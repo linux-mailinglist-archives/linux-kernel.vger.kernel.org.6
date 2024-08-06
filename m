@@ -1,214 +1,328 @@
-Return-Path: <linux-kernel+bounces-276099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B50948E56
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:06:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7EF2948E6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 080772819A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:06:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B1C2863C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AFB1C3F02;
-	Tue,  6 Aug 2024 12:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594FC1C579D;
+	Tue,  6 Aug 2024 12:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZGcsnBuH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="bdE6rmyt"
+Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8292E166F2F
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27961BDA83;
+	Tue,  6 Aug 2024 12:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722945972; cv=none; b=gsfCU5Ua7TqGYlKJ4UMsmm30o914BhPWtImDzPlCMLdTJ6biTXbOSvS+ovxobcOVi5vFmqtsVVw3eeCpoArS+SRI1DKwuiIXScZ+I7DaPUz8miM/aFRGrPVgf40El273kupBsBFPNVJy0O1PbO+T68FtiHH3z7cutXlXAvpkn4w=
+	t=1722946044; cv=none; b=qoE/32tgpPsU7wdaMfJWdyqPmmaADcQGfvjzVRS460gS4ZSAjPw3eLyUyag+bCwvIPGONo+ULD002pDro11qgiC4yU63lYEbOgum1DNBUANXYHxE90NtioewKyb7krk4zExc1GVfMfBdjDb/puO7s5bqrEzTOrXY9le0bl8ULm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722945972; c=relaxed/simple;
-	bh=mZcq5beBIssVWimtksyuopUaPBxztHF66lndE2lN704=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tzc7Pudq+HyWi6DteHqkLa4CqPUMF/S87Vbl50QN3GVj80xTWNCu8bblrrHXiXZZjaJ/QE3BG5g9W7rHbJk6VkcRa/44LuzCtShbmpEQHlbf4vky+zMko+VD6nLxk7KJVuK1o0Ry1qWOoM59rCg1ZsFPT4iWMQHZDFjaLSJ2m3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZGcsnBuH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722945969;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XXjP/8sFGXwn/WKfJmwc1853FXZeH/QqyFf/fRlwTCo=;
-	b=ZGcsnBuHCnZ8yhd4/saNB9LcrWPEUvcszBivHLanWggN1+boUheE4sy7ho8+eMGKzkiHa8
-	IWovEcQi2R+trhaf19o/Q7yhs2Kdp+A3Lbyxp36Vb40F9a+0snR+zyySEfKQ1ZEfRKvidG
-	j0Snhe4THBPmxvU3PJfwWAVH2eMI4sw=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-152-x1jg8enYOk2ZKB3KK0nmcw-1; Tue, 06 Aug 2024 08:06:06 -0400
-X-MC-Unique: x1jg8enYOk2ZKB3KK0nmcw-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a7aa7e86b5eso53085866b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 05:06:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722945965; x=1723550765;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XXjP/8sFGXwn/WKfJmwc1853FXZeH/QqyFf/fRlwTCo=;
-        b=pJa+1bjYafLZgz5O173H9vA3pHV83VHd05cY/yAugeyR/DV4SiEx5ehlhSs5JHy5Lf
-         KOzWZFONBLoebaR38ayjwjMbzywJHLEZfVY6qlnNxCXaKc1gKK4QH+OF4ad7TbMExp7m
-         yf0rKK4DGF6bVm1kShg2EGy1UI1CeLDYWqAwM1JmFM7UcgG98XwqnVGdbwlre8x1LLUM
-         ivTxp7Dd5ZLYhug1GD/VYhIHAtiWvJTE8tCQFEM8dYzgwQdIo5cYXQUBB8xlfTW5mvJp
-         +NOKxND/thaO0l3IWaoEXVqXYmlHz+eEG172nGLSascfaR55MV4FqMGy6WV4rliCXl0D
-         X/nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdzqoYa0XJWYgpuByl2g1EjQJPFD7YNrzeolXwaMXP7lsmdVN2Z/cgQr1MlPbffV4tz+Mhi8AcpduRAjWnTv24EEg0oBiLCIVjvudk
-X-Gm-Message-State: AOJu0Yw0ygZL1qwTFKV/ODEZQ6o2euz/DRhkl5m7ZV+l6ozp8eukno1S
-	1QwQjl6xsmUdwWq/Py7pYpgDQDMWX2v0MfMF4Kp8upESc7tJGCGlAYNiS4KDf4VXdPrlsys9oZd
-	/mghskm/rUgyI9qJnW6t/Pw2QTo2UMfHip8U5HATsxGY18ouMifvBeiR5jmimsQ==
-X-Received: by 2002:a17:907:7f11:b0:a7a:8cb9:7491 with SMTP id a640c23a62f3a-a7dc5106dfemr1124568166b.54.1722945964901;
-        Tue, 06 Aug 2024 05:06:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEkDYU2UgvrKGaQznl3n8Pfd2mbKXM72SmJNAO94B/l91wD5LFREG1boiddijoQR3kYfNHQrg==
-X-Received: by 2002:a17:907:7f11:b0:a7a:8cb9:7491 with SMTP id a640c23a62f3a-a7dc5106dfemr1124565566b.54.1722945964357;
-        Tue, 06 Aug 2024 05:06:04 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ecb546sm541735866b.224.2024.08.06.05.06.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 05:06:04 -0700 (PDT)
-Message-ID: <56be9c2c-6f44-409f-bb66-3bb488f0d546@redhat.com>
-Date: Tue, 6 Aug 2024 14:06:02 +0200
+	s=arc-20240116; t=1722946044; c=relaxed/simple;
+	bh=93AYVZpRrj6lm4O7Qb7k2/uVL0vc/J6wJkb9Us1qvZo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FD6WaIeWYo8zbD9wiUw4HDb0ysWX6xmsqRd0ODi+HkicGcT5Gv1bms+r6ue6QCOQmtqOl8RSmfXNSmwPpWMQy3bdV6rdKWXPBkG37Q2gYl2d05nEx2v9pURhRUbO34B55yyG3JBn8K0lDn1XWWzZW7AgodSQe2/LJu+mF8ljQWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=bdE6rmyt; arc=none smtp.client-ip=49.12.199.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B66AFDAD81;
+	Tue,  6 Aug 2024 14:07:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
+	t=1722946031; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=teO0kk0BCxxiBkmDiwCmJ6i1Z0/9DUe1bmDDcgLGwiU=;
+	b=bdE6rmytiVbaYY4E76O8mJLxsXFV1Ev4yJ6M7m2N0Ac8Owil3m6K+uUoIdHA6Z4s6dS3Sk
+	8cddqtTV16qosWiJckbw2sb8I7GcgKi87aJrinzDStTD3ixJtOREaodC6B/EFbJ33krdsV
+	yRovL3HFU886TlkbjDsUgSq25Ym17nTRF2IkWkFK2EwB0dvIDEl4KoJVY/erzuEgSZCXWW
+	z+u7nDKvfY+F+hCFyUA+XGYjXuL/7355ANe9pQqXN+PvEXQmMbS+dk83Z8VA3Anb7nhpyt
+	zyWHh3cSoNdO3rB6XBWFE9Io45Zhpx8g+r8HVRwzC3GYTt+naEHBZBDaMUoCPw==
+From: Daniel Wagner <dwagner@suse.de>
+Subject: [PATCH v3 00/15] honor isolcpus configuration
+Date: Tue, 06 Aug 2024 14:06:32 +0200
+Message-Id: <20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] mm: Introduce PageUnaccepted() page type
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Mel Gorman <mgorman@suse.de>,
- Vlastimil Babka <vbabka@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, Mike Rapoport <rppt@kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240805145940.2911011-1-kirill.shutemov@linux.intel.com>
- <20240805145940.2911011-4-kirill.shutemov@linux.intel.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240805145940.2911011-4-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMkRsmYC/23NTQ6CMBCG4auQrq3pn1BdeQ/jgsJUJjGAHdtoC
+ He3kBhdsHy/ZJ6ZGEFAIHYqJhYgIeHQ59C7gjVd3d+AY5ubKaGMKJXgSMO9GSNxHPgjQgTisrY
+ WnKm8t47lwzGAx9eKXq65O6TnEN7rjySX9cvJLS5JLrh1sjw6b6Sw+kyRYN8CW7Ck/oFqE1AZU
+ GWtFejG+OrwA+Z5/gD/MmGI8wAAAA==
+To: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
+ Sagi Grimberg <sagi@grimberg.me>, Thomas Gleixner <tglx@linutronix.de>, 
+ Christoph Hellwig <hch@lst.de>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ John Garry <john.g.garry@oracle.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+ Jason Wang <jasowang@redhat.com>, 
+ Kashyap Desai <kashyap.desai@broadcom.com>, 
+ Sumit Saxena <sumit.saxena@broadcom.com>, 
+ Shivasharan S <shivasharan.srikanteshwara@broadcom.com>, 
+ Chandrakanth patil <chandrakanth.patil@broadcom.com>, 
+ Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>, 
+ Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, 
+ Nilesh Javali <njavali@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, 
+ Hannes Reinecke <hare@suse.de>, 
+ Sridhar Balaraman <sbalaraman@parallelwireless.com>, 
+ "brookxu.cn" <brookxu.cn@gmail.com>, Ming Lei <ming.lei@redhat.com>, 
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org, 
+ virtualization@lists.linux.dev, megaraidlinux.pdl@broadcom.com, 
+ mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, 
+ storagedev@microchip.com, linux-doc@vger.kernel.org, 
+ Daniel Wagner <dwagner@suse.de>
+X-Mailer: b4 0.14.0
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 05.08.24 16:59, Kirill A. Shutemov wrote:
-> The new page type allows physical memory scanners to detect unaccepted
-> memory and handle it accordingly.
-> 
-> The page type is serialized with zone lock.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
->   include/linux/page-flags.h | 3 +++
->   mm/page_alloc.c            | 2 ++
->   2 files changed, 5 insertions(+)
-> 
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index 5769fe6e4950..e19eac9c2b5c 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -943,6 +943,7 @@ enum pagetype {
->   	PG_hugetlb	= 0x04000000,
->   	PG_slab		= 0x02000000,
->   	PG_zsmalloc	= 0x01000000,
-> +	PG_unaccepted	= 0x00800000,
->   
->   	PAGE_TYPE_BASE	= 0x80000000,
->   
-> @@ -1076,6 +1077,8 @@ FOLIO_TEST_FLAG_FALSE(hugetlb)
->   
->   PAGE_TYPE_OPS(Zsmalloc, zsmalloc, zsmalloc)
->   
-> +PAGE_TYPE_OPS(Unaccepted, unaccepted, unaccepted)
+After the discussion with Ming on managed_irq, I decided to bring back
+the io_queue option because managed_irq is clearly targetting a different
+use case and Ming ask not to drop support for his use case.
 
-I'm sure you're able to come up with some documentation ;)
+In an offline discussion with Frederic, I learned what the plans are with
+isolcpus. The future is in cpusets but reconfiguration happens only on
+offline CPUs. I think this approach will go into this direction.
 
-> +
->   /**
->    * PageHuge - Determine if the page belongs to hugetlbfs
->    * @page: The page to test.
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 90a1f01d5996..a35efb114496 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -6972,6 +6972,7 @@ static bool try_to_accept_memory_one(struct zone *zone)
->   
->   	account_freepages(zone, -MAX_ORDER_NR_PAGES, MIGRATE_MOVABLE);
->   	__mod_zone_page_state(zone, NR_UNACCEPTED, -MAX_ORDER_NR_PAGES);
-> +	__ClearPageUnaccepted(page);
->   	spin_unlock_irqrestore(&zone->lock, flags);
->   
->   	accept_page(page, MAX_PAGE_ORDER);
-> @@ -7030,6 +7031,7 @@ static bool __free_unaccepted(struct page *page)
->   	list_add_tail(&page->lru, &zone->unaccepted_pages);
->   	account_freepages(zone, MAX_ORDER_NR_PAGES, MIGRATE_MOVABLE);
->   	__mod_zone_page_state(zone, NR_UNACCEPTED, MAX_ORDER_NR_PAGES);
-> +	__SetPageUnaccepted(page);
->   	spin_unlock_irqrestore(&zone->lock, flags);
->   
->   	if (first)
+I've digged up Ming's attempt to replace the
+blk_mq_[pci|virtio]_map_queues a more generic blk_mq_dev_map_queues
+function which takes callback to ask the driver for an affinity mask for
+a hardware queue. With this central function in place, it's also simple
+to overwrite affinities in the core and the drivers don't have to be made
+aware of isolcpus configurations.
 
-At the point PG_unaccepted is set/cleared, we don't have another type 
-set, right? (IOW, PG_buddy is only set after we cleared PG_unaccepted)
+The original attempt was to update the nvme-pci driver only. Hannes asked
+me to look into the other multiqueue drivers/devices. Unfortunatly, I
+don't have all the hardware to test against. So this is only tested with
+nvme-pci, smartpqi, qla2xxx and megaraid. The testing also involved CPU
+hotplug events and I was not able to observe any stalls, e.g. with hctx
+which have online and offline CPUs. The only stall I was able to trigger
+reliable was with qemu's PCI emulation. It looks like when a CPU is
+offlined, the PCI affinity is reprogrammed but qemu still routes IRQs to
+an offline CPU instead to newly programmed destination CPU. All worked
+fine on real hardware.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Finally, I also added a new CPU-hctx mapping function for the isolcpus
+case. Initially the blk_mq_map_queues function was used but it turns out
+this will map all isol CPUs to the first CPU. The new function first maps
+the housekeeping CPUs to the right htcx using the existing mapping logic.
+The isol CPUs are then assigned evenly to the hctxs. I suppose this could
+be done a bit smarter and also considering NUMA aspects when we agree on
+this approach.
 
+This series is based on linux-block/for-6.12/block. If this is the wrong
+branch please let me know which one is better suited. Thanks.
+
+Initial cover letter:
+
+The nvme-pci driver is ignoring the isolcpus configuration. There were
+several attempts to fix this in the past [1][2]. This is another attempt
+but this time trying to address the feedback and solve it in the core
+code.
+
+The first patch introduces a new option for isolcpus 'io_queue', but I'm
+not really sure if this is needed and we could just use the managed_irq
+option instead. I guess depends if there is an use case which depens on
+queues on the isolated CPUs.
+
+The second patch introduces a new block layer helper which returns the
+number of possible queues. I suspect it would makes sense also to make
+this helper a bit smarter and also consider the number of queues the
+hardware supports.
+
+And the last patch updates the group_cpus_evenly function so that it uses
+only the housekeeping CPUs when they are defined
+
+Note this series is not addressing the affinity setting of the admin
+queue (queue 0). I'd like to address this after we agreed on how to solve
+this. Currently, the admin queue affinity can be controlled by the
+irq_afffinity command line option, so there is at least a workaround for
+it.
+
+Baseline:
+
+available: 2 nodes (0-1)
+node 0 cpus: 0 1 2 3
+node 0 size: 1536 MB
+node 0 free: 1227 MB
+node 1 cpus: 4 5 6 7
+node 1 size: 1729 MB
+node 1 free: 1422 MB
+node distances:
+node   0   1
+  0:  10  20
+  1:  20  10
+
+options nvme write_queues=4 poll_queues=4
+
+55: 0 41 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 0-edge nvme0q0 affinity: 0-3
+63: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 1-edge nvme0q1 affinity: 4-5
+64: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 2-edge nvme0q2 affinity: 6-7
+65: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 3-edge nvme0q3 affinity: 0-1
+66: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 4-edge nvme0q4 affinity: 2-3
+67: 0 0 0 0 24 0 0 0 PCI-MSIX-0000:00:05.0 5-edge nvme0q5 affinity: 4
+68: 0 0 0 0 0 1 0 0 PCI-MSIX-0000:00:05.0 6-edge nvme0q6 affinity: 5
+69: 0 0 0 0 0 0 41 0 PCI-MSIX-0000:00:05.0 7-edge nvme0q7 affinity: 6
+70: 0 0 0 0 0 0 0 3 PCI-MSIX-0000:00:05.0 8-edge nvme0q8 affinity: 7
+71: 1 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 9-edge nvme0q9 affinity: 0
+72: 0 18 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 10-edge nvme0q10 affinity: 1
+73: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 11-edge nvme0q11 affinity: 2
+74: 0 0 0 3 0 0 0 0 PCI-MSIX-0000:00:05.0 12-edge nvme0q12 affinity: 3
+
+queue mapping for /dev/nvme0n1
+        hctx0: default 4 5
+        hctx1: default 6 7
+        hctx2: default 0 1
+        hctx3: default 2 3
+        hctx4: read 4
+        hctx5: read 5
+        hctx6: read 6
+        hctx7: read 7
+        hctx8: read 0
+        hctx9: read 1
+        hctx10: read 2
+        hctx11: read 3
+        hctx12: poll 4 5
+        hctx13: poll 6 7
+        hctx14: poll 0 1
+        hctx15: poll 2 3
+
+PCI name is 00:05.0: nvme0n1
+        irq 55, cpu list 0-3, effective list 1
+        irq 63, cpu list 4-5, effective list 5
+        irq 64, cpu list 6-7, effective list 7
+        irq 65, cpu list 0-1, effective list 1
+        irq 66, cpu list 2-3, effective list 3
+        irq 67, cpu list 4, effective list 4
+        irq 68, cpu list 5, effective list 5
+        irq 69, cpu list 6, effective list 6
+        irq 70, cpu list 7, effective list 7
+        irq 71, cpu list 0, effective list 0
+        irq 72, cpu list 1, effective list 1
+        irq 73, cpu list 2, effective list 2
+        irq 74, cpu list 3, effective list 3
+
+* patched:
+
+48: 0 0 33 0 0 0 0 0 PCI-MSIX-0000:00:05.0 0-edge nvme0q0 affinity: 0-3
+58: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 1-edge nvme0q1 affinity: 4
+59: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 2-edge nvme0q2 affinity: 5
+60: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 3-edge nvme0q3 affinity: 0
+61: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 4-edge nvme0q4 affinity: 1
+62: 0 0 0 0 45 0 0 0 PCI-MSIX-0000:00:05.0 5-edge nvme0q5 affinity: 4
+63: 0 0 0 0 0 12 0 0 PCI-MSIX-0000:00:05.0 6-edge nvme0q6 affinity: 5
+64: 2 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 7-edge nvme0q7 affinity: 0
+65: 0 35 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 8-edge nvme0q8 affinity: 1
+
+queue mapping for /dev/nvme0n1
+        hctx0: default 2 3 4 6 7
+        hctx1: default 5
+        hctx2: default 0
+        hctx3: default 1
+        hctx4: read 4
+        hctx5: read 5
+        hctx6: read 0
+        hctx7: read 1
+        hctx8: poll 4
+        hctx9: poll 5
+        hctx10: poll 0
+        hctx11: poll 1
+
+PCI name is 00:05.0: nvme0n1
+        irq 48, cpu list 0-3, effective list 2
+        irq 58, cpu list 4, effective list 4
+        irq 59, cpu list 5, effective list 5
+        irq 60, cpu list 0, effective list 0
+        irq 61, cpu list 1, effective list 1
+        irq 62, cpu list 4, effective list 4
+        irq 63, cpu list 5, effective list 5
+        irq 64, cpu list 0, effective list 0
+        irq 65, cpu list 1, effective list 1
+
+[1] https://lore.kernel.org/lkml/20220423054331.GA17823@lst.de/T/#m9939195a465accbf83187caf346167c4242e798d
+[2] https://lore.kernel.org/linux-nvme/87fruci5nj.ffs@tglx/
+
+Signed-off-by: Daniel Wagner <dwagner@suse.de>
+---
+Changes in v3:
+- lifted a couple of patches from
+  https://lore.kernel.org/all/20210709081005.421340-1-ming.lei@redhat.com/
+  "virito: add APIs for retrieving vq affinity"
+  "blk-mq: introduce blk_mq_dev_map_queues"
+- replaces all users of blk_mq_[pci|virtio]_map_queues with
+  blk_mq_dev_map_queues
+- updated/extended number of queue calc helpers
+- add isolcpus=io_queue CPU-hctx mapping function
+- documented enum hk_type and isolcpus=io_queue
+- added "scsi: pm8001: do not overwrite PCI queue mapping"
+- Link to v2: https://lore.kernel.org/r/20240627-isolcpus-io-queues-v2-0-26a32e3c4f75@suse.de
+
+Changes in v2:
+- updated documentation
+- splitted blk/nvme-pci patch
+- dropped HK_TYPE_IO_QUEUE, use HK_TYPE_MANAGED_IRQ
+- Link to v1: https://lore.kernel.org/r/20240621-isolcpus-io-queues-v1-0-8b169bf41083@suse.de
+
+---
+Daniel Wagner (13):
+      scsi: pm8001: do not overwrite PCI queue mapping
+      scsi: replace blk_mq_pci_map_queues with blk_mq_dev_map_queues
+      nvme: replace blk_mq_pci_map_queues with blk_mq_dev_map_queues
+      virtio: blk/scs: replace blk_mq_virtio_map_queues with blk_mq_dev_map_queues
+      blk-mq: remove unused queue mapping helpers
+      sched/isolation: Add io_queue housekeeping option
+      docs: add io_queue as isolcpus options
+      blk-mq: add number of queue calc helper
+      nvme-pci: use block layer helpers to calculate num of queues
+      scsi: use block layer helpers to calculate num of queues
+      virtio: blk/scsi: use block layer helpers to calculate num of queues
+      lib/group_cpus.c: honor housekeeping config when grouping CPUs
+      blk-mq: use hk cpus only when isolcpus=io_queue is enabled
+
+Ming Lei (2):
+      virito: add APIs for retrieving vq affinity
+      blk-mq: introduce blk_mq_dev_map_queues
+
+ Documentation/admin-guide/kernel-parameters.txt |   9 ++
+ block/blk-mq-cpumap.c                           | 136 ++++++++++++++++++++++++
+ block/blk-mq-pci.c                              |  41 ++-----
+ block/blk-mq-virtio.c                           |  46 +++-----
+ drivers/block/virtio_blk.c                      |   8 +-
+ drivers/nvme/host/pci.c                         |   8 +-
+ drivers/scsi/fnic/fnic_main.c                   |   3 +-
+ drivers/scsi/hisi_sas/hisi_sas.h                |   1 -
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c          |  20 ++--
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c          |   5 +-
+ drivers/scsi/megaraid/megaraid_sas_base.c       |  18 ++--
+ drivers/scsi/mpi3mr/mpi3mr_os.c                 |   3 +-
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c            |   3 +-
+ drivers/scsi/pm8001/pm8001_init.c               |   9 +-
+ drivers/scsi/qla2xxx/qla_isr.c                  |  10 +-
+ drivers/scsi/qla2xxx/qla_nvme.c                 |   3 +-
+ drivers/scsi/qla2xxx/qla_os.c                   |   3 +-
+ drivers/scsi/smartpqi/smartpqi_init.c           |  12 +--
+ drivers/scsi/virtio_scsi.c                      |   4 +-
+ drivers/virtio/virtio.c                         |  10 ++
+ include/linux/blk-mq-pci.h                      |   7 +-
+ include/linux/blk-mq-virtio.h                   |   8 +-
+ include/linux/blk-mq.h                          |   7 ++
+ include/linux/sched/isolation.h                 |  15 +++
+ include/linux/virtio.h                          |   2 +
+ kernel/sched/isolation.c                        |   7 ++
+ lib/group_cpus.c                                |  75 ++++++++++++-
+ 27 files changed, 350 insertions(+), 123 deletions(-)
+---
+base-commit: f48ada402d2f1e46fa241bcc6725bdde70725e15
+change-id: 20240620-isolcpus-io-queues-1a88eb47ff8b
+
+Best regards,
 -- 
-Cheers,
-
-David / dhildenb
+Daniel Wagner <dwagner@suse.de>
 
 
