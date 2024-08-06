@@ -1,72 +1,70 @@
-Return-Path: <linux-kernel+bounces-276274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D4E9491B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:38:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41379949193
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FE59B2B92B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:31:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7395A1C232C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC2C1D2F43;
-	Tue,  6 Aug 2024 13:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701751D54D6;
+	Tue,  6 Aug 2024 13:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rELrWL69"
-Received: from msa.smtpout.orange.fr (msa-212.smtpout.orange.fr [193.252.23.212])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=grep.be header.i=@grep.be header.b="Qio/YNTK"
+Received: from lounge.grep.be (lounge.grep.be [144.76.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18D41C57A5;
-	Tue,  6 Aug 2024 13:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717B51D1F70;
+	Tue,  6 Aug 2024 13:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722951034; cv=none; b=S92p9oxNRzK3AbREkW1yyRhJVRfFOiDJop3XdRnkctTZ9rnJR4Ug98D4NOvl+xIcomEpS/oq9cg9JHc/YMi8hyqoWnM5+CfN0z1JFFSmmldPkUUFQFr6EGOg8tsfhLbJyTSItLUfKjXFVnKJOolu6G30X1CGaP457ISK61sgSSs=
+	t=1722951081; cv=none; b=DrvP4MCd2okCvy4mKyQjfzjlMqnzKGWmXY0X/aFY9xh5VOfqjRgrH9gtXXWt8GTdTYcfYYwHFK3WTgkEtU0+gAYs05T+vAXhI75EmmfD+5N0HwNzKk3m0tV6kGeqYVOnc4ZHdUtB/gQrOm14Rdy0CnNBGLi0mmQSm48QTsQPdWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722951034; c=relaxed/simple;
-	bh=1gt4DGlnEvk4C6I+MHr1KvC3pI+FOt8lCQxfWRZdjzI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S/u7noSoN2vMeACTFUbmxuxNFJBy8OsrK9OCf+YRCn0f09VVM0ZKjiphxTZfCxZa7v1ji0UZuT5baXzQQKoCZmKVaOJGtqMEoXDUPYED7U/IExBXddx+D2gAhErw0hulu2gOXhAXfr1vbri1HgQTEK42PfdN50TlM8LJWjGcIJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rELrWL69; arc=none smtp.client-ip=193.252.23.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id bKGasMrYrk1NHbKGbsryPR; Tue, 06 Aug 2024 15:30:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722951023;
-	bh=d69VfSDFznZJlgGHUNUM34fDu7txnT5TK9v/Z+aWwNg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=rELrWL69hQHCACChtuDknbS5s4eLfnGaz47bWaGPjch0CNbOAuVHSFhGawJ1jGjvc
-	 WmgSRehYY7MdIl8bw/Pu1K1pnFSCNEBjHPnXLoK4qfZBh96HxwvWAQ1Zgjt2Sf+56E
-	 /OZMjdW/wHAN09NKEzJUJ+qFyxpdx3yYBMJ9G3PCkAbr7stysjVhdUGtwvWjWVyGmA
-	 8XKpo6TSmcAWFui2kD0hnqefi1Cx+s4VvLXy/xvNDQR9t56VyY1+f1u/w2yEXBgLly
-	 0rfxYWVn4YML22YLv9/26scAhEXtpUx8yb2Y6q9o0b0jy4cxvV8WtJJGMbdXPUKkvz
-	 71SB7TytRlDaw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 06 Aug 2024 15:30:23 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Davidlohr Bueso <dave@stgolabs.net>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	rcu@vger.kernel.org
-Subject: [PATCH] refscale: Constify struct ref_scale_ops
-Date: Tue,  6 Aug 2024 15:30:16 +0200
-Message-ID: <46cd762aeef493d8655e8a053bfd591f849d27ec.1722951006.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722951081; c=relaxed/simple;
+	bh=zWSCz73at9uv5gGCQxikHF05yR+6+jFaqGCgvUE8fvs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=L+2az8Cwtb3wY3kFefc3CqnIPkFskMuVZHUitRN6nesDazS5WLewZ8eSAKK5m4YvERo7WHV9zB0HgG9rLB76+NJwE8c8ZD5gnSawn+b+fr89A3PQu/M51v3AP8OTQNlpidwzjCGEAEnS2rlagtNjI10AnUfh6eISeNx8/9B2WJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uter.be; spf=pass smtp.mailfrom=grep.be; dkim=fail (0-bit key) header.d=grep.be header.i=@grep.be header.b=Qio/YNTK reason="key not found in DNS"; arc=none smtp.client-ip=144.76.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uter.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grep.be
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=grep.be;
+	s=2017.latin; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To
+	:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=4ezqpc2sp8gD3/2IUsk5Z3eEd9Ks2MQHDdk337O8ScE=; b=Qio/YNTKl3rtT6yh1SL1SIEv5x
+	412DlnJ8MEiGHSnVs88ygGJknbhqqTfC6IUSlM95ZwfdvV0S8DA79Qtq3ARBlF4A2PzmWrm+dPZ7s
+	thGp0Q4mYuRVeUTpgKdGyA3c65KT/1B3BZ4vYeep+rEWVZZRCPVK4ayAsnRNY689vGp+s+BhtVoE3
+	mhQg5kpZOZo9HC2ovqtmoSLJZECk+CDP0jP9lCUmpDvOpyp3URMSl8KhBuCwtj/+rKXTIGaHpBvwR
+	OsbAU+B5uYKeO3bV0wKDiDBuizd5SKf4YsblY5aKHPHqQePoioK9LLy0FUzb9jhsQY453ZzHm+Un0
+	WL0L5/Eg==;
+Received: from [196.251.239.242] (helo=pc220518)
+	by lounge.grep.be with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <wouter@grep.be>)
+	id 1sbKHT-00HZHT-2F;
+	Tue, 06 Aug 2024 15:31:15 +0200
+Received: from wouter by pc220518 with local (Exim 4.98)
+	(envelope-from <wouter@grep.be>)
+	id 1sbKHP-000000017kU-2DJf;
+	Tue, 06 Aug 2024 15:31:11 +0200
+From: Wouter Verhelst <w@uter.be>
+To: Josef Bacik <josef@toxicpanda.com>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: Wouter Verhelst <w@uter.be>,
+	linux-block@vger.kernel.org,
+	nbd@other.debian.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] nbd: implement the WRITE_ZEROES command
+Date: Tue,  6 Aug 2024 15:30:54 +0200
+Message-ID: <20240806133058.268058-1-w@uter.be>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240803130432.5952-1-w@uter.be>
+References: <20240803130432.5952-1-w@uter.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,209 +73,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct ref_scale_ops' are not modified in these drivers.
+The NBD protocol defines a message for zeroing out a region of an export
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+Add support to the kernel driver for that message.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  34231	   4167	    736	  39134	   98de	kernel/rcu/refscale.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  35175	   3239	    736	  39150	   98ee	kernel/rcu/refscale.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Wouter Verhelst <w@uter.be>
 ---
-Compile tested-only.
----
- kernel/rcu/refscale.c | 42 +++++++++++++++++++++---------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ drivers/block/nbd.c      | 8 ++++++++
+ include/uapi/linux/nbd.h | 5 ++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-index cfec0648e141..0db9db73f57f 100644
---- a/kernel/rcu/refscale.c
-+++ b/kernel/rcu/refscale.c
-@@ -135,7 +135,7 @@ struct ref_scale_ops {
- 	const char *name;
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index 5b1811b1ba5f..58221b89965d 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -352,6 +352,8 @@ static int __nbd_set_size(struct nbd_device *nbd, loff_t bytesize,
+ 	}
+ 	if (nbd->config->flags & NBD_FLAG_ROTATIONAL)
+ 		lim.features |= BLK_FEAT_ROTATIONAL;
++	if (nbd->config->flags & NBD_FLAG_SEND_WRITE_ZEROES)
++		lim.max_write_zeroes_sectors = UINT_MAX / blksize;
+ 
+ 	lim.logical_block_size = blksize;
+ 	lim.physical_block_size = blksize;
+@@ -421,6 +423,8 @@ static u32 req_to_nbd_cmd_type(struct request *req)
+ 		return NBD_CMD_WRITE;
+ 	case REQ_OP_READ:
+ 		return NBD_CMD_READ;
++	case REQ_OP_WRITE_ZEROES:
++		return NBD_CMD_WRITE_ZEROES;
+ 	default:
+ 		return U32_MAX;
+ 	}
+@@ -637,6 +641,8 @@ static blk_status_t nbd_send_cmd(struct nbd_device *nbd, struct nbd_cmd *cmd,
+ 
+ 	if (req->cmd_flags & REQ_FUA)
+ 		nbd_cmd_flags |= NBD_CMD_FLAG_FUA;
++	if ((req->cmd_flags & REQ_NOUNMAP) && (type == NBD_CMD_WRITE_ZEROES))
++		nbd_cmd_flags |= NBD_CMD_FLAG_NO_HOLE;
+ 
+ 	/* We did a partial send previously, and we at least sent the whole
+ 	 * request struct, so just go and send the rest of the pages in the
+@@ -1706,6 +1712,8 @@ static int nbd_dbg_flags_show(struct seq_file *s, void *unused)
+ 		seq_puts(s, "NBD_FLAG_SEND_FUA\n");
+ 	if (flags & NBD_FLAG_SEND_TRIM)
+ 		seq_puts(s, "NBD_FLAG_SEND_TRIM\n");
++	if (flags & NBD_FLAG_SEND_WRITE_ZEROES)
++		seq_puts(s, "NBD_FLAG_SEND_WRITE_ZEROES\n");
+ 
+ 	return 0;
+ }
+diff --git a/include/uapi/linux/nbd.h b/include/uapi/linux/nbd.h
+index d75215f2c675..f1d468acfb25 100644
+--- a/include/uapi/linux/nbd.h
++++ b/include/uapi/linux/nbd.h
+@@ -42,8 +42,9 @@ enum {
+ 	NBD_CMD_WRITE = 1,
+ 	NBD_CMD_DISC = 2,
+ 	NBD_CMD_FLUSH = 3,
+-	NBD_CMD_TRIM = 4
++	NBD_CMD_TRIM = 4,
+ 	/* userspace defines additional extension commands */
++	NBD_CMD_WRITE_ZEROES = 6,
  };
  
--static struct ref_scale_ops *cur_ops;
-+static const struct ref_scale_ops *cur_ops;
+ /* values for flags field, these are server interaction specific. */
+@@ -53,11 +54,13 @@ enum {
+ #define NBD_FLAG_SEND_FUA	(1 << 3) /* send FUA (forced unit access) */
+ #define NBD_FLAG_ROTATIONAL	(1 << 4) /* device is rotational */
+ #define NBD_FLAG_SEND_TRIM	(1 << 5) /* send trim/discard */
++#define NBD_FLAG_SEND_WRITE_ZEROES (1 << 6) /* supports WRITE_ZEROES */
+ /* there is a gap here to match userspace */
+ #define NBD_FLAG_CAN_MULTI_CONN	(1 << 8)	/* Server supports multiple connections per export. */
  
- static void un_delay(const int udl, const int ndl)
- {
-@@ -171,7 +171,7 @@ static bool rcu_sync_scale_init(void)
- 	return true;
- }
+ /* values for cmd flags in the upper 16 bits of request type */
+ #define NBD_CMD_FLAG_FUA	(1 << 16) /* FUA (forced unit access) op */
++#define NBD_CMD_FLAG_NO_HOLE	(1 << 17) /* Do not punch a hole for WRITE_ZEROES */
  
--static struct ref_scale_ops rcu_ops = {
-+static const struct ref_scale_ops rcu_ops = {
- 	.init		= rcu_sync_scale_init,
- 	.readsection	= ref_rcu_read_section,
- 	.delaysection	= ref_rcu_delay_section,
-@@ -205,7 +205,7 @@ static void srcu_ref_scale_delay_section(const int nloops, const int udl, const
- 	}
- }
- 
--static struct ref_scale_ops srcu_ops = {
-+static const struct ref_scale_ops srcu_ops = {
- 	.init		= rcu_sync_scale_init,
- 	.readsection	= srcu_ref_scale_read_section,
- 	.delaysection	= srcu_ref_scale_delay_section,
-@@ -232,7 +232,7 @@ static void rcu_tasks_ref_scale_delay_section(const int nloops, const int udl, c
- 		un_delay(udl, ndl);
- }
- 
--static struct ref_scale_ops rcu_tasks_ops = {
-+static const struct ref_scale_ops rcu_tasks_ops = {
- 	.init		= rcu_sync_scale_init,
- 	.readsection	= rcu_tasks_ref_scale_read_section,
- 	.delaysection	= rcu_tasks_ref_scale_delay_section,
-@@ -271,7 +271,7 @@ static void rcu_trace_ref_scale_delay_section(const int nloops, const int udl, c
- 	}
- }
- 
--static struct ref_scale_ops rcu_trace_ops = {
-+static const struct ref_scale_ops rcu_trace_ops = {
- 	.init		= rcu_sync_scale_init,
- 	.readsection	= rcu_trace_ref_scale_read_section,
- 	.delaysection	= rcu_trace_ref_scale_delay_section,
-@@ -310,7 +310,7 @@ static void ref_refcnt_delay_section(const int nloops, const int udl, const int
- 	}
- }
- 
--static struct ref_scale_ops refcnt_ops = {
-+static const struct ref_scale_ops refcnt_ops = {
- 	.init		= rcu_sync_scale_init,
- 	.readsection	= ref_refcnt_section,
- 	.delaysection	= ref_refcnt_delay_section,
-@@ -347,7 +347,7 @@ static void ref_rwlock_delay_section(const int nloops, const int udl, const int
- 	}
- }
- 
--static struct ref_scale_ops rwlock_ops = {
-+static const struct ref_scale_ops rwlock_ops = {
- 	.init		= ref_rwlock_init,
- 	.readsection	= ref_rwlock_section,
- 	.delaysection	= ref_rwlock_delay_section,
-@@ -384,7 +384,7 @@ static void ref_rwsem_delay_section(const int nloops, const int udl, const int n
- 	}
- }
- 
--static struct ref_scale_ops rwsem_ops = {
-+static const struct ref_scale_ops rwsem_ops = {
- 	.init		= ref_rwsem_init,
- 	.readsection	= ref_rwsem_section,
- 	.delaysection	= ref_rwsem_delay_section,
-@@ -419,7 +419,7 @@ static void ref_lock_delay_section(const int nloops, const int udl, const int nd
- 	preempt_enable();
- }
- 
--static struct ref_scale_ops lock_ops = {
-+static const struct ref_scale_ops lock_ops = {
- 	.readsection	= ref_lock_section,
- 	.delaysection	= ref_lock_delay_section,
- 	.name		= "lock"
-@@ -454,7 +454,7 @@ static void ref_lock_irq_delay_section(const int nloops, const int udl, const in
- 	preempt_enable();
- }
- 
--static struct ref_scale_ops lock_irq_ops = {
-+static const struct ref_scale_ops lock_irq_ops = {
- 	.readsection	= ref_lock_irq_section,
- 	.delaysection	= ref_lock_irq_delay_section,
- 	.name		= "lock-irq"
-@@ -490,7 +490,7 @@ static void ref_acqrel_delay_section(const int nloops, const int udl, const int
- 	preempt_enable();
- }
- 
--static struct ref_scale_ops acqrel_ops = {
-+static const struct ref_scale_ops acqrel_ops = {
- 	.readsection	= ref_acqrel_section,
- 	.delaysection	= ref_acqrel_delay_section,
- 	.name		= "acqrel"
-@@ -524,7 +524,7 @@ static void ref_clock_delay_section(const int nloops, const int udl, const int n
- 	stopopts = x;
- }
- 
--static struct ref_scale_ops clock_ops = {
-+static const struct ref_scale_ops clock_ops = {
- 	.readsection	= ref_clock_section,
- 	.delaysection	= ref_clock_delay_section,
- 	.name		= "clock"
-@@ -556,7 +556,7 @@ static void ref_jiffies_delay_section(const int nloops, const int udl, const int
- 	stopopts = x;
- }
- 
--static struct ref_scale_ops jiffies_ops = {
-+static const struct ref_scale_ops jiffies_ops = {
- 	.readsection	= ref_jiffies_section,
- 	.delaysection	= ref_jiffies_delay_section,
- 	.name		= "jiffies"
-@@ -706,9 +706,9 @@ static void refscale_typesafe_ctor(void *rtsp_in)
- 	preempt_enable();
- }
- 
--static struct ref_scale_ops typesafe_ref_ops;
--static struct ref_scale_ops typesafe_lock_ops;
--static struct ref_scale_ops typesafe_seqlock_ops;
-+static const struct ref_scale_ops typesafe_ref_ops;
-+static const struct ref_scale_ops typesafe_lock_ops;
-+static const struct ref_scale_ops typesafe_seqlock_ops;
- 
- // Initialize for a typesafe test.
- static bool typesafe_init(void)
-@@ -769,7 +769,7 @@ static void typesafe_cleanup(void)
- }
- 
- // The typesafe_init() function distinguishes these structures by address.
--static struct ref_scale_ops typesafe_ref_ops = {
-+static const struct ref_scale_ops typesafe_ref_ops = {
- 	.init		= typesafe_init,
- 	.cleanup	= typesafe_cleanup,
- 	.readsection	= typesafe_read_section,
-@@ -777,7 +777,7 @@ static struct ref_scale_ops typesafe_ref_ops = {
- 	.name		= "typesafe_ref"
- };
- 
--static struct ref_scale_ops typesafe_lock_ops = {
-+static const struct ref_scale_ops typesafe_lock_ops = {
- 	.init		= typesafe_init,
- 	.cleanup	= typesafe_cleanup,
- 	.readsection	= typesafe_read_section,
-@@ -785,7 +785,7 @@ static struct ref_scale_ops typesafe_lock_ops = {
- 	.name		= "typesafe_lock"
- };
- 
--static struct ref_scale_ops typesafe_seqlock_ops = {
-+static const struct ref_scale_ops typesafe_seqlock_ops = {
- 	.init		= typesafe_init,
- 	.cleanup	= typesafe_cleanup,
- 	.readsection	= typesafe_read_section,
-@@ -1026,7 +1026,7 @@ static int main_func(void *arg)
- }
- 
- static void
--ref_scale_print_module_parms(struct ref_scale_ops *cur_ops, const char *tag)
-+ref_scale_print_module_parms(const struct ref_scale_ops *cur_ops, const char *tag)
- {
- 	pr_alert("%s" SCALE_FLAG
- 		 "--- %s:  verbose=%d verbose_batched=%d shutdown=%d holdoff=%d lookup_instances=%ld loops=%ld nreaders=%d nruns=%d readdelay=%d\n", scale_type, tag,
-@@ -1081,7 +1081,7 @@ ref_scale_init(void)
- {
- 	long i;
- 	int firsterr = 0;
--	static struct ref_scale_ops *scale_ops[] = {
-+	static const struct ref_scale_ops *scale_ops[] = {
- 		&rcu_ops, &srcu_ops, RCU_TRACE_OPS RCU_TASKS_OPS &refcnt_ops, &rwlock_ops,
- 		&rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops, &clock_ops, &jiffies_ops,
- 		&typesafe_ref_ops, &typesafe_lock_ops, &typesafe_seqlock_ops,
+ /* These are client behavior specific flags. */
+ #define NBD_CFLAG_DESTROY_ON_DISCONNECT	(1 << 0) /* delete the nbd device on
 -- 
-2.45.2
+2.43.0
 
 
