@@ -1,110 +1,121 @@
-Return-Path: <linux-kernel+bounces-276787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CECC949864
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:35:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2285F949863
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1186282F69
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:35:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D103F282975
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BE0145A10;
-	Tue,  6 Aug 2024 19:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UyTfmA3d"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140E014901A;
+	Tue,  6 Aug 2024 19:34:48 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F96823CE
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 19:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15D518D62B
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 19:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722972907; cv=none; b=iSBLvb7CxoussPkT4OX3oaiovbVkIFzoaWsFJxnCAWwVxcVDTTTHdgpBvMlK/JNXVQg9u/fZPQ+PPNGAmn8xJFAgAHTORFsPRabnMyiaCD+UNw30cA7sKFRPD7qDORLNwPFZyNHEHSnbNcEcxgMtyNQn59at/lpQDvvI1rZ+fsw=
+	t=1722972887; cv=none; b=YQyy3h6CB8qkMd5P/duPGkk4LQCUW8CU4krzwwgkXONd1LdAcOyZGcjxHNod6QrzBmXla7JP/5YB1wn2nd0YM0dsX01P5WxgcseaIR1qFkNg6oWsc9GXHjmJSlP76s1cPUXvYWsMOViO1H/4kKx7L7YfGUmc0zfqKVSfmUXzh44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722972907; c=relaxed/simple;
-	bh=V/T03AM219iZ6HHZcbsYExrncgiedcnXl3ocqsywHbE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iMuzg/7CUazSearXvINlAjiaZoEyGrWBZuFtmLDbN3W3P62jvTyqnoV/wp75cCfALIm5jDNCxj4dJeROA2+dQwbysuVZ++tLcSDMY0GdkVQphLZgHVmQMW48ntGp3setpCLgGZ03uYQrRDz4/ZwLhVRH4LmfUtQLofX/nPTb38s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UyTfmA3d; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a61386so1599602a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 12:35:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722972904; x=1723577704; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sN15+GrqjqV+KY/9xz1S8u6+7LyFlTeZFis8FIS9u8o=;
-        b=UyTfmA3dUfznTbVN4I8fuiGrTM840W55JrfK6xGIJOwZ0+czMJt7qLQTdyA47/GsSn
-         DEfRoQ4gYwp23J3RxcofhUOjaHMPR74kMk5JFJFBvEQX7JVAo4RJNRBbn4WyT+GJ3Tni
-         QfcreyR4uI1d9AZvrcE2FWbzfJOr4OT4fzykUWCbbqpH+3xVAetnrn2L9lEYwGq/9JIl
-         b1Kr9SpXuFB5qTXso9hGlv7kameNaLyOcXBCGCQVjdC1yWddKnYqtHWW311Z+jPRu3QJ
-         I3JYsuYYuBJ/i82VdMfygdWEOOpupIrdJyVvny7J+zwtZoR1qlYvx9bo42Cl3srRgcy7
-         4Vbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722972904; x=1723577704;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sN15+GrqjqV+KY/9xz1S8u6+7LyFlTeZFis8FIS9u8o=;
-        b=CKbHluMCvDqudMJ9WteLHCyBcBEQDRiQixucUyvleb/d2ykSYSnoQlJk5L3KwV3Ia1
-         G8BAU+tnxuWbGRrYEaanmI/Crl5nZVsLVwd75z5udQbx9JIHVVGHtnN3haQu+0HTfFBT
-         gaolYV0OzjSB8lufbUrPJtpea6p6tRL9Ibve3QdoMjpUXPcz1gX0UJv7tfxqkUBWTmXm
-         H5coZBnB3XaIdvaXDP2k7q2RaM0UA2/W1sHybPg7D6p/Jy+EDL8LSkhWXM0SUsOGLNHd
-         lOYU8w1C4iq2zCwVng59lMMcdnrT1bR2tie9nHNXFReuPfF11tV5dPBHdwnyglxAkK5y
-         WWEg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2if/LUr67RDzyMiFzEznEsiVmNJXjuUptaT7DyQKMm3gRZPIyfXHO1QQ0F0G46HAC59SMaVr4LjZG5gdKOOOZMpBzKqwv5x9R36f7
-X-Gm-Message-State: AOJu0YysSC2ag6D8zOygNVqm7LJjtkfSildUmbHCJpMKf0essQVgMgOL
-	9E9KhISVtPPr7s0iTz50XCoyBYfYMsPWDtTui+2CGIpPWFyC6uheYQ/ch3J5QJoOQWCY6DcBor5
-	VWhwT9NVsg8DhzTk/uAKdgNmzCItCpF0JZRuZh9O9WkGvGtczCHv8
-X-Google-Smtp-Source: AGHT+IHpyp/NcqymB1GpTBG45STzdu79GH+M+6dKGYHaOQJOfA4Nag5FMNkDx/i/JVFgiaUJ7hbh/cLTks64jO5PhjE=
-X-Received: by 2002:a17:907:6d25:b0:a77:e7b9:fda0 with SMTP id
- a640c23a62f3a-a7dc4db2a36mr1003506566b.14.1722972902954; Tue, 06 Aug 2024
- 12:35:02 -0700 (PDT)
+	s=arc-20240116; t=1722972887; c=relaxed/simple;
+	bh=66+JayvYPW8DSOJhPfdvsTxf4otOJaTKWU9Q989S6+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QfcrOkYvCPcsW4YtPhgsPtMWAd2HoY67UOh4fG9Qxly9ZDQx/14tQaDHgu32muQjikRV32hwyD1vND5nCu3L9o/sBWUtIIbtOfqQeuxAGj3s8mrxSCF7hYQ18iVoWvbsBOdzQs4IpNQOuD1try5nVSil3oWtgOl+bqq+EGz6FvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98C42C32786;
+	Tue,  6 Aug 2024 19:34:44 +0000 (UTC)
+Date: Tue, 6 Aug 2024 20:34:42 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Baoquan He <bhe@redhat.com>
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>, vgoyal@redhat.com,
+	dyoung@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, chenjiahao16@huawei.com,
+	akpm@linux-foundation.org, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH -next] crash: Fix riscv64 crash memory reserve dead loop
+Message-ID: <ZrJ60vopeGDXFZyK@arm.com>
+References: <20240802090105.3871929-1-ruanjinjie@huawei.com>
+ <ZqywtegyIS/YXOVv@MiWiFi-R3L-srv>
+ <ZrJ1JkyDVpRRB_9e@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806022143.3924396-1-alexs@kernel.org> <20240806022311.3924442-1-alexs@kernel.org>
- <20240806123213.2a747a8321bdf452b3307fa9@linux-foundation.org>
-In-Reply-To: <20240806123213.2a747a8321bdf452b3307fa9@linux-foundation.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 6 Aug 2024 12:34:25 -0700
-Message-ID: <CAJD7tkakcaLVWi0viUqaW0K81VoCuGmkCHN4KQXp5+SSJLMB9g@mail.gmail.com>
-Subject: Re: [PATCH v5 00/21] mm/zsmalloc: add zpdesc memory descriptor for zswap.zpool
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: alexs@kernel.org, Vitaly Wool <vitaly.wool@konsulko.com>, 
-	Miaohe Lin <linmiaohe@huawei.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	minchan@kernel.org, willy@infradead.org, senozhatsky@chromium.org, 
-	david@redhat.com, 42.hyeyoo@gmail.com, nphamcs@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrJ1JkyDVpRRB_9e@arm.com>
 
-On Tue, Aug 6, 2024 at 12:32=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Tue,  6 Aug 2024 10:22:47 +0800 alexs@kernel.org wrote:
->
-> > According to Metthew's plan, the page descriptor will be replace by a 8
-> > bytes mem_desc on destination purpose.
-> > https://lore.kernel.org/lkml/YvV1KTyzZ+Jrtj9x@casper.infradead.org/
-> >
-> > Here is a implement on zsmalloc to replace page descriptor by 'zpdesc',
-> > which is still overlay on struct page now. but it's a step move forward
-> > above destination.
->
-> So the sole reason for this work is as a part of the mem_desc
-> conversion.  I'd like to hear from others who are to be involved in
-> that conversion, please - it this patchset something we should be
-> merging?
->
+On Tue, Aug 06, 2024 at 08:10:30PM +0100, Catalin Marinas wrote:
+> On Fri, Aug 02, 2024 at 06:11:01PM +0800, Baoquan He wrote:
+> > On 08/02/24 at 05:01pm, Jinjie Ruan wrote:
+> > > On RISCV64 Qemu machine with 512MB memory, cmdline "crashkernel=500M,high"
+> > > will cause system stall as below:
+> > > 
+> > > 	 Zone ranges:
+> > > 	   DMA32    [mem 0x0000000080000000-0x000000009fffffff]
+> > > 	   Normal   empty
+> > > 	 Movable zone start for each node
+> > > 	 Early memory node ranges
+> > > 	   node   0: [mem 0x0000000080000000-0x000000008005ffff]
+> > > 	   node   0: [mem 0x0000000080060000-0x000000009fffffff]
+> > > 	 Initmem setup node 0 [mem 0x0000000080000000-0x000000009fffffff]
+> > > 	(stall here)
+> > > 
+> > > commit 5d99cadf1568 ("crash: fix x86_32 crash memory reserve dead loop
+> > > bug") fix this on 32-bit architecture. However, the problem is not
+> > > completely solved. If `CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX` on 64-bit
+> > > architecture, for example, when system memory is equal to
+> > > CRASH_ADDR_LOW_MAX on RISCV64, the following infinite loop will also occur:
+> > 
+> > Interesting, I didn't expect risc-v defining them like these.
+> > 
+> > #define CRASH_ADDR_LOW_MAX              dma32_phys_limit
+> > #define CRASH_ADDR_HIGH_MAX             memblock_end_of_DRAM()
+> 
+> arm64 defines the high limit as PHYS_MASK+1, it doesn't need to be
+> dynamic and x86 does something similar (SZ_64T). Not sure why the
+> generic code and riscv define it like this.
+> 
+> > > 	-> reserve_crashkernel_generic() and high is true
+> > > 	   -> alloc at [CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX] fail
+> > > 	      -> alloc at [0, CRASH_ADDR_LOW_MAX] fail and repeatedly
+> > > 	         (because CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX).
+> > > 
+> > > Before refactor in commit 9c08a2a139fe ("x86: kdump: use generic interface
+> > > to simplify crashkernel reservation code"), x86 do not try to reserve crash
+> > > memory at low if it fails to alloc above high 4G. However before refator in
+> > > commit fdc268232dbba ("arm64: kdump: use generic interface to simplify
+> > > crashkernel reservation"), arm64 try to reserve crash memory at low if it
+> > > fails above high 4G. For 64-bit systems, this attempt is less beneficial
+> > > than the opposite, remove it to fix this bug and align with native x86
+> > > implementation.
+> > 
+> > And I don't like the idea crashkernel=,high failure will fallback to
+> > attempt in low area, so this looks good to me.
+> 
+> Well, I kind of liked this behaviour. One can specify ,high as a
+> preference rather than forcing a range. The arm64 land has different
+> platforms with some constrained memory layouts. Such fallback works well
+> as a default command line option shipped with distros without having to
+> guess the SoC memory layout.
 
-Matthew asked an important question here that needs to be answered by
-zsmalloc experts:
-https://lore.kernel.org/lkml/Zq0zucMFsOwATsAC@casper.infradead.org/
+I haven't tried but it's possible that this patch also breaks those
+arm64 platforms with all RAM above 4GB when CRASH_ADDR_LOW_MAX is
+memblock_end_of_DRAM(). Here all memory would be low and in the absence
+of no fallback, it fails to allocate.
+
+So, my strong preference would be to re-instate the current behaviour
+and work around the infinite loop in a different way.
+
+Thanks.
+
+-- 
+Catalin
 
