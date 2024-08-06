@@ -1,276 +1,225 @@
-Return-Path: <linux-kernel+bounces-276245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6989E9490E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:20:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECEDD9490E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE2E01F27777
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:20:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CC601C20A61
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E411D1F7A;
-	Tue,  6 Aug 2024 13:17:52 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344F31D2799;
+	Tue,  6 Aug 2024 13:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LNse4MKR"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF49A1D279F
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722950271; cv=fail; b=hGsZejdgpginQb773iApNvpyHi/nUxdqZxRXN5x5NQ1hWsAH5C31Bt5VhptIHSoVLLBsIqTFPFChXk1hbBmOdB/fQ3U+bekHh4K5acn8z8BV4gpElggnMAXH226c8Bq9caJOSIix+Jfq/rixGx29/L4IF2tcZjaQXaNGdA/AAVQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722950271; c=relaxed/simple;
-	bh=YKK4cMHj7HbYYJG8R80wHdJfO0LJochsfH1ZJjr/kuY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tKYL4aVwkMHyI5ndxtmUlvLAdxgxTxLsZq7FV4Lf3QCKC2GqZcv9cBFgkpjL+iwcrpVe2S6GvsuDRtkQ5YdfTqP43WgIa93lx26eKK6i/SkW89a50xKBvmy8YmGlI6y+bvb8r7ocXVQUABLH83tM/7yQP+3ZQQsD5qSuhQ2TGcs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4765CuPc022240;
-	Tue, 6 Aug 2024 13:17:38 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2172.outbound.protection.outlook.com [104.47.55.172])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40s9ry2twu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 Aug 2024 13:17:38 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qY/IaGr6pTf/tH7zAt9NfpUP/JbJMFml3Fs8/E/4iFTcMZj+x5HXhozzvnMWOH97C6s5akr4zGbz7QeBjFSZR9C4rEszLLnn7KuLTjKMV3hMck6r4f01zkVUl2niWiYxfJoZokDvepX/8wz2/D1kV4KKnw0xi4khan3ed9FjPLCp6GRgWuTNnz/5GtErIvkn38U3aOk7mZ2j0oRnYAEcXUG+/tyhVuL/ctCwwxcNE7hSDIqsXBBZSwsU3Egocjgr3wAbA28Y0SrrOgKDO4+qeEs8Sl05G9LRnGgozmg0MOLjT33e9aqs6tvP4PrqFtPD8F3LZD6i1uzL/gvY3LpGnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jAnpTr3eByMl2NzivtUSwZsPMIGBmtCzcDfPenBCEMU=;
- b=Ih89n4O0QK3pXk9I312gu3LL7EJyfY5xBeUQB2WlVdLQU6Rv4F34jRL3mCIDTDTo2K0HEvSLKLDtELV88ivRKf2mt5I3DwuN11D5PmztFs8451b+1DqJILelEfhVb7KZKCD1lNk/3amZg61ZS7Iil7/o9hqNy9BTj9mvYk88xaCZegK3eip/4VkRY1mSV4vuAF7ak/xRPGw/uypIOofK3UNIgH+u3Vem3TgmPSVgzg32JWfu2NomUyot7xknZuxN0SKHM8ZOHLFv2UKgypemQ+tz6v4KJCOiM/QjTvNgyIXuYEprbHYyho30By8RKMntvwElYkyux6oHHla6qah0VA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from MW5PR11MB5764.namprd11.prod.outlook.com (2603:10b6:303:197::8)
- by LV8PR11MB8512.namprd11.prod.outlook.com (2603:10b6:408:1e7::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Tue, 6 Aug
- 2024 13:17:35 +0000
-Received: from MW5PR11MB5764.namprd11.prod.outlook.com
- ([fe80::3c2c:a17f:2516:4dc8]) by MW5PR11MB5764.namprd11.prod.outlook.com
- ([fe80::3c2c:a17f:2516:4dc8%6]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
- 13:17:34 +0000
-Message-ID: <1d145674-b696-4193-81f8-baeb59c3dd09@windriver.com>
-Date: Wed, 7 Aug 2024 00:17:25 +1100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/etnaviv: Remove GFP_HIGHUSER in systems with 32
- address limits
-To: Lucas Stach <l.stach@pengutronix.de>, linux+etnaviv@armlinux.org.uk,
-        christian.gmeiner@gmail.com, airlied@gmail.com, daniel@ffwll.ch
-Cc: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20240806104733.2018783-1-xiaolei.wang@windriver.com>
- <8040eb85dbdef646a3373ef4602a9614f2d468c1.camel@pengutronix.de>
-Content-Language: en-US
-From: wang xiaolei <xiaolei.wang@windriver.com>
-In-Reply-To: <8040eb85dbdef646a3373ef4602a9614f2d468c1.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR01CA0182.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::20) To MW5PR11MB5764.namprd11.prod.outlook.com
- (2603:10b6:303:197::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8071D1F50;
+	Tue,  6 Aug 2024 13:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722950268; cv=none; b=PSoUjf/GiyJyktbDvNq58PO7BXe8c/4LLQi8yEXG79/Mw5NnR2Ay5hv7mk4dJS7HtGUuGrmxxDil6HB85oFnWxZtG54rVZwOMEzmxJTA3NQlDHwawA5wyezkkUsk78mRKPMCH73OqFBnnSqjSIWb1WE2ZrTI51eQnCTek2MqeVU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722950268; c=relaxed/simple;
+	bh=GgjmkdUPZeZpAYLfxQbXQ8R7Bl5oHiBhZDy+dWxdHDo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=shDTMxfWd9WWrRDJuOH7qNW78BlmqCAgda8t9oYc2S8yq1mNaKq3kwPwM1UsthZH916g+RUOLWbKNrFBmRhSZmcgkokxg+JHlcK0Ky1RIICM3o0tcNJbAUX6W7iFxbh3TCV9qE00eaGc7Ak3B69ChZ1AUErbxwmOxt9SncZOVAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LNse4MKR; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7aac70e30dso62215966b.1;
+        Tue, 06 Aug 2024 06:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722950265; x=1723555065; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ocCUNlG+q7/vW2Za5R6c93ENoxlDHlio7jUu/L0+TLs=;
+        b=LNse4MKRXCq0WStZ3H8GvjnFQgyjZ+EENzCUL/qfrSGwVxlEmMiiJ9fwMMX2A3+NvX
+         KIarUhYnBTvnqJsgCPkM9lECqYnguC5Jzf6dZk9nRzHnDtPlFpsAHWdlhiuzfwe1am7g
+         h8OwA5qyRQJK6ZYBUofQ95Ru6A3M/gc9KrRmNlUlXee/TRq6TzNfgYVYkYEb4RGCEHpZ
+         FRhnNct2/zlzrEjAgZGnzoEXnAHWaZ32isPK1QXdJDb0O9S/qpWjGi47kDJBgUAZaf4s
+         6rnxJVtNXTnjaQddzRoxy0Xvg3Ljr4iGlTamgnG2xygVx0PuIcaFAYGfHXlLVGGOnxcv
+         HP8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722950265; x=1723555065;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ocCUNlG+q7/vW2Za5R6c93ENoxlDHlio7jUu/L0+TLs=;
+        b=Tv8cTybY471gmfo2KZdg5q2Egel75kLoNUbnV8KD8mtK3TUL8j0gJugBlfrBgOO1zB
+         2FUBjiERm6oaK5Y7SxCyhKrdg+zVr7cV8znw4N7fqvHWp4o834ffScil8VvWYjgE+Adu
+         f4AyrLnBUVQAjU70Hbyu3nPmo75SJlIfUJLVEbl2tVpHdMjruv2ngjSu8GBKMYvDyv7F
+         muPurmwE4Ax+bb/B8OlArdy7AQDI7BOprkDseQcPOTB9D5BmcinUbZ3tllb7fpFsdaXc
+         lFQ0H54gRKkxYvGRKvfHWid3Tzs8Qs0yBLkWiX30sgSsqAFPTXjvU5l34gQ96l9oHq4O
+         aJkA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+tCpKLTTbPcBPussE0xwytJxdqAJ/6ADdinGnhttCZ1FGDOlEXgU5E6nqE5vp3sREkM+ar8e8L01mj8YEhi81WwjFYbDVgRE80sOM+v0SMJp9OypnFtVWF1Io1xvgJNNK
+X-Gm-Message-State: AOJu0Yypcrco68vlKWlf7TfdT60OmFpnt6HfiTv8xLnZezjPdOZtTZ11
+	clmUDYUJJFtCn2wkghINhs8CROhiTEFgevpuYmAF+VXkSu9gxWKQ
+X-Google-Smtp-Source: AGHT+IHxEcII4OlQFVnCMktSEztBe5ov7CYA0cUP0kAYGD8VPn9ly9nO4mNC1jhIp7lXp5r0aRVX6w==
+X-Received: by 2002:a17:907:2d0a:b0:a6f:ddb3:bf2b with SMTP id a640c23a62f3a-a7dc508f8d4mr997125266b.41.1722950264303;
+        Tue, 06 Aug 2024 06:17:44 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc9dabsm546423066b.39.2024.08.06.06.17.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 06:17:43 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 6 Aug 2024 15:17:42 +0200
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Juri Lelli <juri.lelli@redhat.com>,
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Artem Savkov <asavkov@redhat.com>
+Subject: Re: NULL pointer deref when running BPF monitor program (6.11.0-rc1)
+Message-ID: <ZrIiduf3FOL6j4mq@krava>
+References: <ZrCZS6nisraEqehw@jlelli-thinkpadt14gen4.remote.csb>
+ <ZrECsnSJWDS7jFUu@krava>
+ <CAADnVQLMPPavJQR6JFsi3dtaaLHB816JN4HCV_TFWohJ61D+wQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW5PR11MB5764:EE_|LV8PR11MB8512:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2d58ca5b-b300-4c0d-6de3-08dcb61a2255
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bWRZTTV0YlhCQmtJY0FzQWlIT1lkb0VXd0hiMUdYeUpyVytHUitmc0ZNQTZn?=
- =?utf-8?B?Yy9HVWZqdTFic1FJV3BVb2NSeFNpY2kvTXJRTzNwMXQ1WjdhN0didHFOZkk2?=
- =?utf-8?B?ZnRDeWxLMGpmY2t6OXc1bHRIZCtiVHhLS0oyWlIwYXJZSEZlWmdaelIzUzJr?=
- =?utf-8?B?c0FqSG42UnNtZlRlRm13ZVVXNWdkYUlSUkt1QkdHRlpDc0J0QkxXR211MTVs?=
- =?utf-8?B?NU1XbXl2VVFYUHZPZGJvenA3Z1JXUXZ2VzNjVTVPcmlMc0Z4RmhXWEw3MXBh?=
- =?utf-8?B?RmhxSEZOa29ueFBaeG1hMU5hemFnbW1NU2ZJd1ZyV1p3SmlXUlcxbHdCcGZz?=
- =?utf-8?B?L1l5YmsxczRlZWdkRG9WOWlJdlVxdlNJL3JHa2hLQXc1V0IrVVVlYXVtSU9h?=
- =?utf-8?B?NUtpKzRCNmJDbHVLcm9IeFljSHN0a3RBQnhsNWgraWt6T2FKc1NOU3h0Skh0?=
- =?utf-8?B?UnNTSUs5T0NTSVd3N1gwREVMbi90dlNodXNha0NKU1NiaXlSVGFURGgyd1Iz?=
- =?utf-8?B?b2FvMjh4ZER4d0dkWTNTdmd2YTlaR3NHUzMzbnBxc3dtYzNNT1J3N2RVOE8z?=
- =?utf-8?B?YmdIbXRWOHpYQ3p4eDFhRWxBZmdSNkkrbGlmeWdCancwVnhKdXJaV0xxdzBp?=
- =?utf-8?B?T0lvUXNRRzkvZm52ZjExd3FmNnhkclhTQlNNTGF5K0ZaalB6YWlxd0RmNU5U?=
- =?utf-8?B?LzVrZVo0aHVWMHZ3K1FrOVFKQ0NzLzlUc1ZjMHZ0UlRSVmJDeElDbU95amZt?=
- =?utf-8?B?L2tXVFhvRVFBRFFiTmE2T3YrYVVLRnQvbDVqb05FNVE4R3A5anN4UjJpYWhU?=
- =?utf-8?B?NmlaQkcrWVhkK3VyeVhQdTlUazBvNzVieFl4WVlQV3h6YmJ4dllXR3FjN2tI?=
- =?utf-8?B?a0Y3VzAvTHIrOXJDa2wxa0R6dnFPRmc3RVJ2NTZTdkx2djV2dkZkSFRQUjVR?=
- =?utf-8?B?b1FpQ2VYd092clBIMVFVUVZDR3BQRHdpWUNvSmxVcldzTklvQUFBTUY0REFO?=
- =?utf-8?B?ME9SZkxodnliSUovYWphbUlkRHRrT3JNWHJtN09OL2hIMnJnN3l4bG1yNktE?=
- =?utf-8?B?WDVJU096R2pqZGJob3pIUU02T3R2d1lIV3FGUHlJWWpDc2JtbDlUanFTa1ZL?=
- =?utf-8?B?QnNLUk5BelpqV2ZBZEdtU2ZpZDAwMW93TzBGbHZ2NE03RWhIVi8vUmlYL3FB?=
- =?utf-8?B?eHE5MHVJakRPRGFHWDdZeWswaElCQ2xOcC9nbys4SGJESUV4UUlUZWRRZXJz?=
- =?utf-8?B?eUtnVDdtUVoybzdFencxbWw4STlmMm82aGM2MXEydWlkZndZUHVkUnJUdXQz?=
- =?utf-8?B?cDFhMUhGZXFxcHlTT2d1WUQ3aU9vT1ppbWhWRG1nOTF0ZGxKenQzendzbjRY?=
- =?utf-8?B?ZGp4Nk5lcXFoRXppcHdyYi9ldTVjME9xQ0lzeHFpTjRRR1VHS3JEdytBaXg4?=
- =?utf-8?B?bGJxNVV4TnY5c3NWVjRNOUdRei9QVjZla3FtVTJ0VnBPazI5ZzBPb1FRZm1W?=
- =?utf-8?B?eFdkVXlGYjhWU1JXeFRLVmlFdjFiSjhJNzR5K2pYUXo1aU9qcUNuQndFN011?=
- =?utf-8?B?WU1JcVNVRHVZYzdvQWoxVXNQNVpjQ20ydHQwQUlLV3dYZkI5bjVuOVZoS3l1?=
- =?utf-8?B?SUNzMkU5RE02QjJzMjZyQ3padktVSjJjR3FTTkE0U2s1VlBVS0Y0Si9Na1py?=
- =?utf-8?B?MHAwckxOM3pxdHZSTFBIK1E2L2F1cVJqZWhYUmRWbmt5bFhMcDJkaXdmVTQ4?=
- =?utf-8?B?N0JjNkR0NDRvK1MzRE1NdktNS1Z6V3grVnh5c2M4aThVUTZtVkpleVZPTWUx?=
- =?utf-8?B?RVh1dU9nV1Q1cXZpNXZIQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5764.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ajdENGdnd1RWdmFZNUY4WHl3cVFzaUV1M05wWjhoZTZ5ZXRKVFd4QlNyU1dG?=
- =?utf-8?B?bjMzbUZUa2c3citLckR6T25OT003bFFYeHltUXFCcm1DZFZrbk1RVHBtOG1U?=
- =?utf-8?B?dEFmYU1RNFdBSWo2ZldHNE1UaTBweUhoNlZKMXdOYlREVndsVkxIaVJzTUo5?=
- =?utf-8?B?aVZTd1Y1RXRhZjR0aENYbXcxcFFKS2FvditMQlJMWGVsUkE2WDZVL3VaaDE5?=
- =?utf-8?B?WGdaQVhnQUk1NWo1MDh1UVpMVVA2VGtsQlMwS3VvU3RDU1FDM1hMWm9IZHlp?=
- =?utf-8?B?b1FSOEkySmRKVW9PWk5VTUhiZ3dUcVEreU0rL1IzMFZuVUR0WkdISlNmaGdC?=
- =?utf-8?B?cFRxMTgxZ0Nqc29IcklIZGZpc3VkNW11TFFCSEFUeWVzbU95VEw2eTY4cDVL?=
- =?utf-8?B?N2JtNXM3d3doM2ZpS1VTS1Fuc0k0cHZyOW9OVUFkc2ZZZXBWMWxrNmlIOEZv?=
- =?utf-8?B?YWl6VFJzdmZ0NVZqUTdxYml0QnUvVFd1OWhZQmo2dVEzN2pnWndiV3VXQVJz?=
- =?utf-8?B?NmI2aXk0emRRRXIzeXFkMjd3MHlaeVVtMWZ6WXB3ZC9scHp1UGY4N004dzEr?=
- =?utf-8?B?QU9JOFZLbXhIZVRlSlg3dkJ0dmxRc2x6OUo3YnlLd0wvL1NVMjRHMjVSeER0?=
- =?utf-8?B?RjB2SnhhM2p2S05oSUtEUDZGV3dPOVdBWmZ5MjdhT1dQK1g3YTRrYWV4bVZl?=
- =?utf-8?B?cHVNOXRxYWRXdlZNQjZHL1llMkd4d2gwUi9qd1RVcDhtYndtQ1FQMkx4VGtB?=
- =?utf-8?B?TjlVQ0Vpc0drVjRIdXZlSEVBMkgzeW50aStIN28zcE11OG9KVjJPbEFJY3FE?=
- =?utf-8?B?NWg3RFBGV0Y0bHlpNVZPa3BJa09BSFdkTjRBZzBWOUVwaWg3elhEMVdOYnFL?=
- =?utf-8?B?L0lvY1hTbURtcmdhMmdRRmVrTkZ4UXR2djQzenBwTGpiZWZYNjBXSTE1R2Qz?=
- =?utf-8?B?R3E5NmpZQkx0M0pUdjlSdUNUdHlDOUdMem1acGp1MEkwdURka2wwY1U0MnRP?=
- =?utf-8?B?MzlMbEdoM0NYSFFPc0pEaVBGUHp6NXB3VVhMTi9sTVFoUEQ0R295TUVoVmdj?=
- =?utf-8?B?VjlvQjZZNXg5bFQxTk5UTUV6RmYrYzJmNmNkNkl1d1lteGk3NmQxTFBlNWQy?=
- =?utf-8?B?SUorTXUybncrSVZYZFlRY0lOcnZsNWNZRmVTWmQzTzU5RUhDdVFBU09DTGx1?=
- =?utf-8?B?SUtWVlh4eSt3NDFkU21ZSUhUZUplWVVaK3E0emlkd2VlUXhEUzQrWjFVcGlw?=
- =?utf-8?B?NzRRc3hudWtCZWduZDlYN2RUT3E5MnU5VzFOSFZ4M3E4WllMQitvQmpmRjdv?=
- =?utf-8?B?WTJsVGdDVHZ2WGxqVDYyMUF1Z21mSUpESUc4TTBQaW53ekplTTg1WkdZMlVC?=
- =?utf-8?B?VzdoZjNLTXBXZ2V4cStCMUNpTk9CZ2xmVWVWc1F4QmZTUVhVd1MvNjRNZFRy?=
- =?utf-8?B?dldGcnE1T2psMUJhazlqVDA1c0RpaklLWnFFbFVPTUdFZWdKUFJqZkg5S1Az?=
- =?utf-8?B?MXZQbFRwb21RajFybWpSdENFT2JweGVvQS8zcEpLdmFtZnd3OGpNY0IwSm9y?=
- =?utf-8?B?bFpEcDlDVk43UHpIckhLZWI2TmVXQ1huQTB6dzRRNDd3SmpxakszZHp1dWZK?=
- =?utf-8?B?U3B1ekExWXJvTExENFFrR3Q0Q3hqU0hpd3M5OWk0WWNPWktDOG05bk4yd2Vq?=
- =?utf-8?B?WG5HTnd2dXJtMkpQbDFZcjNJcjdZMUIxSFFnejg3UXkvb0RDUUcrdTZtVUtq?=
- =?utf-8?B?QTNQZEV3TVpkN3dqdzNvZGZZK1REcmovNW5jbVlSR21LSEZxbWdGOEJjUk9C?=
- =?utf-8?B?N1l1MllMTy92dXcwak1ZSDZzaWN5cjh5K2NRVGt1amJ5VVdSaHNPMDl3WVcw?=
- =?utf-8?B?WXhzYk5ldmN1citKWUdNd0lyMDJGWElGekV1emFpUzMvU1FGNmpvYmdhbnRu?=
- =?utf-8?B?OElsUHVhNjZEVytDRm1xQmNmTE9TMVpZZkpNTXFtNitsbUV0VXpoZlU4YWhY?=
- =?utf-8?B?N1B5NVc1N3Z1aHZXZU5qc3pwVXk4UWVlbFFza2V6ZmVsMjh4Q0h6UEJGcHhI?=
- =?utf-8?B?cVVySmNBWU9qNXNEcURUc2s1b1Q0ZTJIMVJiUGVNTXZadmtoQ3V3UGVpTi9O?=
- =?utf-8?B?UXNuTnpGdzRvUkhMaks4VlhieUtpSmJYYUlPODdtc3l5ZEZzUEQvOCtxV1pH?=
- =?utf-8?B?N2c9PQ==?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d58ca5b-b300-4c0d-6de3-08dcb61a2255
-X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5764.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 13:17:34.4335
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kwEMnXl0szxI7wMXe1V7FuxpA88W6jnqoLq0T6iR5gtni4NV+0AHuw1yHc9Qm1FnopHfatozbmYY91MEhiferVGT3sW9OF1LyFz58LK5vFg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8512
-X-Proofpoint-ORIG-GUID: LXcmqeQ4hmzFWUkDezt8x7UyiL-tDs8D
-X-Proofpoint-GUID: LXcmqeQ4hmzFWUkDezt8x7UyiL-tDs8D
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-06_11,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- malwarescore=0 mlxscore=0 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 clxscore=1015 bulkscore=0 mlxlogscore=999 adultscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2407110000 definitions=main-2408060093
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQLMPPavJQR6JFsi3dtaaLHB816JN4HCV_TFWohJ61D+wQ@mail.gmail.com>
+
+On Mon, Aug 05, 2024 at 10:00:40AM -0700, Alexei Starovoitov wrote:
+> On Mon, Aug 5, 2024 at 9:50 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > On Mon, Aug 05, 2024 at 11:20:11AM +0200, Juri Lelli wrote:
+> >
+> > SNIP
+> >
+> > > [  154.566882] BUG: kernel NULL pointer dereference, address: 000000000000040c
+> > > [  154.573844] #PF: supervisor read access in kernel mode
+> > > [  154.578982] #PF: error_code(0x0000) - not-present page
+> > > [  154.584122] PGD 146fff067 P4D 146fff067 PUD 10fc00067 PMD 0
+> > > [  154.589780] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+> > > [  154.594659] CPU: 28 UID: 0 PID: 2234 Comm: thread0-13 Kdump: loaded Not tainted 6.11.0-rc1 #8
+> > > [  154.603179] Hardware name: Dell Inc. PowerEdge R740/04FC42, BIOS 2.10.2 02/24/2021
+> > > [  154.610744] RIP: 0010:bpf_prog_ec8173ca2868eb50_handle__sched_pi_setprio+0x22/0xd7
+> > > [  154.618310] Code: cc cc cc cc cc cc cc cc 0f 1f 44 00 00 66 90 55 48 89 e5 48 81 ec 30 00 00 00 53 41 55 41 56 48 89 fb 4c 8b 6b 00 4c 8b 73 08 <41> 8b be 0c 04 00 00 48 83 ff 06 0f 85 9b 00 00 00 41 8b be c0 09
+> > > [  154.637052] RSP: 0018:ffffabac60aebbc0 EFLAGS: 00010086
+> > > [  154.642278] RAX: ffffffffc03fba5c RBX: ffffabac60aebc28 RCX: 000000000000001f
+> > > [  154.649411] RDX: ffff95a90b4e4180 RSI: ffffabac4e639048 RDI: ffffabac60aebc28
+> > > [  154.656544] RBP: ffffabac60aebc08 R08: 00000023fce7674a R09: ffff95a91d85af38
+> > > [  154.663674] R10: ffff95a91d85a0c0 R11: 000000003357e518 R12: 0000000000000000
+> > > [  154.670807] R13: ffff95a90b4e4180 R14: 0000000000000000 R15: 0000000000000001
+> > > [  154.677939] FS:  00007ffa6d600640(0000) GS:ffff95c01bf00000(0000) knlGS:0000000000000000
+> > > [  154.686026] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > [  154.691769] CR2: 000000000000040c CR3: 000000014b9f2005 CR4: 00000000007706f0
+> > > [  154.698903] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > [  154.706035] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > [  154.713168] PKRU: 55555554
+> > > [  154.715879] Call Trace:
+> > > [  154.718332]  <TASK>
+> > > [  154.720439]  ? __die+0x20/0x70
+> > > [  154.723498]  ? page_fault_oops+0x75/0x170
+> > > [  154.727508]  ? sysvec_irq_work+0xb/0x90
+> > > [  154.731348]  ? exc_page_fault+0x64/0x140
+> > > [  154.735275]  ? asm_exc_page_fault+0x22/0x30
+> > > [  154.739461]  ? 0xffffffffc03fba5c
+> > > [  154.742780]  ? bpf_prog_ec8173ca2868eb50_handle__sched_pi_setprio+0x22/0xd7
+> >
+> > hi,
+> > reproduced.. AFAICS looks like the bpf program somehow lost the booster != NULL
+> > check and just load the policy field without it and crash when booster is rubbish
+> >
+> > int handle__sched_pi_setprio(u64 * ctx):
+> > ; int handle__sched_pi_setprio(u64 *ctx)
+> >    0: (bf) r6 = r1
+> > ; struct task_struct *boosted = (void *) ctx[0];
+> >    1: (79) r7 = *(u64 *)(r6 +0)
+> > ; struct task_struct *booster = (void *) ctx[1];
+> >    2: (79) r8 = *(u64 *)(r6 +8)
+> > ; if (booster->policy != SCHED_DEADLINE)
+> >
+> > curious why the check disappeared, because object file has it, so I guess verifier
+> > took it out for some reason, will check
+> 
+> Juri,
+> 
+> Thanks for flagging!
+> 
+> Jiri,
+> 
+> the verifier removes the check because it assumes that pointers
+> passed by the kernel into tracepoint are valid and trusted.
+
+ok I was wondering that's the case, but couldn't find that in the code quickly ;-)
+
+> In this case:
+>         trace_sched_pi_setprio(p, pi_task);
+> 
+> pi_task can be NULL.
+> 
+> We cannot make all tracepoint pointers to be PTR_TRUSTED | PTR_MAYBE_NULL
+> by default, since it will break a bunch of progs.
+> Instead we can annotate this tracepoint arg as __nullable and
+> teach the verifier to recognize such special arguments of tracepoints.
+> 
+> Let's think how to workaround such verifier eagerness to remove != null check.
+
+there's probably better way, but following seems to workaround the issue
+
+moving the logic into func__sched_pi_setprio function with tasks arguments
+and call it with NULL from place that's never executed
+
+jirka
 
 
-On 8/6/24 11:23 PM, Lucas Stach wrote:
-> CAUTION: This email comes from a non Wind River email account!
-> Do not click links or open attachments unless you recognize the sender and know the content is safe.
->
-> Hi Xiaolei,
->
-> Am Dienstag, dem 06.08.2024 um 18:47 +0800 schrieb Xiaolei Wang:
->> GFP_HIGHUSER is for userspace allocations that may be mapped
->> to userspace,An example may be a hardware allocation that maps
->> data directly into userspace but has no addressing limitations,
->> this conflicts with GFP_DMA32,The kernel reports a BUG:
->>
-> GFP_HIGHUSER is a combination of GFP_USER | __GFP_HIGHMEM. Only the
-> highmem part is incompatible with DMA32. You don't want to clear the
-> GFP_USER bit here, as the driver allocated buffers might be mapped to
-> userspace.
-
-Yes, I will update the commit log in v2
-
-thanks
-
-xiaolei
-
->
-> Regards,
-> Lucas
->
->> kernel BUG at include/linux/gfp.h:139!
->> Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
->> Modules linked in:
->> Hardware name: NXP i.MX8MPlus EVK board (DT)
->> pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->>   pc : __alloc_pages_noprof+0x5d8/0x72c
->>   lr : alloc_pages_mpol_noprof+0x100/0x4e0
->>   sp : ffffffc08c6a71c0
->>   x29: ffffffc08c6a71c0 x28: ffffffc086e46000 x27: ffffffc086e46a68
->>   x26: 1ffffff81122b260 x25: ffffffc089159304 x24: ffffff80da938000
->>   x23: 0000000000000000 x22: 0000000000000000 x21: ffffff80da938000
->>   x20: 1ffffff8118d4e46 x19: 0000000000146cc6 x18: 0000000000000000
->>   x17: ffffffc081b00980 x16: ffffffc081b002a8 x15: 1ffffff8118d4e56
->>   x14: 00000000f1f1f1f1 x13: 00000000f3f3f300 x12: 0000000000000000
->>   x11: ffffff80da9384c8 x10: ffffff80da938000 x9 : 00000000f2f2f200
->>   x8 : 0000000041b58ab3 x7 : 00000000f3000000 x6 : 00000000f3f3f3f3
->>   x5 : 1ffffff01b527005 x4 : 000000000000000c x3 : 0000000000000006
->>   x2 : 0000000000000000 x1 : 00000000000003a3 x0 : 0000000000000000
->>   Call trace:
->>    __alloc_pages_noprof+0x5d8/0x72c
->>    alloc_pages_mpol_noprof+0x100/0x4e0
->>    folio_alloc_mpol_noprof+0x18/0xb8
->>    shmem_alloc_folio+0x154/0x1a8
->>    shmem_alloc_and_add_folio+0x180/0xee8
->>    shmem_get_folio_gfp+0x660/0x103c
->>    shmem_read_folio_gfp+0x98/0x104
->>    drm_gem_get_pages+0x174/0x5ac
->>    etnaviv_gem_shmem_get_pages+0x18/0x5c
->>    etnaviv_gem_get_pages+0x100/0x328
->>    etnaviv_gem_cpu_prep+0x2e8/0x438
->>    etnaviv_ioctl_gem_cpu_prep+0xb0/0x1ac
->>    drm_ioctl_kernel+0x158/0x2c8
->>    drm_ioctl+0x494/0xb48
->>    __arm64_sys_ioctl+0x120/0x18c
->>    invoke_syscall+0x6c/0x25c
->>    el0_svc_common.constprop.0+0x174/0x278
->>    do_el0_svc+0x40/0x58
->>    el0_svc+0x50/0xc0
->>    el0t_64_sync_handler+0xc0/0xc4
->>    el0t_64_sync+0x190/0x194
->>   Code: 52800021 39003c01 d4210000 17ffff57 (d4210000)
->>
->> Fixes: b72af445cd38 ("drm/etnaviv: request pages from DMA32 zone when needed")
->> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
->> ---
->>   drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
->> index 7c7f97793ddd..c3f329226bed 100644
->> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
->> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
->> @@ -844,8 +844,10 @@ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
->>         * request pages for our SHM backend buffers from the DMA32 zone to
->>         * hopefully avoid performance killing SWIOTLB bounce buffering.
->>         */
->> -     if (dma_addressing_limited(gpu->dev))
->> -             priv->shm_gfp_mask |= GFP_DMA32;
->> +     if (dma_addressing_limited(gpu->dev)) {
->> +             priv->shm_gfp_mask |= GFP_DMA32 & GFP_USER;
->> +             priv->shm_gfp_mask &= ~GFP_HIGHUSER;
->> +     }
->>
->>        /* Create buffer: */
->>        ret = etnaviv_cmdbuf_init(priv->cmdbuf_suballoc, &gpu->buffer,
+---
+diff --git a/src/dlmon.bpf.c b/src/dlmon.bpf.c
+index 73c22d56a75f..5b99ff9e0a46 100644
+--- a/src/dlmon.bpf.c
++++ b/src/dlmon.bpf.c
+@@ -4,6 +4,8 @@
+ #include <bpf/bpf_helpers.h>
+ #include "dlmon.h"
+ 
++int unset;
++
+ struct dl_parameters_t {
+ 	u64 runtime;
+ 	u64 period;
+@@ -160,11 +162,10 @@ int handle__contention_end(u64 *ctx)
+ 	return 0;
+ }
+ 
+-SEC("tp_btf/sched_pi_setprio")
+-int handle__sched_pi_setprio(u64 *ctx)
++static __attribute__((noinline))
++int func__sched_pi_setprio(void *ctx, struct task_struct *boosted, struct task_struct *booster)
++
+ {
+-	struct task_struct *boosted = (void *) ctx[0];
+-	struct task_struct *booster = (void *) ctx[1];
+ 	struct dl_parameters_t *lookup;
+ 	struct task_pi_event pi_event;
+ 	u32 pid;
+@@ -210,6 +211,18 @@ int handle__sched_pi_setprio(u64 *ctx)
+ 	return 0;
+ }
+ 
++SEC("tp_btf/sched_pi_setprio")
++int handle__sched_pi_setprio(u64 *ctx)
++{
++	struct task_struct *boosted = (void *) ctx[0];
++	struct task_struct *booster = (void *) ctx[1];
++
++	if (unset)
++		return func__sched_pi_setprio(ctx, boosted, NULL);
++
++	return func__sched_pi_setprio(ctx, boosted, booster);
++}
++
+ SEC("tp_btf/sched_wakeup")
+ int handle__sched_wakeup(u64 *ctx)
+ {
 
