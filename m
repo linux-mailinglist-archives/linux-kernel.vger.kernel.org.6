@@ -1,194 +1,283 @@
-Return-Path: <linux-kernel+bounces-276272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5A9949181
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:31:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D4E9491B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 029A7286387
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:31:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FE59B2B92B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E3D1E4869;
-	Tue,  6 Aug 2024 13:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC2C1D2F43;
+	Tue,  6 Aug 2024 13:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b/P8CMlN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rELrWL69"
+Received: from msa.smtpout.orange.fr (msa-212.smtpout.orange.fr [193.252.23.212])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF881D2F76
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18D41C57A5;
+	Tue,  6 Aug 2024 13:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722950949; cv=none; b=TeGn0ipvu6Sy+Kh9Qy9Hmp56DslH0l11Dz+/YQCBiPVr4eU3vj8ZEf0H5wQWBMVzz28uhYx6qG/XfYLx6jXPM/Sq16R7yRTeqQ3sHEmk7DAc8QuWJFxnWwPUjzAHDXKCpufWFrrXm5SDXkJal6qUrM/jVKTJASLRZ9ssWNHF2W0=
+	t=1722951034; cv=none; b=S92p9oxNRzK3AbREkW1yyRhJVRfFOiDJop3XdRnkctTZ9rnJR4Ug98D4NOvl+xIcomEpS/oq9cg9JHc/YMi8hyqoWnM5+CfN0z1JFFSmmldPkUUFQFr6EGOg8tsfhLbJyTSItLUfKjXFVnKJOolu6G30X1CGaP457ISK61sgSSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722950949; c=relaxed/simple;
-	bh=4NJ/yhkOnp0DgwZlQ2ar1giYsnoU0BxjF1CUE59RMzM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bOJUoZSDJxtw7iwNUrmGnFg7Z3ZfAmhciSsN7JkDKH5UdPSiklrHqkMsBME124FnkDLFAT63B4wRb1cCOsYBFtng51nxuBlhs5AGov4PlQRmB8LG7i5KKlhh1XALzt9j/tBcSDbZ5nyZzYsGYyzKrnzIk+/dC7TYSlz4DhcOE5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b/P8CMlN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722950946;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mg8j1NdkC4QyJoy5NjpxqHT8Z7jh1Oox1ZezxJBmykE=;
-	b=b/P8CMlNUkpb9rwNLv+lI28z/vQPWrRCCWnyOwBfMgIkNxm4ePCGLWh4ghNzgEuvIOe+x6
-	lG7iqgLxDOgf8MYdenssMo/pC+NQvCDOOC+GqoSHxLa+WENuFj4x0jTAA7SCSFJ05jhVxH
-	e1/BZ06/JmDY/vUZnaNAvIzezJLI1sw=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-43-zwUcvhOeOTqfP7E7bjG-GQ-1; Tue, 06 Aug 2024 09:29:04 -0400
-X-MC-Unique: zwUcvhOeOTqfP7E7bjG-GQ-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2f01b9ae749so6990521fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:29:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722950943; x=1723555743;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=mg8j1NdkC4QyJoy5NjpxqHT8Z7jh1Oox1ZezxJBmykE=;
-        b=mU1IAy1Q0RyInD8YBT2wAawSHfdWX7Cic/wenbNq+GHn/5oIJQ1MN+REozL92rqubD
-         hqtmfFrH+1U2uAt34SJFTD26ExnFGvQwXT5O/u/SYBO4rDBKA1Z7psD3dbXfCbYeg5m1
-         wYmrsVFcCjVu3DanP0UezJ5JiLito1RCsGwEWtrR3c9eM6cxKrdWBQ6ijxX0BadkRRWo
-         UGW65GV6AZXCpChxlNHabfKxBhhBJeg4f2DBGx8SHG5WKxEzTG9gXkfD4MGG7oefwTo0
-         HjAG6l6NZypvEkfcItKgCZHy6X4d+PoNPK+zGnDs/BGwZULSOmZQ7E/MQHn90Yyldi8N
-         gkQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMkoIseeNpFG5K292dorgeTa4kTmuArAPanfZBqZjU3xV9a/MHua4caYY4qEsciNcQo2wpTHXGVpxz8n8O/kpvJeyu4Cs/P6XRLUI5
-X-Gm-Message-State: AOJu0YxE37PLXbIsO3HJ2Ps7J+nW5NVWegUawaQHXSjTe0hTSquhncvK
-	4TQ9EcWjdiJu2McuRy2DCpZAHKaMJhtmYt25wCS41nmubyY4z25fxVAQj3JZp7rfPeRvi9k36LF
-	LTimhgwtv3CB1HVffq5OFeVOYsRkUShMCwXrbVlgkxs9cXAJM+EiYfAM8XGo8Fg==
-X-Received: by 2002:a2e:8696:0:b0:2ef:228a:1b86 with SMTP id 38308e7fff4ca-2f15aabd05fmr96388901fa.21.1722950943100;
-        Tue, 06 Aug 2024 06:29:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUAkkY1eODz2H49AhHbcgbZMYiCb05Jg7YJ0JX+yoRtVdCbp9tatU0EHzUBQRP+lyJ7u1OEA==
-X-Received: by 2002:a2e:8696:0:b0:2ef:228a:1b86 with SMTP id 38308e7fff4ca-2f15aabd05fmr96388601fa.21.1722950942503;
-        Tue, 06 Aug 2024 06:29:02 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e9cd4esm180274335e9.44.2024.08.06.06.29.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 06:29:02 -0700 (PDT)
-Message-ID: <87ca4550-ed4d-4373-8d4c-3f89ac03df91@redhat.com>
-Date: Tue, 6 Aug 2024 15:28:59 +0200
+	s=arc-20240116; t=1722951034; c=relaxed/simple;
+	bh=1gt4DGlnEvk4C6I+MHr1KvC3pI+FOt8lCQxfWRZdjzI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S/u7noSoN2vMeACTFUbmxuxNFJBy8OsrK9OCf+YRCn0f09VVM0ZKjiphxTZfCxZa7v1ji0UZuT5baXzQQKoCZmKVaOJGtqMEoXDUPYED7U/IExBXddx+D2gAhErw0hulu2gOXhAXfr1vbri1HgQTEK42PfdN50TlM8LJWjGcIJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rELrWL69; arc=none smtp.client-ip=193.252.23.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id bKGasMrYrk1NHbKGbsryPR; Tue, 06 Aug 2024 15:30:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722951023;
+	bh=d69VfSDFznZJlgGHUNUM34fDu7txnT5TK9v/Z+aWwNg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=rELrWL69hQHCACChtuDknbS5s4eLfnGaz47bWaGPjch0CNbOAuVHSFhGawJ1jGjvc
+	 WmgSRehYY7MdIl8bw/Pu1K1pnFSCNEBjHPnXLoK4qfZBh96HxwvWAQ1Zgjt2Sf+56E
+	 /OZMjdW/wHAN09NKEzJUJ+qFyxpdx3yYBMJ9G3PCkAbr7stysjVhdUGtwvWjWVyGmA
+	 8XKpo6TSmcAWFui2kD0hnqefi1Cx+s4VvLXy/xvNDQR9t56VyY1+f1u/w2yEXBgLly
+	 0rfxYWVn4YML22YLv9/26scAhEXtpUx8yb2Y6q9o0b0jy4cxvV8WtJJGMbdXPUKkvz
+	 71SB7TytRlDaw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 06 Aug 2024 15:30:23 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Davidlohr Bueso <dave@stgolabs.net>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	rcu@vger.kernel.org
+Subject: [PATCH] refscale: Constify struct ref_scale_ops
+Date: Tue,  6 Aug 2024 15:30:16 +0200
+Message-ID: <46cd762aeef493d8655e8a053bfd591f849d27ec.1722951006.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 24/26] arch_numa: switch over to numa_memblks
-To: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
- Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dan Williams <dan.j.williams@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, Davidlohr Bueso
- <dave@stgolabs.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Heiko Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Jonathan Corbet <corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>,
- Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- Samuel Holland <samuel.holland@sifive.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Thomas Gleixner <tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>,
- Will Deacon <will@kernel.org>, Zi Yan <ziy@nvidia.com>,
- devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-cxl@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- loongarch@lists.linux.dev, nvdimm@lists.linux.dev,
- sparclinux@vger.kernel.org, x86@kernel.org
-References: <20240801060826.559858-1-rppt@kernel.org>
- <20240801060826.559858-25-rppt@kernel.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240801060826.559858-25-rppt@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 01.08.24 08:08, Mike Rapoport wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> Until now arch_numa was directly translating firmware NUMA information
-> to memblock.
-> 
-> Using numa_memblks as an intermediate step has a few advantages:
-> * alignment with more battle tested x86 implementation
-> * availability of NUMA emulation
-> * maintaining node information for not yet populated memory
-> 
-> Replace current functionality related to numa_add_memblk() and
-> __node_distance() with the implementation based on numa_memblks and add
-> functions required by numa_emulation.
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Tested-by: Zi Yan <ziy@nvidia.com> # for x86_64 and arm64
-> ---
+'struct ref_scale_ops' are not modified in these drivers.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  34231	   4167	    736	  39134	   98de	kernel/rcu/refscale.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  35175	   3239	    736	  39150	   98ee	kernel/rcu/refscale.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+---
+ kernel/rcu/refscale.c | 42 +++++++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
+
+diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
+index cfec0648e141..0db9db73f57f 100644
+--- a/kernel/rcu/refscale.c
++++ b/kernel/rcu/refscale.c
+@@ -135,7 +135,7 @@ struct ref_scale_ops {
+ 	const char *name;
+ };
+ 
+-static struct ref_scale_ops *cur_ops;
++static const struct ref_scale_ops *cur_ops;
+ 
+ static void un_delay(const int udl, const int ndl)
+ {
+@@ -171,7 +171,7 @@ static bool rcu_sync_scale_init(void)
+ 	return true;
+ }
+ 
+-static struct ref_scale_ops rcu_ops = {
++static const struct ref_scale_ops rcu_ops = {
+ 	.init		= rcu_sync_scale_init,
+ 	.readsection	= ref_rcu_read_section,
+ 	.delaysection	= ref_rcu_delay_section,
+@@ -205,7 +205,7 @@ static void srcu_ref_scale_delay_section(const int nloops, const int udl, const
+ 	}
+ }
+ 
+-static struct ref_scale_ops srcu_ops = {
++static const struct ref_scale_ops srcu_ops = {
+ 	.init		= rcu_sync_scale_init,
+ 	.readsection	= srcu_ref_scale_read_section,
+ 	.delaysection	= srcu_ref_scale_delay_section,
+@@ -232,7 +232,7 @@ static void rcu_tasks_ref_scale_delay_section(const int nloops, const int udl, c
+ 		un_delay(udl, ndl);
+ }
+ 
+-static struct ref_scale_ops rcu_tasks_ops = {
++static const struct ref_scale_ops rcu_tasks_ops = {
+ 	.init		= rcu_sync_scale_init,
+ 	.readsection	= rcu_tasks_ref_scale_read_section,
+ 	.delaysection	= rcu_tasks_ref_scale_delay_section,
+@@ -271,7 +271,7 @@ static void rcu_trace_ref_scale_delay_section(const int nloops, const int udl, c
+ 	}
+ }
+ 
+-static struct ref_scale_ops rcu_trace_ops = {
++static const struct ref_scale_ops rcu_trace_ops = {
+ 	.init		= rcu_sync_scale_init,
+ 	.readsection	= rcu_trace_ref_scale_read_section,
+ 	.delaysection	= rcu_trace_ref_scale_delay_section,
+@@ -310,7 +310,7 @@ static void ref_refcnt_delay_section(const int nloops, const int udl, const int
+ 	}
+ }
+ 
+-static struct ref_scale_ops refcnt_ops = {
++static const struct ref_scale_ops refcnt_ops = {
+ 	.init		= rcu_sync_scale_init,
+ 	.readsection	= ref_refcnt_section,
+ 	.delaysection	= ref_refcnt_delay_section,
+@@ -347,7 +347,7 @@ static void ref_rwlock_delay_section(const int nloops, const int udl, const int
+ 	}
+ }
+ 
+-static struct ref_scale_ops rwlock_ops = {
++static const struct ref_scale_ops rwlock_ops = {
+ 	.init		= ref_rwlock_init,
+ 	.readsection	= ref_rwlock_section,
+ 	.delaysection	= ref_rwlock_delay_section,
+@@ -384,7 +384,7 @@ static void ref_rwsem_delay_section(const int nloops, const int udl, const int n
+ 	}
+ }
+ 
+-static struct ref_scale_ops rwsem_ops = {
++static const struct ref_scale_ops rwsem_ops = {
+ 	.init		= ref_rwsem_init,
+ 	.readsection	= ref_rwsem_section,
+ 	.delaysection	= ref_rwsem_delay_section,
+@@ -419,7 +419,7 @@ static void ref_lock_delay_section(const int nloops, const int udl, const int nd
+ 	preempt_enable();
+ }
+ 
+-static struct ref_scale_ops lock_ops = {
++static const struct ref_scale_ops lock_ops = {
+ 	.readsection	= ref_lock_section,
+ 	.delaysection	= ref_lock_delay_section,
+ 	.name		= "lock"
+@@ -454,7 +454,7 @@ static void ref_lock_irq_delay_section(const int nloops, const int udl, const in
+ 	preempt_enable();
+ }
+ 
+-static struct ref_scale_ops lock_irq_ops = {
++static const struct ref_scale_ops lock_irq_ops = {
+ 	.readsection	= ref_lock_irq_section,
+ 	.delaysection	= ref_lock_irq_delay_section,
+ 	.name		= "lock-irq"
+@@ -490,7 +490,7 @@ static void ref_acqrel_delay_section(const int nloops, const int udl, const int
+ 	preempt_enable();
+ }
+ 
+-static struct ref_scale_ops acqrel_ops = {
++static const struct ref_scale_ops acqrel_ops = {
+ 	.readsection	= ref_acqrel_section,
+ 	.delaysection	= ref_acqrel_delay_section,
+ 	.name		= "acqrel"
+@@ -524,7 +524,7 @@ static void ref_clock_delay_section(const int nloops, const int udl, const int n
+ 	stopopts = x;
+ }
+ 
+-static struct ref_scale_ops clock_ops = {
++static const struct ref_scale_ops clock_ops = {
+ 	.readsection	= ref_clock_section,
+ 	.delaysection	= ref_clock_delay_section,
+ 	.name		= "clock"
+@@ -556,7 +556,7 @@ static void ref_jiffies_delay_section(const int nloops, const int udl, const int
+ 	stopopts = x;
+ }
+ 
+-static struct ref_scale_ops jiffies_ops = {
++static const struct ref_scale_ops jiffies_ops = {
+ 	.readsection	= ref_jiffies_section,
+ 	.delaysection	= ref_jiffies_delay_section,
+ 	.name		= "jiffies"
+@@ -706,9 +706,9 @@ static void refscale_typesafe_ctor(void *rtsp_in)
+ 	preempt_enable();
+ }
+ 
+-static struct ref_scale_ops typesafe_ref_ops;
+-static struct ref_scale_ops typesafe_lock_ops;
+-static struct ref_scale_ops typesafe_seqlock_ops;
++static const struct ref_scale_ops typesafe_ref_ops;
++static const struct ref_scale_ops typesafe_lock_ops;
++static const struct ref_scale_ops typesafe_seqlock_ops;
+ 
+ // Initialize for a typesafe test.
+ static bool typesafe_init(void)
+@@ -769,7 +769,7 @@ static void typesafe_cleanup(void)
+ }
+ 
+ // The typesafe_init() function distinguishes these structures by address.
+-static struct ref_scale_ops typesafe_ref_ops = {
++static const struct ref_scale_ops typesafe_ref_ops = {
+ 	.init		= typesafe_init,
+ 	.cleanup	= typesafe_cleanup,
+ 	.readsection	= typesafe_read_section,
+@@ -777,7 +777,7 @@ static struct ref_scale_ops typesafe_ref_ops = {
+ 	.name		= "typesafe_ref"
+ };
+ 
+-static struct ref_scale_ops typesafe_lock_ops = {
++static const struct ref_scale_ops typesafe_lock_ops = {
+ 	.init		= typesafe_init,
+ 	.cleanup	= typesafe_cleanup,
+ 	.readsection	= typesafe_read_section,
+@@ -785,7 +785,7 @@ static struct ref_scale_ops typesafe_lock_ops = {
+ 	.name		= "typesafe_lock"
+ };
+ 
+-static struct ref_scale_ops typesafe_seqlock_ops = {
++static const struct ref_scale_ops typesafe_seqlock_ops = {
+ 	.init		= typesafe_init,
+ 	.cleanup	= typesafe_cleanup,
+ 	.readsection	= typesafe_read_section,
+@@ -1026,7 +1026,7 @@ static int main_func(void *arg)
+ }
+ 
+ static void
+-ref_scale_print_module_parms(struct ref_scale_ops *cur_ops, const char *tag)
++ref_scale_print_module_parms(const struct ref_scale_ops *cur_ops, const char *tag)
+ {
+ 	pr_alert("%s" SCALE_FLAG
+ 		 "--- %s:  verbose=%d verbose_batched=%d shutdown=%d holdoff=%d lookup_instances=%ld loops=%ld nreaders=%d nruns=%d readdelay=%d\n", scale_type, tag,
+@@ -1081,7 +1081,7 @@ ref_scale_init(void)
+ {
+ 	long i;
+ 	int firsterr = 0;
+-	static struct ref_scale_ops *scale_ops[] = {
++	static const struct ref_scale_ops *scale_ops[] = {
+ 		&rcu_ops, &srcu_ops, RCU_TRACE_OPS RCU_TASKS_OPS &refcnt_ops, &rwlock_ops,
+ 		&rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops, &clock_ops, &jiffies_ops,
+ 		&typesafe_ref_ops, &typesafe_lock_ops, &typesafe_seqlock_ops,
 -- 
-Cheers,
-
-David / dhildenb
+2.45.2
 
 
