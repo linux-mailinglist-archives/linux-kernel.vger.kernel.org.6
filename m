@@ -1,105 +1,92 @@
-Return-Path: <linux-kernel+bounces-277022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858F7949B34
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:18:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD46949B35
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4F0E1C22A10
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:18:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1600C1F24C04
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A214C16FF48;
-	Tue,  6 Aug 2024 22:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C25170A3C;
+	Tue,  6 Aug 2024 22:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pN1/t/4F"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKAMM9j4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F94F15B0EE;
-	Tue,  6 Aug 2024 22:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E954A15B0EE;
+	Tue,  6 Aug 2024 22:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722982677; cv=none; b=pGSPwt+UThjgo2afqP53t7BTqbgeWYEH/n2vkqn15200s7Ix0/Pd0AXOcizOkC/lJCJ1tsX5MJEuMaYuQq+oTKEjI7Rd78hs/hbbsh62dBN5TvagP4nBkw+DWKlLeDmN1oLkC5oZoUkLEVUdmp73i/HSuGzrD1eCpmAJl4IJ3bo=
+	t=1722982726; cv=none; b=J2puAwpiPta1mYxX5di/CM3gcRTvVUxWvwgtI0FQK1R08cHeVulefM+GDYYWT6hugBYDca3xAD0dZyAbIDLfwYe7jMRiv7J+0dRqNGsgYWGB+s2BGay+f6/Yv66XlMIJIB6qVQaA4cpi4UlU4wjKngrsk5HZK+Q5D7S95ublZBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722982677; c=relaxed/simple;
-	bh=9skTbY1N49GoH83/PtUn3pq8xam8oH/tgvhkKna0ZPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aElgDWCmVlA2/ueDAKBw6R7+sBr9aKlahuOStWBCR2WbY7+0hygcGlM8U6lUvInbLQSyZbYT62bgewhrt7qgxI0QXBMuNbBifyToAgDjhceIIeQ/tqgcXhtUJrsiwkU8LQDtw193zfJObpEwq+jE4lJ5Y/cOsDXQ4p4J/QbOt/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=pN1/t/4F; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722982672;
-	bh=cSO0hv/siOzqkiGxVA4xbmQaQ6dnQ1rMS0EABY37DtY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=pN1/t/4FJyCZAvHFqCSGWrSDsNY6z+WXpCapCvwkV5m84lduE1YzI+SIT1hs87t9V
-	 kBqpW0LwzAHGBqbWM+KGa3Tr2vOr0XIbw3b3AqvIGoVUqwCEXhxudKSPmgFJ1uD37E
-	 kGumChEapMsS1MQ18Lr2JopUHE+eB2dZjZyBMDKg6GxafeEZY6lhtZFX7ItJWXruQe
-	 x3iLe0JxP3xJnJHM8Sh4Tcp/vDjwgpqAfCstsGY7osi4iMB7eDM4LxD3ZdXLpDttM4
-	 ntCTdIes1Hh7Vkw2xWlAotOvLkgak4vcpkJHLavkf3ZTI3SZH8QqnwaJ5kuaQZOWD5
-	 DRjrqb5Oe2bOA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wdnk80Pplz4w2F;
-	Wed,  7 Aug 2024 08:17:51 +1000 (AEST)
-Date: Wed, 7 Aug 2024 08:17:51 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM
- <linux-arm-kernel@lists.infradead.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the arm-soc-fixes tree
-Message-ID: <20240807081751.7149e22c@canb.auug.org.au>
+	s=arc-20240116; t=1722982726; c=relaxed/simple;
+	bh=fBegLiTxA0N7AAc2njIPgvnl6X/brLv/goRh1ajhNnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u+Muv+iti3Mf59zHDfyx2Iqj7pVmIitLdYyTTzvH/gItKeS/lwZTZsQMh5zW/m+SF7Klx/IjtzgSsQjLQ+dQH9JH1fZgLg13acNZ4imzWUntJ2/b06zpsAfeys6MTMjH8eiJu+JJM+BtpNiXxc35JfR5F5wPg3ZDmQ4lfCAusJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKAMM9j4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B88D4C4AF09;
+	Tue,  6 Aug 2024 22:18:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722982725;
+	bh=fBegLiTxA0N7AAc2njIPgvnl6X/brLv/goRh1ajhNnI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vKAMM9j4VKj/ExN4Wx+nNpzBVCY0GZDQHR414NKZalCLCBDrgyqSsnW2sqNIr7gzW
+	 jbzzs9rejDWwqaXqiVYbFDP/nU5cuLFyQ9unXdboz1dvPGVHxms7Tt7qHEYJaAvrFW
+	 /MGTRfOinT/L7So/hNBMH7onP6rwFcoHD9RdiTuRpMmHSmxGsKYos0y+8+CBYXffWM
+	 rjNgUzLJ9jPLeUlyur8f6zXLfjJ5q2wrhIKR21IIf8MXUZL+w7LRQAsl8dcBx77IFu
+	 cD+3JeuHn04XePyOws4sVj9ii8V3IEkIW0Q1BYGR15KdGtPU5U8uT1unF479yFvZW1
+	 Q+9UCxPyGYcjQ==
+Date: Tue, 6 Aug 2024 15:18:45 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: syzbot <syzbot+b9d2e54d2301324657ed@syzkaller.appspotmail.com>
+Cc: boris@bur.io, clm@fb.com, dsterba@suse.com, fdmanana@suse.com,
+	josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	wqu@suse.com
+Subject: Re: [syzbot] [btrfs?] kernel BUG in set_state_bits
+Message-ID: <20240806221845.GA623904@frogsfrogsfrogs>
+References: <0000000000000e082305eec34072@google.com>
+ <0000000000001e43de061f08c0d4@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/3hE6B2UEpC8YkooI7wDrmNr";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000001e43de061f08c0d4@google.com>
 
---Sig_/3hE6B2UEpC8YkooI7wDrmNr
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Aug 06, 2024 at 12:25:03PM -0700, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
+> 
+> commit 33336c1805d3a03240afda0bfb8c8d20395fb1d3
+> Author: Boris Burkov <boris@bur.io>
+> Date:   Thu Jun 20 17:33:10 2024 +0000
+> 
+>     btrfs: preallocate ulist memory for qgroup rsv
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=165cd373980000
+> start commit:   9fdfb15a3dbf Merge tag 'net-6.6-rc2' of git://git.kernel.o..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9681c105d52b0a72
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b9d2e54d2301324657ed
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=148ba274680000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ff46c2680000
+> 
+> If the result looks correct, please mark the issue as fixed by replying with:
+> 
+> #syz fix: btrfs: preallocate ulist memory for qgroup rsv
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Hi all,
+I don't get it, why am I being cc'd on some random btrfs bug?
 
-The following commit is also in Linus Torvalds' tree as a different commit
-(but the same patch):
+#syz check yourself before you wreck yourself
 
-  5b92ca4b2368 ("arm: dts: arm: versatile-ab: Fix duplicate clock node name=
-")
-
-This is commit
-
-  ff58838015c1 ("arm: dts: arm: versatile-ab: Fix duplicate clock node name=
-")
-
-in Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/3hE6B2UEpC8YkooI7wDrmNr
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmayoQ8ACgkQAVBC80lX
-0Gy44Qf/fbzYY/xA3wBgoz6lTrvrDAuCm61TWHKnheGs4DWMyTrjWLm3RhPI7FOV
-SOhXyokx7p8fo73MEmHwwfI0YjGxGA1fgc6+OwVMqVzPLAZ9FoJKzZ1+Wqo5Dyph
-/a1jh49diSmYivQ2jV9f8+4AxlXiUmi783cjcjDAZ4fCZveL7O9alYe+qSXnQpM5
-Fq0L6EcdiyAvQhp9a0dSHv5z/flQtiuT9Rj+AbUaQhWxZVnkUXnM0QAOncOSK1bg
-E/c1c1/XeI+dlIoKP4aLDj41gUXrj2h1XO0H5sLQwrFD7AZ8haoo+em827SXu8ej
-Pj4OrlsTCloNc7zkgg/vPEpbKwfl6w==
-=n74W
------END PGP SIGNATURE-----
-
---Sig_/3hE6B2UEpC8YkooI7wDrmNr--
+--D
 
