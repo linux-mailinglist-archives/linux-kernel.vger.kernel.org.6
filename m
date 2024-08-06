@@ -1,117 +1,262 @@
-Return-Path: <linux-kernel+bounces-275512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5B49486B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:45:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F479486B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 432661F23D62
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:45:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49E77B20DA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E518C09;
-	Tue,  6 Aug 2024 00:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C6D8BEE;
+	Tue,  6 Aug 2024 00:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCFMoQIJ"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DM/qPMdL"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A280879C0
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 00:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0EF6FD5
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 00:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722905122; cv=none; b=Iw7JVYpG68KNfDWjRJtjGVZP3s73h95LsYmwniveTCfUPfZWPwtdqfqmPqFxQDNPdj9QjQqnswSziDSG8S54TPgF4PP57HRZgHeMBWLXy7jr0S0ftChNoQG+7UhnGd4UFA5lCxLRwnMdBYp4kmNaVLR2ZQzy/1QRCx/QWYEtpeo=
+	t=1722905143; cv=none; b=neTFBBvCXYqMhaL+f9yBivYg5njbLc8P+Klg4L6nm2MppJ1EmQBpvognCeX/bgbGBQnrtuERLu7mqtK/FOYGMcGJmNnEBX7IrovT4cF2V88J8gBJICKH48D7bg0lpLnzJWDhY61K3ZY8Cq6U0Wgwb8UaSBf3OMYP1cbPHqs0Kmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722905122; c=relaxed/simple;
-	bh=6C/fTNhPHhkUTQdoDQrJjS8z9bO+T0i8xzItOP2C5lc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ITkknpINFQEI4OHD3nakU6O5nlyY74M6U7c0Opno1n3GIsRHFzvVLiJMIbbSlAW/05Flk20yyAhKERCOzFE3SI/RonQbPqbz5Yi5848Oih1N8u+ca5PXzPsKgC0GYMZBf0ckk5kai6rF6XeAJeUCkt9t0rk26WGYy0pIr3F/7jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jCFMoQIJ; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6694b50a937so874047b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 17:45:20 -0700 (PDT)
+	s=arc-20240116; t=1722905143; c=relaxed/simple;
+	bh=xJZinW9gvbRfqGqVK8gwS78zN2XDlEhctENfqDXkpIM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gGTZs5AjSYthueXh3AIEHK3uffiFj14RRDYYpSGchpcOO+N6WGT1/+IXu8WTUHMD9+9nlB8VamTpm1uRgZXx9y9mC9XGc4F1lAq/Hyh6Bncr68Zdeo9Jj5OZk0EfpgGqh3ClJiFr8h/DFnyOtDtVLNzR35hokUL8y7SWQtwvYU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DM/qPMdL; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-65b985bb059so230715247b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 17:45:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722905119; x=1723509919; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f24byKXBsDdCoUziB9qpsoPdrCNk3SpbbSe3cKaZfUE=;
-        b=jCFMoQIJ39Bw9Z226TgkwFryI/j+Cb0j7O//xP7zZmKt9DA5fjDMNljnmioLT/4KhD
-         nAZ2EmKamXkBnDjyBDDfmBa+WF6HBVKF43akOTBZGL0wOTib0o4JvwLxjfxsoozHk4Cr
-         8oGxdvyPyecfnN1JE3nVhJ0ayzhbxWd+nFmv5+iXnwDk7DrAh8PE/75abWEl3xyRwp9X
-         M7/MLU5UckA2oEoJ3vgR7JBWUq6MF4m5de7G9ORMl4y2AIKagA5c+dQXGWWZBnOs8vU0
-         TPnG+Jphm9JwM30n54niox2sj59YreTgOXaX0ay5o5wz7GEo/R2DrosKxfmC8zcuozhb
-         HHDA==
+        d=google.com; s=20230601; t=1722905141; x=1723509941; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RlwWN4is+MXSZU2QpqY/Ao8/6cEmVqrwuY1O9PQnYgo=;
+        b=DM/qPMdLWJ9ZO29UeGwF3vnQGM0NhXi8PQXim6WrRMkrKBieu5/W201KvBCdM1PFzu
+         E7hP4j+dx7R6HKpb43h+68iZZ7tsKvghuS13Z8wAetYg7PSyJGmmYz0rIkYrovYTYgVv
+         5hyTY3xFj2Our9hOzUGl9iFsws9GTaVZtI4Nc7L5JGdMH15wvoTk3JPYbNUWFTK2RYw7
+         wNEztQL0o7YNsz4Enu8Odct1XXqasraD09OurmWWDZuiew/Y2HNV+mfwmLoh8y3yBuFP
+         BKUvLB/HK/SF/G4GOEnUSQj/e6oi32D8e/hVcmCEF0wnCTl9kmTiETXSsLd1upD76Uni
+         4Eaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722905119; x=1723509919;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f24byKXBsDdCoUziB9qpsoPdrCNk3SpbbSe3cKaZfUE=;
-        b=VTeJ18UBKID5L8M1zNkHFh/T+1g2LxrEViHwYU+llCv4WxPh/WqetwvEBI7Oe8aQ1v
-         3uCAtrdrxxmeGyMjeeSDSFYr2DlxNBE2ttMpHII9AWxaJZ7hvPvcVuRVSsJt92+6es33
-         Tpi9HkcHkVVNtCiCiJYMbf97nhSovwNWKSMhvD6vYfBRzYS4HKHp4TGPp2YwyKV++/5O
-         7Nzl3W529hdic1HsXA00CcZ0NpNnthUw03fyBgmza/D6PzAcTvFZKJWe4ez/QB0YwamW
-         InbMXxKcf8jJ3b7lim+ESrLf3luMW0ejYqfjNkk+9xN396FmwgqX2Ds1PFkY+2nBpX6M
-         NH6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXnvjqi4Xq6nXLx2ktiPDIFoRz840rTTQEV2Sxcv0M7csE7gePU0XUGUV+b4iB4m2eZV2ZIZQ+WAVKvQmCTzgK8gblguOZ9OeqZieFv
-X-Gm-Message-State: AOJu0YzJWAxpZGo2KGoc9ISjSsU5LPgT2lcdzr7sbCpbPScqXNQTjXac
-	khDN4ulGXQDUbY2j6c9oLiG66QdRY8PHBC2DSjfTrlMrtOd6gkDa
-X-Google-Smtp-Source: AGHT+IF72PxGyYKZU1R2KLVxeLyw0kVXVNki+xiuoaf/qeGWyE98VmgZ8Qgl8Mg9GbrUKkWIdbm3vg==
-X-Received: by 2002:a81:9e0d:0:b0:631:78a1:baf with SMTP id 00721157ae682-6895f60d528mr143494237b3.6.1722905119522;
-        Mon, 05 Aug 2024 17:45:19 -0700 (PDT)
-Received: from localhost (fwdproxy-nha-116.fbsv.net. [2a03:2880:25ff:74::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-68a0fdb3c2csm13912147b3.47.2024.08.05.17.45.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 17:45:19 -0700 (PDT)
-From: Nhat Pham <nphamcs@gmail.com>
-To: akpm@linux-foundation.org
-Cc: hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	shakeel.butt@linux.dev,
-	linux-mm@kvack.org,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	flintglass@gmail.com,
-	chengming.zhou@linux.dev
-Subject: [PATCH v3 2/2] zswap: track swapins from disk more accurately (fix)
-Date: Mon,  5 Aug 2024 17:45:18 -0700
-Message-ID: <20240806004518.3183562-1-nphamcs@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240805232243.2896283-3-nphamcs@gmail.com>
-References: <20240805232243.2896283-3-nphamcs@gmail.com>
+        d=1e100.net; s=20230601; t=1722905141; x=1723509941;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RlwWN4is+MXSZU2QpqY/Ao8/6cEmVqrwuY1O9PQnYgo=;
+        b=wETwSJjcvzl4MQnTX0sBfz0SdYUgrmu/uaSczFgKPj2n05Rs1cwX1aSbIDJboIOqeg
+         FLaETEE8FCJddHH/4sqJ1jliFknNSah0q+GkeOD6O5mS6x3HV7q8SHiBQc3NDf5H01Un
+         ESF8yjghKBHp1MSSHTnERCzcYgv44eliuLe3L+L/vtgeQ48Y7ZOQL1b2D5xZX+4r7sZS
+         //kYynF9kxRQpwThV9R6CUggnlaxLEHURLg2NkC6pxfM0fLDedj02nO1vsz5FmmYtOgm
+         t5S/RfmwwswLEA0wRO4OSiwCOXMHsUzLiAKHx8Nao9mmqlDLIV1NvZIdicjgizbdR7Z9
+         RoSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWCgvqHixFmq8PIzmtxSMZVsUB6UAcdQI5qtKORho8+y1mPHzgAOgtQ2Ghlyc1W4dKbOl+eNSG0T/zFmS6lB0X9qcD0FHbCUnRtHG6
+X-Gm-Message-State: AOJu0YwPP1dJP2UnrMf7SFEEqPsTIgL20A72S6MOkuZwO8zSXZVwpBuX
+	Vuk57ylYu0Q6va5dvTF4a1oDYoUYaApxAw09+D8NZhgTmcMPx1TEnYsi9LgjK/TfVTU13bmSdI5
+	cKA==
+X-Google-Smtp-Source: AGHT+IHAlcDpPkJK+Ho8bhRXhblm6X1pytNk7PD61xxKNen6ECBnp7JfJ5NAekg+iOwpjGK6T15xL1tPhyo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:1892:b0:e05:aa67:2d4b with SMTP id
+ 3f1490d57ef6-e0bde222289mr276960276.3.1722905141251; Mon, 05 Aug 2024
+ 17:45:41 -0700 (PDT)
+Date: Mon, 5 Aug 2024 17:45:39 -0700
+In-Reply-To: <f862cefff2ed3f4211b69d785670f41667703cf3.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20220427014004.1992589-1-seanjc@google.com> <20220427014004.1992589-7-seanjc@google.com>
+ <294c8c437c2e48b318b8c27eb7467430dfcba92b.camel@infradead.org> <f862cefff2ed3f4211b69d785670f41667703cf3.camel@infradead.org>
+Message-ID: <ZrFyM8rJZYjfFawx@google.com>
+Subject: Re: [PATCH] KVM: Move gfn_to_pfn_cache invalidation to
+ invalidate_range_end hook
+From: Sean Christopherson <seanjc@google.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Mushahid Hussain <hmushi@amazon.co.uk>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
+	Jim Mattson <jmattson@google.com>, Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Mingwei Zhang <mizhang@google.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Squeeze a comment into a single line.
+On Mon, Aug 05, 2024, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
+> 
+> The existing retry loop in hva_to_pfn_retry() is extremely pessimistic.
+> If there is an invalidation running concurrently, it is effectively just
+> a complex busy wait loop because its local mmu_notifier_retry_cache()
+> function will always return true.
+> 
+> It ends up functioning as a very unfair read/write lock. If userspace is
+> acting as a 'writer', performing many unrelated MM changes, then the
+> hva_to_pfn_retry() function acting as the 'reader' just backs off and
+> keep retrying for ever, not making any progress.
+> 
+> Solve this by introducing a separate 'validating' flag to the GPC, so
+> that it can be marked invalid before it's even mapped. This allows the
+> invalidation to be moved to the range_end hook, and the retry loop in
+> hva_to_pfn_retry() can be changed to loop only if its particular uHVA
+> has been affected.
 
-Signed-off-by: Nhat Pham <nphamcs@gmail.com>
----
- mm/page_io.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+I think I'm missing something.  How does allowing hva_to_pfn_retry() allow KVM
+as a whole to make forward progress?  Doesn't getting past hva_to_pfn_retry()
+just move the problem to kvm_gpc_check()?
 
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 0004c9fbf7e8..aa190e3cb050 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -524,9 +524,7 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
- 		goto finish;
- 	}
+kvm_gpc_refresh() can't be called with gpc->lock held, and nor does it return
+with gpc->lock held, so a racing mmu_notifier invalidation can/will acquire
+gpc->lock and clear gpc->active, no?
+
+Oh, by "unrelated", you mean _completely_ unrelated?  As in, KVM happens to do a
+refresh when userspace is blasting MADV_DONTNEED, and gets stuck retrying for
+no good reason?
+
+Servicing guest pages faults has the same problem, which is why
+mmu_invalidate_retry_gfn() was added.  Supporting hva-only GPCs made our lives a
+little harder, but not horrifically so (there are ordering differences regardless).
+
+Woefully incomplete, but I think this is the gist of what you want:
+
+diff --git a/virt/kvm/pfncache.c b/virt/kvm/pfncache.c
+index f0039efb9e1e..1c4c95ab7d0a 100644
+--- a/virt/kvm/pfncache.c
++++ b/virt/kvm/pfncache.c
+@@ -28,6 +28,26 @@ void gfn_to_pfn_cache_invalidate_start(struct kvm *kvm, unsigned long start,
+        struct gfn_to_pfn_cache *gpc;
  
--	/*
--	 * We have to read the page from slower devices. Increase zswap protection.
--	 */
-+	/* We have to read from slower devices. Increase zswap protection. */
- 	zswap_folio_swapin(folio);
+        spin_lock(&kvm->gpc_lock);
++
++       if (likely(kvm_is_error_hva(kvm->mmu_gpc_invalidate_range_start)) {
++               kvm->mmu_gpc_invalidate_range_start = start;
++               kvm->mmu_gpc_invalidate_range_end = end;
++       } else {
++               /*
++                * Fully tracking multiple concurrent ranges has diminishing
++                * returns. Keep things simple and just find the minimal range
++                * which includes the current and new ranges. As there won't be
++                * enough information to subtract a range after its invalidate
++                * completes, any ranges invalidated concurrently will
++                * accumulate and persist until all outstanding invalidates
++                * complete.
++                */
++               kvm->mmu_gpc_invalidate_range_start =
++                       min(kvm->mmu_gpc_invalidate_range_start, start);
++               kvm->mmu_gpc_invalidate_range_end =
++                       max(kvm->mmu_gpc_invalidate_range_end, end);
++       }
++
+        list_for_each_entry(gpc, &kvm->gpc_list, list) {
+                read_lock_irq(&gpc->lock);
  
- 	if (data_race(sis->flags & SWP_FS_OPS)) {
--- 
-2.43.0
+@@ -124,8 +144,11 @@ static void gpc_unmap(kvm_pfn_t pfn, void *khva)
+ #endif
+ }
+ 
+-static inline bool mmu_notifier_retry_cache(struct kvm *kvm, unsigned long mmu_seq)
++static inline bool mmu_notifier_retry_cache(struct gfn_to_pfn_cache *gpc,
++                                           unsigned long mmu_seq)
+ {
++       struct kvm *kvm = gpc->kvm;
++
+        /*
+         * mn_active_invalidate_count acts for all intents and purposes
+         * like mmu_invalidate_in_progress here; but the latter cannot
+@@ -138,7 +161,9 @@ static inline bool mmu_notifier_retry_cache(struct kvm *kvm, unsigned long mmu_s
+         * be elevated before the mmu_notifier acquires gpc->lock, and
+         * isn't dropped until after mmu_invalidate_seq is updated.
+         */
+-       if (kvm->mn_active_invalidate_count)
++       if (kvm->mn_active_invalidate_count &&
++           gpc->uhva >= kvm->mmu_gpc_invalidate_range_start &&
++           gpc->uhva < kvm->mmu_gpc_invalidate_range_end)
+                return true;
+ 
+        /*
+@@ -224,7 +249,7 @@ static kvm_pfn_t hva_to_pfn_retry(struct gfn_to_pfn_cache *gpc)
+                 * attempting to refresh.
+                 */
+                WARN_ON_ONCE(gpc->valid);
+-       } while (mmu_notifier_retry_cache(gpc->kvm, mmu_seq));
++       } while (mmu_notifier_retry_cache(gpc, mmu_seq));
+ 
+        gpc->valid = true;
+        gpc->pfn = new_pfn;
+
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> ---
+> I note I'm deleting a big comment in kvm_main.c about doing the
+> invalidation before acquiring mmu_lock. But we don't hold the lock
+> in the range_end callback either, do we?
+
+Correct, __kvm_handle_hva_range() acquires and releases mmu_lock.  However, the
+intent of the comment was to clarify why GPCs are invalidated in
+kvm_mmu_notifier_invalidate_range_start(), as opposed to kvm_mmu_invalidate_begin()
+which _is_ called under mmu_lock and is also called if and only if KVM has a
+relevant memslot.  E.g. that's why the comment also talks about memslot overlap
+checks.
+
+>  
+>  include/linux/kvm_types.h |  1 +
+>  virt/kvm/kvm_main.c       | 14 ++------
+>  virt/kvm/kvm_mm.h         | 12 +++----
+>  virt/kvm/pfncache.c       | 75 +++++++++++++++++++--------------------
+>  4 files changed, 45 insertions(+), 57 deletions(-)
+> 
+> diff --git a/include/linux/kvm_types.h b/include/linux/kvm_types.h
+> index 827ecc0b7e10..30ed1019cfc6 100644
+> --- a/include/linux/kvm_types.h
+> +++ b/include/linux/kvm_types.h
+> @@ -69,6 +69,7 @@ struct gfn_to_pfn_cache {
+>  	void *khva;
+>  	kvm_pfn_t pfn;
+>  	bool active;
+> +	bool validating;
+
+This is a confusing name, partly because KVM usually deals with invalidation
+events, but also because it's sticky and stays set long after the act of
+validating the GPC is complete.
+
+Something like "needs_invalidation" is the best I can come up with, but I believe
+this bikeshed is moot (see above and below).
+
+>  	bool valid;
+>  };
+>  
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index d0788d0a72cc..ffd6ab4c2a16 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -777,18 +777,6 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+>  	kvm->mn_active_invalidate_count++;
+>  	spin_unlock(&kvm->mn_invalidate_lock);
+>  
+> -	/*
+> -	 * Invalidate pfn caches _before_ invalidating the secondary MMUs, i.e.
+> -	 * before acquiring mmu_lock, to avoid holding mmu_lock while acquiring
+> -	 * each cache's lock.  There are relatively few caches in existence at
+> -	 * any given time, and the caches themselves can check for hva overlap,
+> -	 * i.e. don't need to rely on memslot overlap checks for performance.
+> -	 * Because this runs without holding mmu_lock, the pfn caches must use
+> -	 * mn_active_invalidate_count (see above) instead of
+> -	 * mmu_invalidate_in_progress.
+> -	 */
+> -	gfn_to_pfn_cache_invalidate_start(kvm, range->start, range->end);
+> -
+>  	/*
+>  	 * If one or more memslots were found and thus zapped, notify arch code
+>  	 * that guest memory has been reclaimed.  This needs to be done *after*
+> @@ -849,6 +837,8 @@ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
+>  	wake = !kvm->mn_active_invalidate_count;
+>  	spin_unlock(&kvm->mn_invalidate_lock);
+>  
+> +	gfn_to_pfn_cache_invalidate(kvm, range->start, range->end);
+
+We can't do this.  The contract with mmu_notifiers is that secondary MMUs must
+unmap the hva before returning from invalidate_range_start(), and must not create
+new mappings until invalidate_range_end().
 
