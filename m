@@ -1,189 +1,123 @@
-Return-Path: <linux-kernel+bounces-275657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7D0948818
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:54:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6E794881B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BA8D1F23895
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:54:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48CE91F23916
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEABD1B9B5F;
-	Tue,  6 Aug 2024 03:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8B01BA880;
+	Tue,  6 Aug 2024 03:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="XUaANtXp"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NVcUuNWs"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167DD3BBF5
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86AD3BBF5;
+	Tue,  6 Aug 2024 03:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722916464; cv=none; b=KMuoi0wE6uyigVjiW6lQL1m+MZs5x1V2SYEpD5bkBYriqfgO9Y+o/qo/PKN3MTylV1Dhmpl42LE78WZj5BCdXLP87ow2IwdSyjxr+PjXs9M3+HtmZhyTBLprL+Z83qJFmpw+hpYc26wx7/eAgJ2yKw7dwDcFPytaOzCv9KrF9w4=
+	t=1722916486; cv=none; b=sd7IgCw49mpSyvnI4JL4zYSA4WPLOrETVWRWai8Yr54zOII4svuvmMCbZIjnkGHBuWacxyPFjpqUyIjTl+2aXs/HpO0rabjiw74mQFHEjjNNogjTHZYbpd3JNNdycbHJAEeCn146n2TZgw7UON6e+iMolNDe8MOqI9o/te7z5/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722916464; c=relaxed/simple;
-	bh=OHn7wU9Ux6L+zXgz4hDtyYLrDplln0Krvsa/Tanrbn4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HGOSdqMbufifPujfGZlyjCqbHq+tKdQjLxjrOHskzyQnjErnrPOuinzcnNjpj9BjsH51w6rBXSy99axPIlwRimALRR4Cez94DM1brdd769d9UgJ73BJSYe5JW9jr2fFlGp22wEDV4tTSXwyriGKVY/N4LuR8+HIq5PdzmwgefnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=XUaANtXp; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ef1c12ae23so2321991fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 20:54:21 -0700 (PDT)
+	s=arc-20240116; t=1722916486; c=relaxed/simple;
+	bh=J49K3cYWUArLK8x1yjCzC181gtekpwUQiXcDMGd9uO8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=nYOZ32FAaRYenk8AcAde+jWiUapYLqr0u9a/JKjhHmH4KpMka+h7SceCCzQlshIz95d66Dd4Xtj5ppGhcLKgDoGeKBkMcERk2wZlVEW2U+9QZq8CXNwfuOU8N1Mmqb0dxS8RsG2i9V5PCeducWoqBxdDRJhKpJ4v3HEZ0QgjD8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NVcUuNWs; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2cfec641429so231163a91.0;
+        Mon, 05 Aug 2024 20:54:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1722916460; x=1723521260; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1722916484; x=1723521284; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bvzMXnNtbinIR6sxB9Vjeo1DnbXtPT7sraVJvvh8AKs=;
-        b=XUaANtXpbu09ETPcGiZ9iL1DPJtSvU4KREKAotBT+gO+YGZuN6zVBGRXkVchgkkgLp
-         LEFGnGDQick+jni6E36ZWnY4bC0WO0eDt3hwxh1u/2zbt0BqJoxwdDAhitfx4G4z8vY5
-         UEkWYk0SN6i2lCyN68w8w/V5NjHbLLRSbXjhU6osDq7syau4SA0jvYzG5fuRk8tlsMz5
-         1pnl/ZlpEGDMHgbRRyE58Gq5nVYyJnfynkC9RT1FaSVklGPH9nWez/+ilK27wBpK4CzI
-         3/6uvbkkXGJ7rAteeci16GYcIPvzg9EwEcOB3Z+PaoYk3QtLxqWUZOKhldF8INdBYfv2
-         mtSQ==
+        bh=J49K3cYWUArLK8x1yjCzC181gtekpwUQiXcDMGd9uO8=;
+        b=NVcUuNWs81aphIn3UsHIPe5DhKLK+rq1ud5TYwX/1DU5y8/At3k2GbNgr6TekQ1W6f
+         iYkUTqBm72N2Zfak9OnxUbWsO5k08djgzBGM25qu1BnppaeirMPHOml27b1HbkcrkTTL
+         EkZrRuIqEqyywanl1vzGqbTKI4a3GzJYS7www6w0hiviUS2TzSso76I5sFgjZjd7/GEt
+         SiIPB3KPMNJZChGZeegCKq7a+24cuHK3fl4wW9gq7s5dyN9HoHHHld2jFFTzYDTJRMsa
+         RIw5sVknMQV1+rZo+LhE0eVMtmj2isCDQYXE8yMtDEHfl0SYobPqvlhpu4WXO8EhOl6/
+         xdcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722916460; x=1723521260;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722916484; x=1723521284;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bvzMXnNtbinIR6sxB9Vjeo1DnbXtPT7sraVJvvh8AKs=;
-        b=IGY2DjKufgBMo0XfzljjzWaizcfIvxxhMPKaByq3qqoYZaueZaWJqpvjRYRwNZibXp
-         3zBCqeajbAsY54HpDKtB0zbuw3YjAwTmeH4OBZhoOXXQXghXPYPmQCGdalWzr5jGc269
-         8whoXcqkqYS8/BTNB2yaCnhAkNo9usFS8vbOBQOerc4hPRi6+r+ZOFnIL3XaB8ao7DYv
-         PS6txV92uOv1c0B2j1Twrg3rng6siK7P9GcovSkXtjVBqM6jYZgfTBZkz5l2y8r1Zxsy
-         JEYU7zFxwefbyRxBIqB6RTb49CuVBjBxGB0Aj/i6FvljuTWXeWmB/MzSL0qXxR9GkxAC
-         G0lg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwb9B5UtoA6WYo+fIyQ0tuYEilZxbpZGiQf3lt5uGf0KD+ForaOb68nQu8X47TuFsjN6KiOyF4UVGJ4ZbZW21RknVJ27uPZ42cZ9lh
-X-Gm-Message-State: AOJu0Ywwo6/eQhUo1X3pCO1hIaTTf2WyhTFIx/OsRtTlNXJQEDgGg3U3
-	0Aj5jxx5/0wwfsVQ9yzz4cF9yAwEvdJudqeMA/xhRaHikB39l2gmq/SCWpDvkGxe7RX7z2/a/Iq
-	Gljr8TwEWeW4ckWypPHa72YAZd47UYFJxWq+r8Q==
-X-Google-Smtp-Source: AGHT+IED+QfpVh2ns4r5CsCF2Hf7HG0ncsxihC0vDxBSVd4rH9+6r9D1hKisabpmLxEL8TLvLP+nRbgTy3vQUF0nLB0=
-X-Received: by 2002:a2e:999a:0:b0:2ef:2f19:a8b3 with SMTP id
- 38308e7fff4ca-2f15ab049f2mr93096061fa.41.1722916460054; Mon, 05 Aug 2024
- 20:54:20 -0700 (PDT)
+        bh=J49K3cYWUArLK8x1yjCzC181gtekpwUQiXcDMGd9uO8=;
+        b=LJRO6aehc4+jmtyyGXHL1eeJPSf3z1SOjtJxYPt6J4vFW20iP7E63pCWOxO7rGBdw/
+         J1u3/qB+Zr1KaLqCnzQCgEWCTOEePnIXgB1i1gVnHRRoEbwbGIiQWIehykqykHK/Ji8h
+         fGK8Id4Cr2R7OIsik1tLW0vm8ZJUUHVFNAX+qUfLTDKGPe1enO9hCbIsjRvNgF9UF6VN
+         Wcka0Hmd7+01+faUNZ32wM2W8gX8igg8kxOSJ2c0S7PSf0GG6dEwObgjzB1aw/GCmdpt
+         HZ/rw0fCTetGCh+F+Se89CC0vYMxkLnpVDvITyK/x62F46tWQjsuuUMmllQ+/lkK1g+Q
+         0ETA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+u9pvcdkZyG1ZNB02K9OmIGTbU/yPx8DitpkCY/dnZ5UFZ3/l4ZMUsCfqX38ECxR4HsWzH9ez35d3mv7bleYfEvBedNPwYlRA+5XGFjZBKnm/ME9AJg5sBZ6TOgsiA8isa6Rn16rirfbPN/AqXEVoWivgQP/T5Z42siZ4Ito8+5hHKYkOmUc=
+X-Gm-Message-State: AOJu0YxifcrWy+Wxta4VcLF/cKqdGqcn7RI4ewUis5k0/UkkmQxZbitn
+	Smd5UVvt4iLcR8MxPyyCIYSSCRDMHYbrV4fm842DrwFNlyPF9TSAyEzLI3KTzg==
+X-Google-Smtp-Source: AGHT+IHhWKClEsbgs1e+2zfUkzsV1vKpeHv4n/WG5pfmZ/WMqH0SY+HG+dVEbhLbZzHg59sxc21bsQ==
+X-Received: by 2002:a17:90a:cf0f:b0:2c7:8a94:215d with SMTP id 98e67ed59e1d1-2cff94040d2mr12625900a91.12.1722916483871;
+        Mon, 05 Aug 2024 20:54:43 -0700 (PDT)
+Received: from swift.. ([114.254.10.84])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cffaf6a6d0sm7963455a91.6.2024.08.05.20.54.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 20:54:43 -0700 (PDT)
+From: LidongLI <wirelessdonghack@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	mark.esler@canonical.com,
+	stf_xl@wp.pl,
+	wirelessdonghack@gmail.com
+Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer Dereference&Use-After-Free Vulnerability
+Date: Tue,  6 Aug 2024 11:54:33 +0800
+Message-Id: <20240806035433.20901-1-wirelessdonghack@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <2024080359-getaway-concave-623e@gregkh>
+References: <2024080359-getaway-concave-623e@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805194424.597244-1-irogers@google.com> <20240805194424.597244-4-irogers@google.com>
-In-Reply-To: <20240805194424.597244-4-irogers@google.com>
-From: Eric Lin <eric.lin@sifive.com>
-Date: Tue, 6 Aug 2024 11:54:08 +0800
-Message-ID: <CAPqJEFpiy307B4OBHK4WJGjgbVm_woUrdZ+Vy_LSdQ=ECqZX-Q@mail.gmail.com>
-Subject: Re: [PATCH v1 4/5] perf pmu-events: Remove duplicated riscv firmware event
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Samuel Holland <samuel.holland@sifive.com>, Charles Ci-Jyun Wu <dminus@andestech.com>, 
-	Locus Wei-Han Chen <locus84@andestech.com>, Atish Patra <atishp@rivosinc.com>, 
-	Ji Sheng Teoh <jisheng.teoh@starfivetech.com>, Inochi Amaoto <inochiama@outlook.com>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Guilherme Amadio <amadio@gentoo.org>, 
-	Changbin Du <changbin.du@huawei.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, vincent.chen@sifive.com, 
-	greentime.hu@sifive.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Ian,
-
-I've sent a patch to fix it and the patch already merged. Thanks.
-https://lore.kernel.org/all/20240719115018.27356-1-eric.lin@sifive.com/
-
-Best regards,
-Eric Lin
+Content-Transfer-Encoding: 8bit
 
 
-On Tue, Aug 6, 2024 at 3:44=E2=80=AFAM Ian Rogers <irogers@google.com> wrot=
-e:
->
-> FW_SFENCE_VMA_RECEIVED is repeated twice in the file which will break
-> invariants in perf list as discussed in this thread:
-> https://lore.kernel.org/linux-perf-users/20240719081651.24853-1-eric.lin@=
-sifive.com/
->
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json      | 3 ---
->  tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json      | 3 ---
->  .../perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json | 3 ---
->  .../perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json | 3 ---
->  4 files changed, 12 deletions(-)
->
-> diff --git a/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json b/=
-tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json
-> index 9b4a032186a7..5a996fa4b837 100644
-> --- a/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json
-> +++ b/tools/perf/pmu-events/arch/riscv/andes/ax45/firmware.json
-> @@ -35,9 +35,6 @@
->    {
->      "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
->    },
-> -  {
-> -    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
-> -  },
->    {
->      "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
->    },
-> diff --git a/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json b/=
-tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json
-> index 9b4a032186a7..5a996fa4b837 100644
-> --- a/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json
-> +++ b/tools/perf/pmu-events/arch/riscv/sifive/u74/firmware.json
-> @@ -35,9 +35,6 @@
->    {
->      "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
->    },
-> -  {
-> -    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
-> -  },
->    {
->      "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
->    },
-> diff --git a/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.=
-json b/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json
-> index 9b4a032186a7..5a996fa4b837 100644
-> --- a/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json
-> +++ b/tools/perf/pmu-events/arch/riscv/starfive/dubhe-80/firmware.json
-> @@ -35,9 +35,6 @@
->    {
->      "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
->    },
-> -  {
-> -    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
-> -  },
->    {
->      "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
->    },
-> diff --git a/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.=
-json b/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json
-> index 9b4a032186a7..5a996fa4b837 100644
-> --- a/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json
-> +++ b/tools/perf/pmu-events/arch/riscv/thead/c900-legacy/firmware.json
-> @@ -35,9 +35,6 @@
->    {
->      "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
->    },
-> -  {
-> -    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
-> -  },
->    {
->      "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
->    },
-> --
-> 2.46.0.rc2.264.g509ed76dc8-goog
->
+Hi Ted,
+
+Thank you for your detailed response.
+
+An attacker doesn't need to create a udev rule in the user's path because that isn't feasible. We need to consider scenarios where certain special devices (embedded systems) are designed from the outset with RT2X00 wireless network cards included in the udev rules. This is because they need to perform custom or automated functions related to the embedded system's operations.
+
+Therefore, what I want to emphasize is that while this vulnerability may not affect users who do not have udev rules configured, setting udev rules is not inherently insecure. It is a normal configuration. Without udev rules, USB devices cannot be properly invoked or perform additional functions under certain conditions. It's a necessary feature.
+
+However, for users utilizing RT2X00 drivers with this normal configuration, it directly allows the execution of the script without sudo, leading to a system crash. This indicates that the RT2X00 driver itself has a vulnerability that needs to be addressed. A robust and secure kernel and driver should not crash or dereference a null pointer regardless of the script run or the permissions used. We tested other drivers and did not encounter similar issues.
+
+I believe this issue should be considered from two aspects:
+
+1.The vulnerability indeed requires certain conditions to be triggered, but the configuration required is normal and necessary.
+2.Running the script does cause a kernel null pointer dereference. Any robust and secure system should not encounter null pointer dereferences or crashes.
+
+I understand your analogy with the /bin/bash example, and I'd like to clarify a couple of points to provide more context for why I believe this should be considered a security issue:
+
+Normal and Necessary Configuration: While it is true that setting up udev rules is not common among typical personal Ubuntu users, there are legitimate and necessary scenarios, especially in embedded Linux environments, where such configurations are required. For example, in industrial automation systems, USB devices are often used to connect various sensors and controllers. In such environments, udev rules are configured to automatically load specific drivers or execute scripts upon device connection to ensure the proper operation of the system. This setup is essential for the reliable functioning of the automation process and is not an example of an insecure configuration.
+
+System Robustness and Stability: Regardless of the configuration, a robust and secure system should handle unexpected inputs gracefully. In this case, running the script under the specified conditions causes a kernel null pointer dereference, leading to a system crash. For instance, consider a medical device scenario where a USB-connected device is used for critical patient monitoring. The udev rule is set to load necessary drivers and start monitoring software automatically upon connection. If an attacker can exploit this setup to cause a kernel crash, it can lead to severe consequences, including potential harm to patients. This example highlights that the presence of udev rules is not inherently insecure; rather, the kernel's inability to handle the input correctly is the underlying issue.
+
+These points underscore the importance of addressing this vulnerability. While the initial setup requires root permissions, the critical aspect is the kernel's handling of the input, which should be robust enough to prevent crashes or null pointer dereferences, ensuring the system's stability and security.
+
+
+Our requirement is to assign a CVE for this "bug" because it is an issue within the kernel. Since it is a problem, it poses a potential risk. Therefore, we believe it is necessary to address it accordingly.
+
+Because it involves a driver development error, we believe it is necessary and meaningful to address this issue.
+Cheers,
+
+
 
