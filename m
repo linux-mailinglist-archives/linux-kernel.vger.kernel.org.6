@@ -1,134 +1,138 @@
-Return-Path: <linux-kernel+bounces-275868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5565948B48
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:26:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1874948B4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF5C6B2559C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:26:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D441F22B5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9147D1BD03D;
-	Tue,  6 Aug 2024 08:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674931BD011;
+	Tue,  6 Aug 2024 08:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="MhlOlm+a"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oNkFNfgL"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647051BD00A;
-	Tue,  6 Aug 2024 08:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6DF1BCA06
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722932788; cv=none; b=SH5BNEvy0s8rrrGltRCvDuF5Ah7O+WWVuex77qy0MeIYkjMbWPHyFvHNwTt0qx9cU7BVtFlv/xtQvz6COfiPCKW74siysmD6hLlr/DS0mjMhBqM0y1nPK5fAh4PXjO5TB/E3c1dEYIbEiYpfUrNbKQ1kRX9fXj2BXU+D/ZcZMwI=
+	t=1722932844; cv=none; b=dnvkzYLpCKHMR0ftj4aA0an6o24IZrLINwRRDlPyX3yBc52tVRWBxCv5t5rihyB7mczMiCoNzMYPlQLeC54e/6C1q/eK/dE4qsBZqEi7cIOu2qIwfzT6c4J5ymF3azAFsvzlGXgP/7ToaYEqvtjOcJ1T4Q4W/eLEg3rnS55y6OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722932788; c=relaxed/simple;
-	bh=XVIfxLlcD8aXE+J8hdCh5vskTp9Tk/E9A2XP/YqNYxM=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HfQU3E1FQtw3a6lAEQ7PJHmvI2xoPVYT1p23ZCKvIg2j5v2rVWhKDSvnisPY3ytEQFVLm80wcIJ052Xpl1E643zLdSp+LG01LL7dgU8jjaQUXp5VEbKLIlP5mi7LzkXs6x3wAqeP5GFyJQwHbYg5tubtfYxcdKZDrDC+jIcnUCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=MhlOlm+a; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1722932787; x=1754468787;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=XVIfxLlcD8aXE+J8hdCh5vskTp9Tk/E9A2XP/YqNYxM=;
-  b=MhlOlm+aOEZc3P72AK339/IDVR1DnCY/lGvvAMaNcR2JL74F0ordZuef
-   SKIMxBCwfHMKb/t8CU4owc56N4HraocMPszW/uf0vnHlpOVt0x5/QP82F
-   P3ZbillGk/hJwgu98RPK5H4pmXFKJn3iFb9eRIVdwIDaGWl0Bp5Kxo9ul
-   k=;
-X-IronPort-AV: E=Sophos;i="6.09,267,1716249600"; 
-   d="scan'208";a="318395121"
-Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
-Thread-Topic: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 08:26:23 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.43.254:17875]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.21.248:2525] with esmtp (Farcaster)
- id 4f4de83e-f658-4ec0-843f-65d77b69dbad; Tue, 6 Aug 2024 08:26:22 +0000 (UTC)
-X-Farcaster-Flow-ID: 4f4de83e-f658-4ec0-843f-65d77b69dbad
-Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 6 Aug 2024 08:26:22 +0000
-Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19D004EUC001.ant.amazon.com (10.252.51.190) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 6 Aug 2024 08:26:22 +0000
-Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
- EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
- 15.02.1258.034; Tue, 6 Aug 2024 08:26:22 +0000
-From: "Gowans, James" <jgowans@amazon.com>
-To: "jack@suse.cz" <jack@suse.cz>, "jgg@ziepe.ca" <jgg@ziepe.ca>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rppt@kernel.org"
-	<rppt@kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, "Graf (AWS),
- Alexander" <graf@amazon.de>, "anthony.yznaga@oracle.com"
-	<anthony.yznaga@oracle.com>, "steven.sistare@oracle.com"
-	<steven.sistare@oracle.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Durrant, Paul" <pdurrant@amazon.co.uk>,
-	"seanjc@google.com" <seanjc@google.com>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "Woodhouse,
- David" <dwmw@amazon.co.uk>, "Saenz Julienne, Nicolas" <nsaenz@amazon.es>,
-	"muchun.song@linux.dev" <muchun.song@linux.dev>, "viro@zeniv.linux.org.uk"
-	<viro@zeniv.linux.org.uk>, "nh-open-source@amazon.com"
-	<nh-open-source@amazon.com>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>
-Thread-Index: AQHa5xp7YUfIGy2/kUGqgjccLElzprIZFmqAgAA56gCAAJYYAA==
-Date: Tue, 6 Aug 2024 08:26:21 +0000
-Message-ID: <0ecbbd25ccddcdf79b90fdfd25ac62ade6cfd01c.camel@amazon.com>
-References: <20240805093245.889357-1-jgowans@amazon.com>
-	 <20240805200151.oja474ju4i32y5bj@quack3> <20240805232908.GD676757@ziepe.ca>
-In-Reply-To: <20240805232908.GD676757@ziepe.ca>
-Accept-Language: en-ZA, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2C847BE97C8F2447A1A080B33F49ABEA@amazon.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1722932844; c=relaxed/simple;
+	bh=eIesG8t60+K8FeaonUdws/9nqAlhzL9g5yfZvQx+N1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G6UGAwJnRCdhBDUGa41soY6ZXIn7QLmRqljvnp4QetsymC1RoGKT9rEwJ5qTTyXNvnldxIDjux7cvnxAMbZpJvSi+SAHN5+yHZBy7Qt4KmiRDlZ4OB7v96QL1qM6eb1Zu3vdrRFdWQNc+2Ve+dJ7XBcTRSG8TS35k3ZKCogOJuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oNkFNfgL; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gGf1RRMLsvUqCDo/9XbUQDO+27CXmxKKBoYyC5G8/rg=; b=oNkFNfgLGqDL52M/3JAZQ/hjHi
+	yo7Xzbi9gXLhBsdoGUKv8tOP/WfubI70Cg8H6VF+Rotgz+cjHeFZg2Jcibhbfq/QpAJUjgUOjovol
+	y2Bk98ExWzGvW+C1BVixGcqgO72ONyWGatv6Cvm/Ykj5uGz5MlbmhdMHhCJ2IQeFvqu5lkc3FD+u9
+	nxQK7dPIro4nvLoqdSCYh9EvdvnXhB9Tw3NopugJj8sI0BYjSdGbxJ0mM3Vak9Gjs26UINuffKKiD
+	OfJOFqBAxE4VKxfk0/yYT19qtf36uv4/fQ9BNNyAZb8+yYB3VG9vO/o9dDFW5a+Iiho87BdOWLCoc
+	YHDYavyw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sbFXJ-00000005Rcc-06kN;
+	Tue, 06 Aug 2024 08:27:17 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3FD4B30049D; Tue,  6 Aug 2024 10:27:16 +0200 (CEST)
+Date: Tue, 6 Aug 2024 10:27:16 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
+	Ingo Molnar <mingo@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
+Message-ID: <20240806082716.GP37996@noisy.programming.kicks-ass.net>
+References: <ZpWjbCQPtuUcvo8r@slm.duckdns.org>
+ <20240723163358.GM26750@noisy.programming.kicks-ass.net>
+ <20240802122034.GZ12673@noisy.programming.kicks-ass.net>
+ <Zq0p154ndOtU9Ypu@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zq0p154ndOtU9Ypu@slm.duckdns.org>
 
-T24gTW9uLCAyMDI0LTA4LTA1IGF0IDIwOjI5IC0wMzAwLCBKYXNvbiBHdW50aG9ycGUgd3JvdGU6
-DQo+IA0KPiBPbiBNb24sIEF1ZyAwNSwgMjAyNCBhdCAxMDowMTo1MVBNICswMjAwLCBKYW4gS2Fy
-YSB3cm90ZToNCj4gDQo+ID4gPiA0LiBEZXZpY2UgYXNzaWdubWVudDogYmVpbmcgYWJsZSB0byB1
-c2UgZ3Vlc3RtZW1mcyBtZW1vcnkgZm9yDQo+ID4gPiBWRklPL2lvbW11ZmQgbWFwcGluZ3MsIGFu
-ZCBhbGxvdyB0aG9zZSBtYXBwaW5ncyB0byBzdXJ2aXZlIGFuZCBjb250aW51ZQ0KPiA+ID4gdG8g
-YmUgdXNlZCBhY3Jvc3Mga2V4ZWMuDQo+IA0KPiBUaGF0J3MgYSBmdW4gb25lLiBQcm9wb3NhbHMg
-Zm9yIHRoYXQgd2lsbCBiZSB2ZXJ5IGludGVyZXN0aW5nIQ0KDQpZdXAhIFdlIGhhdmUgYW4gTFBD
-IHNlc3Npb24gZm9yIHRoaXM7IGxvb2tpbmcgZm9yd2FyZCB0byBkaXNjdXNzaW5nIG1vcmUNCnRo
-ZXJlOiBodHRwczovL2xwYy5ldmVudHMvZXZlbnQvMTgvY29udHJpYnV0aW9ucy8xNjg2Lw0KSSds
-bCBiZSB3b3JraW5nIG9uIGEgaW9tbXVmZCBSRkMgc29vbjsgc2hvdWxkIGdldCBpdCBvdXQgYmVm
-b3JlIHRoZW4uDQoNCj4gDQo+ID4gVG8gbWUgdGhlIGJhc2ljIGZ1bmN0aW9uYWxpdHkgcmVzZW1i
-bGVzIGEgbG90IGh1Z2V0bGJmcy4gTm93IEkga25vdyB2ZXJ5DQo+ID4gbGl0dGxlIGRldGFpbHMg
-YWJvdXQgaHVnZXRsYmZzIHNvIEkndmUgYWRkZWQgcmVsZXZhbnQgZm9sa3MgdG8gQ0MuIEhhdmUg
-eW91DQo+ID4gY29uc2lkZXJlZCB0byBleHRlbmQgaHVnZXRsYmZzIHdpdGggdGhlIGZ1bmN0aW9u
-YWxpdHkgeW91IG5lZWQgKHN1Y2ggYXMNCj4gPiBwcmVzZXJ2YXRpb24gYWNyb3NzIGtleGVjKSBp
-bnN0ZWFkIG9mIGltcGxlbWVudGluZyBjb21wbGV0ZWx5IG5ldyBmaWxlc3lzdGVtPw0KPiANCj4g
-SW4gbW0gY2lyY2xlcyB3ZSd2ZSBicm9hZGx5IGJlZW4gdGFsa2luZyBhYm91dCBzcGxpdHRpbmcg
-dGhlICJtZW1vcnkNCj4gcHJvdmlkZXIiIHBhcnQgb3V0IG9mIGh1Z2V0bGJmcyBpbnRvIGl0cyBv
-d24gbGF5ZXIuIFRoaXMgd291bGQgaW5jbHVkZQ0KPiB0aGUgY2FydmluZyBvdXQgb2Yga2VybmVs
-IG1lbW9yeSBhdCBib290IGFuZCBvcmdhbml6aW5nIGl0IGJ5IHBhZ2UNCj4gc2l6ZSB0byBhbGxv
-dyBodWdlIHB0ZXMuDQo+IA0KPiBJdCB3b3VsZCBtYWtlIGFsb3Qgb2Ygc2Vuc2UgdG8gaGF2ZSBv
-bmx5IG9uZSBjYXJ2ZSBvdXQgbWVjaGFuaXNtLCBhbmQNCj4gc2V2ZXJhbCBjb25zdW1lcnMgLSBo
-dWdldGxiZnMsIHRoZSBuZXcgcHJpdmF0ZSBndWVzdG1lbWZkLCB0aGlzIHRoaW5nLA0KPiBmb3Ig
-ZXhhbXBsZS4NCg0KVGhlIGFjdHVhbCBhbGxvY2F0aW9uIGluIGd1ZXN0bWVtZnMgaXNuJ3QgdG9v
-IGNvbXBsZXgsIGJhc2ljYWxseSBqdXN0IGENCmhvb2sgaW4gbWVtX2luaXQoKSAodGhhdCdzIGEg
-Yml0IHl1Y2t5IGFzIGl0J3MgYXJjaC1zcGVjaWZpYykgYW5kIHRoZW4gYQ0KY2FsbCB0byBtZW1i
-bG9jayBhbGxvY2F0b3IuDQpUaGF0IGJlaW5nIHNhaWQsIHRoZSBmdW5jdGlvbmFsaXR5IGZvciB0
-aGlzIHBhdGNoIHNlcmllcyBpcyBjdXJyZW50bHkNCmludGVudGlvbmFsbHkgbGltaXRlZDogbWlz
-c2luZyBOVU1BIHN1cHBvcnQsIGFuZCBvbmx5IGRvaW5nIFBNRCAoMiBNaUIpDQpibG9jayBhbGxv
-Y2F0aW9ucyBmb3IgZmlsZXMgLSB3ZSB3YW50IFBVRCAoMSBHaUIpIHdoZXJlIHBvc3NpYmxlIGZh
-bGxpbmcNCmJhY2sgdG8gc3BsaXR0aW5nIHRvIDIgTWlCIGZvciBzbWFsbGVyIGZpbGVzLiBUaGF0
-IHdpbGwgY29tcGxpY2F0ZQ0KdGhpbmdzLCBzbyBwZXJoYXBzIGEgbWVtb3J5IHByb3ZpZGVyIHdp
-bGwgYmUgdXNlZnVsIHdoZW4gdGhpcyBnZXRzIG1vcmUNCmZ1bmN0aW9uYWxseSBjb21wbGV0ZS4g
-S2VlbiB0byBoZWFyIG1vcmUhDQoNCkpHDQoNCg0K
+On Fri, Aug 02, 2024 at 08:47:51AM -1000, Tejun Heo wrote:
+
+> > > +static bool consume_remote_task(struct rq *rq, struct scx_dispatch_q *dsq,
+> > > +				struct task_struct *p, struct rq *task_rq)
+> > > +{
+> > > +	bool moved = false;
+> > > +
+> > > +	lockdep_assert_held(&dsq->lock);	/* released on return */
+> > > +
+> > > +	/*
+> > > +	 * @dsq is locked and @p is on a remote rq. @p is currently protected by
+> > > +	 * @dsq->lock. We want to pull @p to @rq but may deadlock if we grab
+> > > +	 * @task_rq while holding @dsq and @rq locks. As dequeue can't drop the
+> > > +	 * rq lock or fail, do a little dancing from our side. See
+> > > +	 * move_task_to_local_dsq().
+> > > +	 */
+> > > +	WARN_ON_ONCE(p->scx.holding_cpu >= 0);
+> > > +	task_unlink_from_dsq(p, dsq);
+> > > +	dsq_mod_nr(dsq, -1);
+> > > +	p->scx.holding_cpu = raw_smp_processor_id();
+> > > +	raw_spin_unlock(&dsq->lock);
+> > > +
+> > > +	double_lock_balance(rq, task_rq);
+> > > +
+> > > +	moved = move_task_to_local_dsq(rq, p, 0);
+> > > +
+> > > +	double_unlock_balance(rq, task_rq);
+> > > +
+> > > +	return moved;
+> > > +}
+> > 
+> > I've gotta ask, why are you using the double_lock_balance() pattern
+> > instead of the one in move_queued_task() that does:
+> > 
+> >   lock src
+> >   dequeue src, task
+> >   set_task_cpu task, dst
+> >   unlock src
+> > 
+> >   lock dst
+> >   enqueue dst, task
+> >   unlock dst
+> 
+> When !CONFIG_PREEMPTION, double_lock_balance() seems cheaper than unlocking
+> and locking unconditionally. Because SCX schedulers can do a lot more hot
+> migrations, I thought it'd be better to go that way. I haven't actually
+> measured anything tho, so I could be wrong.
+
+So I think the theory is something like this.
+
+If you take a spinlock, you wait-time W is N times the hold-time H,
+where the hold-time is avg/max (depending on your analysis goals) time
+you hold the lock for, and N is the contention level or number of
+waiters etc.
+
+Now, when you go nest locks, your hold-time increases with the wait-time
+of the nested lock. In this case, since it's the 'same' lock, your
+hold-time gets a recursive wait-time term, that is: H'=H+N*H.
+
+This blows up your wait-time, which makes contention worse. Because what
+was W=N*H then becomes W=N*(N*H).
+
+Anyway, at the time we saw great benefits from moving away from the
+double-lock thing, it might be worth looking into when/if you see
+significant lock contention; because obviously if the locks are not
+contended it all doesn't matter.
 
