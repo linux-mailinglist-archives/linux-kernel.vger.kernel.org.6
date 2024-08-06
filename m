@@ -1,123 +1,137 @@
-Return-Path: <linux-kernel+bounces-275837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2739948AD4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:04:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88BD6948AD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD7E9287F59
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:04:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4465C28847A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F1716BE12;
-	Tue,  6 Aug 2024 08:04:08 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487E0166F3A;
+	Tue,  6 Aug 2024 08:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Wf7RlRJG"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2426B13D276;
-	Tue,  6 Aug 2024 08:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158152AF12;
+	Tue,  6 Aug 2024 08:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722931448; cv=none; b=R3hNMpJkLLF5URUFIDRESiKWPu1q9zzzJ6qmYfVS4nH3SWzxIhyGo9FtTF6cxNJaYXPNJ4YEQ2OAZdWPr6eScQtZVd9yya0CTiQwu36KbiDR/t0v6J5jRsJ3cqkdHd9+7/dqv7vMZYDZDO86PZ1eNZRrBQ4klBm/TDz5EigtuTg=
+	t=1722931458; cv=none; b=N+sAeB8Dwd0cD7ljwlax9ApFrdF5FLTJBFMH3yvKrpZkIwQwsG4o8SLKr2j/zrEZFgjqnpzkwoMYo8nZAw8XcHcTQxK/m0aLVs+VCvriGTcCqGbTxeDee2cyFPtym0nINA3K4qidrRaPQadYTREUzakTpUHnllkS+Yw6EEQhRcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722931448; c=relaxed/simple;
-	bh=2XgjUA3+Jq76hc3frjNsDmVolGe3r+NnQBfF+T8bkz4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nuByBJosPaM72vciUqboDlfMlOKm22JaVRvwm7vKjKcepr3az15eyW03rzyt9yVX5uDJ6zGupvmU5oG2sl8aQopy/Zoqyn44NtVv5MwGDuAF8MFjBEphLn5vOQuXER2h9xt2QsRL+yMRKfOPu9lLfsM8u3XY6LCee6aFS+5O1Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowAC3vEjZ2LFmRoTjAw--.506S2;
-	Tue, 06 Aug 2024 16:03:45 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: dinguyen@kernel.org,
-	bp@alien8.de,
-	tony.luck@intel.com,
-	james.morse@arm.com,
-	mchehab@kernel.org,
-	rric@kernel.org,
-	niravkumar.l.rabara@intel.com
-Cc: linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] EDAC/altera: Fix possible null pointer dereference
-Date: Tue,  6 Aug 2024 16:03:36 +0800
-Message-Id: <20240806080336.2396336-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1722931458; c=relaxed/simple;
+	bh=Goxo2+bPM4e12ASRTBhR5Gm6/sGX0OFpo+SiBnqJBcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RBtfQVxG3DitUBaA3TgI1PhKcxioSrLo6GmVn9rg3dTW0sKkzy6CKs+hSAWyLWvgD6GVK2f4ZB6la0dAD0tT4eQ/gblmROHEKRbcXXfvTmB+bsRTuPS01kevmWCyBV8qlrQNEyxDSYqCbqxBkMrlvULRD39Vvd0lsw+OgAT+Z+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Wf7RlRJG; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rG4y5YFeWU9pqt9794mGADXOWbUmzQj1vztLw6l4JcQ=; b=Wf7RlRJGkF/QzYCT5DZw5RpzDU
+	brBK/qRXEfvGG6gHMjrkyws3J2/y+zOCUZ+I0l1KxZtqubtN1WeoC93ORYURQzOqyeA9Ujhfsq9d8
+	WDJtJ4LgunYHekHnAymjQ7lI1cp1IN/nicO2hg9t7zMJJvcPf+Iyck8eYcIYm2Y8CCcSv9rb+7JgH
+	n5bdWCDxBOLAohNbjgoBrTQIgyGXacxauF1TNUTQz7j3dKGyZoAbHUEC6GOd5dC/NzbEUn8i34f95
+	r2DPlfhh/3PN7195gnFXYk01gyf7DFqte1ti/x+uQ2MLu1jOqf706j+CNyCBp3gWABS+tKIx1gMhH
+	JB523MvA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sbFAz-00000006ONZ-2K0F;
+	Tue, 06 Aug 2024 08:04:13 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 35E5030049D; Tue,  6 Aug 2024 10:04:13 +0200 (CEST)
+Date: Tue, 6 Aug 2024 10:04:13 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ubisectech Sirius <bugreport@valiantsec.com>
+Cc: linux-trace-kernel <linux-trace-kernel@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	mingo <mingo@redhat.com>, acme <acme@kernel.org>,
+	namhyung <namhyung@kernel.org>
+Subject: Re: WARNING in free_event
+Message-ID: <20240806080413.GM37996@noisy.programming.kicks-ass.net>
+References: <c6333ada-aa38-4876-9e57-881b3774397b.bugreport@valiantsec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAC3vEjZ2LFmRoTjAw--.506S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1fCr17Ww4rWFWDuw45KFg_yoW8Xw4xpr
-	W7W345tryUKa4UWr4vvws5XFy5C3Z3Xay0qrWIyayY93y3Xw15Jryj9FWUta4jqrW8Cay3
-	tr45tw45AayUJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBa14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
-	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20x
-	vY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I
-	3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIx
-	AIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAI
-	cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2js
-	IEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvtAUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6333ada-aa38-4876-9e57-881b3774397b.bugreport@valiantsec.com>
 
-In altr_s10_sdram_check_ecc_deps(), of_get_address() may return NULL which
-is later dereferenced. Fix this bug by adding NULL check.
-of_translate_address() is the same.
+On Mon, Aug 05, 2024 at 10:18:00AM +0800, Ubisectech Sirius wrote:
+> 
+> Hello.
+> We are Ubisectech Sirius Team, the vulnerability lab of China
+> ValiantSec. Recently, our team has discovered a issue in Linux kernel
+> 6.8. Attached to the email were a PoC file of the issue.
+> 
 
-Found by code review.
+I could not readily reproduce on a current kernel. Please double check
+against the latest kernel.
 
-Cc: stable@vger.kernel.org
-Fixes: e1bca853dddc ("EDAC/altera: Add SDRAM ECC check for U-Boot")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the check of of_translate_address() as suggestions.
----
- drivers/edac/altera_edac.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+> Stack dump:
+> 
+> ------------[ cut here ]------------
+> unexpected event refcount: 2; ptr=ffff888019589820
+> WARNING: CPU: 0 PID: 13593 at kernel/events/core.c:5254 free_event+0xa3/0xc0 kernel/events/core.c:5254
+> Modules linked in:
+> CPU: 0 PID: 13593 Comm: syz.3.346 Not tainted 6.8.0 #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> RIP: 0010:free_event+0xa3/0xc0 kernel/events/core.c:5254
+> Code: b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 75 25 48 8b b5 38 02 00 00 48 89 ea 48 c7 c7 00 03 d7 8a e8 3e a9 9a ff 90 <0f> 0b 90 90 5d 41 5c 41 5d e9 bf ed d5 ff 4c 89 ef e8 77 b1 2d 00
+> RSP: 0018:ffffc90001b379c8 EFLAGS: 00010286
+> RAX: 0000000000000000 RBX: dffffc0000000000 RCX: ffffffff814f699a
+> RDX: ffff88801e7b4980 RSI: ffffffff814f69a7 RDI: 0000000000000001
+> RBP: ffff888019589820 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000002
+> R13: ffff888019589a58 R14: ffff888019589b00 R15: ffff888019589820
+> FS:  0000000000000000(0000) GS:ffff88802c600000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f507464c360 CR3: 0000000053fa4000 CR4: 0000000000750ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> PKRU: 55555554
+> Call Trace:
+>  <TASK>
+>  perf_event_release_kernel+0x5d4/0x8f0 kernel/events/core.c:5421
+>  perf_release+0x37/0x50 kernel/events/core.c:5442
+>  __fput+0x282/0xbc0 fs/file_table.c:376
+>  task_work_run+0x16a/0x260 kernel/task_work.c:180
+>  exit_task_work include/linux/task_work.h:38 [inline]
+>  do_exit+0xaf0/0x2a40 kernel/exit.c:871
+>  do_group_exit+0xd4/0x2a0 kernel/exit.c:1020
+>  get_signal+0x2440/0x2630 kernel/signal.c:2893
+>  arch_do_signal_or_restart+0x81/0x7e0 arch/x86/kernel/signal.c:310
+>  exit_to_user_mode_loop kernel/entry/common.c:105 [inline]
+>  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+>  irqentry_exit_to_user_mode+0x13c/0x280 kernel/entry/common.c:225
+>  exc_page_fault+0xc6/0x180 arch/x86/mm/fault.c:1557
+>  asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
+> RIP: 0033:0x7fd5ec9958d5
+> Code: Unable to access opcode bytes at 0x7fd5ec9958ab.
+> RSP: 002b:0000000000000050 EFLAGS: 00010217
+> RAX: 0000000000000000 RBX: 00007fd5ecb33f60 RCX: 00007fd5ec9958cd
+> RDX: 0000000000000000 RSI: 0000000000000050 RDI: 0000000000000280
+> RBP: 00007fd5eca1bb06 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
+> R13: 000000000000000b R14: 00007fd5ecb33f60 R15: 00007fd5ed77a000
+>  </TASK>
+> 
+> 
+> Thank you for taking the time to read this email and we look forward to working with you further.
+> 
+> 
+> 
+> 
+> 
 
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index fe89f5c4837f..4fbfa338e05f 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -1086,6 +1086,7 @@ static int altr_s10_sdram_check_ecc_deps(struct altr_edac_device_dev *device)
- 	struct arm_smccc_res result;
- 	struct device_node *np;
- 	phys_addr_t sdram_addr;
-+	const __be32 *sdram_addrp;
- 	u32 read_reg;
- 	int ret;
- 
-@@ -1093,8 +1094,14 @@ static int altr_s10_sdram_check_ecc_deps(struct altr_edac_device_dev *device)
- 	if (!np)
- 		goto sdram_err;
- 
--	sdram_addr = of_translate_address(np, of_get_address(np, 0,
--							     NULL, NULL));
-+	sdram_addrp = of_get_address(np, 0, NULL, NULL);
-+	if (!sdram_addrp)
-+		return -EINVAL;
-+
-+	sdram_addr = of_translate_address(np, sdram_addrp);
-+	if (sdram_addr == OF_BAD_ADDR)
-+		return -EINVAL;
-+
- 	of_node_put(np);
- 	sdram_ecc_addr = (unsigned long)sdram_addr + prv->ecc_en_ofst;
- 	arm_smccc_smc(INTEL_SIP_SMC_REG_READ, sdram_ecc_addr,
--- 
-2.25.1
 
 
