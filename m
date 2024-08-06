@@ -1,162 +1,281 @@
-Return-Path: <linux-kernel+bounces-277050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596DA949B95
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:53:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA3B2949B98
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C8611C220E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:53:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33CF6B26E86
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888C9176FA0;
-	Tue,  6 Aug 2024 22:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFE6172BAE;
+	Tue,  6 Aug 2024 22:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="unct1XGg"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="wyHKUIut"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0129A59
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 22:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD4416F8FD
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 22:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722984711; cv=none; b=FC9i6W41MWh+ul/S38M5UAGdKChHrgu/u2Q6qEad/4S2QCLbyVWycbcq8Y9L5AEg/cE/F2tIkvhK2RYVuCfZDfxqvA50iLFJEma0aBRW116d4KOlAd974JMBjTvvXfX56fqphrkPKh+C++CyHI8BMrH+ZPiWOAnmGacKrNaj6PM=
+	t=1722984834; cv=none; b=IQV1o1ypJyW405FD3QFeM6db4+5oDHrGg46q20xcIgQaxamYwkqceWGwyL771s5nuSKhO0DT3inHCv1DG72knVzDDcqA2R4dLVeO+wfqQF29VBhZjIcUawbE1MluYxhyCZPp+uacyRdjtij9FXTbi3kXiZki2r/CZ4PUbsamOHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722984711; c=relaxed/simple;
-	bh=6Y9hXA6AzSaU8XwI9by7FO/wehIsVP4L7s1hSbagEhw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A+j10OTbm7H6+ZcZpseiD1MkzLZI+FzdBjDfy17sifQfg18zz67x/tv4rFnnQ5SarRhQEeekbD9YQtqH/0RMIUebTR3cHn9M/eJu1hfNGwHdHooJfqLSVj8ZRDZrhNWSDSZRHw2u1jMtnidekoqhuyA3jhsHiF5RvTlR9197508=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=unct1XGg; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-428f5c0833bso1751545e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 15:51:49 -0700 (PDT)
+	s=arc-20240116; t=1722984834; c=relaxed/simple;
+	bh=9VfVR2f2t0ueyMNKeDuMnIAc5gKoU+3ot0zpq0zg518=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IvQS0yNZYHr9VzGoJ9k5WUd5PZxucccrHw1ecVrzarG6LhaarF6sFkMgzJpgoecr7g3vTAHu2nEw8G3H14EQzWy66PxZ2Ty/jx6MawqJfDwVI+UkmMsgYNPJFbOKV0nGkmP9g0y+YOSO1w1Ut0vVIzI623Cg0W93FpZ+rwUYNes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=wyHKUIut; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d23caf8ddso1052551b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 15:53:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722984708; x=1723589508; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xOOp/YKmc/A5dqoD58ohOhoIfvgLzdB4FRBJ9eYiJAE=;
-        b=unct1XGgi9fmnMD9iSK9pVlCxvNlDiD5Lp/gPbFv4uYzLvbw/7ow/iaTj6yPaj4WiD
-         Hs+No/YjVOTtkebV5p/COu+t6TD51OXcWB+ZV9zjiZg05UIczXQxX/xO4mfH8xQDfB2Q
-         ZkIUwfM9W2IWQ4JwNSeKjNIfbSl1G4AUUgDsZE+ujoGUMsJ5694m9iwAtDHKVIuyMLeV
-         9JFRFdhcc2MywhEi4q+r3jxX08UjoK7ARQw8+P+i/O8OU5RsG+q1OYF3KIR3hBK7wFcE
-         D9eUYwDtY3/O7XZAYSnuTJ15ZC1yHqOPfpMKdskU/MgvIkWkowaLO1PfWVh30+zv3Tnf
-         jjPA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722984830; x=1723589630; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U9lqcqknIkZNKr/KUrs9ocm/EfBzQr5ie1FKgPteVbQ=;
+        b=wyHKUIut7YxJ2nElmw4K4LFwDcsJq4KHp2ExhfpmE1qFu95tpt0UIH6e6ZhOhZq/RV
+         eOthClF1ENUS8gtVNXEXHUGpIyr5zgenPVLLgiAC4wQT/CKP+S0T1AJmdBvRxDRIaygc
+         +eJXCtMXcapzK63D39Nvg3h83NvugdswnQKJwTamZ5gXb1RSbATTTt8C7OlcOaYx5UZZ
+         VNFWEFLnk4fL59GdpXR9DD114szjjL5FVuNERu//nP0wdFLuSu3vbZmrKhSgXKxY99sr
+         ShOiCe6z1ZHK02IZfcJK3T0nNFYj059iLPGi6F2XmYdWkwp4xjidu8sLpQtZESYiFILG
+         iPRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722984708; x=1723589508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xOOp/YKmc/A5dqoD58ohOhoIfvgLzdB4FRBJ9eYiJAE=;
-        b=GDZWW4lu6iLrEJEIf2zLqWT30XqIXKh7Cy9w2QYivii8UHU5vDBOqs6p2veSM5MWP4
-         nHiepELp7GHbF+0jcg7maaQZ3xPHOLWAW5u7a1M4wDXQvdEJ81Psa8ick+zEdCA9P54b
-         BDO8jlBOq5yFkPMj2EfD9XvsQU0Sp+JyuEIkqd1bCja058gAU+Ku/TE+TEWvK0nwRlTK
-         T6nCeI8j/PKIx6Xt90c8HfDBqM4nvloeQ8Fzn2kFa6/S4QfuplG2kv3fgIuvEG5nbVxR
-         HrAODA3a8KxscVF8pUQZrKscnLwhvLFSvJW+ghvRrTNjsBpTYPa2FMoP0TqOE66yo7Ep
-         mDbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvGgVzSDUJPQUeEqSMg7sbpwxrytppPJrLDeQ08FMrRetiNlIzrlzjykb7bYxnJbEdzesLCNi/Vc3Hq/g6EC9nznnKdjbZ5oF6Kg+Q
-X-Gm-Message-State: AOJu0YyC4monPAz7wdX8ALqkZnx2cRtX/3gfMeK9Xo/1b6fxPawDD05v
-	a5hiVntOiOHmN61SAoPb9r8O735k1bhSiC+jp3z/yvU5eGfD8M5QLhHmE1HeIBV6SNGVGtijXVX
-	+X5MD55wUJ9vPPkTLzw6fbDWLzZSvntnKUkZj
-X-Google-Smtp-Source: AGHT+IHxsJV05SvHmbLBzfkJ2/9CLauQTre175KYcg3syg2jB0hoXO5m25jbwBC+niHAL4vOTLYlDRqj7cIekZQCpiY=
-X-Received: by 2002:a05:600c:4fd2:b0:426:676a:c4d1 with SMTP id
- 5b1f17b1804b1-429050c87famr1855145e9.8.1722984707966; Tue, 06 Aug 2024
- 15:51:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722984830; x=1723589630;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U9lqcqknIkZNKr/KUrs9ocm/EfBzQr5ie1FKgPteVbQ=;
+        b=Px5GGaSEfP6F5tnataWWMFvcIYF4m1WJmQZq0BDwDQK8IIpqDRKSiqu+To03KBefnq
+         faMrnJvMV3cCRZNu7pDR699Cby5vkXozTJmbDDzaNNiHpcW++8/75J92GWr+QUUG+qvG
+         qUkmm26Aey3vKcvgFo3IpSMSMyOdX8rrmhBTe8/eCcV+IWO0UoHgF4EYGcWYH1+LFqzJ
+         kBfA3fBbe8PbFcDESjtgywQ/WdDKsNA/iK1+KILLULhTOvBl3M8v4xClLouOIzpHaZyW
+         nr9ATz5u61nhcns9YRdqJew8kJAU1yAoMD6d4499zCt0L5WMgLNPOdEA/Xgg2W4a0Ldk
+         9Gug==
+X-Forwarded-Encrypted: i=1; AJvYcCWchhedoixmZKR696QAuydm0Bfo/vZdnWPkT4OHASiRZR8hJNXbBfNWqJYrSVyHj4ZTbHgoMrwMMzbBLC9wbwo7cdKyvGaBmh/Rrm/s
+X-Gm-Message-State: AOJu0YwZ4bxqWGBlifM+hS/DIgRVhyADn1HLEqyuAbml5xAOxmKbFnIx
+	swIHi7an9zcl+ihLTybZaWLPb+JhWA2atyFb1m/cFaFEi4/ciucN/kJ04BSCDQI=
+X-Google-Smtp-Source: AGHT+IGfCa9EPhq0+cLJ8FNooOou6NRMGYCB8dr77pLtePhMz24rvpdJf9SLGtzqgJNYmfEB1epoig==
+X-Received: by 2002:a05:6a20:2452:b0:1c4:cae1:d53e with SMTP id adf61e73a8af0-1c6995aa7femr22895830637.22.1722984830187;
+        Tue, 06 Aug 2024 15:53:50 -0700 (PDT)
+Received: from localhost ([71.212.170.185])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec49b87sm7425888b3a.81.2024.08.06.15.53.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 15:53:49 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Nishanth Menon <nm@ti.com>,
+ Vibhore Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>, Akashdeep
+ Kaur <a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>,
+ linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 20240801195422.2296347-1-msp@baylibre.com
+Subject: Re: [PATCH 1/3] pmdomain: ti_sci: add per-device latency constraint
+ management
+In-Reply-To: <hhgcy6kkggxkvveftkk2dqzxskyyp542zwonocg7puouzuu4n2@bkccm5wbe2hj>
+References: <20240805-lpm-v6-10-constraints-pmdomain-v1-0-d186b68ded4c@baylibre.com>
+ <20240805-lpm-v6-10-constraints-pmdomain-v1-1-d186b68ded4c@baylibre.com>
+ <hhgcy6kkggxkvveftkk2dqzxskyyp542zwonocg7puouzuu4n2@bkccm5wbe2hj>
+Date: Tue, 06 Aug 2024 15:53:49 -0700
+Message-ID: <7hbk25w9du.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806111157.1336532-1-suleiman@google.com>
-In-Reply-To: <20240806111157.1336532-1-suleiman@google.com>
-From: Joel Fernandes <joelaf@google.com>
-Date: Tue, 6 Aug 2024 18:51:36 -0400
-Message-ID: <CAJWu+oqp9sUDOvKB23p+_C1cTvFj8sQptfz30UwrWJyKhf1ckg@mail.gmail.com>
-Subject: Re: [PATCH] sched: Don't try to catch up excess steal time.
-To: Suleiman Souhlal <suleiman@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, vineethrp@google.com, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, ssouhlal@freebsd.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Aug 6, 2024 at 7:13=E2=80=AFAM Suleiman Souhlal <suleiman@google.co=
-m> wrote:
->
-> When steal time exceeds the measured delta when updating clock_task, we
-> currently try to catch up the excess in future updates.
-> However, this results in inaccurate run times for the future clock_task
-> measurements, as they end up getting additional steal time that did not
-> actually happen, from the previous excess steal time being paid back.
->
-> For example, suppose a task in a VM runs for 10ms and had 15ms of steal
-> time reported while it ran. clock_task rightly doesn't advance. Then, a
-> different task runs on the same rq for 10ms without any time stolen.
-> Because of the current catch up mechanism, clock_sched inaccurately ends
-> up advancing by only 5ms instead of 10ms even though there wasn't any
-> actual time stolen. The second task is getting charged for less time
-> than it ran, even though it didn't deserve it.
-> In other words, tasks can end up getting more run time than they should
-> actually get.
->
-> So, we instead don't make future updates pay back past excess stolen time=
-.
->
-> Signed-off-by: Suleiman Souhlal <suleiman@google.com>
-> ---
->  kernel/sched/core.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index bcf2c4cc0522..42b37da2bda6 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -728,13 +728,15 @@ static void update_rq_clock_task(struct rq *rq, s64=
- delta)
->  #endif
->  #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
->         if (static_key_false((&paravirt_steal_rq_enabled))) {
-> -               steal =3D paravirt_steal_clock(cpu_of(rq));
-> +               u64 prev_steal;
-> +
-> +               steal =3D prev_steal =3D paravirt_steal_clock(cpu_of(rq))=
-;
->                 steal -=3D rq->prev_steal_time_rq;
->
->                 if (unlikely(steal > delta))
->                         steal =3D delta;
->
-> -               rq->prev_steal_time_rq +=3D steal;
-> +               rq->prev_steal_time_rq =3D prev_steal;
->                 delta -=3D steal;
+Markus Schneider-Pargmann <msp@baylibre.com> writes:
 
-Makes sense, but wouldn't this patch also do the following: If vCPU
-task is the only one running and has a large steal time, then
-sched_tick() will only freeze the clock for a shorter period, and not
-give future credits to the vCPU task itself?  Maybe it does not matter
-(and I probably don't understand the code enough) but thought I would
-mention.
-
-I am also not sure if the purpose of stealtime is to credit individual
-tasks, or rather all tasks on the runqueue because the "whole
-runqueue" had time stolen.. No where in this function is it dealing
-with individual tasks but rather the rq itself.
-
-Thoughts?
-
- - Joel
-
-
-
->         }
->  #endif
-> --
-> 2.46.0.rc2.264.g509ed76dc8-goog
+> Hi Kevin,
 >
+> On Mon, Aug 05, 2024 at 04:38:39PM GMT, Kevin Hilman wrote:
+>> For each device in a TI SCI PM domain, check whether the device has
+>> any resume latency constraints set via per-device PM QoS.  If
+>> constraints are set, send them to DM via the new SCI constraints API.
+>> 
+>> Checking for constraints happen:
+>> 
+>> 1) before SCI PM domain power off (->power_off() hook)
+>> 2) before system-wide suspend (via ->suspend() hook)
+>> 
+>> For TI SCI devices that are runtime PM enabled, check (1) will be the
+>> primary method, and will happen when the TI SCI PM domain is powered
+>> off (e.g. when the runtime PM usecount of the last device in that
+>> domain goes to zero.)
+>> 
+>> For devices that are either not runtime PM enabled, or are not yet
+>> runtime suspended (e.g. due to being used during the suspend path),
+>> the constraints check will happen by check(2).
+>> 
+>> Since constraints can be sent by either (1) or (2), driver keeps track
+>> of whether a valid constraint has been sent already.
+>> 
+>> An important detail here is that the PM domain driver inserts itself
+>> into the path of both the ->suspend() and ->resume() hook path
+>> of *all* devices in the PM domain.  This allows generic PM domain code
+>> to handle the constraint management and communication with TI SCI.
+>> 
+>> Further, this allows device drivers to use existing PM QoS APIs to
+>> add/update constraints.
+>> 
+>> DM firmware clears constraints during its resume, so Linux has
+>> to check/update/send constraints each time system suspends.
+>> 
+>> Co-developed-by: Vibhore Vardhan <vibhore@ti.com>
+>> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
+>> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+>> Signed-off-by: Dhruva Gole <d-gole@ti.com>
+>
+> Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
+>
+> In general this looks good, two small things below.
+>
+>> ---
+>>  drivers/pmdomain/ti/ti_sci_pm_domains.c | 92 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 91 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+>> index 1510d5ddae3d..4dc48a97f9b8 100644
+>> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
+>> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+>> @@ -13,6 +13,8 @@
+>>  #include <linux/platform_device.h>
+>>  #include <linux/pm_domain.h>
+>>  #include <linux/slab.h>
+>> +#include <linux/pm_qos.h>
+>> +#include <linux/pm_runtime.h>
+>>  #include <linux/soc/ti/ti_sci_protocol.h>
+>>  #include <dt-bindings/soc/ti,sci_pm_domain.h>
+>>  
+>> @@ -47,10 +49,46 @@ struct ti_sci_pm_domain {
+>>  	struct generic_pm_domain pd;
+>>  	struct list_head node;
+>>  	struct ti_sci_genpd_provider *parent;
+>> +	s32 lat_constraint;
+>> +	bool constraint_sent;
+>>  };
+>>  
+>>  #define genpd_to_ti_sci_pd(gpd) container_of(gpd, struct ti_sci_pm_domain, pd)
+>>  
+>> +static inline bool ti_sci_pd_is_valid_constraint(s32 val)
+>> +{
+>> +	return val != PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
+>> +}
+>> +
+>> +static int ti_sci_pd_send_constraint(struct device *dev, s32 val)
+>> +{
+>> +	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+>> +	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
+>> +	const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
+>> +	int ret;
+>> +
+>> +	ret = ti_sci->ops.pm_ops.set_latency_constraint(ti_sci, val, TISCI_MSG_CONSTRAINT_SET);
+>> +	if (!ret) {
+>> +		pd->constraint_sent = true;
+>> +		dev_dbg(dev, "ti_sci_pd: ID:%d set latency constraint %d\n",
+>> +			pd->idx, val);
+>> +	} else {
+>> +		dev_err(dev, "ti_sci_pd: set latency constraint failed: ret=%d\n",
+>> +			ret);
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static inline void ti_sci_pd_clear_constraints(struct device *dev)
+>> +{
+>> +	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+>> +	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
+>> +
+>> +	pd->lat_constraint = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
+>> +	pd->constraint_sent = false;
+>> +}
+>> +
+>>  /*
+>>   * ti_sci_pd_power_off(): genpd power down hook
+>>   * @domain: pointer to the powerdomain to power off
+>> @@ -59,6 +97,18 @@ static int ti_sci_pd_power_off(struct generic_pm_domain *domain)
+>>  {
+>>  	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(domain);
+>>  	const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
+>> +	struct pm_domain_data *pdd;
+>> +
+>> +	list_for_each_entry(pdd, &domain->dev_list, list_node) {
+>> +		struct device *dev = pdd->dev;
+>> +		s32 val;
+>> +
+>> +		/* If device has any resume latency constraints, send 'em */
+>> +		val = dev_pm_qos_read_value(dev, DEV_PM_QOS_RESUME_LATENCY);
+>> +		if (ti_sci_pd_is_valid_constraint(val) && !pd->constraint_sent)
+>> +			ti_sci_pd_send_constraint(dev, val);
+>> +		pd->lat_constraint = val;
+>> +	}
+>>  
+>>  	return ti_sci->ops.dev_ops.put_device(ti_sci, pd->idx);
+>>  }
+>> @@ -79,6 +129,38 @@ static int ti_sci_pd_power_on(struct generic_pm_domain *domain)
+>>  		return ti_sci->ops.dev_ops.get_device(ti_sci, pd->idx);
+>>  }
+>>  
+>> +static int ti_sci_pd_resume(struct device *dev)
+>> +{
+>> +	ti_sci_pd_clear_constraints(dev);
+>> +	return pm_generic_resume(dev);
+>> +}
+>> +
+>> +static int ti_sci_pd_suspend(struct device *dev)
+>> +{
+>> +	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+>> +	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
+>> +	s32 val;
+>> +	int ret;
+>> +
+>> +	ret = pm_generic_suspend(dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Check if device has any resume latency constraints */
+>> +	val = dev_pm_qos_read_value(dev, DEV_PM_QOS_RESUME_LATENCY);
+>> +	if (ti_sci_pd_is_valid_constraint(val) && !pd->constraint_sent) {
+>> +		if (genpd && genpd->status == GENPD_STATE_OFF)
+>> +			dev_warn(dev, "%s: %s: already off.\n", genpd->name, __func__);
+>> +		else if (pm_runtime_suspended(dev))
+>> +			dev_warn(dev, "%s: %s: already RPM suspended.\n", genpd->name, __func__);
+>> +		else
+>> +			ti_sci_pd_send_constraint(dev, val);
+>> +	}
+>> +	pd->lat_constraint = val;
+>
+> Could you get rid of pd->constraint_sent? I don't really see a situation
+> where it would be necessary.
+
+It is necessary for runtime PM enabled devices that also use
+constraints.  For a device like that, if a constraint is present it will
+be sent when the PM domain is powered off (right after the runtime PM
+usecount goes to zero.)  Later, during system-wide suspend, the suspend
+hook for that same device might try to send the constraint again if we
+don't keep track of whether the constraint was already sent.
+
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  /*
+>>   * ti_sci_pd_xlate(): translation service for TI SCI genpds
+>>   * @genpdspec: DT identification data for the genpd
+>> @@ -188,7 +270,15 @@ static int ti_sci_pm_domain_probe(struct platform_device *pdev)
+>>  				pd->pd.power_on = ti_sci_pd_power_on;
+>>  				pd->idx = args.args[0];
+>>  				pd->parent = pd_provider;
+>> -
+>> +				pd->lat_constraint = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
+>
+> Optionally you could use ti_sci_pd_clear_constraints() here instead.
+
+hmm, yes.  Good catch.
+
+Kevin
 
