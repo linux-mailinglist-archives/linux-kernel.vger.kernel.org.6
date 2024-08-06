@@ -1,175 +1,158 @@
-Return-Path: <linux-kernel+bounces-275547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A548A948713
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:46:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D952948706
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 332F71F23703
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A37D91F2374B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCC1AD51;
-	Tue,  6 Aug 2024 01:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF63A947;
+	Tue,  6 Aug 2024 01:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="wVyppMX6"
-Received: from jpms-ob01.noc.sony.co.jp (jpms-ob01.noc.sony.co.jp [211.125.140.164])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KFAlwiQi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CEA625;
-	Tue,  6 Aug 2024 01:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC8164A
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 01:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722908776; cv=none; b=Sxm4KcwuhVEEbEmadBwS+2cxZTHgmvBZDa3+j6nPslE7wSIK0VCRT2wrujzGvPEb9JWSMq8uzIdri61PMWdg3qsp3sLC1cb1zkihb+cBKuW3FDWqSzxki+uQjBcQ9ZDr/42x3MJGn9PvChBBk5ffGlCpiTp1RuYwvcXjM9lTH1I=
+	t=1722908214; cv=none; b=YqmtvOAvjWueNOQ4jJqObMJwB/LCxgYcJwR2QOlOmvB6lXXWbOPGni7OhV86XG8MDcg5VzrnrMF1P+CD+tvLR/PUldjGsQunObc7082/wDk0CkOJE8MU88YAdcI5PdnMnljSA/cx5OezXirgPxNmQGmzWZJLcmNJUiKSCoP1DTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722908776; c=relaxed/simple;
-	bh=PN2WYtrMkPO/2AIM0NOaircCgusQi2bOHSQYLj+X8Ng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mq7IYW9jCKIU0etsKCIt/GgMrnLGqic1hgAY8KYjIUrYCRuzJ/Bjhq58OQOTxDF/rdlhJ/ryl8X+zjsvmfEEvwmKREOYhZbV588cUHJb7ELf0Mb23on1f2/SSf71xlGDO1ezIYXw8qHh/l7ICLovi3jPV5zthOf4myzpjH+hcYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=wVyppMX6; arc=none smtp.client-ip=211.125.140.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=sony.com; s=s1jp; t=1722908773; x=1754444773;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1WeBvTic2bppPI7/toUgsscC2plQem/Mw3G2AfbZQKk=;
-  b=wVyppMX67yWObapC+MS9MJr9goq7aCXPOHSKlJbUsPLm+fMZa9Tv1sgP
-   XdPYRUeufUbPhq2WZU45+PiE84JWNf8ArUceLDavYLRnj4y7ILc0RofDf
-   ECo9mvYhhBT2AFklxzeD42nmonNguGnqviCloFFzOTaNOnpa2/Hhw4qEp
-   S/vFLS81a9NTa0jakMHX2gzutfLNPYkHK+t4y8mO9W6DBbdnNneBEvvNK
-   WJ7j2JfM6HqyXbfDS3akOv91AGXa4oxnFAPdtXNek2dNotbYniSYLRv0O
-   lZ8VJc3oHOnhW0dGKX3lPMhG48bv4QQ3p1br/yVbwf374BngBD484CAzK
-   Q==;
-Received: from unknown (HELO jpmta-ob02.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::7])
-  by jpms-ob01.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 10:36:03 +0900
-X-IronPort-AV: E=Sophos;i="6.09,266,1716217200"; 
-   d="scan'208";a="419612431"
-Received: from unknown (HELO LXJ00013846) ([IPv6:2001:cf8:1:1611:9e7b:efff:fe46:27de])
-  by jpmta-ob02.noc.sony.co.jp with ESMTP; 06 Aug 2024 10:36:03 +0900
-Date: Tue, 6 Aug 2024 10:36:10 +0900
-From: Keita Aihara <keita.aihara@sony.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jonathan Bell <jonathan@raspberrypi.com>, Tim.Bird@sony.com,
-	Shingo.Takeuchi@sony.com, Masaya.Takahashi@sony.com,
-	keita.aihara@sony.com, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mmc: core: apply SD quirks earlier during probe
-Message-ID: <20240806013610.GA3438728@sony.com>
-References: <20240802032121.GA4019194@sony.com>
- <CAPDyKFoTdMpvuXR16OqY8G6t_4jCJDW9+wz=_fBc=kZSL1KbqQ@mail.gmail.com>
+	s=arc-20240116; t=1722908214; c=relaxed/simple;
+	bh=ZWIc9UiiQFPiR8u4e0A0kpQqLGQVVtnBuEwmNS0uIiY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZE8gvz2oDF6VKcrw3kg1bvOJXAsSdmbBl1ct2JcbWLm8yQfLPzeKvZ/rrFiR4MylAf/PiDAebk3Uy6QC2xGIB4KKWPiYyXypTcMmM20VdAM/NmdONMELuzWFdrLnKqWOsvwyDP4wX94qxlIn9YVWBmRGpgvQvT2yYRrqlYiEv5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KFAlwiQi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722908211;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UcEhLUCnxr7i/FrVr2sXDzvhlO4CjTTmW0PE+1dyQyA=;
+	b=KFAlwiQiZNchro7toeVR8u92kcQixBHJpjTmIB1XW52Rp8fKxBHn0f3ENId504zXEGm54Z
+	xGaWAym6IQbS6k9/ERZsKtaRdueYHD+IGm5yBwfg5QrqAjdcoJ7oYn8nY6BGFI8YN0CKil
+	Iq054wmE0nbDv0+jbl4rQ3IZ7ie3ID8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-408-XsOgrf39M7iwiP_Lsp_wlA-1; Mon,
+ 05 Aug 2024 21:36:47 -0400
+X-MC-Unique: XsOgrf39M7iwiP_Lsp_wlA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 051061955F43;
+	Tue,  6 Aug 2024 01:36:46 +0000 (UTC)
+Received: from [10.22.32.51] (unknown [10.22.32.51])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 44D3130001AD;
+	Tue,  6 Aug 2024 01:36:44 +0000 (UTC)
+Message-ID: <218314e9-7c7c-490c-bb2e-9611243cade3@redhat.com>
+Date: Mon, 5 Aug 2024 21:36:43 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFoTdMpvuXR16OqY8G6t_4jCJDW9+wz=_fBc=kZSL1KbqQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] lockdep: clarify size for LOCKDEP_*_BITS configs
+To: Carlos Llamas <cmllamas@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
+ Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
+References: <20240806010128.402852-1-cmllamas@google.com>
+ <20240806010128.402852-3-cmllamas@google.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240806010128.402852-3-cmllamas@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Mon, Aug 05, 2024 at 12:14:25PM +0200, Ulf Hansson wrote:
-> On Fri, 2 Aug 2024 at 05:21, Keita Aihara <keita.aihara@sony.com> wrote:
-> >
-> > Applying MMC_QUIRK_BROKEN_SD_CACHE is broken, as the card's extended
-> > registers are parsed prior to the quirk being applied in mmc_blk.
+On 8/5/24 21:01, Carlos Llamas wrote:
+> The LOCKDEP_*_BITS configs control the size of internal structures used
+> by lockdep. The size is calculated as a power of two of the configured
+> value (e.g. 16 => 64KB). Update these descriptions to more accurately
+> reflect this, as "Bitsize" can be misleading.
 >
-> In what way is it a problem to read the extended registers first?
-
-SD quirks are referenced by mmc_card_broken_sd_cache() in
-sd_parse_ext_reg_perf(). If the quirk is set, SD_EXT_PERF_CACHE is not
-set to card->ext_perf.feature_support and the cache support will not be
-enabled.
-
-Therefore, SD quirks should be initialized before parsing the extension
-registers.
-
+> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Will Deacon <will@kernel.org>
+> Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> ---
+>   lib/Kconfig.debug | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
 >
-> >
-> > Split this out into an SD-specific list of quirks and apply in
-> > mmc_sd_init_card instead.
-> >
-> > Fixes: c467c8f08185 ("mmc: Add MMC_QUIRK_BROKEN_SD_CACHE for Kingston Canvas Go Plus from 11/2019")
-> > Authored-by: Jonathan Bell <jonathan@raspberrypi.com>
-> > Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
-> > Signed-off-by: Keita Aihara <keita.aihara@sony.com>
->
-> Kind regards
-> Uffe
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index baaaedfde0cb..e0614a415348 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -1505,7 +1505,7 @@ config LOCKDEP_SMALL
+>   	bool
+>   
+>   config LOCKDEP_BITS
+> -	int "Bitsize for MAX_LOCKDEP_ENTRIES"
+> +	int "Size for MAX_LOCKDEP_ENTRIES (as Nth power of 2)"
+>   	depends on LOCKDEP && !LOCKDEP_SMALL
+>   	range 10 24
+>   	default 15
+> @@ -1513,7 +1513,7 @@ config LOCKDEP_BITS
+>   	  Try increasing this value if you hit "BUG: MAX_LOCKDEP_ENTRIES too low!" message.
+>   
+>   config LOCKDEP_CHAINS_BITS
+> -	int "Bitsize for MAX_LOCKDEP_CHAINS"
+> +	int "Size for MAX_LOCKDEP_CHAINS (as Nth power of 2)"
+>   	depends on LOCKDEP && !LOCKDEP_SMALL
+>   	range 10 21
+>   	default 16
+> @@ -1521,7 +1521,7 @@ config LOCKDEP_CHAINS_BITS
+>   	  Try increasing this value if you hit "BUG: MAX_LOCKDEP_CHAINS too low!" message.
+>   
+>   config LOCKDEP_STACK_TRACE_BITS
+> -	int "Bitsize for MAX_STACK_TRACE_ENTRIES"
+> +	int "Size for MAX_STACK_TRACE_ENTRIES (as Nth power of 2)"
+>   	depends on LOCKDEP && !LOCKDEP_SMALL
+>   	range 10 26
+>   	default 19
+> @@ -1529,7 +1529,7 @@ config LOCKDEP_STACK_TRACE_BITS
+>   	  Try increasing this value if you hit "BUG: MAX_STACK_TRACE_ENTRIES too low!" message.
+>   
+>   config LOCKDEP_STACK_TRACE_HASH_BITS
+> -	int "Bitsize for STACK_TRACE_HASH_SIZE"
+> +	int "Size for STACK_TRACE_HASH_SIZE (as Nth power of 2)"
+>   	depends on LOCKDEP && !LOCKDEP_SMALL
+>   	range 10 26
+>   	default 14
+> @@ -1537,7 +1537,7 @@ config LOCKDEP_STACK_TRACE_HASH_BITS
+>   	  Try increasing this value if you need large STACK_TRACE_HASH_SIZE.
+>   
+>   config LOCKDEP_CIRCULAR_QUEUE_BITS
+> -	int "Bitsize for elements in circular_queue struct"
+> +	int "Size for elements in circular_queue struct (as Nth power of 2)"
+>   	depends on LOCKDEP
+>   	range 10 26
+>   	default 12
 
-Best regards,
-Keita Aihara
+Many kernel developers understand that BITS refers to a size of 2^n. 
+Besides LOCKDEP, there are also many instances of such use in other 
+kconfig entries. It can be a bit odd to explicitly state that just for 
+LOCKDEP.
 
->
-> > ---
-> >  drivers/mmc/core/quirks.h | 22 +++++++++++++---------
-> >  drivers/mmc/core/sd.c     |  4 ++++
-> >  2 files changed, 17 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/mmc/core/quirks.h b/drivers/mmc/core/quirks.h
-> > index cca71867bc4a..92905fc46436 100644
-> > --- a/drivers/mmc/core/quirks.h
-> > +++ b/drivers/mmc/core/quirks.h
-> > @@ -15,6 +15,19 @@
-> >
-> >  #include "card.h"
-> >
-> > +static const struct mmc_fixup __maybe_unused mmc_sd_fixups[] = {
-> > +       /*
-> > +        * Kingston Canvas Go! Plus microSD cards never finish SD cache flush.
-> > +        * This has so far only been observed on cards from 11/2019, while new
-> > +        * cards from 2023/05 do not exhibit this behavior.
-> > +        */
-> > +       _FIXUP_EXT("SD64G", CID_MANFID_KINGSTON_SD, 0x5449, 2019, 11,
-> > +                  0, -1ull, SDIO_ANY_ID, SDIO_ANY_ID, add_quirk_sd,
-> > +                  MMC_QUIRK_BROKEN_SD_CACHE, EXT_CSD_REV_ANY),
-> > +
-> > +       END_FIXUP
-> > +};
-> > +
-> >  static const struct mmc_fixup __maybe_unused mmc_blk_fixups[] = {
-> >  #define INAND_CMD38_ARG_EXT_CSD  113
-> >  #define INAND_CMD38_ARG_ERASE    0x00
-> > @@ -53,15 +66,6 @@ static const struct mmc_fixup __maybe_unused mmc_blk_fixups[] = {
-> >         MMC_FIXUP("MMC32G", CID_MANFID_TOSHIBA, CID_OEMID_ANY, add_quirk_mmc,
-> >                   MMC_QUIRK_BLK_NO_CMD23),
-> >
-> > -       /*
-> > -        * Kingston Canvas Go! Plus microSD cards never finish SD cache flush.
-> > -        * This has so far only been observed on cards from 11/2019, while new
-> > -        * cards from 2023/05 do not exhibit this behavior.
-> > -        */
-> > -       _FIXUP_EXT("SD64G", CID_MANFID_KINGSTON_SD, 0x5449, 2019, 11,
-> > -                  0, -1ull, SDIO_ANY_ID, SDIO_ANY_ID, add_quirk_sd,
-> > -                  MMC_QUIRK_BROKEN_SD_CACHE, EXT_CSD_REV_ANY),
-> > -
-> >         /*
-> >          * Some SD cards lockup while using CMD23 multiblock transfers.
-> >          */
-> > diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-> > index 1c8148cdda50..ee37ad14e79e 100644
-> > --- a/drivers/mmc/core/sd.c
-> > +++ b/drivers/mmc/core/sd.c
-> > @@ -26,6 +26,7 @@
-> >  #include "host.h"
-> >  #include "bus.h"
-> >  #include "mmc_ops.h"
-> > +#include "quirks.h"
-> >  #include "sd.h"
-> >  #include "sd_ops.h"
-> >
-> > @@ -1475,6 +1476,9 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
-> >                         goto free_card;
-> >         }
-> >
-> > +       /* Apply quirks prior to card setup */
-> > +       mmc_fixup_device(card, mmc_sd_fixups);
-> > +
-> >         err = mmc_sd_setup_card(host, card, oldcard != NULL);
-> >         if (err)
-> >                 goto free_card;
-> > --
-> > 2.43.2
-> >
+Cheers,
+Longman
+
+
 
