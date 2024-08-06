@@ -1,131 +1,147 @@
-Return-Path: <linux-kernel+bounces-276950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F8A949A4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:37:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F369D949A4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39F9E1F2317F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:37:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B65282102
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B68815F409;
-	Tue,  6 Aug 2024 21:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B055016B75B;
+	Tue,  6 Aug 2024 21:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NrW5R93f"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MHtt3XHr"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B06E82863
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 21:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7945D14F9D7;
+	Tue,  6 Aug 2024 21:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722980228; cv=none; b=ThJLyPBFuGvfQbmikkozWVPe5t/SLQIyCC5Dsl/MSjSSJoP31W7Q6tGi0pXkl+OqJSZ1k/rcS81fUffSdDWFhRG+bG6emkI65+Qnq798WG9ftbP4NJ4JOBa305J3jdJZtzwxCMO45CivA065jwISzpSH0Srs/VHTCRL5bs4voqw=
+	t=1722980242; cv=none; b=lCmSmd+YBMXaCsZ/KiGTIwZlnpQSGva9eaDf0xjkPQImp8AnH7Y8xAPHgF4fuF/6MN/sFyY3n1XtgOVwVs+Ib1xU2DBeJRN00RAfKT/j1znDnl4cPr1B8psmr2d8jdXZbgIxaxZccMiBi6QV/N0aloAfIYcnGnn2jvbS0NdTb7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722980228; c=relaxed/simple;
-	bh=iGfua2WZ8ZPalx5KnQbpkjx/XN2O6toZy/TytvDzeaA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BSSMJPC8efsF1od4Vnh+ax1AeUejOltVGmlHTHUrpx+oELDDqZQALsnFqGDcJO9/kVr5b9tVrbNUot5k9H8Q5RtIsB6iPGCQ15KdBPkHHg1KR7DTTcRudgWhVdNw3WfRrw/h3J81CU+HtU5qCvBfRnId23i3Ipcb6vptVaKeGZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NrW5R93f; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722980227; x=1754516227;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=iGfua2WZ8ZPalx5KnQbpkjx/XN2O6toZy/TytvDzeaA=;
-  b=NrW5R93f23bUNMhQBLlubymud6Dhke93SmwKX8Gx8uLE7PF42t0HiEFT
-   0HYq4vEyskTppOYvi0pegdlml7EzL1l5piF9Idx3QADwoczYDcMptQYxm
-   EmLoHTOMo26vSdFGF80bkFzX5ZUTt4OVyp23TxiV70Rdr0US6ArS+GgMQ
-   kyhOn39YceUaOmknosII75VNzCZjF4fwAobeQisUJPS9wFgcB9kwTGeUj
-   DA3+vpipz1VoPkSDmeYdPPZXdFM25JmeGWMkEgfXBvzPKsAfChk9w/ygm
-   ixgDmiXKHxdGPqWcUHUcAvX82wgvMGSVXNR5nm8Zwbc1v54DOjHNTamjH
-   Q==;
-X-CSE-ConnectionGUID: tHYXoZoGSdCCI2pgR7cozA==
-X-CSE-MsgGUID: hzkY4jOgQhqjudeW4gFg5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="38479469"
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="38479469"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 14:37:06 -0700
-X-CSE-ConnectionGUID: XMAwgPXEQv6XHRk+XHrNHg==
-X-CSE-MsgGUID: 2bs4Naj+Qo6u7tRwlXBHzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="56590134"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 14:37:06 -0700
-Received: from [10.212.84.25] (kliang2-mobl1.ccr.corp.intel.com [10.212.84.25])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 8D10920CFECD;
-	Tue,  6 Aug 2024 14:37:04 -0700 (PDT)
-Message-ID: <20ba40ec-7e2a-4a0d-b9d3-fe8e1256fbb8@linux.intel.com>
-Date: Tue, 6 Aug 2024 17:37:02 -0400
+	s=arc-20240116; t=1722980242; c=relaxed/simple;
+	bh=8kHm+ac+kygNQxYV5Z1B1h2y1ADNWsDkiwXd93UvjBw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MBfMT3YfFk4XX8RdcIHi6Xdo2yZwK0untn2J94fFq2rhClsTV/5JfnNwqzNwt3PiKp6cCG55BbcBXQSBPOk2UP8kLgph7PM57SCBvMNuPpDMt3EsWiuD+2tOJAPDQAEg4Bi+7jDnz39HnWdMDYLcYyAlYFDqQ8YnJyxaRFbxb9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MHtt3XHr; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4f8b5e5671bso475558e0c.0;
+        Tue, 06 Aug 2024 14:37:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722980240; x=1723585040; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uFsMpJ+I7X97hoFlRtZ+H2DXn3COcJ95N+qj7lA/TOQ=;
+        b=MHtt3XHrmQfg/E2uIr1756uvqbVbGmPNOCpcLRoMzCmKNpYFQBzPFfTaSnmkM4Hee2
+         wMhd2igiwxKMC+BAfEyIEFSSVMZhVttSC08Ucz+Aw3yUbuB0gtnBSEO81zPO9TuCZ2R5
+         //3EBsExp06CJ16aNblX2rJffB18vkKjClYln0mCiUsTvJial6IrLqkD597zxCknhnre
+         akvMAKWCVY7+2lYbQVxWfs/mErEFp3IsvhPvMSnQDejZI76VUFsLXP2Uhk9A4R5kw+Yf
+         1tkf9MedoE38vl01D9/KBVcf7BL5skihtjswC7R9tFjAdJoMKnPnu/QuvSumaFRtO1pe
+         KQ4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722980240; x=1723585040;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uFsMpJ+I7X97hoFlRtZ+H2DXn3COcJ95N+qj7lA/TOQ=;
+        b=wmuQ+E5zz2TVfOHpynbrB1SCPh/cUUZobmYnnJSgF7pg6UtuQHqIjcNkO3C0sDr31b
+         oGARr1i566DrB6BYXkIPJ7t3yDsOdtbe73xMSxOqwvSn+7WuSUPRnpGu7zHhiASgrZBJ
+         Zbk1j1KZqj+aZ5FD8ESMCzCB4DubSNnfCQ/Pfevvgg1653M2T03c1aYksl/OIs4OeetC
+         K6rPeCkuKPe7Kb1OwsoXDFZOrrrXr2eTkrOTlqLmdswRfsyf9ey5ys94xbkbKt3ZWYVR
+         GrMu0SqJ4tpB3Vq2rofXAuc/rqQY0AQu+Edzv1qArjHygbhJlK9DmMUWLIQ1lO1aviCe
+         arQw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/A6m4Yjjxdm6soTnisO6MuYWHe/A/xWAAvhJioqq2KCy+pQQs6zlT1/DL7gxxBd6Guyec07OQa2PsQVvtHEBbPHdUhyDkbkcYqXr39WjF007R/onsW1okfXHagX+qb6xF2uAhs4wS
+X-Gm-Message-State: AOJu0YyS5zYXWmhRj+OWaNGqm/h63pTDtXairLh9yrRrvwh5xgVHtSom
+	PwGuSlNUmiIoLUXtwBB0RHAGpEcFNykhPoiraJzgY9Uy8j9JVlxxrQxqiiPuVnbk2QEIKTSU7Ga
+	d8Ow7KiXMTaGzzLqw2FFhBYynwJ4=
+X-Google-Smtp-Source: AGHT+IFrQ8JTwjxVQvgV4t1UWu1mNosEjtPutyaa5+3W6qYS/JH+h8DUFz1dPxmoFFh/1Vhlg23Q+IHOeKLj0hAoGlA=
+X-Received: by 2002:a05:6122:2191:b0:4f5:1b58:acd9 with SMTP id
+ 71dfb90a1353d-4f89ff4c58fmr14470832e0c.2.1722980240246; Tue, 06 Aug 2024
+ 14:37:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/9] perf annotate: Display the branch counter histogram
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-To: Andi Kleen <ak@linux.intel.com>
-Cc: acme@kernel.org, namhyung@kernel.org, irogers@google.com,
- peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
- adrian.hunter@intel.com, eranian@google.com
-References: <20240703200356.852727-1-kan.liang@linux.intel.com>
- <20240703200356.852727-8-kan.liang@linux.intel.com>
- <Zq1K-YM4JoEQwov1@tassilo>
- <c634b005-c382-48cc-bf54-6f570687d5c0@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <c634b005-c382-48cc-bf54-6f570687d5c0@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <202408041602.caa0372-oliver.sang@intel.com> <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
+ <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
+ <CALmYWFuXVCvAfrcDOCAR72z2_rmnm09QeVVqdhzqjF-fZ9ndUA@mail.gmail.com>
+ <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com>
+ <CAHk-=wgdTWpCqTMgM9SJxG2=oYwhAueU_fDHMPifjpH5eHG8qw@mail.gmail.com> <ZrG8+/1YjxN/Hsb7@xsang-OptiPlex-9020>
+In-Reply-To: <ZrG8+/1YjxN/Hsb7@xsang-OptiPlex-9020>
+From: Pedro Falcato <pedro.falcato@gmail.com>
+Date: Tue, 6 Aug 2024 22:37:08 +0100
+Message-ID: <CAKbZUD1278Bq+5QwjH=LeYSgcugZ3JbvkLeoB3whei_gkEXV+w@mail.gmail.com>
+Subject: Re: [linus:master] [mseal] 8be7258aad: stress-ng.pagemove.page_remaps_per_sec
+ -4.4% regression
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jeff Xu <jeffxu@google.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Jeff Xu <jeffxu@chromium.org>, 
+	oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@chromium.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Dave Hansen <dave.hansen@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <groeck@chromium.org>, 
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Amer Al Shanawany <amer.shanawany@gmail.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-api@vger.kernel.org, linux-mm@kvack.org, ying.huang@intel.com, 
+	feng.tang@intel.com, fengwei.yin@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andi,
+On Tue, Aug 6, 2024 at 7:05=E2=80=AFAM Oliver Sang <oliver.sang@intel.com> =
+wrote:
+>
+> hi, Linus,
+>
+> On Mon, Aug 05, 2024 at 12:33:58PM -0700, Linus Torvalds wrote:
+> > On Mon, 5 Aug 2024 at 11:55, Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > >
+> > > So please consider this a "maybe something like this" patch, but that
+> > > 'arch_unmap()' really is pretty nasty
+> >
+> > Actually, the whole powerpc vdso code confused me. It's not the vvar
+> > thing that wants this close thing, it's the other ones that have the
+> > remap thing.
+> >
+> > .. and there were two of those error cases that needed to reset the
+> > vdso pointer.
+> >
+> > That all shows just how carefully I was reading this code.
+> >
+> > New version - still untested, but now I've read through it one more
+> > time - attached.
+>
+> we tested this version by applying it directly upon 8be7258aad,  but seem=
+s it
+> have little impact to performance. still similar regression if comparing =
+to
+> ff388fe5c4.
 
-On 2024-08-06 10:42 a.m., Liang, Kan wrote:
-> 
-> 
-> On 2024-08-02 5:09 p.m., Andi Kleen wrote:
->>> Display the branch counter histogram in the annotation view.
->>>
->>> Press 'B' to display the branch counter's abbreviation list as well.
->>>
->>> Samples: 1M of events 'anon group { branch-instructions:ppp, branch-misses }',
->>> 4000 Hz, Event count (approx.):
->>> f3  /home/sdp/test/tchain_edit [Percent: local period]
->>
->> Can we output the abbreviation mappings here in the header too? 
->> Otherwise it will be hard to use.
-> 
-> If so, the 'B' will be redundant. I will remove the 'B' and move the
-> abbreviation mappings in the header.
-> 
+Hi,
 
-Actually, the output here is in the TUI mode, not --stdio mode.
+I've just sent out a patch set[1] that should alleviate (or hopefully
+totally fix) these performance regressions. It'd be great if you could
+test it.
 
-There is only one single title line for the TUI mode.
-It's filled out quickly. As you can see in the example, the number of
-the "Event count (approx.)" is missed as well. The abbreviation mappings
-will never get a chance to be output.
+For everyone: Apologies if you're in the CC list and I didn't CC you,
+but I tried to keep my patch set's CC list relatively short and clean
+(and I focused on the active participants).
+Everyone's comments are very welcome.
 
-For the TUI mode, usually shortcut keys are used to display aux
-information. The 'B' in this patch follows the existing behavior.
-
-For the --stdio mode, perf should print out the abbreviation mappings in
-the header. I think the --stdio mode is the one used by other tools to
-parse the result, right? The previous patch 6 (--stdio mode) does show
-everything in the header.
-
-Is there a use-case in the TUI mode that has difficulties utilizing the
-shortcut 'B'? If yes, could you please elaborate?
-
-Thanks,
-Kan
+[1]: https://lore.kernel.org/all/20240806212808.1885309-1-pedro.falcato@gma=
+il.com/
+--=20
+Pedro
 
