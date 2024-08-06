@@ -1,73 +1,72 @@
-Return-Path: <linux-kernel+bounces-276940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50977949A38
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:32:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 867FF949A3B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81B061C2161E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:32:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 852ED1C21714
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC455165F08;
-	Tue,  6 Aug 2024 21:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1930414C5A1;
+	Tue,  6 Aug 2024 21:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Wjz+hN/T"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JdiRnpKw"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D738D824A3;
-	Tue,  6 Aug 2024 21:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22ED374C4
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 21:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722979913; cv=none; b=tuArEu9kfe4v6zW4At9/Iy7U+sdkoaOHmG1RAOteypQJNAqW1XfFpJC/Sjt1In41xYeXUcEy7X7+Uncl3TfO9eyIGflJxCDeUnATv5p4BT+WZ+0XMLPAlwpeXVRBAmZhH7PGKWM7650JB5GkGuJpYBBlme2zTgtUMzBmb81gmtY=
+	t=1722980025; cv=none; b=vAEkzGnZT9gt0heitqB1TuHUYG6BQ5ucTtczwXAkwCePjuoTladwz2QIbfvnldjgnpp1wfwXoR7fhSucDwcUb4Br2Q+wzDhu6ZARHhXzP7RW7hDvrPACa5Ts3JE6t4xeozchB+805JYCCCaq0D52aTaEwBiWaE4whVXvl0wMcWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722979913; c=relaxed/simple;
-	bh=FwK36ah26nQK4P5Nju4BLZcO9cGzgqakm2U5iwSxAkM=;
+	s=arc-20240116; t=1722980025; c=relaxed/simple;
+	bh=4aAUCfUArXtfbZ21wUlTfDc2cy+5/mBeLUqkDByFS4s=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sZj3ggPgOFyRpLZumSTAlVzvr3AD9uBvxnEDODBiKWFi44wblAhmPsb6V5uucLw6gb1HR0Z3WKixpHqLLkxT3bunh4B3i0mC9LIw8o8c1Nn54BVlSz7sbxm54XCdxELARVughU18LyWV8raUXVOBHhuYQnVU27FYJVD3e6TAeP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Wjz+hN/T; arc=none smtp.client-ip=198.47.19.142
+	 MIME-Version:Content-Type; b=vB7+arx2KeepZUa4arwsy4mIpw9He5Vi1Fcbjy0mQHGG83j16fC+18tMXsuY+RQ7HBMgEcxhTJjRPx9Kr8VTqOcYJv4VRPtypbi8BHHcXsVQLtTaPheRyQiSWc482KEWzCPrClfZaxUYKcyxCqyhchvY7A//2rDAHdcrgNQQPus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JdiRnpKw; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 476LVhGb026046;
-	Tue, 6 Aug 2024 16:31:43 -0500
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 476LXa6m122107;
+	Tue, 6 Aug 2024 16:33:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722979903;
-	bh=+wUl+GeiKRh9stMga5epj0nB9x1SfRtytiwkTrjRGXU=;
+	s=ti-com-17Q1; t=1722980016;
+	bh=hg9eR4/XMhP+PbigmiNKVLPUs7NXOerX1QaoHdvYn7g=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Wjz+hN/TvWHaI2wwVue0wotVjga/xAehisbaFm70wFN14MsH6PC5H1zqS3/ycKLlK
-	 02mAtF9DAZrtmnY5XW7xK102h0ocFxTBj831+pojKFVdkm4BZgsPzPa5I8H1RyBXWu
-	 XoVtJZX66Oz0bNxYmAHKnR6leKHBfmBroumgTs+E=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 476LVhTk017480
+	b=JdiRnpKwgfFLsbHEFhYwPRCeKhppYDx2rV4oP3VZpFZJ1Y4SMuEHhw8EiPjCuDJNl
+	 KlyPv4ZpZ8IbzEz9+CGVitfohy78c5vMMVmewiUqryqDttMvqpW09zF5t8MeCUiPXA
+	 xzmZvW135DI4nsWECkduLy3wiE9lmLKDWI0w8UBc=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 476LXaCD018516
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 6 Aug 2024 16:31:43 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 6 Aug 2024 16:33:36 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
- Aug 2024 16:31:42 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2024 16:33:36 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 6 Aug 2024 16:31:43 -0500
+ Frontend Transport; Tue, 6 Aug 2024 16:33:36 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 476LVh6Z081346;
-	Tue, 6 Aug 2024 16:31:43 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 476LXacW084337;
+	Tue, 6 Aug 2024 16:33:36 -0500
 From: Nishanth Menon <nm@ti.com>
 To: Santosh Shilimkar <ssantosh@kernel.org>,
-        Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>
+        "Rob Herring (Arm)"
+	<robh@kernel.org>
 CC: Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] soc: ti: k3-ringacc: Constify struct k3_ring_ops
-Date: Tue, 6 Aug 2024 16:31:40 -0500
-Message-ID: <172297970584.486396.3910901501413905475.b4-ty@ti.com>
+Subject: Re: [PATCH] soc: ti: knav: Drop unnecessary check for property presence
+Date: Tue, 6 Aug 2024 16:33:33 -0500
+Message-ID: <172297993279.487934.13417516887545247613.b4-ty@ti.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cb9dfc18cdf890afa2c53cd74b0b330d6f1c30ab.1720546863.git.christophe.jaillet@wanadoo.fr>
-References: <cb9dfc18cdf890afa2c53cd74b0b330d6f1c30ab.1720546863.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240731201407.1838385-2-robh@kernel.org>
+References: <20240731201407.1838385-2-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,27 +77,28 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Christophe JAILLET,
+Hi Rob Herring (Arm),
 
-On Tue, 09 Jul 2024 19:41:29 +0200, Christophe JAILLET wrote:
-> 'struct k3_ring_ops' is not modified in this driver.
+On Wed, 31 Jul 2024 14:13:57 -0600, Rob Herring (Arm) wrote:
+> of_property_read_u32() returns -EINVAL if a property is not present, so
+> the preceeding check for presence with of_get_property() can be
+
+I fixed up the typo s/preceeding/preceding locally
+
+> dropped.
 > 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   17090	   3304	     32	  20426	   4fca	drivers/soc/ti/k3-ringacc.o
+> This is part of a larger effort to remove callers of of_get_property()
+> and similar functions. of_get_property() leaks the DT struct property
+> and data pointers which is a problem for dynamically allocated nodes
+> which may be freed.
 > 
 > [...]
 
 I have applied the following to branch ti-drivers-soc-next on [1].
 Thank you!
 
-[1/1] soc: ti: k3-ringacc: Constify struct k3_ring_ops
-      commit: d9483b44c94eba6fa7451caf27cc7e993c8cc568
+[1/1] soc: ti: knav: Drop unnecessary check for property presence
+      commit: 8737e167dc55cc00c5818b408f47ba03b6ddb25b
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
