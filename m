@@ -1,129 +1,151 @@
-Return-Path: <linux-kernel+bounces-276690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FEE949714
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:47:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CECD7949710
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 634B9B23ECC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:47:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81C701F22873
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2964F6F06D;
-	Tue,  6 Aug 2024 17:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A2B74C1B;
+	Tue,  6 Aug 2024 17:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d+YkSuvD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fx5GUAKM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9F351C4A
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 17:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E612A1C5;
+	Tue,  6 Aug 2024 17:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722966457; cv=none; b=qLSsxLDaQdidFSsMPF4EWFIvhlfLVrUg0q5TvV2104tzp5vx98c9LdblK3mReKrxhNQhOuJ3vwyerYwi804s3RJIn78ytJmNwODr0NoWMFHBw93CyXTFDu+UIFyqeQVTXQ/6ElqoVUq1E1Kl106cvsCrCrIfnFRd2WOA8Y3uPMQ=
+	t=1722966427; cv=none; b=tdi73QpPhtU4YwJZkyLWvIu6RFTybJDxFc43lZ3qybmSi78gomSnOIA1hDyBpDLYOBM5WNvHg6l/tk9hukcQs2SuQbAJOswV3jAsaTC0JG7h791J4c+mkez1wGRKHmwgZ6F7mEZYY9KaLIokpH+PsfK5nld/rpCT5+sWKhJJvlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722966457; c=relaxed/simple;
-	bh=m8zP/G2Caope01Y5hp+XNPX61CFNQXC42ATl15aCd2U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ub8CcYwnlclJ8WnVIFPTE2GLXNvwj8ZhgldTSaI1MdYGfFqwUyPy3SqY97wacX/usAIFiddDhAcnRs5Ku4LBhCfkWCCxtUzRuCPovtBZBdK3GV/ls1B9JvhuWigtPPMrFVRMmAy2jugnA2NxDfIiA5QpLzuxQBCq2xDWlAXoGVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d+YkSuvD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722966455;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Dx3lp9LD5waJbHKy20MWljw9mO6ZuZv40UA8MNp3kCs=;
-	b=d+YkSuvDAtIs0M6evG1WfrZvEgbW6BZk3ppYLLev6pcJsUJ0jxa2lGnYVtoJrVKKpLs3E2
-	kHMufKrUqbiTY8PVRH0QLwLkaUHVfymMkOMUBFuyfWZRL3fJlijz0aa0pUw0h8ynJ/XsZh
-	rG390cED25kdfiWUw3wd0POq1wg1g4c=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-145-rCRjMDKNMH2L5EfFmof1eA-1; Tue,
- 06 Aug 2024 13:47:29 -0400
-X-MC-Unique: rCRjMDKNMH2L5EfFmof1eA-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DBACE19560A2;
-	Tue,  6 Aug 2024 17:47:27 +0000 (UTC)
-Received: from llong.com (unknown [10.2.16.146])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 226F8300019B;
-	Tue,  6 Aug 2024 17:47:25 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Steffen Klassert <steffen.klassert@secunet.com>,
-	Daniel Jordan <daniel.m.jordan@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH] padata: Fix possible divide-by-0 panic in padata_mt_helper()
-Date: Tue,  6 Aug 2024 13:46:47 -0400
-Message-ID: <20240806174647.1050398-1-longman@redhat.com>
+	s=arc-20240116; t=1722966427; c=relaxed/simple;
+	bh=cAgxLRUonxQ14zEMn94zwCIcLctgqYrtfxpI11Fy8wc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gCS6DLgjmWKjkh67zc876ClACk8Mr4mYLf85HU1EKuFBId9NSlMfRnUtA1SkbcgEcDSKtWQ8LSUEWRDQeZUg1AkYc3n1TUojXdSu8jrhF38/XwVCRCAbLN6gHeoOm5GJur9vpV5ikkxL8LNCwqcVSxFs8Tjl/5pUj5jOZTu617I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fx5GUAKM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44C87C4AF0D;
+	Tue,  6 Aug 2024 17:47:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722966427;
+	bh=cAgxLRUonxQ14zEMn94zwCIcLctgqYrtfxpI11Fy8wc=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=Fx5GUAKMYrw01E2NOQ1E8mDP+Pa2FREQ9xmrdnvI2JRpi70zNRNst9qUE1XYbQ5OS
+	 XPI87A12VeS0VVT4UNmPKi37STUZS7hV9suOSoVBhd9YJqSkYsL2V8xHZYl0n+d9DH
+	 T0xYjgL+2ev68pfV1bvqczTVO5nh9pzopTZawUilCCbuWUXJ+32HHZp6YV8/A2FbN/
+	 E+VUMFFhZt7uTXiYZCtctn8zWetrN08YxonF11rLBlEVPJ01zzse+0skxpZmjpL4G5
+	 kd0G1xvmJnPkRtbiI0NCi/1/Wg9SepT9nuEGezK8JPzS+bDZawHomCYoaPVrz3pEyP
+	 l9Zch34CqgXOA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id DEAE2CE0A72; Tue,  6 Aug 2024 10:47:06 -0700 (PDT)
+Date: Tue, 6 Aug 2024 10:47:06 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, leit@meta.com,
+	Sandipan Das <sandipan.das@amd.com>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] perf/x86/amd: Warn only on new bits set
+Message-ID: <3bbb2f65-7305-4e02-942a-484def3a04a3@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240806165848.3397232-1-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806165848.3397232-1-leitao@debian.org>
 
-We are hit with a not easily reproducible divide-by-0 panic in padata.c
-at bootup time.
+On Tue, Aug 06, 2024 at 09:58:48AM -0700, Breno Leitao wrote:
+> Warning at every leaking bits can cause a flood of message, triggering
+> various stall-warning mechanisms to fire, including CSD locks, which
+> makes the machine to be unusable.
+> 
+> Track the bits that are being leaked, and only warn when a new bit is
+> set.
+> 
+> That said, this patch will help with the following issues:
+> 
+> 1) It will tell us which bits are being set, so, it is easy to
+>    communicate it back to vendor, and to do a root-cause analyzes.
+> 
+> 2) It avoid the machine to be unusable, because, worst case
+>    scenario, the user gets less than 60 WARNs (one per unhandled bit).
+> 
+> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+> Reviewed-by: Sandipan Das <sandipan.das@amd.com>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-  [   10.017908] Oops: divide error: 0000 1 PREEMPT SMP NOPTI
-  [   10.017908] CPU: 26 PID: 2627 Comm: kworker/u1666:1 Not tainted 6.10.0-15.el10.x86_64 #1
-  [   10.017908] Hardware name: Lenovo ThinkSystem SR950 [7X12CTO1WW]/[7X12CTO1WW], BIOS [PSE140J-2.30] 07/20/2021
-  [   10.017908] Workqueue: events_unbound padata_mt_helper
-  [   10.017908] RIP: 0010:padata_mt_helper+0x39/0xb0
-    :
-  [   10.017963] Call Trace:
-  [   10.017968]  <TASK>
-  [   10.018004]  ? padata_mt_helper+0x39/0xb0
-  [   10.018084]  process_one_work+0x174/0x330
-  [   10.018093]  worker_thread+0x266/0x3a0
-  [   10.018111]  kthread+0xcf/0x100
-  [   10.018124]  ret_from_fork+0x31/0x50
-  [   10.018138]  ret_from_fork_asm+0x1a/0x30
-  [   10.018147]  </TASK>
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
-Looking at the padata_mt_helper() function, the only way a divide-by-0
-panic can happen is when ps->chunk_size is 0. The way that chunk_size is
-initialized in padata_do_multithreaded(), chunk_size can be 0 when the
-min_chunk in the passed-in padata_mt_job structure is 0.
-
-Fix this divide-by-0 panic by making sure that chunk_size will be at
-least 1 no matter what the input parameters are.
-
-Fixes: 004ed42638f4 ("padata: add basic support for multithreaded jobs")
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/padata.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/kernel/padata.c b/kernel/padata.c
-index 53f4bc912712..0fa6c2895460 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -517,6 +517,13 @@ void __init padata_do_multithreaded(struct padata_mt_job *job)
- 	ps.chunk_size = max(ps.chunk_size, job->min_chunk);
- 	ps.chunk_size = roundup(ps.chunk_size, job->align);
- 
-+	/*
-+	 * chunk_size can be 0 if the caller sets min_chunk to 0. So force it
-+	 * to at least 1 to prevent divide-by-0 panic in padata_mt_helper().`
-+	 */
-+	if (!ps.chunk_size)
-+		ps.chunk_size = 1U;
-+
- 	list_for_each_entry(pw, &works, pw_list)
- 		if (job->numa_aware) {
- 			int old_node = atomic_read(&last_used_nid);
--- 
-2.43.5
-
+> ---
+> Changelog:
+> v3:
+>  * Avoid potential false reporting when concurrent execution occurs on
+>    different CPUs (Paul E. McKenney)
+> 
+> v2:
+>   * Improved the patch description, getting the benefits in words.
+>   * https://lore.kernel.org/all/20240731154651.1555511-1-leitao@debian.org/
+> 
+> v1:
+>   * https://lore.kernel.org/all/20240524141021.3889002-1-leitao@debian.org/
+> 
+> 
+>  arch/x86/events/amd/core.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+> index 920e3a640cad..b4a1a2576510 100644
+> --- a/arch/x86/events/amd/core.c
+> +++ b/arch/x86/events/amd/core.c
+> @@ -943,11 +943,12 @@ static int amd_pmu_v2_snapshot_branch_stack(struct perf_branch_entry *entries, u
+>  static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
+>  {
+>  	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+> +	static atomic64_t status_warned = ATOMIC64_INIT(0);
+> +	u64 reserved, status, mask, new_bits, prev_bits;
+>  	struct perf_sample_data data;
+>  	struct hw_perf_event *hwc;
+>  	struct perf_event *event;
+>  	int handled = 0, idx;
+> -	u64 reserved, status, mask;
+>  	bool pmu_enabled;
+>  
+>  	/*
+> @@ -1012,7 +1013,12 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
+>  	 * the corresponding PMCs are expected to be inactive according to the
+>  	 * active_mask
+>  	 */
+> -	WARN_ON(status > 0);
+> +	if (status > 0) {
+> +		prev_bits = atomic64_fetch_or(status, &status_warned);
+> +		// A new bit was set for the very first time.
+> +		new_bits = status & ~prev_bits;
+> +		WARN(new_bits, "New overflows for inactive PMCs: %llx\n", new_bits);
+> +	}
+>  
+>  	/* Clear overflow and freeze bits */
+>  	amd_pmu_ack_global_status(~status);
+> -- 
+> 2.43.5
+> 
 
