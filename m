@@ -1,208 +1,236 @@
-Return-Path: <linux-kernel+bounces-275560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A7F948737
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:04:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F31948740
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B63280F5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:04:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98CA81F23857
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762F2B665;
-	Tue,  6 Aug 2024 02:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B7BB665;
+	Tue,  6 Aug 2024 02:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oPd53QJP"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MeGXIu7d"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AA236D
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4028036D
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722909888; cv=none; b=cTEOv7Ve3EbkCPiygP2nRe5lLlYthyXN5TAcTSxMdvyA5EVeVzDGj4xhGkThhx9wnEaCcyd48vvJCzSyzBXUHpGM+WG3S21Cqp8LACZJYvvz42VoNSMC9KA4a4nqYl2Sbam4qeZ8y1/8RXdr3nkAQmABMEddOUJfF1xyZEhEKS4=
+	t=1722909950; cv=none; b=Pm8NMBnnInT/hvd8TxINzoGlMfM/HXk1uuVfdOk2dAyK3Pc0dc7WTxA4z1+7kE2YbIZ7NoobmASm77kanioctPdZqHyt7kiqeUB3PxTdMwxzGqxyDg9GEs0OZUEVHr+hvnmo33P0ZKWlAFUORg2vhkjNgTnSegXmPI+GQHOoiRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722909888; c=relaxed/simple;
-	bh=iPlTmklNFO8quaKBrw9Ux98RUrKz2LJF8gWS8xbcp68=;
-	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
-	 Content-Type:References; b=X50L71gsxjee4YapJAKTcdY0fy5nOcrwao5SFXlBxzKVUQhyxvNoKdSnVo+u2U+7EycoZZzyFN1MMlv7Madpm8Ls7qPzP2TJMJTzidNCBwitTUkdUEcWrRYHWeatRehiGVAK8QkyL8iTjf/G8HAZYIdXRZQnaEUyV9lzmuvETXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oPd53QJP; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240806020443epoutp03936e160d57a106c48aa379b932d97295~pAWkbH_bX0377803778epoutp03K
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:04:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240806020443epoutp03936e160d57a106c48aa379b932d97295~pAWkbH_bX0377803778epoutp03K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1722909883;
-	bh=mjOFdIZ4+oy6JbxVkZV/Ap2mouHD6+CoUeSjtJBrFiw=;
-	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-	b=oPd53QJPZMT6buzq16AmFNfu2o2M8LDQXDwhOzgL9QciIiGZhY9HgULgPTW47LMQ2
-	 yetO+VhZRO8a+pDA8NVC7HaFOTxyMnhX+M93tfsaVY73Ih8aws2IEtWe/h/OPUh+f+
-	 Js5hZrrroAIHArkZkpAKelED8UxxnC9kwHdu+2+k=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-	20240806020443epcas2p3239ab413790b8da21fef2d8eca095d18~pAWkL2EiF1427714277epcas2p3Q;
-	Tue,  6 Aug 2024 02:04:43 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.70]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WdGpL23C1z4x9QD; Tue,  6 Aug
-	2024 02:04:42 +0000 (GMT)
-X-AuditID: b6c32a45-ffffa700000028bf-fa-66b184b97311
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	AC.87.10431.9B481B66; Tue,  6 Aug 2024 11:04:41 +0900 (KST)
+	s=arc-20240116; t=1722909950; c=relaxed/simple;
+	bh=cbze+bvvJ8+TR5UPA6NUXqGqcMjc+54+95+D2jShE/w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SORsLmUMCld8lkKf4vmkupvIy3163jXq1t2ylXSWxf8HkXRPeDaqDkVOemUQwUs7mPMkO46sGvWEA1vhhTNCgaOKaCRJbcduANXzgWU7afiyEGpYaTztJ4017dOZwn9enMvruXLHf8rtR8vlVyVCPkryLvU97IFyKZmK3AwRcCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MeGXIu7d; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-45029af1408so84351cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 19:05:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722909948; x=1723514748; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cbze+bvvJ8+TR5UPA6NUXqGqcMjc+54+95+D2jShE/w=;
+        b=MeGXIu7dSS/adOAH95gjceN4aRAYv2Hxo+QQ6FOw4sSxvlvleTVaSOh+xFHtfOzVTm
+         ccBzJSDmEiy9F0EuM5os38T6zPm8SGWfSTWSSBNxQNMckKX+yahrPoO9xz2UToTW9I7m
+         S3JBsg0v1gL99S/BwIJh6mqPUCT7cII//gNEmfA2UhRZEsatQfnu9m41VubopZZH82Ro
+         zQtVQWl5Jp0SHUrL6MQAZ2yrDTEEdiqlkSEzm0Fq5VM/vAlgNUJqqfIs7PwMXmOieb5K
+         aX1gr9T3NbBxxbOM+0LHwnvCzuLWfz2Xxj58Wxnpx4D5FRsIlypI5ZWVEHei78yAkEHa
+         gjLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722909948; x=1723514748;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cbze+bvvJ8+TR5UPA6NUXqGqcMjc+54+95+D2jShE/w=;
+        b=W/iJF9jQ5utsQhfJLp9/xFe0cNglrCm+wF5XWUPc+20cNyrFU1TuX9EArWmnjT9V7Q
+         COrC3W8yDQ16XfR9HAy7a8xfobZ6dhaorHIO/It7Cgk5bDiScBFBREdnuOtxeTc6i27/
+         kBmcvMPk2p5x3A9HmRPWA2lM7gDLfnEzJ4yOA1a8f13rKhjB5i2q/fZpZc4O4N5XpMwG
+         rsTCHwDEAzIJTO3FxWm2o40hbotVwdY+gTRXayXEUhIgE0orKc5c0/YXNjdsfU6sZXtB
+         kMUzzzUxo29q0AAf4x9MC1RG5y/85t7QKAlEeroILJWELC9v7fG0+yWxXzJ+SNRwSOOV
+         TGAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUz3nBZ2VR/emtL4LaVgqwtzoQk3qSn0uE3xC6OgTvIrHhsoxCHvg+pKZMNFvEQr33nE1iBamO9st2jZ2yB3/w2/olwuEH4787/ZdNd
+X-Gm-Message-State: AOJu0Yy01unC2Jn696O4qDxLQ6wmyzwUx/pTuWZ1RS5f/T/octe6V+/r
+	O2Xn6EePcmPxnCkTHkk3Ak1m1KUyfAEUFwzZu9FJ5f+RYbs7aWiahfqTGaphJfKg3oZyYUQInNj
+	8nwV1iIGGoTf/2htPTaEA2V+Axc2UO8/G8pBv
+X-Google-Smtp-Source: AGHT+IGTGLp275OMy7GJaTKyETvGaANpJWPQ0m4N0P7BzQznKGlow/QggGN034uk+hjkyhImdcC6mGzfsLzMa3Y5SXw=
+X-Received: by 2002:a05:622a:288:b0:447:e792:c797 with SMTP id
+ d75a77b69052e-451bd21e471mr917161cf.29.1722909947922; Mon, 05 Aug 2024
+ 19:05:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: RE: [PATCH v2 1/2] scsi: ufs: Prepare to add HCI capabilities sysfs
-Reply-To: keosung.park@samsung.com
-Sender: Keoseong Park <keosung.park@samsung.com>
-From: Keoseong Park <keosung.park@samsung.com>
-To: Avri Altman <avri.altman@wdc.com>, "Martin K . Petersen"
-	<martin.petersen@oracle.com>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bart Van
-	Assche <bvanassche@acm.org>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20240804072109.2330880-2-avri.altman@wdc.com>
-X-CPGS-Detection: blocking_info_exchange
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20240806020441epcms2p177c881111c1a427c33dcddcc9942d790@epcms2p1>
-Date: Tue, 06 Aug 2024 11:04:41 +0900
-X-CMS-MailID: 20240806020441epcms2p177c881111c1a427c33dcddcc9942d790
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdljTVHdny8Y0g5kbFCxe/rzKZjHtw09m
-	i5eHNC0e3X7GaHF51xw2i+7rO9gslh//x+TA7nH5irfHx6e3WDz6tqxi9Pi8Sc6j/UA3UwBr
-	VLZNRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtARSgpl
-	iTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwC8wK94sTc4tK8dL281BIrQwMDI1OgwoTs
-	jA2X9jIXrBKvuDOpmamB8atQFyMnh4SAicTP3zPYQWwhgR2MEssOeXcxcnDwCghK/N0hDBIW
-	FvCRuLtmHzNEiZJE18KtzBBxA4l10/eA2WwCehJTft9hBLFFBKIljs7bDWRzcTALLGOU+Nh/
-	ngViF6/EjPanULa0xPblWxlBdnEKWEusm8UNEdaQ+LGslxnCFpW4ufotO4z9/th8RghbRKL1
-	3lmoGkGJBz93Q8UlJM59WAg1vl6i9f0pdpAbJAQmMEo0HvsDNUhf4lrHRrAiXgFfiedP3rOC
-	2CwCqhJHpnyCqnGRmDF7C9gCZgF5ie1v5zCD3MksoCmxfpc+iCkhoCxx5BYLRAWfRMfhv+ww
-	HzZs/I2VvWPeEyYIW03i0YItrBMYlWchAnoWkl2zEHYtYGRexSiWWlCcm55abFRgCI/a5Pzc
-	TYzg1KjluoNx8tsPeocYmTgYDzFKcDArifB2lW5IE+JNSaysSi3Kjy8qzUktPsRoCvTlRGYp
-	0eR8YHLOK4k3NLE0MDEzMzQ3MjUwVxLnvdc6N0VIID2xJDU7NbUgtQimj4mDU6qBqdExbXmt
-	tK2nesjp1PUhFnx1q5lDHT89/PyG1e14uSbr61fSPma+pQre51j+NOSprGgwqz12teK+0X7m
-	6ucH6r79NKq4GJ9bmKC0PUvodGQSW+alh24cS88snKkXZrO5sH5r3Sbjv5P6V1TZPjE+8E/D
-	dtbF02VW+m+EUw6s6uDYdO/rtdUBz38esJw3uyl2ww2tMAGdqXLW1zVj7HdqmLYu/vD4o6pm
-	kXnlGpc3X4K3Oe5l/S0eezPxv3rZBddLirUW52fZzVx7hP9IqUrC46ffi84dW6iZuyLec4HQ
-	mRDdzwUOO+49L2bdNU8ySHyCwiNxwfxrek3tv88smPBmjY5074b3D2x2Lg+ZxGL0X4mlOCPR
-	UIu5qDgRAFOeeWgWBAAA
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240804072309epcas2p2309ebc15f20ca598a91fe30a3245200f
-References: <20240804072109.2330880-2-avri.altman@wdc.com>
-	<20240804072109.2330880-1-avri.altman@wdc.com>
-	<CGME20240804072309epcas2p2309ebc15f20ca598a91fe30a3245200f@epcms2p1>
+MIME-Version: 1.0
+References: <20240731070207.3918687-1-davidgow@google.com> <CAA1CXcDKht4vOL-acxrARbm6JhGna8_k8wjYJ-vHONink8aZ=w@mail.gmail.com>
+In-Reply-To: <CAA1CXcDKht4vOL-acxrARbm6JhGna8_k8wjYJ-vHONink8aZ=w@mail.gmail.com>
+From: David Gow <davidgow@google.com>
+Date: Tue, 6 Aug 2024 10:05:35 +0800
+Message-ID: <CABVgOSnBhzh=n0VeKY=TZVT_BU=Mx-rTO9kbDo7XuxALtDCVng@mail.gmail.com>
+Subject: Re: [PATCH] kunit: Device wrappers should also manage driver name
+To: Nico Pache <npache@redhat.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Matti Vaittinen <mazziesaccount@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Maxime Ripard <mripard@kernel.org>, 
+	Kees Cook <kees@kernel.org>, kunit-dev@googlegroups.com, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000075e39f061efa3b34"
 
-Hi Avri,
+--00000000000075e39f061efa3b34
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Prepare so we'll be able to read various other HCI registers.
-> While at it, fix the HCPID & HCMID register names to stand for what they
-> really are. Also replace the pm_runtime_{get/put}_sync() calls in
-> auto_hibern8_show to ufshcd_rpm_{get/put}_sync() as any host controller
-> register reads should.
-> 
-> Signed-off-by: Avri Altman <avri.altman@wdc.com>
-> ---
->  drivers/ufs/core/ufs-sysfs.c | 38 +++++++++++++++++++++---------------
->  include/ufs/ufshci.h         |  5 +++--
->  2 files changed, 25 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
-> index e80a32421a8c..dec7746c98e0 100644
-> --- a/drivers/ufs/core/ufs-sysfs.c
-> +++ b/drivers/ufs/core/ufs-sysfs.c
-> @@ -198,6 +198,24 @@ static u32 ufshcd_us_to_ahit(unsigned int timer)
->  	       FIELD_PREP(UFSHCI_AHIBERN8_SCALE_MASK, scale);
->  }
->  
-> +static int ufshcd_read_hci_reg(struct ufs_hba *hba, u32 *val, unsigned int reg)
-> +{
-> +	down(&hba->host_sem);
-> +	if (!ufshcd_is_user_access_allowed(hba)) {
-> +		up(&hba->host_sem);
-> +		return -EBUSY;
-> +	}
-> +
-> +	ufshcd_rpm_get_sync(hba);
-> +	ufshcd_hold(hba);
-> +	*val = ufshcd_readl(hba, reg);
-> +	ufshcd_release(hba);
-> +	ufshcd_rpm_put_sync(hba);
-> +
-> +	up(&hba->host_sem);
-> +	return 0;
-> +}
-> +
->  static ssize_t auto_hibern8_show(struct device *dev,
->  				 struct device_attribute *attr, char *buf)
->  {
-> @@ -208,23 +226,11 @@ static ssize_t auto_hibern8_show(struct device *dev,
->  	if (!ufshcd_is_auto_hibern8_supported(hba))
->  		return -EOPNOTSUPP;
->  
-> -	down(&hba->host_sem);
-> -	if (!ufshcd_is_user_access_allowed(hba)) {
-> -		ret = -EBUSY;
-> -		goto out;
-> -	}
-> -
-> -	pm_runtime_get_sync(hba->dev);
-> -	ufshcd_hold(hba);
-> -	ahit = ufshcd_readl(hba, REG_AUTO_HIBERNATE_IDLE_TIMER);
-> -	ufshcd_release(hba);
-> -	pm_runtime_put_sync(hba->dev);
-> -
-> -	ret = sysfs_emit(buf, "%d\n", ufshcd_ahit_to_us(ahit));
-> +	ret = ufshcd_read_hci_reg(hba, &ahit, REG_AUTO_HIBERNATE_IDLE_TIMER);
-> +	if (ret)
-> +		return ret;
->  
-> -out:
-> -	up(&hba->host_sem);
-> -	return ret;
-> +	return sysfs_emit(buf, "%d\n", ufshcd_ahit_to_us(ahit));
->  }
->  
->  static ssize_t auto_hibern8_store(struct device *dev,
-> diff --git a/include/ufs/ufshci.h b/include/ufs/ufshci.h
-> index 38fe97971a65..194e3655902e 100644
-> --- a/include/ufs/ufshci.h
-> +++ b/include/ufs/ufshci.h
-> @@ -25,8 +25,9 @@ enum {
->  	REG_CONTROLLER_CAPABILITIES		= 0x00,
->  	REG_MCQCAP				= 0x04,
->  	REG_UFS_VERSION				= 0x08,
-> -	REG_CONTROLLER_DEV_ID			= 0x10,
-> -	REG_CONTROLLER_PROD_ID			= 0x14,
-> +	REG_EXT_CONTROLLER_CAPABILITIES		= 0x0C,
-> +	REG_CONTROLLER_PID			= 0x10,
-> +	REG_CONTROLLER_MID			= 0x14,
->  	REG_AUTO_HIBERNATE_IDLE_TIMER		= 0x18,
->  	REG_INTERRUPT_STATUS			= 0x20,
->  	REG_INTERRUPT_ENABLE			= 0x24,
-> -- 
-> 2.25.1
+On Tue, 6 Aug 2024 at 08:23, Nico Pache <npache@redhat.com> wrote:
+>
+> On Wed, Jul 31, 2024 at 1:02=E2=80=AFAM David Gow <davidgow@google.com> w=
+rote:
+> >
+> > kunit_driver_create() accepts a name for the driver, but does not copy
+> > it, so if that name is either on the stack, or otherwise freed, we end
+> > up with a use-after-free when the driver is cleaned up.
+> >
+> > Instead, strdup() the name, and manage it as another KUnit allocation.
+> > As there was no existing kunit_kstrdup(), we add one. Further, add a
+> > kunit_ variant of strdup_const() and kfree_const(), so we don't need to
+> > allocate and manage the string in the majority of cases where it's a
+> > constant.
+> >
+> > This fixes a KASAN splat with overflow.overflow_allocation_test, when
+> > built as a module.
+> >
+> > Fixes: d03c720e03bd ("kunit: Add APIs for managing devices")
+> > Reported-by: Nico Pache <npache@redhat.com>
+>
+> Hi David,
+>
+> This is failing in the Fedora-ark build process [1] which builds the
+> KUNIT tests as modules.
+>
+> + /usr/bin/make <SNIP> modules
+> ...
+> ERROR: modpost: "__start_rodata" [lib/kunit/kunit.ko] undefined!
+> ERROR: modpost: "__end_rodata" [lib/kunit/kunit.ko] undefined!
+> make[2]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
+> make[1]: *** [/builddir/build/BUILD/kernel-6.11.0-build/kernel-6.11-rc2/l=
+inux-6.11.0-0.rc2.22.ov.fc41.x86_64/Makefile:1895:
+> modpost] Error 2
+> make: *** [Makefile:236: __sub-make] Error 2
+> + exit 1
+>
+> This seems related to
+>
+> +#include <asm/sections.h>
+>
+> which defines __<start|end>_rodata.
+>
+> When I tried exporting these symbols I got:
+>
+> ERROR: modpost: vmlinux: '__start_rodata' exported twice. Previous
+> export was in vmlinux
+>
+> So I'm not sure what the problem is here.
+>
+> [1] - https://kojipkgs.fedoraproject.org//work/tasks/9116/121539116/build=
+.log
+>
+> Cheers
+> -- Nico
+>
 
-Looks good to me.
+Thanks -- I've tried disabling the use of is_kernel_rodata() if KUnit
+is built as a module, and that seems to fix it here. I've also moved
+the new kunit_kstrdup_const() and kunit_kfree_const() functions into
+kunit.ko, so they're not inlined into other modules where they could
+cause problems:
+https://lore.kernel.org/linux-kselftest/20240806020136.3481593-1-davidgow@g=
+oogle.com/
 
-Reviewed-by: Keoseong Park <keosung.park@samsung.com>
+-- David
 
-Best Regards,
-Keoseong
+--00000000000075e39f061efa3b34
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIPqgYJKoZIhvcNAQcCoIIPmzCCD5cCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg0EMIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+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
+JEfDtvHU6wy3MSBE3/TrMFcGA1UdIARQME4wCQYHZ4EMAQUBATBBBgkrBgEEAaAyASgwNDAyBggr
+BgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wDAYDVR0TAQH/
+BAIwADCBmgYIKwYBBQUHAQEEgY0wgYowPgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmdsb2JhbHNp
+Z24uY29tL2NhL2dzYXRsYXNyM3NtaW1lY2EyMDIwMEgGCCsGAQUFBzAChjxodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcnQwHwYDVR0jBBgw
+FoAUfMwKaNei6x4schvRzV2Vb4378mMwRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NybC5nbG9i
+YWxzaWduLmNvbS9jYS9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcmwwDQYJKoZIhvcNAQELBQADggEB
+AGwXYwvLVjByVooZ+uKzQVW2nnClCIizd0jfARuMRTPNAWI2uOBSKoR0T6XWsGsVvX1vBF0FA+a9
+DQOd8GYqzEaKOiHDIjq/o455YXkiKhPpxDSIM+7st/OZnlkRbgAyq4rAhAjbZlceKp+1vj0wIvCa
+4evQZvJNnJvTb4Vcnqf4Xg2Pl57hSUAgejWvIGAxfiAKG8Zk09I9DNd84hucIS2UIgoRGGWw3eIg
+GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
+kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
+MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
+IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
+hvcNAQkEMSIEIDkRmhdvlCfhpAEalWcAO5Y3DejQNlmrNtpMb9It8DFoMBgGCSqGSIb3DQEJAzEL
+BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDgwNjAyMDU0OFowaQYJKoZIhvcNAQkPMVww
+WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
+hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCJgF1I
+u6fLeM46ZZC5Rxlt6SvTofP+qRWOfJXknMcULY35rBdjwS099BjZT43fN4ESIXLE1zVu8ijsCEsr
+9EM6RVKV7vLpa+IlhtF7yegixdAFElRli++5uVZc28xRjhPL+KqtoXYWnbNTk94eGBLTGtiAvjaC
+qYJ8jbncJN0n20fEv3/kwLvFYP120pZzhQl3XXw74fnpkmXSuv7gNbI8VMedtuGxuVKlMzohRaOf
+Epvtfq8cPAHmOIbFcrKd4VvR6KYyYyvRZJ0hJK1z+BOBxOPIe7HIAbCnQ2T2jjOpPUdBpxoqBTTT
+kw743J13cdC0TOzuGkP7RqErLfaVqI/P
+--00000000000075e39f061efa3b34--
 
