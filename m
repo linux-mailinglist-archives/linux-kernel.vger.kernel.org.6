@@ -1,173 +1,135 @@
-Return-Path: <linux-kernel+bounces-276409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF35394934A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:39:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78DC94934C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3098B25F1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:38:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9B181C2189A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3A1200113;
-	Tue,  6 Aug 2024 14:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685B61D2F7A;
+	Tue,  6 Aug 2024 14:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="yp/A7IMs"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="duMNRmdi"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7511D54FB
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE78C1BE23E
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722955079; cv=none; b=WqsXzKKyBUfL/avXkb6+ytWkjYg7AHxiHohny9MbrwsqbacFikLBpYPnotgbgG4jrihT5IkS0QFCGSUjhZ37iuhAI3u+n43k6uVRuCrN59bZ/7BnxgO+sg0zHr1MJUaQK9TZPDs3Xu/zVwalP7JwQeTTsPw+ZcjX4sGQ/LY94Ug=
+	t=1722955112; cv=none; b=pkk7c8R6MrExlFedb81amc3Xsdifa4QSIvJlqZB+qMZolHMB4DKiIobenAo/XNvHsA81ZWYlUFkIuBBRTdisMzrdv0UUR1ttiEiCamPoFhCAPo4sTvfk14sZ7Hl8sTjK9eAtIWNzFzgCx8KBrOJlBMVh96oha9/lwXi6MhD3uPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722955079; c=relaxed/simple;
-	bh=8AxUhTyQhg5d6fIk/x8d9ynNwPaGpaK4vXeKfHRX+Vc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Yuib94CXkHg0pICZmj9vKrUM7RqqTjt1VVb4IaKKvR6xU4ZhzPFKSqa6CzEJkYzyKy59Co9nSb3+bUKNx48CkIwupUS+RymIbVmzNDtZK7VIKPSkrpbmIWLL09JOh8Z38sx0aCw1aUO5cd3j/O9AvgCrPGN2lZ+1Ab3nYqzVYZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=yp/A7IMs; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b7b28442f9so6648746d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 07:37:57 -0700 (PDT)
+	s=arc-20240116; t=1722955112; c=relaxed/simple;
+	bh=2fP83v8ZDZ7pc5agamWj3NzXnt1SQztcQNzK097z7/w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B208qggrDcEbIWvBGzRfMvI/c1kmQBW3pmDzp5GV7XxzsMp2VhdzxseKn9Ef/ZJcyRW/UtNsnXgRh8NEazRmjzoeB6aTNuNslplJF9XKM/DmcSuG3cxBhQlHLgQfDtFbmgXTTs8JfmetT4qXGlbJ2w6Nnlg/uz8MY4k8SaUAmlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=duMNRmdi; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5b7b6a30454so1117742a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 07:38:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1722955076; x=1723559876; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=O8w8s8Z0B9GrXJVmKic0qvUBQEuYjfne9EimcVxCr34=;
-        b=yp/A7IMseeydQT6tEdAXbEVZvsuJhihtZEaPw/oDKFJc0FcNHdWADj4xef2C2I94R/
-         fRGStVydaDvnUhoVX3pWRwz858ep0n69OQTW6G2wxXL8xDdbIMIdyGPkKupEsb5BTu54
-         G548z4tdu6Tk62EPfRUg0CdXvPxUEC4BYgHsexnu+bxUCyKardXHdlzCnmAhnV3ywY3X
-         B8SfB10hqrPJ2XqpvQLnkSAM+8au0jDbgxgM6dTxzTOJzT7QEMCaCBKMtdQQXO5+xBNH
-         NK0FarbJGup2NbDhw14r6036d7y03tuINR9oS4nJStAnSI6gy+l36ehLGhfwjIeAg1Ps
-         PZEA==
+        d=linux-foundation.org; s=google; t=1722955109; x=1723559909; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MWWrNlqBqyxE+pa3MBe3r8meejGqG07YEY2OhAnz4Do=;
+        b=duMNRmdiQMn9X7dFKN11RMOaC6OrcSgq1bllh7cjAEpvqaJG2Tz2OMGBRlUC/P/2Qw
+         u8MWWAnfy/x3C6gQCPf4imqyLhwqxPGnFXGhEgYfU+PXhVXGpW+GeBLSEwJZNxdfwhsl
+         TDl6VArfOOA0n3LPg9y7+/foRj01TRaaaqgro=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722955076; x=1723559876;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O8w8s8Z0B9GrXJVmKic0qvUBQEuYjfne9EimcVxCr34=;
-        b=h84jhPWXdLbLpAPL5twfgSx7oHL2Qdx1SO+VY/TVgI50M9Ygy++h49+GuqmbIX1FG8
-         Ky6YTtPLbtdAjqTJMXzStt1yJl5yAvwNXrj5iY4g05GX8yb6vfa1l1/5YQD7Oe+t8Qn3
-         AoHjZ5DndmZHSsRA+e1waA1NZ8UBS1ME8T8MCDQhtChSNQnZNfrn9gJoY1xuHgCpXnSS
-         6321kd3zWYoHwGrZ0iXJEI7svNmrJepEUZcmgwqbWGQBnP7YFZufAbP4bhzmmEdwXbYz
-         afIBxpq2RfWVq6bpyX4BGneUk6C9O56HjW1G9TeyRioTD2R5t5wj0DbnGbMfhi8X+SmA
-         uXGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpBOKZEjRqRlCx+CUzVbXBUtOW9IavIP8JihKWS+1ZV6oW2wbSbJGMBc17KqY63+RCcWdoBpwJc1NNtsLmGyWADXOSGHkpCo8Kywh6
-X-Gm-Message-State: AOJu0YyTTxR3OQHz1HhhO1InRfciV4vWhcN0vIuBklFb77i6+qY7KLJg
-	zt5cV5b5k/TPf1aYkaX4/eToJC88sjDkhtrRR1+tmGFMBPMH+LO3SVtXYBaDilo=
-X-Google-Smtp-Source: AGHT+IHpUcAI0zlnc5UagDYOX3enzaUmDiTyLdmwhEKRsENtGUCdx/UiKZ4BgGBYZTV23qMtuDV7yA==
-X-Received: by 2002:a05:6214:4881:b0:6b2:dd54:b634 with SMTP id 6a1803df08f44-6bb9843f24cmr204285666d6.39.1722955076181;
-        Tue, 06 Aug 2024 07:37:56 -0700 (PDT)
-Received: from nicolas-tpx395.lan ([2606:6d00:15:820c::580])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c83970dsm47045726d6.77.2024.08.06.07.37.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 07:37:55 -0700 (PDT)
-Message-ID: <3765b1674e276afdc302def55327396a0a29cc63.camel@ndufresne.ca>
-Subject: Re: [PATCH] media: s5p-mfc: Corrected NV12M/NV21M plane-sizes
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Aakarsh Jain <aakarsh.jain@samsung.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org, 
-	hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org, 
-	linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com, 
-	aswani.reddy@samsung.com, pankaj.dubey@samsung.com
-Date: Tue, 06 Aug 2024 10:37:54 -0400
-In-Reply-To: <20240806115714.29828-1-aakarsh.jain@samsung.com>
-References: 
-	<CGME20240806120911epcas5p1b0defc027a7f03ee9bf5f21036d3ae5e@epcas5p1.samsung.com>
-	 <20240806115714.29828-1-aakarsh.jain@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+        d=1e100.net; s=20230601; t=1722955109; x=1723559909;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MWWrNlqBqyxE+pa3MBe3r8meejGqG07YEY2OhAnz4Do=;
+        b=RCqr12N8ZMRnNWTeL/Kn2t0ptxHutZDdlgVj3IviHY+T3UVGQRazFQrRq+xnwVdX7b
+         6NEC1u30LksHfcjUkh2fxCY9jz2+MWfoPYSZl+KmSewHDulZttfl7quk6lf4UJyuN1bh
+         5QMrUOBnjgNQnN/hogQvKEAbZz5XnLbv8UtoCWP6bZGrlMKwll1Gh0Dl+aKHLUxq7Lcw
+         +h2YnjQD5b2zRiT8I72w1ASp/rbWMPVYcLWkHEmhHAIrEU5jhexPAJbIhHkFAN+NxnuW
+         SEuGH9e4m800dBdt4kSFBLibFc1ZQFD/H/v2pHPcfzRM+YiZsAlbupYKQ0OOM9KkSD6H
+         0HEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXFPNlEYtS1AePJDMsxjMpEupDRnsoK1d1Vds9BXl+W84b3jH8MNghaYDgZogpg1jQI1MjhcZCOYJvItAcxU+RHMNXVjxvo6DBJ+KU
+X-Gm-Message-State: AOJu0Yx2ZXvEPYfbdf2NzrQIYcjJ/uY70k7n6e6Dn6fqceJXNdq4uR1d
+	I4fBoli/zeAhWsz/Jt12xHJqnHvxZlDhfSfwVi3Q2yS1m8ELngdrfYryW87r+wlNr8DR4FsHVk8
+	7WJUCGw==
+X-Google-Smtp-Source: AGHT+IEu/vUBUT4EXGvAfF+V852TO8vPBUGRCMbyWYeQZJ6LSEKi2+JjMX825jFfx9MHKg39OiaNUA==
+X-Received: by 2002:a17:907:1c2a:b0:a7a:a138:dbd2 with SMTP id a640c23a62f3a-a7dc509f3bcmr978999866b.50.1722955108725;
+        Tue, 06 Aug 2024 07:38:28 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec6b07sm546640766b.202.2024.08.06.07.38.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 07:38:27 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5b7b6a30454so1117657a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 07:38:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWDTGZkgYK4BX+jWAVPD5qPzDl9mHH7tYQK600Oy7fcs0WPaLIJyA1n11HEsexT440JuOsUk9g4oYBXJoiefKZgXP8SSt8PcjBjdgOx
+X-Received: by 2002:a05:6402:22b2:b0:5b8:1035:214 with SMTP id
+ 4fb4d7f45d1cf-5b810350411mr8834214a12.33.1722955106581; Tue, 06 Aug 2024
+ 07:38:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <202408041602.caa0372-oliver.sang@intel.com> <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
+ <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
+ <CALmYWFuXVCvAfrcDOCAR72z2_rmnm09QeVVqdhzqjF-fZ9ndUA@mail.gmail.com>
+ <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com>
+ <CAHk-=wgdTWpCqTMgM9SJxG2=oYwhAueU_fDHMPifjpH5eHG8qw@mail.gmail.com> <ZrG8+/1YjxN/Hsb7@xsang-OptiPlex-9020>
+In-Reply-To: <ZrG8+/1YjxN/Hsb7@xsang-OptiPlex-9020>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Aug 2024 07:38:09 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi+rSKmNvFBpaKW+Hcn8YSzd2az2Lp5ii7Q4_o0PepJ_A@mail.gmail.com>
+Message-ID: <CAHk-=wi+rSKmNvFBpaKW+Hcn8YSzd2az2Lp5ii7Q4_o0PepJ_A@mail.gmail.com>
+Subject: Re: [linus:master] [mseal] 8be7258aad: stress-ng.pagemove.page_remaps_per_sec
+ -4.4% regression
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: Jeff Xu <jeffxu@google.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Pedro Falcato <pedro.falcato@gmail.com>, Jeff Xu <jeffxu@chromium.org>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@chromium.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Dave Hansen <dave.hansen@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <groeck@chromium.org>, 
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Amer Al Shanawany <amer.shanawany@gmail.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-api@vger.kernel.org, linux-mm@kvack.org, ying.huang@intel.com, 
+	feng.tang@intel.com, fengwei.yin@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jain,
+On Mon, 5 Aug 2024 at 23:05, Oliver Sang <oliver.sang@intel.com> wrote:
+>
+> > New version - still untested, but now I've read through it one more
+> > time - attached.
+>
+> we tested this version by applying it directly upon 8be7258aad,  but seems it
+> have little impact to performance. still similar regression if comparing to
+> ff388fe5c4.
 
-I haven't dig much, but I have a quick question below.
+Note that that patch (and Michael's fixes for ppc on top) in itself
+doesn't fix any performance issue.
 
-Le mardi 06 ao=C3=BBt 2024 =C3=A0 17:27 +0530, Aakarsh Jain a =C3=A9crit=C2=
-=A0:
-> There is a possibility of getting page fault if the overall
-> buffer size is not aligned to 256bytes. Since MFC does read
-> operation only and it won't corrupt the data values even if
-> it reads the extra bytes.
-> Corrected luma and chroma plane sizes for V4L2_PIX_FMT_NV12M
-> and V4L2_PIX_FMT_NV21M pixel format.
+But getting rid of arch_unmap() means that now the can_modify_mm() in
+do_vmi_munmap() is right above the "vma_find()" (and can in fact be
+moved below it and into do_vmi_align_munmap), and that means that at
+least the unmap paths don't need the vma lookup of can_modify_mm() at
+all, because they've done their own.
 
-Have you re-run v4l2 compliance ? (better be safe then sorry).
+IOW, the "arch_unmap()" removal was purely preparatory and did nothing
+on its own, it's only preparatory to get rid of some of the
+can_modify_mm() costs.
 
->=20
-> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
-> ---
->  .../media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c    | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/dr=
-ivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-> index 73f7af674c01..03c957221fc4 100644
-> --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-> +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-> @@ -498,8 +498,8 @@ static void s5p_mfc_dec_calc_dpb_size_v6(struct s5p_m=
-fc_ctx *ctx)
->  	case V4L2_PIX_FMT_NV21M:
->  		ctx->stride[0] =3D ALIGN(ctx->img_width, S5P_FIMV_NV12MT_HALIGN_V6);
->  		ctx->stride[1] =3D ALIGN(ctx->img_width, S5P_FIMV_NV12MT_HALIGN_V6);
-> -		ctx->luma_size =3D calc_plane(ctx->stride[0], ctx->img_height);
-> -		ctx->chroma_size =3D calc_plane(ctx->stride[1], (ctx->img_height / 2))=
-;
-> +		ctx->luma_size =3D calc_plane(ctx->img_width, ctx->img_height);
-> +		ctx->chroma_size =3D calc_plane(ctx->img_width, (ctx->img_height >> 1)=
-);
+The call to can_modify_mm() in mremap_to() is a bit harder to get rid
+of. Unless we just say "mremap will unmap the destination even if the
+mremap source is sealed".
 
-These size needs to match the sizes reported through TRY_FMT (and S_FMT)
-sizeimage for each planes. Is this code being call withing try_fmt ? Will t=
-hese
-value match or will this change cause the value to miss-match ?
-
-The reason is that correct value is needed for allocating this memory from =
-the
-outside (like using a DMAbuf Heap). Perhaps its all right, let me know.
-
-Nicolas
-
->  		break;
->  	case V4L2_PIX_FMT_YUV420M:
->  	case V4L2_PIX_FMT_YVU420M:
-> @@ -539,9 +539,11 @@ static void s5p_mfc_dec_calc_dpb_size_v6(struct s5p_=
-mfc_ctx *ctx)
->  static void s5p_mfc_enc_calc_src_size_v6(struct s5p_mfc_ctx *ctx)
->  {
->  	unsigned int mb_width, mb_height;
-> +	unsigned int default_size;
-> =20
->  	mb_width =3D MB_WIDTH(ctx->img_width);
->  	mb_height =3D MB_HEIGHT(ctx->img_height);
-> +	default_size =3D (mb_width * mb_height) * 256;
-> =20
->  	if (IS_MFCV12(ctx->dev)) {
->  		switch (ctx->src_fmt->fourcc) {
-> @@ -549,8 +551,8 @@ static void s5p_mfc_enc_calc_src_size_v6(struct s5p_m=
-fc_ctx *ctx)
->  		case V4L2_PIX_FMT_NV21M:
->  			ctx->stride[0] =3D ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
->  			ctx->stride[1] =3D ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
-> -			ctx->luma_size =3D ctx->stride[0] * ALIGN(ctx->img_height, 16);
-> -			ctx->chroma_size =3D  ctx->stride[0] * ALIGN(ctx->img_height / 2, 16)=
-;
-> +			ctx->luma_size =3D ALIGN(default_size, 256);
-> +			ctx->chroma_size =3D ALIGN(default_size / 2, 256);
->  			break;
->  		case V4L2_PIX_FMT_YUV420M:
->  		case V4L2_PIX_FMT_YVU420M:
-
+            Linus
 
