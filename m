@@ -1,169 +1,153 @@
-Return-Path: <linux-kernel+bounces-275539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E1C9486FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:28:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD414948704
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C209628337E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:28:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7908F1F23054
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730DAAD51;
-	Tue,  6 Aug 2024 01:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B93A94A;
+	Tue,  6 Aug 2024 01:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEzjgHGN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FP5ppg/4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A828D8F62;
-	Tue,  6 Aug 2024 01:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260ECEC4;
+	Tue,  6 Aug 2024 01:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722907680; cv=none; b=YHuhFpQZ1NM+NHoBpnel75/KrdwR0iMCWB5R/xmQjlL76f2JxmmgJdj3XUMm+Xq1Xj02G2YtXCihvDPARBW6e/JF3Y9OFoPT0cRyNO+WfGbCujrB5mXO5lmUy19857suSikZ4cVNrTuziwBuR/2EkykcMtLKigUNZu5GBLAKZXQ=
+	t=1722907933; cv=none; b=n58lES7/mgJBVqIH16kKX7P6Q8UM4vXKF75rp15do/9q0tjrxDwvSxR0Ycvoj2BSwAF6NBafrtYKhCDQ0/uCnO/2UVloSpb8FlD6inXdgja9kQ8cqGJu33uAp/+xaOjOEe9VrejDQdcYLnVzC8cat675m83st2jgLXWHJ5TXsuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722907680; c=relaxed/simple;
-	bh=aIfOxL3rtOChdt3CLqv4K7JL0Tufmfdr6MR2r8LWXZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ol0LgcZSO/FuY1npU2DlTkyGyMxhSqeG3WLPB75SZGx7WVdn9uilT+uNPjNdYQ+FFLZa7ICCpGA1RqR/HGTrho7AssYBe3hEdm/o4QozsSA0ogRfaNiI1Tcj9XVhepC1xjKH8jol8o6Anfe6r23eoHvZSY4VQYCrCrqr7AeeLHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEzjgHGN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66AF2C32782;
-	Tue,  6 Aug 2024 01:27:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722907680;
-	bh=aIfOxL3rtOChdt3CLqv4K7JL0Tufmfdr6MR2r8LWXZM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DEzjgHGNlgbqmK2mVmCz9C8IEZB2HDN2a8ja+5OLyah6qlvRrnd8pl0P7Ixfw3EEP
-	 y7rDUY0KtiET+W6nUHVLdmj38iQHKpHvmOqat4kcVmocatbu8YmGfwf4zzEAFN8/DN
-	 66d/dxGS7yLdybB6gOAxxqRdm9Fm8sBYuGqQpFlLzfvdtSd4PTvQB2KnvJ5UwnAaK/
-	 0C8PMyQ+Jt/KHMj2U9RoCyMbRVwRFrGkTfefzdRMrNMvUiy/2VrF7b40r9C16PLYCu
-	 5xMrsRfazUFhSFrZiyy+yeIJg1qgE9laFK+WIgWLL9J86XaFH93FpaMQpe5Wi5kDC6
-	 dMi66ky02syCA==
-Message-ID: <eacb9a3c-0d76-47d2-8b80-59d6a58fe4b4@kernel.org>
-Date: Mon, 5 Aug 2024 18:27:57 -0700
+	s=arc-20240116; t=1722907933; c=relaxed/simple;
+	bh=8JM33EL9EX6svjFhSUMuNAxDgwAEGfs9STZx806OiSg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mJgf/iqb8gjdN8xGDU7e2vk+Ob0g2FZ8BkGwQI+PyWxB9VGi+BkhohNvLuZWlrzx6N/HNyAIVPQCHxssY+aodkAlnJEIqyN61W7EJ17FrCf0Bbeanq6OcjxC+9RHbnnpJWcDf/D0eIJ7fFhhAZTjqj77cDWBlpmboD89tiUAIXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FP5ppg/4; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722907931; x=1754443931;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=8JM33EL9EX6svjFhSUMuNAxDgwAEGfs9STZx806OiSg=;
+  b=FP5ppg/4GH6uqG6lcwK4Z8mD0dUeJ9qOm/QxSm1j9/8HyO/31JzSrDMz
+   VLHfKRfmRL438g4CMoBu2Ynn0NUADD1Se0Fr199jRAEsGWDUrd4XZNHeF
+   XtJ82Bp1tTBmgBnJbkKDGkraczxIEMCzYTS9Fo7GIMsqDfSMGWxNJrof0
+   +YkA4xz/McdnfEgACR2rbOZi6uxZbaPPACl+PsXlvAKtmrUmhi0JfevR2
+   fJAjTp8lT4ELAmgB9hsAA7DogydMnfpm6ApDR3GLUsCLhLrO8MZ9ZQLC7
+   JZMi0cnioGGqgnknpJ7kGaDDEUBhuMbIBU0REbAffQoNCC+ROT985snYF
+   A==;
+X-CSE-ConnectionGUID: sUktuYYCQxOWbdVOIKyHnA==
+X-CSE-MsgGUID: GaBuMmesRh6NBlGhaCsiHg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="20479693"
+X-IronPort-AV: E=Sophos;i="6.09,266,1716274800"; 
+   d="scan'208";a="20479693"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 18:32:10 -0700
+X-CSE-ConnectionGUID: QJ3kC4yiSViLLkCI8DXv1w==
+X-CSE-MsgGUID: INQVMo1BQiy/TWN7abVCDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,266,1716274800"; 
+   d="scan'208";a="86939041"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 18:32:07 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,  Dave Jiang
+ <dave.jiang@intel.com>,  <linux-cxl@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  Davidlohr Bueso <dave@stgolabs.net>,
+  "Alison Schofield" <alison.schofield@intel.com>,  Vishal Verma
+ <vishal.l.verma@intel.com>,  Ira Weiny <ira.weiny@intel.com>,  "Alejandro
+ Lucero" <alucerop@amd.com>
+Subject: Re: [PATCH 1/3] cxl: Set target type of root decoder based on CFMWS
+ restrictions
+In-Reply-To: <20240804172436.00003275@Huawei.com> (Jonathan Cameron's message
+	of "Sun, 4 Aug 2024 17:24:36 +0100")
+References: <20240729084611.502889-1-ying.huang@intel.com>
+	<20240729084611.502889-2-ying.huang@intel.com>
+	<20240804172436.00003275@Huawei.com>
+Date: Tue, 06 Aug 2024 09:28:34 +0800
+Message-ID: <87zfpqa18d.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH cmpxchg 2/3] ARC: Emulate one-byte cmpxchg
-To: "Paul E. McKenney" <paulmck@kernel.org>, linux-arch@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: elver@google.com, akpm@linux-foundation.org, tglx@linutronix.de,
- peterz@infradead.org, torvalds@linux-foundation.org, arnd@arndb.de,
- geert@linux-m68k.org, palmer@rivosinc.com, mhiramat@kernel.org,
- linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- Vineet Gupta <vgupta@kernel.org>, Andi Shyti <andi.shyti@linux.intel.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>
-References: <c1b7f3a2-da50-4dfb-af6f-a1898eaf2b79@paulmck-laptop>
- <20240805192119.56816-2-paulmck@kernel.org>
-Content-Language: en-US
-From: Vineet Gupta <vgupta@kernel.org>
-In-Reply-To: <20240805192119.56816-2-paulmck@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ascii
 
-Hi Paul,
+Hi, Jonathan,
 
-On 8/5/24 12:21, Paul E. McKenney wrote:
-> Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on arc.
+Jonathan Cameron <Jonathan.Cameron@Huawei.com> writes:
+
+> On Mon, 29 Jul 2024 16:46:09 +0800
+> Huang Ying <ying.huang@intel.com> wrote:
 >
-> [ paulmck: Drop two-byte support per Arnd Bergmann feedback. ]
-> [ paulmck: Apply feedback from Naresh Kamboju. ]
-> [ paulmck: Apply kernel test robot feedback. ]
+>> Now, the target type of root decoder is hard-coded to HOSTONLYMEM,
+>> because only type3 expanders are supported.  To support type2
+>> accelerators, set the target type of root decoder based on the
+>> window restrictions field of CFMWS entry.
+>> 
+>> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+>> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+>> Cc: Davidlohr Bueso <dave@stgolabs.net>
+>> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+>> Cc: Dave Jiang <dave.jiang@intel.com>
+>> Cc: Alison Schofield <alison.schofield@intel.com>
+>> Cc: Vishal Verma <vishal.l.verma@intel.com>
+>> Cc: Ira Weiny <ira.weiny@intel.com>
+>> Cc: Alejandro Lucero <alucerop@amd.com>
+>> ---
+>>  drivers/cxl/acpi.c | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+>> index 82b78e331d8e..40c92ad29122 100644
+>> --- a/drivers/cxl/acpi.c
+>> +++ b/drivers/cxl/acpi.c
+>> @@ -382,7 +382,10 @@ static int __cxl_parse_cfmws(struct acpi_cedt_cfmws *cfmws,
+>>  
+>>  	cxld = &cxlrd->cxlsd.cxld;
+>>  	cxld->flags = cfmws_to_decoder_flags(cfmws->restrictions);
+>> -	cxld->target_type = CXL_DECODER_HOSTONLYMEM;
+>> +	if (cxld->flags & CXL_DECODER_F_TYPE2)
 >
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Vineet Gupta <vgupta@kernel.org>
-> Cc: Andi Shyti <andi.shyti@linux.intel.com>
-> Cc: Andrzej Hajda <andrzej.hajda@intel.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Palmer Dabbelt <palmer@rivosinc.com>
-> Cc: <linux-snps-arc@lists.infradead.org>
-> ---
->  arch/arc/Kconfig               |  1 +
->  arch/arc/include/asm/cmpxchg.h | 33 ++++++++++++++++++++++++---------
->  2 files changed, 25 insertions(+), 9 deletions(-)
+> These flags need updating or we are going to run into problems
+> long term.
 >
-> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-> index fd0b0a0d4686a..163608fd49d18 100644
-> --- a/arch/arc/Kconfig
-> +++ b/arch/arc/Kconfig
-> @@ -13,6 +13,7 @@ config ARC
->  	select ARCH_HAS_SETUP_DMA_OPS
->  	select ARCH_HAS_SYNC_DMA_FOR_CPU
->  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
-> +	select ARCH_NEED_CMPXCHG_1_EMU
->  	select ARCH_SUPPORTS_ATOMIC_RMW if ARC_HAS_LLSC
->  	select ARCH_32BIT_OFF_T
->  	select BUILDTIME_TABLE_SORT
-> diff --git a/arch/arc/include/asm/cmpxchg.h b/arch/arc/include/asm/cmpxchg.h
-> index e138fde067dea..2102ce076f28b 100644
-> --- a/arch/arc/include/asm/cmpxchg.h
-> +++ b/arch/arc/include/asm/cmpxchg.h
-> @@ -8,6 +8,7 @@
->  
->  #include <linux/build_bug.h>
->  #include <linux/types.h>
-> +#include <linux/cmpxchg-emu.h>
->  
->  #include <asm/barrier.h>
->  #include <asm/smp.h>
-> @@ -46,6 +47,9 @@
->  	__typeof__(*(ptr)) _prev_;					\
->  									\
->  	switch(sizeof((_p_))) {						\
-> +	case 1:								\
-> +		_prev_ = (__typeof__(*(ptr)))cmpxchg_emu_u8((volatile u8 *)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
-> +		break;							\
->  	case 4:								\
->  		_prev_ = __cmpxchg(_p_, _o_, _n_);			\
->  		break;							\
-> @@ -65,16 +69,27 @@
->  	__typeof__(*(ptr)) _prev_;					\
->  	unsigned long __flags;						\
->  									\
-> -	BUILD_BUG_ON(sizeof(_p_) != 4);					\
+> As of more recent specs, the distinction is messier than it was and
+> it's device coherent HDM-D / HDM-DB (second one being type2 or type3 with
+> BI support) and/or Host only coherent HDM-H.
 
-Is this alone not sufficient: i.e. for !LLSC let the atomic op happen
-under a spin-lock for non 4 byte quantities as well.
+I got your idea.  Previously, Device Coherent (HDM-D/DB) means type2
+devices, while Host-only Coherent (HDM-H) means type3 devices.  But in
+recent specs, type3 devices could be HDM-DB too.  So, we should rename
+ACPI_CEDT_CFMWS_RESTRICT_TYPEX and CXL_DECODER_F_TYPEX.  What's your
+suggestion for the new name? _DEVMEM and _HOSTONLYMEM?
 
-> +	switch(sizeof((_p_))) {						\
-> +	case 1:								\
-> +		__flags = cmpxchg_emu_u8((volatile u8 *)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
-> +		_prev_ = (__typeof__(*(ptr)))__flags;			\
-> +		break;							\
-> +		break;							\
+> I'm curious on whether anyone is support both on same CFWMS?
+> I believe it is possible and the spec doesn't rule it out.
 
-FWIW, the 2nd break seems extraneous.
+This sounds possible.
 
-> +	case 4:								\
-> +		/*							\
-> +		 * spin lock/unlock provide the needed smp_mb()		\
-> +		 * before/after						\
-> +		 */							\
-> +		atomic_ops_lock(__flags);				\
-> +		_prev_ = *_p_;						\
-> +		if (_prev_ == _o_)					\
-> +			*_p_ = _n_;					\
-> +		atomic_ops_unlock(__flags);				\
-> +		break;							\
-> +	default:							\
-> +		BUILD_BUG();						\
-> +	}								\
->  									\
-> -	/*								\
-> -	 * spin lock/unlock provide the needed smp_mb() before/after	\
-> -	 */								\
-> -	atomic_ops_lock(__flags);					\
-> -	_prev_ = *_p_;							\
-> -	if (_prev_ == _o_)						\
-> -		*_p_ = _n_;						\
-> -	atomic_ops_unlock(__flags);					\
->  	_prev_;								\
->  })
+> Jonathan
+>
+>
+>> +		cxld->target_type = CXL_DECODER_DEVMEM;
+>> +	else
+>> +		cxld->target_type = CXL_DECODER_HOSTONLYMEM;
+>>  	cxld->hpa_range = (struct range) {
+>>  		.start = cfmws->base_hpa,
+>>  		.end = cfmws->base_hpa + cfmws->window_size - 1,
 
--Vineet
+--
+Best Regards,
+Huang, Ying
 
