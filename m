@@ -1,266 +1,158 @@
-Return-Path: <linux-kernel+bounces-276827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26BBC9498DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:14:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3550F9498E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 434621C2166C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:14:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 579871C2113B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5301F155731;
-	Tue,  6 Aug 2024 20:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265ED14EC44;
+	Tue,  6 Aug 2024 20:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TtI6vIiz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uyigb9dV"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD8A129A7E;
-	Tue,  6 Aug 2024 20:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B238C4AEE5
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722975279; cv=none; b=YwHPsrJzp8TUvX0nYcXEVxYhombaLodnq9Z1TZgHyRTAyecs92pNIrPJtTcxvNnkyCNAHlWPrERSV/XA5tvm5TW68mhRm24hS9BQwqHwCuyaW0SUBBqwg+7+DE+dJLmFJHs1Mr8RkzlvR4OA3I2333gWX0E18XN6KhKSjuVZqbI=
+	t=1722975330; cv=none; b=GVn9i0XSdEORS8gqwkTnZwWoj0IPArJ4XkbT7a5lhp2gbfcY75iK7tDuwJAsII38PW3ZtheQnFYW5v1oAvDjB+85YBOo7vt9IkdCc5YrR7dr5vE7W9Ro7N47uo4bYU0ay6mgsE+qPeqNuG9HRrIiZaDhC0lw9+IXtzoQttfachs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722975279; c=relaxed/simple;
-	bh=cYwuBVW7WPFKRnEpy+IFFl54ag6Ze/dkRiRVedUF4IM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H8b0mG4Qsus90kogZK3g8mU1EFKoVm7bOpEYVbIDcI7aLuMLbgsS4DzTbaJ1d6DWqRmJPVkifK/RmuMAbqIUzAWPdku+gFKcoUEv0+yQzC/g4BwhYwlgTEyz97aFlGQW6zwfsNNnKQ/e4vJ1IIjVY5or1vTwhn/rcCChbPMWKEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TtI6vIiz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFCBAC32786;
-	Tue,  6 Aug 2024 20:14:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722975278;
-	bh=cYwuBVW7WPFKRnEpy+IFFl54ag6Ze/dkRiRVedUF4IM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TtI6vIizcTct3JI8798A4w91z293kJbkj58Der6gwHzpG1MZkXP2JAjRrQqmsed85
-	 jcHiCGUcFTiLuSbKDTNgmOaS6vR+bAPlPLa6G76w4NzzIdLQZk+nCxUWIS6fuWHfQp
-	 USlysRcxK/97bW0zDrHmnFEC+Jsa3EsdUrxPGcNoTMW5ED8SeeZqsDhf/rYVl1P02A
-	 6+S4m6EjNuUWrb42pNb1bDLw2kACCQZJOC5PDa4ajPSUcdDJ2B/+u9qCwxWgzDk6hl
-	 RQ0f60FkvtMho1RdrmupFPNpMVVXKMjDdezooq/gHTpu49l2TE58rfmxH0BKndk4XJ
-	 wg3D/qqzABOog==
-Date: Tue, 6 Aug 2024 13:14:38 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v3 12/14] xfs: Unmap blocks according to forcealign
-Message-ID: <20240806201438.GP623936@frogsfrogsfrogs>
-References: <20240801163057.3981192-1-john.g.garry@oracle.com>
- <20240801163057.3981192-13-john.g.garry@oracle.com>
+	s=arc-20240116; t=1722975330; c=relaxed/simple;
+	bh=VxB/cGylhChdxmwTFCI5s1BrAh/xNUENUOMwnFLA+fc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lm4Ty+FdnTwGIuRMJCSKQGF1gSLyEyl9nEw1w7bPVGnDgVq8X3NhdlyrWFOrrCZMwubYyezmiRKlk/H8qP3H+J6RULsCYAKU0uTJ+jSpRxrxtDyMQ2PMIorP1qmMN9USk50ii4OeD6bo5l77fBSXt5hlKyIjulIjfeI9+zD6F3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uyigb9dV; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52efe4c7c16so1781066e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 13:15:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722975327; x=1723580127; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dcr4nYm/ORNQ3/y4PL408hIFoTg8Yy+y6wFiPltrL7k=;
+        b=Uyigb9dVJ1QVtSd6Lb+SB747wcKVLzJCjCDOqCsKQQYTP6wAWp8sdOZMeweq2QaXfE
+         t0bJyai+CsHEtsBnOIo34jdtmErZ3jfJSRgZDZ2B9Lq9mH46SaGfj5CllOzYe/y/sYgJ
+         JEp8b1mRb7pEDF6SBkRsRpjwxRFOaVifuI0cBph/fM9ZXlQRR6DO9gcNcc/t7q8FI9ZO
+         ZdZa2jKtnlUY8ni5ExL+OMXgRDW3jgaz3xDZWQF9UWuz3vJI7k+TrqI4pE9qxL6D1QmC
+         beyOjtaY14VFyZJQhpI1vfCn3tGM5fSzs5IjZMMIrZBed3o5XVoXCJsUCa43xlm2bCQo
+         +6Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722975327; x=1723580127;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dcr4nYm/ORNQ3/y4PL408hIFoTg8Yy+y6wFiPltrL7k=;
+        b=ICH0P47tcvnVFpsKQwcmpL/2rsjl1TIl6zvstycHHtrqWTcDsIqYhnsNJSZ1tv24Xk
+         qY7UemG7IjecuHLPPyxXdTy0NmBDYe2tGLaETNadu7juXBD5+6GBJPG/e6+YsvCp5Gjr
+         jYHnUF+TMXEL10RAHaahBgU8bgzIbUHFKU6MEpH7iG7LRZ0gPsEPJg2o/bYg6CqQer1b
+         cMUY6gjyz+otWFn3F2GfcgGJAQL5sKjvGfe/EWJ71ArG5erwFXOFaXoio6ibpRe7XqDT
+         svQL/M/Sb0SxuMTIu2LTxGCLiUVbRCEsExNLazAGbK6Nh72gzBzesTz70qGfpm6xqcMy
+         /LMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUs9PWzVL4VTuFBx2a6VkUmaSQKFzcPxBPiHuIXc3XeNwe6bDre2t89o5yy2r9SSdrrCbRewFRZ2o/Z564ksS3GffTQCWoeH2ByEzn
+X-Gm-Message-State: AOJu0YwJ3Ii6ZknJjdBlzgU3Po3/kXs6EjgKv3mz797dRS55UgN1C9Tg
+	Z8ri+JE9WWu2BSVyHYlHCNqX0vRURmPd+kHm8yFdbOvMJ4+jKWRbeIANjSZcPIt8f7r55dyNTkX
+	Z4WOp5bWGkf2hmygQdMqSjB9pSNM=
+X-Google-Smtp-Source: AGHT+IH3Tp44NrqMDhvMRbQhQ0+Eoa5hP8pm5fmmlYU+SDu3IykCst1EwAebrsLtDb/dcR3chM8jUFPBcOJNtaDvxNA=
+X-Received: by 2002:a05:6512:a8a:b0:52f:ccb0:9ea7 with SMTP id
+ 2adb3069b0e04-530bb3e0ba6mr9551626e87.60.1722975326329; Tue, 06 Aug 2024
+ 13:15:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801163057.3981192-13-john.g.garry@oracle.com>
+References: <20240723114914.53677-1-slp@redhat.com> <942afa37-a24c-48ed-ae10-c811849165bf@collabora.com>
+ <CAAiTLFV6mAgrMj=itcxoBCibvYRyrAk02wYp-gYJ8kxhF0EPmw@mail.gmail.com> <CAAfnVBkWKn3+YEhNz0CTmw-T_jjL72axkWqYgkzkSa72t_Gf0A@mail.gmail.com>
+In-Reply-To: <CAAfnVBkWKn3+YEhNz0CTmw-T_jjL72axkWqYgkzkSa72t_Gf0A@mail.gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 6 Aug 2024 13:15:14 -0700
+Message-ID: <CAF6AEGsnpEYFsCfZUAPopWzY=wv_GWn0P5f5D6U9y-JrWGQVnw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] drm/virtio: introduce the HOST_PAGE_SIZE feature
+To: Gurchetan Singh <gurchetansingh@chromium.org>
+Cc: Sergio Lopez Pascual <slp@redhat.com>, Dmitry Osipenko <dmitry.osipenko@collabora.com>, tzimmermann@suse.de, 
+	mripard@kernel.org, olvaffe@gmail.com, kraxel@redhat.com, daniel@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, airlied@redhat.com, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 01, 2024 at 04:30:55PM +0000, John Garry wrote:
-> For when forcealign is enabled, blocks in an inode need to be unmapped
-> according to extent alignment, like what is already done for rtvol.
-> 
-> Change variable isrt in __xfs_bunmapi() to a bool, as that is really what
-> it is.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  fs/xfs/libxfs/xfs_bmap.c | 48 +++++++++++++++++++++++++++++-----------
->  fs/xfs/xfs_inode.c       | 16 ++++++++++++++
->  fs/xfs/xfs_inode.h       |  2 ++
->  3 files changed, 53 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> index 0c3df8c71c6d..d6ae344a17fc 100644
-> --- a/fs/xfs/libxfs/xfs_bmap.c
-> +++ b/fs/xfs/libxfs/xfs_bmap.c
-> @@ -5409,6 +5409,25 @@ xfs_bmap_del_extent_real(
->  	return 0;
->  }
->  
-> +static xfs_extlen_t
-> +xfs_bunmapi_align(
-> +	struct xfs_inode	*ip,
-> +	xfs_fsblock_t		fsbno,
-> +	xfs_extlen_t *off)
-> +{
-> +	struct xfs_mount	*mp = ip->i_mount;
-> +
-> +	if (XFS_IS_REALTIME_INODE(ip))
-> +		return xfs_inode_alloc_fsbsize_align(ip, fsbno, off);
-> +	/*
-> +	 * The agbno for the fsbno is aligned to extsize, but the fsbno itself
-> +	 * is not necessarily aligned (to extsize), so use agbno to determine
-> +	 * mod+offset to the alloc unit boundary.
-> +	 */
-> +	return xfs_inode_alloc_fsbsize_align(ip, XFS_FSB_TO_AGBNO(mp, fsbno),
-> +					off);
-> +}
-> +
->  /*
->   * Unmap (remove) blocks from a file.
->   * If nexts is nonzero then the number of extents to remove is limited to
-> @@ -5430,7 +5449,8 @@ __xfs_bunmapi(
->  	xfs_extnum_t		extno;		/* extent number in list */
->  	struct xfs_bmbt_irec	got;		/* current extent record */
->  	struct xfs_ifork	*ifp;		/* inode fork pointer */
-> -	int			isrt;		/* freeing in rt area */
-> +	bool			isrt;		/* freeing in rt area */
-> +	bool			isforcealign;	/* forcealign inode */
->  	int			logflags;	/* transaction logging flags */
->  	xfs_extlen_t		mod;		/* rt extent offset */
->  	struct xfs_mount	*mp = ip->i_mount;
-> @@ -5468,6 +5488,8 @@ __xfs_bunmapi(
->  	}
->  	XFS_STATS_INC(mp, xs_blk_unmap);
->  	isrt = xfs_ifork_is_realtime(ip, whichfork);
-> +	isforcealign = (whichfork != XFS_ATTR_FORK) &&
-> +			xfs_inode_has_forcealign(ip);
->  	end = start + len;
->  
->  	if (!xfs_iext_lookup_extent_before(ip, ifp, &end, &icur, &got)) {
-> @@ -5486,6 +5508,8 @@ __xfs_bunmapi(
->  	extno = 0;
->  	while (end != (xfs_fileoff_t)-1 && end >= start &&
->  	       (nexts == 0 || extno < nexts)) {
-> +		xfs_extlen_t off;
+On Tue, Aug 6, 2024 at 9:15=E2=80=AFAM Gurchetan Singh
+<gurchetansingh@chromium.org> wrote:
+>
+>
+>
+> On Mon, Aug 5, 2024 at 2:14=E2=80=AFAM Sergio Lopez Pascual <slp@redhat.c=
+om> wrote:
+>>
+>> Dmitry Osipenko <dmitry.osipenko@collabora.com> writes:
+>>
+>> > On 7/23/24 14:49, Sergio Lopez wrote:
+>> >> There's an incresing number of machines supporting multiple page size=
+s
+>> >> and on these machines the host and a guest can be running, each one,
+>> >> with a different page size.
+>> >>
+>> >> For what pertains to virtio-gpu, this is not a problem if the page si=
+ze
+>> >> of the guest happens to be bigger or equal than the host, but will
+>> >> potentially lead to failures in memory allocations and/or mappings
+>> >> otherwise.
+>> >
+>> > Please describe concrete problem you're trying to solve. Guest memory
+>> > allocation consists of guest pages, I don't see how knowledge of host
+>> > page size helps anything in userspace.
+>> >
+>> > I suspect you want this for host blobs, but then it should be
+>> > virtio_gpu_vram_create() that should use max(host_page_sz,
+>> > guest_page_size), AFAICT. It's kernel who is responsible for memory
+>> > management, userspace can't be trusted for doing that.
+>>
+>> Mesa's Vulkan/Venus uses CREATE_BLOB to request the host the creation
+>> and mapping into the guest of device-backed memory and shmem regions.
+>> The CREATE_BLOB ioctl doesn't update drm_virtgpu_resource_create->size,
+>> so the guest kernel (and, as a consequence, the host kernel) can't
+>> override the user's request.
+>>
+>> I'd like Mesa's Vulkan/Venus in the guest to be able to obtain the host
+>> page size to align the size of the CREATE_BLOB requests as required.
+>
+>
+> gfxstream solves this problem by putting the relevant information in the =
+capabilities obtained from the host:
+>
+> https://android.googlesource.com/platform/hardware/google/gfxstream/+/ref=
+s/heads/main/host/virtio-gpu-gfxstream-renderer.cpp#1691
+>
+> If you want to be paranoid, you can also validate the ResourceCreateBlob:=
+:size is properly host-page aligned when that request reaches the host.
+>
+> So you can probably solve this problem using current interfaces.  Whether=
+ it's cleaner for all context types to use the capabilities, or have all VM=
+Ms to expose VIRTIO_GPU_F_HOST_PAGE_SIZE, would be the cost/benefit tradeof=
+f.
+>
 
-I got really confused because I thought this was a file block offset and
-only after more digging realized that this is a sometimes dummy
-adjustment variable.
+I guess solving it in a context-type specific way is possible.  But I
+think it is a relatively universal constraint.  And maybe it makes
+sense for virtgpu guest kernel to enforce alignment (at least it can
+return an error synchronously) in addition to the host.
 
-> +
->  		/*
->  		 * Is the found extent after a hole in which end lives?
->  		 * Just back up to the previous extent, if so.
-> @@ -5519,18 +5543,18 @@ __xfs_bunmapi(
->  		if (del.br_startoff + del.br_blockcount > end + 1)
->  			del.br_blockcount = end + 1 - del.br_startoff;
->  
-> -		if (!isrt || (flags & XFS_BMAPI_REMAP))
-> +		if ((!isrt && !isforcealign) || (flags & XFS_BMAPI_REMAP))
->  			goto delete;
->  
-> -		mod = xfs_rtb_to_rtxoff(mp,
-> -				del.br_startblock + del.br_blockcount);
-> +		mod = xfs_bunmapi_align(ip,
-> +				del.br_startblock + del.br_blockcount, &off);
->  		if (mod) {
+BR,
+-R
 
-Oof.  I don't like how this loop body has the rtx adjustment code
-inlined into it.  We only use the isrt flag for the one test above.
-I tried hoisting this into something less gross involving separate
-adjustment functions but then you have to pass in so many outer
-variables that it becomes a mess.
-
-The best I can come up with for now is:
-
-	unsigned int		alloc_fsb = xfs_inode_alloc_fsbsize(ip);
-	/* no more isrt/isforcealign bools */
-
-...
-
-		if (alloc_fsb == 1 || (flags & XFS_BMAPI_REMAP))
-			goto delete;
-
-		mod = do_div(del.br_startblock + del.br_blockcount,
-				alloc_fsb);
-		if (mod) {
-
->  			/*
-> -			 * Realtime extent not lined up at the end.
-> +			 * Not aligned to allocation unit on the end.
->  			 * The extent could have been split into written
->  			 * and unwritten pieces, or we could just be
->  			 * unmapping part of it.  But we can't really
-> -			 * get rid of part of a realtime extent.
-> +			 * get rid of part of an extent.
->  			 */
->  			if (del.br_state == XFS_EXT_UNWRITTEN) {
->  				/*
-> @@ -5554,7 +5578,7 @@ __xfs_bunmapi(
->  			ASSERT(del.br_state == XFS_EXT_NORM);
->  			ASSERT(tp->t_blk_res > 0);
->  			/*
-> -			 * If this spans a realtime extent boundary,
-> +			 * If this spans an extent boundary,
->  			 * chop it back to the start of the one we end at.
->  			 */
->  			if (del.br_blockcount > mod) {
-> @@ -5571,14 +5595,12 @@ __xfs_bunmapi(
->  			goto nodelete;
->  		}
->  
-> -		mod = xfs_rtb_to_rtxoff(mp, del.br_startblock);
-> +		mod = xfs_bunmapi_align(ip, del.br_startblock, &off);
->  		if (mod) {
-> -			xfs_extlen_t off = mp->m_sb.sb_rextsize - mod;
-
-		mod = do_div(del.br_startblock, alloc_fsb);
-		if (mod) {
-			xfs_extlen_t off = alloc_fsb - mod;
-
-At least then you don't need this weird xfs_inode_alloc_fsbsize_align
-that passes back two xfs_extlen_t arguments.
-
---D
-
-> -
->  			/*
-> -			 * Realtime extent is lined up at the end but not
-> -			 * at the front.  We'll get rid of full extents if
-> -			 * we can.
-> +			 * Extent is lined up to the allocation unit at the
-> +			 * end but not at the front.  We'll get rid of full
-> +			 * extents if we can.
->  			 */
->  			if (del.br_blockcount > off) {
->  				del.br_blockcount -= off;
-> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> index e7fa155fcbde..bb8abf990186 100644
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -3164,3 +3164,19 @@ xfs_is_always_cow_inode(
->  {
->  	return ip->i_mount->m_always_cow && xfs_has_reflink(ip->i_mount);
->  }
-> +
-> +/* Return mod+offset for a blkno to an extent boundary */
-> +xfs_extlen_t
-> +xfs_inode_alloc_fsbsize_align(
-> +	struct xfs_inode	*ip,
-> +	xfs_fileoff_t		blkno,
-> +	xfs_extlen_t		*off)
-> +{
-> +	xfs_fileoff_t		blkno_start = blkno;
-> +	xfs_fileoff_t		blkno_end = blkno;
-> +
-> +	xfs_roundout_to_alloc_fsbsize(ip, &blkno_start, &blkno_end);
-> +
-> +	*off = blkno_end - blkno;
-> +	return blkno - blkno_start;
-> +}
-> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> index 6dd8055c98b3..7b77797c3943 100644
-> --- a/fs/xfs/xfs_inode.h
-> +++ b/fs/xfs/xfs_inode.h
-> @@ -647,6 +647,8 @@ void xfs_roundout_to_alloc_fsbsize(struct xfs_inode *ip,
->  		xfs_fileoff_t *start, xfs_fileoff_t *end);
->  void xfs_roundin_to_alloc_fsbsize(struct xfs_inode *ip,
->  		xfs_fileoff_t *start, xfs_fileoff_t *end);
-> +xfs_extlen_t xfs_inode_alloc_fsbsize_align(struct xfs_inode *ip,
-> +		xfs_fileoff_t blkno, xfs_extlen_t *off);
->  
->  int xfs_icreate_dqalloc(const struct xfs_icreate_args *args,
->  		struct xfs_dquot **udqpp, struct xfs_dquot **gdqpp,
-> -- 
-> 2.31.1
-> 
-> 
+>>
+>>
+>> Thanks,
+>> Sergio.
+>>
 
