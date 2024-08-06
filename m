@@ -1,102 +1,114 @@
-Return-Path: <linux-kernel+bounces-276843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD56949915
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:29:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74970949916
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B85E1C21442
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:29:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1659B2558B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD6E15688C;
-	Tue,  6 Aug 2024 20:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E595515FA92;
+	Tue,  6 Aug 2024 20:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="NSSimto/"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MsZlLR7x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64576EB4A
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3E5154456;
+	Tue,  6 Aug 2024 20:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722976103; cv=none; b=uPIef+yETMsFLyRCahO/yg668ReGN/uoKWipwcUaRCSjAsB+AyGQf0qdDVkPV/NPd/OvQ/WteZpcCE1Eff2n2pdhzVdIkBLJxaG+VNAe3uA3jm6om0a1qC8ax0PXJP4++RGwm204K0ElZP56dKEc69w84+JrdJwzQrDljRqOuN4=
+	t=1722976132; cv=none; b=r9Nk4wLdLrX+Q8pxo6JvdOl7zdjJ+Sb4d3/5z5PkL93d9Dae3LhsnB+9e0VyYiSJn1na9pZU3KpkMXzPKfTa8d4LtObFFEoeVxCV5jV6/Fy9d3aZfwDOTw7CSlliFDrBl/nGoLVTwAexDwe9G7LR6z/MSyfDF21cCTdHQEvb+gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722976103; c=relaxed/simple;
-	bh=NewxizV/QrE0bDS6mTJcWWeH0ghijd0o6ZQvUX6X8Co=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VK3yyhBz3ki0AEbmlilOlxsZ/i/TTebE1qVUCdZABeRuBWQs7kWKP1p0GrezrcZAcbLOwB5Jpx3U3UbTcAcwaAwbANONI8NLg37b3NWcxfu7VoOmVANf7Gcs/1/RcQUwn9airEjwKv98e1U53rvELuXOoQ+hSRF45GmdMIUwnH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=NSSimto/; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc56fd4de1so1772295ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 13:28:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1722976101; x=1723580901; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NewxizV/QrE0bDS6mTJcWWeH0ghijd0o6ZQvUX6X8Co=;
-        b=NSSimto/PRLt5uHA1Wa9qAzk2WKijXTsPtp7+hybXGvo3XDk2B2kASm36m2srm5W1x
-         DhOzn7BSWXnK/DrovuFagXocDFypAZIZXjvRLKi4f8XHjL8servwsaqS9aua28uqTlnU
-         vcRkvS2aes7atOIHEOuALZx7/ucBajyDTlQBRK0HuxggKZEic5AjcoBef6w8f6oGLzCc
-         H+S+z8A+jRaWk2hdRvH+f95ywz/dg6S0yXThHBxE/GCcVg5KNUalcVP5/2WxTms/RoQN
-         MDbj4l17tmUML3KRlhH8hRlLpkWWDGxKuhi6Pj/GcquSg34dZ6hqU+h0+wk0mEqTuafK
-         aQ1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722976101; x=1723580901;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NewxizV/QrE0bDS6mTJcWWeH0ghijd0o6ZQvUX6X8Co=;
-        b=pmY6KP454aJ+4hnXjglfkxzTL+tK/CgbDcc0KkChP3td85fc5kwIARebndBQSfiIqc
-         FfUNTdHYXs44+xnyAu950KonMDXOOyiRGAW1y3xFnNt/SeyohKyEmmAv4B554hqFHx3e
-         00X96F2HL2AJmPgNs+d7q0xRdqR6roRR13S75gaJKyi343pXURfp5p1PLIicDWEflS04
-         E76ZP5zdViBN0NlW+VdtfbonbbSqJ49S9ex2qlgwNFWr5l34RGG/rvoE1mJZiGNQJb6e
-         a8d09s8cGQjGzFBI2xtkPL+pclQt2J7bEbdBjaArVZsbARM2MSjPmAIkTlRuT8c6+vh0
-         3Cgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJYuY1cabJt78DZy2lWXemdzjl+nHe7IziKfuXMbmAzgqqHdvn08OBsBz1gvyho0EcE+dAnBCcIhTXLqDhKUFgg0DzeI0hpq7TN9EM
-X-Gm-Message-State: AOJu0YzlMFH1ti/eHwmpFyeU/VFr4wIe7E8EsZcPkSRJqFAcA9wPYNzh
-	3cnY6K4nAalT1Oylvl66W0heie7OQhnvQCWIU+L208zjkHoJ5IpDPpuLN/xcI9V/FppyLop2jI1
-	z/gF/nvjnOy5oB9G7ZAfGR50YUlI=
-X-Google-Smtp-Source: AGHT+IHJzplOe6T346XHNyXlXK1O9+ysbtzTM327nVE1L0ilozkYUPHpw1p+kyXVwiPZ5odozVxc038s2IOyIQTUyCU=
-X-Received: by 2002:a17:903:1206:b0:1fc:253b:5951 with SMTP id
- d9443c01a7336-200853a50c0mr27695ad.4.1722976101123; Tue, 06 Aug 2024 13:28:21
- -0700 (PDT)
+	s=arc-20240116; t=1722976132; c=relaxed/simple;
+	bh=Sl557BAwaHzbY08oPXeLgFTmCXhqWVHszOkVgq68tQo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=tYK3X5SY416/ptwLDnnaROoYoO6yflV1y2dPJvm3RkCNTNjjbThNWU2AAFshODoIw2phOHljJHvLtp1U2cxIdEh0/lLKAoi6PwcFPJgMcMYloyYpupL/8xOkyXgtWOg75k8Oq7yDSp4OY8HG1VVJXNwSOrbLOGEfEVEZhdIyFN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MsZlLR7x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5786C32786;
+	Tue,  6 Aug 2024 20:28:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722976131;
+	bh=Sl557BAwaHzbY08oPXeLgFTmCXhqWVHszOkVgq68tQo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=MsZlLR7x/bg2NSn7c5K3+ZkAPMwNFrMK0IiALaass3WIKWSfKdXCVQcJ4ZpyO4OIj
+	 eMfoKBrz3vj/fxW4Yeg/52DifwIOXvft708AmsgNNUJk96SntwPkyns9e5GslpGhcM
+	 KpBnCeKNrTx7oTOzwVBZyEEkfxEu+rdOPlKx2walqhsXLpv31p/XiLdOAOuGyhW0uK
+	 2Q5Lp58Nepz6rSGjDBXrNCXlCfnJBRp5Cl2k/Ez0cr7VBMb+f7XQMcX3SNelUGew4r
+	 Ds5hoRFBvZZUJbPUqGJos9F+o8Uq7w8Rmzs0U+zqN+HN8jh6ynEL3V5YeZIzQK/gsp
+	 AgMCbL5AT0jqA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AEF7239EF95A;
+	Tue,  6 Aug 2024 20:28:51 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730125023.710237-1-jbrunet@baylibre.com> <20240730125023.710237-4-jbrunet@baylibre.com>
-In-Reply-To: <20240730125023.710237-4-jbrunet@baylibre.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Tue, 6 Aug 2024 22:28:10 +0200
-Message-ID: <CAFBinCCW9bNtHLRaJNBvqLXN_vCm4mFSVhhV6OcrUb+j-0x3kg@mail.gmail.com>
-Subject: Re: [PATCH 3/9] drm/meson: dw-hdmi: use generic clock helpers
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Kevin Hilman <khilman@baylibre.com>, dri-devel@lists.freedesktop.org, 
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v8 0/5] Add Svade and Svadu Extensions Support
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <172297613024.1692635.16557321392270733874.git-patchwork-notify@kernel.org>
+Date: Tue, 06 Aug 2024 20:28:50 +0000
+References: <20240726084931.28924-1-yongxuan.wang@sifive.com>
+In-Reply-To: <20240726084931.28924-1-yongxuan.wang@sifive.com>
+To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, greentime.hu@sifive.com,
+ vincent.chen@sifive.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu
 
-On Tue, Jul 30, 2024 at 2:50=E2=80=AFPM Jerome Brunet <jbrunet@baylibre.com=
-> wrote:
->
-> The Amlogic HDMI phy driver is not doing anything with the clocks
-> besides enabling on probe. CCF provides generic helpers to do that.
->
-> Use the generic clock helpers rather than using a custom one to get and
-> enable clocks.
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Hello:
 
-note to self: even if we need to manage one of the clocks specifically
-we can do it with clk_bulk_data
+This series was applied to riscv/linux.git (fixes)
+by Anup Patel <anup@brainfault.org>:
+
+On Fri, 26 Jul 2024 16:49:25 +0800 you wrote:
+> Svade and Svadu extensions represent two schemes for managing the PTE A/D
+> bit. When the PTE A/D bits need to be set, Svade extension intdicates that
+> a related page fault will be raised. In contrast, the Svadu extension
+> supports hardware updating of PTE A/D bits. This series enables Svade and
+> Svadu extensions for both host and guest OS.
+> 
+> Regrading the mailing thread[1], we have 4 possible combinations of
+> these extensions in the device tree, the default hardware behavior for
+> these possibilities are:
+> 1) Neither Svade nor Svadu present in DT => It is technically
+>    unknown whether the platform uses Svade or Svadu. Supervisor
+>    software should be prepared to handle either hardware updating
+>    of the PTE A/D bits or page faults when they need updated.
+> 2) Only Svade present in DT => Supervisor must assume Svade to be
+>    always enabled.
+> 3) Only Svadu present in DT => Supervisor must assume Svadu to be
+>    always enabled.
+> 4) Both Svade and Svadu present in DT => Supervisor must assume
+>    Svadu turned-off at boot time. To use Svadu, supervisor must
+>    explicitly enable it using the SBI FWFT extension.
+> 
+> [...]
+
+Here is the summary with links:
+  - [v8,1/5] RISC-V: Add Svade and Svadu Extensions Support
+    (no matching commit)
+  - [v8,2/5] dt-bindings: riscv: Add Svade and Svadu Entries
+    (no matching commit)
+  - [v8,3/5] RISC-V: KVM: Add Svade and Svadu Extensions Support for Guest/VM
+    (no matching commit)
+  - [v8,4/5] KVM: riscv: selftests: Fix compile error
+    https://git.kernel.org/riscv/c/dd4a799bcc13
+  - [v8,5/5] KVM: riscv: selftests: Add Svade and Svadu Extension to get-reg-list test
+    (no matching commit)
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
