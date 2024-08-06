@@ -1,159 +1,229 @@
-Return-Path: <linux-kernel+bounces-276368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE8094928E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:04:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0A56949293
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C1E28281C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:04:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3F741C21421
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262B517ADED;
-	Tue,  6 Aug 2024 14:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BDB17ADFE;
+	Tue,  6 Aug 2024 14:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JDzTsCTa"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jPJPy4+p"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D708518D65C
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556541D54D1;
+	Tue,  6 Aug 2024 14:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722952998; cv=none; b=PVhtkrx6u5VaSzn18NXcG4RdNYFcdWK4QvIU0qjkK1EN+QjA1W0mYqREPY1auWSVbhMBnBtvoCXpnDsqv0T5HCWIoNZVanoTx1iENg7Zzz3p8sYto6EQA0vcKqEkXhbw2VKBXBOHL7VzWPAWCRmlngnQoKCUes3ehLTISApfJ9M=
+	t=1722953003; cv=none; b=UGG9u8Vy9mSD873FAt6rIyqN3It4ZvZazR75Jryv2jOdVL0e2BQtVvbBtYtaxy7ahXaW5ImsHNMO8rqX58iyMqoV6vYt9dBNzKYS0B/UM6z+XCENubqrzi1BsUuYi+hN0D99M5N34mtc55MzNLi/ousvykWeEdZrauQWSdohcoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722952998; c=relaxed/simple;
-	bh=p9ZVmTdp+MSHPZCDiYNhr72+FrIxO5hIK6X0gOSKUBw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mAv1P77XEh5pj60FOEq/L/Z/bO1A4MmBDcrvPJ1ZELxex8K6IaIcqtmZfMo5ABvuwrQ1fHZNtSbw7uj2uzBQLkEzLQuGNJUk6WNLlFh5RL2PhF6haVpVqY/3dRDVSp93TbdNx7R8zVN3Vzk6A1LbGiMjR0uSqj9cMB3Na00DJIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JDzTsCTa; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0e78047c98so767504276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 07:03:16 -0700 (PDT)
+	s=arc-20240116; t=1722953003; c=relaxed/simple;
+	bh=BgtXdTWrF/uVjmONeyxVuYhWWob0LQsLCLOoPBwmuuw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SxsHY6h12Rqex3p40KJdceWXxy+uY229497IFBY9LBerJ7U2OxCj2rJoMpxiI4tbaQIEJ6reyrio/MnibcOaO1xZkg5QywgbtM9BtkW8Ge3Esl8ZL5QouLYeARcf5B6rS71SHDluJraaKS8pE6t48aSBARJMIqZzTmsJcjpcoSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jPJPy4+p; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc5549788eso5531505ad.1;
+        Tue, 06 Aug 2024 07:03:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722952996; x=1723557796; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uqGT2mTXRSzZVlXU0nXvRQaIKYNQT+/mO2u06f0vChA=;
-        b=JDzTsCTapuq6R60wlzcPS5LVQ50+8zyNc+Y/A0rQlgY8AYEirfrcZqJQjFGMG5ITXm
-         oJXq+3adOlh0wEur39vdzVG5FFHAkrpjaEDvkAv2PO3xwVy4xNHfMXzLVyb/5r+UmPGP
-         jK2xajxBQECE8QPWTvTN2tzml+3qtZ8FOCM1lFt7dGaS2/fu+nIYeiDXn5sPTKM7N/mD
-         3z+EzMhc+CyEP8krdl24J1anMSNX6DY3bCIKrQBCmBLgIIgaOh78XyHSe5o3e2un+LaP
-         7bKbAzaWU1xz6Xg+eZU1BbkBhvaFWoq8YREpSgwU6dhgj+8qyX7RF8+VbXakkGDFSuGx
-         a8pQ==
+        d=gmail.com; s=20230601; t=1722953000; x=1723557800; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=1WuLsZhsyVi84fddIjL/eS+CsAFFvv5htC93Qn3A7hU=;
+        b=jPJPy4+pZHXEsVS1QuBJ2LlFQQDJmh04TjjD37h0A9+rR+BLwTeywtulIKMy52IVNP
+         G/Rxlnulfc+LMyEgfDhLpVjrT9U23Tn6TA0axC5X5O2yX4YhHaAKni4zzKPtZEf9FAY3
+         RulQbA6sLzZ5/6BEBnx9JwnwGKREJPQJV3yW70J8hos3ub4Vr5+yDg7jz8j3WyAVTdKq
+         vjIbvL2AZQz7CgfP1PqYdxQXhwTqODsnPS5QqA12se7Nae3ETZIu/kABT0NGiBfXtvtp
+         Dj3sc0TCzk2QFoHSqsUKHHxvsXgPmjG3lKogdJODAoQC9clKFxRB387BbWOH9qp/BXj8
+         yibg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722952996; x=1723557796;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uqGT2mTXRSzZVlXU0nXvRQaIKYNQT+/mO2u06f0vChA=;
-        b=uFaI5n3jvdvtpGEcGBVDDNTksRG2O07+KWty1uzfZ0IfkcG6V7IMzXgenTwRpXj1CN
-         zQTRciYtpakvEw0xyHeFm28x+Lq1CxWTau4yz5z9Szqy7yC/TRicZpO+Yu1dteXyILjv
-         VTqo+L36xZT4MjipQG7HbqrbPL7zeBthgERgIQ0jeZS36gzvLu7ZIt4sGgt3YQn/g6g9
-         hUGIlEkwv+OFDVt+56Xj6xln9FiPRGrx0DtdogETrVI8wv0UOf5bHLkXfjh/UWKZghfw
-         zFbxDNJBknOmSaIcXvHDaWfEqbbR+4vCKh8BKAZ2s5thYrfNTHd99qs/P1v8WzkWm0K0
-         rXxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNbyTDyK2BQi3dButWeslXDiVmJKpMW0/+rpPn0wzA23m7z3qTiYV/0LY+qwoLr2aCTsJsv3SsJl4SOo9h/fuzz75IR9L9pTUtRxkB
-X-Gm-Message-State: AOJu0YyDyYSk9qKuNdfvG391vz7IsxxtBQxKb8gXsoHCBGMRe9uQk9Cp
-	O0Mev9xOQmh3G5+ApT3vhluKhZq61vF6qOqroEzM4tLrXlRBZkrwNFsynPMPVJa6LRZI/cOx9fR
-	Ujw==
-X-Google-Smtp-Source: AGHT+IHr0cjXP2WYBxQNM2DFAMasCde6kX0ZJgK/KZ2REvTSlG5RrUyWL0rGH3moNZ4O8mUg1dBZlOQRgtI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:150a:b0:e0b:edb:143c with SMTP id
- 3f1490d57ef6-e0bdde81b6cmr199586276.0.1722952995798; Tue, 06 Aug 2024
- 07:03:15 -0700 (PDT)
-Date: Tue, 6 Aug 2024 07:03:09 -0700
-In-Reply-To: <dd6ca54cfd23dba0d3cba7c1ceefea1fdfcdecbe.camel@infradead.org>
+        d=1e100.net; s=20230601; t=1722953000; x=1723557800;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1WuLsZhsyVi84fddIjL/eS+CsAFFvv5htC93Qn3A7hU=;
+        b=ADjf/EpNEKtGPn2i8nyNPoXAUQz7PCBK7uV1viEaHoWVGjoY1O1HJD0A5q3EEx3xSb
+         cqE5UskxjSkCznc2QG0RvNrlC3zRfGrepZ1mKzM5+pNqtmVmN310jKt0CyFYCWOZiKCF
+         nualxHAoqCKeLva9iRPVn4OhD7KT7M6MBRiYhjEeV5HDLGsR/ly3fVOJKXBUsuT4rXTF
+         SeIJcYUcX3nPsgjMBTTYOUvcPxJhCsSwoQJwM99zolnm1CSP5cszvZSY0Y+qCGMZrcrk
+         Lr4Q3tmDN+BFaFJqgez7al3Dgs2LX3zbzMYRnFHYkV1tSH0NfB7HW9jiGPOtkr1i4Fy2
+         twDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVI7oCph93kB1cNwHfsDDAAKlyAgRR4KRxtcxEdBOO0G/53D1l+y29QLOJjX9mHhXUIPbpXOA5mCiYudAk4WgXQ8fMescTNcLu04CmnTXCR0hUgF5lBDoOWLMgGRP1l/H4zTeqWEVYx4Z3NYl0smSmYHdljRpk6Ftk+7ivOTSC1ay6ULCA6niotLKySy6mhRXt18xAtFqrXraWl06Hdh88vHIBGdha6TFCuSrQ=
+X-Gm-Message-State: AOJu0YxbIIYwnGvAR3GTxJB6t2AEqNx3Qtl02TrX9YFJP3CpPfhmJWEw
+	dG5ld7Go1D86Ajb4s+gW8UGKBbnjdTOM2R3jsjRG1jONuuz4oXBY
+X-Google-Smtp-Source: AGHT+IFuLufyJ8wkFRQLobEpWemkrVv3rhhHR/Eg39XpVVarxeMoL124V5V7CMxLZsS6jlolI1JCiA==
+X-Received: by 2002:a17:902:f213:b0:1fa:ff88:891a with SMTP id d9443c01a7336-1ff5744b232mr142432635ad.48.1722953000326;
+        Tue, 06 Aug 2024 07:03:20 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f29e18sm88462975ad.11.2024.08.06.07.03.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 07:03:19 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <45d4760e-17bf-49f2-a139-d79a0202b630@roeck-us.net>
+Date: Tue, 6 Aug 2024 07:03:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20220427014004.1992589-1-seanjc@google.com> <20220427014004.1992589-7-seanjc@google.com>
- <294c8c437c2e48b318b8c27eb7467430dfcba92b.camel@infradead.org>
- <f862cefff2ed3f4211b69d785670f41667703cf3.camel@infradead.org>
- <ZrFyM8rJZYjfFawx@google.com> <dd6ca54cfd23dba0d3cba7c1ceefea1fdfcdecbe.camel@infradead.org>
-Message-ID: <ZrItHce2GqAWoN0o@google.com>
-Subject: Re: [PATCH] KVM: Move gfn_to_pfn_cache invalidation to
- invalidate_range_end hook
-From: Sean Christopherson <seanjc@google.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Mushahid Hussain <hmushi@amazon.co.uk>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
-	Jim Mattson <jmattson@google.com>, Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Mingwei Zhang <mizhang@google.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] watchdog: Add Watchdog Timer driver for RZ/V2H(P)
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240805200400.54267-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240805200400.54267-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <81ac76eb-8b43-457b-80be-c588ac4790e1@roeck-us.net>
+ <CA+V-a8u0dFGmNqJWuXXH3mVVTT6dWBhSr+SM7nFyu3DAeACjNA@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CA+V-a8u0dFGmNqJWuXXH3mVVTT6dWBhSr+SM7nFyu3DAeACjNA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 06, 2024, David Woodhouse wrote:
-> On Mon, 2024-08-05 at 17:45 -0700, Sean Christopherson wrote:
-> > On Mon, Aug 05, 2024, David Woodhouse wrote:
-> > > From: David Woodhouse <dwmw@amazon.co.uk>
-> > Servicing guest pages faults has the same problem, which is why
-> > mmu_invalidate_retry_gfn() was added.=C2=A0 Supporting hva-only GPCs ma=
-de our lives a
-> > little harder, but not horrifically so (there are ordering differences =
-regardless).
-> >=20
-> > Woefully incomplete, but I think this is the gist of what you want:
->=20
-> Hm, maybe. It does mean that migration occurring all through memory
-> (indeed, just one at top and bottom of guest memory space) would
-> perturb GPCs which remain present.
+On 8/6/24 06:47, Lad, Prabhakar wrote:
+> Hi Guenter,
+> 
+...
+>>> +     /*
+>>> +      * WDTCR
+>>> +      * - CKS[7:4] - Clock Division Ratio Select - 0101b: oscclk/256
+>>> +      * - RPSS[13:12] - Window Start Position Select - 11b: 100%
+>>> +      * - RPES[9:8] - Window End Position Select - 11b: 0%
+>>> +      * - TOPS[1:0] - Timeout Period Select - 11b: 16384 cycles (3FFFh)
+>>> +      */
+>>> +     rzv2h_wdt_setup(wdev, WDTCR_CKS_CLK_256 | WDTCR_RPSS_100 |
+>>> +                     WDTCR_RPES_0 | WDTCR_TOPS_16384);
+>>> +
+>>> +     rzv2h_wdt_ping(wdev);
+>>> +
+>>
+>> The need to ping the watchdog immediately after enabling it is unusual.
+>> Please explain.
+>>
+> The down counting operation starts only after the ping operation, so
+> after starting the wdt a ping is issued here.
+> 
 
-If that happens with a real world VMM, and it's not a blatant VMM goof, the=
-n we
-can fix KVM.  The stage-2 page fault path hammers the mmu_notifier retry lo=
-gic
-far more than GPCs, so if a range-based check is inadequate for some use ca=
-se,
-then we definitely need to fix both.
+Please add that as comment to the code.
 
-In short, I don't see any reason to invent something different for GPCs.
+...
 
-> > > @@ -849,6 +837,8 @@ static void kvm_mmu_notifier_invalidate_range_end=
-(struct mmu_notifier *mn,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0wake =3D !kvm->mn_act=
-ive_invalidate_count;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0spin_unlock(&kvm->mn_=
-invalidate_lock);
-> > > =C2=A0
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0gfn_to_pfn_cache_invalidat=
-e(kvm, range->start, range->end);
-> >=20
-> > We can't do this.=C2=A0 The contract with mmu_notifiers is that seconda=
-ry MMUs must
-> > unmap the hva before returning from invalidate_range_start(), and must =
-not create
-> > new mappings until invalidate_range_end().
->=20
-> But in the context of the GPC, it is only "mapped" when the ->valid bit i=
-s set.=20
->=20
-> Even the invalidation callback just clears the valid bit, and that
-> means nobody is allowed to dereference the ->khva any more. It doesn't
-> matter that the underlying (stale) PFN is still kmapped.
->=20
-> Can we not apply the same logic to the hva_to_pfn_retry() loop? Yes, it
-> might kmap a page that gets removed, but it's not actually created a
-> new mapping if it hasn't set the ->valid bit.
->=20
-> I don't think this version quite meets the constraints, and I might
-> need to hook *both* the start and end notifiers, and might not like it
-> once I get there. But I'll have a go...
+> Ive now updated restart with below, so that we dont touch clocks if
+> they are already ON,
+> 
+>      if (!watchdog_active(wdev)) {
+>          ret = clk_enable(priv->pclk);
+>          if (ret)
+>              return ret;
+> 
+>          ret = clk_enable(priv->oscclk);
+>          if (ret) {
+>              clk_disable(priv->pclk);
+>              return ret;
+>          }
+>      }
+> 
+>      if (!watchdog_active(wdev))
+>          ret = reset_control_deassert(priv->rstc);
+>      else
+>          ret = reset_control_reset(priv->rstc);
 
-I'm pretty sure you're going to need the range-based retry logic.  KVM can'=
-t
-safely set gpc->valid until mn_active_invalidate_count reaches zero, so if =
-a GPC
-refresh comes along after mn_active_invalidate_count has been elevated, it =
-won't
-be able to set gpc->valid until the MADV_DONTNEED storm goes away.  Without
-range-based tracking, there's no way to know if a previous invalidation was
-relevant to the GPC.
+Please rearrange to only require a single "if (!watchdog_active())".
+Also, please add a comment explaining the need for calling
+reset_control_reset() if the watchdog is active.
+
+>      if (ret) {
+>          clk_disable(priv->oscclk);
+>          clk_disable(priv->pclk);
+>          return ret;
+>      }
+> 
+>      /* delay to handle clock halt after de-assert operation */
+>      udelay(3);
+> 
+> 
+>>> +     /*
+>>> +      * WDTCR
+>>> +      * - CKS[7:4] - Clock Division Ratio Select - 0000b: oscclk/1
+>>> +      * - RPSS[13:12] - Window Start Position Select - 00b: 25%
+>>> +      * - RPES[9:8] - Window End Position Select - 00b: 75%
+>>> +      * - TOPS[1:0] - Timeout Period Select - 00b: 1024 cycles (03FFh)
+>>> +      */
+>>> +     rzv2h_wdt_setup(wdev, WDTCR_CKS_CLK_1 | WDTCR_RPSS_25 |
+>>> +                     WDTCR_RPES_75 | WDTCR_TOPS_1024);
+>>> +     rzv2h_wdt_ping(wdev);
+>>> +
+>> Why is the ping here necessary ?
+>>
+> The down counting starts after the refresh operation, hence the WDT is pinged.
+> 
+
+Should be covered with the explanation in rzv2h_wdt_start().
+
+Thanks,
+Guenter
+
 
