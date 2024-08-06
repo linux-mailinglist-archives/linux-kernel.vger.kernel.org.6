@@ -1,160 +1,240 @@
-Return-Path: <linux-kernel+bounces-276570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA34694955F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:15:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED87949568
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86D5E287715
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:15:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E27E61C21497
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FFE2C697;
-	Tue,  6 Aug 2024 16:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5708A38DD8;
+	Tue,  6 Aug 2024 16:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R3w6boAF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ARD8PGZl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13E0175A5
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 16:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5048518D635;
+	Tue,  6 Aug 2024 16:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722960927; cv=none; b=bHbhJUzt6ZM8ZB0+CsIfxtFfeuFNKyKOaIMMHcNm7W5jxIOvSlaLfgFZzAk2PF/hPQl7lWYn8D7wKQzWZ6hY33kcvlDReEUWAAI5NQdHUwENOupIdkfhHN1h9Am1XmZU2yKrfS1xtU1Slu7fkm6FhAFbhlulloKrI6+WMNpegA0=
+	t=1722961040; cv=none; b=Kis3C+vFR4S2KEWH9+nA7I2coZrwIPzyoM0MD9DCJMwmHiWYDIrL4Zn9X1WqR1H5ldp8SgI7fWPTy5ieC2/kuYbxlvKfKabhwaRbZw8+s7XK9AYATZ4njptmJ1d2nhFQ3VAoO0LHxV2GDmNpPnuTOo9I1TnDNEwW9oP46A6aRcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722960927; c=relaxed/simple;
-	bh=nLF70tU9lKmCy8VEiRDxCHWc8vhxDCk0gMzJ6rlRNVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WLbnFB6jI4RmdjjjEJ1VVhv+5NtnrzSizeX2xpA+bthTvtO6FwswUaradYOYHLelr43w5ZezVQIH3RO6s1EwNGndZL+XhQ0OCKsjpsOOJHIEjMkm/k2jKgxGkEU8J0xQUT2t/L0CObtKhboLCkxNAjTcEYpIJu4plY56mvNS9go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R3w6boAF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722960924;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ocUO54UkX6UEu2Jsdmx7F3rzWjBkiKGcuGMRQDNpeXo=;
-	b=R3w6boAFcdwlhVerNqBp7JwPV0eBQyTyml0W2/TUZKdirhzA4yHU4bJAwo6xVkhZNmm4GB
-	rVqQf2uvtlLveUZKIlMsg0aXRVWJ7gSjoyP8fYDnwM2c6SEF2nWeZgyk6lMLwVkafYn6tl
-	lUbQBaCs1TaB5RDBM/H9POr4Zs7i4/4=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-153-ttqLFjRfO3-g3vt4kA9zxQ-1; Tue,
- 06 Aug 2024 12:15:19 -0400
-X-MC-Unique: ttqLFjRfO3-g3vt4kA9zxQ-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4AC5B1955D45;
-	Tue,  6 Aug 2024 16:15:16 +0000 (UTC)
-Received: from [10.2.16.146] (unknown [10.2.16.146])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3B73E300019B;
-	Tue,  6 Aug 2024 16:15:13 +0000 (UTC)
-Message-ID: <bc5fb22c-189f-4f45-a7b3-185634ec3e26@redhat.com>
-Date: Tue, 6 Aug 2024 12:15:12 -0400
+	s=arc-20240116; t=1722961040; c=relaxed/simple;
+	bh=P7qUrUlUJvLXkQ+a2mx7vAKlClxJBD7KrgVMUtkPSQ0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kX6hC7FYytX0csk/il9uyJJ9tpJ2IDAAeemdfzwDoY6EQJt1TgC3Fxa1vNHTbOSgTf4kelHkUvIy/8rNo8QVKmEfIoBemJ+7GSl5J0ZvgbGNSSV79HPyW7ti6ykWJ8Pa2tcu2skAK/J1MD2y6VxjD2SvDa4rz5XVQ+8BoYsKjp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ARD8PGZl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B85C32786;
+	Tue,  6 Aug 2024 16:17:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722961040;
+	bh=P7qUrUlUJvLXkQ+a2mx7vAKlClxJBD7KrgVMUtkPSQ0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ARD8PGZlc8nX6j6s9dR3k9oJpZc8HXQPPKTXgwBu9FGau5VluADHNYbIwao+KUbDv
+	 vTtiz2lNbODgRGDP9yMX3v3/sfxTUPA7Gy/Di+z8bNS+zjo78zf2Ygk4NcRkF8hWmb
+	 4Tz4y+aLIpTE4Y+zwglfxAYjU2vbULI2logPltt8RoWlwbmGZv9XVqHlqJ9M/eC/64
+	 9gNQ0xuIx3dC1c2XNxYlbxtyoCQDJXLdPm8QVoG+t/b8KcxgmBJJHukPmuzVUTf4t0
+	 JpSmSw4NmYc12fYSw4TfGb15PXBAYlKZ5hE8qGw4qDqPXHEtmH/czhUhJdUqUQAMFM
+	 +M7OMaU+8cnHg==
+Message-ID: <915bca37dc73206b0a79f2fba4cac3255f8f6c0d.camel@kernel.org>
+Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+From: Jeff Layton <jlayton@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Andrew Morton
+	 <akpm@linux-foundation.org>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 06 Aug 2024 12:17:12 -0400
+In-Reply-To: <CAGudoHF9nZMfk_XbRRap+0d=VNs_i8zqTkDXxogVt_M9YGbA8Q@mail.gmail.com>
+References: <20240806-openfast-v2-1-42da45981811@kernel.org>
+	 <CAGudoHF9nZMfk_XbRRap+0d=VNs_i8zqTkDXxogVt_M9YGbA8Q@mail.gmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/memory-failure: Use raw_spinlock_t in struct
- memory_failure_cpu
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi
- <nao.horiguchi@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Huang Ying <ying.huang@intel.com>, Len Brown <len.brown@intel.com>
-References: <20240806142535.1033323-1-longman@redhat.com>
- <ZrJG6OtoQCUadS9L@jlelli-thinkpadt14gen4.remote.csb>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <ZrJG6OtoQCUadS9L@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 8/6/24 11:53, Juri Lelli wrote:
-> Hi Waimain,
->
-> On 06/08/24 10:25, Waiman Long wrote:
->> The memory_failure_cpu structure is a per-cpu structure. Access to its
->> content requires the use of get_cpu_var() to lock in the current CPU
->> and disable preemption. The use of a regular spinlock_t for locking
->> purpose is fine for a non-RT kernel.
->>
->> Since the integration of RT spinlock support into the v5.15 kernel,
->> a spinlock_t in a RT kernel becomes a sleeping lock and taking a
->> sleeping lock in a preemption disabled context is illegal resulting in
->> the following kind of warning.
->>
->>    [12135.732244] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
->>    [12135.732248] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 270076, name: kworker/0:0
->>    [12135.732252] preempt_count: 1, expected: 0
->>    [12135.732255] RCU nest depth: 2, expected: 2
->>      :
->>    [12135.732420] Hardware name: Dell Inc. PowerEdge R640/0HG0J8, BIOS 2.10.2 02/24/2021
->>    [12135.732423] Workqueue: kacpi_notify acpi_os_execute_deferred
->>    [12135.732433] Call Trace:
->>    [12135.732436]  <TASK>
->>    [12135.732450]  dump_stack_lvl+0x57/0x81
->>    [12135.732461]  __might_resched.cold+0xf4/0x12f
->>    [12135.732479]  rt_spin_lock+0x4c/0x100
->>    [12135.732491]  memory_failure_queue+0x40/0xe0
->>    [12135.732503]  ghes_do_memory_failure+0x53/0x390
->>    [12135.732516]  ghes_do_proc.constprop.0+0x229/0x3e0
->>    [12135.732575]  ghes_proc+0xf9/0x1a0
->>    [12135.732591]  ghes_notify_hed+0x6a/0x150
->>    [12135.732602]  notifier_call_chain+0x43/0xb0
->>    [12135.732626]  blocking_notifier_call_chain+0x43/0x60
->>    [12135.732637]  acpi_ev_notify_dispatch+0x47/0x70
->>    [12135.732648]  acpi_os_execute_deferred+0x13/0x20
->>    [12135.732654]  process_one_work+0x41f/0x500
->>    [12135.732695]  worker_thread+0x192/0x360
->>    [12135.732715]  kthread+0x111/0x140
->>    [12135.732733]  ret_from_fork+0x29/0x50
->>    [12135.732779]  </TASK>
->>
->> Fix it by using a raw_spinlock_t for locking instead.
-> IIUC this is executed to recover a fault condition already, so maybe
-> latencies are of no interest at that point, but I wonder if something
-> like
->
-> https://elixir.bootlin.com/linux/v6.10.1/source/Documentation/locking/locktypes.rst#L434
->
-> would still work and save us from introducing a raw_spinlock?
->
-> Or maybe the critical section is anyway tiny and we don't care either?
+On Tue, 2024-08-06 at 17:25 +0200, Mateusz Guzik wrote:
+> On Tue, Aug 6, 2024 at 4:32=E2=80=AFPM Jeff Layton <jlayton@kernel.org>
+> wrote:
+> >=20
+> > Today, when opening a file we'll typically do a fast lookup, but if
+> > O_CREAT is set, the kernel always takes the exclusive inode lock. I
+> > assume this was done with the expectation that O_CREAT means that
+> > we
+> > always expect to do the create, but that's often not the case. Many
+> > programs set O_CREAT even in scenarios where the file already
+> > exists.
+> >=20
+> > This patch rearranges the pathwalk-for-open code to also attempt a
+> > fast_lookup in certain O_CREAT cases. If a positive dentry is
+> > found, the
+> > inode_lock can be avoided altogether, and if auditing isn't
+> > enabled, it
+> > can stay in rcuwalk mode for the last step_into.
+> >=20
+> > One notable exception that is hopefully temporary: if we're doing
+> > an
+> > rcuwalk and auditing is enabled, skip the lookup_fast. Legitimizing
+> > the
+> > dentry in that case is more expensive than taking the i_rwsem for
+> > now.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> > Here's a revised patch that does a fast_lookup in the O_CREAT
+> > codepath
+> > too. The main difference here is that if a positive dentry is found
+> > and
+> > audit_dummy_context is true, then we keep the walk lazy for the
+> > last
+> > component, which avoids having to take any locks on the parent
+> > (just
+> > like with non-O_CREAT opens).
+> >=20
+> > The testcase below runs in about 18s on v6.10 (on an 80 CPU
+> > machine).
+> > With this patch, it runs in about 1s:
+> >=20
+>=20
+> I don't have an opinion on the patch.
+>=20
+> If your kernel does not use apparmor and the patch manages to dodge
+> refing the parent, then indeed this should be fully deserialized just
+> like non-creat opens.
+>=20
 
-There are only 2 critical sections that makes use of this lock - 
-memory_failure_queue() and memory_failure_work_func().  In 
-memory_failure_queue(), there is a kfifo_put() and either 
-schedule_work_on() or pr_err(). In memory_failure_work_func(), the 
-critical section is just a kfifo_get(). kfifo_get() and kfifo_put() are 
-not using loop and their run time, though not very short, shouldn't be 
-long. The schedule_work_on() will take its own raw_spinlock_t to do its 
-work anyway. So the only call that may have a long runtime is pr_err() 
-before the printk rework lands. Fortunately, we can easily take the 
-pr_err() call out of the critical section.
+Yep. Pity that auditing will slow things down, but them's the breaks...
 
-As memory_failure_queue() is not a frequently called function and I 
-doubt there will be much contention in the lock, I believe it is easier 
-to understand to just use raw_spinlock_t than using migrate_disable() 
-without using get_cpu_var(). Also if there is hardware issue leading to 
-the call to memory_failure_queue(), a bit extra latency due to the use 
-of raw_spinlock_t is not the most important concern anyway.
+> Instead of the hand-rolled benchmark may I interest you in using
+> will-it-scale instead? Notably it reports the achieved rate once per
+> second, so you can check if there is funky business going on between
+> reruns, gives the cpu the time to kick off turbo boost if applicable
+> etc.
+>=20
+> I would bench with that myself, but I temporarily don't have handy
+> access to bigger hw. Even so, the below is completely optional and
+> perhaps more of a suggestion for the future :)
+>=20
+> I hacked up the test case based on tests/open1.c.
+>=20
+> git clone https://github.com/antonblanchard/will-it-scale.git
+>=20
+> For example plop into tests/opencreate1.c && gmake &&
+> ./opencreate1_processes -t 70:
+>=20
+> #include <stdlib.h>
+> #include <unistd.h>
+> #include <sys/types.h>
+> #include <sys/stat.h>
+> #include <fcntl.h>
+> #include <assert.h>
+> #include <string.h>
+>=20
+> char *testcase_description =3D "Separate file open/close + O_CREAT";
+>=20
+> #define template=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "/tmp/willitsc=
+ale.XXXXXX"
+> static char (*tmpfiles)[sizeof(template)];
+> static unsigned long local_nr_tasks;
+>=20
+> void testcase_prepare(unsigned long nr_tasks)
+> {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int i;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tmpfiles =3D (char(*)[sizeof(t=
+emplate)])malloc(sizeof(template)
+> * nr_tasks);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 assert(tmpfiles);
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < nr_tasks; i+=
++) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 strcpy(tmpfiles[i], template);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 char *tmpfile =3D tmpfiles[i];
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 int fd =3D mkstemp(tmpfile);
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 assert(fd >=3D 0);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 close(fd);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 local_nr_tasks =3D nr_tasks;
+> }
+>=20
+> void testcase(unsigned long long *iterations, unsigned long nr)
+> {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 char *tmpfile =3D tmpfiles[nr]=
+;
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 while (1) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 int fd =3D open(tmpfile, O_RDWR | O_CREAT, 0600);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 assert(fd >=3D 0);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 close(fd);
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 (*iterations)++;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> }
+>=20
+> void testcase_cleanup(void)
+> {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int i;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < local_nr_tas=
+ks; i++) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 unlink(tmpfiles[i]);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 free(tmpfiles);
+> }
+>=20
+>=20
 
-I will post a v2 patch to move pr_err() call out of the lock critical 
-section.
+Good suggestion and thanks for the testcase. With v6.10 kernel, I'm
+seeing numbers like this at -t 70:
 
-Cheers,
-Longman
+min:4873 max:11510 total:418915
+min:4884 max:10598 total:408848
+min:3704 max:12371 total:467658
+min:2842 max:11792 total:418239
+min:2966 max:11511 total:414144
+min:4756 max:11381 total:413137
+min:4557 max:10789 total:404628
+min:4780 max:11125 total:413349
+min:4757 max:11156 total:405963
 
+...with the patched kernel, things are significantly faster:
 
+min:265865 max:508909 total:21464553                                 =20
+min:263252 max:500084 total:21242190                                 =20
+min:263989 max:504929 total:21396968                                 =20
+min:263343 max:505852 total:21346829                                 =20
+min:263023 max:507303 total:21410217                                 =20
+min:263420 max:506593 total:21426307                                 =20
+min:259556 max:494529 total:20927169                                 =20
+min:264451 max:508967 total:21433676                                 =20
+min:263486 max:509460 total:21399874                                 =20
+min:263906 max:507400 total:21393015                                 =20
+
+I can get some fancier plots if anyone is interested, but the benefit
+of this patch seems pretty clear.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
