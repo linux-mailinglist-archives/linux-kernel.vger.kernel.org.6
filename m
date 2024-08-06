@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-275585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F94994876E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:19:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC6194876F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F82C281204
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:19:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9914F1F25137
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABE5482E4;
-	Tue,  6 Aug 2024 02:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C18537F8;
+	Tue,  6 Aug 2024 02:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsMWYRZJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QBV8krES"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C38547F7A
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C855051C3E
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722910705; cv=none; b=Q8WEBiRU6A5Qemcx76cAgisXWcqmhwqbhnBk5l1l696I8AFnPOPyUfHYtyFLi69okyPqdVy29shPTCvwFUEznki54fcMfge0Zozjn3lEoIWv6++np6fzTG233K05ukQ5zI3ohq5RIDDMPouwIQZH2/dx5HZ1XWE3Efr1Eih9924=
+	t=1722910708; cv=none; b=JyPaZok1XPVhUECKoJ+bPlcxt7XDsoJ+DfaTkXJOf3R+k3FgTIaMmGH/FUwRHwu2p63UtTUyL5WCCtNZ6HR7eGJ3M3j2pvOwDktY1zcjPI3iYnn64SnTxRKMbZyQx/COcOZcZsQ8W6/nJBEv4fxLe36YfMEResKB9iVaoK1yT1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722910705; c=relaxed/simple;
-	bh=vNwIGyy8uUag3zQP5bXF/PNe/niCN1bQWoZ3dk5XDpg=;
+	s=arc-20240116; t=1722910708; c=relaxed/simple;
+	bh=2XuUwCpmZ+NvY5bJ3CJbiV5pb57fdunEaUBcKFqNcHQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j1p2nqn2xd/zaT+FoVMR0Qtvs7Fb7Pnm70hhZA+2vQMZ+sj1WpWDYmDZ7f+KIqaDD8pZo+7SCqfK66qNkSCB+Pt+yvrOfHaeDQsABvaKXn51WZS2sLlVwMhjfbjWlKPSKml4gWFriifWuv7P2bnQdM7ProM/KWnJcpcYJIFFis8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HsMWYRZJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9359EC32782;
-	Tue,  6 Aug 2024 02:18:21 +0000 (UTC)
+	 MIME-Version; b=CDW3Ej4ijvXl2OcfyVRn4y/iBSsQ776rgoaZDVHLP87FqC0Pv54zrdJRY029fjaR3gorCt081ocTXGOeD62QppIfrEIvNLW18v2/i6V+276bYZJx/xTGcJcr41yBF3W14ca0Rx/DVRBhmzkD5pKHOgEwTh6owFoOH0YzZ1Ys9bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QBV8krES; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66673C4AF0F;
+	Tue,  6 Aug 2024 02:18:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722910704;
-	bh=vNwIGyy8uUag3zQP5bXF/PNe/niCN1bQWoZ3dk5XDpg=;
+	s=k20201202; t=1722910708;
+	bh=2XuUwCpmZ+NvY5bJ3CJbiV5pb57fdunEaUBcKFqNcHQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HsMWYRZJUqU0Itrt3J8567cHgcx7ZWcgbPSnbOQZy70q7mwkndUTL+/3BqxOm3jLe
-	 1JRXz3aiwZLokB5iJOIAxSzflNxhwrdBNUmQ0yr+fTHmP6UHPnfZXf7ixPXMndCYtR
-	 Xvx0NYmeEH8VFJaWIPEcpkE44VAf3Iq0589/x9KYqXkzoR1v4hFCn9gXAp43FRTRuB
-	 3gwiRk+9fT3CtV1V1KDMvvYsPFFrtc+3sl1sU18WkpAkEgFNlSYItJMcheDweCDUcj
-	 x6cS/1tCwsSUmImOLOvc1iIP45X2TJ1nhJOZhMkYGSHW81OmWHotixv+CqQ+uO3/q4
-	 WUgiwGNqY5X+w==
+	b=QBV8krESkVQBI1btdudXp3KnYlXCSSkzzl+6/65HHV3ctpQCaq1VOxmims7maxwHY
+	 wrBU3toUz1xv2/xTaEdWgIGqSdlbQT8ALHlvL6k9uSg7FUZoD2n3R9jk12A6+w3PPG
+	 4p9Qjo2J8NR/4mJT1z2wuIu0hKQsn8J025ArD7UIENklvSYRCOSEarp8LcmPNjEITN
+	 fnG0iA0wTar2Lb2bdYWWc9r/imZYQ83co9ypl4Ct5PTBSrK62sZ/wIQDLljIBPQAks
+	 EsRG+glMxynyTvNGO7qfPVnLA3IEmk1uoQC882anPHSZqeNAp7qpEJjUJ8+3Lp09gw
+	 whxLi1wfKYSfw==
 From: alexs@kernel.org
 To: Vitaly Wool <vitaly.wool@konsulko.com>,
 	Miaohe Lin <linmiaohe@huawei.com>,
@@ -54,9 +54,9 @@ To: Vitaly Wool <vitaly.wool@konsulko.com>,
 	Yosry Ahmed <yosryahmed@google.com>,
 	nphamcs@gmail.com
 Cc: Alex Shi <alexs@kernel.org>
-Subject: [PATCH v5 08/21] mm/zsmalloc: convert init_zspage() to use zpdesc
-Date: Tue,  6 Aug 2024 10:22:55 +0800
-Message-ID: <20240806022311.3924442-9-alexs@kernel.org>
+Subject: [PATCH v5 09/21] mm/zsmalloc: convert obj_to_page() and zs_free() to use zpdesc
+Date: Tue,  6 Aug 2024 10:22:56 +0800
+Message-ID: <20240806022311.3924442-10-alexs@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240806022311.3924442-1-alexs@kernel.org>
 References: <20240806022143.3924396-1-alexs@kernel.org>
@@ -71,61 +71,51 @@ Content-Transfer-Encoding: 8bit
 
 From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 
-Replace get_first/next_page func series and kmap_atomic to new helper,
-no functional change.
+Rename obj_to_page() to obj_to_zpdesc() and also convert it and
+its user zs_free() to use zpdesc.
 
 Signed-off-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 Signed-off-by: Alex Shi <alexs@kernel.org>
 ---
- mm/zsmalloc.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ mm/zsmalloc.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 3c1755227706..d7400acd0f01 100644
+index d7400acd0f01..5fac2bb436f8 100644
 --- a/mm/zsmalloc.c
 +++ b/mm/zsmalloc.c
-@@ -928,16 +928,16 @@ static void init_zspage(struct size_class *class, struct zspage *zspage)
+@@ -800,9 +800,9 @@ static void obj_to_location(unsigned long obj, struct zpdesc **zpdesc,
+ 	*obj_idx = (obj & OBJ_INDEX_MASK);
+ }
+ 
+-static void obj_to_page(unsigned long obj, struct page **page)
++static void obj_to_zpdesc(unsigned long obj, struct zpdesc **zpdesc)
  {
- 	unsigned int freeobj = 1;
- 	unsigned long off = 0;
--	struct page *page = get_first_page(zspage);
-+	struct zpdesc *zpdesc = get_first_zpdesc(zspage);
+-	*page = pfn_to_page(obj >> OBJ_INDEX_BITS);
++	*zpdesc = pfn_zpdesc(obj >> OBJ_INDEX_BITS);
+ }
  
--	while (page) {
--		struct page *next_page;
-+	while (zpdesc) {
-+		struct zpdesc *next_zpdesc;
- 		struct link_free *link;
- 		void *vaddr;
- 
--		set_first_obj_offset(page, off);
-+		set_first_obj_offset(zpdesc_page(zpdesc), off);
- 
--		vaddr = kmap_atomic(page);
-+		vaddr = zpdesc_kmap_atomic(zpdesc);
- 		link = (struct link_free *)vaddr + off / sizeof(*link);
- 
- 		while ((off += class->size) < PAGE_SIZE) {
-@@ -950,8 +950,8 @@ static void init_zspage(struct size_class *class, struct zspage *zspage)
- 		 * page, which must point to the first object on the next
- 		 * page (if present)
- 		 */
--		next_page = get_next_page(page);
--		if (next_page) {
-+		next_zpdesc = get_next_zpdesc(zpdesc);
-+		if (next_zpdesc) {
- 			link->next = freeobj++ << OBJ_TAG_BITS;
- 		} else {
- 			/*
-@@ -961,7 +961,7 @@ static void init_zspage(struct size_class *class, struct zspage *zspage)
- 			link->next = -1UL << OBJ_TAG_BITS;
- 		}
- 		kunmap_atomic(vaddr);
--		page = next_page;
-+		zpdesc = next_zpdesc;
- 		off %= PAGE_SIZE;
- 	}
- 
+ /**
+@@ -1476,7 +1476,7 @@ static void obj_free(int class_size, unsigned long obj)
+ void zs_free(struct zs_pool *pool, unsigned long handle)
+ {
+ 	struct zspage *zspage;
+-	struct page *f_page;
++	struct zpdesc *f_zpdesc;
+ 	unsigned long obj;
+ 	struct size_class *class;
+ 	int fullness;
+@@ -1490,8 +1490,8 @@ void zs_free(struct zs_pool *pool, unsigned long handle)
+ 	 */
+ 	read_lock(&pool->migrate_lock);
+ 	obj = handle_to_obj(handle);
+-	obj_to_page(obj, &f_page);
+-	zspage = get_zspage(f_page);
++	obj_to_zpdesc(obj, &f_zpdesc);
++	zspage = get_zspage(zpdesc_page(f_zpdesc));
+ 	class = zspage_class(pool, zspage);
+ 	spin_lock(&class->lock);
+ 	read_unlock(&pool->migrate_lock);
 -- 
 2.43.0
 
