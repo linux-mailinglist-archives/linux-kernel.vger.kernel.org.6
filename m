@@ -1,145 +1,283 @@
-Return-Path: <linux-kernel+bounces-276187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D130E948FA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:55:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C879D948FBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781C41F2325F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:55:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50EB01F23277
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D09E1C4633;
-	Tue,  6 Aug 2024 12:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE4F1C57B2;
+	Tue,  6 Aug 2024 12:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kgzPEcBR"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LRcv+Vhl"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E0E1C4618;
-	Tue,  6 Aug 2024 12:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1381C57AC
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722948921; cv=none; b=LFskbJw480+L+RzYMRBnZpgt4EtyjTOGT2vOsv9TznjHpwHPIPb/SHEYU7DWCvsL80TdEsQov208if/6HV/K66eE6N+e8a29D/iD9t9SexC9s6KDMjzVhcIJ/4pXMEQdRagQVVjNvhay3AocuyNvORgIhmAhIoRpdZd4Jgp6qHg=
+	t=1722948958; cv=none; b=ghrwtmNZti5m5YsvAsyhCvQsj2JgFtLdUonJsc0dSldPCUPsNW4QaMoNAtJy072QkSznJPANXrhziICvwRFHjeEBqEWQtT6223/0iZnQeNquW9bRk0fUnw2FWFptBI7+l3xXkZyXeLB2M1QqZ+sLRDNFryjtI4RdAOm8zSllsMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722948921; c=relaxed/simple;
-	bh=lmDlYyysbWwU5impefWx9g8E0dYTl9UV2mnU9LDBMTs=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IfP6qNdhO0z8SqRqGj0OYSj3JMoYbyPZYow8mKkUor/xHzsKk9GCNp3gH1NyS/okafROjVnoSQppxM64P9s43VuAdC4CPQ+16NFwM2ODpC9+i16N8DIGR2xH0ByqXyU5hY6ebxrxpTf2iYD6yhb2Ubpgi24Knh7naqrRs2e6Y2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kgzPEcBR; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42812945633so4844875e9.0;
-        Tue, 06 Aug 2024 05:55:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722948919; x=1723553719; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=tuJWybY/5l5UyBwF8mZPkMRRtpH0IYFVeNn3er57z18=;
-        b=kgzPEcBRPni6G8flHYVhEsWrNsIAYMWovdLAD9ftG9CfhkuW2CUT/zcFgpnk8B8REk
-         024PvmSoH/V+jYCeHSNW70x9Qo7cYCDZy/NYEQN+V3bu/2Ai6WBOD+YvjDCxfnkMCnXg
-         Se4mxd2Gj87pcShIwU5NliUpGzDyuKDLIBWZisnICwL0xOnmGpsuZvDcVZYfiVx2qOxw
-         XzHKMzmXeSaDJlyOPxp0+vn6iG+qWOLXkjXC9h/ZoAoYCcMXQsWeZX7oiJRqJfDJmfxV
-         YdB3zvQ6t0/rzeGlIOF60RfuPnNhWmIDfSQC78wERm/I2WQr0DXgBEde1ZThOaSRJLG/
-         DkHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722948919; x=1723553719;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tuJWybY/5l5UyBwF8mZPkMRRtpH0IYFVeNn3er57z18=;
-        b=uTIPm0awz8eNty3Enk/OmwtYw9024XBMT5c7uRFvE3frx/cAc33m9DNK8BUlVoE5+S
-         7SIoRomr3PDoDGeYiv02avC4sZ4jnZ809Q0HJWX4eoPZeKfA7lzZt5ukbytP4j4OYrfP
-         bXvsbizORIiD9675fsSiCrxXV8jwTGnnY0qdMdo9+Tvbwdvop9tz31FN5YiX1gaEY0jL
-         vn/RZPcpZtD69s3W4pX52Z+w5jrGGzZYy1uH9pzFitElNec6a1ZaLAIwaSzPR4nOeRs6
-         YHKxNfA7mejux4OG71PXpMaczKcfcr7VbEJLBoq6Y5rq8mUuBnTcVQ7O1lPhLwtJvnqR
-         pjMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUO4i7BePKjT69zIS793hzuZ06WECUKPkle5TXPT6DT04wVS2TK+JShcbpjpfiNNG7hw4vwe78R3q0+dpmjr2MjqrEsDXGdyQFNAvlo29lcIauz4d9kJ0b2j0m6PdZ88/oP2QVgc8L3tfQYjj6hE6yhM0tqJ9oCrGSMoFA4yV5BmL4rig==
-X-Gm-Message-State: AOJu0YxCEGYVJN97rE7jo/VJLdU/dgoEUO2rMir3KUTbVV+R28HOEwXr
-	krAJiOz3QKBmwonWe9+4zPP3Cx7DO7+Fl+fyd1Qj6zGgWBZcx7I8
-X-Google-Smtp-Source: AGHT+IE0Qd5FtIv9e0QXQW0IXNZyBBQjJDJFmTAC/0KBUSGyZsbzZmsYlkLeZQJGbpFymr4UoLEIog==
-X-Received: by 2002:a05:600c:5489:b0:426:5983:ed0a with SMTP id 5b1f17b1804b1-428e6b78e24mr96453035e9.30.1722948918385;
-        Tue, 06 Aug 2024 05:55:18 -0700 (PDT)
-Received: from Ansuel-XPS. (host-87-6-196-30.retail.telecomitalia.it. [87.6.196.30])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb64952sm243271985e9.37.2024.08.06.05.55.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 05:55:17 -0700 (PDT)
-Message-ID: <66b21d35.050a0220.3799b3.7e8c@mx.google.com>
-X-Google-Original-Message-ID: <ZrIdMc8CeHeJ3U6s@Ansuel-XPS.>
-Date: Tue, 6 Aug 2024 14:55:13 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Joern Engel <joern@lazybastard.org>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v3 1/6] dt-bindings: nvme: Document nvme-card compatible
-References: <20240806114118.17198-1-ansuelsmth@gmail.com>
- <20240806114118.17198-2-ansuelsmth@gmail.com>
- <20240806124224.GA10156@lst.de>
+	s=arc-20240116; t=1722948958; c=relaxed/simple;
+	bh=mAMLzpif1gNdzNGhe8KuRzYGSz6pOT3BstJuxee6FTQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
+	 MIME-Version:References; b=hNf1Lsat/+0akavhZsgH+acn6qpbTXGYN8lpJnW4EerCKHVgzEWB0hptdPjtkyUt2GCs+4IDUy1lDrmP/+5kUzKlbKuGQ2LRxbM3toyRubr7QL6zTeEEDSkEfI4PEECY4yRX4WLPc5IvJ3A/ItWdf8pTWhXPymjG9j9Dc2fotsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LRcv+Vhl; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240806125548euoutp023d2ece415f955bc8cda2e29c43b65c17~pJPCkanQ-1897718977euoutp02Y
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:55:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240806125548euoutp023d2ece415f955bc8cda2e29c43b65c17~pJPCkanQ-1897718977euoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722948948;
+	bh=esju4BJcQQlBYz+5tBGpKzvVnAuDBBZmMHM2QWKITuM=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+	b=LRcv+Vhl2IaTdj/QJ4R/EkiU8hq1humWgJuCPShFC2ZXfgEaRY+JV84mAqQ2eFDQu
+	 jLU8v7s67w1ckdP3mv5J8s+j5G0I/z2gYux3ArY4ST+/PpWsE8+DaEQj5INzZJQlUY
+	 mb30jNlyaC06vc+ndBVs3u33tAL9ZWh+yk98rRFE=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240806125547eucas1p2debf066641f75a76910c5e13cc385027~pJPCHLMub0165701657eucas1p2I;
+	Tue,  6 Aug 2024 12:55:47 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id A5.F5.09624.35D12B66; Tue,  6
+	Aug 2024 13:55:47 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381~pJPBl8O3v0169001690eucas1p2D;
+	Tue,  6 Aug 2024 12:55:47 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240806125547eusmtrp125c4d13f21cad7079d555451ace1e42c~pJPBlWbfB2935529355eusmtrp1K;
+	Tue,  6 Aug 2024 12:55:47 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-63-66b21d5331e3
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 36.87.09010.35D12B66; Tue,  6
+	Aug 2024 13:55:47 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240806125546eusmtip213e82826fb0451768400eb0b5684c4eb~pJPBG9Xrq1165611656eusmtip2U;
+	Tue,  6 Aug 2024 12:55:46 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) with Microsoft SMTP
+	Server (TLS) id 15.0.1497.2; Tue, 6 Aug 2024 13:55:45 +0100
+Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
+	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Tue, 6 Aug
+	2024 13:55:45 +0100
+From: Daniel Gomez <da.gomez@samsung.com>
+To: Jia He <justin.he@arm.com>
+CC: Herbert Xu <herbert@gondor.apana.org.au>, Andy Polyakov
+	<appro@cryptogams.org>, "David S. Miller" <davem@davemloft.net>, "Catalin
+ Marinas" <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] crypto: arm64/poly1305 - move data to rodata section
+Thread-Topic: [PATCH v2] crypto: arm64/poly1305 - move data to rodata
+	section
+Thread-Index: AQHa5//zJkuz2mMGX0eEFIkrDDjbXg==
+Date: Tue, 6 Aug 2024 12:55:45 +0000
+Message-ID: <qd2jxjle5zf6u4vyu5x32wjhzj4t5cxrc7dbi46inhlhjxhw4s@llhfvho4l2e6>
+In-Reply-To: <20240806055444.528932-1-justin.he@arm.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <965179E67335EA4DB3E7CEA505837BDE@scsc.local>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806124224.GA10156@lst.de>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLKsWRmVeSWpSXmKPExsWy7djPc7rBspvSDC6e17WY+6SVyeL9sh5G
+	iznnW1gsul/JWDw98YfdYtPja6wW9+/9ZLK4vGsOm0XLHVMHTo8189YwejyYuIHFY8vKm0we
+	2w6oemxa1cnmsXlJvcfnTXIB7FFcNimpOZllqUX6dglcGStfzmEtaNWoaP/h2MDYp9TFyMkh
+	IWAi0bh8FmMXIxeHkMAKRokLy/YzQzhfGCWuL17NDlIlJPCZUWLlPDmYji/He6A6ljNKPHrw
+	B8oBKrrbvJ0dwjnNKLGn4Rsz3OA7czYygvSzCWhK7Du5CWyuiICcxIu+j2wgRcwCC5glui9e
+	YgNJCAv4SMzY/5EFoshf4u3DLaxdjBxAtp7E9HdWIGEWARWJc68eMIHYvAK+EquONoPN5xSw
+	kFh+cwWYzSggK/Fo5S+wXcwC4hK3nsxngvhBUGLR7D3MELaYxL9dD9kgbB2Js9efMELYBhJb
+	l+5jgbAVJTqO3WSDmKMjsWD3JyjbUuLg6TnMELa2xLKFr5kh7hGUODnzCQvIXxICrzglVnx8
+	ALXYRWLZqn6oxcISr45vYZ/AqDMLyX2zkOyYhWTHLCQ7ZiHZsYCRdRWjeGppcW56arFhXmq5
+	XnFibnFpXrpecn7uJkZgCjv97/inHYxzX33UO8TIxMF4iFGCg1lJhLerdEOaEG9KYmVValF+
+	fFFpTmrxIUZpDhYlcV7VFPlUIYH0xJLU7NTUgtQimCwTB6dUA5P7Y6l10Yu1m83u8suZV77Y
+	G9syvV5HYYaP7cTDB+1Yv69P3c8gOXXOWu930bdvP5gQe/1GVqSV+bWJ5xj4Zu2u9nFcl8cp
+	bXVrTfi93+2PZgbMVO3h731g7dU8f63x5RezMy5n/Zq0RNopJ5N9urwKx4TT9Us4n63fYPrg
+	9cGMu5uYnha01l9VeGO49dyLXQ9NpDyLP9+W3+M/PfnLhPePF0T0Fq5UjFbuZjE6dUnmd6ao
+	i6jdqbszbrVU6K7qiGpyX3ZkamHe7tef2gKkFm1f+XyDTtaDeVs5OY1K2VN/fxS/F/ntZkBQ
+	FdOj72zXbBOPNcicfHY14mEx//vqN2ecVRJKJIKZQx+m2Xq92LxOiaU4I9FQi7moOBEAMUZd
+	h9ADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCKsWRmVeSWpSXmKPExsVy+t/xe7rBspvSDFZPYLOY+6SVyeL9sh5G
+	iznnW1gsul/JWDw98YfdYtPja6wW9+/9ZLK4vGsOm0XLHVMHTo8189YwejyYuIHFY8vKm0we
+	2w6oemxa1cnmsXlJvcfnTXIB7FF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkam
+	Svp2NimpOZllqUX6dgl6GStfzmEtaNWoaP/h2MDYp9TFyMkhIWAi8eV4D2MXIxeHkMBSRonT
+	vyeyQyRkJDZ+ucoKYQtL/LnWxQZiCwl8ZJRoPKoK0XCaUaJtyhIWCGcFo8SLb9MYQarYBDQl
+	9p3cBDZJREBO4kXfRzaQImaBBcwS3RcvgY0SFvCRmLH/IwtEka/E6ZW/gBo4gGw9ienvrEDC
+	LAIqEudePWACsXmBSlYdbWaEuMJcYsHCLrD5nAIWEstvrgCLMwrISjwCG8MJtEtc4taT+UwQ
+	HwhILNlznhnCFpV4+fgf1Gc6EmevP2GEsA0kti7dxwJhK0p0HLvJBjFHR2LB7k9QtqXEwdNz
+	mCFsbYllC18zQ9wmKHFy5hOWCYwys5CsnoWkfRaS9llI2mchaV/AyLqKUSS1tDg3PbfYSK84
+	Mbe4NC9dLzk/dxMjMDltO/Zzyw7Gla8+6h1iZOJgPMQowcGsJMLbVbohTYg3JbGyKrUoP76o
+	NCe1+BCjKTDsJjJLiSbnA9NjXkm8oZmBqaGJmaWBqaWZsZI4r2dBR6KQQHpiSWp2ampBahFM
+	HxMHp1QDkwsba4b2tqyJ7T8P87502xLP1J7mt88vl3vydYeD5xqWNnkllcRmyeRlzW9UO/TY
+	3Sa+PIVnx6/7XA92zvYSDHu/YNe1C1xPPhcc0jpepZ5kK3bivdG+h9pvDmUVhDhV+2xP+mo5
+	46OR6IbCGHbfWvG8mWeq3H5tEzyxUHKiu2b7n21r+IQliqQ3LIne25F48ZzxuezFdROmioRe
+	ZEwo32X3rPXSrbzTV2+sFr5hNP+0xY6Trs75nnXXtpppO5gubU2rSN8btqPtbmNKGfepf0/N
+	cnxWPcoNN7ORdtz0letp+ZrnBb3vlr+9y1rk9vRevo9mXW7xv4jtNqwfugrKJrRbde/3/flI
+	b2Pp49YVSizFGYmGWsxFxYkAIn85V9cDAAA=
+X-CMS-MailID: 20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381
+X-Msg-Generator: CA
+X-RootMTR: 20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381
+References: <20240806055444.528932-1-justin.he@arm.com>
+	<CGME20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381@eucas1p2.samsung.com>
 
-On Tue, Aug 06, 2024 at 02:42:24PM +0200, Christoph Hellwig wrote:
-> On Tue, Aug 06, 2024 at 01:41:11PM +0200, Christian Marangi wrote:
-> > Document new nvme-card compatible to permit defining fixed-partition in
-> > DT by the use of the block2mtd module to use block devices as MTD.
->  
-> What does nvme card mean?  Is this about nvmem or nvme?  If this is nvme,
-> are you talking about nvme-pci?  Why would that needs a device binding
-> when it is a PCI device?
->
+On Tue, Aug 06, 2024 at 05:54:44AM GMT, Jia He wrote:
 
-It's similar to how it's done with mmc and it's to keep the property
-consistent with block devices.
+Hi Jia,
 
-emmc have something like
+> When objtool gains support for ARM in the future, it may encounter issues
+> disassembling the following data in the .text section:
+> > .Lzeros:
+> > .long   0,0,0,0,0,0,0,0
+> > .asciz  "Poly1305 for ARMv8, CRYPTOGAMS by \@dot-asm"
+> > .align  2
+>=20
+> Move it to .rodata which is a more appropriate section for read-only data=
+.
+>=20
+> There is a limit on how far the label can be from the instruction, hence
+> use "adrp" and low 12bits offset of the label to avoid the compilation
+> error.
+>=20
+> Signed-off-by: Jia He <justin.he@arm.com>
+> ---
+> v2:
+>   - use adrp+offset to avoid compilation error(kernel test bot and Andy)
+> v1: https://lkml.org/lkml/2024/8/2/616
+>=20
+>  arch/arm64/crypto/poly1305-armv8.pl | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm64/crypto/poly1305-armv8.pl b/arch/arm64/crypto/poly=
+1305-armv8.pl
+> index cbc980fb02e3..22c9069c0650 100644
+> --- a/arch/arm64/crypto/poly1305-armv8.pl
+> +++ b/arch/arm64/crypto/poly1305-armv8.pl
+> @@ -473,7 +473,8 @@ poly1305_blocks_neon:
+>  	subs	$len,$len,#64
+>  	ldp	x9,x13,[$inp,#48]
+>  	add	$in2,$inp,#96
+> -	adr	$zeros,.Lzeros
+> +	adrp	$zeros,.Lzeros
+> +	add	$zeros,$zeros,#:lo12:.Lzeros
+> =20
+>  	lsl	$padbit,$padbit,#24
+>  	add	x15,$ctx,#48
+> @@ -885,10 +886,13 @@ poly1305_blocks_neon:
+>  	ret
+>  .size	poly1305_blocks_neon,.-poly1305_blocks_neon
+> =20
+> +.pushsection .rodata
+>  .align	5
+>  .Lzeros:
+>  .long	0,0,0,0,0,0,0,0
+>  .asciz	"Poly1305 for ARMv8, CRYPTOGAMS by \@dot-asm"
+> +.popsection
+> +
 
-mmc {
-	mmc-card {
-		specific-property;
+I'm getting the following error with next-20240806
 
-		partitions...
-	};
-};
+make LLVM=3D1 ARCH=3Darm64 allyesconfig
+make LLVM=3D1 ARCH=3Darm64 -j$(nproc)
 
-The same will be with nvme with
+ld.lld: error: vmlinux.a(arch/arm64/crypto/poly1305-core.o):(function poly1=
+305_blocks_neon: .text+0x3d4): relocation R_AARCH64_ADR_PREL_LO21 out of ra=
+nge: 269166444 is not in [-1048576, 1048575]
 
-nvme {
-	compatible = "pci_id"
+Full debug error with log context:
 
-	nvme-card {
-		quirks maybe in the future?
-		partitions...
-	};
-};
+...
++ grep -q ^CONFIG_DEBUG_INFO_BTF=3Dy include/config/auto.conf
++ strip_debug=3D1
++ vmlinux_link .tmp_vmlinux1
++ local output=3D.tmp_vmlinux1
++ local objs
++ local libs
++ local ld
++ local ldflags
++ local ldlibs
++ info LD .tmp_vmlinux1
++ printf   %-7s %s\n LD .tmp_vmlinux1
+  LD      .tmp_vmlinux1
++ shift
++ is_enabled CONFIG_LTO_CLANG
++ grep -q ^CONFIG_LTO_CLANG=3Dy include/config/auto.conf
++ is_enabled CONFIG_X86_KERNEL_IBT
++ grep -q ^CONFIG_X86_KERNEL_IBT=3Dy include/config/auto.conf
++ objs=3Dvmlinux.a
++ libs=3D./drivers/firmware/efi/libstub/lib.a
++ is_enabled CONFIG_MODULES
++ grep -q ^CONFIG_MODULES=3Dy include/config/auto.conf
++ objs=3Dvmlinux.a .vmlinux.export.o
++ objs=3Dvmlinux.a .vmlinux.export.o init/version-timestamp.o
++ [ arm64 =3D um ]
++ wl=3D
++ ld=3Dld.lld
++ ldflags=3D-EL  -maarch64elf -z norelro -z noexecstack --no-undefined -X -=
+shared -Bsymbolic -z notext  --no-apply-dynamic-relocs --fix-cortex-a53-843=
+419 --build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derror
++ ldlibs=3D
++ ldflags=3D-EL  -maarch64elf -z norelro -z noexecstack --no-undefined -X -=
+shared -Bsymbolic -z notext  --no-apply-dynamic-relocs --fix-cortex-a53-843=
+419 --build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derror=
+ --script=3D./arch/arm64/kernel/vmlinux.lds
++ [ -n 1 ]
++ ldflags=3D-EL  -maarch64elf -z norelro -z noexecstack --no-undefined -X -=
+shared -Bsymbolic -z notext  --no-apply-dynamic-relocs --fix-cortex-a53-843=
+419 --build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derror=
+ --script=3D./arch/arm64/kernel/vmlinux.lds --strip-debug
++ is_enabled CONFIG_VMLINUX_MAP
++ grep -q ^CONFIG_VMLINUX_MAP=3Dy include/config/auto.conf
++ ldflags=3D-EL  -maarch64elf -z norelro -z noexecstack --no-undefined -X -=
+shared -Bsymbolic -z notext  --no-apply-dynamic-relocs --fix-cortex-a53-843=
+419 --build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derror=
+ --script=3D./arch/arm64/kernel/vmlinux.lds --strip-debug -Map=3D.tmp_vmlin=
+ux1.map
++ ld.lld -EL -maarch64elf -z norelro -z noexecstack --no-undefined -X -shar=
+ed -Bsymbolic -z notext --no-apply-dynamic-relocs --fix-cortex-a53-843419 -=
+-build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derror --sc=
+ript=3D./arch/arm64/kernel/vmlinux.lds --strip-debug -Map=3D.tmp_vmlinux1.m=
+ap -o .tmp_vmlinux1 --whole-archive vmlinux.a .vmlinux.export.o init/versio=
+n-timestamp.o --no-whole-archive --start-group ./drivers/firmware/efi/libst=
+ub/lib.a --end-group .tmp_vmlinux0.kallsyms.o
+ld.lld: error: vmlinux.a(arch/arm64/crypto/poly1305-core.o):(function poly1=
+305_blocks_neon: .text+0x3d4): relocation R_AARCH64_ADR_PREL_LO21 out of ra=
+nge: 269166444 is not in [-1048576, 1048575]
+make[2]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 1
+make[1]: *** [/home/dagomez/src/linux-next/Makefile:1156: vmlinux] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
 
-The following implementation permits in block2mtd to not complicate the
-implementation with all the add_disk functions works with parenting
-struct and how they are initialized.
+Any suggestion how to fix this?
 
-(alternative is to have in block2mtd all kind of extra logic with switch
-case to check for major block ID that deviates from a common schema)
+Daniel
 
--- 
-	Ansuel
+>  .align	2
+>  #if !defined(__KERNEL__) && !defined(_WIN64)
+>  .comm	OPENSSL_armcap_P,4,4
+> --=20
+> 2.34.1
+> =
 
