@@ -1,107 +1,106 @@
-Return-Path: <linux-kernel+bounces-276905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C759499E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:14:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B8FE9499EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2140283317
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:14:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66F781C21A8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEC316BE0B;
-	Tue,  6 Aug 2024 21:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC1D16EC0B;
+	Tue,  6 Aug 2024 21:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="caCXsD0R"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JVe5DEXt"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A4413C3E4;
-	Tue,  6 Aug 2024 21:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B39716D4DD;
+	Tue,  6 Aug 2024 21:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722978855; cv=none; b=dV256sP4UwvWPVI8Jq7y/I48KnC2AmZohtxtvrRXAibXzWs/oGRgboSFZJ7awbHDBZImsAyy7ygrCpLCEO4bsuI0fZgjgv+FhXwIxv6GM6onp/KLyL4CKV8LapzpMCwt0awetu0IVnAScmRUrdktT6t5W7sUSAAt017ar+t3GMU=
+	t=1722978899; cv=none; b=l87XHhoXMtkpwTu+H89zCbg25wfkBj50IMoy884lj3LfJ0XbgZpDasLp3gd/i511MS6j0Y+BuvajVMkfBxQyoteRShL2q6TzZgYiDom9pterDDKUQ++ajdl40voPa/OQuBWo2YgT84RWVS6EU/HzCwuqMJbNW1b2ktl1wvsOOdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722978855; c=relaxed/simple;
-	bh=n3SL6DqMd+Il1p2z5Fmna3QwtyNnTZU6xFan5OyXh2E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GzGv8eDB9Q6pe8aiPuZ7uqMxxIu8veCXdmSlDCZ5x1H4lIzSxXKxcSz6bKszyvvvnUVs8Q7rnmLZwghha+wT2iJbVWI84yoga7QY/e/l+jUbxMR8vDVdelPy8dJJVhiby8XiHdwUVkQdZHAP+a6v5qUzeJNotkX3zuG/mkpsWhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=caCXsD0R; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-70b2421471aso747240a12.0;
-        Tue, 06 Aug 2024 14:14:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722978853; x=1723583653; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n3SL6DqMd+Il1p2z5Fmna3QwtyNnTZU6xFan5OyXh2E=;
-        b=caCXsD0Rn85iAwJN88et5mpH3Nz2LX9i0g0F+DiVs6D4xpi7jFSvR99VmaDokYOK/9
-         by6tExDd6kjWXr+pPRlyPvakxnL6uXUfood1gwW0q/cPTO7mwWF8VRPYX2bKHTwVb0v1
-         sbic346LTV5MxRlIjP/2/VrDARXVJmh4otwFxs3sqRvbFjb4PX12VKj2iMr2mSPS10Z4
-         S452JMMsIVP0tEBh3Pvc9qV/W6Im8pQ5T3J6Q0xPHVJOha/H3ENSNqcqFWLMSinIRm0Y
-         wpspF+qrjtjzGXrBz0PKmxPyiIycMPcgaTU5XXlfhOKsHMXMPciAV0DwwGVAqOFYtPde
-         vEtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722978853; x=1723583653;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n3SL6DqMd+Il1p2z5Fmna3QwtyNnTZU6xFan5OyXh2E=;
-        b=uAZN1vZynHob+ooERNw8rcEnMoU/5qTsMeGU4h8SL3QVy3P/mCMYOIAx9RfXQAZ7KA
-         BHceT28gs04wikS1RrzHSIENEzeH/yhRUOd8yaVE5nQriGuW7WGp4B45K87cM3bzLuIB
-         xSLKyIfJ3lvQOK/YbIQhlyUpSTX1vu0k+LOiSqzUnMciJ7wz09JSQ4i2YHOUMifdPi7z
-         80CdATzDtrnFDdURbAWeImSuaoqzMXcqBcicJpq2GvrlvfQdZYJr+q/J25LtQRPZTPkZ
-         SZXFDyq1WpDgQSX2CNh+8ZBEfeuRaXPFM/qQMBJdaFR7b7srEDILtUx5Xpx74vu3CH9E
-         0ykA==
-X-Forwarded-Encrypted: i=1; AJvYcCWT/uTwWSsbzSCnDwiFUYmi3c+qje/78qOht+TAaBOM3Qw3n76nKncreYltZIIjSOhc+eu2Brcg7ZCa3Twnmh5ddbpBVwX7uyOPFC3iQIoGRETPXw1i2xOsT8pP6H1ESc0Qr/OqfsFQWkyzBTU=
-X-Gm-Message-State: AOJu0YwgHW270k9R2Gjjt+MQgZUTY0m9kHQdnJgm3SLQq1clWzgaiEN/
-	XTzcV/9KlWUWmsWD8mRmApEJMoic7TQSblMR9LGWMCrQA+9PPtEz6Whx+AFtEnGHkBU4zCk9O4h
-	Us4r9STJehNPh8tWWu+pxvv77Ohk=
-X-Google-Smtp-Source: AGHT+IHvbAAL2NcqVlB4Rqy6c9/uB/Hg1OGnq+JeRukgKKxR43dKQDIDjEllPEROqpREAP0g7cYcAjDTNcZqjkTqRks=
-X-Received: by 2002:a17:90b:152:b0:2c8:a8f:c97 with SMTP id
- 98e67ed59e1d1-2cff955ce55mr15015074a91.37.1722978852967; Tue, 06 Aug 2024
- 14:14:12 -0700 (PDT)
+	s=arc-20240116; t=1722978899; c=relaxed/simple;
+	bh=av28jhqRgEVBboylZgZMt5CbsMUmoJbFETR3uIhJNXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mnEizxnm2R6kwOlEUcp6fYv/VhrVffat7F99kbCnryt3WaCG0TnBbgL9iPJBAzsET2R4WB/by5+eUoop6TsWpLNMY5XItZu7z+4yE480TQOoEJ6gTUT/AtATZSQyD+IrhtbLLqKZC2+1ypLTXhbBhaFz+8Rzh49mngFQasukPjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JVe5DEXt; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zTN4JJ8RyBIwnN8QtZbKL34OISG6SJBGEivuQ36ISDw=; b=JVe5DEXt+B3CoB1BfQY2a9f0al
+	H2XlLTU87UK6OTBYJGNb1KRjbGmHk3mrHNj4IeMkoyvZKtIsy8xGR6BiX8jnTXDUUgYiHij9usY1y
+	/5V7ZPWhIb/Ll6pfHUoY0OCe0AixNvRModgP/WlTs9aTpQ2WlwqQQnJA3psZO8+PqHokvxqqDqfoa
+	YdsnN2G/GLstZ6cCrNH8XA6O+TvwWyEGNCEigQU/J8w6lQHfrPtds8z87irWwUjXvXVgkLKVwC58h
+	6E7I16G0EoZxWoUg30LsLyvALlYKdVNDrbTOgwb1fSx7p1nKX3+GdNWoV3P0TXwVLGLJT0tdGSrbh
+	UIc4ZhWQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sbRVw-00000006Wg5-3AC2;
+	Tue, 06 Aug 2024 21:14:41 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id F39AB30066A; Tue,  6 Aug 2024 23:14:39 +0200 (CEST)
+Date: Tue, 6 Aug 2024 23:14:39 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] perf/core: Allow multiple AUX PMU events with the
+ same module
+Message-ID: <20240806211439.GB37996@noisy.programming.kicks-ass.net>
+References: <20240806204813.722372-1-leo.yan@arm.com>
+ <20240806204813.722372-2-leo.yan@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-22-dakr@kernel.org>
- <6HIL4hSg3hOCh5IDDOtdEaEy89ZksSJmSLNiKrSvpu2Q78wA5KdrCCrcPSD_p4jB7IlmVRyVBnvBllU4irzuYgpQJOBtwUInAKdOibtRjVc=@protonmail.com>
-In-Reply-To: <6HIL4hSg3hOCh5IDDOtdEaEy89ZksSJmSLNiKrSvpu2Q78wA5KdrCCrcPSD_p4jB7IlmVRyVBnvBllU4irzuYgpQJOBtwUInAKdOibtRjVc=@protonmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 6 Aug 2024 23:14:01 +0200
-Message-ID: <CANiq72mc5h1vx+YoX_MxpFcgDEOfuYJNT9986wTjc3oSbVsbVg@mail.gmail.com>
-Subject: Re: [PATCH v4 21/28] rust: alloc: remove `GlobalAlloc` and `krealloc_aligned`
-To: =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com, 
-	akpm@linux-foundation.org, daniel.almeida@collabora.com, 
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com, 
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, 
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, 
-	lyude@redhat.com, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806204813.722372-2-leo.yan@arm.com>
 
-On Tue, Aug 6, 2024 at 9:07=E2=80=AFPM Bj=C3=B6rn Roy Baron <bjorn3_gh@prot=
-onmail.com> wrote:
->
-> This can be removed too. liballoc needed it for us to acknowledge that we
-> were linking liballoc in a way that isn't guaranteed to be stable, but no=
-w
-> that we are removing liballoc entirely, this static is no longer necessar=
-y.
+On Tue, Aug 06, 2024 at 09:48:09PM +0100, Leo Yan wrote:
+> This commit changes the condition from checking the same PMU instance to
+> checking the same PMU driver module. This allows support for multiple
+> PMU events with the same driver module.
+> 
+> As a result, more than one AUX event (e.g. arm_spe_0 and arm_spe_1) can
+> record trace into the AUX ring buffer.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  kernel/events/core.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index aa3450bdc227..fdb8918e62a0 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -12344,9 +12344,10 @@ perf_event_set_output(struct perf_event *event, struct perf_event *output_event)
+>  
+>  	/*
+>  	 * If both events generate aux data, they must be on the same PMU
+> +	 * module but can be with different PMU instances.
+>  	 */
+>  	if (has_aux(event) && has_aux(output_event) &&
+> -	    event->pmu != output_event->pmu)
+> +	    event->pmu->module != output_event->pmu->module)
 
-Thanks Bj=C3=B6rn, noted in issue #2 (and linked to the new tracking issue)=
-.
-
-Cheers,
-Miguel
+A very quick look at: arch/x86/events/intel/pt.c seems to suggest that
+doesn't set pmu->module. Which seems to suggest the above won't work for
+us.
 
