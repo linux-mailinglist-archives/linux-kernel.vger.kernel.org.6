@@ -1,128 +1,116 @@
-Return-Path: <linux-kernel+bounces-276492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08AFB949484
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:27:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D3094948E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39EE41C237F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:27:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 955241F25B7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0653A268;
-	Tue,  6 Aug 2024 15:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7576D29422;
+	Tue,  6 Aug 2024 15:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKGOvgR0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AOENyDJQ"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6169739FCE;
-	Tue,  6 Aug 2024 15:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE2517BD9
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722957997; cv=none; b=PwMFIURUiI6lxXuLrXfNWvyD2dR2clwT8DFxwIIRfjU5itEChYCw5zkhse8rvYmHUPASvClWTubAlwSVVjL0szT15c2GfpjSCaaUtSqe6zm9LrP28Chvna9MvV2rXiGTDENWxnMDcDtvPoMTJ+/rlJSwmbYbItloHMlKA57yImQ=
+	t=1722958199; cv=none; b=obdH9ogdpD28eZjPW2gYMNwGOIDzbEbXFuS2EjKsMipditpcwLaaOu6X6rAY4wTAeoUPn8BulYESSXmNyRgJMZ5Djkem6SfHECTsnVjlZp39w6Ia545ry6fY7gYWj4TRMV31eTWMPBZsxe5feOj+uf8LDYT9Xs+2Myf2ceCEuvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722957997; c=relaxed/simple;
-	bh=eYNEHkpnc1DOyVbkXkvSD/EYoY5Vx7JFHx/8sgmZens=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lG/7qsf0y5eaBGc5Y8EargAzlNweMQ6OWlPPjgSmxNB2KJJr9hIPdBd+LN81fhr2Nmtw4aLX8hpW3+/gBDu2mzSqszmCq6xObMqM/Q2bg5WGiWhV0GO0RXXLah2QT+acE+67an8WvntIBIEwHOTfKy/dazAbA2JcCi7xc7ZvJQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jKGOvgR0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0CADC4AF0E;
-	Tue,  6 Aug 2024 15:26:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722957997;
-	bh=eYNEHkpnc1DOyVbkXkvSD/EYoY5Vx7JFHx/8sgmZens=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jKGOvgR0BGP7NZay0kAMHzYsgs7lGjaqJaW8u6ABZncK78vbA73WepR48ZYBMA+ov
-	 THIVTyTK6/qWtpGpBP1csqXG8GkpGBoUZ32g3WPFUyw/CamfqKtvH7ASqHjchLuFet
-	 UUbczaQiW57dVFNAMtJh6gJfQfls09dlXeB4TEy9whOo+PCH5tBw63qg6i9IGceVqE
-	 iqzLGV7IH3xRgi7lhb9oyrYJrczzrf+81Xh7SoQaBJZZktb1wWTa+JmS3dneI7OTOK
-	 quYx3rg8+lSxztYomi/OblydUzmILhluT+u/F5ZWa/cKkfUMslSXlS8SZ2u1OaL5yG
-	 l0Vnk4boaNoGg==
-Date: Tue, 6 Aug 2024 16:26:32 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wen Gu <guwen@linux.alibaba.com>
-Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
-	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net/smc: introduce statistics for ringbufs
- usage of net namespace
-Message-ID: <20240806152632.GB2636630@kernel.org>
-References: <20240805090551.80786-1-guwen@linux.alibaba.com>
- <20240805090551.80786-3-guwen@linux.alibaba.com>
- <20240806104941.GT2636630@kernel.org>
- <9fbf960d-f279-4e31-90f0-0243eeb7298f@linux.alibaba.com>
+	s=arc-20240116; t=1722958199; c=relaxed/simple;
+	bh=fv3k8stKYzTS9UIEU0lpQcQQUZi9Zykq6iQUOmCKotg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Q33457f3dpFlulniMoyCrJ/DLv3Uc4KRafYstrfL57gKva9Z2nLfFY1r/14ckmHAEaCNLVRXZVjaHk0yiBfWHU9cJl1N1A26Ic+nRMO6SvPb8+rxVrAEk9x60jV9bwPB5XoQyxjXuGuAuJDPODOZJ7S0m4gs1+jM22k82kPaGR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AOENyDJQ; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ef248ab2aeso12908391fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 08:29:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722958196; x=1723562996; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tprBLK1iiveUCYg/AarvtiLLOVA4FPbpWQNyejze9a8=;
+        b=AOENyDJQT9RsnmqkYhSmNjqbmoIPl2GreifPvxDRVZqWItvYwuvAFg5azGunEwqyva
+         FozNoYBlhoQYmPVKOq/eVmqP0fzqbmV++lcjBCu6kbU14P5yFNK1jwfF+w8AGJ8QG6DW
+         cKkbJjbe4WNrFFps3peFbI8L3B2zfGlN5kKfTB7Q8Z0WLvDo0m0AEasN5Nkl3DgooB+4
+         m9sOolWq21P/FeT61GBme75ZmvQ58+w5hRGSvPrZUrlbVavVecO88uYujGZTeJJCJPzJ
+         sF1fj9a3PRaUVmOQRMJxU0ji08IKvpOMbMP9mEhvqjLpJd9RW4EeRJmw0GKZeI7vbj1f
+         vXWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722958196; x=1723562996;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tprBLK1iiveUCYg/AarvtiLLOVA4FPbpWQNyejze9a8=;
+        b=xO+yVD9UW51fa7KvzIJrRy0CX7LWYqhOxC04CjtXiyanGp+FgxsolteICZQGAIHckV
+         sUnHpZ5yi6SriZvp0ajHeZ8GOLUUtD5L5pqS6Cu5uYD8zDNzDkgFjxCm1i2oqgwWGkXN
+         x3Q0j0eOsIbPhEzJJy3d1ArR276Wae7l6OQFRN4wI9KxjUA9F9PtZvevYPFKnOPN2lTg
+         O4TzdKQSECS6wkuTRHXkVKu0JXbp4ybuayR9bISjzRR0N+ME6xI8JjbIUMPcH3bk+e4z
+         TQa9zbSooKqWAaiw55y+enpQQRhQB4uXM+QGgTD5C6gvqGQYTdarvaOHN9qvRENnoGU7
+         syCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvHfWgPRpcgOQr9U39MP4y5xqW682B23QR9KDyp0AQ6HwVrlBhcfmDGHlRN38Re2DtG03cb6294UP1ioAAEzHsHNJyr9X41+euNTjc
+X-Gm-Message-State: AOJu0Yz8OtKsUsVyyw+biPtOnBjfxtgzIGjj0r0CbuITukR+s6E5lDiF
+	EIhHmmT94/w/2lUssDs4/pborkyyCwOUMg2HTUJMGAD2z8p4e8tOqks58GItgTY=
+X-Google-Smtp-Source: AGHT+IHRZmLaStmO8UYKkVKFqiPyc0B8sPefyyWX408Vg/RWnhXs/VBIaM9S0t9/2UoAAbzROa8OcA==
+X-Received: by 2002:a2e:9cc9:0:b0:2ef:1c0f:a0f3 with SMTP id 38308e7fff4ca-2f15aa88b76mr125008231fa.6.1722958195923;
+        Tue, 06 Aug 2024 08:29:55 -0700 (PDT)
+Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d4294fsm555274266b.103.2024.08.06.08.29.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 08:29:55 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 0/2] tty: serial: samsung_tty: simple cleanups
+Date: Tue, 06 Aug 2024 16:29:44 +0100
+Message-Id: <20240806-samsung-tty-cleanup-v1-0-a68d3abf31fe@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9fbf960d-f279-4e31-90f0-0243eeb7298f@linux.alibaba.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAGlBsmYC/x3MwQpAQBCA4VfRnE3tbkheRQ4Ts0yxtINI3t3m+
+ B3+/wHlKKzQZA9EPkVlDQk2z6CfKIyMMiSDM64wtalQadEjjLjvN/YzUzg29J7YlrYkVxeQyi2
+ yl+u/tt37fnhqy7ZlAAAA
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-On Tue, Aug 06, 2024 at 09:07:40PM +0800, Wen Gu wrote:
-> 
-> 
-> On 2024/8/6 18:49, Simon Horman wrote:
-> > On Mon, Aug 05, 2024 at 05:05:51PM +0800, Wen Gu wrote:
-> > > The buffer size histograms in smc_stats, namely rx/tx_rmbsize, record
-> > > the sizes of ringbufs for all connections that have ever appeared in
-> > > the net namespace. They are incremental and we cannot know the actual
-> > > ringbufs usage from these. So here introduces statistics for current
-> > > ringbufs usage of existing smc connections in the net namespace into
-> > > smc_stats, it will be incremented when new connection uses a ringbuf
-> > > and decremented when the ringbuf is unused.
-> > > 
-> > > Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
-> > 
-> > ...
-> > 
-> > > diff --git a/net/smc/smc_stats.h b/net/smc/smc_stats.h
-> > 
-> > ...
-> > 
-> > > @@ -135,38 +137,45 @@ do { \
-> > >   } \
-> > >   while (0)
-> > > -#define SMC_STAT_RMB_SIZE_SUB(_smc_stats, _tech, k, _len) \
-> > > +#define SMC_STAT_RMB_SIZE_SUB(_smc_stats, _tech, k, _is_add, _len) \
-> > >   do { \
-> > > +	typeof(_is_add) is_a = (_is_add); \
-> > >   	typeof(_len) _l = (_len); \
-> > >   	typeof(_tech) t = (_tech); \
-> > >   	int _pos; \
-> > >   	int m = SMC_BUF_MAX - 1; \
-> > >   	if (_l <= 0) \
-> > >   		break; \
-> > > -	_pos = fls((_l - 1) >> 13); \
-> > > -	_pos = (_pos <= m) ? _pos : m; \
-> > > -	this_cpu_inc((*(_smc_stats)).smc[t].k ## _rmbsize.buf[_pos]); \
-> > > +	if (is_a) { \
-> > > +		_pos = fls((_l - 1) >> 13); \
-> > > +		_pos = (_pos <= m) ? _pos : m; \
-> > > +		this_cpu_inc((*(_smc_stats)).smc[t].k ## _rmbsize.buf[_pos]); \
-> > > +		this_cpu_add((*(_smc_stats)).smc[t].k ## _rmbuse, _l); \
-> > 
-> > Nit:
-> > 
-> > I see that due to the construction of the caller, SMC_STAT_RMB_SIZE(),
-> > it will not occur. But checkpatch warns of possible side effects
-> > from reuse of _smc_stats.
-> > 
-> > As great care seems to have been taken in these macros to avoid such
-> > problems, even if theoretical, perhaps it is worth doing so here too.
-> > 
-> > f.e. A macro-local variable could store (*(_smc_stats)).smc[t] which
-> >       I think would both resolve the problem mentioned, and make some
-> >       lines shorter (and maybe easier to read).
-> > 
-> 
-> It makes sense. I will use a macro-local variable of smc_stats. Thank you!
+While looking through the samsung tty driver, I've spotted a few things that
+can be simplified by removing unused function arguments and by avoiding some
+duplicated variables and casting.
 
-Great, thanks.
+There are no functional changes here.
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+André Draszik (2):
+      tty: serial: samsung_tty: drop unused argument to irq handlers
+      tty: serial: samsung_tty: cast the interrupt's void *id just once
+
+ drivers/tty/serial/samsung_tty.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
+---
+base-commit: 1e391b34f6aa043c7afa40a2103163a0ef06d179
+change-id: 20240806-samsung-tty-cleanup-ffae1515a284
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
 
