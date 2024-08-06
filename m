@@ -1,139 +1,73 @@
-Return-Path: <linux-kernel+bounces-276168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3DDC948F63
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:43:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B004F948F66
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E70311C2370F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:43:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592211F234CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297261C0DE5;
-	Tue,  6 Aug 2024 12:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SSgdo8xj"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1111C579C;
+	Tue,  6 Aug 2024 12:42:33 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A9C3C092
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BB73C092;
+	Tue,  6 Aug 2024 12:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722948075; cv=none; b=eMOWpckas/aWGsB9ICVWGU1/uMwhpgOLoug4/FX99cz38SolXyCtwCiUDi8uFdZv2XamrOC5YiVwWL66vobS5hjYfM5sYxg2eRgkL405ONcnfoZpqVkGHukc/61B+4k3BJxKKODDCTCYfss1uB6ghAYD5BwjYWicvDT7LE9vNMw=
+	t=1722948152; cv=none; b=f9crhqhJ7EXhkOkCt5LoxZ/131pq1Xk0eHGEE7EVX8CxL8xFQUoL0rNw2iGByXmcY2/Hk1pNLWyc7wOutTM+x8jl1x61eV95JW2CQor/HD7hopU3Q9QUiAQbAqM98Ges0JPSJZN7kA9c77pYiumg963bInNPlMg93Mk9XCGkOWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722948075; c=relaxed/simple;
-	bh=/PSyPU+sjxYnvFTtQAn0dQ1UDz+wT7qcDxGZFNmLtrs=;
+	s=arc-20240116; t=1722948152; c=relaxed/simple;
+	bh=UvFAaD7XWQCz5+Y+Ouj+T+Tb4CVsSxOr22ZJmNPkMmM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vd4ghyBLyODR29DAWMNjIrlmIp0SkkTX4RatS6bmJJEQ/XypJpNsY1858bCRVgKcb9T11Pva6qHMMn/ayB+E5tqkydC/9/ictbgV1+diMu3EZJN8AupZtFeQcah7FE2pSsws/zF9+Gw6uOS0bsZ6p9CkBHzLjdk/5tYwzdTu5QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SSgdo8xj; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1ff4568676eso7188965ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 05:41:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722948073; x=1723552873; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=BVpEw07jfarO8EM/3LJ96WQ6UxVaQr8DD1O4wcj9h/Q=;
-        b=SSgdo8xjLxyIAgFqSUgK6Kdf48H2lXTmWJXy+R/7cFVjho4fRmWFyRnxPLBKVLjuRb
-         cI28YnvojXprPvxZBS2Jn4H9PdgB0Jga2FIATRozHxUvPFb5cXfurX2JpgebGeVICDLY
-         oHkZw667r/KKVttCMlsUc1ij9uC6Q2V1WrppdKu+W/rgxaf4HDZvGRN59h4rtPk65BAT
-         hQ5rcDd5ULmUFQUt5SVgqImP7Umx2O8j3ibYcZr5AJ6uV5eVlZUMmfvoCgKfwI+UpnrT
-         QyIckKdTaCXeJalnM58v6RAZGIfs8m6gDQdvwwocnrm6o3X69ij0b8KRGIpIBYzLHsTo
-         Fd9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722948073; x=1723552873;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BVpEw07jfarO8EM/3LJ96WQ6UxVaQr8DD1O4wcj9h/Q=;
-        b=gSDVUgDge95fJ2q08gVO93vXoB68fSGrVaAv2ChCi9KlMDH6OeIYI6GqoK9U04t/8S
-         gZdg1vytTQC5x1g9nVtjF+8VOmG0o1pEY34grqikU4rrdcMXz4G4FT+o9ofAoDEcp4hV
-         W29zVqx8bBvlUJH3WccVNquP9ohGKu65/mO4a44T7PnsKMM7sQcWQX8z96mnPobqv+Md
-         IUIK9H9rpCZ6dXcTkOE+S8GhIZK/IhpwPXijq5eJl6Dpw+9cBZwkk3aAX56pDZ+E4K+Q
-         8e2S3swPnH3/dEmHcKds97F26IWvCr7Hmp19E56EspCuAYe6XeavXN3V1tQIb83wNfnh
-         v42g==
-X-Forwarded-Encrypted: i=1; AJvYcCX7IL2UIDz/aa22CGYT8nw2HaZHj6z/3EWr7RSAu6PFzwtRCX5n36OECTTohv8hzaLQkmLPF4+b+4R4igqQZoNV5BSwOINBmWEfqC7q
-X-Gm-Message-State: AOJu0YwsTaiabxKXXeNZrP/rdy3/aVDEHC09M/ZivcJtP41VUKeilkCN
-	EVgaQYBlHENvw7whoxVw3Mye1Sx+VNrIqlgt4ZYZIZm73iDIdTZKbV2k6zeMFA==
-X-Google-Smtp-Source: AGHT+IFHB9bUhT160f38WZeHXI1PMJWR/79pLH/7+rB0SJdnhHS8nIU4R/ZG7aRt7CXjRPAKKiG2tg==
-X-Received: by 2002:a17:902:ec91:b0:1fd:8e8b:b2d1 with SMTP id d9443c01a7336-1ff572c5565mr137947335ad.33.1722948073313;
-        Tue, 06 Aug 2024 05:41:13 -0700 (PDT)
-Received: from thinkpad ([120.56.197.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5929457dsm86501905ad.249.2024.08.06.05.41.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 05:41:12 -0700 (PDT)
-Date: Tue, 6 Aug 2024 18:11:07 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	mika.westerberg@linux.intel.com, Hsin-Yi Wang <hsinyi@chromium.org>
-Subject: Re: [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all
- Devicetree based platforms
-Message-ID: <20240806124107.GB2968@thinkpad>
-References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
- <20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org>
- <ZqyxS8spZ-ohsP3R@wunner.de>
- <20240805133555.GC7274@thinkpad>
- <ZrHITXLkKrDbQKQp@wunner.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nucs1UJPzCGZMHoEkWqyeIHOpwTl1UVOkxQpqhb129fKzvRNsxnHBWCoGg6U1h97fr4j62QuC6MUn9otJ0YRvg7e8EosCppy+ojCf3TrDNPtw7+Cu2GumVFc/OCek+gd7O4GKrmoH+BYEws7G32Bdbkc72oH8u6AdUBUJq+BGic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 5887E68D05; Tue,  6 Aug 2024 14:42:25 +0200 (CEST)
+Date: Tue, 6 Aug 2024 14:42:24 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Joern Engel <joern@lazybastard.org>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v3 1/6] dt-bindings: nvme: Document nvme-card compatible
+Message-ID: <20240806124224.GA10156@lst.de>
+References: <20240806114118.17198-1-ansuelsmth@gmail.com> <20240806114118.17198-2-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZrHITXLkKrDbQKQp@wunner.de>
+In-Reply-To: <20240806114118.17198-2-ansuelsmth@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Aug 06, 2024 at 08:53:01AM +0200, Lukas Wunner wrote:
-> On Mon, Aug 05, 2024 at 07:05:55PM +0530, Manivannan Sadhasivam wrote:
-> > On Fri, Aug 02, 2024 at 12:13:31PM +0200, Lukas Wunner wrote:
-> > > The PCI core cannot put devices into D3cold without help from the
-> > > platform.  Checking whether D3cold is possible (or allowed or
-> > > whatever) thus requires asking platform support code via
-> > > platform_pci_power_manageable(), platform_pci_choose_state() etc.
-> > > 
-> > > I think patch [3/4] is a little confusing because it creates
-> > > infrastructure to decide whether D3cold is supported (allowed?)
-> > > but we already have that in the platform_pci_*() functions.
-> > > So I'm not sure if patch [3/4] adds value.  I think generally
-> > > speaking if D3hot isn't possible (allowed?), D3cold is assumed
-> > > to not be possible either.
-> > 
-> > Why? D3Hot is useful for runtime PM and if the platform doesn't want to do
-> > runtime PM, it can always skip D3Hot (not ideal though).
-> 
-> AFAICS we always program the device to go to D3hot and the platform
-> then cuts power, thereby putting it into D3cold.  So D3hot is never
-> skipped.  See __pci_set_power_state():
-> 
-> 	if (state == PCI_D3cold) {
-> 		/*
-> 		 * To put the device in D3cold, put it into D3hot in the native
-> 		 * way, then put it into D3cold using platform ops.
-> 		 */
-> 		error = pci_set_low_power_state(dev, PCI_D3hot, locked);
-> 
-> 		if (pci_platform_power_transition(dev, PCI_D3cold))
-> 			return error;
-> 
+On Tue, Aug 06, 2024 at 01:41:11PM +0200, Christian Marangi wrote:
+> Document new nvme-card compatible to permit defining fixed-partition in
+> DT by the use of the block2mtd module to use block devices as MTD.
+ 
+What does nvme card mean?  Is this about nvmem or nvme?  If this is nvme,
+are you talking about nvme-pci?  Why would that needs a device binding
+when it is a PCI device?
 
-This is applicable only to pci_set_power_state(), but AFAIK PCIe spec doesn't
-mandate switching to D3Hot for entering D3Cold. So the PCIe host controller
-drivers (especically non-ACPI platforms) may just send PME_Turn_Off followed by
-removing the slot power (which again is not controlled by pci_set_power_state())
-as there are no non-ACPI related hooks as of now.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
