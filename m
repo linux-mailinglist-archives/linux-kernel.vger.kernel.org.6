@@ -1,153 +1,248 @@
-Return-Path: <linux-kernel+bounces-275567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C7694874E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:08:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC9A94874A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D30981F21C36
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:08:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E55551C21ED6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A60B647;
-	Tue,  6 Aug 2024 02:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCC212B94;
+	Tue,  6 Aug 2024 02:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="FpcXUiVK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="q3pCGfZi"
-Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QITqXE9x"
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D0BBA34;
-	Tue,  6 Aug 2024 02:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BF0B65C
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722910082; cv=none; b=A3+NNTE4ho209qp4to6iAgXZ9BmHRiED0tQrw9Q406IkFl8mEpufRayiSRl92kgVr5O+hAhSm1KGczFQnPR9nCm/UQuE4StZ+idb16hgb/JRf8IhWK7lYAd3DMGQ8+NvgBR+bIZBpgoHMgvhvPLsl03FMLXUyyq88gMbEnkdPD0=
+	t=1722910076; cv=none; b=TX1HSCIKRji5QKK9xLww1PzdYC3f/YV1i7Dm+RWV/rBz8R1dHHTD8BYwSCuEcgsTK4t+0jvRpZcNcpvaOGmnclfIOzF3AEa6mJotzNH3tq6hC7wLkQLU/O5DsW9DkIbZVxK6Aabn79wPodr+UYBLGv20eCM8A6f6lzxohG0DAU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722910082; c=relaxed/simple;
-	bh=7GogOe5n9F2zHkC/WirTp89rqrdd3akHu64WR1KTE1Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nF6+wX+MqsjeRJ9ZZEP8sOZaSOPK2vrb7+IWa5hRbXw11Y0D9Y3xwaXuMRYjD9pqU0Z/xiEkgpjKeiBxeWgJU7JB+v0K4gktPERlFc/TAX0wuhq+NEvy+0A9zBg6C88jZ2xV4qPKhCeVb0CTakcXFGJH4YDAjyAccjjpTRX/ctU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=FpcXUiVK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=q3pCGfZi; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id A74ED1151A8A;
-	Mon,  5 Aug 2024 22:07:59 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Mon, 05 Aug 2024 22:07:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1722910079; x=
-	1722996479; bh=gIvWdDLxWY22hhOBPE6JYFoqhl5WH6m9QN6kQjoDgMY=; b=F
-	pcXUiVKTqyZ9SmvDc1uk2RqM9o8BH4dw9md3VBfFxIY4v5corV+kmXtKilN+HGgP
-	FvyYx3faLKiofqaGrqy4Encn+H1r4Nhgz2lGCd+iSeKROuyNyfh5wQkXfO3M/7mp
-	bdH5IRzrXm5ozgxAQ9d2NpLhFxGM2bJt5if6sqzwHSGCQi+2Dlc6I5JUt56KjWVS
-	08FrB2Diqvxl/F5nWojMzO6RCquU4p4AkbtDeaBvzBkUGoZdIWU9pcThaR+CFg/N
-	Cr1MrLbJV7jhfrS2YXADN8x00aHmejYrovq8DvmZk/upfzic0awWWZugPfaQnOMl
-	Vmsfo5TGR8sf0fffEP7Tw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722910079; x=
-	1722996479; bh=gIvWdDLxWY22hhOBPE6JYFoqhl5WH6m9QN6kQjoDgMY=; b=q
-	3pCGfZiXipAuBzRPJnIvkV6tgXQ5wqTDrJ45IUPrIH7gSGfsei9Tlb6DaAJ5RLOD
-	swRnrWTyD8L/Fc4gBUI/gYRVqRuPhblQn/id5FmRLgHSrocWpjiA2h1aSglrZ2Gh
-	N60YKhgVPmc0UZPwVYPxwPbhkukhC57oY7moY/ura9oj3Llk32xHcgg4MAQBiLoi
-	d5r7pv+YLnt83/jvADP7TmRvjcu7Iqn1RlhdWZSCFk6GE8yuvVirOAAVpe4CuQXE
-	wMBv0LDozXK0vq6exXVXNYecSB6S5Ip63hL8JbFpNvdiVPCNAic/+95tFMI4S0x0
-	43iRfenv4p0yDBXPfHNAg==
-X-ME-Sender: <xms:f4WxZhNxyvZ2NYF_CGllLtMGaznXHum8j45KsNPv4COxsqmkm9LdEw>
-    <xme:f4WxZj9TQ_W1zGGZriiDoqBYRrUKEr6cLBBAAjSTKhwh3zuI8klYs4z___D-Wau_k
-    NVcAtoTdUhzGQoZmXY>
-X-ME-Received: <xmr:f4WxZgRk6UGDZ8OBPS0SsVFd44rzhfjR9-ekc6Z82MUas72fYC8J4oHRUVHn>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeejgdehiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekre
-    dtredttdenucfhrhhomhepfdfnuhhkvgcuffdrucflohhnvghsfdcuoehluhhkvgeslhhj
-    ohhnvghsrdguvghvqeenucggtffrrghtthgvrhhnpefgteefudfgteduueehteejhfeugf
-    fgleeltedvveethfeuueejfedvgeelveehgfenucevlhhushhtvghrufhiiigvpedtnecu
-    rfgrrhgrmhepmhgrihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggprh
-    gtphhtthhopedt
-X-ME-Proxy: <xmx:f4WxZtuZzrAAUnA6l8KmE8JNbvrsnThilRw6TrILse2k8csqMCEfhA>
-    <xmx:f4WxZpcIWuIhpvsStVHxKR99D44-4dQPX_g9QNz9p_wPTfW59suD6w>
-    <xmx:f4WxZp3uJ6JEdSSBU8Yo81MKA7KwmNW-eMmT0dLlWDZQsrqAJhHNUg>
-    <xmx:f4WxZl84u3x_Q-teSkiSJqnGqzkfR6SwYHYn5xW5CFmV0W2MPw3ewQ>
-    <xmx:f4WxZiHUDD7NQiTWUt8gRoKBKE8A0DVjF-fdYdpV5hzb3Ga8udDjH9Dd>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 5 Aug 2024 22:07:56 -0400 (EDT)
-From: "Luke D. Jones" <luke@ljones.dev>
-To: platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	hdegoede@redhat.com,
-	corentin.chary@gmail.com,
-	"Luke D. Jones" <luke@ljones.dev>
-Subject: [PATCH v2 1/6] platform/x86: asus-wmi: Add quirk for ROG Ally X
-Date: Tue,  6 Aug 2024 14:07:42 +1200
-Message-ID: <20240806020747.365042-2-luke@ljones.dev>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240806020747.365042-1-luke@ljones.dev>
-References: <20240806020747.365042-1-luke@ljones.dev>
+	s=arc-20240116; t=1722910076; c=relaxed/simple;
+	bh=y8Sq//XPZsqkc+3bL4CNmIbqRRVQ6S+IG9hm/vcGnKk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SV6/42rGqVDk887HmB3cXIzTljcjbiWQhFTCSMRjL3bN+ikuDBFf9oR07UwOzHuHe0ncK3t+9XVoQhacB+cdGtoKRZQXRsxMJTTwn25aKsWnPFwCl1cxSjIa4Cy3fa5uk1EKWZICIi+VKpZNv3eylFMcU2TXdbmrnDsq2dhqNcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QITqXE9x; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4ef2006dcdbso6407e0c.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 19:07:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722910073; x=1723514873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LARZc07LADq71T7/7gjiP1ItyFSC8ak4cgcFWtYqKus=;
+        b=QITqXE9xP2iygSUu41JJoALK/cLjX4+PRIz9LWf0F2M3flq2QOpKwj9QZCOrdhfPQf
+         /YUMsg2SU323AUng4RNjgY35nwXJfI2BAEdEJOwcjdt1u57GnCKK+YhgFiv7XCBpn/8u
+         eCsrP7tqYSlghb0fyKaOxRPOwGg27Cl18srB7T1eqVQmq6sferyCHL4Zx+63L3lbxdJ7
+         COjKzqj2MWJbfKgozeggzV8g3g5yvpPgYzBVK4PMFffOAil+L9HjPgQmo1j1MNy0aRse
+         13zhoZmi5toZ/jsMOyM/m87gPqZuW+mAmw8Py+SgmUOtABFeMI9XJzGusRib9hsGOhpl
+         u6NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722910073; x=1723514873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LARZc07LADq71T7/7gjiP1ItyFSC8ak4cgcFWtYqKus=;
+        b=wIbDYWPN/n99OvXSgsCkPHzuqIZpXxHOVH8sZ/qk3fQ+bVRh266HgRaMWPw6+LZmSj
+         9rpj5Qt1B9X0P0jhEgKquI5KDQ87uRceAyiDVKfGkpxmLDWKDkQDlvGDnslYk0/tQynR
+         5AChDIlTYxqyPu4Hqzrs4fD9Oh6V8QEGs1IcWbuLPKDhBNxin3dr7WQrZbiZp/Xob4Fe
+         yC0opmOrdvP1rX0k/krBDw35j/CwnSwt/lFhjb7RwF53tEgvPt3LwKw4BVtaF/TfX4Lp
+         xraHrEsb+qXerEesFWDxV+KbXH5QEO3KBOrk+MN5oUvPuHLtcLFRIp9rjE7dCDGD8mrU
+         aUhw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4CPk5+KMzmPblV7di0RpJliHCvieIEwc+m5Ju6AFpPC5WHa54KM+3tKKPl6k1k7n7J+fz+DU8sxpcNC96+so1ca1ULzpidpTb8GCe
+X-Gm-Message-State: AOJu0YxydOt08fbszWOVWC5lUOew5WbNbEds9yxOjAt2RtDAEBdRwL15
+	45H0Tx9Sk/6XVcJoNqAqeFc8395JgTv2TiCN8b13jHPdbdnUVr7/rnc7YJIHh9fV+PF72i/sBap
+	DEQsfBxtRgvv9i/Xj98nNmf/MSfjAJi72
+X-Google-Smtp-Source: AGHT+IFIyuATzo+ZeR3WGkUmX/hHU0lijXzN/fAJpO+nJAsrUt8SRJ56SRpxK6Zd9IuzPU8zdX28oW29AZ2TIS4xnvs=
+X-Received: by 2002:a05:6122:1ac2:b0:4f6:a697:d380 with SMTP id
+ 71dfb90a1353d-4f8a000231fmr16129793e0c.10.1722910073240; Mon, 05 Aug 2024
+ 19:07:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240805160754.1081-1-justinjiang@vivo.com> <CAGsJ_4wqENiGf4FoEKA2yO5pmu3SfJD9qsjHD0E7eHPZG1+PuA@mail.gmail.com>
+ <3699860f-3887-4a99-b9ef-10e3f86ec3bb@vivo.com>
+In-Reply-To: <3699860f-3887-4a99-b9ef-10e3f86ec3bb@vivo.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 6 Aug 2024 14:07:42 +1200
+Message-ID: <CAGsJ_4zNd5oCG1vpWRJxOQgPRvyO3AbjGM5nt9SxGjm=YTcrdg@mail.gmail.com>
+Subject: Re: [PATCH] mm: swap: mTHP frees entries as a whole
+To: zhiguojiang <justinjiang@vivo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Chris Li <chrisl@kernel.org>, 
+	opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The new ROG Ally X functions the same as the previus model so we can use
-the same method to ensure the MCU USB devices wake and reconnect
-correctly.
+On Tue, Aug 6, 2024 at 2:01=E2=80=AFPM zhiguojiang <justinjiang@vivo.com> w=
+rote:
+>
+>
+>
+> =E5=9C=A8 2024/8/6 6:09, Barry Song =E5=86=99=E9=81=93:
+> > On Tue, Aug 6, 2024 at 4:08=E2=80=AFAM Zhiguo Jiang <justinjiang@vivo.c=
+om> wrote:
+> >> Support mTHP's attempt to free swap entries as a whole, which can avoi=
+d
+> >> frequent swap_info locking for every individual entry in
+> >> swapcache_free_entries(). When the swap_map count values corresponding
+> >> to all contiguous entries are all zero excluding SWAP_HAS_CACHE, the
+> >> entries will be freed directly by skippping percpu swp_slots caches.
+> >>
+> > No, this isn't quite good. Please review the work done by Chris and Kai=
+rui[1];
+> > they have handled it better. On a different note, I have a patch that c=
+an
+> > handle zap_pte_range() for swap entries in batches[2][3].
+> I'm glad to see your optimized submission about batch freeing swap
+> entries for
+> zap_pte_range(), sorry, I didn't see it before. My this patch can be
+> ignored.
 
-Given that two devices marks the start of a trend, this patch also adds
-a quirk table to make future additions easier if the MCU is the same.
+no worries, please help test and review the formal patch I sent:
+https://lore.kernel.org/linux-mm/20240806012409.61962-1-21cnbao@gmail.com/
 
-Signed-off-by: Luke D. Jones <luke@ljones.dev>
----
- drivers/platform/x86/asus-wmi.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+Please note that I didn't use a bitmap to avoid a large stack, and
+there is a real possibility of the below can occur, your patch can
+crash if the below is true:
+nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index f15fcb45e1aa..0c80c6b0399b 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -152,6 +152,20 @@ static const char * const ashs_ids[] = { "ATK4001", "ATK4002", NULL };
- 
- static int throttle_thermal_policy_write(struct asus_wmi *);
- 
-+static const struct dmi_system_id asus_ally_mcu_quirk[] = {
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
-+		},
-+	},
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_NAME, "RC72L"),
-+		},
-+	},
-+	{ },
-+};
-+
- static bool ashs_present(void)
- {
- 	int i = 0;
-@@ -4751,7 +4765,7 @@ static int asus_wmi_add(struct platform_device *pdev)
- 	asus->dgpu_disable_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_DGPU);
- 	asus->kbd_rgb_state_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_TUF_RGB_STATE);
- 	asus->ally_mcu_usb_switch = acpi_has_method(NULL, ASUS_USB0_PWR_EC0_CSEE)
--						&& dmi_match(DMI_BOARD_NAME, "RC71L");
-+						&& dmi_check_system(asus_ally_mcu_quirk);
- 
- 	if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_MINI_LED_MODE))
- 		asus->mini_led_dev_id = ASUS_WMI_DEVID_MINI_LED_MODE;
--- 
-2.45.2
+Additionally, I quickly skip the case where
+swap_count(data_race(si->swap_map[start_offset]) !=3D 1) to avoid regressio=
+ns
+in cases that can't be batched.
 
+>
+> Thanks
+> Zhiguo
+>
+> >
+> > [1] https://lore.kernel.org/linux-mm/20240730-swap-allocator-v5-5-cb9c1=
+48b9297@kernel.org/
+> > [2] https://lore.kernel.org/linux-mm/20240803091118.84274-1-21cnbao@gma=
+il.com/
+> > [3] https://lore.kernel.org/linux-mm/CAGsJ_4wPnQqKOHx6iQcwO8bQzoBXKr2qY=
+2AgSxMwTQCj3-8YWw@mail.gmail.com/
+> >
+> >> Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
+> >> ---
+> >>   mm/swapfile.c | 61 +++++++++++++++++++++++++++++++++++++++++++++++++=
+++
+> >>   1 file changed, 61 insertions(+)
+> >>
+> >> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> >> index ea023fc25d08..829fb4cfb6ec
+> >> --- a/mm/swapfile.c
+> >> +++ b/mm/swapfile.c
+> >> @@ -1493,6 +1493,58 @@ static void swap_entry_range_free(struct swap_i=
+nfo_struct *p, swp_entry_t entry,
+> >>          swap_range_free(p, offset, nr_pages);
+> >>   }
+> >>
+> >> +/*
+> >> + * Free the contiguous swap entries as a whole, caller have to
+> >> + * ensure all entries belong to the same folio.
+> >> + */
+> >> +static void swap_entry_range_check_and_free(struct swap_info_struct *=
+p,
+> >> +                                 swp_entry_t entry, int nr, bool *any=
+_only_cache)
+> >> +{
+> >> +       const unsigned long start_offset =3D swp_offset(entry);
+> >> +       const unsigned long end_offset =3D start_offset + nr;
+> >> +       unsigned long offset;
+> >> +       DECLARE_BITMAP(to_free, SWAPFILE_CLUSTER) =3D { 0 };
+> >> +       struct swap_cluster_info *ci;
+> >> +       int i =3D 0, nr_setbits =3D 0;
+> >> +       unsigned char count;
+> >> +
+> >> +       /*
+> >> +        * Free and check swap_map count values corresponding to all c=
+ontiguous
+> >> +        * entries in the whole folio range.
+> >> +        */
+> >> +       WARN_ON_ONCE(nr > SWAPFILE_CLUSTER);
+> >> +       ci =3D lock_cluster_or_swap_info(p, start_offset);
+> >> +       for (offset =3D start_offset; offset < end_offset; offset++, i=
+++) {
+> >> +               if (data_race(p->swap_map[offset])) {
+> >> +                       count =3D __swap_entry_free_locked(p, offset, =
+1);
+> >> +                       if (!count) {
+> >> +                               bitmap_set(to_free, i, 1);
+> >> +                               nr_setbits++;
+> >> +                       } else if (count =3D=3D SWAP_HAS_CACHE) {
+> >> +                               *any_only_cache =3D true;
+> >> +                       }
+> >> +               } else {
+> >> +                       WARN_ON_ONCE(1);
+> >> +               }
+> >> +       }
+> >> +       unlock_cluster_or_swap_info(p, ci);
+> >> +
+> >> +       /*
+> >> +        * If the swap_map count values corresponding to all contiguou=
+s entries are
+> >> +        * all zero excluding SWAP_HAS_CACHE, the entries will be free=
+d directly by
+> >> +        * skippping percpu swp_slots caches, which can avoid frequent=
+ swap_info
+> >> +        * locking for every individual entry.
+> >> +        */
+> >> +       if (nr > 1 && nr_setbits =3D=3D nr) {
+> >> +               spin_lock(&p->lock);
+> >> +               swap_entry_range_free(p, entry, nr);
+> >> +               spin_unlock(&p->lock);
+> >> +       } else {
+> >> +               for_each_set_bit(i, to_free, SWAPFILE_CLUSTER)
+> >> +                       free_swap_slot(swp_entry(p->type, start_offset=
+ + i));
+> >> +       }
+> >> +}
+> >> +
+> >>   static void cluster_swap_free_nr(struct swap_info_struct *sis,
+> >>                  unsigned long offset, int nr_pages,
+> >>                  unsigned char usage)
+> >> @@ -1808,6 +1860,14 @@ void free_swap_and_cache_nr(swp_entry_t entry, =
+int nr)
+> >>          if (WARN_ON(end_offset > si->max))
+> >>                  goto out;
+> >>
+> >> +       /*
+> >> +        * Try to free all contiguous entries about mTHP as a whole.
+> >> +        */
+> >> +       if (IS_ENABLED(CONFIG_THP_SWAP) && nr > 1) {
+> >> +               swap_entry_range_check_and_free(si, entry, nr, &any_on=
+ly_cache);
+> >> +               goto free_cache;
+> >> +       }
+> >> +
+> >>          /*
+> >>           * First free all entries in the range.
+> >>           */
+> >> @@ -1821,6 +1881,7 @@ void free_swap_and_cache_nr(swp_entry_t entry, i=
+nt nr)
+> >>                  }
+> >>          }
+> >>
+> >> +free_cache:
+> >>          /*
+> >>           * Short-circuit the below loop if none of the entries had th=
+eir
+> >>           * reference drop to zero.
+> >> --
+> >> 2.39.0
+> >>
+Thanks
+Barry
 
