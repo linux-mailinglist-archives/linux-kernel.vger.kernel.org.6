@@ -1,117 +1,95 @@
-Return-Path: <linux-kernel+bounces-276396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D4F7949308
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:29:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E66159492F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12E03287A33
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:29:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0B94283BB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6709B1C579D;
-	Tue,  6 Aug 2024 14:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB25017AE08;
+	Tue,  6 Aug 2024 14:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RGcTgp4V"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b="cHTn2xI2"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2093.outbound.protection.outlook.com [40.107.249.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892ED18D638;
-	Tue,  6 Aug 2024 14:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCA618D64C;
+	Tue,  6 Aug 2024 14:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.93
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722954528; cv=fail; b=TuNLuXb9HNFXU3AkUSpEuWP0oyirpBSbIrtVAtviXZRhX0CY4Da+HygnYqHPI+lCzkIONbrxR8I3tmm6vlYpqt4bboCjEbIaG0Y36OU9T90WMzL7NPNHE9Z2myE7H2JC4+slY2RtlH03EF/QSOB12cr0dSHn5GQGS7qCleQKYLA=
+	t=1722954454; cv=fail; b=fT6GqNjS3FgL6I2ffuXwvwmMVl6zrC8HKv3LQlw7AemW9kAbzghcpo9wPNLQK5ZnmuSLth2LKi5hg1C9qJaYXHZUY14uHzEUWpfOkkKdVExiV6deoMMkBwns0Pqf5Y2FKj9FBNG4Q1hGgP4P09dCTtoTVgFblsXGT9OJdQEVP00=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722954528; c=relaxed/simple;
-	bh=guJXt5hLs/k6Gy5qqQbEgBY5K6l41GRJp9C7qXsr19U=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=ZGCCE6R4K6GGxE4RBr7QoWvg8iTjcD3JKJLS1zXCcyfC3ymNdUEQE4Lg7DWlsqJ9T2F1UMAI7qlYyDBhevzRPBahR+YH0ATSkkDSWkf5XqTcjxoV2E3rDwu1ys8Jo+NqfDQ3ZXjdBDIVMBpbU7p35Jvur7T9jhli7o8U+sFfuRk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RGcTgp4V; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722954526; x=1754490526;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=guJXt5hLs/k6Gy5qqQbEgBY5K6l41GRJp9C7qXsr19U=;
-  b=RGcTgp4V7ckAT5DjAqJK3lvkMaUaSbsDiwwpgQXNnJp3Lay8WqErei2c
-   hJItz/FgN/DwRB9/cV07qNhLaYOBK7J3CWJBNUHnTn0BbSZuILZlJh/6G
-   MXdNp3of4VVYsnHbeihgeLgtaLrdYxRgqZAr3+CSmzwCLxl9871g5Qrti
-   rbmOQGsPmFiX7coEp8NvqCv8AIb/59hr15olAwazfq9ZvfetzxOvDAgO6
-   dBfAXLO9qHJ4rFu5WLrdaKH66K9kQEsia884YsJsrZErg9AajHj93sij3
-   frdF7DJBCLntl9Ur0IFWtw8jS60QTck8cA65gw2vjK3mdfWvbxyMLFcVT
-   Q==;
-X-CSE-ConnectionGUID: ki9NTdStQWy0+W5yRbSxog==
-X-CSE-MsgGUID: eqTR9qQmRWWg/dM5aIjbeQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="21124737"
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="21124737"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 07:26:39 -0700
-X-CSE-ConnectionGUID: gyD9eSBARPSsOiF2Yik7eQ==
-X-CSE-MsgGUID: J7P7JTsrQqmWurS4CYTNwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="56223387"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Aug 2024 07:26:39 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 6 Aug 2024 07:26:38 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 6 Aug 2024 07:26:38 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.41) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 6 Aug 2024 07:26:35 -0700
+	s=arc-20240116; t=1722954454; c=relaxed/simple;
+	bh=q1LITArf13oDXReN1X1GPJz9MSXwH95r2LmRr13zV3w=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hFtcIaENV7Qchz5+yAunUJ65KORbSuLPihKIlvTTlu+y5ncHBzUzf5pZKNeNWmGCGt+Ps5t3e9BQZvTeILEVC/AzHsTRDQv0RIJJHwFdDOw4YkYwXEOqGSOyBiEtL4sX9PWafuwQcB6OMaKx+enOGwM109a6NjLYfn1Qhdch9LQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de; spf=pass smtp.mailfrom=kontron.de; dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b=cHTn2xI2; arc=fail smtp.client-ip=40.107.249.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kontron.de
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ATdlNkQbUURFDWw3EQ+FOv2F6queS9qW4usskKMd+Fs3nfnS6ph5+3i7pXGUIPEJvV29SqvVDRQSRUK2X/taTH6FZTHVEs0bVvmbyYra2A8QTSpkry7VwLGZRiEVE4EijQnqSln9G18QUTQfaunphnYANjcKCLuXUKVjFXRWHDvGoa5O2ewSMRoBqyKBfxQsGqKRZD+iEelWYzWgn29a1FxqLlgItaeijC7IffnJBmLlQvaZWoqxBnYJ01G/FPtGUYu6u+TVEXUXZJY0HaMvKXJy6PJEsLo2SyK8NKWXy7iNdzEuSlT3LReculGkdKW0Q4HvXM/5Ugw/9ZTmifBYng==
+ b=WDnBC6RKVcT/66qASugnUH+5usz9FjkobyeKDlzhXV+ztlSsK+QuZ73HixXKDVQ+7NGMrYn0NxFhfnVuZRH9atIl5qIHYAqcnkIYFzPUdNTF8ii9LbXCHhoFfpmvE+ZzwAV/ocRMGwyTFkHiT0TrJ/pzAS1A+CuMBzgKoP/EBmooJjQDLc0kwDm+gzld9ki+zK//6xTgaMCj1PUZOWOjgmrRpBWNMCd7w5ir+GjCUe+JMJqTi7uYN/gJkOAzJqOR0v39sL9wVUzmhD+o0kGKS/PVWNwAuFTE8y7T2PBnWU/7wrpyOBnH1U5tSvOlz3EgDPMCjxNZp0BYG996m7A3Hw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fGzr3Hp4lzoFa6xs7RG144KUvQcQ6K+5zwbk0tnn9O8=;
- b=JQ/qoi+efmqX+X3Wwao0QTpvXE13VRzLRoAfbNQZaZs9KTu30nuM/Zw6GhzjVbTWHpF2Ysp6Uycp6LgvzJtPCPEPlvpdVJPGMUpzH6Q+WFDh+t0fxjsO88CH5BENq8QtnRbmIdSoIH+02fitNOkIrTKjQ4v/v5cvRNGbTfJmcGYlLuCy8CeqMW+AXYs7psNrIrhvYoAJLA75znLSm1MIeErOLU7Io/K4Rz+apegkm+e8b7yV8KKaAgfq5XSpsCJjCy1SCnNZE9zgCQq3p3HgRXPYQbinnnzerNxjIMzT+rY+XZIDJAGj6QensS866WeCHJgKXgevnt+CGgMIlpbmGg==
+ bh=g8Wxe/uvyWogunU4RwJ6ZXoPnw+JEBgE88Wwz+zq820=;
+ b=uK50+KQJL6caa4rgYGX2J6tTtahm9EsmxCUXa5NeVIQR8h7ozT70VhA2BfcTq0klPHQcAHkURaNn8orO1fhEggNFJkecJCi+MmipnDRV4DkZgtHelHpVz1iA2MMSbBsTvtcZ1ZQJcyuRkdp0QKnN4Biymha3895af9zYVMc2H9bu+o5MRHzsuEFtSdm3Zk9eIdrsVLdcyaGLPvPVDhFJmkTaWexThKhMuHla98gEJ8Z8vJzsdpfktUsR2+FuQg88lUJbH063SRhFKG5bojFT0vm1U0oo8pW3haavmbT5qf7+zc9cJ0QsKXebRPMwvszJrxjqd3L7GL6XnXI4179H7g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
+ dkim=pass header.d=kontron.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
+ s=selector2-mysnt-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g8Wxe/uvyWogunU4RwJ6ZXoPnw+JEBgE88Wwz+zq820=;
+ b=cHTn2xI28X2+wMYUV90I512tuhqa/4htvlQ6p13+w1Zlp1xGWdLwRL/qPIRYSQOeS35zgYmOsxNWQ4l+k4vtOlF45JI0YZEXOpe6uBR8EZEFgtIasuuutQLCO1fxZqIAoFsme9FUIc4MhU5wXdGkhzkNTb+LoOz2Rr2yRBgdq3Y=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by PH7PR11MB7500.namprd11.prod.outlook.com (2603:10b6:510:275::8) with
+ header.d=none;dmarc=none action=none header.from=kontron.de;
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
+ by PR3PR10MB3930.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:4a::24) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.32; Tue, 6 Aug
- 2024 14:26:32 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
- 14:26:32 +0000
-Date: Tue, 6 Aug 2024 22:26:17 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Matthew Wilcox <willy@infradead.org>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, Linux Memory Management List
-	<linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-block@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
-	<linux-bcachefs@vger.kernel.org>, <ceph-devel@vger.kernel.org>,
-	<ecryptfs@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
-	<linux-f2fs-devel@lists.sourceforge.net>, <linux-um@lists.infradead.org>,
-	<linux-mtd@lists.infradead.org>, <jfs-discussion@lists.sourceforge.net>,
-	<linux-nfs@vger.kernel.org>, <linux-nilfs@vger.kernel.org>,
-	<ntfs3@lists.linux.dev>, <ocfs2-devel@lists.linux.dev>,
-	<linux-karma-devel@lists.sourceforge.net>, <devel@lists.orangefs.org>,
-	<reiserfs-devel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<oliver.sang@intel.com>
-Subject: [linux-next:master] [fs]  cdc4ad36a8:
- kernel_BUG_at_include/linux/page-flags.h
-Message-ID: <202408062249.2194d51b-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SI2PR04CA0009.apcprd04.prod.outlook.com
- (2603:1096:4:197::8) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.11; Tue, 6 Aug
+ 2024 14:27:26 +0000
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b854:7611:1533:2a19]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b854:7611:1533:2a19%7]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
+ 14:27:26 +0000
+Message-ID: <bf41ac18-f9a0-4d6b-9b30-264c9c295d35@kontron.de>
+Date: Tue, 6 Aug 2024 16:27:23 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] arm64: dts: Add support for Kontron i.MX93 OSM-S
+ SoM and BL carrier board
+To: Peng Fan <peng.fan@nxp.com>, Frieder Schrempf <frieder@fris.de>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Fabio Estevam <festevam@gmail.com>,
+ Francesco Dolcini <francesco.dolcini@toradex.com>,
+ Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+ Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+ Parthiban Nallathambi <parthiban@linumiz.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ "tharvey@gateworks.com" <tharvey@gateworks.com>
+References: <20240729124450.118497-1-frieder@fris.de>
+ <20240729124450.118497-3-frieder@fris.de>
+ <PAXPR04MB8459728C46300E5507CBA6F188B22@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Content-Language: en-US, de-DE
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
+In-Reply-To: <PAXPR04MB8459728C46300E5507CBA6F188B22@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0181.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a4::14) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:102:263::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -119,252 +97,676 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|PH7PR11MB7500:EE_
-X-MS-Office365-Filtering-Correlation-Id: e94a9346-3ceb-4cd4-8bfe-08dcb623c495
+X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|PR3PR10MB3930:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf67d1f7-8a48-4108-4d43-08dcb623e52f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?mB0EYL1MtFxFD4RDqIsstpIbKISXJ2c07Ppcpx3pCKE9AJbAtYP2j+1ba9Pc?=
- =?us-ascii?Q?8Q9mp8Yku7SkBSYAKvaZMGGhluZnWYxNRW0aCaPLaHozkVnX4UGosa3GedhV?=
- =?us-ascii?Q?E60y9fWon/ftfVYnX2NuwudQGhH0Q8xhAqj0aJ23WGDK3ahx69Ir8ibuZalj?=
- =?us-ascii?Q?895JjgX8mdt/9U5EU18nPt+/5NpFUhRJFPTnWlOm/6h/zcrJXxYtilGhej94?=
- =?us-ascii?Q?xKxQvMmfZmBa8YNItOcDSXjR26MRBsZBLZFfpqdTaUbdE+dcP5pRY5d3NVhT?=
- =?us-ascii?Q?GmgJvYJ+nDxx5AID2hXAmkchx+Sb1XGEuvfcwP/0yxEWK0iYkviZD6E6x4Ki?=
- =?us-ascii?Q?oS3IxvdUzrCDojVHAUtLlQf5ERfjwGtqqiYpeZ4wmyHJdMNqRslyVXra+pUH?=
- =?us-ascii?Q?prYXa5mORiz+YBr04gv6Pco4f4VvntCG6jp+ygxzQ0a4TKdzv/yOn2jxliei?=
- =?us-ascii?Q?PlTu0fltzdAwYQfNFJuU09S5JO4Xrx3e/uhK9D53FCHD+CkZ3HVafZUrp1zl?=
- =?us-ascii?Q?9YE/74s0u+vi2AN6JD5vMb8mkI8052vCx6dKLccQVWmusUJhJrpyLc+YqYA9?=
- =?us-ascii?Q?8//6dZP72PaV2PQo2L1H8Iew/el0oDZT26IwP+VMANdXlqDuL49zWbEssdVw?=
- =?us-ascii?Q?qkcmYzfa7HTNjKZnXU79+4F8t8VfyPYLOdo7mB4fsj2fBuAwyVvru3hl92lU?=
- =?us-ascii?Q?8iXrxbBu7rxagfP4Z1ENeQPPZLmJ1gyCvqOhF5xuytspjTY6Gz79mbzDZkNB?=
- =?us-ascii?Q?hVCsvddcZDKpr2a9+/QPWLusW0NT0DrShAB87+6qa7iWpL5o+H+yEnWObUnt?=
- =?us-ascii?Q?cyydQlyUFhio0SXEWP4hhfb5AP1peTTufoDkmJfyDTppvx+ZhfJAmnwW55IG?=
- =?us-ascii?Q?QJsXcrxdc+/pQE2Y2s26t5FQryTNkfzWxywHfw5voWmQshXW/K7kv8VvxFst?=
- =?us-ascii?Q?I2oKWNza9KSHSHRbWnH/rjihV+CjL1pweVIzZrZjmHIYGTqCNd33//7tOM65?=
- =?us-ascii?Q?wAlFbTIVmQ048+dVxr11IoWbPGHb91Bp8+btr2PiFowhfr0si0k1nRhjadE4?=
- =?us-ascii?Q?YprU/hIqedvuBVDEJLsTQj7u/b0OYxtWeimbDfQF6NsFAp5JPM73UADl/svq?=
- =?us-ascii?Q?/5OeDfKyaPtxf6PxE9y+yMf4uR2YCVd/zjiQYAN7u6aXo2381Uwv6adk/53D?=
- =?us-ascii?Q?cV9ZFixCZWX3YBJ1CzRt/l+aMHvmimVIj3JPo/jPgEOUPSYFYbjPUgC2oIto?=
- =?us-ascii?Q?YAwFMVTe0JgAGqjkxeDp00oThIN/rC/g1TlE8Cjn1D71QxIBckP1D2sZLnew?=
- =?us-ascii?Q?0v40ozKpSz2TAN+4FFt4zqju?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bm4wcUNIOXc5OEtJVCtaSGVKbU9pWmlLZlV0RmJSa25hRzVPeXUyOG1jOFFH?=
+ =?utf-8?B?Z3NId3FBQTRFMGltMzQyYXlETkdlNUFSSEIxUU5NSGY4OFowSlJ3czZUVG4y?=
+ =?utf-8?B?ZDhYM3REMk51OWZ1M1dKKzhkK2E5ZzlyRGFqY0o3UnBPVG5oU2d3Mm81TW9L?=
+ =?utf-8?B?SHlDZG5KejhKSWtGVUV1RDlUNmk4eVRHR0d1OU5mUTFTYnRwOWFyN0xtNkNQ?=
+ =?utf-8?B?K0Y3NkFES1o5T01GVk9vYU5mc3VSSjNYOUtYRldmRXV1V3kxYTlQYUJoU3Jm?=
+ =?utf-8?B?YjFUeVgxUEUyUGVWTzNIMC9nUlo1ZzdJazRkWHIzRy8zVHpkUWs1Tjk0Smpq?=
+ =?utf-8?B?eTRXa0VrRjlJb2VrM2ExS1dacTAyeDdSZHRSaDFxb25VbG1lMW16b3U4R3Nj?=
+ =?utf-8?B?M2FoQ1Bxam8wdFJvZlNFcWc3YzFUMk5pWlhMU3hLQVM5OUdzelZLaXk4cktW?=
+ =?utf-8?B?Y0QrT0JHNEwzbDVIWXdhbVpvckVDby92VTRCRVNkWk83aCtlaGRIUGVBeE1v?=
+ =?utf-8?B?V2lSMmNPZUluZmEwbFdvZGxVOWRwcDZQa2JVL1dMdXFBQ2p1NWFLeGZkN0V3?=
+ =?utf-8?B?NHJXMWJwWnBkRE5ZLzA4aXJuWWpjU2R3eUtKY2hOZ0xDS0R6RFpXTTh3RGpE?=
+ =?utf-8?B?UFNTdUJHYkhpa0F6eTRjaWZvaGVuanlEdVg4ajBhKy93cnpscU9JZTBvS0p0?=
+ =?utf-8?B?ZXFQMUtKb2RINEt5NkdzV0FjcURISkJOUlg1Q2FkSWFreUZVdTUyTVphdTB0?=
+ =?utf-8?B?TkZDeHFKUjducGFkemxpTGNXUG0vOTVxeFRmRG9scXdSaURNemkrUWxpUXkw?=
+ =?utf-8?B?dUtqbU5ESWliakZJaWVDc0k2R05QUlpIV1lDa003a2h2amM5U2l2UkxYb3dC?=
+ =?utf-8?B?Z0N5QW9ZbXVUVHJZa2JVQ3ljSmcyODAyK3p0aEwyeFM1ZWFLUjZSTW5ZN3FG?=
+ =?utf-8?B?REpjMnNSbERhZ2E2ZGVoRVBBbDBkMlNXbXcvb1BmUG5MZFcyb3U1MXBvQ3Ux?=
+ =?utf-8?B?bFM4SkNkTFdyZFZnakhnUTNsVy9NODFENUdxY2pOV2hKVzVHSHRMem1ybFRF?=
+ =?utf-8?B?c2ZKMWk4QjZZQXoxYkMvSjRvMmFEbTNLR05MMngxeHBHd0M0ejBhSURQY2Qv?=
+ =?utf-8?B?TzUwb3c4cDFBZS9tZzJzcTJwM3phUVozTmVJWS96N3VGOTBZYkhabjUwWWlC?=
+ =?utf-8?B?eDJDU0RBRGpzL0dNYnRoM0s1QVRFU2lNYlBIaEQyTVV5T2huSEFlaThtbWdm?=
+ =?utf-8?B?YzBqT3JIcnVVUW14dWdKV3AzNUVNd3AzeVA3ejh2cU9EN2IxSkxHbVQxRWRn?=
+ =?utf-8?B?dGhPbUtaaVJ2Y2ZFMGovb3FkdzRaby9WMlAvdnFHa0lpSVV6TmFaeDkrZEdj?=
+ =?utf-8?B?a0drZThQSzFWMG5KUHVjclhCdVFVZ05MSXhxb2s1dnpPSnEvMzlNY2JJejhP?=
+ =?utf-8?B?Uis3K0VKUFlKZE5MQXArbGdzUkJoT1AxbUhBUVIvRDRrajNHeksxOVpmMnlS?=
+ =?utf-8?B?ODhPekg2T3g0QlFWanFtVlpMSFZJWFdhdCtGdWFXa292SlExNnkvbDRUNjBX?=
+ =?utf-8?B?eVZBcHh2YUZCdkdTU1pBa01TSjdxRHFJRWg4VitPdERoTlpqcHhNMXFGQUJG?=
+ =?utf-8?B?K3JjZmhOeDlJdkE2RE5sUHNIQzZmaEdnYkZxbVhwNmpXUm9CVWNwSEJvd01N?=
+ =?utf-8?B?bGVCaXpmS3J4UHV4YlBjeEZwcWxlckphWVNKVHU5KzY3KzYzVXprTE9JbHM2?=
+ =?utf-8?B?Y2c2VDR1NVJPWldEcTl0R3BrdHkybWMwSDJCa0JydkgxL282b1JwSUVibjdj?=
+ =?utf-8?B?aUdDR0o3WGhseVFqWUM2VFhoTG9BaDd1Rm1VVk1vRlpYWWFMT0dkdHdIeWps?=
+ =?utf-8?Q?FwgcvgeWBVmCc?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?eA8AFK2lv6HKS8Do5EpGunyYg8LGOi8TAGkrw9RlUF6gLklfvPIu9az/Nrqa?=
- =?us-ascii?Q?KyPPQQiRwTu75vMfa0Y2/BUT0zqfDs8d3LyvBPK2O0WW2KT+L14BNSYaKPkC?=
- =?us-ascii?Q?P01VR7JlwjhpzQ+EWf2kHNrt2eDCXPWzJvPrs/uoQBsLZg7aUocRknmG7uAk?=
- =?us-ascii?Q?2+oAD3zkzZUkZzeZaEv4qMO0EG9AlMsChe8j6+826OQqF7586IL4vjH1DyDR?=
- =?us-ascii?Q?aktAopGWTs8dZLqhei1qQncoVU5YytLnVvKF4coInKnVtqN6SELdgIApv0yR?=
- =?us-ascii?Q?9EnybXHG2yVHlD8QUHDFhKTEge0JkZsiwNUuIH/dgElxUze7kuKmCISSlYmk?=
- =?us-ascii?Q?V+QeTEHHTOi2nEchL2+K0yBIQl0pf0R2edJvU67hrEp/XrkUv2j/T12qhA0E?=
- =?us-ascii?Q?ExjIM07wCBUWxWc6srJMrq8qr9go54roba7Ng2eIz+Wq/exUbY/pwKpOm9No?=
- =?us-ascii?Q?XI4OAKO2iX4IWq32fH78tD2yJ6qQEMpSt8CD6XGs6ktxdhv7fPmRl3jdhH1u?=
- =?us-ascii?Q?6TOXyAzSYUb230a4w2XU/nQFbI/hUH8eoqAtAKAL6oQOcyu5p1atEupBB+T/?=
- =?us-ascii?Q?TKjS/Gvykh7VZL9ejA9z/xlyec/YHmlx4A5OxzFMYUx3rEforrF9OfQUWUwL?=
- =?us-ascii?Q?Xh+FraY2cUv5epuBgQB3UHdEip1JeNLf+qCeiW5ILjAATO6nhh6ZvZOBJM92?=
- =?us-ascii?Q?hubFQRsa3ZgJ+6AMlXUW1YJCZ4p3Nn9wBsQGP/R12JRw94an4KgztD/fUuGw?=
- =?us-ascii?Q?13aMKO/D3sFbQFZ7h3lh8dLp8uOpVlR6crFVdz2geCH8T5jGoSydkre6P7pU?=
- =?us-ascii?Q?/IxE5SzhBCBYPdkaCKiQfcbls0cdd5iK8xUvaOvFJkuJw5y5PGAHubZlQUzz?=
- =?us-ascii?Q?2PtioQ/oHSTWV6DEq+J/pTHcvMX1RDaqxY23P2z7xLiqst30ZAq5s5r5Om15?=
- =?us-ascii?Q?gUJ8xZVTOH8tDwiii9OBP5NxbdjvuZEwZdSNNcw02c3a/utK0vWfy7HKGFfl?=
- =?us-ascii?Q?AQSzZ3HVhdseHuUUU4DIzcWV9nk/qb0QbxCukbh9t0lY40GxJZqT1OrWgXqy?=
- =?us-ascii?Q?nQp73XXiEjedvpnUAi9smncnWLwGwnBs4HsRFJjTcVHEJldAljQb1eMbWP63?=
- =?us-ascii?Q?xq9uX1sbmrDbWpCTn+StKsJ2O/aPmt0XjyXc0aGurzFOnOgOq8H1fHpLZyVq?=
- =?us-ascii?Q?N6W3TbTyOg/Iv1C7OpLYFdiUwVE0LrZ2KkIzoSc5TGru8XdzR8JJs9Djy7oF?=
- =?us-ascii?Q?Db1jOkdFZrftNcuvtf/xHJxUuY/lj1uqwDruJ6VXlP5x0Xlw7T6UBkVA8Y4q?=
- =?us-ascii?Q?svlHSJrT4AlgdApJLVQicsqWqSkKCAg5p5Ih/1vwn5FeJK7x+H1756+d54ot?=
- =?us-ascii?Q?OtrTkAyku2ee0RzANMxWsLG0WHJGZNGCr2FLO2u2+HLqeZ4DXAmY/jZ4q5bS?=
- =?us-ascii?Q?Eg3KUjfjRI1F1eDCYLLyvQuPOZFQjOqTomCa7kBw+EYlzfqtTq6fEsh5N8Ml?=
- =?us-ascii?Q?OiQZs4HXfETvSAiuDiSotsfEjPf9JrcNbZaOcwjSriUHFyIsNo5WavSiO5rO?=
- =?us-ascii?Q?t8DSZYZw7mlUBJae7Rxf/SMaLdueiCOa+sYgB7dn3ObPYNEZ/abNBPFPY18K?=
- =?us-ascii?Q?nA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e94a9346-3ceb-4cd4-8bfe-08dcb623c495
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RW1UeGNpNHkzcTVUOGg4anFYN3Vwd2tJUTgxZzQ5cXFsemdaamtzTVAzcTc3?=
+ =?utf-8?B?bVV5aURlOFphTnRvWlFBUmMwcURoN1B2cEc5UTE0Y2ZJYVhLSWh1QlBtcU9X?=
+ =?utf-8?B?eU4xTzRVWWUxTkVNRHBoQzhyYXdaak9UekttSzdBclFRTFpFeFBXcXJWTDVZ?=
+ =?utf-8?B?L0FjNDY5MlRkd1hXYnlxZkdvQTRXdTZVQWJ4dmdkeTUxcW9FUnZJRksxNE9W?=
+ =?utf-8?B?Nm8ra1BCSUtEYThyQkRpZWhWSnNzRmJHckFSSW9xU3EzZlJNYkpReTFBenhm?=
+ =?utf-8?B?UVpqUTB4TEtXZVkybS9ZeDZxWW8zQi93eElRbWFLNXgyTkdIeFFVV0QwcGJM?=
+ =?utf-8?B?bUZJUjBvWU9qc0kralNVUVBTRHNvVkVGVWJRL3dxRlBPREVZWm51OXVBeXZS?=
+ =?utf-8?B?SmVYeWtUY082NFBMWUlrYzVOUk9TQTB6Vkg1d1gyMWIwRmNJcWZqWi9lY1Mr?=
+ =?utf-8?B?OU0rV0tlV3d5SVZURkt6T1RTcmV2QVU4S29kbkV1TW80Yk5aVGFkMTVYeEt5?=
+ =?utf-8?B?bCtBZ1Z0bU0ySUZPSnRkYVd2OW9RdzBZdXdJU0tLVzNDQU9qd1NtNk5jSUo2?=
+ =?utf-8?B?MVhaemJJd3U2V1JYTlJXSnQ1UnZnYmc2T3dzTzRkNGJ4ZFZzTGI3ejVFREI4?=
+ =?utf-8?B?YklkYlJXaWlNbHBxWTY0Ky9IOTUvNFYwNXBvNVBOaVIxWVIwamtuRlMxd3Vm?=
+ =?utf-8?B?TkROS251OU9walBjT24vUmJLNGFTM0RDZkFvY1k0RnFra1EyNS9SSHBVRlB0?=
+ =?utf-8?B?dm9sWTB6Q2RBOWJRWkluUmQxQXoya3Rxb3hRVVFCaWlTNS9kNmVXT1Q3SW9x?=
+ =?utf-8?B?QURZN0ZGa1lpd2JGcE9lYmRKcG5hNHJnU1ZvbDVKSUhyT3YrZTJNMkh3ZG1O?=
+ =?utf-8?B?amg0cTZYSE5HcGtJUUdwbkFkaVNHeXdlbkltUDdhekwya0xJQkpkL04vZ29L?=
+ =?utf-8?B?cG5SZ201L0dmbWZaVE1VZmF1UENXSWpKTjBNSXJaTlc0UFRlc1J5Q21zWjZD?=
+ =?utf-8?B?ZitMY2EydXFNbHF4SmJUYnBLQUpkdGxjVkd2Zzh6WCtGVXJtdDNuSnNyMGpM?=
+ =?utf-8?B?NXp4QmwyS1Rrd3VwcUNuMlBKQmVSTUFwNFk5VXM3MUgrdnJSNS95eU81Tlgy?=
+ =?utf-8?B?UW9JQmhMK3l4UlI2bTVlZnJleEppYUo4OGt3ZlpBMy94M2lUYmc5M0tQaWd5?=
+ =?utf-8?B?TmZFOUVTbTdWZ2xWMjZHNUpCdXd4dDIvNTZIeURJdmx2S0FEQlB6a1VZcDFN?=
+ =?utf-8?B?NkZHYjZYK3ZyZnlCa0NxNjRJZ0tlR243U0phbVhFMWhrV2svN3ljTWFlZDhx?=
+ =?utf-8?B?NkY0VDU3cktLeEVqVzJxRWhycUlDL1UybzlpMkxmWlBXaERLdmNTcEVnWmY4?=
+ =?utf-8?B?QmMyTkRsZ2dWbS81M25XeWw2cEVMbGVwRjlzSklRQ1BUZ2REYk56NC92VFEy?=
+ =?utf-8?B?WXVjZVh5dkdVdmI5NHF1eU5BVnhoMWVGN0gwSEpXMFc5YzhFZXZ2VW1SMy82?=
+ =?utf-8?B?cGJSUDhOd1oxUEFXK2FOdzZOWFJ2cFBjS1RhNTdSR2M0aERRd3EvTUxWR2hu?=
+ =?utf-8?B?U0xMc2xHNzZ4WHFIWWdtdWhjZm5mNGk3M0pEbGlqcW9LUjh5ZVh0OEFnTzZo?=
+ =?utf-8?B?ZzUvd1hvWEFGTCtyamxqUnVkbk9sTUNvcFZkLzZWOHdBQjhPN0drL0prdWhR?=
+ =?utf-8?B?SVJ0LzRvYTFHSEYrOStsNmpIQkVJTWNJdEFtbk5EZnhyMEdGU3FPT254TjRt?=
+ =?utf-8?B?VzNFcEJPbmxMa0RpMkhUWUdpMHlHWm5zTGcxTHp4WlZuaXZ0Y2hUOURxdVBj?=
+ =?utf-8?B?TTJqSktBQWhsRTR2a0NVZ3Blck5UcDhyR1VGK1NWZGZFMFdGV2dhbEdPMW1l?=
+ =?utf-8?B?QUZHWk9Ca2NzKzQySmxBQXk0SHZKa1RRc2ZGUk44R2d3S3dFVzBVT1c5bUxx?=
+ =?utf-8?B?WTVmTnBQNnErN2dpS3hHK0VweHBXM3J4WWdFSTlGbTVCV1UrajJ2UWY3VWFD?=
+ =?utf-8?B?L0NDdktoK0Vpa1VPK1l0eFVkNTBGaEh6QjloTEpVN0xXeDNhbTloZllBWVYr?=
+ =?utf-8?B?WHkzSGFFQVRFTTl5emVUU0pKc1FFdkJXTVlCc0ZOQXhBdHBmZ2IxajBZVXcw?=
+ =?utf-8?B?bVhWZ3cvYUJRZzcrSUZ6MGdiVUxuTlBCQzdVVEpwQW5IcWJwU0hBaUxHM1VX?=
+ =?utf-8?B?UWc9PQ==?=
+X-OriginatorOrg: kontron.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf67d1f7-8a48-4108-4d43-08dcb623e52f
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 14:26:31.9618
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 14:27:26.6256
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: swcdo0wJAwd82lP8fzEEHBl2Vr4WkMHQML81U3Dywhz+DO16CUWG15l5v/2XHCWEMAIET54dfLVTOGo9er3dBw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7500
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: abM0jWeGNKAUMbF4cLshOQIuQTPpIEzITYj0KVCDwFy/8UiCDzp2tZZkhbpRzVeJhBmi/v3h4cMGQBlcH/t6uRm4r6ziKsDgxn1dLRWPgbw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR10MB3930
 
+Hi Peng,
 
+thanks for reviewing!
 
-Hello,
+On 01.08.24 4:10 AM, Peng Fan wrote:
+>> Subject: [PATCH v3 2/2] arm64: dts: Add support for Kontron i.MX93
+>> OSM-S SoM and BL carrier board
+>>
+>> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+>>
+>> This adds support for the Kontron Electronics OSM-S i.MX93 SoM and
+>> the matching baseboard BL i.MX93.
+>>
+>> The SoM hardware complies to the Open Standard Module (OSM) 1.1
+>> specification, size S
+>>
+>> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+>> ---
+>>  arch/arm64/boot/dts/freescale/Makefile        |   1 +
+>>  .../dts/freescale/imx93-kontron-bl-osm-s.dts  | 165 ++++++
+>>  .../dts/freescale/imx93-kontron-osm-s.dtsi    | 547
+>> ++++++++++++++++++
+>>  3 files changed, 713 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/freescale/imx93-kontron-
+>> bl-osm-s.dts
+>>  create mode 100644 arch/arm64/boot/dts/freescale/imx93-kontron-
+>> osm-s.dtsi
+>>
+>> diff --git a/arch/arm64/boot/dts/freescale/Makefile
+>> b/arch/arm64/boot/dts/freescale/Makefile
+>> index f04c22b7de72e..c6e82dfe37576 100644
+>> --- a/arch/arm64/boot/dts/freescale/Makefile
+>> +++ b/arch/arm64/boot/dts/freescale/Makefile
+>> @@ -238,6 +238,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8qxp-
+>> tqma8xqp-mba8xx.dtb
+>>  dtb-$(CONFIG_ARCH_MXC) += imx8ulp-evk.dtb
+>>  dtb-$(CONFIG_ARCH_MXC) += imx93-9x9-qsb.dtb
+>>  dtb-$(CONFIG_ARCH_MXC) += imx93-11x11-evk.dtb
+>> +dtb-$(CONFIG_ARCH_MXC) += imx93-kontron-bl-osm-s.dtb
+>>  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-segin.dtb
+>>  dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxca.dtb
+>>  dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxla.dtb diff --
+>> git a/arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts
+>> b/arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts
+>> new file mode 100644
+>> index 0000000000000..2dfa2381f4691
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts
+>> @@ -0,0 +1,165 @@
+>> +// SPDX-License-Identifier: GPL-2.0+ OR MIT
+>> +/*
+>> + * Copyright (C) 2024 Kontron Electronics GmbH  */
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include "imx93-kontron-osm-s.dtsi"
+>> +
+>> +/ {
+>> +	model = "Kontron BL i.MX93 OSM-S";
+>> +	compatible = "kontron,imx93-bl-osm-s", "kontron,imx93-osm-
+>> s",
+>> +"fsl,imx93";
+>> +
+>> +	aliases {
+>> +		ethernet0 = &fec;
+>> +		ethernet1 = &eqos;
+>> +	};
+>> +
+>> +	leds {
+>> +		compatible = "gpio-leds";
+>> +
+>> +		led1 {
+>> +			label = "led1";
+>> +			gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
+>> +			linux,default-trigger = "heartbeat";
+>> +		};
+>> +	};
+>> +
+>> +	pwm-beeper {
+>> +		compatible = "pwm-beeper";
+>> +		pwms = <&tpm6 1 5000 0>;
+>> +	};
+>> +
+>> +	reg_vcc_panel: regulator-vcc-panel {
+>> +		compatible = "regulator-fixed";
+>> +		enable-active-high;
+>> +		gpio = <&gpio4 3 GPIO_ACTIVE_HIGH>;
+> 
+> "enable-active-high" should be put under gpio property.
 
-kernel test robot noticed "kernel_BUG_at_include/linux/page-flags.h" on:
+Hm, alphabetically 'e' comes before 'g'. And I see a lot of occurences
+in the tree where the order is like this. So I'm not really convinced it
+should be the other way round.
 
-commit: cdc4ad36a871b7ac43fcc6b2891058d332ce60ce ("fs: Convert aops->write_begin to take a folio")
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> 
+>> +		regulator-max-microvolt = <3300000>;
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-name = "VCC_PANEL";
+>> +	};
+>> +};
+>> +
+>> +&lpspi8 {
+>> +	status = "okay";
+>> +	assigned-clocks = <&clk IMX93_CLK_LPSPI8>;
+>> +	assigned-clock-parents = <&clk
+>> IMX93_CLK_SYS_PLL_PFD0_DIV2>;
+>> +	assigned-clock-rates = <100000000>;
+>> +
+>> +	eeram@0 {
+>> +		compatible = "microchip,48l640";
+>> +		reg = <0>;
+>> +		spi-max-frequency = <20000000>;
+>> +	};
+>> +};
+>> +
+>> +&eqos {	/* Second ethernet (OSM-S ETH_B) */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_eqos_rgmii>;
+>> +	phy-mode = "rgmii-id";
+>> +	phy-handle = <&ethphy1>;
+>> +	status = "okay";
+>> +
+>> +	mdio {
+>> +		compatible = "snps,dwmac-mdio";
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		ethphy1: ethernet-phy@1 {
+>> +			compatible = "ethernet-phy-id4f51.e91b";
+>> +			reg = <1>;
+>> +			reset-assert-us = <10000>;
+>> +			reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&fec { /* First ethernet (OSM-S ETH_A) */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_enet_rgmii>;
+>> +	phy-connection-type = "rgmii-id";
+>> +	phy-handle = <&ethphy0>;
+>> +	status = "okay";
+>> +
+>> +	mdio {
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		ethphy0: ethernet-phy@1 {
+>> +			compatible = "ethernet-phy-id4f51.e91b";
+>> +			reg = <1>;
+>> +			reset-assert-us = <10000>;
+>> +			reset-gpios = <&gpio2 18 GPIO_ACTIVE_LOW>;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&flexcan1 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&lpi2c2 {
+>> +	status = "okay";
+>> +
+>> +	gpio_expander_dio: gpio@20 {
+>> +		compatible = "ti,tca6408";
+>> +		reg = <0x20>;
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +		gpio-line-names = "DIO1_OUT","DIO1_IN",
+>> "DIO2_OUT","DIO2_IN",
+>> +				  "DIO3_OUT","DIO3_IN",
+>> "DIO4_OUT","DIO4_IN";
+>> +		interrupt-parent = <&gpio4>;
+>> +		interrupts = <28 IRQ_TYPE_EDGE_FALLING>;
+>> +		reset-gpios = <&gpio2 2 GPIO_ACTIVE_LOW>;
+>> +	};
+>> +};
+>> +
+>> +&lpuart1 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&lpuart7 {
+>> +	uart-has-rtscts;
+>> +	status = "okay";
+>> +};
+>> +
+>> +&lpuart6 {
+>> +	linux,rs485-enabled-at-boot-time;
+>> +	uart-has-rtscts;
+>> +	status = "okay";
+>> +};
+>> +
+>> +&tpm6 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usbotg1 {
+>> +	disable-over-current;
+>> +	dr_mode = "host";
+>> +	status = "okay";
+>> +
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +
+>> +	usb1@1 {
+>> +		compatible = "usb424,2514";
+>> +		reg = <1>;
+>> +	};
+>> +};
+>> +
+>> +&usbotg2 {
+>> +	adp-disable;
+>> +	hnp-disable;
+>> +	srp-disable;
+>> +
+>> +	disable-over-current;
+>> +	dr_mode = "otg";
+>> +	usb-role-switch;
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usdhc2 {
+>> +	vmmc-supply = <&reg_vdd_3v3>;
+>> +	status = "okay";
+>> +};
+>> diff --git a/arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
+>> b/arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
+>> new file mode 100644
+>> index 0000000000000..926c622d380ee
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
+>> @@ -0,0 +1,547 @@
+>> +// SPDX-License-Identifier: GPL-2.0+ OR MIT
+>> +/*
+>> + * Copyright (C) 2024 Kontron Electronics GmbH  */
+>> +
+>> +#include <dt-bindings/interrupt-controller/irq.h>
+>> +#include "imx93.dtsi"
+>> +
+>> +/ {
+>> +	model = "Kontron OSM-S i.MX93";
+>> +	compatible = "kontron,imx93-osm-s", "fsl,imx93";
+>> +
+>> +	aliases {
+>> +		rtc0 = &rv3028;
+>> +		rtc1 = &bbnsm_rtc;
+>> +	};
+>> +
+>> +	memory@40000000 {
+>> +		device_type = "memory";
+>> +		reg = <0x0 0x40000000 0 0x80000000>;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = &lpuart1;
+>> +	};
+>> +
+>> +	reg_usdhc2_vcc: regulator-usdhc2-vcc {
+>> +		compatible = "regulator-fixed";
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&pinctrl_reg_usdhc2_vcc>;
+>> +		enable-active-high;
+>> +		gpio = <&gpio3 7 GPIO_ACTIVE_HIGH>;
+> 
+> "enable-active-high" put under "gpio".
+> 
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-max-microvolt = <3300000>;
+>> +		regulator-name = "VCC_SDIO_A";
+>> +	};
+>> +
+>> +	reg_vdd_carrier: regulator-vdd-carrier {
+>> +		compatible = "regulator-fixed";
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&pinctrl_reg_vdd_carrier>;
+>> +		enable-active-high;
+>> +		gpio = <&gpio4 29 GPIO_ACTIVE_HIGH>;
+> 
+> Ditto.
+> 
+>> +		regulator-always-on;
+>> +		regulator-boot-on;
+>> +		regulator-name = "VDD_CARRIER";
+>> +
+>> +		regulator-state-standby {
+>> +			regulator-on-in-suspend;
+>> +		};
+>> +
+>> +		regulator-state-mem {
+>> +			regulator-off-in-suspend;
+>> +		};
+>> +
+>> +		regulator-state-disk {
+>> +			regulator-off-in-suspend;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&lpspi1 { /* OSM-S SPI_A */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_lpspi1>;
+>> +	cs-gpios = <&gpio1 11 GPIO_ACTIVE_LOW>; };
+>> +
+>> +&lpspi8 { /* OSM-S SPI_B */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_lpspi8>;
+>> +	cs-gpios = <&gpio2 12 GPIO_ACTIVE_LOW>; };
+>> +
+>> +&flexcan1 { /* OSM-S CAN_A */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_flexcan1>;
+>> +};
+>> +
+>> +&flexcan2 { /* OSM-S CAN_B */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_flexcan2>;
+>> +};
+>> +
+>> +&gpio1 {
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_gpio1>;
+>> +	gpio-line-names = "", "", "I2C_A_SCL", "I2C_A_SDA",
+>> +			  "UART_CON_RX", "UART_CON_TX",
+>> "UART_C_RX", "UART_C_TX",
+>> +			  "CAN_A_TX", "CAN_A_RX", "GPIO_A_0",
+>> "SPI_A_CS0",
+>> +			  "SPI_A_SDI", "SPI_A_SCK","SPI_A_SDO"; };
+>> +
+>> +&gpio2 {
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_gpio2>;
+>> +	gpio-line-names = "I2C_B_SDA", "I2C_B_SCL", "GPIO_B_1",
+>> "GPIO_A_2",
+>> +			  "UART_B_TX", "UART_B_RX", "UART_B_RTS",
+>> "UART_B_CTS",
+>> +			  "UART_A_TX", "UART_A_RX", "UART_A_RTS",
+>> "UART_A_CTS",
+>> +			  "SPI_B_CS0", "SPI_B_SDI", "SPI_B_SDO",
+>> "SPI_B_SCK",
+>> +			  "I2S_BITCLK", "I2S_MCLK", "GPIO_A_1",
+>> "I2S_A_DATA_OUT",
+>> +			  "I2S_A_DATA_IN", "PWM_2", "GPIO_A_3",
+>> "PWM_1",
+>> +			  "PWM_0", "CAN_B_TX", "I2S_LRCLK",
+>> "CAN_B_RX", "GPIO_A_4",
+>> +			  "GPIO_A_5";
+>> +};
+>> +
+>> +&gpio3 {
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_gpio3>;
+>> +	gpio-line-names = "SDIO_A_CD", "SDIO_A_CLK",
+>> "SDIO_A_CMD", "SDIO_A_D0",
+>> +			  "SDIO_A_D1", "SDIO_A_D2", "SDIO_A_D3",
+>> "SDIO_A_PWR_EN",
+>> +			  "", "", "", "",
+>> +			  "", "", "", "",
+>> +			  "", "", "", "",
+>> +			  "SDIO_B_CLK", "SDIO_B_CMD",
+>> "SDIO_B_D0", "SDIO_B_D1",
+>> +			  "SDIO_B_D2", "SDIO_B_D3", "GPIO_A_6",
+>> "GPIO_A_7"; };
+>> +
+>> +&gpio4 {
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_gpio4>;
+>> +	gpio-line-names = "ETH_B_MDC", "ETH_B_MDIO",
+>> "ETH_B_TXD4", "ETH_B_TXD3",
+>> +			  "ETH_B_TXD2", "ETH_B_TXD1",
+>> "ETH_B_TX_EN", "ETH_B_TX_CLK",
+>> +			  "ETH_B_RX_CTL", "ETH_B_RX_CLK",
+>> "ETH_B_RXD0", "ETH_B_RXD1",
+>> +			  "ETH_B_RXD2", "ETH_B_RXD3", "ETH_MDC",
+>> "ETH_MDIO",
+>> +			  "ETH_A_TXD3", "ETH_A_TXD2",
+>> "ETH_A_TXD1", "ETH_A_TXD0",
+>> +			  "ETH_A_TX_EN", "ETH_A_TX_CLK",
+>> "ETH_A_RX_CTL", "ETH_A_RX_CLK",
+>> +			  "ETH_A_RXD0", "ETH_A_RXD1",
+>> "ETH_A_RXD2", "ETH_A_RXD3",
+>> +			  "GPIO_B_0", "CARRIER_PWR_EN";
+>> +};
+>> +
+>> +&lpi2c1 {
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_lpi2c1>;
+>> +	status = "okay";
+>> +
+>> +	pca9451: pmic@25 {
+>> +		compatible = "nxp,pca9451a";
+>> +		reg = <0x25>;
+>> +		nxp,i2c-lt-enable;
+>> +
+>> +		regulators {
+>> +			reg_vdd_soc: BUCK1 { /* dual phase with
+>> BUCK3 */
+>> +				regulator-name = "+0V8_VDD_SOC
+>> (BUCK1)";
+>> +				regulator-min-microvolt = <650000>;
+>> +				regulator-max-microvolt = <950000>;
+>> +				regulator-boot-on;
+>> +				regulator-always-on;
+>> +				regulator-ramp-delay = <3125>;
+>> +			};
+>> +
+>> +			reg_vddq_ddr: BUCK2 {
+>> +				regulator-name = "+0V6_VDDQ_DDR
+>> (BUCK2)";
+>> +				regulator-min-microvolt = <600000>;
+>> +				regulator-max-microvolt = <600000>;
+>> +				regulator-boot-on;
+>> +				regulator-always-on;
+>> +				regulator-ramp-delay = <3125>;
+>> +			};
+>> +
+>> +			reg_vdd_3v3: BUCK4 {
+>> +				regulator-name = "+3V3 (BUCK4)";
+>> +				regulator-min-microvolt =
+>> <3300000>;
+>> +				regulator-max-microvolt =
+>> <3300000>;
+>> +				regulator-boot-on;
+>> +				regulator-always-on;
+>> +			};
+>> +
+>> +			reg_vdd_1v8: BUCK5 {
+>> +				regulator-name = "+1V8 (BUCK5)";
+>> +				regulator-min-microvolt =
+>> <1800000>;
+>> +				regulator-max-microvolt =
+>> <1800000>;
+>> +				regulator-boot-on;
+>> +				regulator-always-on;
+>> +			};
+>> +
+>> +			reg_nvcc_dram: BUCK6 {
+>> +				regulator-name =
+>> "+1V1_NVCC_DRAM (BUCK6)";
+>> +				regulator-min-microvolt =
+>> <1100000>;
+>> +				regulator-max-microvolt =
+>> <1100000>;
+>> +				regulator-boot-on;
+>> +				regulator-always-on;
+>> +			};
+>> +
+>> +			reg_nvcc_snvs: LDO1 {
+>> +				regulator-name = "+1V8_NVCC_SNVS
+>> (LDO1)";
+>> +				regulator-min-microvolt =
+>> <1800000>;
+>> +				regulator-max-microvolt =
+>> <1800000>;
+>> +				regulator-boot-on;
+>> +				regulator-always-on;
+>> +			};
+>> +
+>> +			reg_vdd_ana: LDO4 {
+>> +				regulator-name = "+0V8_VDD_ANA
+>> (LDO4)";
+>> +				regulator-min-microvolt = <800000>;
+>> +				regulator-max-microvolt = <800000>;
+>> +				regulator-boot-on;
+>> +				regulator-always-on;
+>> +			};
+>> +
+>> +			reg_nvcc_sd: LDO5 {
+>> +				regulator-name = "NVCC_SD (LDO5)";
+>> +				regulator-min-microvolt =
+>> <1800000>;
+>> +				regulator-max-microvolt =
+>> <3300000>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	eeprom@50 {
+>> +		compatible = "onnn,n24s64b", "atmel,24c64";
+>> +		reg = <0x50>;
+>> +		pagesize = <32>;
+>> +		size = <8192>;
+>> +		num-addresses = <1>;
+>> +	};
+>> +
+>> +	rv3028: rtc@52 {
+>> +		compatible = "microcrystal,rv3028";
+>> +		reg = <0x52>;
+>> +	};
+>> +};
+>> +
+>> +&lpi2c2 { /* OSM-S I2C_A */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_lpi2c2>;
+>> +};
+>> +
+>> +&lpi2c3 { /* OSM-S I2C_B */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_lpi2c3>;
+>> +};
+>> +
+>> +&tpm3 { /* OSM-S PWM_0 */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_tpm3>;
+>> +};
+>> +
+>> +&tpm4 { /* OSM-S PWM_2 */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_tpm4>;
+>> +};
+>> +
+>> +&tpm6 { /* OSM-S PWM_1 */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_tpm6>;
+>> +};
+>> +
+>> +&lpuart1 { /* OSM-S UART_CON */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_lpuart1>;
+>> +};
+>> +
+>> +&lpuart2 { /* OSM-S UART_C */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_lpuart2>;
+>> +};
+>> +
+>> +&lpuart6 { /* OSM-S UART_B */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_lpuart6>;
+>> +};
+>> +
+>> +&lpuart7 { /* OSM-S UART_A */
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_lpuart7>;
+>> +};
+>> +
+>> +&usdhc1 { /* eMMC */
+>> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+>> +	pinctrl-0 = <&pinctrl_usdhc1>;
+>> +	pinctrl-1 = <&pinctrl_usdhc1>;
+>> +	pinctrl-2 = <&pinctrl_usdhc1>;
+> 
+> Same pad settings?
 
-[test failed on linux-next/master 1e391b34f6aa043c7afa40a2103163a0ef06d179]
+I will update this to use adjusted settings for the different speed modes.
 
-in testcase: boot
+> 
+>> +	vmmc-supply = <&reg_vdd_3v3>;
+>> +	vqmmc-supply = <&reg_vdd_1v8>;
+>> +	bus-width = <8>;
+>> +	non-removable;
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usdhc2 { /* OSM-S SDIO_A */
+>> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+>> +	pinctrl-0 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
+>> +	pinctrl-1 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
+>> +	pinctrl-2 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
+> 
+> Ditto.
 
-compiler: clang-18
-test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
+I will change this, too.
 
-(please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+>> +	vmmc-supply = <&reg_usdhc2_vcc>;
+>> +	cd-gpios = <&gpio3 0 GPIO_ACTIVE_LOW>; };
+>> +
+>> +&usdhc3 { /* OSM-S SDIO_B */
+>> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+>> +	pinctrl-0 = <&pinctrl_usdhc3>;
+>> +	pinctrl-1 = <&pinctrl_usdhc3>;
+>> +	pinctrl-2 = <&pinctrl_usdhc3>;
+> 
+> Ditto.
 
+I will change this, too.
 
-+------------------------------------------+------------+------------+
-|                                          | 300dd0fa8e | cdc4ad36a8 |
-+------------------------------------------+------------+------------+
-| boot_successes                           | 36         | 0          |
-| boot_failures                            | 0          | 36         |
-| kernel_BUG_at_include/linux/page-flags.h | 0          | 36         |
-| Oops:invalid_opcode:#[##]PREEMPT         | 0          | 36         |
-| EIP:shmem_write_begin                    | 0          | 36         |
-| Kernel_panic-not_syncing:Fatal_exception | 0          | 36         |
-+------------------------------------------+------------+------------+
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202408062249.2194d51b-lkp@intel.com
-
-
-[   11.817454][  T102] ------------[ cut here ]------------
-[   11.818309][  T102] kernel BUG at include/linux/page-flags.h:308!
-[   11.825783][  T103] aops:shmem_aops ino:8 dentry name:"n2.tmp"
-[   11.826808][  T102] Oops: invalid opcode: 0000 [#1] PREEMPT
-[   11.827585][  T102] CPU: 0 UID: 0 PID: 102 Comm: udevd Not tainted 6.10.0-12082-gcdc4ad36a871 #1 bef0abbc1afe2d2f07a6410b59dcdae1fe513b9d
-[   11.829082][  T102] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[ 11.830495][ T102] EIP: shmem_write_begin (include/linux/page-flags.h:308) 
-[ 11.831231][ T102] Code: 62 ff ff ff 8b 7d 10 01 f7 89 d3 83 d3 00 39 79 34 8b 79 38 19 df 0f 8d 4a ff ff ff eb cb 89 f0 ba 0b 15 3b c2 e8 ec 60 01 00 <0f> 0b 68 18 5c ad c2 e8 d0 fe 6a 00 89 f0 ba f6 f4 3a c2 e8 d4 60
-All code
-========
-   0:	62                   	(bad)
-   1:	ff                   	(bad)
-   2:	ff                   	(bad)
-   3:	ff 8b 7d 10 01 f7    	decl   -0x8feef83(%rbx)
-   9:	89 d3                	mov    %edx,%ebx
-   b:	83 d3 00             	adc    $0x0,%ebx
-   e:	39 79 34             	cmp    %edi,0x34(%rcx)
-  11:	8b 79 38             	mov    0x38(%rcx),%edi
-  14:	19 df                	sbb    %ebx,%edi
-  16:	0f 8d 4a ff ff ff    	jge    0xffffffffffffff66
-  1c:	eb cb                	jmp    0xffffffffffffffe9
-  1e:	89 f0                	mov    %esi,%eax
-  20:	ba 0b 15 3b c2       	mov    $0xc23b150b,%edx
-  25:	e8 ec 60 01 00       	call   0x16116
-  2a:*	0f 0b                	ud2		<-- trapping instruction
-  2c:	68 18 5c ad c2       	push   $0xffffffffc2ad5c18
-  31:	e8 d0 fe 6a 00       	call   0x6aff06
-  36:	89 f0                	mov    %esi,%eax
-  38:	ba f6 f4 3a c2       	mov    $0xc23af4f6,%edx
-  3d:	e8                   	.byte 0xe8
-  3e:	d4                   	(bad)
-  3f:	60                   	(bad)
-
-Code starting with the faulting instruction
-===========================================
-   0:	0f 0b                	ud2
-   2:	68 18 5c ad c2       	push   $0xffffffffc2ad5c18
-   7:	e8 d0 fe 6a 00       	call   0x6afedc
-   c:	89 f0                	mov    %esi,%eax
-   e:	ba f6 f4 3a c2       	mov    $0xc23af4f6,%edx
-  13:	e8                   	.byte 0xe8
-  14:	d4                   	(bad)
-  15:	60                   	(bad)
-[   11.833693][  T102] EAX: 00000000 EBX: 00000001 ECX: 00000000 EDX: 00000000
-[   11.834656][  T102] ESI: e7a1f820 EDI: ebad5ac0 EBP: eb4fdd20 ESP: eb4fdd10
-[   11.835648][  T102] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010282
-[   11.836740][  T102] CR0: 80050033 CR2: 00fb121c CR3: 2b40a000 CR4: 000406d0
-[   11.837714][  T102] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
-[   11.838683][  T102] DR6: fffe0ff0 DR7: 00000400
-[   11.839367][  T102] Call Trace:
-[ 11.839909][ T102] ? __die_body (arch/x86/kernel/dumpstack.c:478 arch/x86/kernel/dumpstack.c:420) 
-[ 11.840561][ T102] ? die (arch/x86/kernel/dumpstack.c:447) 
-[ 11.841150][ T102] ? do_trap (arch/x86/kernel/traps.c:? arch/x86/kernel/traps.c:155) 
-[ 11.841736][ T102] ? do_error_trap (arch/x86/kernel/traps.c:175) 
-[ 11.842383][ T102] ? shmem_write_begin (include/linux/page-flags.h:308) 
-[ 11.843047][ T102] ? shmem_write_begin (include/linux/page-flags.h:308) 
-[ 11.843761][ T102] ? exc_overflow (arch/x86/kernel/traps.c:252) 
-[ 11.844444][ T102] ? handle_invalid_op (arch/x86/kernel/traps.c:212) 
-[ 11.845176][ T102] ? shmem_write_begin (include/linux/page-flags.h:308) 
-[ 11.845918][ T102] ? exc_invalid_op (arch/x86/kernel/traps.c:267) 
-[ 11.846634][ T102] ? handle_exception (arch/x86/entry/entry_32.S:1047) 
-[ 11.847347][ T102] ? lru_lazyfree_fn (include/linux/list.h:124 include/linux/list.h:215 include/linux/list.h:229 include/linux/mm_inline.h:355 mm/swap.c:633) 
-[ 11.848042][ T102] ? exc_overflow (arch/x86/kernel/traps.c:252) 
-[ 11.848686][ T102] ? shmem_write_begin (include/linux/page-flags.h:308) 
-[ 11.849348][ T102] ? lru_lazyfree_fn (include/linux/list.h:124 include/linux/list.h:215 include/linux/list.h:229 include/linux/mm_inline.h:355 mm/swap.c:633) 
-[ 11.850008][ T102] ? exc_overflow (arch/x86/kernel/traps.c:252) 
-[ 11.850650][ T102] ? shmem_write_begin (include/linux/page-flags.h:308) 
-[ 11.851371][ T102] generic_perform_write (mm/filemap.c:4018) 
-[ 11.852110][ T102] shmem_file_write_iter (mm/shmem.c:?) 
-[ 11.852790][ T102] vfs_write (fs/read_write.c:498) 
-[ 11.853346][ T102] ? kmem_cache_free (mm/slub.c:4425) 
-[ 11.853945][ T102] ? shmem_file_read_iter (mm/shmem.c:3061) 
-[ 11.854693][ T102] ksys_write (fs/read_write.c:643) 
-[ 11.855325][ T102] __ia32_sys_write (fs/read_write.c:652) 
-[ 11.856005][ T102] ia32_sys_call (arch/x86/entry/syscall_32.c:44) 
-[ 11.856683][ T102] do_int80_syscall_32 (arch/x86/entry/common.c:?) 
-[ 11.857375][ T102] ? syscall_exit_to_user_mode (kernel/entry/common.c:221) 
-[ 11.858131][ T102] ? do_int80_syscall_32 (arch/x86/entry/common.c:343) 
-[ 11.858864][ T102] ? free_to_partial_list (mm/slub.c:4265) 
-[ 11.859637][ T102] ? __slab_free (mm/slub.c:4291) 
-[ 11.860288][ T102] ? do_mkdirat (fs/namei.c:4243) 
-[ 11.860926][ T102] ? mntput_no_expire (fs/namespace.c:1460) 
-[ 11.861609][ T102] ? kmem_cache_free (mm/slub.c:4425) 
-[ 11.865615][ T102] ? do_mkdirat (fs/namei.c:4243) 
-[ 11.866331][ T102] ? do_mkdirat (fs/namei.c:4243) 
-[ 11.866989][ T102] ? syscall_exit_to_user_mode (kernel/entry/common.c:221) 
-[ 11.867783][ T102] ? do_int80_syscall_32 (arch/x86/entry/common.c:343) 
-[ 11.868435][ T102] ? irqentry_exit_to_user_mode (kernel/entry/common.c:234) 
-[ 11.869221][ T102] ? do_fast_syscall_32 (arch/x86/entry/common.c:411) 
-[ 11.869855][ T102] entry_INT80_32 (arch/x86/entry/entry_32.S:944) 
-[   11.870507][  T102] EIP: 0xb7e536c2
-[ 11.871050][ T102] Code: 90 66 90 66 90 66 90 90 56 53 83 ec 14 8b 5c 24 20 8b 4c 24 24 8b 54 24 28 65 a1 0c 00 00 00 85 c0 75 15 b8 04 00 00 00 cd 80 <3d> 00 f0 ff ff 77 47 83 c4 14 5b 5e c3 90 89 54 24 0c 89 4c 24 08
-All code
-========
-   0:	90                   	nop
-   1:	66 90                	xchg   %ax,%ax
-   3:	66 90                	xchg   %ax,%ax
-   5:	66 90                	xchg   %ax,%ax
-   7:	90                   	nop
-   8:	56                   	push   %rsi
-   9:	53                   	push   %rbx
-   a:	83 ec 14             	sub    $0x14,%esp
-   d:	8b 5c 24 20          	mov    0x20(%rsp),%ebx
-  11:	8b 4c 24 24          	mov    0x24(%rsp),%ecx
-  15:	8b 54 24 28          	mov    0x28(%rsp),%edx
-  19:	65 a1 0c 00 00 00 85 	movabs %gs:0x1575c0850000000c,%eax
-  20:	c0 75 15 
-  23:	b8 04 00 00 00       	mov    $0x4,%eax
-  28:	cd 80                	int    $0x80
-  2a:*	3d 00 f0 ff ff       	cmp    $0xfffff000,%eax		<-- trapping instruction
-  2f:	77 47                	ja     0x78
-  31:	83 c4 14             	add    $0x14,%esp
-  34:	5b                   	pop    %rbx
-  35:	5e                   	pop    %rsi
-  36:	c3                   	ret
-  37:	90                   	nop
-  38:	89 54 24 0c          	mov    %edx,0xc(%rsp)
-  3c:	89 4c 24 08          	mov    %ecx,0x8(%rsp)
-
-Code starting with the faulting instruction
-===========================================
-   0:	3d 00 f0 ff ff       	cmp    $0xfffff000,%eax
-   5:	77 47                	ja     0x4e
-   7:	83 c4 14             	add    $0x14,%esp
-   a:	5b                   	pop    %rbx
-   b:	5e                   	pop    %rsi
-   c:	c3                   	ret
-   d:	90                   	nop
-   e:	89 54 24 0c          	mov    %edx,0xc(%rsp)
-  12:	89 4c 24 08          	mov    %ecx,0x8(%rsp)
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20240806/202408062249.2194d51b-lkp@intel.com
-
-
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Thanks
+Frieder
 
