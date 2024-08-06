@@ -1,217 +1,118 @@
-Return-Path: <linux-kernel+bounces-276436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C74D9493A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:49:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24859493F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94AD11F25779
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:48:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1679B227CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9C81D54DC;
-	Tue,  6 Aug 2024 14:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148571D1748;
+	Tue,  6 Aug 2024 14:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IymEJ6kN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9fYvqTvi";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="W1Nqs6L0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FwAlTJJu"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2ojaV+kP"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030371C4632;
-	Tue,  6 Aug 2024 14:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149AE1D47BC
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722955703; cv=none; b=E0TIJRjgIZNdUwYQhYuLxLueUBFpolsQr29JE0X+fHZweLjv8c6h3/2SBBnXCUp0ShBtLRjIO5Jr9nkbR79Fd+tJsZmKLvm2GCTadr5gw96Toj37ywZEZLCs8FNAikxEvNRl0VsEzljHXgGw6r+I/IPS4QGkzFYZVHd4pZG80Jo=
+	t=1722955754; cv=none; b=K2TpKE9QHeflHpQpfQVCdqdcqJS4BzbVN76RsKsqrpADgTZkt399ThEWVgqhBYZW84s0v0X15ckrPS5RAWSRRiLowrtA56mrvy6wfRc5ZrtbmpUu8aVTiDQm/krtw+Y8A4DK7owym0Y4tF99XWibUREO5QdyaO7r//r4Kk6lTU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722955703; c=relaxed/simple;
-	bh=VybxuQBAM4o24NbIdlrBob9LpV4bJGlToSnIWUJm6NM=;
+	s=arc-20240116; t=1722955754; c=relaxed/simple;
+	bh=2C/zKvKl9FGPU3xLwEybVW98UlH/dVTnM4JZmSi1yXc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JSCLRKhPtyaejW8cuCHEnzrKB19ihDqAYCs11xyBiBxfclveRfLbxm2ymq2qGGxmQGGkILXg4bF+yYC4B+e/xAc7/X0B8VZdf7FgWaXTkJJWfam1wJPUocL7ycP10Ck4Y2K1PmA8xrIZaExM99mRJCWxRtlSLKqvjPctmUKa904=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IymEJ6kN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9fYvqTvi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=W1Nqs6L0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FwAlTJJu; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EFA7321A3B;
-	Tue,  6 Aug 2024 14:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722955700; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GIy6LB74tYno7F1w+6DejLLIb5pKKiajOSRCccD1aDM=;
-	b=IymEJ6kNuU6w6OIG5OEOPNzOnZBqxoZJRbbgfXSrDD0QFT1H5dw8URE9OEKDHY9RpUmjRM
-	+cuVWrMVrAWPHT4LV5/dJ+bacP8AXXTbcwpE9iH8gS4raVVGd5Q6JVbI50hnrnut+pTbK1
-	9FhpkpNRsxnFQHSubUzCxXxdPLd/f0I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722955700;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GIy6LB74tYno7F1w+6DejLLIb5pKKiajOSRCccD1aDM=;
-	b=9fYvqTvi3aI3xAU/AaLcw5WAnO8j2lV3e8Y9vMsaDdltF0tDiVyMczMUdxfliY047nDiKp
-	CEIfhq+AVl+VHkCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722955698; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GIy6LB74tYno7F1w+6DejLLIb5pKKiajOSRCccD1aDM=;
-	b=W1Nqs6L0Wq9GmsmANpB1PJ/SoeuAy5/4AOJhKGhN33TaPUZP1+XM9mGZiyxLNkD+arbmm3
-	lZrucRCjTUZwQiRaKK+xV9qTaXexTQbn4vU4uzDlEntHE7O8JW6z2DJ+p33AlkbJAt1DTz
-	QhG5ZB3rDX2Ym9M9O4pNGQnjV0MRuSg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722955698;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GIy6LB74tYno7F1w+6DejLLIb5pKKiajOSRCccD1aDM=;
-	b=FwAlTJJuY02fGPm7yRre/vJ9VZBtC0+4oMShZYJXQH736yi93iVPw94Op3XvVvw+FQH8lU
-	uryqBkSUP8K0LOBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DE07813770;
-	Tue,  6 Aug 2024 14:48:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8tc0NrI3smatYAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 06 Aug 2024 14:48:18 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 859C3A0762; Tue,  6 Aug 2024 16:48:18 +0200 (CEST)
-Date: Tue, 6 Aug 2024 16:48:18 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 02/10] ext4: optimize the
- EXT4_GET_BLOCKS_DELALLOC_RESERVE flag set
-Message-ID: <20240806144818.rt2vb677cxghxykz@quack3>
-References: <20240802115120.362902-1-yi.zhang@huaweicloud.com>
- <20240802115120.362902-3-yi.zhang@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lqcdB/fEDCKLooSskdJe30Sz+wwfz0ug2G1vYJNT1OMzTFQIrjDG70Nly1sJK5M4TWPBxSeYZv4e3B2DDXfdVElQK7Hw5HLCGQFUD2/rBl2/THYoDnW2y7LxhonGQLB785Ot4lGE2fkj1gmjwPYG6AFiQczMH2c8vV/apOHcTIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2ojaV+kP; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7b8b1743a01so269878a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 07:49:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722955752; x=1723560552; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hw1okeFzQIXZQL7QGXIUOXdYXd5iHV8SBwCo7Wmj348=;
+        b=2ojaV+kPEC52eL5F+3n0JqSk438hjbuFkwp+qCbtAn+pFqEstwsrkLlB9lCm2OxDBn
+         Y+jkFEhjC9yXdWfHtisedL3metaZVac2qikQ8hzLsfo4Rd4ZsFQbnaTNw/cOhB/gpduT
+         3RMki4s9OUpZ6QdyxuWCdBPOc88w8vwJxtInaQDYbx1Xf5qG9B3WNbQpUesmCJQOZYZ3
+         c0v1OPgxJy48htn2nfoWS3U6KMuBaO2VDCLUYoxJlM7LpBsu/a6U0Y7sZxVIlkee4yxH
+         goDaUiHw5+UFdRcToRzli/SbKfowI4fLZlQsMFpsqEukHWpEOAfwCRzV5hE1CJNfaTt7
+         cLcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722955752; x=1723560552;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hw1okeFzQIXZQL7QGXIUOXdYXd5iHV8SBwCo7Wmj348=;
+        b=mxpFltSCoRQZiWfvO7Y5IjJLQlvSFGExau5+NidaCKFZZDYusqKkjKx1yg6ys6qXqD
+         Pl38WG4d+bu8hlsKUz1KUAw3QIXKKK7xs5W5Y6Iv/dkMhbUG9+dSUnQEGwQQ9MX233b1
+         3g3PO2KJdNWaUashNB/Zjn+w+fa2hmeAzxa2VDTiqtipHGjBNfUQt7n/3cI4HHnvp27Q
+         nwSFXYH12ZlKJ9i7JuI8zgC1QDK5S4ntuSPvmo02MRhKkZ+sULsuU9nERh0TeaUNmWcC
+         K/HuLd8Fb2z891pGEtuku0sYUmCKe9fmTPwmEG9cHNtRw1BKcMZd+TjZYtMgUdR9lzPD
+         MULA==
+X-Forwarded-Encrypted: i=1; AJvYcCXt8m8RNlXN2VdwH6JYyVBJiq7R2dveRb+c5fdr6wdxK8oHW1jZEzqzMtHdtbfz6yGoD5sQw0O5QIRJ3qOhrI2EpX49FlgNeYXekltq
+X-Gm-Message-State: AOJu0Yzzl7no6C0RAXwpUSIjJA4LVeFCLBfx9Gq0u4tN5LPDgtWqGRGf
+	x7JUme5/d5/vGiogSvKmOwNZk6eW1EGov0mLEHC82HUsIr4Vw9yGqgN7sq7F2w==
+X-Google-Smtp-Source: AGHT+IE1Zuaik0XEJ9HrbZun3OaGLGrprUOQHTu9VVu6AbpI1DMvg73gyh/KAxXpm6MrVDEaWfGCrA==
+X-Received: by 2002:a17:902:d507:b0:1fd:6a00:582e with SMTP id d9443c01a7336-1ff572cdd9amr146128185ad.30.1722955752051;
+        Tue, 06 Aug 2024 07:49:12 -0700 (PDT)
+Received: from google.com (57.145.233.35.bc.googleusercontent.com. [35.233.145.57])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f57176sm88837205ad.80.2024.08.06.07.49.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 07:49:11 -0700 (PDT)
+Date: Tue, 6 Aug 2024 14:49:07 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+	kernel-team@android.com, Huang Ying <ying.huang@intel.com>,
+	"J. R. Okajima" <hooanon05g@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>
+Subject: Re: [PATCH 3/3] lockdep: document MAX_LOCKDEP_CHAIN_HLOCKS
+ calculation
+Message-ID: <ZrI34xNP1Szn1WnB@google.com>
+References: <20240806010128.402852-1-cmllamas@google.com>
+ <20240806010128.402852-4-cmllamas@google.com>
+ <45ceeb38-06c4-4b8a-8b3f-afe57c891f9a@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240802115120.362902-3-yi.zhang@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [0.70 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	MISSING_XM_UA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email,huawei.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: 0.70
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <45ceeb38-06c4-4b8a-8b3f-afe57c891f9a@redhat.com>
 
-On Fri 02-08-24 19:51:12, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Mon, Aug 05, 2024 at 09:27:52PM -0400, Waiman Long wrote:
 > 
-> When doing block allocation, magic EXT4_GET_BLOCKS_DELALLOC_RESERVE
-> means the allocating range covers a range of delayed allocated clusters,
-> the blocks and quotas have already been reserved in ext4_da_map_blocks(),
-> we should update the reserved space and don't need to claim them again.
+> I think it is better to define another macro like
 > 
-> At the moment, we only set this magic in mpage_map_one_extent() when
-> allocating a range of delayed allocated clusters in the write back path,
-> it makes things complicated since we have to notice and deal with the
-> case of allocating non-delayed allocated clusters separately in
-> ext4_ext_map_blocks(). For example, it we fallocate some blocks that
-> have been delayed allocated, free space would be claimed again in
-> ext4_mb_new_blocks() (this is wrong exactily), and we can't claim quota
-> space again, we have to release the quota reservations made for that
-> previously delayed allocated clusters.
+> diff --git a/kernel/locking/lockdep_internals.h
+> b/kernel/locking/lockdep_internals.h
+> index bbe9000260d0..8805122cc9f1 100644
+> --- a/kernel/locking/lockdep_internals.h
+> +++ b/kernel/locking/lockdep_internals.h
+> @@ -119,7 +119,8 @@ static const unsigned long LOCKF_USED_IN_IRQ_READ =
 > 
-> Move the position thats set the EXT4_GET_BLOCKS_DELALLOC_RESERVE to
-> where we actually do block allocation, it could simplify above handling
-> a lot, it means that we always set this magic once the allocation range
-> covers delalloc blocks, no need to take care of the allocation path.
+>  #define MAX_LOCKDEP_CHAINS     (1UL << MAX_LOCKDEP_CHAINS_BITS)
 > 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> -#define MAX_LOCKDEP_CHAIN_HLOCKS (MAX_LOCKDEP_CHAINS*5)
+> +#define AVG_LOCKDEP_CHAIN_DEPTH         5
+> +#define MAX_LOCKDEP_CHAIN_HLOCKS
+> (MAX_LOCKDEP_CHAINS*AVG_LOCKDEP_CHAIN_DEPTH)
+> 
+>  extern struct lock_chain lock_chains[];
+> 
+> Cheers,
+> Longman
 
-Ah, nice idea. The patch looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/inode.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 112aec171ee9..91b2610a6dc5 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -489,6 +489,14 @@ static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
->  	unsigned int status;
->  	int err, retval = 0;
->  
-> +	/*
-> +	 * We pass in the magic EXT4_GET_BLOCKS_DELALLOC_RESERVE
-> +	 * indicates that the blocks and quotas has already been
-> +	 * checked when the data was copied into the page cache.
-> +	 */
-> +	if (map->m_flags & EXT4_MAP_DELAYED)
-> +		flags |= EXT4_GET_BLOCKS_DELALLOC_RESERVE;
-> +
->  	/*
->  	 * Here we clear m_flags because after allocating an new extent,
->  	 * it will be set again.
-> @@ -2224,11 +2232,6 @@ static int mpage_map_one_extent(handle_t *handle, struct mpage_da_data *mpd)
->  	 * writeback and there is nothing we can do about it so it might result
->  	 * in data loss.  So use reserved blocks to allocate metadata if
->  	 * possible.
-> -	 *
-> -	 * We pass in the magic EXT4_GET_BLOCKS_DELALLOC_RESERVE if
-> -	 * the blocks in question are delalloc blocks.  This indicates
-> -	 * that the blocks and quotas has already been checked when
-> -	 * the data was copied into the page cache.
->  	 */
->  	get_blocks_flags = EXT4_GET_BLOCKS_CREATE |
->  			   EXT4_GET_BLOCKS_METADATA_NOFAIL |
-> @@ -2236,8 +2239,6 @@ static int mpage_map_one_extent(handle_t *handle, struct mpage_da_data *mpd)
->  	dioread_nolock = ext4_should_dioread_nolock(inode);
->  	if (dioread_nolock)
->  		get_blocks_flags |= EXT4_GET_BLOCKS_IO_CREATE_EXT;
-> -	if (map->m_flags & BIT(BH_Delay))
-> -		get_blocks_flags |= EXT4_GET_BLOCKS_DELALLOC_RESERVE;
->  
->  	err = ext4_map_blocks(handle, inode, map, get_blocks_flags);
->  	if (err < 0)
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Sounds good, I'll add your suggestion for v2. Thanks!
 
