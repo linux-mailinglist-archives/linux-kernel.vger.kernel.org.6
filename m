@@ -1,104 +1,153 @@
-Return-Path: <linux-kernel+bounces-275807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD7F948A1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:28:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A25948A21
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B644283A9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:28:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DD5BB243B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4580D166F34;
-	Tue,  6 Aug 2024 07:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB3A166F35;
+	Tue,  6 Aug 2024 07:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="S7lo9+Cc"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y9EA/Hhf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99F164A;
-	Tue,  6 Aug 2024 07:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77729165F1F;
+	Tue,  6 Aug 2024 07:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722929312; cv=none; b=Yfuot8OB/1i+qcgMRiGNZPVwrk1s7q4IqL3qMETQ+BLRtAvgv1zmkEenWJYdoETcXEUZrqgnalAf3bhcfeFC9PWp2nNtt9H8wqeM/tbwkxh8iR0kCrUxPUH0eenOGxA2+1BxX+tK8tLsH84gYYq+Hist1T+qg/2cTWc2Y+J3eBI=
+	t=1722929333; cv=none; b=oCNxxWauVQL4QPmb4ELY0iJB4jqtfNfhD90Tk4rTRHlUM+02Ih8uLCChk1ibap/IRHNFFJZ7u2OcRvrY/LOgOMaZtqEhN0OGAqKWg7YDgMNt3eZWuIuXfLS8Pl+Sz+u0lBtoH8XmiKJhUf2uzbrdeVazG1bDCdZd6EtwriJBhtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722929312; c=relaxed/simple;
-	bh=DPKMbIhNMBWo8TVDQHV16EL/N7iDJy1aU8uVJ8RTMBc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EIyyxMm+tbAC3cyJAS/2vN70lRkxBEDYcgYk9aqdX+KZ/ZW8KyJPuYcMyoHASlUkpz+mhrBNzojecTdw7gE8yJD1IYYlvZdHpCwTNsC1mvEHPnaoCPj4tB9+stKVH7mWbZ4Hkz0xJVIe/Md9CznF78umffykfJE6e2vBQdIOCkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=S7lo9+Cc; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 70155fb653c511ef9a4e6796c666300c-20240806
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=bd8GlhW9froM6GOA2YyMMX+R5JWkQRdHXG8ufSuKDZk=;
-	b=S7lo9+CcEvbtzQeRMFP90ClQE05B2DplLGO+YHRUL8nvyWUKJvhyejiClqcIzd6kmCQJHD0F2XQlVO6AOy+n7KZ+y5vgo5forAQrx4uXCAB2WUw6P7zcD3mpJ2/KGdEVXaQ6F0fn63JGjE57gb3amP3BxZiJWQYiwBxWB16rK8g=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:35d93b46-6f65-4d6a-b2ea-bb55fe00c44a,IP:0,U
-	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:25
-X-CID-META: VersionHash:6dc6a47,CLOUDID:b66160d2-931c-41a1-8323-49b8649cd827,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:5,IP:nil,UR
-	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
-	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 70155fb653c511ef9a4e6796c666300c-20240806
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
-	(envelope-from <chaotian.jing@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1313570926; Tue, 06 Aug 2024 15:28:12 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 6 Aug 2024 15:28:13 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Tue, 6 Aug 2024 15:28:12 +0800
-From: Chaotian Jing <chaotian.jing@mediatek.com>
-To: <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>, Chaotian
- Jing <chaotian.jing@mediatek.com>
-Subject: [PATCH] scsi: fix the return value of scsi_logical_block_count
-Date: Tue, 6 Aug 2024 15:26:34 +0800
-Message-ID: <20240806072714.29756-1-chaotian.jing@mediatek.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1722929333; c=relaxed/simple;
+	bh=9D+0NjOt3KntCM54yS0urPQiBIqOtAJZOIbLRRmMZ+E=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=FMPaerPlE1R7pqorneSiwJxdNVIsVDCq/GLaTamo+6ZVPJWezSnHleov5NB1RqbOnpccRsB7XAesw4CcLGc5GyJ7BCOd1BvzWqn1ubwvT8wl94m746Ev8UIimBk0WHMlWTshNwIr2ZxIxW0ksvrKcaA4w5QxxH2hEmKiU2D3wq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y9EA/Hhf; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722929333; x=1754465333;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=9D+0NjOt3KntCM54yS0urPQiBIqOtAJZOIbLRRmMZ+E=;
+  b=Y9EA/Hhfle1yZGKmDvvbkgj8xvOo8++g5/uwLwhC8Zer+Xi1QAzval4c
+   DNGXjgqXvrU38I72xLVUUDrqH/NZNMilLyjY2oXOVoF/WOzQrQ17QlpGw
+   Som9EmWW+VBqIehFKoLb04cPn9Fwpp2n97avX09qKZ0qi2WYn2VeVpXWL
+   Egiwgw5804WLUVUqky72pwet11jY0gZON1Wm3Wps6/xxg5l05nLSs0w90
+   Ih25sQrcL4F80nvE19H/ONIf5850NK+I4KdWbKnonKBfA4142A9HHYvmb
+   qIGYoNN4eP6wrsQ+U/uebqHpW+UFTyc6oleC+oHgyN7kQu4YI48OYOttV
+   Q==;
+X-CSE-ConnectionGUID: QvjiRbJHQ52ALnffrShp6w==
+X-CSE-MsgGUID: iMrUwQKCQCasW0lx8zLSFA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="21076071"
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="21076071"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 00:28:47 -0700
+X-CSE-ConnectionGUID: mfoKG3RUQ3uks+MipdEmIQ==
+X-CSE-MsgGUID: /W8TOMkxTD6ck4TWh4QctA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="56636343"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.72])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 00:28:45 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 6 Aug 2024 10:28:41 +0300 (EEST)
+To: "Luke D. Jones" <luke@ljones.dev>
+cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    Hans de Goede <hdegoede@redhat.com>, corentin.chary@gmail.com
+Subject: Re: [PATCH v2 1/6] platform/x86: asus-wmi: Add quirk for ROG Ally
+ X
+In-Reply-To: <20240806020747.365042-2-luke@ljones.dev>
+Message-ID: <76178389-f99e-d625-df38-8202309310d9@linux.intel.com>
+References: <20240806020747.365042-1-luke@ljones.dev> <20240806020747.365042-2-luke@ljones.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: multipart/mixed; boundary="8323328-361996996-1722929321=:1027"
 
-scsi_logical_block_count() should return the block count of scsi device,
-but the original code has a wrong implement.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
----
- include/scsi/scsi_cmnd.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--8323328-361996996-1722929321=:1027
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-diff --git a/include/scsi/scsi_cmnd.h b/include/scsi/scsi_cmnd.h
-index 45c40d200154..f0be0caa295a 100644
---- a/include/scsi/scsi_cmnd.h
-+++ b/include/scsi/scsi_cmnd.h
-@@ -236,7 +236,7 @@ static inline unsigned int scsi_logical_block_count(struct scsi_cmnd *scmd)
- {
- 	unsigned int shift = ilog2(scmd->device->sector_size) - SECTOR_SHIFT;
- 
--	return blk_rq_bytes(scsi_cmd_to_rq(scmd)) >> shift;
-+	return blk_rq_sectors(scsi_cmd_to_rq(scmd)) >> shift;
- }
- 
- /*
--- 
-2.46.0
+On Tue, 6 Aug 2024, Luke D. Jones wrote:
 
+> The new ROG Ally X functions the same as the previus model so we can use
+
+previous
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--
+ i.
+
+> the same method to ensure the MCU USB devices wake and reconnect
+> correctly.
+>=20
+> Given that two devices marks the start of a trend, this patch also adds
+> a quirk table to make future additions easier if the MCU is the same.
+>=20
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> ---
+>  drivers/platform/x86/asus-wmi.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-=
+wmi.c
+> index f15fcb45e1aa..0c80c6b0399b 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -152,6 +152,20 @@ static const char * const ashs_ids[] =3D { "ATK4001"=
+, "ATK4002", NULL };
+> =20
+>  static int throttle_thermal_policy_write(struct asus_wmi *);
+> =20
+> +static const struct dmi_system_id asus_ally_mcu_quirk[] =3D {
+> +=09{
+> +=09=09.matches =3D {
+> +=09=09=09DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
+> +=09=09},
+> +=09},
+> +=09{
+> +=09=09.matches =3D {
+> +=09=09=09DMI_MATCH(DMI_BOARD_NAME, "RC72L"),
+> +=09=09},
+> +=09},
+> +=09{ },
+> +};
+> +
+>  static bool ashs_present(void)
+>  {
+>  =09int i =3D 0;
+> @@ -4751,7 +4765,7 @@ static int asus_wmi_add(struct platform_device *pde=
+v)
+>  =09asus->dgpu_disable_available =3D asus_wmi_dev_is_present(asus, ASUS_W=
+MI_DEVID_DGPU);
+>  =09asus->kbd_rgb_state_available =3D asus_wmi_dev_is_present(asus, ASUS_=
+WMI_DEVID_TUF_RGB_STATE);
+>  =09asus->ally_mcu_usb_switch =3D acpi_has_method(NULL, ASUS_USB0_PWR_EC0=
+_CSEE)
+> -=09=09=09=09=09=09&& dmi_match(DMI_BOARD_NAME, "RC71L");
+> +=09=09=09=09=09=09&& dmi_check_system(asus_ally_mcu_quirk);
+> =20
+>  =09if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_MINI_LED_MODE))
+>  =09=09asus->mini_led_dev_id =3D ASUS_WMI_DEVID_MINI_LED_MODE;
+>=20
+
+--=20
+ i.
+
+--8323328-361996996-1722929321=:1027--
 
