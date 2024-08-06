@@ -1,191 +1,113 @@
-Return-Path: <linux-kernel+bounces-277090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25222949C44
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:24:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB751949C49
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 927F91F22F55
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:24:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C65C284B1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9EF175D5F;
-	Tue,  6 Aug 2024 23:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F125176228;
+	Tue,  6 Aug 2024 23:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DGDjiH1X";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oslLGRgO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NBduNJUK"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB20158DC0;
-	Tue,  6 Aug 2024 23:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DE7158DC0
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 23:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722986655; cv=none; b=sM9ZsS7y/wLg8Vb8cpGAG0FyEj+DI4bIfvkDd3kUKoIBPfvn86mL7jr8UIdtTpIS6TuN+viU9FLp43j9fhIbTiotMGLE5n5zCDmSs+m56F6mudUQysVrEpDlXE+mg+aHBItCYHJj/r6BP0+8em/N++8C9xedoLUtlYC2uDZTLPs=
+	t=1722986820; cv=none; b=iSbPSNGNlnIfLDkIt13p095aKlnkAymCcy+Eh2bZzM9HAAnbBdL942lo2rwTnYst4ZDopLmqvgjY5H7KD8FENOx5Yu8qhCpFouflnU3xtmPo5qYqyYUuWyBm7TFDSNNgk8Isuh3xjoCp97nLmHjMsIaNrhyvliSnaQWr7pZoSe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722986655; c=relaxed/simple;
-	bh=18Sxpdx4lVcJt9lQoC20MlzTq8vPCXIXtETa2CIv9Zk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=M1T/STWItQ8U50roItqiH6jzIvutjNFi2YMf+BRngoz2XAGzkSnf1PU2+nEHDYGbHhkUO8eLAKRyehAFeDaLpl2JQRZmgV5RxlJRhONTvhIoR/hPXG1q6fv7StJKuu6enHuS5n7KmdPakJnG9VgqT+CEzodxAQQLjkNivL/kLl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DGDjiH1X; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oslLGRgO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722986649;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=twL9kWG4LmZQWC4HjggAN439garSwXGMqnD/GVecd+I=;
-	b=DGDjiH1XLzRi59gVCKqDNkZCvNanFv5lW3G95DgP9y2uPdcagLkxrEJWeBSrWy1y8PNfZn
-	TKLT0dAKTWa+/Im8JxykhqgIZcBmXgZQ1M/D5V+ERfsmRfc0smUxBxe+B3eXMSdPCBfUWa
-	qpzL3GVjt0bqkokLMte+8WGfDXIGx6GvbuX4JZ8AGxIbVk+7DnuzAKdap5iJUNV0Za+DRz
-	RZB50pwrFuAf3I3ZGrbB8Jtpzscv/8+QQTMsf9eNtLLENAzSwlwV4WUzRZoVm8NG9KWvAh
-	48YQ+2KoeLeHVubBeUyhiWUriHZq9WqkYT0UuNsDAM+DAe/PR6fAh6sqgDfJRg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722986649;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=twL9kWG4LmZQWC4HjggAN439garSwXGMqnD/GVecd+I=;
-	b=oslLGRgOnW67BsgwFNBCu+wQXX4TVepHYAs7A/D1yLZR9L0C7S0YyTukY0D73mu1rmvZk4
-	HDkt/HPOLaLpupBQ==
-To: Vlastimil Babka <vbabka@suse.cz>, Linus Torvalds
- <torvalds@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>, Helge
- Deller <deller@gmx.de>, linux-parisc@vger.kernel.org
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
-In-Reply-To: <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz>
-References: <20240731095022.970699670@linuxfoundation.org>
- <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
- <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
- <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <87le194kuq.ffs@tglx>
- <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz>
-Date: Wed, 07 Aug 2024 01:24:08 +0200
-Message-ID: <87frrh44mf.ffs@tglx>
+	s=arc-20240116; t=1722986820; c=relaxed/simple;
+	bh=UWh5YGePP5Ny2O9u1IrWk3OwzQBnlSDgER6TdIIY0TU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qoTS7A/b3Fv1GiZEd9cHF1krc2z73Z+8KPRMyFN5GAOotoQwZVte5/Hxt5w4DenY70Wkamuy9Pcnqt3KR06O257lBkR79qH1A0nsdOX9DG0ebPsyVesODdWOguuTo379nsQ2j7OKS4Vr3wl/yDOps5N10giDGB1AUTVKT4WKx3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--axelrasmussen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NBduNJUK; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--axelrasmussen.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6643016423fso30283447b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 16:26:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722986818; x=1723591618; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=b0aPvkt5h9A2E+umL0pkphP872PICLMo5TUgyHEuDTA=;
+        b=NBduNJUKpWbBmTGUtmxL43ddrA2SQqtMUDhSTTIzfp38/Jgufl2r0rGhnTcczQJtMv
+         ef95SW7QtgrxaWy/z7V51sXWVytSABZn4PrSLLS62EfpZXpkzUnT59WkdU5csjCbpgOO
+         5isFFifwwpDMxHlTeeb0x/u4tIH0N0krf5La6pUSvDAN6Ag1QmTExow82J6BfsyzPXvd
+         O/o9dSdGtkQZquTXMToE6pDlCyE7TJRPf3580WkmZ65B8z2lbc0Y+FcJjFgyDtcJ8ZZv
+         BrhKl6bp6VPYAZPbQOSj19azRBCAiMzwgtdLsSaSjxsTDsQfvCOlbAv5CWdxtrqdiSQx
+         Dq8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722986818; x=1723591618;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b0aPvkt5h9A2E+umL0pkphP872PICLMo5TUgyHEuDTA=;
+        b=rIkWxL5AbV1MliovT8FaZ/ZcsRi86dOCMUhUBB/vFOn0KPE9ijuNXZcCxt06PYiLO2
+         B8N0XHJa/oyuKQ1pO6JlBwKJgKHnf8FOPnUpEtvWW6ryDrUuegMHnN0XmRB9WGIT9mUY
+         ZJG1okfi8VkFDyAppy0FBmYwt7WEZXIaCHllz9S4y/UhYM3vXYH8FFBvNbEDPZzxb1hx
+         u3DKi0TWCeEfkZJHKaOz8AJz927xoqkE/s7BpDX5kFwsd4CH+9HC4cxTQAOxpOH0AGX9
+         CBfZLoiqsmkden1JzXgVtwpqncZTrVL+v5h2f/kpDd6pOmzGKcE+YRivw2BeyrC84Cdf
+         6rVA==
+X-Gm-Message-State: AOJu0Yx0Q2OpeMhP6UKHez66rHfbnl741wMdwo7MCWxf7QAa8mXWVwPD
+	h3og/xroGoKAUIEt+6amXdQ2txcy/TU9h8HgMMACItYeSrzwYgkJM+uk0lJUU0gTHO+ewtmTMya
+	Xf54nBcxVwZwouqnFeEujzHNwKB1m7g==
+X-Google-Smtp-Source: AGHT+IGO/DKXmMym7DGlZY511GOLd3Iy1MHKCPdnNLPCdGXOEBfIkai43Xinu+xxlo+4tXTL7Lrm5w3X1+SwJOvIZ8h2
+X-Received: from axel.svl.corp.google.com ([2620:15c:2a3:200:3bdc:f263:106d:f85e])
+ (user=axelrasmussen job=sendgmr) by 2002:a05:6902:2605:b0:e05:a1b5:adc0 with
+ SMTP id 3f1490d57ef6-e0bde423771mr446254276.10.1722986818062; Tue, 06 Aug
+ 2024 16:26:58 -0700 (PDT)
+Date: Tue,  6 Aug 2024 16:26:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
+Message-ID: <20240806232649.3258741-1-axelrasmussen@google.com>
+Subject: [PATCH] mm, slub: print CPU id on slab OOM
+From: Axel Rasmussen <axelrasmussen@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Pekka Enberg <penberg@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Vlastimil Babka <vbabka@suse.cz>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Axel Rasmussen <axelrasmussen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Cc+: Helge, parisc ML
+Depending on how remote_node_defrag_ratio is configured, allocations can
+end up in this path as a result of the local node being OOM, despite the
+allocation overall being unconstrained (node == -1).
 
-We're chasing a weird failure which has been tracked down to the
-placement of the division library functions (I assume they are imported
-from libgcc).
+When we print a warning, printing the current CPU makes that situation
+more clear (i.e., you can immediately see which node's OOM status
+matters for the allocation at hand).
 
-See the thread starting at:
+Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+---
+ mm/slub.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-  https://lore.kernel.org/all/718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net
-
-On Tue, Aug 06 2024 at 21:25, Vlastimil Babka wrote:
-> On 8/6/24 19:33, Thomas Gleixner wrote:
->> 
->> So this change adds 16 bytes to __softirq() which moves the division
->> functions up by 16 bytes. That's all it takes to make the stupid go
->> away....
->
-> Heh I was actually wondering if the division is somhow messed up because
-> maxobj = order_objects() and order_objects() does a division. Now I suspect
-> it even more.
-
-check_slab() calls into that muck, but I checked the disassembly of a
-working and a broken kernel and the only difference there is the
-displacement offset when the code calculates the call address, but
-that's as expected a difference of 16 bytes.
-
-Now it becomes interesting.
-
-I added a unused function after __do_softirq() into the softirq text
-section and filled it with ASM nonsense so that it occupies exactly one
-page. That moves $$divoI, which is what check_slab() calls, exactly one
-page forward:
-
-    -0000000041218c70 T $$divoI
-    +0000000041219c70 T $$divoI
-
-Guess what happens? If falls on it's nose again.
-
-Now with that ASM gunk I can steer the size conveniently. It works up
-to:
-
-    0000000041219c50 T $$divoI
-
-and fails for
-
-    0000000041219c60 T $$divoI
-    0000000041219c70 T $$divoI
-
-and works again at
-
-    0000000041219c80 T $$divoI
-
-So I added the following:
-
-+extern void testme(void);
-+extern unsigned int testsize;
-+
-+unsigned int testsize = 192;
-+
-+void __init testme(void)
-+{
-+	pr_info("TESTME: %lu\n", PAGE_SIZE / testsize);
-+}
-
-called that _before_ mm_core_init() from init/main.c and adjusted my ASM
-hack to make $$divoI be at:
-
-    0000000041219c70 T $$divoI
-
-again and surprisingly the output is:
-
-    [    0.000000] softirq: TESTME: 21
-
-Now I went back to the hppa64 gcc version 12.2.0 again and did the same
-ASM gunk adjustment so that $$divoI ends up at the offset 0xc70 in the
-page and the same happens.
-
-So it's not a compiler dependent problem.
-
-But then I added a testme() call to the error path and get:
-
-[    0.000000] softirq: TESTME: 21
-[    0.000000] =============================================================================
-[    0.000000] BUG kmem_cache_node (Not tainted): objects 21 > max 16 size 192 sorder 0
-
-Now what's wrong?
-
-Adding more debug:
-
-[    0.000000] BUG kmem_cache_node (Not tainted): objects 21 > max 16 size 192 sorder 0 21
-
-where the last '21' is the output of the same call which made maxobj go
-south:
-
- static int check_slab(struct kmem_cache *s, struct slab *slab)
- {
- 	int maxobj;
-@@ -1386,8 +1388,10 @@ static int check_slab(struct kmem_cache
+diff --git a/mm/slub.c b/mm/slub.c
+index c9d8a2497fd6..7148047998de 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -3422,7 +3422,8 @@ slab_out_of_memory(struct kmem_cache *s, gfp_t gfpflags, int nid)
+ 	if ((gfpflags & __GFP_NOWARN) || !__ratelimit(&slub_oom_rs))
+ 		return;
  
- 	maxobj = order_objects(slab_order(slab), s->size);
- 	if (slab->objects > maxobj) {
--		slab_err(s, slab, "objects %u > max %u",
--			slab->objects, maxobj);
-+		testme();
-+		slab_err(s, slab, "objects %u > max %u size %u sorder %u %u",
-+			 slab->objects, maxobj, s->size, slab_order(slab),
-+			 order_objects(slab_order(slab), s->size));
- 		return 0;
- 	}
- 	if (slab->inuse > slab->objects) {
+-	pr_warn("SLUB: Unable to allocate memory on node %d, gfp=%#x(%pGg)\n",
++	pr_warn("SLUB: Unable to allocate memory for CPU %u on node %d, gfp=%#x(%pGg)\n",
++		preemptible() ? raw_smp_processor_id() : smp_processor_id(),
+ 		nid, gfpflags, &gfpflags);
+ 	pr_warn("  cache: %s, object size: %u, buffer size: %u, default order: %u, min order: %u\n",
+ 		s->name, s->object_size, s->size, oo_order(s->oo),
+-- 
+2.46.0.rc2.264.g509ed76dc8-goog
 
-I don't know and I don't want to know TBH...
-
-Thanks,
-
-        tglx
 
