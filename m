@@ -1,185 +1,361 @@
-Return-Path: <linux-kernel+bounces-276542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C0C94950E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:01:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A98E949513
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6E861F29959
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:01:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C3321C23D9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536594AEE5;
-	Tue,  6 Aug 2024 15:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A9C1C3F0B;
+	Tue,  6 Aug 2024 15:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LLnZtzvY"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="vvx/xbWY"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258634AEE0
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EDB4D9FE
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722959937; cv=none; b=s3Xizqbtuuca5lYm5w/o+g4/11ybRv5CqQKwoGN7miI5zuAfxjBeOUhVqgXw6tu+WVwmKRQ8N1tL5Naa0rD5VF3ItRlIGmVIR006DfbPgPKLugiI8OYPIuhkEcUOqKAnBs8WqKgIiqC/eGP1dpXii+ldoXRXIw2cjD1e+jHlqhg=
+	t=1722959966; cv=none; b=Zy48IFxvoMQhVItKMRPHN4h5NxzBVA954IA5t5vXzPAAe0/P2NmZi4VFG4ocs7jdOhST/n6fmMTaG8utOfhrsWtujLNtjWnCKz8ceOARljDFfVd398frq/qGR06/ZroIsmGFpBEHBBabL4asu9d3uVk03WmaQ4fMTT41D3fwbkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722959937; c=relaxed/simple;
-	bh=2FH/dOOxWxJKfqWSoqpo4ZQuvYPtOzy40WjN5wZ2RMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AZwmNhyL0qybDbXZp6MAC0zeCJNvM7yIyPAzr3Lys4UlyecemuexBINOf48pj8J47jPsu9+ifqW4hOs+sMpBwOeK1OHR1WxW9SzcYUrzk0gEOsZ9MdKj4xpXrUg4IWgBKb5M/ijkTJ19A88IxgnifTIwnzmGZoU/J0+0d/gYgGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LLnZtzvY; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fd657c9199so199505ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 08:58:55 -0700 (PDT)
+	s=arc-20240116; t=1722959966; c=relaxed/simple;
+	bh=5IHtW0V6LW9GBudGRdbXzlBXhuGb+QZ5HHx2L0Ot9Ho=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FlX1zjuYjpWYODsV2L+ETiRg8m5frBLz2CsFUBLgckLa/AueND6HgFWhocfx2mLN1GzRb6v8g/9/ntKCg8aMvrBIyty3mv3cEkuqFciofXkz8l8hOAmfjoL8GcLPChLj1CSximWJC+ZaAKYe7TMeQ0/uk8J5SConf+wIRAq0Gvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=vvx/xbWY; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-39aeccc6377so3173245ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 08:59:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722959935; x=1723564735; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZJ9q+lL80ph0zqMaur0WSQg7aHVpr9HBiqm7INAI3+k=;
-        b=LLnZtzvY3kBmF4f0At5fLqH41+1yf9RNCnghEEMgdSJjhf3A1fjoG19EwklXzDwEN1
-         ktz0DqLRLnjJMQiqOjxNnDHJArT4B5ThcoU9f17ns0HfnWuR8zys+tBBNzhJ+MKQvnCG
-         ATB99S6nqbJBThjHOjRtFWOnVD7NScmNgqLXFbgGZAdH708SdkYZ0kkDNka3dVIgss5y
-         bez/Q5lW0wgAhXMUMyZuJcEkK/KVnN7L4Nm1a9h+V3LjUgneqKH3xPFIhelnEhG0gXeS
-         egs73ee5JIDam12EycPNQ2fs5uH/T3Qw377I341MqVTBv5P50jDgfEKwul0AMO8Rs07H
-         e5fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722959935; x=1723564735;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1722959964; x=1723564764; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZJ9q+lL80ph0zqMaur0WSQg7aHVpr9HBiqm7INAI3+k=;
-        b=v/4Wj/8Cv9STiZlTSAJMri442lgDTFqW23MYMGCaMiK1Nt4VYfXg3Laj+LPIELgFul
-         3/g5iNzPr/Y1hHNxKUFvXzO5pJbu1lnFe0UrJbXPNfRR4dQMbIUhmBrxqY31hjQ9Dv7u
-         H3vwn6m6ytAUIg04clzxprO9aIFeijKILWfCnzqnrS3f5CIi2llsQq/f6g7xn4maHWeI
-         sngzwdLQ3bF/PZqTlikikpEO9PYaDYaO1m9unjMDw42M7SIsMJw0qSaJDi77I3xWah1x
-         U895C4YkS5VDxNPdOFBfWIxGORzHPnTrjIwygmbGyo6dNx63PZfWtDXAi9oBDLoN4kNt
-         iAHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqG/0eX7R0f/v3HEg0sMCuAYVtwXQx8hifeadM+W1asRa5j18sU6TvYpdiNGecRvidGAP3piAK8yvKYBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYdMEX+kfxUGqy2IJ/TTvbZLhBPOjqh34WTAvIBTA1mz9U2pcz
-	ylWDdTeQELDT1WDeZmfzrbljODpAEYiNUgRrlupV1keHqWRcXCFRipwO+6qGsw==
-X-Google-Smtp-Source: AGHT+IFAA+OF+sdoWF8GkRc3c8mBACflHchrbE/s0/v0yDpm4IdT2wPJ77Y/eswakR4oHgS78+KCjg==
-X-Received: by 2002:a17:902:da8e:b0:1fb:563:3c25 with SMTP id d9443c01a7336-200767948b6mr3826775ad.18.1722959934955;
-        Tue, 06 Aug 2024 08:58:54 -0700 (PDT)
-Received: from google.com (255.248.124.34.bc.googleusercontent.com. [34.124.248.255])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7bceab6187asm1157647a12.59.2024.08.06.08.58.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 08:58:54 -0700 (PDT)
-Date: Tue, 6 Aug 2024 15:58:43 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Will Deacon <will@kernel.org>, Kunkun Jiang <jiangkunkun@huawei.com>,
-	Baolu Lu <baolu.lu@linux.intel.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Michael Shavit <mshavit@google.com>,
-	Mostafa Saleh <smostafa@google.com>,
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	wanghaibin.wang@huawei.com, yuzenghui@huawei.com,
-	tangnianyao@huawei.com
-Subject: Re: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
- scenarios
-Message-ID: <ZrJIM8-pS31grIVR@google.com>
-References: <6147caf0-b9a0-30ca-795e-a1aa502a5c51@huawei.com>
- <7d5a8b86-6f0d-50ef-1b2f-9907e447c9fc@huawei.com>
- <20240724102417.GA27376@willie-the-truck>
- <c2f6163e-47f0-4dce-b077-7751816be62f@linux.intel.com>
- <CAN6iL-QvE29-t4B+Ucg+AYMPhr9cqDa8xGj9oz_MAO5uyZyX2g@mail.gmail.com>
- <5e8e6857-44c9-40a1-f86a-b8b5aae65bfb@huawei.com>
- <20240805123001.GB9326@willie-the-truck>
- <ZrDwolC6oXN44coq@google.com>
- <20240806124943.GF676757@ziepe.ca>
+        bh=NpnkKIJgnuEPhelT1VbXs9Kh1Gjs36WnewQApXQbgY0=;
+        b=vvx/xbWYBq1Jk46DOY+KQ0lx5yz4z6OOmZIbLfLqgNWRjFb6VOZkp0DedqHKYMqXcy
+         I0Oct8Dwio9akc5zMQ4m8LP20u1Baed0IaHEpfaBXdi41kp1GJBkBLCyYTiTo4Dk/kfw
+         TywGGZsqp5wzEy7WEHy1zdJXZhLmJfwzk8TkBg102O2p2S2xXW/f6vltlLT0V6DSHUGT
+         l+z4SosobnAvEEKKi82EjsfEu3vW3ZQSb8lsH/UlqYJi+D9tcZg6ah211kXEvWTfvXZ3
+         udIp49m6IRmZWpEnmSRnWQ/5hvwQNkJEKrIIjte3fd7YNhrAwcDn65lFA+2q8LCVn3G+
+         +wwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722959964; x=1723564764;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NpnkKIJgnuEPhelT1VbXs9Kh1Gjs36WnewQApXQbgY0=;
+        b=pczaccg0CwNSy6ulnwlZp1AuKbmWRdlayAFggaWmpKUpp7gH+lzwBcYCVYMbTiE6ky
+         AnLdxNOTpXhA9PkxaDK1fr5bKBOlrO8K9ynJFZH4CN+DAtFq7jBeqJrlDADk5xFlIIdC
+         WmKz4JXqYeE8KgMoqeq3O2e6SgsdHQXR/pJyhNY0COAcXwiYZiOthQndKf9kN+QLLG4I
+         8n6V8ieq7ob2bbFgr07NBaeI4KD1qFGTCOAtYoS8g1z02/IygBUnSPhPsohMx5Tiz+LH
+         k2jJloVt3sSSKV1U2OVGd9VJqCfJHqqiaQQ9K32GX0h0zUwTmfVoe79Fx/Bmy86it+cS
+         8v+A==
+X-Gm-Message-State: AOJu0Yy8RhLvnzVjJL6rOK6KChxYk0n9yxdGC17SN2nAGfWJ+uxfxHyZ
+	NdBgCiUGasIdY+gLYcqHt5fSNX2CzcgoBMNbudLWk+QYYm66cxn8PjFJiiA/JLh85N67B/l8I+O
+	bhmYIAiPWr1c01vAyX5hO6LRDZ5WUuTUoJ6fRBw==
+X-Google-Smtp-Source: AGHT+IEeGerVMiLX8KrZvRsFQJUPFh+TJy37h32RX7gd08MgDCUq9yw0ABtWpHRrv4tSrL498zUHQgOm2NKeRLhWkAs=
+X-Received: by 2002:a92:cccc:0:b0:39a:e984:1caa with SMTP id
+ e9e14a558f8ab-39b1fbf65cbmr144360605ab.21.1722959964025; Tue, 06 Aug 2024
+ 08:59:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806124943.GF676757@ziepe.ca>
+References: <20240729142241.733357-1-sunilvl@ventanamicro.com> <20240729142241.733357-18-sunilvl@ventanamicro.com>
+In-Reply-To: <20240729142241.733357-18-sunilvl@ventanamicro.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Tue, 6 Aug 2024 21:29:13 +0530
+Message-ID: <CAAhSdy1372ZY_irkfZ5-81C3KL+2ap9HkfRKTjGZWVT-nrGoNQ@mail.gmail.com>
+Subject: Re: [PATCH v7 17/17] irqchip/sifive-plic: Add ACPI support
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-pci@vger.kernel.org, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Samuel Holland <samuel.holland@sifive.com>, 
+	Robert Moore <robert.moore@intel.com>, Conor Dooley <conor.dooley@microchip.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Haibo Xu <haibo1.xu@intel.com>, 
+	Atish Kumar Patra <atishp@rivosinc.com>, Drew Fustini <dfustini@tenstorrent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 06, 2024 at 09:49:43AM -0300, Jason Gunthorpe wrote:
-> On Mon, Aug 05, 2024 at 03:32:50PM +0000, Pranjal Shrivastava wrote:
-> > Here's the updated diff:
-> > diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> > index a31460f9f3d4..ed2b106e02dd 100644
-> > --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> > +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> > @@ -1777,7 +1777,7 @@ static int arm_smmu_handle_evt(struct arm_smmu_device *smmu, u64 *evt)
-> >  		goto out_unlock;
-> >  	}
-> >  
-> > -	iommu_report_device_fault(master->dev, &fault_evt);
-> > +	ret = iommu_report_device_fault(master->dev, &fault_evt);
-> >  out_unlock:
-> >  	mutex_unlock(&smmu->streams_mutex);
-> >  	return ret;
-> > diff --git a/drivers/iommu/intel/svm.c b/drivers/iommu/intel/svm.c
-> > index 0e3a9b38bef2..7684e7562584 100644
-> > --- a/drivers/iommu/intel/svm.c
-> > +++ b/drivers/iommu/intel/svm.c
-> > @@ -532,6 +532,9 @@ void intel_svm_page_response(struct device *dev, struct iopf_fault *evt,
-> >  	bool last_page;
-> >  	u16 sid;
-> >  
-> > +	if (!evt)
-> > +		return;
-> > +
-> 
-> I'm not sure this make sense??
-> 
-> The point of this path is for the driver to retire the fault with a
-> failure. This prevents that from happing on Intel and we are back to
-> loosing track of a fault.
-> 
-> All calls to iommu_report_device_fault() must result in
-> page_response() properly retiring whatever the event was.
-> 
-> > +static void iopf_error_response(struct device *dev, struct iommu_fault *fault)
-> > +{
-> > +	const struct iommu_ops *ops = dev_iommu_ops(dev);
-> > +	struct iommu_page_response resp = {
-> > +		.pasid = fault->prm.pasid,
-> > +		.grpid = fault->prm.grpid,
-> > +		.code = IOMMU_PAGE_RESP_INVALID
-> > +	};
-> > +
-> > +	ops->page_response(dev, NULL, &resp);
-> > +}
-> 
-> The issue originates here, why is this NULL?
-> 
-> void iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
-> {
-> 
-> The caller has an evt? I think we should pass it down.
+On Mon, Jul 29, 2024 at 7:54=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.com=
+> wrote:
+>
+> Add ACPI support in PLIC driver. Use the mapping created early during
+> boot to get details about the PLIC.
+>
+> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+> Co-developed-by: Haibo Xu <haibo1.xu@intel.com>
+> Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
+> ---
+>  drivers/irqchip/irq-sifive-plic.c | 94 ++++++++++++++++++++++++-------
+>  1 file changed, 73 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifi=
+ve-plic.c
+> index 9e22f7e378f5..12d60728329c 100644
+> --- a/drivers/irqchip/irq-sifive-plic.c
+> +++ b/drivers/irqchip/irq-sifive-plic.c
+> @@ -3,6 +3,7 @@
+>   * Copyright (C) 2017 SiFive
+>   * Copyright (C) 2018 Christoph Hellwig
+>   */
+> +#include <linux/acpi.h>
+>  #include <linux/cpu.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+> @@ -70,6 +71,8 @@ struct plic_priv {
+>         unsigned long plic_quirks;
+>         unsigned int nr_irqs;
+>         unsigned long *prio_save;
+> +       u32 gsi_base;
+> +       int id;
 
-Hmm, I agree, I don't see `iommu_report_device_fault` be called anywhere
-with a NULL evt. Hence, it does make sense to pass the evt down and
-ensure we don't lose track of the event.
+Same as the other patch, better to call "id" as "acpi_id".
 
-I'm assuming that we retired the if (!evt) check from intel->page
-response since we didn't have any callers of intel->page_response
-with a NULL evt. (Atleast, for now, I don't see that happen).
+>  };
+>
+>  struct plic_handler {
+> @@ -324,6 +327,10 @@ static int plic_irq_domain_translate(struct irq_doma=
+in *d,
+>  {
+>         struct plic_priv *priv =3D d->host_data;
+>
+> +       /* For DT, gsi_base is always zero. */
+> +       if (fwspec->param[0] >=3D priv->gsi_base)
+> +               fwspec->param[0] =3D fwspec->param[0] - priv->gsi_base;
+> +
+>         if (test_bit(PLIC_QUIRK_EDGE_INTERRUPT, &priv->plic_quirks))
+>                 return irq_domain_translate_twocell(d, fwspec, hwirq, typ=
+e);
+>
+> @@ -424,18 +431,37 @@ static const struct of_device_id plic_match[] =3D {
+>         {}
+>  };
+>
+> +#ifdef CONFIG_ACPI
+> +
+> +static const struct acpi_device_id plic_acpi_match[] =3D {
+> +       { "RSCV0001", 0 },
+> +       {}
+> +};
+> +MODULE_DEVICE_TABLE(acpi, plic_acpi_match);
+> +
+> +#endif
+>  static int plic_parse_nr_irqs_and_contexts(struct platform_device *pdev,
+> -                                          u32 *nr_irqs, u32 *nr_contexts=
+)
+> +                                          u32 *nr_irqs, u32 *nr_contexts=
+,
+> +                                          u32 *gsi_base, u32 *id)
+>  {
+>         struct device *dev =3D &pdev->dev;
+>         int rc;
+>
+> -       /*
+> -        * Currently, only OF fwnode is supported so extend this
+> -        * function for ACPI support.
+> -        */
+> -       if (!is_of_node(dev->fwnode))
+> -               return -EINVAL;
+> +       if (!is_of_node(dev->fwnode)) {
+> +               rc =3D riscv_acpi_get_gsi_info(dev->fwnode, gsi_base, id,=
+ nr_irqs, NULL);
+> +               if (rc) {
+> +                       dev_err(dev, "failed to find GSI mapping\n");
+> +                       return rc;
+> +               }
+> +
+> +               *nr_contexts =3D acpi_get_plic_nr_contexts(*id);
+> +               if (WARN_ON(!*nr_contexts)) {
+> +                       dev_err(dev, "no PLIC context available\n");
+> +                       return -EINVAL;
+> +               }
+> +
+> +               return 0;
+> +       }
+>
+>         rc =3D of_property_read_u32(to_of_node(dev->fwnode), "riscv,ndev"=
+, nr_irqs);
+>         if (rc) {
+> @@ -449,23 +475,29 @@ static int plic_parse_nr_irqs_and_contexts(struct p=
+latform_device *pdev,
+>                 return -EINVAL;
+>         }
+>
+> +       *gsi_base =3D 0;
+> +       *id =3D 0;
+> +
+>         return 0;
+>  }
+>
+>  static int plic_parse_context_parent(struct platform_device *pdev, u32 c=
+ontext,
+> -                                    u32 *parent_hwirq, int *parent_cpu)
+> +                                    u32 *parent_hwirq, int *parent_cpu, =
+u32 id)
+>  {
+>         struct device *dev =3D &pdev->dev;
+>         struct of_phandle_args parent;
+>         unsigned long hartid;
+>         int rc;
+>
+> -       /*
+> -        * Currently, only OF fwnode is supported so extend this
+> -        * function for ACPI support.
+> -        */
+> -       if (!is_of_node(dev->fwnode))
+> -               return -EINVAL;
+> +       if (!is_of_node(dev->fwnode)) {
+> +               hartid =3D acpi_get_ext_intc_parent_hartid(id, context);
+> +               if (hartid =3D=3D INVALID_HARTID)
+> +                       return -EINVAL;
+> +
+> +               *parent_cpu =3D riscv_hartid_to_cpuid(hartid);
+> +               *parent_hwirq =3D RV_IRQ_EXT;
+> +               return 0;
+> +       }
+>
+>         rc =3D of_irq_parse_one(to_of_node(dev->fwnode), context, &parent=
+);
+>         if (rc)
+> @@ -489,6 +521,8 @@ static int plic_probe(struct platform_device *pdev)
+>         u32 nr_irqs, parent_hwirq;
+>         struct plic_priv *priv;
+>         irq_hw_number_t hwirq;
+> +       int id, context_id;
+> +       u32 gsi_base;
+>
+>         if (is_of_node(dev->fwnode)) {
+>                 const struct of_device_id *id;
+> @@ -498,7 +532,7 @@ static int plic_probe(struct platform_device *pdev)
+>                         plic_quirks =3D (unsigned long)id->data;
+>         }
+>
+> -       error =3D plic_parse_nr_irqs_and_contexts(pdev, &nr_irqs, &nr_con=
+texts);
+> +       error =3D plic_parse_nr_irqs_and_contexts(pdev, &nr_irqs, &nr_con=
+texts, &gsi_base, &id);
+>         if (error)
+>                 return error;
+>
+> @@ -509,6 +543,8 @@ static int plic_probe(struct platform_device *pdev)
+>         priv->dev =3D dev;
+>         priv->plic_quirks =3D plic_quirks;
+>         priv->nr_irqs =3D nr_irqs;
+> +       priv->gsi_base =3D gsi_base;
+> +       priv->id =3D id;
+>
+>         priv->regs =3D devm_platform_ioremap_resource(pdev, 0);
+>         if (WARN_ON(!priv->regs))
+> @@ -519,12 +555,22 @@ static int plic_probe(struct platform_device *pdev)
+>                 return -ENOMEM;
+>
+>         for (i =3D 0; i < nr_contexts; i++) {
+> -               error =3D plic_parse_context_parent(pdev, i, &parent_hwir=
+q, &cpu);
+> +               error =3D plic_parse_context_parent(pdev, i, &parent_hwir=
+q, &cpu, priv->id);
+>                 if (error) {
+>                         dev_warn(dev, "hwirq for context%d not found\n", =
+i);
+>                         continue;
+>                 }
+>
+> +               if (is_of_node(dev->fwnode)) {
+> +                       context_id =3D i;
+> +               } else {
+> +                       context_id =3D acpi_get_plic_context(priv->id, i)=
+;
+> +                       if (context_id =3D=3D INVALID_CONTEXT) {
+> +                               dev_warn(dev, "invalid context id for con=
+text%d\n", i);
+> +                               continue;
+> +                       }
+> +               }
+> +
+>                 /*
+>                  * Skip contexts other than external interrupts for our
+>                  * privilege level.
+> @@ -562,10 +608,10 @@ static int plic_probe(struct platform_device *pdev)
+>                 cpumask_set_cpu(cpu, &priv->lmask);
+>                 handler->present =3D true;
+>                 handler->hart_base =3D priv->regs + CONTEXT_BASE +
+> -                       i * CONTEXT_SIZE;
+> +                       context_id * CONTEXT_SIZE;
+>                 raw_spin_lock_init(&handler->enable_lock);
+>                 handler->enable_base =3D priv->regs + CONTEXT_ENABLE_BASE=
+ +
+> -                       i * CONTEXT_ENABLE_SIZE;
+> +                       context_id * CONTEXT_ENABLE_SIZE;
+>                 handler->priv =3D priv;
+>
+>                 handler->enable_save =3D devm_kcalloc(dev, DIV_ROUND_UP(n=
+r_irqs, 32),
+> @@ -581,8 +627,8 @@ static int plic_probe(struct platform_device *pdev)
+>                 nr_handlers++;
+>         }
+>
+> -       priv->irqdomain =3D irq_domain_add_linear(to_of_node(dev->fwnode)=
+, nr_irqs + 1,
+> -                                               &plic_irqdomain_ops, priv=
+);
+> +       priv->irqdomain =3D irq_domain_create_linear(dev->fwnode, nr_irqs=
+ + 1,
+> +                                                  &plic_irqdomain_ops, p=
+riv);
+>         if (WARN_ON(!priv->irqdomain))
+>                 goto fail_cleanup_contexts;
+>
+> @@ -619,13 +665,18 @@ static int plic_probe(struct platform_device *pdev)
+>                 }
+>         }
+>
+> +#ifdef CONFIG_ACPI
+> +       if (!acpi_disabled)
+> +               acpi_dev_clear_dependencies(ACPI_COMPANION(dev));
+> +#endif
+> +
+>         dev_info(dev, "mapped %d interrupts with %d handlers for %d conte=
+xts.\n",
+>                  nr_irqs, nr_handlers, nr_contexts);
+>         return 0;
+>
+>  fail_cleanup_contexts:
+>         for (i =3D 0; i < nr_contexts; i++) {
+> -               if (plic_parse_context_parent(pdev, i, &parent_hwirq, &cp=
+u))
+> +               if (plic_parse_context_parent(pdev, i, &parent_hwirq, &cp=
+u, priv->id))
+>                         continue;
+>                 if (parent_hwirq !=3D RV_IRQ_EXT || cpu < 0)
+>                         continue;
+> @@ -644,6 +695,7 @@ static struct platform_driver plic_driver =3D {
+>         .driver =3D {
+>                 .name           =3D "riscv-plic",
+>                 .of_match_table =3D plic_match,
+> +               .acpi_match_table =3D ACPI_PTR(plic_acpi_match),
+>         },
+>         .probe =3D plic_probe,
+>  };
+> --
+> 2.43.0
+>
 
-Lu, Will -- Any additional comments/suggestions for this?
+Otherwise, this looks good to me.
 
-> 
-> Looking at the abort_group path that is effectively what we do, but
-> the evt is copied to the group's evt first.
-> 
-> I also noticed we have another similar issue with the
-> report_partial_fault() loosing the fault if memory allocation
-> fails.. A goto for your new err label after report_partial_fault()
-> would be appropriate too
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-Ahh, yes! I'll add that too in the follow up.
-
-> 
-> Jason
-
-Thanks,
-Pranjal
+Regards,
+Anup
 
