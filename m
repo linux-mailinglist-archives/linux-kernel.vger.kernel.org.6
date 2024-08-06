@@ -1,105 +1,172 @@
-Return-Path: <linux-kernel+bounces-276759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DE3949808
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:12:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35A6C94980C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:12:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B4B51F23EE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:12:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1168284546
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB6F12C499;
-	Tue,  6 Aug 2024 19:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D46A145341;
+	Tue,  6 Aug 2024 19:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TSy5DWxm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eF7hcLy0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F404F8A0;
-	Tue,  6 Aug 2024 19:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A6A4F8A0;
+	Tue,  6 Aug 2024 19:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722971516; cv=none; b=GdSQCgYUsAw2D3TJ/fXlvagjHdZQ9KrZKZolN+vuSxQMXZjDPOfVirRxn+I27GnQUA4FfKdryXgWDBRhSUDS2CY00q0xWq44GsCUV7atN5srdSXsFQf9ZRcPCfqu5mriIPmpq8nrE/a6bz2lPNulnLyHGm9p1SwZvobVtM5edd4=
+	t=1722971525; cv=none; b=Oi4axgJle2a3XjzbjRWEZsqJWSaIu8wNkj27kXXWqHTbccu/gjhhyqAi9i6zebJnog2ri2PQnv/INIZNz2d6AWwTpnmYzNXnys4OtggD9aMRMWFugTd4ON3fHsObSY5qozUVa5xviItWxvLMk3RciNKRLYYIREYGb5BcSpbsfW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722971516; c=relaxed/simple;
-	bh=1GuZY7l73RPYRon+EVmjfQ9BpjAR5+4uqRreZFXzwKI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=djMDh7oWmypqBKeTKOButAObXWipGPuuM1TLTjQ/xlY/4Xg3nlwek5+cYBIRhieXJZ3aNEPcxHUuF0B6Rf42e8e4/aaFinS8CT1eyWto/cPIsP+jLm5ASAhcrV1vUCMVIfV4v9oGeAkuuYZmabNkqisqlhebU2Iqt5xPwlzKlNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TSy5DWxm; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722971515; x=1754507515;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=1GuZY7l73RPYRon+EVmjfQ9BpjAR5+4uqRreZFXzwKI=;
-  b=TSy5DWxmxT+Ahu4Kyl5kQ2WC3ARcPC4SJ1Pcelz31eIqq5GmF2EEGt04
-   T/JOQWfd100UjYxPPySIofYuo1pCoL079z+cUzjrhMsmkhCUJ5od1nUqE
-   GQlzUgb3pVvlFfz2auk+KUBBxS4Lzj4rpIKds+rWz0Fa2xZrEEC+F13lN
-   /lmlP8cVG/vZY2l2TD5jspubAhHOu62td2rGxN4VPM1rJqQwJa9IFjKct
-   i0pjnJuCP/lirOszpSJoxbw+YSIQHZFWTws1/Fi5+9Ut/i/FHq2zmA08N
-   PX1FmVJEn8V5+KAoS4zF/wRg0NvWVyAYDJgKeM71uQa4LhBXioVHJ5iRH
-   g==;
-X-CSE-ConnectionGUID: POP96g3fQtCSkAb/MZjdPA==
-X-CSE-MsgGUID: +oUHlzbnS+qKvwn4RNiPEg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="21160760"
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="21160760"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 12:11:54 -0700
-X-CSE-ConnectionGUID: 6LEnu33RTgW2TY7adEPoyA==
-X-CSE-MsgGUID: kHY7WZL/SAGx5KyzZpi+Uw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="61484207"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.54.38.190])
-  by orviesa005.jf.intel.com with ESMTP; 06 Aug 2024 12:11:51 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-	id 27036301A9C; Tue,  6 Aug 2024 12:11:49 -0700 (PDT)
-From: Andi Kleen <ak@linux.intel.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>,  Alexander Viro
- <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,  Jan
- Kara <jack@suse.cz>,  Andrew Morton <akpm@linux-foundation.org>,  Josef
- Bacik <josef@toxicpanda.com>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-In-Reply-To: <CAGudoHF9nZMfk_XbRRap+0d=VNs_i8zqTkDXxogVt_M9YGbA8Q@mail.gmail.com>
-	(Mateusz Guzik's message of "Tue, 6 Aug 2024 17:25:30 +0200")
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
-	<CAGudoHF9nZMfk_XbRRap+0d=VNs_i8zqTkDXxogVt_M9YGbA8Q@mail.gmail.com>
-Date: Tue, 06 Aug 2024 12:11:49 -0700
-Message-ID: <87ikwdtqiy.fsf@linux.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1722971525; c=relaxed/simple;
+	bh=MUntDv2gD5+r+bQ9Gq55BzMlclzgUuGCotLVqMS29C8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=VpF/Sa0qzQQ6mxbfAbTAe1YM33E1/6HTXn72FNM3dLpty3eJcd8ma+ID7HDADqcXYOLiKDyVV9Gpn5V9QmuYWzgOvM7OV4TtYIDr218c4QIl8auvmIA1fX0Zz7e6vJFYwi6W6cylysNJiAip+U17f+vqPnAlhm7I30SMSgRcax8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eF7hcLy0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAF02C32786;
+	Tue,  6 Aug 2024 19:12:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722971525;
+	bh=MUntDv2gD5+r+bQ9Gq55BzMlclzgUuGCotLVqMS29C8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=eF7hcLy04y8SklVvaENBicO1NsGIl5KbsF37nza/Xt5zlCAp60c00afp8+p72rvpF
+	 Cgx0mn1gWokiW68mKXvEIdBD42b2TMdsmbs1wedysOqm8GPdmIjWTWUtknEaNcb1Lf
+	 Ta8NGJOWxvP/AG0e7t41JjEl8/EuNWUuTXSU1AdQiGAXT50L3OAMoG6qIw+nHHeF7L
+	 ktM/Ly8qy4L9NUBZIuBaFpmNYg/F8G097FtCkwdOAZEqRFJ+YqMY+7c8rfM3w1DSsA
+	 iIK68nGhgRl3bdpEfSw71nf6iXxoKUbo41sSuLBF06X6+kU9gSaN0Mpg6jXe2uIQvr
+	 pC+AviepEa6QA==
+Date: Tue, 6 Aug 2024 14:12:03 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	andersson@kernel.org, quic_vbadigan@quicinc.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 7/8] PCI: qcom: Add support for host_stop_link() &
+ host_start_link()
+Message-ID: <20240806191203.GA73014@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240803-qps615-v2-7-9560b7c71369@quicinc.com>
 
-Mateusz Guzik <mjguzik@gmail.com> writes:
->
-> I would bench with that myself, but I temporarily don't have handy
-> access to bigger hw. Even so, the below is completely optional and
-> perhaps more of a suggestion for the future :)
->
-> I hacked up the test case based on tests/open1.c.
+On Sat, Aug 03, 2024 at 08:52:53AM +0530, Krishna chaitanya chundru wrote:
+> For the switches like QPS615 which needs to configure it before
+> the PCIe link is established.
+> 
+> if the link is not up assert the PERST# and disable LTSSM bit so
+> that PCIe controller will not participate in the link training
+> as part of host_stop_link().
+> 
+> De-assert the PERST# and enable LTSSM bit back in host_start_link().
+> 
+> Introduce ltssm_disable function op to stop the link training.
 
-Don't you need two test cases? One where the file exists and one
-where it doesn't. Because the "doesn't exist" will likely be slower
-than before because it will do the lookups twice,
-and it will likely even slow single threaded.
+pcie-qcom.c is a driver for a PCIe host controller.  Apparently QPS615
+is a switch in a hierarchy that could be below any PCIe host
+controller, so I'm missing the connection with pcie-qcom.c.
 
-I assume the penalty will also depend on the number of entries
-in the path.
+Does this fix a problem that only occurs with pcie-qcom.c?  What
+happens if you put a QPS615 below some other controller?
 
-That all seem to be an important considerations in judging the benefits
-of the patch.
-
--Andi
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 39 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 0180edf3310e..f4a6df53139c 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -233,6 +233,7 @@ struct qcom_pcie_ops {
+>  	void (*host_post_init)(struct qcom_pcie *pcie);
+>  	void (*deinit)(struct qcom_pcie *pcie);
+>  	void (*ltssm_enable)(struct qcom_pcie *pcie);
+> +	void (*ltssm_disable)(struct qcom_pcie *pcie);
+>  	int (*config_sid)(struct qcom_pcie *pcie);
+>  };
+>  
+> @@ -555,6 +556,41 @@ static int qcom_pcie_post_init_1_0_0(struct qcom_pcie *pcie)
+>  	return 0;
+>  }
+>  
+> +static int qcom_pcie_host_start_link(struct dw_pcie *pci)
+> +{
+> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> +
+> +	if (!dw_pcie_link_up(pcie->pci))  {
+> +		qcom_ep_reset_deassert(pcie);
+> +
+> +		if (pcie->cfg->ops->ltssm_enable)
+> +			pcie->cfg->ops->ltssm_enable(pcie);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void qcom_pcie_host_stop_link(struct dw_pcie *pci)
+> +{
+> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> +
+> +	if (!dw_pcie_link_up(pcie->pci))  {
+> +		qcom_ep_reset_assert(pcie);
+> +
+> +		if (pcie->cfg->ops->ltssm_disable)
+> +			pcie->cfg->ops->ltssm_disable(pcie);
+> +	}
+> +}
+> +
+> +static void qcom_pcie_2_3_2_ltssm_disable(struct qcom_pcie *pcie)
+> +{
+> +	u32 val;
+> +
+> +	val = readl(pcie->parf + PARF_LTSSM);
+> +	val &= ~LTSSM_EN;
+> +	writel(val, pcie->parf + PARF_LTSSM);
+> +}
+> +
+>  static void qcom_pcie_2_3_2_ltssm_enable(struct qcom_pcie *pcie)
+>  {
+>  	u32 val;
+> @@ -1306,6 +1342,7 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
+>  	.host_post_init = qcom_pcie_host_post_init_2_7_0,
+>  	.deinit = qcom_pcie_deinit_2_7_0,
+>  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+> +	.ltssm_disable = qcom_pcie_2_3_2_ltssm_disable,
+>  	.config_sid = qcom_pcie_config_sid_1_9_0,
+>  };
+>  
+> @@ -1363,6 +1400,8 @@ static const struct qcom_pcie_cfg cfg_sc8280xp = {
+>  static const struct dw_pcie_ops dw_pcie_ops = {
+>  	.link_up = qcom_pcie_link_up,
+>  	.start_link = qcom_pcie_start_link,
+> +	.host_start_link = qcom_pcie_host_start_link,
+> +	.host_stop_link = qcom_pcie_host_stop_link,
+>  };
+>  
+>  static int qcom_pcie_icc_init(struct qcom_pcie *pcie)
+> 
+> -- 
+> 2.34.1
+> 
 
