@@ -1,149 +1,104 @@
-Return-Path: <linux-kernel+bounces-276516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C25D19494EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:56:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D169494D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6BB6B2A968
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:50:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 300161C22CBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D37381AA;
-	Tue,  6 Aug 2024 15:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832993C466;
+	Tue,  6 Aug 2024 15:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="cjWrwhOM"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AphVWnIG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5243B7AC
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F7939855
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722959416; cv=none; b=gp1bxprVAlujAwiQQfUtXQUDh+R5STOl62L3dv4n8aZuaCI5FU8KCTjEIcOWuxTdaj4mqA01usUtF83++bFSfHsyIaFaYUA03LiECokRLQQZBeoJeOz/KbNx+nMC5D4Zu7kFASB0u2W3fqeOv9ApVAw+S62upparGip0xzwNlxQ=
+	t=1722959418; cv=none; b=EGWEJi2K8xOV+/ng97VPanIp9bkldg+0EYPQP1X84+R17LINwvrG2MkBzBKXXQML5I1eppr+Buumw0/mVwkQxFClu+0mzuj5nhzK0xIO9/0VaIYeHxgTEkDvB2tFXfqKH3i+VL8SNyb2Kej10AwpIQONgqnnRl4J5xnbElp6I6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722959416; c=relaxed/simple;
-	bh=8F/sdfwOgYrozXSYzhW6xlVGWL5FX8sCck7YmA7e/mo=;
+	s=arc-20240116; t=1722959418; c=relaxed/simple;
+	bh=MNX0AX4yItYjv9aP4unerrqiXI17MhLCA3jpCkKbas8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RZfehEmKOKD/duC3WJA1heWfgqWMogflIYGNGey1jiNYyt/l+CvOngYSQtI7Nx852yua95YIblZZk2uLGx4IyOuLOrD/yy/is5qZfE93OBKuHsjsxMXkupYfJ3PLhYUGdFFkioh1DhuRMVSi0zcLgT/GQYfWm3lOQek6EKxThyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=cjWrwhOM; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f01e9f53e3so12938791fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 08:50:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1722959413; x=1723564213; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8F/sdfwOgYrozXSYzhW6xlVGWL5FX8sCck7YmA7e/mo=;
-        b=cjWrwhOMAHiYkbqzY2U3HTQZbQXR7v6c9JBKTRVXLqYZTtEMK9BWjixQ656rZ7o6wa
-         sccPWl/5xqcNGBR2tJ+Ha4cvuBqbVfQlYqCKC5Ux5TOWirR80KnwsV6exc2PL6eVdawX
-         oy0gIpyucHMe/F1B/OPbgvyXQqMuH2RdM8Wdb66yUclOlEN1q3DAxn5p2rm+HhaxjHvN
-         m1C0bV3uCRHiGcegXcn2n74IOIDwx74zVDfci6YjBzpRnDx8cG7oF1qWAGzQYc1aPTcp
-         h56LVugsqWDzs1W1v4tSQmwhllOky/4Leg4Hw9nqUowgq4ZDMNCBo9uL1jJiNXclIhpB
-         rC7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722959413; x=1723564213;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8F/sdfwOgYrozXSYzhW6xlVGWL5FX8sCck7YmA7e/mo=;
-        b=THERDNjzEQzheYoHXWRUGJm6f9K4MW3aN3by/TFkbycC9IUKK1SrXbQSti1HPjmkwa
-         twGNhvHay5kiWLHRTXhwdDLpwaITZwnB2Fwoo7NEy4rizjqjz6897aLxE7EXkDs8sUI4
-         SgtqnJ/OsSPo+/mPAk0dJR0YGZer+JQMj/rs58+n2RXRRqvTptFkxjB03Y1mGNNb3Gsg
-         As26rmcezSJwC2pU7JX4JS/jpsSPMWRG50I8x+M4i5TeTaPrbGkDjU7eju5hKjI/FZHw
-         X5tFC1k5X5At1S6dpYAliMyEoTP80i7500MRcYS64QoJaWST0NSev9ONR4M0sV6xLFon
-         f8FA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqbMQNNfWQFsBkfsDXM1ctXTTIZmLWjQOO5tG027ZrTnsD/ZV6T8CYKjt69KElrr5uOhaDhkP6BgFcnpEmcZDn1jZjvOiPY5Q5Hs/v
-X-Gm-Message-State: AOJu0YwUhexXkkioeZJy0Cjt6jr3y5CxxlEUQoEXsoKZow9eFx4IOpLz
-	u0O26sSoRsEC2vCaMkSoHAik2+fcnqswHSS36VLOAb8L2HR/JiVjYzkQJnV7uHkUhSeSlHAl7Zm
-	DtESMToqBqEmMEMXNPAmwe9hRcEZbANpoG0vtuQ==
-X-Google-Smtp-Source: AGHT+IEKRNQL6v8yZxwZiugCHsLJCc91BgG6XIW8t6WKvKDPtqvKAcvwQ3Mf0Z6iVsyMeVqV3TUGbDZ5W+id3C9qS34=
-X-Received: by 2002:a2e:9ed3:0:b0:2ef:17ee:62a2 with SMTP id
- 38308e7fff4ca-2f15aaab018mr133316761fa.14.1722959412812; Tue, 06 Aug 2024
- 08:50:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=UaGTeln+/oB+RfphxbFGeKKyY/UO8et5g6nKv8t4aWY/my8YoerOPQwFgwnXKOCx5b3KGjB9vh6wzMdSSO6oIPo3zCRJPeCllr2e4ml2SPJJeKXvW1MBUr+pVoiWfaRn4vcKlEwrNC9HpV/YyU/SLEY6lHwyP8YqfYS7nOsiUIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AphVWnIG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57747C4AF11
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:50:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722959418;
+	bh=MNX0AX4yItYjv9aP4unerrqiXI17MhLCA3jpCkKbas8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AphVWnIGKGptjmxqyUHrhGEUDs/u9YYgR4FD+ytyEW7uzufIGmNYKH+VtSYtzq8oI
+	 lVwY4jYRJBxY9OXhu2lkkbStqA6r8slMG06oMSuu3EoMvJDQrSzSOSxQuUEWD8IRuR
+	 s9ObHQqzk/i6LDWHQVUV/1uZMS29rJ246rPaUN4np3ZcARc8x1EWLVWwUQI4TNAyIS
+	 mT5GoMlP/wVjF3ASBuAILVXOI/HkVxy7DvefelEyPIe+6FHrCA4pDV+qoOCcYau4+6
+	 BCKavWs6GwdOTVeK130r/nRQY3y/pMfdVFrYw/1Y7c4hmCYOpxy98tzKmLcDHv+sp7
+	 cUyKh7Q9VQqWA==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52efd08e6d9so1412614e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 08:50:18 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzLr4eP6FwA2ooukw1wgwG1NmXkc4be946CJnNymmYbQE5SlKAZ
+	jeE/UtkiKE9SEtBMpe1O4trvDm/awzj1e2L0zigccNANKVBoh5vbzXpFTa1yJhadYYJdRvO6bqW
+	x0N+XUTUvCJFEm1Roc8zPLU02IfY=
+X-Google-Smtp-Source: AGHT+IGUYVUVcQ5kUVi2D8JkvZfb0KuRiJ8RGbi2blIBJOzX2qfiqBupMJYICOdo522BgU1J3op0Q5MlTunQ4u2ZzyA=
+X-Received: by 2002:ac2:5f47:0:b0:530:daee:cfb0 with SMTP id
+ 2adb3069b0e04-530daeed2a8mr227964e87.52.1722959416743; Tue, 06 Aug 2024
+ 08:50:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805194424.597244-1-irogers@google.com> <20240805194424.597244-4-irogers@google.com>
- <CAPqJEFpiy307B4OBHK4WJGjgbVm_woUrdZ+Vy_LSdQ=ECqZX-Q@mail.gmail.com>
- <CAP-5=fWDmdAkJSoncedZTaSgFwG+p3--jywDj9krnXSfkhh6dQ@mail.gmail.com>
- <ZrInOywRKzRmjtKF@x1> <ZrIqR07cYJnhcTq8@x1>
-In-Reply-To: <ZrIqR07cYJnhcTq8@x1>
-From: Eric Lin <eric.lin@sifive.com>
-Date: Tue, 6 Aug 2024 23:50:01 +0800
-Message-ID: <CAPqJEFoFfCG0_fqkVqakUK7CWs_8WREpmAd+f3H26UasGRPz2Q@mail.gmail.com>
-Subject: Re: [PATCH v1 4/5] perf pmu-events: Remove duplicated riscv firmware event
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Samuel Holland <samuel.holland@sifive.com>, Charles Ci-Jyun Wu <dminus@andestech.com>, 
-	Locus Wei-Han Chen <locus84@andestech.com>, Atish Patra <atishp@rivosinc.com>, 
-	Ji Sheng Teoh <jisheng.teoh@starfivetech.com>, Inochi Amaoto <inochiama@outlook.com>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Guilherme Amadio <amadio@gentoo.org>, 
-	Changbin Du <changbin.du@huawei.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, vincent.chen@sifive.com, 
-	greentime.hu@sifive.com
+References: <20240805231031.1760371-1-song@kernel.org> <CAL_Jsq+dxQxNV-Bm3q5vzCyfWEzO2Qv-jq29eGVaP-sC-jVyww@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+dxQxNV-Bm3q5vzCyfWEzO2Qv-jq29eGVaP-sC-jVyww@mail.gmail.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 6 Aug 2024 08:50:03 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW5NjtFzYi=zRBO7SwFvgRvJi1MEhgU9F5P99nTugEJwkg@mail.gmail.com>
+Message-ID: <CAPhsuW5NjtFzYi=zRBO7SwFvgRvJi1MEhgU9F5P99nTugEJwkg@mail.gmail.com>
+Subject: Re: [PATCH] Revert "perf: Add a counter for number of user access
+ events in context"
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Arnaldo,
+Hi Rob,
 
-On Tue, Aug 6, 2024 at 9:51=E2=80=AFPM Arnaldo Carvalho de Melo <acme@kerne=
-l.org> wrote:
+On Tue, Aug 6, 2024 at 6:37=E2=80=AFAM Rob Herring <robh@kernel.org> wrote:
 >
-> On Tue, Aug 06, 2024 at 10:38:07AM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Mon, Aug 05, 2024 at 09:05:26PM -0700, Ian Rogers wrote:
-> > > On Mon, Aug 5, 2024 at 8:54=E2=80=AFPM Eric Lin <eric.lin@sifive.com>=
- wrote:
-> > > >
-> > > > Hi Ian,
-> > > >
-> > > > I've sent a patch to fix it and the patch already merged. Thanks.
->
-> Also, already merged where? Upstream? In the riscv kernel tree? where?
->
-
-The patch already merged to Linux upstream:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D63ba5b0fb4f54db256ec43b3062b2606b383055d
-
-Thanks.
-
-Best regards,
-Eric Lin
-
-> - Arnaldo
->
-> > > > https://lore.kernel.org/all/20240719115018.27356-1-eric.lin@sifive.=
-com/
-> > >
-> > > Hi Eric/Arnaldo,
-> > >
-> > > Right, I already commented this should have gone through the
-> > > perf-tools-next tree:
-> > > https://lore.kernel.org/all/CAP-5=3DfV3NXkKsCP1WH0_qLRNpL+WuP8S3h1=3D=
-cHaUMH5MFkVHQg@mail.gmail.com/
-> > > Arnaldo, please take Eric's patch in preference to this one.
+> On Mon, Aug 5, 2024 at 5:10=E2=80=AFPM Song Liu <song@kernel.org> wrote:
 > >
-> > So I removed your version from perf-tools-next, eventually we'll get
-> > this merged upstream, I'm just checking this isn't going to get in our
-> > way of testing what we have in perf-tools-next...
+> > This reverts commit 82ff0c022d19c2ad69a472692bb7ee01ac07a40b.
 > >
-> >
-> > - Arnaldo
+> > perf_event->nr_user is not used any more. Remove it.
+>
+> What are you talking about? It is used whenever
+> PERF_EVENT_FLAG_USER_READ_CNT is set on an event:
+>
+> arch/x86/events/core.c:         event->hw.flags |=3D
+> PERF_EVENT_FLAG_USER_READ_CNT;
+> arch/x86/events/core.c: if (!(event->hw.flags & PERF_EVENT_FLAG_USER_READ=
+_CNT))
+> arch/x86/events/core.c: if (!(event->hw.flags & PERF_EVENT_FLAG_USER_READ=
+_CNT))
+> arch/x86/events/core.c: if (!(hwc->flags & PERF_EVENT_FLAG_USER_READ_CNT)=
+)
+> arch/x86/events/core.c:         !!(event->hw.flags &
+> PERF_EVENT_FLAG_USER_READ_CNT);
+> drivers/perf/arm_pmuv3.c:       return event->hw.flags &
+
+My fault. I didn't realize the code had been moved to drivers/perf/.
+
+Please ignore this. Sorry for the noise.
+
+Song
 
