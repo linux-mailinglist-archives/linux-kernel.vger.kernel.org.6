@@ -1,196 +1,219 @@
-Return-Path: <linux-kernel+bounces-276252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E59949123
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:24:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A0CE949163
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98A051C21F8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:24:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A7C0B29E3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0A91D27A2;
-	Tue,  6 Aug 2024 13:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44051D2799;
+	Tue,  6 Aug 2024 13:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LO9nI4X7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BAx3GpVq"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9571CB333
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E783A1D1F6E;
+	Tue,  6 Aug 2024 13:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722950605; cv=none; b=YbdwN3QWkr0COEpIONVGcBQBjcRwdiDP2ugTmg1v5D3gpp8xZtfHzzUUWDmBr5HKc4o3N/oM4dvOw2UscIHf/GFUlvAtOy5V0Ama2ILhyO1KbhP/Q4v1Ncu2q0ncWDjxCFsIevX0Uin95rCtQCOAqGyGAYMvhRUAJBYlmizdgxo=
+	t=1722950652; cv=none; b=dxpqaD2eUsXN83u5fbKoDyyWY2U3KkhlDgYCcaOayecC8sSW8shWmTPppq9NiVMMv2xKhOT2C8HRB/aiyLQIeCsyWN3pcda4p9ZzAsRWPeE4F1x7ZaP5HCHfJLSieqA5GocvZPNHPTpjPaUdDj3XixD5s1Fzpui6EzlFfGQq/YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722950605; c=relaxed/simple;
-	bh=rU255xyhAb7brULso+fTqDh4oBnAsC0sHUaLBv1rRPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gjwQSziQNY99JoI8liYIH+qtY+OJ/H/mm1bs2rBY6obiEHOC0bLX+qciOtsWzrCBSgCHxhq9mw4bBxA1fJprX2wCLcP6OpmJPsmCLqs1QcLC/gjdXjj6lm75rVVWQ4BtuaiZAlncFk0CPreK9xtuwd17qM6WTbZX+RJG+TBKW0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LO9nI4X7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722950603;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ZB/Nz+T68lcjdmx6jQYY05PBs50un9o0yFuZF5Y14W0=;
-	b=LO9nI4X7yPyc8dpwOdRuSjUzKekqUpEjp4Q9wsrBl6hp7XlEnpz3JpzPobvH4WBReFbv0N
-	PaS4u0F8HyyO8bJN7CDZShpsYpypIhu5kjq5RSGGcJjtNlB8A+x1GyQ43kN9FCXLRraM4o
-	750fXGCC+Up3dAtYQyRsR9OTxzmQjc8=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-498-IoyzZnFgN0WWb8U5YDg3dw-1; Tue, 06 Aug 2024 09:23:21 -0400
-X-MC-Unique: IoyzZnFgN0WWb8U5YDg3dw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4281310bf7aso5030265e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:23:21 -0700 (PDT)
+	s=arc-20240116; t=1722950652; c=relaxed/simple;
+	bh=flY31rR6pmZoH4oEeY0NtqzgVGaYVAz6Fi0dOwG65fU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sm0BEgHzdECfi/MHWKt5bUIr3MFwvbezheFWTBXdFafxVSMsBFsolYv40kNBtugaz18D21GQB0YHsR/pVTU9c5WPekcHeckLrSyVW7bVVsHj4BugI8JoaZ9Pjmv8PqMiyHAgKL2D7QtpEqorQNOEuYW4YmhNaRfae0ufxGAZFH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BAx3GpVq; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a975fb47eso84467366b.3;
+        Tue, 06 Aug 2024 06:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722950649; x=1723555449; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=UIfR/qoWHRktUdU3sb33iLjGERsBhmCcHVpktbloA4M=;
+        b=BAx3GpVqwvLtY9gGHJIwBdleWglJU+HOojqWjKdRODYAjIBijjO1i5ofuj7y10Pbc0
+         ieY2ZH/uTQ0eDl/RuYDfSgpLFidt7ODOLcaXzQuB/IhEp1P8kVYEt/UfjVZgV6UgLX7G
+         2KjqqPc2s4v0t27NqUHwIo6qo5eJ1v5AiTDxe0EyQ2ieHXVvShob/1D9gOMSGa3gg3FE
+         brB9wjZeWoLs0HCEvWeaLoUDmHSpJi+tHEzak3NB98WM+nbgLBxcoo9IoBjAYqggW3Qd
+         mlC0nNubNyRM9JpUOUt/1vReXEWjDfbWNntylvzTcYhefom4uiLRLRmtDaUO//82vdlf
+         eRKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722950600; x=1723555400;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZB/Nz+T68lcjdmx6jQYY05PBs50un9o0yFuZF5Y14W0=;
-        b=tCSJGrA/82vHZKcyMK9Aa8XDgsmhLPZMyVtuMh3tBen5mvs4m44kTJs+iqCh5k/4CA
-         8fuc/qzA1nje3AZU318GeTWbFSGhfLDTZVd5XLzNINMjuy7/pDS66ytosf87+JmNqrEm
-         PTicwzs1yKfQx/hWD8Sk1AhVLABIjfjbGIrNTP8hKpLRdqREGT7iy1ul8eaJoL4aFiqQ
-         EAmMFHiGjyRj3RmkT94k8X7nGZ4FctelpTp23uIayZDpUaCm7gHP0JdDKv+LN8GZeRUr
-         vYWzHZgC/oGsGydy5WWykyjsgZV8kHqGczNb6sf+cclNJh4dp+kwptO+WgULDgqMO87U
-         M7sw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHxWbrZj7DyyzUaDuvkPm35bgaOG+g/hSkxYA6X4g0UYTVjX8ZObbPVIhWQS46+t96uEmYUNxXJulyQy7tBFRO7Uye/l4+6p5rcgyW
-X-Gm-Message-State: AOJu0Yw611eNifVnxdq3bJfwdGOoYDFezi3oOK6g0kmf+F6y49+Qa17V
-	vPtA+yk9he5mgPKIs3ejIUHu4DflDeRYjvmNO5HWBTXrMTuyiDGrCOB+CneqyIc6+ZDcDALRscU
-	w3sJ7jPC2zoOG5+PD0c2OWC9FefiWOpBDtlB5DjtUQEwgyx4/RYtQ1kwcbaHhyg==
-X-Received: by 2002:a05:600c:1906:b0:426:686f:cb4c with SMTP id 5b1f17b1804b1-428e6b96b3bmr118640165e9.32.1722950600095;
-        Tue, 06 Aug 2024 06:23:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGnLFmt3qZaTRVeNpAWHRxvq5JQmQg7WtAtzN+rNgpMvX+m7w9zDhJGl/mp8SOyNMjpKdqIw==
-X-Received: by 2002:a05:600c:1906:b0:426:686f:cb4c with SMTP id 5b1f17b1804b1-428e6b96b3bmr118639805e9.32.1722950599607;
-        Tue, 06 Aug 2024 06:23:19 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bba3249sm242378295e9.48.2024.08.06.06.23.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 06:23:19 -0700 (PDT)
-Message-ID: <14bf500e-e0a0-4217-9c50-7676543adc33@redhat.com>
-Date: Tue, 6 Aug 2024 15:23:16 +0200
+        d=1e100.net; s=20230601; t=1722950649; x=1723555449;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UIfR/qoWHRktUdU3sb33iLjGERsBhmCcHVpktbloA4M=;
+        b=De+gWXb/eMNjQr0h2rXZ2a1dQYWTtSJhE/vI8ttSytBzKCD7x1fWgsHszUtW7NlT47
+         Oz5urYfgiMJA9wxlh84pBlr9mYo0gPpW4t97k/t+OKMDk7gj9Zp4U0UDp0IA/EPFXfrT
+         VlYUDb0zeiLY05SXJt/fWdv5V5ZGzoNqiPN6CpbTzHRXVnUOuCVrujyak3LcI1n85F/4
+         Z78VEAd5jk66bRWEzMFSG/Fs2astHbg2uQ3b91ukiJ0Gp1TrT7hrPRX+awcdCHHSDhN+
+         dUtovsUqf8swstOb8ZRqi5O/4xJwP8Vq2l4/fCi++e1/lREchNasIMn6SOu/K1Uve7rA
+         nDJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXSt9czfs1ZVyuxllfKefgNXIPCUAwG/SvK6N2XcVK8xIThH/3l3bxI49rRwxklFBSBBUkBwNZpauYi2xd6ZJKoZ0FaNv+aqzxDDHDB058C2ynvbG2v6EGwgj/7tCXBrKK
+X-Gm-Message-State: AOJu0YzNtV4QjsrQERsaHNSbo8RZZwY8NMrep8leNxlZlm+Uql/vjHPe
+	zks18A1SnWo8C6C2HcIB8/XkK/xXkW1q//rokS9YVGvYHUFhxoCkXmY0YA==
+X-Google-Smtp-Source: AGHT+IFWOnCIA2gd194+ITHxSNhVnn2tvZxKDVseMUk62HGons/HEc9a24a76DMnSoeM0IX6QmbX9w==
+X-Received: by 2002:a17:907:7254:b0:a77:b784:deba with SMTP id a640c23a62f3a-a7dc4d8f5a7mr1122599966b.6.1722950648829;
+        Tue, 06 Aug 2024 06:24:08 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0f8d2sm549363066b.46.2024.08.06.06.24.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 06:24:08 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 6 Aug 2024 15:24:06 +0200
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Juri Lelli <juri.lelli@redhat.com>,
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Artem Savkov <asavkov@redhat.com>
+Subject: Re: NULL pointer deref when running BPF monitor program (6.11.0-rc1)
+Message-ID: <ZrIj9jkXqpKXRuS7@krava>
+References: <ZrCZS6nisraEqehw@jlelli-thinkpadt14gen4.remote.csb>
+ <ZrECsnSJWDS7jFUu@krava>
+ <CAADnVQLMPPavJQR6JFsi3dtaaLHB816JN4HCV_TFWohJ61D+wQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 23/26] of, numa: return -EINVAL when no numa-node-id is
- found
-To: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
- Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dan Williams <dan.j.williams@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, Davidlohr Bueso
- <dave@stgolabs.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Heiko Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Jonathan Corbet <corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>,
- Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- Samuel Holland <samuel.holland@sifive.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Thomas Gleixner <tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>,
- Will Deacon <will@kernel.org>, Zi Yan <ziy@nvidia.com>,
- devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-cxl@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- loongarch@lists.linux.dev, nvdimm@lists.linux.dev,
- sparclinux@vger.kernel.org, x86@kernel.org
-References: <20240801060826.559858-1-rppt@kernel.org>
- <20240801060826.559858-24-rppt@kernel.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240801060826.559858-24-rppt@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQLMPPavJQR6JFsi3dtaaLHB816JN4HCV_TFWohJ61D+wQ@mail.gmail.com>
 
-On 01.08.24 08:08, Mike Rapoport wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On Mon, Aug 05, 2024 at 10:00:40AM -0700, Alexei Starovoitov wrote:
+> On Mon, Aug 5, 2024 at 9:50 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > On Mon, Aug 05, 2024 at 11:20:11AM +0200, Juri Lelli wrote:
+> >
+> > SNIP
+> >
+> > > [  154.566882] BUG: kernel NULL pointer dereference, address: 000000000000040c
+> > > [  154.573844] #PF: supervisor read access in kernel mode
+> > > [  154.578982] #PF: error_code(0x0000) - not-present page
+> > > [  154.584122] PGD 146fff067 P4D 146fff067 PUD 10fc00067 PMD 0
+> > > [  154.589780] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+> > > [  154.594659] CPU: 28 UID: 0 PID: 2234 Comm: thread0-13 Kdump: loaded Not tainted 6.11.0-rc1 #8
+> > > [  154.603179] Hardware name: Dell Inc. PowerEdge R740/04FC42, BIOS 2.10.2 02/24/2021
+> > > [  154.610744] RIP: 0010:bpf_prog_ec8173ca2868eb50_handle__sched_pi_setprio+0x22/0xd7
+> > > [  154.618310] Code: cc cc cc cc cc cc cc cc 0f 1f 44 00 00 66 90 55 48 89 e5 48 81 ec 30 00 00 00 53 41 55 41 56 48 89 fb 4c 8b 6b 00 4c 8b 73 08 <41> 8b be 0c 04 00 00 48 83 ff 06 0f 85 9b 00 00 00 41 8b be c0 09
+> > > [  154.637052] RSP: 0018:ffffabac60aebbc0 EFLAGS: 00010086
+> > > [  154.642278] RAX: ffffffffc03fba5c RBX: ffffabac60aebc28 RCX: 000000000000001f
+> > > [  154.649411] RDX: ffff95a90b4e4180 RSI: ffffabac4e639048 RDI: ffffabac60aebc28
+> > > [  154.656544] RBP: ffffabac60aebc08 R08: 00000023fce7674a R09: ffff95a91d85af38
+> > > [  154.663674] R10: ffff95a91d85a0c0 R11: 000000003357e518 R12: 0000000000000000
+> > > [  154.670807] R13: ffff95a90b4e4180 R14: 0000000000000000 R15: 0000000000000001
+> > > [  154.677939] FS:  00007ffa6d600640(0000) GS:ffff95c01bf00000(0000) knlGS:0000000000000000
+> > > [  154.686026] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > [  154.691769] CR2: 000000000000040c CR3: 000000014b9f2005 CR4: 00000000007706f0
+> > > [  154.698903] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > [  154.706035] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > [  154.713168] PKRU: 55555554
+> > > [  154.715879] Call Trace:
+> > > [  154.718332]  <TASK>
+> > > [  154.720439]  ? __die+0x20/0x70
+> > > [  154.723498]  ? page_fault_oops+0x75/0x170
+> > > [  154.727508]  ? sysvec_irq_work+0xb/0x90
+> > > [  154.731348]  ? exc_page_fault+0x64/0x140
+> > > [  154.735275]  ? asm_exc_page_fault+0x22/0x30
+> > > [  154.739461]  ? 0xffffffffc03fba5c
+> > > [  154.742780]  ? bpf_prog_ec8173ca2868eb50_handle__sched_pi_setprio+0x22/0xd7
+> >
+> > hi,
+> > reproduced.. AFAICS looks like the bpf program somehow lost the booster != NULL
+> > check and just load the policy field without it and crash when booster is rubbish
+> >
+> > int handle__sched_pi_setprio(u64 * ctx):
+> > ; int handle__sched_pi_setprio(u64 *ctx)
+> >    0: (bf) r6 = r1
+> > ; struct task_struct *boosted = (void *) ctx[0];
+> >    1: (79) r7 = *(u64 *)(r6 +0)
+> > ; struct task_struct *booster = (void *) ctx[1];
+> >    2: (79) r8 = *(u64 *)(r6 +8)
+> > ; if (booster->policy != SCHED_DEADLINE)
+> >
+> > curious why the check disappeared, because object file has it, so I guess verifier
+> > took it out for some reason, will check
 > 
-> Currently of_numa_parse_memory_nodes() returns 0 if no "memory" node in
-> device tree contains "numa-node-id" property. This makes of_numa_init()
-> to return "success" despite no NUMA nodes were actually parsed and set
-> up.
+> Juri,
 > 
-> arch_numa workarounds this by returning an error if numa_nodes_parsed is
-> empty.
+> Thanks for flagging!
 > 
-> numa_memblks however would WARN() in such case and since it will be used
-> by arch_numa shortly, such warning is not desirable.
+> Jiri,
 > 
-> Make sure of_numa_init() returns -EINVAL when no NUMA node information
-> was found in the device tree.
+> the verifier removes the check because it assumes that pointers
+> passed by the kernel into tracepoint are valid and trusted.
+> In this case:
+>         trace_sched_pi_setprio(p, pi_task);
 > 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
+> pi_task can be NULL.
+> 
+> We cannot make all tracepoint pointers to be PTR_TRUSTED | PTR_MAYBE_NULL
+> by default, since it will break a bunch of progs.
+> Instead we can annotate this tracepoint arg as __nullable and
+> teach the verifier to recognize such special arguments of tracepoints.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+ok, so you mean to be able to mark it in event header like:
 
--- 
-Cheers,
+  TRACE_EVENT(sched_pi_setprio,
+        TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task __nullable),
 
-David / dhildenb
+I guess we could make pahole to emit DECL_TAG for that argument,
+but I'm not sure how to propagate that __nullable info to pahole
 
+while wondering about that, I tried the direct fix below ;-)
+
+jirka
+
+
+---
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 95426d5b634e..1a20bbdead64 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -6377,6 +6377,25 @@ int btf_ctx_arg_offset(const struct btf *btf, const struct btf_type *func_proto,
+ 	return off;
+ }
+ 
++static bool is_tracing_prog_raw_tp(const struct bpf_prog *prog, const char *name)
++{
++	struct btf *btf = prog->aux->attach_btf;
++	const struct btf_type *t;
++	const char *tname;
++
++	if (prog->expected_attach_type != BPF_TRACE_RAW_TP)
++		return false;
++
++	t = btf_type_by_id(btf, prog->aux->attach_btf_id);
++	if (!t)
++		return false;
++
++	tname = btf_name_by_offset(btf, t->name_off);
++	if (!tname)
++		return false;
++	return !strcmp(tname, name);
++}
++
+ bool btf_ctx_access(int off, int size, enum bpf_access_type type,
+ 		    const struct bpf_prog *prog,
+ 		    struct bpf_insn_access_aux *info)
+@@ -6544,6 +6563,10 @@ bool btf_ctx_access(int off, int size, enum bpf_access_type type,
+ 		}
+ 	}
+ 
++	/* Second argument of sched_pi_setprio tracepoint can be null */
++	if (is_tracing_prog_raw_tp(prog, "btf_trace_sched_pi_setprio") && arg == 1)
++		info->reg_type |= PTR_MAYBE_NULL;
++
+ 	info->btf = btf;
+ 	info->btf_id = t->type;
+ 	t = btf_type_by_id(btf, t->type);
 
