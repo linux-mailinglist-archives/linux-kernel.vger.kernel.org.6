@@ -1,61 +1,87 @@
-Return-Path: <linux-kernel+bounces-276838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5514A949907
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:28:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74CEE9498F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04FC11F244B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:28:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A52C21C227C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16B1158DBA;
-	Tue,  6 Aug 2024 20:27:53 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA61155726;
+	Tue,  6 Aug 2024 20:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VeHwzW+r"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B3540875;
-	Tue,  6 Aug 2024 20:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FCB73451
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722976073; cv=none; b=EdloIc9FBGc6GGs2biVVgzCo4F1ITXREEe9adkyHsP1qFkTVC4KxuqcQpM6jfmBvX4RW8SSXWN1LC2QR0aoq3zuFYG6hPEg163NGdJdIH4te/e5XcKOm8pe16g5bDmWOjr2UGb+OmAcyU8CSGn0zuBFBxVLFzzfyj5sCA/q61to=
+	t=1722975656; cv=none; b=h1Uybch0ywtDxwcGHGEbJh7iHoFLaSY0O9/iNXYdiW69rsz9v8kqf+YzIypprO4wzSRdd+dqEtQWjjxfl8syCb7FUPCdzNccP2MEKJOIGKH/Q5CKhjJV0Z9Rgp7flTDvt/1GvHwdjtadH9tZvCU7CrcYuvkqBYyQzeBRx4iTPD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722976073; c=relaxed/simple;
-	bh=hviKw2gsMRb17vKpnsMoBwOyTh4jnXdi7myuXldoCP0=;
+	s=arc-20240116; t=1722975656; c=relaxed/simple;
+	bh=lbD2yN7+U0zSlm4dKUDg6s57Ahi2A+OIRdKwppqjUGI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ieH2916N38xQbteDFNxjZOkMm8y54tRvbdUCeGuFBL9NsZ0JToGWEaMURe0tQ8WVK/PUV2zr3CW4hei4OWcIzJDS4ObfU3J0mvqAVqeszAkqWuFXjK5IW9+hTPP9qrdXARx0rTHlNTE7KPpJNetPJdXDSYR/3J93tFTRgx8Ke9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 962C4300002D5;
-	Tue,  6 Aug 2024 22:20:39 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 8EA124D196; Tue,  6 Aug 2024 22:20:39 +0200 (CEST)
-Date: Tue, 6 Aug 2024 22:20:39 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	mika.westerberg@linux.intel.com, Hsin-Yi Wang <hsinyi@chromium.org>
-Subject: Re: [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all
- Devicetree based platforms
-Message-ID: <ZrKFl-dvNSNCWd8e@wunner.de>
-References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
- <20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org>
- <ZqyxS8spZ-ohsP3R@wunner.de>
- <20240805133555.GC7274@thinkpad>
- <ZrHITXLkKrDbQKQp@wunner.de>
- <20240806124107.GB2968@thinkpad>
- <ZrIe70Z7uFven8HH@wunner.de>
- <20240806143918.GC2968@thinkpad>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PPanJo3M1+zNhBfH0M6J//sFWBlzMV7mFD2C02ee6HmlcFqL2mExLcdB7ZwyKTVZsiYF0StjjR/Zw1WKevcgxHotoQJrXioSHcfBVPvSx1fh876P6UmiefzaXybDgwRP1ktQVxv3kO+tlqrMeyfuRwxU7n+6/jWymofZ5kRMtFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VeHwzW+r; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fd9e6189d5so9225425ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 13:20:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722975655; x=1723580455; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S01QFwPjAI6in0wYYdm17SnJVb2Cx1kFLtFbTqFHpRo=;
+        b=VeHwzW+rWvJBubEMBgOdY8qsBqgim8ABELINgS5dP66RCgZ/pakb7DB0SXN29+e/Hm
+         Lyb6NZxflD1utaa4/d7l+SgOwO60u+KwNYxG8+3kaef++FVLggBCeOcva5ER4tULT7w0
+         Ov7lVuBdPegPgN0sbABK9Oxvbt27/MOz/K7CgUEON2dToKI9aojRBC2C/c5y9shZVhwK
+         bBJnKsub+d8FkmMYlWyLCi87b2TAPiHy16bhipAoAnXDmNKVzACUciyO+Ch0S9EpIQAc
+         qckx9Y9WDfqgykgMox6DccNpuYq9HNCqfKyVa8HR2cvwjn4iHq+ZjVHYdxRp4xEtkgze
+         GRYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722975655; x=1723580455;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S01QFwPjAI6in0wYYdm17SnJVb2Cx1kFLtFbTqFHpRo=;
+        b=L3UY/dWoOjS0RLnUGg8OMOU9mWKLWOas+2wReosoWaX0t/HgDIfkoXBejFRWNosSqT
+         oLjgpcYqhhwox/a4hFfNdGHlRgG3QPKPRNvW1kxLFVohvZitf12TA2efxVgaqFjh9u2R
+         2QKK2z0s2tYPouF94ZRTI1R4c9L9VLpKQRagOWqZ/CLD7mIQCt5hrDKb0bheq52I4xNV
+         Hp4QbnlmDJdPmvJ+iLSuEV4CzuFbwEng/Nh2GxENcV3hIM7QGkN30s0tQLU4mu0xeUXX
+         pTZN9mcY4OovxEhAX6fazSOV2u6IPw46UGmIQRxNs6L1FXNpM7H3i2qD8Yl4Fc3d+ea7
+         2zdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEFd+8ecEtJeGdWXw5Ufjx6UGJJwTDrcU8Ye4AnULBbyKzLgMs9oteHILuS9k7VZR9RGw7406QrrT1QP9bo7TNTJ665WvpOcyyoXxL
+X-Gm-Message-State: AOJu0YwukXIxSnfaCUgJzu9md5HtvbbFpAGTrON0g0lPb0cWXPR9Ks7H
+	7B2DbNeZKb16UQK/IhjLIvjLvbLiEV2Z8JoWdGUPs0jrtsGupFyJ
+X-Google-Smtp-Source: AGHT+IFmLGVSduRWWrQpg7B0OrScjCWZ7oUp7n6LTZv/4VMXccfTsOilTQNlNTt+QfIHmITZgw+vRA==
+X-Received: by 2002:a17:902:d4c3:b0:1fb:68a2:a948 with SMTP id d9443c01a7336-1ff5728183emr175162085ad.15.1722975654528;
+        Tue, 06 Aug 2024 13:20:54 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5905ca1bsm90924455ad.138.2024.08.06.13.20.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 13:20:54 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 6 Aug 2024 10:20:52 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
+	Ingo Molnar <mingo@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
+Message-ID: <ZrKFpCz2hbSjvE5M@slm.duckdns.org>
+References: <ZpWjbCQPtuUcvo8r@slm.duckdns.org>
+ <20240723163358.GM26750@noisy.programming.kicks-ass.net>
+ <ZqAFtfSijJ-KMVHo@slm.duckdns.org>
+ <20240724085221.GO26750@noisy.programming.kicks-ass.net>
+ <ZrJ_9OF3TaXA3xtp@slm.duckdns.org>
+ <20240806201845.GY37996@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,37 +90,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240806143918.GC2968@thinkpad>
+In-Reply-To: <20240806201845.GY37996@noisy.programming.kicks-ass.net>
 
-On Tue, Aug 06, 2024 at 08:09:18PM +0530, Manivannan Sadhasivam wrote:
-> Regarding your comment on patch 3/4, we already have the sysfs attribute
-> to control whether the device can be put into D3Cold or not and that is
-> directly coming from userspace. So there is no guarantee to assume that
-> D3Hot support is considered.
+Hello, Peter.
 
-If a device is not allowed to be suspended to D3cold, it will only be
-suspended to D3hot.
+On Tue, Aug 06, 2024 at 10:18:45PM +0200, Peter Zijlstra wrote:
+...
+> OK. So my plan was to finish reading the for 6.11 pull diff, and then
+> merge that eevdf patch-set I send out. Post those patches I had in
+> sched/prep that re-arrange the put_prev thing. Then merge those, and
+> then ask you to rebase the whole lot on top of that, after which I'll
+> pull your branch.
 
-If a port is put into anything deeper than D0, its secondary bus is
-no longer in B0 (PCI-PM r1.2 table 6-1) and children are inaccessible,
-so they're "effectively" in D3cold.  Hence if a device cannot be
-suspended to D3cold, it will block all parent bridges from being
-suspended.  That's what the logic in pci_bridge_d3_update() and
-pci_dev_check_d3cold() is doing.
+Oh... I'm planning to keep the tree history and just send the pull request
+to Linus. I can just follow the core changes and update accordingly as
+necessary.
 
-The d3cold_allowed attribute in sysfs is just one of several reasons
-why a device may not go to D3cold (see pci_dev_check_d3cold() for
-details).
+Thanks.
 
-The d3cold_allowed attribute was originally intended to disable D3cold
-on devices where it was known to not work.  Nowadays this should all
-be handled automatically, which is why we've discussed moving the
-attribute to debugfs:
-
-https://lore.kernel.org/all/20230918132424.GA11357@wunner.de/
-https://lore.kernel.org/all/20231002181025.82746-1-mario.limonciello@amd.com/
-
-Thanks,
-
-Lukas
+-- 
+tejun
 
