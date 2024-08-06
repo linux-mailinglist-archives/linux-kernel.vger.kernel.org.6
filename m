@@ -1,111 +1,183 @@
-Return-Path: <linux-kernel+bounces-276770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 477D294982E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:25:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031F994982C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5EC51F23364
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:24:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91BB3B24E77
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830FC146A6D;
-	Tue,  6 Aug 2024 19:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C77142E92;
+	Tue,  6 Aug 2024 19:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SqXCxba7"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7188047F4D;
-	Tue,  6 Aug 2024 19:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfsroDnx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2A1762C1;
+	Tue,  6 Aug 2024 19:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722972283; cv=none; b=RVnDXwYA1QOhmK5PvXN5tPZS8Fe8/vBGHygwfpCoJ0UHoyP+FQ5Pl+fRhb5VA45BHTRmcHmT8JtaFOkdZCq0O4SKhY2XU2jruRTYyMM9oiEEXVhckejIjr4EEQw7NklanytnFE+jNjpa5SHtcAbzS0SgSno3R82+LMyLJ6nNcas=
+	t=1722972282; cv=none; b=pINbv6B0uJoSNcJmpXssP8dKqHi+4JYyxlNdX5SgBciE8Ff2P/2N5D+jM3PpyfUMQaXn3DI+8MBCMIJZsQgNIC9wmlEG+woDODybtAIUfHwFVahMYcIy7ZicClcnvkfJBm4SL3K9rFN/XsBQL8qEoT0BT8gkmrDo4LoZszbn+eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722972283; c=relaxed/simple;
-	bh=lx4SKSYG9IQt/tT0YU0rp35SXnpgN8Tt+kd6Z8utk2I=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BiPhH57Nw+c5abNujH3Vt1e6PMnnO/5zmbTe5DdT8+dNeMA77imlTzLrQ4JekjN+AIDBzR18X2m7A8qvM1LKAAgDkdazat62ZRFGpaxdoYUOPrbP/6nd16CVOo2+Eekyq9rbd7v2GTh51sqjoA+6eGKf1S8b+0gieAZM8aXQnXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SqXCxba7; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.49.54] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 8018920B7165;
-	Tue,  6 Aug 2024 12:24:40 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8018920B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1722972281;
-	bh=Qbx96xFbGoYdTWGhHn3B+cy2pNWGVzfzN21Xqhn+OSk=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=SqXCxba7R3fhOrXQIUZw3R4WO4OkqLSq0ky5wLl6zBu3kxtU4lSB7e0xih8mApH5E
-	 sCdfu13aveEjfkIQ9CMyGkjBs7+EvZF46Gr4HZ5p1dckvpOkNliR0kW2lXLKpCg8Km
-	 1KUtVl+grJYw+dT7Ck7tx9MIrgOovUzrlSZqbCI4=
-Message-ID: <389da90e-df78-4ea4-8453-ae2080a68956@linux.microsoft.com>
-Date: Tue, 6 Aug 2024 12:24:40 -0700
+	s=arc-20240116; t=1722972282; c=relaxed/simple;
+	bh=KanH2dsOXDBjIaC/3ljdXiWmUXY7N4CM55GZvVkAZqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KslfIfCQT/5n0WVJWYt0sAkIDskbTRWEyFlgELkhxFyNfFSpbCNfDhIvyXqwFItY19PI/afgWK2mo2KrwXwGgSceFzTnmDW6A27y0cxXeyDNE1J9w8an2ZLqwMZjLQMbNjQULBLn9/82MiHxPhL0sX15lV3VXUyByE6a2jUKd9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VfsroDnx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3334AC4AF0D;
+	Tue,  6 Aug 2024 19:24:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722972282;
+	bh=KanH2dsOXDBjIaC/3ljdXiWmUXY7N4CM55GZvVkAZqs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VfsroDnxJeoQkrr8LTbXXj4qV6h65CT/s1tfiagL0/SjcS5Rl/TJBsB9YMwXqAE8q
+	 Jrltu7ohmMQHALNGGUTy+qiqoHAOZlVRHlO1xdxgxpQjN8HbwcaqFpLPywZq4jqk93
+	 SQfX5JawXfqwc7/I5x61Cl1rHb+2aMzlr36cArjeY/FXb9JhybX/BQGiK/KhnHCbcG
+	 UkHgRf7cer9lsvwe4MqnpyLO0pUx/sF/zwm9PJpeXyj7NgMn6zUGZOo9BpxeoiBqpQ
+	 3OrEx4dmzsO7TiW4VA1KSdoLe1aGqJuqdt1VbJcGEdrabM7cl9NESplbtF1QdLm0cy
+	 fYGJu6IIuxyHA==
+Date: Tue, 6 Aug 2024 12:24:41 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v3 10/14] xfs: Do not free EOF blocks for forcealign
+Message-ID: <20240806192441.GM623936@frogsfrogsfrogs>
+References: <20240801163057.3981192-1-john.g.garry@oracle.com>
+ <20240801163057.3981192-11-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: eahariha@linux.microsoft.com, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>,
- Sunil V L <sunilvl@ventanamicro.com>, Nick Kossifidis <mick@ics.forth.gr>,
- Sebastien Boeuf <seb@rivosinc.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org, iommu@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux@rivosinc.com, Lu Baolu <baolu.lu@linux.intel.com>,
- Zong Li <zong.li@sifive.com>
-Subject: Re: [PATCH v8 7/7] iommu/riscv: Paging domain support
-To: Tomasz Jeznach <tjeznach@rivosinc.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Paul Walmsley <paul.walmsley@sifive.com>
-References: <cover.1718388908.git.tjeznach@rivosinc.com>
- <bdd1e0547e01d012bf40c5e33b752e77c6663c90.1718388909.git.tjeznach@rivosinc.com>
-Content-Language: en-US
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-In-Reply-To: <bdd1e0547e01d012bf40c5e33b752e77c6663c90.1718388909.git.tjeznach@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801163057.3981192-11-john.g.garry@oracle.com>
 
-On 6/14/2024 10:27 PM, Tomasz Jeznach wrote:
-> Introduce first-stage address translation support.
+On Thu, Aug 01, 2024 at 04:30:53PM +0000, John Garry wrote:
+> For when forcealign is enabled, we want the EOF to be aligned as well, so
+> do not free EOF blocks.
 > 
-> Page table configured by the IOMMU driver will use the highest mode
-> implemented by the hardware, unless not known at the domain allocation
-> time falling back to the CPU’s MMU page mode.
-> 
-> This change introduces IOTINVAL.VMA command, required to invalidate
-> any cached IOATC entries after mapping is updated and/or removed from
-> the paging domain.  Invalidations for the non-leaf page entries use
-> IOTINVAL for all addresses assigned to the protection domain for
-> hardware not supporting more granular non-leaf page table cache
-> invalidations.
-> 
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Reviewed-by: Zong Li <zong.li@sifive.com>
-> Signed-off-by: Tomasz Jeznach <tjeznach@rivosinc.com>
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org> #earlier version
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 > ---
->  drivers/iommu/riscv/iommu.c | 642 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 639 insertions(+), 3 deletions(-)
+>  fs/xfs/xfs_bmap_util.c |  7 +++++--
+>  fs/xfs/xfs_inode.c     | 14 ++++++++++++++
+>  fs/xfs/xfs_inode.h     |  2 ++
+>  3 files changed, 21 insertions(+), 2 deletions(-)
 > 
-
-> @@ -856,7 +1473,7 @@ static struct iommu_domain riscv_iommu_identity_domain = {
+> diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+> index fe2e2c930975..60389ac8bd45 100644
+> --- a/fs/xfs/xfs_bmap_util.c
+> +++ b/fs/xfs/xfs_bmap_util.c
+> @@ -496,6 +496,7 @@ xfs_can_free_eofblocks(
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	xfs_fileoff_t		end_fsb;
+>  	xfs_fileoff_t		last_fsb;
+> +	xfs_fileoff_t		dummy_fsb;
+>  	int			nimaps = 1;
+>  	int			error;
 >  
->  static int riscv_iommu_device_domain_type(struct device *dev)
->  {
-> -	return IOMMU_DOMAIN_IDENTITY;
-> +	return 0;
+> @@ -537,8 +538,10 @@ xfs_can_free_eofblocks(
+>  	 * forever.
+>  	 */
+>  	end_fsb = XFS_B_TO_FSB(mp, (xfs_ufsize_t)XFS_ISIZE(ip));
+> -	if (xfs_inode_has_bigrtalloc(ip))
+> -		end_fsb = xfs_rtb_roundup_rtx(mp, end_fsb);
+> +
+> +	/* Only try to free beyond the allocation unit that crosses EOF */
+> +	xfs_roundout_to_alloc_fsbsize(ip, &dummy_fsb, &end_fsb);
+> +
+>  	last_fsb = XFS_B_TO_FSB(mp, mp->m_super->s_maxbytes);
+>  	if (last_fsb <= end_fsb)
+>  		return false;
+> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> index 5af12f35062d..d765dedebc15 100644
+> --- a/fs/xfs/xfs_inode.c
+> +++ b/fs/xfs/xfs_inode.c
+> @@ -3129,6 +3129,20 @@ xfs_inode_alloc_unitsize(
+>  	return XFS_FSB_TO_B(ip->i_mount, xfs_inode_alloc_fsbsize(ip));
 >  }
+>  
+> +void
+> +xfs_roundout_to_alloc_fsbsize(
+> +	struct xfs_inode	*ip,
+> +	xfs_fileoff_t		*start,
+> +	xfs_fileoff_t		*end)
+> +{
+> +	unsigned int		blocks = xfs_inode_alloc_fsbsize(ip);
+> +
+> +	if (blocks == 1)
+> +		return;
+> +	*start = rounddown_64(*start, blocks);
+> +	*end = roundup_64(*end, blocks);
+> +}
 
-<snip>
-Sorry for the drive by comment, I just happen to be in the nearby code
-context.
+This is probably going to start another round of shouting, but I think
+it's silly to do two rounding operations when you only care about one
+value.  In patch 12 it results in a bunch more dummy variables that you
+then ignore.
 
-Nit: It may be better to use IOMMU_DOMAIN_BLOCKED here for readability
-rather than the bare value.
+Can't this be:
 
-Thanks,
-Easwar
+static inline xfs_fileoff_t
+xfs_inode_rounddown_alloc_unit(
+	struct xfs_inode	*ip,
+	xfs_fileoff		off)
+{
+	unsigned int		rounding = xfs_inode_alloc_fsbsize(ip);
+
+	if (rounding == 1)
+		return off;
+	return rounddown_64(off, rounding);
+}
+
+static inline xfs_fileoff_t
+xfs_inode_roundup_alloc_unit(
+	struct xfs_inode	*ip,
+	xfs_fileoff		off)
+{
+	unsigned int		rounding = xfs_inode_alloc_fsbsize(ip);
+
+	if (rounding == 1)
+		return off;
+	return roundup_64(off, rounding);
+}
+
+Then that callsite can be:
+
+	end_fsb = xfs_inode_roundup_alloc_unit(ip,
+			XFS_B_TO_FSB(mp, (xfs_ufsize_t)XFS_ISIZE(ip)));
+
+--D
+
+> +
+>  /* Should we always be using copy on write for file writes? */
+>  bool
+>  xfs_is_always_cow_inode(
+> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> index 158afad8c7a4..7f86c4781bd8 100644
+> --- a/fs/xfs/xfs_inode.h
+> +++ b/fs/xfs/xfs_inode.h
+> @@ -643,6 +643,8 @@ void xfs_inode_count_blocks(struct xfs_trans *tp, struct xfs_inode *ip,
+>  		xfs_filblks_t *dblocks, xfs_filblks_t *rblocks);
+>  unsigned int xfs_inode_alloc_fsbsize(struct xfs_inode *ip);
+>  unsigned int xfs_inode_alloc_unitsize(struct xfs_inode *ip);
+> +void xfs_roundout_to_alloc_fsbsize(struct xfs_inode *ip,
+> +		xfs_fileoff_t *start, xfs_fileoff_t *end);
+>  
+>  int xfs_icreate_dqalloc(const struct xfs_icreate_args *args,
+>  		struct xfs_dquot **udqpp, struct xfs_dquot **gdqpp,
+> -- 
+> 2.31.1
+> 
+> 
 
