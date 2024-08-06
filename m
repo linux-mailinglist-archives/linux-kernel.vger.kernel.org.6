@@ -1,63 +1,87 @@
-Return-Path: <linux-kernel+bounces-276603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE5D89495F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:54:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F209495F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5CFC1F21E22
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:54:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0573A1C22F12
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629EF4776E;
-	Tue,  6 Aug 2024 16:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC6C4F8BB;
+	Tue,  6 Aug 2024 16:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c0lNCnO7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="JkRd0Udn"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9341918EB0;
-	Tue,  6 Aug 2024 16:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B255339D
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 16:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722963255; cv=none; b=GQM3ccBX1YwqxQ28at5Db2Si/5m2AdaRr7hlqbksjqPfzisG383mGPmn5lQe48Xz6Nf5VEclbz9hu04IW0JaTq4o5351oROuVHURkdKtbrEgAvrVvqAfFNIHWXUNAK5rgPH4FDPzE/tQCv29qSpgzEbV/jgq8dkvd4UmOa/oCGM=
+	t=1722963270; cv=none; b=Uj1et9cDgMKNaLBXTLBcA9rer6PGkok8FgLdPy7gablbRsy5uGYIIlGnk4GHpA1mXyxXuUqAmA8DDLTfziqMYeFy2VsCYJa3FE8avHO4RN2InPBA4igCYBcKZqefWf7JG1dLtSiqp0ZG3PjigyXE6zqQQnHlE2xCUlhDMd/5Vk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722963255; c=relaxed/simple;
-	bh=OGl7OTeP+UuQWbwPEeanYVgWrUqC6QmWTlkqT9FnYbM=;
+	s=arc-20240116; t=1722963270; c=relaxed/simple;
+	bh=wYfaWsh6Sn8wwLS9gnk0eyrAgYMx+qgcYiLYh20Su9E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kxunJl+ugNV8NRQW/3vw2jF6tUCNH1bVSLhH5Dl05z5rPl44v4qF5zoEw6xls/FgXcFI5lrpcfUIosb70Ma4APZcgJkmqsKNB5Pb9StUXtpil0siWbhOVp+3Qm8Q1SEiwtR3XJs665ZFSLZIkbCvD9wDuK6V0kchlbARMT+Pwjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c0lNCnO7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAF6FC32786;
-	Tue,  6 Aug 2024 16:54:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722963255;
-	bh=OGl7OTeP+UuQWbwPEeanYVgWrUqC6QmWTlkqT9FnYbM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c0lNCnO7RCuLuqrgl1WsgFoXz5nm9aLgAqqu9vfGK/oz8a7ja25K1b5eopZWg+fiF
-	 0PEeECqc5lNyHYOnmjCTfH/QLxu2izJ6f/76zxz8sUOCucAFFw5De57k/B6M3Jpkch
-	 t/Ni/Rvo6w5Pnw8fZTN4yVebCuCBZOn9qGlHUQZ2jMWAN3Z0iT2nJwJ+CDWTbAIflW
-	 T6tsx40T1zdg8sU6DrAk723WM5vFpFCC3bWzZVkjayFGnx1qZDDJjInG5P9jrwH2GQ
-	 34Ax4Me3XZm0y1wl9QzvyjqU8XB1/hJ2+3YJHrTFi5DVHTkz4rQASUL2gqSV2uxrsN
-	 e/XIiEzrFrUJg==
-Date: Tue, 6 Aug 2024 10:54:13 -0600
-From: Rob Herring <robh@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 11/13] dt-bindings: PCI: qcom,pcie-sm8450: Add
- 'global' interrupt
-Message-ID: <20240806165413.GA1674220-robh@kernel.org>
-References: <20240731-pci-qcom-hotplug-v3-0-a1426afdee3b@linaro.org>
- <20240731-pci-qcom-hotplug-v3-11-a1426afdee3b@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GTRmBnsjj2EfxBG/YtUkXCn15mSLkRqp82yHhvaLLyAjWmYSM5JVw1nvkc63wuI3zx1PPOgCSdHX9TJmNiTh9/TwgAjc9zoJupSKfhRj2Dt027+4vZKOFJZrZzlIj8HBfmTC++dmCzC8erUjjs0pQUJ8evTreKoIdzCOqzhEP5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=JkRd0Udn; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b5dfcfb165so4569236d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 09:54:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1722963267; x=1723568067; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OAtE3NrwvMQADtEx9/Wu95vxDu4saq6pM1UUIbdCnAA=;
+        b=JkRd0Udn3X2xJUkLsxwIorLonu3ZMIl/0TYFKuxPgBo/js9wilkGTpHxMiba3YTkel
+         p101R+TOH4m+hJ0lvwiftl0t9hlSKU2oNShCKkiCeeL+yN4+OJjgssvfmKhHmgG2kShj
+         et+UWo4F1V0RAKyzOjTaobhi3JbFsU9+pTXMvfxmAAh8Cc9j9kQNlYFbSMwgf7BVFhkH
+         AUO+9/m9dEIPEReEWxAUxRAkACCQr/N/CNzOleVWlcPzy38VEVqbQIgEwnqb7A170YY2
+         vLa0aKkBg3GFZ/0ingTZt/om4pCMhi9FtwtPdWyuqNvNElrE/YSa3ntalFeQX4U+2XoI
+         PPxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722963267; x=1723568067;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OAtE3NrwvMQADtEx9/Wu95vxDu4saq6pM1UUIbdCnAA=;
+        b=DweIGx8hhmhtWyeEl3M4AP60Nuqy4z0DdqziTI8atel1wRd0rH0fwwpkXujUt3D/Ez
+         +ryk9wiv11f66rQ/CjZ6H+gXFx8fF6IUn+H864ZKjK2J+3Vn1l2jdh5sIQX2tfu/j7gB
+         /48urf+aII4kDkJFn9wNs9cXqFf0gfmK+WH0dsOmGBP9KHRJkXPb0INf+iVhZH43LkXV
+         O7c5LIXHN0H1SdpK5vj4nLsmnB0Imn6B/h7E5Zw34/vQKBsRWSYuX6Ma2vBKEaDdLBIj
+         f7Hpz95F+C5EVtRqFExvUNyd+prUqw1W05V6mqW2k6v76uOwjBiPmaby+lFGGGdM3Jce
+         9mcg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8t0xYK7jx0LPy3Fr9k1UsemOIVmcfwYBTWb80cvk8a19WUft03efnFofoC2QEjmI/jA+AWSXhdFXxCUqnOpjQz4x/45g1L15ZMM7N
+X-Gm-Message-State: AOJu0YxluIDxlZf8epGAFGzJJtcBjeZcQLijrehUCd+zyA5UmuaV/kvk
+	T/Hg0rj/sY8CF0bVbuWS9kSqf9cTpufYwdPVCxrHLlTyfD0JqjnID1cV9uiozDtfOY6trI9LeDZ
+	e
+X-Google-Smtp-Source: AGHT+IG7NmK09twXabrf/broQ0lPcxWf11duxdRdIzqDmUxQ0A445hpYQ9qMVh5SqopGRWRDeernQQ==
+X-Received: by 2002:a05:6214:4586:b0:6b0:7d80:38b9 with SMTP id 6a1803df08f44-6bb983d0e04mr201635916d6.16.1722963266718;
+        Tue, 06 Aug 2024 09:54:26 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c87bb90sm48302166d6.130.2024.08.06.09.54.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 09:54:26 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sbNS5-00FQVe-PN;
+	Tue, 06 Aug 2024 13:54:25 -0300
+Date: Tue, 6 Aug 2024 13:54:25 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] iommu/vt-d: Require DMA domain if hardware not
+ support passthrough
+Message-ID: <20240806165425.GJ676757@ziepe.ca>
+References: <20240806023941.93454-1-baolu.lu@linux.intel.com>
+ <20240806023941.93454-2-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,23 +90,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240731-pci-qcom-hotplug-v3-11-a1426afdee3b@linaro.org>
+In-Reply-To: <20240806023941.93454-2-baolu.lu@linux.intel.com>
 
-On Wed, Jul 31, 2024 at 04:20:14PM +0530, Manivannan Sadhasivam wrote:
-> Qcom PCIe RC controllers are capable of generating 'global' SPI interrupt
-> to the host CPU. This interrupt can be used by the device driver to
-> identify events such as PCIe link specific events, safety events, etc...
+On Tue, Aug 06, 2024 at 10:39:35AM +0800, Lu Baolu wrote:
+> The iommu core defines the def_domain_type callback to query the iommu
+> driver about hardware capability and quirks. The iommu driver should
+> declare IOMMU_DOMAIN_DMA requirement for hardware lacking pass-through
+> capability.
 > 
-> Hence, document it in the binding along with the existing MSI interrupts.
-> Though adding a new interrupt will break the ABI, it is required to
-> accurately describe the hardware.
+> Earlier VT-d hardware implementations did not support pass-through
+> translation mode. The iommu driver relied on a paging domain with all
+> physical system memory addresses identically mapped to the same IOVA
+> to simulate pass-through translation before the def_domain_type was
+> introduced and it has been kept until now. It's time to adjust it now
+> to make the Intel iommu driver follow the def_domain_type semantics.
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 > ---
->  Documentation/devicetree/bindings/pci/qcom,pcie-sm8450.yaml | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+>  drivers/iommu/intel/iommu.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 
-Patch 10 should be combined with this. It's one logical change.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Jason
 
