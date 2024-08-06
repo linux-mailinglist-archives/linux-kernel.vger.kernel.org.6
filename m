@@ -1,54 +1,84 @@
-Return-Path: <linux-kernel+bounces-276150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E50CE948F1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:38:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9417948F0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 498F2B247F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:38:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8FC41C21D41
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028E51C4628;
-	Tue,  6 Aug 2024 12:37:46 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2F01DFC7;
+	Tue,  6 Aug 2024 12:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="h/57+CeY"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968D81BD507;
-	Tue,  6 Aug 2024 12:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E852219F464
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722947865; cv=none; b=e7zroD9WJVOPgG7PKicgKrMJlJtz7EMrWCH6UeNpXa0HpIZZam3cA+OuG+Yzk2wkdA9SiLUjcwL6W6o8R4A7GVoVC8usPTqXo2uvT9HfUxePHHerynLzhhzHiLbnX3zfv9kYTH+N8sMeyC23yQm2d8ZqrQMvuGlGrMLJxH/ymtU=
+	t=1722947589; cv=none; b=g3r+pj5fKvp4zVqlMrbohyhMAVCk/CILO2UUxIfe7xc/r7IwJczcfzOdjaKWZXSCgnAEekOX7VpkVzzrsAcwwlAP/aDmXQD83UA3KjmWbbHpiTybyVQMqgMtNA02yCT74mrZmFa31swD1jbxnRQKgPklY6wPm0i2AHjLMk4NoA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722947865; c=relaxed/simple;
-	bh=f55jc9z6uEIp7Y9jmlkWELf5oT9//u8l2fy9Tf+LnrE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EXM3QimQfdv71TMzpnYJoUzQXar095LnNoXx8f4B9em+65PIgo73dfs4QxOpouAYmet9d1p2sDPINDt61RKUmZvoAmeaBLaC2fLozusjxK0eIlWeiEz91Mjx9ZySkeE94FLbmqut9I0UFHZ53vhyD8VfSyP5O6hHjxlH8/ZedLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WdXqP0fcTzpSv2;
-	Tue,  6 Aug 2024 20:36:33 +0800 (CST)
-Received: from kwepemm600005.china.huawei.com (unknown [7.193.23.191])
-	by mail.maildlp.com (Postfix) with ESMTPS id C29F114011B;
-	Tue,  6 Aug 2024 20:37:41 +0800 (CST)
-Received: from huawei.com (10.50.165.33) by kwepemm600005.china.huawei.com
- (7.193.23.191) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 6 Aug
- 2024 20:37:41 +0800
-From: Longfang Liu <liulongfang@huawei.com>
-To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <jonathan.cameron@huawei.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@openeuler.org>, <liulongfang@huawei.com>
-Subject: [PATCH v8 4/4] Documentation: add debugfs description for hisi migration
-Date: Tue, 6 Aug 2024 20:29:28 +0800
-Message-ID: <20240806122928.46187-5-liulongfang@huawei.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20240806122928.46187-1-liulongfang@huawei.com>
-References: <20240806122928.46187-1-liulongfang@huawei.com>
+	s=arc-20240116; t=1722947589; c=relaxed/simple;
+	bh=hLDHnjRdPnpaeg167MxCyofiZQOaLsJlLf+Rmw4qk3M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MMFKdTPvSm8Utpt8BcdEPv3nuQnqUWeAq7iPK7ErTRBlXqSvxXaHePIgrNuGSnwHwFPOnpH5txreQf57Ai68gUXMJanaRJxQih8u5NqPMbitIIVOTmeciH9jTz1ND+KdKZzb2MI4ZnovoKQIFr8x5FLcDqOxWdCFJQ8ZGlRkm10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=h/57+CeY; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-710afd56c99so354835b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 05:33:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1722947587; x=1723552387; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AT7QwYWK8WZyIEtyo3//GG8heHvMwjuLkdYziSoLjUo=;
+        b=h/57+CeYAWdfu365BOQ6Xxc2IhfE3gf2v9om5XyaVH+zMxhTZyrfVAd63mbXzj4qEf
+         Q95+ZeSAqx59QW0Z8pO54tBttZJREbOEuPG0t+qG1wyFGjzdL0h6txUi5Bd+UUL4Bt7d
+         anUs70yV/hEzj9WKZsl3csdVs7eL7xvQz7FKI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722947587; x=1723552387;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AT7QwYWK8WZyIEtyo3//GG8heHvMwjuLkdYziSoLjUo=;
+        b=cg2AzEm+Q9XlByOI7EKDk+8aY8wBk8KNR/wdswF/nTa8Q2JGkHHXM971mYnTZqO3mr
+         yK/1rnSIihKm+xdYjbD/vzZwS2c9MSe0RstpK7sNwd9xjnpa11wfpvF5Ojr0lS++v1Bw
+         BfCPCoWj4Zwfa7p+lXwUeMPsu4blZp118FCkU8+5gjd2LaW7wgf0DxCCulOCI1dypXeL
+         4xn/D6AIN/ODhYBp9GGB/GdsK/2/+nY1DPY/fIg6HiyJ1VywJDjyrpKrpsgswBLo8Owd
+         lcx9+ZiTVN7dRMYKteOtObVdDwBry6/mYWqcymQbDmB815PPIpz6nHwpstK7cKnQ6tTr
+         DzTw==
+X-Gm-Message-State: AOJu0YymTbTu1Gem+PiquMyImGZqGd10JrCR+xOdZ0o0nFhjRI5NSLb3
+	NXB1BKq5sNabK0wNb3x4upAvEnSnwSBPiLGlGACqRPn2aEuUviC/XFRkOPQKvOq0E2aruj2DnQ/
+	Cfd1Is+PB0Jinxf49CvWLXqtdZO6t494xPUZX5BPTEr5fx4JgHUvU+iLts+wFamh2uWZo9Ja7Hj
+	x5El72qQJBJMnj0Grktw65aMw01r+TCvpDziRSDS+VeK1OkA==
+X-Google-Smtp-Source: AGHT+IHrUqiuFtCV3WrfhBJ4arzdppGltRltfSkrJGcbzB3/8Mb8Oiy5ACComQJXPWx7LLJfKZ66aQ==
+X-Received: by 2002:a05:6a21:788a:b0:1c4:d14f:248f with SMTP id adf61e73a8af0-1c69a5f0268mr22605294637.13.1722947586715;
+        Tue, 06 Aug 2024 05:33:06 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ed16cb3sm7141271b3a.179.2024.08.06.05.33.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 05:33:06 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: netdev@vger.kernel.org,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	stable@vger.kernel.org,
+	Joe Damato <jdamato@fastly.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>
+Subject: [PATCH net] eventpoll: Annotate data-race of busy_poll_usecs
+Date: Tue,  6 Aug 2024 12:33:01 +0000
+Message-Id: <20240806123301.167557-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,54 +86,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm600005.china.huawei.com (7.193.23.191)
 
-Add a debugfs document description file to help users understand
-how to use the hisilicon accelerator live migration driver's
-debugfs.
+From: Martin Karsten <mkarsten@uwaterloo.ca>
 
-Update the file paths that need to be maintained in MAINTAINERS
+A struct eventpoll's busy_poll_usecs field can be modified via a user
+ioctl at any time. All reads of this field should be annotated with
+READ_ONCE.
 
-Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+Fixes: 85455c795c07 ("eventpoll: support busy poll per epoll instance")
+Cc: stable@vger.kernel.org
+Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
+Reviewed-by: Joe Damato <jdamato@fastly.com>
 ---
- .../ABI/testing/debugfs-hisi-migration        | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 Documentation/ABI/testing/debugfs-hisi-migration
+ fs/eventpoll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/ABI/testing/debugfs-hisi-migration b/Documentation/ABI/testing/debugfs-hisi-migration
-new file mode 100644
-index 000000000000..ad6eb437cdcd
---- /dev/null
-+++ b/Documentation/ABI/testing/debugfs-hisi-migration
-@@ -0,0 +1,25 @@
-+What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/dev_data
-+Date:		Aug 2024
-+KernelVersion:  6.11
-+Contact:	Longfang Liu <liulongfang@huawei.com>
-+Description:	Read the configuration data and some status data
-+		required for device live migration. These data include device
-+		status data, queue configuration data, some task configuration
-+		data and device attribute data. The output format of the data
-+		is defined by the live migration driver.
-+
-+What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/migf_data
-+Date:		Aug 2024
-+KernelVersion:  6.11
-+Contact:	Longfang Liu <liulongfang@huawei.com>
-+Description:	Read the data from the last completed live migration.
-+		This data includes the same device status data as in "dev_data".
-+		The migf_data is the dev_data that is migrated.
-+
-+What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/cmd_state
-+Date:		Aug 2024
-+KernelVersion:  6.11
-+Contact:	Longfang Liu <liulongfang@huawei.com>
-+Description:	Used to obtain the device command sending and receiving
-+		channel status. Returns failure or success logs based on the
-+		results.
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index f53ca4f7fced..6d0e2f547ae7 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -420,7 +420,7 @@ static bool busy_loop_ep_timeout(unsigned long start_time,
+ 
+ static bool ep_busy_loop_on(struct eventpoll *ep)
+ {
+-	return !!ep->busy_poll_usecs || net_busy_loop_on();
++	return !!READ_ONCE(ep->busy_poll_usecs) || net_busy_loop_on();
+ }
+ 
+ static bool ep_busy_loop_end(void *p, unsigned long start_time)
 -- 
-2.24.0
+2.25.1
 
 
