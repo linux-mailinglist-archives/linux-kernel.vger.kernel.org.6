@@ -1,273 +1,127 @@
-Return-Path: <linux-kernel+bounces-276584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AED694959F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:33:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67EE39495A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32AEF288746
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:33:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C95F288D89
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10ED53FBB3;
-	Tue,  6 Aug 2024 16:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D1F40858;
+	Tue,  6 Aug 2024 16:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ieLjQ3lR"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="AqFJDYCd"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3D54AEE0;
-	Tue,  6 Aug 2024 16:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722961986; cv=none; b=LtY5pq5yTf0BTIZ26jQHT41VHLpkgq8SO5Se8zU2wcShD+EiBLsR8Eh+jyHsvRdnFKBjK+IS9/dtqdBBxmxHCOzzYxJ0v1aLJsR1aolao7AtcSzmpS7C1eX3OtjkjqgibmLywhKUL0lWfz7vF5eFQmcFsfYVLIvqrN6mGgglIZA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722961986; c=relaxed/simple;
-	bh=566wAyXOpiqU1O82gz3vDJ7RUFpvtKpN82ioekzGPY0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cU7iA8L0z9IEpbAhcLhl0ZiRyU3Ds17VIB8tsfBEknO36Kn5u6WZMU+3kxabJwaqUeNymU5ZS1RyrrfLimDtpCNWnc0F3ps21PizBYwiPeWd1SYZL47X2J62YLC0TE0sUbE8SG7lDEA9sK8klTrwwBQBO8RR+JvDF89WKxV1ips=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ieLjQ3lR; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7a9185e1c0so87648766b.1;
-        Tue, 06 Aug 2024 09:33:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722961983; x=1723566783; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=K9lOceRSQXe5XyV96b7OxiJnOBX35L4zgaI+kg/nMLM=;
-        b=ieLjQ3lRCSPrQTShbpqdfitSwRhbGSS0zz3hHSpb0SeyvO/xmAGv5MCE9si/KuDW5C
-         jKhKuNHHOV+4nsfxPhvy/mf+DVAB+HjC459+1f9RSgcFhxnB9e7FuYwFtpi4iIeYA511
-         wmd13aLHE310bcT2hfiFcUx7191+OrF/NMCg77y1/CvM5O7OU/yjfKENhIca4LQL9yz4
-         MUKHoQvkAvbiAC403JgT1qnYLiZ17wqlTggojA4hV7zwjpZBUrTa8sE3/lv6wrHV4LhJ
-         izST7+2fcY6ihigswM54Aoui2soF9h+heQIylqPJ+L+fcDlBRwWsgDUaphGmpf+7IzBi
-         5dXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722961983; x=1723566783;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K9lOceRSQXe5XyV96b7OxiJnOBX35L4zgaI+kg/nMLM=;
-        b=bo5/MRV8jLihmQqqpqfDrHjMr//1Lw7AbkEbU1U/6foybWNMQzwld8QQFFzHOu9ddv
-         dDwFBMZ34TD7QyzxZWXu99q/z5WJmYN48gKZHgY4LjShdDPiF8+tpNQ0X308ddATdshn
-         Iho+ZOJUvD5QMpELZ/Q6U1FZxnaRUkPGl/CZSX5xvx1QiFb6/t2TgU5vB6rfx1idiTFO
-         FAo9vQxu2xjM2vpM8tTBCF/3OcciNgwzzdDDbXYAtihWvXVNIZcYKl0DB7pz/A5I8XIR
-         S2d5P9cwvVJZPvtZRUcp051NZPyXbpO/3Wr4OI7MiqxIrBTikzJEyIkbLTztrfi4cdTp
-         tRtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPUGjZ26ZLhbPz6v+NQlLI6qKfUBHTI1xnu/b/d386VprT6HM57xzbhWRi938c1Iv3ROB3vgvTZOy1aPVsBPHhM4VjmOTIAYgrw01aJn3ucVOnRRAwIBVuJQ4Oy9fY0uYsFkt/LJ57LU/xhw==
-X-Gm-Message-State: AOJu0Yx0b+1G/TT7PgO3V62J6iHvyO4mhbvL0rpcSmVGA2aL1peE2W10
-	vIvod3vTWSm5WthkNxtZRRUtN9MQW7ITG1NKPPifQ/6ukLEg3YbQ
-X-Google-Smtp-Source: AGHT+IFKYCHZmgKM7Mtu032rEJecn9FegLtR6YoLCFPsBbOXHlgg9nmPptdEvP3+KRD01RyOU7WByg==
-X-Received: by 2002:a17:906:c156:b0:a77:d1ea:ab26 with SMTP id a640c23a62f3a-a7dc5105151mr1139312366b.65.1722961982200;
-        Tue, 06 Aug 2024 09:33:02 -0700 (PDT)
-Received: from f.. (cst-prg-92-246.cust.vodafone.cz. [46.135.92.246])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d4304fsm564900866b.128.2024.08.06.09.33.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 09:33:01 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org,
-	viro@zeniv.linux.org.uk
-Cc: jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2] vfs: avoid spurious dentry ref/unref cycle on open
-Date: Tue,  6 Aug 2024 18:32:56 +0200
-Message-ID: <20240806163256.882140-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD982C182;
+	Tue,  6 Aug 2024 16:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722962031; cv=pass; b=LlSZPGKKEZoQDd1C0nxe1sh+jSfj4K6C15aOAADgLAwzT7+vJGCDFqiIRvpgxbd3/yjznAa3oT/WTQtbzqCOG/za/3YITc2PN4UOLHW1PCiWg1Kb84qZDJfbN8vNSYDtwtNptvagewGcalNx5I97NThwgFvoDgptyi2SBMHZqlA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722962031; c=relaxed/simple;
+	bh=puiEd1SRm3ADc828HACBfKNH+QKdUIB7UI3diIKs2AA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IHwpMHVRcBoTmQx16ezizbI68nUnFobbKrX/E92WInnfyaw53PWq7VWyCmaLxmqU3KMKoczg1/6XdahN4Itawszkiv4YEOTiGorHnODhAGZrCUgvdz7eDpdge0OnmaXfTqSR2pmuF1xjYF6n8FAQfNAiRGb7nhBL0iAHdgvTx1k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=AqFJDYCd; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1722962010; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=nVmjkx2NYYfGexWUTXG6+br7K+/tYNcm2BTNaHP0pmFRRUF6ugYmgQNdE1Z4TgZeOsBp4IWtKiRsYRVcx4LkEdgW5NMOcFdNYbTecmOXjMHwkj1saTbQw/ng9eOW0VYI7I9+0R3Xa0qXjOLqYMnRZAmrgi5gzUp/2gUkgllXlLc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1722962010; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=l/JHjYFYD5hXu+XbGOm+SC68og+CQ6amBp7xMsiP/Lo=; 
+	b=CsIS/Zd0X+HOmXOqsWJsKqIQT07/9srdSQNwHL6RoqLJaMD9Y7UgQFJDZlOIfmDqWpuGwgErLkyLoDibyGeJbGBU4/MH4oUSKMRMUfT3DV8t98XX8dQFQcQEUv5AgtcB6RaxxkM77B4O7oCmvoyML5/04OYGhINcMrEJWljfpwI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1722962010;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=l/JHjYFYD5hXu+XbGOm+SC68og+CQ6amBp7xMsiP/Lo=;
+	b=AqFJDYCdobJ60Kpe/ZGzSVKMoNEWj3yVbIBcC+9Q5Pm9KxZG5CRvJ6KdXceQzpe0
+	oTPRGkOL6pPFlfJdmaHXdCx6ZHWo1MpTI8HyNji7wYzk/OsF9zTgIQ861Gn/BzZk1Gc
+	TNyFVoh6ilAbmNIrlRYMu/halSDBLbAqVtm76XCE=
+Received: by mx.zohomail.com with SMTPS id 1722962009873809.7480289049981;
+	Tue, 6 Aug 2024 09:33:29 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Finley Xiao <finley.xiao@rock-chips.com>, Jagan Teki <jagan@edgeble.ai>,
+ Elaine Zhang <zhangqing@rock-chips.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: Add power-domain header for RK3576 SoCs
+Date: Tue, 06 Aug 2024 12:34:41 -0400
+Message-ID: <3310992.44csPzL39Z@trenzalore>
+In-Reply-To: <e04258dc-07c4-45c7-90d4-bc1ed9eb100b@kernel.org>
+References:
+ <20240802151647.294307-1-detlev.casanova@collabora.com>
+ <20240802151647.294307-3-detlev.casanova@collabora.com>
+ <e04258dc-07c4-45c7-90d4-bc1ed9eb100b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-Opening a file grabs a reference on the terminal dentry in
-__legitimize_path(), then another one in do_dentry_open() and finally
-drops the initial reference in terminate_walk().
+On Sunday, 4 August 2024 05:56:39 EDT Krzysztof Kozlowski wrote:
+> On 02/08/2024 17:14, Detlev Casanova wrote:
+> > From: Finley Xiao <finley.xiao@rock-chips.com>
+> > 
+> > Define power domain IDs as described in the TRM.
+> 
+> Please use subject prefixes matching the subsystem. You can get them for
+> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+> your patch is touching. For bindings, the preferred subjects are
+> explained here:
+> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patche
+> s.html#i-for-patch-submitters
+> > Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> > [reword]
+> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > ---
+> > 
+> >  include/dt-bindings/power/rk3576-power.h | 30 ++++++++++++++++++++++++
+> >  1 file changed, 30 insertions(+)
+> >  create mode 100644 include/dt-bindings/power/rk3576-power.h
+> 
+> This is part of bindings.
+> 
+> > diff --git a/include/dt-bindings/power/rk3576-power.h
+> > b/include/dt-bindings/power/rk3576-power.h
+> Missing vendor prefix. This should be named after compatible.
 
-That's 2 modifications which don't need to be there -- do_dentry_open can
-consume the already held reference instead.
+Looks like all other rockchip power bindings use the include/dt-bindings/
+power/rkXXXX.h format. Should I keep that way ?
 
-In order to facilitate some debugging a dedicated namei state flag was
-added to denote this happened.
+> > new file mode 100644
+> > index 0000000000000..cb33a32c1aed9
+> > --- /dev/null
+> > +++ b/include/dt-bindings/power/rk3576-power.h
+> > @@ -0,0 +1,30 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> 
+> Weird license.
+> 
+> Best regards,
+> Krzysztof
 
-When benchmarking on a 20-core vm using will-it-scale's open3_processes
-("Same file open/close"), the results are (ops/s):
-before:	3087010
-after:	4173977 (+35%)
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
 
-- drop the debug flag
-- tweak commentary
-- make vfs_open_consume clean up the path
-
-perhaps this will do the trick? :)
-
- fs/internal.h |  3 ++-
- fs/namei.c    | 15 ++++++++++++---
- fs/open.c     | 44 +++++++++++++++++++++++++++++++++++++++++---
- 3 files changed, 55 insertions(+), 7 deletions(-)
-
-diff --git a/fs/internal.h b/fs/internal.h
-index cdd73209eecb..6899e6ec9394 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -193,7 +193,8 @@ int chmod_common(const struct path *path, umode_t mode);
- int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
- 		int flag);
- int chown_common(const struct path *path, uid_t user, gid_t group);
--extern int vfs_open(const struct path *, struct file *);
-+int vfs_open_consume(struct path *, struct file *);
-+int vfs_open(const struct path *, struct file *);
- 
- /*
-  * inode.c
-diff --git a/fs/namei.c b/fs/namei.c
-index 1bf081959066..44ea5353ae26 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3683,6 +3683,7 @@ static const char *open_last_lookups(struct nameidata *nd,
- static int do_open(struct nameidata *nd,
- 		   struct file *file, const struct open_flags *op)
- {
-+	struct vfsmount *mnt;
- 	struct mnt_idmap *idmap;
- 	int open_flag = op->open_flag;
- 	bool do_truncate;
-@@ -3720,11 +3721,17 @@ static int do_open(struct nameidata *nd,
- 		error = mnt_want_write(nd->path.mnt);
- 		if (error)
- 			return error;
-+		/*
-+		 * We grab an additional reference here because after the call to
-+		 * vfs_open_consume() we no longer own the reference in nd->path.mnt
-+		 * while we need to undo write access below.
-+		 */
-+		mnt = mntget(nd->path.mnt);
- 		do_truncate = true;
- 	}
- 	error = may_open(idmap, &nd->path, acc_mode, open_flag);
- 	if (!error && !(file->f_mode & FMODE_OPENED))
--		error = vfs_open(&nd->path, file);
-+		error = vfs_open_consume(&nd->path, file);
- 	if (!error)
- 		error = security_file_post_open(file, op->acc_mode);
- 	if (!error && do_truncate)
-@@ -3733,8 +3740,10 @@ static int do_open(struct nameidata *nd,
- 		WARN_ON(1);
- 		error = -EINVAL;
- 	}
--	if (do_truncate)
--		mnt_drop_write(nd->path.mnt);
-+	if (do_truncate) {
-+		mnt_drop_write(mnt);
-+		mntput(mnt);
-+	}
- 	return error;
- }
- 
-diff --git a/fs/open.c b/fs/open.c
-index 22adbef7ecc2..2fdfb3133d0f 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -905,6 +905,15 @@ static inline int file_get_write_access(struct file *f)
- 	return error;
- }
- 
-+/*
-+ * Populate struct file
-+ *
-+ * NOTE: it assumes f_path is populated and consumes the caller's reference.
-+ *
-+ * The caller must not path_put on it regardless of the error code -- the
-+ * routine will either clean it up on its own or rely on fput, which must
-+ * be issued anyway.
-+ */
- static int do_dentry_open(struct file *f,
- 			  int (*open)(struct inode *, struct file *))
- {
-@@ -912,7 +921,6 @@ static int do_dentry_open(struct file *f,
- 	struct inode *inode = f->f_path.dentry->d_inode;
- 	int error;
- 
--	path_get(&f->f_path);
- 	f->f_inode = inode;
- 	f->f_mapping = inode->i_mapping;
- 	f->f_wb_err = filemap_sample_wb_err(f->f_mapping);
-@@ -1045,6 +1053,7 @@ int finish_open(struct file *file, struct dentry *dentry,
- 	BUG_ON(file->f_mode & FMODE_OPENED); /* once it's opened, it's opened */
- 
- 	file->f_path.dentry = dentry;
-+	path_get(&file->f_path);
- 	return do_dentry_open(file, open);
- }
- EXPORT_SYMBOL(finish_open);
-@@ -1077,15 +1086,22 @@ char *file_path(struct file *filp, char *buf, int buflen)
- EXPORT_SYMBOL(file_path);
- 
- /**
-- * vfs_open - open the file at the given path
-+ * vfs_open_consume - open the file at the given path and consume the reference
-  * @path: path to open
-  * @file: newly allocated file with f_flag initialized
-  */
--int vfs_open(const struct path *path, struct file *file)
-+int vfs_open_consume(struct path *path, struct file *file)
- {
- 	int ret;
- 
- 	file->f_path = *path;
-+	path->mnt = NULL;
-+	path->dentry = NULL;
-+
-+	/*
-+	 * do_dentry_open() does the reference consuming regardless of its
-+	 * return value
-+	 */
- 	ret = do_dentry_open(file, NULL);
- 	if (!ret) {
- 		/*
-@@ -1098,6 +1114,27 @@ int vfs_open(const struct path *path, struct file *file)
- 	return ret;
- }
- 
-+/**
-+ * vfs_open - open the file at the given path
-+ * @path: path to open
-+ * @file: newly allocated file with f_flag initialized
-+ *
-+ * See commentary in vfs_open_consume. The difference here is that this routine
-+ * grabs its own reference and does not clean up the passed path.
-+ */
-+int vfs_open(const struct path *path, struct file *file)
-+{
-+	int ret;
-+
-+	file->f_path = *path;
-+	path_get(&file->f_path);
-+	ret = do_dentry_open(file, NULL);
-+	if (!ret) {
-+		fsnotify_open(file);
-+	}
-+	return ret;
-+}
-+
- struct file *dentry_open(const struct path *path, int flags,
- 			 const struct cred *cred)
- {
-@@ -1183,6 +1220,7 @@ struct file *kernel_file_open(const struct path *path, int flags,
- 		return f;
- 
- 	f->f_path = *path;
-+	path_get(&f->f_path);
- 	error = do_dentry_open(f, NULL);
- 	if (error) {
- 		fput(f);
--- 
-2.43.0
 
 
