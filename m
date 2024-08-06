@@ -1,187 +1,316 @@
-Return-Path: <linux-kernel+bounces-276279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E0B949197
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:33:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CCD94919A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 840EE1C20967
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:33:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 175DC1C21935
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6171D1F52;
-	Tue,  6 Aug 2024 13:32:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03A81D47AA;
+	Tue,  6 Aug 2024 13:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HHewcVbL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B371C579E
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80ECF1C5792;
+	Tue,  6 Aug 2024 13:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722951125; cv=none; b=QCEm/AFL5BSbvCJDo0R+0CWBIo+w0ukfkuwALVMxcCCwxWnfSX9XfZn0soTLwPjOjkq1YIL0OsVYMdipi8i0MvT/pbwEgtAL6jszVFnbyJriHGcmwOKLQ/X8NUcBb+CZKeUeJgyInSqWvrDUIkPmAnmjHSuux7+Ey3ZzClcHzCg=
+	t=1722951156; cv=none; b=WZ2AT2nI1vTTTkdwCBR+RaQa3EXSZUvbveYv6TOKTYGroG1sVw0C/R4QRH5aHChcv7sHjSbFhPbnjGls/PfAZ9HmryscssjFh4kxKcgDnEg4YhXsNJeMGAVtjf1sxNnAdmmiScAWfHETuXpMUHY8tkGbgNY/1FfAqtPugK+Q4So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722951125; c=relaxed/simple;
-	bh=ZK8Ub15m/k4zKfWfKaE9zoMAGaqhrIjn1f0vhnTkhQg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=LQn0H51x2x3yr2qTkePWZG5OVfYHrgTjBcXrvZ3peGRQahzgM9TW4SKblDiYHlORmmKtS7Saw8PI7gGDO5sonXF2aSkFPgLMy0XPQSFTmSF99p7RS4YN+7Tqv4VD1ujzDf82qsHoC0Dam0KWid5LCr612ltvQ8g+b0U11aN/G/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f99189f5fso95236339f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:32:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722951123; x=1723555923;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ud5owjxCCY9V1D3LFJJBZv3XvT8pdONCyFfG/rdXgv0=;
-        b=nlnL8ASX5Ykc3SiRLi9CMT3LmfHtFSuL/EycDFnW8JNygtlCKkjqqHUJBLYFVDfA6a
-         NWr2Pg+OIsrAQ0ieJNUlxnsl8PdQ9SQ0ytYDu7r7EwpsjdFrXO5wY9IVUN5lP96iEFPn
-         cgfu1ymloTlFzJYuab8JcL5a+xJkgl343s3DUDuQ683QYiFTw/7oajiICHJE0w+PrWYl
-         Ie00CRq4QNAK9Lw3tsmXBkReAjJzk/JLqBc3eESl+3Wl9UUXnqnFiem6TcUYi4KoHnK3
-         SpfGZvsWGaTv0vDbbHZrl2HJ0EDQjDgE+7J9NxUg4BdgfRajUoOA67hZv5SN7bUVZW0P
-         jPlA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3T9h8tZB7AHqJm6R0pE4RHXyEsZNm0ovrMZcBJN9hKAIrTf4kKrFR8BpJhfUPht8gtKGG0j3PypmEIW8RJykSOsdbqLHBVb04Te1W
-X-Gm-Message-State: AOJu0Yz3rALly+VBaLesgB1d9CSc+r9keq+gCemfaTunmANRlTfxZu+c
-	dGpwNgFWkRICHdjUky6+yMfs5/o4R2IhQm9YeN0ByI5bd2lb7m+Cho4gGQyKik1/+tBeCZPBLD8
-	9ty7UwPb7z/gfuqE3wWcBXIiIwXpEo3+f7WtumOUyEuMSabW7K4U1m2Q=
-X-Google-Smtp-Source: AGHT+IHtg6A8rdnpNV235JeviuRqCrg9HXorqJiOlrK+osSepWr6FptwkrBmv14/13UAPmGJo5SXwaWvr48sQsC2sE32v+61t9BK
+	s=arc-20240116; t=1722951156; c=relaxed/simple;
+	bh=1/hOT1teYDjCnab1J6u5zZvPN7xUqhdY7qulzsyiAHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BBprTscBYYIsgQ72lH5ZZQKVNWjYHhwCyWhLRIOQFa6F2aA1qOg6IbN+cvRoz+EI0bpIIQhbCNnN+gH1/0qs85WO6clfl5KotqWhzfarFoolC6nho+gEIA0vqxsy48UifbhSFWympOTegvX4E1hScIbZ0f5vygxwRrxkNClDW2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HHewcVbL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B97CDC4AF0C;
+	Tue,  6 Aug 2024 13:32:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722951156;
+	bh=1/hOT1teYDjCnab1J6u5zZvPN7xUqhdY7qulzsyiAHo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HHewcVbLVQgPrwbAgB79Lrw0faT8+P71+hgPYj+krUOO3dQIVnPlAGjOq1XxJtchm
+	 hH76BeDhZNbxqsfdddj5AyWLlYpe+dzkYLfGnydr29bK86gJHPd33AgEAezXL+BvyA
+	 ustquKIo7gRg20dBD0GOemtP6uUL9U1BfPPw3oHDAbrs1H5se69VA1zHUB5MEnwBsD
+	 2kZnt5W4kmr93aMyd8LkD5fYqiOGsjuslsmWdV2QAlRhzJW4UrZpZJ+gG4XQGrmsV0
+	 TrT8xJPUjsEqDx88Ax97QNLdU8BVI5kpab1gJLsrwKM4pupSmieC+l55slWpuPNN/H
+	 fwjsRbrX6rs8g==
+Date: Tue, 6 Aug 2024 10:32:32 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, weilin.wang@intel.com,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Perry Taylor <perry.taylor@intel.com>,
+	Samantha Alt <samantha.alt@intel.com>,
+	Caleb Biggers <caleb.biggers@intel.com>
+Subject: Re: [RFC PATCH v18 0/8] TPEBS counting mode support
+Message-ID: <ZrIl8NCHkIVHQVt2@x1>
+References: <20240720062102.444578-1-weilin.wang@intel.com>
+ <CAM9d7cgoTyf3Zjt=+2yZi5Pat4UrxKxN=rkLHmyUWZqwZk8_Kw@mail.gmail.com>
+ <CAP-5=fWr2Qna9ikzUCFavo3OTUDSP3ztr=i6E=R962CXCdHckg@mail.gmail.com>
+ <ZrEpJxtm5zlp5rbo@x1>
+ <CAP-5=fVTaHdiF8G2Dn=vnguvoapa_+ZKsQ7Wy3z51K9nDZQUtg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8527:b0:4b9:26f5:3632 with SMTP id
- 8926c6da1cb9f-4c8d5740ff1mr392316173.6.1722951123161; Tue, 06 Aug 2024
- 06:32:03 -0700 (PDT)
-Date: Tue, 06 Aug 2024 06:32:03 -0700
-In-Reply-To: <tencent_D1FC92D5864A49986EC02EE50C8967EF4606@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a96937061f03d135@google.com>
-Subject: Re: [syzbot] [can?] WARNING: refcount bug in j1939_session_put
-From: syzbot <syzbot+ad601904231505ad6617@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fVTaHdiF8G2Dn=vnguvoapa_+ZKsQ7Wy3z51K9nDZQUtg@mail.gmail.com>
 
-Hello,
+On Mon, Aug 05, 2024 at 04:33:44PM -0700, Ian Rogers wrote:
+> On Mon, Aug 5, 2024 at 12:34 PM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > On Mon, Aug 05, 2024 at 08:10:12AM -0700, Ian Rogers wrote:
+> > > On Mon, Jul 22, 2024 at 10:38 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > >
+> > > > Hello Weilin,
+> > > >
+> > > > On Fri, Jul 19, 2024 at 11:21 PM <weilin.wang@intel.com> wrote:
+> > > > >
+> > > > > From: Weilin Wang <weilin.wang@intel.com>
+> > > > >
+> > > > > Change in v18:
+> > > > >  - Update to exit 2 in TPEBS shell test when not on Intel platform.
+> > > > >  - Several updates to use EVLIST_CTL_CMD_ENABLE_TAG, EVLIST_CTL_CMD_ACK_TAG, and
+> > > > >  etc.
+> > > > >
+> > > > > Changes in v17:
+> > > > >  - Add a poll on control fifo ack_fd to ensure program returns successfully when
+> > > > >  perf record failed for any reason.
+> > > > >  - Add a check in the tpebs test to only run on Intel platforms.
+> > > > >
+> > > > > Changes in v16:
+> > > > >  - Update tpebs bash test code and variable name.
+> > > > >  - Add a check to ensure only use "-C" option when cpumap is not "-1" when
+> > > > >  forking "perf record".
+> > > > >
+> > > > > Changes in v15:
+> > > > >  - Revert changes added for python import test failure in v14 because the code
+> > > > >  works correctly with the new python build code.
+> > > > >  - Update the command line option to --record-tpebs.
+> > > > >
+> > > > > Changes in v14:
+> > > > >  - Fix the python import test failure. We cannot support PYTHON_PERF because it
+> > > > >  will trigger a chain of dependency issues if we add intel-tpebs.c to it. So,
+> > > > >  only enable tpebs functions in evsel and evlist when PYTHON_PERF is not
+> > > > >  defined.
+> > > > >  - Fix shellcheck warning for the tpebs test.
+> > > > >
+> > > > > Changes in v13:
+> > > > >  - Add document for the command line option and fix build error in non-x86_64.
+> > > > >  - Update example with non-zero retire_latency value when tpebs recording is
+> > > > >  enabled.
+> > > > >  - Add tpebs_stop() back to tpebs_set_evsel() because in hybrid platform, when
+> > > > >  the forked perf record is not killed, the reader thread does not get any
+> > > > >  sampled data from the PIPE. As a result, tpebs_set_evesel() will always return
+> > > > >  zero on retire_latency values. This does not happen on my test GNR machine.
+> > > > >  Since -I is not supported yet, I think we should add tpebs_stop() to ensure
+> > > > >  correctness for now. More investigation is required here when we work on
+> > > > >  supporting -I mode.
+> > > > >  - Rebase code on top of perf-tools-next.
+> > > > >
+> > > > > Changes in v12:
+> > > > >  - Update MTL metric JSON file to include E-Core TMA3.6 changes.
+> > > > >  - Update comments and code for better code quality. Keep tpebs_start() and
+> > > > >  tpebs_delete() at evsel level for now and add comments on these functions with
+> > > > >  more details about potential future changes. Remove tpebs_stop() call from
+> > > > >  tpebs_set_evsel(). Simplify the tpebs_start() and tpebs_stop()/tpebs_delete()
+> > > > >  interfaces. Also fixed the bugs on not freed "new" pointer and the incorrect
+> > > > >  variable value assignment to val instead of counter->val.
+> > > > >
+> > > > > Changes in v11:
+> > > > >  - Make retire_latency evsels not opened for counting. This works correctly now
+> > > > >  with the code Namhyung suggested that adjusting group read size when
+> > > > >  retire_latency evsels included in the group.
+> > > > >  - Update retire_latency value assignment using rint() to reduce precision loss
+> > > > >  while keeping code generic.
+> > > > >  - Fix the build error caused by not used variable in the test.
+> > > > >
+> > > > > Other changes in v10:
+> > > > >  - Change perf record fork from perf stat to evsel. All the major operations
+> > > > >  like tpebs start, stop, read_evsel should directly work through evsel.
+> > > > >  - Make intel-tpebs x86_64 only. This change is cross-compiled to arm64.
+> > > > >  - Put tpebs code to intel-tepbs and simplify intel-tpebs APIs to minimum number
+> > > > > of functions and variables. Update funtion name and variable names to use
+> > > > > consistent prefix. Also improve error handling.
+> > > > >  - Integrate code patch from Ian for the :R parser.
+> > > > >  - Update MTL metrics to TMA 4.8.
+> > > > >
+> > > > > V9: https://lore.kernel.org/all/20240521173952.3397644-1-weilin.wang@intel.com/
+> > > > >
+> > > > > Changes in v9:
+> > > > >  - Update the retire_latency result print and metric calculation method. Plugin
+> > > > > the value to evsel so that no special code is required.
+> > > > >  - Update --control:fifo to use pipe instead of named pipe.
+> > > > >  - Add test for TPEBS counting mode.
+> > > > >  - Update Document with more details.
+> > > > >
+> > > > > Changes in v8:
+> > > > >  - In this revision, the code is updated to base on Ian's patch on R modifier
+> > > > > parser https://lore.kernel.org/lkml/20240428053616.1125891-3-irogers@google.com/
+> > > > > After this change, there is no special code required for R modifier in
+> > > > > metricgroup.c and metricgroup.h files.
+> > > > >
+> > > > > Caveat of this change:
+> > > > >   Ideally, we will need to add special handling to skip counting events with R
+> > > > > modifier in evsel. Currently, this is not implemented so the event with :R will
+> > > > > be both counted and sampled. Usually, in a metric formula that uses retire_latency,
+> > > > > it would already require to count the event. As a result, we will endup count the
+> > > > > same event twice. This should be able to be handled properly when we finalize our
+> > > > > design on evsel R modifier support.
+> > > > >
+> > > > >  - Move TPEBS specific code out from main perf stat code to separate files in
+> > > > > util/intel-tpebs.c and util/intel-tpebs.h. [Namhyung]
+> > > > >  - Use --control:fifo to ack perf stat from forked perf record instead of sleep(2) [Namhyung]
+> > > > >  - Add introductions about TPEBS and R modifier in Documents. [Namhyung]
+> > > > >
+> > > > >
+> > > > > Changes in v7:
+> > > > >  - Update code and comments for better code quality [Namhyung]
+> > > > >  - Add a separate commit for perf data [Namhyung]
+> > > > >  - Update retire latency print function to improve alignment [Namhyung]
+> > > > >
+> > > > > Changes in v6:
+> > > > >  - Update code and add comments for better code quality [Namhyung]
+> > > > >  - Remove the added fd var and directly pass the opened fd to data.file.fd [Namhyung]
+> > > > >  - Add kill() to stop perf record when perf stat exists early [Namhyung]
+> > > > >  - Add command opt check to ensure only start perf record when -a/-C given [Namhyung]
+> > > > >  - Squash commits [Namhyung]
+> > > > >
+> > > > > Changes in v5:
+> > > > >  - Update code and add comments for better code quality [Ian]
+> > > > >
+> > > > > Changes in v4:
+> > > > >  - Remove uncessary debug print and update code and comments for better
+> > > > > readability and quality [Namhyung]
+> > > > >  - Update mtl metric json file with consistent TmaL1 and TopdownL1 metricgroup
+> > > > >
+> > > > > Changes in v3:
+> > > > >  - Remove ':' when event name has '@' [Ian]
+> > > > >  - Use 'R' as the modifier instead of "retire_latency" [Ian]
+> > > > >
+> > > > > Changes in v2:
+> > > > >  - Add MTL metric file
+> > > > >  - Add more descriptions and example to the patch [Arnaldo]
+> > > > >
+> > > > > Here is an example of running perf stat to collect a metric that uses
+> > > > > retire_latency value of event MEM_INST_RETIRED.STLB_HIT_STORES on a MTL system.
+> > > > >
+> > > > > In this simple example, there is no MEM_INST_RETIRED.STLB_HIT_STORES sample.
+> > > > > Therefore, the MEM_INST_RETIRED.STLB_HIT_STORES:p count and retire_latency value
+> > > > > are all 0.
+> > > > >
+> > > > > ./perf stat -M tma_dtlb_store -a -- sleep 1
+> > > > >
+> > > > > [ perf record: Woken up 1 times to write data ]
+> > > > > [ perf record: Captured and wrote 0.000 MB - ]
+> > > > >
+> > > > >  Performance counter stats for 'system wide':
+> > > > >
+> > > > >        181,047,168      cpu_core/TOPDOWN.SLOTS/          #      0.6 %  tma_dtlb_store
+> > > > >          3,195,608      cpu_core/topdown-retiring/
+> > > > >         40,156,649      cpu_core/topdown-mem-bound/
+> > > > >          3,550,925      cpu_core/topdown-bad-spec/
+> > > > >        117,571,818      cpu_core/topdown-fe-bound/
+> > > > >         57,118,087      cpu_core/topdown-be-bound/
+> > > > >             69,179      cpu_core/EXE_ACTIVITY.BOUND_ON_STORES/
+> > > > >              4,582      cpu_core/MEM_INST_RETIRED.STLB_HIT_STORES/
+> > > > >         30,183,104      cpu_core/CPU_CLK_UNHALTED.DISTRIBUTED/
+> > > > >         30,556,790      cpu_core/CPU_CLK_UNHALTED.THREAD/
+> > > > >            168,486      cpu_core/DTLB_STORE_MISSES.WALK_ACTIVE/
+> > > > >               0.00 MEM_INST_RETIRED.STLB_HIT_STORES:p       0        0
+> > > > >
+> > > > >        1.003105924 seconds time elapsed
+> > > > >
+> > > > > v1:
+> > > > > TPEBS is one of the features provided by the next generation of Intel PMU.
+> > > > > Please refer to Section 8.4.1 of "Intel® Architecture Instruction Set Extensions
+> > > > > Programming Reference" [1] for more details about this feature.
+> > > > >
+> > > > > This set of patches supports TPEBS in counting mode. The code works in the
+> > > > > following way: it forks a perf record process from perf stat when retire_latency
+> > > > > of one or more events are used in a metric formula. Perf stat would send a
+> > > > > SIGTERM signal to perf record before it needs the retire latency value for
+> > > > > metric calculation. Perf stat will then process sample data to extract the
+> > > > > retire latency data for metric calculations. Currently, the code uses the
+> > > > > arithmetic average of retire latency values.
+> > > > >
+> > > > > [1] https://www.intel.com/content/www/us/en/content-details/812218/intel-architecture-instruction-set-extensions-programming-reference.html?wapkw=future%20features
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > > Ian Rogers (1):
+> > > > >   perf parse-events: Add a retirement latency modifier
+> > > > >
+> > > > > Weilin Wang (7):
+> > > > >   perf data: Allow to use given fd in data->file.fd
+> > > > >   perf stat: Fork and launch perf record when perf stat needs to get
+> > > > >     retire latency value for a metric.
+> > > > >   perf stat: Plugin retire_lat value from sampled data to evsel
+> > > > >   perf vendor events intel: Add MTL metric json files
+> > > > >   perf stat: Add command line option for enabling tpebs recording
+> > > > >   perf Document: Add TPEBS to Documents
+> > > > >   perf test: Add test for Intel TPEBS counting mode
+> > > >
+> > > > Thanks for your persistence!
+> > > >
+> > > > Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+> > >
+> > > Ping.
+> >
+> > I guess Namhyung's reviewed-by should suffice, but since you're pinging
+> > and I saw previous comments about this serie, would it be possible to
+> > get your Reviewed-by as well?
+> 
+> I'm happy with most of the changes and they can have my reviewed-by.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING: refcount bug in j1939_session_put
+Thanks.
 
-------------[ cut here ]------------
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 1 PID: 6087 at lib/refcount.c:28 refcount_warn_saturate+0x15a/0x1d0 lib/refcount.c:28
-Modules linked in:
-CPU: 1 UID: 0 PID: 6087 Comm: syz.0.15 Not tainted 6.10.0-syzkaller-12610-g743ff02152bc-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:refcount_warn_saturate+0x15a/0x1d0 lib/refcount.c:28
-Code: 00 17 40 8c e8 67 97 a5 fc 90 0f 0b 90 90 eb 99 e8 1b 89 e3 fc c6 05 76 7d 31 0b 01 90 48 c7 c7 60 17 40 8c e8 47 97 a5 fc 90 <0f> 0b 90 90 e9 76 ff ff ff e8 f8 88 e3 fc c6 05 50 7d 31 0b 01 90
-RSP: 0018:ffffc90000a186a0 EFLAGS: 00010246
-RAX: 20b8440b9615ae00 RBX: ffff8880223e2d64 RCX: ffff88802aba9e00
-RDX: 0000000080000101 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000003 R08: ffffffff81559432 R09: 1ffff1101726519a
-R10: dffffc0000000000 R11: ffffed101726519b R12: ffff88801e5ed868
-R13: ffff8880223e2d64 R14: 1ffff11003cbdb18 R15: ffff88801e5ed800
-FS:  00007faec5b416c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007faec5b40fa8 CR3: 000000007d6f6000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- kfree_skb_reason include/linux/skbuff.h:1260 [inline]
- kfree_skb include/linux/skbuff.h:1269 [inline]
- j1939_session_destroy net/can/j1939/transport.c:282 [inline]
- __j1939_session_release net/can/j1939/transport.c:294 [inline]
- kref_put include/linux/kref.h:65 [inline]
- j1939_session_put+0x1e7/0x440 net/can/j1939/transport.c:299
- j1939_tp_cmd_recv net/can/j1939/transport.c:2113 [inline]
- j1939_tp_recv+0x7fe/0x1050 net/can/j1939/transport.c:2161
- j1939_can_recv+0x798/0xbb0 net/can/j1939/main.c:109
- deliver net/can/af_can.c:572 [inline]
- can_rcv_filter+0x359/0x7f0 net/can/af_can.c:606
- can_receive+0x31c/0x470 net/can/af_can.c:663
- can_rcv+0x144/0x260 net/can/af_can.c:687
- __netif_receive_skb_one_core net/core/dev.c:5660 [inline]
- __netif_receive_skb+0x2e0/0x650 net/core/dev.c:5774
- process_backlog+0x662/0x15b0 net/core/dev.c:6107
- __napi_poll+0xcb/0x490 net/core/dev.c:6771
- napi_poll net/core/dev.c:6840 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6962
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0xd8/0x140 kernel/locking/spinlock.c:194
-Code: 9c 8f 44 24 20 42 80 3c 23 00 74 08 4c 89 f7 e8 0e 9c 3b f6 f6 44 24 21 02 75 52 41 f7 c7 00 02 00 00 74 01 fb bf 01 00 00 00 <e8> 63 c1 a3 f5 65 8b 05 64 b7 44 74 85 c0 74 43 48 c7 04 24 0e 36
-RSP: 0018:ffffc900035978c0 EFLAGS: 00000206
-RAX: 20b8440b9615ae00 RBX: 1ffff920006b2f1c RCX: ffffffff81701f3a
-RDX: dffffc0000000000 RSI: ffffffff8bead5a0 RDI: 0000000000000001
-RBP: ffffc90003597950 R08: ffffffff9351e8f7 R09: 1ffffffff26a3d1e
-R10: dffffc0000000000 R11: fffffbfff26a3d1f R12: dffffc0000000000
-R13: 1ffff920006b2f18 R14: ffffc900035978e0 R15: 0000000000000246
- j1939_sk_send_loop net/can/j1939/socket.c:1164 [inline]
- j1939_sk_sendmsg+0xe01/0x14c0 net/can/j1939/socket.c:1277
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
- ___sys_sendmsg net/socket.c:2651 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7faec4d773b9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007faec5b41048 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007faec4f05f80 RCX: 00007faec4d773b9
-RDX: 0000000000000000 RSI: 0000000020000280 RDI: 0000000000000003
-RBP: 00007faec4de48e6 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007faec4f05f80 R15: 00007ffefe95bb18
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	9c                   	pushf
-   1:	8f 44 24 20          	pop    0x20(%rsp)
-   5:	42 80 3c 23 00       	cmpb   $0x0,(%rbx,%r12,1)
-   a:	74 08                	je     0x14
-   c:	4c 89 f7             	mov    %r14,%rdi
-   f:	e8 0e 9c 3b f6       	call   0xf63b9c22
-  14:	f6 44 24 21 02       	testb  $0x2,0x21(%rsp)
-  19:	75 52                	jne    0x6d
-  1b:	41 f7 c7 00 02 00 00 	test   $0x200,%r15d
-  22:	74 01                	je     0x25
-  24:	fb                   	sti
-  25:	bf 01 00 00 00       	mov    $0x1,%edi
-* 2a:	e8 63 c1 a3 f5       	call   0xf5a3c192 <-- trapping instruction
-  2f:	65 8b 05 64 b7 44 74 	mov    %gs:0x7444b764(%rip),%eax        # 0x7444b79a
-  36:	85 c0                	test   %eax,%eax
-  38:	74 43                	je     0x7d
-  3a:	48                   	rex.W
-  3b:	c7                   	.byte 0xc7
-  3c:	04 24                	add    $0x24,%al
-  3e:	0e                   	(bad)
-  3f:	36                   	ss
+> I'm not happy with:
+> perf stat: Fork and launch 'perf record' when 'perf stat' needs to get
+> retire latency value for a metric.
 
+I don't like it either, but I couldn't find the time to engage in this
+discussion to try to offer an alternative patch and since Namhyung had
+provided his reviewed-by and you pinged me, I felt compelled to move
+forward on this.
 
-Tested on:
+> so please leave it off there.
 
-commit:         743ff021 ethtool: Don't check for NULL info in prepare..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=13b28ce5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5efb917b1462a973
-dashboard link: https://syzkaller.appspot.com/bug?extid=ad601904231505ad6617
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=153cb8d3980000
+So, what are you proposing, that we process up to some patch?
 
+For now I'm removing the whole series from perf-tools-next.
+
+- Arnaldo
+ 
+> Context: originally the patches aimed to abstract everything inside of
+> the evsel, now builtin-stat is manually starting and ending the
+> sub-process and has to be aware of TPEBS. There are ugly architectural
+> dependencies. My reviewed-by was correct on the earlier version, as
+> you could make a tpebs evsel just like any... other, open, close, read
+> it, etc. This would be useful say in a python script. This version to
+> my eyes is worse as all TPEBS dependencies are made explicit and the
+> caller needs to be aware of TPEBS. I understand Weilin was asked to
+> make some of the changes, and there was a desire for efficiency, but I
+> think things were better in earlier versions.
+> 
+> Thanks,
+> Ian
 
