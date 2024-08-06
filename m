@@ -1,127 +1,101 @@
-Return-Path: <linux-kernel+bounces-277063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4282E949BC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:02:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB95949BC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDAF51F22DA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:02:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 747F51F21F37
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B87E176FA4;
-	Tue,  6 Aug 2024 23:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4C4174ED0;
+	Tue,  6 Aug 2024 23:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WbSgrCGk"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EQidU8so"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5DC176AC2;
-	Tue,  6 Aug 2024 23:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D29216EC0B
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 23:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722985316; cv=none; b=qCi0wI3+ctJ3UnUF3AN6qVa+PoDkeZNA/Qe8w7k1hvYn4DSDHX9I5LSf3wS8s8djY4wEQrPjysArYQibO/XFbhKOYP0Vb2XiO7Y42sdoPyOuhvecW5/qixveyyTfmlnfnPM0kUZLRyhnzCoaiyoGYaAirbzDQf6YTrygThkb8Pc=
+	t=1722985356; cv=none; b=h/jRrSoBtog4DjMj4b7pbKA+oI8wsFfJyxpu0caX22ZBngOZKRBVm6vNQdX/KzkF8Awnki4mkzBtorjftgvzofwwy6im6vCZV/qiTxEUYHunJ3/kvJjKFjs0fQoDYXDi9ywcdKNSTxwTveHa4Wu9ccSQnQAoV3xkZqqoKsON1mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722985316; c=relaxed/simple;
-	bh=E7F+jikrY1ea4Cg2U9hTgk3SA6CkkasrCnZSU7WQ9+U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I9MtnwP1QKF7ulEP+5QszlnzlaN2vajZFB6+IDvVgOH8wYbYvnMUhrmnc2JB4oKFTxg0ZrDx5rNyzU848aKhogRuRVjw9DCa1GUmau4fTuYlVYSqCVNp9ymvOEzcgEipJxiU8EX0xjFfRgaBPy4sYGGXLMU8zB0lf1S4rM03T5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WbSgrCGk; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fc5296e214so11376615ad.0;
-        Tue, 06 Aug 2024 16:01:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722985314; x=1723590114; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZdVJJdDCqZKalivgmtRZB9cyZ9uUV+RhJk3mCj9v4vU=;
-        b=WbSgrCGksCNYdvQGk25pRDrHACJKcrgaX96Ezp7eHvhjOxR16vuUqvy7Cpfd5pBrWR
-         e6YHQxcuuHfm1nuKanWITBJ5LwQORACyvCKv2MKbcDxKF0Vkd4H2yw+cFLnCHfrd0Y3v
-         ERLFwjVHk4r/wp+4xalsgyKVKh4LACdXAUIraDOXpcuoy/EjZ59/eg7Gn28Gkj10fjeM
-         B8FY0DcUAmaoieHuYs0754gO5Iw6iHSWEz5R29SH3ihMKLHGizw4v652zBaUXml27J39
-         mJwFczYewGjC8+3RwSRwfmHuxdyjzt1YA9rCg6WSX+uKPieysQjXCI7WDgPSocSDn6o9
-         5Lyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722985314; x=1723590114;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZdVJJdDCqZKalivgmtRZB9cyZ9uUV+RhJk3mCj9v4vU=;
-        b=ASbmMDeYRcuhe0Fl/wzAqO11EewQgAEYFGPeTukV+353iY7C5KVjBZx+45P3IP29hl
-         zGAY98Gp07bb3sqaIjb28HGIGw6EQqAb0eqXsBwLcGLYCAQgOLUqtvnqNtCitc3Mpih8
-         vbK1rJOfKYuT6QB7kJa4vombDC7cTNaWJJoz1h7S3qNjWPyDaxtIHNayzcxX8BuoIGA/
-         i22lpTE/tfTX8Xx/F7kPMVGGvmgJuHxLXuuXePE60HeaLXNlS4ZC/8+57MghqKATlkTA
-         1nISMc40OXAwnFTsuxYAM2BvBFH9Dneo+2mzJ+S0AeixIRVS6nWU1tkVyQT0sBu0pdga
-         RWqA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8aAVjcV5JU/QB/4RdhXIJG5Exa/IG0a+eGtapcQRoryJKOEhNrH5+/bhVhaYoalGvqXc1aXarycR1fNyfv/1S57GYxlaS2vws9JzjW/KXaOuTtoPjOBdxdWeMs+RDP1oivfu++kNK
-X-Gm-Message-State: AOJu0Yyxlm74JpBpOyoD5y+HaaEaR5OmIFPEvjq/Bgg4kBbXXNRi3d0c
-	nk39b+exn975vNGeIlvFxQIqzaHUr02zZIRac5QmahgFYNTTtSsA
-X-Google-Smtp-Source: AGHT+IGKu6Uu5p66KKRw86KqLzb0kdhVrY7CZb8sOV5pguHraF37uyOcTxKsqC18hMgJMQrSsoYZmg==
-X-Received: by 2002:a17:903:41cf:b0:1fc:5820:8940 with SMTP id d9443c01a7336-1ff57274b55mr215231055ad.20.1722985314508;
-        Tue, 06 Aug 2024 16:01:54 -0700 (PDT)
-Received: from toolbox.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592b3997sm92780755ad.294.2024.08.06.16.01.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 16:01:54 -0700 (PDT)
-From: Alistair Francis <alistair23@gmail.com>
-X-Google-Original-From: Alistair Francis <alistair.francis@wdc.com>
-To: bhelgaas@google.com,
-	linux-pci@vger.kernel.org,
-	Jonathan.Cameron@huawei.com,
-	lukas@wunner.de
-Cc: alex.williamson@redhat.com,
-	christian.koenig@amd.com,
-	kch@nvidia.com,
-	gregkh@linuxfoundation.org,
-	logang@deltatee.com,
-	linux-kernel@vger.kernel.org,
-	alistair23@gmail.com,
-	chaitanyak@nvidia.com,
-	rdunlap@infradead.org,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: [PATCH v15 4/4] PCI/DOE: Allow enabling DOE without CXL
-Date: Wed,  7 Aug 2024 09:01:18 +1000
-Message-ID: <20240806230118.1332763-4-alistair.francis@wdc.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240806230118.1332763-1-alistair.francis@wdc.com>
-References: <20240806230118.1332763-1-alistair.francis@wdc.com>
+	s=arc-20240116; t=1722985356; c=relaxed/simple;
+	bh=Kflc9+5zqw92VJhJ+bmkGLCRq6Z7U1zrmWwyRiioHuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q9FgPJSvyXpQgweKMIkHKt6fyAsQVHhIwWCexA4jygvAyFiGYhS4LwmQto4fP6m6q9nNmm0ZwUureVp+O5OvFvVr85P4jpO6ePoXNQiCsBBPko9WUiqDHzaQtX5DeE8ZpDBwhXkNtw37e5781dIKR7ygoVx9u8L0LVgMmrCzUCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EQidU8so; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722985355; x=1754521355;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Kflc9+5zqw92VJhJ+bmkGLCRq6Z7U1zrmWwyRiioHuI=;
+  b=EQidU8sovOi1yIh6+hPIcWE6g8Y90W+k/C4qgvZ/iTYWHjrs83rJcOwe
+   7o+BCxfj+/Hxo9kd6GESUhIDwYYxNY6nGLtvh0Plgm6xvJIc0PobOL0E9
+   4d8HeEzq+avh3CKluymkgfroAM9SvT+OXhdEd4ReybvCY8cnsKGuO2udb
+   PJssER66Bk+9QNXQNacD7MVSGpeYZ/c3txFH1+1tbcuK/fsf0Fi2SfvUi
+   fp3lJgZ9k5Ml+nGhZKQnDdPTomyUZGAlgu4Ppe5z41K9UQ0NvtTsX4GVw
+   LWR8R4lF1ZhnBKPBNePAnOaNO1NoKMF9TMCpRbd/PoVfG2WNjqkGe1LGr
+   Q==;
+X-CSE-ConnectionGUID: WyjovkMxRs+6fJ4xLqYRdQ==
+X-CSE-MsgGUID: TdxhX1oAT92YEcGAeO+qXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="38488230"
+X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
+   d="scan'208";a="38488230"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 16:02:34 -0700
+X-CSE-ConnectionGUID: DuGfvrq3SCue8OjUM+uRXg==
+X-CSE-MsgGUID: wSUk9GpNTxCKF8CTMif23A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
+   d="scan'208";a="57350252"
+Received: from tassilo.jf.intel.com (HELO tassilo) ([10.54.38.190])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 16:02:33 -0700
+Date: Tue, 6 Aug 2024 16:02:31 -0700
+From: Andi Kleen <ak@linux.intel.com>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: acme@kernel.org, namhyung@kernel.org, irogers@google.com,
+	peterz@infradead.org, mingo@kernel.org,
+	linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
+	eranian@google.com
+Subject: Re: [PATCH 7/9] perf annotate: Display the branch counter histogram
+Message-ID: <ZrKrh3t_Kasf2gf8@tassilo>
+References: <20240703200356.852727-1-kan.liang@linux.intel.com>
+ <20240703200356.852727-8-kan.liang@linux.intel.com>
+ <Zq1K-YM4JoEQwov1@tassilo>
+ <c634b005-c382-48cc-bf54-6f570687d5c0@linux.intel.com>
+ <20ba40ec-7e2a-4a0d-b9d3-fe8e1256fbb8@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20ba40ec-7e2a-4a0d-b9d3-fe8e1256fbb8@linux.intel.com>
 
-PCIe devices (not CXL) can support DOE as well, so allow DOE to be
-enabled even if CXL isn't.
+> For the --stdio mode, perf should print out the abbreviation mappings in
+> the header. I think the --stdio mode is the one used by other tools to
+> parse the result, right? 
 
-Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- drivers/pci/Kconfig | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+It's not just for tools, the humans might also not know, especially
+if there are lots of events.
 
-diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-index aa4d1833f442..173dbcfc3b47 100644
---- a/drivers/pci/Kconfig
-+++ b/drivers/pci/Kconfig
-@@ -122,7 +122,10 @@ config PCI_ATS
- 	bool
- 
- config PCI_DOE
--	bool
-+	bool "Enable PCI Data Object Exchange (DOE) support"
-+	help
-+	  Say Y here if you want be able to communicate with PCIe DOE
-+	  mailboxes.
- 
- config PCI_ECAM
- 	bool
--- 
-2.45.2
+> The previous patch 6 (--stdio mode) does show
+> everything in the header.
+> 
+> Is there a use-case in the TUI mode that has difficulties utilizing the
+> shortcut 'B'? If yes, could you please elaborate?
 
+No if B works in tui mode that's fine.
+
+
+-Andi
 
