@@ -1,233 +1,128 @@
-Return-Path: <linux-kernel+bounces-276334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A847A94923B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:55:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E69BA949240
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6072872C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:55:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 912E81F2739D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31218205E24;
-	Tue,  6 Aug 2024 13:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EC520FABD;
+	Tue,  6 Aug 2024 13:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="rqDaIoXl"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2054.outbound.protection.outlook.com [40.92.102.54])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Mr76nB06"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714601EA0BD;
-	Tue,  6 Aug 2024 13:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722952382; cv=fail; b=Oi6fv9ZMgiOewyNztxF26Y22tqyverOGXjQBdt7/QwGzZraFD42BOHF75a0wnl3Qwtubr2XYj41UCZm/Nv3ot2eN2LVhD9Wu+utlT09ExOL6biMhXi+xzXmQkl0MziNxuL1tiLTKDlDAdf+knYD8H3Q+T0hmzI3rzAMgyjwrsws=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722952382; c=relaxed/simple;
-	bh=wM5lJQU/XTPlSQMc3tjBBPl998jaf/IPW5DbGJ2A6IA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oKYvoTHJArISoNAo5xkTJithT/zZvonwKp7a+LRM2fNMK6Rs4yqN44QlTGoG2haLJcjMpKDPp5qhVJAjiTmd+VAAVl40G08XIy98YWxzMkGzUTR174p3TYy9S7M4DrkXHnk0YX7HqhStK6ILviWcCYnIlPeCh1Ej8fvdpzYJtDY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=rqDaIoXl; arc=fail smtp.client-ip=40.92.102.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KC7BJPnHxJk3inQkFZuTHr33Uyt17QWwb5Afhn9eZrbm2TBbl2Ijd2QJ9VV7M9Zmlr5xh9N2b9sP9/opQ3HmmNYDd8IqF2GoxtDr3+y64nGORMDFUDwMjhzuRT5ggWl1E3rm5Pbissif0Bw1AWfue85sZasOVNP2Pm96xM2GxoI26o7FKYRk3qnIZ+My8e4JhNIU5Cc5LtMlUW5r7mdr6MHoF6nP8KpGj4THgpP5xpUZD3s5W07LyatWZEJDziwe2iymjFtsDDIXmTl4VjoFDoo+Z5zRQ8nBQALLSSC0RB0h6s4pDb3+oBdrwNC60Tk76/DK1tIbxCTh7/DtTH+Izg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WFlmNon3cxCsrA/dn65ztpfF+V3XRcHR23mKlXxL7g4=;
- b=Hm+fTj7azRnRda/yjkYA5/RbC8yramoGYgwObEoKh1WulhOnyv5G+GrFfxqlkJohmdyP+IRgUZZsKYpfbjWfK+rSCApJvO65eaDLhP7w4SAyyRx5zhsj/9DwBzkI9X0qcASG9Vbw7Zw2EgHQSmRwPBnVwjMpxpBzOXsRIcIDByQPVAB9mbDHpCBCal5VjQZl5InHl7cAfyuoyZM++dqd4aU2TMfaaQuWMJ7GY+A8PbfnCCQSspvDRXMrqZ+gIB7aH1RUwyIt9iNaCU629SHKrBtSYH9Ax+ZFjx7RjJ1s3bOnKfmq91vuzoCosZSrZL7GmFW88jCEYHq1TY7SbJR+kA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WFlmNon3cxCsrA/dn65ztpfF+V3XRcHR23mKlXxL7g4=;
- b=rqDaIoXlUSPM0Ip3SFDNBOOVW9uK9cljHNfuKAyGjUYywKwe1H4gaDGMZT7vs00eazkPoIwhuQL7XIxslVXMt7p/rj6X1/cgvVaD0QdTOG78gLZ8zJkC5o94pW7Cyc5t7py7/wJ/Y77N4mpl+mc6df9oh9sZUjR06pfKTd+TAJh6wutwDLkV2KlyjFPd29DzbgDRXPjOoYHsiE6HYxXd50PUPyBmXSn8rZENVrsKGIe05txXTt5s6FujK4Yea9Cyc1hjwGUFJ2HHlbQxQRTWbDRmF4j+qkpflqdvjpEQF7W+LMJs+nJhzI2fib24Ms6ujEbRNQlHObHnixdKODAung==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- MA0P287MB1708.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:fe::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7828.26; Tue, 6 Aug 2024 13:52:46 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
- 13:52:46 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Aditya Garg <gargaditya08@live.com>
-CC: "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
-	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>, Kerem Karabay
-	<kekrby@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Orlando
- Chamberlain <orlandoch.dev@gmail.com>
-Subject: [PATCH 7/9] HID: multitouch: add device ID for Apple Touch Bars
-Thread-Topic: [PATCH 7/9] HID: multitouch: add device ID for Apple Touch Bars
-Thread-Index: AQHa6AfrYQfNORX0kUmVQmeA7FLxkA==
-Date: Tue, 6 Aug 2024 13:52:46 +0000
-Message-ID: <4BB7CA6D-1554-4784-9F7E-BFDBCD9D8B5A@live.com>
-References: <021EE0BF-93CA-4A37-863F-851078A0EFB7@live.com>
- <C0F2E161-BBAD-4AF7-B39F-015A5A609CD4@live.com>
- <C687A5C0-9922-4CDB-85C1-096CE9D82847@live.com>
- <9223E804-286F-4692-9726-2306361F1909@live.com>
- <C2CAAA64-500A-4D76-905B-DC3E2A884941@live.com>
- <BDCA0457-7A04-4705-892F-CC8DF493DBC7@live.com>
- <708F206D-3571-42E2-BA6B-5AD9EEF66073@live.com>
-In-Reply-To: <708F206D-3571-42E2-BA6B-5AD9EEF66073@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [YCaoMJIq9VaYdbccaFPuAV4fufHF45NGgAyQLik22ZYRlcAAXGT1ArLGcdN7mjWp8MniL5IZ6yw=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|MA0P287MB1708:EE_
-x-ms-office365-filtering-correlation-id: f4c3c476-067f-411f-4476-08dcb61f0da2
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|461199028|19110799003|3412199025|440099028|102099032|1710799026;
-x-microsoft-antispam-message-info:
- 5MX1fzMAZ6gRNqtwKjoIbwcKRzddUqXBbW0lrlzdb2q0a1SuUxWyj4CVVVpB/x6ym3Z2jpvMGPb3/jvOJQHeX1IrnlCxKVCnjmbNm66+uy8dyskBV+0jeZW0U4zaYfaii3/sK6g36smW6zLr455z5WYE2U12UmVwzamlJ8kv9HEWjk7P11SoWho9R/DIbgl5ZdiNWCU4nUJAM1R4clPnZ5BX0rDqtQHvaVGZOWtGMT3Tx4MkUsHF90DJiSzahyQ0LncKsKgZe5PzgBMwWt/qfENErSqMEDmLOfMiDIpeWXOIWOa2Ul5LbQSv2uesyrve0A4s7EpqllUxUqhLaHqvY13ia4eMhjDax+OHHAZcOiG/H+NqA+xehAkcn71vnOONXOebfIxClLOaq+rTj6yRRxoEI8ibeO07uK3LRNAgR6f4OQZYmcXfziefWe7teVF7mAcGKd1V52IfDUnjA1ICUTPhW/KZ864Wxr5EW9Lvlz5W2UDSuzzeTfdq1H67DKZl0ntsoF5doPbSaeLZHdXLo1OtyIkHmqG3DMaHppzoo8Bp9jZPSLuaJNZS8fzX7Kg3YL8WVM3vxVh02jCW/OQdSGFMJ5WqDT1qYq5OLrQPa+zGPSkrC5i+czRbANBtvfMY1SYF10rwbPSsxBSyjJYazFFuoToLlJvBRsqzcbFxqn1doooYTzdSIKCBeOWZVmUs
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?yzzQm2EqQ1A5m5va5l5FhF8MpeajYsixtuBU42sPASbIqmLk97VjyjiE/WLJ?=
- =?us-ascii?Q?zpPt70JhoDJwKx/1tbf6FM6LAZLJJbgnjpxI1E+H6xikq7VEyIeUQ1w6tPKJ?=
- =?us-ascii?Q?hnN48SpWtgDKp4e5p45BKFozuSQZrEr0Vxq0pOhOJ6w9gZSG5lmjGIQAAIBc?=
- =?us-ascii?Q?GqA134q0+AZeBwVAhpKBk4fs0XBXypQ5vwWEUDOcat4PFDIaw93CkTbn/Fqy?=
- =?us-ascii?Q?WNWbpztQxdy2SV3y3fm0ehAxnjSXYTk0fCO2ubsQQ5x4/UlQ3S9txi/wrFqk?=
- =?us-ascii?Q?efNSLrrvi37J+zofIry3EWjSVg5EZbJRqgvX/vRoSegMB2lg9vv7P3b7smE1?=
- =?us-ascii?Q?sUHCGxP8Fa6QzHoYokH1lGswx8tKb0Vni/Ek4U5waq0IUGnUzsrw47HdKbvo?=
- =?us-ascii?Q?9DV2ujglAU503YsFspvi/lyg3OwIK16OkJeUl1DGdAPxxqO3UbEWJ1Y4ptLL?=
- =?us-ascii?Q?VbyiJDbgPYCDFITlIboCeE45V1e3D0Fu6nDHsnzyJ6ObULbJ/sCzdOEem5LH?=
- =?us-ascii?Q?ZUwGH/4oKs5fZ23T6TNzu6BJXzvURCc0bX24vcRoUs80EjxUbqhe8yHwZVJh?=
- =?us-ascii?Q?JJzSiKqiMwAfTU5k51AglogDGf0gjvLdtv4h+Gj0uDJzfc1/g1VHGNp1kjdg?=
- =?us-ascii?Q?ciBas5O8KbjvgC1peZGauXDfGlWYpMAJssFYIRgNKvuvYM2BcFYqgjwlYI5z?=
- =?us-ascii?Q?juACGTuUIlLtdC9iiCf32+SjxLOga42+I17tLLyBF1IAKj6I8O3z4J3AGQTW?=
- =?us-ascii?Q?bvuhAeZjdFssRmoHTCRg0UWC2wlrQzG1g6dA+cBKElPF0LWTSy1dHJCB3oph?=
- =?us-ascii?Q?h7xJezbdfhKTNxvKX+zlGtuY7psIp4hPkEPTL0kguY752GKMl1h3cdKuZuuJ?=
- =?us-ascii?Q?h3+C7J/mWTHfby2wbgI4umiXAWwZ1Xkz+mgyO/4Y5V4Npx7OPKY8R79b6YwL?=
- =?us-ascii?Q?D/IQgs68nlgW7Xeq87W6s68z7RapHE1eC+Rg/gpIg2zj7C1sc3gcigG40xhc?=
- =?us-ascii?Q?RNwYKvZ/6cQyblDtUMH2EjV7G618p/vwN4pnRHOnbxGew8O8MDntCjvh+3sG?=
- =?us-ascii?Q?ZTe+0LWCTaFzkt0MLazw8P8foS8m50H1uPr3wHUNNJu2WDkJJ/FI6a6/n1xH?=
- =?us-ascii?Q?wb8w0b3ty7gHExOyK+2qaGSofwJZ0/YUZe7I2dJj0ghdn5hjKUM0T4obOLup?=
- =?us-ascii?Q?40sUfknA3RXC/XLYx7iP/4333q3Urq5V82DpD3/vP/HzCfDJ/ZxKMq3NFlLg?=
- =?us-ascii?Q?gX89CnpLid6IjJljV+wRNkm8F+jcalrBHz6bz2HDL/4EfQ4T9CsOAMMAeFcx?=
- =?us-ascii?Q?icmkxZbnzpx1Wecax+ulakqt?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <95EE09D02FDC9742B58E4500BDEC44A5@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2918A16B741
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722952404; cv=none; b=oT4EDf2f0SaZ5tNRmRHlq5GdpjoFOkL495kcoX3Eyyq3NY3Gl29bX8TdtJc6RmgAEqtY828KGG0rh+4iOXNLsuQUI3DQ5hJRdZGBkXOExPnhO7gYkmtkWstpxYVMCmW44iW/sTesjKYdLAGD+e2dGWsTHzxGhR2Cq0EXLOE9g5s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722952404; c=relaxed/simple;
+	bh=gND2bZM1lMXlIKqLm4B7YduypVXLJlqmOeeFIwQ3M6s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gLriwLaP/rosXiaiXpfNBFflQckCowF5R0nfcNsSF3XBWfCzd2jZK9l+kqUddBZh+F8kUz5vXj1tziHs7/HlgEHMKJmIzy4TbPYYB14sCfvXKQFFhUR0ko81nRqx9VPqlQ7bznFRC/zttSb2s81JDSuBFip5BrGAZsla1hR/yeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Mr76nB06; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=3LTBOgJDuXy2JwBI4zDANEzW9GrzludH0YUDes8GtkE=; b=Mr76nB06wQclSyKoqSrIkT4bMj
+	OOgpRUmOKIE5K8IQGUaxR8U2Ue89TpXSxdT0t0LL0HAP3KJDI+995AnE8ngb1af0SEBLQhyErrMhE
+	hjHW2leRMXsNA6TIA0yF5ulOg9hMTxwWkDA7/eicCWGkSVkuUg/PzILn6egqQuTDxpWJ5hpLw8A5Y
+	kpZ3l/J+VEGTtCq4SoUubDju/SqTOjIteVVJcI6v6J6mcqAteBUARvIxjg1AzsJU0gfPFs5ZDK7bS
+	hD0k7/fq/d7KEC7yKQkEOc9iplQjxdb6uYxO1eog0Y2XzBfZarNrOeWHEB5CIwMTXl0pFuIMA01tf
+	5DgN82Og==;
+Received: from [179.118.186.198] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1sbKcd-008buR-1C; Tue, 06 Aug 2024 15:53:07 +0200
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+To: dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel-dev@igalia.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Simon Ser <contact@emersion.fr>,
+	Pekka Paalanen <ppaalanen@gmail.com>,
+	daniel@ffwll.ch,
+	Daniel Stone <daniel@fooishbar.org>,
+	=?UTF-8?q?=27Marek=20Ol=C5=A1=C3=A1k=27?= <maraeo@gmail.com>,
+	Dave Airlie <airlied@gmail.com>,
+	ville.syrjala@linux.intel.com,
+	Xaver Hugl <xaver.hugl@gmail.com>,
+	Joshua Ashton <joshua@froggi.es>,
+	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH RESEND v8 0/2] drm/atomic: Ease async flip restrictions
+Date: Tue,  6 Aug 2024 10:52:58 -0300
+Message-ID: <20240806135300.114469-1-andrealmeid@igalia.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-bafef.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4c3c476-067f-411f-4476-08dcb61f0da2
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2024 13:52:46.8230
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB1708
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Kerem Karabay <kekrby@gmail.com>
+Hi,
 
-Note that this is device ID is for T2 Macs. Testing on T1 Macs would be
-appreciated.
+As per my previous patchsets, the goal of this work is to find a nice way to
+allow amdgpu to perform async page flips in the overlay plane as well, not
+only on the primary one. Currently, when using the atomic uAPI, this is the only
+type of plane allowed to do async flips, and every driver accepts it.
 
-Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/hid/Kconfig          |  1 +
- drivers/hid/hid-multitouch.c | 26 ++++++++++++++++++++++----
- 2 files changed, 23 insertions(+), 4 deletions(-)
+In my last version, I had created a static field `bool async_flip` for
+drm_planes. When creating new planes, drivers could tell if such plane was
+allowed or not to do async flips. This would be latter checked on the atomic
+uAPI whenever the DRM_MODE_PAGE_FLIP_ASYNC was present.
 
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index 72b665eda..35ef5d4ef 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -744,6 +744,7 @@ config HID_MULTITOUCH
- 	  Say Y here if you have one of the following devices:
- 	  - 3M PCT touch screens
- 	  - ActionStar dual touch panels
-+	  - Touch Bars on x86 MacBook Pros
- 	  - Atmel panels
- 	  - Cando dual touch panels
- 	  - Chunghwa panels
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 2948fbcbc..0fed95536 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -214,6 +214,7 @@ static void mt_post_parse(struct mt_device *td, struct =
-mt_application *app);
- #define MT_CLS_GOOGLE				0x0111
- #define MT_CLS_RAZER_BLADE_STEALTH		0x0112
- #define MT_CLS_SMART_TECH			0x0113
-+#define MT_CLS_APPLE_TOUCHBAR			0x0114
-=20
- #define MT_DEFAULT_MAXCONTACT	10
- #define MT_MAX_MAXCONTACT	250
-@@ -398,6 +399,13 @@ static const struct mt_class mt_classes[] =3D {
- 			MT_QUIRK_CONTACT_CNT_ACCURATE |
- 			MT_QUIRK_SEPARATE_APP_REPORT,
- 	},
-+	{ .name =3D MT_CLS_APPLE_TOUCHBAR,
-+		.quirks =3D MT_QUIRK_HOVERING |
-+			MT_QUIRK_TOUCH_IS_TIPSTATE |
-+			MT_QUIRK_SLOT_IS_CONTACTID_MINUS_ONE,
-+		.is_direct =3D true,
-+		.maxcontacts =3D 11,
-+	},
- 	{ }
- };
-=20
-@@ -1747,6 +1755,15 @@ static int mt_probe(struct hid_device *hdev, const s=
-truct hid_device_id *id)
- 		}
- 	}
-=20
-+	ret =3D hid_parse(hdev);
-+	if (ret !=3D 0)
-+		return ret;
-+
-+	if (mtclass->name =3D=3D MT_CLS_APPLE_TOUCHBAR &&
-+	    !hid_find_field(hdev, HID_INPUT_REPORT,
-+			    HID_DG_TOUCHPAD, HID_DG_TRANSDUCER_INDEX))
-+		return -ENODEV;
-+
- 	td =3D devm_kzalloc(&hdev->dev, sizeof(struct mt_device), GFP_KERNEL);
- 	if (!td) {
- 		dev_err(&hdev->dev, "cannot allocate multitouch data\n");
-@@ -1794,10 +1811,6 @@ static int mt_probe(struct hid_device *hdev, const s=
-truct hid_device_id *id)
-=20
- 	timer_setup(&td->release_timer, mt_expired_timeout, 0);
-=20
--	ret =3D hid_parse(hdev);
--	if (ret !=3D 0)
--		return ret;
--
- 	if (mtclass->quirks & MT_QUIRK_FIX_CONST_CONTACT_ID)
- 		mt_fix_const_fields(hdev, HID_DG_CONTACTID);
-=20
-@@ -2249,6 +2262,11 @@ static const struct hid_device_id mt_devices[] =3D {
- 		MT_USB_DEVICE(USB_VENDOR_ID_XIROKU,
- 			USB_DEVICE_ID_XIROKU_CSR2) },
-=20
-+	/* Apple Touch Bars */
-+	{ .driver_data =3D MT_CLS_APPLE_TOUCHBAR,
-+		HID_USB_DEVICE(USB_VENDOR_ID_APPLE,
-+			       USB_DEVICE_ID_APPLE_TOUCHBAR_DISPLAY) },
-+
- 	/* Google MT devices */
- 	{ .driver_data =3D MT_CLS_GOOGLE,
- 		HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, USB_VENDOR_ID_GOOGLE,
---=20
-2.43.0
+However, Dmitry Baryshkov raised a valid point about getting confused with the 
+existing atomic_async_check() code, giving that is an function to do basically
+what I want: to let drivers tell DRM whether a giving plane can do async flips
+or not. It turns out atomic_async_check() is implemented by drivers to deal with
+the legacy cursor update, so it's not wired with the atomic uAPI because is
+something that precedes such API.
+
+So my new proposal is to just reuse this same function in the atomic uAPI path.
+The plane restrictions defined at atomic_async_check() should work in this
+codepath as well. And I will be able to allow overlays planes by modifying
+amdgpu_dm_plane_atomic_async_check(), and anyone else have a proper place to
+play with async plane restrictions as well.
+
+One note is that currently we always allow async flips for primary planes,
+regardless of the drivers, but not every atomic_async_check() implementation
+allows primary planes (because they were writing targeting cursor planes
+anyway...). To avoid regressions, my patch only calls atomic_async_check() for
+non primary planes, and always allows primary ones.
+
+Thoughts?
+
+Changelog
+ v7: https://lore.kernel.org/dri-devel/20240618030024.500532-1-andrealmeid@igalia.com/
+ - Complete rewrite
+
+André Almeida (2):
+  drm/atomic: Let drivers decide which planes to async flip
+  drm/amdgpu: Enable async flip on overlay planes
+
+ .../amd/display/amdgpu_dm/amdgpu_dm_plane.c   |  3 +--
+ drivers/gpu/drm/drm_atomic_uapi.c             | 23 ++++++++++++++-----
+ 2 files changed, 18 insertions(+), 8 deletions(-)
+
+-- 
+2.46.0
 
 
