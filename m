@@ -1,218 +1,246 @@
-Return-Path: <linux-kernel+bounces-275701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA579488D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:07:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5630F9488D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 455A3B229EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:07:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46B51F2394F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29971BB6AF;
-	Tue,  6 Aug 2024 05:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0AF1BB6A9;
+	Tue,  6 Aug 2024 05:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="D2QoG28i";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NZtpEaaw"
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D0EmZYpi"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C701B9B57;
-	Tue,  6 Aug 2024 05:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EDB15C124
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 05:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722920841; cv=none; b=CxVxr1zfWvjxvrKLXs5OtCF38eINKqdseHkTmrTyc3N3MNvvwqcnCO20VLYBvWJq06z0XM+/EUdjWLxggSIoy6ANEMiEm0xpFT54C4kYaflwHDhKA4wdrnhGwhjLCKDcCXSmuD1BR5pZwvOn+kItMODlkQj15vnvuk1iJrsL/mo=
+	t=1722920922; cv=none; b=NK03dWHzMPfB2sU387CvYxYPIlSBBDycyiWEzjVKZRQClENN4gbY5onQ/bwR3sRp0UfMgN0dN5AuQzCe6rYcheowfLDuXvE/W9tCefi6EhPjYogVeJkqPdmQVub1MpilViNeia9NXl37oUPg+3AvVc2OPe7c5oTANJ9Ux4RMTC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722920841; c=relaxed/simple;
-	bh=apDWX41hzTvepTsaor7Otn5/Ivr3hjk1x5Lq8kdkbQo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=eaz5CO9WTSXysIyrx+cepa+OYTcrQogmdLfe2Ub2iAgpA5y9hvmhGz3rGpslIff9EeqFAWwgEA+Keoex6BijzADtuHq3brcwvNLma080coZe8gNeAHm5fC+IGlosD8We/785mnLjSeboVh/d6WFkON4qrq0QKOfLvwMKj2sY9yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=D2QoG28i; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NZtpEaaw; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id B4BC4115184B;
-	Tue,  6 Aug 2024 01:07:17 -0400 (EDT)
-Received: from wimap26 ([10.202.2.86])
-  by compute5.internal (MEProxy); Tue, 06 Aug 2024 01:07:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1722920837;
-	 x=1723007237; bh=BgnfkzSExE/qxu88/0KK7QSWgDm/YVsejCE1GRTeWMQ=; b=
-	D2QoG28iZfuj6HVD2ACxzTeTPStEIrdqFSWIkc8/5CmOQwIg4eVniMGB1lXxV2vO
-	n6HGWjHlhuNsSX2Msb73Zlvw+OO8W5xJx0QYY7ETOX/uVZbEN9mfvFkPPm9SxZlP
-	YnP1By9Hvqg7RCt43znDt2VMEcfr0RHgmbYgdPEUh8C/DirM2VGwzciTUimfKhq/
-	JNH4emj3d5tVqubeTI09n+4LN/S0REuwAO96DfdnMwLrVzld8axWuneyCaHuijgJ
-	1nRNszvpMJZV7UvK7Lvna/3u9bxfQ3lkXRNeJwOduiQ/fZyj+rkTSAaCXK8IV30v
-	ENjWYfCU+NQSUEl+/gFn5w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722920837; x=
-	1723007237; bh=BgnfkzSExE/qxu88/0KK7QSWgDm/YVsejCE1GRTeWMQ=; b=N
-	ZtpEaawHsVkrXwlydpyeNoZrmDQzwaPtDWibrL4CSC8CuE51QYHmynaUuW+QB6sc
-	D3ZRr2qXQKl3SzGCXcjFJfaJgdFscolNrhbMB5wDADGlSgoINwXYAXDK1PGB/DMA
-	JrC+5bmJRaPdht7moV7Hucqb0wxyBIlFvbO4jIEKYMWDyWO0TLcwZcmcX2ncDzE9
-	/MiWfaIw9I2p4h3hBYWBOBuhDYEmMPvESOxJm3i9f7HMQPdU40dhIrEx3y5db9Lm
-	j7JO3LoSyxOPBYUsIyno9is3x8KQvLvKPZAVkj/3i3w1ig+ljs1OIU8DtALAU6y/
-	b6kqgVo5bJDfwHhxgvu8A==
-X-ME-Sender: <xms:hK-xZsPuwW7Y3wlUfLkNlNFh76UKOl5oSVi9J40pGmJLrLXYLCv_og>
-    <xme:hK-xZi_3z-L5Lc9V_YHAGUJ4bCgeEZ4-QF3CljHKduS9BOQC-PVRR5q3esrnJi4DT
-    ypKR6DlBl9pKxIYRjU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeejgdelvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdflihgr
-    gihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqe
-    enucggtffrrghtthgvrhhnpeffkeevtedtueevfefhkefhudfggeetjeffjeduueehueej
-    gfeludevkedutdeuheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsth
-    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghn
-    ghesfhhlhihgohgrthdrtghomhdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:ha-xZjTRVAObh7Uv0wtlJQT-LCXPIBcBDlQtrlwILzCa2ByRvApwrQ>
-    <xmx:ha-xZks35dc82f9GsuY0rcK_gN9nERwkjYZLG029PLh2mfFQbdAs-g>
-    <xmx:ha-xZkexrRstUjfb15YI24IlQwjKqalVZGC3RzrmK3xihn5jPnMaEw>
-    <xmx:ha-xZo3hlFYLDmdrEtWPl79KGIi5OdKwd1tOgGBtl726jk6DUcVy-g>
-    <xmx:ha-xZrxuagU7lHBLOfOx0Nq2bfYelBgdGaphPrdL5GpuLA8HIzDkkJI8>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id DA53219C0079; Tue,  6 Aug 2024 01:07:16 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1722920922; c=relaxed/simple;
+	bh=DYcRYcExpvTwKvL0HLnsyTitLjgAAyICKJ45hJgye70=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pEgG4Rwa5J6De0vCnlgxRk+miWHTIpUyYs+7TlQds9P2fryMP9RUfuSLgFnWHE9R9c+4zSpgC12nDoTiSxAG+ktKvF6Vud3XKPto1qxCFOGSzs+TFuPc83/ZmP4ZGE1rL+CIpuIxM21wIK04Pnpk3D43QoM5gUg/9acVcHn4SrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D0EmZYpi; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-44fee2bfd28so147961cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 22:08:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722920920; x=1723525720; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jjc5PvFQAIDEJuasUzjAKu0+WbtJ/LimH4KncpiNJ2k=;
+        b=D0EmZYpiifyYnoEfClSvdWJ1bHWHUKtLW04ehtW/l8GtVPt15B2j0xVG00DE6ReJ+l
+         vSvMvRUEMrAJzYZ/l8MRdofabvhVWVq6eA47/Ci17YdVjapzhaz9T3rsBpn1JJQp7Jru
+         qN9RJeoJ/QC+g7GBoY0PlzJN1veHMAuFEhr45sGkFvanDTD7LSLn5qGRU2gImqbBKERe
+         tScMBB4IMhJKo1MExE46ES88oNYMagfUaGq0GQpfqcF+2LLwfrRMKYnRBNpht1vyH88F
+         ugrymPQyo40CmyTxb8FQMbAPBD9tzoRXWptSw01i8ZrX32KJNvoV8gQEuEa3nr5QHJgT
+         S3AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722920920; x=1723525720;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Jjc5PvFQAIDEJuasUzjAKu0+WbtJ/LimH4KncpiNJ2k=;
+        b=wUyVfGk4ntTmY5ubeeXsQfjnKht9Qr6aKjK6jlX9VPfwfgw29zRJ7mIQUVHWZPSCMG
+         h7g7iwde4LD4OI8p9ULBkXzIhTWIN27OGuxo1pw145bxWxFtFImpxefQp18FYbf9IVeG
+         a7bbyxILpEiHkSX7IOzjmKPIN419zejpAjZdt6I5aDR1BQtw/dpey9y59ndZ/wuEW7t/
+         E8/2NWWXwur40keKFFuUw8wReupHFsoiy/aS266/SNj69sZHYyXYfPEcQQiTrEIoTUK2
+         8sMntRBqFdZNFnqlexO0CVSLIEOfc+Uj5M/7Rbq9pbj4IHnHsUHubGXJeDbaQSV39Rsx
+         cfCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9mCk4MzRCgCVWSDnkTdVtXLHaEtql1YKBUh0GXwXqzdwz4wFLJ7YaCeWt47MixbH6AotVg2x1aRlLLPviSjR6CD8NUvfbmK/oQ96s
+X-Gm-Message-State: AOJu0Yybd11KY+kMCnSGIqT/jccfUtlnqfVBVom9j1wK0NGPzku22zH9
+	8TMyqCfhOv33th+e3ZNUDESpGWv1Bfk8sW4bucMZ3Vw5Xtgskg5LRdTZd6kKK3YTMq4L67JOENm
+	PzYUNDB6f+cBLzIyh+OrEHPjcVflSvl5FPYE/
+X-Google-Smtp-Source: AGHT+IGe+hbnq8FqqpBq6h2fG7LKEjlEXbgQq7QkXIaGvlbHxBcjruOiSCjcQRxF74y9Lk6vbB+gLm+PKJ0ZasuFnCc=
+X-Received: by 2002:ac8:7fd3:0:b0:447:d7ff:961d with SMTP id
+ d75a77b69052e-451bd1ea570mr1055671cf.9.1722920919750; Mon, 05 Aug 2024
+ 22:08:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 06 Aug 2024 06:06:56 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Guenter Roeck" <linux@roeck-us.net>
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Serge Semin" <fancer.lancer@gmail.com>,
- "Daniel Lezcano" <daniel.lezcano@linaro.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Maciej W. Rozycki" <macro@orcam.me.uk>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-Message-Id: <97ad6c99-ca4e-463b-aee0-9a7e9455fea3@app.fastmail.com>
-In-Reply-To: <fbe92f1c-3c08-4b46-9d7a-e098ac1656a8@roeck-us.net>
-References: <20240612-mips-clks-v2-0-a57e6f49f3db@flygoat.com>
- <20240612-mips-clks-v2-2-a57e6f49f3db@flygoat.com>
- <fbe92f1c-3c08-4b46-9d7a-e098ac1656a8@roeck-us.net>
-Subject: Re: [PATCH v2 2/7] MIPS: csrc-r4k: Apply verification clocksource flags
-Content-Type: text/plain; charset=utf-8
+References: <20240806022114.3320543-1-yuzhao@google.com> <20240806022114.3320543-4-yuzhao@google.com>
+In-Reply-To: <20240806022114.3320543-4-yuzhao@google.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Mon, 5 Aug 2024 23:08:01 -0600
+Message-ID: <CAOUHufY-CRHoALNEenHvh6HHS=B7nX5_YyB-XZobi5zxY5nB+Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/4] arm64: pause remote CPUs to update vmemmap
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Rientjes <rientjes@google.com>, 
+	Douglas Anderson <dianders@chromium.org>, Frank van der Linden <fvdl@google.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Muchun Song <muchun.song@linux.dev>, 
+	Nanyong Sun <sunnanyong@huawei.com>, Yang Shi <yang@os.amperecomputing.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-
-
-=E5=9C=A82024=E5=B9=B48=E6=9C=886=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=E5=
-=8D=8812:09=EF=BC=8CGuenter Roeck=E5=86=99=E9=81=93=EF=BC=9A
-> Hi,
+On Mon, Aug 5, 2024 at 8:21=E2=80=AFPM Yu Zhao <yuzhao@google.com> wrote:
 >
-> On Wed, Jun 12, 2024 at 09:54:29AM +0100, Jiaxun Yang wrote:
->> CP0 counter suffers from various problems like SMP sync,
->> behaviour on wait.
->>=20
->> Set CLOCK_SOURCE_MUST_VERIFY and CLOCK_SOURCE_VERIFY_PERCPU,
->> as what x86 did to TSC, to let kernel test it before use.
->>=20
->> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-
-Hi Guenter,
-
-Thanks for the report, it makes no sense to me though....
-
-I can't reproduce it with QEMU git master, do you mind specifying your Q=
-EMU
-version for me? Also is it possible to have a copy of dmesg when failure=
- happens.
-
-If I'm unable to resolve it in a couple of days, I'll send a patch to re=
-vert this change.
-
-Thanks
-
+> Pause remote CPUs so that the local CPU can follow the proper BBM
+> sequence to safely update the vmemmap mapping `struct page` areas.
 >
-> With this patch in the mainline kernel, about one in five qemu
-> boot attempts with e1000 Ethernet controller fail to activate
-> the network interface (specifically, the dhcp client is unable to
-> get an IP address for the interface). Bisect log is attached below.
+> While updating the vmemmap, it is guaranteed that neither the local
+> CPU nor the remote ones will access the `struct page` area being
+> updated, and therefore they will not trigger kernel PFs.
 >
-> For reference, here is an example command line.
->
-> qemu-system-mips64 -kernel vmlinux -M malta -cpu 5KEc \
-> 	-initrd rootfs-n32.cpio \
-> 	-device e1000,netdev=3Dnet0 -netdev user,id=3Dnet0 \
-> 	-vga cirrus -no-reboot -m 256 \
-> 	--append "rdinit=3D/sbin/init mem=3D256M console=3DttyS0 console=3Dtt=
-y " \
-> 	-nographic
->
-> Reverting this patch fixes the probem.
->
-> Thanks,
-> Guenter
->
+> Signed-off-by: Yu Zhao <yuzhao@google.com>
 > ---
-> # bad: [de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed] Linux 6.11-rc2
-> # good: [0c3836482481200ead7b416ca80c68a29cfdaabd] Linux 6.10
-> git bisect start 'HEAD' 'v6.10'
-> # good: [280e36f0d5b997173d014c07484c03a7f7750668] nsfs: use cleanup=20
-> guard
-> git bisect good 280e36f0d5b997173d014c07484c03a7f7750668
-> # good: [a4f9285520584977127946a22eab2adfbc87d1bf] Merge tag=20
-> 'clk-for-linus' of=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
-> git bisect good a4f9285520584977127946a22eab2adfbc87d1bf
-> # bad: [8e313211f7d46d42b6aa7601b972fe89dcc4a076] Merge tag=20
-> 'pinctrl-v6.11-1' of=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
-> git bisect bad 8e313211f7d46d42b6aa7601b972fe89dcc4a076
-> # good: [acc5965b9ff8a1889f5b51466562896d59c6e1b9] Merge tag=20
-> 'char-misc-6.11-rc1' of=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
-> git bisect good acc5965b9ff8a1889f5b51466562896d59c6e1b9
-> # bad: [d2be38b9a5514dbc7dc0c96a2a7f619fcddce00d] Merge tag 'mips_6.11=
-'=20
-> of git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux
-> git bisect bad d2be38b9a5514dbc7dc0c96a2a7f619fcddce00d
-> # good: [45659274e60864f9acabba844468e405362bdc8c] Merge branch=20
-> 'pci/misc'
-> git bisect good 45659274e60864f9acabba844468e405362bdc8c
-> # good: [8e5c0abfa02d85b9cd2419567ad2d73ed8fe4b74] Merge tag=20
-> 'input-for-v6.11-rc0' of=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input
-> git bisect good 8e5c0abfa02d85b9cd2419567ad2d73ed8fe4b74
-> # good: [3c3ff7be9729959699eb6cbc7fd7303566d74069] Merge tag=20
-> 'powerpc-6.11-1' of=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
-> git bisect good 3c3ff7be9729959699eb6cbc7fd7303566d74069
-> # good: [3de96d810ffd712b7ad2bd764c1390fac2436551] dt-bindings: mips:=20
-> brcm: Document brcm,bmips-cbr-reg property
-> git bisect good 3de96d810ffd712b7ad2bd764c1390fac2436551
-> # bad: [9c7a86c935074525f24cc20e78a7d5150e4600e3] MIPS: lantiq: improv=
-e=20
-> USB initialization
-> git bisect bad 9c7a86c935074525f24cc20e78a7d5150e4600e3
-> # bad: [580724fce27f2b71b3e4d58bbe6d83b671929b33] MIPS: sync-r4k:=20
-> Rework based on x86 tsc_sync
-> git bisect bad 580724fce27f2b71b3e4d58bbe6d83b671929b33
-> # good: [c171186c177970d3ec22dd814f2693f1f7fc1e7d] MIPS: csrc-r4k:=20
-> Refine rating computation
-> git bisect good c171186c177970d3ec22dd814f2693f1f7fc1e7d
-> # bad: [426fa8e4fe7bb914b5977cbce453a9926bf5b2e6] MIPS: csrc-r4k:=20
-> Select HAVE_UNSTABLE_SCHED_CLOCK if SMP && 64BIT
-> git bisect bad 426fa8e4fe7bb914b5977cbce453a9926bf5b2e6
-> # bad: [7190401fc56fb5f02ee3d04476778ab000bbaf32] MIPS: csrc-r4k: Appl=
-y=20
-> verification clocksource flags
-> git bisect bad 7190401fc56fb5f02ee3d04476778ab000bbaf32
-> # first bad commit: [7190401fc56fb5f02ee3d04476778ab000bbaf32] MIPS:=20
-> csrc-r4k: Apply verification clocksource flags
+>  arch/arm64/include/asm/pgalloc.h | 55 ++++++++++++++++++++++++++++++++
+>  mm/hugetlb_vmemmap.c             | 14 ++++++++
+>  2 files changed, 69 insertions(+)
+>
+> diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pg=
+alloc.h
+> index 8ff5f2a2579e..1af1aa34a351 100644
+> --- a/arch/arm64/include/asm/pgalloc.h
+> +++ b/arch/arm64/include/asm/pgalloc.h
+> @@ -12,6 +12,7 @@
+>  #include <asm/processor.h>
+>  #include <asm/cacheflush.h>
+>  #include <asm/tlbflush.h>
+> +#include <asm/cpu.h>
+>
+>  #define __HAVE_ARCH_PGD_FREE
+>  #define __HAVE_ARCH_PUD_FREE
+> @@ -137,4 +138,58 @@ pmd_populate(struct mm_struct *mm, pmd_t *pmdp, pgta=
+ble_t ptep)
+>         __pmd_populate(pmdp, page_to_phys(ptep), PMD_TYPE_TABLE | PMD_TAB=
+LE_PXN);
+>  }
+>
+> +#ifdef CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP
+> +
+> +#define vmemmap_update_lock vmemmap_update_lock
+> +static inline void vmemmap_update_lock(void)
+> +{
+> +       cpus_read_lock();
+> +}
+> +
+> +#define vmemmap_update_unlock vmemmap_update_unlock
+> +static inline void vmemmap_update_unlock(void)
+> +{
+> +       cpus_read_unlock();
+> +}
+> +
+> +#define vmemmap_update_pte vmemmap_update_pte
+> +static inline void vmemmap_update_pte(unsigned long addr, pte_t *ptep, p=
+te_t pte)
+> +{
+> +       preempt_disable();
+> +       pause_remote_cpus();
+> +
+> +       pte_clear(&init_mm, addr, ptep);
+> +       flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
+> +       set_pte_at(&init_mm, addr, ptep, pte);
+> +
+> +       resume_remote_cpus();
+> +       preempt_enable();
+> +}
 
---=20
-- Jiaxun
+Note that I kept this API from Nanyong for the sake of discussion.
+What I actually plan to test in our production is:
+
+#define vmemmap_update_pte_range_start vmemmap_update_pte_range_start
+static inline void vmemmap_update_pte_range_start(pte_t *pte,
+                                                  unsigned long start,
+unsigned long end)
+{
+        preempt_disable();
+        pause_remote_cpus();
+
+        for (; start !=3D end; start +=3D PAGE_SIZE, pte++)
+                pte_clear(&init_mm, start, pte);
+
+        flush_tlb_kernel_range(start, end);
+}
+
+#define vmemmap_update_pte_range_end vmemmap_update_pte_range_end
+static inline void vmemmap_update_pte_range_end(void)
+{
+        resume_remote_cpus();
+        preempt_enable();
+}
+
+> +#define vmemmap_update_pmd vmemmap_update_pmd
+> +static inline void vmemmap_update_pmd(unsigned long addr, pmd_t *pmdp, p=
+te_t *ptep)
+> +{
+> +       preempt_disable();
+> +       pause_remote_cpus();
+> +
+> +       pmd_clear(pmdp);
+> +       flush_tlb_kernel_range(addr, addr + PMD_SIZE);
+> +       pmd_populate_kernel(&init_mm, pmdp, ptep);
+> +
+> +       resume_remote_cpus();
+> +       preempt_enable();
+> +}
+> +
+> +#define vmemmap_flush_tlb_all vmemmap_flush_tlb_all
+> +static inline void vmemmap_flush_tlb_all(void)
+> +{
+> +}
+> +
+> +#define vmemmap_flush_tlb_range vmemmap_flush_tlb_range
+> +static inline void vmemmap_flush_tlb_range(unsigned long start, unsigned=
+ long end)
+> +{
+> +}
+> +
+> +#endif /* CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP */
+> +
+>  #endif
+> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> index 2dd92e58f304..893c73493d9c 100644
+> --- a/mm/hugetlb_vmemmap.c
+> +++ b/mm/hugetlb_vmemmap.c
+> @@ -46,6 +46,18 @@ struct vmemmap_remap_walk {
+>         unsigned long           flags;
+>  };
+>
+> +#ifndef vmemmap_update_lock
+> +static void vmemmap_update_lock(void)
+> +{
+> +}
+> +#endif
+> +
+> +#ifndef vmemmap_update_unlock
+> +static void vmemmap_update_unlock(void)
+> +{
+> +}
+> +#endif
+> +
+>  #ifndef vmemmap_update_pmd
+>  static inline void vmemmap_update_pmd(unsigned long addr,
+>                                       pmd_t *pmdp, pte_t *ptep)
+> @@ -194,10 +206,12 @@ static int vmemmap_remap_range(unsigned long start,=
+ unsigned long end,
+>
+>         VM_BUG_ON(!PAGE_ALIGNED(start | end));
+>
+> +       vmemmap_update_lock();
+>         mmap_read_lock(&init_mm);
+>         ret =3D walk_page_range_novma(&init_mm, start, end, &vmemmap_rema=
+p_ops,
+>                                     NULL, walk);
+>         mmap_read_unlock(&init_mm);
+> +       vmemmap_update_unlock();
+>         if (ret)
+>                 return ret;
+>
+> --
+> 2.46.0.rc2.264.g509ed76dc8-goog
+>
 
