@@ -1,312 +1,191 @@
-Return-Path: <linux-kernel+bounces-275627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 833D49487B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:57:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140D29487BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D470CB23C0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:57:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA5F71F23F4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB3440856;
-	Tue,  6 Aug 2024 02:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FC03BBF0;
+	Tue,  6 Aug 2024 02:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BsfWyndD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MvTDUVd+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F303B7AC
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB4663CB;
+	Tue,  6 Aug 2024 02:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722913053; cv=none; b=W4Q2E4g/b+LKl8bJNVzbr8xWM0CsQGd+ArBWcTt8IxUScjla//QwLZ8BqsGJW7JHVDfSaR0TKctDwnYTGat6MqNaGTaoxpImao+5RKsSZrlxXsxMoECes1Ih3FQerGMZ8MlknIcc4g43DPxeOqN/d+HlnnEqe+KVHDKz0NxUtnA=
+	t=1722913135; cv=none; b=qFtQ8ey3OuyfdmrcccH6N8FpPy8bhdt3nGgWLKsdsnYTzVrcjTzBsdrzRRb6znOqFxc3fy4PYtC8oU2nhH3epyXBU288OJRpFYE4DnwlgoBvWZszguj9ZUNhjjtMLs7lgySEYY3/9Jp/ouzqbu9yGT5UG1I9l4CmWDRR2b2RkVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722913053; c=relaxed/simple;
-	bh=Et3Rgv15AHoLf3qbw1RElJDtSFKydQXp0V3QkhFEXYk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MMNnQf4tAFBNyztvYao0T+Vb+8BpNyEyznb7E/f0X7UngG4kknGBcM/QkMe4jQgDZ+nSgKX7n5uP5un8f6aXjvKyBtnw1qXOVnwQmQaaqjwBgK+kyJU8Sb/dZVdfCuqZCwTU8bqXGT2f8ZF0SAjJD8mp4ws4p6wiEdC5hcFzyc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BsfWyndD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722913050;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D/Ealr7U/YUSVDDNANGwGdcf9UjVrAd+Xl/AaSABtGc=;
-	b=BsfWyndDQ0JOwOMcZThauzzr9qxhF74PXwWgZ2s5rMmJN/KO40VVzi8/KvA9FmOowGShuB
-	Ow/Q/xrSgh1kcut6oCesU6IG++ZXPQ+EM3TjX5e3gvl5GxD6kQqe2enJX4VUKj41QaPVWx
-	p9dTKICC6I8ErKiafpI+a9KvglxzN8Q=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-455-MVaJI-z5PI2XW1ORoug4Yg-1; Mon, 05 Aug 2024 22:57:27 -0400
-X-MC-Unique: MVaJI-z5PI2XW1ORoug4Yg-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2cb77ab2074so395233a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 19:57:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722913046; x=1723517846;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D/Ealr7U/YUSVDDNANGwGdcf9UjVrAd+Xl/AaSABtGc=;
-        b=l/D/yfhzX2mAlj/pBAkaiiWQDTCJaxM8Ex+pK6ni8CWF0TzIANJgq3vNTTsdnM6h6a
-         8N/pxDdHrhEMvcf8CuNpfdw9ORldteH2+M82qStkncZi9m7qSPMhNGhictagg3PNXz5d
-         KKbii5a9+0ZzeLJf7J0A5RDP62REyMHVJnhL2B93xLKQt7BdLK1GZZRUG8RyYnRkFtjK
-         vqmyMjGiQfpz2DBKUSJVRJjoBy97xfbMrqZ2bOBl8HjLbNkuixW2JOLRoCC8ro0VcCu+
-         +5uJWTQJxfN8IiqUWe66LK41vq69aZENyUwFKNCZHFzCCTablG+ZOX66Wy6wRthHjdll
-         K/Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCHXazvzcJvaKUEKVoeo9dR3xUz8t44B79QXO5M1lQhfgUEu1N+OaK5+I3/prMzlPG5k90Rlx7JPDivxclCU6onrTh+zPbc4+sFPOS
-X-Gm-Message-State: AOJu0YyNvbv5JHr3LDJTSo25B8RmPOIh8XlnSAjmTaIZzX1LxaVsk5RA
-	AsScnQdk6z2JPsGBBUZdNEBOilDoNC3kIVp2+mPdmoDpDMA/2YygnPno+DFIYRmwGPmnxXgYBX2
-	EmKPfkiLmgNwBxutQ/nrGNHV6GFWV2A3es08NGXDC+q/MBfCXb8yGimJc9kNuhTpeqSR8kOQyok
-	Wv+ELlqmHt0dJzvTwCYDAdJVUT8qaDAP3A7S0S
-X-Received: by 2002:a17:90a:5ae5:b0:2ca:7f3e:a10f with SMTP id 98e67ed59e1d1-2cff93c5a19mr12543749a91.9.1722913045792;
-        Mon, 05 Aug 2024 19:57:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF14o/QZvCia+rUu3d6wzCzB8kmwnmiRbIkLwlrBhoI/u/PVzEyXmhGN8WZBvpq5XCGGWGVK02Hxk64IRBCczY=
-X-Received: by 2002:a17:90a:5ae5:b0:2ca:7f3e:a10f with SMTP id
- 98e67ed59e1d1-2cff93c5a19mr12543733a91.9.1722913045229; Mon, 05 Aug 2024
- 19:57:25 -0700 (PDT)
+	s=arc-20240116; t=1722913135; c=relaxed/simple;
+	bh=X58WHt6Fh8FhmSI41u9K4I6aEokjQtj1VVSgk6cJ98Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zm23xsUv4Z4CUvvFMmrEqynLbaa5gv+QIKHEe3PpXiyXxCWbZQMcGnL/a9EuL61eN1UR2yijglBOqkUaaFLPj+gst78pyp2D3NFPHX2MPlHLOCLx6eNx55YGBXT9neg4wN7mQt60eqn11TF+ZOkF7+T5DMwts5r3kQ4Iv/Fntic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MvTDUVd+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97A7EC4AF0D;
+	Tue,  6 Aug 2024 02:58:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722913135;
+	bh=X58WHt6Fh8FhmSI41u9K4I6aEokjQtj1VVSgk6cJ98Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MvTDUVd+JKS81TYKSNog2yDXCLbryh4iwwYyZvfodVveaN3QgPT1SAUBDC9rKSXMH
+	 lg0o5UK4Qh0gAfT6z2XyIgpzd3MNdnZbocWQ04wb+k0Zx6t8m2uh2M53Msj89fTnhO
+	 j7k1//Z4i5psfR+qj2ZWETEx5FLK5Qqfre4gfevcNZsVPHNqLT5xI0kdQ+My37dR3+
+	 y1vLmIjDyBkALLZRq3m3rgB7bgFnbcOZhqhD6AGP6/7xVEkxn97x5bUXM5cHsX1XwW
+	 a32M+Ugg5Ktr4FAL3oiVF6p3ZaQqZsxzxHyka6x56iODddQqYtrpzqoxGvFPUFsYfu
+	 wNd7zGhBOidNQ==
+Date: Mon, 5 Aug 2024 19:58:53 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Jose Fernandez <jose.fernandez@linux.dev>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Christian Heusel <christian@heusel.eu>,
+	Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: control extra pacman packages with
+ PACMAN_EXTRAPACKAGES
+Message-ID: <20240806025853.GB1570554@thelio-3990X>
+References: <20240804000130.841636-1-jose.fernandez@linux.dev>
+ <c41e3856-29f4-438f-a796-43aa957215d1@t-8ch.de>
+ <g5jex6hwlsjwzryo5umw44uotww54h6ccjzzqk3fao5k3ig7df@yg2vhcxr5t6s>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801153722.191797-2-dtatulea@nvidia.com> <CACGkMEutqWK+N+yddiTsnVW+ZDwyM+EV-gYC8WHHPpjiDzY4_w@mail.gmail.com>
- <51e9ed8f37a1b5fbee9603905b925aedec712131.camel@nvidia.com>
- <CACGkMEuHECjNVEu=QhMDCc5xT_ajaETqAxNFPfb2-_wRwgvyrA@mail.gmail.com> <cc771916-62fe-4f6b-88d2-9c17dff65523@nvidia.com>
-In-Reply-To: <cc771916-62fe-4f6b-88d2-9c17dff65523@nvidia.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 6 Aug 2024 10:57:13 +0800
-Message-ID: <CACGkMEvPNvdhYmAofP5Xoqf7mPZ97Sv2EaooyEtZVBoGuA-8vA@mail.gmail.com>
-Subject: Re: [RFC PATCH vhost] vhost-vdpa: Fix invalid irq bypass unregister
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "mst@redhat.com" <mst@redhat.com>, 
-	"eperezma@redhat.com" <eperezma@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <g5jex6hwlsjwzryo5umw44uotww54h6ccjzzqk3fao5k3ig7df@yg2vhcxr5t6s>
 
-On Mon, Aug 5, 2024 at 11:59=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
-> wrote:
->
-> On 05.08.24 05:17, Jason Wang wrote:
-> > On Fri, Aug 2, 2024 at 2:51=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.=
-com> wrote:
-> >>
-> >> On Fri, 2024-08-02 at 11:29 +0800, Jason Wang wrote:
-> >>> On Thu, Aug 1, 2024 at 11:38=E2=80=AFPM Dragos Tatulea <dtatulea@nvid=
-ia.com> wrote:
-> >>>>
-> >>>> The following workflow triggers the crash referenced below:
-> >>>>
-> >>>> 1) vhost_vdpa_unsetup_vq_irq() unregisters the irq bypass producer
-> >>>>    but the producer->token is still valid.
-> >>>> 2) vq context gets released and reassigned to another vq.
-> >>>
-> >>> Just to make sure I understand here, which structure is referred to a=
-s
-> >>> "vq context" here? I guess it's not call_ctx as it is a part of the v=
-q
-> >>> itself.
-> >>>
-> >>>> 3) That other vq registers it's producer with the same vq context
-> >>>>    pointer as token in vhost_vdpa_setup_vq_irq().
-> >>>
-> >>> Or did you mean when a single eventfd is shared among different vqs?
-> >>>
-> >> Yes, that's what I mean: vq->call_ctx.ctx which is a eventfd_ctx.
-> >>
-> >> But I don't think it's shared in this case, only that the old eventfd_=
-ctx value
-> >> is lingering in producer->token. And this old eventfd_ctx is assigned =
-now to
-> >> another vq.
-> >
-> > Just to make sure I understand the issue. The eventfd_ctx should be
-> > still valid until a new VHOST_SET_VRING_CALL().
-> >
-> I think it's not about the validity of the eventfd_ctx. More about
-> the lingering ctx value of the producer after vhost_vdpa_unsetup_vq_irq()=
-.
+On Mon, Aug 05, 2024 at 04:30:15PM -0600, Jose Fernandez wrote:
+> On 24/08/05 04:01PM, Thomas Weißschuh wrote:
+> > > This changes the behavior of the pacman-pkg target to only create the
+> > > main kernel package by default. The rest of the packages will be opt-in
+> > > going forward.
+> > 
+> > I had the impression that by default all extrapackages should be
+> > built. The variable can then be used by expert users where needed.
+> > Other Opinions?
+> 
+> I think switching to defaulting to all packages is a good idea. One concern I 
+> had was how regular users would discover the customization options. Expert users
+> will likely look at the Makefile and figure out how to opt out.
 
-Probably, but
+I think that most users will likely want all of the packages built by
+default. I think leaving this to be discovered by power users in the
+Makefile is reasonable.
 
-> That value is the eventfd ctx, but it could be anything else really...
+> > > In a previous patch, there was concern that adding a new debug package
+> > > would increase t.he package time. To address this concern and provide
+> > > more flexibility, this change has been added to allow users to decide
+> > > which extra packages to include before introducing an optional debug
+> > > package [1].
+> > 
+> > This paragraph seems like it shouldn't be part of the final commit.
+> > If you put it after a line with "---" it will be dropped from the
+> > commit, like so:
+> > 
+> > ---
+> > 
+> > In a previous patch, ...
+> 
+> Agreed, I will move this paragraph to below --- for v2.
+> 
+> > 
+> > > 
+> > > [1] https://lore.kernel.org/lkml/20240801192008.GA3923315@thelio-3990X/T/
+> > > 
+> > > Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
+> > > Reviewed-by: Peter Jung <ptr1337@cachyos.org>
+> > > ---
+> > >  scripts/Makefile.package |  5 +++++
+> > >  scripts/package/PKGBUILD | 11 ++++++++---
+> > >  2 files changed, 13 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> > > index 4a80584ec771..146e828cb4f1 100644
+> > > --- a/scripts/Makefile.package
+> > > +++ b/scripts/Makefile.package
+> > > @@ -144,6 +144,10 @@ snap-pkg:
+> > >  # pacman-pkg
+> > >  # ---------------------------------------------------------------------------
+> > >  
+> > > +# Space-separated list of extra packages to build
+> > > +# The available extra packages are: headers api-headers
+> > > +PACMAN_EXTRAPACKAGES ?=
+> > 
+> > The assignment doesn't do anything.
+> > Do we need the documentation if the default enables all subpackages?
+> > 
+> > > +
+> > >  PHONY += pacman-pkg
+> > >  pacman-pkg:
+> > >  	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
+> > > @@ -152,6 +156,7 @@ pacman-pkg:
+> > >  		CARCH="$(UTS_MACHINE)" \
+> > >  		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
+> > >  		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
+> > > +		PACMAN_EXTRAPACKAGES="$(PACMAN_EXTRAPACKAGES)" \
+> > 
+> > This line is superfluous.
+> 
+> Ack.
 
-I mean we hold a refcnt of the eventfd so it should be valid until the
-next set_vring_call() or vhost_dev_cleanup().
+Is it superfluous if PACMAN_EXTRAPACKAGES is not exported to makepkg? If
+I remove this while changing the default of PACMAN_EXTRAPACKAGES in
+scripts/Makefile.package, its value is not visible in makepkg, so only
+the default package gets built. I think
 
-But I do spot some possible issue:
+  export PACMAN_EXTRAPACKAGES
 
-1) We swap and assign new ctx in vhost_vring_ioctl():
+is needed after the '?=' assignment line.
 
-                swap(ctx, vq->call_ctx.ctx);
-
-2) and old ctx will be put there as well:
-
-                if (!IS_ERR_OR_NULL(ctx))
-                        eventfd_ctx_put(ctx);
-
-3) but in vdpa, we try to unregister the producer with the new token:
-
-static long vhost_vdpa_vring_ioctl(struct vhost_vdpa *v, unsigned int cmd,
-                           void __user *argp)
-{
-...
-        r =3D vhost_vring_ioctl(&v->vdev, cmd, argp);
-...
-        switch (cmd) {
-...
-        case VHOST_SET_VRING_CALL:
-                if (vq->call_ctx.ctx) {
-                        cb.callback =3D vhost_vdpa_virtqueue_cb;
-                        cb.private =3D vq;
-                        cb.trigger =3D vq->call_ctx.ctx;
-                } else {
-                        cb.callback =3D NULL;
-                        cb.private =3D NULL;
-                        cb.trigger =3D NULL;
-                }
-                ops->set_vq_cb(vdpa, idx, &cb);
-                vhost_vdpa_setup_vq_irq(v, idx);
-
-in vhost_vdpa_setup_vq_irq() we had:
-
-        irq_bypass_unregister_producer(&vq->call_ctx.producer);
-
-here the producer->token still points to the old one...
-
-Is this what you have seen?
-
->
->
-> > I may miss something but the only way to assign exactly the same
-> > eventfd_ctx value to another vq is where the guest tries to share the
-> > MSI-X vector among virtqueues, then qemu will use a single eventfd as
-> > the callback for multiple virtqueues. If this is true:
-> >
-> I don't think this is the case. I see the issue happening when running qe=
-mu vdpa
-> live migration tests on the same host. From a vdpa device it's basically =
-a device
-> starting on a VM over and over.
->
-> > For bypass registering, only the first registering can succeed as the
-> > following registering will fail because the irq bypass manager already
-> > had exactly the same producer token.
-> > For registering, all unregistering can succeed:
-> >
-> > 1) the first unregistering will do the real job that unregister the tok=
-en
-> > 2) the following unregistering will do nothing by iterating the
-> > producer token list without finding a match one
-> >
-> > Maybe you can show me the userspace behaviour (ioctls) when you see thi=
-s?
-> >
-> Sure, what would you need? qemu traces?
-
-Yes, that would be helpful.
-
-Thanks
-
->
-> Thanks,
-> Dragos
->
-> > Thanks
-> >
-> >>
-> >>>> 4) The original vq tries to unregister it's producer which it has
-> >>>>    already unlinked in step 1. irq_bypass_unregister_producer() will=
- go
-> >>>>    ahead and unlink the producer once again. That happens because:
-> >>>>       a) The producer has a token.
-> >>>>       b) An element with that token is found. But that element comes
-> >>>>          from step 3.
-> >>>>
-> >>>> I see 3 ways to fix this:
-> >>>> 1) Fix the vhost-vdpa part. What this patch does. vfio has a differe=
-nt
-> >>>>    workflow.
-> >>>> 2) Set the token to NULL directly in irq_bypass_unregister_producer(=
-)
-> >>>>    after unlinking the producer. But that makes the API asymmetrical=
-.
-> >>>> 3) Make irq_bypass_unregister_producer() also compare the pointer
-> >>>>    elements not just the tokens and do the unlink only on match.
-> >>>>
-> >>>> Any thoughts?
-> >>>>
-> >>>> Oops: general protection fault, probably for non-canonical address 0=
-xdead000000000108: 0000 [#1] SMP
-> >>>> CPU: 8 PID: 5190 Comm: qemu-system-x86 Not tainted 6.10.0-rc7+ #6
-> >>>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-=
-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
-> >>>> RIP: 0010:irq_bypass_unregister_producer+0xa5/0xd0
-> >>>> RSP: 0018:ffffc900034d7e50 EFLAGS: 00010246
-> >>>> RAX: dead000000000122 RBX: ffff888353d12718 RCX: ffff88810336a000
-> >>>> RDX: dead000000000100 RSI: ffffffff829243a0 RDI: 0000000000000000
-> >>>> RBP: ffff888353c42000 R08: ffff888104882738 R09: ffff88810336a000
-> >>>> R10: ffff888448ab2050 R11: 0000000000000000 R12: ffff888353d126a0
-> >>>> R13: 0000000000000004 R14: 0000000000000055 R15: 0000000000000004
-> >>>> FS:  00007f9df9403c80(0000) GS:ffff88852cc00000(0000) knlGS:00000000=
-00000000
-> >>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >>>> CR2: 0000562dffc6b568 CR3: 000000012efbb006 CR4: 0000000000772ef0
-> >>>> PKRU: 55555554
-> >>>> Call Trace:
-> >>>>  <TASK>
-> >>>>  ? die_addr+0x36/0x90
-> >>>>  ? exc_general_protection+0x1a8/0x390
-> >>>>  ? asm_exc_general_protection+0x26/0x30
-> >>>>  ? irq_bypass_unregister_producer+0xa5/0xd0
-> >>>>  vhost_vdpa_setup_vq_irq+0x5a/0xc0 [vhost_vdpa]
-> >>>>  vhost_vdpa_unlocked_ioctl+0xdcd/0xe00 [vhost_vdpa]
-> >>>>  ? vhost_vdpa_config_cb+0x30/0x30 [vhost_vdpa]
-> >>>>  __x64_sys_ioctl+0x90/0xc0
-> >>>>  do_syscall_64+0x4f/0x110
-> >>>>  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-> >>>> RIP: 0033:0x7f9df930774f
-> >>>> RSP: 002b:00007ffc55013080 EFLAGS: 00000246 ORIG_RAX: 00000000000000=
-10
-> >>>> RAX: ffffffffffffffda RBX: 0000562dfe134d20 RCX: 00007f9df930774f
-> >>>> RDX: 00007ffc55013200 RSI: 000000004008af21 RDI: 0000000000000011
-> >>>> RBP: 00007ffc55013200 R08: 0000000000000002 R09: 0000000000000000
-> >>>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000562dfe134360
-> >>>> R13: 0000562dfe134d20 R14: 0000000000000000 R15: 00007f9df801e190
-> >>>>
-> >>>> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> >>>> ---
-> >>>>  drivers/vhost/vdpa.c | 1 +
-> >>>>  1 file changed, 1 insertion(+)
-> >>>>
-> >>>> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> >>>> index 478cd46a49ed..d4a7a3918d86 100644
-> >>>> --- a/drivers/vhost/vdpa.c
-> >>>> +++ b/drivers/vhost/vdpa.c
-> >>>> @@ -226,6 +226,7 @@ static void vhost_vdpa_unsetup_vq_irq(struct vho=
-st_vdpa *v, u16 qid)
-> >>>>         struct vhost_virtqueue *vq =3D &v->vqs[qid];
-> >>>>
-> >>>>         irq_bypass_unregister_producer(&vq->call_ctx.producer);
-> >>>> +       vq->call_ctx.producer.token =3D NULL;
-> >>>>  }
-> >>>>
-> >>>>  static int _compat_vdpa_reset(struct vhost_vdpa *v)
-> >>>> --
-> >>>> 2.45.2
-> >>>>
-> >>>
-> >> Thanks
-> >>
-> >
->
-
+> > >  		makepkg $(MAKEPKGOPTS)
+> > >  
+> > >  # dir-pkg tar*-pkg - tarball targets
+> > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > > index 663ce300dd06..41bd0d387f0a 100644
+> > > --- a/scripts/package/PKGBUILD
+> > > +++ b/scripts/package/PKGBUILD
+> > > @@ -3,10 +3,15 @@
+> > >  # Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+> > >  
+> > >  pkgbase=${PACMAN_PKGBASE:-linux-upstream}
+> > > -pkgname=("${pkgbase}" "${pkgbase}-api-headers")
+> > > -if grep -q CONFIG_MODULES=y include/config/auto.conf; then
+> > > -	pkgname+=("${pkgbase}-headers")
+> > > +pkgname=("${pkgbase}")
+> > > +
+> > > +_extrapackages=${PACMAN_EXTRAPACKAGES:-}
+> > > +if [ -n "$_extrapackages" ]; then
+> > 
+> > No need for this check. The loop over an empty variable work fine.
+> 
+> Ack. Will update in v2.
+>  
+> > > +	for pkg in $_extrapackages; do
+> > > +		pkgname+=("${pkgbase}-$pkg")
+> > 
+> > Use consistent variable references: "${pkgbase}-${pkg}"
+> 
+> Ack. Will update in v2.
+> 
+> > > +	done
+> > >  fi
+> > > +
+> > >  pkgver="${KERNELRELEASE//-/_}"
+> > >  # The PKGBUILD is evaluated multiple times.
+> > >  # Running scripts/build-version from here would introduce inconsistencies.
+> > > -- 
+> > > 2.46.0
+> > > 
 
