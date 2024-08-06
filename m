@@ -1,216 +1,105 @@
-Return-Path: <linux-kernel+bounces-277021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD5C949B2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:15:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 858F7949B34
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 191751C22ACC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:15:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4F0E1C22A10
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622D117556C;
-	Tue,  6 Aug 2024 22:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A214C16FF48;
+	Tue,  6 Aug 2024 22:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NuzCxNvx"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pN1/t/4F"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9322C171E5A;
-	Tue,  6 Aug 2024 22:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F94F15B0EE;
+	Tue,  6 Aug 2024 22:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722982502; cv=none; b=qmy5cPRzoIXTbHZ4rueFHI9PrjUL5KDO2udbDic6qt7uUgOB+SJ1HzwKi35QqKSu4wxozQS4TdaCY0ApP1Wyw72gxKyLrxaQEync2QbtFL+qSZniTuqjCcbtKejHOUq4aM1pY7uU9SxzCzW3ZDruOJVZAKoSBECbJays2cfcuTQ=
+	t=1722982677; cv=none; b=pGSPwt+UThjgo2afqP53t7BTqbgeWYEH/n2vkqn15200s7Ix0/Pd0AXOcizOkC/lJCJ1tsX5MJEuMaYuQq+oTKEjI7Rd78hs/hbbsh62dBN5TvagP4nBkw+DWKlLeDmN1oLkC5oZoUkLEVUdmp73i/HSuGzrD1eCpmAJl4IJ3bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722982502; c=relaxed/simple;
-	bh=m5BjGQn0ztYT3NKsuxQ229IfQyV8rqnP0MJCBdsv/DQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Va/0sVbBput+MIxCUXRCO81sxwZf4UtAl3C+v7wU28iFytSGw8FLPO3+zDhJUuH5aYSGJtO0mvrixXx80OzS5xiYAJr3f+eJXEsubHsAsM9daq7BfKr+7yp0kJwXRm8laZZQ221YPVL6Yb5Le0n+W5vgUuO7OwZhM65LB8yTpMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NuzCxNvx; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52f04b4abdcso1691126e87.2;
-        Tue, 06 Aug 2024 15:15:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722982499; x=1723587299; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yXjtb86nnXZiK+81bTmuvRngQoj2Z9OAz1cGyJKoh3A=;
-        b=NuzCxNvxHGPPsuNlQjMj1Dwg03s3RXkAl4sEcRZOsjeh40b6vg1/7r57ae6Bk0Q9NM
-         NoH7T5WjwDC4ys5733nwz8244eKZ7vxp5QlICXMtB0nC4tRA3dTZeQLNqIY12BYrqIxI
-         JKB04vkA66S3n3ALdsw5t5Vkp4YaHfRal4LFwhyI38Tn8BrREqnXzXjJ1KT7YCgTRe3n
-         mHpnWA9fi9AONRf/cs3Kc/4Z2M+PjYxRWeBeUUaCC40aCocLG97w9mksG9h127R3lyQf
-         UZ3JWgBVDA3yWVKUC9xAeH1XX3XJbe5Lzl+MKX++YA6Wpc3SFOvldsDX5zklghKLgtE1
-         yREg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722982499; x=1723587299;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yXjtb86nnXZiK+81bTmuvRngQoj2Z9OAz1cGyJKoh3A=;
-        b=siZiHvUo5WsTfVxv9sQbCDixKPAKzzVs8pBfvOxV5bAkEmVX97Wgd7tIWMfZAJzwH1
-         bjEgo7iwckcG8rW2rNxyY8t/Wd98Uqx7wga10OB8llpnJV8kom5dkU7Bn06wmqrdQ8gN
-         hYZUQRSNX+4GHHky9EsddVpruM5daCX3Oi0tcCOI0BX4Ju1mFng5ryWcOBF5PjVLUass
-         JpdtuMEndM9q4WAyg52yhPkHMo9l9Sfo92XYUDCI93gWYlfG8tBEcpmhWcYH6E9dSlTX
-         3Nn9ZWaWP+mBijrKSuICHImc3RULLD50DYeSPsQSokzs0lwDJ+ZPPd4f/b1m4PfUBNAT
-         aETA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIKf/C63jRROk/GU/rAx0VYWfsGmED0Xxwb5DLPHswtkFx2us7zoCXOBbjGHa4Y74GibNTF0e2iD5QOdlcSC3RWXoZgGKyCpRTxVIN6/6KpojlLVWj5pPo0WybDc+E1r0J
-X-Gm-Message-State: AOJu0YxS068XnFDrshJ2Xz5jgPzqbJ6IHs+8XutTg16no+MRlixKEREu
-	tXSzwlrUz3fgMPzylrLXE+UNzejczY/qgXYMXEuJ6LEZe5hX7IGhMwlwCo+z
-X-Google-Smtp-Source: AGHT+IEKpr1UFCKDIwWRxjnU/uCMgSVrE+o0Upo4NwXVrAnyDnyihhz4pz3m7yaMLFIsDF1d0jQ75A==
-X-Received: by 2002:a05:6512:3c98:b0:52b:c27c:ea1f with SMTP id 2adb3069b0e04-530bb39bf01mr11779826e87.55.1722982498234;
-        Tue, 06 Aug 2024 15:14:58 -0700 (PDT)
-Received: from mobilestation ([95.79.225.241])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530de457b3csm3663e87.161.2024.08.06.15.14.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 15:14:57 -0700 (PDT)
-Date: Wed, 7 Aug 2024 01:14:55 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: jitendra.vegiraju@broadcom.com
-Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, 
-	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
-	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org, 
-	john.fastabend@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, 
-	andrew@lunn.ch, linux@armlinux.org.uk, horms@kernel.org, 
-	florian.fainelli@broadcom.com
-Subject: Re: [PATCH net-next v3 2/3] net: stmmac: Integrate dwxgmac4 into
- stmmac hwif handling
-Message-ID: <o4dgczjefqjek3iqw2y3ca7pwolj5e6otjyuinpuvkwcli5xei@dzehe7xde44x>
-References: <20240802031822.1862030-1-jitendra.vegiraju@broadcom.com>
- <20240802031822.1862030-3-jitendra.vegiraju@broadcom.com>
+	s=arc-20240116; t=1722982677; c=relaxed/simple;
+	bh=9skTbY1N49GoH83/PtUn3pq8xam8oH/tgvhkKna0ZPg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aElgDWCmVlA2/ueDAKBw6R7+sBr9aKlahuOStWBCR2WbY7+0hygcGlM8U6lUvInbLQSyZbYT62bgewhrt7qgxI0QXBMuNbBifyToAgDjhceIIeQ/tqgcXhtUJrsiwkU8LQDtw193zfJObpEwq+jE4lJ5Y/cOsDXQ4p4J/QbOt/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=pN1/t/4F; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722982672;
+	bh=cSO0hv/siOzqkiGxVA4xbmQaQ6dnQ1rMS0EABY37DtY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=pN1/t/4FJyCZAvHFqCSGWrSDsNY6z+WXpCapCvwkV5m84lduE1YzI+SIT1hs87t9V
+	 kBqpW0LwzAHGBqbWM+KGa3Tr2vOr0XIbw3b3AqvIGoVUqwCEXhxudKSPmgFJ1uD37E
+	 kGumChEapMsS1MQ18Lr2JopUHE+eB2dZjZyBMDKg6GxafeEZY6lhtZFX7ItJWXruQe
+	 x3iLe0JxP3xJnJHM8Sh4Tcp/vDjwgpqAfCstsGY7osi4iMB7eDM4LxD3ZdXLpDttM4
+	 ntCTdIes1Hh7Vkw2xWlAotOvLkgak4vcpkJHLavkf3ZTI3SZH8QqnwaJ5kuaQZOWD5
+	 DRjrqb5Oe2bOA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wdnk80Pplz4w2F;
+	Wed,  7 Aug 2024 08:17:51 +1000 (AEST)
+Date: Wed, 7 Aug 2024 08:17:51 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM
+ <linux-arm-kernel@lists.infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the arm-soc-fixes tree
+Message-ID: <20240807081751.7149e22c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240802031822.1862030-3-jitendra.vegiraju@broadcom.com>
+Content-Type: multipart/signed; boundary="Sig_/3hE6B2UEpC8YkooI7wDrmNr";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Aug 01, 2024 at 08:18:21PM -0700, jitendra.vegiraju@broadcom.com wrote:
-> From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-> 
-> Integrate dwxgmac4 support into stmmac hardware interface handling.
-> A dwxgmac4 is an xgmac device and hence it inherits properties from
-> existing stmmac_hw table entry.
-> The quirks handling facility is used to update dma_ops field to
-> point to dwxgmac400_dma_ops when the user version field matches.
-> 
-> Signed-off-by: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/common.h |  4 +++
->  drivers/net/ethernet/stmicro/stmmac/hwif.c   | 26 +++++++++++++++++++-
->  drivers/net/ethernet/stmicro/stmmac/hwif.h   |  1 +
->  3 files changed, 30 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
-> index cd36ff4da68c..9bf278e11704 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/common.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-> @@ -37,11 +37,15 @@
->  #define DWXGMAC_CORE_2_10	0x21
->  #define DWXGMAC_CORE_2_20	0x22
->  #define DWXLGMAC_CORE_2_00	0x20
+--Sig_/3hE6B2UEpC8YkooI7wDrmNr
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> +#define DWXGMAC_CORE_4_00	0x40
+Hi all,
 
-DW25GMAC_CORE_4_00?
+The following commit is also in Linus Torvalds' tree as a different commit
+(but the same patch):
 
->  
->  /* Device ID */
->  #define DWXGMAC_ID		0x76
+  5b92ca4b2368 ("arm: dts: arm: versatile-ab: Fix duplicate clock node name=
+")
 
-What is the device ID in your case? Does it match to DWXGMAC_ID?
+This is commit
 
->  #define DWXLGMAC_ID		0x27
->  
-> +/* User Version */
-> +#define DWXGMAC_USER_VER_X22	0x22
-> +
->  #define STMMAC_CHAN0	0	/* Always supported and default for all chips */
->  
->  /* TX and RX Descriptor Length, these need to be power of two.
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/ethernet/stmicro/stmmac/hwif.c
-> index 29367105df54..713cb5aa2c3e 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
-> @@ -36,6 +36,18 @@ static u32 stmmac_get_dev_id(struct stmmac_priv *priv, u32 id_reg)
->  	return (reg & GENMASK(15, 8)) >> 8;
->  }
->  
+  ff58838015c1 ("arm: dts: arm: versatile-ab: Fix duplicate clock node name=
+")
 
-> +static u32 stmmac_get_user_version(struct stmmac_priv *priv, u32 id_reg)
-> +{
-> +	u32 reg = readl(priv->ioaddr + id_reg);
-> +
-> +	if (!reg) {
-> +		dev_info(priv->device, "User Version not available\n");
-> +		return 0x0;
-> +	}
-> +
-> +	return (reg & GENMASK(23, 16)) >> 16;
-> +}
-> +
+in Linus' tree.
 
-The User Version is purely a vendor-specific stuff defined on the
-IP-core synthesis stage. Moreover I don't see you'll need it anyway.
+--=20
+Cheers,
+Stephen Rothwell
 
->  static void stmmac_dwmac_mode_quirk(struct stmmac_priv *priv)
->  {
->  	struct mac_device_info *mac = priv->hw;
-> @@ -82,6 +94,18 @@ static int stmmac_dwmac4_quirks(struct stmmac_priv *priv)
->  	return 0;
->  }
->  
+--Sig_/3hE6B2UEpC8YkooI7wDrmNr
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> +static int stmmac_dwxgmac_quirks(struct stmmac_priv *priv)
-> +{
-> +	struct mac_device_info *mac = priv->hw;
-> +	u32 user_ver;
-> +
-> +	user_ver = stmmac_get_user_version(priv, GMAC4_VERSION);
-> +	if (priv->synopsys_id == DWXGMAC_CORE_4_00 &&
-> +	    user_ver == DWXGMAC_USER_VER_X22)
-> +		mac->dma = &dwxgmac400_dma_ops;
-> +	return 0;
-> +}
-> +
->  static int stmmac_dwxlgmac_quirks(struct stmmac_priv *priv)
->  {
->  	priv->hw->xlgmac = true;
-> @@ -256,7 +280,7 @@ static const struct stmmac_hwif_entry {
->  		.mmc = &dwxgmac_mmc_ops,
->  		.est = &dwmac510_est_ops,
->  		.setup = dwxgmac2_setup,
-> -		.quirks = NULL,
-> +		.quirks = stmmac_dwxgmac_quirks,
+-----BEGIN PGP SIGNATURE-----
 
-Why? You can just introduce a new stmmac_hw[] entry with the DW
-25GMAC-specific stmmac_dma_ops instance specified.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmayoQ8ACgkQAVBC80lX
+0Gy44Qf/fbzYY/xA3wBgoz6lTrvrDAuCm61TWHKnheGs4DWMyTrjWLm3RhPI7FOV
+SOhXyokx7p8fo73MEmHwwfI0YjGxGA1fgc6+OwVMqVzPLAZ9FoJKzZ1+Wqo5Dyph
+/a1jh49diSmYivQ2jV9f8+4AxlXiUmi783cjcjDAZ4fCZveL7O9alYe+qSXnQpM5
+Fq0L6EcdiyAvQhp9a0dSHv5z/flQtiuT9Rj+AbUaQhWxZVnkUXnM0QAOncOSK1bg
+E/c1c1/XeI+dlIoKP4aLDj41gUXrj2h1XO0H5sLQwrFD7AZ8haoo+em827SXu8ej
+Pj4OrlsTCloNc7zkgg/vPEpbKwfl6w==
+=n74W
+-----END PGP SIGNATURE-----
 
--Serge(y)
-
->  	}, {
->  		.gmac = false,
->  		.gmac4 = false,
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.h b/drivers/net/ethernet/stmicro/stmmac/hwif.h
-> index e53c32362774..6213c496385c 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/hwif.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h
-> @@ -683,6 +683,7 @@ extern const struct stmmac_desc_ops dwxgmac210_desc_ops;
->  extern const struct stmmac_mmc_ops dwmac_mmc_ops;
->  extern const struct stmmac_mmc_ops dwxgmac_mmc_ops;
->  extern const struct stmmac_est_ops dwmac510_est_ops;
-> +extern const struct stmmac_dma_ops dwxgmac400_dma_ops;
->  
->  #define GMAC_VERSION		0x00000020	/* GMAC CORE Version */
->  #define GMAC4_VERSION		0x00000110	/* GMAC4+ CORE Version */
-> -- 
-> 2.34.1
-> 
-> 
+--Sig_/3hE6B2UEpC8YkooI7wDrmNr--
 
