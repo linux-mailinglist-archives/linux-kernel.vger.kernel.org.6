@@ -1,308 +1,274 @@
-Return-Path: <linux-kernel+bounces-275499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C69394868C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:10:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7824F94868F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0258B284BC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:10:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F687283AEA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F39615D1;
-	Tue,  6 Aug 2024 00:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9C310F1;
+	Tue,  6 Aug 2024 00:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dlbFBL/1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j14bludw"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293FFA32;
-	Tue,  6 Aug 2024 00:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722903001; cv=fail; b=luwZn5XLnT8C4K1X8Tq3DelbpKZfz4vCmpwf/efRepmW/rc3BPJjE5bJ7GxoAtMw9hPqdEdkDJo8YaNchDtKMCfPBvZlS876nAk9UPna4DXmgqp0RDrBVKjbjBhL/d6YTkL/7GWExI8fxh9BuyaYZtrzWopwiJlDBu0C+L//n08=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722903001; c=relaxed/simple;
-	bh=sl3yWaqs5o73nmZ9OkIGHYguQcjP2oCyfqoGN4Hb5+U=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=HoR3pHL4JdbBAVqQiNqwpsODhtu1ZHkM3Uz3OurvtaKxeILCM2gRwTDTvsmfD3SH/WBPmHRg0OhstoltxdDJ2GieLDUvbFkMt1pUAwChjqPBaN859kwx0iHKtbLjfT2yWXfXC4jMiwrcRN25ABWulGBZCafoaRkdk7BN9rY4Uak=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dlbFBL/1; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722903000; x=1754439000;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=sl3yWaqs5o73nmZ9OkIGHYguQcjP2oCyfqoGN4Hb5+U=;
-  b=dlbFBL/1B1mCY5dp70vFkC87XVUFBkb0pMJghovs7B5I1aeklowJ+32N
-   XK0P/jkGid6N7OFyBvstQuiBtgk3JsD75t0Gq1BgJIcCjusSPylKq4yDF
-   7si9yA8Eh5wGQYL0XTHhB5kR7pPBYkiYqohnrP7O6HsavLAcgXO/31aZw
-   Rc9COZVtzV71iNxvtSt0MkwIJObxTwh88JyaJr8kbu9QxDcm9zYASZgav
-   42ES6FZXWMG3wrlW3ydRamrhTNQ/PPOpFu8MrPdSlUeCAXBtdK4Af47J0
-   H/EVlvdYoqK3RAK6OtBD+Z0+qW8qoJpoITfpGWHiaBsuBL/ieA2Wrz8Ad
-   A==;
-X-CSE-ConnectionGUID: PrqtNYSbSbCKTNufgQJhoQ==
-X-CSE-MsgGUID: Jk/bV0jTR6WXeJo5HphIFg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="21073916"
-X-IronPort-AV: E=Sophos;i="6.09,266,1716274800"; 
-   d="scan'208";a="21073916"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 17:09:59 -0700
-X-CSE-ConnectionGUID: qNQOkYabQW6DLIcb2SAm9Q==
-X-CSE-MsgGUID: sLGQECtUSTeMyvvdxmi8AQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,266,1716274800"; 
-   d="scan'208";a="56245351"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 Aug 2024 17:10:00 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 5 Aug 2024 17:09:58 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 5 Aug 2024 17:09:58 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 5 Aug 2024 17:09:58 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 5 Aug 2024 17:09:58 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CMURatsFyOx8AsMQySlT23PgBtdvshpd/KRCrYkb76J7P5UpfA96IV8pArA8yINDRZ2LCVs6ltYmUIwB8YJy0v3K4u9mcXXkVp0oqLYnKpc9+eaPazwfeieuiX6U99SfUIFUmpJLC0YxdhgqYmx9BIdCt4hYQbr584QsJApjANF5gIkxas+6R37BpOyp+GcFb7Lf67bP8znoKdcD4Blp1lXkgjSpTsAU9mP6M3pxG+Opg4QN/FLxsSius23MEAUnlH4uKLOZXhx0GkzLIMhPxsjSeBZRwSQHAIJvl/lLJK126P0RrTOMhaNy2vWvSftF6ZUmIHxh1ds9rbfMcLduIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hFemsVxZcTLUv/+btFSQaYHBtE1i57CIigtEHCsudCA=;
- b=t7mbxVE9trH+b6WTmV+twmB8AL8XqVJqNku27hfijbx/qw3ZBdy2oU8Zf9aZERSQ8Ywdo8R8qH34SUfP6yyDWagzcudIIjIl/ZBhC3sUWbHXz2W8pyoGiNc1abvFaNFuD/xPBlhrEypoSH444XG8J2yFcOXsPaSiO/aWUfdJz0YZ6IN8FICnN4NumeiTwnErDQirFMabJi2bZXlrCz177LS9WjOYuxjzN+ikJVGJzzNEcbbC6xNqkG6YSuh3uM2R++umbCXNLgRu7so19WEe7kXfzpk6gK7dPRQr/k9eM/fIejgZg4sVWxXQEyxIy2n+F775fXZ5lnw8cmykkGfi6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
- by PH7PR11MB8123.namprd11.prod.outlook.com (2603:10b6:510:236::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Tue, 6 Aug
- 2024 00:09:56 +0000
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b%7]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
- 00:09:56 +0000
-Message-ID: <7b65b317-397d-4a72-beac-6b0140b1d8dd@intel.com>
-Date: Tue, 6 Aug 2024 12:09:45 +1200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/10] x86/virt/tdx: Unbind global metadata read with
- 'struct tdx_tdmr_sysinfo'
-To: "Williams, Dan J" <dan.j.williams@intel.com>, "Hansen, Dave"
-	<dave.hansen@intel.com>, "kirill.shutemov@linux.intel.com"
-	<kirill.shutemov@linux.intel.com>, "bp@alien8.de" <bp@alien8.de>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "peterz@infradead.org"
-	<peterz@infradead.org>, "mingo@redhat.com" <mingo@redhat.com>,
-	"hpa@zytor.com" <hpa@zytor.com>, "seanjc@google.com" <seanjc@google.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>
-CC: "x86@kernel.org" <x86@kernel.org>, "kvm@vger.kernel.org"
-	<kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Edgecombe, Rick P"
-	<rick.p.edgecombe@intel.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>,
-	"Gao, Chao" <chao.gao@intel.com>, "binbin.wu@linux.intel.com"
-	<binbin.wu@linux.intel.com>
-References: <cover.1721186590.git.kai.huang@intel.com>
- <7af2b06ec26e2964d8d5da21e2e9fa412e4ed6f8.1721186590.git.kai.huang@intel.com>
- <66b16121c48f4_4fc729424@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Language: en-US
-From: "Huang, Kai" <kai.huang@intel.com>
-In-Reply-To: <66b16121c48f4_4fc729424@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0352.namprd03.prod.outlook.com
- (2603:10b6:a03:39c::27) To BL1PR11MB5978.namprd11.prod.outlook.com
- (2603:10b6:208:385::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D65A35
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 00:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722903238; cv=none; b=dSPI32uE+S/9hZJBXJXSQ16khI3TgDVGvnN5qGYzagbbGv36O4fgkpMB3InCPfDDzXMrzKI66cLOO3ka8TKoRvtOvDSewiqv+FW7xcukECCpdG2ipL+EjivbKb4NIVDU48rcuV1bp20WYBRj2EtoMBrFar/Z6BRTiEeSWjpiTQk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722903238; c=relaxed/simple;
+	bh=ZDxCORataawjKOGxtlarKZDhv+rXkx4UHqog+8LGujQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B8qE+L8o7FJlX/Hi0066ntUXx2h5Sp+R10vv8qcxrouWD8Kd4uRZrBMbESZeRB8yUkV6ma1oi6QBfL7+loprjFonTZLTC+6fdgLiGLKlKttZTi/MgJoQkyb9vR4NFUVITEEb9oBZCecMKK2hR9EKzhzQUwU6NLe4EKYcwj9TdDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j14bludw; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7a81bd549eso8579566b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 17:13:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722903235; x=1723508035; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lz1Ae/7rlg/3/u2JXrEz+z/RAQ/eMDWE8SckjgKSpLY=;
+        b=j14bludwKHIboLjegi8tkzZsSV1JvwnrHkj5SQyKY8M3RiBM4PnHhR07EOz+ztO7HK
+         keSpK2jslJBed7SQIuUes6jDL+jl8IOg3aWT0H7o0b4t1pUmD5+2wUkSxLEnKmv5Yz1w
+         0NovQL1tW71VOEarWXAxIQ1AgnsG3abQFO4CuKxrER5jhLQWnVL/8HZgJXXOYosZ955g
+         jdXhtqbyuoFOuR8Cnr1UyxA5pz4w00kin7Kt+KTVMTf6gffqafoxM5QaMfXLeZQ5RQmc
+         pmFJBPuujz+4PLxJTEKXIC887XvTCNtCWbAnjm1l0hyLcX4Gl6SIBg8upTTIdcuQv2Hr
+         lQjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722903235; x=1723508035;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lz1Ae/7rlg/3/u2JXrEz+z/RAQ/eMDWE8SckjgKSpLY=;
+        b=Jyp/l4ldXo5GA+TeMrhtGXu6bvz3tEi+L3qk7RXosQeEvQ8Bzdz3+buJ0hgMyGR7v4
+         VTws58qGU6TOchK+1GD9oWQgGUucft/pBt5yJiX4tzOLo4L/60/bRqCUy9Krhg+YUjZF
+         JMvcjaHopharK7kmd05h9EtG2+2b0VIvGZsxPiEdyyZftU0Kam9L9TWfwxCHQhwpKqUS
+         WT5iwBDRzhCZWrqWmOP93yIrftGu3t8wauFMjmrbpK2yFcA/Zdfufq2VNs5reIb14cfr
+         hTD5HnTDCtg8BF1FYT9PHqUritj3QfxXQk6ab1Xgt4p1mmMH3qjV9emoJQfDDWEfsYAS
+         rEeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUy0u9bl3XTVnCcyFwOYUAKr2foPOOuKuGvg/9qR952P0387Rf5VD9Nag86KwOBX6c8aAtS+JCkV/7KY9uTJgysOdXRt5WaauitAgxL
+X-Gm-Message-State: AOJu0YyOYx/TkwZ4dmYgNOAC5aSSi0dYEwB1IPCD4Im0nJyJAfbvo1gu
+	mYxYnWJIciIBs7Mc2qaHw+7U7LFvOpBsdnd/9CUYqG0fFnNdYJji92rEqjqdN1vF0wn3jQ2iNhC
+	200V2kv0ptL6dfZHcmeWGUXRJa7caYFjllZcT
+X-Google-Smtp-Source: AGHT+IHc3zANL8ZaSgowmvp7aToDGXdFt777ft/8Sndpc2h+mU1jmNIEJ9xF4cwU9gBldTl1f9hRoWOI/y3KoRYdq/g=
+X-Received: by 2002:a17:907:6d28:b0:a77:f2c5:84a9 with SMTP id
+ a640c23a62f3a-a7dc4e56417mr954695566b.18.1722903234349; Mon, 05 Aug 2024
+ 17:13:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|PH7PR11MB8123:EE_
-X-MS-Office365-Filtering-Correlation-Id: 746a42d2-9999-4a37-d0df-08dcb5ac1a58
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?YkwvUHpqQjZNS2VRUkxxcGtMbjVpYVd2K1Z4U0ROYS9HNVF4b3d5ZTN3QnU5?=
- =?utf-8?B?dVFJelF4bzJHYi9tUzMyNjZPdEFoelZEdHU0K0pScWhjRjN1bDNlakNPQ1ph?=
- =?utf-8?B?eEtacnd4UW5xOFV1Nnd0Sy9DRnJpUWI0NkRLV29palgzYUlFeHF6aTZoSWph?=
- =?utf-8?B?SDNvMDIvMWtFOFFrRjkzbHdpWlhOT0kwbTFFRlUwenhMVFB6c3lrWVU1eGpC?=
- =?utf-8?B?bG5oUFErd1RzYUZhQzNFdGVibElHQmNCUTRMZFIvSkwzbWpTWlZicS9WQnlP?=
- =?utf-8?B?NUhycmVUTWVZMTdTMnRCc0RNOEowVUkrb3ZiMGR1eTFZS1VGU0c4QTBTbmJ4?=
- =?utf-8?B?K2plaEhxV3duc2ZBTEtxSGJYNGhtaUlPZ2d5Q29SUnNHVHhQRHh2UGJKb0pK?=
- =?utf-8?B?cnZ5YXNhUWo0eWh0RFhaZkZSbTI2NFo5MUk0ZVJ0c252Z21tKzlkVC9oMXJW?=
- =?utf-8?B?VmI3RnFEd213YWlTWXZ1YmlyM2c2SjZQR2ozcHNZelpiWUdvblErWVJUNGpH?=
- =?utf-8?B?dVo3Wlo1dkVGWkVsUGN6L25WWlo4NUpOUnZVamJOcFRtQ2wrYkV1d3FXS2la?=
- =?utf-8?B?Sm1wTkRodzE2dzZ5THY5Uyt1NmE3eEkzdkxSc2tTL3dleFVOVEdpOXVQWGF6?=
- =?utf-8?B?blIzaFQ0MXJ3NDdJK0FVcjZWalJmM1V1WGxuTEpRRlF2c3RUSTdiS0NWRWNq?=
- =?utf-8?B?ems4dWF3NkVzMk5KZW9HWTRmc096YmZ0Njg5YnUvd1FBMDdXZjJHSlFWWjlO?=
- =?utf-8?B?UCt3L2NVSldDZ3V2UEpmWGI3ZEMzaWliT2E3QmExaEFVTDlCRFlRQlBoYjJq?=
- =?utf-8?B?Z2VkS282NjFVNThQMks3TjgrNjAvbDdpNkllYXV1N0lZYXJwVHpHOExTbHM5?=
- =?utf-8?B?MU1INGs0bGdNc08vL1BHVlFUTFB2aTNDWStoZVd0WnQ3ZkthcXMrS3Z0S3dZ?=
- =?utf-8?B?M1RDSHVMbTZ5NCswQ0lFUGFoZXcvQlhNaDFiNG52WUJKY0J4UU9XUjVGcXBi?=
- =?utf-8?B?MFFmdG1PMDY4MWFiRTVBa0luV1Z4SVEvTzVHR3BWQnZSTXZiZFFLYnBndVNp?=
- =?utf-8?B?YndrMHZhUHNkTzRmcTdLRXZ3ZDNoLzljbVJ1UG1YZjNFWnM5bUVPZGpPdHRL?=
- =?utf-8?B?UkJ2QkVqSnJnYlpSbnZLTC9JMUExTnZVbDBwR2lYRnNnR2x5a2hmclNPMWRQ?=
- =?utf-8?B?VHBsRWVUN3dScFViTW9MYXpkbStvQVhxK3N6UmdNdnhmQ0dDUXlsa3NnVjRt?=
- =?utf-8?B?bmZhU1FJWS9wam5KK2RzSjZ1STQ5OEd4TEgyYlJRcStpcFJUbG9xaWFyY0dr?=
- =?utf-8?B?M0VXZWMzeDNBRkV3NjBUbG51M1IvNkZRbGhuWWdVSkZucnVEYnN4cWtFZFNR?=
- =?utf-8?B?bXNFOWVUTWRaQ25BZHR2MTlLZDFJTnlEZDBJeUYzbmM1RnpJWXFXcXNVVEpH?=
- =?utf-8?B?YlVHMDNjdHpzTnhGWlE5WXJjRXRTd0dtWnA0SXNuM29IREFkTGlja21WNWdy?=
- =?utf-8?B?QzVWUkxVWkJtUkNEYlJYZ09hMWUxWlZFSHlkazV2d29BaUtySzJjdDl5UnBq?=
- =?utf-8?B?bS9TRHNJT1BHN3k2UFlvSStIUmJXZTBLdFIyWnZPOEpWQnk4M2VZaEVuNlR4?=
- =?utf-8?B?WG14RXBhbkRRYXF5c1lnUnJ5dXJmSHU0bm1jMDlRUGROSzlpYmtmTktLQ24w?=
- =?utf-8?B?QUY0WnFGSWRYMFY4RW1vcUZicUtkRDdEMk01WXpoek9CeEpVdm9XN3gzSjA2?=
- =?utf-8?B?NjNxU0xvWXFLVnRRaElqK3VOeDdOS1hmN0xzdXM0bmZsRVpkR2FkODZMek1E?=
- =?utf-8?B?SHU5WUIrL0RLM09XN013QT09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eDZuTkRXa3h0clo0RFJuWXI1RUR5dHVrZHNUUzYzNVhzWDdJY1JMVnRoWmFk?=
- =?utf-8?B?RldHbXlYRVVSRno4cjlKUXd2VEc1VzhSbjByRWdURmZRV3JDb3NjajhvTFhs?=
- =?utf-8?B?bHNuT0h1NjRwTkxBblA3ZVNvTVQxS3lRU0g1RVhnSFBBQWxoTlNmUjNjOGtq?=
- =?utf-8?B?eFRVRXdBQlNuR2dQM3hLbWFJMGE0dFZHSEt4S2pnRVBka0lQZ0J5WkZsS1Zw?=
- =?utf-8?B?TkN2a3VMV1RFQkE1Z2hIZi8ybUZSaUVVNUcwSm1GTi9FU2Yrc1VKWVhnd0xt?=
- =?utf-8?B?Y28rcXZBWUVzT0dnY3BZQjFkcStZaUVxazlJbTNOK21YSXlpMGFBTjRiSThW?=
- =?utf-8?B?WW5yMjF3bi9idWhQeVpTN1pUZXJqazlITTZxVWdBNXpvc1YxbTlYWkY4b2d4?=
- =?utf-8?B?QURvVDdkZ0RqN3hUWUZvcXhCMXVhOGVlczI2Tmd6d01vT0tuTWNQdDJSRjV4?=
- =?utf-8?B?S1pxdlBOenhZNGxBc1dnNWxYb3FTRk5nZndqRmZrVmhUSGxCNVg1eGl6cjRX?=
- =?utf-8?B?TUxmV3FONDM1eUlDSnV5Q0VUdFRxUUgrTmttN1N4blcwMVRreHhmZXk0TWpO?=
- =?utf-8?B?U09WQ3FGZ0lXaTZzZ2pSNE9oMm5mTFhVa2M5Q1ExV1dXK1gweCsvcFJOYnpE?=
- =?utf-8?B?VWNIMkxRYjRkTmRkYTRpbWZQalhCUkRDb1Vnb3FwaXhsejFpQU56NlhOVnhk?=
- =?utf-8?B?YmcrcWE2RVQyeXVEU3J1WmIwUW5DeWZlUU1Db1hoZ2tFR09BeWVWSEZYbnlx?=
- =?utf-8?B?Q1k3L0I0SEdONTJyaFR4dk5IZFBrNmlHZ2Q3OVIvVWJtMjJYU2JmeVhybkdz?=
- =?utf-8?B?Tk85RHBHNW1wRkpJVW1vem5IZjRROEo5RTluSFdHeW1PaGdZWU8vTkhUZ01V?=
- =?utf-8?B?K1NBREd5MVZSV1YvSlFJN3pXb3k1VkRMbUNieHpjN2lndllmQUllMjdLRThI?=
- =?utf-8?B?ek55UmlSd0xQQThrYXdObkR2Z0VLMnphT2VnTU9sbVYwWTNhOXQzWTc5YjhN?=
- =?utf-8?B?QmFsWG9aVm1MbUtWYmlyRS84QmhQdDE5enVxbk5ybE54eUV4ZGNSb2tOSy9M?=
- =?utf-8?B?RkNkdUhObktzUG9MTk92NVhZYlJOYzM1dDlyN2dkRzZEMDJxbjMzWDgyM2hu?=
- =?utf-8?B?SU5RVUZKcjgycHJKQk9Ma3BOSFpoMXExUE9XM2o0Z25ORXNEUG5OSG95Slo2?=
- =?utf-8?B?YmZ2b3lHeVJVWWtKVlRnTjcxY0wySGRKZHljcWNIN1k4RXROck1RWkNTRFZV?=
- =?utf-8?B?L1dnaUprNWJDc3p5OTVFVGQvV2lNaHYydDN2UXRIRC9nYjUrZGYwTE9yUjUv?=
- =?utf-8?B?WjdpN3FhcS9FcDNCVnBYLy9HdThzaXdCU1RZSlpWSHhMZ3UrTWQ0dTlRNmEr?=
- =?utf-8?B?SC9BNTIxYVhnV09hc01LZkEzUFlUU1FxdXdia2ZmUVdIaWV0WkZOS3FNZTYy?=
- =?utf-8?B?VTZSQWt2ang4N2p0VnI0R2V3UjJzdStwcU16RlJLUjRDcXRPTEdCNkd3Sks0?=
- =?utf-8?B?cml4elJPTkNjcnNJcGJxRnFrRTdQanNJRTNvSWpkdUxITFBrTHF1Y0ZoQlFD?=
- =?utf-8?B?R0gvN0c3ZkxkMjE5M0R0Y1A2VFIyZm43ellCWmxGQkpSR2NPTko5elcrRDVo?=
- =?utf-8?B?RC8vK0V3ay9HSGs3L2grcDNsR2tqdEd2cHNaelREQ0NOYTFDc1MyTzA4Q0Jn?=
- =?utf-8?B?MlRWeUFMODJUVUJSRWxweUswWWN3RUtHLytQdW12K21jMGNsRjdjMHFxSEEv?=
- =?utf-8?B?a1NadkEvZGFaZ000alpvWVhudER5a1NXVHA3bW0za3FuMlhaeHoxeWx0UXB1?=
- =?utf-8?B?RXJRUFI3TkxnMVpPTXVob2lSRjVsUG5sWTF1QndTY0Zhck01M2JKejNoNjd5?=
- =?utf-8?B?Ly9JeGI3K1NzYUsrQVIrNTN3YUorSkRxMlA0NXBtaWRubEFsalhGRi9tVlpC?=
- =?utf-8?B?SWQxMWZvMzNYb2IzN1JTb1hxM0RyWHNrd0tUYjVCMVN3d2d6Q3ZwSW12VG15?=
- =?utf-8?B?aFljR2p5aG1IS0xaSEt2WUJIZnB6UzdzT3BRRjd1TnM1MFdpZEFHTWRRdTJ6?=
- =?utf-8?B?dXh5bDRYeE53c0FyVFVOZWVIaFRlWkIwK2ZKUDd0SmpmQ3diWkovVGVGVGla?=
- =?utf-8?Q?AfFQVvZHnhAjVJOzutskoeN89?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 746a42d2-9999-4a37-d0df-08dcb5ac1a58
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 00:09:56.2383
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bkdBQmvwUEaUeR1N7kAvXDCGC1LHw9KvxMa6aH/98BnMtvpvU9qJ8M9v6YHO+SjvvyVRUl0AGRhbfs3PaaykJA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8123
-X-OriginatorOrg: intel.com
+References: <20240805232243.2896283-1-nphamcs@gmail.com> <20240805232243.2896283-2-nphamcs@gmail.com>
+In-Reply-To: <20240805232243.2896283-2-nphamcs@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 5 Aug 2024 17:13:17 -0700
+Message-ID: <CAJD7tkbnYi5WsQC+5QfrVgmqb34yzY9HtVZ4cZjw9eg+ikCXkQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] zswap: implement a second chance algorithm for
+ dynamic zswap shrinker
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, shakeel.butt@linux.dev, 
+	linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
+	flintglass@gmail.com, chengming.zhou@linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Aug 5, 2024 at 4:22=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrote:
+>
+> Current zswap shrinker's heuristics to prevent overshrinking is brittle
+> and inaccurate, specifically in the way we decay the protection size
+> (i.e making pages in the zswap LRU eligible for reclaim).
+>
+> We currently decay protection aggressively in zswap_lru_add() calls.
+> This leads to the following unfortunate effect: when a new batch of
+> pages enter zswap, the protection size rapidly decays to below 25% of
+> the zswap LRU size, which is way too low.
+>
+> We have observed this effect in production, when experimenting with the
+> zswap shrinker: the rate of shrinking shoots up massively right after a
+> new batch of zswap stores. This is somewhat the opposite of what we want
+> originally - when new pages enter zswap, we want to protect both these
+> new pages AND the pages that are already protected in the zswap LRU.
+>
+> Replace existing heuristics with a second chance algorithm
+>
+> 1. When a new zswap entry is stored in the zswap pool, its referenced
+>    bit is set.
+> 2. When the zswap shrinker encounters a zswap entry with the referenced
+>    bit set, give it a second chance - only flips the referenced bit and
+>    rotate it in the LRU.
+> 3. If the shrinker encounters the entry again, this time with its
+>    referenced bit unset, then it can reclaim the entry.
+>
+> In this manner, the aging of the pages in the zswap LRUs are decoupled
+> from zswap stores, and picks up the pace with increasing memory pressure
+> (which is what we want).
+>
+> The second chance scheme allows us to modulate the writeback rate based
+> on recent pool activities. Entries that recently entered the pool will
+> be protected, so if the pool is dominated by such entries the writeback
+> rate will reduce proportionally, protecting the workload's workingset.On
+> the other hand, stale entries will be written back quickly, which
+> increases the effective writeback rate.
+>
+> The referenced bit is added at the hole after the `length` field of
+> struct zswap_entry, so there is no extra space overhead for this
+> algorithm.
+>
+> We will still maintain the count of swapins, which is consumed and
+> subtracted from the lru size in zswap_shrinker_count(), to further
+> penalize past overshrinking that led to disk swapins. The idea is that
+> had we considered this many more pages in the LRU active/protected, they
+> would not have been written back and we would not have had to swapped
+> them in.
+>
+> To test this new heuristics, I built the kernel under a cgroup with
+> memory.max set to 2G, on a host with 36 cores:
+>
+> With the old shrinker:
+>
+> real: 263.89s
+> user: 4318.11s
+> sys: 673.29s
+> swapins: 227300.5
+>
+> With the second chance algorithm:
+>
+> real: 244.85s
+> user: 4327.22s
+> sys: 664.39s
+> swapins: 94663
+>
+> (average over 5 runs)
+>
+> We observe an 1.3% reduction in kernel CPU usage, and around 7.2%
+> reduction in real time. Note that the number of swapped in pages
+> dropped by 58%.
+>
+> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+> Signed-off-by: Nhat Pham <nphamcs@gmail.com>
+> ---
+>  include/linux/zswap.h |  16 +++----
+>  mm/zswap.c            | 108 ++++++++++++++++++++++++------------------
+>  2 files changed, 70 insertions(+), 54 deletions(-)
+>
+> diff --git a/include/linux/zswap.h b/include/linux/zswap.h
+> index 6cecb4a4f68b..9cd1beef0654 100644
+> --- a/include/linux/zswap.h
+> +++ b/include/linux/zswap.h
+> @@ -13,17 +13,15 @@ extern atomic_t zswap_stored_pages;
+>
+>  struct zswap_lruvec_state {
+>         /*
+> -        * Number of pages in zswap that should be protected from the shr=
+inker.
+> -        * This number is an estimate of the following counts:
+> +        * Number of swapped in pages from disk, i.e not found in the zsw=
+ap pool.
+>          *
+> -        * a) Recent page faults.
+> -        * b) Recent insertion to the zswap LRU. This includes new zswap =
+stores,
+> -        *    as well as recent zswap LRU rotations.
+> -        *
+> -        * These pages are likely to be warm, and might incur IO if the a=
+re written
+> -        * to swap.
+> +        * This is consumed and subtracted from the lru size in
+> +        * zswap_shrinker_count() to penalize past overshrinking that led=
+ to disk
+> +        * swapins. The idea is that had we considered this many more pag=
+es in the
+> +        * LRU active/protected and not written them back, we would not h=
+ave had to
+> +        * swapped them in.
+>          */
+> -       atomic_long_t nr_zswap_protected;
+> +       atomic_long_t nr_disk_swapins;
+>  };
+>
+>  unsigned long zswap_total_pages(void);
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index adeaf9c97fde..fb3d9cb88785 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -187,6 +187,10 @@ static struct shrinker *zswap_shrinker;
+>   * length - the length in bytes of the compressed page data.  Needed dur=
+ing
+>   *          decompression. For a same value filled page length is 0, and=
+ both
+>   *          pool and lru are invalid and must be ignored.
+> + * referenced - true if the entry recently entered the zswap pool. Unset=
+ by the
+> + *              dynamic shrinker. The entry is only reclaimed by the dyn=
+amic
+> + *              shrinker if referenced is unset. See comments in the shr=
+inker
+> + *              section for context.
 
+Nit: It is unset and reclaimed by the writeback logic in general,
+which isn't necessarily triggered from the dynamic shrinker, right?
 
-On 6/08/2024 11:32 am, Williams, Dan J wrote:
-> Kai Huang wrote:
->> The TDX module provides a set of "global metadata fields".  They report
->> things like TDX module version, supported features, and fields related
->> to create/run TDX guests and so on.
->>
->> For now the kernel only reads "TD Memory Region" (TDMR) related global
->> metadata fields to a 'struct tdx_tdmr_sysinfo' for initializing the TDX
->> module, and the metadata reading code can only work with that structure.
->>
->> Future changes will need to read other metadata fields that don't make
->> sense to populate to the "struct tdx_tdmr_sysinfo".  It's essential to
->> provide a generic metadata read infrastructure which is not bound to any
->> specific structure.
->>
->> To start providing such infrastructure, unbind the metadata reading code
->> with the 'struct tdx_tdmr_sysinfo'.
->>
->> Note the kernel has a helper macro, TD_SYSINFO_MAP(), for marshaling the
->> metadata into the 'struct tdx_tdmr_sysinfo', and currently the macro
->> hardcodes the structure name.  As part of unbinding the metadata reading
->> code with 'struct tdx_tdmr_sysinfo', it is extended to accept different
->> structures.
->>
->> Unfortunately, this will result in the usage of TD_SYSINFO_MAP() for
->> populating 'struct tdx_tdmr_sysinfo' to be changed to use the structure
->> name explicitly for each structure member and make the code longer.  Add
->> a wrapper macro which hides the 'struct tdx_tdmr_sysinfo' internally to
->> make the code shorter thus better readability.
->>
->> Signed-off-by: Kai Huang <kai.huang@intel.com>
->> Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
->> ---
->>
->> v1 -> v2:
->>   - 'st_member' -> 'member'. (Nikolay)
->>
->> ---
->>   arch/x86/virt/vmx/tdx/tdx.c | 25 ++++++++++++++-----------
->>   1 file changed, 14 insertions(+), 11 deletions(-)
->>
->> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
->> index d8fa9325bf5e..2ce03c3ea017 100644
->> --- a/arch/x86/virt/vmx/tdx/tdx.c
->> +++ b/arch/x86/virt/vmx/tdx/tdx.c
->> @@ -272,9 +272,9 @@ static int read_sys_metadata_field(u64 field_id, u64 *data)
->>   
->>   static int read_sys_metadata_field16(u64 field_id,
->>   				     int offset,
->> -				     struct tdx_tdmr_sysinfo *ts)
->> +				     void *stbuf)
-> 
-> The loss of all type-safety sticks out, and points to the fact that
-> @offset was awkward to pass in from the beginning. I would have expected
-> a calling convention like:
-> 
-> static int read_sys_metadata_field16(u64 field_id, u16 *val)
-> 
-> ...and make the caller calculate the buffer in a type-safe way.
-> 
-> The problem with the current code is that it feels like it is planning
-> ahead for a dynamic metdata reading future, that is not coming, Instead
-> it could be leaning further into initializing all metadata once.
-> 
-> In other words what is the point of defining:
-> 
-> static const struct field_mapping fields[]
-> 
-> ...only to throw away all type-safety and run it in a loop. Why not
-> unroll the loop, skip the array, and the runtime warning with something
-> like?
-> 
-> read_sys_metadata_field16(MD_FIELD_ID_MAX_TDMRS, &ts->max_tdmrs);
-> read_sys_metadata_field16(MD_FIELD_ID_MAX_RESERVED_PER_TDMR, &ts->max_reserved_per_tdmr);
-> ...etc
-> 
-> The unrolled loop is the same amount of work as maintaining @fields.
+>   * pool - the zswap_pool the entry's data is in
+>   * handle - zpool allocation handle that stores the compressed page data
+>   * value - value of the same-value filled pages which have same content
+> @@ -196,6 +200,7 @@ static struct shrinker *zswap_shrinker;
+>  struct zswap_entry {
+>         swp_entry_t swpentry;
+>         unsigned int length;
+> +       bool referenced;
+>         struct zswap_pool *pool;
+>         union {
+>                 unsigned long handle;
+> @@ -700,11 +705,8 @@ static inline int entry_to_nid(struct zswap_entry *e=
+ntry)
+>
+>  static void zswap_lru_add(struct list_lru *list_lru, struct zswap_entry =
+*entry)
+>  {
+> -       atomic_long_t *nr_zswap_protected;
+> -       unsigned long lru_size, old, new;
+>         int nid =3D entry_to_nid(entry);
+>         struct mem_cgroup *memcg;
+> -       struct lruvec *lruvec;
+>
+>         /*
+>          * Note that it is safe to use rcu_read_lock() here, even in the =
+face of
+> @@ -722,19 +724,6 @@ static void zswap_lru_add(struct list_lru *list_lru,=
+ struct zswap_entry *entry)
+>         memcg =3D mem_cgroup_from_entry(entry);
+>         /* will always succeed */
+>         list_lru_add(list_lru, &entry->lru, nid, memcg);
+> -
+> -       /* Update the protection area */
+> -       lru_size =3D list_lru_count_one(list_lru, nid, memcg);
+> -       lruvec =3D mem_cgroup_lruvec(memcg, NODE_DATA(nid));
+> -       nr_zswap_protected =3D &lruvec->zswap_lruvec_state.nr_zswap_prote=
+cted;
+> -       old =3D atomic_long_inc_return(nr_zswap_protected);
+> -       /*
+> -        * Decay to avoid overflow and adapt to changing workloads.
+> -        * This is based on LRU reclaim cost decaying heuristics.
+> -        */
+> -       do {
+> -               new =3D old > lru_size / 4 ? old / 2 : old;
+> -       } while (!atomic_long_try_cmpxchg(nr_zswap_protected, &old, new))=
+;
 
-Hi Dan,
+Nice, arcane heuristics gone :)
 
-Thanks for the feedback.
-
-AFAICT Dave didn't like this way:
-
-https://lore.kernel.org/lkml/cover.1699527082.git.kai.huang@intel.com/T/#me6f615d7845215c278753b57a0bce1162960209d
+LGTM with the above nit:
+Acked-by: Yosry Ahmed <yosryahmed@google.com>
 
