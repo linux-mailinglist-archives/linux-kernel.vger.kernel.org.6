@@ -1,124 +1,242 @@
-Return-Path: <linux-kernel+bounces-276737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B549497B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:47:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF369497BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB09B1F24710
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:47:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B62A1F235F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8939B7346F;
-	Tue,  6 Aug 2024 18:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0FC73477;
+	Tue,  6 Aug 2024 18:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="A3hY3LRn"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IMRbCaIC"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FCC8F77
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 18:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42548F77;
+	Tue,  6 Aug 2024 18:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722970035; cv=none; b=jsR/xlHoi1v/KScrpdBoIeGeN9AB9qM2rCNqIQnel0THavng3++cwFALRBLxbnK/lBfG2jgQFs19nTNGB0rOfbNPCtNtXufxvGYDW4emiGGy6JAGkLh+TRVUzLq/mdzNFDa7kEkCta+/2B5AOqgNZCaQTN/O0g01X8c6LRFM9M8=
+	t=1722970128; cv=none; b=N6pJdLnFXa5zCzCopY0BQngsY47eKBCPEPb8qACVIL1rxz65XgkiNTA2yyBHGIAyXMEgBhC77odoH9UkoQNs3Dh4rf4onScwq3uXuiG+N3qy/ntnLaC8EL+vp4gmk+aYAniegF8c3bLU5w6fbejb+SZOaqpt8iOrr6FxJyccdKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722970035; c=relaxed/simple;
-	bh=zYZ+0OnIejKYMoOB1WVZaKNvgF0bAI3uhOiw1siPpnQ=;
+	s=arc-20240116; t=1722970128; c=relaxed/simple;
+	bh=dmb8MnIsQ45LvpDmstjVoIwppoxS/Sh0KJO+aWBWUco=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MhNQQgwB5z12W2cLy7rIIsAiAOi+GTEVWjrJbiLypBPTt3jMEXK7RVcYeFpncQOkEu5m7jbRO8aYtTleG4aomEb8/H7t2XfBmKEosboDEe3BnhCr0LxNGNIAt1m405FG7TwwDdOdVo5KP7f1xgfCxkCjJXI9/8yIyU9ckq+y5l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=A3hY3LRn; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a3b866ebc9so1231967a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 11:47:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722970030; x=1723574830; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6MAznyqpvb8spFxkoKW0gjqJWNHEy/LCmc62o5EfxKk=;
-        b=A3hY3LRnJ9oG1/eX3R/3yF0ME3c+b6fsblsnCSRGUEeXngk5vs00wa9f5eDyY68Pp2
-         0cJHIOTZUDRESszOFdClYbdEqgkH4LwIMtZujF96t3JkRyvOFm4yDUco8Gq/t9l/qxzD
-         WFX8YJdgRxatG8UCMEG0461oSxgtijlse/dLqKdHz1SseXZe2Pn0bL+bg0lkHVEamp4F
-         roVEXXwic/GSzkNFW6ku8Ln4Ip26t/6UzIsQgz5FLIKCro6N7H9PXnGCpzAAUe+fyWI5
-         YGc1dLWpr9gzNww1uwTcyrLGQluAM+SwVbr3aowPFNOYORjpotdmPEvnBksrIRRU2sSX
-         Df0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722970030; x=1723574830;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6MAznyqpvb8spFxkoKW0gjqJWNHEy/LCmc62o5EfxKk=;
-        b=ZNGHr9+APrgk21mveMaUw6GNP2tDGPMTWy6aoLxA60+OU2GASJNBpdg6SFEcgCFF0r
-         WKUFrgPExeGzyJu129H1qHdzV8S/2CisMVZ2lhm1z42rxxsDmNoPjNkj5vL31xTp7VBy
-         52eVYfInUFo4BvVPn+XySiWpiu7hDzodBMdUV4rCOK/tx3WVG6CBb1HCSQTr0n8IgVzS
-         YGYmf0UbvEWt+BkNAV30HgJKaectt3CQ15tnuY7ti8+EmOEnB3lobrQSwB8NnkTluY2V
-         Xgno2IDqPgzx70j9mINcmDnFL1PSTJBnUhzF1juXVYp8fBwLm8cWgGHC1IcIGpCi9fmW
-         ck9g==
-X-Forwarded-Encrypted: i=1; AJvYcCW9WKmo8Dlfek2KUKJ3ajoq9Rgslligydlq7Ky1H3OeMwlCJIBWkEVfu7OlsABRtQ3f7H9YH9Jh6oQo7vVMVw8McRo0vIpzYYF8Kfp9
-X-Gm-Message-State: AOJu0YyVazDGPImzA7gF1g21ri/mqudrYCp9R52mhaCTRXH4UtTj4+sZ
-	oJJV3Hhz8Ny+7vQI6KOxAcqKTb+UJ35+arKD5VYI3QPjp1EengOzVBl2KZMvBOc=
-X-Google-Smtp-Source: AGHT+IG1qfGVbDM/hX3rH5zzwv3xKuLb799kAVcT/8qvdW2M66Ak8RK7dscO8iCSSxuW5OPapbnoZg==
-X-Received: by 2002:a17:906:794d:b0:a7d:2429:dc16 with SMTP id a640c23a62f3a-a7dc5107ce6mr1042915066b.65.1722970030427;
-        Tue, 06 Aug 2024 11:47:10 -0700 (PDT)
-Received: from blmsp ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e80ea8sm572780666b.183.2024.08.06.11.47.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 11:47:09 -0700 (PDT)
-Date: Tue, 6 Aug 2024 20:47:09 +0200
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-To: Nishanth Menon <nm@ti.com>
-Cc: Tero Kristo <kristo@kernel.org>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, Vibhore Vardhan <vibhore@ti.com>, 
-	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>, 
-	Georgi Vlaev <g-vlaev@ti.com>, Akashdeep Kaur <a-kaur@ti.com>
-Subject: Re: [PATCH v8 1/3] firmware: ti_sci: Introduce Power Management Ops
-Message-ID: <6zk5auljbsjnimtrftr6se2jrhcibidc2oq2qpdc7yncauvui7@peyzkaszsm2c>
-References: <20240801195422.2296347-1-msp@baylibre.com>
- <20240801195422.2296347-2-msp@baylibre.com>
- <20240806153912.sqsirnic5eb7witi@unsealed>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PTxwp+7XbM4y+e2PDvPNaiZjq/yWqZ9Elw0kYpUu9mo4/HG++ESg0BhhWtP9WoW1rW0xirduff6mMBlV0RFMxsC6zsCPqDTgRC2SPtWBQqpXglV+S9fUkqgaAap/faOduoDD6q6NpBtWvV9ZHkxrKTWthfpnzNKdcw6eqUKvw5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IMRbCaIC; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=AeNxfIV7mpbOzFTVofHcft4AOiiZ1fn76DHHxIZMmWY=; b=IMRbCaICZPpKQr7GYNx8yoqKUr
+	HnnURJCyJEvHl1S9oQhmlJuIxaskb7rFYnXrO2jHvi2Wsz7+pNt2Ev028hlLJyRLpc2wdl19+bxCq
+	leOsRLFy2GEzqnKTtPs6aGTm5kI1j+mvYBXS//6dCl1ZiwsvfnIFu2njDKerLVQ4yVbLjKAZqHsd/
+	pCdJz9Ek+6YqmghGvmqX9IvjZHyovJBxobs9JN5do5FQngMv/MPboGn04saBWZkxdS5l8Koe5PQuW
+	n/bXb+6GyVDLnYQVTeymSRiQsgEBU0t3E83urn2hJZ/ocVurfi1nt13KJLZUE39TiWTqlrTUD8kip
+	5kjnvFSw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sbPEi-000000067nY-2eU9;
+	Tue, 06 Aug 2024 18:48:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A43DC30066A; Tue,  6 Aug 2024 20:48:43 +0200 (CEST)
+Date: Tue, 6 Aug 2024 20:48:43 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [tip: x86/urgent] x86/mm: Fix pti_clone_entry_text() for i386
+Message-ID: <20240806184843.GX37996@noisy.programming.kicks-ass.net>
+References: <172250973153.2215.13116668336106656424.tip-bot2@tip-bot2>
+ <e541b49b-9cc2-47bb-b283-2de70ae3a359@roeck-us.net>
+ <20240806085050.GQ37996@noisy.programming.kicks-ass.net>
+ <d99175bb-b5ca-46e6-a781-df4d21e9b7a8@roeck-us.net>
+ <20240806145632.GR39708@noisy.programming.kicks-ass.net>
+ <20240806150515.GS39708@noisy.programming.kicks-ass.net>
+ <20240806154653.GT39708@noisy.programming.kicks-ass.net>
+ <20240806155922.GH12673@noisy.programming.kicks-ass.net>
+ <eab8db58-1eb5-40f7-b7c9-e58558937bf4@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240806153912.sqsirnic5eb7witi@unsealed>
+In-Reply-To: <eab8db58-1eb5-40f7-b7c9-e58558937bf4@roeck-us.net>
 
-Hi Nishanth,
-
-On Tue, Aug 06, 2024 at 10:39:12AM GMT, Nishanth Menon wrote:
-> On 21:54-20240801, Markus Schneider-Pargmann wrote:
-> > From: Dave Gerlach <d-gerlach@ti.com>
-> [...]
+On Tue, Aug 06, 2024 at 09:42:23AM -0700, Guenter Roeck wrote:
+> On 8/6/24 08:59, Peter Zijlstra wrote:
+> > On Tue, Aug 06, 2024 at 05:46:53PM +0200, Peter Zijlstra wrote:
+> > > On Tue, Aug 06, 2024 at 05:05:15PM +0200, Peter Zijlstra wrote:
+> > > > On Tue, Aug 06, 2024 at 04:56:32PM +0200, Peter Zijlstra wrote:
+> > > > > On Tue, Aug 06, 2024 at 07:25:42AM -0700, Guenter Roeck wrote:
+> > > > > 
+> > > > > > I created http://server.roeck-us.net/qemu/x86-v6.11-rc2/ with all
+> > > > > > the relevant information. Please let me know if you need anything else.
+> > > > > 
+> > > > > So I grabbed that config, stuck it in the build dir I used last time and
+> > > > > upgraded gcc-13 from 13.2 ro 13.3. But alas, my build runs successfully
+> > > > > :/
+> > > > > 
+> > > > > Is there anything else special I missed?
+> > > > 
+> > > > run.sh is not exacrlty the same this time, different CPU model, that
+> > > > made it go.
+> > > > 
+> > > > OK, lemme poke at this.
+> > > 
+> > > Urgh, so crypto's late_initcall() does user-mode-helper based modprobe
+> > > looking for algorithms before we kick off /bin/init :/
+> > > 
+> > > This makes things difficult.
+> > > 
+> > > Urgh.
+> > 
+> > So the problem is that mark_readonly() splits a code PMD due to NX. Then
+> > the second pti_clone_entry_text() finds a kernel PTE but a user PMD
+> > mapping for the same address (from the early clone) and gets upset.
+> > 
+> > And we can't run mark_readonly() sooner, because initcall expect stuff
+> > to be RW. But initcalls do modprobe, which runs user crap before we're
+> > done initializing everything.
+> > 
+> > This is a right mess, and I really don't know what to do.
 > 
-> > +	pmops->lpm_wake_reason = ti_sci_msg_cmd_lpm_wake_reason;
+> And there was me thinking this one should be easy to solve. Oh well.
 > 
-> did you miss populating the rest of the pm ops?
-> 	See https://lore.kernel.org/all/202408031302.28NpPykP-lkp@intel.com/
+> Maybe Linus has an idea ? I am getting a bit wary to reporting all those
+> weird problems to him, though.
 
-No, I didn't miss populating the pmops.
+While I had dinner with the family, Thomas cooked up the below, which
+seems to make it happy.
 
-set_latency_constraint() and set_device_constraint() are only added to
-pmops once the firmware capabilities are added in the next patch.
-set_io_isolation() and prepare_sleep() are not added to pmops as the
-usage outside of ti_sci.c is not planned. These are only used for
-suspend/resume in the third patch.
+It basically splits the PMD on the late copy.
 
-I will rearrange the patches and integrate the functions required for
-suspend/resume with the suspend/resume patch to avoid any build
-warnings.
-
-Best
-Markus
-
-> It might be better to introduce the APIs one at a time?
-> 
-> -- 
-> Regards,
-> Nishanth Menon
-> Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+---
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index bfdf5f45b137..b6ebbc9c23b1 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -241,7 +241,7 @@ static pmd_t *pti_user_pagetable_walk_pmd(unsigned long address)
+  *
+  * Returns a pointer to a PTE on success, or NULL on failure.
+  */
+-static pte_t *pti_user_pagetable_walk_pte(unsigned long address)
++static pte_t *pti_user_pagetable_walk_pte(unsigned long address, bool late_text)
+ {
+ 	gfp_t gfp = (GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO);
+ 	pmd_t *pmd;
+@@ -251,10 +251,15 @@ static pte_t *pti_user_pagetable_walk_pte(unsigned long address)
+ 	if (!pmd)
+ 		return NULL;
+ 
+-	/* We can't do anything sensible if we hit a large mapping. */
++	/* Large PMD mapping found */
+ 	if (pmd_leaf(*pmd)) {
+-		WARN_ON(1);
+-		return NULL;
++		/* Clear the PMD if we hit a large mapping from the first round */
++		if (late_text) {
++			set_pmd(pmd, __pmd(0));
++		} else {
++			WARN_ON_ONCE(1);
++			return NULL;
++		}
+ 	}
+ 
+ 	if (pmd_none(*pmd)) {
+@@ -283,7 +288,7 @@ static void __init pti_setup_vsyscall(void)
+ 	if (!pte || WARN_ON(level != PG_LEVEL_4K) || pte_none(*pte))
+ 		return;
+ 
+-	target_pte = pti_user_pagetable_walk_pte(VSYSCALL_ADDR);
++	target_pte = pti_user_pagetable_walk_pte(VSYSCALL_ADDR, false);
+ 	if (WARN_ON(!target_pte))
+ 		return;
+ 
+@@ -301,7 +306,7 @@ enum pti_clone_level {
+ 
+ static void
+ pti_clone_pgtable(unsigned long start, unsigned long end,
+-		  enum pti_clone_level level)
++		  enum pti_clone_level level, bool late_text)
+ {
+ 	unsigned long addr;
+ 
+@@ -390,7 +395,7 @@ pti_clone_pgtable(unsigned long start, unsigned long end,
+ 				return;
+ 
+ 			/* Allocate PTE in the user page-table */
+-			target_pte = pti_user_pagetable_walk_pte(addr);
++			target_pte = pti_user_pagetable_walk_pte(addr, late_text);
+ 			if (WARN_ON(!target_pte))
+ 				return;
+ 
+@@ -452,7 +457,7 @@ static void __init pti_clone_user_shared(void)
+ 		phys_addr_t pa = per_cpu_ptr_to_phys((void *)va);
+ 		pte_t *target_pte;
+ 
+-		target_pte = pti_user_pagetable_walk_pte(va);
++		target_pte = pti_user_pagetable_walk_pte(va, false);
+ 		if (WARN_ON(!target_pte))
+ 			return;
+ 
+@@ -475,7 +480,7 @@ static void __init pti_clone_user_shared(void)
+ 	start = CPU_ENTRY_AREA_BASE;
+ 	end   = start + (PAGE_SIZE * CPU_ENTRY_AREA_PAGES);
+ 
+-	pti_clone_pgtable(start, end, PTI_CLONE_PMD);
++	pti_clone_pgtable(start, end, PTI_CLONE_PMD, false);
+ }
+ #endif /* CONFIG_X86_64 */
+ 
+@@ -492,11 +497,11 @@ static void __init pti_setup_espfix64(void)
+ /*
+  * Clone the populated PMDs of the entry text and force it RO.
+  */
+-static void pti_clone_entry_text(void)
++static void pti_clone_entry_text(bool late)
+ {
+ 	pti_clone_pgtable((unsigned long) __entry_text_start,
+ 			  (unsigned long) __entry_text_end,
+-			  PTI_LEVEL_KERNEL_IMAGE);
++			  PTI_LEVEL_KERNEL_IMAGE, late);
+ }
+ 
+ /*
+@@ -571,7 +576,7 @@ static void pti_clone_kernel_text(void)
+ 	 * pti_set_kernel_image_nonglobal() did to clear the
+ 	 * global bit.
+ 	 */
+-	pti_clone_pgtable(start, end_clone, PTI_LEVEL_KERNEL_IMAGE);
++	pti_clone_pgtable(start, end_clone, PTI_LEVEL_KERNEL_IMAGE, false);
+ 
+ 	/*
+ 	 * pti_clone_pgtable() will set the global bit in any PMDs
+@@ -639,7 +644,7 @@ void __init pti_init(void)
+ 	/* Undo all global bits from the init pagetables in head_64.S: */
+ 	pti_set_kernel_image_nonglobal();
+ 	/* Replace some of the global bits just for shared entry text: */
+-	pti_clone_entry_text();
++	pti_clone_entry_text(false);
+ 	pti_setup_espfix64();
+ 	pti_setup_vsyscall();
+ }
+@@ -659,7 +664,7 @@ void pti_finalize(void)
+ 	 * We need to clone everything (again) that maps parts of the
+ 	 * kernel image.
+ 	 */
+-	pti_clone_entry_text();
++	pti_clone_entry_text(true);
+ 	pti_clone_kernel_text();
+ 
+ 	debug_checkwx_user();
 
