@@ -1,93 +1,85 @@
-Return-Path: <linux-kernel+bounces-275913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4BE8948BD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:00:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D575B948BB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EE9A2823D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:00:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E445B22521
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB521BE23C;
-	Tue,  6 Aug 2024 08:59:38 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318BB1BDA83;
+	Tue,  6 Aug 2024 08:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYPA8Y8w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00B61BD505
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6944E165EE2;
+	Tue,  6 Aug 2024 08:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722934778; cv=none; b=aqjvPsmIUX0BXH3lzk9+mOrevYLKGPjCnhO4VEpF+lqSlTkzBCcPgSyWcfVDvOFt2OmJMHcjO27XiZfUiwThIeD0+bXaWFmSfxUuJ7Q0yZK2k5fE5RrKpwSC4c/XrPei2tSLxgXYKLZZnpMdPLjb/3J5Hhn/UR8WjZ5qQy5gSz4=
+	t=1722934433; cv=none; b=iBRNRWGOoTHU4PQQh+19qd+ljN6MQMKlhZc7UfK3oMpN9SCAsp5+EjdN0o9JaBjeLYmhfqYyMG7fLX/7TaBI0QBGpFUtHnsR0EpwnIGHOQleS9vtIwGtVvxzsI6+oh77KiqJFkfzBYzukDXTRGzHwPWYwJ8ckRsJsGdGLnQumWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722934778; c=relaxed/simple;
-	bh=mc5+S4NfgglFHfOm/XvAZiQVzDyF8rqf6YaxmfrOUdY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H2ScYmq504XkrCHO8WRopot5NgXyM0rmCJ3csf5AFenBicyb+a5nnfEp7TeBwds5i86dISE8t16YHmjePzSPLts7WHngsiQwNA/UkjitBHJYB9nXYm9Ui3FJ2tAJLxkeTXV9ZikpLy8eZp2UUXciMBm2HqjF7+U+knGabKJP79A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WdS0f1f9Wz1L9tY;
-	Tue,  6 Aug 2024 16:59:14 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 507E11400D8;
-	Tue,  6 Aug 2024 16:59:33 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 6 Aug 2024 16:59:32 +0800
-From: Yicong Yang <yangyicong@huawei.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <sudeep.holla@arm.com>,
-	<tglx@linutronix.de>, <peterz@infradead.org>, <mpe@ellerman.id.au>,
-	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>
-CC: <linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <dietmar.eggemann@arm.com>,
-	<gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
-	<linuxarm@huawei.com>, <yangyicong@hisilicon.com>, <xuwei5@huawei.com>,
-	<guohanjun@huawei.com>
-Subject: [PATCH v5 4/4] arm64: Kconfig: Enable HOTPLUG_SMT
-Date: Tue, 6 Aug 2024 16:53:20 +0800
-Message-ID: <20240806085320.63514-5-yangyicong@huawei.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20240806085320.63514-1-yangyicong@huawei.com>
-References: <20240806085320.63514-1-yangyicong@huawei.com>
+	s=arc-20240116; t=1722934433; c=relaxed/simple;
+	bh=jJiDKtpTZPBGixNvY1xeALOuKA+bJwGe+gpGsecz10k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=egIGlno92aTVOj1KSJPSB9jncD3jrzNCfOYjJCrr7MkCWj+jZzF6PykqwjAVBJE13Y2JbOQ6WQFKUqmwiuGQUREceQ8dJ0P6sZlXZzJBqUNRdev26PcfdrHKyS6uqtLsQSyBM4lf80H7g+W55w4gs24gJ75OBzehMLoV/OKntV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYPA8Y8w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DCBAC32786;
+	Tue,  6 Aug 2024 08:53:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722934432;
+	bh=jJiDKtpTZPBGixNvY1xeALOuKA+bJwGe+gpGsecz10k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WYPA8Y8w2KT75Gt8JnlT9ZCjDddV8wLtOcfUU+uTaVRZgR6bsrHvnWwD2DwRYDnsl
+	 itkcxaeq3JZ46SXvqHmvnRtUI18MKOp3LlwFOFw/c9juV1I231hbghW9Hg5D2tpTdf
+	 ytv7dyau/8ucyP7L10Hj/nqtcp6JGV/z1rbDRez3XmXumP9ZIXML5rlexaTQXFalJP
+	 3hpBotfHb3t1GuEBNLAq14PHDeNJ/Xrz2gOjGeOYpl2QgmsbrhY/Z8GV1Dgx2TZPjL
+	 0vVBNXqDCVV8Ml/Qllh0/8nVSeDQezId38CR7JADdjpIpohGomWBcMbGkhHtwb6Ksr
+	 URZpBzD1QPfDA==
+Date: Tue, 6 Aug 2024 09:53:47 +0100
+From: Simon Horman <horms@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: stas.yakovlev@gmail.com, kvalo@kernel.org, gregkh@linuxfoundation.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, johannes@sipsolutions.net,
+	linux-wireless@vger.kernel.org, linux-staging@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] lib80211: Constify struct lib80211_crypto_ops
+Message-ID: <20240806085347.GP2636630@kernel.org>
+References: <cover.1722839425.git.christophe.jaillet@wanadoo.fr>
+ <0cc3741c15f2c502cc85bddda9d6582b5977c8f9.1722839425.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0cc3741c15f2c502cc85bddda9d6582b5977c8f9.1722839425.git.christophe.jaillet@wanadoo.fr>
 
-From: Yicong Yang <yangyicong@hisilicon.com>
+On Mon, Aug 05, 2024 at 08:40:38AM +0200, Christophe JAILLET wrote:
+> Now that functions in lib80211 handle "const struct lib80211_crypto_ops",
+> some structure can be constified as well.
+> 
+> Constifying these structures moves some data to a read-only section, so
+> increase overall security.
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>    7273	    604	     16	   7893	   1ed5	net/wireless/lib80211.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>    7429	    444	     16	   7889	   1ed1	net/wireless/lib80211.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Enable HOTPLUG_SMT for SMT control.
-
-Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
----
- arch/arm64/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a2f8ff354ca6..bd3bc2f5e0ec 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -238,6 +238,7 @@ config ARM64
- 	select HAVE_KRETPROBES
- 	select HAVE_GENERIC_VDSO
- 	select HOTPLUG_CORE_SYNC_DEAD if HOTPLUG_CPU
-+	select HOTPLUG_SMT if (SMP && HOTPLUG_CPU)
- 	select IRQ_DOMAIN
- 	select IRQ_FORCED_THREADING
- 	select KASAN_VMALLOC if KASAN
--- 
-2.24.0
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
