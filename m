@@ -1,193 +1,214 @@
-Return-Path: <linux-kernel+bounces-276211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5943949029
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:07:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BBC949030
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 673771F221EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:07:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBEE81F22592
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F741C9EBC;
-	Tue,  6 Aug 2024 13:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444F81D0DC7;
+	Tue,  6 Aug 2024 13:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aK3u9PRl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="al3f5CNy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2FB1C9EB8
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE12E1CB333
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722949633; cv=none; b=MAQaNvuhWVw+ZLFiAC/dREYYG7BEGEFigmeJZ2dSywfL1OM+xWNf0BEIeOROe8N4V51qrVPV8R7wX5g/8ITISC3xpR96rJhf43O07NujfutNJmv1R7jsbJOg1gVZ06RdAuXy8zNPwWF9bZx2OScdiNdpnGTlI/cYmmqGJ8ONyWY=
+	t=1722949718; cv=none; b=s4OqFVLr6teB67QVV2N6Hfb1tQ18R0qg4AjjqZebboVdKCfZfdJ+nl5JxxSqjKN61DROBSFVpX//Q4qtQDc43VvD99PiBb8YnY4UETFX/cL6aXHw9FsjBezgfhG/RoemlQUyDT6UxPHewsrygMjYZz/qoLa3VcwzT+kVbTC62nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722949633; c=relaxed/simple;
-	bh=ohktJkp32zdBlRDAVBckFX8Ux8G76FRLJDuU/j98O4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kVhdvfbVucNI+yKW+WbjqlV8GGhtRPfgEemOiHrqyntORMMqfmC6RQ9G+RPAHiiGc5NBGmXPSnUdVHOuztd5hM6FKgxLQFbBIJTk5YyBEw7K3XM34M5tpIN9G0Apd79H815E9i1I5DZn3Ax81CSzJHnPb0liEviiBBul3n3ydmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aK3u9PRl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722949630;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=TIyQLvWnyqqMtiLKFFzAu2zlk32GezvKg83XuQ8tLc0=;
-	b=aK3u9PRlJV1wkREJ8PHAR9tt41wu3+a353OweueThdeaUEUObNbJR2+1NlUldG57ynPWfa
-	4QziCTzgLGxCvMbqyfmjigs5OF0C4YCOxykEzn7N37TD9UPVhHYGHTeRXoaX0orlXQr0W1
-	o9GeAxPYQTV75pKmn2iKsDKAUHnJBsU=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-42-m0dlCVJzPReTpAfm_rqFYg-1; Tue, 06 Aug 2024 09:07:09 -0400
-X-MC-Unique: m0dlCVJzPReTpAfm_rqFYg-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4280f233115so4613065e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:07:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722949628; x=1723554428;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TIyQLvWnyqqMtiLKFFzAu2zlk32GezvKg83XuQ8tLc0=;
-        b=T+10/3g2OjEEoVowYwyt9hr9Bi7lAVjUx6PV7GUF181o8bYhNyEPrisZ0BbHS256sI
-         4dJN7mrFUIbZeOyK0XmOAT8jJZ6OW+2KsbFntzT8yLubmWiu93n6Tp8zVx0hDF5MHcN8
-         F6l/gaCEFYZjsOvUnwUUXpEWk4pUEiLI2on+L/jbEh45PknYy0pAf1fYo2P6aZ9HLWA9
-         VWmAgle/2NQZw5HOhPw0383/mbgVJYdOdZqtSorDu1Kon9Yv6ZEef224feVqjInkaKhq
-         Ke8g6Qxpu9vlNZLo5tCEUssbWCAHQYd3mG2zBJvD5hr574mVr45yr3WFkqxSSxi2HD4+
-         nr3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV6drGksHgQgq2MvqjSfaLS9qKP1uWDshpdBvirSd++iyc+h4Sa8iyGU+Ojz+zdDNdAqeXsWZHbf957agMudAYu+3bNGkR0/9KWW7we
-X-Gm-Message-State: AOJu0Yx+Pjogkl0RC8Jx7A5GHMDWf09cxuOzDqpCra+3eMu7o9nFt7lI
-	11xJtKaI4LpeBSgOE+nP5Qe6YeLv2LnLXyq/XbIWDeS74E19BwDQLuWTidm9Y8M+xZTFz9fgFiP
-	mfwX8Q9m1KR0Z89fZXYhxsuvsOJntvugbLFivjIlBqKX4cmoMd9OhuaTtTng0ZQ==
-X-Received: by 2002:adf:fc8e:0:b0:367:8a3b:2098 with SMTP id ffacd0b85a97d-36bbc0cd4f4mr9122600f8f.3.1722949628125;
-        Tue, 06 Aug 2024 06:07:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG5hu4Yl048YBcD0iUaoL+L6g8sWN82xUft0hO7GbEEUwPYqCeeCeFFMLPGzwr84CCZLQ21jQ==
-X-Received: by 2002:adf:fc8e:0:b0:367:8a3b:2098 with SMTP id ffacd0b85a97d-36bbc0cd4f4mr9122568f8f.3.1722949627565;
-        Tue, 06 Aug 2024 06:07:07 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd01ee30sm12949582f8f.50.2024.08.06.06.07.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 06:07:06 -0700 (PDT)
-Message-ID: <d2ee3f9a-f2b0-4c8b-9623-20bbca03cf50@redhat.com>
-Date: Tue, 6 Aug 2024 15:07:04 +0200
+	s=arc-20240116; t=1722949718; c=relaxed/simple;
+	bh=RNrL9CN+dN6RJP1VI37W81GvijLeQZx/f0QxcrrQ3jM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bI/Z9O7CxvCdnd3GS7LgcIyc31j424aUztZIjPMAaU+c7dErAqjiL1mvfcw4CAjQPORw4Cs8A70Y6Jd2xpfvd2T1jkPcqjD6L1D7mVDGXW86AgveTCf0sJGYHSrt/b9HocsX211qiQmC9rKZnihA5yPITYhHfUUqLIe5B7bIoL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=al3f5CNy; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722949715; x=1754485715;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=RNrL9CN+dN6RJP1VI37W81GvijLeQZx/f0QxcrrQ3jM=;
+  b=al3f5CNyGtOH3gfLR9u5jRD9AT3pSCoeTZkk6218vQSpYpxuUlA/fvAp
+   mCvAtduHPWqdCgb91byRQPiqia+1pOpyf0rUquee1LNeXt1DJLSXDBZNv
+   P+t/dRJlO1vpvqdKPD7xYop8HC3TpDkg0B1MA20Zp+4n1geK2lW51DF0n
+   elEV7/j5gdqqukpitiz95Mrb2ej7sTBB66znwnE7jGiZcS8OK/7ug75Am
+   c0iTgtjqPsFn76W23CJgXcKhsy3jdmsAIdizCeWsrINaOK0cV6zQwdysn
+   nBvvI7sVaTfxuAqpxgdcwwmRVHBOI7LgGowEvaFsFG4CcGwRKCF88mcDq
+   w==;
+X-CSE-ConnectionGUID: q6ioebuqRo2zW8eVxIMM8g==
+X-CSE-MsgGUID: 3n11WSWvRD+X+N88X7h5wQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="20778868"
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="20778868"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 06:07:57 -0700
+X-CSE-ConnectionGUID: I7kZhXtMR8iCSgm6MeE11w==
+X-CSE-MsgGUID: lITOk8SxSyePUVOemACZ3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="57216435"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 06 Aug 2024 06:07:55 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sbJup-0004UO-2w;
+	Tue, 06 Aug 2024 13:07:51 +0000
+Date: Tue, 6 Aug 2024 21:07:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bitterblue Smith <rtl8821cerfe2@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Ping-Ke Shih <pkshih@realtek.com>
+Subject: include/linux/bitfield.h:189:18: warning: 'value32' is used
+ uninitialized
+Message-ID: <202408062100.DWhN0CYH-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/26] MIPS: loongson64: drop
- HAVE_ARCH_NODEDATA_EXTENSION
-To: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
- Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dan Williams <dan.j.williams@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, Davidlohr Bueso
- <dave@stgolabs.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Heiko Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Jonathan Corbet <corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>,
- Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- Samuel Holland <samuel.holland@sifive.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Thomas Gleixner <tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>,
- Will Deacon <will@kernel.org>, Zi Yan <ziy@nvidia.com>,
- devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-cxl@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- loongarch@lists.linux.dev, nvdimm@lists.linux.dev,
- sparclinux@vger.kernel.org, x86@kernel.org
-References: <20240801060826.559858-1-rppt@kernel.org>
- <20240801060826.559858-7-rppt@kernel.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240801060826.559858-7-rppt@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 01.08.24 08:08, Mike Rapoport wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> Commit f8f9f21c7848 ("MIPS: Fix build error for loongson64 and
-> sgi-ip27") added HAVE_ARCH_NODEDATA_EXTENSION to loongson64 to silence a
-> compilation error that happened because loongson64 didn't define array
-> of pg_data_t as node_data like most other architectures did.
-> 
-> After rename of __node_data to node_data arch_alloc_nodedata() and
-> HAVE_ARCH_NODEDATA_EXTENSION can be dropped from loongson64.
-> 
-> Since it was the only user of HAVE_ARCH_NODEDATA_EXTENSION config option
-> also remove this option from arch/mips/Kconfig.
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   b446a2dae984fa5bd56dd7c3a02a426f87e05813
+commit: 59ea089dcba3b51769280522fd62696d4d436cbc wifi: rtlwifi: Enable the new rtl8192du driver
+date:   10 weeks ago
+config: mips-randconfig-r061-20240806 (https://download.01.org/0day-ci/archive/20240806/202408062100.DWhN0CYH-lkp@intel.com/config)
+compiler: mips64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240806/202408062100.DWhN0CYH-lkp@intel.com/reproduce)
 
-Acked-by: David Hildenbrand <david@redhat.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408062100.DWhN0CYH-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/ieee80211.h:21,
+                    from include/net/mac80211.h:20,
+                    from drivers/net/wireless/realtek/rtlwifi/rtl8192du/../wifi.h:14,
+                    from drivers/net/wireless/realtek/rtlwifi/rtl8192du/hw.c:4:
+   In function 'u32p_replace_bits',
+       inlined from '_rtl92du_init_queue_reserved_page.isra' at drivers/net/wireless/realtek/rtlwifi/rtl8192du/hw.c:225:2:
+>> include/linux/bitfield.h:189:18: warning: 'value32' is used uninitialized [-Wuninitialized]
+     189 |         *p = (*p & ~to(field)) | type##_encode_bits(val, field);        \
+         |              ~~~~^~~~~~~~~~~~~
+   include/linux/bitfield.h:198:9: note: in expansion of macro '____MAKE_OP'
+     198 |         ____MAKE_OP(u##size,u##size,,)
+         |         ^~~~~~~~~~~
+   include/linux/bitfield.h:201:1: note: in expansion of macro '__MAKE_OP'
+     201 | __MAKE_OP(32)
+         | ^~~~~~~~~
+   drivers/net/wireless/realtek/rtlwifi/rtl8192du/hw.c: In function '_rtl92du_init_queue_reserved_page.isra':
+   drivers/net/wireless/realtek/rtlwifi/rtl8192du/hw.c:188:13: note: 'value32' was declared here
+     188 |         u32 value32;
+         |             ^~~~~~~
+
+
+vim +/value32 +189 include/linux/bitfield.h
+
+e2192de59e457a Johannes Berg   2023-01-18  120  
+e2192de59e457a Johannes Berg   2023-01-18  121  /**
+e2192de59e457a Johannes Berg   2023-01-18  122   * FIELD_PREP_CONST() - prepare a constant bitfield element
+e2192de59e457a Johannes Berg   2023-01-18  123   * @_mask: shifted mask defining the field's length and position
+e2192de59e457a Johannes Berg   2023-01-18  124   * @_val:  value to put in the field
+e2192de59e457a Johannes Berg   2023-01-18  125   *
+e2192de59e457a Johannes Berg   2023-01-18  126   * FIELD_PREP_CONST() masks and shifts up the value.  The result should
+e2192de59e457a Johannes Berg   2023-01-18  127   * be combined with other fields of the bitfield using logical OR.
+e2192de59e457a Johannes Berg   2023-01-18  128   *
+e2192de59e457a Johannes Berg   2023-01-18  129   * Unlike FIELD_PREP() this is a constant expression and can therefore
+e2192de59e457a Johannes Berg   2023-01-18  130   * be used in initializers. Error checking is less comfortable for this
+e2192de59e457a Johannes Berg   2023-01-18  131   * version, and non-constant masks cannot be used.
+e2192de59e457a Johannes Berg   2023-01-18  132   */
+e2192de59e457a Johannes Berg   2023-01-18  133  #define FIELD_PREP_CONST(_mask, _val)					\
+e2192de59e457a Johannes Berg   2023-01-18  134  	(								\
+e2192de59e457a Johannes Berg   2023-01-18  135  		/* mask must be non-zero */				\
+e2192de59e457a Johannes Berg   2023-01-18  136  		BUILD_BUG_ON_ZERO((_mask) == 0) +			\
+e2192de59e457a Johannes Berg   2023-01-18  137  		/* check if value fits */				\
+e2192de59e457a Johannes Berg   2023-01-18  138  		BUILD_BUG_ON_ZERO(~((_mask) >> __bf_shf(_mask)) & (_val)) + \
+e2192de59e457a Johannes Berg   2023-01-18  139  		/* check if mask is contiguous */			\
+e2192de59e457a Johannes Berg   2023-01-18  140  		__BF_CHECK_POW2((_mask) + (1ULL << __bf_shf(_mask))) +	\
+e2192de59e457a Johannes Berg   2023-01-18  141  		/* and create the value */				\
+e2192de59e457a Johannes Berg   2023-01-18  142  		(((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask))	\
+e2192de59e457a Johannes Berg   2023-01-18  143  	)
+e2192de59e457a Johannes Berg   2023-01-18  144  
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  145  /**
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  146   * FIELD_GET() - extract a bitfield element
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  147   * @_mask: shifted mask defining the field's length and position
+7240767450d6d8 Masahiro Yamada 2017-10-03  148   * @_reg:  value of entire bitfield
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  149   *
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  150   * FIELD_GET() extracts the field specified by @_mask from the
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  151   * bitfield passed in as @_reg by masking and shifting it down.
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  152   */
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  153  #define FIELD_GET(_mask, _reg)						\
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  154  	({								\
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  155  		__BF_FIELD_CHECK(_mask, _reg, 0U, "FIELD_GET: ");	\
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  156  		(typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));	\
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  157  	})
+3e9b3112ec74f1 Jakub Kicinski  2016-08-31  158  
+e7d4a95da86e0b Johannes Berg   2018-06-20  159  extern void __compiletime_error("value doesn't fit into mask")
+00b0c9b82663ac Al Viro         2017-12-14  160  __field_overflow(void);
+00b0c9b82663ac Al Viro         2017-12-14  161  extern void __compiletime_error("bad bitfield mask")
+00b0c9b82663ac Al Viro         2017-12-14  162  __bad_mask(void);
+00b0c9b82663ac Al Viro         2017-12-14  163  static __always_inline u64 field_multiplier(u64 field)
+00b0c9b82663ac Al Viro         2017-12-14  164  {
+00b0c9b82663ac Al Viro         2017-12-14  165  	if ((field | (field - 1)) & ((field | (field - 1)) + 1))
+00b0c9b82663ac Al Viro         2017-12-14  166  		__bad_mask();
+00b0c9b82663ac Al Viro         2017-12-14  167  	return field & -field;
+00b0c9b82663ac Al Viro         2017-12-14  168  }
+00b0c9b82663ac Al Viro         2017-12-14  169  static __always_inline u64 field_mask(u64 field)
+00b0c9b82663ac Al Viro         2017-12-14  170  {
+00b0c9b82663ac Al Viro         2017-12-14  171  	return field / field_multiplier(field);
+00b0c9b82663ac Al Viro         2017-12-14  172  }
+e31a50162feb35 Alex Elder      2020-03-12  173  #define field_max(field)	((typeof(field))field_mask(field))
+00b0c9b82663ac Al Viro         2017-12-14  174  #define ____MAKE_OP(type,base,to,from)					\
+00b0c9b82663ac Al Viro         2017-12-14  175  static __always_inline __##type type##_encode_bits(base v, base field)	\
+00b0c9b82663ac Al Viro         2017-12-14  176  {									\
+e7d4a95da86e0b Johannes Berg   2018-06-20  177  	if (__builtin_constant_p(v) && (v & ~field_mask(field)))	\
+00b0c9b82663ac Al Viro         2017-12-14  178  		__field_overflow();					\
+00b0c9b82663ac Al Viro         2017-12-14  179  	return to((v & field_mask(field)) * field_multiplier(field));	\
+00b0c9b82663ac Al Viro         2017-12-14  180  }									\
+00b0c9b82663ac Al Viro         2017-12-14  181  static __always_inline __##type type##_replace_bits(__##type old,	\
+00b0c9b82663ac Al Viro         2017-12-14  182  					base val, base field)		\
+00b0c9b82663ac Al Viro         2017-12-14  183  {									\
+00b0c9b82663ac Al Viro         2017-12-14  184  	return (old & ~to(field)) | type##_encode_bits(val, field);	\
+00b0c9b82663ac Al Viro         2017-12-14  185  }									\
+00b0c9b82663ac Al Viro         2017-12-14  186  static __always_inline void type##p_replace_bits(__##type *p,		\
+00b0c9b82663ac Al Viro         2017-12-14  187  					base val, base field)		\
+00b0c9b82663ac Al Viro         2017-12-14  188  {									\
+00b0c9b82663ac Al Viro         2017-12-14 @189  	*p = (*p & ~to(field)) | type##_encode_bits(val, field);	\
+00b0c9b82663ac Al Viro         2017-12-14  190  }									\
+00b0c9b82663ac Al Viro         2017-12-14  191  static __always_inline base type##_get_bits(__##type v, base field)	\
+00b0c9b82663ac Al Viro         2017-12-14  192  {									\
+00b0c9b82663ac Al Viro         2017-12-14  193  	return (from(v) & field)/field_multiplier(field);		\
+00b0c9b82663ac Al Viro         2017-12-14  194  }
+00b0c9b82663ac Al Viro         2017-12-14  195  #define __MAKE_OP(size)							\
+00b0c9b82663ac Al Viro         2017-12-14  196  	____MAKE_OP(le##size,u##size,cpu_to_le##size,le##size##_to_cpu)	\
+00b0c9b82663ac Al Viro         2017-12-14  197  	____MAKE_OP(be##size,u##size,cpu_to_be##size,be##size##_to_cpu)	\
+00b0c9b82663ac Al Viro         2017-12-14  198  	____MAKE_OP(u##size,u##size,,)
+37a3862e123826 Johannes Berg   2018-06-20  199  ____MAKE_OP(u8,u8,,)
+00b0c9b82663ac Al Viro         2017-12-14  200  __MAKE_OP(16)
+00b0c9b82663ac Al Viro         2017-12-14  201  __MAKE_OP(32)
+00b0c9b82663ac Al Viro         2017-12-14  202  __MAKE_OP(64)
+00b0c9b82663ac Al Viro         2017-12-14  203  #undef __MAKE_OP
+00b0c9b82663ac Al Viro         2017-12-14  204  #undef ____MAKE_OP
+00b0c9b82663ac Al Viro         2017-12-14  205  
+
+:::::: The code at line 189 was first introduced by commit
+:::::: 00b0c9b82663ac42e5a09f58ce960f81f29d64ee Add primitives for manipulating bitfields both in host- and fixed-endian.
+
+:::::: TO: Al Viro <viro@zeniv.linux.org.uk>
+:::::: CC: Al Viro <viro@zeniv.linux.org.uk>
 
 -- 
-Cheers,
-
-David / dhildenb
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
