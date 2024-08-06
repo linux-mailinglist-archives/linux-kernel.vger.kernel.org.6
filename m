@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-276217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E58C094904D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:10:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C355394905C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A45DB282A20
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:10:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 523631F225AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB08E1D1723;
-	Tue,  6 Aug 2024 13:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841221D0DFE;
+	Tue,  6 Aug 2024 13:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RrXYYeBZ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HrBwIu4e"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CAB1D0DCD
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04CE1D0DE3
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722949823; cv=none; b=Lm2X/3RcphfBSnrMZ3LEah/EsCsU5h8AEJVh7w6Ofzl4h9mmBLEI0OrEkyFV5jAFOLVvSW2qGJyzjZ8dLMHnolEtM/aNulof4aqND+hd116yYkhSuQPL1q8BYeIhosM1yN1kvdVsXW43NwORz4XjsZVudw848RYGQgoX6yEpBcc=
+	t=1722949851; cv=none; b=bOcfDbJir1qe0PTdqLZJ0/z66x8UyTHE31J7RvL83KlGffPULBeCfRvBdkQyLF0qHT6g9Z5bGdP6RG5v4vx7sf1AHwxt2WtUnUOTp70M6nQ8djRjw355tQCwNDrCvt12tPPqrbC7Mz7zLfaSQLvhZnjIUFs9ImyqHkoDAtz+Hok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722949823; c=relaxed/simple;
-	bh=VZf+W7H5ECHe1LeszIj32HRlouWm+gNbqSXTVU4McVc=;
+	s=arc-20240116; t=1722949851; c=relaxed/simple;
+	bh=Gswup74gdZDKuXydEGunFAuYoPC4FThD+hz23ueDCVU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gdUw80cEoDTKBmnM8MLTguCUPIKcL8oShmZ3Yh0+YtDAeIUXT8656v17Roxi8VtNTfnlvHXkZEPo0/jY4dRY0JXyKgtbJV+jf5rz9rIR7f2C8IA1GjiE/ZnmxoCFDwoKDM4P2b6QHj7mnsN9sESkI5SUZIaEpRE4JQL5iNYEgE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RrXYYeBZ; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=n+9UhoeyvWCfjqCxW2NumRRivk51oSn/2t28ra4CTvHhffnpRETJpQBZiAfbVJlz8r5/funr/61CAXhXXbFzXfmZKPy2I99ZjwHraxQa+YNroKND2RUBLgPjgscSANzkzal+yJLK2WVJxvwFDgNDdNcoQNTCYMXy3KdSsTChHSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HrBwIu4e; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722949819;
+	s=mimecast20190719; t=1722949849;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XMArt7lrxiLTGx8cI5K6x9tG5YL3nku1jijErqMpNuk=;
-	b=RrXYYeBZVKggUtnJfqfguXDFVQdrJqn1rlC+oEmZXGtqPBfyuZ4AOBD39USLWLykaTcs/l
-	1bOdmO1j/Q6+XbNQDupLjGOIkehdOeTlnNKS8ANY4xhWUlQAMrQP5Fu0O6WG43HD+mpLbW
-	ixyBI+dGi68cN7rK1AKMgEPV00+q7Cw=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=kKfhuw0mmi3GGMg/l+8v2Ox0vbzOY8peZg1zYjmYH3U=;
+	b=HrBwIu4e4DnYhcIYQ/6Z5xx0Hkxul5VY/+/5i7pfgkNIuB/Z6TzjcSaJ4RvEobQ6d6fhKQ
+	2TgazUiTnekegOJxpVQfbvAi7O7ebGlS+y5kUZ4/uyPVsxTdRdBE1KbjOuz8kJRGdYw4sa
+	UuY7qWPlcS82RAbzOgdo7vveyuOA+oA=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-557-4CnnR3wGOMWEK-LeyXkPYg-1; Tue, 06 Aug 2024 09:10:18 -0400
-X-MC-Unique: 4CnnR3wGOMWEK-LeyXkPYg-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ef31dbc770so7365071fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:10:18 -0700 (PDT)
+ us-mta-473-Dge7PSGjNp-cTYUnQQCBcA-1; Tue, 06 Aug 2024 09:10:47 -0400
+X-MC-Unique: Dge7PSGjNp-cTYUnQQCBcA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-426624f4ce3so3749845e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:10:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722949817; x=1723554617;
+        d=1e100.net; s=20230601; t=1722949846; x=1723554646;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=XMArt7lrxiLTGx8cI5K6x9tG5YL3nku1jijErqMpNuk=;
-        b=INBPc3wXQeIJfnjpcakXvaidQZ8xHdy6Mbc7XjC7FnGnoocrlKTdnyDcOI6oH03g45
-         6uZDDbJnnltSwa9E3EDIMZLakHfFDbUb0aWDefLV+Wto9kC3OgVfGyAw/dsdWGuTMCJg
-         tg+nAEyKILtuYHiteZcdsR6BqtaxneptFcAv33SKFlT0NCpzjgtbaPVt8x/zS/vBq8Rv
-         6wghu2ThfZ1ScCgrdZbZkXwJX9mEILyoHIjtdmgITMi1IRJlKYe7eIWNmmFVtVg8TkNT
-         dYiLWarRdAub3FIgnb7rXxgKPlnMDBSZcp7We+xhKGUp2ieD5ml21/U4NvbIs8jm2kQr
-         s3/w==
-X-Forwarded-Encrypted: i=1; AJvYcCW375CkyQjIpS7UTdbdZgf5uT6uUjwIGHBkgy5XQvH11hsCJRPgYduYO/JRUBbymgIwsHEotRMH43QSirR9yxXAyQN1c2v+qM4Pz5qC
-X-Gm-Message-State: AOJu0Yxi9197uiSmSXUtYOADL9vBPtRvmoFQMZJe5jIAQrvWYL5IE2q2
-	c26nbCMG/NA99KR9A66wEODx7cGEameINwv0POV4ddVqu1YAqGekxB93rxWTShb8P2EUS8fCxio
-	C3ZcY/KhzRRwuQdph9ciZ2l89knogFfrjQKeSGnlTZedu4xQ15QSel95beVZpkA==
-X-Received: by 2002:a05:651c:97:b0:2ef:2f9e:dd1b with SMTP id 38308e7fff4ca-2f15aaa448cmr92872531fa.14.1722949816898;
-        Tue, 06 Aug 2024 06:10:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEslSo4aw4IGCxZcHbmai5AN267iofKebgs9fA8+xmPQvmatGDbiowVzi3lsrM8Q8aYQX9pLA==
-X-Received: by 2002:a05:651c:97:b0:2ef:2f9e:dd1b with SMTP id 38308e7fff4ca-2f15aaa448cmr92871841fa.14.1722949816287;
-        Tue, 06 Aug 2024 06:10:16 -0700 (PDT)
+        bh=kKfhuw0mmi3GGMg/l+8v2Ox0vbzOY8peZg1zYjmYH3U=;
+        b=wW6EojyHALaRFX8qq/59BM3vIUvF1ujEw0gDXryilswAdJlEjFFQAG0XuVq1yqxpQ+
+         ve6gWZZBh08TfI521qmJHLf6zQIbM8jUvYV+LwJbG7GHvIMFH6xX5pGIHvG6n2e0oTff
+         8t9v+1Qy1bmk7PtYn6x9bWMe8e/R7Nq5rQLslbnWqU8QEk9ZKVtP0Bznc9bFa8doN7iC
+         CLic4uCFCiiU8GhIt3xuzOwQydGkGTL/aj1XCK1VWnbwkxaz41Ken6dt8HF6Enx3Cu+M
+         tnQt0VaUwoz+MAEX8FcA+y8SvnIeVOlauOVS0O36CYJppTZBY2yPUfXCH+iPIMquh3Eo
+         9tdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpg4/uFqliZbQou8D0W/gn+nuRH+Qg49pep0m/oWupCLWkCt2EEOUU1681N2GhNqVw5JMLdBzzLbUTUCi0Ta2fu5lMb+q4N+7vWu2+
+X-Gm-Message-State: AOJu0Yxt5OnRZ8uBxwlkf/tr2toxWMacRX7uTpQVwSCY41L0zKn+gQRe
+	1+mb83VxzWesafcQaDs39ToC2WvZcvab/epHY9Ct5KPhXgO1kDj/LxGfaQYESXzoD/LHbapE8Y9
+	fE9rgdllzObqSyGxXQZcSLMnjtZxTRJ+oNnQLuYllljE/rBXGqXsqsgJSy4lBlw==
+X-Received: by 2002:a05:600c:2211:b0:427:d713:a5d3 with SMTP id 5b1f17b1804b1-428e6af81f9mr97868195e9.11.1722949846546;
+        Tue, 06 Aug 2024 06:10:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGleH7c0DR1VqnVw0r2AW7qu7fZ7wxkqVc0S+UNT+14H+QbPeE2XEd6xRN3HTRdiTCcf27YNw==
+X-Received: by 2002:a05:600c:2211:b0:427:d713:a5d3 with SMTP id 5b1f17b1804b1-428e6af81f9mr97867845e9.11.1722949846057;
+        Tue, 06 Aug 2024 06:10:46 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8addd6sm239858525e9.20.2024.08.06.06.10.13
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd059e44sm13047467f8f.70.2024.08.06.06.10.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 06:10:15 -0700 (PDT)
-Message-ID: <3c0fcf0b-8dfe-4a6a-b4a5-4c4732ae52e5@redhat.com>
-Date: Tue, 6 Aug 2024 15:10:12 +0200
+        Tue, 06 Aug 2024 06:10:45 -0700 (PDT)
+Message-ID: <5d1a6f58-2f6a-4214-975d-dfc937689792@redhat.com>
+Date: Tue, 6 Aug 2024 15:10:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,8 +82,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 11/26] x86/numa: use get_pfn_range_for_nid to verify
- that node spans memory
+Subject: Re: [PATCH v3 12/26] x86/numa: move FAKE_NODE_* defines to numa_emu
 To: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org
 Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
  Andreas Larsson <andreas@gaisler.com>,
@@ -114,7 +113,7 @@ Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
  loongarch@lists.linux.dev, nvdimm@lists.linux.dev,
  sparclinux@vger.kernel.org, x86@kernel.org
 References: <20240801060826.559858-1-rppt@kernel.org>
- <20240801060826.559858-12-rppt@kernel.org>
+ <20240801060826.559858-13-rppt@kernel.org>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -162,49 +161,21 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240801060826.559858-12-rppt@kernel.org>
+In-Reply-To: <20240801060826.559858-13-rppt@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 01.08.24 08:08, Mike Rapoport wrote:
 > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 > 
-> Instead of looping over numa_meminfo array to detect node's start and
-> end addresses use get_pfn_range_for_init().
-> 
-> This is shorter and make it easier to lift numa_memblks to generic code.
+> The definitions of FAKE_NODE_MIN_SIZE and FAKE_NODE_MIN_HASH_MASK are
+> only used by numa emulation code, make them local to
+> arch/x86/mm/numa_emulation.c
 > 
 > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 > Tested-by: Zi Yan <ziy@nvidia.com> # for x86_64 and arm64
 > ---
->   arch/x86/mm/numa.c | 13 +++----------
->   1 file changed, 3 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-> index edfc38803779..cfe7e5477cf8 100644
-> --- a/arch/x86/mm/numa.c
-> +++ b/arch/x86/mm/numa.c
-> @@ -521,17 +521,10 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
->   
->   	/* Finally register nodes. */
->   	for_each_node_mask(nid, node_possible_map) {
-> -		u64 start = PFN_PHYS(max_pfn);
-> -		u64 end = 0;
-> +		unsigned long start_pfn, end_pfn;
->   
-> -		for (i = 0; i < mi->nr_blks; i++) {
-> -			if (nid != mi->blk[i].nid)
-> -				continue;
-> -			start = min(mi->blk[i].start, start);
-> -			end = max(mi->blk[i].end, end);
-> -		}
-> -
-> -		if (start >= end)
-> +		get_pfn_range_for_nid(nid, &start_pfn, &end_pfn);
-> +		if (start_pfn >= end_pfn)
->   			continue;
->   
->   		alloc_node_data(nid);
 
 Acked-by: David Hildenbrand <david@redhat.com>
 
