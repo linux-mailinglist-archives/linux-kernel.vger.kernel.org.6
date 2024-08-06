@@ -1,192 +1,212 @@
-Return-Path: <linux-kernel+bounces-275703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB1A9488D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:12:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 725E59488DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D57571C22330
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:12:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E11E21F22041
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD2E1BB6AE;
-	Tue,  6 Aug 2024 05:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB741BBBE3;
+	Tue,  6 Aug 2024 05:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="puSL0mX6"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="tsn7+CR3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ksYDcuQB"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FE9B663
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 05:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A871BB695;
+	Tue,  6 Aug 2024 05:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722921146; cv=none; b=DOMDTLbOjUWA1imi/G9mjlldDUs5KiZ2JDo70NaXBpuG6vxURUBdwxQIatETXdWp1FJKyD9YYd4UwIAxnrMstfCZt994QZI4R0ug4Kw0HupnI+4M88874/KSOq9TgvP1iN3F2kQhaH/zX/3meKODBSKtckiQufBZ9Khi5WkuPnM=
+	t=1722921244; cv=none; b=fat2Odt2fKCdsr1hn3PCDIzzK1sDRDCjrtdI29eHZa6iXjONLmXcEeXBUtccAXwEnPlEpijYWGcwS9oNdvoZZqJT9yUhP1uoOvT7FxjwO+bnzM7Un2gvarF+QLFuwowAYWuKz/YRCo0kGXgxmxbFsKrxDyYhUwIpjB72Ufx8Ado=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722921146; c=relaxed/simple;
-	bh=/TH6cB+n+1ayWn8HHSV/LMald4tEPqBBgejtf1Q1SS0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=DyAfv9pFx0iNCD18p9CTD/X4yl35pjdcWRp5wUJnhOHPzM6FpJU+Z3suSGMlXJ63fmISCENsywyHW/2SdLTAvpOK9HLVrw/Q3GbY88NF8UJXoH4DrtbrJvb4/tshuyMfBNVYshZdFxQifCjri6ES3ZZisXEBWbPAyez2Dt+bLKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=puSL0mX6; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240806051220epoutp044a4b4389f904137713428997f444cc46~pC6YwmLrX0812508125epoutp043
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 05:12:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240806051220epoutp044a4b4389f904137713428997f444cc46~pC6YwmLrX0812508125epoutp043
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1722921140;
-	bh=D6KiA/heKMDS76hm7ohxJiQZ2JEMRXX4D/OeWiSU8XI=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=puSL0mX6m6/2vzNSVBhUuYTrTHhRvVX1rxxH19zgyvLctbH0FByx9HN4BGJF7FbWS
-	 v+gDsUJMzfe74GxXBtSB1GxmhYL1PN04jmAUhBWs6Nxa3X4YKRDfFQjILTUEGTDe+l
-	 100tFy9QFDpEKWooFcjZ8+w2fSLXegfBt+pI3Yho=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240806051220epcas1p2f905ebe529285a4bf1aca0b23d8af471~pC6YaUYn_1773717737epcas1p2l;
-	Tue,  6 Aug 2024 05:12:20 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.36.223]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WdLyr2lrBz4x9QJ; Tue,  6 Aug
-	2024 05:12:20 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	FC.82.09725.4B0B1B66; Tue,  6 Aug 2024 14:12:20 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240806051219epcas1p42de88463d90d6084ccfea538d929465c~pC6XqkYt10191501915epcas1p41;
-	Tue,  6 Aug 2024 05:12:19 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240806051219epsmtrp2403db729d9db94d091746fa2bd0404b2~pC6Xp7oGq2312723127epsmtrp2p;
-	Tue,  6 Aug 2024 05:12:19 +0000 (GMT)
-X-AuditID: b6c32a37-245b8700000025fd-fb-66b1b0b4e588
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	05.C3.08964.3B0B1B66; Tue,  6 Aug 2024 14:12:19 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.253.105.252]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240806051219epsmtip11c52a113b4d933a91c5683f4a8c69a64~pC6XioeOr0178101781epsmtip1A;
-	Tue,  6 Aug 2024 05:12:19 +0000 (GMT)
-From: Sangmoon Kim <sangmoon.kim@samsung.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: youngjae24.lim@samsung.com, jordan.lim@samsung.com,
-	myoungjae.kim@samsung.com, Sangmoon Kim <sangmoon.kim@samsung.com>, Lai
-	Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] workqueue: add cmdline parameter
- workqueue.panic_on_stall
-Date: Tue,  6 Aug 2024 14:12:09 +0900
-Message-Id: <20240806051209.3352066-1-sangmoon.kim@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722921244; c=relaxed/simple;
+	bh=QZOs8BBlIkSUUBhhHl+0vmSxOUGMFA7NbjQkvj+Bwmg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=X8+3Vo5cS19vt6QmGSyNa5pMzahYNIPg/gXwrn5QZOZe4KobG+Y+K2TTwZSIQOBR8J9Z4/3atmPx8gvUQ/rzG4y4ZAGqnZsu1Fr/nULr8Q4pg+wcteQTvymcGr3Zbu266czBqyh/jxzYnGuP7Oh42rvuhMi97ADBRvi34IHNHPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=tsn7+CR3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ksYDcuQB; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 4F4D61151ADD;
+	Tue,  6 Aug 2024 01:14:01 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by compute5.internal (MEProxy); Tue, 06 Aug 2024 01:14:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1722921241;
+	 x=1723007641; bh=rCJWAJzCZLrjURtB+l1gQRtFP29yFUUAlXPDm+aUA7w=; b=
+	tsn7+CR3MbhrlzOIf0sryru74soR2RxVDNT3Mbp6iszpyqeHUq/tIlfM9dABQVw5
+	11vErv9NPEVfyzIVjoeG5UwroOlsB8HXqw/8vD+fWqnenb60SfqAzjtsqjeMCCJ4
+	d/i/jCi+qkvNtz/5CA556oGrRv7za46QGF79oVKcRB1a9Nr+rH1CvtBmnrFmZ8d3
+	ld1qZQjzOpwbbn909KoEUHEoh6Qb6/Dra+XohFqTfxjP2Rxj2EROMDAM56en82hG
+	aKBSbSs2RNI/ENMrqt7szERzCHzu7UXs3Jx2BpvCeJamvK9aVlhEKQdBzxEsDAnD
+	a5I0F4y7KkUeHsvS4XMRvw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722921241; x=
+	1723007641; bh=rCJWAJzCZLrjURtB+l1gQRtFP29yFUUAlXPDm+aUA7w=; b=k
+	sYDcuQB3uX9ltxaVgPfi1b2oLwWSkKefdDTCBVJgEtTdJ/q0U8KAKWeafsIvC7ew
+	u/CWb19JMU1DKQMzpykpYw7DG/86UQ0phO4pTse7dW+et8eu9/gbcE6rmxG+V1NN
+	C/dZPtLB5AX1XwXuPTgOrJSsxcllT++J8kLLH14NXFyraP6SF8cpWF+HfONcCWb3
+	FHqE4ikhYleqNdF+PIxhPHXShcQC+tO5Xy8n9ulFa7e+A58TT0VeYOTK2OjBU5U0
+	7NhuX66xQOj3cj1MYo1tiV1CUncKypGLu5XsY51XzqKW9GEcuY+xscx+M9ggkp0E
+	Mzf7ByJZ93z2TdWleMj4Q==
+X-ME-Sender: <xms:GbGxZnkj1JRIdnmycwnYo1jqLAtn07up4HvivrDRL28nAIDXrS3TSg>
+    <xme:GbGxZq3ss9-1RD2cuwg2y9qbeL00zheDVWXsn3ynvuYeNx_KKMpSOi_M4JoNAHEu0
+    MgyVA0PopGX7wQqdCc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeejgdelfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdflihgr
+    gihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqe
+    enucggtffrrghtthgvrhhnpeffkeevtedtueevfefhkefhudfggeetjeffjeduueehueej
+    gfeludevkedutdeuheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsth
+    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghn
+    ghesfhhlhihgohgrthdrtghomhdpnhgspghrtghpthhtoheptd
+X-ME-Proxy: <xmx:GbGxZtqLGxNaDOpdvue8Zm4mYpWe7b6218hN-E4vUKKbi0N85afwJw>
+    <xmx:GbGxZvnTOyDq9_xrZkqKHzuqvUyJNkhjZc9n3ZKGKZMoXe3QMvMbKg>
+    <xmx:GbGxZl27ug1jbMC41AU316rMsL9d49yFy6fGpfyPqrOZq-QBAELS4g>
+    <xmx:GbGxZuvweX3to77asxTVzx68XXhT4xXi6Lx7v_ijzkalNcyJwDkVmA>
+    <xmx:GbGxZgRUmSlQiRpKxKltr3xKOLPepubaRLeGBm2TvvLZ1kptVO2tfnx2>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 2330719C0079; Tue,  6 Aug 2024 01:14:01 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDKsWRmVeSWpSXmKPExsWy7bCmnu6WDRvTDJ4fELGYunY3k8WNZWEW
-	l3fNYbOY/lHM4taDRhaLX8uPMlps2/uUyYHdY+esu+wem1Z1snn0bVnF6PF5k1wAS1S2TUZq
-	YkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QfiWFssScUqBQ
-	QGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgVmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdsbNU3uZ
-	Co7xVzSdbmRrYPzJ08XIySEhYCKx7PNqxi5GLg4hgR2MEv8+PGAGSQgJfGKUmNntCJH4xiix
-	rGE6UIIDrGP52wyImr2MEr2fLSFqvjBKHN4wgwUkwSagK/Fl3mVGEFtEQFbiyrSHYBuYBY4w
-	Skz99QEsISzgL/H8+XpWEJtFQFXixPFbYDavgL3EzEnrmCDOk5fYf/AsM0RcUOLkzCdgC5iB
-	4s1bZzODDJUQOMUusePUVXaIBheJNdPWsEDYwhKvjm+BiktJfH63lw2ioZ9R4lR3F1TRFEaJ
-	udc0IWxjid6eC2BvMgtoSqzfpQ+xjE/i3dceVojveSU62oQgqtUkHr+6ywhhy0j035kPNdFD
-	4sKv5dBQjJW4/76VeQKj3CwkL8xC8sIshGULGJlXMYqlFhTnpqcWGxYYwyMyOT93EyM42WmZ
-	72Cc9vaD3iFGJg7GQ4wSHMxKIrxdpRvShHhTEiurUovy44tKc1KLDzGaAgN1IrOUaHI+MN3m
-	lcQbmlgamJgZmVgYWxqbKYnznrlSliokkJ5YkpqdmlqQWgTTx8TBKdXAtF6gIP7M0V8ceyQE
-	ylhTJNuW/+YLi92vn31n7gKWgEstTJf098tH7y5/ur9TwG6DwLI5/+axBKS1LlQ781WGN6Ko
-	dkPplIDbrOppl9nM7ggtnr62LnESp8j6hOy0F0ZbU5/ols+5Ou283NyHMrz7NqmVbVblDft2
-	Jekga/2PHf4u8rr6HQp2GV8NfrafvukWXP8pzIZxwd6aLa0tUTY/7a+Ih4oXdwsqGQj9ddUw
-	KkzTrN/h+YvrfaXrSa5/E4MXJx+zUffffFSfPfT206qKsvvGhWu8r618fNrvouo5fi6eAAaP
-	wzyztxvfP3Hib4h2aUyYI1/+7M2bZR8fMvTwVvpdetXtWmDzZJ8/hgxKLMUZiYZazEXFiQAp
-	H0sa/wMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGLMWRmVeSWpSXmKPExsWy7bCSnO7mDRvTDH4eVbOYunY3k8WNZWEW
-	l3fNYbOY/lHM4taDRhaLX8uPMlps2/uUyYHdY+esu+wem1Z1snn0bVnF6PF5k1wASxSXTUpq
-	TmZZapG+XQJXxs1Te5kKjvFXNJ1uZGtg/MnTxcjBISFgIrH8bUYXIxeHkMBuRonPu++xdjFy
-	AsVlJHZe3MwEUSMscfhwMUhYSOATo8S79VYgNpuArsSXeZcZQWwRAVmJK9MeMoLMYRY4xSjx
-	dUIXM0hCWMBX4tPRz0wgNouAqsSJ47fA5vMK2EvMnLSOCWKXvMT+g2eZIeKCEidnPmEBsZmB
-	4s1bZzNPYOSbhSQ1C0lqASPTKkbJ1ILi3PTcYsMCw7zUcr3ixNzi0rx0veT83E2M4KDU0tzB
-	uH3VB71DjEwcjIcYJTiYlUR4u0o3pAnxpiRWVqUW5ccXleakFh9ilOZgURLnFX/RmyIkkJ5Y
-	kpqdmlqQWgSTZeLglGpgiqzpXvBYyt121a93340fzV5QYlN55ehvI92v/Ltf5ZzzO7Y9YyEv
-	m/lBh8nTbaRvmjmaue3IcNqoZ75i8csHkUsM2LTkz93oC5PSZEicuPJIDKuQh3bmqb4Ymbbj
-	tulmd7dWH/3ybIbdySe7o862fZm1NivVnnPFoQ19mz3k3/byqsgfazz02T7mknX61kVLlFV3
-	psz9fUX1m4nqzAyms8p1TXZTuRlaT+7KyVZ9Yx3f+1VrI79W34dqwS+vzi6b8eqmwd8LYn1c
-	1RtKajar/eAq+fnwybsF7avc1dcHOQRwS9vKyPvtXxnt/2/enaTKiDWLmgUZ76dYmC5Q8Fe9
-	KcT+0YFzWtIMG5XO+9frlFiKMxINtZiLihMBDeTECrkCAAA=
-X-CMS-MailID: 20240806051219epcas1p42de88463d90d6084ccfea538d929465c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240806051219epcas1p42de88463d90d6084ccfea538d929465c
-References: <CGME20240806051219epcas1p42de88463d90d6084ccfea538d929465c@epcas1p4.samsung.com>
+Date: Tue, 06 Aug 2024 06:13:05 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Guenter Roeck" <linux@roeck-us.net>, regressions@lists.linux.dev
+Message-Id: <b0d32b16-2def-48cf-84c1-3403f71c5b03@app.fastmail.com>
+In-Reply-To: <314ee964-fe3f-4b4a-b83f-76ed6e6e16dd@roeck-us.net>
+References: 
+ <CAHk-=wh01xPAWUT_=J1TehFOu3SST12UTNuB=QQTeRw+1N4pDQ@mail.gmail.com>
+ <378f3810-8b3f-416f-90ec-c81bb3f29123@roeck-us.net>
+ <314ee964-fe3f-4b4a-b83f-76ed6e6e16dd@roeck-us.net>
+Subject: [REGRESSION] QEMU malta MIPS64 network failure (was: Re: Linux 6.11-rc2)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-When we want to debug the workqueue stall, we can immediately make
-a panic to get the information we want.
 
-In some systems, it may be necessary to quickly reboot the system to
-escape from a workqueue lockup situation. In this case, we can control
-the number of stall detections to generate panic.
 
-workqueue.panic_on_stall sets the number times of the stall to trigger
-panic. 0 disables the panic on stall.
+=E5=9C=A82024=E5=B9=B48=E6=9C=886=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8A=E5=
+=8D=885:21=EF=BC=8CGuenter Roeck=E5=86=99=E9=81=93=EF=BC=9A
+> On Mon, Aug 05, 2024 at 09:00:04AM -0700, Guenter Roeck wrote:
+>> On Sun, Aug 04, 2024 at 02:00:57PM -0700, Linus Torvalds wrote:
+>> > So rc1 had a fair number of annoying small build or test failures on
+>> > Guenter's test matrix, which never looks good. But most of them see=
+med
+>> > to be of the "stupid and trivial" variety, which obviously doesn't
+>> > instill confidence in the process, but also isn't exactly scary. Wh=
+en
+>> > the microblaze tinyconfig doesn't build cleanly, it may not be a gr=
+eat
+>> > look, but it's also probably not a showstopper for actual use.
+>> >=20
+>> > Hopefully we've gotten rid of the bulk of the silly noise here in r=
+c2,
+>> > and not added too much new noise, so that we can get on with the
+>> > process of finding more meaningful issues.
+>> >=20
+>>=20
+>> Build results:
+>> 	total: 158 pass: 158 fail: 0
+>> Qemu test results:
+>> 	total: 539 pass: 516 fail: 23
+>> Failed tests:
+> ...
+>> 	mips64:malta:malta_defconfig:nocd:smp:net=3De1000-82544gc:ide:ext2
+> ...
+>> The mips64 test failure is a networking interface failure. It started
+>> happening a week or two ago. The problem is spurious and thus difficu=
+lt
+>> to bisect.
 
-Signed-off-by: Sangmoon Kim <sangmoon.kim@samsung.com>
----
-v2
-- Combine 'panic_on_watchdog' and 'max_watchdog_to_panic' into
-  'panic_on_stall'
+#regzbot introduced: 7190401fc56fb5f02ee3d04476778ab000bbaf32
+#regzbot title: QEMU malta MIPS64 network failure
 
-v1: https://lore.kernel.org/lkml/20240730080428.2556769-1-sangmoon.kim@samsung.com
----
- kernel/workqueue.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+>>=20
+>
+> I managed to bisect this. Bisect results below. I didn't try to unders=
+tand
+> what is going on, but reverting the offending patch fixes the problem.
+> It is seen with all variants of e1000 controllers.
+>
+> Guenter
+>
+> ---
+> # bad: [de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed] Linux 6.11-rc2
+> # good: [0c3836482481200ead7b416ca80c68a29cfdaabd] Linux 6.10
+> git bisect start 'HEAD' 'v6.10'
+> # good: [280e36f0d5b997173d014c07484c03a7f7750668] nsfs: use cleanup=20
+> guard
+> git bisect good 280e36f0d5b997173d014c07484c03a7f7750668
+> # good: [a4f9285520584977127946a22eab2adfbc87d1bf] Merge tag=20
+> 'clk-for-linus' of=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
+> git bisect good a4f9285520584977127946a22eab2adfbc87d1bf
+> # bad: [8e313211f7d46d42b6aa7601b972fe89dcc4a076] Merge tag=20
+> 'pinctrl-v6.11-1' of=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
+> git bisect bad 8e313211f7d46d42b6aa7601b972fe89dcc4a076
+> # good: [acc5965b9ff8a1889f5b51466562896d59c6e1b9] Merge tag=20
+> 'char-misc-6.11-rc1' of=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
+> git bisect good acc5965b9ff8a1889f5b51466562896d59c6e1b9
+> # bad: [d2be38b9a5514dbc7dc0c96a2a7f619fcddce00d] Merge tag 'mips_6.11=
+'=20
+> of git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux
+> git bisect bad d2be38b9a5514dbc7dc0c96a2a7f619fcddce00d
+> # good: [45659274e60864f9acabba844468e405362bdc8c] Merge branch=20
+> 'pci/misc'
+> git bisect good 45659274e60864f9acabba844468e405362bdc8c
+> # good: [8e5c0abfa02d85b9cd2419567ad2d73ed8fe4b74] Merge tag=20
+> 'input-for-v6.11-rc0' of=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input
+> git bisect good 8e5c0abfa02d85b9cd2419567ad2d73ed8fe4b74
+> # good: [3c3ff7be9729959699eb6cbc7fd7303566d74069] Merge tag=20
+> 'powerpc-6.11-1' of=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
+> git bisect good 3c3ff7be9729959699eb6cbc7fd7303566d74069
+> # good: [3de96d810ffd712b7ad2bd764c1390fac2436551] dt-bindings: mips:=20
+> brcm: Document brcm,bmips-cbr-reg property
+> git bisect good 3de96d810ffd712b7ad2bd764c1390fac2436551
+> # bad: [9c7a86c935074525f24cc20e78a7d5150e4600e3] MIPS: lantiq: improv=
+e=20
+> USB initialization
+> git bisect bad 9c7a86c935074525f24cc20e78a7d5150e4600e3
+> # bad: [580724fce27f2b71b3e4d58bbe6d83b671929b33] MIPS: sync-r4k:=20
+> Rework based on x86 tsc_sync
+> git bisect bad 580724fce27f2b71b3e4d58bbe6d83b671929b33
+> # good: [c171186c177970d3ec22dd814f2693f1f7fc1e7d] MIPS: csrc-r4k:=20
+> Refine rating computation
+> git bisect good c171186c177970d3ec22dd814f2693f1f7fc1e7d
+> # bad: [426fa8e4fe7bb914b5977cbce453a9926bf5b2e6] MIPS: csrc-r4k:=20
+> Select HAVE_UNSTABLE_SCHED_CLOCK if SMP && 64BIT
+> git bisect bad 426fa8e4fe7bb914b5977cbce453a9926bf5b2e6
+> # bad: [7190401fc56fb5f02ee3d04476778ab000bbaf32] MIPS: csrc-r4k: Appl=
+y=20
+> verification clocksource flags
+> git bisect bad 7190401fc56fb5f02ee3d04476778ab000bbaf32
+> # first bad commit: [7190401fc56fb5f02ee3d04476778ab000bbaf32] MIPS:=20
+> csrc-r4k: Apply verification clocksource flags
 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index dfd42c28e404..801d984b68e5 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -7406,6 +7406,9 @@ static struct timer_list wq_watchdog_timer;
- static unsigned long wq_watchdog_touched = INITIAL_JIFFIES;
- static DEFINE_PER_CPU(unsigned long, wq_watchdog_touched_cpu) = INITIAL_JIFFIES;
- 
-+static unsigned int wq_panic_on_stall;
-+module_param_named(panic_on_stall, wq_panic_on_stall, uint, 0644);
-+
- /*
-  * Show workers that might prevent the processing of pending work items.
-  * The only candidates are CPU-bound workers in the running state.
-@@ -7457,6 +7460,16 @@ static void show_cpu_pools_hogs(void)
- 	rcu_read_unlock();
- }
- 
-+static void panic_on_wq_watchdog(void)
-+{
-+	static unsigned int wq_stall;
-+
-+	if (wq_panic_on_stall) {
-+		wq_stall++;
-+		BUG_ON(wq_stall >= wq_panic_on_stall);
-+	}
-+}
-+
- static void wq_watchdog_reset_touched(void)
- {
- 	int cpu;
-@@ -7529,6 +7542,9 @@ static void wq_watchdog_timer_fn(struct timer_list *unused)
- 	if (cpu_pool_stall)
- 		show_cpu_pools_hogs();
- 
-+	if (lockup_detected)
-+		panic_on_wq_watchdog();
-+
- 	wq_watchdog_reset_touched();
- 	mod_timer(&wq_watchdog_timer, jiffies + thresh);
- }
--- 
-2.34.1
-
+--=20
+- Jiaxun
 
