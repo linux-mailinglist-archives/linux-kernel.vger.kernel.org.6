@@ -1,132 +1,146 @@
-Return-Path: <linux-kernel+bounces-276462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1CF894941B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:04:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A6B194941C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA7141C21647
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:04:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2669C288E68
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D76C1EA0DC;
-	Tue,  6 Aug 2024 15:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2461C1EA0D0;
+	Tue,  6 Aug 2024 15:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RkDqvkkN"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="d52Gp4QX"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489DD1D54FB;
-	Tue,  6 Aug 2024 15:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B981D54FB
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722956643; cv=none; b=t8tfsZen/o6zXDdprzq84n4JAfgMKprfd0H6VSbDchbGRo+8zo18Is9d2lkbGWx6FzHTudSDlt5+OJq8qsmODUbwWMgIWN+F9bOsDWD8kFr6rNRabG38rxUbiPDeR2aSOmg6LoAIgJD1u3TXJaHNfhMzDLPN7ERVHyuDx/5MGtA=
+	t=1722956653; cv=none; b=hHXpi/aC1qpHl3X9Sbf0bj44+un9mTp4RqeU1RCp+18Q6k8JCV6NKpfoxxqtzvqP+W1SzM4ZpEicl5oCPcOUE3OYyrQpH3HI0WpwZplVHcOYCUZo/IbTneYRIFxihclrjNQg+4f3g4whPMIxYgFD0GJjpAtFdxUNePUJc4DfiRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722956643; c=relaxed/simple;
-	bh=vXK0BUzSSbknlVaLGfcKkPDJgP2UcBjdICOwO3I5IJU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H5r/fEgrBn0e47DkkmFKpPuWtP9xU4S48c+rxckwDaIYRwpZnYyS89zGgWb8GJzixsJsDJDAbDYoxkMKZNJaWVwCTdWlLCbYd/cPcULjv4bhLYMStPOSGAHh1Iywx3sRZZgJe+q0ECy2dX8Vds8oEy5W4cyTaVzF3agkFrPFcgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RkDqvkkN; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 476F3fDN106327;
-	Tue, 6 Aug 2024 10:03:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722956621;
-	bh=H7hluvR91GwUos3RLVo/gNL6S3yfN5RfkN4cbUfh3qk=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=RkDqvkkN/qd6naQNMmEmJIsZBiv9iBTixgy8aE2W1RJTXbHVcXOKK9wIdJiGAGYDt
-	 SAwKiXKAEyvhWVg68bPMEYUcFt9LZQJizpccQu/xs4Ooedgyqojpg/HKAS8M0TrAWb
-	 Er09X5GcbhAcqEF9cFReSPnk0qHHiS6xkYioe3fY=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 476F3fHq022247
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 6 Aug 2024 10:03:41 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
- Aug 2024 10:03:41 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 6 Aug 2024 10:03:41 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 476F3fg8106848;
-	Tue, 6 Aug 2024 10:03:41 -0500
-Date: Tue, 6 Aug 2024 10:03:41 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Roger Quadros <rogerq@kernel.org>
-CC: MD Danish Anwar <danishanwar@ti.com>, Suman Anna <s-anna@ti.com>,
-        Sai
- Krishna <saikrishnag@marvell.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Dan
- Carpenter <dan.carpenter@linaro.org>,
-        Diogo Ivo <diogo.ivo@siemens.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Kory Maincent
-	<kory.maincent@bootlin.com>,
-        Simon Horman <horms@kernel.org>, Andrew Lunn
-	<andrew@lunn.ch>,
-        Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Santosh
- Shilimkar <ssantosh@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Tero
- Kristo <kristo@kernel.org>,
-        <srk@ti.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 1/6] dt-bindings: soc: ti: pruss: Add documentation
- for PA_STATS support
-Message-ID: <20240806150341.evrprkjp3hb6d74p@mockup>
-References: <20240729113226.2905928-1-danishanwar@ti.com>
- <20240729113226.2905928-2-danishanwar@ti.com>
- <b6196edc-4e14-41e9-826e-7b58f9753ef5@kernel.org>
+	s=arc-20240116; t=1722956653; c=relaxed/simple;
+	bh=Ojp+5mgXIeLmoaOntdYobjdPsSlf5Jv2i52l1FMoU8o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mwzIRCr2PjKat8jS6kl4QaCTkSXqWWOYHL9RVbtSUITOSYZYcRf/akP93iphMEmqCIKYdSeLxgDfKfnh5/OUFmExqS66Y2u/fnTR3XNJ49B4ceTL5x44pdbM8f1udakful0RhijLB/axzjo+iZkcxbWJ8Davom16t21DqezkyH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=d52Gp4QX; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-396e2d21812so3157815ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 08:04:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1722956651; x=1723561451; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5nqpVJEa3gF+vLMgvdD8twTbWevyBd39Y3ES27W51MM=;
+        b=d52Gp4QXL5N0z7YA2EbMkiYnHuAeE5d8Q02SLVXmq4IS5IBSYyJa3nAVrhpMDbjWxo
+         V/9jVDDd3xhdG8LsCLLAirk39wLC9scuXwlr1CdL9e1h1pymuXg4oDWK0ZOV+DuHQV07
+         t3Yug0INszErMVCyPOACtxZo59yAidEqBQOjorFizlXE76A1+gniwNpNH/ilWHdNvMlh
+         e6RYjdiQgVvMT408J/D0c8GCbJD0ObhBknuCtzcWcLsWxFPme21PGj9SiIxItFhqMbw/
+         nL+dBwH+irjs9/FeyRq6l8S57zaaDqPQFjg+dvpDkPfuRXOi1XlsAf0lRG/FMvsepiF2
+         5U0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722956651; x=1723561451;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5nqpVJEa3gF+vLMgvdD8twTbWevyBd39Y3ES27W51MM=;
+        b=TCKoCjmMEbR25SieuJa+Fx9dpmmQkiahBsNxKCD0AOTVYwAuNVH70vPqTr0e1mPjIz
+         fCJskT/BYWECvUyqUJtMMjpt8bPnCei2baGnV/QBFfjgAsnN+UDxTob0XKpSuKNfOFvw
+         NKldIUntbB9swi7bsXrPT87hQInIjghPUj/bCcLsvCeOknbUHemvLf4Wg7b77q6zfckq
+         Fx70YhNiajpI5Tpr13Gwz7IpGBDjyEheOi6gF68xJeaWCHqRuLYE2shD3Nb4LStXGHDM
+         U/Fi+txDyVYrnNPCxJCFjHj+ka4s+DFAgHTPH2QNUVyd6ylo5yJvfo3Ej5qhHcMDqWBt
+         WSUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgbDZtk+JGcv2IEHTkEs89uAHCPy9p1hse0Bsvqvlto0XmicD9Py1K67ZEjXfUFbJvRaMEvSubXzWC+o5kwf3O9rDo0BAH4Tg4bhp4
+X-Gm-Message-State: AOJu0Yy84f9EzYxw9e6WKexxu734pls8ZlQb9cxBOLzOTsHB9xendQNu
+	PDboI9Notqy/FWOKRj0xW9SQ6rPOHV8PLBaFK54jReMWYmh31kxXRDjhqjg1G2ywDl3Zg8jR0pC
+	2rT0RIlU9aJbQqmK8xk9L20291CiPQ2UCnImhTw==
+X-Google-Smtp-Source: AGHT+IE5dkU8O3hsRzTzR3mqE211YMexCU92LD+ZH2mO65SVdE7w+UZ8Equ/sKTPvXFYaRtJg+9DX/UprpD7ulXsS18=
+X-Received: by 2002:a92:d64d:0:b0:397:d9a9:8769 with SMTP id
+ e9e14a558f8ab-39b1fc37fe5mr152610645ab.24.1722956650868; Tue, 06 Aug 2024
+ 08:04:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <b6196edc-4e14-41e9-826e-7b58f9753ef5@kernel.org>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240726235234.228822-1-seanjc@google.com> <20240726235234.228822-57-seanjc@google.com>
+In-Reply-To: <20240726235234.228822-57-seanjc@google.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Tue, 6 Aug 2024 20:33:59 +0530
+Message-ID: <CAAhSdy1DvkU_C2jmtA1SBNfjp1gxu_6RhFKbf-hkhSNQeTXwwA@mail.gmail.com>
+Subject: Re: [PATCH v12 56/84] KVM: RISC-V: Mark "struct page" pfns dirty iff
+ a stage-2 PTE is installed
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09:42-20240805, Roger Quadros wrote:
-> 
-> 
-> On 29/07/2024 14:32, MD Danish Anwar wrote:
-> > Add documentation for pa-stats node which is syscon regmap for
-> > PA_STATS registers. This will be used to dump statistics maintained by
-> > ICSSG firmware.
-> > 
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Reviewed-by: tags should come after Author's Signed-off-by:
-> 
-> > Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> 
-> Reviewed-by: Roger Quadros <rogerq@kernel.org>
+On Sat, Jul 27, 2024 at 5:24=E2=80=AFAM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> Don't mark pages dirty if KVM bails from the page fault handler without
+> installing a stage-2 mapping, i.e. if the page is guaranteed to not be
+> written by the guest.
+>
+> In addition to being a (very) minor fix, this paves the way for convertin=
+g
+> RISC-V to use kvm_release_faultin_page().
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-If the net maintainers are OK, they could potentially take the binding
-patch along with the driver mods corresponding to this - I am a bit
-unsure of picking up a binding if the driver implementation is heading
-the wrong way.
+For KVM RISC-V:
+Acked-by: Anup Patel <anup@brainfault.org>
 
--- 
 Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Anup
+
+
+> ---
+>  arch/riscv/kvm/mmu.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+> index b63650f9b966..06aa5a0d056d 100644
+> --- a/arch/riscv/kvm/mmu.c
+> +++ b/arch/riscv/kvm/mmu.c
+> @@ -669,7 +669,6 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+>                 goto out_unlock;
+>
+>         if (writable) {
+> -               kvm_set_pfn_dirty(hfn);
+>                 mark_page_dirty(kvm, gfn);
+>                 ret =3D gstage_map_page(kvm, pcache, gpa, hfn << PAGE_SHI=
+FT,
+>                                       vma_pagesize, false, true);
+> @@ -682,6 +681,9 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
+>                 kvm_err("Failed to map in G-stage\n");
+>
+>  out_unlock:
+> +       if ((!ret || ret =3D=3D -EEXIST) && writable)
+> +               kvm_set_pfn_dirty(hfn);
+> +
+>         spin_unlock(&kvm->mmu_lock);
+>         kvm_set_pfn_accessed(hfn);
+>         kvm_release_pfn_clean(hfn);
+> --
+> 2.46.0.rc1.232.g9752f9e123-goog
+>
 
