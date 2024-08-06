@@ -1,129 +1,87 @@
-Return-Path: <linux-kernel+bounces-276039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CF0948D9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:24:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B05948D9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED8B1B260AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:24:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAFA1F233B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627081C3780;
-	Tue,  6 Aug 2024 11:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9hPHjbE"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE371C2325;
+	Tue,  6 Aug 2024 11:25:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0D813B2AC;
-	Tue,  6 Aug 2024 11:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5211BE860
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 11:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722943460; cv=none; b=TqqRx1/BbyoY352exZwbEbidatRfFB0b+1Dxx2RhCNJymZs7B9bKUqm/j/RcY3HMrnjHMQgcpuUDi7wlO8fkHD5iSsJD7RkUuRdQg0chvYS4I8k0gnNF4X2d8JnpqtP95f6tprcfHHkv9HaUYeM7y1Swc2pcUOTL68w9l58rJHA=
+	t=1722943505; cv=none; b=gQLvOfJujzdCH/1t0h+HHyep2Y368m7h0U1vdUyr1chcpKOry5o3NnYC+x7fhSYUrArDpN0XxVzeeLh0odtN0yCQS0lNEow0A6Cg5m4M6y57/aZ7mqoRZ7MpsTxxU4fY7A4Pj3RCifC5JScjA2MdhTT2cItCx9mVlbN9D8mwEaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722943460; c=relaxed/simple;
-	bh=NLJFKlsrv5HZC+jpQ0fj6SQCwJrn1odW8ws5NvM5/FU=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mD1ACyH5Ky8DVrHaxOsvW0BDhjE4l7mo48KeVzLnZ6O6B2ARJ3RvTcdxymwWgJxl5wM3VqBWjwifpbVBPa1nH4UE0UHeIGQrdSnX0syB6USnMNhaA739nfXiad6ny1qU/T6MoifsFmQm/6+fyJciNB9FkepoHCw3akcMMTpfvDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U9hPHjbE; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso646087a12.3;
-        Tue, 06 Aug 2024 04:24:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722943457; x=1723548257; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GgG5bT+5Oy8mtqui+2A+oSAac16iD+OUBZ0++IA9yGw=;
-        b=U9hPHjbE1GfcG44RKGwDiWhzo1Bzfb7oDsFWU1MyXLvTIp+fahFeH4xtWDY+CD+Xjn
-         C3bhesCJ+kWOdWFBchdauNCb5d+WMEbSCbMUtg8qIHMbiYaJvX4tGn+l7F8qBIeo5dQq
-         88fvKd+vI6KIDYgWZKoBPofvw5JMq2AQOEDnuMqLTeoEM1//JVCsMRFLBVBB2La3C54q
-         TQrgg0P0fXoNWGUUIZcNmtQCl9N1l24mdfAUvgH9ZxzsuJUgqf8zDQv2iEg6X7I3/jSE
-         YJg5nucj2UhRwVqgsLQvi2m7WdHs7PYlJa+5Htc1W6x8Jsa9e0UJ6TxQ8dMUqlhUPos5
-         1/bQ==
+	s=arc-20240116; t=1722943505; c=relaxed/simple;
+	bh=6L6/GAzLQO87eGts9A62XkImFZ+QV04iAlBbFPhel00=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bT83u8pgYab7ZUxDifsVRIE1qMTYexrE8QhsZoym3Ew5+MsXQNvGVFNLGvyhKmPZI7Jdb46r7GzL0eLg8U5OKUhLGke9CqDBpWE0/OzZXlL1Ei8iod8HW1Y1ZuMeGQL8DuCkH96KwH4JtNzqO4CElD73tpTZdE1moZ651jTde3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39b28ea6f37so8942905ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 04:25:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722943457; x=1723548257;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GgG5bT+5Oy8mtqui+2A+oSAac16iD+OUBZ0++IA9yGw=;
-        b=WAMIOhpWJQdhhOmYY2nZFDlHxB31xKE7GIlHIsG9oggmy10lOKVE5eWjSdj3sTzhTm
-         sA9Uf2tL6/xksF4m1pMUjFhiV2oqcalWjGlZkIbeK+wt4d4e2GbGmLwAFDeBLi3CYfJt
-         VRgDBzZD4uTUyGjwFVfxhbzHbnrLrJ6vCgBu8DMAGIRMlQyo2um4iE8NA58IuUkyzYuc
-         loAmT9E0CuaNzPWNJoq/rPCHpA3XXrNiQIgCa+G/LKiI+QykIXVSzSmbIVyuLYt3HziM
-         3illDDLmxDB6cjWf5BAnOQzEQ5ZzJkiHHyn0kbsXJnOAXyXThOS/4UtxTN7DHHGLAtBj
-         qdQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWeo6YJV/Qwz3nhbbG8nC+kOV5IkWyaXiYHyXGoUHfiw5Og3Aq+LHU4ptm8+7rXSFV5Av9QwLSWjS+I/DwZvjpCEXTzcs7DQHzCeC7ubZpGeOXlCPsxOoYcoukr6JBAnJLMKmRrZoM0tjItxyrLscsKS43/efdrY3MG
-X-Gm-Message-State: AOJu0YwP6b7M72hz3XudV+O96iZMjPl4wEkDvk4RvfU67+txdWLrQPg5
-	I/ltwvWyfXQs1vf0SiGOo8ERTPDR1EPm4NxbS6Q7j/SsOhjBrYZ+
-X-Google-Smtp-Source: AGHT+IFgVDW4rgXOYxPYQc3gQW4V0fzzE6vvVdZBkhDqcoL+eee8Fr/uTFjVUjJF/eGwwBa2+EE23w==
-X-Received: by 2002:a17:907:1c2a:b0:a7a:a138:dbd2 with SMTP id a640c23a62f3a-a7dc509f3bcmr933115666b.50.1722943457201;
-        Tue, 06 Aug 2024 04:24:17 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec8cd5sm536901166b.213.2024.08.06.04.24.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 04:24:12 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 6 Aug 2024 13:24:07 +0200
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
-	daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
-	yonghong.song@linux.dev, john.fastabend@gmail.com,
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
-	delyank@fb.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] libbpf: check the btf_type kind to prevent error
-Message-ID: <ZrIH1_UYOYWkaawc@krava>
-References: <20240806105142.2420140-1-make24@iscas.ac.cn>
+        d=1e100.net; s=20230601; t=1722943503; x=1723548303;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dPLs6GYpISNHA6KRlDwrxff6K+pIg+ZZS8gje1aRwOY=;
+        b=nXFJvUJ6fe9yh8mFCsA8vrpUWPxDjJWGF9WG173PQtACfPYFBrRuAVblZj2wM/m+d1
+         1UdpBeLyC3IsQeFZCWAZwLsRriHIvhYPGQNkNVDOgsjVTYfZKiaJiSTMmvY1s2MqkSVm
+         eQMPk8LAlwUouxCpmut4+7/JLz88sTWtcTBvjElrdYgyxCZ/BFig2seiwcRgh0Jx1Tg4
+         BB2b9a20ej8wltpdM8kr2AXH/DbIxPWMliim3K5kV4xc513pLLNJ20H2l+CeTADUpVCg
+         iVaNV5FJADhZ+9OJIFcZ65wWmjP8FZsZaK/yc2XuJK7xhcB1FS43fMA89HcglUZcbmc/
+         F1JA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7sDl5OFtQfkiTmSSaz/PEQbQRVf0Jhug5uNHoGn1HE3NoplG1D/1E7zx26Hu/VoQpmFCTBEND3+DXKJEEiehxv2AcEnceaGKtMnie
+X-Gm-Message-State: AOJu0YyhiW+5GaDNWKX5RcVRW1Dppc+etOIKapWzlIsbG8JodkDJWfTi
+	brkUI/CR11OhHvWMbvzzXvcoJ5q44s+sKFPCcb5kCAN1INyDs9ZMawEG7/fRHIqpwN4l9N7JW+2
+	O/fAw4xktr2OzFIxn3PGT2jyj9CAkyJBLluLr6OqG1lo5nNwHbj076ys=
+X-Google-Smtp-Source: AGHT+IEZt7rdkBD85PZ0nZRBlQzTDNhoiY+L84sEiWNWCgeL3woPw+d8x7EMi+93A+95D4zjA1Uoe9XXkWQnY7W569QyxGHHhQls
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806105142.2420140-1-make24@iscas.ac.cn>
+X-Received: by 2002:a05:6e02:1d0b:b0:396:ec3b:df65 with SMTP id
+ e9e14a558f8ab-39b1fc356damr10323505ab.4.1722943502677; Tue, 06 Aug 2024
+ 04:25:02 -0700 (PDT)
+Date: Tue, 06 Aug 2024 04:25:02 -0700
+In-Reply-To: <20240806105106.2667-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000720d29061f020b8a@google.com>
+Subject: Re: [syzbot] [can?] WARNING: refcount bug in j1939_xtp_rx_cts
+From: syzbot <syzbot+5a1281566cc25c9881e0@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 06, 2024 at 06:51:42PM +0800, Ma Ke wrote:
-> To prevent potential error return values, it is necessary to check the
-> return value of btf__type_by_id. We can add a kind checking to fix the
-> issue.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 430025e5dca5 ("libbpf: Add subskeleton scaffolding")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->  tools/lib/bpf/libbpf.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index a3be6f8fac09..d1eb45d16054 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -13850,6 +13850,9 @@ int bpf_object__open_subskeleton(struct bpf_object_subskeleton *s)
->  		var = btf_var_secinfos(map_type);
->  		for (i = 0; i < len; i++, var++) {
->  			var_type = btf__type_by_id(btf, var->type);
-> +			if (!var_type)
-> +				return libbpf_err(-ENOENT);
+Hello,
 
-hum btf__type_by_id sets errno to EINVAL in case of error
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-I think we should keep that or just pass errno like we do earlier in the function
+Reported-by: syzbot+5a1281566cc25c9881e0@syzkaller.appspotmail.com
+Tested-by: syzbot+5a1281566cc25c9881e0@syzkaller.appspotmail.com
 
-  libbpf_err(-errno)
+Tested on:
 
-jirka
+commit:         743ff021 ethtool: Don't check for NULL info in prepare..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1482bd73980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5efb917b1462a973
+dashboard link: https://syzkaller.appspot.com/bug?extid=5a1281566cc25c9881e0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=156bf061980000
 
-> +
->  			var_name = btf__name_by_offset(btf, var_type->name_off);
->  			if (strcmp(var_name, var_skel->name) == 0) {
->  				*var_skel->addr = map->mmaped + var->offset;
-> -- 
-> 2.25.1
-> 
+Note: testing is done by a robot and is best-effort only.
 
