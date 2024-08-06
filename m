@@ -1,109 +1,99 @@
-Return-Path: <linux-kernel+bounces-275773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3083F94899E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:52:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C95FF9489A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C72F3B2123C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:52:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7195B1F21A02
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359C21BCA08;
-	Tue,  6 Aug 2024 06:51:57 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5CB1BCA11;
+	Tue,  6 Aug 2024 06:53:08 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1D415B147;
-	Tue,  6 Aug 2024 06:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF1D15B147;
+	Tue,  6 Aug 2024 06:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722927116; cv=none; b=RXfiGFqDcX/n3EfWt21ACqBoA3vHlvr7t+XFSfUz+FFivH7/HBnE89rMbo06b7BblY4LE/lJtpdnBvZy24ivSW+YlZrm28KFu1YLYePNYNi2rQSJ0bnV/JyszbVBzMeQxthH813aiQV1Jy6IvlEkrWV6JODIGRqCv9fWuyeIt4Q=
+	t=1722927187; cv=none; b=JZk5P2vk6o+ilSvBLCw0BCCFPBnkFoqQtgZM6o2kwgrrrIOCiugt1fQ/prMzX5UaQHshWUAOK3nHbL4loyxT3lmck+wh3SaacmV9ysC1aKXI3Qhrf6v2kDMcsuGVMLEglSuv4I2wBuJb88gx0T2vvM4mEGzgJzBEJ9tNgQFcCf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722927116; c=relaxed/simple;
-	bh=H6A4LpeNGhQxmd9+oJB3s2uuR0dLR/RABd7vBqdiGFM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eV0Iuozk9sUNlQRn1Ng+CSLi9gabj1X3PEClpnfXFRtlyG6djZkOCzqk9SS3Yofudi1VxXV4e5regqslHfs2SEnY0ukmtA3x7KIS91r+0QcnvwErmfphmUvGLhpr+QbdAU4MGpsAjytLsdZ93f7+RXwe8aJzaM4zMG0U0fhYeEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WdP9H2lS0z4f3jLy;
-	Tue,  6 Aug 2024 14:51:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A62841A1127;
-	Tue,  6 Aug 2024 14:51:44 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.174.178.55])
-	by APP4 (Coremail) with SMTP id gCh0CgBXfoT9x7FmMjilAw--.41083S4;
-	Tue, 06 Aug 2024 14:51:44 +0800 (CST)
-From: thunder.leizhen@huaweicloud.com
-To: Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	selinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Zhen Lei <thunder.leizhen@huawei.com>,
-	Nick Kralevich <nnk@google.com>,
-	Jeff Vander Stoep <jeffv@google.com>
-Subject: [PATCH 1/1] selinux: Fix potential counting error in avc_add_xperms_decision()
-Date: Tue,  6 Aug 2024 14:51:13 +0800
-Message-Id: <20240806065113.1317-1-thunder.leizhen@huaweicloud.com>
-X-Mailer: git-send-email 2.37.3.windows.1
+	s=arc-20240116; t=1722927187; c=relaxed/simple;
+	bh=XqxcGCRMECyTsBkrwwKzGy9qu0WpXUhddQXpzpKFkPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WaxOc7aMJ+y0S9hGNglJ14XWreWmH0EOLWdg/sW30ZmUegmt12m/ojJncSeAXZKdVQx36PKkUfI5TPyDUycNJsL6mvRL09RfO4ZOq/xH9IUXxIrIHnubUflKmhlam+I7qMSlcVqFe2+MCqTlkauJfff1arePqyOh7/7F3brCm0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id BCBC8300002A5;
+	Tue,  6 Aug 2024 08:53:01 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id A884E323E0; Tue,  6 Aug 2024 08:53:01 +0200 (CEST)
+Date: Tue, 6 Aug 2024 08:53:01 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	mika.westerberg@linux.intel.com, Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all
+ Devicetree based platforms
+Message-ID: <ZrHITXLkKrDbQKQp@wunner.de>
+References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
+ <20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org>
+ <ZqyxS8spZ-ohsP3R@wunner.de>
+ <20240805133555.GC7274@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXfoT9x7FmMjilAw--.41083S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7GF4UJry3Zw1UGF4DWFy7GFg_yoWfKFcEkF
-	ykurnrWr48ZFs5AanxCF1Fvrn09395uF4rW34rCasrZF43XFn5Jr1fCr1kXry3Ww4rAr9r
-	CFnrWa4kGwnrXjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbcxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267
-	AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80
-	ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4
-	AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUAVWU
-	twCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1XdbUUUUUU==
-X-CM-SenderInfo: hwkx0vthuozvpl2kv046kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240805133555.GC7274@thinkpad>
 
-From: Zhen Lei <thunder.leizhen@huawei.com>
+On Mon, Aug 05, 2024 at 07:05:55PM +0530, Manivannan Sadhasivam wrote:
+> On Fri, Aug 02, 2024 at 12:13:31PM +0200, Lukas Wunner wrote:
+> > The PCI core cannot put devices into D3cold without help from the
+> > platform.  Checking whether D3cold is possible (or allowed or
+> > whatever) thus requires asking platform support code via
+> > platform_pci_power_manageable(), platform_pci_choose_state() etc.
+> > 
+> > I think patch [3/4] is a little confusing because it creates
+> > infrastructure to decide whether D3cold is supported (allowed?)
+> > but we already have that in the platform_pci_*() functions.
+> > So I'm not sure if patch [3/4] adds value.  I think generally
+> > speaking if D3hot isn't possible (allowed?), D3cold is assumed
+> > to not be possible either.
+> 
+> Why? D3Hot is useful for runtime PM and if the platform doesn't want to do
+> runtime PM, it can always skip D3Hot (not ideal though).
 
-The count increases only when a node is successfully added to
-the linked list.
+AFAICS we always program the device to go to D3hot and the platform
+then cuts power, thereby putting it into D3cold.  So D3hot is never
+skipped.  See __pci_set_power_state():
 
-Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
----
- security/selinux/avc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	if (state == PCI_D3cold) {
+		/*
+		 * To put the device in D3cold, put it into D3hot in the native
+		 * way, then put it into D3cold using platform ops.
+		 */
+		error = pci_set_low_power_state(dev, PCI_D3hot, locked);
 
-diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-index 32eb67fb3e42c0f..7087cd2b802d8d8 100644
---- a/security/selinux/avc.c
-+++ b/security/selinux/avc.c
-@@ -330,12 +330,12 @@ static int avc_add_xperms_decision(struct avc_node *node,
- {
- 	struct avc_xperms_decision_node *dest_xpd;
- 
--	node->ae.xp_node->xp.len++;
- 	dest_xpd = avc_xperms_decision_alloc(src->used);
- 	if (!dest_xpd)
- 		return -ENOMEM;
- 	avc_copy_xperms_decision(&dest_xpd->xpd, src);
- 	list_add(&dest_xpd->xpd_list, &node->ae.xp_node->xpd_head);
-+	node->ae.xp_node->xp.len++;
- 	return 0;
- }
- 
--- 
-2.34.1
+		if (pci_platform_power_transition(dev, PCI_D3cold))
+			return error;
 
+Thanks,
+
+Lukas
 
