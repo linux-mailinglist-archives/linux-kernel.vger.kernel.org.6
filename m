@@ -1,316 +1,123 @@
-Return-Path: <linux-kernel+bounces-276281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CCD94919A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:33:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBBF949233
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 175DC1C21935
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:33:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C89A1282D48
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03A81D47AA;
-	Tue,  6 Aug 2024 13:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01299201279;
+	Tue,  6 Aug 2024 13:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HHewcVbL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="nsESuk2s"
+Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80ECF1C5792;
-	Tue,  6 Aug 2024 13:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8C31D47C5;
+	Tue,  6 Aug 2024 13:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722951156; cv=none; b=WZ2AT2nI1vTTTkdwCBR+RaQa3EXSZUvbveYv6TOKTYGroG1sVw0C/R4QRH5aHChcv7sHjSbFhPbnjGls/PfAZ9HmryscssjFh4kxKcgDnEg4YhXsNJeMGAVtjf1sxNnAdmmiScAWfHETuXpMUHY8tkGbgNY/1FfAqtPugK+Q4So=
+	t=1722952318; cv=none; b=p5+YqvYEHqNP5fACbeFAf0Obe0HFZZK7W8do9gNsC/SMGSBB/lAMlwokz//gcdkPCjNYr6X+bYC6bX9XD5UklJlnzIKTki3YDoqY1oJdohrPJvuZTQw8lmbhD6XIR67/+KYc7h6Z9fF+GufuBDEcOlzrzJjoyDC9rE1pFWl19zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722951156; c=relaxed/simple;
-	bh=1/hOT1teYDjCnab1J6u5zZvPN7xUqhdY7qulzsyiAHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BBprTscBYYIsgQ72lH5ZZQKVNWjYHhwCyWhLRIOQFa6F2aA1qOg6IbN+cvRoz+EI0bpIIQhbCNnN+gH1/0qs85WO6clfl5KotqWhzfarFoolC6nho+gEIA0vqxsy48UifbhSFWympOTegvX4E1hScIbZ0f5vygxwRrxkNClDW2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HHewcVbL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B97CDC4AF0C;
-	Tue,  6 Aug 2024 13:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722951156;
-	bh=1/hOT1teYDjCnab1J6u5zZvPN7xUqhdY7qulzsyiAHo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HHewcVbLVQgPrwbAgB79Lrw0faT8+P71+hgPYj+krUOO3dQIVnPlAGjOq1XxJtchm
-	 hH76BeDhZNbxqsfdddj5AyWLlYpe+dzkYLfGnydr29bK86gJHPd33AgEAezXL+BvyA
-	 ustquKIo7gRg20dBD0GOemtP6uUL9U1BfPPw3oHDAbrs1H5se69VA1zHUB5MEnwBsD
-	 2kZnt5W4kmr93aMyd8LkD5fYqiOGsjuslsmWdV2QAlRhzJW4UrZpZJ+gG4XQGrmsV0
-	 TrT8xJPUjsEqDx88Ax97QNLdU8BVI5kpab1gJLsrwKM4pupSmieC+l55slWpuPNN/H
-	 fwjsRbrX6rs8g==
-Date: Tue, 6 Aug 2024 10:32:32 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, weilin.wang@intel.com,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Perry Taylor <perry.taylor@intel.com>,
-	Samantha Alt <samantha.alt@intel.com>,
-	Caleb Biggers <caleb.biggers@intel.com>
-Subject: Re: [RFC PATCH v18 0/8] TPEBS counting mode support
-Message-ID: <ZrIl8NCHkIVHQVt2@x1>
-References: <20240720062102.444578-1-weilin.wang@intel.com>
- <CAM9d7cgoTyf3Zjt=+2yZi5Pat4UrxKxN=rkLHmyUWZqwZk8_Kw@mail.gmail.com>
- <CAP-5=fWr2Qna9ikzUCFavo3OTUDSP3ztr=i6E=R962CXCdHckg@mail.gmail.com>
- <ZrEpJxtm5zlp5rbo@x1>
- <CAP-5=fVTaHdiF8G2Dn=vnguvoapa_+ZKsQ7Wy3z51K9nDZQUtg@mail.gmail.com>
+	s=arc-20240116; t=1722952318; c=relaxed/simple;
+	bh=8rybmepnuNG/Fm0NjZD4Qp7/jNS4BX4w/ave4TQ7X1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qA+H+6i3tJQ3q2XGl2oiiPAYtl/78YlXGPzQKgTvwLQwGoGmAHj+ebIoumJmxdKUta0ZnkT9fUpFYTOXc7tDvdcAwBHFngy6++q6SoFWY/u54zmZWiTOAchcBNC0g1lQ2VKTlf38qbtW+m6WRDEUYFwTkWGfJfBtb7dL1yVwnBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=nsESuk2s; arc=none smtp.client-ip=116.203.77.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fris.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 88FF1BFB06;
+	Tue,  6 Aug 2024 15:34:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
+	t=1722951281; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=cyPHxdswqOb5N+EqzIxpN2i+5Izf1AnteHGpt/ataIA=;
+	b=nsESuk2sVBWj2SesqVt3A1EOdeQ4/vRf6w6WccdSt2uhfIqTmi27B07agGlrLJ/m/A9Ku9
+	qYJSFQk02oVwssdIZH6GL6EtTzm2GsZO14f0QCmTxiIGcK57DgSAQCnaOJG6XfLN25KTTf
+	xHiwKKb2lvidS5m5qJYCAhByorTU2cLwIklqrTYNRID7jtNTqjJzD1xhYf1Y3bcNEm05S/
+	WLltmZXvc25z2h03u8boQGeybd9E0IxrPB6GYAhRR9+959NN0XzN7ZcgsyA75AtTZhCVth
+	UTAZOkw4AgI4lrPn4LlLGL8KiTvyX5nD7kTPxtcW5FhmFB+GcFbfZCHz6obyEg==
+From: Frieder Schrempf <frieder@fris.de>
+To: Conor Dooley <conor+dt@kernel.org>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Parthiban Nallathambi <parthiban@linumiz.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+Subject: [PATCH 0/4] arm64: dts: imx8mm-kontron: Add HDMI and LVDS display support
+Date: Tue,  6 Aug 2024 15:32:58 +0200
+Message-ID: <20240806133352.440922-1-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVTaHdiF8G2Dn=vnguvoapa_+ZKsQ7Wy3z51K9nDZQUtg@mail.gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Aug 05, 2024 at 04:33:44PM -0700, Ian Rogers wrote:
-> On Mon, Aug 5, 2024 at 12:34 PM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Mon, Aug 05, 2024 at 08:10:12AM -0700, Ian Rogers wrote:
-> > > On Mon, Jul 22, 2024 at 10:38 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > >
-> > > > Hello Weilin,
-> > > >
-> > > > On Fri, Jul 19, 2024 at 11:21 PM <weilin.wang@intel.com> wrote:
-> > > > >
-> > > > > From: Weilin Wang <weilin.wang@intel.com>
-> > > > >
-> > > > > Change in v18:
-> > > > >  - Update to exit 2 in TPEBS shell test when not on Intel platform.
-> > > > >  - Several updates to use EVLIST_CTL_CMD_ENABLE_TAG, EVLIST_CTL_CMD_ACK_TAG, and
-> > > > >  etc.
-> > > > >
-> > > > > Changes in v17:
-> > > > >  - Add a poll on control fifo ack_fd to ensure program returns successfully when
-> > > > >  perf record failed for any reason.
-> > > > >  - Add a check in the tpebs test to only run on Intel platforms.
-> > > > >
-> > > > > Changes in v16:
-> > > > >  - Update tpebs bash test code and variable name.
-> > > > >  - Add a check to ensure only use "-C" option when cpumap is not "-1" when
-> > > > >  forking "perf record".
-> > > > >
-> > > > > Changes in v15:
-> > > > >  - Revert changes added for python import test failure in v14 because the code
-> > > > >  works correctly with the new python build code.
-> > > > >  - Update the command line option to --record-tpebs.
-> > > > >
-> > > > > Changes in v14:
-> > > > >  - Fix the python import test failure. We cannot support PYTHON_PERF because it
-> > > > >  will trigger a chain of dependency issues if we add intel-tpebs.c to it. So,
-> > > > >  only enable tpebs functions in evsel and evlist when PYTHON_PERF is not
-> > > > >  defined.
-> > > > >  - Fix shellcheck warning for the tpebs test.
-> > > > >
-> > > > > Changes in v13:
-> > > > >  - Add document for the command line option and fix build error in non-x86_64.
-> > > > >  - Update example with non-zero retire_latency value when tpebs recording is
-> > > > >  enabled.
-> > > > >  - Add tpebs_stop() back to tpebs_set_evsel() because in hybrid platform, when
-> > > > >  the forked perf record is not killed, the reader thread does not get any
-> > > > >  sampled data from the PIPE. As a result, tpebs_set_evesel() will always return
-> > > > >  zero on retire_latency values. This does not happen on my test GNR machine.
-> > > > >  Since -I is not supported yet, I think we should add tpebs_stop() to ensure
-> > > > >  correctness for now. More investigation is required here when we work on
-> > > > >  supporting -I mode.
-> > > > >  - Rebase code on top of perf-tools-next.
-> > > > >
-> > > > > Changes in v12:
-> > > > >  - Update MTL metric JSON file to include E-Core TMA3.6 changes.
-> > > > >  - Update comments and code for better code quality. Keep tpebs_start() and
-> > > > >  tpebs_delete() at evsel level for now and add comments on these functions with
-> > > > >  more details about potential future changes. Remove tpebs_stop() call from
-> > > > >  tpebs_set_evsel(). Simplify the tpebs_start() and tpebs_stop()/tpebs_delete()
-> > > > >  interfaces. Also fixed the bugs on not freed "new" pointer and the incorrect
-> > > > >  variable value assignment to val instead of counter->val.
-> > > > >
-> > > > > Changes in v11:
-> > > > >  - Make retire_latency evsels not opened for counting. This works correctly now
-> > > > >  with the code Namhyung suggested that adjusting group read size when
-> > > > >  retire_latency evsels included in the group.
-> > > > >  - Update retire_latency value assignment using rint() to reduce precision loss
-> > > > >  while keeping code generic.
-> > > > >  - Fix the build error caused by not used variable in the test.
-> > > > >
-> > > > > Other changes in v10:
-> > > > >  - Change perf record fork from perf stat to evsel. All the major operations
-> > > > >  like tpebs start, stop, read_evsel should directly work through evsel.
-> > > > >  - Make intel-tpebs x86_64 only. This change is cross-compiled to arm64.
-> > > > >  - Put tpebs code to intel-tepbs and simplify intel-tpebs APIs to minimum number
-> > > > > of functions and variables. Update funtion name and variable names to use
-> > > > > consistent prefix. Also improve error handling.
-> > > > >  - Integrate code patch from Ian for the :R parser.
-> > > > >  - Update MTL metrics to TMA 4.8.
-> > > > >
-> > > > > V9: https://lore.kernel.org/all/20240521173952.3397644-1-weilin.wang@intel.com/
-> > > > >
-> > > > > Changes in v9:
-> > > > >  - Update the retire_latency result print and metric calculation method. Plugin
-> > > > > the value to evsel so that no special code is required.
-> > > > >  - Update --control:fifo to use pipe instead of named pipe.
-> > > > >  - Add test for TPEBS counting mode.
-> > > > >  - Update Document with more details.
-> > > > >
-> > > > > Changes in v8:
-> > > > >  - In this revision, the code is updated to base on Ian's patch on R modifier
-> > > > > parser https://lore.kernel.org/lkml/20240428053616.1125891-3-irogers@google.com/
-> > > > > After this change, there is no special code required for R modifier in
-> > > > > metricgroup.c and metricgroup.h files.
-> > > > >
-> > > > > Caveat of this change:
-> > > > >   Ideally, we will need to add special handling to skip counting events with R
-> > > > > modifier in evsel. Currently, this is not implemented so the event with :R will
-> > > > > be both counted and sampled. Usually, in a metric formula that uses retire_latency,
-> > > > > it would already require to count the event. As a result, we will endup count the
-> > > > > same event twice. This should be able to be handled properly when we finalize our
-> > > > > design on evsel R modifier support.
-> > > > >
-> > > > >  - Move TPEBS specific code out from main perf stat code to separate files in
-> > > > > util/intel-tpebs.c and util/intel-tpebs.h. [Namhyung]
-> > > > >  - Use --control:fifo to ack perf stat from forked perf record instead of sleep(2) [Namhyung]
-> > > > >  - Add introductions about TPEBS and R modifier in Documents. [Namhyung]
-> > > > >
-> > > > >
-> > > > > Changes in v7:
-> > > > >  - Update code and comments for better code quality [Namhyung]
-> > > > >  - Add a separate commit for perf data [Namhyung]
-> > > > >  - Update retire latency print function to improve alignment [Namhyung]
-> > > > >
-> > > > > Changes in v6:
-> > > > >  - Update code and add comments for better code quality [Namhyung]
-> > > > >  - Remove the added fd var and directly pass the opened fd to data.file.fd [Namhyung]
-> > > > >  - Add kill() to stop perf record when perf stat exists early [Namhyung]
-> > > > >  - Add command opt check to ensure only start perf record when -a/-C given [Namhyung]
-> > > > >  - Squash commits [Namhyung]
-> > > > >
-> > > > > Changes in v5:
-> > > > >  - Update code and add comments for better code quality [Ian]
-> > > > >
-> > > > > Changes in v4:
-> > > > >  - Remove uncessary debug print and update code and comments for better
-> > > > > readability and quality [Namhyung]
-> > > > >  - Update mtl metric json file with consistent TmaL1 and TopdownL1 metricgroup
-> > > > >
-> > > > > Changes in v3:
-> > > > >  - Remove ':' when event name has '@' [Ian]
-> > > > >  - Use 'R' as the modifier instead of "retire_latency" [Ian]
-> > > > >
-> > > > > Changes in v2:
-> > > > >  - Add MTL metric file
-> > > > >  - Add more descriptions and example to the patch [Arnaldo]
-> > > > >
-> > > > > Here is an example of running perf stat to collect a metric that uses
-> > > > > retire_latency value of event MEM_INST_RETIRED.STLB_HIT_STORES on a MTL system.
-> > > > >
-> > > > > In this simple example, there is no MEM_INST_RETIRED.STLB_HIT_STORES sample.
-> > > > > Therefore, the MEM_INST_RETIRED.STLB_HIT_STORES:p count and retire_latency value
-> > > > > are all 0.
-> > > > >
-> > > > > ./perf stat -M tma_dtlb_store -a -- sleep 1
-> > > > >
-> > > > > [ perf record: Woken up 1 times to write data ]
-> > > > > [ perf record: Captured and wrote 0.000 MB - ]
-> > > > >
-> > > > >  Performance counter stats for 'system wide':
-> > > > >
-> > > > >        181,047,168      cpu_core/TOPDOWN.SLOTS/          #      0.6 %  tma_dtlb_store
-> > > > >          3,195,608      cpu_core/topdown-retiring/
-> > > > >         40,156,649      cpu_core/topdown-mem-bound/
-> > > > >          3,550,925      cpu_core/topdown-bad-spec/
-> > > > >        117,571,818      cpu_core/topdown-fe-bound/
-> > > > >         57,118,087      cpu_core/topdown-be-bound/
-> > > > >             69,179      cpu_core/EXE_ACTIVITY.BOUND_ON_STORES/
-> > > > >              4,582      cpu_core/MEM_INST_RETIRED.STLB_HIT_STORES/
-> > > > >         30,183,104      cpu_core/CPU_CLK_UNHALTED.DISTRIBUTED/
-> > > > >         30,556,790      cpu_core/CPU_CLK_UNHALTED.THREAD/
-> > > > >            168,486      cpu_core/DTLB_STORE_MISSES.WALK_ACTIVE/
-> > > > >               0.00 MEM_INST_RETIRED.STLB_HIT_STORES:p       0        0
-> > > > >
-> > > > >        1.003105924 seconds time elapsed
-> > > > >
-> > > > > v1:
-> > > > > TPEBS is one of the features provided by the next generation of Intel PMU.
-> > > > > Please refer to Section 8.4.1 of "Intel® Architecture Instruction Set Extensions
-> > > > > Programming Reference" [1] for more details about this feature.
-> > > > >
-> > > > > This set of patches supports TPEBS in counting mode. The code works in the
-> > > > > following way: it forks a perf record process from perf stat when retire_latency
-> > > > > of one or more events are used in a metric formula. Perf stat would send a
-> > > > > SIGTERM signal to perf record before it needs the retire latency value for
-> > > > > metric calculation. Perf stat will then process sample data to extract the
-> > > > > retire latency data for metric calculations. Currently, the code uses the
-> > > > > arithmetic average of retire latency values.
-> > > > >
-> > > > > [1] https://www.intel.com/content/www/us/en/content-details/812218/intel-architecture-instruction-set-extensions-programming-reference.html?wapkw=future%20features
-> > > > >
-> > > > >
-> > > > >
-> > > > >
-> > > > > Ian Rogers (1):
-> > > > >   perf parse-events: Add a retirement latency modifier
-> > > > >
-> > > > > Weilin Wang (7):
-> > > > >   perf data: Allow to use given fd in data->file.fd
-> > > > >   perf stat: Fork and launch perf record when perf stat needs to get
-> > > > >     retire latency value for a metric.
-> > > > >   perf stat: Plugin retire_lat value from sampled data to evsel
-> > > > >   perf vendor events intel: Add MTL metric json files
-> > > > >   perf stat: Add command line option for enabling tpebs recording
-> > > > >   perf Document: Add TPEBS to Documents
-> > > > >   perf test: Add test for Intel TPEBS counting mode
-> > > >
-> > > > Thanks for your persistence!
-> > > >
-> > > > Reviewed-by: Namhyung Kim <namhyung@kernel.org>
-> > >
-> > > Ping.
-> >
-> > I guess Namhyung's reviewed-by should suffice, but since you're pinging
-> > and I saw previous comments about this serie, would it be possible to
-> > get your Reviewed-by as well?
-> 
-> I'm happy with most of the changes and they can have my reviewed-by.
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Thanks.
+This add support for the display bridges (DSI->LVDS and DSI->HDMI)
+on the BL i.MX8MM and the 7" LVDS panel in a separate overlay.
 
-> I'm not happy with:
-> perf stat: Fork and launch 'perf record' when 'perf stat' needs to get
-> retire latency value for a metric.
+Only one of the interfaces (HDMI or LVDS) is supported at the same
+time. Enabling the LVDS overlay will disable the HDMI interface.
 
-I don't like it either, but I couldn't find the time to engage in this
-discussion to try to offer an alternative patch and since Namhyung had
-provided his reviewed-by and you pinged me, I felt compelled to move
-forward on this.
+* Patch 1 and 2: Add the necessary binding changes
+* Patch 3: Extend the BL devicetree
+* Patch 4: Add the LVDS panel overlay
 
-> so please leave it off there.
+Frieder Schrempf (4):
+  dt-bindings: vendor-prefixes: Add Jenson Display
+  dt-bindings: display: panel-lvds: Add compatible for Jenson
+    BL-JT60050-01A
+  arm64: dts: imx8mm-kontron: Add support for display bridges on BL
+    i.MX8MM
+  arm64: dts: imx8mm-kontron: Add DL (Display-Line) overlay with LVDS
+    support
 
-So, what are you proposing, that we process up to some patch?
+ .../bindings/display/panel/panel-lvds.yaml    |   2 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/freescale/Makefile        |   4 +
+ .../boot/dts/freescale/imx8mm-kontron-bl.dts  | 146 ++++++++++++
+ .../boot/dts/freescale/imx8mm-kontron-dl.dtso | 210 ++++++++++++++++++
+ 5 files changed, 364 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-kontron-dl.dtso
 
-For now I'm removing the whole series from perf-tools-next.
+-- 
+2.45.2
 
-- Arnaldo
- 
-> Context: originally the patches aimed to abstract everything inside of
-> the evsel, now builtin-stat is manually starting and ending the
-> sub-process and has to be aware of TPEBS. There are ugly architectural
-> dependencies. My reviewed-by was correct on the earlier version, as
-> you could make a tpebs evsel just like any... other, open, close, read
-> it, etc. This would be useful say in a python script. This version to
-> my eyes is worse as all TPEBS dependencies are made explicit and the
-> caller needs to be aware of TPEBS. I understand Weilin was asked to
-> make some of the changes, and there was a desire for efficiency, but I
-> think things were better in earlier versions.
-> 
-> Thanks,
-> Ian
 
