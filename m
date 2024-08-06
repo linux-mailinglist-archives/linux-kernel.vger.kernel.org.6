@@ -1,136 +1,127 @@
-Return-Path: <linux-kernel+bounces-276266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B1179491AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:36:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E35194914B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A6E2B29B21
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:29:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE37D1F25427
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2EE1D2F6D;
-	Tue,  6 Aug 2024 13:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9621D27BB;
+	Tue,  6 Aug 2024 13:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WlQcBWCV"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHhDb3qS"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9D61D1F4E;
-	Tue,  6 Aug 2024 13:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195451DDF5;
+	Tue,  6 Aug 2024 13:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722950911; cv=none; b=mXDJMTORwOAwiK/jSfdD7jvLDxye5kHlt0kPZ7pIVhZ2tIiSAwi/6EiT+ynQWen8b+M1ggjGp2sUARg17TGuTsj8CwGIBthhpJwcmG8yj//VvvMupNASDzog4mDyC0iSpnlgnWG/92/eFFc27Lqh74iAVUtinqzA9sDHre4Z0eI=
+	t=1722950766; cv=none; b=iutbIEj4nXizij0rTJBT+PZAmtMvyuHuIRipa7tm+/ZiqnwIcH4R47ZeBbj7qCciapCp7scoD7GHX+0dZgmnw4LxIwyM1LSKXRtUOeNC5okJlClMXWNDMqqi1H61BwWxAO6edjoMzUa/iJUQNKE9gI0YLl5kltDdw8JLlGOfnuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722950911; c=relaxed/simple;
-	bh=MNnLV25K6YhULXYYlXhNI0BKUG+LUYqABdwm34GgDDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eEAe1iSHf+kprRrgQWp8Qs45jT8e0VGE7DdXE9pT8p/KDdw4tX1AXVbVyKlmvW+Vjt7993l+ku3dpCDLprpEyR6wTYE1GmplFc/cDVkno4zj1YrELQgFCCI7L6jGHGtfc69bQX41AHPErcdQwf/KATtVLP/+AHcShVGVHAcQwcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WlQcBWCV; arc=none smtp.client-ip=209.85.208.43
+	s=arc-20240116; t=1722950766; c=relaxed/simple;
+	bh=AyuNxMyh4zUWBkVZV/n9fM2nvkdkU/rcgSii9IhMIIc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fbcdirQEf/VRqpTDVNhob7Nnt2kutfWlzw+VFpLEZBM+g6uxuzJHfGraq3tLH5b5EbJR9EkkVJKHp8fxqf8LuFyMzJV5EhFgi2sAPKQEYRAUHJ+oR/0b1BdKFAhTgtbe3lkDyHyxLnAanCO1FS6HBgEvfgot70/zDjyQm+jrv1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HHhDb3qS; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a1c496335aso312501a12.1;
-        Tue, 06 Aug 2024 06:28:29 -0700 (PDT)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2cb5243766dso581340a91.0;
+        Tue, 06 Aug 2024 06:26:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722950908; x=1723555708; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1722950764; x=1723555564; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=t11NvRdsE6tRyZHoH+rh9Stx+kDJmXVz4PuKIrvrxow=;
-        b=WlQcBWCVLG5gb+cTZ4+XDR00I9JrxHrTpIPL1Xs3CPrDreFcvziEBBnKGnyJ8RFqay
-         KICOGOvuPVnRYfu1asUOG4Tk0y3Ks+IwlUH8OpbPLy1HKP49b48MnA6B/vc948MqXLBo
-         WSQZ2iRfGQPC8RGJDcwcQQei2BHj2US379PpRu97f7ILdeT7PZPWwGvk7uw9ORUrb6ux
-         nPdLFxPO6Px3+HOMfmjY1pW/ROhK4P63YrQYiPv1klcfdb9EvkbQzPttI0UgEoc2SZce
-         xS3w0sqbIkCkbgnKdRUqz0RrHCrpz30Ee08jg94VQyyMBNy4+e+NhNQL49zEhilVWA2G
-         nvFQ==
+        bh=sy7bUu11FomXNhdiIBOfoEquEd4jJxCHt/44zI6khbw=;
+        b=HHhDb3qSAVZCl5L4BZ9BvNAgvgNYMjuCXxyl1gM6jhVbI9Tvxjglu5kZHLJywL7oCn
+         wM3/wfIiPGaTGcDTtwSSBZSFE2R10IEHPDu4Q+t3nNGaQMzaaWlFecxIxv7YtTkxvT1V
+         w1qNDOdMXy7DYSBYzKMgwzfaCFCnRIq5Jj7yIMfQTybtj40iV3ij2SeljdOr7HO8+GKw
+         /jVkK7A3B0iUcyfkeanJSS804O1BXixcJN7hwqfxhCYBAfZbgSfSFPE06MpzY3g5IuqR
+         3592xr/vzVyGTsMzvdcw0CLLbjJRgqZZdXYVKKr0kD/1Yleit1d46ypcsW4bo0lU/K2i
+         nlpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722950908; x=1723555708;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722950764; x=1723555564;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=t11NvRdsE6tRyZHoH+rh9Stx+kDJmXVz4PuKIrvrxow=;
-        b=Ndd25x2ktqdw16ZSapjh+949yuTLY9QfgRtz9nkg0AZuk3PamQ6OxQEBr/4FpVCrCK
-         N9Jpi8N375esF8+292Qn6GwqTjmTDk9l1Y2Wyvce2imv7dLaw/jK4REHyCrvG8GQWjNt
-         jj1jmDPYzro9o7HUuoMIxsJUDnDZJovE0TegzJ4faYmli0XGW9+0qv2/VIlSvkGHvh18
-         5Aci+sH0O7Uh0Qb7hncb5YDB3O8qIqtmS8vX49WyazMic+Zbaoya/mjbDUJdxqFglquu
-         LHRsrInTZj125PrIjAxiH2olbmhHttCSlc0Hb2CuleA8Hmi97txR1CqXsaskgGn3UgXZ
-         fepw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6oSaB3MU4NhWABKj/Kx0QgrswtqXQlOm/wjz4sCEa9Aer5XWHTxaqHzNQFYvp0qHqcrZomlAgtUdu@vger.kernel.org, AJvYcCUQXcPwnmmxL+S0+YL6QnRMQi1N7/FmM2mbACe6VlWSL+m7uybZ+5Ww4yavkLIK8rwFVunKb51m/XZlh5qF@vger.kernel.org, AJvYcCVhyCAedyXIhdD/gKx5dQfY2eDW/GYW542zExejAYqFufFzv/VrcU5wR5iHviReOVgocPvkwvWP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUAB2taL8BpP7KgySvwhAJSbgKnp5tjdliULNQgMnqAkYcBW7U
-	oIfIivdYkxDuhIrRwg61aboc9avHYR2k3gU1GQ5aerXeBBsD5oKe
-X-Google-Smtp-Source: AGHT+IFoADXb3aIb0ygPnlnU2NZzG/iHbz8BzpZLTJYMTElblwboYJGK63zl4KoMM/0u6YlD487YkQ==
-X-Received: by 2002:aa7:cc81:0:b0:5a7:464a:abf with SMTP id 4fb4d7f45d1cf-5b7f521e6a4mr13748702a12.24.1722950908185;
-        Tue, 06 Aug 2024 06:28:28 -0700 (PDT)
-Received: from lapsy144.cern.ch ([2001:1458:204:1::102:a6a])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83a153f77sm5910172a12.53.2024.08.06.06.28.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 06:28:27 -0700 (PDT)
-From: vtpieter@gmail.com
-To: Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	David S Miller <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Vasut <marex@denx.de>
-Cc: Woojung Huh <Woojung.Huh@microchip.com>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pieter Van Trappen <pieter.van.trappen@cern.ch>,
-	Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH net-next v3 1/5] dt-bindings: net: dsa: microchip: add microchip,pme-active-high flag
-Date: Tue,  6 Aug 2024 15:25:53 +0200
-Message-ID: <20240806132606.1438953-2-vtpieter@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240806132606.1438953-1-vtpieter@gmail.com>
-References: <20240806132606.1438953-1-vtpieter@gmail.com>
+        bh=sy7bUu11FomXNhdiIBOfoEquEd4jJxCHt/44zI6khbw=;
+        b=TRTozWKJrpIeKSWGxUs8U+3SvAG/frfPmO3uZ++LH4/QSsUW39DqRxM8g4HiXQpPGJ
+         gZ1Zbda4saZ+wz9ZYJF2DgK2F21aEWqjhMeizJpGSZw92oti03gYpJWFruXemGVnaQxd
+         Jbv8KsgyvZOMP71gCYfwIujfM9IC2cxwF4zdFZVbRTz/vveoa45yCXCurDv43IgGjy4J
+         ksKSaVcqq/gxF+NebwUMFVKQPxApX01larOFclXRUNymtcT+Bet8ey5TkQmVrH5wA6G7
+         6iuz15JFJln0G1fyhyNbc0uD17n848ZOBDgszL2MQpjoZAf6+OF5taXJoRwY+Bllk5HX
+         k9Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWRFsDZu7jBDA0nH3Ca1jKjVcQpyraaMMVXrAeIJFwCpmL6qrcqmQaFSwor4gHVx6IojQ7fjdZW55YNwHnqSMHZo7mBtDvb7knrBT9oeERErkza9TNZhrgrLTtTcYGH+LeHeVJy+A==
+X-Gm-Message-State: AOJu0Yz/3ffK3OAusHiPuGdwmWwaBMNWCIjdlC0nK7nUFCypr2ICmQZV
+	PGOpdhnffJRQeGupSFyBN+z/U4CAaHLZyoWQ65WFybgGYwWA1kfrJxTJ5lkjds60XaEwHxXuq4b
+	grSE0RhPcFnjvBFpnXyQsj/+0m34=
+X-Google-Smtp-Source: AGHT+IGBSjMtbj8wgs57ayyLG/2RShvUlugBOcI+pSg5bWKr2HkOFIi1oc/8xtVHSEhU0kjtruD71SUpskeXuF/p8rg=
+X-Received: by 2002:a17:90b:274a:b0:2cf:cd53:327d with SMTP id
+ 98e67ed59e1d1-2cff954f8c0mr16406268a91.36.1722950764308; Tue, 06 Aug 2024
+ 06:26:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240806065113.1317-1-thunder.leizhen@huaweicloud.com>
+In-Reply-To: <20240806065113.1317-1-thunder.leizhen@huaweicloud.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Tue, 6 Aug 2024 09:25:53 -0400
+Message-ID: <CAEjxPJ59=rHFovk3scmkhLuiAdu2uinGiua60y0naJ0e95GLmg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] selinux: Fix potential counting error in avc_add_xperms_decision()
+To: thunder.leizhen@huaweicloud.com
+Cc: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Zhen Lei <thunder.leizhen@huawei.com>, 
+	Nick Kralevich <nnk@google.com>, Jeff Vander Stoep <jeffv@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Pieter Van Trappen <pieter.van.trappen@cern.ch>
+On Tue, Aug 6, 2024 at 2:51=E2=80=AFAM <thunder.leizhen@huaweicloud.com> wr=
+ote:
+>
+> From: Zhen Lei <thunder.leizhen@huawei.com>
+>
+> The count increases only when a node is successfully added to
+> the linked list.
+>
+> Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
+> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 
-Add microchip,pme-active-high property to set the PME (Power
-Management Event) pin polarity for Wake on Lan interrupts.
+This looks correct to me but I also notice that the caller is not
+checking or handling the return code for the -ENOMEM situation.
+Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
 
-Note that the polarity is active-low by default.
-
-Signed-off-by: Pieter Van Trappen <pieter.van.trappen@cern.ch>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml b/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-index 52acc15ebcbf..c589ebc2c7be 100644
---- a/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-@@ -51,6 +51,11 @@ properties:
-       Set if the output SYNCLKO clock should be disabled. Do not mix with
-       microchip,synclko-125.
- 
-+  microchip,pme-active-high:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      Indicates if the PME pin polarity is active-high.
-+
-   microchip,io-drive-strength-microamp:
-     description:
-       IO Pad Drive Strength
--- 
-2.43.0
-
+> ---
+>  security/selinux/avc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/security/selinux/avc.c b/security/selinux/avc.c
+> index 32eb67fb3e42c0f..7087cd2b802d8d8 100644
+> --- a/security/selinux/avc.c
+> +++ b/security/selinux/avc.c
+> @@ -330,12 +330,12 @@ static int avc_add_xperms_decision(struct avc_node =
+*node,
+>  {
+>         struct avc_xperms_decision_node *dest_xpd;
+>
+> -       node->ae.xp_node->xp.len++;
+>         dest_xpd =3D avc_xperms_decision_alloc(src->used);
+>         if (!dest_xpd)
+>                 return -ENOMEM;
+>         avc_copy_xperms_decision(&dest_xpd->xpd, src);
+>         list_add(&dest_xpd->xpd_list, &node->ae.xp_node->xpd_head);
+> +       node->ae.xp_node->xp.len++;
+>         return 0;
+>  }
+>
+> --
+> 2.34.1
+>
 
