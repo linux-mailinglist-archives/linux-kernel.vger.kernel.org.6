@@ -1,75 +1,113 @@
-Return-Path: <linux-kernel+bounces-275813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D29948A41
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:38:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 284E9948ABB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02BB91C229D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:38:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D031E281303
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBABE16A92D;
-	Tue,  6 Aug 2024 07:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A494B165F00;
+	Tue,  6 Aug 2024 07:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JCkTvYh+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hB7cv8FQ"
+Received: from mail-m12814.netease.com (mail-m12814.netease.com [103.209.128.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1533B1547DE;
-	Tue,  6 Aug 2024 07:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AFD166F36;
+	Tue,  6 Aug 2024 07:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.209.128.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722929898; cv=none; b=TmP3u/3ZMUp1vYVezVGneVIIKpnyBDbDfMiIPfKWBb5unmyWY3Q5wxwW6CmxBjwL/ny3DPDZNqS4fXk/FPv4yZ3LsJHTI/ejJi5qiL0XhRMDwmWhR8YAZXpEtx28K6k/J+uENoZ7ZwfF9Mo0p6QxRdgFfkcUzKsJz/3Mu+mPRRI=
+	t=1722931021; cv=none; b=tClVIbgISpH7gXQ+Kzj5GYsmPYnGja+cR+ZEux/SxBizye5/sbMjrNhIWcQvU47CCs0jL8mZP5e42ITMGdGqwrGKoE4idbjTwY10Pw9757c4moG//snoUwKsnI39s6hDOvX/l0rqz1eX0qpfGJTxG+4UDHJ4/bTErqVfTY5jVQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722929898; c=relaxed/simple;
-	bh=52a78dRRUlEtuA42foEjlPuvHuJZdiMY70ZGvdQVk1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OzSzKfp84OoExEetG7XHPFDqnEij7KbzbAr+4R4P010UhTl/P9+5YBRJpgd/Gk48cMfWOD2fp2A/zI+ja0O+RVSGvTnB+HgcsDFrbPKWXWSMbWHeMXfqNAK/xIV8t8PBxxHfmODbs55ZA35HA8/6ypjcfCPBxCf1Od34NthWpmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JCkTvYh+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14CB6C32786;
-	Tue,  6 Aug 2024 07:38:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722929897;
-	bh=52a78dRRUlEtuA42foEjlPuvHuJZdiMY70ZGvdQVk1A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JCkTvYh+KdIzbSCjmcXp8B16eP7phOR9/AajzX6KtuSKI1MRQtiXzjTU2HzcDdVVC
-	 AczAUdlqbL7aDwUIzrTuQfA9NXge6GpF55pl2fZVONqgnBBNy+ZxKYGBqwEDZzpaAP
-	 VMtMW6YbGLR1E2noTBPzMgo6lUY15zR6RdVX7wKA=
-Date: Tue, 6 Aug 2024 09:38:09 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: JaeJoon Jung <rgbi3307@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Sasha Levin <levinsasha928@gmail.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, maple-tree@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] lib/htree: Add locking interface to new Hash Tree
-Message-ID: <2024080615-ointment-undertone-9a8e@gregkh>
-References: <20240805100109.14367-1-rgbi3307@gmail.com>
- <2024080635-neglector-isotope-ea98@gregkh>
- <CAHOvCC4-298oO9qmBCyrCdD_NZYK5e+gh+SSLQWuMRFiJxYetA@mail.gmail.com>
+	s=arc-20240116; t=1722931021; c=relaxed/simple;
+	bh=Za7uQ/FdF5TBjfIlUc0XpHWe/Cvyos8PCSjtEIPcZ4M=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=BVjWIS6vxiCH9bAbyiareaX76oPmrZpHpHObSj5eluZXlNL+vfR0OuQMlSfnGXjsbxzE3hl4yWuYtlmwyVaVDQiXFY35MMBFNpfpF37VwNujlN4k6LsYcptPYNSyllSpg0ly4cu+W8JWWiGidoF24+FQGndcj020vhDOX/BMvyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hB7cv8FQ; arc=none smtp.client-ip=103.209.128.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+DKIM-Signature: a=rsa-sha256;
+	b=hB7cv8FQEu9PuezqGIIrz1ErY4ueQCOC7o50WMlAQ4F/2H8dWKdjDacxJpRvIvhlDi90AXg528vCOpFmjWDYQHv4i931JD1urwpTbDZi+tjMnE+2KgHks11H60ED9q4hCFboMRxflkRpBqQWcCMFAZb5fvgsDZowZfa9iRY3v78=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=qUN0fucssUTYDJMPGdCMYXuJJdSvyMs7YM5gSkBeMgM=;
+	h=date:mime-version:subject:message-id:from;
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 55BD9A07E0;
+	Tue,  6 Aug 2024 15:38:40 +0800 (CST)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	kever.yang@rock-chips.com,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	huangtao@rock-chips.com,
+	sugar.zhang@rock-chips.com
+Subject: [PATCH v1] clk: gate: export clk_gate_endisable
+Date: Tue,  6 Aug 2024 15:38:32 +0800
+Message-Id: <20240806073832.13568-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh5KQ1ZISBgeHUtDQhhJHktWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a9126a03b4c03a8kunm55bd9a07e0
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MzY6Iyo4PDI3HxJJNxYSHUke
+	DhlPCiNVSlVKTElJQklCQklKSEtOVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUlOSkk3Bg++
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHOvCC4-298oO9qmBCyrCdD_NZYK5e+gh+SSLQWuMRFiJxYetA@mail.gmail.com>
 
-On Tue, Aug 06, 2024 at 04:32:22PM +0900, JaeJoon Jung wrote:
-> Since I've been working on something called a new Hash Table, it may
-> not be needed in the kernel right now.
+make clk_gate_endisable not static, export API for other use.
 
-We don't review, or accept, changes that are not actually needed in the
-kernel tree as that would be a huge waste of reviewer time and energy
-for no actual benefit.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/clk-gate.c       | 3 ++-
+ include/linux/clk-provider.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-sorry,
+diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
+index 68e585a02fd9..531bb84a5b3e 100644
+--- a/drivers/clk/clk-gate.c
++++ b/drivers/clk/clk-gate.c
+@@ -53,7 +53,7 @@ static inline void clk_gate_writel(struct clk_gate *gate, u32 val)
+  *
+  * So, result is always: enable xor set2dis.
+  */
+-static void clk_gate_endisable(struct clk_hw *hw, int enable)
++void clk_gate_endisable(struct clk_hw *hw, int enable)
+ {
+ 	struct clk_gate *gate = to_clk_gate(hw);
+ 	int set = gate->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
+@@ -87,6 +87,7 @@ static void clk_gate_endisable(struct clk_hw *hw, int enable)
+ 	else
+ 		__release(gate->lock);
+ }
++EXPORT_SYMBOL_GPL(clk_gate_endisable);
+ 
+ static int clk_gate_enable(struct clk_hw *hw)
+ {
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 4a537260f655..db7132e9c057 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -630,6 +630,7 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
+ void clk_unregister_gate(struct clk *clk);
+ void clk_hw_unregister_gate(struct clk_hw *hw);
+ int clk_gate_is_enabled(struct clk_hw *hw);
++void clk_gate_endisable(struct clk_hw *hw, int enable);
+ 
+ struct clk_div_table {
+ 	unsigned int	val;
+-- 
+2.17.1
 
-greg k-h
 
