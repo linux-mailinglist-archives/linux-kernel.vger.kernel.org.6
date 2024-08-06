@@ -1,69 +1,57 @@
-Return-Path: <linux-kernel+bounces-276802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF591949890
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:42:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D46949893
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B9391C2186D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:42:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7204B2297E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8C2155307;
-	Tue,  6 Aug 2024 19:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E258114C5A1;
+	Tue,  6 Aug 2024 19:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hn93Maia"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1tqTmDS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BEF15444E;
-	Tue,  6 Aug 2024 19:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289607EEFD;
+	Tue,  6 Aug 2024 19:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722973362; cv=none; b=HQMYdYx5QV5MGnpDQG6CyhOEaoH8TIbhKMo5CVCY+jRXDkp4u6ZUGKco3pf0X0+D7ksHjRBzaPrjN2oVtXbmdizC8uClPHqIgXZJ+q4q6h5layfy6mgotdmDHy5d8mUa3CH+HxGjtRDcKNyE64ihP+Au3Pw0nhharxKF4Pah7Nw=
+	t=1722973402; cv=none; b=E4tseNBcBIgFWqqpAkjVvMtrPoxBiek47abyGQkroLGJCr5y56bpf0NiIw9F2SZFsq27dJ79r2Q1yJ2a23y0CFgr/iLhWIjYIWnImPY5WvkVkse8g+XrzOLcw6C/uSvRohD8bFiyEG0SC9pJ7Hfw0ESnwPozDqtf8Rys/0DuX1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722973362; c=relaxed/simple;
-	bh=A6wuRUtfgg1q7zJnhSwgRYW1regIAczoPJ9M7ZNTQPw=;
+	s=arc-20240116; t=1722973402; c=relaxed/simple;
+	bh=TLWaPUe957jN+lNsjIkqk2CPkFpWrDGUb/QpOBcEPyo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qSnBmrmmOccVWK7DjqYBnOS6weS8xAyLvhg17syy2OMGW4SQucD44lw+Z6WSWEc9MqWIMKUG3e1g5o6tqqLvXcSbi7aIeFEvbrtaUrk4nrfe+KDaoBlJauKRo5tgQzA1pA9oxZkGTfmXzccFSLzkHwyBlcJWtbYc/Ye6cEC2tu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hn93Maia; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB210C32786;
-	Tue,  6 Aug 2024 19:42:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=RqgxcLu7nBak/FpGoOv8sT17LPCUB8fPsdyYwimepGSWS2Dzuo4PzHe/9wYsQ+uPdl5pSn3qOmNBrM/hU/m8nq5AefmRWBFItYvo2yfm6NPccclAtq5PCf9lxO5qN2p3lfVbX/a06/bkSSweMi77W+Ma2nhTGytITcMM0OuT1Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1tqTmDS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A09F3C32786;
+	Tue,  6 Aug 2024 19:43:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722973361;
-	bh=A6wuRUtfgg1q7zJnhSwgRYW1regIAczoPJ9M7ZNTQPw=;
+	s=k20201202; t=1722973401;
+	bh=TLWaPUe957jN+lNsjIkqk2CPkFpWrDGUb/QpOBcEPyo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hn93MaiaMX8jKd2xmiJiNo+7tzNOOV3BEu6J3Q+G9l8enc8swjm4sTKHw0VrwjUu+
-	 MkQolnpS0D7YlL1/xbQBXfdsiPzT+JyOCkkNCgNz4xnBpGIP7sHJpAlyy13vLoCekC
-	 Lx1JkX7b5TDMsQNXNBVfhIGl/6siwTXMrWtEQWKdzeqYgvXypyaYXVdNm00F5GnmVf
-	 68APEYskHQn3fq17vQYouJuihB8Cn4yE94uaWac/MktSfRoQU5Af6VOmDxOTfM4n5W
-	 fes0NU13Cu4SJA3EgGESo72co35hb5cPZOQ3A4xQ3NhOh4h8IAJdwLR7zGTW+VI1sD
-	 EU4NtdKezNWEA==
-Date: Tue, 6 Aug 2024 12:42:41 -0700
-From: Kees Cook <kees@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Masahiro Yamada <masahiroy@kernel.org>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v3 5/6] objtool/rust: list `noreturn` Rust functions
-Message-ID: <202408061241.855CB28@keescook>
-References: <20240725183325.122827-1-ojeda@kernel.org>
- <20240725183325.122827-6-ojeda@kernel.org>
+	b=D1tqTmDSx5jm2CRMlHUtYdMggpkfgB75emkb/YcJwGg5IZqk+/xsKfIVq2E2Ht4XD
+	 hV40PFHaJ1+TFH+DbAM9OQ4PPVZ7guvOzBNDjtKEKDVYal3EEcs9HQ5B6FIMtc5fyF
+	 NjX4aJnI8JWrMXVHtXICNYLiHhD4grBeBqTDxB0BUzhsgh4sjt5tsr26j7EcGL+KeJ
+	 8Z4iHFAGDbR0JzEuhZnwv9WvKIVnygtjsPyj1dBMoWtYN/MBoDoWMFgLKugukFDKHe
+	 +fyVUp4zeOy778HEAH5GvalyGkxI9nOoxP7o4ILluLkTvTShDhMRD8GpVmsobTVx6c
+	 yM44lM2A4jqaQ==
+Date: Tue, 6 Aug 2024 12:43:21 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v3 14/14] xfs: Enable file data forcealign feature
+Message-ID: <20240806194321.GO623936@frogsfrogsfrogs>
+References: <20240801163057.3981192-1-john.g.garry@oracle.com>
+ <20240801163057.3981192-15-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,57 +60,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240725183325.122827-6-ojeda@kernel.org>
+In-Reply-To: <20240801163057.3981192-15-john.g.garry@oracle.com>
 
-On Thu, Jul 25, 2024 at 08:33:22PM +0200, Miguel Ojeda wrote:
-> Rust functions may be `noreturn` (i.e. diverging) by returning the
-> "never" type, `!`, e.g.
+On Thu, Aug 01, 2024 at 04:30:57PM +0000, John Garry wrote:
+> From: "Darrick J. Wong" <djwong@kernel.org>
 > 
->     fn f() -> ! {
->         loop {}
->     }
+> Enable this feature.
 > 
-> Thus list the known `noreturn` functions to avoid such warnings.
-> 
-> Without this, `objtool` would complain if enabled for Rust, e.g.:
-> 
->     rust/core.o: warning: objtool:
->     _R...9panic_fmt() falls through to next function _R...18panic_nounwind_fmt()
-> 
->     rust/alloc.o: warning: objtool:
->     .text: unexpected end of section
-> 
-> In order to do so, we cannot match symbols' names exactly, for two
-> reasons:
-> 
->   - Rust mangling scheme [1] contains disambiguators [2] which we
->     cannot predict (e.g. they may vary depending on the compiler version).
-> 
->     One possibility to solve this would be to parse v0 and ignore/zero
->     those before comparison.
-> 
->   - Some of the diverging functions come from `core`, i.e. the Rust
->     standard library, which may change with each compiler version
->     since they are implementation details (e.g. `panic_internals`).
-> 
-> Thus, to workaround both issues, only part of the symbols are matched,
-> instead of using the `NORETURN` macro in `noreturns.h`.
-> 
-> Ideally, just like for the C side, we should have a better solution. For
-> instance, the compiler could give us the list via something like:
-> 
->     $ rustc --emit=noreturns ...
+> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 
-Yeah, having added noreturns to objtool myself a few times, it'd be nice
-to have a way to make these manual lists go away some day.
+You really ought to add your own Reviewed-by tag here...
 
+--D
+
+> ---
+>  fs/xfs/libxfs/xfs_format.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Link: https://rust-lang.github.io/rfcs/2603-rust-symbol-name-mangling-v0.html [1]
-> Link: https://doc.rust-lang.org/rustc/symbol-mangling/v0.html#disambiguator [2]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-
-Reviewed-by: Kees Cook <kees@kernel.org>
-
--- 
-Kees Cook
+> diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
+> index 95f5259c4255..04c6cbc943c2 100644
+> --- a/fs/xfs/libxfs/xfs_format.h
+> +++ b/fs/xfs/libxfs/xfs_format.h
+> @@ -357,7 +357,8 @@ xfs_sb_has_compat_feature(
+>  		(XFS_SB_FEAT_RO_COMPAT_FINOBT | \
+>  		 XFS_SB_FEAT_RO_COMPAT_RMAPBT | \
+>  		 XFS_SB_FEAT_RO_COMPAT_REFLINK| \
+> -		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT)
+> +		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT | \
+> +		 XFS_SB_FEAT_RO_COMPAT_FORCEALIGN)
+>  #define XFS_SB_FEAT_RO_COMPAT_UNKNOWN	~XFS_SB_FEAT_RO_COMPAT_ALL
+>  static inline bool
+>  xfs_sb_has_ro_compat_feature(
+> -- 
+> 2.31.1
+> 
+> 
 
