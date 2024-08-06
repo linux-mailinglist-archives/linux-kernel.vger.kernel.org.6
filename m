@@ -1,182 +1,166 @@
-Return-Path: <linux-kernel+bounces-276892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E87DF9499AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:56:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBF99499B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F791F236D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:56:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8866328548A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A8515ECE7;
-	Tue,  6 Aug 2024 20:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A801B15F31D;
+	Tue,  6 Aug 2024 20:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SKj/n/r4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZPLbccxC"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDA915573A
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A06E15B54A
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722977808; cv=none; b=AUrHry39N0V4r/fcJ0imNHtLd2gR5Sr40cs33q4L4NtWtJ1NsR7cKjPW5CTMLjxPwHRueZ2eoOQtNShvutd3wt8JwpgbKKUg7iLLA7ZFl5zz4c/Y2LzCqP3uy8A9FBjJGXaRza5PATbQSE0LmQtT4UJK38cqT2qJaw2q1shqd7E=
+	t=1722977917; cv=none; b=kEWjH/hqc5CfKx4MUjEazY65VbGpgghGScGRYnG2+voxSg0u3/htw3HteG5P6sInUT/0xXJFEtBcE9CCrs9EeTb60fwBh5QsaHCxBjb4whfk+aDyWVp4Kps4gQbzY9rKIZtLpPuW/+PrWOddWfNJ+x7boQOLYrNqPx6ae/fWzGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722977808; c=relaxed/simple;
-	bh=pGi/uxcZi3YrvGaOOaaM8bWfjMaJ4H2RPHu7rzO5+MY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bvD3YJp3lLYKAJOGRnU9pmI9Oz/2GecN+qDlVarCtsfwVMtFzDb88+ppdboLngkMlolC9mbLDvmGAuC+Oi6RgB+GHG4PzILK8MmoG22RvwYNoghKch0M+MrvUmLGEs1sG1IM2uhGwszeQB7z03VRGbkxXra5LwjQqh4H3zs/45w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SKj/n/r4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722977805;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qe6VBZJRiQp4qF9WjYWrAkKgoBmgqYQ+VXQlPMeplEU=;
-	b=SKj/n/r49cyjdTh9mb62cNYdxSxaRVq1rajAZbZIRk001qiZE3p1GbPda19NC5vdoLY0Xi
-	yNd5xrN+pfWe8TlxFNOEKUdi23iK24bvmJAvzDNIC8usAZ25RqESozjpEjOMvuQKG1C4CJ
-	JyMxsdVdyVnPsHkNgbW/ivzZ12q1bHc=
-Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com
- [209.85.210.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-80-PUfs89QUPZKmAqcCnZgO4w-1; Tue, 06 Aug 2024 16:56:44 -0400
-X-MC-Unique: PUfs89QUPZKmAqcCnZgO4w-1
-Received: by mail-ot1-f69.google.com with SMTP id 46e09a7af769-7092e450d23so1390466a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 13:56:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722977803; x=1723582603;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1722977917; c=relaxed/simple;
+	bh=nZfAx0s+w4iQejbkZTuFHn4biuzda0IB96F9dYK6Csc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FXvOgyp8IZh3k9qkPrv6AL3Kzer5orNhLxHCIziyjtYlMvGN/5HFPnI4JkRpckJV7aladHVAnCBzvQN63Lv8tbbjS7SOaXHIlcPxdU8KjzYD4oNIHv9V86XbiVMoOjgfHQdiE1ieU0qJtY1/QDw3JVjuLuHWBhHTyEFfF0tjkdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZPLbccxC; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5a15692b6f6so1547036a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 13:58:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1722977914; x=1723582714; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Qe6VBZJRiQp4qF9WjYWrAkKgoBmgqYQ+VXQlPMeplEU=;
-        b=e9bkh1q1cPeBvrwpCdLEyRCJD52oIBoDhxG2AkraHkWNxt0zU7gNrtfCaC8HSOWO8F
-         FiuB84nZQboY5WuVmvuPRLvDxLFgXexk6KjEGruzYnQSkY2Sc3PhyikSrNx/Eu/3PHSO
-         kUhjy4ss/QXrIW373UWWh4B+bCWXQeRibWsZUWTH9Jtg3i/NJ42sRBEccETykuyUs0Cc
-         AL6L/yg5eCkVMFhVmxD3Z8PYk8wl+snf6f00AGsn80Z5HibBqKezfPCb+Obdnmy0h/oS
-         lf3Y4szL1iOBahnO6zGrjoPn72ModqedwKv8erpWbJmpW9lcf9ixWhi/Nsg3YYYwSGpN
-         P7lw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIjK9BC2De34FDGhEz987F/8G1eAGPy9JaBC/YiMYZatblel1EwGzI+wvHJvcQZ+4WfdZCaUFPxteWe/bRTKopEW1IxaSZy5PZsIzK
-X-Gm-Message-State: AOJu0Yy+Yao8+Yrt02pOkvexTTV2qxhv7wrnoUoGigX403Akqs469UAj
-	yJLuN4oFNCR1LjvSSH95A/vIqRRkvXvHcjik2UIcKiU7d9R1HZlGMZHqI1KmO6zFJRm9LTgnvxV
-	KtydX//5xM/hA2r9AB7LTXLtx4lhvfjcBhoyl+VXz/yDu2VQzKhd5N6gkYz84tg==
-X-Received: by 2002:a05:6358:5906:b0:1af:4626:7e42 with SMTP id e5c5f4694b2df-1af46267f7fmr1799887955d.25.1722977803166;
-        Tue, 06 Aug 2024 13:56:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEoGX6vrc5VZiBrLXAafPPUxZlhxnFoJm9EJsMe8SfamL2QQezK4MKx7rVKRflXSY3iRwu4Eg==
-X-Received: by 2002:a05:6358:5906:b0:1af:4626:7e42 with SMTP id e5c5f4694b2df-1af46267f7fmr1799885155d.25.1722977802724;
-        Tue, 06 Aug 2024 13:56:42 -0700 (PDT)
-Received: from fedora.redhat.com ([71.217.44.209])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c864c87sm50208546d6.115.2024.08.06.13.56.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 13:56:42 -0700 (PDT)
-Date: Tue, 6 Aug 2024 16:56:40 -0400
-From: "John B. Wyatt IV" <jwyatt@redhat.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, linux-pm@vger.kernel.org,
-	Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, John Kacur <jkacur@redhat.com>,
-	Tomas Glozar <tglozar@redhat.com>, Arnaldo Melo <acme@redhat.com>,
-	"John B. Wyatt IV" <sageofredondo@gmail.com>
-Subject: Re: [PATCH 0/2][RFC] Add SWIG Bindings to libcpupower
-Message-ID: <ZrKOCLYvYklsPg1K@fedora.redhat.com>
-References: <20240724221122.54601-1-jwyatt@redhat.com>
- <1f5c24b6-f3ee-4863-8b7a-49344a550206@linuxfoundation.org>
- <Zqv9BOjxLAgyNP5B@hatbackup>
- <2024080405-roundish-casket-2474@gregkh>
+        bh=8xvQ8q70+jopmdmtVnSXHJgxWGZAdLdmRhj5/9vncUA=;
+        b=ZPLbccxC/nM00JL0ImqO6bB77shnm6JI5c5IVZ2BJyJ63HhAmqH80leytbCMdhoDGV
+         SQT18Xx17Fj5TM7QFcWezOksKYLW48bL7wke5MqEgcCUmuf3hK5/Yq5oyfCZftKFB7rl
+         HUtCrVmMcRoVMYeTXRFUkgoKLpGRDhyvUxlu8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722977914; x=1723582714;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8xvQ8q70+jopmdmtVnSXHJgxWGZAdLdmRhj5/9vncUA=;
+        b=Pl5B7zhV3tx02s0VdeO9Zfa88ly6B6d4t1BwB8RWJ2ct3bLb7zMkFPjNCnTdW0q7DK
+         GD4rNfGXmqLNH+suYue7gRtPb9i4uiMifETnbUPASGSkJ0LOO7c2kxmaBdyCk/5RJtht
+         Y14YTMqljwZWMTru+/BBMMQ67JTVoc24f7qyvXF5y0yCpPCq0HNsL5Y7OFj53v7moNNR
+         mPKqA+xGN4MXetEu/jUJdXfY6KSFG17+ecsTAs0tkfITQdt9lOGDBTR8oIYvm3dNMegp
+         0+S9wjxmhRtGOD+rEx/HvSup7zovh+2/vNfr6Q3Ch1ZgVLZRcqhEJGd4Il6qX2mckEzj
+         gmmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVj8WDbg79Q4xG6JnDUbTCIkps/Pn3mB4c94q9qkaTGNinV317M3w8nmq25NKJKj8yvfSyZeHsIl37FTedf7qQ4yWsUWLw1Az5C2+vT
+X-Gm-Message-State: AOJu0YxKY3/R6KIKjtQlt1FwDkjVaNwFg8VooF8Lh2XoU0eC+hrn0zBj
+	ntBO3xjQOjxRxqiRmWn1H0kZ2Dob5d/XdAmprqF86fn4IlHbYsJUb9zJeQSy9vpEINJmrWFQx0J
+	X8MMQnK3RdKFfqbZ7bUZTVmNw8VkKb0fs7io3
+X-Google-Smtp-Source: AGHT+IEJSf52pY9j4pFPa4o6S67GFeLCHb6GBBPZf0aUJS5SUKeqMkhnpPp+zqohQkLtvrPq77O/VHzn/qsa/j3fBX0=
+X-Received: by 2002:aa7:c2c5:0:b0:5bb:9aff:3e27 with SMTP id
+ 4fb4d7f45d1cf-5bb9aff3f07mr1686710a12.37.1722977914233; Tue, 06 Aug 2024
+ 13:58:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024080405-roundish-casket-2474@gregkh>
+References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
+ <20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org> <ZqyxS8spZ-ohsP3R@wunner.de>
+ <20240805133555.GC7274@thinkpad> <ZrHITXLkKrDbQKQp@wunner.de>
+ <20240806124107.GB2968@thinkpad> <ZrIe70Z7uFven8HH@wunner.de> <20240806143918.GC2968@thinkpad>
+In-Reply-To: <20240806143918.GC2968@thinkpad>
+From: Hsin-Yi Wang <hsinyi@chromium.org>
+Date: Tue, 6 Aug 2024 13:58:07 -0700
+Message-ID: <CAJMQK-g6fM-MODqniNFMZ4hg28zE6eCeYzwZbNjy5_HtR3c9DA@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all
+ Devicetree based platforms
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	mika.westerberg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Adding Arnaldo to the CC list.
+On Tue, Aug 6, 2024 at 7:39=E2=80=AFAM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Tue, Aug 06, 2024 at 03:02:39PM +0200, Lukas Wunner wrote:
+> > On Tue, Aug 06, 2024 at 06:11:07PM +0530, Manivannan Sadhasivam wrote:
+> > > On Tue, Aug 06, 2024 at 08:53:01AM +0200, Lukas Wunner wrote:
+> > > > AFAICS we always program the device to go to D3hot and the platform
+> > > > then cuts power, thereby putting it into D3cold.  So D3hot is never
+> > > > skipped.  See __pci_set_power_state():
+> > > >
+> > > >   if (state =3D=3D PCI_D3cold) {
+> > > >           /*
+> > > >            * To put the device in D3cold, put it into D3hot in the =
+native
+> > > >            * way, then put it into D3cold using platform ops.
+> > > >            */
+> > > >           error =3D pci_set_low_power_state(dev, PCI_D3hot, locked)=
+;
+> > > >
+> > > >           if (pci_platform_power_transition(dev, PCI_D3cold))
+> > > >                   return error;
+> > > >
+> > >
+> > > This is applicable only to pci_set_power_state(), but AFAIK PCIe spec
+> > > doesn't mandate switching to D3Hot for entering D3Cold.
+> >
+> > Per PCI Bus Power Management Interface Specification r1.2 sec 5.5 fig 5=
+-1,
+> > the only supported state transition to D3cold is from D3hot.
+> >
+> > Per PCIe r6.2 sec 5.2, "PM is compatible with the PCI Bus Power Managem=
+ent
+> > Interface Specification".
+> >
+> > Granted, PCI-PM is an ancient spec, so I think anyone can be forgiven
+> > for not knowing its intricacies off-the-cuff. :)
+> >
+>
+> Ah, the grand old PCI-PM... I don't remember the last time I looked into =
+it :)
+>
+> >
+> > > So the PCIe host controller drivers (especically non-ACPI platforms)
+> > > may just send PME_Turn_Off followed by removing the slot power
+> > > (which again is not controlled by pci_set_power_state())
+> > > as there are no non-ACPI related hooks as of now.
+> >
+> > Ideally, devicetree-based platforms should be brought into the
+> > platform_pci_*() fold to align them with ACPI and get common
+> > behavior across all platforms.
+> >
+>
+> Yeah, that would be the ideal case. Unfortunately, there is no ideal grou=
+nd for
+> DT :/ We do not even have the supplies populated properly. But with the a=
+dvent
+> of power sequencing framework, I think this can be fixed.
+>
 
-On Sun, Aug 04, 2024 at 10:54:10AM +0200, Greg Kroah-Hartman wrote:
-> On Thu, Aug 01, 2024 at 05:24:20PM -0400, John B. Wyatt IV wrote:
-> > > On 7/24/24 16:11, John B. Wyatt IV wrote:
-> > > > SWIG is a tool packaged in Fedora and other distros that can generate
-> > > > bindings from C and C++ code for several languages including Python,
-> > > > Perl, and Go. We at Red Hat are interested in adding binding support to
-> > > > libcpupower so Python tools like rteval or tuned can make easy use of it.
-> > > > 
-> > > 
-> > > Can you elaborate on the use-case and what rteval currently does and
-> > > how it could benefit from using libcpupower with the bindings?
-> > 
-> > rteval is a Python program used to measure realtime performance. We wanted to
-> > test the effect of enabling some levels of idle-stat to see how it affects
-> > latency, and didn't want to reinvent the wheel. We thought that the Python
-> > bindings could be useful to other people as well who might want to call
-> > cpupower too from Python. I did some testing and was able to achieve this with
-> > SWIG. We sent the patchset to see what folks thought about this.
-> 
-> Is this going to require a built-time dependency on SWIG?  If not, when
-> would it be run
+Looking in acpi_pci_bridge_d3(), it has several checkings about
+whether d3 is supported, including reading power_manageable flag
+(acpi_device_power_manageable) and reading the root port property.
+For DT, does it make sense to have a chosen property about this?
 
-It is optional, and based on my conversation with Shuah; the bindings will be
-in a seperate makefile. It would be ran after running cpupower's
-makefile, seperately. (But one can call the other.)
-
-> and who will be in charge of running it and updating the bindings?
-
-That would be myself. If I no longer wish to continue I would reassign it to
-another person here on the real-time team at Red Hat. John Kacur (whom I am
-working with on rteval) is fine with being listed as a backup contact.
-
-The bindings would need to be updated every time one of the functions or data
-structures listed in the .i file changes. But it can be as simple as copying the
-changed declaration from the header file to the .i file to resolve.
-
-> And finally, why do we need these at all?
-
-To provide bindings for Python programs like rteval to easily interface with
-libcpupower. It is very common for userspace programs to include bindings to
-scripting languages.
-
-> You are saying these are new
-> tests that external tools will be using, but why, if external tools are
-> required to run them, are they needed in the kernel tree at all?  Why
-> isn't this just another external test-suite that people who care about
-> measuring this type of thing going to just run on their own if desired?
-
-SWIG the tool requires the .o files compiled from libcpupower to generate
-bindings. Since we need these artifacts from a packaging and usability perspective
-it makes sense to include the bindings source code along in a seperate directory
-with the cpupower source code to generate the builds for them at the same time.
-The source code is: the .i definitions file, any future Python wrapper helpers
-around the bindings needed by SWIG, and the documentation.
-
-Why SWIG? It was chosen for this project because of:
-
-1) Many Python bindings generators are strickly Apache2 or GPL v3 licensed; and
-they may inject code into the bindings binary that will create a license conflict
-with the GPL v2. Swig was far more clear about the license status of the
-generated bindings. As described above:
-https://lore.kernel.org/linux-pm/1f5c24b6-f3ee-4863-8b7a-49344a550206@linuxfoundation.org/T/#mb7170232fb429fc242bb45c8d3d4d5ed47f0c59f
-
-2) It's extensive documentation. This is the Python section:
-https://www.swig.org/Doc4.2/Python.html#Python
-
-3) Support: SWIG has been around since 1996 and had a release 5 months ago. It's
-length of time and the acitvity in it's community makes it unlikely SWIG will
-lose support by it's developers anytime soon.
-
-4) This RFC demonstrates how quickly and with little work you can generate
-bindings for an existing C project with no code changes to that project. :-)
-There were issues getting other Python bindings generators to work as
-described in their documentation.
-
--- 
-Sincerely,
-John Wyatt
-Software Engineer, Core Kernel
-Red Hat
-
+> Regarding your comment on patch 3/4, we already have the sysfs attribute =
+to
+> control whether the device can be put into D3Cold or not and that is dire=
+ctly
+> coming from userspace. So there is no guarantee to assume that D3Hot supp=
+ort is
+> considered.
+>
+> - Mani
+>
+> --
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
 
