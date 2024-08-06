@@ -1,177 +1,283 @@
-Return-Path: <linux-kernel+bounces-276714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2BD194975F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:12:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E91E794974E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 576D128545C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:12:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A30C0284D51
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B26158DD8;
-	Tue,  6 Aug 2024 18:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C25770FD;
+	Tue,  6 Aug 2024 18:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="erkTNNf5"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FWZZqhb/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4F679B87;
-	Tue,  6 Aug 2024 18:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A70481D5;
+	Tue,  6 Aug 2024 18:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722967884; cv=none; b=VD5uy+yjCb8Fi6r+e8x2rV3ItHf0y42Zhc3yR/X6klPcJKb1GSdVcT38P285s/6lxLn/2B6RuFAL0zWwbO1UVO8FuAlTIeI2ZgsVaigRUgrLAXWMfSCi98MBi7x2L7H09rx46ynaCPLpWqFH+sXV7SFj7NuNkcihNF9xPMywZ9k=
+	t=1722967865; cv=none; b=IELFzdLVdtE3zUEtF+6HsBHlhtx8Ug2xbv8qgAlo8i7byKwcfX9wvurvq4KIerzxGBbyjUoth2vdgmsq6ugAUMG8vBm/1iJlVkdImlBwiLORkH+xysAKK/dygn8BjGHeXGuwSWMFhW8Q6rs3oOsUfjeAesD8FesG3K5+pwPmNaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722967884; c=relaxed/simple;
-	bh=q9QLkZ/H/j6QTqNueNb0kSZDd/RQJbs+z7t4FIClwzo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VS9Gq1xKpSmAZ1q7iRX0lIezHfJ21NZzRum5Q7EFteUOxyDG6voVtEMb7GuJgNKRgk4y5Zc2YJ5D/KpuyinKHVrc/Yo9eSZgChCQ1b0cmAvEc7KBl+NEJZ86Erk0Xgme+MaJd/BsLVSajxyZFRxO/rfzVlx3uHWxIXNw2IsPoDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=erkTNNf5; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cd5e3c27c5so651247a91.3;
-        Tue, 06 Aug 2024 11:11:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722967882; x=1723572682; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3VrsPTsD55P11qoYiWXSWqA/RANzLdJrHm5M8EK/YZ0=;
-        b=erkTNNf5e3OPpMpZByd0s44hWUWBs0Nrg0Uay5xKL+I01ZMC7pcD2hZZvvTvE74G/y
-         1ZOcvti4WXLVYagKJIkCweUOpeY/B+6ry6BbW1gC/4jdG9mtZUoaJOpGx59Y30B2cu+C
-         ldSeI+Oc3Lzl3hUq6xm4egwZBk1F3tHXBpAdF5UXR2cMHZbGSgmEJy2NbD3xHpm3U1vg
-         EgSkAYmr+HT4Dc4vp1Q58j6yMLt8Tenc0PUaUnPYc6NL5r8IPd8AT3OS8OWDIAzQCJ/I
-         T9qg8nnLU4BgbBX7LQ4RAkbRx0/hsiv4dGJAxgCA1Wo/0RGLxQLylEdk8owXlrUkDCqj
-         NSuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722967882; x=1723572682;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3VrsPTsD55P11qoYiWXSWqA/RANzLdJrHm5M8EK/YZ0=;
-        b=sAZJbX5oCTP3tpbYjclzRboERdeGB0d69HczsWyID0J3EkNrT5oAmV8xDCvN5iN9fi
-         CUr30Dku+2TWL6jWMFlZGVTktlLRUt9phb2wZDqB+Uf7H1Qpih1j6GzKqhsls7Jn7PrV
-         N68VHKfb776Jq5glctCKVmSyMWxTwdO3z6sWuOHvm/kmA12ZpXHTjKnkhjtw9oqA7y0W
-         GPBo0FzQRbSXlcdsDYsOMZfvCf+sUJ7hQsciBSEINscTkjnrDW9z7MEAC0OgQiaeGYl0
-         20BPfy2idGGf2/85vJVLWeqQUdCMNYDJQ3Mn3zlyRWqwm5yM7+ahnOViTAyfGJjDFjXE
-         mMuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUC0/6cXp4EHCoVJOpMNED76iggL8L0k3W+pYsrVKMRIqsO35H9S3EwXgV7sw0+NA8ulEL+9A9/1QYZndc=@vger.kernel.org, AJvYcCUFWyJZIXStBnV5P+btixTbVf04GI0j3LmkjsfUDxZ9hO9urKLxlfAdam7IJgebuGVyKuNsaqua@vger.kernel.org, AJvYcCV8JDqgKHPvTl0AOu2yetfrPcqYWmWJL1t7JjHjbmJufqpGGiEo2qoMnklA5VFcSvZI9wwI7sMPg+HotG3GSi1/0qhgIsdg@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywel59CIy1khLlwLAvlaE9g6KtzyU+8OQJYB1ZR6tMz2Ki/ZdKJ
-	UMAh9Ewsz2nZVHG8OtI4M9xnHorP8WM2Fj1W3mWa6FFVNmmSIOHC
-X-Google-Smtp-Source: AGHT+IGiT+hmqoEULYz2BBGUi4Gw+UHaG5Qkj+LXdSF6TXcbaZb0t8t/rendJeJxdT7efNmVye4TAg==
-X-Received: by 2002:a17:90b:4016:b0:2c8:8a5:c1b9 with SMTP id 98e67ed59e1d1-2cff94143f4mr15769258a91.13.1722967881560;
-        Tue, 06 Aug 2024 11:11:21 -0700 (PDT)
-Received: from tahera-OptiPlex-5000.tail3bf47f.ts.net ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc45b51esm12829504a91.32.2024.08.06.11.11.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 11:11:21 -0700 (PDT)
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: outreachy@lists.linux.dev
-Cc: mic@digikod.net,
-	gnoack@google.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bjorn3_gh@protonmail.com,
-	jannh@google.com,
-	netdev@vger.kernel.org,
-	Tahera Fahimi <fahimitahera@gmail.com>
-Subject: [PATCH v2 4/4] Landlock: Document LANDLOCK_SCOPED_SIGNAL
-Date: Tue,  6 Aug 2024 12:10:43 -0600
-Message-Id: <e7d324cc4c256f8574b444c0c4c2899c78ed0c16.1722966592.git.fahimitahera@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1722966592.git.fahimitahera@gmail.com>
-References: <cover.1722966592.git.fahimitahera@gmail.com>
+	s=arc-20240116; t=1722967865; c=relaxed/simple;
+	bh=3di6R+nkCndRgrAqvkZqbc0TKP4ULxAxRH2e/8MBJCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h0c+SgQwENn5Wp5I/ynNzbeSMnJ8H5kbFZcdqy/1aSKFjCShXMpD5MI6dUHQzi9SmluyPiP+l+IyR2v1HUwieTpleTSiE2UIbO0n4Jz3QIXGm4nbZxK9d+HTMGgTLI5sosYGIRY9lSyeNvEFgs5e02qz9zwtTeYSPOoGBDoaTJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FWZZqhb/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C4A0C32786;
+	Tue,  6 Aug 2024 18:11:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722967864;
+	bh=3di6R+nkCndRgrAqvkZqbc0TKP4ULxAxRH2e/8MBJCg=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=FWZZqhb//UQU1wHXRAjXaAsb+dT05/gACCIhSUpcMLDrhC6KmP+ixHxYgjnfn4Tpa
+	 NXd3X2/VapefKueUsoXM1AoPBBm4oCGVI2+d148Kl4YAdF/VC0anWVlZ778QBgwkri
+	 HOBMsTG4NCsC9jFhtjL8GOh3pgYjxvaltE9eZ16RtzQYTlwVoySvqsuYQas/u54TwK
+	 bEYkzBkAv0B3qZjeLHvOQk9LaZqhngbWJDLyc+L8eL0XIEz9IONQZbWKfwQTHYb0Dv
+	 G5duhkqehx/i6LZC5lv1VC7E43ykn+MEWcIupzkkx1OJ3WltnWYNfdBXbIWBjiJhBZ
+	 l33kkuahnEZUA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 33EABCE0A72; Tue,  6 Aug 2024 11:10:59 -0700 (PDT)
+Date: Tue, 6 Aug 2024 11:10:59 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, rcu@vger.kernel.org
+Subject: Re: [PATCH] refscale: Constify struct ref_scale_ops
+Message-ID: <86dbcaa7-db16-4a90-9022-eb7b6e736ed7@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <46cd762aeef493d8655e8a053bfd591f849d27ec.1722951006.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <46cd762aeef493d8655e8a053bfd591f849d27ec.1722951006.git.christophe.jaillet@wanadoo.fr>
 
-Improving Landlock ABI version 6 to support signal scoping
-with LANDLOCK_SCOPED_SIGNAL.
+On Tue, Aug 06, 2024 at 03:30:16PM +0200, Christophe JAILLET wrote:
+> 'struct ref_scale_ops' are not modified in these drivers.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>   34231	   4167	    736	  39134	   98de	kernel/rcu/refscale.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>   35175	   3239	    736	  39150	   98ee	kernel/rcu/refscale.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested-only.
 
-Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
----
- Documentation/userspace-api/landlock.rst | 27 ++++++++++++++----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+Tested-by: Paul E. McKenney <paulmck@kernel.org>
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 01bd62dc6bb1..1923abfd2007 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -8,7 +8,7 @@ Landlock: unprivileged access control
- =====================================
- 
- :Author: Mickaël Salaün
--:Date: July 2024
-+:Date: August 2024
- 
- The goal of Landlock is to enable to restrict ambient rights (e.g. global
- filesystem or network access) for a set of processes.  Because Landlock
-@@ -82,7 +82,8 @@ to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_NET_BIND_TCP |
-             LANDLOCK_ACCESS_NET_CONNECT_TCP,
-         .scoped =
--            LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET,
-+            LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET |
-+            LANDLOCK_SCOPED_SIGNAL,
-     };
- 
- Because we may not know on which kernel version an application will be
-@@ -123,7 +124,8 @@ version, and only use the available subset of access rights:
-         ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
-     case 5:
-         /* Removes LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET for ABI < 6 */
--        ruleset_attr.scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
-+        ruleset_attr.scoped &= ~(LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET |
-+                                 LANDLOCK_SCOPED_SIGNAL);
-     }
- 
- This enables to create an inclusive ruleset that will contain our rules.
-@@ -319,11 +321,14 @@ interactions between sandboxes. Each Landlock domain can be explicitly scoped
- for a set of actions by specifying it on a ruleset. For example, if a sandboxed
- process should not be able to :manpage:`connect(2)` to a non-sandboxed process
- through abstract :manpage:`unix(7)` sockets, we can specify such restriction
--with ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``.
-+with ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``. Moreover, if a sandboxed process
-+should not be able to send a signal to a non-sandboxed process, we can specify
-+this restriction with ``LANDLOCK_SCOPED_SIGNAL``.
- 
--A sandboxed process can connect to a non-sandboxed process when its domain is
--not scoped. If a process's domain is scoped, it can only connect to processes in
--the same scoped domain.
-+A sandboxed process can access to a non-sandboxed process when its domain is
-+not scoped. If a process's domain is scoped, it can only access to processes in
-+the same scoped domain. For example, If a process is scoped to send signal to
-+other processes, it can only send signals to processes in the same scoped domain.
- 
- IPC scoping does not support Landlock rules, so if a domain is scoped, no rules
- can be added to allow accessing to a resource outside of the scoped domain.
-@@ -563,12 +568,12 @@ earlier ABI.
- Starting with the Landlock ABI version 5, it is possible to restrict the use of
- :manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right.
- 
--Abstract Unix sockets Restriction  (ABI < 6)
----------------------------------------------
-+Abstract Unix sockets and Signal Restriction  (ABI < 6)
-+-------------------------------------------------------
- 
- With ABI version 6, it is possible to restrict connection to an abstract Unix socket
--through ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``, thanks to the ``scoped`` ruleset
--attribute.
-+through ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET`` and sending signal through
-+``LANDLOCK_SCOPED_SIGNAL``, thanks to the ``scoped`` ruleset attribute.
- 
- .. _kernel_support:
- 
--- 
-2.34.1
-
+> ---
+>  kernel/rcu/refscale.c | 42 +++++++++++++++++++++---------------------
+>  1 file changed, 21 insertions(+), 21 deletions(-)
+> 
+> diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
+> index cfec0648e141..0db9db73f57f 100644
+> --- a/kernel/rcu/refscale.c
+> +++ b/kernel/rcu/refscale.c
+> @@ -135,7 +135,7 @@ struct ref_scale_ops {
+>  	const char *name;
+>  };
+>  
+> -static struct ref_scale_ops *cur_ops;
+> +static const struct ref_scale_ops *cur_ops;
+>  
+>  static void un_delay(const int udl, const int ndl)
+>  {
+> @@ -171,7 +171,7 @@ static bool rcu_sync_scale_init(void)
+>  	return true;
+>  }
+>  
+> -static struct ref_scale_ops rcu_ops = {
+> +static const struct ref_scale_ops rcu_ops = {
+>  	.init		= rcu_sync_scale_init,
+>  	.readsection	= ref_rcu_read_section,
+>  	.delaysection	= ref_rcu_delay_section,
+> @@ -205,7 +205,7 @@ static void srcu_ref_scale_delay_section(const int nloops, const int udl, const
+>  	}
+>  }
+>  
+> -static struct ref_scale_ops srcu_ops = {
+> +static const struct ref_scale_ops srcu_ops = {
+>  	.init		= rcu_sync_scale_init,
+>  	.readsection	= srcu_ref_scale_read_section,
+>  	.delaysection	= srcu_ref_scale_delay_section,
+> @@ -232,7 +232,7 @@ static void rcu_tasks_ref_scale_delay_section(const int nloops, const int udl, c
+>  		un_delay(udl, ndl);
+>  }
+>  
+> -static struct ref_scale_ops rcu_tasks_ops = {
+> +static const struct ref_scale_ops rcu_tasks_ops = {
+>  	.init		= rcu_sync_scale_init,
+>  	.readsection	= rcu_tasks_ref_scale_read_section,
+>  	.delaysection	= rcu_tasks_ref_scale_delay_section,
+> @@ -271,7 +271,7 @@ static void rcu_trace_ref_scale_delay_section(const int nloops, const int udl, c
+>  	}
+>  }
+>  
+> -static struct ref_scale_ops rcu_trace_ops = {
+> +static const struct ref_scale_ops rcu_trace_ops = {
+>  	.init		= rcu_sync_scale_init,
+>  	.readsection	= rcu_trace_ref_scale_read_section,
+>  	.delaysection	= rcu_trace_ref_scale_delay_section,
+> @@ -310,7 +310,7 @@ static void ref_refcnt_delay_section(const int nloops, const int udl, const int
+>  	}
+>  }
+>  
+> -static struct ref_scale_ops refcnt_ops = {
+> +static const struct ref_scale_ops refcnt_ops = {
+>  	.init		= rcu_sync_scale_init,
+>  	.readsection	= ref_refcnt_section,
+>  	.delaysection	= ref_refcnt_delay_section,
+> @@ -347,7 +347,7 @@ static void ref_rwlock_delay_section(const int nloops, const int udl, const int
+>  	}
+>  }
+>  
+> -static struct ref_scale_ops rwlock_ops = {
+> +static const struct ref_scale_ops rwlock_ops = {
+>  	.init		= ref_rwlock_init,
+>  	.readsection	= ref_rwlock_section,
+>  	.delaysection	= ref_rwlock_delay_section,
+> @@ -384,7 +384,7 @@ static void ref_rwsem_delay_section(const int nloops, const int udl, const int n
+>  	}
+>  }
+>  
+> -static struct ref_scale_ops rwsem_ops = {
+> +static const struct ref_scale_ops rwsem_ops = {
+>  	.init		= ref_rwsem_init,
+>  	.readsection	= ref_rwsem_section,
+>  	.delaysection	= ref_rwsem_delay_section,
+> @@ -419,7 +419,7 @@ static void ref_lock_delay_section(const int nloops, const int udl, const int nd
+>  	preempt_enable();
+>  }
+>  
+> -static struct ref_scale_ops lock_ops = {
+> +static const struct ref_scale_ops lock_ops = {
+>  	.readsection	= ref_lock_section,
+>  	.delaysection	= ref_lock_delay_section,
+>  	.name		= "lock"
+> @@ -454,7 +454,7 @@ static void ref_lock_irq_delay_section(const int nloops, const int udl, const in
+>  	preempt_enable();
+>  }
+>  
+> -static struct ref_scale_ops lock_irq_ops = {
+> +static const struct ref_scale_ops lock_irq_ops = {
+>  	.readsection	= ref_lock_irq_section,
+>  	.delaysection	= ref_lock_irq_delay_section,
+>  	.name		= "lock-irq"
+> @@ -490,7 +490,7 @@ static void ref_acqrel_delay_section(const int nloops, const int udl, const int
+>  	preempt_enable();
+>  }
+>  
+> -static struct ref_scale_ops acqrel_ops = {
+> +static const struct ref_scale_ops acqrel_ops = {
+>  	.readsection	= ref_acqrel_section,
+>  	.delaysection	= ref_acqrel_delay_section,
+>  	.name		= "acqrel"
+> @@ -524,7 +524,7 @@ static void ref_clock_delay_section(const int nloops, const int udl, const int n
+>  	stopopts = x;
+>  }
+>  
+> -static struct ref_scale_ops clock_ops = {
+> +static const struct ref_scale_ops clock_ops = {
+>  	.readsection	= ref_clock_section,
+>  	.delaysection	= ref_clock_delay_section,
+>  	.name		= "clock"
+> @@ -556,7 +556,7 @@ static void ref_jiffies_delay_section(const int nloops, const int udl, const int
+>  	stopopts = x;
+>  }
+>  
+> -static struct ref_scale_ops jiffies_ops = {
+> +static const struct ref_scale_ops jiffies_ops = {
+>  	.readsection	= ref_jiffies_section,
+>  	.delaysection	= ref_jiffies_delay_section,
+>  	.name		= "jiffies"
+> @@ -706,9 +706,9 @@ static void refscale_typesafe_ctor(void *rtsp_in)
+>  	preempt_enable();
+>  }
+>  
+> -static struct ref_scale_ops typesafe_ref_ops;
+> -static struct ref_scale_ops typesafe_lock_ops;
+> -static struct ref_scale_ops typesafe_seqlock_ops;
+> +static const struct ref_scale_ops typesafe_ref_ops;
+> +static const struct ref_scale_ops typesafe_lock_ops;
+> +static const struct ref_scale_ops typesafe_seqlock_ops;
+>  
+>  // Initialize for a typesafe test.
+>  static bool typesafe_init(void)
+> @@ -769,7 +769,7 @@ static void typesafe_cleanup(void)
+>  }
+>  
+>  // The typesafe_init() function distinguishes these structures by address.
+> -static struct ref_scale_ops typesafe_ref_ops = {
+> +static const struct ref_scale_ops typesafe_ref_ops = {
+>  	.init		= typesafe_init,
+>  	.cleanup	= typesafe_cleanup,
+>  	.readsection	= typesafe_read_section,
+> @@ -777,7 +777,7 @@ static struct ref_scale_ops typesafe_ref_ops = {
+>  	.name		= "typesafe_ref"
+>  };
+>  
+> -static struct ref_scale_ops typesafe_lock_ops = {
+> +static const struct ref_scale_ops typesafe_lock_ops = {
+>  	.init		= typesafe_init,
+>  	.cleanup	= typesafe_cleanup,
+>  	.readsection	= typesafe_read_section,
+> @@ -785,7 +785,7 @@ static struct ref_scale_ops typesafe_lock_ops = {
+>  	.name		= "typesafe_lock"
+>  };
+>  
+> -static struct ref_scale_ops typesafe_seqlock_ops = {
+> +static const struct ref_scale_ops typesafe_seqlock_ops = {
+>  	.init		= typesafe_init,
+>  	.cleanup	= typesafe_cleanup,
+>  	.readsection	= typesafe_read_section,
+> @@ -1026,7 +1026,7 @@ static int main_func(void *arg)
+>  }
+>  
+>  static void
+> -ref_scale_print_module_parms(struct ref_scale_ops *cur_ops, const char *tag)
+> +ref_scale_print_module_parms(const struct ref_scale_ops *cur_ops, const char *tag)
+>  {
+>  	pr_alert("%s" SCALE_FLAG
+>  		 "--- %s:  verbose=%d verbose_batched=%d shutdown=%d holdoff=%d lookup_instances=%ld loops=%ld nreaders=%d nruns=%d readdelay=%d\n", scale_type, tag,
+> @@ -1081,7 +1081,7 @@ ref_scale_init(void)
+>  {
+>  	long i;
+>  	int firsterr = 0;
+> -	static struct ref_scale_ops *scale_ops[] = {
+> +	static const struct ref_scale_ops *scale_ops[] = {
+>  		&rcu_ops, &srcu_ops, RCU_TRACE_OPS RCU_TASKS_OPS &refcnt_ops, &rwlock_ops,
+>  		&rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops, &clock_ops, &jiffies_ops,
+>  		&typesafe_ref_ops, &typesafe_lock_ops, &typesafe_seqlock_ops,
+> -- 
+> 2.45.2
+> 
 
