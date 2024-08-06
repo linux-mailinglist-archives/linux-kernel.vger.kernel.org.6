@@ -1,104 +1,120 @@
-Return-Path: <linux-kernel+bounces-276517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2D169494D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:50:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62FF99494E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 300161C22CBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:50:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75E10B2B211
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832993C466;
-	Tue,  6 Aug 2024 15:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D56381AA;
+	Tue,  6 Aug 2024 15:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AphVWnIG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AMf68li7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F7939855
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8D721105
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722959418; cv=none; b=EGWEJi2K8xOV+/ng97VPanIp9bkldg+0EYPQP1X84+R17LINwvrG2MkBzBKXXQML5I1eppr+Buumw0/mVwkQxFClu+0mzuj5nhzK0xIO9/0VaIYeHxgTEkDvB2tFXfqKH3i+VL8SNyb2Kej10AwpIQONgqnnRl4J5xnbElp6I6U=
+	t=1722959432; cv=none; b=EokLUY9NzwMs3EAfFMsEkbLo2D4ak0P+HcbeTYTm0d8o4JEpKaE6ZpZK9Ll15Eh7JnvijsZEwtYW4m3GpAmruoXYv26IWZDm50osGJ/2foY4sc5eb26ADsx0/tgNj9f+sVSsrbQVUgGI+xAVrR/FBJs8c5r9w+AvKwqLjHgyQZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722959418; c=relaxed/simple;
-	bh=MNX0AX4yItYjv9aP4unerrqiXI17MhLCA3jpCkKbas8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UaGTeln+/oB+RfphxbFGeKKyY/UO8et5g6nKv8t4aWY/my8YoerOPQwFgwnXKOCx5b3KGjB9vh6wzMdSSO6oIPo3zCRJPeCllr2e4ml2SPJJeKXvW1MBUr+pVoiWfaRn4vcKlEwrNC9HpV/YyU/SLEY6lHwyP8YqfYS7nOsiUIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AphVWnIG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57747C4AF11
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:50:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722959418;
-	bh=MNX0AX4yItYjv9aP4unerrqiXI17MhLCA3jpCkKbas8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AphVWnIGKGptjmxqyUHrhGEUDs/u9YYgR4FD+ytyEW7uzufIGmNYKH+VtSYtzq8oI
-	 lVwY4jYRJBxY9OXhu2lkkbStqA6r8slMG06oMSuu3EoMvJDQrSzSOSxQuUEWD8IRuR
-	 s9ObHQqzk/i6LDWHQVUV/1uZMS29rJ246rPaUN4np3ZcARc8x1EWLVWwUQI4TNAyIS
-	 mT5GoMlP/wVjF3ASBuAILVXOI/HkVxy7DvefelEyPIe+6FHrCA4pDV+qoOCcYau4+6
-	 BCKavWs6GwdOTVeK130r/nRQY3y/pMfdVFrYw/1Y7c4hmCYOpxy98tzKmLcDHv+sp7
-	 cUyKh7Q9VQqWA==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52efd08e6d9so1412614e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 08:50:18 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzLr4eP6FwA2ooukw1wgwG1NmXkc4be946CJnNymmYbQE5SlKAZ
-	jeE/UtkiKE9SEtBMpe1O4trvDm/awzj1e2L0zigccNANKVBoh5vbzXpFTa1yJhadYYJdRvO6bqW
-	x0N+XUTUvCJFEm1Roc8zPLU02IfY=
-X-Google-Smtp-Source: AGHT+IGUYVUVcQ5kUVi2D8JkvZfb0KuRiJ8RGbi2blIBJOzX2qfiqBupMJYICOdo522BgU1J3op0Q5MlTunQ4u2ZzyA=
-X-Received: by 2002:ac2:5f47:0:b0:530:daee:cfb0 with SMTP id
- 2adb3069b0e04-530daeed2a8mr227964e87.52.1722959416743; Tue, 06 Aug 2024
- 08:50:16 -0700 (PDT)
+	s=arc-20240116; t=1722959432; c=relaxed/simple;
+	bh=FrTfwV+pTxyUZOUdlAo1IU0O6QFzQjc+/lQkr4y8yJw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=o7tdM8BdMxtOXeXxk4J9ZKjpEJKpxz+19frL5Vy6Wl+w0z7kvO8SBRgk4zg/mMTcTl2TlGQJF/sAMxlj2N7tTvSAv06V//BBFLeckVw/Jji6AekAMcqgOK/KkRNs2rJFkW7F6iAeZlYA7lvvOnumagvPLqzyRFNAVAI0BLcaxnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AMf68li7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722959428;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V1SZflUlzWRG2lz6nF9WqANN4zM73HGx+fcNBTyWTyU=;
+	b=AMf68li7AzcwfbRgE1fgbmwtIfqyNk5K015lyErYdDSjZJuMYrJeI7qW+vrK2vU3W0Dnn8
+	Ntp13GJmwwHwfpbN8AZq9hMtDJ9dL2/dUprVuH7flg7MlPXXz1RqUf3DVClYF2EcRmzdEW
+	Vd55yQJr46y5QAOcZbC7aCRgT9YrE7c=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-191-5NJheQUjM76jB7jakTYK7w-1; Tue, 06 Aug 2024 11:50:27 -0400
+X-MC-Unique: 5NJheQUjM76jB7jakTYK7w-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52efc9f200aso838507e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 08:50:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722959426; x=1723564226;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V1SZflUlzWRG2lz6nF9WqANN4zM73HGx+fcNBTyWTyU=;
+        b=Ml5V0a/lqaqJAYFEWGWNIynKUkay7dDbcUY/mDF5DjsbSFrbEBGMI5gNcO28lEUXcw
+         lF/ETFvio52DBge3hm1F856ERsaVy1MxUPTWgkg1kgTf53put1JfqfzKRdVg42jAKY92
+         tvfGS6YZjUVQJJBc1dAdMK8/DegJzNrWKWKHua3bCfkpn6bvAP6EhMOX8pTX6uCl+8Hd
+         LNMXzAGKcYUJUVUnQiXhSAbYfWcb6Bvgyj+U2tYoxBdDPcaA0GBUR+w9PelxhT29IWQm
+         SUg+9Ywp25sjbn9vZke8YMTLY0YG6L0pnaDywTQTrawoNZr7cXwHLCW3xgVLUS+jRcXX
+         cbNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWD0DDbzb3RVl33vQfyd+dOJgwxDq3zl5hGkrOopCohCnz4exSIOfZsyrpihtcYeXkth8WkMO0zHkZCyDtRcJWOvxVnB9HXD6mS2KEh
+X-Gm-Message-State: AOJu0YyWjMmge4U72voMMKIeWknwPJOeoi9D4PH2fwrgVcK8sEzv2d6U
+	/jb+tXQeebe7uPzJ3Ad9OSD7Rk8WwDSQ2iqI/6xHf+aKZydvaQIPZ9D4YWaAt/4Xk6COko8pXYC
+	02RhGdLmpsqdIIXx2BTMJtJEd8MEyjGdjJIS29tFSmJqlHF9rjdCbEpsm0RnrGg==
+X-Received: by 2002:a05:6512:1588:b0:530:ad8b:de11 with SMTP id 2adb3069b0e04-530bb366510mr10120983e87.9.1722959425560;
+        Tue, 06 Aug 2024 08:50:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGrP/2irlZFIsDLVFNkNhYd8/du5Rm7YYrDr/q2yS/bDqGryVxnLlmBrADtz1Oy4e5F1rfSFg==
+X-Received: by 2002:a05:6512:1588:b0:530:ad8b:de11 with SMTP id 2adb3069b0e04-530bb366510mr10120956e87.9.1722959425004;
+        Tue, 06 Aug 2024 08:50:25 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb9d464sm250003485e9.42.2024.08.06.08.50.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 08:50:24 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Yury Norov <yury.norov@gmail.com>, linux-kernel@vger.kernel.org
+Cc: Yury Norov <yury.norov@gmail.com>, Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>, Leonardo Bras <leobras@redhat.com>, Ingo
+ Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri
+ Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>
+Subject: Re: [PATCH 2/2] sched/topology: optimize topology_span_sane()
+In-Reply-To: <20240802175750.1152788-3-yury.norov@gmail.com>
+References: <20240802175750.1152788-1-yury.norov@gmail.com>
+ <20240802175750.1152788-3-yury.norov@gmail.com>
+Date: Tue, 06 Aug 2024 17:50:23 +0200
+Message-ID: <xhsmhy159mz0g.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805231031.1760371-1-song@kernel.org> <CAL_Jsq+dxQxNV-Bm3q5vzCyfWEzO2Qv-jq29eGVaP-sC-jVyww@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+dxQxNV-Bm3q5vzCyfWEzO2Qv-jq29eGVaP-sC-jVyww@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Tue, 6 Aug 2024 08:50:03 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW5NjtFzYi=zRBO7SwFvgRvJi1MEhgU9F5P99nTugEJwkg@mail.gmail.com>
-Message-ID: <CAPhsuW5NjtFzYi=zRBO7SwFvgRvJi1MEhgU9F5P99nTugEJwkg@mail.gmail.com>
-Subject: Re: [PATCH] Revert "perf: Add a counter for number of user access
- events in context"
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Rob,
+On 02/08/24 10:57, Yury Norov wrote:
+> The function may call cpumask_equal with tl->mask(cpu) == tl->mask(i),
+> even when cpu != i.
 
-On Tue, Aug 6, 2024 at 6:37=E2=80=AFAM Rob Herring <robh@kernel.org> wrote:
->
-> On Mon, Aug 5, 2024 at 5:10=E2=80=AFPM Song Liu <song@kernel.org> wrote:
-> >
-> > This reverts commit 82ff0c022d19c2ad69a472692bb7ee01ac07a40b.
-> >
-> > perf_event->nr_user is not used any more. Remove it.
->
-> What are you talking about? It is used whenever
-> PERF_EVENT_FLAG_USER_READ_CNT is set on an event:
->
-> arch/x86/events/core.c:         event->hw.flags |=3D
-> PERF_EVENT_FLAG_USER_READ_CNT;
-> arch/x86/events/core.c: if (!(event->hw.flags & PERF_EVENT_FLAG_USER_READ=
-_CNT))
-> arch/x86/events/core.c: if (!(event->hw.flags & PERF_EVENT_FLAG_USER_READ=
-_CNT))
-> arch/x86/events/core.c: if (!(hwc->flags & PERF_EVENT_FLAG_USER_READ_CNT)=
-)
-> arch/x86/events/core.c:         !!(event->hw.flags &
-> PERF_EVENT_FLAG_USER_READ_CNT);
-> drivers/perf/arm_pmuv3.c:       return event->hw.flags &
+For which architecture have you observed this? AFAIA all implementations of
+tl->sched_domain_mask_f are built on a per-CPU cpumask.
 
-My fault. I didn't realize the code had been moved to drivers/perf/.
+e.g. for the default topology, we have:
 
-Please ignore this. Sorry for the noise.
+  cpu_smt_mask() -> topology_sibling_cpumask()
 
-Song
+which is implemented as:
+
+  arch/loongarch/include/asm/topology.h:35:#define topology_sibling_cpumask(cpu)		(&cpu_sibling_map[cpu])
+  arch/mips/include/asm/topology.h:18:#define topology_sibling_cpumask(cpu)		(&cpu_sibling_map[cpu])
+  arch/powerpc/include/asm/topology.h:139:#define topology_sibling_cpumask(cpu)	(per_cpu(cpu_sibling_map, cpu))
+  arch/s390/include/asm/topology.h:31:#define topology_sibling_cpumask(cpu)	  (&cpu_topology[cpu].thread_mask)
+  arch/sparc/include/asm/topology_64.h:50:#define topology_sibling_cpumask(cpu)		(&per_cpu(cpu_sibling_map, cpu))
+  arch/x86/include/asm/topology.h:186:#define topology_sibling_cpumask(cpu)		(per_cpu(cpu_sibling_map, cpu))
+  include/linux/arch_topology.h:91:#define topology_sibling_cpumask(cpu)	(&cpu_topology[cpu].thread_sibling)
+  include/linux/topology.h:218:#define topology_sibling_cpumask(cpu)		cpumask_of(cpu)
+
+and ditto for cpu_coregroup_mask() & cpu_cpu_mask().
+
 
