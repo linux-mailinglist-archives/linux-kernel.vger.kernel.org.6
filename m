@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-276360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD9994927A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:02:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502AA94927B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C95C1C214DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:02:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D076E1F22CD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2746321C18C;
-	Tue,  6 Aug 2024 13:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58D121C190;
+	Tue,  6 Aug 2024 13:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hE2xQx4s"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kM/xj0Fz"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863BB1EB49E
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DF721C168
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722952789; cv=none; b=oYt6mM/wihzQKsuCj+A0NVqH6taDVNsIVNfkTWSP+o98mj05HIJ1oN6gqydU/Udzd61/IjYTE+W+gt8OPFiZx4aWTuC0DMxcDTSh4OKI9Z87TpahpSqEprwOOxD2wwpMBWopj7v8vurxJazSsOvdeQkB2T0h7oWod6/F37C+s3g=
+	t=1722952791; cv=none; b=PtuGMhpF94vmQffHwwBcCl3X0CVCAd1I1XIluXMcL1hzZ1ueMzA+6TLXT4Kaa3PU93+DDHPRkSqzTQlTvdafZY+C0Mfq61QWPFpylFCH3Dk0TiziUhg32HhsLHEUqNPKU2I4cnQKLgmJGPVTEDmOP7XhoGf4QVYKzOriUQdmk2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722952789; c=relaxed/simple;
-	bh=5Auobud/qkfPgqEK9dIDGdnYH2b2+TiVd76QFukYtuo=;
+	s=arc-20240116; t=1722952791; c=relaxed/simple;
+	bh=U1OnWrBrlP25BFBpzAVCMr4UKIx3mPzoMhcGTN/whpk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=MLunIek8OrAOgvpB8XCle+CwsAS2J7Qojogs2a6wNG8EjiKjoPCrH4hOiQ0z2dPihqgVcspJtIBTFjC/dJ86HcJ9R2EJ+eTSyzTXJq4nCFAVCb4AVNvxuRuNhYkBLfRWkqg7j+zz5ZMnXdHw8ox79Kb5zQs3l169SgD5Htun0EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hE2xQx4s; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=FHZgzCOVoDWU+cN6eXu3v6MWWAmOfnx1vSz3llpcwXaiMFrBSK0p4WsxzWGIGGBbZXNEDc/I5jsiJUhkZko5wxHSeRoomutmkm+8QJdWj1dkR3DgKwJsXlIEqe/wxWUyNSNrJrc88r6KQweFZoxXEgsVNQF/oROR0toQfdXzzqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kM/xj0Fz; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4280d8e685eso5704015e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:59:46 -0700 (PDT)
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3685bbd6dfbso401008f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:59:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722952785; x=1723557585; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1722952787; x=1723557587; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mBtLq8vMW6E0NPD2YscCzJYeLwsvhgk+uQjC+zS8n/A=;
-        b=hE2xQx4sIRttx0tPcfu8GAShAcHEStbeUykwcTns2QeKFj1n48rvfc5DAO0za087oG
-         UcCKpdGs0adhmT8mCt3EV/vkG0c27Bxw48KNi2ddbkesdHfwxjvSHPzMEyzS2UPijJlx
-         vA3QJxEpAQHboslORuPNKqcNOLfTIjc9ZDywYrnsShKtRhJZ0/Jr2Gxz+tJWfDWGj/oK
-         i7EmZSTpzQP3lczVnpoJbye7nD0eu/mqh3qHLlnLkBDjw5DQvRwwbNRgj3ZHuwROve+t
-         pZDljORFqEcbe+zwQX2GNP77GyR1d/2xxfqXmuU8EYOUpYubP5TWC59lonBcDzCNjlpP
-         U7AQ==
+        bh=JZA3G4fqGlTDhQpwTk3AIW/gAya/39uBmQnmVK3DEuM=;
+        b=kM/xj0FzW7fPFD62FlnNCDSEoOI6Xdm+nriltfgIEU40rDJqAUHdV7h4CzC6UjfQE6
+         tcovJNvxY6aVELpuOb5yJY9/fVVvMwPLofQw/s4jP6QLuJqd+5dx0b5ctiw0jmQycMB1
+         97knkNfHNgu8v5uvMx9bmteoJB+pK2t6J3AwMLnjT+8tlW/cnFyiLW6oRfEQVY6GAC1B
+         AMEW1ygG760ZDaSdwJxh/X+CkOaKJNvjQnk3iDAxZNl3ucwOk1g8JXMPwAj4YZ/8sLYr
+         Mz/ZFZBQEUAMhrTKK0WGdMdxnLYDS4AGCGXn8lO11O/U8NOeZi1Vk9FDD/C37HmR5EdV
+         0FWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722952785; x=1723557585;
+        d=1e100.net; s=20230601; t=1722952787; x=1723557587;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mBtLq8vMW6E0NPD2YscCzJYeLwsvhgk+uQjC+zS8n/A=;
-        b=uzLQVs+khi9ZpqJU+ks4jIO3K6HGcuR7H820+vlAn16oFRfJg8FMWy+1jZkwsrP4n4
-         19QKOZBD2Pnn98wZWnMkWgcNBt+ViAKRjvm/aSvFPLunGHDtM4TmI3WFQymNxsLUyevx
-         V6YUEpFSDvIdYdWCVYrgkJZOspiEeSLatdyqKNWDRVlDeY616UvDrzotBpHrA/1ThGIM
-         J4LQI02ZlQEoj+B7pPTE6KgZqJ50qI8EDf/D8swpYhItM2EZ1zN/IlyNAwXgpXUX9q1F
-         G/Gpch9e0NWaG3k8A6G8JOSPF2AQKqXogqyVtXUbeqqC/iCTPp3dEbkDvCLD9cEivXvO
-         RNCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXt1dKgZeuOKeEhO7r3/qmDwzjqEKvwT6veZpvC5hqgWboazFaan/M9/pNe+LL3CDElpiWF5f2nki3Hpb1LiOMC77UeLj688+CA318h
-X-Gm-Message-State: AOJu0Yxoky5kOAM23xb289NJojhj1ZBbH35Zs3qQic1fn8jKDQ2aCM10
-	oF61gmklEaCVsW4/7Ez0AttIH6YIWzjIou13fmNyms14ytQRmWzNVk8SNYOO7Q5jyO/MMt7zXx2
-	3WxIjnJw9WhKXUQ==
-X-Google-Smtp-Source: AGHT+IFEqJ0FlEIEvxMSETiYqlJJ0W522Nh4qV0BfqtWSXzyR9SKwiyAjstR3yqNxweYjHzyIs8dujHwU7UEhh4=
+        bh=JZA3G4fqGlTDhQpwTk3AIW/gAya/39uBmQnmVK3DEuM=;
+        b=D6dIjamHuTy8Ad+nO1lgEdYtB6Ex9QvMKVeBEsP237jj/W45oLRCIQOf9Xx1G98Fko
+         q/h0IasdY+TJIQrZ8xWNIuYNj+Iiv1jLGPn3bxP0DHuWuoCu+coplY7QbqpPQ+TIXcV/
+         9e5tTBBWKr5TAKdnQ3tYKe0hdLb5amdQ9SqPi7gnGTiz2Wmdg65gk0RaY9srZ5GH6450
+         WH9JI77oow7X0FZ08utrffXuT9oYiGqz4qcFN1y08DQkBLyBpjadeRLiAzPDOZ47KrVk
+         hyPF+UYamrR1l0sXA/aq3ow6gnfgQlnWyKfNHydW0ZWSLDuIr8F6ca4j3tg1c0+bxEv0
+         Mieg==
+X-Forwarded-Encrypted: i=1; AJvYcCVg/cYnlXX81jzcP9NH17xFUDkUj7waE/DGI7ecj0paiDV8c9YnJohf8LCqH3iQvd0abkUUD2K7P7F6jnpx3l5DNcNb/CWP5si8lSne
+X-Gm-Message-State: AOJu0YwRl0Y1EcNK3meq4bFb1R8xEyzadHknw+D09f8Em6M7o/MeOeBt
+	CoktezQuvGtYXEOi2q6k5kXqeJJuNI2o87g4Eeivv97FXm53boq/q5RFevk3NIe8p5R5inWgTYz
+	5tazF57GbGwuZaw==
+X-Google-Smtp-Source: AGHT+IFUqpa4kYAE0Jai9LGsZ0iw7NZR2G2lA87l7DR81DoK1l123eiFEiwOmx62rjwtr4W8x+V71Okc703Z0nc=
 X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a05:600c:6986:b0:424:a3d1:bdc5 with SMTP
- id 5b1f17b1804b1-428e6a603a4mr651055e9.0.1722952784877; Tue, 06 Aug 2024
- 06:59:44 -0700 (PDT)
-Date: Tue, 06 Aug 2024 13:58:59 +0000
+ (user=aliceryhl job=sendgmr) by 2002:a05:6000:d91:b0:366:e9fa:36e with SMTP
+ id ffacd0b85a97d-36bbc189d6cmr19674f8f.10.1722952787295; Tue, 06 Aug 2024
+ 06:59:47 -0700 (PDT)
+Date: Tue, 06 Aug 2024 13:59:00 +0000
 In-Reply-To: <20240806-linked-list-v4-0-23efc510ec92@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,22 +73,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240806-linked-list-v4-0-23efc510ec92@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5030; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=5Auobud/qkfPgqEK9dIDGdnYH2b2+TiVd76QFukYtuo=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmsiw7FowwYrZejcypbzdQRWrZDJ2Ax/ZGPWDpJ
- Qipg8CgP5SJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZrIsOwAKCRAEWL7uWMY5
- Rn6fD/4qX5qT6tv/rYHGx4RP6YWw0w8sZR44fApGeEeHWpXtRigu0T1OvVbFCZUBAy/rPOpa+CF
- kBple4Bk0B7EoOXu05JfFWU+WAIPPb6kMFRUqXJZ58LViN2tFoRSPjW5e2WEqpJh5JL0iCypaSs
- CDnF02W4KE1GnWwOBrQ7taTGm5U69NAgqvKDdKJ9UFcOgQc8osbqulMRP3wGiidcroV2u6SuJDm
- Nczfm0yTwmLVmT9pOsVw8tR6ZeK0CIozQkn+TZBs7qmfsBeb+efhz/TKxnNj1NuFc0l7qaJGtI4
- YcaelbKk2MpiaAG+i8k5Nfx2NyUxmNuq1y08VpcS7V1okVMxTS5e8lS6Zme4zQlf2G5esiQHHNM
- TqsgA+BebfDFT0ObUhH71yZzDABmkQ3Yn633zYmkwTLyBB+iCzPcDmSwWsb2DNX+SQNK8xCaX7k
- ydN7RpprqLpCkrg/KXMraHy553zMzGLoXXU5KXZj2brOR/ytT1HUhhQEFpduCHJHIJX/BP+UgJV
- xRiTouCNDmO9GCH3YSgtVQ+2yfmaupc8DLk21g5OZfRPDayll8mUCNy3l5oLSZn7bYhzNzJd03M
- ZgWXlWduCrV370Zo3QXezg+yx44hwOhTwhREmnH2vfUNUIquNtoECYO8hJ6kIaNI1CUPeXulyfg 4IVyAlEANyb/Dag==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5338; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=U1OnWrBrlP25BFBpzAVCMr4UKIx3mPzoMhcGTN/whpk=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmsiw7q/7R3ylIYLWLyhQ0XS4gH2HMmHo5fhP7t
+ gxuqwODVoeJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZrIsOwAKCRAEWL7uWMY5
+ RjaEEACX6cOLmwlkrkiRLI3de7L2WvmTFxaR2EO3aLbIt+2BXuKyjikAESx3gX00+bqSGdO9INF
+ 3gl6+2zERiaD9v/wVpktV45bSQNEfT+cmGxU883lU6mTYwd6XKxIfwtIvsyDnMCqsOKtov1zFXP
+ GBM7XAKs8RVfTZv/4hzIo7WG+zp81Y6xRi99/Z9C4yzffrQ+BET+IlssD3eaIzwZFbxDmYE35VJ
+ 1eH6WsU6cyVsnfbqZxkio+Wkfsd1SlB3IPs8/FiJjQy4NEutHCoq43KPcrRoDQeMk962OmzU5b/
+ DS5UwUrAjJ1qcM20g6Nuls5DA+hjWP8GnHeJudq6Tx3WHMud3OLw8qCflWBPdxUKBBCqI/BWAVW
+ XZMfUYgFgce9XnGc5kfVqBZkkT50t5NCTPU6oYdb0IP1ywmPlHHFZTwaKlmoE1x58Gu3qHDtpIT
+ ksjDl+EdgUZwUPYcJusw18taaktSy3cGkI0tORjkatxPsg/zvZbIt/NdyTpFpqhC3b558xMRiSZ
+ 2oYdM1y5cDPhf4ifBgA8IqtqjObEVufHrjdzACMQ8P4nzf9VxIBDsquOFCG2yndyybC0a+TdCbc
+ ogQF9KBOwY6gwLeIZ0Y4ek8VTjsaNT1PE/+uDtPHSG+1AzsA2PWFOD4TnMGzk3rCOHtFMB80r/B cRqyBJP6oGfCphw==
 X-Mailer: b4 0.13.0
-Message-ID: <20240806-linked-list-v4-7-23efc510ec92@google.com>
-Subject: [PATCH v4 07/10] rust: list: add iterators
+Message-ID: <20240806-linked-list-v4-8-23efc510ec92@google.com>
+Subject: [PATCH v4 08/10] rust: list: add cursor
 From: Alice Ryhl <aliceryhl@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
@@ -102,144 +102,139 @@ Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.co
 	Kees Cook <kees@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 
-Rust Binder has lists containing stuff such as all contexts or all
-processes, and sometimes needs to iterate over them. This patch enables
-Rust Binder to do that using a normal for loop.
+The cursor is very similar to the list iterator, but it has one
+important feature that the iterator doesn't: it can be used to remove
+items from the linked list.
 
-The iterator returns the ArcBorrow type, so it is possible to grab a
-refcount to values while iterating.
+This feature cannot be added to the iterator because the references you
+get from the iterator are considered borrows of the original list,
+rather than borrows of the iterator. This means that there's no way to
+prevent code like this:
+
+let item = iter.next();
+iter.remove();
+use(item);
+
+If `iter` was a cursor instead of an iterator, then `item` will be
+considered a borrow of `iter`. Since `remove` destroys `iter`, this
+means that the borrow-checker will prevent uses of `item` after the call
+to `remove`.
+
+So there is a trade-off between supporting use in traditional for loops,
+and supporting removal of elements as you iterate. Iterators and cursors
+represents two different choices on that spectrum.
+
+Rust Binder needs cursors for the list of death notifications that a
+process is currently handling. When userspace tells Binder that it has
+finished processing the death notification, Binder will iterate the list
+to search for the relevant item and remove it.
 
 Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/kernel/list.rs | 102 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 102 insertions(+)
+ rust/kernel/list.rs | 82 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
 diff --git a/rust/kernel/list.rs b/rust/kernel/list.rs
-index 551c46a2401b..0d680156b8b1 100644
+index 0d680156b8b1..904cfa454dff 100644
 --- a/rust/kernel/list.rs
 +++ b/rust/kernel/list.rs
-@@ -5,7 +5,9 @@
- //! A linked list implementation.
- 
- use crate::init::PinInit;
-+use crate::sync::ArcBorrow;
- use crate::types::Opaque;
-+use core::iter::{DoubleEndedIterator, FusedIterator};
- use core::marker::PhantomData;
- use core::ptr;
- 
-@@ -437,6 +439,17 @@ pub fn push_all_back(&mut self, other: &mut List<T, ID>) {
-         // INVARIANT: The other list is now empty, so update its pointer.
+@@ -440,6 +440,20 @@ pub fn push_all_back(&mut self, other: &mut List<T, ID>) {
          other.first = ptr::null_mut();
      }
-+
-+    /// Creates an iterator over the list.
-+    pub fn iter(&self) -> Iter<'_, T, ID> {
-+        // INVARIANT: If the list is empty, both pointers are null. Otherwise, both pointers point
-+        // at the first element of the same list.
-+        Iter {
-+            current: self.first,
-+            stop: self.first,
-+            _ty: PhantomData,
+ 
++    /// Returns a cursor to the first element of the list.
++    ///
++    /// If the list is empty, this returns `None`.
++    pub fn cursor_front(&mut self) -> Option<Cursor<'_, T, ID>> {
++        if self.first.is_null() {
++            None
++        } else {
++            Some(Cursor {
++                current: self.first,
++                list: self,
++            })
 +        }
 +    }
- }
- 
- impl<T: ?Sized + ListItem<ID>, const ID: u64> Default for List<T, ID> {
-@@ -452,3 +465,92 @@ fn drop(&mut self) {
-         }
++
+     /// Creates an iterator over the list.
+     pub fn iter(&self) -> Iter<'_, T, ID> {
+         // INVARIANT: If the list is empty, both pointers are null. Otherwise, both pointers point
+@@ -514,6 +528,74 @@ fn next(&mut self) -> Option<ArcBorrow<'a, T>> {
      }
  }
-+
-+/// An iterator over a [`List`].
+ 
++/// A cursor into a [`List`].
 +///
 +/// # Invariants
 +///
-+/// * There must be a [`List`] that is immutably borrowed for the duration of `'a`.
-+/// * The `current` pointer is null or points at a value in that [`List`].
-+/// * The `stop` pointer is equal to the `first` field of that [`List`].
-+#[derive(Clone)]
-+pub struct Iter<'a, T: ?Sized + ListItem<ID>, const ID: u64 = 0> {
++/// The `current` pointer points a value in `list`.
++pub struct Cursor<'a, T: ?Sized + ListItem<ID>, const ID: u64 = 0> {
 +    current: *mut ListLinksFields,
-+    stop: *mut ListLinksFields,
-+    _ty: PhantomData<&'a ListArc<T, ID>>,
++    list: &'a mut List<T, ID>,
 +}
 +
-+impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> Iterator for Iter<'a, T, ID> {
-+    type Item = ArcBorrow<'a, T>;
-+
-+    fn next(&mut self) -> Option<ArcBorrow<'a, T>> {
-+        if self.current.is_null() {
-+            return None;
-+        }
-+
-+        let current = self.current;
-+
-+        // SAFETY: We just checked that `current` is not null, so it is in a list, and hence not
-+        // dangling. There's no race because the iterator holds an immutable borrow to the list.
-+        let next = unsafe { (*current).next };
-+        // INVARIANT: If `current` was the last element of the list, then this updates it to null.
-+        // Otherwise, we update it to the next element.
-+        self.current = if next != self.stop {
-+            next
-+        } else {
-+            ptr::null_mut()
-+        };
-+
-+        // SAFETY: The `current` pointer points at a value in the list.
-+        let item = unsafe { T::view_value(ListLinks::from_fields(current)) };
++impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> Cursor<'a, T, ID> {
++    /// Access the current element of this cursor.
++    pub fn current(&self) -> ArcBorrow<'_, T> {
++        // SAFETY: The `current` pointer points a value in the list.
++        let me = unsafe { T::view_value(ListLinks::from_fields(self.current)) };
 +        // SAFETY:
 +        // * All values in a list are stored in an `Arc`.
 +        // * The value cannot be removed from the list for the duration of the lifetime annotated
 +        //   on the returned `ArcBorrow`, because removing it from the list would require mutable
-+        //   access to the list. However, the `ArcBorrow` is annotated with the iterator's
-+        //   lifetime, and the list is immutably borrowed for that lifetime.
-+        // * Values in a list never have a `UniqueArc` reference.
-+        Some(unsafe { ArcBorrow::from_raw(item) })
++        //   access to the cursor or the list. However, the `ArcBorrow` holds an immutable borrow
++        //   on the cursor, which in turn holds a mutable borrow on the list, so any such
++        //   mutable access requires first releasing the immutable borrow on the cursor.
++        // * Values in a list never have a `UniqueArc` reference, because the list has a `ListArc`
++        //   reference, and `UniqueArc` references must be unique.
++        unsafe { ArcBorrow::from_raw(me) }
++    }
++
++    /// Move the cursor to the next element.
++    pub fn next(self) -> Option<Cursor<'a, T, ID>> {
++        // SAFETY: The `current` field is always in a list.
++        let next = unsafe { (*self.current).next };
++
++        if next == self.list.first {
++            None
++        } else {
++            // INVARIANT: Since `self.current` is in the `list`, its `next` pointer is also in the
++            // `list`.
++            Some(Cursor {
++                current: next,
++                list: self.list,
++            })
++        }
++    }
++
++    /// Move the cursor to the previous element.
++    pub fn prev(self) -> Option<Cursor<'a, T, ID>> {
++        // SAFETY: The `current` field is always in a list.
++        let prev = unsafe { (*self.current).prev };
++
++        if self.current == self.list.first {
++            None
++        } else {
++            // INVARIANT: Since `self.current` is in the `list`, its `prev` pointer is also in the
++            // `list`.
++            Some(Cursor {
++                current: prev,
++                list: self.list,
++            })
++        }
++    }
++
++    /// Remove the current element from the list.
++    pub fn remove(self) -> ListArc<T, ID> {
++        // SAFETY: The `current` pointer always points at a member of the list.
++        unsafe { self.list.remove_internal(self.current) }
 +    }
 +}
 +
-+impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> FusedIterator for Iter<'a, T, ID> {}
-+
-+impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> IntoIterator for &'a List<T, ID> {
-+    type IntoIter = Iter<'a, T, ID>;
-+    type Item = ArcBorrow<'a, T>;
-+
-+    fn into_iter(self) -> Iter<'a, T, ID> {
-+        self.iter()
-+    }
-+}
-+
-+/// An owning iterator into a [`List`].
-+pub struct IntoIter<T: ?Sized + ListItem<ID>, const ID: u64 = 0> {
-+    list: List<T, ID>,
-+}
-+
-+impl<T: ?Sized + ListItem<ID>, const ID: u64> Iterator for IntoIter<T, ID> {
-+    type Item = ListArc<T, ID>;
-+
-+    fn next(&mut self) -> Option<ListArc<T, ID>> {
-+        self.list.pop_front()
-+    }
-+}
-+
-+impl<T: ?Sized + ListItem<ID>, const ID: u64> FusedIterator for IntoIter<T, ID> {}
-+
-+impl<T: ?Sized + ListItem<ID>, const ID: u64> DoubleEndedIterator for IntoIter<T, ID> {
-+    fn next_back(&mut self) -> Option<ListArc<T, ID>> {
-+        self.list.pop_back()
-+    }
-+}
-+
-+impl<T: ?Sized + ListItem<ID>, const ID: u64> IntoIterator for List<T, ID> {
-+    type IntoIter = IntoIter<T, ID>;
-+    type Item = ListArc<T, ID>;
-+
-+    fn into_iter(self) -> IntoIter<T, ID> {
-+        IntoIter { list: self }
-+    }
-+}
+ impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> FusedIterator for Iter<'a, T, ID> {}
+ 
+ impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> IntoIterator for &'a List<T, ID> {
 
 -- 
 2.46.0.rc2.264.g509ed76dc8-goog
