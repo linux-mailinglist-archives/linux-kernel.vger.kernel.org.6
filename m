@@ -1,67 +1,53 @@
-Return-Path: <linux-kernel+bounces-276455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71069493FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:58:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA8B949406
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E281F2855D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:58:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D92F01F227A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B0418D655;
-	Tue,  6 Aug 2024 14:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rV4GqNrJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0C71BC08F;
-	Tue,  6 Aug 2024 14:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762411D6187;
+	Tue,  6 Aug 2024 14:59:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F086E18D655;
+	Tue,  6 Aug 2024 14:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722956270; cv=none; b=ZGNcfpwbPzRRqQRRNSikM7NT27x2TsvM+23w77Wtcg/zjw4CuBZJWDDjd9j/Bq6chh7JJ7RJC0OGyK3Msw6akbQLrwotUeIdsX9njcFVun6i+6nvQNiWtmEM0fuUhk5e+8j4uUj80YwVIXBMg5tb8nWRHj/kEJCs0cNuj79veFo=
+	t=1722956354; cv=none; b=m5nvgFVpgYTmcAUFdCM6Ad8Hl2Q8A0SCaoIYDeBJiJg0z3ENE0SEBLAssSLiUcv4cBGnT7bq5jlA2ugEP4p5VOp5lijEAybbj6AU3lVP+dMeTfDV4p+r0E3pgpMfTFqdZpBlEz1116hvi3P2P3ov41BLVxNnr/J0qwg4AauzJN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722956270; c=relaxed/simple;
-	bh=WvUKeYGEnDCMv+ueazaSl3PBo1+JLiRTjhrQ6VKYw0Y=;
+	s=arc-20240116; t=1722956354; c=relaxed/simple;
+	bh=iqjYJFL2/l8ov0CWQDySesvc675/T6vPfcXzMoIIRls=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dnNfSHwymi0GpJFC1Ub3ZzGQwQPnW+fBpE5IcaYZPqSKCw8RzigMqSOx4CeCjOfivaOMDOFWM99pMeeZ3XmDUi2MC39Za8DF70yvBU/VSxI375EcbQfycX+ToGWBWD59OoYkNxalzdKJR43MSLord1yedjwOTA0SBTvNHLsb2SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rV4GqNrJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3AADC4AF12;
-	Tue,  6 Aug 2024 14:57:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722956270;
-	bh=WvUKeYGEnDCMv+ueazaSl3PBo1+JLiRTjhrQ6VKYw0Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rV4GqNrJfetI/fwIhKY+0Wo5JSVDXU4OgOt9bnDmMHKmri6JYdaWmUF5bZxtGCEQB
-	 e4yzlsC5qpzB6Xn6lDkrKsrqxpHikymw0WYNJUcspOQNFGWJ0FRtP02OM9AMAZQrl0
-	 L7rop4/B1k0t6PoOat3/X9rRz4Q0UK7KQkMnxP4KAIIlTUXRyKKS+FhWqKt90Na8OW
-	 qOzEnC6xD8dmQGece5TAEWe6zkiIGooO62y0PCNkQRI3Dvx7aLQbylH67f5LYO1r5R
-	 Ab6Z/OcZTY5VHXQOCEggiW+zfKaHT4NIfsQmMZm9XWmuZvfFoJ9j+yQ3J0r0yUWn5G
-	 QzinxQ5lWN3BA==
-Date: Tue, 6 Aug 2024 08:57:48 -0600
-From: Rob Herring <robh@kernel.org>
-To: Swathi K S <swathi.ks@samsung.com>
-Cc: krzk@kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org,
-	richardcochran@gmail.com, mcoquelin.stm32@gmail.com, andrew@lunn.ch,
-	alim.akhtar@samsung.com, linux-fsd@tesla.com,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, alexandre.torgue@foss.st.com,
-	peppe.cavallaro@st.com, joabreu@synopsys.com, rcsekar@samsung.com,
-	ssiddha@tesla.com, jayati.sahu@samsung.com,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
-	gost.dev@samsung.com
-Subject: Re: [PATCH v4 1/4] dt-bindings: net: Add FSD EQoS device tree
- bindings
-Message-ID: <20240806145748.GA1502402-robh@kernel.org>
-References: <20240730091648.72322-1-swathi.ks@samsung.com>
- <CGME20240730092855epcas5p49902519f31bddcfe7da8f4b96a7d0527@epcas5p4.samsung.com>
- <20240730091648.72322-2-swathi.ks@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P1mp+4UpNCfHrHJhVeLl399mYHOH3wZnwRwCZAIBrBqPd7dgCC1qqzz90lgmbpD7kdPtot7Z4fevENR7Y2ycOTG7knpwUgC6nbQmxzTZZuyRNxzZ3W9l6ObGD3rg6y2KJIFi1oAvjK7DxmXbbvNsGmXOiaUZggj7iK4kkcid2sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0EFA9FEC;
+	Tue,  6 Aug 2024 07:59:37 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 908963F6A8;
+	Tue,  6 Aug 2024 07:59:08 -0700 (PDT)
+Date: Tue, 6 Aug 2024 15:59:00 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, james.quinlan@broadcom.com,
+	f.fainelli@gmail.com, vincent.guittot@linaro.org,
+	etienne.carriere@st.com, peng.fan@oss.nxp.com, michal.simek@amd.com,
+	quic_sibis@quicinc.com, quic_nkela@quicinc.com, ptosi@google.com,
+	dan.carpenter@linaro.org, souvik.chakravarty@arm.com
+Subject: Re: [PATCH v3 5/9] firmware: arm_scmi: Make MBOX transport a
+ standalone driver
+Message-ID: <ZrI6NH20rK0-WCuf@pluto>
+References: <20240730133318.1573765-1-cristian.marussi@arm.com>
+ <20240730133318.1573765-6-cristian.marussi@arm.com>
+ <ZrIhR-bpbkwdK3Mx@bogus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,167 +56,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240730091648.72322-2-swathi.ks@samsung.com>
+In-Reply-To: <ZrIhR-bpbkwdK3Mx@bogus>
 
-On Tue, Jul 30, 2024 at 02:46:45PM +0530, Swathi K S wrote:
-> Add FSD Ethernet compatible in Synopsys dt-bindings document. Add FSD
-> Ethernet YAML schema to enable the DT validation.
+On Tue, Aug 06, 2024 at 02:12:39PM +0100, Sudeep Holla wrote:
+> On Tue, Jul 30, 2024 at 02:33:14PM +0100, Cristian Marussi wrote:
+> > Make SCMI mailbox transport a standalne driver that can be optionally
+> > loaded as a module.
+> > 
+
+Hi Sudeep,
+
+thanks for havig a look.
+
+> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> > ---
+> > v2 --> v3
+> > - fixed spacing in Kconfig
+> > - updated Copyright
+> > - use new params in DEFINE_SCMI_TRANSPORT_DRIVER
+> > ---
+> >  drivers/firmware/arm_scmi/Kconfig             |  4 +-
+> >  drivers/firmware/arm_scmi/Makefile            |  3 +-
+> >  drivers/firmware/arm_scmi/common.h            |  3 --
+> >  drivers/firmware/arm_scmi/driver.c            |  3 --
+> >  .../{mailbox.c => scmi_transport_mailbox.c}   | 47 +++++++++++++------
+> >  5 files changed, 38 insertions(+), 22 deletions(-)
+> >  rename drivers/firmware/arm_scmi/{mailbox.c => scmi_transport_mailbox.c} (87%)
 > 
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-> Signed-off-by: Swathi K S <swathi.ks@samsung.com>
-> ---
->  .../devicetree/bindings/net/snps,dwmac.yaml   |  5 +-
->  .../devicetree/bindings/net/tesla,ethqos.yaml | 91 +++++++++++++++++++
->  2 files changed, 94 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/net/tesla,ethqos.yaml
+> I am happy with the changes in the series, they all look good. I wonder if
+> it makes sense to move transport drivers into a separate folder
+> drivers/firmware/arm_scmi/transport/{mailbox,smc,optee,virtio}.c
 > 
-> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> index 3eb65e63fdae..0da11fe98cec 100644
-> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> @@ -98,6 +98,7 @@ properties:
->          - snps,dwxgmac-2.10
->          - starfive,jh7100-dwmac
->          - starfive,jh7110-dwmac
-> +        - tesla,fsd-ethqos
->  
->    reg:
->      minItems: 1
-> @@ -121,7 +122,7 @@ properties:
->  
->    clocks:
->      minItems: 1
-> -    maxItems: 8
-> +    maxItems: 10
->      additionalItems: true
->      items:
->        - description: GMAC main clock
-> @@ -133,7 +134,7 @@ properties:
->  
->    clock-names:
->      minItems: 1
-> -    maxItems: 8
-> +    maxItems: 10
->      additionalItems: true
->      contains:
->        enum:
-> diff --git a/Documentation/devicetree/bindings/net/tesla,ethqos.yaml b/Documentation/devicetree/bindings/net/tesla,ethqos.yaml
-> new file mode 100644
-> index 000000000000..9246b0395126
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/tesla,ethqos.yaml
-> @@ -0,0 +1,91 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/tesla,ethqos.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: FSD Ethernet Quality of Service
-> +
-> +maintainers:
-> +  - Swathi K S <swathi.ks@samsung.com>
-> +
-> +description:
-> +  dwmmac based tesla ethernet devices which support Gigabit
-> +  ethernet.
-
-Please write complete sentences.
-
-> +
-> +allOf:
-> +  - $ref: snps,dwmac.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: tesla,fsd-ethqos.yaml
-
-???
-
-Filename matching compatible means for compatible string 
-"tesla,fsd-ethqos" the filename should be tesla,fsd-ethqos.yaml.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 5
-> +    maxItems: 10
-> +
-> +  clock-names:
-> +    minItems: 5
-> +    maxItems: 10
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  phy-mode:
-> +    $ref: ethernet-controller.yaml#/properties/phy-connection-type
-
-No need for this. phy-mode should already be included by snps,dwmac.yaml 
-including ethernet-controller.yaml.
-
-Though you may want to define what subset of modes are valid.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - iommus
-> +  - phy-mode
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/fsd-clk.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    ethernet_1: ethernet@14300000 {
-
-Drop unused label.
-
-> +              compatible = "tesla,fsd-ethqos";
-> +              reg = <0x0 0x14300000 0x0 0x10000>;
-> +              interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
-> +              clocks = <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_CLK_PTP_REF_I>,
-> +                       <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_ACLK_I>,
-> +                       <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_HCLK_I>,
-> +                       <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_RGMII_CLK_I>,
-> +                       <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_CLK_RX_I>,
-> +                       <&clock_peric PERIC_BUS_D_PERIC_IPCLKPORT_EQOSCLK>,
-> +                       <&clock_peric PERIC_BUS_P_PERIC_IPCLKPORT_EQOSCLK>,
-> +                       <&clock_peric PERIC_EQOS_PHYRXCLK_MUX>,
-> +                       <&clock_peric PERIC_EQOS_PHYRXCLK>,
-> +                       <&clock_peric PERIC_DOUT_RGMII_CLK>;
-> +              clock-names = "ptp_ref",
-> +                            "master_bus",
-> +                            "slave_bus",
-> +                            "tx",
-> +                            "rx",
-> +                            "master2_bus",
-> +                            "slave2_bus",
-> +                            "eqos_rxclk_mux",
-> +                            "eqos_phyrxclk",
-> +                            "dout_peric_rgmii_clk";
-> +              pinctrl-names = "default";
-> +              pinctrl-0 = <&eth1_tx_clk>, <&eth1_tx_data>, <&eth1_tx_ctrl>,
-> +                          <&eth1_phy_intr>, <&eth1_rx_clk>, <&eth1_rx_data>,
-> +                          <&eth1_rx_ctrl>, <&eth1_mdio>;
-> +              iommus = <&smmu_peric 0x0 0x1>;
-> +              phy-mode = "rgmii-id";
-> +    };
-> +
-> +...
-> -- 
-> 2.17.1
+> In scmi_transport_*.c, I see scmi is redundant and transport can be eliminated
+> by moving all under the folder with that name. Thoughts ?
 > 
+
+Yes it is a possigility, not sure if there is any (trivial) drawback to
+solve while movinf, but consider that the final name for the .ko LKM has to
+have the scmi_transport prefix somehow to be able to live in the tree and distinguish
+those LKMs from (vendor) protocols ones...so I would have anyway to craft an
+scmi_ naming in the Makefile
+
+Thanks,
+Cristian
+
 
