@@ -1,225 +1,156 @@
-Return-Path: <linux-kernel+bounces-275648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F699487FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:41:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AEE5948801
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9E1D1C226F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:41:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B15F285036
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7122417C9F6;
-	Tue,  6 Aug 2024 03:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="GKCFYDIS"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF64A170A1F;
+	Tue,  6 Aug 2024 03:41:34 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344BA176AC1
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A1115B551
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722915640; cv=none; b=VwzRL4F+50tmv/Ye3JxNGiDNE2XDiBdgrrmLYflvn/JkvYmxwTB+bDbKTOj7gjo6C8pE4KJb+eetex1ZYyPmAi7Mq6sCY/sypUDsBzdQwo458XVI5g7fCs0NMagB1RPMumGoMydfDsPr+BF4v8eYqZlToEJobHcT3dCrses+OSM=
+	t=1722915694; cv=none; b=TieyMJb70CeEtqGb+43jjiscdcMyFU2xMCqnG6NqOgdaLBKBzajwQNpS7PGcXGpi1xwrzAvlUqfKkBV6bxgGhRHOt9pWMEAxwih8UzJfjb8IWNy2Xxo6RGucjGjf93byP6F8J/DaB9YTkvbvpONa4OllZE6K0pKgN2u+5iMLDDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722915640; c=relaxed/simple;
-	bh=ozMFox/Vxe8+rf9SuGeOwqnVsOI4jWQHxikuN6Rtnpc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=QQcA+BNSM7rBIZsTjKJBwkyAKknmRlHWz6UOqw5Po+IAjP+zk1byK7apsxLs31Z7iYe+Gz+m8Q4ghE02MQ+zrB/AMAGT3qyG22cvALknaj5yi+0Nm/+0wni+vEmyJ3uhT9vthMZqcuF3U5fEYGNYRt9fIcWBgtbLm2NC8WkHOzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=GKCFYDIS; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70d399da0b5so147187b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 20:40:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1722915637; x=1723520437; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=82lMs1je3U5UlY1FCMTTSk04IsRDEoOeFF882f6TZgY=;
-        b=GKCFYDISLdAoXjUfPZTWylV8uftnGJWTSz3RYqT0AO+PdBUSFKhxdCxUO1AhJWCVJP
-         5XgD8u9DH4xa9TJZ8i7vSLMwNE93gy0BSFBCDavoAAStrEW+rqFWbXw8cqJmD2eFYILZ
-         HEGK5H40+mBYd3TuQcSaAS1oIln9V11CNGEozqK7R31VcN+YhhzHC9pz/zhzgzjgXPxl
-         T8uQ1Oza8XuYy6APoCMu6G9DbAg8gI69qyuPNlhtaO5UW/Ie7zdkefsiGHfixo4W8Yfw
-         nKu1NiXqXtNup+vW6NtDRLFLBjCALtkJ0EP1nhFj8183m7tY22RwUp+NKqkDhPzsy9j4
-         5eMw==
+	s=arc-20240116; t=1722915694; c=relaxed/simple;
+	bh=cfJnQiGRiLNZZXQ0U5w+PwTLBxMbYLy4nYGq0lhTmtA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pkKyo+OWk3qsUCRPF3tOQWHK4lbmonBfQGVxLKhsnvCl/uTLcQ56Unp6ksLYJ6jRCsyaKppnXyAotdtin/ZKtOFxdO7Wf2Kt+TS33VpUCIIXYZvg5nDx8Qdc/UJ/4WtY6lRzWyqa4eYNPg0cwpDiE9aclkapecPwNoGNUyAGcVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8223aed779aso13155839f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 20:41:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722915637; x=1723520437;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=82lMs1je3U5UlY1FCMTTSk04IsRDEoOeFF882f6TZgY=;
-        b=YfpuE+H5efKdW9WQWOp9ETUh0DnrvLgacpG/YY8AXAsqNcVYNcdNTdE5SyCvxmHy44
-         dT44appu3bzPE5ua3HeaMfHv1D+tBpwc99rtSEj9nvN7g7H6WFW9AXYNDlRPcWyJ/efb
-         gCQvW8hDXQA2MicrNleKedvTBQ8diZvXnvfbhmpxcHz5nIyCz3pRGr8xnI8RVGXeFxZO
-         G/4HwC3r+0M7fzIT2y8bHQZBYG8cClpxodlC9isOs2jJ9aInm7djU2wV13I9XwiBa2af
-         A95g8E/VjfGjQ1najwMtNvyEMSBm9WT2TCMLhA9J02C7+EqKJq/9QEtpflWUGTN248+A
-         jafw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEa5Y5Qw+g/3KEjJjPXZKP7LaT0AbY8r0Z1rW4PcK2sl97Cem5+XCI/LL8JjSpuRllikN0H3heB59cYEmgZduq0YqYXc7K/GqhKzML
-X-Gm-Message-State: AOJu0YzbBh/fAcTUJcwi1Da36O397USdOuFjinHwCDUB9cGesnI2lQyY
-	sqw1R3UCJqghdhSXCgIIfpCQlJaOX4aOCyc9LhnOIeo4eXAFmki+ZxhKQOqWNSE=
-X-Google-Smtp-Source: AGHT+IGUq0bTDzkItWpZfxzEvyUgJ7iAYEQxgHsO66kRmkWNaGaJ3s+4PgpTyEarvoa3R2vD/KBdlg==
-X-Received: by 2002:a05:6a21:3997:b0:1be:c4f9:ddd3 with SMTP id adf61e73a8af0-1c6995ab171mr18012022637.24.1722915637357;
-        Mon, 05 Aug 2024 20:40:37 -0700 (PDT)
-Received: from lvzhaoxiong-KLVC-WXX9.huaqin.com ([116.66.212.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec49486sm6134074b3a.55.2024.08.05.20.40.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 20:40:36 -0700 (PDT)
-From: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-To: neil.armstrong@linaro.org,
-	quic_jesszhan@quicinc.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	dianders@chromium.org,
-	hsinyi@google.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	jagan@edgeble.ai,
-	dmitry.baryshkov@linaro.org,
-	jani.nikula@linux.intel.com
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Subject: [PATCH v2 2/2] drm/panel: jd9365da: Modify the init code of Melfas
-Date: Tue,  6 Aug 2024 11:40:15 +0800
-Message-Id: <20240806034015.11884-3-lvzhaoxiong@huaqin.corp-partner.google.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240806034015.11884-1-lvzhaoxiong@huaqin.corp-partner.google.com>
-References: <20240806034015.11884-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+        d=1e100.net; s=20230601; t=1722915688; x=1723520488;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+JgjY7BMDnfPKZwhOPFpQUnmBA2Ec1+1za4jsL4wAJQ=;
+        b=d9OmUifSrAlmDPgnThDSwuHb9MlJyyzh0kq+LuOjevHM9swY+K+4ef4rXCjFZN5BTk
+         NlUuex3f9Od+0uXWzLG+EUXcnvLF5x3KBA69il/YoSejN8ZAjyOv5YdQtufB9NBFgZFl
+         1HGwTjb4gUCjrCOSgntbybOoK8x776V3dXUiuj4ma6gdZgaizL0UmKveiK4frhdzhsgf
+         p6kZ3S16jNbR6gELrPdLmACysEeqS7v897d8jXFLFTqBQJTvDvWUO2h/TFxLJ+MVxoab
+         DHK/VN//weqRmgHaTXGnP7J59nyB6ayZiFcHCFG3wS5LAJz8eBH03N+9lFCtySFAvBV5
+         SYgw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1udj+oneH/HS/5NP3LES4YnjwBbYSXrb7LqNM/CpValq9N2ytgtKAf+sNOHL4wJSjBbUvjyHn0/5pMHr3JnCDIaHgvts8/JMmfAZB
+X-Gm-Message-State: AOJu0YzOvTlzDDmGlL3OdXp2q+/h79zNfbd6xx2DTRB7T34oywExiucn
+	TsSDFYRhiT7fLu/ZkfEL+z95OY68IEPFD4efK7ucIb0qHNxvQeh+oaShHDKoFTIDpwN7x/mi185
+	Jac5kFAldWau5MLkHW74riQ4tKt6OnPcZiR77/2JzkcvcJxZROCDHcAY=
+X-Google-Smtp-Source: AGHT+IHVoYK2/OVOYfaCo3woMIImP2h9pp6CXglXCHeHvltXb/LLj4+pMMWRpDNkZbvLbobZk6o6fEUrr3wCaF6/0T5/FXmYvXI4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6638:8911:b0:4c2:7a26:278b with SMTP id
+ 8926c6da1cb9f-4c8d56af0b0mr362481173.5.1722915688467; Mon, 05 Aug 2024
+ 20:41:28 -0700 (PDT)
+Date: Mon, 05 Aug 2024 20:41:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000096e011061efb915b@google.com>
+Subject: [syzbot] [serial?] KMSAN: uninit-value in n_tty_lookahead_flow_ctrl (2)
+From: syzbot <syzbot+290abdcd4f509377a0eb@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Modify the Melfas panel init code to satisfy the gamma
-value of 2.2
+Hello,
 
-Acked-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+syzbot found the following issue on:
+
+HEAD commit:    17712b7ea075 Merge tag 'io_uring-6.11-20240802' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10bc6e75980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9d6059ad10dde6fd
+dashboard link: https://syzkaller.appspot.com/bug?extid=290abdcd4f509377a0eb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8ab4fb08b298/disk-17712b7e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/22441c38ffc1/vmlinux-17712b7e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/faf4575a6197/bzImage-17712b7e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+290abdcd4f509377a0eb@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in n_tty_lookahead_flow_ctrl+0x2cd/0x300 drivers/tty/n_tty.c:1516
+ n_tty_lookahead_flow_ctrl+0x2cd/0x300 drivers/tty/n_tty.c:1516
+ tty_port_default_lookahead_buf+0x144/0x210 drivers/tty/tty_port.c:59
+ lookahead_bufs drivers/tty/tty_buffer.c:428 [inline]
+ flush_to_ldisc+0x8ec/0xdb0 drivers/tty/tty_buffer.c:498
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea5/0x1520 kernel/workqueue.c:3390
+ kthread+0x3dd/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3994 [inline]
+ slab_alloc_node mm/slub.c:4037 [inline]
+ __do_kmalloc_node mm/slub.c:4157 [inline]
+ __kmalloc_noprof+0x661/0xf30 mm/slub.c:4170
+ kmalloc_noprof include/linux/slab.h:685 [inline]
+ tty_buffer_alloc drivers/tty/tty_buffer.c:180 [inline]
+ __tty_buffer_request_room+0x36e/0x6d0 drivers/tty/tty_buffer.c:273
+ __tty_insert_flip_string_flags+0x140/0x570 drivers/tty/tty_buffer.c:309
+ tty_insert_flip_char include/linux/tty_flip.h:77 [inline]
+ uart_insert_char+0x39e/0xa10 drivers/tty/serial/serial_core.c:3560
+ serial8250_read_char+0x1a7/0x5d0 drivers/tty/serial/8250/8250_port.c:1743
+ serial8250_rx_chars drivers/tty/serial/8250/8250_port.c:1760 [inline]
+ serial8250_handle_irq+0x77a/0xb80 drivers/tty/serial/8250/8250_port.c:1924
+ serial8250_default_handle_irq+0x120/0x2b0 drivers/tty/serial/8250/8250_port.c:1949
+ serial8250_interrupt+0xc5/0x360 drivers/tty/serial/8250/8250_core.c:86
+ __handle_irq_event_percpu+0x118/0xca0 kernel/irq/handle.c:158
+ handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+ handle_irq_event+0xef/0x2c0 kernel/irq/handle.c:210
+ handle_edge_irq+0x340/0xfb0 kernel/irq/chip.c:831
+ generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+ handle_irq arch/x86/kernel/irq.c:247 [inline]
+ call_irq_handler arch/x86/kernel/irq.c:259 [inline]
+ __common_interrupt+0x97/0x1f0 arch/x86/kernel/irq.c:285
+ common_interrupt+0x8f/0xa0 arch/x86/kernel/irq.c:278
+ asm_common_interrupt+0x2b/0x40 arch/x86/include/asm/idtentry.h:693
+
+CPU: 0 UID: 0 PID: 3456 Comm: kworker/u8:20 Not tainted 6.11.0-rc1-syzkaller-00272-g17712b7ea075 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Workqueue: events_unbound flush_to_ldisc
+=====================================================
+
+
 ---
-Changes between V2 and V1:
--  1. No changed.
-v1: https://lore.kernel.org/all/20240725083245.12253-3-lvzhaoxiong@huaqin.corp-partner.google.com/
----
- .../gpu/drm/panel/panel-jadard-jd9365da-h3.c  | 78 +++++++++----------
- 1 file changed, 39 insertions(+), 39 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-index ce73e8cb1db5..44897e5218a6 100644
---- a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-+++ b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-@@ -873,22 +873,22 @@ static int melfas_lmfbx101117480_init_cmds(struct jadard *jadard)
- 	jd9365da_switch_page(&dsi_ctx, 0x01);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0c, 0x74);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x17, 0x00);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x18, 0xbf);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x19, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x18, 0xd7);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x19, 0x01);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1a, 0x00);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1b, 0xbf);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1c, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1b, 0xd7);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1c, 0x01);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1f, 0x70);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x20, 0x2d);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x21, 0x2d);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x22, 0x7e);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x24, 0xfe);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x24, 0xfd);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x37, 0x19);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x35, 0x28);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x38, 0x05);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x39, 0x08);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3a, 0x12);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3c, 0x78);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3c, 0x7e);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3d, 0xff);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3e, 0xff);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3f, 0x7f);
-@@ -899,47 +899,47 @@ static int melfas_lmfbx101117480_init_cmds(struct jadard *jadard)
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0c, 0x74);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x55, 0x02);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x56, 0x01);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x57, 0x8e);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x57, 0x6a);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x58, 0x09);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x59, 0x0a);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5a, 0x2e);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5b, 0x1a);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5c, 0x15);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5d, 0x7f);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5e, 0x69);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5f, 0x59);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x60, 0x4e);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x61, 0x4c);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x62, 0x40);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x63, 0x45);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x64, 0x30);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x65, 0x4a);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x66, 0x49);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x67, 0x4a);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x68, 0x68);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x69, 0x57);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6a, 0x5b);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6b, 0x4e);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6c, 0x49);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5d, 0x73);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5e, 0x56);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5f, 0x43);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x60, 0x38);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x61, 0x36);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x62, 0x28);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x63, 0x2f);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x64, 0x19);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x65, 0x32);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x66, 0x31);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x67, 0x31);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x68, 0x4f);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x69, 0x3e);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6a, 0x47);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6b, 0x36);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6c, 0x31);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6d, 0x24);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6e, 0x12);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6f, 0x02);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x70, 0x7f);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x71, 0x69);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x72, 0x59);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x73, 0x4e);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x74, 0x4c);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x75, 0x40);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x76, 0x45);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x77, 0x30);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x78, 0x4a);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x79, 0x49);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7a, 0x4a);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7b, 0x68);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7c, 0x57);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7d, 0x5b);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7e, 0x4e);
--	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7f, 0x49);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x70, 0x73);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x71, 0x56);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x72, 0x43);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x73, 0x38);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x74, 0x36);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x75, 0x28);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x76, 0x2f);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x77, 0x19);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x78, 0x32);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x79, 0x31);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7a, 0x31);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7b, 0x4f);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7c, 0x3e);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7d, 0x47);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7e, 0x36);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7f, 0x31);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x80, 0x24);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x81, 0x12);
- 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x82, 0x02);
--- 
-2.17.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
