@@ -1,149 +1,132 @@
-Return-Path: <linux-kernel+bounces-275996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DC67948D09
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:45:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 750A6948D05
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53A941F24BA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:45:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2987C287C56
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8D81BDA80;
-	Tue,  6 Aug 2024 10:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAAA1BD4FB;
+	Tue,  6 Aug 2024 10:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cVfaRy73"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQSHPzI6"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76245161310
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 10:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722941116; cv=none; b=mytOk3RowyOD+pGgiLrmcuZcxmtvjxg8SacJ/TcXPgik6oa6S5OfS1y/LJo0tr0LtqDznaGCypPwDNKw4/MYujw3dGWwuD7LjD3jt9Y0qtVUHjM4EX5lKb9ovsrOrePKRT3hIMQHU5BdIeWA8+IaT3hiMvBs0Z8+CT1j28dAQnA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722941116; c=relaxed/simple;
-	bh=+vmp79Qb3Tls6NjnMxfgvb4gLjW13lPFJ1eRIACcW78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RfAmqg3LyFDgs9vM3twMPRaWzgwBD1R9dzw2wabuNIYHaN8hHaAm62qA+msvQejIHLV/ZCjBli6CbYl3DZ+ZEaDiGkXMDhakmnFKU8ryZ/lkFZJRHQ+AtbSqFn2BzfIfs0x6ZCukLL4jmjjkc9BcB/fi1Dq4WFjhA5QKxbnbLRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cVfaRy73; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722941113;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gf7zpjnUN0wmUdYB8KWoxMfwdTSfpBnwuV6brudHc/Q=;
-	b=cVfaRy738JRG5pSmq6tV9+dJfNoXf2sVo8Ms+Jgc8Adymx/B38gyLv/aLRDpOJw8ZZa5Vk
-	kcz0xNIBDrjtmOmTP1mVxzKf82t1iYOEn/cUmVzLcSs9k4GicTgN4q0An912JhfEgDJevQ
-	XgZ/E6UnNbeFIzujfzhmjc1vIaSznS8=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-NAKf1IueNUu23MhVLxz5bQ-1; Tue,
- 06 Aug 2024 06:45:10 -0400
-X-MC-Unique: NAKf1IueNUu23MhVLxz5bQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0170019560A2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0495A161310;
 	Tue,  6 Aug 2024 10:45:08 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.155])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B3A1F1955D42;
-	Tue,  6 Aug 2024 10:45:03 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue,  6 Aug 2024 12:45:05 +0200 (CEST)
-Date: Tue, 6 Aug 2024 12:45:00 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
-	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-	paulmck@kernel.org
-Subject: Re: [PATCH 2/8] uprobes: revamp uprobe refcounting and lifetime
- management
-Message-ID: <20240806104500.GA20881@redhat.com>
-References: <20240731214256.3588718-1-andrii@kernel.org>
- <20240731214256.3588718-3-andrii@kernel.org>
- <20240805134418.GA11049@redhat.com>
- <CAEf4BzYvkAYL4pPcA7ayiR_VT=g4Y1SMZy4MNX3QEV3H=PjYvw@mail.gmail.com>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722941110; cv=none; b=j343FR9IbceGfg8Yvkc2DmHON2sQddZnQhuWBrRO9nc/3dbjtU7BeyzDKKjGAFRY38yjTp9W+lDlVQcwL1f4hNP64/W0YTSKvC8LzUEMiuwygdjVhQX+PLQM3l+40LqiTw26BkQeljkIAhnjLDKedXyHCaNAnPYVum3JjX+p6z4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722941110; c=relaxed/simple;
+	bh=rOYhd2/EFTCSIXBMVNgLS/L0tQ85DFEsBrVqWQTwj/w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=X2LeKS0LtUI6uRAfqc/4OuS6XbVZJ+h5IBTak/OfXl8cb5o63qn4Ngwug3oCWqxehaxwnGyYE2Kr3GlmQi3nEHTfPRu5s7H+70wGbJxgSUXAOdcR2mAMTVWr2rZa5r9u+CGHuJT2n/2X4OGTEfHNR/xAFYZldI0h/LU3vhZ689U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQSHPzI6; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-428243f928fso4542415e9.0;
+        Tue, 06 Aug 2024 03:45:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722941107; x=1723545907; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zwKi+niK4mDkuGH1TU8kmdB7gCGRr8kwrsgvY8XWNKI=;
+        b=AQSHPzI6DQnQtop6ViJPySjMCVZoKEc+Jt8sshzV/+FQOP8/+TVaJOhjLbN/Kavdnl
+         1kLXUrWyuqW7vBFFjYjkfofROWnVF5stQuTkL+j0PwoiRO4kKwkNDxBRSzxLdCBpEMad
+         UW3QkMAz2sTjpCc9r79cpFShRKvSKg/ExR2qnQr/DBofzAogPieY9pqGbXotKuaPQ48U
+         DURSGfIE4i7Fd3gx3qJ+ruS4OsfcfTiokSNPHf5q+8+mwBV6Dr5CU99f/sCSidyfptwe
+         jFmBbAj28sMXsUjvITa8UDQY7qLNRWfcUJ8JeBxMnFMasrP2ea2mgFI8bkg4jOkEVAjk
+         4iEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722941107; x=1723545907;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zwKi+niK4mDkuGH1TU8kmdB7gCGRr8kwrsgvY8XWNKI=;
+        b=GVBNPWpdXoxCmKzsupbZIhg2cB1H4ay2dzJsOu9v+HKulW21/9N04xLRl0eJ3to7XC
+         czLKVehoL9eYaU5k+VqlG+OeruStKI8jr6rqn6UrDKIR2BOPaHXrw4Zrit1K7UwbUad8
+         w3oaJb2YHVIB7Nl3agSuOyreIOm5myBasMW/eZsZvY9q6RB/37AdZMy4zSw2TG5/5p7B
+         /RaEmOjhOdvaAJ5sScXAFmogzicgydwGSgOpBeNpaN+TGqsm+frtAXZBQFVwRGrV6A+o
+         SV8vRRgaQIf0WY/w34lcaGOEkfX70bNtRqsz9udZZ/W6r1CR89N9Fj9XyFWQ9VpwxFEx
+         Z/Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8gQOvTWB5L0+qKd7jjGqX+7rYcjj9W9N0QM7KQhSMBtBLjO3yoBa7I5CHKwF5jjyDPhnbDQfckmxOMFanbLRhaDoAy8qFw44dUaBp/4UXs6h2uroNT+s5ClO+ojVhwdM7ELSTFxVW
+X-Gm-Message-State: AOJu0YzK+W5B5gzyg8y5sMcrCExhte+x4q0HGfmFO+9dN7qpq/pQd+Tz
+	RdPUXKsPopwDbOaJH4IKxChkdFl2j1Nz1GHStybpC27DyKHUan5U
+X-Google-Smtp-Source: AGHT+IHlDih8wASngLnMl9wG+rTzq76pmtVaIYD7eg8uIZmKmt/fQ5OsOJUSkZrVt4hQSJYgeLt0fA==
+X-Received: by 2002:a05:600c:45d5:b0:424:aa35:9fb9 with SMTP id 5b1f17b1804b1-428e6af285cmr132230085e9.2.1722941107000;
+        Tue, 06 Aug 2024 03:45:07 -0700 (PDT)
+Received: from ?IPv6:2001:a61:359b:e801:d44:32b3:6924:10d1? ([2001:a61:359b:e801:d44:32b3:6924:10d1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb64006sm238256225e9.30.2024.08.06.03.45.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 03:45:06 -0700 (PDT)
+Message-ID: <15304301efe5c23d55984f8a1f2a5016d7be213d.camel@gmail.com>
+Subject: Re: [PATCH] iio: adc: ad7124: fix DT configuration parsing
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Dumitru Ceclan <mitrutzceclan@gmail.com>
+Cc: lars@metafoo.de, jic23@kernel.org, alexandru.tachici@analog.com, 
+	Jonathan.Cameron@huawei.com, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dumitru Ceclan <dumitru.ceclan@analog.com>
+Date: Tue, 06 Aug 2024 12:45:06 +0200
+In-Reply-To: <20240806085133.114547-1-dumitru.ceclan@analog.com>
+References: <20240806085133.114547-1-dumitru.ceclan@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzYvkAYL4pPcA7ayiR_VT=g4Y1SMZy4MNX3QEV3H=PjYvw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 08/05, Andrii Nakryiko wrote:
->
-> On Mon, Aug 5, 2024 at 6:44 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > On 07/31, Andrii Nakryiko wrote:
-> > >
-> > > @@ -732,11 +776,13 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset,
-> > >       uprobe->ref_ctr_offset = ref_ctr_offset;
-> > >       init_rwsem(&uprobe->register_rwsem);
-> > >       init_rwsem(&uprobe->consumer_rwsem);
-> > > +     RB_CLEAR_NODE(&uprobe->rb_node);
-> >
-> > I guess RB_CLEAR_NODE() is not necessary?
->
-> I definitely needed that with my batch API changes, but it might be
-> that I don't need it anymore. But I'm a bit hesitant to remove it,
+On Tue, 2024-08-06 at 11:51 +0300, Dumitru Ceclan wrote:
+> The cfg pointer is set before reading the channel number that the
+> configuration should point to. This causes configurations to be shifted
+> by one channel.
+> For example setting bipolar to the first channel defined in the DT will
+> cause bipolar mode to be active on the second defined channel.
+>=20
+> Fix by moving the cfg pointer setting after reading the channel number.
+>=20
+> Fixes: 7b8d045e497a ("iio: adc: ad7124: allow more than 8 channels")
+> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> ---
 
-OK, lets keep it, it doesn't hurt. Just it wasn't clear to me why did
-you add this initialization in this patch.
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-> > > @@ -1286,15 +1296,19 @@ static void build_probe_list(struct inode *inode,
-> > >                       u = rb_entry(t, struct uprobe, rb_node);
-> > >                       if (u->inode != inode || u->offset < min)
-> > >                               break;
-> > > +                     u = try_get_uprobe(u);
-> > > +                     if (!u) /* uprobe already went away, safe to ignore */
-> > > +                             continue;
-> > >                       list_add(&u->pending_list, head);
-> >
-> > cosmetic nit, feel to ignore, but to me
-> >
-> >                         if (try_get_uprobe(u))
-> >                                 list_add(&u->pending_list, head);
-> >
-> > looks more readable.
->
-> It's not my code base to enforce my preferences, but I'll at least
-> explain why I disagree. To me, something like `if (some condition)
-> <break/continue>;` is a very clear indication that this item (or even
-> the rest of items in case of break) won't be processed anymore.
->
-> While
->
-> if (some inverted condition)
->    <do some something useful>
-> <might be some more code>
-
-OK, I won't insist. To me the most confusing part is
-
-	u = try_get_uprobe(u);
-	if (!u)
-	...
-
-If you read this code for the 1st time (or you are trying to recall it
-after 10 years ;) it looks as if try_get_uprobe() can return another uprobe.
-
-> So I'll invert this just to not be PITA, but I disagree :)
-
-If you disagree, then don't change it ;)
-
-Oleg.
+> =C2=A0drivers/iio/adc/ad7124.c | 3 +--
+> =C2=A01 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+> index 3beed78496c5..672d41bac8ca 100644
+> --- a/drivers/iio/adc/ad7124.c
+> +++ b/drivers/iio/adc/ad7124.c
+> @@ -839,8 +839,6 @@ static int ad7124_parse_channel_config(struct iio_dev
+> *indio_dev,
+> =C2=A0	st->channels =3D channels;
+> =C2=A0
+> =C2=A0	device_for_each_child_node_scoped(dev, child) {
+> -		cfg =3D &st->channels[channel].cfg;
+> -
+> =C2=A0		ret =3D fwnode_property_read_u32(child, "reg", &channel);
+> =C2=A0		if (ret)
+> =C2=A0			return ret;
+> @@ -858,6 +856,7 @@ static int ad7124_parse_channel_config(struct iio_dev
+> *indio_dev,
+> =C2=A0		st->channels[channel].ain =3D AD7124_CHANNEL_AINP(ain[0]) |
+> =C2=A0						=C2=A0 AD7124_CHANNEL_AINM(ain[1]);
+> =C2=A0
+> +		cfg =3D &st->channels[channel].cfg;
+> =C2=A0		cfg->bipolar =3D fwnode_property_read_bool(child, "bipolar");
+> =C2=A0
+> =C2=A0		ret =3D fwnode_property_read_u32(child, "adi,reference-select",
+> &tmp);
 
 
