@@ -1,246 +1,192 @@
-Return-Path: <linux-kernel+bounces-275702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5630F9488D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:08:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB1A9488D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46B51F2394F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:08:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D57571C22330
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0AF1BB6A9;
-	Tue,  6 Aug 2024 05:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD2E1BB6AE;
+	Tue,  6 Aug 2024 05:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D0EmZYpi"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="puSL0mX6"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EDB15C124
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 05:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FE9B663
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 05:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722920922; cv=none; b=NK03dWHzMPfB2sU387CvYxYPIlSBBDycyiWEzjVKZRQClENN4gbY5onQ/bwR3sRp0UfMgN0dN5AuQzCe6rYcheowfLDuXvE/W9tCefi6EhPjYogVeJkqPdmQVub1MpilViNeia9NXl37oUPg+3AvVc2OPe7c5oTANJ9Ux4RMTC8=
+	t=1722921146; cv=none; b=DOMDTLbOjUWA1imi/G9mjlldDUs5KiZ2JDo70NaXBpuG6vxURUBdwxQIatETXdWp1FJKyD9YYd4UwIAxnrMstfCZt994QZI4R0ug4Kw0HupnI+4M88874/KSOq9TgvP1iN3F2kQhaH/zX/3meKODBSKtckiQufBZ9Khi5WkuPnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722920922; c=relaxed/simple;
-	bh=DYcRYcExpvTwKvL0HLnsyTitLjgAAyICKJ45hJgye70=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pEgG4Rwa5J6De0vCnlgxRk+miWHTIpUyYs+7TlQds9P2fryMP9RUfuSLgFnWHE9R9c+4zSpgC12nDoTiSxAG+ktKvF6Vud3XKPto1qxCFOGSzs+TFuPc83/ZmP4ZGE1rL+CIpuIxM21wIK04Pnpk3D43QoM5gUg/9acVcHn4SrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D0EmZYpi; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-44fee2bfd28so147961cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 22:08:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722920920; x=1723525720; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jjc5PvFQAIDEJuasUzjAKu0+WbtJ/LimH4KncpiNJ2k=;
-        b=D0EmZYpiifyYnoEfClSvdWJ1bHWHUKtLW04ehtW/l8GtVPt15B2j0xVG00DE6ReJ+l
-         vSvMvRUEMrAJzYZ/l8MRdofabvhVWVq6eA47/Ci17YdVjapzhaz9T3rsBpn1JJQp7Jru
-         qN9RJeoJ/QC+g7GBoY0PlzJN1veHMAuFEhr45sGkFvanDTD7LSLn5qGRU2gImqbBKERe
-         tScMBB4IMhJKo1MExE46ES88oNYMagfUaGq0GQpfqcF+2LLwfrRMKYnRBNpht1vyH88F
-         ugrymPQyo40CmyTxb8FQMbAPBD9tzoRXWptSw01i8ZrX32KJNvoV8gQEuEa3nr5QHJgT
-         S3AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722920920; x=1723525720;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jjc5PvFQAIDEJuasUzjAKu0+WbtJ/LimH4KncpiNJ2k=;
-        b=wUyVfGk4ntTmY5ubeeXsQfjnKht9Qr6aKjK6jlX9VPfwfgw29zRJ7mIQUVHWZPSCMG
-         h7g7iwde4LD4OI8p9ULBkXzIhTWIN27OGuxo1pw145bxWxFtFImpxefQp18FYbf9IVeG
-         a7bbyxILpEiHkSX7IOzjmKPIN419zejpAjZdt6I5aDR1BQtw/dpey9y59ndZ/wuEW7t/
-         E8/2NWWXwur40keKFFuUw8wReupHFsoiy/aS266/SNj69sZHYyXYfPEcQQiTrEIoTUK2
-         8sMntRBqFdZNFnqlexO0CVSLIEOfc+Uj5M/7Rbq9pbj4IHnHsUHubGXJeDbaQSV39Rsx
-         cfCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9mCk4MzRCgCVWSDnkTdVtXLHaEtql1YKBUh0GXwXqzdwz4wFLJ7YaCeWt47MixbH6AotVg2x1aRlLLPviSjR6CD8NUvfbmK/oQ96s
-X-Gm-Message-State: AOJu0Yybd11KY+kMCnSGIqT/jccfUtlnqfVBVom9j1wK0NGPzku22zH9
-	8TMyqCfhOv33th+e3ZNUDESpGWv1Bfk8sW4bucMZ3Vw5Xtgskg5LRdTZd6kKK3YTMq4L67JOENm
-	PzYUNDB6f+cBLzIyh+OrEHPjcVflSvl5FPYE/
-X-Google-Smtp-Source: AGHT+IGe+hbnq8FqqpBq6h2fG7LKEjlEXbgQq7QkXIaGvlbHxBcjruOiSCjcQRxF74y9Lk6vbB+gLm+PKJ0ZasuFnCc=
-X-Received: by 2002:ac8:7fd3:0:b0:447:d7ff:961d with SMTP id
- d75a77b69052e-451bd1ea570mr1055671cf.9.1722920919750; Mon, 05 Aug 2024
- 22:08:39 -0700 (PDT)
+	s=arc-20240116; t=1722921146; c=relaxed/simple;
+	bh=/TH6cB+n+1ayWn8HHSV/LMald4tEPqBBgejtf1Q1SS0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=DyAfv9pFx0iNCD18p9CTD/X4yl35pjdcWRp5wUJnhOHPzM6FpJU+Z3suSGMlXJ63fmISCENsywyHW/2SdLTAvpOK9HLVrw/Q3GbY88NF8UJXoH4DrtbrJvb4/tshuyMfBNVYshZdFxQifCjri6ES3ZZisXEBWbPAyez2Dt+bLKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=puSL0mX6; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240806051220epoutp044a4b4389f904137713428997f444cc46~pC6YwmLrX0812508125epoutp043
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 05:12:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240806051220epoutp044a4b4389f904137713428997f444cc46~pC6YwmLrX0812508125epoutp043
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722921140;
+	bh=D6KiA/heKMDS76hm7ohxJiQZ2JEMRXX4D/OeWiSU8XI=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=puSL0mX6m6/2vzNSVBhUuYTrTHhRvVX1rxxH19zgyvLctbH0FByx9HN4BGJF7FbWS
+	 v+gDsUJMzfe74GxXBtSB1GxmhYL1PN04jmAUhBWs6Nxa3X4YKRDfFQjILTUEGTDe+l
+	 100tFy9QFDpEKWooFcjZ8+w2fSLXegfBt+pI3Yho=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240806051220epcas1p2f905ebe529285a4bf1aca0b23d8af471~pC6YaUYn_1773717737epcas1p2l;
+	Tue,  6 Aug 2024 05:12:20 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.36.223]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4WdLyr2lrBz4x9QJ; Tue,  6 Aug
+	2024 05:12:20 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	FC.82.09725.4B0B1B66; Tue,  6 Aug 2024 14:12:20 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240806051219epcas1p42de88463d90d6084ccfea538d929465c~pC6XqkYt10191501915epcas1p41;
+	Tue,  6 Aug 2024 05:12:19 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240806051219epsmtrp2403db729d9db94d091746fa2bd0404b2~pC6Xp7oGq2312723127epsmtrp2p;
+	Tue,  6 Aug 2024 05:12:19 +0000 (GMT)
+X-AuditID: b6c32a37-245b8700000025fd-fb-66b1b0b4e588
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	05.C3.08964.3B0B1B66; Tue,  6 Aug 2024 14:12:19 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.253.105.252]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240806051219epsmtip11c52a113b4d933a91c5683f4a8c69a64~pC6XioeOr0178101781epsmtip1A;
+	Tue,  6 Aug 2024 05:12:19 +0000 (GMT)
+From: Sangmoon Kim <sangmoon.kim@samsung.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: youngjae24.lim@samsung.com, jordan.lim@samsung.com,
+	myoungjae.kim@samsung.com, Sangmoon Kim <sangmoon.kim@samsung.com>, Lai
+	Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] workqueue: add cmdline parameter
+ workqueue.panic_on_stall
+Date: Tue,  6 Aug 2024 14:12:09 +0900
+Message-Id: <20240806051209.3352066-1-sangmoon.kim@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806022114.3320543-1-yuzhao@google.com> <20240806022114.3320543-4-yuzhao@google.com>
-In-Reply-To: <20240806022114.3320543-4-yuzhao@google.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Mon, 5 Aug 2024 23:08:01 -0600
-Message-ID: <CAOUHufY-CRHoALNEenHvh6HHS=B7nX5_YyB-XZobi5zxY5nB+Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/4] arm64: pause remote CPUs to update vmemmap
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, David Rientjes <rientjes@google.com>, 
-	Douglas Anderson <dianders@chromium.org>, Frank van der Linden <fvdl@google.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Muchun Song <muchun.song@linux.dev>, 
-	Nanyong Sun <sunnanyong@huawei.com>, Yang Shi <yang@os.amperecomputing.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDKsWRmVeSWpSXmKPExsWy7bCmnu6WDRvTDJ4fELGYunY3k8WNZWEW
+	l3fNYbOY/lHM4taDRhaLX8uPMlps2/uUyYHdY+esu+wem1Z1snn0bVnF6PF5k1wAS1S2TUZq
+	YkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QfiWFssScUqBQ
+	QGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgVmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdsbNU3uZ
+	Co7xVzSdbmRrYPzJ08XIySEhYCKx7PNqxi5GLg4hgR2MEv8+PGAGSQgJfGKUmNntCJH4xiix
+	rGE6UIIDrGP52wyImr2MEr2fLSFqvjBKHN4wgwUkwSagK/Fl3mVGEFtEQFbiyrSHYBuYBY4w
+	Skz99QEsISzgL/H8+XpWEJtFQFXixPFbYDavgL3EzEnrmCDOk5fYf/AsM0RcUOLkzCdgC5iB
+	4s1bZzODDJUQOMUusePUVXaIBheJNdPWsEDYwhKvjm+BiktJfH63lw2ioZ9R4lR3F1TRFEaJ
+	udc0IWxjid6eC2BvMgtoSqzfpQ+xjE/i3dceVojveSU62oQgqtUkHr+6ywhhy0j035kPNdFD
+	4sKv5dBQjJW4/76VeQKj3CwkL8xC8sIshGULGJlXMYqlFhTnpqcWGxYYwyMyOT93EyM42WmZ
+	72Cc9vaD3iFGJg7GQ4wSHMxKIrxdpRvShHhTEiurUovy44tKc1KLDzGaAgN1IrOUaHI+MN3m
+	lcQbmlgamJgZmVgYWxqbKYnznrlSliokkJ5YkpqdmlqQWgTTx8TBKdXAtF6gIP7M0V8ceyQE
+	ylhTJNuW/+YLi92vn31n7gKWgEstTJf098tH7y5/ur9TwG6DwLI5/+axBKS1LlQ781WGN6Ko
+	dkPplIDbrOppl9nM7ggtnr62LnESp8j6hOy0F0ZbU5/ols+5Ou283NyHMrz7NqmVbVblDft2
+	Jekga/2PHf4u8rr6HQp2GV8NfrafvukWXP8pzIZxwd6aLa0tUTY/7a+Ih4oXdwsqGQj9ddUw
+	KkzTrN/h+YvrfaXrSa5/E4MXJx+zUffffFSfPfT206qKsvvGhWu8r618fNrvouo5fi6eAAaP
+	wzyztxvfP3Hib4h2aUyYI1/+7M2bZR8fMvTwVvpdetXtWmDzZJ8/hgxKLMUZiYZazEXFiQAp
+	H0sa/wMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGLMWRmVeSWpSXmKPExsWy7bCSnO7mDRvTDH4eVbOYunY3k8WNZWEW
+	l3fNYbOY/lHM4taDRhaLX8uPMlps2/uUyYHdY+esu+wem1Z1snn0bVnF6PF5k1wASxSXTUpq
+	TmZZapG+XQJXxs1Te5kKjvFXNJ1uZGtg/MnTxcjBISFgIrH8bUYXIxeHkMBuRonPu++xdjFy
+	AsVlJHZe3MwEUSMscfhwMUhYSOATo8S79VYgNpuArsSXeZcZQWwRAVmJK9MeMoLMYRY4xSjx
+	dUIXM0hCWMBX4tPRz0wgNouAqsSJ47fA5vMK2EvMnLSOCWKXvMT+g2eZIeKCEidnPmEBsZmB
+	4s1bZzNPYOSbhSQ1C0lqASPTKkbJ1ILi3PTcYsMCw7zUcr3ixNzi0rx0veT83E2M4KDU0tzB
+	uH3VB71DjEwcjIcYJTiYlUR4u0o3pAnxpiRWVqUW5ccXleakFh9ilOZgURLnFX/RmyIkkJ5Y
+	kpqdmlqQWgSTZeLglGpgiqzpXvBYyt121a93340fzV5QYlN55ehvI92v/Ltf5ZzzO7Y9YyEv
+	m/lBh8nTbaRvmjmaue3IcNqoZ75i8csHkUsM2LTkz93oC5PSZEicuPJIDKuQh3bmqb4Ymbbj
+	tulmd7dWH/3ybIbdySe7o862fZm1NivVnnPFoQ19mz3k3/byqsgfazz02T7mknX61kVLlFV3
+	psz9fUX1m4nqzAyms8p1TXZTuRlaT+7KyVZ9Yx3f+1VrI79W34dqwS+vzi6b8eqmwd8LYn1c
+	1RtKajar/eAq+fnwybsF7avc1dcHOQRwS9vKyPvtXxnt/2/enaTKiDWLmgUZ76dYmC5Q8Fe9
+	KcT+0YFzWtIMG5XO+9frlFiKMxINtZiLihMBDeTECrkCAAA=
+X-CMS-MailID: 20240806051219epcas1p42de88463d90d6084ccfea538d929465c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240806051219epcas1p42de88463d90d6084ccfea538d929465c
+References: <CGME20240806051219epcas1p42de88463d90d6084ccfea538d929465c@epcas1p4.samsung.com>
 
-On Mon, Aug 5, 2024 at 8:21=E2=80=AFPM Yu Zhao <yuzhao@google.com> wrote:
->
-> Pause remote CPUs so that the local CPU can follow the proper BBM
-> sequence to safely update the vmemmap mapping `struct page` areas.
->
-> While updating the vmemmap, it is guaranteed that neither the local
-> CPU nor the remote ones will access the `struct page` area being
-> updated, and therefore they will not trigger kernel PFs.
->
-> Signed-off-by: Yu Zhao <yuzhao@google.com>
-> ---
->  arch/arm64/include/asm/pgalloc.h | 55 ++++++++++++++++++++++++++++++++
->  mm/hugetlb_vmemmap.c             | 14 ++++++++
->  2 files changed, 69 insertions(+)
->
-> diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pg=
-alloc.h
-> index 8ff5f2a2579e..1af1aa34a351 100644
-> --- a/arch/arm64/include/asm/pgalloc.h
-> +++ b/arch/arm64/include/asm/pgalloc.h
-> @@ -12,6 +12,7 @@
->  #include <asm/processor.h>
->  #include <asm/cacheflush.h>
->  #include <asm/tlbflush.h>
-> +#include <asm/cpu.h>
->
->  #define __HAVE_ARCH_PGD_FREE
->  #define __HAVE_ARCH_PUD_FREE
-> @@ -137,4 +138,58 @@ pmd_populate(struct mm_struct *mm, pmd_t *pmdp, pgta=
-ble_t ptep)
->         __pmd_populate(pmdp, page_to_phys(ptep), PMD_TYPE_TABLE | PMD_TAB=
-LE_PXN);
->  }
->
-> +#ifdef CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP
-> +
-> +#define vmemmap_update_lock vmemmap_update_lock
-> +static inline void vmemmap_update_lock(void)
-> +{
-> +       cpus_read_lock();
-> +}
-> +
-> +#define vmemmap_update_unlock vmemmap_update_unlock
-> +static inline void vmemmap_update_unlock(void)
-> +{
-> +       cpus_read_unlock();
-> +}
-> +
-> +#define vmemmap_update_pte vmemmap_update_pte
-> +static inline void vmemmap_update_pte(unsigned long addr, pte_t *ptep, p=
-te_t pte)
-> +{
-> +       preempt_disable();
-> +       pause_remote_cpus();
-> +
-> +       pte_clear(&init_mm, addr, ptep);
-> +       flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
-> +       set_pte_at(&init_mm, addr, ptep, pte);
-> +
-> +       resume_remote_cpus();
-> +       preempt_enable();
-> +}
+When we want to debug the workqueue stall, we can immediately make
+a panic to get the information we want.
 
-Note that I kept this API from Nanyong for the sake of discussion.
-What I actually plan to test in our production is:
+In some systems, it may be necessary to quickly reboot the system to
+escape from a workqueue lockup situation. In this case, we can control
+the number of stall detections to generate panic.
 
-#define vmemmap_update_pte_range_start vmemmap_update_pte_range_start
-static inline void vmemmap_update_pte_range_start(pte_t *pte,
-                                                  unsigned long start,
-unsigned long end)
-{
-        preempt_disable();
-        pause_remote_cpus();
+workqueue.panic_on_stall sets the number times of the stall to trigger
+panic. 0 disables the panic on stall.
 
-        for (; start !=3D end; start +=3D PAGE_SIZE, pte++)
-                pte_clear(&init_mm, start, pte);
+Signed-off-by: Sangmoon Kim <sangmoon.kim@samsung.com>
+---
+v2
+- Combine 'panic_on_watchdog' and 'max_watchdog_to_panic' into
+  'panic_on_stall'
 
-        flush_tlb_kernel_range(start, end);
-}
+v1: https://lore.kernel.org/lkml/20240730080428.2556769-1-sangmoon.kim@samsung.com
+---
+ kernel/workqueue.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-#define vmemmap_update_pte_range_end vmemmap_update_pte_range_end
-static inline void vmemmap_update_pte_range_end(void)
-{
-        resume_remote_cpus();
-        preempt_enable();
-}
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index dfd42c28e404..801d984b68e5 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -7406,6 +7406,9 @@ static struct timer_list wq_watchdog_timer;
+ static unsigned long wq_watchdog_touched = INITIAL_JIFFIES;
+ static DEFINE_PER_CPU(unsigned long, wq_watchdog_touched_cpu) = INITIAL_JIFFIES;
+ 
++static unsigned int wq_panic_on_stall;
++module_param_named(panic_on_stall, wq_panic_on_stall, uint, 0644);
++
+ /*
+  * Show workers that might prevent the processing of pending work items.
+  * The only candidates are CPU-bound workers in the running state.
+@@ -7457,6 +7460,16 @@ static void show_cpu_pools_hogs(void)
+ 	rcu_read_unlock();
+ }
+ 
++static void panic_on_wq_watchdog(void)
++{
++	static unsigned int wq_stall;
++
++	if (wq_panic_on_stall) {
++		wq_stall++;
++		BUG_ON(wq_stall >= wq_panic_on_stall);
++	}
++}
++
+ static void wq_watchdog_reset_touched(void)
+ {
+ 	int cpu;
+@@ -7529,6 +7542,9 @@ static void wq_watchdog_timer_fn(struct timer_list *unused)
+ 	if (cpu_pool_stall)
+ 		show_cpu_pools_hogs();
+ 
++	if (lockup_detected)
++		panic_on_wq_watchdog();
++
+ 	wq_watchdog_reset_touched();
+ 	mod_timer(&wq_watchdog_timer, jiffies + thresh);
+ }
+-- 
+2.34.1
 
-> +#define vmemmap_update_pmd vmemmap_update_pmd
-> +static inline void vmemmap_update_pmd(unsigned long addr, pmd_t *pmdp, p=
-te_t *ptep)
-> +{
-> +       preempt_disable();
-> +       pause_remote_cpus();
-> +
-> +       pmd_clear(pmdp);
-> +       flush_tlb_kernel_range(addr, addr + PMD_SIZE);
-> +       pmd_populate_kernel(&init_mm, pmdp, ptep);
-> +
-> +       resume_remote_cpus();
-> +       preempt_enable();
-> +}
-> +
-> +#define vmemmap_flush_tlb_all vmemmap_flush_tlb_all
-> +static inline void vmemmap_flush_tlb_all(void)
-> +{
-> +}
-> +
-> +#define vmemmap_flush_tlb_range vmemmap_flush_tlb_range
-> +static inline void vmemmap_flush_tlb_range(unsigned long start, unsigned=
- long end)
-> +{
-> +}
-> +
-> +#endif /* CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP */
-> +
->  #endif
-> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-> index 2dd92e58f304..893c73493d9c 100644
-> --- a/mm/hugetlb_vmemmap.c
-> +++ b/mm/hugetlb_vmemmap.c
-> @@ -46,6 +46,18 @@ struct vmemmap_remap_walk {
->         unsigned long           flags;
->  };
->
-> +#ifndef vmemmap_update_lock
-> +static void vmemmap_update_lock(void)
-> +{
-> +}
-> +#endif
-> +
-> +#ifndef vmemmap_update_unlock
-> +static void vmemmap_update_unlock(void)
-> +{
-> +}
-> +#endif
-> +
->  #ifndef vmemmap_update_pmd
->  static inline void vmemmap_update_pmd(unsigned long addr,
->                                       pmd_t *pmdp, pte_t *ptep)
-> @@ -194,10 +206,12 @@ static int vmemmap_remap_range(unsigned long start,=
- unsigned long end,
->
->         VM_BUG_ON(!PAGE_ALIGNED(start | end));
->
-> +       vmemmap_update_lock();
->         mmap_read_lock(&init_mm);
->         ret =3D walk_page_range_novma(&init_mm, start, end, &vmemmap_rema=
-p_ops,
->                                     NULL, walk);
->         mmap_read_unlock(&init_mm);
-> +       vmemmap_update_unlock();
->         if (ret)
->                 return ret;
->
-> --
-> 2.46.0.rc2.264.g509ed76dc8-goog
->
 
