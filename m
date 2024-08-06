@@ -1,276 +1,170 @@
-Return-Path: <linux-kernel+bounces-276599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB3A89495E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:51:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C7CE9495EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1FB51C223E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:51:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C53371F219DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B69F3BB50;
-	Tue,  6 Aug 2024 16:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7090040855;
+	Tue,  6 Aug 2024 16:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BdQOXAjW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LefYejKC"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0D844C81;
-	Tue,  6 Aug 2024 16:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBFC481C4
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 16:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722963072; cv=none; b=IyRu14TgT8NxInnlPLPsE7n5+mpH4b4VunlSBA56PAkvHSZH+f3kmPg5QotBpkuj86yqi8LV2Dt5tRCkP5BiGZAymQsLdbosB3tNZMT5cxA0L+RUPQpavbqxwaYGkXLHnNc7gAepL50I1fzPrv1g5JNjVrU8o7hnDinhgxVCB3I=
+	t=1722963103; cv=none; b=KBeccWnJi1OUyw0JN7e3r9mStFuNVLiUYSALziJgSJ7rY9KTH9A7TIxlJum/lzZ/RMgsLldJsDo4z3zpB9zoHLHhUMIhkOcLDbMtdwgVdmiw6SFRVMRnIrH1I/V2jzMXqf40uXAdgoT3NX0PFhkHYiNkgUukYJY151uUhIGs8wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722963072; c=relaxed/simple;
-	bh=17eO7sl2jd1gtxWt8RVlCObOGsTQ5a/P8JFR/vmFREY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nsPeoHFaLcxg+E0BWZQh9mXa7m8IXQ/SnCudPGTIonA+PdT/W2QTv+0lNoRJLj2IV0wv6ptq+ENsrDLNSZ0IZtp4nhXSHssRf2j/PsBAXUTR1k6q1FxU5b+k/2LkHEYC0R7Ewr2Dd90FnGi+H53LljbhszKOw9agJXgge5tsbFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BdQOXAjW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5034C4AF0C;
-	Tue,  6 Aug 2024 16:51:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722963071;
-	bh=17eO7sl2jd1gtxWt8RVlCObOGsTQ5a/P8JFR/vmFREY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BdQOXAjWke+YVJ7M94Cqkn1mWhs11qVSCmbtfOkCA1QjpaAKlMnIAUcR870pXf0WB
-	 G9isqgmLNvGoTCFResa+tSZnKaq25a04mvVUfwf8EL5Wfja5AY4vNNEaxuiHMSzFvl
-	 6kC2yLD94EHYXWLeyo45gQx/ithDK5NN699311Qy9cCdHcV+Mh2vyK3SAsEfGcn3yb
-	 dMv27AGPrZRTHr7n31sZ317TlympdjYTGltXlbaKV2AkUgOzTELjoOp0hlOdAjRRip
-	 FPqFLNDVq/jk5bcCVcKP7gOvO7Qbds3qu0LOUwzgYm+JwessgwHstUMzRlg1WBFRIU
-	 2Cu9FcM5bxemQ==
-Date: Tue, 6 Aug 2024 17:51:06 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: <fabrice.gasnier@foss.st.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 8/9] iio: add iio backend support to sd modulator
-Message-ID: <20240806175106.09a53784@jic23-huawei>
-In-Reply-To: <20240730084640.1307938-9-olivier.moysan@foss.st.com>
-References: <20240730084640.1307938-1-olivier.moysan@foss.st.com>
-	<20240730084640.1307938-9-olivier.moysan@foss.st.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722963103; c=relaxed/simple;
+	bh=zwYrYMjd46tRAc1s8WfUpUtE5XVT9C0iCl5X9xL3yRM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Od8fFRWF//NSRfFXGAw97cIRaz59Wj5lVyZCINm0FprLEO1+HXj/KJkvmbrU6ZezxGzVqAG5DEJuZ1b5Ex9bWP6yXWzxWmcgGUUcgOlketqIwgWgdmnm2pl8K0+so5q8nYFA9djPhpMPpEYLr3yP/hLaU7Ou/8Qx8vEVgPNbFuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LefYejKC; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-44ff132ff9cso5454071cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 09:51:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1722963100; x=1723567900; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xwhrn6L/BEax4z8Y9Ps+jMGT26+SKh+43Sy/rMhIBig=;
+        b=LefYejKC+a7bQvRIXQJ+6GhzLhCDOzMEBf+BLGowb1TdSWIGkUThrrXuT3dPesLDOH
+         5tcwmXB8qh+nTS38kpXmrh1D0u8Ne5mGoM9VwEVkQJNWZpGvJjU0jW/3GAiAuZmlf/WK
+         B877QvQceuH5MuPc3dTkTuW4pqTbUp6yQczB0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722963100; x=1723567900;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xwhrn6L/BEax4z8Y9Ps+jMGT26+SKh+43Sy/rMhIBig=;
+        b=JReOsQoKXCYxyzq7Ly/pbf4HdywyOHWEPuvrvL2CyLjs1Idq4V3a/Whu8LHCCCYqMV
+         fUI+s59jUtgcplZyexTzRErBX2AzWFsf+d4l2oQ9LAdo/9VRe4ZssVawQqUF2Sa5oqne
+         ys1nFEi0mrdaD1lHNIibREeMhwXiDaJi72RSJuh4EPdzWdWNNLeR2tcyVdCbTCrZ93V6
+         mLb9wWBsNGRIUCA0turfKmb0JTLdpoiY1HQS2Th5Hi6B+sQYtTbdsTOyH5VZV7z6FOZC
+         TZrY9aIXZW5+cQrZXdFMOjVZbuxy8DBNszEmiZPaRrhbFp0nj2u+BpGweey2Lv0Kw7bd
+         Va0Q==
+X-Gm-Message-State: AOJu0YyXNtzTw/Ne+rtTP3D/7K6APU34aEhZywGbCuRxHqbW1RDUECeP
+	NpBL7i4Lr/0rDj8ny1N3GSIarlnyaspEQE2ATW88ybp0PVoKpgx1dr2nAau411birklw5szNFf0
+	NDw==
+X-Google-Smtp-Source: AGHT+IEIJDB0Wd/AEg4ps8OtmLu1icwcxdK69nWNNqRPnsYe91O137kk69C/uJq5/hfxb5REkl/+gA==
+X-Received: by 2002:ac8:5a4a:0:b0:447:efb8:97f4 with SMTP id d75a77b69052e-45189208315mr162589391cf.2.1722963100004;
+        Tue, 06 Aug 2024 09:51:40 -0700 (PDT)
+Received: from rink.c.googlers.com.com (212.165.232.35.bc.googleusercontent.com. [35.232.165.212])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-451ae326f9dsm18974831cf.38.2024.08.06.09.51.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 09:51:39 -0700 (PDT)
+From: Jett Rink <jettrink@chromium.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: jettrink@chromium.org,
+	linux-security-module@vger.kernel.org,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	linux-integrity@vger.kernel.org
+Subject: [PATCH v5] tpm: Add new device/vendor ID 0x50666666
+Date: Tue,  6 Aug 2024 16:51:10 +0000
+Message-ID: <20240806165134.1692428-1-jettrink@chromium.org>
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 30 Jul 2024 10:46:38 +0200
-Olivier Moysan <olivier.moysan@foss.st.com> wrote:
+Accept another DID:VID for the next generation Google TPM. This TPM
+has the same Ti50 firmware and fulfills the same interface.
 
-> The legacy sd modulator driver registers the sigma delta modulator as
-> an IIO channel provider. This implementation is not convenient when the
-> SD modulator has to be cascaded with another IIO device. The scaling
-> information is distributed across devices, which makes it difficult to
-> report consistent scaling data on IIO devices.
-> 
-> The solution is to expose these cascaded IIO devices as an aggregate
-> device, which report global scaling information.
-> Add IIO backend support to SD modulator to allow scaling information
-> management.
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-I've applied this fixup given changes in the backend code that crossed
-with this.
+Suggested-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Jett Rink <jettrink@chromium.org>
+---
 
-diff --git a/drivers/iio/adc/sd_adc_modulator.c b/drivers/iio/adc/sd_adc_modulator.c
-index 06f9c5cacd53..654b6a38b650 100644
---- a/drivers/iio/adc/sd_adc_modulator.c
-+++ b/drivers/iio/adc/sd_adc_modulator.c
-@@ -74,6 +74,11 @@ static const struct iio_backend_ops sd_backend_ops = {
-        .read_raw = iio_sd_mod_read,
- };
+Changes in v5:
+Correct Suggested-by tag form.
+
+Changes in v4:
+Add Suggested-by tag. Sorry that I forget.
+
+Changes in v3:
+Refactor ternary operators into helper method.
+
+Changes in v2:
+Patchset 2 applies cleanly
+
+ drivers/char/tpm/tpm_tis_i2c_cr50.c | 30 ++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+index adf22992138e..1f83cfe2724c 100644
+--- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
++++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+@@ -31,7 +31,8 @@
+ #define TPM_CR50_TIMEOUT_SHORT_MS	2		/* Short timeout during transactions */
+ #define TPM_CR50_TIMEOUT_NOIRQ_MS	20		/* Timeout for TPM ready without IRQ */
+ #define TPM_CR50_I2C_DID_VID		0x00281ae0L	/* Device and vendor ID reg value */
+-#define TPM_TI50_I2C_DID_VID		0x504a6666L	/* Device and vendor ID reg value */
++#define TPM_TI50_DT_I2C_DID_VID		0x504a6666L	/* Device and vendor ID reg value */
++#define TPM_TI50_OT_I2C_DID_VID		0x50666666L	/* Device and vendor ID reg value */
+ #define TPM_CR50_I2C_MAX_RETRIES	3		/* Max retries due to I2C errors */
+ #define TPM_CR50_I2C_RETRY_DELAY_LO	55		/* Min usecs between retries on I2C */
+ #define TPM_CR50_I2C_RETRY_DELAY_HI	65		/* Max usecs between retries on I2C */
+@@ -668,6 +669,27 @@ static const struct of_device_id of_cr50_i2c_match[] = {
+ MODULE_DEVICE_TABLE(of, of_cr50_i2c_match);
+ #endif
  
-+static const struct iio_backend_info sd_backend_info = {
-+       .name = "sd-modulator",
-+       .ops = &sd_backend_ops,
-+};
++/**
++ * tpm_cr50_vid_to_name() - Maps VID to name.
++ * @vendor:	Vendor identifier to map to name
++ *
++ * Return:
++ *	A valid string for the vendor or empty string
++ */
++static const char *tpm_cr50_vid_to_name(u32 vendor)
++{
++	switch (vendor) {
++	case TPM_CR50_I2C_DID_VID:
++		return "cr50";
++	case TPM_TI50_DT_I2C_DID_VID:
++		return "ti50 DT";
++	case TPM_TI50_OT_I2C_DID_VID:
++		return "ti50 OT";
++	default:
++		return "";
++	}
++}
 +
- static int iio_sd_mod_register(struct platform_device *pdev)
- {
-        struct device *dev = &pdev->dev;
-@@ -131,7 +136,7 @@ static int iio_sd_mod_probe(struct platform_device *pdev)
-                priv->vref_mv = ret / 1000;
-        }
+ /**
+  * tpm_cr50_i2c_probe() - Driver probe function.
+  * @client:	I2C client information.
+@@ -741,14 +763,16 @@ static int tpm_cr50_i2c_probe(struct i2c_client *client)
+ 	}
  
--       return devm_iio_backend_register(&pdev->dev, &sd_backend_ops, priv);
-+       return devm_iio_backend_register(&pdev->dev, &sd_backend_info, priv);
- };
-
-Please give it a quick spin. Hopefully I didn't break anything.
-
-Jonathan
-
-> ---
->  drivers/iio/adc/Kconfig            |  1 +
->  drivers/iio/adc/sd_adc_modulator.c | 92 +++++++++++++++++++++++++++++-
->  2 files changed, 92 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index bd028d59db63..43ff8182b2ea 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -1195,6 +1195,7 @@ config SD_ADC_MODULATOR
->  	tristate "Generic sigma delta modulator"
->  	select IIO_BUFFER
->  	select IIO_TRIGGERED_BUFFER
-> +	select IIO_BACKEND
->  	help
->  	  Select this option to enables sigma delta modulator. This driver can
->  	  support generic sigma delta modulators.
-> diff --git a/drivers/iio/adc/sd_adc_modulator.c b/drivers/iio/adc/sd_adc_modulator.c
-> index 327cc2097f6c..06f9c5cacd53 100644
-> --- a/drivers/iio/adc/sd_adc_modulator.c
-> +++ b/drivers/iio/adc/sd_adc_modulator.c
-> @@ -6,11 +6,14 @@
->   * Author: Arnaud Pouliquen <arnaud.pouliquen@st.com>.
->   */
->  
-> +#include <linux/iio/backend.h>
->  #include <linux/iio/iio.h>
->  #include <linux/iio/triggered_buffer.h>
->  #include <linux/module.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/platform_device.h>
-> +#include <linux/property.h>
-> +#include <linux/regulator/consumer.h>
->  
->  static const struct iio_info iio_sd_mod_iio_info;
->  
-> @@ -24,7 +27,54 @@ static const struct iio_chan_spec iio_sd_mod_ch = {
->  	},
->  };
->  
-> -static int iio_sd_mod_probe(struct platform_device *pdev)
-> +struct iio_sd_backend_priv {
-> +	struct regulator *vref;
-> +	int vref_mv;
-> +};
-> +
-> +static int iio_sd_mod_enable(struct iio_backend *backend)
-> +{
-> +	struct iio_sd_backend_priv *priv = iio_backend_get_priv(backend);
-> +
-> +	if (priv->vref)diff --git a/drivers/iio/adc/sd_adc_modulator.c b/drivers/iio/adc/sd_adc_modulator.c
-index 06f9c5cacd53..654b6a38b650 100644
---- a/drivers/iio/adc/sd_adc_modulator.c
-+++ b/drivers/iio/adc/sd_adc_modulator.c
-@@ -74,6 +74,11 @@ static const struct iio_backend_ops sd_backend_ops = {
-        .read_raw = iio_sd_mod_read,
- };
+ 	vendor = le32_to_cpup((__le32 *)buf);
+-	if (vendor != TPM_CR50_I2C_DID_VID && vendor != TPM_TI50_I2C_DID_VID) {
++	if (vendor != TPM_CR50_I2C_DID_VID &&
++	    vendor != TPM_TI50_DT_I2C_DID_VID &&
++	    vendor != TPM_TI50_OT_I2C_DID_VID) {
+ 		dev_err(dev, "Vendor ID did not match! ID was %08x\n", vendor);
+ 		tpm_cr50_release_locality(chip, true);
+ 		return -ENODEV;
+ 	}
  
-+static const struct iio_backend_info sd_backend_info = {
-+       .name = "sd-modulator",
-+       .ops = &sd_backend_ops,
-+};
-+
- static int iio_sd_mod_register(struct platform_device *pdev)
- {
-        struct device *dev = &pdev->dev;
-@@ -131,7 +136,7 @@ static int iio_sd_mod_probe(struct platform_device *pdev)
-                priv->vref_mv = ret / 1000;
-        }
- 
--       return devm_iio_backend_register(&pdev->dev, &sd_backend_ops, priv);
-+       return devm_iio_backend_register(&pdev->dev, &sd_backend_info, priv);
- };
-> +		return regulator_enable(priv->vref);
-> +
-> +	return 0;
-> +};
-> +
-> +static void iio_sd_mod_disable(struct iio_backend *backend)
-> +{
-> +	struct iio_sd_backend_priv *priv = iio_backend_get_priv(backend);
-> +
-> +	if (priv->vref)
-> +		regulator_disable(priv->vref);
-> +};
-> +
-> +static int iio_sd_mod_read(struct iio_backend *backend, struct iio_chan_spec const *chan, int *val,
-> +			   int *val2, long mask)
-> +{
-> +	struct iio_sd_backend_priv *priv = iio_backend_get_priv(backend);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_SCALE:
-> +		*val = priv->vref_mv;
-> +		return IIO_VAL_INT;
-> +
-> +	case IIO_CHAN_INFO_OFFSET:
-> +		*val = 0;
-> +		return IIO_VAL_INT;
-> +	}
-> +
-> +	return -EOPNOTSUPP;
-> +};
-> +
-> +static const struct iio_backend_ops sd_backend_ops = {
-> +	.enable = iio_sd_mod_enable,
-> +	.disable = iio_sd_mod_disable,
-> +	.read_raw = iio_sd_mod_read,
-> +};
-> +
-> +static int iio_sd_mod_register(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct iio_dev *iio;
-> @@ -45,6 +95,45 @@ static int iio_sd_mod_probe(struct platform_device *pdev)
->  	return devm_iio_device_register(&pdev->dev, iio);
->  }
->  
-> +static int iio_sd_mod_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct regulator *vref;
-> +	struct iio_sd_backend_priv *priv;
-> +	int ret;
-> +
-> +	/* If sd modulator is not defined as an IIO backend device, fallback to legacy */
-> +	if (!device_property_present(dev, "#io-backend-cells"))
-> +		return iio_sd_mod_register(pdev);
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	/*
-> +	 * Get regulator reference if any, but don't enable regulator right now.
-> +	 * Rely on enable and disable callbacks to manage regulator power.
-> +	 */
-> +	vref = devm_regulator_get_optional(dev, "vref");
-> +	if (IS_ERR(vref)) {
-> +		if (PTR_ERR(vref) != -ENODEV)
-> +			return dev_err_probe(dev, PTR_ERR(vref), "Failed to get vref\n");
-> +	} else {
-> +		/*
-> +		 * Retrieve voltage right now, as regulator_get_voltage() provides it whatever
-> +		 * the state of the regulator.
-> +		 */
-> +		ret = regulator_get_voltage(vref);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		priv->vref = vref;
-> +		priv->vref_mv = ret / 1000;
-> +	}
-> +
-> +	return devm_iio_backend_register(&pdev->dev, &sd_backend_ops, priv);
-> +};
-> +
->  static const struct of_device_id sd_adc_of_match[] = {
->  	{ .compatible = "sd-modulator" },
->  	{ .compatible = "ads1201" },
-> @@ -65,3 +154,4 @@ module_platform_driver(iio_sd_mod_adc);
->  MODULE_DESCRIPTION("Basic sigma delta modulator");
->  MODULE_AUTHOR("Arnaud Pouliquen <arnaud.pouliquen@st.com>");
->  MODULE_LICENSE("GPL v2");
-> +MODULE_IMPORT_NS(IIO_BACKEND);
+ 	dev_info(dev, "%s TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
+-		 vendor == TPM_TI50_I2C_DID_VID ? "ti50" : "cr50",
++		 tpm_cr50_vid_to_name(vendor),
+ 		 client->addr, client->irq, vendor >> 16);
+ 	return tpm_chip_register(chip);
+ }
+-- 
+2.46.0.rc2.264.g509ed76dc8-goog
 
 
