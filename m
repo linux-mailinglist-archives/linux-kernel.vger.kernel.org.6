@@ -1,137 +1,111 @@
-Return-Path: <linux-kernel+bounces-275550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C018594871B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:57:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA83294871C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46698280D2A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:57:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E9DB1F2391A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D55AD51;
-	Tue,  6 Aug 2024 01:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDB4B65C;
+	Tue,  6 Aug 2024 01:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="fl/ZfEuw"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="UR0WAKVJ"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD645680
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 01:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56401F9DF
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 01:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722909427; cv=none; b=ZPgvVQfKD/JEe68CSqZk0DYmvXO9IMBIdO+TaAZ2GXx9tx6xWo1KOTrcLsdI3P0CPnMeSpne1ICCkKB+ebAWi8AiVz9vDRzeIRFiy1OQLmBOfTDJUzzMj1fd3pwmIfDcKHfMz/kOJCFysd73g5ps97zHU70p8pnJWcmt+WHpZL4=
+	t=1722909435; cv=none; b=jP0pYPGWxa+kA2SYWOuRUr1SI7/fOJAyNdM4emmpeeW1F8jLq2VLl3sxMpGJNlbn312mhABRIBqVCCr3PlXs6AebZLolApVVAdLxUbo1oaUvNaZKbNKe4gDR11eKv/brB+VD/dU5Tba6WRg6EnYeeiIhglVOJMdkvzqeGPZPOt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722909427; c=relaxed/simple;
-	bh=o5ubZySqM898YMKI6B44D6+HzEqA4goif3s72XtXPEg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F9CaqVA3H1+se/B4lrRxq8ifPup64ZX7no/F65l4spIronys9TDNBauT87J8V0tUt8qxRRD2DZSHZR7UIo+tt5LSaO8D2P4P62D5/aR+MwKaCs3uVGT5Cy2nAUI982M6Qm5u1C2NMBeuA5DiAGGwdg6ozaagQSIlUhvjDoNcl9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=fl/ZfEuw; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4f50dd3eab9so68155e0c.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 18:57:05 -0700 (PDT)
+	s=arc-20240116; t=1722909435; c=relaxed/simple;
+	bh=qmjwWQ6QasKjrkVUxCzo9BcRTbn5iMp89oLmum3d2Mk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OzdQwO+DWMEZERFJ5qXVlka4b9j+rXmmdoDWdRAtRUliQT/zsWrn9PiQS2c9z1eC6hL4EMq3Z1MhRs7gG3gNEcr7jiZMuq56mBNERh8l5QM8RqEAGByImrwbIHJCj8G33y3jhSZGI29vCJ1mdSE6FHF5MYN/0KkZaLbEeymvBt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=UR0WAKVJ; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fd69e44596so2624565ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 18:57:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1722909424; x=1723514224; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4IBhLwxtqkmorMtQaTuVRdda8fWR3f/wiJqz/bSky3o=;
-        b=fl/ZfEuwLqvt05Yrm48nuIjQNGXb3jOArbAJT46tXE57LBQllva1uwCi6k8h7tQy/L
-         Et+UFln3sJuEKfMVxq0cqmqyYok/i6MqC+0O1knJml67mmTyY68tqHfhoVl/arHmHcUf
-         VarwGEuZg3M/1w6A1aCUxhaGx9Og/+SNvngEVCf4jQ1KrSoIJ4TaW3DsCm33mxT+PX9k
-         Q7CffZkJy5kJOIBRa/5md8HXSOAD2X7N+dPUkWMtMs/ip6YGC/06xj8VeS5Qg/oUEtw0
-         qpbDNwiHNOwObx+q3l3MBFyBWsalAmkMTTUO4KNqshVzqUe06smg02HsdLn+NEzCmn+L
-         ikIw==
+        d=bytedance.com; s=google; t=1722909431; x=1723514231; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FNbH2l+f98EFaxyweVh/dPqISWyY0AP+f1WHA/sTSok=;
+        b=UR0WAKVJ/We4USVgtTA8DAXtu9RZyoAV9PX0QKb2wSjD8pv2YnilQyTvtOUKAXJAhh
+         srQFpjJZ17kB4eeZMS7pN+5cDQ8zUtyqA1azbAffA2qytC6lJksHo0Q1CW/Uea0oxfdT
+         1H0g0qKXPgcMRFSaAPKi3rE2iDb36kxt0LxwRM/il8CcRtdyaWMbJINyGca2tx9nZGCX
+         hZMCwkfTmnunUc6yrBxM5aW33dt72zj5F4JIZiSSiGiKchZPOCuLOMTJYJ0bXA/WaYix
+         V0j8KYNDFbX3jsvnViWhW2RgRFqIgiD5hBn7euOc5Fa07DUMYqNWUMWkoF/JJZ95qs5e
+         FiYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722909424; x=1723514224;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4IBhLwxtqkmorMtQaTuVRdda8fWR3f/wiJqz/bSky3o=;
-        b=ov77mA5rzRvoxbgayMwbMxnZeJpw15OnhTa+iFU602RT6yX/gxpBhDVnDuhfWWeV5J
-         aaE5fSCThUHEVkQX5T7nO47L7wdjS+1KR64GNTxYzoe6JjkdyGjT1GCjt7l+TEjifA2l
-         YCbrIvqcI0xDQSlFXXnUHDAZkMW/8ni/VoH1LneB6GrNz/cVcJEjez38QsmDKBOMEcMy
-         Hc+SJusi7FLxi5ZR+P8yni8gyS62M2VAMe+dhOpOCekZoAuQGVTs73GODS/THQTZ0dVQ
-         gCcMBX66QEsfNqqjdxG8FFLvLI91I9/ESdMjzDbUULofApsRF2ftq5sQ8sJYadkj4+wk
-         dnOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7NKOxs6RqA0n0Q2Jrui9cA9eGVPhwAnRXESrhcGGVdlEc05ZXUJUG45KUeNE7EI61jYp1t5/tuv3lZ8MZUBmgfD0BTJcy3bX6cJRW
-X-Gm-Message-State: AOJu0YxQ1qPEx4jPAWG3o65j4+PwQza4wKR03o9WwFqtlglw2p6/Ghm+
-	GyUt4BNeTg6JahzLcmCpnLamC3Eqnz9kDDbEd/mhjaOwhTaYwvMg7aVBslT+MqO8inDje8d51Yn
-	/EePWCYc4cvcnM40iGaxVe2RhItFegpVmHqN0tQ==
-X-Google-Smtp-Source: AGHT+IG6uYp/qeARWmcfys9e+xhKBRJ3fLh+ZcQoOxPy1mUlLhZ7LB67in6o5dtQKoMQbvfW4vU8Bcr9rD2b/bQNxDQ=
-X-Received: by 2002:a05:6122:4584:b0:4eb:5cb9:f219 with SMTP id
- 71dfb90a1353d-4f89fe84d6fmr16806238e0c.0.1722909424192; Mon, 05 Aug 2024
- 18:57:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722909431; x=1723514231;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FNbH2l+f98EFaxyweVh/dPqISWyY0AP+f1WHA/sTSok=;
+        b=UBu38lu+SfKgLYteJOrC3xlWXL3Bxvr+Mc/SZ0+95J8lH3ugODNW0aP23LERbWWctb
+         IcOCVWKjEvHeSJQb133TXeVuIQUfeWZC3f3BKHXATICMo9AMICXMDC8vHnLJOhb9oz0n
+         81LN3ve31w8o8cTRXYI4pwECXqrtRnHoaiBHdQPYsxIqJCiNW00Eukw1yyG+OhDlE5GI
+         Tq28bkYJjtspnNalX1mXp1XzYc4L5cxrDwexJC1DzkU6G8E68XzhsSf+p4iYzyTZyyc7
+         HBxTEwIvOQ1rM04i4ShXzkKvvMFac0tXg0lPJNAt6gJc5lj+DOKaeO7m2uBw8isZvJVu
+         yQNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEGjTRJoU68FajT6N/noDrAMC3Jr54vTAzHhWoLBiclf9e1DMpeXrebiXU5EY316lXTcGwUIwP2aYeAfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykC3FP1bw75RH1SP/TJnUVmYZSDtHrdsY5yxQXU2gorbOlwT8K
+	pwM52jmqHjOH633H3P63YaHjuYbJCRv0kTSOkfOXryOZqWQNox3JpQdqASONKnw=
+X-Google-Smtp-Source: AGHT+IH+NAgt5RGJPsxRWyM2LY2HdYVr5vLtBqHS1AuItEYySLf9oxzb1hg/HtnL1pYaofvNDkUQVw==
+X-Received: by 2002:a17:903:1209:b0:1f4:a04e:8713 with SMTP id d9443c01a7336-1ff57f062b9mr246030095ad.28.1722909431538;
+        Mon, 05 Aug 2024 18:57:11 -0700 (PDT)
+Received: from ubuntu20.04 ([203.208.189.5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5917496fsm75509455ad.182.2024.08.05.18.57.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 18:57:10 -0700 (PDT)
+From: Yang Jihong <yangjihong@bytedance.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: yangjihong@bytedance.com
+Subject: [PATCH 0/2] perf sched timehist: Add --show-prio & --prio option
+Date: Tue,  6 Aug 2024 09:56:59 +0800
+Message-Id: <20240806015701.1309833-1-yangjihong@bytedance.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802075741.316968-1-vincent.chen@sifive.com>
- <CAAhSdy3yx=mm3M6U_Q+_WdMs12SGCypPgNkBAVc9Kwn9jgev6g@mail.gmail.com>
- <CABvJ_xgcbyQKa1+U1MC7cLEB-SUzzNaWqKdXFp+13mni0YSvNw@mail.gmail.com> <87sevj5r45.ffs@tglx>
-In-Reply-To: <87sevj5r45.ffs@tglx>
-From: Vincent Chen <vincent.chen@sifive.com>
-Date: Tue, 6 Aug 2024 09:56:53 +0800
-Message-ID: <CABvJ_xhMAU+Ft-Ut2hMapO9dCSkz4M2PqxvdCrJS6eaSz02hLQ@mail.gmail.com>
-Subject: Re: [PATCH] irqchip: let the probe of APLIC be earlier than IMSIC
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Anup Patel <anup@brainfault.org>, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 5, 2024 at 4:08=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de>=
- wrote:
->
-> On Mon, Aug 05 2024 at 10:43, Vincent Chen wrote:
-> > On Fri, Aug 2, 2024 at 7:03=E2=80=AFPM Anup Patel <anup@brainfault.org>=
- wrote:
-> >> Secondly, changing compilation order in Makefile to influence
-> >> the probe order will not help in any way.
-> >>
-> > I was confused here. If possible, hope you can help me clarify it.
-> > The following is the backtrace of really_porbe() dumped by GDB.
-> > #0  0xffffffff8092318a in really_probe ()
-> > #1  0xffffffff80923516 in __driver_probe_device.part.0 ()
-> > #2  0xffffffff8057c856 in driver_probe_device ()
-> > #3  0xffffffff8057c9ba in __driver_attach ()
-> > #4  0xffffffff8057aaa4 in bus_for_each_dev ()
-> > #5  0xffffffff8057c3ea in driver_attach ()
-> > #6  0xffffffff8057bc4a in bus_add_driver ()
-> > #7  0xffffffff8057d75a in driver_register ()
-> > #8  0xffffffff8057e83c in __platform_driver_register ()
-> > #9  0xffffffff80a2455e in imsic_platform_driver_init ()
-> > #10 0xffffffff8000212c in do_one_initcall ()
-> > #11 0xffffffff80a01188 in kernel_init_freeable ()
-> > #12 0xffffffff80928d80 in kernel_init ()
-> >
-> > According to this result, the source to call really_probe is
-> > do_one_initcall(), regardless of whether it is APLIC or IMSIC. The
-> > do_one_initcall() function follows the placed order of the
-> > initialization functions in the __initcall6 section to invoke them.
-> > The compile order determines the order of the __initcall6 section.
-> > Therefore, I try to adjust the compile order to influence the probe
-> > order between IMSIC and APLIC. Do I misunderstand something?
->
-> There is no guarantee that this order is retained. The linker can freely
-> reorg the section. That's why we have deferred probing. It's neither a
-> bug nor a problem, so what are you trying to solve?
->
+This patch set adds --show-prio and --prio to show and filter task priorities.
+Sometimes may only be interested in the scheduling of certain tasks
+(such as RT tasks). Support for analyzing events of tasks with given priority(ies)
+only.
 
-Hi Thomas,
-I understand now. I didn't realize that the linker could freely
-reorganize this section. This patch won=E2=80=99t actually adjust the probe
-order. Thank you very much for the explanation
+Both options are disabled by default, consistent with the original behavior.
 
-Regards,
-Vincent
+Yang Jihong (2):
+  perf sched timehist: Add --show-prio option
+  perf sched timehist: Add --prio option
 
-> Thanks,
->
->         tglx
+ tools/perf/Documentation/perf-sched.txt |   6 +
+ tools/perf/builtin-sched.c              | 163 +++++++++++++++++++++++-
+ 2 files changed, 162 insertions(+), 7 deletions(-)
+
+-- 
+2.25.1
+
 
