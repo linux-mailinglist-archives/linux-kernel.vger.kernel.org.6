@@ -1,162 +1,144 @@
-Return-Path: <linux-kernel+bounces-277102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11074949C7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:52:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B035A949C88
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C06E9284FC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:52:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 116D8B22A23
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC61176FA0;
-	Tue,  6 Aug 2024 23:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A298176FB6;
+	Wed,  7 Aug 2024 00:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="apxW+At4"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tZuOINgP"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9E8171E64
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 23:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B72176FA1
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 00:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722988331; cv=none; b=RB52/bgXI2Kpnrwdg2Q2Glr7+ZIHPzRyAY85lhCoU9ZuEoT4B8UQjYt80XoXTsMGuQgkVuIfyU1909VF0iVFLXWSUmSXqjsWAqP1UGEWgT5ThUufIy62/DoiyhdkuSSx2g69ShtQwOBB+7r/6TCatvW0u2zViT18QzQQlZzYWDw=
+	t=1722988809; cv=none; b=RmOFMF0BPJDrU4JsXwG7yvLta3XubSJk1ZkP2DfqcUwo06Ty7nPqI1rL5iUvjVUKNYnXkoQ5fIqv4cwTRR/tBbNxuRCg5hBeXYahmNdj+QT2vempdo8+rgtTQmI/9WTY2AZM8AC7Svj9mX/Feea/AeKtqyWHqmRVo0wlzfwHsnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722988331; c=relaxed/simple;
-	bh=Jm0hEY8j/SV1FZh0Si8hSb56li35/Yiw0KWeIoYQwDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MEYcYTnVDQlMQr6g7wIYByvGUCpuvGJDCR1ZgwwdGZ8JisnpKAxAWhAREQmP4fCfmDAU8qq7lREYqEEEAoztVD1hv/gkTQfV6kJVAvKwQOlTlBd+geZJz1yJDiSNTq6QuO9DFVaqN6UuuAG94PP5sxYMSPSQ2LHNwvLhBFMynWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=apxW+At4; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70d25b5b6b0so938995b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 16:52:09 -0700 (PDT)
+	s=arc-20240116; t=1722988809; c=relaxed/simple;
+	bh=UHgIWVKvGfmyugfK+5SUX8pCsbKk968BZK+Jt1c65xc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Uo5tiK35aGJPk9sOHN9T8KhaCd+KezSbQdl3CqB281IHi0WdXfka7T8UloNOAVNAbvr7HchhYo7EYdhXx434OPxoQLt48rJw44nbu/w45IntS4zUqDXvocoh9gxn5X1V+54iU2oTSh4SMi02Pxsc7qUOEcb2AmWDpnE25ge1SlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tZuOINgP; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7a3c6dd559aso994416a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 17:00:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722988329; x=1723593129; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8tZQszvaJQblmvSb0R2v/S/W6bOUtf6jVNBKsq5aGLs=;
-        b=apxW+At4gLABa6FPd0XyfA1IkAtf/NTEUlu3OIuE9dhrd3mHQ2iBOTW2QJSFuiknx7
-         CsJauPR7I6CXqUx6+OaQwjMxI9+zHnLDHU0yobmPDbdC8DoYV+bCk+Pfjz6YK1RFkH5Q
-         RKf6unjGRCUqEg+Tb2Semt5SCwFGak7d9XMoRKh2elWcJwpGkfMG6BYmbPdBcyDW3g7i
-         R5m9oQegKAf0RTebnQULlyT9p5vjpn9xSdY4Wf/OQ0YLb8KKxGaajSxGXswonxn4ugoZ
-         ZCb7Lq1sNkQam8OY0sjKlb66sfCucDfCEf0ibMzY1s8IW/8z+YAsoIpxmB2H8FkM7gvl
-         pxiw==
+        d=google.com; s=20230601; t=1722988806; x=1723593606; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Q2NRiav7MDRT7LLYySbofxe/7oFalUeoZKG+LR63fQ=;
+        b=tZuOINgPZnMdi9v4GMYmHna5biCt5cMm8nKMJNgu8dr0hnRqfRyXSDSDAjOsJ11mGB
+         jhcMMGJu9e61LPnCr4weFK89Jk+J02KL1AUaoi/DRRzpUIwC4IPs6nfZrgZjBQoVVb4p
+         hBoMBNnae0JkFsueJqhwtLkhj/TuajQz76u4qFRwgsH3HFyF+nbMU+w/BtBYgjhfYXdK
+         ss/o/ohOA2wPWuhymFk4sGIw/0IzXlUEmaG/da77jmeBrTF+5KjiwXmVyqq5PGLogzLo
+         ovnCxPGxREByI0fwRe5FiLGLUNfM+Uo9ZUfi+Vf3/T8UPGacrTH7b4XsqQirmNdoa7Jt
+         fm9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722988329; x=1723593129;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8tZQszvaJQblmvSb0R2v/S/W6bOUtf6jVNBKsq5aGLs=;
-        b=ML3X7yMRAuR980VKb3dxOcPIjJ2oHyVHU/I/I8ucLryOwSgT9ZXoQMy84XsJ1Q/04e
-         LXbT4PaY73ZvZxHL3sVjx2nnoYqv54ubPaqXTuUtA/WqFjeazMt6iqEVVgGdMTbALVcO
-         y1/2BlHxtKi/4VREFuBSM29oQsmREER5OnyfL9o8MNdF67MtDqGWAuZQgQ6ESTHY4kym
-         GIRI+nFzDIquHt9BBYyjsa5HbyC9I3O4zp/92VgK5T+YxnV8pbuaQAQNRt6ARQenakWw
-         E8IvZQADSF2SFGnuEV5dbaP4sXEnMREQLm4WSrrA1zlK0EAF9En1y5Gzl6LlEv0wP6x5
-         uF7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXoP0pfGFF1DIp6P160n0LzuM7WyEVFuuoXj/HGUNQ+luo5orPQHLEJq/G3Ru9o2pmhxle3uf8KEHCrGuqdZHjXyc4Zld0tM7nSG94u
-X-Gm-Message-State: AOJu0YzcOOJfTcHmzL3CPf1Gte/+1ulXk6vLlMnroWDW3LDr2wdZxRAE
-	IELXOuyG8ix+WH/2iGIo3hilWtd3+VbOKRVmpNECBZM83pd+KkBQPIf0by0X+xQ=
-X-Google-Smtp-Source: AGHT+IGBYb0LD4iC+TEAspjupwGRwPAVKKGDnI1zPxc9eT9Lb/x4//+gafjrnfO+hOaZOVpc0GM7sQ==
-X-Received: by 2002:a05:6a21:3389:b0:1c4:819f:8e0c with SMTP id adf61e73a8af0-1c69954a469mr17927330637.6.1722988328986;
-        Tue, 06 Aug 2024 16:52:08 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7109d5e0318sm3274086b3a.121.2024.08.06.16.52.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 16:52:08 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sbTyI-007vNT-0N;
-	Wed, 07 Aug 2024 09:52:06 +1000
-Date: Wed, 7 Aug 2024 09:52:06 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com,
-	dchinner@redhat.com, hch@lst.de, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	catherine.hoang@oracle.com, martin.petersen@oracle.com
-Subject: Re: [PATCH v3 03/14] xfs: simplify extent allocation alignment
-Message-ID: <ZrK3JlJIV5j4h44F@dread.disaster.area>
-References: <20240801163057.3981192-1-john.g.garry@oracle.com>
- <20240801163057.3981192-4-john.g.garry@oracle.com>
- <20240806185651.GG623936@frogsfrogsfrogs>
+        d=1e100.net; s=20230601; t=1722988806; x=1723593606;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Q2NRiav7MDRT7LLYySbofxe/7oFalUeoZKG+LR63fQ=;
+        b=ECc4oS7FT4Q0L/tXOX++0nJ0z1em8CVWNFxDq7AJG0drryfwNFOCTVR5fGko9nKLkK
+         5ML7WPle+gHrIOc4N2aPsk50RkQxnxyPOgcqJAS5SVUKn3PW9bgTLj0JhW1qk6LK5dnc
+         7lT/dnZILYF7XE/Eb6Zh8OntGzKxswOhHJW3f1/dUdKVxaPTTIXzUyb0ic42ETeJjmFq
+         spdR71CCnLQyGrLowcbOz9dr3+Q/PjEMIViXV2HAGiBpHkvwol0dw3iZ8pmbqpWfxuGS
+         gQxjocv8rz1bHV/CIPuFf4QC0m6vSjxFrpE0r411vdWUAeBZ6yU4KRGn5PxC2iOOglHN
+         EC0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVXFFS74ucLn/zT9bnv4lQlwt4Ty0EfiGcXPxpKjz3yTvFHKHQcRFL8NjpiAKB8SPs4CMNz2vlaEfRSiSh2KttBiAKnGIdHv9E4+7Z7
+X-Gm-Message-State: AOJu0Yy/wrE4YewbM7qJPdFpdlr7nYOxTryW0bB7zBBRwNBfmN6/gWIx
+	FM//L8bZN83dsFTv0UBhNIYmLqWYL3sRGm8q4GizTYewBJBIUry1IAF2yFIUlxkSQo/MlCaWQ7P
+	dSA==
+X-Google-Smtp-Source: AGHT+IHvS0fM2LOTssx0eAi+ioCPUdUHmTfVhIBg5USnscLvdfSuqB0Ekxw+gGimmHjT/noSv8q+S+cCN3A=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a65:6904:0:b0:7a0:cd17:c701 with SMTP id
+ 41be03b00d2f7-7b74a9d0286mr33925a12.10.1722988805874; Tue, 06 Aug 2024
+ 17:00:05 -0700 (PDT)
+Date: Tue, 6 Aug 2024 16:59:03 -0700
+In-Reply-To: <ZrKqrCnNpNQ_K_qi@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806185651.GG623936@frogsfrogsfrogs>
+Mime-Version: 1.0
+References: <20240802200136.329973-1-seanjc@google.com> <20240802200136.329973-3-seanjc@google.com>
+ <ZrKqrCnNpNQ_K_qi@linux.dev>
+Message-ID: <ZrK4x4LLz1wlwGQN@google.com>
+Subject: Re: [PATCH 2/2] KVM: Protect vCPU's "last run PID" with rwlock, not RCU
+From: Sean Christopherson <seanjc@google.com>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Marc Zyngier <maz@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Steve Rutherford <srutherford@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Aug 06, 2024 at 11:56:51AM -0700, Darrick J. Wong wrote:
-> On Thu, Aug 01, 2024 at 04:30:46PM +0000, John Garry wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > We currently align extent allocation to stripe unit or stripe width.
-> > That is specified by an external parameter to the allocation code,
-> > which then manipulates the xfs_alloc_args alignment configuration in
-> > interesting ways.
-> > 
-> > The args->alignment field specifies extent start alignment, but
-> > because we may be attempting non-aligned allocation first there are
-> > also slop variables that allow for those allocation attempts to
-> > account for aligned allocation if they fail.
-> > 
-> > This gets much more complex as we introduce forced allocation
-> > alignment, where extent size hints are used to generate the extent
-> > start alignment. extent size hints currently only affect extent
-> > lengths (via args->prod and args->mod) and so with this change we
-> > will have two different start alignment conditions.
-> > 
-> > Avoid this complexity by always using args->alignment to indicate
-> > extent start alignment, and always using args->prod/mod to indicate
-> > extent length adjustment.
-> > 
-> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > [jpg: fixup alignslop references in xfs_trace.h and xfs_ialloc.c]
-> > Signed-off-by: John Garry <john.g.garry@oracle.com>
+On Tue, Aug 06, 2024, Oliver Upton wrote:
+> On Fri, Aug 02, 2024 at 01:01:36PM -0700, Sean Christopherson wrote:
+> > diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> > index a33f5996ca9f..7199cb014806 100644
+> > --- a/arch/arm64/include/asm/kvm_host.h
+> > +++ b/arch/arm64/include/asm/kvm_host.h
+> > @@ -1115,7 +1115,7 @@ int __kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
+> >  void kvm_arm_halt_guest(struct kvm *kvm);
+> >  void kvm_arm_resume_guest(struct kvm *kvm);
+> >  
+> > -#define vcpu_has_run_once(vcpu)	!!rcu_access_pointer((vcpu)->pid)
+> > +#define vcpu_has_run_once(vcpu)	(!!READ_ONCE((vcpu)->pid))
+> >  
+> >  #ifndef __KVM_NVHE_HYPERVISOR__
+> >  #define kvm_call_hyp_nvhe(f, ...)						\
+> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > index 689e8be873a7..d6f4e8b2b44c 100644
+> > --- a/include/linux/kvm_host.h
+> > +++ b/include/linux/kvm_host.h
+> > @@ -342,7 +342,8 @@ struct kvm_vcpu {
+> >  #ifndef __KVM_HAVE_ARCH_WQP
+> >  	struct rcuwait wait;
+> >  #endif
+> > -	struct pid __rcu *pid;
+> > +	struct pid *pid;
+> > +	rwlock_t pid_lock;
+> >  	int sigset_active;
+> >  	sigset_t sigset;
+> >  	unsigned int halt_poll_ns;
 > 
-> Going back to the 6/21 posting[1], what were the answers to the
-> questions I posted?  Did I correctly figure out what alignslop refers
-> to?
+> Adding yet another lock is never exciting, but this looks fine.
 
-Hard to say.
+Heh, my feelings too.  Maybe that's why I didn't post this for two years.
 
-alignslop is basically an temporary accounting mechanism used to
-prevent filesystem shutdowns when the AG is near ENOSPC and exact
-BNO allocation is attempted and fails because there isn't an exact
-free space available. This exact bno allocation attempt can dirty
-the AGFL, and before we dirty the transaction *we must guarantee the
-allocation will succeed*. If the allocation fails after we've
-started modifying metadata (for whatever reason) we will cancel a
-dirty transaction and shut down the filesystem.
+> Can you nest this lock inside of the vcpu->mutex acquisition in
+> kvm_vm_ioctl_create_vcpu() so lockdep gets the picture?
 
-Hence the first allocation done from the xfs_bmap_btalloc() context
-needs to account for every block the specific allocation and all the
-failure fallback attempts *may require* before it starts modifying
-metadata. The contiguous exact bno allocation case isn't an aligned
-allocation, but it will be followed by an aligned allocation attempt
-if it fails and so it must take into account the space requirements
-of aligned allocation even though it is not an aligned allocation
-itself.
+I don't think that's necessary.  Commit 42a90008f890 ("KVM: Ensure lockdep knows
+about kvm->lock vs. vcpu->mutex ordering rule") added the lock+unlock in
+kvm_vm_ioctl_create_vcpu() purely because actually taking vcpu->mutex inside
+kvm->lock is rare, i.e. lockdep would be unable to detect issues except for very
+specific VM types hitting very specific flows.
 
-args->alignslop allows xfs_alloc_space_available() to take this
-space requirement into account for any allocation that has lesser
-alignment requirements than any subsequent allocation attempt that
-may follow if this specific allocation attempt fails.
+But for this lock, every arch is guaranteed to take the lock on the first KVM_RUN,
+as "oldpid" is '0' and guaranteed to mismatch task_pid(current).  So I don't think
+we go out of our way to alert lockdep.
 
-IOWs, args->alignslop is similar to args->minleft and args->total in
-purpose, but it only affects the accounting for this specific
-allocation attempt rather than defining the amount of space
-that needs to remain available at the successful completion of this
-allocation for future allocations within this transaction context.
+> > @@ -4466,7 +4469,7 @@ static long kvm_vcpu_ioctl(struct file *filp,
+> >  		r = -EINVAL;
+> >  		if (arg)
+> >  			goto out;
+> > -		oldpid = rcu_access_pointer(vcpu->pid);
+> > +		oldpid = vcpu->pid;
+> 
+> It'd be good to add a comment here about how this is guarded by the
+> vcpu->mutex, as Steve points out.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Roger that.
 
