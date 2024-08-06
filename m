@@ -1,91 +1,158 @@
-Return-Path: <linux-kernel+bounces-276007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A713D948D24
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:49:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61CCF948D27
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517161F25853
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 120701F24FED
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F591C0DEF;
-	Tue,  6 Aug 2024 10:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065091C3789;
+	Tue,  6 Aug 2024 10:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HrNJYJa4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y18ktaza"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB041BE852;
-	Tue,  6 Aug 2024 10:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263251C0DC4;
+	Tue,  6 Aug 2024 10:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722941351; cv=none; b=Fd2Naq+bXswUaTRlGXojDSsdHVAhXR1j0ldZtzuo9/o8XIIQ+OP3ZpWCj/x2H0hn62FfVx1ww04qLWOIrWdXwGAxnYGNzHGVMknn2DFJCNhTOOrCmyuLADAkR6Fy5dEhlyLjwxNRu2F2xgpBmx1s250YBaHfRRF0jEE3IvcLXnU=
+	t=1722941370; cv=none; b=DWYnNGGOfPItKnMN7hJofsswR6nZLWNSTkOIGNS7YI5zOEoBrj//vDxwQKCVL8IVp6hpxUb+60PGr6XJZc7d16d0uXJhN01P65zdDKYdHe0Jf87xI/2pArCJ/3FN6PfQ1PBG+I2z8rBzraAZXPIgj95lmu6sJ9hYAjXd37+SIXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722941351; c=relaxed/simple;
-	bh=fv839ZtErwa9R2DfjDzoRtgqbssgZDKi01olLjFOF/o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DLEJhoLyGQ9B6TXUxMLNFrwHD8OYnq1ug56+eGRW2I6QUrFJpgDwR11uNXX/UVFR9wM9kc/6gnT7Ba3wgFMeWVC7aocS+Q9EIsMo782zr3GTfN8iCqhe5pXILV77VU0Fy1DTpa6RqEukV9OiFjk/jVeBRvNyLiam/DJyjGmU70c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HrNJYJa4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E548C32786;
-	Tue,  6 Aug 2024 10:49:08 +0000 (UTC)
+	s=arc-20240116; t=1722941370; c=relaxed/simple;
+	bh=eeflND3p0sty9SnVOq0BHiPjiXkx3ZzDdI3gZhlpwWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jGlM7IsKLs0c0YfeGpSFytISjlBBFbzz4APnKet+E5rREq5qgmFxkYo3H7Pc1edcs790vyw8mKsl0fKx1rMfTdSzZCxwNLy5CCrXeC/MAknFeOMXh8NPyFgqRNKyTdEQi/n8+deuAglCjkoW+evs3AhAqC+0jVsehHvhMnalEHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y18ktaza; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E634C32786;
+	Tue,  6 Aug 2024 10:49:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722941350;
-	bh=fv839ZtErwa9R2DfjDzoRtgqbssgZDKi01olLjFOF/o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HrNJYJa4AW0Aa6GCeUHi7TtLiVbfg/l3RL7FwRRnPuWjQYM5dqW5qzuzZHGlxigVy
-	 1JPRB7sY+2DzTjWQR5ooLz3L2E0T0W0JuazUpKW7vosGmJUAcJeToSWtQFzqkmkauo
-	 YUJlVLxeqFUafSFWvnj6ZK7zFx0SCteqQ3FCaI2XNWrvtE058CVPFOpiZq7d7fZLvM
-	 LRbHT/+ZJkUJBvQXGZIXYb6ZxgctL8pJaoaVYp37/rNflMkb3UxoRcU5kLGwu+SXvz
-	 8/iYzGCFxU4+2LVl7AqNqkpkHhwNjvq7HS6aZFZhF+y9gz3+Xl/+B/cj4WAc5yvcaV
-	 JYCAx2a8+Gvjw==
-From: Christian Brauner <brauner@kernel.org>
-To: Yuesong Li <liyuesong@vivo.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@vivo.com,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] fs/namespace.c: Fix typo in comment
-Date: Tue,  6 Aug 2024 12:48:56 +0200
-Message-ID: <20240806-indikatoren-galaxie-d652d6fd6b2d@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240806034710.2807788-1-liyuesong@vivo.com>
-References: <20240806034710.2807788-1-liyuesong@vivo.com>
+	s=k20201202; t=1722941369;
+	bh=eeflND3p0sty9SnVOq0BHiPjiXkx3ZzDdI3gZhlpwWQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y18ktaza8IQu0paXRuZ2pzyUh8AnVzt21QQ3IecXBfS+pJs4uaziftuEVrQSwQWTo
+	 YmADrqQyONg7LDsd0KPGUp6+fAJYNLNkN7M5mAK+W4TYEk7nxtYnINbYHmMd3jynI5
+	 Dy9BV9yYAdKoOjXCieipmwoMRasdyhOK8q5hXV3KQMkTCSd/FA2bBmg8ivkUmOKUW/
+	 NDk5V3/vmCIkyzom8o8FNxatjJgWnC+Bgdug9dRdkQaaXJnL3Bnn+eFmIISY3ibvvl
+	 NAFZeZ2mF2GLti+CAGmv+7297umrrGxxa8Q850AuTb39frSmCyioupBRnErWw/u3l2
+	 zS0xOiDDXgW7Q==
+Date: Tue, 6 Aug 2024 11:49:25 +0100
+From: Simon Horman <horms@kernel.org>
+To: Wen Gu <guwen@linux.alibaba.com>
+Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 1/2] net/smc: introduce statistics for allocated
+ ringbufs of link group
+Message-ID: <20240806104925.GS2636630@kernel.org>
+References: <20240805090551.80786-1-guwen@linux.alibaba.com>
+ <20240805090551.80786-2-guwen@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=927; i=brauner@kernel.org; h=from:subject:message-id; bh=fv839ZtErwa9R2DfjDzoRtgqbssgZDKi01olLjFOF/o=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRt/D9fofkYd6SPZoWQJsvTfykC/2JE3i9hXLrh+J5at hkTf/V96ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZgIRywjw6dXoS9FfmpaR1U+ VLdYVVV+NHLyiuVP5XKDrOp23VeJqmRkmLyBPzHaTUf7qI+Yz5239hWyBxWYOpR1eXc5OO3g3b6 YAwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240805090551.80786-2-guwen@linux.alibaba.com>
 
-On Tue, 06 Aug 2024 11:47:10 +0800, Yuesong Li wrote:
-> replace 'permanetly' with 'permanently' in the comment &
-> replace 'propogated' with 'propagated' in the comment
+On Mon, Aug 05, 2024 at 05:05:50PM +0800, Wen Gu wrote:
+> Currently we have the statistics on sndbuf/RMB sizes of all connections
+> that have ever been on the link group, namely smc_stats_memsize. However
+> these statistics are incremental and since the ringbufs of link group
+> are allowed to be reused, we cannot know the actual allocated buffers
+> through these. So here introduces the statistic on actual allocated
+> ringbufs of the link group, it will be incremented when a new ringbuf is
+> added into buf_list and decremented when it is deleted from buf_list.
 > 
+> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
+> ---
+>  include/uapi/linux/smc.h |  4 ++++
+>  net/smc/smc_core.c       | 52 ++++++++++++++++++++++++++++++++++++----
+>  net/smc/smc_core.h       |  2 ++
+>  3 files changed, 54 insertions(+), 4 deletions(-)
 > 
+> diff --git a/include/uapi/linux/smc.h b/include/uapi/linux/smc.h
+> index b531e3ef011a..d27b8dc50f90 100644
+> --- a/include/uapi/linux/smc.h
+> +++ b/include/uapi/linux/smc.h
+> @@ -127,6 +127,8 @@ enum {
+>  	SMC_NLA_LGR_R_NET_COOKIE,	/* u64 */
+>  	SMC_NLA_LGR_R_PAD,		/* flag */
+>  	SMC_NLA_LGR_R_BUF_TYPE,		/* u8 */
+> +	SMC_NLA_LGR_R_SNDBUF_ALLOC,	/* u64 */
+> +	SMC_NLA_LGR_R_RMB_ALLOC,	/* u64 */
+>  	__SMC_NLA_LGR_R_MAX,
+>  	SMC_NLA_LGR_R_MAX = __SMC_NLA_LGR_R_MAX - 1
+>  };
+> @@ -162,6 +164,8 @@ enum {
+>  	SMC_NLA_LGR_D_V2_COMMON,	/* nest */
+>  	SMC_NLA_LGR_D_EXT_GID,		/* u64 */
+>  	SMC_NLA_LGR_D_PEER_EXT_GID,	/* u64 */
+> +	SMC_NLA_LGR_D_SNDBUF_ALLOC,	/* u64 */
+> +	SMC_NLA_LGR_D_DMB_ALLOC,	/* u64 */
+>  	__SMC_NLA_LGR_D_MAX,
+>  	SMC_NLA_LGR_D_MAX = __SMC_NLA_LGR_D_MAX - 1
+>  };
+> diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
+> index 71fb334d8234..73c7999fc74f 100644
+> --- a/net/smc/smc_core.c
+> +++ b/net/smc/smc_core.c
+> @@ -221,6 +221,37 @@ static void smc_lgr_unregister_conn(struct smc_connection *conn)
+>  	write_unlock_bh(&lgr->conns_lock);
+>  }
+>  
+> +/* must be called under lgr->{sndbufs|rmbs} lock */
+> +static inline void smc_lgr_buf_list_add(struct smc_link_group *lgr,
+> +					bool is_rmb,
+> +					struct list_head *buf_list,
+> +					struct smc_buf_desc *buf_desc)
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Please do not use the inline keyword in .c files unless there is a
+demonstrable reason to do so, e.g. performance. Rather, please allow
+the compiler to inline functions as it sees fit.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+The inline keyword in .h files is, of course, fine.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+> +{
+> +	list_add(&buf_desc->list, buf_list);
+> +	if (is_rmb) {
+> +		lgr->alloc_rmbs += buf_desc->len;
+> +		lgr->alloc_rmbs +=
+> +			lgr->is_smcd ? sizeof(struct smcd_cdc_msg) : 0;
+> +	} else {
+> +		lgr->alloc_sndbufs += buf_desc->len;
+> +	}
+> +}
+> +
+> +/* must be called under lgr->{sndbufs|rmbs} lock */
+> +static inline void smc_lgr_buf_list_del(struct smc_link_group *lgr,
+> +					bool is_rmb,
+> +					struct smc_buf_desc *buf_desc)
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Ditto.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+> +{
+> +	list_del(&buf_desc->list);
+> +	if (is_rmb) {
+> +		lgr->alloc_rmbs -= buf_desc->len;
+> +		lgr->alloc_rmbs -=
+> +			lgr->is_smcd ? sizeof(struct smcd_cdc_msg) : 0;
+> +	} else {
+> +		lgr->alloc_sndbufs -= buf_desc->len;
+> +	}
+> +}
+> +
 
-[1/1] fs/namespace.c: Fix typo in comment
-      https://git.kernel.org/vfs/vfs/c/2d17506818d0
+...
+
+-- 
+pw-bot: changes-requested
 
