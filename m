@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-275992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00DF948CFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:41:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A79C8948CFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 894531F24FA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:41:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19154B256B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A541BF31F;
-	Tue,  6 Aug 2024 10:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C471BF31F;
+	Tue,  6 Aug 2024 10:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VP/sKAO9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bt8ykx4Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED5D15B54C;
-	Tue,  6 Aug 2024 10:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DAE15B54C;
+	Tue,  6 Aug 2024 10:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722940907; cv=none; b=n5u5aBdcydZL4I8Qf+Fap/kozxehn9/gl7DfTjzIslFwVyhTCuzho8PfAHDDL7nUkT8PQlpa3axyohduepOyL3pp7y9qi/nPPwJJ0jn/stMzbCFjgweMkIEsdn/LnIAhZUjrPSXEw2BkJlClp2inEPJ5kMUCGmkUsVSGWyT7Jsw=
+	t=1722940996; cv=none; b=m5foWjvuGAjxyuenwaJotac3hkIXWnnyBjSpoUg7PeJD6qoapHPyJpo84DPblk0CleEaC+8AWmwg5tgCP9EHFpFGkFccho8kOdaZ/K4gNZ583tlnGQh/mN6LClhMQuJPqWtgM4fWGt+fT8Ie/0BhTL0PIyI2d9j6C/UnjcVd6sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722940907; c=relaxed/simple;
-	bh=w/o/43GVgMIJBJnANDvsMR2gUekzP2lLGblNSraTfnA=;
+	s=arc-20240116; t=1722940996; c=relaxed/simple;
+	bh=oMjhUs6NicrLk9Y7zgHx1PPeEfvMmvWbsd+FFnx2ekc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A6mwfnQEOOw8uClQpNeJuyEf0BPIhOR2+rWBykU8xR+Vy2jfZKBYRWeCFaD/0t5PIf0xayNKufPkIK3k7Q2durLMGmnTDYQ3cZUHy+c0tzszbKfXSt+cwDZn8skVIYQHfEQugIdTGI3c5+d4kb3y7Sn7g/vPtDPnZcX5TehN+tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VP/sKAO9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AA7CC32786;
-	Tue,  6 Aug 2024 10:41:42 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=eaMM2oq1dRNJVQX1S5J+Fh8nQPr50m9vBr9+WHtW6g8HOv1AqvJsuuAI0AvIDmHPIWU3jQ9QSSQXXXdqrfZZNgwvUtsRhcrUQmMcnxsZ5XrPa+eP0VZ8StxPHLhnFjoc4yy0LXgIkm7Zs+uZWNhROXVgr9JU2PzV0MSXEd3Axzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bt8ykx4Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C75E9C32786;
+	Tue,  6 Aug 2024 10:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722940906;
-	bh=w/o/43GVgMIJBJnANDvsMR2gUekzP2lLGblNSraTfnA=;
+	s=k20201202; t=1722940995;
+	bh=oMjhUs6NicrLk9Y7zgHx1PPeEfvMmvWbsd+FFnx2ekc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VP/sKAO9WUjFnKnBY7nudP6EHdMseFpHQwbizktPDVfxANcUeEshotjMa6GGR8eV5
-	 AJ8zrUV0MCnWJe6TnfEWYvTVxBz6+J1QbOQl+Fo+9EfwepFqNaLUiw3/v6cpoZgxK5
-	 npKCuurCCwxHOsjt5W7rMVtzuYeZJEmNuUJ6WXm/znRPaFgBt+AXMpT0VsXYnQqf5L
-	 zn9mT2ALyjTzP2H2KR9fWVyleCagmRbLeknKrWtVYeEC9T76oOmcQJoiKIRWjzXgVM
-	 wj4JWEDC1cswZ7ivp2nuApgu3GP4ZdjkW6muZvDi8mNhxyNC+q9zQqq3k6x2eqqB7C
-	 T1GQtaV/kMUlg==
-Message-ID: <25163642-8f36-4bb1-8bf4-a3e34b283795@kernel.org>
-Date: Tue, 6 Aug 2024 12:41:39 +0200
+	b=bt8ykx4Z4A2tEX2jXvx6y8tSVqe7V6pjrNXL65cIjiNpAknb5BR9ORhZrFUUsLc1o
+	 Od9NKyabNQEkIg/zs3MED6MTosMBI8h0F0pqF/RpsERzETirXvdmOrW6znbMrvkJmt
+	 d9UrNEQ3xtqh/FQ8Yq0VNoL9FTSVW9WgzIZBl5qIlV4d4jbdEMKnmKxHRHT09MVRSr
+	 CfS/yQY3nmqpGtfk62DkdsVVKWbN0Ja5qZiehzeprdaaLMA+Y8aKQZskrXfsiiUKYS
+	 8pPNOAr3Wx/Vg+ubjjZazfkgxmJkT4DvyGQI+I7TwOfVF/r/Yk+DqIYRge6cTFGSmd
+	 hLFAJ8ju2PcmA==
+Message-ID: <39e9fc4a-64f7-4695-bfd2-1f77740714c3@kernel.org>
+Date: Tue, 6 Aug 2024 12:43:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/3] adp5588-keys: Support for dedicated gpio operation
-To: "Agarwal, Utsav" <Utsav.Agarwal@analog.com>,
- "Hennerich, Michael" <Michael.Hennerich@analog.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH] dt-bindings: watchdog: fsl-imx-wdt: Add missing
+ 'big-endian' property
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>
-Cc: "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Artamonovs, Arturs" <Arturs.Artamonovs@analog.com>,
- "Bimpikas, Vasileios" <Vasileios.Bimpikas@analog.com>,
- "Gaskell, Oliver" <Oliver.Gaskell@analog.com>
-References: <20240806-adp5588_gpio_support-v9-0-4d6118b6d653@analog.com>
- <bd4f6aca-ca3a-465e-8b46-e9c5e11ebad7@kernel.org>
- <SJ0PR03MB6343FDF6A250691B387088A19BBF2@SJ0PR03MB6343.namprd03.prod.outlook.com>
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240806103819.10890-1-animeshagarwal28@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,26 +108,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <SJ0PR03MB6343FDF6A250691B387088A19BBF2@SJ0PR03MB6343.namprd03.prod.outlook.com>
+In-Reply-To: <20240806103819.10890-1-animeshagarwal28@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 06/08/2024 12:16, Agarwal, Utsav wrote:
->>
->>
->>> 	- Added dt-binding dependency for interrupt-controller. Now if
->>> 	  interrupt-controller is specified, interrupts must be
->>> 	  provided.
->>
->> So that's the reason of skipping tag?
+On 06/08/2024 12:38, Animesh Agarwal wrote:
+> Add missing big-endian property in watchdog/fsl-imx-wdt.yaml schema.
+> This fixes dtbs_check errors.
 > 
-> Apologies if I don’t understand this, but I have pointed to the link 
-> for the previous version as well as labelled that this change is 
-> under v9. I understand the order is wrong, but all versions seem to
-> be present in the changelog. Could you guide me on what should
-> to be added?
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+> ---
+> There are 12 similar errors related to this missing property from
+> different blobs.
+> 
+> ./arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dtb: watchdog@2ad0000:
+> Unevaluated properties are not allowed ('big-endian' was unexpected)from
+> schema $id: http://devicetree.org/schemas/watchdog/fsl-imx-wdt.yaml#
+> ---
 
-You received a tag (or even tags). Where is it?
+Not sure if this is correct. I mean, technically it is, but Frank Li was
+removing big-endian properties so please choose consistent approach.
 
 Best regards,
 Krzysztof
