@@ -1,172 +1,124 @@
-Return-Path: <linux-kernel+bounces-276944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547B8949A3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:34:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A43FB949A40
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7B1AB22FD2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:34:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4EA1F227B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72CDC16B75B;
-	Tue,  6 Aug 2024 21:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075CC165F08;
+	Tue,  6 Aug 2024 21:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YCWPOEmc"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EBVrfHvB"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6C016190C
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 21:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EC5374C4;
+	Tue,  6 Aug 2024 21:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722980063; cv=none; b=ayKTrUGmZn4Egcm55DKMNS378PvdRKbMIoO0tptgOnZvW28cm+YMd7BK4CnMX9CPml1z7HrsJiPnHoj3VTSPJsCXFp2g9GKC9Q/u6aHI1TuBZnS8b3r1FXDRYWnn8KZ3A/FfS75jYdv1aM+yd94xef1I3XVGBfKu+i19D19uIBs=
+	t=1722980077; cv=none; b=RS6uD8Im/nSccKgTpVzGPja3tZ9rZZWeboJUPZcvFk7LI9WWcJZwYieQl+8Z6xkz0XGjtYUykeybr+f0HVei4drRGVDXSSbDzYltnNk0igU5ckDtA5TFaRVWANfCSyoT2Ktbbuu7KGRvU1zR8ruxQhHdXJYjNKBm0DTWD4xH/6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722980063; c=relaxed/simple;
-	bh=y+WPBRcP2UUkmoo1X6b1On/m7xI6hXa7A87BB06rY5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Plgl0TiKQosvZJGDvRt5SgA2iBieUbJwDfaXpCnR413JuVS0umak2ssDb26VNYrjOAddbAEArqNQF7iS5mJltrRQeoYcfyTXPAopTFzZamzMnTHFSCji2lGBSBnfA/oSWACiKdpe5fAYc4ePNEJNlGucnqEQ2/A+U7cGBNU7HqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YCWPOEmc; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2cb4b6ecb3dso919591a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 14:34:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722980061; x=1723584861; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QOQuy+CBC2lxToAhwqJ1r238GNCITA2gO3WQsUAlD2Y=;
-        b=YCWPOEmcpI5fzThg7O+fZwitRQcJAvOl2Svn4zwhcDwcJijZTgPjwCdSrBuXSD9LLY
-         CorosBZs3J7jCZC2AYdECiq6CT4AduoMzkq2Jb4AMdftOvhhDv0IoS8h0FEVomndPEdF
-         nta85t4qkI0zkpAMpJPXmr6mmS7rNPFKFImXZz/gtI2mERLtspKEd7EWGP35ae75qzpv
-         TQX7wddrj/J5kuirbnaWMYEnFnktVZ/SbtfkPBke8S3E6ZGz2L/UFF2ubSbVYB3ERv0C
-         9o0eT24zD6wzK5gvY70oObMSq185gbEE0KNoGHJZQi06XzrpU5wKclWMMDijB4omDrjC
-         HC1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722980061; x=1723584861;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QOQuy+CBC2lxToAhwqJ1r238GNCITA2gO3WQsUAlD2Y=;
-        b=FYLbaHP06aH3ffJmkSM/UxllLmfbwHdQfYibz+nssZPVeN44phZ3eUP2A0yuaiDC16
-         XZAj38Qzi6A1nV3YPycgxhUEKuEMtJt1FRN1mB0SvV0wIKSJM1ZXMaA+vrzvWLo+G467
-         IJ2gJ91KhdjB66EJxTJygbseWz7IiVnwb8a18jH3v8BYcy1P3Jt3jFhFi+tEpm/7J5cx
-         A4lzT7xvITlXm6a9gztcGaT+BweiUEL4tmn5inBe1zRR3tvDEerKmxojmQb3++ulQ8zj
-         Xcl4P4nNFjZTyTpZ0oH7cxa+TLMeeheCn2zMvlJZQ5PTkD48mNA61zlYNR2h95EQv+O9
-         Wr9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXMun27QLObkgSVSNYhXKeJY9HGPXw8DqSnQ5tamRcBQNEa7guasi2sja/5jiqsk7i//8qWYFC9TCJ27XIXiDg2bC9fMjE7z/by54N2
-X-Gm-Message-State: AOJu0YyVdMl9/HnRPSs2h3DwQzaqFUGL01xigEfTuoiZBOkvxTuwpRUR
-	VnS4aGyKR+eUl27BtKDiU7h5/F5fMB1w1w74OzwFdZB0DMXNn1fT
-X-Google-Smtp-Source: AGHT+IHEI3ELvoumHxz09rfUnzEJLqvH383+eci7go1Lny9bXfK6g9YunLCBD7n2NuJYOyGNjTSRUg==
-X-Received: by 2002:a17:90a:4585:b0:2c9:888a:7a7b with SMTP id 98e67ed59e1d1-2cff945a894mr16090920a91.25.1722980061252;
-        Tue, 06 Aug 2024 14:34:21 -0700 (PDT)
-Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b2b677bdsm55394a91.36.2024.08.06.14.34.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 14:34:20 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 6 Aug 2024 11:34:19 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
-	Ingo Molnar <mingo@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
-Message-ID: <ZrKW2wZTT3myBI0d@slm.duckdns.org>
-References: <ZpWjbCQPtuUcvo8r@slm.duckdns.org>
- <20240723163358.GM26750@noisy.programming.kicks-ass.net>
- <ZqAFtfSijJ-KMVHo@slm.duckdns.org>
- <20240724085221.GO26750@noisy.programming.kicks-ass.net>
- <ZqmVG9ZiktN6bnm0@slm.duckdns.org>
- <20240806211002.GA37996@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1722980077; c=relaxed/simple;
+	bh=/jTkFQ8ev6vvnwdDNVwixlkwQ69qyZwJEDKz4pu6HKE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lDRct6X07PDEtDiQ0PdizJOQV3CALh3B88zehO9SMd++Ect/BW87V/bccHGg/mdT+6DlAaeSSP5ck4Hn8vK4PE1IzjfGXxy1WMCrHhTlsMSwZJm+wyctBv8hYRczrniVl7lswmSRDsQRgQTI2kXfGrtyuU5wlsv91U+hghY7Fhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EBVrfHvB; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 476LYUGj122182;
+	Tue, 6 Aug 2024 16:34:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722980070;
+	bh=UHFII3hknLPwvageK9iQOUyvT59K+4CNg5YM0uH1HDM=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=EBVrfHvByBNtn81TxrDTZTLfLAtO+6b2WrxEFyrEhk2tXuH0YAGp0v6eSAKkje9h7
+	 oFtJPMC29N0k15XyFX2GGyVlML0++X3bPcYHQHFdFC2LPofpo+QLGuL26Q29JB0urZ
+	 /Y0HDwZ5nITXDOLUTPFEvVBIR03y30JVsltZQrCg=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 476LYUcC101299
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 6 Aug 2024 16:34:30 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
+ Aug 2024 16:34:29 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 6 Aug 2024 16:34:29 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 476LYThK085253;
+	Tue, 6 Aug 2024 16:34:29 -0500
+From: Nishanth Menon <nm@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Bhavya
+ Kapoor <b-kapoor@ti.com>
+CC: Nishanth Menon <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <conor+dt@kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
+        <kristo@kernel.org>, <jm@ti.com>, <vigneshr@ti.com>
+Subject: Re: [PATCH 0/2] arm64: dts: ti: Update mux-controller node name
+Date: Tue, 6 Aug 2024 16:34:28 -0500
+Message-ID: <172298005662.488348.14948625003852817425.b4-ty@ti.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240729063411.1570930-1-b-kapoor@ti.com>
+References: <20240729063411.1570930-1-b-kapoor@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806211002.GA37996@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello, Peter.
+Hi Bhavya Kapoor,
 
-On Tue, Aug 06, 2024 at 11:10:02PM +0200, Peter Zijlstra wrote:
-...
-> > Right, I don't think it affects SCX in any significant way. Either way
-> > should be fine.
+On Mon, 29 Jul 2024 12:04:09 +0530, Bhavya Kapoor wrote:
+> There are 2 mux-controller nodes in J721S2 and J7200 which are
+> responsible for transferring can signals to the can phy but same
+> node names for both the mux-controllers on a platform led to errors
+> while setting up both mux-controllers for can phys simultaneously.
+> Thus, update node names for these mux-controller.
 > 
-> So I just looked at things. And considering we currently want to have:
+> Rebased to next-20240729
 > 
->   pick_next_task := pick_task() + set_next_task(.first = true)
-> 
-> and want to, with those other patches moving put_prev_task() around, get
-> to fully making pick_next_task() optional, it looks to me you're not
-> quite there yet. Notably:
+> [...]
 
-Oh yes, the code definitely needs updating. I just meant that the needed
-changes are unlikely to be invasive.
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-...
-> > +	p = first_local_task(rq);
-> > +	if (!p)
-> > +		return NULL;
-> > +
-> > +	set_next_task_scx(rq, p, true);
-> > +
-> > +	if (unlikely(!p->scx.slice)) {
-> > +		if (!scx_ops_bypassing() && !scx_warned_zero_slice) {
-> > +			printk_deferred(KERN_WARNING "sched_ext: %s[%d] has zero slice in pick_next_task_scx()\n",
-> > +					p->comm, p->pid);
-> > +			scx_warned_zero_slice = true;
-> > +		}
-> > +		p->scx.slice = SCX_SLICE_DFL;
-> > +	}
-> 
-> This condition should probably move to set_next_task_scx(.first = true).
+[1/2] arm64: dts: ti: k3-j721s2-som-p0: Update mux-controller node name
+      commit: c36f60772e2aeca253924572a9f348ba27192bd0
+[2/2] arm64: dts: ti: k3-j7200-som-p0: Update mux-controller node name
+      commit: e3cce1229c34b5c28f103361c4d6b3ef17302d5d
 
-Sure.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-...
-> > +static struct task_struct *pick_task_scx(struct rq *rq)
-> > +{
-> > +	struct task_struct *curr = rq->curr;
-> > +	struct task_struct *first = first_local_task(rq);
-> > +
-> > +	if (curr->scx.flags & SCX_TASK_QUEUED) {
-> > +		/* is curr the only runnable task? */
-> > +		if (!first)
-> > +			return curr;
-> > +
-> > +		/*
-> > +		 * Does curr trump first? We can always go by core_sched_at for
-> > +		 * this comparison as it represents global FIFO ordering when
-> > +		 * the default core-sched ordering is used and local-DSQ FIFO
-> > +		 * ordering otherwise.
-> > +		 *
-> > +		 * We can have a task with an earlier timestamp on the DSQ. For
-> > +		 * example, when a current task is preempted by a sibling
-> > +		 * picking a different cookie, the task would be requeued at the
-> > +		 * head of the local DSQ with an earlier timestamp than the
-> > +		 * core-sched picked next task. Besides, the BPF scheduler may
-> > +		 * dispatch any tasks to the local DSQ anytime.
-> > +		 */
-> > +		if (curr->scx.slice && time_before64(curr->scx.core_sched_at,
-> > +						     first->scx.core_sched_at))
-> > +			return curr;
-> > +	}
-> 
-> And the above condition seems a little core_sched specific. Is that
-> suitable for the primary pick function?
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Would there be any distinction between pick_task() being called for regular
-and core sched paths?
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Thanks.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
 -- 
-tejun
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+
 
