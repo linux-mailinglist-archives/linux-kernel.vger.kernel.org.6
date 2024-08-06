@@ -1,198 +1,139 @@
-Return-Path: <linux-kernel+bounces-276159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274F4948F4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:41:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3DDC948F63
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFA692888CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:41:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E70311C2370F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892F91C8242;
-	Tue,  6 Aug 2024 12:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297261C0DE5;
+	Tue,  6 Aug 2024 12:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKlxrqan"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SSgdo8xj"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EFC1C57BD;
-	Tue,  6 Aug 2024 12:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A9C3C092
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722947978; cv=none; b=B7IWww1Fg6972u4BDApPUB8xMKPbdGTTLWK8zv/Rcz78+M8yuv4Ntqf4OSP4zzQD6co6C/q4OW0ygKWL4t2PzzLpTOpoagQ5sQUbSt3TkfMYQlIE0luURcExN6BblQPmSn+oWPIIDBAWg/OA8FKse0wrkXTVoZ/ZxJ4wlkZpLGA=
+	t=1722948075; cv=none; b=eMOWpckas/aWGsB9ICVWGU1/uMwhpgOLoug4/FX99cz38SolXyCtwCiUDi8uFdZv2XamrOC5YiVwWL66vobS5hjYfM5sYxg2eRgkL405ONcnfoZpqVkGHukc/61B+4k3BJxKKODDCTCYfss1uB6ghAYD5BwjYWicvDT7LE9vNMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722947978; c=relaxed/simple;
-	bh=pRGjwMQFuXx8nS2LCderaOx79LtJsbSQjU6aMaxd08o=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=TKK2KnVVy1rJbTHObhoK3/wKw5taAyFPyFvVG0RZpbtLNHUJ15pfoX+fEnYFWkkgCrkj90LaHHeTPz54ahzTFBBpb37lZQ0b8fuEUtGvgLQ5Nr/krMquGBR8NuPLanCWQsQY0Hmwqb/6qIDGrktMHds0OUcA0ut4GWUxNQP1NTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VKlxrqan; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-4f50dd3eab9so240273e0c.1;
-        Tue, 06 Aug 2024 05:39:36 -0700 (PDT)
+	s=arc-20240116; t=1722948075; c=relaxed/simple;
+	bh=/PSyPU+sjxYnvFTtQAn0dQ1UDz+wT7qcDxGZFNmLtrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vd4ghyBLyODR29DAWMNjIrlmIp0SkkTX4RatS6bmJJEQ/XypJpNsY1858bCRVgKcb9T11Pva6qHMMn/ayB+E5tqkydC/9/ictbgV1+diMu3EZJN8AupZtFeQcah7FE2pSsws/zF9+Gw6uOS0bsZ6p9CkBHzLjdk/5tYwzdTu5QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SSgdo8xj; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1ff4568676eso7188965ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 05:41:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722947976; x=1723552776; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zrdmTtiXVmTM/1NHHOYdmmDXOI3jR7XQcOI+pwOJhWY=;
-        b=VKlxrqanIheS9Sd5XzmNfv9ScS8GGE/obB6rli6JcQfzv8OQyH1ms5LfzyftBPJlAw
-         sfZMoNB7fMIUVJbfSp28rtM1yLUdMdnW27USd+yevM4WhMxcn2tC0kCwT21BzrtIUUHR
-         Gs3J1wl0qryBTZV4pStD26pH1HB09vV81qeXzTdRPH8cT7SCJpF5PsIvdPYcQcoZb/bU
-         lS+DuGbMun0iJwWow8q9nb7YSa1fpQ79XatO8EdXq8FWVvnWo4atP4i/rHxrlW27fHfJ
-         SUpp7IX8Dh3JdPkm8lpi4n5ypupMKNxoU+XW+rEQCrGBXD5UQfBs/vy59JIZ6bD1Fmo1
-         zdgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722947976; x=1723552776;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+        d=linaro.org; s=google; t=1722948073; x=1723552873; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=zrdmTtiXVmTM/1NHHOYdmmDXOI3jR7XQcOI+pwOJhWY=;
-        b=YwoX+XXfHLFESv4nU6ef39maHkPDlzto+lpgxBYhmTJEGyg2MbrBTQuBRLzRIMetp7
-         MQo8C31NtC9IZUGo9PHUc9W5l2dFksMlgvi0QohkNNrkdg4xQrtwhhuVJp8AE+/6ZwsQ
-         18SRSbZ2kcflIWn99kpghh+EsNMIKy603tqnS5oZtciShQj7G1+LyGSVb1bWbmQlC4s6
-         zOFuUMxal+8Y4F6zIsS88V3ZjSIHwj26kh2J0B93/ye4/Pfxq7mRdnBEDbepUUVUF+Un
-         E/8H1bwvmgq3UU6gjegXYWuZJmcJeH8x9s01MRCBTsNyyPGs315OJchwwKbtfo1ePb8w
-         FjPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCTL3GifOoTkGotVQKHsht3DH11hDZibW61aSUOHYmvH8IO2m8nbbHB4vV63n+wNxBJfCcxiS88C2+z1upzJbLrWmIu6BvineuFcHLv+zQRkbWwJ5woYB0Rp6z1J9OsObiq0BDbZy8aUaI/o8DoCpcfiIn5M4NjWpUVOucS89c+cCJYuFy3hblNRb+aS9l7uNxbvPYmIqIO/SKZa//lBNIJmEfQGAWGB6KOX6w4lu0PECsvwrDEIHRoSypUvkwoM6wr8nbiwptxAlGu0Q2nfri3ivhFPaQ0a58BZ3JjhgHBkMZ+ZxRbGFJjExm9gtw7Q6DN/0jI/infzNnGKupNyYRy9ob9tkjzf4Giii2kSAGYdSkDzMcMup97D6whg1Arys+dL0HfUhjVC2cdmgR+NzVZX2Dcq6rmsYNH42+t182nBhSh2GY21ecMPVrx3+rk6rROHyUGoWoVjbrnX1mVY8JOfgyEYZALUMv2CcFUQDww0dClYG9XRp3hPYyliKGX6G+v7PhjQ==
-X-Gm-Message-State: AOJu0YwpsNYteLdDFoX1IKaNFFCuUC+P89kqXZcyX2ui47QVOzUubQGf
-	/7ZVPgtJdbk9sA4CS5+NFrTN9dPmJbKUl6w6X+olQ2zL47KdPisM
-X-Google-Smtp-Source: AGHT+IEzF8kEieTvm400vGSAD/FxkfKWUdB+Qp9zmFjvlH9NnaUdLi1L0Oe0+UqgMX4/h+bhgaOPVA==
-X-Received: by 2002:a05:6122:4584:b0:4eb:5cb9:f219 with SMTP id 71dfb90a1353d-4f89fe84d6fmr18355377e0c.0.1722947975581;
-        Tue, 06 Aug 2024 05:39:35 -0700 (PDT)
-Received: from localhost (73.84.86.34.bc.googleusercontent.com. [34.86.84.73])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a34f6dce75sm450350985a.14.2024.08.06.05.39.34
+        bh=BVpEw07jfarO8EM/3LJ96WQ6UxVaQr8DD1O4wcj9h/Q=;
+        b=SSgdo8xjLxyIAgFqSUgK6Kdf48H2lXTmWJXy+R/7cFVjho4fRmWFyRnxPLBKVLjuRb
+         cI28YnvojXprPvxZBS2Jn4H9PdgB0Jga2FIATRozHxUvPFb5cXfurX2JpgebGeVICDLY
+         oHkZw667r/KKVttCMlsUc1ij9uC6Q2V1WrppdKu+W/rgxaf4HDZvGRN59h4rtPk65BAT
+         hQ5rcDd5ULmUFQUt5SVgqImP7Umx2O8j3ibYcZr5AJ6uV5eVlZUMmfvoCgKfwI+UpnrT
+         QyIckKdTaCXeJalnM58v6RAZGIfs8m6gDQdvwwocnrm6o3X69ij0b8KRGIpIBYzLHsTo
+         Fd9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722948073; x=1723552873;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BVpEw07jfarO8EM/3LJ96WQ6UxVaQr8DD1O4wcj9h/Q=;
+        b=gSDVUgDge95fJ2q08gVO93vXoB68fSGrVaAv2ChCi9KlMDH6OeIYI6GqoK9U04t/8S
+         gZdg1vytTQC5x1g9nVtjF+8VOmG0o1pEY34grqikU4rrdcMXz4G4FT+o9ofAoDEcp4hV
+         W29zVqx8bBvlUJH3WccVNquP9ohGKu65/mO4a44T7PnsKMM7sQcWQX8z96mnPobqv+Md
+         IUIK9H9rpCZ6dXcTkOE+S8GhIZK/IhpwPXijq5eJl6Dpw+9cBZwkk3aAX56pDZ+E4K+Q
+         8e2S3swPnH3/dEmHcKds97F26IWvCr7Hmp19E56EspCuAYe6XeavXN3V1tQIb83wNfnh
+         v42g==
+X-Forwarded-Encrypted: i=1; AJvYcCX7IL2UIDz/aa22CGYT8nw2HaZHj6z/3EWr7RSAu6PFzwtRCX5n36OECTTohv8hzaLQkmLPF4+b+4R4igqQZoNV5BSwOINBmWEfqC7q
+X-Gm-Message-State: AOJu0YwsTaiabxKXXeNZrP/rdy3/aVDEHC09M/ZivcJtP41VUKeilkCN
+	EVgaQYBlHENvw7whoxVw3Mye1Sx+VNrIqlgt4ZYZIZm73iDIdTZKbV2k6zeMFA==
+X-Google-Smtp-Source: AGHT+IFHB9bUhT160f38WZeHXI1PMJWR/79pLH/7+rB0SJdnhHS8nIU4R/ZG7aRt7CXjRPAKKiG2tg==
+X-Received: by 2002:a17:902:ec91:b0:1fd:8e8b:b2d1 with SMTP id d9443c01a7336-1ff572c5565mr137947335ad.33.1722948073313;
+        Tue, 06 Aug 2024 05:41:13 -0700 (PDT)
+Received: from thinkpad ([120.56.197.55])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5929457dsm86501905ad.249.2024.08.06.05.41.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 05:39:34 -0700 (PDT)
-Date: Tue, 06 Aug 2024 08:39:34 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>, 
- Mina Almasry <almasrymina@google.com>, 
- netdev@vger.kernel.org, 
- linux-doc@vger.kernel.org
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, 
- Kaiyuan Zhang <kaiyuanz@google.com>, 
- Pavel Begunkov <asml.silence@gmail.com>, 
- Willem de Bruijn <willemb@google.com>, 
- linux-alpha@vger.kernel.org, 
- linux-mips@vger.kernel.org, 
- linux-parisc@vger.kernel.org, 
- sparclinux@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, 
- linux-arch@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- bpf@vger.kernel.org, 
- linux-media@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, 
- LKML <linux-kernel@vger.kernel.org>, 
- Andreas Larsson <andreas@gaisler.com>, 
- Arnd Bergmann <arnd@arndb.de>, 
- Bagas Sanjaya <bagasdotme@gmail.com>, 
- =?UTF-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>, 
- Christoph Hellwig <hch@infradead.org>, 
- David Ahern <dsahern@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, 
- David Wei <dw@davidwei.uk>, 
- Donald Hunter <donald.hunter@gmail.com>, 
- Eric Dumazet <edumazet@google.com>, 
- Harshitha Ramamurthy <hramamurthy@google.com>, 
- Helge Deller <deller@gmx.de>, 
- Herbert Xu <herbert@gondor.apana.org.au>, 
- Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
- Jakub Kicinski <kuba@kernel.org>, 
- "James E. J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
- Jason Gunthorpe <jgg@ziepe.ca>, 
- Jeroen de Borst <jeroendb@google.com>, 
- Jesper Dangaard Brouer <hawk@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Matt Turner <mattst88@gmail.com>, 
- Nikolay Aleksandrov <razor@blackwall.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Praveen Kaligineedi <pkaligineedi@google.com>, 
- Richard Henderson <richard.henderson@linaro.org>, 
- Shailend Chand <shailend@google.com>, 
- Shakeel Butt <shakeel.butt@linux.dev>, 
- Shuah Khan <shuah@kernel.org>, 
- Steffen Klassert <steffen.klassert@secunet.com>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- Taehee Yoo <ap420073@gmail.com>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <66b2198686b91_3206cf29453@willemb.c.googlers.com.notmuch>
-In-Reply-To: <9aad36fe-cd4c-4ce5-b4d8-6c8619d10c46@web.de>
-References: <20240730022623.98909-4-almasrymina@google.com>
- <5d3c74da-7d44-4b88-8961-60f21f84f0ac@web.de>
- <CAHS8izPxfCv1VMFBK1FahGTjVmUSSfrabgY5y6V+XtaszoHQ4w@mail.gmail.com>
- <9aad36fe-cd4c-4ce5-b4d8-6c8619d10c46@web.de>
-Subject: Re: [PATCH net-next v17 03/14] netdev: support binding dma-buf to
- netdevice
+        Tue, 06 Aug 2024 05:41:12 -0700 (PDT)
+Date: Tue, 6 Aug 2024 18:11:07 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	mika.westerberg@linux.intel.com, Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all
+ Devicetree based platforms
+Message-ID: <20240806124107.GB2968@thinkpad>
+References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
+ <20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org>
+ <ZqyxS8spZ-ohsP3R@wunner.de>
+ <20240805133555.GC7274@thinkpad>
+ <ZrHITXLkKrDbQKQp@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZrHITXLkKrDbQKQp@wunner.de>
 
-Markus Elfring wrote:
-> >> =E2=80=A6
-> >>> +++ b/include/net/devmem.h
-> >>> @@ -0,0 +1,115 @@
-> >> =E2=80=A6
-> >>> +#ifndef _NET_DEVMEM_H
-> >>> +#define _NET_DEVMEM_H
-> >> =E2=80=A6
-> >>
-> >> I suggest to omit leading underscores from such identifiers.
-> >> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declar=
-e+or+define+a+reserved+identifier
-> >>
-> >
-> > I was gonna apply this change, but I ack'd existing files and I find
-> > that all of them include leading underscores, including some very
-> > recently added files like net/core/page_pool_priv.h.
-> >
-> > I would prefer to stick to existing conventions if that's OK, unless
-> > there is widespread agreement to the contrary.
-> =
+On Tue, Aug 06, 2024 at 08:53:01AM +0200, Lukas Wunner wrote:
+> On Mon, Aug 05, 2024 at 07:05:55PM +0530, Manivannan Sadhasivam wrote:
+> > On Fri, Aug 02, 2024 at 12:13:31PM +0200, Lukas Wunner wrote:
+> > > The PCI core cannot put devices into D3cold without help from the
+> > > platform.  Checking whether D3cold is possible (or allowed or
+> > > whatever) thus requires asking platform support code via
+> > > platform_pci_power_manageable(), platform_pci_choose_state() etc.
+> > > 
+> > > I think patch [3/4] is a little confusing because it creates
+> > > infrastructure to decide whether D3cold is supported (allowed?)
+> > > but we already have that in the platform_pci_*() functions.
+> > > So I'm not sure if patch [3/4] adds value.  I think generally
+> > > speaking if D3hot isn't possible (allowed?), D3cold is assumed
+> > > to not be possible either.
+> > 
+> > Why? D3Hot is useful for runtime PM and if the platform doesn't want to do
+> > runtime PM, it can always skip D3Hot (not ideal though).
+> 
+> AFAICS we always program the device to go to D3hot and the platform
+> then cuts power, thereby putting it into D3cold.  So D3hot is never
+> skipped.  See __pci_set_power_state():
+> 
+> 	if (state == PCI_D3cold) {
+> 		/*
+> 		 * To put the device in D3cold, put it into D3hot in the native
+> 		 * way, then put it into D3cold using platform ops.
+> 		 */
+> 		error = pci_set_low_power_state(dev, PCI_D3hot, locked);
+> 
+> 		if (pci_platform_power_transition(dev, PCI_D3cold))
+> 			return error;
+> 
 
-> Under which circumstances would you become interested to reduce develop=
-ment risks
-> also according to undefined behaviour?
-> https://wiki.sei.cmu.edu/confluence/display/c/CC.+Undefined+Behavior#CC=
-.UndefinedBehavior-ub_106
+This is applicable only to pci_set_power_state(), but AFAIK PCIe spec doesn't
+mandate switching to D3Hot for entering D3Cold. So the PCIe host controller
+drivers (especically non-ACPI platforms) may just send PME_Turn_Off followed by
+removing the slot power (which again is not controlled by pci_set_power_state())
+as there are no non-ACPI related hooks as of now.
 
-This series is following established practice in kernel networking.
+- Mani
 
-If that conflicts with a C standard, then perhaps that needs to be
-resolved project wide.
-
-Forcing an individual feature to diverge just brings inconsistency.
-That said, this appears to be inconsistent already.
-
-Main question is whether this is worth respinning a series already at
-v17 with no more fundamental feedback.
-
-For reference:
-
-$ grep -nrI '^#ifndef\ _\+NET[_A-Z]\+H' include/  | wc -l
-149
-
-$ grep -nrI '^#ifndef\ NET[_A-Z]\+H' include/  | wc -l
-4
-
-$ grep -nrI '^#ifndef\ [_]\+[A-Z][_A-Z]\+H' include/  | wc -l
-3805
-
-$ grep -nrI '^#ifndef\ [A-Z][_A-Z]\+H' include/  | wc -l
-583
+-- 
+மணிவண்ணன் சதாசிவம்
 
