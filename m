@@ -1,241 +1,194 @@
-Return-Path: <linux-kernel+bounces-275960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBB3948C7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:58:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2002948C7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1985C1F22F73
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:58:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE24D1C22349
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617AB1BDABA;
-	Tue,  6 Aug 2024 09:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F54D1BDABB;
+	Tue,  6 Aug 2024 09:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="je9656hG"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O7v/oR3G"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F2B1BDA84
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 09:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB67B1BDAB1;
+	Tue,  6 Aug 2024 09:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722938304; cv=none; b=iTpJKqdo0ye48xgqJT2FDJyhWDO/w67fe7ULUeHrGl2FQ7IRUPt0ACzDR/Sj43Zt3Yzx4YhLHpGpqDJLLlZMm2PLqQjCFAbvrq8RjyKrJ3V8tDMfEE9rhe+uYoQ9yfuaoxKC71m/f2ckkFVRR5jwrH1eHtShYtw7QbFOiqxES+Y=
+	t=1722938330; cv=none; b=S0MHPBUPEyo8hnpH/TFT6HClmIorHfCPTjmKlPs/DGSwq3H+1qfswvS5v2/3tNiEIVX7laXcgBYTidv1aIxQLHaUOOHd5yxMVPzD3izxFCCkqFm8qKYrJgC433BlgYITOVvZnUFS39oJ0/8Rya6CHi9hVn4VuqvRmMG6toJLqgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722938304; c=relaxed/simple;
-	bh=kMm+NKRFOFvLmdxIXuTSE9MwOAwuHJpRP2KuJ5R5xVM=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UnyI1tAwzlA1GImsuGvlXJullZLFRrQMQA7JTwH2pcj+hkoy/yS4+o3l1lNgxk8W1LzyG58cYA3egpCAN7VnnHubk/KklffOg82ICf2LRw4DO0stXRkMrdET8Sjgi0LOuwNuz2pH8qVFhlgg58Wr8UFrwdAG+NKISBlLcSnYP7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=je9656hG; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com [209.85.128.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 89D4E3F1EF
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 09:58:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1722938299;
-	bh=2cCl5NWvQP7mvWlTPj6kYUEZ/fX6AeYVRRTgEXvTcx0=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=je9656hGo2UBMayXelQNsf5iX3KAzezbzHsqyRKkrC4q3PRDTTKQfse5+SqoQxoxm
-	 AyfuFcujeXBsBryHLRTumQhu9GsHn7CeXIzml0LoIEbyYvnn61WfWgBCnNBzgvze1s
-	 9pdK875teX1CPoeDeQVUBAxpd/o2NJGm39EC8gn96EJH85RQGnYW31lxlCHNhSZfRm
-	 yKaI1QANzG39qX/I4NSN6rc04QoAdzNesf/Kce/V4UG8VvDzuACpOzTTyuWxCuOcjC
-	 HXqacyU+IpVV799VXIZ/7Fm1s4504YHhQJ3HHTD179SAk2cHQpBbLD0DKJuVi/dPR7
-	 8Ebm8n6CN4gtw==
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-6506bfeaf64so6599607b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 02:58:19 -0700 (PDT)
+	s=arc-20240116; t=1722938330; c=relaxed/simple;
+	bh=WVXKPEWDjUkXu5g0wedpQut1oMyZMrn+VbJYDXgp9CU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nWSOU1nJtB3EALpyuyVR4/o3WrRS5LEs1rXHfHuWx2NVNCquwj3Bt2YU6ObpZ+1ppXsksnzv5jjQ0ufb6kHa3tvw4WcujT5L4WDySZb4YQaVWwnP4Jii2c77gBFDTa+B/dpx+9bisO8o9MHdDJ/qFy9koYdbRDNlFSfUPe9ZDj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O7v/oR3G; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7aabb71bb2so35650666b.2;
+        Tue, 06 Aug 2024 02:58:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722938327; x=1723543127; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UWFXS3msriWso8OK2ucbircclSt70Aab+Ge8S3Vzum8=;
+        b=O7v/oR3GHQDLIWwIus4rSdjqa93BRqSfQqXWJs2g5AN9F6L7IPV9/Z7JdlQgODjjRM
+         xAkV0r9NEuE/xio5KiYsc+hMl1xTwS4bbK0/4UpBdUwGZRHJzYvnuHSs/9gRJoN9mWB7
+         lE37BaYLHFnAugwIvziQmNF9xiYkj4fzMpHVh6QM/jluJ4wrwoNVuWKXLtwtB8K2hx45
+         RpmlvN6Gm0swMKmk/Qq0Is66+dHFX92KxFvgS6g/tvVixNDr1zOV0pdrgEbo5r8afook
+         RZPs6XGi4PkoVXrPws2bJWuodtJ7eNgRHwBFomv95b3LcC3Da3Y6ZMST6MOCr9LnjBtC
+         dOCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722938298; x=1723543098;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2cCl5NWvQP7mvWlTPj6kYUEZ/fX6AeYVRRTgEXvTcx0=;
-        b=V9g9iASLfuclejIpWIM+2s8uedpaYfvNXRH0Ho/2ABjxVdkr8qyTUim8lgbN7cFquh
-         mCBvlv2dOR8qtvVltEpDMgO7CxFfpvD95jiVDQuuh2Rn5WyQbaoQW6IhDLJPJq2EO8mD
-         aKhYJjhdW3YguFl+4ndGjSL7WEWkcS81sHMF6kGKgogC2lUpvPeu40cZb2dbqzwI3AyJ
-         qnYSouo8IMmYJ3ANYE49hVx1CMwA1KEpLW6KWVEerBdYbaKjMiWH9LLtaPTDUamWVG4I
-         0QqPbrq3tX73Bke2zbV2u7RKZtvrEPML2rZofWLCba8DqEtlrUfua563ufgyUeJuvtTV
-         ClCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWkeTg2rzihpK9792Cub8UXxVRMmXFtoZgsndRbv6F7F6bmsae7RXLJCFkaOmMGShPDengwsr3u8feeMtzAMUQq/ERDlJW9wIL/piq
-X-Gm-Message-State: AOJu0YzakM0WBbQMG0m2Rs0kn3FYGNSvJNOLmkRYnIZFc6vHh2ndw9Z0
-	UxnCcYtGLuxFTl0pkm8IHilY4og/3Iml65ywpMLlTwykAlwgCBqWwiXR27S9ik2eDwEEkbzy3ba
-	VzSjsSwo3YK6jFZR+NqpoIZ2dMLBoxpj+IVgyLkw43EEf8dZOADq/v+HVxIiAZBHoJr5XE293l7
-	JJVzUG0Q0aYybz5qPS1ILiUMzWDnh1vbPoPtRWo/t18Ugg3jDGWU4i
-X-Received: by 2002:a05:6902:508:b0:e0b:618f:cb9a with SMTP id 3f1490d57ef6-e0bde408a4amr13968422276.37.1722938298572;
-        Tue, 06 Aug 2024 02:58:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG1GJXQ7U5odGOP0yjOPy0Ll2tOOOgBwmuxvwHvgUXTIuxI0NrhOz7tSeIbC1T7ag81e+WPcOay5Uoe6LMqrI4=
-X-Received: by 2002:a05:6902:508:b0:e0b:618f:cb9a with SMTP id
- 3f1490d57ef6-e0bde408a4amr13968408276.37.1722938298152; Tue, 06 Aug 2024
- 02:58:18 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 6 Aug 2024 04:58:17 -0500
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <20240603020607.25122-1-xingyu.wu@starfivetech.com>
-References: <20240603020607.25122-1-xingyu.wu@starfivetech.com>
+        d=1e100.net; s=20230601; t=1722938327; x=1723543127;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UWFXS3msriWso8OK2ucbircclSt70Aab+Ge8S3Vzum8=;
+        b=pYAjrbx2/vkQ55ILBAJ+IFu6m5DYjPw5sFUJk7Qr51XlKNf8+ZIBbyjy9CS/9Va4tE
+         LSj83HtkQfH8aJO6ElDNBeWabzjFnNqcGztds4QNDRycvhsRFhkMD7AIlJm9K9ZLxYKL
+         gFhaJTc1mjMJZ9blUFH+x8mFqObLbh0o2Q4GdSs06ey1zFhRDlPoMUmM0ypDWKHhVHuJ
+         M2uBzzYDWis4wHLYEOzYmCJjcz+6OIBv3PVm/dNGtt9DCpE/f3XcQSx1pMg7N443i2JR
+         cEowjXxGGL53A99I6u6WH7lm1kgZhEu5W2iRug8icud13QdAVEV2RKdKI63y+TVTQU8E
+         5jbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXm2ASYkiXUhPEPQDw6w2e8G6PAcaCIUV90jzUKiGsW3qGYmp7ImpN/AhGV4XIml9cHJeM8n3gKwGVk6esfO78rOe52x8Cq3BBv86FDe3M5meanSFfD3lmL2yPs1I0NJiI9rLoMbC+E
+X-Gm-Message-State: AOJu0YwfRCD10BogcKaNs+bxTHTlJKa14fGg3jUwoLDa6eu0CYFLcZbE
+	otycn8X5jpobLIJJzZRXcz+3tGI2cUhp4YeGoGu0h1fgfE3xUZV5
+X-Google-Smtp-Source: AGHT+IEar3jTUi864HpTSM4h75a+MT2FqFimqumdw4yMkpqbOP3dpy9RmMkU5joiiUHcMlsKONIbQA==
+X-Received: by 2002:a17:907:3f1d:b0:a7a:952b:95b1 with SMTP id a640c23a62f3a-a7dc4e287demr1050845166b.24.1722938326530;
+        Tue, 06 Aug 2024 02:58:46 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::7:c24b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d437bbsm529533566b.121.2024.08.06.02.58.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 02:58:46 -0700 (PDT)
+Message-ID: <9162275d-12af-45d4-a004-adde8e4d63c2@gmail.com>
+Date: Tue, 6 Aug 2024 10:58:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Tue, 6 Aug 2024 04:58:17 -0500
-Message-ID: <CAJM55Z-_sOvRnaa8BuGcupsUksaK=tuTbTmF=AtzmzkCo7y5jA@mail.gmail.com>
-Subject: Re: [PATCH v6] clk: starfive: jh7110-sys: Fix lower rate of CPUfreq
- by setting PLL0 rate to 1.5GHz
-To: Xingyu Wu <xingyu.wu@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor@kernel.org>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: Hal Feng <hal.feng@starfivetech.com>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] mm: free zapped tail pages when splitting isolated
+ thp
+To: David Hildenbrand <david@redhat.com>
+Cc: hannes@cmpxchg.org, riel@surriel.com, shakeel.butt@linux.dev,
+ roman.gushchin@linux.dev, yuzhao@google.com, baohua@kernel.org,
+ ryan.roberts@arm.com, rppt@kernel.org, willy@infradead.org,
+ cerasuolodomenico@gmail.com, corbet@lwn.net, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kernel-team@meta.com,
+ Shuang Zhai <zhais@google.com>, akpm@linux-foundation.org, linux-mm@kvack.org
+References: <20240730125346.1580150-1-usamaarif642@gmail.com>
+ <20240730125346.1580150-4-usamaarif642@gmail.com>
+ <3be3dacd-1f45-468f-a363-b9d3a10aeb89@redhat.com>
+ <6622b7b4-e558-4d14-bc72-33e8008b06ec@gmail.com>
+ <73bbee97-ff58-4518-8dcf-e1da07906b45@redhat.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <73bbee97-ff58-4518-8dcf-e1da07906b45@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Xingyu Wu wrote:
-> CPUfreq supports 4 cpu frequency loads on 375/500/750/1500MHz. But now
-> PLL0 rate is 1GHz and the cpu frequency loads become 250/333/500/1000MHz
-> in fact. The PLL0 rate should be default set to 1.5GHz and set the
-> divider of cpu_core clock to 2 in safe.
->
-> To keeo the cpu frequency stable when setting PLL0, the parent clock of
-> the cpu_root clock needs to be switched from PLL0 to another parent
-> clock and add notifier function to do this for PLL0 clock. In the
-> function, the cpu_root clock should be operated by saving its current
-> parent and setting a new safe parent (osc clock) before setting the PLL0
-> clock rate. After setting PLL0 rate, it should be switched back to the
-> original parent clock.
->
-> To keep the DTS same in Linux and U-Boot and the PLL0 rate is 1GHz in
-> U-Boot, the PLL0 rate should be set to 1.5GHz in the driver instead of
-> DTS.
->
-> Fixes: e2c510d6d630 ("riscv: dts: starfive: Add cpu scaling for JH7110 SoC")
-> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> ---
->
-> Hi Stephen and Emil,
->
-> This patch is to fix the lower rate of CPUfreq by adding the notifier
-> for PLL0 clock and changing the PLL0 rate to 1.5GHz.
->
-> To keep the DTS same in Linux and U-Boot as Conor wants[1] and the PLL0
-> rate is 1GHz in U-Boot, the PLL0 rate should be set to 1.5GHz in the
-> driver instead of DTS.
->
-> [1]: https://lore.kernel.org/all/20240515-reorder-even-8b9eebd91b45@spud/
->
-> Thanks,
-> Xingyu Wu
->
-> ---
->  .../clk/starfive/clk-starfive-jh7110-sys.c    | 54 ++++++++++++++++++-
->  drivers/clk/starfive/clk-starfive-jh71x0.h    |  2 +
->  2 files changed, 54 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> index 8f5e5abfa178..7469981fb405 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> @@ -385,6 +385,32 @@ int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
->  }
->  EXPORT_SYMBOL_GPL(jh7110_reset_controller_register);
->
-> +/*
-> + * This clock notifier is called when the rate of PLL0 clock is to be changed.
-> + * The cpu_root clock should save the curent parent clock and swicth its parent
-> + * clock to osc before PLL0 rate will be changed. Then swicth its parent clock
-> + * back after the PLL0 rate is completed.
-> + */
-> +static int jh7110_pll0_clk_notifier_cb(struct notifier_block *nb,
-> +				       unsigned long action, void *data)
-> +{
-> +	struct jh71x0_clk_priv *priv = container_of(nb, struct jh71x0_clk_priv, pll_clk_nb);
-> +	struct clk *cpu_root = priv->reg[JH7110_SYSCLK_CPU_ROOT].hw.clk;
-> +	int ret = 0;
-> +
-> +	if (action == PRE_RATE_CHANGE) {
-> +		struct clk *osc = clk_get(priv->dev, "osc");
-> +
-> +		priv->original_clk = clk_get_parent(cpu_root);
-> +		ret = clk_set_parent(cpu_root, osc);
-> +		clk_put(osc);
-> +	} else if (action == POST_RATE_CHANGE) {
-> +		ret = clk_set_parent(cpu_root, priv->original_clk);
-> +	}
-> +
-> +	return notifier_from_errno(ret);
-> +}
-> +
->  static int __init jh7110_syscrg_probe(struct platform_device *pdev)
->  {
->  	struct jh71x0_clk_priv *priv;
-> @@ -413,7 +439,11 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
->  		if (IS_ERR(priv->pll[0]))
->  			return PTR_ERR(priv->pll[0]);
->  	} else {
-> -		clk_put(pllclk);
-> +		priv->pll_clk_nb.notifier_call = jh7110_pll0_clk_notifier_cb;
-> +		ret = clk_notifier_register(pllclk, &priv->pll_clk_nb);
-> +		if (ret)
-> +			return ret;
-> +
->  		priv->pll[0] = NULL;
->  	}
->
-> @@ -501,7 +531,27 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->
-> -	return jh7110_reset_controller_register(priv, "rst-sys", 0);
-> +	ret = jh7110_reset_controller_register(priv, "rst-sys", 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Set the divider cpu_core to 2 and set the PLL0 rate to 1.5G. */
-> +	pllclk = clk_get(priv->dev, "pll0_out");
-> +	if (!IS_ERR(pllclk)) {
-> +		struct clk *cpu_core = priv->reg[JH7110_SYSCLK_CPU_CORE].hw.clk;
-> +
-> +		ret = clk_set_rate(cpu_core, clk_get_rate(cpu_core) / 2);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = clk_set_rate(pllclk, 1500000000);
-> +		if (ret)
-> +			return ret;
-> +
-> +		clk_put(pllclk);
-> +	}
-> +
-> +	return 0;
 
-I'm still not a fan of hardcoding cpu frequencies in the driver. You've added
-the notifiers exactly so that we can use the standard device tree settings for
-this.
 
-In other words I much prefer v5 of this patchset.
+On 05/08/2024 10:00, David Hildenbrand wrote:
+> On 04.08.24 21:02, Usama Arif wrote:
+>>
+>>
+>> On 30/07/2024 16:14, David Hildenbrand wrote:
+>>> On 30.07.24 14:46, Usama Arif wrote:
+>>>> From: Yu Zhao <yuzhao@google.com>
+>>>>
+>>>> If a tail page has only two references left, one inherited from the
+>>>> isolation of its head and the other from lru_add_page_tail() which we
+>>>> are about to drop, it means this tail page was concurrently zapped.
+>>>> Then we can safely free it and save page reclaim or migration the
+>>>> trouble of trying it.
+>>>>
+>>>> Signed-off-by: Yu Zhao <yuzhao@google.com>
+>>>> Tested-by: Shuang Zhai <zhais@google.com>
+>>>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>>>> ---
+>>>>    mm/huge_memory.c | 26 ++++++++++++++++++++++++++
+>>>>    1 file changed, 26 insertions(+)
+>>>>
+>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>> index 0167dc27e365..76a3b6a2b796 100644
+>>>> --- a/mm/huge_memory.c
+>>>> +++ b/mm/huge_memory.c
+>>>> @@ -2923,6 +2923,8 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+>>>>        unsigned int new_nr = 1 << new_order;
+>>>>        int order = folio_order(folio);
+>>>>        unsigned int nr = 1 << order;
+>>>> +    LIST_HEAD(pages_to_free);
+>>>> +    int nr_pages_to_free = 0;
+>>>>          /* complete memcg works before add pages to LRU */
+>>>>        split_page_memcg(head, order, new_order);
+>>>> @@ -3007,6 +3009,24 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+>>>>            if (subpage == page)
+>>>>                continue;
+>>>>            folio_unlock(new_folio);
+>>>> +        /*
+>>>> +         * If a tail page has only two references left, one inherited
+>>>> +         * from the isolation of its head and the other from
+>>>> +         * lru_add_page_tail() which we are about to drop, it means this
+>>>> +         * tail page was concurrently zapped. Then we can safely free it
+>>>> +         * and save page reclaim or migration the trouble of trying it.
+>>>> +         */
+>>>> +        if (list && page_ref_freeze(subpage, 2)) {
+>>>> +            VM_BUG_ON_PAGE(PageLRU(subpage), subpage);
+>>>> +            VM_BUG_ON_PAGE(PageCompound(subpage), subpage);
+>>>> +            VM_BUG_ON_PAGE(page_mapped(subpage), subpage);
+>>>> +
+>>>
+>>> No VM_BUG_*, VM_WARN is good enough.
+>>>
+>>>> +            ClearPageActive(subpage);
+>>>> +            ClearPageUnevictable(subpage);
+>>>> +            list_move(&subpage->lru, &pages_to_free);
+>>>
+>>> Most checks here should operate on new_folio instead of subpage.
+>>>
+>>>
+>> Do you mean instead of doing the PageLRU, PageCompound and page_mapped check on the subpage, there should be checks on new_folio?
+>> If new_folio is a large folio, then it could be that only some of the subpages were zapped?
+> 
+> We do a:
+> 
+> struct folio *new_folio = page_folio(subpage);
+> 
+> Then:
+> 
+> PageLRU() will end up getting translated to folio_test_lru(page_folio(subpage))
+> 
+> page_mapped() will end up getting translated to
+> folio_mapped(page_folio(subpage))
+> 
+> PageCompound() is essentially a folio_test_large() check.
+> 
+> So what stops us from doing
+> 
+> VM_WARN_ON_ONCE_FOLIO(folio_test_lru(new_folio), new_folio);
+> VM_WARN_ON_ONCE_FOLIO(folio_test_large(new_folio), new_folio);
+> VM_WARN_ON_ONCE_FOLIO(folio_mapped(new_folio), new_folio);
+> 
+> folio_clear_active(new_folio);
+> folio_clear_unevictable(new_folio);
+> ...
+> 
+> ?
+> 
+> The page_ref_freeze() should make sure that we don't have a tail page of
+> a large folio. Tail pages would have a refcount of 0.
+> 
+> Or what am I missing?
+> 
 
-/Emil
-
->  }
->
->  static const struct of_device_id jh7110_syscrg_match[] = {
-> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.h b/drivers/clk/starfive/clk-starfive-jh71x0.h
-> index 23e052fc1549..e3f441393e48 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh71x0.h
-> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.h
-> @@ -114,6 +114,8 @@ struct jh71x0_clk_priv {
->  	spinlock_t rmw_lock;
->  	struct device *dev;
->  	void __iomem *base;
-> +	struct clk *original_clk;
-> +	struct notifier_block pll_clk_nb;
->  	struct clk_hw *pll[3];
->  	struct jh71x0_clk reg[];
->  };
-> --
-> 2.34.1
->
+Yes you are right. For some reason I was thinking tail pages would be able to reach this path.
 
