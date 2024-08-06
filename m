@@ -1,151 +1,174 @@
-Return-Path: <linux-kernel+bounces-276689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECD7949710
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:47:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D25949719
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81C701F22873
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:47:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAB361F21E72
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A2B74C1B;
-	Tue,  6 Aug 2024 17:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558657347C;
+	Tue,  6 Aug 2024 17:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fx5GUAKM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="W+ZUt7zt"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E612A1C5;
-	Tue,  6 Aug 2024 17:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BFF2A1C5
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 17:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722966427; cv=none; b=tdi73QpPhtU4YwJZkyLWvIu6RFTybJDxFc43lZ3qybmSi78gomSnOIA1hDyBpDLYOBM5WNvHg6l/tk9hukcQs2SuQbAJOswV3jAsaTC0JG7h791J4c+mkez1wGRKHmwgZ6F7mEZYY9KaLIokpH+PsfK5nld/rpCT5+sWKhJJvlU=
+	t=1722966622; cv=none; b=s0Ww6bY/aBPE/rW6HrWkQQPyr6Q1BSAvWJCa+u299o8gunEUsyzv1sUMHbnrnN3IjV8a655r+dQB2pv52ZXn/kVnSekLS8gr8MGYvG6JMSWKB5EUkx8HZ4JxauZA1n3WCyRWFpbCMUJSnMHnxKqDAMi8bqBK3+Lk7REwVWhUufQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722966427; c=relaxed/simple;
-	bh=cAgxLRUonxQ14zEMn94zwCIcLctgqYrtfxpI11Fy8wc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gCS6DLgjmWKjkh67zc876ClACk8Mr4mYLf85HU1EKuFBId9NSlMfRnUtA1SkbcgEcDSKtWQ8LSUEWRDQeZUg1AkYc3n1TUojXdSu8jrhF38/XwVCRCAbLN6gHeoOm5GJur9vpV5ikkxL8LNCwqcVSxFs8Tjl/5pUj5jOZTu617I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fx5GUAKM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44C87C4AF0D;
-	Tue,  6 Aug 2024 17:47:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722966427;
-	bh=cAgxLRUonxQ14zEMn94zwCIcLctgqYrtfxpI11Fy8wc=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Fx5GUAKMYrw01E2NOQ1E8mDP+Pa2FREQ9xmrdnvI2JRpi70zNRNst9qUE1XYbQ5OS
-	 XPI87A12VeS0VVT4UNmPKi37STUZS7hV9suOSoVBhd9YJqSkYsL2V8xHZYl0n+d9DH
-	 T0xYjgL+2ev68pfV1bvqczTVO5nh9pzopTZawUilCCbuWUXJ+32HHZp6YV8/A2FbN/
-	 E+VUMFFhZt7uTXiYZCtctn8zWetrN08YxonF11rLBlEVPJ01zzse+0skxpZmjpL4G5
-	 kd0G1xvmJnPkRtbiI0NCi/1/Wg9SepT9nuEGezK8JPzS+bDZawHomCYoaPVrz3pEyP
-	 l9Zch34CqgXOA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id DEAE2CE0A72; Tue,  6 Aug 2024 10:47:06 -0700 (PDT)
-Date: Tue, 6 Aug 2024 10:47:06 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, leit@meta.com,
-	Sandipan Das <sandipan.das@amd.com>,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] perf/x86/amd: Warn only on new bits set
-Message-ID: <3bbb2f65-7305-4e02-942a-484def3a04a3@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240806165848.3397232-1-leitao@debian.org>
+	s=arc-20240116; t=1722966622; c=relaxed/simple;
+	bh=55LuJW7aLxHedglkTrjEuWqkrs4/0wc54LyvDSYDHO4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T+WZ4qwhWFBbklxX1aUGWJkW9hGGm4kPtyYdx0B1YGLwYdYnDGiPbl13X8frbmkD/gXa5OmJ9nmPPy46nrm6mYsRRI7GpdUZc/0z8kSM9B6akdA0nG6EphmQuXCHQO8Kr3bBXnkEFX+LKiMGmQ3mKV2+RX/xfDyLtPwkS/Kn1Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=W+ZUt7zt; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5b391c8abd7so1055407a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 10:50:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1722966618; x=1723571418; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=z0zMo04KKh0y+kNNC4Vm6QM8kJTTcnqycTCj7GXfBl0=;
+        b=W+ZUt7zt43INU2rTG9dkaxXnzo0sc20c+AnHIh7Z0VEtLvPUeqxlEofbgK1D9P5G8y
+         xPeqMhxFAHMJY5oYczNl8Q+k6hkpW87BxNEZZOXyjbBwS38T1JmlwZZ3pG9L7AXCsFsB
+         vX5Tb6VRJ45n45o4zbua7Jvdx2Jf40qw6eQ2c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722966618; x=1723571418;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z0zMo04KKh0y+kNNC4Vm6QM8kJTTcnqycTCj7GXfBl0=;
+        b=K02YKNkpz8Pe0KT0O97I71W77+k3VCxQCI/ItAcJPoaBtEBmeBC1Y16U3WfbJYxkqG
+         LnFBBlCpmqNlFyI/5pU/hD1JDgxWJa8w+rpqhPdDlAkQkDYhZ8bpPff0EpErd+6frmsP
+         M6h6dJ8zhvXNspsx9ZmR22TJaUkUAnYjCFCCfqT4hwo7JOvtQwYJxWYx3cUvjehSgfI2
+         jt/8oaS9KrLffcZrPZvq9CVbkeVnhcyZYEP5gApdEcpWRdJWIhwtgcM0jvR2axw+RCgY
+         EI3whZgRvRD2ZUfK1LWU3ExShIlg+QWt+Nyv5VOOzLGkrMI8FxoCSEwnffvlEHhvS4Gj
+         NcGw==
+X-Forwarded-Encrypted: i=1; AJvYcCX4uMQUcWZEUMshzPu6fNFyhTnZpLqnrh0RqL/vA+tc44AE194kbc+isEpCNeQS9McQ3gF2WRE/WO/4aEQtfHydxPdPke8alYo9D+bb
+X-Gm-Message-State: AOJu0Ywu11VtwWMLYo3y1r+nSeXRGqWqxNZuzBG3RZlOZ33IsM2e2o1c
+	1uy38MHCqL1WRrm2siiAZXjblqsdwU/Xst4M7OzNPokYOj15TkHSxfcW8IMRtrwYVaOIBEJsN3n
+	1vxq92Q==
+X-Google-Smtp-Source: AGHT+IFevHAZw+EXOdgU5yeDJET/n7B7wXxuAcjZIgCZboGK1zNXeciLQcaTb4rWOfC6ivDfiZSvhg==
+X-Received: by 2002:aa7:d755:0:b0:5a1:7570:8914 with SMTP id 4fb4d7f45d1cf-5b7f3cc6926mr11099645a12.11.1722966618169;
+        Tue, 06 Aug 2024 10:50:18 -0700 (PDT)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83960f26bsm6149303a12.14.2024.08.06.10.50.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 10:50:16 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bb477e3a6dso1120872a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 10:50:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUJ1DULxgcgy1lEqINOpgDxMPI7deexOTnDpslc1Hcyx0BMd8zkajBQzYxkopH4aMuQd1ZlVhH5a61f/VW1PyxbsgYLnHDkYzpoqRzW
+X-Received: by 2002:a17:907:9715:b0:a77:cacf:58b5 with SMTP id
+ a640c23a62f3a-a7dc4da659bmr1188256466b.1.1722966615960; Tue, 06 Aug 2024
+ 10:50:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806165848.3397232-1-leitao@debian.org>
+References: <20240731095022.970699670@linuxfoundation.org> <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
+ <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
+ <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <f63c6789-b01a-4d76-b7c9-74c04867bc13@roeck-us.net>
+ <CAHk-=wjmumbT73xLkSAnnxDwaFE__Ny=QCp6B_LE2aG1SUqiTg@mail.gmail.com>
+In-Reply-To: <CAHk-=wjmumbT73xLkSAnnxDwaFE__Ny=QCp6B_LE2aG1SUqiTg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Aug 2024 10:49:58 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiss_E41A1uH0-1MXF-GjxzW_Rbz+Xbs+fbr-vyQFpo4g@mail.gmail.com>
+Message-ID: <CAHk-=wiss_E41A1uH0-1MXF-GjxzW_Rbz+Xbs+fbr-vyQFpo4g@mail.gmail.com>
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+To: Guenter Roeck <linux@roeck-us.net>, Heiko Carstens <hca@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, 
+	Linux-MM <linux-mm@kvack.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 06, 2024 at 09:58:48AM -0700, Breno Leitao wrote:
-> Warning at every leaking bits can cause a flood of message, triggering
-> various stall-warning mechanisms to fire, including CSD locks, which
-> makes the machine to be unusable.
-> 
-> Track the bits that are being leaked, and only warn when a new bit is
-> set.
-> 
-> That said, this patch will help with the following issues:
-> 
-> 1) It will tell us which bits are being set, so, it is easy to
->    communicate it back to vendor, and to do a root-cause analyzes.
-> 
-> 2) It avoid the machine to be unusable, because, worst case
->    scenario, the user gets less than 60 WARNs (one per unhandled bit).
-> 
-> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> Reviewed-by: Sandipan Das <sandipan.das@amd.com>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+[ Adding s390 people, this is strange ]
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+New people, see
 
-> ---
-> Changelog:
-> v3:
->  * Avoid potential false reporting when concurrent execution occurs on
->    different CPUs (Paul E. McKenney)
-> 
-> v2:
->   * Improved the patch description, getting the benefits in words.
->   * https://lore.kernel.org/all/20240731154651.1555511-1-leitao@debian.org/
-> 
-> v1:
->   * https://lore.kernel.org/all/20240524141021.3889002-1-leitao@debian.org/
-> 
-> 
->  arch/x86/events/amd/core.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
-> index 920e3a640cad..b4a1a2576510 100644
-> --- a/arch/x86/events/amd/core.c
-> +++ b/arch/x86/events/amd/core.c
-> @@ -943,11 +943,12 @@ static int amd_pmu_v2_snapshot_branch_stack(struct perf_branch_entry *entries, u
->  static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
->  {
->  	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-> +	static atomic64_t status_warned = ATOMIC64_INIT(0);
-> +	u64 reserved, status, mask, new_bits, prev_bits;
->  	struct perf_sample_data data;
->  	struct hw_perf_event *hwc;
->  	struct perf_event *event;
->  	int handled = 0, idx;
-> -	u64 reserved, status, mask;
->  	bool pmu_enabled;
->  
->  	/*
-> @@ -1012,7 +1013,12 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
->  	 * the corresponding PMCs are expected to be inactive according to the
->  	 * active_mask
->  	 */
-> -	WARN_ON(status > 0);
-> +	if (status > 0) {
-> +		prev_bits = atomic64_fetch_or(status, &status_warned);
-> +		// A new bit was set for the very first time.
-> +		new_bits = status & ~prev_bits;
-> +		WARN(new_bits, "New overflows for inactive PMCs: %llx\n", new_bits);
-> +	}
->  
->  	/* Clear overflow and freeze bits */
->  	amd_pmu_ack_global_status(~status);
-> -- 
-> 2.43.5
-> 
+  https://lore.kernel.org/all/CAHk-=wjmumbT73xLkSAnnxDwaFE__Ny=QCp6B_LE2aG1SUqiTg@mail.gmail.com/
+
+for context. There's a heisenbug that depends on random code layout
+issues on s390.
+
+On Tue, 6 Aug 2024 at 10:34, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Hmm. Do we have some alignment confusion?
+>
+> The alignment rules for 192 are to align it to 64-byte boundaries
+> (because that's the largest power of two that divides it), and that
+> means it stays at 192, and that would give 21 objects per 4kB page.
+>
+> But if we use the "align up to next power of two", you get 256 bytes,
+> and 16 objects per page.
+>
+> And that 21-vs-16 confusion would seem to match this pretty well:
+>
+>   [    0.000000] BUG kmem_cache_node (Not tainted): objects 21 > max 16
+>
+> which makes me wonder...
+
+I'd suspect commit ad59baa31695 ("slab, rust: extend kmalloc()
+alignment guarantees to remove Rust padding"), perhaps with some odd
+s390 code generation issue for 'ffs()'.
+
+IOW, this new code in mm/slab_common.c
+
+        if (flags & SLAB_KMALLOC)
+                align = max(align, 1U << (ffs(size) - 1));
+
+might not match some other alignment code.
+
+Or maybe it's the s390 ffs().
+
+It looks like
+
+  static inline int ffs(int word)
+  {
+        unsigned long mask = 2 * BITS_PER_LONG - 1;
+        unsigned int val = (unsigned int)word;
+
+        return (1 + (__flogr(-val & val) ^ (BITS_PER_LONG - 1))) & mask;
+  }
+
+where s390 has this very odd "flogr" instruction ("find last one G
+register"?) for the non-constant case.
+
+That uses a "union register_pair" but only ever uses the "even"
+register without ever using the full 128-bit part or the odd register.
+So the other register in the register pair is uninitialized.
+
+Does that cause random compiler issues based on register allocation?
+
+Just for fun, does something like this make any difference?
+
+  --- a/arch/s390/include/asm/bitops.h
+  +++ b/arch/s390/include/asm/bitops.h
+  @@ -305,6 +305,7 @@ static inline unsigned char __flogr(unsigned long word)
+                union register_pair rp;
+
+                rp.even = word;
+  +             rp.odd = 0;
+                asm volatile(
+                        "       flogr   %[rp],%[rp]\n"
+                        : [rp] "+d" (rp.pair) : : "cc");
+
+
+Thomas notices that the special "div by constant" routines moved
+around, and I'm not seeing how *that* would matter, but it's all
+obviously very strange.
+
+              Linus
 
