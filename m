@@ -1,168 +1,118 @@
-Return-Path: <linux-kernel+bounces-275989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1BF1948CF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:39:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C94E948CF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 375ACB249C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:39:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBEA41F24C54
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAA71BF301;
-	Tue,  6 Aug 2024 10:39:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCB015B54C;
-	Tue,  6 Aug 2024 10:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A109F1BE86E;
+	Tue,  6 Aug 2024 10:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GOb2xykC"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C9B15B54C
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 10:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722940768; cv=none; b=BiFyO6RIO2y7nflfXokdTb8wtNmiKI8lLPT/zcEC5438BVIncF9DMbfrKixIYTxagjlYwu2UufYUWTdjI2B98n25V7Epj5C2WjZwoQ2g1Wn4DT+OrE8JTFS37O/P0JMaT8+kyZmXOmxFUwNklkq4NP9oMWRrNwJiWQrxlLGneQw=
+	t=1722940777; cv=none; b=kZ2EuqMZGIVXh6h0QD194oSFAElFtaNOjYw+pxPf8hzRVmplpFgd8A1lDVANGdE+zvOFj7hzxTVJDq7uQ1R/Txy32zXWWrO64bNLF0dijvQU00BbT0PRXR+7MqTsS7k8IPCAOB9EAJ7O/pKv6QKO31IHt6TDfW7lp+m6ZgywPl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722940768; c=relaxed/simple;
-	bh=f3yrW3TgSKGlLolol72ndZGCbsVRSJQaOX3C228bnyY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oyadqOJP0sUQxXLnokF6H5UGGTtJCnBZG0aSTJ576ASZbzqe4vO4O9NxP4YybY2qSG5NaJ1THNCmXlocsECdMlGcp75phtRV5ROaP5no8a0lJPGtm0Ajz13niAWxrqUBSzOietCTebrsCnrXaJVK0g09Zv25E1JkCzcBAgLtZ9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E24CFEC;
-	Tue,  6 Aug 2024 03:39:51 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E0FC3F6A8;
-	Tue,  6 Aug 2024 03:39:24 -0700 (PDT)
-Message-ID: <bfd0f7c7-5492-47ec-9c66-4c1ad4cd0e52@arm.com>
-Date: Tue, 6 Aug 2024 11:39:23 +0100
+	s=arc-20240116; t=1722940777; c=relaxed/simple;
+	bh=q4Y5msxJLDdqSHUidDCRbWsywG04LxO/kcGEtcDMcUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bemjwb49OxVDfI/yqI7OOn4FxRa4PrxxVGGEFW7C6gxVMo2FXOrkSgrK2vAqKYckauw2ndNtdHBE7gzguGCME0RIETdMjGd5hA7TgD1ws7Mo8bN1Mjh8xNwlpwEY9O3RMoyDy0JykjySbTr9pSBPaK4mm+2+4VOFPZD+zu0e60g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GOb2xykC; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DGNnOD/ncB9uIMZlnBUhnl/FC/huOzlX+hkkh4rYu28=; b=GOb2xykCcsch2NGFLdpQplas9j
+	+1dQ7hVqODf0sh3zgXSaeH29K42B8CtIVFzacJXEcXNZ15OhnnIs6hNRLjchJhQ/6lhjrrxejZBia
+	OKtCfA21jLCIb+zH9bptzHSwVODLjMHaEdITs9H6BAGzYysS71ws7AtP1xnNeIJr1gMZWCVlWbiDv
+	9bHMDxjse7r/wtbr9fiPimpPjxKSqpipjLk+yf3jh3Cm6JBthJU4jev58kmGBkppl4HsK7CJdlJri
+	wuOxEtpvE3zH075HiE/HgQ+6J+oAW3jB1NTVvf/TH/4LAOh7NEn6yoiB2sDWJDdbgHtOjP/TWfM/A
+	UxEi1JiQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sbHbD-00000005afk-0lo0;
+	Tue, 06 Aug 2024 10:39:27 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id CF3D330049D; Tue,  6 Aug 2024 12:39:26 +0200 (CEST)
+Date: Tue, 6 Aug 2024 12:39:26 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	Menglong Dong <dongml2@chinatelecom.cn>,
+	Bin Lai <laib2@chinatelecom.cn>
+Subject: Re: [PATCH next] sched: make printk safe when rq lock is held
+Message-ID: <20240806103926.GU37996@noisy.programming.kicks-ass.net>
+References: <20240806074131.36007-1-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] iommu: Optimize IOMMU UnMap
-To: Ashish Mhetre <amhetre@nvidia.com>, will@kernel.org, joro@8bytes.org
-Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20240805084106.214584-1-amhetre@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240805084106.214584-1-amhetre@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806074131.36007-1-dongml2@chinatelecom.cn>
 
-On 05/08/2024 9:41 am, Ashish Mhetre wrote:
-> The current __arm_lpae_unmap() function calls dma_sync() on individual
-> PTEs after clearing them. Overall unmap performance can be improved by
-> around 25% for large buffer sizes by combining the syncs for adjacent
-> leaf entries.
-> Optimize the unmap time by clearing all the leaf entries and issuing a
-> single dma_sync() for them.
-> Below is detailed analysis of average unmap latency(in us) with and
-> without this optimization obtained by running dma_map_benchmark for
-> different buffer sizes.
+On Tue, Aug 06, 2024 at 03:41:31PM +0800, Menglong Dong wrote:
+> The dead lock can happen if we try to use printk(), such as a call of
+> SCHED_WARN_ON(), during the rq->__lock is held. The printk() will try to
+> print the message to the console, and the console driver can call
+> queue_work_on(), which will try to obtain rq->__lock again.
 > 
-> 		UnMap Latency(us)
-> Size	Without		With		% gain with
-> 	optimiztion	optimization	optimization
+> This means that any WARN during the kernel function that hold the
+> rq->__lock, such as schedule(), sched_ttwu_pending(), etc, can cause dead
+> lock.
 > 
-> 4KB	3		3		0
-> 8KB	4		3.8		5
-> 16KB	6.1		5.4		11.48
-> 32KB	10.2		8.5		16.67
-> 64KB	18.5		14.9		19.46
-> 128KB	35		27.5		21.43
-> 256KB	67.5		52.2		22.67
-> 512KB	127.9		97.2		24.00
-> 1MB	248.6		187.4		24.62
-> 2MB	65.5		65.5		0
-> 4MB	119.2		119		0.17
+> Following is the call trace of the deadlock case that I encounter:
 > 
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> ---
-> Changes in V2:
-> - Updated the commit message to be imperative.
-> - Fixed ptep at incorrect index getting cleared for non-leaf entries.
+>   PID: 0      TASK: ff36bfda010c8000  CPU: 156  COMMAND: "swapper/156"
+>    #0 crash_nmi_callback+30
+>    #1 nmi_handle+85
+>    #2 default_do_nmi+66
+>    #3 exc_nmi+291
+>    #4 end_repeat_nmi+22
+>       [exception RIP: native_queued_spin_lock_slowpath+96]
+>    #5 native_queued_spin_lock_slowpath+96
+>    #6 _raw_spin_lock+30
+>    #7 ttwu_queue+111
+>    #8 try_to_wake_up+375
+>    #9 __queue_work+462
+>   #10 queue_work_on+32
+>   #11 soft_cursor+420
+>   #12 bit_cursor+898
+>   #13 hide_cursor+39
+>   #14 vt_console_print+995
+>   #15 call_console_drivers.constprop.0+204
+>   #16 console_unlock+374
+>   #17 vprintk_emit+280
+>   #18 printk+88
+>   #19 __warn_printk+71
+>   #20 enqueue_task_fair+1779
+>   #21 activate_task+102
+>   #22 ttwu_do_activate+155
+>   #23 sched_ttwu_pending+177
+>   #24 flush_smp_call_function_from_idle+42
+>   #25 do_idle+161
+>   #26 cpu_startup_entry+25
+>   #27 secondary_startup_64_no_verify+194
 > 
-> Changes in V3:
-> - Used loop-local variables and removed redundant function variables.
-> - Added check for zero-sized dma_sync in __arm_lpae_clear_pte().
-> - Merged both patches into this single patch by adding check for a
->    NULL gather in __arm_lpae_unmap() itself.
+> Fix this by using __printk_safe_enter()/__printk_safe_exit() in
+> rq_pin_lock()/rq_unpin_lock(). Then, printk will defer to print out the
+> buffers to the console.
 
-Yeah, that's cleaned up really nicely!
-
-Other than a nit that the subject ideally wants to be something more 
-accurate like "iommu/io-pgtable-arm: Optimise non-coherent unmap" (sorry 
-I forgot to mention that last time),
-
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-
-> ---
->   drivers/iommu/io-pgtable-arm.c | 31 +++++++++++++++++--------------
->   1 file changed, 17 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> index f5d9fd1f45bf..6fecf3d9fe67 100644
-> --- a/drivers/iommu/io-pgtable-arm.c
-> +++ b/drivers/iommu/io-pgtable-arm.c
-> @@ -274,13 +274,13 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
->   				   sizeof(*ptep) * num_entries, DMA_TO_DEVICE);
->   }
->   
-> -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg)
-> +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg, int num_entries)
->   {
-> +	for (int i = 0; i < num_entries; i++)
-> +		ptep[i] = 0;
->   
-> -	*ptep = 0;
-> -
-> -	if (!cfg->coherent_walk)
-> -		__arm_lpae_sync_pte(ptep, 1, cfg);
-> +	if (!cfg->coherent_walk && num_entries)
-> +		__arm_lpae_sync_pte(ptep, num_entries, cfg);
->   }
->   
->   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
-> @@ -654,26 +654,29 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->   		max_entries = ARM_LPAE_PTES_PER_TABLE(data) - unmap_idx_start;
->   		num_entries = min_t(int, pgcount, max_entries);
->   
-> -		while (i < num_entries) {
-> -			pte = READ_ONCE(*ptep);
-> +		/* Find and handle non-leaf entries */
-> +		for (i = 0; i < num_entries; i++) {
-> +			pte = READ_ONCE(ptep[i]);
->   			if (WARN_ON(!pte))
->   				break;
->   
-> -			__arm_lpae_clear_pte(ptep, &iop->cfg);
-> -
->   			if (!iopte_leaf(pte, lvl, iop->fmt)) {
-> +				__arm_lpae_clear_pte(&ptep[i], &iop->cfg, 1);
-> +
->   				/* Also flush any partial walks */
->   				io_pgtable_tlb_flush_walk(iop, iova + i * size, size,
->   							  ARM_LPAE_GRANULE(data));
->   				__arm_lpae_free_pgtable(data, lvl + 1, iopte_deref(pte, data));
-> -			} else if (!iommu_iotlb_gather_queued(gather)) {
-> -				io_pgtable_tlb_add_page(iop, gather, iova + i * size, size);
->   			}
-> -
-> -			ptep++;
-> -			i++;
->   		}
->   
-> +		/* Clear the remaining entries */
-> +		__arm_lpae_clear_pte(ptep, &iop->cfg, i);
-> +
-> +		if (gather && !iommu_iotlb_gather_queued(gather))
-> +			for (int j = 0; j < i; j++)
-> +				io_pgtable_tlb_add_page(iop, gather, iova + j * size, size);
-> +
->   		return i * size;
->   	} else if (iopte_leaf(pte, lvl, iop->fmt)) {
->   		/*
+Nope, sorry, not happening.
 
