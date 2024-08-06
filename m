@@ -1,387 +1,188 @@
-Return-Path: <linux-kernel+bounces-276589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C799495B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:41:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 532059495BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A39F1F22CDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:41:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C766B1F25A71
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DF5433D0;
-	Tue,  6 Aug 2024 16:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0A540856;
+	Tue,  6 Aug 2024 16:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Mn2P3ULj"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OT1OcLzh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E63A2AE99;
-	Tue,  6 Aug 2024 16:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BD8482E4
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 16:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722962464; cv=none; b=L6OYEMAXmXy54QkuJxFQ080EgcOf7Ah9CL4kRu5Uxficvm0NrOtmJCBnHUPWlIKRdrMylBttDEAXJ33sVPOEOWHRyyzHHrhhetilKt9udmmAmfxw56/KQosXYwx720yM2laWzoIM8XnZuPe88VgayFjvh0oEz2mwxdxt+edw/qo=
+	t=1722962494; cv=none; b=OIlBKwKzgaD8MZqvdMumchNMHqUa4T1OSABwjoyHEvfPI4/eVoyAyBwYBuJ8xKMsyH/Pf6vpUu+b20oznnYAIxIJmt9qTsf9BkBYeuVaZVeKSGP2dgzi7pnn+2HlFzWyKouMlSy9BKcYalTCuMhGwmOQqKpxQRF4+6Gyv02LsVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722962464; c=relaxed/simple;
-	bh=7h0U3zv4x/bjHp3scR2KFQ7oAeKzjwlrm9SSGc+hHn4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oJk3Xgs+IHp9TWYz89pJ/uS1cIB6i/hjp0ziKod7myj1uLr1WJel+lo+gV5tayEMsJCzxuQ3zefyHgYeLnCNchfRJRqTlZme7eN6SC0LBiS4Olmz71IGHGYL07CjLv6ROu43qwiFyB1IlWW6E+h7HAUmOnaZs6oXJOmXWZuSTbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Mn2P3ULj; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=uYRFjgYunHylqo95qhimOzNE6dkuMRV93hSqH+49pBg=; b=Mn2P3ULjULfN6kOXgeQ+gNbupN
-	LsUBaCuhU9SKtqhokUrfObD08DRufpARfqv0ccQQDfh+YEo+0CkwR9CS7CAi701u5Uj/vNEOGDy7p
-	ZXCFl8ranKNzHLDAf+dQPR5S4sxTdLep0gjuu8Ed8cT+5r0496lU9t6Kdhz8/SaWLOJRDXtWXAxdu
-	V3xImsgUWe8GHq1WhQTQtql9Bb9Sp5NX0spS/F9Kssc/rTk5JIhe98JnCsRBtMAc4++j9YDvi8ef/
-	UQ8YBqIXqx4MhWGC+HrsfXwpyMJLPBxvZxoEbz0f3o4VATKHwiWFn6KjaDSAbKBA128iUcubJ0duO
-	o9M4QzXg==;
-Received: from [2001:8b0:10b:5:95e1:bb50:f4dd:70b1] (helo=u3832b3a9db3152.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sbNEw-00000005yYK-1HPm;
-	Tue, 06 Aug 2024 16:40:50 +0000
-Message-ID: <d806ed85d2487a7798769de39c5b3f33c2f93b54.camel@infradead.org>
-Subject: Re: [PATCH] KVM: Move gfn_to_pfn_cache invalidation to
- invalidate_range_end hook
-From: David Woodhouse <dwmw2@infradead.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Mushahid Hussain
- <hmushi@amazon.co.uk>,  Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li
- <wanpengli@tencent.com>, Jim Mattson <jmattson@google.com>,  Joerg Roedel
- <joro@8bytes.org>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Mingwei Zhang <mizhang@google.com>, Maxim Levitsky <mlevitsk@redhat.com>
-Date: Tue, 06 Aug 2024 17:40:49 +0100
-In-Reply-To: <ZrJIA6t8S9Ucjqzn@google.com>
-References: <20220427014004.1992589-1-seanjc@google.com>
-	 <20220427014004.1992589-7-seanjc@google.com>
-	 <294c8c437c2e48b318b8c27eb7467430dfcba92b.camel@infradead.org>
-	 <f862cefff2ed3f4211b69d785670f41667703cf3.camel@infradead.org>
-	 <ZrFyM8rJZYjfFawx@google.com>
-	 <dd6ca54cfd23dba0d3cba7c1ceefea1fdfcdecbe.camel@infradead.org>
-	 <ZrItHce2GqAWoN0o@google.com>
-	 <a21a90c76af446951956b4423b1f87beb91cb660.camel@infradead.org>
-	 <ZrJIA6t8S9Ucjqzn@google.com>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-NldtdWfVdBR7STqnMUdL"
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1722962494; c=relaxed/simple;
+	bh=x+qOlislYtOrctnFuQItxhnuZ1AqzDOo2LxZqHyxKPg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=evZ3gNIUV0Ev8He/Wn5gC2Sy8hUEe35rPhv1viOQoDa7fOOjR66aBKA3y1TRd6iuvOVES+61qEkavbrTBJpV3AxEuvASYk1f2SYKjMYdIJtD+4jgvxkWpc4WbySQLAX18p5gQpZBSd0R8Pr8G7T4TR2SUWVcxEN06jbaq4YP7Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OT1OcLzh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722962489;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MheGlQ8G5AVmBz/Qc+bceb8MjLw8Dyx0VZwfQNW+cQk=;
+	b=OT1OcLzh7nC+zdycafB7dpQfHyY7WpcPEOF617CxNZd6SKcx9Q1YtuqskUteptXEjr4sIa
+	7iHUbSS8wHf5gYd+TGPuUgvyhZFJ4pMjEJUwegQvcB0HbhFOKAXNkfN9SgjKp1e+9WW8A1
+	KWJcqfsntVr43aTjpzLTBtsk75Wflw0=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-269-C2SyOLZyNG2aY1kL4z7-_Q-1; Tue,
+ 06 Aug 2024 12:41:27 -0400
+X-MC-Unique: C2SyOLZyNG2aY1kL4z7-_Q-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B66921955BFA;
+	Tue,  6 Aug 2024 16:41:24 +0000 (UTC)
+Received: from llong.com (unknown [10.2.16.146])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B8536195605A;
+	Tue,  6 Aug 2024 16:41:21 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <nao.horiguchi@gmail.com>
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Huang Ying <ying.huang@intel.com>,
+	Len Brown <len.brown@intel.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v2] mm/memory-failure: Use raw_spinlock_t in struct memory_failure_cpu
+Date: Tue,  6 Aug 2024 12:41:07 -0400
+Message-ID: <20240806164107.1044956-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+The memory_failure_cpu structure is a per-cpu structure. Access to its
+content requires the use of get_cpu_var() to lock in the current CPU
+and disable preemption. The use of a regular spinlock_t for locking
+purpose is fine for a non-RT kernel.
 
---=-NldtdWfVdBR7STqnMUdL
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Since the integration of RT spinlock support into the v5.15 kernel,
+a spinlock_t in a RT kernel becomes a sleeping lock and taking a
+sleeping lock in a preemption disabled context is illegal resulting in
+the following kind of warning.
 
-On Tue, 2024-08-06 at 08:57 -0700, Sean Christopherson wrote:
-> The last one is key: the pages have already been freed when invalidate_ra=
-nge_end()
-> is called, and so unmapping at that time would be too late.
+  [12135.732244] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+  [12135.732248] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 270076, name: kworker/0:0
+  [12135.732252] preempt_count: 1, expected: 0
+  [12135.732255] RCU nest depth: 2, expected: 2
+    :
+  [12135.732420] Hardware name: Dell Inc. PowerEdge R640/0HG0J8, BIOS 2.10.2 02/24/2021
+  [12135.732423] Workqueue: kacpi_notify acpi_os_execute_deferred
+  [12135.732433] Call Trace:
+  [12135.732436]  <TASK>
+  [12135.732450]  dump_stack_lvl+0x57/0x81
+  [12135.732461]  __might_resched.cold+0xf4/0x12f
+  [12135.732479]  rt_spin_lock+0x4c/0x100
+  [12135.732491]  memory_failure_queue+0x40/0xe0
+  [12135.732503]  ghes_do_memory_failure+0x53/0x390
+  [12135.732516]  ghes_do_proc.constprop.0+0x229/0x3e0
+  [12135.732575]  ghes_proc+0xf9/0x1a0
+  [12135.732591]  ghes_notify_hed+0x6a/0x150
+  [12135.732602]  notifier_call_chain+0x43/0xb0
+  [12135.732626]  blocking_notifier_call_chain+0x43/0x60
+  [12135.732637]  acpi_ev_notify_dispatch+0x47/0x70
+  [12135.732648]  acpi_os_execute_deferred+0x13/0x20
+  [12135.732654]  process_one_work+0x41f/0x500
+  [12135.732695]  worker_thread+0x192/0x360
+  [12135.732715]  kthread+0x111/0x140
+  [12135.732733]  ret_from_fork+0x29/0x50
+  [12135.732779]  </TASK>
 
-OK, thanks.
+Fix it by using a raw_spinlock_t for locking instead. Also move the
+pr_err() out of the lock critical section to avoid indeterminate latency
+of this call.
 
-> The obvious downside is what you've run into, where the start+end approac=
-h forces
-> KVM to wait for all in-flight invalidations to go away.=C2=A0 But again, =
-in practice
-> the rudimentary range tracking suffices for all known use cases.
+Fixes: ea8f5fb8a71f ("HWPoison: add memory_failure_queue()")
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ mm/memory-failure.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-Makes sense.
-
-> I suspect you're trying to solve a problem that doesn't exist in practice=
-.
-> hva_to_pfn_retry() already has a cond_resched(), so getting stuck for a l=
-ong
-> duration isn't fatal, just suboptimal.=C2=A0 And similar to the range-bas=
-ed tracking,
-> _if_ there's a problem in practice, then it also affects guest page fault=
-s.=C2=A0 KVM
-> simply resumes the vCPU and keeps re-faulting until the in-flight invalid=
-ation(s)
-> has gone away.
-
-Yeah. When it's looping on actual page faults it's easy to pretend it
-isn't a busy-loop :)
-
-Making it wait is fairly simple; it would be easy to just make it
-cond_resched() instead though. Here's what I have so far (incremental).
-
-https://git.infradead.org/?p=3Dusers/dwmw2/linux.git;a=3Dcommitdiff;h=3Dpfn=
-cache-2
-
-I need to revive the torture test you had at the end of your earlier series=
-.
-
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 689e8be873a7..9b5261e11802 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -770,6 +770,9 @@ struct kvm {
- 	/* For management / invalidation of gfn_to_pfn_caches */
- 	spinlock_t gpc_lock;
- 	struct list_head gpc_list;
-+	u64 mmu_gpc_invalidate_range_start;
-+	u64 mmu_gpc_invalidate_range_end;
-+	wait_queue_head_t gpc_invalidate_wq;
-=20
- 	/*
- 	 * created_vcpus is protected by kvm->lock, and is incremented
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index ffd6ab4c2a16..a243f9f8a9c0 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -775,6 +775,24 @@ static int kvm_mmu_notifier_invalidate_range_start(str=
-uct mmu_notifier *mn,
- 	 */
- 	spin_lock(&kvm->mn_invalidate_lock);
- 	kvm->mn_active_invalidate_count++;
-+	if (likely(kvm->mn_active_invalidate_count =3D=3D 1) {
-+		kvm->mmu_gpc_invalidate_range_start =3D range->start;
-+		kvm->mmu_gpc_invalidate_range_end =3D range->end;
-+	} else {
-+		/*
-+		 * Fully tracking multiple concurrent ranges has diminishing
-+		 * returns. Keep things simple and just find the minimal range
-+		 * which includes the current and new ranges. As there won't be
-+		 * enough information to subtract a range after its invalidate
-+		 * completes, any ranges invalidated concurrently will
-+		 * accumulate and persist until all outstanding invalidates
-+		 * complete.
-+		 */
-+		kvm->mmu_gpc_invalidate_range_start =3D
-+			min(kvm->mmu_gpc_invalidate_range_start, range->start);
-+		kvm->mmu_gpc_invalidate_range_end =3D
-+			max(kvm->mmu_gpc_invalidate_range_end, range->end);
-+	}
- 	spin_unlock(&kvm->mn_invalidate_lock);
-=20
- 	/*
-@@ -830,21 +848,27 @@ static void kvm_mmu_notifier_invalidate_range_end(str=
-uct mmu_notifier *mn,
-=20
- 	__kvm_handle_hva_range(kvm, &hva_range);
-=20
-+	gfn_to_pfn_cache_invalidate(kvm, range->start, range->end);
-+
- 	/* Pairs with the increment in range_start(). */
- 	spin_lock(&kvm->mn_invalidate_lock);
- 	if (!WARN_ON_ONCE(!kvm->mn_active_invalidate_count))
- 		--kvm->mn_active_invalidate_count;
- 	wake =3D !kvm->mn_active_invalidate_count;
-+	if (wake) {
-+		kvm->mmu_gpc_invalidate_range_start =3D KVM_HVA_ERR_BAD;
-+		kvm->mmu_gpc_invalidate_range_end =3D KVM_HVA_ERR_BAD;
-+	}
- 	spin_unlock(&kvm->mn_invalidate_lock);
-=20
--	gfn_to_pfn_cache_invalidate(kvm, range->start, range->end);
--
- 	/*
- 	 * There can only be one waiter, since the wait happens under
- 	 * slots_lock.
- 	 */
--	if (wake)
-+	if (wake) {
-+		wake_up(&kvm->gpc_invalidate_wq);
- 		rcuwait_wake_up(&kvm->mn_memslots_update_rcuwait);
-+	}
- }
-=20
- static int kvm_mmu_notifier_clear_flush_young(struct mmu_notifier *mn,
-@@ -1154,7 +1178,9 @@ static struct kvm *kvm_create_vm(unsigned long type, =
-const char *fdname)
-=20
- 	INIT_LIST_HEAD(&kvm->gpc_list);
- 	spin_lock_init(&kvm->gpc_lock);
--
-+	init_waitqueue_head(&kvm->gpc_invalidate_wq);
-+	kvm->mmu_gpc_invalidate_range_start =3D KVM_HVA_ERR_BAD;
-+	kvm->mmu_gpc_invalidate_range_end =3D KVM_HVA_ERR_BAD;
- 	INIT_LIST_HEAD(&kvm->devices);
- 	kvm->max_vcpus =3D KVM_MAX_VCPUS;
-=20
-diff --git a/virt/kvm/pfncache.c b/virt/kvm/pfncache.c
-index 187b58150ef7..dad32ef5ac87 100644
---- a/virt/kvm/pfncache.c
-+++ b/virt/kvm/pfncache.c
-@@ -133,6 +133,39 @@ static void gpc_unmap(kvm_pfn_t pfn, void *khva)
- #endif
- }
-=20
-+static bool gpc_invalidations_pending(struct gfn_to_pfn_cache *gpc)
-+{
-+	/*
-+	 * No need for locking on GPC here because these fields are protected
-+	 * by gpc->refresh_lock.
-+	 */
-+	return unlikely(gpc->kvm->mn_active_invalidate_count) &&
-+		(gpc->kvm->mmu_gpc_invalidate_range_start <=3D gpc->uhva) &&
-+		(gpc->kvm->mmu_gpc_invalidate_range_end > gpc->uhva);
-+}
-+
-+static void gpc_wait_for_invalidations(struct gfn_to_pfn_cache *gpc)
-+{
-+	spin_lock(&gpc->kvm->mn_invalidate_lock);
-+	if (gpc_invalidations_pending(gpc)) {
-+		DECLARE_WAITQUEUE(wait, current);
-+
-+		for (;;) {
-+			prepare_to_wait(&gpc->kvm->gpc_invalidate_wq, &wait,
-+					TASK_UNINTERRUPTIBLE);
-+
-+			if (!gpc_invalidations_pending(gpc))
-+				break;
-+
-+			spin_unlock(&gpc->kvm->mn_invalidate_lock);
-+			schedule();
-+			spin_lock(&gpc->kvm->mn_invalidate_lock);
-+		}
-+		finish_wait(&gpc->kvm->gpc_invalidate_wq, &wait);
-+	}
-+	spin_unlock(&gpc->kvm->mn_invalidate_lock);
-+}
-+
- static kvm_pfn_t hva_to_pfn_retry(struct gfn_to_pfn_cache *gpc)
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 581d3e5c9117..7aeb5198c2a0 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -2417,7 +2417,7 @@ struct memory_failure_entry {
+ struct memory_failure_cpu {
+ 	DECLARE_KFIFO(fifo, struct memory_failure_entry,
+ 		      MEMORY_FAILURE_FIFO_SIZE);
+-	spinlock_t lock;
++	raw_spinlock_t lock;
+ 	struct work_struct work;
+ };
+ 
+@@ -2443,19 +2443,21 @@ void memory_failure_queue(unsigned long pfn, int flags)
  {
- 	/* Note, the new page offset may be different than the old! */
-@@ -205,6 +238,15 @@ static kvm_pfn_t hva_to_pfn_retry(struct gfn_to_pfn_ca=
-che *gpc)
- 			goto out_error;
- 		}
-=20
-+		/*
-+		 * Avoid populating a GPC with a user address which is already
-+		 * being invalidated, if the invalidate_range_start() notifier
-+		 * has already been called. The actual invalidation happens in
-+		 * the invalidate_range_end() callback, so wait until there are
-+		 * no active invalidations (for the relevant HVA).
-+		 */
-+		gpc_wait_for_invalidations(gpc);
-+
- 		write_lock_irq(&gpc->lock);
-=20
- 		/*
+ 	struct memory_failure_cpu *mf_cpu;
+ 	unsigned long proc_flags;
++	bool buffer_overflow;
+ 	struct memory_failure_entry entry = {
+ 		.pfn =		pfn,
+ 		.flags =	flags,
+ 	};
+ 
+ 	mf_cpu = &get_cpu_var(memory_failure_cpu);
+-	spin_lock_irqsave(&mf_cpu->lock, proc_flags);
+-	if (kfifo_put(&mf_cpu->fifo, entry))
++	raw_spin_lock_irqsave(&mf_cpu->lock, proc_flags);
++	buffer_overflow = !kfifo_put(&mf_cpu->fifo, entry);
++	if (!buffer_overflow)
+ 		schedule_work_on(smp_processor_id(), &mf_cpu->work);
+-	else
++	raw_spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
++	if (buffer_overflow)
+ 		pr_err("buffer overflow when queuing memory failure at %#lx\n",
+ 		       pfn);
+-	spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
+ 	put_cpu_var(memory_failure_cpu);
+ }
+ EXPORT_SYMBOL_GPL(memory_failure_queue);
+@@ -2469,9 +2471,9 @@ static void memory_failure_work_func(struct work_struct *work)
+ 
+ 	mf_cpu = container_of(work, struct memory_failure_cpu, work);
+ 	for (;;) {
+-		spin_lock_irqsave(&mf_cpu->lock, proc_flags);
++		raw_spin_lock_irqsave(&mf_cpu->lock, proc_flags);
+ 		gotten = kfifo_get(&mf_cpu->fifo, &entry);
+-		spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
++		raw_spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
+ 		if (!gotten)
+ 			break;
+ 		if (entry.flags & MF_SOFT_OFFLINE)
+@@ -2501,7 +2503,7 @@ static int __init memory_failure_init(void)
+ 
+ 	for_each_possible_cpu(cpu) {
+ 		mf_cpu = &per_cpu(memory_failure_cpu, cpu);
+-		spin_lock_init(&mf_cpu->lock);
++		raw_spin_lock_init(&mf_cpu->lock);
+ 		INIT_KFIFO(mf_cpu->fifo);
+ 		INIT_WORK(&mf_cpu->work, memory_failure_work_func);
+ 	}
+-- 
+2.43.5
 
-
---=-NldtdWfVdBR7STqnMUdL
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
-ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
-EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
-FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
-aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
-VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
-aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
-ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
-QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
-rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
-ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
-U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
-DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
-BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
-BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
-CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
-xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
-IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
-kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
-eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
-KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
-1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
-OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
-x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
-5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
-DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
-UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
-MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
-ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
-oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
-SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
-xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
-RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
-bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
-NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
-KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
-5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
-C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
-gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
-VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
-MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
-by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
-b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
-BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
-QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
-c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
-AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
-qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
-v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
-Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
-tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
-Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
-YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
-ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
-IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
-ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
-GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
-h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
-9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
-P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
-2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
-BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
-7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
-lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
-lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
-AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
-Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
-cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
-aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
-LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
-BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
-cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
-Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
-lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
-WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
-hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
-IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
-dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
-NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
-xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwODA2MTY0MDQ5WjAvBgkqhkiG9w0BCQQxIgQgk+an4RWH
-/7EL93HdAn5iGQ23YWORWAwGQtsLg9BgPU0wgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
-A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
-DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
-MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
-Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
-lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgAVnrUxfSR5vKIR7+N1VLmKNYZJB9OQBatT
-lZTFNyj4hlUP//dvLHzGBtlanGQjmG3lcWMymkMdSmvYEJrirTeKwjpRzRiSXcV0j8UPo/XqmZvw
-4jIgbhiHuXcIvtzN4hYqpcZIngR4SJaRbcbI4RyFOGnS5DQYYDHKjAgFZ2XdrHxULAB8Bo+2PNFa
-g/Ye8w6OvRodHltiomLErMYtI8X4sBBIUDTJZk3XwOIoi6X77vAIVfIwvwbq1dOIf8v2OsIzbsXL
-r5qjsCsULaMczi6Cax4kijIlqB+YucVAtDTlcaIHD/jy0KvWjgu+S3t5tuaKuSTYPFNx9hw/7ndZ
-u0MmM6GPMqjIxRSVBykx1xtkXHA1FjBFRxANNh2UYTpug42OwAjFAthdQhzLpyI6bftrHYTFZvRI
-8ibuRICzRXUi4h+0tfS90oaNlEFSv/eoIqO7i2pDmoyN0TDu8VXvheU9VQrrZMWYjgxyUqaYODQl
-9ZCY9IRZsO+R52aYdPMjg5knJ27ieHDbehdACB5L8kMxe02XWPgvMhmIM4iRPrXeNxwi1NREBOJV
-zfgwgUo6EUMA97HyLZHPMsbNxQ1U4gHlhTisdkPZWIoum+kOwn5Zoo2yNXBSAeyjf/L9Wp3HIO5V
-EMF+DHZbTLs5f7S/sxFIc3PJwr4hPL7/8hxfiS5zRwAAAAAAAA==
-
-
---=-NldtdWfVdBR7STqnMUdL--
 
