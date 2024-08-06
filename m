@@ -1,269 +1,134 @@
-Return-Path: <linux-kernel+bounces-276566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63181949555
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:14:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C6C9495BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3B91F25828
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:14:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 494BAB25D82
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3D136124;
-	Tue,  6 Aug 2024 16:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46183B1AC;
+	Tue,  6 Aug 2024 16:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D8uuWB1r"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fDxCyeNw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7B6DF71
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 16:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48083184D
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 16:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722960842; cv=none; b=ONhNgp1nG0QCU7d/StNbXKJvj1YEUWjz1GgEI3tSKMF1C/Tu0yT1UOLqR0ThqMTi1bDk/HaWoQGBYV2WvMnMumnSLq7+F5e2uQ7Wbub+jwgiZO3FQmT4VkYmDFsX5EnWF2JNBptflNaEoSbr5Y+PXq3zxOKLrrc1litmgn3GoIU=
+	t=1722960863; cv=none; b=cPyeBB08uzMncw4qSKQ3esp8C8vwbHnjwWjEsX/qThJUDBwkHngrZt57hBTRqon8ASQNKBsuQCB2STligc0BdtqlxR8hIDGiBepj3q4QLcTbVl0Zucfsr9A+GoKdTIAHYpTl5YLBeT2bDbtUKkcJeUJsde2Lslvg1qP42fuHhFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722960842; c=relaxed/simple;
-	bh=9rfWxmaQdCuJldr9R81UXATYIvKwfKmV1awJwd6fJ3U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cIUxMH4OgqNC86T+wRBj62pbBMkjybkfLd6h1UHS777Xc52S7Q3MPf81UpyEYYHNhKdjTMFOH3gbBbRPmlqTgRqDYYn9SnVNgv1fYJsQJ/AII0+3pesPQv01DVUJZ1Ur9th5NVGSGshuDsEg6chF1TT/l2/khTnxFWpxvqGeqhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D8uuWB1r; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e0bf9602db6so810924276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 09:14:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722960839; x=1723565639; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=flHyanDSyOW3E9RQeJ9pSCPkgNyeeM0BzJyFB+YwtSQ=;
-        b=D8uuWB1r70Y0tGxUZsOmux4I8zAM17Eq5TVg2kuTuGj6xzG6FQQO6w330j+zTuktE6
-         d3nPi0w232da5oips2bHE/tJt1se/HekoJ+j/nL69/xkPDbuuAssZ5X2Nk2MDMHpw2jj
-         mxtObIObmC95KKEMRjTx9mgxVbGF3LIfwaFR3TX1jC0I7z5cqb3YdIzaf0wlF2Cs+7nZ
-         +P8cW8w4SZSPXe9jSwBU+Wpw41bLyBgWUvedD0nLRBeYq4n1o60V74+CMutjiSVwTlKN
-         IqyF1VRy692CoN85RhumLHtrJgS8/xrXSalRDio+68GgI/b4Gm9VjHqEp87OVkwGNOCK
-         jEBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722960839; x=1723565639;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=flHyanDSyOW3E9RQeJ9pSCPkgNyeeM0BzJyFB+YwtSQ=;
-        b=Ex9qQ6cWyT6TwqRi59Z37aOJEVQcKONFpbTLKycQJzFP91GLqndZKlcKSLJ+PpxYIO
-         hATuSmf6A8BnQmeNtKtxqPr4TJ1JhYzl7CpmVqXZk7b8eoTBHoL2mFKzPsztnR2mxwCa
-         bQnDmC7TMM7Yy/b7lnLVk7hZDqPjj7MBMWmxP+D0rHgmA0j/V0opTHT0rnp+9vi6FsmG
-         mfQ4oapum3XBkXHFTehDzrW/XZnvypy9qzEwM0jjL+XkqhmXlEbuUFYQ6+5HsHcXzhps
-         NVHh7KwKk5iM30a0KSfRhQ/53Ez5b2JrDjmv+udSz5pkltp3dPoTNHi+/YyeDOUZBthV
-         jsbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXWvm5U10kjEXe5xSEbcDUZwEYlNZz+UBlcBMLsIyM8bHvDR8qs/utJktS7hEnPYp9Tay3vf2h+gimAucrvkqdouatVFsp1N2QkKUz
-X-Gm-Message-State: AOJu0Yyvpp/4PHYlygbwJPD6ToTEJirhLOJVLB3May6rOJUKRTBmvrws
-	3eg0oEjtmfhEPVMzPdfJ4GBh2ZwMOfjEDPpHcWUHVJHdJW/2MKI7t6haGvHtuPoA8wRsDAGQ6OG
-	u1o5hQ5JyLVcYBEZIcPDTQgEWsaime0wCeVhl
-X-Google-Smtp-Source: AGHT+IFIR7KB3qC95IwE99Ecy1X9S4TKWbi7I5lgIk7hVv/EXJ2eNsSamr8zi6SVuWSu0NNUtVbJv6C43PAZ39oOiJ8=
-X-Received: by 2002:a25:918a:0:b0:e0b:c402:b03f with SMTP id
- 3f1490d57ef6-e0bde34c22dmr12985019276.27.1722960838924; Tue, 06 Aug 2024
- 09:13:58 -0700 (PDT)
+	s=arc-20240116; t=1722960863; c=relaxed/simple;
+	bh=mn4bAaKh4OzlNcns15U7R+92M15go6dKF/m0kZ4fJcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ddzdmo6pnURs3Ukrbbsl17igJDwP04QqEiyL1lJQ/5/ySuoFlesfvi7gC6lB3QEpXc8suGxiOZ72xfvbDeRXDrM0ZKzbfKzX5QcyTe1Gk95X1JhlFdNB3+mnKDXpppXlDhA4jbUmdzUR0bAVVAbFkrlWYrI7uhy/8KwPlHspD8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fDxCyeNw; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722960863; x=1754496863;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mn4bAaKh4OzlNcns15U7R+92M15go6dKF/m0kZ4fJcQ=;
+  b=fDxCyeNwLxWttJZskGiiMaQrV9SfwoRQCRDFVSs+f+Ndv0gItRnFbseB
+   U0X0lfHtXL+NoHUjwNDifaqhETY+lItzfXM6jYWoPiRzhBQPxVxMCB8iu
+   ToJVk/bbreV4tSeO7AJ91O/t7+P+nnQl5GpFytmu02wsBbu1WJILJqjke
+   sEDnBhsROJegHqRJnLcmfDscdMJjUpWPA+8fFtSmv4tW4ryYLkDR1WyUo
+   OTEgZ/yTh0hiKa0s3+cNQ5IvCzDvVBwYbxhrdPW1uqmKeCRxVb7ofmekU
+   rmp7X9jV8TDTZBhFItK0S/bNnxv1K7AdZ+jxT1t9JqEj8OX/CTwAmCV3p
+   w==;
+X-CSE-ConnectionGUID: kQ5HRAVnTM+nD7Iwn2QGJQ==
+X-CSE-MsgGUID: +3t1KOpjQm2XtLxc3PAeqQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="31566797"
+X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
+   d="scan'208";a="31566797"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 09:14:22 -0700
+X-CSE-ConnectionGUID: L+AMiGrRR3SsWknUUVXQcw==
+X-CSE-MsgGUID: F8dxAd+vQJ+Qrr/0i/YGwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
+   d="scan'208";a="87215097"
+Received: from johunt-mobl9.ger.corp.intel.com (HELO intel.com) ([10.245.244.131])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 09:14:15 -0700
+Date: Tue, 6 Aug 2024 17:14:07 +0100
+From: Andi Shyti <andi.shyti@linux.intel.com>
+To: David Gow <david@davidgow.net>
+Cc: Christian =?iso-8859-15?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Somalapuram Amaranath <Amaranath.Somalapuram@amd.com>,
+	Thomas =?iso-8859-15?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Gow <david@ingeniumdigital.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Ville =?iso-8859-15?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] drm/i915: Fix ttm small BAR placement handling
+Message-ID: <ZrJLz9rZLsZh1nWo@ashyti-mobl2.lan>
+References: <20240804091851.122186-1-david@davidgow.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805-fix-vma-lock-type-confusion-v1-1-9f25443a9a71@google.com>
-In-Reply-To: <20240805-fix-vma-lock-type-confusion-v1-1-9f25443a9a71@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 6 Aug 2024 09:13:45 -0700
-Message-ID: <CAJuCfpEy1QV-9uTUtrFvN-6eS5KFw-ZyQothQbLqXFyUaJ4xgQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: fix (harmless) type confusion in lock_vma_under_rcu()
-To: Jann Horn <jannh@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240804091851.122186-1-david@davidgow.net>
 
-On Mon, Aug 5, 2024 at 5:52=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
->
-> There is a (harmless) type confusion in lock_vma_under_rcu():
-> After vma_start_read(), we have taken the VMA lock but don't know yet
-> whether the VMA has already been detached and scheduled for RCU freeing.
-> At this point, ->vm_start and ->vm_end are accessed.
->
-> vm_area_struct contains a union such that ->vm_rcu uses the same memory a=
-s
-> ->vm_start and ->vm_end; so accessing ->vm_start and ->vm_end of a detach=
-ed
-> VMA is illegal and leads to type confusion between union members.
->
-> Fix it by reordering the vma->detached check above the address checks, an=
-d
-> document the rules for RCU readers accessing VMAs.
->
-> This will probably change the number of observed VMA_LOCK_MISS events
-> (since previously, trying to access a detached VMA whose ->vm_rcu has bee=
-n
-> scheduled would bail out when checking the fault address against the
-> rcu_head members reinterpreted as VMA bounds).
->
-> Fixes: 50ee32537206 ("mm: introduce lock_vma_under_rcu to be used from ar=
-ch-specific code")
-> Signed-off-by: Jann Horn <jannh@google.com>
+Hi David,
 
-Thanks for fixing this subtle issue and clearly documenting the rules!
-Not sure if we should CC stable? It is harmless but it's still a bug...
+thanks for the patches and thanks Justin for debugging the issue.
 
-Acked-by: Suren Baghdasaryan <surenb@google.com>
+I reviewed and merged it into drm-intel-gt-next.
 
+Thanks,
+Andi
+
+On Sun, Aug 04, 2024 at 05:18:46PM +0800, David Gow wrote:
+> From: David Gow <david@ingeniumdigital.com>
+> 
+> As described in [1], there have been a couple of regressions in the TTM
+> placement handling for i915, which adversely affect DG2 systems with
+> small BAR.  In particular, performance become very poor when eviction
+> from the mappable BAR memory is required, as suboptimal placements can
+> be preferred, leading to thrashing. This often leads to hangs of >10s,
+> during which even the compositor is unusable.
+> 
+> These regressions were largely introduced during the flag rework in
+> commit a78a8da51b36 ("drm/ttm: replace busy placement with flags v6").
+> 
+> The first patch has already been sent out[2]. I'm resending it as part
+> of this series which fixes both known regressions.
+> 
+> Thanks to Justin Brewer for bisecting the issue.
+> 
+> Cheers,
+> -- David
+> 
+> [1]: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/11255
+> [2]: https://lore.kernel.org/dri-devel/20240722074540.15295-1-david@davidgow.net/
+> 
 > ---
-> sidenote: I'm not entirely sure why we handle detached VMAs and moved
-> VMAs differently here (detached VMAs retry, moved VMAs bail out), but
-> that's kinda out of scope of this patch.
-
-Yeah, technically in both cases the address space is being modified
-and we should bail out and retry with mmap_lock. I just think if the
-VMA got replaced while we are calling lock_vma_under_rcu(), it's
-reasonable to retry the search and try finding the new VMA if it's
-already established and unlocked.
-
-> ---
->  include/linux/mm_types.h | 15 +++++++++++++--
->  mm/memory.c              | 14 ++++++++++----
->  2 files changed, 23 insertions(+), 6 deletions(-)
->
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 485424979254..498cdf3121d0 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -657,58 +657,69 @@ struct vma_numab_state {
->
->  /*
->   * This struct describes a virtual memory area. There is one of these
->   * per VM-area/task. A VM area is any part of the process virtual memory
->   * space that has a special rule for the page-fault handlers (ie a share=
-d
->   * library, the executable area etc).
-> + *
-> + * Only explicitly marked struct members may be accessed by RCU readers =
-before
-> + * getting a stable reference.
->   */
->  struct vm_area_struct {
->         /* The first cache line has the info for VMA tree walking. */
->
->         union {
->                 struct {
->                         /* VMA covers [vm_start; vm_end) addresses within=
- mm */
->                         unsigned long vm_start;
->                         unsigned long vm_end;
->                 };
->  #ifdef CONFIG_PER_VMA_LOCK
->                 struct rcu_head vm_rcu; /* Used for deferred freeing. */
->  #endif
->         };
->
-> -       struct mm_struct *vm_mm;        /* The address space we belong to=
-. */
-> +       /*
-> +        * The address space we belong to.
-> +        * Unstable RCU readers are allowed to read this.
-> +        */
-> +       struct mm_struct *vm_mm;
->         pgprot_t vm_page_prot;          /* Access permissions of this VMA=
-. */
->
->         /*
->          * Flags, see mm.h.
->          * To modify use vm_flags_{init|reset|set|clear|mod} functions.
->          */
->         union {
->                 const vm_flags_t vm_flags;
->                 vm_flags_t __private __vm_flags;
->         };
->
->  #ifdef CONFIG_PER_VMA_LOCK
-> -       /* Flag to indicate areas detached from the mm->mm_mt tree */
-> +       /*
-> +        * Flag to indicate areas detached from the mm->mm_mt tree.
-> +        * Unstable RCU readers are allowed to read this.
-> +        */
->         bool detached;
->
->         /*
->          * Can only be written (using WRITE_ONCE()) while holding both:
->          *  - mmap_lock (in write mode)
->          *  - vm_lock->lock (in write mode)
->          * Can be read reliably while holding one of:
->          *  - mmap_lock (in read or write mode)
->          *  - vm_lock->lock (in read or write mode)
->          * Can be read unreliably (using READ_ONCE()) for pessimistic bai=
-lout
->          * while holding nothing (except RCU to keep the VMA struct alloc=
-ated).
->          *
->          * This sequence counter is explicitly allowed to overflow; seque=
-nce
->          * counter reuse can only lead to occasional unnecessary use of t=
-he
->          * slowpath.
->          */
->         int vm_lock_seq;
-> +       /* Unstable RCU readers are allowed to read this. */
->         struct vma_lock *vm_lock;
->  #endif
->
->         /*
->          * For areas with an address space and backing store,
->          * linkage into the address_space->i_mmap interval tree.
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 34f8402d2046..3f4232b985a1 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -5996,23 +5996,29 @@ struct vm_area_struct *lock_vma_under_rcu(struct =
-mm_struct *mm,
->         if (!vma)
->                 goto inval;
->
->         if (!vma_start_read(vma))
->                 goto inval;
->
-> -       /* Check since vm_start/vm_end might change before we lock the VM=
-A */
-> -       if (unlikely(address < vma->vm_start || address >=3D vma->vm_end)=
-)
-> -               goto inval_end_read;
-> -
->         /* Check if the VMA got isolated after we found it */
->         if (vma->detached) {
->                 vma_end_read(vma);
->                 count_vm_vma_lock_event(VMA_LOCK_MISS);
->                 /* The area was replaced with another one */
->                 goto retry;
->         }
-> +       /*
-> +        * At this point, we have a stable reference to a VMA: The VMA is
-> +        * locked and we know it hasn't already been isolated.
-> +        * From here on, we can access the VMA without worrying about whi=
-ch
-> +        * fields are accessible for RCU readers.
-> +        */
-> +
-> +       /* Check since vm_start/vm_end might change before we lock the VM=
-A */
-> +       if (unlikely(address < vma->vm_start || address >=3D vma->vm_end)=
-)
-> +               goto inval_end_read;
->
->         rcu_read_unlock();
->         return vma;
->
->  inval_end_read:
->         vma_end_read(vma);
->
-> ---
-> base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
-> change-id: 20240805-fix-vma-lock-type-confusion-0a956d9d31ae
-> --
-> Jann Horn <jannh@google.com>
->
+> 
+> David Gow (2):
+>   drm/i915: Allow evicting to use the requested placement
+>   drm/i915: Attempt to get pages without eviction first
+> 
+>  drivers/gpu/drm/i915/gem/i915_gem_ttm.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> -- 
+> 2.46.0
 
