@@ -1,100 +1,109 @@
-Return-Path: <linux-kernel+bounces-275771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3F394899A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:51:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3083F94899E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13224280FE4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:51:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C72F3B2123C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F9B1BCA08;
-	Tue,  6 Aug 2024 06:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="trLWNAN/"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359C21BCA08;
+	Tue,  6 Aug 2024 06:51:57 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EF515B147;
-	Tue,  6 Aug 2024 06:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1D415B147;
+	Tue,  6 Aug 2024 06:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722927071; cv=none; b=KtLK22zv9HFg3XDnkIijtR7+NnqwgTUNLsy9BUJkS7w+yMBu/8ipwp0Mm2phVBR2Z6tsPJzrlYFeOYeVIhw8T71m6QFkcmVe3YlcXmX5VQzO8UHzp/h5oayhl/IqAEEp1zdOtek/pMtf2IRWOFrwpJM6wWf6eTkfo8lheBx+b6w=
+	t=1722927116; cv=none; b=RXfiGFqDcX/n3EfWt21ACqBoA3vHlvr7t+XFSfUz+FFivH7/HBnE89rMbo06b7BblY4LE/lJtpdnBvZy24ivSW+YlZrm28KFu1YLYePNYNi2rQSJ0bnV/JyszbVBzMeQxthH813aiQV1Jy6IvlEkrWV6JODIGRqCv9fWuyeIt4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722927071; c=relaxed/simple;
-	bh=2vOPurazSJ1srXpGqSTW+az72lhdQC6hwtTQ9ZWAw28=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fth6FQvNI685dP48E/ee3jZWoQQL1Z9MIxJLmtMHBpsMehqcvQ0Fusp0tWtKH+HJfzH68JuRl53VjNe9M1S3ZhhKB/PQ9XPOdyW+Uc6Z0XAexjHhaQIbbIbFBgn0LoGNrTt2hoGKfCSqR4o/A20LTwVMaF1jv73GEqG3rgST2JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=trLWNAN/; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722927060;
-	bh=2vOPurazSJ1srXpGqSTW+az72lhdQC6hwtTQ9ZWAw28=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=trLWNAN/fJXy9UPxaT4NALvLZnw8NmsqW6mV4Ac24bvslnWCBMP+gUlgN3xEz8Yrt
-	 BNpyajmxUz5obcQxlziuT365ePUM7qZe4QidL9ZewjWp7r0PXaDUS+/YW8iq9xbQob
-	 F85DWHz/LLATRKq0gMHPbXC+HyJ50YftC+go8+Zn8vjz3TmVfa2LwBxm+QV4cRQ36a
-	 19SEK8keYFkROFUpGNlMz3Goa43EAK3IagKk0pT/wypjF29yiWBwb7Td47iks0ehAB
-	 +3SRtcUkH+2OjXvtolFQtqWcUvsUZpqFboaJ/Iyc7in6Q7otp9OFntUEJ23PQyZuaI
-	 VvAjwocG3aAUQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WdP8h0kgwz4w2K;
-	Tue,  6 Aug 2024 16:51:00 +1000 (AEST)
-Date: Tue, 6 Aug 2024 16:50:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>, linux-next
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the asm-generic tree
-Message-ID: <20240806165059.456e57f8@canb.auug.org.au>
-In-Reply-To: <f978393a-0250-4493-8e38-a4d80b2b5698@app.fastmail.com>
-References: <20240806145453.5297d452@canb.auug.org.au>
-	<f978393a-0250-4493-8e38-a4d80b2b5698@app.fastmail.com>
+	s=arc-20240116; t=1722927116; c=relaxed/simple;
+	bh=H6A4LpeNGhQxmd9+oJB3s2uuR0dLR/RABd7vBqdiGFM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eV0Iuozk9sUNlQRn1Ng+CSLi9gabj1X3PEClpnfXFRtlyG6djZkOCzqk9SS3Yofudi1VxXV4e5regqslHfs2SEnY0ukmtA3x7KIS91r+0QcnvwErmfphmUvGLhpr+QbdAU4MGpsAjytLsdZ93f7+RXwe8aJzaM4zMG0U0fhYeEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WdP9H2lS0z4f3jLy;
+	Tue,  6 Aug 2024 14:51:31 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A62841A1127;
+	Tue,  6 Aug 2024 14:51:44 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.174.178.55])
+	by APP4 (Coremail) with SMTP id gCh0CgBXfoT9x7FmMjilAw--.41083S4;
+	Tue, 06 Aug 2024 14:51:44 +0800 (CST)
+From: thunder.leizhen@huaweicloud.com
+To: Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	selinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Zhen Lei <thunder.leizhen@huawei.com>,
+	Nick Kralevich <nnk@google.com>,
+	Jeff Vander Stoep <jeffv@google.com>
+Subject: [PATCH 1/1] selinux: Fix potential counting error in avc_add_xperms_decision()
+Date: Tue,  6 Aug 2024 14:51:13 +0800
+Message-Id: <20240806065113.1317-1-thunder.leizhen@huaweicloud.com>
+X-Mailer: git-send-email 2.37.3.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8MhX29N3meCMEbD_GK7O/TY";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXfoT9x7FmMjilAw--.41083S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7GF4UJry3Zw1UGF4DWFy7GFg_yoWfKFcEkF
+	ykurnrWr48ZFs5AanxCF1Fvrn09395uF4rW34rCasrZF43XFn5Jr1fCr1kXry3Ww4rAr9r
+	CFnrWa4kGwnrXjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbcxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267
+	AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80
+	ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4
+	AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUAVWU
+	twCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1XdbUUUUUU==
+X-CM-SenderInfo: hwkx0vthuozvpl2kv046kxt4xhlfz01xgou0bp/
 
---Sig_/8MhX29N3meCMEbD_GK7O/TY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Zhen Lei <thunder.leizhen@huawei.com>
 
-Hi Arnd,
+The count increases only when a node is successfully added to
+the linked list.
 
-On Tue, 06 Aug 2024 08:30:14 +0200 "Arnd Bergmann" <arnd@arndb.de> wrote:
->
-> Thanks! I've pushed a fixed version now.
+Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ security/selinux/avc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Um, it looks identical to the old one ...
---=20
-Cheers,
-Stephen Rothwell
+diff --git a/security/selinux/avc.c b/security/selinux/avc.c
+index 32eb67fb3e42c0f..7087cd2b802d8d8 100644
+--- a/security/selinux/avc.c
++++ b/security/selinux/avc.c
+@@ -330,12 +330,12 @@ static int avc_add_xperms_decision(struct avc_node *node,
+ {
+ 	struct avc_xperms_decision_node *dest_xpd;
+ 
+-	node->ae.xp_node->xp.len++;
+ 	dest_xpd = avc_xperms_decision_alloc(src->used);
+ 	if (!dest_xpd)
+ 		return -ENOMEM;
+ 	avc_copy_xperms_decision(&dest_xpd->xpd, src);
+ 	list_add(&dest_xpd->xpd_list, &node->ae.xp_node->xpd_head);
++	node->ae.xp_node->xp.len++;
+ 	return 0;
+ }
+ 
+-- 
+2.34.1
 
---Sig_/8MhX29N3meCMEbD_GK7O/TY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaxx9MACgkQAVBC80lX
-0Gxdkwf+Pt9UFdBiGOyhm9z6W8J5jsqugivepVUk+DzEC9b4BZFoCCowkT78oUOG
-EgacXyTQ1VB8I5OGy6JlftkeasdS34Kh+PYlJeu3sbDXi9XwMYdC1xveA/tZN7lU
-wYy2oLtPYWZsg9zpaLU4fFnBW9daNM2TfCXb2NmQtA8MJ23kywqOKuKo3nqfo2o5
-I7K/P3d5dxYUCJp2W33ofa5WjRolNwq/LoZ3SPmg1Pv56KUYx59pzCrPq2IFAYtf
-xBY2iSaeJOvGsM0SdgNYe5LeZ5oDxR0MghH9egef7PiCsYiTQpukKVg49+YLtTiZ
-lza5aiuzfv7U6pQek1uKsiYXKatwXg==
-=lRji
------END PGP SIGNATURE-----
-
---Sig_/8MhX29N3meCMEbD_GK7O/TY--
 
