@@ -1,254 +1,251 @@
-Return-Path: <linux-kernel+bounces-275975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6267948CB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:20:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CB34948CBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E343B2426E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:20:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EECCF1C2353C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4151C1BE250;
-	Tue,  6 Aug 2024 10:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AEA1BE84F;
+	Tue,  6 Aug 2024 10:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lGiuozis"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kmShUCC7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79D51BDA86;
-	Tue,  6 Aug 2024 10:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722939627; cv=none; b=RAkzv62+1G5kZJnw69KjuogYE/G8Dev6sHJur949nsboSnAqMCwOP9MH4/K2mF7o1LBkkY5YV+jvCyPO0hnVwqii3DOvTPKtqWPXMDP0XtUeuaif3HipMQ9LQvsnRFPnminQ9/h3nfmd6wUMCuub1vlICROx76nkGixFrZk+ve4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722939627; c=relaxed/simple;
-	bh=U+g0GIU8RRfE++oqN+BfWKyYtmzIe0pYd55mBqOrJ/0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Xvdypf70ibVDjvKDsN8ZOj1E/x33oKu7U9ZNw0I+Wv4eNKQ7ksvfpY9V0LHgngwtIaM5/hz+BRXSbd1k5Csz7T5pXQ+mN9wNP52HmWcf04jh+dnIZkpx2RbaaPcS90r28L7h3oC0InKN2Jf7jqsjd6kW6EQMChlbTCpB+K8e23s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lGiuozis; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01CF1BD501;
+	Tue,  6 Aug 2024 10:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722939799; cv=fail; b=rm/+80UR4kS9g63nzsbvMsV41L4Thrb4BRG75Y8r5BcyMhlRb2hKO2gr7o2/wxp2s2ZRJ0lqudwp99nCxAUIyGreTtdqsr0V1ivJKhx+ujQapYTKGUho7VNEGJ3Peq04w35y48iPMnTI7aQgKP4K9hDebyXKf13J1+N6U4tfN3o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722939799; c=relaxed/simple;
+	bh=n22PlU+0Wm+URzWczjXdPKLlVN7+R8rfSheuB07CsZM=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Or50nXBVRbifz68VOXf11VuWxaudXYOyB2Vo7wM/FrygZH2djPleEseMdRR+aenKXCkInTUnZthQ/HvT7E9JGNorcReJOIIYQizRIcFaaRUPKsgOEv67nnZ6w3TxN3tNCN4U8VCte76GDJQoHGBniTxzaJiPh3ZXN+CpQqohb7s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kmShUCC7; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722939626; x=1754475626;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=U+g0GIU8RRfE++oqN+BfWKyYtmzIe0pYd55mBqOrJ/0=;
-  b=lGiuozisie0j5WaxWMBZUcnDGnvnwR9F+KBod5hPe68MJ/LoVzEed1Un
-   6aVlGXBty98qlnt2SzMgpf1WBr8OV9Kw16E5JBbFcJNUUI4xC9lkqOFKW
-   BMoy2FnQBiwYIE1WS0b7B2BgfTZms4lGoAtNLBewS3XiqMy6oiwipkx4J
-   SXPpIrcFKa+EBQmdjhFfuBmGpl/Fxwl2RuZPP7adlC/x11e81ppGjtcPC
-   incX75JUtOH9s8Z9FaNqzpba9ldXnOA4fsBCfHIXEVBuIiT5wLud0Wr8b
-   iQh6crUK8sLcbnO18Wk9LqZdyV2Zv/ZEwN4vop7RB/c9sjLjRdfsOMQAi
-   w==;
-X-CSE-ConnectionGUID: CQDK6zFrS7yassX/sRcflw==
-X-CSE-MsgGUID: +HMG9xnvQoCH28YZYCNsyg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="24811567"
+  t=1722939798; x=1754475798;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=n22PlU+0Wm+URzWczjXdPKLlVN7+R8rfSheuB07CsZM=;
+  b=kmShUCC7W9EyX5tF86vAWRl0JJWZ63prP2+/7S223Rwv/Jw3L19rBoo+
+   u+55tgeRQtJuSY5a8Rjyc146g2mC42gwD2PFB67jMcVYQ7QPBSE0VIohc
+   zoJyzIqmWkuUCSe0WyMMXM8gwuxWEYBtobBWmwUpZKTR/MXPxUYsQ2kMy
+   cBgFCyTyOJCvrByDMq1fQu/9QseeHPe7HGkEqT9cWit5+tGWfLvbgx5oq
+   uH7fp+fmO3qrRjfm9lbRoHWujRVr79f7Iag7Xnlsa9potoIpAXJ+zQ/mb
+   GnRJ3UVz5tIBbbx3bUOChT75tzZRY/FBtQDZY9x/pX9p4QHhtC18rEIsT
+   Q==;
+X-CSE-ConnectionGUID: DsrAnM0pQiqVfqkgoj/gHw==
+X-CSE-MsgGUID: 6RG7QmNQQRm/H5cQGx+wFw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="46350325"
 X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
-   d="scan'208";a="24811567"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 03:20:25 -0700
-X-CSE-ConnectionGUID: Etuog58sTNKD8CSRUAYHdQ==
-X-CSE-MsgGUID: 3+2a+bDWSWOMXF8BUsiNWg==
+   d="scan'208";a="46350325"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 03:23:17 -0700
+X-CSE-ConnectionGUID: p4EM4P8tSxy412UfH+zN0g==
+X-CSE-MsgGUID: wvbVKFM/S76sWYQcGbAKwQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
-   d="scan'208";a="56411439"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.72])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 03:20:22 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 6 Aug 2024 13:20:19 +0300 (EEST)
-To: "Luke D. Jones" <luke@ljones.dev>
-cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    Hans de Goede <hdegoede@redhat.com>, corentin.chary@gmail.com
-Subject: Re: [PATCH v2 4/6] platform/x86: asus-armoury: add apu-mem control
- support
-In-Reply-To: <20240806020747.365042-5-luke@ljones.dev>
-Message-ID: <c7080912-7772-96df-0ae0-07903edbba1a@linux.intel.com>
-References: <20240806020747.365042-1-luke@ljones.dev> <20240806020747.365042-5-luke@ljones.dev>
+   d="scan'208";a="56352201"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Aug 2024 03:23:17 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 6 Aug 2024 03:23:16 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 6 Aug 2024 03:23:16 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 6 Aug 2024 03:23:16 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.40) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 6 Aug 2024 03:23:16 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Gy4AbxRODQ1VM+8Q8M1qpdBYffMcuBhkYjQhuM2VtTUER/bGjedK1eoJqNAoPPhL9Bm8S0Yb1V/ksGYXXAP4ivogfRXgcU5Pl3BwVVcUpbfwyrqs5TGWOKymX6m9nGI2su0wyflluhIExO13nVteI6t5KeXYQ318C3FHjAd4j9ddGmThi/qr8Jyf9K4YueoypPK46GdD2gDwveTUFJDp+tXgcJH/zECsK6EBVpB6NQibFty87giJgiKpY870YoEiMKw5P63b2u5u4jHk22sNqTX9+C+zELGWfCkKRD+82SRg/0MyrM+57JRXWpDGEPo+gVhzQhjTKeaKA2vDNHigtg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KnjL47lvo/2pJlQTgvlbosANb+n3e42Glb/wMwna3uY=;
+ b=mDgB6yTDdOlWiPKGXOs7fNTEQhikjqRqG0rxG2X2FKYTktF6jXPsmWe0NLFbK3BZ95UrA7d1Z81/ngU0MXP+NjZTlMXCNY4IGsk60EOZgFPg3viyxKk5rqtTU/Vg0P9O1nlbsr2QpWeOfnDelIEzNYss7xPEtL6bRgjne0HNl7gcN1RzabsTqYKzjPZ16hql0GsiHwADAY4qr+B/OULEFWrED2QUY29xXCihE9CYyAtfvNh1usPK7PqURYLZLzvLbL+uaSP+sifYo8UuSVRfHLDy7jCK/svbEZfjZ/N95B+j4n0usVrNk4ZjItD8MKWrX7750wvqBeYP1tjibi65DA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
+ by SA1PR11MB6664.namprd11.prod.outlook.com (2603:10b6:806:258::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21; Tue, 6 Aug
+ 2024 10:23:12 +0000
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6%7]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
+ 10:23:12 +0000
+Message-ID: <bfc4a6b1-44c0-49c4-a930-e69825e0e446@intel.com>
+Date: Tue, 6 Aug 2024 12:23:07 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] [PATCH iwl-net] idpf: Acquire the lock before accessing
+ the xn->salt
+To: Manoj Vishwanathan <manojvishy@google.com>, Tony Nguyen
+	<anthony.l.nguyen@intel.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, David Decotigny
+	<decot@google.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, <intel-wired-lan@lists.osuosl.org>
+References: <20240803182548.2932270-1-manojvishy@google.com>
+ <20240805182159.3547482-1-manojvishy@google.com>
+Content-Language: en-US
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+In-Reply-To: <20240805182159.3547482-1-manojvishy@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ZR0P278CA0137.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:40::16) To MN6PR11MB8102.namprd11.prod.outlook.com
+ (2603:10b6:208:46d::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|SA1PR11MB6664:EE_
+X-MS-Office365-Filtering-Correlation-Id: 10c1f7ab-3a5f-48e7-1a4f-08dcb601c6ce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?WjRUd2hjV1BhbmZLWWM1UURKcnQzVnZ4bFM0U3lzYVgzY003N1VRS1FtcjBG?=
+ =?utf-8?B?bFQ1LzBNR1pWWmpvdkU3azZpbUVqRE1mSTFpeDBmbmtCanpnbzZGVitUV3Qv?=
+ =?utf-8?B?Y3M1dndDUi9wOHRIYVNsc2trV2RYaGlKdEtUQ0RxRUVjNjlETUExVWZORVRx?=
+ =?utf-8?B?K1B2ejhVZGxFRkEzRlZ4NWhXQldqTWxaTVN2SVg0VitNTHU1Tmpub1hwVnJo?=
+ =?utf-8?B?NFF0U09Bd0FBQlhtZ3g0bUdEM1JjZ2gybnJBTUFVeUdNcVdJbnc0bm82Z1B2?=
+ =?utf-8?B?TS9jNVovOThoYmdzNzRkaTlEOXA0RU5XVXpzWmlyOEtLSVlIbUU4V1FvRW52?=
+ =?utf-8?B?WGI0ZHUwTlBvZmRJbXZFTEFUWmtRV2ZxYm9xNzYyS1E5VnZ5RUtLZUUzT0J4?=
+ =?utf-8?B?a3V3Mllsamo4ZitTZzdVK1hhcm1QOGVaamZYZHVkcjZweitMSHFNWTR6MExj?=
+ =?utf-8?B?MzZ4L3hMUlZ3ZWV6bTlUdG94WGcyNGx1THl6a0lzY1o3bEV5QmlyMXVONlNr?=
+ =?utf-8?B?KzNvMzZyeC9Sa1o4aE43eUczQmtPejJVQllTNVBVeTlyVk1DNU8yL2R4MlB5?=
+ =?utf-8?B?RUhLa3JYRmoxYlZ3OW01SCsxYlpNMlJlekxvTXg0UHdUOGFnbUpxd3ExZmRW?=
+ =?utf-8?B?MGt2QkViMFA0RzJPU0NyUnBIb3luQ2NobFJ5TGkrd2NGd3Nqa2VpR2QzKzc5?=
+ =?utf-8?B?YkcyTk5ZdWI1RytvRWVGTjVVSmtPNktTRGxKVG11WitlVHk1WG5xalhzV2tE?=
+ =?utf-8?B?NWsxRWhrWkZCM1pJVTJLS09FM3poc0dCaC85MDZVVkRwazRHNGR1Z0U1ZndB?=
+ =?utf-8?B?N2hDcG4vQksvL09VWXZ6NFR2T04xZnJIOWRoWm1BMGZGM3pQMzJnL1dFNnda?=
+ =?utf-8?B?RW1HNUtuYWJjM012VnpDMDlFRW9QTHd4amtreTVzajZGcGVGLzNOZkREN1Vn?=
+ =?utf-8?B?dG1BRFJsQjVhUmoyY2EvZFNZZHowS1c3eEkzeDlzejcxd2NSS1ZDS0tKempW?=
+ =?utf-8?B?SzdkdlppaDR5emcxZ3RZaWp0QVBuMDRoU1ZCY3RhMWVydjVLakhwQzF1UEx1?=
+ =?utf-8?B?aWZvN00zZkg5ZlNER2NpSU5oRGNWYzRabTJFL2FuY2F2M3NDNzdtREk0Ukk2?=
+ =?utf-8?B?MkpGRzJEYlRwK01SU2VhS0pXV1dvblU3YWRxaHZCWnNXUnZzWGlsckJDeGYx?=
+ =?utf-8?B?T244amJlS20yU3pJUERoWEJEZW1NRzlzWmFiZGJNV0xqanFKbkg3YnNSYmlL?=
+ =?utf-8?B?YURmNzlCS051alJkeW1sNHhKMGpLWFJ2VFVNMnYrajRkN1VTemNHYUNQVSsv?=
+ =?utf-8?B?bTQxMGptRHFQcnI3RExIQk5mZ0YwamtIVXY2czBtWmNZS3RmaXkyTEl1emhz?=
+ =?utf-8?B?aTRBSjZvOXpGK0tqdElnM3lvdkdQNlBzejFaRFgyZXNTc0VYQ0RuMW9wRDVl?=
+ =?utf-8?B?MlVFSWRSbzJjVUd5LzA2aytORXlNK3hXY2UvT1EwMjdCV2NsRmNHdjhBWWx4?=
+ =?utf-8?B?STRSb0hYTXAwaDNOaStPaTJOaFEzV2ZoSVlPTjJFWmJwWjV2dmYxanNCRTdY?=
+ =?utf-8?B?M1Z2NUhkL3J2Y0lhTGkxVFlpZ25tajh0MXBLUWlsK3RCRFN5OG5WZUZPeFpJ?=
+ =?utf-8?B?c0ZpTit6cmNib2E0dUUvN2tJZU9BbUN2MTI4VFZ6UGZNL2RkRFVwczdNREI1?=
+ =?utf-8?B?ZDhpUTlmNjZuY3RqU0FpbVdNN3piVXpCTDVFY3lkZGRjT1JqL3FBODZNRUM1?=
+ =?utf-8?B?MWhRN29yVis2R09pSHNiTk5CYXhDTE9Rb3FHQjB4Nkdjb3FJcU1MUjJBVWh6?=
+ =?utf-8?B?enBNKzNPMTcxdWovY1FYQT09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aGJLLzhPRmRmb3BUaVBDV09Cd2xDNmdQNC9UV1MyWktjOFV4OE5nK3FjSFVi?=
+ =?utf-8?B?ZW5lK0o2Q0xmSnRmM1VLSklCdnE4MWNSSnh4Y1h6OUd4WmdCZDM3VGNjQzAv?=
+ =?utf-8?B?Sk1QeUtFR2syQTg3ak1PUStUd1FDSFNIbnhpaTBDalRYMzRUK0xZV1MyRGFQ?=
+ =?utf-8?B?dnI2YTZ1eUhtR29ZSVQ2U2VYN1NxMnkzbUtsWncxMnlvL3BPTVRRQi85WDdm?=
+ =?utf-8?B?NHNmZjgwbGFhdVZ3UHhQMmdhQXRDSHJyRmxHTCtwSk9YSlhFYU1aVEFsSU5w?=
+ =?utf-8?B?bVBvVlM1cThzRDVNV2ZmRWxwTWczdmRXa1R0UTJ2OFdyLzk5MnpObmc0VEdW?=
+ =?utf-8?B?ZzhRMDA1alR1VDB0TEE5V0FZeTFBNGMwZzRkdWYydFRqaG81YzZqK04zVWJU?=
+ =?utf-8?B?TUlEU2F4YnJkL3hLdklBTGR3VmU2dzI3dmlBdDh3blV0UnVCbmhQRGszR0dL?=
+ =?utf-8?B?V1hIa29vWHpwYlc4TzVNalV6WW54RDRzQ3h2OVY5TXN1cXlKT3hnZEsydFFt?=
+ =?utf-8?B?Z1BEV3A4THRVS0xYNEVURkQvb0JiK1BqWWw5QnVFWUVGSVE3TnBuT1lDSEtU?=
+ =?utf-8?B?WkdBT01yeHIwVlhJUXIyVzlHYnQxSk5TMlk0K3pVeVdyVlIxSEhwUXp3TExX?=
+ =?utf-8?B?bWl1emFua0ttV0htSnRxa0RxcHY3d1RWQWFHSHdTdVcwSkNLNUlRZ01EZEtF?=
+ =?utf-8?B?Sm9IZVpBZU8wRDRwZnF3Vm9xYTlxOG84Rmw1ZjVQSjIwYmdIU0NkRFFMMStw?=
+ =?utf-8?B?VzBINndHa0NvaUU1Q1MvU3NVQTMwR1NWby94OU5HREVxZWhvSkZoWkk5eCtr?=
+ =?utf-8?B?ZkRJL0MyNGNybHVuZEtrNVhVcmtPTER0TTFrM0QyUlkyanFxNGxvR2VNZUl4?=
+ =?utf-8?B?RzhFTFdnVHF5NHM3eHdNWTN0Tm9BemVjWkFkb2lSSzErODFhUGhXRWlabzBH?=
+ =?utf-8?B?NHFxV2FnRXI5OGdsSE1FMzZyUkhPUENaUWJEQmZwL2QzMW1FQ0w0aVF4ellF?=
+ =?utf-8?B?MktUNUZyVkk2NCt6U2lsbzNYOWNoSFoySDhRaEVHdWRjSTlHTGNKZDhxN3Bw?=
+ =?utf-8?B?NVJ1WWZuNjVITEJ4NHlWUVNvOUg2aHQ4ZUozYnJlRHUzSGE5OHMwcnhoOWZj?=
+ =?utf-8?B?UGhEMkNQaURhV3EySU9XczZYVEdRYVE3MHE5dERpVWVBYi9kd1dQRWxFR3Q5?=
+ =?utf-8?B?M3hyZGhUWkxZSklzLzR4S1R0NHZkS3V4SnFydWlmTXlTa0puLzdZTi9zaERO?=
+ =?utf-8?B?K3hNN2J3Nld0Z0tzRHF1Z0xsSW5IUTNUZXdHOGFXKzJPa3FicWxsN2R3MHJt?=
+ =?utf-8?B?bnJBWUk0MFhFMVhscEVTemtTN1ZpYkNqMk1tYlprcDhibGdXeTg3NkRiL09p?=
+ =?utf-8?B?bTJOVXhYeEFVSGNYdGdmV1pGS0pGMmhzT2M5bmVBR251M2ptWHJ1cXpzelk5?=
+ =?utf-8?B?TU1WamV0bTY0K1BjeXhESDVJMjBXZzQ3eFJYeFRSY1QvMEhDOE9TM2tHTTdB?=
+ =?utf-8?B?YzNMbXY1YmxyaHFncTJuVGVkWDBGc2NVNWo3UWJhRWdzempVVzBDODJjNHRi?=
+ =?utf-8?B?bUMyYmRUeTNVQytjV0grUTJsT0hmdk43eVl0OUhUa01qeXNMNU1zYUl6MGcv?=
+ =?utf-8?B?aERhQlNYUDBLSUR6RjBiYjhTSzQyaExMc0phQlpEQnBsVHlOK3ZCaXBLSE5R?=
+ =?utf-8?B?alVUWnZtK2V4Qy9BaVk2dmNYY2x3UTUveFNETndibndsUnN1RUhhT2RGRmdB?=
+ =?utf-8?B?UnBSRVZWZFVzcExERkVxQ3dkbEorcWlPZnF0ck1DbFFmN05UcFNrZWpmNzY3?=
+ =?utf-8?B?RFJFUjdHM1pkL2orUFFRTUhpdGVDZzlsUnRyOThEQXBENHhCbGNqajZiMGlu?=
+ =?utf-8?B?VmM5cnMvQTV4WTRqOTdJZktmaGxzU2ZzSTltWlpmQXZhQkh1YXF3QnplWm9C?=
+ =?utf-8?B?M0d4Z0IzYThHWEdMbTZuU3Nydk55Tm5sTEFWNlVFNWFKSUdLOGliUnRKL1dX?=
+ =?utf-8?B?ZzhyNW9POXVDVHM3MU9BZUx2SjRvaVYydzdYeHMzT3JVR2FSN1duT1k3NmxZ?=
+ =?utf-8?B?azI3UTUxYnNXZXFpWFpXVXdCeDRIcEVwWXV4QjRMNUlmYjV3Nkw5a09LSlJP?=
+ =?utf-8?B?QVBxQnl3c2hyNWhlMWhyK3JvT1A1enYrQXByRk1JeUpiL0FSa0gvQmxYWEVJ?=
+ =?utf-8?Q?rnsUym/SB1u5BeBixIrVbsc=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10c1f7ab-3a5f-48e7-1a4f-08dcb601c6ce
+X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 10:23:12.7247
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: w3teqBtJitZCT535qrIWh6X1r9bM6rMqjc9Gx66e5+9+8sYOPlmT93cIC9Wk1adYPD6BAV9v9uUB8Ra7o2pc1drPbuusSIVjjCZBwl+tUFQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6664
+X-OriginatorOrg: intel.com
 
-On Tue, 6 Aug 2024, Luke D. Jones wrote:
+On 8/5/24 20:21, Manoj Vishwanathan wrote:
+> The transaction salt was being accessed before acquiring the
+> idpf_vc_xn_lock when idpf has to forward the virtchnl reply.
+> 
+> Fixes: 34c21fa894a1a (“idpf: implement virtchnl transaction manager”)
+> Signed-off-by: Manoj Vishwanathan <manojvishy@google.com>
 
-> Implement the APU memory size control under the asus-armoury module using
-> the fw_attributes class.
-> 
-> This allows the APU allocated memory size to be adjusted depending on
-> the users priority. A reboot is required after change.
-> 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+
+Thank you!
+(next time please add "v2" (and so on) to subsequent versions of the
+patch/series; please also send as a standalone thread, instead of
+in-reply-to v1; no need to repost this one for any of those though)
+
 > ---
->  drivers/platform/x86/asus-armoury.c        | 115 +++++++++++++++++++++
->  include/linux/platform_data/x86/asus-wmi.h |   1 +
->  2 files changed, 116 insertions(+)
+>   drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
-> index 31dbdacd8978..412e75c652a4 100644
-> --- a/drivers/platform/x86/asus-armoury.c
-> +++ b/drivers/platform/x86/asus-armoury.c
-> @@ -462,6 +462,120 @@ static ssize_t egpu_enable_current_value_store(struct kobject *kobj,
->  WMI_SHOW_INT(egpu_enable_current_value, "%d\n", ASUS_WMI_DEVID_EGPU);
->  ATTR_GROUP_BOOL_CUSTOM(egpu_enable, "egpu_enable", "Enable the eGPU (also disables dGPU)");
->  
-> +/* Device memory available to APU */
-> +
-> +static ssize_t apu_mem_current_value_show(struct kobject *kobj,
-> +				struct kobj_attribute *attr, char *buf)
-> +{
-> +	int err;
-> +	u32 mem;
-> +
-> +	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_APU_MEM, &mem);
-> +	if (err)
-> +		return err;
-> +
-> +	switch (mem) {
-> +	case 256:
-> +		mem = 0;
-> +		break;
-> +	case 258:
-> +		mem = 1;
-> +		break;
-> +	case 259:
-> +		mem = 2;
-> +		break;
-> +	case 260:
-> +		mem = 3;
-> +		break;
-> +	case 261:
-> +		mem = 4;
-> +		break;
-> +	case 262:
-> +		/* This is out of order and looks wrong but is correct */
-> +		mem = 8;
-> +		break;
-> +	case 263:
-> +		mem = 5;
-> +		break;
-> +	case 264:
-> +		mem = 6;
-> +		break;
-> +	case 265:
-> +		mem = 7;
-> +		break;
-> +	default:
-> +		mem = 4;
-> +		break;
-> +	}
-> +
-> +	return sysfs_emit(buf, "%d\n", mem);
+> diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+> index 70986e12da28..30eec674d594 100644
+> --- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+> +++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+> @@ -612,14 +612,15 @@ idpf_vc_xn_forward_reply(struct idpf_adapter *adapter,
+>   		return -EINVAL;
+>   	}
+>   	xn = &adapter->vcxn_mngr->ring[xn_idx];
+> +	idpf_vc_xn_lock(xn);
+>   	salt = FIELD_GET(IDPF_VC_XN_SALT_M, msg_info);
+>   	if (xn->salt != salt) {
+>   		dev_err_ratelimited(&adapter->pdev->dev, "Transaction salt does not match (%02x != %02x)\n",
+>   				    xn->salt, salt);
+> +		idpf_vc_xn_unlock(xn);
+>   		return -EINVAL;
+>   	}
+>   
+> -	idpf_vc_xn_lock(xn);
+>   	switch (xn->state) {
+>   	case IDPF_VC_XN_WAITING:
+>   		/* success */
 
-%u
-
-> +}
-> +
-> +static ssize_t apu_mem_current_value_store(struct kobject *kobj,
-> +				struct kobj_attribute *attr,
-> +				const char *buf, size_t count)
-> +{
-> +	int result, err;
-> +	u32 requested, mem;
-> +
-> +	result = kstrtou32(buf, 10, &requested);
-> +	if (result)
-> +		return result;
-> +
-> +	switch (requested) {
-> +	case 0:
-> +		mem = 0;
-> +		break;
-> +	case 1:
-> +		mem = 258;
-> +		break;
-> +	case 2:
-> +		mem = 259;
-> +		break;
-> +	case 3:
-> +		mem = 260;
-> +		break;
-> +	case 4:
-> +		mem = 261;
-> +		break;
-> +	case 5:
-> +		mem = 263;
-> +		break;
-> +	case 6:
-> +		mem = 264;
-> +		break;
-> +	case 7:
-> +		mem = 265;
-> +		break;
-> +	case 8:
-> +		/* This is outof order and looks wrong but is correct */
-
-outof -> out of
-
-> +		mem = 262;
-> +		break;
-> +	default:
-> +		return -EIO;
-> +	}
-> +
-> +	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_APU_MEM, mem, &result);
-> +	if (err) {
-> +		pr_warn("Failed to set apu_mem: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	pr_info("APU memory changed to %dGB, reboot required\n", requested);
-
-%u
-
-> +	sysfs_notify(kobj, NULL, attr->attr.name);
-> +
-> +	asus_set_reboot_and_signal_event();
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t apu_mem_possible_values_show(struct kobject *kobj,
-> +					struct kobj_attribute *attr, char *buf)
-> +{
-> +	return sysfs_emit(buf, "0;1;2;3;4;5;6;7;8\n");
-
-IIRC, space or newline is the usual separator for possible values sysfs 
-files. I don't think I've ever seen ; used.
-
--- 
- i.
-
-> +}
-> +ATTR_GROUP_ENUM_CUSTOM(apu_mem, "apu_mem", "Set the available system memory for the APU to use");
-> +
->  /* Simple attribute creation */
->  ATTR_GROUP_ROG_TUNABLE(ppt_pl1_spl, "ppt_pl1_spl", ASUS_WMI_DEVID_PPT_PL1_SPL, cpu_default,
->  		       cpu_min, cpu_max, 1, "Set the CPU slow package limit");
-> @@ -516,6 +630,7 @@ static const struct asus_attr_group armoury_attr_groups[] = {
->  	{ &nv_temp_target_attr_group, ASUS_WMI_DEVID_NV_THERM_TARGET },
->  	{ &dgpu_base_tgp_attr_group, ASUS_WMI_DEVID_DGPU_BASE_TGP },
->  	{ &dgpu_tgp_attr_group, ASUS_WMI_DEVID_DGPU_SET_TGP },
-> +	{ &apu_mem_attr_group, ASUS_WMI_DEVID_APU_MEM },
->  
->  	{ &charge_mode_attr_group, ASUS_WMI_DEVID_CHARGE_MODE },
->  	{ &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
-> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
-> index 3ce0c63be4c1..287206a03763 100644
-> --- a/include/linux/platform_data/x86/asus-wmi.h
-> +++ b/include/linux/platform_data/x86/asus-wmi.h
-> @@ -135,6 +135,7 @@
->  
->  #define ASUS_WMI_DEVID_DGPU_BASE_TGP	0x00120099
->  #define ASUS_WMI_DEVID_DGPU_SET_TGP	0x00120098
-> +#define ASUS_WMI_DEVID_APU_MEM		0x000600C1
->  
->  /* gpu mux switch, 0 = dGPU, 1 = Optimus */
->  #define ASUS_WMI_DEVID_GPU_MUX		0x00090016
-> 
 
