@@ -1,127 +1,215 @@
-Return-Path: <linux-kernel+bounces-276791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71568949875
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:37:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5359C949877
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C5061F22CE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:37:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C8B2283119
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC61158DC0;
-	Tue,  6 Aug 2024 19:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9693914830D;
+	Tue,  6 Aug 2024 19:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dgXFt8rq"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pW3rlf/d"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2045.outbound.protection.outlook.com [40.107.93.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF402146D60
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 19:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722972988; cv=none; b=Q3T2eA7d+KBAkh43YyUJ8l6bY6tvKL0lKVFkFO/SyOXzkA5LjmZBFlsRwpgh8PJXGqiVFrZdYNaC8POoPN9mD0ZAvJ1RZe3Dp5/VMavm3PHzai/VI3BffBBXg4exrAbiUVQrSpZzeVJMXWrdgkZ7pMsn5dzyXglPQs0mc5GVsOo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722972988; c=relaxed/simple;
-	bh=iEz7lCKN6LmqkDmIh7w+RAirspZH+Yr49vveXIUCT2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CN3QzTwjUhemQzm77/VRZUF4h5fHKfcTPwGzrVjG7cNkcnb99Uclo1/ei/tYXCrl4PpXFKrVnNx+guei5cuoY1vT7L17irk3RuU2ueJ3pA26PFovtR6DCJZvIJ6kHBGcSZZFa2UK77rxntovuf1sen8h5h/j5AzKwmBo1fvtLLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dgXFt8rq; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-39b37e5f8fdso716465ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 12:36:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722972984; x=1723577784; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+IcNnXdUnkI1mV+s9deswScXVelqj2JzGCxi8Q1hYao=;
-        b=dgXFt8rq338v9mNPgwgFpyQeEyP9PhlbTH0gd/5M7tHssveTygnJUSoOPDz1s7zoEE
-         vrXqctZJ3rctpjXUVqMPwL6X/tRQnb/2HsOyBqlkjG+8c0fMU5I73PouwXQytmKaxy2b
-         I6DfJ98qKJ91h8g816wg/YeFcfIfIoxRJQTdY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722972984; x=1723577784;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+IcNnXdUnkI1mV+s9deswScXVelqj2JzGCxi8Q1hYao=;
-        b=uI9AT1S9/Djrn1vlw2KEfEg9th1vJv0ZNaiDtdqI08+MQfHJL/DnvHBwqZYyGzIK0C
-         gjpNdQ5Ts0jEClnoLbfyDvYZjFSP+cAwGNqiV6xGa2zzsCb/XNmNZBUpyVk4P0fJ6QV+
-         vz9LTi8JITldoINUIrPatuqm4xrVYu6oiH0nBRNNQ7DqHUz6rowHvZCeUS4Kcsl6JiVR
-         OvYzEUn0v2qKuqsDKR2wOzKrHImUKP+tf7sqyVle4CwOHBa8tvPQOnI3KmaPGziNAtvA
-         GyShQGCjJ8S6HuyDYVv123rTzN6qlu+Dv/U6FHQzB1Rh+DYQ5YX+naKEp9MNx5iE6r7s
-         3CRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2AGTEaMNHejnaM3AceF91A2+ZXi6F3BIMkjSsrOjrSYuwxBkJLeHkkSRXOzIeETDZ4FoAGkr9R8T3+QAuY88gT5kzuooBx8BpYroA
-X-Gm-Message-State: AOJu0YyZeVwYiJ4CvsCU/3xHIfk1u/WhcoIel4ZUhICUjB/Lp5zXQJsq
-	ABZ9xIzqvVnN8nH4UMSjd6ktqK385sBSu+LUSRX03WKftfb/xEE6xnR0sbC6454=
-X-Google-Smtp-Source: AGHT+IEZoVlqN5oqC2UZRAj8/ipXO6L3aUE6bBqVulf2yqdJndVbcARXaKrOBMfnhl2rIFv8JufbBQ==
-X-Received: by 2002:a6b:7b02:0:b0:81f:a783:e595 with SMTP id ca18e2360f4ac-81fd434de8bmr1018147939f.1.1722972983992;
-        Tue, 06 Aug 2024 12:36:23 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-81fd4d830afsm267206139f.55.2024.08.06.12.36.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 12:36:23 -0700 (PDT)
-Message-ID: <ed207f8a-893d-489f-8e41-d698292ab918@linuxfoundation.org>
-Date: Tue, 6 Aug 2024 13:36:22 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BED7711F
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 19:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722973011; cv=fail; b=WpCjHMaUwCNTXr3SYGvjbm1wrwQAw6Q2hVPZt+gUjQrYdgdJQa71EvQ4rWqac/yvNxIHVGZLdFQuzlldayomd5m1QSDolVC/Ev4lKYy/gA3mWklf4UtPUGuJFzvQD+g6cCJatndrcPj5tZBnDfzz9/BfEZd4+zWcWn4phzAko00=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722973011; c=relaxed/simple;
+	bh=FFi14VVTtioEDNdITEShckD+mpQNZ6VEk4ffSpbpkEA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UYvXtCOppZeE/83CDAjdNzewatPoDf+1UZo/W3ZuR0TqC6eX4n13hIz3ahWg4A61QdTkk4lcVSg9gKNGRuNg+RJ7QoUNJwzAKvwsyPRJM4qsGAuhC+O0NriD4o5BjXfvMMedsmS28s/XPdWuLvmAtsOZPJcOXnQ+UwfDTPcU8RY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pW3rlf/d; arc=fail smtp.client-ip=40.107.93.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X6tq8G8RyddbEwvIMuKDQoxT8PoB7qzkvnyEpB87CuCIGiAsI+Pq+TmcyarLEXqBHrsGA9JWSo9584Vi3Qzu0xcJL84A6qixDy1yyb3P4dSmaTK9u9qgmNVRUmlykm39SRPBHmpsHmvjGK8kWYkbytadAkBml+f0lFoSM1ChdUHRlCIlqZVWg9L4gEFstumHbkA8zOIR6yfSqIm420+C1qjt8DBLf9AD/TflJXEIgI3ra3H4GOwPEIBiopOVj0Rn7JXfA62lTFwsgpOWcF1Gdk9VIFY4vDd3wegMmIa/vSz3ID+MRwSJjFW+ROJsXTn3OXQVuUUkY/sOamxI6pWxKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Qex6aG/3RRLnKuITW1iGRsfgUSRLGencRU2BKIUeSuI=;
+ b=P1gfDEA5wJSW+9QAVfSyksBF4ZnXlfIiQo/Qg+fhp6RAivKg2ln7vm+OUqwrqvFZmxLOv/t6Jc7Q4xBED7M0gX+rIMRkpvikR0PVqh+YCXJ/ozWpbbXozz1+UZpBplvtG71KOFGYqGDQGEpAOO/WBYfEiPn+xvnEXDdDf9l8psYiGjN1YzZml4onsOZj4nHpzgPMg/fsuSWQc/tf+DmLVILHLlAs/PobEjc3//4I63VrG0vMlarfUN0rpus+LY6ScT5cjQ69zDmAZFcWly7Rk+6LnWAuX+Sl3F1TcqWyQASdlAINuvTwJrqrgFB2JG6GR16sY3c+SiUZkMuBVSYY5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Qex6aG/3RRLnKuITW1iGRsfgUSRLGencRU2BKIUeSuI=;
+ b=pW3rlf/dlLHhiW+d/lO7CE/9brGHQ9a+XgWs+pFj/nTNOHIribf7VgFjUdWtZhu9o0DAXmi/WPEf/VeG9KZbcdovwgdTodfsvtFxAMQ8ZGrZFdyw5VmZX404nCDGRtAwTN9bTVwz8UkvLlinTYPl5U3OqMRuMB3h9viYVLQogz9zPbH0ttCXDNGIRJHq16kUk2aUfFHlXJYWyStKrMlyr/e2FyEw4Fy26GI+95MxgzC/0DwV4Ow9WW5FVqugTirFuAR8X9KxA/Xfqrb1sd/FOv1978Q8TpCZla62xV1+3nWR7W/AAwh54B4XjH3cADyUmkLkZtdcqPfHrnUekNd4/A==
+Received: from SJ0PR03CA0097.namprd03.prod.outlook.com (2603:10b6:a03:333::12)
+ by DM6PR12MB4123.namprd12.prod.outlook.com (2603:10b6:5:21f::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27; Tue, 6 Aug
+ 2024 19:36:47 +0000
+Received: from MWH0EPF000971E8.namprd02.prod.outlook.com
+ (2603:10b6:a03:333:cafe::79) by SJ0PR03CA0097.outlook.office365.com
+ (2603:10b6:a03:333::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27 via Frontend
+ Transport; Tue, 6 Aug 2024 19:36:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ MWH0EPF000971E8.mail.protection.outlook.com (10.167.243.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.8 via Frontend Transport; Tue, 6 Aug 2024 19:36:46 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 Aug 2024
+ 12:36:37 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 6 Aug 2024 12:36:37 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 6 Aug 2024 12:36:36 -0700
+Date: Tue, 6 Aug 2024 12:36:35 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <kevin.tian@intel.com>, <yi.l.liu@intel.com>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] iommufd/device: Enforce reserved IOVA also when
+ attached to hwpt_nested
+Message-ID: <ZrJ7QwO+HJ6rxL6Y@Asurada-Nvidia>
+References: <20240806050201.3717816-1-nicolinc@nvidia.com>
+ <20240806174242.GP478300@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] selftests: harness: refactor __constructor_order
-To: Kees Cook <kees@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
- linux-kernel@vger.kernel.org,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- David Hildenbrand <david@redhat.com>, Janosch Frank <frankja@linux.ibm.com>,
- Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>,
- bpf@vger.kernel.org, kvm@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-rtc@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240727143816.1808657-1-masahiroy@kernel.org>
- <202408052126.E8A8120C1@keescook>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <202408052126.E8A8120C1@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240806174242.GP478300@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E8:EE_|DM6PR12MB4123:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6b95ee7-9375-4cc1-255c-08dcb64f1bd7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2zqNArTNhubdT0L2RyAAh9LhA6rP55BZf9AWtcjnJcbNwlK3R2sXiHfznTzu?=
+ =?us-ascii?Q?8cJv/ryXF9Lnt4bWInFTgsMfbt3S2EwUz/gf7doDPmARao+VcmoYm9HDxmya?=
+ =?us-ascii?Q?qS+WKO81WVC+PmE8AE9gWJtqP+E45QxgcadDboQ0MHTJQwJ+aXBpSELClHmg?=
+ =?us-ascii?Q?cPAqK/jVnF4Ztf4tiPyZuHelWuM5ttmgyfCN9+7pe0kj9pfTZaK0G2YJbOE1?=
+ =?us-ascii?Q?Gkoju48zLpYHjChew0M4BGfHg3mB5rxNwwZ+76Yof9+wORopCbKp92rF9nk0?=
+ =?us-ascii?Q?4fNozob28YYIz9IJvPwTdOkLylqsrMve2bxD0ylkdybE1WhvTor0qd7M7Yjr?=
+ =?us-ascii?Q?xQQVMow/jFOQRs3G3goY/+LHbM8xq7xS7g+jkkPStwe/YUWJIQOmUUJoMQOV?=
+ =?us-ascii?Q?osX76fRhiPQESeOEzj7N+BE6vQFCh6TDG+gqu7EzrM5c+N2OJGEnjfdYPnTo?=
+ =?us-ascii?Q?usXRE8KbFVp+2Yc68cgVafSczLX+a8h/pwJ78hywgwv2J/ihR2WrF/nVx+WT?=
+ =?us-ascii?Q?yniV9J0fGG7AvXLBMKbRAhLI+gaf/vShdewgNIMH2o1UHPVa6jqN7Wif6zvu?=
+ =?us-ascii?Q?BXRFOxWFu8bP6FxIxpuMHZPRDLJZIYG53NknrAPx81R179SYVNgZWF0G6voF?=
+ =?us-ascii?Q?jQVtlLHHtmWnBEmAuXNfe7bP6JMA//NvM2Q5dMU5fxSJf9c3jRL/v6IV56S/?=
+ =?us-ascii?Q?5nmijVe7pLoUugKElD2ciDCDst1zgz47ZsoBysPYFuG+FBTJUas5nwcAlzRs?=
+ =?us-ascii?Q?ZenyYT7CuBYulXwFqvSCov9aKknhmzBSVNklZptFHefP0I/RtY3OzL4mtMAt?=
+ =?us-ascii?Q?tPYdjJuFwitSUguf9wt3KRhhZACg8awsOEIROzDGDtVHk9Rs5LpxLxdxO/MQ?=
+ =?us-ascii?Q?em4dFShBw/H3LmYdjqwF6dZe7wkiBU1gSTUOEVSlSlYohU4eZSG/+bGBfuQG?=
+ =?us-ascii?Q?fEYKkXPjNdjC8p0i1zjSLMMMdqhgm906OtyfNFEHo/PoziObIhKfmhlrco5i?=
+ =?us-ascii?Q?LcGRvmQFcNw41LLF9WeNoNvsu9+241PuXiC+xTAYdj/iJ75hv/6/OcYhzyyc?=
+ =?us-ascii?Q?C5keDxl8xG3U6MYlUnt+c/W74CD7A1mtpEF8yU/HbhT9lIiLKTgk1tGcCj9+?=
+ =?us-ascii?Q?Sa0mZt4zbPmyw/8YWl+CyKKl80GjKtpDxYtqoAaA0dKMVLiDBwJ4aE2cfrJ/?=
+ =?us-ascii?Q?+FkV1Z5yREHGSCdBGGm5Oez/l9v8Yp9trcCal61g2LceAaW4F4cdp6OCBrUa?=
+ =?us-ascii?Q?HrqO4yes9SzAl0WVALUkZhUlpPdmUIhj4ugTtRpLN5A8/dVPXLZnfxbKwFI8?=
+ =?us-ascii?Q?Pj6hiHvKspBGGXP8jifTqC3bskNziA1MZP0vMMgGtQRmUAbhh2WOKNUWymdu?=
+ =?us-ascii?Q?5+aRBY/8OPbv0bDSKBcflHQUSMWPNI9sfjRS/LDFmO+S/IhtzBCTfiABuFfH?=
+ =?us-ascii?Q?JOxRmdm3W5R0v329xU8TTPW0b+GhhKa3?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 19:36:46.4430
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6b95ee7-9375-4cc1-255c-08dcb64f1bd7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000971E8.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4123
 
-On 8/5/24 22:27, Kees Cook wrote:
-> On Sat, Jul 27, 2024 at 11:37:35PM +0900, Masahiro Yamada wrote:
->>
->> This series refactors __constructor_order because
->> __constructor_order_last() is unneeded.
->>
->> No code change since v1.
->> I reworded "reverse-order" to "backward-order" in commit description.
->>
->>
->> Masahiro Yamada (2):
->>    selftests: harness: remove unneeded __constructor_order_last()
->>    selftests: harness: rename __constructor_order for clarification
+On Tue, Aug 06, 2024 at 02:42:42PM -0300, Jason Gunthorpe wrote:
+> > -static int iommufd_hwpt_paging_attach(struct iommufd_hwpt_paging *hwpt_paging,
+> > -				      struct iommufd_device *idev)
+> > +static int
+> > +iommufd_device_attach_reserved_iova(struct iommufd_device *idev,
+> > +				    struct iommufd_hw_pagetable *hwpt)
+> >  {
+> > +	struct iommufd_hwpt_paging *hwpt_paging = to_hwpt_paging(hwpt);
+> >  	int rc;
 > 
-> Thanks for resending this!
+> This seems like the wrong place to put these types, a big point point of the
+> struct iommufd_hwpt_paging was to mark functions that should only be
+> operating on a paging hwpt.
 > 
-> Reviewed-by: Kees Cook <kees@kernel.org>
+> The caller is expected to figure out what it is doing.
 > 
-> Shuah, do you want to take this via kselftest? If not, I can carry it...
+> >  int iommufd_hw_pagetable_attach(struct iommufd_hw_pagetable *hwpt,
+> >  				struct iommufd_device *idev)
+> >  {
+> > @@ -363,11 +380,9 @@ int iommufd_hw_pagetable_attach(struct iommufd_hw_pagetable *hwpt,
+> >  		goto err_unlock;
+> >  	}
+> >  
+> > -	if (hwpt_is_paging(hwpt)) {
+> > -		rc = iommufd_hwpt_paging_attach(to_hwpt_paging(hwpt), idev);
+> > -		if (rc)
+> > -			goto err_unlock;
+> > -	}
 > 
-> -Kees
+> Like we had here, so it would be a bit nicer to write it as more like:
 > 
+> hwpt_paging = to_hwpt_paging(hwpt);
+> if (hwpt_paging) {
+> 	rc = iommufd_hwpt_paging_attach(hwpt_paging, idev);
+> }
+> 
+> Then we can keep the clearer labeling of the function signatures.
 
-Just about to ask you if you want me take it :)
+Okay. Will keep the hwpt_paging type in the function signatures.
 
-Yes I can take this - I will apply this for Linux 6.12-rc1.
+> > @@ -321,7 +321,20 @@ static inline bool hwpt_is_paging(struct iommufd_hw_pagetable *hwpt)
+> >  static inline struct iommufd_hwpt_paging *
+> >  to_hwpt_paging(struct iommufd_hw_pagetable *hwpt)
+> >  {
+> > -	return container_of(hwpt, struct iommufd_hwpt_paging, common);
+> > +	switch (hwpt->obj.type) {
+> > +	case IOMMUFD_OBJ_HWPT_PAGING:
+> > +		return container_of(hwpt, struct iommufd_hwpt_paging, common);
+> > +	case IOMMUFD_OBJ_HWPT_NESTED:
+> > +		return container_of(hwpt, struct iommufd_hwpt_nested, common)->parent;
+> > +	default:
+> > +		return NULL;
+> > +	}
+> > +}
+> 
+> There are alot of existing callers of this, I think it should get a
+> new function to do this behavior and it would only be used in a few
+> places.
+> 
+> It is not OK for a NESTING to get into most of the places that are
+> already calling this.
 
-thanks,
--- Shuah
+OK. Let's add a find_hwpt_paging(struct iommufd_hw_pagetable *);
 
-
+Thanks
+Nicolin
 
