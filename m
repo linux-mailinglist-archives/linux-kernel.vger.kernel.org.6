@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-276528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9EB9949548
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:09:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 453EC94958E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81450B2D003
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:57:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB2E2B2EB43
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C708A3A1DB;
-	Tue,  6 Aug 2024 15:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0589F2770B;
+	Tue,  6 Aug 2024 15:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X7S3h3uC"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jY8RYTF+"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77EBD381C4;
-	Tue,  6 Aug 2024 15:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD221D54EB;
+	Tue,  6 Aug 2024 15:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722959824; cv=none; b=LRLjY6SML3bwetzrVqDFu24XHTNg5kS0dkyO4dlEHBpHwU9BsyaVyoQ3pTI3eNsA7TXjkKdqXRK+eGHLQh3aEuk+KrxS5ZqY2vre+4bvOhZcXnjfxpHDVuUJjAO1ln8/oZEkpV16m2+/yDb28TsI8S+eeqEpBhZfp+yhknN3AXA=
+	t=1722959843; cv=none; b=KQ2NI3w/aHEdnXvIX+7eIQtySLPZShY7uSuEwJP5nJktBe9sv85u7yw0WtbNpXoeMx3+gjMnqOZBbX6JhRxVeP4VNpBrdXORKhkqtt0vgRzOhh9lWw6EoDDvM5NQ6rOCoLbpgg75Pu65WtoFPMbJk4+CaRPi6HHZUYCPO+ylqfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722959824; c=relaxed/simple;
-	bh=AS5PfC6by2nm7spHtlLT7YHpaxQkrSqjN6YHAGpTVQE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=NHqhI7pu6Kg5KXiTGtNJWZc8I1/EC45Gj7WJWN19SVBGVGkakgrWcBFEjzcToG6DPDdaLAt/ShKsmszTh7tD59z2PThH/zcgefADNb4QTVMcC37X24pzrPxaU+KhI8TLfYP8z23oWXb4gPGW/gAoXIa/plXU9C8o4gmcp0Fn0AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X7S3h3uC; arc=none smtp.client-ip=198.175.65.9
+	s=arc-20240116; t=1722959843; c=relaxed/simple;
+	bh=vCvEbu+nQ116dru5XSUlUvVobY5NlbRotmpPTAehOrg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GvawHakLTHqXKU+fEDiJB7NANHLZBF7/h/MZuXQbiFvunwBv8I1zesy0MwXzYnXqpH+lQdyaihscbx4JOEV9kwvZTbBpm+qv2t97S1kn/ptnx3lo0/jfFd2WumAaEoKtq/o0FJSRKwJHGIesga+QWSH3AsR9FxXQxCgfevzrinA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jY8RYTF+; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722959823; x=1754495823;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=AS5PfC6by2nm7spHtlLT7YHpaxQkrSqjN6YHAGpTVQE=;
-  b=X7S3h3uC9Oq1Q3g3y9Hl/r11v4xTg/nMrWXcoVI0JTJ7Iqbz+HEL8CEW
-   1RGrRb/1IkiW/cp89DYzdmmkRF/Kxqvy4SJyXEirPg0Apg8/Tv0ZckgS+
-   lQ8UUBZU0wovPEwmf+SYqgjrzqXncdjGjjEnOwRV/gzacCq/Y0eYfe8zy
-   odpxXiCNqFLJ3nvNZjW7rsOMwAwkwhKrwdfQi0LN3hgBtj7/M1oSp9s5X
-   2Qdxcsg65u0MTiuym4PtHNGfWmOGT6Svsfm/Zj1GBi/+ymn/Mxmey06gH
-   3zIcSWXqXtIk1DIgjQbu5ozJEPO6rJqIcgjnQ9B+YPzHBkUDzLBCwP6pg
-   Q==;
-X-CSE-ConnectionGUID: 1GYuL+t8ROGGHjEPm+8ieQ==
-X-CSE-MsgGUID: Nk3m5FQdR0OtN1M4r7O0xg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="43514049"
+  t=1722959841; x=1754495841;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=vCvEbu+nQ116dru5XSUlUvVobY5NlbRotmpPTAehOrg=;
+  b=jY8RYTF+B0O9lidutwvoPfximiLRiyOip11xwzR48mMnyVjwklumuseu
+   LYsDFaBPnicfyYJsnDVi5eAudfBH3HQJMd9Mb8DLurnXWhjQrRXvUvd/G
+   FWhqFsLD/VzXc8TXmGW3CXrDhwqtatX97KVRUxHskeW6f1hi+Bm8CJB3P
+   iGDXiZcKgeNSMDsay+yuN4aHj7DMAtWnst4fjIovFIzBpjkzTqcUPIpKF
+   Nk5vq6WARyOgNr4Q7vHgUVfI+86uio77iLGtnI/rXDX0v3o/bYNYvZMU2
+   eOM3Yd8KVH89dPT8jVh+HRmROX6zcgaf3DURPdY3FAdnITwQf96OueeJ3
+   g==;
+X-CSE-ConnectionGUID: KfSRoYdxQ/u6yCudmPbknw==
+X-CSE-MsgGUID: IDHzptHMRtqFBLGqYRkD/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="43514232"
 X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="43514049"
+   d="scan'208";a="43514232"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 08:55:34 -0700
-X-CSE-ConnectionGUID: cmfVOcvZTraHDGemzaHcLg==
-X-CSE-MsgGUID: 9fqnnbmsShKYw1UgKumG4Q==
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 08:56:18 -0700
+X-CSE-ConnectionGUID: dwFPCVgqTtimsOdSb6j4CQ==
+X-CSE-MsgGUID: mjq16m42TJWlYYeAqSiGJw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="56631058"
+   d="scan'208";a="56631391"
 Received: from ahunter6-mobl1.ger.corp.intel.com (HELO localhost.localdomain) ([10.94.248.17])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 08:55:28 -0700
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 08:56:13 -0700
 From: Adrian Hunter <adrian.hunter@intel.com>
 To: Peter Zijlstra <peterz@infradead.org>
 Cc: Ingo Molnar <mingo@redhat.com>,
@@ -79,10 +80,12 @@ Cc: Ingo Molnar <mingo@redhat.com>,
 	Andi Kleen <ak@linux.intel.com>,
 	linux-kernel@vger.kernel.org,
 	linux-perf-users@vger.kernel.org
-Subject: [PATCH V11 00/10] perf/core: Add ability for an event to "pause" or "resume" AUX area tracing
-Date: Tue,  6 Aug 2024 18:55:04 +0300
-Message-Id: <20240806155514.17900-1-adrian.hunter@intel.com>
+Subject: [PATCH V11 08/10] perf intel-pt: Improve man page format
+Date: Tue,  6 Aug 2024 18:55:12 +0300
+Message-Id: <20240806155514.17900-9-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240806155514.17900-1-adrian.hunter@intel.com>
+References: <20240806155514.17900-1-adrian.hunter@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,238 +93,567 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi
+Improve format of config terms and section references.
 
-Note for V11:
-	Moving aux_paused into a union within struct hw_perf_event caused
-	a regression because aux_paused was being written unconditionally
-	even though it is valid only for AUX (e.g. Intel PT) PMUs.
-	That is fixed in V11.
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Ian Rogers <irogers@google.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+---
+ tools/perf/Documentation/perf-intel-pt.txt | 486 +++++++++++----------
+ 1 file changed, 267 insertions(+), 219 deletions(-)
 
-Hardware traces, such as instruction traces, can produce a vast amount of
-trace data, so being able to reduce tracing to more specific circumstances
-can be useful.
-
-The ability to pause or resume tracing when another event happens, can do
-that.
-
-These patches add such a facilty and show how it would work for Intel
-Processor Trace.
-
-Maintainers of other AUX area tracing implementations are requested to
-consider if this is something they might employ and then whether or not
-the ABI would work for them.  Note, thank you to James Clark (ARM) for
-evaluating the API for Coresight.  Suzuki K Poulose (ARM) also responded
-positively to the RFC.
-
-Changes to perf tools are now (since V4) fleshed out.
-
-Please note, Intel® Architecture Instruction Set Extensions and Future
-Features Programming Reference March 2024 319433-052, currently:
-
-	https://cdrdv2.intel.com/v1/dl/getContent/671368
-
-introduces hardware pause / resume for Intel PT in a feature named
-Intel PT Trigger Tracing.
-
-For that more fields in perf_event_attr will be necessary.  The main
-differences are:
-	- it can be applied not just to overflows, but optionally to
-	every event
-	- a packet is emitted into the trace, optionally with IP
-	information
-	- no PMI
-	- works with PMC and DR (breakpoint) events only
-
-Here are the proposed additions to perf_event_attr, please comment:
-
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index 0c557f0a17b3..05dcc43f11bb 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -369,6 +369,22 @@ enum perf_event_read_format {
- 	PERF_FORMAT_MAX = 1U << 5,		/* non-ABI */
- };
+diff --git a/tools/perf/Documentation/perf-intel-pt.txt b/tools/perf/Documentation/perf-intel-pt.txt
+index 59ab1ff9d75f..ad39bf20f862 100644
+--- a/tools/perf/Documentation/perf-intel-pt.txt
++++ b/tools/perf/Documentation/perf-intel-pt.txt
+@@ -151,7 +151,7 @@ displayed as follows:
+ There are two ways that instructions-per-cycle (IPC) can be calculated depending
+ on the recording.
  
-+enum {
-+	PERF_AUX_ACTION_START_PAUSED		=   1U << 0,
-+	PERF_AUX_ACTION_PAUSE			=   1U << 1,
-+	PERF_AUX_ACTION_RESUME			=   1U << 2,
-+	PERF_AUX_ACTION_EMIT			=   1U << 3,
-+	PERF_AUX_ACTION_NR			= 0x1f << 4,
-+	PERF_AUX_ACTION_NO_IP			=   1U << 9,
-+	PERF_AUX_ACTION_PAUSE_ON_EVT		=   1U << 10,
-+	PERF_AUX_ACTION_RESUME_ON_EVT		=   1U << 11,
-+	PERF_AUX_ACTION_EMIT_ON_EVT		=   1U << 12,
-+	PERF_AUX_ACTION_NR_ON_EVT		= 0x1f << 13,
-+	PERF_AUX_ACTION_NO_IP_ON_EVT		=   1U << 18,
-+	PERF_AUX_ACTION_MASK			= ~PERF_AUX_ACTION_START_PAUSED,
-+	PERF_AUX_PAUSE_RESUME_MASK		= PERF_AUX_ACTION_PAUSE | PERF_AUX_ACTION_RESUME,
-+};
+-If the 'cyc' config term (see config terms section below) was used, then IPC
++If the 'cyc' config term (see <<_config_terms,config terms>> section below) was used, then IPC
+ and cycle events are calculated using the cycle count from CYC packets, otherwise
+ MTC packets are used - refer to the 'mtc' config term.  When MTC is used, however,
+ the values are less accurate because the timing is less accurate.
+@@ -239,7 +239,7 @@ which is the same as
+ 
+ 	-e intel_pt/tsc=1,noretcomp=0/
+ 
+-Note there are now new config terms - see section 'config terms' further below.
++Note there are other config terms - see section <<_config_terms,config terms>> further below.
+ 
+ The config terms are listed in /sys/devices/intel_pt/format.  They are bit
+ fields within the config member of the struct perf_event_attr which is
+@@ -311,217 +311,264 @@ perf_event_attr is displayed if the -vv option is used e.g.
+ config terms
+ ~~~~~~~~~~~~
+ 
+-The June 2015 version of Intel 64 and IA-32 Architectures Software Developer
+-Manuals, Chapter 36 Intel Processor Trace, defined new Intel PT features.
+-Some of the features are reflect in new config terms.  All the config terms are
+-described below.
+-
+-tsc		Always supported.  Produces TSC timestamp packets to provide
+-		timing information.  In some cases it is possible to decode
+-		without timing information, for example a per-thread context
+-		that does not overlap executable memory maps.
+-
+-		The default config selects tsc (i.e. tsc=1).
+-
+-noretcomp	Always supported.  Disables "return compression" so a TIP packet
+-		is produced when a function returns.  Causes more packets to be
+-		produced but might make decoding more reliable.
+-
+-		The default config does not select noretcomp (i.e. noretcomp=0).
+-
+-psb_period	Allows the frequency of PSB packets to be specified.
+-
+-		The PSB packet is a synchronization packet that provides a
+-		starting point for decoding or recovery from errors.
+-
+-		Support for psb_period is indicated by:
+-
+-			/sys/bus/event_source/devices/intel_pt/caps/psb_cyc
+-
+-		which contains "1" if the feature is supported and "0"
+-		otherwise.
+-
+-		Valid values are given by:
+-
+-			/sys/bus/event_source/devices/intel_pt/caps/psb_periods
+-
+-		which contains a hexadecimal value, the bits of which represent
+-		valid values e.g. bit 2 set means value 2 is valid.
+-
+-		The psb_period value is converted to the approximate number of
+-		trace bytes between PSB packets as:
+-
+-			2 ^ (value + 11)
+-
+-		e.g. value 3 means 16KiB bytes between PSBs
+-
+-		If an invalid value is entered, the error message
+-		will give a list of valid values e.g.
+-
+-			$ perf record -e intel_pt/psb_period=15/u uname
+-			Invalid psb_period for intel_pt. Valid values are: 0-5
+-
+-		If MTC packets are selected, the default config selects a value
+-		of 3 (i.e. psb_period=3) or the nearest lower value that is
+-		supported (0 is always supported).  Otherwise the default is 0.
+-
+-		If decoding is expected to be reliable and the buffer is large
+-		then a large PSB period can be used.
+-
+-		Because a TSC packet is produced with PSB, the PSB period can
+-		also affect the granularity to timing information in the absence
+-		of MTC or CYC.
+-
+-mtc		Produces MTC timing packets.
+-
+-		MTC packets provide finer grain timestamp information than TSC
+-		packets.  MTC packets record time using the hardware crystal
+-		clock (CTC) which is related to TSC packets using a TMA packet.
+-
+-		Support for this feature is indicated by:
+-
+-			/sys/bus/event_source/devices/intel_pt/caps/mtc
+-
+-		which contains "1" if the feature is supported and
+-		"0" otherwise.
+-
+-		The frequency of MTC packets can also be specified - see
+-		mtc_period below.
+-
+-mtc_period	Specifies how frequently MTC packets are produced - see mtc
+-		above for how to determine if MTC packets are supported.
+-
+-		Valid values are given by:
+-
+-			/sys/bus/event_source/devices/intel_pt/caps/mtc_periods
+-
+-		which contains a hexadecimal value, the bits of which represent
+-		valid values e.g. bit 2 set means value 2 is valid.
+-
+-		The mtc_period value is converted to the MTC frequency as:
+-
+-			CTC-frequency / (2 ^ value)
+-
+-		e.g. value 3 means one eighth of CTC-frequency
+-
+-		Where CTC is the hardware crystal clock, the frequency of which
+-		can be related to TSC via values provided in cpuid leaf 0x15.
+-
+-		If an invalid value is entered, the error message
+-		will give a list of valid values e.g.
+-
+-			$ perf record -e intel_pt/mtc_period=15/u uname
+-			Invalid mtc_period for intel_pt. Valid values are: 0,3,6,9
+-
+-		The default value is 3 or the nearest lower value
+-		that is supported (0 is always supported).
+-
+-cyc		Produces CYC timing packets.
+-
+-		CYC packets provide even finer grain timestamp information than
+-		MTC and TSC packets.  A CYC packet contains the number of CPU
+-		cycles since the last CYC packet. Unlike MTC and TSC packets,
+-		CYC packets are only sent when another packet is also sent.
+-
+-		Support for this feature is indicated by:
+-
+-			/sys/bus/event_source/devices/intel_pt/caps/psb_cyc
+-
+-		which contains "1" if the feature is supported and
+-		"0" otherwise.
+-
+-		The number of CYC packets produced can be reduced by specifying
+-		a threshold - see cyc_thresh below.
+-
+-cyc_thresh	Specifies how frequently CYC packets are produced - see cyc
+-		above for how to determine if CYC packets are supported.
+-
+-		Valid cyc_thresh values are given by:
+-
+-			/sys/bus/event_source/devices/intel_pt/caps/cycle_thresholds
+-
+-		which contains a hexadecimal value, the bits of which represent
+-		valid values e.g. bit 2 set means value 2 is valid.
+-
+-		The cyc_thresh value represents the minimum number of CPU cycles
+-		that must have passed before a CYC packet can be sent.  The
+-		number of CPU cycles is:
+-
+-			2 ^ (value - 1)
+-
+-		e.g. value 4 means 8 CPU cycles must pass before a CYC packet
+-		can be sent.  Note a CYC packet is still only sent when another
+-		packet is sent, not at, e.g. every 8 CPU cycles.
+-
+-		If an invalid value is entered, the error message
+-		will give a list of valid values e.g.
+-
+-			$ perf record -e intel_pt/cyc,cyc_thresh=15/u uname
+-			Invalid cyc_thresh for intel_pt. Valid values are: 0-12
+-
+-		CYC packets are not requested by default.
+-
+-pt		Specifies pass-through which enables the 'branch' config term.
+-
+-		The default config selects 'pt' if it is available, so a user will
+-		never need to specify this term.
+-
+-branch		Enable branch tracing.  Branch tracing is enabled by default so to
+-		disable branch tracing use 'branch=0'.
+-
+-		The default config selects 'branch' if it is available.
+-
+-ptw		Enable PTWRITE packets which are produced when a ptwrite instruction
+-		is executed.
+-
+-		Support for this feature is indicated by:
+-
+-			/sys/bus/event_source/devices/intel_pt/caps/ptwrite
+-
+-		which contains "1" if the feature is supported and
+-		"0" otherwise.
+-
+-		As an alternative, refer to "Emulated PTWRITE" further below.
+-
+-fup_on_ptw	Enable a FUP packet to follow the PTWRITE packet.  The FUP packet
+-		provides the address of the ptwrite instruction.  In the absence of
+-		fup_on_ptw, the decoder will use the address of the previous branch
+-		if branch tracing is enabled, otherwise the address will be zero.
+-		Note that fup_on_ptw will work even when branch tracing is disabled.
+-
+-pwr_evt		Enable power events.  The power events provide information about
+-		changes to the CPU C-state.
+-
+-		Support for this feature is indicated by:
+-
+-			/sys/bus/event_source/devices/intel_pt/caps/power_event_trace
+-
+-		which contains "1" if the feature is supported and
+-		"0" otherwise.
+-
+-event		Enable Event Trace.  The events provide information about asynchronous
+-		events.
+-
+-		Support for this feature is indicated by:
+-
+-			/sys/bus/event_source/devices/intel_pt/caps/event_trace
+-
+-		which contains "1" if the feature is supported and
+-		"0" otherwise.
+-
+-notnt		Disable TNT packets.  Without TNT packets, it is not possible to walk
+-		executable code to reconstruct control flow, however FUP, TIP, TIP.PGE
+-		and TIP.PGD packets still indicate asynchronous control flow, and (if
+-		return compression is disabled - see noretcomp) return statements.
+-		The advantage of eliminating TNT packets is reducing the size of the
+-		trace and corresponding tracing overhead.
+-
+-		Support for this feature is indicated by:
+-
+-			/sys/bus/event_source/devices/intel_pt/caps/tnt_disable
+-
+-		which contains "1" if the feature is supported and
+-		"0" otherwise.
++Config terms are parameters specified with the -e intel_pt// event option,
++for example:
 +
- #define PERF_ATTR_SIZE_VER0	64	/* sizeof first published struct */
- #define PERF_ATTR_SIZE_VER1	72	/* add: config2 */
- #define PERF_ATTR_SIZE_VER2	80	/* add: branch_sample_type */
-@@ -515,10 +531,19 @@ struct perf_event_attr {
- 	union {
- 		__u32	aux_action;
- 		struct {
--			__u32	aux_start_paused :  1, /* start AUX area tracing paused */
--				aux_pause        :  1, /* on overflow, pause AUX area tracing */
--				aux_resume       :  1, /* on overflow, resume AUX area tracing */
--				__reserved_3     : 29;
-+			__u32	aux_start_paused  :  1, /* start AUX area tracing paused */
-+				aux_pause         :  1, /* on overflow, pause AUX area tracing */
-+				aux_resume        :  1, /* on overflow, resume AUX area tracing */
-+				aux_emit          :  1, /* generate AUX records instead of events */
-+				aux_nr            :  5, /* AUX area tracing reference number */
-+				aux_no_ip         :  1, /* suppress IP in AUX records */
-+				/* Following apply to event occurrence not overflows */
-+				aux_pause_on_evt  :  1, /* on event, pause AUX area tracing */
-+				aux_resume_on_evt :  1, /* on event, resume AUX area tracing */
-+				aux_emit_on_evt   :  1, /* generate AUX records instead of events */
-+				aux_nr_on_evt     :  5, /* AUX area tracing reference number */
-+				aux_no_ip_on_evt  :  1, /* suppress IP in AUX records */
-+				__reserved_3      : 13;
- 		};
- 	};
++	-e intel_pt/cyc/
++
++which selects cycle accurate mode. Each config term can have a value which
++defaults to 1, so the above is the same as:
++
++	-e intel_pt/cyc=1/
++
++Some terms are set by default, so must be set to 0 to turn them off. For
++example, to turn off branch tracing:
++
++	-e intel_pt/branch=0/
++
++Multiple config terms are separated by commas, for example:
++
++	-e intel_pt/cyc,mtc_period=9/
++
++There are also common config terms, see linkperf:perf-record[1] documentation.
++
++Intel PT config terms are described below.
++
++*tsc*::
++Always supported.  Produces TSC timestamp packets to provide
++timing information.  In some cases it is possible to decode
++without timing information, for example a per-thread context
++that does not overlap executable memory maps.
+++
++The default config selects tsc (i.e. tsc=1).
++
++*noretcomp*::
++Always supported.  Disables "return compression" so a TIP packet
++is produced when a function returns.  Causes more packets to be
++produced but might make decoding more reliable.
+++
++The default config does not select noretcomp (i.e. noretcomp=0).
++
++*psb_period*::
++Allows the frequency of PSB packets to be specified.
+++
++The PSB packet is a synchronization packet that provides a
++starting point for decoding or recovery from errors.
+++
++Support for psb_period is indicated by:
+++
++	/sys/bus/event_source/devices/intel_pt/caps/psb_cyc
+++
++which contains "1" if the feature is supported and "0"
++otherwise.
+++
++Valid values are given by:
+++
++	/sys/bus/event_source/devices/intel_pt/caps/psb_periods
+++
++which contains a hexadecimal value, the bits of which represent
++valid values e.g. bit 2 set means value 2 is valid.
+++
++The psb_period value is converted to the approximate number of
++trace bytes between PSB packets as:
+++
++	2 ^ (value + 11)
+++
++e.g. value 3 means 16KiB bytes between PSBs
+++
++If an invalid value is entered, the error message
++will give a list of valid values e.g.
+++
++	$ perf record -e intel_pt/psb_period=15/u uname
++	Invalid psb_period for intel_pt. Valid values are: 0-5
+++
++If MTC packets are selected, the default config selects a value
++of 3 (i.e. psb_period=3) or the nearest lower value that is
++supported (0 is always supported).  Otherwise the default is 0.
+++
++If decoding is expected to be reliable and the buffer is large
++then a large PSB period can be used.
+++
++Because a TSC packet is produced with PSB, the PSB period can
++also affect the granularity to timing information in the absence
++of MTC or CYC.
++
++*mtc*::
++Produces MTC timing packets.
+++
++MTC packets provide finer grain timestamp information than TSC
++packets.  MTC packets record time using the hardware crystal
++clock (CTC) which is related to TSC packets using a TMA packet.
+++
++Support for this feature is indicated by:
+++
++	/sys/bus/event_source/devices/intel_pt/caps/mtc
+++
++which contains "1" if the feature is supported and
++"0" otherwise.
+++
++The frequency of MTC packets can also be specified - see
++mtc_period below.
++
++*mtc_period*::
++Specifies how frequently MTC packets are produced - see mtc
++above for how to determine if MTC packets are supported.
+++
++Valid values are given by:
+++
++	/sys/bus/event_source/devices/intel_pt/caps/mtc_periods
+++
++which contains a hexadecimal value, the bits of which represent
++valid values e.g. bit 2 set means value 2 is valid.
+++
++The mtc_period value is converted to the MTC frequency as:
++
++	CTC-frequency / (2 ^ value)
+++
++e.g. value 3 means one eighth of CTC-frequency
+++
++Where CTC is the hardware crystal clock, the frequency of which
++can be related to TSC via values provided in cpuid leaf 0x15.
+++
++If an invalid value is entered, the error message
++will give a list of valid values e.g.
+++
++	$ perf record -e intel_pt/mtc_period=15/u uname
++	Invalid mtc_period for intel_pt. Valid values are: 0,3,6,9
+++
++The default value is 3 or the nearest lower value
++that is supported (0 is always supported).
++
++*cyc*::
++Produces CYC timing packets.
+++
++CYC packets provide even finer grain timestamp information than
++MTC and TSC packets.  A CYC packet contains the number of CPU
++cycles since the last CYC packet. Unlike MTC and TSC packets,
++CYC packets are only sent when another packet is also sent.
+++
++Support for this feature is indicated by:
+++
++	/sys/bus/event_source/devices/intel_pt/caps/psb_cyc
+++
++which contains "1" if the feature is supported and
++"0" otherwise.
+++
++The number of CYC packets produced can be reduced by specifying
++a threshold - see cyc_thresh below.
++
++*cyc_thresh*::
++Specifies how frequently CYC packets are produced - see cyc
++above for how to determine if CYC packets are supported.
+++
++Valid cyc_thresh values are given by:
+++
++	/sys/bus/event_source/devices/intel_pt/caps/cycle_thresholds
+++
++which contains a hexadecimal value, the bits of which represent
++valid values e.g. bit 2 set means value 2 is valid.
+++
++The cyc_thresh value represents the minimum number of CPU cycles
++that must have passed before a CYC packet can be sent.  The
++number of CPU cycles is:
+++
++	2 ^ (value - 1)
+++
++e.g. value 4 means 8 CPU cycles must pass before a CYC packet
++can be sent.  Note a CYC packet is still only sent when another
++packet is sent, not at, e.g. every 8 CPU cycles.
+++
++If an invalid value is entered, the error message
++will give a list of valid values e.g.
+++
++	$ perf record -e intel_pt/cyc,cyc_thresh=15/u uname
++	Invalid cyc_thresh for intel_pt. Valid values are: 0-12
+++
++CYC packets are not requested by default.
++
++*pt*::
++Specifies pass-through which enables the 'branch' config term.
+++
++The default config selects 'pt' if it is available, so a user will
++never need to specify this term.
++
++*branch*::
++Enable branch tracing.  Branch tracing is enabled by default so to
++disable branch tracing use 'branch=0'.
+++
++The default config selects 'branch' if it is available.
++
++*ptw*::
++Enable PTWRITE packets which are produced when a ptwrite instruction
++is executed.
+++
++Support for this feature is indicated by:
+++
++	/sys/bus/event_source/devices/intel_pt/caps/ptwrite
+++
++which contains "1" if the feature is supported and
++"0" otherwise.
+++
++As an alternative, refer to "Emulated PTWRITE" further below.
++
++*fup_on_ptw*::
++Enable a FUP packet to follow the PTWRITE packet.  The FUP packet
++provides the address of the ptwrite instruction.  In the absence of
++fup_on_ptw, the decoder will use the address of the previous branch
++if branch tracing is enabled, otherwise the address will be zero.
++Note that fup_on_ptw will work even when branch tracing is disabled.
++
++*pwr_evt*::
++Enable power events.  The power events provide information about
++changes to the CPU C-state.
+++
++Support for this feature is indicated by:
+++
++	/sys/bus/event_source/devices/intel_pt/caps/power_event_trace
+++
++which contains "1" if the feature is supported and
++"0" otherwise.
++
++*event*::
++Enable Event Trace.  The events provide information about asynchronous
++events.
+++
++Support for this feature is indicated by:
+++
++	/sys/bus/event_source/devices/intel_pt/caps/event_trace
+++
++which contains "1" if the feature is supported and
++"0" otherwise.
++
++*notnt*::
++Disable TNT packets.  Without TNT packets, it is not possible to walk
++executable code to reconstruct control flow, however FUP, TIP, TIP.PGE
++and TIP.PGD packets still indicate asynchronous control flow, and (if
++return compression is disabled - see noretcomp) return statements.
++The advantage of eliminating TNT packets is reducing the size of the
++trace and corresponding tracing overhead.
+++
++Support for this feature is indicated by:
+++
++	/sys/bus/event_source/devices/intel_pt/caps/tnt_disable
+++
++which contains "1" if the feature is supported and
++"0" otherwise.
++
++
++config terms on other events
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++Some Intel PT features work with other events, features such as AUX area sampling
++and PEBS-via-PT.  In those cases, the other events can have config terms below:
++
++*aux-sample-size*::
++		Used to set the AUX area sample size, refer to the section
++		<<_aux_area_sampling_option,AUX area sampling option>>
++
++*aux-output*::
++		Used to select PEBS-via-PT, refer to the
++		section <<_pebs_via_intel_pt,PEBS via Intel PT>>
+ 
+ 
+ AUX area sampling option
+@@ -596,7 +643,8 @@ The default snapshot size is the auxtrace mmap size.  If neither auxtrace mmap s
+ nor snapshot size is specified, then the default is 4MiB for privileged users
+ (or if /proc/sys/kernel/perf_event_paranoid < 0), 128KiB for unprivileged users.
+ If an unprivileged user does not specify mmap pages, the mmap pages will be
+-reduced as described in the 'new auxtrace mmap size option' section below.
++reduced as described in the <<_new_auxtrace_mmap_size_option,new auxtrace mmap size option>>
++section below.
+ 
+ The snapshot size is displayed if the option -vv is used e.g.
+ 
+@@ -952,11 +1000,11 @@ transaction start, commit or abort.
+ 
+ Note that "instructions", "cycles", "branches" and "transactions" events
+ depend on code flow packets which can be disabled by using the config term
+-"branch=0".  Refer to the config terms section above.
++"branch=0".  Refer to the <<_config_terms,config terms>> section above.
+ 
+ "ptwrite" events record the payload of the ptwrite instruction and whether
+ "fup_on_ptw" was used.  "ptwrite" events depend on PTWRITE packets which are
+-recorded only if the "ptw" config term was used.  Refer to the config terms
++recorded only if the "ptw" config term was used.  Refer to the <<_config_terms,config terms>>
+ section above.  perf script "synth" field displays "ptwrite" information like
+ this: "ip: 0 payload: 0x123456789abcdef0"  where "ip" is 1 if "fup_on_ptw" was
+ used.
+@@ -964,7 +1012,7 @@ used.
+ "Power" events correspond to power event packets and CBR (core-to-bus ratio)
+ packets.  While CBR packets are always recorded when tracing is enabled, power
+ event packets are recorded only if the "pwr_evt" config term was used.  Refer to
+-the config terms section above.  The power events record information about
++the <<_config_terms,config terms>> section above.  The power events record information about
+ C-state changes, whereas CBR is indicative of CPU frequency.  perf script
+ "event,synth" fields display information like this:
+ 
+@@ -1120,7 +1168,7 @@ What *will* be decoded with the (single) q option:
+ 	- asynchronous branches such as interrupts
+ 	- indirect branches
+ 	- function return target address *if* the noretcomp config term (refer
+-	config terms section) was used
++	<<_config_terms,config terms>> section) was used
+ 	- start of (control-flow) tracing
+ 	- end of (control-flow) tracing, if it is not out of context
+ 	- power events, ptwrite, transaction start and abort
+@@ -1133,7 +1181,7 @@ Repeating the q option (double-q i.e. qq) results in even faster decoding and ev
+ less detail.  The decoder decodes only extended PSB (PSB+) packets, getting the
+ instruction pointer if there is a FUP packet within PSB+ (i.e. between PSB and
+ PSBEND).  Note PSB packets occur regularly in the trace based on the psb_period
+-config term (refer config terms section).  There will be a FUP packet if the
++config term (refer <<_config_terms,config terms>> section).  There will be a FUP packet if the
+ PSB+ occurs while control flow is being traced.
+ 
+ What will *not* be decoded with the qq option:
+-- 
+2.34.1
 
-
-Changes in V11:
-      perf/core: Add aux_pause, aux_resume, aux_start_paused
-	Make assignment to event->hw.aux_paused conditional on
-	(pmu->capabilities & PERF_PMU_CAP_AUX_PAUSE).
-
-      perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
-	Remove definition of has_aux_action() because it has
-	already been added as an inline function.
-
-      perf/x86/intel/pt: Fix sampling synchronization
-      perf tools: Enable evsel__is_aux_event() to work for ARM/ARM64
-      perf tools: Enable evsel__is_aux_event() to work for S390_CPUMSF
-	Dropped because they have already been applied
-
-Changes in V10:
-      perf/core: Add aux_pause, aux_resume, aux_start_paused
-	Move aux_paused into a union within struct hw_perf_event.
-	Additional comment wrt PERF_EF_PAUSE/PERF_EF_RESUME.
-	Factor out has_aux_action() as an inline function.
-	Use scoped_guard for irqsave.
-	Move calls of perf_event_aux_pause() from __perf_event_output()
-	to __perf_event_overflow().
-
-Changes in V9:
-      perf/x86/intel/pt: Fix sampling synchronization
-	New patch
-
-      perf/core: Add aux_pause, aux_resume, aux_start_paused
-	Move aux_paused to struct hw_perf_event
-
-      perf/x86/intel/pt: Add support for pause / resume
-	Add more comments and barriers for resume_allowed and
-	pause_allowed
-	Always use WRITE_ONCE with resume_allowed
-
-
-Changes in V8:
-
-      perf tools: Parse aux-action
-	Fix clang warning:
-	     util/auxtrace.c:821:7: error: missing field 'aux_action' initializer [-Werror,-Wmissing-field-initializers]
-	     821 |         {NULL},
-	         |              ^
-
-Changes in V7:
-
-	Add Andi's Reviewed-by for patches 2-12
-	Re-base
-
-Changes in V6:
-
-      perf/core: Add aux_pause, aux_resume, aux_start_paused
-	Removed READ/WRITE_ONCE from __perf_event_aux_pause()
-	Expanded comment about guarding against NMI
-
-Changes in V5:
-
-    perf/core: Add aux_pause, aux_resume, aux_start_paused
-	Added James' Ack
-
-    perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
-	New patch
-
-    perf tools
-	Added Ian's Ack
-
-Changes in V4:
-
-    perf/core: Add aux_pause, aux_resume, aux_start_paused
-	Rename aux_output_cfg -> aux_action
-	Reorder aux_action bits from:
-		aux_pause, aux_resume, aux_start_paused
-	to:
-		aux_start_paused, aux_pause, aux_resume
-	Fix aux_action bits __u64 -> __u32
-
-    coresight: Have a stab at support for pause / resume
-	Dropped
-
-    perf tools
-	All new patches
-
-Changes in RFC V3:
-
-    coresight: Have a stab at support for pause / resume
-	'mode' -> 'flags' so it at least compiles
-
-Changes in RFC V2:
-
-	Use ->stop() / ->start() instead of ->pause_resume()
-	Move aux_start_paused bit into aux_output_cfg
-	Tighten up when Intel PT pause / resume is allowed
-	Add an example of how it might work for CoreSight
-
-
-Adrian Hunter (10):
-      perf/core: Add aux_pause, aux_resume, aux_start_paused
-      perf/x86/intel/pt: Add support for pause / resume
-      perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
-      perf tools: Add aux_start_paused, aux_pause and aux_resume
-      perf tools: Add aux-action config term
-      perf tools: Parse aux-action
-      perf tools: Add missing_features for aux_start_paused, aux_pause, aux_resume
-      perf intel-pt: Improve man page format
-      perf intel-pt: Add documentation for pause / resume
-      perf intel-pt: Add a test for pause / resume
-
- arch/x86/events/intel/core.c               |   4 +-
- arch/x86/events/intel/pt.c                 |  69 +++-
- arch/x86/events/intel/pt.h                 |   4 +
- include/linux/perf_event.h                 |  28 ++
- include/uapi/linux/perf_event.h            |  11 +-
- kernel/events/core.c                       |  72 +++-
- kernel/events/internal.h                   |   1 +
- tools/include/uapi/linux/perf_event.h      |  11 +-
- tools/perf/Documentation/perf-intel-pt.txt | 596 ++++++++++++++++++-----------
- tools/perf/Documentation/perf-record.txt   |   4 +
- tools/perf/builtin-record.c                |   4 +-
- tools/perf/tests/shell/test_intel_pt.sh    |  28 ++
- tools/perf/util/auxtrace.c                 |  67 +++-
- tools/perf/util/auxtrace.h                 |   6 +-
- tools/perf/util/evsel.c                    |  13 +-
- tools/perf/util/evsel.h                    |   1 +
- tools/perf/util/evsel_config.h             |   1 +
- tools/perf/util/parse-events.c             |  10 +
- tools/perf/util/parse-events.h             |   1 +
- tools/perf/util/parse-events.l             |   1 +
- tools/perf/util/perf_event_attr_fprintf.c  |   3 +
- tools/perf/util/pmu.c                      |   1 +
- 22 files changed, 698 insertions(+), 238 deletions(-)
-
-
-Regards
-Adrian
 
