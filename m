@@ -1,87 +1,109 @@
-Return-Path: <linux-kernel+bounces-276467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758A1949429
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:05:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A5294942C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30D1E28858C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:05:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 323691C22C2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D363200139;
-	Tue,  6 Aug 2024 15:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F321EA0CB;
+	Tue,  6 Aug 2024 15:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oHSfNC7e"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GfFhatj1"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56301D54FB;
-	Tue,  6 Aug 2024 15:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3649C1D6DDB;
+	Tue,  6 Aug 2024 15:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722956720; cv=none; b=l6ybCQb76PHfoKnu/RSX5bvjpFpDXICd9c8oT3HMW61GwMoYMFNe+c8A4vekc5lnN57lWJPqk06w1R/LvxZnjGGO00JFctyj3aN3iI6ezz9dCUsjk5tQ0YHk+EQsmiapr42MCIAA6l82Fr2bFlqDxWJBy+RL96zyZcp3s1WNhig=
+	t=1722956733; cv=none; b=OJlbcgWenr/pUz+IUUSk4jmP+d7KgQ/wqwNPz1RJJ3MZc8EALYDk+RGlCA9SggCEt3gI/P291j2QH7z6t6lbaUs5rz7EM0soD6KPapRqoFE6ANa8IdWo/2npSIj+ZoUMmnQR0Ml9D3mCAmLHxDx7cay9eTDllMDyVB/6eyI3w98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722956720; c=relaxed/simple;
-	bh=udICwCBvJshjtVZs7gtly5jRvCos3Vlp9LlZX3uPxic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UgnbBntNiXlcsUFcbh/ZrGvw+CbA6Z5Dwpw0/FivPeHb4qQnwcVgg6gEMAZkm0Fb23LaPGu3Z2uB8LG23RYHYggoZVQIRflayTuAlHo8gdLK1iZ8sdP/qCG5Dhze1yK/HSHIJEwt0dKe++AFwpXkUxw3dWFWYu4cdUGnkDEqFpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oHSfNC7e; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=g7/z3cR/Twtrn5FHIQO54HzbyScbHj7IzKCsLCpGlqg=; b=oHSfNC7ebJ7mq2xuSnvTLpMVeT
-	jHs4mxU97jA4Uoz4pX+af9+sGRFz81auzkbDX09uAsx+x7G1LqdrL5vUG2PDpoyvW0GplCH3xs7wM
-	KoN3qyCz/1ObIFckR/UK5Q5hGOop15U8fnwI4HWAjFGz3U2b444Ck96J4q9qs2WM7xXLkxcphnUgw
-	2V5s+eTt0coOUg8Nfr7YOov6jBzhoDkS2/7FjjePlsxqO608cpy84f/+MdBzXcgNg0yN/1Tjef2uN
-	EaF2sE6zFJZ1kwMyLA6nfDNJ+HcFXuqNPSFLiFlC7ILBJSWgoz+zzSpeRpdA1qafRnq8zfYf2xChc
-	/g9alBMQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sbLkS-00000006Tya-2vNK;
-	Tue, 06 Aug 2024 15:05:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D373730066A; Tue,  6 Aug 2024 17:05:15 +0200 (CEST)
-Date: Tue, 6 Aug 2024 17:05:15 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [tip: x86/urgent] x86/mm: Fix pti_clone_entry_text() for i386
-Message-ID: <20240806150515.GS39708@noisy.programming.kicks-ass.net>
-References: <172250973153.2215.13116668336106656424.tip-bot2@tip-bot2>
- <e541b49b-9cc2-47bb-b283-2de70ae3a359@roeck-us.net>
- <20240806085050.GQ37996@noisy.programming.kicks-ass.net>
- <d99175bb-b5ca-46e6-a781-df4d21e9b7a8@roeck-us.net>
- <20240806145632.GR39708@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1722956733; c=relaxed/simple;
+	bh=cKLi7+6crt9HUr5A8M2ER4zioa92HQFRFtOAa82Xb0s=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kC6+TPb7zUSOZIGMpNV7hmJ7M2t0UYRfpl3eVo8gdVnKltyEqzTfNBu/Boo8rfAxIMljaI1spMC7EqZ4VfG5A4qZiPwtZhutOEmiCt+TS0Qik+KqIr0xp61eQY1jBWMNEEBj+LOaB0WZrJT8aJsxyjqmpbWCSzoKkC9kvHRLUIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GfFhatj1; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 476F5P63084874;
+	Tue, 6 Aug 2024 10:05:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722956725;
+	bh=jRUVh2j7bRPlAnSp8fPUpjC66w/pHoa9+DKzEoGOPCo=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=GfFhatj1AH1w+I8hHz5eD57b8l+SyNRCcbQPYqYzm+fkPNangrGHipqyCHCCigd51
+	 o2PsQclEC/4fZVWjpysGkVNSXJnI3EbhnvnElIEidf6urCvJG9FJakTOhcVJbMaMrL
+	 Zm+1OSOrTuG9wHaYUKRTIFfgpABqyutJpJdBJYFc=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 476F5PbV005455
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 6 Aug 2024 10:05:25 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
+ Aug 2024 10:05:25 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 6 Aug 2024 10:05:25 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 476F5PMh109855;
+	Tue, 6 Aug 2024 10:05:25 -0500
+Date: Tue, 6 Aug 2024 10:05:25 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Andrew Davis <afd@ti.com>
+CC: Manorit Chawdhry <m-chawdhry@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Neha Malcom
+ Francis <n-francis@ti.com>,
+        Aniket Limaye <a-limaye@ti.com>, Udit Kumar
+	<u-kumar1@ti.com>,
+        Beleswar Padhi <b-padhi@ti.com>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>
+Subject: Re: [PATCH v3 1/5] arm64: dts: ti: k3-j721s2*: Add bootph-*
+ properties
+Message-ID: <20240806150525.5aj6hnqmzwir7j22@fruit>
+References: <20240730-b4-upstream-bootph-all-v3-0-9bc2eccb6952@ti.com>
+ <20240730-b4-upstream-bootph-all-v3-1-9bc2eccb6952@ti.com>
+ <bcd96f9f-54bd-4793-b9f1-04a011f2df82@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240806145632.GR39708@noisy.programming.kicks-ass.net>
+In-Reply-To: <bcd96f9f-54bd-4793-b9f1-04a011f2df82@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Aug 06, 2024 at 04:56:32PM +0200, Peter Zijlstra wrote:
-> On Tue, Aug 06, 2024 at 07:25:42AM -0700, Guenter Roeck wrote:
+On 09:43-20240806, Andrew Davis wrote:
+> On 7/30/24 4:53 AM, Manorit Chawdhry wrote:
+> > Adds bootph-* properties to the leaf nodes to enable U-boot to
+> > utilise them.
 > 
-> > I created http://server.roeck-us.net/qemu/x86-v6.11-rc2/ with all
-> > the relevant information. Please let me know if you need anything else.
-> 
-> So I grabbed that config, stuck it in the build dir I used last time and
-> upgraded gcc-13 from 13.2 ro 13.3. But alas, my build runs successfully
-> :/
-> 
-> Is there anything else special I missed?
+> U-Boot? Let's try to pretend like this is a generic property and
+> just say "bootloader" :)
 
-run.sh is not exacrlty the same this time, different CPU model, that
-made it go.
+Yes please - respin with wording fixup.
 
-OK, lemme poke at this.
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
