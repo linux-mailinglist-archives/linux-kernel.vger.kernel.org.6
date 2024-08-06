@@ -1,161 +1,93 @@
-Return-Path: <linux-kernel+bounces-276473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E50F694943D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:11:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B103949446
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A73D728644F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:11:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 457C2288FFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93770200111;
-	Tue,  6 Aug 2024 15:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WPNAYG0Q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8C120011D;
+	Tue,  6 Aug 2024 15:13:43 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102CE1BC08F;
-	Tue,  6 Aug 2024 15:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEE11BCA09;
+	Tue,  6 Aug 2024 15:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722957104; cv=none; b=SI4CaY3+hwMGe2agu4722+uyW5LA5buuHZWOuZDEhZzSa3DN3GqUuWOLyS3CSgt7lOaKvDyo1xK/svhYWhsWjpPfE8Bwxv8+lr3kzgWuoKr4J1RkSHv7qJnY/HX5ta05HeGE8ZOf+8E8saLOZh06pI50u3dJJmKGExdq9i/89yo=
+	t=1722957223; cv=none; b=DuZlAogqptx5ZA07UdgAQEhnHxY5qm8jeWOhyLHzrt6gQWYSZ7pq2E/6cOK3WcG1kiPmpyRjT/7/n7XMbkmOQq18T369PVS5I9XZO6j60aozujNQ6Z2FJWiV7oYpnyuS5Dt4lb4BjB7S3WVqAGOU1ADJFsXu2YdOJxv8ydd4U/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722957104; c=relaxed/simple;
-	bh=7iqHXjjCeAj+TidcvK4r77b9VBp1itlsXMImcsXnbgk=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gXzhKYuWjODQLQSK3C/u1DxGJytv7j7SAPoJcG3XoWR0svAOWDK1ac+V0ThzX/Phkz5xfm6MpS7qyfLpXhyIrIJ+TekhFSD5MIwqyUFcEFuJU4/0c1EjWmM41YChJlkGLzeKkf7TeBRzWPz+3ZyMS4UH5QdCDAvONJFA+XVvT0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WPNAYG0Q; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722957103; x=1754493103;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=7iqHXjjCeAj+TidcvK4r77b9VBp1itlsXMImcsXnbgk=;
-  b=WPNAYG0QbuQkXEENa+kOmzEWj+/5MIHjnm4bSnUj63ID56/4Z9UHEN53
-   XYfS8oxpIjL2ISrxR9XeAYz1SSzqvkLriEcX/LHJ83plpOeVL/7Pa4eLZ
-   dLNjllVG5Uo+0dawVNxqISA1CAG/D/hqTm6k0WHiK0VEjUqrSiNr25Pzj
-   nLzE7YWzUG0yri7+KjLhR9lSYxpl0NNp4q9icFdXDkc3ofEBlymI9hKDe
-   x3eMnIg4YJMEE85YKiasPIcX94MGmPuhtZNE/ztUBScBjiw+TLe+mgiji
-   mFYufkHFl22DIUONGwv5O/GhRMPricceMwJhhyU5rb4fz8Nm7uQzuvC7f
-   w==;
-X-CSE-ConnectionGUID: zPChqGqET6i92bjDy63JdQ==
-X-CSE-MsgGUID: /bxfriooQ5WvIpuyb9bIwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="31650052"
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="31650052"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 08:11:42 -0700
-X-CSE-ConnectionGUID: rsCG6K4CSa+HqeDrtlkZUg==
-X-CSE-MsgGUID: 3Q9OiXZJSfCaScnoTt5eJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="60650645"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.72])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 08:11:40 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 6 Aug 2024 18:11:36 +0300 (EEST)
-To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-cc: bhelgaas@google.com, linux-pci@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: remove type return
-In-Reply-To: <20240803140443.23036-1-trintaeoitogc@gmail.com>
-Message-ID: <a7f0433d-11ab-b404-31a6-944cf9637472@linux.intel.com>
-References: <20240803140443.23036-1-trintaeoitogc@gmail.com>
+	s=arc-20240116; t=1722957223; c=relaxed/simple;
+	bh=ZTi9W6KQUxZNG8bClo476MM7Nla8g1TY3m6qhrfsvZE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rshgv2TOQglfdH+PDxCPLyAGamKJ0TBqsMm3TJ7iCsM8zE/Kn+dPWAUxDTHIbuHfpqffDWi2iLdWmJpQ8Azy/pvvOpa1tWRXtFiyrH1HZIe6mxARkZyiqeSFF+p8BD1NkTqIrppe8qSIRh9mAFdG7Hv7XG3/8Pub8yNNbtOujOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sbLsT-0005t0-N2; Tue, 06 Aug 2024 17:13:33 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linux-kernel@vger.kernel.org, zhangqing <zhangqing@rock-chips.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com,
+ Finley Xiao <finley.xiao@rock-chips.com>, YouMin Chen <cym@rock-chips.com>,
+ Liang Chen <cl@rock-chips.com>, Sugar Zhang <sugar.zhang@rock-chips.com>
+Subject: Re: [PATCH v2 3/3] clk: rockchip: Add clock controller for the RK3576
+Date: Tue, 06 Aug 2024 17:13:30 +0200
+Message-ID: <1936032.MyG8hOvIyE@diego>
+In-Reply-To: <2335430.ElGaqSPkdT@trenzalore>
+References:
+ <20240802214053.433493-1-detlev.casanova@collabora.com>
+ <a9a9219d-325c-4afa-b40c-b261ff95263c@rock-chips.com>
+ <2335430.ElGaqSPkdT@trenzalore>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Sat, 3 Aug 2024, Guilherme Giacomo Simoes wrote:
+Hi Detlev,
 
-> I can see that the function pci_hp_add_brigde have a int return propagation.
-
-typo in function name. Add parenthesis after function names like this:
-pci_hp_add_bridge()
-
-> But in the drivers that pci_hp_add_bridge is called, your return never is
-> cheked.
-
-checked.
-
-> This make me a think that the add bridge for pci hotplug drivers is not crucial
-> for functionaly and your failed only should show a message in logs.
-
-functionality
-
+Am Dienstag, 6. August 2024, 16:15:41 CEST schrieb Detlev Casanova:
+> The suggestion from Heiko was that those reset should be managed by the 
+> subsystems that use them, because they are on a different offset and therefore 
+> seem to be on a different core.
 > 
-> Then, I maked this patch for remove your return propagation for this moment.
-
-Please write the commit message using imperative tone. Don't use "I", 
-"me", "you", "your", or "we" at all.
-
-Also, you need to signoff your patches (please read 
-Documentation/process/submitting-patches.rst).
-
-The lack of return value checking seems to be on the list in
-pci_hp_add_bridge(). So perhaps the right course of action would be to 
-handle return values correctly.
-
--- 
- i.
-
-> ---
->  drivers/pci/pci.h   | 2 +-
->  drivers/pci/probe.c | 7 +++----
->  2 files changed, 4 insertions(+), 5 deletions(-)
+> But I think I will include them here like you suggested because:
+>  - That's actually how it is done for rk3588 (which is quite close th rk3576),
+>  - According to you and the TRM, those resets are on the same core, just with 
+> big offsets.
 > 
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 79c8398f3938..a35dbfd89961 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -189,7 +189,7 @@ static inline int pci_proc_detach_bus(struct pci_bus *bus) { return 0; }
->  #endif
->  
->  /* Functions for PCI Hotplug drivers to use */
-> -int pci_hp_add_bridge(struct pci_dev *dev);
-> +void pci_hp_add_bridge(struct pci_dev *dev);
->  
->  #if defined(CONFIG_SYSFS) && defined(HAVE_PCI_LEGACY)
->  void pci_create_legacy_files(struct pci_bus *bus);
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index b14b9876c030..b13c4c912eb1 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -3352,7 +3352,7 @@ void __init pci_sort_breadthfirst(void)
->  	bus_sort_breadthfirst(&pci_bus_type, &pci_sort_bf_cmp);
->  }
->  
-> -int pci_hp_add_bridge(struct pci_dev *dev)
-> +void pci_hp_add_bridge(struct pci_dev *dev)
->  {
->  	struct pci_bus *parent = dev->bus;
->  	int busnr, start = parent->busn_res.start;
-> @@ -3365,7 +3365,7 @@ int pci_hp_add_bridge(struct pci_dev *dev)
->  	}
->  	if (busnr-- > end) {
->  		pci_err(dev, "No bus number available for hot-added bridge\n");
-> -		return -1;
-> +		return;
->  	}
->  
->  	/* Scan bridges that are already configured */
-> @@ -3381,8 +3381,7 @@ int pci_hp_add_bridge(struct pci_dev *dev)
->  	pci_scan_bridge_extend(parent, dev, busnr, available_buses, 1);
->  
->  	if (!dev->subordinate)
-> -		return -1;
-> +		pci_err(dev, "No bus subordinate");
->  
-> -	return 0;
->  }
->  EXPORT_SYMBOL_GPL(pci_hp_add_bridge);
-> 
+> Having the same structure for both SoC makes sense for maintening them.
+
+Just without the big offsets between areas please.
+Similar to how rk3588 does it already.
+
+And yep most likely they are in the same block. Just that huge block of
+space for the cru somehow suggested some algamation of multiple ones,
+but looking up the rk3588, you're right that it really seems to be one block.
+
+I did request the rk3576 TRM from Rockchip - hopefully they'll follow up
+with that at some point ;-) .
+
+
+Heiko
+
+
+
 
