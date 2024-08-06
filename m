@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-276041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E13948D9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:25:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C93E1948D86
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03F62280DB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:25:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84D51284A81
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39531C2335;
-	Tue,  6 Aug 2024 11:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QhUBkTPr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE27813B2AC;
-	Tue,  6 Aug 2024 11:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C5F1C3789;
+	Tue,  6 Aug 2024 11:17:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F4D1BCA04;
+	Tue,  6 Aug 2024 11:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722943540; cv=none; b=qZ8LSZtZz0AN0Byt7FYGPKVGbjhk9Ylej34zXQnWQZPMVKvcdWs9/sAZXi9rL8E6Z7MjxMtVEh66mEJVCdscpU1Sj9ww7WdwqmOKtVjCvqYk5b9hDRnFT0dqfgRP6zzr48nkJt0RJYM0r23jUxwqkzTFQ/WXa3ejUOEg4FcWFrY=
+	t=1722943074; cv=none; b=kT2fwEUTJjMBG7G4GGTlSxPb1d3kPWjhzYSkVuNpuGmVvh28WucOwiE5+ijJkIlob3LnNVbSPo/lnkge+3ulRcdTm7VwWMzOzWancksnO4ltXjOqzJzncxn2k2dCm8N067i2FsPUxsfoNRS0yr8oxBIS719g9oU8JBtOsdq+SdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722943540; c=relaxed/simple;
-	bh=XeP8qMVW9duWHN2BUl9XidmCMVmrVkb5XZ55nX3RpWU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CGGCgP5CzpEFzlwJEOSewDyQnp90zsDZKotwUvlqKSGjoUlzgOMB7YSrbhBszdF3YS8VKueDjZsG9NNHFYKeDA6Q5xfTSlr94mKOJO6IOYk2AwJtFyZ5BUDB6AgPp0lTyGZYBOtupo+vB21cXagjxZkqXrndEAxcDqCtTjvlTms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QhUBkTPr; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722943538; x=1754479538;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=XeP8qMVW9duWHN2BUl9XidmCMVmrVkb5XZ55nX3RpWU=;
-  b=QhUBkTPrVEQaKxPIwWyQ7x1J57OSf/x5PGwWuxLAkDvqG1k04tE1u429
-   FfKzbjVLcb4B6PLFECwmTTgxvMUVc0mMWJupbCJiSltVb+npcmm/o8411
-   0nEeEOfd/x5FU5GUCIuWoTVZP5bBrk69kak17LiaW7MqSZ+rKtbIp+TZZ
-   j0nij8St+C2ccHwOmIBt2s+GFl8yeSeEvzKKU+LGmC2P69g/amIAWcjOz
-   dTGz+/QCOrJpMjEyk7V2FdcqBwfCbaTQ6qai2xFqG+gPJCmXQtIap6RHb
-   cRXRo9DXmy2jeJ6lVBA9gMsSlToUzr+UrPNiM9pxLGX7uHUSXsX2wKS2o
-   Q==;
-X-CSE-ConnectionGUID: Z8IjaQKDQuG2g1BQXJI6jA==
-X-CSE-MsgGUID: cKtBJhieRweIqUfqILNsbw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="20804834"
-X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
-   d="scan'208";a="20804834"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 04:25:37 -0700
-X-CSE-ConnectionGUID: uVVs95WMQuuVeX2XlWhaPA==
-X-CSE-MsgGUID: 4wC1AypiTUqIxnJYqoPfTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
-   d="scan'208";a="56399162"
-Received: from hrotuna-mobl2.ger.corp.intel.com (HELO [10.245.246.248]) ([10.245.246.248])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 04:25:34 -0700
-Message-ID: <e89a56bf-c377-43d8-bba8-6a09e571ed64@linux.intel.com>
-Date: Tue, 6 Aug 2024 13:16:38 +0200
+	s=arc-20240116; t=1722943074; c=relaxed/simple;
+	bh=/NA0QSHaLm4VQwkETTIB9yAdEGKXOx+9QzY4eD4/fKA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sxA8lvwYjIsZPaHD0eYH5Soqqbt+K0w3sZfvfMbOYjGNhKVqCN3G3TgJ6GVVetxF1JVx7h3TLLEZ/SmHYZgzN4NdQeD7ZyXh2tyqbRw/jDP5TJOQWMRP8aNa/sxG7ayuQUNQAeGIVuIyZtE4IF8Vl5oXbu8adQDuIlPqC5110Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65557367;
+	Tue,  6 Aug 2024 04:18:17 -0700 (PDT)
+Received: from [10.1.31.182] (unknown [10.1.31.182])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ED8603F766;
+	Tue,  6 Aug 2024 04:17:48 -0700 (PDT)
+Message-ID: <74536df6-98c7-43ac-9ae6-8106eea123ec@arm.com>
+Date: Tue, 6 Aug 2024 12:17:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,100 +41,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/6] ALSA: compress: add Sample Rate Converter codec
- support
-To: Shengjiu Wang <shengjiu.wang@nxp.com>, vkoul@kernel.org, perex@perex.cz,
- tiwai@suse.com, alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com,
- festevam@gmail.com, nicoleotsuka@gmail.com, lgirdwood@gmail.com,
- broonie@kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <1722940003-20126-1-git-send-email-shengjiu.wang@nxp.com>
- <1722940003-20126-2-git-send-email-shengjiu.wang@nxp.com>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <1722940003-20126-2-git-send-email-shengjiu.wang@nxp.com>
+Subject: Re: [PATCH v1 07/11] mm/huge_memory: convert split_huge_pages_pid()
+ from follow_page() to folio_walk
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>, Heiko Carstens
+ <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Mark Brown <broonie@kernel.org>
+References: <20240802155524.517137-1-david@redhat.com>
+ <20240802155524.517137-8-david@redhat.com>
+ <e1d44e36-06e4-4d1c-8daf-315d149ea1b3@arm.com>
+ <ac97ccdc-ee1e-4f07-8902-6360de80c2a0@redhat.com>
+ <a5f059a0-32d6-453e-9d18-1f3bfec3a762@redhat.com>
+ <c75d1c6c-8ea6-424f-853c-1ccda6c77ba2@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <c75d1c6c-8ea6-424f-853c-1ccda6c77ba2@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 8/6/24 12:26, Shengjiu Wang wrote:
-> Add Sample Rate Converter(SRC) codec support, define the output
-> format and rate for SRC.
+>>>> It's trying to split some pmd-mapped THPs then checking and finding that
+>>>> they are not split. The split is requested via
+>>>> /sys/kernel/debug/split_huge_pages, which I believe ends up in this function
+>>>> you are modifying here. Although I'll admit that looking at the change,
+>>>> there is nothing obviously wrong! Any ideas?
+>>>
+>>> Nothing jumps at me as well. Let me fire up the debugger :)
+>>
+>> Ah, very likely the can_split_folio() check expects a raised refcount
+>> already.
 > 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
->  include/uapi/sound/compress_offload.h | 2 ++
->  include/uapi/sound/compress_params.h  | 9 ++++++++-
->  2 files changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/uapi/sound/compress_offload.h b/include/uapi/sound/compress_offload.h
-> index 98772b0cbcb7..8b2b72f94e26 100644
-> --- a/include/uapi/sound/compress_offload.h
-> +++ b/include/uapi/sound/compress_offload.h
-> @@ -112,10 +112,12 @@ struct snd_compr_codec_caps {
->   * end of the track
->   * @SNDRV_COMPRESS_ENCODER_DELAY: no of samples inserted by the encoder at the
->   * beginning of the track
-> + * @SNDRV_COMPRESS_SRC_RATIO_MOD: Resampling Ratio Modifier for sample rate converter
->   */
->  enum sndrv_compress_encoder {
->  	SNDRV_COMPRESS_ENCODER_PADDING = 1,
->  	SNDRV_COMPRESS_ENCODER_DELAY = 2,
-> +	SNDRV_COMPRESS_SRC_RATIO_MOD = 3,
->  };
+> Indeed, the following does the trick! Thanks Ryan, I could have sworn
+> I ran that selftest as well.
 
-this sounds wrong to me. The sample rate converter is not an "encoder",
-and the properties for padding/delay are totally specific to an encoder
-function.
-
-The other point is that I am not sure how standard this ratio_mod
-parameter is. This could be totally specific to a specific
-implementation, and another ASRC might have different parameters.
-
->  
->  /**
-> diff --git a/include/uapi/sound/compress_params.h b/include/uapi/sound/compress_params.h
-> index ddc77322d571..0843773ea6b4 100644
-> --- a/include/uapi/sound/compress_params.h
-> +++ b/include/uapi/sound/compress_params.h
-> @@ -43,7 +43,8 @@
->  #define SND_AUDIOCODEC_BESPOKE               ((__u32) 0x0000000E)
->  #define SND_AUDIOCODEC_ALAC                  ((__u32) 0x0000000F)
->  #define SND_AUDIOCODEC_APE                   ((__u32) 0x00000010)
-> -#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_APE
-> +#define SND_AUDIOCODEC_SRC                   ((__u32) 0x00000011)
-> +#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_SRC
-
-I am not sure this is wise to change such definitions?
->  
->  /*
->   * Profile and modes are listed with bit masks. This allows for a
-> @@ -324,6 +325,11 @@ struct snd_dec_ape {
->  	__u32 seek_table_present;
->  } __attribute__((packed, aligned(4)));
->  
-> +struct snd_dec_src {
-> +	__u32 format_out;
-> +	__u32 rate_out;
-> +} __attribute__((packed, aligned(4)));
-
-Again I am not sure how standard those parameters are, and even if they
-were if their representation is reusable.
-
-And the compressed API has a good split between encoders and decoders, I
-am not sure how an SRC can be classified as either.
-
->  union snd_codec_options {
->  	struct snd_enc_wma wma;
->  	struct snd_enc_vorbis vorbis;
-> @@ -334,6 +340,7 @@ union snd_codec_options {
->  	struct snd_dec_wma wma_d;
->  	struct snd_dec_alac alac_d;
->  	struct snd_dec_ape ape_d;
-> +	struct snd_dec_src src;
->  } __attribute__((packed, aligned(4)));
->  
->  /** struct snd_codec_desc - description of codec capabilities
+Ahha! Thanks for sorting so quickly!
 
 
