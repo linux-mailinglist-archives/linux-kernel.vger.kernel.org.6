@@ -1,276 +1,225 @@
-Return-Path: <linux-kernel+bounces-275932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD88948C22
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:24:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2897F948C23
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2E2E1F24E63
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:24:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C3961C21DB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A391BC083;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E391BDABE;
 	Tue,  6 Aug 2024 09:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lTixvis9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="UnPsvDnv"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D56C1BDAA0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526C4161900;
 	Tue,  6 Aug 2024 09:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722936245; cv=fail; b=aDM75e8WprSdmwVqYcn87NhanNOZDHa37vOq4p/0cXQb3fik5uN13ntsBpzbV2qXLgc3RQSi23fV+Z7A7nzoST5iFRbQzbtu9YMKjk0lpQdPH/QePlqkaqjAP3wsBHiazjlUbareEUYCDgXRvm8wWAy/F1zUl60nqJWPZkP+Noc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722936245; cv=none; b=Ek0sQmYX6ol8pC6KwuLdCMfkvdSBmaqEmwXo6vFKrB42QrCtXTvk2yd1QCXspqjr0XJnN03WRb4uliKvwKTuzg6s7EGZLSV0LDGNV95OXaHBu8ow/OjgHaz2JjKGSiQ5ElsbfT3f4LeOAeHJGOEcCDwRTO8d2yJF2UdbsEejzMg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722936245; c=relaxed/simple;
-	bh=zcMiJSY3LofeRSh+fbVNTpX7F5qR5Hf57lWi74x7KTw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=e5Iz7BqPCzoyoRqsEemQJwWA2LBPFwHERRDiNm4Lp6VuuYiviGZa93XOSSdyOWi/oaO0GIs8YGulHbvXP4bvLxq1cZPkOxxLcPGLpJQUNZRTPC66Rd0YMuXH5ufw73Aixn9M7na4czI7UhGUnkFuFE8gUanWCPjF8fOvsOKoJIQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lTixvis9; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722936243; x=1754472243;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=zcMiJSY3LofeRSh+fbVNTpX7F5qR5Hf57lWi74x7KTw=;
-  b=lTixvis9YJcSWKXIkHBNJGdu7DuNfADHF21inufOifNaIgjef1mb1Y5m
-   zDa8aJXMdH1ELj4nQCMvlOQkX8F3uHyJqDEbBFTsrjqfLgNNTkDBQfPmA
-   Sqf9apC6ihQst9MPWSkmW348AQwssrhgu3Yjs1iy21zKQ+EtVVpwqNOJ6
-   RHzydKOD6a00gYkrHPs58NU1aPVTCvEd7AGqyNff83oSQQKmDFeS6ONg2
-   9lBcxkM+9CjZRLGUhgaZtwnBSSYtmw9zHY8Fw1i7jNDZE0nEoIx0jEREi
-   LoqqdQSW1O+InMKzKTl9/WK60RK1M4HVddoxNk99XC3bGqKlfr/qkn2xq
-   A==;
-X-CSE-ConnectionGUID: IJ9J5Xm4RKWWdUKAaGfY9g==
-X-CSE-MsgGUID: RsioQtnIQnqybPWrQD4EjQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="24804490"
-X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
-   d="scan'208";a="24804490"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 02:24:02 -0700
-X-CSE-ConnectionGUID: tPmp0XXUSrCyhbWoh7Pz5Q==
-X-CSE-MsgGUID: NgYuYPyGT0GnDpeFeC2ADA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
-   d="scan'208";a="56394576"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Aug 2024 02:24:02 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 6 Aug 2024 02:24:01 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 6 Aug 2024 02:24:01 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 6 Aug 2024 02:24:01 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 6 Aug 2024 02:24:01 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IZRIFIxNp+K3sp9fQivRdvG8K/vmfx0AgRaZ+gj3cOheVQnRike0RkXEMwbXcn4wJ1XLM/Ie3oEkkHO7Z9EI2ZWggPOs/S/j64YvrAYYgcZdCv3+al8V6ceTxR6iNK+s4l2Xsa3a/4K+vCmSYgrmgJQPcnY4gAUWewpkCIv3DvC6aq5q2uCqOdGS1a2X/fVTsX3GaPmNP3uoG1fcTm2NTEAHxRob9GFV4tZIJotfG78zrZT09/31D/8NPZIUzgiaxjHLKjduoKOlJi89cpJLFN+o9DqYtUlV1Onuajc4+BDDEOS3AZvSyjb1iXzfqKijQQrTRp0fjhF/P0Uq+Yxsog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=j4YngrO/ie+momr1mtK1eZHFOBeLltyFaAyqihqLPRQ=;
- b=JSCArwNtpqDj3t1vV+WCH6YnQ0TLhxpfTzxuILazpw5zh6iEPtYAKfNPtGBDXs4blVQGWEKXuyXWny9TQBPWDzpY0ETyhvBpUDxQTRql9zcd4OT0jiqrpQ/ARjH5a+8fcMuCnXlQg1vBzHeU7eRlv1uFCzv1IlS3DTh5vpRtmKWH6Kd+5bUq3ZqcKzLNpRgD/si4yYMZO6+CvPcjklTknPjJNq+9v2KKkDTWc9SwyZmfsrNLgCoC3guz/OKEMGCsF/Unp1HOencGxtoKdBWD02ngLc47smEaZqwbHZHGaaj3sM7VcZB7h53NSh3oUdfrnEuNcfBZaxSmNm7qG/Rgyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB5423.namprd11.prod.outlook.com (2603:10b6:5:39b::20)
- by PH7PR11MB6425.namprd11.prod.outlook.com (2603:10b6:510:1f7::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Tue, 6 Aug
- 2024 09:23:58 +0000
-Received: from DM4PR11MB5423.namprd11.prod.outlook.com
- ([fe80::dffa:e0c8:dbf1:c82e]) by DM4PR11MB5423.namprd11.prod.outlook.com
- ([fe80::dffa:e0c8:dbf1:c82e%5]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
- 09:23:58 +0000
-Date: Tue, 6 Aug 2024 17:23:43 +0800
-From: Philip Li <philip.li@intel.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-CC: kernel test robot <lkp@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Joern Engel <joern@lazybastard.org>, Keith Busch <kbusch@kernel.org>, "Jens
- Axboe" <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg
-	<sagi@grimberg.me>, Wolfram Sang <wsa-dev@sang-engineering.com>, "Florian
- Fainelli" <f.fainelli@gmail.com>, Thomas Bogendoerfer
-	<tsbogend@alpha.franken.de>, <linux-mmc@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mtd@lists.infradead.org>, <linux-nvme@lists.infradead.org>,
-	<oe-kbuild-all@lists.linux.dev>
-Subject: Re: [PATCH v2 6/6] mtd: parser: add support for Airoha parser
-Message-ID: <ZrHrn9NzeOhp+Sdl@rli9-mobl>
-References: <20240804174414.18171-7-ansuelsmth@gmail.com>
- <202408050612.Ya1m6REu-lkp@intel.com>
- <66b0b109.050a0220.93681.d015@mx.google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <66b0b109.050a0220.93681.d015@mx.google.com>
-X-ClientProxiedBy: SG2PR04CA0168.apcprd04.prod.outlook.com (2603:1096:4::30)
- To DM4PR11MB5423.namprd11.prod.outlook.com (2603:10b6:5:39b::20)
+	bh=6QihisEp0mn1uvvvE4Jqxxv+CSMqCfke8XvcUnoWJ+k=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BH2YLH6msRAnjwOSTCIQybffYGLDtJmbKUV0x4iZO2xbgxfsdsfe/wak3CEagrKt8OLum6k4nW2dmsAFyC9XWovXZBXx+V4y7KQRh/si9UMUL5HrmsS3CVtkKl/6xdwQ06GiQY7o9GcVKfd8CxBkmR77LHfc0JzkeIwQlrTsbC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=UnPsvDnv; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722936240; x=1723195440;
+	bh=o80ArRjJ4S+NSkA8kokhob7C7RE9JLax11CpmI/aPAI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=UnPsvDnvhAEAhk9KdeXay7NGZvPclwwcrvF0VQeX8P6gIlj11NKXx/7APmfZMbVeA
+	 XhPMm2hqgmzLZASJp4fNaeaCbonhQuOeA4U+P/gYODTJDdzg2TUX+XM8kk8ge68a5Q
+	 oZ0m5ER9iXgTR8xfGo6dzUN1Og0kqSodT8qe7VsohjNeXChjf1Gz34F9QE/PkEUFTv
+	 lFwSbmR3F0yznx1RNlqleEAPprKJcnKTolivRacMsSeXtgaFtW1Qo8sMsjqxmjpRzV
+	 ZoLX7cG4pg2DLM1z30GRx/DkrhzDWWdfyunoJPKelhHQL90ZI6JQ0OoTWGp/dTQmV5
+	 5qCmv237QtiMw==
+Date: Tue, 06 Aug 2024 09:23:55 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Matt Gilbride <mattgilbride@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>, Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 4/6] rust: rbtree: add mutable iterator
+Message-ID: <2617ec4a-6413-4341-b4fe-c30c1b14432e@proton.me>
+In-Reply-To: <CAH5fLghJmA_01QJvzSBX4HEfLwPr+FskM9dzOs0ykbYj_sCWTg@mail.gmail.com>
+References: <20240727-b4-rbtree-v8-0-951600ada434@google.com> <20240727-b4-rbtree-v8-4-951600ada434@google.com> <27f724ba-4f04-407b-9f5d-81a472f8ba14@proton.me> <CAH5fLghJmA_01QJvzSBX4HEfLwPr+FskM9dzOs0ykbYj_sCWTg@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 03925b95f4e0101d5cdd57dfd80d4da26e3ebc5e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB5423:EE_|PH7PR11MB6425:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2d420c8-411f-450f-7a99-08dcb5f9805a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Jzyyp7gTaT3aB+la4mG/9m15tLlGBBHKgdGii3IFm+/D5N2TLFtniRb/8DWJ?=
- =?us-ascii?Q?2UNcLRhuKcBuWsCg9FI3l2LD4Fb2BrtlFqfW9v2u1bI93++AwxHA7mK1zUik?=
- =?us-ascii?Q?OKBvQwAJzgTKEBL5XUtQyYTUjAorpyg/nzNWzQJhix7Vo6cGW+DwCSsTwuMY?=
- =?us-ascii?Q?FntftSDcxtwzeBgyXdr/8QcC1a1SlILGtogvfP2oMp86wRrrtWeurxlGb3Fa?=
- =?us-ascii?Q?6DIvD+mIEihZ71rXi4VEKGhbfgwb/f5cCJUBwfTcS5kCwdlDEhDdOLN78H9h?=
- =?us-ascii?Q?BbRnR9LeOpigKBhfIMz8IuoBLmGCMawkgr4FNZiQI0pw5v39Fx121iiLE7m9?=
- =?us-ascii?Q?N+4AeBxvlOihExKUInHxkP1xL7BGZl1t2I1UEJyUyVqdASmqFFXVnPTY+Zt3?=
- =?us-ascii?Q?5Kcj7pfBC8qhcjxvAcn6LYevrh+mcFyPQFYUpZ53qA5xA6ZUbOk0zAUoCWto?=
- =?us-ascii?Q?amai+gukVhEdzWdNZDYgQk/KMGpaC/SR7QZsyhjp8ov3oYb88SQm6EG9RJ1Q?=
- =?us-ascii?Q?YcI4sHoZMF426okbfZSmw9TTXrusHpsNELnu9H/NSS0GKb7dkG4uTgKncRQS?=
- =?us-ascii?Q?CSX5YZCuQiZVegaLVib2pt2oVxDX7aev6OCD1jcdCQR0Qp6YS8zeiJnMWsTK?=
- =?us-ascii?Q?tHINkcQ6bapPFgU6NMLSv0AQVRs7ejpWYg6avSWPJcEr+Bxz/caHuEX1oipy?=
- =?us-ascii?Q?KIhzsFqyGX1lJ7WlZVR+7vsx++hJ0ZA8UoUOtHwz5GkwoqVU6rKyRhUq5SWP?=
- =?us-ascii?Q?HPS22WswK/SpCcQ2jxaTUckm8TGUdi/S+qS/39p3JR+bQKDqqney3dXG8g+w?=
- =?us-ascii?Q?jYkUmMfbqG5RXa/EIoouXIv8a3TRXDw6ZcpZPeLD1NjTzgcNGyEg73tcHE5j?=
- =?us-ascii?Q?y+KA0i9bHudnFNNUFm9RF/+K0RPq8f80quLAG3iO04M5AdzS590bnFajUb3x?=
- =?us-ascii?Q?wSdoMbIwRNINisi9/OzZxtAX2wuf1vAmjXBeCkGBT9AJ3XzGLKE3kky2AoKT?=
- =?us-ascii?Q?bPaugrvs15bOfHoMHNt9oSr3I2abmc8mgEiiz3b3WfQ8zwlw328YMOrkz7hT?=
- =?us-ascii?Q?FBN7hdbk8UrfBafk25KCkLz/Ay3Hn8dH/d2KzxaqDralP9mNtx0pk54hI/uE?=
- =?us-ascii?Q?FZmeQpSZd86ZQxDyLICx3HT2RR2vTo9OfKWpHg+jqezEC1dJF6Y9XevCoS/w?=
- =?us-ascii?Q?oH44UFD0AMGEnh9eOezsYvL4MseaAdWaCkC7c9CY/ZbHHAgCgWI6o6zNCgdY?=
- =?us-ascii?Q?gEVlF9XBRIfkzBgNBecwu9l0qzpanHzZvEg0gfrI2G/W0+yQjopU3uXX0s1C?=
- =?us-ascii?Q?f/nQrXpfmiZ7nKmEiEafiC8x?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5423.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?JMHHKJor+0bgFFsTR5gpmDeuVYkSvj8gAqUrpndUVz1sCJ4ExYzBlv5e2zo0?=
- =?us-ascii?Q?zZ0EV5XUb8L8aRtx5JHJTNSGcpJ9KB2FTkzz72by2dY5IZM1oqIz0t2o2pB+?=
- =?us-ascii?Q?q8f5xTLR2FsfMPaNGlPH+UcaqjT+PH2Mmbf34GirmVxYOr8meL+fSqcrS7M1?=
- =?us-ascii?Q?sDi3Q5Lfh+BC5TF1LewUPD9DXqlHAWfOAbnApT5JldeRqbqCjzViu8iI/eod?=
- =?us-ascii?Q?ntXnSEPcNHsYKP9oSuj/bd9nb1t9zIw8jbvzzlQJLujoSXnkTy0R5Ldt387A?=
- =?us-ascii?Q?PO+6SaN0cHbB+r6cGBdB/u3DGzQ/EkhNwGfK+cQEoa/ghOagkWsasVx9gblT?=
- =?us-ascii?Q?BrZiGbrwL6JarfYSoXTv4V7cTbhSOr5WSUTVP9Cg2pq1rKfpOT1EiUXmvpVZ?=
- =?us-ascii?Q?bApfNfOEYoUnYt0nYoID0uev9eRbaRDjqDNx6G42NW7YBHoLLPMXDyx62Liq?=
- =?us-ascii?Q?VTakSTOG/Rwk+ixvq6S+Ifc8N/44pBXc0F2KwBTKVbtZcskaCZwIs9v3eptG?=
- =?us-ascii?Q?gf2MfoAhf8Bma/ptIhMyqzc3MzWDxGy7+xrXc1E5b4FTMdxkT7/843MZaoAv?=
- =?us-ascii?Q?wWX5gSs9ruyz9w8c53YXnza33IG4VD9w03IcpYL4rTbssQj/aPrfmYaIwktH?=
- =?us-ascii?Q?pE2049s6KqHi6LDIgULT6gbIynEedaaZQl0xVeWyoZscQMtc2/HQ85zx//It?=
- =?us-ascii?Q?OcCDlIjNYv4JR5l+J01T8lEK5f+cYbAQZxHY2FEqqhqIwut+Ts6FOTlHv6Th?=
- =?us-ascii?Q?c78grABoBFBbGMQSRc5hSCg7PAj4RScxHECK1zSAZA6pqgBNBA5O94Dm3xQ3?=
- =?us-ascii?Q?y/tTgK1ixdRdhTaQ5PrNUu6+xvYpYnzk12KhwXEHMn+9NP634tCmf94xuCse?=
- =?us-ascii?Q?MSCOgB8gZizRHaFbKisdm4K9j57R0eJlRq2pyYT05lorS7Nf9cprFeqFghCy?=
- =?us-ascii?Q?MNt5BBfY+gsIZiB4wJ87q11jUH+XrpsPDkXyl+1Ek9BUGhxdm9ciBWI0spL6?=
- =?us-ascii?Q?RPlSKpAEPR6S3RBKDXT/mUjTWq43arUuRkC6GupduTj7W+aS5wcP8Ghkcxce?=
- =?us-ascii?Q?lw4UPEpuEFvtntfOT/L608kyiTGGAXllQL3A/fL5cNiXEiGTeeyJFRDetCUU?=
- =?us-ascii?Q?Pb/7cIpmnFZ7Piu5JDQAGzpg9o+mohJQ0/uSPulbG3h5ZFI3GUF1wKbqKjYJ?=
- =?us-ascii?Q?pYlCQckNjKowbHLsnIrysZu3cNOWrSIEhWLqn+/Qmasf7xxLAy0E7XzhhGEL?=
- =?us-ascii?Q?nXaoXiWl/poKpKA8QrRRzIJ8Fdxcwrqub2sjg2rGqLnuTBAcOx2v7AVRMnwV?=
- =?us-ascii?Q?lSlf2b/r9Zqq77VNEqkagfbLZjpeVd3ePLy3U8c9H/MEMgnAYYT0lb3XxSLI?=
- =?us-ascii?Q?6UbqpWAe48+spUAwv2pZOf+MisHRoXC9538PLwLMjkMbqezkxZ7uuJZdBwej?=
- =?us-ascii?Q?FxmYd8LnIvwAkQNEBSwPoAuJ3ZgPL6sYWkpjlIVapULKeN13gxYCtV5sMXeF?=
- =?us-ascii?Q?wIl1wQTcbaUijUDcs+b8Al+VU+9kMfb9EVrF+L+b+BgzJjZQHQKp0j77gzJv?=
- =?us-ascii?Q?niIbN1SgmZNQC3OvbzaodoC1KR9A7vXr5ppus21L?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2d420c8-411f-450f-7a99-08dcb5f9805a
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5423.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 09:23:58.7640
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZGCROC1TLXFXfdLFjHh6Rakgh/LRTWfRhJN2fyCpbfZj4+QRctw4SyQJ0M+RbwJcIURXlMV5vfjdkP6C2m7Z9Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6425
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 05, 2024 at 04:54:45AM +0200, Christian Marangi wrote:
-> On Mon, Aug 05, 2024 at 06:52:04AM +0800, kernel test robot wrote:
-> > Hi Christian,
-> > 
-> > kernel test robot noticed the following build errors:
-> > 
-> > [auto build test ERROR on robh/for-next]
-> > [also build test ERROR on linus/master v6.11-rc1 next-20240802]
-> > [cannot apply to mtd/mtd/next mtd/mtd/fixes]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > 
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-nvme-Document-nvme-card-compatible/20240805-014740
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-> > patch link:    https://lore.kernel.org/r/20240804174414.18171-7-ansuelsmth%40gmail.com
-> > patch subject: [PATCH v2 6/6] mtd: parser: add support for Airoha parser
-> > config: xtensa-allyesconfig (https://download.01.org/0day-ci/archive/20240805/202408050612.Ya1m6REu-lkp@intel.com/config)
-> > compiler: xtensa-linux-gcc (GCC) 14.1.0
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240805/202408050612.Ya1m6REu-lkp@intel.com/reproduce)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202408050612.Ya1m6REu-lkp@intel.com/
-> > 
-> > All errors (new ones prefixed by >>):
-> > 
-> >    drivers/mtd/parsers/ofpart_airoha.c: In function 'airoha_partitions_post_parse':
-> >    drivers/mtd/parsers/ofpart_airoha.c:33:16: error: implicit declaration of function 'kzalloc' [-Wimplicit-function-declaration]
-> >       33 |         prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-> >          |                ^~~~~~~
-> > >> drivers/mtd/parsers/ofpart_airoha.c:33:14: error: assignment to 'struct property *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-> >       33 |         prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-> >          |              ^
-> > 
-> > 
-> > vim +33 drivers/mtd/parsers/ofpart_airoha.c
-> > 
-> >     10	
-> >     11	int airoha_partitions_post_parse(struct mtd_info *mtd,
-> >     12					 struct mtd_partition *parts,
-> >     13					 int nr_parts)
-> >     14	{
-> >     15		struct mtd_partition *part;
-> >     16		int len, a_cells, s_cells;
-> >     17		struct device_node *pp;
-> >     18		struct property *prop;
-> >     19		const __be32 *reg;
-> >     20		__be32 *new_reg;
-> >     21	
-> >     22		part = &parts[nr_parts - 1];
-> >     23		pp = part->of_node;
-> >     24	
-> >     25		/* Skip if ART partition have a valid offset instead of a dynamic one */
-> >     26		if (!of_device_is_compatible(pp, "airoha,dynamic-art"))
-> >     27			return 0;
-> >     28	
-> >     29		/* ART partition is set at the end of flash - size */
-> >     30		part->offset = mtd->size - part->size;
-> >     31	
-> >     32		/* Update the offset with the new calculate value in DT */
-> >   > 33		prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-> > 
-> > -- 
-> > 0-DAY CI Kernel Test Service
-> > https://github.com/intel/lkp-tests/wiki
-> 
-> Mhhh somehow I can't repro this with instructions?
+On 06.08.24 10:30, Alice Ryhl wrote:
+> On Mon, Aug 5, 2024 at 9:22=E2=80=AFPM Benno Lossin <benno.lossin@proton.=
+me> wrote:
+>>
+>> On 27.07.24 22:30, Matt Gilbride wrote:
+>>> From: Wedson Almeida Filho <wedsonaf@gmail.com>
+>>>
+>>> Add mutable Iterator implementation for `RBTree`,
+>>> allowing iteration over (key, value) pairs in key order. Only values ar=
+e
+>>> mutable, as mutating keys implies modifying a node's position in the tr=
+ee.
+>>>
+>>> Mutable iteration is used by the binder driver during shutdown to
+>>> clean up the tree maintained by the "range allocator" [1].
+>>>
+>>> Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-6-=
+08ba9197f637@google.com/ [1]
+>>> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+>>> Signed-off-by: Matt Gilbride <mattgilbride@google.com>
+>>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>>> Tested-by: Alice Ryhl <aliceryhl@google.com>
+>>> ---
+>>>  rust/kernel/rbtree.rs | 98 +++++++++++++++++++++++++++++++++++++++++++=
++-------
+>>>  1 file changed, 86 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
+>>> index d10074e4ac58..d7514ebadfa8 100644
+>>> --- a/rust/kernel/rbtree.rs
+>>> +++ b/rust/kernel/rbtree.rs
+>>> @@ -197,8 +197,26 @@ pub fn iter(&self) -> Iter<'_, K, V> {
+>>>          // INVARIANT: `bindings::rb_first` returns a valid pointer to =
+a tree node given a valid pointer to a tree root.
+>>
+>> This INVARIANT is out of place, `Iter` doesn't have any INVARIANT any
+>> more.
+>=20
+> We can delete it.
+>=20
+>>>          Iter {
+>>>              _tree: PhantomData,
+>>> -            // SAFETY: `self.root` is a valid pointer to the tree root=
+.
+>>> -            next: unsafe { bindings::rb_first(&self.root) },
+>>> +            iter_raw: IterRaw {
+>>
+>> This `IterRaw` construction is missing an INVARIANT comment. I think you
+>> can copy paste from below.
+>=20
+> We can copy from below.
+>=20
+>>> +                // SAFETY: by the invariants, all pointers are valid.
+>>> +                next: unsafe { bindings::rb_first(&self.root) },
+>>> +                _phantom: PhantomData,
+>>> +            },
+>>> +        }
+>>> +    }
+>>> +
+>>> +    /// Returns a mutable iterator over the tree nodes, sorted by key.
+>>> +    pub fn iter_mut(&mut self) -> IterMut<'_, K, V> {
+>>> +        IterMut {
+>>> +            _tree: PhantomData,
+>>> +            // INVARIANT:
+>>> +            //   - `self.root` is a valid pointer to a tree root.
+>>> +            //   - `bindings::rb_first` produces a valid pointer to a =
+node given `root` is valid.
+>>> +            iter_raw: IterRaw {
+>>> +                // SAFETY: by the invariants, all pointers are valid.
+>>> +                next: unsafe { bindings::rb_first(&self.root) },
+>>
+>> Does this really derive a mutable reference? Ie shouldn't this be:?
+>>
+>>     next: unsafe { bindings::rb_first(&mut self.root) },
+>=20
+> Let's change this to:
+>=20
+> next: unsafe { bindings::rb_first(ptr::from_mut(&mut self.root)) }
+>=20
+> This way, the pointer will be derived from a mutable reference even if
+> it becomes a `*const` through intermediate operations.
 
-Hi Ansuel, would you mind sharing the steps of reproduce? I can reproduce this with steps
-described in the repro link [1]
+SGTM
 
-[1] https://download.01.org/0day-ci/archive/20240805/202408050612.Ya1m6REu-lkp@intel.com/reproduce
+>=20
+>=20
+>>> +                _phantom: PhantomData,
+>>> +            },
+>>>          }
+>>>      }
+>>>
+>>> @@ -211,6 +229,11 @@ pub fn keys(&self) -> impl Iterator<Item =3D &'_ K=
+> {
+>>>      pub fn values(&self) -> impl Iterator<Item =3D &'_ V> {
+>>>          self.iter().map(|(_, v)| v)
+>>>      }
+>>> +
+>>> +    /// Returns a mutable iterator over the values of the nodes in the=
+ tree, sorted by key.
+>>> +    pub fn values_mut(&mut self) -> impl Iterator<Item =3D &'_ mut V> =
+{
+>>> +        self.iter_mut().map(|(_, v)| v)
+>>> +    }
+>>>  }
+>>>
+>>>  impl<K, V> RBTree<K, V>
+>>> @@ -414,13 +437,9 @@ fn into_iter(self) -> Self::IntoIter {
+>>>  /// An iterator over the nodes of a [`RBTree`].
+>>>  ///
+>>>  /// Instances are created by calling [`RBTree::iter`].
+>>> -///
+>>> -/// # Invariants
+>>> -/// - `self.next` is a valid pointer.
+>>> -/// - `self.next` points to a node stored inside of a valid `RBTree`.
+>>>  pub struct Iter<'a, K, V> {
+>>>      _tree: PhantomData<&'a RBTree<K, V>>,
+>>> -    next: *mut bindings::rb_node,
+>>> +    iter_raw: IterRaw<K, V>,
+>>>  }
+>>>
+>>>  // SAFETY: The [`Iter`] gives out immutable references to K and V, so =
+it has the same
+>>> @@ -434,21 +453,76 @@ unsafe impl<'a, K: Sync, V: Sync> Sync for Iter<'=
+a, K, V> {}
+>>>  impl<'a, K, V> Iterator for Iter<'a, K, V> {
+>>>      type Item =3D (&'a K, &'a V);
+>>>
+>>> +    fn next(&mut self) -> Option<Self::Item> {
+>>> +        self.iter_raw.next().map(|(k, v)|
+>>> +            // SAFETY: Due to `self._tree`, `k` and `v` are valid for =
+the lifetime of `'a`.
+>>> +            unsafe { (&*k, &*v) })
+>>
+>> I don't really like the formatting here, can you move the SAFETY one
+>> line upwards? It should format nicely then.
+>=20
+> You suggested exactly the reverse formatting change on RBTreeCursor?
 
-> -- 
-> 	Ansuel
-> 
+Do you mean on this version or in a previous one? If you mean in this
+one, then I would argue that they are not "reverses" of each other. For
+this instance I would prefer
+
+        // SAFETY: Due to `self._tree`, `k` and `v` are valid for the lifet=
+ime of `'a`.
+        self.iter_raw.next().map(|(k, v)| unsafe { (&*k, &*v) })
+
+or
+
+        self.iter_raw.next().map(|(k, v)| {
+            // SAFETY: Due to `self._tree`, `k` and `v` are valid for the l=
+ifetime of `'a`.
+            unsafe { (&*k, &*v) }
+        })
+
+I hope that this seems consistent, my motivation behind the suggestions=20
+are that I don't like the comment splitting the single line.
+
+---
+Cheers,
+Benno
+
 
