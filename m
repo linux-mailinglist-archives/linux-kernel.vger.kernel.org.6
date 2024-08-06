@@ -1,187 +1,293 @@
-Return-Path: <linux-kernel+bounces-276200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A557948FE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:02:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72556948FE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7DB1C221A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:02:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9AE11F24F9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CC61C5785;
-	Tue,  6 Aug 2024 13:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4300E1C57B5;
+	Tue,  6 Aug 2024 13:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fqKbUsiO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bgQphaFS"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF51F1BF311
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5344B1C3F3A
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722949328; cv=none; b=tqskRBrvTk6M0tzT7DuSPYJJX915rHewB/bbRhm1pyc3rbY14W3E4Qbu4phW8OlmlV2KWsWMrWcOLdnDk6LlZ+VEtBkcSNU+SUGOLXBUb3KNEsBBm6bsdE5vRdiGW8jMksXVcljzQaCLr7gz0Cb7ljWbtN1DsCz9ohlff2BxYo8=
+	t=1722949348; cv=none; b=fJZH66OnZyzdJbTi5fjFZpNYXKWFq5rWBB3Cord+PyB57HRd4XwT7U369wW/q7idrWqkMP1u3pNrpHo0T7p2NzZG1qzfi6UhoUjHbYs4s/bmV1UFRS5dS0yjETQ1Q/OgM31t6M8/dyQNzUk4db0GuQiOwecpwJRTkTqXPBJ//u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722949328; c=relaxed/simple;
-	bh=0IFhwUzKw1+XIVn2krwoHTO54VDP4V4ipVQKuqt24Bk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ryvaVMr6myLnCd6ymvrseYC0kSv9Kfm1/lRdd60N2HUcmN8HCoL8nwFPQqo8DzLOn8QNq+R4Mx/UInxmoMjsb3bmK2BhQNkGMsyrJoKULKOc9iyDeks+McZ+v956IoXAQScct4nYKIZJrVyJxCNBwQCOhGJyWpoHkqtnYalx65c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fqKbUsiO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722949326;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8bydtEU8dpvIeQ2V0I0gbNTbGq+ZFreMIhNnwB6nrP8=;
-	b=fqKbUsiOG0UsT9avSyTEBG1SwvG606UUKcyCmZUeKtPynfnE0z19MquAN0fi3024o7HhkK
-	tSzw5222DQ4hbmRDZKqOtyAOE/9Iy6qXv4ZDF3ZQ+zFV9D5plzVOqbnyizbNE1/Y59aLlt
-	yJ9LTJFtia9H+3R/BH+CEmfuLFVwFA8=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-49-mz1VzXVeNsWtyU0YcFe5ew-1; Tue, 06 Aug 2024 09:02:04 -0400
-X-MC-Unique: mz1VzXVeNsWtyU0YcFe5ew-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42816096cb8so7329845e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:02:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722949323; x=1723554123;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8bydtEU8dpvIeQ2V0I0gbNTbGq+ZFreMIhNnwB6nrP8=;
-        b=Ve5QHX0N104yJrvnhuYn7X+zLYSdi47Ne7gpTVJNhveXQkT1P5CiAJxlA6MElgRw5y
-         Fq/l3luM+lI69XPWhBQvtRGfcvXQQUKT7CTN4fd9ZlPmb8AIohJNf/rNMuw6qe/f44po
-         RHXYQSqkQlm3sWKlQKC0Y84td550EVm3JcEbZgZDX/bxhVmWcrq2Ks3BTUatR5FFaDWh
-         VqrEIWqNg79WpI134FtjlvY75UDRxXmo5OVulKWhdpKvZL2PM7L4d+3nr3MwBReCA8D2
-         DuaRP2ss870IjyvLqYpdB/LuKm8OJk5Z0o0EW4+chTceBSRfRt6SRVh0Svb/8MjmtC8A
-         uoSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVb3uG/Hx/W3QNoTTy9D7N3XeqfeOHmsRiQWmkhWBK+AGqEilKJksCkuK9B4031+1T+wbX/Q7bFhEaXKwsUXkl4496Oib56LzIClGEG
-X-Gm-Message-State: AOJu0YxD9XkAHv9Q9oOMUKpwJymNBpP2kAZX7eOF1vRqjEI5TwSKF3hQ
-	gppUk3zQA1lw6xb8RmCdLAkWAQcuHM9IrpmbQHF99uj2bv7MaApt+ZhIROoLMjGqiKTs53rTeRH
-	JOab2gj2uAGgsjta2GrhwWIyTYLYfRGtUkmP1MG25AArIJt/UR7XLiZWlsguXcQ==
-X-Received: by 2002:a05:600c:4752:b0:426:6fd2:e14b with SMTP id 5b1f17b1804b1-428e6b0274emr120097365e9.11.1722949323372;
-        Tue, 06 Aug 2024 06:02:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHRwjjANscg8+b9Kv9y6U+t1I48VOP6ZN/WR8pMZTv9tWk4uh7ippB+DqqreWBWrJFzurQ+lQ==
-X-Received: by 2002:a05:600c:4752:b0:426:6fd2:e14b with SMTP id 5b1f17b1804b1-428e6b0274emr120096965e9.11.1722949322849;
-        Tue, 06 Aug 2024 06:02:02 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e9d1fcsm178027965e9.42.2024.08.06.06.02.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 06:02:02 -0700 (PDT)
-Message-ID: <054324a3-bc77-426f-a751-06700aad394e@redhat.com>
-Date: Tue, 6 Aug 2024 15:02:00 +0200
+	s=arc-20240116; t=1722949348; c=relaxed/simple;
+	bh=QIZqyc+I8RFslPCQTD1BtN/Inqm96G5peDLal06r5D8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
+	 MIME-Version:References; b=QTszCju6RGW0tdajil40qV6XslqfeswYD9aPPRPotUepvDKJuCAlaKbHo2UtKQFEV6C77tELa1sH3uQAkonXS1HaexsIDDiDBUhnzdzunBNh4xcp20zxrVuVojJ3/I7yjaQPhQOYodJn4+VSFrYTdNcDsron2f+/1+MOBOQlIiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bgQphaFS; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240806130223euoutp021c6bf309245eb9eac34e966b6208aabf~pJUyfdrel2772027720euoutp02Z
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:02:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240806130223euoutp021c6bf309245eb9eac34e966b6208aabf~pJUyfdrel2772027720euoutp02Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722949343;
+	bh=Lb/5UzI+07WJdSlW9RPzOwZ2h2A+sulIeTSbgEZxUgM=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+	b=bgQphaFSXL/2OtAaLMwY2+1anc4Skz+yTMqsxTMmtI+Zzx7X/BoICsHQ8QiMh5a/M
+	 zzlIqF0Ca9VczBkatgBvXqtpwRsMybdwRZnjhqYF2zadYYBy1K0XZOUVqQPpf/Y8eo
+	 mTT9CsaO2ue3furffhotrNxgn0zc8mO7h8XSaVSo=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240806130223eucas1p2a8ae07ada81e178b5442e0dcbfd2de07~pJUyQ5e_A2768327683eucas1p2v;
+	Tue,  6 Aug 2024 13:02:23 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 97.67.09624.EDE12B66; Tue,  6
+	Aug 2024 14:02:23 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240806130222eucas1p11900a61c4922bc5cad1ac3c464a0b159~pJUxw_U4P0397703977eucas1p1g;
+	Tue,  6 Aug 2024 13:02:22 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240806130222eusmtrp23778000324d1c284e3e0b44ac97dba0e~pJUxwGMPy0338103381eusmtrp2U;
+	Tue,  6 Aug 2024 13:02:22 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-e8-66b21ede8bab
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id B0.1D.08810.EDE12B66; Tue,  6
+	Aug 2024 14:02:22 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240806130222eusmtip17c7d19166bffb1a1f69c9c17faabec13~pJUxbq9k01872218722eusmtip1C;
+	Tue,  6 Aug 2024 13:02:22 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
+	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
+	Server (TLS) id 15.0.1497.2; Tue, 6 Aug 2024 14:02:21 +0100
+Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
+	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Tue, 6 Aug
+	2024 14:02:21 +0100
+From: Daniel Gomez <da.gomez@samsung.com>
+To: Jia He <justin.he@arm.com>
+CC: Herbert Xu <herbert@gondor.apana.org.au>, Andy Polyakov
+	<appro@cryptogams.org>, "David S. Miller" <davem@davemloft.net>, "Catalin
+ Marinas" <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] crypto: arm64/poly1305 - move data to rodata section
+Thread-Topic: [PATCH v2] crypto: arm64/poly1305 - move data to rodata
+	section
+Thread-Index: AQHa5//zJkuz2mMGX0eEFIkrDDjbXrIaIPoA
+Date: Tue, 6 Aug 2024 13:02:20 +0000
+Message-ID: <hedfv2cny4wk4izuhvkur56xnrmclakxedfr5yzo5vl34ac35i@siwozxxr4u7a>
+In-Reply-To: <qd2jxjle5zf6u4vyu5x32wjhzj4t5cxrc7dbi46inhlhjxhw4s@llhfvho4l2e6>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <D6E56B73BFD29041968D3A657FEB55DF@scsc.local>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/8] mm/mprotect: Remove NUMA_HUGE_PTE_UPDATES
-To: Peter Xu <peterx@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Dave Jiang <dave.jiang@intel.com>, Rik van Riel <riel@surriel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
- Matthew Wilcox <willy@infradead.org>,
- Rick P Edgecombe <rick.p.edgecombe@intel.com>,
- Oscar Salvador <osalvador@suse.de>, Mel Gorman
- <mgorman@techsingularity.net>, Andrew Morton <akpm@linux-foundation.org>,
- Borislav Petkov <bp@alien8.de>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Huang Ying <ying.huang@intel.com>, "Kirill A . Shutemov"
- <kirill@shutemov.name>, "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
- Dan Williams <dan.j.williams@intel.com>, Thomas Gleixner
- <tglx@linutronix.de>, Hugh Dickins <hughd@google.com>, x86@kernel.org,
- Nicholas Piggin <npiggin@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
- Ingo Molnar <mingo@redhat.com>, Alex Thorlton <athorlton@sgi.com>
-References: <20240715192142.3241557-1-peterx@redhat.com>
- <20240715192142.3241557-3-peterx@redhat.com>
- <added2d0-b8be-4108-82ca-1367a388d0b1@redhat.com> <Zq-Y3qs5_PZW04bt@x1n>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zq-Y3qs5_PZW04bt@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHKsWRmVeSWpSXmKPExsWy7djPc7r35TalGby7xWQx90krk8X7ZT2M
+	FnPOt7BYdL+SsXh64g+7xabH11gt7t/7yWRxedccNouWO6YOnB5r5q1h9HgwcQOLx5aVN5k8
+	th1Q9di0qpPNY/OSeo/Pm+QC2KO4bFJSczLLUov07RK4Mj7NfMJYMFu74vnNBtYGxikqXYwc
+	HBICJhK/dpl3MXJxCAmsYJRY8vYWI4TzhVHi8/7PTBDOZ0aJFxsXAzmcYB0HX25gBLGFBJYz
+	Shx/Zw5X1HpnOQuEc5pRYva/WYxwgz/PbwNrZxPQlNh3chM7iC0iICfxou8jG0gRs8ACZonu
+	i5fYQBLCAj4SM/Z/ZIEo8pd4+3ALK4RtJDFryXQwm0VARaJ/6wowm1fAV2L3q6lgN3EK+EnM
+	vDcdbBmjgKzEo5W/wJYxC4hL3HoyH+oHQYlFs/cwQ9hiEv92PWSDsHUkzl5/wghhG0hsXbqP
+	BcJWlOg4dpMNYo6OxILdn6BsS4kT7+cyQdjaEssWvmaGuEdQ4uTMJ+CgkBB4xinR++E91AIX
+	iZ+b3kAtEJZ4dXwL+wRGnVlI7puFZMcsJDtmIdkxC8mOBYysqxjFU0uLc9NTiw3zUsv1ihNz
+	i0vz0vWS83M3MQKT2Ol/xz/tYJz76qPeIUYmDsZDjBIczEoivF2lG9KEeFMSK6tSi/Lji0pz
+	UosPMUpzsCiJ86qmyKcKCaQnlqRmp6YWpBbBZJk4OKUamJINU3d8sNydyztPUW21y09Vb7HH
+	/TcD7s9fz3/OyMNiEVPsuautJxQ37o1XYri40PGvcI93suDP78YrzsxcLiZ1MfzfHqUbsv2H
+	yiZkfIt7w1TLo7OsL0OBZ+VPviL5lxUxD78nMjb0G230/Tn9xrLs4gLRlMi4JCaNUCmbb+v9
+	6tZ92BY5O7j0wLLznip13zssXtxvErsn8VtLSHDKFxOfG3HOWQsWMs6dpHd+2uYXy16E8axu
+	KuHsz0rqv3PLct7RV6ws0/5bTP22g19RcGboorqX9VvXO2+r4Za5Ib3cW0l9Y9c9kZfte+sU
+	+P6IRQhI3Vg279GUa3eFXttqeF294HOJ37cloSl5Oz/bPiWW4oxEQy3mouJEAMZPABHRAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGKsWRmVeSWpSXmKPExsVy+t/xu7r35DalGTw8KW0x90krk8X7ZT2M
+	FnPOt7BYdL+SsXh64g+7xabH11gt7t/7yWRxedccNouWO6YOnB5r5q1h9HgwcQOLx5aVN5k8
+	th1Q9di0qpPNY/OSeo/Pm+QC2KP0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxM
+	lfTtbFJSczLLUov07RL0Mj7NfMJYMFu74vnNBtYGxikqXYycHBICJhIHX25g7GLk4hASWMoo
+	sa+jhx0iISOx8ctVVghbWOLPtS42EFtI4COjxI7pkRANpxkl1n54yAbhrGCUODJtBVgHm4Cm
+	xL6Tm8AmiQjISbzo+whWxCywgFmi++IlsFHCAj4SM/Z/ZIEo8pU4vfIXVIORxKwl08EGsQio
+	SPRvhRjKC1Sz+9VURogzqiWu9PxnBrE5BfwkZt6bzgRiMwrISjyCmsMsIC5x68l8JogXBCSW
+	7DnPDGGLSrx8/A/qNR2Js9efMELYBhJbl+5jgbAVJTqO3WSDmKMjsWD3JyjbUuLE+7lMELa2
+	xLKFr5khbhOUODnzCcsERplZSFbPQtI+C0n7LCTts5C0L2BkXcUoklpanJueW2yoV5yYW1ya
+	l66XnJ+7iRGYoLYd+7l5B+O8Vx/1DjEycTAeYpTgYFYS4e0q3ZAmxJuSWFmVWpQfX1Sak1p8
+	iNEUGHYTmaVEk/OBKTKvJN7QzMDU0MTM0sDU0sxYSZzXs6AjUUggPbEkNTs1tSC1CKaPiYNT
+	qoHppESFol/sBdmk8h2aLk7X+/bL28TpR977w9p+1CTuzeektDCGdqGXL50FWcqmcSXc0fL2
+	9tkwMUvhhoXRqRrlw4knvz0seH+W/3vBa5UCM/vODE75o3onrzLt8v0Z0hbH9+7ujEVls5KY
+	NFqstlueWrmbye5SRfl1u/jvBxbJXt/mxXLojPud18nX7hmtkLQK2ePX+ZK55XXvg06DTOuu
+	U/e2xywtZy+U79edt17BykFk5vTNjl5eHrzf67V9F3KtLj27VGftvGh/w/sz2tlsv5+/einY
+	55uv0JyFrE+b+/k/9zpc4ar484ida2fRna+SfOdS3bjOm7qeEs/e++V0nrXQ8gli0x49TGgp
+	ZVRiKc5INNRiLipOBAARjeDv2QMAAA==
+X-CMS-MailID: 20240806130222eucas1p11900a61c4922bc5cad1ac3c464a0b159
+X-Msg-Generator: CA
+X-RootMTR: 20240806130222eucas1p11900a61c4922bc5cad1ac3c464a0b159
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240806130222eucas1p11900a61c4922bc5cad1ac3c464a0b159
+References: <20240806055444.528932-1-justin.he@arm.com>
+	<qd2jxjle5zf6u4vyu5x32wjhzj4t5cxrc7dbi46inhlhjxhw4s@llhfvho4l2e6>
+	<CGME20240806130222eucas1p11900a61c4922bc5cad1ac3c464a0b159@eucas1p1.samsung.com>
 
-> Right.
-> 
-> I don't have a reason to change numa_pte_updates semantics yet so far, but
-> here there's the problem where numa_huge_pte_updates can be ambiguous when
-> there is even PUD involved.
-> 
-> In general, I don't know how I should treat this counter in PUD path even
-> if NUMA isn't involved in dax yet; it can be soon involved if we move on
-> with using this same path for hugetlb, or when 1G thp can be possible (with
-> Yu Zhao's TAO?).
+On Tue, Aug 06, 2024 at 02:55:45PM GMT, Daniel Gomez wrote:
+> On Tue, Aug 06, 2024 at 05:54:44AM GMT, Jia He wrote:
+>=20
+> Hi Jia,
+>=20
+> > When objtool gains support for ARM in the future, it may encounter issu=
+es
+> > disassembling the following data in the .text section:
+> > > .Lzeros:
+> > > .long   0,0,0,0,0,0,0,0
+> > > .asciz  "Poly1305 for ARMv8, CRYPTOGAMS by \@dot-asm"
+> > > .align  2
+> >=20
+> > Move it to .rodata which is a more appropriate section for read-only da=
+ta.
+> >=20
+> > There is a limit on how far the label can be from the instruction, henc=
+e
+> > use "adrp" and low 12bits offset of the label to avoid the compilation
+> > error.
+> >=20
+> > Signed-off-by: Jia He <justin.he@arm.com>
+> > ---
+> > v2:
+> >   - use adrp+offset to avoid compilation error(kernel test bot and Andy=
+)
+> > v1: https://lkml.org/lkml/2024/8/2/616
+> >=20
+> >  arch/arm64/crypto/poly1305-armv8.pl | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/arch/arm64/crypto/poly1305-armv8.pl b/arch/arm64/crypto/po=
+ly1305-armv8.pl
+> > index cbc980fb02e3..22c9069c0650 100644
+> > --- a/arch/arm64/crypto/poly1305-armv8.pl
+> > +++ b/arch/arm64/crypto/poly1305-armv8.pl
+> > @@ -473,7 +473,8 @@ poly1305_blocks_neon:
+> >  	subs	$len,$len,#64
+> >  	ldp	x9,x13,[$inp,#48]
+> >  	add	$in2,$inp,#96
+> > -	adr	$zeros,.Lzeros
+> > +	adrp	$zeros,.Lzeros
+> > +	add	$zeros,$zeros,#:lo12:.Lzeros
+> > =20
+> >  	lsl	$padbit,$padbit,#24
+> >  	add	x15,$ctx,#48
+> > @@ -885,10 +886,13 @@ poly1305_blocks_neon:
+> >  	ret
+> >  .size	poly1305_blocks_neon,.-poly1305_blocks_neon
+> > =20
+> > +.pushsection .rodata
+> >  .align	5
+> >  .Lzeros:
+> >  .long	0,0,0,0,0,0,0,0
+> >  .asciz	"Poly1305 for ARMv8, CRYPTOGAMS by \@dot-asm"
+> > +.popsection
+> > +
+>=20
+> I'm getting the following error with next-20240806
 
-We shouldn't bother about it in the PUD path at all I think. Especially 
-as long as NUMA hinting doesn't apply to any of what we would handle on 
-the PUD path :)
+To clarify my report: the error below disappears when this patch is reverte=
+d.
 
-> 
-> One other thing I can do is I drop this patch, ignore NUMA_HUGE_PTE_UPDATES
-> in PUD dax processing for now.  It'll work for this series, but it'll still
-> be a problem later.  I figured maybe we should simply drop it from now.
-
-It probably shouldn't block your other fixes and we should likely 
-discuss that separately.
-
-I agree that we should look into dropping that PMD counter completely.
-
--- 
-Cheers,
-
-David / dhildenb
-
+>=20
+> make LLVM=3D1 ARCH=3Darm64 allyesconfig
+> make LLVM=3D1 ARCH=3Darm64 -j$(nproc)
+>=20
+> ld.lld: error: vmlinux.a(arch/arm64/crypto/poly1305-core.o):(function pol=
+y1305_blocks_neon: .text+0x3d4): relocation R_AARCH64_ADR_PREL_LO21 out of =
+range: 269166444 is not in [-1048576, 1048575]
+>=20
+> Full debug error with log context:
+>=20
+> ...
+> + grep -q ^CONFIG_DEBUG_INFO_BTF=3Dy include/config/auto.conf
+> + strip_debug=3D1
+> + vmlinux_link .tmp_vmlinux1
+> + local output=3D.tmp_vmlinux1
+> + local objs
+> + local libs
+> + local ld
+> + local ldflags
+> + local ldlibs
+> + info LD .tmp_vmlinux1
+> + printf   %-7s %s\n LD .tmp_vmlinux1
+>   LD      .tmp_vmlinux1
+> + shift
+> + is_enabled CONFIG_LTO_CLANG
+> + grep -q ^CONFIG_LTO_CLANG=3Dy include/config/auto.conf
+> + is_enabled CONFIG_X86_KERNEL_IBT
+> + grep -q ^CONFIG_X86_KERNEL_IBT=3Dy include/config/auto.conf
+> + objs=3Dvmlinux.a
+> + libs=3D./drivers/firmware/efi/libstub/lib.a
+> + is_enabled CONFIG_MODULES
+> + grep -q ^CONFIG_MODULES=3Dy include/config/auto.conf
+> + objs=3Dvmlinux.a .vmlinux.export.o
+> + objs=3Dvmlinux.a .vmlinux.export.o init/version-timestamp.o
+> + [ arm64 =3D um ]
+> + wl=3D
+> + ld=3Dld.lld
+> + ldflags=3D-EL  -maarch64elf -z norelro -z noexecstack --no-undefined -X=
+ -shared -Bsymbolic -z notext  --no-apply-dynamic-relocs --fix-cortex-a53-8=
+43419 --build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derr=
+or
+> + ldlibs=3D
+> + ldflags=3D-EL  -maarch64elf -z norelro -z noexecstack --no-undefined -X=
+ -shared -Bsymbolic -z notext  --no-apply-dynamic-relocs --fix-cortex-a53-8=
+43419 --build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derr=
+or --script=3D./arch/arm64/kernel/vmlinux.lds
+> + [ -n 1 ]
+> + ldflags=3D-EL  -maarch64elf -z norelro -z noexecstack --no-undefined -X=
+ -shared -Bsymbolic -z notext  --no-apply-dynamic-relocs --fix-cortex-a53-8=
+43419 --build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derr=
+or --script=3D./arch/arm64/kernel/vmlinux.lds --strip-debug
+> + is_enabled CONFIG_VMLINUX_MAP
+> + grep -q ^CONFIG_VMLINUX_MAP=3Dy include/config/auto.conf
+> + ldflags=3D-EL  -maarch64elf -z norelro -z noexecstack --no-undefined -X=
+ -shared -Bsymbolic -z notext  --no-apply-dynamic-relocs --fix-cortex-a53-8=
+43419 --build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derr=
+or --script=3D./arch/arm64/kernel/vmlinux.lds --strip-debug -Map=3D.tmp_vml=
+inux1.map
+> + ld.lld -EL -maarch64elf -z norelro -z noexecstack --no-undefined -X -sh=
+ared -Bsymbolic -z notext --no-apply-dynamic-relocs --fix-cortex-a53-843419=
+ --build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derror --=
+script=3D./arch/arm64/kernel/vmlinux.lds --strip-debug -Map=3D.tmp_vmlinux1=
+.map -o .tmp_vmlinux1 --whole-archive vmlinux.a .vmlinux.export.o init/vers=
+ion-timestamp.o --no-whole-archive --start-group ./drivers/firmware/efi/lib=
+stub/lib.a --end-group .tmp_vmlinux0.kallsyms.o
+> ld.lld: error: vmlinux.a(arch/arm64/crypto/poly1305-core.o):(function pol=
+y1305_blocks_neon: .text+0x3d4): relocation R_AARCH64_ADR_PREL_LO21 out of =
+range: 269166444 is not in [-1048576, 1048575]
+> make[2]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 1
+> make[1]: *** [/home/dagomez/src/linux-next/Makefile:1156: vmlinux] Error =
+2
+> make: *** [Makefile:224: __sub-make] Error 2
+>=20
+> Any suggestion how to fix this?
+>=20
+> Daniel
+>=20
+> >  .align	2
+> >  #if !defined(__KERNEL__) && !defined(_WIN64)
+> >  .comm	OPENSSL_armcap_P,4,4
+> > --=20
+> > 2.34.1
+> > =
 
