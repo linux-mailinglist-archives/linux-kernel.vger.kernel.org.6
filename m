@@ -1,77 +1,127 @@
-Return-Path: <linux-kernel+bounces-275897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FD7948BA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:51:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 505D0948BAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48061B220B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:51:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B4F2281B8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6E01BD501;
-	Tue,  6 Aug 2024 08:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3B41BDA92;
+	Tue,  6 Aug 2024 08:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="kpmE/bSY"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kgrBCm1p"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BB213A884
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A90713A884;
+	Tue,  6 Aug 2024 08:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722934296; cv=none; b=a5aLbUh/OaDFxH7vZ3UwTZmL3miMnNV8i1txCgvc+NGfYmCrxZmuK8msrCcdz1PAHJ3XHqz6a+LWQS+gMOAhSxdmmF6+YdU7h+kZuR1unRwWxEFfqoTuyHhw0jzR1t1cIXbsPG7w2owp8R5tMJec6iboB3L4bzT7ufsbL9mfKdM=
+	t=1722934301; cv=none; b=TzC8iq/JXad1+6wcvoKrGw7et1z5qi5z0kWkBgzftc962ZA8OhmnV640lDEPQpo5WBLeRB3Li19Yrc9yDEP+nXeH3eEd5P0fQ3z8Ysbsmfjg5TtDBOEPffht0pDAVm5+MdMp+v7Tb/gIh5tIuPuL+Ir5dhdw3wVnMpEhnnC9v/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722934296; c=relaxed/simple;
-	bh=cY6OkhPHtRz9xJlrr0Wk6/Mc37QiDA311dyNNdaGZWw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NPnQ2Ji9R019EuJ7KEG9vf5Fa+dc1nLLv3s7ReGBgeEE+yoZRaMrc33oVW48e0HDlbWJrjZZ9QZp6DtPcIskvYZslv/p/i7rS/a6xKeeXxqE7D3EFa/+j7iKFFO6tcW9dSG0A7xUzPe7nkO+t+xGygVmfwuxsQUYwa+9EH21NAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=kpmE/bSY; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722934292; x=1723193492;
-	bh=cY6OkhPHtRz9xJlrr0Wk6/Mc37QiDA311dyNNdaGZWw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=kpmE/bSYoVk1y2RaJkOqP0KesYwT5nPkyLy8+M0jQvITAh7buX5AZQO1GprP4bDLq
-	 nTFJ6nF3OWOpWWT3d43yA3zb4K+32dCK3P0o5tGMkX6cmhmgiXBuOEEpuGCBebcf6d
-	 gNlRMh0QVyJzYVpPRhotIVhe87BCO0X26ER639EvwIQlM8mxRd0KDmpx2n2DI58Y6f
-	 LHPHSpQxGv0Zpp6hNj7bcvkI1/lhl4XxtV6obLnzy0dAe7OwrGRIJ5Cuf12hTiR51o
-	 InXSSaF9MIKqdMbqaqoAj1JItWzeV3u4KKhhpsVyLNzGjmCTo1TAnwAdrW8cBRj7Su
-	 ttyZuHaPdul+Q==
-Date: Tue, 06 Aug 2024 08:51:27 +0000
-To: Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Matt Gilbride <mattgilbride@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>, Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 2/6] rust: rbtree: add red-black tree implementation backed by the C version
-Message-ID: <b25537d5-97ae-4ff1-9408-2a1c13ae9585@proton.me>
-In-Reply-To: <CAH5fLgjHzYJAeZBA7JjK0_dw_m_XL+gU9x6M4Jv0tRzAH40+Pg@mail.gmail.com>
-References: <20240727-b4-rbtree-v8-0-951600ada434@google.com> <20240727-b4-rbtree-v8-2-951600ada434@google.com> <242d0107-8e2b-4856-8f4c-1d5351fdaad8@proton.me> <CAH5fLgjHzYJAeZBA7JjK0_dw_m_XL+gU9x6M4Jv0tRzAH40+Pg@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 8c4ff7885984f2caa92e83d84d71dd7d0d6b35b1
+	s=arc-20240116; t=1722934301; c=relaxed/simple;
+	bh=2+Lxiko6ZligeGS4dc4/EzTkBkKDNlSRrqvZ8kgh4ZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DxnhtNS73NahPQk/XPXoKnNcz5QEXmmR9RsQm6qz5LPKnp+eOdFYHkT15qVRDryVFRmalRmTJlKBeyHQ3TUW/O5dzTnQoC7/mIUgyd2Xt+T6S5pRXfPu7n0LWVPyRHM/e1W0dsZskGrPQlaK1zuPix5BDYXM96Mz6X9OfReeTZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kgrBCm1p; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b7b28442f9so3337876d6.3;
+        Tue, 06 Aug 2024 01:51:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722934299; x=1723539099; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gin8E/Gou+L852rKqaT8yJDJEOm3ljHZ257fFbqypfY=;
+        b=kgrBCm1pJLjxUwabGl3SDs6hqccO1Gq3z+YXnmsdeig3//6Sb0toobO3di4xvrLot5
+         qSWKY/UDPWWVeiNmkg2xmO5l87BDN82entAr9GnughWqi+Zsn1JTyK5oGat9mTalvTX0
+         egou3qoy3LXD/UwIrcxevEyEjJ17gZheXJw+YvYgnGeIlIuqQSDl0kAnDyM2YT3SO3Lf
+         ItRlov4JVqEdXDv8Ju1fbt1BRUAbA4rRwIfkQkzHDfA6Ao6glhFaC3kFBHMPv2Kz2DN2
+         o5061sBx9rajhantqQqBOorCh4k5oiKDge6IejTb+J+MR8/mrxjB1B/VhgBF+qUs4vsh
+         eNQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722934299; x=1723539099;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gin8E/Gou+L852rKqaT8yJDJEOm3ljHZ257fFbqypfY=;
+        b=Fi0bmzwRAWKrpbnIsVxf6Umkcuip3AglsQFp/mtf4Mjt0D9/Iujecx/wRlgj7tDBql
+         6MCLyUdyoQ7EK/byQXaU4MChQDfzZ+3upQ51I2xgI9RRzZ4BkHIwYhAThzUa4si6qcrF
+         dXtZNOagMugh4lU3qJ6371YC895IeZpN5WaqitPtFxUQPtgggfpbBjUuewc3N4Ep6U6h
+         BIQMLosUgmqms7Ik92GonNDiofTj7lT+SIgr7P+6I9jwFpXtuKUDn4NDjwyCLHM7PZ1p
+         W9aQXkd0qRvYsID4HIQEM9tZ4uRakG9I658zCt+LIsPhp7oAbYynM3ICoU9JFWHwl/Pq
+         rVfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyXTOo68/Ke2ZwhuFmkV2boYa4/c0db8Y1qUAHGSjCkudLBN1lhjyhX+JRavk9WMlCT/tw3STQuIXoANEz4zb6I0BU58vLTHHeNeYvXd/XKdfDpPp00lW3JVTuzz5xk54ff5qfokCi
+X-Gm-Message-State: AOJu0Yw49sYrY8iyI2w6FkhVPMXUMuq18XvzrebWspWsLd74HVNnz0qA
+	67hefxW51bL3I4w/c/Y3HqJaM8MChNW6LkJX1pIHrWtKkoHvkbEbO1XmagnqvwA=
+X-Google-Smtp-Source: AGHT+IG2FgUAZOuWAbufZ/kFsVkYH/mBhs0sj7SW9FI+wwS064TW6Jw82vIizd3/wZrb2sfNmcYI9w==
+X-Received: by 2002:a05:6214:3b88:b0:6b7:aed3:408f with SMTP id 6a1803df08f44-6bb9838e594mr150803896d6.13.1722934299215;
+        Tue, 06 Aug 2024 01:51:39 -0700 (PDT)
+Received: from HYB-hhAwRlzzMZb.ad.analog.com ([5.2.194.157])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c7c2512sm43300816d6.74.2024.08.06.01.51.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 01:51:38 -0700 (PDT)
+From: Dumitru Ceclan <mitrutzceclan@gmail.com>
+X-Google-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+To: mitrutzceclan@gmail.com
+Cc: lars@metafoo.de,
+	jic23@kernel.org,
+	alexandru.tachici@analog.com,
+	Jonathan.Cameron@huawei.com,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dumitru Ceclan <dumitru.ceclan@analog.com>
+Subject: [PATCH] iio: adc: ad7124: fix DT configuration parsing
+Date: Tue,  6 Aug 2024 11:51:33 +0300
+Message-ID: <20240806085133.114547-1-dumitru.ceclan@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On 06.08.24 10:41, Alice Ryhl wrote:
-> On Mon, Aug 5, 2024 at 9:02=E2=80=AFPM Benno Lossin <benno.lossin@proton.=
-me> wrote:
->> Otherwise the patch looks good.
->=20
-> Will you give a Reviewed-by conditional on the above changes?
+The cfg pointer is set before reading the channel number that the
+configuration should point to. This causes configurations to be shifted
+by one channel.
+For example setting bipolar to the first channel defined in the DT will
+cause bipolar mode to be active on the second defined channel.
 
-Yes.
+Fix by moving the cfg pointer setting after reading the channel number.
 
+Fixes: 7b8d045e497a ("iio: adc: ad7124: allow more than 8 channels")
+Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
 ---
-Cheers,
-Benno
+ drivers/iio/adc/ad7124.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+index 3beed78496c5..672d41bac8ca 100644
+--- a/drivers/iio/adc/ad7124.c
++++ b/drivers/iio/adc/ad7124.c
+@@ -839,8 +839,6 @@ static int ad7124_parse_channel_config(struct iio_dev *indio_dev,
+ 	st->channels = channels;
+ 
+ 	device_for_each_child_node_scoped(dev, child) {
+-		cfg = &st->channels[channel].cfg;
+-
+ 		ret = fwnode_property_read_u32(child, "reg", &channel);
+ 		if (ret)
+ 			return ret;
+@@ -858,6 +856,7 @@ static int ad7124_parse_channel_config(struct iio_dev *indio_dev,
+ 		st->channels[channel].ain = AD7124_CHANNEL_AINP(ain[0]) |
+ 						  AD7124_CHANNEL_AINM(ain[1]);
+ 
++		cfg = &st->channels[channel].cfg;
+ 		cfg->bipolar = fwnode_property_read_bool(child, "bipolar");
+ 
+ 		ret = fwnode_property_read_u32(child, "adi,reference-select", &tmp);
+-- 
+2.43.0
 
 
