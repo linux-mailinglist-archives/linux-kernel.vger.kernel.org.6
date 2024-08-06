@@ -1,163 +1,172 @@
-Return-Path: <linux-kernel+bounces-276688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 817CF94970A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:45:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED17949716
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 984711C20C34
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:45:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F938282A4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464907347C;
-	Tue,  6 Aug 2024 17:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E81D7347C;
+	Tue,  6 Aug 2024 17:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="TnzK2BMC"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AeVhgAe7"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58693399B
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 17:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39612A1C5;
+	Tue,  6 Aug 2024 17:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722966313; cv=none; b=Kcmvrna548h2EDIJBftHZqZoLNHizQu8NXuAarmEPnjJoqRB/rw2dw5JvBpE/YhFpHgUaWLEHCvHKqA4ecK8MdyP5XUnAS2tu0IQB9Wa0Rj8FuEpqIlXxdOR31iAU4N4Hl13IUlKhTrceLf5cIaOBcC48kBg+O5JW1YOoH4omJM=
+	t=1722966508; cv=none; b=kWP0gov9n8kjenLs4DMVSunoTMH7uNlpDCjTT5eBZAiQyTVNYRb4vkikMaR54fFJkes0f9Xu+Yb2V8ddUHv5yg7257LBbQKGi2Q0uS7cBDOGEVv9CzrOUCk+0tQw5P1QTnScSbJLUueo0V9YL+0m/Gkm9Od60i+QU3QWdBM72Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722966313; c=relaxed/simple;
-	bh=0tLFNAjZhobO+5ZBb4zaqEL5Jl6woFc4ybqgkujup/w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=L71fM5Na6GlFZ35Kbj4PIubQflitH1gvUrCqre77lZvdqlWWakhFhRPTcvtYnQEZAHc4bm9hbkMaA1IAcUpSVVV6tfPPlr8lX3h/fuPshJsjSz9JPrx7TCU7rhPVG/50TRn2P/GxWcdHv8ryYUpPqKUf3Xdw1nCXK7lBiL8/SC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=TnzK2BMC; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so1250985a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 10:45:11 -0700 (PDT)
+	s=arc-20240116; t=1722966508; c=relaxed/simple;
+	bh=vBDC4xo9mbVO1SY74xWdWYDnd5MRWexVdsUupjrLjyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gWFG4+xEC0YvZmdUxum2iB7VvMCvIFqxk2meuiU5oL8APZd9TZ4QBQbnYcZ3ALodueuIWlra76GCKf6SBPWPfjIr+9/JeWfw8vitolv6zokK0RvHFfZGsQ3Ig4csm9+1UKIb1ZlcLpOB2YDm4cHfrJ6cHKzwi1Zc7f0JkUmS8hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AeVhgAe7; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70d18d4b94cso680720b3a.2;
+        Tue, 06 Aug 2024 10:48:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1722966310; x=1723571110; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Xi6uKEtI3ydcMFh53TpPa6nlM2/m0g8EIF/kx2Za9s=;
-        b=TnzK2BMCIL8/Jz/7YeW7TQPqfmkzLwmrH0mAbTg+Sdu7EO3JWqb3bjMUvxGJqC7UdB
-         NJWs1jPkGf7iInPJCiOLpTrnW/H3inSRb26t9u5K7w+ipQoPqvaRD3QltAlsmCPOlwSr
-         LytL8+DL2SIs2lLSYUYJB8IevAHcid4ju5vNI+8InuNPMCtgthftIVbUdBE7xYd2A8JS
-         N6xK4Yxb4PPNJ1TxJU9I3zcbdjgFt4l+kh3KtzID+0LzjIjN1zbnLSZnYywgqxUmy/qU
-         AYwW85FXjan7KnY60BrKIsmGDI6JDJn/W2OkQ6FbWrOLOKpUiVHKtSitE5AziMhujVSr
-         eZzg==
+        d=gmail.com; s=20230601; t=1722966506; x=1723571306; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Cdrno72hqQxJb3X2e7mH5XWUDnJWg3spI0M3gLifjw=;
+        b=AeVhgAe79/ITpogYc2gGQzkQGpj2SNulO9IgopU+LZkp/WxxVdAN80LnvSzR2fsR5C
+         NMOX/vEHLT41szR37cHx/MD6G9CoTJ1uoEK4MB3de/1EUXZUqX3liGJhLOBLshJRbht/
+         mTgng7HVzmYjR7TbHP1eBRcI2C5Zr5zA4ZHNj4NLKNXckAwRiOnhABgqRWz/Yph7FcsN
+         OKxB8QK7nlhesTOX/1ORhSk9kMI4kMN1D9CLbXHtM+LYBcHlXoNguJLvxZl5tIMtzN2P
+         +C3rbE1TcqE/pFY7oJYuIQPL8WdOOukjYitNnX78/BxfJ6dqs+zrtQdvqY4ceqBmNuzJ
+         VdNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722966310; x=1723571110;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1722966506; x=1723571306;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7Xi6uKEtI3ydcMFh53TpPa6nlM2/m0g8EIF/kx2Za9s=;
-        b=q/WvEX3OJRIARVX2BvhNADt1uQ4739eagVa3FYjZIDIUToweO3G6Xqpu9iW+UDcvK/
-         fBFNYqdr7q4VdIMWKnGrZ2C4b0pT31jiofCzSGsQFuwUM8X9/HKS1KPCLMlIRhx6CQ3f
-         H3BJIyv68kFy7Pt9dPivBYxzTTM0k1dEbPl3xpduB1TdxS+PYdZ8rUAhhvngAWR6oiaG
-         vPXYLiqfMUrGpwC2iSJyiX3GzzPIA0T65WgcGyV9F7KnVbsuZyo/jEi30m/buQWbxJ5d
-         YiV1uCd3ppox0C36k2f5NzOdyN/Q3X0PhLWjcmhSK7PIikBJ4GvL+4NQVN3d16TSOIOJ
-         SEWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXP8RgxET9TpN9E3ExiiLzZnKMxbktqP7TQrmKKi0juwWRREktmIP081yyKAKDGktbT9Qkc7GIEJ5ezVZzpkY++OVrNSDJWvqDwXtY8
-X-Gm-Message-State: AOJu0Yxa3Df3L1BtoPBfPUuEiVoqHUR2wXlrYtYFlLZ+X7989U1Bm3rd
-	VzK0RtCMg1wkKhn5CEpntCeycBvViQjdifBlmdzD7+6Z5OdKEQp6mKC137eJITY=
-X-Google-Smtp-Source: AGHT+IHsMgSIGDF9mdMgRCHYX3ehKL2Du+ZMgmMto3bDVzv9/bnv6kg+8D9dwyetoyMdqeWFiBEflw==
-X-Received: by 2002:a50:eb0b:0:b0:5a2:8802:8e10 with SMTP id 4fb4d7f45d1cf-5b7f36f556amr11358198a12.8.1722966309815;
-        Tue, 06 Aug 2024 10:45:09 -0700 (PDT)
-Received: from cloudflare.com ([2a09:bac5:5063:2387::38a:2f])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bb88c4598asm2808992a12.82.2024.08.06.10.45.08
+        bh=8Cdrno72hqQxJb3X2e7mH5XWUDnJWg3spI0M3gLifjw=;
+        b=jDh+xGKcNRIBL8GOI8pCAjT3X4kUYH2LFjejCaBmgic4wU6fiJMmcwPoInIaXTsS9H
+         sC25vDr5+V8MT+fpAJzc7Uinbjwro429yoJUxai0v4SQ474UWpe1uSN3Dikr1j6ETDvt
+         vMmjc18ARjWF9ejezXcIBi5wAbPJNB5son+X6nRaZYMAULztUt3+KbO9VxuBaVnjmX/A
+         okzfEo+S6AXk5VC/SuW4tsv8grSyaWcU4qpKa+tKvlDhUy0DSHzu+kd6apCENabZz3/F
+         rCnwyIerymGx7xoKIl0CJhKbsk1kxixUO8GM7toK8nxFmaQWpVPkOAn2zQKBunCqW5RJ
+         LkuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgyPskx3OVvYuRr/VqlTdvuQ7L6UGRydj+G7VP8ChndOcHqnrDIt9XsvMMYsOGLc0hJEH6H9CDl3o1intinN6IaZUXE55WJ0PdYw4SZxQeIM7R6LQgeBA/9wkJnZCE1kgxKL2YaUd1
+X-Gm-Message-State: AOJu0YzxMKshunSYtgwSAbMR08M4DyBppcWcyTbL2KXVSMULGH4EK7nY
+	1MMBZAnoclgpCsxGoIQ1k+26Q3pZO+EFuaLxEbjjLHiLFvPrei4y
+X-Google-Smtp-Source: AGHT+IHF6ZPuSk0kgk91RJ7K16gv5yUw2DkiVVYF4+Fqgd7PX6IJ8xGEME+Z0x/y2rTs1lRZLulxNg==
+X-Received: by 2002:a05:6a00:c95:b0:70e:9213:f321 with SMTP id d2e1a72fcca58-7106cfcf2a5mr15610008b3a.14.1722966506066;
+        Tue, 06 Aug 2024 10:48:26 -0700 (PDT)
+Received: from embed-PC.myguest.virtualbox.org ([122.169.160.8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec401c9sm7247174b3a.53.2024.08.06.10.48.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 10:45:08 -0700 (PDT)
-From: Jakub Sitnicki <jakub@cloudflare.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: Andrii Nakryiko <andrii@kernel.org>,  Eduard Zingerman
- <eddyz87@gmail.com>,  Mykola Lysenko <mykolal@fb.com>,  Alexei Starovoitov
- <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>,  Martin KaFai
- Lau <martin.lau@linux.dev>,  Song Liu <song@kernel.org>,  Yonghong Song
- <yonghong.song@linux.dev>,  John Fastabend <john.fastabend@gmail.com>,  KP
- Singh <kpsingh@kernel.org>,  Stanislav Fomichev <sdf@fomichev.me>,  Hao
- Luo <haoluo@google.com>,  Jiri Olsa <jolsa@kernel.org>,  Shuah Khan
- <shuah@kernel.org>,  bpf@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 0/6] selftests/bpf: Various sockmap-related
- fixes
-In-Reply-To: <249a7dc3-34e2-4579-aae7-8b38b145e4bb@rbox.co> (Michal Luczaj's
-	message of "Tue, 6 Aug 2024 19:18:31 +0200")
-References: <20240731-selftest-sockmap-fixes-v2-0-08a0c73abed2@rbox.co>
-	<87y159yi5m.fsf@cloudflare.com>
-	<249a7dc3-34e2-4579-aae7-8b38b145e4bb@rbox.co>
-User-Agent: mu4e 1.12.4; emacs 29.1
-Date: Tue, 06 Aug 2024 19:45:07 +0200
-Message-ID: <87ttfxy28s.fsf@cloudflare.com>
+        Tue, 06 Aug 2024 10:48:25 -0700 (PDT)
+Date: Tue, 6 Aug 2024 23:16:31 +0530
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
+	biju.das.jz@bp.renesas.com, nuno.sa@analog.com,
+	skhan@linuxfoundation.org, rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: accel: bma180: Fix dataready interrupt to use INT2
+ pin
+Message-ID: <ZrJhd7wd5R+GwoYj@embed-PC.myguest.virtualbox.org>
+References: <20240805173237.475797-1-abhishektamboli9@gmail.com>
+ <20240806173228.264f0114@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806173228.264f0114@jic23-huawei>
 
-On Tue, Aug 06, 2024 at 07:18 PM +02, Michal Luczaj wrote:
-> On 8/6/24 14:01, Jakub Sitnicki wrote:
->> On Wed, Jul 31, 2024 at 12:01 PM +02, Michal Luczaj wrote:
->>> Series takes care of few bugs and missing features with the aim to improve
->>> the test coverage of sockmap/sockhash.
->>>
->>> Last patch is a create_pair() rewrite making use of
->>> __attribute__((cleanup)) to handle socket fd lifetime.
->>>
->>> Signed-off-by: Michal Luczaj <mhal@rbox.co>
->>> ---
->>> Changes in v2:
->>> - Rebase on bpf-next (Jakub)
->>> - Use cleanup helpers from kernel's cleanup.h (Jakub)
->>> - Fix subject of patch 3, rephrase patch 4, use correct prefix
->>> - Link to v1: https://lore.kernel.org/r/20240724-sockmap-selftest-fixes-v1-0-46165d224712@rbox.co
->>>
->>> Changes in v1:
->>> - No declarations in function body (Jakub)
->>> - Don't touch output arguments until function succeeds (Jakub)
->>> - Link to v0: https://lore.kernel.org/netdev/027fdb41-ee11-4be0-a493-22f28a1abd7c@rbox.co/
->>>
->>> ---
->>> Michal Luczaj (6):
->>>       selftests/bpf: Support more socket types in create_pair()
->>>       selftests/bpf: Socket pair creation, cleanups
->>>       selftests/bpf: Simplify inet_socketpair() and vsock_socketpair_connectible()
->>>       selftests/bpf: Honour the sotype of af_unix redir tests
->>>       selftests/bpf: Exercise SOCK_STREAM unix_inet_redir_to_connected()
->>>       selftests/bpf: Introduce __attribute__((cleanup)) in create_pair()
->>>
->>>  .../selftests/bpf/prog_tests/sockmap_basic.c       |  28 ++--
->>>  .../selftests/bpf/prog_tests/sockmap_helpers.h     | 149 ++++++++++++++-------
->>>  .../selftests/bpf/prog_tests/sockmap_listen.c      | 117 ++--------------
->>>  3 files changed, 124 insertions(+), 170 deletions(-)
->>> ---
->>> base-commit: 92cc2456e9775dc4333fb4aa430763ae4ac2f2d9
->>> change-id: 20240729-selftest-sockmap-fixes-bcca996e143b
->>>
->>> Best regards,
->> 
->> Thanks again for these fixes. For the series:
->> 
->> Reviewed-by: Jakub Sitnicki <jakub@cloudflare.com>
->> Tested-by: Jakub Sitnicki <jakub@cloudflare.com>
->
-> Great, thanks for the review. With this completed, I guess we can unwind
-> the (mail) stack to [1]. Is that ingress-to-local et al. something you
-> wanted to take care of yourself or can I give it a try?
+On Tue, Aug 06, 2024 at 05:32:28PM +0100, Jonathan Cameron wrote:
+> On Mon,  5 Aug 2024 23:02:37 +0530
+> Abhishek Tamboli <abhishektamboli9@gmail.com> wrote:
+> 
+> > Update the interrupt configuration to use the INT2 pin for
+> > the dataready interrupt.
+> > 
+> > Address the FIXME: support using the INT2 pin.
+> > 
+> > Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+> Hi Abhishek,
+> 
+> That's not the intent of that FIXME.  It's pointing out that the driver
+> does not currently support the wiring configuration where only INT2 is
+> connected.  The change you have here breaks the configuration where
+> only INT1 is wired or both are wired (as it will register the
+> interrupt handler on the int1 pin, not int2).
+> 
+> I'm guessing that is the situation you have is int2 only?
+> 
+> To handle this you need to add the firmware queries to identify the
+> interrupt by name. See for example driver/iio/imu/bmi323_core.c
+> bmi323_trigger_probe()
+> 
+> 	fwnode = dev_fwnode(data->dev);
+> 	if (!fwnode)
+> 		return -ENODEV;
+> 
+> 	irq = fwnode_irq_get_byname(fwnode, "INT1");
+> 	if (irq > 0) {
+> 		irq_pin = BMI323_IRQ_INT1;
+> 	} else {
+> 		irq = fwnode_irq_get_byname(fwnode, "INT2");
+> 		if (irq < 0)
+> 			return 0;
+> 
+> 		irq_pin = BMI323_IRQ_INT2;
+> 	}
+> 
+> This defaults to INT1 if available, but will find INT2
+> if interrupt-names is provided in DT and specifies that only INT2
+> is present.
+Thank you for the guidance. I see that I misinterpreted the intent of 'FIXME' comment.
+I'll work on implementing the logic to query the firmware for the correct interrupt
+configuration, as you suggested. I'll refer to the example in bmi323_core.c and update 
+the patch accordingly.
 
-I haven't stated any work on. You're welcome to tackle that.
-
-All I have is a toy test that I've used to generate the redirect matrix.
-Perhaps it can serve as inspiration:
-
-https://github.com/jsitnicki/sockmap-redir-matrix
-
->
-> [1] https://lore.kernel.org/netdev/87msmqn9ws.fsf@cloudflare.com/
->
-> Also, I've noticed patchwork still lists (besides this one) the old version
-> of this series. Am I supposed to tell the bot to disregard it?
-
-Only the maintainers can change patch set status in patchwork:
-
-https://docs.kernel.org/process/maintainer-netdev.html#updating-patch-status
+Thanks
+Abhishek Tamboli
+> 
+> > ---
+> >  drivers/iio/accel/bma180.c | 7 +++----
+> >  1 file changed, 3 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/iio/accel/bma180.c b/drivers/iio/accel/bma180.c
+> > index 6581772cb0c4..d44409afffbf 100644
+> > --- a/drivers/iio/accel/bma180.c
+> > +++ b/drivers/iio/accel/bma180.c
+> > @@ -126,7 +126,7 @@ struct bma180_part_info {
+> >  #define BMA250_SUSPEND_MASK	BIT(7) /* chip will sleep */
+> >  #define BMA250_LOWPOWER_MASK	BIT(6)
+> >  #define BMA250_DATA_INTEN_MASK	BIT(4)
+> > -#define BMA250_INT1_DATA_MASK	BIT(0)
+> > +#define BMA250_INT2_DATA_MASK	BIT(7)
+> >  #define BMA250_INT_RESET_MASK	BIT(7) /* Reset pending interrupts */
+> >  
+> >  struct bma180_data {
+> > @@ -425,10 +425,9 @@ static int bma250_chip_config(struct bma180_data *data)
+> >  	if (ret)
+> >  		goto err;
+> >  	/*
+> > -	 * This enables dataready interrupt on the INT1 pin
+> > -	 * FIXME: support using the INT2 pin
+> > +	 * This enables dataready interrupt on the INT2 pin
+> >  	 */
+> > -	ret = bma180_set_bits(data, BMA250_INT_MAP_REG, BMA250_INT1_DATA_MASK, 1);
+> > +	ret = bma180_set_bits(data, BMA250_INT_MAP_REG, BMA250_INT2_DATA_MASK, 1);
+> >  	if (ret)
+> >  		goto err;
+> >  
+> 
 
