@@ -1,113 +1,116 @@
-Return-Path: <linux-kernel+bounces-275599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F64A94877C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:22:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EDF694877E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9A771F266D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:22:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF11AB23C0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0EE4174C;
-	Tue,  6 Aug 2024 02:19:29 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E272744C94;
+	Tue,  6 Aug 2024 02:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="duZ/BX7b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FF3757EB
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBE244376;
+	Tue,  6 Aug 2024 02:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722910769; cv=none; b=dOwlhMR/Z6QNw278TcNuYLgIYlu6ZCa1ERtzINPMZOg22XPo6IW1BYaApCms3TWXWOAdH7sxjDKxz04QJNbGdfh7ExGYAAkd7w0Y14+wL3Gky8jNoPIj5L3LHNjDdLSeJUANRrs3zuMrx004vk8X/k4K/R5rfeaY2ZTwm1UHAZM=
+	t=1722910805; cv=none; b=o7IX3lJuIyiXWlt9UNeHqPaQCuEwC8yU5Q66MxU4l5JxQJMSAFdIKmHkhAQArBv0s+QpvovbfqyL9xO0FiHVYE4pk4Y2EvLKGcdlJLfdufp/lXbQInWWBC6/LSR5XDFH35DNLMLtJChRx22kgMNSDnoiJr7kSx4vSdlLacprWnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722910769; c=relaxed/simple;
-	bh=SgCaGlYNwtKWWvSGFawFuAHR/Xo3DceOjircE0tpmyY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jtWAYrZA6G4bT5mTb7Zk0j0B8satt0Tb+eyjYAx3q0CWYTGM+FmweKsHfzYGlUKNaYWOBRHLyVyhhEb6kwDvhUoljcz+hVtRp52UH0f9d3mPml4YYo2Sfu6XQV2Ag3gfo6Kp8E78cVE9AJYb9YT7Iv7BSaTKuW2/JUFI58HNAlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WdH1k5m0mz1S75v;
-	Tue,  6 Aug 2024 10:14:34 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5E3911402CF;
-	Tue,  6 Aug 2024 10:19:16 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 6 Aug 2024 10:19:15 +0800
-Message-ID: <93bbedcd-2f6b-3124-6b54-01080efeb515@huawei.com>
-Date: Tue, 6 Aug 2024 10:19:14 +0800
+	s=arc-20240116; t=1722910805; c=relaxed/simple;
+	bh=9S6tVtHSHJo3qToGq9bIhQsitjGsrcFKDan0KV0PsvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JRfjGwXO6bFJCE9+/WA4BymHZ8/okVLmZhMubou00sG+G/CfqF+0Bo0oH38a71mlViKo9/pGhIWwmN6Z5dAaCUoaWB+ZaY6W/FdducF5H8QO5h/OPtDsVZpn/+tPLqwlUCdFzn3pww4IQgcBI4+R/m7dCJ02/BV24qjPeDBapRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=duZ/BX7b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DFECC32782;
+	Tue,  6 Aug 2024 02:20:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722910804;
+	bh=9S6tVtHSHJo3qToGq9bIhQsitjGsrcFKDan0KV0PsvU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=duZ/BX7bxzV9putEGR6x3UaY33fkNgIV0nyl6E8b6tRQayz4gmFK2xBeX+BzEiNw3
+	 ytsi9uwkdzmgBDq8qb4e1xmiJjJoVrJA47lvOaAoIxpxXU3Vw+s6GdlvV0evXKh5AC
+	 jJzIldGWTXoGutWOi28B8NMl8hCPPU5Aj2Md5V+158/PuP7zgNoq1IXUmBXwnyH+Lz
+	 xe4/SceQtJ44S8SYwYd3r7vOYZpHqbxy5cQIVjd+/UnH9dC5T8a3VLxpLXeERCLMaK
+	 4y3PpyDVaUO4H6URKGh89TevxE2gicu2cuzXeBUxXLBxmIfipN71GYEvRCJ1V/wfNj
+	 zLcPLusyj+D3A==
+Date: Mon, 5 Aug 2024 19:20:02 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: KP Singh <kpsingh@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, bp@alien8.de,
+	sfr@canb.auug.org.au, peterz@infradead.org
+Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
+Message-ID: <20240806022002.GA1570554@thelio-3990X>
+References: <20240801171747.3155893-1-kpsingh@kernel.org>
+ <CAHC9VhRO-weTJPGcrkgntFLG3RPRCUvHh9m+uduDN+q4hzyhGg@mail.gmail.com>
+ <CACYkzJ6486mzW97LF+QrHhM9-pZt0QPWFH+oCrTmubGkJVvGhw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [RFC PATCH] ARM: Support allocating crashkernel above 4G for LPAE
-Content-Language: en-US
-To: Catalin Marinas <catalin.marinas@arm.com>, "Russell King (Oracle)"
-	<linux@armlinux.org.uk>
-CC: <bhe@redhat.com>, <akpm@linux-foundation.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240802092510.3915986-1-ruanjinjie@huawei.com>
- <Zqy8lwZM2Z6RlV5H@shell.armlinux.org.uk> <ZrDRCP9tyvXLfAYs@arm.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <ZrDRCP9tyvXLfAYs@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACYkzJ6486mzW97LF+QrHhM9-pZt0QPWFH+oCrTmubGkJVvGhw@mail.gmail.com>
 
+On Tue, Aug 06, 2024 at 01:29:37AM +0200, KP Singh wrote:
+> On Mon, Aug 5, 2024 at 9:58 PM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > On Thu, Aug 1, 2024 at 1:17 PM KP Singh <kpsingh@kernel.org> wrote:
+> > >
+> > > With LSMs using static calls, early_lsm_init needs to wait for setup_arch
+> > > for architecture specific functionality which includes jump tables and
+> > > static calls to be initialized.
+> > >
+> > > This only affects "early LSMs" i.e. only lockdown when
+> > > CONFIG_SECURITY_LOCKDOWN_LSM_EARLY is set.
+> > >
+> > > Fixes: 2732ad5ecd5b ("lsm: replace indirect LSM hook calls with static calls")
+> > > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > > ---
+> > >  init/main.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > Considering the problems we've had, I'd like to hear more about how
+...
+> I guess it would not harm Boris, Nathan and others to look at it as
+> well and see if it breaks any of their tests.
 
+For what it's worth, I have not noticed any issues in my -next testing
+with this patch applied but I only build architectures that build with
+LLVM due to the nature of my work. If exposure to more architectures is
+desirable, perhaps Guenter Roeck would not mind testing it with his
+matrix?
 
-On 2024/8/5 21:18, Catalin Marinas wrote:
-> On Fri, Aug 02, 2024 at 12:01:43PM +0100, Russell King wrote:
->> On Fri, Aug 02, 2024 at 05:25:10PM +0800, Jinjie Ruan wrote:
->>> As ARM LPAE feature support accessing memory beyond the 4G limit, define
->>> HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH macro to support reserving crash
-> 
-> At least in 6.11-rc1, there's no trace of such macro anywhere. So not
-> sure this patch has any effect (I haven't checked linux-next though).
+Cheers,
+Nathan
 
-Sorry, this macro is introduced in linux-next, the -next subject has
-been missed.
-
-> 
->>> memory above 4G for ARM32 LPAE.
->>>
->>> No test because there is no LPAE ARM32 hardware.
->>
->> Why are you submitting patches for features you can't test?
->>
->> I'm not going to apply this without it being properly tested, because I
->> don't believe that this will work in the generic case.
->>
->> If the crash kernel is located in memory outside of the lower 4GiB of
->> address space, and there is no alias within physical address space
->> for that memory, then there is *no* *way* for such a kernel to boot.
->>
->> So, right now I believe this patch to be *fundamentally* wrong.
-> 
-> Indeed. Even on arm64, we keep some crashkernel reservations in the
-> lower parts of the memory for ZONE_DMA allocations.
-
-Indeed, it is.
-
-> 
-> On arch/arm with LPAE, we could do something similar like forcing some
-> lowmem reservation and allowing explicit allocation in the higher ranges
-> with crashkernel=<size>,high. We should, of course, force the kdump
-
-In linux-next, with the HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH macro
-defined, it is ok.
-
-> image placement in the lower memory. The user kexec tools must be taught
-> to interpret this information and provide a DT accordingly to the crash
-> kernel.
-> 
+> > > diff --git a/init/main.c b/init/main.c
+> > > index 206acdde51f5..a0e3f3c720e6 100644
+> > > --- a/init/main.c
+> > > +++ b/init/main.c
+> > > @@ -922,8 +922,8 @@ void start_kernel(void)
+> > >         boot_cpu_init();
+> > >         page_address_init();
+> > >         pr_notice("%s", linux_banner);
+> > > -       early_security_init();
+> > >         setup_arch(&command_line);
+> > > +       early_security_init();
+> > >         setup_boot_config();
+> > >         setup_command_line(command_line);
+> > >         setup_nr_cpu_ids();
+> > > --
+> > > 2.46.0.rc2.264.g509ed76dc8-goog
+> >
+> > --
+> > paul-moore.com
 
