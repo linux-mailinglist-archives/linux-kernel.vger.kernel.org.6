@@ -1,430 +1,245 @@
-Return-Path: <linux-kernel+bounces-275986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13555948CDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:33:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02014948CEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34FAA1C235C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:33:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACCD8286F74
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13FA1BE85D;
-	Tue,  6 Aug 2024 10:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FF71BF317;
+	Tue,  6 Aug 2024 10:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SftJdPiZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PLBMjG/q"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA07A15A4AF;
-	Tue,  6 Aug 2024 10:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4A715A4AF;
+	Tue,  6 Aug 2024 10:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722940384; cv=none; b=Pyq0EEChDrktS3e8wEOj4cqunjzA0vg3MAJLrxw+NhfMACX8MjN2Lny1X9vKRsnTPMbEG9G/OU8Ut1XTtxRhfXMUSKlC43UZefYZUkHOk0evQ+SVV1zLnXaGOk+rXhRhM93aW3LyoJZdWNUo1ltIb2gGDvsh2Lefoav152whsLA=
+	t=1722940699; cv=none; b=g9vnOwi0xumYYGZ65RvpmUSVof01TATynKFYeA3KmRhvOwEC7FoyhcobIg48MSr+fOviME7kscYs2pDrKEx2EkkMH9OJN6FRe7Ts6UAmv55BMzsVYVjpW1wOFLrVifWTm6vN98YxL7XRAk5Y59JRYL9wWUZBqIzjGNk0PiPI9uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722940384; c=relaxed/simple;
-	bh=WK0yUyd4B3A4zEVchWwC5BxaLN9zllyCeQGwlVdV5f4=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=sdPCg27R8lm/iq0hz5g0GsiWhERmgXITKUKIfDLq2k4MvXdh6+En0jl9R17ri6/+T2OSyewxZ8+4dvdVc1Vr9jcDfF4jSQ1/tbKoExRliLApwWYIof/FqgjNDAkU5IOpMdwiv/W78CJNNUL7U1iJy6CuISG9oI0gV5dfLQahYUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SftJdPiZ; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722940383; x=1754476383;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=WK0yUyd4B3A4zEVchWwC5BxaLN9zllyCeQGwlVdV5f4=;
-  b=SftJdPiZ50qKdhye9oqhHBshQb4UnKbxEUa/CcwFk/RuiYDEVwpYCcb4
-   4BK2dUc+1m8DSdb0e+TWSDPzkAdOe107Sg0tuVpxl5ve2EseUNtlPKnRn
-   gOWWIXoMwtWZewjtw0JAdS3nvSeIG/3vL7Pr/4N36WSccFmtwZNjjoJIm
-   kvBToStg0juLxg+wqqPoF4sLKOciQyJhJxDveS+argqS8wcCbZ6tZZSsv
-   Gv3Utq6P7rTV3KetmVAWbgiW/qDKvbxYCup05yAfSnSlmbVHZ1ypNauG7
-   ZoAVBNjwX3s0jO2jZm6U4IsBPzhEpwPt2njaTg5HCGGmaQMcBlDFwveTi
-   A==;
-X-CSE-ConnectionGUID: W1KF13huQQGdlKJpQtZsRw==
-X-CSE-MsgGUID: H0FrApNdTAymrZ0sj1ZfDQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="38400432"
-X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
-   d="scan'208";a="38400432"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 03:33:03 -0700
-X-CSE-ConnectionGUID: U7OxoXkfQr2WWptWQaWupQ==
-X-CSE-MsgGUID: L8BvsL50QCW5Ngn9ZtkC1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
-   d="scan'208";a="93999273"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.72])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 03:33:00 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 6 Aug 2024 13:32:56 +0300 (EEST)
-To: "Luke D. Jones" <luke@ljones.dev>
-cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    Hans de Goede <hdegoede@redhat.com>, corentin.chary@gmail.com
-Subject: Re: [PATCH v2 5/6] platform/x86: asus-armoury: add core count
- control
-In-Reply-To: <20240806020747.365042-6-luke@ljones.dev>
-Message-ID: <b29283ba-22c1-95dc-dbaa-69bd4fc2dd3a@linux.intel.com>
-References: <20240806020747.365042-1-luke@ljones.dev> <20240806020747.365042-6-luke@ljones.dev>
+	s=arc-20240116; t=1722940699; c=relaxed/simple;
+	bh=El/3bAO0l069mqw/cXVTEp+zY0hjWd3P1csIyZHu6fs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d1yF7KNQ/YA2aKgkrf6CoKbHxH5EOIPcTM58xFjskQ9xXyn+v8CagmHFDurX3QQIR19RGEz+vEgRxggq0kOiFaQ4seAs1GclveykLV9EWuw3EvfkgnU0n8CnQK5xv6GX/Sxfq/QorjFb+3yJQ0EUKef62Hr1cc8tqM2b1LCK+Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PLBMjG/q; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=W7Mfw8x3s054daJSUWaTm5SQvpi9NZcP7llJQaPfuF0=; b=PLBMjG/qkP/fCYn8wdJsdX41ae
+	1XE6tajTet2eQ63AV1V5oAD2KiIx4aYWmeNgMi0o2fpa4Se/juBqIOy0+NfM3NF5UXDlAJ8oc+AjP
+	NR3jhGEyrC5zJNI6dtvgSe/VVUwbYF1oT9hdS95F9Mh7YwAdZ5ELxJNJk8q/TWUAMFHovZYXQQbdY
+	d6DSLiz+Wu2Q9uwQCOg/axE/2d2FknLyRwBV55u1XWeM31IxAQEcsm14VUEtbQNTHqhdebRt8X/Yz
+	0czHeyf7l0alucmbjdWv02cbfctmKOmozg9MtMiF3Olh1ln8E6H5FuujYzamaeKaOLfrfhPgPFeUI
+	6TDsxLFw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sbHZx-00000006Qw3-1ZbX;
+	Tue, 06 Aug 2024 10:38:09 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 80C0630088D; Tue,  6 Aug 2024 12:38:08 +0200 (CEST)
+Date: Tue, 6 Aug 2024 12:38:08 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Chandan Babu R <chandanbabu@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	xfs <linux-xfs@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org,
+	tglx@linutronix.de
+Subject: Re: Are jump labels broken on 6.11-rc1?
+Message-ID: <20240806103808.GT37996@noisy.programming.kicks-ass.net>
+References: <20240730033849.GH6352@frogsfrogsfrogs>
+ <87o76f9vpj.fsf@debian-BULLSEYE-live-builder-AMD64>
+ <20240730132626.GV26599@noisy.programming.kicks-ass.net>
+ <20240731001950.GN6352@frogsfrogsfrogs>
+ <20240731031033.GP6352@frogsfrogsfrogs>
+ <20240731053341.GQ6352@frogsfrogsfrogs>
+ <20240731105557.GY33588@noisy.programming.kicks-ass.net>
+ <20240805143522.GA623936@frogsfrogsfrogs>
+ <20240806094413.GS37996@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806094413.GS37996@noisy.programming.kicks-ass.net>
 
-On Tue, 6 Aug 2024, Luke D. Jones wrote:
-
-> Implement Intel core enablement under the asus-armoury module using the
-> fw_attributes class.
+On Tue, Aug 06, 2024 at 11:44:13AM +0200, Peter Zijlstra wrote:
+> On Mon, Aug 05, 2024 at 07:35:22AM -0700, Darrick J. Wong wrote:
+> > On Wed, Jul 31, 2024 at 12:55:57PM +0200, Peter Zijlstra wrote:
+> > > On Tue, Jul 30, 2024 at 10:33:41PM -0700, Darrick J. Wong wrote:
+> > > 
+> > > > Sooooo... it turns out that somehow your patch got mismerged on the
+> > > > first go-round, and that worked.  The second time, there was no
+> > > > mismerge, which mean that the wrong atomic_cmpxchg() callsite was
+> > > > tested.
+> > > > 
+> > > > Looking back at the mismerge, it actually changed
+> > > > __static_key_slow_dec_cpuslocked, which had in 6.10:
+> > > > 
+> > > > 	if (atomic_dec_and_test(&key->enabled))
+> > > > 		jump_label_update(key);
+> > > > 
+> > > > Decrement, then return true if the value was set to zero.  With the 6.11
+> > > > code, it looks like we want to exchange a 1 with a 0, and act only if
+> > > > the previous value had been 1.
+> > > > 
+> > > > So perhaps we really want this change?  I'll send it out to the fleet
+> > > > and we'll see what it reports tomorrow morning.
+> > > 
+> > > Bah yes, I missed we had it twice. Definitely both sites want this.
+> > > 
+> > > I'll tentatively merge the below patch in tip/locking/urgent. I can
+> > > rebase if there is need.
+> > 
+> > Hi Peter,
+> > 
+> > This morning, I noticed the splat below with -rc2.
+> > 
+> > WARNING: CPU: 0 PID: 8578 at kernel/jump_label.c:295 __static_key_slow_dec_cpuslocked.part.0+0x50/0x60
+> > 
+> > Line 295 is the else branch of this code:
+> > 
+> > 	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
+> > 		jump_label_update(key);
+> > 	else
+> > 		WARN_ON_ONCE(!static_key_slow_try_dec(key));
+> > 
+> > Apparently static_key_slow_try_dec returned false?  Looking at that
+> > function, I suppose the atomic_read of key->enabled returned 0, since it
+> > didn't trigger the "WARN_ON_ONCE(v < 0)" code.  Does that mean the value
+> > must have dropped from positive N to 0 without anyone ever taking the
+> > jump_label_mutex?
 > 
-> This allows users to enable or disable preformance or efficiency cores
-> depending on their requirements. After change a reboot is required.
+> One possible scenario I see:
 > 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
-> ---
->  drivers/platform/x86/asus-armoury.c        | 208 ++++++++++++++++++++-
->  drivers/platform/x86/asus-armoury.h        |  29 +++
->  include/linux/platform_data/x86/asus-wmi.h |   4 +
->  3 files changed, 240 insertions(+), 1 deletion(-)
+>   slow_dec
+>     if (try_dec) // dec_not_one-ish, false
+>     // enabled == 1
+> 				slow_inc
+> 				  if (inc_not_disabled) // inc_not_zero-ish
+> 				  // enabled == 2
+> 				    return
 > 
-> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
-> index 412e75c652a4..592ebea35ad5 100644
-> --- a/drivers/platform/x86/asus-armoury.c
-> +++ b/drivers/platform/x86/asus-armoury.c
-> @@ -39,6 +39,18 @@
->  #define ASUS_MINI_LED_2024_STRONG 0x01
->  #define ASUS_MINI_LED_2024_OFF 0x02
->  
-> +enum cpu_core_type {
-> +	CPU_CORE_PERF = 0,
-> +	CPU_CORE_POWER,
-> +};
-> +
-> +enum cpu_core_value {
-> +	CPU_CORE_DEFAULT = 0,
-> +	CPU_CORE_MIN,
-> +	CPU_CORE_MAX,
-> +	CPU_CORE_CURRENT,
-> +};
-> +
->  /* Default limits for tunables available on ASUS ROG laptops */
->  #define PPT_CPU_LIMIT_MIN 5
->  #define PPT_CPU_LIMIT_MAX 150
-> @@ -84,6 +96,10 @@ struct rog_tunables {
->  	u32 dgpu_tgp_min;
->  	u32 dgpu_tgp_max;
->  	u32 dgpu_tgp;
-> +
-> +	u32 min_perf_cores;
-> +	u32 max_perf_cores;
-> +	u32 max_power_cores;
->  };
->  
->  static const struct class *fw_attr_class;
-> @@ -148,7 +164,9 @@ static struct kobj_attribute pending_reboot = __ATTR_RO(pending_reboot);
->  static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
->  {
->  	return !strcmp(attr->attr.name, "gpu_mux_mode") ||
-> -	       !strcmp(attr->attr.name, "panel_hd_mode");
-> +		!strcmp(attr->attr.name, "cores_performance") ||
-> +		!strcmp(attr->attr.name, "cores_efficiency") ||
-> +		!strcmp(attr->attr.name, "panel_hd_mode");
->  }
->  
->  /**
-> @@ -576,6 +594,191 @@ static ssize_t apu_mem_possible_values_show(struct kobject *kobj,
->  }
->  ATTR_GROUP_ENUM_CUSTOM(apu_mem, "apu_mem", "Set the available system memory for the APU to use");
->  
-> +static int init_max_cpu_cores(void)
-> +{
-> +	u32 cores;
-> +	int err;
-> +
-> +	asus_armoury.rog_tunables->min_perf_cores = 4;
-> +	asus_armoury.rog_tunables->max_perf_cores = 4;
-> +	asus_armoury.rog_tunables->max_power_cores = 8;
-> +
-> +	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES_MAX, &cores);
-> +	if (err)
-> +		return err;
-> +
-> +	cores &= ~ASUS_WMI_DSTS_PRESENCE_BIT;
-> +	asus_armoury.rog_tunables->max_power_cores = (cores & 0xff00) >> 8;
-> +	asus_armoury.rog_tunables->max_perf_cores = cores & 0xff;
-
-Define names for the fields returned in 'cores' using GENMASK() and use 
-FIELD_GET() here to extract them.
-
-> +
-> +	return 0;
-> +}
-> +
-> +static ssize_t cores_value_show(struct kobject *kobj,
-> +					struct kobj_attribute *attr, char *buf,
-> +					enum cpu_core_type core_type,
-> +					enum cpu_core_value core_value)
-> +{
-> +	u32 cores;
-> +	int err;
-> +
-> +	switch (core_value) {
-> +	case CPU_CORE_DEFAULT:
-> +	case CPU_CORE_MAX:
-> +		if (core_type == CPU_CORE_PERF)
-> +			return sysfs_emit(buf, "%d\n", asus_armoury.rog_tunables->max_perf_cores);
-
-%u for u32, please check all %d, I won't mark the rest.
-
-> +		else
-> +			return sysfs_emit(buf, "%d\n", asus_armoury.rog_tunables->max_power_cores);
-> +	case CPU_CORE_MIN:
-> +		if (core_type == CPU_CORE_PERF)
-> +			return sysfs_emit(buf, "%d\n", asus_armoury.rog_tunables->min_perf_cores);
-> +		else
-> +			return sysfs_emit(buf, "%d\n", 0);
-> +	default:
-> +	break;
-
-Misindented.
-
-> +	}
-> +
-> +	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES, &cores);
-> +	if (err)
-> +		return err;
-> +
-> +	cores &= ~ASUS_WMI_DSTS_PRESENCE_BIT;
-> +	if (core_type == CPU_CORE_PERF)
-> +		cores &= 0xff;
-> +	else
-> +		cores = (cores & 0xff00) >> 8;
-
-Perhaps create a helper which takes two pointers for core types as this 
-code is similar to the one in init_max_cpu_cores().
-
-> +	return sysfs_emit(buf, "%d\n", cores);
-> +}
-> +
-> +static ssize_t cores_current_value_store(struct kobject *kobj,
-> +				struct kobj_attribute *attr, const char *buf,
-> +				enum cpu_core_type core_type)
-> +{
-> +	int result, err;
-> +	u32 cores, currentv, min, max;
-> +
-> +	result = kstrtou32(buf, 10, &cores);
-> +	if (result)
-> +		return result;
-> +
-> +	if (core_type == CPU_CORE_PERF) {
-> +		min = asus_armoury.rog_tunables->min_perf_cores;
-> +		max = asus_armoury.rog_tunables->max_perf_cores;
-> +	} else {
-> +		min = 0;
-> +		max = asus_armoury.rog_tunables->max_power_cores;
-> +	}
-> +	if (cores < min || cores > max)
-> +		return -EINVAL;
-> +
-> +	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES, &currentv);
-> +	if (err)
-> +		return err;
-> +
-> +	if (core_type == CPU_CORE_PERF)
-> +		cores |= (currentv & 0xff00);
-> +	else
-> +		cores |= currentv & 0xff;
-
-Use normal pattern to alter a field:
-	xx &= ~YY;
-	xx |= FIELD_PREP(YY, cores);
-
-Alternatively you could just recalculate it fully since you've cached the 
-values?
-
-> +
-> +	if (cores == currentv)
-> +		return 0;
-> +
-> +	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_CORES, cores, &result);
-> +	if (err) {
-> +		pr_warn("Failed to set CPU core count: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	if (result > 1) {
-> +		pr_warn("Failed to set CPU core count (result): 0x%x\n", result);
-> +		return -EIO;
-> +	}
-> +
-> +	pr_info("CPU core count changed, reboot required\n");
-> +	sysfs_notify(kobj, NULL, attr->attr.name);
-> +	asus_set_reboot_and_signal_event();
-
-What prevents two change requests racing with each other?
-
--- 
- i.
-
-> +	return 0;
-> +}
-> +
-> +static ssize_t cores_performance_min_value_show(struct kobject *kobj,
-> +					struct kobj_attribute *attr, char *buf)
-> +{
-> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_MIN);
-> +}
-> +
-> +static ssize_t cores_performance_max_value_show(struct kobject *kobj,
-> +					struct kobj_attribute *attr, char *buf)
-> +{
-> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_MAX);
-> +}
-> +
-> +static ssize_t cores_performance_default_value_show(struct kobject *kobj,
-> +					struct kobj_attribute *attr, char *buf)
-> +{
-> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_DEFAULT);
-> +}
-> +
-> +static ssize_t cores_performance_current_value_show(struct kobject *kobj,
-> +					struct kobj_attribute *attr, char *buf)
-> +{
-> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_CURRENT);
-> +}
-> +
-> +static ssize_t cores_performance_current_value_store(struct kobject *kobj,
-> +					struct kobj_attribute *attr,
-> +					const char *buf, size_t count)
-> +{
-> +	int err;
-> +
-> +	err = cores_current_value_store(kobj, attr, buf, CPU_CORE_PERF);
-> +	if (err)
-> +		return err;
-> +
-> +	return count;
-> +}
-> +ATTR_GROUP_CORES_RW(cores_performance, "cores_performance",
-> +		"Set the max available performance cores");
-> +
-> +static ssize_t cores_efficiency_min_value_show(struct kobject *kobj,
-> +					struct kobj_attribute *attr, char *buf)
-> +{
-> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_MIN);
-> +}
-> +
-> +static ssize_t cores_efficiency_max_value_show(struct kobject *kobj,
-> +					struct kobj_attribute *attr, char *buf)
-> +{
-> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_MAX);
-> +}
-> +
-> +static ssize_t cores_efficiency_default_value_show(struct kobject *kobj,
-> +					struct kobj_attribute *attr, char *buf)
-> +{
-> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_DEFAULT);
-> +}
-> +
-> +static ssize_t cores_efficiency_current_value_show(struct kobject *kobj,
-> +					struct kobj_attribute *attr, char *buf)
-> +{
-> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_CURRENT);
-> +}
-> +
-> +static ssize_t cores_efficiency_current_value_store(struct kobject *kobj,
-> +					struct kobj_attribute *attr,
-> +					const char *buf, size_t count)
-> +{
-> +	int err;
-> +
-> +	err = cores_current_value_store(kobj, attr, buf, CPU_CORE_POWER);
-> +	if (err)
-> +		return err;
-> +
-> +	return count;
-> +}
-> +ATTR_GROUP_CORES_RW(cores_efficiency, "cores_efficiency",
-> +		"Set the max available efficiency cores");
-> +
->  /* Simple attribute creation */
->  ATTR_GROUP_ROG_TUNABLE(ppt_pl1_spl, "ppt_pl1_spl", ASUS_WMI_DEVID_PPT_PL1_SPL, cpu_default,
->  		       cpu_min, cpu_max, 1, "Set the CPU slow package limit");
-> @@ -631,6 +834,8 @@ static const struct asus_attr_group armoury_attr_groups[] = {
->  	{ &dgpu_base_tgp_attr_group, ASUS_WMI_DEVID_DGPU_BASE_TGP },
->  	{ &dgpu_tgp_attr_group, ASUS_WMI_DEVID_DGPU_SET_TGP },
->  	{ &apu_mem_attr_group, ASUS_WMI_DEVID_APU_MEM },
-> +	{ &cores_efficiency_attr_group, ASUS_WMI_DEVID_CORES_MAX },
-> +	{ &cores_performance_attr_group, ASUS_WMI_DEVID_CORES_MAX },
->  
->  	{ &charge_mode_attr_group, ASUS_WMI_DEVID_CHARGE_MODE },
->  	{ &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
-> @@ -811,6 +1016,7 @@ static int __init asus_fw_init(void)
->  		return -ENOMEM;
->  	}
->  	init_rog_tunables(asus_armoury.rog_tunables);
-> +	init_max_cpu_cores();
->  
->  	err = asus_fw_attr_add();
->  	mutex_unlock(&asus_armoury.mutex);
-> diff --git a/drivers/platform/x86/asus-armoury.h b/drivers/platform/x86/asus-armoury.h
-> index 96d991383b8a..da585a180125 100644
-> --- a/drivers/platform/x86/asus-armoury.h
-> +++ b/drivers/platform/x86/asus-armoury.h
-> @@ -154,6 +154,35 @@ static ssize_t enum_type_show(struct kobject *kobj, struct kobj_attribute *attr,
->  		.name = _fsname, .attrs = _attrname##_attrs                                    \
->  	}
->  
-> +/* CPU core attributes need a little different in setup */
-> +#define ATTR_GROUP_CORES_RW(_attrname, _fsname, _dispname)	\
-> +__ATTR_SHOW_FMT(scalar_increment, _attrname, "%d\n", 1);	\
-> +__ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);	\
-> +static struct kobj_attribute attr_##_attrname##_current_value = \
-> +	__ASUS_ATTR_RW(_attrname, current_value);		\
-> +static struct kobj_attribute attr_##_attrname##_default_value = \
-> +	__ASUS_ATTR_RO(_attrname, default_value);		\
-> +static struct kobj_attribute attr_##_attrname##_min_value =	\
-> +	__ASUS_ATTR_RO(_attrname, min_value);			\
-> +static struct kobj_attribute attr_##_attrname##_max_value =	\
-> +	__ASUS_ATTR_RO(_attrname, max_value);			\
-> +static struct kobj_attribute attr_##_attrname##_type =		\
-> +	__ASUS_ATTR_RO_AS(type, int_type_show);			\
-> +static struct attribute *_attrname##_attrs[] = {		\
-> +		&attr_##_attrname##_current_value.attr,		\
-> +		&attr_##_attrname##_default_value.attr,		\
-> +		&attr_##_attrname##_min_value.attr,		\
-> +		&attr_##_attrname##_max_value.attr,		\
-> +		&attr_##_attrname##_scalar_increment.attr,	\
-> +		&attr_##_attrname##_display_name.attr,		\
-> +		&attr_##_attrname##_type.attr,			\
-> +		NULL						\
-> +};								\
-> +static const struct attribute_group _attrname##_attr_group = {	\
-> +		.name = _fsname,				\
-> +		.attrs = _attrname##_attrs			\
-> +}
-> +
->  /*
->   * ROG PPT attributes need a little different in setup as they
->   * require rog_tunables members.
-> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
-> index 287206a03763..2e7509ab5be0 100644
-> --- a/include/linux/platform_data/x86/asus-wmi.h
-> +++ b/include/linux/platform_data/x86/asus-wmi.h
-> @@ -133,6 +133,10 @@
->  /* dgpu on/off */
->  #define ASUS_WMI_DEVID_DGPU		0x00090020
->  
-> +/* Intel E-core and P-core configuration in a format 0x0[E]0[P] */
-> +#define ASUS_WMI_DEVID_CORES		0x001200D2
-> + /* Maximum Intel E-core and P-core availability */
-> +#define ASUS_WMI_DEVID_CORES_MAX	0x001200D3
->  #define ASUS_WMI_DEVID_DGPU_BASE_TGP	0x00120099
->  #define ASUS_WMI_DEVID_DGPU_SET_TGP	0x00120098
->  #define ASUS_WMI_DEVID_APU_MEM		0x000600C1
+>     guard((mutex)(&jump_label_mutex);
+>     if (atomic_cmpxchg(1,0)==1) // false, we're 2
+>     
+> 				slow_dec
+> 				  if (try-dec) // dec_not_one, true
+> 				  // enabled == 1
+> 				    return
+>     else
+>       try_dec() // dec_not_one, false
+>       WARN
 > 
+> 
+> Let me go play to see how best to cure this.
+
+I've ended up with this, not exactly pretty :/
+
+Thomas?
+
+---
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 6dc76b590703..5fa2c9f094b1 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -168,8 +168,8 @@ bool static_key_slow_inc_cpuslocked(struct static_key *key)
+ 		jump_label_update(key);
+ 		/*
+ 		 * Ensure that when static_key_fast_inc_not_disabled() or
+-		 * static_key_slow_try_dec() observe the positive value,
+-		 * they must also observe all the text changes.
++		 * static_key_dec() observe the positive value, they must also
++		 * observe all the text changes.
+ 		 */
+ 		atomic_set_release(&key->enabled, 1);
+ 	} else {
+@@ -250,7 +250,7 @@ void static_key_disable(struct static_key *key)
+ }
+ EXPORT_SYMBOL_GPL(static_key_disable);
+ 
+-static bool static_key_slow_try_dec(struct static_key *key)
++static bool static_key_dec(struct static_key *key, bool fast)
+ {
+ 	int v;
+ 
+@@ -268,31 +268,45 @@ static bool static_key_slow_try_dec(struct static_key *key)
+ 	v = atomic_read(&key->enabled);
+ 	do {
+ 		/*
+-		 * Warn about the '-1' case though; since that means a
+-		 * decrement is concurrent with a first (0->1) increment. IOW
+-		 * people are trying to disable something that wasn't yet fully
+-		 * enabled. This suggests an ordering problem on the user side.
++		 * Warn about the '-1' case; since that means a decrement is
++		 * concurrent with a first (0->1) increment. IOW people are
++		 * trying to disable something that wasn't yet fully enabled.
++		 * This suggests an ordering problem on the user side.
++		 *
++		 * Warn about the '0' case; simple underflow.
++		 *
++		 * Neither case should succeed and change things.
++		 */
++		if (WARN_ON_ONCE(v <= 0))
++			return false;
++
++		/*
++		 * Lockless fast-path, dec-not-one like behaviour.
+ 		 */
+-		WARN_ON_ONCE(v < 0);
+-		if (v <= 1)
++		if (fast && v <= 1)
+ 			return false;
+ 	} while (!likely(atomic_try_cmpxchg(&key->enabled, &v, v - 1)));
+ 
+-	return true;
++	if (fast)
++		return true;
++
++	/*
++	 * Locked slow path, dec-and-test like behaviour.
++	 */
++	lockdep_assert_held(&jump_label_mutex);
++	return v == 1;
+ }
+ 
+ static void __static_key_slow_dec_cpuslocked(struct static_key *key)
+ {
+ 	lockdep_assert_cpus_held();
+ 
+-	if (static_key_slow_try_dec(key))
++	if (static_key_dec(key, true)) // dec-not-one
+ 		return;
+ 
+ 	guard(mutex)(&jump_label_mutex);
+-	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
++	if (static_key_dec(key, false)) // dec-and-test
+ 		jump_label_update(key);
+-	else
+-		WARN_ON_ONCE(!static_key_slow_try_dec(key));
+ }
+ 
+ static void __static_key_slow_dec(struct static_key *key)
+@@ -329,7 +343,7 @@ void __static_key_slow_dec_deferred(struct static_key *key,
+ {
+ 	STATIC_KEY_CHECK_USE(key);
+ 
+-	if (static_key_slow_try_dec(key))
++	if (static_key_dec(key, true)) // dec-not-one
+ 		return;
+ 
+ 	schedule_delayed_work(work, timeout);
 
