@@ -1,134 +1,228 @@
-Return-Path: <linux-kernel+bounces-275721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BF1948909
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:45:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558C394890C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B0E2849AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:45:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C661B1F230DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8941BC068;
-	Tue,  6 Aug 2024 05:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520BE1BBBFA;
+	Tue,  6 Aug 2024 05:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UkmsdGL5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hV43y14X"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E322D224EF;
-	Tue,  6 Aug 2024 05:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D8315D1
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 05:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722923122; cv=none; b=Gob5iZHlhP2xA0VU5wYZCTrmAmrdUHISHpi2UQemSGfZhM/2QFStDn4wDxRdh+dzxzxLrIXBXDEO+bLKj8Gh2bX/RqivAkSpeGSJC2+n2D3cgLI+we0A/HCcYCyZSQIEuqr+toznSsgGLtWcmb3bbAcnYMC8IF5dquj2++K061M=
+	t=1722923423; cv=none; b=jtPvWMopUy6kjDW1bO1ewSnB+ceS6GCW17/CHL0FTVtCMVD5ZE3VPW4v2Z80d5ja0D5WeRnDch5oODFIqUYrB0k/LMSIWReH3RiG6VnJ5Oz4OYMCQhLJHARZrXIPZQBoEOoEzK6ji3ZanfM3Ir4yMOzQDQi/t3Y1Oadia4RLtas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722923122; c=relaxed/simple;
-	bh=8QBZkc1WIu784A5sISdhtLiWeGpKBHspI6RssO5hh+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PewLwLIjpTAxtVFeCPTiqCVXK30U1z4vdJzzv8DzqfexJFSj9B/ISBBsXoZhH8s/sGsybeWF1O4oJfdk+Rrbysk6nGGITBoR3RX1jC9gBZCIYkbNoBdUxCHBHFuIkiXXL5bGTy/t6b7J4Jflf9iOOrWHRAyjE9CNFVi9nezn0fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UkmsdGL5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD49CC32786;
-	Tue,  6 Aug 2024 05:45:14 +0000 (UTC)
+	s=arc-20240116; t=1722923423; c=relaxed/simple;
+	bh=UiWQS7gc3ysLCHL9aHj72FbRoBMkgpHs3tYBo3erZz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LKF+Uy+jjNeFY5AVsmRPQV854mEINum6+owcz7KFjH5GlRGAOTb27h6h8vwryIOBytjAxiKbZKruvQzYMCdsgU00GQgZPY805AW4wTPi72p24+eImMqoPhjcZyZVHlqwAwLwZIwHUeGwZPwRLPcSc9a1XtoMCeqqMgI4peJE7TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hV43y14X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51C38C32786;
+	Tue,  6 Aug 2024 05:50:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722923121;
-	bh=8QBZkc1WIu784A5sISdhtLiWeGpKBHspI6RssO5hh+g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UkmsdGL5F80ZcGr1hTkqQiYcJnST18cfUI9pn71UMPtg8V3HmtUP497+NDJz9pJKL
-	 3+o7SFRJ1h3J5849T5k6Q+ZdIUKuOwV7wnkUqiGBRuVs20ipeb8DtaDbDHnWZC/XN9
-	 hOTb6AUClLwB523IscVAopvCkKK0D1H6RPq6D9QTxVeqtZMBYxWnVNcrKXn1FjZbRu
-	 SgFJIgHMffcrGGkjISosrTo4euIdqu3bE78Ohl+/z0bnub8zlYCkSFAgweUFywIKgh
-	 SJxCA0GkSmfk+MXP3uVphmJn1RKPJEgplvESRaMszfYpD+/s7aLODEMb+/GDx67Umt
-	 L5bZs10aUoB5Q==
-Message-ID: <da392b79-9221-4988-baee-704ce20a3d57@kernel.org>
-Date: Tue, 6 Aug 2024 07:45:12 +0200
+	s=k20201202; t=1722923422;
+	bh=UiWQS7gc3ysLCHL9aHj72FbRoBMkgpHs3tYBo3erZz4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hV43y14XMABUY81yE+YC+2Td9A7tvcct9m87Hg0EGry0HVNNIEMjlUszPrOzorXEN
+	 2M492EF4PI/ZjDfckEbeDV1GYm7IFG2Qdi1QfsB6jsmTnOjkqmjCjGtg0fHixtDQ5G
+	 M8XeLAZUZhUranSfNg4NUgK/DCMH8IrFrqerFPZJYdmXZJqS90uq/uT2qT61RIMYeT
+	 lusFzM3NGa9BxAbrdyzTrg0XMH+R7jo8SpDRdoY2O58i8gpY8UUXaajQWFtfXaaVCQ
+	 1IEiwNQ7sk0llWpAG9MLEvCuQ6IhWGUEXZ+aapS9jEHl8Pk9lI+z7OLkRz8ZE0lyQq
+	 IOxRpHV45FstQ==
+Date: Tue, 6 Aug 2024 07:50:18 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Shiju Jose <shiju.jose@huawei.com>, "Michael S. Tsirkin"
+ <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>, Igor Mammedov
+ <imammedo@redhat.com>, <linux-kernel@vger.kernel.org>,
+ <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v5 2/7] acpi/generic_event_device: add an APEI error
+ device
+Message-ID: <20240806075018.46ff22ea@foz.lan>
+In-Reply-To: <20240805173946.00001244@Huawei.com>
+References: <cover.1722634602.git.mchehab+huawei@kernel.org>
+	<5dfb5fb31afa249e06e0f849b37a7cb525f81215.1722634602.git.mchehab+huawei@kernel.org>
+	<20240805173946.00001244@Huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] dt-bindings: misc: qcom,fastrpc: increase the max
- number of iommus
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Amol Maheshwari <amahesh@qti.qualcomm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Jassi Brar <jassisinghbrar@gmail.com>, Bjorn Andersson
- <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-remoteproc@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Tengfei Fan <quic_tengfan@quicinc.com>, Ling Xu <quic_lxu5@quicinc.com>
-References: <20240805-topic-sa8775p-iot-remoteproc-v4-0-86affdc72c04@linaro.org>
- <20240805-topic-sa8775p-iot-remoteproc-v4-1-86affdc72c04@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240805-topic-sa8775p-iot-remoteproc-v4-1-86affdc72c04@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 05/08/2024 19:08, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Em Mon, 5 Aug 2024 17:39:46 +0100
+Jonathan Cameron <Jonathan.Cameron@Huawei.com> escreveu:
+
+> On Fri,  2 Aug 2024 23:43:57 +0200
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 > 
-> The fastrpc components on the SA8775P SoC can require up to 10 IOMMU
-> entries. Bump the maxItems.
+> > Adds a Generic Event Device to handle generic hardware error
+> > events, supporting General Purpose Event (GPE) as specified at
+> > ACPI 6.5 specification at 18.3.2.7.2:
+> > https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#event-notification-for-generic-error-sources
+> > using HID PNP0C33.
+> > 
+> > The PNP0C33 device is used to report hardware errors to
+> > the bios via ACPI APEI Generic Hardware Error Source (GHES).
+> > 
+> > Co-authored-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > Co-authored-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>  
 > 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Much nicer with a GED event.
+> Happy to give SoB on this as you requested due to changes.
+> 
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> 
+> One minor comment though.
+> The pnp0c33 device isn't technically coupled to the generic_event_device.
+> Perhaps that should be in aml_build.h/.c instead of where you
+> have it here?
+> 
+> Maybe we can move it later though if anyone implements non GED signalling?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I opted to place it there at hw/acpi/generic_event_device.c, just after 
+PNP0C0C, e. g.:
 
-Best regards,
-Krzysztof
+	void acpi_dsdt_add_power_button(Aml *scope)
+	{
+	    Aml *dev = aml_device(ACPI_POWER_BUTTON_DEVICE);
+	    aml_append(dev, aml_name_decl("_HID", aml_string("PNP0C0C")));
+	    aml_append(dev, aml_name_decl("_UID", aml_int(0)));
+	    aml_append(scope, dev);
+	}
+	
+	void acpi_dsdt_add_error_device(Aml *scope)
+	{
+	    Aml *dev = aml_device(ACPI_APEI_ERROR_DEVICE);
+	    aml_append(dev, aml_name_decl("_HID", aml_string("PNP0C33")));
+	    aml_append(dev, aml_name_decl("_UID", aml_int(0)));
+	    aml_append(dev, aml_name_decl("_STA", aml_int(0xF)));
+	    aml_append(scope, dev);
+	}
 
+IMO this way it will be kept closer to other PNP devices. If this starts
+to grow, then some later cleanup could move those to some separate file,
+but, as now there are just two, I would just keep both there at GED
+file.
+
+> 
+> Jonathan
+> 
+> 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > ---
+> >  hw/acpi/generic_event_device.c         | 17 +++++++++++++++++
+> >  include/hw/acpi/acpi_dev_interface.h   |  1 +
+> >  include/hw/acpi/generic_event_device.h |  3 +++
+> >  3 files changed, 21 insertions(+)
+> > 
+> > diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
+> > index 15b4c3ebbf24..b9ad05e98c05 100644
+> > --- a/hw/acpi/generic_event_device.c
+> > +++ b/hw/acpi/generic_event_device.c
+> > @@ -26,6 +26,7 @@ static const uint32_t ged_supported_events[] = {
+> >      ACPI_GED_PWR_DOWN_EVT,
+> >      ACPI_GED_NVDIMM_HOTPLUG_EVT,
+> >      ACPI_GED_CPU_HOTPLUG_EVT,
+> > +    ACPI_GED_ERROR_EVT
+> >  };
+> >  
+> >  /*
+> > @@ -116,6 +117,11 @@ void build_ged_aml(Aml *table, const char *name, HotplugHandler *hotplug_dev,
+> >                             aml_notify(aml_name(ACPI_POWER_BUTTON_DEVICE),
+> >                                        aml_int(0x80)));
+> >                  break;
+> > +            case ACPI_GED_ERROR_EVT:
+> > +                aml_append(if_ctx,
+> > +                           aml_notify(aml_name(ACPI_APEI_ERROR_DEVICE),
+> > +                                      aml_int(0x80)));
+> > +                break;
+> >              case ACPI_GED_NVDIMM_HOTPLUG_EVT:
+> >                  aml_append(if_ctx,
+> >                             aml_notify(aml_name("\\_SB.NVDR"),
+> > @@ -153,6 +159,15 @@ void acpi_dsdt_add_power_button(Aml *scope)
+> >      aml_append(scope, dev);
+> >  }
+> >  
+> > +void acpi_dsdt_add_error_device(Aml *scope)
+> > +{
+> > +    Aml *dev = aml_device(ACPI_APEI_ERROR_DEVICE);
+> > +    aml_append(dev, aml_name_decl("_HID", aml_string("PNP0C33")));
+> > +    aml_append(dev, aml_name_decl("_UID", aml_int(0)));
+> > +    aml_append(dev, aml_name_decl("_STA", aml_int(0xF)));
+> > +    aml_append(scope, dev);
+> > +}
+> > +
+> >  /* Memory read by the GED _EVT AML dynamic method */
+> >  static uint64_t ged_evt_read(void *opaque, hwaddr addr, unsigned size)
+> >  {
+> > @@ -295,6 +310,8 @@ static void acpi_ged_send_event(AcpiDeviceIf *adev, AcpiEventStatusBits ev)
+> >          sel = ACPI_GED_MEM_HOTPLUG_EVT;
+> >      } else if (ev & ACPI_POWER_DOWN_STATUS) {
+> >          sel = ACPI_GED_PWR_DOWN_EVT;
+> > +    } else if (ev & ACPI_GENERIC_ERROR) {
+> > +        sel = ACPI_GED_ERROR_EVT;
+> >      } else if (ev & ACPI_NVDIMM_HOTPLUG_STATUS) {
+> >          sel = ACPI_GED_NVDIMM_HOTPLUG_EVT;
+> >      } else if (ev & ACPI_CPU_HOTPLUG_STATUS) {
+> > diff --git a/include/hw/acpi/acpi_dev_interface.h b/include/hw/acpi/acpi_dev_interface.h
+> > index 68d9d15f50aa..8294f8f0ccca 100644
+> > --- a/include/hw/acpi/acpi_dev_interface.h
+> > +++ b/include/hw/acpi/acpi_dev_interface.h
+> > @@ -13,6 +13,7 @@ typedef enum {
+> >      ACPI_NVDIMM_HOTPLUG_STATUS = 16,
+> >      ACPI_VMGENID_CHANGE_STATUS = 32,
+> >      ACPI_POWER_DOWN_STATUS = 64,
+> > +    ACPI_GENERIC_ERROR = 128,
+> >  } AcpiEventStatusBits;
+> >  
+> >  #define TYPE_ACPI_DEVICE_IF "acpi-device-interface"
+> > diff --git a/include/hw/acpi/generic_event_device.h b/include/hw/acpi/generic_event_device.h
+> > index 40af3550b56d..b8f2f1328e0c 100644
+> > --- a/include/hw/acpi/generic_event_device.h
+> > +++ b/include/hw/acpi/generic_event_device.h
+> > @@ -66,6 +66,7 @@
+> >  #include "qom/object.h"
+> >  
+> >  #define ACPI_POWER_BUTTON_DEVICE "PWRB"
+> > +#define ACPI_APEI_ERROR_DEVICE   "GEDD"
+> >  
+> >  #define TYPE_ACPI_GED "acpi-ged"
+> >  OBJECT_DECLARE_SIMPLE_TYPE(AcpiGedState, ACPI_GED)
+> > @@ -98,6 +99,7 @@ OBJECT_DECLARE_SIMPLE_TYPE(AcpiGedState, ACPI_GED)
+> >  #define ACPI_GED_PWR_DOWN_EVT      0x2
+> >  #define ACPI_GED_NVDIMM_HOTPLUG_EVT 0x4
+> >  #define ACPI_GED_CPU_HOTPLUG_EVT    0x8
+> > +#define ACPI_GED_ERROR_EVT          0x10
+> >  
+> >  typedef struct GEDState {
+> >      MemoryRegion evt;
+> > @@ -120,5 +122,6 @@ struct AcpiGedState {
+> >  void build_ged_aml(Aml *table, const char* name, HotplugHandler *hotplug_dev,
+> >                     uint32_t ged_irq, AmlRegionSpace rs, hwaddr ged_base);
+> >  void acpi_dsdt_add_power_button(Aml *scope);
+> > +void acpi_dsdt_add_error_device(Aml *scope);
+> >  
+> >  #endif  
+> 
+
+
+
+Thanks,
+Mauro
 
