@@ -1,207 +1,156 @@
-Return-Path: <linux-kernel+bounces-276483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B9694946D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:23:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D96949467
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C3811F264FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:23:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7F1B1C218C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80BC2209D;
-	Tue,  6 Aug 2024 15:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4841CA9C;
+	Tue,  6 Aug 2024 15:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="d9oj+hsK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="arOjqBWZ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="d9oj+hsK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="arOjqBWZ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="QT6omPpk"
+Received: from sender3-op-o17.zoho.com (sender3-op-o17.zoho.com [136.143.184.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F831799B;
-	Tue,  6 Aug 2024 15:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722957812; cv=none; b=bKzrEKR6EKqBaZ5fzsdloL1v//Xa1wQSpjePH6KZx6mZQyaHwt5f9CauEUutS+AFa0Itc6eJAx/kHRpZfWvIrqF/VXJRkFOOrK23O+7s7wOUL9rISiWT+koHD7fMg6EnL+SKVAUmDZkdcmnXejsicQCCsv4NC6d2UvnocOJ4mlY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722957812; c=relaxed/simple;
-	bh=8kg3mfOpz7+Ec8CDih/G148yH0fU1Yxbw2ii02mQFa0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FIMS9UFJbF5miPn12BxbeGtia3N4sRYP0sQe1N2Lme9ihEWR8cyL47BbpL0OtyN4P6AlWD4HtWtor6g/ugR1UsnBxJnO62yDMKkUHb1lIv4RK41KzZkr6PZscVufrcgfJ7KqgLWSiicLcB5Z4GdLNntr+/ki4F5xMl7bspaxhaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=d9oj+hsK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=arOjqBWZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=d9oj+hsK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=arOjqBWZ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4C53C21C38;
-	Tue,  6 Aug 2024 15:23:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722957808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ekoGVZj6up6oDDMQ3dNZnr/+091be6k7VqzVnNRuMA=;
-	b=d9oj+hsKNO4ngzpH/88pFbicELhXBTY0IF71+3gXs/cky2yZvJYndhLj+YW4yX7dVD67jk
-	K2J27ZuZn5U0n+ehA+FDtaGENTiEhAoVkqAeB15Cksf4gq2HNV0bqPO4JiuUVWbZgBCtIp
-	ViGM4l5Snt+SzzRTgAQjYuh+uvskc+M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722957808;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ekoGVZj6up6oDDMQ3dNZnr/+091be6k7VqzVnNRuMA=;
-	b=arOjqBWZXtwB9JndLjIbtxpvOUBLf8No5veJ/vlQ60TgXR4g0vkatma5Icr1UqCimNI4K6
-	dYIuf3XnCX0hVeAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=d9oj+hsK;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=arOjqBWZ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722957808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ekoGVZj6up6oDDMQ3dNZnr/+091be6k7VqzVnNRuMA=;
-	b=d9oj+hsKNO4ngzpH/88pFbicELhXBTY0IF71+3gXs/cky2yZvJYndhLj+YW4yX7dVD67jk
-	K2J27ZuZn5U0n+ehA+FDtaGENTiEhAoVkqAeB15Cksf4gq2HNV0bqPO4JiuUVWbZgBCtIp
-	ViGM4l5Snt+SzzRTgAQjYuh+uvskc+M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722957808;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ekoGVZj6up6oDDMQ3dNZnr/+091be6k7VqzVnNRuMA=;
-	b=arOjqBWZXtwB9JndLjIbtxpvOUBLf8No5veJ/vlQ60TgXR4g0vkatma5Icr1UqCimNI4K6
-	dYIuf3XnCX0hVeAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3E23813981;
-	Tue,  6 Aug 2024 15:23:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ASYnD/A/smYqawAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 06 Aug 2024 15:23:28 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D9626A0762; Tue,  6 Aug 2024 17:23:27 +0200 (CEST)
-Date: Tue, 6 Aug 2024 17:23:27 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 03/10] ext4: don't set EXTENT_STATUS_DELAYED on
- allocated blocks
-Message-ID: <20240806152327.td572f7elpel4aeo@quack3>
-References: <20240802115120.362902-1-yi.zhang@huaweicloud.com>
- <20240802115120.362902-4-yi.zhang@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF9F18D63A;
+	Tue,  6 Aug 2024 15:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722957765; cv=pass; b=MfZff/RbFiPF56b+wMk3HpNlcH/k97/TamwW5bUSxL30m6a4Jy12MNv7n+cNAjsFg5tpBo6cNfCKepK3Ei8m3GvTgz8VnZQgclG6uQu4oxmhO6xVEG2i53dcjGbIzyKJlb7Q9JJvNlSCf0SsGgcJc/iQD4WZrPSU+N5n8KrS7j4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722957765; c=relaxed/simple;
+	bh=wn4DQPBiboqzNAW3MD+ufw1E2ANmJQ637kK8TsQ+G4s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tNYiOWhNxwWhXh7L6lvtCovWC6JpqYeHtraAzdP6tUOzkSGSCJIgdI/yR8bIqmY2+kXsRzi3PzjAIgseV+uPczbmVtyJeI70ry4M0LIWT3xtRitzinHgvPWRWVkgJp0CRAXp8RJIhVKpqbspIxR3+5UXJbI4YAbFZoGQGt4uz14=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=QT6omPpk; arc=pass smtp.client-ip=136.143.184.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1722957739; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=X528A3SDqlxQS6uBuvYp/fY/an5pNhTKOg6VxX8/lV238DXnO7fkA2JqZDYq/Uw0UzFBzRNEcnt7VwJDRwZzQ9VGY34iuHdSPecS3hCDqXEOwXJtOYzv3hT3ci598zg7TNoh8Lj0M7vUB5ImS7xgqEtf6yLSXGvCJ+v35ZIWY9E=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1722957739; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=4E7YYytNxcERJA+P5c4RQhUBo3UBV2EKfxk7gX+2rTM=; 
+	b=TKo9JKPjy6afGWCkdn8B7MKOGG4ytVCihNakvPPNXhc3m4mt4gpY2HbqlrH1RsRGTUfcqxpDPDaRiaI84prLM3GoatssHJatedODQXHBfs9dm9fGbQL+s32OvQ1kp5nsRW5wqMKBoPu8yAUl3XOGhJZWaO8OUlBdOo8BLVZkijE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1722957739;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=4E7YYytNxcERJA+P5c4RQhUBo3UBV2EKfxk7gX+2rTM=;
+	b=QT6omPpk0QHjjuJfgBNeP66BFRUwXPimJeRjTSygjmdjXWvwmN0wUJrfWdFdAoKn
+	nzXgIyfDanTB9wv84E2jic3W9dgaLFmwBr5mIO4cfYpYC3tbhB3fECOEYeH/3wO8dJg
+	NpNPaiHc85uYtSu9Zeo7kkV4217sSzbwpkQ3/qb8=
+Received: by mx.zohomail.com with SMTPS id 1722957736998397.9644636527041;
+	Tue, 6 Aug 2024 08:22:16 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com,
+ Sugar Zhang <sugar.zhang@rock-chips.com>
+Subject: Re: [PATCH v2 2/3] clk: rockchip: Add dt-binding header for rk3576
+Date: Tue, 06 Aug 2024 11:23:28 -0400
+Message-ID: <2949191.e9J7NaK4W3@trenzalore>
+In-Reply-To: <1600ee06-ac19-436f-8229-1bb44b29c683@kernel.org>
+References:
+ <20240802214053.433493-1-detlev.casanova@collabora.com>
+ <20240802214053.433493-3-detlev.casanova@collabora.com>
+ <1600ee06-ac19-436f-8229-1bb44b29c683@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240802115120.362902-4-yi.zhang@huaweicloud.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [0.49 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:email]
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: 4C53C21C38
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: 0.49
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-On Fri 02-08-24 19:51:13, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Sunday, 4 August 2024 05:53:57 EDT Krzysztof Kozlowski wrote:
+> On 02/08/2024 23:35, Detlev Casanova wrote:
+> > From: Elaine Zhang <zhangqing@rock-chips.com>
+> > 
+> > Add the dt-bindings header for the rk3576, that gets shared between
+> > the clock controller and the clock references in the dts.
+> > 
+> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> > Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
+> > [rebased, separate clocks and resets]
+> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
 > 
-> Since we always set EXT4_GET_BLOCKS_DELALLOC_RESERVE when allocating
-> delalloc blocks, there is no need to keep delayed flag on the unwritten
-> extent status entry, so just drop it after allocation.
+> Please use subject prefixes matching the subsystem. You can get them for
+> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+> your patch is touching. For bindings, the preferred subjects are
+> explained here:
+> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patche
+> s.html#i-for-patch-submitters
+> > ---
+> > 
+> >  .../dt-bindings/clock/rockchip,rk3576-cru.h   | 589 ++++++++++++++++++
+> >  .../dt-bindings/reset/rockchip,rk3576-cru.h   | 484 ++++++++++++++
+> >  2 files changed, 1073 insertions(+)
+> >  create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
+> >  create mode 100644 include/dt-bindings/reset/rockchip,rk3576-cru.h
 > 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> These are bindings. Must be squashed with previous patch.
 
-Let me improve the changelog because I was confused for some time before I
-understood:
+Ok, so you'd rather have a commit for reset definitions (dt-bindings: reset: 
+Add rk3576 reset definitions) and another one for clock definitions + 
+Documentation (dt-bindings: clock: Add rk3576 clock definitions and 
+documentation) ?
 
-Currently, we release delayed allocation reservation when removing delayed
-extent from extent status tree (which also happens when overwriting one
-extent with another one). When we allocated unwritten extent under
-some delayed allocated extent, we don't need the reservation anymore and
-hence we don't need to preserve the EXT4_MAP_DELAYED status bit. Inserting
-the new extent into extent status tree will properly release the
-reservation.
-
-Otherwise feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 91b2610a6dc5..e9ce1e4e6acb 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -558,12 +558,6 @@ static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
->  
->  	status = map->m_flags & EXT4_MAP_UNWRITTEN ?
->  			EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
-> -	if (!(flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE) &&
-> -	    !(status & EXTENT_STATUS_WRITTEN) &&
-> -	    ext4_es_scan_range(inode, &ext4_es_is_delayed, map->m_lblk,
-> -			       map->m_lblk + map->m_len - 1))
-> -		status |= EXTENT_STATUS_DELAYED;
-> -
->  	ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
->  			      map->m_pblk, status);
->  
-> @@ -682,11 +676,6 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
->  
->  		status = map->m_flags & EXT4_MAP_UNWRITTEN ?
->  				EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
-> -		if (!(flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE) &&
-> -		    !(status & EXTENT_STATUS_WRITTEN) &&
-> -		    ext4_es_scan_range(inode, &ext4_es_is_delayed, map->m_lblk,
-> -				       map->m_lblk + map->m_len - 1))
-> -			status |= EXTENT_STATUS_DELAYED;
->  		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
->  				      map->m_pblk, status);
->  	}
-> -- 
-> 2.39.2
+> > diff --git a/include/dt-bindings/clock/rockchip,rk3576-cru.h
+> > b/include/dt-bindings/clock/rockchip,rk3576-cru.h new file mode 100644
+> > index 0000000000000..14b54543d1a11
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/rockchip,rk3576-cru.h
+> > @@ -0,0 +1,589 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Weird license. Why not using recommended one?
+
+Oh right, I suppose "GPL-2.0 OR MIT" is better ? At least that is what I see 
+for rk3588. include/dt-bindings/clock/rockchip,rv1126-cru.h uses "GPL-2.0+ OR 
+MIT" though.
+
+> > +/*
+> > + * Copyright (c) 2023 Rockchip Electronics Co. Ltd.
+> > + * Author: Elaine Zhang <zhangqing@rock-chips.com>
+> > + */
+> > +
+> > +#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK3576_H
+> > +#define _DT_BINDINGS_CLK_ROCKCHIP_RK3576_H
+> > +
+> > +/* cru-clocks indices */
+> > +
+> > +/* cru plls */
+> > +#define PLL_BPLL			1
+> > +#define PLL_LPLL			3
+> > +#define PLL_VPLL			4
+> > +#define PLL_AUPLL			5
+> > +#define PLL_CPLL			6
+> > +#define PLL_GPLL			7
+> > +#define PLL_PPLL			9
+> 
+> Nope, indices start from 1 and are incremented continuously.
+
+Why start at 1 ? RK3588 starts at 0 for clocks and resets
+
+Regards,
+Detlev.
+
+
 
