@@ -1,109 +1,111 @@
-Return-Path: <linux-kernel+bounces-276771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4FF0949830
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:25:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 477D294982E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5FFD283C13
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:25:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5EC51F23364
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74E513C90F;
-	Tue,  6 Aug 2024 19:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830FC146A6D;
+	Tue,  6 Aug 2024 19:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="pU1nIbns"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B4713C90B;
-	Tue,  6 Aug 2024 19:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SqXCxba7"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7188047F4D;
+	Tue,  6 Aug 2024 19:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722972288; cv=none; b=N5YV6cJX5QlxXc/A0b44jSQmtKLD7u2axxr+kr0uLjOyv3SMS/BX+onf2Gc1l4eka4x0xNPsqlxofag2QAnELdGueEl/2IgFX1qRiCx2q77NMSrH535+HWlhxjCAlAu9HWCzT0VH+AIpxM7h5hhjx3iQso8O3csP4pXhpW6PkFE=
+	t=1722972283; cv=none; b=RVnDXwYA1QOhmK5PvXN5tPZS8Fe8/vBGHygwfpCoJ0UHoyP+FQ5Pl+fRhb5VA45BHTRmcHmT8JtaFOkdZCq0O4SKhY2XU2jruRTYyMM9oiEEXVhckejIjr4EEQw7NklanytnFE+jNjpa5SHtcAbzS0SgSno3R82+LMyLJ6nNcas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722972288; c=relaxed/simple;
-	bh=4gbTg6sRbIzoCnBVCnT/nCz6ATeU7FH1cjOBD45zYkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cHIAYCx2umkb1kDIuWDIiZ8eAolNyD6WQbeEWrQfWUhC1CSwoLmvfKk/1SaWDWoJ3sYaAS3Srgs+zUAxkBLHVF9EnAJOaONRZnPGKd5igCz5gUfVulApXA4Oh4s9ljk3Anc9/u5V5R++s54wiqHUAKEeuMjdGYuwE0HbGDowirM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=pU1nIbns; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1722972275;
-	bh=4gbTg6sRbIzoCnBVCnT/nCz6ATeU7FH1cjOBD45zYkw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pU1nIbnsSAhLR+Qzy0iAXlaj4sF+T1DUdytsrPVbaG9uu5vXUpqXplO+4KUfunisy
-	 xv/WmPn4pkdHhn4zrAFr4BZSlhZcG3/sWSExdM2JRbxBdUweej9+xsoztftUd16KIW
-	 fhbQ/Wk+8tHXwQEY43UrzcqrHdR2RwtcmH5U1KFE=
-Date: Tue, 6 Aug 2024 21:24:33 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Solar Designer <solar@openwall.com>
-Cc: Joel Granados <j.granados@samsung.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Jeff Johnson <quic_jjohnson@quicinc.com>, Kees Cook <keescook@chromium.org>, Wen Yang <wen.yang@linux.dev>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [GIT PULL] sysctl changes for v6.11-rc1
-Message-ID: <97a52396-3b86-47a5-ae02-8a979f6fc375@t-8ch.de>
-References: <CGME20240716141703eucas1p2f6ddaf91b7363dd893d37b9aa8987dc6@eucas1p2.samsung.com>
- <20240716141656.pvlrrnxziok2jwxt@joelS2.panther.com>
- <20240806185736.GA29664@openwall.com>
+	s=arc-20240116; t=1722972283; c=relaxed/simple;
+	bh=lx4SKSYG9IQt/tT0YU0rp35SXnpgN8Tt+kd6Z8utk2I=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=BiPhH57Nw+c5abNujH3Vt1e6PMnnO/5zmbTe5DdT8+dNeMA77imlTzLrQ4JekjN+AIDBzR18X2m7A8qvM1LKAAgDkdazat62ZRFGpaxdoYUOPrbP/6nd16CVOo2+Eekyq9rbd7v2GTh51sqjoA+6eGKf1S8b+0gieAZM8aXQnXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SqXCxba7; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.49.54] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 8018920B7165;
+	Tue,  6 Aug 2024 12:24:40 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8018920B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1722972281;
+	bh=Qbx96xFbGoYdTWGhHn3B+cy2pNWGVzfzN21Xqhn+OSk=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=SqXCxba7R3fhOrXQIUZw3R4WO4OkqLSq0ky5wLl6zBu3kxtU4lSB7e0xih8mApH5E
+	 sCdfu13aveEjfkIQ9CMyGkjBs7+EvZF46Gr4HZ5p1dckvpOkNliR0kW2lXLKpCg8Km
+	 1KUtVl+grJYw+dT7Ck7tx9MIrgOovUzrlSZqbCI4=
+Message-ID: <389da90e-df78-4ea4-8453-ae2080a68956@linux.microsoft.com>
+Date: Tue, 6 Aug 2024 12:24:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806185736.GA29664@openwall.com>
+User-Agent: Mozilla Thunderbird
+Cc: eahariha@linux.microsoft.com, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>,
+ Sunil V L <sunilvl@ventanamicro.com>, Nick Kossifidis <mick@ics.forth.gr>,
+ Sebastien Boeuf <seb@rivosinc.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org, iommu@lists.linux.dev,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux@rivosinc.com, Lu Baolu <baolu.lu@linux.intel.com>,
+ Zong Li <zong.li@sifive.com>
+Subject: Re: [PATCH v8 7/7] iommu/riscv: Paging domain support
+To: Tomasz Jeznach <tjeznach@rivosinc.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>
+References: <cover.1718388908.git.tjeznach@rivosinc.com>
+ <bdd1e0547e01d012bf40c5e33b752e77c6663c90.1718388909.git.tjeznach@rivosinc.com>
+Content-Language: en-US
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+In-Reply-To: <bdd1e0547e01d012bf40c5e33b752e77c6663c90.1718388909.git.tjeznach@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2024-08-06 20:57:37+0000, Solar Designer wrote:
-> On Tue, Jul 16, 2024 at 04:16:56PM +0200, Joel Granados wrote:
-> > sysctl changes for 6.11-rc1
-> > 
-> > Summary
-> > 
-> > * Remove "->procname == NULL" check when iterating through sysctl table arrays
-> > 
-> >     Removing sentinels in ctl_table arrays reduces the build time size and
-> >     runtime memory consumed by ~64 bytes per array. With all ctl_table
-> >     sentinels gone, the additional check for ->procname == NULL that worked in
-> >     tandem with the ARRAY_SIZE to calculate the size of the ctl_table arrays is
-> >     no longer needed and has been removed. The sysctl register functions now
-> >     returns an error if a sentinel is used.
-> > 
-> > * Preparation patches for sysctl constification
-> > 
-> >     Constifying ctl_table structs prevents the modification of proc_handler
-> >     function pointers as they would reside in .rodata. The ctl_table arguments
-> >     in sysctl utility functions are const qualified in preparation for a future
-> >     treewide proc_handler argument constification commit.
+On 6/14/2024 10:27 PM, Tomasz Jeznach wrote:
+> Introduce first-stage address translation support.
 > 
-> As (I assume it was) expected, these changes broke out-of-tree modules.
-> For LKRG, I am repairing this by adding "#if LINUX_VERSION_CODE >=
-> KERNEL_VERSION(6,11,0)" checks around the corresponding module changes.
-> This works.  However, I wonder if it would possibly be better for the
-> kernel to introduce a corresponding "feature test macro" (or two, for
-> the two changes above).  I worry that these changes (or some of them)
-> could get backported to stable/longterm, which with the 6.11+ checks
-> would unnecessarily break out-of-tree modules again (and again and again
-> for each backport to a different kernel branch).  Feature test macro(s)
-> would avoid such further breakage, as they would (be supposed to be)
-> included along with the backports.
+> Page table configured by the IOMMU driver will use the highest mode
+> implemented by the hardware, unless not known at the domain allocation
+> time falling back to the CPU’s MMU page mode.
+> 
+> This change introduces IOTINVAL.VMA command, required to invalidate
+> any cached IOATC entries after mapping is updated and/or removed from
+> the paging domain.  Invalidations for the non-leaf page entries use
+> IOTINVAL for all addresses assigned to the protection domain for
+> hardware not supporting more granular non-leaf page table cache
+> invalidations.
+> 
+> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Reviewed-by: Zong Li <zong.li@sifive.com>
+> Signed-off-by: Tomasz Jeznach <tjeznach@rivosinc.com>
+> ---
+>  drivers/iommu/riscv/iommu.c | 642 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 639 insertions(+), 3 deletions(-)
+> 
 
-I don't see any of these changes being backported.
+> @@ -856,7 +1473,7 @@ static struct iommu_domain riscv_iommu_identity_domain = {
+>  
+>  static int riscv_iommu_device_domain_type(struct device *dev)
+>  {
+> -	return IOMMU_DOMAIN_IDENTITY;
+> +	return 0;
+>  }
 
-The removal of the "->procname == NULL" check depends on all in-kernel
-tables being registered with an explicit size, which is not the case on
-old kernels. So a backport would not only silently fail for external
-modules but also for internal code.
-The same for the constification patches but with build errors instead of
-runtime errors.
+<snip>
+Sorry for the drive by comment, I just happen to be in the nearby code
+context.
 
-My future sysctl constification patches will be backwards compatible at
-both compiletime and runtime, for both internal and external code.
+Nit: It may be better to use IOMMU_DOMAIN_BLOCKED here for readability
+rather than the bare value.
 
-So the version checks should be enough here.
+Thanks,
+Easwar
 
