@@ -1,109 +1,153 @@
-Return-Path: <linux-kernel+bounces-276176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ADB3948F7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:50:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4CD948F7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B5C71C20B4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:50:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791CC1F22F59
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25A71C5797;
-	Tue,  6 Aug 2024 12:50:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D231EB46;
-	Tue,  6 Aug 2024 12:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E8D1C461D;
+	Tue,  6 Aug 2024 12:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="SCE+sKVo"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC671DFC7
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722948613; cv=none; b=TgYX1hhQdI7KCJZKA7kcmxArMQfn96p1JbIG9eQvh/ZL0vLX3V9oBah+HOM04SmboNQJJDhxBXAwd8a9haWFL1i5TAOMxgZkxd8LXnSqPZMB0iUt2HCv+XCiDQLqOQknz54wZnPsQth9u4Dv9+H4xItLx3hy/UoeryD8HXPEY5g=
+	t=1722948627; cv=none; b=E1Qip+dqCh9HHNNfGx3uEQBVhU252m4VzWbzj0pv6QW3hjQyxFbnffRUNcr1B5HcUA51s1kwqhDNxb7/7l46y/rGQ6lg3ektMDpUnrHOMfdtAp6sOdSrwhNN2kFhFKm3+zWvGw1kpWQrD0atSkaKWLYy7GB+FPQmNV4o4OvkgKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722948613; c=relaxed/simple;
-	bh=qiB1pIDrpr161u3H5M6pgp7TwSMXFUJdUlIbecnDkGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OF/HXOrENiJ+v2Nunqzt8LW51orEYoyNv3N4JxYidpRoR7jVRH1Xw+Zk4CmG7OW59hqtBSzM6AFbfyhfto2qKiq2rbpm5vhW8AIhqUOYCn+0YedrKJnE6ejjnB4DJPFyyHH5I5Y7zkI+29/7iArLSlWYCIZrUnBRc1o+23j6Bfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22386FEC;
-	Tue,  6 Aug 2024 05:50:37 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 704F73F766;
-	Tue,  6 Aug 2024 05:50:09 -0700 (PDT)
-Message-ID: <ae995d55-daa9-4060-85fa-31b4f725a17d@arm.com>
-Date: Tue, 6 Aug 2024 13:50:08 +0100
+	s=arc-20240116; t=1722948627; c=relaxed/simple;
+	bh=OMNNokSWIhWjatnSua94hQ0Tdvb0u2DzTMoj+bCaqqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rhp9C3h3jRoZHacCyq+s8Q/ugAnE+NY5lQCqs/FjoeFa/r8nzbauErIGH1h5iqMIrAR9xNN8tm2SXjYxLPwauPHrX32Mxce3+a3OjcX5pYKm7InBD019UdxHs1pPO/4ZbVdT5cFC8VQey3RITuTuBpHUgnWwtVKA5Jjc4vTZ32Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=SCE+sKVo; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from mordecai.tesarici.cz (unknown [213.235.133.103])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by bee.tesarici.cz (Postfix) with ESMTPSA id 2E5B81D3A2C;
+	Tue,  6 Aug 2024 14:50:20 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1722948620; bh=y6V3imBPTklgQg9pDb3ERB5uieHvs7IMBkapax2rleY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SCE+sKVoJK9wRiLzRNTOfiJn9tXWapLJX+9qKA60wTjhNwn0dgduoeQ0+QcvcdU/i
+	 3y2BR26g15cQFJ1gOn86AN9mTYDBdIKRAeeoQJCj0KD+gqbrjJXTN43lZLxqHWoDgr
+	 QEzZxA+Ye3BL9orS90/bZqutsT7DznSqQzDoGmEW15SOh+op9V1qQPG7a+LVAlxtKk
+	 /mzX2b9brrw+yoHV8MfaHW6bZ+HwsfsnQExZGfpmpkd8J3G3ovErJk+zyZ01FztgRb
+	 oRBcuDZG73BXYIZsuLDkvWCOJ1x+lj9xIh6rLw3Ht/m9rRP0zC1mtXTI+RPIu4JdFq
+	 NSEeEYurgfuIg==
+Date: Tue, 6 Aug 2024 14:50:14 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, Andrew Morton
+ <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH 03/10] mm: abstract duplicated policy comparison
+Message-ID: <20240806145014.7e2c8557@mordecai.tesarici.cz>
+In-Reply-To: <bf56244f473e6ac9378cfce420b51c4dac7783a7.1722849859.git.lorenzo.stoakes@oracle.com>
+References: <cover.1722849859.git.lorenzo.stoakes@oracle.com>
+	<bf56244f473e6ac9378cfce420b51c4dac7783a7.1722849859.git.lorenzo.stoakes@oracle.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG REPORT]net: page_pool: kernel crash at
- iommu_get_dma_domain+0xc/0x20
-To: Yunsheng Lin <linyunsheng@huawei.com>,
- Somnath Kotur <somnath.kotur@broadcom.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: Yonglong Liu <liuyonglong@huawei.com>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- pabeni@redhat.com, ilias.apalodimas@linaro.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Alexander Duyck <alexander.duyck@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, "shenjian (K)" <shenjian15@huawei.com>,
- Salil Mehta <salil.mehta@huawei.com>, joro@8bytes.org, will@kernel.org,
- iommu@lists.linux.dev
-References: <0e54954b-0880-4ebc-8ef0-13b3ac0a6838@huawei.com>
- <8743264a-9700-4227-a556-5f931c720211@huawei.com>
- <e980d20f-ea8a-43e3-8d3f-179a269b5956@kernel.org>
- <CAOBf=musxZcjYNHjdD+MGp0y6epnNO5ryC6JgeAJbP6YQ+sVUA@mail.gmail.com>
- <ad84acd2-36ba-433c-bdf7-c16c0d992e1c@huawei.com>
- <190d5a15-d6bf-47d6-be86-991853b7b51d@arm.com>
- <5b0415ff-9bbe-4553-89d6-17d12fd44b47@huawei.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <5b0415ff-9bbe-4553-89d6-17d12fd44b47@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 06/08/2024 12:54 pm, Yunsheng Lin wrote:
-> On 2024/8/5 20:53, Robin Murphy wrote:
->>>>>
->>>>> The page_pool bumps refcnt via get_device() + put_device() on the DMA
->>>>> 'struct device', to avoid it going away, but I guess there is also some
->>>>> IOMMU code that we need to make sure doesn't go away (until all inflight
->>>>> pages are returned) ???
->>>
->>> I guess the above is why thing went wrong here, the question is which
->>> IOMMU code need to be called here to stop them from going away.
->>
->> This looks like the wrong device is being passed to dma_unmap_page() - if a device had an IOMMU DMA domain at the point when the DMA mapping was create, then neither that domain nor its group can legitimately have disappeared while that device still had a driver bound. Or if it *was* the right device, but it's already had device_del() called on it, then you have a fundamental lifecycle problem - a device with no driver bound should not be passed to the DMA API, much less a dead device that's already been removed from its parent bus.
-> 
-> Yes, the device *was* the right device, And it's already had device_del()
-> called on it.
-> page_pool tries to call get_device() on the DMA 'struct device' to avoid the
-> above lifecycle problem, it seems get_device() does not stop device_del()
-> from being called, and that is where we have the problem here:
-> https://elixir.bootlin.com/linux/v6.11-rc2/source/net/core/page_pool.c#L269
-> 
-> The above happens because driver with page_pool support may hand over
-> page still with dma mapping to network stack and try to reuse that page
-> after network stack is done with it and passes it back to page_pool to avoid
-> the penalty of dma mapping/unmapping. With all the caching in the network
-> stack, some pages may be held in the network stack without returning to the
-> page_pool soon enough, and with VF disable causing the driver unbound, the
-> page_pool does not stop the driver from doing it's unbounding work, instead
-> page_pool uses workqueue to check if there is some pages coming back from the
-> network stack periodically, if there is any, it will do the dma unmmapping
-> related cleanup work.
+On Mon,  5 Aug 2024 13:13:50 +0100
+Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-OK, that sounds like a more insidious problem - it's not just IOMMU 
-stuff, in general the page pool should not be holding and using the 
-device pointer after the device has already been destroyed. Even without 
-an IOMMU, attempting DMA unmaps after the driver has already unbound may 
-leak resources or at worst corrupt memory. Fundamentally, the page pool 
-code cannot allow DMA mappings to outlive the driver they belong to.
+> Both can_vma_merge_before() and can_vma_merge_after() are invoked after
+> checking for compatible VMA NUMA policy, we can simply move this to
+> is_mergeable_vma() and abstract this altogether.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  mm/mmap.c | 8 +++-----
+>  mm/vma.c  | 9 ++++-----
+>  2 files changed, 7 insertions(+), 10 deletions(-)
+> 
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index f931000c561f..721ced6e37b0 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1422,8 +1422,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>  
+>  	/* Attempt to expand an old mapping */
+>  	/* Check next */
+> -	if (next && next->vm_start == end && !vma_policy(next) &&
+> -	    can_vma_merge_before(&vmg)) {
+> +	if (next && next->vm_start == end && can_vma_merge_before(&vmg)) {
+>  		merge_end = next->vm_end;
+>  		vma = next;
+>  		vmg.pgoff = next->vm_pgoff - pglen;
+> @@ -1435,8 +1434,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>  	}
+>  
+>  	/* Check prev */
+> -	if (prev && prev->vm_end == addr && !vma_policy(prev) &&
+> -	    can_vma_merge_after(&vmg)) {
+> +	if (prev && prev->vm_end == addr && can_vma_merge_after(&vmg)) {
+>  		merge_start = prev->vm_start;
+>  		vma = prev;
+>  		vmg.pgoff = prev->vm_pgoff;
+> @@ -1798,7 +1796,7 @@ static int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
+>  	 * Expand the existing vma if possible; Note that singular lists do not
+>  	 * occur after forking, so the expand will only happen on new VMAs.
+>  	 */
+> -	if (vma && vma->vm_end == addr && !vma_policy(vma)) {
+> +	if (vma && vma->vm_end == addr) {
+>  		struct vma_merge_struct vmg = {
+>  			.prev = vma,
+>  			.flags = flags,
+> diff --git a/mm/vma.c b/mm/vma.c
+> index 20c4ce7712c0..b452b472a085 100644
+> --- a/mm/vma.c
+> +++ b/mm/vma.c
+> @@ -19,6 +19,8 @@ static inline bool is_mergeable_vma(struct vma_merge_struct *vmg, bool merge_nex
+>  	 */
+>  	bool may_remove_vma = merge_next;
+>  
+> +	if (!mpol_equal(vmg->policy, vma_policy(vma)))
+> +		return false;
+>  	/*
+>  	 * VM_SOFTDIRTY should not prevent from VMA merging, if we
+>  	 * match the flags but dirty bit -- the caller should mark
+> @@ -971,17 +973,14 @@ static struct vm_area_struct *vma_merge(struct vma_merge_struct *vmg)
+>  		vma_pgoff = prev->vm_pgoff;
+>  
+>  		/* Can we merge the predecessor? */
+> -		if (addr == prev->vm_end && mpol_equal(vma_policy(prev), vmg->policy)
+> -		    && can_vma_merge_after(vmg)) {
+> -
+> +		if (addr == prev->vm_end && can_vma_merge_after(vmg)) {
+>  			merge_prev = true;
+>  			vma_prev(vmg->vmi);
+>  		}
+>  	}
+>  
+>  	/* Can we merge the successor? */
+> -	if (next && mpol_equal(vmg->policy, vma_policy(next)) &&
+> -	    can_vma_merge_before(vmg)) {
+> +	if (next && can_vma_merge_before(vmg)) {
+>  		merge_next = true;
+>  	}
+>  
 
-Thanks,
-Robin.
+Looks good.
+
+Petr T
 
