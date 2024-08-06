@@ -1,138 +1,204 @@
-Return-Path: <linux-kernel+bounces-276094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 824F2948E48
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:01:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0EC4948E4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ABC81F23080
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:01:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2B59281B84
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E35B1C3F02;
-	Tue,  6 Aug 2024 12:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0E11C3780;
+	Tue,  6 Aug 2024 12:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="CtTWSoPN"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L0w/Z9Dv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8605165EFA
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10683165EFA
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722945691; cv=none; b=H/L6DIZlAo177N9KqLo860Ll3nXXTBnnSVfNSp+GIIIcIHI31H/T7YWQFpqCqOnpR2VvYNPC4ymQc1CESlDMzohowwisNcSdaJk5JSJg5ypaAl5UGuf+jtV8pA9oUPmmxPc5Wo8kMqo5nqW3sgdUS7NURiy4ebmyoWD3Om0Q3Zk=
+	t=1722945762; cv=none; b=S0XyAPcJCWINYdurVFpg+faEa3yc5wKEUzjqOpFX6VlBV+GHmiS/wD9amBKJpuSHX7C+Z8pkQ6R9AdGVK0OKAdfTRj9/dHU1Sx40YYYdOCFBwDbEGOV6xdL66OIR/HUz4Yt8IlMXBVATj9SvN4BpvdAq1hbcMbOHkv7ENvfma5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722945691; c=relaxed/simple;
-	bh=Lugsx6fzDwyeoUcfvVDJLgsJHlh3ibZ4yuE5vwJULrI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EMPJowESCVQwFo/nYuYqVKhy7eFiTaHmT6UIowE17ZX/6w9wa/BCt9pdTw6R23Ev8fHL1mEOB3kbX26uhgoJz4xw+45b8zuWfPAe4x/H94n/V6tsPgEVQ5hPdn1Kb7PgFC94Uc3gX+L0TpS/XxA2KrvhGaONbGvf6MTOwMpwkuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=CtTWSoPN; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so71774666b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 05:01:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1722945688; x=1723550488; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SC/B0o7+RdgTPnb7EbqFy0h9TTXJHbv05EgMHed2hQM=;
-        b=CtTWSoPNMagkvVC+duRMDzRo3hkUXDVqG54/wYPFyQAHcG+XyyseU9ZJIQscFWaeTy
-         lq79QpXkVvF3Aw34hrlsJIKdhtkg2sG3gHskJpPFFe5u6UTzMqzKhHU0lqDUKh4GcDk8
-         K3r0OT9krfaCpmyHC+my2c4Gq0O2MMjnUg5FvTh3bqBVqNSzAbRgUGbanfXyoPOwjfQ0
-         MoOLmu8cls45V38tlqAfmb9YvsWzS3+/+uTWcm/QMwf3nEyfTOVYPrHd2S3+rbs8sYBB
-         S4Y98UP+e1LfUqv/H3YPj8m/+m2TkbB7HUfS7Pyi/FUU2awOfmNDalO+0CEgboNsg0SI
-         0nog==
+	s=arc-20240116; t=1722945762; c=relaxed/simple;
+	bh=Z5h1Jsi57J8sln7ZgWt6/obaq6kyMeAW44PiB75lQxw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gsewgBfLwYpn+Bbhv6M0CrbGe28iBJLlKJD6mONjKdVLgjH9eKZSzlTwhF0/Y17EKGGHj+SweJo3mctdCbUU0MbdSKxVyRKGgq8ycYbUoCs0OsNeqMQfgYKDWZJoqQfJaRGGdNUHwed4ep2luKW9BZvgtKQDj7VAtqTSkk+OyOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L0w/Z9Dv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722945759;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=rfRkYxe/SPAMiYh4vQI2fbfDI6Yat+EMEMpDOx9VDW4=;
+	b=L0w/Z9DvY5II9maRqmged7WDe8LYGdCvSohH3MA5GtwQAUbRQ6wpbIu7IOU3zhK/Gqgvy1
+	PXLs51SNAP0E+/sop52EhPHvUB8E3lVbJbs+fKiqzRtaBNmMxQ9kfrCTOCr4rIGrTWgtFO
+	HB+jl6q0ny0GqJseZ5GPGY1qleFGNDs=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-679-PEIUjbY2MoypGTPSlGI1SA-1; Tue, 06 Aug 2024 08:02:38 -0400
+X-MC-Unique: PEIUjbY2MoypGTPSlGI1SA-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-36bbcecebb4so443901f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 05:02:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722945688; x=1723550488;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SC/B0o7+RdgTPnb7EbqFy0h9TTXJHbv05EgMHed2hQM=;
-        b=sFdmM3P8HxBju0yCBhG6Hm7Eq1Xf2gcUzi6gfx9puXr3VM/gJLXqMEHr4XTGfVD4LC
-         7tsTA6kI3B1X+CUlTPbx05Dm5OfCwM7Rn+oYu7bw9bZJr+r056CaEw/LCAHrafjayUdV
-         hsmMz0B2biPjm93qp0GJ6clANCTEOclQvmF7IpGOUTSNEfycxeWDSYHM1xRxyHgIg+Ol
-         yP7XCnJn5RNKUU20Ly6mJUN7mqz0e9vivqCfFUfgVYf/9/0Bn0nsmM0PDELaxpBEVqHR
-         Az0Dq0YXeOvTbGO1pg8zib1MW4bmhxOmRNEr+IfYoqTB/Zduxe8ZupUhlhYd2FmNgBLd
-         p37w==
-X-Forwarded-Encrypted: i=1; AJvYcCVMAjCnIghHZLPoq4C5q4E297VNgwkEJyhOdUWeoxZ658wwyd2AYJXmfvWWEMdi41o4Af8u5z6LtKV7mReSx+JupgVwGF6wSKDoSp97
-X-Gm-Message-State: AOJu0YyifVi1a1lVLrD4Slm3UePE8GkvaLSctuBBIDkSOGE4ZXfNnB9J
-	vOmf48i1jDqPpL334PNVoYlq8Ijgm54skA71JQN84rvmhvyE+4Bph4RssCtWc24=
-X-Google-Smtp-Source: AGHT+IFZECUBQXofC+L4rA9OhKjiBlUfVSyXAns5FoFrow7eTVkumUQVC1WUleF3rWg3eVS8qyr7bQ==
-X-Received: by 2002:a17:906:db03:b0:a7a:b070:92cc with SMTP id a640c23a62f3a-a7dc5106e2amr1253822266b.45.1722945687914;
-        Tue, 06 Aug 2024 05:01:27 -0700 (PDT)
-Received: from cloudflare.com ([2a09:bac5:5063:2387::38a:2f])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0c801sm539912666b.59.2024.08.06.05.01.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 05:01:26 -0700 (PDT)
-From: Jakub Sitnicki <jakub@cloudflare.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: Andrii Nakryiko <andrii@kernel.org>,  Eduard Zingerman
- <eddyz87@gmail.com>,  Mykola Lysenko <mykolal@fb.com>,  Alexei Starovoitov
- <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>,  Martin KaFai
- Lau <martin.lau@linux.dev>,  Song Liu <song@kernel.org>,  Yonghong Song
- <yonghong.song@linux.dev>,  John Fastabend <john.fastabend@gmail.com>,  KP
- Singh <kpsingh@kernel.org>,  Stanislav Fomichev <sdf@fomichev.me>,  Hao
- Luo <haoluo@google.com>,  Jiri Olsa <jolsa@kernel.org>,  Shuah Khan
- <shuah@kernel.org>,  bpf@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 0/6] selftests/bpf: Various sockmap-related
- fixes
-In-Reply-To: <20240731-selftest-sockmap-fixes-v2-0-08a0c73abed2@rbox.co>
-	(Michal Luczaj's message of "Wed, 31 Jul 2024 12:01:25 +0200")
-References: <20240731-selftest-sockmap-fixes-v2-0-08a0c73abed2@rbox.co>
-User-Agent: mu4e 1.12.4; emacs 29.1
-Date: Tue, 06 Aug 2024 14:01:25 +0200
-Message-ID: <87y159yi5m.fsf@cloudflare.com>
+        d=1e100.net; s=20230601; t=1722945757; x=1723550557;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rfRkYxe/SPAMiYh4vQI2fbfDI6Yat+EMEMpDOx9VDW4=;
+        b=f0FbiKNp3XONlH77kMebmTv+IIlE45ZgvxhagRUwvqASsxVrAKvmYmziYUGgmG8CJz
+         ztenxe6TY9qpveMkBJBGuYGXY2SBmKHoA5u1FCIxuCpLigOj4LBJXjW9JvGNezj4akY+
+         rHd+YP0hd4u/HqqxljEr8PDqtNiqrB3NKuLA6cJaXPbSor90tCN9NnaNQPfSYwOXLcHW
+         ZUy8gzBS1vy1nSB0X5OfLJ6tYtV6vS6ThbTjP+cdGKYgMDHkUVyifPkzAYx+TAw+IBNh
+         vVmdXQeg5VmRbZHIzDXoS9a/RpyttrKTyVqMBEfStJdM4otkLuTC7O6I263mBH4es3QY
+         e8Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUBw7gADtRUeoID9+DOaFnMjrzjhR7WxQkJAR1wPalBRNyhcV7juG9MdxTa7dl9wWQsFbo4X0zmqwryt8OVvUnq/mDJ9motHB4ODwUN
+X-Gm-Message-State: AOJu0YwzMHQsMSK8gFhy0b0ZUh9uPcDgQDlJ6LkRm9qz0hDzP54HoRKH
+	6Q9D0Iv7QHPYH+ZlfmAP9lqXit4i+gn/TSmFTOpOYklQRNqb22Z2vUFGvVawp3HNkGzhrEnK2xx
+	B8tvzkkBAw8LORordEytK7LYi838n/yhVsCja+wC9df4zllFJv+JCm1iMGmaUDQ==
+X-Received: by 2002:a5d:568f:0:b0:368:6b56:641b with SMTP id ffacd0b85a97d-36bbc1a6754mr13444198f8f.47.1722945757391;
+        Tue, 06 Aug 2024 05:02:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGwjm93au6XMoF3owRpkCyFW+Prx88RdvN7jmkNLtTQhqujQ1NAs/T2s3CwdeRT2LuWx5QtGQ==
+X-Received: by 2002:a5d:568f:0:b0:368:6b56:641b with SMTP id ffacd0b85a97d-36bbc1a6754mr13444165f8f.47.1722945756917;
+        Tue, 06 Aug 2024 05:02:36 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e9d1fcsm175829175e9.42.2024.08.06.05.02.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 05:02:36 -0700 (PDT)
+Message-ID: <2276d983-cb01-4a28-9f12-13ac924a7248@redhat.com>
+Date: Tue, 6 Aug 2024 14:02:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/8] mm: Accept memory in __alloc_pages_bulk().
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Mel Gorman <mgorman@suse.de>,
+ Vlastimil Babka <vbabka@suse.cz>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>, Mike Rapoport <rppt@kernel.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240805145940.2911011-1-kirill.shutemov@linux.intel.com>
+ <20240805145940.2911011-3-kirill.shutemov@linux.intel.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240805145940.2911011-3-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 31, 2024 at 12:01 PM +02, Michal Luczaj wrote:
-> Series takes care of few bugs and missing features with the aim to improve
-> the test coverage of sockmap/sockhash.
->
-> Last patch is a create_pair() rewrite making use of
-> __attribute__((cleanup)) to handle socket fd lifetime.
->
-> Signed-off-by: Michal Luczaj <mhal@rbox.co>
+On 05.08.24 16:59, Kirill A. Shutemov wrote:
+> Currently, the kernel only accepts memory in get_page_from_freelist(),
+> but there is another path that directly takes pages from free lists -
+> __alloc_page_bulk(). This function can consume all accepted memory and
+> will resort to __alloc_pages_noprof() if necessary.
+> 
+> Conditionally accepted in __alloc_pages_bulk().
+> 
+> The same issue may arise due to deferred page initialization. Kick the
+> deferred initialization machinery before abandoning the zone, as the
+> kernel does in get_page_from_freelist().
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 > ---
-> Changes in v2:
-> - Rebase on bpf-next (Jakub)
-> - Use cleanup helpers from kernel's cleanup.h (Jakub)
-> - Fix subject of patch 3, rephrase patch 4, use correct prefix
-> - Link to v1: https://lore.kernel.org/r/20240724-sockmap-selftest-fixes-v1-0-46165d224712@rbox.co
->
-> Changes in v1:
-> - No declarations in function body (Jakub)
-> - Don't touch output arguments until function succeeds (Jakub)
-> - Link to v0: https://lore.kernel.org/netdev/027fdb41-ee11-4be0-a493-22f28a1abd7c@rbox.co/
->
-> ---
-> Michal Luczaj (6):
->       selftests/bpf: Support more socket types in create_pair()
->       selftests/bpf: Socket pair creation, cleanups
->       selftests/bpf: Simplify inet_socketpair() and vsock_socketpair_connectible()
->       selftests/bpf: Honour the sotype of af_unix redir tests
->       selftests/bpf: Exercise SOCK_STREAM unix_inet_redir_to_connected()
->       selftests/bpf: Introduce __attribute__((cleanup)) in create_pair()
->
->  .../selftests/bpf/prog_tests/sockmap_basic.c       |  28 ++--
->  .../selftests/bpf/prog_tests/sockmap_helpers.h     | 149 ++++++++++++++-------
->  .../selftests/bpf/prog_tests/sockmap_listen.c      | 117 ++--------------
->  3 files changed, 124 insertions(+), 170 deletions(-)
-> ---
-> base-commit: 92cc2456e9775dc4333fb4aa430763ae4ac2f2d9
-> change-id: 20240729-selftest-sockmap-fixes-bcca996e143b
->
-> Best regards,
+>   mm/page_alloc.c | 13 +++++++++++++
+>   1 file changed, 13 insertions(+)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index aa9b1eaa638c..90a1f01d5996 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -4576,12 +4576,25 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
+>   			goto failed;
+>   		}
+>   
+> +		cond_accept_memory(zone, 0);
+> +retry_this_zone:
+>   		mark = wmark_pages(zone, alloc_flags & ALLOC_WMARK_MASK) + nr_pages;
+>   		if (zone_watermark_fast(zone, 0,  mark,
+>   				zonelist_zone_idx(ac.preferred_zoneref),
+>   				alloc_flags, gfp)) {
+>   			break;
+>   		}
+> +
+> +		if (cond_accept_memory(zone, 0))
+> +			goto retry_this_zone;
+> +
+> +#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+> +		/* Try again if zone has deferred pages */
+> +		if (deferred_pages_enabled()) {
+> +			if (_deferred_grow_zone(zone, 0))
+> +				goto retry_this_zone;
+> +		}
+> +#endif
 
-Thanks again for these fixes. For the series:
+We could probably avoid the #ifdef if we add a dummy function for 
+_deferred_grow_zone().
 
-Reviewed-by: Jakub Sitnicki <jakub@cloudflare.com>
-Tested-by: Jakub Sitnicki <jakub@cloudflare.com>
+Same applies to the other similar users in this file.
+
+Acked-by: David Hildenbrand <david@redhat.com>
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
