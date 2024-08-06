@@ -1,117 +1,116 @@
-Return-Path: <linux-kernel+bounces-276971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3441E949A89
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:55:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22464949A8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF1051F23BD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:55:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3B2DB21539
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E3116F26D;
-	Tue,  6 Aug 2024 21:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC0C16F84A;
+	Tue,  6 Aug 2024 21:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jB4+338i"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OFKm6ezG"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630D916D33D
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 21:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B6B16F260
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 21:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722981341; cv=none; b=m+eeAEb2NvC+p44rm7K8wVAdy/ioKg+Mrq8nrWWY7hts2fjZPiMa7E/N5c1ch7eoRsT5Kndmn1Jjomjx1wp30yKoNYp+/RaF7C04xhtw5k8gTOJcJv6iDvfGfjJrK+OU/nFcv6wNtVMykn9H+TkjMO+bBw+rHAL8VKAFiAi5G1Q=
+	t=1722981366; cv=none; b=CO9xt0vPlts/FepLIabyRINIuIZKiW+Da7oTgNwQwjVo8pXnw5688YDJ25EXiY/gx76zQX422VzufakoqktOVtFfNuO8amVF6Xnf1Wfuq4QbINCF7HhB7yCcixA+n9Ja9tRI4g24ZfTBz9lKBzBRUz/KHCMUzCpmw4LOyz3/09M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722981341; c=relaxed/simple;
-	bh=n1CsJvO4RUncYz1C9N6354Je8MjF9roKSsq0uARHNEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eCUPzu8dwpK5Hmiy83hR2LIQ5AvTdneT21hNSR3bjucwVRoi1sAO0qNfOYbyPMNMnT5G3d/75/+eM2BAxNRWJTnamxsNq9SHzDaY2p89ykumakaksA4ZBNSJYhKHwldZr882JbpqyongazyCEkgQMpTa6lLJAJEcdgOs/gvtE+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jB4+338i; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OYAn+zIBaN840s8JSyuuYFV+HpHAFTrA+0QShvGCpAM=; b=jB4+338ibrSGZ89k2okOOjNyjy
-	Eo3dmypnkVhI3k08v5/Kg8h2Z/iDL725eoaQ9gVm3J7wzH4l42aPn13mNb5QsAtIHOiofVXoPnndk
-	ICTvx02cw9fZeAW+oSumL4M5TDWGeYbuVlD2kQfJdLQSg9e20/nQxSy/oBR+rD/Nk8AJnILZkGWri
-	Ike0xcPxjdcQFb/6vXzbxP6LhXD94c7yLT19rd6+TgnKGXjeJILLWOSIMm2pARwS0CMzefC+V+Bx7
-	M/2sa+HiKc5yHr9AB71URNkVy876VP7pHwOYrjfOx1WisLUV+2npFkMnj6cacAer8qJLaLcZ8E9Yr
-	51ZcwGKg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sbS9Y-00000006Wxy-2g2u;
-	Tue, 06 Aug 2024 21:55:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 63AA430066A; Tue,  6 Aug 2024 23:55:35 +0200 (CEST)
-Date: Tue, 6 Aug 2024 23:55:35 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
-	Ingo Molnar <mingo@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
-Message-ID: <20240806215535.GA36996@noisy.programming.kicks-ass.net>
-References: <ZpWjbCQPtuUcvo8r@slm.duckdns.org>
- <20240723163358.GM26750@noisy.programming.kicks-ass.net>
- <ZqAFtfSijJ-KMVHo@slm.duckdns.org>
- <20240724085221.GO26750@noisy.programming.kicks-ass.net>
- <ZqmVG9ZiktN6bnm0@slm.duckdns.org>
- <20240806211002.GA37996@noisy.programming.kicks-ass.net>
- <ZrKW2wZTT3myBI0d@slm.duckdns.org>
+	s=arc-20240116; t=1722981366; c=relaxed/simple;
+	bh=Jvd6d/g8j8GNeIP/2vY+rysLx4jcS6wFfVxuDrV0hx0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J7qC/P+jGqPLVQtb89mqoVND6a2CcFKN2A9n9OjgLlDIIKo0BP4/3gf/v+mfLsjADuFss6ccEmNOaKmcQLo/zMJ/QUACaNwihgxGmPX662jomdipgfg0N8Y4TgIcRL2oE4z32vhUd9gOBEJcA1ZT+uUk8H2+xQXrfpklze9gVGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OFKm6ezG; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-664b4589b1aso2212537b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 14:56:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1722981363; x=1723586163; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kDAjrM4/RIRi3K/tRUnjq4ndMEWl1uNkteCqHbi87aU=;
+        b=OFKm6ezGMCrq2e2n98ivl3PGtPJTt5SvKEFdxjf/Ti7ExV4gBvYc8fdu7bHO4S/09W
+         j8XqNmghcx3dQ2IEYPxboyU7l8u2XhHeQw44dX6rOKPT89Hkm2fheeSL/Za6h/HF568j
+         fwbgpP6AuRLVaN0WaiCHuw0qBr4BA7oDgaL3/uLed8aKE6wBafj0vbHj8danIV59rWck
+         IZDD5jQP2dTfdxOp0/zYee6qq6tki0dfNKZtDA20BAnzDN2++6fgfuRs1iBnPiNoK4JM
+         GGgpWwiKai/5/J1gZGMYi+iUEOi7MokMPcgtbBKB1Lr1vDjGokESAEKIrwx/J93m+8fo
+         wUfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722981363; x=1723586163;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kDAjrM4/RIRi3K/tRUnjq4ndMEWl1uNkteCqHbi87aU=;
+        b=SCSrhAINB+c0BYfAyKUauRTeBHYJv0vi7HJEarb72gOVJzdZoI9U/wlSNjMPYcdit6
+         7DT735ORfKhZo/xfud6Cn/wRUhKCDJ3vUFLjZ0bBH/l2ZIeYWweRhzdqGgAZUR++FkwX
+         RHyNOmAW+jSBQxKud218yZ44CbciU1Udk752DmaA5P9ClubW1MaGoSriPW889K0cDZEV
+         yS7bGs+DVN8TIEybpzSLS+f9bilZOWJIbb8ZOrpDHuj7cdgvBldpIjiIvETSLG8DhuqF
+         mWpsxWr6gLQMvLv3jdcUz728CeH+vmQcmvvZk5GuG0Bxn3/PlbgHfCvqWtdc7/iz7jyv
+         eR+w==
+X-Forwarded-Encrypted: i=1; AJvYcCU8guS27PS7pWiprvzLE9bXX6GqVN8mcFwZ4EdAki47TYgNjIgV41DrfQNCgTO2Zrgwp7H9RnEYkgcDuO5kXVIP/SevVWJy1SdE0N8M
+X-Gm-Message-State: AOJu0Yxs4LvM4zyt4DrwjvRoi19Hlo1SJAGw/fVFnVfDYXKS57z80Sok
+	DkyBQIeC5AFZE2yruuYjFq8og9o6Vaww3+jvFhsVViB6TgIaDbAunu7I2AeCBw2nhqptl5fZCQl
+	Cu8bNHA/4k3u5gsblvOUSv+sr+ijrhDyest5W
+X-Google-Smtp-Source: AGHT+IH3dkrRfOJW0prmnIwdEA2mFjIA4RWSsRtLuzMPO64WTfKIRWGNz9sO84SFriTXfQ/Css9cuJZbEfdI7+2HQNI=
+X-Received: by 2002:a05:6902:2782:b0:e08:6373:dfc8 with SMTP id
+ 3f1490d57ef6-e0e877f5902mr158689276.23.1722981363600; Tue, 06 Aug 2024
+ 14:56:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrKW2wZTT3myBI0d@slm.duckdns.org>
+References: <20240806065113.1317-1-thunder.leizhen@huaweicloud.com> <CAEjxPJ59=rHFovk3scmkhLuiAdu2uinGiua60y0naJ0e95GLmg@mail.gmail.com>
+In-Reply-To: <CAEjxPJ59=rHFovk3scmkhLuiAdu2uinGiua60y0naJ0e95GLmg@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 6 Aug 2024 17:55:52 -0400
+Message-ID: <CAHC9VhTWye8Pm3EUr-Fy-mxq+6H1ThtAekqZd0nXX70f8xP5rw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] selinux: Fix potential counting error in avc_add_xperms_decision()
+To: Zhen Lei <thunder.leizhen@huawei.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: thunder.leizhen@huaweicloud.com, Ondrej Mosnacek <omosnace@redhat.com>, 
+	selinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nick Kralevich <nnk@google.com>, Jeff Vander Stoep <jeffv@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 06, 2024 at 11:34:19AM -1000, Tejun Heo wrote:
+On Tue, Aug 6, 2024 at 9:26=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Tue, Aug 6, 2024 at 2:51=E2=80=AFAM <thunder.leizhen@huaweicloud.com> =
+wrote:
+> > From: Zhen Lei <thunder.leizhen@huawei.com>
+> >
+> > The count increases only when a node is successfully added to
+> > the linked list.
+> >
+> > Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
+> > Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>
+> This looks correct to me ...
 
-> > > +static struct task_struct *pick_task_scx(struct rq *rq)
-> > > +{
-> > > +	struct task_struct *curr = rq->curr;
-> > > +	struct task_struct *first = first_local_task(rq);
-> > > +
-> > > +	if (curr->scx.flags & SCX_TASK_QUEUED) {
-> > > +		/* is curr the only runnable task? */
-> > > +		if (!first)
-> > > +			return curr;
-> > > +
-> > > +		/*
-> > > +		 * Does curr trump first? We can always go by core_sched_at for
-> > > +		 * this comparison as it represents global FIFO ordering when
-> > > +		 * the default core-sched ordering is used and local-DSQ FIFO
-> > > +		 * ordering otherwise.
-> > > +		 *
-> > > +		 * We can have a task with an earlier timestamp on the DSQ. For
-> > > +		 * example, when a current task is preempted by a sibling
-> > > +		 * picking a different cookie, the task would be requeued at the
-> > > +		 * head of the local DSQ with an earlier timestamp than the
-> > > +		 * core-sched picked next task. Besides, the BPF scheduler may
-> > > +		 * dispatch any tasks to the local DSQ anytime.
-> > > +		 */
-> > > +		if (curr->scx.slice && time_before64(curr->scx.core_sched_at,
-> > > +						     first->scx.core_sched_at))
-> > > +			return curr;
-> > > +	}
-> > 
-> > And the above condition seems a little core_sched specific. Is that
-> > suitable for the primary pick function?
-> 
-> Would there be any distinction between pick_task() being called for regular
-> and core sched paths?
+It looks good to me too, unless I hear any objections I'm going to
+merge this into selinux/stable-6.11 and send it up to Linux during the
+v6.11-rcX cycle.
 
-There currently is not -- but if you need that, we can definitely add a
-boolean argument or something. But I think it would be good if a policy
-can inherently know if curr is the better pick.
+> ... but I also notice that the caller is not
+> checking or handling the return code for the -ENOMEM situation.
 
-ISTR you having two queue types, one FIFO and one vtime ordered, for
-both I think it should be possible to determine order, right?
+Good catch.  We should also fix this, ideally in the same PR where we
+send the count/len fix.
+
+Zhen Lei, would you mind working on a separate fix for checking the
+error code in the caller?
+
+--=20
+paul-moore.com
 
