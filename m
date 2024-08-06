@@ -1,794 +1,400 @@
-Return-Path: <linux-kernel+bounces-277059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83131949BBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:01:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A05E949BBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 107C91F228D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:01:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF5491F22397
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B54175D2F;
-	Tue,  6 Aug 2024 23:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FB3175D2C;
+	Tue,  6 Aug 2024 23:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rCga8lOW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HpUxnG3N"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1858B16F27E;
-	Tue,  6 Aug 2024 23:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0625D149DE2;
+	Tue,  6 Aug 2024 23:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722985275; cv=none; b=j5mVOHkdH/fWA2c2e3xDVkp41z2xe/a6zv0vzQJq6LbSmdl/NTq+QseseLVfzFhq+ad6UcNf9c96fRfcYlFVn9cNkXJBxKctpfoaLi59Jw40kRE+4Dj5HkhPnqCEl6s22zW8vusU2yc09Hms+lIAKrH3xgjom0fC1gWAIgoi7+8=
+	t=1722985301; cv=none; b=Y1jd+49bbxnSbKdD4gCyantS6bTzIQuVV2tA++dkaJsdyoFa93M8p5CvVwdSnzs/9A7HoescdhMebxS//tF7t4JhGFtkMeY29aU2weWOkmF24fTInYb/gr7GtlYlKMByRs8NmlbB6F6ZTFVJknmCfMvXT9vKjhhbW8QNef/iSrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722985275; c=relaxed/simple;
-	bh=VT/t8xi2XQhMWBtU/nRyUl6WDtHH1fAaE+epdvkYA/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O9sC/627U6H/PQVMTxVJN2KReoa/Emu8FnKdBzJy2SnBFOpzT6Ts/SxfULxQRMveFX9iyxZJCrA5ziPl4nfd2iSDJsT56ZFjlZlsQ6uhzqh3oMHypcicf5aeX3DVIV1qhGxYgRz1mXxb6chYavoYdV16IHUHUs1Hu92x4HGYuc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rCga8lOW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EBF5C4AF09;
-	Tue,  6 Aug 2024 23:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722985274;
-	bh=VT/t8xi2XQhMWBtU/nRyUl6WDtHH1fAaE+epdvkYA/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rCga8lOWcZf+cJOYXJzqZvd8e5egGKN3KAXKjEInRB+vxawWOAFNM0cXXCx/HVN4s
-	 WNUM88owjXWzn9ymmgoS6Jv17j3I8GNpFuPN/hkykI7b4cmDv8kMTcebJcEhKX0hj2
-	 jEoFAIwOAZ1Rtf9G/EcVpvElrwpnbjF/R23tPx7b2zMdr9JUGRcJjbkWK6dmolg9BW
-	 BgmXciUJVOy7LiOwGSF7da1kNAYPZ45bfUadzwK8yT+q7q0toVLOUJSObwBvhlYfua
-	 nrQLeEeh8yPmM1qaN4l9CdReQ2wY4Z9TDbzAmFpWM8kzUWWzaqQrMeOfI8r+e5SgAs
-	 SThj7h9af5WEw==
-Date: Wed, 7 Aug 2024 01:01:06 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
-	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v4 09/28] rust: alloc: implement kernel `Box`
-Message-ID: <ZrKrMrg5E85y7jkj@pollux>
-References: <20240805152004.5039-1-dakr@kernel.org>
- <20240805152004.5039-10-dakr@kernel.org>
- <a1c1e273-2d40-4114-b3b9-f27c73e3d122@proton.me>
+	s=arc-20240116; t=1722985301; c=relaxed/simple;
+	bh=f1xiifrjh7vKfrNfmLwT2AO9GXKGE9rht8EESovRZ6w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l51iGUPc4s2p9PmjYxT7ZHqOjKns83gFDCPE7yEH2EspdnY0gAWI4VvzExxC4hMpm2rpaEB6+3haJFMh8aOeu5IZpyrn9sSuFzMbhIpSWdkz9cDtxaRFsbIK4psZMISzG8Od8kNkrsuX4Ab3T1/Lw0+yAMiJeTlOjg2RWAJh0Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HpUxnG3N; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc56fd4de1so2546335ad.0;
+        Tue, 06 Aug 2024 16:01:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722985299; x=1723590099; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qC3rSICI9IoAuJIQSFewWSX2BQATF5BEMr9DE8NVX7U=;
+        b=HpUxnG3N3FFGPGWFaYyzDigE6WLyGC1g0paR6CvbFN5qrUf0Ean+Ml10qj6Z8heMYw
+         HJPvQql2ymvrBPPTrY4hhfTs6g8OlrI8IpfRwNq+R/ClDJKagGrE2ULXdcskLIEmOIoz
+         M655kaDVSeEfDNWHN2mNRczTrcMUG04oZYrT6DBLEwyEry33kRcgKNiVg030zuTlH7u+
+         vJhDoiAhaj8r5hCzM4ESudlKXBoDeCtBf8vlcoeL8NAvYQ0+q0Vq9gESldEWvcXBDxf0
+         JmHWaVNziJwvu7tGaeC5c+7SojytRTmCxoYh4o5Pt62gAkgOHq3KBkEFDg93nEu+NV/n
+         yL+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722985299; x=1723590099;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qC3rSICI9IoAuJIQSFewWSX2BQATF5BEMr9DE8NVX7U=;
+        b=sUPp1ASQ3ClTry4XFWF9gS4rLqukBnTiKzaXimM4X3Dje78hb6IxWb9memLe+alTst
+         IslW4Qq3biiiWLZhWaTFUT9/eDuhadnZq7VbHRzyitxPTHVzTGx/dj3+D9+p5vkhnT4D
+         SGjOhk/hXDftOX70ATJDl1ZbatvkfjDwi3izM3ruEnwSGwu8GNxMOYtA94C52mNmOCNc
+         s14eep4qSTbO5AaHzMyqToWrTbq0ly6ZZnKM5pFPEN/ROv8T4jScwa37TRI5lraLP7Hi
+         AQAKizjOnj0vtE8e5lYmyt2xcGz5d/KZzq8B2RbfAb5W1q7lohCDNmAhM6zyO+rjWwyU
+         4m1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUEQD3Kyaybr8ijsJJukjoO3fGXMK9OUbzBpPqQ8f/a4eXFpWabGEJWIuqLuJrzHhzFWmvXCAN0Bpqd1K+3QruWfaOugL77jxV0cN3WJ1X1cNDbpqsM1ao/vp0ybUzS0DjzZdBnpnXZ
+X-Gm-Message-State: AOJu0YxLWCknBqTBKUTqd4IF/1qwRwpLHrLVTO9GVM/cjzE0tAy70kqg
+	9JbOL3+YRwz3PomZ+fRepBYIjSc4KUaQ8TCXi+LQreXMvA0PhxDH
+X-Google-Smtp-Source: AGHT+IGQGq476FDad1g00jhCresKLvmhdVnks40yA57CXQpJny0xtG5Iqg7MOXiJR/olGoc1WqP55w==
+X-Received: by 2002:a17:902:da8d:b0:1fc:5b81:729f with SMTP id d9443c01a7336-200855706cemr4295465ad.32.1722985298865;
+        Tue, 06 Aug 2024 16:01:38 -0700 (PDT)
+Received: from toolbox.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592b3997sm92780755ad.294.2024.08.06.16.01.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 16:01:37 -0700 (PDT)
+From: Alistair Francis <alistair23@gmail.com>
+X-Google-Original-From: Alistair Francis <alistair.francis@wdc.com>
+To: bhelgaas@google.com,
+	linux-pci@vger.kernel.org,
+	Jonathan.Cameron@huawei.com,
+	lukas@wunner.de
+Cc: alex.williamson@redhat.com,
+	christian.koenig@amd.com,
+	kch@nvidia.com,
+	gregkh@linuxfoundation.org,
+	logang@deltatee.com,
+	linux-kernel@vger.kernel.org,
+	alistair23@gmail.com,
+	chaitanyak@nvidia.com,
+	rdunlap@infradead.org,
+	Alistair Francis <alistair.francis@wdc.com>
+Subject: [PATCH v15 1/4] PCI/DOE: Rename DOE protocol to feature
+Date: Wed,  7 Aug 2024 09:01:15 +1000
+Message-ID: <20240806230118.1332763-1-alistair.francis@wdc.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a1c1e273-2d40-4114-b3b9-f27c73e3d122@proton.me>
 
-On Tue, Aug 06, 2024 at 07:47:17PM +0000, Benno Lossin wrote:
-> On 05.08.24 17:19, Danilo Krummrich wrote:
-> > `Box` provides the simplest way to allocate memory for a generic type
-> > with one of the kernel's allocators, e.g. `Kmalloc`, `Vmalloc` or
-> > `KVmalloc`.
-> > 
-> > In contrast to Rust's `Box` type, the kernel `Box` type considers the
-> > kernel's GFP flags for all appropriate functions, always reports
-> > allocation failures through `Result<_, AllocError>` and remains
-> > independent from unstable features.
-> > 
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > ---
-> >  rust/kernel/alloc.rs      |   6 +
-> >  rust/kernel/alloc/kbox.rs | 330 ++++++++++++++++++++++++++++++++++++++
-> >  rust/kernel/init.rs       |  35 +++-
-> >  rust/kernel/prelude.rs    |   2 +-
-> >  rust/kernel/types.rs      |  56 +++++++
-> >  5 files changed, 427 insertions(+), 2 deletions(-)
-> >  create mode 100644 rust/kernel/alloc/kbox.rs
-> > 
-> > diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-> > index 942e2755f217..d7beaf0372af 100644
-> > --- a/rust/kernel/alloc.rs
-> > +++ b/rust/kernel/alloc.rs
-> > @@ -5,6 +5,7 @@
-> >  #[cfg(not(any(test, testlib)))]
-> >  pub mod allocator;
-> >  pub mod box_ext;
-> > +pub mod kbox;
-> >  pub mod vec_ext;
-> > 
-> >  #[cfg(any(test, testlib))]
-> > @@ -13,6 +14,11 @@
-> >  #[cfg(any(test, testlib))]
-> >  pub use self::allocator_test as allocator;
-> > 
-> > +pub use self::kbox::Box;
-> > +pub use self::kbox::KBox;
-> > +pub use self::kbox::KVBox;
-> > +pub use self::kbox::VBox;
-> > +
-> >  /// Indicates an allocation error.
-> >  #[derive(Copy, Clone, PartialEq, Eq, Debug)]
-> >  pub struct AllocError;
-> > diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
-> > new file mode 100644
-> > index 000000000000..4a4379980745
-> > --- /dev/null
-> > +++ b/rust/kernel/alloc/kbox.rs
-> > @@ -0,0 +1,330 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +//! Implementation of [`Box`].
-> > +
-> > +use super::{AllocError, Allocator, Flags};
-> > +use core::fmt;
-> > +use core::marker::PhantomData;
-> > +use core::mem::ManuallyDrop;
-> > +use core::mem::MaybeUninit;
-> > +use core::ops::{Deref, DerefMut};
-> > +use core::pin::Pin;
-> > +use core::result::Result;
-> > +
-> > +use crate::types::Unique;
-> > +
-> > +/// The kernel's [`Box`] type.
-> > +///
-> > +/// `Box` provides the simplest way to allocate memory for a generic type with one of the kernel's
-> > +/// allocators, e.g. `Kmalloc`, `Vmalloc` or `KVmalloc`.
-> > +///
-> > +/// For non-zero-sized values, a [`Box`] will use the given allocator `A` for its allocation. For
-> > +/// the most common allocators the type aliases `KBox`, `VBox` and `KVBox` exist.
-> > +///
-> > +/// It is valid to convert both ways between a [`Box`] and a raw pointer allocated with any
-> > +/// `Allocator`, given that the `Layout` used with the allocator is correct for the type.
-> > +///
-> > +/// For zero-sized values the [`Box`]' pointer must be `dangling_mut::<T>`; no memory is allocated.
-> 
-> Why do we need this to be in the docs?
+DOE r1.1 replaced all occurrences of "protocol" with the term "feature"
+or "Data Object Type".
 
-Probably not - do you suggest to remove it entirely? Otherwise, where do you
-think we should move it?
+PCIe r6.1 (which was published July 24) incorporated that change.
 
-> 
-> > +///
-> > +/// So long as `T: Sized`, a `Box<T>` is guaranteed to be represented as a single pointer and is
-> > +/// also ABI-compatible with C pointers (i.e. the C type `T*`).
-> 
-> You did not make `Box` `repr(transparent)`, so this is not true.
-> Additionally, `Box<T>` (from stdlib) is not FFI-safe [1], this might be
-> surprising, given that it is ABI-compatible (and the documentation seems
-> to suggest that one *can* just use it across FFI). I think we should
-> generally avoid using `Box` in glue code between Rust and C. I would
-> remove this paragraph.
+Rename the existing terms protocol with feature.
 
-Agreed.
+Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Lukas Wunner <lukas@wunner.de>
+---
+v15:
+ - No changes
+v14:
+ - No changes
+v13:
+ - No changes
+v12:
+ - No changes
+v11:
+ - No changes
+v10:
+ - Split original patch into two
+v9:
+ - Rename two more DOE macros
+v8:
+ - Rename prot to feat as well
+v7:
+ - Initial patch
 
-> 
-> [1]: https://github.com/rust-lang/unsafe-code-guidelines/issues/334
-> 
-> 
-> I think there are also other improvements, how about the following (feel
-> free to adapt it):
-> 
->     /// A heap allocation for a single value of type `T`.
->     ///
->     /// When dropping a [`Box`], the value is also dropped and the heap memory is automatically freed.
->     ///
->     /// This is the kernel's version of the Rust stdlib's `Box`. There are a couple, for example no
->     /// `noalias` attribute is emitted and partially moving out of a `Box` is not supported.
->     ///
->     /// `Box` works with any of the kernel's allocators, e.g. [`Kmalloc`], [`Vmalloc`] or [`KVMalloc`].
->     /// There are aliases for `Box` with these allocators ([`KBox`], [`VBox`], [`KVBox`]).
+ drivers/pci/doe.c | 88 +++++++++++++++++++++++------------------------
+ 1 file changed, 44 insertions(+), 44 deletions(-)
 
-That sounds good, I will take this with a few minor adjustments, thanks.
+diff --git a/drivers/pci/doe.c b/drivers/pci/doe.c
+index 652d63df9d22..f776f5304a3e 100644
+--- a/drivers/pci/doe.c
++++ b/drivers/pci/doe.c
+@@ -22,7 +22,7 @@
+ 
+ #include "pci.h"
+ 
+-#define PCI_DOE_PROTOCOL_DISCOVERY 0
++#define PCI_DOE_FEATURE_DISCOVERY 0
+ 
+ /* Timeout of 1 second from 6.30.2 Operation, PCI Spec r6.0 */
+ #define PCI_DOE_TIMEOUT HZ
+@@ -43,7 +43,7 @@
+  *
+  * @pdev: PCI device this mailbox belongs to
+  * @cap_offset: Capability offset
+- * @prots: Array of protocols supported (encoded as long values)
++ * @feats: Array of features supported (encoded as long values)
+  * @wq: Wait queue for work item
+  * @work_queue: Queue of pci_doe_work items
+  * @flags: Bit array of PCI_DOE_FLAG_* flags
+@@ -51,14 +51,14 @@
+ struct pci_doe_mb {
+ 	struct pci_dev *pdev;
+ 	u16 cap_offset;
+-	struct xarray prots;
++	struct xarray feats;
+ 
+ 	wait_queue_head_t wq;
+ 	struct workqueue_struct *work_queue;
+ 	unsigned long flags;
+ };
+ 
+-struct pci_doe_protocol {
++struct pci_doe_feature {
+ 	u16 vid;
+ 	u8 type;
+ };
+@@ -66,7 +66,7 @@ struct pci_doe_protocol {
+ /**
+  * struct pci_doe_task - represents a single query/response
+  *
+- * @prot: DOE Protocol
++ * @feat: DOE Feature
+  * @request_pl: The request payload
+  * @request_pl_sz: Size of the request payload (bytes)
+  * @response_pl: The response payload
+@@ -78,7 +78,7 @@ struct pci_doe_protocol {
+  * @doe_mb: Used internally by the mailbox
+  */
+ struct pci_doe_task {
+-	struct pci_doe_protocol prot;
++	struct pci_doe_feature feat;
+ 	const __le32 *request_pl;
+ 	size_t request_pl_sz;
+ 	__le32 *response_pl;
+@@ -171,8 +171,8 @@ static int pci_doe_send_req(struct pci_doe_mb *doe_mb,
+ 		length = 0;
+ 
+ 	/* Write DOE Header */
+-	val = FIELD_PREP(PCI_DOE_DATA_OBJECT_HEADER_1_VID, task->prot.vid) |
+-		FIELD_PREP(PCI_DOE_DATA_OBJECT_HEADER_1_TYPE, task->prot.type);
++	val = FIELD_PREP(PCI_DOE_DATA_OBJECT_HEADER_1_VID, task->feat.vid) |
++		FIELD_PREP(PCI_DOE_DATA_OBJECT_HEADER_1_TYPE, task->feat.type);
+ 	pci_write_config_dword(pdev, offset + PCI_DOE_WRITE, val);
+ 	pci_write_config_dword(pdev, offset + PCI_DOE_WRITE,
+ 			       FIELD_PREP(PCI_DOE_DATA_OBJECT_HEADER_2_LENGTH,
+@@ -217,12 +217,12 @@ static int pci_doe_recv_resp(struct pci_doe_mb *doe_mb, struct pci_doe_task *tas
+ 	int i = 0;
+ 	u32 val;
+ 
+-	/* Read the first dword to get the protocol */
++	/* Read the first dword to get the feature */
+ 	pci_read_config_dword(pdev, offset + PCI_DOE_READ, &val);
+-	if ((FIELD_GET(PCI_DOE_DATA_OBJECT_HEADER_1_VID, val) != task->prot.vid) ||
+-	    (FIELD_GET(PCI_DOE_DATA_OBJECT_HEADER_1_TYPE, val) != task->prot.type)) {
+-		dev_err_ratelimited(&pdev->dev, "[%x] expected [VID, Protocol] = [%04x, %02x], got [%04x, %02x]\n",
+-				    doe_mb->cap_offset, task->prot.vid, task->prot.type,
++	if ((FIELD_GET(PCI_DOE_DATA_OBJECT_HEADER_1_VID, val) != task->feat.vid) ||
++	    (FIELD_GET(PCI_DOE_DATA_OBJECT_HEADER_1_TYPE, val) != task->feat.type)) {
++		dev_err_ratelimited(&pdev->dev, "[%x] expected [VID, Feature] = [%04x, %02x], got [%04x, %02x]\n",
++				    doe_mb->cap_offset, task->feat.vid, task->feat.type,
+ 				    FIELD_GET(PCI_DOE_DATA_OBJECT_HEADER_1_VID, val),
+ 				    FIELD_GET(PCI_DOE_DATA_OBJECT_HEADER_1_TYPE, val));
+ 		return -EIO;
+@@ -384,7 +384,7 @@ static void pci_doe_task_complete(struct pci_doe_task *task)
+ }
+ 
+ static int pci_doe_discovery(struct pci_doe_mb *doe_mb, u8 capver, u8 *index, u16 *vid,
+-			     u8 *protocol)
++			     u8 *feature)
+ {
+ 	u32 request_pl = FIELD_PREP(PCI_DOE_DATA_OBJECT_DISC_REQ_3_INDEX,
+ 				    *index) |
+@@ -395,7 +395,7 @@ static int pci_doe_discovery(struct pci_doe_mb *doe_mb, u8 capver, u8 *index, u1
+ 	u32 response_pl;
+ 	int rc;
+ 
+-	rc = pci_doe(doe_mb, PCI_VENDOR_ID_PCI_SIG, PCI_DOE_PROTOCOL_DISCOVERY,
++	rc = pci_doe(doe_mb, PCI_VENDOR_ID_PCI_SIG, PCI_DOE_FEATURE_DISCOVERY,
+ 		     &request_pl_le, sizeof(request_pl_le),
+ 		     &response_pl_le, sizeof(response_pl_le));
+ 	if (rc < 0)
+@@ -406,7 +406,7 @@ static int pci_doe_discovery(struct pci_doe_mb *doe_mb, u8 capver, u8 *index, u1
+ 
+ 	response_pl = le32_to_cpu(response_pl_le);
+ 	*vid = FIELD_GET(PCI_DOE_DATA_OBJECT_DISC_RSP_3_VID, response_pl);
+-	*protocol = FIELD_GET(PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL,
++	*feature = FIELD_GET(PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL,
+ 			      response_pl);
+ 	*index = FIELD_GET(PCI_DOE_DATA_OBJECT_DISC_RSP_3_NEXT_INDEX,
+ 			   response_pl);
+@@ -414,12 +414,12 @@ static int pci_doe_discovery(struct pci_doe_mb *doe_mb, u8 capver, u8 *index, u1
+ 	return 0;
+ }
+ 
+-static void *pci_doe_xa_prot_entry(u16 vid, u8 prot)
++static void *pci_doe_xa_feat_entry(u16 vid, u8 prot)
+ {
+ 	return xa_mk_value((vid << 8) | prot);
+ }
+ 
+-static int pci_doe_cache_protocols(struct pci_doe_mb *doe_mb)
++static int pci_doe_cache_features(struct pci_doe_mb *doe_mb)
+ {
+ 	u8 index = 0;
+ 	u8 xa_idx = 0;
+@@ -438,11 +438,11 @@ static int pci_doe_cache_protocols(struct pci_doe_mb *doe_mb)
+ 			return rc;
+ 
+ 		pci_dbg(doe_mb->pdev,
+-			"[%x] Found protocol %d vid: %x prot: %x\n",
++			"[%x] Found feature %d vid: %x prot: %x\n",
+ 			doe_mb->cap_offset, xa_idx, vid, prot);
+ 
+-		rc = xa_insert(&doe_mb->prots, xa_idx++,
+-			       pci_doe_xa_prot_entry(vid, prot), GFP_KERNEL);
++		rc = xa_insert(&doe_mb->feats, xa_idx++,
++			       pci_doe_xa_feat_entry(vid, prot), GFP_KERNEL);
+ 		if (rc)
+ 			return rc;
+ 	} while (index);
+@@ -466,7 +466,7 @@ static void pci_doe_cancel_tasks(struct pci_doe_mb *doe_mb)
+  * @pdev: PCI device to create the DOE mailbox for
+  * @cap_offset: Offset of the DOE mailbox
+  *
+- * Create a single mailbox object to manage the mailbox protocol at the
++ * Create a single mailbox object to manage the mailbox feature at the
+  * cap_offset specified.
+  *
+  * RETURNS: created mailbox object on success
+@@ -485,7 +485,7 @@ static struct pci_doe_mb *pci_doe_create_mb(struct pci_dev *pdev,
+ 	doe_mb->pdev = pdev;
+ 	doe_mb->cap_offset = cap_offset;
+ 	init_waitqueue_head(&doe_mb->wq);
+-	xa_init(&doe_mb->prots);
++	xa_init(&doe_mb->feats);
+ 
+ 	doe_mb->work_queue = alloc_ordered_workqueue("%s %s DOE [%x]", 0,
+ 						dev_bus_name(&pdev->dev),
+@@ -508,11 +508,11 @@ static struct pci_doe_mb *pci_doe_create_mb(struct pci_dev *pdev,
+ 
+ 	/*
+ 	 * The state machine and the mailbox should be in sync now;
+-	 * Use the mailbox to query protocols.
++	 * Use the mailbox to query features.
+ 	 */
+-	rc = pci_doe_cache_protocols(doe_mb);
++	rc = pci_doe_cache_features(doe_mb);
+ 	if (rc) {
+-		pci_err(pdev, "[%x] failed to cache protocols : %d\n",
++		pci_err(pdev, "[%x] failed to cache features : %d\n",
+ 			doe_mb->cap_offset, rc);
+ 		goto err_cancel;
+ 	}
+@@ -521,7 +521,7 @@ static struct pci_doe_mb *pci_doe_create_mb(struct pci_dev *pdev,
+ 
+ err_cancel:
+ 	pci_doe_cancel_tasks(doe_mb);
+-	xa_destroy(&doe_mb->prots);
++	xa_destroy(&doe_mb->feats);
+ err_destroy_wq:
+ 	destroy_workqueue(doe_mb->work_queue);
+ err_free:
+@@ -539,31 +539,31 @@ static struct pci_doe_mb *pci_doe_create_mb(struct pci_dev *pdev,
+ static void pci_doe_destroy_mb(struct pci_doe_mb *doe_mb)
+ {
+ 	pci_doe_cancel_tasks(doe_mb);
+-	xa_destroy(&doe_mb->prots);
++	xa_destroy(&doe_mb->feats);
+ 	destroy_workqueue(doe_mb->work_queue);
+ 	kfree(doe_mb);
+ }
+ 
+ /**
+- * pci_doe_supports_prot() - Return if the DOE instance supports the given
+- *			     protocol
++ * pci_doe_supports_feat() - Return if the DOE instance supports the given
++ *			     feature
+  * @doe_mb: DOE mailbox capability to query
+- * @vid: Protocol Vendor ID
+- * @type: Protocol type
++ * @vid: Feature Vendor ID
++ * @type: Feature type
+  *
+- * RETURNS: True if the DOE mailbox supports the protocol specified
++ * RETURNS: True if the DOE mailbox supports the feature specified
+  */
+-static bool pci_doe_supports_prot(struct pci_doe_mb *doe_mb, u16 vid, u8 type)
++static bool pci_doe_supports_feat(struct pci_doe_mb *doe_mb, u16 vid, u8 type)
+ {
+ 	unsigned long index;
+ 	void *entry;
+ 
+-	/* The discovery protocol must always be supported */
+-	if (vid == PCI_VENDOR_ID_PCI_SIG && type == PCI_DOE_PROTOCOL_DISCOVERY)
++	/* The discovery feature must always be supported */
++	if (vid == PCI_VENDOR_ID_PCI_SIG && type == PCI_DOE_FEATURE_DISCOVERY)
+ 		return true;
+ 
+-	xa_for_each(&doe_mb->prots, index, entry)
+-		if (entry == pci_doe_xa_prot_entry(vid, type))
++	xa_for_each(&doe_mb->feats, index, entry)
++		if (entry == pci_doe_xa_feat_entry(vid, type))
+ 			return true;
+ 
+ 	return false;
+@@ -591,7 +591,7 @@ static bool pci_doe_supports_prot(struct pci_doe_mb *doe_mb, u16 vid, u8 type)
+ static int pci_doe_submit_task(struct pci_doe_mb *doe_mb,
+ 			       struct pci_doe_task *task)
+ {
+-	if (!pci_doe_supports_prot(doe_mb, task->prot.vid, task->prot.type))
++	if (!pci_doe_supports_feat(doe_mb, task->feat.vid, task->feat.type))
+ 		return -EINVAL;
+ 
+ 	if (test_bit(PCI_DOE_FLAG_DEAD, &doe_mb->flags))
+@@ -637,8 +637,8 @@ int pci_doe(struct pci_doe_mb *doe_mb, u16 vendor, u8 type,
+ {
+ 	DECLARE_COMPLETION_ONSTACK(c);
+ 	struct pci_doe_task task = {
+-		.prot.vid = vendor,
+-		.prot.type = type,
++		.feat.vid = vendor,
++		.feat.type = type,
+ 		.request_pl = request,
+ 		.request_pl_sz = request_sz,
+ 		.response_pl = response,
+@@ -663,9 +663,9 @@ EXPORT_SYMBOL_GPL(pci_doe);
+  *
+  * @pdev: PCI device
+  * @vendor: Vendor ID
+- * @type: Data Object Type
++ * @prot: Data Object Type
+  *
+- * Find first DOE mailbox of a PCI device which supports the given protocol.
++ * Find first DOE mailbox of a PCI device which supports the given feature.
+  *
+  * RETURNS: Pointer to the DOE mailbox or NULL if none was found.
+  */
+@@ -676,7 +676,7 @@ struct pci_doe_mb *pci_find_doe_mailbox(struct pci_dev *pdev, u16 vendor,
+ 	unsigned long index;
+ 
+ 	xa_for_each(&pdev->doe_mbs, index, doe_mb)
+-		if (pci_doe_supports_prot(doe_mb, vendor, type))
++		if (pci_doe_supports_feat(doe_mb, vendor, type))
+ 			return doe_mb;
+ 
+ 	return NULL;
+-- 
+2.45.2
 
-> 
-> > +///
-> > +/// # Invariants
-> 
-> Please move this section below the examples section.
-> 
-> > +///
-> > +/// The [`Box`]' pointer always properly aligned and either points to memory allocated with `A` or,
-> 
-> "The [`Box`]' pointer" -> "`self.0` is"
-> 
-> > +/// for zero-sized types, is a dangling pointer.
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// let b = KBox::<u64>::new(24_u64, GFP_KERNEL)?;
-> > +///
-> > +/// assert_eq!(*b, 24_u64);
-> > +///
-> > +/// # Ok::<(), Error>(())
-> > +/// ```
-> 
-> Do you think it would be a good idea to have an example that fails (ie
-> allocate with Kmalloc more than PAGE_SIZE)?
-
-I think that's a good idea, I'll add one.
-
-Please note that kmalloc() can allocate larger buffers than PAGE_SIZE. We can
-request something larger than KMALLOC_MAX_SIZE though.
-
-> 
-> > +///
-> > +/// ```
-> > +/// struct Huge([u8; 1 << 24]);
-> 
-> I know that this is ~16MB, but are there test-vms with less memory (I
-> have no idea how much you normally run these at, I usually give my vms
-> plenty of ram, but when testing, people might not [my intuition is
-> telling me that 16MB should be fine, but I am not sure]).
-
-I think it's pretty reasonable to ask for 16MiB for a test case to succeed.
-
-> 
-> > +///
-> > +/// assert!(KVBox::<Huge>::new_uninit(GFP_KERNEL).is_ok());
-> > +/// ```
-> > +pub struct Box<T: ?Sized, A: Allocator>(Unique<T>, PhantomData<A>);
-> > +
-> > +/// Type alias for `Box` with a `Kmalloc` allocator.
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// let b = KBox::new(24_u64, GFP_KERNEL)?;
-> > +///
-> > +/// assert_eq!(*b, 24_u64);
-> > +///
-> > +/// # Ok::<(), Error>(())
-> > +/// ```
-> > +pub type KBox<T> = Box<T, super::allocator::Kmalloc>;
-> > +
-> > +/// Type alias for `Box` with a `Vmalloc` allocator.
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// let b = VBox::new(24_u64, GFP_KERNEL)?;
-> > +///
-> > +/// assert_eq!(*b, 24_u64);
-> > +///
-> > +/// # Ok::<(), Error>(())
-> > +/// ```
-> > +pub type VBox<T> = Box<T, super::allocator::Vmalloc>;
-> > +
-> > +/// Type alias for `Box` with a `KVmalloc` allocator.
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// let b = KVBox::new(24_u64, GFP_KERNEL)?;
-> > +///
-> > +/// assert_eq!(*b, 24_u64);
-> > +///
-> > +/// # Ok::<(), Error>(())
-> > +/// ```
-> > +pub type KVBox<T> = Box<T, super::allocator::KVmalloc>;
-> > +
-> > +impl<T, A> Box<T, A>
-> > +where
-> > +    T: ?Sized,
-> > +    A: Allocator,
-> > +{
-> > +    /// Constructs a `Box<T, A>` from a raw pointer.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// `raw` must point to valid memory, previously allocated with `A`, and at least the size of
-> > +    /// type `T`.
-> 
-> With this requirement and the invariant on `Box`, I am lead to believe
-> that you can't use this for ZSTs, since they are not allocated with `A`.
-> One solution would be to adjust this requirement. But I would rather use
-> a different solution: we move the dangling pointer stuff into the
-> allocator and also call it when `T` is a ZST (ie don't special case them
-> in `Box` but in the impls of `Allocator`). That way this can stay as-is
-> and the part about ZSTs in the invariant can be removed.
-
-Actually, we already got that. Every zero sized allocation will return a
-dangling pointer. However, we can't call `Allocator::free` with (any) dangling
-pointer though.
-
-> 
-> > +    #[inline]
-> > +    pub const unsafe fn from_raw(raw: *mut T) -> Self {
-> > +        // SAFETY: Validity of `raw` is guaranteed by the safety preconditions of this function.
-> 
-> This is not a safety requirement of `Unique::new_unchecked`. Instead it
-> is a type invariant of `Box`, so it should be an INVARIANT comment.
-> You still need to justify `new_unchecked` though (which is requires that
-> `raw` is not NULL.
-
-Agreed.
-
-> 
-> > +        Self(unsafe { Unique::new_unchecked(raw) }, PhantomData::<A>)
-> 
-> You don't need the `::<A>`.
-> 
-> > +    }
-> > +
-> > +    /// Consumes the `Box<T>`, returning a wrapped raw pointer.
-> > +    ///
-> 
-> Please add a new paragraph: "This will not run the destructor of `T` and
-> the allocation will stay alive indefinitely. Use [`Box::from_raw`] to
-> recover the [`Box`], drop the value and free the allocation.".
-> 
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let x = KBox::new(24, GFP_KERNEL)?;
-> > +    /// let ptr = KBox::into_raw(x);
-> > +    /// let x = unsafe { KBox::from_raw(ptr) };
-> > +    ///
-> > +    /// assert_eq!(*x, 24);
-> > +    ///
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    #[inline]
-> > +    pub fn into_raw(b: Self) -> *mut T {
-> > +        let b = ManuallyDrop::new(b);
-> > +
-> > +        b.0.as_ptr()
-> > +    }
-> > +
-> > +    /// Consumes and leaks the `Box<T>`, returning a mutable reference, &'a mut T.
-> 
-> The last part seems a bit weird, it should definitely be enclosed in
-> '`', but it also seems unnecessary. Instead I would stress that this
-> will never drop the value and also never free the allocation.
-
-Agreed, for this and the above.
-
-> 
-> > +    #[inline]
-> > +    pub fn leak<'a>(b: Self) -> &'a mut T
-> > +    where
-> > +        T: 'a,
-> > +    {
-> > +        // SAFETY: `Box::into_raw` always returns a properly aligned and dereferenceable pointer
-> > +        // which points to an initialized instance of `T`.
-> > +        unsafe { &mut *Box::into_raw(b) }
-> > +    }
-> > +
-> > +    /// Converts a `Box<T, A>` into a `Pin<Box<T, A>>`.
-> > +    #[inline]
-> > +    pub fn into_pin(b: Self) -> Pin<Self>
-> > +    where
-> > +        A: 'static,
-> 
-> Why do we require this? Our `Box` doesn't store an allocator.
-
-I just forgot to remove it.
-
-> 
-> > +    {
-> > +        // SAFETY: It's not possible to move or replace the insides of a `Pin<Box<T, A>>` when
-> > +        // `T: !Unpin`, so it's safe to pin it directly without any additional requirements.
-> > +        unsafe { Pin::new_unchecked(b) }
-> > +    }
-> > +}
-> > +
-> > +impl<T, A> Box<MaybeUninit<T>, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    /// Converts to `Box<T, A>`.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// As with MaybeUninit::assume_init, it is up to the caller to guarantee that the value really
-> > +    /// is in an initialized state. Calling this when the content is not yet fully initialized
-> > +    /// causes immediate undefined behavior.
-> 
-> This also looks like it was copied from the Rust stdlib, please see
-> Miguel's response as to what to do about that.
-
-Yeah, I think there are a few places more places where I forgot about that, will
-fix all of them.
-
-> 
-> Additionally, this Safety section is not up to par with the rest of the
-> kernel, for me this sounds better:
-> 
->     /// The pointee must be a valid value of type `T`.
-> 
-> > +    pub unsafe fn assume_init(b: Self) -> Box<T, A> {
-> > +        let raw = Self::into_raw(b);
-> > +        // SAFETY: Reconstruct the `Box<MaybeUninit<T>, A>` as Box<T, A> now that has been
-> > +        // initialized. `raw` and `alloc` are safe by the invariants of `Box`.
-> > +        unsafe { Box::from_raw(raw as *mut T) }
-> > +    }
-> > +
-> > +    /// Writes the value and converts to `Box<T, A>`.
-> > +    pub fn write(mut b: Self, value: T) -> Box<T, A> {
-> > +        (*b).write(value);
-> > +        // SAFETY: We've just initialized `boxed`'s value.
-> > +        unsafe { Self::assume_init(b) }
-> > +    }
-> > +}
-> > +
-> > +impl<T, A> Box<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    fn is_zst() -> bool {
-> > +        core::mem::size_of::<T>() == 0
-> > +    }
-> > +
-> > +    /// Allocates memory with the allocator `A` and then places `x` into it.
-> > +    ///
-> > +    /// This doesn’t actually allocate if T is zero-sized.
-> > +    pub fn new(x: T, flags: Flags) -> Result<Self, AllocError> {
-> > +        let b = Self::new_uninit(flags)?;
-> > +        Ok(Box::write(b, x))
-> > +    }
-> > +
-> > +    /// Constructs a new `Box<T, A>` with uninitialized contents.
-> > +    ///
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let b = KBox::<u64>::new_uninit(GFP_KERNEL)?;
-> > +    /// let b = KBox::write(b, 24);
-> > +    ///
-> > +    /// assert_eq!(*b, 24_u64);
-> > +    ///
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    pub fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit<T>, A>, AllocError> {
-> > +        let ptr = if Self::is_zst() {
-> > +            Unique::dangling()
-> > +        } else {
-> > +            let layout = core::alloc::Layout::new::<MaybeUninit<T>>();
-> > +            let ptr = A::alloc(layout, flags)?;
-> > +
-> > +            ptr.cast().into()
-> > +        };
-> > +
-> > +        Ok(Box(ptr, PhantomData::<A>))
-> > +    }
-> > +
-> > +    /// Constructs a new `Pin<Box<T, A>>`. If `T` does not implement [`Unpin`], then `x` will be
-> > +    /// pinned in memory and unable to be moved.
-> > +    #[inline]
-> > +    pub fn pin(x: T, flags: Flags) -> Result<Pin<Box<T, A>>, AllocError>
-> > +    where
-> > +        A: 'static,
-> 
-> Again, we don't need this.
-> 
-> > +    {
-> > +        Ok(Self::new(x, flags)?.into())
-> > +    }
-> > +
-> > +    /// Drops the contents, but keeps the allocation.
-> > +    ///
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let value = KBox::new([0; 32], GFP_KERNEL)?;
-> > +    /// assert_eq!(*value, [0; 32]);
-> > +    /// let value = KBox::drop_contents(value);
-> > +    /// // Now we can re-use `value`:
-> > +    /// let value = KBox::write(value, [1; 32]);
-> > +    /// assert_eq!(*value, [1; 32]);
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    pub fn drop_contents(this: Self) -> Box<MaybeUninit<T>, A> {
-> > +        let ptr = Box::into_raw(this);
-> > +        // SAFETY: `ptr` is valid, because it came from `Box::into_raw`.
-> > +        unsafe { core::ptr::drop_in_place(ptr) };
-> > +        // SAFETY: `ptr` is valid, because it came from `Box::into_raw`.
-> > +        unsafe { Box::from_raw(ptr.cast()) }
-> > +    }
-> 
-> I don't particularly care in this instance, but you just took my patch
-> and folded it into your own without asking me or specifying it in the
-> commit message. In general I would have assumed that you just put the
-> entire patch into the series (with correct From:... etc).
-
-When I asked about this in [1] my understanding was that we expect [1] to land
-prior to this series. So, I'm just anticipating a future rebase where I move
-this code from box_ext.rs to kbox.rs, just like Alice suggested for her
-"ForeignOwnable for Pin<crate::alloc::Box<T, A>>" implementation.
-
-I also understand your later reply, where you said: "[...] then you can just
-include it when you remove the `BoxExit` trait." as confirmation.
-
-Probably that's a misunderstanding though. Sorry if that's the case.
-
-[1] https://lore.kernel.org/lkml/24a8d381-dd13-4d19-a736-689b8880dbe1@proton.me/
-
-> 
-> > +}
-> > +
-> > +impl<T, A> From<Box<T, A>> for Pin<Box<T, A>>
-> > +where
-> > +    T: ?Sized,
-> > +    A: Allocator,
-> > +    A: 'static,
-> > +{
-> > +    /// Converts a `Box<T>` into a `Pin<Box<T>>`. If `T` does not implement [`Unpin`], then
-> > +    /// `*boxed` will be pinned in memory and unable to be moved.
-> > +    ///
-> > +    /// This conversion does not allocate on the heap and happens in place.
-> > +    ///
-> > +    /// This is also available via [`Box::into_pin`].
-> > +    ///
-> > +    /// Constructing and pinning a `Box` with <code><Pin<Box\<T>>>::from([Box::new]\(x))</code>
-> > +    /// can also be written more concisely using <code>[Box::pin]\(x)</code>.
-> > +    /// This `From` implementation is useful if you already have a `Box<T>`, or you are
-> > +    /// constructing a (pinned) `Box` in a different way than with [`Box::new`].
-> 
-> This also looks very much like something from the stdlib...
-
-Yeah, I'll replace that.
-
-> 
-> > +    fn from(b: Box<T, A>) -> Self {
-> > +        Box::into_pin(b)
-> > +    }
-> > +}
-> > +
-> > +impl<T, A> Deref for Box<T, A>
-> > +where
-> > +    T: ?Sized,
-> > +    A: Allocator,
-> > +{
-> > +    type Target = T;
-> > +
-> > +    fn deref(&self) -> &T {
-> > +        // SAFETY: `self.0` is always properly aligned, dereferenceable and points to an initialized
-> > +        // instance of `T`.
-> 
-> If `T` is a ZST, then it is not dereferenceable.
-
-Why not? If `T` is a ZST `self.0` is `Unique::<T>::dangling()`. So, in the end
-this is the same as `NonNull::<T>::dangling().as_ref()`.
-
-> 
-> > +        unsafe { self.0.as_ref() }
-> > +    }
-> > +}
-> > +
-> > +impl<T, A> DerefMut for Box<T, A>
-> > +where
-> > +    T: ?Sized,
-> > +    A: Allocator,
-> > +{
-> > +    fn deref_mut(&mut self) -> &mut T {
-> > +        // SAFETY: `self.0` is always properly aligned, dereferenceable and points to an initialized
-> > +        // instance of `T`.
-> > +        unsafe { self.0.as_mut() }
-> > +    }
-> > +}
-> > +
-> > +impl<T, A> fmt::Debug for Box<T, A>
-> > +where
-> > +    T: ?Sized + fmt::Debug,
-> > +    A: Allocator,
-> > +{
-> > +    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-> > +        fmt::Debug::fmt(&**self, f)
-> > +    }
-> > +}
-> > +
-> > +impl<T, A> Drop for Box<T, A>
-> > +where
-> > +    T: ?Sized,
-> > +    A: Allocator,
-> > +{
-> > +    fn drop(&mut self) {
-> > +        let ptr = self.0.as_ptr();
-> > +
-> > +        // SAFETY: `ptr` is always properly aligned, dereferenceable and points to an initialized
-> > +        // instance of `T`.
-> > +        let size = unsafe { core::mem::size_of_val(&*ptr) };
-> 
-> 1. `size_of_val` is not `unsafe`.
-
-Right, but dereferencing the `ptr` is unsafe.
-
-> 2. why not use `&*self` instead of using the raw pointer? (then move the
->    let binding below this line)
-
-If we ever support non-ZST `Allocator`s using `self` would not always evaluate
-to the correct size. I think evaluating the size of `T` rather than `Box<T>` is
-the correct thing to do.
-
-> 
-> > +
-> > +        // SAFETY: We need to drop `self.0` in place, before we free the backing memory.
-> > +        unsafe { core::ptr::drop_in_place(ptr) };
-> > +
-> > +        if size != 0 {
-> 
-> Making zero-sized allocations possible with Allocators would also
-> simplify this.
-
-As mentioned, it's possible already. But we still can't pass any dangling
-pointer to `free`.
-
-> 
-> > +            // SAFETY: `ptr` was previously allocated with `A`.
-> > +            unsafe { A::free(self.0.as_non_null().cast()) };
-> > +        }
-> > +    }
-> > +}
-> > diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
-> > index 495c09ebe3a3..5fd7a0ffabd2 100644
-> > --- a/rust/kernel/init.rs
-> > +++ b/rust/kernel/init.rs
-> > @@ -211,7 +211,7 @@
-> >  //! [`pin_init!`]: crate::pin_init!
-> > 
-> >  use crate::{
-> > -    alloc::{box_ext::BoxExt, AllocError, Flags},
-> > +    alloc::{box_ext::BoxExt, AllocError, Allocator, Flags},
-> >      error::{self, Error},
-> >      sync::UniqueArc,
-> >      types::{Opaque, ScopeGuard},
-> > @@ -1178,6 +1178,39 @@ fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
-> >      }
-> >  }
-> > 
-> > +impl<T, A> InPlaceInit<T> for crate::alloc::Box<T, A>
-> > +where
-> > +    A: Allocator + 'static,
-> > +{
-> > +    #[inline]
-> > +    fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Pin<Self>, E>
-> > +    where
-> > +        E: From<AllocError>,
-> > +    {
-> > +        let mut this = crate::alloc::Box::<_, A>::new_uninit(flags)?;
-> > +        let slot = this.as_mut_ptr();
-> > +        // SAFETY: When init errors/panics, slot will get deallocated but not dropped,
-> > +        // slot is valid and will not be moved, because we pin it later.
-> > +        unsafe { init.__pinned_init(slot)? };
-> > +        // SAFETY: All fields have been initialized.
-> > +        Ok(unsafe { crate::alloc::Box::assume_init(this) }.into())
-> > +    }
-> > +
-> > +    #[inline]
-> > +    fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
-> > +    where
-> > +        E: From<AllocError>,
-> > +    {
-> > +        let mut this = crate::alloc::Box::<_, A>::new_uninit(flags)?;
-> > +        let slot = this.as_mut_ptr();
-> > +        // SAFETY: When init errors/panics, slot will get deallocated but not dropped,
-> > +        // slot is valid.
-> > +        unsafe { init.__init(slot)? };
-> > +        // SAFETY: All fields have been initialized.
-> > +        Ok(unsafe { crate::alloc::Box::assume_init(this) })
-> > +    }
-> > +}
-> 
-> Please move this impl into kbox.rs, for the stdlib `Box`, this was here,
-> since we did not own that `Box`.
-> 
-> > +
-> >  impl<T> InPlaceInit<T> for UniqueArc<T> {
-> >      #[inline]
-> >      fn try_pin_init<E>(init: impl PinInit<T, E>, flags: Flags) -> Result<Pin<Self>, E>
-> > diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-> > index b37a0b3180fb..39f9331a48e2 100644
-> > --- a/rust/kernel/prelude.rs
-> > +++ b/rust/kernel/prelude.rs
-> > @@ -14,7 +14,7 @@
-> >  #[doc(no_inline)]
-> >  pub use core::pin::Pin;
-> > 
-> > -pub use crate::alloc::{box_ext::BoxExt, flags::*, vec_ext::VecExt};
-> > +pub use crate::alloc::{box_ext::BoxExt, flags::*, vec_ext::VecExt, KBox, KVBox, VBox};
-> > 
-> >  #[doc(no_inline)]
-> >  pub use alloc::{boxed::Box, vec::Vec};
-> > diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> > index 7cf89067b5fc..9fe87528d129 100644
-> > --- a/rust/kernel/types.rs
-> > +++ b/rust/kernel/types.rs
-> > @@ -2,6 +2,7 @@
-> > 
-> >  //! Kernel types.
-> > 
-> > +use crate::alloc::Allocator;
-> >  use crate::init::{self, PinInit};
-> >  use alloc::boxed::Box;
-> >  use core::{
-> > @@ -9,6 +10,7 @@
-> >      marker::{PhantomData, PhantomPinned},
-> >      mem::MaybeUninit,
-> >      ops::{Deref, DerefMut},
-> > +    pin::Pin,
-> >      ptr::NonNull,
-> >  };
-> > 
-> > @@ -89,6 +91,60 @@ unsafe fn from_foreign(ptr: *const core::ffi::c_void) -> Self {
-> >      }
-> >  }
-> > 
-> > +impl<T: 'static, A> ForeignOwnable for crate::alloc::Box<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    type Borrowed<'a> = &'a T;
-> > +
-> > +    fn into_foreign(self) -> *const core::ffi::c_void {
-> > +        crate::alloc::Box::into_raw(self) as _
-> > +    }
-> > +
-> > +    unsafe fn borrow<'a>(ptr: *const core::ffi::c_void) -> &'a T {
-> > +        // SAFETY: The safety requirements for this function ensure that the object is still alive,
-> > +        // so it is safe to dereference the raw pointer.
-> > +        // The safety requirements of `from_foreign` also ensure that the object remains alive for
-> > +        // the lifetime of the returned value.
-> > +        unsafe { &*ptr.cast() }
-> > +    }
-> > +
-> > +    unsafe fn from_foreign(ptr: *const core::ffi::c_void) -> Self {
-> > +        // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
-> > +        // call to `Self::into_foreign`.
-> > +        unsafe { crate::alloc::Box::from_raw(ptr as _) }
-> > +    }
-> > +}
-> > +
-> > +impl<T: 'static, A> ForeignOwnable for Pin<crate::alloc::Box<T, A>>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    type Borrowed<'a> = Pin<&'a T>;
-> > +
-> > +    fn into_foreign(self) -> *const core::ffi::c_void {
-> > +        // SAFETY: We are still treating the box as pinned.
-> > +        crate::alloc::Box::into_raw(unsafe { Pin::into_inner_unchecked(self) }) as _
-> > +    }
-> > +
-> > +    unsafe fn borrow<'a>(ptr: *const core::ffi::c_void) -> Pin<&'a T> {
-> > +        // SAFETY: The safety requirements for this function ensure that the object is still alive,
-> > +        // so it is safe to dereference the raw pointer.
-> > +        // The safety requirements of `from_foreign` also ensure that the object remains alive for
-> > +        // the lifetime of the returned value.
-> > +        let r = unsafe { &*ptr.cast() };
-> > +
-> > +        // SAFETY: This pointer originates from a `Pin<Box<T>>`.
-> > +        unsafe { Pin::new_unchecked(r) }
-> > +    }
-> > +
-> > +    unsafe fn from_foreign(ptr: *const core::ffi::c_void) -> Self {
-> > +        // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
-> > +        // call to `Self::into_foreign`.
-> > +        unsafe { Pin::new_unchecked(crate::alloc::Box::from_raw(ptr as _)) }
-> > +    }
-> > +}
-> 
-> Ditto for these two.
-
-Agreed, will do.
-
-> 
-> ---
-> Cheers,
-> Benno
-> 
-> > +
-> >  impl ForeignOwnable for () {
-> >      type Borrowed<'a> = ();
-> > 
-> > --
-> > 2.45.2
-> > 
-> 
 
