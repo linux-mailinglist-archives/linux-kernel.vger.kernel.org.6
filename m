@@ -1,133 +1,233 @@
-Return-Path: <linux-kernel+bounces-276344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F42594924D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:57:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98AD694924F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9A9B1F272EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:57:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB3B283173
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0113D1D2F49;
-	Tue,  6 Aug 2024 13:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA721D47D4;
+	Tue,  6 Aug 2024 13:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NzxQZzWK"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="st72H8UF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5711C579D;
-	Tue,  6 Aug 2024 13:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4842C1BE240;
+	Tue,  6 Aug 2024 13:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722952616; cv=none; b=lf23c+D3oWG/vq4yauyxKmk0BRdPk9BVvyQUwa97zC4Lp2w6fmJTg0z7Rb8X3n2xNAtrTzd57KlwAXbyj8OkFNYtmuywGBJNQVkeYNvxI+ifxxTxbzHloW6LhUewffXz4x7x66vPRnBkpi0eDJkPQWPcQ+YKpBvXNCQh9QHs90E=
+	t=1722952653; cv=none; b=sglIg9P0rA10lv4JNTPagx9E4ULq1TMXfUkcsZS4ktQlIf5Sq05GFDC+ISF2GtVgtsUn15fyyIYRipdY2GiqUCcGWUArBKk3IlHN5VAWM90kk5D5txpIUA23Pjy/RVJMqT/vT8efpYd6LOD95RRa8XCfc6pRlEnyQriNMjixge0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722952616; c=relaxed/simple;
-	bh=P9EbeoRT60rQDkcM4qaVG4RD3YBobJKZcRP/nEPc5/Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vfl/k20Ql8Be1v1SFyY3uZRboVu5VFslVfkUmMX8ahO/t9sEb/AGEjCnMMaE0vkyIrCM1PkuDiXIqW+apx0q9/sG9FLml/0B5FDR1Y7nPHlbmEczO4ggM0o9VhGjCjQSS1L4ehZZ/Es9KDBfYHYFefJ6q5O++YyPYWOwoEZ7fIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NzxQZzWK; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4281e715904so380635e9.0;
-        Tue, 06 Aug 2024 06:56:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722952613; x=1723557413; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rGYRmrw93lyT9+EcZR8YwD5h3/xRcHadaUPb+Q7HbDM=;
-        b=NzxQZzWKcHweG0y8n6N0INqEt/1u6laSogE9Vz+W4Y87IbWee2ZkCNctX746bd6+qH
-         HslU8ghP2em+pvzNoUUhjcIAQZVtvB8hqBxY3NpcGuMwjvQgUYx+qdOE1JJ+bsnLnAsy
-         8e13uLSuuPy8j+Bl43fVc33FF+fa1BDjMQzwC1/hFS8/4gb1FYTUaEDSmhoV/kweGmTu
-         tmMreklv1ARfkyyf4d6Tp/04BQhfn/t/QFtb4ie2D2SFLRiCws5Qr/fP4Rc/Re9GX4xx
-         IZxTxjUw3YzKKEXOIl+/BAib7WJ3ccgw2b4ILdTepnDSnCwiZKJNLG0rAhl0/tdyIHf0
-         njoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722952613; x=1723557413;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rGYRmrw93lyT9+EcZR8YwD5h3/xRcHadaUPb+Q7HbDM=;
-        b=IEj22B0b5ZHGdigODKTTIe4E03ipp7I0VZNyKfrhK8Cu+cMlVY/stab4KlcdR0M1lq
-         +8VJmsB/1+EL42eTnO0qyLoErh5yJe9nyN7aO7V+RgGh+ip3xw6Q1+vHFvL+ZC/Y8fUU
-         oolt3GeS42ZNFIVJg/Kmn7W1D6DsG1ljv/VQoMgSot39jfnaNAe5icXvV5ybIwrhONcX
-         bGVheqmckXXZM0n/6BOA8tUIcCvmVc7ajoWEsDUSRsYGIxCHT9f32EL8CNn+KNXFuCp0
-         e46wm4HYPvuKZ2cFGWtCUaBYiFYi85MuBRGTTBRs0AbOpZaeDsBYxYPoO4tGPbu4Y3JV
-         4qOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVV9hBfFzMLcLTUkwqPlXG4YuZOpyaXJE5fYHoFIECX8YPT61daRQcl2IxYvHOUfleL573ZH8eOLpxMGPH6MaD5CKOGNCW2/cPZKXhuB0WoRY1TKHv6pOmCz6fYGZhcJuw8bNL53VgYAHvdd47vADTQsDaGVFFtcKvaSLJUL78cZ/QN8b4=
-X-Gm-Message-State: AOJu0YzHlgRSjqm/XxNU9e23NE5IltML3xGPf7oJnoVmcYlq5pdlgZuY
-	pXyYsg2/C3xUK6CUnIhi9FcrKRzzUVyzTd0eI9tv6fhKONfAt09n
-X-Google-Smtp-Source: AGHT+IEY7UGmH6pDeX7ipw00m+WWJP3MfsJP+s7AIwqszU79s04STakugi2gaQ8mejKlJdjQ6BterQ==
-X-Received: by 2002:a05:600c:3152:b0:427:9f6f:4913 with SMTP id 5b1f17b1804b1-428ea0fd688mr64176135e9.5.1722952612705;
-        Tue, 06 Aug 2024 06:56:52 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:d20e:7300:b50e:24fa:fd17:c835? ([2a01:4b00:d20e:7300:b50e:24fa:fd17:c835])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282babaaa8sm245028995e9.24.2024.08.06.06.56.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 06:56:52 -0700 (PDT)
-Message-ID: <c5624841-fa50-4bd1-841f-071bef166fd8@gmail.com>
-Date: Tue, 6 Aug 2024 14:56:50 +0100
+	s=arc-20240116; t=1722952653; c=relaxed/simple;
+	bh=/hCT7gobvH0UbYHRedogV0jhFfNJDsfDZ2AZNymDZ1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sZ7E1clUCFwSwVEljUJKZ/aE28JFtg3ocXq5T06qAIS6+5metzDqi5HkSyQKpehlDHgrvcJQiTu8gjJlKnvJ78SXcb6LccJTznD8OgZYDkRA5S+6D04wk8YL+EiPJ738wmEFjaztowRhDJjlvMXvRSbvt8QgMfngx43A8r6+ZCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=st72H8UF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF0BC32786;
+	Tue,  6 Aug 2024 13:57:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722952652;
+	bh=/hCT7gobvH0UbYHRedogV0jhFfNJDsfDZ2AZNymDZ1U=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=st72H8UFtXzgaDhOyIcf+/7egvd0K3JLC3ShlEKxlKqJRDtm5T1MxHuProrKpvaRx
+	 6/fBqMPsIvElKpeOSJBjfyvIsoHfP07dNComsTo+IWtKJUWPG7Q8XKFvSWCTSd+2a0
+	 7iOjcDMwSxCKRcZpGtG1FwhWKGgAgLNikUeKjUtVnS/HTzgxvKcULXCK3bsi4GhYA5
+	 yc1rKmDgHDJ7trJrReVwgt+RlH3EhKUc0LnUQ9Fq0YIylD8i72UTXTDBT+Fc2jzfHL
+	 SpT83a+O7JD0UB60mZ2XZ/wYOTK224PiNaOZljk05hzJs0PpH48GjeNjRIgqaTqw0a
+	 loJq2bC+rG7vw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 6865FCE088B; Tue,  6 Aug 2024 06:57:32 -0700 (PDT)
+Date: Tue, 6 Aug 2024 06:57:32 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Vineet Gupta <vgupta@kernel.org>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	elver@google.com, akpm@linux-foundation.org, tglx@linutronix.de,
+	peterz@infradead.org, torvalds@linux-foundation.org, arnd@arndb.de,
+	geert@linux-m68k.org, palmer@rivosinc.com, mhiramat@kernel.org,
+	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>
+Subject: Re: [PATCH cmpxchg 2/3] ARC: Emulate one-byte cmpxchg
+Message-ID: <11c53e21-f17a-4e9b-bcea-b0a0c03bf46e@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <c1b7f3a2-da50-4dfb-af6f-a1898eaf2b79@paulmck-laptop>
+ <20240805192119.56816-2-paulmck@kernel.org>
+ <eacb9a3c-0d76-47d2-8b80-59d6a58fe4b4@kernel.org>
+ <3353ac4f-97ed-471b-bd19-96e0dbc41612@paulmck-laptop>
+ <c9952ed7-9e8a-4142-b70c-8ddb14bf90de@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] ALSA: timer: Introduce virtual userspace-driven
- timers
-To: Jaroslav Kysela <perex@perex.cz>, tiwai@suse.com, corbet@lwn.net,
- broonie@kernel.org, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- christophe.jaillet@wanadoo.fr, aholzinger@gmx.de
-References: <20240806125243.449959-1-ivan.orlov0322@gmail.com>
- <20240806125243.449959-4-ivan.orlov0322@gmail.com>
- <8bcfd160-8c6a-4a1f-807c-f76e7f069b49@perex.cz>
-Content-Language: en-US
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <8bcfd160-8c6a-4a1f-807c-f76e7f069b49@perex.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c9952ed7-9e8a-4142-b70c-8ddb14bf90de@kernel.org>
 
-On 8/6/24 14:11, Jaroslav Kysela wrote:
-> On 06. 08. 24 14:52, Ivan Orlov wrote:
->> Implement two ioctl calls in order to support virtual userspace-driven
->> ALSA timers.
+On Mon, Aug 05, 2024 at 09:44:39PM -0700, Vineet Gupta wrote:
 > 
-> ...
 > 
-
-Hi Jaroslav,
-
->> +struct snd_utimer_info {
->> +    /*
->> +     * To pretend being a normal timer, we need to know the frame 
->> rate and
->> +     * the period size in frames.
->> +     */
->> +    __u64 frame_rate;
->> +    __u64 period_size;
+> On 8/5/24 21:28, Paul E. McKenney wrote:
+> > On Mon, Aug 05, 2024 at 06:27:57PM -0700, Vineet Gupta wrote:
+> >> Hi Paul,
+> >>
+> >> On 8/5/24 12:21, Paul E. McKenney wrote:
+> >>> Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on arc.
+> >>>
+> >>> [ paulmck: Drop two-byte support per Arnd Bergmann feedback. ]
+> >>> [ paulmck: Apply feedback from Naresh Kamboju. ]
+> >>> [ paulmck: Apply kernel test robot feedback. ]
+> >>>
+> >>> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> >>> Cc: Vineet Gupta <vgupta@kernel.org>
+> >>> Cc: Andi Shyti <andi.shyti@linux.intel.com>
+> >>> Cc: Andrzej Hajda <andrzej.hajda@intel.com>
+> >>> Cc: Arnd Bergmann <arnd@arndb.de>
+> >>> Cc: Palmer Dabbelt <palmer@rivosinc.com>
+> >>> Cc: <linux-snps-arc@lists.infradead.org>
+> >>> ---
+> >>>  arch/arc/Kconfig               |  1 +
+> >>>  arch/arc/include/asm/cmpxchg.h | 33 ++++++++++++++++++++++++---------
+> >>>  2 files changed, 25 insertions(+), 9 deletions(-)
+> >>>
+> >>> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+> >>> index fd0b0a0d4686a..163608fd49d18 100644
+> >>> --- a/arch/arc/Kconfig
+> >>> +++ b/arch/arc/Kconfig
+> >>> @@ -13,6 +13,7 @@ config ARC
+> >>>  	select ARCH_HAS_SETUP_DMA_OPS
+> >>>  	select ARCH_HAS_SYNC_DMA_FOR_CPU
+> >>>  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+> >>> +	select ARCH_NEED_CMPXCHG_1_EMU
+> >>>  	select ARCH_SUPPORTS_ATOMIC_RMW if ARC_HAS_LLSC
+> >>>  	select ARCH_32BIT_OFF_T
+> >>>  	select BUILDTIME_TABLE_SORT
+> >>> diff --git a/arch/arc/include/asm/cmpxchg.h b/arch/arc/include/asm/cmpxchg.h
+> >>> index e138fde067dea..2102ce076f28b 100644
+> >>> --- a/arch/arc/include/asm/cmpxchg.h
+> >>> +++ b/arch/arc/include/asm/cmpxchg.h
+> >>> @@ -8,6 +8,7 @@
+> >>>  
+> >>>  #include <linux/build_bug.h>
+> >>>  #include <linux/types.h>
+> >>> +#include <linux/cmpxchg-emu.h>
+> >>>  
+> >>>  #include <asm/barrier.h>
+> >>>  #include <asm/smp.h>
+> >>> @@ -46,6 +47,9 @@
+> >>>  	__typeof__(*(ptr)) _prev_;					\
+> >>>  									\
+> >>>  	switch(sizeof((_p_))) {						\
+> >>> +	case 1:								\
+> >>> +		_prev_ = (__typeof__(*(ptr)))cmpxchg_emu_u8((volatile u8 *)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
+> >>> +		break;							\
+> >>>  	case 4:								\
+> >>>  		_prev_ = __cmpxchg(_p_, _o_, _n_);			\
+> >>>  		break;							\
+> >>> @@ -65,16 +69,27 @@
+> >>>  	__typeof__(*(ptr)) _prev_;					\
+> >>>  	unsigned long __flags;						\
+> >>>  									\
+> >>> -	BUILD_BUG_ON(sizeof(_p_) != 4);					\
+> >> Is this alone not sufficient: i.e. for !LLSC let the atomic op happen
+> >> under a spin-lock for non 4 byte quantities as well.
+> > Now that you mention it, that would be a lot simpler.
+> >
+> >>> +	switch(sizeof((_p_))) {						\
+> >>> +	case 1:								\
+> >>> +		__flags = cmpxchg_emu_u8((volatile u8 *)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
+> >>> +		_prev_ = (__typeof__(*(ptr)))__flags;			\
+> >>> +		break;							\
+> >>> +		break;							\
+> >> FWIW, the 2nd break seems extraneous.
+> > And to your earlier point, the first break as well.  ;-)
+> >
+> > How does the updated patch below look?  Or did I miss your point?
+> >
+> > 							Thanx, Paul
+> >
+> > ------------------------------------------------------------------------
+> >
+> > commit 96c1107797ca329fe203818cdfda2fe5f5a9a82e
+> > Author: Paul E. McKenney <paulmck@kernel.org>
+> > Date:   Mon Mar 18 01:27:35 2024 -0700
+> >
+> >     ARC: Emulate one-byte cmpxchg
+> >     
+> >     Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on arc.
+> >     
+> >     [ paulmck: Drop two-byte support per Arnd Bergmann feedback. ]
+> >     [ paulmck: Apply feedback from Naresh Kamboju. ]
+> >     [ paulmck: Apply kernel test robot feedback. ]
+> >     [ paulmck: Apply feedback from Vineet Gupta. ]
+> >     
+> >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> >     Cc: Vineet Gupta <vgupta@kernel.org>
+> >     Cc: Andi Shyti <andi.shyti@linux.intel.com>
+> >     Cc: Andrzej Hajda <andrzej.hajda@intel.com>
+> >     Cc: Arnd Bergmann <arnd@arndb.de>
+> >     Cc: Palmer Dabbelt <palmer@rivosinc.com>
+> >     Cc: <linux-snps-arc@lists.infradead.org>
 > 
-> There should be just one timer resolution in ns member (like in struct 
-> snd_timer_ginfo - not frame/period members here - it's too specific). 
-> The resolution can be calculated in the user space from the rate and 
-> period size.
+> Acked-by: Vineet Gupta <vgupta@kernel.org>
+
+Thank you, and I will apply this on my next rebase.
+
+							Thanx, Paul
+
+> Thx,
+> -Vineet
 > 
-
-Ah, yes, I agree... Also, it should help us to avoid complex 
-calculations and sanity checks in the kernel space. I'll replace these 
-two fields with 'resolution' field in V4, thanks!
-
-> Also naming - the timer API uses snd_timer prefix for structures, thus 
-> snd_timer_uinfo should be more appropriate.
+> >
+> > diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+> > index fd0b0a0d4686a..163608fd49d18 100644
+> > --- a/arch/arc/Kconfig
+> > +++ b/arch/arc/Kconfig
+> > @@ -13,6 +13,7 @@ config ARC
+> >  	select ARCH_HAS_SETUP_DMA_OPS
+> >  	select ARCH_HAS_SYNC_DMA_FOR_CPU
+> >  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+> > +	select ARCH_NEED_CMPXCHG_1_EMU
+> >  	select ARCH_SUPPORTS_ATOMIC_RMW if ARC_HAS_LLSC
+> >  	select ARCH_32BIT_OFF_T
+> >  	select BUILDTIME_TABLE_SORT
+> > diff --git a/arch/arc/include/asm/cmpxchg.h b/arch/arc/include/asm/cmpxchg.h
+> > index e138fde067dea..58045c8983404 100644
+> > --- a/arch/arc/include/asm/cmpxchg.h
+> > +++ b/arch/arc/include/asm/cmpxchg.h
+> > @@ -8,6 +8,7 @@
+> >  
+> >  #include <linux/build_bug.h>
+> >  #include <linux/types.h>
+> > +#include <linux/cmpxchg-emu.h>
+> >  
+> >  #include <asm/barrier.h>
+> >  #include <asm/smp.h>
+> > @@ -46,6 +47,9 @@
+> >  	__typeof__(*(ptr)) _prev_;					\
+> >  									\
+> >  	switch(sizeof((_p_))) {						\
+> > +	case 1:								\
+> > +		_prev_ = (__typeof__(*(ptr)))cmpxchg_emu_u8((volatile u8 *)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
+> > +		break;							\
+> >  	case 4:								\
+> >  		_prev_ = __cmpxchg(_p_, _o_, _n_);			\
+> >  		break;							\
+> > @@ -65,8 +69,6 @@
+> >  	__typeof__(*(ptr)) _prev_;					\
+> >  	unsigned long __flags;						\
+> >  									\
+> > -	BUILD_BUG_ON(sizeof(_p_) != 4);					\
+> > -									\
+> >  	/*								\
+> >  	 * spin lock/unlock provide the needed smp_mb() before/after	\
+> >  	 */								\
 > 
-Alright, I'll rename the structure.
-
-Thank you so much for the review!
-
--- 
-Kind regards,
-Ivan Orlov
+> 
 
