@@ -1,141 +1,112 @@
-Return-Path: <linux-kernel+bounces-275520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF629486CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:58:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2259486D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DDE81C2238F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:58:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 492471C22231
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDBA8C1E;
-	Tue,  6 Aug 2024 00:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61E26FD5;
+	Tue,  6 Aug 2024 01:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CacYpGbc"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xRwqL6Dx"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796473D7A;
-	Tue,  6 Aug 2024 00:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72F863CB
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 01:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722905877; cv=none; b=Q9r+LqZW3nZhH4Rj9Fq2PfK57kkMg+2EY7vncuOEO2c7VBY53AFWVD7NLnr+K8Dz16IXJlUML5DTiThKuU89Ot7Tttp9Uogfh441Y3fXsfhzOTpIQysUAgpLTU8JFrthH+ESRU2Zl+4YxohQIAyjrIA1ZY5EWvmQhYUy+NT2rwI=
+	t=1722906097; cv=none; b=Nu2keJK9Htw75ms/lQpyzINx3hWulGSqn/UrD8p0shH8bUg5Q8A1TXsOI/0yezI1J+x4WBQd2+PijDbm07FESFrrIIrd3lw57O/vQsJAwmREAPSmecEqGWugQnTg6BtV4ldMkCGT8e3HbeXbAD++eJE8Mho51OhkjGBFzRQ3RCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722905877; c=relaxed/simple;
-	bh=k3RpyGKl1/D+xkHBS5lknyeFze0giVtQLIWrv7erfKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qLG+9aITtVgMTvsR2W750QND0FnjTmrplMPYyoNmYs5ro27zY/Z+curPn32FAmsgvPHXp/yp84eJKGJccjX8qtUTw+IaNn2ddQ2CCQzzQvOk6eIklvE5JgtukyTFVWPjJEVIIvU+9jAagVq18ioY6FzTYOjOSS68PD5h/IgrfTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CacYpGbc; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722905871;
-	bh=V2B6IP2Xn5UkzqES0ky3SHK03er1O8SRWpu7s94SRSg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=CacYpGbciy6qt1QBu++SUUG0WpW6cI3GBrxj1vOUJcMUY1puFo6KyYGoC9ByWXL6/
-	 LPHz6fFuPs6O/GOBROe7z7Zbvw6TSzIQ0/VacLWqL13Bym2els/g7Koi9AyW7rw3ZJ
-	 P7NCut7aXPbkq1iI6qBeo+h+vrIvZX5BBfGoNWGZXiaHglsBuf190aYZzMcGaImAan
-	 B/OCNSxRP1lSb8aGUy6NpcXB8HoIWv9pVBW03fAkggi+H7Is0t4PGXPZQJ6iiF3m8i
-	 6ZdsOz3yHszdZAvXFXZws1Iopm8jdVfPJJiX9/fn5NeERW9Xl/aN6g15dd4u1gq7iK
-	 uI1C2NBHbPBZQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WdFKB4jhxz4w2F;
-	Tue,  6 Aug 2024 10:57:50 +1000 (AEST)
-Date: Tue, 6 Aug 2024 10:57:49 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Chao Yu
- <chao@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <20240806105749.1bd7853c@canb.auug.org.au>
+	s=arc-20240116; t=1722906097; c=relaxed/simple;
+	bh=fM4SJzWvF3QTsUCKIYp6JVztdgWOj9EDVg02LaS/GXA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:Cc:Content-Type; b=bXNCtmTTUin5YMFmH6aB+P1SHSwEvKk7/NsqLIP6HIbiACPjb/yOD1Z+YitJa409muknCcaqYkUp7TLolMZLOd3wZQmM3RGolBju6KiKjBKaeqf/lFTqnlnaXXJPZpOE6MJHHyB97/qTRmAC8/zuXrrF0ayoZeENgATv7v79XNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xRwqL6Dx; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70d1df50db2so327410b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 18:01:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722906095; x=1723510895; darn=vger.kernel.org;
+        h=cc:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jJlx0J8t9Bmz0EPbFFVZ9ZkYVWLdmylZG3lirelk9mE=;
+        b=xRwqL6DxJ/QF5kgdooYnMep/Bj9ORZbIsR3yE3tSX5uFibB9XjpDUQ7bC6Z2KhQwjH
+         HT0ggJpM3YyD6uXuvWIcO7M0nR/8tETmKg1MnQ7L5Y/oG222jWSmsmbnnF5T+xY8Nr6j
+         9F/deF/Hj+9F5f9Y+1NjaYOuzU6BM+ClGYd9PXvHbhVS47tvpC/IqcsbK34P7IydaJpZ
+         KOWOEhxYPCs5Z8OOV0Kwk1xDkTCk+6X3Rbss41EUOROyDSdP7vDu2qAjtC8/9Q7EJ2bf
+         3POBlb71V/uRLaAgMOOg2Ev6xvnjX9TThjQd4qa7PEw0u3O6doTrim4I2cQlIl4b3sSk
+         Gm3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722906095; x=1723510895;
+        h=cc:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jJlx0J8t9Bmz0EPbFFVZ9ZkYVWLdmylZG3lirelk9mE=;
+        b=VNeG2z9dV2s6YVCQGmNATf7iD+gFa8TftPNxae9hgus2rmQM6ijWXXjat4F67qH/87
+         Fn2qZSOfuDM1kuYo/d3DrM/y4YZYq0waWAhRAoCCT1UXnVusIiJ4hrSrtbbV/XBbvS3P
+         yE/67Le5WRQXm9TJXBbsK9DmtUX6T7eKjZJ+JtiutjI2+3T0zQI8SWs/hOYaVUM3zYRA
+         b90otf32iss5CQOLy/gaF1xzsmhIhMcpLnWeBAqh9bTWKr927Qnm3yCBs2/R27VGJeEc
+         yEdwN1+7lDVNF115dYbTZs0p6WkG+yOi8MjDGfZwNURHfmpeunZGPqIlYZ/PwhV6bXlx
+         e91w==
+X-Gm-Message-State: AOJu0YxFqY5fGE1dUZ7T6QKQShhvY2yOHuAWbU4+8UBlLx5Zvmc8eV8M
+	YtNR0eLZD9LUFooIPPAoAdS6osOxoIweiiflLz5w49TaIKuZu5WWHCpIyJrBYZPRQIxT1/WcJbn
+	IhOpcqE00ztCMjJ7MWq/iSU+hfEr7ihZft02o9r/Vkze4u079EvbBZhNujuGh4uf0p9BIPTnNAq
+	eXjXJOHE2iMHGiyHVhtPLgJt7dy9xZ6cjrZugq7Kip+SI2bI6a5Rs=
+X-Google-Smtp-Source: AGHT+IHE2vW0EK7l1Yeq12LW+96R9mdcq0Xqzm/E7LumdZwrFbLPeTh9DiSlY+ml/fBSIj36DP6J6KtGtY3Xeg==
+X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
+ (user=cmllamas job=sendgmr) by 2002:a05:6a00:9192:b0:710:4e5c:967d with SMTP
+ id d2e1a72fcca58-7106d8d2d3bmr233519b3a.0.1722906094399; Mon, 05 Aug 2024
+ 18:01:34 -0700 (PDT)
+Date: Tue,  6 Aug 2024 01:01:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Xq/.Bi1fzk2tX90mfPc2j0q";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
+Message-ID: <20240806010128.402852-1-cmllamas@google.com>
+Subject: [PATCH 0/3] lockdep: minor config and documentation fixes
+From: Carlos Llamas <cmllamas@google.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Carlos Llamas <cmllamas@google.com>, Huang Ying <ying.huang@intel.com>, 
+	"J. R. Okajima" <hooanon05g@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>, 
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/Xq/.Bi1fzk2tX90mfPc2j0q
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+These are some minor follow-up patches that came up during conversation
+at: https://lore.kernel.org/all/30795.1620913191@jrobl/
 
-Hi all,
+Note this patchset is sent on top of akpm mm-nonmm-unstable as it
+depends on "[PATCH v2] lockdep: upper limit LOCKDEP_CHAINS_BITS" which
+as been previously applied there.
 
-After merging the vfs-brauner tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: J. R. Okajima <hooanon05g@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Will Deacon <will@kernel.org>
 
-fs/f2fs/data.c: In function 'f2fs_write_end':
-fs/f2fs/data.c:3735:41: error: 'page' undeclared (first use in this functio=
-n)
- 3735 |                 set_page_private_atomic(page);
-      |                                         ^~~~
+Carlos Llamas (3):
+  lockdep: fix upper limit for LOCKDEP_*_BITS configs
+  lockdep: clarify size for LOCKDEP_*_BITS configs
+  lockdep: document MAX_LOCKDEP_CHAIN_HLOCKS calculation
 
-Caused by commit
+ kernel/locking/lockdep_internals.h |  1 +
+ lib/Kconfig.debug                  | 18 +++++++++---------
+ 2 files changed, 10 insertions(+), 9 deletions(-)
 
-  300dd0fa8e20 ("fs: Convert aops->write_end to take a folio")
 
-interacting with commit
+base-commit: 766e1913ce7c3add51f49bc1861441e3a3275df2
+-- 
+2.46.0.rc2.264.g509ed76dc8-goog
 
-  1a0bd289a5db ("f2fs: atomic: fix to avoid racing w/ GC")
-
-from the f2fs tree.
-
-I have applied the following merge fix patch for today.  This makes it
-build, but there is probably a better resolution.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 6 Aug 2024 10:35:46 +1000
-Subject: [PATCH] fixup for "fs: Convert aops->write_end to take a folio"
-
-interacting with "f2fs: atomic: fix to avoid racing w/ GC" from the
-f2fs tree.
----
- fs/f2fs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index bfc81203bd0a..908a836dd1c3 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -3732,7 +3732,7 @@ static int f2fs_write_end(struct file *file,
- 	folio_mark_dirty(folio);
-=20
- 	if (f2fs_is_atomic_file(inode))
--		set_page_private_atomic(page);
-+		set_page_private_atomic(&folio->page);
-=20
- 	if (pos + copied > i_size_read(inode) &&
- 	    !f2fs_verity_in_progress(inode)) {
---=20
-2.43.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Xq/.Bi1fzk2tX90mfPc2j0q
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaxdQ0ACgkQAVBC80lX
-0GwZGwf/eP3UO9CryTPl8V6wjQkXwJdjJkKArx0f2HmVbRvWnRGZWiwTvpvBpw15
-MZSmiI6BFkwJu0fQLYq9tMQQeKZIp3WjxTuYnk9QbqLV7pK6TybmZ5IkFnHpQKR0
-MBwo97MfD5uwSojKfbOn7H6FQo8lvMikkcG1mbo7wfS6Ps3BKYmssyF+wSqFU8aO
-E3TSjXWKcClZbkeKkm22K3+VKue45Fm3Zlq2YhcoinU6Rcr6HOakj8abwXeqyJqG
-T7MlcZyIufLtj6pi6Q4qBviA4Fj2zpZ56K+w69/begLS8xzvpYp4p2dPiRE1DqgD
-0tlWubhNmjqDwmHyV2QPwpE74V1uKg==
-=zx70
------END PGP SIGNATURE-----
-
---Sig_/Xq/.Bi1fzk2tX90mfPc2j0q--
 
