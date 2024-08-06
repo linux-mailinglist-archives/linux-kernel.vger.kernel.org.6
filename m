@@ -1,67 +1,96 @@
-Return-Path: <linux-kernel+bounces-276261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE4C949153
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2C5949156
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A13D82847EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FE3B28616B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5741D2797;
-	Tue,  6 Aug 2024 13:26:51 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25C21D2F43;
+	Tue,  6 Aug 2024 13:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OyeQavgo"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1492E1DDF5;
-	Tue,  6 Aug 2024 13:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB661D27AB;
+	Tue,  6 Aug 2024 13:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722950810; cv=none; b=Z+fEkWp/nbL+SlGa1Evz2Unj28WhE3y5TL8TgSu6LIadtWieRTEAtzOzTQOp7JYcs7nc6EtLUZqWLMef5H69alFGe7WIV6BAAXld0Y2Rj6AS/LbdAVsLqwranXbY0c1jTohEuvXlVutYkaatQK7iL9CyZtqE/CkR4Y/P1m2ncNA=
+	t=1722950814; cv=none; b=krSHa9l1demTCZ1RCELzq3FDJMvCqK66yyY0i2gNWkk92gpJO8uYoPVPusTJs3yV84gffAM2bABCiWJedp7TWwybze3o2cKgt1PHkMxwc8mSxj32ccaUn0QPmIFfV9/1bXB2RTtoo4XzCo0T1GTytNDtnH8Lt7XD1CIv+vMjk0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722950810; c=relaxed/simple;
-	bh=8UivSrRf4oDqeu6a9FiqQpiD886IiszpM9wVoHBy+qE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KerD4vYHsKZiC+E67Ojolegbp+ZmwrxzPV4j+zbJe+7oNO1fKfSU2i0RadXm92GFJ75xHfHWu6M7f/LAnxvEQQ9Gi9gFDIa4dkdaNLylqSIIkggEMho/veUGNLkPAQ3gimgTMGBC8fDcjAlttAOQ3CaMk17gprC6s+5Acb0A2p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 83FD868D09; Tue,  6 Aug 2024 15:26:45 +0200 (CEST)
+	s=arc-20240116; t=1722950814; c=relaxed/simple;
+	bh=bZOBpmsyTzK8v1YYpAeTeDxlbWCsIOtryxVDKATcLaE=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LY56NzHrikZPVg2FjxCqhvitRgXRbqSw/F19vKEPpuOPHX9iwhYNu6RYt735tySonzQpm+YCd7yp6Dj7Rrfn/q4+CvwpDsCCLoJ4gZ4PZdRFSPeHUr7CXnlM4ynaKBFeJnLiCpYQ/3/e4rM8W86eH0vWoE8kEnlWzNbEAECMdlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OyeQavgo; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a843bef98so66293066b.2;
+        Tue, 06 Aug 2024 06:26:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722950811; x=1723555611; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=WJLq6wZ3V9tDfVtOdZGITLF+SX3fZ5WHv+sByglbu5s=;
+        b=OyeQavgoJQBU2RyuQUGDQP3efzAKVKEJmw7NgCovi3DAJyfdcCYOwD8nko8CK1FIXN
+         FBz+HFMCHUiQ2TqWI8rv5d7Y6khsth2grGsP0Z40jC2/kfv94OuYRAPsKLYlRA29Pv3O
+         2KoJpyJAFCn6Puq0EolylU8p6W8c9WTSVZbKLRoMIPDOgXQIZxdicUlv/+xa4vw0BLUN
+         +1ooNIZ0IX9kheeTGDGYVDii3OXKC1VSBM7P037z+y0RxwifTwaCeOKDMCSFji0NqMHU
+         GtIg7Bf+Qjqx7ZZ+RhG5FfPcPX/wi83I6wBrol9/bp6NhZRWFSME0QUrwT6prSjBtPoK
+         GbUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722950811; x=1723555611;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WJLq6wZ3V9tDfVtOdZGITLF+SX3fZ5WHv+sByglbu5s=;
+        b=A6u875gleyj1taVxVOiKB8wBHUNPNKoFTrnvOPeO59KSGjo+RSIZ8p5qqg9LE/WJ3W
+         Fd/bm2MWtNkDLJeBZ0D7IOLkDVyqTxGet04ZIsrsMzNmsp6+cM10jZ8Ip3Z4QWRivQG+
+         XNHwboiId7hL0yVSMfum9Y+itDWVe/yTj06NMdMGzA5XymUYgpO5g8ULjjGsmUaqvn+d
+         wu+K9rzYCSQUmUM4zFZoKEk8PVGvu5Nkz9tbsYuoKMFOnI+k3iXf2PIYmJPPSuhs7rVl
+         Zrf0KaDqHijSVESluVFHNLUpQVOp3Z9s68Zvrwc5o2GOrs7HTPGRJD+DOAd9GgcYVhDj
+         Aikg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/oaDe3yVBBE4UxOUx0ji+jly2tY3dq64EoCBZV/1En6lMHE+telaCZg1o0GsgVG2lkJ1URL2SgjhSmKKz3/YMb6vCXf+KXRoyiHlItoFJOk3s5hRKv1iEdffzx+fO4DLY8Wnvrg+Gwv2eOJ6gpBTZX+ePI73HkrFIVId2+SriKBdGcA==
+X-Gm-Message-State: AOJu0YxfQGD7GEydlhXqX5cOGra/7GrB8NquPOZKpUAfBhww6l5NF0ai
+	SB6LfwsB9853DPEeU+axlMWJfiwzzMXvbiAq4l+jU0S6GqHI+lzt
+X-Google-Smtp-Source: AGHT+IFCZboMdtGhjAjAlddCPcdXU/2ru7VniI37xRcVSX5ZWE/iyT9EsbOEIdYyKoXwTHhvEvlGlg==
+X-Received: by 2002:a17:907:7ba1:b0:a7d:a008:abca with SMTP id a640c23a62f3a-a7dc509e2damr1049187866b.56.1722950810418;
+        Tue, 06 Aug 2024 06:26:50 -0700 (PDT)
+Received: from Ansuel-XPS. (host-87-6-196-30.retail.telecomitalia.it. [87.6.196.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec285bsm545048066b.188.2024.08.06.06.26.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 06:26:49 -0700 (PDT)
+Message-ID: <66b22499.170a0220.cc48.fa2b@mx.google.com>
+X-Google-Original-Message-ID: <ZrIklQiyQvFIIPz8@Ansuel-XPS.>
 Date: Tue, 6 Aug 2024 15:26:45 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Daniel Wagner <dwagner@suse.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Joern Engel <joern@lazybastard.org>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
 	Sagi Grimberg <sagi@grimberg.me>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Christoph Hellwig <hch@lst.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	John Garry <john.g.garry@oracle.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Kashyap Desai <kashyap.desai@broadcom.com>,
-	Sumit Saxena <sumit.saxena@broadcom.com>,
-	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
-	Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	Nilesh Javali <njavali@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	Jonathan Corbet <corbet@lwn.net>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>,
-	Sridhar Balaraman <sbalaraman@parallelwireless.com>,
-	"brookxu.cn" <brookxu.cn@gmail.com>, Ming Lei <ming.lei@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-	virtualization@lists.linux.dev, megaraidlinux.pdl@broadcom.com,
-	mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
-	storagedev@microchip.com, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 03/15] blk-mq: introduce blk_mq_dev_map_queues
-Message-ID: <20240806132645.GC13883@lst.de>
-References: <20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de> <20240806-isolcpus-io-queues-v3-3-da0eecfeaf8b@suse.de>
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v3 2/6] nvme: assign of_node to nvme device
+References: <20240806114118.17198-1-ansuelsmth@gmail.com>
+ <20240806114118.17198-3-ansuelsmth@gmail.com>
+ <20240806124312.GB10156@lst.de>
+ <66b21f20.5d0a0220.200175.4b9b@mx.google.com>
+ <20240806130938.GA12231@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,129 +99,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240806-isolcpus-io-queues-v3-3-da0eecfeaf8b@suse.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20240806130938.GA12231@lst.de>
 
-On Tue, Aug 06, 2024 at 02:06:35PM +0200, Daniel Wagner wrote:
-> From: Ming Lei <ming.lei@redhat.com>
+On Tue, Aug 06, 2024 at 03:09:38PM +0200, Christoph Hellwig wrote:
+> On Tue, Aug 06, 2024 at 03:03:24PM +0200, Christian Marangi wrote:
+> > Well on embedded pure PCIe card most of the time are not a thing...
+> > Unless it's an enterprise product, everything is integrated in the pcb
+> > and not detachable for cost saving measure or also if the thing use PCIe
+> > protocol but it tighlty coupled with the SoC.
 > 
-> blk_mq_pci_map_queues and blk_mq_virtio_map_queues will create a CPU to
-> hardware queue mapping based on affinity information. These two
-> function share code which only differs on how the affinity information
-> is retrieved. Also there is the hisi_sas which open codes the same loop.
+> Yes, PCIe has a bunch of form factors, including just soldered on BGA
+> devices, but none of that matters at all for the logical protocol.
+>
+
+Correct, for the context of soldered stuff tho things can be
+malfunctioning (problem in the PCIe driver) or working so it's possibile
+to make assumption and attach OF node in DT. Consider that the thing is
+probed only if the card is correctly detected. Card not present ->
+nothing is done.
+
+> > This implementation is already very common for all kind of pcie devices
+> > like wireless card, gpio expander that are integrated in the PCB and
+> > require property in DT like calibration data, quirks or GPIO pin
+> > definitions, i2c...
 > 
-> Thus introduce a new helper function for creating these mappings which
-> takes an callback function for fetching the affinity mask. Also
-> introduce common helper function for PCI and virtio devices to retrieve
-> affinity masks.
+> Do you have a document on that/
 > 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> [dwagner: - removed fallback mapping
->           - added affintity helpers
-> 	  - updated commit message]
-> Signed-off-by: Daniel Wagner <dwagner@suse.de>
-> ---
->  block/blk-mq-cpumap.c         | 35 +++++++++++++++++++++++++++++++++++
->  block/blk-mq-pci.c            | 18 ++++++++++++++++++
->  block/blk-mq-virtio.c         | 19 +++++++++++++++++++
->  include/linux/blk-mq-pci.h    |  2 ++
->  include/linux/blk-mq-virtio.h |  3 +++
->  include/linux/blk-mq.h        |  5 +++++
->  6 files changed, 82 insertions(+)
-> 
-> diff --git a/block/blk-mq-cpumap.c b/block/blk-mq-cpumap.c
-> index 9638b25fd521..7037a2dc485f 100644
-> --- a/block/blk-mq-cpumap.c
-> +++ b/block/blk-mq-cpumap.c
-> @@ -54,3 +54,38 @@ int blk_mq_hw_queue_to_node(struct blk_mq_queue_map *qmap, unsigned int index)
->  
->  	return NUMA_NO_NODE;
->  }
-> +
-> +/**
-> + * blk_mq_dev_map_queues - Create CPU to hardware queue mapping
-> + * @qmap:	CPU to hardware queue map.
-> + * @dev_off:	Offset to use for the device.
-> + * @dev_data:	Device data passed to get_queue_affinity().
-> + * @get_queue_affinity:	Callback to retrieve queue affinity.
-> + *
-> + * Create a CPU to hardware queue mapping in @qmap. For each queue
-> + * @get_queue_affinity will be called to retrieve the affinity for given
-> + * queue.
-> + */
-> +void blk_mq_dev_map_queues(struct blk_mq_queue_map *qmap,
-> +			   void *dev_data, int dev_off,
-> +			   get_queue_affinty_fn *get_queue_affinity)
-> +{
-> +	const struct cpumask *mask;
-> +	unsigned int queue, cpu;
-> +
-> +	for (queue = 0; queue < qmap->nr_queues; queue++) {
-> +		mask = get_queue_affinity(dev_data, dev_off, queue);
-> +		if (!mask)
-> +			goto fallback;
-> +
-> +		for_each_cpu(cpu, mask)
-> +			qmap->mq_map[cpu] = qmap->queue_offset + queue;
-> +	}
-> +
-> +	return;
-> +
-> +fallback:
-> +	WARN_ON_ONCE(qmap->nr_queues > 1);
-> +	blk_mq_clear_mq_map(qmap);
-> +}
-> +EXPORT_SYMBOL_GPL(blk_mq_dev_map_queues);
-> diff --git a/block/blk-mq-pci.c b/block/blk-mq-pci.c
-> index d47b5c73c9eb..71a73238aeb2 100644
-> --- a/block/blk-mq-pci.c
-> +++ b/block/blk-mq-pci.c
-> @@ -44,3 +44,21 @@ void blk_mq_pci_map_queues(struct blk_mq_queue_map *qmap, struct pci_dev *pdev,
->  	blk_mq_clear_mq_map(qmap);
->  }
->  EXPORT_SYMBOL_GPL(blk_mq_pci_map_queues);
-> +
-> +/**
-> + * blk_mq_pci_get_queue_affinity - get affinity mask queue mapping for PCI device
-> + * @dev_data:	Pointer to struct pci_dev.
-> + * @offset:	Offset to use for the pci irq vector
-> + * @queue:	Queue index
-> + *
-> + * This function returns for a queue the affinity mask for a PCI device.
-> + * It is usually used as callback for blk_mq_dev_map_queues().
-> + */
-> +const struct cpumask *blk_mq_pci_get_queue_affinity(void *dev_data, int offset,
-> +						    int queue)
-> +{
-> +	struct pci_dev *pdev = dev_data;
-> +
-> +	return pci_irq_get_affinity(pdev, offset + queue);
-> +}
-> +EXPORT_SYMBOL_GPL(blk_mq_pci_get_queue_affinity);
-> diff --git a/block/blk-mq-virtio.c b/block/blk-mq-virtio.c
-> index 68d0945c0b08..d3d33f8d69ce 100644
-> --- a/block/blk-mq-virtio.c
-> +++ b/block/blk-mq-virtio.c
-> @@ -44,3 +44,22 @@ void blk_mq_virtio_map_queues(struct blk_mq_queue_map *qmap,
->  	blk_mq_map_queues(qmap);
->  }
->  EXPORT_SYMBOL_GPL(blk_mq_virtio_map_queues);
-> +
-> +/**
-> + * blk_mq_virtio_get_queue_affinity - get affinity mask queue mapping for virtio device
 
-Please avoid the overly long line here.
+You mean example of PCIe that makes use of OF? Pretty much ath10k-11k
+mediatek and in general all wireless card. Example ath11k-pci.yaml [1]
 
-> +const struct cpumask *blk_mq_virtio_get_queue_affinity(void *dev_data,
-> +						       int offset,
-> +						       int queue)
-> +{
+Compatible is set to the ID. PCIe will attach an OF node if found in the
+pcie child nodes (already supported)
 
-And maybe use sane formatting here:
+On NVMe driver side, the NVMe controller will already have an OF node
+present.
 
-const struct cpumask *blk_mq_virtio_get_queue_affinity(void *dev_data,
-		int offset, int queue)
+We are now just adding an additional subnode "nvme-card" and attach it
+on the root disk when it's created.
 
-/me also wonders why the parameters aren't unsigned, but that's history..
+[1] https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/net/wireless/qcom%2Cath11k-pci.yaml
 
+-- 
+	Ansuel
 
