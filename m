@@ -1,181 +1,86 @@
-Return-Path: <linux-kernel+bounces-276091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19DC5948E44
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:00:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A793C948E46
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67FE9B24BC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:00:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A852886E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C7D1C3F18;
-	Tue,  6 Aug 2024 12:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SWnx48bS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DD81C232A;
+	Tue,  6 Aug 2024 12:00:58 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55EE1C0DFA
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDC5165EFA
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722945617; cv=none; b=q7D9/6SfXkLhGnc0WSfLSRSqKVonFPTAiJJs68G6ReGgmCaJ8gGXr2hFst8mr3gffJsnbkvQmNkCbVJfj3F3x7WKOgNyEtkQYIXvukx9J+QBNMMEW+yhhrAIptJPUIIbVuPKy5xCi14QWaQQEF1pdwBVWAhhzu2z8BCb+sihvu8=
+	t=1722945657; cv=none; b=hVJ8CR43fVsZiiNYfhCtmet7af2qwYb3Xiw9AYnniTWaDhGWN7UnjFVtecEFG7n7BKMRO3D+9Kn+8HXFiwdpjK8V6/rl9L+T0q0Q5+fjM1+pQtwmFfO5IMgVyUpKi0V+jA+pFQqi3Sn7KbYtDDbga7vAG9CYPpjJVGqe6vPFIHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722945617; c=relaxed/simple;
-	bh=bBv2cHHWcE2FsszcQBzisILn+uKryUE8Esyx/ZXDteQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SME0YjGbo+3EAIl5a5hNRk2IeU58/fUXKHUelA447JNrA0YyD61DhNb21Y+g7YR1Be1BG84CFARXVIC5J1ZkaLfxoLxMSgsC4aN5o17mznDepEAcSiLsauS4u9ZPU7wrCqNod1bnU4lRftzDDHRE3FkrAukWys1WuDH/Tupr+jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SWnx48bS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722945614;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jOJGHm4Br6LaHArjPowVXyqQXUfsOQYsBdbCDZ6CFQA=;
-	b=SWnx48bSp+pGkLwDTaZar+HmS+SDaLpAVXPm2mqnArTMdokWRmDo8iisstTxpJzTtmA4CD
-	F7kzL6coMdFw7JmArkHJHPb2LhaKnTn/0sWiAvkZlBtcxzno96utie3UV5KCgo6mCeV9GC
-	Q+Cg7/gy0pIt1dt29+8/S6/SYH6SXxI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-675-0ikUg_JmNYiLU3PxJ1HfCQ-1; Tue, 06 Aug 2024 08:00:11 -0400
-X-MC-Unique: 0ikUg_JmNYiLU3PxJ1HfCQ-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4281b7196bbso4903775e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 05:00:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722945610; x=1723550410;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jOJGHm4Br6LaHArjPowVXyqQXUfsOQYsBdbCDZ6CFQA=;
-        b=QWBa14/sIbjt+0wUbTkiq3CvggTZqRLleCta6EmwJYPsR7w6iZCvQwUagjDB8ndm5b
-         i3wErYCcNbiGumkakjwZYvN6rsPo4UNnIRFajnJPwUZKWrwudIAezyFTAHTsq2bdwj58
-         aRDltRjz1Dqx/qbs6xgr2R2qyPr0EOC7bbwguYfcaMvE5n4BXJyZCRRZlt7GyarSYiH2
-         qCTBbFamCXatgDyF4NXHNXg2mJpCi1eJzLeAgjkFejvvhL6VmGz9upjMbhSlRUtNyRWw
-         ZxEl40XRrrhRHJHaYICgVPtQzz/uJGXmnbeoIWKKcx98H2uSlCl2djxovpRePxlYKIDJ
-         625Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXcImZJ8oz3/chjanxdWowaT2WOUyAZX2i/hoYwTMSoMvoG1aqPtbQ6Q1fAwAUdMoWaQuSbif1tuac8DlpAK71G1vbI7KJOrfR98X2D
-X-Gm-Message-State: AOJu0Yy6Y8CYduAFX6UFOo2AttvpinC7UjiFVysLGNEFlX8mxAJFm1Hu
-	+P8S24oBNOWAOKZ5NekTCwpfHKHw41+5Kztv+nLqIAHPgvamcxVMG4BHCPlAbk9fCXHzVbVV3+i
-	dFQU8l4AHP8P1n+38DQKDNy782y+tzHD0UZoN2zAfZI1MWAI7J4/hX4GA2AUcOQ==
-X-Received: by 2002:a05:600c:468c:b0:427:abed:3608 with SMTP id 5b1f17b1804b1-428e6af2fb9mr85689075e9.5.1722945610151;
-        Tue, 06 Aug 2024 05:00:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2QasHYqkusBhWQLHdc8qVQblinwhGWx2cAkm/gc5JdYPrFP55UaOZZ1yyKwduUpTbjy595g==
-X-Received: by 2002:a05:600c:468c:b0:427:abed:3608 with SMTP id 5b1f17b1804b1-428e6af2fb9mr85688825e9.5.1722945609620;
-        Tue, 06 Aug 2024 05:00:09 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e727084dsm177397315e9.36.2024.08.06.05.00.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 05:00:09 -0700 (PDT)
-Message-ID: <7564cf76-115b-4d5b-bfbd-fd3b1e55a5c1@redhat.com>
-Date: Tue, 6 Aug 2024 14:00:07 +0200
+	s=arc-20240116; t=1722945657; c=relaxed/simple;
+	bh=MsSt96AGd2jq91O4H2m69HgMZRLLGD9PwgnN+FW8BRs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QDKX2HdZ8I/moQxoZO9A6PnAwyz0ExlFxq86F7I/c03AfNHGWSZmtovyZNAs3CMJlT1kxPAItoL7MqvjAWqxoe4gaTzLg7PO/cdJRlOy4Qm3ITn26XR+UQWFCRtQ3xpg4aUpxwqmjDnauazrOcNJoKXAM8P07+4aK1ZhGCEj1js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WdWyl246Mz1HFnY;
+	Tue,  6 Aug 2024 19:57:51 +0800 (CST)
+Received: from kwepemd200011.china.huawei.com (unknown [7.221.188.251])
+	by mail.maildlp.com (Postfix) with ESMTPS id E038A1A016C;
+	Tue,  6 Aug 2024 20:00:46 +0800 (CST)
+Received: from cgs.huawei.com (10.244.148.83) by
+ kwepemd200011.china.huawei.com (7.221.188.251) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 6 Aug 2024 20:00:46 +0800
+From: Gaosheng Cui <cuigaosheng1@huawei.com>
+To: <sboyd@kernel.org>, <joshc@codeaurora.org>, <gregkh@linuxfoundation.org>,
+	<kheitke@codeaurora.org>, <cuigaosheng1@huawei.com>
+CC: <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next,v2] spmi: pmic-arb: Add check for return value of platform_get_resource_byname
+Date: Tue, 6 Aug 2024 20:00:45 +0800
+Message-ID: <20240806120045.3113451-1-cuigaosheng1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] mm: Fix endless reclaim on machines with unaccepted
- memory
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Mel Gorman <mgorman@suse.de>,
- Vlastimil Babka <vbabka@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, Mike Rapoport <rppt@kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Jianxiong Gao <jxgao@google.com>,
- stable@vger.kernel.org
-References: <20240805145940.2911011-1-kirill.shutemov@linux.intel.com>
- <20240805145940.2911011-2-kirill.shutemov@linux.intel.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240805145940.2911011-2-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd200011.china.huawei.com (7.221.188.251)
 
-On 05.08.24 16:59, Kirill A. Shutemov wrote:
-> Unaccepted memory is considered unusable free memory, which is not
-> counted as free on the zone watermark check. This causes
-> get_page_from_freelist() to accept more memory to hit the high
-> watermark, but it creates problems in the reclaim path.
-> 
-> The reclaim path encounters a failed zone watermark check and attempts
-> to reclaim memory. This is usually successful, but if there is little or
-> no reclaimable memory, it can result in endless reclaim with little to
-> no progress. This can occur early in the boot process, just after start
-> of the init process when the only reclaimable memory is the page cache
-> of the init executable and its libraries.
-> 
-> Make unaccepted memory free from watermark check point of view. This way
-> unaccepted memory will never be the trigger of memory reclaim.
-> Accept more memory in the get_page_from_freelist() if needed.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reported-by: Jianxiong Gao <jxgao@google.com>
-> Fixes: dcdfdd40fa82 ("mm: Add support for unaccepted memory")
-> Cc: stable@vger.kernel.org # v6.5+
-> ---
+Add check for the return value of platform_get_resource_byname() and
+return the error if it fails to catch the error.
 
-Nothing jumped at me, sounds reasonable
+Fixes: 39ae93e3a31d ("spmi: Add MSM PMIC Arbiter SPMI controller")
+Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+---
+v2: Add the fixes tag, thanks!
+ drivers/spmi/spmi-pmic-arb.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Acked-by: David Hildenbrand <david@redhat.com>
-
+diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+index 9ba9495fcc4b..5f5f2f0a10b9 100644
+--- a/drivers/spmi/spmi-pmic-arb.c
++++ b/drivers/spmi/spmi-pmic-arb.c
+@@ -1808,6 +1808,9 @@ static int spmi_pmic_arb_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "core");
++	if (!res)
++		return -EINVAL;
++
+ 	core = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!core)
+ 		return -ENOMEM;
 -- 
-Cheers,
-
-David / dhildenb
+2.25.1
 
 
