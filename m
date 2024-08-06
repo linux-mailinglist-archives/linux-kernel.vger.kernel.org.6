@@ -1,97 +1,122 @@
-Return-Path: <linux-kernel+bounces-276817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EE19498BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:01:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD969498C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D40051C21703
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:01:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A110282ED8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7E4156871;
-	Tue,  6 Aug 2024 20:01:04 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A06182498;
+	Tue,  6 Aug 2024 20:02:42 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920731547DE;
-	Tue,  6 Aug 2024 20:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B67238DD8
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722974463; cv=none; b=bMCa4dWsuMpdZfRZeeZv5E+XYzG/eUhDOVDr0PeySBC7YI9HIm8/O9Rr0iGTDd87bnSk5e4388JdQdHTssJnToG3vXUPtdSXt/UJdTkOU5L8dfmkqeuGVnmqe4KCh2nrbaBT38HETm9dCTIM+YhJpv5mb4SWMaH9j1L8QMo/nBw=
+	t=1722974561; cv=none; b=rir3AV0FeZT4Xdm6iHFP/me9U3hi2nQSOYFyq42C4uPYPr020AEs3e6Cp9Zx7eqeADFZ9fgeoGnT9gRTbsYjEf+Vn7yUOrccIMq+g5SCxSlvSSOwp0EkV3SkGvbcKr3XBZA3X6SjxEksrkE8NORhgO7YhuQkUZ6S1YDnhZslAbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722974463; c=relaxed/simple;
-	bh=LtvbirBLl/FBSBSTs2FebEYxe3x5raFLdt0tu1khpII=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V5L+BbebHIQDBf6dTBs7ly3PshmkBEpqscE380E/yZ7KHgF5mWvOPHX4uCDowrCPljPQWfUT6reej0NmhNrqgaNL1gNEJVcOweLscL/gpFY2KbmROVOdQJ5XWMzXnm416yCNWKVN6V3ozB1Fg65EtR8QarDf/sc5/5Gt9d/kh/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12BC8C32786;
-	Tue,  6 Aug 2024 20:01:00 +0000 (UTC)
-Date: Tue, 6 Aug 2024 16:01:49 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Song Liu <song@kernel.org>, "live-patching@vger.kernel.org"
- <live-patching@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
- Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, Joe
- Lawrence <joe.lawrence@redhat.com>, Nathan Chancellor <nathan@kernel.org>,
- "morbo@google.com" <morbo@google.com>, Justin Stitt
- <justinstitt@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Leizhen
- <thunder.leizhen@huawei.com>, "kees@kernel.org" <kees@kernel.org>, Kernel
- Team <kernel-team@meta.com>, Matthew Maurer <mmaurer@google.com>, Sami
- Tolvanen <samitolvanen@google.com>, Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2 3/3] tracing/kprobes: Use APIs that matches symbols
- without .XXX suffix
-Message-ID: <20240806160149.48606a0b@gandalf.local.home>
-In-Reply-To: <20240806160049.617500de@gandalf.local.home>
-References: <20240802210836.2210140-1-song@kernel.org>
-	<20240802210836.2210140-4-song@kernel.org>
-	<20240806144426.00ed349f@gandalf.local.home>
-	<B53E6C7F-7FC4-4B4B-9F06-8D7F37B8E0EB@fb.com>
-	<20240806160049.617500de@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722974561; c=relaxed/simple;
+	bh=26g9Ojmfp/XWsHZOBrHzTOF07DGuNxqX2cmP6duZhec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XjQRl2uC7TaGoyVgj+SqZkRrz/VeoriRtkemQwxrS8dhCWbWB77JWhL0wYRPWBgybGEK8TUKxEMmxDfQA7UiBvwj3C14Hz3AxFB9H2DCKTWU99J/JYga+j/5/ThRFskCTnOKobNVM9DdWPUgG1/0fX1lbX/bIeJZwM4yhwxyllA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sbQO2-0006ca-Cw; Tue, 06 Aug 2024 22:02:26 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sbQO0-0051lx-Pq; Tue, 06 Aug 2024 22:02:24 +0200
+Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 6C38431837B;
+	Tue, 06 Aug 2024 20:02:24 +0000 (UTC)
+Date: Tue, 6 Aug 2024 22:02:24 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Anup Kulkarni <quic_anupkulk@quicinc.com>
+Cc: manivannan.sadhasivam@linaro.org, thomas.kopp@microchip.com, 
+	mailhol.vincent@wanadoo.fr, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_msavaliy@quicinc.com, quic_vdadhani@quicinc.com
+Subject: Re: [PATCH v1] can: mcp251xfd: Enable transceiver using gpio
+Message-ID: <20240806-industrious-augmented-crane-44239a-mkl@pengutronix.de>
+References: <20240806090339.785712-1-quic_anupkulk@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2namxbm3ltw7rz3l"
+Content-Disposition: inline
+In-Reply-To: <20240806090339.785712-1-quic_anupkulk@quicinc.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, 6 Aug 2024 16:00:49 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> > >> + if (IS_ENABLED(CONFIG_LTO_CLANG) && !addr)
-> > >> + addr = kallsyms_lookup_name_without_suffix(trace_kprobe_symbol(tk));
-> > >> +    
-> > > 
-> > > So you do the lookup twice if this is enabled?
-> > > 
-> > > Why not just use "kallsyms_lookup_name_without_suffix()" the entire time,
-> > > and it should work just the same as "kallsyms_lookup_name()" if it's not
-> > > needed?    
-> > 
-> > We still want to give priority to full match. For example, we have:
-> > 
-> > [root@~]# grep c_next /proc/kallsyms
-> > ffffffff81419dc0 t c_next.llvm.7567888411731313343
-> > ffffffff81680600 t c_next
-> > ffffffff81854380 t c_next.llvm.14337844803752139461
-> > 
-> > If the goal is to explicitly trace c_next.llvm.7567888411731313343, the
-> > user can provide the full name. If we always match _without_suffix, all
-> > of the 3 will match to the first one. 
-> > 
-> > Does this make sense?  
-> 
-> Yes. Sorry, I missed the "&& !addr)" after the "IS_ENABLED()", which looked
-> like you did the command twice.
+--2namxbm3ltw7rz3l
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But that said, does this only have to be for llvm? Or should we do this for
-even gcc? As I believe gcc can give strange symbols too.
+On 06.08.2024 14:33:39, Anup Kulkarni wrote:
+> Ensure the CAN transceiver is active during mcp251xfd_open() and
+> inactive during mcp251xfd_close() by utilizing
+> mcp251xfd_transceiver_mode(). Adjust GPIO_0 to switch between
+> NORMAL and STANDBY modes of transceiver.
 
--- Steve
+There is still the gpio support patch pending, which I have to review
+and test.
+
+https://lore.kernel.org/all/20240522-mcp251xfd-gpio-feature-v3-0-8829970269=
+c5@ew.tq-group.com/
+
+After this has been merged, we can have a look at this patch.
+
+It might actually not be needed anymore, as we can describe a CAN
+transceiver switched by a GPIO in the DT. Hopefully we don't run into
+some crazy circular dependencies or similar issues.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--2namxbm3ltw7rz3l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmaygUwACgkQKDiiPnot
+vG9+QQgAggrdk32CWlLAoZBayn4qT025uirjqvwMZlzCEGSvX9lMXPfzM1dnOwRh
+8IK+cKSJMGE3ntnzj/2MSlm9P/PPgNvoysPDzDgf82FYiVRMzl5EWFXZQxeh3kLT
+ORG/syZSKhSvI+EfKRV9vVF7jPUi4Ibkvk8dvfNSvY9NZEiimHnH4YFXwe5guaRt
+xBmx37tijZDyHprPDD4TAUmUk9v5dXu7rjZDAbBZwayhRyD4ShSnEfu1vmr8bWaI
+hg2pT9jpQSWXaaPk02EoTb6yfh8GcFT3TfnBdpajWJMdZ0Pz/4jzihR7UKkwI0q1
+qASw8iKfTE3sO2ALEdyuRqmaM0ZQjA==
+=rN/9
+-----END PGP SIGNATURE-----
+
+--2namxbm3ltw7rz3l--
 
