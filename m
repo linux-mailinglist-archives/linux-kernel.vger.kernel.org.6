@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-275574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A7094875F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:16:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 949AC948766
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68DEE1C2206B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:16:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F202A285975
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C25DF42;
-	Tue,  6 Aug 2024 02:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA9EF9DF;
+	Tue,  6 Aug 2024 02:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMx4f/29"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2uYnoZx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EC9B663
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE45C2E9
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722910599; cv=none; b=bUad5wveyH/7k5/hzMoHT9x2TotoC95yistq+bjmY3o/BL1GQmM9piQEAhl+gRWZRaWEiH9Mp1YCgbl60M4/CMd3mBO9PBEjcLO1MAeNw5wVBXGU3tB6KcKWXXZDsENK2O1WeK1DWKUOlCgGbQnwm8fmMIVRfD4nbRkMKKTk6Yg=
+	t=1722910675; cv=none; b=u39eY3LiB8rBz7GRS+gQLnET9SnGJXwflaWDrbrLJ3lwwKu9shcPJBb5KzovukyzC+piSix9pSl/8Tcs0e/tAbfbCRvp/6uECudITG9QMq73Enqm55viQewPfdzqoAN2NcL0ONjLaG95ydYfqsYlDju0kLNHgB7YfHu/Y2jXK3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722910599; c=relaxed/simple;
+	s=arc-20240116; t=1722910675; c=relaxed/simple;
 	bh=yXVABbkmu8OTawq0fw52gNq7FEB6YnC9rfwX9dBxipE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mk/oF5LV/o+KKMuL6CAnudF+IaYP/0mOqn/v+QHaMyu3IlSYpZPVEogBDRFEtrG+2G+KdTQ2agkRx5Y11oL8gGcyvNaqXH9w7xFf/CyFbFaTHv6crtG06zEu4hjlIGWL6ELc0SkD1B5l9/W4Yl/YVvz3y9crDnR+/umGnlEMFuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMx4f/29; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E4C8C32782;
-	Tue,  6 Aug 2024 02:16:35 +0000 (UTC)
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NQSEjDvrlcjRRVnV0UAYn5M3Sy7P8Xg1QZ86oL/ctkcGe88l6MeJj6NvzeQ3oMbO/vlzCGV3u09i0chcmSOyekOhfNTDyJgYZtR4GzzHIq3TJYpwdl/MXnup1NFtS+hP8xWHaI3oryCr4QZ27ihhprSit11MCHpVttmUFq0tbck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2uYnoZx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5959AC32782;
+	Tue,  6 Aug 2024 02:17:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722910598;
+	s=k20201202; t=1722910674;
 	bh=yXVABbkmu8OTawq0fw52gNq7FEB6YnC9rfwX9dBxipE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lMx4f/29PRG68vAFR3Oy3tPjxk8B+tHttTZHU6R6Sj/cige+jkzrIUJyb7Hx0MHPg
-	 EHRFGdelRhCCFghYZ1SJ+NuPWT+R8Aru8lFou3iFyFQ2Ys7hRLo5ryhcsFnqj2uNFa
-	 LTYRtiQWPD7faB/98r0i2fmBHkcpBs9z7Wcv1HJycjLpJPtwvHIQVLiM99sK+yi5mU
-	 E4nHz8bXPtU7gAUhkUktGBmXFdlbcNLmlsH54g05FIgMWBbHPau2yjzsF0Di/vNh5N
-	 zLF0we9ScSmkLJJuj2YtN3aBmC3qxlx3Tf57zVJK0uL4bSBDoJ7Edbc2k1L1Hkkw1H
-	 RE5+LnwFldsoQ==
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=m2uYnoZxR8xMBazV/hBgxgY81G3IXq7Xti+2mJZaEDWlhaCvFzCpg8/8LndrC02+d
+	 0zXoDHYOX4iKnA9+Nlqx5RdEbkv+eFVbpvAiIh1SrP47yve+P3MaHrvhySrz9+Iioq
+	 dnEdB9mDMxO6jlTPGe5NslxhBy6VyDMui3GJg1RtYVbeOcyDNDrQ92AmDKKSGlYrD3
+	 3XS0v5Df+AdCXcaWMhzH0BUCvBpyYCHLEYr87jL4LIWxzb2TcCqPVj3sYz59Cd2Aaa
+	 FJ38L9N604JzZGqUxC/heCvKbkZ+3oXCoIVhQSaOHEJyQJryAjLFb4dD890SWQXqQE
+	 NJholuQNSG2Lg==
 From: alexs@kernel.org
 To: Vitaly Wool <vitaly.wool@konsulko.com>,
 	Miaohe Lin <linmiaohe@huawei.com>,
@@ -54,9 +55,11 @@ To: Vitaly Wool <vitaly.wool@konsulko.com>,
 	nphamcs@gmail.com
 Cc: Alex Shi <alexs@kernel.org>
 Subject: [PATCH v5 00/21] mm/zsmalloc: add zpdesc memory descriptor for zswap.zpool
-Date: Tue,  6 Aug 2024 10:21:42 +0800
-Message-ID: <20240806022143.3924396-1-alexs@kernel.org>
+Date: Tue,  6 Aug 2024 10:22:47 +0800
+Message-ID: <20240806022311.3924442-1-alexs@kernel.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240806022143.3924396-1-alexs@kernel.org>
+References: <20240806022143.3924396-1-alexs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
