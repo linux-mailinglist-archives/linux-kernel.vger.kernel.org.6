@@ -1,266 +1,632 @@
-Return-Path: <linux-kernel+bounces-276420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D7D949365
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:42:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7B63949367
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A78E288B39
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:42:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37F681F25284
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2111D47B0;
-	Tue,  6 Aug 2024 14:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF8F1D47DB;
+	Tue,  6 Aug 2024 14:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KWmNbfp8"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2073.outbound.protection.outlook.com [40.107.94.73])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UsFPlxVZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E5D1D1748;
-	Tue,  6 Aug 2024 14:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722955179; cv=fail; b=rriE75JZPkaB2HKXSOzq3qcyfmSFkS02i0omfXQfp3ydkn1Xgto96PSgC9CIRYkI8KNLeG0c0Gk9H3nsXkgmCoiggM+z9PePu8eIcFuR2BMmXv4dy3w9eJhNQuBs4jJhkkrupMXXovrQGNXbAqEGhxVtHVd98EpInSA1qB9eRqs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722955179; c=relaxed/simple;
-	bh=TP9t7g0O8xlL2KDdP28kt1+dHFLDvbB4AuMk7BcXT9o=;
-	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
-	 Content-Type:MIME-Version; b=jx50NcYFPmT5izSWMh0pK2OUu7gZiXBOyJkhBFCfUDpJONH3lHvvse/YaOYKfc8wPoJv6iYlPAGbQDKsoFkvMsZ4tkX3E+WOl+wjuYL2pT8vqOJHjrgAtYPFAxmvBALltu12nSJ6dtTny0GKwQdz9eC5wU5y/UxLzzJQVfC1Vnw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KWmNbfp8; arc=fail smtp.client-ip=40.107.94.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DSpR4Vp0YZfVz1KtGfVMokr1PXlCmdVkFSHO64YGzMDvlpsaBxhOnPDd5e5/cCsr1HDpPzs6IRsu1taiA2KntrRkaanPIhDTZ8m5KoZ8WxY38I7KFMoYUyybNxZkozO5cosd5q4guSjFWz5Y+d1FnUYN49b2GEUbeTOosbLKYWvw4V0Wzf72kbGDpxHyZRjGyEgnijRCbY7S1mTvKtkvdNlL0U0dewtM8io1iHSBR5uvwel7L8yfTG1Lo5RRN+3Xw/vWDJdSiufYkwUCs+OKOPLOHQpwU2QxviTr4IRxmkikrWZt0Sp+nyCdZIbPcUVOLf5qFzj2PDV+PFdwS4wqRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LsXsptiea1VzXkLn8bVgssLs3/gqmh/gryJVDY8fbMg=;
- b=rwluX27JlXbY6kqBAZTZao9z5D1qJEBO+apsllnwHxUrN+tn8NkHQ90EOJHbmTvd9THwfBjSVPd+RnW3hzhnl34So5yB30aURZx14gKkZWXd31X9Fhg8dgxKJLk+T/6+qwgwNQomhSirgsQOpNErpXn21QydbkIqcDEyjb3xGiXzL7wUo2B8ZW8nez770RAV3q4Rdpf2QSh2HuH/QGmfMPMsHX0V+mS9AFYDdndR4kaox+CsbdcQ7J+jF9GDyStWCOXKyGDbvm9EWPoFThty7se5SJZXEHd/TLgDrv9xEgE6rdywsjZtsOVXW5Qz9lahBZFftY+jY8Y+bgkQozE4uA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LsXsptiea1VzXkLn8bVgssLs3/gqmh/gryJVDY8fbMg=;
- b=KWmNbfp8dbNB/NAVfJoDLs7m/q7lTffyOOQszTtfc4KEM8hQXPYpI5Cj3U1D40Sov11hRJ4eSrL62CLi7snTol3bbu4Apvsq2OJUdfKPrYg6Aiz9ehSaFQoTwS/OG8NwxtAJdGtgJFwVOWSZikAbS1T9sD9Ezy0+IXsPYKK2gXc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by PH7PR12MB7425.namprd12.prod.outlook.com (2603:10b6:510:200::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Tue, 6 Aug
- 2024 14:39:33 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.7849.008; Tue, 6 Aug 2024
- 14:39:33 +0000
-Message-ID: <8890482d-22b6-2ffa-9902-cb970ed20013@amd.com>
-Date: Tue, 6 Aug 2024 09:39:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Content-Language: en-US
-To: Ravi Bangoria <ravi.bangoria@amd.com>, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- seanjc@google.com, pbonzini@redhat.com, jmattson@google.com
-Cc: hpa@zytor.com, rmk+kernel@armlinux.org.uk, peterz@infradead.org,
- james.morse@arm.com, lukas.bulwahn@gmail.com, arjan@linux.intel.com,
- j.granados@samsung.com, sibs@chinatelecom.cn, nik.borisov@suse.com,
- michael.roth@amd.com, nikunj.dadhania@amd.com, babu.moger@amd.com,
- x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- santosh.shukla@amd.com, ananth.narayan@amd.com, sandipan.das@amd.com,
- manali.shukla@amd.com
-References: <20240806125442.1603-1-ravi.bangoria@amd.com>
- <20240806125442.1603-5-ravi.bangoria@amd.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH v3 4/4] KVM: SVM: Add Bus Lock Detect support
-In-Reply-To: <20240806125442.1603-5-ravi.bangoria@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9PR13CA0094.namprd13.prod.outlook.com
- (2603:10b6:806:24::9) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C2F1D1748
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722955199; cv=none; b=bjEIcjMhCjae/c1mq+JAtbxAPjE9CRGoqvmJRK88vV4yAhAK/68rJRqB07YoIDPvLGVmzuVqUVyri0SKt8T1pcVlvXBbIvQ6gUpntSt2cQR95IKTmYc7JMcq4d980xxGVwu1RdxOuxePH7gMR93CSXi2xlymbLZsy08GffdyDHc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722955199; c=relaxed/simple;
+	bh=v68hSRbYssgHPOdUrsegsfZqESfEURUFI1ovetWwfZk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P/Sz4w88NspmhJsJoxu2eI7Hu3V0MMxPMeksL4xMoxaHBkcP8GdGl7VBDpLnTZTmXX30hnaAZbfALI3nc06NxI2rx8AXYNJxcwzWnBSiWSrPoXmu6RPriQTRn0j/2BxKP7B9YEwD1zBc2DDBLO1JN27J7qDQTtZz8lWePPri7aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UsFPlxVZ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722955197; x=1754491197;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=v68hSRbYssgHPOdUrsegsfZqESfEURUFI1ovetWwfZk=;
+  b=UsFPlxVZkTmU+Dss4+rw8sEbBKsFO+gcX9mNADlRrtIBVwYfc6F3LpUt
+   Ji6LAHlOMxJQXkdtNmnuADDzrSkXwkFfiPxAr9lpS6VEt4zkreR+ugstL
+   tWGKMe9yQu9hYi7iMr6oCNUcW1br2HXR5NUzW55I+4OMRTD0k7yCcQN0a
+   s2ZXvbr5iQaCo8RNzRMEbph46lgXvWDGfBORdYKnV60Vstc3TmWFOnh1j
+   CRqYNCnAOKf9Rq7GKMsBCbijv6E50T1LMc3QuxvhPnqUYGVPdoUK1UX4Q
+   EQeiSxQ9XtiWX2H1Le0qyP3kQllwstknTiH0TDKKd9uhk6P0UDV1xKSqa
+   A==;
+X-CSE-ConnectionGUID: AWYhwg5fQA+n1xMuivKMww==
+X-CSE-MsgGUID: n7o8qP9rTfiNoljDxF79wg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="43501776"
+X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
+   d="scan'208";a="43501776"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 07:39:57 -0700
+X-CSE-ConnectionGUID: HVHRI5pXTp2gRhiQYiWpDQ==
+X-CSE-MsgGUID: JD3uxjkPTJO70/Zu8tmObA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
+   d="scan'208";a="87176887"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 07:39:57 -0700
+Received: from [10.212.84.25] (kliang2-mobl1.ccr.corp.intel.com [10.212.84.25])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 8B00B20CFECD;
+	Tue,  6 Aug 2024 07:39:55 -0700 (PDT)
+Message-ID: <9b7c5c61-ef8c-43a8-bf1c-7ff32b4c8bee@linux.intel.com>
+Date: Tue, 6 Aug 2024 10:39:54 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|PH7PR12MB7425:EE_
-X-MS-Office365-Filtering-Correlation-Id: 93ef8e5b-daf9-4e28-25dd-08dcb6259673
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YmttUDdCZ0F5cHpNdWo2blFaZ3lQVzVMY0xpUHlXc0JPZDFBaSt3djk3QUNL?=
- =?utf-8?B?ZXFESlFZRE9PNThSekdmeTNtTWNRczUwU3RzTDV2UUNxUWRaOHJ4ck9mMWU4?=
- =?utf-8?B?YnlYNFBVZ1NrQUZCMWJGcmo4UEhGdEJBVGNjbzM0VDlIa1ZKOEo3U2VzNjhy?=
- =?utf-8?B?Z2s5cmQ1Y3hoSW5OVTVSSGdiUi96T05pM0dXUytWUy8vNVlhaVRFLzN5Y0M5?=
- =?utf-8?B?S1h4ZjduL1BWL2VrbkV4cWRIc2NxSGliVkptWTBLVGZHdXJVZFZrUTVCRGxQ?=
- =?utf-8?B?bWR4VVEzeWkxOUVhY3QyMysvMzRYOThWVHpkU1BZZktkaHljUXhwbElIeit1?=
- =?utf-8?B?TjlxaEZFU3JuY1VUV3pydkVWeWVMYkF5aW1vSkhLN2hZdWlJSk1Kd09jaVFO?=
- =?utf-8?B?RnZPUkY1M0tNK1o4eUFpMHBJZDZlTmoxRi81NUo3SUltbFdPVDhzUTkrMkh5?=
- =?utf-8?B?TEUyNkVVZlg1SFZldlhFam1KbTEwaDZ1R3hiRVdEa3JLejEyM2puS1BWMmpq?=
- =?utf-8?B?MTBrV2w0alY2TnJOYWZORU5DQ0xGclBRcVJZQXM2N2h2MnpSSi95K1FPQi91?=
- =?utf-8?B?RTBiNGh2KzVHOWRwRlk2NGkrVmQvdWRCazhHdGpUMUM1Z0lUWmg1N2lLWkN6?=
- =?utf-8?B?cmk2OFpWZDF6UnZ5b0llaFJ2ZFdna3ZJMHd5YnlLbWVZTTlxS0pERzBCakIv?=
- =?utf-8?B?UTQzRmlxTDhFVnUwTmtvUGM5NkNVUUtud1RSTzhWN1F4WEZSR3FoQUtFaUNC?=
- =?utf-8?B?YWFKYkZKZjJCNkVPRDNuaVhNZW1KNWpDalBodi8wWlpxd01JUFVtaGhQQTYy?=
- =?utf-8?B?UzBOemZrd2VXSFNtSUt0NXZrWlBGN0FuN0VTU3FLMGp1NHFmcE9zN2ZlamZa?=
- =?utf-8?B?MUVHM1Q5NlRERGNzSjMycmsxYlljM3cwY01ScEsrTWpFQytNbjJTNUJPekJJ?=
- =?utf-8?B?VEsrY2tWdnNBaHZ1a0RiUzdFVnc0d0hVYlZ0dUdKVk9uU2JvVCtOQy92bGNP?=
- =?utf-8?B?KzR3NG5rU1dlTVU0djdOR053emNzRVkxeC9zK2dVUWZEd09iZUp2SXN1MWFp?=
- =?utf-8?B?bGxOTUtFSmxtQTRPd1YvV0FlSUFMS1RKdUV1NnM5ZnM2aU5KOWJOck9ScGE4?=
- =?utf-8?B?aG8zK241TFI4V21vc1lkTE5sdGlTZ1JXZ3V2R0UxR1NwRGRKTWtibG1MMHNN?=
- =?utf-8?B?MmV4Tk9jT2dHVE51VjNQOS8yQko1Zmo5V3JzMk9LbjJCQlVZY3lQRmtvQ0kv?=
- =?utf-8?B?THR0a1YwY2UyUXpESXJNVFBVWFdhNkZYeEFQdXdkcDVsSlVyVWJVNnZKRy82?=
- =?utf-8?B?MFVTVWVtWm5ucVA0Z05FRjd3Uk0zYUFoMVJlZjZlWkh6T1RacG1wR2NhUk05?=
- =?utf-8?B?ckpQMy9UYSt5Qm1CVUtoU0xEYUxFNjRIZlMxaXdpTVVONFQ3VTBRZmFMTUxx?=
- =?utf-8?B?Mkk3bE1mQnhtaUIzLzBmZzlGN3kxd25aYW8rVmowbXRSSldXTWpSeVJCVXo3?=
- =?utf-8?B?TVBnUis1eHlkZ2lTMGVlSXpnRS9RbG96ajhVa0RGLzh1OUFiSkFIcDkzTE9H?=
- =?utf-8?B?YVM4MmZPeGxIR2xDQ1gvS044LzhOMGZ3L1BYZlhiNHlKbTVzdmJ4bFBTQTAw?=
- =?utf-8?B?b1JWQmdDNGEvemIxM0ZpMWNyOWt1WU44ejVaRDdUWEF3TzdTcURPd1NxSWhY?=
- =?utf-8?B?L053YjR3ZzY5QTZ3L2V6UXIrd2h1SjhzZ1BKNDJJc1JyOWFtcTdody9Vdkli?=
- =?utf-8?B?eDIzTVVTbTFsWGU0RGtkKytOY3hCbEZLbDdFV1FMMGdqMU9OQ1BPUk5OVC81?=
- =?utf-8?B?eFhUSkdZVWdNQXdtSjN3dz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QWV1amhXZzdhbzBPYjJzN2Z4RzZhREZnWkEvTFdKMVd4OTZzbE9MTmlic0Mv?=
- =?utf-8?B?TmlmR29jam1Hakgrb2JpYWpDWXlPR0dpbGRud3FKaUVyemZiK3FaWm9Hazdm?=
- =?utf-8?B?WEsrVytsLzd6bFRLMzlZSVFnQzh6THJIV2lqNW43WmhpUXFybFZ1NThvY3hN?=
- =?utf-8?B?N1p6enltVktTNHd4Q3dIWGZtcEx5Zi9QZG42WEZpUmV6UVZaeVZOdlllNFpB?=
- =?utf-8?B?OFBYUmE3c25jWG9TRGphSHF3aHlJS054ZXZTZlpDaXlVVHVnTFQ4M2dKQ0s1?=
- =?utf-8?B?QkZDYktBMmpRRmIvQmw3dVAyV0N1a3BNVGpGVnRPNnJ0UXZXY3JwTXBZakoy?=
- =?utf-8?B?RHFyMkdSU1VOMHlEUjl0N0pPcWVJVUNJa3NKdERwU25PRFU1ZmorQ2pzNDdL?=
- =?utf-8?B?aWprRTIwaWpsNjlwMDNwWEcrWDBtTXFLd0dNMDRkMnBjRjl3K29VU3FOYjhE?=
- =?utf-8?B?cWp0TU9kQm1oY0lJT1hnTE96azVwMnIySGd2Z0I5eml4ZkM3WkdnVmgyMG9o?=
- =?utf-8?B?Z0xIc3kyYVJkZnJJUUM5OURLZVRXWUpuZE9uazdldURhRlN0YzVPRE0yWEUr?=
- =?utf-8?B?Q0o0ak0yQnQxVXBCN2RCNjhrMTF6N2tYU1BPNTNzaGxCZEVmbExiODluS1dF?=
- =?utf-8?B?VC9LbWt3VkZ4a2JVczFjQjJtZWJnTTdZR1pTclp6TXIwWDRXd3RxaHRGOCtX?=
- =?utf-8?B?eGNGa05iWHZ2M0tabXllam94SVQ4WXFTREtOeG9FdUl4TEdBNGx1djlWeTQ0?=
- =?utf-8?B?cXZaNVpqd3pSbVEyZlU2MkxIZ3hZS2MyV2l0RDhXZ2NxU2xTSFQrTktmMFlH?=
- =?utf-8?B?OHhoQTkwMXRTbys4SEFXdUNKQmdkK3ZVdWY2OWZOelFkN01Zem1oNU1wNExo?=
- =?utf-8?B?V1NkSDJ0ejJxZTROM05vRWdoNzloYXJ5czdxQzB6SW1HaVVkbWoxV09sM2dw?=
- =?utf-8?B?cVhoNHIvVWE2SSs3RVJjVGtYeFJGWkxYZmJYZDdkZmhRUFVubm5HMnYweUlk?=
- =?utf-8?B?V2pEYWNKaHI4ZmlqZWxISlk0OWU5eXJTMWNwSXZNdHpRY3dhaU9LcHdLM1hF?=
- =?utf-8?B?VXA2YndKSFAvQVVBRi8yT2NPdSsyaWE0M1hmQ1JwckJWbTc3KzREY3QrR3Qz?=
- =?utf-8?B?SHZSQTUweEg4SEFQaXRNSTh0S1dxeDVaV0NHUXUyQ0trKy9JcmxyRG1hengr?=
- =?utf-8?B?djBLcHAvZWJZNE5nV2lOZTM3M2VBd0Fna1Z3ZTU5S1JsREx3VjU5UkExSnhP?=
- =?utf-8?B?OENJUFNMMWdvcUFVaHdwSjA0K0dySG5OT3NOMHNjb1U2dU5tR2sybjd4ZVFp?=
- =?utf-8?B?TlZjYXZJNFZ5TEFxeGdtWVdHUFpDYkkzUjh3QVZoNHJHb0NYMzVWSHp6Qjhw?=
- =?utf-8?B?dmlySng1anVVb1J5QU91THlzcGlmWmFCbjErU3A1aEU2UFl5Y3Q1aTBvbWlF?=
- =?utf-8?B?N2laMkttOW9QOGJEZmp5ZFdWUjllbllyRzkyZkpjYkoveWZQSnFkTGJ4ZkMx?=
- =?utf-8?B?MTloSHR3bytFT2d6TkdHK200d0g3WDZvaEt6OU8wbEg2UThOM2pQZTcxRFVJ?=
- =?utf-8?B?NTVKMlJVTlMwdlVjNWthTVFqeTM1REF3NjhDNndGYkZkZGZweVhTV3NRU252?=
- =?utf-8?B?bGRkNFlSWEpzZjBkT0lJeFQ5OG9jOGdvYlplcXozc29HRVorT0FIMUxZZlpq?=
- =?utf-8?B?Uk40RFdkb2RPcW9KYVcvZ2psSmxyRS85N3pSWlRZYkpvUFVlelNwNVJXRHhv?=
- =?utf-8?B?cXo3S0JlTGx1VldLZ3R2MHNjSlJJa3EvMXJZSE9jT2FQYUxCMXFValY2b2Zi?=
- =?utf-8?B?RTdURi9QNk1yTWl2WFkzZFNUMjBvMW1DYlhpbFVoek9MdnJsZklENFF0anZG?=
- =?utf-8?B?QjRteFZ0ZjdpbjU4SVRzdjJwMjR2QURhOXg0RGROM2lCWWVsWnJwM3pKQVM3?=
- =?utf-8?B?aE5ONldJUThnTGJVMmd1cmlKN3Vha2xZRmNQclBqV1AvZXNFalQ5Ry9HL2gx?=
- =?utf-8?B?bjVXSElleVFxallTYTVVbnVMTE5Nb0VYUkFOTDhrdktrZE5jYVN3RzhHVWNH?=
- =?utf-8?B?Z1FUTjFHVXVuUkdFUW9PcWQ1ZkZUMWJiSndUcVYrWGNEaURzS0F0NW9FMndt?=
- =?utf-8?Q?b26c7W/7a8DMeEMkocJ251hOi?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93ef8e5b-daf9-4e28-25dd-08dcb6259673
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 14:39:33.5950
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RYIZUpjxWU1jEoJDUOmx6n/1BuHakbzVbhQbvpqbdTPbh1njknQdX77yapRfOqLjOyB5E9WMffRPWzZF4bn3Gw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7425
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/9] perf report: Display the branch counter histogram
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: acme@kernel.org, irogers@google.com, peterz@infradead.org,
+ mingo@kernel.org, linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
+ ak@linux.intel.com, eranian@google.com
+References: <20240703200356.852727-1-kan.liang@linux.intel.com>
+ <20240703200356.852727-7-kan.liang@linux.intel.com>
+ <CAM9d7cgQWLdec063U+c1su_O9jchv5HSTQ0S0tQJ_q96hjgjXw@mail.gmail.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <CAM9d7cgQWLdec063U+c1su_O9jchv5HSTQ0S0tQJ_q96hjgjXw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 8/6/24 07:54, Ravi Bangoria wrote:
-> Add Bus Lock Detect support in AMD SVM. Bus Lock Detect is enabled through
-> MSR_IA32_DEBUGCTLMSR and MSR_IA32_DEBUGCTLMSR is virtualized only if LBR
-> Virtualization is enabled. Add this dependency in the SVM.
+
+
+On 2024-08-02 8:18 p.m., Namhyung Kim wrote:
+> On Wed, Jul 3, 2024 at 1:03 PM <kan.liang@linux.intel.com> wrote:
+>>
+>> From: Kan Liang <kan.liang@linux.intel.com>
+>>
+>> Reusing the existing --total-cycles option to display the branch
+>> counters. Add a new PERF_HPP_REPORT__BLOCK_BRANCH_COUNTER to display
+>> the logged branch counter events. They are shown right after all the
+>> cycle-related annotations.
+>> Extend the struct block_info to store and pass the branch counter
+>> related information.
+>>
+>> The annotation_br_cntr_entry() is to print the histogram of each branch
+>> counter event.
+>> The annotation_br_cntr_abbr_list() prints the branch counter's
+>> abbreviation list. Press 'B' to display the list in the TUI mode.
+>>
+>> $perf record -e "{branch-instructions:ppp,branch-misses}:S" -j any,counter
+>> $perf report  --total-cycles --stdio
+>>
+>>  # To display the perf.data header info, please use --header/--header-only options.
+>>  #
+>>  #
+>>  # Total Lost Samples: 0
+>>  #
+>>  # Samples: 1M of events 'anon group { branch-instructions:ppp, branch-misses }'
+>>  # Event count (approx.): 1610046
+>>  #
+>>  # Branch counter abbr list:
+>>  # branch-instructions:ppp = A
+>>  # branch-misses = B
+>>  # '-' No event occurs
+>>  # '+' Event occurrences may be lost due to branch counter saturated
+>>  #
+>>  # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles          Branch Counter [Program Block Range]
+>>  # ...............  ..............  ...........  ..........  ......................  ..................
+>>  #
+>>            57.55%            2.5M        0.00%           3             |A   |-   |                 ...
+>>            25.27%            1.1M        0.00%           2             |AA  |-   |                 ...
+>>            15.61%          667.2K        0.00%           1             |A   |-   |                 ...
+>>             0.16%            6.9K        0.81%         575             |A   |-   |                 ...
+>>             0.16%            6.8K        1.38%         977             |AA  |-   |                 ...
+>>             0.16%            6.8K        0.04%          28             |AA  |B   |                 ...
+>>             0.15%            6.6K        1.33%         946             |A   |-   |                 ...
+>>             0.11%            4.5K        0.06%          46             |AAA+|-   |                 ...
+>>             0.10%            4.4K        0.88%         624             |A   |-   |                 ...
+>>             0.09%            3.7K        0.74%         524             |AAA+|B   |                 ...
 > 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
+> I think this format assumes short width and might not work
+> well when it has more events with bigger width.  Maybe
+> A=<n>, B=<n> ?
 
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+The purpose of "AAA" is to print a histogram here which can give the end
+user a straightforward image of the distribution. The A=<n> may not be
+that obvious.
 
-Minor comments below.
-
-> ---
->  arch/x86/kvm/svm/nested.c |  3 ++-
->  arch/x86/kvm/svm/svm.c    | 17 ++++++++++++++---
->  2 files changed, 16 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> index 6f704c1037e5..97caf940815b 100644
-> --- a/arch/x86/kvm/svm/nested.c
-> +++ b/arch/x86/kvm/svm/nested.c
-> @@ -586,7 +586,8 @@ static void nested_vmcb02_prepare_save(struct vcpu_svm *svm, struct vmcb *vmcb12
->  	/* These bits will be set properly on the first execution when new_vmc12 is true */
->  	if (unlikely(new_vmcb12 || vmcb_is_dirty(vmcb12, VMCB_DR))) {
->  		vmcb02->save.dr7 = svm->nested.save.dr7 | DR7_FIXED_1;
-> -		svm->vcpu.arch.dr6  = svm->nested.save.dr6 | DR6_ACTIVE_LOW;
-> +		/* DR6_RTM is not supported on AMD as of now. */
-> +		svm->vcpu.arch.dr6  = svm->nested.save.dr6 | DR6_FIXED_1 | DR6_RTM;
-
-This took me having to look at the APM, so maybe expand on this comment
-for now to indicate that DR6_RTM is a reserved bit on AMD and as such
-much be set to 1.
-
-Does this qualify as a fix?
-
->  		vmcb_mark_dirty(vmcb02, VMCB_DR);
->  	}
->  
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index 85631112c872..68ef5bff7fc7 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -1047,7 +1047,8 @@ void svm_update_lbrv(struct kvm_vcpu *vcpu)
->  {
->  	struct vcpu_svm *svm = to_svm(vcpu);
->  	bool current_enable_lbrv = svm->vmcb->control.virt_ext & LBR_CTL_ENABLE_MASK;
-> -	bool enable_lbrv = (svm_get_lbr_vmcb(svm)->save.dbgctl & DEBUGCTLMSR_LBR) ||
-> +	u64 dbgctl_buslock_lbr = DEBUGCTLMSR_BUS_LOCK_DETECT | DEBUGCTLMSR_LBR;
-> +	bool enable_lbrv = (svm_get_lbr_vmcb(svm)->save.dbgctl & dbgctl_buslock_lbr) ||
->  			    (is_guest_mode(vcpu) && guest_can_use(vcpu, X86_FEATURE_LBRV) &&
->  			    (svm->nested.ctl.virt_ext & LBR_CTL_ENABLE_MASK));
-
-This statement is getting pretty complicated! I'm not sure if there's a
-better way that is more readable. Maybe start with a value and update it
-using separate statements? Not critical, though.
+I don't think there is a plan to increase the saturation of the counter.
+So 4 bits of width should last for a long time. Other ARCHs don't have
+such a feature either. I think I can the change the code to force the 4
+bits of width now. For more that 3 events, the perf tool can convert it
+to a "+". We may update the perf tool for a more specific histogram
+later, if the saturation is changed. What do you think?
 
 Thanks,
-Tom
-
->  
-> @@ -3158,6 +3159,10 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
->  		if (data & DEBUGCTL_RESERVED_BITS)
->  			return 1;
->  
-> +		if ((data & DEBUGCTLMSR_BUS_LOCK_DETECT) &&
-> +		    !guest_cpuid_has(vcpu, X86_FEATURE_BUS_LOCK_DETECT))
-> +			return 1;
-> +
->  		svm_get_lbr_vmcb(svm)->save.dbgctl = data;
->  		svm_update_lbrv(vcpu);
->  		break;
-> @@ -5224,8 +5229,14 @@ static __init void svm_set_cpu_caps(void)
->  	/* CPUID 0x8000001F (SME/SEV features) */
->  	sev_set_cpu_caps();
->  
-> -	/* Don't advertise Bus Lock Detect to guest if SVM support is absent */
-> -	kvm_cpu_cap_clear(X86_FEATURE_BUS_LOCK_DETECT);
-> +	/*
-> +	 * LBR Virtualization must be enabled to support BusLockTrap inside the
-> +	 * guest, since BusLockTrap is enabled through MSR_IA32_DEBUGCTLMSR and
-> +	 * MSR_IA32_DEBUGCTLMSR is virtualized only if LBR Virtualization is
-> +	 * enabled.
-> +	 */
-> +	if (!lbrv)
-> +		kvm_cpu_cap_clear(X86_FEATURE_BUS_LOCK_DETECT);
->  }
->  
->  static __init int svm_hardware_setup(void)
+Kan
+> 
+> Thanks,
+> Namhyung
+> 
+>>
+>> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+>> ---
+>>  tools/perf/Documentation/perf-report.txt |   1 +
+>>  tools/perf/builtin-diff.c                |   4 +-
+>>  tools/perf/builtin-report.c              |  20 ++++-
+>>  tools/perf/ui/browsers/hists.c           |  17 +++-
+>>  tools/perf/util/annotate.c               | 101 +++++++++++++++++++++++
+>>  tools/perf/util/annotate.h               |   3 +
+>>  tools/perf/util/block-info.c             |  66 +++++++++++++--
+>>  tools/perf/util/block-info.h             |   8 +-
+>>  8 files changed, 202 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
+>> index d2b1593ef700..f35189d5ff1e 100644
+>> --- a/tools/perf/Documentation/perf-report.txt
+>> +++ b/tools/perf/Documentation/perf-report.txt
+>> @@ -614,6 +614,7 @@ include::itrace.txt[]
+>>         'Avg Cycles%'     - block average sampled cycles / sum of total block average
+>>                             sampled cycles
+>>         'Avg Cycles'      - block average sampled cycles
+>> +       'Branch Counter'  - block branch counter histogram
+>>
+>>  --skip-empty::
+>>         Do not print 0 results in the --stat output.
+>> diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
+>> index 2d9226b1de52..de24892dc7b8 100644
+>> --- a/tools/perf/builtin-diff.c
+>> +++ b/tools/perf/builtin-diff.c
+>> @@ -705,7 +705,7 @@ static void hists__precompute(struct hists *hists)
+>>                 if (compute == COMPUTE_CYCLES) {
+>>                         bh = container_of(he, struct block_hist, he);
+>>                         init_block_hist(bh);
+>> -                       block_info__process_sym(he, bh, NULL, 0);
+>> +                       block_info__process_sym(he, bh, NULL, 0, 0);
+>>                 }
+>>
+>>                 data__for_each_file_new(i, d) {
+>> @@ -728,7 +728,7 @@ static void hists__precompute(struct hists *hists)
+>>                                 pair_bh = container_of(pair, struct block_hist,
+>>                                                        he);
+>>                                 init_block_hist(pair_bh);
+>> -                               block_info__process_sym(pair, pair_bh, NULL, 0);
+>> +                               block_info__process_sym(pair, pair_bh, NULL, 0, 0);
+>>
+>>                                 bh = container_of(he, struct block_hist, he);
+>>
+>> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+>> index da8d13bbb500..a0f864f2e996 100644
+>> --- a/tools/perf/builtin-report.c
+>> +++ b/tools/perf/builtin-report.c
+>> @@ -575,6 +575,13 @@ static int evlist__tty_browse_hists(struct evlist *evlist, struct report *rep, c
+>>                 hists__fprintf_nr_sample_events(hists, rep, evname, stdout);
+>>
+>>                 if (rep->total_cycles_mode) {
+>> +                       char *buf;
+>> +
+>> +                       if (!annotation_br_cntr_abbr_list(&buf, pos, true)) {
+>> +                               fprintf(stdout, "%s", buf);
+>> +                               fprintf(stdout, "#\n");
+>> +                               free(buf);
+>> +                       }
+>>                         report__browse_block_hists(&rep->block_reports[i - 1].hist,
+>>                                                    rep->min_percent, pos, NULL);
+>>                         continue;
+>> @@ -1121,18 +1128,23 @@ static int __cmd_report(struct report *rep)
+>>         report__output_resort(rep);
+>>
+>>         if (rep->total_cycles_mode) {
+>> -               int block_hpps[6] = {
+>> +               int nr_hpps = 4;
+>> +               int block_hpps[PERF_HPP_REPORT__BLOCK_MAX_INDEX] = {
+>>                         PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT,
+>>                         PERF_HPP_REPORT__BLOCK_LBR_CYCLES,
+>>                         PERF_HPP_REPORT__BLOCK_CYCLES_PCT,
+>>                         PERF_HPP_REPORT__BLOCK_AVG_CYCLES,
+>> -                       PERF_HPP_REPORT__BLOCK_RANGE,
+>> -                       PERF_HPP_REPORT__BLOCK_DSO,
+>>                 };
+>>
+>> +               if (session->evlist->nr_br_cntr > 0)
+>> +                       block_hpps[nr_hpps++] = PERF_HPP_REPORT__BLOCK_BRANCH_COUNTER;
+>> +
+>> +               block_hpps[nr_hpps++] = PERF_HPP_REPORT__BLOCK_RANGE;
+>> +               block_hpps[nr_hpps++] = PERF_HPP_REPORT__BLOCK_DSO;
+>> +
+>>                 rep->block_reports = block_info__create_report(session->evlist,
+>>                                                                rep->total_cycles,
+>> -                                                              block_hpps, 6,
+>> +                                                              block_hpps, nr_hpps,
+>>                                                                &rep->nr_block_reports);
+>>                 if (!rep->block_reports)
+>>                         return -1;
+>> diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+>> index b7219df51236..73d766eac75b 100644
+>> --- a/tools/perf/ui/browsers/hists.c
+>> +++ b/tools/perf/ui/browsers/hists.c
+>> @@ -3684,8 +3684,10 @@ int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
+>>         struct hist_browser *browser;
+>>         int key = -1;
+>>         struct popup_action action;
+>> +       char *br_cntr_text = NULL;
+>>         static const char help[] =
+>> -       " q             Quit \n";
+>> +       " q             Quit \n"
+>> +       " B             Branch counter abbr list (Optional)\n";
+>>
+>>         browser = hist_browser__new(hists);
+>>         if (!browser)
+>> @@ -3703,6 +3705,8 @@ int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
+>>
+>>         memset(&action, 0, sizeof(action));
+>>
+>> +       annotation_br_cntr_abbr_list(&br_cntr_text, evsel, false);
+>> +
+>>         while (1) {
+>>                 key = hist_browser__run(browser, "? - help", true, 0);
+>>
+>> @@ -3723,6 +3727,16 @@ int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
+>>                         action.ms.sym = browser->selection->sym;
+>>                         do_annotate(browser, &action);
+>>                         continue;
+>> +               case 'B':
+>> +                       if (br_cntr_text) {
+>> +                               ui__question_window("Branch counter abbr list",
+>> +                                                   br_cntr_text, "Press any key...", 0);
+>> +                       } else {
+>> +                               ui__question_window("Branch counter abbr list",
+>> +                                                   "\n The branch counter is not available.\n",
+>> +                                                   "Press any key...", 0);
+>> +                       }
+>> +                       continue;
+>>                 default:
+>>                         break;
+>>                 }
+>> @@ -3730,5 +3744,6 @@ int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
+>>
+>>  out:
+>>         hist_browser__delete(browser);
+>> +       free(br_cntr_text);
+>>         return 0;
+>>  }
+>> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+>> index 6baa0671598e..f20f9e40ef0d 100644
+>> --- a/tools/perf/util/annotate.c
+>> +++ b/tools/perf/util/annotate.c
+>> @@ -40,6 +40,7 @@
+>>  #include "namespaces.h"
+>>  #include "thread.h"
+>>  #include "hashmap.h"
+>> +#include "strbuf.h"
+>>  #include <regex.h>
+>>  #include <linux/bitops.h>
+>>  #include <linux/kernel.h>
+>> @@ -47,6 +48,7 @@
+>>  #include <linux/zalloc.h>
+>>  #include <subcmd/parse-options.h>
+>>  #include <subcmd/run-command.h>
+>> +#include <math.h>
+>>
+>>  /* FIXME: For the HE_COLORSET */
+>>  #include "ui/browser.h"
+>> @@ -1706,6 +1708,105 @@ static void ipc_coverage_string(char *bf, int size, struct annotation *notes)
+>>                   ipc, coverage);
+>>  }
+>>
+>> +int annotation_br_cntr_abbr_list(char **str, struct evsel *evsel, bool header)
+>> +{
+>> +       struct evsel *pos;
+>> +       struct strbuf sb;
+>> +
+>> +       if (evsel->evlist->nr_br_cntr <= 0)
+>> +               return -ENOTSUP;
+>> +
+>> +       strbuf_init(&sb, /*hint=*/ 0);
+>> +
+>> +       if (header && strbuf_addf(&sb, "# Branch counter abbr list:\n"))
+>> +               goto err;
+>> +
+>> +       evlist__for_each_entry(evsel->evlist, pos) {
+>> +               if (!(pos->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_COUNTERS))
+>> +                       continue;
+>> +               if (header && strbuf_addf(&sb, "#"))
+>> +                       goto err;
+>> +
+>> +               if (strbuf_addf(&sb, " %s = %s\n", pos->name, pos->abbr_name))
+>> +                       goto err;
+>> +       }
+>> +
+>> +       if (header && strbuf_addf(&sb, "#"))
+>> +               goto err;
+>> +       if (strbuf_addf(&sb, " '-' No event occurs\n"))
+>> +               goto err;
+>> +
+>> +       if (header && strbuf_addf(&sb, "#"))
+>> +               goto err;
+>> +       if (strbuf_addf(&sb, " '+' Event occurrences may be lost due to branch counter saturated\n"))
+>> +               goto err;
+>> +
+>> +       *str = strbuf_detach(&sb, NULL);
+>> +
+>> +       return 0;
+>> +err:
+>> +       strbuf_release(&sb);
+>> +       return -ENOMEM;
+>> +}
+>> +
+>> +int annotation_br_cntr_entry(char **str, int br_cntr_nr,
+>> +                            u64 *br_cntr, int num_aggr,
+>> +                            struct evsel *evsel)
+>> +{
+>> +       struct evsel *pos = evsel ? evlist__first(evsel->evlist) : NULL;
+>> +       int i, j, avg, used;
+>> +       struct strbuf sb;
+>> +
+>> +       strbuf_init(&sb, /*hint=*/ 0);
+>> +       for (i = 0; i < br_cntr_nr; i++) {
+>> +               used = 0;
+>> +               avg = ceil((double)(br_cntr[i] & ~ANNOTATION__BR_CNTR_SATURATED_FLAG) /
+>> +                          (double)num_aggr);
+>> +
+>> +               if (strbuf_addch(&sb, '|'))
+>> +                       goto err;
+>> +
+>> +               if (!br_cntr[i]) {
+>> +                       if (strbuf_addch(&sb, '-'))
+>> +                               goto err;
+>> +                       used++;
+>> +               } else {
+>> +                       evlist__for_each_entry_from(evsel->evlist, pos) {
+>> +                               if ((pos->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_COUNTERS) &&
+>> +                                   (pos->br_cntr_idx == i))
+>> +                                       break;
+>> +                       }
+>> +                       for (j = 0; j < avg; j++, used++) {
+>> +                               if (strbuf_addstr(&sb, pos->abbr_name))
+>> +                                       goto err;
+>> +                       }
+>> +
+>> +                       if (br_cntr[i] & ANNOTATION__BR_CNTR_SATURATED_FLAG) {
+>> +                               if (strbuf_addch(&sb, '+'))
+>> +                                       goto err;
+>> +                               used++;
+>> +                       }
+>> +                       pos = list_next_entry(pos, core.node);
+>> +               }
+>> +
+>> +               /* Assume the branch counter saturated at 3 */
+>> +               for (j = used; j < 4; j++) {
+>> +                       if (strbuf_addch(&sb, ' '))
+>> +                               goto err;
+>> +               }
+>> +       }
+>> +
+>> +       if (strbuf_addch(&sb, br_cntr_nr ? '|' : ' '))
+>> +               goto err;
+>> +
+>> +       *str = strbuf_detach(&sb, NULL);
+>> +
+>> +       return 0;
+>> +err:
+>> +       strbuf_release(&sb);
+>> +       return -ENOMEM;
+>> +}
+>> +
+>>  static void __annotation_line__write(struct annotation_line *al, struct annotation *notes,
+>>                                      bool first_line, bool current_entry, bool change_color, int width,
+>>                                      void *obj, unsigned int percent_type,
+>> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+>> index f39dd5d7b05e..2ff79a389dc0 100644
+>> --- a/tools/perf/util/annotate.h
+>> +++ b/tools/perf/util/annotate.h
+>> @@ -548,4 +548,7 @@ struct annotated_basic_block {
+>>  int annotate_get_basic_blocks(struct symbol *sym, s64 src, s64 dst,
+>>                               struct list_head *head);
+>>
+>> +int annotation_br_cntr_entry(char **str, int br_cntr_nr, u64 *br_cntr,
+>> +                            int num_aggr, struct evsel *evsel);
+>> +int annotation_br_cntr_abbr_list(char **str, struct evsel *evsel, bool header);
+>>  #endif /* __PERF_ANNOTATE_H */
+>> diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
+>> index 04068d48683f..649392bee7ed 100644
+>> --- a/tools/perf/util/block-info.c
+>> +++ b/tools/perf/util/block-info.c
+>> @@ -40,16 +40,32 @@ static struct block_header_column {
+>>         [PERF_HPP_REPORT__BLOCK_DSO] = {
+>>                 .name = "Shared Object",
+>>                 .width = 20,
+>> +       },
+>> +       [PERF_HPP_REPORT__BLOCK_BRANCH_COUNTER] = {
+>> +               .name = "Branch Counter",
+>> +               .width = 30,
+>>         }
+>>  };
+>>
+>> -struct block_info *block_info__new(void)
+>> +static struct block_info *block_info__new(unsigned int br_cntr_nr)
+>>  {
+>> -       return zalloc(sizeof(struct block_info));
+>> +       struct block_info *bi = zalloc(sizeof(struct block_info));
+>> +
+>> +       if (bi && br_cntr_nr) {
+>> +               bi->br_cntr = calloc(br_cntr_nr, sizeof(u64));
+>> +               if (!bi->br_cntr) {
+>> +                       free(bi);
+>> +                       return NULL;
+>> +               }
+>> +       }
+>> +
+>> +       return bi;
+>>  }
+>>
+>>  void block_info__delete(struct block_info *bi)
+>>  {
+>> +       if (bi)
+>> +               free(bi->br_cntr);
+>>         free(bi);
+>>  }
+>>
+>> @@ -86,7 +102,8 @@ int64_t block_info__cmp(struct perf_hpp_fmt *fmt __maybe_unused,
+>>
+>>  static void init_block_info(struct block_info *bi, struct symbol *sym,
+>>                             struct cyc_hist *ch, int offset,
+>> -                           u64 total_cycles)
+>> +                           u64 total_cycles, unsigned int br_cntr_nr,
+>> +                           u64 *br_cntr, struct evsel *evsel)
+>>  {
+>>         bi->sym = sym;
+>>         bi->start = ch->start;
+>> @@ -99,10 +116,18 @@ static void init_block_info(struct block_info *bi, struct symbol *sym,
+>>
+>>         memcpy(bi->cycles_spark, ch->cycles_spark,
+>>                NUM_SPARKS * sizeof(u64));
+>> +
+>> +       if (br_cntr && br_cntr_nr) {
+>> +               bi->br_cntr_nr = br_cntr_nr;
+>> +               memcpy(bi->br_cntr, &br_cntr[offset * br_cntr_nr],
+>> +                      br_cntr_nr * sizeof(u64));
+>> +       }
+>> +       bi->evsel = evsel;
+>>  }
+>>
+>>  int block_info__process_sym(struct hist_entry *he, struct block_hist *bh,
+>> -                           u64 *block_cycles_aggr, u64 total_cycles)
+>> +                           u64 *block_cycles_aggr, u64 total_cycles,
+>> +                           unsigned int br_cntr_nr)
+>>  {
+>>         struct annotation *notes;
+>>         struct cyc_hist *ch;
+>> @@ -125,12 +150,14 @@ int block_info__process_sym(struct hist_entry *he, struct block_hist *bh,
+>>                         struct block_info *bi;
+>>                         struct hist_entry *he_block;
+>>
+>> -                       bi = block_info__new();
+>> +                       bi = block_info__new(br_cntr_nr);
+>>                         if (!bi)
+>>                                 return -1;
+>>
+>>                         init_block_info(bi, he->ms.sym, &ch[i], i,
+>> -                                       total_cycles);
+>> +                                       total_cycles, br_cntr_nr,
+>> +                                       notes->branch->br_cntr,
+>> +                                       hists_to_evsel(he->hists));
+>>                         cycles += bi->cycles_aggr / bi->num_aggr;
+>>
+>>                         he_block = hists__add_entry_block(&bh->block_hists,
+>> @@ -327,6 +354,24 @@ static void init_block_header(struct block_fmt *block_fmt)
+>>         fmt->width = block_column_width;
+>>  }
+>>
+>> +static int block_branch_counter_entry(struct perf_hpp_fmt *fmt,
+>> +                                     struct perf_hpp *hpp,
+>> +                                     struct hist_entry *he)
+>> +{
+>> +       struct block_fmt *block_fmt = container_of(fmt, struct block_fmt, fmt);
+>> +       struct block_info *bi = he->block_info;
+>> +       char *buf;
+>> +       int ret;
+>> +
+>> +       if (annotation_br_cntr_entry(&buf, bi->br_cntr_nr, bi->br_cntr,
+>> +                                    bi->num_aggr, bi->evsel))
+>> +               return 0;
+>> +
+>> +       ret = scnprintf(hpp->buf, hpp->size, "%*s", block_fmt->width, buf);
+>> +       free(buf);
+>> +       return ret;
+>> +}
+>> +
+>>  static void hpp_register(struct block_fmt *block_fmt, int idx,
+>>                          struct perf_hpp_list *hpp_list)
+>>  {
+>> @@ -357,6 +402,9 @@ static void hpp_register(struct block_fmt *block_fmt, int idx,
+>>         case PERF_HPP_REPORT__BLOCK_DSO:
+>>                 fmt->entry = block_dso_entry;
+>>                 break;
+>> +       case PERF_HPP_REPORT__BLOCK_BRANCH_COUNTER:
+>> +               fmt->entry = block_branch_counter_entry;
+>> +               break;
+>>         default:
+>>                 return;
+>>         }
+>> @@ -390,7 +438,7 @@ static void init_block_hist(struct block_hist *bh, struct block_fmt *block_fmts,
+>>  static int process_block_report(struct hists *hists,
+>>                                 struct block_report *block_report,
+>>                                 u64 total_cycles, int *block_hpps,
+>> -                               int nr_hpps)
+>> +                               int nr_hpps, unsigned int br_cntr_nr)
+>>  {
+>>         struct rb_node *next = rb_first_cached(&hists->entries);
+>>         struct block_hist *bh = &block_report->hist;
+>> @@ -405,7 +453,7 @@ static int process_block_report(struct hists *hists,
+>>         while (next) {
+>>                 he = rb_entry(next, struct hist_entry, rb_node);
+>>                 block_info__process_sym(he, bh, &block_report->cycles,
+>> -                                       total_cycles);
+>> +                                       total_cycles, br_cntr_nr);
+>>                 next = rb_next(&he->rb_node);
+>>         }
+>>
+>> @@ -435,7 +483,7 @@ struct block_report *block_info__create_report(struct evlist *evlist,
+>>                 struct hists *hists = evsel__hists(pos);
+>>
+>>                 process_block_report(hists, &block_reports[i], total_cycles,
+>> -                                    block_hpps, nr_hpps);
+>> +                                    block_hpps, nr_hpps, evlist->nr_br_cntr);
+>>                 i++;
+>>         }
+>>
+>> diff --git a/tools/perf/util/block-info.h b/tools/perf/util/block-info.h
+>> index 0b9e1aad4c55..b9329dc3ab59 100644
+>> --- a/tools/perf/util/block-info.h
+>> +++ b/tools/perf/util/block-info.h
+>> @@ -18,6 +18,9 @@ struct block_info {
+>>         u64                     total_cycles;
+>>         int                     num;
+>>         int                     num_aggr;
+>> +       int                     br_cntr_nr;
+>> +       u64                     *br_cntr;
+>> +       struct evsel            *evsel;
+>>  };
+>>
+>>  struct block_fmt {
+>> @@ -36,6 +39,7 @@ enum {
+>>         PERF_HPP_REPORT__BLOCK_AVG_CYCLES,
+>>         PERF_HPP_REPORT__BLOCK_RANGE,
+>>         PERF_HPP_REPORT__BLOCK_DSO,
+>> +       PERF_HPP_REPORT__BLOCK_BRANCH_COUNTER,
+>>         PERF_HPP_REPORT__BLOCK_MAX_INDEX
+>>  };
+>>
+>> @@ -46,7 +50,6 @@ struct block_report {
+>>         int                     nr_fmts;
+>>  };
+>>
+>> -struct block_info *block_info__new(void);
+>>  void block_info__delete(struct block_info *bi);
+>>
+>>  int64_t __block_info__cmp(struct hist_entry *left, struct hist_entry *right);
+>> @@ -55,7 +58,8 @@ int64_t block_info__cmp(struct perf_hpp_fmt *fmt __maybe_unused,
+>>                         struct hist_entry *left, struct hist_entry *right);
+>>
+>>  int block_info__process_sym(struct hist_entry *he, struct block_hist *bh,
+>> -                           u64 *block_cycles_aggr, u64 total_cycles);
+>> +                           u64 *block_cycles_aggr, u64 total_cycles,
+>> +                           unsigned int br_cntr_nr);
+>>
+>>  struct block_report *block_info__create_report(struct evlist *evlist,
+>>                                                u64 total_cycles,
+>> --
+>> 2.38.1
+>>
+> 
 
