@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-276860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8CD494994A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:42:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA85F94994B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92A311F22629
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:42:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 814B81F22A8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF91F15ECED;
-	Tue,  6 Aug 2024 20:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E3D16B720;
+	Tue,  6 Aug 2024 20:41:53 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A18014EC44
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B396F15ECE7
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722976910; cv=none; b=lgQxxVjBApmj5b2PjfI5hMGz11HpVw14caIYnqo0Nt06l4JPexcZnY3ZNndD+dfcFQYtl5sgPiYHV8ZjujCBpx4ub1d8eJRdXD7vHJVV5gV4e6KWGgBUNiTP933kybfKSu/9HrDV2LYKSZ41b4HxYnE0jObzAs01N9mrP0w4SKw=
+	t=1722976912; cv=none; b=bj2NhvLtda53Od4qssE+qsE9vC3qOHjt+QY5BBMhvSPtqBwk3Mv8mbSd9DkMsDvd0R8o/c5s8PCW2zTZHXXcGy5EOKJL7H0h2iz4Dcv6XNehUzh7ZyjJ6m4x4r+L/qew1pCGGlV/HfmpYeqyKAzLnaTa1LxQ/Dz0BNy6MYeplXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722976910; c=relaxed/simple;
-	bh=niPuiLHg6vRs8AsgEV9YT2aZx38TJq1qSTOWx4c3pv4=;
+	s=arc-20240116; t=1722976912; c=relaxed/simple;
+	bh=vsm3qi8RvkMCxE073ECII6z81bIECJlBtBNc4117PpQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MbAZ/Y2D03cNN02YRil8jb1Hu1t7yp7/p54zEzlLQfZGnSiMqYV6wpiG723TznRAcJh7sJ3ve/fLkDb4H9PSBxxyn0vFfCxHIeimDVaVYJc2GFZxuhsxFyEjX0nT5uX61cPOOmpwsZYnESrTeQUgZrlw8jLxXpp53+iaIQyso0w=
+	 MIME-Version; b=kzMI4DiAkrJk8cowxg+Y0Lt/s6zvGAOlfdXdVLeGJ9FwEP9FuQQYnmmlQ2/e1cVyGeoqfCJGHSegfFFGGKkPvUBHvHQSLIEVCpFOxSR18YHAhDlNIS1mDSLVwo6FAfE5GPER5zLznk2nZkswuB3N3nHn8A5z1oPM9ZzEMuUZoHM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 762621063;
-	Tue,  6 Aug 2024 13:42:13 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 922AB113E;
+	Tue,  6 Aug 2024 13:42:15 -0700 (PDT)
 Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D08DA3F766;
-	Tue,  6 Aug 2024 13:41:45 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 009943F766;
+	Tue,  6 Aug 2024 13:41:47 -0700 (PDT)
 From: Leo Yan <leo.yan@arm.com>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 	Namhyung Kim <namhyung@kernel.org>,
@@ -45,9 +45,9 @@ To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	"Liang, Kan" <kan.liang@linux.intel.com>
 Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v1 1/9] perf auxtrace: Use evsel__is_aux_event() for checking AUX event
-Date: Tue,  6 Aug 2024 21:41:22 +0100
-Message-Id: <20240806204130.720977-2-leo.yan@arm.com>
+Subject: [PATCH v1 2/9] perf auxtrace: Remove unused 'pmu' pointer from struct auxtrace_record
+Date: Tue,  6 Aug 2024 21:41:23 +0100
+Message-Id: <20240806204130.720977-3-leo.yan@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240806204130.720977-1-leo.yan@arm.com>
 References: <20240806204130.720977-1-leo.yan@arm.com>
@@ -59,32 +59,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use evsel__is_aux_event() to decide if an event is a AUX event, this is
-a refactoring to replace comparing the PMU type.
+The 'pmu' pointer in the auxtrace_record structure is not used after
+support multiple AUX events, remove it.
 
 Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- tools/perf/util/auxtrace.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/arch/arm/util/cs-etm.c     | 1 -
+ tools/perf/arch/arm64/util/arm-spe.c  | 1 -
+ tools/perf/arch/arm64/util/hisi-ptt.c | 1 -
+ tools/perf/arch/x86/util/intel-bts.c  | 1 -
+ tools/perf/arch/x86/util/intel-pt.c   | 1 -
+ tools/perf/util/auxtrace.h            | 1 -
+ 6 files changed, 6 deletions(-)
 
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index e2f317063eec..c3f0ef4349fc 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -671,11 +671,11 @@ int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx)
- {
- 	struct evsel *evsel;
+diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+index da6231367993..96aeb7cdbee1 100644
+--- a/tools/perf/arch/arm/util/cs-etm.c
++++ b/tools/perf/arch/arm/util/cs-etm.c
+@@ -888,7 +888,6 @@ struct auxtrace_record *cs_etm_record_init(int *err)
+ 	}
  
--	if (!itr->evlist || !itr->pmu)
-+	if (!itr->evlist)
- 		return -EINVAL;
+ 	ptr->cs_etm_pmu			= cs_etm_pmu;
+-	ptr->itr.pmu			= cs_etm_pmu;
+ 	ptr->itr.parse_snapshot_options	= cs_etm_parse_snapshot_options;
+ 	ptr->itr.recording_options	= cs_etm_recording_options;
+ 	ptr->itr.info_priv_size		= cs_etm_info_priv_size;
+diff --git a/tools/perf/arch/arm64/util/arm-spe.c b/tools/perf/arch/arm64/util/arm-spe.c
+index d59f6ca499f2..2be99fdf997d 100644
+--- a/tools/perf/arch/arm64/util/arm-spe.c
++++ b/tools/perf/arch/arm64/util/arm-spe.c
+@@ -514,7 +514,6 @@ struct auxtrace_record *arm_spe_recording_init(int *err,
+ 	}
  
- 	evlist__for_each_entry(itr->evlist, evsel) {
--		if (evsel->core.attr.type == itr->pmu->type) {
-+		if (evsel__is_aux_event(evsel)) {
- 			if (evsel->disabled)
- 				return 0;
- 			return evlist__enable_event_idx(itr->evlist, evsel, idx);
+ 	sper->arm_spe_pmu = arm_spe_pmu;
+-	sper->itr.pmu = arm_spe_pmu;
+ 	sper->itr.snapshot_start = arm_spe_snapshot_start;
+ 	sper->itr.snapshot_finish = arm_spe_snapshot_finish;
+ 	sper->itr.find_snapshot = arm_spe_find_snapshot;
+diff --git a/tools/perf/arch/arm64/util/hisi-ptt.c b/tools/perf/arch/arm64/util/hisi-ptt.c
+index ba97c8a562a0..eac9739c87e6 100644
+--- a/tools/perf/arch/arm64/util/hisi-ptt.c
++++ b/tools/perf/arch/arm64/util/hisi-ptt.c
+@@ -174,7 +174,6 @@ struct auxtrace_record *hisi_ptt_recording_init(int *err,
+ 	}
+ 
+ 	pttr->hisi_ptt_pmu = hisi_ptt_pmu;
+-	pttr->itr.pmu = hisi_ptt_pmu;
+ 	pttr->itr.recording_options = hisi_ptt_recording_options;
+ 	pttr->itr.info_priv_size = hisi_ptt_info_priv_size;
+ 	pttr->itr.info_fill = hisi_ptt_info_fill;
+diff --git a/tools/perf/arch/x86/util/intel-bts.c b/tools/perf/arch/x86/util/intel-bts.c
+index 34696f3d3d5d..85c8186300c8 100644
+--- a/tools/perf/arch/x86/util/intel-bts.c
++++ b/tools/perf/arch/x86/util/intel-bts.c
+@@ -434,7 +434,6 @@ struct auxtrace_record *intel_bts_recording_init(int *err)
+ 	}
+ 
+ 	btsr->intel_bts_pmu = intel_bts_pmu;
+-	btsr->itr.pmu = intel_bts_pmu;
+ 	btsr->itr.recording_options = intel_bts_recording_options;
+ 	btsr->itr.info_priv_size = intel_bts_info_priv_size;
+ 	btsr->itr.info_fill = intel_bts_info_fill;
+diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+index 4b710e875953..ea510a7486b1 100644
+--- a/tools/perf/arch/x86/util/intel-pt.c
++++ b/tools/perf/arch/x86/util/intel-pt.c
+@@ -1197,7 +1197,6 @@ struct auxtrace_record *intel_pt_recording_init(int *err)
+ 	}
+ 
+ 	ptr->intel_pt_pmu = intel_pt_pmu;
+-	ptr->itr.pmu = intel_pt_pmu;
+ 	ptr->itr.recording_options = intel_pt_recording_options;
+ 	ptr->itr.info_priv_size = intel_pt_info_priv_size;
+ 	ptr->itr.info_fill = intel_pt_info_fill;
+diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+index 8a6ec9565835..95304368103b 100644
+--- a/tools/perf/util/auxtrace.h
++++ b/tools/perf/util/auxtrace.h
+@@ -411,7 +411,6 @@ struct auxtrace_record {
+ 	int (*read_finish)(struct auxtrace_record *itr, int idx);
+ 	unsigned int alignment;
+ 	unsigned int default_aux_sample_size;
+-	struct perf_pmu *pmu;
+ 	struct evlist *evlist;
+ };
+ 
 -- 
 2.34.1
 
