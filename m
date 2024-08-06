@@ -1,222 +1,107 @@
-Return-Path: <linux-kernel+bounces-276904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3C59499E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:10:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C759499E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75FAB1F2259A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2140283317
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4DD15F3F8;
-	Tue,  6 Aug 2024 21:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEC316BE0B;
+	Tue,  6 Aug 2024 21:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dxMg23sK"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="caCXsD0R"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0367F1EB2A
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 21:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A4413C3E4;
+	Tue,  6 Aug 2024 21:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722978609; cv=none; b=X97GpPjikYekxUTXH6dow+qtcif0/yTpsM9j4XgVAvCd/QtTAc+VhNK4KBjonS8sJXOsWhaHXHZKxEAw/arWTOVVD6XcRU5rqUn24byeiCojRRPh8COrSxCGyUdTGIyIu40gs4EGuShkkrN/tH+yS+UVjMJ2EiWqRw7926FUudA=
+	t=1722978855; cv=none; b=dV256sP4UwvWPVI8Jq7y/I48KnC2AmZohtxtvrRXAibXzWs/oGRgboSFZJ7awbHDBZImsAyy7ygrCpLCEO4bsuI0fZgjgv+FhXwIxv6GM6onp/KLyL4CKV8LapzpMCwt0awetu0IVnAScmRUrdktT6t5W7sUSAAt017ar+t3GMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722978609; c=relaxed/simple;
-	bh=kKru8HxH5Ekpv0FzB4LE7ujsjFpwmXgI0M7T2lCWaj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KXGwt59KOhQj+zlTQZ/k8JD0lye0XX4vNkH97GlabTXVvQKQKT729ZPzb2L3V0dI3tNzWsZpOl9cAsI+0dhWJgzbswZjgouwuy+2yzke6pt+wyiP4AFXgBbO2tCs5KlKTCPT1RhuiSL1KkYlWvvluC2NLdlUbpTt2kpt/XrUYmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dxMg23sK; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vU6UU4v54ZKNI87YtWtUngD0BKx3YAvGYJgw0QK6TeM=; b=dxMg23sKC0rD/BxpC4cxsojtkR
-	mbRkjZuYUXHmPW+4wq7ZnWJFHDcXMAtgvaUfFf0X+M9XLCo4WWknZrYEm494UaT1S6i4FOCxur4ox
-	sSTPMVVE/m4GXEtft+LYSLEQeqyNP1XbCMo9Drft5kYsPcUY39p8+R5WB/wxHN71NjMlEyjsirXXB
-	bBoGHrRsqNQ2KrGOts1PXZeVeqoFQ7heQLAFibEEm+bs5u3srxdsu+bCSrU0tDWWfPbQHaa9LPJoB
-	QqUABtXHd87KAspWC1ytG6+3kmDf6fCWhuT+ag/KvhM+2nGTbF+zuv/sLcs9gEPg/nYq2o459UcVW
-	JHugatxQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sbRRT-00000006H1O-0vez;
-	Tue, 06 Aug 2024 21:10:03 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A256130066A; Tue,  6 Aug 2024 23:10:02 +0200 (CEST)
-Date: Tue, 6 Aug 2024 23:10:02 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
-	Ingo Molnar <mingo@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
-Message-ID: <20240806211002.GA37996@noisy.programming.kicks-ass.net>
-References: <ZpWjbCQPtuUcvo8r@slm.duckdns.org>
- <20240723163358.GM26750@noisy.programming.kicks-ass.net>
- <ZqAFtfSijJ-KMVHo@slm.duckdns.org>
- <20240724085221.GO26750@noisy.programming.kicks-ass.net>
- <ZqmVG9ZiktN6bnm0@slm.duckdns.org>
+	s=arc-20240116; t=1722978855; c=relaxed/simple;
+	bh=n3SL6DqMd+Il1p2z5Fmna3QwtyNnTZU6xFan5OyXh2E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GzGv8eDB9Q6pe8aiPuZ7uqMxxIu8veCXdmSlDCZ5x1H4lIzSxXKxcSz6bKszyvvvnUVs8Q7rnmLZwghha+wT2iJbVWI84yoga7QY/e/l+jUbxMR8vDVdelPy8dJJVhiby8XiHdwUVkQdZHAP+a6v5qUzeJNotkX3zuG/mkpsWhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=caCXsD0R; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-70b2421471aso747240a12.0;
+        Tue, 06 Aug 2024 14:14:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722978853; x=1723583653; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n3SL6DqMd+Il1p2z5Fmna3QwtyNnTZU6xFan5OyXh2E=;
+        b=caCXsD0Rn85iAwJN88et5mpH3Nz2LX9i0g0F+DiVs6D4xpi7jFSvR99VmaDokYOK/9
+         by6tExDd6kjWXr+pPRlyPvakxnL6uXUfood1gwW0q/cPTO7mwWF8VRPYX2bKHTwVb0v1
+         sbic346LTV5MxRlIjP/2/VrDARXVJmh4otwFxs3sqRvbFjb4PX12VKj2iMr2mSPS10Z4
+         S452JMMsIVP0tEBh3Pvc9qV/W6Im8pQ5T3J6Q0xPHVJOha/H3ENSNqcqFWLMSinIRm0Y
+         wpspF+qrjtjzGXrBz0PKmxPyiIycMPcgaTU5XXlfhOKsHMXMPciAV0DwwGVAqOFYtPde
+         vEtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722978853; x=1723583653;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n3SL6DqMd+Il1p2z5Fmna3QwtyNnTZU6xFan5OyXh2E=;
+        b=uAZN1vZynHob+ooERNw8rcEnMoU/5qTsMeGU4h8SL3QVy3P/mCMYOIAx9RfXQAZ7KA
+         BHceT28gs04wikS1RrzHSIENEzeH/yhRUOd8yaVE5nQriGuW7WGp4B45K87cM3bzLuIB
+         xSLKyIfJ3lvQOK/YbIQhlyUpSTX1vu0k+LOiSqzUnMciJ7wz09JSQ4i2YHOUMifdPi7z
+         80CdATzDtrnFDdURbAWeImSuaoqzMXcqBcicJpq2GvrlvfQdZYJr+q/J25LtQRPZTPkZ
+         SZXFDyq1WpDgQSX2CNh+8ZBEfeuRaXPFM/qQMBJdaFR7b7srEDILtUx5Xpx74vu3CH9E
+         0ykA==
+X-Forwarded-Encrypted: i=1; AJvYcCWT/uTwWSsbzSCnDwiFUYmi3c+qje/78qOht+TAaBOM3Qw3n76nKncreYltZIIjSOhc+eu2Brcg7ZCa3Twnmh5ddbpBVwX7uyOPFC3iQIoGRETPXw1i2xOsT8pP6H1ESc0Qr/OqfsFQWkyzBTU=
+X-Gm-Message-State: AOJu0YwgHW270k9R2Gjjt+MQgZUTY0m9kHQdnJgm3SLQq1clWzgaiEN/
+	XTzcV/9KlWUWmsWD8mRmApEJMoic7TQSblMR9LGWMCrQA+9PPtEz6Whx+AFtEnGHkBU4zCk9O4h
+	Us4r9STJehNPh8tWWu+pxvv77Ohk=
+X-Google-Smtp-Source: AGHT+IHvbAAL2NcqVlB4Rqy6c9/uB/Hg1OGnq+JeRukgKKxR43dKQDIDjEllPEROqpREAP0g7cYcAjDTNcZqjkTqRks=
+X-Received: by 2002:a17:90b:152:b0:2c8:a8f:c97 with SMTP id
+ 98e67ed59e1d1-2cff955ce55mr15015074a91.37.1722978852967; Tue, 06 Aug 2024
+ 14:14:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZqmVG9ZiktN6bnm0@slm.duckdns.org>
+References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-22-dakr@kernel.org>
+ <6HIL4hSg3hOCh5IDDOtdEaEy89ZksSJmSLNiKrSvpu2Q78wA5KdrCCrcPSD_p4jB7IlmVRyVBnvBllU4irzuYgpQJOBtwUInAKdOibtRjVc=@protonmail.com>
+In-Reply-To: <6HIL4hSg3hOCh5IDDOtdEaEy89ZksSJmSLNiKrSvpu2Q78wA5KdrCCrcPSD_p4jB7IlmVRyVBnvBllU4irzuYgpQJOBtwUInAKdOibtRjVc=@protonmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 6 Aug 2024 23:14:01 +0200
+Message-ID: <CANiq72mc5h1vx+YoX_MxpFcgDEOfuYJNT9986wTjc3oSbVsbVg@mail.gmail.com>
+Subject: Re: [PATCH v4 21/28] rust: alloc: remove `GlobalAlloc` and `krealloc_aligned`
+To: =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com, 
+	akpm@linux-foundation.org, daniel.almeida@collabora.com, 
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com, 
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, 
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, 
+	lyude@redhat.com, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 03:36:27PM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> On Wed, Jul 24, 2024 at 10:52:21AM +0200, Peter Zijlstra wrote:
-> ...
-> > So pick_task() came from the SCHED_CORE crud, which does a remote pick
-> > and as such isn't able to do a put -- remote is still running its
-> > current etc.
-> > 
-> > So pick_task() *SHOULD* already be considering its current and pick
-> > that if it is a better candidate than whatever is on the queue.
-> > 
-> > If we have a pick_task() that doesn't do that, it's a pre-existing bug
-> > and needs fixing anyhow.
-> 
-> Right, I don't think it affects SCX in any significant way. Either way
-> should be fine.
+On Tue, Aug 6, 2024 at 9:07=E2=80=AFPM Bj=C3=B6rn Roy Baron <bjorn3_gh@prot=
+onmail.com> wrote:
+>
+> This can be removed too. liballoc needed it for us to acknowledge that we
+> were linking liballoc in a way that isn't guaranteed to be stable, but no=
+w
+> that we are removing liballoc entirely, this static is no longer necessar=
+y.
 
-So I just looked at things. And considering we currently want to have:
+Thanks Bj=C3=B6rn, noted in issue #2 (and linked to the new tracking issue)=
+.
 
-  pick_next_task := pick_task() + set_next_task(.first = true)
-
-and want to, with those other patches moving put_prev_task() around, get
-to fully making pick_next_task() optional, it looks to me you're not
-quite there yet. Notably:
-
-> +static void set_next_task_scx(struct rq *rq, struct task_struct *p, bool first)
-> +{
-> +	if (p->scx.flags & SCX_TASK_QUEUED) {
-> +		/*
-> +		 * Core-sched might decide to execute @p before it is
-> +		 * dispatched. Call ops_dequeue() to notify the BPF scheduler.
-> +		 */
-> +		ops_dequeue(p, SCX_DEQ_CORE_SCHED_EXEC);
-> +		dispatch_dequeue(rq, p);
-> +	}
-> +
-> +	p->se.exec_start = rq_clock_task(rq);
-> +
-> +	/* see dequeue_task_scx() on why we skip when !QUEUED */
-> +	if (SCX_HAS_OP(running) && (p->scx.flags & SCX_TASK_QUEUED))
-> +		SCX_CALL_OP_TASK(SCX_KF_REST, running, p);
-> +
-> +	clr_task_runnable(p, true);
-> +
-> +	/*
-> +	 * @p is getting newly scheduled or got kicked after someone updated its
-> +	 * slice. Refresh whether tick can be stopped. See scx_can_stop_tick().
-> +	 */
-> +	if ((p->scx.slice == SCX_SLICE_INF) !=
-> +	    (bool)(rq->scx.flags & SCX_RQ_CAN_STOP_TICK)) {
-> +		if (p->scx.slice == SCX_SLICE_INF)
-> +			rq->scx.flags |= SCX_RQ_CAN_STOP_TICK;
-> +		else
-> +			rq->scx.flags &= ~SCX_RQ_CAN_STOP_TICK;
-> +
-> +		sched_update_tick_dependency(rq);
-> +
-> +		/*
-> +		 * For now, let's refresh the load_avgs just when transitioning
-> +		 * in and out of nohz. In the future, we might want to add a
-> +		 * mechanism which calls the following periodically on
-> +		 * tick-stopped CPUs.
-> +		 */
-> +		update_other_load_avgs(rq);
-> +	}
-> +}
-
-> +static struct task_struct *pick_next_task_scx(struct rq *rq)
-> +{
-> +	struct task_struct *p;
-> +
-> +#ifndef CONFIG_SMP
-> +	/* UP workaround - see the comment at the head of put_prev_task_scx() */
-> +	if (unlikely(rq->curr->sched_class != &ext_sched_class))
-> +		balance_one(rq, rq->curr, true);
-> +#endif
-
-(should already be gone in your latest branch)
-
-> +
-> +	p = first_local_task(rq);
-> +	if (!p)
-> +		return NULL;
-> +
-> +	set_next_task_scx(rq, p, true);
-> +
-> +	if (unlikely(!p->scx.slice)) {
-> +		if (!scx_ops_bypassing() && !scx_warned_zero_slice) {
-> +			printk_deferred(KERN_WARNING "sched_ext: %s[%d] has zero slice in pick_next_task_scx()\n",
-> +					p->comm, p->pid);
-> +			scx_warned_zero_slice = true;
-> +		}
-> +		p->scx.slice = SCX_SLICE_DFL;
-> +	}
-
-This condition should probably move to set_next_task_scx(.first = true).
-
-> +
-> +	return p;
-> +}
-
-> +/**
-> + * pick_task_scx - Pick a candidate task for core-sched
-> + * @rq: rq to pick the candidate task from
-> + *
-> + * Core-sched calls this function on each SMT sibling to determine the next
-> + * tasks to run on the SMT siblings. balance_one() has been called on all
-> + * siblings and put_prev_task_scx() has been called only for the current CPU.
-> + *
-> + * As put_prev_task_scx() hasn't been called on remote CPUs, we can't just look
-> + * at the first task in the local dsq. @rq->curr has to be considered explicitly
-> + * to mimic %SCX_TASK_BAL_KEEP.
-> + */
-> +static struct task_struct *pick_task_scx(struct rq *rq)
-> +{
-> +	struct task_struct *curr = rq->curr;
-> +	struct task_struct *first = first_local_task(rq);
-> +
-> +	if (curr->scx.flags & SCX_TASK_QUEUED) {
-> +		/* is curr the only runnable task? */
-> +		if (!first)
-> +			return curr;
-> +
-> +		/*
-> +		 * Does curr trump first? We can always go by core_sched_at for
-> +		 * this comparison as it represents global FIFO ordering when
-> +		 * the default core-sched ordering is used and local-DSQ FIFO
-> +		 * ordering otherwise.
-> +		 *
-> +		 * We can have a task with an earlier timestamp on the DSQ. For
-> +		 * example, when a current task is preempted by a sibling
-> +		 * picking a different cookie, the task would be requeued at the
-> +		 * head of the local DSQ with an earlier timestamp than the
-> +		 * core-sched picked next task. Besides, the BPF scheduler may
-> +		 * dispatch any tasks to the local DSQ anytime.
-> +		 */
-> +		if (curr->scx.slice && time_before64(curr->scx.core_sched_at,
-> +						     first->scx.core_sched_at))
-> +			return curr;
-> +	}
-
-And the above condition seems a little core_sched specific. Is that
-suitable for the primary pick function?
-
-> +
-> +	return first;	/* this may be %NULL */
-> +}
-
+Cheers,
+Miguel
 
