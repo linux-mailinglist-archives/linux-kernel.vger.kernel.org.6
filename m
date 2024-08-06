@@ -1,304 +1,365 @@
-Return-Path: <linux-kernel+bounces-275504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8016948698
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:21:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B051994869C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:22:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8805B1C21E1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:21:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEB801C20D1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FF31FA5;
-	Tue,  6 Aug 2024 00:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCEC4A15;
+	Tue,  6 Aug 2024 00:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gTnRKQfc"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="csmHZW59"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AB610E5
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 00:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F284B10F1;
+	Tue,  6 Aug 2024 00:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722903665; cv=none; b=dcWYVNy3/qiq30N5kJ3CT8QA0+0KMG58I46qPVnsUOp65kHHwZVzY9V7aYn6r4mvRYg6B6/e2+YNo+irxKTDF0s1KjG3UF6pwtM4qQOYtCev8GhtD2Yeo24rtIpKQH1sGvoxFV1OW2IYNkrleG/n3deb3at5RXSC3yqm+Cj8EPw=
+	t=1722903729; cv=none; b=V26125xS/C9d1OUu94Dcmgxqc3JQVxeMNLJJsoURxbzQpWN05whOgUSGfIUV2204dVjqp31ckMiiGpFqBIXTlIqw/c52ZMO9FUjqk9H++pWY+v4nannZeNKf94POrs3z5wz9cUuqljhryyxbMqKSSfEy/fL9o6M92GGGUWFflLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722903665; c=relaxed/simple;
-	bh=QTEiV5EySissS04Imas0Yboxis6sc2aPpwvyAWuEF+U=;
+	s=arc-20240116; t=1722903729; c=relaxed/simple;
+	bh=7LI+SyKIAMeHUrgTNeBg7NAwZHvCgGvaCTW79mhlUNU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UPgqakBQmzq2IXfBteLvWyBAcXH33vt/5JtIwY/Bk7LUIIMloiTtlLuUS2vyfjxZEdJzyy9Y+1KbNfNyPN8nc046M5cKoz4d9G+jJkNVPKX4cBYmc6IAbYGpRN482Se0PndxfSGyGiK91jLYXkhw0CXK6+7QKW7gC4PGVuHlpwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gTnRKQfc; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fd7509397bso105175ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 17:21:02 -0700 (PDT)
+	 To:Cc:Content-Type; b=PjG9VmunPdLGV4J/1bTmJPkDwE6pT/g3+/xOhv3qshcnAx75DmN9H8gsbCVsn/EGjzxYQQOXnuSp3ZLq+fD3czgQGO8ixL6XeZQw9nyQktkHnPVOqL7Bpum8a1eMYiHdLYGZPoRD6wZYpfHMxO2M4HY7iTO0xKkO60l3qmA4PWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=csmHZW59; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-368380828d6so7551597f8f.1;
+        Mon, 05 Aug 2024 17:22:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722903662; x=1723508462; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722903726; x=1723508526; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/Qs2/y9HQ/jrUn+UzFcaZ4VwrttaCo8JvTXd23mb+HQ=;
-        b=gTnRKQfcWa59Kh8bDiDE0LeTteE6o1kuLjJIrj3eBBq5S/TLpYWXRvK8AJeU1xy7Kk
-         RBiuY15FCWutJtaHZNYa2jq0HJaA2qBbUwmGRt1kiYLtb0BsuMxOy8PlE4Ak8c/v+xH+
-         oGzETuSeQ9WfBRwc3yZm7LU8o0CUIfZ0ylHg/TKDqXVX2LW7HV4K8BZ4kJD2qMuWY0tk
-         73gdiis1r84w+9ouwHCUQ36NSGRKKQ+aJ+sk69Kxgp0gGgTI0A/qGpig8P/SqoUwqYVM
-         QOmEtSjZSbTE2dm1sAWuuG2DBZl/kqqCV34x+/SOmPRbpgY3vRxj/ECktDAW3dITpgFI
-         6/iw==
+        bh=AdgtCx0yObvg3G9BhDSSvuFzLZYEdkp911WRI3897EA=;
+        b=csmHZW59U+/lm5uXpKM6+ahYgN87ZFS56rRCh/X81TO1bhMkQEQN/qijey2L8m3a3/
+         /mRbc4p0pVfO0ESveaydpTg9E3+81Bx/ODr7nIjB4zq8FNEYS2Va9sUDLD6jJrQTYEzN
+         g7BIOTT9d3M5iOiPYOTg6qmuhfb4RiEK7eh/s27WDmfKoT5nJ7YcIBMwX5KjnNM9xacC
+         U9VhpQqVguyIBJRfypa5i3JMJpAeGAjyLsJL1y5ed9Lr8zndFVPbIa4FCOcnDy2fx4dL
+         buXpzUJ4gT2eVLr6SCqlJ+uWOBlBdL54Y8ZXWzc5SWCQvi7E3PWaKNvHVOX25jrp9zAT
+         Y/Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722903662; x=1723508462;
+        d=1e100.net; s=20230601; t=1722903726; x=1723508526;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/Qs2/y9HQ/jrUn+UzFcaZ4VwrttaCo8JvTXd23mb+HQ=;
-        b=KP66OQYdQ0dIA/MxmPkM72Yem3nEpx241cc5MQMu9MNGsXss+CeFCLph6CqjcAIOkZ
-         dnRgv7RFSFOQVuqe+AfoNbXwCQz6NPl9KAKeKi0cRx+Vh1jJ05BDOQgi7ignV9l7+tNg
-         d/67c0Fvdespf4JAJdwoZL4DzNSaZf8x7Jvgq8tBnrR1lb8ZPt9TCPaihaCwejQCXaB3
-         8egkpAy3G4kCENSQTtIE5UtlPY3g5VauMpeWKC3vWwy7Bv1KlimD/4hqx+wv1B+4goo8
-         ZLpEU8Z73px4DsOaPY8bdIaQf3iiRgmTOUrFxMnIoghBh3wGqbCZwEaYByvCKs+04P+a
-         neoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzpRI5LIJmEmi8rZQUr8WSRQ+pVFkXR3JKF2CwMajMKtM1djoiazpGwIfilPUwdrT7YZvqJV33SPxZFA8tctzBxj6xQ0GIjdpWagtk
-X-Gm-Message-State: AOJu0Yzf+UUxTQ7sTvwguQ9603rUiLO2B1aThsN60hDM9OAHw7CSl+OH
-	j/h84/+1SuFOEozsNPazgSvW/JkNAvJh3c8SJxQnItRz09AxEMzvJ8f72z2d+g849UtiRlG/eW2
-	jW5FNmDPcUyReJ/Nc48tX/6vtKTDEt6F21C3u
-X-Google-Smtp-Source: AGHT+IFECJja6NxCCL6J4A1MZdG/03Or7ewdZVOXkjvQVibqjal5y478g7LHRBCBMXRPL4Ey2/0Dvcg036xTCAskfn0=
-X-Received: by 2002:a17:903:1107:b0:1f6:8836:e43f with SMTP id
- d9443c01a7336-20077fedf2amr669875ad.17.1722903661410; Mon, 05 Aug 2024
- 17:21:01 -0700 (PDT)
+        bh=AdgtCx0yObvg3G9BhDSSvuFzLZYEdkp911WRI3897EA=;
+        b=U6HmQrV2s+1umyzD+yfZzRCvOQ9pYyZm7AXT2Ut7+r49TPqdT+mmwecA9tNp0X4OZw
+         G7q5aKrdHesgRJMVegQuU8ouTjC4LOgPg7ZcDXkWL9it1HONdEG65xjgFHtYRjRrA/ET
+         lKG8bR674S/rJLHyvbFdihdUpxKDT53qdWZflSm4ZkLDxlwnKFVrhGfyxqSfeWNffrSk
+         zzNvuimm0SUif2h902AvULySuYQLf1jWBO5JQ1rVaCCMzxyc9bdxbNcdEzgsw/jMORev
+         nNminn/dhZOhhFJx/o0fB2m51XBSuZOC2//FAz6EO1/Fp46EfcBq5lwOdzEU/R1xCSrb
+         Q2CA==
+X-Forwarded-Encrypted: i=1; AJvYcCUI4+lwq6PRr7KdEazqwZk6s5u0F1XIb0Z5dprGGvCfEh5XibHLsgnSGqwxpJWmLtKiqbmwsMdI47kTsu+SXf65ySwNsWNMllqYUOzTNfOhvCMmgZ00d7srVmjn2JiW9gTmXMbQ1rU5
+X-Gm-Message-State: AOJu0YwCBgyrpNUK2AkJhFZEHZI1EajM9Cv81WgGoXUvcyfNXnEKiLmP
+	UlSCgQ0bJ5d07LgYQq/hbTWJ4cGciWgdunsjEATXeMVZ1STyuI+fe6vXH3GwAQavL2zXWyMQjuM
+	anEgwZ9dSiPhkORC7lhhk0k65Coo=
+X-Google-Smtp-Source: AGHT+IH06UHMm256p32TdT2WPSu1K5DQoM648J62YpulrnPPVBWU9tC4UdOKcOkSWGNi2ao/3ZwZxRaDg/dSfGIf5wQ=
+X-Received: by 2002:a05:6000:2a6:b0:368:31c7:19d9 with SMTP id
+ ffacd0b85a97d-36bbc0c54eamr12263479f8f.12.1722903725876; Mon, 05 Aug 2024
+ 17:22:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPhsuW4nem9XZP+b=sJJ7kqXG-cafz0djZf51HsgjCiwkGBA+A@mail.gmail.com>
- <26fb7054-f877-496f-b23a-9b6a3d752595@linux.intel.com> <CAPhsuW6+7ULMQFLbmOsBzYAdd8LMV54h_ynfkGDxd_oH6O8cww@mail.gmail.com>
- <CAP-5=fVNfGT+a1RG9-ugKWjQR-83vLdHo-6vCVz=N=CBF4_7ug@mail.gmail.com>
- <CO6PR11MB5635E5844F7C8CB1277C1DF4EEAB2@CO6PR11MB5635.namprd11.prod.outlook.com>
- <CAPhsuW6Hq4qno1=K9-q17TsNO7S4-dQMCfo_nAQZ7EMdcuP6NQ@mail.gmail.com>
- <CO6PR11MB563550B4AB0D89D6DAC39CBAEEBE2@CO6PR11MB5635.namprd11.prod.outlook.com>
- <CAPhsuW76F2PkpSpB+V039_0orX9aRwj=++XzM7k1omGVZY-uEw@mail.gmail.com> <CO6PR11MB5635775FADE3BBECD551A7A6EEBE2@CO6PR11MB5635.namprd11.prod.outlook.com>
-In-Reply-To: <CO6PR11MB5635775FADE3BBECD551A7A6EEBE2@CO6PR11MB5635.namprd11.prod.outlook.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 5 Aug 2024 17:20:49 -0700
-Message-ID: <CAP-5=fVf0K6RtLv-oGMbgr4uGE5hqBT5=EqArZF+_X0Sx3YhPA@mail.gmail.com>
-Subject: Re: Some unc_cha_tor_* events appear to be "not supported"?
-To: "Wang, Weilin" <weilin.wang@intel.com>
-Cc: Song Liu <song@kernel.org>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	"Taylor, Perry" <perry.taylor@intel.com>, "Baker, Edward" <edward.baker@intel.com>, 
-	"Daneti, Venkata Naga Sai Dilip" <venkata.naga.sai.dilip.daneti@intel.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, "Hunter, Adrian" <adrian.hunter@intel.com>, 
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	"jonesz@meta.com" <jonesz@meta.com>
+References: <20240805000639.619232-2-crwulff@gmail.com> <2024080516-flatness-humorous-03ca@gregkh>
+In-Reply-To: <2024080516-flatness-humorous-03ca@gregkh>
+From: Chris Wulff <crwulff@gmail.com>
+Date: Mon, 5 Aug 2024 20:21:54 -0400
+Message-ID: <CAB0kiBKGb=vuYbs1C3w2wzmbSZuVp3t9iqjkfL+dYkKQKgA7ow@mail.gmail.com>
+Subject: Re: [PATCH v4] usb: gadget: f_fs: add capability for dfu run-time descriptor
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
+	Paul Cercueil <paul@crapouillou.net>, Christian Brauner <brauner@kernel.org>, 
+	Eric Farman <farman@linux.ibm.com>, Wesley Cheng <quic_wcheng@quicinc.com>, 
+	Dmitry Antipov <dmantipov@yandex.ru>, Jeff Layton <jlayton@kernel.org>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, David Sands <david.sands@biamp.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 5, 2024 at 1:26=E2=80=AFPM Wang, Weilin <weilin.wang@intel.com>=
- wrote:
+On Mon, Aug 5, 2024 at 3:01=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
+> On Sun, Aug 04, 2024 at 08:06:40PM -0400, crwulff@gmail.com wrote:
+> > From: David Sands <david.sands@biamp.com>
+> >
+> > From: David Sands <david.sands@biamp.com>
 >
+> Twice?
+
+Oops. Not sure what happened, but I'll try to make it not happen next time.
+
 >
-> > -----Original Message-----
-> > From: Song Liu <song@kernel.org>
-> > Sent: Monday, August 5, 2024 12:15 PM
-> > To: Wang, Weilin <weilin.wang@intel.com>
-> > Cc: Liang, Kan <kan.liang@linux.intel.com>; Ian Rogers <irogers@google.=
-com>;
-> > Taylor, Perry <perry.taylor@intel.com>; Baker, Edward
-> > <edward.baker@intel.com>; Daneti, Venkata Naga Sai Dilip
-> > <venkata.naga.sai.dilip.daneti@intel.com>; Arnaldo Carvalho de Melo
-> > <acme@kernel.org>; Hunter, Adrian <adrian.hunter@intel.com>; linux-perf=
--
-> > users@vger.kernel.org; open list <linux-kernel@vger.kernel.org>; Namhyu=
-ng
-> > Kim <namhyung@kernel.org>; Jiri Olsa <jolsa@kernel.org>; jonesz@meta.co=
-m
-> > Subject: Re: Some unc_cha_tor_* events appear to be "not supported"?
-> >
-> > Hi Weilin,
-> >
-> > On Mon, Aug 5, 2024 at 11:34=E2=80=AFAM Wang, Weilin <weilin.wang@intel=
-.com>
-> > wrote:
-> > [...]
-> > > > > > > >
-> > > > > > > > The value '4b433' is for the 'Filter1', according to the or=
-iginal event
-> > > > > > > > list.
-> > > > > > > >
-> > > > > > > >
-> > >
-> > > @Song Liu, do you see different output from some other
-> > unc_cha_tor_occupancy
-> > > and unc_cha_tor_inserts events. Or, are all of them report the same w=
-arning
-> > like this
-> > > example here?
-> > >
-> > > Could you please try UNC_CHA_TOR_OCCUPANCY.IA_MISS and share the
-> > output?
-> > > Please also specify the platform you tested on. Thanks!
-> >
-> > This event is working, I guess. Though the output is zero on the host.
-> >
-> > [root@ ~]# perf stat -e  UNC_CHA_TOR_OCCUPANCY.IA_MISS -a -- sleep 1
-> >
-> >  Performance counter stats for 'system wide':
-> >
-> >                  0      UNC_CHA_TOR_OCCUPANCY.IA_MISS
-> >
-> >        1.002497126 seconds time elapsed
-> >
-> > For this one, I am testing on Intel(R) Xeon(R) D-2191A CPU @ 1.60GHz.
-> > I think the issue happens on all skylake and copperlake CPUs.
+> > Add the ability for FunctionFS driver to be able to create DFU Run-Time
+> > descriptors.
 >
-> This looks correct. I thinks some of this type of events are supposed to =
-be always
-> return 0.
+> As others said, please spell out "DFU" and I do not think that
+> "Run-Time" needs Capital letters, or a '-', right?
+>
+> Also include here a lot more description of how this is to be used.
+
+Ok, I will expand on this (and the associated documentation.)
+
 >
 > >
-> > >
-> > > > > >
-> > > >
-> > https://github.com/intel/perfmon/blob/main/SKX/events/skylakex_uncore.j=
-s
-> > > > > > on#L4634
-> > > > > > > >
-> > > > > > > >       "EventName":
-> > "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-> > > > > > > >       "BriefDescription":
-> > > > > > "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-> > > > > > > >       "PublicDescription":
-> > > > > > "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-> > > > > > > >       "Counter": "0",
-> > > > > > > >       "MSRValue": "0x00",
-> > > > > > > >       "ELLC": "0",
-> > > > > > > >       "Filter": "Filter1",
-> > > > > > > >       "ExtSel": "0",
-> > > > > > > >       "Deprecated": "0",
-> > > > > > > >       "FILTER_VALUE": "0x4b433"
-> > > > > > > >
-> > > > > > > > There are two filters for CHA on SKX. Each filter is 32 bit=
-s wide.
-> > > > > > > > So the Linux kernel driver uses config1 (64 bits wide) to r=
-epresent
-> > both
-> > > > > > > > of them. The low 32 bits are for filter0 and high 32 bits a=
-re for
-> > filter1.
-> > > > > > > >
-> > > > > > > > It should be an issue of the convert script, which set the =
-filter1 value
-> > > > > > > > to the low 32 bits.
-> > >
-> > > @Liang, Kan, the following is the converted
-> > "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD"
-> > > in perf JSON. The "Filter" filed has value "config1=3D0x4b433", which=
- looks
-> > correct to
-> > > me according to your description above.
-> > >
-> > > Please let me know your thoughts.
-> > >
-> > >     {
-> > >         "BriefDescription": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD=
-",
-> > >         "Counter": "0",
-> > >         "EventCode": "0x36",
-> > >         "EventName": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-> > >         "Filter": "config1=3D0x4b433",
-> > >         "PerPkg": "1",
-> > >         "UMask": "0x21",
-> > >         "Unit": "CHA"
-> > >     },
+> > Signed-off-by: David Sands <david.sands@biamp.com>
+> > Co-developed-by: Chris Wulff <crwulff@gmail.com>
+> > Signed-off-by: Chris Wulff <crwulff@gmail.com>
+> > ---
+> > v4: Clean up unneeded change, switch to BIT macros, more documentation
+> > v3: Documentation, additional constants and constant order fixed
+> > https://lore.kernel.org/all/CO1PR17MB54197F118CBC8783D289B97DE1102@CO1P=
+R17MB5419.namprd17.prod.outlook.com/
+> > v2: https://lore.kernel.org/linux-usb/CO1PR17MB54198D086B61F7392FA9075F=
+E10E2@CO1PR17MB5419.namprd17.prod.outlook.com/
+> > v1: https://lore.kernel.org/linux-usb/CO1PR17MB5419AC3907C74E28D80C5021=
+E1082@CO1PR17MB5419.namprd17.prod.outlook.com/
+> > ---
+> >  Documentation/usb/functionfs-desc.rst | 22 ++++++++++++++++++++++
+> >  Documentation/usb/functionfs.rst      |  2 ++
+> >  Documentation/usb/index.rst           |  1 +
+> >  drivers/usb/gadget/function/f_fs.c    | 12 ++++++++++--
+> >  include/uapi/linux/usb/ch9.h          |  8 ++++++--
+> >  include/uapi/linux/usb/functionfs.h   | 25 +++++++++++++++++++++++++
+> >  6 files changed, 66 insertions(+), 4 deletions(-)
+> >  create mode 100644 Documentation/usb/functionfs-desc.rst
 > >
-> > I think we need config1 to be 0x4b43300000000?
+> > diff --git a/Documentation/usb/functionfs-desc.rst b/Documentation/usb/=
+functionfs-desc.rst
+> > new file mode 100644
+> > index 000000000000..73d2b8a3f02c
+> > --- /dev/null
+> > +++ b/Documentation/usb/functionfs-desc.rst
+> > @@ -0,0 +1,22 @@
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +FunctionFS Descriptors
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +Interface Descriptors
+> > +---------------------
+> > +
+> > +Standard USB interface descriptors may be added. The class/subclass of=
+ the
+> > +most recent interface descriptor determines what type of class-specifi=
+c
+> > +descriptors are accepted.
+> > +
+> > +Class-Specific Descriptors
+> > +--------------------------
+> > +
 >
-> If this is the value required, @Liang, Kan and @Ian Rogers, should we upd=
-ate the
-> converter script to set 0x4b43300000000 or let kernel to pad the zeros? I=
- want to
-> ensure that we won't break other platforms if change this in the converte=
-r script.
+> Why an empty section?
 
-I think updating the converter script to do this would be good.
-Generally it is a bad idea in an event to use config, config1, etc.
-the reason being that the driver may decide to move the meaning of
-bits around and then that breaks the event if the bit positions in
-config are hard coded. This is skylakex and so rewriting the driver is
-unlikely to happen, but the fix would apply to cascadelakex and
-snowridgex too, so maybe..
+It was just a heading-2 for the class-specific descriptor section (with eac=
+h
+of the class-specific descriptors being heading-3). I can add a bit of
+text though.
 
-From:
-```
-$ grep -r config1 /sys/devices/uncore_cha_0/format/
-/sys/devices/uncore_cha_0/format/filter_rem:config1:32
-/sys/devices/uncore_cha_0/format/filter_opc0:config1:41-50
-/sys/devices/uncore_cha_0/format/filter_isoc:config1:63
-/sys/devices/uncore_cha_0/format/filter_tid:config1:0-8
-/sys/devices/uncore_cha_0/format/filter_loc:config1:33
-/sys/devices/uncore_cha_0/format/filter_nc:config1:62
-/sys/devices/uncore_cha_0/format/filter_opc1:config1:51-60
-/sys/devices/uncore_cha_0/format/filter_all_op:config1:35
-/sys/devices/uncore_cha_0/format/filter_not_nm:config1:37
-/sys/devices/uncore_cha_0/format/filter_state:config1:17-26
-/sys/devices/uncore_cha_0/format/filter_nm:config1:36
-```
-we can see the meanings of the bit positions. So the best encoding of
-0x4b433 in the event I think would be:
-cha/event=3D0x36,umask=3D0x21,filter_rem=3D1,filter_loc=3D1,filter_nm=3D1,f=
-ilter_not_nm=3D1,filter_opc0=3D0x5a,filter_opc1=3D1/
+>
+> > +DFU Functional Descriptor
+> > +~~~~~~~~~~~~~~~~~~~~~~~~~
+> > +
+> > +When the interface class is USB_CLASS_APP_SPEC and  the interface subc=
+lass
+>
+> Extra space?
+>
+>
+> > +is USB_SUBCLASS_DFU, a DFU functional descriptor can be provided.
+>
+> Provided how?
 
-I wonder in the perfmon json, could we instead of:
- "FILTER_VALUE": "0x4b433"
-have individual values for each of the filter values? So something like:
+I will expand on this a bit more. Most of the functionfs descriptor
+behavior wasn't documented. The functionfs page talks about how
+these are written to the ep0 file, but doesn't mention anything about
+what descriptors can be written other than mentioning that ep# files
+are created when endpoint descriptors are written.
 
-Before:
-    {
-      "Unit": "CHA",
-      "EventCode": "0x36",
-      "UMask": "0x21",
-      "PortMask": "0x00",
-      "FCMask": "0x00",
-      "UMaskExt": "0x00",
-      "EventName": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-      "BriefDescription": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-      "PublicDescription": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-      "Counter": "0",
-      "MSRValue": "0x00",
-      "ELLC": "0",
-      "Filter": "Filter1",
-      "ExtSel": "0",
-      "Deprecated": "0",
-      "FILTER_VALUE": "0x4b433"
-    },
+>
+> > +
+> > +.. kernel-doc:: include/uapi/linux/usb/functionfs.h
+> > +   :doc: usb_dfu_functional_descriptor
+> > diff --git a/Documentation/usb/functionfs.rst b/Documentation/usb/funct=
+ionfs.rst
+> > index d05a775bc45b..4f96e4b93d7b 100644
+> > --- a/Documentation/usb/functionfs.rst
+> > +++ b/Documentation/usb/functionfs.rst
+> > @@ -70,6 +70,8 @@ have been written to their ep0's.
+> >  Conversely, the gadget is unregistered after the first USB function
+> >  closes its endpoints.
+> >
+> > +For more information about FunctionFS descriptors see :doc:`functionfs=
+-desc`
+> > +
+> >  DMABUF interface
+> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > diff --git a/Documentation/usb/index.rst b/Documentation/usb/index.rst
+> > index 27955dad95e1..826492c813ac 100644
+> > --- a/Documentation/usb/index.rst
+> > +++ b/Documentation/usb/index.rst
+> > @@ -11,6 +11,7 @@ USB support
+> >      dwc3
+> >      ehci
+> >      functionfs
+> > +    functionfs-desc
+>
+> That's an odd name for a DFU-specific file, right?
+>
+> Where are the Documentation/ABI/ entries?
 
-After:
-    {
-      "Unit": "CHA",
-      "EventCode": "0x36",
-      "UMask": "0x21",
-      "PortMask": "0x00",
-      "FCMask": "0x00",
-      "UMaskExt": "0x00",
-      "EventName": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-      "BriefDescription": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-      "PublicDescription": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-      "Counter": "0",
-      "MSRValue": "0x00",
-      "ELLC": "0",
-      "FilterLoc": "1",
-      "FilterRem": "1",
-      "FilterNm": "1",
-      "FilterNotNm": "1",
-      "FilterOpc0": "0x5a",
-      "FilterOpc1": "1",
-      "ExtSel": "0",
-      "Deprecated": "0",
-    },
+functionfs-desc was intended to be for more than DFU. I was thinking
+it would be nice to also talk about other descriptors that can be
+written to functionfs since I couldn't find any documentation on
+that, but I didn't want to add documentation for a bunch of existing
+stuff to this same patch. It seems like that would be better submitted
+separately (which I can work on if you think it's useful.) I only included
+the descriptors that were relevant to DFU.
 
-Then in the converter script we can just read and concatenate the values.
+I will see what I can add for the ABI documentation as well.
 
-Thanks,
-Ian
+>
+> >      gadget_configfs
+> >      gadget_hid
+> >      gadget_multi
+> > diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/fu=
+nction/f_fs.c
+> > index d8b096859337..ba5c6e4827ba 100644
+> > --- a/drivers/usb/gadget/function/f_fs.c
+> > +++ b/drivers/usb/gadget/function/f_fs.c
+> > @@ -2478,7 +2478,7 @@ typedef int (*ffs_os_desc_callback)(enum ffs_os_d=
+esc_type entity,
+> >
+> >  static int __must_check ffs_do_single_desc(char *data, unsigned len,
+> >                                          ffs_entity_callback entity,
+> > -                                        void *priv, int *current_class=
+)
+> > +                                        void *priv, int *current_class=
+, int *current_subclass)
+> >  {
+> >       struct usb_descriptor_header *_ds =3D (void *)data;
+> >       u8 length;
+> > @@ -2535,6 +2535,7 @@ static int __must_check ffs_do_single_desc(char *=
+data, unsigned len,
+> >               if (ds->iInterface)
+> >                       __entity(STRING, ds->iInterface);
+> >               *current_class =3D ds->bInterfaceClass;
+> > +             *current_subclass =3D ds->bInterfaceSubClass;
+> >       }
+> >               break;
+> >
+> > @@ -2559,6 +2560,12 @@ static int __must_check ffs_do_single_desc(char =
+*data, unsigned len,
+> >                       if (length !=3D sizeof(struct ccid_descriptor))
+> >                               goto inv_length;
+> >                       break;
+> > +             } else if (*current_class =3D=3D USB_CLASS_APP_SPEC &&
+> > +                        *current_subclass =3D=3D USB_SUBCLASS_DFU) {
+> > +                     pr_vdebug("dfu functional descriptor\n");
+> > +                     if (length !=3D sizeof(struct usb_dfu_functional_=
+descriptor))
+> > +                             goto inv_length;
+> > +                     break;
+> >               } else {
+> >                       pr_vdebug("unknown descriptor: %d for class %d\n"=
+,
+> >                             _ds->bDescriptorType, *current_class);
+> > @@ -2621,6 +2628,7 @@ static int __must_check ffs_do_descs(unsigned cou=
+nt, char *data, unsigned len,
+> >       const unsigned _len =3D len;
+> >       unsigned long num =3D 0;
+> >       int current_class =3D -1;
+> > +     int current_subclass =3D -1;
+> >
+> >       for (;;) {
+> >               int ret;
+> > @@ -2640,7 +2648,7 @@ static int __must_check ffs_do_descs(unsigned cou=
+nt, char *data, unsigned len,
+> >                       return _len - len;
+> >
+> >               ret =3D ffs_do_single_desc(data, len, entity, priv,
+> > -                     &current_class);
+> > +                     &current_class, &current_subclass);
+> >               if (ret < 0) {
+> >                       pr_debug("%s returns %d\n", __func__, ret);
+> >                       return ret;
+> > diff --git a/include/uapi/linux/usb/ch9.h b/include/uapi/linux/usb/ch9.=
+h
+> > index 44d73ba8788d..91f0f7e214a5 100644
+> > --- a/include/uapi/linux/usb/ch9.h
+> > +++ b/include/uapi/linux/usb/ch9.h
+> > @@ -254,6 +254,9 @@ struct usb_ctrlrequest {
+> >  #define USB_DT_DEVICE_CAPABILITY     0x10
+> >  #define USB_DT_WIRELESS_ENDPOINT_COMP        0x11
+> >  #define USB_DT_WIRE_ADAPTER          0x21
+> > +/* From USB Device Firmware Upgrade Specification, Revision 1.1 */
+> > +#define USB_DT_DFU_FUNCTIONAL                0x21
+> > +/* these are from the Wireless USB spec */
+> >  #define USB_DT_RPIPE                 0x22
+> >  #define USB_DT_CS_RADIO_CONTROL              0x23
+> >  /* From the T10 UAS specification */
+> > @@ -329,9 +332,10 @@ struct usb_device_descriptor {
+> >  #define USB_CLASS_USB_TYPE_C_BRIDGE  0x12
+> >  #define USB_CLASS_MISC                       0xef
+> >  #define USB_CLASS_APP_SPEC           0xfe
+> > -#define USB_CLASS_VENDOR_SPEC                0xff
+> > +#define USB_SUBCLASS_DFU                     0x01
+> >
+> > -#define USB_SUBCLASS_VENDOR_SPEC     0xff
+> > +#define USB_CLASS_VENDOR_SPEC                0xff
+> > +#define USB_SUBCLASS_VENDOR_SPEC             0xff
+> >
+> >  /*--------------------------------------------------------------------=
+-----*/
+> >
+> > diff --git a/include/uapi/linux/usb/functionfs.h b/include/uapi/linux/u=
+sb/functionfs.h
+> > index 9f88de9c3d66..40f87cbabf7a 100644
+> > --- a/include/uapi/linux/usb/functionfs.h
+> > +++ b/include/uapi/linux/usb/functionfs.h
+> > @@ -37,6 +37,31 @@ struct usb_endpoint_descriptor_no_audio {
+> >       __u8  bInterval;
+> >  } __attribute__((packed));
+> >
+> > +/**
+> > + * struct usb_dfu_functional_descriptor - DFU Functional descriptor
+> > + * @bLength:         Size of the descriptor (bytes)
+> > + * @bDescriptorType: USB_DT_DFU_FUNCTIONAL
+> > + * @bmAttributes:    DFU attributes
+> > + * @wDetachTimeOut:  Maximum time to wait after DFU_DETACH (ms, le16)
+> > + * @wTransferSize:   Maximum number of bytes per control-write (le16)
+> > + * @bcdDFUVersion:   DFU Spec version (BCD, le16)
+> > + */
+> > +struct usb_dfu_functional_descriptor {
+> > +     __u8  bLength;
+> > +     __u8  bDescriptorType;
+> > +     __u8  bmAttributes;
+> > +     __le16 wDetachTimeOut;
+> > +     __le16 wTransferSize;
+> > +     __le16 bcdDFUVersion;
+> > +} __attribute__ ((packed));
+> > +
+> > +/* from DFU functional descriptor bmAttributes */
+> > +#define DFU_FUNC_ATT_CAN_DOWNLOAD    BIT(0)
+> > +#define DFU_FUNC_ATT_CAN_UPLOAD              BIT(1)
+> > +#define DFU_FUNC_ATT_MANIFEST_TOLERANT       BIT(2)
+> > +#define DFU_FUNC_ATT_WILL_DETACH     BIT(3)
+>
+> Wrong macro for bit fields for uapi .h files :(
+
+Oh. I'm surprised there is more than one macro for bits. I will
+change this to _BITUL().
+
+>
+> thanks,
+>
+> greg k-h
 
