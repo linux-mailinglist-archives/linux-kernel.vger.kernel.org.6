@@ -1,151 +1,186 @@
-Return-Path: <linux-kernel+bounces-275942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F716948C43
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:41:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C10C948C45
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C798D1F21AC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:41:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C058288877
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48771BDA9E;
-	Tue,  6 Aug 2024 09:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300A11BDAA4;
+	Tue,  6 Aug 2024 09:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AXVzTkNX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N/vSipoG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF9A5464E
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 09:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4791BDA84
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 09:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722937262; cv=none; b=b6HhdaNn8Yf6kKpm4En3yaq23KstGQMh8J+Xp5AXVUFrMzaRdLNqZjxYvfzviiRWzS2vc10/aCbSRSXv30eaYQDFW/67kz8NhjBNsDq26QSv8W7YQx2/Tczg2/KugbGwjoNdvIUex3Uv6TJD54HSnWsm8ZdQaIbBDzWLOCllwfE=
+	t=1722937353; cv=none; b=sl0YtV2ecrl2zM70jWLPeOQt/Bv/iNJmJwOM/3b3stRDhEBkHvwp5PVTxkvosOGxLTs3igZqFFpzl8tqNnXVWa2wxi1GElRWwWlBQEoHgalRIUWDS0fJFKuj+MOg9+w+PvLiXDrPz5e5PndkZgvswsDXH1ghIp4L+8iUAjpiy+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722937262; c=relaxed/simple;
-	bh=aYqDvoRDf3JMHhB71lW27cCe/hn8Rs9fJHHNmSZv8NA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=McrfaUHSmInLf/drq+H52015wYZr6VNOjwz2Fr6g7QPLTPzuqAm9wL/WU4X/k/rG3xdiUmrUiaKeiFLT+REc46aDJiZjV+zz5F5b3xaqtbmTOv55yjF0GTYGpCjyXMVb9zsQKmBPDflKi2vMmNIp3F1Q0A5uQG0oFg0ecPPnofQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AXVzTkNX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722937258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4sH0fBYcEAsNCLPYwHilfAXVbxQ9T0LtTAmwUlVDpSk=;
-	b=AXVzTkNXuP69qjvxMdXEfJOi96CiZLHuu9gm8J1S9pieLccvk+m1XSyDK25niv408971Pg
-	R7jou7Zd09Qz2T/JMXsThMoQCa/FB8VU2Lj/VvSbOGdtatWXEa12MELJuR0gxrfaiVmdew
-	7eTp/Fpj+bxIohPKOS5r6B7MCuoub0s=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-60-Wmaicg5tMwW0_LYc97lrIA-1; Tue, 06 Aug 2024 05:40:56 -0400
-X-MC-Unique: Wmaicg5tMwW0_LYc97lrIA-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a77f0eca75bso49342766b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 02:40:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722937255; x=1723542055;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4sH0fBYcEAsNCLPYwHilfAXVbxQ9T0LtTAmwUlVDpSk=;
-        b=s6hbgvJ/NpT3V3R/eyps8bhO84BbHSdNlpwXcew021XrMoSApp8tD2BWSHKV7IRWdw
-         Dzevl2xieXA8x6T0hRT9sFYxNlV45hMGDn59jjHImGBywN4wzkod6yeE27RrG16xy6Ue
-         awpoBttEuPTH0LIfIfOdsKbqrQb2G0PmJDGjRE/XlMySSqE47UDjrP2UwWetJF0eNZQF
-         HwU/s8cZ/iT0UzvkmAd1cRa3bqt+dtZ+wwEYMcb5NJ5MaIxblG0E6cJbTXaOTzUh+ybe
-         PiENKYqFy9Zwbz656gTK1yIn6yhTvnK/eEAKgE7gKTruaqsfcvbv3Yg4/9+ZahylBMqX
-         62MA==
-X-Gm-Message-State: AOJu0Yw0sgzB45AcxtFC6v6xz4y/ydc3EDE4qUC7JNvFb3Ppr7hpW+oQ
-	XIxrc9VKvFKdWhLblPUKQ++6WsKm+WVmNEACIpH2M/u7LjbKTNgGfdZ8Yv2ZM6YuQAqRd9u50a1
-	g5i1KfH6NxvvozBuBPKSz1ig0drl8tCtMWKHQtp0DODuKdSYWkJ8XGqov52lWgA==
-X-Received: by 2002:a17:906:7956:b0:a7d:48e3:4117 with SMTP id a640c23a62f3a-a7dc518febbmr1078836466b.68.1722937255608;
-        Tue, 06 Aug 2024 02:40:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEQ4vqsfgihejS6Eyz1CA5H5YmIQyoyLuL/W83qs6hOkpfbll5bE6UOZ182BaMjIPOSgaczJw==
-X-Received: by 2002:a17:906:7956:b0:a7d:48e3:4117 with SMTP id a640c23a62f3a-a7dc518febbmr1078834766b.68.1722937255187;
-        Tue, 06 Aug 2024 02:40:55 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e83e93sm525913066b.166.2024.08.06.02.40.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 02:40:54 -0700 (PDT)
-Message-ID: <53e1e46c-b75e-4f64-bd7d-c56cad1981e8@redhat.com>
-Date: Tue, 6 Aug 2024 11:40:53 +0200
+	s=arc-20240116; t=1722937353; c=relaxed/simple;
+	bh=IZn7speP+xoerFkC55ZXUSz2mmiZ42yMY/QoBdHoHZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TE1P3BybjxAVJGBejijIGeETE7xwRqav3kTtQRpbsLZWFgShYfY55x7zwZfVmp+KK5WTLmwnGXrM0I6uUQ3ltB6PxSrHwkc7hXhPp/fsLg/G04OyhJ7j2hat8FHPImSr+e+0v002ZLdMxSB/Ivh8TS+hP+4Gfh3KkYlHWvsP+HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N/vSipoG; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722937351; x=1754473351;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=IZn7speP+xoerFkC55ZXUSz2mmiZ42yMY/QoBdHoHZ8=;
+  b=N/vSipoGD6W4P+a4QU86sp5SEcd5Fg/obHwZmiGwwHJDhdMk/S3OgBYx
+   D8zxf6LTHOXFyoBUL/hA30qYBB2ciTEa7DZh//Fzy51XfD0q5M8S64OzF
+   hHazS6D/HN8dPEkwkYspQJwZR4KAwap4Zu5xAb0feIgidUNpjTQI0MxLA
+   gmDcHgyvuVLCtjiDtegiCkSiWY5640yvhhMsZJk0mvxnA2KCGkHNsxFUO
+   rCrGZMtoQiHOwjofDP8SFe+txxzlgyGw3PhQNbryJzP4yKDGZk9O2LSet
+   8KTRHYvLg85BLhzb5ghHu8ritK0Z5A0Z3mPqb2/3Ag3iJ56g+UbRPUWMX
+   g==;
+X-CSE-ConnectionGUID: ocXCAyD7TUa8NBVniWASGw==
+X-CSE-MsgGUID: quYPJrZIR4yvFIydSeaOSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="31604021"
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="31604021"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 02:42:30 -0700
+X-CSE-ConnectionGUID: vpK+OUGMSget8k+YNLBCEA==
+X-CSE-MsgGUID: awTUVpA3RmOsjbAtUkRJJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="57024709"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 06 Aug 2024 02:42:29 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sbGi2-0004MZ-20;
+	Tue, 06 Aug 2024 09:42:26 +0000
+Date: Tue, 6 Aug 2024 17:42:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: James Smart <jsmart2021@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Hannes Reinecke <hare@suse.de>, Daniel Wagner <dwagner@suse.de>,
+	Ram Vegesna <ram.vegesna@broadcom.com>
+Subject: drivers/scsi/elx/efct/efct_hw.c:227:1: warning: the frame size of
+ 1136 bytes is larger than 1024 bytes
+Message-ID: <202408061721.gfnwpv1W-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] platform/x86: asus-wmi: don't fail if platform_profile
- already registered
-To: "Luke D. Jones" <luke@ljones.dev>, platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
- corentin.chary@gmail.com
-References: <20240805235808.40944-1-luke@ljones.dev>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240805235808.40944-1-luke@ljones.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Luke,
+Hi James,
 
-On 8/6/24 1:58 AM, Luke D. Jones wrote:
-> On some newer laptops it appears that an AMD driver can register a
-> platform_profile handler. If this happens then the asus_wmi driver would
-> error with -EEXIST when trying to register its own handler leaving the
-> user with a possibly unusable system - this is especially true for
-> laptops with an MCU that emit a stream of HID packets, some of which can
-> be misinterpreted as shutdown signals.
-> 
-> We can safely continue loading the driver instead of bombing out.
-> 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
-> ---
->  drivers/platform/x86/asus-wmi.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index cc5dc296fb2d..2fdfa84f7efb 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -3897,8 +3897,13 @@ static int platform_profile_setup(struct asus_wmi *asus)
->  		asus->platform_profile_handler.choices);
->  
->  	err = platform_profile_register(&asus->platform_profile_handler);
-> -	if (err)
-> +	if (err == -EEXIST) {
-> +		pr_warn("A platform_profile handler is already registered, this may be a driver conflict.\n");
-> +		return 0;
-> +	} else if (err) {
-> +		pr_err("Failed to register platform_profile: %d\n", err);
->  		return err;
-> +	}
->  
->  	asus->platform_profile_support = true;
->  	return 0;
-> @@ -4773,7 +4778,7 @@ static int asus_wmi_add(struct platform_device *pdev)
->  		goto fail_fan_boost_mode;
->  
->  	err = platform_profile_setup(asus);
-> -	if (err)
-> +	if (err && err != -EEXIST)
->  		goto fail_platform_profile_setup;
+First bad commit (maybe != root cause):
 
-Since you already do "return 0" on EEXIST in platform_profile_setup() there
-is no need for this part of the patch.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   b446a2dae984fa5bd56dd7c3a02a426f87e05813
+commit: ebc076b3eddc807729bd81f7bc48e798a3ddc477 scsi: elx: efct: Tie into kernel Kconfig and build process
+date:   3 years, 2 months ago
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20240806/202408061721.gfnwpv1W-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240806/202408061721.gfnwpv1W-lkp@intel.com/reproduce)
 
-Regards,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408061721.gfnwpv1W-lkp@intel.com/
 
-Hans
+All warnings (new ones prefixed by >>):
+
+   drivers/scsi/elx/efct/efct_hw.c: In function 'efct_hw_cb_link':
+>> drivers/scsi/elx/efct/efct_hw.c:227:1: warning: the frame size of 1136 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+     227 | }
+         | ^
 
 
+vim +227 drivers/scsi/elx/efct/efct_hw.c
 
->  
->  	err = asus_wmi_sysfs_init(asus->platform_device);
+4df84e8466242d James Smart 2021-06-01  162  
+4df84e8466242d James Smart 2021-06-01  163  static int
+4df84e8466242d James Smart 2021-06-01  164  efct_hw_cb_link(void *ctx, void *e)
+4df84e8466242d James Smart 2021-06-01  165  {
+4df84e8466242d James Smart 2021-06-01  166  	struct efct_hw *hw = ctx;
+4df84e8466242d James Smart 2021-06-01  167  	struct sli4_link_event *event = e;
+4df84e8466242d James Smart 2021-06-01  168  	struct efc_domain *d = NULL;
+4df84e8466242d James Smart 2021-06-01  169  	int rc = 0;
+4df84e8466242d James Smart 2021-06-01  170  	struct efct *efct = hw->os;
+4df84e8466242d James Smart 2021-06-01  171  
+4df84e8466242d James Smart 2021-06-01  172  	efct_hw_link_event_init(hw);
+4df84e8466242d James Smart 2021-06-01  173  
+4df84e8466242d James Smart 2021-06-01  174  	switch (event->status) {
+4df84e8466242d James Smart 2021-06-01  175  	case SLI4_LINK_STATUS_UP:
+4df84e8466242d James Smart 2021-06-01  176  
+4df84e8466242d James Smart 2021-06-01  177  		hw->link = *event;
+4df84e8466242d James Smart 2021-06-01  178  		efct->efcport->link_status = EFC_LINK_STATUS_UP;
+4df84e8466242d James Smart 2021-06-01  179  
+4df84e8466242d James Smart 2021-06-01  180  		if (event->topology == SLI4_LINK_TOPO_NON_FC_AL) {
+4df84e8466242d James Smart 2021-06-01  181  			struct efc_domain_record drec = {0};
+4df84e8466242d James Smart 2021-06-01  182  
+4df84e8466242d James Smart 2021-06-01  183  			efc_log_info(hw->os, "Link Up, NPORT, speed is %d\n",
+4df84e8466242d James Smart 2021-06-01  184  				     event->speed);
+4df84e8466242d James Smart 2021-06-01  185  			drec.speed = event->speed;
+4df84e8466242d James Smart 2021-06-01  186  			drec.fc_id = event->fc_id;
+4df84e8466242d James Smart 2021-06-01  187  			drec.is_nport = true;
+4df84e8466242d James Smart 2021-06-01  188  			efc_domain_cb(efct->efcport, EFC_HW_DOMAIN_FOUND,
+4df84e8466242d James Smart 2021-06-01  189  				      &drec);
+4df84e8466242d James Smart 2021-06-01  190  		} else if (event->topology == SLI4_LINK_TOPO_FC_AL) {
+4df84e8466242d James Smart 2021-06-01  191  			u8 buf[SLI4_BMBX_SIZE];
+4df84e8466242d James Smart 2021-06-01  192  
+4df84e8466242d James Smart 2021-06-01  193  			efc_log_info(hw->os, "Link Up, LOOP, speed is %d\n",
+4df84e8466242d James Smart 2021-06-01  194  				     event->speed);
+4df84e8466242d James Smart 2021-06-01  195  
+4df84e8466242d James Smart 2021-06-01  196  			if (!sli_cmd_read_topology(&hw->sli, buf,
+4df84e8466242d James Smart 2021-06-01  197  						   &hw->loop_map)) {
+4df84e8466242d James Smart 2021-06-01  198  				rc = efct_hw_command(hw, buf, EFCT_CMD_NOWAIT,
+4df84e8466242d James Smart 2021-06-01  199  						__efct_read_topology_cb, NULL);
+4df84e8466242d James Smart 2021-06-01  200  			}
+4df84e8466242d James Smart 2021-06-01  201  
+4df84e8466242d James Smart 2021-06-01  202  			if (rc)
+4df84e8466242d James Smart 2021-06-01  203  				efc_log_debug(hw->os, "READ_TOPOLOGY failed\n");
+4df84e8466242d James Smart 2021-06-01  204  		} else {
+4df84e8466242d James Smart 2021-06-01  205  			efc_log_info(hw->os, "%s(%#x), speed is %d\n",
+4df84e8466242d James Smart 2021-06-01  206  				     "Link Up, unsupported topology ",
+4df84e8466242d James Smart 2021-06-01  207  				     event->topology, event->speed);
+4df84e8466242d James Smart 2021-06-01  208  		}
+4df84e8466242d James Smart 2021-06-01  209  		break;
+4df84e8466242d James Smart 2021-06-01  210  	case SLI4_LINK_STATUS_DOWN:
+4df84e8466242d James Smart 2021-06-01  211  		efc_log_info(hw->os, "Link down\n");
+4df84e8466242d James Smart 2021-06-01  212  
+4df84e8466242d James Smart 2021-06-01  213  		hw->link.status = event->status;
+4df84e8466242d James Smart 2021-06-01  214  		efct->efcport->link_status = EFC_LINK_STATUS_DOWN;
+4df84e8466242d James Smart 2021-06-01  215  
+4df84e8466242d James Smart 2021-06-01  216  		d = efct->efcport->domain;
+4df84e8466242d James Smart 2021-06-01  217  		if (d)
+4df84e8466242d James Smart 2021-06-01  218  			efc_domain_cb(efct->efcport, EFC_HW_DOMAIN_LOST, d);
+4df84e8466242d James Smart 2021-06-01  219  		break;
+4df84e8466242d James Smart 2021-06-01  220  	default:
+4df84e8466242d James Smart 2021-06-01  221  		efc_log_debug(hw->os, "unhandled link status %#x\n",
+4df84e8466242d James Smart 2021-06-01  222  			      event->status);
+4df84e8466242d James Smart 2021-06-01  223  		break;
+4df84e8466242d James Smart 2021-06-01  224  	}
+4df84e8466242d James Smart 2021-06-01  225  
+4df84e8466242d James Smart 2021-06-01  226  	return 0;
+4df84e8466242d James Smart 2021-06-01 @227  }
+4df84e8466242d James Smart 2021-06-01  228  
 
+:::::: The code at line 227 was first introduced by commit
+:::::: 4df84e8466242de835416a4ec0c856c0e2ed26eb scsi: elx: efct: Driver initialization routines
+
+:::::: TO: James Smart <jsmart2021@gmail.com>
+:::::: CC: Martin K. Petersen <martin.petersen@oracle.com>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
