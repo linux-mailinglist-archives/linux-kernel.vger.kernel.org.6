@@ -1,208 +1,354 @@
-Return-Path: <linux-kernel+bounces-276873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA5A949964
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:45:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8C62949A81
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72A1B286DBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:45:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 946BF281D58
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D25170A28;
-	Tue,  6 Aug 2024 20:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAC916A95E;
+	Tue,  6 Aug 2024 21:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YQ2Wgocs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VfCTMNpV"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439FA15B147
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13ED2AF12
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 21:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722977048; cv=none; b=W68b0PCwASNs2UEwaFNMyPJlSl+4WHq9a6L2d5UnkcUbIMp2BSbNtqS70bU7Y34TzrJduc9r+Q4QiRcSMsXras0ChZzda7ru+nTCppFtQ59lqwtAsZyAlEvMm1lG8sL0Z1e9YxWUgXfag5+nf8JBEnMh7st1r2vve1PGbJvt4fk=
+	t=1722980939; cv=none; b=oF6/HPiEsu5nINV6s/YAsGbOfmICzKGIUn3xU6x/YIyWbrNwoxBR40Bh1WEoS3ow6mp5rX0vYp1s4uWTTdCgv3lDNTlz8JY36CXOZF8/92fTmWRa97wD5sbT7Q1Tll4KLikSjEweOHQZB9h+njw4vVYGJd/EqQbAmE8oZ1jemOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722977048; c=relaxed/simple;
-	bh=IutHGMeTkeySW5/QvcVGeAyZEXnmwsngxPhILvafk/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cF9W/7qYuT2S4+eSvq6WGPnXtE6uEXFFz1TremaxUn2w2WuLKZcPg5ud0ZfQJk97suaANR1rNNsNa2lNwhzIvL37oFkpaY6HjpS5m8rbhGwrseiuMf7KLe8Fx9E0fdziHSF7m2t1J56sigM0ul/1/6YxK8ASmJq4Gn7YpBE1Yz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YQ2Wgocs; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722977046; x=1754513046;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=IutHGMeTkeySW5/QvcVGeAyZEXnmwsngxPhILvafk/4=;
-  b=YQ2Wgocs8g6M0LrgoxN/HKEdevlJKpxfGOGTQGIB1r+s9Z92eq8eSX6H
-   pfAIFWXt0qkSdAUXOZx0iHz780Oa53apN3AakgU1/D6KDUGUMSIO1rHT1
-   Y+WOpsWJoSBMOV0DfTE/lVaxbgs94IuQ+ZRtor8ZhUw1QFdZ6MFAYH8sa
-   efi3m67VROV1cwZ+DWlqfZm1nXJfdkVILcD0cWH6oIzlPAoW65C5q+SGk
-   YPX1vWpIbcMwTf8h/om1M8jenm6CucwPtHA7fcEKe8DnnPZhvKhGGF4Om
-   pJL73RfL7lhaWzvgeWFEYS2p+RWOtZOGXSOsMB2y+JE7Jt49DFlwfWk4q
-   g==;
-X-CSE-ConnectionGUID: vNr3D1yJQ5mXh0y2wdmg6A==
-X-CSE-MsgGUID: /Zy8rhmXRCOpcfal2cYRcg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="38526902"
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="38526902"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 13:44:05 -0700
-X-CSE-ConnectionGUID: Sg5ZoonVTfqVJDgwVwumdA==
-X-CSE-MsgGUID: lVzE3irpQai0H/rfJf9GCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="56577988"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 06 Aug 2024 13:44:04 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sbR2I-0004pE-13;
-	Tue, 06 Aug 2024 20:44:02 +0000
-Date: Wed, 7 Aug 2024 04:43:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: ERROR: modpost: "__popcountsi2" [fs/bcachefs/bcachefs.ko] undefined!
-Message-ID: <202408070432.X6n56VaY-lkp@intel.com>
+	s=arc-20240116; t=1722980939; c=relaxed/simple;
+	bh=tSebhSjpGZDkCZrttA0QKnA5FmhLf8/yIAGCDJlW+70=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XIKs0cmNv9b1cieOmLgWjmVlWsuixn2T4/nWr3x0TlkPx3fjg4P0Q9zingciK5VH5/gsafko+fuOJYB0my4okiHQAyAxO3EnGWDJkN8u9udNp8d4ypB0Tx3UDdJ9IM+nScCcz8fItpoImpgbSiyvWugQGrRZZ55djf7N1Ms4Zk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VfCTMNpV; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-4f6b67d9608so521745e0c.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 14:48:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722980936; x=1723585736; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rl3WXMCZeTktAWupa/M0ETvAw989O5QcqEa5h6bH4xk=;
+        b=VfCTMNpV3e6MgrFDuBSTszqOiUdElvhVZZMTKSwtGoAiO/ydPRfc439EPWruToAyho
+         5xtkDEgOcl3e8p2uXpfuRQEvySUPtDos4aZ6hy1VZoZCIWeWots5pqPIkzD776OLBHpJ
+         Jo6TK1QghjbXK5bHgu6z/EDkyqJyuYYT14vVu5s0utwdZYRx4gVYH4FAd+rUEyTMJ6xZ
+         5VTRDkWGHaVG45QBy9XKRcEkzv3TgNNne0u4KZgw3UeQRIB33C97WugxMIoOsflZf378
+         qyf/n82KMxtE1fRuAYJKQ3rI3VNnwL0mNpHHfmVBLSjtalsMCicDazQQ8/Cz79IbuIVq
+         /cwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722980936; x=1723585736;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rl3WXMCZeTktAWupa/M0ETvAw989O5QcqEa5h6bH4xk=;
+        b=Sbi+yzlKCbXcn0eelwAzO3k7eIKzYTMJomXhxxBGC4dCn7XDzangfu6pHFtcx+5P1A
+         M7Tx48t22hNuIrrAAuZa7eZQZED2z+883FAB00QInXKlcEIHAM1isVNIbp+Jc5F81W8A
+         b803lkNiRe2ZPgLTA+aJuv7aEI3aVcjr3zzkuYFTdlUQFsgAcTb7jjp0oUb4Ydh9haUu
+         qHOjvuHfP8dNnnrC0lbNOK2JITtywlubexSFtAKhg4FQGWSDHJq/bKhhAK5KspgsiUF2
+         mXYOnGnfg2ZxbbM7EKPwuuHxIZZYK0WxqVZTa/vlp1LMRj7ggrH+SuikWjE5LeZATPPy
+         V+IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVi++LVOOmtF3Io5IE06XZBnPJDNYRoNl0w2D/7G/CWWaoKQr1avGm0vf3Ib+34HuHESHV+hti3RHc6tDurmbj5mjk03UBY444GK4zp
+X-Gm-Message-State: AOJu0Yz7llR2qFD1Iy/osnCQqUIrXgApn8hi/auwIAqB7vAcVlLAI4dQ
+	1Nud1fml80LPrp/R3e3avBhGBm+e2hU9ByWOM7wEPP2w1MIrLJ5h5XpEczIRU8HNFQ22CYd+rdK
+	unyavdD67oBREZrEzFt6ohUOTjf8=
+X-Google-Smtp-Source: AGHT+IE1DKusDGsNsw3fyn9EbpqmMm7iO45Fw1Zxx2sqpgQjMjDKIKxDQzh7SgL9nIyBnOvX3AySX6YQQbJxz8j/gnk=
+X-Received: by 2002:a05:6122:3282:b0:4f5:1363:845b with SMTP id
+ 71dfb90a1353d-4f89ffc8eaemr18530549e0c.9.1722980936520; Tue, 06 Aug 2024
+ 14:48:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240806012409.61962-1-21cnbao@gmail.com> <1e6bcaf2-7c48-4be0-b101-ec2ddc4098ce@redhat.com>
+In-Reply-To: <1e6bcaf2-7c48-4be0-b101-ec2ddc4098ce@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 7 Aug 2024 04:44:44 +0800
+Message-ID: <CAGsJ_4xR949nPauJ4kZpcg3cRwvcrHHWU7oSazpfGR2Tv5XNTA@mail.gmail.com>
+Subject: Re: [PATCH] mm: attempt to batch free swap entries for zap_pte_range()
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
+	Kairui Song <kasong@tencent.com>, Chris Li <chrisl@kernel.org>, 
+	"Huang, Ying" <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, Ryan Roberts <ryan.roberts@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kent,
+On Tue, Aug 6, 2024 at 8:56=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 06.08.24 03:24, Barry Song wrote:
+> > From: Barry Song <v-songbaohua@oppo.com>
+> >
+> > Zhiguo reported that swap release could be a serious bottleneck
+> > during process exits[1]. With mTHP, we have the opportunity to
+> > batch free swaps.
+> > Thanks to the work of Chris and Kairui[2], I was able to achieve
+> > this optimization with minimal code changes by building on their
+> > efforts.
+> > If swap_count is 1, which is likely true as most anon memory are
+> > private, we can free all contiguous swap slots all together.
+> >
+> > Ran the below test program for measuring the bandwidth of munmap
+> > using zRAM and 64KiB mTHP:
+> >
+> >   #include <sys/mman.h>
+> >   #include <sys/time.h>
+> >   #include <stdlib.h>
+> >
+> >   unsigned long long tv_to_ms(struct timeval tv)
+> >   {
+> >          return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+> >   }
+> >
+> >   main()
+> >   {
+> >          struct timeval tv_b, tv_e;
+> >          int i;
+> >   #define SIZE 1024*1024*1024
+> >          void *p =3D mmap(NULL, SIZE, PROT_READ | PROT_WRITE,
+> >                                  MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+> >          if (!p) {
+> >                  perror("fail to get memory");
+> >                  exit(-1);
+> >          }
+> >
+> >          madvise(p, SIZE, MADV_HUGEPAGE);
+> >          memset(p, 0x11, SIZE); /* write to get mem */
+> >
+> >          madvise(p, SIZE, MADV_PAGEOUT);
+> >
+> >          gettimeofday(&tv_b, NULL);
+> >          munmap(p, SIZE);
+> >          gettimeofday(&tv_e, NULL);
+> >
+> >          printf("munmap in bandwidth: %ld bytes/ms\n",
+> >                          SIZE/(tv_to_ms(tv_e) - tv_to_ms(tv_b)));
+> >   }
+> >
+> > The result is as below (munmap bandwidth):
+> >                  mm-unstable  mm-unstable-with-patch
+> >     round1       21053761      63161283
+> >     round2       21053761      63161283
+> >     round3       21053761      63161283
+> >     round4       20648881      67108864
+> >     round5       20648881      67108864
+> >
+> > munmap bandwidth becomes 3X faster.
+> >
+> > [1] https://lore.kernel.org/linux-mm/20240731133318.527-1-justinjiang@v=
+ivo.com/
+> > [2] https://lore.kernel.org/linux-mm/20240730-swap-allocator-v5-0-cb9c1=
+48b9297@kernel.org/
+> >
+> > Cc: Kairui Song <kasong@tencent.com>
+> > Cc: Chris Li <chrisl@kernel.org>
+> > Cc: "Huang, Ying" <ying.huang@intel.com>
+> > Cc: Hugh Dickins <hughd@google.com>
+> > Cc: Kalesh Singh <kaleshsingh@google.com>
+> > Cc: Ryan Roberts <ryan.roberts@arm.com>
+> > Cc: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> > ---
+> >   mm/swapfile.c | 61 ++++++++++++++++++++++++++++++++++++++++++++++++++=
++
+> >   1 file changed, 61 insertions(+)
+> >
+> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > index ea023fc25d08..ed872a186e81 100644
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -156,6 +156,25 @@ static bool swap_is_has_cache(struct swap_info_str=
+uct *si,
+> >       return true;
+> >   }
+> >
+> > +static bool swap_is_last_map(struct swap_info_struct *si,
+> > +                           unsigned long offset, int nr_pages,
+> > +                           bool *has_cache)
+> > +{
+> > +     unsigned char *map =3D si->swap_map + offset;
+> > +     unsigned char *map_end =3D map + nr_pages;
+> > +     bool cached =3D false;
+> > +
+> > +     do {
+> > +             if ((*map & ~SWAP_HAS_CACHE) !=3D 1)
+> > +                     return false;
+> > +             if (*map & SWAP_HAS_CACHE)
+> > +                     cached =3D true;
+> > +     } while (++map < map_end);
+> > +
+> > +     *has_cache =3D cached;
+> > +     return true;
+> > +}
+> > +
+> >   /*
+> >    * returns number of pages in the folio that backs the swap entry. If=
+ positive,
+> >    * the folio was reclaimed. If negative, the folio was not reclaimed.=
+ If 0, no
+> > @@ -1469,6 +1488,39 @@ static unsigned char __swap_entry_free(struct sw=
+ap_info_struct *p,
+> >       return usage;
+> >   }
+> >
+> > +static bool try_batch_swap_entries_free(struct swap_info_struct *p,
+>
+> Why call it "p" here and not "si" like in the other code you are touching=
+?
 
-First bad commit (maybe != root cause):
+that is because I found other _free_ functions are all using "p":
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   eb5e56d1491297e0881c95824e2050b7c205f0d4
-commit: 9ae82fe6ace1b267005758ccfb2347a4a6aa4398 bcachefs: Inline make_bfloat() into __build_ro_aux_tree()
-date:   10 months ago
-config: arm-randconfig-002-20240805 (https://download.01.org/0day-ci/archive/20240807/202408070432.X6n56VaY-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 423aec6573df4424f90555468128e17073ddc69e)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240807/202408070432.X6n56VaY-lkp@intel.com/reproduce)
+static unsigned char __swap_entry_free(struct swap_info_struct *p,
+      swp_entry_t entry)
+{
+...
+}
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408070432.X6n56VaY-lkp@intel.com/
+static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
+{
+...
+}
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+For sure I can move from "p" to "si".
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/pcs/pcs-mtk-lynxi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/ppp/ppp_async.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/ppp/ppp_synctty.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/dummy.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/plip/plip.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cdrom/cdrom.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/charlcd.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/hd44780_common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/tests/input_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/i2c/busses/i2c-qup.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/i2c/uda1342.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/dvb-frontends/au8522_decoder.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/platform/samsung/exynos4-is/exynos-fimc-is.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/platform/samsung/exynos4-is/exynos4-is-common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/radio/si470x/radio-si470x-common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/blink/leds-bcm63138.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-a4tech.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-apple.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-belkin.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-dr.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-emsff.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-evision.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ite.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kensington.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-keytouch.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-magicmouse.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-mf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-microsoft.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sjoy.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-steam.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sunplus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-zpff.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm-ccn.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwtracing/intel_th/intel_th_msu_sink.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-hub.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mm-interconnect.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mn-interconnect.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mp-interconnect.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/qcom/interconnect_qcom.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/parport/parport.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/corsair-cpro.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/mr75203.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/siox/siox-bus-gpio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/core/snd-pcm-dmaengine.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/soc-topology-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/codecs/snd-soc-wm-adsp.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/snd-acp-config.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/fsl/imx-pcm-fiq.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/xilinx/snd-soc-xlnx-i2s.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/xilinx/snd-soc-xlnx-formatter-pcm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/ac97_bus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/core/selftests.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/802/mrp.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/sch_hfsc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/sch_sfq.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/sch_drr.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/sch_ets.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/sch_skbprio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/sch_etf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/cls_u32.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/cls_fw.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/netlink/netlink_diag.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/netfilter/ipvs/ip_vs_wlc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/ipv4/udp_diag.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/xfrm/xfrm_user.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_ar9331.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_brcm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_dsa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_gswip.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_hellcreek.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_ksz.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_lan9303.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_mtk.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_none.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_ocelot_8021q.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_qca.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_rtl8_4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_sja1105.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_trailer.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/dsa/tag_xrs700x.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/8021q/8021q.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/caif/chnl_net.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/caif/caif_usb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/xdp/xsk_diag.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/mptcp/mptcp_crypto_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/mptcp/mptcp_token_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/key/af_key.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/sunrpc/sunrpc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/sunrpc/auth_gss/auth_rpcgss.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/sunrpc/auth_gss/rpcsec_gss_krb5.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/tipc/diag.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/nfc/nci/nci.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/nfc/nfc_digital.o
-ERROR: modpost: "__popcountsi2" [fs/ext4/ext4.ko] undefined!
-ERROR: modpost: "__popcountsi2" [fs/fat/fat.ko] undefined!
-ERROR: modpost: "__popcountsi2" [fs/hfsplus/hfsplus.ko] undefined!
-ERROR: modpost: "__popcountsi2" [fs/xfs/xfs.ko] undefined!
-ERROR: modpost: "__popcountsi2" [fs/gfs2/gfs2.ko] undefined!
->> ERROR: modpost: "__popcountsi2" [fs/bcachefs/bcachefs.ko] undefined!
-ERROR: modpost: "__aeabi_uldivmod" [fs/bcachefs/bcachefs.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/block/virtio_blk.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/net/ipa/ipa.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/memory/emif.ko] undefined!
-WARNING: modpost: suppressed 5 unresolved symbol warnings because there were too many)
+>
+> > +             swp_entry_t entry, int nr, bool *any_only_cache)
+> > +{
+> > +     unsigned long offset =3D swp_offset(entry);
+> > +     struct swap_cluster_info *ci;
+> > +     bool has_cache =3D false;
+> > +     bool can_batch;
+> > +     int i;
+> > +
+> > +     /* cross into another cluster */
+> > +     if (nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER)
+> > +             return false;
+> > +     ci =3D lock_cluster_or_swap_info(p, offset);
+> > +     can_batch =3D swap_is_last_map(p, offset, nr, &has_cache);
+> > +     if (can_batch) {
+> > +             for (i =3D 0; i < nr; i++)
+> > +                     WRITE_ONCE(p->swap_map[offset + i], SWAP_HAS_CACH=
+E);
+> > +     }
+> > +     unlock_cluster_or_swap_info(p, ci);
+> > +
+> > +     /* all swap_maps have count=3D=3D1 and have no swapcache */
+> > +     if (!can_batch)
+> > +             goto out;
+> > +     if (!has_cache) {
+> > +             spin_lock(&p->lock);
+> > +             swap_entry_range_free(p, entry, nr);
+> > +             spin_unlock(&p->lock);
+> > +     }
+> > +     *any_only_cache =3D has_cache;
+> > +out:
+> > +     return can_batch;
+> > +}
+> > +
+> >   /*
+> >    * Drop the last HAS_CACHE flag of swap entries, caller have to
+> >    * ensure all entries belong to the same cgroup.
+> > @@ -1797,6 +1849,7 @@ void free_swap_and_cache_nr(swp_entry_t entry, in=
+t nr)
+> >       bool any_only_cache =3D false;
+> >       unsigned long offset;
+> >       unsigned char count;
+> > +     bool batched;
+> >
+> >       if (non_swap_entry(entry))
+> >               return;
+> > @@ -1808,6 +1861,13 @@ void free_swap_and_cache_nr(swp_entry_t entry, i=
+nt nr)
+> >       if (WARN_ON(end_offset > si->max))
+> >               goto out;
+> >
+> > +     if (nr > 1 && swap_count(data_race(si->swap_map[start_offset]) =
+=3D=3D 1)) {
+> > +             batched =3D try_batch_swap_entries_free(si, entry, nr,
+> > +                                             &any_only_cache);
+> > +             if (batched)
+> > +                     goto reclaim;
+> > +     }
+> > +
+>
+> I'm wondering if we could find a way to clean this up to achieve here:
+>
+>
+> if (WARN_ON(end_offset > si->max))
+>         goto out;
+>
+> /*
+>   * First free all entries in the range.$
+>   */
+> any_only_cache =3D __free_swap_entries(si, entry, nr);
+>
+> /*
+>   * Short-circuit the below loop if none of the entries had their
+>   * reference drop to zero.
+>   */
+> if (!any_only_cache)
+>         goto out;
+>
+>
+>
+>
+> Whereby move the fallback loop in that new function
+>
+> static bool __free_swap_entries(struct swap_info_struct *si,
+>                 swp_entry_t entry, int nr)
+> {
+>         const unsigned long start_offset =3D swp_offset(entry);
+>         const unsigned long end_offset =3D start_offset + nr;
+>         bool any_only_cache =3D false;
+>
+>         if (nr > 1 && swap_count(data_race(si->swap_map[start_offset]) =
+=3D=3D 1)) {
+>                 [... what try_batch_swap_entries_free() would do ...]
+>         }
+>
+> fallback:
+>         for (offset =3D start_offset; offset < end_offset; offset++) {
+>                 if (data_race(si->swap_map[offset])) {
+>                 [... what the fallback code would do ...]
+>         }
+>         return any_only_cache;
+> }
+>
+>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+good suggestion. will do this in v2.
+
+> >       /*
+> >        * First free all entries in the range.
+> >        */
+> > @@ -1821,6 +1881,7 @@ void free_swap_and_cache_nr(swp_entry_t entry, in=
+t nr)
+> >               }
+> >       }
+> >
+> > +reclaim:
+> >       /*
+> >        * Short-circuit the below loop if none of the entries had their
+> >        * reference drop to zero.
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
+
+Thanks
+Barry
 
