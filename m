@@ -1,97 +1,123 @@
-Return-Path: <linux-kernel+bounces-275836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24747948ACE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:03:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2739948AD4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B39BAB25140
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:03:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD7E9287F59
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D98E1BBBE0;
-	Tue,  6 Aug 2024 08:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WRrQzINO"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F1716BE12;
+	Tue,  6 Aug 2024 08:04:08 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797AC28F5
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2426B13D276;
+	Tue,  6 Aug 2024 08:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722931409; cv=none; b=QXWQOPscFDGOE4vxg70B4A40pprEIE3EHSyfm2mRVztPcaGAUCua0bw6pTsKF29NWfYigyKZc4V23C5YvgJilen8YlqujX85cFESZctAIdzExZG6chic7Xns7Gl+FqbQtjcvEAU3EN8XIbtLJgFDq3OeYJM4uIEzLUixAj0sPzo=
+	t=1722931448; cv=none; b=R3hNMpJkLLF5URUFIDRESiKWPu1q9zzzJ6qmYfVS4nH3SWzxIhyGo9FtTF6cxNJaYXPNJ4YEQ2OAZdWPr6eScQtZVd9yya0CTiQwu36KbiDR/t0v6J5jRsJ3cqkdHd9+7/dqv7vMZYDZDO86PZ1eNZRrBQ4klBm/TDz5EigtuTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722931409; c=relaxed/simple;
-	bh=xUbEDe8Ju4tZyZi6DkwHyzxRu+sNl4qqdn3MR2Ct9bk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=heeRt0DWD3yOdntmhdtUrySG8nb+wOWB3hBP15CbNl2GbrMuadYDTeodzmhvfGJHKCtVKnDdOE9wyNdIBrBA2YnMUjsQpWNdv1EXpKh2OFyW5QbTFCg1Ilq0vqrRhpmVveGGXKaUMw+o7HRNi7N9AIrmltIzSAetHYkm09cYHWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WRrQzINO; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 6 Aug 2024 10:03:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722931404;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ha85jh06ju2ec3M6eRrZItHlhVDmC4EM/7NItagZQ6A=;
-	b=WRrQzINO6/pcFc2X+Qn0D1xCm1LCIlAS5BXaDHH2iAtz0z/gvuY+2/qdve+Fbxt/fwK0az
-	k1cQHSnhbB6EU/BXNUoulEpY9YvGeSD4GUzwN27LHJ5AqFFKgjU/cRDeWEOS8Eqg9iLBLR
-	9mYk9u14+hQJfRS4q7iO9UeeQNj1XCY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Andrew Jones <andrew.jones@linux.dev>
-To: Mark Brown <broonie@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Joey Gouly <joey.gouly@arm.com>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] KVM: selftests: arm64: Use generated defines for
- named system registers
-Message-ID: <20240806-7d137744fa04e05689efac71@orel>
-References: <20240802-kvm-arm64-get-reg-list-v1-0-3a5bf8f80765@kernel.org>
- <20240802-kvm-arm64-get-reg-list-v1-2-3a5bf8f80765@kernel.org>
+	s=arc-20240116; t=1722931448; c=relaxed/simple;
+	bh=2XgjUA3+Jq76hc3frjNsDmVolGe3r+NnQBfF+T8bkz4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nuByBJosPaM72vciUqboDlfMlOKm22JaVRvwm7vKjKcepr3az15eyW03rzyt9yVX5uDJ6zGupvmU5oG2sl8aQopy/Zoqyn44NtVv5MwGDuAF8MFjBEphLn5vOQuXER2h9xt2QsRL+yMRKfOPu9lLfsM8u3XY6LCee6aFS+5O1Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-01 (Coremail) with SMTP id qwCowAC3vEjZ2LFmRoTjAw--.506S2;
+	Tue, 06 Aug 2024 16:03:45 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: dinguyen@kernel.org,
+	bp@alien8.de,
+	tony.luck@intel.com,
+	james.morse@arm.com,
+	mchehab@kernel.org,
+	rric@kernel.org,
+	niravkumar.l.rabara@intel.com
+Cc: linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] EDAC/altera: Fix possible null pointer dereference
+Date: Tue,  6 Aug 2024 16:03:36 +0800
+Message-Id: <20240806080336.2396336-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240802-kvm-arm64-get-reg-list-v1-2-3a5bf8f80765@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAC3vEjZ2LFmRoTjAw--.506S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1fCr17Ww4rWFWDuw45KFg_yoW8Xw4xpr
+	W7W345tryUKa4UWr4vvws5XFy5C3Z3Xay0qrWIyayY93y3Xw15Jryj9FWUta4jqrW8Cay3
+	tr45tw45AayUJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBa14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
+	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20x
+	vY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I
+	3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIx
+	AIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAI
+	cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2js
+	IEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvtAUUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Fri, Aug 02, 2024 at 10:57:54PM GMT, Mark Brown wrote:
-> Currently the get-reg-list test uses directly specified numeric values to
-> define system registers to validate. Since we already have a macro which
-> allows us to use the generated system register definitions from the main
-> kernel easily let's update all the registers where we have specified the
-> name in a comment to just use that macro. This reduces the number of
-> places where we need to validate the name to number mapping.
-> 
-> This conversion was done with the sed command:
-> 
->   sed -i -E 's-ARM64_SYS_REG.*/\* (.*) \*/-KVM_ARM64_SYS_REG(SYS_\1),-' tools/testing/selftests/kvm/aarch64/get-reg-list.c
-> 
-> We still have a number of numerically specified registers, some of these
-> are reserved registers without defined names (eg, unallocated ID registers)
-> and others don't have kernel macro definitions yet.
+In altr_s10_sdram_check_ecc_deps(), of_get_address() may return NULL which
+is later dereferenced. Fix this bug by adding NULL check.
+of_translate_address() is the same.
 
-FWIW, the "ARM64_SYS_REG(...encoding...), /* NAME */" format was
-intentional. The idea was that when get-reg-list outputs new or missing
-registers it discovers, or the user lists registers with --list, the best
-it can do is output "ARM64_SYS_REG(...encoding...)". Putting that format
-directly into the test enabled copy+paste of the list output into a test
-case. However, the lack of names did lead to scripting the generation of
-the name comments, which means it wasn't a direct copy+paste anyway. The
-other benefit of the format was being able to directly grep the test for
-the 'missing' registers. Anyway, maybe always going through asm/sysreg.h
-with greps of '...encoding...' is the better approach.
+Found by code review.
 
-Thanks,
-drew
+Cc: stable@vger.kernel.org
+Fixes: e1bca853dddc ("EDAC/altera: Add SDRAM ECC check for U-Boot")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v2:
+- modified the check of of_translate_address() as suggestions.
+---
+ drivers/edac/altera_edac.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index fe89f5c4837f..4fbfa338e05f 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -1086,6 +1086,7 @@ static int altr_s10_sdram_check_ecc_deps(struct altr_edac_device_dev *device)
+ 	struct arm_smccc_res result;
+ 	struct device_node *np;
+ 	phys_addr_t sdram_addr;
++	const __be32 *sdram_addrp;
+ 	u32 read_reg;
+ 	int ret;
+ 
+@@ -1093,8 +1094,14 @@ static int altr_s10_sdram_check_ecc_deps(struct altr_edac_device_dev *device)
+ 	if (!np)
+ 		goto sdram_err;
+ 
+-	sdram_addr = of_translate_address(np, of_get_address(np, 0,
+-							     NULL, NULL));
++	sdram_addrp = of_get_address(np, 0, NULL, NULL);
++	if (!sdram_addrp)
++		return -EINVAL;
++
++	sdram_addr = of_translate_address(np, sdram_addrp);
++	if (sdram_addr == OF_BAD_ADDR)
++		return -EINVAL;
++
+ 	of_node_put(np);
+ 	sdram_ecc_addr = (unsigned long)sdram_addr + prv->ecc_en_ofst;
+ 	arm_smccc_smc(INTEL_SIP_SMC_REG_READ, sdram_ecc_addr,
+-- 
+2.25.1
+
 
