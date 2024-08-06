@@ -1,245 +1,127 @@
-Return-Path: <linux-kernel+bounces-276126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA40948EE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:15:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA5C948EE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBAB528C29F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:15:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE6FA1C20F5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8381C9DD3;
-	Tue,  6 Aug 2024 12:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6781C9DE8;
+	Tue,  6 Aug 2024 12:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/cbiPiP"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R2XSasi1"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4506B1C8FB7;
-	Tue,  6 Aug 2024 12:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E511C0DE7;
+	Tue,  6 Aug 2024 12:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722946304; cv=none; b=gqHd9GS2bQ4T3vf/q+jiEKVHjMYvtTrx8ryVrvmDqBLeAQF00gi0qB+UkBKZBEHN8k76xmA8OeLQNPl4JkZUmbpBIgQeisFvOj0jDWVSvmZTG6PgP842eJLZUvZHyucUwd9hNNYiU2+oAlWJS4MJCIRElAIS9FiTK9bOOh2LZlM=
+	t=1722946357; cv=none; b=cGapSfcmXZg26pp+62MkUc8BYFhzXIhqrvama7wwVRTT9NcGYGbLstKR+sHgG9DJuoMhxU0iOLifl4IYLtHP4zntzcckWCIMJoWTvRdKwaaiivw9VaguE1F6rfk6NTePEK4KFxCVDGqIfznzcOQJAIdaUjuCglJcQUOdm2j1iNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722946304; c=relaxed/simple;
-	bh=8wZWTlDutoIdgkQonWtbC7fK/3x1PokJPYQxOF+5Oho=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MLFE9juGWF3cbmcqMlZiYbXVzRPV/KLtTvXPwSgRL/NmmsEjS469SIocpEhbp3AzVTa04Na7fWRTSy36YSzjEtkW2BI3B9vUM3jalgzUew/pQRK4zOA1S2cMCEJSJ3P5fDiU4uc611JH4EIrwYQ9ftp0qadigsqVPop4yjrbIhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E/cbiPiP; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f01e9f53e3so9255781fa.1;
-        Tue, 06 Aug 2024 05:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722946300; x=1723551100; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0if134XhdeRkEUYfkA+1CHXu+GQYSvk7tXr14DRvpMU=;
-        b=E/cbiPiPKhpRLz7L/eHH0ZXUFDP1nlPc5M/Lr6G5dhq6z9r7MPxemZHcmfcscazZ55
-         6Kk3pAyw/T8hqKq+prTmB2rJNBPyqLOSBhl72uXEyXJHpvATh/ZumwJBF3Gi8Gn7qvrZ
-         RQHWoDhFdnE7HbfBLOLEz9990BqGHkHpa4R9b5UxuPic7//PGwckoY/1HZCqDbiRI20x
-         nTqtSdia1Np2r2GY3qbgSH6/mnAGyAUws9vjINroheMEtyZIWw403qeLws9B7P8Td76H
-         eeeWF2KwFVYz4uRPRAxKfwMb0ita17LquqDaJr0Da4L4eCLZaTrLGOIcLyCW+di2ei77
-         FaSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722946300; x=1723551100;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0if134XhdeRkEUYfkA+1CHXu+GQYSvk7tXr14DRvpMU=;
-        b=UXwNaTQuTvMtE8ZzqFFQBaX9iomBHG6Bqvds8NurNqeyjSZBWRNZeVQ+3KTKO0ylrd
-         0zXzyQC70Bvo7cGvRn5Lzi1uGML4pIdZmXVhVn0YipN1enb2kQHhHXDkKLkCsH91AEH0
-         Qd+tMUuPMy5IwuBWCV4p1JB/M0sY9cnYHfhFqo3AQ9+vVXTL4m+ah41RzI9nXYhdDeFb
-         QKe61ETVBnz/vh18IizvKeeeEXRJxQyM3/lC/GzqsFOrmMX7DrbHhgoIyKep6APFlrmg
-         30cPYcIPsMF0LvRYc6lhwTPp3BliZaC7ueu7LtWUqNlZSwi4ggPrzZr/BJMOrMFAUq1t
-         HToQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXuF4OzueuVvf+ObYtgBl2IxG3xvQdibXuJTLfs026Cxx+eT88WHpaY5bNL1sVJlWPl0rSIESuwJFyUf/pPbg59XaYcLIgiUMcp4YmNucH0BteOj+b7Sf2ygl4XHWbw/i5/bj+ubHp2rRHAC5ITZ9G02m/W/lZfAgYAWy4EA5CIzWwP7w==
-X-Gm-Message-State: AOJu0YwcLe6pokf2WKNb77M+DSpDOq0i94wWK1zZeT2ghVzhtzGIi1T1
-	a4yWp7SRIKqBfER0rPhGx6sVhqopdEMRPbtRcZ7YkIpwsi/hLRlyDSLxKkxj
-X-Google-Smtp-Source: AGHT+IHmc+4jNVeC/deUHpKRZGlhx97wH6E6XkbGg1ilLroKPhmyzIRoqWZ0tQUgZPOVpADW7upZfw==
-X-Received: by 2002:a05:6512:234c:b0:52e:d0f8:2d43 with SMTP id 2adb3069b0e04-530bb3810d0mr12841061e87.17.1722946300245;
-        Tue, 06 Aug 2024 05:11:40 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9ecb546sm542080366b.224.2024.08.06.05.11.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 05:11:39 -0700 (PDT)
-From: David Virag <virag.david003@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Virag <virag.david003@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 7/7] clk: samsung: exynos7885: Add USB related clocks to CMU_FSYS
-Date: Tue,  6 Aug 2024 14:11:50 +0200
-Message-ID: <20240806121157.479212-8-virag.david003@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240806121157.479212-1-virag.david003@gmail.com>
-References: <20240806121157.479212-1-virag.david003@gmail.com>
+	s=arc-20240116; t=1722946357; c=relaxed/simple;
+	bh=4Jlvs3s8D6Puqz4utkMELxCxHzvLhaMPn3o/pdA9IeU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IS0Jm0T2Z6AxLurFEy5wmBXGVZwXFVKx/bxnsM5b6dnf3YHiega4AZAklIxI8Qckyakn86VDJLYE4MiG0hEjimX/HCpoFNVP9sD+HqMo/eeAMnvjR7Z1TiA0DpcimOBqNr7lEPQG+p3rtNiPJSLA5eSwgVy3kr7f4BKrXOurglo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=R2XSasi1; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 476CCCaf024746;
+	Tue, 6 Aug 2024 07:12:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722946332;
+	bh=g5gDMigbTHL+jxXCwUmh5fa9wrLaoK43+KxVX/dTfvM=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=R2XSasi1RETGNZJLKD+HlKf2YrLQ9lVUdZw30x0ETjPuLH8ZB+8tQsaQuzUGXXeVd
+	 UIX5DyA9XMLSx7eRRj7tWI/+bq1ggXBJaFha7q2wHMf4nrZia9RabqUen0Y/15Af4C
+	 X4P9gV6Rjjag9ZBvf17l5ykFhTBRv8R7MGG72F/E=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 476CCCL7055008
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 6 Aug 2024 07:12:12 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
+ Aug 2024 07:12:12 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 6 Aug 2024 07:12:12 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 476CCCbA081755;
+	Tue, 6 Aug 2024 07:12:12 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Francesco Dolcini <francesco@dolcini.it>
+CC: Nishanth Menon <nm@ti.com>,
+        Francesco Dolcini
+	<francesco.dolcini@toradex.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH v1] arm64: dts: ti: k3-am62-verdin-dahlia: Keep CTRL_SLEEP_MOCI# regulator on
+Date: Tue, 6 Aug 2024 07:12:10 -0500
+Message-ID: <172294632012.366302.5768922280079626594.b4-ty@ti.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240731054804.6061-1-francesco@dolcini.it>
+References: <20240731054804.6061-1-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Exynos7885 SoC has a DWC3 USB Controller with Exynos USB PHY which in
-theory supports USB3 SuperSpeed, but is only used as USB2 in all known
-devices.
+Hi Francesco Dolcini,
 
-These clocks are needed for everything related to USB.
+On Wed, 31 Jul 2024 07:48:04 +0200, Francesco Dolcini wrote:
+> This reverts commit 3935fbc87ddebea5439f3ab6a78b1e83e976bf88.
+> 
+> CTRL_SLEEP_MOCI# is a signal that is defined for all the SoM
+> implementing the Verdin family specification, this signal is supposed to
+> control the power enable in the carrier board when the system is in deep
+> sleep mode. However this is not possible with Texas Instruments AM62
+> SoC, IOs output buffer is disabled in deep sleep and IOs are in
+> tri-state mode.
+> 
+> [...]
 
-While at it, also remove the CLK_SET_RATE_PARENT capability of
-CLK_MOUT_FSYS_USB30DRD_USER, since it's not actually needed.
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-Signed-off-by: David Virag <virag.david003@gmail.com>
----
- drivers/clk/samsung/clk-exynos7885.c | 71 ++++++++++++++++++++++------
- 1 file changed, 57 insertions(+), 14 deletions(-)
+[1/1] arm64: dts: ti: k3-am62-verdin-dahlia: Keep CTRL_SLEEP_MOCI# regulator on
+      commit: 9438f970296f9c3a6dd340ae0ad01d2f056c88e6
 
-diff --git a/drivers/clk/samsung/clk-exynos7885.c b/drivers/clk/samsung/clk-exynos7885.c
-index a0c9b7cc6942..fc42251731ed 100644
---- a/drivers/clk/samsung/clk-exynos7885.c
-+++ b/drivers/clk/samsung/clk-exynos7885.c
-@@ -20,7 +20,7 @@
- #define CLKS_NR_TOP			(CLK_MOUT_SHARED1_PLL + 1)
- #define CLKS_NR_CORE			(CLK_GOUT_TREX_P_CORE_PCLK_P_CORE + 1)
- #define CLKS_NR_PERI			(CLK_GOUT_WDT1_PCLK + 1)
--#define CLKS_NR_FSYS			(CLK_MOUT_FSYS_USB30DRD_USER + 1)
-+#define CLKS_NR_FSYS			(CLK_FSYS_USB30DRD_REF_CLK + 1)
- 
- /* ---- CMU_TOP ------------------------------------------------------------- */
- 
-@@ -686,30 +686,56 @@ static const struct samsung_cmu_info core_cmu_info __initconst = {
- /* ---- CMU_FSYS ------------------------------------------------------------ */
- 
- /* Register Offset definitions for CMU_FSYS (0x13400000) */
--#define PLL_CON0_MUX_CLKCMU_FSYS_BUS_USER	0x0100
--#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_CARD_USER	0x0120
--#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_EMBD_USER	0x0140
--#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER	0x0160
--#define PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER	0x0180
--#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK	0x2030
--#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_SDCLKIN	0x2034
--#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_I_ACLK	0x2038
--#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_SDCLKIN	0x203c
--#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_I_ACLK	0x2040
--#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN	0x2044
-+#define PLL_LOCKTIME_PLL_USB				0x0000
-+#define PLL_CON0_MUX_CLKCMU_FSYS_BUS_USER		0x0100
-+#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_CARD_USER		0x0120
-+#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_EMBD_USER		0x0140
-+#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER		0x0160
-+#define PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER		0x0180
-+#define PLL_CON0_PLL_USB				0x01a0
-+#define CLK_CON_GAT_CLK_FSYS_USB20PHY_CLKCORE		0x200c
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK		0x2030
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_SDCLKIN		0x2034
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_I_ACLK		0x2038
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_SDCLKIN		0x203c
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_I_ACLK		0x2040
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN		0x2044
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_20PHYCTRL	0x2068
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_0	0x206c
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_1	0x2070
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_BUS_CLK_EARLY	0x2074
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_REF_CLK		0x2078
- 
- static const unsigned long fsys_clk_regs[] __initconst = {
-+	PLL_LOCKTIME_PLL_USB,
- 	PLL_CON0_MUX_CLKCMU_FSYS_BUS_USER,
- 	PLL_CON0_MUX_CLKCMU_FSYS_MMC_CARD_USER,
- 	PLL_CON0_MUX_CLKCMU_FSYS_MMC_EMBD_USER,
- 	PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER,
- 	PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER,
-+	PLL_CON0_PLL_USB,
-+	CLK_CON_GAT_CLK_FSYS_USB20PHY_CLKCORE,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_CARD_SDCLKIN,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_I_ACLK,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_SDCLKIN,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_I_ACLK,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_20PHYCTRL,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_0,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_1,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_BUS_CLK_EARLY,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_REF_CLK,
-+};
-+
-+static const struct samsung_pll_rate_table pll_usb_rate_table[] __initconst = {
-+	PLL_35XX_RATE(26 * MHZ, 50000000U, 400, 13, 4),
-+};
-+
-+static const struct samsung_pll_clock fsys_pll_clks[] __initconst = {
-+	PLL(pll_1418x, CLK_FOUT_USB_PLL, "fout_usb_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_USB, PLL_CON0_PLL_USB,
-+	    pll_usb_rate_table),
- };
- 
- /* List of parent clocks for Muxes in CMU_FSYS */
-@@ -718,6 +744,7 @@ PNAME(mout_fsys_mmc_card_user_p)	= { "oscclk", "dout_fsys_mmc_card" };
- PNAME(mout_fsys_mmc_embd_user_p)	= { "oscclk", "dout_fsys_mmc_embd" };
- PNAME(mout_fsys_mmc_sdio_user_p)	= { "oscclk", "dout_fsys_mmc_sdio" };
- PNAME(mout_fsys_usb30drd_user_p)	= { "oscclk", "dout_fsys_usb30drd" };
-+PNAME(mout_usb_pll_p)			= { "oscclk", "fout_usb_pll" };
- 
- static const struct samsung_mux_clock fsys_mux_clks[] __initconst = {
- 	MUX(CLK_MOUT_FSYS_BUS_USER, "mout_fsys_bus_user", mout_fsys_bus_user_p,
-@@ -731,12 +758,16 @@ static const struct samsung_mux_clock fsys_mux_clks[] __initconst = {
- 	MUX_F(CLK_MOUT_FSYS_MMC_SDIO_USER, "mout_fsys_mmc_sdio_user",
- 	      mout_fsys_mmc_sdio_user_p, PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER,
- 	      4, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(CLK_MOUT_FSYS_USB30DRD_USER, "mout_fsys_usb30drd_user",
-+	MUX(CLK_MOUT_FSYS_USB30DRD_USER, "mout_fsys_usb30drd_user",
- 	      mout_fsys_usb30drd_user_p, PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER,
--	      4, 1, CLK_SET_RATE_PARENT, 0),
-+	      4, 1),
-+	nMUX_F(CLK_MOUT_USB_PLL, "mout_usb_pll", mout_usb_pll_p,
-+	    PLL_CON0_PLL_USB, 4, 1, CLK_SET_RATE_PARENT, 0),
- };
- 
- static const struct samsung_gate_clock fsys_gate_clks[] __initconst = {
-+	GATE(CLK_FSYS_USB20PHY_CLKCORE, "clk_fsys_usb20phy_clkcore", "mout_usb_pll",
-+	     CLK_CON_GAT_CLK_FSYS_USB20PHY_CLKCORE, 21, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_GOUT_MMC_CARD_ACLK, "gout_mmc_card_aclk", "mout_fsys_bus_user",
- 	     CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK, 21, 0, 0),
- 	GATE(CLK_GOUT_MMC_CARD_SDCLKIN, "gout_mmc_card_sdclkin",
-@@ -752,9 +783,21 @@ static const struct samsung_gate_clock fsys_gate_clks[] __initconst = {
- 	GATE(CLK_GOUT_MMC_SDIO_SDCLKIN, "gout_mmc_sdio_sdclkin",
- 	     "mout_fsys_mmc_sdio_user", CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN,
- 	     21, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_FSYS_USB30DRD_ACLK_20PHYCTRL, "clk_fsys_usb30drd_aclk_20phyctrl",
-+	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_20PHYCTRL, 21, 0, 0),
-+	GATE(CLK_FSYS_USB30DRD_ACLK_30PHYCTRL_0, "clk_fsys_usb30drd_aclk_30phyctrl_0",
-+	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_0, 21, 0, 0),
-+	GATE(CLK_FSYS_USB30DRD_ACLK_30PHYCTRL_1, "clk_fsys_usb30drd_aclk_30phyctrl_1",
-+	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_1, 21, 0, 0),
-+	GATE(CLK_FSYS_USB30DRD_BUS_CLK_EARLY, "clk_fsys_usb30drd_bus_clk_early",
-+	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_BUS_CLK_EARLY, 21, 0, 0),
-+	GATE(CLK_FSYS_USB30DRD_REF_CLK, "clk_fsys_usb30drd_ref_clk", "mout_fsys_usb30drd_user",
-+	     CLK_CON_GAT_GOUT_FSYS_USB30DRD_REF_CLK, 21, 0, 0),
- };
- 
- static const struct samsung_cmu_info fsys_cmu_info __initconst = {
-+	.pll_clks		= fsys_pll_clks,
-+	.nr_pll_clks		= ARRAY_SIZE(fsys_pll_clks),
- 	.mux_clks		= fsys_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(fsys_mux_clks),
- 	.gate_clks		= fsys_gate_clks,
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
 -- 
-2.46.0
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
 
