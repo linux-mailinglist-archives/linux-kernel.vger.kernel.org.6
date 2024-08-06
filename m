@@ -1,244 +1,186 @@
-Return-Path: <linux-kernel+bounces-275919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69E4948BE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:04:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97EE9948BE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 001271C235C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:04:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC4001C224BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361851BDAA4;
-	Tue,  6 Aug 2024 09:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474751BD50A;
+	Tue,  6 Aug 2024 09:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGMT7lxQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N8N3Ux5V"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE02146A6F;
-	Tue,  6 Aug 2024 09:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46FC146A6F
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 09:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722935047; cv=none; b=mcbhdznrMBZuILlu9uEMJdR+5vRjBfCzLvEzzj+mny2ukJf+0n8+Fq46ZTzN0DhMqhr7dVMlBPMyvMirdcBzWHkCbYQMpDATVR+Zpwg0PDV4DBlTudmjVnSEKRzZsCwEooUwvFsM8cHjAuUyKSP15D9HTe45T6aOr4ej3t9uq4c=
+	t=1722935107; cv=none; b=KDn15w7aBt21UGA1FcXJe/KtlngAU23Q8ro7KgiLjQAX78qjeLXL662SyDtCthYv6W7gPRPMPpnLsi0peZyPDdE0xkWRiBSsyAyYuW2kiAUHruIVEEk44Wx8eBAI0otT69VXfDkie7arjMPDwovkTnw+MMWqX7ap8gs4RKAXGhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722935047; c=relaxed/simple;
-	bh=BCz5alDXDrczbYyQPbsxtRfrt4U+bf2v3iwbwkAa38U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h/Ubh1XVmBpb7LM+Kn4G0S/UbdrhPqLE5DBEPPL0fcNHuE8xDl8Hg20nENf/u4qnWBR92R60oeDNqKTYTG7yfpzRMJyAs74NI9UE/GpGWzikwHStPKEShqLTG17Tcj6RJmNBgUEc0XgknmbgcjPHJI8nZ/O1VRjEAFT6popafjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGMT7lxQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 403A1C32786;
-	Tue,  6 Aug 2024 09:04:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722935046;
-	bh=BCz5alDXDrczbYyQPbsxtRfrt4U+bf2v3iwbwkAa38U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rGMT7lxQvCazpOBl+z3AIVM50STQBiRN6x6/ABmcdee2M/RwkXNBi9Fhegt9/C+oT
-	 JTO471X8BXDPU6uNkQ7UzegCxvxFCOMSRRmbbJHibbPPTrGcssm+I2bruhUScb5tQ7
-	 O+DwzAdHgqSuUVaqXTlvOYi6HfvUR1YKP/1x3tb9PqtFXZ+bsuUy54gwosU4VZnQVz
-	 92TNnb7tZHsaCAHh1hU60C1MiHRJNtNv1/NY+YEVR9iX3+CJrLRA+6aWFdvJ4BxdjK
-	 nxoBMNNwXplduUEYWJXjTMTpmUBQ1mC98lyHY7iQMmnq/N10sC7PbA6UdbY0ed5FjZ
-	 RcSjABObQVZjQ==
-Message-ID: <c230faec-d359-461e-a717-6708d2710e42@kernel.org>
-Date: Tue, 6 Aug 2024 11:04:00 +0200
+	s=arc-20240116; t=1722935107; c=relaxed/simple;
+	bh=UCVqS60sn9LNaCSs75cAxVmBRpP/G+2QNbsQ4OV3MQ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fygmu9u8pkJPE2Md6K5L9DGKjBkfgBlZKDPL02KOzQgY++cmQtDbP3S0Ep0wwpNcqTD7dsD2WwRri0h+LH2eWsDcrT45f6OFEdl5Nk9xD2mqpTghX8RDAcgjGJdgbjQRZJDREOfhEWTIrjCqVZ1XJEAGg+RBM70Z0YMpdeJYc4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N8N3Ux5V; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-369c609d0c7so289470f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 02:05:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722935104; x=1723539904; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DETMGaPs2PGmqMwvCjnPO//c4goVZtDilP9QX2nQBO8=;
+        b=N8N3Ux5VsnntlHSullOcM/fbBWCQAtS8fhQyTEb/ONb8yooOVnHGJMYdSeo89aEkS0
+         OU5buJQE3H76Opihs3GphlLlGA6IAanBA+GE7vPiqt4EP+9/jMyOJCmOR5P5oBJNgxAt
+         SVqSZO5VK5GZbPXQgR7eO0xWm1IKjbNE6YkJ35zMvVvFgr1cXd713anBCko6J/rH6MMt
+         deAkl9foelfwp2nLYa9sp1VhphGktcvzUEGyMEvciySoGdJs7/hE8MOaBuGRqsS+HiXL
+         k28A1h/RNJOIPw2ruJZ2RRaFVPnVajUhL27Rt+liLDl1iJaA/4+AaAwnWxMjdQHjscMX
+         0K2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722935104; x=1723539904;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DETMGaPs2PGmqMwvCjnPO//c4goVZtDilP9QX2nQBO8=;
+        b=TrRl3JAi7ePz1Azaad9ZnipMODHX8I+3jH2Y6G5ZQ6YQZo4IHTL2gF+WAtbzu2Anih
+         sL1Pnpe/Jzvi8xD2qhtZAvo625OyD7NpxWFZFoH5Db6G7RaxKMWC3sggADvrR+uMxuuB
+         TbikmgGQAEh3qZeAtdY6dvxiQxTLmCcs7WLUJpaVW8BI85bNz5Hj8ocFd66HPCozEq/C
+         QieOBljAr2iWys+yX44oUAfPv6qTyxrrrvrFAhenMi5QkJIvDJgT6znc5C8g2csKCD9N
+         iHesuDr+2G44P2d9hAaR3q098IrPun4BRHucRQi8XTRcWLjgqsdpsWFiO4+oAGc+L9+8
+         QcLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8rLy7qvR+wFAYHPjNWZhcYZhvEsl+u2bwr7V/gfkT62Qdy+Qq8lU6m+RICnH6AQp3yxJR1y2U5/lVWN6KgMe9UPe/t9ML6mr2TWPj
+X-Gm-Message-State: AOJu0Yz+roihWQyhC3WJB8DDSJqME3g9a+2xOeJE1JFfRJNwZ0bLGb1A
+	upAB3p9O7kr+Eo0GAT9MbcsbHvjY7PtnboJa5uuUnM794QVy9OgpEzdiXfLKpEIFIxYnhgeLofw
+	S73d+ODQGvUbyoikUMwrojMG87xw0vN1ypLiW
+X-Google-Smtp-Source: AGHT+IFINWCUgofLtvN+dIZ/17A15VOEXod/e5YskrS11F18PP1AwtyfWa99txQejYOa/nGkarLFvzgk0CyEHspmfQI=
+X-Received: by 2002:a05:6000:402b:b0:368:6633:e23f with SMTP id
+ ffacd0b85a97d-36bbc1a6749mr14909337f8f.38.1722935103850; Tue, 06 Aug 2024
+ 02:05:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/3] dt-bindings: input: Update dtbinding for adp5588
-To: utsav.agarwal@analog.com, Michael Hennerich
- <michael.hennerich@analog.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Arturs Artamonovs <arturs.artamonovs@analog.com>,
- Vasileios Bimpikas <vasileios.bimpikas@analog.com>,
- Oliver Gaskell <oliver.gaskell@analog.com>
-References: <20240806-adp5588_gpio_support-v9-0-4d6118b6d653@analog.com>
- <20240806-adp5588_gpio_support-v9-3-4d6118b6d653@analog.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240806-adp5588_gpio_support-v9-3-4d6118b6d653@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240727-b4-rbtree-v8-0-951600ada434@google.com>
+ <20240727-b4-rbtree-v8-5-951600ada434@google.com> <309d3d27-62d0-42b0-b50a-40692a019b40@proton.me>
+ <CAH5fLgh30z2Cfixn1aC-LPp-ua46eJ+jREWDTfhMK3aqXzbt-A@mail.gmail.com> <4ef9616f-a35a-4aa2-993c-9b67f50a46ee@proton.me>
+In-Reply-To: <4ef9616f-a35a-4aa2-993c-9b67f50a46ee@proton.me>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 6 Aug 2024 11:04:52 +0200
+Message-ID: <CAH5fLgjiqOcu0JVgLze76LQDUD3KTQv9WrBy-GkMbCgVWn0xzA@mail.gmail.com>
+Subject: Re: [PATCH v8 5/6] rust: rbtree: add `RBTreeCursor`
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Matt Gilbride <mattgilbride@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>, Rob Landley <rob@landley.net>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Michel Lespinasse <michel@lespinasse.org>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06/08/2024 10:48, Utsav Agarwal via B4 Relay wrote:
-> From: Utsav Agarwal <utsav.agarwal@analog.com>
-> 
+On Tue, Aug 6, 2024 at 11:01=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+>
+> On 06.08.24 10:24, Alice Ryhl wrote:
+> > On Mon, Aug 5, 2024 at 9:35=E2=80=AFPM Benno Lossin <benno.lossin@proto=
+n.me> wrote:
+> >> On 27.07.24 22:30, Matt Gilbride wrote:
+> >>> +        // SAFETY: `best` is a non-null node so it is valid by the t=
+ype invariants.
+> >>> +        let links =3D unsafe { addr_of_mut!((*best.as_ptr()).links) =
+};
+> >>> +
+> >>> +        NonNull::new(links).map(|current| {
+> >>
+> >> Why would `links` be a null pointer? AFAIK it just came from `best`
+> >> which is non-null. (I don't know if we want to use `new_unchecked`
+> >> instead, but wanted to mention it)
+> >
+> > It's never a null pointer in this branch. Do you prefer an extra
+> > unsafe block to call new_unchecked?
+>
+> No need, doesn't seem like this part is hot and this is something that
+> field projections could solve.
+>
+> >>> +            // INVARIANT:
+> >>> +            // - `current` is a valid node in the [`RBTree`] pointed=
+ to by `self`.
+> >>> +            // - Due to the type signature of this function, the ret=
+urned [`RBTreeCursor`]
+> >>> +            //   borrows mutably from `self`.
+> >>> +            RBTreeCursor {
+> >>> +                current,
+> >>> +                tree: self,
+> >>> +            }
+> >>> +        })
+> >>> +    }
+> >>
+> >> [...]
+> >>
+> >>> +/// // Calling `remove_next` removes and returns the last element.
+> >>> +/// assert_eq!(cursor.remove_next().unwrap().to_key_value(), (30, 30=
+0));
+> >>> +///
+> >>> +/// # Ok::<(), Error>(())
+> >>> +/// ```
+> >>
+> >> I would put a newline here.
+> >
+> > Ok.
+> >
+> >>> +/// # Invariants
+> >>> +/// - `current` points to a node that is in the same [`RBTree`] as `=
+tree`.
+> >>> +pub struct RBTreeCursor<'a, K, V> {
+> >>
+> >> I think we can name it just `Cursor`, since one can refer to it as
+> >> `rbtree::Cursor` and then it also follows the naming scheme for `Iter`
+> >> etc.
+> >
+> > You are welcome to submit that as a follow-up change.
+> >
+> >>> +    tree: &'a mut RBTree<K, V>,
+> >>> +    current: NonNull<bindings::rb_node>,
+> >>> +}
+> >>> +
+> >>> +// SAFETY: The [`RBTreeCursor`] gives out immutable references to K =
+and mutable references to V,
+> >>> +// so it has the same thread safety requirements as mutable referenc=
+es.
+> >>> +unsafe impl<'a, K: Send, V: Send> Send for RBTreeCursor<'a, K, V> {}
+> >>
+> >> Again, do we want to use `K: Sync` here instead?
+> >
+> > In this case, `K: Send` and `K: Sync` are both sufficient conditions,
+> > but `K: Send` will generally be less restrictive for the user.
+>
+> What if `K =3D struct(RefCell<i32>, i32)` where only the second i32 is
+> used in `(Partial)Ord`? Then you can send `RBTreeCursor` to another
+> thread and call `borrow` there, even though `K: !Sync` (and the value
+> still lives on another thread).
 
-A nit, subject: drop second/last, redundant "dtbinding". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+In that scenario, all immutable references to the key would be on the
+same thread as the cursor. The cursor borrows the tree mutably, so
+there can only be one cursor.
 
-Subject: everything is an update. Be descriptive and specific.
+When using `K: Send`, it's basically like having `RBTreeCursor` store
+mutable references to the key, but with an API that downgrades to
+immutable reference when giving out access to the key.
 
-> Updating dt bindings for adp5588. Since the device can now function in a
-> purely gpio mode, the following keypad specific properties are now made
-
-Hardware changed? How?
-
-> optional:
-> 	- interrupts
-> 	- keypad,num-rows
-> 	- keypad,num-columns
-> 	- linux,keymap
-> 
-> However the above properties are required to be specified when
-> configuring the device as a keypad, dependencies have been added
-> such that specifying either one would require the remaining as well.
-> 
-> Note that interrupts are optional, but required when the device has
-> either been configured in keypad mode or as an interrupt controller.
-> 
-> Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
-> ---
->  .../devicetree/bindings/input/adi,adp5588.yaml     | 51 +++++++++++++++++++---
->  1 file changed, 45 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/input/adi,adp5588.yaml b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-> index 26ea66834ae2..827d72ece54b 100644
-> --- a/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-> +++ b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-> @@ -49,7 +49,12 @@ properties:
->    interrupt-controller:
->      description:
->        This property applies if either keypad,num-rows lower than 8 or
-> -      keypad,num-columns lower than 10.
-> +      keypad,num-columns lower than 10. This property is optional if
-> +      keypad,num-rows or keypad,num-columns are not specified since the
-> +      device then acts as gpio only, during which interrupts may or may
-> +      not be utilized. If specified however, interrupts must be also be
-> +      provided as all interrupt communication is h
-
-Don't repeat constraints in free form text.
-
-
-andled via a single
-> +      interrupt line.
->  
->    '#interrupt-cells':
->      const: 2
-> @@ -65,13 +70,30 @@ properties:
->      minItems: 1
->      maxItems: 2
->  
-> +
-> +dependencies:
-> +  keypad,num-rows:
-> +    - linux,keymap
-> +    - keypad,num-columns
-> +  keypad,num-columns:
-> +    - linux,keymap
-> +    - keypad,num-rows
-> +  linux,keymap:
-> +    - keypad,num-rows
-> +    - keypad,num-columns
-> +  interrupt-controller:
-> +    - interrupts
-
-How is this related to this patchset? Why? I don't understand what are
-you trying to achieve here. Hardware changed? Are you fixing something?
-How many issues are you fixing in one (!!!) commit?
-
-> +
-> +if:
-> +  required:
-> +    - linux,keymap
-> +then:
-> +  required:
-> +    - interrupts
-> +
->  required:
->    - compatible
->    - reg
-> -  - interrupts
-> -  - keypad,num-rows
-> -  - keypad,num-columns
-> -  - linux,keymap
->  
->  unevaluatedProperties: false
->  
-> @@ -108,4 +130,21 @@ examples:
->              >;
->          };
->      };
-> -...
-> +
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/input/input.h>
-> +    #include <dt-bindings/gpio/gpio.h>
-
-Where do you use these headers?
-
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        gpio@34 {
-> +            compatible = "adi,adp5588";
-> +            reg = <0x34>;
-> +
-> +            #gpio-cells = <2>;
-> +            gpio-controller;
-> +        };
-> +    };
-> +
-> +.
-
-Why this change?
-
-
-Best regards,
-Krzysztof
-
+Alice
 
