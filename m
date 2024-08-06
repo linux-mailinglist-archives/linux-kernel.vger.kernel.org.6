@@ -1,548 +1,307 @@
-Return-Path: <linux-kernel+bounces-276313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B437F9491FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:48:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C7DE9491FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D600D1C210E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:48:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C67C6282DFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8881D47B4;
-	Tue,  6 Aug 2024 13:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6BE1D47C8;
+	Tue,  6 Aug 2024 13:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hFV2X6VH"
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="jQFILm4O"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2091.outbound.protection.outlook.com [40.92.102.91])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582F51D47A2;
-	Tue,  6 Aug 2024 13:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722952093; cv=none; b=LC+ppo0XKpP/JbFO9fQ72mMsD/PYoXHDE4VEstybjfhPpW6a4ERpTX81iVtzn3/c5EbNLTr2RCNNhOzqHIB6vG5aSh2T2ySniWO9TUqG9P/POrqjmgWTfViPzzvRleMqN9U1fJmHi7gcASqeYcGlUDBGGtj0KGuI7v4xuLVmZf8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722952093; c=relaxed/simple;
-	bh=BqnKAUCWcDIjhm2+lTYpZTWTssaO70bBdk2S0yIbdWM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TdciUFfxeg0JXLA5HaRntozkBF5pEMKsGORY7roZxmikvxJjl31jU2dbAxdo5OkcIDrX94gu25QEhi8WZfDNb5j7ZaEVyNKiTD3r7vCi3dNmqZeSEzB72Sp3KZelzfFF2slHjbDNOQBiShY59+E0ivRno6giLxvByOhTB/yMZ4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hFV2X6VH; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4f6b7250d6dso221923e0c.0;
-        Tue, 06 Aug 2024 06:48:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722952090; x=1723556890; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ECT70F8ui5lw6WNFO/lAOYt5X8TuJlJygMtjeEHBoFU=;
-        b=hFV2X6VH3pHV5jYXjBdiRrh3sRyOkTuZeoTAecDm+nZlOloC9oAkrJ1uAcpCYqGFvY
-         DQXP4V1pHKgOLR1O8RDlVtoaelkTyZSHjF12Kd9Wd15V2y3NOf+QgZUSdcSPURRxLfBA
-         FCVWg7E0ThmpdbF6PKrtx3mgvbpIas/VW9+bmA51EY/cpkNY+UQ0yjHBXx91EPvmUoWl
-         PHkiBwx+vOQIhM8YAgC4JI4vneQW4Ol2XGVR3bdmY42Vori+iw0g5CIArNp1kimK+ZXE
-         IyN2jmQWZrYy2DEOGR4NrtXMobiDM2mDYLTRAAdAWXsAn1K7AJESCdLxg75MKqMiSIzl
-         jyig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722952090; x=1723556890;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ECT70F8ui5lw6WNFO/lAOYt5X8TuJlJygMtjeEHBoFU=;
-        b=taS2mXRC8uKLqEcQiEfiptPQ8MUjSMQbfWuanhjfn+EBsLmPvckK5zgUqUViuTFeVm
-         TAjAnuvGdFIgQQxmQGN/XZPi/+5Utz/XksZl2vLaS2OBIWXrM04NrT5cljqxjjXXrfvB
-         cevJ6jCj92WbJP86oxzB49oaCSpLDOQMycidTxg2zPjoihJ52muuS1nZjzvZrTL+S49d
-         QLXhApno6nruIdPSrT+vt8DoYatlLwebh7+AGuSxLfX+AAYk12ba5Z95AEdiN3lBKJSm
-         PumHSf/TlRNG+VKKoySJSG4gpRzmf9A0Ig7TkQSK63OeKx+j6DbdBWiXyZb9VqTSkavj
-         2JgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUX3atfEN03LQCXCisXilWZsLOwGN8rzsmr9F8oCJ86InsFDp37JgqwC+FERgPONz5ud679Nm7PCyk38vZ6m9MMzaIjt1kHiTxV8noYGyZvmNf1Sq+KCv7569CljNYZXXCOu4i3ZDr5hEgi/UyEsed/kIpC9nGsqRKBvxuzp9ijbypqgdnum+RjHbUldnRJPBjyhQZhFMc7852JPF5ICvcJ7o7lGddomEm3IWs=
-X-Gm-Message-State: AOJu0Yyls+gYDsu4s1ohKJUxLEJxhbWtGXrV07bRgQ/sLIBBQaFTwhRZ
-	qU85Hf+v8k3X9AnqwA8CCgfgZtr26Nf+JrF/+s8OLZ8f66NTKoj8ADst3yaIYDx+KQjUHnOfgHK
-	xoEpYL9sTp93wpK+yj3qrvB/yEKM=
-X-Google-Smtp-Source: AGHT+IHhElSupydm9Pu8Q2cCtAhcr2G+W8uC687+2vGI6V7+dLh4KkHCNjePrtfwGAhHDTl8L3bMjI5q6uAafHbuczU=
-X-Received: by 2002:a05:6122:a11:b0:4f5:130c:bef3 with SMTP id
- 71dfb90a1353d-4f89ff3aca6mr18358968e0c.1.1722952090043; Tue, 06 Aug 2024
- 06:48:10 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D161D47AA;
+	Tue,  6 Aug 2024 13:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.91
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722952075; cv=fail; b=aqp7oNNh63VtOj2QkvCzB5RM2hDYZxtERC89VKKf2MK4VhWgsf3lhVSGQ+YZseof9v4LYrTOW47b0ysYxgvERi5WrbVneWskNbUp21ZaFt8jBKPQMKrFeXBfg3F0vG4vYqgRVWktuhvcx+7fjFl/n+SaJZNBkaBAnf7JPilSAJY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722952075; c=relaxed/simple;
+	bh=D0qLwSFECv9OWQd4m9QpT07h/bWMht6DoLCCCfEudIo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=W0ULRAA2xUliZeG6a74U+57ugY/228r9sPfIur0N+oWQIQmhk+ThWsadwbPq3ON7EI5T9Q/xqHM98P75UVrhlbMf1nD7feV2BDLYOuyNIIzD/Furfs43ORqceIQQER81gtJ974wGBArgMU3ncpjQWjfnH0LE5JX8J46etKdsfI8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=jQFILm4O; arc=fail smtp.client-ip=40.92.102.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SfLffjqrs7SUdsM/uzeSfeH3zzgDv/kn+ZfyUSD1HdquZZqD6Fd6exyN5twjx4C5exC5DydXuJu4fKWDoWFZFPc1Idy1Cms41x4RI4T8GLBTNNpwtetDpNHILzzln7YWv4nDHPRRFn0JOWRd5cGzJrkolMFrwrp3AB/3zu9YhqLM5COhqK0PeWqixM8uXTM2C/M9EtYJ8Pzt+6NP33chyToQLuNGoBlxXGy6Xv0BgqFPNdSAEwqOHOzJrpvSHkxVVfyAOidZgT5JYhypPi0jpeQBqd/0keBsYO839sMDQcRzw158iBLWEm3fhEmAOpTVgvpfzkwy/NjoMIuB9bhIDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D0qLwSFECv9OWQd4m9QpT07h/bWMht6DoLCCCfEudIo=;
+ b=JDNoe9ApzXjDE/513IwTaKZaktT/+BXWkSwPqN1b1++IhR8r4DVAuuvv9rYWh+50TjMkGUJSSQT83hOjw5vMZy1lj989WDnu7Gme95wLOKtzM6Yb3t+jWdGE7X9TWlw4zd4Fpx4qspem8XhnWmKFFcNmsk5QwUKFXnUbJrfHjvOS0dbAw9nvyhTPf8yumxLKp1MTArpRiqkNQz/IiWCOUSkpS1+PLpIeN1+IwgqVKjNlBKoHpQOqtbCnwM++sGlLWfRDty4mJixr1BEFUH9k3KW3DVdw2jnOGbHfXLnDyuXaFF+661iT0tfNh7Q1bHQNN5O7R+pRNbstj1T2liayEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D0qLwSFECv9OWQd4m9QpT07h/bWMht6DoLCCCfEudIo=;
+ b=jQFILm4O684X20plKXTVhGQth+resJwDy+dSmPNtJCZmqyyKEBYCjYme7taOKd1/9rDbAjHB+G/VhirYHJeI2dC08BBhwvOSYxvn+y9ZA8euBc6DDEQNAbxzO/gxIpYQSdNQSqXdQQbHDXsS3h3CjhT6khb9ZkERTJ24s+V1zc48xw4o7ec8XXrfLS2eoqhhxK6OpcQmJmlZcBT0OEWHOQtZIU9l3T94D+uDcpS+ZYGLf194DMdWmDbgnjIUTZN3SFsfEkh4h3VEqVnq3qkZs7TV/tWiQ7JQ/r5ieI6Of4vcwm2Zt6hvxf7c7xyHOWsdGGB+AaYM82bhw8nP0CwTbQ==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ PN0P287MB2100.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1bd::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.27; Tue, 6 Aug 2024 13:47:47 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
+ 13:47:47 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
+	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
+CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: [PATCH 1/9] HID: hid-appletb-bl: add driver for the backlight of
+ Apple Touch Bars
+Thread-Topic: [PATCH 1/9] HID: hid-appletb-bl: add driver for the backlight of
+ Apple Touch Bars
+Thread-Index: AQHa6Ac4UNDG/AUcD0C1tqLHK7a9LA==
+Date: Tue, 6 Aug 2024 13:47:47 +0000
+Message-ID: <C0F2E161-BBAD-4AF7-B39F-015A5A609CD4@live.com>
+References: <021EE0BF-93CA-4A37-863F-851078A0EFB7@live.com>
+In-Reply-To: <021EE0BF-93CA-4A37-863F-851078A0EFB7@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [2zUQohJ4MxBHBE9+g8CYoYs4EIZ9Xfc0ki+t5l2Bw/SSgkJdUZypuKaayXR+y4n9VyfE9arLOzA=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN0P287MB2100:EE_
+x-ms-office365-filtering-correlation-id: df498a4e-873e-4fb9-f666-08dcb61e5b0e
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|19110799003|461199028|8060799006|102099032|3412199025|440099028;
+x-microsoft-antispam-message-info:
+ K8FPzg8/28ktIIUtNm4dIGWjw83RIz5S4ttrfWrNe9siWOYZRTnGOUksOk2Fr5C6iso86b7ODQjE7Wk1p9inYuTtPcPP1ddvp6cl0JCibgGIgxagNMj56LGKadJBDtaf/kE6qxC5TEzTRxWoBS9MteLMUY/Fh4NK7iPHte2Qjww7u8tmG00AD9FLMxxs/3rxheEp3u3WpHSXxcJq8csnL6xPchK737XJjbX6HqzIZL2hGhmC8jx/KitKcCyC/Uddr0cFCr8rKFhHgH9rWG0raqumUgyfy4jTuCGLC5Hie2y7mpK4+AJRZTbvSCl8qXUx5z9pin88ckX25lzQGQoIMRhGHtIR7gHUfhTqAvXyJhkBncgi9mW6ITjGRG9qoeUzmnvRH0IkIRraqLw2rsZaa18VcSB/MCkHteqEJOOnm8LmgfDlRejXfKNC9/GPKm7BtFLj68q197X3dSVXHA/439hs5ZsBtbdoDNHEO7Qk4Jx4EHCn+LMoj4cpMzAwfbFQinl9lM4AqjMyafUW8GsvnHz2RRTZyzoNMA5hxqk3jex7hDvo6ByzMYONuMDAnSki+DV3gu71Hv6gW3xSeu9WObrXPdaXvJRhc/sfayCQCKpNBxXDROtkpjCHfvJ2rCKZSiu+Y/r+e4BRCDSccwmdnQ==
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?VDNiVGxBSTk5cDB4WHVWSTB0RERlM1VSR3N2RlRGUTJROVJsTmNhTVNJVFVI?=
+ =?utf-8?B?UVF5djlqSXRuQ0U2Tk10bjZ2a1RQS2t1c0ZJK3lqZnZleGJHdlhFSjA2bCty?=
+ =?utf-8?B?MDN6R0xlZFZ3NXdHa2VRekNKWUdLZVJmc2J6alArYlFGdmJzaXUxWnZPaGtx?=
+ =?utf-8?B?OWF0cUR6ck15YjYrdnpoMmt5UTRFdHFsZnkvVjU2NXJhR0JkcFd6MDNBcW5H?=
+ =?utf-8?B?VUxOSHpoRjZ1WS9pV1gwaWZpbjdsNm1TbWhGZ1ZpUDROUnJ2OEdLUU9JZ1BE?=
+ =?utf-8?B?MTNyb2dXajhFV3NiTTVOQUo0M2JyUHJKNWttamROekF0dGtJb3lvN2RuajVp?=
+ =?utf-8?B?aDNCclowckVCTmVQT0graHhDQ2RxY25lUEdPRmkxdWJkSnJlS0pYRVRTUkVm?=
+ =?utf-8?B?WmFEaWFIT0t6QS8wQWgxY3JuWHdxeWNkYkRzNjFQN0s5UFROQmtyWmhCZTlJ?=
+ =?utf-8?B?bnkwdHVQeEtaSWZvVkRnU1RlejhDcUVYTWljeDIvRG1rRzQ3azVmbHFjNmw4?=
+ =?utf-8?B?eXVocW1YVnFsV0lZdEZMRHhwb1RTTURUODVzd2grZEZNclo5MFFGNmhRN2p5?=
+ =?utf-8?B?L3BOdFNzYnIzWTZyRlB2bm52Vm1kOFFLUWlEeDVNTlA0Z0tJNFVOdEhEdm1J?=
+ =?utf-8?B?TXhOcmhiVzRJRDlISUNNN2ZMOFB4R0FNSS81cS9ETXZSMWxWU01Nbnd2V2x5?=
+ =?utf-8?B?VjMrQmpvcWdqSDZrVEw3dUFlcnFISFRJby8rTERSM0p0SFBKZFNCMWNGY29G?=
+ =?utf-8?B?TkNMTXZBS053WDFoWmVZZmVEVkYwOWRwY0I2a0JlQVgzWWJGM0FueVdhMkMr?=
+ =?utf-8?B?VWFzQ1hlUlpObW1zKzM2RFpENFJSQng2cngrbFloM1JzTGJ2djdXSGFmYy9L?=
+ =?utf-8?B?OVlMV2lVSTI3T0U4VVRWZCtjRGVYNU5odE9ZNzhQZnEzNVhVZnpJTkJ6UE00?=
+ =?utf-8?B?aitrRlBOelQ2akdZZTFQZDk2aWd2Um5udWg5bVZrdVRMTVZWZlB5Nk5jbGJW?=
+ =?utf-8?B?ZzBZYTJDSlNWQTh1Y3JJQmRuclc5U2E3WS8rSTJSam9vL3ovRGV5NkVNMmdx?=
+ =?utf-8?B?ZU5oUkNRTUhPeXMrZGppVXpSS2Q5cFFoTHNmdGp2d0F4bjV1WkhXcnlybmtR?=
+ =?utf-8?B?dW9SVVlRN2hWZStESU1RKzNaalg4Rmpnc1pjOWNncTBDeVUvZHQ0QllZYzE5?=
+ =?utf-8?B?WXhGSzNqZEZtTHVhMDNQRnl4Q3oxK0VGKy9pTWZNOTZFNTdXOWc2WE5GSDRL?=
+ =?utf-8?B?c3Zmd1dHRUdtd0pTSGlBblpDVXFYMjB5WUdDQnRNT1FFUXdYUE5VTDB4L3Qx?=
+ =?utf-8?B?b1Vzbk1GUi8rNWM4M29XemlIbXpMMDdld3kxcWE5WnNMZDh6VzNabHN3R3Bw?=
+ =?utf-8?B?Y25nVHJKSkxnODJMUkNoVDBCZmZQckdUUnBxYTVSdnh1MkRxMTgvR1pMM2Rz?=
+ =?utf-8?B?UElTU0tZT2gyazdqeC93Qll3bEFYU3Z6S0JxSVcwVGg5S2FUN2JQMWh1U2Uy?=
+ =?utf-8?B?cEs2L3hmc0ttQmhHVlZQTWdudlZtK2lrWkwrajY5SXhBTmEzLzNzMmQraE1L?=
+ =?utf-8?B?dklXOWVUNy9QZzkxemZSQmZJdXU1V0NzNTRCRTVJb2t6bjlubnBrS1hkb1A2?=
+ =?utf-8?B?WXBoWHRidjVZSTRNaDVidFNnZjRxd3Q5RlZMN1BhcUQ5VGk4eWpsRWw4ZEg4?=
+ =?utf-8?B?R2hJZzhUbFZzcjZueXZhL1ZWYmIyM3I0aGhON05XSUhiRXdYeVZ0R2hkVDhF?=
+ =?utf-8?Q?n8xqwmWc1jrsTDfXhaUpwKflPnwOnCEIe6jFrzw?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <05972F7C98F80B429D4B08D13A95A251@INDP287.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805200400.54267-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240805200400.54267-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <81ac76eb-8b43-457b-80be-c588ac4790e1@roeck-us.net>
-In-Reply-To: <81ac76eb-8b43-457b-80be-c588ac4790e1@roeck-us.net>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 6 Aug 2024 14:47:42 +0100
-Message-ID: <CA+V-a8u0dFGmNqJWuXXH3mVVTT6dWBhSr+SM7nFyu3DAeACjNA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] watchdog: Add Watchdog Timer driver for RZ/V2H(P)
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-bafef.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: df498a4e-873e-4fb9-f666-08dcb61e5b0e
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2024 13:47:47.2364
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB2100
 
-Hi Guenter,
-
-Thank you for the review.
-
-On Mon, Aug 5, 2024 at 9:34=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> w=
-rote:
->
-> On 8/5/24 13:04, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add Watchdog Timer driver for RZ/V2H(P) SoC.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v2->v3
-> > - Fixed dependency, ARCH_R9A09G011->ARCH_R9A09G057
-> > - Added dependency for PM
-> > - Added delay after de-assert operation as clks are halted temporarily
-> >    after de-assert operation
-> > - clearing WDTSR register
-> >
-> > v1->v2
-> > - Stopped using PM runtime calls in restart handler
-> > - Dropped rstc deassert from probe
-> > ---
-> >   drivers/watchdog/Kconfig     |   9 ++
-> >   drivers/watchdog/Makefile    |   1 +
-> >   drivers/watchdog/rzv2h_wdt.c | 259 ++++++++++++++++++++++++++++++++++=
-+
-> >   3 files changed, 269 insertions(+)
-> >   create mode 100644 drivers/watchdog/rzv2h_wdt.c
-> >
-> > diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> > index bae1d97cce89..684b9fe84fff 100644
-> > --- a/drivers/watchdog/Kconfig
-> > +++ b/drivers/watchdog/Kconfig
-> > @@ -953,6 +953,15 @@ config RENESAS_RZG2LWDT
-> >         This driver adds watchdog support for the integrated watchdogs =
-in the
-> >         Renesas RZ/G2L SoCs. These watchdogs can be used to reset a sys=
-tem.
-> >
-> > +config RENESAS_RZV2HWDT
-> > +     tristate "Renesas RZ/V2H(P) WDT Watchdog"
-> > +     depends on ARCH_R9A09G057 || COMPILE_TEST
-> > +     depends on PM || COMPILE_TEST
-> > +     select WATCHDOG_CORE
-> > +     help
-> > +       This driver adds watchdog support for the integrated watchdogs =
-in the
-> > +       Renesas RZ/V2H(P) SoCs. These watchdogs can be used to reset a =
-system.
-> > +
-> >   config ASPEED_WATCHDOG
-> >       tristate "Aspeed BMC watchdog support"
-> >       depends on ARCH_ASPEED || COMPILE_TEST
-> > diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-> > index b51030f035a6..ab6f2b41e38e 100644
-> > --- a/drivers/watchdog/Makefile
-> > +++ b/drivers/watchdog/Makefile
-> > @@ -86,6 +86,7 @@ obj-$(CONFIG_RENESAS_WDT) +=3D renesas_wdt.o
-> >   obj-$(CONFIG_RENESAS_RZAWDT) +=3D rza_wdt.o
-> >   obj-$(CONFIG_RENESAS_RZN1WDT) +=3D rzn1_wdt.o
-> >   obj-$(CONFIG_RENESAS_RZG2LWDT) +=3D rzg2l_wdt.o
-> > +obj-$(CONFIG_RENESAS_RZV2HWDT) +=3D rzv2h_wdt.o
-> >   obj-$(CONFIG_ASPEED_WATCHDOG) +=3D aspeed_wdt.o
-> >   obj-$(CONFIG_STM32_WATCHDOG) +=3D stm32_iwdg.o
-> >   obj-$(CONFIG_UNIPHIER_WATCHDOG) +=3D uniphier_wdt.o
-> > diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.=
-c
-> > new file mode 100644
-> > index 000000000000..b6183940b221
-> > --- /dev/null
-> > +++ b/drivers/watchdog/rzv2h_wdt.c
-> > @@ -0,0 +1,259 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Renesas RZ/V2H(P) WDT Watchdog Driver
-> > + *
-> > + * Copyright (C) 2024 Renesas Electronics Corporation.
-> > + */
-> > +#include <linux/bitops.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/io.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/pm_runtime.h>
-> > +#include <linux/reset.h>
-> > +#include <linux/units.h>
-> > +#include <linux/watchdog.h>
-> > +
-> > +#define WDTRR                        0x00    /* RW, 8  */
-> > +#define WDTCR                        0x02    /* RW, 16 */
-> > +#define WDTSR                        0x04    /* RW, 16 */
-> > +#define WDTRCR                       0x06    /* RW, 8  */
-> > +
-> > +#define WDTCR_TOPS_1024              0x00
-> > +#define WDTCR_TOPS_16384     0x03
-> > +
-> > +#define WDTCR_CKS_CLK_1              0x00
-> > +#define WDTCR_CKS_CLK_256    0x50
-> > +
-> > +#define WDTCR_RPES_0         0x300
-> > +#define WDTCR_RPES_75                0x000
-> > +
-> > +#define WDTCR_RPSS_25                0x00
-> > +#define WDTCR_RPSS_100               0x3000
-> > +
-> > +#define WDTRCR_RSTIRQS               BIT(7)
-> > +
-> > +#define CLOCK_DIV_BY_256     256
-> > +
-> > +#define WDT_DEFAULT_TIMEOUT  60U
-> > +
-> > +static bool nowayout =3D WATCHDOG_NOWAYOUT;
-> > +module_param(nowayout, bool, 0);
-> > +MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (d=
-efault=3D"
-> > +              __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
-> > +
-> > +struct rzv2h_wdt_priv {
-> > +     void __iomem *base;
-> > +     struct clk *pclk;
-> > +     struct clk *oscclk;
-> > +     struct reset_control *rstc;
-> > +     struct watchdog_device wdev;
-> > +     unsigned long oscclk_rate;
-> > +};
-> > +
-> > +static int rzv2h_wdt_ping(struct watchdog_device *wdev)
-> > +{
-> > +     struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
-> > +     static unsigned long delay;
-> > +
-> > +     writeb(0x0, priv->base + WDTRR);
-> > +     writeb(0xFF, priv->base + WDTRR);
-> > +
-> > +     /*
-> > +      * Refreshing the down-counter requires up to 4 cycles
-> > +      * of the signal for counting
-> > +      */
->
-> That doesn't explain why the delay (after pinging the watchdog) is necess=
-ary.
->
-> > +     if (!delay)
-> > +             delay =3D 4 * div64_ul(CLOCK_DIV_BY_256 * MICRO, priv->os=
-cclk_rate);
->
-> "MICRO" is 1000000UL, and CLOCK_DIV_BY_256 is 256, making this 256000000 =
-which fits
-> into 32 bit. oscclk_rate is unsigned long. Please explain the need for us=
-ing div64_ul(),
-> because I don't see it.
->
-> Besides that, please explain the benefit of storing "delay" in a static v=
-ariable
-> instead of calculating it with oscclk_rate and storing it in struct rzv2h=
-_wdt_priv.
-> This should better be a good explanation because it is very unlikely that=
- I'll accept
-> the code as written.
->
-As per the HW manual  we have, "After FFh is written to the WDT
-Refresh Register (WDTRR), refreshing the down-counter requires up to 4
-cycles of the signal for counting. To meet this requirement, complete
-writing FFh to WDTRR 4 count cycles before the ms", which I misread
-that delay is required as 4 cycles are required to reflect, but this
-isnt the case we can return as soon as FFh is written and let the HW
-to start down-counter after 4 cycles.
-
-So Ive now updated the code to drop any delay in ping operation.
-
-> > +     udelay(delay);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static void rzv2h_wdt_setup(struct watchdog_device *wdev, u16 wdtcr)
-> > +{
-> > +     struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
-> > +
-> > +     writew(wdtcr, priv->base + WDTCR);
-> > +
-> > +     writeb(0, priv->base + WDTRCR);
-> > +
-> > +     writew(0, priv->base + WDTSR);
-> > +}
-> > +
-> > +static int rzv2h_wdt_start(struct watchdog_device *wdev)
-> > +{
-> > +     struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
-> > +     int ret;
-> > +
-> > +     ret =3D reset_control_deassert(priv->rstc);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     udelay(5);
-> > +
-> > +     ret =3D pm_runtime_resume_and_get(wdev->parent);
-> > +     if (ret) {
-> > +             reset_control_assert(priv->rstc);
-> > +             return ret;
-> > +     }
-> > +
-> > +     /*
-> > +      * WDTCR
-> > +      * - CKS[7:4] - Clock Division Ratio Select - 0101b: oscclk/256
-> > +      * - RPSS[13:12] - Window Start Position Select - 11b: 100%
-> > +      * - RPES[9:8] - Window End Position Select - 11b: 0%
-> > +      * - TOPS[1:0] - Timeout Period Select - 11b: 16384 cycles (3FFFh=
-)
-> > +      */
-> > +     rzv2h_wdt_setup(wdev, WDTCR_CKS_CLK_256 | WDTCR_RPSS_100 |
-> > +                     WDTCR_RPES_0 | WDTCR_TOPS_16384);
-> > +
-> > +     rzv2h_wdt_ping(wdev);
-> > +
->
-> The need to ping the watchdog immediately after enabling it is unusual.
-> Please explain.
->
-The down counting operation starts only after the ping operation, so
-after starting the wdt a ping is issued here.
-
-> > +     return 0;
-> > +}
-> > +
-> > +static int rzv2h_wdt_stop(struct watchdog_device *wdev)
-> > +{
-> > +     struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
-> > +     int ret;
-> > +
-> > +     ret =3D pm_runtime_put(wdev->parent);
-> > +     if (ret < 0)
-> > +             return ret;
->
-> Shouldn't this be called _after_ stopping the watchdog ?
->
-Ideally this should be the reverse of start operation, hence stopping
-the clocks first and then the assert operation. I did this because
-there is a temporary halt of clock after de-assert operation. To
-handle this now I ve update start and stop callbacks to below code:
-
-static int rzv2h_wdt_start(struct watchdog_device *wdev)
-{
-    struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
-    int ret;
-
-    ret =3D pm_runtime_resume_and_get(wdev->parent);
-    if (ret)
-        return ret;
-
-    ret =3D reset_control_deassert(priv->rstc);
-    if (ret) {
-        pm_runtime_put(wdev->parent);
-        return ret;
-    }
-
-    /* delay to handle clock halt after de-assert operation */
-    udelay(3);
-
-.....
-.....
-
-    return 0;
-}
-
-static int rzv2h_wdt_stop(struct watchdog_device *wdev)
-{
-    struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
-    int ret;
-
-    ret =3D reset_control_assert(priv->rstc);
-    if (ret)
-        return ret;
-
-    ret =3D pm_runtime_put(wdev->parent);
-    if (ret < 0)
-        return ret;
-
-    return 0;
-}
-
-
-> > +
-> > +     return reset_control_assert(priv->rstc);
-> > +}
-> > +
-> > +static const struct watchdog_info rzv2h_wdt_ident =3D {
-> > +     .options =3D WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTI=
-MEOUT,
-> > +     .identity =3D "Renesas RZ/V2H WDT Watchdog",
-> > +};
-> > +
-> > +static int rzv2h_wdt_restart(struct watchdog_device *wdev,
-> > +                          unsigned long action, void *data)
-> > +{
-> > +     struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
-> > +     int ret;
-> > +
-> > +     ret =3D reset_control_deassert(priv->rstc);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     /* delay to handle clock halt after de-assert operation */
-> > +     udelay(5);
-> > +
-> > +     ret =3D clk_enable(priv->pclk);
-> > +     if (ret) {
-> > +             reset_control_assert(priv->rstc);
-> > +             return ret;
-> > +     }
-> > +
-> > +     ret =3D clk_enable(priv->oscclk);
-> > +     if (ret) {
-> > +             clk_disable(priv->pclk);
-> > +             reset_control_assert(priv->rstc);
-> > +             return ret;
-> > +     }
-> > +
-> Please explain the need for enabling the clocks here.
->
-When using the below from user space, while the watchdog service is
-not running, the below directly lands into restart callback, (please
-let me know if my understanding is wrong here)
-
-reboot(LINUX_REBOOT_CMD_RESTART);
-
-Ive now updated restart with below, so that we dont touch clocks if
-they are already ON,
-
-    if (!watchdog_active(wdev)) {
-        ret =3D clk_enable(priv->pclk);
-        if (ret)
-            return ret;
-
-        ret =3D clk_enable(priv->oscclk);
-        if (ret) {
-            clk_disable(priv->pclk);
-            return ret;
-        }
-    }
-
-    if (!watchdog_active(wdev))
-        ret =3D reset_control_deassert(priv->rstc);
-    else
-        ret =3D reset_control_reset(priv->rstc);
-    if (ret) {
-        clk_disable(priv->oscclk);
-        clk_disable(priv->pclk);
-        return ret;
-    }
-
-    /* delay to handle clock halt after de-assert operation */
-    udelay(3);
-
-
-> > +     /*
-> > +      * WDTCR
-> > +      * - CKS[7:4] - Clock Division Ratio Select - 0000b: oscclk/1
-> > +      * - RPSS[13:12] - Window Start Position Select - 00b: 25%
-> > +      * - RPES[9:8] - Window End Position Select - 00b: 75%
-> > +      * - TOPS[1:0] - Timeout Period Select - 00b: 1024 cycles (03FFh)
-> > +      */
-> > +     rzv2h_wdt_setup(wdev, WDTCR_CKS_CLK_1 | WDTCR_RPSS_25 |
-> > +                     WDTCR_RPES_75 | WDTCR_TOPS_1024);
-> > +     rzv2h_wdt_ping(wdev);
-> > +
-> Why is the ping here necessary ?
->
-The down counting starts after the refresh operation, hence the WDT is ping=
-ed.
-
-> > +     /* wait for underflow to trigger... */
-> > +     mdelay(500);
->
-> Does that really take 500 ms ?
->
-Agreed this can be reduced as the WDT is configured to trigger asap.
-
-> > +
-> > +     return 0;
->
->
-> > +}
-> > +
-> > +static const struct watchdog_ops rzv2h_wdt_ops =3D {
-> > +     .owner =3D THIS_MODULE,
-> > +     .start =3D rzv2h_wdt_start,
-> > +     .stop =3D rzv2h_wdt_stop,
-> > +     .ping =3D rzv2h_wdt_ping,
-> > +     .restart =3D rzv2h_wdt_restart,
-> > +};
-> > +
-> > +static int rzv2h_wdt_probe(struct platform_device *pdev)
-> > +{
-> > +     struct device *dev =3D &pdev->dev;
-> > +     struct rzv2h_wdt_priv *priv;
-> > +     unsigned long rate;
-> > +     int ret;
-> > +
-> > +     priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > +     if (!priv)
-> > +             return -ENOMEM;
-> > +
-> > +     priv->base =3D devm_platform_ioremap_resource(pdev, 0);
-> > +     if (IS_ERR(priv->base))
-> > +             return PTR_ERR(priv->base);
-> > +
-> > +     priv->pclk =3D devm_clk_get_prepared(&pdev->dev, "pclk");
-> > +     if (IS_ERR(priv->pclk))
-> > +             return dev_err_probe(&pdev->dev, PTR_ERR(priv->pclk), "no=
- pclk");
-> > +
-> > +     priv->oscclk =3D devm_clk_get_prepared(&pdev->dev, "oscclk");
-> > +     if (IS_ERR(priv->oscclk))
-> > +             return dev_err_probe(&pdev->dev, PTR_ERR(priv->oscclk), "=
-no oscclk");
-> > +
-> > +     priv->oscclk_rate =3D clk_get_rate(priv->oscclk);
-> > +     if (!priv->oscclk_rate)
-> > +             return dev_err_probe(&pdev->dev, -EINVAL, "oscclk rate is=
- 0");
-> > +
-> > +     priv->rstc =3D devm_reset_control_get_exclusive(&pdev->dev, 16383=
-NULL);
-> > +     if (IS_ERR(priv->rstc))
-> > +             return dev_err_probe(&pdev->dev, PTR_ERR(priv->rstc),
-> > +                                  "failed to get cpg reset");
-> > +
-> > +     rate =3D priv->oscclk_rate / 256;
-> > +     priv->wdev.max_hw_heartbeat_ms =3D (1000 * 16383) / rate;
->
-> Not accounting to rounding, this translates to
->                 =3D (1000 * 16383) / (clk_rate / 256)
->                 =3D (1000 * 16383 * 256) / clk_rate
->
-> Why the added complexity ?
->
-Agreed, I will update the above.
-
-> Also, what is the value of storing oscclk_rate instead of the calculated =
-delay
-> in the private data structure ?
->
-Agreed, as mentioned above I no longer need storing the oscclk_rate in
-priv structure as I have dropped adding delay in ping operation.
-
-Cheers,
-Prabhakar
+RnJvbTogS2VyZW0gS2FyYWJheSA8a2VrcmJ5QGdtYWlsLmNvbT4NCg0KVGhpcyBjb21taXQgYWRk
+cyBhIGRyaXZlciBmb3IgdGhlIGJhY2tsaWdodCBvZiBBcHBsZSBUb3VjaCBCYXJzIG9uIHg4Ng0K
+TWFjcy4gTm90ZSB0aGF0IGN1cnJlbnRseSBvbmx5IFQyIE1hY3MgYXJlIHN1cHBvcnRlZC4NCg0K
+VGhpcyBkcml2ZXIgaXMgYmFzZWQgb24gcHJldmlvdXMgd29yayBkb25lIGJ5IFJvbmFsZCBUc2No
+YWzDpHINCjxyb25hbGRAaW5ub3ZhdGlvbi5jaD4uDQoNClNpZ25lZC1vZmYtYnk6IEtlcmVtIEth
+cmFiYXkgPGtla3JieUBnbWFpbC5jb20+DQpTaWduZWQtb2ZmLWJ5OiBBZGl0eWEgR2FyZyA8Z2Fy
+Z2FkaXR5YTA4QGxpdmUuY29tPg0KLS0tDQogTUFJTlRBSU5FUlMgICAgICAgICAgICAgICAgICB8
+ICAgNiArDQogZHJpdmVycy9oaWQvS2NvbmZpZyAgICAgICAgICB8ICAxMCArKw0KIGRyaXZlcnMv
+aGlkL01ha2VmaWxlICAgICAgICAgfCAgIDEgKw0KIGRyaXZlcnMvaGlkL2hpZC1hcHBsZXRiLWJs
+LmMgfCAyMDYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCiBkcml2ZXJzL2hp
+ZC9oaWQtcXVpcmtzLmMgICAgIHwgICA0ICstDQogNSBmaWxlcyBjaGFuZ2VkLCAyMjYgaW5zZXJ0
+aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2hpZC9o
+aWQtYXBwbGV0Yi1ibC5jDQoNCmRpZmYgLS1naXQgYS9NQUlOVEFJTkVSUyBiL01BSU5UQUlORVJT
+DQppbmRleCA4NzY2ZjNlNWUuLmFjMjdmNDFkNCAxMDA2NDQNCi0tLSBhL01BSU5UQUlORVJTDQor
+KysgYi9NQUlOVEFJTkVSUw0KQEAgLTk5MzEsNiArOTkzMSwxMiBAQCBGOglpbmNsdWRlL2xpbnV4
+L3BtLmgNCiBGOglpbmNsdWRlL2xpbnV4L3N1c3BlbmQuaA0KIEY6CWtlcm5lbC9wb3dlci8NCiAN
+CitISUQgQVBQTEUgVE9VQ0ggQkFSIERSSVZFUlMNCitNOglLZXJlbSBLYXJhYmF5IDxrZWtyYnlA
+Z21haWwuY29tPg0KK0w6CWxpbnV4LWlucHV0QHZnZXIua2VybmVsLm9yZw0KK1M6CU1haW50YWlu
+ZWQNCitGOglkcml2ZXJzL2hpZC9oaWQtYXBwbGV0Yi0qDQorDQogSElEIENPUkUgTEFZRVINCiBN
+OglKaXJpIEtvc2luYSA8amlrb3NAa2VybmVsLm9yZz4NCiBNOglCZW5qYW1pbiBUaXNzb2lyZXMg
+PGJlbnRpc3NAa2VybmVsLm9yZz4NCmRpZmYgLS1naXQgYS9kcml2ZXJzL2hpZC9LY29uZmlnIGIv
+ZHJpdmVycy9oaWQvS2NvbmZpZw0KaW5kZXggMDg0NDZjODllLi40OTg4YzFmYjIgMTAwNjQ0DQot
+LS0gYS9kcml2ZXJzL2hpZC9LY29uZmlnDQorKysgYi9kcml2ZXJzL2hpZC9LY29uZmlnDQpAQCAt
+MTQ4LDYgKzE0OCwxNiBAQCBjb25maWcgSElEX0FQUExFSVINCiANCiAJU2F5IFkgaGVyZSBpZiB5
+b3Ugd2FudCBzdXBwb3J0IGZvciBBcHBsZSBpbmZyYXJlZCByZW1vdGUgY29udHJvbC4NCiANCitj
+b25maWcgSElEX0FQUExFVEJfQkwNCisJdHJpc3RhdGUgIkFwcGxlIFRvdWNoIEJhciBCYWNrbGln
+aHQiDQorCWRlcGVuZHMgb24gQkFDS0xJR0hUX0NMQVNTX0RFVklDRQ0KKwloZWxwDQorCSAgU2F5
+IFkgaGVyZSBpZiB5b3Ugd2FudCBzdXBwb3J0IGZvciB0aGUgYmFja2xpZ2h0IG9mIFRvdWNoIEJh
+cnMgb24geDg2DQorCSAgTWFjQm9vayBQcm9zLg0KKw0KKwkgIFRvIGNvbXBpbGUgdGhpcyBkcml2
+ZXIgYXMgYSBtb2R1bGUsIGNob29zZSBNIGhlcmU6IHRoZQ0KKwkgIG1vZHVsZSB3aWxsIGJlIGNh
+bGxlZCBoaWQtYXBwbGV0Yi1ibC4NCisNCiBjb25maWcgSElEX0FTVVMNCiAJdHJpc3RhdGUgIkFz
+dXMiDQogCWRlcGVuZHMgb24gVVNCX0hJRA0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvaGlkL01ha2Vm
+aWxlIGIvZHJpdmVycy9oaWQvTWFrZWZpbGUNCmluZGV4IGU0MGYxZGRlYi4uMWQ4MjVhNDc0IDEw
+MDY0NA0KLS0tIGEvZHJpdmVycy9oaWQvTWFrZWZpbGUNCisrKyBiL2RyaXZlcnMvaGlkL01ha2Vm
+aWxlDQpAQCAtMjksNiArMjksNyBAQCBvYmotJChDT05GSUdfSElEX0FMUFMpCQkrPSBoaWQtYWxw
+cy5vDQogb2JqLSQoQ09ORklHX0hJRF9BQ1JVWCkJCSs9IGhpZC1heGZmLm8NCiBvYmotJChDT05G
+SUdfSElEX0FQUExFKQkJKz0gaGlkLWFwcGxlLm8NCiBvYmotJChDT05GSUdfSElEX0FQUExFSVIp
+CSs9IGhpZC1hcHBsZWlyLm8NCitvYmotJChDT05GSUdfSElEX0FQUExFVEJfQkwpCSs9IGhpZC1h
+cHBsZXRiLWJsLm8NCiBvYmotJChDT05GSUdfSElEX0NSRUFUSVZFX1NCMDU0MCkJKz0gaGlkLWNy
+ZWF0aXZlLXNiMDU0MC5vDQogb2JqLSQoQ09ORklHX0hJRF9BU1VTKQkJKz0gaGlkLWFzdXMubw0K
+IG9iai0kKENPTkZJR19ISURfQVVSRUFMKQkrPSBoaWQtYXVyZWFsLm8NCmRpZmYgLS1naXQgYS9k
+cml2ZXJzL2hpZC9oaWQtYXBwbGV0Yi1ibC5jIGIvZHJpdmVycy9oaWQvaGlkLWFwcGxldGItYmwu
+Yw0KbmV3IGZpbGUgbW9kZSAxMDA2NDQNCmluZGV4IDAwMDAwMDAwMC4uMDBiYmU0NWRmDQotLS0g
+L2Rldi9udWxsDQorKysgYi9kcml2ZXJzL2hpZC9oaWQtYXBwbGV0Yi1ibC5jDQpAQCAtMCwwICsx
+LDIwNiBAQA0KKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wDQorLyoNCisgKiBB
+cHBsZSBUb3VjaCBCYXIgQmFja2xpZ2h0IERyaXZlcg0KKyAqDQorICogQ29weXJpZ2h0IChjKSAy
+MDE3LTIwMTggUm9uYWxkIFRzY2hhbMOkcg0KKyAqIENvcHlyaWdodCAoYykgMjAyMi0yMDIzIEtl
+cmVtIEthcmFiYXkgPGtla3JieUBnbWFpbC5jb20+DQorICovDQorDQorI2RlZmluZSBwcl9mbXQo
+Zm10KSBLQlVJTERfTU9ETkFNRSAiOiAiIGZtdA0KKw0KKyNpbmNsdWRlIDxsaW51eC9oaWQuaD4N
+CisjaW5jbHVkZSA8bGludXgvYmFja2xpZ2h0Lmg+DQorDQorI2luY2x1ZGUgImhpZC1pZHMuaCIN
+CisNCisjZGVmaW5lIEFQUExFVEJfQkxfT04JCQkxDQorI2RlZmluZSBBUFBMRVRCX0JMX0RJTQkJ
+CTMNCisjZGVmaW5lIEFQUExFVEJfQkxfT0ZGCQkJNA0KKw0KKyNkZWZpbmUgSElEX1VQX0FQUExF
+VkVORE9SX1RCX0JMCTB4ZmYxMjAwMDANCisNCisjZGVmaW5lIEhJRF9WRF9BUFBMRV9UQl9CUklH
+SFRORVNTCTB4ZmYxMjAwMDENCisjZGVmaW5lIEhJRF9VU0FHRV9BVVgxCQkJMHhmZjEyMDAyMA0K
+KyNkZWZpbmUgSElEX1VTQUdFX0JSSUdIVE5FU1MJCTB4ZmYxMjAwMjENCisNCitzdGF0aWMgaW50
+IGFwcGxldGJfYmxfZGVmX2JyaWdodG5lc3MgPSAyOw0KK21vZHVsZV9wYXJhbV9uYW1lZChicmln
+aHRuZXNzLCBhcHBsZXRiX2JsX2RlZl9icmlnaHRuZXNzLCBpbnQsIDA0NDQpOw0KK01PRFVMRV9Q
+QVJNX0RFU0MoYnJpZ2h0bmVzcywgIkRlZmF1bHQgYnJpZ2h0bmVzczpcbiINCisJCQkgIiAgICAw
+IC0gVG91Y2hiYXIgaXMgb2ZmXG4iDQorCQkJICIgICAgMSAtIERpbSBicmlnaHRuZXNzXG4iDQor
+CQkJICIgICAgWzJdIC0gRnVsbCBicmlnaHRuZXNzIik7DQorDQorc3RydWN0IGFwcGxldGJfYmwg
+ew0KKwlzdHJ1Y3QgaGlkX2ZpZWxkICphdXgxX2ZpZWxkLCAqYnJpZ2h0bmVzc19maWVsZDsNCisJ
+c3RydWN0IGJhY2tsaWdodF9kZXZpY2UgKmJkZXY7DQorDQorCWJvb2wgZnVsbF9vbjsNCit9Ow0K
+Kw0KK2NvbnN0IHU4IGFwcGxldGJfYmxfYnJpZ2h0bmVzc19tYXBbXSA9IHsNCisJQVBQTEVUQl9C
+TF9PRkYsDQorCUFQUExFVEJfQkxfRElNLA0KKwlBUFBMRVRCX0JMX09ODQorfTsNCisNCitzdGF0
+aWMgaW50IGFwcGxldGJfYmxfc2V0X2JyaWdodG5lc3Moc3RydWN0IGFwcGxldGJfYmwgKmJsLCB1
+OCBicmlnaHRuZXNzKQ0KK3sNCisJc3RydWN0IGhpZF9yZXBvcnQgKnJlcG9ydCA9IGJsLT5icmln
+aHRuZXNzX2ZpZWxkLT5yZXBvcnQ7DQorCXN0cnVjdCBoaWRfZGV2aWNlICpoZGV2ID0gcmVwb3J0
+LT5kZXZpY2U7DQorCWludCByZXQ7DQorDQorCXJldCA9IGhpZF9zZXRfZmllbGQoYmwtPmF1eDFf
+ZmllbGQsIDAsIDEpOw0KKwlpZiAocmV0KSB7DQorCQloaWRfZXJyKGhkZXYsICJGYWlsZWQgdG8g
+c2V0IGF1eGlsaWFyeSBmaWVsZCAoJXBlKVxuIiwgRVJSX1BUUihyZXQpKTsNCisJCXJldHVybiBy
+ZXQ7DQorCX0NCisNCisJcmV0ID0gaGlkX3NldF9maWVsZChibC0+YnJpZ2h0bmVzc19maWVsZCwg
+MCwgYnJpZ2h0bmVzcyk7DQorCWlmIChyZXQpIHsNCisJCWhpZF9lcnIoaGRldiwgIkZhaWxlZCB0
+byBzZXQgYnJpZ2h0bmVzcyBmaWVsZCAoJXBlKVxuIiwgRVJSX1BUUihyZXQpKTsNCisJCXJldHVy
+biByZXQ7DQorCX0NCisNCisJaWYgKCFibC0+ZnVsbF9vbikgew0KKwkJcmV0ID0gaGlkX2h3X3Bv
+d2VyKGhkZXYsIFBNX0hJTlRfRlVMTE9OKTsNCisJCWlmIChyZXQgPCAwKSB7DQorCQkJaGlkX2Vy
+cihoZGV2LCAiRGV2aWNlIGRpZG4ndCBwb3dlciBvbiAoJXBlKVxuIiwgRVJSX1BUUihyZXQpKTsN
+CisJCQlyZXR1cm4gcmV0Ow0KKwkJfQ0KKw0KKwkJYmwtPmZ1bGxfb24gPSB0cnVlOw0KKwl9DQor
+DQorCWhpZF9od19yZXF1ZXN0KGhkZXYsIHJlcG9ydCwgSElEX1JFUV9TRVRfUkVQT1JUKTsNCisN
+CisJaWYgKGJyaWdodG5lc3MgPT0gQVBQTEVUQl9CTF9PRkYpIHsNCisJCWhpZF9od19wb3dlciho
+ZGV2LCBQTV9ISU5UX05PUk1BTCk7DQorCQlibC0+ZnVsbF9vbiA9IGZhbHNlOw0KKwl9DQorDQor
+CXJldHVybiAwOw0KK30NCisNCitzdGF0aWMgaW50IGFwcGxldGJfYmxfdXBkYXRlX3N0YXR1cyhz
+dHJ1Y3QgYmFja2xpZ2h0X2RldmljZSAqYmRldikNCit7DQorCXN0cnVjdCBhcHBsZXRiX2JsICpi
+bCA9IGJsX2dldF9kYXRhKGJkZXYpOw0KKwl1MTYgYnJpZ2h0bmVzczsNCisNCisJaWYgKGJkZXYt
+PnByb3BzLnN0YXRlICYgQkxfQ09SRV9TVVNQRU5ERUQpDQorCQlicmlnaHRuZXNzID0gMDsNCisJ
+ZWxzZQ0KKwkJYnJpZ2h0bmVzcyA9IGJhY2tsaWdodF9nZXRfYnJpZ2h0bmVzcyhiZGV2KTsNCisN
+CisJcmV0dXJuIGFwcGxldGJfYmxfc2V0X2JyaWdodG5lc3MoYmwsIGFwcGxldGJfYmxfYnJpZ2h0
+bmVzc19tYXBbYnJpZ2h0bmVzc10pOw0KK30NCisNCitzdGF0aWMgY29uc3Qgc3RydWN0IGJhY2ts
+aWdodF9vcHMgYXBwbGV0Yl9ibF9iYWNrbGlnaHRfb3BzID0gew0KKwkub3B0aW9ucyA9IEJMX0NP
+UkVfU1VTUEVORFJFU1VNRSwNCisJLnVwZGF0ZV9zdGF0dXMgPSBhcHBsZXRiX2JsX3VwZGF0ZV9z
+dGF0dXMsDQorfTsNCisNCitzdGF0aWMgaW50IGFwcGxldGJfYmxfcHJvYmUoc3RydWN0IGhpZF9k
+ZXZpY2UgKmhkZXYsIGNvbnN0IHN0cnVjdCBoaWRfZGV2aWNlX2lkICppZCkNCit7DQorCXN0cnVj
+dCBoaWRfZmllbGQgKmF1eDFfZmllbGQsICpicmlnaHRuZXNzX2ZpZWxkOw0KKwlzdHJ1Y3QgYmFj
+a2xpZ2h0X3Byb3BlcnRpZXMgYmxfcHJvcHMgPSB7IDAgfTsNCisJc3RydWN0IGRldmljZSAqZGV2
+ID0gJmhkZXYtPmRldjsNCisJc3RydWN0IGFwcGxldGJfYmwgKmJsOw0KKwlpbnQgcmV0Ow0KKw0K
+KwlyZXQgPSBoaWRfcGFyc2UoaGRldik7DQorCWlmIChyZXQpDQorCQlyZXR1cm4gZGV2X2Vycl9w
+cm9iZShkZXYsIHJldCwgIkhJRCBwYXJzZSBmYWlsZWRcbiIpOw0KKw0KKwlhdXgxX2ZpZWxkID0g
+aGlkX2ZpbmRfZmllbGQoaGRldiwgSElEX0ZFQVRVUkVfUkVQT1JULA0KKwkJCQkgICAgSElEX1ZE
+X0FQUExFX1RCX0JSSUdIVE5FU1MsIEhJRF9VU0FHRV9BVVgxKTsNCisNCisJYnJpZ2h0bmVzc19m
+aWVsZCA9IGhpZF9maW5kX2ZpZWxkKGhkZXYsIEhJRF9GRUFUVVJFX1JFUE9SVCwNCisJCQkJCSAg
+SElEX1ZEX0FQUExFX1RCX0JSSUdIVE5FU1MsIEhJRF9VU0FHRV9CUklHSFRORVNTKTsNCisNCisJ
+aWYgKCFhdXgxX2ZpZWxkIHx8ICFicmlnaHRuZXNzX2ZpZWxkKQ0KKwkJcmV0dXJuIC1FTk9ERVY7
+DQorDQorCWlmIChhdXgxX2ZpZWxkLT5yZXBvcnQgIT0gYnJpZ2h0bmVzc19maWVsZC0+cmVwb3J0
+KQ0KKwkJcmV0dXJuIGRldl9lcnJfcHJvYmUoZGV2LCAtRU5PREVWLCAiRW5jb3VudGVyZWQgdW5l
+eHBlY3RlZCByZXBvcnQgc3RydWN0dXJlXG4iKTsNCisNCisJYmwgPSBkZXZtX2t6YWxsb2MoZGV2
+LCBzaXplb2YoKmJsKSwgR0ZQX0tFUk5FTCk7DQorCWlmICghYmwpDQorCQlyZXR1cm4gLUVOT01F
+TTsNCisNCisJcmV0ID0gaGlkX2h3X3N0YXJ0KGhkZXYsIEhJRF9DT05ORUNUX0RSSVZFUik7DQor
+CWlmIChyZXQpDQorCQlyZXR1cm4gZGV2X2Vycl9wcm9iZShkZXYsIHJldCwgIkhJRCBoYXJkd2Fy
+ZSBzdGFydCBmYWlsZWRcbiIpOw0KKw0KKwlyZXQgPSBoaWRfaHdfb3BlbihoZGV2KTsNCisJaWYg
+KHJldCkgew0KKwkJZGV2X2Vycl9wcm9iZShkZXYsIHJldCwgIkhJRCBoYXJkd2FyZSBvcGVuIGZh
+aWxlZFxuIik7DQorCQlnb3RvIHN0b3BfaHc7DQorCX0NCisNCisJYmwtPmF1eDFfZmllbGQgPSBh
+dXgxX2ZpZWxkOw0KKwlibC0+YnJpZ2h0bmVzc19maWVsZCA9IGJyaWdodG5lc3NfZmllbGQ7DQor
+DQorCWlmIChhcHBsZXRiX2JsX2RlZl9icmlnaHRuZXNzID09IDApDQorCQlyZXQgPSBhcHBsZXRi
+X2JsX3NldF9icmlnaHRuZXNzKGJsLCBBUFBMRVRCX0JMX09GRik7DQorCWVsc2UgaWYgKGFwcGxl
+dGJfYmxfZGVmX2JyaWdodG5lc3MgPT0gMSkNCisJCXJldCA9IGFwcGxldGJfYmxfc2V0X2JyaWdo
+dG5lc3MoYmwsIEFQUExFVEJfQkxfRElNKTsNCisJZWxzZQ0KKwkJcmV0ID0gYXBwbGV0Yl9ibF9z
+ZXRfYnJpZ2h0bmVzcyhibCwgQVBQTEVUQl9CTF9PTik7DQorDQorCWlmIChyZXQpIHsNCisJCWRl
+dl9lcnJfcHJvYmUoZGV2LCByZXQsICJGYWlsZWQgdG8gc2V0IHRvdWNoIGJhciBicmlnaHRuZXNz
+IHRvIG9mZlxuIik7DQorCQlnb3RvIGNsb3NlX2h3Ow0KKwl9DQorDQorCWJsX3Byb3BzLnR5cGUg
+PSBCQUNLTElHSFRfUkFXOw0KKwlibF9wcm9wcy5tYXhfYnJpZ2h0bmVzcyA9IEFSUkFZX1NJWkUo
+YXBwbGV0Yl9ibF9icmlnaHRuZXNzX21hcCkgLSAxOw0KKw0KKwlibC0+YmRldiA9IGRldm1fYmFj
+a2xpZ2h0X2RldmljZV9yZWdpc3RlcihkZXYsICJhcHBsZXRiX2JhY2tsaWdodCIsIGRldiwgYmws
+DQorCQkJCQkJICAmYXBwbGV0Yl9ibF9iYWNrbGlnaHRfb3BzLCAmYmxfcHJvcHMpOw0KKwlpZiAo
+SVNfRVJSKGJsLT5iZGV2KSkgew0KKwkJcmV0ID0gUFRSX0VSUihibC0+YmRldik7DQorCQlkZXZf
+ZXJyX3Byb2JlKGRldiwgcmV0LCAiRmFpbGVkIHRvIHJlZ2lzdGVyIGJhY2tsaWdodCBkZXZpY2Vc
+biIpOw0KKwkJZ290byBjbG9zZV9odzsNCisJfQ0KKw0KKwloaWRfc2V0X2RydmRhdGEoaGRldiwg
+YmwpOw0KKw0KKwlyZXR1cm4gMDsNCisNCitjbG9zZV9odzoNCisJaGlkX2h3X2Nsb3NlKGhkZXYp
+Ow0KK3N0b3BfaHc6DQorCWhpZF9od19zdG9wKGhkZXYpOw0KKw0KKwlyZXR1cm4gcmV0Ow0KK30N
+CisNCitzdGF0aWMgdm9pZCBhcHBsZXRiX2JsX3JlbW92ZShzdHJ1Y3QgaGlkX2RldmljZSAqaGRl
+dikNCit7DQorCXN0cnVjdCBhcHBsZXRiX2JsICpibCA9IGhpZF9nZXRfZHJ2ZGF0YShoZGV2KTsN
+CisNCisJYXBwbGV0Yl9ibF9zZXRfYnJpZ2h0bmVzcyhibCwgQVBQTEVUQl9CTF9PRkYpOw0KKw0K
+KwloaWRfaHdfY2xvc2UoaGRldik7DQorCWhpZF9od19zdG9wKGhkZXYpOw0KK30NCisNCitzdGF0
+aWMgY29uc3Qgc3RydWN0IGhpZF9kZXZpY2VfaWQgYXBwbGV0Yl9ibF9oaWRfaWRzW10gPSB7DQor
+CS8qIE1hY0Jvb2sgUHJvJ3MgMjAxOCwgMjAxOSwgd2l0aCBUMiBjaGlwOiBpQnJpZGdlIERGUiBC
+cmlnaHRuZXNzICovDQorCXsgSElEX1VTQl9ERVZJQ0UoVVNCX1ZFTkRPUl9JRF9BUFBMRSwgVVNC
+X0RFVklDRV9JRF9BUFBMRV9UT1VDSEJBUl9CQUNLTElHSFQpIH0sDQorCXsgfQ0KK307DQorTU9E
+VUxFX0RFVklDRV9UQUJMRShoaWQsIGFwcGxldGJfYmxfaGlkX2lkcyk7DQorDQorc3RhdGljIHN0
+cnVjdCBoaWRfZHJpdmVyIGFwcGxldGJfYmxfaGlkX2RyaXZlciA9IHsNCisJLm5hbWUgPSAiaGlk
+LWFwcGxldGItYmwiLA0KKwkuaWRfdGFibGUgPSBhcHBsZXRiX2JsX2hpZF9pZHMsDQorCS5wcm9i
+ZSA9IGFwcGxldGJfYmxfcHJvYmUsDQorCS5yZW1vdmUgPSBhcHBsZXRiX2JsX3JlbW92ZSwNCit9
+Ow0KK21vZHVsZV9oaWRfZHJpdmVyKGFwcGxldGJfYmxfaGlkX2RyaXZlcik7DQorDQorTU9EVUxF
+X0FVVEhPUigiUm9uYWxkIFRzY2hhbMOkciIpOw0KK01PRFVMRV9BVVRIT1IoIktlcmVtIEthcmFi
+YXkgPGtla3JieUBnbWFpbC5jb20+Iik7DQorTU9EVUxFX0RFU0NSSVBUSU9OKCJNYWNCb29rUHJv
+IFRvdWNoIEJhciBCYWNrbGlnaHQgRHJpdmVyIik7DQorTU9EVUxFX0xJQ0VOU0UoIkdQTCIpOw0K
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvaGlkL2hpZC1xdWlya3MuYyBiL2RyaXZlcnMvaGlkL2hpZC1x
+dWlya3MuYw0KaW5kZXggZTBiYmYwYzYzLi44MThkNDFhMzUgMTAwNjQ0DQotLS0gYS9kcml2ZXJz
+L2hpZC9oaWQtcXVpcmtzLmMNCisrKyBiL2RyaXZlcnMvaGlkL2hpZC1xdWlya3MuYw0KQEAgLTMy
+OCw3ICszMjgsNiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGhpZF9kZXZpY2VfaWQgaGlkX2hhdmVf
+c3BlY2lhbF9kcml2ZXJbXSA9IHsNCiAJeyBISURfVVNCX0RFVklDRShVU0JfVkVORE9SX0lEX0FQ
+UExFLCBVU0JfREVWSUNFX0lEX0FQUExFX0dFWVNFUjFfVFBfT05MWSkgfSwNCiAJeyBISURfVVNC
+X0RFVklDRShVU0JfVkVORE9SX0lEX0FQUExFLCBVU0JfREVWSUNFX0lEX0FQUExFX01BR0lDX0tF
+WUJPQVJEXzIwMjEpIH0sDQogCXsgSElEX1VTQl9ERVZJQ0UoVVNCX1ZFTkRPUl9JRF9BUFBMRSwg
+VVNCX0RFVklDRV9JRF9BUFBMRV9NQUdJQ19LRVlCT0FSRF9GSU5HRVJQUklOVF8yMDIxKSB9LA0K
+LQl7IEhJRF9VU0JfREVWSUNFKFVTQl9WRU5ET1JfSURfQVBQTEUsIFVTQl9ERVZJQ0VfSURfQVBQ
+TEVfVE9VQ0hCQVJfQkFDS0xJR0hUKSB9LA0KIAl7IEhJRF9VU0JfREVWSUNFKFVTQl9WRU5ET1Jf
+SURfQVBQTEUsIFVTQl9ERVZJQ0VfSURfQVBQTEVfVE9VQ0hCQVJfRElTUExBWSkgfSwNCiAjZW5k
+aWYNCiAjaWYgSVNfRU5BQkxFRChDT05GSUdfSElEX0FQUExFSVIpDQpAQCAtMzM4LDYgKzMzNyw5
+IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgaGlkX2RldmljZV9pZCBoaWRfaGF2ZV9zcGVjaWFsX2Ry
+aXZlcltdID0gew0KIAl7IEhJRF9VU0JfREVWSUNFKFVTQl9WRU5ET1JfSURfQVBQTEUsIFVTQl9E
+RVZJQ0VfSURfQVBQTEVfSVJDT05UUk9MNCkgfSwNCiAJeyBISURfVVNCX0RFVklDRShVU0JfVkVO
+RE9SX0lEX0FQUExFLCBVU0JfREVWSUNFX0lEX0FQUExFX0lSQ09OVFJPTDUpIH0sDQogI2VuZGlm
+DQorI2lmIElTX0VOQUJMRUQoQ09ORklHX0hJRF9BUFBMRVRCX0JMKQ0KKwl7IEhJRF9VU0JfREVW
+SUNFKFVTQl9WRU5ET1JfSURfQVBQTEUsIFVTQl9ERVZJQ0VfSURfQVBQTEVfVE9VQ0hCQVJfQkFD
+S0xJR0hUKSB9LA0KKyNlbmRpZg0KICNpZiBJU19FTkFCTEVEKENPTkZJR19ISURfQVNVUykNCiAJ
+eyBISURfSTJDX0RFVklDRShVU0JfVkVORE9SX0lEX0FTVVNURUssIFVTQl9ERVZJQ0VfSURfQVNV
+U1RFS19JMkNfS0VZQk9BUkQpIH0sDQogCXsgSElEX0kyQ19ERVZJQ0UoVVNCX1ZFTkRPUl9JRF9B
+U1VTVEVLLCBVU0JfREVWSUNFX0lEX0FTVVNURUtfSTJDX1RPVUNIUEFEKSB9LA0KLS0gDQoyLjQz
+LjANCg0K
 
