@@ -1,137 +1,130 @@
-Return-Path: <linux-kernel+bounces-276003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20474948D19
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:48:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8779948CD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9628E1F22A6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:48:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A3D9283874
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A011C37AB;
-	Tue,  6 Aug 2024 10:47:46 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA07C1BE875;
+	Tue,  6 Aug 2024 10:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eOF/5z63"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827F01C2321;
-	Tue,  6 Aug 2024 10:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396B81BE852;
+	Tue,  6 Aug 2024 10:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722941266; cv=none; b=gsJV8YNIStpvEHsaZQa/UmRb4/X2TyaGAPj/n6WMPCmt2MtAGLU2xNOP237CsYgv0A+EHLxwuZWnex4wFI0eYiPyiQ1mPv9j4U0K0IxqtHVO/TgXX7Spi1cUIlPP1I82qsZL3tVCkqaWrByDdnCvZpWuuC7ba/YrPKHZnRId20c=
+	t=1722940104; cv=none; b=N7/RJGspK3avzZBB/MBwqbGlHYNRlIJ9thOQ9QhG/jT+SNh+xwKlFAL4IvsMbaDZxI5x1exdKN5D+EfOk5vkQixrBRT+R7mU+AO6ZoLlcJTJdci80oMWVVooE1MtBVxZuSyVLU9V6aAAXX8nVnjp/JhpC6LbwuPi6czEJYzQPis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722941266; c=relaxed/simple;
-	bh=G6B1/BrdV5xtz9U9lJX6IlnXxyM5OmUZ0gZB6H4vRFU=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=cxHA7L3yIPrC1CqpsZxEwM1sEWZoCYVQYC7PDr8n1rZ4qEOnYLPIVKDMT4YkPq9Qg4Qsiu/qZSDI+iGn6vCXx3PpRPGE91mJ2YsmLs7JPsJ4De7Q60veVjkWBS4Y1+eRI/UbD5bcXS+7v3e+NooxkOAM7/foV8pD2l6immwDy3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 28605200E65;
-	Tue,  6 Aug 2024 12:47:41 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E1C27200E5A;
-	Tue,  6 Aug 2024 12:47:40 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 321E2183487B;
-	Tue,  6 Aug 2024 18:47:39 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: vkoul@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shengjiu.wang@gmail.com,
-	Xiubo.Lee@gmail.com,
-	festevam@gmail.com,
-	nicoleotsuka@gmail.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [RFC PATCH 6/6] ASoC: fsl_easrc: register m2m platform device
-Date: Tue,  6 Aug 2024 18:26:43 +0800
-Message-Id: <1722940003-20126-7-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1722940003-20126-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1722940003-20126-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1722940104; c=relaxed/simple;
+	bh=EOfE/ebGBtf74dVOWosTb1GOhybI3Ox0SBCawLRaCoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DF0GrFZXikv0dssyo6jKyiJjEuDGt70Un0HQ9k469lhHIbekJbMw88r7Z1SHDMdJyEsClQBGa6Hswy9dvV1jlATU2pmNVk7nDou3mSEj/d7uCvo2qIIzjtlOSmoQfvqlg0E55jml+4rZCTtcbDE8Io/TyBfLHzLV/lm7UVw13Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eOF/5z63; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a728f74c23dso55110266b.1;
+        Tue, 06 Aug 2024 03:28:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722940100; x=1723544900; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UCjUVgAD+QJaA2D+lUO0OlTYuB0Hq3DzdOOGhevVtH0=;
+        b=eOF/5z637hf+kH8imK9S7XbQvbFiCFNN01QmcAoUGhRAZp+j0UmQtQqAPfF/zlqR3R
+         FLdHVpJK5P0hKcbKc8ZjnBrnqTPauBc9Qv0uQWmvi9o7caUopfn1LYSiitawBDDiz82m
+         ppOwieYyj61MQDxkBHRUaVfMEhCE3pP0ErKxiAsXfmigVevlx+MoSO6mQk+fphAS488j
+         Ajg/uKlFzvtl7MHCT5zmbvHsQte8HvVvWtemMz/01wvp/iHs1YcH2mMEgFPx9X44lJIW
+         kmDJRMAUrCXdqKOth96PXPbKARmNjZtbJveYa4oMn4JnbrjgRn3ZrCeau5KLaQgYLk8R
+         6b6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722940100; x=1723544900;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UCjUVgAD+QJaA2D+lUO0OlTYuB0Hq3DzdOOGhevVtH0=;
+        b=tFuOwDKlpGeV+a3/UuOj/SE9TdvMQd/fpFKMJTdgCBBY7QGEtl/I2jxCr1Pw0ig4St
+         0NrIiWgpQllybz8kxmxyWp1cjf7HiFEQdr1RIrZiAj5cPFvxM2ixJNPOcI1ceZCbykE0
+         Bk91NMJZJ6FOl+iYj5rz06+JxFrirSD0bAk3FN2RWeOJ8ogJ6PO3Ta40ObQlvp0pPa3t
+         0Ts1TIjF82swdVij3nDlJ4PlelV3vMBRCKqr8V32d3Zpv0WBI/FxfR1EE1WfobtI5zb1
+         8+6UXEkhsX2aTXJD/MEfMeztACIUyM0i4sHsvK/PmEbDcKh3ey2hrEsvcWO1vaHdpRwY
+         XlHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUCRUe1wfhzWQCoiXNYkcKCCRNFEzqZ+kKFcwJvNSOxOFU0Otfi0zoIzvDp3rqN+gJU/QGNwtss0w8Jq++Y+RGTJ7y0rOTjyZmkeLKU3a0o0ScgorAKkU9bGqWfDKvwIQHoLGQ
+X-Gm-Message-State: AOJu0YwhZGm36tAULoF/fzACuDnbKDuxMQXBpyS0uUrLooIS0U5POSG7
+	CbppvifZ0dyxu0m0BY7SWfW/Z74EvEvn6tJWFNqw9/SCiSpeZSC8bzsoD+nd5X8=
+X-Google-Smtp-Source: AGHT+IEt/cUUCVUWP3fXZhXdOB0/5qvGanQLCmKshHZRnKBQXnTNEG4+a6ZKjkqhp7eIKZ0+DtFK5A==
+X-Received: by 2002:a17:907:c2a:b0:a7a:c106:364f with SMTP id a640c23a62f3a-a7dc506c508mr1081841366b.43.1722940099279;
+        Tue, 06 Aug 2024 03:28:19 -0700 (PDT)
+Received: from fedora.iskraemeco.si ([193.77.86.250])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3d09sm541145166b.17.2024.08.06.03.28.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 03:28:18 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH] netfilter: nf_tables: Add __percpu annotation to *stats pointer in nf_tables_updchain()
+Date: Tue,  6 Aug 2024 12:26:58 +0200
+Message-ID: <20240806102808.804619-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Register m2m platform device,that user can
-use M2M feature.
+Compiling nf_tables_api.c results in several sparse warnings:
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+nf_tables_api.c:2740:23: warning: incorrect type in assignment (different address spaces)
+nf_tables_api.c:2752:38: warning: incorrect type in assignment (different address spaces)
+nf_tables_api.c:2798:21: warning: incorrect type in argument 1 (different address spaces)
+
+Add __percpu annotation to *stats pointer to fix these warnings.
+
+Found by GCC's named address space checks.
+
+There were no changes in the resulting object files.
+
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Jozsef Kadlecsik <kadlec@netfilter.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
 ---
- sound/soc/fsl/fsl_easrc.c | 33 +++++++++++++++++++++++++++++++--
- 1 file changed, 31 insertions(+), 2 deletions(-)
+ net/netfilter/nf_tables_api.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/fsl/fsl_easrc.c b/sound/soc/fsl/fsl_easrc.c
-index 959a8e2dd716..98adbae082fa 100644
---- a/sound/soc/fsl/fsl_easrc.c
-+++ b/sound/soc/fsl/fsl_easrc.c
-@@ -2202,6 +2202,12 @@ static int fsl_easrc_probe(struct platform_device *pdev)
- 		goto err_pm_disable;
- 	}
- 
-+	ret = fsl_asrc_m2m_init(easrc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to init m2m device %d\n", ret);
-+		return ret;
-+	}
-+
- 	return 0;
- 
- err_pm_disable:
-@@ -2211,6 +2217,10 @@ static int fsl_easrc_probe(struct platform_device *pdev)
- 
- static void fsl_easrc_remove(struct platform_device *pdev)
- {
-+	struct fsl_asrc *easrc = dev_get_drvdata(&pdev->dev);
-+
-+	fsl_asrc_m2m_exit(easrc);
-+
- 	pm_runtime_disable(&pdev->dev);
- }
- 
-@@ -2311,10 +2321,29 @@ static int fsl_easrc_runtime_resume(struct device *dev)
- 	return ret;
- }
- 
-+static int fsl_easrc_suspend(struct device *dev)
-+{
-+	struct fsl_asrc *easrc = dev_get_drvdata(dev);
-+	int ret;
-+
-+	fsl_asrc_m2m_suspend(easrc);
-+	ret = pm_runtime_force_suspend(dev);
-+	return ret;
-+}
-+
-+static int fsl_easrc_resume(struct device *dev)
-+{
-+	struct fsl_asrc *easrc = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = pm_runtime_force_resume(dev);
-+	fsl_asrc_m2m_resume(easrc);
-+	return ret;
-+}
-+
- static const struct dev_pm_ops fsl_easrc_pm_ops = {
- 	RUNTIME_PM_OPS(fsl_easrc_runtime_suspend, fsl_easrc_runtime_resume, NULL)
--	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
--				pm_runtime_force_resume)
-+	SYSTEM_SLEEP_PM_OPS(fsl_easrc_suspend, fsl_easrc_resume)
- };
- 
- static struct platform_driver fsl_easrc_driver = {
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 481ee78e77bc..805227131f10 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -2642,7 +2642,7 @@ static int nf_tables_updchain(struct nft_ctx *ctx, u8 genmask, u8 policy,
+ 	struct nft_table *table = ctx->table;
+ 	struct nft_chain *chain = ctx->chain;
+ 	struct nft_chain_hook hook = {};
+-	struct nft_stats *stats = NULL;
++	struct nft_stats __percpu *stats = NULL;
+ 	struct nft_hook *h, *next;
+ 	struct nf_hook_ops *ops;
+ 	struct nft_trans *trans;
 -- 
-2.34.1
+2.45.2
 
 
