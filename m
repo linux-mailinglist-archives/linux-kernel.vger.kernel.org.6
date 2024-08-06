@@ -1,109 +1,188 @@
-Return-Path: <linux-kernel+bounces-275633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 364909487CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:06:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866949487CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE71B1F24005
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:06:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 976FFB2084C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6180357CBA;
-	Tue,  6 Aug 2024 03:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Kxcbkszu"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9F56F06D;
+	Tue,  6 Aug 2024 03:06:43 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5381E3BBC9
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03F946426;
+	Tue,  6 Aug 2024 03:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722913593; cv=none; b=XrTOKPWpznrwbPgFKk3Td+E/9ZkM8FkSuNustWf/VqGHkdyb6cBjwWB6AIVS+qvQV6hfAF9pMyOtUlzE2XCdF5C3PDABc4ocz0elQHFSTS68NfWZH3yTviZ84MGGgrBTIONOHFhBxqkHENJAqQWGZzHC83MxyhDd124kNs/x5ek=
+	t=1722913602; cv=none; b=h8CmtkDU+m3WTqBXVA/zTbI0E91UwSKVxScrSlAwgKwwuMiXj/Wz2A348rLvnNkPkhnzfP+NCq3Q/mDU9hYczzzgYGsHjVpUrQ0a3lR8P0Lbt4Ww0mu08oJcEC4ZBnxeVN66KZi4sr8Eug44yCK7iv9dn1rtki8n3EWESnKx744=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722913593; c=relaxed/simple;
-	bh=z2RduF5SrSCqYnNFY3ic96xP4oa47G8J68FG6Cq48kI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kldmWIbUKRF3Z1U/b+gWBF1FJNK9dI5qMe7GCrTvt1PvCPnj7/TR1qGziKSZrvyz+/oR4hNls6VCv4Sc4+THNLi9PHDj/IlYql55LvIkIrlfLdoqhwRwiARgmjJEVMwn+1iaMdRRwfsXkQ2xSJ2SIIniNeb1MhivtDxywaAsc7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Kxcbkszu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-111-165.bstnma.fios.verizon.net [173.48.111.165])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 47636Jep028166
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 5 Aug 2024 23:06:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1722913582; bh=VmaAGTx1wD/W53aSiZJmwqSRUde/TdzrR3XDoX7JRVQ=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=Kxcbkszu3ob/vTjugSeK2rDLUNNrxWZ1IY/tOKH+MEk7/Zd89M2nSAoDLxP34y7C/
-	 AH7kFAHly4P9vlTGn3AZlEgRdGiRKpjVL7qGrbp9QSbnCorieg2GH5hKEEz6lHbuEM
-	 kJ1l+ezTPJTj0k6KjJShtFBFwPY9ccmtYlpvEbfKVD0zn7q1mFwvu5DvbGKrNIhZ/O
-	 r6ZxEb4hSCPgMj6mDDDo6S5IKHwgdD4muz0Lu2jSkODOeBjfCQ1Xoed085v8axbhMB
-	 Yh8HYQsSEq8bhdO8U4oD9tmaz7fwZL9Piu82HeyFpB9W/ZfDpvjQH4joPE7r8+p+8a
-	 MrCqAH44fmBkQ==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 60C5715C0330; Mon, 05 Aug 2024 23:06:19 -0400 (EDT)
-Date: Mon, 5 Aug 2024 23:06:19 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: LidongLI <wirelessdonghack@gmail.com>
-Cc: gregkh@linuxfoundation.org, kvalo@kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-        mark.esler@canonical.com, stf_xl@wp.pl
-Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer
- Dereference&Use-After-Free Vulnerability
-Message-ID: <20240806030619.GB1008477@mit.edu>
-References: <2024080359-getaway-concave-623e@gregkh>
- <20240806015904.1004435-1-wirelessdonghack@gmail.com>
+	s=arc-20240116; t=1722913602; c=relaxed/simple;
+	bh=smMDiTbaBRj4i9fHbX1UswDY5rROW12ggIkv10ZoIpQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JojuyyOjdWJa5p7Hls74a/dCFuhhDsxKjtAiqbq/bkznKiKl0u5/T3BVtXIO+AH5bOueVIxO9zTvg5Y1hEALDsfdtMYXhvatCw3cH4Gmtd40ATv0c0dr0zW6bDQeCg6ojuBE+AyXRBEkLNF18DSdy4CzTTMu2wzISHPnI26AGxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WdJ7c1wlkz1xtxv;
+	Tue,  6 Aug 2024 11:04:44 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id EDB9A1A016C;
+	Tue,  6 Aug 2024 11:06:31 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 6 Aug 2024 11:06:30 +0800
+Message-ID: <0c69ef28-26d8-4b6e-fa78-2211a7b84eca@huawei.com>
+Date: Tue, 6 Aug 2024 11:06:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806015904.1004435-1-wirelessdonghack@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH] uprobes: Improve scalability by reducing the contention
+ on siglock
+To: Oleg Nesterov <oleg@redhat.com>
+CC: <mhiramat@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
+	<acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>
+References: <20240801082407.1618451-1-liaochang1@huawei.com>
+ <20240801140639.GE4038@redhat.com>
+ <51a756b7-3c2f-9aeb-1418-b38b74108ee6@huawei.com>
+ <20240802092406.GC12343@redhat.com>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <20240802092406.GC12343@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On Tue, Aug 06, 2024 at 09:59:04AM +0800, LidongLI wrote:
+
+
+在 2024/8/2 17:24, Oleg Nesterov 写道:
+> On 08/02, Liao, Chang wrote:
+>>
+>>
+>> 在 2024/8/1 22:06, Oleg Nesterov 写道:
+>>> On 08/01, Liao Chang wrote:
+>>>>
+>>>> @@ -2276,22 +2277,25 @@ static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
+>>>>  	int err = 0;
+>>>>
+>>>>  	uprobe = utask->active_uprobe;
+>>>> -	if (utask->state == UTASK_SSTEP_ACK)
+>>>> +	switch (utask->state) {
+>>>> +	case UTASK_SSTEP_ACK:
+>>>>  		err = arch_uprobe_post_xol(&uprobe->arch, regs);
+>>>> -	else if (utask->state == UTASK_SSTEP_TRAPPED)
+>>>> +		break;
+>>>> +	case UTASK_SSTEP_TRAPPED:
+>>>>  		arch_uprobe_abort_xol(&uprobe->arch, regs);
+>>>> -	else
+>>>> +		fallthrough;
+>>>> +	case UTASK_SSTEP_DENY_SIGNAL:
+>>>> +		set_tsk_thread_flag(current, TIF_SIGPENDING);
+>>>> +		break;
+>>>> +	default:
+>>>>  		WARN_ON_ONCE(1);
+>>>> +	}
+>>>
+>>> Liao, at first glance this change looks "obviously wrong" to me.
+>>
+>> Oleg. Did i overlook some thing obvious here?
 > 
-> Yes, as you mentioned, it requires users to create their own udev
-> rules, which is not common among Ubuntu personal users. However, in
-> some non-personal user scenarios, they must pre-add udev rules to
-> meet their needs. A simple example: in some Ubuntu embedded Linux
-> scenarios, we found that when starting a wireless hotspot,
-> developers must configure udev rules to ensure a stable connection,
-> enable auto-loading of drivers, or auto-run or write USB-based
-> auto-configuration scripts.
+> OK, lets suppose uprobe_deny_signal() sets UTASK_SSTEP_DENY_SIGNAL.
+> 
+> In this case handle_singlestep() will only set TIF_SIGPENDING and
+> do nothing else. This is wrong, either _post_xol() or _abort_xol()
+> must be called.
+> 
+> But I think handle_singlestep() will never hit this case. In the
+> likely case uprobe_post_sstep_notifier() will replace _DENY_SIGNAL
+> with _ACK, and this means that handle_singlestep() won't restore
+> TIF_SIGPENDING cleared by uprobe_deny_signal().
 
-Yes, but when the user is setting up their own udev rules, they are
-editing them as root (e.g, "sudo nano /etc/udev/rules.d/").
+You're absolutely right. handle_signlestep() has chance to handle _DENY_SIGANL
+unless it followed by setting TIF_UPROBE in uprobe_deny_signal(). This means
+_DENY_SIGNAL is likey replaced during next uprobe single-stepping.
 
-But in your exploit scenario, the *attacker* needs to be able to
-insert a specific udev rule to allow the attack to succeed.  So that
-means that the attacker needs to be able to manipulate the user to
-insert a udev rule which allows the attacker to acarry out the attack,
-or the user has left the udev rule file in such a way that it is
-writeable by the attacker.  But in that case, the attacker can just
-edit the udev rule to arrange to run some script as root, ad it's
-already game over.
+I believe introducing _DENY_SIGNAL as the immediate state between UTASK_SSTEP
+and UTASK_SSTEP_ACK is still necessary. This allow uprobe_post_sstep_notifier()
+to correctly restore TIF_SIGPENDING upon the completion of single-step.
 
-Your argument is roughly the same as "sudo is a vulerability because
-the attacker could run (or trick the user to run) the command 'sudo
-chmod 4755 /bin/bash'.  Well yes, if the attacker can arrange to run a
-particular command as root, it's game over.  But that's not a security
-bug, but rather a bug in the gullible user who has root access.
+A revised implementation would look like this:
 
-Similarly, if the user has a insecure configuration --- say, suppose
-the user has run the command "sudo chmod 4755 /bin/bash", it does not
-follow that this is a reason to request a CVE for /bin/bash.  It's not
-really a security bug in /bin/bash, but a bug in how /bin/bash was
-confiured.
+------------------%<------------------
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -1980,6 +1980,7 @@ bool uprobe_deny_signal(void)
 
-Cheers,
+        if (task_sigpending(t)) {
+                clear_tsk_thread_flag(t, TIF_SIGPENDING);
++               utask->state = UTASK_SSTEP_DENY_SIGNAL;
 
-						- Ted
+                if (__fatal_signal_pending(t) || arch_uprobe_xol_was_trapped(t)) {
+                        utask->state = UTASK_SSTEP_TRAPPED;
+@@ -2276,22 +2277,23 @@ static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
+        int err = 0;
+
+        uprobe = utask->active_uprobe;
+-       if (utask->state == UTASK_SSTEP_ACK)
++       switch (utask->state) {
++       case UTASK_SSTEP_ACK:
+                err = arch_uprobe_post_xol(&uprobe->arch, regs);
+-       else if (utask->state == UTASK_SSTEP_TRAPPED)
++               break;
++       case UTASK_SSTEP_TRAPPED:
+                arch_uprobe_abort_xol(&uprobe->arch, regs);
+-       else
++               set_thread_flag(TIF_SIGPENDING);
++               break;
++       default:
+                WARN_ON_ONCE(1);
++       }
+
+        put_uprobe(uprobe);
+        utask->active_uprobe = NULL;
+        utask->state = UTASK_RUNNING;
+        xol_free_insn_slot(current);
+
+-       spin_lock_irq(&current->sighand->siglock);
+-       recalc_sigpending(); /* see uprobe_deny_signal() */
+-       spin_unlock_irq(&current->sighand->siglock);
+-
+        if (unlikely(err)) {
+                uprobe_warn(current, "execute the probed insn, sending SIGILL.");
+                force_sig(SIGILL);
+@@ -2351,6 +2353,8 @@ int uprobe_post_sstep_notifier(struct pt_regs *regs)
+                /* task is currently not uprobed */
+                return 0;
+
++       if (utask->state == UTASK_SSTEP_DENY_SIGNAL)
++               set_thread_flag(TIF_SIGPENDING);
+        utask->state = UTASK_SSTEP_ACK;
+        set_thread_flag(TIF_UPROBE);
+        return 1;
+
+------------------>%------------------
+
+> 
+> Oleg.
+> 
+> 
+
+-- 
+BR
+Liao, Chang
 
