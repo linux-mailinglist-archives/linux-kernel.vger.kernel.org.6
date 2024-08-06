@@ -1,179 +1,124 @@
-Return-Path: <linux-kernel+bounces-276736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F8EF9497B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:45:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B549497B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50D7A1C22124
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:45:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB09B1F24710
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6C27346F;
-	Tue,  6 Aug 2024 18:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8939B7346F;
+	Tue,  6 Aug 2024 18:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MryIgUM5"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="A3hY3LRn"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656CC33086;
-	Tue,  6 Aug 2024 18:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FCC8F77
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 18:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722969907; cv=none; b=JjvJEDzKZC+3aK0vL7CK1Eh1OKR5LnEJhmit+mau5MqVjz/H2Ii+m09hc4qNL9p2mzyNs7msQnjap5Y3cV/P2EUWRb+gzNXx2E3GvSCM05QYo8B3Es0/YPukNA/gvJdsR2DJb6upxckCoXOLepl4LmiRtxwhGNU2tLF4ZAmaPYo=
+	t=1722970035; cv=none; b=jsR/xlHoi1v/KScrpdBoIeGeN9AB9qM2rCNqIQnel0THavng3++cwFALRBLxbnK/lBfG2jgQFs19nTNGB0rOfbNPCtNtXufxvGYDW4emiGGy6JAGkLh+TRVUzLq/mdzNFDa7kEkCta+/2B5AOqgNZCaQTN/O0g01X8c6LRFM9M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722969907; c=relaxed/simple;
-	bh=MksspJt2OKMM69Yrantzwk9v9PcjMC/A1WzVqiZAm8w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EAr/X6IVouObWza/pyFUWpfZqDpAbd1fvQJv0I3eT4PSqNA3mee0deMI4MqJO+3mLjAcLx/J1e1U4ppsUyLemmg6ZpCfJCvYFv5+1PK+Kr7XfHl+vLpq9X8XhMz7ThV1nP7YG53VK3Xkgwc9JG9qxtC3LSawF4ySoEv8r0ezaow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MryIgUM5; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3687fd09251so553125f8f.0;
-        Tue, 06 Aug 2024 11:45:05 -0700 (PDT)
+	s=arc-20240116; t=1722970035; c=relaxed/simple;
+	bh=zYZ+0OnIejKYMoOB1WVZaKNvgF0bAI3uhOiw1siPpnQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MhNQQgwB5z12W2cLy7rIIsAiAOi+GTEVWjrJbiLypBPTt3jMEXK7RVcYeFpncQOkEu5m7jbRO8aYtTleG4aomEb8/H7t2XfBmKEosboDEe3BnhCr0LxNGNIAt1m405FG7TwwDdOdVo5KP7f1xgfCxkCjJXI9/8yIyU9ckq+y5l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=A3hY3LRn; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a3b866ebc9so1231967a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 11:47:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722969903; x=1723574703; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v+u1OFVQHObJoguvXtjDzPNwznZJF1zF62hr/WPNRsY=;
-        b=MryIgUM5YQH0i2xCuLmjjEsRKaOe2TZVfqz+fRi8Su4cyp3vR0009tGcW4VAjInR0a
-         4JToD6MoaXkHqDY+akVy1n+IX1gIT4VDg/r0A0UQl2USU7H2avyb9ELzMgm683KQuXnU
-         0nyP+pJHP9xZmXIZBtFMZpiXOhVBC5hGUeiqlQIwoy59CmnqLqZVL7deyakiYFzarBGA
-         bD2SL9PeSmNfBG62Kh6qbSFECZW1EkNiEQDMz961YIMAmiUlxx+zt3lOdaWGO2UwdsKr
-         S7FZo86akJNXdqaChKmE8YHa48it1ee8dYXV3d0KhboWVnyNKY7EJqpJboaOWhtUW1T/
-         0ZNA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722970030; x=1723574830; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6MAznyqpvb8spFxkoKW0gjqJWNHEy/LCmc62o5EfxKk=;
+        b=A3hY3LRnJ9oG1/eX3R/3yF0ME3c+b6fsblsnCSRGUEeXngk5vs00wa9f5eDyY68Pp2
+         0cJHIOTZUDRESszOFdClYbdEqgkH4LwIMtZujF96t3JkRyvOFm4yDUco8Gq/t9l/qxzD
+         WFX8YJdgRxatG8UCMEG0461oSxgtijlse/dLqKdHz1SseXZe2Pn0bL+bg0lkHVEamp4F
+         roVEXXwic/GSzkNFW6ku8Ln4Ip26t/6UzIsQgz5FLIKCro6N7H9PXnGCpzAAUe+fyWI5
+         YGc1dLWpr9gzNww1uwTcyrLGQluAM+SwVbr3aowPFNOYORjpotdmPEvnBksrIRRU2sSX
+         Df0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722969903; x=1723574703;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v+u1OFVQHObJoguvXtjDzPNwznZJF1zF62hr/WPNRsY=;
-        b=a7o7jDBmUprs4P4cRDZwV/RY30rxk6u1fUZh5g/hcfpLIX5sUzgDeM2nZTfIsLYPEZ
-         5YrtmxpPPU/7QTq1VMgmmkHwDNaiorPBhPyKRX/xUA4F2H7BSWnxfdUgTIOnW5WB9lq9
-         vyfZrENpgYTFVdPa3WU9UFOs2awNuuX0jsOvHQNX8eZxBdNor8evsGKYFo8bkzblMDKp
-         u2zGfAdvc7OsFGGp+UO4Mx2hiYcw2ngpsbCXSFqa333cDEHLpl7/rGkNyQ4yW1wkgzum
-         QN74vFF/I6HzflvNGwh9lSyV5oLazDIetiCDPtBBCiRCInDhgPMm+q1koZJuZaT8pvUs
-         4u4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUchkITY5wgVAVUtXP4b/NmHeq4NYbs+Oa03/xATSbrB4Q64K1JRVuf01ew7IUfIffAteesJRV7PMU12S5wUa/67xwGhW7SCqXZ4Wg5TuZbJG9nslUKLbQJmN25SYNumrBg
-X-Gm-Message-State: AOJu0YwjIIdta697rm0x8d5haRClcIB1pIq1hsPhfM5GpbHd2WOYercQ
-	XZ4PkisFugGt93L/EAlM6nRNU92BsFfmihxII1nqbyNNFJONgbAVl1NtrPdayvUnVZv1UOxaJgJ
-	Dkm3aKXku4wYVYi48ZQRQXAuGE2qE/aon
-X-Google-Smtp-Source: AGHT+IHQbiLxLHtymrNy+OahMY6SNPajRcpz2Vds9fPFsNIQjOamRr9F1Xpj/oyyzoEJEOXfutTs5YgZylQnerU4doQ=
-X-Received: by 2002:a5d:4c82:0:b0:36b:b24b:d14f with SMTP id
- ffacd0b85a97d-36bbc0fca5dmr10199002f8f.36.1722969903285; Tue, 06 Aug 2024
- 11:45:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722970030; x=1723574830;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6MAznyqpvb8spFxkoKW0gjqJWNHEy/LCmc62o5EfxKk=;
+        b=ZNGHr9+APrgk21mveMaUw6GNP2tDGPMTWy6aoLxA60+OU2GASJNBpdg6SFEcgCFF0r
+         WKUFrgPExeGzyJu129H1qHdzV8S/2CisMVZ2lhm1z42rxxsDmNoPjNkj5vL31xTp7VBy
+         52eVYfInUFo4BvVPn+XySiWpiu7hDzodBMdUV4rCOK/tx3WVG6CBb1HCSQTr0n8IgVzS
+         YGYmf0UbvEWt+BkNAV30HgJKaectt3CQ15tnuY7ti8+EmOEnB3lobrQSwB8NnkTluY2V
+         Xgno2IDqPgzx70j9mINcmDnFL1PSTJBnUhzF1juXVYp8fBwLm8cWgGHC1IcIGpCi9fmW
+         ck9g==
+X-Forwarded-Encrypted: i=1; AJvYcCW9WKmo8Dlfek2KUKJ3ajoq9Rgslligydlq7Ky1H3OeMwlCJIBWkEVfu7OlsABRtQ3f7H9YH9Jh6oQo7vVMVw8McRo0vIpzYYF8Kfp9
+X-Gm-Message-State: AOJu0YyVazDGPImzA7gF1g21ri/mqudrYCp9R52mhaCTRXH4UtTj4+sZ
+	oJJV3Hhz8Ny+7vQI6KOxAcqKTb+UJ35+arKD5VYI3QPjp1EengOzVBl2KZMvBOc=
+X-Google-Smtp-Source: AGHT+IG1qfGVbDM/hX3rH5zzwv3xKuLb799kAVcT/8qvdW2M66Ak8RK7dscO8iCSSxuW5OPapbnoZg==
+X-Received: by 2002:a17:906:794d:b0:a7d:2429:dc16 with SMTP id a640c23a62f3a-a7dc5107ce6mr1042915066b.65.1722970030427;
+        Tue, 06 Aug 2024 11:47:10 -0700 (PDT)
+Received: from blmsp ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e80ea8sm572780666b.183.2024.08.06.11.47.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 11:47:09 -0700 (PDT)
+Date: Tue, 6 Aug 2024 20:47:09 +0200
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+To: Nishanth Menon <nm@ti.com>
+Cc: Tero Kristo <kristo@kernel.org>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Vibhore Vardhan <vibhore@ti.com>, 
+	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>, 
+	Georgi Vlaev <g-vlaev@ti.com>, Akashdeep Kaur <a-kaur@ti.com>
+Subject: Re: [PATCH v8 1/3] firmware: ti_sci: Introduce Power Management Ops
+Message-ID: <6zk5auljbsjnimtrftr6se2jrhcibidc2oq2qpdc7yncauvui7@peyzkaszsm2c>
+References: <20240801195422.2296347-1-msp@baylibre.com>
+ <20240801195422.2296347-2-msp@baylibre.com>
+ <20240806153912.sqsirnic5eb7witi@unsealed>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZrCZS6nisraEqehw@jlelli-thinkpadt14gen4.remote.csb>
- <ZrECsnSJWDS7jFUu@krava> <CAADnVQLMPPavJQR6JFsi3dtaaLHB816JN4HCV_TFWohJ61D+wQ@mail.gmail.com>
- <ZrIj9jkXqpKXRuS7@krava>
-In-Reply-To: <ZrIj9jkXqpKXRuS7@krava>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 6 Aug 2024 11:44:52 -0700
-Message-ID: <CAADnVQ+NpPtFOrvD0o2F8npCpZwPrLf4dX8h8Rt96uwM+crQcQ@mail.gmail.com>
-Subject: Re: NULL pointer deref when running BPF monitor program (6.11.0-rc1)
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Artem Savkov <asavkov@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240806153912.sqsirnic5eb7witi@unsealed>
 
-On Tue, Aug 6, 2024 at 6:24=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrote=
-:
->
-> > Jiri,
-> >
-> > the verifier removes the check because it assumes that pointers
-> > passed by the kernel into tracepoint are valid and trusted.
-> > In this case:
-> >         trace_sched_pi_setprio(p, pi_task);
-> >
-> > pi_task can be NULL.
-> >
-> > We cannot make all tracepoint pointers to be PTR_TRUSTED | PTR_MAYBE_NU=
-LL
-> > by default, since it will break a bunch of progs.
-> > Instead we can annotate this tracepoint arg as __nullable and
-> > teach the verifier to recognize such special arguments of tracepoints.
->
-> ok, so you mean to be able to mark it in event header like:
->
->   TRACE_EVENT(sched_pi_setprio,
->         TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task __n=
-ullable),
->
-> I guess we could make pahole to emit DECL_TAG for that argument,
-> but I'm not sure how to propagate that __nullable info to pahole
->
-> while wondering about that, I tried the direct fix below ;-)
+Hi Nishanth,
 
-We don't need to rush such a hack below.
-No need to add decl_tag and change pahole either.
-The arg name is already vmlinux BTF:
-[51371] FUNC_PROTO '(anon)' ret_type_id=3D0 vlen=3D3
-        '__data' type_id=3D61
-        'tsk' type_id=3D77
-        'pi_task' type_id=3D77
-[51372] FUNC '__bpf_trace_sched_pi_setprio' type_id=3D51371 linkage=3Dstati=
-c
+On Tue, Aug 06, 2024 at 10:39:12AM GMT, Nishanth Menon wrote:
+> On 21:54-20240801, Markus Schneider-Pargmann wrote:
+> > From: Dave Gerlach <d-gerlach@ti.com>
+> [...]
+> 
+> > +	pmops->lpm_wake_reason = ti_sci_msg_cmd_lpm_wake_reason;
+> 
+> did you miss populating the rest of the pm ops?
+> 	See https://lore.kernel.org/all/202408031302.28NpPykP-lkp@intel.com/
 
-just need to rename "pi_task" to "pi_task__nullable"
-and teach the verifier.
+No, I didn't miss populating the pmops.
 
+set_latency_constraint() and set_device_constraint() are only added to
+pmops once the firmware capabilities are added in the next patch.
+set_io_isolation() and prepare_sleep() are not added to pmops as the
+usage outside of ti_sci.c is not planned. These are only used for
+suspend/resume in the third patch.
 
-> jirka
->
->
-> ---
-> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> index 95426d5b634e..1a20bbdead64 100644
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -6377,6 +6377,25 @@ int btf_ctx_arg_offset(const struct btf *btf, cons=
-t struct btf_type *func_proto,
->         return off;
->  }
->
-> +static bool is_tracing_prog_raw_tp(const struct bpf_prog *prog, const ch=
-ar *name)
-> +{
-> +       struct btf *btf =3D prog->aux->attach_btf;
-> +       const struct btf_type *t;
-> +       const char *tname;
-> +
-> +       if (prog->expected_attach_type !=3D BPF_TRACE_RAW_TP)
-> +               return false;
-> +
-> +       t =3D btf_type_by_id(btf, prog->aux->attach_btf_id);
-> +       if (!t)
-> +               return false;
-> +
-> +       tname =3D btf_name_by_offset(btf, t->name_off);
-> +       if (!tname)
-> +               return false;
-> +       return !strcmp(tname, name);
-> +}
-> +
->  bool btf_ctx_access(int off, int size, enum bpf_access_type type,
->                     const struct bpf_prog *prog,
->                     struct bpf_insn_access_aux *info)
-> @@ -6544,6 +6563,10 @@ bool btf_ctx_access(int off, int size, enum bpf_ac=
-cess_type type,
->                 }
->         }
->
-> +       /* Second argument of sched_pi_setprio tracepoint can be null */
-> +       if (is_tracing_prog_raw_tp(prog, "btf_trace_sched_pi_setprio") &&=
- arg =3D=3D 1)
-> +               info->reg_type |=3D PTR_MAYBE_NULL;
-> +
->         info->btf =3D btf;
->         info->btf_id =3D t->type;
->         t =3D btf_type_by_id(btf, t->type);
+I will rearrange the patches and integrate the functions required for
+suspend/resume with the suspend/resume patch to avoid any build
+warnings.
+
+Best
+Markus
+
+> It might be better to introduce the APIs one at a time?
+> 
+> -- 
+> Regards,
+> Nishanth Menon
+> Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
