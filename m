@@ -1,216 +1,278 @@
-Return-Path: <linux-kernel+bounces-276808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54E2B9498A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:53:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D3C69498A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7662C1C21682
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:53:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCE622831E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425E0154BFE;
-	Tue,  6 Aug 2024 19:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBE71509A5;
+	Tue,  6 Aug 2024 19:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MDl3p4rP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="hFzXxG54"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9D118D64E;
-	Tue,  6 Aug 2024 19:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C5A145B1C
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 19:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722973992; cv=none; b=Jl7fXXKfFziZX7IUz2QTzLoSZO+T3h/g3G/eX9Ygk+hSOnuoy3J7E4x1E/PMStd20MLjzG65JNePWMcLfIWpYtx3Q1booBehNrBEBVTGgi7hgF+1gOYvZlqnpHxcbkeSuTgTN3pEammO4131lymZnSggjmj+ZTnFS80bux2JHwc=
+	t=1722974075; cv=none; b=s/UqV8p2Vse067lC7flHJf+RWxq3njxeJuHZEzyqoh4cbEwn+xhtSeRQs4AZvZmdg0emfZQrvPsCCaBkqQ4/WyCI7JwTR7fXbvSiJ2hqtmK0m8IdlnSdm5zCNs5YvrJyw0U3T7w9gHiKnbwrjE29m0UQ058Lx0ujjoNeL+yVu0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722973992; c=relaxed/simple;
-	bh=OQLJiIkny94KECYHJtVp+i8bZZ1zlTH93kKv+2o8Aig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PowfxNnI//xHbNT+DNX2HzHZcbhyNMQUbIBKw1qmnYuOg9t5yOD0iTs1023LrHDWy3qGiWtt5kXx2plKYreFtSpR4vFbwFrqtjhDKPGJk4CmXNQyPP459eXSAoqyScx3Ak0wbRtym6V8YAeKb8/UXeCe0xhhd6Mz+YGNmzizVtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MDl3p4rP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 476H6Pju021361;
-	Tue, 6 Aug 2024 19:52:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	70Lq7orQebnxRFnaTzLwJ4HqQh/eJyGl2eF5/RFh48I=; b=MDl3p4rPzpT7t6iw
-	4Y8C7wRhe+/61+PIUUI+i8pI9ObxhFjvGAmP1rYwJQLkkUetmVMn1+potifLH05r
-	EyMO5QC+7L5sMbDh7WZbc2d8iryifpM20un7z4ND7uCISeNb3r6Xv9GtQFW5TLUY
-	Gv33Igscf2adDMF1BGY7DPW5qBSh6B4ucntiRZknXovtol3qZ0cyGo1GB1JAv1ng
-	Zwq81MA/haqAW1P6V3/QOUl6o0r+dXy/uPk5YaI5fIgHU1gz59IEqL2tyQYICn+/
-	S5yLbNy7K+/nMba+yoZMzrCBOS34bKMk1zOmXfEYgQy4AvGA4qaZiqBoDfHcyg5m
-	iXdIAQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sbgs0jks-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 Aug 2024 19:52:46 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 476JqjB0008058
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 6 Aug 2024 19:52:45 GMT
-Received: from [10.71.113.127] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 6 Aug 2024
- 12:52:44 -0700
-Message-ID: <b323a813-b02e-488b-86f9-06796f9bbf50@quicinc.com>
-Date: Tue, 6 Aug 2024 12:52:44 -0700
+	s=arc-20240116; t=1722974075; c=relaxed/simple;
+	bh=BpiFkizntkuNYYbqLMUh5o6k123HE/GRHqdrd5DtwaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YTNxA9AesYGB5KzzWM4NgG8R6Avon3pYd20YOT+wAftG+IkdhseQh3PbSp1cF183WaoGxQ+g1g8yh+M59u/QPUtWOQ8watB3vgTXw8X9NvOXOUbLi8l64gNidAMx8rbgWS4UASHAyM+f4jMwUQ8KAkl6ll3tTltzPerZJRN3Flc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=hFzXxG54; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4519383592aso6342011cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 12:54:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1722974072; x=1723578872; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Q9KObzHEoTkTzOdnl1Xc1srqmdgq+QKJ4U9b5T6vC08=;
+        b=hFzXxG540fxFXv7qNqVoIzoQguhKaBL5jOVxwSaoipixLKDXPh8+AYRJQDO9s0evh5
+         O7MNMvmBNPMDQteVb6e7gUHBGYtZnH7TmIJyRT7atnqtXc+YkNV/Nwudi4OrijgxdimO
+         3hY+LWhPFBlGjk9CoKw7doiolmXlCrbn6m3H4G0/m9se2bijS3ra0qFWjV17bN4Q6y+L
+         MqeL5xoflOe3pgxEw6ytqPiwJVC7PiSb1e8eiKADwhe9gPJzCQlhAVmN4fT9syndSttg
+         o3JJVaPIhbNYybBw4L4MkRsCqSMu9RjMnlZ87XOjBmm21v09alOxpqPIuyeBgCggQftZ
+         8iSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722974072; x=1723578872;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q9KObzHEoTkTzOdnl1Xc1srqmdgq+QKJ4U9b5T6vC08=;
+        b=S3SJzdMVEsCGn5qGDU2J8w7Nhim2URFU0zAuC4BTkNNDQMxG7BxeC48CqR48JUS7/N
+         apSbRjOBt+ySoiadLs80ggWMlgFyu54merooacSxxPzyesGZg7pnQ0dgQ58SBYx4ZC6z
+         k7gwfuupZjE8YZKefdRcMauEo/lVUfrjdgEf7rWFrgwip0WX0o2yQQnDFBHDjVvdAOyP
+         3cdXAhiKfQ8Zi/8kf8UIM7+gAeV9dihQsu98HlwdnukTVjs0AQ9K01FCQ2xZ/g1c6YYd
+         Er4iBxJ6TLSwZM6ZL6st8UcVZDKOrzAEd3XGXdt7rV7PbLS4BTl4RpVU+T2AxHk+OaTj
+         02MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnjwAKw//1GPA3+tOW+u1kR+SV4PWg/Bh7q6iwPoSwvcoUhj/deOluFVM7pZq97DuufboFW9awNLCL7GU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPupKThZSkxO8eTHmMhULTB16VtDRd8722FeUdAb2ZWdj5UGqo
+	99dgk5LcuO4I61gLzryiJ6aBFOaPDJnLn/sOsjcry/kQk9VCIfIXOQ3BJltTzZU=
+X-Google-Smtp-Source: AGHT+IHtbWCzTzD4UemOkN9Gk7mskcRVQkFIJsa35ZBWCAYvI+WhrKtgZlBUMGgJq6cyyv1rtQTtYA==
+X-Received: by 2002:a05:622a:198a:b0:450:319:6b44 with SMTP id d75a77b69052e-45189206d8amr202167641cf.1.1722974071641;
+        Tue, 06 Aug 2024 12:54:31 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4518a756206sm40320921cf.65.2024.08.06.12.54.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 12:54:31 -0700 (PDT)
+Date: Tue, 6 Aug 2024 15:54:22 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Yu Zhao <yuzhao@google.com>
+Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org,
+	linux-mm@kvack.org, riel@surriel.com, shakeel.butt@linux.dev,
+	roman.gushchin@linux.dev, david@redhat.com, baohua@kernel.org,
+	ryan.roberts@arm.com, rppt@kernel.org, willy@infradead.org,
+	cerasuolodomenico@gmail.com, corbet@lwn.net,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH 0/6] mm: split underutilized THPs
+Message-ID: <20240806195422.GF322282@cmpxchg.org>
+References: <20240730125346.1580150-1-usamaarif642@gmail.com>
+ <CAOUHufb7z13u51VCTGZMimoCXpmfT5AOAbrUpAvJjTx5+AXwew@mail.gmail.com>
+ <20240806173840.GE322282@cmpxchg.org>
+ <CAOUHufavZTKjh6sb4n_q0ciLzTS88Kxxkp_2Q1wWVp_ZkFrshQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 09/34] ASoC: Add SOC USB APIs for adding an USB
- backend
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <gregkh@linuxfoundation.org>, <robh@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-10-quic_wcheng@quicinc.com>
- <09fde4e6-c3be-484d-a7a5-bd653dc42094@linux.intel.com>
- <f761530c-a49b-4dd5-b01c-97d08931e0ab@quicinc.com>
- <acf4de1d-d551-4539-8353-3c85aa3d965c@linux.intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <acf4de1d-d551-4539-8353-3c85aa3d965c@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: yYw0m-dlgfRq1_xa_E0JOK1i5VwHIAdk
-X-Proofpoint-GUID: yYw0m-dlgfRq1_xa_E0JOK1i5VwHIAdk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-06_16,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- impostorscore=0 malwarescore=0 suspectscore=0 phishscore=0 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408060140
+In-Reply-To: <CAOUHufavZTKjh6sb4n_q0ciLzTS88Kxxkp_2Q1wWVp_ZkFrshQ@mail.gmail.com>
 
-Hi Pierre,
+On Tue, Aug 06, 2024 at 12:06:20PM -0600, Yu Zhao wrote:
+> On Tue, Aug 6, 2024 at 11:38 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
+> >
+> > On Thu, Aug 01, 2024 at 12:09:16AM -0600, Yu Zhao wrote:
+> > > On Tue, Jul 30, 2024 at 6:54 AM Usama Arif <usamaarif642@gmail.com> wrote:
+> > > >
+> > > > The current upstream default policy for THP is always. However, Meta
+> > > > uses madvise in production as the current THP=always policy vastly
+> > > > overprovisions THPs in sparsely accessed memory areas, resulting in
+> > > > excessive memory pressure and premature OOM killing.
+> > > > Using madvise + relying on khugepaged has certain drawbacks over
+> > > > THP=always. Using madvise hints mean THPs aren't "transparent" and
+> > > > require userspace changes. Waiting for khugepaged to scan memory and
+> > > > collapse pages into THP can be slow and unpredictable in terms of performance
+> > > > (i.e. you dont know when the collapse will happen), while production
+> > > > environments require predictable performance. If there is enough memory
+> > > > available, its better for both performance and predictability to have
+> > > > a THP from fault time, i.e. THP=always rather than wait for khugepaged
+> > > > to collapse it, and deal with sparsely populated THPs when the system is
+> > > > running out of memory.
+> > > >
+> > > > This patch-series is an attempt to mitigate the issue of running out of
+> > > > memory when THP is always enabled. During runtime whenever a THP is being
+> > > > faulted in or collapsed by khugepaged, the THP is added to a list.
+> > > > Whenever memory reclaim happens, the kernel runs the deferred_split
+> > > > shrinker which goes through the list and checks if the THP was underutilized,
+> > > > i.e. how many of the base 4K pages of the entire THP were zero-filled.
+> > > > If this number goes above a certain threshold, the shrinker will attempt
+> > > > to split that THP. Then at remap time, the pages that were zero-filled are
+> > > > not remapped, hence saving memory. This method avoids the downside of
+> > > > wasting memory in areas where THP is sparsely filled when THP is always
+> > > > enabled, while still providing the upside THPs like reduced TLB misses without
+> > > > having to use madvise.
+> > > >
+> > > > Meta production workloads that were CPU bound (>99% CPU utilzation) were
+> > > > tested with THP shrinker. The results after 2 hours are as follows:
+> > > >
+> > > >                             | THP=madvise |  THP=always   | THP=always
+> > > >                             |             |               | + shrinker series
+> > > >                             |             |               | + max_ptes_none=409
+> > > > -----------------------------------------------------------------------------
+> > > > Performance improvement     |      -      |    +1.8%      |     +1.7%
+> > > > (over THP=madvise)          |             |               |
+> > > > -----------------------------------------------------------------------------
+> > > > Memory usage                |    54.6G    | 58.8G (+7.7%) |   55.9G (+2.4%)
+> > > > -----------------------------------------------------------------------------
+> > > > max_ptes_none=409 means that any THP that has more than 409 out of 512
+> > > > (80%) zero filled filled pages will be split.
+> > > >
+> > > > To test out the patches, the below commands without the shrinker will
+> > > > invoke OOM killer immediately and kill stress, but will not fail with
+> > > > the shrinker:
+> > > >
+> > > > echo 450 > /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none
+> > > > mkdir /sys/fs/cgroup/test
+> > > > echo $$ > /sys/fs/cgroup/test/cgroup.procs
+> > > > echo 20M > /sys/fs/cgroup/test/memory.max
+> > > > echo 0 > /sys/fs/cgroup/test/memory.swap.max
+> > > > # allocate twice memory.max for each stress worker and touch 40/512 of
+> > > > # each THP, i.e. vm-stride 50K.
+> > > > # With the shrinker, max_ptes_none of 470 and below won't invoke OOM
+> > > > # killer.
+> > > > # Without the shrinker, OOM killer is invoked immediately irrespective
+> > > > # of max_ptes_none value and kill stress.
+> > > > stress --vm 1 --vm-bytes 40M --vm-stride 50K
+> > > >
+> > > > Patches 1-2 add back helper functions that were previously removed
+> > > > to operate on page lists (needed by patch 3).
+> > > > Patch 3 is an optimization to free zapped tail pages rather than
+> > > > waiting for page reclaim or migration.
+> > > > Patch 4 is a prerequisite for THP shrinker to not remap zero-filled
+> > > > subpages when splitting THP.
+> > > > Patches 6 adds support for THP shrinker.
+> > > >
+> > > > (This patch-series restarts the work on having a THP shrinker in kernel
+> > > > originally done in
+> > > > https://lore.kernel.org/all/cover.1667454613.git.alexlzhu@fb.com/.
+> > > > The THP shrinker in this series is significantly different than the
+> > > > original one, hence its labelled v1 (although the prerequisite to not
+> > > > remap clean subpages is the same).)
+> > > >
+> > > > Alexander Zhu (1):
+> > > >   mm: add selftests to split_huge_page() to verify unmap/zap of zero
+> > > >     pages
+> > > >
+> > > > Usama Arif (3):
+> > > >   Revert "memcg: remove mem_cgroup_uncharge_list()"
+> > > >   Revert "mm: remove free_unref_page_list()"
+> > > >   mm: split underutilized THPs
+> > > >
+> > > > Yu Zhao (2):
+> > > >   mm: free zapped tail pages when splitting isolated thp
+> > > >   mm: don't remap unused subpages when splitting isolated thp
+> > >
+> > >  I would recommend shatter [1] instead of splitting so that
+> >
+> > I agree with Rik, this seems like a possible optimization, not a
+> > pre-requisite.
 
-On 8/1/2024 11:26 PM, Pierre-Louis Bossart wrote:
->
-> On 8/1/24 23:43, Wesley Cheng wrote:
->> Hi Pierre,
->>
->> On 8/1/2024 1:02 AM, Pierre-Louis Bossart wrote:
->>>
->>>> +/**
->>>> + * struct snd_soc_usb_device
->>>> + * @card_idx - sound card index associated with USB device
->>>> + * @pcm_idx - PCM device index associated with USB device
->>>> + * @chip_idx - USB sound chip array index
->>>> + * @num_playback - number of playback streams
->>>> + * @num_capture - number of capture streams
->>> so here we have a clear separation between playback and capture...
->> Thanks for the quick review of the series, I know that its a lot of work, so its much appreciated.
->>
->> I guess in the past revisions there was some discussions that highlighted on the fact that, currently, in our QC USB offload implementation we're supporting playback only, and maybe it should be considered to also expand on the capture path.  I went ahead and added some sprinkles of that throughout the SOC USB layer, since its vendor agnostic, and some vendors may potentially have that type of support.  Is it safe to assume that this is the right thinking?  If so, I will go and review some of the spots that may need to consider both playback and capture paths ONLY for soc-usb. (as you highlighted one below)  Else, I can note an assumption somewhere that soc-usb supports playback only and add the capture path when implemented.
-> I don't think it's as simple as playback only or playback+capture. If
-> there is no support for capture, then there is also no support for
-> devices with implicit feedback - which uses the capture path. So you
-> gradually start drawing a jagged boundary of what is supported and what
-> isn't.
->
-> My preference would be to add capture in APIs where we can, with TODOs
-> added to make sure no one us under any illusion that the code is fully
-> tested. But at least some of the basic plumbing will be in place.
->
-> Takashi should chime in on this...
->
->>>> + * @list - list head for SoC USB devices
->>>> + **/
->>>> +struct snd_soc_usb_device {
->>>> +	int card_idx;
->>>> +	int pcm_idx;
->>>> +	int chip_idx;
->>>> +	int num_playback;
->>>> +	int num_capture;
->>>> +	struct list_head list;
->>>> +};
->>>> +
->>>> +/**
->>>> + * struct snd_soc_usb
->>>> + * @list - list head for SND SOC struct list
->>>> + * @component - reference to ASoC component
->>>> + * @num_supported_streams - number of supported concurrent sessions
->>> ... but here we don't. And it's not clear what the working 'sessions'
->>> means in the comment.
->>>
->>>> + * @connection_status_cb - callback to notify connection events
->>>> + * @priv_data - driver data
->>>> + **/
->>>> +struct snd_soc_usb {
->>>> +	struct list_head list;
->>>> +	struct snd_soc_component *component;
->>>> +	unsigned int num_supported_streams;
->>>> +	int (*connection_status_cb)(struct snd_soc_usb *usb,
->>>> +			struct snd_soc_usb_device *sdev, bool connected);
->>>> +	void *priv_data;
->>>> +};
->>>> +/**
->>>> + * snd_soc_usb_allocate_port() - allocate a SOC USB device
->>> USB port?
->> Noted, refer to the last comment.
->>>> + * @component: USB DPCM backend DAI component
->>>> + * @num_streams: number of offloading sessions supported
->>> same comment, is this direction-specific or not?
->> Depending on what you think about my first comment above, I'll also fix or remove the concept of direction entirely.
->>>> + * @data: private data
->>>> + *
->>>> + * Allocate and initialize a SOC USB device.  This will populate parameters that
->>>> + * are used in subsequent sequences.
->>>> + *
->>>> + */
->>>> +struct snd_soc_usb *snd_soc_usb_allocate_port(struct snd_soc_component *component,
->>>> +					      int num_streams, void *data)
->>>> +{
->>>> +	struct snd_soc_usb *usb;
->>>> +
->>>> +	usb = kzalloc(sizeof(*usb), GFP_KERNEL);
->>>> +	if (!usb)
->>>> +		return ERR_PTR(-ENOMEM);
->>>> +
->>>> +	usb->component = component;
->>>> +	usb->priv_data = data;
->>>> +	usb->num_supported_streams = num_streams;
->>>> +
->>>> +	return usb;
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(snd_soc_usb_allocate_port);
->>>> +
->>>> +/**
->>>> + * snd_soc_usb_free_port() - free a SOC USB device
->>>> + * @usb: allocated SOC USB device
->>>> +
->>>> + * Free and remove the SOC USB device from the available list of devices.
->>> Now I am lost again on the device:port relationship. I am sure you've
->>> explained this before but I forget things and the code isn't
->>> self-explanatory.
->>>
->> Ok, I think the problem is that I'm interchanging the port and device terminology, because from the USB perspective its one device connected to a USB port, so its a one-to-one relation.  Removing that mindset, I think the proper term here would still be "port," because in the end SOC USB is always only servicing a port.  If this is the case, do you have any objections using this terminology in the Q6AFE as well as ASoC?  I will use consistent wording throughout SOC USB if so.
-> I am not sure USB uses 'port' at all. If by 'port' you meant 'connector'
-> it's not quite right, USB audio works across hubs.
->
-Remember, this is technically the term used to explain the channel created for ASoC to communicate w/ USB.  If we use a term like "device," USB devices come and go, but this ASoC path won't be unallocated along with the USB device, since it does service/know about all the available USB devices connected to the system. (ie through usb hubs)
+Let me just re-iterate, I don't think this discussion has any bearing
+on the THP shrinker. There is data corroborating that the shrinker
+as-is is useful today.
 
-Thanks
+Shattering is an independent proposal for an optimization that should
+be discussed on its own merits.
 
-Wesley Cheng
+> > > 1) whoever underutilized their THPs get punished for the overhead;
+> >
+> > Is that true?
+> 
+> Yes :)
 
+It actually sounds like the answer is no.
+
+> > The downgrade is done in a shrinker.
+> 
+> Ideally, should we charge for the CPU usage of the shrinker and who
+> should we charge it to?
+
+There are two contexts it runs in:
+
+1) Task tries to allocate a THP. A physical one cannot be found, so
+   direct reclaim and compaction run. The allocating task and its
+   cgroup get charged for this effort, regardless of who underutilized
+   the page, and regardless of whether we split+compact or shatter.
+
+2) Cgroup tries to charge a THP and hits its limit. The allocating
+   task runs limit reclaim, which invokes the shrinker. The job of
+   this context is to enforce memory quantity, not contiguity. A limit
+   can be hit when the system is 5% utilized, with an abundance of
+   free blocks. With the shrinker shattering, the cgroup would be
+   needlessly punished. Twice in fact:
+
+   	    a) it would perform unnecessary migration work
+
+	    b) splitting retains PTE contiguity on the remaining
+	       subpages, which has benefits on CPUs with TLB
+	       coalescing. Shattering would disrupt that needlessly.
+
+   This is the wrong context for contiguity work.
+
+So it seems to me that the punishment of "culprits" is not natural,
+reliable, or proportional in any way.
+
+> > With or without
+> > shattering, the compaction effort will be on the allocation side.
+> 
+> If compaction is needed at all.
+
+That's not what I meant.
+
+Shattering IS compaction work. There is a migration source block, and
+it moves the individual pages to somewhere else to produce a free THP.
+
+> > The only difference is that
+> > compaction would do the work on-demand
+> 
+> And can often fail to produce 2MB blocks *under memory pressure*
+
+So let's agree that shattering helps if the THP demand is constant.
+
+It doesn't help when THP demand *grows* under pressure. But fixing
+this is kind of critical for THPs to be useful.
+
+And fixing the latter obviates the need for a special solution to only
+the former.
+
+> > whereas shattering would do it unconditionally
+> 
+> And always produces a 2MB block
+
+Which can immediately get fragmented by a racing allocation from an
+unrelated cgroup. So the next step would be compaction capturing for
+the shattering code...
+
+I'm not really sold on this. It's re-inventing compaction in an ad-hoc
+scenario that has limited usefulness, instead of addressing the
+fundamental issues that make compaction inefficient & unreliable.
+
+Allocation context is the appropriate place to determine whether, and
+how much, defragmentation (and all its direct and indirect costs) is
+actually warranted. Not opportunistically deep in the reclaim stack.
 
