@@ -1,312 +1,414 @@
-Return-Path: <linux-kernel+bounces-276398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A29949318
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:31:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D448594931C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B798E284723
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:31:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04EF41C23C87
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562241C37A9;
-	Tue,  6 Aug 2024 14:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCE71BE875;
+	Tue,  6 Aug 2024 14:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WLezUN71";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="PBEhf5Nr"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZYXLdL0h"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0862C17ADF2
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722954666; cv=fail; b=IW1sPLKyOZh2axYp84KhzO2Q3gA8JQOdkNSXzwGMWl76Lcu1ZVq0O0mY8mB/VdWn/xdPsup0SWp7kENfLf27/qC8XQgjXxaeVgVKi0PkV9ucgDPPXRTmiOb9lyqtodMDWTGmYdyHhopIoH6WU9LrA4Xej+RAP1YBjla7oManmNE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722954666; c=relaxed/simple;
-	bh=83wT0fVk5+mUmVbijrDxBeZAJJCV2Ihb8JY+pMPIvmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=dRnkvCDKcTWjVfmSpjTU9tIOxBh7W7lJmOQFG+EM4iMzvwISdrnuCJXp3rDcQf59cGkUazE5N8Yt411+HZj5wkDay5uGHCT4tOPI53xI+nOeRuWYSRggJb7OHjBxMoLU4rVgJK28+SNR5G6A8jMZ4O193eWckaYcZGuQAxQnrPs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WLezUN71; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=PBEhf5Nr; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4765kbYH031248;
-	Tue, 6 Aug 2024 14:30:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:content-transfer-encoding:in-reply-to:mime-version; s=
-	corp-2023-11-20; bh=sBPLsISRwYEDrIjHJ2v89ycPyuYEsqBImHTp7uf23hk=; b=
-	WLezUN71P5xOHLkQV+bP9z0qHUAYBOPbD3ZxESfIjl0C6Xa9LlUyTkJ46vT0GVsv
-	eWjNlX9wK7d8BCM8++9P89WVPxqvz9N2c9/uLm/Sr3d1OJuROwm+YWEo8jMJ80nH
-	wzVV76mO3aQOSSp5E/vDHrIqG7DWYM5K4X7m9tjU2lDEeoUK64So9bNiMktL3b1R
-	OU5KlSmaPbZCYaMXmUs0BaxBBVgRg+5VqTkiGmWLuov1kXZLnudle0DG05NzgSKE
-	0pTdwbjRV5M31F+kLevt+SfHiRqnRX+68geOlZDivtheuu1n7wIZ2/7cEVTBVI9v
-	fYBSIi8Ihv0o3BmdRfetCg==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40sbb2ngtk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 06 Aug 2024 14:30:55 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 476DnJar004853;
-	Tue, 6 Aug 2024 14:30:54 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2176.outbound.protection.outlook.com [104.47.58.176])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40sb0esja0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 06 Aug 2024 14:30:54 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bSy6iJe+4zN83PlzlWRVEra7EHz3KndTgroTQjgPFulPEQqMp7t3rvW85ukYm9GfOfsc5oxQi6cUwN39paOiQpW8xuiZgWXxbglQmZgaCkrYEo2v3DJkSgK6NSn4Z81lTqqXtZE8ezfbm6pCI3YgBK6prMSB8oFtmBueQNcbIM70pyjF0je+YsdrBaX6Dx3NMp0ssGZ3MJL/8bAx5Q/SefhQSCov1u72X1U7FAGXiZgUXsmUmg3NFIP58ZBY4vYXmMAE3afcf5ivXKe3458zHBTxG0U7H+9t3tbYhRQcu1B/QQrwCR2ZbH2pFg4yp3o2KEGcuvZQFArC++mRGgaJ2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sBPLsISRwYEDrIjHJ2v89ycPyuYEsqBImHTp7uf23hk=;
- b=pUwDLsNYrUYvpFpmpuA9hmkx0zBXLWevN1AcanUirOPWJdVGPQ6hjxAyKyZPdc7srGzHdI0wldlxoDnp5KZ2TgelLujm9WTAYFzECYW69nhfAEOLNT/CAgG881wv4BehmQThuovjCAa5CVHO1y42d/q9xv+JcSFyG5iHsLSJjsmSMHhQpx+Ne3yLyD3KIBaRdrOTB6ED2dkOJ/ycm8n16oc4toNK44d4iM8/ZlyotNeaH+FvDn0UPBMjEYPTMN1RtG5B3tA7n+o7gUv7oPtTJ/nPlmObm7nDHG4gZJfGCFF3IHjoVtboxoNLD0S5YRxQtzk4qPu9PAmKI7EiOMGJUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sBPLsISRwYEDrIjHJ2v89ycPyuYEsqBImHTp7uf23hk=;
- b=PBEhf5NrQFE2CuO1Ny5pwAsTiPyNsigmd7xfVkuguAaxuPBeDKLpHy7VFyKrogqOxAnJ+xCVq1Fk2vkyiJPXbd3EiN/WW3q17qcVRDx7YSloqRIV4TVbhpV8WGwubYfYcarkm6VarGGhU8S7i3DKOIXHtrKHYlZlnpMZAHnGSyo=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by MN2PR10MB4349.namprd10.prod.outlook.com (2603:10b6:208:1d4::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Tue, 6 Aug
- 2024 14:30:52 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
- 14:30:52 +0000
-Date: Tue, 6 Aug 2024 15:30:49 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH 08/10] mm: introduce commit_merge(), abstracting merge
- operation
-Message-ID: <c60acd5e-e7c7-42ba-9ad3-1b221cec2ddf@lucifer.local>
-References: <cover.1722849859.git.lorenzo.stoakes@oracle.com>
- <3b04eb13b499df3ebf50ae3cde9a7ed5e76237fd.1722849860.git.lorenzo.stoakes@oracle.com>
- <20240806154116.015e329a@mordecai.tesarici.cz>
- <415d9d9c-7b63-47f0-9091-678f0d8d1268@lucifer.local>
- <20240806161321.376f0a55@mordecai.tesarici.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240806161321.376f0a55@mordecai.tesarici.cz>
-X-ClientProxiedBy: LO4P123CA0358.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18d::21) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF841BE23A
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722954680; cv=none; b=ts9NQ/uZt52i0Ts7zN22BYswKGSYt4sb2zZNYkoAeGNbUNSjmTjG2TZBCIRkLEPahMKfcBsD+vxFe3lQT07IpK2ieDBXKekhZuVU+kwCHaWcJ7vqf9a1Qgl9Dq3Y9CFatCe8/5QD2cvTaKlLFeWxNiBJoOgUCdnAj//0QUyzBqk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722954680; c=relaxed/simple;
+	bh=XYMqqZrK4GA7mzMtl+TAohnD8td6UX/kc1Pp1MGV8Tc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UUZ3JUJn3/6v6WSWMUaZzYrEnMr0tEjP1onB7YIYJln+T9063QnmSvK/fBjXXCoTrs4jAXcFOn23ultx2jgxwaK8/rKRyFjHOzPASKfzL1OyhqdLtsbUKkJorzA4Y5kq4aCz3DSzvtqp/NCiDNdqEdTvQngmupVkMmJoAefLYZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZYXLdL0h; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722954678;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EvF8Xylsgtl9CdwpW85ezra0SLl7EikGkhlaTaeGrqo=;
+	b=ZYXLdL0hIIQV67PawJzd4SIEOpdFWABZfmXJrcmrbnafubZmriyw1rMg4kPcrZQr4VtIQ3
+	fM/suvpL2p+63nL4tctWGz9H/qUtIUom0ELLQwef4zoc7vj12/2Q2TkU7k6c/CTMMMEN/z
+	UhuuneHjs8XLDl52UA1I1vmdQXPTukw=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-1-6d6R4jL4OA6rEjAa3NqWXQ-1; Tue, 06 Aug 2024 10:31:16 -0400
+X-MC-Unique: 6d6R4jL4OA6rEjAa3NqWXQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4280c0b3017so5189275e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 07:31:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722954675; x=1723559475;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EvF8Xylsgtl9CdwpW85ezra0SLl7EikGkhlaTaeGrqo=;
+        b=W3+GtuL+qMae20VTsT+Q6W8oxOGrb0MKBWI+NOZUI3BD77QjX1t6scaX/OOBGJmZET
+         IQMcvuRvu+sjO+sNfB9X0f4u3vkG5qFfcB5/m7pPTs9f4Fnb8HqJ2nKv+uHPnYWSGbLI
+         mzYO9bWSVOPkRHaRwmptvgsnxVBgCwKJSRwfdM+y1ueIgfm/suB5T0K+10erOwqd0gkH
+         VIaoU4SqDOjOrz+qjPVzs91Po5/VH5U0wJkRM33KpDyQjqYXAE2dJ5fUaFw9kV99yjTB
+         4FdDR3K7LlsF8XMFR6I4l33d52FSW5SN5u5KjfWQlR47BJrdExHzasWbxM7v53+i0YP3
+         bWPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3LLvfQ+r4LGd+xuKPRDSP6t3JXxi7xZrGRbX3C0fJodKQUlY0zqOUOP6X4/GjC7x7QEoRad+0oZLRza+E1wBKDhF+AmAe4OWhtSq4
+X-Gm-Message-State: AOJu0Yxg3uoi9PRp3TEeT1hAd1+YH0oU9NeSUM2QJ0fEr2mQNLAloITq
+	pZ3ke3BQpQCcHXb2p1ggNOFhOSgFv/OLczuqyxZ5goGMucaGXh9L98jNO+2UQYDVvrfp5ArMuXB
+	1rIvzDW0IJymi3QDtTtqYh23okjneXv0gzh5JhIvIuxK47zx2/ly9s625ywwPNQ==
+X-Received: by 2002:a05:600c:580a:b0:428:f1b4:3473 with SMTP id 5b1f17b1804b1-428f1b4398bmr71197155e9.26.1722954674989;
+        Tue, 06 Aug 2024 07:31:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG6CXrSXKowS/TTkQO0vuI6Ltcbfrl8sA8YRQn6TA2/2Si4QscTPGDCiUgWPfAr3SBEngAprA==
+X-Received: by 2002:a05:600c:580a:b0:428:f1b4:3473 with SMTP id 5b1f17b1804b1-428f1b4398bmr71196805e9.26.1722954674364;
+        Tue, 06 Aug 2024 07:31:14 -0700 (PDT)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428ebbe18c0sm161469075e9.17.2024.08.06.07.31.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 07:31:13 -0700 (PDT)
+Date: Tue, 6 Aug 2024 16:31:13 +0200
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v5 6/7] acpi/ghes: add support for generic error
+ injection via QAPI
+Message-ID: <20240806163113.3bdc260a@imammedo.users.ipa.redhat.com>
+In-Reply-To: <20c491e357340e0062b6ff09867c1661ed4d2479.1722634602.git.mchehab+huawei@kernel.org>
+References: <cover.1722634602.git.mchehab+huawei@kernel.org>
+	<20c491e357340e0062b6ff09867c1661ed4d2479.1722634602.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|MN2PR10MB4349:EE_
-X-MS-Office365-Filtering-Correlation-Id: 68d50223-7136-4f2f-515b-08dcb6245fad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eW82ajZFRDNSTW1XbXNtRjhJVzJmSlBvVzJwdkdzL0JVOVVuVGM4SlBLLzgw?=
- =?utf-8?B?Q3JKMlJOUFdxQTNUR2tMRzBGSmNUM1BHSTU1WkJXaUpqeExUMWg4dGV5NTdD?=
- =?utf-8?B?SjVlNFFPc1l6RjRqV1lKeWtzOTdrNjRGb1RLa3lzdGl1N0FxNDNLU3hFYmJr?=
- =?utf-8?B?OGZxejFPaEVPLzVXS0JaVG9jd242ckU0K1ZyNGNjT1M2V2FFbVM1V1crWXA3?=
- =?utf-8?B?ZG1YQlgwREY4VlF1WDNLem9CdWRjZ1F3TWI5S1BoMEUrV0NkVncwbmFpbjlv?=
- =?utf-8?B?cWZid3I5YTFyZTRMVWptNHBrTk9pUTR6TjBkVVM5RG5jaCtjQUYzUEtJRjM4?=
- =?utf-8?B?bWg4MjUrSGNHRTJmNjFpU0VEYmZRYno4ZmhtcWZCekkyeVFUbjNVM0RQQ1BE?=
- =?utf-8?B?b3N4dnZzcmZjZit6c002U2J4eWxDdVZhd0c1b3RneUNiRFJ3OEpXMGNkSlJ3?=
- =?utf-8?B?Yk1nQUpaVzdpR0l1ZnRGSnVBb01PbFVHa1lFT29URjNkd0FDcExrc3dlTk0z?=
- =?utf-8?B?TkJkQXNmSElrUUNMRDdwSFcxbmtFeGJwOGEzY3p5eXZzYmxLVkdrY3lyMkYw?=
- =?utf-8?B?cytRZnBHVERoMkZzdmVuc2l1bjhhczQ3ZFRMTXhkL2tOazEwbDBidVhzWUd0?=
- =?utf-8?B?a2M2WFUyZWY2Y1NPckk5aytDRTNpODRwT0xHT2FVT2hYZnNla2MzZUJBTDBD?=
- =?utf-8?B?Zzh1VjRPZkJrckFqR1BleXlTS09iRG5aUkZOcFJGZFQ1WWRHdzNKU1J6dWhP?=
- =?utf-8?B?SUpIamt1YVNBek1qTy9zRXBoVFF4VTEveDM1NmlKZlE5YmdBMnhXb1dqbG52?=
- =?utf-8?B?bFVRekpoL2Z6OHdlbHhJSUd1MzVuNWh6a3lHbmFaRCt3eGJzZHdoYnBYLzFF?=
- =?utf-8?B?OERYYlFFTnM5TUI3QWY2RUNRUHBZNjNINjVYcm9udmFvcWZ1cmZuWVhvSG5m?=
- =?utf-8?B?d2hVaVV6aGROZ1ZSUk5rdEk4MkthSWxnSEJsS08zREd5L2dQVFVTdWlQbHZl?=
- =?utf-8?B?M2lYUkpTNUJPWUJMRXI0cUZhOUU0NHVrazJMV3FiNXA2U01DS0JBVFo0aU1H?=
- =?utf-8?B?cnBJVFp0UXh2cW1iWHFmaHFrZzBBL0s1Y2N1ODVzNVd3K09NWFBKZEtHL2Z3?=
- =?utf-8?B?OHhvRFdQdUUyTFdZbytqV1BlZ2FFZFFJS1hna3cxeGkrMm9WV0pHM0Qzenc3?=
- =?utf-8?B?SG05c0hvZFZtbWJ2OS9YUFlCZzhHaFd1aCtOZnpMTVdROEFkUzBCVURDN1cz?=
- =?utf-8?B?QXY3SEVkcjZqVnV2dlV4UkJ6ekdSdmNZbkx5UTlNclRBVUkwZFJaRlcrMVY0?=
- =?utf-8?B?QVlibW9kRi9OeGpPV0NWQU1VdjBYR2xXa3FXNGxVRmlZRjlsYnpPVU5MTHRW?=
- =?utf-8?B?dkxlaStDSEEwT1owU2Q4anhEMm5lZGpFczljWlVPcmVja2RzWlZFUEtLeXdr?=
- =?utf-8?B?amVkUHB3bnJ5OTlhV09kOU8ySlVVZFQxL0t0aWNnUmR1dWNHUEF5clZnL1Rj?=
- =?utf-8?B?NGRFdzN3V29nWGdpa2pZK2g5THF2U3cyZG9vV3FjRWFTTGIxcVNkaWlvR2ln?=
- =?utf-8?B?UVVIYmdaNmxtSld4dEM3dVl4Q0tTNXJ1anRRSmRzUm5PYWNDNDUyNnBpR0lw?=
- =?utf-8?B?Rm5ydElMRzlJQnYvRTQyd3JKOVExelUwdWdRWVh6V2h1RTgvL0N6MGYrTmhs?=
- =?utf-8?B?d3d4MEg4bmZZL3p1cVhmNjlBNVNHOFZVcDRyUHlkcURIeHgyandIeVVOQk91?=
- =?utf-8?B?Zzh1Rk5adzI4QjBKd2loR2Nha3QrYW1qWmd4Rlo2bG1BeGp2ZFhqTllHanRK?=
- =?utf-8?B?SkVFcFI1a0p4R25PV0pWQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d3dZczBVMjhPRFdwejhXSjdGU2lHMmMveXhlSWpTOFRtRERZc3kwZm9EQXFY?=
- =?utf-8?B?d3g3ZTFpM0NTZjNnZmdGZGN2VTQ4ekRBNzI5bTRETEhpeFpET2hnbXJSUnpW?=
- =?utf-8?B?bll4bTFwSCtBR1Z3Z1JVNnpLQjlwZC9KMzd1K0drS0JMd1I3T3g0NHlSY2NI?=
- =?utf-8?B?cmt1eEFSVHdKaVYwSmxtSGlZbDhMaGdZd2M2L2pZVHJaWTlNZGRPMWZuRDQ4?=
- =?utf-8?B?LzRPOU43NDZ0RUp2Wk12VFUxSThqUmdqcTJKYm1zbGZGcHBLZ0NIOUIzVmkv?=
- =?utf-8?B?RFhlWDdkSkoxOHRyRk9oeEE3d2RrSUE3UUpRMDVtMjE1VURzZVZJYUlFYUVF?=
- =?utf-8?B?WEE0ekE3ak9DbEI4SHZTSEJTQUxZZXM3Y3QrU3pBb2dPMDNsYVNIVnlGT0g5?=
- =?utf-8?B?UWJhdWtyaGlyc0w5M3BpM2grQUw4c1FITmRwNkxMUERyajgvekthd0FKeGp1?=
- =?utf-8?B?UUZlMmR0MzQxL2RkZW9jMWpTN2kwaDh0M1NaSU02QW9GWHljOU13Y0ZRWDds?=
- =?utf-8?B?NE43NldsajNpVlRPM3piell3M2QxcG5mMzZqKzVacDZJTWEvVWttK1VnWVJq?=
- =?utf-8?B?Y0ZOQnVseStBRVNEc2Z0N1BsMWlucS9PK0lxU2syc2g5dWIxcm9IZXNQbitt?=
- =?utf-8?B?QVZMSG4rWTdoZHArcWk2S05VYUdvbzRQQTJCY09SZXVZdkRyZUoyUFdJNEoz?=
- =?utf-8?B?eXJJMVdOcmhhWnlBczk4NjhBT3BZaitYeTJubUxqUklyRS9uVm0wcHBRWUEw?=
- =?utf-8?B?NXhDZkY4RGZNWkZQeWcrOW9MSW5nVFM2UGdRUGtXNG54Wld2dUJFSmVWbkl0?=
- =?utf-8?B?MjBEeG9OZS9pVDNhNjYyNHdyWlV6eWdNOFBTQnQxRWc2ZFRuaVJEY0F1ZnA1?=
- =?utf-8?B?YlZUWTNmamw0aGRpNlBBa0NURFRlTUIrNHA4a0ZXb1dRaG9KSFRGMUM0dnd5?=
- =?utf-8?B?anZ0aXk5dU5uY0k3Y2VwSVFreVU4bG9Ld1M0Z0RNN1pvMkgwV3d4NHZNTmJT?=
- =?utf-8?B?aXJqN2lEU1ZuZjRLTTlsc3Nld21CamhRRC9IbU04a0lxYjdodlFadkpWZWJO?=
- =?utf-8?B?djNFMkY2L1F3bDdWcVBUdDFuMENJdm45ZnVBd1dZRzBUWEtQcGFNaDh2ZERU?=
- =?utf-8?B?NUY4ZnVMZUZYQzc3VDhOaE1pRGJwN25BbUtIdzY1bndRVHZkSjBleU10WFZq?=
- =?utf-8?B?SVlhVlBWUytxY3FqNDlpT2JqdE9DNWFFUUVKUEw1NDB2N1diUThPWEJ1d3B0?=
- =?utf-8?B?ZXdVd2lMQWZRUllueTZZUXh3Skt0Tm8rekRxbnVDeWVpZC9YblZBaHZRTXNQ?=
- =?utf-8?B?Yk01dlhTWlFpeTVYZDJOWExBTDg1RHdla29OakVKOHY0eGtiM1BpTkI4ZExC?=
- =?utf-8?B?a284dnhHem9ndVY1bHBpRTB3SjlUY0xWRDRMZ3dZdW9YaG5SZTd3NGdJZEUy?=
- =?utf-8?B?V2R4Rmt3M2s0dW9YNTcwSkdwUW1iNjFLbENuWElXOENZOVpGcWJIM0xweTdT?=
- =?utf-8?B?ZTd0ZnYzYytSS05FbW5aT2g4SEJhOTh0eTFlRU93NGZtRlhhU3NlOEx4cFIr?=
- =?utf-8?B?OU96RjBYKytXUGI1c3ZiT0VidHc3VFp1SU4vVnpDa05ER0oxVDk2QVdwQ1Fq?=
- =?utf-8?B?QUlWcXdWYzBkSHBucmV0cUd0UjBLREluZk9YSW5ObHErSHcrWE9WbXVmdHpC?=
- =?utf-8?B?NG5wV3ZZVGZlT1lwUWVObE1jME1wVHNMaU9GdmNkSURYL3lNaTNTY21wcld1?=
- =?utf-8?B?ZmpLd3ArS2pSSTNzam5KUzF2aW1MOHU5NTg2aXFSTVk4R0xpTlFEMkoyVTJO?=
- =?utf-8?B?SmpwUGxtOHBRL3Z2elBvcTFsbitKWjd6RHJLNFZtcCs4MnU4c0xQTE9BQVhS?=
- =?utf-8?B?djMyN0J5REFHWDNTZ280TDJVZ0krYXRvUGhFM1VDdTkvOFJlTkJSRTJwTEhX?=
- =?utf-8?B?alNxZkovWEg5WG5ESDNrNUdaVHFwVDljZlRoSWpONkVGampzTTYwU3RKZ0F2?=
- =?utf-8?B?c2txdUl0K2VtOXlzcWJkWVluTDZDUXdPdGFiM1l2U1huWVRKb3RiTEREeFhI?=
- =?utf-8?B?ckJPVndhc3NkUTZob1NYYUE0aTl6NUt4YklDR0Q0clFkSXdUOVlrYW5jaUlw?=
- =?utf-8?B?VWlhbDkvV21FUk1IU0JDbk55NWtBb0F5VWFHOGdWeCtKYWNsMUQ2ZzdMN21a?=
- =?utf-8?B?TGc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	rBCyXJt68TLZKaw1zFDpk/IG0Vxl0Uf5vhYehexs6rKt8YzfBrlC1XRxoHP/qiLf1Qzt8ce4fjhBG0Hz31MmwhhBlht/cZ3k33Kqjnf/xdELi3wUaKz+Moff1pJ0w4paMFgHBL2kV/LeVId/xgaGkpQjbcLdQ3twqQiCqEFIp0nO7JlqCUHe+xO3e2pkcf1lwwTPrtWdC3cymxzZibw42ViOXI1MHGsDfIhqKeBsPfwSfUCGN/0mZ2HqoSGiMPocOwbPMiKWiDy/DitYXD/5MFBFvCUCqvKjTdZ8OyxjjAneyzrfYXkCbs41F5b9Oag1V4QyQS8BamAuXqPc/X+rPDK/RStwVqmHkm87SVAYPh6kwVmhlRMmbyyBfHKxrCO3eF+2ThBeNpQr7BNloFNZ0/41AfoQw4Ex/2CTdrOY0+xn2aDi6Knhb0M57gXaJcDPbJ/g/1MVyMH/qTdx3TZRusUZ2DgH8hMGPKijoKu7vYzJacgLkxs3PfR2zg83QgE4CLvq2ddjekZKMnG37r2orh/9kWKZEX5BjB7jBFN2FigZyG5LWVhJvZh9cfuJclzJm1i3AN/PlXWBykFrpvGjoW7QLsvU9sU8LdgyL3ILTYw=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68d50223-7136-4f2f-515b-08dcb6245fad
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 14:30:52.1236
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IifcdPs0QsgMF537uThlPOyjfpLN1SVwqON2BzgL2TqVb/+OgN70n5qAxCOQwH8zAD4qopV8BUZ6/HjXZoWyfgl+NwUElOMx+5sJWjemjEY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4349
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-06_12,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0 bulkscore=0
- adultscore=0 mlxscore=0 phishscore=0 malwarescore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408060101
-X-Proofpoint-GUID: xRmWFoICu9gI9I-c_oFX6-Tw4gXSkgsx
-X-Proofpoint-ORIG-GUID: xRmWFoICu9gI9I-c_oFX6-Tw4gXSkgsx
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 06, 2024 at 04:13:21PM GMT, Petr Tesařík wrote:
-> On Tue, 6 Aug 2024 14:48:33 +0100
-> Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
->
-> > On Tue, Aug 06, 2024 at 03:41:16PM GMT, Petr Tesařík wrote:
-> > > On Mon,  5 Aug 2024 13:13:55 +0100
-> > > Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-> > >
-> > > > Pull this operation into its own function and have vma_expand() call
-> > > > commit_merge() instead.
-> > > >
-> > > > This lays the groundwork for a subsequent patch which replaces vma_merge()
-> > > > with a simpler function which can share the same code.
-> > > >
-> > > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > > ---
-> > > >  mm/vma.c | 57 ++++++++++++++++++++++++++++++++++++++++++++------------
-> > > >  1 file changed, 45 insertions(+), 12 deletions(-)
-> > > >
-> > > > diff --git a/mm/vma.c b/mm/vma.c
-> > > > index a404cf718f9e..b7e3c64d5d68 100644
-> > > > --- a/mm/vma.c
-> > > > +++ b/mm/vma.c
-> > > > @@ -564,6 +564,49 @@ void validate_mm(struct mm_struct *mm)
-> > > >  }
-> > > >  #endif /* CONFIG_DEBUG_VM_MAPLE_TREE */
-> > > >
-> > > > +/* Actually perform the VMA merge operation. */
-> > > > +static int commit_merge(struct vma_merge_struct *vmg,
-> > > > +			struct vm_area_struct *adjust,
-> > > > +			struct vm_area_struct *remove,
-> > > > +			struct vm_area_struct *remove2,
-> > > > +			long adj_start,
-> > > > +			bool expanded)
-> > > > +{
-> > > > +	struct vma_prepare vp;
-> > > > +
-> > > > +	init_multi_vma_prep(&vp, vmg->vma, adjust, remove, remove2);
-> > > > +
-> > > > +	if (expanded) {
-> > > > +		vma_iter_config(vmg->vmi, vmg->start, vmg->end);
-> > > > +	} else {
-> > > > +		vma_iter_config(vmg->vmi, adjust->vm_start + adj_start,
-> > > > +				adjust->vm_end);
-> > > > +	}
-> > >
-> > > It's hard to follow the logic if you the "expanded" parameter is always
-> > > true. I have to look at PATCH 09/10 first to see how it is expected to
-> > > be used. Is there no other way?
-> > >
-> > > Note that this is not needed for adjust and adj_start, because they are
-> > > merely moved here from vma_expand() and passed down as parameters to
-> > > other functions.
-> >
-> > See the next patch to understand how these are used, as the commit message
-> > says, this lays the groundwork for the next patch which actually uses both
-> > of these.
-> >
-> > I have tried hard to clarify how these are used, however there is some
-> > unavoidable and inherent complexity in this logic. If you don't believe me,
-> > I suggest trying to follow the logic of the existing code :)
-> >
-> > And if you want to _really_ have fun, I suggest you try to understand the
-> > logic around v6.0 prior to Liam's interventions.
-> >
-> > We might be able to try to improve the logic flow further, but it's one
-> > step at a time with this.
->
-> What I mean is: Is there no way to arrange the patch series so that I
-> don't have to look at PATH 09/10 before I can understand code in patch
-> 08/10?
+On Fri,  2 Aug 2024 23:44:01 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-No.
+> Provide a generic interface for error injection via GHESv2.
+> 
+> This patch is co-authored:
+>     - original ghes logic to inject a simple ARM record by Shiju Jose;
+>     - generic logic to handle block addresses by Jonathan Cameron;
+>     - generic GHESv2 error inject by Mauro Carvalho Chehab;
+> 
+> Co-authored-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Co-authored-by: Shiju Jose <shiju.jose@huawei.com>
+> Co-authored-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Cc: Shiju Jose <shiju.jose@huawei.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  hw/acpi/ghes.c         | 159 ++++++++++++++++++++++++++++++++++++++---
+>  hw/acpi/ghes_cper.c    |   2 +-
+>  include/hw/acpi/ghes.h |   3 +
+>  3 files changed, 152 insertions(+), 12 deletions(-)
+> 
+> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> index a745dcc7be5e..e125c9475773 100644
+> --- a/hw/acpi/ghes.c
+> +++ b/hw/acpi/ghes.c
+> @@ -395,23 +395,22 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+>      ags->present = true;
+>  }
+>  
+> +static uint64_t ghes_get_state_start_address(void)
 
->
-> This PATCH 08/10 adds only one call to commit_merge() and that one
-> always sets expanded to true. Maybe you could introduce commit_merge()
-> here without the parameter and add it in PATCH 09/10?
+ghes_get_hardware_errors_address() might better reflect what address it will return
 
-No, I won't do that, you haven't made a case for it.
+> +{
+> +    AcpiGedState *acpi_ged_state =
+> +        ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED, NULL));
+> +    AcpiGhesState *ags = &acpi_ged_state->ghes_state;
+> +
+> +    return le64_to_cpu(ags->ghes_addr_le);
+> +}
+> +
+>  int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
+>  {
+>      uint64_t error_block_addr, read_ack_register_addr, read_ack_register = 0;
+> -    uint64_t start_addr;
+> +    uint64_t start_addr = ghes_get_state_start_address();
+>      bool ret = -1;
+> -    AcpiGedState *acpi_ged_state;
+> -    AcpiGhesState *ags;
+> -
+>      assert(source_id < ACPI_HEST_SRC_ID_RESERVED);
+>  
+> -    acpi_ged_state = ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED,
+> -                                                       NULL));
+> -    g_assert(acpi_ged_state);
+> -    ags = &acpi_ged_state->ghes_state;
+> -
+> -    start_addr = le64_to_cpu(ags->ghes_addr_le);
+> -
+>      if (physical_address) {
+>          start_addr += source_id * sizeof(uint64_t);
 
->
-> Petr T
+above should be a separate patch
 
-I appreciate you are doing a drive-by review on code you aren't familiar
-with, but it's worth appreciating that there is some context here - this is
-intentionally isolating _existing_ logic from vma_expand() and vma_merge()
-in such a way that we have a _generic_ function we can use for this
-operation.
+>  
+> @@ -448,9 +447,147 @@ int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
+>      return ret;
+>  }
+>  
+> +/*
+> + * Error register block data layout
+> + *
+> + * | +---------------------+ ges.ghes_addr_le
+> + * | |error_block_address0 |
+> + * | +---------------------+
+> + * | |error_block_address1 |
+> + * | +---------------------+ --+--
+> + * | |    .............    | GHES_ADDRESS_SIZE
+> + * | +---------------------+ --+--
+> + * | |error_block_addressN |
+> + * | +---------------------+
+> + * | | read_ack0           |
+> + * | +---------------------+ --+--
+> + * | | read_ack1           | GHES_ADDRESS_SIZE
+> + * | +---------------------+ --+--
+> + * | |   .............     |
+> + * | +---------------------+
+> + * | | read_ackN           |
+> + * | +---------------------+ --+--
+> + * | |      CPER           |   |
+> + * | |      ....           | GHES_MAX_RAW_DATA_LENGT
+> + * | |      CPER           |   |
+> + * | +---------------------+ --+--
+> + * | |    ..........       |
+> + * | +---------------------+
+> + * | |      CPER           |
+> + * | |      ....           |
+> + * | |      CPER           |
+> + * | +---------------------+
+> + */
 
-I think it'd be _more_ confusing and (surprising given your rather pedantic
-interpretation of churn elsewhere) churny to rewrite this again with a
-bunch of added logic in the next commit.
+no need to duplicate docs/specs/acpi_hest_ghes.rst,
+I'd just reffer to it and maybe add short comment as to why it's mentioned.
 
-I think this is highly subjective, and I'm not sure it's a great use of
-either of our time to get too stuck in the weeds on this kind of thing.
+> +/* Map from uint32_t notify to entry offset in GHES */
+> +static const uint8_t error_source_to_index[] = { 0xff, 0xff, 0xff, 0xff,
+> +                                                 0xff, 0xff, 0xff, 1, 0};
+> +
+> +static bool ghes_get_addr(uint32_t notify, uint64_t *error_block_addr,
+> +                          uint64_t *read_ack_addr)
+> +{
+> +    uint64_t base;
+> +
+> +    if (notify >= ACPI_GHES_NOTIFY_RESERVED) {
+> +        return false;
+> +    }
+> +
+> +    /* Find and check the source id for this new CPER */
+> +    if (error_source_to_index[notify] == 0xff) {
+> +        return false;
+> +    }
+> +
+> +    base = ghes_get_state_start_address();
+> +
+> +    *read_ack_addr = base +
+> +        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t) +
+> +        error_source_to_index[notify] * sizeof(uint64_t);
+> +
+> +    /* Could also be read back from the error_block_address register */
+> +    *error_block_addr = base +
+> +        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t) +
+> +        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t) +
+> +        error_source_to_index[notify] * ACPI_GHES_MAX_RAW_DATA_LENGTH;
+> +
+> +    return true;
+> +}
 
-Of course if you or others can present a more compelling argument for
-reworking this I'm happy to hear.
+I don't like all this pointer math, which is basically a reverse engineered
+QEMU actions on startup + guest provided etc/hardware_errors address.
+
+For once, it assumes error_source_to_index[] matches order in which HEST
+error sources were described, which is fragile.
+
+2nd: migration-wive it's disaster, since old/new HEST/hardware_errors tables
+in RAM migrated from older version might not match above assumptions
+of target QEMU. 
+
+I see 2 ways to rectify it:
+  1st: preferred/cleanest would be to tell QEMU (via fw_cfg) address of HEST table
+       in guest RAM, like we do with etc/hardware_errors, see
+            build_ghes_error_table()
+               ...
+               tell firmware to write hardware_errors GPA into
+       and then fetch from HEST table in RAM, the guest patched error/ack addresses
+       for given source_id
+
+       code-wise: relatively simple once one wraps their own head over
+                 how this whole APEI thing works in QEMU
+                 workflow  is described in docs/specs/acpi_hest_ghes.rst
+                 look to me as sufficient to grasp it.
+                 (but my view is very biased given my prior knowledge,
+                  aka: docs/comments/examples wrt acpi patching are good enough)
+                 (if it's not clear how to do it, ask me for pointers)
+
+  2nd:  sort of hack based on build_ghes_v2() Error Status Address/Read Ack Register
+        patching instructions
+               bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,                
+                   address_offset + GAS_ADDR_OFFSET, sizeof(uint64_t),                      
+                   ACPI_GHES_ERRORS_FW_CFG_FILE, source_id * sizeof(uint64_t));
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+        during build_ghes_v2() also store on a side mapping
+             source_id -> error address offset : read ack address
+
+        so when you are injecting error, you'd at least use offsets
+        used at start time, to get rid of risk where injection code
+        diverge from HEST:etc/hardware_errors layout at start time.
+
+        However to make migration safe, one would need to add a fat
+        comment not to change order ghest error sources in HEST _and_
+        a dedicated unit test to make sure we catch it when that happens.
+        bios_tables_test should be able to catch the change, but it won't
+        say what's wrong, hence a test case that explicitly checks order
+        and loudly & clear complains when we will break order assumptions.
+
+        downside:
+           * we are are limiting ways HEST could be composed/reshuffled in future
+           * consumption of extra CI resources
+           * and well, it relies on above duct tape holding all pieces together
+
+>  NotifierList generic_error_notifiers =
+>      NOTIFIER_LIST_INITIALIZER(error_device_notifiers);
+>  
+> +void ghes_record_cper_errors(AcpiGhesCper *cper, Error **errp,
+> +                             uint32_t notify)
+> +{
+> +    int read_ack = 0;
+       ^^^
+[...]
+> +    cpu_physical_memory_read(read_ack_addr,
+> +                             &read_ack, sizeof(uint64_t));
+                                                  ^^^^
+it looks like possible stack corruption, isn't it?
+
+> +    /* zero means OSPM does not acknowledge the error */
+> +    if (!read_ack) {
+> +        error_setg(errp,
+> +                   "Last CPER record was not acknowledged yet");
+> +        read_ack = 1;
+> +        cpu_physical_memory_write(read_ack_addr,
+> +                                  &read_ack, sizeof(uint64_t));
+                                                        ^^^^^
+and then who knows what we are writing back here
+
+> +        return;
+> +    }
+> +
+> +    read_ack = cpu_to_le64(0);
+> +    cpu_physical_memory_write(read_ack_addr,
+> +                              &read_ack, sizeof(uint64_t));
+> +
+> +    /* Build CPER record */
+> +
+> +    /*
+> +     * Invalid fru id: ACPI 4.0: 17.3.2.6.1 Generic Error Data,
+> +     * Table 17-13 Generic Error Data Entry
+> +     */
+> +    QemuUUID fru_id = {};
+> +
+> +    block = g_array_new(false, true /* clear */, 1);
+> +    data_length = ACPI_GHES_DATA_LENGTH + cper->data_len;
+> +
+> +    /*
+> +        * It should not run out of the preallocated memory if
+> +        * adding a new generic error data entry
+> +        */
+> +    assert((data_length + ACPI_GHES_GESB_SIZE) <=
+> +            ACPI_GHES_MAX_RAW_DATA_LENGTH);
+it's better to error out gracefully here instead of crash
+in case script generated too long record,
+not the end of the world, but it's annoying to restart guest
+on external mistake.
+
+PS:
+looking at the code, ACPI_GHES_MAX_RAW_DATA_LENGTH is 1K
+and it is the total size of a error block for a error source.
+
+However acpi_hest_ghes.rst (3) says it should be 4K,
+am I mistaken? 
+
+
+> +    /* Build the new generic error status block header */
+> +    acpi_ghes_generic_error_status(block, ACPI_GEBS_UNCORRECTABLE,
+> +                                    0, 0, data_length,
+> +                                    ACPI_CPER_SEV_RECOVERABLE);
+> +
+> +    /* Build this new generic error data entry header */
+> +    acpi_ghes_generic_error_data(block, cper->guid,
+> +                                ACPI_CPER_SEV_RECOVERABLE, 0, 0,
+> +                                cper->data_len, fru_id, 0);
+> +
+
+not that I mind, but I'd ax above calls with their hardcoded
+assumptions and make script generate whole error block,
+it's more flexible wrt ACPI_CPER_SEV_RECOVERABLE/ACPI_GEBS_UNCORRECTABLE
+and then one can ditch from QAPI interface cper->guid.
+
+basically inject whatever user provided via QAPI without any other assumptions.
+
+> +    /* Add CPER data */
+> +    for (i = 0; i < cper->data_len; i++) {
+> +        build_append_int_noprefix(block, cper->data[i], 1);
+> +    }
+> +
+> +    /* Write the generic error data entry into guest memory */
+> +    cpu_physical_memory_write(error_block_addr, block->data, block->len);
+> +
+> +    g_array_free(block, true);
+> +
+> +    notifier_list_notify(&generic_error_notifiers, NULL);
+> +}
+> +
+>  bool acpi_ghes_present(void)
+>  {
+>      AcpiGedState *acpi_ged_state;
+> diff --git a/hw/acpi/ghes_cper.c b/hw/acpi/ghes_cper.c
+> index 7aa7e71e90dc..d7ff7debee74 100644
+> --- a/hw/acpi/ghes_cper.c
+> +++ b/hw/acpi/ghes_cper.c
+> @@ -39,7 +39,7 @@ void qmp_ghes_cper(CommonPlatformErrorRecord *qmp_cper,
+>          return;
+>      }
+>  
+> -    /* TODO: call a function at ghes */
+> +    ghes_record_cper_errors(&cper, errp, ACPI_GHES_NOTIFY_GPIO);
+>  
+>      g_free(cper.data);
+>  }
+> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+> index 06a5b8820cd5..ee6f6cd96911 100644
+> --- a/include/hw/acpi/ghes.h
+> +++ b/include/hw/acpi/ghes.h
+> @@ -85,6 +85,9 @@ typedef struct AcpiGhesCper {
+>      size_t data_len;
+>  } AcpiGhesCper;
+>  
+> +void ghes_record_cper_errors(AcpiGhesCper *cper, Error **errp,
+> +                             uint32_t notify);
+
+maybe rename it to acpi_ghes_inject_error_block()
+
+> +
+>  /**
+>   * acpi_ghes_present: Report whether ACPI GHES table is present
+>   *
+
 
