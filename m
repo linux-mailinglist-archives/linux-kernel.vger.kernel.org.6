@@ -1,127 +1,328 @@
-Return-Path: <linux-kernel+bounces-276480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE059949461
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:21:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27956949468
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8843D1F25949
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:21:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D197B288E17
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7361A269;
-	Tue,  6 Aug 2024 15:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD77B29422;
+	Tue,  6 Aug 2024 15:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RA1988Mg"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="jHphYok6"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C98812E75;
-	Tue,  6 Aug 2024 15:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F70219E4
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722957691; cv=none; b=Jnif444sZmlDwQb27p/A80CKGS39otoBytJlS4eJi7wPVVrrwGeoyPXECFVC8GADEdJmqjhYqmRe5wjgSCcnHEXtyN049dZJhvNKTc4IqVXbL3w5cxPb5vzqicsLI9R+c20KazlYxeUcux4jffUNiQCypjNJ1gAKwBfyeM1yq6s=
+	t=1722957768; cv=none; b=I4wvO9+N/Hdeek9jcuQRYn53l5IEq1hIX7BL24GJpFHWrYMqMcv6BLrOlk7c/I8vdl0meBX0+JV8fmEMdgeNnKnw1hGV3Ap/Ze47DW9uhTtCbi+sE1WHkCUi3dI2+/goS3eAC2tocdANOi9VFpdHAdnLhwpiDKwuNJDOLmqXiLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722957691; c=relaxed/simple;
-	bh=yXypt64uF0w/ShLxbdnq16PrfyJcpZl0iWSpKlVTEjw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=FvuMf1Ef8JCPNPGvGLAMd6SbLMzkTMn4kWrvLNsDyO5h+q4XA3O4tQQXyuPVzh6I0MgFVXvaHMdEaVUhX6Ed57W1xhIeVdoOZS9FWc+Cn9YIFBW4F/nitPg9f43uQZ1Ue17U1QvfKGBq20AuyarQX6X6ESfYtFj0VL5iP1pMKM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RA1988Mg; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fc5549788eso6429945ad.1;
-        Tue, 06 Aug 2024 08:21:30 -0700 (PDT)
+	s=arc-20240116; t=1722957768; c=relaxed/simple;
+	bh=XRx9VH/ThNvkQFNhb5kmyBFfJnrqQp5grG+upjC91Mw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dp6fECAh0hkCX8S57Dk7tHv8ZuT1w0iX+qVBSMxxfYPGdxWEHbn/jZNlxsiZzgD0FiDo0E4+GK3Al9mSmSWKNE/B3C2ikyJ1iwcEWgmSfelihaocG+uyIFks8ONbNykkFQCi4sRm6Xy2rDPEvUzufFqmskZ7fg0cNWekl2lRkM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=jHphYok6; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-81f921c40f2so22402739f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 08:22:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722957689; x=1723562489; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1722957766; x=1723562566; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=L3oTpRyrb3abk0ueTizPKWSn8WwNP0gHjkntdPT2laM=;
-        b=RA1988Mg6FGNI0yMquN5YPKFqyxdP2vnu5KwJSRaEID5jxalXIGlncHA44yizzOk+O
-         vuiAU83iFBm4cQzlQDk63R89e+IOx0O4lHUCsdov1MuZLQIv8wBx3BxtyRWtVHqUy9E5
-         k5Db+gLxO+bYw5ONAXez8R6KRacGSfnqtnxq3e7hfgX/4GOvqzlRP3ZYruSGvlp1zoPO
-         k2/MMAeOcPbB8z7BPWM7hJ4l0KINRusImTjz91IOpZwuegnzirwXzPZ/LOFHKwhaXQY2
-         4AkGmIpNGr0E/rZ8z5hpdih73mq03Bde6080zZY//rbkOXUnFIfXinbfSMC5mYT2Vqmj
-         yUwA==
+        bh=gZK/SAMkK6qN158OD2MUZR6P1q11CC48toriFO0gX24=;
+        b=jHphYok6mSgxH5BY01LX3Dq4lAUcPlQAf6+F8DAMtby714CdHtvhvjbL9UGd5/mRRB
+         gvYRMvcavYTpZ5D2YdZLhnqzN+sevDaVE1prxtsxJVBNoo/UXKqwip8JIX4EJTG66lvC
+         S6IA9qLRO1QURMHY7b9cqveOkd+QGbpttp1TkMLN6ztNNMy93G0CeX5N2vjEUoI6kH6w
+         6m2OkpnG/tyBk90XWaQivM14GoqZU6qAr0iQhM0Sk6A3y0NluHtKY15dLuMJGU65OWPY
+         WxuBdI3+Vk2bE2/NbavTp+HeTQaR+eSv3pwfmLw9V6TP+cIIIwnzwH+7F/SDNL1KKOV+
+         hw3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722957689; x=1723562489;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722957766; x=1723562566;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=L3oTpRyrb3abk0ueTizPKWSn8WwNP0gHjkntdPT2laM=;
-        b=N4+44DyIzq5+eIZ+4HnC52pJ5iNTAEjdGCL3IcrhU2273KawwQB7uA7eBcQe4CqN/r
-         DaWCx9VwmI+7lUaN7R5CPwj2v8QVwDGZSNDdvP617XOdmwm1uSuF4F+RJMYZAjyJK1f8
-         qElKJ0dFjtrv6VMThSPAK7QD9wUtKQN9cLjwKlTHq0XPlW3h693ErKV77CxxBCHS5c4P
-         2Vxgo6Fa2XYXzA+3eds/V1kuf+OkdyW9rA2kdZq2qPDdTyPkuvUYjD0fA7AOHRXsZ2vE
-         8OKE1L4t+hY7ls56JIdP2hULZA7AUfUX/v7t6dcYILSoqAJmCpqvMnTFY4zlj+Pitfyb
-         55SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBXiuBRKMstxSZ70d4uI34e29wfLcrFvQyAzuN7K+mQMbwsBlyB1nLSHFYk5GXpfVp7ib2Ip8Mzkge2UB6Inxr8iWH2F/HtF84BDf7
-X-Gm-Message-State: AOJu0YyeW14yjDHxwehmoPEdg9X43RL2NzPzaBu1B2od1fx+WE+u0e7O
-	hosfA6d1nIQTnVhzPrAOM1iy7O+q2+lF6hBQGTPQ33Yn0jSbNzpoqJx1dA==
-X-Google-Smtp-Source: AGHT+IEGxh6kPnY9wC4MAD9+3SC4BQ0LGo7bdy72buLv3bKeuSvvBJPxTtj7eAqkku941gB4DGSUjA==
-X-Received: by 2002:a17:903:1245:b0:1fb:3ce5:122d with SMTP id d9443c01a7336-1ff573bfe4amr217689025ad.41.1722957689376;
-        Tue, 06 Aug 2024 08:21:29 -0700 (PDT)
-Received: from smtpclient.apple ([47.89.225.180])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2007728d837sm17172925ad.84.2024.08.06.08.21.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 06 Aug 2024 08:21:28 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+        bh=gZK/SAMkK6qN158OD2MUZR6P1q11CC48toriFO0gX24=;
+        b=pssMty4dxglKOLvg+zcT78yn734YlHzy6tCV1LqWDBYR1D7YaZBONSPdQCCJ2ZJbN6
+         NS2d349eqNnqpCsKQAu7t9w9NO52GZDmYXTvO3oeNWJYC2OPiycM/G/mKvPrvLprFTAq
+         UQ9mMvnbdjAeGXBIqko5Wx+WrBO8zjFEBk4ueCCEoabDWD58zGYsgRA9bBcq07npfqLU
+         A7dAnxgZZ4mJITVs5vto3CpLywtJr9pImHd7kEXdndhU/nISdWJHq+BOw5syq9RsHLLG
+         yv5scnmfyncS0/+Vl+JrRsAegEykjveTFlKnnEicbva7DmNo0baiRm8tNNlnv1bJ8hGJ
+         nmiw==
+X-Gm-Message-State: AOJu0YxIGTvBWFTtQ/+cr00ckj3dmB4mDVHBB6TgLQgi4Id+0DXAR6xi
+	gZPpHUM0TLD2wt9+HqpBqLQwvJ/2+QQFJLx6aFcq/ghA9sXFh2dykHGhXARvBF6qjM6dgXTiUPK
+	HbRDr/ov2Jh/26xo5jJlyNgaUtyMpFk5YmX4MAw==
+X-Google-Smtp-Source: AGHT+IGoYopgvARvXhcov69tPNfXLq0wMn0uqHERJincoJcvdaUmpe1P134PN7KjzYlHQPv82EElloRMNkb9vreilnQ=
+X-Received: by 2002:a92:6506:0:b0:398:ca2b:2537 with SMTP id
+ e9e14a558f8ab-39b1fb6ab2emr164960855ab.3.1722957766329; Tue, 06 Aug 2024
+ 08:22:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH v2 1/1] livepatch: Add using attribute to klp_func for
- using function show
-From: zhang warden <zhangwarden@gmail.com>
-In-Reply-To: <20240805064656.40017-2-zhangyongde.zyd@alibaba-inc.com>
-Date: Tue, 6 Aug 2024 23:21:13 +0800
-Cc: live-patching@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240729142241.733357-1-sunilvl@ventanamicro.com> <20240729142241.733357-14-sunilvl@ventanamicro.com>
+In-Reply-To: <20240729142241.733357-14-sunilvl@ventanamicro.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Tue, 6 Aug 2024 20:52:35 +0530
+Message-ID: <CAAhSdy0BMDNZ3ks4xQkT5cyg_Jg8J2yq7+1CzYyNayP+shBHcw@mail.gmail.com>
+Subject: Re: [PATCH v7 13/17] irqchip/riscv-intc: Add ACPI support for AIA
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-pci@vger.kernel.org, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Samuel Holland <samuel.holland@sifive.com>, 
+	Robert Moore <robert.moore@intel.com>, Conor Dooley <conor.dooley@microchip.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Haibo Xu <haibo1.xu@intel.com>, 
+	Atish Kumar Patra <atishp@rivosinc.com>, Drew Fustini <dfustini@tenstorrent.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <81AC0E7E-24D8-4768-B1A2-CD3688C1525D@gmail.com>
-References: <20240805064656.40017-1-zhangyongde.zyd@alibaba-inc.com>
- <20240805064656.40017-2-zhangyongde.zyd@alibaba-inc.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>,
- Miroslav Benes <mbenes@suse.cz>,
- Jiri Kosina <jikos@kernel.org>,
- Petr Mladek <pmladek@suse.com>,
- Joe Lawrence <joe.lawrence@redhat.com>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
+On Mon, Jul 29, 2024 at 7:54=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.com=
+> wrote:
+>
+> The RINTC subtype structure in MADT also has information about other
+> interrupt controllers. Save this information and provide interfaces to
+> retrieve them when required by corresponding drivers.
+>
+> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+> ---
+>  arch/riscv/include/asm/irq.h     | 33 ++++++++++++
+>  drivers/irqchip/irq-riscv-intc.c | 90 ++++++++++++++++++++++++++++++++
+>  2 files changed, 123 insertions(+)
+>
+> diff --git a/arch/riscv/include/asm/irq.h b/arch/riscv/include/asm/irq.h
+> index 44a0b128c602..51d86f0b80d2 100644
+> --- a/arch/riscv/include/asm/irq.h
+> +++ b/arch/riscv/include/asm/irq.h
+> @@ -12,6 +12,8 @@
+>
+>  #include <asm-generic/irq.h>
+>
+> +#define INVALID_CONTEXT UINT_MAX
+> +
+>  void riscv_set_intc_hwnode_fn(struct fwnode_handle *(*fn)(void));
+>
+>  struct fwnode_handle *riscv_get_intc_hwnode(void);
+> @@ -28,6 +30,11 @@ enum riscv_irqchip_type {
+>  int riscv_acpi_get_gsi_info(struct fwnode_handle *fwnode, u32 *gsi_base,
+>                             u32 *id, u32 *nr_irqs, u32 *nr_idcs);
+>  struct fwnode_handle *riscv_acpi_get_gsi_domain_id(u32 gsi);
 
+I suggest the below renaming to make it explicit that these are RINTC funct=
+ions.
 
-> On Aug 5, 2024, at 14:46, zhangyongde.zyd <zhangwarden@gmail.com> =
-wrote:
->=20
-> From: Wardenjohn <zhangwarden@gmail.com>
->=20
->=20
-> static void klp_init_func_early(struct klp_object *obj,
-> struct klp_func *func)
-> {
-> + func->using =3D false;
-> kobject_init(&func->kobj, &klp_ktype_func);
-> list_add_tail(&func->node, &obj->func_list);
-> }
+> +unsigned long acpi_get_intc_index_hartid(u32 index);
 
-I reviewed my mail again and found some typos and point them out first.
+s/acpi_get_intc_index_hartid/acpi_rintc_index_to_hartid/
 
-func->using =3D false
-is a remaining mistake by the previous patch which will remove in the =
-next patch.
+> +unsigned long acpi_get_ext_intc_parent_hartid(unsigned int plic_id, unsi=
+gned int ctxt_idx);
 
->=20
-> + *=20
-> + * When this patch is in transition, all functions of this patch will
-> + * set to be unknown
-> */
-This comment is left and become useless, it will be removed	in the =
-next patch.
+s/acpi_get_ext_intc_parent_hartid/acpi_rintc_ext_parent_to_hartid/
 
-Thanks!
-Wardenjohn.=
+> +unsigned int acpi_get_plic_nr_contexts(unsigned int plic_id);
+
+s/acpi_get_plic_nr_contexts/acpi_rintc_get_plic_nr_contexts/
+
+> +unsigned int acpi_get_plic_context(unsigned int plic_id, unsigned int ct=
+xt_idx);
+
+s/acpi_get_plic_context/acpi_rintc_get_plic_context/
+
+> +int __init acpi_get_imsic_mmio_info(u32 index, struct resource *res);
+
+s/acpi_get_imsic_mmio_info/acpi_rintc_get_imsic_mmio_info/
+
+>
+>  #else
+>  static inline int riscv_acpi_get_gsi_info(struct fwnode_handle *fwnode, =
+u32 *gsi_base,
+> @@ -36,6 +43,32 @@ static inline int riscv_acpi_get_gsi_info(struct fwnod=
+e_handle *fwnode, u32 *gsi
+>         return 0;
+>  }
+>
+> +static inline unsigned long acpi_get_intc_index_hartid(u32 index)
+> +{
+> +       return INVALID_HARTID;
+> +}
+> +
+> +static inline unsigned long acpi_get_ext_intc_parent_hartid(unsigned int=
+ plic_id,
+> +                                                           unsigned int =
+ctxt_idx)
+> +{
+> +       return INVALID_HARTID;
+> +}
+> +
+> +static inline unsigned int acpi_get_plic_nr_contexts(unsigned int plic_i=
+d)
+> +{
+> +       return INVALID_CONTEXT;
+> +}
+> +
+> +static inline unsigned int acpi_get_plic_context(unsigned int plic_id, u=
+nsigned int ctxt_idx)
+> +{
+> +       return INVALID_CONTEXT;
+> +}
+> +
+> +static inline int __init acpi_get_imsic_mmio_info(u32 index, struct reso=
+urce *res)
+> +{
+> +       return 0;
+> +}
+> +
+>  #endif /* CONFIG_ACPI */
+>
+>  #endif /* _ASM_RISCV_IRQ_H */
+> diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv=
+-intc.c
+> index 47f3200476da..5ddb12ce8b97 100644
+> --- a/drivers/irqchip/irq-riscv-intc.c
+> +++ b/drivers/irqchip/irq-riscv-intc.c
+> @@ -250,6 +250,85 @@ IRQCHIP_DECLARE(andes, "andestech,cpu-intc", riscv_i=
+ntc_init);
+>
+>  #ifdef CONFIG_ACPI
+>
+> +struct rintc_data {
+> +       union {
+> +               u32             ext_intc_id;
+> +               struct {
+> +                       u32     context_id      : 16,
+> +                               reserved        :  8,
+> +                               aplic_plic_id   :  8;
+> +               };
+> +       };
+> +       unsigned long           hart_id;
+> +       u64                     imsic_addr;
+> +       u32                     imsic_size;
+> +};
+> +
+> +static u32 nr_rintc;
+> +static struct rintc_data *rintc_acpi_data[NR_CPUS];
+> +
+> +#define for_each_matching_plic(_plic_id)                               \
+> +       unsigned int _plic;                                             \
+> +                                                                       \
+> +       for (_plic =3D 0; _plic < nr_rintc; _plic++)                     =
+ \
+> +               if (rintc_acpi_data[_plic]->aplic_plic_id !=3D _plic_id) =
+ \
+> +                       continue;                                       \
+> +               else
+> +
+> +unsigned int acpi_get_plic_nr_contexts(unsigned int plic_id)
+> +{
+> +       unsigned int nctx =3D 0;
+> +
+> +       for_each_matching_plic(plic_id)
+> +               nctx++;
+> +
+> +       return nctx;
+> +}
+> +
+> +static struct rintc_data *get_plic_context(unsigned int plic_id, unsigne=
+d int ctxt_idx)
+> +{
+> +       unsigned int ctxt =3D 0;
+> +
+> +       for_each_matching_plic(plic_id) {
+> +               if (ctxt =3D=3D ctxt_idx)
+> +                       return rintc_acpi_data[_plic];
+> +
+> +               ctxt++;
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+> +unsigned long acpi_get_ext_intc_parent_hartid(unsigned int plic_id, unsi=
+gned int ctxt_idx)
+> +{
+> +       struct rintc_data *data =3D get_plic_context(plic_id, ctxt_idx);
+> +
+> +       return data ? data->hart_id : INVALID_HARTID;
+> +}
+> +
+> +unsigned int acpi_get_plic_context(unsigned int plic_id, unsigned int ct=
+xt_idx)
+> +{
+> +       struct rintc_data *data =3D get_plic_context(plic_id, ctxt_idx);
+> +
+> +       return data ? data->context_id : INVALID_CONTEXT;
+> +}
+> +
+> +unsigned long acpi_get_intc_index_hartid(u32 index)
+> +{
+> +       return index >=3D nr_rintc ? INVALID_HARTID : rintc_acpi_data[ind=
+ex]->hart_id;
+> +}
+> +
+> +int acpi_get_imsic_mmio_info(u32 index, struct resource *res)
+> +{
+> +       if (index >=3D nr_rintc)
+> +               return -1;
+> +
+> +       res->start =3D rintc_acpi_data[index]->imsic_addr;
+> +       res->end =3D res->start + rintc_acpi_data[index]->imsic_size - 1;
+> +       res->flags =3D IORESOURCE_MEM;
+> +       return 0;
+> +}
+> +
+>  static int __init riscv_intc_acpi_init(union acpi_subtable_headers *head=
+er,
+>                                        const unsigned long end)
+>  {
+> @@ -258,6 +337,15 @@ static int __init riscv_intc_acpi_init(union acpi_su=
+btable_headers *header,
+>         int rc;
+>
+>         rintc =3D (struct acpi_madt_rintc *)header;
+> +       rintc_acpi_data[nr_rintc] =3D kzalloc(sizeof(*rintc_acpi_data[0])=
+, GFP_KERNEL);
+> +       if (!rintc_acpi_data[nr_rintc])
+> +               return -ENOMEM;
+> +
+> +       rintc_acpi_data[nr_rintc]->ext_intc_id =3D rintc->ext_intc_id;
+> +       rintc_acpi_data[nr_rintc]->hart_id =3D rintc->hart_id;
+> +       rintc_acpi_data[nr_rintc]->imsic_addr =3D rintc->imsic_addr;
+> +       rintc_acpi_data[nr_rintc]->imsic_size =3D rintc->imsic_size;
+> +       nr_rintc++;
+>
+>         /*
+>          * The ACPI MADT will have one INTC for each CPU (or HART)
+> @@ -277,6 +365,8 @@ static int __init riscv_intc_acpi_init(union acpi_sub=
+table_headers *header,
+>         rc =3D riscv_intc_init_common(fn, &riscv_intc_chip);
+>         if (rc)
+>                 irq_domain_free_fwnode(fn);
+> +       else
+> +               acpi_set_irq_model(ACPI_IRQ_MODEL_RINTC, riscv_acpi_get_g=
+si_domain_id);
+>
+>         return rc;
+>  }
+> --
+> 2.43.0
+>
+
+Otherwise, this looks good to me.
+
+Reviewed-by: Anup Patel <anup@brainfault.org>
+
+Regards,
+Anup
 
