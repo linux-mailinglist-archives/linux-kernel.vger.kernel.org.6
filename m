@@ -1,166 +1,400 @@
-Return-Path: <linux-kernel+bounces-275651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 908CF948804
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE828948807
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47FCE285090
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:44:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6456B2851DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1AC172769;
-	Tue,  6 Aug 2024 03:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="T2i2g83E"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49606176242;
+	Tue,  6 Aug 2024 03:45:08 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C3641AAC
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2FA17554A
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722915849; cv=none; b=eL2eC4nQGgHz0KqZAMUaux1mLMZqPqEB0EjNijg3y/7IUD4ghIIOx4FUS7MtOLcT4M6HzfxYUYf8FmwHVXOn3cHDLv122CkYmIfGPEm8I2BRwRI89JXpabrgKbDooPKEnbY7MlPuXdgYTdKy/nOCtZVJPAiBKV/dcaJMVmjWuiQ=
+	t=1722915907; cv=none; b=pmbBnR5PtEPsHljpKnBVyAK90bgcZ0KihWAJlY+5DNTtQVXs5qpKyDwdE3d47Q4ZjM3j6de1etMDJPIEFiMmcOp6i+Pgk23KuJzr0aCHJ1i00b8AD2DV1PU586xe2wz6pwoxgDy/P6ByYS+xz19+BOouzYC8ZrFMna5msd+7URU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722915849; c=relaxed/simple;
-	bh=9w8ncq3RRlP4l5j0Y3KPln+B5xci5rtypVVSJcn36hU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oZSaHQ8CSlr8Mtk1TYB7n5fJMvTuELn+4Pdf2KxfJpI+nPVbplBELgD4VKFnYMJS0gVpsoLfa4mpiarDj5tmXOVGk1XtKUf/7Tpabqph3XsUUhaJdGyS7MfsDcg0KWzbR/TQ2m1EIZ09b4tLcT54rBlNIwZcMXBPEbfPuNKPqRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=T2i2g83E; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70d25b5b6b0so127403b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 20:44:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1722915847; x=1723520647; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rRM9FZSh16rbfz7ihxtx8ZJYPVBYiimSpzVKxSu/NJA=;
-        b=T2i2g83ELDsOeP7ZlqctGblSqCJqKBiQmzBothltGBRfqoepmL5TdX6V1h7GSfltUw
-         ox9ptROzGE6RgguAIXERvvJWEp1r7xfshGn5Cccs9OL5EetroI6xvhPbTe3Q4rCO6kfa
-         8k8mLO8gaVpWZnkSxtJ6XPDUiNfLvBinfYctGwQBVcRJT5Q3z8yOROZdKamnGGx9nb3+
-         df4yC+VqoEO4A5L3QbQzH7wGbTOvwNS5ZRRzIILo0BU0R9Wt02Gepo8CzbgDN84hq4EJ
-         TXfYmHWlGfGrRancZZkBwmm0ybANBL5vyhOcQczTCVKGfd3HXMTfzxOfr2BiKlF5wBuo
-         UIXA==
+	s=arc-20240116; t=1722915907; c=relaxed/simple;
+	bh=LSrWlDgeZ9bSxu9L4ZXmdU5RZ/Dd3TtIt/ipq0FmBFI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FqFp9mE8wbSl5T2VJso8I3Oe1FHFlniguCyhdAAETFjUJAohE5wWZquApc5l2T/NGgRCxhjOROQ5AFM0RyoeqY+gNpop+NZp8zTeKe4rfLzP/wDI4YUkBmkec3bKBK9Uf+vmVmguXkCNWpM1s3Kh+D9SdKHJnBpj3w30eGn1Tk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39a1f627b3dso2970255ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 20:45:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722915847; x=1723520647;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rRM9FZSh16rbfz7ihxtx8ZJYPVBYiimSpzVKxSu/NJA=;
-        b=mXi5pY3ZC0vI2sYC97bj+sXKfCQOPgW9+wdGxy9HIEj4qO1GrtOWqAYP6CuJZuQ7gw
-         jkTXMGc3z20xQ3ePWERj8EUmxHBZuNL4vElNi5iv0xsECNnl73ZiQAdunH8/A4ywKIE7
-         sjh7/6f5yL5xV37DSsmNlB0rVJJELREC/hDq9ovneDCDLTLn1UgYaW19nyX1bpaoPl65
-         3ZHHKnmeeTUzQuKyW/XH5aIEKIQG8okMqXQR1DS1f8ijSkYNHMOJYrzk/A3xGL5RFjjP
-         mHAdjLU+hz64z+L9xw810PeosEvlPBJ1sjUXCOVgxaO2yIlUbneG7BHbuDOA25+grNdY
-         hTQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjkQJQQtOLn47VdpEed2NuDo1lPUtOc2P/QzkM8hqg8kUWrHbFtS0MGmcE/Jc+NA+lrW4IwikdSe+pKBUTsrjuf3OXfCmpvZgURSxA
-X-Gm-Message-State: AOJu0Yw3JkCxXkJLXVVL2RF4kV6SsRuAYSYdYOiW/1a+mqUy6T3+R4rg
-	a/Q55Rajh+hOFwuFVTCAZe8kr/KhjaCxAc00Dds4cDDz53Nsq8re/Ws0tCa6yXk=
-X-Google-Smtp-Source: AGHT+IEt+NsWrhDZvNKh+KL5PXQ/tZukt6UMHbZ2/1vsVJU8L/SGBi/xds/Pna+3NasWdgtfRP3gWQ==
-X-Received: by 2002:a05:6a20:1592:b0:1c6:a825:8ba4 with SMTP id adf61e73a8af0-1c6a8258d8emr10547856637.41.1722915846608;
-        Mon, 05 Aug 2024 20:44:06 -0700 (PDT)
-Received: from ubuntu20.04 ([203.208.189.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f21718sm76723415ad.59.2024.08.05.20.44.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 20:44:05 -0700 (PDT)
-From: Yang Jihong <yangjihong@bytedance.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: yangjihong@bytedance.com
-Subject: [PATCH] perf sched timehist: Fixed timestamp error when unable to confirm event sched_in time
-Date: Tue,  6 Aug 2024 11:43:57 +0800
-Message-Id: <20240806034357.1340216-1-yangjihong@bytedance.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1722915904; x=1723520704;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gw5z27UroeewxSkNJFoFGrZHFY0d+PLLlfqHJbevcG4=;
+        b=bV9wfZmQvU3dpEOBXb7tRk7rmxkKaRcG0IyfzqXTAjww6xm8jaikywzCZpn0GGyKhv
+         6hb/P89g+vRD/AcfXd+gkMym9uXc5dVW/s9CTdZR+SiGj+aBJLPVAiVvjjtmPmkL+bEo
+         ALtJrKAYd6eUNpc7bRNp2EqnXDPAeiw/M4Fe5tgk3nqeTAJZ7KH7P65n9FTR9tZWrBzD
+         bvAbma6j1pVjN9U1MIqqf09oWoy+vM+3OBUr77zV5WBodvUfTrHSEKKTHyLqZnI3xN1H
+         MCcKZ3PkNl41v1FSqPhcZTaBR0Tv2HCG8qTa33x51k1o+AxMEgappquH3i9hVAr8+qrA
+         UJlg==
+X-Forwarded-Encrypted: i=1; AJvYcCXl/Y0u9gOABREHfLdBpP/3njd6AY1vclkEYa1nYyhTmU2r9j9dkXzDFBNb+AGo+PAekkAvP79R2J/SplBUu4JqhMtkmd3NM+2hhQgN
+X-Gm-Message-State: AOJu0Yxn95j5x1LGm/acFCyeDNM2S5aQXtaFx2Uv6wkqpfWFe6iEOya9
+	IG1nR08skblEUgB1bltMKpyPiCGYirgVkCEGDJZHzyZDvHw3yJQYSuAJXX+mkQftGkNrjqY4+KQ
+	jYmGYa0zs/Y4T0kqQAgQ2IMjD8WLv/XrOewSw90O9scdI1yOdNCicXOs=
+X-Google-Smtp-Source: AGHT+IG1LCLPIXqxGpNLAY4DcYCPnxxswPtvc7K5JezhcEtiATj8ZYT3WGgj7Q0MhVx0XR8lXRPY9O8xIaf8ZxfexSIppM2OxbXH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a83:b0:375:a55e:f5fc with SMTP id
+ e9e14a558f8ab-39b1fb72b46mr9699935ab.1.1722915904396; Mon, 05 Aug 2024
+ 20:45:04 -0700 (PDT)
+Date: Mon, 05 Aug 2024 20:45:04 -0700
+In-Reply-To: <CAJwTMzopW3_-EXG3qdMAT0XpWpvSFQuEPiKpJ2nr2M45rMtAug@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000075aca9061efb9ebb@google.com>
+Subject: Re: [syzbot] [bluetooth?] WARNING in __hci_cmd_sync_sk
+From: syzbot <syzbot+f52b6db1fe57bfb08d49@syzkaller.appspotmail.com>
+To: djahchankoike@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If sched_in event for current task is not recorded, sched_in timestamp
-will be set to end_time of time window interest, causing an error in
-timestamp show. In this case, we choose to ignore this event.
+Hello,
 
-Test scenario:
-  perf[1229608] does not record the first sched_in event, run time and sch delay are both 0
+syzbot tried to test the proposed patch but the build/boot failed:
 
-  # perf sched timehist
-  Samples of sched_switch event do not have callchains.
-             time    cpu  task name                       wait time  sch delay   run time
-                          [tid/pid]                          (msec)     (msec)     (msec)
-  --------------- ------  ------------------------------  ---------  ---------  ---------
-   2090450.763231 [0000]  perf[1229608]                       0.000      0.000      0.000
-   2090450.763235 [0000]  migration/0[15]                     0.000      0.001      0.003
-   2090450.763263 [0001]  perf[1229608]                       0.000      0.000      0.000
-   2090450.763268 [0001]  migration/1[21]                     0.000      0.001      0.004
-   2090450.763302 [0002]  perf[1229608]                       0.000      0.000      0.000
-   2090450.763309 [0002]  migration/2[27]                     0.000      0.001      0.007
-   2090450.763338 [0003]  perf[1229608]                       0.000      0.000      0.000
-   2090450.763343 [0003]  migration/3[33]                     0.000      0.001      0.004
+b 5f5f206220306136
+ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 5f5f206220303237 6433663439666666 66666666660a3032 2e79656b5f5f2062
+ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 382e79656b5f5f20 6220303637643366 3439666666666666 66660a372e79656b
+ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 3063613234663439 6666666666666666 0a302e79656b5f5f 2062203038613234
+ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 5f5f206220303062 3234663439666666 66666666660a312e 79656b5f5f206220
+ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 332e79656b5f5f20 6220303462323466 3439666666666666 66660a322e79656b
+ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 666666660a302e79 656b5f5f20622030 3862323466343966 666666666666660a
+info registers vcpu 2
 
-Before:
-  arbitrarily specify a time window of interest, timestamp will be set to an incorrect value
+CPU#2
+RAX=3D0000000000000000 RBX=3Dffffc90003347740 RCX=3Dffffffff813cdd16 RDX=3D=
+ffff88802352a440
+RSI=3Dffffffff813cde49 RDI=3D0000000000000005 RBP=3Dffffc90003347ca0 RSP=3D=
+ffffc90003347670
+R8 =3D0000000000000005 R9 =3D0000000000000000 R10=3D0000000000000001 R11=3D=
+0000000000000000
+R12=3Dffffc90003347748 R13=3Dffffc90003347750 R14=3Dffffc90003340000 R15=3D=
+ffffc90003348000
+RIP=3Dffffffff818a7d60 RFL=3D00000287 [--S--PC] CPL=3D0 II=3D0 A20=3D1 SMM=
+=3D0 HLT=3D0
+ES =3D0000 0000000000000000 ffffffff 00c00000
+CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
+SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
+DS =3D0000 0000000000000000 ffffffff 00c00000
+FS =3D0000 0000000000000000 ffffffff 00c00000
+GS =3D0000 ffff88806b200000 ffffffff 00c00000
+LDT=3D0000 0000000000000000 ffffffff 00c00000
+TR =3D0040 fffffe0000091000 00004087 00008b00 DPL=3D0 TSS64-busy
+GDT=3D     fffffe000008f000 0000007f
+IDT=3D     fffffe0000000000 00000fff
+CR0=3D80050033 CR2=3D00007f7b448feda0 CR3=3D000000002560c000 CR4=3D00350ef0
+DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000 DR3=3D=
+0000000000000000=20
+DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
+EFER=3D0000000000000d01
+FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001fa0
+FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
+FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
+FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
+FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
+Opmask00=3D0000000000000000 Opmask01=3D0000000000000000 Opmask02=3D00000000=
+00000000 Opmask03=3D0000000000000000
+Opmask04=3D0000000000000000 Opmask05=3D0000000000000000 Opmask06=3D00000000=
+00000000 Opmask07=3D0000000000000000
+ZMM00=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000100040801000 3fff040c01289606
+ZMM01=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 100000040c012896 0010000108006410
+ZMM02=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0010000108006410 000e100010808080
+ZMM03=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0010004080100010 808080040c012896
+ZMM04=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 2896001000010800 6410000010004080
+ZMM05=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 6410000e10001080 8080100000040c01
+ZMM06=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0010808080040c01 2896001000010800
+ZMM07=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0100100001080064 1000001000408010
+ZMM08=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000001 000000c001b047a0
+ZMM09=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000001 0000000000000001
+ZMM10=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000002 000000c00020eba0
+ZMM11=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000001 000000c001b047b8
+ZMM12=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000001 0000000000000001
+ZMM13=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000003 000000c00020ebc0
+ZMM14=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000001 000000c001b047e0
+ZMM15=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM16=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM17=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM18=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM19=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM20=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM21=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM22=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM23=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM24=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM25=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+info registers vcpu 3
 
-  # perf sched timehist --time 100,200
-  Samples of sched_switch event do not have callchains.
-             time    cpu  task name                       wait time  sch delay   run time
-                          [tid/pid]                          (msec)     (msec)     (msec)
-  --------------- ------  ------------------------------  ---------  ---------  ---------
-       200.000000 [0000]  perf[1229608]                       0.000      0.000      0.000
-       200.000000 [0001]  perf[1229608]                       0.000      0.000      0.000
-       200.000000 [0002]  perf[1229608]                       0.000      0.000      0.000
-       200.000000 [0003]  perf[1229608]                       0.000      0.000      0.000
-       200.000000 [0004]  perf[1229608]                       0.000      0.000      0.000
-       200.000000 [0005]  perf[1229608]                       0.000      0.000      0.000
-       200.000000 [0006]  perf[1229608]                       0.000      0.000      0.000
-       200.000000 [0007]  perf[1229608]                       0.000      0.000      0.000
+CPU#3
+RAX=3D0000000000000003 RBX=3D0000000000000000 RCX=3D1ffffffff1fced3f RDX=3D=
+0000000000000000
+RSI=3D0000000000000000 RDI=3Dffff88807ffd77b0 RBP=3D0000000000000002 RSP=3D=
+ffffc90003e27a68
+R8 =3D0000000000001000 R9 =3D000000000007efdd R10=3Dffffffff8fe7391f R11=3D=
+dffffc0000000000
+R12=3D0000000000000000 R13=3D0000000000000004 R14=3Dffff88807ffd7740 R15=3D=
+0000000000044d40
+RIP=3Dffffffff81c84fd0 RFL=3D00000006 [-----P-] CPL=3D0 II=3D0 A20=3D1 SMM=
+=3D0 HLT=3D0
+ES =3D0000 0000000000000000 ffffffff 00c00000
+CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
+SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
+DS =3D0000 0000000000000000 ffffffff 00c00000
+FS =3D0000 00007fc2ddb8e280 ffffffff 00c00000
+GS =3D0000 ffff88806b300000 ffffffff 00c00000
+LDT=3D0000 0000000000000000 ffffffff 00c00000
+TR =3D0040 fffffe00000d8000 00004087 00008b00 DPL=3D0 TSS64-busy
+GDT=3D     fffffe00000d6000 0000007f
+IDT=3D     fffffe0000000000 00000fff
+CR0=3D80050033 CR2=3D000056367fa7aa10 CR3=3D0000000022206000 CR4=3D00350ef0
+DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000 DR3=3D=
+0000000000000000=20
+DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
+EFER=3D0000000000000d01
+FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001f80
+FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
+FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
+FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
+FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
+Opmask00=3D00000000fe810000 Opmask01=3D0000000000410101 Opmask02=3D00000000=
+ffffffef Opmask03=3D0000000000000000
+Opmask04=3D00000000ffffffff Opmask05=3D00000000004007ff Opmask06=3D00000000=
+07ffe7ff Opmask07=3D0000000000000000
+ZMM00=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 ffffffffffffffff ffffff0000000000
+ZMM01=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 2f2f2f2f2f2f2f2f 2f2f2f2f2f2f2f2f
+ZMM02=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 7373737373737373 7373737373737373
+ZMM03=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM04=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 ffffffffffffff00 ffffffffffffffff
+ZMM05=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 ffffffffffffffff ffffff0000000000
+ZMM06=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 ffffffffffffff00 ffffffffffffffff
+ZMM07=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM08=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM09=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM10=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM11=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM12=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM13=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM14=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM15=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM16=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM17=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 2f2f2f2f2f2f2f2f 2f2f2f2f2f2f2f2f 2f2f2f2f2f2f2f2f 2f2f2f2f2f2f2f2f
+ZMM18=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 2f646e756f732f00 682e6c6974752f64 65726168732f6372 732f2e2e2f2e2e00
+ZMM19=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 616c730033706f6f 6c2f6b636f6c622f 6c6175747269762f 736563697665642f
+ZMM20=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000061 00736576616c732f 33706f6f6c2f6b63 6f6c622f6c617574
+ZMM21=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 00007fc2dd7f1b00 000056331cd7f560 0000000000000021 0000000000007374
+ZMM22=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 69305f474f5b647c 6930382432273f39 7b27697a787c7a30 23333a3a38263342
+ZMM23=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM24=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 3a3a263e383a3a26 39383a3a2638383a 3a263b383a3a263a 383a3a26493b3a3a
+ZMM25=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 692054524f50202c 2064696c61696d20 0070253a20252054 524f504d49005452
+ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 692020520050202c 2025204f504d4900 0061253a20252000 2527204d49005452
+ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 282b2e2fdf37342d 280bbfbf23243324 26312033fc040f18 1317140d080b0412
+ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 343133bffc121104 1214041204110814 100411bffc040f18 1317140d080b0412
+ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 4141414141414141 4141414141414141 4141414141414141 4141414141414141
+ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a
+ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 2020202020202020 2020202020202020 2020202020202020 2020202020202020
 
- After:
 
-  # perf sched timehist --time 100,200
-  Samples of sched_switch event do not have callchains.
-             time    cpu  task name                       wait time  sch delay   run time
-                          [tid/pid]                          (msec)     (msec)     (msec)
-  --------------- ------  ------------------------------  ---------  ---------  ---------
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.21.4'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs/linux/gopath/src/github.com/google/syzkaller/go.mo=
+d'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build414629084=3D/tmp/go-build -gno-record-gcc=
+-switches'
 
-Fixes: 853b74071110 ("perf sched timehist: Add option to specify time window of interest")
-Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
----
- tools/perf/builtin-sched.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+git status (err=3D<nil>)
+HEAD detached at 9e136b955
+nothing to commit, working tree clean
 
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index 8750b5f2d49b..92b1113b22ad 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -2683,9 +2683,12 @@ static int timehist_sched_change_event(struct perf_tool *tool,
- 	 * - previous sched event is out of window - we are done
- 	 * - sample time is beyond window user cares about - reset it
- 	 *   to close out stats for time window interest
-+	 * - If tprev is 0, that is, sched_in event for current task is
-+	 *   not recorded, cannot determine whether sched_in event is
-+	 *   within time window interest - ignore it
- 	 */
- 	if (ptime->end) {
--		if (tprev > ptime->end)
-+		if (!tprev || (tprev && tprev > ptime->end))
- 			goto out;
- 
- 		if (t > ptime->end)
--- 
-2.25.1
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+go fmt ./sys/... >/dev/null
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D9e136b95503a540d35e7bace3e89b77f13a672b1 -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20240710-085916'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execpr=
+og github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include -fpermissive -w -DGOOS_linu=
+x=3D1 -DGOARCH_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"9e136b95503a540d35e7bace3e89b77f13=
+a672b1\"
+/usr/bin/ld: /tmp/ccGUtGqZ.o: in function `test_cover_filter()':
+executor.cc:(.text+0x133bb): warning: the use of `tempnam' is dangerous, be=
+tter use `mkstemp'
+/usr/bin/ld: /tmp/ccGUtGqZ.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x1a0): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
+
+
+Error text is too large and was truncated, full error text is at:
+https://syzkaller.appspot.com/x/error.txt?x=3D128b0bbd980000
+
+
+Tested on:
+
+commit:         b446a2da Merge tag 'linux_kselftest-fixes-6.11-rc3' of..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D53ca389b28cf423
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Df52b6db1fe57bfb08=
+d49
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D116cbd739800=
+00
 
 
