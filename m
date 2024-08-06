@@ -1,103 +1,172 @@
-Return-Path: <linux-kernel+bounces-276943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BBA8949A3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:34:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 547B8949A3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4523A1F22ED5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:34:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7B1AB22FD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F5516A94B;
-	Tue,  6 Aug 2024 21:34:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E46680043;
-	Tue,  6 Aug 2024 21:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72CDC16B75B;
+	Tue,  6 Aug 2024 21:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YCWPOEmc"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6C016190C
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 21:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722980043; cv=none; b=V5s9z7OrTTg2Dz3vJYJdqKwPijTqSt8EVQgFZiFp4bqrtc3MIWy2IG3HUONSB0nP5fcZZJNQ6ceaM2vQ6UQv1Jdo7+DK+VUxGCY0SzsXkV9c/TYAoCiVB7hkeUv0ag8CBkeiK16+9uzga9YHWC+ChDZ7ByJfn9+kXQbGQs6IoRk=
+	t=1722980063; cv=none; b=ayKTrUGmZn4Egcm55DKMNS378PvdRKbMIoO0tptgOnZvW28cm+YMd7BK4CnMX9CPml1z7HrsJiPnHoj3VTSPJsCXFp2g9GKC9Q/u6aHI1TuBZnS8b3r1FXDRYWnn8KZ3A/FfS75jYdv1aM+yd94xef1I3XVGBfKu+i19D19uIBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722980043; c=relaxed/simple;
-	bh=DO8014anKApOwesYndEPWUGjEgeA57oZZUbqUPxyvv8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=curCeyw/RZjSazHB/XGdTJEYhRQD8hQy/FYGDjtKleFFKJKgRvqb3VxoCPZhpnHBRmad+Y1RkkG+k70RwGw5wdB+tx1zCJdZtfyWwLqNDEsW9iNK1ubhVytA54eRAPrbRYGo2oBEGH6oYiSPmHsdjgV0sKJd/Z8Jbw5J+B7A2Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B217EFEC;
-	Tue,  6 Aug 2024 14:34:26 -0700 (PDT)
-Received: from [10.57.79.15] (unknown [10.57.79.15])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC1823F5A1;
-	Tue,  6 Aug 2024 14:33:58 -0700 (PDT)
-Message-ID: <a3699fc9-059f-4192-b522-918952c4b264@arm.com>
-Date: Tue, 6 Aug 2024 22:34:06 +0100
+	s=arc-20240116; t=1722980063; c=relaxed/simple;
+	bh=y+WPBRcP2UUkmoo1X6b1On/m7xI6hXa7A87BB06rY5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Plgl0TiKQosvZJGDvRt5SgA2iBieUbJwDfaXpCnR413JuVS0umak2ssDb26VNYrjOAddbAEArqNQF7iS5mJltrRQeoYcfyTXPAopTFzZamzMnTHFSCji2lGBSBnfA/oSWACiKdpe5fAYc4ePNEJNlGucnqEQ2/A+U7cGBNU7HqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YCWPOEmc; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2cb4b6ecb3dso919591a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 14:34:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722980061; x=1723584861; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QOQuy+CBC2lxToAhwqJ1r238GNCITA2gO3WQsUAlD2Y=;
+        b=YCWPOEmcpI5fzThg7O+fZwitRQcJAvOl2Svn4zwhcDwcJijZTgPjwCdSrBuXSD9LLY
+         CorosBZs3J7jCZC2AYdECiq6CT4AduoMzkq2Jb4AMdftOvhhDv0IoS8h0FEVomndPEdF
+         nta85t4qkI0zkpAMpJPXmr6mmS7rNPFKFImXZz/gtI2mERLtspKEd7EWGP35ae75qzpv
+         TQX7wddrj/J5kuirbnaWMYEnFnktVZ/SbtfkPBke8S3E6ZGz2L/UFF2ubSbVYB3ERv0C
+         9o0eT24zD6wzK5gvY70oObMSq185gbEE0KNoGHJZQi06XzrpU5wKclWMMDijB4omDrjC
+         HC1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722980061; x=1723584861;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QOQuy+CBC2lxToAhwqJ1r238GNCITA2gO3WQsUAlD2Y=;
+        b=FYLbaHP06aH3ffJmkSM/UxllLmfbwHdQfYibz+nssZPVeN44phZ3eUP2A0yuaiDC16
+         XZAj38Qzi6A1nV3YPycgxhUEKuEMtJt1FRN1mB0SvV0wIKSJM1ZXMaA+vrzvWLo+G467
+         IJ2gJ91KhdjB66EJxTJygbseWz7IiVnwb8a18jH3v8BYcy1P3Jt3jFhFi+tEpm/7J5cx
+         A4lzT7xvITlXm6a9gztcGaT+BweiUEL4tmn5inBe1zRR3tvDEerKmxojmQb3++ulQ8zj
+         Xcl4P4nNFjZTyTpZ0oH7cxa+TLMeeheCn2zMvlJZQ5PTkD48mNA61zlYNR2h95EQv+O9
+         Wr9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXMun27QLObkgSVSNYhXKeJY9HGPXw8DqSnQ5tamRcBQNEa7guasi2sja/5jiqsk7i//8qWYFC9TCJ27XIXiDg2bC9fMjE7z/by54N2
+X-Gm-Message-State: AOJu0YyVdMl9/HnRPSs2h3DwQzaqFUGL01xigEfTuoiZBOkvxTuwpRUR
+	VnS4aGyKR+eUl27BtKDiU7h5/F5fMB1w1w74OzwFdZB0DMXNn1fT
+X-Google-Smtp-Source: AGHT+IHEI3ELvoumHxz09rfUnzEJLqvH383+eci7go1Lny9bXfK6g9YunLCBD7n2NuJYOyGNjTSRUg==
+X-Received: by 2002:a17:90a:4585:b0:2c9:888a:7a7b with SMTP id 98e67ed59e1d1-2cff945a894mr16090920a91.25.1722980061252;
+        Tue, 06 Aug 2024 14:34:21 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b2b677bdsm55394a91.36.2024.08.06.14.34.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 14:34:20 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 6 Aug 2024 11:34:19 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
+	Ingo Molnar <mingo@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
+Message-ID: <ZrKW2wZTT3myBI0d@slm.duckdns.org>
+References: <ZpWjbCQPtuUcvo8r@slm.duckdns.org>
+ <20240723163358.GM26750@noisy.programming.kicks-ass.net>
+ <ZqAFtfSijJ-KMVHo@slm.duckdns.org>
+ <20240724085221.GO26750@noisy.programming.kicks-ass.net>
+ <ZqmVG9ZiktN6bnm0@slm.duckdns.org>
+ <20240806211002.GA37996@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] perf dwarf-aux: Fix build fail when
- HAVE_DWARF_GETLOCATIONS_SUPPORT undefined
-To: Yang Jihong <yangjihong@bytedance.com>, peterz@infradead.org,
- mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240806114801.1652417-1-yangjihong@bytedance.com>
- <20240806114801.1652417-4-yangjihong@bytedance.com>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <20240806114801.1652417-4-yangjihong@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806211002.GA37996@noisy.programming.kicks-ass.net>
 
-On 8/6/2024 12:48 PM, Yang Jihong wrote:
-> commit 3796eba7c137 move #else block of #ifdef HAVE_DWARF_GETLOCATIONS_SUPPORT
-> code from dwarf-aux.c to dwarf-aux.h, in which die_get_var_range() used ENOTSUP
-> macro, but dwarf-aux.h was not self-contained and did not include file errno.h.
-> 
-> As a result, the build failed when HAVE_DWARF_GETLOCATIONS_SUPPORT macro was not
-> defined, and the error log is as follows:
-> 
->   In file included from util/disasm.h:8,
->                    from util/annotate.h:16,
->                    from builtin-top.c:23:
->   util/dwarf-aux.h: In function 'die_get_var_range':
->   util/dwarf-aux.h:184:10: error: 'ENOTSUP' undeclared (first use in this function)
->     184 |  return -ENOTSUP;
->         |          ^~~~~~~
->   util/dwarf-aux.h:184:10: note: each undeclared identifier is reported only once for each function it appears
-> 
-> Fixes: 3796eba7c137 ("perf dwarf-aux: Move #else block of #ifdef HAVE_DWARF_GETLOCATIONS_SUPPORT code to the header file")
-> Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
-> ---
->  tools/perf/util/dwarf-aux.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/perf/util/dwarf-aux.h b/tools/perf/util/dwarf-aux.h
-> index 24446412b869..d2903894538e 100644
-> --- a/tools/perf/util/dwarf-aux.h
-> +++ b/tools/perf/util/dwarf-aux.h
-> @@ -5,6 +5,7 @@
->   * dwarf-aux.h : libdw auxiliary interfaces
->   */
-> 
-> +#include <errno.h>
->  #include <dwarf.h>
+Hello, Peter.
 
-Please alphabet ordering. With it:
-
-Reviewed-by: Leo Yan <leo.yan@arm.com>
-
->  #include <elfutils/libdw.h>
->  #include <elfutils/libdwfl.h>
-> --
-> 2.25.1
+On Tue, Aug 06, 2024 at 11:10:02PM +0200, Peter Zijlstra wrote:
+...
+> > Right, I don't think it affects SCX in any significant way. Either way
+> > should be fine.
 > 
+> So I just looked at things. And considering we currently want to have:
 > 
+>   pick_next_task := pick_task() + set_next_task(.first = true)
+> 
+> and want to, with those other patches moving put_prev_task() around, get
+> to fully making pick_next_task() optional, it looks to me you're not
+> quite there yet. Notably:
+
+Oh yes, the code definitely needs updating. I just meant that the needed
+changes are unlikely to be invasive.
+
+...
+> > +	p = first_local_task(rq);
+> > +	if (!p)
+> > +		return NULL;
+> > +
+> > +	set_next_task_scx(rq, p, true);
+> > +
+> > +	if (unlikely(!p->scx.slice)) {
+> > +		if (!scx_ops_bypassing() && !scx_warned_zero_slice) {
+> > +			printk_deferred(KERN_WARNING "sched_ext: %s[%d] has zero slice in pick_next_task_scx()\n",
+> > +					p->comm, p->pid);
+> > +			scx_warned_zero_slice = true;
+> > +		}
+> > +		p->scx.slice = SCX_SLICE_DFL;
+> > +	}
+> 
+> This condition should probably move to set_next_task_scx(.first = true).
+
+Sure.
+
+...
+> > +static struct task_struct *pick_task_scx(struct rq *rq)
+> > +{
+> > +	struct task_struct *curr = rq->curr;
+> > +	struct task_struct *first = first_local_task(rq);
+> > +
+> > +	if (curr->scx.flags & SCX_TASK_QUEUED) {
+> > +		/* is curr the only runnable task? */
+> > +		if (!first)
+> > +			return curr;
+> > +
+> > +		/*
+> > +		 * Does curr trump first? We can always go by core_sched_at for
+> > +		 * this comparison as it represents global FIFO ordering when
+> > +		 * the default core-sched ordering is used and local-DSQ FIFO
+> > +		 * ordering otherwise.
+> > +		 *
+> > +		 * We can have a task with an earlier timestamp on the DSQ. For
+> > +		 * example, when a current task is preempted by a sibling
+> > +		 * picking a different cookie, the task would be requeued at the
+> > +		 * head of the local DSQ with an earlier timestamp than the
+> > +		 * core-sched picked next task. Besides, the BPF scheduler may
+> > +		 * dispatch any tasks to the local DSQ anytime.
+> > +		 */
+> > +		if (curr->scx.slice && time_before64(curr->scx.core_sched_at,
+> > +						     first->scx.core_sched_at))
+> > +			return curr;
+> > +	}
+> 
+> And the above condition seems a little core_sched specific. Is that
+> suitable for the primary pick function?
+
+Would there be any distinction between pick_task() being called for regular
+and core sched paths?
+
+Thanks.
+
+-- 
+tejun
 
