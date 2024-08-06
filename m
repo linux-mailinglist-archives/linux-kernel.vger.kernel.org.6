@@ -1,93 +1,94 @@
-Return-Path: <linux-kernel+bounces-275681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED5FF948858
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:25:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DA9794885D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BCFD1F233A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:25:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F8111C21D4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016A11BA87B;
-	Tue,  6 Aug 2024 04:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC851BB68F;
+	Tue,  6 Aug 2024 04:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oCNIdKy6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIXyXEq6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7E8EADC;
-	Tue,  6 Aug 2024 04:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5F3EADC;
+	Tue,  6 Aug 2024 04:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722918347; cv=none; b=sT8xPM/J6GOTLTQtp+DuUboZU3ex/ZtNQ4bxxLsuDOGBOIK1hcTffJ41Y4qXJch0QFfD9dYAGjOtaivqRuo//V/vl8Tnax8/xBUs02ZLGMLyUEViB21kptcV3yxSjB7V19kAk6ggaJ1m4BrykgR4fV+rhpDrZmbohpiogieVXXE=
+	t=1722918444; cv=none; b=a6j+KnlwrIZRV/TKYX7plJ6RPVvi8cn3gVRXhWRLW7SvxyxhWkcnuYxUy9vi4Aw4Y6qKhdW4Z0O1NqWipNm31kvTD+itwsq4ujlfi9AcPcd8OznzcwJEZgXdlewZRyL4DrKDh9i6IMgFryXjb4z8IZy6BziATRiWU6sUfJoXRtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722918347; c=relaxed/simple;
-	bh=QeaQwtTB7a9JnjAXEkn+Bx7klIr5PDhTwHeCV4i+mJo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cnZ6/gJfZn3GpCcRPCJV0M50fWkcUzJgirDyr1Yg5bxWx/yWMOpjB466YFUcllVNEByeb6V7ahMyEnOmOT7RgcUyHk9Uy2iBi1MgVnqU/0RNXFX/eelS6Q/CJMYJ9Ux9irmlFO1jV1EXfOCftxSYwFXz99iG6zDs5hDdP/o1XcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oCNIdKy6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5970C32786;
-	Tue,  6 Aug 2024 04:25:46 +0000 (UTC)
+	s=arc-20240116; t=1722918444; c=relaxed/simple;
+	bh=AZzy/I51vgXjxJSQvB6NDee/pSQvkl/ELAdj2zwi0es=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n/rLMS40l1HmwRLMxUZvmVqmSvZLjR7SXoDDKDeeZpcUYLkICtOgMVN8BeTOi9yaY+zwLjNM89P7fb0/jREmAQ0KrkOh8ywtD4anqYHt9ivrz6a2TMvI/8hLKd9mmqIIoMIvNs/MTdoTeRX5o/HYf99rk88QRVzAJgOnc8fevRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIXyXEq6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF8FAC32786;
+	Tue,  6 Aug 2024 04:27:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722918346;
-	bh=QeaQwtTB7a9JnjAXEkn+Bx7klIr5PDhTwHeCV4i+mJo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oCNIdKy66bliwZZ4yJaswWsFzhir14J1fWrdG5g3pWdEfmaQkymhuCxI3f5txxx/B
-	 6d5eecZdgGdKdcMmlHPayA4aMW+Tq+HuyC3ceUK83QEI1XupDMyBdFEbAh5G9FbZRf
-	 S7IoS0S60g5zubBOJ5moq2SSTbQtYZ39ND7nXToE2P8m3xrnY7SH5lvEShcGok9e2w
-	 /KtC8dRoqui+UAY218fm6w0Tjbjv6wrYD2zf88Q+66AjvXW9OtzAy+YgdgGR4HwF50
-	 vRedK4h1aqbOuBCF34sf+R3kmJEgogEpfy2OOsV5CG+VXi7zPtgGcGQirP2VcHNaet
-	 u7UYb2QR13Gvg==
+	s=k20201202; t=1722918443;
+	bh=AZzy/I51vgXjxJSQvB6NDee/pSQvkl/ELAdj2zwi0es=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gIXyXEq6bDAqnFjFEN3iXLi/wiYv8IqNv2XLV5j2si3yZCU7rnzJISPVX/dgFq0NS
+	 Vqhm+P/Cu4PxAaXoEOfgNenZMAo72oEeFUsibER62z7/MawhvCeE9iSFzJ+gTTkLv0
+	 Rqi1KQi4PH9FPXLs52Lu1geS8Nmr2yWiXAyhhBk+lEV+yuUFun913JJQMxOhon5V1t
+	 /nAQSjDOxbrJi4pQiCn3XzHlFGO2qcWVL0CzY/cZSHxRYnyr7Q/gsTTHiUZW3buyvm
+	 4qAXewx7CPGy9dRB7I/8h3HALw6kxjFQ7OJmllUIJoHDfIcGTG7uyM3omyYkp3dMIu
+	 iRgHG/EyuiSMQ==
+Date: Mon, 5 Aug 2024 21:27:23 -0700
 From: Kees Cook <kees@kernel.org>
 To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
+Cc: Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
 	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	linux-hardening@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v2 0/3] fortify: fix various issues in test_fortify Makefile
-Date: Mon,  5 Aug 2024 21:25:41 -0700
-Message-Id: <172291833913.3365241.1557417143670946391.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240727150302.1823750-1-masahiroy@kernel.org>
-References: <20240727150302.1823750-1-masahiroy@kernel.org>
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	bpf@vger.kernel.org, kvm@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] selftests: harness: refactor __constructor_order
+Message-ID: <202408052126.E8A8120C1@keescook>
+References: <20240727143816.1808657-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240727143816.1808657-1-masahiroy@kernel.org>
 
-On Sun, 28 Jul 2024 00:02:35 +0900, Masahiro Yamada wrote:
-> This version fixes new warnings for GCC <= 7, which were reported
-> by 0 day bot.
+On Sat, Jul 27, 2024 at 11:37:35PM +0900, Masahiro Yamada wrote:
 > 
-> I changed the patch order, as 3/3 is the most controvertial.
-> I am confident with 1/3 and 2/3.
-> 3/3 drops the test coverage for GCC <= 7.
+> This series refactors __constructor_order because
+> __constructor_order_last() is unneeded.
 > 
-> [...]
+> No code change since v1.
+> I reworded "reverse-order" to "backward-order" in commit description.
+> 
+> 
+> Masahiro Yamada (2):
+>   selftests: harness: remove unneeded __constructor_order_last()
+>   selftests: harness: rename __constructor_order for clarification
 
-Applied to for-next/hardening, thanks!
+Thanks for resending this!
 
-[1/3] fortify: refactor test_fortify Makefile to fix some build problems
-      https://git.kernel.org/kees/c/61b317f70aa7
-[2/3] fortify: move test_fortify.sh to lib/test_fortify/
-      https://git.kernel.org/kees/c/728dc04bc4e3
-[3/3] fortify: use if_changed_dep to record header dependency in *.cmd files
-      https://git.kernel.org/kees/c/634a52a98f04
+Reviewed-by: Kees Cook <kees@kernel.org>
 
-Take care,
+Shuah, do you want to take this via kselftest? If not, I can carry it...
+
+-Kees
 
 -- 
 Kees Cook
-
 
