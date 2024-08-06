@@ -1,132 +1,120 @@
-Return-Path: <linux-kernel+bounces-277047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2F8B949BBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:01:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF8A949B92
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 882821F22336
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:01:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5254B1F23558
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3D817A930;
-	Tue,  6 Aug 2024 22:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97353175D38;
+	Tue,  6 Aug 2024 22:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNn/qlvi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="OW1XKP1Z"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31B417A591;
-	Tue,  6 Aug 2024 22:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA4517557E
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 22:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722984621; cv=none; b=JRJf2Zfj7BYkgqKObjpfzJqGfW/nyTOhpaiCEg0saW7IzChRzRcnJcS71XwoB9QqASphCqwuls7tRU9EpPCOe6jsLhTXa7LqgAvQbjArhJyI/WEdM6QKDGsim76pKqG3vmDgJ7DpsJCCkbHW/igvJfeaWroADdiIOtRuTIQ33Sc=
+	t=1722984672; cv=none; b=oYlJUL6whbpr6e4LGkRzXQySU6Biy561XxwhI7kiht3lHtgv/uKCrwd6fzffh5RhDh4y9TkoC3yWcUBdYw6oZxuiGvFAJ3sl4AY35+HN6fRX3OE9ComPAWLeJxPGVsw0gAy1B5JDhm9h4D8sADrInd6NDN2BRXKZwdrbCFJe+y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722984621; c=relaxed/simple;
-	bh=gK1obJXd1qkzdCSSqvX5FK5ZTMAeRQdCpQHNrfbJ+40=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R+F1th2S/PE+g+A8iPsVXPHAkSCqZV4/F19u9kypzrtTjkB0u7/j2eI9vbKgqNzLmyEtrnEDFmhamPz2TPq9hBLqFCcyT7eGdLyBcmL7z8oTMPx/qvgEbGCGM3OgHmG5syaOrBb10DQiisfEtKakzlpfr6SH6eP8vKb/+ux0pjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNn/qlvi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D6A5C4AF12;
-	Tue,  6 Aug 2024 22:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722984621;
-	bh=gK1obJXd1qkzdCSSqvX5FK5ZTMAeRQdCpQHNrfbJ+40=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WNn/qlviS23xtpwnn36sM+c4rE9Q86HBZ3XiXHNJO3s0LKnH8QF6Imu2asSSer52+
-	 llzsVXU5M4Dm7QAbB6KdaluuMNoGnW3nxIHlgq3TDV1ABoge+Fep39pGb81ue53qUO
-	 M5n0VkXTOwmG4cwJJ3el0H0PdmwY0ky4ZezIEuECJ7L9hSM0ZEg7RtVW1S868DGIDa
-	 kwGVLOmWKAm367+MRO/AbqSk4prdnrfu2QVg3pKciJVnaQiBnpE6Ou11bQsRLzqXzP
-	 a0E6vFTyd1Jb9tvdGBJswVvBnmr3SMZrVrB6d4ERjvrtyjpxZuTIi5jceImQRnPDbK
-	 ioPFDrVYPKoVA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 10/10] tools/include: Sync arm64 headers with the kernel sources
-Date: Tue,  6 Aug 2024 15:50:13 -0700
-Message-ID: <20240806225013.126130-11-namhyung@kernel.org>
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-In-Reply-To: <20240806225013.126130-1-namhyung@kernel.org>
-References: <20240806225013.126130-1-namhyung@kernel.org>
+	s=arc-20240116; t=1722984672; c=relaxed/simple;
+	bh=v2B7nVx7bGwylS1Coul36Jp/i9HWOlxXDCVw6QkBijA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qzjTg0MAqsHGWvVIbU6VWuuIqP+a4IwK5e/hHgc/HYt+2FmBBQX/PSZtdj9c8C2pCKxjekRcIo9eyOpD3tXQBEuwpXIGTgoyV3NVoiFtXOZKw0NqASGhlpfY1u1Rk1zcn6RzYaCrDjWrc9d9ohzi47hbYZ9EfYD9rM/asT1oMYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=OW1XKP1Z; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fdd6d81812so10194595ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 15:51:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722984670; x=1723589470; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QB3pdYOMTN4zfS35rYEzvo3b4e8uJgrA8HIiP1Z9cOg=;
+        b=OW1XKP1Z7fPLs+FQK6koKjaoAh56LIQe4tlM4d5HcfK+4AH2IAKLK/qY05wIiUFBGB
+         ICzkiqyEllzcKo+PUdePI39SC7XlF2YFaK587zZF7t1Tiu29FSYDQHIFyTT13Qt00Vhu
+         n1LduAl0UIbsQzBSEVO0zuJsoj2TT2P0EJT8BhfKf5Ln6MvEmGNe9P/j/taf4awYQC32
+         cPxdRwnGhhwSt3ljROGFcnUMjqbm2U835iAN1tI36Y7pAR7acDXJEdmm3UhevcSsaLCd
+         Uo0NX8Hb7J3vpuO0jIqYv55IMJdN4Ns/wnPI/yLJNKQTwIcxL76JoXOw8U5XOyUWe1w6
+         ksnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722984670; x=1723589470;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QB3pdYOMTN4zfS35rYEzvo3b4e8uJgrA8HIiP1Z9cOg=;
+        b=JGpc78FlQxbR338dJrJn5QMoXMZGMbKYFn86luulY0FcHsvpdwlQd8YR4GiB7MXY+m
+         6oU8GtxQLTd4B2UavNGCSNEAijudP+6LOafZuIoMmuikn6cSHrzVqTC5x9s9HM6nlcIK
+         XYwm2yyGaLAQxMwln/VCZzorpZ7dU0Y+ZbLTub2vabDEHNqrVXLrL4pPxCS6/Ob5y2IA
+         YWPa7dvIyZ3fChL2ZIqpmyToS6T+WlUrjslQrWb+ljqsxa5Kv5+hv6gXjBe7WHy7t9/i
+         D9E3GzIs9uoMsc0Q1sX44/Rsf1CWNXBWGEtBwTS70r8JGPEdLN5IoeyLm2O7t1pyqtpb
+         bsJg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/6kH3al7sXUayzl5ZvsxHDNWRQDEJNnBEWE03euvzt/YdYiwMYAmtwfb0bdmT4hMJMJyl8PnzkfUjz1vZIBtRWawYrqf6+e09808D
+X-Gm-Message-State: AOJu0YzixQg1OMSMthe9jUstuyzT5PR5BKbOs498tpyjvOQJIbavMPIB
+	CrvZ5xsFLtc5w9vJ8hbbatxD68m1OkdFNVMnfzsU5LIN8bnbk90D54Kly6S5RQU=
+X-Google-Smtp-Source: AGHT+IFE46gLoqQz8l8cruTk5/OYiCyXCPpy+CMOkGB+am/kp+K4IXuhCfx++xe6zztsBZajWiT0Fg==
+X-Received: by 2002:a17:902:d2cf:b0:1f9:d0da:5b2f with SMTP id d9443c01a7336-1ff572d48e5mr238212395ad.39.1722984670579;
+        Tue, 06 Aug 2024 15:51:10 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff591764ebsm92926865ad.197.2024.08.06.15.51.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 15:51:10 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sbT1H-007sHp-3C;
+	Wed, 07 Aug 2024 08:51:08 +1000
+Date: Wed, 7 Aug 2024 08:51:07 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
+Message-ID: <ZrKo23cfS2jtN9wF@dread.disaster.area>
+References: <20240806144628.874350-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806144628.874350-1-mjguzik@gmail.com>
 
-To pick up changes from:
+On Tue, Aug 06, 2024 at 04:46:28PM +0200, Mateusz Guzik wrote:
+>  	error = may_open(idmap, &nd->path, acc_mode, open_flag);
+> -	if (!error && !(file->f_mode & FMODE_OPENED))
+> -		error = vfs_open(&nd->path, file);
+> +	if (!error && !(file->f_mode & FMODE_OPENED)) {
+> +		BUG_ON(nd->state & ND_PATH_CONSUMED);
 
-  9ef54a384526 arm64: cputype: Add Cortex-A725 definitions
-  58d245e03c32 arm64: cputype: Add Cortex-X1C definitions
-  fd2ff5f0b320 arm64: cputype: Add Cortex-X925 definitions
-  add332c40328 arm64: cputype: Add Cortex-A720 definitions
-  be5a6f238700 arm64: cputype: Add Cortex-X3 definitions
+Please don't litter new code with random BUG_ON() checks. If this
+every happens, it will panic a production kernel and the fix will
+generate a CVE.
 
-This should be used to beautify x86 syscall arguments and it addresses
-these tools/perf build warnings:
+Given that these checks should never fire in a production kernel
+unless something is corrupting memory (i.e. the end is already
+near), these should be considered debug assertions and we should
+treat them that way from the start.
 
-  Warning: Kernel ABI header differences:
-  diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/cputype.h
+i.e. we really should have a VFS_ASSERT() or VFS_BUG_ON() (following
+the VM_BUG_ON() pattern) masked by a CONFIG_VFS_DEBUG option so they
+are only included into debug builds where there is a developer
+watching to debug the system when one of these things fires.
 
-Please see tools/include/uapi/README for details (it's in the first patch
-of this series).
+This is a common pattern for subsystem specific assertions.  We do
+this in all the major filesystems, the MM subsystem does this
+(VM_BUG_ON), etc.  Perhaps it is time to do this in the VFS code as
+well....
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/arch/arm64/include/asm/cputype.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/tools/arch/arm64/include/asm/cputype.h b/tools/arch/arm64/include/asm/cputype.h
-index 7b32b99023a2..5fd7caea4419 100644
---- a/tools/arch/arm64/include/asm/cputype.h
-+++ b/tools/arch/arm64/include/asm/cputype.h
-@@ -86,9 +86,14 @@
- #define ARM_CPU_PART_CORTEX_X2		0xD48
- #define ARM_CPU_PART_NEOVERSE_N2	0xD49
- #define ARM_CPU_PART_CORTEX_A78C	0xD4B
-+#define ARM_CPU_PART_CORTEX_X1C		0xD4C
-+#define ARM_CPU_PART_CORTEX_X3		0xD4E
- #define ARM_CPU_PART_NEOVERSE_V2	0xD4F
-+#define ARM_CPU_PART_CORTEX_A720	0xD81
- #define ARM_CPU_PART_CORTEX_X4		0xD82
- #define ARM_CPU_PART_NEOVERSE_V3	0xD84
-+#define ARM_CPU_PART_CORTEX_X925	0xD85
-+#define ARM_CPU_PART_CORTEX_A725	0xD87
- 
- #define APM_CPU_PART_XGENE		0x000
- #define APM_CPU_VAR_POTENZA		0x00
-@@ -162,9 +167,14 @@
- #define MIDR_CORTEX_X2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X2)
- #define MIDR_NEOVERSE_N2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_N2)
- #define MIDR_CORTEX_A78C	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A78C)
-+#define MIDR_CORTEX_X1C	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X1C)
-+#define MIDR_CORTEX_X3 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X3)
- #define MIDR_NEOVERSE_V2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_V2)
-+#define MIDR_CORTEX_A720 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A720)
- #define MIDR_CORTEX_X4 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X4)
- #define MIDR_NEOVERSE_V3 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_V3)
-+#define MIDR_CORTEX_X925 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X925)
-+#define MIDR_CORTEX_A725 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A725)
- #define MIDR_THUNDERX	MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX)
- #define MIDR_THUNDERX_81XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_81XX)
- #define MIDR_THUNDERX_83XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_83XX)
+-Dave.
 -- 
-2.46.0.rc2.264.g509ed76dc8-goog
-
+Dave Chinner
+david@fromorbit.com
 
