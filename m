@@ -1,280 +1,164 @@
-Return-Path: <linux-kernel+bounces-276400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F22B5949320
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:32:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F05949323
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A94142826B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:32:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 218361C21C65
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80C61BF305;
-	Tue,  6 Aug 2024 14:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B520D1BDA82;
+	Tue,  6 Aug 2024 14:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UjsuwahO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="hJIWvF5V"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52F518D659;
-	Tue,  6 Aug 2024 14:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95B818D632
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722954740; cv=none; b=sniDSDLkYMf5oFDdnmSAz+gHZT2u4ND4EZUlLv+UEb9fRJhHJVzzMHrvckOnqa472PFD43t4/wvXXeHgwegDUU0dNj7HtkntNLbvC6+DFlo3Q8L5QXRJ7h60FSA+KXGkbYaRpfQPyz1Fie2yG6zU1zSDPE+fiAFWaTpsyH2gS7o=
+	t=1722954763; cv=none; b=A3DW3i25yOu+YzMBAqrqI9YYm/HnFj43zaVz244nwNPw8B5nbYbMhpG3H7DWD+HS5bLWBKuxaJ+IaYDgq4PntN13NGgVB4gbY/nWx2y5lQANOy3o/+qO/goo5mr35SSWUkjTjFIqTFv2wJXXMF3IOv2Zec/uY7+myOQd5vBMWuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722954740; c=relaxed/simple;
-	bh=691QilyEvzlg/2Bt54Q3j8m95vwztLrqKuCrAM5y/Dw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=P0Vd4wqjNlEjOvhKbwl7s2LhIbZm4kIqPn5yVmXOWNVOSnn89119kN2NaHdSr4dKpCKm3+u1VTmJssbVK8TShJS8Xz0uS+Yjj+5VfXBJniGEUDDo1ZJi6ACJl8Gbl7fHLZJ0k7Y2SmiTXXqiiOePpPDAqtjP9ZNxfL3FjOUaUO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UjsuwahO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1095C32786;
-	Tue,  6 Aug 2024 14:32:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722954739;
-	bh=691QilyEvzlg/2Bt54Q3j8m95vwztLrqKuCrAM5y/Dw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=UjsuwahOj+Jt7EWqhiFcM1kX04RiH7FOmxi8A36JnsLoNHiKiQPbRiRq4fm1mwCZQ
-	 5V6ol5zZgLnftev2CGHOFJyT4JMqpCONaxxMZBMcVuqjOQKgthf3aCrmAH3B0MNB6I
-	 +bCB2ku07L56R5xjy9+jYuu6Nu2ZAYP7QRstFPY8HdGDZCH2U0Xst1iajW0VEKQoCE
-	 FfpVLJg8Ys0QCY+z6jAOgxMyQuf24GivI06fUSzvaMsyqz1v4UmxYSSeDWelGifF9v
-	 Js08u1vMiOpSY4g1V8JL1JIquX6TosWVcLC+X+QhNFFde5PyOXAKy6tSNj2jUSo9b3
-	 pEBNuwWPkff9A==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 06 Aug 2024 10:32:17 -0400
-Subject: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+	s=arc-20240116; t=1722954763; c=relaxed/simple;
+	bh=h2LzO5/swy7riOzvE+Pwhv9uoG+himOjFdyAkddfjw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cr8jOxMvEZoqljwm2+Fqawhc40tK47ySaAhTmVyVjNGyBwgerARfaNCDcdVTvhRhM2xunXt2GWXaYqprL1fnYuKCi9UFv7MwS2DjJLWuypJJsfor1kX4Tg/DmcjrEmfiom24RXQvLZLjuICHZad2gFD4znccLYduRuXguc5XygQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=hJIWvF5V; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from mordecai.tesarici.cz (unknown [193.86.92.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by bee.tesarici.cz (Postfix) with ESMTPSA id 4DBF71D39A8;
+	Tue,  6 Aug 2024 16:32:39 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1722954759; bh=g4APhhwhO/eLGnY2rQDpJ8JqIDQ+BR/sG7w6iumGct0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hJIWvF5VxVnXCVSszKyATmb5VsflfmiCBVlHkvL2ZJnogohaJ2O6UJv/cC50pFbFW
+	 9S5KRqX6dLiLlLTPi4qvXqsSx8l2R+FqzvGt2zqeXDlUqCRyGNJd3xZLOH9zrodcjx
+	 OUjeIiNi6XikKSY1oIfvQVZoi8ciHjYT/+9MmK/iWELoMWG3h0Mu73sC5WQDXdpRjd
+	 O/HC/I85BBUNqjW3Hj+v5GnclqRNlKb1WEOxDumT0m1Z0AGnH9S5+GATAv775xx4bF
+	 NQWstA9LK/6ZIR+TYIezjR5QMA+bIc81Du/p1/hFbXJN1/uLEhKwF7whIx1TjprNnz
+	 dxbrizj6IFQEw==
+Date: Tue, 6 Aug 2024 16:32:34 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, Andrew Morton
+ <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH 02/10] mm: introduce vma_merge_struct and abstract merge
+ parameters
+Message-ID: <20240806163234.78debfc0@mordecai.tesarici.cz>
+In-Reply-To: <654dd596-3875-4ab4-acdf-9e5f547b5551@lucifer.local>
+References: <cover.1722849859.git.lorenzo.stoakes@oracle.com>
+	<f2d7cc5de8aecc50d353980f62a74a0a6fcec198.1722849859.git.lorenzo.stoakes@oracle.com>
+	<20240806144754.447001bc@mordecai.tesarici.cz>
+	<ddc4c351-d79f-4654-8e0e-63f22afc146f@lucifer.local>
+	<20240806160650.16af656e@mordecai.tesarici.cz>
+	<654dd596-3875-4ab4-acdf-9e5f547b5551@lucifer.local>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240806-openfast-v2-1-42da45981811@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAPAzsmYC/0XMQQ7CIBCF4as0sxYDQ9OqK+9huhjp0BINNNAQT
- cPdxbpw+b+8fBskjo4TXJoNImeXXPA18NCAmclPLNxYG1BiK3vUIizsLaVVkGnP1N87Ghmh3pf
- I1r126jbUnl1aQ3zvclbf9YecJP6RrIQUpIy1SFrLTl8fHD0/jyFOMJRSPv3g3cihAAAA
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5709; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=691QilyEvzlg/2Bt54Q3j8m95vwztLrqKuCrAM5y/Dw=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmsjPyr6qXd81k0Il4k3F/nEVaNrCMBJs90Adem
- X5fXKKOpzCJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZrIz8gAKCRAADmhBGVaC
- FdJwD/9ZtRjBDilpM06eP2KszTn2z+boLaqZ7wSU9gdR0diSG7KHs/aBEkgfcj+l5n2HWSIe2YT
- 56dpcSurrgVqkGI9x+xOI2V8StdWXjKr9eMbYeo3cwFOfyIm8v8aD8xcBdWVMGWdQNTrcJg5Fh7
- CFAn6it42nKwcD6YCvG6lpU+LuqaUdlPe/dHJN0KEsWr//l/MEeUV6gD1UhdKRdmJifZ1ZBA26M
- 4sMhbOtNCk3mtN0IJrIgYz/C/9ZOgB3Fj61sUbbR/xSJvMOns8Ag3yzrbKF6OM775ahokxfElNa
- QWUurkw4tnWa6QaGSPPrroo7sjvh1x0ny3waqKODN7XtJa1hckVTnRwY0Bjq+yLiWMVCRu66TSf
- C4yP5Kq7jUV9MjrorNGN2NAb/NWK7WbqKJW1qA/NRlu7RawGpf8WNNqEOtgjVI+xxBoyufmYMYX
- jKnPVVbxoMQMmsiFFzIUTq2ItA8wTw/C9S/AajaItN74fsWmYVB7azfS13Yq7UyqwQgi/V9+bPu
- SW/YJ7kPxcJMuBbbMPKW3K+edmdOhwLHQwgPV6lLgqiHFMc22JBttVgwBJIJ+2NaEs2TdXgenXf
- 9n3By0pz4shRSZN8qrxJ77nSCcr9wQPw9GO44sEoDuObb1hYBkuA0r3V9YWObHr9XClZJqX9BF+
- XIJ5b01NUr2tolw==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Today, when opening a file we'll typically do a fast lookup, but if
-O_CREAT is set, the kernel always takes the exclusive inode lock. I
-assume this was done with the expectation that O_CREAT means that we
-always expect to do the create, but that's often not the case. Many
-programs set O_CREAT even in scenarios where the file already exists.
+V Tue, 6 Aug 2024 15:20:49 +0100
+Lorenzo Stoakes <lorenzo.stoakes@oracle.com> naps=C3=A1no:
 
-This patch rearranges the pathwalk-for-open code to also attempt a
-fast_lookup in certain O_CREAT cases. If a positive dentry is found, the
-inode_lock can be avoided altogether, and if auditing isn't enabled, it
-can stay in rcuwalk mode for the last step_into.
+> On Tue, Aug 06, 2024 at 04:06:50PM GMT, Petr Tesa=C5=99=C3=ADk wrote:
+> > On Tue, 6 Aug 2024 14:43:48 +0100
+> > Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+> > =20
+> > > On Tue, Aug 06, 2024 at 02:47:54PM GMT, Petr Tesa=C5=99=C3=ADk wrote:=
+ =20
+> > > > Hi Lorenzo!
+> > > >
+> > > > On Mon,  5 Aug 2024 13:13:49 +0100
+> > > > Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+> > > > =20
+> > > > > Rather than passing around huge numbers of parameters to numerous=
+ helper
+> > > > > functions, abstract them into a single struct that we thread thro=
+ugh the
+> > > > > operation.
+> > > > >
+> > > > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > > > ---
+> > > > >  mm/mmap.c |  76 ++++++++------
+> > > > >  mm/vma.c  | 297 ++++++++++++++++++++++++++++++++++++++----------=
+------
+> > > > >  mm/vma.h  |  92 ++++++++---------
+> > > > >  3 files changed, 294 insertions(+), 171 deletions(-)
+> > > > >
+> > > > > diff --git a/mm/mmap.c b/mm/mmap.c
+> > > > > index 4a9c2329b09a..f931000c561f 100644
+> > > > > --- a/mm/mmap.c
+> > > > > +++ b/mm/mmap.c
+> > > > > @@ -1369,9 +1369,16 @@ unsigned long mmap_region(struct file *fil=
+e, unsigned long addr,
+> > > > >  	unsigned long end =3D addr + len;
+> > > > >  	unsigned long merge_start =3D addr, merge_end =3D end;
+> > > > >  	bool writable_file_mapping =3D false;
+> > > > > -	pgoff_t vm_pgoff;
+> > > > >  	int error;
+> > > > >  	VMA_ITERATOR(vmi, mm, addr);
+> > > > > +	struct vma_merge_struct vmg =3D {
+> > > > > +		.vmi =3D &vmi,
+> > > > > +		.start =3D addr,
+> > > > > +		.end =3D end,
+> > > > > +		.flags =3D vm_flags,
+> > > > > +		.pgoff =3D pgoff,
+> > > > > +		.file =3D file,
+> > > > > +	};
+> > > > >
+> > > > >  	/* Check against address space limit. */
+> > > > >  	if (!may_expand_vm(mm, vm_flags, len >> PAGE_SHIFT)) {
+> > > > > @@ -1405,8 +1412,8 @@ unsigned long mmap_region(struct file *file=
+, unsigned long addr,
+> > > > >  		vm_flags |=3D VM_ACCOUNT;
+> > > > >  	}
+> > > > >
+> > > > > -	next =3D vma_next(&vmi);
+> > > > > -	prev =3D vma_prev(&vmi);
+> > > > > +	next =3D vmg.next =3D vma_next(&vmi);
+> > > > > +	prev =3D vmg.prev =3D vma_prev(&vmi); =20
+> > > >
+> > > > So, next is now a shortcut for vmg.next, and prev is a shortcut for
+> > > > vmg.prev. ATM there is only one assignment, so no big deal, but I
+> > > > wonder if next and prev could be removed instead, same as you repla=
+ced
+> > > > vm_pgoff with vmg.pgoff. =20
+> > >
+> > > It's simply to avoid repeatedly referencing vmg.xxx / at least reduce
+> > > _some_ churn. Also this will get moved shortly, so it's worth looking=
+ at in
+> > > final form. =20
+> >
+> > I'm not a MM maintainer, so my comments may not be relevant, but my
+> > experience shows that pointer aliases have a potential to introduce all
+> > kinds of subtle bugs. That's the reason I generally try to avoid them. =
+=20
+>=20
+> Right, I understand, I don't want to get too deep into a distracting bike
+> shed when this series is doing something quite major.
+>=20
+> If you feel this is absolutely critical, I can adjust this code that I
+> later delete, if not I suggest leaving it as it is.
 
-One notable exception that is hopefully temporary: if we're doing an
-rcuwalk and auditing is enabled, skip the lookup_fast. Legitimizing the
-dentry in that case is more expensive than taking the i_rwsem for now.
+Fair enough. I missed that _both_ occurences of the pointer aliases are
+deleted later.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-Here's a revised patch that does a fast_lookup in the O_CREAT codepath
-too. The main difference here is that if a positive dentry is found and
-audit_dummy_context is true, then we keep the walk lazy for the last
-component, which avoids having to take any locks on the parent (just
-like with non-O_CREAT opens).
+Then you're right, it's fine as is. No more bike shedding.
 
-The testcase below runs in about 18s on v6.10 (on an 80 CPU machine).
-With this patch, it runs in about 1s:
-
- #define _GNU_SOURCE 1
- #include <stdio.h>
- #include <unistd.h>
- #include <errno.h>
- #include <fcntl.h>
- #include <stdlib.h>
- #include <sys/wait.h>
-
- #define PROCS           70
- #define LOOPS           500000
-
-static int openloop(int tnum)
-{
-	char *file;
-	int i, ret;
-
-       	ret = asprintf(&file, "./testfile%d", tnum);
-	if (ret < 0) {
-		printf("asprintf failed for proc %d", tnum);
-		return 1;
-	}
-
-	for (i = 0; i < LOOPS; ++i) {
-		int fd = open(file, O_RDWR|O_CREAT, 0644);
-
-		if (fd < 0) {
-			perror("open");
-			return 1;
-		}
-		close(fd);
-	}
-	unlink(file);
-	free(file);
-	return 0;
-}
-
-int main(int argc, char **argv) {
-	pid_t kids[PROCS];
-	int i, ret = 0;
-
-	for (i = 0; i < PROCS; ++i) {
-		kids[i] = fork();
-		if (kids[i] > 0)
-			return openloop(i);
-		if (kids[i] < 0)
-			perror("fork");
-	}
-
-	for (i = 0; i < PROCS; ++i) {
-		int ret2;
-
-		if (kids[i] > 0) {
-			wait(&ret2);
-			if (ret2 != 0)
-				ret = ret2;
-		}
-	}
-	return ret;
-}
----
-Changes in v2:
-- drop the lockref patch since Mateusz is working on a better approach
-- add trailing_slashes helper function
-- add a lookup_fast_for_open helper function
-- make lookup_fast_for_open skip the lookup if auditing is enabled
-- if we find a positive dentry and auditing is disabled, don't unlazy
-- Link to v1: https://lore.kernel.org/r/20240802-openfast-v1-0-a1cff2a33063@kernel.org
----
- fs/namei.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 53 insertions(+), 9 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 1e05a0f3f04d..2d716fb114c9 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3518,6 +3518,47 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 	return ERR_PTR(error);
- }
- 
-+static inline bool trailing_slashes(struct nameidata *nd)
-+{
-+	return (bool)nd->last.name[nd->last.len];
-+}
-+
-+static struct dentry *lookup_fast_for_open(struct nameidata *nd, int open_flag)
-+{
-+	struct dentry *dentry;
-+
-+	if (open_flag & O_CREAT) {
-+		/* Don't bother on an O_EXCL create */
-+		if (open_flag & O_EXCL)
-+			return NULL;
-+
-+		/*
-+		 * FIXME: If auditing is enabled, then we'll have to unlazy to
-+		 * use the dentry. For now, don't do this, since it shifts
-+		 * contention from parent's i_rwsem to its d_lockref spinlock.
-+		 * Reconsider this once dentry refcounting handles heavy
-+		 * contention better.
-+		 */
-+		if ((nd->flags & LOOKUP_RCU) && !audit_dummy_context())
-+			return NULL;
-+	}
-+
-+	if (trailing_slashes(nd))
-+		nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
-+
-+	dentry = lookup_fast(nd);
-+
-+	if (open_flag & O_CREAT) {
-+		/* Discard negative dentries. Need inode_lock to do the create */
-+		if (dentry && !dentry->d_inode) {
-+			if (!(nd->flags & LOOKUP_RCU))
-+				dput(dentry);
-+			dentry = NULL;
-+		}
-+	}
-+	return dentry;
-+}
-+
- static const char *open_last_lookups(struct nameidata *nd,
- 		   struct file *file, const struct open_flags *op)
- {
-@@ -3535,28 +3576,31 @@ static const char *open_last_lookups(struct nameidata *nd,
- 		return handle_dots(nd, nd->last_type);
- 	}
- 
-+	/* We _can_ be in RCU mode here */
-+	dentry = lookup_fast_for_open(nd, open_flag);
-+	if (IS_ERR(dentry))
-+		return ERR_CAST(dentry);
-+
- 	if (!(open_flag & O_CREAT)) {
--		if (nd->last.name[nd->last.len])
--			nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
--		/* we _can_ be in RCU mode here */
--		dentry = lookup_fast(nd);
--		if (IS_ERR(dentry))
--			return ERR_CAST(dentry);
- 		if (likely(dentry))
- 			goto finish_lookup;
- 
- 		if (WARN_ON_ONCE(nd->flags & LOOKUP_RCU))
- 			return ERR_PTR(-ECHILD);
- 	} else {
--		/* create side of things */
- 		if (nd->flags & LOOKUP_RCU) {
-+			/* can stay in rcuwalk if not auditing */
-+			if (dentry && audit_dummy_context())
-+				goto check_slashes;
- 			if (!try_to_unlazy(nd))
- 				return ERR_PTR(-ECHILD);
- 		}
- 		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
--		/* trailing slashes? */
--		if (unlikely(nd->last.name[nd->last.len]))
-+check_slashes:
-+		if (trailing_slashes(nd))
- 			return ERR_PTR(-EISDIR);
-+		if (dentry)
-+			goto finish_lookup;
- 	}
- 
- 	if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
-
----
-base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-change-id: 20240723-openfast-ac49a7b6ade2
-
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Petr T
 
