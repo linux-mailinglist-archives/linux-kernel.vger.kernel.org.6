@@ -1,117 +1,78 @@
-Return-Path: <linux-kernel+bounces-275639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C209487E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:21:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F1CC9487E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44FB21F2372E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:21:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ABEB284991
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC48158AD0;
-	Tue,  6 Aug 2024 03:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X7esAOrm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CAB58ABC;
+	Tue,  6 Aug 2024 03:26:29 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CDD43144
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81893184D
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722914472; cv=none; b=GXb8JYEkpehoo9KFulNkmbv/XghgVxWTg53GUv35lmuwpBNcArX6zS/yFdk4WMgoQ3fnxGcUAeK02vplqTpN8bsPfim1TwGkMP75r95IV/ZVmiGPJtOX7vnvLMFNIO8g+tbAPR633hHXDFQE2zfVe6SUwqtFr7LbfVRjVSrLd8g=
+	t=1722914788; cv=none; b=ejm5l4WdVG6tQU6t7z9GM0tkjdOFCTl2RBWYNjjG0WzTDGsNjtwb+GbXIBcGVmDu422Nhec2KAh5MQfqZhNlJcfUwGgH2Qbo/O1SpIZR/mmwroyl/NBcJpYa3wVOLd+n7GA/K8ktJFkyBs8K6BKwZ16p0WbkMLHNHSCjare55pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722914472; c=relaxed/simple;
-	bh=/PjDIgC1AdM+VFrKt5b8qgbE6p4BW8mIM3/GvNc2jLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pyP6HoeO5rYd7d4yiWIwxHqf83CcrPFolA6j8/Z+GkWvwCCysTefhUgh/ziSyXBOmS8VNwFVOaCZSAaJHAd//V00Jx7wojyrJucvMYX/g8yfS1xnrzU6qHAFiTuI71bzy29UFR+3afuEpowMG/J+UlVFrecI3xwywMGncfh6jTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X7esAOrm; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722914470; x=1754450470;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/PjDIgC1AdM+VFrKt5b8qgbE6p4BW8mIM3/GvNc2jLA=;
-  b=X7esAOrm1sT7co3L6TCyGl24D4WIoOso0KU+x7qjpbqRL8DhCmPdZapy
-   8Kl609lwK7keca+c0AMXnka6dEhQ24b/n8YrO+w2gzS8yre7SVwA7gVTW
-   dIZNyx3rdPB9eoDGCWzDIdS8jwRhbLwWv7XtuRa6C4Cu7zmNamBlNfRre
-   Ns5SVPz4C7Q366sOF2vdJfE1ky6UpjhwXSu/Hj02OcVY8S4k7trqX0WLE
-   XkfURmeejiUUOSJQD9t2glFYMK8+7GAq2TrnGCLT+qHIMm4KnEFnylkRx
-   qxHCGNRWkJ+dzjwjZRw2Gip79H3E9SPGwP7CbAToc2Ul0jJxkr3mitdm+
-   Q==;
-X-CSE-ConnectionGUID: 4qWwFwlPS8GLvJiY0H7o2w==
-X-CSE-MsgGUID: b+TuEldGTUe+fpm4QHYt2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="31482603"
-X-IronPort-AV: E=Sophos;i="6.09,266,1716274800"; 
-   d="scan'208";a="31482603"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 20:21:10 -0700
-X-CSE-ConnectionGUID: diVFB3BeS967P4LQ2q3yow==
-X-CSE-MsgGUID: ewlVtK50QGOVPHfaFCRDuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,266,1716274800"; 
-   d="scan'208";a="87292940"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 05 Aug 2024 20:21:07 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sbAky-00046S-3A;
-	Tue, 06 Aug 2024 03:21:04 +0000
-Date: Tue, 6 Aug 2024 11:20:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Colin Ian King <colin.king@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>, rppt@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] md/raid6 algorithms: scale test duration for speedier
- boots
-Message-ID: <202408061040.0kdEdUBV-lkp@intel.com>
-References: <20240805170816.6025-1-colin.king@intel.com>
+	s=arc-20240116; t=1722914788; c=relaxed/simple;
+	bh=Y0MbgVd8q2mIoRcko+GgWB3F0UrqvEp+5ZgftDAQTEY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QXyXfPRyTFAC6ZNZEHeaFwfS/Q0QmrZgGgJawhR2a9HVFjLCiPNFkPywM1r90cGdvwNnWfUAOyVICOV02xL09hi4VHP7+awihUo4AuWiuLyIUS60NFYC1yzeYf8xOCi8y0PdcLMtN+jTik2I7aLa6+WVLjNS5BL/BohqoPF/2jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39b3cd1813aso3266865ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 20:26:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722914786; x=1723519586;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y0MbgVd8q2mIoRcko+GgWB3F0UrqvEp+5ZgftDAQTEY=;
+        b=p9EYion+E2NUOC2yjajrt4fgb3P1ssRGAmkxva8iCUu81Xf+LWXOTLyELYLNruiVNQ
+         6simp0bw7nmZE7DC3+J4+rDDUWv+v3dwiv5U09ppbo6pfXidZXvrG4UQntofd3IqQ5DH
+         133s1HZQOVI7wgvGJh+L3M50cBLF+kZkFzeD3ccobACB5iUNaAgAP7tOlDqGOQhyEWA8
+         dJ/9t00/dNR4NfGsAupR6jBhKzd+qTWIUO2aWZ/qALPOVyHtgFbZEK+o2pEPBRy2yntK
+         5EmnE2xYEQpWOa8x3aa+ocMsvDNIEX06sxkjNhH9DQBgCVQwKMXSFLlgVu1RnAqeKik8
+         fDAA==
+X-Gm-Message-State: AOJu0YxRL7BoRDlYE4N9XJzyKvsYbQfcVSOOFXlCmwJgdK/tnIHJ/x54
+	WE1JSSJrqPKOBX1BGejMTOBuCAGItfOPMUjSkQu9FCLzHD0cNIXT7ayInm91Ft9B+cZR9Dmosnb
+	z/EFgCSaDDnAjZurL7C2FJuRUYZ76bzoWaDldg5PdZsI6OPu2h3KvS1A=
+X-Google-Smtp-Source: AGHT+IECOGR7pTUehzqC593vmI8e9d3C3Vg3xluUc0FH15f1hEE5vxOAi3b5+f1xzYOwybsDJCmsl0J+mFmI9+fh331X4DuWhS1U
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240805170816.6025-1-colin.king@intel.com>
+X-Received: by 2002:a05:6e02:12ec:b0:39a:e9f5:5ed5 with SMTP id
+ e9e14a558f8ab-39b1f7abcc0mr11870545ab.0.1722914786646; Mon, 05 Aug 2024
+ 20:26:26 -0700 (PDT)
+Date: Mon, 05 Aug 2024 20:26:26 -0700
+In-Reply-To: <000000000000fa6583061ccb8e3d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d636f0061efb5bdf@google.com>
+Subject: Re: [syzbot] WARNING in __hci_cmd_sync_sk
+From: syzbot <syzbot+f52b6db1fe57bfb08d49@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Colin,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-kernel test robot noticed the following build errors:
+***
 
-[auto build test ERROR on akpm-mm/mm-nonmm-unstable]
-[also build test ERROR on akpm-mm/mm-everything linus/master v6.11-rc2 next-20240805]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Subject: WARNING in __hci_cmd_sync_sk
+Author: djahchankoike@gmail.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Colin-Ian-King/md-raid6-algorithms-scale-test-duration-for-speedier-boots/20240806-012444
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
-patch link:    https://lore.kernel.org/r/20240805170816.6025-1-colin.king%40intel.com
-patch subject: [PATCH] md/raid6 algorithms: scale test duration for speedier boots
-config: parisc-defconfig (https://download.01.org/0day-ci/archive/20240806/202408061040.0kdEdUBV-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240806/202408061040.0kdEdUBV-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408061040.0kdEdUBV-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/asn1_decoder.o
->> ERROR: modpost: "__udivdi3" [lib/raid6/raid6_pq.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+#syz test
+hci_dev_cmd calls sync functions without holding the
+appropriate lock.
 
