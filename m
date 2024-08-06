@@ -1,250 +1,283 @@
-Return-Path: <linux-kernel+bounces-276705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD79C949747
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:07:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1B1994974A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDD4B1C212DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:07:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A720A284C2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B34F6F2EB;
-	Tue,  6 Aug 2024 18:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70AE178C73;
+	Tue,  6 Aug 2024 18:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kJ2S5Gj3"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwIOFLNt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F6624211
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 18:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BEA40875;
+	Tue,  6 Aug 2024 18:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722967621; cv=none; b=J7LtaLd9k4QXah/dAd7bEZaRA+hVZpaFhn5eEof2vVxCVJqquQEOvByRGclELiSGUq3UD1/gUiy4KiUdUQX3ukA/xLbZ3hQdQfyV8kvJ0GndLn0Z+GnJjCyYr1ZWPoNV4YP0+itBL4hpfhh7FJNAjevmflSA6SIDC/SBSPs4L04=
+	t=1722967696; cv=none; b=WpLKuyg53hSS2SK8KYyY2pNCRtKH8byuzB9NtNqsUe1qRqmI1xarMnsFd5miXLHg9nAOGSzP2YnIUOiXGeog9JrEEAOsjNLpwxn1qGOQ2UmWGe6G+AXHrjDpudcevb9DwUCygqHcFXtx3DnUGN0aAo4c/G/MC+YqitKyOTHYD90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722967621; c=relaxed/simple;
-	bh=WuhskdTwh3qaEPhMQQjYELqlsIsRhputzcXhW/m4K+w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SKQL582xeqW7k8x+fPZPz9DHahfsYzjQXOJa9r3aHPHhy7TlFiGIpMh+Y9YDhin+GG2+v7Gmq1LYelgwf6qwkSWM60LNqwQcgVc968+8vNB3CupT8eueEY19oBInRZmfpOgoFnTjAMvZj8+iB646T+CnWmhb16oB//7eUmOfSA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kJ2S5Gj3; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-44fdc70e695so591161cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 11:06:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722967619; x=1723572419; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LkioQVGF+wSLQTbkssOazSN8dIovK/fE4dOy9+EWWvg=;
-        b=kJ2S5Gj3gWhW67X2gZ1jSc1EazQ3vo9AYxWdLHInBpGEK1HTVRPOAdWQj8SsflaFvH
-         Iy3b0OngTIwzwKvLvoX1FfDjQCstCzG0rH6i+Vgk9i3re3t3qtUkESh2uGI9CTAUUCxY
-         kUyWJ88iObv5FYcAHoMWDFWxD5EMlMB738LTiy8uGayHjpMbmE0Z/lOdGIhcBmu8RHMP
-         OB7VKxmWFMEULI0wVS45eqfTTLjuRxBcQJJPH92us26TcD/xj5Hx/Hpd35mPBfY+qZZn
-         weYiMYHkTyzdbLkc25hHq7eO2G9SsoLC9UH22SjpYngQN99ASoHbOvep+8fRlsZSe+fg
-         KY/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722967619; x=1723572419;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LkioQVGF+wSLQTbkssOazSN8dIovK/fE4dOy9+EWWvg=;
-        b=GqWPOEHXGvxJyOBdDczuk/RDrrSDPYU2y6F71qhFPletG6wUK7Ubw9KKyfwJy1p0zR
-         kCKMsNn9QHxBu24lV4EmrjiuHMHqX9DHgsHdLVC+E5UYyEP5wMX2hZtjMAxM4uGMDlIu
-         WlU8VaaHgKD1+Qr6dxZTsiwJMOTaUh7GBgKpEiX2PaFohJH/tuyoycnOTAcnVkOs3Hx3
-         Rs7Rq6dB6Cp4FvxqGA4IWSWSThfchFuRP5D30iy93J86iDNDaA585bRCH7po59BVkW+P
-         fOYFVI+yNXoXkCc2EIktqMxzS7asoajHcBTWcCjnpm5797bx/KSshtOq/s1VwYrwK1dZ
-         l2VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVlWOOCqTjKMGaPi469rlFXx3hdp86BObarj6pVEE/kE/SA4j5PC/gCp5pmFNgqP7m1QDEs7MiD32v9SZI3VLDwHp38JiwIHNAr8n/b
-X-Gm-Message-State: AOJu0YyQeKr1iMrg3Gb+JuchMJEliDM1XxV5VRa8ru6cEAa49NAcDe1j
-	39NuYNyVMsLDqCuG5IoDWExsCWJLN5g5MoSxiJWFyu3HaVq2rEKj4d6XvP3aJbnT92KZ7m1hTVu
-	6KPFncdwHiPoTcPcrRvWWtsf0m/JrJflzv0fp
-X-Google-Smtp-Source: AGHT+IHZNrc+FnooCfdfckKFlUU+RkmBQlO7XEnnfitvjHUtcg6asUd2mxT6pVacIbyvDNUzFrYiQJKl5snCiPdsZf8=
-X-Received: by 2002:ac8:5743:0:b0:44f:9e0f:bc41 with SMTP id
- d75a77b69052e-451c5bc8aa5mr65871cf.27.1722967618415; Tue, 06 Aug 2024
- 11:06:58 -0700 (PDT)
+	s=arc-20240116; t=1722967696; c=relaxed/simple;
+	bh=Pio7eRsl6VoHHo6puRlzv4zHn+1CVPdub+C7U9Kagxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TaFVHU/aZp2FU6hd6Da6ulbjE8rqraLq43KQGeTS4lSw/wNfdmZobSuP3GYgP2uAdchab3w7jT5nI52KRfcsARsRFVr/LNLtGDWnQrFltHr/zrfiYUgaPPjUlO5RR4++a5E6QGd/rkTe9fnsXndHmJZBZ5qOvCzSiC/sz2O5SNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwIOFLNt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6948C32786;
+	Tue,  6 Aug 2024 18:08:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722967695;
+	bh=Pio7eRsl6VoHHo6puRlzv4zHn+1CVPdub+C7U9Kagxk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=XwIOFLNtUlDroHzZABNmcYxAgszzcVKJPvG8vl5YoRyX2QqXUdOpjoGVeo9O7D1Vz
+	 FdI52FqxhlPMtT4XSdgSFS5xuhsGkFemJGPuxX1XETTbjiy3bNyYwJ8H//9xPpNwqC
+	 m7uiiEwJ6gHbE5Hjtbq7YqY4ABpdCean6Vtoq76LQouWOT7AMvaEmKmsCJjKN57rWx
+	 8e9/4tWMBFlGPSrN8g1Xhx4iJK7k/2q20k3CfKpx+b3w3Er9W8WHDmrsIcIUrbCem1
+	 j/B7DfPmn8ObOK0PSZSkzgJVf0GabeLFbcK4sF+JD2U2smpJar1umAJB3JS4yCIKJw
+	 gJkOhNKoP6dGw==
+Date: Tue, 6 Aug 2024 12:08:12 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Kalle Valo <kvalo@kernel.org>,
+	Stanislav Yakovlev <stas.yakovlev@gmail.com>,
+	Ajay Singh <ajay.kathat@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	libertas-dev@lists.infradead.org, netdev@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] wifi: radiotap: Avoid -Wflex-array-member-not-at-end
+ warnings
+Message-ID: <ZrJmjM4izqDqwIrc@cute>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730125346.1580150-1-usamaarif642@gmail.com>
- <CAOUHufb7z13u51VCTGZMimoCXpmfT5AOAbrUpAvJjTx5+AXwew@mail.gmail.com> <20240806173840.GE322282@cmpxchg.org>
-In-Reply-To: <20240806173840.GE322282@cmpxchg.org>
-From: Yu Zhao <yuzhao@google.com>
-Date: Tue, 6 Aug 2024 12:06:20 -0600
-Message-ID: <CAOUHufavZTKjh6sb4n_q0ciLzTS88Kxxkp_2Q1wWVp_ZkFrshQ@mail.gmail.com>
-Subject: Re: [PATCH 0/6] mm: split underutilized THPs
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev, 
-	david@redhat.com, baohua@kernel.org, ryan.roberts@arm.com, rppt@kernel.org, 
-	willy@infradead.org, cerasuolodomenico@gmail.com, corbet@lwn.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, Aug 6, 2024 at 11:38=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.org=
-> wrote:
->
-> On Thu, Aug 01, 2024 at 12:09:16AM -0600, Yu Zhao wrote:
-> > On Tue, Jul 30, 2024 at 6:54=E2=80=AFAM Usama Arif <usamaarif642@gmail.=
-com> wrote:
-> > >
-> > > The current upstream default policy for THP is always. However, Meta
-> > > uses madvise in production as the current THP=3Dalways policy vastly
-> > > overprovisions THPs in sparsely accessed memory areas, resulting in
-> > > excessive memory pressure and premature OOM killing.
-> > > Using madvise + relying on khugepaged has certain drawbacks over
-> > > THP=3Dalways. Using madvise hints mean THPs aren't "transparent" and
-> > > require userspace changes. Waiting for khugepaged to scan memory and
-> > > collapse pages into THP can be slow and unpredictable in terms of per=
-formance
-> > > (i.e. you dont know when the collapse will happen), while production
-> > > environments require predictable performance. If there is enough memo=
-ry
-> > > available, its better for both performance and predictability to have
-> > > a THP from fault time, i.e. THP=3Dalways rather than wait for khugepa=
-ged
-> > > to collapse it, and deal with sparsely populated THPs when the system=
- is
-> > > running out of memory.
-> > >
-> > > This patch-series is an attempt to mitigate the issue of running out =
-of
-> > > memory when THP is always enabled. During runtime whenever a THP is b=
-eing
-> > > faulted in or collapsed by khugepaged, the THP is added to a list.
-> > > Whenever memory reclaim happens, the kernel runs the deferred_split
-> > > shrinker which goes through the list and checks if the THP was underu=
-tilized,
-> > > i.e. how many of the base 4K pages of the entire THP were zero-filled=
-.
-> > > If this number goes above a certain threshold, the shrinker will atte=
-mpt
-> > > to split that THP. Then at remap time, the pages that were zero-fille=
-d are
-> > > not remapped, hence saving memory. This method avoids the downside of
-> > > wasting memory in areas where THP is sparsely filled when THP is alwa=
-ys
-> > > enabled, while still providing the upside THPs like reduced TLB misse=
-s without
-> > > having to use madvise.
-> > >
-> > > Meta production workloads that were CPU bound (>99% CPU utilzation) w=
-ere
-> > > tested with THP shrinker. The results after 2 hours are as follows:
-> > >
-> > >                             | THP=3Dmadvise |  THP=3Dalways   | THP=
-=3Dalways
-> > >                             |             |               | + shrinke=
-r series
-> > >                             |             |               | + max_pte=
-s_none=3D409
-> > > ---------------------------------------------------------------------=
---------
-> > > Performance improvement     |      -      |    +1.8%      |     +1.7%
-> > > (over THP=3Dmadvise)          |             |               |
-> > > ---------------------------------------------------------------------=
---------
-> > > Memory usage                |    54.6G    | 58.8G (+7.7%) |   55.9G (=
-+2.4%)
-> > > ---------------------------------------------------------------------=
---------
-> > > max_ptes_none=3D409 means that any THP that has more than 409 out of =
-512
-> > > (80%) zero filled filled pages will be split.
-> > >
-> > > To test out the patches, the below commands without the shrinker will
-> > > invoke OOM killer immediately and kill stress, but will not fail with
-> > > the shrinker:
-> > >
-> > > echo 450 > /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_no=
-ne
-> > > mkdir /sys/fs/cgroup/test
-> > > echo $$ > /sys/fs/cgroup/test/cgroup.procs
-> > > echo 20M > /sys/fs/cgroup/test/memory.max
-> > > echo 0 > /sys/fs/cgroup/test/memory.swap.max
-> > > # allocate twice memory.max for each stress worker and touch 40/512 o=
-f
-> > > # each THP, i.e. vm-stride 50K.
-> > > # With the shrinker, max_ptes_none of 470 and below won't invoke OOM
-> > > # killer.
-> > > # Without the shrinker, OOM killer is invoked immediately irrespectiv=
-e
-> > > # of max_ptes_none value and kill stress.
-> > > stress --vm 1 --vm-bytes 40M --vm-stride 50K
-> > >
-> > > Patches 1-2 add back helper functions that were previously removed
-> > > to operate on page lists (needed by patch 3).
-> > > Patch 3 is an optimization to free zapped tail pages rather than
-> > > waiting for page reclaim or migration.
-> > > Patch 4 is a prerequisite for THP shrinker to not remap zero-filled
-> > > subpages when splitting THP.
-> > > Patches 6 adds support for THP shrinker.
-> > >
-> > > (This patch-series restarts the work on having a THP shrinker in kern=
-el
-> > > originally done in
-> > > https://lore.kernel.org/all/cover.1667454613.git.alexlzhu@fb.com/.
-> > > The THP shrinker in this series is significantly different than the
-> > > original one, hence its labelled v1 (although the prerequisite to not
-> > > remap clean subpages is the same).)
-> > >
-> > > Alexander Zhu (1):
-> > >   mm: add selftests to split_huge_page() to verify unmap/zap of zero
-> > >     pages
-> > >
-> > > Usama Arif (3):
-> > >   Revert "memcg: remove mem_cgroup_uncharge_list()"
-> > >   Revert "mm: remove free_unref_page_list()"
-> > >   mm: split underutilized THPs
-> > >
-> > > Yu Zhao (2):
-> > >   mm: free zapped tail pages when splitting isolated thp
-> > >   mm: don't remap unused subpages when splitting isolated thp
-> >
-> >  I would recommend shatter [1] instead of splitting so that
->
-> I agree with Rik, this seems like a possible optimization, not a
-> pre-requisite.
->
-> > 1) whoever underutilized their THPs get punished for the overhead;
->
-> Is that true?
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-Yes :)
+So, in order to avoid ending up with a flexible-array member in the
+middle of multiple other structs, we use the `__struct_group()`
+helper to create a new tagged `struct ieee80211_radiotap_header_hdr`.
+This structure groups together all the members of the flexible
+`struct ieee80211_radiotap_header` except the flexible array.
 
-> The downgrade is done in a shrinker.
+As a result, the array is effectively separated from the rest of the
+members without modifying the memory layout of the flexible structure.
+We then change the type of the middle struct members currently causing
+trouble from `struct ieee80211_radiotap_header` to `struct
+ieee80211_radiotap_header_hdr`.
 
-Ideally, should we charge for the CPU usage of the shrinker and who
-should we charge it to?
+We also want to ensure that in case new members need to be added to the
+flexible structure, they are always included within the newly created
+tagged struct. For this, we use `static_assert()`. This ensures that the
+memory layout for both the flexible structure and the new tagged struct
+is the same after any changes.
 
-> With or without
-> shattering, the compaction effort will be on the allocation side.
+This approach avoids having to implement `struct ieee80211_radiotap_header_hdr`
+as a completely separate structure, thus preventing having to maintain
+two independent but basically identical structures, closing the door
+to potential bugs in the future.
 
-If compaction is needed at all.
+So, with these changes, fix the following warnings:
+drivers/net/wireless/ath/wil6210/txrx.c:309:50: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/net/wireless/intel/ipw2x00/ipw2100.c:2521:50: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/net/wireless/intel/ipw2x00/ipw2200.h:1146:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/net/wireless/intel/ipw2x00/libipw.h:595:36: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/net/wireless/marvell/libertas/radiotap.h:34:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/net/wireless/marvell/libertas/radiotap.h:5:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/net/wireless/microchip/wilc1000/mon.c:10:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/net/wireless/microchip/wilc1000/mon.c:15:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/net/wireless/virtual/mac80211_hwsim.c:758:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/net/wireless/virtual/mac80211_hwsim.c:767:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-> > 2) underutilized THPs are kept intact and can be reused by others.
->
-> If migration of the subpages is possible, then compaction can clear
-> the block as quickly as shattering can.
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ drivers/net/wireless/ath/wil6210/txrx.c       |  2 +-
+ drivers/net/wireless/intel/ipw2x00/ipw2100.c  |  2 +-
+ drivers/net/wireless/intel/ipw2x00/ipw2200.h  |  2 +-
+ .../net/wireless/marvell/libertas/radiotap.h  |  4 +-
+ drivers/net/wireless/microchip/wilc1000/mon.c |  4 +-
+ drivers/net/wireless/virtual/mac80211_hwsim.c |  4 +-
+ include/net/ieee80211_radiotap.h              | 43 +++++++++++--------
+ 7 files changed, 33 insertions(+), 28 deletions(-)
 
-Compaction needs to scan and find the block first, assuming that block
-is still movable when it gets there.
+diff --git a/drivers/net/wireless/ath/wil6210/txrx.c b/drivers/net/wireless/ath/wil6210/txrx.c
+index f29ac6de7139..b7cc29939d59 100644
+--- a/drivers/net/wireless/ath/wil6210/txrx.c
++++ b/drivers/net/wireless/ath/wil6210/txrx.c
+@@ -306,7 +306,7 @@ static void wil_rx_add_radiotap_header(struct wil6210_priv *wil,
+ 				       struct sk_buff *skb)
+ {
+ 	struct wil6210_rtap {
+-		struct ieee80211_radiotap_header rthdr;
++		struct ieee80211_radiotap_header_hdr rthdr;
+ 		/* fields should be in the order of bits in rthdr.it_present */
+ 		/* flags */
+ 		u8 flags;
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+index b6636002c7d2..9d5524c8e95d 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+@@ -2518,7 +2518,7 @@ static void isr_rx_monitor(struct ipw2100_priv *priv, int i,
+ 	 * to build this manually element by element, we can write it much
+ 	 * more efficiently than we can parse it. ORDER MATTERS HERE */
+ 	struct ipw_rt_hdr {
+-		struct ieee80211_radiotap_header rt_hdr;
++		struct ieee80211_radiotap_header_hdr rt_hdr;
+ 		s8 rt_dbmsignal; /* signal in dbM, kluged to signed */
+ 	} *ipw_rt;
+ 
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.h b/drivers/net/wireless/intel/ipw2x00/ipw2200.h
+index 8ebf09121e17..becdd3bc5235 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2200.h
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.h
+@@ -1143,7 +1143,7 @@ struct ipw_prom_priv {
+  * structure is provided regardless of any bits unset.
+  */
+ struct ipw_rt_hdr {
+-	struct ieee80211_radiotap_header rt_hdr;
++	struct ieee80211_radiotap_header_hdr rt_hdr;
+ 	u64 rt_tsf;      /* TSF */	/* XXX */
+ 	u8 rt_flags;	/* radiotap packet flags */
+ 	u8 rt_rate;	/* rate in 500kb/s */
+diff --git a/drivers/net/wireless/marvell/libertas/radiotap.h b/drivers/net/wireless/marvell/libertas/radiotap.h
+index 1ed5608d353f..95b427196f5a 100644
+--- a/drivers/net/wireless/marvell/libertas/radiotap.h
++++ b/drivers/net/wireless/marvell/libertas/radiotap.h
+@@ -2,7 +2,7 @@
+ #include <net/ieee80211_radiotap.h>
+ 
+ struct tx_radiotap_hdr {
+-	struct ieee80211_radiotap_header hdr;
++	struct ieee80211_radiotap_header_hdr hdr;
+ 	u8 rate;
+ 	u8 txpower;
+ 	u8 rts_retries;
+@@ -31,7 +31,7 @@ struct tx_radiotap_hdr {
+ #define IEEE80211_FC_DSTODS          0x0300
+ 
+ struct rx_radiotap_hdr {
+-	struct ieee80211_radiotap_header hdr;
++	struct ieee80211_radiotap_header_hdr hdr;
+ 	u8 flags;
+ 	u8 rate;
+ 	u8 antsignal;
+diff --git a/drivers/net/wireless/microchip/wilc1000/mon.c b/drivers/net/wireless/microchip/wilc1000/mon.c
+index 03b7229a0ff5..56cdc7a193dd 100644
+--- a/drivers/net/wireless/microchip/wilc1000/mon.c
++++ b/drivers/net/wireless/microchip/wilc1000/mon.c
+@@ -7,12 +7,12 @@
+ #include "cfg80211.h"
+ 
+ struct wilc_wfi_radiotap_hdr {
+-	struct ieee80211_radiotap_header hdr;
++	struct ieee80211_radiotap_header_hdr hdr;
+ 	u8 rate;
+ } __packed;
+ 
+ struct wilc_wfi_radiotap_cb_hdr {
+-	struct ieee80211_radiotap_header hdr;
++	struct ieee80211_radiotap_header_hdr hdr;
+ 	u8 rate;
+ 	u8 dump;
+ 	u16 tx_flags;
+diff --git a/drivers/net/wireless/virtual/mac80211_hwsim.c b/drivers/net/wireless/virtual/mac80211_hwsim.c
+index d86e6ff4523d..6ab0f3a6f26c 100644
+--- a/drivers/net/wireless/virtual/mac80211_hwsim.c
++++ b/drivers/net/wireless/virtual/mac80211_hwsim.c
+@@ -763,7 +763,7 @@ static const struct rhashtable_params hwsim_rht_params = {
+ };
+ 
+ struct hwsim_radiotap_hdr {
+-	struct ieee80211_radiotap_header hdr;
++	struct ieee80211_radiotap_header_hdr hdr;
+ 	__le64 rt_tsft;
+ 	u8 rt_flags;
+ 	u8 rt_rate;
+@@ -772,7 +772,7 @@ struct hwsim_radiotap_hdr {
+ } __packed;
+ 
+ struct hwsim_radiotap_ack_hdr {
+-	struct ieee80211_radiotap_header hdr;
++	struct ieee80211_radiotap_header_hdr hdr;
+ 	u8 rt_flags;
+ 	u8 pad;
+ 	__le16 rt_channel;
+diff --git a/include/net/ieee80211_radiotap.h b/include/net/ieee80211_radiotap.h
+index 91762faecc13..029137023779 100644
+--- a/include/net/ieee80211_radiotap.h
++++ b/include/net/ieee80211_radiotap.h
+@@ -24,31 +24,36 @@
+  * struct ieee80211_radiotap_header - base radiotap header
+  */
+ struct ieee80211_radiotap_header {
+-	/**
+-	 * @it_version: radiotap version, always 0
+-	 */
+-	uint8_t it_version;
+-
+-	/**
+-	 * @it_pad: padding (or alignment)
+-	 */
+-	uint8_t it_pad;
+-
+-	/**
+-	 * @it_len: overall radiotap header length
+-	 */
+-	__le16 it_len;
+-
+-	/**
+-	 * @it_present: (first) present word
+-	 */
+-	__le32 it_present;
++	/* New members MUST be added within the __struct_group() macro below. */
++	__struct_group(ieee80211_radiotap_header_hdr, hdr, __packed,
++		/**
++		 * @it_version: radiotap version, always 0
++		 */
++		uint8_t it_version;
++
++		/**
++		 * @it_pad: padding (or alignment)
++		 */
++		uint8_t it_pad;
++
++		/**
++		 * @it_len: overall radiotap header length
++		 */
++		__le16 it_len;
++
++		/**
++		 * @it_present: (first) present word
++		 */
++		__le32 it_present;
++	);
+ 
+ 	/**
+ 	 * @it_optional: all remaining presence bitmaps
+ 	 */
+ 	__le32 it_optional[];
+ } __packed;
++static_assert(offsetof(struct ieee80211_radiotap_header, it_optional) == sizeof(struct ieee80211_radiotap_header_hdr),
++	      "struct member likely outside of __struct_group()");
+ 
+ /* version is always 0 */
+ #define PKTHDR_RADIOTAP_VERSION	0
+-- 
+2.34.1
 
-> The only difference is that
-> compaction would do the work on-demand
-
-And can often fail to produce 2MB blocks *under memory pressure*
-
-> whereas shattering would do it unconditionally
-
-And always produces a 2MB block
-
-> whether a THP has been requested or not...
-
-With the former condition being the priority because of *THP=3Dalways*.
 
