@@ -1,96 +1,72 @@
-Return-Path: <linux-kernel+bounces-276052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC16948DC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:33:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC8A3948DC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08091C231EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BDC81C22FDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AEB1C37B6;
-	Tue,  6 Aug 2024 11:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114B41C4612;
+	Tue,  6 Aug 2024 11:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VB3hFrMz"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IJ74lPpM"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A08A1BD015;
-	Tue,  6 Aug 2024 11:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD1E1C37AF;
+	Tue,  6 Aug 2024 11:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722943981; cv=none; b=TuYX4kl16ykFaL9Zj3EL69G/S8TYEaN30eI2XZj5XyzY0wseFoGmsZArdLCfiEXfDAT3j5qKaAY+2VGtemceE1ieJCtDxRXg5M4eGHQlb9q8URf2IAzuf1OfOiz2Nc8cIF4Pc4clrSQPj5aRM/d8EnWMl83br5/QO6c1Xf15NU8=
+	t=1722943988; cv=none; b=CfhlLQ+O/a8SAbDUGPuok+o8gbISBiowa7bTnxjpCY3ITo1+/vgoNvNutD/FLOYAv8mceSir2w60k7s1H6RvwBquiFAnAsNgtkhbMqHRk5PupLITyhne3RSK23Yktks8F++Gahb2cd+vOtWXU9YxVJkyS23bF6T6S3hKK2THoUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722943981; c=relaxed/simple;
-	bh=EcRtA1U8qgaYeFf87D2o2VR8P52XBfeQwJ39AxaXKkg=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H1dYqF8pj+zpH9bfMAfqG2TSgXqWvDKPrmVUXyUt+KPaCmSWAjqcAkvRe1ERQt9exl/Kbp52P1Xoq1HQQcUnUz0BQsZGrqq1k4qoqJrOAGsUsloPglsmvYc1JRxPXZ3r3L7cWovJuhqhSpEGeqJ9gPAv3T7ltT8sn9pg4aNsGzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VB3hFrMz; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f15e48f35bso4581661fa.0;
-        Tue, 06 Aug 2024 04:32:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722943977; x=1723548777; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=IVejJhSSwefbToNWC/vMSJDYdMIZMCdNUKTcNbMdxLc=;
-        b=VB3hFrMzaW98MrjQ7dXZ70ZCY2kR41794oi52jTWEmlaZG2J6aW/1jjmhm3HG4BpAJ
-         6IFZeV05hrkvf+5Hl4DGKBLxvhbK5L9LBLxVbdk7pl31wp+g1i2xWr3EIPR3trGheaIJ
-         tFx8u/DkFWjnKsb/JmnOifWyXdDSCZ9QwcZlN6CuZmwGU9w3bhWil++TwuoeSZa7Xs9q
-         L6ZB6Ay5gx69sumVRcd782G7+PVZGrrMWGliTwPMB89ns8VvO/T2mEHrsiAdP5Il+mG3
-         FcQAemQFlWaOi/aSAIf4nAJOlHthVsFzhxes8eE42oRGlxAVpHKqtvoIFnZyreZFm2vY
-         da+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722943977; x=1723548777;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IVejJhSSwefbToNWC/vMSJDYdMIZMCdNUKTcNbMdxLc=;
-        b=fFbT7IXpidyN3pDT/TONIqbcXymMmugDMnxtv9h2Mmk0LJg99UPWtfKlzeVdc2e0a3
-         XIz11VV/yoWfbCI+rxTh+stc34EqG0nNfStwxxzUNN4gR3i7hfByaCTaQ7PKRm+e6yhb
-         M6ZrNloieJF5yQHROKouMIO3JND/NJ1pHqn5xaMcXY/h9S0I6kdtYdKNPtppSLQQFzR+
-         8KR8oS+j77zUnWIiOmKnT0+m//hsfq3uR5SaDbE0rEvMyh7nDZ6fVA+lnlbJkWI0ehs3
-         NBNXlZcD2bhAhchT7rsLKMyVTbpZtjKAjjmbT7Py8rBAOkpz2Y6cpe1wzSoFmYP/57EP
-         acbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbSsdnBqyTCVOIDsmoqxQCqHWNtDY92oUGaNMRHWLXG7vVpwRhNAT6wv//a0CYbjJt8XJ2ft8R2x3S+ICbtRo8/ks2jM9tMQvG7JYGbpC5Ia8ZtaVZkQxUeR/hKr2C5Fddw9MKfaJIobR+Zjz7yUoEQ/rwVDfvZFY6w62V35Il83Giaw==
-X-Gm-Message-State: AOJu0Yy9ur6XXhdkfksCMl1Ji9rcs1GwSlfg4iO0PZWx90SFZmbaa3Ix
-	SeCwcbu9Q0Qpp+wxAMwMzQ4FwkmFWwaQcnW6sDWyZ07eOZPrG3O5
-X-Google-Smtp-Source: AGHT+IEIML1fcbxEmifD6CYWnibQGgfrmZhaChuLVp5niogHyeL8TR72e1QzDfH14JBGB+amQfws3Q==
-X-Received: by 2002:a2e:8046:0:b0:2ee:7c12:7b36 with SMTP id 38308e7fff4ca-2f15aaacc1dmr104556941fa.19.1722943976887;
-        Tue, 06 Aug 2024 04:32:56 -0700 (PDT)
-Received: from Ansuel-XPS. (host-87-6-196-30.retail.telecomitalia.it. [87.6.196.30])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282babaa2esm240389145e9.25.2024.08.06.04.32.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 04:32:56 -0700 (PDT)
-Message-ID: <66b209e8.050a0220.1f20c8.5a92@mx.google.com>
-X-Google-Original-Message-ID: <ZrIJ4y8S0sEtDOQ2@Ansuel-XPS.>
-Date: Tue, 6 Aug 2024 13:32:51 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Philip Li <philip.li@intel.com>
-Cc: kernel test robot <lkp@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Joern Engel <joern@lazybastard.org>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Wolfram Sang <wsa-dev@sang-engineering.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-nvme@lists.infradead.org, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v2 6/6] mtd: parser: add support for Airoha parser
-References: <20240804174414.18171-7-ansuelsmth@gmail.com>
- <202408050612.Ya1m6REu-lkp@intel.com>
- <66b0b109.050a0220.93681.d015@mx.google.com>
- <ZrHrn9NzeOhp+Sdl@rli9-mobl>
+	s=arc-20240116; t=1722943988; c=relaxed/simple;
+	bh=OFD62wRB2zpm+RyrKFUiRca+gNeuDFf1kvCDZr1PDp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q9BLmjnZIAvKRNoilSz34o/PEUzWstepshowZrSP1Ki6f4oJ22INAU5jVDFxGjn9M53sJ1C5I1xMiBf3ptUQT8rHBFlT/SBkkIY0QJu+6cQHWEME2I5mfxLy493Usy8ia+K0JSf4Zjz04PeNw70fscgne9GgTYn9fFcQS37fPv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IJ74lPpM; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=z6VG0JIpbLxI2trJ9q3LgWi7re73WaxG/xk3UlirF7E=; b=IJ74lPpMfMDm/linc30hotKtLK
+	dIS2x6jAzO+Na/m/MzxL3q5NCLzbkUZDibtzlPfsqXKQoRHLqA+OYR6cc3KsV4STcBtL1PlNlHyDa
+	UpAk0DRXyW0gjnB07z/EBelacRsrzRvtJEeyD/z5NDQa82bXV7Um8JPB7QLL5AgLkJMx6wfI7NE4S
+	DPupxjkt9Mpo75hf/+fKpUidBvFQZJUUeeH0MJfDqyo6rdBmQETnRTJy7eX4+i8yiCzidpN6O8NE7
+	nv1p+zf35xLz3TyRCkNa4SkWBZh8MosvzvWB/j6JDTbqU0vv/XZo4eUMjdXcjeGkfzsyy8Lw3RlRU
+	/W/9KVQw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sbIQx-00000005dfz-0Xi0;
+	Tue, 06 Aug 2024 11:32:55 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3AD3530047C; Tue,  6 Aug 2024 13:32:54 +0200 (CEST)
+Date: Tue, 6 Aug 2024 13:32:54 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] perf: Avoid -Wflex-array-member-not-at-end warnings
+Message-ID: <20240806113254.GG12673@noisy.programming.kicks-ass.net>
+References: <ZrFVW+6OOJ2tX23N@cute>
+ <20240806105941.GV37996@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,88 +75,266 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZrHrn9NzeOhp+Sdl@rli9-mobl>
+In-Reply-To: <20240806105941.GV37996@noisy.programming.kicks-ass.net>
 
-On Tue, Aug 06, 2024 at 05:23:43PM +0800, Philip Li wrote:
-> On Mon, Aug 05, 2024 at 04:54:45AM +0200, Christian Marangi wrote:
-> > On Mon, Aug 05, 2024 at 06:52:04AM +0800, kernel test robot wrote:
-> > > Hi Christian,
-> > > 
-> > > kernel test robot noticed the following build errors:
-> > > 
-> > > [auto build test ERROR on robh/for-next]
-> > > [also build test ERROR on linus/master v6.11-rc1 next-20240802]
-> > > [cannot apply to mtd/mtd/next mtd/mtd/fixes]
-> > > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > > And when submitting patch, we suggest to use '--base' as documented in
-> > > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > > 
-> > > url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-nvme-Document-nvme-card-compatible/20240805-014740
-> > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-> > > patch link:    https://lore.kernel.org/r/20240804174414.18171-7-ansuelsmth%40gmail.com
-> > > patch subject: [PATCH v2 6/6] mtd: parser: add support for Airoha parser
-> > > config: xtensa-allyesconfig (https://download.01.org/0day-ci/archive/20240805/202408050612.Ya1m6REu-lkp@intel.com/config)
-> > > compiler: xtensa-linux-gcc (GCC) 14.1.0
-> > > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240805/202408050612.Ya1m6REu-lkp@intel.com/reproduce)
-> > > 
-> > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > > the same patch/commit), kindly add following tags
-> > > | Reported-by: kernel test robot <lkp@intel.com>
-> > > | Closes: https://lore.kernel.org/oe-kbuild-all/202408050612.Ya1m6REu-lkp@intel.com/
-> > > 
-> > > All errors (new ones prefixed by >>):
-> > > 
-> > >    drivers/mtd/parsers/ofpart_airoha.c: In function 'airoha_partitions_post_parse':
-> > >    drivers/mtd/parsers/ofpart_airoha.c:33:16: error: implicit declaration of function 'kzalloc' [-Wimplicit-function-declaration]
-> > >       33 |         prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-> > >          |                ^~~~~~~
-> > > >> drivers/mtd/parsers/ofpart_airoha.c:33:14: error: assignment to 'struct property *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-> > >       33 |         prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-> > >          |              ^
-> > > 
-> > > 
-> > > vim +33 drivers/mtd/parsers/ofpart_airoha.c
-> > > 
-> > >     10	
-> > >     11	int airoha_partitions_post_parse(struct mtd_info *mtd,
-> > >     12					 struct mtd_partition *parts,
-> > >     13					 int nr_parts)
-> > >     14	{
-> > >     15		struct mtd_partition *part;
-> > >     16		int len, a_cells, s_cells;
-> > >     17		struct device_node *pp;
-> > >     18		struct property *prop;
-> > >     19		const __be32 *reg;
-> > >     20		__be32 *new_reg;
-> > >     21	
-> > >     22		part = &parts[nr_parts - 1];
-> > >     23		pp = part->of_node;
-> > >     24	
-> > >     25		/* Skip if ART partition have a valid offset instead of a dynamic one */
-> > >     26		if (!of_device_is_compatible(pp, "airoha,dynamic-art"))
-> > >     27			return 0;
-> > >     28	
-> > >     29		/* ART partition is set at the end of flash - size */
-> > >     30		part->offset = mtd->size - part->size;
-> > >     31	
-> > >     32		/* Update the offset with the new calculate value in DT */
-> > >   > 33		prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-> > > 
-> > > -- 
-> > > 0-DAY CI Kernel Test Service
-> > > https://github.com/intel/lkp-tests/wiki
+On Tue, Aug 06, 2024 at 12:59:41PM +0200, Peter Zijlstra wrote:
+> On Mon, Aug 05, 2024 at 04:42:35PM -0600, Gustavo A. R. Silva wrote:
+> > -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> > getting ready to enable it, globally.
 > > 
-> > Mhhh somehow I can't repro this with instructions?
+> > So, in order to avoid ending up with a flexible-array member in the
+> > middle of multiple other structs, we use the `struct_group_tagged()`
+> > helper to create a new tagged `struct perf_branch_stack_hdr`.
+> > This structure groups together all the members of the flexible
+> > `struct perf_branch_stack` except the flexible array.
+> > 
+> > As a result, the array is effectively separated from the rest of the
+> > members without modifying the memory layout of the flexible structure.
+> > We then change the type of the middle struct members currently causing
+> > trouble from `struct perf_branch_stack` to `struct perf_branch_stack_hdr`.
+> > 
+> > We also want to ensure that when new members need to be added to the
+> > flexible structure, they are always included within the newly created
+> > tagged struct. For this, we use `static_assert()`. This ensures that the
+> > memory layout for both the flexible structure and the new tagged struct
+> > is the same after any changes.
+> > 
+> > This approach avoids having to implement `struct perf_branch_stack_hdr`
+> > as a completely separate structure, thus preventing having to maintain
+> > two independent but basically identical structures, closing the door
+> > to potential bugs in the future.
+> > 
+> > We also use `container_of()` whenever we need to retrieve a pointer to
+> > the flexible structure, through which the flexible-array member can be
+> > accessed, if necessary.
+> > 
+> > So, with these changes, fix the following warnings:
+> > arch/x86/events/amd/../perf_event.h:289:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> > arch/x86/events/intel/../perf_event.h:289:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> > arch/x86/events/perf_event.h:289:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> > arch/x86/events/zhaoxin/../perf_event.h:289:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> > ./arch/x86/include/generated/../../events/perf_event.h:289:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> > arch/x86/xen/../events/perf_event.h:289:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 > 
-> Hi Ansuel, would you mind sharing the steps of reproduce? I can reproduce this with steps
-> described in the repro link [1]
+> Urgh, this fugly.. And you're breaking coding style :-(
 > 
-> [1] https://download.01.org/0day-ci/archive/20240805/202408050612.Ya1m6REu-lkp@intel.com/reproduce
->
+> Let me see if this can't be done sanely...
 
-Hi, thanks for confirming that. Manage to repro, just had dirty
-build-dir and config wasn't correctly applying.
+This seems to build...
 
--- 
-	Ansuel
+diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+index 920e3a640cad..9477dfd34e07 100644
+--- a/arch/x86/events/amd/core.c
++++ b/arch/x86/events/amd/core.c
+@@ -1001,7 +1001,7 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
+ 			continue;
+ 
+ 		if (has_branch_stack(event))
+-			perf_sample_save_brstack(&data, event, &cpuc->lbr_stack, NULL);
++			perf_sample_save_brstack(&data, event, cpu_lbr_stack(cpuc), NULL);
+ 
+ 		if (perf_event_overflow(event, &data, regs))
+ 			x86_pmu_stop(event, 0);
+diff --git a/arch/x86/events/amd/lbr.c b/arch/x86/events/amd/lbr.c
+index 19c7b76e21bc..2a7a8673ed17 100644
+--- a/arch/x86/events/amd/lbr.c
++++ b/arch/x86/events/amd/lbr.c
+@@ -107,7 +107,7 @@ static void amd_pmu_lbr_filter(void)
+ 	    ((br_sel & X86_BR_TYPE_SAVE) != X86_BR_TYPE_SAVE))
+ 		fused_only = true;
+ 
+-	for (i = 0; i < cpuc->lbr_stack.nr; i++) {
++	for (i = 0; i < cpu_lbr_stack(cpuc)->nr; i++) {
+ 		from = cpuc->lbr_entries[i].from;
+ 		to = cpuc->lbr_entries[i].to;
+ 		type = branch_type_fused(from, to, 0, &offset);
+@@ -137,12 +137,12 @@ static void amd_pmu_lbr_filter(void)
+ 		return;
+ 
+ 	/* Remove all invalid entries */
+-	for (i = 0; i < cpuc->lbr_stack.nr; ) {
++	for (i = 0; i < cpu_lbr_stack(cpuc)->nr; ) {
+ 		if (!cpuc->lbr_entries[i].from) {
+ 			j = i;
+-			while (++j < cpuc->lbr_stack.nr)
++			while (++j < cpu_lbr_stack(cpuc)->nr)
+ 				cpuc->lbr_entries[j - 1] = cpuc->lbr_entries[j];
+-			cpuc->lbr_stack.nr--;
++			cpu_lbr_stack(cpuc)->nr--;
+ 			if (!cpuc->lbr_entries[i].from)
+ 				continue;
+ 		}
+@@ -208,13 +208,13 @@ void amd_pmu_lbr_read(void)
+ 		out++;
+ 	}
+ 
+-	cpuc->lbr_stack.nr = out;
++	cpu_lbr_stack(cpuc)->nr = out;
+ 
+ 	/*
+ 	 * Internal register renaming always ensures that LBR From[0] and
+ 	 * LBR To[0] always represent the TOS
+ 	 */
+-	cpuc->lbr_stack.hw_idx = 0;
++	cpu_lbr_stack(cpuc)->hw_idx = 0;
+ 
+ 	/* Perform further software filtering */
+ 	amd_pmu_lbr_filter();
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index be01823b1bb4..6054d209bcd1 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -1706,7 +1706,7 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
+ 		perf_sample_data_init(&data, 0, event->hw.last_period);
+ 
+ 		if (has_branch_stack(event))
+-			perf_sample_save_brstack(&data, event, &cpuc->lbr_stack, NULL);
++			perf_sample_save_brstack(&data, event, cpu_lbr_stack(cpuc), NULL);
+ 
+ 		if (perf_event_overflow(event, &data, regs))
+ 			x86_pmu_stop(event, 0);
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index fa5ea65de0d0..f4d5efb52d9b 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1573,7 +1573,7 @@ static int intel_pmu_pebs_fixup_ip(struct pt_regs *regs)
+ 	/*
+ 	 * No LBR entry, no basic block, no rewinding
+ 	 */
+-	if (!cpuc->lbr_stack.nr || !from || !to)
++	if (!cpu_lbr_stack(cpuc)->nr || !from || !to)
+ 		return 0;
+ 
+ 	/*
+@@ -1869,7 +1869,7 @@ static void setup_pebs_fixed_sample_data(struct perf_event *event,
+ 		setup_pebs_time(event, data, pebs->tsc);
+ 
+ 	if (has_branch_stack(event))
+-		perf_sample_save_brstack(data, event, &cpuc->lbr_stack, NULL);
++		perf_sample_save_brstack(data, event, cpu_lbr_stack(cpuc), NULL);
+ }
+ 
+ static void adaptive_pebs_save_regs(struct pt_regs *regs,
+diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
+index dc641b50814e..1e9c4f114720 100644
+--- a/arch/x86/events/intel/lbr.c
++++ b/arch/x86/events/intel/lbr.c
+@@ -751,8 +751,8 @@ void intel_pmu_lbr_read_32(struct cpu_hw_events *cpuc)
+ 		br->to		= msr_lastbranch.to;
+ 		br++;
+ 	}
+-	cpuc->lbr_stack.nr = i;
+-	cpuc->lbr_stack.hw_idx = tos;
++	cpu_lbr_stack(cpuc)->nr = i;
++	cpu_lbr_stack(cpuc)->hw_idx = tos;
+ }
+ 
+ /*
+@@ -846,8 +846,8 @@ void intel_pmu_lbr_read_64(struct cpu_hw_events *cpuc)
+ 		br[out].cycles	 = cycles;
+ 		out++;
+ 	}
+-	cpuc->lbr_stack.nr = out;
+-	cpuc->lbr_stack.hw_idx = tos;
++	cpu_lbr_stack(cpuc)->nr = out;
++	cpu_lbr_stack(cpuc)->hw_idx = tos;
+ }
+ 
+ static DEFINE_STATIC_KEY_FALSE(x86_lbr_mispred);
+@@ -930,7 +930,7 @@ static void intel_pmu_store_lbr(struct cpu_hw_events *cpuc,
+ 		e->reserved	= (info >> LBR_INFO_BR_CNTR_OFFSET) & LBR_INFO_BR_CNTR_FULL_MASK;
+ 	}
+ 
+-	cpuc->lbr_stack.nr = i;
++	cpu_lbr_stack(cpuc)->nr = i;
+ }
+ 
+ /*
+@@ -956,7 +956,7 @@ static void intel_pmu_lbr_counters_reorder(struct cpu_hw_events *cpuc,
+ 
+ 	WARN_ON_ONCE(!pos);
+ 
+-	for (i = 0; i < cpuc->lbr_stack.nr; i++) {
++	for (i = 0; i < cpu_lbr_stack(cpuc)->nr; i++) {
+ 		src = cpuc->lbr_entries[i].reserved;
+ 		dst = 0;
+ 		for (j = 0; j < pos; j++) {
+@@ -974,11 +974,11 @@ void intel_pmu_lbr_save_brstack(struct perf_sample_data *data,
+ {
+ 	if (is_branch_counters_group(event)) {
+ 		intel_pmu_lbr_counters_reorder(cpuc, event);
+-		perf_sample_save_brstack(data, event, &cpuc->lbr_stack, cpuc->lbr_counters);
++		perf_sample_save_brstack(data, event, cpu_lbr_stack(cpuc), cpuc->lbr_counters);
+ 		return;
+ 	}
+ 
+-	perf_sample_save_brstack(data, event, &cpuc->lbr_stack, NULL);
++	perf_sample_save_brstack(data, event, cpu_lbr_stack(cpuc), NULL);
+ }
+ 
+ static void intel_pmu_arch_lbr_read(struct cpu_hw_events *cpuc)
+@@ -1210,7 +1210,7 @@ intel_pmu_lbr_filter(struct cpu_hw_events *cpuc)
+ 	    ((br_sel & X86_BR_TYPE_SAVE) != X86_BR_TYPE_SAVE))
+ 		return;
+ 
+-	for (i = 0; i < cpuc->lbr_stack.nr; i++) {
++	for (i = 0; i < cpu_lbr_stack(cpuc)->nr; i++) {
+ 
+ 		from = cpuc->lbr_entries[i].from;
+ 		to = cpuc->lbr_entries[i].to;
+@@ -1248,14 +1248,14 @@ intel_pmu_lbr_filter(struct cpu_hw_events *cpuc)
+ 		return;
+ 
+ 	/* remove all entries with from=0 */
+-	for (i = 0; i < cpuc->lbr_stack.nr; ) {
++	for (i = 0; i < cpu_lbr_stack(cpuc)->nr; ) {
+ 		if (!cpuc->lbr_entries[i].from) {
+ 			j = i;
+-			while (++j < cpuc->lbr_stack.nr) {
++			while (++j < cpu_lbr_stack(cpuc)->nr) {
+ 				cpuc->lbr_entries[j-1] = cpuc->lbr_entries[j];
+ 				cpuc->lbr_counters[j-1] = cpuc->lbr_counters[j];
+ 			}
+-			cpuc->lbr_stack.nr--;
++			cpu_lbr_stack(cpuc)->nr--;
+ 			if (!cpuc->lbr_entries[i].from)
+ 				continue;
+ 		}
+@@ -1270,9 +1270,9 @@ void intel_pmu_store_pebs_lbrs(struct lbr_entry *lbr)
+ 	/* Cannot get TOS for large PEBS and Arch LBR */
+ 	if (static_cpu_has(X86_FEATURE_ARCH_LBR) ||
+ 	    (cpuc->n_pebs == cpuc->n_large_pebs))
+-		cpuc->lbr_stack.hw_idx = -1ULL;
++		cpu_lbr_stack(cpuc)->hw_idx = -1ULL;
+ 	else
+-		cpuc->lbr_stack.hw_idx = intel_pmu_lbr_tos();
++		cpu_lbr_stack(cpuc)->hw_idx = intel_pmu_lbr_tos();
+ 
+ 	intel_pmu_store_lbr(cpuc, lbr);
+ 	intel_pmu_lbr_filter(cpuc);
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index ac1182141bf6..0daab579264f 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -286,7 +286,7 @@ struct cpu_hw_events {
+ 	 */
+ 	int				lbr_users;
+ 	int				lbr_pebs_users;
+-	struct perf_branch_stack	lbr_stack;
++	u64				lbr_hdr[sizeof(struct perf_branch_stack)/sizeof(u64)];
+ 	struct perf_branch_entry	lbr_entries[MAX_LBR_ENTRIES];
+ 	u64				lbr_counters[MAX_LBR_ENTRIES]; /* branch stack extra */
+ 	union {
+@@ -349,6 +349,11 @@ struct cpu_hw_events {
+ 	struct pmu			*pmu;
+ };
+ 
++static __always_inline struct perf_branch_stack *cpu_lbr_stack(struct cpu_hw_events *cpuc)
++{
++	return (void *)&cpuc->lbr_hdr;
++}
++
+ #define __EVENT_CONSTRAINT_RANGE(c, e, n, m, w, o, f) {	\
+ 	{ .idxmsk64 = (n) },		\
+ 	.code = (c),			\
 
