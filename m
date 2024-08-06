@@ -1,129 +1,168 @@
-Return-Path: <linux-kernel+bounces-275988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD54948CF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:38:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1BF1948CF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A14AB23A67
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:38:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 375ACB249C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6634B1BF30D;
-	Tue,  6 Aug 2024 10:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnMqk+fp"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4651BDAA7;
-	Tue,  6 Aug 2024 10:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAA71BF301;
+	Tue,  6 Aug 2024 10:39:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCB015B54C;
+	Tue,  6 Aug 2024 10:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722940720; cv=none; b=bJQXEL/sxKwLbfBMl/6oJIC5ipLVTQTXkWA0qZU4mIesbcuPEwGe/G7QVnjldbk9UnWEmL5t9QHZBurpNkHnH5oxLJtRRTYFSYQLoPWAccnrW+ljcIi1grUumNj9rs7EDeO45/XX3BMBeWuoYqOZN/RqL5W/C2LGs4ZrfPGthHY=
+	t=1722940768; cv=none; b=BiFyO6RIO2y7nflfXokdTb8wtNmiKI8lLPT/zcEC5438BVIncF9DMbfrKixIYTxagjlYwu2UufYUWTdjI2B98n25V7Epj5C2WjZwoQ2g1Wn4DT+OrE8JTFS37O/P0JMaT8+kyZmXOmxFUwNklkq4NP9oMWRrNwJiWQrxlLGneQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722940720; c=relaxed/simple;
-	bh=05YUjKWcS8QjfXQkGcpwUyF2jmITRUMRuJ8V9/VtX4I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PReEnwBJ4NkuA3uj6LSTvnwiaQmUVkx0bVSX8Jehp8v6YC8SocehkYf4M5E4oMTXv0ZuuzNfhd+FBVl6I7UAT0XVtGh9v5R4YXmv1EnBI8X6OLvbrKONhas44LYTyGc9idmCf9PiMvz/jsxqzvaAcgM2mFiKnGmtpRn6uxQJRto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnMqk+fp; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7b594936e9bso420259a12.1;
-        Tue, 06 Aug 2024 03:38:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722940719; x=1723545519; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lBE9cbqqy9E10rFhHW0Wgihe2/UchPViyrmjttfLQ6E=;
-        b=hnMqk+fpb40Pk0Z9UPUseTZ7wmGFrkVkg6TncvPmT81FFdJlvZiDMqUpWihOLL3j4L
-         t6NZ1Mi+pYKm7X1FMDE86muzWHkzlsT5KKzNZF/55xePBdAPkxCQK05E+HF5MsgB98xP
-         8/BB0FNbIfAIxn6EXJFCynBpI57giA6eASuz0OdCGcuPQ26acIdsX+LQ6XoQyx/1fNKQ
-         5f23jjuxf7YXheG5ZNoUEdNC4qYnSvZ9tAK1rsPPuTSk7KVfhIPDNMAH5AtMcGtXVTvG
-         sLKOVmpFjTPj6QuSxq+g6jOLhHmyOJfQpIz2mzXLtLIZQ7MlR20wc7+y8IUc+wm+N2wG
-         zlfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722940719; x=1723545519;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lBE9cbqqy9E10rFhHW0Wgihe2/UchPViyrmjttfLQ6E=;
-        b=FSy+flqEVKZpL7SlfyjbBFgrpqUHoePjEz78JjukSBHsICgoVJU/RgkC8is/1DQKyH
-         qy5hF1HSff9i0H76bG9DoCyYSWO8NaeWlrUo+zoqvTCnyfQ/kyJm8XQ5wj8Yl94Yyw+H
-         dnXrOE0+aPSMf9EUlAjc+LlDmVadsAgvdmQkjZmvlvJZU8m+Y/wY5RGmKrPCdA4m5NJp
-         wk8lwSmPV/aVXECUVyDy/3uVnpNdyOq9OKK6z6je4LtBgquU73EZVOc/K2wQZlEXhSgE
-         nRR6jiTQm+Rc510SEta2nkuZYD3jlBfnemYgygO6+TERpRRbsWrFZNOdh24u66VAua/g
-         nwgA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/ldo/YQdWW9bXc6gMqLecZoYSvOVAuq8rJ93SL2btpe9xhNM15bPc52B/O7fITHpwM2S/+fWMZxBQ15NEw2rQ6o85HlvHLYd0VmO1oUoJlfhJ/xo/2eJuFYBLJghpAHCtwc9npHIEU4n/bxBfKw60TB2jfMqVnVwxMKvcVf+PSyxVwnOVmrTv
-X-Gm-Message-State: AOJu0YzRGiGajfuND8AQzGE5AcER427tT83l04QsKeBVbzmYW8zq4MC0
-	uX5p+uFg0E0a2zopVDDKlWCDcVfVdbUDUHMoJPoSZVf5ceUKQ00n
-X-Google-Smtp-Source: AGHT+IFeoNZTBJIcwXObcpVFY6Q7EaDDvgDY5rZpxHnHyuZgINHleuwM7ffl5V+qHwaBw6XGBqXTEw==
-X-Received: by 2002:a05:6a21:6f87:b0:1c4:c7ac:9e5b with SMTP id adf61e73a8af0-1c6996605e3mr12075324637.45.1722940718410;
-        Tue, 06 Aug 2024 03:38:38 -0700 (PDT)
-Received: from localhost.localdomain ([115.240.194.54])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec4169csm6775561b3a.64.2024.08.06.03.38.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 03:38:38 -0700 (PDT)
-From: Animesh Agarwal <animeshagarwal28@gmail.com>
-To: 
-Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: watchdog: fsl-imx-wdt: Add missing 'big-endian' property
-Date: Tue,  6 Aug 2024 16:08:16 +0530
-Message-ID: <20240806103819.10890-1-animeshagarwal28@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722940768; c=relaxed/simple;
+	bh=f3yrW3TgSKGlLolol72ndZGCbsVRSJQaOX3C228bnyY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oyadqOJP0sUQxXLnokF6H5UGGTtJCnBZG0aSTJ576ASZbzqe4vO4O9NxP4YybY2qSG5NaJ1THNCmXlocsECdMlGcp75phtRV5ROaP5no8a0lJPGtm0Ajz13niAWxrqUBSzOietCTebrsCnrXaJVK0g09Zv25E1JkCzcBAgLtZ9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E24CFEC;
+	Tue,  6 Aug 2024 03:39:51 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E0FC3F6A8;
+	Tue,  6 Aug 2024 03:39:24 -0700 (PDT)
+Message-ID: <bfd0f7c7-5492-47ec-9c66-4c1ad4cd0e52@arm.com>
+Date: Tue, 6 Aug 2024 11:39:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] iommu: Optimize IOMMU UnMap
+To: Ashish Mhetre <amhetre@nvidia.com>, will@kernel.org, joro@8bytes.org
+Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20240805084106.214584-1-amhetre@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240805084106.214584-1-amhetre@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add missing big-endian property in watchdog/fsl-imx-wdt.yaml schema.
-This fixes dtbs_check errors.
+On 05/08/2024 9:41 am, Ashish Mhetre wrote:
+> The current __arm_lpae_unmap() function calls dma_sync() on individual
+> PTEs after clearing them. Overall unmap performance can be improved by
+> around 25% for large buffer sizes by combining the syncs for adjacent
+> leaf entries.
+> Optimize the unmap time by clearing all the leaf entries and issuing a
+> single dma_sync() for them.
+> Below is detailed analysis of average unmap latency(in us) with and
+> without this optimization obtained by running dma_map_benchmark for
+> different buffer sizes.
+> 
+> 		UnMap Latency(us)
+> Size	Without		With		% gain with
+> 	optimiztion	optimization	optimization
+> 
+> 4KB	3		3		0
+> 8KB	4		3.8		5
+> 16KB	6.1		5.4		11.48
+> 32KB	10.2		8.5		16.67
+> 64KB	18.5		14.9		19.46
+> 128KB	35		27.5		21.43
+> 256KB	67.5		52.2		22.67
+> 512KB	127.9		97.2		24.00
+> 1MB	248.6		187.4		24.62
+> 2MB	65.5		65.5		0
+> 4MB	119.2		119		0.17
+> 
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+> Changes in V2:
+> - Updated the commit message to be imperative.
+> - Fixed ptep at incorrect index getting cleared for non-leaf entries.
+> 
+> Changes in V3:
+> - Used loop-local variables and removed redundant function variables.
+> - Added check for zero-sized dma_sync in __arm_lpae_clear_pte().
+> - Merged both patches into this single patch by adding check for a
+>    NULL gather in __arm_lpae_unmap() itself.
 
-Cc: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
----
-There are 12 similar errors related to this missing property from
-different blobs.
+Yeah, that's cleaned up really nicely!
 
-./arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dtb: watchdog@2ad0000:
-Unevaluated properties are not allowed ('big-endian' was unexpected)from
-schema $id: http://devicetree.org/schemas/watchdog/fsl-imx-wdt.yaml#
----
- Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Other than a nit that the subject ideally wants to be something more 
+accurate like "iommu/io-pgtable-arm: Optimise non-coherent unmap" (sorry 
+I forgot to mention that last time),
 
-diff --git a/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml b/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
-index 36b836d0620c..24d47b1701a7 100644
---- a/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
-+++ b/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
-@@ -48,6 +48,8 @@ properties:
-   clocks:
-     maxItems: 1
- 
-+  big-endian: true
-+
-   fsl,ext-reset-output:
-     $ref: /schemas/types.yaml#/definitions/flag
-     description: |
--- 
-2.45.2
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
+> ---
+>   drivers/iommu/io-pgtable-arm.c | 31 +++++++++++++++++--------------
+>   1 file changed, 17 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+> index f5d9fd1f45bf..6fecf3d9fe67 100644
+> --- a/drivers/iommu/io-pgtable-arm.c
+> +++ b/drivers/iommu/io-pgtable-arm.c
+> @@ -274,13 +274,13 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
+>   				   sizeof(*ptep) * num_entries, DMA_TO_DEVICE);
+>   }
+>   
+> -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg)
+> +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg, int num_entries)
+>   {
+> +	for (int i = 0; i < num_entries; i++)
+> +		ptep[i] = 0;
+>   
+> -	*ptep = 0;
+> -
+> -	if (!cfg->coherent_walk)
+> -		__arm_lpae_sync_pte(ptep, 1, cfg);
+> +	if (!cfg->coherent_walk && num_entries)
+> +		__arm_lpae_sync_pte(ptep, num_entries, cfg);
+>   }
+>   
+>   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+> @@ -654,26 +654,29 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>   		max_entries = ARM_LPAE_PTES_PER_TABLE(data) - unmap_idx_start;
+>   		num_entries = min_t(int, pgcount, max_entries);
+>   
+> -		while (i < num_entries) {
+> -			pte = READ_ONCE(*ptep);
+> +		/* Find and handle non-leaf entries */
+> +		for (i = 0; i < num_entries; i++) {
+> +			pte = READ_ONCE(ptep[i]);
+>   			if (WARN_ON(!pte))
+>   				break;
+>   
+> -			__arm_lpae_clear_pte(ptep, &iop->cfg);
+> -
+>   			if (!iopte_leaf(pte, lvl, iop->fmt)) {
+> +				__arm_lpae_clear_pte(&ptep[i], &iop->cfg, 1);
+> +
+>   				/* Also flush any partial walks */
+>   				io_pgtable_tlb_flush_walk(iop, iova + i * size, size,
+>   							  ARM_LPAE_GRANULE(data));
+>   				__arm_lpae_free_pgtable(data, lvl + 1, iopte_deref(pte, data));
+> -			} else if (!iommu_iotlb_gather_queued(gather)) {
+> -				io_pgtable_tlb_add_page(iop, gather, iova + i * size, size);
+>   			}
+> -
+> -			ptep++;
+> -			i++;
+>   		}
+>   
+> +		/* Clear the remaining entries */
+> +		__arm_lpae_clear_pte(ptep, &iop->cfg, i);
+> +
+> +		if (gather && !iommu_iotlb_gather_queued(gather))
+> +			for (int j = 0; j < i; j++)
+> +				io_pgtable_tlb_add_page(iop, gather, iova + j * size, size);
+> +
+>   		return i * size;
+>   	} else if (iopte_leaf(pte, lvl, iop->fmt)) {
+>   		/*
 
