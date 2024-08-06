@@ -1,165 +1,163 @@
-Return-Path: <linux-kernel+bounces-276069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5FCE948E0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:45:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B62B948DDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 814412846B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:45:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB38A1F250C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D1B1C233B;
-	Tue,  6 Aug 2024 11:45:50 +0000 (UTC)
-Received: from hosting3.qishost.com (signalogic.com [209.150.126.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0381B1C37A3;
+	Tue,  6 Aug 2024 11:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kK+tBEwV"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE3B16B3B5;
-	Tue,  6 Aug 2024 11:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.150.126.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876801C2324;
+	Tue,  6 Aug 2024 11:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722944750; cv=none; b=GqYnBDLuJ4joE35llDAen0ICX4AP3h0CXipsfzddi1VUn/EN9kQLqit5RWTxIUlgML9grtx/gyORND5HjgVqyHaaqt2XfHP+H5uoNbF4Gu7QkPMjEZNaUQWAKljRsmPZiDpVsmMm9xhBwad9FmgpPsZFMBp7SRF6nAfpYniCrkI=
+	t=1722944490; cv=none; b=ZGd1OZus2LB5uwIQIPqBfSwJEzQl82FXAilM4ynqC09b9KyOGgkiObMXZVbxYPLfShQXBpHNBFeUi1y6sSK3yR1sibIWA0jC5eoE5INMGyWk8QO+j35sMAjhLOGCPAYa7kbPKBtPC0LJoDOD99RQXaitHIVScvnd22qBhMtNmOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722944750; c=relaxed/simple;
-	bh=IZLPCVzb3kPUDGJIg69Ehm8qFNzjVH6IUeurAwjF0EU=;
-	h=Date:Message-ID:From:To:Cc:Subject:References:In-Reply-To:
-	 Content-Type:MIME-Version:Content-Disposition; b=pDH9opPHrS+WpK0sqYW/fuW1sLwcKNUXDDSMvIYmaUXeRJncniy+cxwvllwes6vO2c534AsyA/Ucg2M5znFzNhaq1r7IIwvdjJHispMeK7dFjyNdt/o+AP18Vg9EjsPF5JNDcAHBrD3YW9T6htjNIfmcURqTuLtuv2psXoKw190=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=signalogic.com; spf=pass smtp.mailfrom=signalogic.com; arc=none smtp.client-ip=209.150.126.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=signalogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=signalogic.com
-Received: from hosting3.qishost.com (localhost [IPv6:::1])
-	by hosting3.qishost.com (Postfix) with ESMTPSA id 7702F45A59;
-	Tue,  6 Aug 2024 07:39:36 -0400 (EDT)
-Authentication-Results: hosting3.qishost.com;
-        spf=pass (sender IP is ::1) smtp.mailfrom=jbrower@signalogic.com smtp.helo=hosting3.qishost.com
-Received-SPF: pass (hosting3.qishost.com: connection is authenticated)
-Received: from c-76-132-49-220.hsd1.ca.comcast.net
- (c-76-132-49-220.hsd1.ca.comcast.net [76.132.49.220]) by
- webmail.signalogic.com (Horde Framework) with HTTP; Tue, 06 Aug 2024
- 11:39:36 +0000
-Date: Tue, 06 Aug 2024 11:39:36 +0000
-Message-ID: <20240806113936.Horde.vcDWoEx08a51SUfvt56nQ2p@webmail.signalogic.com>
-From: Jeff Brower <jbrower@signalogic.com>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, vkoul@kernel.org, perex@perex.cz,
- tiwai@suse.com, alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com,
- festevam@gmail.com, nicoleotsuka@gmail.com, lgirdwood@gmail.com,
- broonie@kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH 1/6] ALSA: compress: add Sample Rate Converter codec
- support
-References: <1722940003-20126-1-git-send-email-shengjiu.wang@nxp.com>
- <1722940003-20126-2-git-send-email-shengjiu.wang@nxp.com>
- <e89a56bf-c377-43d8-bba8-6a09e571ed64@linux.intel.com>
-In-Reply-To: <e89a56bf-c377-43d8-bba8-6a09e571ed64@linux.intel.com>
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+	s=arc-20240116; t=1722944490; c=relaxed/simple;
+	bh=0cuXlLqNV1nI6qmvoA149YGaAWIEPfuv5YFddNUum0o=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=jm0CPdpsxJqS4xQcdzHlEMAOMn4SB1+caI+4qSx0E39OAejDE7m8ouWuHeemtEHgokXYAjSk7qSkTBlw9bTmQ85Pnt5xM5UB9NQCH7Vv3EU+/bN1jP9ol8XhE7RV45X8UQ2R3mCV1X27APuWjhRi5tZDF3tpOJfuxpGE0dRz9E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kK+tBEwV; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42808071810so3186965e9.1;
+        Tue, 06 Aug 2024 04:41:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722944487; x=1723549287; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YpfYwGb98vUIAZ4eOkYm143SZkEFj932lYgjUfhnx5I=;
+        b=kK+tBEwVWjLsogOkiZgAcEgEQiyfmYNHkgMJN1i+Bkxcof7TAr4Bc6SmvvDp4QpLQe
+         /tNuv5uLPjSdqUWw4AeA0I2fQlDJpHNrYOPM11VOPSuWs2z8hydciUDJS5oy65LW9k7d
+         hRmg9QYYd0Ov3rB4f49NIsCRnVZ0iglNbNUzXL59800S/3l6xrsPEZjey2GiVZHFx7ig
+         kehri+AkEE6VBp4nnXGkYCkWRbFvNXkw6QrgH/uVGjdB/D0CdY0uVk3xYqdZUwQ+LmOn
+         D9kd2B6sU8GfFZ+P2hEAWN833FadMXdwutyBvOYkwxu6b+vzmAvg5G5K6zPqtxCQXus5
+         FWeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722944487; x=1723549287;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YpfYwGb98vUIAZ4eOkYm143SZkEFj932lYgjUfhnx5I=;
+        b=wXznGtA8xnFd9NNU+TiC9YgJ6FCrr0U1LxZ8j5CLcSTGFuZw+HJlLUJla2rzDjp1G3
+         lCMUR8IYGA0M1bEIfVx8oowWyZU0WQbdPBex4y2qB/9IvWzhKmNVMex7zeXD18E+J3YM
+         RqCIvG8ZFEGwHGJ++4ZSLYrqlexJMouVfClix0UrAFryp5j8KnVf9DWn7FaxdLsSODFa
+         ODVk47Oo86BUrXj5LMjQVrp+pOZuVJIThyormFMPWsmYgC04kHIBfkU2asp+WUA3xZR1
+         Xh+tFKqUCQNNPSaR//tlGu8PokosYwQ3ueCMf3l8K32h6mpXwS7X76YoeHwpfKSTO9Y/
+         d/cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDxXEGEH9qXYMVkakzLjCcku9snvgiIMCHPG1MYvFb89Anq8vc/fZTR7jsufIjoHenEoHvp3MTWj83nlzGYsp6tqAhvFVgjpnW6+44wTnSGeS3mgGe3D4kVCSbtxKOZ8jLafgxyMqTrMqsyH6JPBfBV0b2HpyqC0dWd/7A2TaJI20amQ==
+X-Gm-Message-State: AOJu0Yw8F6rWAVQDin9yBFK17OG1pW5ColgefwlGarjNSgTDJV73Xibp
+	zIwKTUNj1OL6SRv6WwdOVJ2vowmG/9X3hjIvz/Qn49m7IEd3arlo
+X-Google-Smtp-Source: AGHT+IH3bACCHKh1gLb1eYfDR32vW4Ay/HBQR1YwSGOa4TNKvGPiVuBbrwRDssiyzifL5Rm50ofl/w==
+X-Received: by 2002:a05:600c:4f4b:b0:426:614b:1a72 with SMTP id 5b1f17b1804b1-428e6b07ea1mr107971085e9.17.1722944486415;
+        Tue, 06 Aug 2024 04:41:26 -0700 (PDT)
+Received: from localhost.localdomain (host-87-6-196-30.retail.telecomitalia.it. [87.6.196.30])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-428e6e7cce6sm176105845e9.31.2024.08.06.04.41.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 04:41:26 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Joern Engel <joern@lazybastard.org>,
+	Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-nvme@lists.infradead.org
+Subject: [PATCH v3 0/6] mtd: improve block2mtd + airoha parser
+Date: Tue,  6 Aug 2024 13:41:10 +0200
+Message-ID: <20240806114118.17198-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-All-
+This small series handle 2 problems.
 
-"The sample rate converter is not an encoder ..."
+It does try to ""standardize"" the usage of block2mtd module with
+MTD OF nodes.
 
-Indeed, an encoder creates a compressed bitstream from audio data  
-(typically linear PCM samples), normally for transmission of some  
-type. A sample rate converter generates audio data from audio data,  
-and is normally applied prior to an encoder because it can only accept  
-a limited range of sample rates.
+It is very easy to add support for MTD parser by just adding an
+OF node to the mtd created for block2mtd.
 
--Jeff
+This apply only if the root block is used for block2mtd to allow
+scenario where the full eMMC or an NVME is used for MTD and it doesn't
+have any partition table.
 
-Quoting Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>:
+To also support NVME, similar to how it's done with eMMC, we introduce
+a subnode to the NVME controller that needs to have the "nvme-card"
+compatible where a dev can define fixed-paritions for MTD parser usage.
 
-> On 8/6/24 12:26, Shengjiu Wang wrote:
->> Add Sample Rate Converter(SRC) codec support, define the output
->> format and rate for SRC.
->>
->> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
->> ---
->>  include/uapi/sound/compress_offload.h | 2 ++
->>  include/uapi/sound/compress_params.h  | 9 ++++++++-
->>  2 files changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/uapi/sound/compress_offload.h  
->> b/include/uapi/sound/compress_offload.h
->> index 98772b0cbcb7..8b2b72f94e26 100644
->> --- a/include/uapi/sound/compress_offload.h
->> +++ b/include/uapi/sound/compress_offload.h
->> @@ -112,10 +112,12 @@ struct snd_compr_codec_caps {
->>   * end of the track
->>   * @SNDRV_COMPRESS_ENCODER_DELAY: no of samples inserted by the  
->> encoder at the
->>   * beginning of the track
->> + * @SNDRV_COMPRESS_SRC_RATIO_MOD: Resampling Ratio Modifier for  
->> sample rate converter
->>   */
->>  enum sndrv_compress_encoder {
->>  	SNDRV_COMPRESS_ENCODER_PADDING = 1,
->>  	SNDRV_COMPRESS_ENCODER_DELAY = 2,
->> +	SNDRV_COMPRESS_SRC_RATIO_MOD = 3,
->>  };
->
-> this sounds wrong to me. The sample rate converter is not an "encoder",
-> and the properties for padding/delay are totally specific to an encoder
-> function.
->
-> The other point is that I am not sure how standard this ratio_mod
-> parameter is. This could be totally specific to a specific
-> implementation, and another ASRC might have different parameters.
->
->>
->>  /**
->> diff --git a/include/uapi/sound/compress_params.h  
->> b/include/uapi/sound/compress_params.h
->> index ddc77322d571..0843773ea6b4 100644
->> --- a/include/uapi/sound/compress_params.h
->> +++ b/include/uapi/sound/compress_params.h
->> @@ -43,7 +43,8 @@
->>  #define SND_AUDIOCODEC_BESPOKE               ((__u32) 0x0000000E)
->>  #define SND_AUDIOCODEC_ALAC                  ((__u32) 0x0000000F)
->>  #define SND_AUDIOCODEC_APE                   ((__u32) 0x00000010)
->> -#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_APE
->> +#define SND_AUDIOCODEC_SRC                   ((__u32) 0x00000011)
->> +#define SND_AUDIOCODEC_MAX                   SND_AUDIOCODEC_SRC
->
-> I am not sure this is wise to change such definitions?
->>
->>  /*
->>   * Profile and modes are listed with bit masks. This allows for a
->> @@ -324,6 +325,11 @@ struct snd_dec_ape {
->>  	__u32 seek_table_present;
->>  } __attribute__((packed, aligned(4)));
->>
->> +struct snd_dec_src {
->> +	__u32 format_out;
->> +	__u32 rate_out;
->> +} __attribute__((packed, aligned(4)));
->
-> Again I am not sure how standard those parameters are, and even if they
-> were if their representation is reusable.
->
-> And the compressed API has a good split between encoders and decoders, I
-> am not sure how an SRC can be classified as either.
->
->>  union snd_codec_options {
->>  	struct snd_enc_wma wma;
->>  	struct snd_enc_vorbis vorbis;
->> @@ -334,6 +340,7 @@ union snd_codec_options {
->>  	struct snd_dec_wma wma_d;
->>  	struct snd_dec_alac alac_d;
->>  	struct snd_dec_ape ape_d;
->> +	struct snd_dec_src src;
->>  } __attribute__((packed, aligned(4)));
->>
->>  /** struct snd_codec_desc - description of codec capabilities
+This series also add support for the Airoha partition table where
+the last partition is always ART and is placed at the end of the flash.
 
+This require dynamic calculation of the offset as some dedicated
+driver for bad block management might be used that reserve some space
+at the end of the flash for block accounting.
 
+New aarch64 Airoha SoC make use of this partition table and use block2mtd
+for eMMC to treat them as MTD with custom bad block management and block
+tracking.
+
+Changes v3:
+- Fix compilation error for missing slab.h header
+- Add compatible to partitions.yaml
+Changes v2:
+- Fix typo in DT patch
+- Fix compilation error for non-OF platform
+- Fix compilation error due to recent changes in block2mtd module
+
+Christian Marangi (6):
+  dt-bindings: nvme: Document nvme-card compatible
+  nvme: assign of_node to nvme device
+  dt-bindings: mmc: add property for partitions node in mmc-card node
+  block2mtd: attach device OF node to MTD device
+  dt-bindings: mtd: Add Documentation for Airoha fixed-partitions
+  mtd: parser: add support for Airoha parser
+
+ .../devicetree/bindings/mmc/mmc-card.yaml     | 40 ++++++++++
+ .../partitions/airoha,fixed-partitions.yaml   | 80 +++++++++++++++++++
+ .../bindings/mtd/partitions/partitions.yaml   |  1 +
+ .../devicetree/bindings/nvme/nvme-card.yaml   | 78 ++++++++++++++++++
+ drivers/mtd/devices/block2mtd.c               | 12 +++
+ drivers/mtd/parsers/Kconfig                   | 10 +++
+ drivers/mtd/parsers/Makefile                  |  1 +
+ drivers/mtd/parsers/ofpart_airoha.c           | 57 +++++++++++++
+ drivers/mtd/parsers/ofpart_airoha.h           | 18 +++++
+ drivers/mtd/parsers/ofpart_core.c             |  6 ++
+ drivers/nvme/host/core.c                      |  4 +
+ 11 files changed, 307 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
+ create mode 100644 Documentation/devicetree/bindings/nvme/nvme-card.yaml
+ create mode 100644 drivers/mtd/parsers/ofpart_airoha.c
+ create mode 100644 drivers/mtd/parsers/ofpart_airoha.h
+
+-- 
+2.45.2
 
 
