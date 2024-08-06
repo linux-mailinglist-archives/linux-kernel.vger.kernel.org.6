@@ -1,135 +1,99 @@
-Return-Path: <linux-kernel+bounces-276167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0566A948F60
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:43:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FCD0948F1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BFA31F24FCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:43:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D16F31C23779
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211E01C4628;
-	Tue,  6 Aug 2024 12:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQ8SPXXw"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7691C4616;
+	Tue,  6 Aug 2024 12:39:31 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AD41C9EA5;
-	Tue,  6 Aug 2024 12:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6501BE240
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722947984; cv=none; b=mS+mzpOf/ewB1UsxX0Qg0UiK9zt+IJIdHeMBMSSGv8qUo+7/OxT2FKW34P07FaCa0IIGzQX6PJ7VyJ3qXwJqIW/y5DitmWmaKzSU4uSpPn6lgglBb4eSb2acpcveTzIcOeNTUxRvayAVlMyelXFHMcn8pYEuHDssNJRBD9JiwUY=
+	t=1722947970; cv=none; b=gQKNcQXkv/0MOiFScjlLa3BxNmoX8x923/V6FwHx32kBpalqPpmpDYhtem9A2FE5o3kTMnp09+jGq5AsRQxEsW0nlZWRmjMRZX0BMY4vNNYvQpz1lOL3Kf2wLMWXYSyUrqP+MqdPWSdA1zZ4qAaT48L0/5Ppsl5RAPDdlA6/Kq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722947984; c=relaxed/simple;
-	bh=yPMDwHtB6xyMhjDEG6GPfVut3vH1K2hQubaFGpmcOJ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JVXFrGiRRnzeYt39Uua+zVikIvCtYIdpD6e+TQPWBmqiNsjE5iGIIuTokxJULcHnr/cN19nlJmVfIyRmjK/UC57vNj1OLSgMrSWKiNdN7JEZ6RUKfnnq8by6SgqDD5WS/L8iR91Fog49dFYSl/yeTyaiCR1moTrepokH4GAkEmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQ8SPXXw; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ef2d96164aso6597761fa.3;
-        Tue, 06 Aug 2024 05:39:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722947981; x=1723552781; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ch4sivXa7WbxCan6nymUmIb/9rywiOLv8it/SNUMy/4=;
-        b=UQ8SPXXwgLsp+R+KrsPzR11KmCxF7fPJS1X3651Y2B9Gas888EONF/TThpJ7lzU0Fb
-         irlXNFqwx4+G7F6xXHTmkJdN1C9G7wE6+tjFYKJkzYwZpn+i5aKpWKgjF+cjUdgk0BXY
-         d46rG2rMlH/xlvEXD2Fpool+LxKDtldDm56L2GG/mLaCm/XKqyAO6aRx4MHNV1jryVOi
-         f+Qf+DDnMOs+eJUNoimqTH9UwLoVtgHQZ3hc+DSFGfZ73e0y6lIO90+KjZgRL/o7Ky6b
-         H3c4npxAMIZ+uufxbsjZvLQlFkcFYsVFjRuxoiXawfMrs2cIGqOJvIAVFYUlAnC4wrdw
-         eR9A==
+	s=arc-20240116; t=1722947970; c=relaxed/simple;
+	bh=1ZlfVR7vQURDb9BeWjxEDmJ8l6FtdZ58kNs4ybI0ucQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sS9ECtW+n/gGs3AoyX/wKbNp+oRbpurhdVYukC4GKe76Rx2F87dynu5NGJP8NFhXhSRM7tYvY+ws4+O6c1sTRGhpwvnJqjPK4E1ltFobz+85L1BXR6pntM+IKu12scDBh+KeTW4UClPVz3b+7SR7M9nUDOYWWP4S7uchS3otfbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81fa12a11b7so89577739f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 05:39:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722947981; x=1723552781;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ch4sivXa7WbxCan6nymUmIb/9rywiOLv8it/SNUMy/4=;
-        b=XSIdgswj2g39ukjD4FuwZBqP58tpExQ3YD60dqgMxG/iFrIwCq1a6FDIiLlGxKr7Nd
-         Q+uVVWDVV0n8Dymwmi07FBXHroeokC060enHHOWSUpewatg0u9ztR/I+kX4eZwchFSms
-         uMZ1v6kax5ZXR0m9boWz2goKYS6jDucFAcpyO7ershMpHCeDf4D3wP0B9uOZjbDVlGSx
-         jDe5nIrwaZU4oSvLhXoWJ4DyWMfu18BttUlVJxI/mjuS+Yjrvf4y9wLhir/3TCtzOZVT
-         4HfnVl47jdR+PZTWAd/Iop0jLm0561U9om4fXpfqDQ90EqH9diSeSr5JZW4v+tSeBFoB
-         6Ydg==
-X-Forwarded-Encrypted: i=1; AJvYcCUraeD4He6fxdhFbsZs/VSpGXBp9jgRJUvm3kzBqrZOXPM1iy3KQ9NsU9PlnTzEe14M6C391L0+eZiiMgCWO4jJaR9Ngcer5pL/d6g0clIXwnvY9N27Zu0gt6k6LsZ+XhrW8UXWfW1yA28=
-X-Gm-Message-State: AOJu0YwhgkztFAhZ8fhffhjBZff6iG9aL5KmP+cKz72kCAQGUiAajXtz
-	eX8yxdokc3ww1CzxdQN85iA2gmF3zaAC4Jw3M1U+q231+oxQOYvd
-X-Google-Smtp-Source: AGHT+IHGOafdBabYlP2c2x+Cz7k9sR9kUTAZvDXhK09l1VfhYbB9xjfqGlqK69PXXXc7UJFrWzQktg==
-X-Received: by 2002:a05:6512:3091:b0:530:aeea:27e1 with SMTP id 2adb3069b0e04-530bb39b760mr9505743e87.50.1722947980138;
-        Tue, 06 Aug 2024 05:39:40 -0700 (PDT)
-Received: from xeon.. ([188.163.112.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d8a4b1sm546428366b.151.2024.08.06.05.39.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 05:39:39 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 11/11] ARM: nvidia: tf701t: configure USB
-Date: Tue,  6 Aug 2024 15:39:06 +0300
-Message-ID: <20240806123906.161218-12-clamor95@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240806123906.161218-1-clamor95@gmail.com>
-References: <20240806123906.161218-1-clamor95@gmail.com>
+        d=1e100.net; s=20230601; t=1722947968; x=1723552768;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xIsK4Zhm8DeNTVyySFlh0qMMYw6ijS/N/XatwMsGdQE=;
+        b=dhje7YSLIGbPtU9IsLC/gEL7Ecf42OfaAsfZhiZd01VF9bodkLyUUYhqK8xX83RedQ
+         jg4JHgDUSehEsbYmnrElCyWuMH7Qk9WIzcKUo/ciOof4qUft7T2IpwfxZHXhnExso1pX
+         9LR8s4J3Hl95StZRIJfk65oiAgkoNnzzLKm6ovpm7tjGTI/YbAoxzUZ0H/HOCuPe4A+q
+         UCvwIE2I7e6J9O+Ix1HQUwSyxHS1d9P9eyPzuUjNqrLDUPjWd3oHLjEW17vX4b5qZzGN
+         KBdzfxabYJ6qNASzvuSsgvNYrMsSNVU7Oah5HQKTeBGwyBmel92Ed5zXqhj/Vb8Zg0eN
+         jWxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzro1yz1Kz0PpAYJbFOt60DCBhHH9PknIiZ7cBTj/ROv3heIrOdkBefvaDfb9nNCaGJJ/DZjs1qcDndfHvN4FEb4eEd02VaSGKLB7J
+X-Gm-Message-State: AOJu0YwnhqaQ5SFoIA002DrEb8l7dCgxkIOb/u2izKUzLuSN385ClAdu
+	PubYNljE1kDO4994hKcuPVtUBb8R851q725FguzQypOLETHCyrIjZL64L1dhDme1gqDy2jHrbo5
+	NTez1VGfC2oKpgqWK4FHuwQgSzdd3i+wI9lp2DAan8oXHZjOAl6YhM+c=
+X-Google-Smtp-Source: AGHT+IGFR/jSOji8KiIQk8A8GUKQozz6fTjGvhbdsdH+fAhCdZu6unNrrCGgXIDP/yPM76dGkcwgEOja1BoxJyAl4wQXa6SydWMd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:c561:0:b0:381:c14:70cf with SMTP id
+ e9e14a558f8ab-39b1fb6bed1mr13341315ab.1.1722947968517; Tue, 06 Aug 2024
+ 05:39:28 -0700 (PDT)
+Date: Tue, 06 Aug 2024 05:39:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a15b4e061f031536@google.com>
+Subject: [syzbot] Monthly jffs2 report (Aug 2024)
+From: syzbot <syzbot+list5279c8c444a08dc01075@syzkaller.appspotmail.com>
+To: dwmw2@infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, richard@nod.at, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Fixes issue when resuming after suspend made USB in peripheral
-mode inaccessible.
+Hello jffs2 maintainers/developers,
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+This is a 31-day syzbot report for the jffs2 subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/jffs2
+
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 4 issues are still open and 1 has been fixed so far.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 730     Yes   kernel BUG in jffs2_del_ino_cache
+                  https://syzkaller.appspot.com/bug?extid=44664704c1494ad5f7a0
+<2> 13      Yes   KASAN: slab-use-after-free Read in jffs2_garbage_collect_pass
+                  https://syzkaller.appspot.com/bug?extid=e84662c5f30b8c401437
+<3> 3       Yes   kernel BUG in jffs2_start_garbage_collect_thread
+                  https://syzkaller.appspot.com/bug?extid=61a9d95630970eece39d
+
 ---
- arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-index e6d0c834c0a2..fbe7eb1a5753 100644
---- a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-@@ -1604,22 +1604,22 @@ mmc@78000600 {
- 		vqmmc-supply = <&vdd_1v8_vio>;
- 	};
- 
-+	/* Peripheral USB via ASUS connector */
- 	usb@7d000000 {
- 		compatible = "nvidia,tegra114-udc";
- 		status = "okay";
- 		dr_mode = "peripheral";
--
--		/* Peripheral USB via ASUS connector */
- 	};
- 
- 	usb-phy@7d000000 {
- 		status = "okay";
-+		dr_mode = "peripheral";
-+		vbus-supply = <&avdd_usb>;
- 	};
- 
-+	/* Host USB via dock */
- 	usb@7d008000 {
- 		status = "okay";
--
--		/* Host USB via dock */
- 	};
- 
- 	usb-phy@7d008000 {
--- 
-2.43.0
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
