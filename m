@@ -1,129 +1,166 @@
-Return-Path: <linux-kernel+bounces-275857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679C6948B14
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:18:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E834D948B1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22620286569
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:18:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1695C1C22722
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0291BCA1C;
-	Tue,  6 Aug 2024 08:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB6E166F17;
+	Tue,  6 Aug 2024 08:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HJ6lBs9a"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0IC6MIux"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9BE166F19
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120DB16A397
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722932320; cv=none; b=A91VsrDqOzu+uJYJ0FsozSspSvQwcDv8jmjZOJHNkVuxmaOQX3qi+XAuu+d3wVAlm7TkAzjWPmNRUAp1SMlwmMggSbBn1CYuGlBEmA43SigO5C0Cf79+xALjW4Xi/oDz1QyR3Fkdbh0Z8FzE7PQg/EQ/xCAM8FdYt7x6QDpXA5U=
+	t=1722932335; cv=none; b=Oh3icbxv1Bpo6nN0JU5OFi96e3giX9yOlWIbhxs86imVv99x29nCuD3CQN1HZyRoGGxRebZA5gUY2wWNdKCqRIkl9YElNwJscX22yvn0RABoTVKb3CYZ7a6Dpm+vVLBboh1Wq+9t3SxTkko8FKsKtI4cvGMVTR4GIUP1kjkgpVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722932320; c=relaxed/simple;
-	bh=QyCE/uUU3yt8EzWomhk5uMhp5Yq3D0+NGDYpDzHolVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=salEvRbyvg6U0Z4r6dGYt7q6Wju88HSQVCnKV/ZXKp+MKDk6D65xIn5amfdmMdKog2lJwECSfQpuCicEprUzbXRV3oGUcQIsvCeaoPjLsPuviUqDhJ1nTZ/Juk/esOeT/OMh82xV/VroKPn+EP5yCMw2XH8ll4iUMnDqiYzo1vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HJ6lBs9a; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f189a2a841so3052211fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 01:18:38 -0700 (PDT)
+	s=arc-20240116; t=1722932335; c=relaxed/simple;
+	bh=yte5vG9VKOD6lKjbDQRT7GC2pyy7NFROFw7L+XQx008=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UA1/uojzUuBtI4WnFtjdWd6h1CSTLf8G5J/9xDtQJuKwr/e81DeMD1vbVYRwXSmlzcI6vKxExdHzOeGbv4JTCZtNim8ZP5+uLTBkUS3CKmYQ0G5rs7XUv+iIcZeKo01u7i1pnIq82H1uJALz3fF+nugkvJrVgKnvMj4NOmQy6T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0IC6MIux; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-81f83b14d65so15965539f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 01:18:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722932317; x=1723537117; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pdaYiU6TA3sxGpWccnkRIY5dniHV0/PLzplS0d18FZ8=;
-        b=HJ6lBs9aVRzjTVQbhp4ALtIpimfOnaNW0fRE6wtXSZQHQ1QssMMwECmkHuyLME0JzZ
-         Qzu6BnGD3YjVCB7HxkLKNIiM2V/EwXWzDpmm9QWhvKhHnzDRRqMmc5ZUjPvSStu6XrAA
-         w4rPhJ+lLtwTMuW4KK3SK506vJ9zLgeaRDP+XXy2HQ25yJ7yVEqtHBk18+k5l1nKEJqq
-         cGdQkBV2AncsRvIi2tLVlVTMa9VITq50YnYSf//8gyRcjxSkgcf3f/qWcpbqU4z2P3qq
-         QJLcUK823uAmf0zk0oC9UZ0QxoKZhiUrdq8488ub07y3VvbXoSpxjShtjQOD1YAEfPhJ
-         svPQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722932331; x=1723537131; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZBZfPqNU2oWRIpM7IHmG0mRj/x4u/OXicGm04hIfixw=;
+        b=0IC6MIux+pgbpo5gx3hlesdjiM3GruWeGzlkSdi0k1EesbjTqjN79sTO6HMxl/gdEq
+         8cSMalmHTkgm5kwuRns7ZZBcTPSGzmFFBtNYhzmU/lTYyQ7pY0tQMpStVOUyNrdFG+2r
+         5YTZzo7GtCTUrSS7l5Bn9DzrNki/idHO0Mb3HmJOqB+YA81ZV3jrNEIl7VDH5R9RqU5H
+         fgllW6H2GnQV4wUoM7DC0pMgC+pwlbbXJ9wzVM31RX/XNZ9wgoj4RpWtrNx1gHMBEc6X
+         N4BKIS/pSF0q0o62eRYz/zcyi98+zCUzUzKKqtSO2FRCS4+pCtarzVmBM7WD7uc8yblk
+         h1sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722932317; x=1723537117;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pdaYiU6TA3sxGpWccnkRIY5dniHV0/PLzplS0d18FZ8=;
-        b=NyqJ5kjEVyVAUjuCGnrB9aWiy/dRydIS5jrdrKjWW1lEcdXMv0djz2UcKiHKIA/+06
-         DDzPlnmE2wyKgdMIlyHi23Qfd+ILWxgL1RonhyepM3rAlNcKTJdBHEcSak2MQPR/VTDJ
-         1RRJdqa7hleY2DFGaMudZ7YBvT/KRsRGssrFjTjOC61k6/bbWxPSRPyl5TMJeC8D5HCp
-         +LvetUSTRLD0ORNr0wygJ+et51o3KsV+oXZ/r1wDZM3eB6iM+sJ4gM/A5KnVV2zZu2gV
-         DktfxVoPZMgOpBTmn/5myvFQRdaWsU2q/lR+1iTh+CUdCR6Etz8qF2JOvXgyCqH87qXc
-         6EEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSwBPjsIuPPPzuLxsA5VxiJOQzx3Vu/8iMnlO9koAq4C4TBuYLQi3/VYiQaLKoEkwN7w9dDTFSaEeZgkh6aRk6tMSddvHSBYpLv/4d
-X-Gm-Message-State: AOJu0Yw5Fm0tahZIMukp8NKezPuTO4XHNlQ8Yy8P8Yf7zVy7tl3g7Gz2
-	GV6vY8MV4OZNHC/lGfNE7UDYwDbqxL5NuvLBgPHvnoxA4RBkdYC6
-X-Google-Smtp-Source: AGHT+IEeVOq7+cZ+dHSYnQ6EarVpMFsJIKxpE+xSZDbU2cnocYZUNB2eIjkdgNkHndMYe2wYIzgtJw==
-X-Received: by 2002:a2e:979a:0:b0:2ef:2b53:c785 with SMTP id 38308e7fff4ca-2f15ab35233mr90242731fa.41.1722932316328;
-        Tue, 06 Aug 2024 01:18:36 -0700 (PDT)
-Received: from [172.16.183.82] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f15e186f67sm13145041fa.18.2024.08.06.01.18.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 01:18:35 -0700 (PDT)
-Message-ID: <cb944855-0277-4267-9c6b-449c7879a1c7@gmail.com>
-Date: Tue, 6 Aug 2024 11:18:34 +0300
+        d=1e100.net; s=20230601; t=1722932331; x=1723537131;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZBZfPqNU2oWRIpM7IHmG0mRj/x4u/OXicGm04hIfixw=;
+        b=ag9PCBTXwPiGxWwBB8WsOt7998/cGYv7LbJBImoCJ8YrSElOLc65v4IozhCvBcbcEM
+         fy5n4JwJINRECvTbkz+qcPXYREgVqwYwzm9EDiJwKuaoidVUUt7Y+Mtbqp/LAnh1RFWI
+         Czq5XvCjLuvRrU+iiBqisRmK0frcWHRR6GDr32c304Bo6deJgUKXXEliT78IL+mOWdxt
+         AIal9XFno9LI4GkyUChAp4jaie1R8YDo+xq/0mYVcfoVyYhL8q3ChG8N86og4TcvNToE
+         4b4RBkuVxaZgtlIqp7tzIXAYamgHlSWrV/JgPEASO+vHcMRfiI/EMXVDtGkSYVj/NnXR
+         Ie9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUR1nv4yPIzk3XKABoPluXDUXBe9WUVgXZq1KHvCP6F6rmED7uCHNuZVGCJd6ZlpqU0nO4WkEfEr8tYG6dNWFDgevYXH65JNK7HuB6A
+X-Gm-Message-State: AOJu0Yz2Dyul4CYlhnwGD7oVhM7dxsDZMUOtoA7VlWHsSkh7rnmumLUj
+	IW+xrPQoawLfj3lYb6N0W2o+3oKAmT/CkWZa1XCdPpymo+ALZFkmsfmttxWRTFU=
+X-Google-Smtp-Source: AGHT+IEnMjssfn1tHGwLEI3HboWn9lT/r3BrtKO1At+7UuPTRgGKdWYqKsk244HKY3ky2lRZhIkcZQ==
+X-Received: by 2002:a05:6602:1683:b0:807:eeef:4fb5 with SMTP id ca18e2360f4ac-81fd433fb70mr2059641239f.1.1722932331120;
+        Tue, 06 Aug 2024 01:18:51 -0700 (PDT)
+Received: from blmsp ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6a59e74sm2129519173.174.2024.08.06.01.18.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 01:18:50 -0700 (PDT)
+Date: Tue, 6 Aug 2024 10:18:47 +0200
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Nishanth Menon <nm@ti.com>, 
+	Vibhore Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
+	Sebin Francis <sebin.francis@ti.com>, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 20240801195422.2296347-1-msp@baylibre.com
+Subject: Re: [PATCH 2/3] pmdomain: ti_sci: add wakeup constraint management
+Message-ID: <5qvb3vt5s7egkyzpitgys6uylvvttrpbcar2dgshp2kk5he6sk@p34xb2xmebxq>
+References: <20240805-lpm-v6-10-constraints-pmdomain-v1-0-d186b68ded4c@baylibre.com>
+ <20240805-lpm-v6-10-constraints-pmdomain-v1-2-d186b68ded4c@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] regmap: Allow setting IRQ domain name suffix
-To: Thomas Gleixner <tglx@linutronix.de>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Mark Brown <broonie@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org
-References: <cover.1719830185.git.mazziesaccount@gmail.com>
- <fd13fcc9dd785d69b8450c8e9c26d860fcab7da8.1719830185.git.mazziesaccount@gmail.com>
- <87plrpvzmg.ffs@tglx> <12228ec5-cf2f-47b2-842d-ce336d921260@gmail.com>
- <87jzhpscql.ffs@tglx> <dd2f4a1e-1861-4838-9ba2-668bcde0e2b5@gmail.com>
- <877ccv5d2x.ffs@tglx>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <877ccv5d2x.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240805-lpm-v6-10-constraints-pmdomain-v1-2-d186b68ded4c@baylibre.com>
 
-On 8/5/24 16:11, Thomas Gleixner wrote:
-> On Mon, Aug 05 2024 at 16:04, Matti Vaittinen wrote:
->> On 7/13/24 15:22, Thomas Gleixner wrote:
->>> Something like the untested below should work.
->>
->> Sorry for a very late reply. I have tried to minimize my "computer time"
->> during the last 1.5 months (I really needed a break) - but now I'm
->> getting back to the business...
->>
->> I used your patch below with the BD96801 driver and tested the changes
->> to the extent that the IRQ domains were successfully created and names
->> and numbers seemed reasonable. (I didn't yet try to make the PMIC to do
->> a real IRQ though although it should be doable using the WDG.)
->>
->> Do you want me to include this in my series (keeping you as author), or
->> do you prefer going through the patch process yourself?
+On Mon, Aug 05, 2024 at 04:38:40PM GMT, Kevin Hilman wrote:
+> During system-wide suspend, check all devices connected to PM domain
+> to see if they are wakeup-enabled.  If so, set a TI SCI device
+> constraint.
 > 
-> Just pick it up. Make it work and add a change log.
+> Note: DM firmware clears all constraints on resume.
 > 
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> is good enough.
+> Co-developed-by: Vibhore Vardhan <vibhore@ti.com>
+> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
+> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+> Signed-off-by: Dhruva Gole <d-gole@ti.com>
+> ---
+>  drivers/pmdomain/ti/ti_sci_pm_domains.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> index 4dc48a97f9b8..7cd6ae957289 100644
+> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> @@ -51,6 +51,7 @@ struct ti_sci_pm_domain {
+>  	struct ti_sci_genpd_provider *parent;
+>  	s32 lat_constraint;
+>  	bool constraint_sent;
+> +	bool wkup_constraint;
+>  };
+>  
+>  #define genpd_to_ti_sci_pd(gpd) container_of(gpd, struct ti_sci_pm_domain, pd)
+> @@ -87,6 +88,26 @@ static inline void ti_sci_pd_clear_constraints(struct device *dev)
+>  
+>  	pd->lat_constraint = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
+>  	pd->constraint_sent = false;
+> +	pd->wkup_constraint = false;
+> +}
+> +
+> +static inline bool ti_sci_pd_check_wkup_constraint(struct device *dev)
 
-Ok, thanks. I'm on it :)
+'check' in the function name sounds like a passive function. Maybe
+ti_sci_pd_send_wkup_constraint() would indicate its purpose better?
 
-Yours,
-	-- Matti
+> +{
+> +	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+> +	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
+> +	const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
+> +	int ret;
+> +
+> +	if (device_may_wakeup(dev)) {
+> +		ret = ti_sci->ops.pm_ops.set_device_constraint(ti_sci, pd->idx,
+> +							       TISCI_MSG_CONSTRAINT_SET);
+> +		if (!ret) {
+> +			pd->wkup_constraint = true;
+> +			dev_dbg(dev, "ti_sci_pd: ID:%d set device constraint.\n", pd->idx);
+> +		}
+> +	}
+> +
+> +	return pd->wkup_constraint;
 
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+Is this return value used anywhere?
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+Best
+Markus
 
+>  }
+>  
+>  /*
+> @@ -158,6 +179,8 @@ static int ti_sci_pd_suspend(struct device *dev)
+>  	}
+>  	pd->lat_constraint = val;
+>  
+> +	ti_sci_pd_check_wkup_constraint(dev);
+> +
+>  	return 0;
+>  }
+>  
+> 
+> -- 
+> 2.46.0
+> 
 
