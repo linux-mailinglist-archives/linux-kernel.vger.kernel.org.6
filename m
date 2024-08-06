@@ -1,120 +1,127 @@
-Return-Path: <linux-kernel+bounces-276086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE2D948E36
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:56:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94647948E3B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 195DB1F22806
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:56:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DEB51F23AAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A7A1C3F3B;
-	Tue,  6 Aug 2024 11:56:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0288C1C3F1B;
+	Tue,  6 Aug 2024 11:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="bkh98zX1"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306411C233C
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 11:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722945365; cv=none; b=HCd4/tYG+Lhw/sZ0blwE+Wwro2aDokneRTejT8SRECbor66x+Fh75fLGXZpXG809dEqe5A9Ap6IWH9qxWHzaN82WCV/+BmUT19EhmhS9Em9nsFZrzwXsq1iGTnnpWf1Nu1BCkP9eGnzaIg5fWG8aK/Grk718W0b0q9rzZvWHqo4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722945365; c=relaxed/simple;
-	bh=NNtBbZ1/zNAnc0GfMMKdAMZ2kgpJuN01sUWeCCVSBmg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RyOo145rDcb+ZT2zMkwgJ7SaZQvfQsFekfSR/gI5HDx1Hd99pcnufOf3m/R7bEjjEOdhs6DTyIeBqSetlbVvHVtfCPq22IZ60/SwCsz/ZcqDqe32t+Vm335Fyf66uYzesOi/WNbxVvAJge6vCADYpBVooAr5sTFMDc2R4kz7BgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39915b8e08dso7295055ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 04:56:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722945363; x=1723550163;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+OVE/O9AGW84ON/7C1wS6kl9XbGNoZzh0MiwSWvC/IU=;
-        b=pph0Tiq+9nkPqyAi1LpEv+6YEBi3EtQlxPGatD7z6k4pRLcz6yH3jELgvbFquGicEV
-         TxuE1gqTUE7PjTsUBx7/SV6c97mg2p/PrvZz6Iehl3YaTLWoLz8cLHUcpUVZDAHlPDU3
-         CM1UOSzb6yyJhJZ8yRWUik2th7flu+ftBZCi5LFxJzLCg5XGMizXohKeaj6q19SdbQIk
-         R3O9u812TylLnr6hZCIKJVaHo1y22dvr0d63VCfraXexzM1XDdqi95I++vmelR0xkVZO
-         z01gTFK1uqPGLkPJIsoe0OQcKkIRBZmWYH38GJu/fSkROKZ2N7j/7kK9TIX1b9FDAjAY
-         qDGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtEqoz5Jh5duI9sxQv6PcJSq+dTaWLDYgw1Ab3YgdoxHwduJOf+9/fmOUUreTao3Ig9FPzljBIXgk30WeJzHgNUtj9C7oxsh/gyI5/
-X-Gm-Message-State: AOJu0YxSl5I5DL4/oG9Vihf+FjUp5JqQ/mDz6ZK8xzPTjoqhdpR3Drt7
-	RyHL+WhIs/I2mMFIdH7l7AH6LR8OZy8z1VlI7owucD7iCmEGvweQUg2RlPh6K3rYBes0ULWK9h5
-	jA7REvP77KdpjYf7xg77z04eJPuWS9lS133cog7rzXWbyBhlrkkMAviU=
-X-Google-Smtp-Source: AGHT+IFfXFuYXVxoT7uxbb1sHutcbrFkZv8sMO86gV5wXMhcJq5/Xvtc/GBO4WCioWE58vchExcyHK5M/O3zwKY4Hlcan9JHcWuJ
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2C31BDA83;
+	Tue,  6 Aug 2024 11:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722945546; cv=pass; b=r+Sio6rJlf4cCANHjGt1wRjblRTccoUY8wGktnxFVHFV9WlCeafuLKsXE50nk0xicx8eutUMXUMbDIvSQ5x/7P8pC+adETRj3VDfhOCrjVC8CUhpwc+cBtLSAEg/ChGe+UtxkUsWugp79PgWfkgQE2ZwBSj8W51yp4gBQA4fyoM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722945546; c=relaxed/simple;
+	bh=AZ80Ks/bzs21qDAXLNmuk7nUGrnOLl29vWE9nLhd84g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PNgaSMhXui/cpYtGi9+e5UQZ32rxfiGwI8iIRo1Za0rDWXVGlko4vPOpe2gFZl+mQG3+8rsR/YHQaF2Y3h90/LF0X9Y7KymieWid9Dif2XjZsJZUqXOsUGT/jm64b9WjLskU5nBJQnd1tHLmjGkoYeEb4YpiSbC9pDj2dhm9vUI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=bkh98zX1; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: shreeya.patel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1722945497; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=OtfNcwuLHczvL3PGe4brG2g1/ATYA97GUqWrNCS/kqHaAIUyU72cHXqkBi99QibOGMTF3ox31D4V+j5tlTZUWOK6f3A1CO29Z172tYrnokLc2Jox7lUaAmZuPxAzbgZofHuGtfE+RWKhujZotdvgsGZmKXcgOfqHpd7DFa5pqeo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1722945497; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=GUl7n+rnOu9EMuo1/gD5MP5eCxVNnOpkTAodKwwv4e4=; 
+	b=D6wxYgNk7hdmVztiEz/yP34x3N93lsoFngMqeTPkDNGl3eVbuZhVPuKtL4R2m6MKJ9N1bk54OsSsCwu5sgPX22ea4U6hyvwTKoegMgwIqzkIy+W4Rca6BOQtB7s9RcHhelBrThoSWgNw9r3PeZztsotU7caqFdlce42LiKmQWCk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1722945497;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=GUl7n+rnOu9EMuo1/gD5MP5eCxVNnOpkTAodKwwv4e4=;
+	b=bkh98zX1F1CBHoTSUQkD8/YaKz3/kdxoxgoAVVYS4lgnhSmRXKzMtugxJQXTTmDy
+	TepE5MqSGt9XcEpgHQpA4eQB8el87wBucUDXmlkJ2tIioRmL1baacIwojDSW45WoYQ+
+	qWwB3jg7KP6b25eVzzB+RYJ9I743gvVCZIlnI28I=
+Received: by mx.zohomail.com with SMTPS id 1722945495133332.7271484161171;
+	Tue, 6 Aug 2024 04:58:15 -0700 (PDT)
+Message-ID: <929d2f50-6b0e-4d1e-a6d3-482d615bd06a@collabora.com>
+Date: Tue, 6 Aug 2024 14:58:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:154b:b0:397:95c7:6f72 with SMTP id
- e9e14a558f8ab-39b1fc8baecmr11825975ab.6.1722945363236; Tue, 06 Aug 2024
- 04:56:03 -0700 (PDT)
-Date: Tue, 06 Aug 2024 04:56:03 -0700
-In-Reply-To: <tencent_1E67D386C552C806488981AEDBAEDF8CAD06@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000057eae1061f027aec@google.com>
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] Add Synopsys DesignWare HDMI RX Controller
+To: Tim Surber <me@timsurber.de>, Shreeya Patel
+ <shreeya.patel@collabora.com>, heiko@sntech.de, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+ jose.abreu@synopsys.com, nelson.costa@synopsys.com,
+ shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
+ hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+References: <20240719124032.26852-1-shreeya.patel@collabora.com>
+ <6f5c4ebb-84ab-4b65-9817-ac5f6158911f@timsurber.de>
+Content-Language: en-US
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <6f5c4ebb-84ab-4b65-9817-ac5f6158911f@timsurber.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-Hello,
+On 8/4/24 02:57, Tim Surber wrote:
+> Hi Shreeya,
+> 
+> I tested your patch and noticed problems when using 3840x2160 resolution
+> at  60fps.
+> 
+> For my testing I connected an HDMI source and set it to 4k60fps. I
+> verified that this source and the cables work on a screen at this
+> resolution.
+> 
+> Using
+> 'v4l2-ctl --verbose -d /dev/video1
+> --set-fmt-video=width=3840,height=2160,pixelformat='NV12'
+> --stream-mmap=4 --stream-skip=3 --stream-count=100 --stream-poll'
+> I get the video format output, but not the periodic output which shows
+> the fps.
+> 
+> Using
+> 'GST_DEBUG=4 gst-launch-1.0 -v v4l2src device=/dev/video1 !
+> fpsdisplaysink text-overlay=false video-sink="fakevideosink"'
+> I get the following error message:
+> 
+> (gst-launch-1.0:3231): GStreamer-CRITICAL **: 01:34:39.137:
+> gst_memory_resize: assertion 'size + mem->offset + offset <=
+> mem->maxsize' failed
+> 0:00:03.489382529  3231 0xffffa0000b90 WARN  v4l2bufferpool
+> gstv4l2bufferpool.c:2209:gst_v4l2_buffer_pool_process:<v4l2src0:pool0:src> Dropping truncated buffer, this is likely a driver bug.
+> 0:00:03.489421906  3231 0xffffa0000b90 WARN  bufferpool
+> gstbufferpool.c:1252:default_reset_buffer:<v4l2src0:pool0:src> Buffer
+> 0xffff98008e80 without the memory tag has maxsize (8294400) that is
+> smaller than the configured buffer pool size (12441600). The buffer will
+> be not be reused. This is most likely a bug in this GstBufferPool subclass
+> 
+> 
+> Everything works with 4k30fps or 1080p 60fps. The hardware should
+> support 4k60fps.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in v9fs_begin_writeback
+Please do `echo 3 > /sys/module/synopsys_hdmirx/parameters/debug` and
+show the kernel log of capturing 4k@60 with v4l2-ctl.
 
-WARNING: CPU: 2 PID: 64 at fs/9p/vfs_addr.c:43 v9fs_begin_writeback+0x25f/0x2c0 fs/9p/vfs_addr.c:43
-Modules linked in:
-CPU: 2 UID: 0 PID: 64 Comm: kworker/u32:3 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: writeback wb_workfn (flush-9p-1)
-RIP: 0010:v9fs_begin_writeback+0x25f/0x2c0 fs/9p/vfs_addr.c:43
-Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 6a 48 8b 73 40 48 c7 c7 20 9a 8e 8b e8 f2 4b 0d fe 90 <0f> 0b 90 90 eb 80 e8 e6 2b a8 fe e9 d1 fd ff ff e8 cc 2c a8 fe e9
-RSP: 0018:ffffc90000d17480 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff888046068670 RCX: ffffffff814cc379
-RDX: ffff888016f42440 RSI: ffffffff814cc386 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000004
-R13: dffffc0000000000 R14: ffffc90000d17840 R15: ffff8880269d0298
-FS:  0000000000000000(0000) GS:ffff88806b200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005555755375c8 CR3: 000000002c17a000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- netfs_writepages+0x656/0xde0 fs/netfs/write_issue.c:534
- do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
- __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
- writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
- wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
- wb_do_writeback fs/fs-writeback.c:2274 [inline]
- wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
-Tested on:
-
-commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=173a319d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=125cb8d3980000
+-- 
+Best regards,
+Dmitry
 
 
