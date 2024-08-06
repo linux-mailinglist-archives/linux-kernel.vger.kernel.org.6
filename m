@@ -1,208 +1,88 @@
-Return-Path: <linux-kernel+bounces-276116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E26B948EB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:12:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4A3948EEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D28D51F26995
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:12:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B641F22F97
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E521CCB51;
-	Tue,  6 Aug 2024 12:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="tTGUux5A"
-Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAE01CB33E;
-	Tue,  6 Aug 2024 12:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E661C578D;
+	Tue,  6 Aug 2024 12:16:01 +0000 (UTC)
+Received: from njjs-sys-mailin01.njjs.baidu.com (mx313.baidu.com [180.101.52.140])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203AC1C5788
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.101.52.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722946068; cv=none; b=Bxn7WXwO4Y265iMZzeW95xUU77GpSxN8aGGBn4g99/dUJ9toR8m+0Dk+ZFuk+K7z6AfsSgM2hkgblAtbJFJjAZSzSjcE4NPsYnT3ST3xF198bvfc5xe2xBG0PfLXhI/2xVNTiXvbmpV9ptT++aAPJkD7GKJXK9ZB1qCecSF2eZ4=
+	t=1722946561; cv=none; b=qCLlYawaybITNC5fU8rLptbQ6X1id1vtPG9XDm3xKok5mm4YSswcvWCCYvzE5SGjYlF6RWofkWp2juqlsHZpr5haXPB88bTFiV8yHAAWeNFGCbpMcO4V8jH+/7jZrKH2F8+o3V250ityv9HrpcVRk5duwHc+06BO3aC+a8QkC6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722946068; c=relaxed/simple;
-	bh=EeSlh6HQgSapOe5YllNashjoq27f1osI04/1RQlyu0w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZzSI3Oe6klJYvd0SkfwoO8kv8DPZ7HKEDuebvIlKFN3KkH8EIvz73x8rH/ZCZZ1nifjEPwfKf8wnEjYz0q+LpbeC2nUNxfeAvoQWgu5iA1ssLkFZkxGyfuyTakwK6DhATInSzOmsLoZ6qqWdr8JGl2Zh54b3Lv3tB6g9lgVkmDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=tTGUux5A; arc=none smtp.client-ip=49.12.199.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 89206DAE28;
-	Tue,  6 Aug 2024 14:07:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
-	t=1722946063; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=K2bsze7ezb+slXPQ4bNAIIy8wybtR+D2TJArZapU+cQ=;
-	b=tTGUux5AC/Uk20RXr+NxBO7HWhYzxcUt11TumR8DSPHGCBv6uxLlApfR3XG9AePQeQU5h+
-	BV7HB7CPO6RrdHe/ocJaAE3caYnM1dn8AkvFhgikgXbNIxfR2ZB01H7LEc8WStUJ5Go0AP
-	d/nx/I4+hCNzkMbRXoTyG1zsxM7fDyDqzhhzVSN/foeQsfFtIHF50v0GmEgi3VvLNWWTAW
-	Dv5n56BIWsEkZ2AmjpksM5dqns6lO/Xw/9Q034k0hIgHiph0dSB1myGy5w3caNIE2BjiDn
-	V+0Y5eN0PMpFkison9rMooG+Yfa+CduSYwsFSxqO5N1HvDYUAwIMvO/lSkJO6Q==
-From: Daniel Wagner <dwagner@suse.de>
-Date: Tue, 06 Aug 2024 14:06:47 +0200
-Subject: [PATCH v3 15/15] blk-mq: use hk cpus only when isolcpus=io_queue
- is enabled
+	s=arc-20240116; t=1722946561; c=relaxed/simple;
+	bh=TytV68QddyNnY52A7MdFl09H9DUSm5ch6y9xQ/iisug=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=tBucajCKxNIezWcAM/JmljhaJK2997CLnXN2X4WqO9ko6478rxFuNW7+3DaB6hyHbZfnhNLBX7dHAT9VcdlG9eO6UG53/gbQsV3soVZWFI69+ZD2aZhJbJblAL3cbspXKsEUiX5Lf0rOXVg/ZJv/+SnNTUTKsBd0Jvvon85wTtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=180.101.52.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+Received: from localhost (bjhw-sys-rpm015653cc5.bjhw.baidu.com [10.227.53.39])
+	by njjs-sys-mailin01.njjs.baidu.com (Postfix) with ESMTP id 056127F0003D;
+	Tue,  6 Aug 2024 20:08:25 +0800 (CST)
+From: Li RongQing <lirongqing@baidu.com>
+To: mingo@redhat.com,
+	dave.hansen@linux.intel.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	tglx@linutronix.de,
+	bp@alien8.de,
+	x86@kernel.org,
+	hpa@zytor.com,
+	linux-kernel@vger.kernel.org
+Cc: Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH] x86/mm: Don't print out SRAT table information
+Date: Tue,  6 Aug 2024 20:08:23 +0800
+Message-Id: <20240806120823.17111-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.9.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240806-isolcpus-io-queues-v3-15-da0eecfeaf8b@suse.de>
-References: <20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de>
-In-Reply-To: <20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de>
-To: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
- Sagi Grimberg <sagi@grimberg.me>, Thomas Gleixner <tglx@linutronix.de>, 
- Christoph Hellwig <hch@lst.de>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- John Garry <john.g.garry@oracle.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
- Jason Wang <jasowang@redhat.com>, 
- Kashyap Desai <kashyap.desai@broadcom.com>, 
- Sumit Saxena <sumit.saxena@broadcom.com>, 
- Shivasharan S <shivasharan.srikanteshwara@broadcom.com>, 
- Chandrakanth patil <chandrakanth.patil@broadcom.com>, 
- Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>, 
- Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, 
- Nilesh Javali <njavali@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, 
- Hannes Reinecke <hare@suse.de>, 
- Sridhar Balaraman <sbalaraman@parallelwireless.com>, 
- "brookxu.cn" <brookxu.cn@gmail.com>, Ming Lei <ming.lei@redhat.com>, 
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org, 
- virtualization@lists.linux.dev, megaraidlinux.pdl@broadcom.com, 
- mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, 
- storagedev@microchip.com, linux-doc@vger.kernel.org, 
- Daniel Wagner <dwagner@suse.de>
-X-Mailer: b4 0.14.0
-X-Last-TLS-Session-Version: TLSv1.3
 
-When isolcpus=io_queue is enabled all hardware queues should run on the
-housekeeping CPUs only. Thus ignore the affinity mask provided by the
-driver. Also we can't use blk_mq_map_queues because it will map all CPUs
-to first hctx unless, the CPU is the same as the hctx has the affinity
-set to, e.g. 8 CPUs with isolcpus=io_queue,2-3,6-7 config
+This Per-CPU log is becoming longer with more and more CPUs in system,
+so don't print it, to make the CPU bootup faster; If people want to
+know SRAT information, they can find it by lscpu
 
-  queue mapping for /dev/nvme0n1
-        hctx0: default 2 3 4 6 7
-        hctx1: default 5
-        hctx2: default 0
-        hctx3: default 1
-
-  PCI name is 00:05.0: nvme0n1
-        irq 57 affinity 0-1 effective 1 is_managed:0 nvme0q0
-        irq 58 affinity 4 effective 4 is_managed:1 nvme0q1
-        irq 59 affinity 5 effective 5 is_managed:1 nvme0q2
-        irq 60 affinity 0 effective 0 is_managed:1 nvme0q3
-        irq 61 affinity 1 effective 1 is_managed:1 nvme0q4
-
-where as with blk_mq_hk_map_queues we get
-
-  queue mapping for /dev/nvme0n1
-        hctx0: default 2 4
-        hctx1: default 3 5
-        hctx2: default 0 6
-        hctx3: default 1 7
-
-  PCI name is 00:05.0: nvme0n1
-        irq 56 affinity 0-1 effective 1 is_managed:0 nvme0q0
-        irq 61 affinity 4 effective 4 is_managed:1 nvme0q1
-        irq 62 affinity 5 effective 5 is_managed:1 nvme0q2
-        irq 63 affinity 0 effective 0 is_managed:1 nvme0q3
-        irq 64 affinity 1 effective 1 is_managed:1 nvme0q4
-
-Signed-off-by: Daniel Wagner <dwagner@suse.de>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
 ---
- block/blk-mq-cpumap.c | 56 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ arch/x86/mm/srat.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/block/blk-mq-cpumap.c b/block/blk-mq-cpumap.c
-index c1277763aeeb..7e026c2ffa02 100644
---- a/block/blk-mq-cpumap.c
-+++ b/block/blk-mq-cpumap.c
-@@ -60,11 +60,64 @@ unsigned int blk_mq_num_online_queues(unsigned int max_queues)
+diff --git a/arch/x86/mm/srat.c b/arch/x86/mm/srat.c
+index 9c52a95..6f8e0f2 100644
+--- a/arch/x86/mm/srat.c
++++ b/arch/x86/mm/srat.c
+@@ -57,8 +57,7 @@ acpi_numa_x2apic_affinity_init(struct acpi_srat_x2apic_cpu_affinity *pa)
+ 	}
+ 	set_apicid_to_node(apic_id, node);
+ 	node_set(node, numa_nodes_parsed);
+-	printk(KERN_INFO "SRAT: PXM %u -> APIC 0x%04x -> Node %u\n",
+-	       pxm, apic_id, node);
++	pr_debug("SRAT: PXM %u -> APIC 0x%04x -> Node %u\n", pxm, apic_id, node);
  }
- EXPORT_SYMBOL_GPL(blk_mq_num_online_queues);
  
-+static bool blk_mq_hk_map_queues(struct blk_mq_queue_map *qmap)
-+{
-+	struct cpumask *hk_masks;
-+	cpumask_var_t isol_mask;
-+
-+	unsigned int queue, cpu;
-+
-+	if (!housekeeping_enabled(HK_TYPE_IO_QUEUE))
-+		return false;
-+
-+	/* map housekeeping cpus to matching hardware context */
-+	hk_masks = group_cpus_evenly(qmap->nr_queues);
-+	if (!hk_masks)
-+		goto fallback;
-+
-+	for (queue = 0; queue < qmap->nr_queues; queue++) {
-+		for_each_cpu(cpu, &hk_masks[queue])
-+			qmap->mq_map[cpu] = qmap->queue_offset + queue;
-+	}
-+
-+	kfree(hk_masks);
-+
-+	/* map isolcpus to hardware context */
-+	if (!alloc_cpumask_var(&isol_mask, GFP_KERNEL))
-+		goto fallback;
-+
-+	queue = 0;
-+	cpumask_andnot(isol_mask,
-+		       cpu_possible_mask,
-+		       housekeeping_cpumask(HK_TYPE_IO_QUEUE));
-+
-+	for_each_cpu(cpu, isol_mask) {
-+		qmap->mq_map[cpu] = qmap->queue_offset + queue;
-+		queue = (queue + 1) % qmap->nr_queues;
-+	}
-+
-+	free_cpumask_var(isol_mask);
-+
-+	return true;
-+
-+fallback:
-+	/* map all cpus to hardware context ignoring any affinity */
-+	queue = 0;
-+	for_each_possible_cpu(cpu) {
-+		qmap->mq_map[cpu] = qmap->queue_offset + queue;
-+		queue = (queue + 1) % qmap->nr_queues;
-+	}
-+	return true;
-+}
-+
- void blk_mq_map_queues(struct blk_mq_queue_map *qmap)
- {
- 	const struct cpumask *masks;
- 	unsigned int queue, cpu;
+ /* Callback for Proximity Domain -> LAPIC mapping */
+@@ -98,8 +97,7 @@ acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *pa)
  
-+	if (blk_mq_hk_map_queues(qmap))
-+		return;
-+
- 	masks = group_cpus_evenly(qmap->nr_queues);
- 	if (!masks) {
- 		for_each_possible_cpu(cpu)
-@@ -118,6 +171,9 @@ void blk_mq_dev_map_queues(struct blk_mq_queue_map *qmap,
- 	const struct cpumask *mask;
- 	unsigned int queue, cpu;
+ 	set_apicid_to_node(apic_id, node);
+ 	node_set(node, numa_nodes_parsed);
+-	printk(KERN_INFO "SRAT: PXM %u -> APIC 0x%02x -> Node %u\n",
+-	       pxm, apic_id, node);
++	pr_debug("SRAT: PXM %u -> APIC 0x%02x -> Node %u\n", pxm, apic_id, node);
+ }
  
-+	if (blk_mq_hk_map_queues(qmap))
-+		return;
-+
- 	for (queue = 0; queue < qmap->nr_queues; queue++) {
- 		mask = get_queue_affinity(dev_data, dev_off, queue);
- 		if (!mask)
-
+ int __init x86_acpi_numa_init(void)
 -- 
-2.46.0
+2.9.4
 
 
