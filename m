@@ -1,90 +1,110 @@
-Return-Path: <linux-kernel+bounces-276424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7207E949372
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:43:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B84C894937A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32FD3287A9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8CFF1C217C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF3F201255;
-	Tue,  6 Aug 2024 14:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43EF1D54EA;
+	Tue,  6 Aug 2024 14:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5QlAkhZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jzitq4hf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2BF1C37AA;
-	Tue,  6 Aug 2024 14:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89B41C2300
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722955331; cv=none; b=E07vccdV5QrPpz+OGxpK0ou1qX9srqbNLh9cZuVayucEL39WQB2SVqy2dAvfPHYc1TjzFMQOPW/RbDiI2Jp2cTqyFaPQcVSDyCWuYFcJvf6o3BWYHT/0qEu4CY4XgIKJJd+YDas+80iPFIm/6Xsmx6jJxiKU9ZTU0ahvFXVNFxQ=
+	t=1722955370; cv=none; b=J0sPZJ15snWAseOgtysIAeUoTm/RubH9S68k1G69iT5J95uoROpq6AuUbEBuuxsi/YFVZmUFJKQge9maOd0igG3XqWWq/yU7y4h92qie03QySoVes8+85ObRfBwawCo3SYw7Pju9stg6/QZf4cbOhsGr6rfGXr6CM35HJ28Lwos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722955331; c=relaxed/simple;
-	bh=HjNMR+ty9GrU7p91fTdn6RMgP4z5+pj5CYoj3Tjy3wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bg+7GJqocOtsOOCVIuKLsR/Qv60rQGBqV96TZAzDH2RG/pw2I8sIRwFMCzENaCZs0bBkxAMDjFJ1psbPMyFipcuHgxJ0CegvHUv6aqwsRljuaXXOuSrNDQntCA2nz0jF4WO7G/9Mh9jrcsnvOIutJerFzYOfHxP40ZZ3Mxit9LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5QlAkhZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09FA0C32786;
-	Tue,  6 Aug 2024 14:42:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722955330;
-	bh=HjNMR+ty9GrU7p91fTdn6RMgP4z5+pj5CYoj3Tjy3wg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t5QlAkhZN/pFf1OS2fZT/gSbT5rVivKV5wJtyry/nI/WY26l1sfg/XmFMS4vdqWx6
-	 ptzucE4dHpvJPvE7F+/GLdKcNhMMezQoSMV51h7QmbghNSK5worifm/AB2joFM2fKS
-	 HIvR/x++dJ5Bbq+kJYBGupDrhKo8zynq8TR17f/jI8I1SwxZ48Rev9D7O0IqAK3K+g
-	 wrQve/W2KMWETkhylrH4HshfPYn6RWlsASbNwdE4M+qXGTBOauGvUmcD0fwOHTDaqY
-	 +IAiESng8KuP8C25ZY835oit827T6fdVH+YSFcFlwY/ZmKq05WHzUD8IwGB5/F3NDq
-	 BCtpHH/WA3kLQ==
-Date: Tue, 6 Aug 2024 08:42:08 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Danila Tikhonov <danila@jiaxyga.com>
-Cc: krzk+dt@kernel.org, quic_rjendra@quicinc.com, viresh.kumar@linaro.org,
-	quic_kriskura@quicinc.com, devicetree@vger.kernel.org,
-	heiko.stuebner@cherry.de, linux@mainlining.org,
-	linux-usb@vger.kernel.org, ulf.hansson@linaro.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	macromorgan@hotmail.com, davidwronek@gmail.com,
-	johan+linaro@kernel.org, javier.carrasco.cruz@gmail.com,
-	linux-hardening@vger.kernel.org, fekz115@gmail.com,
-	tony.luck@intel.com, andre.przywara@arm.com, kees@kernel.org,
-	andersson@kernel.org, lpieralisi@kernel.org,
-	dmitry.baryshkov@linaro.org, linus.walleij@linaro.org,
-	conor+dt@kernel.org, rafal@milecki.pl,
-	heikki.krogerus@linux.intel.com, gpiccoli@igalia.com,
-	neil.armstrong@linaro.org, sudeep.holla@arm.com, rafael@kernel.org,
-	gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org,
-	konrad.dybcio@linaro.org
-Subject: Re: [PATCH 05/11] dt-bindings: soc: qcom: qcom,pmic-glink: Document
- SM7325 compatible
-Message-ID: <172295532809.1490946.6805112460436096246.robh@kernel.org>
-References: <20240729201843.142918-1-danila@jiaxyga.com>
- <20240729201843.142918-6-danila@jiaxyga.com>
+	s=arc-20240116; t=1722955370; c=relaxed/simple;
+	bh=/k6UEnEQjIyqhBqwPolAnSvIJXqn1cBgKv8xQPaJUYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qNEKMTWDAqKq4p205zY+da725rlLJROSkk3DUABDN+1Q6r9mI6HNIJuEI9gYYcbk9JZ+cGhAk+38FaWVVooJjliRFyFfGfOh2j/lBPgQCrLuP2qZZyjQjmyxVQAlA/Qvw1WgCfirBPU+5IFj47GQ8uGBjkDWO0GBNPKbq8xJ6O4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jzitq4hf; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722955369; x=1754491369;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/k6UEnEQjIyqhBqwPolAnSvIJXqn1cBgKv8xQPaJUYU=;
+  b=Jzitq4hf8cDTNcNfG0+bUCFFyawI7bTsibPol6ZsPvpRgLyXc+d+xI8D
+   w2npNEC0PjZlgTHYzY1Fo7TMeM/a00dc9jCGXxYyQo6hsOdQF5EBfAdOI
+   nnk6HID6NnuDyfCIKI7fr6ifFu5rwF/fmqmcRN2ZjzStf5+1+wk62iud3
+   h2QgzTBFgCpacBYR6HiGSrYvcsnmIZQK7om+7RybYEl725lJOhaFRTlTC
+   nIhYv6SmzHSMeZFQWUuJjoIY5W+yi4JIVO62NI6y+IfHi/eMyuuv+3B3B
+   HfrZ1vPU4noRdI5M4o4B3aT+p4ygUHQO88GQGbBzzlkcQ/lNN8twyrLeA
+   g==;
+X-CSE-ConnectionGUID: V4HdhkFvT1WvbVpIO6Ejlw==
+X-CSE-MsgGUID: B1PdIkcsRhepEzFmcOZusw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="38430123"
+X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
+   d="scan'208";a="38430123"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 07:42:48 -0700
+X-CSE-ConnectionGUID: zAj39YZ9TlyCjTP28vJ52A==
+X-CSE-MsgGUID: 50WzpB2lRci4cW36qDtcyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
+   d="scan'208";a="56504779"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 07:42:48 -0700
+Received: from [10.212.84.25] (kliang2-mobl1.ccr.corp.intel.com [10.212.84.25])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 69B2C20CFED5;
+	Tue,  6 Aug 2024 07:42:46 -0700 (PDT)
+Message-ID: <c634b005-c382-48cc-bf54-6f570687d5c0@linux.intel.com>
+Date: Tue, 6 Aug 2024 10:42:45 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729201843.142918-6-danila@jiaxyga.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/9] perf annotate: Display the branch counter histogram
+To: Andi Kleen <ak@linux.intel.com>
+Cc: acme@kernel.org, namhyung@kernel.org, irogers@google.com,
+ peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
+ adrian.hunter@intel.com, eranian@google.com,
+ Tinghao Zhang <tinghao.zhang@intel.com>
+References: <20240703200356.852727-1-kan.liang@linux.intel.com>
+ <20240703200356.852727-8-kan.liang@linux.intel.com>
+ <Zq1K-YM4JoEQwov1@tassilo>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <Zq1K-YM4JoEQwov1@tassilo>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-On Mon, 29 Jul 2024 23:18:12 +0300, Danila Tikhonov wrote:
-> Document the SM7325 compatible used to describe the pmic glink on this
-> platform.
+
+On 2024-08-02 5:09 p.m., Andi Kleen wrote:
+>> Display the branch counter histogram in the annotation view.
+>>
+>> Press 'B' to display the branch counter's abbreviation list as well.
+>>
+>> Samples: 1M of events 'anon group { branch-instructions:ppp, branch-misses }',
+>> 4000 Hz, Event count (approx.):
+>> f3  /home/sdp/test/tchain_edit [Percent: local period]
 > 
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> ---
->  Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+> Can we output the abbreviation mappings here in the header too? 
+> Otherwise it will be hard to use.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+If so, the 'B' will be redundant. I will remove the 'B' and move the
+abbreviation mappings in the header.
+
+Thanks,
+Kan
 
 
