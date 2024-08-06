@@ -1,102 +1,139 @@
-Return-Path: <linux-kernel+bounces-276848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987A5949921
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:31:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA4ED949A49
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40EF31F23648
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:31:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 761761F2267C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF07B13D525;
-	Tue,  6 Aug 2024 20:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D78416BE0B;
+	Tue,  6 Aug 2024 21:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="EiG549gj"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SemJxCq1"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62BB37703
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F8F14C5A1;
+	Tue,  6 Aug 2024 21:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722976256; cv=none; b=np/d4GzOdta7cJ4T2S2E2WxgIDvYJz3ibCln6ymtlP3xcz08LinqcOURzgMydRCtdoC4VjCDI05wpa908gPG8LzgkuT6wJjTmGJAjSLvXyy4kf+KZ0ET1YLRWS8Mle+GlehbAabKkugA1b82aUHvpNAd3G6wXoqMbFvp/89ZMlw=
+	t=1722980183; cv=none; b=CXyWlovd3t7Y/jDt31HbnpJzWxSXW5XmVPVTDJfgPlgpWb7xakt6nl39PT6dfReiO2ZuuZYYiVd23vXHgKIdJqeswUQ/p92xZFCDYvtMSE/2s1SPxkyBE5FiXofYdFbfFs/PNQ5iXEqnjb26To0S/du5F7syunvzIZFOIaIKFjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722976256; c=relaxed/simple;
-	bh=pGjOP1lRrUIGHHfY/ucyJaa3OokEJdc3Rk3ANgx/cL4=;
+	s=arc-20240116; t=1722980183; c=relaxed/simple;
+	bh=2t+WutVWb5K5+D7fiMz4bLOCIU3ZQR0TMlrkjEcV3Ec=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TpYsw9znS/16/6W3y0juqXKZ5DH1pAZ92PA9tReToVCvK+Bdax22q5QujZP5ObDEzZWiGz2OOYXekRhdopnM73GJoC9hzsH9oy9aN3vTwSa0WF9EUrHvprv5pWPXQ+RcVXtdq6gxnSA40YMWclCuQaIPOZf/gJ1ypj3DjH2HUis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=EiG549gj; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fec34f94abso10227285ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 13:30:54 -0700 (PDT)
+	 To:Cc:Content-Type; b=I/9UB2h+KdSvLbzneFhslfDMqYPWVrutFTuRCcr9phnabJ3rcvtw5U+kicPyRZBn4M6QLEVw62EtXQHRWb5TYfEzdrh1axhghxZX9xId1uxmkkYLmJam5CSDN4BaLNsbOeURUXQGepxfuKMvPrjB5bagaJjHDq/D5Yw1dFumrEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SemJxCq1; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4f6ac1628dfso424924e0c.0;
+        Tue, 06 Aug 2024 14:36:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1722976254; x=1723581054; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722980181; x=1723584981; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pGjOP1lRrUIGHHfY/ucyJaa3OokEJdc3Rk3ANgx/cL4=;
-        b=EiG549gjGbTqZdMEzXLBvzxehHXQ4WAuK7H9zhgm/MB0ClSLiz+Lx1MXfW8B7axF+l
-         nBdKWFHIbcsD74USqO201OHHy5iI5J2J2usY6J1yiT/yw6fi7Q5XBymkmDs+i/iucfNQ
-         1o9HJFrmKxsY9y+IA/Dv/UksFbh90udLNeXoHeKl7lP3uULojNniYPEz17DBqZMZ22vj
-         bqiViQyNxj8z/uY5zHHEKZEteT1+tt9w1qY+yyIbo+1Fkp8to082dgayGq7biWAAT1F/
-         F+bQG1GiUeMx5vDOXYhtV5k6snFQQn9jpobdzcZvnB0nLD38TeCa112XPvh/0Chh8J3u
-         gDZg==
+        bh=Dh/CnSErYT7/6V79W9GXrn6y0woRRKH6f2DR4IxHNx8=;
+        b=SemJxCq1iiNIrRCHDZzGFroL2IyUfxTOy1ZQ+Ov3aAOMFSNH2UW/10MR3kGh/Pr/GZ
+         iMUlmcUCJVwUu9W0EcgWAXZIPmFmVVSgZlQuFk/8yLE+SeC1kghCi/FPDEEwFcKuTCog
+         XgB4n3bF2VNcpF7MJzRdwpmX2qt7RiG5J6S/Aze1IcTGF+d43uXyJghyaTdWlNbmuSuk
+         EfNPzhtM9HeCaPzgkZ8hT3is5zUgOkQb7/eQ0Nn9sF/Fksgktm+7T3yuH70+gcLTU41I
+         7JoSX2yO8j323tepfhKEziLbWhIywTznisnsNNYjdjULdbtzqly4AVFtTbHVZPeZh5Si
+         bCjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722976254; x=1723581054;
+        d=1e100.net; s=20230601; t=1722980181; x=1723584981;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pGjOP1lRrUIGHHfY/ucyJaa3OokEJdc3Rk3ANgx/cL4=;
-        b=RSg/4KmwuCqvxvy+8sPCEN9UhMHi9XK70wtDiHam0cFg2A/dD82dfQ1AW0S7rIgr1U
-         WeObn5Opwdm9KgUlXEPQtOsu2JpROSGJ4CwhK4iPn5Dd8c/fr8Q2PnynZ4MKj/Vp7T9O
-         LoTIORkzZyob3czFaPKVLwlZnZmzIx/0UnV870l+oh21xYuXQtYXPxmpxovZyrgLs4S7
-         ebKCuzIN0JvfRwg/kAVxTM+K4zS2GW5ji+fIAhUIb/AAUzODQMA2b1MtlSvN56pRMtdh
-         ZMzO2hBkirYUNKjMeB2g0Z2uxoitc0xrt+v7CzfCBYijaysw+4QOz/BbnyOwDLIiv8x/
-         OxqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWfg5z0rzj45afzuvcB0+mFiYVBGcOnd/QJ2SDf60b3i3Fzap1wqfxKvWUjy3hShVuvggidsAGkxzCQV+qJGoW1ABR1oXY9ALcDOoG
-X-Gm-Message-State: AOJu0YxPhzRM6FEsHhMbDBOyvmj8PR/Gcxm37e/mtRyTKlD0sUaAs4eO
-	kD8yBjnNxKer/LE4xp69ieOU7SBmTxmRW5tj6oP8iVwczzUUJiEUSZxcB54Ax8c8PzhRKngKKvq
-	kRYzcDqEFGgmAoXn6najDDHFyzN8=
-X-Google-Smtp-Source: AGHT+IEks/oAZa8ntL5YZ2Jy/KZVr3ukaB2BFUAtpfcEpVrc9hTXXkB88UBCo3OXbZXNdpKSoeO+mLzLsyC2xIw91ds=
-X-Received: by 2002:a17:903:18a:b0:1fd:9c2d:2f17 with SMTP id
- d9443c01a7336-1ff573bb69bmr145408745ad.44.1722976253993; Tue, 06 Aug 2024
- 13:30:53 -0700 (PDT)
+        bh=Dh/CnSErYT7/6V79W9GXrn6y0woRRKH6f2DR4IxHNx8=;
+        b=Kc4YuB2okayI2sj2ETwL3N7wQTNF7oiBVjvn1r0/WuaSDynlDR8lKVEG2OTz9YPXus
+         V0IttrwuV6/5m5zpuUWVeUpQMnh99AFAJmp21AB4eU9b1l81+68LusD4Ax5TdIAoQMuQ
+         hWcrnbtTMj/wtjExzu4Ie47pEwu9Ozzwr8v9FuC7fXzhX3ZWZhcyb8LvE2V5ZdI1RVKI
+         kpj2ctFWaz87ytPQelmBm5pArTDibJC5ZEM6VWRkVAnvenTTaPaonoiqrxN9L9VyZY2/
+         q/kdmzqopMc6FBAy8eUtn92/BkA59F0AVn1Pv1zfiG9oqq1HenoK1VuCuYAmNixO0vyN
+         XPqA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7cBLGUZQYgxMC6P/3KTVZgKAfPZvQfw9P3JgAchkkbA2YfSiMX04ABQQtRCIbABi9tN/e2qu7rVvavESmbu1YZTKZtQz1a45JbzdDRJ3fnH0doLrGiSpih9bLCmGUVytthevX9KXG7zXtG5raBXyNIxmRKRW3Altds/2kSQwWBv0=
+X-Gm-Message-State: AOJu0YyTYuAwSjWF3a7zxV4lqX85xNFuQZm3bU3tWV/S1Msr32kLSAPN
+	pJ8c/7QfyiFzOcb1ItO1YsghNxnNKWzQ3p1zwFtMYX+ZhWopSKyQ47nHYg0I3LpM3xy4x/9G7HF
+	6xSDJd1j2lt/eYjFbZri2f5B0M0Y=
+X-Google-Smtp-Source: AGHT+IFmUCpFy0ikEOsHVNcJ0/zIKB6zFAVRuMB81ZBEkWgUduwTajthzToYqvIUNMbqXOXZ0iKU7UA3pdcWrBARjqM=
+X-Received: by 2002:a05:6102:6d4:b0:492:a11f:a878 with SMTP id
+ ada2fe7eead31-4945bebdc3dmr20433130137.23.1722980181051; Tue, 06 Aug 2024
+ 14:36:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730125023.710237-1-jbrunet@baylibre.com> <20240730125023.710237-5-jbrunet@baylibre.com>
-In-Reply-To: <20240730125023.710237-5-jbrunet@baylibre.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Tue, 6 Aug 2024 22:30:42 +0200
-Message-ID: <CAFBinCDun9kgPO9ko9seFvWxjZvHwpRO=SaPrdxT1_Yh-FzXVg@mail.gmail.com>
-Subject: Re: [PATCH 4/9] drm/meson: dw-hdmi: fix incorrect comment in suspend
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Kevin Hilman <khilman@baylibre.com>, dri-devel@lists.freedesktop.org, 
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240731133318.527-1-justinjiang@vivo.com> <20240731091715.b78969467c002fa3a120e034@linux-foundation.org>
+ <dbead7ca-e9a4-4ee8-9247-4e1ba9f6695c@vivo.com> <20240806133823.5cb3f27ef30c42dad5d0c3e8@linux-foundation.org>
+In-Reply-To: <20240806133823.5cb3f27ef30c42dad5d0c3e8@linux-foundation.org>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 7 Aug 2024 04:32:09 +0800
+Message-ID: <CAGsJ_4x1tLEmRFbnUYcNYtV73SyBYpBtAx_syjfcnjrom-R+4w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] mm: tlb swap entries batch async release
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: zhiguojiang <justinjiang@vivo.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Will Deacon <will@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
+	Nick Piggin <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, linux-arch@vger.kernel.org, cgroups@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>, opensource.kernel@vivo.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 2:50=E2=80=AFPM Jerome Brunet <jbrunet@baylibre.com=
-> wrote:
+On Wed, Aug 7, 2024 at 4:38=E2=80=AFAM Andrew Morton <akpm@linux-foundation=
+.org> wrote:
 >
-> Comment in suspend says TOP is put in suspend, but the register
-> poke following is actually de-asserting the reset, like in init.
+> On Thu, 1 Aug 2024 14:30:52 +0800 zhiguojiang <justinjiang@vivo.com> wrot=
+e:
 >
-> It is doing the opposite of what the comment says.
+> > > Dumb question: why can't this be done in userspace?  The exiting
+> > > process does fork/exit and lets the child do all this asynchronous fr=
+eeing?
+> > The logic optimization for kernel releasing swap entries cannot be
+> > implemented in userspace. The multiple exiting processes here own
+> > their independent mm, rather than parent and child processes share the
+> > same mm. Therefore, when the kernel executes multiple exiting process
+> > simultaneously, they will definitely occupy multiple CPU core resources
+> > to complete it.
 >
-> Align the comment with what the code is doing for now and add
-> a FIXME note to sort this out later
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-(based on public S912 and A311 datasheets)
+> What I'm asking is why not change those userspace processes so that they
+> fork off a child process which shares the MM (shared mm_struct) and
+> then the original process exits, leaving the asynchronously-running
+> child to clean up the MM resources.
+
+Not Zhiguo. From my perspective as a phone engineer, this issue isn't relat=
+ed
+to the parent-child process or the wait() function. Phones rely heavily on
+mechanisms similar to the OOM killer to function efficiently. For instance,
+if you're using apps like YouTube, TikTok, and Facebook, and then you
+open the camera app to take a photo, the camera app becomes the foreground
+process and demands a lot of memory. In this scenario, the phone might
+decide to terminate the most memory-consuming and less important apps,
+such as TikTok or YouTube, to free up memory for the camera app. TikTok
+and YouTube become less important because they are no longer occupying
+the phone's screen and have moved to the background. The faster TikTok
+and YouTube can be unmapped, the quicker the camera app can launch,
+enhancing the user experience.
+
+An important reason why apps can launch very slowly is due to the time late=
+ncy
+of alloc_pages(). That's why I'm quite interested in Zhiguo's patchset. On =
+the
+other hand, mTHP can help alleviate the situation by releasing swap slots t=
+hree
+times faster in my other patch:
+https://lore.kernel.org/linux-mm/20240806012409.61962-1-21cnbao@gmail.com/
+
+This is likely another advantage of mTHP.
+
+Thanks
+Barry
 
