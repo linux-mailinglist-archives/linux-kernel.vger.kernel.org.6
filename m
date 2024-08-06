@@ -1,139 +1,116 @@
-Return-Path: <linux-kernel+bounces-275817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9496948A5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:46:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD61948A90
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73A502833F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:46:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECD6E1C2333C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9EF116BE12;
-	Tue,  6 Aug 2024 07:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C441BC9E7;
+	Tue,  6 Aug 2024 07:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZoqiKYIh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=uter.be header.i=@uter.be header.b="gdqWBr2O"
+Received: from lounge.grep.be (lounge.grep.be [144.76.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B8F15D1;
-	Tue,  6 Aug 2024 07:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D770161310;
+	Tue,  6 Aug 2024 07:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722930353; cv=none; b=Bn2YqzUAqiPdenM/IHInzGJ6Pwrp8dRYziXBfV6nls/ZNz+FpAjFLpEaYQJQ0DTp0ggB9gHyhXDnW2fWoYO32qHqOSHedXu30EeDeNmOS0j+gKCCElzMyNEo2HZG2qOHo/TXyHvfw9jPM0VB4H5um2nLT7Mjp1nJB3It6CS10FI=
+	t=1722930564; cv=none; b=WUjsCg+NfRerPOkij3TbfMQ0ARjwN4pxUgmUcdNcSI1uph1JTKROx8Yr8rUk7dFlIoJC6y02gjMKj/+2rfiGM+T+z7tstA72x1YiRkvdlPNgrcHMgggAz1rrBnphT8/X4z+T3MlUhyqGkQH5jRU5nTt/kseNMMcNNpVCIxqJqd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722930353; c=relaxed/simple;
-	bh=yGiNiFGi7Vaq87quk92S2Swz/r+ypNNm0Lc2mBcEMyQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iE2qppr8aorUEYEeysCJS+0JcoK88PwWCWMyjd+QRDsTLgb5ZqyJXlsV4TYXnAoRa6YfXyaRxEimeLU3pmGduri/qKRdSVGtmx2Ov9LDRyt3gcwJJESb6iB9D4leDaN/Jrc38DTpgrkldplAowE2yEm5tk2dXznkpHcX4NSemn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZoqiKYIh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3FF0C4AF10;
-	Tue,  6 Aug 2024 07:45:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722930352;
-	bh=yGiNiFGi7Vaq87quk92S2Swz/r+ypNNm0Lc2mBcEMyQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZoqiKYIhd1x3S00BKm1jiixbglE+w3LLz2tvXP77Rkj8333Egus2iPcZQzW3Nxkff
-	 Sggs9TGr3PRPiJ/Q00/E2SLqTKeOdmQHI5iXtr2jHGq6TyuadZn96v3Jr0sWg1HUxz
-	 SkrOcDNd2H3PyPV15aKvPvsJxRzosJbynkkHioCGA7HNREIySmto014GL/YmMd5LY7
-	 rWWzPjuEk2BSx0+zde5bOvlWfMCBHWPU+BZwxXsfkH4tQFk1wrNhRJNi6zTTis2RlB
-	 l23xM6R5XpDMg18RaggLaASzCGQoChMTPTYo8Lh7GC1nU3iV8ddUvXra7LIMCtMG9P
-	 T+jvR9xJVUlbA==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5ab2baf13d9so589905a12.2;
-        Tue, 06 Aug 2024 00:45:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVAFhGDtwuenDqWnJsIpMCwTDHr1Krz4GlEMRAZwFBUYU1Vm4EFpThFIyvUYHpHrPdlZDqykPD3Hk3wJ45yvAs4VATGwIvmDPIyjYVBZR+REXQzbjIo5X/EQ766XCUAJbm9
-X-Gm-Message-State: AOJu0YziEtju36bhOZEY83xcmhZZ1Tm1AEZtfY+seQ4xxr7If2hfOsAB
-	RWdlbiWLktZcNR4ZZ1sPL2DIBCvbs0zBpjq+OW3qw6EbFsDT21PyDQ6HkD9Yk8FE9e7F0WqMTXw
-	xI3fOVOA9cXGjxP7kemZmMgze/Qs=
-X-Google-Smtp-Source: AGHT+IGFW4nB0Godlt8tjYNw+BdB5pIE9dNG90d0hv4ZSDmWnDVURzXoI/38bpiLY+5Dp1IAu21Iurff6ztAAI5Px9U=
-X-Received: by 2002:aa7:c599:0:b0:5a2:a0d9:c1a2 with SMTP id
- 4fb4d7f45d1cf-5b7f56fd9cdmr9973224a12.26.1722930351191; Tue, 06 Aug 2024
- 00:45:51 -0700 (PDT)
+	s=arc-20240116; t=1722930564; c=relaxed/simple;
+	bh=9s0qX9EcCdK9Cz1xzXalamrvaY9+4khYtkIME4JNusk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mYAck2gS7x1LQurI1iaHF2ePm/I1+8vK4hwk29vw3x8s5ufIFHGUxSixqVEK+BbKCtqe50+ADI1GnlHPdSs2cA18pWfsTqORzzv4VMGMtKgn3vBAq8aVmnDrUwhpZtkKl7s4DQnMTJMFMlcoX4qCUjWrNlGjnLc2QScQVidltDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uter.be; spf=pass smtp.mailfrom=uter.be; dkim=pass (2048-bit key) header.d=uter.be header.i=@uter.be header.b=gdqWBr2O; arc=none smtp.client-ip=144.76.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uter.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uter.be
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=uter.be;
+	s=2021.lounge; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=3G8kWmCY8+8ycTTQtwqTo5kt3QPEPxhAtSHYBuxzt1E=; b=gdqWBr2OGUd+hdjhz2vxPeQx2g
+	tYa1cZgdCCmtGvBVJKiqukSWovODXy9AF73NwJ8Qf/AtniKznQVGWkmU9jMDTVhzvayS875AjGTaX
+	7TO4T/IjNtQpk62abcOGI5Sx5HaQYoxJbxTOqz6DdOD3GJ7NxXLTAW0e//OUc8C9ctLhOgqA/1wPC
+	jM2HvgAqVfS0/4J9CwQLVMZmh2UpNSd5rZpv0TMDr1j2RUi/xrw0ylbEDIITVYoOE9RBiZ8IMtTAS
+	DkVU2LJuOcvUksG2bPXPc1xCtdHEQOHJbrpsmKIraWzT3Eu69PCw17ZFY8paloR5DuQybcWY1LfDD
+	tuR/PPBA==;
+Received: from [102.39.154.62] (helo=pc220518)
+	by lounge.grep.be with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <w@uter.be>)
+	id 1sbEwP-00EW3a-1L;
+	Tue, 06 Aug 2024 09:49:09 +0200
+Received: from wouter by pc220518 with local (Exim 4.98)
+	(envelope-from <w@uter.be>)
+	id 1sbEwH-000000002oc-0XVH;
+	Tue, 06 Aug 2024 09:49:01 +0200
+Date: Tue, 6 Aug 2024 09:49:01 +0200
+From: Wouter Verhelst <w@uter.be>
+To: Eric Blake <eblake@redhat.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org, nbd@other.debian.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] nbd: implement the WRITE_ZEROES command
+Message-ID: <ZrHVbQ5_lvCCegK_@pc220518.home.grep.be>
+References: <20240803130432.5952-1-w@uter.be>
+ <f2kaityrjmmstzvqq7xu755ikstida2hcnnng634oeo6fxjfbj@zrgbeik6fwz6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6D5128458C9E19E4+20240725134820.55817-1-zhangdandan@uniontech.com>
- <c40854ac-38ef-4781-6c6b-4f74e24f265c@loongson.cn> <CAAhV-H5R_kamf=YJ62hb+iFr7Y+cvCaBBrY1rdk_wEEq4+6D_w@mail.gmail.com>
- <a9245b66-be6e-7211-49dd-a9a2d23ec2cf@loongson.cn> <CAAhV-H7Op_W0B7d4uQQVU_BEkpyQmwf9TCxQA9bYx3=JrQZ8pg@mail.gmail.com>
- <9bad6e47-dac5-82d2-1828-57df3ec840f8@loongson.cn> <DB945E243D91EB2F+df447e7b-ddd6-459d-9951-d92fcfceb92c@uniontech.com>
-In-Reply-To: <DB945E243D91EB2F+df447e7b-ddd6-459d-9951-d92fcfceb92c@uniontech.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 6 Aug 2024 15:45:37 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H61-x2s-22q5+WqrQ_RnmwWgY2E8cqSozLPrdxv1MX+1g@mail.gmail.com>
-Message-ID: <CAAhV-H61-x2s-22q5+WqrQ_RnmwWgY2E8cqSozLPrdxv1MX+1g@mail.gmail.com>
-Subject: Re: [PATCH] KVM: Loongarch: Remove undefined a6 argument comment for kvm_hypercall
-To: WangYuli <wangyuli@uniontech.com>
-Cc: maobibo <maobibo@loongson.cn>, Dandan Zhang <zhangdandan@uniontech.com>, 
-	zhaotianrui@loongson.cn, kernel@xen0n.name, kvm@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Wentao Guan <guanwentao@uniontech.com>, baimingcong@uniontech.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2kaityrjmmstzvqq7xu755ikstida2hcnnng634oeo6fxjfbj@zrgbeik6fwz6>
+X-Speed: Gates' Law: Every 18 months, the speed of software halves.
+Organization: none
 
-On Mon, Jul 29, 2024 at 11:03=E2=80=AFAM WangYuli <wangyuli@uniontech.com> =
-wrote:
->
-> Hi Bibo and Huacai,
->
->
-> Ah... tell me you two aren't arguing, right?
->
->
-> Both of you are working towards the same goal=E2=80=94making the upstream
->
-> code for the Loongarch architecture as clean and elegant as possible.
->
-> If it's just a disagreement about how to handle this small patch,
->
-> there's no need to make things complicated.
->
->
-> As a partner of yours and a community developer passionate about
->
-> Loongson CPU, I'd much rather see you two working together
->
-> harmoniously than complaining about each other's work. I have full
->
-> confidence in Bibo's judgment on the direction of KVM for Loongarch,
->
-> and I also believe that Huacai, as the Loongarch maintainer, has always
->
-> been fulfilling his responsibilities.
->
->
-> You are both excellent Linux developers. That's all.
-Bibo has made lots of contributions on LoongArch/KVM, and he is more
-professional than me. I hope we can collaborate well in the future.
-For this patch itself, I've applied to loongarch-fixes, thanks.
+On Mon, Aug 05, 2024 at 07:52:42AM -0500, Eric Blake wrote:
+> On Sat, Aug 03, 2024 at 03:04:30PM GMT, Wouter Verhelst wrote:
+> > The NBD protocol defines a message for zeroing out a region of an export
+> > 
+> > Add support to the kernel driver for that message.
+> > 
+> > Signed-off-by: Wouter Verhelst <w@uter.be>
+> > ---
+> >  drivers/block/nbd.c      | 8 ++++++++
+> >  include/uapi/linux/nbd.h | 5 ++++-
+> >  2 files changed, 12 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+> > index 5b1811b1ba5f..215e7ea9a3c3 100644
+> > --- a/drivers/block/nbd.c
+> > +++ b/drivers/block/nbd.c
+> > @@ -352,6 +352,8 @@ static int __nbd_set_size(struct nbd_device *nbd, loff_t bytesize,
+> >  	}
+> >  	if (nbd->config->flags & NBD_FLAG_ROTATIONAL)
+> >  		lim.features |= BLK_FEAT_ROTATIONAL;
+> > +	if (nbd->config->flags & NBD_FLAG_SEND_WRITE_ZEROES)
+> > +		lim.max_write_zeroes_sectors = UINT_MAX;
+> 
+> Is that number accurate, when the kernel has not yet been taught to
+> use 64-bit transactions and can therefore only request a 32-bit byte
+> length on any one transaction?  Would a better limit be
+> UINT_MAX/blksize?
 
-Huacai
+Thanks, good catch.
 
->
->
-> To be specific about the controversy caused by this particular commit,
->
-> I think the root cause is that the KVM documentation for Loongarch
->
-> hasn't been upstreamed. In my opinion, the documentation seems
->
-> ready to be upstreamed. If you're all busy with more important work,
->
-> I can take the time to submit them and provide a Chinese translation.
->
->
-> If this is feasible, it would be better to merge this commit after that.
->
->
-> Best wishes,
->
->
-> --
->
-> WangYuli
->
->
+I copied the logic from the handling of the TRIM command (i.e., the
+discard logic), which has the same flawed UINT_MAX behavior. I will fix
+this in v2 and add a fix for the discard code.
+
+-- 
+     w@uter.{be,co.za}
+wouter@{grep.be,fosdem.org,debian.org}
+
+I will have a Tin-Actinium-Potassium mixture, thanks.
 
