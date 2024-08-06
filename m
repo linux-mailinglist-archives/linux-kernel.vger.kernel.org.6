@@ -1,167 +1,131 @@
-Return-Path: <linux-kernel+bounces-275642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CA0F9487EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:31:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 197799487EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81DB51C21E70
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:31:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD35C281BA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265AC41AAC;
-	Tue,  6 Aug 2024 03:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196356F067;
+	Tue,  6 Aug 2024 03:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Q1iF9viv"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hjthtiup"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE85184D
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9FA184D;
+	Tue,  6 Aug 2024 03:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722915094; cv=none; b=atWkqdkCJgPfBqR44WXZnvcd/+W4Z4YExRWhqZVkTSCu4RGwZ1WeMZc79tjKuv94EZN0vdgQoVX1j1ENv7G7vcychfpVmimVnYLzFTxhTtrWJM16fVflGPf4Lf4ypyNpBdNqudtCSWWSa+OQA/HIUVurqCbLAslPTXO5AzrNS0E=
+	t=1722915100; cv=none; b=pZHOKe74l57jsfpaQa+FST5dkDoJfrbkzhhQDgbsIPaVd7VEB2+XtG9MhkQBt3ozKC/pqH8sEm0Wq8pXZ362MzvM1BW7QfaqhJEo4KCxO7ENaHQ0a0zj4IUSHVe7fp1dfZyA6iP/Zy23hknK7pWp2TqlI1DqplcIeL4jHySJ7PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722915094; c=relaxed/simple;
-	bh=SvuoSmChBOHGdTLubBOmex8R46e7cVvpPusA8rmgPfk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fDS9Gi07ZzwG+CJlkOnzi957heHOj3crBArWPTcw5OMT6xbtggzwQYSbxmvNy5TjhV+oUuqavWK0w5SzPv9/8zBbQswAZ1+m9rfChNhTrMWy1DgrwUa/o4TIRm7A5aSKVa7BrlhS5gKGr6UUGLgcwVkA1oQf0xK0f7bipgAaHl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Q1iF9viv; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d2879bfb0so64635b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 20:31:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1722915092; x=1723519892; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z2JoVlyDoUX2ysalhvEPxZpeuSvjk1cVm0vV/c3XfoY=;
-        b=Q1iF9vivFCERseQEBSHD0Y/P1NHdjGNFqIZ4vtEdna2nBs98PiXU0I/A4WwtqnEGGY
-         eoF0PFybLnD/EZiu0spPcn9pQY/UfjgGEGbc8unRbpSXISWZV8IQSdWJziT/ycQbaoKy
-         e/rZZwsGABtZWQq8/0ChnfZwxOdRNuRXKNmZotJKpdfdc5Y5ELWXmIBAoG+jG0GXQsXW
-         m4bMUBG7/bl1zv32Ili7UQEGWK6YPp2n9LMc68MMavqSnhY0mCQObvNA6ChS3lPwI3+p
-         Zd6HR9kGqnBNtUz7Rgg9zc5vYvd7N8jkAewJdiuy6FBxI2veC7e1CQTLLmiucsRIb3il
-         scNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722915092; x=1723519892;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z2JoVlyDoUX2ysalhvEPxZpeuSvjk1cVm0vV/c3XfoY=;
-        b=bq8HbYhygpBai6T8QqF1MezAtiI7zW8XPMZpHrXLk6Z9bx0+jDqPq15qKVP5eKJk9T
-         kbeI7HHG05nhOZIjhumv8IP1B7+zZvJwdk76RKb8HqFuTqhS16oStXQ8m+zEw7+4/7d/
-         9ZY/3BtHoUM7IxScmGUsFKiljx8QfdjZkLyrkIJn4MGR+wsdBxq7dw38aq4WqH6PUq0V
-         vLqBxaWDXMN8GeUFn9/WR48kr43/n3NGwgk9/rBLbbZRtIjQ0kjx+dmmW+VMNrq50jfd
-         NEJL7YP7bqdg5kIHJVKVsYI1JZVvr/AE2cmwGcfQcyJl7sbQZfFDSbFpuX75k2uTTxrD
-         sy4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVWSR9sKRpWVrCkP/Hn1V9Qkpg8GeZAK41ct6F5eZoBRuy1Grfm6rF5m3k5vv42zNuXQXMJgziY8zqecw2N6yejiHvhxfJLGFz3wmPH
-X-Gm-Message-State: AOJu0Yxf/iw6ZHRd3aG7UpVJ+bSIhafLQmslx1Qc1oMMXLrx3W3Yfwbl
-	VzL0eiHlFCQhWZHIB/3CZz0F+tP/OvZXQ+pDVqcKLBeR5XMPpIwJyM/oQ1jlWVc=
-X-Google-Smtp-Source: AGHT+IHjB6AScazUkHn0BP4teSXOlloTlQqOI/0QMlJZDjNnp/apIsyvye9E1r70/giw8p0Wt63YyA==
-X-Received: by 2002:a05:6a00:3993:b0:70d:1048:d4eb with SMTP id d2e1a72fcca58-7106d07ea82mr10721161b3a.3.1722915091824;
-        Mon, 05 Aug 2024 20:31:31 -0700 (PDT)
-Received: from [10.255.168.175] ([139.177.225.232])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ed0d462sm6330616b3a.174.2024.08.05.20.31.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 20:31:31 -0700 (PDT)
-Message-ID: <bf9f79df-4821-4053-a1e9-f054f2ca5734@bytedance.com>
-Date: Tue, 6 Aug 2024 11:31:24 +0800
+	s=arc-20240116; t=1722915100; c=relaxed/simple;
+	bh=ixRvpBut5AMgVS30pczTl4SUQmbCW1wL6KZmMhwmNIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YUp2Qc+AOEPHaNFoe7o0SvgYr41fvjWDrSNBwhJ8wiBcoxPz0pIKlfPcunyyWGfr8KV+CSEN8Vq4tK17/fFXgOQyQlJCLhPk7depd/bv1Ck6C9XRNm6ocBebxtpJHuD11PqukwHH5GIRl1FeLXQdJg3pLEdX2XFzxi6gK5p9q3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hjthtiup; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722915099; x=1754451099;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ixRvpBut5AMgVS30pczTl4SUQmbCW1wL6KZmMhwmNIU=;
+  b=hjthtiupM+H+8LgBZk3TsQGYQEL+y8pZMGh7abVa/Jgpa8iEDxRJG1ah
+   7YxGcP2obCmOknqSCEz3RICTHOoPRAwSB/GsrXzLt8MgO6UNYOTHvWAef
+   sl+/UCAsp2WNSKLwCVjkE4hUtUuL3na4YIe8N3YNy3uap+xpQjnEOLKz2
+   KwoOzcRmlf/ZgS83sG3Dh3+NcgUSgKhHC5aGvzWCrjmlID4GyOyNe8fXy
+   N6WYGh5m9ZodRHwLGEo7aFOU7Ph1xzWqCBHYTa/HO/O+0B4xhkFeo3xog
+   NFqzbfnMhM8bn0tLthPioQ0NDVAajzZ4UL25cfIqNh44hPENSsXV+RTo3
+   A==;
+X-CSE-ConnectionGUID: BjEYBLdpSfqbXoVwI2CJag==
+X-CSE-MsgGUID: HA5JzkmyTjOmjlB7rEnN3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="21057422"
+X-IronPort-AV: E=Sophos;i="6.09,266,1716274800"; 
+   d="scan'208";a="21057422"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 20:31:38 -0700
+X-CSE-ConnectionGUID: jaes8beITLaae12znXclMA==
+X-CSE-MsgGUID: uhPQagcFTAekYXOGCXS8LQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,266,1716274800"; 
+   d="scan'208";a="61001216"
+Received: from yy-desk-7060.sh.intel.com (HELO localhost) ([10.239.159.76])
+  by fmviesa004.fm.intel.com with ESMTP; 05 Aug 2024 20:31:36 -0700
+Date: Tue, 6 Aug 2024 11:31:35 +0800
+From: Yuan Yao <yuan.yao@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 5/9] KVM: x86/mmu: Free up A/D bits in FROZEN_SPTE
+Message-ID: <20240806033135.c76lyedxxmhjaux5@yy-desk-7060>
+References: <20240801183453.57199-1-seanjc@google.com>
+ <20240801183453.57199-6-seanjc@google.com>
+ <20240805072013.i3ib4h7eadlzzglm@yy-desk-7060>
+ <ZrFPcJvYMpv8BH30@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 0/7] synchronously scan and reclaim empty user PTE
- pages
-Content-Language: en-US
-To: david@redhat.com, hughd@google.com, willy@infradead.org, mgorman@suse.de,
- muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
- zokeefe@google.com, rientjes@google.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- the arch/x86 maintainers <x86@kernel.org>
-References: <cover.1722861064.git.zhengqi.arch@bytedance.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <cover.1722861064.git.zhengqi.arch@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrFPcJvYMpv8BH30@google.com>
+User-Agent: NeoMutt/20171215
 
-Hi all,
+On Mon, Aug 05, 2024 at 03:17:20PM -0700, Sean Christopherson wrote:
+> On Mon, Aug 05, 2024, Yuan Yao wrote:
+> > On Thu, Aug 01, 2024 at 11:34:49AM -0700, Sean Christopherson wrote:
+> > > Remove all flavors of A/D bits from FROZEN_SPTE so that KVM can keep A/D
+> > > bits set in SPTEs that are frozen, without getting false positives.
+> > >
+> > > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > > ---
+> > >  arch/x86/kvm/mmu/spte.h | 8 +++++---
+> > >  1 file changed, 5 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
+> > > index ba7ff1dfbeb2..d403ecdfcb8e 100644
+> > > --- a/arch/x86/kvm/mmu/spte.h
+> > > +++ b/arch/x86/kvm/mmu/spte.h
+> > > @@ -216,15 +216,17 @@ extern u64 __read_mostly shadow_nonpresent_or_rsvd_mask;
+> > >   * should not modify the SPTE.
+> > >   *
+> > >   * Use a semi-arbitrary value that doesn't set RWX bits, i.e. is not-present on
+> > > - * both AMD and Intel CPUs, and doesn't set PFN bits, i.e. doesn't create a L1TF
+> > > - * vulnerability.
+> > > + * both AMD and Intel CPUs, doesn't set any A/D bits, and doesn't set PFN bits,
+> > > + * i.e. doesn't create a L1TF vulnerability.
+> > >   *
+> > >   * Only used by the TDP MMU.
+> > >   */
+> > > -#define FROZEN_SPTE	(SHADOW_NONPRESENT_VALUE | 0x5a0ULL)
+> > > +#define FROZEN_SPTE	(SHADOW_NONPRESENT_VALUE | 0x498ULL)
+> >
+> > Question:
+> > Why bit3 and bit4 also changed from 0 to 1 ?
+>
+> Purely so that more bits are set, i.e. so that KVM doesn't rely on one or two
+> bits to identify frozen SPTEs.
 
-On 2024/8/5 20:55, Qi Zheng wrote:
+Thanks for your explanation!
 
-[...]
+Please consider add this into the commit log, it explains
+the reason of why some non A/D bits are selected.
 
-> 
-> 2. When we use mmu_gather to batch flush tlb and free PTE pages, the TLB is not
->     flushed before pmd lock is unlocked. This may result in the following two
->     situations:
-> 
->     1) Userland can trigger page fault and fill a huge page, which will cause
->        the existence of small size TLB and huge TLB for the same address.
-> 
->     2) Userland can also trigger page fault and fill a PTE page, which will
->        cause the existence of two small size TLBs, but the PTE page they map
->        are different.
-> 
->     For case 1), according to Intel's TLB Application note (317080), some CPUs of
->     x86 do not allow it:
-> 
->     ```
->     If software modifies the paging structures so that the page size used for a
->     4-KByte range of linear addresses changes, the TLBs may subsequently contain
->     both ordinary and large-page translations for the address range.12 A reference
->     to a linear address in the address range may use either translation. Which of
->     the two translations is used may vary from one execution to another and the
->     choice may be implementation-specific.
-> 
->     Software wishing to prevent this uncertainty should not write to a paging-
->     structure entry in a way that would change, for any linear address, both the
->     page size and either the page frame or attributes. It can instead use the
->     following algorithm: first mark the relevant paging-structure entry (e.g.,
->     PDE) not present; then invalidate any translations for the affected linear
->     addresses (see Section 5.2); and then modify the relevant paging-structure
->     entry to mark it present and establish translation(s) for the new page size.
->     ```
-> 
->     We can also learn more information from the comments above pmdp_invalidate()
->     in __split_huge_pmd_locked().
-> 
->     For case 2), we can see from the comments above ptep_clear_flush() in
->     wp_page_copy() that this situation is also not allowed. Even without
->     this patch series, madvise(MADV_DONTNEED) can also cause this situation:
-> 
->             CPU 0                         CPU 1
-> 
->     madvise (MADV_DONTNEED)
->     -->  clear pte entry
->          pte_unmap_unlock
->                                        touch and tlb miss
-> 				      --> set pte entry
->          mmu_gather flush tlb
-> 
->     But strangely, I didn't see any relevant fix code, maybe I missed something,
->     or is this guaranteed by userland?
-
-I'm still quite confused about this, is there anyone who is familiar
-with this part?
-
-Thanks,
-Qi
-
-> 
->     Anyway, this series defines the following two functions to be implemented by
->     the architecture. If the architecture does not allow the above two situations,
->     then define these two functions to flush the tlb before set_pmd_at().
-> 
->     - arch_flush_tlb_before_set_huge_page
->     - arch_flush_tlb_before_set_pte_page
-> 
-
-[...]
-
-> 
+>
+> > They're not part of AD bits fro EPT and CR3 page table/AMD NPT
+>
+> This is very delibreate.  The A/D bits need to be '0' in the FROZEN, i.e. bits
+> 5,6, 8, and 9 must not be set in FROZEN_SPTE.
+>
+> >
+> > EPT: Abit:8 Dbit:9
+> > CR3: Abit:5 Dbit:6
 
