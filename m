@@ -1,247 +1,187 @@
-Return-Path: <linux-kernel+bounces-276199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05EEC948FDE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:01:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A557948FE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:02:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3050C1C20F49
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:01:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7DB1C221A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309491C579C;
-	Tue,  6 Aug 2024 13:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CC61C5785;
+	Tue,  6 Aug 2024 13:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="i76UqWAq"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fqKbUsiO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7661BF311
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF51F1BF311
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722949311; cv=none; b=o8+v66E4UIrvfDNS9KzTjn4GBzlib8o4EmdfVoLldPNtaZgJEB3a2rx39KqYTk9YLkGHbhES2w+KwDgcGv+wHKI49QWnveWZLQWgT6OvBismGkeCguzByvJid2eL0d7b5Dl96+Oa6w+/W1SHv4LY/nw1RudVwx7mP5zCx+vz07M=
+	t=1722949328; cv=none; b=tqskRBrvTk6M0tzT7DuSPYJJX915rHewB/bbRhm1pyc3rbY14W3E4Qbu4phW8OlmlV2KWsWMrWcOLdnDk6LlZ+VEtBkcSNU+SUGOLXBUb3KNEsBBm6bsdE5vRdiGW8jMksXVcljzQaCLr7gz0Cb7ljWbtN1DsCz9ohlff2BxYo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722949311; c=relaxed/simple;
-	bh=XGHVtA53ndm8tu52HB2cm7xGUUoAVG2gnIVZD/zuSXE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CI2NiHlk2bgWiWTs1Pe4JZyWi8osJWTpWPYzkWhffQqd9xkqwZDg7LMU1xqNF3MCfqHc41vCnQ4Bs86L3y7R7lWQjSje8OSy4uJ51WleeU/uediGBFgTjhSTzJlAxHqJ6TfbLZxurcXIOG6WddgjPdHIpW2U06wC91sWf1Yw+qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=i76UqWAq; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ef247e8479so1162481fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:01:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1722949307; x=1723554107; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZWaPqrk0Ji9UdhOsGVUggVZW2Ffw4bKnDm4+9jC3vKo=;
-        b=i76UqWAqEs2KeYCdDz8sPsJrKAkI5MHczuEDwKbHgwMFULeNGbCYsjp14xtyWHD9R2
-         a8Y9ZSep2m4GD3YHQdZNXuJdlK966VijFv+f5Qnr5RM5HQNdXGYRS3oEgmeKHFY7NzYS
-         OFKH7B5R+l9BnowGdbahAjnCFkQ4+ByhY8wfY=
+	s=arc-20240116; t=1722949328; c=relaxed/simple;
+	bh=0IFhwUzKw1+XIVn2krwoHTO54VDP4V4ipVQKuqt24Bk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ryvaVMr6myLnCd6ymvrseYC0kSv9Kfm1/lRdd60N2HUcmN8HCoL8nwFPQqo8DzLOn8QNq+R4Mx/UInxmoMjsb3bmK2BhQNkGMsyrJoKULKOc9iyDeks+McZ+v956IoXAQScct4nYKIZJrVyJxCNBwQCOhGJyWpoHkqtnYalx65c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fqKbUsiO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722949326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8bydtEU8dpvIeQ2V0I0gbNTbGq+ZFreMIhNnwB6nrP8=;
+	b=fqKbUsiOG0UsT9avSyTEBG1SwvG606UUKcyCmZUeKtPynfnE0z19MquAN0fi3024o7HhkK
+	tSzw5222DQ4hbmRDZKqOtyAOE/9Iy6qXv4ZDF3ZQ+zFV9D5plzVOqbnyizbNE1/Y59aLlt
+	yJ9LTJFtia9H+3R/BH+CEmfuLFVwFA8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-49-mz1VzXVeNsWtyU0YcFe5ew-1; Tue, 06 Aug 2024 09:02:04 -0400
+X-MC-Unique: mz1VzXVeNsWtyU0YcFe5ew-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42816096cb8so7329845e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:02:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722949307; x=1723554107;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZWaPqrk0Ji9UdhOsGVUggVZW2Ffw4bKnDm4+9jC3vKo=;
-        b=AzgEfCTR/CJFsIfIUFFXonc90KWqv36e2Z5IqkFsoRAGP2Yd6MksMh6kIs4Lx+h7TQ
-         e454RhnMlsJuYD/p8UPkzcx/bw3/YSyenxJcs3UISlLFAWXTia7joJXpm24bnJK8U/1C
-         SH5jncImR+ajJ9D5++zI8Eea4xuePWryupegCMQ1a71ufavH6FMYUuYb5b8rCDgjbkGy
-         Gbigp9vK0AVwkKMsyB3XLXG5p9w5OBBYioH/jIan/vUR1ArzF3YU9S70dfR3vHvh35gK
-         BFWaUY2tK3VIpTIx+EFB0WgmYLS0MrBVRePmd81ojtUhLXwq2LuK6bU69pDNPiV7RvSe
-         YqjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIlge7dhXHTNsXhR3DcLo2AM553tTU01KZ35k6W1gOiEw26Gat2RKjllbc0qlrA48o1L21Y6wEnKp+G+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5wDsdBkc1iDypWMIjyvb1Xrku08UtkRLXZmKgFHDYnumnRpWf
-	CP8w3nIg/CH1mE9flzA9C6iJngiMScfG8e80glCkrWOluOi42H5x8TIQikeNtRg=
-X-Google-Smtp-Source: AGHT+IGBILqIWLNLhTGm47B+BmFPkDFKRX0XFMxi6y7ZZfWYiY/LEw2NnlFOMQ1ijpWL3jroPbc9qA==
-X-Received: by 2002:a2e:3313:0:b0:2ef:2405:ff63 with SMTP id 38308e7fff4ca-2f15aafc20bmr51509691fa.5.1722949307034;
-        Tue, 06 Aug 2024 06:01:47 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bb884cddf4sm2712126a12.66.2024.08.06.06.01.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 06:01:46 -0700 (PDT)
-Date: Tue, 6 Aug 2024 15:01:44 +0200
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: Tvrtko Ursulin <tursulin@ursulin.net>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, intel-xe@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, linux-doc@vger.kernel.org
-Subject: Re: [RFC PATCH 2/6] drm/cgroup: Add memory accounting DRM cgroup
-Message-ID: <ZrIeuLi88jqbQ0FH@phenom.ffwll.local>
-Mail-Followup-To: Tvrtko Ursulin <tursulin@ursulin.net>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, intel-xe@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, David Airlie <airlied@gmail.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, linux-doc@vger.kernel.org
-References: <20240627154754.74828-1-maarten.lankhorst@linux.intel.com>
- <20240627154754.74828-3-maarten.lankhorst@linux.intel.com>
- <20240627-paper-vicugna-of-fantasy-c549ed@houat>
- <6cb7c074-55cb-4825-9f80-5cf07bbd6745@linux.intel.com>
- <20240628-romantic-emerald-snake-7b26ca@houat>
- <70289c58-7947-4347-8600-658821a730b0@linux.intel.com>
- <40ef0eed-c514-4ec1-9486-2967f23824be@ursulin.net>
+        d=1e100.net; s=20230601; t=1722949323; x=1723554123;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8bydtEU8dpvIeQ2V0I0gbNTbGq+ZFreMIhNnwB6nrP8=;
+        b=Ve5QHX0N104yJrvnhuYn7X+zLYSdi47Ne7gpTVJNhveXQkT1P5CiAJxlA6MElgRw5y
+         Fq/l3luM+lI69XPWhBQvtRGfcvXQQUKT7CTN4fd9ZlPmb8AIohJNf/rNMuw6qe/f44po
+         RHXYQSqkQlm3sWKlQKC0Y84td550EVm3JcEbZgZDX/bxhVmWcrq2Ks3BTUatR5FFaDWh
+         VqrEIWqNg79WpI134FtjlvY75UDRxXmo5OVulKWhdpKvZL2PM7L4d+3nr3MwBReCA8D2
+         DuaRP2ss870IjyvLqYpdB/LuKm8OJk5Z0o0EW4+chTceBSRfRt6SRVh0Svb/8MjmtC8A
+         uoSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVb3uG/Hx/W3QNoTTy9D7N3XeqfeOHmsRiQWmkhWBK+AGqEilKJksCkuK9B4031+1T+wbX/Q7bFhEaXKwsUXkl4496Oib56LzIClGEG
+X-Gm-Message-State: AOJu0YxD9XkAHv9Q9oOMUKpwJymNBpP2kAZX7eOF1vRqjEI5TwSKF3hQ
+	gppUk3zQA1lw6xb8RmCdLAkWAQcuHM9IrpmbQHF99uj2bv7MaApt+ZhIROoLMjGqiKTs53rTeRH
+	JOab2gj2uAGgsjta2GrhwWIyTYLYfRGtUkmP1MG25AArIJt/UR7XLiZWlsguXcQ==
+X-Received: by 2002:a05:600c:4752:b0:426:6fd2:e14b with SMTP id 5b1f17b1804b1-428e6b0274emr120097365e9.11.1722949323372;
+        Tue, 06 Aug 2024 06:02:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRwjjANscg8+b9Kv9y6U+t1I48VOP6ZN/WR8pMZTv9tWk4uh7ippB+DqqreWBWrJFzurQ+lQ==
+X-Received: by 2002:a05:600c:4752:b0:426:6fd2:e14b with SMTP id 5b1f17b1804b1-428e6b0274emr120096965e9.11.1722949322849;
+        Tue, 06 Aug 2024 06:02:02 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e9d1fcsm178027965e9.42.2024.08.06.06.02.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 06:02:02 -0700 (PDT)
+Message-ID: <054324a3-bc77-426f-a751-06700aad394e@redhat.com>
+Date: Tue, 6 Aug 2024 15:02:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <40ef0eed-c514-4ec1-9486-2967f23824be@ursulin.net>
-X-Operating-System: Linux phenom 6.9.10-amd64 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/8] mm/mprotect: Remove NUMA_HUGE_PTE_UPDATES
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Dave Jiang <dave.jiang@intel.com>, Rik van Riel <riel@surriel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
+ Matthew Wilcox <willy@infradead.org>,
+ Rick P Edgecombe <rick.p.edgecombe@intel.com>,
+ Oscar Salvador <osalvador@suse.de>, Mel Gorman
+ <mgorman@techsingularity.net>, Andrew Morton <akpm@linux-foundation.org>,
+ Borislav Petkov <bp@alien8.de>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Huang Ying <ying.huang@intel.com>, "Kirill A . Shutemov"
+ <kirill@shutemov.name>, "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+ Dan Williams <dan.j.williams@intel.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Hugh Dickins <hughd@google.com>, x86@kernel.org,
+ Nicholas Piggin <npiggin@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Ingo Molnar <mingo@redhat.com>, Alex Thorlton <athorlton@sgi.com>
+References: <20240715192142.3241557-1-peterx@redhat.com>
+ <20240715192142.3241557-3-peterx@redhat.com>
+ <added2d0-b8be-4108-82ca-1367a388d0b1@redhat.com> <Zq-Y3qs5_PZW04bt@x1n>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Zq-Y3qs5_PZW04bt@x1n>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 01, 2024 at 06:01:41PM +0100, Tvrtko Ursulin wrote:
+> Right.
 > 
-> On 01/07/2024 10:25, Maarten Lankhorst wrote:
-> > Den 2024-06-28 kl. 16:04, skrev Maxime Ripard:
-> > > Hi,
-> > > 
-> > > On Thu, Jun 27, 2024 at 09:22:56PM GMT, Maarten Lankhorst wrote:
-> > > > Den 2024-06-27 kl. 19:16, skrev Maxime Ripard:
-> > > > > Hi,
-> > > > > 
-> > > > > Thanks for working on this!
-> > > > > 
-> > > > > On Thu, Jun 27, 2024 at 05:47:21PM GMT, Maarten Lankhorst wrote:
-> > > > > > The initial version was based roughly on the rdma and misc cgroup
-> > > > > > controllers, with a lot of the accounting code borrowed from rdma.
-> > > > > > 
-> > > > > > The current version is a complete rewrite with page counter; it uses
-> > > > > > the same min/low/max semantics as the memory cgroup as a result.
-> > > > > > 
-> > > > > > There's a small mismatch as TTM uses u64, and page_counter long pages.
-> > > > > > In practice it's not a problem. 32-bits systems don't really come with
-> > > > > > > =4GB cards and as long as we're consistently wrong with units, it's
-> > > > > > fine. The device page size may not be in the same units as kernel page
-> > > > > > size, and each region might also have a different page size (VRAM vs GART
-> > > > > > for example).
-> > > > > > 
-> > > > > > The interface is simple:
-> > > > > > - populate drmcgroup_device->regions[..] name and size for each active
-> > > > > >     region, set num_regions accordingly.
-> > > > > > - Call drm(m)cg_register_device()
-> > > > > > - Use drmcg_try_charge to check if you can allocate a chunk of memory,
-> > > > > >     use drmcg_uncharge when freeing it. This may return an error code,
-> > > > > >     or -EAGAIN when the cgroup limit is reached. In that case a reference
-> > > > > >     to the limiting pool is returned.
-> > > > > > - The limiting cs can be used as compare function for
-> > > > > >     drmcs_evict_valuable.
-> > > > > > - After having evicted enough, drop reference to limiting cs with
-> > > > > >     drmcs_pool_put.
-> > > > > > 
-> > > > > > This API allows you to limit device resources with cgroups.
-> > > > > > You can see the supported cards in /sys/fs/cgroup/drm.capacity
-> > > > > > You need to echo +drm to cgroup.subtree_control, and then you can
-> > > > > > partition memory.
-> > > > > > 
-> > > > > > Signed-off-by: Maarten Lankhorst<maarten.lankhorst@linux.intel.com>
-> > > > > > Co-developed-by: Friedrich Vock<friedrich.vock@gmx.de>
-> > > > > I'm sorry, I should have wrote minutes on the discussion we had with TJ
-> > > > > and Tvrtko the other day.
-> > > > > 
-> > > > > We're all very interested in making this happen, but doing a "DRM"
-> > > > > cgroup doesn't look like the right path to us.
-> > > > > 
-> > > > > Indeed, we have a significant number of drivers that won't have a
-> > > > > dedicated memory but will depend on DMA allocations one way or the
-> > > > > other, and those pools are shared between multiple frameworks (DRM,
-> > > > > V4L2, DMA-Buf Heaps, at least).
-> > > > > 
-> > > > > This was also pointed out by Sima some time ago here:
-> > > > > https://lore.kernel.org/amd-gfx/YCVOl8%2F87bqRSQei@phenom.ffwll.local/
-> > > > > 
-> > > > > So we'll want that cgroup subsystem to be cross-framework. We settled on
-> > > > > a "device" cgroup during the discussion, but I'm sure we'll have plenty
-> > > > > of bikeshedding.
-> > > > > 
-> > > > > The other thing we agreed on, based on the feedback TJ got on the last
-> > > > > iterations of his series was to go for memcg for drivers not using DMA
-> > > > > allocations.
-> > > > > 
-> > > > > It's the part where I expect some discussion there too :)
-> > > > > 
-> > > > > So we went back to a previous version of TJ's work, and I've started to
-> > > > > work on:
-> > > > > 
-> > > > >     - Integration of the cgroup in the GEM DMA and GEM VRAM helpers (this
-> > > > >       works on tidss right now)
-> > > > > 
-> > > > >     - Integration of all heaps into that cgroup but the system one
-> > > > >       (working on this at the moment)
-> > > > 
-> > > > Should be similar to what I have then. I think you could use my work to
-> > > > continue it.
-> > > > 
-> > > > I made nothing DRM specific except the name, if you renamed it the device
-> > > > resource management cgroup and changed the init function signature to take a
-> > > > name instead of a drm pointer, nothing would change. This is exactly what
-> > > > I'm hoping to accomplish, including reserving memory.
-> > > 
-> > > I've started to work on rebasing my current work onto your series today,
-> > > and I'm not entirely sure how what I described would best fit. Let's
-> > > assume we have two KMS device, one using shmem, one using DMA
-> > > allocations, two heaps, one using the page allocator, the other using
-> > > CMA, and one v4l2 device using dma allocations.
-> > > 
-> > > So we would have one KMS device and one heap using the page allocator,
-> > > and one KMS device, one heap, and one v4l2 driver using the DMA
-> > > allocator.
-> > > 
-> > > Would these make different cgroup devices, or different cgroup regions?
-> > 
-> > Each driver would register a device, whatever feels most logical for that device I suppose.
-> > 
-> > My guess is that a prefix would also be nice here, so register a device with name of drm/$name or v4l2/$name, heap/$name. I didn't give it much thought and we're still experimenting, so just try something. :)
-> > 
-> > There's no limit to amount of devices, I only fixed amount of pools to match TTM, but even that could be increased arbitrarily. I just don't think there is a point in doing so.
+> I don't have a reason to change numa_pte_updates semantics yet so far, but
+> here there's the problem where numa_huge_pte_updates can be ambiguous when
+> there is even PUD involved.
 > 
-> Do we need a plan for top level controls which do not include region names?
-> If the latter will be driver specific then I am thinking of ease of
-> configuring it all from the outside. Especially considering that one cgroup
-> can have multiple devices in it.
+> In general, I don't know how I should treat this counter in PUD path even
+> if NUMA isn't involved in dax yet; it can be soon involved if we move on
+> with using this same path for hugetlb, or when 1G thp can be possible (with
+> Yu Zhao's TAO?).
+
+We shouldn't bother about it in the PUD path at all I think. Especially 
+as long as NUMA hinting doesn't apply to any of what we would handle on 
+the PUD path :)
+
 > 
-> Second question is about double accounting for shmem backed objects. I think
-> they will be seen, for drivers which allocate backing store at buffer
-> objects creation time, under the cgroup of process doing the creation, in
-> the existing memory controller. Right?
+> One other thing I can do is I drop this patch, ignore NUMA_HUGE_PTE_UPDATES
+> in PUD dax processing for now.  It'll work for this series, but it'll still
+> be a problem later.  I figured maybe we should simply drop it from now.
 
-We currently don't set __GFP_ACCOUNT respectively use GFP_KERNEL_ACCOUNT,
-so no. Unless someone allocates them with GFP_USER ...
+It probably shouldn't block your other fixes and we should likely 
+discuss that separately.
 
-> Is there a chance to exclude those from there and only have them in this new
-> controller? Or would the opposite be a better choice? That is, not see those
-> in the device memory controller but only in the existing one.
+I agree that we should look into dropping that PMD counter completely.
 
-I missed this, so jumping in super late. I think guidance from Tejun was
-to go the other way around: Exclude allocations from normal system
-memory from device cgroups and instead make sure it's tracked in the
-existing memcg.
-
-Which might mean we need memcg shrinkers and the assorted pain ...
-
-Also I don't think we ever reached some agreement on where things like cma
-allocations should be accounted for in this case.
--Sima
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Cheers,
+
+David / dhildenb
+
 
