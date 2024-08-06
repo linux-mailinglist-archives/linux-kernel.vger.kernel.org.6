@@ -1,305 +1,358 @@
-Return-Path: <linux-kernel+bounces-275866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B5AB948B41
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:26:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A2E948B45
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30954284DF8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:26:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29ACB1C21FE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CA21BD4F0;
-	Tue,  6 Aug 2024 08:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4781BD4E7;
+	Tue,  6 Aug 2024 08:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iOQ3S99E"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MPre/Vk8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uEoBcGmZ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MPre/Vk8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uEoBcGmZ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11005166F17;
-	Tue,  6 Aug 2024 08:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722932741; cv=fail; b=RABhOauigKeQcxul2DaVlgecJFQbPlfg4kJjukXTE/fIkp0ElfdUPefmjnfrRil+drACY2HWcTpLkKlJA7nj2s3R+AVnY3cKehHD/BkS5lm7Ix/PlJ5VGQVOUCV8dUQzXRsso1ZygDRVLzIxAoeB2zm4NhEbG/b4ZXZcP+/Qe58=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722932741; c=relaxed/simple;
-	bh=6kw1ufUhd7TmcdSv05MOt5fZJ8Nndwtya5jPEmW0gCA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YUARNdoTu79rz+61XVrWIutlvovn1i7CCqNwS96itQCK7JTCdEFyvp68eI5kdsJAZgCshLjLjmve/kfqsjQPad6izvwmKmvUn9KFmRX8YJFtcAvXcE28fuRwgwQ2uv8YbZHSFHt9hX1WHKPIC6tN9X8VCir1kyEvDBdyO4IqEYI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iOQ3S99E; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722932740; x=1754468740;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=6kw1ufUhd7TmcdSv05MOt5fZJ8Nndwtya5jPEmW0gCA=;
-  b=iOQ3S99Elb3Hkr3P8yNpHlnxI72sVBpesnzjclGFEdYwqlnIA1m9xQjI
-   l9rAfynwD9zaaKbIeFQvP6MzPV5WPr4DztvKHNY2gUkcQpxha0cOgIqKg
-   zntjEV/fATI46xdmhp1QYkrIEG0NGztml9hl8ngolBujnKHFjc1tcuz0F
-   ZJjomemGdjOZGQ985Ht5r2Pm6jjiFrH+g/57P0NzY6ZLHe6P5CvA3Zvf9
-   jefvTlcJhbEoVrbjRHLv8iaypZVqV1ntrJUnrfF0ruKwQC9mWvRUU/1ib
-   +Cn5cPJQRTj9EO6w2ic+BDI1ahNUkKlGjk4WXP/bEbqCg/+i7VLSNWYVl
-   A==;
-X-CSE-ConnectionGUID: EnYnHL+aR3uHS+VANJjb6A==
-X-CSE-MsgGUID: 5cvVP5srSHWDaljtlRSSEw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="32338068"
-X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
-   d="scan'208";a="32338068"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 01:25:39 -0700
-X-CSE-ConnectionGUID: Cq166OByRFqNDQQDt8eNnA==
-X-CSE-MsgGUID: V8yg5wDqQ8aMTNvLWLBP8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
-   d="scan'208";a="56528507"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Aug 2024 01:25:37 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 6 Aug 2024 01:25:36 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 6 Aug 2024 01:25:36 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 6 Aug 2024 01:25:36 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 6 Aug 2024 01:25:35 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bmEJ2FGELqQZWT0QGc+aYRc+6NJAxF0HeRQvq0roV28PCP0pamzT++vo4LMRegy60oR4hxXuQJ8zHzWJfQnV+iFSvdD/UhOSkTVVRFTBooQF2vPrrzgkM39CyvDSy5C0yApqHy0ydJvxfUYwsZAAsPsl9eyvQYNlKQLgyvCA+QOu+WTgUezyo/qrTJVtUQvlizCwBqXYjxd21D7NCxguZQBrsx+f+7nSdaaIoOty6+yFNjAau6yAQJGd9o7/p0DJKQ1F5PfJuTxFxrCGcGcvZ/8r4E13/ktmG1YwrEtNSAcU3WdgLSEK/PoC9DYfx4HmIMe9NcDmQ5MguxW2WtwnZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LqwwwZNC7oWmhY8qFXTOYHtRmoEEns9S8RSuPH5dyXc=;
- b=XxlrvrKw0a9xxT3EE0EWeB64jd7lW1OIjeAiQ+y3ThGasDouD/3M+dyopOq+mimpXr1mUShzgpnCsWyhegC84AOk8Yyl1lyQ5+3zVwhkIQhnXP0pqbPcaHgTmOGWfvkcXHJIyZ3XSIjaVeAZsMfIiSLf6dzJWAYGGsYx78CZ5U/1LIjeDnRRR4qeIPVeDAlTsiMxzwTJyIQda0uV8lpZYIwa0M+rWURRMICW7iN1xuH83h7PouXhdyihyZSDRZHRIuoO1uLJLH/Aqdzmn/4p7G++TAIAJTBH/Fc/8AcZB5gWHO5UjxQAyKTIU0qNzi5lSeLetppRBKYLMGKh1KgU3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by SJ0PR11MB5168.namprd11.prod.outlook.com (2603:10b6:a03:2dc::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.28; Tue, 6 Aug
- 2024 08:25:33 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%3]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
- 08:25:33 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>
-CC: "robin.murphy@arm.com" <robin.murphy@arm.com>, "joro@8bytes.org"
-	<joro@8bytes.org>, "will@kernel.org" <will@kernel.org>, "shuah@kernel.org"
-	<shuah@kernel.org>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Subject: RE: [PATCH v2 2/3] iommu/dma: Support MSIs through nested domains
-Thread-Topic: [PATCH v2 2/3] iommu/dma: Support MSIs through nested domains
-Thread-Index: AQHa5Tymvv0QPh+hX0iHTvry+ddr+7IZ6L5A
-Date: Tue, 6 Aug 2024 08:25:33 +0000
-Message-ID: <BN9PR11MB5276E59FBD67B1119B3E2A858CBF2@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <cover.1722644866.git.nicolinc@nvidia.com>
- <b1b8ff9c716f22f524be0313ad12e5c6d10f5bd4.1722644866.git.nicolinc@nvidia.com>
-In-Reply-To: <b1b8ff9c716f22f524be0313ad12e5c6d10f5bd4.1722644866.git.nicolinc@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|SJ0PR11MB5168:EE_
-x-ms-office365-filtering-correlation-id: bbfa5edb-ad19-4aa6-f74e-08dcb5f1573a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?XTrp2SdbuJ8nIpVER4CDGKufG66aUGdxxZ6hTjFiPg/8Rda0HBbEprqNqlnl?=
- =?us-ascii?Q?4oRGMqlNYC89OL337SLzwvE7P0vLyVK/YIdyg3OthQaM2eLEpyuhkLNW1lHX?=
- =?us-ascii?Q?14GotYS6DbMtgJlujDXb2qpttWpJHO2NlKB0bMaQluWMF8ozaiUFBJKLqr1T?=
- =?us-ascii?Q?QzPx4Saa4RrPxQsgxhqMKqBkolDxnrece0GbtfdwVKxqWBftkBUFhicnDNKu?=
- =?us-ascii?Q?WIsB9hFn9Ytsf/L5FGFEmJ2QA+YZO2/TFwZ17bEZhnk61JNnDPTQHb3HfEWm?=
- =?us-ascii?Q?yJYEQFpBSb8K5Ff6D9Aqce/hsdUsNLoxbOcs8ZXPOYIAWumyQvZAuKfPvhbc?=
- =?us-ascii?Q?TYSxsmpP+gnJOnz61XW+t7oyegP4g51qIMs3cyHLDGz+IAbHmzQDicGAK/7X?=
- =?us-ascii?Q?UNkeXWLLHsbjUiH/YOozZXaAfVXLQP7Kq+ezAG5dIjwFG6gxAnxquQ+TWWX3?=
- =?us-ascii?Q?4FLn8eWh5+cOOAq84cKZuthVWkOrG0SnJ/3B6alAIY29bIDiltuouRBCER4R?=
- =?us-ascii?Q?7dXcrhhM2TMvsX1ego5rNqRopNEyeEmgLk3M4W8ijVmqBzATAsavWDPTSn6f?=
- =?us-ascii?Q?fPH2f9DuuLYX8M7YSvCNFcs2hXCjutGORJvxzZtn0B4HkmifmFm2bsMUZoWR?=
- =?us-ascii?Q?KH8O3yRCUc+YPs5kyQkYwPeoeTkkZTU4oManZ9vPo1dIa6QsbmbhdMc73uac?=
- =?us-ascii?Q?i7EHTAeO2RLR4oEjzpYMlfLlXYLIc4oSwh7k/R/ckjPAIQe0l/JgweRuIIha?=
- =?us-ascii?Q?Q+/VxOHSj0aEX/rmlsFuzfd8R/6lBHPttzPW25t2/nLZj5g3rd7HXDhkF6HQ?=
- =?us-ascii?Q?ftO2LSB76QgmkOQx4LbPWSCZAiaLvDML9YyaGxDlk9yHLrpbwGvRPM0XaNFH?=
- =?us-ascii?Q?EbIIPAdKHYDaMp8LiJY9c/7m2O9qkE5dnQkCtnsAhWqcRAusQWidaKQ4Lccm?=
- =?us-ascii?Q?39BFAM6VXYU+feG/4vaRAIgBbJrHoR8MFMk/7B8nfi04Ug27t5Jay6qz8Fyt?=
- =?us-ascii?Q?e5sXQQlPDJN+lP/8jGL8ajCkDlhbl3g/tiV/o5Av+hX9CWU7paLey6gg/8rg?=
- =?us-ascii?Q?kDI9xjVOrD02OS/aOC3ah0d0X8YyTwMvXq5snAEFJKnHfVoWkWhERc+VIvCT?=
- =?us-ascii?Q?XZRV86rQV12cX5C1hbnRvcn2HYH+iP+Rlj4y3KuUy+h4mPbPammNHr9BvqjR?=
- =?us-ascii?Q?5Tn7z8MXbCKyiSZmJ8L+lhW8mmHGMLHY47aULdi2k475Z7kW65FRzqbCCqzf?=
- =?us-ascii?Q?03szSC/2WcT096eW69Th8VY4vLGGWyaWXi7k97xx9uwuWqof0K2Gpu5QBSc6?=
- =?us-ascii?Q?Ypn511GSlcNVehIIlTZ75FFEdatJk7sqToUIkfzXi5QobBVgq39O1OBLljYf?=
- =?us-ascii?Q?mxAnKk9cCHPeGmOx5iK4Xc2ka8NaR/BbolvrYYEQG7reG5Lkbw=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?RRds9/V46UwLIdaQbb1dIvq03+2J/Ph8UNJGbgnBQNRwN9dUsuwf68N8+T/a?=
- =?us-ascii?Q?epiPPbqeOEXunAZg1aOrdVqgrTd2WedWCWc3RkahFiDAj5km+KBjggKWOjSq?=
- =?us-ascii?Q?pEu+6RUnh/celQomDjPDs5Bf7FhtKilZuXRM3KfNnlaQUdDuyQb80n6aJ4Dl?=
- =?us-ascii?Q?5kc+OScFSQTQw1L2KWZgRmWoMqc5DTTn9/Y7YcxnmGBB0nqN0qVrLv3i/tWn?=
- =?us-ascii?Q?y5tWORmJkJqlR4ZGA9KyzIxhKGaqP7xJFn6RK1wP4N+DgH5A4hw/q1CYaVWb?=
- =?us-ascii?Q?NzmwfU3z0+4WeNlMYlq5o9/lKz+oy6QCG3aVG9EqTJR1bKv2GItXeRizw52d?=
- =?us-ascii?Q?U47aJ9lanp32v+/QUyXc1uTrY2Bk8OBtK0L5R747uhFSevPNYA4hVBJTzsL7?=
- =?us-ascii?Q?E4hOhOWDbZM7/iMn1zSSAp08iCTLbhxDpm05xKcJbEu3JdvgUfuDgcQdCYZK?=
- =?us-ascii?Q?uvh4Ygq068r/43vgqALtTQfHkG8dXCwrmJU/Bld/gtcOiU349qIiIOCDb4m6?=
- =?us-ascii?Q?CEl8FLfhQl7JxOZ3SKBI86unqs6WekbxyPTVS6rHtGC77/Kuv+Z8KRi6ByBH?=
- =?us-ascii?Q?hdArYANUuFbRDKr/6B2sXCHO9Xc/jM6CEtZa6jty6tr8ZffU6F/vuCsxfLF0?=
- =?us-ascii?Q?ylxZxxQBUJfsRuEZGZ1BzrkY3q8JTBt1SRER6Ax52E0o2FCLL2WY3jB7b0e/?=
- =?us-ascii?Q?b5jqFfN63itLHNWOi74Cqoxe7BNE6IzOnYuxC6piou6pbwOuh/hT/ub5mjfG?=
- =?us-ascii?Q?Ews3LIeWEuVf/CcbuWJ2kJ+9+prnHNH4JT7YdbEGprtbFDu8VZcRDYeBmLmn?=
- =?us-ascii?Q?8VDO32ADaiE7A4DjnLSir3lou10kA1dyr5K3S7uyoZIDiSnxpRSNNP62eTji?=
- =?us-ascii?Q?Laro+wQaNBudwDj0ZNSLg2DNeD+ABP3s1TxUgbJc5FKi+tsvgPTRvM/666W3?=
- =?us-ascii?Q?kC1eRKLH9yZ8J+6TIM7Tl876oszhhtZ9/Dc0RBEW+ICpFvl0CB7VL8SIpC88?=
- =?us-ascii?Q?QvzEqea441p3KsgWuIO/7GkxiBFo55J7ysS5AXh66rzs2Rmna/la8AjP8HE0?=
- =?us-ascii?Q?vOAY06kvd1qpGJOlQRpvzVkm6DbNZWSL7Kbsj5njJm6T2AK6Vps36n1IzNw2?=
- =?us-ascii?Q?Z7p8PlA/KpoBSCW8J0NtIVODNIhEazMZVJpjncg9swJJe2Ai5G+i+ss9T3+9?=
- =?us-ascii?Q?owr+du5TghAP5vGaQ5K7kXCg9g4waxiIgARlwJvIIjEfgxd3Lau32Yg4SOB1?=
- =?us-ascii?Q?d9bO0wHb3xqfUR4Qqc20mXHUqVrcUpZt6h5K8L+ws5/9HoFsqIerrJIV5Y4O?=
- =?us-ascii?Q?RFWsFzGEbYghB4Q1MbsAJxhej8UEHPvcKGmFcvdzF1i8Z32nxKq0LLQvVnPF?=
- =?us-ascii?Q?k95q7cqyKLklFg3h7BZZK0RYuUGcTzMYVwjWplnkcmCCprlVbJUIWyhIIf+e?=
- =?us-ascii?Q?hCiQeiKKNPBLvLn+2XbtfV5/7/UQmguMwCGLnfQwCr59YpEbRMJl7jFH+Lo+?=
- =?us-ascii?Q?tnmdKDWJTKxKHKqGFJGMC2Hbc6LxCU8Homw4ALk+RFKmb4UQRSg0i7w2J5/D?=
- =?us-ascii?Q?aDksviK2mfWHd0NtxLZCW1P6pnmtJ/n6dm+q3rst?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406651BD013;
+	Tue,  6 Aug 2024 08:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722932763; cv=none; b=mcgboYDDAQYY0bl02cUN2lW8UzF3v6a1hIvhxjEcNgeS/uJSelwSlZx9NIDM5axkH1Re8hq7rKOF/nCa5MohJt2QtPWjNp80NYIehsORzHUIH5d5rViqBoX70I1ashOMczGe2k29pYVcJsSmP3aVVeUXjAlM/p3Fp6u3zaubKmE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722932763; c=relaxed/simple;
+	bh=Uxq8yj0YGBfIwNGoCiqKWcjoXClhZfUdV7Ik356EHQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qeKPSXUwoSKjvP8ZD8rowC/OgsCkWOf9m4QCyVbz5XeJPWHj4f70gGpWsTWfIxZqw9sx5atAseeYqzs0X8IWR72mnLldEOjWh+GiDeI0wcdDNCcErmrd/TkZyH9Yz5r/PEKLOyo6SRURY3y7MV6nRKUlOv1U1DK/iXjAXYUbz9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MPre/Vk8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uEoBcGmZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MPre/Vk8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uEoBcGmZ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4B2061F8D9;
+	Tue,  6 Aug 2024 08:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722932759; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3zFLW3UmxKUVVXjIggs++B4K08fotJs+XXT3n0klgn8=;
+	b=MPre/Vk8Sc5pln8aK3+Jq/1MRwUaSFiWmNBSNaEEqz9z2BxLQjlJaMQvwXuEs5GaD3WhbL
+	GlyIzELm9WFI65ULaH0ciWyyR/uODHOCidorvO6Ty+UhihoHvzIYuViK//m6eE4KkpWXBx
+	lFFF3NzX3WksuwpsujiB4yFgc4Gntu8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722932759;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3zFLW3UmxKUVVXjIggs++B4K08fotJs+XXT3n0klgn8=;
+	b=uEoBcGmZF1VoYusw7QT8Zb98ADYsV7Jwry6aC82vLjkTaERH2RAPV708OoZmrCZLEQlEwY
+	VYUiCedJ+wY9caCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="MPre/Vk8";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=uEoBcGmZ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722932759; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3zFLW3UmxKUVVXjIggs++B4K08fotJs+XXT3n0klgn8=;
+	b=MPre/Vk8Sc5pln8aK3+Jq/1MRwUaSFiWmNBSNaEEqz9z2BxLQjlJaMQvwXuEs5GaD3WhbL
+	GlyIzELm9WFI65ULaH0ciWyyR/uODHOCidorvO6Ty+UhihoHvzIYuViK//m6eE4KkpWXBx
+	lFFF3NzX3WksuwpsujiB4yFgc4Gntu8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722932759;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3zFLW3UmxKUVVXjIggs++B4K08fotJs+XXT3n0klgn8=;
+	b=uEoBcGmZF1VoYusw7QT8Zb98ADYsV7Jwry6aC82vLjkTaERH2RAPV708OoZmrCZLEQlEwY
+	VYUiCedJ+wY9caCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3FC5313770;
+	Tue,  6 Aug 2024 08:25:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NhKODxfesWYpawAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 06 Aug 2024 08:25:59 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id DD05BA0762; Tue,  6 Aug 2024 10:25:58 +0200 (CEST)
+Date: Tue, 6 Aug 2024 10:25:58 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mirsad Todorovac <mtodorovac69@gmail.com>
+Cc: Jan Kara <jack@suse.cz>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Kees Cook <kees@kernel.org>, Christian Brauner <brauner@kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>,
+	reiserfs-devel@vger.kernel.org
+Subject: Re: [PROBLEM linux-next] =?utf-8?Q?fs=2Freiserfs=2Fdo=5Fbalan=2Ec?=
+ =?utf-8?B?OjExNDc6MTM6IGVycm9yOiB2YXJpYWJsZSDigJhsZWFmX21p?=
+ =?utf-8?B?4oCZ?= set but not used [-Werror=unused-but-set-variable]
+Message-ID: <20240806082558.ytq673mhuji32koz@quack3>
+References: <39591663-9151-42f9-9906-4684acaa685c@gmail.com>
+ <20240715172826.wbmlg52ckdxze7sg@quack3>
+ <9aec9df8-ca82-4b2f-b227-5e318c66b97e@gmail.com>
+ <20240717154434.jba66jupaf566tes@quack3>
+ <83c22d71-8706-4779-8d20-6b18a75c95a5@gmail.com>
+ <20240718093943.qtyc2bdt4oerjuek@quack3>
+ <25a65d69-5f04-433b-a5a3-5fd8dbe787aa@gmail.com>
+ <20240805130415.ws3t7sgvcg7cj5ev@quack3>
+ <38de6ac2-a7d8-41dc-a065-68ce60d5b662@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bbfa5edb-ad19-4aa6-f74e-08dcb5f1573a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2024 08:25:33.4622
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dij3yGevUlMrzP6t4KYJwgdQsrIwAvAt93/wEZ3nOqDGuBGqX179b3bKk8Stvln7ASnbjVGlTzR5yv870ZifVg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5168
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <38de6ac2-a7d8-41dc-a065-68ce60d5b662@gmail.com>
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-1.01 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -1.01
+X-Rspamd-Queue-Id: 4B2061F8D9
 
-> From: Nicolin Chen <nicolinc@nvidia.com>
-> Sent: Saturday, August 3, 2024 8:32 AM
->=20
-> From: Robin Murphy <robin.murphy@arm.com>
->=20
-> Currently, iommu-dma is the only place outside of IOMMUFD and drivers
-> which might need to be aware of the stage 2 domain encapsulated within
-> a nested domain. This would be in the legacy-VFIO-style case where we're
+On Mon 05-08-24 23:24:06, Mirsad Todorovac wrote:
+> On 8/5/24 15:04, Jan Kara wrote:
+> > On Fri 02-08-24 18:31:46, Mirsad Todorovac wrote:
+> >> On 7/18/24 11:39, Jan Kara wrote:
+> >>> On Thu 18-07-24 00:14:24, Mirsad Todorovac wrote:
+> >>>>
+> >>>>
+> >>>> On 7/17/24 17:44, Jan Kara wrote:
+> >>>>> On Tue 16-07-24 19:17:05, Mirsad Todorovac wrote:
+> >>>>>> On 7/15/24 19:28, Jan Kara wrote:
+> >>>>>>> Hello Mirsad!
+> >>>>>>>
+> >>>>>>> On Wed 10-07-24 20:09:27, Mirsad Todorovac wrote:
+> >>>>>>>> On the linux-next vanilla next-20240709 tree, I have attempted the seed KCONFIG_SEED=0xEE7AB52F
+> >>>>>>>> which was known from before to trigger various errors in compile and build process.
+> >>>>>>>>
+> >>>>>>>> Though this might seem as contributing to channel noise, Linux refuses to build this config,
+> >>>>>>>> treating warnings as errors, using this build line:
+> >>>>>>>>
+> >>>>>>>> $ time nice make W=1 -k -j 36 |& tee ../err-next-20230709-01a.log; date
+> >>>>>>>>
+> >>>>>>>> As I know that the Chief Penguin doesn't like warnings, but I am also aware that there are plenty
+> >>>>>>>> left, there seems to be more tedious work ahead to make the compilers happy.
+> >>>>>>>>
+> >>>>>>>> The compiler output is:
+> >>>>>>>>
+> >>>>>>>> ---------------------------------------------------------------------------------------------------------
+> >>>>>>>> fs/reiserfs/do_balan.c: In function ‘balance_leaf_new_nodes_paste_whole’:
+> >>>>>>>> fs/reiserfs/do_balan.c:1147:13: error: variable ‘leaf_mi’ set but not used [-Werror=unused-but-set-variable]
+> >>>>>>>>  1147 |         int leaf_mi;
+> >>>>>>>>       |             ^~~~~~~
+> >>>>>>>
+> >>>>>>> Frankly, I wouldn't bother with reiserfs. The warning is there for ages,
+> >>>>>>> the code is going to get removed in two releases, so I guess we can live
+> >>>>>>> with these warnings for a few more months...
+> >>>>>>
+> >>>>>> In essence I agree with you, but for sentimental reasons I would like to
+> >>>>>> keep it because it is my first journaling Linux system on Knoppix 🙂
+> >>>>>
+> >>>>> As much as I understand your sentiment (I have a bit of history with that
+> >>>>> fs as well) the maintenance cost isn't really worth it and most fs folks
+> >>>>> will celebrate when it's removed. We have already announced the removal
+> >>>>> year and half ago and I'm fully for executing that plan at the end of this
+> >>>>> year.
+> >>>>>
+> >>>>>> Patch is also simple and a no-brainer, as proposed by Mr. Cook:
+> >>>>>>
+> >>>>>> -------------------------------><------------------------------------------
+> >>>>>> diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
+> >>>>>> index 5129efc6f2e6..fbe73f267853 100644
+> >>>>>> --- a/fs/reiserfs/do_balan.c
+> >>>>>> +++ b/fs/reiserfs/do_balan.c
+> >>>>>> @@ -1144,7 +1144,9 @@ static void balance_leaf_new_nodes_paste_whole(struct tree_balance *tb,
+> >>>>>>  {
+> >>>>>>  	struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
+> >>>>>>  	int n = B_NR_ITEMS(tbS0);
+> >>>>>> +#ifdef CONFIG_REISERFS_CHECK
+> >>>>>>  	int leaf_mi;
+> >>>>>> +#endif
+> >>>>>
+> >>>>> Well, I would not like this even for actively maintained code ;) If you
+> >>>>> want to silence these warnings in this dead code, then I could live with
+> >>>>> something like:
+> >>>>>
+> >>>>> #if defined( CONFIG_REISERFS_CHECK )
+> >>>>> #define RFALSE(cond, format, args...) __RASSERT(!(cond), ....)
+> >>>>> #else
+> >>>>> - #define RFALSE( cond, format, args... ) do {;} while( 0 )
+> >>>>> + #define RFALSE( cond, format, args... ) do { (void)cond; } while( 0 )
+> >>>>> #endif
+> >>>>
+> >>>> Yes, one line change is much smarter than 107 line patch of mine :-)
+> >>>>
+> >>>> Verified, and this line solved all the warnings:
+> >>>>
+> >>>>   CC      fs/reiserfs/bitmap.o
+> >>>>   CC      fs/reiserfs/do_balan.o
+> >>>>   CC      fs/reiserfs/namei.o
+> >>>>   CC      fs/reiserfs/inode.o
+> >>>>   CC      fs/reiserfs/file.o
+> >>>>   CC      fs/reiserfs/dir.o
+> >>>>   CC      fs/reiserfs/fix_node.o
+> >>>>   CC      fs/reiserfs/super.o
+> >>>>   CC      fs/reiserfs/prints.o
+> >>>>   CC      fs/reiserfs/objectid.o
+> >>>>   CC      fs/reiserfs/lbalance.o
+> >>>>   CC      fs/reiserfs/ibalance.o
+> >>>>   CC      fs/reiserfs/stree.o
+> >>>>   CC      fs/reiserfs/hashes.o
+> >>>>   CC      fs/reiserfs/tail_conversion.o
+> >>>>   CC      fs/reiserfs/journal.o
+> >>>>   CC      fs/reiserfs/resize.o
+> >>>>   CC      fs/reiserfs/item_ops.o
+> >>>>   CC      fs/reiserfs/ioctl.o
+> >>>>   CC      fs/reiserfs/xattr.o
+> >>>>   CC      fs/reiserfs/lock.o
+> >>>>   CC      fs/reiserfs/procfs.o
+> >>>>   AR      fs/reiserfs/built-in.a
+> >>>>
+> >>>> Just FWIW, back then in year 2000/2001 a journaling file system on my
+> >>>> Knoppix box was a quantum leap - it would simply replay the journal if
+> >>>> there was a power loss before shutdown. No several minutes of fsck.
+> >>>
+> >>> Well, there was also ext3 at that time already :-) That's where I became
+> >>> familiar with the idea of journalling. Reiserfs was interesting to me
+> >>> because of completely different approach to on-disk format (b-tree with
+> >>> formatted items), packing of small files / file tails (interesting in 2000,
+> >>> not so much 20 years later) and reasonable scalability for large
+> >>> directories.
+> >>>
+> >>>> I think your idea is great and if you wish a patch could be submitted
+> >>>> after the merge window.
+> >>>
+> >>> I'll leave it up to you. If the warnings annoy you, send the patch along
+> >>> the lines I've proposed (BTW (void)cond should better be (void)(cond) for
+> >>> macro safety) and I'll push it to Linus.
+> >>>
+> >>> 								Honza
+> >>
+> >> Hi, Jan,
+> >>
+> >> After a short break, I just tried a full build with this hack against the vanilla
+> >> linux-next tree:
+> >>
+> >> #define RFALSE( cond, format, args... ) do { (void)(cond); } while( 0 )
+> >>
+> >> and it breaks at least here:
+> >>
+> >> In file included from fs/reiserfs/do_balan.c:15:
+> >> fs/reiserfs/do_balan.c: In function ‘balance_leaf_when_delete_del’:
+> >> fs/reiserfs/do_balan.c:86:28: error: ‘ih’ undeclared (first use in this function)
+> >>    86 |         RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
+> >>       |                            ^~
+> >> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
+> >>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
+> >>       |                                                      ^~~~
+> >> ./include/linux/byteorder/generic.h:91:21: note: in expansion of macro ‘__le16_to_cpu’
+> >>    91 | #define le16_to_cpu __le16_to_cpu
+> >>       |                     ^~~~~~~~~~~~~
+> >> fs/reiserfs/do_balan.c:86:16: note: in expansion of macro ‘ih_item_len’
+> >>    86 |         RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
+> >>       |                ^~~~~~~~~~~
+> >> fs/reiserfs/do_balan.c:86:28: note: each undeclared identifier is reported only once for each function it appears in
+> >>    86 |         RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
+> >>       |                            ^~
+> >> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
+> >>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
+> >>       |                                                      ^~~~
+> >> ./include/linux/byteorder/generic.h:91:21: note: in expansion of macro ‘__le16_to_cpu’
+> >>    91 | #define le16_to_cpu __le16_to_cpu
+> >>       |                     ^~~~~~~~~~~~~
+> >> fs/reiserfs/do_balan.c:86:16: note: in expansion of macro ‘ih_item_len’
+> >>    86 |         RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
+> >>       |                ^~~~~~~~~~~
+> >> fs/reiserfs/do_balan.c: In function ‘do_balance_starts’:
+> >> fs/reiserfs/do_balan.c:1800:16: error: implicit declaration of function ‘check_before_balancing’ [-Werror=implicit-function-declaration]
+> >>  1800 |         RFALSE(check_before_balancing(tb), "PAP-12340: locked buffers in TB");
+> >>       |                ^~~~~~~~~~~~~~~~~~~~~~
+> >> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
+> >>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
+> >>       |                                                      ^~~~
+> >> cc1: some warnings being treated as errors
+> >> make[7]: *** [scripts/Makefile.build:244: fs/reiserfs/do_balan.o] Error 1
+> >>   CC [M]  fs/reiserfs/stree.o
+> >> In file included from fs/reiserfs/stree.c:15:
+> >> fs/reiserfs/stree.c: In function ‘reiserfs_delete_item’:
+> >> fs/reiserfs/stree.c:1283:24: error: ‘mode’ undeclared (first use in this function)
+> >>  1283 |                 RFALSE(mode != M_DELETE, "PAP-5320: mode must be M_DELETE");
+> >>       |                        ^~~~
+> >> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
+> >>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
+> >>       |                                                      ^~~~
+> >> fs/reiserfs/stree.c:1283:24: note: each undeclared identifier is reported only once for each function it appears in
+> >>  1283 |                 RFALSE(mode != M_DELETE, "PAP-5320: mode must be M_DELETE");
+> >>       |                        ^~~~
+> >> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
+> >>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
+> >>       |                                                      ^~~~
+> >>
+> >> Last time it compiled, but now it expects variables in (void)(cond) expressions to be defined.
+> >>
+> >> I have try to fix those warnings, submitting the patch for review:
+> > 
+> > Yeah, this looks ok to me.
+> > 
+> > 								Honza
+> 
+> Hi, Jan,
+> 
+> As I understood from the previous experiences, and the Code of Conduct,
+> and explicit Reviwed-by: or Acked-by: is required ...
+> 
+> Or otherwise, the Suggested-by: is used?
 
-why is it a legacy-VFIO-style? We only support nested in IOMMUFD.
+So I was waiting for you to submit official patch with proper changelog and
+your Signed-off-by. Then I can pick up the patch into my tree and merge it. 
 
-> using host-managed MSIs with an identity mapping at stage 1, where it is
-> the underlying stage 2 domain which owns an MSI cookie and holds the
-> corresponding dynamic mappings. Hook up the new op to resolve what we
-> need from a nested domain.
->=20
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  drivers/iommu/dma-iommu.c | 18 ++++++++++++++++--
->  include/linux/iommu.h     |  4 ++++
->  2 files changed, 20 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index 7b1dfa0665df6..05e04934a5f81 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -1799,6 +1799,20 @@ static struct iommu_dma_msi_page
-> *iommu_dma_get_msi_page(struct device *dev,
->  	return NULL;
->  }
->=20
-> +/*
-> + * Nested domains may not have an MSI cookie or accept mappings, but
-> they may
-> + * be related to a domain which does, so we let them tell us what they n=
-eed.
-> + */
-> +static struct iommu_domain
-> *iommu_dma_get_msi_mapping_domain(struct device *dev)
-> +{
-> +	struct iommu_domain *domain =3D iommu_get_domain_for_dev(dev);
-> +
-> +	if (domain && domain->type =3D=3D IOMMU_DOMAIN_NESTED &&
-> +	    domain->ops->get_msi_mapping_domain)
-
-I'm not sure the core should restrict it to the NESTED type. Given
-there is a new domain ops any type restriction can be handled
-inside the callback. Anyway the driver should register the op
-for a domain only when there is a need.=20
-
-> +		domain =3D domain->ops->get_msi_mapping_domain(domain);
-> +	return domain;
-> +}
-> +
->  /**
->   * iommu_dma_prepare_msi() - Map the MSI page in the IOMMU domain
->   * @desc: MSI descriptor, will store the MSI page
-> @@ -1809,7 +1823,7 @@ static struct iommu_dma_msi_page
-> *iommu_dma_get_msi_page(struct device *dev,
->  int iommu_dma_prepare_msi(struct msi_desc *desc, phys_addr_t msi_addr)
->  {
->  	struct device *dev =3D msi_desc_to_dev(desc);
-> -	struct iommu_domain *domain =3D iommu_get_domain_for_dev(dev);
-> +	struct iommu_domain *domain =3D
-> iommu_dma_get_msi_mapping_domain(dev);
->  	struct iommu_dma_msi_page *msi_page;
->  	static DEFINE_MUTEX(msi_prepare_lock); /* see below */
->=20
-> @@ -1842,7 +1856,7 @@ int iommu_dma_prepare_msi(struct msi_desc
-> *desc, phys_addr_t msi_addr)
->  void iommu_dma_compose_msi_msg(struct msi_desc *desc, struct msi_msg
-> *msg)
->  {
->  	struct device *dev =3D msi_desc_to_dev(desc);
-> -	const struct iommu_domain *domain =3D
-> iommu_get_domain_for_dev(dev);
-> +	const struct iommu_domain *domain =3D
-> iommu_dma_get_msi_mapping_domain(dev);
->  	const struct iommu_dma_msi_page *msi_page;
->=20
->  	msi_page =3D msi_desc_get_iommu_cookie(desc);
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 4d47f2c333118..69ed76f9c3ec4 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -638,6 +638,8 @@ struct iommu_ops {
->   * @enable_nesting: Enable nesting
->   * @set_pgtable_quirks: Set io page table quirks (IO_PGTABLE_QUIRK_*)
->   * @free: Release the domain after use.
-> + * @get_msi_mapping_domain: Return the related iommu_domain that
-> should hold the
-> + *                          MSI cookie and accept mapping(s).
->   */
->  struct iommu_domain_ops {
->  	int (*attach_dev)(struct iommu_domain *domain, struct device *dev);
-> @@ -668,6 +670,8 @@ struct iommu_domain_ops {
->  				  unsigned long quirks);
->=20
->  	void (*free)(struct iommu_domain *domain);
-> +	struct iommu_domain *
-> +		(*get_msi_mapping_domain)(struct iommu_domain
-> *domain);
->  };
->=20
->  /**
-> --
-> 2.43.0
->=20
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
