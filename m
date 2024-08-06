@@ -1,260 +1,234 @@
-Return-Path: <linux-kernel+bounces-275874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43FDC948B57
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:31:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DC92948B59
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 640541C2272E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:31:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEFEAB24EFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDA7165EF1;
-	Tue,  6 Aug 2024 08:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B991BD50F;
+	Tue,  6 Aug 2024 08:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UNkWtgSi"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HIGhqMzm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C63165EFB
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A251BD4E5;
+	Tue,  6 Aug 2024 08:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722933055; cv=none; b=GUC+dca/eJh9/LuOS3R9mxKMOgpWIMAKed2aXcgmDaKzn0MYE0s1sCudPVbkD0voph9ie3BVBtrQZraKq0ArSkA9YUnzinof2HEepElRUCXDSd82MHrWNk3jogtzSdDsC9ksk72smM9l7JJci7OeZbMU61DVxQFxJn8BYQqIeYY=
+	t=1722933059; cv=none; b=Qfl+xqMmQjGVRq7PaWNFEH/aOe6Gey69Ze5Dw9JRKXBSq5vBcDmB7ANvsck03VXlKAnRPdSief8lTC9lUPPXwCWWmkDXSXgsROcEHvDC9L4aJxxvK4cR2rEOXQ8AWsi2kySVGgE9H1No/yn6XkKaPKZ4Dvk/1xNMHLyK1fmHGVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722933055; c=relaxed/simple;
-	bh=LnFZp12TIqn5SQDpHxYlO8HWh+yQl3eB38wxtB7M/dE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S5+ATca0ZisuK3xPLvrnsjM7V3NmsKbgiwa7D3034sYtnVEqGvoRV+3Wc43rXB+vK4Rod9Y1MjBVxT4/FsiNGXADxDLTx7QADtJgsU8/3TSD1k1xZJdVAk4Sr1FvsI8sc5uGglH4+JJkEVPTYYxjsuNA+lCaWpJKoRAywv1hoPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UNkWtgSi; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-428e0d18666so1829585e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 01:30:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722933052; x=1723537852; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=koPOZ7NdBsDQmuAR9Ro33aVNgwZigMdr1Rj3bsmXrOA=;
-        b=UNkWtgSifrHxv5r8YRgHrbFiADBB/J+2QridtLmbrTXwiWUk24iETWshgVpx6BUswV
-         SrS/UizzqPPHZuzT2UH1becATmPwb+T4sG7oAtTAhfNQEAimeHs1/bMoQOF+rnKWtUXA
-         t1N99A54fvaVpOuAyhY2IiBaL59xyurG/uslHzdP4xI/jFF10eHskPuI5bbKNL+6xyFV
-         bySQsvDa39EsCf90RZSCySfuwzbW+/i/op/WQAwMjHpdRbUA8YOUMs/E+qpZd48hTmlR
-         MorQfzVvjs6pYxtUryBUfDbH8Y8iBHXCdJATFO6RvMlsE880z/t482aL9+ghfBA3jUlU
-         dwPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722933052; x=1723537852;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=koPOZ7NdBsDQmuAR9Ro33aVNgwZigMdr1Rj3bsmXrOA=;
-        b=FdIxRUSwKO4xSe1e/RNsmXtDMcUx5IvOkntEgoiEF/4NF+hdnv2yhwiEnNFd0Or5Vx
-         xeXM4Fy4c+XPNSUawq+PKgHdG0DsFjlm26SLvZ61y0Bqf4ZwXiV1hnKXZkokRDHex1cr
-         YjOQeIsKHMaUwzxRZdDFGibySZLsgngH6K3LSGX2BQK5+cnpmiPwwS8G5viKj5YJo6ei
-         LgWD9CaFRlpESVUoFKaTX6zuXhNaiv2CNxi/UmM9QWAA8N0tSASnFBdgis0uLX0ZThoq
-         Dt2iHZ27nlQXQghy2D09+zfi/WjTvz28ptd8ji8jvzT8fx339jyBe6e3smPOPafvZmTj
-         2G4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXgqdjYMVfx6PRZ5fYtz9R5pHYJ1P2cT0BUZ7tdt5qOAAXRG5bV1rMoBnMMnBrOjOfAao6Kwx6YAMEzNJ9ABm0OtEvL2pUfbOMo0s2r
-X-Gm-Message-State: AOJu0YyPpk5Sw08CWobk1VIoVXYAs/ENbVCwQ+h95hfgFUPSh1xz/MLQ
-	tvLAO2RxRaZv799byD7wTtdpoa7jBPJ0bQfjB5MuhETrxIvfb7W3/QHZaydnwFC/oB0DXXXwFqd
-	NQP9Prwi+I+ORyCoHC8VIh3Y2h4iL3KujQra0
-X-Google-Smtp-Source: AGHT+IGzYHiShkvLDa3uQWiW2yA3lF+z/Tz24rRjBIX2lqr731n7mHLts+IQtweqWLM8ZWv2S//3CGuONC3J6sjgRkY=
-X-Received: by 2002:a05:600c:46cc:b0:426:5e0b:5823 with SMTP id
- 5b1f17b1804b1-428e6b92fdcmr95073695e9.34.1722933052114; Tue, 06 Aug 2024
- 01:30:52 -0700 (PDT)
+	s=arc-20240116; t=1722933059; c=relaxed/simple;
+	bh=zXeKbpJ1OlI6R8Gluo/M21f4/B+Rydwt3JbrN4H78UU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=pTcGoiT2guPKxUzLvktcsys4rfddNe2rcpLorTXz05r9b6nU/vowOuacBFcIBOmpfgVCSiy4l4gSNulueG1RO54Ywvo8euTNIOqFIb/T6zXSJFt5jJ6i8/wrYItrS4pmH0J53ngqjLcWxcgT5G/yjKquyxo3U+42db3hs9Gm7OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HIGhqMzm; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722933058; x=1754469058;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=zXeKbpJ1OlI6R8Gluo/M21f4/B+Rydwt3JbrN4H78UU=;
+  b=HIGhqMzm7oOmCkvLPfIHnBm2mJlYuFkY5jSh4H7W9zayEDI4aWYbqRzT
+   EVRhzmEDYWyMQqaWlaN1sTIU13X8nkH+VJPfddVxVfXtyEHO/9Zg5RyD3
+   UqN/1OpFvorDK/WfsGHZFdo7nTBf9Ox5Ntusao8vy3oLVkoY++LI/keqM
+   pM2YkZD+M9AKvD2IMZRgArYL+j1uu20IDiljYqur5azYPIJQZDX4hxi6S
+   feHGEtsmxMW2vxQaPbu7vVHcD90ijkLwnWSuAmX/dWLJC5vSp9m/0Y8Az
+   2VQTbaxfuuEOXP6XuaJnfL3tCM09bXet53TmEt+0DJbaTwW5vFkH9h1jv
+   w==;
+X-CSE-ConnectionGUID: gmRmMbEsQryBJ449FVmtWA==
+X-CSE-MsgGUID: o8pZSUphTGCVsI1gwT1zRQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="20811203"
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="20811203"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 01:30:57 -0700
+X-CSE-ConnectionGUID: yoY/xXEfSwC3B+jvAARDQw==
+X-CSE-MsgGUID: Uw1OAaodSBK5JNuyBl+aHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="61304492"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.72])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 01:30:54 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Xi Pardee <xi.pardee@linux.intel.com>,
+	Rajvi Jingar <rajvi.jingar@linux.intel.com>,
+	Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
+	David E Box <david.e.box@intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Kane Chen <kane.chen@intel.com>,
+	=?UTF-8?q?Marek=20Ma=C5=9Blanka?= <mmaslanka@google.com>
+Subject: [PATCH 1/1] platform/x86: intel/pmc: Remove unused param idx from pmc_for_each_mode()
+Date: Tue,  6 Aug 2024 11:30:47 +0300
+Message-Id: <20240806083047.1562-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240727-b4-rbtree-v8-0-951600ada434@google.com>
- <20240727-b4-rbtree-v8-4-951600ada434@google.com> <27f724ba-4f04-407b-9f5d-81a472f8ba14@proton.me>
-In-Reply-To: <27f724ba-4f04-407b-9f5d-81a472f8ba14@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 6 Aug 2024 10:30:40 +0200
-Message-ID: <CAH5fLghJmA_01QJvzSBX4HEfLwPr+FskM9dzOs0ykbYj_sCWTg@mail.gmail.com>
-Subject: Re: [PATCH v8 4/6] rust: rbtree: add mutable iterator
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Matt Gilbride <mattgilbride@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>, Rob Landley <rob@landley.net>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Michel Lespinasse <michel@lespinasse.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 5, 2024 at 9:22=E2=80=AFPM Benno Lossin <benno.lossin@proton.me=
-> wrote:
->
-> On 27.07.24 22:30, Matt Gilbride wrote:
-> > From: Wedson Almeida Filho <wedsonaf@gmail.com>
-> >
-> > Add mutable Iterator implementation for `RBTree`,
-> > allowing iteration over (key, value) pairs in key order. Only values ar=
-e
-> > mutable, as mutating keys implies modifying a node's position in the tr=
-ee.
-> >
-> > Mutable iteration is used by the binder driver during shutdown to
-> > clean up the tree maintained by the "range allocator" [1].
-> >
-> > Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-6-=
-08ba9197f637@google.com/ [1]
-> > Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> > Signed-off-by: Matt Gilbride <mattgilbride@google.com>
-> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> > Tested-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
-> >  rust/kernel/rbtree.rs | 98 +++++++++++++++++++++++++++++++++++++++++++=
-+-------
-> >  1 file changed, 86 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
-> > index d10074e4ac58..d7514ebadfa8 100644
-> > --- a/rust/kernel/rbtree.rs
-> > +++ b/rust/kernel/rbtree.rs
-> > @@ -197,8 +197,26 @@ pub fn iter(&self) -> Iter<'_, K, V> {
-> >          // INVARIANT: `bindings::rb_first` returns a valid pointer to =
-a tree node given a valid pointer to a tree root.
->
-> This INVARIANT is out of place, `Iter` doesn't have any INVARIANT any
-> more.
+pmc_for_each_mode() takes i (index) variable name as a parameter but
+the loop index is not used by any of the callers. Make the index
+variable internal to pmc_for_each_mode().
 
-We can delete it.
+This also changes the loop logic such that ->lpm_en_modes[] is never
+read beyond num_lpm_modes.
 
-> >          Iter {
-> >              _tree: PhantomData,
-> > -            // SAFETY: `self.root` is a valid pointer to the tree root=
-.
-> > -            next: unsafe { bindings::rb_first(&self.root) },
-> > +            iter_raw: IterRaw {
->
-> This `IterRaw` construction is missing an INVARIANT comment. I think you
-> can copy paste from below.
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
+ drivers/platform/x86/intel/pmc/core.c       | 18 +++++++-----------
+ drivers/platform/x86/intel/pmc/core.h       | 10 ++++++----
+ drivers/platform/x86/intel/pmc/core_ssram.c |  4 ++--
+ 3 files changed, 15 insertions(+), 17 deletions(-)
 
-We can copy from below.
+diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
+index 01ae71c6df59..0e88a89a236a 100644
+--- a/drivers/platform/x86/intel/pmc/core.c
++++ b/drivers/platform/x86/intel/pmc/core.c
+@@ -728,12 +728,11 @@ static int pmc_core_substate_res_show(struct seq_file *s, void *unused)
+ 	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
+ 	const int lpm_adj_x2 = pmc->map->lpm_res_counter_step_x2;
+ 	u32 offset = pmc->map->lpm_residency_offset;
+-	unsigned int i;
+ 	int mode;
+ 
+ 	seq_printf(s, "%-10s %-15s\n", "Substate", "Residency");
+ 
+-	pmc_for_each_mode(i, mode, pmcdev) {
++	pmc_for_each_mode(mode, pmcdev) {
+ 		seq_printf(s, "%-10s %-15llu\n", pmc_lpm_modes[mode],
+ 			   adjust_lpm_residency(pmc, offset + (4 * mode), lpm_adj_x2));
+ 	}
+@@ -787,11 +786,10 @@ DEFINE_SHOW_ATTRIBUTE(pmc_core_substate_l_sts_regs);
+ static void pmc_core_substate_req_header_show(struct seq_file *s, int pmc_index)
+ {
+ 	struct pmc_dev *pmcdev = s->private;
+-	unsigned int i;
+ 	int mode;
+ 
+ 	seq_printf(s, "%30s |", "Element");
+-	pmc_for_each_mode(i, mode, pmcdev)
++	pmc_for_each_mode(mode, pmcdev)
+ 		seq_printf(s, " %9s |", pmc_lpm_modes[mode]);
+ 
+ 	seq_printf(s, " %9s |\n", "Status");
+@@ -833,14 +831,14 @@ static int pmc_core_substate_req_regs_show(struct seq_file *s, void *unused)
+ 			u32 req_mask = 0;
+ 			u32 lpm_status;
+ 			const struct pmc_bit_map *map;
+-			int mode, idx, i, len = 32;
++			int mode, i, len = 32;
+ 
+ 			/*
+ 			 * Capture the requirements and create a mask so that we only
+ 			 * show an element if it's required for at least one of the
+ 			 * enabled low power modes
+ 			 */
+-			pmc_for_each_mode(idx, mode, pmcdev)
++			pmc_for_each_mode(mode, pmcdev)
+ 				req_mask |= lpm_req_regs[mp + (mode * num_maps)];
+ 
+ 			/* Get the last latched status for this map */
+@@ -863,7 +861,7 @@ static int pmc_core_substate_req_regs_show(struct seq_file *s, void *unused)
+ 				seq_printf(s, "pmc%d: %26s |", pmc_index, map[i].name);
+ 
+ 				/* Loop over the enabled states and display if required */
+-				pmc_for_each_mode(idx, mode, pmcdev) {
++				pmc_for_each_mode(mode, pmcdev) {
+ 					bool required = lpm_req_regs[mp + (mode * num_maps)] &
+ 							bit_mask;
+ 					seq_printf(s, " %9s |", required ? "Required" : " ");
+@@ -925,7 +923,6 @@ static int pmc_core_lpm_latch_mode_show(struct seq_file *s, void *unused)
+ {
+ 	struct pmc_dev *pmcdev = s->private;
+ 	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
+-	unsigned int idx;
+ 	bool c10;
+ 	u32 reg;
+ 	int mode;
+@@ -939,7 +936,7 @@ static int pmc_core_lpm_latch_mode_show(struct seq_file *s, void *unused)
+ 		c10 = true;
+ 	}
+ 
+-	pmc_for_each_mode(idx, mode, pmcdev) {
++	pmc_for_each_mode(mode, pmcdev) {
+ 		if ((BIT(mode) & reg) && !c10)
+ 			seq_printf(s, " [%s]", pmc_lpm_modes[mode]);
+ 		else
+@@ -960,7 +957,6 @@ static ssize_t pmc_core_lpm_latch_mode_write(struct file *file,
+ 	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
+ 	bool clear = false, c10 = false;
+ 	unsigned char buf[8];
+-	unsigned int idx;
+ 	int m, mode;
+ 	u32 reg;
+ 
+@@ -979,7 +975,7 @@ static ssize_t pmc_core_lpm_latch_mode_write(struct file *file,
+ 	mode = sysfs_match_string(pmc_lpm_modes, buf);
+ 
+ 	/* Check string matches enabled mode */
+-	pmc_for_each_mode(idx, m, pmcdev)
++	pmc_for_each_mode(m, pmcdev)
+ 		if (mode == m)
+ 			break;
+ 
+diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
+index ea04de7eb9e8..c8851f128adc 100644
+--- a/drivers/platform/x86/intel/pmc/core.h
++++ b/drivers/platform/x86/intel/pmc/core.h
+@@ -604,10 +604,12 @@ int lnl_core_init(struct pmc_dev *pmcdev);
+ void cnl_suspend(struct pmc_dev *pmcdev);
+ int cnl_resume(struct pmc_dev *pmcdev);
+ 
+-#define pmc_for_each_mode(i, mode, pmcdev)		\
+-	for (i = 0, mode = pmcdev->lpm_en_modes[i];	\
+-	     i < pmcdev->num_lpm_modes;			\
+-	     i++, mode = pmcdev->lpm_en_modes[i])
++#define pmc_for_each_mode(mode, pmcdev)						\
++	for (unsigned int __i = 0, __cond;					\
++	     __cond = __i < (pmcdev)->num_lpm_modes,				\
++	     __cond && ((mode) = (pmcdev)->lpm_en_modes[__i]),			\
++	     __cond;								\
++	     __i++)
+ 
+ #define DEFINE_PMC_CORE_ATTR_WRITE(__name)				\
+ static int __name ## _open(struct inode *inode, struct file *file)	\
+diff --git a/drivers/platform/x86/intel/pmc/core_ssram.c b/drivers/platform/x86/intel/pmc/core_ssram.c
+index 1bde86c54eb9..9eea5118653b 100644
+--- a/drivers/platform/x86/intel/pmc/core_ssram.c
++++ b/drivers/platform/x86/intel/pmc/core_ssram.c
+@@ -45,7 +45,7 @@ static int pmc_core_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc)
+ 	struct telem_endpoint *ep;
+ 	const u8 *lpm_indices;
+ 	int num_maps, mode_offset = 0;
+-	int ret, mode, i;
++	int ret, mode;
+ 	int lpm_size;
+ 	u32 guid;
+ 
+@@ -116,7 +116,7 @@ static int pmc_core_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc)
+ 	 *
+ 	 */
+ 	mode_offset = LPM_HEADER_OFFSET + LPM_MODE_OFFSET;
+-	pmc_for_each_mode(i, mode, pmcdev) {
++	pmc_for_each_mode(mode, pmcdev) {
+ 		u32 *req_offset = pmc->lpm_req_regs + (mode * num_maps);
+ 		int m;
+ 
+-- 
+2.39.2
 
-> > +                // SAFETY: by the invariants, all pointers are valid.
-> > +                next: unsafe { bindings::rb_first(&self.root) },
-> > +                _phantom: PhantomData,
-> > +            },
-> > +        }
-> > +    }
-> > +
-> > +    /// Returns a mutable iterator over the tree nodes, sorted by key.
-> > +    pub fn iter_mut(&mut self) -> IterMut<'_, K, V> {
-> > +        IterMut {
-> > +            _tree: PhantomData,
-> > +            // INVARIANT:
-> > +            //   - `self.root` is a valid pointer to a tree root.
-> > +            //   - `bindings::rb_first` produces a valid pointer to a =
-node given `root` is valid.
-> > +            iter_raw: IterRaw {
-> > +                // SAFETY: by the invariants, all pointers are valid.
-> > +                next: unsafe { bindings::rb_first(&self.root) },
->
-> Does this really derive a mutable reference? Ie shouldn't this be:?
->
->     next: unsafe { bindings::rb_first(&mut self.root) },
-
-Let's change this to:
-
-next: unsafe { bindings::rb_first(ptr::from_mut(&mut self.root)) }
-
-This way, the pointer will be derived from a mutable reference even if
-it becomes a `*const` through intermediate operations.
-
-
-> > +                _phantom: PhantomData,
-> > +            },
-> >          }
-> >      }
-> >
-> > @@ -211,6 +229,11 @@ pub fn keys(&self) -> impl Iterator<Item =3D &'_ K=
-> {
-> >      pub fn values(&self) -> impl Iterator<Item =3D &'_ V> {
-> >          self.iter().map(|(_, v)| v)
-> >      }
-> > +
-> > +    /// Returns a mutable iterator over the values of the nodes in the=
- tree, sorted by key.
-> > +    pub fn values_mut(&mut self) -> impl Iterator<Item =3D &'_ mut V> =
-{
-> > +        self.iter_mut().map(|(_, v)| v)
-> > +    }
-> >  }
-> >
-> >  impl<K, V> RBTree<K, V>
-> > @@ -414,13 +437,9 @@ fn into_iter(self) -> Self::IntoIter {
-> >  /// An iterator over the nodes of a [`RBTree`].
-> >  ///
-> >  /// Instances are created by calling [`RBTree::iter`].
-> > -///
-> > -/// # Invariants
-> > -/// - `self.next` is a valid pointer.
-> > -/// - `self.next` points to a node stored inside of a valid `RBTree`.
-> >  pub struct Iter<'a, K, V> {
-> >      _tree: PhantomData<&'a RBTree<K, V>>,
-> > -    next: *mut bindings::rb_node,
-> > +    iter_raw: IterRaw<K, V>,
-> >  }
-> >
-> >  // SAFETY: The [`Iter`] gives out immutable references to K and V, so =
-it has the same
-> > @@ -434,21 +453,76 @@ unsafe impl<'a, K: Sync, V: Sync> Sync for Iter<'=
-a, K, V> {}
-> >  impl<'a, K, V> Iterator for Iter<'a, K, V> {
-> >      type Item =3D (&'a K, &'a V);
-> >
-> > +    fn next(&mut self) -> Option<Self::Item> {
-> > +        self.iter_raw.next().map(|(k, v)|
-> > +            // SAFETY: Due to `self._tree`, `k` and `v` are valid for =
-the lifetime of `'a`.
-> > +            unsafe { (&*k, &*v) })
->
-> I don't really like the formatting here, can you move the SAFETY one
-> line upwards? It should format nicely then.
-
-You suggested exactly the reverse formatting change on RBTreeCursor?
-
-> > +    }
-> > +}
-> > +
-> > +impl<'a, K, V> IntoIterator for &'a mut RBTree<K, V> {
-> > +    type Item =3D (&'a K, &'a mut V);
-> > +    type IntoIter =3D IterMut<'a, K, V>;
-> > +
-> > +    fn into_iter(self) -> Self::IntoIter {
-> > +        self.iter_mut()
-> > +    }
-> > +}
-> > +
-> > +/// A mutable iterator over the nodes of a [`RBTree`].
-> > +///
-> > +/// Instances are created by calling [`RBTree::iter_mut`].
-> > +pub struct IterMut<'a, K, V> {
-> > +    _tree: PhantomData<&'a mut RBTree<K, V>>,
-> > +    iter_raw: IterRaw<K, V>,
-> > +}
-> > +
-> > +// SAFETY: The [`IterMut`] gives out immutable references to K and mut=
-able references to V, so it has the same
-> > +// thread safety requirements as mutable references.
-> > +unsafe impl<'a, K: Send, V: Send> Send for IterMut<'a, K, V> {}
->
-> Since we only borrow `K` immutably, would it make sense to have `K:
-> Sync`?
-
-No, `K: Send` is better because it's less restrictive in practice.
-
-Alice
 
