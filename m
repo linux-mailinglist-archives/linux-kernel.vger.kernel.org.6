@@ -1,97 +1,132 @@
-Return-Path: <linux-kernel+bounces-275843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73ACE948AE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:08:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE76948AE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27F0A1F2104B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:08:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D3AC1C22732
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9C416BE26;
-	Tue,  6 Aug 2024 08:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1131BCA13;
+	Tue,  6 Aug 2024 08:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=angelogioacchino.delregno@collabora.com header.b="UsxKHhmf"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NMTDURMV"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268C82AF12;
-	Tue,  6 Aug 2024 08:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722931666; cv=pass; b=GoTPErY/XqRo5Nt3R1EB59U9NkNxYV2RSXwRn/JVd1ZtVAB3Zz4l5Ch9bN6wLfDkULEQIBWOTbb815jlXnzExQwHFDBzGQcg4tmGirBm0ow0rf7xELcyGEAS+dfO4/ENxyaGK7/VrxWW94aGPsIDUucyixyoSZcgUJYNfJXG4EY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722931666; c=relaxed/simple;
-	bh=bwQKidI9pODrIEYPmfbCvwKKsalCr8dYWC/jTO11S1M=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hIrU5cQCBpijiIUAJhD+1gn5trnGrfzlxI+opkxUazcJAQoLyNYK3q+dUZ5RvGc7pIPg+m7jPooItVmuSyfI7uk4fkG+HfihVjBbrQpgfqjHqedsuougtNRLVIiURFL1bHUQiTDe3kYAykV4/WMFetfv4ZV+UcLtxMydtW0EN/w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=angelogioacchino.delregno@collabora.com header.b=UsxKHhmf; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1722931658; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=N2e1lk4kfrhaRAtgWbQXJRPDt1ynW5cjnde2J8ZysRQJUAOwqDdoiAdewFHCWjNhJEocwUPao313kYJ+Mmi56n3OPAy5jHX1WiBXpc4H8lT9L3hSxbESAjQB1ZVCknPQ5lpKNtivDR9p6qfTxgB15jq5iSb1VXgz2xGzAng372E=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1722931658; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=bSU/7Kz+oEIpxKjEzwo61RqKAafjCLDSroZXQNzm+mM=; 
-	b=PtzAXx+xwWGfy8n8MXnAcQHgDt+/Ap8wp5OOgQVXQBp4DlWEhu+pBRAd4D30EJzq0/mzh351q0k7OoA19WMEtHM4qaa5IrM+gr0ioP3ztz1zY4jlKWMcOSEMrA5VvhyIgnEyuNQ2AjoDho41kUStlW2E4wggMYm8Uv3cavmH5+E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=angelogioacchino.delregno@collabora.com;
-	dmarc=pass header.from=<angelogioacchino.delregno@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1722931658;
-	s=zohomail; d=collabora.com;
-	i=angelogioacchino.delregno@collabora.com;
-	h=From:From:To:To:Cc:Cc:In-Reply-To:References:Subject:Subject:Message-Id:Message-Id:Date:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:Reply-To;
-	bh=bSU/7Kz+oEIpxKjEzwo61RqKAafjCLDSroZXQNzm+mM=;
-	b=UsxKHhmfa6m19Dx1Hg90C9Ui3kMtV+xHQlf+B9NCEbbPjLwn/Hb8h+FSbGhJCmmD
-	lS6SFz+2HQ+g1PrVGoNc9rxjnLilWpB+/gwDmEzPPhCKPZABzE41E6mVHPZzO3Y1SwU
-	FZonMjhtDqjUH0TowkmUi2SLJxiGf1UNZ4pdShak=
-Received: by mx.zohomail.com with SMTPS id 1722931656834676.9532817394971;
-	Tue, 6 Aug 2024 01:07:36 -0700 (PDT)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, 
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240625095441.3474194-1-wenst@chromium.org>
-References: <20240625095441.3474194-1-wenst@chromium.org>
-Subject: Re: [PATCH] arm64: dts: mt8183-kukui: clean up regulator tree
-Message-Id: <172293165481.46149.12368879686778657908.b4-ty@collabora.com>
-Date: Tue, 06 Aug 2024 10:07:34 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5911BCA0D
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722931686; cv=none; b=fxEcfBwM1bBa79YtGzOKvPoUHpmaw+gV93JnV7PnR2fMQ1Law8iQkKu12TH+EStpkW/VtJVWhPzR5GDvMZRWx0cpLGX3876gZ6n+vEhFGBhILzMlnwvkH3Z7FdYCIxlCVY1DPtHSOr6jN2MUrUTw+b+U2T4fPH1mB11Si6ASnoY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722931686; c=relaxed/simple;
+	bh=FBmv/1mMUMtmoVaqDCjCNU+JbyEqNiF+6Rx1D/EScDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dcHVYi3MilhSkphBxMBZgc6zVab0rVDmvidmq+ZuUfSNFhPDs2vhQlA5sbOm7AymuqnHLP14J6cNneEKMODxDq9vDNsjiSKN9Bf6b23jBvHlO+jjLuJZ1VJlXT94nnBqdf5nwr6qnxk1YaozIOfU4UEb4T1BJgUoymPhZVIyq6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NMTDURMV; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2l9hno7U/++q07/aPrJaio/HGg/vk7idZdCdfjSW4Zg=; b=NMTDURMV9O41mygfelcFKtBWIk
+	kg8GeRcwQt+r+P+ijFB0BhVHPMDA6AxPUTeysyjw94j3hVTuS2oMQTDVET+Dk61OVEv/ga501vy7Z
+	1uhnLz0pq+YNgMgi4ggTvDxMW0l3+T8IP70/tCkRRH9ckaHVWm5vMgTFBlCDKZAP3sxDR2BdmxyuV
+	NKuXbuFphfwAJNH1kbWTrCypJDTtInlqEk5GescK57GCB50KVyRkHes1zInhCrNYbvFITdbOTbyd/
+	7kfyh90Nk7QQ5tUIoXtC/Dozwcci0I56O/bgZKt9neNtWSpiRDITyhdP1/+6t5InCTVhlFON/UbN+
+	I0NWLGcg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sbFEc-00000005Qdh-126R;
+	Tue, 06 Aug 2024 08:07:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id DADAA300ABE; Tue,  6 Aug 2024 10:07:57 +0200 (CEST)
+Date: Tue, 6 Aug 2024 10:07:57 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: "Liang, Kan" <kan.liang@linux.intel.com>,
+	Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Stephane Eranian <eranian@google.com>,
+	Ian Rogers <irogers@google.com>, Mingwei Zhang <mizhang@google.com>
+Subject: Re: [PATCH v2] perf/core: Optimize event reschedule for a PMU
+Message-ID: <20240806080757.GF12673@noisy.programming.kicks-ass.net>
+References: <20240731000607.543783-1-namhyung@kernel.org>
+ <476e7cea-f987-432a-995b-f7d52a123c9d@linux.intel.com>
+ <20240805092058.GK37996@noisy.programming.kicks-ass.net>
+ <20240805145827.GE12673@noisy.programming.kicks-ass.net>
+ <CAM9d7cj8YMt-YiVZ=7dRiEnfODqo=WLRJ87Rd134YR_O6MU_Qg@mail.gmail.com>
+ <20240806075630.GL37996@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806075630.GL37996@noisy.programming.kicks-ass.net>
 
-On Tue, 25 Jun 2024 17:54:38 +0800, Chen-Yu Tsai wrote:
-> Some regulators in the kukui device tree are modeled incorrectly. Some
-> are missing supplies and some switches are incorrectly modeled as
-> voltage regulators. A pass-through was incorrectly modeled as a
-> regulator.
+On Tue, Aug 06, 2024 at 09:56:30AM +0200, Peter Zijlstra wrote:
+
+> Does this help? What would be an easy reproducer?
 > 
-> Add supplies where missing, remove voltage constraints for "switches",
-> and drop the "bl_pp5000" pass-through.
-> 
-> [...]
+> ---
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index c67fc43fe877..4a04611333d9 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -179,23 +179,27 @@ static void perf_ctx_lock(struct perf_cpu_context *cpuctx,
+>  	}
+>  }
+>  
+> +static inline void __perf_ctx_unlock(struct perf_event_context *ctx)
+> +{
+> +	/*
+> +	 * If ctx_sched_in() didn't again set any ALL flags, clean up
+> +	 * after ctx_sched_out() by clearing is_active.
+> +	 */
+> +	if (ctx->is_active & EVENT_FROZEN) {
+> +		if (!(ctx->is_active & EVENT_ALL))
+> +			ctx->is_active = 0;
+> +		else
+> +			ctx->is_active &= ~EVENT_FROZEN;
+> +	}
+> +	raw_spin_unlock(&ctx->lock);
+> +}
+> +
+>  static void perf_ctx_unlock(struct perf_cpu_context *cpuctx,
+>  			    struct perf_event_context *ctx)
+>  {
+> -	if (ctx) {
+> -		/*
+> -		 * If ctx_sched_in() didn't again set any ALL flags, clean up
+> -		 * after ctx_sched_out() by clearing is_active.
+> -		 */
+> -		if (ctx->is_active & EVENT_FROZEN) {
+> -			if (!(ctx->is_active & EVENT_ALL))
+> -				ctx->is_active = 0;
+> -			else
+> -				ctx->is_active &= ~EVENT_FROZEN;
+> -		}
+> -		raw_spin_unlock(&ctx->lock);
+> -	}
+> -	raw_spin_unlock(&cpuctx->ctx.lock);
+> +	if (ctx)
+> +		__perf_ctx_unlock(ctx);
+> +	__perf_ctx_unlock(&cpuctx->ctx.lock);
 
-Applied to v6.11-next/dts64, thanks!
+Obviously that wants to be just: &cpuctx->ctx :-)
 
-[1/1] arm64: dts: mt8183-kukui: clean up regulator tree
-      commit: f5843dc83583d58e13e6851c70ad8371f036dc35
-
-Cheers,
-Angelo
-
-
+>  }
+>  
+>  #define TASK_TOMBSTONE ((void *)-1L)
 
