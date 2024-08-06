@@ -1,503 +1,384 @@
-Return-Path: <linux-kernel+bounces-276501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF2ED9494A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:36:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8935A9494A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D27B71C21642
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:36:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC1FF1C215CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FDA1CFA9;
-	Tue,  6 Aug 2024 15:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B17B2C6BB;
+	Tue,  6 Aug 2024 15:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e3b6BB/s"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cF4cOo5y"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2043.outbound.protection.outlook.com [40.107.244.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79455F9E6;
-	Tue,  6 Aug 2024 15:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457432A1D3;
+	Tue,  6 Aug 2024 15:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722958583; cv=fail; b=XTwxTE9pFMCIeOmVhkbGhSdZk9+Yl2S77/rgfBzw6fxZ6EgGJB+q7u+OUNcAimWqQFQVFznLdF00oKkuSy6IcXRb8fcbHfZ9YbBF7IEw5XND2flcbRp9OUJGAqtmGQLXUk3342mbcLKV4B+MmHw7CKNXaFtnbfm8sBrlk7qUmWU=
+	t=1722958594; cv=fail; b=t2KwkzUExa6tiFeAhcnAQfD06ZHdftxN/fml5PbZQUUFiaaH5Cbf8QsMm69Wwi3N0FLZ1LLEJEZvmQ3qnv/ec+ImhI9uKj9i8VzalB0HutliFQ6TmNWZRYfWe0D1Nko6K/1Ntc6j3WSYyiswJhmBybUzseTYC6kAXO6BVkzA7Mc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722958583; c=relaxed/simple;
-	bh=OzUF4LTVMa9Mdc06023IkY89n6iP+GlFDWsJrhjdKnc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZYS7HL+Da6skv7G2vfBL0pRltXogn6SOZb7ga0gb0TPTyDAw/szMEbVsBR7EDGMLjyd5rGO34f0KJckNA24aW4Waql2gwnDSPSvpioRHc3AAGqSGwA7ilyAICEkTWeOVyyOyQyp1yH3B30YC5tHbVlrz9Yln6hVLk7cYt39svzo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e3b6BB/s; arc=fail smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4768WDj2025788;
-	Tue, 6 Aug 2024 15:36:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	atvXeNIzoUqhIBsQLqtuFqracRS/Dpxuj8IkwymhPsw=; b=e3b6BB/sPZ7JFTOq
-	a11CV3XJdbLAUv5wzAylmNLzpdLZiayuwUv10h5j4YqkQF6x7o3PXYU2MXf/CfAM
-	0Au8/P3013e10rVENfQULdQU+0OMsozf5PWBtSyc8kW2jKfgFO7T/8LtkVeX6QR8
-	t/3pui8msEa2246zaAI+zfh7EHJfOQ5EcOsVh7TQe37el/ACzg6htVtC7I56BLan
-	7ydP5pcG2S6Hpp7SrssQ6Hh23Z1MLoDzQlCVWSqQPWl+RZHQm65HOO+bwePw5Nuo
-	MCkSjovuDJw37ihdIZzmSn+M9EX/LtDnnnNBAYxCzSnDrUZd/K33UwTgR4p/5aW1
-	OM6bAA==
-Received: from bn8pr05cu002.outbound.protection.outlook.com (mail-eastus2azlp17011028.outbound.protection.outlook.com [40.93.12.28])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40u4cpjuaw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 Aug 2024 15:36:06 +0000 (GMT)
+	s=arc-20240116; t=1722958594; c=relaxed/simple;
+	bh=Y6jPE2mio+IIoSnB49rhjnyaSxUKUHu7KJjIidK8b8Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=byvClWHJPL0J/gMDdRmwlhxyoyRjVDQ9G0AwGbWGk1om2ivvqFgBpDLa9YSQknvYAMtQYURP0MYGByewX0aFp+YHCelHVHCVSKrVSicY66D2V+cJwWr1LlK3598CKO92a1kBr92hrxJIQTj7Ym+dQFhEilenEmyu3rhsCWimSlk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cF4cOo5y; arc=fail smtp.client-ip=40.107.244.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YPQXTw3OiKWhF/MqKcYTWtcTrkCrzYKaseDpyKOEWd1HynqyagImNk7Z8NtbqSpW6sGAu+39tNecnCirpmo5GO8e/SyxexAjG+z+/M+cQ28sFeoQqJFq732WKfOQMoel4Xu04ZJUkQz1z1+r6fgeTPrgL+0tVgw/KLLGqyx6DsMGUeeDDz7o/AcmOIxbpJ5MJtbzy0RuRbaG3oEc/wh4YTb1JkSD732zwzV7dEXRWMbhU0e7hSlr0Pup+Yn+MiBcrnXQ+2Nm/fekTnZL/jFBZHh2VkTCJwGaK77rdPGYH8gUQ7Z7+Arp+5o0RBVW07hhjyy4gosuY9HhVT84jPONdQ==
+ b=ZKT/HA/L0x63cxQh08FBCIMTmUxv2vlyspo1CCLtaVwBxZITuQUH+21TC13nFPy9D98gM35dxW7yNfFM0Lm5aVc3hFLFnP/V2c99Y/tpVNxcMvlY8jv2fcm4w++RG9bCcgcvlUpNfqHkD/etmW6jI1zs5DbICS1t3CNgL9ZKPDrhvykwyz/WlSFmRGYBjOcnoY4FQAmWQEFiGcNwriCFZ5P+mEQigOyf482nK9qDf+94XjFf7Zr+JEg9Wphy4+ye10nwBjcxKGDLLUUdG6FHHeJ6bLhWqC2A54luXj4+5pP3qLG8YsYzbZUVBOzwwP1/cIM0mRz46w+eE+fzEyAE9Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=atvXeNIzoUqhIBsQLqtuFqracRS/Dpxuj8IkwymhPsw=;
- b=oswrSq5TO/YL0PFZTPMDZEacJ3jEd6UWSgVVIfduf4eVFVkzS6t+kHDgfwIiBb9NoEfBWhxOmTRfttCra92TGQocctdTBGbNoF/9YbcJTgGdSVd4kV7dJJEzdEDqZWgYqCtzq/YK7SwttTelVD0wCFwTHPu8ZoL2bg1w1ghPavKUfFQScHBBa1b8hBPxDpDcruwCTUyyQc5exqG32FsfvBVOhVoEJFclcjKy3LAGM04bdZA/oZrrhzhWuAEek77dPtPKTPG6TyMZGx0mpyk3JGEnAFgWSemff012q1j4Uvmolo8ETJOw3UDLgUfumu5wsxKXpQPLVF/YGdpaTigYiQ==
+ bh=jaggBkzvqEUG6f5QmAG+k40yvYDVETYmcKkiKcF/C6s=;
+ b=a1YjgWUvwYTPX1EgN+RuaR0WdmV4HiklWSfL4afVRxEQZ9oIreRFIX6+5NKXK/Q26obQxcfuYz7kjdNf4GwjQK5DY71ub+Zl0RuNXLd9rl2k8FdK5JRoHzfLfUY3+Q1XkBQLkxueidnKBikZmh2lQOz6+NVQW3BQgvs69UDQRQGN80haV2asJREdjM9kXohx47+lsCs342sHopPtID72GOcIeM84nhru550WRh+OVt5i4wdjAsClJlZK8XQxAAV3tNC7fIFK63YO4p68ujCaQo+Zd3iwXVm5l4LzozMWJXqiqugYlxpDSwbYtInNOz0+iJfPwKC9trQmaBFLb6hlxQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=quicinc.com; dmarc=pass action=none header.from=quicinc.com;
- dkim=pass header.d=quicinc.com; arc=none
-Received: from CH3PR02MB10247.namprd02.prod.outlook.com
- (2603:10b6:610:1c2::10) by SA0PR02MB7274.namprd02.prod.outlook.com
- (2603:10b6:806:e8::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Tue, 6 Aug
- 2024 15:36:02 +0000
-Received: from CH3PR02MB10247.namprd02.prod.outlook.com
- ([fe80::2980:17c4:6e92:2b11]) by CH3PR02MB10247.namprd02.prod.outlook.com
- ([fe80::2980:17c4:6e92:2b11%6]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
- 15:36:01 +0000
-From: Brian Cain <bcain@quicinc.com>
-To: Nathan Chancellor <nathan@kernel.org>,
-        "Gustavo A. R. Silva"
-	<gustavo@embeddedor.com>
-CC: kernel test robot <lkp@intel.com>,
-        "Gustavo A. R. Silva"
-	<gustavoars@kernel.org>,
-        "llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-        "oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
-        LKML
-	<linux-kernel@vger.kernel.org>,
-        "linux-hexagon@vger.kernel.org"
-	<linux-hexagon@vger.kernel.org>,
-        Sid Manning <sidneym@quicinc.com>,
-        Sundeep
- Kushwaha <sundeepk@quicinc.com>
-Subject: RE: [gustavoars:testing/wfamnae-next20240729-cbc-2 11/18]
- include/rdma/uverbs_ioctl.h:643:15: error: static assertion failed due to
- requirement '__builtin_offsetof(struct uverbs_attr_bundle, attrs) ==
- sizeof(struct uverbs_attr_bundle_hdr)': struct memb...
-Thread-Topic: [gustavoars:testing/wfamnae-next20240729-cbc-2 11/18]
- include/rdma/uverbs_ioctl.h:643:15: error: static assertion failed due to
- requirement '__builtin_offsetof(struct uverbs_attr_bundle, attrs) ==
- sizeof(struct uverbs_attr_bundle_hdr)': struct memb...
-Thread-Index: AQHa5GAx8pxBq9usEUCI4KlonF1oTLIS/ZyAgAGN1ACABdgR0A==
-Date: Tue, 6 Aug 2024 15:36:01 +0000
-Message-ID:
- <CH3PR02MB10247E2B6524ACA52F747A0C0B8BF2@CH3PR02MB10247.namprd02.prod.outlook.com>
-References: <202408011956.wscyBwq6-lkp@intel.com>
- <138da3e5-0e24-41a6-bb35-df5d07045eb3@embeddedor.com>
- <20240801190813.GC122261@thelio-3990X>
- <f40160aa-7cbd-4264-be44-45396b09574f@embeddedor.com>
- <20240801221427.GA3773553@thelio-3990X>
- <ca056227-30c3-47b9-a19a-fbab87778f20@embeddedor.com>
- <20240802221952.GA737452@thelio-3990X>
-In-Reply-To: <20240802221952.GA737452@thelio-3990X>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH3PR02MB10247:EE_|SA0PR02MB7274:EE_
-x-ms-office365-filtering-correlation-id: 566db375-367d-4823-73de-08dcb62d7a27
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?+e5Q4n2XKraFtGLJnjcStmPnIyq0btxU/mS5sXXMWvRnaUWPXZdE4LHT1eBH?=
- =?us-ascii?Q?17U/zgxk+QD3dm4bX7gXx5q+j3dsg0GAQkgiJMlxX66RnLnIjsFQ0A1bJVac?=
- =?us-ascii?Q?BYt1+XAxs5kkAq3/YJ71skP6GzmD7xN59UVzmM5Z0uzQruXbi9tD6HPjiO7U?=
- =?us-ascii?Q?P+MQvCILJPjSi/6OZspC9fLrcae94wsiTIfg++IDOBpR/uXRDkJ2zZ3W3jZY?=
- =?us-ascii?Q?TonsOCR45HxmccyDC/em+4Ck07iiVhzxJ3n63MstqBCRDNNiV1q0FK2rT4Ka?=
- =?us-ascii?Q?SsiUpd+bk1EKWarYLgR5mhkt0CjFCjucvDf84e6tU8r5l6/uevtjYyD3o5J/?=
- =?us-ascii?Q?Vxuj1QZyFv8wIpQtgREP019PoiN+qAN7g+uMZHHaOOGcSWD2Cy5S+IMdEpbP?=
- =?us-ascii?Q?Smt+/Grv3NrOk3UeO/VjKpJPA4xFdJ6Zl3N9aH+1J5AOaWxUHtPoYNCn2qyx?=
- =?us-ascii?Q?q+SI6FY+Z0kjtPOEPhKiYTOI55IjBkUaL45F6QEnLUnDqD8WH+A1vTpXSEk0?=
- =?us-ascii?Q?YFlwRpSXNSSDDew0oYy4r21PJhRDaawLnWI8MmBRKJaadqdCnNnPrzswUJOP?=
- =?us-ascii?Q?t94e4nQn6fwn6CWAOUp5nEb9sZhhntcWnSy9hXFOGijdLYukz/VisFZPr5m5?=
- =?us-ascii?Q?nEoDMLY1ngWE/H8RGX6/0DY4l3aiikeDa5h11gp/+w4dAbyL/qH3g+lLtIUG?=
- =?us-ascii?Q?ALlMOVf5F0cCnXik2d9GJzsTSzowMB7fpMC/EOIPUI8NNqegLuTWXp45MeSP?=
- =?us-ascii?Q?sUKzojGtckOasJNQMbkAKQm+eLBlmi0qQlW8PBR5DxliRXbZ0vimI82Xr89h?=
- =?us-ascii?Q?42f91DaJ006rzgR8/QidZtoivzXVi0ibQL9XKkwGmtVh60pUOIfYYx3SUUg1?=
- =?us-ascii?Q?nlbuzQKBuZg4gdvAbcycMYdNwSWYfbmv8m4MEfNG+hauOqN3ECK5Iv9hokq+?=
- =?us-ascii?Q?9o/qWTnjp2JPqtERkISdKfNRJl5CmgUVlM2QG88UkdSNkQjdD5td57ErpqKG?=
- =?us-ascii?Q?PcaZWLKckIGsxpzGqQ64BvMOFKjmrs4Fa6qnBJblhfCiu/bB63TESDH2DByp?=
- =?us-ascii?Q?PzgRb4LcjnKcOGUzg6n1rq0oeDpxnCIzJ+o0+xoDA7NguB1nZ5pTdc6cr3ah?=
- =?us-ascii?Q?o88nXMx78zMxQZWv3l3jCMTVQRZS1oQCDg26aRIOC8dYU9am0T1JfZ9KeS6t?=
- =?us-ascii?Q?U1dCVRgZoTSe0eSdMQwyM9QvS2wrpFeOXcx6Jl2uMrVEiuw1smjr4ocCJlo3?=
- =?us-ascii?Q?YB11SMY2RgTso2J4NYlSg3G9iImkOfxnY2ZMO6hhLjAj6ww553lv/9gh6067?=
- =?us-ascii?Q?OJPYXnkPorL6uojdePMzVJGl18wpLaaJJVG/x1YV5A22G2WmZD0G9rvnlkfG?=
- =?us-ascii?Q?uE1vR4M=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR02MB10247.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?KF9pwsuf1/HpNaWOXPvOfk3zULqGm2YsSu71/oz4lj74wU1VRbUw+v6/w4lP?=
- =?us-ascii?Q?SHx+JRPnmV5R4GRgfAHyAjeEBvPH0xrO89JZvhF7qyvfOSRsqHzIMzrAcg/M?=
- =?us-ascii?Q?pogCN40tqhm94MiAaPvl6a0w6pflqp0BM4jaRaHmMhhc2nVu+GjgnnV/l8d9?=
- =?us-ascii?Q?p9ie2QXK4aHB/7EwXP2N6VNktzD93wswYfbQ5Il+z0LZmZzJr8EvutkXvyf1?=
- =?us-ascii?Q?8XWlN+67nfA9xkRas5s4cwRVFQeifRlZ/MvhvNj32d10m4A6KEJ3jJxicPJn?=
- =?us-ascii?Q?Y6m/yQU3bZf3IzRKK9u8HYNaFhnhao8BcWBsMqu+cmSv8ghPuQHhGmW7MID8?=
- =?us-ascii?Q?A6KF5qdxmk3JCja+8xS1M6c8VT5rsThEHVsbu/ZXErHxHVh4B0l3XHHW5Q91?=
- =?us-ascii?Q?9iIyEK6Ra79lO0MAbTTMP5TZjT8H4jrSdEs3L/a0exyQpXbHZ+fOc4+a1Vps?=
- =?us-ascii?Q?BZulKhkvPL2BEk+Z8Q66PZXG+5DrjDG9ohhERkZx86G2dLRO+Xagj28Kodvp?=
- =?us-ascii?Q?mMzCAn59ASNdyFPtrUAZn3ApUBuzqVOg5Fr8+vMoRz0sNsWC2IPdyEJLPd4q?=
- =?us-ascii?Q?edvQOx25BiCfEkXOnl0IxkoRL/DetdRSbIwQey+dWUPnxrSRxZkSLQ/v93Zt?=
- =?us-ascii?Q?J+FrHXcN2LGgsrkRg1etitWdqx+PFJn9CzVpLZ/fUDLE2U6nA9cnmtDKYVBn?=
- =?us-ascii?Q?kaN1bsxBUXQIMrFpJtvlStieftI71tgzP5hAtwn3+/IBDu/dHcumvSyOumir?=
- =?us-ascii?Q?XvpwyQvs1ARrCy1IhI/dzrV3e0svncGD61faBNJd67LVjXpplvyatePADGU7?=
- =?us-ascii?Q?XO0wU18JWwxAIPH+WY5asLzV2TY/OBeCse+3WMIsbuJTT0x5o98nwLxIvyuj?=
- =?us-ascii?Q?Lh9Vj91Me9uDQFp50lw8W1hZFs5dwjOtUTHA0qZ9p8WbnUBaMkTisCWfXGSX?=
- =?us-ascii?Q?yjOlvc8wDIUyCe9lTWYFGJuHGKJOkrkiM4ZCrC+i8N+Epo0BxeoMhF3rTlMH?=
- =?us-ascii?Q?QqYFxzfUOPpmxzwMP6TyXI6YCvZyFtnfEfIRq/WqUCj+riqnkUEt4Qt8WMjn?=
- =?us-ascii?Q?r4t00UwrkzhNg4uUk0pQNHJE2frqOnMvYkP/j/MhO876sdi8zogV3ZzNwj48?=
- =?us-ascii?Q?RPJ7Gu/OaeJIud8Q7hNXNvKCyXqhGO8fE/AQs2M9JV56eGI2e6df+L8T3esJ?=
- =?us-ascii?Q?pJsXxbNUpMfk61gS6l0SXvaY+W3/hMQMAu9mFMH/8a1Cn1svYexHvltoS4Gu?=
- =?us-ascii?Q?Pmb3Wrqj9+BomFFad3gh5GhK4gUlMPD5IBZ88sRHyER5+p2m1VQVqBguWAL/?=
- =?us-ascii?Q?F1XrWS4/lFGV9hFAOPdKSgkkuMTPjVcVUnw0RYEt6QdQGw/XLQLhQeDRH/0a?=
- =?us-ascii?Q?lG4aSXd98k0PPkMydgttZCYr3IesQWB3oPvojW77lkeZVZK2umJSoZhkhsco?=
- =?us-ascii?Q?m3A/UvQ1nPygZ/HBGYkLzXZMeUXWLA+sd8/MN2av7/Agq94CF9dDNG1cc0pf?=
- =?us-ascii?Q?DDISIBzS3iiCkPp9Mibn/XYBDQxGNRKBA1HePdRoOGcxewDkpbWK93XPfUPJ?=
- =?us-ascii?Q?D/ka9RZYALPEjBIZXUYICrKdd3I9vqrC5/t67Hti?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jaggBkzvqEUG6f5QmAG+k40yvYDVETYmcKkiKcF/C6s=;
+ b=cF4cOo5yzutmG8tXNbDzfxmSnk5MqZ3QsmXwzcgga5CLdhGdKOoR+JCyEMQtZUvkeUU8i7AmS1NadtkE1UljzQN8yc6Vu5EbQp9yO3RosrGxbhf0IxzjjD/3p8llAywlwvEUFenZV5W0jryKyDVrtWBFOdASoj7w2ftdhH6fHLsvY5aaS5l+ZQyU63dZOCwcEshuPks/ctqMbJlAY7JdMuB8ulcVj6psV2T+dJSq2tQaqHewX5VB8XMPQZnAmY2vS8vlZwdY1n+DvV1FOMufMdPO3hKu16mBPhNCjXqbkOXV7vRtnZyZWxmhpcE/M4sekvv5qd8eGRWrzhLdORCMCA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CYXPR12MB9320.namprd12.prod.outlook.com (2603:10b6:930:e6::9)
+ by CY5PR12MB6297.namprd12.prod.outlook.com (2603:10b6:930:22::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.11; Tue, 6 Aug
+ 2024 15:36:24 +0000
+Received: from CYXPR12MB9320.namprd12.prod.outlook.com
+ ([fe80::9347:9720:e1df:bb5f]) by CYXPR12MB9320.namprd12.prod.outlook.com
+ ([fe80::9347:9720:e1df:bb5f%3]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
+ 15:36:23 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v1 07/11] mm/huge_memory: convert split_huge_pages_pid()
+ from follow_page() to folio_walk
+Date: Tue, 06 Aug 2024 11:36:19 -0400
+X-Mailer: MailMate (1.14r6052)
+Message-ID: <5BEF38E0-359C-4927-98EF-A0EE7DC81251@nvidia.com>
+In-Reply-To: <c75d1c6c-8ea6-424f-853c-1ccda6c77ba2@redhat.com>
+References: <20240802155524.517137-1-david@redhat.com>
+ <20240802155524.517137-8-david@redhat.com>
+ <e1d44e36-06e4-4d1c-8daf-315d149ea1b3@arm.com>
+ <ac97ccdc-ee1e-4f07-8902-6360de80c2a0@redhat.com>
+ <a5f059a0-32d6-453e-9d18-1f3bfec3a762@redhat.com>
+ <c75d1c6c-8ea6-424f-853c-1ccda6c77ba2@redhat.com>
+Content-Type: multipart/signed;
+ boundary="=_MailMate_EF315A2D-DFF5-497B-8D01-8B983751DA52_=";
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+X-ClientProxiedBy: BL1PR13CA0082.namprd13.prod.outlook.com
+ (2603:10b6:208:2b8::27) To CYXPR12MB9320.namprd12.prod.outlook.com
+ (2603:10b6:930:e6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Pd3fnEqzYPNKV2Cl79gpJHqUqbfUPpKnJ+fY+OZC79NATjvnKUCeqhtFyzZPYRrMu71AwmgWBMcfMtroxjtRgcOYzGNdT6sn7hkq7hjngsxGpfzjwSWmINegxCnoyGJGzZ8dfS/cBpFYyJcA1Ph2g/q2Wm+oKfzh5RZuKtyNEdJ9XhRZAJkSR/ykxKz1B9KGNWC6uEjA1jFX0eRAesFnHjsNIw41Quc7dr4d6mB8xO1zm8XH0y+W+DrJ9R3N2So8p5IbmW4mNi9aM8tOyibPla3sTsZoYJHxLf9+7LQ5A9YD16DDjWcuGDtshPNEllS5W0IsgxQOAimAEPnjgfzZYCiPTqAqv1/WL7OYpypJUH8wIyFeUOavNsI8TrzUPpJ7eJ6qbefldjxD9axFKH7n5QwvXYlWI5kQPMVus+vL57tn38CahmZSvw3Uo7gNkwFTkglfnZVa6HdUcEavLgkbtZ5qGhPLu8iHeR4+ppqvw8DqaDhLCk6w8+DjIUBnj8BgD7Na3jW9ErL/qBQ8oxyUkSiIjiGg8xpR+erd58846G+OMaPwz0NTh2s6tjtTtjq9DmIISBUaPQTMLTTz3Uph5PDXtBo+Zd9dpz1kmA69QckI6Z/Otj6M92y0WG/D0ID3
-X-OriginatorOrg: quicinc.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYXPR12MB9320:EE_|CY5PR12MB6297:EE_
+X-MS-Office365-Filtering-Correlation-Id: 486c4399-9623-4481-efd0-08dcb62d8727
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DJsD7utkoZH/49YeyGmKQy+UNtavMMBTZjH33BrJynayYx+zl4//EVWuEhLJ?=
+ =?us-ascii?Q?B1mp8DDfqBCb3Wo1ejqS41dDdRAkdo38YXHnhXqkObK67vOFQxwG3Y5mhdEj?=
+ =?us-ascii?Q?1ZSvDwnWCpTutUHekKa1bRBXqlCzBJkBPpPYalgnSv5VWfHKfGVEoXyTlEuU?=
+ =?us-ascii?Q?EyDgp1Az369R+IjujKFlQ/DWmPY35vlHvOn70KJSeZOvDZXG33DNBeC0Lsz7?=
+ =?us-ascii?Q?XR1NlRG+UPyLq+F5tv8mCIrZWhqtod3/ZP/ypMwKk50QIBPmEw4wxLYCv1m7?=
+ =?us-ascii?Q?qZViGoAYHz1gDjYl+AOs0NafEzwRQDdvLxQIT3oqnYACNmZKqWgormxIWb9/?=
+ =?us-ascii?Q?VyYEoX6bNw8d0tlVQRahFyhQ6bKqDJWJ5cQrvVu9ohMcD/CsTTFRomsM07+Y?=
+ =?us-ascii?Q?+wsj2tlP7KmZUMSjIMhL8UISNnzaZzOFLPpe/NUOwlfnu6TIE+NMgiJ38kdG?=
+ =?us-ascii?Q?wyZYqOJ7cm+u4ksnJ2Z2gAlVc/s6THvDOdNC8cU2RpjlsCAAlc3SyB0aufgF?=
+ =?us-ascii?Q?aBns+SLGYVcaWzX1bJeUsCIeU2AvL9W/sQsYwVlfxIs+arcp21hvYKiC6gRa?=
+ =?us-ascii?Q?4D+AW/t4EEeP3W8jdLlGWh7vd1jF3sQpNnRoZtZ1SfgPzad42O65azWGAiVE?=
+ =?us-ascii?Q?xbNH3gn1ybf3twyMGumBB8+7vtLMRaOLVnGeu1vOHrNmwMC+kEV4Koz+k2fb?=
+ =?us-ascii?Q?QaQBL64AoprqTfp5VRDnVLfRRRTOE3vMBTkl27TwulojF5a3OPxJhlgs+N6i?=
+ =?us-ascii?Q?0vW99pnOTOtPiEtYYEuqFtewGcWdxixUwzvSiuAscj5j02pD22IRjDapgprx?=
+ =?us-ascii?Q?jHqCL4HYdi6uv+qS6ljAst0f8hXalRv+6UTTs7WQ2VcABdXqwJGf+kjlLtST?=
+ =?us-ascii?Q?9V0bJ5n24VryEud0qbI/FI1b4RFTO9P0zwNawzaB//0IsMjcd/QjoVsBBtiM?=
+ =?us-ascii?Q?qswlESK5OuQcDB9CZv3qCC65TwqJVkHeEbHv+KRuXe3+a0fXAkFULUlOEdqY?=
+ =?us-ascii?Q?ekj40nRZFCkYEM1M0rd50IXgpL1olhMNrdiOTNnPeMqp3t4YPMiLZ+20AB5X?=
+ =?us-ascii?Q?ee9BFM150OLwPwAtr8XxQAOnW/taZhJD8lZQOjvjBpzfcE0/INatn+qT3j6/?=
+ =?us-ascii?Q?I7JUM4HrNswWnMjtQ/+GAbpvcE5fwzF1LN/PGFZSZ67WKafjL1dxkyGo44ZB?=
+ =?us-ascii?Q?wScayULTG96CA4ck8N9vQzW3BRzCrh3POXSxsak8jNdDm6Wwa7gMgS//dlFF?=
+ =?us-ascii?Q?FjUOU74nGnBzlCSDGDO0ls3BOEorJ+lZ7jDgJP+iP1zDijkior4ZdZeAMoNB?=
+ =?us-ascii?Q?R3/AtT3S9UIQKE1IpprX4xer5x6nKasR5LNKIBgezRmNeQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYXPR12MB9320.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6OaOULjYERSDovg80JD1+tbkatvlkagVnE3UspRmSqLrTO+xA2ErfkDKyCjp?=
+ =?us-ascii?Q?Whkuhvc/T6URvAO9juNYOhfLqO4s00sDDizII+YCtAUWdRv03TOSohvCQKOy?=
+ =?us-ascii?Q?30+0Hdau6qZ1mU0Jj+FuRvM10C7asNQSyLkogvBLRJlLwlwpNwqG3F20Oo/t?=
+ =?us-ascii?Q?Z9tWCm4R3NsKmNfgtDt6vWhIWB276zLS5Rj8dzFeULmVTuzQEkr4XL9p4s14?=
+ =?us-ascii?Q?0rwpwV7n1vzYHTuqnNtLApCiMwQGIl7SuKGKqw+AWSE+muOKxjayczSb0KaM?=
+ =?us-ascii?Q?2fFNdgwS2RAi0ajS9mdH/OKSs8w8AjJoKOg0A89tuNzHV0+SeEmiGEVKq8AJ?=
+ =?us-ascii?Q?FPiILU+GwZi4gFdedIn75x+9xWA+c7zMnRzPmicVoayQlyWYnXt/5uGmPsgd?=
+ =?us-ascii?Q?37CeKrhwYAvFggQ72ECarmoVjTBgGFhioQq72u3L+AO7B/e5m3C9bR5SNQGs?=
+ =?us-ascii?Q?uQSYJYMq73M8lzPAOoOGsqG1EA1jds2ZeiBvU2SWRNUTapqCmtZJTTJqhLAO?=
+ =?us-ascii?Q?kpg2G8wWWaQpHRkPLAG+A3rOQ6cfQLUu3qKPnHsm2AwbtQ2057pEIGuVYf7c?=
+ =?us-ascii?Q?uxMQ8Cdk0vdYpkxveKViiVuXqDutDE2QVfoLLZCXQ8K4vANul+HaV2PKk0yn?=
+ =?us-ascii?Q?QYj2jbDnymuF/gK8Htsz0Uq+71k67dmOGnW7pD15eflYnVKDkPpKTWmSQZLk?=
+ =?us-ascii?Q?1C0UvIQ/pdXE2ZIKIRUljP/ZCGWVgrFrsNbIWNvGx7SZSmIzTixyeQGTLoRJ?=
+ =?us-ascii?Q?UZ4r4wfVT5LjCWW/muhhhu7Y+iNtzpM+zg40iqXzJ8/b4l9KGtorvx/qE2Z8?=
+ =?us-ascii?Q?Aivx15Wa8HE/QmCLm380ZRitlXcd1inj6esYwUV3X9PyOqUkQuIymqB7Nyzz?=
+ =?us-ascii?Q?8zZP34FPR4iimf06U9WId+tusauRcvnJLSeWIAtAnO2jr67k0rHr1w64RzBG?=
+ =?us-ascii?Q?eqd40tNMRc6Ir4km6taIdgKtww+XXlZfm+cnN1r3sWkww01bpSx+4T42+q+O?=
+ =?us-ascii?Q?9jFw8QdjM4jLAokUZk8Eql1drKlz9ca8/O1+w+4OJfjjHDhHh3iNPdWGB3Pe?=
+ =?us-ascii?Q?FTiXdr+zQfGuj5FtX6+st0YKnhd3PzXVVPn50//lIqdL/N6PKfFkJFMTSmG2?=
+ =?us-ascii?Q?Gj1YkjOhJgqksM/kxRpzS0CCdl3j1lkIjwBjIr7FefuktWDVCdLbbHVRUskn?=
+ =?us-ascii?Q?hgdfjbUzNEFHZxWx6AiveIO0JlA0N+bbGX9GOUTK21kB7qV4IYlF0dEd82x/?=
+ =?us-ascii?Q?fLxr8RZIOu5aq/WLfT20tLJMejKbQ5By0X6V89QfH/0eB4sc8AayAWb43/ud?=
+ =?us-ascii?Q?PJtW7zPh5DqTZ64AABhh3rKMMK6mdImBl1mX6wi24FwYTzaQUH8zeqY7phJD?=
+ =?us-ascii?Q?vy4ndkCgvCk5ya9C56mNuSyIxwxf5ePbDYbXjCtyErACpG1PE68Kmp1CogCA?=
+ =?us-ascii?Q?NJWYx0qHK99y5FvPlqqNpntkm8KJGVLFV1LOLdR7aDGPg0xV9JrBebft3Dkr?=
+ =?us-ascii?Q?ynx7A7i80mdP4WZrEdQ2EYlUAaBr6kLMRMIPo5uR7341zL8wJgu/XX2H3gYF?=
+ =?us-ascii?Q?8WgHBpHi73DHlOyBm1HeUOqnKfDvFdtl5+kt4R6Q?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 486c4399-9623-4481-efd0-08dcb62d8727
+X-MS-Exchange-CrossTenant-AuthSource: CYXPR12MB9320.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR02MB10247.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 566db375-367d-4823-73de-08dcb62d7a27
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2024 15:36:01.8745
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 15:36:23.8875
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 98e9ba89-e1a1-4e38-9007-8bdabc25de1d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: k0wEsXhO+1KLR+11xdkuv/QJ9Cyf6BnvupMcWVORpvgS06wb4xZ1AWv4E2cCVRUSPWWPcXuprRrZMwLd5ENIKA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR02MB7274
-X-Proofpoint-ORIG-GUID: KtfPOfQ3rselVjaKKkLadkaTpwyCzl4n
-X-Proofpoint-GUID: KtfPOfQ3rselVjaKKkLadkaTpwyCzl4n
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-06_12,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 phishscore=0 malwarescore=0 bulkscore=0 spamscore=0
- lowpriorityscore=0 mlxscore=0 clxscore=1011 adultscore=0
- priorityscore=1501 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408060109
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HpR6QcpzJFJ3Ig5bOQRTyi503AUeVTJFaQ8vjv8Tb515M6k0TD6xV5yKkhQgVeye
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6297
+
+--=_MailMate_EF315A2D-DFF5-497B-8D01-8B983751DA52_=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+On 6 Aug 2024, at 6:24, David Hildenbrand wrote:
+
+> On 06.08.24 12:03, David Hildenbrand wrote:
+>> On 06.08.24 11:56, David Hildenbrand wrote:
+>>> On 06.08.24 11:46, Ryan Roberts wrote:
+>>>> On 02/08/2024 16:55, David Hildenbrand wrote:
+>>>>> Let's remove yet another follow_page() user. Note that we have to d=
+o the
+>>>>> split without holding the PTL, after folio_walk_end(). We don't car=
+e
+>>>>> about losing the secretmem check in follow_page().
+>>>>
+>>>> Hi David,
+>>>>
+>>>> Our (arm64) CI is showing a regression in split_huge_page_test from =
+mm selftests from next-20240805 onwards. Navigating around a couple of ot=
+her lurking bugs, I was able to bisect to this change (which smells about=
+ right).
+>>>>
+>>>> Newly failing test:
+>>>>
+>>>> # # ------------------------------
+>>>> # # running ./split_huge_page_test
+>>>> # # ------------------------------
+>>>> # # TAP version 13
+>>>> # # 1..12
+>>>> # # Bail out! Still AnonHugePages not split
+>>>> # # # Planned tests !=3D run tests (12 !=3D 0)
+>>>> # # # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
+>>>> # # [FAIL]
+>>>> # not ok 52 split_huge_page_test # exit=3D1
+>>>>
+>>>> It's trying to split some pmd-mapped THPs then checking and finding =
+that they are not split. The split is requested via /sys/kernel/debug/spl=
+it_huge_pages, which I believe ends up in this function you are modifying=
+ here. Although I'll admit that looking at the change, there is nothing o=
+bviously wrong! Any ideas?
+>>>
+>>> Nothing jumps at me as well. Let me fire up the debugger :)
+>>
+>> Ah, very likely the can_split_folio() check expects a raised refcount
+>> already.
+>
+> Indeed, the following does the trick! Thanks Ryan, I could have sworn
+> I ran that selftest as well.
+>
+> TAP version 13
+> 1..12
+> ok 1 Split huge pages successful
+> ok 2 Split PTE-mapped huge pages successful
+> # Please enable pr_debug in split_huge_pages_in_file() for more info.
+> # Please check dmesg for more information
+> ok 3 File-backed THP split test done
+>
+> ...
+>
+>
+> @Andrew, can you squash the following?
+>
+>
+> From e5ea585de3e089ea89bf43d8447ff9fc9b371286 Mon Sep 17 00:00:00 2001
+> From: David Hildenbrand <david@redhat.com>
+> Date: Tue, 6 Aug 2024 12:08:17 +0200
+> Subject: [PATCH] fixup: mm/huge_memory: convert split_huge_pages_pid() =
+from
+>  follow_page() to folio_walk
+>
+> We have to teach can_split_folio() that we are not holding an additiona=
+l
+> reference.
+>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  include/linux/huge_mm.h | 4 ++--
+>  mm/huge_memory.c        | 8 ++++----
+>  mm/vmscan.c             | 2 +-
+>  3 files changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index e25d9ebfdf89..ce44caa40eed 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -314,7 +314,7 @@ unsigned long thp_get_unmapped_area_vmflags(struct =
+file *filp, unsigned long add
+>  		unsigned long len, unsigned long pgoff, unsigned long flags,
+>  		vm_flags_t vm_flags);
+>  -bool can_split_folio(struct folio *folio, int *pextra_pins);
+> +bool can_split_folio(struct folio *folio, int caller_pins, int *pextra=
+_pins);
+>  int split_huge_page_to_list_to_order(struct page *page, struct list_he=
+ad *list,
+>  		unsigned int new_order);
+>  static inline int split_huge_page(struct page *page)
+> @@ -470,7 +470,7 @@ thp_get_unmapped_area_vmflags(struct file *filp, un=
+signed long addr,
+>  }
+>   static inline bool
+> -can_split_folio(struct folio *folio, int *pextra_pins)
+> +can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins=
+)
+>  {
+>  	return false;
+>  }
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 697fcf89f975..c40b0dcc205b 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3021,7 +3021,7 @@ static void __split_huge_page(struct page *page, =
+struct list_head *list,
+>  }
+>   /* Racy check whether the huge page can be split */
+> -bool can_split_folio(struct folio *folio, int *pextra_pins)
+> +bool can_split_folio(struct folio *folio, int caller_pins, int *pextra=
+_pins)
+>  {
+>  	int extra_pins;
+>  @@ -3033,7 +3033,7 @@ bool can_split_folio(struct folio *folio, int *p=
+extra_pins)
+>  		extra_pins =3D folio_nr_pages(folio);
+>  	if (pextra_pins)
+>  		*pextra_pins =3D extra_pins;
+> -	return folio_mapcount(folio) =3D=3D folio_ref_count(folio) - extra_pi=
+ns - 1;
+> +	return folio_mapcount(folio) =3D=3D folio_ref_count(folio) - extra_pi=
+ns - caller_pins;
+>  }
+>   /*
+> @@ -3201,7 +3201,7 @@ int split_huge_page_to_list_to_order(struct page =
+*page, struct list_head *list,
+>  	 * Racy check if we can split the page, before unmap_folio() will
+>  	 * split PMDs
+>  	 */
+> -	if (!can_split_folio(folio, &extra_pins)) {
+> +	if (!can_split_folio(folio, 1, &extra_pins)) {
+>  		ret =3D -EAGAIN;
+>  		goto out_unlock;
+>  	}
+> @@ -3537,7 +3537,7 @@ static int split_huge_pages_pid(int pid, unsigned=
+ long vaddr_start,
+>  		 * can be split or not. So skip the check here.
+>  		 */
+>  		if (!folio_test_private(folio) &&
+> -		    !can_split_folio(folio, NULL))
+> +		    !can_split_folio(folio, 0, NULL))
+>  			goto next;
+>   		if (!folio_trylock(folio))
+
+The diff below can skip a folio with private and extra pin(s) early inste=
+ad
+of trying to lock and split it then failing at can_split_folio() inside
+split_huge_page_to_list_to_order().
+
+Maybe worth applying on top of yours?
 
 
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index a218320a9233..ce992d54f1da 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3532,13 +3532,10 @@ static int split_huge_pages_pid(int pid, unsigned=
+ long vaddr_start,
+                        goto next;
 
-> -----Original Message-----
-> From: Nathan Chancellor <nathan@kernel.org>
-> Sent: Friday, August 2, 2024 5:20 PM
-> To: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> Cc: kernel test robot <lkp@intel.com>; Gustavo A. R. Silva
-> <gustavoars@kernel.org>; llvm@lists.linux.dev; oe-kbuild-all@lists.linux.=
-dev;
-> LKML <linux-kernel@vger.kernel.org>; Brian Cain <bcain@quicinc.com>; linu=
-x-
-> hexagon@vger.kernel.org
-> Subject: Re: [gustavoars:testing/wfamnae-next20240729-cbc-2 11/18]
-> include/rdma/uverbs_ioctl.h:643:15: error: static assertion failed due to
-> requirement '__builtin_offsetof(struct uverbs_attr_bundle, attrs) =3D=3D
-> sizeof(struct uverbs_attr_bundle_hdr)': struct memb...
->=20
-> WARNING: This email originated from outside of Qualcomm. Please be wary o=
-f
-> any links or attachments, and do not enable macros.
->=20
-> On Thu, Aug 01, 2024 at 04:35:59PM -0600, Gustavo A. R. Silva wrote:
-> >
-> >
-> > On 01/08/24 16:14, Nathan Chancellor wrote:
-> > > On Thu, Aug 01, 2024 at 02:17:50PM -0600, Gustavo A. R. Silva wrote:
-> > > >
-> > > >
-> > > > On 01/08/24 13:08, Nathan Chancellor wrote:
-> > > > > On Thu, Aug 01, 2024 at 06:47:58AM -0600, Gustavo A. R. Silva wro=
-te:
-> > > > > >
-> > > > > >
-> > > > > > On 01/08/24 05:35, kernel test robot wrote:
-> > > > > > > tree:
-> https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git
-> testing/wfamnae-next20240729-cbc-2
-> > > > > > > head:   df15c862c1b93b6e1f6c90b0d7971f7a6ad66751
-> > > > > > > commit: e7cd9f429a852fb7e37a706c7d08fc36e7863e06 [11/18]
-> RDMA/uverbs: Use static_assert() to check struct sizes
-> > > > > > > config: hexagon-randconfig-001-20240801
-> (https://download.01.org/0day-ci/archive/20240801/202408011956.wscyBwq6-
-> lkp@intel.com/config)
-> > > > > > > compiler: clang version 20.0.0git (https://github.com/llvm/ll=
-vm-
-> project 430b90f04533b099d788db2668176038be38c53b)
-> > > > > >
-> > > > > >
-> > > > > > Clang 20.0.0?? (thinkingface)
-> > > > >
-> > > > > Indeed, Clang 19 branched and main is now 20 :)
-> > > > >
-> > > > > https://github.com/llvm/llvm-
-> project/commit/8f701b5df0adb3a2960d78ca2ad9cf53f39ba2fe
-> > > >
-> > > > Yeah, but is that a stable release?
-> > >
-> > > No, but the Intel folks have tested tip of tree LLVM against the kern=
-el
-> > > for us for a few years now to try and catch issues such as this.
-> >
-> > Oh, I see, fine. :)
-> >
-> > >
-> > > > BTW, I don't see GCC reporting the same problem below:
-> > >
-> > > Hexagon does not have a GCC backend anymore so it is not going to be
-> > > possible to do an exact A/B comparison with this configuration but...
-> > >
-> > > > > > > > > include/rdma/uverbs_ioctl.h:643:15: error: static asserti=
-on failed
-> due to requirement '__builtin_offsetof(struct uverbs_attr_bundle, attrs) =
-=3D=3D
-> sizeof(struct uverbs_attr_bundle_hdr)': struct member likely outside of
-> struct_group_tagged()
-> > > > > > >         643 | static_assert(offsetof(struct uverbs_attr_bundl=
-e, attrs) =3D=3D
-> sizeof(struct uverbs_attr_bundle_hdr),
-> > > > > > >             |
-> ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > > >         644 |               "struct member likely outside of
-> struct_group_tagged()");
-> > > > > > >             |
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > > >       include/linux/stddef.h:16:32: note: expanded from macro
-> 'offsetof'
-> > > > > > >          16 | #define offsetof(TYPE, MEMBER)  __builtin_offse=
-tof(TYPE,
-> MEMBER)
-> > > > > > >             |                                 ^
-> > > > > > >       include/linux/build_bug.h:77:50: note: expanded from ma=
-cro
-> 'static_assert'
-> > > > > > >          77 | #define static_assert(expr, ...) __static_asser=
-t(expr,
-> ##__VA_ARGS__, #expr)
-> > > > > > >             |
-> ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > > >       include/linux/build_bug.h:78:56: note: expanded from ma=
-cro
-> '__static_assert'
-> > > > > > >          78 | #define __static_assert(expr, msg, ...) _Static=
-_assert(expr,
-> msg)
-> > > > > > >             |                                                =
-        ^~~~
-> > > > > > >       include/rdma/uverbs_ioctl.h:643:58: note: expression ev=
-aluates
-> to '56 =3D=3D 52'
-> > >
-> > > This seems to give some indication that perhaps there may be some
-> > > architecture specific here with padding maybe? I seem to recall ARM O=
-ABI
-> > > having something similar. Adding the Hexagon folks/list to get some m=
-ore
-> > > clarification. Full warning and context:
-> > >
-> > > https://lore.kernel.org/202408011956.wscyBwq6-lkp@intel.com/
-> > >
+                total++;
+-               /*
+-                * For folios with private, split_huge_page_to_list_to_or=
+der()
+-                * will try to drop it before split and then check if the=
+ folio
+-                * can be split or not. So skip the check here.
+-                */
+-               if (!folio_test_private(folio) &&
+-                   !can_split_folio(folio, 0, NULL))
++
++               if (!can_split_folio(folio,
++                                    folio_test_private(folio) ? 1 : 0,
++                                    NULL))
+                        goto next;
 
-There might be hexagon-specific padding requirements, but not ones that I'v=
-e stumbled across before.  I've added Sundeep from the compiler team who ma=
-y be able to help.
+                if (!folio_trylock(folio))
 
-> > > The problematic section preprocessed since sometimes the macros
-> > > obfuscate things:
-> > >
-> > > struct uverbs_attr_bundle {
-> > >          union {
-> > >                  struct {
-> > >                          struct ib_udata driver_udata;
-> > >                          struct ib_udata ucore;
-> > >                          struct ib_uverbs_file *ufile;
-> > >                          struct ib_ucontext *context;
-> > >                          struct ib_uobject *uobject;
-> > >                          unsigned long attr_present[(((UVERBS_API_ATT=
-R_BKEY_LEN)
-> +
-> > >                                                       ((sizeof(long) =
-* 8)) - 1) /
-> > >                                                      ((sizeof(long) *=
- 8)))];
-> > >                  };
-> > >                  struct uverbs_attr_bundle_hdr {
-> > >                          struct ib_udata driver_udata;
-> > >                          struct ib_udata ucore;
-> > >                          struct ib_uverbs_file *ufile;
-> > >                          struct ib_ucontext *context;
-> > >                          struct ib_uobject *uobject;
-> > >                          unsigned long attr_present[(((UVERBS_API_ATT=
-R_BKEY_LEN)
-> +
-> > >                                                       ((sizeof(long) =
-* 8)) - 1) /
-> > >                                                      ((sizeof(long) *=
- 8)))];
-> > >                  } hdr;
-> > >          };
-> > >
-> > >          struct uverbs_attr attrs[];
-> > > };
-> > > _Static_assert(__builtin_offsetof(struct uverbs_attr_bundle, attrs) =
-=3D=3D
-> > >                         sizeof(struct uverbs_attr_bundle_hdr),
-> > >                 "struct member likely outside of struct_group_tagged(=
-)");
-> > >
-> > > FWIW, I see this with all versions of Clang that the kernel supports
-> > > with this configuration.
-> >
-> > I don't have access to a Clang compiler right now; I wonder if you coul=
-d
-> > help me get the output of this command:
-> >
-> > pahole -C uverbs_attr_bundle drivers/infiniband/core/rdma_core.o
->=20
-> We disabled CONFIG_DEBUG_INFO_BTF for Hexagon because elfutils does not
-> support Hexagon relocations but this is built-in for this configuration
-> so I removed that limitation and ended up with:
->=20
-> $ pahole -C uverbs_attr_bundle vmlinux
-> struct uverbs_attr_bundle {
->         union {
->                 struct {
->                         struct ib_udata driver_udata;    /*     0    16 *=
-/
->                         struct ib_udata ucore;           /*    16    16 *=
-/
->                         struct ib_uverbs_file * ufile;   /*    32     4 *=
-/
->                         struct ib_ucontext * context;    /*    36     4 *=
-/
->                         struct ib_uobject * uobject;     /*    40     4 *=
-/
->                         unsigned long attr_present[2];   /*    44     8 *=
-/
->                 };                                       /*     0    52 *=
-/
->                 struct uverbs_attr_bundle_hdr hdr;       /*     0    52 *=
-/
->         };                                               /*     0    52 *=
-/
->=20
->         /* XXX 4 bytes hole, try to pack */
->         union {
->                 struct {
->                         struct ib_udata    driver_udata;         /*     0=
-    16 */
->                         struct ib_udata    ucore;                /*    16=
-    16 */
->                         struct ib_uverbs_file * ufile;           /*    32=
-     4 */
->                         struct ib_ucontext * context;            /*    36=
-     4 */
->                         struct ib_uobject * uobject;             /*    40=
-     4 */
->                         unsigned long      attr_present[2];      /*    44=
-     8 */
->                 };                                               /*     0=
-    52 */
->                 struct uverbs_attr_bundle_hdr hdr;               /*     0=
-    52 */
->         };
->=20
->=20
->         struct uverbs_attr         attrs[];              /*    56     0 *=
-/
->=20
->         /* size: 56, cachelines: 1, members: 2 */
->         /* sum members: 52, holes: 1, sum holes: 4 */
->         /* last cacheline: 56 bytes */
-> };
->=20
-> If you want any other information or want me to test anything, I am more
-> than happy to do so.
->=20
-> Cheers,
-> Nathan
->=20
-> > > > > > >         643 | static_assert(offsetof(struct uverbs_attr_bundl=
-e, attrs) =3D=3D
-> sizeof(struct uverbs_attr_bundle_hdr),
-> > > > > > >             |
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > > >         644 |               "struct member likely outside of
-> struct_group_tagged()");
-> > > > > > >             |
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > > >       include/linux/build_bug.h:77:50: note: expanded from ma=
-cro
-> 'static_assert'
-> > > > > > >          77 | #define static_assert(expr, ...) __static_asser=
-t(expr,
-> ##__VA_ARGS__, #expr)
-> > > > > > >             |
-> ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > > >       include/linux/build_bug.h:78:56: note: expanded from ma=
-cro
-> '__static_assert'
-> > > > > > >          78 | #define __static_assert(expr, msg, ...) _Static=
-_assert(expr,
-> msg)
-> > > > > > >             |                                                =
-        ^~~~
-> > > > > > >       7 warnings and 1 error generated.
-> > > > > > >
-> > > > > > >
-> > > > > > > vim +643 include/rdma/uverbs_ioctl.h
-> > > > > > >
-> > > > > > >       630
-> > > > > > >       631   struct uverbs_attr_bundle {
-> > > > > > >       632           /* New members MUST be added within the
-> struct_group() macro below. */
-> > > > > > >       633           struct_group_tagged(uverbs_attr_bundle_hd=
-r, hdr,
-> > > > > > >       634                   struct ib_udata driver_udata;
-> > > > > > >       635                   struct ib_udata ucore;
-> > > > > > >       636                   struct ib_uverbs_file *ufile;
-> > > > > > >       637                   struct ib_ucontext *context;
-> > > > > > >       638                   struct ib_uobject *uobject;
-> > > > > > >       639                   DECLARE_BITMAP(attr_present,
-> UVERBS_API_ATTR_BKEY_LEN);
-> > > > > > >       640           );
-> > > > > > >       641           struct uverbs_attr attrs[];
-> > > > > > >       642   };
-> > > > > > >     > 643   static_assert(offsetof(struct uverbs_attr_bundle,=
- attrs) =3D=3D
-> sizeof(struct uverbs_attr_bundle_hdr),
-> > > > > > >       644                 "struct member likely outside of
-> struct_group_tagged()");
-> > > > > > >       645
-> > > > > > >
-> > > > > >
-> > > >
-> > > > Thanks
-> > > > --
-> > > > Gustavo
+Best Regards,
+Yan, Zi
+
+--=_MailMate_EF315A2D-DFF5-497B-8D01-8B983751DA52_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAmayQvQPHHppeUBudmlk
+aWEuY29tAAoJEJ2yUfNrYfqKBBcQALAnYBO27/vspagzhg8KQNaFWeGtg1UHvSgK
+c3HLGgbulN2oHz0hHyGFkvsNnCJYjjdul1R/JExzs8ZT9cZu7TmzKUyCL0iSNw4W
+m2l+VrYLwRpzIL/wQlEydzC0cbcOSVo/OTygg0OpRJO7cjE4dLQOG6DOUYrRRCd0
+88NWCLWWPJphpe4hKfUuM9VHBIfJMjKLYREv18AjHT8Z+BG0959UHrPN9lqDW47I
+vKS6XgOTTDEvGwtcwyW7+C1X+WYnFfN6cf54AZLO/gx1o8lBDC0a6ly8Yf/wCFSz
+w5nqISyrnJF+nKrJqiaqByvs0hx95qKhDJ+9yuJBfCa9JSdVTEsoCUnZoTO0wYob
+QQYeshDSwizbm2nu0LByxCKTyztEzHPvZDHISoxlGvo8ZUs6wr9u0DM00nL1dNje
+mm7GwzxBFT3DqeYHhuPLEJejaClM3oKUiFRSlXyRa96UDXjAC6BEOas8CRIXBB7f
+8xsrnooTmHD5W6AXOmVxla4PYD1DnvUapyF8fh7Y9J5O4/3TgsAA82UqwG1MTABE
+LV+39W4gfdZdZDZCDM9oesdwQy97ZOVekkBzGeOJNQQ5a9erO5lyYGuk8vxR4NPo
+VbowakeTWTzFF/xV8KLWEcmh/QRE1/oVroo+aW87qd5P1VpjJEuPb3xgfwy/+ptS
+P+edxUcs
+=7h2r
+-----END PGP SIGNATURE-----
+
+--=_MailMate_EF315A2D-DFF5-497B-8D01-8B983751DA52_=--
 
