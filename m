@@ -1,156 +1,142 @@
-Return-Path: <linux-kernel+bounces-275863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7680948B38
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:25:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0989948B4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E048285589
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:25:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A4DF287488
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60FC1BD00D;
-	Tue,  6 Aug 2024 08:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7000D1BD01C;
+	Tue,  6 Aug 2024 08:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="GoiMGeS2"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QXLFizCS"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD073C092
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A7D3C092;
+	Tue,  6 Aug 2024 08:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722932708; cv=none; b=HBBtnDxeBZgQHr/00ydBAMLvHVuvP55Bk98XjuMjNbyy+/6SjNMMujuFDCCnCfCdjJ5pTXzS4054CAF7bgrylXJxhY7gtrsH/P7loS8VeemSckpNYvWwPn+1Avz61AcNQKZi2haX0Fq4DP+r5NwwQFDbM3faD9cJyZqitT8XkEc=
+	t=1722932817; cv=none; b=nfk3YijQ+ICxooI9tm+wWvpmEGH6rv87hZkHWNpCUqovWRPEmtTYJly6HR3vYvact5jufuz7fWaISi91IM3tLRlMwU/46LWJrG6I7JGR/SXRsDNQeet3dTYFuXA8bwut04uzT+EfvkasEe+ULkjgRh4cSdRCtXODCZyci5Su69A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722932708; c=relaxed/simple;
-	bh=h8D1nt+xIM5Af7tNSx7i7SKz4hL10tcGcm45Tt6J20E=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dHUDei37kCPHfCtQ952QYL58z4M+TWr2DqaeZ2jZD2O7TmE4+bLkfUjQAIGrX9JLyj4m7JpMIALY0vR6PKOvDe0Lwd28cf5C7WyHfFvz2Tqa0PCUdznnLRGJvCIjaZpzjVNQJ4uK+jQjoXjmb20uy9VoL6V8dLvuIZOTKce3Ryw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=GoiMGeS2; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1722932704; x=1725524704;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=h8D1nt+xIM5Af7tNSx7i7SKz4hL10tcGcm45Tt6J20E=;
-	b=GoiMGeS2GqxqDckxPwz2mmeOLTG+zfvr0u4jYxhgMosTvaGiLLukMlZJrwdgcTbH
-	d2AVUC52Bdqs7sYyJLMnqQd3sTEFa/FDSt0ucV8eTsBuWwCHYDu/MDoI+jT2Sj7L
-	Xvp05hGOpp+Y9cNY2M9AxFFdCnfyBm+fVbODzxzuckM=;
-X-AuditID: ac14000a-03e52700000021bc-bd-66b1dde057a9
-Received: from florix.phytec.de (Unknown_Domain [172.25.0.13])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 74.BD.08636.0EDD1B66; Tue,  6 Aug 2024 10:25:04 +0200 (CEST)
-Received: from Berlix.phytec.de (172.25.0.12) by Florix.phytec.de
- (172.25.0.13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Tue, 6 Aug 2024
- 10:25:03 +0200
-Received: from Berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4]) by
- berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4%4]) with mapi id 15.01.2507.006;
- Tue, 6 Aug 2024 10:25:03 +0200
-From: Teresa Remmet <T.Remmet@phytec.de>
-To: "kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com"
-	<festevam@gmail.com>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"robh@kernel.org" <robh@kernel.org>, "Frank.Li@nxp.com" <Frank.Li@nxp.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "shawnguo@kernel.org"
-	<shawnguo@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 8/9] arm64: dts: imx8mm: Add fallback compatible string
- fsl,imx8mm
-Thread-Topic: [PATCH 8/9] arm64: dts: imx8mm: Add fallback compatible string
- fsl,imx8mm
-Thread-Index: AQHa50/260XBs3iG5kKSaB0JsnnMjbIZxB6A
-Date: Tue, 6 Aug 2024 08:25:03 +0000
-Message-ID: <051cd6a11250b277eb1ac2e5fade36c21026ab3a.camel@phytec.de>
-References: <20240805-fsl_dts_warning-v1-0-055653dd5c96@nxp.com>
-	 <20240805-fsl_dts_warning-v1-8-055653dd5c96@nxp.com>
-In-Reply-To: <20240805-fsl_dts_warning-v1-8-055653dd5c96@nxp.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DED360978B75E24FBE8B0663E5A558DD@phytec.de>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1722932817; c=relaxed/simple;
+	bh=QJkh28dfaTpLjVEIV2Nz8NvUIGeG3YYvhCkbDyeVoJ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sBmPQhkMCXDj8YfQ3AXOp2SOxTgWQStPYV8/i/rNTjqoKKaM+Muh5A2duX6BSCtl3wcqyVBiARrx5Jy4FFmorSelfsI+oFJCyd6dvYdOOefW39l89BvPk1Yic9+DbguqIJ3zl2Mc72WZI/L+ef3xSGYoGvZGWR6bcpq6s+1u6uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QXLFizCS; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc4fccdd78so2332445ad.2;
+        Tue, 06 Aug 2024 01:26:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722932816; x=1723537616; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=21cCqT5PRweYK70/48x7Kh3qRL476Uhp78KESvWeohE=;
+        b=QXLFizCSpMo3TohhAtGiWUMt8pJjpm+2y1tS7Mij21GIbxBbgarpkQBrVhWFX5RRH7
+         kDQ3uUcY9vhbtERPRIWNNpr4hgvFziSPTsecsZ93IWlsvcjz5MPv30p9vogi7xUA2JKU
+         iRnZk0KRxGGPewZl+lqJU4m0RrxJEdxx9fdOHcBRA9ntXXHI8lq+cw+jL7orsSzt1TQC
+         y6dsjAZwY6lHGXoBJtkjAxTzwFdif+p1hcrHT4S7kh274raeffUcKMxjTPV+Yit9XEdL
+         T5N/bGB5yMJ7TS4XkG+ErVeEngf8UjGlOwOurFTTc5dkjj6GdSR2rLLGJrUT2G0BLLLJ
+         Z50w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722932816; x=1723537616;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=21cCqT5PRweYK70/48x7Kh3qRL476Uhp78KESvWeohE=;
+        b=V57y3OwWo0adEgfj8OupllJuPyYaypf9EwZKesKFMD6YFB9a3rJXcdz4/S/Asoz5MX
+         xU7l/nh7sKjxyfxguqTjonjKAOS97TV4yJhloxvdKILcH0o/vKzfprp0VYIJ6EmGmDyq
+         IntSP+4CYRvUMaUoyx1NnoMRYbEvXf3QA7USpFder7fOm7UPMCW6ZrTISt3LL63tJhl5
+         KEu2AcBHg0rPA4EMrTTxFTRrWW8NkiXQmZOj2LK9sFqx8kbSMULNORUdgZMvYDChsU6U
+         BAtQip/5SWDdXkf9RewFy0q8COirEJPAYF6UmBm8v5LvY2SxdTX8Ufnk7uv3lyjzc8AF
+         JUkg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLv+m/O3l5x6NKjki3ZAH25GHZ8zVIdoj4yGXKPvXWIqi3wGcwkH2TCOrchFiYJDTwIPyIu5gyiz2ekto=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJIWpUYH+jVbcAxsGMvPKyTkTDDuaQXZrNmPVCfRQmSCF9wpw2
+	l0K3ldkrUp5fnsNl1sVbqjrB6ySS0/QdCuQEhK/JiAgdFn68RB7f
+X-Google-Smtp-Source: AGHT+IEq9/4drMN7kIJagyt6lrlCSWgHiibKxIIRqUq2p5mmi0bXPHTGWSPyacFRkErrEli/VAB2LA==
+X-Received: by 2002:a17:903:22d1:b0:1fd:7097:af58 with SMTP id d9443c01a7336-1ff5727d560mr147468455ad.11.1722932815585;
+        Tue, 06 Aug 2024 01:26:55 -0700 (PDT)
+Received: from sis-tammy.. ([2402:7500:587:98f5:915f:607f:a35b:7990])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff591764ebsm82106985ad.197.2024.08.06.01.26.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 01:26:55 -0700 (PDT)
+From: tammy tseng <tammy0524@gmail.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tammy_tseng@sis.com,
+	tammy tseng <tammy0524@gmail.com>
+Subject: [PATCH RESEND] hid: add patch for sis multitouch format
+Date: Tue,  6 Aug 2024 16:25:32 +0800
+Message-ID: <20240806082531.1353207-2-tammy0524@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsWyRpKBV/fB3Y1pBg83c1us2XuOyWL+kXOs
-	Fg+v+lu0fdnJZDHzXiubxaqpO1ksXs66x2ax6fE1VovLu+awWfzfs4Pd4u/2TSwWL7aIO/B4
-	7Jx1l91j06pONo/NS+o9Xmyeyeix8d0OJo/+vwYenzfJBbBHcdmkpOZklqUW6dslcGVsvHSf
-	qeCefMWqbz/YGhi/yHUxcnJICJhIPJs1kx3EFhJYwiQx+QF/FyMXkH2PUaL/x2wmCGc9o8SK
-	A90sIFVsAhoSL090gyVEBF4xSXy/9pINxGEWaGCSWDrxDCtIlbBAhMShto3MILaIQKTErbnn
-	WCFsI4mVO1+xgdgsAioS75+1gtXwCrhJbH74kg3ijgqJe/s3g93EKeAo0bxhIyOIzSggK7Fh
-	w3mwemYBcYlNz76zQvwgILFkD0RcQkBU4uXjf1BxeYkTt6YBXcoBVK8psX6XPoRpIfFiSRDE
-	FEWJKd0P2SEuEJQ4OfMJywRG8VlIFsxCaJ6F0DwLSfMsJM0LGFlXMQrlZiZnpxZlZusVZFSW
-	pCbrpaRuYgTFvAgD1w7GvjkehxiZOBgPMUpwMCuJ8HaVbkgT4k1JrKxKLcqPLyrNSS0+xCjN
-	waIkzru6IzhVSCA9sSQ1OzW1ILUIJsvEwSnVwGiklpl160PsfkfLVz5NzxLbZV9fneEg+22R
-	qJCQ3kMrnqvTNjqey3rFJqL8I1hg2emUB2+j9e66WxVGhDRK7Ex4opl0beorh2YFfjlDj7OX
-	fjjEHdkatXTH6wjTtZKern8M7fwlX0T49z+1yH+yKq+sYtlOndqd5+/Fv3qoalQUtGXiUmfH
-	eCWW4oxEQy3mouJEAMZ0TgjnAgAA
+Content-Transfer-Encoding: 8bit
 
-SGVsbG8gRnJhbmssDQoNCkFtIE1vbnRhZywgZGVtIDA1LjA4LjIwMjQgdW0gMTE6NDkgLTA0MDAg
-c2NocmllYiBGcmFuayBMaToNCj4gQWRkIGZhbGxiYWNrIGNvbXBhdGlibGUgc3RyaW5nIGlteDht
-bS1waHlnYXRlIHRvIGZpeCBiZWxvdyB3YXJuaW5nOg0KPiAncGh5dGVjLGlteDhtbS1waHlnYXRl
-LXRhdXJpLWwnIGlzIG5vdCBvbmUgb2YgWydhcm1hZGV1cyxpbXgxLQ0KPiBhcGY5MzI4JywgJ2Zz
-bCxpbXgxYWRzJ10NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEZyYW5rIExpIDxGcmFuay5MaUBueHAu
-Y29tPg0KPiAtLS0NCj4gwqBhcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bW0tcGh5
-Z2F0ZS10YXVyaS1sLXJzMjMyLQ0KPiByczIzMi5kdHNvwqAgfCAzICsrLQ0KPiDCoGFyY2gvYXJt
-NjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDhtbS1waHlnYXRlLXRhdXJpLWwtcnMyMzItDQo+IHJz
-NDg1LmR0c2/CoCB8IDMgKystDQo+IMKgLi4uL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4
-bW0tcGh5Z2F0ZS10YXVyaS1sLXJzMjMyLXJ0cy0NCj4gY3RzLmR0c28gfCAzICsrLQ0KPiDCoDMg
-ZmlsZXMgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlm
-ZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDhtbS1waHlnYXRlLXRh
-dXJpLWwtDQo+IHJzMjMyLXJzMjMyLmR0c28gYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2Fs
-ZS9pbXg4bW0tcGh5Z2F0ZS0NCj4gdGF1cmktbC1yczIzMi1yczIzMi5kdHNvDQo+IGluZGV4IGJm
-M2UwNDY1MWJhMDAuLmYyNDZiMGJhNmFmMjkgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtNjQvYm9v
-dC9kdHMvZnJlZXNjYWxlL2lteDhtbS1waHlnYXRlLXRhdXJpLWwtcnMyMzItDQo+IHJzMjMyLmR0
-c28NCj4gKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1tLXBoeWdhdGUt
-dGF1cmktbC1yczIzMi0NCj4gcnMyMzIuZHRzbw0KPiBAQCAtMTUsNyArMTUsOCBAQA0KPiDCoC9w
-bHVnaW4vOw0KPiDCoA0KPiDCoCZ7L30gew0KPiAtwqDCoMKgwqDCoMKgwqBjb21wYXRpYmxlID0g
-InBoeXRlYyxpbXg4bW0tcGh5Z2F0ZS10YXVyaS1sIjsNCj4gK8KgwqDCoMKgwqDCoMKgY29tcGF0
-aWJsZSA9ICJwaHl0ZWMsaW14OG1tLXBoeWdhdGUtdGF1cmktbCIsDQo+ICvCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAicGh5dGVjLGlteDhtbS1waHljb3JlLXNvbSIsICJm
-c2wsaW14OG1tIjsNCg0Kc2hvdWxkIHRoZSBjb21wYXRpYmxlIG5vdCBiZXR0ZXIgYmUgcmVtb3Zl
-ZCBmb3Igb3ZlcmxheXM/DQoNClJlZ2FyZHMsDQpUZXJlc2ENCg0KPiDCoA0KPiDCoH07DQo+IMKg
-DQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bW0tcGh5
-Z2F0ZS10YXVyaS1sLQ0KPiByczIzMi1yczQ4NS5kdHNvIGIvYXJjaC9hcm02NC9ib290L2R0cy9m
-cmVlc2NhbGUvaW14OG1tLXBoeWdhdGUtDQo+IHRhdXJpLWwtcnMyMzItcnM0ODUuZHRzbw0KPiBp
-bmRleCBmNDQ0OGNkZTA0MDdjLi42NzUwOGNhMTQyNzZmIDEwMDY0NA0KPiAtLS0gYS9hcmNoL2Fy
-bTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bW0tcGh5Z2F0ZS10YXVyaS1sLXJzMjMyLQ0KPiBy
-czQ4NS5kdHNvDQo+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDhtbS1w
-aHlnYXRlLXRhdXJpLWwtcnMyMzItDQo+IHJzNDg1LmR0c28NCj4gQEAgLTE2LDcgKzE2LDggQEAN
-Cj4gwqAvcGx1Z2luLzsNCj4gwqANCj4gwqAmey99IHsNCj4gLcKgwqDCoMKgwqDCoMKgY29tcGF0
-aWJsZSA9ICJwaHl0ZWMsaW14OG1tLXBoeWdhdGUtdGF1cmktbCI7DQo+ICvCoMKgwqDCoMKgwqDC
-oGNvbXBhdGlibGUgPSAicGh5dGVjLGlteDhtbS1waHlnYXRlLXRhdXJpLWwiLA0KPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgInBoeXRlYyxpbXg4bW0tcGh5Y29yZS1z
-b20iLCAiZnNsLGlteDhtbSI7DQo+IMKgDQo+IMKgfTsNCj4gwqANCj4gZGlmZiAtLWdpdCBhL2Fy
-Y2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDhtbS1waHlnYXRlLXRhdXJpLWwtDQo+IHJz
-MjMyLXJ0cy1jdHMuZHRzbyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDhtbS1w
-aHlnYXRlLQ0KPiB0YXVyaS1sLXJzMjMyLXJ0cy1jdHMuZHRzbw0KPiBpbmRleCAxMDdmNzQzZmJi
-MWMzLi43MTRlMjJjY2I5YzY0IDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2Zy
-ZWVzY2FsZS9pbXg4bW0tcGh5Z2F0ZS10YXVyaS1sLXJzMjMyLXJ0cy0NCj4gY3RzLmR0c28NCj4g
-KysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1tLXBoeWdhdGUtdGF1cmkt
-bC1yczIzMi1ydHMtDQo+IGN0cy5kdHNvDQo+IEBAIC0xNiw3ICsxNiw4IEBADQo+IMKgDQo+IMKg
-DQo+IMKgJnsvfSB7DQo+IC3CoMKgwqDCoMKgwqDCoGNvbXBhdGlibGUgPSAicGh5dGVjLGlteDht
-bS1waHlnYXRlLXRhdXJpLWwiOw0KPiArwqDCoMKgwqDCoMKgwqBjb21wYXRpYmxlID0gInBoeXRl
-YyxpbXg4bW0tcGh5Z2F0ZS10YXVyaS1sIiwNCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgICJwaHl0ZWMsaW14OG1tLXBoeWNvcmUtc29tIiwgImZzbCxpbXg4bW0iOw0K
-PiDCoA0KPiDCoH07DQo+IMKgDQo+IA0KDQotLSANClBIWVRFQyBNZXNzdGVjaG5payBHbWJIIHwg
-QmFyY2Vsb25hLUFsbGVlIDEgfCA1NTEyOSBNYWlueiwgR2VybWFueQ0KDQpHZXNjaMOkZnRzZsO8
-aHJlcjogRGlwbC4tSW5nLiBNaWNoYWVsIE1pdGV6a2ksIERpcGwuLUluZy4gQm9kbyBIdWJlciwN
-CkRpcGwuLUluZy4gKEZIKSBNYXJrdXMgTGlja2VzIHwgSGFuZGVsc3JlZ2lzdGVyIE1haW56IEhS
-QiA0NjU2IHwNCkZpbmFuemFtdCBNYWlueiB8IFN0Lk5yLiAyNjY1MDA2MDgsIERFIDE0OTA1OTg1
-NQ0K
+The patch is to add proper quirks for sis multitouch format
+
+Signed-off-by: tammy tseng <tammy0524@gmail.com>
+---
+ drivers/hid/hid-multitouch.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 56fc78841f24..9f49bc7a157c 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -212,6 +212,7 @@ static void mt_post_parse(struct mt_device *td, struct mt_application *app);
+ #define MT_CLS_GOOGLE				0x0111
+ #define MT_CLS_RAZER_BLADE_STEALTH		0x0112
+ #define MT_CLS_SMART_TECH			0x0113
++#define MT_CLS_SIS				0x0457
+ 
+ #define MT_DEFAULT_MAXCONTACT	10
+ #define MT_MAX_MAXCONTACT	250
+@@ -396,6 +397,11 @@ static const struct mt_class mt_classes[] = {
+ 			MT_QUIRK_CONTACT_CNT_ACCURATE |
+ 			MT_QUIRK_SEPARATE_APP_REPORT,
+ 	},
++	{ .name = MT_CLS_SIS,
++		.quirks = MT_QUIRK_NOT_SEEN_MEANS_UP |
++			MT_QUIRK_ALWAYS_VALID |
++			MT_QUIRK_CONTACT_CNT_ACCURATE,
++	},
+ 	{ }
+ };
+ 
+@@ -1787,6 +1793,9 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	if (mtclass->quirks & MT_QUIRK_FIX_CONST_CONTACT_ID)
+ 		mt_fix_const_fields(hdev, HID_DG_CONTACTID);
+ 
++	if (hdev->vendor == USB_VENDOR_ID_SIS_TOUCH)
++		hdev->quirks |= HID_QUIRK_NOGET;
++
+ 	ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT);
+ 	if (ret)
+ 		return ret;
+@@ -2243,6 +2252,11 @@ static const struct hid_device_id mt_devices[] = {
+ 		HID_DEVICE(BUS_USB, HID_GROUP_MULTITOUCH_WIN_8, USB_VENDOR_ID_GOOGLE,
+ 			USB_DEVICE_ID_GOOGLE_WHISKERS) },
+ 
++	/* sis */
++	{ .driver_data = MT_CLS_SIS,
++		HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, USB_VENDOR_ID_SIS_TOUCH,
++			HID_ANY_ID) },
++
+ 	/* Generic MT device */
+ 	{ HID_DEVICE(HID_BUS_ANY, HID_GROUP_MULTITOUCH, HID_ANY_ID, HID_ANY_ID) },
+ 
+-- 
+2.43.0
+
 
