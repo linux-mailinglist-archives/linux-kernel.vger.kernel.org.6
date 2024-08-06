@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-276127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA5C948EE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:16:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 038FB948EE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE6FA1C20F5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:16:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 353F31C22318
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6781C9DE8;
-	Tue,  6 Aug 2024 12:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6971C9ECC;
+	Tue,  6 Aug 2024 12:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R2XSasi1"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KszOxV6u"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E511C0DE7;
-	Tue,  6 Aug 2024 12:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043591C4622;
+	Tue,  6 Aug 2024 12:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722946357; cv=none; b=cGapSfcmXZg26pp+62MkUc8BYFhzXIhqrvama7wwVRTT9NcGYGbLstKR+sHgG9DJuoMhxU0iOLifl4IYLtHP4zntzcckWCIMJoWTvRdKwaaiivw9VaguE1F6rfk6NTePEK4KFxCVDGqIfznzcOQJAIdaUjuCglJcQUOdm2j1iNg=
+	t=1722946378; cv=none; b=aqg7DXews7n9q7+bOx482gdhTYno65P0cxwXmgVOfwMurXIKT320XCRVBoo8DOSTNpn3nSMxpVUFmsiMxOiuA+VrIOHcFKVYR/f2Hdlusccuahc2v4t7ZAaH8lG2tHVHnm5GOjPscU74LqLEsC4UX/42rAollYOd49wmQpn7l94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722946357; c=relaxed/simple;
-	bh=4Jlvs3s8D6Puqz4utkMELxCxHzvLhaMPn3o/pdA9IeU=;
+	s=arc-20240116; t=1722946378; c=relaxed/simple;
+	bh=ij9sLePyaJY22skmN2sv317+IUd6trLmSCTEE9vl6wk=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IS0Jm0T2Z6AxLurFEy5wmBXGVZwXFVKx/bxnsM5b6dnf3YHiega4AZAklIxI8Qckyakn86VDJLYE4MiG0hEjimX/HCpoFNVP9sD+HqMo/eeAMnvjR7Z1TiA0DpcimOBqNr7lEPQG+p3rtNiPJSLA5eSwgVy3kr7f4BKrXOurglo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=R2XSasi1; arc=none smtp.client-ip=198.47.23.249
+	 MIME-Version:Content-Type; b=pnzPZNCUVJ58UppcIwqjVhXzj52+4WjZaM3T/b6ZW+sknjyoacF7xx49Ko4dyPGOvGvbEy3xffxbaGvi/uQsQUFY3+YfBr8E57TROSW8Y7GcFqUo13P9TMR3W3Rl34Q2ZIjUJTbvXyPWe36ZbV2qALMqZufEqgZTmmWWXHQ48Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KszOxV6u; arc=none smtp.client-ip=198.47.23.248
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 476CCCaf024746;
-	Tue, 6 Aug 2024 07:12:12 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 476CCct7063931;
+	Tue, 6 Aug 2024 07:12:38 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722946332;
-	bh=g5gDMigbTHL+jxXCwUmh5fa9wrLaoK43+KxVX/dTfvM=;
+	s=ti-com-17Q1; t=1722946358;
+	bh=enREF7ItjJiUxrF5pFpnS1rZGxyVdchoSvuFJO/m2yQ=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=R2XSasi1RETGNZJLKD+HlKf2YrLQ9lVUdZw30x0ETjPuLH8ZB+8tQsaQuzUGXXeVd
-	 UIX5DyA9XMLSx7eRRj7tWI/+bq1ggXBJaFha7q2wHMf4nrZia9RabqUen0Y/15Af4C
-	 X4P9gV6Rjjag9ZBvf17l5ykFhTBRv8R7MGG72F/E=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 476CCCL7055008
+	b=KszOxV6unmRdGvZDqWv+dS2JW3Fswk6CrdiX3tC/P8dpzUa9GIAaLXLNXeBt+qxFN
+	 OQcFcPPmCGCp0CjF68sBxVBONWTux0uODR1WVcGSktj5Gk7PKklwpuUEJyGUWWBnSA
+	 D1FDdQcOLKBsynR5rIKQywvW2+tl0Y8QU5QuRkVs=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 476CCcaT023414
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 6 Aug 2024 07:12:12 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 6 Aug 2024 07:12:38 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
- Aug 2024 07:12:12 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2024 07:12:38 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 6 Aug 2024 07:12:12 -0500
+ Frontend Transport; Tue, 6 Aug 2024 07:12:38 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 476CCCbA081755;
-	Tue, 6 Aug 2024 07:12:12 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 476CCcnM082165;
+	Tue, 6 Aug 2024 07:12:38 -0500
 From: Nishanth Menon <nm@ti.com>
-To: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Francesco Dolcini <francesco@dolcini.it>
-CC: Nishanth Menon <nm@ti.com>,
-        Francesco Dolcini
-	<francesco.dolcini@toradex.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH v1] arm64: dts: ti: k3-am62-verdin-dahlia: Keep CTRL_SLEEP_MOCI# regulator on
-Date: Tue, 6 Aug 2024 07:12:10 -0500
-Message-ID: <172294632012.366302.5768922280079626594.b4-ty@ti.com>
+To: Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Jared McArthur
+	<j-mcarthur@ti.com>
+CC: Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Tero
+ Kristo <kristo@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH v2 0/3] arm64: dts: ti: k3-am62p/j722s: Fix gpio-ranges
+Date: Tue, 6 Aug 2024 07:12:34 -0500
+Message-ID: <172294634855.366372.6539527201402606616.b4-ty@ti.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240731054804.6061-1-francesco@dolcini.it>
-References: <20240731054804.6061-1-francesco@dolcini.it>
+In-Reply-To: <20240801210414.715306-1-j-mcarthur@ti.com>
+References: <20240801210414.715306-1-j-mcarthur@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,25 +82,27 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Francesco Dolcini,
+Hi Jared McArthur,
 
-On Wed, 31 Jul 2024 07:48:04 +0200, Francesco Dolcini wrote:
-> This reverts commit 3935fbc87ddebea5439f3ab6a78b1e83e976bf88.
+On Thu, 01 Aug 2024 16:04:11 -0500, Jared McArthur wrote:
+> Fixes issues within the am62p and j722s gpio-ranges. Adds the missing
+> holes within the ranges as well as the the missing gpio-ranges
+> property within the mcu_gpio0 node of the am62p.
 > 
-> CTRL_SLEEP_MOCI# is a signal that is defined for all the SoM
-> implementing the Verdin family specification, this signal is supposed to
-> control the power enable in the carrier board when the system is in deep
-> sleep mode. However this is not possible with Texas Instruments AM62
-> SoC, IOs output buffer is disabled in deep sleep and IOs are in
-> tri-state mode.
+> v2 changes: Removes the duplicate ti,ngpio property from the mcu_gpio0
+> node of the k3-am62p-j722s-common-mcu.dtsi.
 > 
 > [...]
 
 I have applied the following to branch ti-k3-dts-next on [1].
 Thank you!
 
-[1/1] arm64: dts: ti: k3-am62-verdin-dahlia: Keep CTRL_SLEEP_MOCI# regulator on
-      commit: 9438f970296f9c3a6dd340ae0ad01d2f056c88e6
+[1/3] arm64: dts: ti: k3-am62p: Add gpio-ranges for mcu_gpio0
+      commit: 4e436f6fb95e507131df78c0d98052237db60ecc
+[2/3] arm64: dts: ti: k3-am62p: Fix gpio-range for main_pmx0
+      commit: 98897a300859dca62f834a5d1f60267032a9fe54
+[3/3] arm64: dts: ti: k3-j722s: Fix gpio-range for main_pmx0
+      commit: 04c90681144c40619524367c69e40736a6fa690c
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
