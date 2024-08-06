@@ -1,178 +1,148 @@
-Return-Path: <linux-kernel+bounces-276319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 991A3949234
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:54:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 504E394920B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43039B2D982
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:50:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF4791F25D99
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8F51D6192;
-	Tue,  6 Aug 2024 13:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9811D47DB;
+	Tue,  6 Aug 2024 13:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="Mi3ovq96"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2036.outbound.protection.outlook.com [40.92.103.36])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhZvdBoZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7876A1D47A2;
-	Tue,  6 Aug 2024 13:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722952192; cv=fail; b=VdIUSpP/Cz1EH8+QvQbJ1dJupSRaJwr/hUs0Wu5srTDUlxS2BYfcz12uv6t2ZgT3Js+wryuj9ieOvikr0TjqeQWVHDTdsMVUfSU/e9BtV48z2AHPVxHY3MYuosXxSRdOAGLmJM+dhuF7RDxNYHgxCTxgEXz6ZOutJvLU4NeKnGQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722952192; c=relaxed/simple;
-	bh=D00Gce7316VLUbOKRXehS00hoLKGw4I/91lXDdj9C+k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YhIxee3Fa1gKik6Osn00IJZSw/bqerKSiXFwSopSzvoT+PYXIsjLMlnFoEHjdfn+DTMLxW3m7upNw2yCox/LxzpRvpb4A1tnY3ECbVtW3MQ63oLLHFCMUNMNGDSMXOsKj2lUJ9J0/fpjsoMp5TTt+6/DpjeqevzuTHRrIVYAZOo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=Mi3ovq96; arc=fail smtp.client-ip=40.92.103.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NnPSWbUV0hszmPk9CA2LxTakjKCbLJ/mYEaUem6qwY/Kuj5elLNHFMWeo3AKBQN1U3ydAb8/6npRSeaVXiwvi5zmxQcHrgg+cIxXw1NXcUREtcWLcEDQxXjWpbomw3ewbjZQlRA9OD9tW2YdpRjSKw1TwrybmW71FsCH6eRM3lb8+f8sitHVA6XiE2X9IhgBXR6Qb7G8pY7ySuWXjhLYYf0VJzzpsld7wyaUlG8c3syYPw8wvfi5S2i6w6PYv4Q5XtNBjaannebsr3LKZhaL3Af8xDMM7HwMk9w/1yGnkFsPkxyeFdGjQlqGwHv8I39qOA5oj8O8/9GwUj7efflY7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LYljV6lQyR/DvSjvEVVSS69P9uNf1effmU5txH9sWMA=;
- b=g7Z22adZLB1R6S+CxSuRcFhb4k47dSGND8kn0Dj9DzKq8QNguFBsN57KtJjAZ0wmeTv7dqJPks2LIczszp25lHGyxd1pVR22OAGFPzkNGztjUqlNrWsHK6soKoj6oPouZvjuvwmJ+AuAabDCAR/LpSk1eXyUa3CyCVYvH07EPKnWOM6PyCWtufgywPGks1tmXqn13D+2ZTtprfHZceLkGKlJKGUXIYjCU75iUiC/UOBf9dcQVYUvMu3ZwRBVZZ0s81DHxEDxpnuj6B28EPvt6gP2aeHMft+ui4GLUbKNIOqj/8GfngpQPIvwiMLOmWBZhWGK0cMEKOQdd2/DuNMTdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LYljV6lQyR/DvSjvEVVSS69P9uNf1effmU5txH9sWMA=;
- b=Mi3ovq96UklNGgqpKoRgL88P/WcedwkU3LDdXGEsC0+hS9QKaRvkQd8K2mX+zYkzuWX9GayEC75FN83Vn4UJuK0sRksL/CoK1tsmtk1byuYed2wUqMO/HPBuaq0LI6/7snCij0adD320fT9eR0WVkoXxClyaddytoCEzHjWZ/jmOaR4nLPKXnUo1/8HEUBrvVszbVqk2wtO2IhyHorJKvtTWTHL8GFFrJr9CBolAOUABVM9BdJrcfGKehTlnUgHoCuxTvkeTu/8XuCuhMB4+7RudfpejzpcsYzcKk5eF9CoG7azXzCoJsSR+J6t1xk+Q29X0A7A/HMjl0JarcIPp/A==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- MA0P287MB1708.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:fe::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7828.26; Tue, 6 Aug 2024 13:49:43 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
- 13:49:43 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Aditya Garg <gargaditya08@live.com>
-CC: "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
-	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>, Kerem Karabay
-	<kekrby@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Orlando
- Chamberlain <orlandoch.dev@gmail.com>
-Subject: [PATCH 3/9] HID: multitouch: support getting the contact ID from
- HID_DG_TRANSDUCER_INDEX fields
-Thread-Topic: [PATCH 3/9] HID: multitouch: support getting the contact ID from
- HID_DG_TRANSDUCER_INDEX fields
-Thread-Index: AQHa6Ad9lUj4/NPxr0mlo/9wuQYrdg==
-Date: Tue, 6 Aug 2024 13:49:43 +0000
-Message-ID: <9223E804-286F-4692-9726-2306361F1909@live.com>
-References: <021EE0BF-93CA-4A37-863F-851078A0EFB7@live.com>
- <C0F2E161-BBAD-4AF7-B39F-015A5A609CD4@live.com>
- <C687A5C0-9922-4CDB-85C1-096CE9D82847@live.com>
-In-Reply-To: <C687A5C0-9922-4CDB-85C1-096CE9D82847@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [j8b33ClWdm9egTSHGKFdho7XMt/KZVoeZDo1B9PP/inH5Nn2V+HlAHPqBHYApBkd7NTQXlYBs5M=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|MA0P287MB1708:EE_
-x-ms-office365-filtering-correlation-id: 264465bc-39df-4923-5541-08dcb61ea04b
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|461199028|19110799003|3412199025|440099028|102099032|1710799026;
-x-microsoft-antispam-message-info:
- FRAdsXC38QTpjeKtv04dEdLr4mEATh4Ij2CUm6tKJoaLJ31Mut0DVcC8xb9OR1bUPUK026gnX4Bl/IEigkyPKaShY9HB5b2P/QT2K72vAfn8XMil16qao3r1IWmUIp7+lOJzPwZAmTHlQJ9sM94UXSrdaOMwxCU/XNcSMP8kiz/NFQILB9B1EvUJ6KaoldW5vZ5vT7F9IykFN8HHisnGa9/PVff7c4AnEbJQz+ahyDia2w8Cittb/IF570xevP8s5URfYsDoBDgTAN2HF7PsoiWfNvBJiIeeAmhvOD0SRhw3GjqIu2aeWZVPwfbDmOxd6Ahu0fOHX/Nkxs60HqDqCMZfkqfQl00+Dr0y2M8ZaKPk56HkpoCVpKVJDQk9kiia/0Rgfs4hozGGZhi5e5mg2Y8grFfRGaWAX2eiZGko0cLUg+DMY6SyscZooF6NsFz5OMWvORI3z9KrO3jWdI6Hs7G4JAWlDyP3udoBQpQ4YQnjwnS+1Mi9oC15xmxduNhLDOeD06JeTB6OyDVfRqCs0uP92cOHG2+1W3FWGuxzp8n0zEPHz7UDF2QT7Y48TIQI16OkOiIKTg8GdhrJVpoQTnN2MBjLTPkri2ylCqAjWE+gkfZggh5m7B6o9AAytyIkZkrf2JwVtieV0AXtHGeMU2iCYQMLeVOVrS1gMY48vR0OuweGcQvpKLLQUNj0vIeH
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?mTx35u3Qj33nVNaf2sigmKnOoGZXPmQX48rLVH3AC7KHrpMIwK+MJOcTXxfz?=
- =?us-ascii?Q?/+6UjwBrpK0w+OgCUJ8U7qpfLhylSz/SEj8BOZvpVIn2BnHRcjscjUFiUfoY?=
- =?us-ascii?Q?/qN+xHRcpfsPU5IuY2oVuiB7wiBL+zk0nk7MrHZOWrXUKtQ5ryfj6tU5GteN?=
- =?us-ascii?Q?ZLu11/gNOtHX5KiOeKhfnfXxl/gQh69tFeMSkkLnj930DKDglHLSBt8XZdH9?=
- =?us-ascii?Q?7q8Y1Gat1ilLePnSI+wG65SfuvFjZP83CvTgfDKY1NbspF183YlGl3hrzX4L?=
- =?us-ascii?Q?aQkUv8TCdFR1G2Zq1OkUEciCGsBUZZY88VRlKRFwhRRVFy52SIPPOxEp7mHC?=
- =?us-ascii?Q?9X/lYSNqcFf1h59u3afyOdcvSeJRO7JxIEjxS0qm6+eBUSISmVpxI1VmovmH?=
- =?us-ascii?Q?RDpiq2mtBh4mx7AHJ0pgFXAOlsaoUDCFhkGKQisXMkuaBPBlyhySRrOIh9hh?=
- =?us-ascii?Q?ttC/8/8mr/8ZpdsuLL7hNx7CYUJBQdb2VLWBdCtOVmtUQyjTXSNNr511qYPa?=
- =?us-ascii?Q?EhKrC5VanYVds5+RoSGtLouDcDEAsgN/HxL8Uo+YMcYJUN37cUh7A+8KnGtW?=
- =?us-ascii?Q?PCU3zx0vBKiyHIdC4QRbp7howYu3NqzgZNIeKfNV9nXxH0ZiI5ZO0KLkz4le?=
- =?us-ascii?Q?bznDENfXa1s/H7PMgM+/I3O6XdDG7LyoZqeZsrxm5w3VMasiCB1nu4ncToZm?=
- =?us-ascii?Q?G4661n4AhNNoHuYkgMDVdN/OYMk0BNUDOmrtNLO2/hwGCVboC9BS1KPryywS?=
- =?us-ascii?Q?9g6qlohVJdYhy9khuHiAqmdoJYvQJP07WTiSGVhuEus6xtk56MDs3DiZBCkZ?=
- =?us-ascii?Q?QFJ433AdBv4GCA/pDOUIALKVfcDOrgDy6humTR6EB0yIZosEjlkc7ylQ7P5P?=
- =?us-ascii?Q?Xzi41ywsjUh2+i7QWaj7qkLl4pR0Alg13/KlnUalwsQc1fBHa2mg6Vy3EHGN?=
- =?us-ascii?Q?G+8pdm1ckrZy71znmMGQK7pl2GLTAuDwCthQAYsmzX1uON+7Lbs9ALMzeu93?=
- =?us-ascii?Q?4FNoHFBM+Iu1eQDUot/qtrYyRQEqpPSRoZgs0qp7YYNBCcZMKSmnCI+KcPpk?=
- =?us-ascii?Q?YkwPZJ8/BBJAb/I3x4rT96gqshAJirUkbyApQE79swccbjeT6FHsoNvOUt0y?=
- =?us-ascii?Q?/HU4+aPtH16v8YBHLzRW11QO5DcbhkNTax3XYpgGwHp21IJVS3wd8241ou5g?=
- =?us-ascii?Q?H9vdZFRhF9vGpPG/ZRt8iSGxNYPujdLxBl8i2KUQx6K3Lt+mNg8Kqha7tPWU?=
- =?us-ascii?Q?oBDsGu3L7+5f/+tifgsPD4iiRuS/8Q4fdgk7/SxV985gcWIk5E5xpDTwNmPv?=
- =?us-ascii?Q?wcJrYGz3cAGaZyoEs4XHlre3?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1B5FF40860AF644C95C402CBE841999D@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298AA1D27A4;
+	Tue,  6 Aug 2024 13:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722952208; cv=none; b=JiW04aAb5SOUHo+q0Nmn6L6gsmZ66OF745hQVlPxhX7SpATH+WHwgUx9538JxMkcsPecIFbSiLFtErAquA2IBI949CRp6bIopLxdBPw+Ngk9BccHJRlQtfITYIwTyx3/gCx590aKqtzfX2sgBBKnkAU42OLzZX2ylafe8/AGXt8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722952208; c=relaxed/simple;
+	bh=ViNFQZX1KF1hgpgV7zrHw49j/8aYGn1Bq6dW4VSWMQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FkciAT78SPI/v1rZIUaMY6MIN6VfuHjZbTfVXXwVM/D+aeop/qUZaZ+9HEbY7v0+5Tos+8MLyEhog5PG4hcGTLDOCc7LXPtDbiOSuiPBEsMC2iHNAYtoImi5mx2/42oCvSfWzI27GyGyPrm6WDbb3hYqYZzkd5OTxsHSHg5AH7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhZvdBoZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CF8AC32786;
+	Tue,  6 Aug 2024 13:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722952207;
+	bh=ViNFQZX1KF1hgpgV7zrHw49j/8aYGn1Bq6dW4VSWMQM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BhZvdBoZrlmlZpD01wdDp/IWpLtwBKX/SA9QtGZU9A8MTSXpgHAmxDVr5RxmMD9ZR
+	 efw/I/gK/ELlECqGASEcUDUgXegxHJsPQrtU211cM6tK/lGd+j9f+LNG/DO0tmiYvR
+	 0Cih9Gs+cEX8Rf8lfQjRFqEGQYNf9tKc6HvHOcQNtAg3nkinHVYSQ92RyHxuABfj0E
+	 DWEhTjX9Z56jKtf6GNxwIGeoFPWvXAbBi42rdAEgY+NIRC7AhImGz0YPGnQTjy2HYT
+	 6AqILYuQvu9QoLe4AZ7nuN5XSgq0zaHTaLA2k/mRNhhnl1McyTfJvN8ys8/KYC5b5+
+	 5lcTx1P5JmtDw==
+Date: Tue, 6 Aug 2024 10:50:04 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Eric Lin <eric.lin@sifive.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Charles Ci-Jyun Wu <dminus@andestech.com>,
+	Locus Wei-Han Chen <locus84@andestech.com>,
+	Atish Patra <atishp@rivosinc.com>,
+	Ji Sheng Teoh <jisheng.teoh@starfivetech.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Xu Yang <xu.yang_2@nxp.com>, Sandipan Das <sandipan.das@amd.com>,
+	Guilherme Amadio <amadio@gentoo.org>,
+	Changbin Du <changbin.du@huawei.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, vincent.chen@sifive.com,
+	greentime.hu@sifive.com
+Subject: Re: [PATCH v1 4/5] perf pmu-events: Remove duplicated riscv firmware
+ event
+Message-ID: <ZrIqDMg7cBVhstYU@x1>
+References: <20240805194424.597244-1-irogers@google.com>
+ <20240805194424.597244-4-irogers@google.com>
+ <CAPqJEFpiy307B4OBHK4WJGjgbVm_woUrdZ+Vy_LSdQ=ECqZX-Q@mail.gmail.com>
+ <CAP-5=fWDmdAkJSoncedZTaSgFwG+p3--jywDj9krnXSfkhh6dQ@mail.gmail.com>
+ <ZrInOywRKzRmjtKF@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-bafef.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 264465bc-39df-4923-5541-08dcb61ea04b
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2024 13:49:43.4208
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB1708
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZrInOywRKzRmjtKF@x1>
 
-From: Kerem Karabay <kekrby@gmail.com>
+On Tue, Aug 06, 2024 at 10:38:07AM -0300, Arnaldo Carvalho de Melo wrote:
+> On Mon, Aug 05, 2024 at 09:05:26PM -0700, Ian Rogers wrote:
+> > On Mon, Aug 5, 2024 at 8:54 PM Eric Lin <eric.lin@sifive.com> wrote:
+> > > I've sent a patch to fix it and the patch already merged. Thanks.
+> > > https://lore.kernel.org/all/20240719115018.27356-1-eric.lin@sifive.com/
 
-This is needed to support Apple Touch Bars, where the contact ID is
-contained in fields with the HID_DG_TRANSDUCER_INDEX usage.
+> > Right, I already commented this should have gone through the
+> > perf-tools-next tree:
+> > https://lore.kernel.org/all/CAP-5=fV3NXkKsCP1WH0_qLRNpL+WuP8S3h1=cHaUMH5MFkVHQg@mail.gmail.com/
+> > Arnaldo, please take Eric's patch in preference to this one.
 
-Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-Co-developed-by: Aditya Garg <gargaditya08@live.com>
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/hid/hid-multitouch.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+> So I removed your version from perf-tools-next, eventually we'll get
+> this merged upstream, I'm just checking this isn't going to get in our
+> way of testing what we have in perf-tools-next...
 
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 56fc78841..3e92789ed 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -635,7 +635,9 @@ static struct mt_report_data *mt_allocate_report_data(s=
-truct mt_device *td,
-=20
- 		if (field->logical =3D=3D HID_DG_FINGER || td->hdev->group !=3D HID_GROU=
-P_MULTITOUCH_WIN_8) {
- 			for (n =3D 0; n < field->report_count; n++) {
--				if (field->usage[n].hid =3D=3D HID_DG_CONTACTID) {
-+				unsigned int hid =3D field->usage[n].hid;
-+
-+				if (hid =3D=3D HID_DG_CONTACTID || hid =3D=3D HID_DG_TRANSDUCER_INDEX)=
- {
- 					rdata->is_mt_collection =3D true;
- 					break;
- 				}
-@@ -814,6 +816,7 @@ static int mt_touch_input_mapping(struct hid_device *hd=
-ev, struct hid_input *hi,
- 			MT_STORE_FIELD(tip_state);
- 			return 1;
- 		case HID_DG_CONTACTID:
-+		case HID_DG_TRANSDUCER_INDEX:
- 			MT_STORE_FIELD(contactid);
- 			app->touches_by_report++;
- 			return 1;
---=20
-2.43.0
+As expected:
 
+⬢[acme@toolbox perf-tools-next]$ git log --oneline -1 ; time make -C tools/perf build-test
+<SNIP>
+make_no_libdw_dwarf_unwind_O: cd . && make NO_LIBDW_DWARF_UNWIND=1 FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.1xBTPCPJh1 DESTDIR=/tmp/tmp.6upZRBhUpN
+          make_jevents_all_O: cd . && make JEVENTS_ARCH=all FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.ncjKsS9Ddm DESTDIR=/tmp/tmp.z2lxV44jzL
+cd . && make JEVENTS_ARCH=all FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.ncjKsS9Ddm DESTDIR=/tmp/tmp.z2lxV44jzL
+  BUILD:   Doing 'make -j28' parallel build
+Warning: Kernel ABI header differences:
+  diff -u tools/include/uapi/drm/i915_drm.h include/uapi/drm/i915_drm.h
+<SNIP>
+  LD      /tmp/tmp.ncjKsS9Ddm/util/perf-util-in.o
+  LD      /tmp/tmp.ncjKsS9Ddm/perf-util-in.o
+  AR      /tmp/tmp.ncjKsS9Ddm/libperf-util.a
+Traceback (most recent call last):
+  File "/home/acme/git/perf-tools-next/tools/perf/pmu-events/jevents.py", line 1317, in <module>
+    main()
+  File "/home/acme/git/perf-tools-next/tools/perf/pmu-events/jevents.py", line 1308, in main
+    ftw(arch_path, [], process_one_file)
+  File "/home/acme/git/perf-tools-next/tools/perf/pmu-events/jevents.py", line 1245, in ftw
+    ftw(item.path, parents + [item.name], action)
+  File "/home/acme/git/perf-tools-next/tools/perf/pmu-events/jevents.py", line 1243, in ftw
+    action(parents, item)
+  File "/home/acme/git/perf-tools-next/tools/perf/pmu-events/jevents.py", line 646, in process_one_file
+    print_pending_events()
+  File "/home/acme/git/perf-tools-next/tools/perf/pmu-events/jevents.py", line 510, in print_pending_events
+    assert event.name != last_name, f"Duplicate event: {last_pmu}/{last_name}/ in {_pending_events_tblname}"
+           ^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Duplicate event: default_core/fw_sfence_vma_received/ in pmu_events__andes_ax45
+make[5]: *** [pmu-events/Build:46: /tmp/tmp.ncjKsS9Ddm/pmu-events/pmu-events.c] Error 1
+make[5]: *** Deleting file '/tmp/tmp.ncjKsS9Ddm/pmu-events/pmu-events.c'
+make[4]: *** [Makefile.perf:763: /tmp/tmp.ncjKsS9Ddm/pmu-events/pmu-events-in.o] Error 2
+
+So I'll have to cherry pick that patch and have it in perf-tools-next,
+we'll get notified at some point that linux-next has the same patch,
+will ack that, etc.
+
+Please send patches for this area in the future to the perf-tools-next
+tree.
+
+- Arnaldo
 
