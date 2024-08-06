@@ -1,159 +1,117 @@
-Return-Path: <linux-kernel+bounces-275511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 696029486A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:40:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E5B49486B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B6651C21C78
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:40:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 432661F23D62
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9503E6FD5;
-	Tue,  6 Aug 2024 00:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E518C09;
+	Tue,  6 Aug 2024 00:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqRtDVlu"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCFMoQIJ"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD4663C;
-	Tue,  6 Aug 2024 00:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A280879C0
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 00:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722904803; cv=none; b=L6yjf5oNp/ib9PWdlap+49qhR2gxuSy+GLOEkj8kFYkkK8eynoW2Ll6Ljzn+wy/jRicmHtUHNZini6VB2LQr56FixebIFrBNvHUdLRe4891LRHy1Vam63k5LRldqh4jux3j8Ct9cMFrETfPskLMzRFevesV7gpj565tjqUP1vqI=
+	t=1722905122; cv=none; b=Iw7JVYpG68KNfDWjRJtjGVZP3s73h95LsYmwniveTCfUPfZWPwtdqfqmPqFxQDNPdj9QjQqnswSziDSG8S54TPgF4PP57HRZgHeMBWLXy7jr0S0ftChNoQG+7UhnGd4UFA5lCxLRwnMdBYp4kmNaVLR2ZQzy/1QRCx/QWYEtpeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722904803; c=relaxed/simple;
-	bh=fRR3DATEsRrbV2lk8KRxjtv1/FxWvxec6i6bzpLg/mA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V8we7MZh4JsAi8+62ub3JxhcouQXmEy1HkT4ZBKIFbYOQdb3eQzw2rBf2jUp/XUttWY5oj9+sjA4cWWNcDYNzCmWBuI2hpd99CLF6bihsXNCjBrvZYrx2e+UhRjp9aMjfYw93247WlT+B/I96kwgEJVa4JE7qx7V3qXYKxHBo+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqRtDVlu; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1722905122; c=relaxed/simple;
+	bh=6C/fTNhPHhkUTQdoDQrJjS8z9bO+T0i8xzItOP2C5lc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ITkknpINFQEI4OHD3nakU6O5nlyY74M6U7c0Opno1n3GIsRHFzvVLiJMIbbSlAW/05Flk20yyAhKERCOzFE3SI/RonQbPqbz5Yi5848Oih1N8u+ca5PXzPsKgC0GYMZBf0ckk5kai6rF6XeAJeUCkt9t0rk26WGYy0pIr3F/7jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jCFMoQIJ; arc=none smtp.client-ip=209.85.128.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3685b3dbcdcso111151f8f.3;
-        Mon, 05 Aug 2024 17:40:01 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6694b50a937so874047b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 17:45:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722904800; x=1723509600; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1722905119; x=1723509919; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fRR3DATEsRrbV2lk8KRxjtv1/FxWvxec6i6bzpLg/mA=;
-        b=AqRtDVluNkcdWZVDRIDDgzt23wl8AUkvKOncS3HCrc3XPB92zBbk2GTndAQ/CX/G1l
-         trxOqd4UQYTWj5N2oVcgyrCMIY8Hll/MKwSR/QhQzxnkWEEmzTSbM5Fe+n8OlJkzwU+S
-         4UM9HG1CwJKhbMewxIKvLOsXrb8q15TVgslObHTsH989DEgC8sP7R5IXIs2/2hdE1FWY
-         RRSXbubW0sq0md/vhqeQz40ypqErCTzWzTUJqaBeMggm1xEqf9J9tjb6obG5SK497CTJ
-         whNgtZBtCFSkWsjwoDWxx68reUYvm0Y116JnP5tNg2kbZf4bLfJtc6ohUZkirCboanTY
-         NhRQ==
+        bh=f24byKXBsDdCoUziB9qpsoPdrCNk3SpbbSe3cKaZfUE=;
+        b=jCFMoQIJ39Bw9Z226TgkwFryI/j+Cb0j7O//xP7zZmKt9DA5fjDMNljnmioLT/4KhD
+         nAZ2EmKamXkBnDjyBDDfmBa+WF6HBVKF43akOTBZGL0wOTib0o4JvwLxjfxsoozHk4Cr
+         8oGxdvyPyecfnN1JE3nVhJ0ayzhbxWd+nFmv5+iXnwDk7DrAh8PE/75abWEl3xyRwp9X
+         M7/MLU5UckA2oEoJ3vgR7JBWUq6MF4m5de7G9ORMl4y2AIKagA5c+dQXGWWZBnOs8vU0
+         TPnG+Jphm9JwM30n54niox2sj59YreTgOXaX0ay5o5wz7GEo/R2DrosKxfmC8zcuozhb
+         HHDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722904800; x=1723509600;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722905119; x=1723509919;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fRR3DATEsRrbV2lk8KRxjtv1/FxWvxec6i6bzpLg/mA=;
-        b=bWmjlDSpAcNb5fahNYKi0pEfHj+cG5CZaRPs6ogJz3WRxZwipAelcFrzX9SB3bzQl1
-         m9rtswQYfJQsNGdYsRhIdGRjGrow8d6HxNf+BEutZekjmGMXcuE8sz09SXOveEA7Q5Ht
-         CoNci3nn8AklGeM6dOt2Z4Cf7rbLGpVeqjv0eoIWMOU07bz0JNcfb3G0l2MPw/Ob4060
-         nyDyqQQhy0zK3AinnLLBK0Re9MPbVRch1aj/Q86MP0AFqyYWnDznW+VS6Sv9SwRM0h5c
-         IL75Gw5rLuNxYIfFR5uhfQSkWeq8OTHfcAx9LlGkFMEtC1Q7Kq5RrtZD2RNIm2LD9Fha
-         eIAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDuzFFiZHrOyp4EHTHiisvqappoUf+khqG8dmj6fD6Mua+3nuTHjYZwJLkuhp3HDzL+WODsupWAlNx64O4DUghGlxl6z/b0sq7KB0jmEwBxyEw0kW+ZEq5cLRkpxQJHnXBQDYj
-X-Gm-Message-State: AOJu0YzOiF1/vBQy827SeFtzPcdS+FJ2sf+SdkFKhy7vy8kJlms84oKB
-	laWyhgYHxNAdUTW2ln393u39QK7hf2Axn0aiL+PR2f0xpeqd+B3gc8584gtkgTvDD1sqfuVaL1M
-	SlbgPrxNrGPLucQ28k8BAsWrqFNI=
-X-Google-Smtp-Source: AGHT+IEQwDIjU1uPDtehVAQaw1/z3fKCHW7xjJpO2iSqDasNkhxHmMjofXQkPJJAKw0wBpE4lz/mcTzeUCXMSbOYxuo=
-X-Received: by 2002:a05:6000:4028:b0:366:e7e2:13c8 with SMTP id
- ffacd0b85a97d-36bbc0f7a96mr13980593f8f.11.1722904800170; Mon, 05 Aug 2024
- 17:40:00 -0700 (PDT)
+        bh=f24byKXBsDdCoUziB9qpsoPdrCNk3SpbbSe3cKaZfUE=;
+        b=VTeJ18UBKID5L8M1zNkHFh/T+1g2LxrEViHwYU+llCv4WxPh/WqetwvEBI7Oe8aQ1v
+         3uCAtrdrxxmeGyMjeeSDSFYr2DlxNBE2ttMpHII9AWxaJZ7hvPvcVuRVSsJt92+6es33
+         Tpi9HkcHkVVNtCiCiJYMbf97nhSovwNWKSMhvD6vYfBRzYS4HKHp4TGPp2YwyKV++/5O
+         7Nzl3W529hdic1HsXA00CcZ0NpNnthUw03fyBgmza/D6PzAcTvFZKJWe4ez/QB0YwamW
+         InbMXxKcf8jJ3b7lim+ESrLf3luMW0ejYqfjNkk+9xN396FmwgqX2Ds1PFkY+2nBpX6M
+         NH6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXnvjqi4Xq6nXLx2ktiPDIFoRz840rTTQEV2Sxcv0M7csE7gePU0XUGUV+b4iB4m2eZV2ZIZQ+WAVKvQmCTzgK8gblguOZ9OeqZieFv
+X-Gm-Message-State: AOJu0YzJWAxpZGo2KGoc9ISjSsU5LPgT2lcdzr7sbCpbPScqXNQTjXac
+	khDN4ulGXQDUbY2j6c9oLiG66QdRY8PHBC2DSjfTrlMrtOd6gkDa
+X-Google-Smtp-Source: AGHT+IF72PxGyYKZU1R2KLVxeLyw0kVXVNki+xiuoaf/qeGWyE98VmgZ8Qgl8Mg9GbrUKkWIdbm3vg==
+X-Received: by 2002:a81:9e0d:0:b0:631:78a1:baf with SMTP id 00721157ae682-6895f60d528mr143494237b3.6.1722905119522;
+        Mon, 05 Aug 2024 17:45:19 -0700 (PDT)
+Received: from localhost (fwdproxy-nha-116.fbsv.net. [2a03:2880:25ff:74::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-68a0fdb3c2csm13912147b3.47.2024.08.05.17.45.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 17:45:19 -0700 (PDT)
+From: Nhat Pham <nphamcs@gmail.com>
+To: akpm@linux-foundation.org
+Cc: hannes@cmpxchg.org,
+	yosryahmed@google.com,
+	shakeel.butt@linux.dev,
+	linux-mm@kvack.org,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	flintglass@gmail.com,
+	chengming.zhou@linux.dev
+Subject: [PATCH v3 2/2] zswap: track swapins from disk more accurately (fix)
+Date: Mon,  5 Aug 2024 17:45:18 -0700
+Message-ID: <20240806004518.3183562-1-nphamcs@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240805232243.2896283-3-nphamcs@gmail.com>
+References: <20240805232243.2896283-3-nphamcs@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0e54954b-0880-4ebc-8ef0-13b3ac0a6838@huawei.com>
- <8743264a-9700-4227-a556-5f931c720211@huawei.com> <CAKgT0Uf4xBJDLMxa3awSnzgZvbb-LN82APkPi7uVpWw+j7wqRA@mail.gmail.com>
- <8d4b6398-1b7d-4c14-b390-0456a6158681@huawei.com>
-In-Reply-To: <8d4b6398-1b7d-4c14-b390-0456a6158681@huawei.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Tue, 6 Aug 2024 06:09:23 +0530
-Message-ID: <CAKgT0Ue1+wvoFzymvMhUvbbSTRgW8=qYySkH80KqRKHCXdHWPg@mail.gmail.com>
-Subject: Re: [BUG REPORT]net: page_pool: kernel crash at iommu_get_dma_domain+0xc/0x20
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: Yonglong Liu <liuyonglong@huawei.com>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, pabeni@redhat.com, hawk@kernel.org, 
-	ilias.apalodimas@linaro.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
-	"shenjian (K)" <shenjian15@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, iommu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 5, 2024 at 6:20=E2=80=AFPM Yunsheng Lin <linyunsheng@huawei.com=
-> wrote:
->
-> On 2024/8/3 0:38, Alexander Duyck wrote:
->
-> ...
->
-> >
-> > The issue as I see it is that we aren't unmapping the pages when we
-> > call page_pool_destroy. There need to be no pages remaining with a DMA
-> > unmapping needed *after* that is called. Otherwise we will see this
-> > issue regularly.
-> >
-> > What we probably need to look at doing is beefing up page_pool_release
-> > to add a step that will take an additional reference on the inflight
-> > pages, then call __page_pool_put_page to switch them to a reference
-> > counted page.
->
-> I am not sure if I understand what you meant about, did you mean making
-> page_pool_destroy() synchronously wait for the all in-flight pages to
-> come back before returning to driver?
+Squeeze a comment into a single line.
 
-Part of the issue is the device appears to be removed from the iommu
-before all the pages have been unmap. To fix that we would either need
-to unmap all the pages or force the kernel to wait until all of the
-pages have been unmapped before the device can be removed from the
-iommu group.
+Signed-off-by: Nhat Pham <nphamcs@gmail.com>
+---
+ mm/page_io.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> >
-> > Seems like the worst case scenario is that we are talking about having
-> > to walk the page table to do the above for any inflight pages but it
->
-> Which page table are we talking about here?
-
-The internal memory being managed by the kernel in the form of struct
-page. Basically we would need to walk through all the struct page
-entries and if they are setup to use the page_pool we are freeing we
-would have to force them out of the pool.
-
-> > would certainly be a much more deterministic amount of time needed to
-> > do that versus waiting on a page that may or may not return.
-> >
-> > Alternatively a quick hack that would probably also address this would
-> > be to clear poll->dma_map in page_pool_destroy or maybe in
->
-> It seems we may need to clear pool->dma_sync too, and there may be some
-> time window between clearing and checking/dma_unmap?
-
-That is a possibility. However for many platforms dma_sync is a no-op.
-
-> > page_pool_unreg_netdev so that any of those residual mappings would
-> > essentially get leaked, but we wouldn't have to worry about trying to
-> > unmap while the device doesn't exist.
->
-> But how does the page_pool know if it is just the normal unloading proces=
-sing
-> without VF disabling where the device still exists or it is the abnormal =
-one
-> caused by the VF disabling where the device will disappear? If it is the =
-first
-> one, does it cause resource leaking problem for iommu if some calling for=
- iommu
-> is skipped?
-
-It wouldn't. Basically we would have to do this for any page pool that
-is being destroyed with pages left in-flight. That is why the
-preference would likely be to stall for some time and hope that the
-pages get unmapped on their own, and then if they can't we would need
-to force this process to kick in so we don't spend forever.
+diff --git a/mm/page_io.c b/mm/page_io.c
+index 0004c9fbf7e8..aa190e3cb050 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -524,9 +524,7 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
+ 		goto finish;
+ 	}
+ 
+-	/*
+-	 * We have to read the page from slower devices. Increase zswap protection.
+-	 */
++	/* We have to read from slower devices. Increase zswap protection. */
+ 	zswap_folio_swapin(folio);
+ 
+ 	if (data_race(sis->flags & SWP_FS_OPS)) {
+-- 
+2.43.0
 
