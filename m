@@ -1,128 +1,218 @@
-Return-Path: <linux-kernel+bounces-275700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC4A9488C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:06:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAA579488D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:07:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41BD81F23B2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:06:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 455A3B229EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FDE1BBBE8;
-	Tue,  6 Aug 2024 05:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29971BB6AF;
+	Tue,  6 Aug 2024 05:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TTtv82xt"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="D2QoG28i";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NZtpEaaw"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD87A1BA879
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 05:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C701B9B57;
+	Tue,  6 Aug 2024 05:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722920790; cv=none; b=L4vsBmebRhYleAJVrfmcAG5YAwzm7NsXFlDIPlNqjBFfhx567vMddg02nnLzBoIumInd8ocQlfjXgUUVZas7Pu+nCot0sZzDccUf5xPLTfY+pAwgmHHe5Esx6n1ZpK5R0sSRTj9xkhf2daUyu7VwoceAAaaKeu1NxE7UIt6wxyg=
+	t=1722920841; cv=none; b=CxVxr1zfWvjxvrKLXs5OtCF38eINKqdseHkTmrTyc3N3MNvvwqcnCO20VLYBvWJq06z0XM+/EUdjWLxggSIoy6ANEMiEm0xpFT54C4kYaflwHDhKA4wdrnhGwhjLCKDcCXSmuD1BR5pZwvOn+kItMODlkQj15vnvuk1iJrsL/mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722920790; c=relaxed/simple;
-	bh=2pkjSfd95zUvLrMKWE6ujE4TtorLVUowbInEA7tvNHQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AIF5bDikrzUmwt3vmyX64ftIWKUHEkWmJ4uXFIPLdEnW3ebZZrLiC3ToZnmRU8rnC7uD7T4LrsGYmq6KJ33Y4JBXPnLHcDfUqBz13UfIZmOz7aBN0b95uffytXFPz3g6qljc1eQtMKr0loxAGdlr7pSO3Jc01gxJt7KRRKqCThY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TTtv82xt; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5b391c8abd7so141366a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 22:06:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722920787; x=1723525587; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XCDSMY7BT7wntpsqPsFrSxhoevgzeOq2oCwZ5SgFJUo=;
-        b=TTtv82xtSJQ68fCg+sb5sXJxRQh0deH6ZWpiMusYXQH1RGedepADTgkNo8hPSwQ1fD
-         Z6UXLJ0N3lFpng035adY/A+hoC1iqVeNvqe+R+rRsE6vHqZ26246v1I3/KVYy5P/dpQY
-         r3maXmMuOU1TSH9R9eg7mL6Nw3qOIVN44YUs4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722920787; x=1723525587;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XCDSMY7BT7wntpsqPsFrSxhoevgzeOq2oCwZ5SgFJUo=;
-        b=FtqPikFuQf0U0ZpcmWWFc3JAoZRa6YB+TXAFKztrABlYmS+PEKCDQHrZsvM8lWjHPB
-         1+VuqRP6s4bwv8E5M31+FB4N0Sw1YTA4bDF/YMYek2s0nwUIFubdFqglXFfrXQ9XwV8K
-         XOfkjVHEvEDlWYbpUqKzHAfx1mH0L6RkZbKl34TczseplOowDw+Ejt0JXJL4bohhHKWv
-         dej7rDv13wqrZzeqWmGc0DXC79GFrLb4X6YZCb2D6qS5SVTEvCgZUKTSLXhK41h8o5Zf
-         HDwGKREGSPMZ8o6MJ0PG51vgbGsQJiWkb3lVNtpX1PA7Z5C49v3YPul/vP8TZ36t7qgj
-         sgJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHEdJBqVbwyMwAm1s05Ma/PH6K/gakRObqfqSV6+tRuaruDTCe4it1FI65oqJ8rDJc7bdBdpuUwdyvGmQwlSMmwNf6UuUEqnZXqmGb
-X-Gm-Message-State: AOJu0YzrqkC0HGOsdcanXYn9p5dRGTv5kbsh/Y/HzawrY6i6rkLySfPg
-	1sFSVmDVCtwJG28Naz3BV6OfnEMFSlUU92P/0pxO6daJV3qqjaeEhy2G6oEKv9+0vff3SxNkk+k
-	=
-X-Google-Smtp-Source: AGHT+IGW/l++AClOs+7tjwzlbMHBdGjTbb1zXTQrawS+gQt3GrUSnwQYA2Lh1t5LnVGsoLWTa5N7UQ==
-X-Received: by 2002:a05:6402:1762:b0:5b8:34a9:7fd9 with SMTP id 4fb4d7f45d1cf-5b834a980efmr8698506a12.27.1722920787097;
-        Mon, 05 Aug 2024 22:06:27 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b839c2c939sm5564877a12.33.2024.08.05.22.06.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 22:06:26 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7aabb71bb2so8599566b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 22:06:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX0Y8napSg5vrUpeXrY1CRLylwZHpDskD/HvisSrZsQypmdRzx4kZW+n3nAKYuSkBFfudb99UwDuwaxtR5KTpyWKq8sAB+cc5+K58zw
-X-Received: by 2002:a17:907:d29:b0:a7a:c812:36bb with SMTP id
- a640c23a62f3a-a7dc4da6efdmr1175852766b.8.1722920786049; Mon, 05 Aug 2024
- 22:06:26 -0700 (PDT)
+	s=arc-20240116; t=1722920841; c=relaxed/simple;
+	bh=apDWX41hzTvepTsaor7Otn5/Ivr3hjk1x5Lq8kdkbQo=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=eaz5CO9WTSXysIyrx+cepa+OYTcrQogmdLfe2Ub2iAgpA5y9hvmhGz3rGpslIff9EeqFAWwgEA+Keoex6BijzADtuHq3brcwvNLma080coZe8gNeAHm5fC+IGlosD8We/785mnLjSeboVh/d6WFkON4qrq0QKOfLvwMKj2sY9yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=D2QoG28i; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NZtpEaaw; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id B4BC4115184B;
+	Tue,  6 Aug 2024 01:07:17 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by compute5.internal (MEProxy); Tue, 06 Aug 2024 01:07:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1722920837;
+	 x=1723007237; bh=BgnfkzSExE/qxu88/0KK7QSWgDm/YVsejCE1GRTeWMQ=; b=
+	D2QoG28iZfuj6HVD2ACxzTeTPStEIrdqFSWIkc8/5CmOQwIg4eVniMGB1lXxV2vO
+	n6HGWjHlhuNsSX2Msb73Zlvw+OO8W5xJx0QYY7ETOX/uVZbEN9mfvFkPPm9SxZlP
+	YnP1By9Hvqg7RCt43znDt2VMEcfr0RHgmbYgdPEUh8C/DirM2VGwzciTUimfKhq/
+	JNH4emj3d5tVqubeTI09n+4LN/S0REuwAO96DfdnMwLrVzld8axWuneyCaHuijgJ
+	1nRNszvpMJZV7UvK7Lvna/3u9bxfQ3lkXRNeJwOduiQ/fZyj+rkTSAaCXK8IV30v
+	ENjWYfCU+NQSUEl+/gFn5w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722920837; x=
+	1723007237; bh=BgnfkzSExE/qxu88/0KK7QSWgDm/YVsejCE1GRTeWMQ=; b=N
+	ZtpEaawHsVkrXwlydpyeNoZrmDQzwaPtDWibrL4CSC8CuE51QYHmynaUuW+QB6sc
+	D3ZRr2qXQKl3SzGCXcjFJfaJgdFscolNrhbMB5wDADGlSgoINwXYAXDK1PGB/DMA
+	JrC+5bmJRaPdht7moV7Hucqb0wxyBIlFvbO4jIEKYMWDyWO0TLcwZcmcX2ncDzE9
+	/MiWfaIw9I2p4h3hBYWBOBuhDYEmMPvESOxJm3i9f7HMQPdU40dhIrEx3y5db9Lm
+	j7JO3LoSyxOPBYUsIyno9is3x8KQvLvKPZAVkj/3i3w1ig+ljs1OIU8DtALAU6y/
+	b6kqgVo5bJDfwHhxgvu8A==
+X-ME-Sender: <xms:hK-xZsPuwW7Y3wlUfLkNlNFh76UKOl5oSVi9J40pGmJLrLXYLCv_og>
+    <xme:hK-xZi_3z-L5Lc9V_YHAGUJ4bCgeEZ4-QF3CljHKduS9BOQC-PVRR5q3esrnJi4DT
+    ypKR6DlBl9pKxIYRjU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeejgdelvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdflihgr
+    gihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqe
+    enucggtffrrghtthgvrhhnpeffkeevtedtueevfefhkefhudfggeetjeffjeduueehueej
+    gfeludevkedutdeuheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsth
+    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghn
+    ghesfhhlhihgohgrthdrtghomhdpnhgspghrtghpthhtoheptd
+X-ME-Proxy: <xmx:ha-xZjTRVAObh7Uv0wtlJQT-LCXPIBcBDlQtrlwILzCa2ByRvApwrQ>
+    <xmx:ha-xZks35dc82f9GsuY0rcK_gN9nERwkjYZLG029PLh2mfFQbdAs-g>
+    <xmx:ha-xZkexrRstUjfb15YI24IlQwjKqalVZGC3RzrmK3xihn5jPnMaEw>
+    <xmx:ha-xZo3hlFYLDmdrEtWPl79KGIi5OdKwd1tOgGBtl726jk6DUcVy-g>
+    <xmx:ha-xZrxuagU7lHBLOfOx0Nq2bfYelBgdGaphPrdL5GpuLA8HIzDkkJI8>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id DA53219C0079; Tue,  6 Aug 2024 01:07:16 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731-jacuzzi_dt-v3-0-1c4314e8962f@chromium.org> <172243932855.488108.1466847928167694223.b4-ty@collabora.com>
-In-Reply-To: <172243932855.488108.1466847928167694223.b4-ty@collabora.com>
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Tue, 6 Aug 2024 13:05:49 +0800
-X-Gmail-Original-Message-ID: <CAHc4DNLwUAzrE-1-7oH2DHR6fvz4x9ZVaKbjUo6rOy3-kjUadQ@mail.gmail.com>
-Message-ID: <CAHc4DNLwUAzrE-1-7oH2DHR6fvz4x9ZVaKbjUo6rOy3-kjUadQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] Add kukui-jacuzzi-cerise and kukui-jacuzzi-stern
- DT and dt-binding
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Hsin-Te Yuan <yuanhsinte@chromium.org>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 06 Aug 2024 06:06:56 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Guenter Roeck" <linux@roeck-us.net>
+Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Serge Semin" <fancer.lancer@gmail.com>,
+ "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, regressions@lists.linux.dev
+Message-Id: <97ad6c99-ca4e-463b-aee0-9a7e9455fea3@app.fastmail.com>
+In-Reply-To: <fbe92f1c-3c08-4b46-9d7a-e098ac1656a8@roeck-us.net>
+References: <20240612-mips-clks-v2-0-a57e6f49f3db@flygoat.com>
+ <20240612-mips-clks-v2-2-a57e6f49f3db@flygoat.com>
+ <fbe92f1c-3c08-4b46-9d7a-e098ac1656a8@roeck-us.net>
+Subject: Re: [PATCH v2 2/7] MIPS: csrc-r4k: Apply verification clocksource flags
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 11:22=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> On Wed, 31 Jul 2024 10:47:24 +0000, Hsin-Te Yuan wrote:
-> > Cerise is known as ASUS Chromebook CZ1.
-> > Stern is known as ASUS Chromebook Flip CZ1.
-> >
-> > They are almost identical. The only difference is that Cerise is a
-> > clamshell device without touchscreen and Stern is a convertible device.
-> >
-> >
-> > [...]
->
-> Applied to v6.11-next/dts64, thanks!
->
-> [1/2] arm64: dts: mt8183: Add kukui-jacuzzi-cerise series boards
->       commit: 4ba6d1539fdd709ea8e8478c37b014e663cd6894
-> [2/2] dt-bindings: arm64: mediatek: Add kukui-jacuzzi-cerise board
->       commit: ac90896833b52ff58c81727f57ed3cf9ffb9db86
->
-> Cheers,
-> Angelo
->
->
-I'm sorry that I just found out these two devices will not be
-launched. I sincerely apologize for any inconvenience this may cause
-and for taking up your valuable time. I kindly request that you
-consider dropping this patch series.
 
-Sincerely,
-Hsin-Te
+
+=E5=9C=A82024=E5=B9=B48=E6=9C=886=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=E5=
+=8D=8812:09=EF=BC=8CGuenter Roeck=E5=86=99=E9=81=93=EF=BC=9A
+> Hi,
+>
+> On Wed, Jun 12, 2024 at 09:54:29AM +0100, Jiaxun Yang wrote:
+>> CP0 counter suffers from various problems like SMP sync,
+>> behaviour on wait.
+>>=20
+>> Set CLOCK_SOURCE_MUST_VERIFY and CLOCK_SOURCE_VERIFY_PERCPU,
+>> as what x86 did to TSC, to let kernel test it before use.
+>>=20
+>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+
+Hi Guenter,
+
+Thanks for the report, it makes no sense to me though....
+
+I can't reproduce it with QEMU git master, do you mind specifying your Q=
+EMU
+version for me? Also is it possible to have a copy of dmesg when failure=
+ happens.
+
+If I'm unable to resolve it in a couple of days, I'll send a patch to re=
+vert this change.
+
+Thanks
+
+>
+> With this patch in the mainline kernel, about one in five qemu
+> boot attempts with e1000 Ethernet controller fail to activate
+> the network interface (specifically, the dhcp client is unable to
+> get an IP address for the interface). Bisect log is attached below.
+>
+> For reference, here is an example command line.
+>
+> qemu-system-mips64 -kernel vmlinux -M malta -cpu 5KEc \
+> 	-initrd rootfs-n32.cpio \
+> 	-device e1000,netdev=3Dnet0 -netdev user,id=3Dnet0 \
+> 	-vga cirrus -no-reboot -m 256 \
+> 	--append "rdinit=3D/sbin/init mem=3D256M console=3DttyS0 console=3Dtt=
+y " \
+> 	-nographic
+>
+> Reverting this patch fixes the probem.
+>
+> Thanks,
+> Guenter
+>
+> ---
+> # bad: [de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed] Linux 6.11-rc2
+> # good: [0c3836482481200ead7b416ca80c68a29cfdaabd] Linux 6.10
+> git bisect start 'HEAD' 'v6.10'
+> # good: [280e36f0d5b997173d014c07484c03a7f7750668] nsfs: use cleanup=20
+> guard
+> git bisect good 280e36f0d5b997173d014c07484c03a7f7750668
+> # good: [a4f9285520584977127946a22eab2adfbc87d1bf] Merge tag=20
+> 'clk-for-linus' of=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
+> git bisect good a4f9285520584977127946a22eab2adfbc87d1bf
+> # bad: [8e313211f7d46d42b6aa7601b972fe89dcc4a076] Merge tag=20
+> 'pinctrl-v6.11-1' of=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
+> git bisect bad 8e313211f7d46d42b6aa7601b972fe89dcc4a076
+> # good: [acc5965b9ff8a1889f5b51466562896d59c6e1b9] Merge tag=20
+> 'char-misc-6.11-rc1' of=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
+> git bisect good acc5965b9ff8a1889f5b51466562896d59c6e1b9
+> # bad: [d2be38b9a5514dbc7dc0c96a2a7f619fcddce00d] Merge tag 'mips_6.11=
+'=20
+> of git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux
+> git bisect bad d2be38b9a5514dbc7dc0c96a2a7f619fcddce00d
+> # good: [45659274e60864f9acabba844468e405362bdc8c] Merge branch=20
+> 'pci/misc'
+> git bisect good 45659274e60864f9acabba844468e405362bdc8c
+> # good: [8e5c0abfa02d85b9cd2419567ad2d73ed8fe4b74] Merge tag=20
+> 'input-for-v6.11-rc0' of=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input
+> git bisect good 8e5c0abfa02d85b9cd2419567ad2d73ed8fe4b74
+> # good: [3c3ff7be9729959699eb6cbc7fd7303566d74069] Merge tag=20
+> 'powerpc-6.11-1' of=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
+> git bisect good 3c3ff7be9729959699eb6cbc7fd7303566d74069
+> # good: [3de96d810ffd712b7ad2bd764c1390fac2436551] dt-bindings: mips:=20
+> brcm: Document brcm,bmips-cbr-reg property
+> git bisect good 3de96d810ffd712b7ad2bd764c1390fac2436551
+> # bad: [9c7a86c935074525f24cc20e78a7d5150e4600e3] MIPS: lantiq: improv=
+e=20
+> USB initialization
+> git bisect bad 9c7a86c935074525f24cc20e78a7d5150e4600e3
+> # bad: [580724fce27f2b71b3e4d58bbe6d83b671929b33] MIPS: sync-r4k:=20
+> Rework based on x86 tsc_sync
+> git bisect bad 580724fce27f2b71b3e4d58bbe6d83b671929b33
+> # good: [c171186c177970d3ec22dd814f2693f1f7fc1e7d] MIPS: csrc-r4k:=20
+> Refine rating computation
+> git bisect good c171186c177970d3ec22dd814f2693f1f7fc1e7d
+> # bad: [426fa8e4fe7bb914b5977cbce453a9926bf5b2e6] MIPS: csrc-r4k:=20
+> Select HAVE_UNSTABLE_SCHED_CLOCK if SMP && 64BIT
+> git bisect bad 426fa8e4fe7bb914b5977cbce453a9926bf5b2e6
+> # bad: [7190401fc56fb5f02ee3d04476778ab000bbaf32] MIPS: csrc-r4k: Appl=
+y=20
+> verification clocksource flags
+> git bisect bad 7190401fc56fb5f02ee3d04476778ab000bbaf32
+> # first bad commit: [7190401fc56fb5f02ee3d04476778ab000bbaf32] MIPS:=20
+> csrc-r4k: Apply verification clocksource flags
+
+--=20
+- Jiaxun
 
