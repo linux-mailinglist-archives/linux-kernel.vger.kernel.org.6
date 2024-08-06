@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-276840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D387F94990D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:28:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2DF949912
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87B9E1F23219
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:28:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 869F128535A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB6116BE27;
-	Tue,  6 Aug 2024 20:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5E5170A21;
+	Tue,  6 Aug 2024 20:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mjKbp61A"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/Nza7/+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C0A15F330;
-	Tue,  6 Aug 2024 20:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D80158DDF;
+	Tue,  6 Aug 2024 20:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722976082; cv=none; b=t/cyR10WOEmNgdYqnGd0zDbJ3JQCjmkFuAEBygLm/M0oBJB/0/3/gwls35E8KFheWPv1QkseCMAFnzsbCXWnIwSESujADGeANnP3qIbKuH57bSsODPsJ2BBBqzkjA4kPZGxwbbDpxFJjYkRQu690BEisxVBH8giRLxDCvxYOo+E=
+	t=1722976087; cv=none; b=iexfwKvKWfqyjBclffDn9UdId2lbIyfLIubJ0wr79hYBTX1h5Pv4JjN62ZyKDDW8Z/qButWySuBLlsQeeSvcPnEBU4jGCUdUVkh8RN63M7YQ47detK0jHBjyJ7nCw+SY0u8OnODTjeJTpsoKDGmc6Z0xQREAqtzaKDSbc5R2aZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722976082; c=relaxed/simple;
-	bh=PGidN50VqSMsxH5WPybaRo3PQQ3ZFjgWPFywza87M2Y=;
+	s=arc-20240116; t=1722976087; c=relaxed/simple;
+	bh=UaND5S5bwiFcSdjyXg3oXyV9jhUNoq8C93n1XABl+k4=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=snOzZn47Bip8oMCVTIjLw4StGDMyoExZtwclP7SICsnUTPYnysCrohKF6OmH5ciiUbpJZgTIt7TwSghwv8K07KHbm5A7ctIIbDh4bJXjFCkCxVpOUrt9151dD2ZEpVSRzxuxwBTWj6Pj20GxrApAQNhsxgz1RJdTFGLJo0Uqncs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mjKbp61A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3F00C4AF11;
-	Tue,  6 Aug 2024 20:28:02 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=rUtqi+bLFmNexZbCsJwhPF3hrXmgo/sCO3s0ydDCeDo7Or0U2Hfcz2iLQB/UW5TdzrweTegeWcgyHRkq0aDds3njYjpt69ku/EPg3Xb+wNeEq5Ccqc6B9iMeBiGCYTwGhD3/pniaIOU4d1CstLkGk7I+x2NOCtLwqMDl54Z/Q/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/Nza7/+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 369FCC4AF14;
+	Tue,  6 Aug 2024 20:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722976082;
-	bh=PGidN50VqSMsxH5WPybaRo3PQQ3ZFjgWPFywza87M2Y=;
+	s=k20201202; t=1722976087;
+	bh=UaND5S5bwiFcSdjyXg3oXyV9jhUNoq8C93n1XABl+k4=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=mjKbp61AtvZojlrEeyKxTIBYhokiQPE1EMUXZCR1QvueH/kisy9s0RQQdLiL64hF2
-	 XO1jdpMRNol1yKqezjW83AG/yvLfcbFIIqiRMKykmv+WeEAlRal2ovtD0gjWiT7+6d
-	 tdTXNwHuHQ25XfFjd02WSYAHA7ZlzNjCnZzuWQC0/bOUisDjpJ+MCfp2bjbKoGnOAL
-	 oNba+4x66OGM1Cr2l5+KPISZXHfh3RiwrHVX+DJUQpwH60uzvUMoBlyA53l69M5XFL
-	 hgic2k9M/PeVt3z6JvEkxNFrbGkiRiCWOm7Hh0Dk3UvTKlzgCKNJwec7cUjxmM7DbM
-	 BQ5PDpYWrm9GA==
+	b=W/Nza7/+HIACT0cGoRdnSgOMxG4QJAwut/yYi1nw+v4w/6H6OB8MQcHxGC2GADlp6
+	 6kxeVUcPEWuaRgNFV0pTY+Qh43XOuXkICW5UU+8QgGgdR6VHRouuhjTFSa6Iw4ViVj
+	 U+stheoDEK2OPfeK9ZVp6BgH/+EVEwkRgfAoJqAhLexOEdURFFbXuo6tfv/9ZXwhVT
+	 0hfSWRBhirnqBiVs3rTXJmNHQamFhCIE27aFGePbERthaZeXV5FSNCULp+VCwoR4l6
+	 JTDxBnwFyMgBvXKZeS6KVv000r6b2YK7ljVXmQi0g1IawnuVGmV/VeuJeiVlqW+Hla
+	 Xl8ZrAjiTphGg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE1F93824F34;
-	Tue,  6 Aug 2024 20:28:02 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 340B83824F34;
+	Tue,  6 Aug 2024 20:28:07 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,35 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] ethtool: cmis_cdb: Remove unused declaration
- ethtool_cmis_page_fini()
+Subject: Re: [PATCH net-next v2] tcp: Use clamp() in htcp_alpha_update()
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172297608133.1692635.2165578555125490106.git-patchwork-notify@kernel.org>
-Date: Tue, 06 Aug 2024 20:28:01 +0000
-References: <20240803112213.4044015-1-yuehaibing@huawei.com>
-In-Reply-To: <20240803112213.4044015-1-yuehaibing@huawei.com>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, danieller@nvidia.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ <172297608575.1692635.542797158588181224.git-patchwork-notify@kernel.org>
+Date: Tue, 06 Aug 2024 20:28:05 +0000
+References: <561bb4974499a328ac39aff31858465d9bd12b1c.1722752370.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <561bb4974499a328ac39aff31858465d9bd12b1c.1722752370.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: edumazet@google.com, davem@davemloft.net, dsahern@kernel.org,
+ kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Sat, 3 Aug 2024 19:22:13 +0800 you wrote:
-> ethtool_cmis_page_fini() is declared but never implemented.
+On Sun,  4 Aug 2024 08:20:17 +0200 you wrote:
+> Using clamp instead of min(max()) is easier to read and it matches even
+> better the comment just above it.
 > 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> ---
->  net/ethtool/cmis.h | 1 -
->  1 file changed, 1 deletion(-)
+> It also reduces the size of the preprocessed files by ~ 2.5 ko.
+> (see [1] for a discussion about it)
+> 
+> $ ls -l net/ipv4/tcp_htcp*.i
+>  5576024 27 juil. 10:19 net/ipv4/tcp_htcp.old.i
+>  5573550 27 juil. 10:21 net/ipv4/tcp_htcp.new.i
+> 
+> [...]
 
 Here is the summary with links:
-  - [net-next] ethtool: cmis_cdb: Remove unused declaration ethtool_cmis_page_fini()
-    https://git.kernel.org/netdev/net-next/c/edfa53dd617f
+  - [net-next,v2] tcp: Use clamp() in htcp_alpha_update()
+    https://git.kernel.org/netdev/net-next/c/871cdea0f82e
 
 You are awesome, thank you!
 -- 
