@@ -1,101 +1,115 @@
-Return-Path: <linux-kernel+bounces-277036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 004AF949B80
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:44:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5E3949B83
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA8971F21AC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:44:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19A2E1C21F06
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8D11741EF;
-	Tue,  6 Aug 2024 22:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C066F174ED0;
+	Tue,  6 Aug 2024 22:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="U+eZqkfs"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oA9Udird"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685396BB39;
-	Tue,  6 Aug 2024 22:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722984275; cv=fail; b=IUJln9qqfZOtRyDFKACjbjXzp7uj+F/TE9efOT9L12m2m8GW9Q5/pX6x+PTEWa9dWJUs7P/u2szsZxNaIuOvYEbku4rMluDqPn6uZO7phHKEHlcCSPD9mfMvu4hmSvMsfvoBvSoOdpNlE9sZM12TAVjUbVmKn5+GVlRz4lzTF18=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722984275; c=relaxed/simple;
-	bh=Xu4DzLtoKgAZG2alv6tAowlN2kPeD/xB+lvfOJ3kL+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SPeFhxX3W6B9t63gJct/Ik/m49Wp6HA1IbInPd2JwSIHORqXTVZbkz5RtWmEVoDIROvO3TNvtmeyx4J3dgZ/GiVpNxiOtbY0i9HEHxjbDDGXUuPN9Xhzzxc5+G+58DUHE3bDs1JIFUw1vKXFVgbb/J94iuq0Kxe+3cx8OzJ283g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=fail (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=U+eZqkfs reason="signature verification failed"; arc=fail smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1722984262; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=JA/SrSLOcnwcUCKFfrFwnGE1YbvGhCcrLxJeW8r78qnF/x6ARpy0WXU3MwFYzUZizhwBxv3g5aK6iFSVPvsrYusD4KqeOln/7kpGQZzXokpskUOXpSNcmSKTOI1dCATf2phVhOOld8x6C3TtoSKPuacDpMcQgWoXHEFm8i3r+TA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1722984262; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=2DeYFOLt4YpqNZkU+QrGDdxNc8FVFJ477fjrwZdudGg=; 
-	b=PZbXLdNPFJQWzXelRMmK4FUA8kv4wrgLdZRQv3PrjdwXJeD7Yca5ezB8PAJRwRSA7dVsr3TecnQS3AUBXcdMU8EbXS6c60w4R8aorCeDSGB8u1uF4cGvmKx1z4aRqRu861V2KpOWdHJvSS2c6OoL+TtVwgSY7y7iOV7cdCXzAWk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
-	dmarc=pass header.from=<nfraprado@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1722984262;
-	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=2DeYFOLt4YpqNZkU+QrGDdxNc8FVFJ477fjrwZdudGg=;
-	b=U+eZqkfsgzfVLGaXxanEEpGmiw6sgRJ3ts8bvooqqQ/bEDaNMrvAuiKYo+8zeSIw
-	0bAYNi6GporgUhg9MNEEoXiRhnONf1nWx55e/TjHIMgid0Yr60B4DUC5VgCcY5xyD3m
-	vlqGAAv4MqL2zkA7feHGfXEXuV22iS4Hf5krQ2tQ=
-Received: by mx.zohomail.com with SMTPS id 1722984260135977.7539156361697;
-	Tue, 6 Aug 2024 15:44:20 -0700 (PDT)
-Date: Tue, 6 Aug 2024 18:44:17 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Wren Turkal <wt@penguintechs.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 3/3] Bluetooth: hci_qca: fix a NULL-pointer derefence at
- shutdown
-Message-ID: <1723fdc3-33b9-4518-8f25-161ab59ecf21@notapiano>
-References: <20240731-hci_qca_fixes-v1-0-59dad830b243@linaro.org>
- <20240731-hci_qca_fixes-v1-3-59dad830b243@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078D33BB30;
+	Tue,  6 Aug 2024 22:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722984617; cv=none; b=Rj3uNY73RUQaL0JvAIdT29D1/P4CznUvXLW3zVihmjxcHn30v3Lc/NEhf9uJjRMnWNvXBVJm/vI+zhwdElMej97eBPIySveV6Xz9JmGiZH79mrCKzbPKDd8RhnQBElWoR8g1o/t2OKdxhuoEShJJUdfZJTKEJz0MCWO2mkjp7Hg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722984617; c=relaxed/simple;
+	bh=Uuzmt+G1XXTtnYH31M+MA+kwz1Lvn26M+bDbpb4G2dM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=afKPXiwZkGRcO3jqFuPGQdieak/jeFF8pLw7AVZUJ8UJB0yyDPWzheGW58WO7LxhUMa3ihoM/wR7f1IP4izmzBdgIrZ7y/7p45c+VHcYeRiq8kOeT8vyTUsqMfgmTsTDnkFu81wMRPxhERIu9Kw5JipOZYkUIUjcFevnw+Wq2lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oA9Udird; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4301BC32786;
+	Tue,  6 Aug 2024 22:50:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722984616;
+	bh=Uuzmt+G1XXTtnYH31M+MA+kwz1Lvn26M+bDbpb4G2dM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oA9UdirdUjdmup4rGaYLV/AaZ+eCS+Ktn/6dKTJ0XMFiqhDKNL0DpcUYYFVn3Jd6Z
+	 7SHHIawMDlC4n/hJDi4YSNyFrFr3zwvdqHCKrapYLIwt00hEddpQ0droQbsSremEvg
+	 ocWhI/FmEvvBs4Ln89cvItqFT+U38TZrPv0DFsaNOVs2MMaRMm4T+6QUx2mqSWb4JE
+	 4Ii81a7NULbyC+uWaRCDO+5wRicqAwswFE3Y0JaJKXM5B7ivxfFuVh6Qf9aA1SMJO6
+	 wZaxFaIkHehc3d8rlupwzCPvCDAXj11ZzEJZTRV9sbgqq1ZdL39SSOLf3Se567cNqX
+	 wBdSXiCmtaesg==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCHSET 00/10] perf tools: Sync tools and kernel headers for v6.11
+Date: Tue,  6 Aug 2024 15:50:03 -0700
+Message-ID: <20240806225013.126130-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240731-hci_qca_fixes-v1-3-59dad830b243@linaro.org>
-X-ZohoMailClient: External
 
-On Wed, Jul 31, 2024 at 05:20:50PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Unlike qca_regulator_init(), qca_power_shutdown() may be called for
-> QCA_ROME which does not have qcadev->bt_power assigned. Add a
-> NULL-pointer check before dereferencing the struct qca_power pointer.
-> 
-> Fixes: eba1718717b0 ("Bluetooth: hci_qca: make pwrseq calls the default if available")
-> Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Closes: https://lore.kernel.org/linux-bluetooth/su3wp6s44hrxf4ijvsdfzbvv4unu4ycb7kkvwbx6ltdafkldir@4g7ydqm2ap5j/
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hello,
 
-Hi,
-
-I just noticed we're still hitting this issue in mainline (saw it on the
-mt8183-juniper platform in KernelCI). I see this commit was merged 6 days ago to
-bluetooth-next, but it seems there wasn't a pull request with this fix yet to
-include it in 6.11. I'm wondering if it's still going to be sent.
+This is the usual sync up in header files we keep in tools directory.
+I put a file to give the reason of this work and not to repeat it in
+every commit message.  The changes will be carried in the perf-tools
+tree.
 
 Thanks,
-Nícolas
+Namhyung
+
+
+Namhyung Kim (10):
+  perf tools: Add tools/include/uapi/README
+  tools/include: Sync uapi/drm/i915_drm.h with the kernel sources
+  tools/include: Sync uapi/linux/kvm.h with the kernel sources
+  tools/include: Sync uapi/linux/perf.h with the kernel sources
+  tools/include: Sync uapi/sound/asound.h with the kernel sources
+  tools/include: Sync uapi/asm-generic/unistd.h with the kernel sources
+  tools/include: Sync network socket headers with the kernel sources
+  tools/include: Sync filesystem headers with the kernel sources
+  tools/include: Sync x86 headers with the kernel sources
+  tools/include: Sync arm64 headers with the kernel sources
+
+ tools/arch/arm64/include/asm/cputype.h        |  10 +
+ tools/arch/arm64/include/uapi/asm/unistd.h    |  24 +-
+ tools/arch/powerpc/include/uapi/asm/kvm.h     |   3 +
+ tools/arch/x86/include/asm/cpufeatures.h      | 803 +++++++++---------
+ tools/arch/x86/include/asm/msr-index.h        |  11 +
+ tools/arch/x86/include/uapi/asm/kvm.h         |  49 ++
+ tools/arch/x86/include/uapi/asm/svm.h         |   1 +
+ tools/include/uapi/README                     |  73 ++
+ tools/include/uapi/asm-generic/unistd.h       |   2 +-
+ tools/include/uapi/drm/i915_drm.h             |  27 +
+ tools/include/uapi/linux/in.h                 |   2 +
+ tools/include/uapi/linux/kvm.h                |  17 +-
+ tools/include/uapi/linux/perf_event.h         |   6 +-
+ tools/include/uapi/linux/stat.h               |  12 +-
+ .../arch/powerpc/entry/syscalls/syscall.tbl   |   6 +-
+ .../perf/arch/s390/entry/syscalls/syscall.tbl |   2 +-
+ .../arch/x86/entry/syscalls/syscall_64.tbl    |   8 +-
+ .../perf/trace/beauty/include/linux/socket.h  |   5 +-
+ .../perf/trace/beauty/include/uapi/linux/fs.h | 163 +++-
+ .../trace/beauty/include/uapi/linux/mount.h   |  10 +-
+ .../trace/beauty/include/uapi/linux/stat.h    |  12 +-
+ .../trace/beauty/include/uapi/sound/asound.h  |   9 +-
+ 22 files changed, 810 insertions(+), 445 deletions(-)
+ create mode 100644 tools/include/uapi/README
+
+-- 
+2.46.0.rc2.264.g509ed76dc8-goog
+
 
