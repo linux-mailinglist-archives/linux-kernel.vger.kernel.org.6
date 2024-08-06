@@ -1,350 +1,187 @@
-Return-Path: <linux-kernel+bounces-275957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B6E948C6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:53:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A48948C75
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DADDB23F0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:53:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB9B11C2237E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B596A1BDABC;
-	Tue,  6 Aug 2024 09:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409671BE23E;
+	Tue,  6 Aug 2024 09:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WIgKtVHa"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ad9qQIof"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF9AF4FA;
-	Tue,  6 Aug 2024 09:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3031BDAAF
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 09:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722937997; cv=none; b=ZdhJEq4NjQ3+CuLtLsr63mU8O5/bFhtzz4bP0AWB4hG+c4x60vpm7fEBMcBHTU2p9P3F8SJhLpkUAnmy6Afg3tsLbwYRG3PaS6qrTUTNbZQz2dQELe0lWpw0E9RPT8B62GfSikhqEt6g4DcwAgD0o49RCorJ9Ym8yC2mmFjNh5A=
+	t=1722938187; cv=none; b=p0v1a1S1RRclUuAtY1ffJWbMwQFEC5tdZpE+uJ0Vy+T/+dBDebC8Cw9kvZ910s2yive7vYbBEZEKMc9p/D0H+fxHYs5gIpE0B7PVAzhTOqrvm+uxerPJV3bcjwAuIHSpaXip+UtaqXNbwvJsO3r05qQZw3DnSvQSTkhMOGsJRMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722937997; c=relaxed/simple;
-	bh=YlrGk0eWcSMeOxrP+q9m2CXmPxYl8BQMUsHGzZUmaCE=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=NPu16bWeuvZcx5NlaegmSOz8F+orLuOOR3ePkn4uImWPtwN+rK81ZyP3Wpo+3cCeHCxrMjvM5JFANj6Iduu9XOldWK2uBUXEmfSHkoQYXt+eb0GU9bfMTHsQCkNw4wjVmnYj4gsgyUp6wHDgP3jh8n/dQ9jF5B/491e8hCzhBsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WIgKtVHa; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-428119da952so3126015e9.0;
-        Tue, 06 Aug 2024 02:53:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722937994; x=1723542794; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2mQPS9zg7TGIvwm6agg96nJdEWh3XQlPRFsLMFHgNQs=;
-        b=WIgKtVHagampGi6/jFZ7iPfeCMwzVVC/oEpZH7EUhYEOe9TWqwfvv8R5e+OFKZ2msq
-         eFNykmf45EBRH+BIjxVjKONOATKasYnQ3PD2EmPxOU/0d9G5qD2QIR0I8zydwShvOErI
-         Qu4z3CeVYwa6euOfwRFV1M73IXKlXqhEkP6HPHlfFwL134ouAZME4OhEKid2I8RsKMxa
-         rTF+BSex0iZMBJSzaEFkzF2wOJ62ATymFE8PKXKHvtW9uEKFjOcz4VgDf2MVteqzrCuH
-         Itx/1ilgnN7vnWfmTr1Tp8dIzE+eAkoAawAXKIj20ZeH8D30htIKSjO6EDBEPCTrvD1v
-         aGkQ==
+	s=arc-20240116; t=1722938187; c=relaxed/simple;
+	bh=Ti7LxTdMM/GAdTYAF9fxDmku8ji0u+DIP+EbRV6ON8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FEC560gskid2Vq0nNrJl3AR0gUMpjlp24LzlDPPEGpBsMaz9DpzL4I5OfWUHZjpWxlgAfHHaJGVSuczrpRl7bMA+Je90QjVgdbXBl0XdcJBHF15e/h1A75jN4pOjixZy2qDDDR3ivuZoBM45tFqjsUjqaTVjfFDHU3VOzRjw974=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ad9qQIof; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722938184;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vBQbeHUtRbShTjPALCR2c7k0HkoMBZRNLSHpsLdcSmo=;
+	b=Ad9qQIofW2pyjT7v8NfDmLYj3GmsAZVALw8qEh9QVskolRfs8JoHRA21Moe68/+oSyG65v
+	Ii1Y0wmiMM4tYr3RV5xsap+razHgseSGOGPYsC8NiOOql0DVzn4xMQFJkY3YE6m59GJCzJ
+	hNluA7qjHiojGUb3Ex8XaOzqczwmc1g=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-75-KhFikSmSP16Znm5AB6t4yw-1; Tue, 06 Aug 2024 05:56:22 -0400
+X-MC-Unique: KhFikSmSP16Znm5AB6t4yw-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4280b119a74so3618785e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 02:56:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722937994; x=1723542794;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2mQPS9zg7TGIvwm6agg96nJdEWh3XQlPRFsLMFHgNQs=;
-        b=l3pnTHAIJh4W4x+2MwojE3KOWP1eNxnyGCyvChqScwenmqom2kkrnjTGcuN6ywaSIe
-         3683Eh0hK4i0Ki+IS8oSTTyRHS2X16oTGx9zVtlC0jw1JSwWKGEsu2YYvOrF3HsY1dO4
-         +sdVtK3aVZPqyeq7m+aDbghahJu+WkBHP2FKI9uys8he6W+V7m/f2KF1ykZ0oSzbT9nb
-         zTFtqIWegCQIa6qkf8t7hXm5WtbTP4lUgwM0mZbS7Gv4cIoPirxt+1YhtdcZ7me4LoPK
-         hajLoU3KjPhzLIhmQ7lOgJ+CteJwcv/ahvDyRBFtxFuPv6CVBefHEyfYTk8DKW4mWD2l
-         jUgw==
-X-Forwarded-Encrypted: i=1; AJvYcCXuqlh6PUSZzDyPvALlan5N+9/9LvWw0jfsv4Nxo7z0vsDWs07AW2M4+uc45EOxfHcJE2x0bnfrtDsIlLwqY9h1V18dnQKza8NywlPRQkitf4b4aeJ8YYzfT/wi2/hEJ2GBJZNrZMDjA31Vr8gc6n1jvGv+I7OFy7OkvaUmgQIo9FL7pg==
-X-Gm-Message-State: AOJu0YzmpG6npVEHXuhvgHLzNVX30zSDxcVcpHaiyeN5U+Qvh7ns5t3L
-	gyYRONgb07GoIfQUCZOGHsbBOfy6iJyDveQV3vsAc9K0ZUhJouMTCTslL5oq
-X-Google-Smtp-Source: AGHT+IHxn9Y5AXE0NxP2JtVmiQmgpmFT4+fYLO9J518Mr77PSMlwGH9nzHumSAjUEHlc/hxhWdqPrQ==
-X-Received: by 2002:a05:600c:19cb:b0:426:64f4:7793 with SMTP id 5b1f17b1804b1-428e6b30a06mr108861175e9.22.1722937993580;
-        Tue, 06 Aug 2024 02:53:13 -0700 (PDT)
-Received: from localhost (host-82-58-19-206.retail.telecomitalia.it. [82.58.19.206])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e9cd4esm172094365e9.44.2024.08.06.02.53.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 02:53:13 -0700 (PDT)
-Date: Tue, 06 Aug 2024 11:53:12 +0200
-From: Matteo Martelli <matteomartelli3@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
- Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Marius Cristea <marius.cristea@microchip.com>, 
- linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <66b1f288678b6_31cc370bc@njaxe.notmuch>
-In-Reply-To: <20240729211100.0d602d6e@jic23-huawei>
-References: <20240724-iio-pac1921-v4-0-723698e903a3@gmail.com>
- <20240724-iio-pac1921-v4-3-723698e903a3@gmail.com>
- <20240728135306.422713ea@jic23-huawei>
- <66a784bac1db7_89a37017@njaxe.notmuch>
- <20240729211100.0d602d6e@jic23-huawei>
-Subject: Re: [PATCH v4 3/3] iio: adc: add support for pac1921
+        d=1e100.net; s=20230601; t=1722938181; x=1723542981;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vBQbeHUtRbShTjPALCR2c7k0HkoMBZRNLSHpsLdcSmo=;
+        b=SFgaPCBwGEXRgYFJW5fsSkLdNucKN5RE+2I8T5tY56rbKNbdoZJWiVvaC5342O3ZXz
+         jcAUKmul3d+jAPM5hzaBpsz0HTFAdZWv4H5mPCZ5QWGiwTp35ja+0WRaR8C7i5ysrQHa
+         TaXk6KNzgp1NiWddANEpGFMPbzRVvufXkW/kH+Ot2+NEuMtmGzRvcqGA0UQQvE2t2Y+g
+         4moz9nxHfOL/fkcpFQq2uPuxuSyYLxL7DOVqcSGHRbEoF2DDyHYUOvK9tByH2e5gKl1c
+         B25eqi1jou+2g5+PpQxJqqiYQnJGpINx7kYTBf8kJQufBpCAY5Utp1QKDlqSqdb3Aov4
+         xECQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsxLJb8miD/8UpoeccyGvuUyfQL/fPqWhiEebumJM5N/17Vb/d9gxyMDSKHyVHDW2YNcKw5oe6eEo7eDjNfpuSyHgjH2qriMtV0xLo
+X-Gm-Message-State: AOJu0Yyv/u0qQ8BfWY6Plo51jzbj8W+sF2AxPSGM3RpTsxlHVl5QzioR
+	06BAFlyQtQUewd8fqAIk2OJxvNjsZBbTnzPgmKrTqIop1ZpPiIuPGMSNyHLuGvIICkmZ+4E89O5
+	xWkWMzD91wdV9dkcOax6A+OYb4q/kr8N0ow17dNMA/Nf3KsUlWD+tKIQDo+esoQ==
+X-Received: by 2002:a05:600c:4451:b0:426:616e:db8d with SMTP id 5b1f17b1804b1-428e6b090eamr97972375e9.15.1722938181435;
+        Tue, 06 Aug 2024 02:56:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfP5KCXnsTh/UB7wgpJpEYZk3HSm4U8XqukDLtT1XwMJtEIW1gpaFv2fU6boTUbNdjaKb94w==
+X-Received: by 2002:a05:600c:4451:b0:426:616e:db8d with SMTP id 5b1f17b1804b1-428e6b090eamr97971975e9.15.1722938180840;
+        Tue, 06 Aug 2024 02:56:20 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbcf0ccc5sm12576894f8f.23.2024.08.06.02.56.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 02:56:20 -0700 (PDT)
+Message-ID: <ac97ccdc-ee1e-4f07-8902-6360de80c2a0@redhat.com>
+Date: Tue, 6 Aug 2024 11:56:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 07/11] mm/huge_memory: convert split_huge_pages_pid()
+ from follow_page() to folio_walk
+To: Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>, Heiko Carstens
+ <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Mark Brown <broonie@kernel.org>
+References: <20240802155524.517137-1-david@redhat.com>
+ <20240802155524.517137-8-david@redhat.com>
+ <e1d44e36-06e4-4d1c-8daf-315d149ea1b3@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <e1d44e36-06e4-4d1c-8daf-315d149ea1b3@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Jonathan Cameron wrote:
-> > > > +
-> > > > +/*
-> > > > + * Emit on sysfs the list of available scales contained in scales_tbl
-> > > > + *
-> > > > + * TODO:: this function can be replaced with iio_format_avail_list() if the
-> > > > + * latter will ever be exported.  
-> > > 
-> > > You could just have added a precursor patch doing that.
-> > > If you have time I'd certainly consider a patch that does export that function
-> > > and uses it here.
-> > >  
-> > I wasn't sure that one usage was enough to justify the export. I could
-> > definitely do it, I am assuming it would now go to a new patch series since
-> > this has already been merged into testing, right?
-> The requirements for justifying exporting an existing function is less
-> than it would be to add a new one.  As such I think it makes sense.
+On 06.08.24 11:46, Ryan Roberts wrote:
+> On 02/08/2024 16:55, David Hildenbrand wrote:
+>> Let's remove yet another follow_page() user. Note that we have to do the
+>> split without holding the PTL, after folio_walk_end(). We don't care
+>> about losing the secretmem check in follow_page().
 > 
-> As you note, needs a separate patch on top of the tree.
+> Hi David,
 > 
-I will try to address this more generally by adding a new
-read_avail_release_resource() iio_info function, see below. If that goes
-through, exporting the iio_format_avail_list() would not be necessary since the
-driver could directly use the read_avail iio_info function.
-
-> > 
-> > > > + *
-> > > > + * Must be called with lock held if the scales_tbl can change runtime (e.g. for
-> > > > + * the current scales table)
-> > > > + */
-> > > > +static ssize_t pac1921_format_scale_avail(const int (*const scales_tbl)[2],
-> > > > +					  size_t size, char *buf)
-> > > > +{
-> > > > +	ssize_t len = 0;
-> > > > +
-> > > > +	for (unsigned int i = 0; i < size; i++) {
-> > > > +		if (i != 0) {
-> > > > +			len += sysfs_emit_at(buf, len, " ");
-> > > > +			if (len >= PAGE_SIZE)
-> > > > +				return -EFBIG;
-> > > > +		}
-> > > > +		len += sysfs_emit_at(buf, len, "%d.%09d", scales_tbl[i][0],
-> > > > +				     scales_tbl[i][1]);
-> > > > +		if (len >= PAGE_SIZE)
-> > > > +			return -EFBIG;
-> > > > +	}
-> > > > +
-> > > > +	len += sysfs_emit_at(buf, len, "\n");
-> > > > +	return len;
-> > > > +}
-> > > > +
-> > > > +/*
-> > > > + * Read available scales for a specific channel
-> > > > + *
-> > > > + * NOTE: using extended info insted of iio.read_avail() because access to
-> > > > + * current scales must be locked as they depend on shunt resistor which may
-> > > > + * change runtime. Caller of iio.read_avail() would access the table unlocked
-> > > > + * instead.  
-> > > 
-> > > That's a corner case we should think about closing. Would require an indicator
-> > > to read_avail that the buffer it has been passed is a snapshot that it should
-> > > free on completion of the string building.  I don't like passing ownership
-> > > of data around like that, but it is fiddly to do anything else given
-> > > any simple double buffering is subject to race conditions.
-> > >  
-> > If I understand your suggestion the driver would allocate a new table and copy
-> > the values into it at each read_avail() call. Then
-> > iio_read_channel_info_avail() would free the buffer if some sort of
-> > free-after-use indicator flag is set. I guess such indicator might be set via an
-> > additional read_avail function argument (would be an extensive API change) or
-> > maybe via a new iio_chan_spec attribute.
+> Our (arm64) CI is showing a regression in split_huge_page_test from mm selftests from next-20240805 onwards. Navigating around a couple of other lurking bugs, I was able to bisect to this change (which smells about right).
 > 
-> Probably needs to be in read_avail() as otherwise we end up with yet more masks.
-> However, doesn't need to be global.  read_avail_ext() could be added that
-> is used in preference to read_avail() if it is supplied.  That new one can
-> be used only be drivers that need to handle the allocation and free.
-> However I prefer the explicit resource free option as we can in theory
-> at least do much cleverer things than simply freeing the buffer.
+> Newly failing test:
 > 
-> > 
-> > > An alternative would use a key of sometype to associate individual read_avail
-> > > calls with new ones to read_avail_release_resource. That might be cleaner.
-> > >   
-> > Are you referring to introduce a new read_avail_realease_resource callback that
-> > would be called at the end of iio_read_channel_info_avail() if set? Similarly
-> > to the previous point the driver would allocate a new table and copy the values
-> > into it at each read_avail() call, but the driver would also define a release
-> > callback to free such table. If otherwise you are referring to something less
-> > trivial, is there a similar API in the kernel that can be referred to for
-> > clarity?
+> # # ------------------------------
+> # # running ./split_huge_page_test
+> # # ------------------------------
+> # # TAP version 13
+> # # 1..12
+> # # Bail out! Still AnonHugePages not split
+> # # # Planned tests != run tests (12 != 0)
+> # # # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
+> # # [FAIL]
+> # not ok 52 split_huge_page_test # exit=1
 > 
-> Indeed what you suggest. Key is it puts the burden on the driver to do it's
-> own management. That avoids handing ownership of the buffer to the core
-> which is a pattern I'm not that keen on if we can avoid it.
-> 
-> The new callback would take the buffer pointer that came back from read_avail()
-> and pass that back to the driver.  In simple case the driver could just
-> free the buffer.  However, it could also do some cleverer stuff to keep
-> it around if a write hasn't raced with this code.  That might make sense if
-> it's a big table and calculating the values is expensive.
->
-I am trying to achieve this and it looks pretty straightforward for the case we
-considered, iio would be extended like the following:
+> It's trying to split some pmd-mapped THPs then checking and finding that they are not split. The split is requested via /sys/kernel/debug/split_huge_pages, which I believe ends up in this function you are modifying here. Although I'll admit that looking at the change, there is nothing obviously wrong! Any ideas?
 
-diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-index e6fad8a6a1fc..fe6ad8e9722f 100644
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -860,12 +860,20 @@ static ssize_t iio_read_channel_info_avail(struct device *dev,
-                return ret;
-        switch (ret) {
-        case IIO_AVAIL_LIST:
--               return iio_format_avail_list(buf, vals, type, length);
-+               ret = iio_format_avail_list(buf, vals, type, length);
-+               break;
-        case IIO_AVAIL_RANGE:
--               return iio_format_avail_range(buf, vals, type);
-+               ret = iio_format_avail_range(buf, vals, type);
-+               break;
-        default:
--               return -EINVAL;
-+               ret = -EINVAL;
-        }
-+
-+       if (indio_dev->info->read_avail_release_resource)
-+               indio_dev->info->read_avail_release_resource(
-+                       indio_dev, this_attr->c, vals, this_attr->address);
-+
-+       return ret;
- }
+Nothing jumps at me as well. Let me fire up the debugger :)
 
- /**
-diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
-index f6c0499853bb..0ab08b94bad0 100644
---- a/include/linux/iio/iio.h
-+++ b/include/linux/iio/iio.h
-@@ -491,6 +491,10 @@ struct iio_info {
-                          int *length,
-                          long mask);
+-- 
+Cheers,
 
-+       void (*read_avail_release_resource)(struct iio_dev *indio_dev,
-+                                           struct iio_chan_spec const *chan,
-+                                           const int *vals, long mask);
-+
-        int (*write_raw)(struct iio_dev *indio_dev,
-                         struct iio_chan_spec const *chan,
-                         int val, 
+David / dhildenb
 
-And with the following usage example for the pac1921 driver:
-
-static int pac1921_read_avail(struct iio_dev *indio_dev,
-			      struct iio_chan_spec const *chan,
-			      const int **vals, int *type, int *length,
-			      long mask)
-{
-	switch (mask) {
-	//...
-	case IIO_CHAN_INFO_SCALE:
-		switch (chan->channel) {
-		//...
-		case PAC1921_CHAN_CURRENT: {
-			struct pac1921_priv *priv = iio_priv(indio_dev);
-			size_t len;
-			int *buf;
-
-			len = ARRAY_SIZE(priv->current_scales) * 2;
-			buf = kmalloc_array(len, sizeof(int), GFP_KERNEL);
-			if (!buf)
-				return -ENOMEM;
-
-			for (unsigned int i = 0; i < len; i++)
-				buf[i] = ((int *)priv->current_scales)[i];
-
-			*vals = buf;
-			*length = (int)len;
-			*type = IIO_VAL_INT_PLUS_NANO;
-			return IIO_AVAIL_LIST;
-		}
-		default:
-			return -EINVAL;
-		}
-	default:
-		return -EINVAL;
-	}
-}
-
-static void pac1921_read_avail_release_res(struct iio_dev *indio_dev,
-					   struct iio_chan_spec const *chan,
-					   const int *vals, long mask)
-{
-	if (mask == IIO_CHAN_INFO_SCALE &&
-	    chan->channel == PAC1921_CHAN_CURRENT)
-		kfree(vals);
-}
-
-static const struct iio_info pac1921_iio = {
-	//...
-	.read_avail = pac1921_read_avail,
-	.read_avail_release_resource = pac1921_read_avail_release_res,
-};
-
-However I noticed that some consumer drivers also expose the producer's
-available lists through the following functions:
-- iio_read_avail_channel_attribute()
-- iio_read_avail_channel_raw()
-- iio_channel_read_max()
-- iio_channel_read_min()
-
-While addressing the read_max()/read_min() is trivial since the
-release_resource() can be called at the end of those function, I think the
-first twos should be tracked as well for later release by the consumer drivers.
-So for example the consumer driver would also expose a
-iio_read_avail_channel_attribute_release_resource() (any suggestion for shorter
-function names?) mapped to the read_avail_release_resource() iio_info function.
-However the fact that iio_read_avail_channel_attribute() locks on
-info_exist_lock, makes me think that the driver could be unregistered between a
-read_avail() and a read_avail_release_resource() and in that case an allocated
-list would be leaked, right? Any suggestion on how best handle this case? My
-guess is to let iio destroy the list at some point during device release, that
-would be done if the list allocation was done through devm_kmalloc (or similar)
-but I think it would result in double frees during usual case, so maybe there
-should be a way to let it free the list only if not already freed? Or maybe a
-complete different approach?
-
-> > 
-> > > oh well, a cleanup job for another day.   I suspect we have drivers today
-> > > that are subject to tearing of their available lists.
-> > >   
-> > I've just taken a quick look at the other drivers and the following twos seem
-> > to have the race condition issue since they are updating an available table
-> > during a write_raw() call and also exposing it during a read_avail() call:
-> > * drivers/iio/light/as73211.c: see int_time_avail table
-> > * drivers/iio/adc/ad7192.c: see filter_freq_avail table
-> > 
-> > There might be others, I've only looked into those that seemed likely to have
-> > this issue after some trivial greps.
-> > 
-> > Is there already a common way for iio to keep track of open issues (e.g. Issue
-> > tracker/TODO lists/etc)?
-> 
-> Not really.  Email to the list tends to be the most we do for tracking.
-> I have had various todo lists public over the years, but they tend to rot.
-> 
-> Fix stuff before we forget about it! :(
-> 
-I could try to provide fix patches for those two drivers as well, but I could
-not test them on the real HW. I am wondering whether to add them to the same
-release_resource() patch series or into a separate series since those fixes
-could be sit for a while waiting for additional tests.
-
-Thanks,
-Matteo Martelli
 
