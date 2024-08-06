@@ -1,82 +1,95 @@
-Return-Path: <linux-kernel+bounces-277057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 809AB949BB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:59:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31175949BB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1C6B1C22814
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:59:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D9AEB2801A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0139617557E;
-	Tue,  6 Aug 2024 22:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3674175D2C;
+	Tue,  6 Aug 2024 23:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t9OqXWrr"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IGIrwrvg"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A8A171E5F
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 22:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E091509A5;
+	Tue,  6 Aug 2024 23:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722985174; cv=none; b=d5t4TsvOpWSa6ZkRvr1MeYmJm0A5YoSuUlUqGKC88hfCjPzvevNfaNkGoEhspftlEq9Lr8S4IfQpuQghYzFzcD5Z1usD5mcnDYjSS5vg0iuR524kRwFIjSLZB/iVYcz5VQJHQW5sSTzx0r9D/UwpHaDy2gi+dwDKaaGO8mvlBpA=
+	t=1722985224; cv=none; b=BxfND/5+Bzv1Y/bvruRVy4FxL10PtsLB+RVAM3xPiJQSjynoDFgyXQaqV5RQLsq4RzqFYhaUQ0IRYZGVeKjzO1SpmJfBNzH7dwWYwjbX+Y8mOu7jrzUQI/L3tzHMh0W2cXOvgzLO4sgpQYS0gO4o3it1qFeS5s0fc+uC8T7LMfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722985174; c=relaxed/simple;
-	bh=ds9pqJh7H9fMOWP6se75ivaqlkU29QAObaWXCWyWx9M=;
+	s=arc-20240116; t=1722985224; c=relaxed/simple;
+	bh=Frnzqhxbv9gcN+sXkiNywtxjtOKpQe/OJLFiKrjdhUY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N8vRzIt3lDneEhySfFDbzKWCxa6k2VcDRAu7Brhf6Zv0AbeIlIIndRSCPpPZig0dXGVrcDG5iw1qnuvjv5aRk9pjTG+gbpTqY7SVQxWL86+bTZz5/eId7ptqJT25/mPiHpjBW8kXUCJy+P7RfJ70w9Ff27zhmY1/OQqiNCwGmxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t9OqXWrr; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 6 Aug 2024 15:59:26 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722985170;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=czRgRDeRzLrqBrQivBvizwUbT0h+w1TNXUGWQtXg8MQ=;
-	b=t9OqXWrr8NixYPqY6nc80jW99/6NeLrV2HCWr6yUBunDx7UPLELnjrVzzN4qoVfPhsxF6V
-	L6OSjGitosA6JNlL/hEacVd+VrB9M1fL3dtNs6ZO646Z7Wh8G5DUU5Z+ZEnbcF90hyMc3C
-	hjA1wKcVQKSff/vgqIJ2ORksr/t65Uc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Steve Rutherford <srutherford@google.com>
-Subject: Re: [PATCH 0/2] KVM: Protect vCPU's PID with a rwlock
-Message-ID: <ZrKqzrPF_y4momna@linux.dev>
-References: <20240802200136.329973-1-seanjc@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qu0a2WoeBK22TRkmPvNgB4i/LJpPvEiRIeKKI1oLOQkNnAol140BX6ILanqo11SoJL//zq4I1yvDcYNt+92CwG4dMO8OOaWGFNxGKGpOCu4DNtM+nW2TKIFAwrERmdo3ti5h0PY7PDAadF6whCGiJJV+Wz9tbnPJWv1ZbUGN+48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=IGIrwrvg; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=ILlC2MFMjbmvYocuV/JrbTAwJHaG8KNMV/Nvs/dlXyE=; b=IG
+	IrwrvgidLe38K0EhRmsHj0O0LY5EcxYLjOW2FX/YVaqMmy/DMOAs14sVr+znt81A1qAzH0eHqZ+6P
+	qKP5ZTMOc2/34Estg3cwbXprSB2psWx2QEeWoR8VuBUg9CqE24Sj00JciD2rqPW6k0Pn0IWsLw/x2
+	/8xGcpYsL5BwZ5U=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sbTA1-0049ai-Ep; Wed, 07 Aug 2024 01:00:09 +0200
+Date: Wed, 7 Aug 2024 01:00:09 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>,
+	imx@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Wei Fang <wei.fang@nxp.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>
+Subject: Re: [PATCH] net: fec: Stop PPS on driver remove
+Message-ID: <1a3ef42d-d7b3-4842-b291-f5de8e8b62a1@lunn.ch>
+References: <20240805145735.2385752-1-csokas.bence@prolan.hu>
+ <CAOMZO5BzcZR8PwKKwBssQq_wAGzVgf1ffwe_nhpQJjviTdxy-w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240802200136.329973-1-seanjc@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOMZO5BzcZR8PwKKwBssQq_wAGzVgf1ffwe_nhpQJjviTdxy-w@mail.gmail.com>
 
-On Fri, Aug 02, 2024 at 01:01:34PM -0700, Sean Christopherson wrote:
-> Protect vcpu->pid with a rwlock instead of RCU, so that running a vCPU
-> with a different task doesn't require a full RCU synchronization, which
-> can introduce a non-trivial amount of jitter, especially on large systems.
+On Mon, Aug 05, 2024 at 12:04:35PM -0300, Fabio Estevam wrote:
+> On Mon, Aug 5, 2024 at 11:59 AM Csókás, Bence <csokas.bence@prolan.hu> wrote:
+> >
+> > PPS was not stopped in `fec_ptp_stop()`, called when
+> > the adapter was removed. Consequentially, you couldn't
+> > safely reload the driver with the PPS signal on.
+> >
+> > Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
 > 
-> I've had this mini-series sitting around for ~2 years, pretty much as-is.
-> I could have sworn past me thought there was a flaw in using a rwlock, and
-> so I never posted it, but for the life of me I can't think of any issues.
+> It seems this one deserves a Fixes tag.
 > 
-> Extra eyeballs would be much appreciated.
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
 
-Besides the nitpicks:
+And should be based on the correct tree, and indicate that tree in the
+Subject: line:
 
-Acked-by: Oliver Upton <oliver.upton@linux.dev>
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html#netdev-faq
 
--- 
-Thanks,
-Oliver
+    Andrew
+
+---
+pw-bot: cr
+
 
