@@ -1,273 +1,227 @@
-Return-Path: <linux-kernel+bounces-275659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44C9B94881E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:55:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D09194881F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 687021C222A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:55:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A00FEB21538
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD0B1BB685;
-	Tue,  6 Aug 2024 03:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11221B9B40;
+	Tue,  6 Aug 2024 03:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e8Weu7Y2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MfViBbMm"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2049.outbound.protection.outlook.com [40.107.237.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA501B9B57;
-	Tue,  6 Aug 2024 03:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722916495; cv=none; b=UJcVXz99dt1g69QnlLOhmWUXfmBjz4d8sivv7zTCBPZUm7Kr7TJEoEVk4ZX5jdNyiYEPMzDVsWhU9QbcY26OVSgAvz6YAx60KHID/Q9InjwKV5Aa5G75sErd8TxlRxrAnfz1oB5in4iekWKUwR6rVsGmRN6wsmT25PCGKNpgDSA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722916495; c=relaxed/simple;
-	bh=ZN7LpMGj7zrmpfRGmVKaOCvARt0JyWCvzNUEqCDoDQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jqPjqifq8vYKSDKp8bQybQ1ABv/UJvHsjWeNI1iqACVii8T9FLutZ0xZnjCR/nbDOsurkqtEsjOJcYXXxBYYonm8otqZ6gL67FUgZ1kImB2mGoNyusp5AuvcoJcWnukF3KHqAjTMbIUq6jLoRZl8gahcsme3Yr/jmH8U9n2j2k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e8Weu7Y2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA205C32786;
-	Tue,  6 Aug 2024 03:54:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722916494;
-	bh=ZN7LpMGj7zrmpfRGmVKaOCvARt0JyWCvzNUEqCDoDQM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e8Weu7Y2u+9A2JYm6rvXwGOSTOLzWkUqOaHH4e8QT6kE4d36A9vli3jj1A/JW+uuC
-	 SmHjqErcIJiy2XqELNbvRJn4fpt0BpEV5yn+z3xykCDZzgQvMwxs4i1cpnFytv4jX1
-	 r1Wz2fzY8bewmmlw80OSHZbEGdlyVTJzk82+y8bm2FNvBL155Ej3y8v3bFEKefSeGK
-	 rkogUeMwt+ZjRHriemu4nf/po3z0UzAd6iOY+g8GudodQhbypv+gmdxttLDlhRlZp3
-	 LyDvY7ZSCyOLbkGIZDOMXzhg4NUAoGL/kwUImG7tyUilhwrZijXNrUitI7sAvppsmF
-	 mKsBgx/5zyJ5g==
-Date: Mon, 5 Aug 2024 20:54:54 -0700
-From: Kees Cook <kees@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, jannh@google.com,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH RFT v7 9/9] selftests/clone3: Test shadow stack support
-Message-ID: <202408052046.00BC7CBC@keescook>
-References: <20240731-clone3-shadow-stack-v7-0-a9532eebfb1d@kernel.org>
- <20240731-clone3-shadow-stack-v7-9-a9532eebfb1d@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F88A5F
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722916558; cv=fail; b=txWUN4wz4Nvq9uWizoGDXnEXyOAHi0UdH8Ys8xqBb/zbI6W/WHSyEnuDoGihOyzpghBgfeDvfYQPyVTZ41YRTOSvUu9s7NIVVfseKlvcgyFWCiBO/i/hOVV/RsSbYtCiUNu1rl7pf8OUPvvfk/czm7sBCOWCLoW3oz7Fcdi448Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722916558; c=relaxed/simple;
+	bh=d5JEyZu+KHnkL19/7ooG6JVor066QChTqNyXUYaCfMA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZagDMp1NpNLTQ00N2Brn8HmkD/izOqaIAPwZ596AAIjIDcoQACq8ZKwK6gySZL7+kbd6EdvJnz6bXvo8YXQU51rUUyAc0y3DvMde7MoVl1toVc7goexOyTnW170KRGHXcEDDNaWoyivWtwKBu5F8BR0++l4WPTkiQP36Dc6TYvQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MfViBbMm; arc=fail smtp.client-ip=40.107.237.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dmhRF/dBC7deQMtwKWKgieU4hmvZJdbLNkewA3IOYUuySLTn+Ia4hfAZ/sNtc2Z47t59sHJ1KJNIuwNjNa2g9oUqfTl00txHxFJcpu5roINRgacKyG2A/D3TvcqGYIidjBw2NwzepuVL8Jaxf5JBtMtAngnQ9JcSZAheoA5JiDYo+C6ktt7JDSRrY5jmDfQ1T5H8lNzGvgnFxhVhM68/IJMDPkm01z3Q48Rp9qJg3AGPE8/KPkFroBY6lWWmmoMVNNySxlK2m6VFRFBXiEItQCxoR1MxaiGA89KnnVWBWdtmc0JABk1HnJBJ8IPG5+pKfomQbiB8VPrqXHKlc1UpuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sWLpyC9T9SKyYUkmQnhGp2NQYd0S3ZdKuZv9cTQImwM=;
+ b=FhNn98tvpEHGPBT2luNhcOBqTLFw32cGD9G6asTWK03fRHm7agGuu8lc7wmKWAWu85N6N13KiQdPEKu68WAjptsYNGUYaKBfzLkcMxH7qoqOwzCrRxfRyHL7Nf32nE/r/uV58G1zqgg3m/KLuflu+T1LlnlP+2ql1Z5QIMxA+r467+hY7syEzWyJ4skR1kxOShfeMYM5GhsZjvBCC5aSQg8YcDcVtXmZglpAl9e3nqoW+Ht5RMjrn92x4zj+WaI5KZ8Ky8BRi1iMDx76Mzy1Hv+pXRfdrPufpy+4glIUnjlZZSvWsn9GZb1/hv/ahrK0/Yb70F5ZkIHQv5itHiI2AA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sWLpyC9T9SKyYUkmQnhGp2NQYd0S3ZdKuZv9cTQImwM=;
+ b=MfViBbMmhZ+Lphzj5D24XYgQAGUyOPd1A69h8MHjJVdCR/X8pLIDI9A83jMBRNeTE7+mLRQs59MC9jzSpeHGXsoShuzyKpuyYeAVg7KxuuVqVK3q4RUl26QrystUsFIsORCORTbtc5lbhVShipE7wN9rci7a3C4CcHsg76WwEv1qRyS6NNuKStvjcq1OvxxepvcMR00yJrk81eqmQla70l9VKSNFJ+mhBIvtKdDth3bdNlm3STCvN7/ruNtoNkR/gef/yL8TOemIPg614MCqXXQ5f6oT01/7XDesQ+eIx/WCwq+BP4G+yGrQq5LG7Kww38RoFiZklMAldTpU5v3N4w==
+Received: from SJ0PR13CA0059.namprd13.prod.outlook.com (2603:10b6:a03:2c2::34)
+ by LV2PR12MB5750.namprd12.prod.outlook.com (2603:10b6:408:17e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Tue, 6 Aug
+ 2024 03:55:54 +0000
+Received: from CO1PEPF000075F1.namprd03.prod.outlook.com
+ (2603:10b6:a03:2c2:cafe::e6) by SJ0PR13CA0059.outlook.office365.com
+ (2603:10b6:a03:2c2::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.11 via Frontend
+ Transport; Tue, 6 Aug 2024 03:55:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1PEPF000075F1.mail.protection.outlook.com (10.167.249.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.19 via Frontend Transport; Tue, 6 Aug 2024 03:55:53 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 5 Aug 2024
+ 20:55:42 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 5 Aug 2024
+ 20:55:42 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Mon, 5 Aug 2024 20:55:41 -0700
+Date: Mon, 5 Aug 2024 20:55:40 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: "jgg@nvidia.com" <jgg@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iommufd/device: Enforce reserved IOVA also when attached
+ to hwpt_nested
+Message-ID: <ZrGevEpFCntQx6wV@Asurada-Nvidia>
+References: <20240802053458.2754673-1-nicolinc@nvidia.com>
+ <BN9PR11MB5276B6D6A75FFDF7DB14CAC18CBE2@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZrEQt5r978B+Pgex@Asurada-Nvidia>
+ <BN9PR11MB527682A9FBDDE82439A3F7E28CBF2@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20240731-clone3-shadow-stack-v7-9-a9532eebfb1d@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BN9PR11MB527682A9FBDDE82439A3F7E28CBF2@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075F1:EE_|LV2PR12MB5750:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe8bfdca-84f1-49ea-9094-08dcb5cbab2a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UzE1ZUhFNWQrNXZ5cllVeERxdmRqcVMvWEwvS0QwbzhNK1RTcFkzVng0cC81?=
+ =?utf-8?B?ZG11TTFTMFNXeitIS2c2MUNVSk1IZkROcHE3a1VYTEpiTlFwLy8zRVhGbXVG?=
+ =?utf-8?B?Z1ZielJnbS9OMSsyTHZ0TWtsZFNvTWQrbng4V0RaSVhKMzMyNEx2VllwTUlx?=
+ =?utf-8?B?eWVMWFBnZEtUTjVCT1l5NlBEcFV5WWh5YlBuUVg1TFhlRmFVL0VoNXlPMDZN?=
+ =?utf-8?B?dXcyYTBwTzlvSVpHc1ZwOU1Qb1dDUmF4ZUpqczB4QVFpOXZrN2NwZjVnMlY4?=
+ =?utf-8?B?UHNYNTNWUWI1NExlVXdORnBSTlBNY3cwbSt6aEl3amJkSi82Y2o0ZEdNMVpv?=
+ =?utf-8?B?SjY2aERYNnowNzVKT2xOV1NUeDVONjhMTXk0WVVXWGhwMkx4OXVYUGZjR3pz?=
+ =?utf-8?B?aHYwcWdtQkFUOUZrSlF6djVWblVJRE1QNU9FWC9CcWcvcjZDTkp2OGdaeVVw?=
+ =?utf-8?B?MVJJVDVxdDF3WVZuNmllaFk0eWx6RVVURkgyM2M4b0ovZWlvK0YvM1FBNGt5?=
+ =?utf-8?B?UUtYaXFHU3ljQVNpd2p1bWFzeE9DcWRYVjBmOHNQVmpCNElTb2QyaHhOS1RP?=
+ =?utf-8?B?d1NHVGxzcU53VDE0SXB5dnJzVHFtYkp1TmxPRm01aWFkMXJYT1lCT1B1M2lV?=
+ =?utf-8?B?TUdoL05mL3ZlREREVjYvRDFxWi9ZUGVXQnR3blBTdXprWFZLK0tmTk44TTNu?=
+ =?utf-8?B?OUlnc0luYWxNMDFVSFVaMWhqNURpWGRsZUx1SHkreWZKVisxVG1SV0JaUVJ3?=
+ =?utf-8?B?cFVzMmg5VjdnOXYvK3FNVDlTWWNzM1pvYjNRK095OEhLYmVLMUVjWEdDVjNN?=
+ =?utf-8?B?MlVsQWl2dVpxbXFSQ09vYjZQZzFXUEorM25Sb1JFb3FsbFJaV05NSGVWTStM?=
+ =?utf-8?B?b3ludnkzVWdROEhjUzNya1VmUjhxLzRsaGIzb0VndnNmQlV4Tm9HWDBkNzdr?=
+ =?utf-8?B?aTdhNjFBSHFidVdGRXlHdTNkVmdNR1k4UEZBTmhHSGhXcTY3OUpxN1BvL3Rj?=
+ =?utf-8?B?T3Y1OU1HVUJMNkhaU3BGaFVuOUR3MUF1RzBQVkhyTi9aMmcrV1MvMVV3RGM4?=
+ =?utf-8?B?REJEb1RtZUIzY1VVT0FPNVE0ZEEzMTFDTkpkV1FUYXBvMTR4TmNzanpuT0ky?=
+ =?utf-8?B?WjNKdDVTNW4wd24rWlVtRlJwQVJRSXYwYmF5Tmw4OTkxNDhDOEwwcjBta0JD?=
+ =?utf-8?B?YUtzbzdaNFRKd1RLYzd4Q25xVHVrNmNGWEkrUFFZK0VHSElSYTcvQXZoTksy?=
+ =?utf-8?B?R1FUQVYvNXp4Q0RFV1F6NCtVdURDNCtJUi9LNjJQZDR5SjR0bVRKOGU3bXhX?=
+ =?utf-8?B?WFF0NzlpWjUvODk1Z0N0TXAyUHA5K3k4WjRFblhwKzhDVlFBSmdxQ3MwSSts?=
+ =?utf-8?B?NlRPRlpucllZdHUxYXU0azhrNVAvZ1NZTGMvVTl5SjJZL3VOeEhXSW5nTUtz?=
+ =?utf-8?B?RW5aQW1OQUovWEs0UDA3YU5TWkNCeFJnU3NPRTl0TXV5VDhvM05xUmUraEpE?=
+ =?utf-8?B?VGhjN2g0bFBUL05QcjRqc2xnOXF3N1J1eDhUKzdxWkpRNHJsS3U0M1ZxWWEy?=
+ =?utf-8?B?dWJBdkMxdWxvYmZ2c2pTQnhhdlJpQzY1b3hOOWpabklFMTZoUDBNaGlZNEc1?=
+ =?utf-8?B?SzVOZnB6SXNNVnpvRWJtcmVZcU1tMUpVRjJhenJmRFhpTSsydVh4QXpkVmZU?=
+ =?utf-8?B?aE5lWUtDdUw5VTA3d0IwRGZDMFh6Mm51K05CejcxMWpETmlWZld1TytNdkZU?=
+ =?utf-8?B?ZnVoTzAyWFkzM3JOcFJTNkdPVEpiVGJxRUJSblVkSXk3ekIrTkM3OVhiWnpx?=
+ =?utf-8?B?Y1k3czVXNlE2T2pLVXN5eEpYUFdvQndQK3l6R1hmR3liVnpVeWRSc3JyQ3lB?=
+ =?utf-8?B?V3J4bDNJdHI1RElwcUpzWGZ1bmYyd0JoWlNFNTJvSlBjeHdvZkRGMFpYcXhp?=
+ =?utf-8?Q?Iel9zBo4ZDFI8BFfB1vcP/69286bRjKB?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 03:55:53.3668
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe8bfdca-84f1-49ea-9094-08dcb5cbab2a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000075F1.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5750
 
-On Wed, Jul 31, 2024 at 01:14:15PM +0100, Mark Brown wrote:
-> Add basic test coverage for specifying the shadow stack for a newly
-> created thread via clone3(), including coverage of the newly extended
-> argument structure.  We check that a user specified shadow stack can be
-> provided, and that invalid combinations of parameters are rejected.
+On Tue, Aug 06, 2024 at 02:59:53AM +0000, Tian, Kevin wrote:
+> > From: Nicolin Chen <nicolinc@nvidia.com>
+> > Sent: Tuesday, August 6, 2024 2:04 AM
+> >
+> > On Mon, Aug 05, 2024 at 07:40:45AM +0000, Tian, Kevin wrote:
+> > > > From: Nicolin Chen <nicolinc@nvidia.com>
+> > > > Sent: Friday, August 2, 2024 1:35 PM
+> > > >
+> > > >  static int
+> > > > -iommufd_group_do_replace_paging(struct iommufd_group *igroup,
+> > > > -                             struct iommufd_hwpt_paging *hwpt_paging)
+> > > > +iommufd_group_do_replace_reserved_iova(struct iommufd_group
+> > *igroup,
+> > > > +                                    struct iommufd_hw_pagetable *hwpt)
+> > > >  {
+> > > > +     struct iommufd_hwpt_paging *hwpt_paging =
+> > > > to_hwpt_paging(hwpt);
+> > > >       struct iommufd_hw_pagetable *old_hwpt = igroup->hwpt;
+> > > >       struct iommufd_device *cur;
+> > > >       int rc;
+> > > >
+> > > >       lockdep_assert_held(&igroup->lock);
+> > > >
+> > > > -     if (!hwpt_is_paging(old_hwpt) ||
+> > > > -         hwpt_paging->ioas != to_hwpt_paging(old_hwpt)->ioas) {
+> > > > +     if (!hwpt_paging)
+> > > > +             return 0;
+> > > > +
+> > > > +     if (iommufd_hw_pagetable_compare_ioas(old_hwpt, hwpt)) {
+> > >
+> > > hmm this change is broken. In this helper:
+> > >
+> > >         if (!old_hwpt_paging || !new_hwpt_paging)
+> > >                 return false;
+> > >         return old_hwpt_paging->ioas != new_hwpt_paging->ioas;
+> > >
+> > > Obviously the original code wants to enforce reserved regions if
+> > > new_hwpt is paging && old_hwpt is not paging, but this change
+> > > skips this scenario.
+> >
+> > Hmm..I think that is the intention of this patch?
+> >
+> > The original code does that because it didn't enforce reserved
+> > region (to the parent paging hwpt) when attaching the group to
+> > a nested one. Now, it does. So, we basically check whether the
+> > associated ioas has changed or not. Right?
+> >
 > 
-> In order to facilitate testing on systems without userspace shadow stack
-> support we manually enable shadow stacks on startup, this is architecture
-> specific due to the use of an arch_prctl() on x86. Due to interactions with
-> potential userspace locking of features we actually detect support for
-> shadow stacks on the running system by attempting to allocate a shadow
-> stack page during initialisation using map_shadow_stack(), warning if this
-> succeeds when the enable failed.
+> that is too much tied to nested vs. paging type. In case a new
+> type comes w/o parent/ioas in the future, above will be broken.
 > 
-> In order to allow testing of user configured shadow stacks on
-> architectures with that feature we need to ensure that we do not return
-> from the function where the clone3() syscall is called in the child
-> process, doing so would trigger a shadow stack underflow.  To do this we
-> use inline assembly rather than the standard syscall wrapper to call
-> clone3().  In order to avoid surprises we also use a syscall rather than
-> the libc exit() function., this should be overly cautious.
-> 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  tools/testing/selftests/clone3/clone3.c           | 134 +++++++++++++++++++++-
->  tools/testing/selftests/clone3/clone3_selftests.h |  38 ++++++
->  2 files changed, 171 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/clone3/clone3.c b/tools/testing/selftests/clone3/clone3.c
-> index 26221661e9ae..81c2e8648e8b 100644
-> --- a/tools/testing/selftests/clone3/clone3.c
-> +++ b/tools/testing/selftests/clone3/clone3.c
-> @@ -3,6 +3,7 @@
->  /* Based on Christian Brauner's clone3() example */
->  
->  #define _GNU_SOURCE
-> +#include <asm/mman.h>
->  #include <errno.h>
->  #include <inttypes.h>
->  #include <linux/types.h>
-> @@ -11,6 +12,7 @@
->  #include <stdint.h>
->  #include <stdio.h>
->  #include <stdlib.h>
-> +#include <sys/mman.h>
->  #include <sys/syscall.h>
->  #include <sys/types.h>
->  #include <sys/un.h>
-> @@ -19,8 +21,12 @@
->  #include <sched.h>
->  
->  #include "../kselftest.h"
-> +#include "../ksft_shstk.h"
->  #include "clone3_selftests.h"
->  
-> +static bool shadow_stack_supported;
-> +static size_t max_supported_args_size;
-> +
->  enum test_mode {
->  	CLONE3_ARGS_NO_TEST,
->  	CLONE3_ARGS_ALL_0,
-> @@ -28,6 +34,10 @@ enum test_mode {
->  	CLONE3_ARGS_INVAL_EXIT_SIGNAL_NEG,
->  	CLONE3_ARGS_INVAL_EXIT_SIGNAL_CSIG,
->  	CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG,
-> +	CLONE3_ARGS_SHADOW_STACK,
-> +	CLONE3_ARGS_SHADOW_STACK_NO_SIZE,
-> +	CLONE3_ARGS_SHADOW_STACK_NO_POINTER,
-> +	CLONE3_ARGS_SHADOW_STACK_NO_TOKEN,
->  };
->  
->  typedef bool (*filter_function)(void);
-> @@ -44,6 +54,44 @@ struct test {
->  	filter_function filter;
->  };
->  
-> +
-> +/*
-> + * We check for shadow stack support by attempting to use
-> + * map_shadow_stack() since features may have been locked by the
-> + * dynamic linker resulting in spurious errors when we attempt to
-> + * enable on startup.  We warn if the enable failed.
-> + */
-> +static void test_shadow_stack_supported(void)
-> +{
-> +	long ret;
-> +
-> +	ret = syscall(__NR_map_shadow_stack, 0, getpagesize(), 0);
-> +	if (ret == -1) {
-> +		ksft_print_msg("map_shadow_stack() not supported\n");
-> +	} else if ((void *)ret == MAP_FAILED) {
-> +		ksft_print_msg("Failed to map shadow stack\n");
-> +	} else {
-> +		ksft_print_msg("Shadow stack supportd\n");
+> IMHO to_hwpt_paging() already resolves the problem about
+> nested parent while the original code above appears to be
+> more future proof (w/ the enhanced to_hwpt_paging()), i.e.
+> adding reserved region to the new hwpt w/ ioas as long as
+> old/new hwpts don't belong to a same ioas (including the case
+> where old has no ioas), instead of adding reserved region
+> only when both old/new have an ioas but different. 😊
 
-typo: supportd -> supported
+Ah, I see your point. It failed to cover the case where one of
+the hwpts returns NULL from to_hwpt_paging().
 
-> +		shadow_stack_supported = true;
-> +
-> +		if (!shadow_stack_enabled)
-> +			ksft_print_msg("Mapped but did not enable shadow stack\n");
-> +	}
-> +}
+Will fix and respin.
 
-On my CET system, this reports:
-
-  ...
-  # clone3() syscall supported
-  # Shadow stack supportd
-  # Running test 'simple clone3()'
-  ...
-
-(happily doesn't print "Mapped but did not enable ...").
-
-> +
-> +static unsigned long long get_shadow_stack_page(unsigned long flags)
-> +{
-> +	unsigned long long page;
-> +
-> +	page = syscall(__NR_map_shadow_stack, 0, getpagesize(), flags);
-> +	if ((void *)page == MAP_FAILED) {
-> +		ksft_print_msg("map_shadow_stack() failed: %d\n", errno);
-> +		return 0;
-> +	}
-> +
-> +	return page;
-> +}
-> +
->  static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
->  {
->  	struct __clone_args args = {
-> @@ -89,6 +137,21 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
->  	case CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG:
->  		args.exit_signal = 0x00000000000000f0ULL;
->  		break;
-> +	case CLONE3_ARGS_SHADOW_STACK:
-> +		/* We need to specify a normal stack too to avoid corruption */
-> +		args.shadow_stack = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN);
-> +		args.shadow_stack_size = getpagesize();
-> +		break;
-
-  # Running test 'Shadow stack on system with shadow stack'
-  # [5496] Trying clone3() with flags 0 (size 0)
-  # I am the parent (5496). My child's pid is 5505
-  # Child exited with signal 11
-  # [5496] clone3() with flags says: 11 expected 0
-  # [5496] Result (11) is different than expected (0)
-  not ok 20 Shadow stack on system with shadow stack
-
-The child segfaults immediately, it seems?
-
-> +	case CLONE3_ARGS_SHADOW_STACK_NO_POINTER:
-> +		args.shadow_stack_size = getpagesize();
-> +		break;
-
-  # Running test 'Shadow stack with no pointer'
-  # [5496] Trying clone3() with flags 0 (size 0)
-  # Invalid argument - Failed to create new process
-  # [5496] clone3() with flags says: -22 expected -22
-  ok 21 Shadow stack with no pointer
-
-This seems like it misses the failure and reports ok
-
-> +	case CLONE3_ARGS_SHADOW_STACK_NO_SIZE:
-> +		args.shadow_stack = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN);
-> +		break;
-
-  # Running test 'Shadow stack with no size'
-  # [5496] Trying clone3() with flags 0 (size 0)
-  # Invalid argument - Failed to create new process
-  # [5496] clone3() with flags says: -22 expected -22
-  ok 22 Shadow stack with no size
-
-Same?
-
-> +	case CLONE3_ARGS_SHADOW_STACK_NO_TOKEN:
-> +		args.shadow_stack = get_shadow_stack_page(0);
-> +		args.shadow_stack_size = getpagesize();
-> +		break;
-
-This actually segfaults the parent:
-
-  # Running test 'Shadow stack with no token'
-  # [5496] Trying clone3() with flags 0x100 (size 0)
-  # I am the parent (5496). My child's pid is 5507
-  Segmentation fault
-
-Let me know what would be most helpful to dig into more...
-
--- 
-Kees Cook
+Thanks
+Nicolin
 
