@@ -1,143 +1,202 @@
-Return-Path: <linux-kernel+bounces-276642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854D2949678
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:14:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E81B494967C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 145D8282DD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:14:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 167EE1C22E56
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B3F4AEE6;
-	Tue,  6 Aug 2024 17:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13234D9FE;
+	Tue,  6 Aug 2024 17:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WhUE7rvU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K7LCt/pK"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A853A267;
-	Tue,  6 Aug 2024 17:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192582A1D3;
+	Tue,  6 Aug 2024 17:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722964487; cv=none; b=lJRJvRwLVqZP48NEEExeBBRQh6Bor2kGGU4o8ca/xzV8wKIbpyhjeKoqJUSre0nuKVTW1PMOn8hKeq2jUKH/PC1EeTHB+Y77HJd1awpZvdol0zVEt+XiK9G8yQJdksl2/uTOnAX1skcGr2RaRCxfMbrmrMDgCZXAr5s3eMsTZkY=
+	t=1722964592; cv=none; b=QyYuUKDmgMlhzxcuIeJ7j7/WzzOxNNM0ucdMMyZTdzntNunUTax4nWfU/e4rlgxW5zYQK+H5czYCDCsaAi4+iRjyO6wTPP0f0RvTMXWTrIMy6rwuG+rBj7ajokY07Zi8mifJ7Cw2eRqlNTicpgCPuyCEoe32eAJ3iqZGC+wUoUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722964487; c=relaxed/simple;
-	bh=xhS+H7iQiaDB12Ynm2FdXOxJMbniRh+wjTAQWI2WEfo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iDL5IBnpVrdSuY1AvzczufdpIztiYhf4VWgSum4BmI5QQCohPaCgQO0UEFxTeZvqoD2HfMnx24VEExX1+Db3jGDO2xj06vcH2RjFV6AaSj4Wot1c7QEP0Pz7R5rJrF4aJl5cKVUnemo13syp3Z0UmJCYy4dNgzJbEbFhlzxTdvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WhUE7rvU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 476H6cpp018995;
-	Tue, 6 Aug 2024 17:14:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=T+n7dvh64qYrN/shgqY+idk4
-	1vC5DMbfjHSVqiAN9yc=; b=WhUE7rvUUoNPuWvxRyP4CZsScWKjmalCjsHGAE2N
-	kRGTHkuk7l9OjwKqFV0HTsxUhvYLXIdRsH78hlg9jmdDt6so6Txmwcg5MaiDF9tF
-	qAPY2W+n9lf5Cv9vmy/KNIEWAgbaWepwP0Y/GJzjsBGee9tLDCzafVUp3OWWFsjr
-	ZJaIjgCCSDNPObNV0ageWipmuTMv4eTl6LYWYq9slF85BHfxuK2qzoXenCj0CLJx
-	xBjLUSv0RlrGd/c47RtOt2njOvegNHPan4B4nuQHFlhiL6DL4MZlU6h3+ChKULBx
-	okImzB0822Dktd1MkZvuzmTZYN+Q1pxvZ7gHaoI0WgZjqw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40u4cpk51q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 Aug 2024 17:14:27 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 476HEQC6024565
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 6 Aug 2024 17:14:26 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 6 Aug 2024 10:14:26 -0700
-Date: Tue, 6 Aug 2024 10:14:25 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: David Hildenbrand <david@redhat.com>
-CC: Andrew Morton <akpm@linux-foundation.org>,
-        Paolo Bonzini
-	<pbonzini@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Fuad Tabba
-	<tabba@google.com>, Patrick Roy <roypat@amazon.co.uk>,
-        <qperret@google.com>, Ackerley Tng <ackerleytng@google.com>,
-        <linux-coco@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <kvm@vger.kernel.org>
-Subject: Re: [PATCH RFC 4/4] mm: guest_memfd: Add ability for mmap'ing pages
-Message-ID: <20240806093625007-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com>
- <20240805-guest-memfd-lib-v1-4-e5a29a4ff5d7@quicinc.com>
- <4cdd93ba-9019-4c12-a0e6-07b430980278@redhat.com>
+	s=arc-20240116; t=1722964592; c=relaxed/simple;
+	bh=PEETIci6hUduaM8hNub+xJEHnlXgc5vOZkcX5XlaWd8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NhuII7LClDa5v52pm7ZjD7BigDQnfnk1BYqdGUVnrkCXV+5DsqGS9LY7OusUmyuGG9TrRsyOA0nqS1ZXUpADgqXJvvx1k3q+piM8bSc0C2Qi5fQ9Ao64A7+4I0TGKk4wlAavtPbuZHbWKs1yQDOlF9nfGvnQgmlCA/6JRti8dWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K7LCt/pK; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f16767830dso10026931fa.0;
+        Tue, 06 Aug 2024 10:16:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722964589; x=1723569389; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7sCtlrfFx1xhGzgLdvWohx3gPpnZHRqBbQohEVU2h6E=;
+        b=K7LCt/pKms+r3eB8BR8h7DZiMWLgqd8ig2libB3kmy/9F6Dld9ltovETCxh6f5s//U
+         vUsf9aHfGqqRetNUtWQwXFiOASsS9pmZiW2chRmyUry6xfhOIw2hXg9MTtxNKizC5icG
+         humsXT55lqJZuasCV+FpyHMUXymG0s/t8ITSOU+JdcvNoFSQWfa5rlD6RQIt7ynh5N8x
+         9j58d3hrdgzOXqYpC43dXj53m1dOfevFS29U/H81huHcBfL8/wxZFFtKdyfHtwyEVQ1a
+         vbzo5qqhkv8XtR1UCE6Y576rJ05rvKU3AKAmb2IAdtpoh/ZDevr80OAtmpcLIyKLQ1My
+         tk3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722964589; x=1723569389;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7sCtlrfFx1xhGzgLdvWohx3gPpnZHRqBbQohEVU2h6E=;
+        b=kB7ruV6iKKA3dnA4otVLRgq1ZIMQnS1fKOA0D+JWFrgWkVHrcW+mwAaWwDA75rt6w7
+         9lYqzOojw58cs+gNxHl52brtvI4hHimcgRKDkpbNx/CP1x4DT3Rk1fp2eP2uJWdY0ZaE
+         7N157s9QaSQhgTPM7NxUXPg532Ux5PnzA6OVQrWFphZrW5dFPNC0ln/nzPM/3YmkJ/98
+         Inew0/c3ol2BcM+JAvotM9bAQnbFtL5IIXIWOfDB1QEJKmpMr65ot8oyVY0TWoqTDA6F
+         rauPTTswQsOcYAMCLxzbv3HNVvfK9ztxqDieedR8sqsCy6eOzAjbOCa8450V4396fhGM
+         NzgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsRJQtg56DdSgPWqAaRz6TSZuamuhvSSSPqUlhvBjfxHqeubn5UjA4dTrsQkYzEEPh7iRgopu6MSo2C3ZCReJE8TOry525x7zzcO1a/bGE6rWCY0TlU26pQ2T9z/LvpAxXQwFGALoHpZqvQQ==
+X-Gm-Message-State: AOJu0Yz2X6k24cGOAmzLlX1WbeLX+PsqXY23wpPdrzxx7Vt2F7SDeV1N
+	HTeQ+BlPzgmzD0Suot/dF+VL8JdYPxQ8JODB1DJHEGFxiKIblA8nQPYNe9rZoTzGwYBDOyyOG6d
+	SGqO/eCJs5vozKQ9Knet681lH71cA4KM8
+X-Google-Smtp-Source: AGHT+IHtr+C20+PJjskNV4xHqS1/kkkgmJu5MYIN14r+C/ilL+cKyXGQMxKVuKfBSiLXv0qQfEbvZSJwHE3m4+dY7LE=
+X-Received: by 2002:a2e:984d:0:b0:2ef:2c2d:a603 with SMTP id
+ 38308e7fff4ca-2f15aaa70cbmr103338871fa.21.1722964588567; Tue, 06 Aug 2024
+ 10:16:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <4cdd93ba-9019-4c12-a0e6-07b430980278@redhat.com>
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: IXdqrJVxXSKqBhFXqNY1RdXvAtHONbC5
-X-Proofpoint-GUID: IXdqrJVxXSKqBhFXqNY1RdXvAtHONbC5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-06_13,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 phishscore=0 malwarescore=0 bulkscore=0 spamscore=0
- lowpriorityscore=0 mlxscore=0 clxscore=1015 adultscore=0
- priorityscore=1501 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408060121
+References: <20240730230805.42205-1-song@kernel.org> <20240730230805.42205-3-song@kernel.org>
+In-Reply-To: <20240730230805.42205-3-song@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 6 Aug 2024 10:16:17 -0700
+Message-ID: <CAADnVQJJcJsBk9nR5_gTWNmgQGjNi1BJWCex4XZVB=w9ybsOzA@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 2/2] selftests/bpf: Add tests for bpf_get_dentry_xattr
+To: Song Liu <song@kernel.org>
+Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	liamwisehart@meta.com, lltang@meta.com, shankaran@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 06, 2024 at 03:51:22PM +0200, David Hildenbrand wrote:
-> > -	if (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP) {
-> > +	if (!ops->accessible && (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP)) {
-> >   		r = guest_memfd_folio_private(folio);
-> >   		if (r)
-> >   			goto out_err;
-> > @@ -107,6 +109,82 @@ struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags
-> >   }
-> >   EXPORT_SYMBOL_GPL(guest_memfd_grab_folio);
-> > +int guest_memfd_make_inaccessible(struct file *file, struct folio *folio)
-> > +{
-> > +	unsigned long gmem_flags = (unsigned long)file->private_data;
-> > +	unsigned long i;
-> > +	int r;
-> > +
-> > +	unmap_mapping_folio(folio);
-> > +
-> > +	/**
-> > +	 * We can't use the refcount. It might be elevated due to
-> > +	 * guest/vcpu trying to access same folio as another vcpu
-> > +	 * or because userspace is trying to access folio for same reason
-> 
-> As discussed, that's insufficient. We really have to drive the refcount to 1
-> -- the single reference we expect.
-> 
-> What is the exact problem you are running into here? Who can just grab a
-> reference and maybe do nasty things with it?
-> 
+On Tue, Jul 30, 2024 at 4:08=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+>
+> Add test for bpf_get_dentry_xattr on hook security_inode_getxattr.
+> Verify that the kfunc can read the xattr. Also test failing getxattr
+> from user space by returning non-zero from the LSM bpf program.
+>
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  .../selftests/bpf/prog_tests/fs_kfuncs.c      |  9 ++++-
+>  .../selftests/bpf/progs/test_get_xattr.c      | 37 ++++++++++++++++---
+>  2 files changed, 40 insertions(+), 6 deletions(-)
+>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c b/tools/t=
+esting/selftests/bpf/prog_tests/fs_kfuncs.c
+> index 37056ba73847..5a0b51157451 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
+> @@ -16,6 +16,7 @@ static void test_xattr(void)
+>  {
+>         struct test_get_xattr *skel =3D NULL;
+>         int fd =3D -1, err;
+> +       int v[32];
+>
+>         fd =3D open(testfile, O_CREAT | O_RDONLY, 0644);
+>         if (!ASSERT_GE(fd, 0, "create_file"))
+> @@ -50,7 +51,13 @@ static void test_xattr(void)
+>         if (!ASSERT_GE(fd, 0, "open_file"))
+>                 goto out;
+>
+> -       ASSERT_EQ(skel->bss->found_xattr, 1, "found_xattr");
+> +       ASSERT_EQ(skel->bss->found_xattr_from_file, 1, "found_xattr_from_=
+file");
+> +
+> +       /* Trigger security_inode_getxattr */
+> +       err =3D getxattr(testfile, "user.kfuncs", v, sizeof(v));
+> +       ASSERT_EQ(err, -1, "getxattr_return");
+> +       ASSERT_EQ(errno, EINVAL, "getxattr_errno");
+> +       ASSERT_EQ(skel->bss->found_xattr_from_dentry, 1, "found_xattr_fro=
+m_dentry");
+>
+>  out:
+>         close(fd);
+> diff --git a/tools/testing/selftests/bpf/progs/test_get_xattr.c b/tools/t=
+esting/selftests/bpf/progs/test_get_xattr.c
+> index 7eb2a4e5a3e5..66e737720f7c 100644
+> --- a/tools/testing/selftests/bpf/progs/test_get_xattr.c
+> +++ b/tools/testing/selftests/bpf/progs/test_get_xattr.c
+> @@ -2,6 +2,7 @@
+>  /* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
+>
+>  #include "vmlinux.h"
+> +#include <errno.h>
+>  #include <bpf/bpf_helpers.h>
+>  #include <bpf/bpf_tracing.h>
+>  #include "bpf_kfuncs.h"
+> @@ -9,10 +10,12 @@
+>  char _license[] SEC("license") =3D "GPL";
+>
+>  __u32 monitored_pid;
+> -__u32 found_xattr;
+> +__u32 found_xattr_from_file;
+> +__u32 found_xattr_from_dentry;
+>
+>  static const char expected_value[] =3D "hello";
+> -char value[32];
+> +char value1[32];
+> +char value2[32];
+>
+>  SEC("lsm.s/file_open")
+>  int BPF_PROG(test_file_open, struct file *f)
+> @@ -25,13 +28,37 @@ int BPF_PROG(test_file_open, struct file *f)
+>         if (pid !=3D monitored_pid)
+>                 return 0;
+>
+> -       bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
+> +       bpf_dynptr_from_mem(value1, sizeof(value1), 0, &value_ptr);
+>
+>         ret =3D bpf_get_file_xattr(f, "user.kfuncs", &value_ptr);
+>         if (ret !=3D sizeof(expected_value))
+>                 return 0;
+> -       if (bpf_strncmp(value, ret, expected_value))
+> +       if (bpf_strncmp(value1, ret, expected_value))
+>                 return 0;
+> -       found_xattr =3D 1;
+> +       found_xattr_from_file =3D 1;
+>         return 0;
+>  }
+> +
+> +SEC("lsm.s/inode_getxattr")
+> +int BPF_PROG(test_inode_getxattr, struct dentry *dentry, char *name)
+> +{
+> +       struct bpf_dynptr value_ptr;
+> +       __u32 pid;
+> +       int ret;
+> +
+> +       pid =3D bpf_get_current_pid_tgid() >> 32;
+> +       if (pid !=3D monitored_pid)
+> +               return 0;
+> +
+> +       bpf_dynptr_from_mem(value2, sizeof(value2), 0, &value_ptr);
+> +
+> +       ret =3D bpf_get_dentry_xattr(dentry, "user.kfuncs", &value_ptr);
 
-Right, I remember we had discussed it. The problem I faced was if 2
-vcpus fault on same page, they would race to look up the folio in
-filemap, increment refcount, then try to lock the folio. One of the
-vcpus wins the lock, while the other waits. The vcpu that gets the
-lock vcpu will see the elevated refcount.
+Song,
 
-I was in middle of writing an explanation why I think this is best
-approach and realized I think it should be possible to do
-shared->private conversion and actually have single reference. There
-would be some cost to walk through the allocated folios and convert them
-to private before any vcpu runs. The approach I had gone with was to
-do conversions as late as possible.
+See CI failure on s390.
+I think you need to update bpf_kfuncs.h, since s390 doesn't emit
+kfuncs into vmlinux.h
 
-Thanks,
-Elliot
+Also pls add a patch to move these kfuncs to fs/bpf_fs_kfuncs.c
+
+pw-bot: cr
 
