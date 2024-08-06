@@ -1,439 +1,157 @@
-Return-Path: <linux-kernel+bounces-275669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F5E948834
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:08:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B71D948836
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 493151F20F0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 576AC28345B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299561BA899;
-	Tue,  6 Aug 2024 04:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664D01BA88F;
+	Tue,  6 Aug 2024 04:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CItAcj+u"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YdPEdUlc"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2783AA59;
-	Tue,  6 Aug 2024 04:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A0213BC11;
+	Tue,  6 Aug 2024 04:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722917304; cv=none; b=Ja7kROdHONF9a2+kMsHtDRM/QbiQxVU9Ib7VufXBI4ZNQrJZ5rrxy55OneHp8gULJJDvoDo5VxzQ+yLw54eAZJSbP1o7krToLr1zGwvMZRkhu0VJUlPmmrxY11dmJT4BOtIiuPVklA5ofpFFkzIVzV23rRCQHDXxHrDLhWQrYYE=
+	t=1722917352; cv=none; b=LBzKhsL+R4hEYG8ZbBVrlOtQwILdbF1NEEnY8lIvCQkGtx+qm/TE9w/xZCEj6muBR2L1ccpDgeGsvNHAh7dByzGYacS5Ebt3wltpWvKzpy1A3CGY/zqWbkuaSSMkZs3liiBsHOq0MarGEgPMan0ngqXAuKyP/DEULO6hI0aKVc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722917304; c=relaxed/simple;
-	bh=LscGH4hKGxiphI81let4IXI6/0DyKy1o2DGYhysplM4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yua03KQ56szG6xjH+I/QhByT/UJVbjCwKdehgUVjjrTGpEO6Lzj0E4z2fIlrNAiz96fLLEG77pNk2vehGWguAaIr98SqG4wBWq6f2kUzZ+ziSCv9CT/rZEeog5HGiK8gPsYdBc82DNjCkWKAMe1CHA83zs6fW4Ocaapt6dZDEuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CItAcj+u; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1722917352; c=relaxed/simple;
+	bh=8l9WnyWHzi8Tzt2NAJoVsNu9wvQFDPty8PnCSIbrSrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VG8RFD8KletzA9eYXBGRav5WlZmYfQ7bhnWMdEaiG4fnqLGYylFnVdAkyBrvWoKStKInWhsGcJ5SrUtmI4L4KzwoEZfd3o4jsdOXXBVNeBjEz/TbaUxHDzkWoLSh8G7AklOfVLxmrFtnCNzJsL222CiWFjqLECPgebveUCOawCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YdPEdUlc; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70d1cbbeeaeso123063b3a.0;
-        Mon, 05 Aug 2024 21:08:22 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fc56fd4de1so3054745ad.0;
+        Mon, 05 Aug 2024 21:09:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722917302; x=1723522102; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/IT8sEsFAxIa+ue7ADaJWFTGS/kPVVConO5rGnfybXg=;
-        b=CItAcj+uDR/3aspTIx31d81fNThS2piufyTCkAf0NC9TQ+xqh9FBXsLgpmlEMD3faT
-         BCOwPAtMHTD5eV5Ngfr5ulifjeahT5AyFnO2ritTfgjIxo7qzi68RpJ681zAQKjLd8iI
-         WtSxRAy3zC8Jf3n92SMXFQlfBPmp5Df+xF5UciD/he7dEALujJYqi7OiFcwxXSq1BkTz
-         u2iJkhQGFpn7PmZJm9iEBf6dniNeXXr4dgCGZjMDz8l3nX7tWJWRAzlGxwgCkmcVGGuT
-         2m3NygcIx/lgQ9H5fobC0FoUV9SiFXz8/83Gr0Mt42K3tjfN4c5T4WLyY6DnTzxYaMf+
-         wLVw==
+        d=gmail.com; s=20230601; t=1722917350; x=1723522150; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x4VUlslBVhfHHLrCBxi8o+FcHDhYgsZSGNYD1GG8x6Y=;
+        b=YdPEdUlcWTSyOku+kWdlF1yPCr8CYE67/KQpFWJ2ZiLbSB/EW3y/7+pQW1M4r/jDhZ
+         g/Wu1dcos+n1KXHw1SESFEfpuO0SgjipbMsJpMSxjwG0+lXgIcB0mOD9DlaILHcJjr7C
+         iewTEVQm+U+Wls79AsKnvjXMga3/6lVwNWsJSQFQlzVFz5DHPmxXUtoixEsXLZeJ1rMh
+         uqbWhexG3gI0n1ox/N6Ijh6JRgwSB1f+ltbMdiJqLyc0QuaK0pZgUGmE5CVnNnUacskn
+         3Yq6yeAOQengF70xG9+1llQlkeGcbVeGsCKWWoI7oM7HkTArclu9G8KHH7eEauuFGU7G
+         +X4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722917302; x=1723522102;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722917350; x=1723522150;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/IT8sEsFAxIa+ue7ADaJWFTGS/kPVVConO5rGnfybXg=;
-        b=Ptq/MxOaR4Bx6ow6biYmuLVKHbiVjbhwqVIYYHWSTBGjusAzm9ZSNrO5JUW/PunmFj
-         BmNhorq5oBeQkg9EgweuE4aPoBTmhnpehoduBG3K0YcMOvN0NBixqRWI9frioLUtgAmp
-         YwGVFHxJzHfTl2iBvy02Z/RVcg0U/LQv3DlM8tQIa4IGUqfBaoWbEjFlhEjImYgsDoZm
-         UyrFr04jOQE8FYTNnupVP3NFJnLDnWFKmrlzpTjZ+XZ3uJArjXJPg93KyZPzkSUxAX5F
-         oNfhJ2jJu/SzWe0JfbxMy4O8+BMyotdnDB+24i7o3FGkNPs/yLQNOqonhzwSt8d4Z6uh
-         7x4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW6DczyPWaD+8YfoE9T1MLpS8vN0tytHZ3glQ0VHN2miZzYkOj0MzrjHp3h2trQg5cT21zCIL2ZFvp97Kxo1TW5i1uLfXysP0v1IEjN8V6RwruCNHZOeYNt2XYB1x172f67
-X-Gm-Message-State: AOJu0Yz30JdjBSWtyGp5g2JDHphZ7IGQ6cs8xN4KmNuRJ7DiVhV9UipV
-	Ou2s1Ba7jOrVjUTAMtc8lGNkvBWcGSiPpiyOQsSCZFbvXAh6UOhRmB5toEZ1WcvHT743j/ggYFR
-	AGLoPgJ0R5w6yfTk8F1lhg/vnU/4=
-X-Google-Smtp-Source: AGHT+IF20GaEPNQro6dBiwEIVSRqnAshwy8AQADhn3PB57dSXpIv2LWeFXipXlJpjrGifopKW8CyuShoUAd8vpwa6E8=
-X-Received: by 2002:a05:6a20:9148:b0:1c0:eba5:e192 with SMTP id
- adf61e73a8af0-1c69958619amr15112499637.27.1722917302185; Mon, 05 Aug 2024
- 21:08:22 -0700 (PDT)
+        bh=x4VUlslBVhfHHLrCBxi8o+FcHDhYgsZSGNYD1GG8x6Y=;
+        b=kbt6wWsff1qGxzqeBBnf1RdDEBak8r/+HUVmsPqRpnoTYJA65Ujg1VAr2EvvoOoHaf
+         wjIZXUCm/peSWMMGC9inYd1Hr5i90fqeOQqfCdSdFk5kbtFc65XTeOwGyRLcP8JRJWuH
+         B/Xp+S7VDsfEnunojWVJh5xxyKHG0PYtAdUR9fpdL1xXuzFs+WojA2HEcFyCVa38nq+O
+         VSBdCs5CPSbABB9ncR2Yf7s8TtTasNzrxvD+3pxL6BMod6MVQCFt30WbKWF0wq1v2h4x
+         smxTH771g3+XrPZh4/f/5TVEd07rZtglZJaMXQvwow0kD8bBrF+UC4lV+S2Kjq4GKrEL
+         uMNg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFglxtQHSjoHc+f+xS7/43hb2OjAtYwV08LmFT6GBMpCj3QDi6O2m4ZByA5BRLwMWpBYDwpApH8rwlHGjUMgMQPsyRioYaBXv02jxLwaPEyW1tVCIpbaV/65svbgbYtwMv9uR5CqGdYQ==
+X-Gm-Message-State: AOJu0Yy9bjVd6yKUj4PLDXajE+9QwH13O8mtUkBsNY1Blimj1C4yeTSV
+	0E3zJd4qoNv0PQlDdcWAj66GRKc46qcLM4iHZ/fWQibv66iz76WE
+X-Google-Smtp-Source: AGHT+IFExs2RIs/XzdpTCp3D3iQlVgyKXYU5xoO0Dq2vz4Ya0KViBzrT/A8gGW7SM3h8jNPfJLSrfg==
+X-Received: by 2002:a17:902:f641:b0:1fb:7654:4a40 with SMTP id d9443c01a7336-1ff57bc159bmr224509635ad.14.1722917349895;
+        Mon, 05 Aug 2024 21:09:09 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f2a159sm76770955ad.3.2024.08.05.21.09.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 21:09:08 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 5 Aug 2024 21:09:07 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Maciej W. Rozycki" <macro@orcam.me.uk>, linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] MIPS: csrc-r4k: Apply verification clocksource
+ flags
+Message-ID: <fbe92f1c-3c08-4b46-9d7a-e098ac1656a8@roeck-us.net>
+References: <20240612-mips-clks-v2-0-a57e6f49f3db@flygoat.com>
+ <20240612-mips-clks-v2-2-a57e6f49f3db@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zo1hBFS7c_J-Yx-7@casper.infradead.org> <20240710091631.GT27299@noisy.programming.kicks-ass.net>
- <20240710094013.GF28838@noisy.programming.kicks-ass.net> <CAJuCfpF3eSwW_Z48e0bykCh=8eohAuACxjXBbUV_sjrVwezxdw@mail.gmail.com>
- <CAEf4BzZPGG9_P9EWosREOw8owT6+qawmzYr0EJhOZn8khNn9NQ@mail.gmail.com>
- <CAJuCfpELNoDrVyyNV+fuB7ju77pqyj0rD0gOkLVX+RHKTxXGCA@mail.gmail.com>
- <ZqRtcZHWFfUf6dfi@casper.infradead.org> <20240730131058.GN33588@noisy.programming.kicks-ass.net>
- <CAJuCfpFUQFfgx0BWdkNTAiOhBpqmd02zarC0y38gyB5OPc0wRA@mail.gmail.com>
- <CAEf4BzavWOgCLQoNdmPyyqHcm7gY5USKU5f1JWfyaCbuc_zVAA@mail.gmail.com>
- <20240803085312.GP39708@noisy.programming.kicks-ass.net> <CAEf4BzYPpkhKtuaT-EbyKeB13-uBeYf8LjR9CB=xaXYHnwsyAQ@mail.gmail.com>
-In-Reply-To: <CAEf4BzYPpkhKtuaT-EbyKeB13-uBeYf8LjR9CB=xaXYHnwsyAQ@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 5 Aug 2024 21:08:09 -0700
-Message-ID: <CAEf4BzZ26FNTguRh_X9_5eQZvOeKb+c-o3mxSzoM2+TF3NqaWA@mail.gmail.com>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-To: Peter Zijlstra <peterz@infradead.org>, rostedt@goodmis.org
-Cc: Suren Baghdasaryan <surenb@google.com>, Matthew Wilcox <willy@infradead.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org, 
-	andrii@kernel.org, linux-kernel@vger.kernel.org, oleg@redhat.com, 
-	jolsa@kernel.org, clm@meta.com, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612-mips-clks-v2-2-a57e6f49f3db@flygoat.com>
 
-On Sun, Aug 4, 2024 at 4:22=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Sat, Aug 3, 2024 at 1:53=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
-rg> wrote:
-> >
-> > On Fri, Aug 02, 2024 at 10:47:15PM -0700, Andrii Nakryiko wrote:
-> >
-> > > Is there any reason why the approach below won't work?
-> >
-> > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > > index 8be9e34e786a..e21b68a39f13 100644
-> > > --- a/kernel/events/uprobes.c
-> > > +++ b/kernel/events/uprobes.c
-> > > @@ -2251,6 +2251,52 @@ static struct uprobe
-> > > *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
-> > >         struct uprobe *uprobe =3D NULL;
-> > >         struct vm_area_struct *vma;
-> > >
-> > > +#ifdef CONFIG_PER_VMA_LOCK
-> > > +       vm_flags_t flags =3D VM_HUGETLB | VM_MAYEXEC | VM_MAYSHARE, v=
-m_flags;
-> > > +       struct file *vm_file;
-> > > +       struct inode *vm_inode;
-> > > +       unsigned long vm_pgoff, vm_start, vm_end;
-> > > +       int vm_lock_seq;
-> > > +       loff_t offset;
-> > > +
-> > > +       rcu_read_lock();
-> > > +
-> > > +       vma =3D vma_lookup(mm, bp_vaddr);
-> > > +       if (!vma)
-> > > +               goto retry_with_lock;
-> > > +
-> > > +       vm_lock_seq =3D READ_ONCE(vma->vm_lock_seq);
-> >
-> > So vma->vm_lock_seq is only updated on vma_start_write()
->
-> yep, I've looked a bit more at the implementation now
->
-> >
-> > > +
-> > > +       vm_file =3D READ_ONCE(vma->vm_file);
-> > > +       vm_flags =3D READ_ONCE(vma->vm_flags);
-> > > +       if (!vm_file || (vm_flags & flags) !=3D VM_MAYEXEC)
-> > > +               goto retry_with_lock;
-> > > +
-> > > +       vm_inode =3D READ_ONCE(vm_file->f_inode);
-> > > +       vm_pgoff =3D READ_ONCE(vma->vm_pgoff);
-> > > +       vm_start =3D READ_ONCE(vma->vm_start);
-> > > +       vm_end =3D READ_ONCE(vma->vm_end);
-> >
-> > None of those are written with WRITE_ONCE(), so this buys you nothing.
-> > Compiler could be updating them one byte at a time while you load some
-> > franken-update.
-> >
-> > Also, if you're in the middle of split_vma() you might not get a
-> > consistent set.
->
-> I used READ_ONCE() only to prevent the compiler from re-reading those
-> values. We assume those values are garbage anyways and double-check
-> everything, so lack of WRITE_ONCE doesn't matter. Same for
-> inconsistency if we are in the middle of split_vma().
->
-> We use the result of all this speculative calculation only if we find
-> a valid uprobe (which could be a false positive) *and* if we detect
-> that nothing about VMA changed (which is what I got wrong, but
-> honestly I was actually betting on others to help me get this right
-> anyways).
->
-> >
-> > > +       if (bp_vaddr < vm_start || bp_vaddr >=3D vm_end)
-> > > +               goto retry_with_lock;
-> > > +
-> > > +       offset =3D (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vm_=
-start);
-> > > +       uprobe =3D find_uprobe_rcu(vm_inode, offset);
-> > > +       if (!uprobe)
-> > > +               goto retry_with_lock;
-> > > +
-> > > +       /* now double check that nothing about VMA changed */
-> > > +       if (vm_lock_seq !=3D READ_ONCE(vma->vm_lock_seq))
-> > > +               goto retry_with_lock;
-> >
-> > Since vma->vma_lock_seq is only ever updated at vma_start_write() you'r=
-e
-> > checking you're in or after the same modification cycle.
-> >
-> > The point of sequence locks is to check you *IN* a modification cycle
-> > and retry if you are. You're now explicitly continuing if you're in a
-> > modification.
-> >
-> > You really need:
-> >
-> >    seq++;
-> >    wmb();
-> >
-> >    ... do modification
-> >
-> >    wmb();
-> >    seq++;
-> >
-> > vs
-> >
-> >   do {
-> >           s =3D READ_ONCE(seq) & ~1;
-> >           rmb();
-> >
-> >           ... read stuff
-> >
-> >   } while (rmb(), seq !=3D s);
-> >
-> >
-> > The thing to note is that seq will be odd while inside a modification
-> > and even outside, further if the pre and post seq are both even but not
-> > identical, you've crossed a modification and also need to retry.
-> >
->
-> Ok, I don't think I got everything you have written above, sorry. But
-> let me explain what I think I need to do and please correct what I
-> (still) got wrong.
->
-> a) before starting speculation,
->   a.1) read and remember current->mm->mm_lock_seq (using
-> smp_load_acquire(), right?)
->   a.2) read vma->vm_lock_seq (using smp_load_acquire() I presume)
->   a.3) if vm_lock_seq is odd, we are already modifying VMA, so bail
-> out, try with proper mmap_lock
-> b) proceed with the inode pointer fetch and offset calculation as I've co=
-ded it
-> c) lookup uprobe by inode+offset, if failed -- bail out (if succeeded,
-> this could still be wrong)
-> d) re-read vma->vm_lock_seq, if it changed, we started modifying/have
-> already modified VMA, bail out
-> e) re-read mm->mm_lock_seq, if that changed -- presume VMA got
-> modified, bail out
->
-> At this point we should have a guarantee that nothing about mm
-> changed, nor that VMA started being modified during our speculative
-> calculation+uprobe lookup. So if we found a valid uprobe, it must be a
-> correct one that we need.
->
-> Is that enough? Any holes in the approach? And thanks for thoroughly
-> thinking about this, btw!
+Hi,
 
-Ok, with slight modifications to the details of the above (e.g., there
-is actually no "odd means VMA is being modified" thing with
-vm_lock_seq), I ended up with the implementation below. Basically we
-validate that mm->mm_lock_seq didn't change and that vm_lock_seq !=3D
-mm_lock_seq (which otherwise would mean "VMA is being modified").
-There is a possibility that vm_lock_seq =3D=3D mm_lock_seq just by
-accident, which is not a correctness problem, we'll just fallback to
-locked implementation until something about VMA or mm_struct itself
-changes. Which is fine, and if mm folks ever change this locking
-schema, this might go away.
+On Wed, Jun 12, 2024 at 09:54:29AM +0100, Jiaxun Yang wrote:
+> CP0 counter suffers from various problems like SMP sync,
+> behaviour on wait.
+> 
+> Set CLOCK_SOURCE_MUST_VERIFY and CLOCK_SOURCE_VERIFY_PERCPU,
+> as what x86 did to TSC, to let kernel test it before use.
+> 
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 
-If this seems on the right track, I think we can just move
-mm_start_vma_specuation()/mm_end_vma_speculation() into
-include/linux/mm.h.
+With this patch in the mainline kernel, about one in five qemu
+boot attempts with e1000 Ethernet controller fail to activate
+the network interface (specifically, the dhcp client is unable to
+get an IP address for the interface). Bisect log is attached below.
 
-And after thinking a bit more about READ_ONCE() usage, I changed them
-to data_race() to not trigger KCSAN warnings. Initially I kept
-READ_ONCE() only around vma->vm_file access, but given we never change
-it until vma is freed and reused (which would be prevented by
-guard(rcu)), I dropped READ_ONCE() and only added data_race(). And
-even data_race() is probably not necessary.
+For reference, here is an example command line.
 
-Anyways, please see the patch below. Would be nice if mm folks
-(Suren?) could confirm that this is not broken.
+qemu-system-mips64 -kernel vmlinux -M malta -cpu 5KEc \
+	-initrd rootfs-n32.cpio \
+	-device e1000,netdev=net0 -netdev user,id=net0 \
+	-vga cirrus -no-reboot -m 256 \
+	--append "rdinit=/sbin/init mem=256M console=ttyS0 console=tty " \
+	-nographic
 
+Reverting this patch fixes the probem.
 
+Thanks,
+Guenter
 
-Author: Andrii Nakryiko <andrii@kernel.org>
-Date:   Fri Aug 2 22:16:40 2024 -0700
-
-    uprobes: add speculative lockless VMA to inode resolution
-
-    Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 3de311c56d47..bee7a929ff02 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -2244,6 +2244,70 @@ static int is_trap_at_addr(struct mm_struct
-*mm, unsigned long vaddr)
-        return is_trap_insn(&opcode);
- }
-
-+#ifdef CONFIG_PER_VMA_LOCK
-+static inline void mm_start_vma_speculation(struct mm_struct *mm, int
-*mm_lock_seq)
-+{
-+       *mm_lock_seq =3D smp_load_acquire(&mm->mm_lock_seq);
-+}
-+
-+/* returns true if speculation was safe (no mm and vma modification
-happened) */
-+static inline bool mm_end_vma_speculation(struct vm_area_struct *vma,
-int mm_lock_seq)
-+{
-+       int mm_seq, vma_seq;
-+
-+       mm_seq =3D smp_load_acquire(&vma->vm_mm->mm_lock_seq);
-+       vma_seq =3D READ_ONCE(vma->vm_lock_seq);
-+
-+       return mm_seq =3D=3D mm_lock_seq && vma_seq !=3D mm_seq;
-+}
-+
-+static struct uprobe *find_active_uprobe_speculative(unsigned long bp_vadd=
-r)
-+{
-+       const vm_flags_t flags =3D VM_HUGETLB | VM_MAYEXEC | VM_MAYSHARE;
-+       struct mm_struct *mm =3D current->mm;
-+       struct uprobe *uprobe;
-+       struct vm_area_struct *vma;
-+       struct file *vm_file;
-+       struct inode *vm_inode;
-+       unsigned long vm_pgoff, vm_start;
-+       int mm_lock_seq;
-+       loff_t offset;
-+
-+       guard(rcu)();
-+
-+       mm_start_vma_speculation(mm, &mm_lock_seq);
-+
-+       vma =3D vma_lookup(mm, bp_vaddr);
-+       if (!vma)
-+               return NULL;
-+
-+       vm_file =3D data_race(vma->vm_file);
-+       if (!vm_file || (vma->vm_flags & flags) !=3D VM_MAYEXEC)
-+               return NULL;
-+
-+       vm_inode =3D data_race(vm_file->f_inode);
-+       vm_pgoff =3D data_race(vma->vm_pgoff);
-+       vm_start =3D data_race(vma->vm_start);
-+
-+       offset =3D (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vm_start)=
-;
-+       uprobe =3D find_uprobe_rcu(vm_inode, offset);
-+       if (!uprobe)
-+               return NULL;
-+
-+       /* now double check that nothing about MM and VMA changed */
-+       if (!mm_end_vma_speculation(vma, mm_lock_seq))
-+               return NULL;
-+
-+       /* happy case, we speculated successfully */
-+       return uprobe;
-+}
-+#else /* !CONFIG_PER_VMA_LOCK */
-+static struct uprobe *find_active_uprobe_speculative(unsigned long bp_vadd=
-r)
-+{
-+       return NULL;
-+}
-+#endif /* CONFIG_PER_VMA_LOCK */
-+
- /* assumes being inside RCU protected region */
- static struct uprobe *find_active_uprobe_rcu(unsigned long bp_vaddr,
-int *is_swbp)
- {
-@@ -2251,6 +2315,10 @@ static struct uprobe
-*find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
-        struct uprobe *uprobe =3D NULL;
-        struct vm_area_struct *vma;
-
-+       uprobe =3D find_active_uprobe_speculative(bp_vaddr);
-+       if (uprobe)
-+               return uprobe;
-+
-        mmap_read_lock(mm);
-        vma =3D vma_lookup(mm, bp_vaddr);
-        if (vma) {
-diff --git a/kernel/fork.c b/kernel/fork.c
-index cc760491f201..211a84ee92b4 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -3160,7 +3160,7 @@ void __init proc_caches_init(void)
-                        NULL);
-        files_cachep =3D kmem_cache_create("files_cache",
-                        sizeof(struct files_struct), 0,
--                       SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
-+
-SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT|SLAB_TYPESAFE_BY_RCU,
-                        NULL);
-        fs_cachep =3D kmem_cache_create("fs_cache",
-                        sizeof(struct fs_struct), 0,
-
-
->
-> P.S. This is basically the last big blocker towards linear uprobes
-> scalability with the number of active CPUs. I have
-> uretprobe+SRCU+timeout implemented and it seems to work fine, will
-> post soon-ish.
->
-> P.P.S Also, funny enough, below was another big scalability limiter
-> (and the last one) :) I'm not sure if we can just drop it, or I should
-> use per-CPU counter, but with the below change and speculative VMA
-> lookup (however buggy, works ok for benchmarking), I finally get
-> linear scaling of uprobe triggering throughput with number of CPUs. We
-> are very close.
->
-> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> index f7443e996b1b..64c2bc316a08 100644
-> --- a/kernel/trace/trace_uprobe.c
-> +++ b/kernel/trace/trace_uprobe.c
-> @@ -1508,7 +1508,7 @@ static int uprobe_dispatcher(struct
-> uprobe_consumer *con, struct pt_regs *regs)
->         int ret =3D 0;
->
->         tu =3D container_of(con, struct trace_uprobe, consumer);
-> -       tu->nhit++;
-> +       //tu->nhit++;
->
->         udd.tu =3D tu;
->         udd.bp_addr =3D instruction_pointer(regs);
->
->
-> > > +
-> > > +       /* happy case, we speculated successfully */
-> > > +       rcu_read_unlock();
-> > > +       return uprobe;
-> > > +
-> > > +retry_with_lock:
-> > > +       rcu_read_unlock();
-> > > +       uprobe =3D NULL;
-> > > +#endif
-> > > +
-> > >         mmap_read_lock(mm);
-> > >         vma =3D vma_lookup(mm, bp_vaddr);
-> > >         if (vma) {
-> > > diff --git a/kernel/fork.c b/kernel/fork.c
-> > > index cc760491f201..211a84ee92b4 100644
-> > > --- a/kernel/fork.c
-> > > +++ b/kernel/fork.c
-> > > @@ -3160,7 +3160,7 @@ void __init proc_caches_init(void)
-> > >                         NULL);
-> > >         files_cachep =3D kmem_cache_create("files_cache",
-> > >                         sizeof(struct files_struct), 0,
-> > > -                       SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
-> > > + SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT|SLAB_TYPESAFE_BY_RCU,
-> > >                         NULL);
-> > >         fs_cachep =3D kmem_cache_create("fs_cache",
-> > >                         sizeof(struct fs_struct), 0,
+---
+# bad: [de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed] Linux 6.11-rc2
+# good: [0c3836482481200ead7b416ca80c68a29cfdaabd] Linux 6.10
+git bisect start 'HEAD' 'v6.10'
+# good: [280e36f0d5b997173d014c07484c03a7f7750668] nsfs: use cleanup guard
+git bisect good 280e36f0d5b997173d014c07484c03a7f7750668
+# good: [a4f9285520584977127946a22eab2adfbc87d1bf] Merge tag 'clk-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
+git bisect good a4f9285520584977127946a22eab2adfbc87d1bf
+# bad: [8e313211f7d46d42b6aa7601b972fe89dcc4a076] Merge tag 'pinctrl-v6.11-1' of git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
+git bisect bad 8e313211f7d46d42b6aa7601b972fe89dcc4a076
+# good: [acc5965b9ff8a1889f5b51466562896d59c6e1b9] Merge tag 'char-misc-6.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
+git bisect good acc5965b9ff8a1889f5b51466562896d59c6e1b9
+# bad: [d2be38b9a5514dbc7dc0c96a2a7f619fcddce00d] Merge tag 'mips_6.11' of git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux
+git bisect bad d2be38b9a5514dbc7dc0c96a2a7f619fcddce00d
+# good: [45659274e60864f9acabba844468e405362bdc8c] Merge branch 'pci/misc'
+git bisect good 45659274e60864f9acabba844468e405362bdc8c
+# good: [8e5c0abfa02d85b9cd2419567ad2d73ed8fe4b74] Merge tag 'input-for-v6.11-rc0' of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input
+git bisect good 8e5c0abfa02d85b9cd2419567ad2d73ed8fe4b74
+# good: [3c3ff7be9729959699eb6cbc7fd7303566d74069] Merge tag 'powerpc-6.11-1' of git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
+git bisect good 3c3ff7be9729959699eb6cbc7fd7303566d74069
+# good: [3de96d810ffd712b7ad2bd764c1390fac2436551] dt-bindings: mips: brcm: Document brcm,bmips-cbr-reg property
+git bisect good 3de96d810ffd712b7ad2bd764c1390fac2436551
+# bad: [9c7a86c935074525f24cc20e78a7d5150e4600e3] MIPS: lantiq: improve USB initialization
+git bisect bad 9c7a86c935074525f24cc20e78a7d5150e4600e3
+# bad: [580724fce27f2b71b3e4d58bbe6d83b671929b33] MIPS: sync-r4k: Rework based on x86 tsc_sync
+git bisect bad 580724fce27f2b71b3e4d58bbe6d83b671929b33
+# good: [c171186c177970d3ec22dd814f2693f1f7fc1e7d] MIPS: csrc-r4k: Refine rating computation
+git bisect good c171186c177970d3ec22dd814f2693f1f7fc1e7d
+# bad: [426fa8e4fe7bb914b5977cbce453a9926bf5b2e6] MIPS: csrc-r4k: Select HAVE_UNSTABLE_SCHED_CLOCK if SMP && 64BIT
+git bisect bad 426fa8e4fe7bb914b5977cbce453a9926bf5b2e6
+# bad: [7190401fc56fb5f02ee3d04476778ab000bbaf32] MIPS: csrc-r4k: Apply verification clocksource flags
+git bisect bad 7190401fc56fb5f02ee3d04476778ab000bbaf32
+# first bad commit: [7190401fc56fb5f02ee3d04476778ab000bbaf32] MIPS: csrc-r4k: Apply verification clocksource flags
 
