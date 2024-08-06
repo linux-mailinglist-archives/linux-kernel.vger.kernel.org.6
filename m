@@ -1,169 +1,122 @@
-Return-Path: <linux-kernel+bounces-275575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4178948762
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:17:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0344A948764
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11A68B20300
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:17:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3230C1C22216
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA9DEAD2;
-	Tue,  6 Aug 2024 02:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FF2DF42;
+	Tue,  6 Aug 2024 02:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XLOX3o62"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Am8D4qac"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920976FC3;
-	Tue,  6 Aug 2024 02:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5B8DF5C
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722910607; cv=none; b=hqzvugwaAGauumTMSBMZmPiFpfxv0E5NCQ589th3rnQg/rvhe9y/T1BKq0/OKDGOr+OCuT9O9juGKu7YrD2/la30e8a9bOU2txOfk21b+hcWN8Hk/4oDBjooDd7id0KPShc0+8HtIyZUtf/6fyL8uTuUIp1NkklsVsy9PaY4OPs=
+	t=1722910646; cv=none; b=oNvSUvQyWEmdQf90PVObezFVeLlsAzdpmBsV7oDwSaABqoxu8LPCqJWWldF0kaIg4hEi55g/6K6sV4DG742xNqFZkyfVs8WIQYvf5DXNVSNVOeg7HUlSy8tmdf+XrK0KNhYrzAtiLPJzFIyDbWsXAXep5WXF98G9HnVAL4Tnw0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722910607; c=relaxed/simple;
-	bh=ebSWJSj/buxW44/rQoQph4W+aePCGg6KpmYyKZK1snY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qR5CMqjd+kA3skC3drdhC1mH8ZRI5VALyKXqrN9iaVtkaspQDcAidubL6o+0JUtCOiV57ZcDna+9aq8ALjQl9AlecrochmeIf7yzC8O/OxR1DVh+XogY/ow0iY4v0I+anVfII58KIclkZywJFAvHy36JCT42uT677aYj/8Wa+SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XLOX3o62; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fdacc4129fso56835ad.1;
-        Mon, 05 Aug 2024 19:16:45 -0700 (PDT)
+	s=arc-20240116; t=1722910646; c=relaxed/simple;
+	bh=1kbFbn/hAUhXKnkcqsPGGdbcnRxGgzs3MwJiZATRWDA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=orZaHDIkbGFugY9rQmUItVwscApPNDtVozWQYvyj2prwlLy2MDj+dghFOhWsJPBnvaidjDv/M4MZu3xrpEM9ubUxiV4bP4HJ3YRDuqmMpGwiEjhNAbiif/aAxKu7BNGG2gW/1IDEsnoEXtXt3Uwjd+K/qz+XQYJ5vcN1RIgphbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Am8D4qac; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52efbc57456so106501e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 19:17:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722910605; x=1723515405; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=l7mvtGZEsuHPzWX3pW4fYKh4Cjh9maArqhFHH/gvuGQ=;
-        b=XLOX3o62pxoWuviVbBdJtPthPCgPAfXVRvQoyWVxmzUshThtmNwBdZJvc0lrzU4Owq
-         2wD4tg7YxS/deJujva6dqirXdDjVqsAn68t3bxsz26VPbYbRJkaeCAZGFanQ2mZ1ArYM
-         YcsUfITjsl6NyPoMx3WymRZIYj5VavOCDuN0Z0ENFEGQU0ssPDwsagVL5G3pcnPS/m25
-         7unbNMRIKhpAvyCfZyAZaJfIl58xhIXEgpIebY6ID/0Qdxob2uFpOXURhnpw3NyJoKde
-         lYUWB4XOw+kI40mlSN6LRwVUYQGM85uDMFUwoczIUplfGTQYITiI7U9DZFX77cjo1wLZ
-         2VXQ==
+        d=linux-foundation.org; s=google; t=1722910642; x=1723515442; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dwq5AxSs3t0w/fOZRG6eJ0P9hFWvane6MBazV/wxmCg=;
+        b=Am8D4qacjeW9OrAKHivXQNmZMPg1xWa3COmbUhBur1GxBq0VDquvIk9ARMf9OK1X6m
+         nemA6pxm+CxjRJosPHqj6qZ0/mHsubx3PaOR3OsclSZjC1Xr70FqaB/IZCP3QKIbPbUq
+         rOdvDFcr/pTuV1sH0AhnHDCmHvrHhRBA8i7Ek=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722910605; x=1723515405;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1722910642; x=1723515442;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=l7mvtGZEsuHPzWX3pW4fYKh4Cjh9maArqhFHH/gvuGQ=;
-        b=WAddRhowbTRVn8FzmALfpz9ic4LIhZ8dbhd6iq+tmN+Gq+26WX4F1mOrY69LJE0yrt
-         49EeVC6ZxqisFVIR4DbEOz61V687dQajGZiEbzMlju9D1ORzFYz2Kpo+z+HhksIbgxhQ
-         aXoNwazHvsulrz5M4mz3oZPfrh4YSH0o+iaFiuwkN0qxavUiLpoqpZISXcdATNNSAgYk
-         V0GoQk5wqqPVfogabqDeykHNGhFkKEMQ4xGAEQVj3usQ5yLUP2/jWlWcDR4Uasxp9QK+
-         G9eG3HICDLHSvztPipseCTTPYxaxrqxlW/rXwPbH+D9B47TWnFpEIx/+19o6+f8Yt0Lp
-         93Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5vCn+nH0Jc0anXn3dsMsIRlhSfn3xe4/wcdbFCIpni2i/W+LerRJFhwpcRZ+VFXlOt1wn9ktH@vger.kernel.org, AJvYcCV+tp1bWEwre5ziu3gqZsZYtU2w1jymHluNxd2zeOZrPPHENlm0Jfoze0M9Veoy9q77nfr+0uG8EB+mlto=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1nVpI3er4OuPAJLeRxjcBoBafW2aKF4RLS1TpJIa8aV/bIGM8
-	QXl8U8qQcSpXpnomxPqasvQ1mui+Ny8zyrDrWaWe1aptFNUqra2I
-X-Google-Smtp-Source: AGHT+IFGIIZ+nhDuGefYZ1y1WVR21yakH6dk3osLDORN1mCGnbZ1+JngnuuwyDq0uaosvESzYiK9fg==
-X-Received: by 2002:a17:902:d505:b0:1f7:3ed:e7b2 with SMTP id d9443c01a7336-1ff570f16cfmr91474625ad.0.1722910604865;
-        Mon, 05 Aug 2024 19:16:44 -0700 (PDT)
-Received: from fabio-Precision-3551.. ([2804:14c:485:4b61:3668:14ca:30e:638f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5929ac42sm76095385ad.267.2024.08.05.19.16.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 19:16:44 -0700 (PDT)
-From: Fabio Estevam <festevam@gmail.com>
-To: kuba@kernel.org
-Cc: wei.fang@nxp.com,
-	shenwei.wang@nxp.com,
-	xiaoning.wang@nxp.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	imx@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Fabio Estevam <festevam@denx.de>
-Subject: [PATCH net-next] net: fec: Switch to RUNTIME/SYSTEM_SLEEP_PM_OPS()
-Date: Mon,  5 Aug 2024 23:16:28 -0300
-Message-Id: <20240806021628.2524089-1-festevam@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        bh=Dwq5AxSs3t0w/fOZRG6eJ0P9hFWvane6MBazV/wxmCg=;
+        b=YgB5dyoHXmY2myVXkiijZ46DoPgLLLDJfwnkJ/jSe5pBbvCph/RUCrrqJVYCaPisGD
+         Snsq8ftN12a1TMq3x4TiaHXK74H8GM78yUPqWUqq8luhRL2yXTLqA+mL2E2y/qRjoj1N
+         9I3DWjvRtwfKUzQD8UfnQGg2jEGUOnSEIW35KRY6GY28DMsudRUpyzwXut+QftaxxN9P
+         tYI8/8CVFFWRL6O68Y9d8qt4L0kaGP2ZeuVsfZ3tCA03f5mnl79Zp8T9RdZjMHDc6X00
+         L84KlO9wVeqmdbLzSpp/3Azyvd23i5K0pwd5RIuYIX69uvprCyrMqYGUeHBsCJ4kFlft
+         Jw4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVp7hLg3oMpOK7H3ijJq40iLak8oC95B34FndLhuzsEbzl6r2nWkdmcd6fwa1rKepTq+xWBVpooRnnJdio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKh+1xGJM5mxRuhlMgrNtBZXjY71iDhBI4dVPKi4vt1Snl2dcB
+	HuJyPmWZFPYIKQYF8pnqDgVYJGaQyl6iVwRC0JEX0M63Le2GAHMtywXlD/51UsM8/427bPLhxR5
+	jE4+YpQ==
+X-Google-Smtp-Source: AGHT+IHBgUMZFfDI/gEKKYZ8P+GfoLiBk3/7QSw+F72ZGUHonmeFw0jwggDkFUizWTZvMiysOCd27w==
+X-Received: by 2002:a05:6512:b21:b0:52c:d76a:867f with SMTP id 2adb3069b0e04-530bb3041acmr8488012e87.0.1722910641861;
+        Mon, 05 Aug 2024 19:17:21 -0700 (PDT)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc9dabsm504603866b.39.2024.08.05.19.17.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 19:17:21 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a1c49632deso128947a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 19:17:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXk266YiF028glFct3wi7Yfo/mbRZ8IOJffz5KnIo43JdITeWVUOF90xSEw2nsMUi+4W1ujxRV/Z/PX/a4=@vger.kernel.org
+X-Received: by 2002:a05:6402:a42:b0:5a2:cc1c:4cf0 with SMTP id
+ 4fb4d7f45d1cf-5b7f36f59ffmr9300778a12.7.1722910641236; Mon, 05 Aug 2024
+ 19:17:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <202408041602.caa0372-oliver.sang@intel.com> <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
+ <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
+ <CALmYWFuXVCvAfrcDOCAR72z2_rmnm09QeVVqdhzqjF-fZ9ndUA@mail.gmail.com>
+ <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com>
+ <CAHk-=wgdTWpCqTMgM9SJxG2=oYwhAueU_fDHMPifjpH5eHG8qw@mail.gmail.com> <87o766iehy.fsf@mail.lhotse>
+In-Reply-To: <87o766iehy.fsf@mail.lhotse>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 5 Aug 2024 19:17:04 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whQwJaS=jVWVvvvf0R=45EGMb0itmhhSpa7_xWJXQY71Q@mail.gmail.com>
+Message-ID: <CAHk-=whQwJaS=jVWVvvvf0R=45EGMb0itmhhSpa7_xWJXQY71Q@mail.gmail.com>
+Subject: Re: [linus:master] [mseal] 8be7258aad: stress-ng.pagemove.page_remaps_per_sec
+ -4.4% regression
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Jeff Xu <jeffxu@google.com>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Pedro Falcato <pedro.falcato@gmail.com>, 
+	kernel test robot <oliver.sang@intel.com>, Jeff Xu <jeffxu@chromium.org>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@chromium.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Dave Hansen <dave.hansen@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <groeck@chromium.org>, 
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Amer Al Shanawany <amer.shanawany@gmail.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-api@vger.kernel.org, linux-mm@kvack.org, ying.huang@intel.com, 
+	feng.tang@intel.com, fengwei.yin@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Fabio Estevam <festevam@denx.de>
+On Mon, 5 Aug 2024 at 19:14, Michael Ellerman <mpe@ellerman.id.au> wrote:
+>
+> Needs a slight tweak to compile, vvar_close() needs to return void.
 
-Replace SET_RUNTIME_PM_OPS()/SET SYSTEM_SLEEP_PM_OPS() with their modern
-RUNTIME_PM_OPS() and SYSTEM_SLEEP_PM_OPS() alternatives.
+Ack, shows just how untested it was.
 
-The combined usage of pm_ptr() and RUNTIME_PM_OPS/SYSTEM_SLEEP_PM_OPS()
-allows the compiler to evaluate if the runtime suspend/resume() functions
-are used at build time or are simply dead code.
+> And should probably be renamed vdso_close().
 
-This allows removing the __maybe_unused notation from the runtime
-suspend/resume() functions.
+.. and that was due to the initial confusion that I then fixed, but
+didn't fix the naming.
 
-Signed-off-by: Fabio Estevam <festevam@denx.de>
----
- drivers/net/ethernet/freescale/fec_main.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+So yes, those fixes look ObviouslyCorrect(tm).
 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index a923cb95cdc6..8c3bf0faba63 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -4606,7 +4606,7 @@ fec_drv_remove(struct platform_device *pdev)
- 	free_netdev(ndev);
- }
- 
--static int __maybe_unused fec_suspend(struct device *dev)
-+static int fec_suspend(struct device *dev)
- {
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct fec_enet_private *fep = netdev_priv(ndev);
-@@ -4659,7 +4659,7 @@ static int __maybe_unused fec_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int __maybe_unused fec_resume(struct device *dev)
-+static int fec_resume(struct device *dev)
- {
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct fec_enet_private *fep = netdev_priv(ndev);
-@@ -4714,7 +4714,7 @@ static int __maybe_unused fec_resume(struct device *dev)
- 	return ret;
- }
- 
--static int __maybe_unused fec_runtime_suspend(struct device *dev)
-+static int fec_runtime_suspend(struct device *dev)
- {
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct fec_enet_private *fep = netdev_priv(ndev);
-@@ -4725,7 +4725,7 @@ static int __maybe_unused fec_runtime_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int __maybe_unused fec_runtime_resume(struct device *dev)
-+static int fec_runtime_resume(struct device *dev)
- {
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct fec_enet_private *fep = netdev_priv(ndev);
-@@ -4746,14 +4746,14 @@ static int __maybe_unused fec_runtime_resume(struct device *dev)
- }
- 
- static const struct dev_pm_ops fec_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(fec_suspend, fec_resume)
--	SET_RUNTIME_PM_OPS(fec_runtime_suspend, fec_runtime_resume, NULL)
-+	SYSTEM_SLEEP_PM_OPS(fec_suspend, fec_resume)
-+	RUNTIME_PM_OPS(fec_runtime_suspend, fec_runtime_resume, NULL)
- };
- 
- static struct platform_driver fec_driver = {
- 	.driver	= {
- 		.name	= DRIVER_NAME,
--		.pm	= &fec_pm_ops,
-+		.pm	= pm_ptr(&fec_pm_ops),
- 		.of_match_table = fec_dt_ids,
- 		.suppress_bind_attrs = true,
- 	},
--- 
-2.34.1
-
+           Linus
 
