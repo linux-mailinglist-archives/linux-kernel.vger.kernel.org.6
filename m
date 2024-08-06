@@ -1,147 +1,171 @@
-Return-Path: <linux-kernel+bounces-276951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F369D949A4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:37:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77913949A50
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B65282102
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:37:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7414B26D16
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B055016B75B;
-	Tue,  6 Aug 2024 21:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368F916C6AB;
+	Tue,  6 Aug 2024 21:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MHtt3XHr"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="E2f6Y387"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7945D14F9D7;
-	Tue,  6 Aug 2024 21:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96EB82863
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 21:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722980242; cv=none; b=lCmSmd+YBMXaCsZ/KiGTIwZlnpQSGva9eaDf0xjkPQImp8AnH7Y8xAPHgF4fuF/6MN/sFyY3n1XtgOVwVs+Ib1xU2DBeJRN00RAfKT/j1znDnl4cPr1B8psmr2d8jdXZbgIxaxZccMiBi6QV/N0aloAfIYcnGnn2jvbS0NdTb7c=
+	t=1722980285; cv=none; b=b3dW4d+n9lf48JUqBaGXnuNUiRoNxSv6/YqXyxBjaAvlQIaP2gZ6JrXwMVd3AyiLGGCkKKmReyNHp4hDiFdBs5fwN/V0BuFXqLlNrurjvHs8Hbw/Q2D78UEYI72ZeX23GYIHXnltR2tBkeThRt0l9RDRjqTrVkswB3qAiBluj3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722980242; c=relaxed/simple;
-	bh=8kHm+ac+kygNQxYV5Z1B1h2y1ADNWsDkiwXd93UvjBw=;
+	s=arc-20240116; t=1722980285; c=relaxed/simple;
+	bh=P+LlFXVAR3ni2Q9lpbZyAlQdpPzTbV2ToRmZ+4oEOIw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MBfMT3YfFk4XX8RdcIHi6Xdo2yZwK0untn2J94fFq2rhClsTV/5JfnNwqzNwt3PiKp6cCG55BbcBXQSBPOk2UP8kLgph7PM57SCBvMNuPpDMt3EsWiuD+2tOJAPDQAEg4Bi+7jDnz39HnWdMDYLcYyAlYFDqQ8YnJyxaRFbxb9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MHtt3XHr; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4f8b5e5671bso475558e0c.0;
-        Tue, 06 Aug 2024 14:37:21 -0700 (PDT)
+	 Cc:Content-Type; b=a2DCUxrKnxuGlOm/nHcxyL4Dbcddg/sfaWP+jUOIzOJZ6nmzVsghlxTAxUqfl0t3IGSy/Kig+sTTEVEJMpP+7OUt3/7HGwxrJsz8yyZD4fQuyo/GNUWCQWOigcGOySOYkZ2UTNaYOCOjPubRazCTkZuHMOPFceD4QMqvyLMusow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=E2f6Y387; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-451b7e1d157so5793431cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 14:38:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722980240; x=1723585040; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1722980283; x=1723585083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uFsMpJ+I7X97hoFlRtZ+H2DXn3COcJ95N+qj7lA/TOQ=;
-        b=MHtt3XHrmQfg/E2uIr1756uvqbVbGmPNOCpcLRoMzCmKNpYFQBzPFfTaSnmkM4Hee2
-         wMhd2igiwxKMC+BAfEyIEFSSVMZhVttSC08Ucz+Aw3yUbuB0gtnBSEO81zPO9TuCZ2R5
-         //3EBsExp06CJ16aNblX2rJffB18vkKjClYln0mCiUsTvJial6IrLqkD597zxCknhnre
-         akvMAKWCVY7+2lYbQVxWfs/mErEFp3IsvhPvMSnQDejZI76VUFsLXP2Uhk9A4R5kw+Yf
-         1tkf9MedoE38vl01D9/KBVcf7BL5skihtjswC7R9tFjAdJoMKnPnu/QuvSumaFRtO1pe
-         KQ4A==
+        bh=9XmlWe99DKTvSLptoxepSTHSiK1+FbVsnMpcepxt5N8=;
+        b=E2f6Y3875sCi+FUMC4NnDIWYjuAY1SAoH/x5FpJ24DePrabii4oI5FqT8pU7OZgMYF
+         qh/rCJ2vIPK16JkeQNZO7vSs9qTrf5R6HaNzKefw/vdlZQtp/tkEvMO2iJxPFqcZSB8C
+         txvjrUzTdKdHw1TpSGJBnuDAFxEPGmAd4WV8VUk2hG7O/+XAjACvYR62XJdUI+x3VxG8
+         UMaRuBy/ESUFzgrVbGEh0qDkhQb72Y9gjuGhRVDD6cL3Zu3V/gKrLdxyGgo1rOPyI8gU
+         Sm6yvVIxln4bsqIZzlf6+2En2jLGeikoP5Xf/2568/veowAkdTOSykr9dyN5QA/nJ43a
+         Qzrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722980240; x=1723585040;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1722980283; x=1723585083;
+        h=content-transfer-encoding:cc:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uFsMpJ+I7X97hoFlRtZ+H2DXn3COcJ95N+qj7lA/TOQ=;
-        b=wmuQ+E5zz2TVfOHpynbrB1SCPh/cUUZobmYnnJSgF7pg6UtuQHqIjcNkO3C0sDr31b
-         oGARr1i566DrB6BYXkIPJ7t3yDsOdtbe73xMSxOqwvSn+7WuSUPRnpGu7zHhiASgrZBJ
-         Zbk1j1KZqj+aZ5FD8ESMCzCB4DubSNnfCQ/Pfevvgg1653M2T03c1aYksl/OIs4OeetC
-         K6rPeCkuKPe7Kb1OwsoXDFZOrrrXr2eTkrOTlqLmdswRfsyf9ey5ys94xbkbKt3ZWYVR
-         GrMu0SqJ4tpB3Vq2rofXAuc/rqQY0AQu+Edzv1qArjHygbhJlK9DmMUWLIQ1lO1aviCe
-         arQw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/A6m4Yjjxdm6soTnisO6MuYWHe/A/xWAAvhJioqq2KCy+pQQs6zlT1/DL7gxxBd6Guyec07OQa2PsQVvtHEBbPHdUhyDkbkcYqXr39WjF007R/onsW1okfXHagX+qb6xF2uAhs4wS
-X-Gm-Message-State: AOJu0YyS5zYXWmhRj+OWaNGqm/h63pTDtXairLh9yrRrvwh5xgVHtSom
-	PwGuSlNUmiIoLUXtwBB0RHAGpEcFNykhPoiraJzgY9Uy8j9JVlxxrQxqiiPuVnbk2QEIKTSU7Ga
-	d8Ow7KiXMTaGzzLqw2FFhBYynwJ4=
-X-Google-Smtp-Source: AGHT+IFrQ8JTwjxVQvgV4t1UWu1mNosEjtPutyaa5+3W6qYS/JH+h8DUFz1dPxmoFFh/1Vhlg23Q+IHOeKLj0hAoGlA=
-X-Received: by 2002:a05:6122:2191:b0:4f5:1b58:acd9 with SMTP id
- 71dfb90a1353d-4f89ff4c58fmr14470832e0c.2.1722980240246; Tue, 06 Aug 2024
- 14:37:20 -0700 (PDT)
+        bh=9XmlWe99DKTvSLptoxepSTHSiK1+FbVsnMpcepxt5N8=;
+        b=RlsNb104W9nvW7oKCJIeVkNaQ66k+fwZE6klk7tnQ5LgNtsowUH5e8VoxB1RAF2wvy
+         6UOkHBST0xj/0Bv7ToIU3uJhkFSZVKDqIR7kSZpIEcirLk23SmB06kJu0mHwaEAGrjwE
+         dm5ykHkMIheZYojNYNOOEtQKC4MhIfh8UHNL3mi+89GZovIxkZdd2c+rXyk5wSb37ikM
+         D4qTxAHYYRyNTKk0+F34DRThHIDoVzHDYujwNJYMWx41yHavGCz3/mlu900KJiDjUbU8
+         +IQiG6WXH7zpdcpsII7+SqdFQOE3UmGT3VAjrW2QycPib3w1K59swfUV3na8CHxUxlqY
+         bs0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUfhge0f1hwSLyPuTPd/XXyV2FZtoDLjPfPdhWXTqv9jiv7XBFN33WxlG5aMNu8X3hPWHqwGCsTk2Cx7/ANkTlaoP6pHvP0cqxVJFRx
+X-Gm-Message-State: AOJu0Yxpc5lFjfFkjaX9mLCWgpG++dXLgqeo42RIPzxuz+hoAX0CNXLi
+	ObmG1/JA4Y2j9KdpQWzen/cxjpD9GV3Iz2p8neKLnOmpfqQsNl4fvo8JasYxpTWGeYAW/w0eTqP
+	ZFDsMskPwgSKeKacMI9CM8c+bQctPvolRKgmYrA==
+X-Received: by 2002:a05:622a:1825:b0:447:dc9a:1cea with SMTP id
+ d75a77b69052e-451892561c8mt209894031cf.13.1722980282606; Tue, 06 Aug 2024
+ 14:38:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202408041602.caa0372-oliver.sang@intel.com> <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
- <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
- <CALmYWFuXVCvAfrcDOCAR72z2_rmnm09QeVVqdhzqjF-fZ9ndUA@mail.gmail.com>
- <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com>
- <CAHk-=wgdTWpCqTMgM9SJxG2=oYwhAueU_fDHMPifjpH5eHG8qw@mail.gmail.com> <ZrG8+/1YjxN/Hsb7@xsang-OptiPlex-9020>
-In-Reply-To: <ZrG8+/1YjxN/Hsb7@xsang-OptiPlex-9020>
-From: Pedro Falcato <pedro.falcato@gmail.com>
-Date: Tue, 6 Aug 2024 22:37:08 +0100
-Message-ID: <CAKbZUD1278Bq+5QwjH=LeYSgcugZ3JbvkLeoB3whei_gkEXV+w@mail.gmail.com>
-Subject: Re: [linus:master] [mseal] 8be7258aad: stress-ng.pagemove.page_remaps_per_sec
- -4.4% regression
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jeff Xu <jeffxu@google.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Jeff Xu <jeffxu@chromium.org>, 
-	oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@chromium.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Dave Hansen <dave.hansen@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <groeck@chromium.org>, 
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Amer Al Shanawany <amer.shanawany@gmail.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-api@vger.kernel.org, linux-mm@kvack.org, ying.huang@intel.com, 
-	feng.tang@intel.com, fengwei.yin@intel.com
+References: <20240605222751.1406125-1-souravpanda@google.com>
+ <Zq0tPd2h6alFz8XF@aschofie-mobl2> <CA+CK2bAfgamzFos1M-6AtozEDwRPJzARJOmccfZ=uzKyJ7w=kQ@mail.gmail.com>
+ <66b15addf1a80_c144829473@dwillia2-xfh.jf.intel.com.notmuch>
+ <CA+CK2bC1ZsT3cuAMDAAUonys3BUxbb2JdnZXs1Ps3NbYZt5W2Q@mail.gmail.com> <ZrKNKRfaH7GliS3C@iweiny-mobl>
+In-Reply-To: <ZrKNKRfaH7GliS3C@iweiny-mobl>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 6 Aug 2024 17:37:24 -0400
+Message-ID: <CA+CK2bDnJsgjK-7H-8qJjdeejKJk7E7m-SDnwXatH4FHr4R0_g@mail.gmail.com>
+Subject: Re: [PATCH v13] mm: report per-page metadata information
+Cc: Dan Williams <dan.j.williams@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
+	Sourav Panda <souravpanda@google.com>, corbet@lwn.net, gregkh@linuxfoundation.org, 
+	rafael@kernel.org, akpm@linux-foundation.org, mike.kravetz@oracle.com, 
+	muchun.song@linux.dev, rppt@kernel.org, david@redhat.com, 
+	rdunlap@infradead.org, chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, 
+	tomas.mudrunka@gmail.com, bhelgaas@google.com, ivan@cloudflare.com, 
+	yosryahmed@google.com, hannes@cmpxchg.org, shakeelb@google.com, 
+	kirill.shutemov@linux.intel.com, wangkefeng.wang@huawei.com, 
+	adobriyan@gmail.com, vbabka@suse.cz, Liam.Howlett@oracle.com, 
+	surenb@google.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org, weixugc@google.com, David Rientjes <rientjes@google.com>, 
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, yi.zhang@redhat.com, 
+	ira.weiny@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 6, 2024 at 7:05=E2=80=AFAM Oliver Sang <oliver.sang@intel.com> =
-wrote:
+On Tue, Aug 6, 2024 at 4:53=E2=80=AFPM Ira Weiny <iweiny@iweiny-mobl> wrote=
+:
 >
-> hi, Linus,
->
-> On Mon, Aug 05, 2024 at 12:33:58PM -0700, Linus Torvalds wrote:
-> > On Mon, 5 Aug 2024 at 11:55, Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
+> On Tue, Aug 06, 2024 at 01:59:54PM -0400, Pasha Tatashin wrote:
+> > On Mon, Aug 5, 2024 at 7:06=E2=80=AFPM Dan Williams <dan.j.williams@int=
+el.com> wrote:
 > > >
-> > > So please consider this a "maybe something like this" patch, but that
-> > > 'arch_unmap()' really is pretty nasty
+> > > Pasha Tatashin wrote:
+> > > [..]
+> > > > Thank you for the heads up. Can you please attach a full config fil=
+e,
+> > > > also was anyone able to reproduce this problem in qemu with emulate=
+d
+> > > > nvdimm?
+> > >
+> > > Yes, I can reproduce the crash just by trying to reconfigure the mode=
+ of
+> > > a pmem namespace:
+> > >
+> > > # ndctl create-namespace -m raw -f -e namespace0.0
+> > >
+> > > ...where namespace0.0 results from:
+> > >
+> > >     memmap=3D4G!4G
+> > >
+> > > ...passed on the kernel command line.
+> > >
+> > > Kernel config here:
+> > >
+> > > https://gist.github.com/djbw/143705077103d43a735c179395d4f69a
 > >
-> > Actually, the whole powerpc vdso code confused me. It's not the vvar
-> > thing that wants this close thing, it's the other ones that have the
-> > remap thing.
+> > Excellent, I was able to reproduce this problem.
 > >
-> > .. and there were two of those error cases that needed to reset the
-> > vdso pointer.
+> > The problem appear to be caused by this code:
 > >
-> > That all shows just how carefully I was reading this code.
+> > Calling page_pgdat() in depopulate_section_memmap():
 > >
-> > New version - still untested, but now I've read through it one more
-> > time - attached.
+> > static void depopulate_section_memmap(unsigned long pfn, unsigned long =
+nr_pages,
+> >                 struct vmem_altmap *altmap)
+> > {
+> >         unsigned long start =3D (unsigned long) pfn_to_page(pfn);
+> >         unsigned long end =3D start + nr_pages * sizeof(struct page);
+> >
+> >         mod_node_page_state(page_pgdat(pfn_to_page(pfn)), NR_MEMMAP,
+> > <<<< We cannot do it.
+> >                             -1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)=
+));
+> >         vmemmap_free(start, end, altmap);
+> > }
+> >
+> > The page_pgdat() returns NULL starting from:
+> > pageunmap_range()
+> >     remove_pfn_range_from_zone() <- page is removed from the zone.
 >
-> we tested this version by applying it directly upon 8be7258aad,  but seem=
-s it
-> have little impact to performance. still similar regression if comparing =
-to
-> ff388fe5c4.
+> Is there any idea on a fix?  I'm seeing the same error.
+>
+> [  561.867431]  ? mod_node_page_state+0x11/0xa0
+> [  561.867963]  section_deactivate+0x2a0/0x2c0
+> [  561.868496]  __remove_pages+0x59/0x90
+> [  561.868975]  arch_remove_memory+0x1a/0x40
+> [  561.869491]  memunmap_pages+0x206/0x3d0
+> [  561.869972]  devres_release_all+0xa8/0xe0
+> [  561.870466]  device_unbind_cleanup+0xe/0x70
+> [  561.870960]  device_release_driver_internal+0x1ca/0x210
+> [  561.871529]  driver_detach+0x47/0x90
+> [  561.871981]  bus_remove_driver+0x6c/0xf0
+>
+> Shall we revert this patch until we figure out a fix?
 
-Hi,
+I am working on a fix, and will send it out in a couple hours.
 
-I've just sent out a patch set[1] that should alleviate (or hopefully
-totally fix) these performance regressions. It'd be great if you could
-test it.
-
-For everyone: Apologies if you're in the CC list and I didn't CC you,
-but I tried to keep my patch set's CC list relatively short and clean
-(and I focused on the active participants).
-Everyone's comments are very welcome.
-
-[1]: https://lore.kernel.org/all/20240806212808.1885309-1-pedro.falcato@gma=
-il.com/
---=20
-Pedro
+Pasha
 
