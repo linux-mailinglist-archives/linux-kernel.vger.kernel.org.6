@@ -1,87 +1,116 @@
-Return-Path: <linux-kernel+bounces-275899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B181948BAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:53:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1AF6948BD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B57C282331
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:53:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EF611C22649
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492D91BD51F;
-	Tue,  6 Aug 2024 08:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5qa+F+o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98B41BDAA6;
+	Tue,  6 Aug 2024 08:59:37 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3C664A;
-	Tue,  6 Aug 2024 08:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3231BD4F0
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722934379; cv=none; b=klPYgBT/e9AaHI3FaYZtgHledN44lRoOcYPNKqGeISDkO8qayLPBBhmaoMfEN68n9qtLiHqRXWzuB6F1tRhSY86tB/OkLIW7FficocW1mpP8vwKvTGpGiwbnKawGpbxZdpxUqeUTIPbIBYdnNy21BHqsJBLQZ3zfw8vf0GH7Hv8=
+	t=1722934777; cv=none; b=geBOTZ1/2T6369o8/JTA73+QdF7ZPMSNREFeSLdRiJxOCVkOg8ti5Ts+pCwsjrCDHprpw4BbbekUqDSBeZ4NKzmwhXAO8fJaaJuq3z76b60Slv2VGQ4d+pocdE+eB9613CLjeGDlYypGy7nEYTUAWe++JWStJsSPr+0rt9kAys4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722934379; c=relaxed/simple;
-	bh=jLxtaqYwGejHVDr7TLr2wF+thWxAzyeocnesv8I+WjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VfsDKyHEnhnuKRutD/LPBo7QyfLfZQvaI8oF96rEiqlHUB6f94LBF54OkNyQBgWTctgFefqx6r/OoncIElb249PtNRS6O7yGLRsc4aM6iA/tJTR/A2q9SW+q+vbOxuBpQWjb4AsKfYnSYSY9b3NwD9K3QvGcCEZ7NPP7FqrfYqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5qa+F+o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF260C32786;
-	Tue,  6 Aug 2024 08:52:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722934379;
-	bh=jLxtaqYwGejHVDr7TLr2wF+thWxAzyeocnesv8I+WjI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t5qa+F+o1iPppiI2xZ55esXGw/puFe5lAgM1SOXNIEuRgG5VJjXxGGKK8CehV7pER
-	 XzcxjP96ZL7mouz7XSa7gyRnzzZCXBzy/gfOrKYzjIxpeKG910tyqOb298Gk0AjHcF
-	 vTETQSiuIxmAxByPhlSmLTvbpbc95vCzTnIeYhEW4XWMt6uyRG0knTPjZqh1Dbhnf1
-	 4sZsUYE529IeeSD5SeP5VpybqeQrMEdj0xW1frWGSJgdkf+hGW0tPZocUKoS6ZKZ0o
-	 GL8R12u/YY9utt4aAhr4vpkysLv8PF6rV/ktNSSHq5iYdFzPO7tXtzBvrPcdHhUkJm
-	 mQIHqBByrxNCg==
-Date: Tue, 6 Aug 2024 09:52:54 +0100
-From: Simon Horman <horms@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: stas.yakovlev@gmail.com, kvalo@kernel.org, gregkh@linuxfoundation.org,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, johannes@sipsolutions.net,
-	linux-wireless@vger.kernel.org, linux-staging@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] lib80211: Handle const struct lib80211_crypto_ops
- in lib80211
-Message-ID: <20240806085254.GO2636630@kernel.org>
-References: <cover.1722839425.git.christophe.jaillet@wanadoo.fr>
- <c74085e02f33a11327582b19c9f51c3236e85ae2.1722839425.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1722934777; c=relaxed/simple;
+	bh=KedQPHi61sunIvXTAZ1469/WC6/J0bl3HAWAtlkMVgk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OIc60tEzRgn7w4UK/0U6wcTRdDUwaoZ/BTRC0aS5ccjVdqjfEWlOq+QnJc0Xh8xyY4zPg+3iUvEnH2HWrjJH02KjmHY3yRODcM3Swf2yqMbn3jNuLH/TS7zDgOPBduYUjLwdLy/5KgTrX4FzexVvzp8DBuuti2d/cuC1FRCh6V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WdRyn2YkRzfZkB;
+	Tue,  6 Aug 2024 16:57:37 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id AA8EA14011B;
+	Tue,  6 Aug 2024 16:59:30 +0800 (CST)
+Received: from localhost.localdomain (10.50.165.33) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 6 Aug 2024 16:59:29 +0800
+From: Yicong Yang <yangyicong@huawei.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>, <sudeep.holla@arm.com>,
+	<tglx@linutronix.de>, <peterz@infradead.org>, <mpe@ellerman.id.au>,
+	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>
+CC: <linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <dietmar.eggemann@arm.com>,
+	<gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <yangyicong@hisilicon.com>, <xuwei5@huawei.com>,
+	<guohanjun@huawei.com>
+Subject: [PATCH v5 0/4] Support SMT control on arm64
+Date: Tue, 6 Aug 2024 16:53:16 +0800
+Message-ID: <20240806085320.63514-1-yangyicong@huawei.com>
+X-Mailer: git-send-email 2.31.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c74085e02f33a11327582b19c9f51c3236e85ae2.1722839425.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-On Mon, Aug 05, 2024 at 08:40:37AM +0200, Christophe JAILLET wrote:
-> lib80211_register_crypto_ops() and lib80211_unregister_crypto_ops() don't
-> modify their "struct lib80211_crypto_ops *ops" argument. So, it can be
-> declared as const.
-> 
-> Doing so, some adjustments are needed to also constify some date in
-> "struct lib80211_crypt_data", "struct lib80211_crypto_alg" and the
-> return value of lib80211_get_crypto_ops().
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
-> 
-> Changes in v2:
->   - Update ipw2x00/libipw_wx.c as well   [Simon Horman]
-> 
-> v1: https://lore.kernel.org/all/d6306f7c76015653e9539ddbcd1ed74d1681a98f.1715443223.git.christophe.jaillet@wanadoo.fr/
+From: Yicong Yang <yangyicong@hisilicon.com>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+The core CPU control framework supports runtime SMT control which
+is not yet supported on arm64. Besides the general vulnerabilities
+concerns we want this runtime control on our arm64 server for:
+
+- better single CPU performance in some cases
+- saving overall power consumption
+
+This patchset implements it in the following aspects:
+
+- Provides a default topology_is_primary_thread()
+- support retrieve SMT thread number on OF based system
+- support retrieve SMT thread number on ACPI based system
+- select HOTPLUG_SMT for arm64
+
+Tests has been done on our real ACPI based arm64 server and on
+ACPI/OF based QEMU VMs.
+
+Change since v4:
+- Provide a default topology_is_primary_thread() in the framework, Per Will
+Link: https://lore.kernel.org/linux-arm-kernel/20231121092602.47792-1-yangyicong@huawei.com/
+
+Change since v3:
+- Fix some build and kconfig error reported by kernel test robot <lkp@intel.com>
+Link: https://lore.kernel.org/linux-arm-kernel/20231114040110.54590-1-yangyicong@huawei.com/
+
+Change since v2:
+- Detect SMT thread number at topology build from ACPI/DT, avoid looping CPUs
+- Split patches into ACPI/OF/arch_topology path and enable the kconfig for arm64
+Link: https://lore.kernel.org/linux-arm-kernel/20231010115335.13862-1-yangyicong@huawei.com/
+
+
+Yicong Yang (4):
+  cpu/SMT: Provide a default topology_is_primary_thread()
+  arch_topology: Support SMT control for OF based system
+  arm64: topology: Support SMT control on ACPI based system
+  arm64: Kconfig: Enable HOTPLUG_SMT
+
+ arch/arm64/Kconfig                  |  1 +
+ arch/arm64/kernel/topology.c        | 24 ++++++++++++++++++++++++
+ arch/powerpc/include/asm/topology.h |  1 +
+ arch/x86/include/asm/topology.h     |  2 +-
+ drivers/base/arch_topology.c        | 13 +++++++++++++
+ include/linux/topology.h            | 14 ++++++++++++++
+ 6 files changed, 54 insertions(+), 1 deletion(-)
+
+-- 
+2.24.0
 
 
