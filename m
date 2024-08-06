@@ -1,39 +1,74 @@
-Return-Path: <linux-kernel+bounces-275949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD43948C5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:46:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 779E0948C5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C8A5B26009
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:46:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B184FB219CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B9C1BE84F;
-	Tue,  6 Aug 2024 09:46:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DAE41BDA86;
-	Tue,  6 Aug 2024 09:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955B41BDAA0;
+	Tue,  6 Aug 2024 09:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g0UJuyGI"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3CBF4FA
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 09:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722937568; cv=none; b=ZmpOMKUlhukL4YJxbQ3pY9MvQN71RnF0a6wCMvTvDISqBVxZGeEuHi/Qqfi0B0UPkm3P8MX6pT/LY17zj2q85KK7xwepJGOqTBMl8lFNT25/Mc3efNIfYk+Kz26hZ2ESGdY/8ZZnkhebf1GivztUaM0EAzp9vaBM5kh7Lle9kdg=
+	t=1722937634; cv=none; b=ZalVlt1307fLqehJroW9IvCKDc9OpIynqnowmeF9KzdqFCVCA34hdJGumkCjL4iXcp/5/aqqRdPoZkAHHW0yHCaUkW/i2g/+gbl8ZqNZwi4GG7zuJ0vtSOfcaHt3lhDguPx+itHVd4PnSsYqXDwcAy6oBMw+KB924GzkQPf14u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722937568; c=relaxed/simple;
-	bh=wKTlcGiWBThyUbRzi9ybAMp65v0DAlZ2p6BQtxLqgA4=;
+	s=arc-20240116; t=1722937634; c=relaxed/simple;
+	bh=aMPu2XJMOniTwFmc2L/yYrmwsVrVl1yAtIPAnBxErdE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XQy3asSAVH/3m6I3dVRY2q2g9HL6GacWR9p3NoZ93utrxdz/ObmGJbGEw2lekXBHOBw1EImNx0LBCYpGG8Xra8JRD+1IJGtRTpQw3hVlda13uDpThfLm1uAtEaVCfI+I1f9JedVnv11l6z/t5qGGcmYie23fm+gayoixj1y/V+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 205221063;
-	Tue,  6 Aug 2024 02:46:31 -0700 (PDT)
-Received: from [10.57.81.200] (unknown [10.57.81.200])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7451C3F6A8;
-	Tue,  6 Aug 2024 02:46:02 -0700 (PDT)
-Message-ID: <e1d44e36-06e4-4d1c-8daf-315d149ea1b3@arm.com>
-Date: Tue, 6 Aug 2024 10:46:00 +0100
+	 In-Reply-To:Content-Type; b=a9K6Ip2v8xj2fcsd6anCuTwLAon7p1PhysXSxvmQSw8TX1Pp7IcxdPvUDU9bkZekB5JiUAYrpD6xrHJ/+3P4EbiQWEE1EzXNy3P1biQ/50/7+tWAnSFNgE877Kg2/Gcn+KNnLqwykmCInhK1fKdznvgZTGNoaWPZdb4qLJ3ZVa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g0UJuyGI; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-428119da952so3088705e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 02:47:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722937630; x=1723542430; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jwYXytpUlQ14zuO1Y2GsrTv+EzAWBa5EvBLrzKGksa4=;
+        b=g0UJuyGIg0bMsUpsv/wwyqXjlpFWdYsR/nkOMD4HMRq0SZ/b2A72xtEMnBB1E3t48m
+         7L0iej9/5IpjkybxuDQZEObv8iDu/rW0eTwerXWPBVPdsklNwAseeL/2SzonRhsymNgB
+         GkK0Mocc9KkOn5C9KHAqvKiXBl3NOXsjpleaE8Bs4K6vTQz+KZTbl/NXDTQry6vo+2Hp
+         g7azdzJy8PnMUKnZ3Uh9qALUwjQ+6bS9XIk1B2WvWfGtX9H7uskpqv6/rhD6wTcfVwOg
+         96U2LRSUC+4J3LaP/3JCoMsbA6FB9319BilzLumRd6AmNG9FSd2+58MnxbnLvUCqJ706
+         Ty7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722937630; x=1723542430;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jwYXytpUlQ14zuO1Y2GsrTv+EzAWBa5EvBLrzKGksa4=;
+        b=pGBU6UmidtQhY4nHvv+x+J8Qj1jRxg4PvWuR8nPALvc53YRTR0yPR3fabnG4+fDK3l
+         X4KQsT5vVaGXdodcj0QE65CxqTcPU2mnL0tsOvu76Wo7KWYfj8sVeDTxpI/vjvSxc2NO
+         EjkvgkAHQc6Jw4kRQlssoWEpIHmkg36Xgs65M5llgJqL4PwkB98hY+WhVa3WEj/+S2dO
+         MRN8LvY/ffjfYCGYnvE/0TKMwnom7iZEo9pB5r5W+200aWWC7MpIEB8gSLi+/Qmyk1ly
+         OABtRVZxbOerPdS4Qc1Y5j0xaUxpqPMRezNc+Na/9oAMkoWJWrfP+TgBGSqJtwlLCwb/
+         eVJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUflG0lHSzM9KhB1eSd0TkGJQN3VFuZd+OrOLKPgapLSfUVmznwjSvCSwEYLHrh3oiRrtOv0l8OAEQhynAmoWTAaRyvqJcFEzeHhAXM
+X-Gm-Message-State: AOJu0YzUCNKC/Tnbme2IAbNGTlNmPgEU4zsmMGy1zD1J+NGhCWPtnrrN
+	uTdDDA2GCXBKYpl37bVJc/O9qdMXb5+kcddTSXVGBoKFhtG49CaAz8TvJR+w2OuMjHaL5Bctuqp
+	ITZQ=
+X-Google-Smtp-Source: AGHT+IEBtFqBk5XHzmMLktmShXIjeTOJ3fLSCT6umPNT2A9LeJDOeggA9Q5PU8bBY4Z/jSnmtMFn4A==
+X-Received: by 2002:a05:600c:220b:b0:426:6416:aa73 with SMTP id 5b1f17b1804b1-428e6b04552mr95169165e9.12.1722937629958;
+        Tue, 06 Aug 2024 02:47:09 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e7d585sm174182605e9.35.2024.08.06.02.47.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 02:47:09 -0700 (PDT)
+Message-ID: <6adf84fa-b755-4d7a-957a-9bf01e442238@linaro.org>
+Date: Tue, 6 Aug 2024 10:47:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,157 +76,626 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 07/11] mm/huge_memory: convert split_huge_pages_pid()
- from follow_page() to folio_walk
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, kvm@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>, Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Mark Brown <broonie@kernel.org>
-References: <20240802155524.517137-1-david@redhat.com>
- <20240802155524.517137-8-david@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240802155524.517137-8-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 02/08/2024 16:55, David Hildenbrand wrote:
-> Let's remove yet another follow_page() user. Note that we have to do the
-> split without holding the PTL, after folio_walk_end(). We don't care
-> about losing the secretmem check in follow_page().
-
-Hi David,
-
-Our (arm64) CI is showing a regression in split_huge_page_test from mm selftests from next-20240805 onwards. Navigating around a couple of other lurking bugs, I was able to bisect to this change (which smells about right).
-
-Newly failing test:
-
-# # ------------------------------
-# # running ./split_huge_page_test
-# # ------------------------------
-# # TAP version 13
-# # 1..12
-# # Bail out! Still AnonHugePages not split
-# # # Planned tests != run tests (12 != 0)
-# # # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-# # [FAIL]
-# not ok 52 split_huge_page_test # exit=1
-
-It's trying to split some pmd-mapped THPs then checking and finding that they are not split. The split is requested via /sys/kernel/debug/split_huge_pages, which I believe ends up in this function you are modifying here. Although I'll admit that looking at the change, there is nothing obviously wrong! Any ideas?
-
-bisect log:
-
-# bad: [1e391b34f6aa043c7afa40a2103163a0ef06d179] Add linux-next specific files for 20240806
-git bisect bad 1e391b34f6aa043c7afa40a2103163a0ef06d179
-# good: [de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed] Linux 6.11-rc2
-git bisect good de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
-# bad: [01c2d56f2c52e8af01dfd91af1fe9affc76c4c9e] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-git bisect bad 01c2d56f2c52e8af01dfd91af1fe9affc76c4c9e
-# bad: [01c2d56f2c52e8af01dfd91af1fe9affc76c4c9e] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-git bisect bad 01c2d56f2c52e8af01dfd91af1fe9affc76c4c9e
-# bad: [3610638e967f32f02c56c7cc8f7d6a815972f8c2] Merge branch 'for-linux-next' of git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git
-git bisect bad 3610638e967f32f02c56c7cc8f7d6a815972f8c2
-# bad: [3610638e967f32f02c56c7cc8f7d6a815972f8c2] Merge branch 'for-linux-next' of git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git
-git bisect bad 3610638e967f32f02c56c7cc8f7d6a815972f8c2
-# bad: [d35ef6c9d106eedff36908c21699e1b7f3e55584] Merge branch 'clang-format' of https://github.com/ojeda/linux.git
-git bisect bad d35ef6c9d106eedff36908c21699e1b7f3e55584
-# good: [e1a15959d75c9ba4b45e07e37bcf843c85750010] Merge branch 'for-linux-next-fixes' of https://gitlab.freedesktop.org/drm/misc/kernel.git
-git bisect good e1a15959d75c9ba4b45e07e37bcf843c85750010
-# good: [6d66cb9bdeceb769ce62591f56580ebe80f6267a] mm: swap: add a adaptive full cluster cache reclaim
-git bisect good 6d66cb9bdeceb769ce62591f56580ebe80f6267a
-# bad: [2b820b576dfc4aa9b65f18b68f468cb5b38ece84] mm: optimization on page allocation when CMA enabled
-git bisect bad 2b820b576dfc4aa9b65f18b68f468cb5b38ece84
-# bad: [ab70279848c8623027791799492a3f6e7c38a9b2] MIPS: sgi-ip27: drop HAVE_ARCH_NODEDATA_EXTENSION
-git bisect bad ab70279848c8623027791799492a3f6e7c38a9b2
-# bad: [539bc09ff00b29eb60f3dc8ed2d82ad2050a582d] mm/huge_memory: convert split_huge_pages_pid() from follow_page() to folio_walk
-git bisect bad 539bc09ff00b29eb60f3dc8ed2d82ad2050a582d
-# good: [1a37544d0e35340ce740d377d7d6c746a84e2aae] include/linux/mmzone.h: clean up watermark accessors
-git bisect good 1a37544d0e35340ce740d377d7d6c746a84e2aae
-# good: [22adafb60d6e1a607a3d99da90927ddd7df928ad] mm/migrate: convert do_pages_stat_array() from follow_page() to folio_walk
-git bisect good 22adafb60d6e1a607a3d99da90927ddd7df928ad
-# good: [57e1ccf54dba4dda6d6f0264b76e2b86eec3d401] mm/ksm: convert get_mergeable_page() from follow_page() to folio_walk
-git bisect good 57e1ccf54dba4dda6d6f0264b76e2b86eec3d401
-# good: [285aa1a963f310530351b0e4a2e64bc4b806e518] mm/ksm: convert scan_get_next_rmap_item() from follow_page() to folio_walk
-git bisect good 285aa1a963f310530351b0e4a2e64bc4b806e518
-# first bad commit: [539bc09ff00b29eb60f3dc8ed2d82ad2050a582d] mm/huge_memory: convert split_huge_pages_pid() from follow_page() to folio_walk
-
-Thanks,
-Ryan
+Subject: Re: [PATCH] perf scripts python arm-cs-trace-disasm.py: Skip disasm
+ if address continuity is broken
+To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Cc: acme@redhat.com, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ darren@os.amperecomputing.com, scclevenger@os.amperecomputing.com,
+ james.clark@arm.com, suzuki.poulose@arm.com, Leo Yan <leo.yan@arm.com>,
+ Al.Grant@arm.com, Mike Leach <mike.leach@linaro.org>
+References: <20240719092619.274730-1-gankulkarni@os.amperecomputing.com>
+ <7302367c-311f-4655-9a83-3c4034c50086@linaro.org>
+ <6920de94-a9c8-47f4-840f-391d1ec85c0c@os.amperecomputing.com>
+ <8f6f221b-4c9a-42e1-b8ce-1f492caee184@linaro.org>
+ <0a697a54-5dd8-4351-a651-991724690db2@os.amperecomputing.com>
+ <ce4af204-874f-404c-a7aa-42dc6693d072@linaro.org>
+ <a197123a-be59-4052-9615-cac79ffa357a@os.amperecomputing.com>
+ <543813f6-cb1f-4759-b26f-75246750814d@linaro.org>
+ <f72038a0-c6b5-4245-8515-3b735ca38cbb@linaro.org>
+ <ae1b2d8c-588a-4f0a-b3c9-c869f8dd0f25@os.amperecomputing.com>
+ <00fac24c-d664-4ebb-8c60-f4697b7f76c1@linaro.org>
+ <8b53a424-19f7-4042-a2db-e1c5d051f9cc@os.amperecomputing.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <8b53a424-19f7-4042-a2db-e1c5d051f9cc@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
+
+On 06/08/2024 8:02 am, Ganapatrao Kulkarni wrote:
 > 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  mm/huge_memory.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
 > 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 0167dc27e365..697fcf89f975 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -40,6 +40,7 @@
->  #include <linux/memory-tiers.h>
->  #include <linux/compat.h>
->  #include <linux/pgalloc_tag.h>
-> +#include <linux/pagewalk.h>
->  
->  #include <asm/tlb.h>
->  #include <asm/pgalloc.h>
-> @@ -3507,7 +3508,7 @@ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
->  	 */
->  	for (addr = vaddr_start; addr < vaddr_end; addr += PAGE_SIZE) {
->  		struct vm_area_struct *vma = vma_lookup(mm, addr);
-> -		struct page *page;
-> +		struct folio_walk fw;
->  		struct folio *folio;
->  
->  		if (!vma)
-> @@ -3519,13 +3520,10 @@ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
->  			continue;
->  		}
->  
-> -		/* FOLL_DUMP to ignore special (like zero) pages */
-> -		page = follow_page(vma, addr, FOLL_GET | FOLL_DUMP);
-> -
-> -		if (IS_ERR_OR_NULL(page))
-> +		folio = folio_walk_start(&fw, vma, addr, 0);
-> +		if (!folio)
->  			continue;
->  
-> -		folio = page_folio(page);
->  		if (!is_transparent_hugepage(folio))
->  			goto next;
->  
-> @@ -3544,13 +3542,19 @@ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
->  
->  		if (!folio_trylock(folio))
->  			goto next;
-> +		folio_get(folio);
-> +		folio_walk_end(&fw, vma);
->  
->  		if (!split_folio_to_order(folio, new_order))
->  			split++;
->  
->  		folio_unlock(folio);
-> -next:
->  		folio_put(folio);
-> +
-> +		cond_resched();
-> +		continue;
-> +next:
-> +		folio_walk_end(&fw, vma);
->  		cond_resched();
->  	}
->  	mmap_read_unlock(mm);
+> On 05-08-2024 07:29 pm, James Clark wrote:
+>>
+>>
+>> On 05/08/2024 1:22 pm, Ganapatrao Kulkarni wrote:
+>>>
+>>>
+>>> On 01-08-2024 03:30 pm, James Clark wrote:
+>>>>
+>>>>
+>>>> On 24/07/2024 3:45 pm, James Clark wrote:
+>>>>>
+>>>>>
+>>>>> On 24/07/2024 7:38 am, Ganapatrao Kulkarni wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 23-07-2024 09:16 pm, James Clark wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 23/07/2024 4:26 pm, Ganapatrao Kulkarni wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> On 23-07-2024 06:40 pm, James Clark wrote:
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> On 22/07/2024 11:02 am, Ganapatrao Kulkarni wrote:
+>>>>>>>>>>
+>>>>>>>>>> Hi James,
+>>>>>>>>>>
+>>>>>>>>>> On 19-07-2024 08:09 pm, James Clark wrote:
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> On 19/07/2024 10:26 am, Ganapatrao Kulkarni wrote:
+>>>>>>>>>>>> To generate the instruction tracing, script uses 2 
+>>>>>>>>>>>> contiguous packets
+>>>>>>>>>>>> address range. If there a continuity brake due to 
+>>>>>>>>>>>> discontiguous branch
+>>>>>>>>>>>> address, it is required to reset the tracing and start 
+>>>>>>>>>>>> tracing with the
+>>>>>>>>>>>> new set of contiguous packets.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Adding change to identify the break and complete the 
+>>>>>>>>>>>> remaining tracing
+>>>>>>>>>>>> of current packets and restart tracing from new set of 
+>>>>>>>>>>>> packets, if
+>>>>>>>>>>>> continuity is established.
+>>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> Hi Ganapatrao,
+>>>>>>>>>>>
+>>>>>>>>>>> Can you add a before and after example of what's changed to 
+>>>>>>>>>>> the commit message? It wasn't immediately obvious to me if 
+>>>>>>>>>>> this is adding missing output, or it was correcting the tail 
+>>>>>>>>>>> end of the output that was previously wrong.
+>>>>>>>>>>
+>>>>>>>>>> It is adding tail end of the trace as well avoiding the 
+>>>>>>>>>> segfault of the perf application. With out this change the 
+>>>>>>>>>> perf segfaults with as below log
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> ./perf script 
+>>>>>>>>>> --script=python:./scripts/python/arm-cs-trace-disasm.py -- -d 
+>>>>>>>>>> objdump -k ../../vmlinux -v $* > dump
+>>>>>>>>>> objdump: error: the stop address should be after the start 
+>>>>>>>>>> address
+>>>>>>>>>> Traceback (most recent call last):
+>>>>>>>>>>    File "./scripts/python/arm-cs-trace-disasm.py", line 271, 
+>>>>>>>>>> in process_event
+>>>>>>>>>>      print_disam(dso_fname, dso_vm_start, start_addr, stop_addr)
+>>>>>>>>>>    File "./scripts/python/arm-cs-trace-disasm.py", line 105, 
+>>>>>>>>>> in print_disam
+>>>>>>>>>>      for line in read_disam(dso_fname, dso_start, start_addr, 
+>>>>>>>>>> stop_addr):
+>>>>>>>>>> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>>>>>>>>>>    File "./scripts/python/arm-cs-trace-disasm.py", line 99, in 
+>>>>>>>>>> read_disam
+>>>>>>>>>>      disasm_output = 
+>>>>>>>>>> check_output(disasm).decode('utf-8').split('\n')
+>>>>>>>>>>                      ^^^^^^^^^^^^^^^^^^^^
+>>>>>>>>>>    File "/usr/lib64/python3.12/subprocess.py", line 466, in 
+>>>>>>>>>> check_output
+>>>>>>>>>>      return run(*popenargs, stdout=PIPE, timeout=timeout, 
+>>>>>>>>>> check=True,
+>>>>>>>>>> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>>>>>>>>>>    File "/usr/lib64/python3.12/subprocess.py", line 571, in run
+>>>>>>>>>>      raise CalledProcessError(retcode, process.args,
+>>>>>>>>>> subprocess.CalledProcessError: Command '['objdump', '-d', 
+>>>>>>>>>> '-z', '--start-address=0xffff80008125b758', 
+>>>>>>>>>> '--stop-address=0xffff80008125a934', '../../vmlinux']' 
+>>>>>>>>>> returned non-zero exit status 1.
+>>>>>>>>>> Fatal Python error: handler_call_die: problem in Python trace 
+>>>>>>>>>> event handler
+>>>>>>>>>> Python runtime state: initialized
+>>>>>>>>>>
+>>>>>>>>>> Current thread 0x0000ffffb05054e0 (most recent call first):
+>>>>>>>>>>    <no Python frame>
+>>>>>>>>>>
+>>>>>>>>>> Extension modules: perf_trace_context, systemd._journal, 
+>>>>>>>>>> systemd._reader, systemd.id128, report._py3report, 
+>>>>>>>>>> _dbus_bindings, problem._py3abrt (total: 7)
+>>>>>>>>>> Aborted (core dumped)
+>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>> Signed-off-by: Ganapatrao Kulkarni 
+>>>>>>>>>>>> <gankulkarni@os.amperecomputing.com>
+>>>>>>>>>>>> ---
+>>>>>>>>>>>>   tools/perf/scripts/python/arm-cs-trace-disasm.py | 10 
+>>>>>>>>>>>> ++++++++++
+>>>>>>>>>>>>   1 file changed, 10 insertions(+)
+>>>>>>>>>>>>
+>>>>>>>>>>>> diff --git 
+>>>>>>>>>>>> a/tools/perf/scripts/python/arm-cs-trace-disasm.py 
+>>>>>>>>>>>> b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>>>>>>>>>>>> index d973c2baed1c..ad10cee2c35e 100755
+>>>>>>>>>>>> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>>>>>>>>>>>> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>>>>>>>>>>>> @@ -198,6 +198,10 @@ def process_event(param_dict):
+>>>>>>>>>>>>           cpu_data[str(cpu) + 'addr'] = addr
+>>>>>>>>>>>>           return
+>>>>>>>>>>>> +    if (cpu_data.get(str(cpu) + 'ip') == None):
+>>>>>>>>>>>> +        cpu_data[str(cpu) + 'ip'] = ip
+>>>>>>>>>>>> +
+>>>>>>>>>>>
+>>>>>>>>>>> Do you need to write into the global cpu_data here? Doesn't 
+>>>>>>>>>>> it get overwritten after you load it back into 'prev_ip'
+>>>>>>>>>>
+>>>>>>>>>> No, the logic is same as holding the addr of previous packet.
+>>>>>>>>>> Saving the previous packet saved ip in to prev_ip before 
+>>>>>>>>>> overwriting with the current packet.
+>>>>>>>>>
+>>>>>>>>> It's not exactly the same logic as holding the addr of the 
+>>>>>>>>> previous sample. For addr, we return on the first None, with 
+>>>>>>>>> your change we now "pretend" that the second one is also the 
+>>>>>>>>> previous one:
+>>>>>>>>>
+>>>>>>>>>    if (cpu_data.get(str(cpu) + 'addr') == None):
+>>>>>>>>>      cpu_data[str(cpu) + 'addr'] = addr
+>>>>>>>>>      return  <----------------------------sample 0 return
+>>>>>>>>>
+>>>>>>>>>    if (cpu_data.get(str(cpu) + 'ip') == None):
+>>>>>>>>>        cpu_data[str(cpu) + 'ip'] = ip <---- sample 1 save but 
+>>>>>>>>> no return
+>>>>>>>>>
+>>>>>>>>> Then for sample 1 'prev_ip' is actually now the 'current' IP:
+>>>>>>>>
+>>>>>>>> Yes, it is dummy for first packet. Added anticipating that we 
+>>>>>>>> wont hit the discontinuity for the first packet itself.
+>>>>>>>>
+>>>>>>>> Can this be changed to more intuitive like below?
+>>>>>>>>
+>>>>>>>> diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py 
+>>>>>>>> b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>>>>>>>> index d973c2baed1c..d49f5090059f 100755
+>>>>>>>> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>>>>>>>> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>>>>>>>> @@ -198,6 +198,8 @@ def process_event(param_dict):
+>>>>>>>>                  cpu_data[str(cpu) + 'addr'] = addr
+>>>>>>>>                  return
+>>>>>>>>
+>>>>>>>> +       if (cpu_data.get(str(cpu) + 'ip') != None):
+>>>>>>>> +               prev_ip = cpu_data[str(cpu) + 'ip']
+>>>>>>>>
+>>>>>>>>          if (options.verbose == True):
+>>>>>>>>                  print("Event type: %s" % name)
+>>>>>>>> @@ -243,12 +245,18 @@ def process_event(param_dict):
+>>>>>>>>
+>>>>>>>>          # Record for previous sample packet
+>>>>>>>>          cpu_data[str(cpu) + 'addr'] = addr
+>>>>>>>> +       cpu_data[str(cpu) + 'ip'] = stop_addr
+>>>>>>>>
+>>>>>>>>          # Handle CS_ETM_TRACE_ON packet if start_addr=0 and 
+>>>>>>>> stop_addr=4
+>>>>>>>>          if (start_addr == 0 and stop_addr == 4):
+>>>>>>>>                  print("CPU%d: CS_ETM_TRACE_ON packet is 
+>>>>>>>> inserted" % cpu)
+>>>>>>>>                  return
+>>>>>>>>
+>>>>>>>> +       if (stop_addr < start_addr and prev_ip != 0):
+>>>>>>>> +               # Continuity of the Packets broken, set 
+>>>>>>>> start_addr to previous
+>>>>>>>> +               # packet ip to complete the remaining tracing of 
+>>>>>>>> the address range.
+>>>>>>>> +               start_addr = prev_ip
+>>>>>>>> +
+>>>>>>>>          if (start_addr < int(dso_start) or start_addr > 
+>>>>>>>> int(dso_end)):
+>>>>>>>>                  print("Start address 0x%x is out of range [ 
+>>>>>>>> 0x%x .. 0x%x ] for dso %s" % (start_addr, int(dso_start), 
+>>>>>>>> int(dso_end), dso))
+>>>>>>>>                  return
+>>>>>>>>
+>>>>>>>> Without this patch below is the failure log(with segfault) for 
+>>>>>>>> reference.
+>>>>>>>>
+>>>>>>>> [root@sut01sys-r214 perf]# timeout 4s ./perf record -e cs_etm// 
+>>>>>>>> -C 1 dd if=/dev/zero of=/dev/null
+>>>>>>>> [ perf record: Woken up 1 times to write data ]
+>>>>>>>> [ perf record: Captured and wrote 1.087 MB perf.data ]
+>>>>>>>> [root@sut01sys-r214 perf]# ./perf script 
+>>>>>>>> --script=python:./scripts/python/arm-cs-trace-disasm.py -- -d 
+>>>>>>>> objdump -k ../../vmlinux -v $* > dump
+>>>>>>>> objdump: error: the stop address should be after the start address
+>>>>>>>> Traceback (most recent call last):
+>>>>>>>>    File "./scripts/python/arm-cs-trace-disasm.py", line 271, in 
+>>>>>>>> process_event
+>>>>>>>>      print_disam(dso_fname, dso_vm_start, start_addr, stop_addr)
+>>>>>>>>    File "./scripts/python/arm-cs-trace-disasm.py", line 105, in 
+>>>>>>>> print_disam
+>>>>>>>>      for line in read_disam(dso_fname, dso_start, start_addr, 
+>>>>>>>> stop_addr):
+>>>>>>>> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>>>>>>>>    File "./scripts/python/arm-cs-trace-disasm.py", line 99, in 
+>>>>>>>> read_disam
+>>>>>>>>      disasm_output = 
+>>>>>>>> check_output(disasm).decode('utf-8').split('\n')
+>>>>>>>>                      ^^^^^^^^^^^^^^^^^^^^
+>>>>>>>>    File "/usr/lib64/python3.12/subprocess.py", line 466, in 
+>>>>>>>> check_output
+>>>>>>>>      return run(*popenargs, stdout=PIPE, timeout=timeout, 
+>>>>>>>> check=True,
+>>>>>>>> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>>>>>>>>    File "/usr/lib64/python3.12/subprocess.py", line 571, in run
+>>>>>>>>      raise CalledProcessError(retcode, process.args,
+>>>>>>>> subprocess.CalledProcessError: Command '['objdump', '-d', '-z', 
+>>>>>>>> '--start-address=0xffff80008125b758', 
+>>>>>>>> '--stop-address=0xffff80008125a934', '../../vmlinux']' returned 
+>>>>>>>> non-zero exit status 1.
+>>>>>>>> Fatal Python error: handler_call_die: problem in Python trace 
+>>>>>>>> event handler
+>>>>>>>> Python runtime state: initialized
+>>>>>>>>
+>>>>>>>> Current thread 0x0000ffffb90d54e0 (most recent call first):
+>>>>>>>>    <no Python frame>
+>>>>>>>>
+>>>>>>>> Extension modules: perf_trace_context, systemd._journal, 
+>>>>>>>> systemd._reader, systemd.id128, report._py3report, 
+>>>>>>>> _dbus_bindings, problem._py3abrt (total: 7)
+>>>>>>>> Aborted (core dumped)
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> dump snippet:
+>>>>>>>> ============
+>>>>>>>> Event type: branches
+>>>>>>>> Sample = { cpu: 0001 addr: 0xffff80008030cb00 phys_addr: 
+>>>>>>>> 0x0000000000000000 ip: 0xffff800080313f0c pid: 12720 tid: 12720 
+>>>>>>>> period: 1 time: 5986372298040 }
+>>>>>>>>          ffff800080313f04 <__perf_event_header__init_id+0x4c>:
+>>>>>>>>          ffff800080313f04:       36100094        tbz     w20, 
+>>>>>>>> #2, ffff800080313f14 <__perf_event_header__init_id+0x5c>
+>>>>>>>>          ffff800080313f08:       f941e6a0        ldr     x0, 
+>>>>>>>> [x21, #968]
+>>>>>>>>          ffff800080313f0c:       d63f0000        blr     x0
+>>>>>>>>              perf 12720/12720 [0001]      5986.372298040 
+>>>>>>>> __perf_event_header__init_id+0x54 
+>>>>>>>> .../coresight/linux/kernel/events/core.c  586         return 
+>>>>>>>> event->clock();
+>>>>>>>> Event type: branches
+>>>>>>>> Sample = { cpu: 0001 addr: 0xffff8000801bb4a8 phys_addr: 
+>>>>>>>> 0x0000000000000000 ip: 0xffff80008030cb0c pid: 12720 tid: 12720 
+>>>>>>>> period: 1 time: 5986372298040 }
+>>>>>>>>          ffff80008030cb00 <local_clock>:
+>>>>>>>>          ffff80008030cb00:       d503233f        paciasp
+>>>>>>>>          ffff80008030cb04:       a9bf7bfd        stp     x29, 
+>>>>>>>> x30, [sp, #-16]!
+>>>>>>>>          ffff80008030cb08:       910003fd        mov     x29, sp
+>>>>>>>>          ffff80008030cb0c:       97faba67        bl 
+>>>>>>>> ffff8000801bb4a8 <sched_clock>
+>>>>>>>>              perf 12720/12720 [0001]      5986.372298040 
+>>>>>>>> local_clock+0xc ...t/linux/./include/linux/sched/clock.h   64 
+>>>>>>>> return sched_clock();
+>>>>>>>> Event type: branches
+>>>>>>>> Sample = { cpu: 0001 addr: 0xffff80008125a8a8 phys_addr: 
+>>>>>>>> 0x0000000000000000 ip: 0xffff8000801bb4c8 pid: 12720 tid: 12720 
+>>>>>>>> period: 1 time: 5986372298040 }
+>>>>>>>>          ffff8000801bb4a8 <sched_clock>:
+>>>>>>>>          ffff8000801bb4a8:       d503233f        paciasp
+>>>>>>>>          ffff8000801bb4ac:       a9be7bfd        stp     x29, 
+>>>>>>>> x30, [sp, #-32]!
+>>>>>>>>          ffff8000801bb4b0:       910003fd        mov     x29, sp
+>>>>>>>>          ffff8000801bb4b4:       a90153f3        stp     x19, 
+>>>>>>>> x20, [sp, #16]
+>>>>>>>>          ffff8000801bb4b8:       d5384113        mrs     x19, 
+>>>>>>>> sp_el0
+>>>>>>>>          ffff8000801bb4bc:       b9401260        ldr     w0, 
+>>>>>>>> [x19, #16]
+>>>>>>>>          ffff8000801bb4c0:       11000400        add     w0, w0, 
+>>>>>>>> #0x1
+>>>>>>>>          ffff8000801bb4c4:       b9001260        str     w0, 
+>>>>>>>> [x19, #16]
+>>>>>>>>          ffff8000801bb4c8:       94427cf8        bl 
+>>>>>>>> ffff80008125a8a8 <sched_clock_noinstr>
+>>>>>>>>              perf 12720/12720 [0001]      5986.372298040 
+>>>>>>>> sched_clock+0x20 ...sight/linux/kernel/time/sched_clock.c  105 
+>>>>>>>> ns = sched_clock_noinstr();
+>>>>>>>> Event type: branches
+>>>>>>>> Sample = { cpu: 0001 addr: 0xffff80008125b758 phys_addr: 
+>>>>>>>> 0x0000000000000000 ip: 0xffff80008125a8e4 pid: 12720 tid: 12720 
+>>>>>>>> period: 1 time: 5986372298040 }
+>>>>>>>>          ffff80008125a8a8 <sched_clock_noinstr>:
+>>>>>>>>          ffff80008125a8a8:       d503233f        paciasp
+>>>>>>>>          ffff80008125a8ac:       a9bc7bfd        stp     x29, 
+>>>>>>>> x30, [sp, #-64]!
+>>>>>>>>          ffff80008125a8b0:       910003fd        mov     x29, sp
+>>>>>>>>          ffff80008125a8b4:       a90153f3        stp     x19, 
+>>>>>>>> x20, [sp, #16]
+>>>>>>>>          ffff80008125a8b8:       b000e354        adrp    x20, 
+>>>>>>>> ffff800082ec3000 <tick_bc_dev+0x140>
+>>>>>>>>          ffff80008125a8bc:       910d0294        add     x20, 
+>>>>>>>> x20, #0x340
+>>>>>>>>          ffff80008125a8c0:       a90363f7        stp     x23, 
+>>>>>>>> x24, [sp, #48]
+>>>>>>>>          ffff80008125a8c4:       91002297        add     x23, 
+>>>>>>>> x20, #0x8
+>>>>>>>>          ffff80008125a8c8:       52800518        mov     w24, 
+>>>>>>>> #0x28                  // #40
+>>>>>>>>          ffff80008125a8cc:       a9025bf5        stp     x21, 
+>>>>>>>> x22, [sp, #32]
+>>>>>>>>          ffff80008125a8d0:       b9400296        ldr     w22, [x20]
+>>>>>>>>          ffff80008125a8d4:       120002d5        and     w21, 
+>>>>>>>> w22, #0x1
+>>>>>>>>          ffff80008125a8d8:       9bb87eb5        umull   x21, 
+>>>>>>>> w21, w24
+>>>>>>>>          ffff80008125a8dc:       8b1502f3        add     x19, 
+>>>>>>>> x23, x21
+>>>>>>>>          ffff80008125a8e0:       f9400e60        ldr     x0, 
+>>>>>>>> [x19, #24]
+>>>>>>>>          ffff80008125a8e4:       d63f0000        blr     x0
+>>>>>>>>              perf 12720/12720 [0001]      5986.372298040 
+>>>>>>>> sched_clock_noinstr+0x3c 
+>>>>>>>> ...sight/linux/kernel/time/sched_clock.c 93                 cyc 
+>>>>>>>> = (rd->read_sched_clock() - rd->epoch_cyc) &
+>>>>>>>> Event type: branches
+>>>>>>>> Sample = { cpu: 0001 addr: 0xffff8000801bb4cc phys_addr: 
+>>>>>>>> 0x0000000000000000 ip: 0xffff80008125a930 pid: 12720 tid: 12720 
+>>>>>>>> period: 1 time: 5986372298040 }
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> With fix:
+>>>>>>>> =========
+>>>>>>>>
+>>>>>>>> Event type: branches
+>>>>>>>> Sample = { cpu: 0001 addr: 0xffff80008030cb00 phys_addr: 
+>>>>>>>> 0x0000000000000000 ip: 0xffff800080313f0c pid: 12720 tid: 12720 
+>>>>>>>> period: 1 time: 5986372298040 }
+>>>>>>>>          ffff800080313f04 <__perf_event_header__init_id+0x4c>:
+>>>>>>>>          ffff800080313f04:       36100094        tbz     w20, 
+>>>>>>>> #2, ffff800080313f14 <__perf_event_header__init_id+0x5c>
+>>>>>>>>          ffff800080313f08:       f941e6a0        ldr     x0, 
+>>>>>>>> [x21, #968]
+>>>>>>>>          ffff800080313f0c:       d63f0000        blr     x0
+>>>>>>>>              perf 12720/12720 [0001]      5986.372298040 
+>>>>>>>> __perf_event_header__init_id+0x54 
+>>>>>>>> .../coresight/linux/kernel/events/core.c  586         return 
+>>>>>>>> event->clock();
+>>>>>>>> Event type: branches
+>>>>>>>> Sample = { cpu: 0001 addr: 0xffff8000801bb4a8 phys_addr: 
+>>>>>>>> 0x0000000000000000 ip: 0xffff80008030cb0c pid: 12720 tid: 12720 
+>>>>>>>> period: 1 time: 5986372298040 }
+>>>>>>>>          ffff80008030cb00 <local_clock>:
+>>>>>>>>          ffff80008030cb00:       d503233f        paciasp
+>>>>>>>>          ffff80008030cb04:       a9bf7bfd        stp     x29, 
+>>>>>>>> x30, [sp, #-16]!
+>>>>>>>>          ffff80008030cb08:       910003fd        mov     x29, sp
+>>>>>>>>          ffff80008030cb0c:       97faba67        bl 
+>>>>>>>> ffff8000801bb4a8 <sched_clock>
+>>>>>>>>              perf 12720/12720 [0001]      5986.372298040 
+>>>>>>>> local_clock+0xc ...t/linux/./include/linux/sched/clock.h   64 
+>>>>>>>> return sched_clock();
+>>>>>>>> Event type: branches
+>>>>>>>> Sample = { cpu: 0001 addr: 0xffff80008125a8a8 phys_addr: 
+>>>>>>>> 0x0000000000000000 ip: 0xffff8000801bb4c8 pid: 12720 tid: 12720 
+>>>>>>>> period: 1 time: 5986372298040 }
+>>>>>>>>          ffff8000801bb4a8 <sched_clock>:
+>>>>>>>>          ffff8000801bb4a8:       d503233f        paciasp
+>>>>>>>>          ffff8000801bb4ac:       a9be7bfd        stp     x29, 
+>>>>>>>> x30, [sp, #-32]!
+>>>>>>>>          ffff8000801bb4b0:       910003fd        mov     x29, sp
+>>>>>>>>          ffff8000801bb4b4:       a90153f3        stp     x19, 
+>>>>>>>> x20, [sp, #16]
+>>>>>>>>          ffff8000801bb4b8:       d5384113        mrs     x19, 
+>>>>>>>> sp_el0
+>>>>>>>>          ffff8000801bb4bc:       b9401260        ldr     w0, 
+>>>>>>>> [x19, #16]
+>>>>>>>>          ffff8000801bb4c0:       11000400        add     w0, w0, 
+>>>>>>>> #0x1
+>>>>>>>>          ffff8000801bb4c4:       b9001260        str     w0, 
+>>>>>>>> [x19, #16]
+>>>>>>>>          ffff8000801bb4c8:       94427cf8        bl 
+>>>>>>>> ffff80008125a8a8 <sched_clock_noinstr>
+>>>>>>>>              perf 12720/12720 [0001]      5986.372298040 
+>>>>>>>> sched_clock+0x20 ...sight/linux/kernel/time/sched_clock.c  105 
+>>>>>>>> ns = sched_clock_noinstr();
+>>>>>>>> Event type: branches
+>>>>>>>> Sample = { cpu: 0001 addr: 0xffff80008125b758 phys_addr: 
+>>>>>>>> 0x0000000000000000 ip: 0xffff80008125a8e4 pid: 12720 tid: 12720 
+>>>>>>>> period: 1 time: 5986372298040 }
+>>>>>>>>          ffff80008125a8a8 <sched_clock_noinstr>:
+>>>>>>>>          ffff80008125a8a8:       d503233f        paciasp
+>>>>>>>>          ffff80008125a8ac:       a9bc7bfd        stp     x29, 
+>>>>>>>> x30, [sp, #-64]!
+>>>>>>>>          ffff80008125a8b0:       910003fd        mov     x29, sp
+>>>>>>>>          ffff80008125a8b4:       a90153f3        stp     x19, 
+>>>>>>>> x20, [sp, #16]
+>>>>>>>>          ffff80008125a8b8:       b000e354        adrp    x20, 
+>>>>>>>> ffff800082ec3000 <tick_bc_dev+0x140>
+>>>>>>>>          ffff80008125a8bc:       910d0294        add     x20, 
+>>>>>>>> x20, #0x340
+>>>>>>>>          ffff80008125a8c0:       a90363f7        stp     x23, 
+>>>>>>>> x24, [sp, #48]
+>>>>>>>>          ffff80008125a8c4:       91002297        add     x23, 
+>>>>>>>> x20, #0x8
+>>>>>>>>          ffff80008125a8c8:       52800518        mov     w24, 
+>>>>>>>> #0x28                  // #40
+>>>>>>>>          ffff80008125a8cc:       a9025bf5        stp     x21, 
+>>>>>>>> x22, [sp, #32]
+>>>>>>>>          ffff80008125a8d0:       b9400296        ldr     w22, [x20]
+>>>>>>>>          ffff80008125a8d4:       120002d5        and     w21, 
+>>>>>>>> w22, #0x1
+>>>>>>>>          ffff80008125a8d8:       9bb87eb5        umull   x21, 
+>>>>>>>> w21, w24
+>>>>>>>>          ffff80008125a8dc:       8b1502f3        add     x19, 
+>>>>>>>> x23, x21
+>>>>>>>>          ffff80008125a8e0:       f9400e60        ldr     x0, 
+>>>>>>>> [x19, #24]
+>>>>>>>>          ffff80008125a8e4:       d63f0000        blr     x0
+>>>>>>>
+>>>>>>> It looks like the disassembly now assumes this BLR wasn't taken. 
+>>>>>>> We go from ffff80008125a8e4 straight through to ...
+>>>>>>>
+>>>>>>>>              perf 12720/12720 [0001]      5986.372298040 
+>>>>>>>> sched_clock_noinstr+0x3c 
+>>>>>>>> ...sight/linux/kernel/time/sched_clock.c 93                 cyc 
+>>>>>>>> = (rd->read_sched_clock() - rd->epoch_cyc) &
+>>>>>>>> Event type: branches
+>>>>>>>> Sample = { cpu: 0001 addr: 0xffff8000801bb4cc phys_addr: 
+>>>>>>>> 0x0000000000000000 ip: 0xffff80008125a930 pid: 12720 tid: 12720 
+>>>>>>>> period: 1 time: 5986372298040 }
+>>>>>>>>          ffff80008125a8e8 <sched_clock_noinstr+0x40>:
+>>>>>>>>          ffff80008125a8e8:       f8756ae3        ldr     x3, 
+>>>>>>>> [x23, x21]
+>>>>>>>
+>>>>>>> ffff80008125a8e4 which is just the previous one +4. Isn't your 
+>>>>>>> issue actually a decode issue in Perf itself? Why is there a 
+>>>>>>> discontinuity without branch samples being generated where either 
+>>>>>>> the source or destination address is 0?
+>>>>>>>
+>>>>>>> What are your record options to create this issue? As I mentioned 
+>>>>>>> in the previous reply I haven't been able to reproduce it.
+>>>>>>
+>>>>>> I am using below perf record command.
+>>>>>>
+>>>>>> timeout 4s ./perf record -e cs_etm// -C 1 dd if=/dev/zero 
+>>>>>> of=/dev/null
+>>>>>>
+>>>>>
+>>>>> Thanks I managed to reproduce it. I'll take a look to see if I 
+>>>>> think the issue is somewhere else.
+>>>>>
+>>>>
+>>>> At least for the failures I encountered, the issue is due to the 
+>>>> alternatives runtime instruction patching mechanism. vmlinux ends up 
+>>>> being the wrong image to decode with because a load of branches are 
+>>>> actually turned into nops.
+>>>>
+>>>> Can you confirm if you use --kcore instead of vmlinux that you still 
+>>>> get failures:
+>>>>
+>>>>    sudo perf record -e cs_etm// -C 1 --kcore -o <output-folder.data> 
+>>>> -- \
+>>>>      dd if=/dev/zero of=/dev/null
+>>>>
+>>>>     perf script -i <output-folder.data> \
+>>>>      tools/perf/scripts/python/arm-cs-trace-disasm.py -d llvm-objdump \
+>>>>      -k <output-folder.data>/kcore_dir/kcore
+>>>>
+>>>
+>>> With below command combination with kcore also the issue is seen, as 
+>>> reported in this email chain.
+>>>
+>>> timeout 8s ./perf record -e cs_etm// -C 1 --kcore -o kcore \
+>>> dd if=/dev/zero of=/dev/null
+>>>
+>>> ./perf script -i kcore/data \
+>>> --script=python:./scripts/python/arm-cs-trace-disasm.py -- \
+>>> -d objdump -k kcore/kcore_dir/kcore
+>>>
+>>>
+>>> However, with below sequence(same as your command) the issue is *not* 
+>>> seen.
+>>>
+>>> timeout 8s ./perf record -e cs_etm// -C 1 --kcore -o kcore \
+>>> dd if=/dev/zero of=/dev/null
+>>>
+>>> ./perf script -i kcore/data ./scripts/python/arm-cs-trace-disasm.py \
+>>> -- -d objdump -k kcore/kcore_dir/kcore
+>>>
+>>> Do you see any issue with the command, which is showing the problem?
+>>> Also the output log produced by these both commands is different.
+>>>
 
+BTW are you running this on the target or somewhere else? It's 
+suspicious that "-i kcore/data" works at all because there is no kernel 
+image given to Perf. Unless you are running on the target and then I 
+think it will just open the one from /proc. Or maybe it uses 
+/boot/vmlinux by default which also wouldn't work.
+
+Also the difference between "--script=python:" and just giving the 
+script name is in the parsing of the arguments following " -- ". 
+Sometimes they're also parsed as Perf arguments (like the -v becomes 
+perf verbose and -k becomes the Perf vmlinux rather than the script).
+
+I _think_ you want the " -- " when "--script" is used, and no "--" when 
+it's not. But there are some other combinations and you'll have to debug 
+it to compare your two exact scenarios to see why they're different.
+
+But ignoring that issue with the argument format, you mentioned you 
+didn't see the issue any more with one version of --kcore. So I'm 
+assuming that confirms the issue is just a decode image issue, so we 
+shouldn't try to patch this script?
+
+>>
+>> Double check the command I gave. "-i" needs to be the same as "-o" 
+>> (it's the folder, not the data file). I think this could be causing 
+>> your issue. Unless you give it the folder it doesn't open kcore along 
+>> with the data file.
+>>
+> 
+> As per 'perf script --help'
+> 
+>         -i, --input=
+>             Input file name. (default: perf.data unless stdin is a fifo)
+> 
+
+That could probably say "file name, or folder when --kcore is used", if 
+you mean that you think it's not accurate?
+
+But when you use --kcore the default folder (not file) name is still 
+perf.data, so the default argument gives you a clue that you're not 
+supposed to descend into the folder.
+
+> Also tried just giving dir as you suggested and still the same.
+> 
+> ./perf script -i kcore 
+> --script=python:./scripts/python/arm-cs-trace-disasm.py -- -d objdump -k 
+> kcore/kcore_dir/kcore
+> 
+>>> The below diff that you have shared has no effect on the failing case.
+>>>
+>>>> But I still think bad decode detection should be moved as much as 
+>>>> possible into OpenCSD and Perf rather than this script. Otherwise 
+>>>> every tool will have to re-implement it, and OpenCSD has a lot more 
+>>>> info to make decisions with.
+>>>>
+>>>> One change we can make is to desynchronize when an N atom is an 
+>>>> unconditional branch:
+>>>>
+>>>>   diff --git a/decoder/source/etmv4/trc_pkt_decode_etmv4i.cpp 
+>>>> b/decoder/source/etmv4/trc_pkt_decode_etmv4i.cpp
+>>>> index c557998..3eefd5d 100644
+>>>> --- a/decoder/source/etmv4/trc_pkt_decode_etmv4i.cpp
+>>>> +++ b/decoder/source/etmv4/trc_pkt_decode_etmv4i.cpp
+>>>> @@ -1341,6 +1341,14 @@ ocsd_err_t 
+>>>> TrcPktDecodeEtmV4I::processAtom(const ocsd_atm_val atom)
+>>>>           //  save recorded next instuction address
+>>>>           ocsd_vaddr_t nextAddr = m_instr_info.instr_addr;
+>>>>
+>>>> +        // must have lost sync if an unconditional branch wasn't taken
+>>>> +        if (atom == ATOM_N && !m_instr_info.is_conditional) {
+>>>> +             m_need_addr = true;
+>>>> +             m_out_elem.addElemType(m_index_curr_pkt, 
+>>>> OCSD_GEN_TRC_ELEM_NO_SYNC);
+>>>> +             // wait for next address
+>>>> +             return OCSD_OK;
+>>>> +        }
+>>>> +
+>>>>
+>>>> Another one we can spot is when a new address comes that is before 
+>>>> the current decode address (basically the backwards check that you 
+>>>> added).
+>>>>
+>>>> There are probably others that can be spotted like an address 
+>>>> appearing after a direct branch that doesn't match the branch target.
+>>>>
+>>>> I think at that point, desynchronising should cause the disassembly 
+>>>> script to throw away the last bit, rather than force it to be 
+>>>> printed as in this patch. As I mentioned above in the thread, it 
+>>>> leads to printing disassembly that's implausible and misleading 
+>>>> (where an unconditional branch wasn't taken).
+>>>
+> 
+> Thanks,
+> Ganapat
 
