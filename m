@@ -1,117 +1,126 @@
-Return-Path: <linux-kernel+bounces-276071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA52D948E12
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:48:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A8C0948E17
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751941F25F2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:48:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6D17B245B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140B41C3F35;
-	Tue,  6 Aug 2024 11:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BC61C3F17;
+	Tue,  6 Aug 2024 11:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QYAnI33n"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YHJhtWiB"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6C11C37B3
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 11:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C461C233C
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 11:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722944896; cv=none; b=FIzmZK17ZWCBo7hf2ckwjwt/DXbF9ipaOzmG9t2y6jm9CFg6loPn6MeME5SWPT8yqGmHPjEpOuRVP33EpJfavnIaunmw1//kBK6qBX8/kHgeLYmQM2mhrZmurQDxnnwovIJldE1YmaLrpTzb57OTyArzWCoattso/zx8DvqxinI=
+	t=1722944960; cv=none; b=Aqn3yBKmdsrhdh/7DDkiF8r694vGDJ0Ow3/6fZqGMmunbps3HCb7PmVJzD8nCCdwM7wejpS5eu1OQKXDjfCFI1LQrkBLFw5O/8iarfoSTbLTizLBJGyVVOXwocJQBluzJ3YVD/DLffuYeNIaEXUHaHg+IpsPjgiRveVvc2pfmXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722944896; c=relaxed/simple;
-	bh=KJ96BgkJZQbvnEnqdDFr5FIIureinTKxCE4K6X/Qgf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I7hyMPxysfvhOiZMvy2ABuGFEswfErNs/NPmOmuCTA6u5vOD9keneiOuVXUuSZXIh2vSqdmTE6dc0YpZKzITauHaqwYngqGC20LOxduCcz328h3lPX6BmFWbcvilgdL8U1rnVveoMtXKKiZz0iOP5sc0ove98wdwxu05UBTAtd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QYAnI33n; arc=none smtp.client-ip=209.85.166.173
+	s=arc-20240116; t=1722944960; c=relaxed/simple;
+	bh=HK69OtcF/Vf94b5GhLN5TCYnV2gFptY6A3zc3NCas5U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UJ8FJcoK+ZjL7VaEEpD0/NlbQOGGALrgphbUQN5gJHUlNy3EIs00TLiVCnPSXf9VuOGF7mM9dddTbKo8Gb4plALLiGhVKYGK1FskNeHPTbKg0NUmEfIgEY7/Jij3KpBC2D59R2cUZE8biLEwADBWSSmhXLVe4dG4ipzB/7dOXjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YHJhtWiB; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-39b3a4d2577so1622115ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 04:48:14 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428119da952so3915195e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 04:49:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722944894; x=1723549694; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YnKDLZastVXUhXCKZl6BxKY06diUTWNA7Rw0yyQiGS8=;
-        b=QYAnI33nWuCXNFGLkdwzrwxE/ldAkeiSlt9GnomrS50hC3wgbGEj0L1Yb2SsY+Kv6G
-         Cu4dNnqftfWfo4OQ7uMu2puh/2aJ8Ul7RVtwFOh4WqXXn8itUsvoPKOP9pmv5Ci0bgMy
-         qQ9Tp4bvLJ9t2SzTTXGdTI+vKZVkIOq+e3Qw7SLqPUI+SCTS35P9xtgbLXyXBVBsnBer
-         admISBSAESVom2xB+kW40f8A2F6CbcgIm0331aWUuGSKazzmzl+kDulopv5widVlHrzX
-         larTb4YRrNtNywKcVgwTcJWSpqeoe0ZOP/5oqlc9Jqs3muKpC2I38Lf/HzjGNuPenvdH
-         WsxA==
+        d=linaro.org; s=google; t=1722944957; x=1723549757; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PXVpYau+0lr9R+A94wXB50FKZnvpt0eTOY5VusN/TE0=;
+        b=YHJhtWiBMuEBA1sx9mWsKQSG8KgA2U8hzYVTChGZa1GE9v84iSM1j2kLcwJQuHI7KX
+         TAbWpKfeTntfrlzjT7IiOoq02UIP8eWJn33ZsWwhhyREqqnqCCgoQiLvzMeaMvDVMotP
+         K9qycpyFYPSwaKwidIG1JyqoFk69OuK7efFEqqQuKLHWyzq4/r+Le8FqqBq1+lmCy4zL
+         9yLRXV4AI40aqXBZSbelqzjruqTu9I2SIWD2eDMi27BNJNMRpNDTvicj0beZtOiuHcHq
+         +ehXASoKwdSRf3xjvyZX/0yxb7fMVM7xYZb/8P7SDhM8LRk+yogFnfVdBouPIQpOGY4e
+         jGQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722944894; x=1723549694;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YnKDLZastVXUhXCKZl6BxKY06diUTWNA7Rw0yyQiGS8=;
-        b=BwAso/R2+5cttPFI/yg+BX2ZIkr9MT6LCzeAceP34ATrtFINtYwKHOgCxNTPWZxe/Q
-         h3+xxZc4U8u/LIthV9Utsq0EALEGc0YyOK7zM4KoSH2Yhvaq11DFJ6sMiXQN/uL0/Zbm
-         ATnrmWZObIBQEP13Z0VmPrgM5e2QozAzYduf5aSQ3jyietqfFVGuiJ/KuX/pdB2NTMb/
-         zdPXT4yZNDl0PzgPTGpzb41SH/XL/QvFwgVDDpxRnd7rbuADCJwp2zEFvwjpk37OuAIC
-         AxKh16HmS8Qz/WpgCAStTIktVI5dUbfI3lsN+9ChI6MYbOprZWmUo/Ir9c7asOIQvMyF
-         soGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXs+qUF1S87pyPm96nu2VkgSg0ghP4aHCE62u5lX6H+JGy3xtBK+0IzWNQWwrPq4VbgRLxb4W3Itw2at94d+UQ7hEVi/CExCpzW6Rjs
-X-Gm-Message-State: AOJu0YyklR+GRZ8HWPrwc00Jv2H9zBgGPCQlZ4SCi3vqXE3Z13a6DFb2
-	SF31lpYSwFXcC/0qmH3HZLPluyHpQc4NYQP5SOP+b0zZf6flD/Oefd6z40MswQnTHcwKxeuZlJ0
-	=
-X-Google-Smtp-Source: AGHT+IHDx5ouRyGybYmKI+rGA3bANIvnR3BlipR1pbrh2anF4Gl61iD5cVGF8vIXPCnZL8KlLVtx2g==
-X-Received: by 2002:a05:6e02:54a:b0:39b:35c3:d5b8 with SMTP id e9e14a558f8ab-39b35c3d5e0mr100545275ab.22.1722944893872;
-        Tue, 06 Aug 2024 04:48:13 -0700 (PDT)
-Received: from thinkpad ([120.56.197.55])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b763b342e3sm5792785a12.56.2024.08.06.04.48.10
+        d=1e100.net; s=20230601; t=1722944957; x=1723549757;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PXVpYau+0lr9R+A94wXB50FKZnvpt0eTOY5VusN/TE0=;
+        b=R8faJNjpD32DPM95Zt/9ULxpve5LtGhlHpxDe4MQUd5gVGNQRJPmDjENXh5eBeejKw
+         E//586Ewf7F4Zqwl5W2TwI/aZYRxVbFcHgmLFjLKZR13iRWoyP1oEuWGGdxDgOqnYwpe
+         zUXBztwTK436FeWZWfLILny4wg+8+oaccC9MYRgH1UbNcMaXbZD1m8aJz92qFl1s0MKk
+         BZ85Ti4exJK4rUBAQD7dO8pA55rJuF9vWK6CS7FXNHqPIcz3vnNQhk9U/4TkrJfC8SDN
+         4VCHI0Q1pWrtoSiiDOddMTh3oKszGniG2h6EZavttNrVeQsBNVviKPpWYpgJtTiwb+Q/
+         DQEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuubFTHjE6rzQ5Uo2OePsQmzyKSysKtwdFyee7W3N3fZLA5wBau0W8thoJHp+3h1eL8lgKax95iEFr8R8g7LVYNI0EohWu/UF+SqaA
+X-Gm-Message-State: AOJu0YwZQNuHzlxVGoVyLjdj/P4JQR2XJsBvQQGY5xwbN9xDmZ0Q+9g3
+	MFLbfyuPMbslEdEGAAktW3aySbM27lT5F52ZMqAplQkuuNbe6mGv3XmL+IEW6eI=
+X-Google-Smtp-Source: AGHT+IE57sgPG7MXWgWPSR/NBtN6707/MUX7FS0F0l/Q4cnzEb2aq3Uun92NAyWQJVWdu2uJJE8AgQ==
+X-Received: by 2002:a5d:51c1:0:b0:367:89fd:1e06 with SMTP id ffacd0b85a97d-36bbc1312c6mr10073817f8f.36.1722944957105;
+        Tue, 06 Aug 2024 04:49:17 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e9d887sm177773605e9.43.2024.08.06.04.49.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 04:48:13 -0700 (PDT)
-Date: Tue, 6 Aug 2024 17:18:08 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Len Brown <lenb@kernel.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, mika.westerberg@linux.intel.com,
-	Hsin-Yi Wang <hsinyi@chromium.org>
-Subject: Re: [PATCH v5 1/4] PCI/portdrv: Make use of pci_dev::bridge_d3 for
- checking the D3 possibility
-Message-ID: <20240806114808.GA2968@thinkpad>
-References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
- <20240802-pci-bridge-d3-v5-1-2426dd9e8e27@linaro.org>
- <Zqyro5mW-1kpFGQd@wunner.de>
- <CAJZ5v0hw7C2dHC3yXAwya-KAjzYxU+QgavO_MkR9Rscsm_YHvg@mail.gmail.com>
- <Zq08i2i_ETHsJiKW@wunner.de>
- <20240805132442.GA7274@thinkpad>
- <ZrHG2KnGp9N00mV_@wunner.de>
+        Tue, 06 Aug 2024 04:49:16 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
+	Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	stable@vger.kernel.org,
+	Alexey Klimov <alexey.klimov@linaro.org>
+Subject: [PATCH] ASoC: codecs: wcd937x: Fix missing de-assert of reset GPIO
+Date: Tue,  6 Aug 2024 13:49:13 +0200
+Message-ID: <20240806114913.40022-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZrHG2KnGp9N00mV_@wunner.de>
 
-On Tue, Aug 06, 2024 at 08:46:48AM +0200, Lukas Wunner wrote:
-> On Mon, Aug 05, 2024 at 06:54:42PM +0530, Manivannan Sadhasivam wrote:
-> > So what is wrong in using pci_dev::bridge_d3?
-> 
-> The bridge_d3 flag may change at runtime, e.g. when writing to the
-> d3cold_allowed attribute in sysfs.
-> 
-> If e.g. bridge_d3 is set when pcie_portdrv_probe() runs but no longer
-> set when pcie_portdrv_remove() runs, there would be a runtime PM ref
-> imbalance.  (Ref would be dropped on probe, but not reacquired on remove.)
-> 
+The device never comes online from a reset/shutdown state, because the
+driver de-asserts reset GPIO when requesting it but then, at the end of
+probe() through wcd937x_reset(), leaves it asserted.
 
-Ah, so it is the other way around. Thanks for clearing it up!
+Cc: <stable@vger.kernel.org>
+Fixes: 9be3ec196da4 ("ASoC: codecs: wcd937x: add wcd937x codec driver")
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-- Mani
+---
 
+Cc: Alexey Klimov <alexey.klimov@linaro.org>
+---
+ sound/soc/codecs/wcd937x.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/sound/soc/codecs/wcd937x.c b/sound/soc/codecs/wcd937x.c
+index 13926f4b0d9f..af296b77a723 100644
+--- a/sound/soc/codecs/wcd937x.c
++++ b/sound/soc/codecs/wcd937x.c
+@@ -242,10 +242,9 @@ static const struct regmap_irq_chip wcd937x_regmap_irq_chip = {
+ 
+ static void wcd937x_reset(struct wcd937x_priv *wcd937x)
+ {
+-	usleep_range(20, 30);
+-
+ 	gpiod_set_value(wcd937x->reset_gpio, 1);
+-
++	usleep_range(20, 30);
++	gpiod_set_value(wcd937x->reset_gpio, 0);
+ 	usleep_range(20, 30);
+ }
+ 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.0
+
 
