@@ -1,202 +1,180 @@
-Return-Path: <linux-kernel+bounces-276597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C06F59495E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:50:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB8A9495E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF8B21C22FEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:50:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7951F217AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18CD45C18;
-	Tue,  6 Aug 2024 16:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF8241C85;
+	Tue,  6 Aug 2024 16:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rcgeYhJB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HpPl60oI"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2047.outbound.protection.outlook.com [40.107.223.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC43E3A8CB;
-	Tue,  6 Aug 2024 16:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722963021; cv=none; b=LicFH5sMEhw/dS/EdXjI9w0smGz52csYl9vmDG0+05OnyEGyjoZ2hqTRzoihdFtpe7z41xoa18r0vY6cqnRAsz1nyCw1Q3QDWySKl7kgNQtKV+9zEVlFs/Uzq1elTPjWPmdPC0Ff8X9Y4VojRgbur9HR4ilgRAV9u0DDexuuHKc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722963021; c=relaxed/simple;
-	bh=FFxPz+Zq4k0dEWsAFdsdPEf4umMD6s9dToAnn3i5Faw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jvXZtLVyee4Jcuhn6B4mL8WFhlPgX4+7aieLSAu20nJq/3+41ODYPSEzLip9AMm/zozcoeczM4G2IToAOCtn0DHpZ0OKgRLYMjSsbrW2gEO1dkXVsIJw7jjOHz2ThmnbfKX4epH74aSQlkACgKyAjNiW5EAAKdmnF+z8NUpR1+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rcgeYhJB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E010C32786;
-	Tue,  6 Aug 2024 16:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722963021;
-	bh=FFxPz+Zq4k0dEWsAFdsdPEf4umMD6s9dToAnn3i5Faw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rcgeYhJBrYlbH3M0m57xTjrf6egz6fWtJY+YBSjefW7/YuRYVTLxhQEkVH0MyuI21
-	 YKWnqXkNZZB7UhNgxe+l6a1elFtLIVeZgEhtrT5kztvvbRqx3a3e6JsowRnjzd8zkI
-	 uaAszT420F5Z9WWIZ7xv7yIEWIWHeZ9CUy8EyfZslnzvCs383StpYSkfnoqrn16MYL
-	 +5O+t/lHdaSyIGoAf9Ii7NPK7Msqf4BLoJ+8dCH7cjCH+zi8mC54ekEkSVjPnOGHs8
-	 HVFbmxaqrrbCSfO1mTMLI9GVD0M0BhlB6V8rIOyuIRSmqsvNtCoDkP7Sl+yQUD7CKz
-	 W978rCKWWeQnQ==
-Date: Tue, 6 Aug 2024 10:50:20 -0600
-From: Rob Herring <robh@kernel.org>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: kernel@pengutronix.de, Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	David Jander <david.jander@protonic.nl>,
-	Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH can-next v2 01/20] dt-bindings: can: rockchip_canfd: add
- rockchip CAN-FD controller
-Message-ID: <20240806165020.GA1664499-robh@kernel.org>
-References: <20240731-rockchip-canfd-v2-0-d9604c5b4be8@pengutronix.de>
- <20240731-rockchip-canfd-v2-1-d9604c5b4be8@pengutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03422BAEF
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 16:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722963070; cv=fail; b=NigMEcsCcA9Kp3cNbgR5eXLImYSGSv7Yj0QJXNsoXRZmnOS6zmbk8RFbvoTTtVFNzp/SF6evrXfaloEpsm0q5AjD49shjnF0o9Ba3mLOZRuuYtfvXTHoMf7NQcwq6TaJp52m7TYm+qFUr+/8XR1UXrmdQ9nEOjQsdc2ndp/kGik=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722963070; c=relaxed/simple;
+	bh=CoKOzNvzx2Ac3DZ/5FS13ex8AuVY1TD6DVjYza4G4L4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DHgSEBKMxrUsFjBFtObzVkUYaxb/jHPxr2iSkYOedkGbr+33h8KAn+jfvs0MOOZLVctKesS1cVIZt8hB3qlyYGTE2tR9x/8daj6S0ncKwjybPsRuBAX1lYpYr55j/NbzJnpziVaiVACybbt0Gzkok1JdfW3BhWAKiJ3SakhQKr4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HpPl60oI; arc=fail smtp.client-ip=40.107.223.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PiDSjIM5ywDhArjHg+3xLkaBJvAIYJoP5PS6H6EX2aS5F3dMcuaxcDE8Fx/KWcQ2wDL/iA814UBaWek9/8llahdTl8En9+Woip/98g2SsfNBekEsTLDCzHow96YGeeKfLdvZwmzPdHEfyzJcG5yOEgbgvSYjaLgd2JVlD6sFye+CaIaf917RAqAwtcL9s8aLedSstN0EXfTB/p+9jWnFeVa/B5mUmNc/VvCrqMUmztgXdWiigv//NAnE9aACVmCMM0BkszmMsTBqWck+KCY51SAOjGYRlP5QGLeqy09dsAs4rCdQ0V/ZAMwdbR3idtbxC5Teqzd8iZ8DphiFtjJrcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MRyHeG2xlVcgGbeO3r5Lg1VfmVo2bDZbnMS7O4wMmz0=;
+ b=t3PbivQXjMGggvPzH1LdoWzk+GKB4qVDNwC7KcGxnU2nn10Hfo1wpWi+rz9C+oXGxVkz7QS4vXtpR77SL2+O0mfC1j4X3kOAeOC5gPiSPrrwKhJ/J9OazFXyS06LofY8wDhE38gkwStFN1ffSR+IE8mYc5cyfD8gHq3NPyk2DzQtv1IO3skreW0ASdEd/mJOniWzu6mDNF/f09nQzUepUxBUpphj0SkLQ317waFyZh+dG3R/ya++ICBux63zS4PRIp1h9yx/M5FOXjmZZCjeyjKfaWniYtgnnkkq81IrZUPWciXx3Ltrv+r8mmDMCSe7/sV+ZfBKoylTOiw1tea4jw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MRyHeG2xlVcgGbeO3r5Lg1VfmVo2bDZbnMS7O4wMmz0=;
+ b=HpPl60oIi0eZSCoJVPYEHr8fI4bU8DbFWia9/k8W749K1UH+mjkaQHgoDXlAg4G/75jbwNuyIdFzUEEpP+g2QGyz52RDF3hkqdYbcQ2luyzvjVc4inijdnRWdjShG3zt7FOJarPEb1gVCCoIUsqexhJlvhY0wcXQ0sFhokEV7tvmHnbpaKaL10r2ykWpiLRxOvD76OWtmAmhRGSgL3mFb1rn9pCS3AnUNQYGCmQlCwDoWm0B9AvOci7lIZxQTT3MTtelmKZOM2mf2gsYpVqSzDPQmrT9wNOe3pw1jX1x7ALcOhIh4wJ4leFLWHBhfHLUkHxqgUrmuiJ0etxogpZfYg==
+Received: from SA9PR13CA0095.namprd13.prod.outlook.com (2603:10b6:806:24::10)
+ by SJ0PR12MB7066.namprd12.prod.outlook.com (2603:10b6:a03:4ae::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Tue, 6 Aug
+ 2024 16:51:01 +0000
+Received: from SN1PEPF00026367.namprd02.prod.outlook.com
+ (2603:10b6:806:24:cafe::3d) by SA9PR13CA0095.outlook.office365.com
+ (2603:10b6:806:24::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.6 via Frontend
+ Transport; Tue, 6 Aug 2024 16:51:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SN1PEPF00026367.mail.protection.outlook.com (10.167.241.132) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.19 via Frontend Transport; Tue, 6 Aug 2024 16:51:01 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 Aug 2024
+ 09:50:42 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 Aug 2024
+ 09:50:42 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 6 Aug 2024 09:50:41 -0700
+Date: Tue, 6 Aug 2024 09:50:40 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: "jgg@nvidia.com" <jgg@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] iommufd/device: Enforce reserved IOVA also when
+ attached to hwpt_nested
+Message-ID: <ZrJUYDCxWJQCfOQA@Asurada-Nvidia>
+References: <20240806050201.3717816-1-nicolinc@nvidia.com>
+ <BN9PR11MB5276C2F39301A461FF84EB368CBF2@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240731-rockchip-canfd-v2-1-d9604c5b4be8@pengutronix.de>
+In-Reply-To: <BN9PR11MB5276C2F39301A461FF84EB368CBF2@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00026367:EE_|SJ0PR12MB7066:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4bb596c8-ca3f-4fcd-746e-08dcb637f40a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lwW8aRVwIrpYfo531GNyNvZzKg8WteDQrm2DF1r6s+3N49s6NNJbdmhbOJ55?=
+ =?us-ascii?Q?sS7RjZBsvyBeODJyiipHkyjBnvtOn4VScH/RiyLYM1YAQ8N3OwT1w1BcvxkR?=
+ =?us-ascii?Q?xIGn4PaDtWgggcDAqsdCGysXIOSzS+aeNstW1naHxv++QEun+mSRVr2pS9wQ?=
+ =?us-ascii?Q?4chq6BBHKjGaV9t3aMN7UeEwbhK8DxJ7+0npIsg35rLLo+QDDI0eVVQc2Vfs?=
+ =?us-ascii?Q?Mvb7Fyvvo4ndftrks3lDbDugqSfu/Ky/n9zwhkh5m6ECBtsBO8ttFddYvbiO?=
+ =?us-ascii?Q?pFEoFSQXSac9i5rrnyNIqfOcpE5Ek2HzcUs8zEZrG+3jYhZ+CEkkQOaf1lEK?=
+ =?us-ascii?Q?jFCUGr5WxeieDvAzHfosHG4vxOr61+0Aw4tgldavThZZAcqdCVO68c+SHX7B?=
+ =?us-ascii?Q?sEXjrhfK50U2N0CUuJhgwJ8DQCM+De3SHfIfwlstUR490qKTqlHjUCaCZn7Q?=
+ =?us-ascii?Q?ArqjUzp9h9GF8vNjpeeUs4ol3JKPkBGb7XWDoj2hlXYUZ1mgkNzB+6H8VAnz?=
+ =?us-ascii?Q?uKEQKrcn9y9nbd/6SCHRMszw8sI3hZC118i4kgeK0mM9V6BtKIiNsDhGPNCC?=
+ =?us-ascii?Q?sSRIpX5CzyGDupEWH8zihMMj4Ksg+ONsrYFSZ+Bf43Uy55BQE7XXeMHOljZm?=
+ =?us-ascii?Q?7gIni16lBwjrwbr6R9e4b3huP+rSJ3RUz9nc3wjT4CPpf5bxChPFgGUYMICA?=
+ =?us-ascii?Q?Jy/fsORKZQSreIOsZrBSZEtr0jMTkMy4dbd6FP1KyYmJ2dVAWz4O39QBbydr?=
+ =?us-ascii?Q?WAajGrRj6xJvjDsuXPrK5PrQOJZfrwT5MKfoTYXbek+UIcd02hscAdhmY4uz?=
+ =?us-ascii?Q?4C2HnwkbE2xakzUXJ7VcOig+x5Q27Y6I0AOPOIohB0kx1UnEMLo4sU/3PWE0?=
+ =?us-ascii?Q?7OqGd0lsr0atDm0YfoCjs973I78wrSOlKvnG5xCrOc3Jj54TX8QHY7FBetFJ?=
+ =?us-ascii?Q?OiZ8JaioAOJ4i26YLvctFe/l+1+QjcLBGogDy218gR2L/Wa1CvLzUEsARTsU?=
+ =?us-ascii?Q?RUrBRhfwa5t2QdMCrXwU8NfY3dGwE5/gbBUYyM4IirhUbG2OMuGyYaUbuJ1K?=
+ =?us-ascii?Q?vy3pzsfQpooWrcoyvS+b1gq/brCmRH5ad6s4dNu6UL99cLcd/fBmUbU5jXYq?=
+ =?us-ascii?Q?84JnDVAbA/gbUUOOa+o1J7REHTvBFihAcz4biSjM+TlX/TgTDhwIk2mvfAcY?=
+ =?us-ascii?Q?iUfmj6geWODmOVHjMka3iDIy5+29nCN9TzpZV1jISGSuzaPjHvdBrZgYFgYZ?=
+ =?us-ascii?Q?PS3MzhXXrLvFMdAuHXnG86UkGmQOibpAcSyE26B8gD/JMmJV7tUcKOUW0B89?=
+ =?us-ascii?Q?2Mke2kjFvgUpVmhmNwVnq3lz0lm68SKDdP37h2yBli0HQ58cKpVb3loc/s11?=
+ =?us-ascii?Q?jvdvErWdlZbGJ2qrIxn0YvrC5RONFdr07x5Yz9e8SV4Velt/2Ug/0W+MUNKq?=
+ =?us-ascii?Q?6FXTiPvoOlPrn30i3BdEzS/zNmhaibw/?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 16:51:01.1206
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4bb596c8-ca3f-4fcd-746e-08dcb637f40a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00026367.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7066
 
-On Wed, Jul 31, 2024 at 11:37:03AM +0200, Marc Kleine-Budde wrote:
-> Add documentation for the rockchip rk3568 CAN-FD controller.
+On Tue, Aug 06, 2024 at 08:08:49AM +0000, Tian, Kevin wrote:
+> > From: Nicolin Chen <nicolinc@nvidia.com>
+> > Sent: Tuesday, August 6, 2024 1:02 PM
+> >
+> > +iommufd_group_do_replace_reserved_iova(struct iommufd_group *igroup,
+> > +                                    struct iommufd_hw_pagetable *hwpt)
+> >  {
+> > -     struct iommufd_hw_pagetable *old_hwpt = igroup->hwpt;
+> > +     struct iommufd_hwpt_paging *hwpt_paging =
+> > to_hwpt_paging(hwpt);
+> >       struct iommufd_device *cur;
+> >       int rc;
+> >
+> >       lockdep_assert_held(&igroup->lock);
+> >
+> > -     if (!hwpt_is_paging(old_hwpt) ||
+> > -         hwpt_paging->ioas != to_hwpt_paging(old_hwpt)->ioas) {
+> > +     if (!hwpt_paging)
+> > +             return 0;
+> > +
+> > +     if (hwpt_to_ioas(hwpt) &&
 > 
-> Co-developed-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-> ---
->  .../bindings/net/can/rockchip,canfd.yaml           | 76 ++++++++++++++++++++++
-
-rockchip,rk3568-canfd.yaml
-
->  MAINTAINERS                                        |  7 ++
->  2 files changed, 83 insertions(+)
+> this check is always true when hwpt_paging is valid.
 > 
-> diff --git a/Documentation/devicetree/bindings/net/can/rockchip,canfd.yaml b/Documentation/devicetree/bindings/net/can/rockchip,canfd.yaml
-> new file mode 100644
-> index 000000000000..444269f630f4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/can/rockchip,canfd.yaml
-> @@ -0,0 +1,76 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/can/rockchip,canfd.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title:
-> +  Rockchip CAN-FD controller
-> +
-> +maintainers:
-> +  - Marc Kleine-Budde <mkl@pengutronix.de>
-> +
-> +allOf:
-> +  - $ref: can-controller.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: rockchip,rk3568-canfd
-> +      - items:
-> +          - enum:
-> +              - rockchip,rk3568v2-canfd
-> +              - rockchip,rk3568v3-canfd
-> +          - const: rockchip,rk3568-canfd
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 
-Given you already know there are differences in the versions to handle 
-and there's no existing driver supporting the fallback, I don't know 
-that a fallback is too useful here.
+I can drop it.
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: baud
-> +      - const: pclk
-> +
-> +  resets:
-> +    maxItems: 2
-> +
-> +  reset-names:
-> +    items:
-> +      - const: core
-> +      - const: apb
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - resets
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/rk3568-cru.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        can0: can@fe570000 {
-
-Drop unused labels.
-
-> +            compatible = "rockchip,rk3568-canfd";
-> +            reg = <0x0 0xfe570000 0x0 0x1000>;
-> +            interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-> +            clocks = <&cru CLK_CAN0>, <&cru PCLK_CAN0>;
-> +            clock-names = "baud", "pclk";
-> +            resets = <&cru SRST_CAN0>, <&cru SRST_P_CAN0>;
-> +            reset-names = "core", "apb";
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c0a3d9e93689..d225dc39bd89 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19694,6 +19694,13 @@ F:	Documentation/ABI/*/sysfs-driver-hid-roccat*
->  F:	drivers/hid/hid-roccat*
->  F:	include/linux/hid-roccat*
->  
-> +ROCKCHIP CAN-FD DRIVER
-> +M:	Marc Kleine-Budde <mkl@pengutronix.de>
-> +R:	kernel@pengutronix.de
-> +L:	linux-can@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/net/can/rockchip,canfd.yaml
-> +
->  ROCKCHIP CRYPTO DRIVERS
->  M:	Corentin Labbe <clabbe@baylibre.com>
->  L:	linux-crypto@vger.kernel.org
-> 
-> -- 
-> 2.43.0
-> 
-> 
+Thanks
+Nicolin
 
