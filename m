@@ -1,134 +1,145 @@
-Return-Path: <linux-kernel+bounces-276823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E851E9498D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:09:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF7B9498D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:10:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A17EE285071
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:09:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D1061C21C16
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A0F13A26F;
-	Tue,  6 Aug 2024 20:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81EF814A099;
+	Tue,  6 Aug 2024 20:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gtN6Zawz"
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ss93FVLv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5EB7580A
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B741938DD8;
+	Tue,  6 Aug 2024 20:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722974941; cv=none; b=K2bkZ1layuF3IwmyqXEq26gqVIQs/lliquaDKTXZeaCkUAKPUx/uaZwCUc1LRq1RTkcR6VBehDGryinekc2VcYsT4Iad5tWR4Tb8g2Q0hhRjkYAyCfsetpVriMQParAYeEqDTljnEmtyZakEmpC2RqWZWpKdxKeTOw9bpnfHSMg=
+	t=1722975037; cv=none; b=Gejqt7cBrnUNJwWOCGUUuZ9iL74c0mFL42s1gmbP3xpTbeh2E4u/d+3JisS3i1sgv2BakmibINouJme2ZdtbwHRb8Meok2KceGj6anBt2Z3aWrDMZVR7BOcMYiz0Jj2VTdy7fG3jAdUJe8Uu7GAZQtd+TjpAW9A4CZVHfIQZdNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722974941; c=relaxed/simple;
-	bh=HA5MIyAq3K4wBmGAXx7kvjvMbEMdBSz1eDV3WE70Kl0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NLlJDmQ5fmNYbdl9DAwgoL2rDzWI5cR9/Q+eLu8kQEz6o49o2+nNwcavXHMYbPIYJIA2GPJVwoDh4K99kSB/oxEAR7uMrwJanNDcW8fyIBedtqpAkrW6qBpogwoneMGbw0F/AncvrLEFwPJchVVY+Z0ynR5BFeOhedRcqpOPMbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gtN6Zawz; arc=none smtp.client-ip=209.85.217.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-49299323d71so425885137.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 13:09:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722974939; x=1723579739; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XUkvCg+RsxL9ebqULPF0t5iB+5m6NBdGn9KgAoU3S/s=;
-        b=gtN6Zawza9ctKvg+NnhdNddtUaqWEkLLosr4TQ7xrkIAOfflDczAsDlanvY7d9FArr
-         SOEyHaAooajef5EIyVXrts0hxKjKztc2ZTcmR1KsfIr0N/lpJDW3CUhJfH3Qi+xivUVE
-         //jVnRzzBrTXfmBzi/pVcNxTkFJVvXe6o6J+8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722974939; x=1723579739;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XUkvCg+RsxL9ebqULPF0t5iB+5m6NBdGn9KgAoU3S/s=;
-        b=fZHH8lqLvVogehyeuURBcvTr32gkrlN3PLx1uDmY/JNipC8WNp76Pnh5NlHcbLpKvW
-         shUN1V282YKdaRYDa2sr6drFdiF5OEQrT1gmHlwoMQCIi2soqCr7Kc+nDzYwjUVjb8LY
-         tMzh1XVkSD2Q6YTcj7+3oeqrDzIw2ZyT2PhQA4Bu4hQfos4QYLZHlyiydY7LSq3U6k6H
-         HuJPEFg+MwtNXFQIbwCQ075Y6fHqLuPLCePrmRqd71zs8KeGt5XKH0FiuV7AXt6Q0oWy
-         TUY1k3ex2dtulwzD29Qqihp6Y9Q3O0s0S1rbyN4gtvzVqydYkEr+vd2wthl1lQTtDbWf
-         R+zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpQ4F9Prf/1ij0XdqxiiynJxvds/Rl/EfChzSGnA/rTSs/IC4mHio0QXxlYM5dcy0I3xBBroI+Z5aWHCiM6KqEGS42x8PaTdFqwBnw
-X-Gm-Message-State: AOJu0YzyS0zENZAfaw8+dxdUaBSXj/LFwgzqRU9CWgT+jk1g0JQ2jVL0
-	UYyLEw5OJn15/eysFv4H6mqO9Mb042O/wgE4CJVIjLqgCp9iLP/K2qtDZZlK7A==
-X-Google-Smtp-Source: AGHT+IFfSWZW6P76X9v61/mj/6S3tRRSFE21DqG896oRSD41MC2S4TF4vbAu8H9XY+BIhrwTHBOFVQ==
-X-Received: by 2002:a05:6102:3049:b0:493:ddd1:d7fc with SMTP id ada2fe7eead31-4945bdf7cf9mr20304623137.11.1722974939132;
-        Tue, 06 Aug 2024 13:08:59 -0700 (PDT)
-Received: from spinny.c.googlers.com (39.119.74.34.bc.googleusercontent.com. [34.74.119.39])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4945da8b74asm1830562137.7.2024.08.06.13.08.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 13:08:58 -0700 (PDT)
-From: Esther Shimanovich <eshimanovich@chromium.org>
-Date: Tue, 06 Aug 2024 20:08:47 +0000
-Subject: [PATCH] acpi video: force native for Apple MacbookPro9,2
+	s=arc-20240116; t=1722975037; c=relaxed/simple;
+	bh=SSiLomxL//zY67+OfrSfJCKDltG7KAmpSaLz5hXWlqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EOpUTN7sfx/COEib+LiOD/DKofr5reJD44BfBkv8PQ1MA/h/o2N3OgAYXHMeR4fWHNgr2hOsu0VEFPdngccFpqQNBx8dgL/gY3fz2yEtPrz+E0r2X6bBdQaQE05oOT23gjYmbzn5y0ihAcpWeGCVgdb56+9ebbbtH2/CHnsF3Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ss93FVLv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD94BC32786;
+	Tue,  6 Aug 2024 20:10:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722975037;
+	bh=SSiLomxL//zY67+OfrSfJCKDltG7KAmpSaLz5hXWlqs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ss93FVLv34StJ+xuJI6MJltQ2GcdU2Etb2vuw+r1BM+KEW1PgHFl+Z2OctLjEoA9y
+	 IGI7Ox6GVVB1AHVRC6hqRfuTi5NuqXLVFOhyJiQKOmI9DteEvT7WADraJBZW5uc2Z1
+	 GpqWX1VuyA/m2mlNBTJBHgSv5hRi5MPau+3fVx4z6wjoUBvo2Sacd86I28v5AEYFn/
+	 wE2HRR7hbV4kKWABcgIUJPPF3nE5BlH3PBgTg1ZT1RJ46bb3WWoi7bQ1FHR6whAh8X
+	 0yI4xPaMfcGSZeAgqq3phenE6XpCe0lpCjNuZw1voIH3VtXW+//7d38Tga56O+Qr0O
+	 AKcF9NUpy5zmw==
+Date: Tue, 6 Aug 2024 21:10:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, jannh@google.com,
+	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH RFT v7 9/9] selftests/clone3: Test shadow stack support
+Message-ID: <b172c2c1-42d3-4c50-8065-9bd4ae21ffea@sirena.org.uk>
+References: <20240731-clone3-shadow-stack-v7-0-a9532eebfb1d@kernel.org>
+ <20240731-clone3-shadow-stack-v7-9-a9532eebfb1d@kernel.org>
+ <202408052046.00BC7CBC@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240806-acpi-video-quirk-v1-1-369d8f7abc59@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAM6CsmYC/x3MywqAIBBA0V+RWTcwSvT6lWgROtYQ9FCSIPz3p
- OVZ3PtC5CAcYVAvBE4S5dgLdKXArvO+MIorBkOmpo4anO0pmMTxgdctYUOvbe9Je2pdDyU7A3t
- 5/uU45fwBlAHqomIAAAA=
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
- Hans de Goede <hdegoede@redhat.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Esther Shimanovich <eshimanovich@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="A4C5k1PZaqbvidwo"
+Content-Disposition: inline
+In-Reply-To: <202408052046.00BC7CBC@keescook>
+X-Cookie: One picture is worth 128K words.
 
-It used to be that the MacbookPro9,2 used its native intel backlight
-device until the following commit was introduced:
-commit b1d36e73cc1c ("drm/i915: Don't register backlight when another
-backlight should be used (v2)")
-This commit forced this model to use its firmware acpi_video backlight
-device instead.
 
-That worked fine until an additional commit was added:
-commit 92714006eb4d ("drm/i915/backlight: Do not bump min brightness
-to max on enable")
-That commit uncovered a bug in the MacbookPro 9,2's acpi_video
-backlight firmware; the backlight does not come back up after resume.
+--A4C5k1PZaqbvidwo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add DMI quirk to select the working native intel interface instead
-so that the backlight successfully comes back up after resume.
+On Mon, Aug 05, 2024 at 08:54:54PM -0700, Kees Cook wrote:
 
-Signed-off-by: Esther Shimanovich <eshimanovich@chromium.org>
----
- drivers/acpi/video_detect.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+>   # Running test 'Shadow stack on system with shadow stack'
+>   # [5496] Trying clone3() with flags 0 (size 0)
+>   # I am the parent (5496). My child's pid is 5505
+>   # Child exited with signal 11
+>   # [5496] clone3() with flags says: 11 expected 0
+>   # [5496] Result (11) is different than expected (0)
+>   not ok 20 Shadow stack on system with shadow stack
 
-diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
-index c11cbe5b6eaa..2d377414f873 100644
---- a/drivers/acpi/video_detect.c
-+++ b/drivers/acpi/video_detect.c
-@@ -547,6 +547,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
- 		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookAir9,1"),
- 		},
- 	},
-+	{
-+	 .callback = video_detect_force_native,
-+	 /* Apple MacBook Pro 9,2 */
-+	 .matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "Apple Inc."),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookPro9,2"),
-+		},
-+	},
- 	{
- 	 /* https://bugzilla.redhat.com/show_bug.cgi?id=1217249 */
- 	 .callback = video_detect_force_native,
+> The child segfaults immediately, it seems?
 
----
-base-commit: d9ef02e56f0fd3668b6d7cb17f9399ea53f12edd
-change-id: 20240806-acpi-video-quirk-f1c9f01f07d9
+Does this help:
 
-Best regards,
--- 
-Esther Shimanovich <eshimanovich@chromium.org>
+diff --git a/arch/x86/kernel/shstk.c b/arch/x86/kernel/shstk.c
+index 1755fa21e6fb..27acbdf44c5f 100644
+--- a/arch/x86/kernel/shstk.c
++++ b/arch/x86/kernel/shstk.c
+@@ -198,13 +198,14 @@ int arch_shstk_post_fork(struct task_struct *t, struc=
+t kernel_clone_args *args)
+ 	 * the token 64-bit.
+ 	 */
+ 	struct mm_struct *mm;
+-	unsigned long addr;
++	unsigned long addr, ssp;
+ 	u64 expected;
+ 	u64 val;
+-	int ret =3D -EINVAL;;
++	int ret =3D -EINVAL;
+=20
+-	addr =3D args->shadow_stack + args->shadow_stack_size - sizeof(u64);
+-	expected =3D (addr - SS_FRAME_SIZE) | BIT(0);
++	ssp =3D args->shadow_stack + args->shadow_stack_size;
++	addr =3D ssp - SS_FRAME_SIZE;
++	expected =3D ssp | BIT(0);
+=20
+ 	mm =3D get_task_mm(t);
+ 	if (!mm)
 
+--A4C5k1PZaqbvidwo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaygzQACgkQJNaLcl1U
+h9B6Xwf/UaYSzrSa86cliyUv9R+kMDZyJtEseOLNm/iYYkVCDJsd9eDaXt2NIaLj
+BvGnXKy8+G7KT6n4qkCHFFajGljl9yKWMchEyF2R9St1XWH8rcu4YXfoOxpy4Axo
+BbQFDUVksmQg+/+NsuTOrd9mWDKfh+tOFN4yuImGcR5prKaXEnP8+wWcJrkswdxD
+kl0AnUXB1cW6a5tMmdgIuA4csSQIFWQjiKg2BBqd29otKX58tM1zReYV+46v1CsP
+l7B811tIonjJncQlRdD+XQWiJZk+VNTE0+u6qWhulrAqRIMp99lugsN1Z7Puv8WN
+e9MAhZDjlEAOppyR3AuZgrZCrp9/jA==
+=2dt8
+-----END PGP SIGNATURE-----
+
+--A4C5k1PZaqbvidwo--
 
