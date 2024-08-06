@@ -1,109 +1,122 @@
-Return-Path: <linux-kernel+bounces-275531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16F29486E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:05:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3189486E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6EE1C22352
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:05:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAD2E1C2228D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3666FD5;
-	Tue,  6 Aug 2024 01:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4977179C0;
+	Tue,  6 Aug 2024 01:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YzxEzO1F"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f8Y0gvDC"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732B23D62
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 01:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F018B4A15
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 01:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722906328; cv=none; b=OIqJg/W/QWexfo0KELGOX+fKorkOmzKbsnjvXjkAfIo20l1WNvGi7quxW8cAGF8z0xJ+/0K3a1/XKXMwXx7Iv7FXg6c0xGBycElDOMcNe051UPG53uf1MQPaFvlLWtnuhU830CfEUb99pWXYyAcOFzwnURBfteoiqW6mJHnb1Pw=
+	t=1722906484; cv=none; b=jM1P2AfJHdxxeCSqRCQMK+ZdeYsFybBDJevV+JGDQLT8dgnI13In5Q2ftrphhm5KJ7XXlwjPG64EbKbeqR3NVSBzs0+rShoYayMOloTIGgdTpta/c6KfWeRQNmod9/6XAYBtWgeSanWqQogUvs+SD4jkBKDa4K6gWAEqVAbn+Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722906328; c=relaxed/simple;
-	bh=EWIVw3BD5pZ9LYfI27N3hczCVsae/1ZQC5jUV+hg/Gs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J087K3aYFc69FOGWFFCJXGVtf79oqBxylT+fdOubc+jY8rdyVB30iYGE0R7hK6MkAEfSo4ya/vH5HMShkHzEFaJt1PewM3TT9DEWcQq7BYN9KLJmQcVxggKnwMRwIPiKjjcgL7bGtAAkbiFt35+XQiTDkh7R2y8pBurvwbMC02I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YzxEzO1F; arc=none smtp.client-ip=209.85.210.49
+	s=arc-20240116; t=1722906484; c=relaxed/simple;
+	bh=l7cAiRt8kOKCDFenfYmQSEyC20G3OW9HdO4GxtHcxQM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NGuZcjgepkUphfFpTJ8sdSuhoN4cLLEVgJ05VY+9qYEbluzHkm950c2RzDnfxjB6VsejPFHRhsNFfu3Cp2tV0SOUNO+ljPkE7KVimxHywXTyCynS69EunjWKDCEYeoABjynIackmmjmXr8sVJgOtqgFwKnVXR+OLMW38ICycpzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f8Y0gvDC; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-70b3b62025dso449741a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 18:05:27 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7aabb71bb2so1343180866b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 18:08:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722906326; x=1723511126; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cgHEXBLzdjfR1flI96zKqgpNHrnaCn0RVRpjPfksRBM=;
-        b=YzxEzO1FGxZuDWTBFla0PghlTjz0rk4v9GFOwDDuQ+gDF3yUGaamtD2envekeS/5yU
-         NirnV2pGywRAKPc5SQi2/GkBKyqDS8L7dZqvGuEUYB3yqaue85S7lG5T1eF0yeSjmoJb
-         fBsaIT4QiVWE898ebDYS0Eybgtir8eKXhrVdHXvruQ1IpXw8XWsMUhVoPR91c5TVYEWY
-         1rpQRxXWrv3WJS0mVxNY8zVl53EZYyV/m6DjIzev/ZE2I021/1M1lULjfaF86Og3gorj
-         /8ji+7UrLG40bhPHlmzF/0omnqp77saYSrdUy+lUDZSzNrEMKICfs2xu11sO35P9B9wE
-         CHXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722906326; x=1723511126;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1722906481; x=1723511281; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cgHEXBLzdjfR1flI96zKqgpNHrnaCn0RVRpjPfksRBM=;
-        b=taSH4DtnDzvpWqBJl4i/nNKo3Ln6q2oBfa8N8fUA7VI7TyPKCsxkXw8F4pnj8vfB6Q
-         w42WlV3DLce+qO8O9QUZOa0NhyoKziNIeDYhZ6H2ro4N+xVX0hk4v5zS88FydKQSu2Jw
-         PZMrmoAv1kgT3LCUZYv9un/Db1Sx/nZGZjCQJouawmiEo23as3YbPP8Ahyh1GEP5AhWb
-         fHWNzSrKb03deA8QJVuqVGW3GlmrKV6DozPKNXGyYizIoHn+rvm6Drfonb+O1quPrENS
-         hESvK2c4d+kTdhoC+T5NvMG1AkEkW8zc3rbl9Y6aK7a0jGAsBF4YTx64urp7NjTciCQ9
-         Iw8A==
-X-Gm-Message-State: AOJu0YxrdHmh1n9vzBah98FFR810SzvvoEvQU7casnPc0gnQZ0sytSdp
-	wTf/YUKPQPQ+Mx4T2wwtxNGBIdeKOJakkO+2eqpDAhI7ZJCn+2Uz1qPluzziSw==
-X-Google-Smtp-Source: AGHT+IFZSqUe07+gWoVDJrLCl9r3PrZY3R04PnGB2hlgedOYvkft6In9wyh/t33eBaiNTM/qmdAuog==
-X-Received: by 2002:a05:6830:6e19:b0:704:8660:2672 with SMTP id 46e09a7af769-709b996e591mr23789589a34.25.1722906326379;
-        Mon, 05 Aug 2024 18:05:26 -0700 (PDT)
-Received: from google.com (57.145.233.35.bc.googleusercontent.com. [35.233.145.57])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b762e9c066sm4934403a12.13.2024.08.05.18.05.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 18:05:25 -0700 (PDT)
-Date: Tue, 6 Aug 2024 01:05:22 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
-	"J. R. Okajima" <hooanon05g@gmail.com>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2] lockdep: upper limit LOCKDEP_CHAINS_BITS
-Message-ID: <ZrF20rJmu2RwQ4V5@google.com>
-References: <11faf952-c0f8-6e1d-3560-12d77847a8ac@i-love.sakura.ne.jp>
- <20240723164018.2489615-1-cmllamas@google.com>
- <20240731164823.c8ac96ab0f8968ce8213c02d@linux-foundation.org>
- <ZrEuz9bjZcBq6jNG@google.com>
+        bh=r6ndtU8uZ3NwtS+ORp+o4K5xii6RVoLxBCf1D4iTv9w=;
+        b=f8Y0gvDCZOdVnDgwRsSri879FdeUz5TqfDgwXIVgbw6p38OJVtlnpVik/HGJda2JRw
+         cOIcRMkX3KOt55o1QKbpMvWW6mld+lbyV8tmHMuPyGuB2mYbjS3/D6B5IpnIgwLiHwdY
+         bmnUXGNB60TMPLHkygCfSLNLgEpdqnoklgGHlm1Q5egAGlcnwGiF2h6Ls0wgzw6oQ9J3
+         FKG7s24pQxi5MT529BKGyvsYe1OwEG1x2WYGJUKW1B1aNEMK34xDZpxd1TysVgn4Qff+
+         zvgWsgaYvQ4DwYbOppfHoMFbK0USEAo3o4V39BJh4Izs4OWYjRkowatsBpBHTRbNe7kQ
+         fo8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722906481; x=1723511281;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r6ndtU8uZ3NwtS+ORp+o4K5xii6RVoLxBCf1D4iTv9w=;
+        b=EUUmFPzhvppS/+NQOG9URdw8X2fEoCN/X/auUhv3gZTWLrnjBooZAiw10JM0g3f17D
+         oD0keDrq3ZDBdKPpyvoKnJc0dOJwzcMKe1s1Hc8cDbDhH0VPakGWeLFhIZtafQbI3mfy
+         9hlJ252w5H7BcCvAhfG45idQ9h0N+Ck4xoLE2/mb1m7qM8Zc04jBrzgb+T5cNMbVBcQd
+         QiX2+mApDGYmkH1JtPRXJWrvA8/EuFltD6dM7C8VbSoEFE8hBueLLZ7+vn66ncIIJToV
+         p/vwvWvpUwYl27Mf9Wbh5rJLxMKMdgDSJlg1mP8fjciA5BLwfLpfdQmOwb1i/cFcdE4H
+         NV+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUz6uAVauqC+tttdpKJf0RbQGFwNY8K0eaFeOok5n/AnTVz1eYxwyffRsS4EQV8gxFl8z3MVYTEar3n09+HY1aLQv7xaI074UKIgakE
+X-Gm-Message-State: AOJu0Yx50HXvBzYHsF17GzvxYsg0uM34GOVhYSnpHJ17JNYtCVOTyzhC
+	zc6Wg9pR7+tvZzIVVUzIF3PyOuqPvSQaePqaZ+qhPnZ8TuwGakVRKSe8wpAnWcAjkBAkmx1hbrD
+	fRMrgdJc8N8xaDOT8BijG8IBJJyEr8LI/4sbk
+X-Google-Smtp-Source: AGHT+IFYsmuj2eHWrNVeUnRZvUF9JRFvdYm29RIdAQF9ytbZxgKKjw/ejQs71dC7KD6rFO3aPrr5vcCIsgOM7gqvDbE=
+X-Received: by 2002:a17:907:7b8a:b0:a77:cca9:b21c with SMTP id
+ a640c23a62f3a-a7dc4e8c3e5mr1042930566b.34.1722906480523; Mon, 05 Aug 2024
+ 18:08:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrEuz9bjZcBq6jNG@google.com>
+References: <20240805232243.2896283-2-nphamcs@gmail.com> <20240806003403.3142387-1-nphamcs@gmail.com>
+In-Reply-To: <20240806003403.3142387-1-nphamcs@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 5 Aug 2024 18:07:24 -0700
+Message-ID: <CAJD7tkZACWjdr6Cow74XO+Kw1Pdt7esHQss03M5f2U6P6Ey_-w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] zswap: implement a second chance algorithm for
+ dynamic zswap shrinker (fix)
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, shakeel.butt@linux.dev, 
+	linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
+	flintglass@gmail.com, chengming.zhou@linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 05, 2024 at 07:58:07PM +0000, Carlos Llamas wrote:
-> On Wed, Jul 31, 2024 at 04:48:23PM -0700, Andrew Morton wrote:
-> > btw, the help text "Bitsize for MAX_LOCKDEP_CHAINS" is odd.  What's a
-> > bitsize?  Maybe "bit shift count for..." or such.
-> 
-> Yeah, maybe a _SHIFT suffix would have been better fit for these configs
-> instead of _BITS. Similar to PAGE_SHIFT or NODES_SHIFT. Anyways, I can
-> send a patch to improve the help text. How about something like:
->    "Size for ... (as a power of 2)"
-> 
-> I'll also send a separate patch to fix the rest of the upper limits. Any
-> of the (1 << 30) shifts allocates static arrays that blow past the .bss
-> segment. Just as originally reporeted by J. R. Okajima.
+On Mon, Aug 5, 2024 at 5:34=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrote:
+>
+> Fix a small mistake in the referenced bit documentation.
+>
+> Signed-off-by: Nhat Pham <nphamcs@gmail.com>
 
-Ok, I've sent a patchset for these bits at:
-https://lore.kernel.org/all/20240806010128.402852-1-cmllamas@google.com/
+Acked-by: Yosry Ahmed <yosryahmed@google.com>
 
-Thanks,
-Carlos Llamas
+> ---
+>  mm/zswap.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index fb3d9cb88785..44a7234a7b11 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -188,8 +188,8 @@ static struct shrinker *zswap_shrinker;
+>   *          decompression. For a same value filled page length is 0, and=
+ both
+>   *          pool and lru are invalid and must be ignored.
+>   * referenced - true if the entry recently entered the zswap pool. Unset=
+ by the
+> - *              dynamic shrinker. The entry is only reclaimed by the dyn=
+amic
+> - *              shrinker if referenced is unset. See comments in the shr=
+inker
+> + *              writeback logic. The entry is only reclaimed by the writ=
+eback
+> + *              logic if referenced is unset. See comments in the shrink=
+er
+>   *              section for context.
+>   * pool - the zswap_pool the entry's data is in
+>   * handle - zpool allocation handle that stores the compressed page data
+> --
+> 2.43.0
 
