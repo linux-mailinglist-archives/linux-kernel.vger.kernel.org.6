@@ -1,128 +1,137 @@
-Return-Path: <linux-kernel+bounces-276506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4371A9494B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:41:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86DDE9494BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6A11F25521
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:41:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EB671F2305C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD34755C0A;
-	Tue,  6 Aug 2024 15:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B5938F91;
+	Tue,  6 Aug 2024 15:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="VfEMfp9v"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gF0zgAFx"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F7E47A66;
-	Tue,  6 Aug 2024 15:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEB42C6A3
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722958784; cv=none; b=eD0DqeTrIqAaQciijBY0N3mmwYuj8EyRHaNU3CsQobjvA9CUG9WWX0/S5iaV2biWfcGdGgMOjcIMlb6R8WRVDmAPCpvgWSlHWa4QbC8F1PJ02f/cYh733tXoI+kS3Jj5LilLBCfZYhGO3TXN4q3g4wDjh3jyymX2sH378rYA7Uo=
+	t=1722958933; cv=none; b=aNKnZ5BJpQNYuC48IOxdp6YUeYfEqZFwGyN088KPrRFGgA6sGVQZrjllZnxF/IhBU1396vzF6+SlzdjyFGzpyTELX8H3bWEhdsmPmF00Ywx5S4P4NJy8iHLxCnDP2YL4zbA5eHu8+WnT82hEq1PDs8NTxNHH5gvOVGG+7Sc0b9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722958784; c=relaxed/simple;
-	bh=b7ozdsbwfMXW21Tyt4Tt33Hq8k141H7HbyANf37oXi0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Exu/7ZxuqQ50IVqnX8ulsJO0jY9g1patois89mH9Nw5tp7l5cEV+KJz/q1d4zd+NpV+DIn09g5ICvScnUBgFW0wo48mO3ts4E1OyH0MUZ6BJrKWQAZvR7CXoSI7lhwJIVctWkhRIq+oKsivU3C9afaS8/W59pMsnyZHmZqSRHDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=VfEMfp9v; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1722958933; c=relaxed/simple;
+	bh=2F97gembZB7Ph+t8UMlLUN/RaEUIDWcSTRDhoreN85k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ejYg2vZqeQ/lo58L86m8nGICwf6uWtnvyoQzJmcjKE+dEYuay5Sybk05/jSlnbcMgbnLk+mnVKkVeV/WEo3kCyGScntZmzXzZIrWmh12aBPuHxVWJWugGZfmKmuNuJsevOo78+nTHcQmg87TPYcWNZ/ZmFVLLfZtqAc31reWow8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gF0zgAFx; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3684bea9728so450266f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 08:42:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722958930; x=1723563730; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=THccCsa9d44/a7k4O9weE7Ak3VSX2fq1wLCNhXJEyK4=;
+        b=gF0zgAFxz4+lyXxqmdcJ9DIETmodb9nwyfmVSw6EKIX+GwPLP3UYEJUwGTab3mxJAz
+         23uXBSz3geC0U/gzV1GiAcTend95GCJlXup39W2Yphi2d1rydc6AuHfbVzkTeJ8aUC/L
+         5WL9Ry3ywy/tDzsKmoue7HlXxW3eo6od4UNIyoHMUPo8fjr0CBjoj+Ns6LcPbXgtqjJl
+         rVsOHtJ6T4afw1MZ40Dm3unSj1JLD2X4cNZHBhSTw9QB2d5TJxr9CsHAgUvHKWjY28v3
+         IKcNMee9UJcJLwFeh/KXJa7LosU2nXRWrA9L1XdCKZ33Mt03Bys/uCsp/2y/YBM5bzO6
+         mD3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722958930; x=1723563730;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=THccCsa9d44/a7k4O9weE7Ak3VSX2fq1wLCNhXJEyK4=;
+        b=p6gDeZ1CoVbb6LN4jYjwMJGrQEaSO5xxMioaP1CD7ye/H9ZdH1KrbGvSbYBKdJptZv
+         pfueT/DxQmKV2bCM3NwmdfzbGqut5/D/3ubzPWNyxoxkM4GcV6CEz9LPKqE6YlYlMuF5
+         udHmFsj1GIKUJLZx3X8mLb1UEI0eC0heF+6/A5fgqMp9MCMDW+VHbPfYyxihn7ZVhAhZ
+         6rj1jynMaMkLt9wrJD5y8bc75pLUhbf0skSBMmiXeEIJaRdgr7fJMI4ggYkpiYWLpsAX
+         I/INbTPyp/jWy6VFKfmyJ35GZDtItSyt7Ivs/qu8w46qnRipeJx/fcCj6vgU9UxQ1Hso
+         H4aA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgZIDp5ev7vbemN37KWPYV53snnSjP9NpoYf4+8Jg5v5cHECxWI7lMAcL+7auTKR0BJDV88CvMBI0qupU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy09GEg8ZhoFnVEfaThY4VBiXmelWEI8PhGD/MDD2/YbeMEDDNU
+	EUnylJ8mUko6LA6fztApYGqhYFDdhw0fFRxn4d7jGyOqTtrV0jRYBHNwUUIdX2utzYl6bhaK8of
+	gaMqu92/6YgTmLE5tzGdzozDwOK+2MlPUijch
+X-Google-Smtp-Source: AGHT+IFy1q1xSU6pQqfOY13ZKc31YixugPXTYoG2iOCjOHiY5xXt+yoxINs0iVcTVHkdmSjbDCF8Z08VAJ3+o8YTt88=
+X-Received: by 2002:a5d:67d0:0:b0:360:7c4b:58c3 with SMTP id
+ ffacd0b85a97d-36bbc17ec0emr11080309f8f.54.1722958929954; Tue, 06 Aug 2024
+ 08:42:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1722958773;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Chn8ymlqazavJ1DZmXPdLBrye9DBk3cugxlezlxhvc=;
-	b=VfEMfp9veTf9vofJGHvARhjKJLQWxXoE6CZ4ZfPJBcyubeBt6RFYznvEmk0qhNLGaLcWIZ
-	V4ZVilXZpCU9C/H3Fj/ysZ/XgET0TF1ZDcxMeq8V3CyxyQdsNk7NIj2fbogg2t01z7WsLv
-	wvZqgRJCniv7XWLsHstRuSCgMls15R5RXpdkYXYEbuirc0/HNhXfXfbC+UTQp1+RTHuNyc
-	HQCGgdhhrNGrjo/ZN4a8er9JdyzG+eHz0KiwhMuHq/wV0VtW6AozR7DoRbDrDnLY5G34gi
-	SGgRl+hV/9eqi04hVkBzZk6CNzURj7hKvvnqvMopGb0w7ymNHesO9/LnmyrCtw==
-Date: Tue, 06 Aug 2024 17:39:32 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>, Ulf Hansson <ulf.hansson@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh
- Raghavendra <vigneshr@ti.com>, Joern Engel <joern@lazybastard.org>, Keith
- Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Sagi Grimberg
- <sagi@grimberg.me>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Florian
- Fainelli <f.fainelli@gmail.com>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v3 2/6] nvme: assign of_node to nvme device
-In-Reply-To: <66b21f20.5d0a0220.200175.4b9b@mx.google.com>
-References: <20240806114118.17198-1-ansuelsmth@gmail.com>
- <20240806114118.17198-3-ansuelsmth@gmail.com>
- <20240806124312.GB10156@lst.de>
- <66b21f20.5d0a0220.200175.4b9b@mx.google.com>
-Message-ID: <ceab3813dad635387e9f216203292fbe@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+References: <20240806150619.192882-1-ojeda@kernel.org>
+In-Reply-To: <20240806150619.192882-1-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 6 Aug 2024 17:41:57 +0200
+Message-ID: <CAH5fLgiPS9ByFPU+4GoLUwgH=GTD0xkCp2mi9zvaC6XzLpP03g@mail.gmail.com>
+Subject: Re: [PATCH] rust: add intrinsics to fix `-Os` builds
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	rust-for-linux@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello all,
+On Tue, Aug 6, 2024 at 5:06=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
+e:
+>
+> Alice reported [1] that an arm64 build failed with:
+>
+>     ld.lld: error: undefined symbol: __extendsfdf2
+>     >>> referenced by core.a6f5fc5794e7b7b3-cgu.0
+>     >>>               rust/core.o:(<f32>::midpoint) in archive vmlinux.a
+>     >>> referenced by core.a6f5fc5794e7b7b3-cgu.0
+>     >>>               rust/core.o:(<f32>::midpoint) in archive vmlinux.a
+>
+>     ld.lld: error: undefined symbol: __truncdfsf2
+>     >>> referenced by core.a6f5fc5794e7b7b3-cgu.0
+>     >>>               rust/core.o:(<f32>::midpoint) in archive vmlinux.a
+>
+> Rust 1.80.0 or later together with `CONFIG_CC_OPTIMIZE_FOR_SIZE=3Dy`
+> is what triggers it.
+>
+> In addition, x86_64 builds also fail the same way.
+>
+> Similarly, compiling with Rust 1.82.0 (currently in nightly) makes
+> another one appear, possibly due to the LLVM 19 upgrade there:
+>
+>     ld.lld: error: undefined symbol: __eqdf2
+>     >>> referenced by core.20495ea57a9f069d-cgu.0
+>     >>>               rust/core.o:(<f64>::next_up) in archive vmlinux.a
+>     >>> referenced by core.20495ea57a9f069d-cgu.0
+>     >>>               rust/core.o:(<f64>::next_down) in archive vmlinux.a
+>
+> Gary adds [1]:
+>
+> > Usually the fix on rustc side is to mark those functions as `#[inline]`
+> >
+> > All of {midpoint,next_up,next_down} are indeed unstable functions not
+> > marked as inline...
+>
+> Fix all those by adding those intrinsics to our usual workaround.
+>
+> Cc: Gary Guo <gary@garyguo.net>
+> Reported-by: Alice Ryhl <aliceryhl@google.com>
+> Closes: https://rust-for-linux.zulipchat.com/#narrow/stream/288089-Genera=
+l/topic/v6.2E11-rc1.20doesn't.20build.20for.20arm64/near/455637364
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-On 2024-08-06 15:03, Christian Marangi wrote:
-> On Tue, Aug 06, 2024 at 02:43:12PM +0200, Christoph Hellwig wrote:
->> On Tue, Aug 06, 2024 at 01:41:12PM +0200, Christian Marangi wrote:
->> > Introduce support for a dedicated node for a nvme card. This will be a
->> > subnode of the nvme controller node that will have the "nvme-card"
->> > compatible.
->> >
->> > This follow a similar implementation done for mmc where the specific mmc
->> > card have a dedicated of_node.
->> >
->> > This can be used for scenario where block2mtd module is used to declare
->> > partition in DT and block2mtd is called on the root block of the nvme
->> > card, permitting the usage of fixed-partition parser or alternative
->> > ones.
->> 
->> Err, hell no.  Why would you wire up a purely PCIe device to OF?
->> PCIe is self-discovering.
->> 
-> 
-> Well on embedded pure PCIe card most of the time are not a thing...
-> Unless it's an enterprise product, everything is integrated in the pcb
-> and not detachable for cost saving measure or also if the thing use 
-> PCIe
-> protocol but it tighlty coupled with the SoC.
-> 
-> This implementation is already very common for all kind of pcie devices
-> like wireless card, gpio expander that are integrated in the PCB and
-> require property in DT like calibration data, quirks or GPIO pin
-> definitions, i2c...
-> 
-> In modern SoC we are seeing an influx of using cheap flash storage
-> option instead of NAND or NOR as modern hw require more space and price
-> increase is not that high... Almost any high tier device is switching 
-> to
-> using emmc and even attached NVME and simulating MTD with them for easy
-> usage.
-> 
-> Please consider this well used scenario in emebedded where PCIe is just
-> a comunication way and the concept of detachable doesn't exist at all
-> and things can be described in DT as static. Also these storage are 
-> used
-> for rootfs mount so userspace is not so viable.
+This fixes the issue I ran into.
 
-As a note, perhaps this is another good example of a "fixed layout"
-PCIe device found on an SBC:
-
-https://lore.kernel.org/linux-rockchip/20240805073425.3492078-1-jacobe.zang@wesion.com/T/#u
+Tested-by: Alice Ryhl <aliceryhl@google.com>
 
