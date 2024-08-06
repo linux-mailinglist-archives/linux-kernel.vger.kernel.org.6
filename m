@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-276874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DD8949967
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:45:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D020394996D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A273287798
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:45:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85F161F22275
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9096D15E5A2;
-	Tue,  6 Aug 2024 20:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9056315B10A;
+	Tue,  6 Aug 2024 20:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fNmonm7D"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXQFa+4n"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2295447F6B;
-	Tue,  6 Aug 2024 20:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCCA77F08;
+	Tue,  6 Aug 2024 20:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722977113; cv=none; b=muAMfp4Hpher3W29JyJavwn/Ef0demCKgYZc1cUe3BxtlAUaihLW6xDc1E8G9q5B0JRTWHZzXK7+dQ+km8SXhcvA40KWZxnMsBaDnofA8pEhtvOvPVdU9iQJV2AKF4ykM4D2ext2v39ESPn245Zv7w0BVq6UnWB6+uTjCAPdiKk=
+	t=1722977165; cv=none; b=V6BRovo2OVTFRY9pluDKwL8JT7QvqATXmgi/0czlF/I6YYumeZvGjVdjeEyYL9h45DJFysvw8rSLkzRiWuPrnXySAjqWC+uctpglIHG6RBgvgfIPQdsRIkR1S1aIDQVzAJU/iMtdjkNHmslDoM+u4mXALmXYoFXgYoxlwR5k2UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722977113; c=relaxed/simple;
-	bh=KIuqqmJpBYBODsWb+cOMINZVAttBqf/tOMB2ESlS/cg=;
+	s=arc-20240116; t=1722977165; c=relaxed/simple;
+	bh=FBPPBXVWYgE3RuKywF6s6v5xBm5ttSryUiyb6Dp8Dg8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Or8h1/et6iMHxbhaW52bv2ageWHKpVUSpu88NSeWxUUU4tocNhMPPbkNc8DVIdw694St7nP2NRoLvGw5nObcO27FCY8gwVwJUsVYZ6h0fHJ+w1L/V1N3aUVSJQ45Gq+pXZH/1MKXsiWJFYInpO0mfUvIfWv2ooSY8zl0Sv3iYwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fNmonm7D; arc=none smtp.client-ip=209.85.221.43
+	 In-Reply-To:Content-Type; b=UeggYifhyeCQVKzlcB0g5RA5qdS6mNkxsksCiwmwtpzIIaXHaOWuxbHiDC1lxUprRahm6FtOKcB1b48aB7X/H0HQG1R/L4JDdT8wNvZeF58rH7Yqq+8XGECZvEWJA/pegRK//K48AtFmFz4VvJxG3t49eA4M1KSrjpVQeLnU12o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VXQFa+4n; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-36ba3b06186so591658f8f.2;
-        Tue, 06 Aug 2024 13:45:11 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef2cb7d562so11214011fa.3;
+        Tue, 06 Aug 2024 13:46:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722977110; x=1723581910; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722977162; x=1723581962; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dOg6CYStGsFYA3cE/78c/lPHwu3rcEs4hIt+mQogWrY=;
-        b=fNmonm7DFpvZTqN6chJOVCfxX3qFEJLnb4hM4pQIN89y09bEzn5QbNl0DgiE1vNR7g
-         UcDE2tTzcr02CKvcnPdjKUs7v6Y/QMCn/0ClmDmBZbNwk5Y5LMeKiQRFZW7hN+JUoAF9
-         IYPru+S/nzRf4C4sSJwDMlo70i95P86fbPxlkYIn6HQCPoWn+imu6gvNTJEhJWkvSLlK
-         syDEoWEunhCa+ez2y+twsbrlDVd+GMOEie8sdPy5Yq1nXukcROwoGMyroKPcME350tzS
-         yCLi9mf3q5IkKqqkJP+gdI/BwkCdqfdaegoD0vpEA/mEygm5I1alYhKSLfBA1SHXcSxX
-         m5GA==
+        bh=LULBEc4FENaLMYCzin9zgQn6oarwP+ZKpZeZTtcHz6o=;
+        b=VXQFa+4nbkeGhMZ9uZ2T5fSf+Fx1/qYR0E0kPzBPQwui69J1fqB046kpCTTqswN0bk
+         viMcNvywbO+YzRQmSsVE/vK4zA67i1FgtVmFPghdFtLWqhbhVJrrHw8MQ/j8WcY/2Ly9
+         sC3O9I5V7REVLnGa0ZhUU8bt8cHWlzpbuzD9zZ5fWWN6vM4TyKX+yBoMDoPzEUeYoVco
+         rjOPlwd5526jO8VrEYzx+329qNqU4HJENWnc8q9E3gLRV+n8tSrUCg546ETY4jJoBsxr
+         p6Ubw9DBtyb3/8Z1FnzhIZyYO4k+dcPc6pF/KR4hYQWO21o5kRE/PLpqlbICu8pQ8cEu
+         tBWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722977110; x=1723581910;
+        d=1e100.net; s=20230601; t=1722977162; x=1723581962;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dOg6CYStGsFYA3cE/78c/lPHwu3rcEs4hIt+mQogWrY=;
-        b=onEdx+UJFxgMfKwPllMhyE3/ci4EWPJ7KYkAV8HVXQuFg98O7AKQnO37h4E9M/XHuD
-         n9uB4F2BtZ3AFQ4TM+bKKQPSbotGfsymnTn3INTb5wamVc2/+i+MU4uGVxwsPXlqceph
-         V9gj68mRNmu3D0y8/o3pcohp9pEQVj+lujLnaXp8+0nuAU2i0Az3koDxTwvXeZASUJ7n
-         NSi8U36jjQVTPu8YCcFnMqbgTAxtnYbrbTR4oNypJkPb4HdW5I+dE+chz+YQZErOMdSu
-         wRBSZffxm/GYMwGc6Mv0X1lmt5/pxVu9aTfftTGTJa0RK8GHaat99fCtWObhFl2cYyxy
-         QqsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrmj64p6STFQYb2Saqi/7aySe+Mstm3vfGPFJm5gNwYJl/nqtOO4qWPfuzTtjEdUkZx48bCnBqsbrnM2AELS54+rbC21nIn/VT5gwXD3fD7EbHfOtQdyAsvlBz0PgxD5s0Ool2mA==
-X-Gm-Message-State: AOJu0Yxn3ufyWCLO3/m5k/1MswyReE67HW8Aob5HWtj0tnnfsvOhgj7S
-	Z8dmKE0cC/NKmDikrcwcYXsNIzjWU4FHRCQ0jWfi2sS1SlV4bd9S
-X-Google-Smtp-Source: AGHT+IGZSd4SSanfsuHMDv/NQfTB4T/YAdjutfajpEpk6SceNnV3BqFIVTXztk1vx7VerGImtafjvA==
-X-Received: by 2002:adf:9794:0:b0:366:eb61:b47 with SMTP id ffacd0b85a97d-36bbc0c6b4bmr9775385f8f.8.1722977109710;
-        Tue, 06 Aug 2024 13:45:09 -0700 (PDT)
-Received: from ?IPV6:2a10:d582:37c5:0:24ff:23cd:356f:3efc? ([2a10:d582:37c5:0:24ff:23cd:356f:3efc])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd26f8edsm13985739f8f.113.2024.08.06.13.45.08
+        bh=LULBEc4FENaLMYCzin9zgQn6oarwP+ZKpZeZTtcHz6o=;
+        b=eWBdenwcaudBzPKXo2U+nWVE11dKsP3ExSiujC8jQNgg6T/mwZiMFxnp7BQzwcAwB7
+         nQX6eEy/CFlmhcu9lGQzZ1TfRGUS6hJOeyQxyr74jSzoAJHIEZ3VcFw/LH4/PXt+z2AJ
+         fLf52XD347nfgcXaHuwuYZAFTLCvqiFLPjPAUmBmDegd3rvvJJhby0Mv0pSKFIBtaVBf
+         7BkxiFHFHBXzDoBoJlYaMZSRfGxllzqMnb+C3LyyTTjKfVGHNSRG61jvYYTSDj55sh2/
+         tXDrdfvRIl1mdvtVcEElSGdD79BTee4/is8vdhzhNsg8Fy4D5yq6xJ0PvE2kOAoWERTn
+         fHLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGAIvF9K+y/wS3rnNP/i2ENMOkobhk46ml7sQn4uwrSnTgBIQr5bdj1wMb/FjKZk3jmFk7LlKDz3IQfhI2k43mIUprIxPa10T1oLbmAz5qOtYBfOXcHUQVB+vWF8QhB73Kx/ZdqM7U7nnR0xPylFknss/ezTJNDXs04amvhfv1QKFaMMzZ5Dp1gxX/8VP1oesuQMSaovvY52VPOc7T
+X-Gm-Message-State: AOJu0Yx5Wa/Prd5OJxeyrtgtw9xWtbdwq5WfNNVCI3/guOQALcV/5Bzk
+	37ldOi6SpxoQ4oRu40O2VtjQWOvbFoCFlzE3mCcrFyboW5aaTNh+
+X-Google-Smtp-Source: AGHT+IFMeaFQDsf+dsHssdxOBCJ7gqaVJ+n/aCw9r/FzaHmGmbGdivVoVbMtHbP7QVFrNjeei9qk5g==
+X-Received: by 2002:a2e:9f06:0:b0:2f0:1a36:1d79 with SMTP id 38308e7fff4ca-2f15ab24cfamr117939951fa.45.1722977161874;
+        Tue, 06 Aug 2024 13:46:01 -0700 (PDT)
+Received: from [192.168.0.31] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b839c23417sm6263082a12.29.2024.08.06.13.45.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 13:45:09 -0700 (PDT)
-Message-ID: <23e8b9d9-d0e0-44df-b464-fc2d1f2d5507@gmail.com>
-Date: Tue, 6 Aug 2024 21:45:07 +0100
+        Tue, 06 Aug 2024 13:46:00 -0700 (PDT)
+Message-ID: <14cd5fee-23f8-4265-96e7-22a5457627da@gmail.com>
+Date: Tue, 6 Aug 2024 22:45:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,65 +75,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/2] iio: light: ROHM BH1745 colour sensor
-To: Matti Vaittinen <mazziesaccount@gmail.com>, jic23@kernel.org,
- lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, Ivan Orlov <ivan.orlov0322@gmail.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-References: <20240718220208.331942-1-muditsharma.info@gmail.com>
- <20240718220208.331942-2-muditsharma.info@gmail.com>
- <5622f011-222a-459e-9086-138adf0796aa@gmail.com>
-Content-Language: en-US
-From: Mudit Sharma <muditsharma.info@gmail.com>
-In-Reply-To: <5622f011-222a-459e-9086-138adf0796aa@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: (subset) [PATCH v3 2/4] leds: pca995x: use
+ device_for_each_child_node() to access device child nodes
+To: Lee Jones <lee@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Jean Delvare
+ <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Pavel Machek <pavel@ucw.cz>, Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Andreas Kemnade <andreas@kemnade.info>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
+ netdev@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20240805-device_for_each_child_node-available-v3-0-48243a4aa5c0@gmail.com>
+ <20240805-device_for_each_child_node-available-v3-2-48243a4aa5c0@gmail.com>
+ <172287362960.2885491.3573302906275384293.b4-ty@kernel.org>
+ <20240805160153.GG1019230@google.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <20240805160153.GG1019230@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 05/08/2024 11:28, Matti Vaittinen wrote:
-> On 7/19/24 01:02, Mudit Sharma wrote:
->> Add support for BH1745, which is an I2C colour sensor with red, green,
->> blue and clear channels. It has a programmable active low interrupt
->> pin. Interrupt occurs when the signal from the selected interrupt
->> source channel crosses set interrupt threshold high or low level.
+On 05/08/2024 18:01, Lee Jones wrote:
+> On Mon, 05 Aug 2024, Lee Jones wrote:
+> 
+>> On Mon, 05 Aug 2024 16:49:45 +0200, Javier Carrasco wrote:
+>>> The iterated nodes are direct children of the device node, and the
+>>> `device_for_each_child_node()` macro accounts for child node
+>>> availability.
+>>>
+>>> `fwnode_for_each_available_child_node()` is meant to access the child
+>>> nodes of an fwnode, and therefore not direct child nodes of the device
+>>> node.
+>>>
+>>> [...]
 >>
->> Interrupt source for the device can be configured by enabling the
->> corresponding event. Interrupt latch is always enabled when setting
->> up interrupt.
+>> Applied, thanks!
 >>
->> Add myself as the maintainer for this driver in MAINTAINERS.
->>
->> Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
->> Reviewed-by: Ivan Orlov <ivan.orlov0322@gmail.com>
->> Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>> [2/4] leds: pca995x: use device_for_each_child_node() to access device child nodes
+>>       commit: 6eefd65ba6ae29ab801f6461e59c10f93dd496f8
 > 
-> Hi Mudit & All :)
+> I'm not sure what you rebased onto, but it wasn't LEDs or -next.
 > 
-> I know I am late. The series has already been applied (thanks 
-> Jonathan!). I've mostly been offline for the last 1.5 months or so - 
-> "all work and no play makes Jack a dull boy", you know ;)
+> Anyway, I fixed-up the conflicts and pushed.
 > 
-> Anyways, as Jonathan asked me to take a look at the GTS stuff (at v7), I 
-> tried to quickly glance at this. It looks good to me!
+> The patch should be in -next by tomorrow.
 > 
-> Well, the real test will be the users of the sensor driver - so please 
-> let us know if GTS stuff brings problems to users. I am mostly 
-> interested in knowing if gain changes caused by integration time changes 
-> are handled gracefully by the users. :) Well, seeing there is no per- 
-> channel gain or integration time setting, you should be safe from the 
-> worst side-effects :)
+> Please check it to ensure I didn't make any mistakes.
 > 
-> Nice driver!
 
-Hi Matti,
-
-Thank you for your review on this :)
+Hi, I rebased onto next-20240805, and its commit ID matches the
+base-commit provided in the cover letter (generated by b4). I wonder why
+it did not work on your side, but thanks for fixing the conflicts and
+applying (I checked it and it looks fine).
 
 Best regards,
-Mudit Sharma
-> 
-> Yours,
->      -- Matti
-> 
+Javier Carrasco
 
 
