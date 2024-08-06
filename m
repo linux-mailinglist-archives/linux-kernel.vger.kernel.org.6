@@ -1,136 +1,137 @@
-Return-Path: <linux-kernel+bounces-275708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AAA69488E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:21:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA7F69488E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D27C1C223E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:21:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 186471C2235B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956641BA880;
-	Tue,  6 Aug 2024 05:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AA21BB6BF;
+	Tue,  6 Aug 2024 05:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YYoPdNvn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XO3BN6Sw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A281C32;
-	Tue,  6 Aug 2024 05:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A39A1C32;
+	Tue,  6 Aug 2024 05:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722921709; cv=none; b=eU59g6WVzkNWLhX1PdVUi1VQRvKFYJZEhJqryit2DEwtlwK71hp12mA5tbxhvd6BwnpYopCcy5W9SKWItdgj1/1KVqrsq/sslu072Eu10ppsqaj5JjzwMX4XiobGmWm94eDdXCN734F2vFubmG9cqUYPuTZytKFiic/WjeZgwHY=
+	t=1722921763; cv=none; b=PiE5pVuldLYSgOdbCF9nN3S4/4Ul/gKGIn4u5Mn0l3T+kazp1X1T4rc5xmJkAm8jN/Sa6KIG2xdaNIxkvzg65yhXeYBVO8ZzWJTKmPupsOsumrW2g/EUWtYOvHvhOih2TPKwhAmpJT7ZVkt9RkiaZ4xNr/KZaJPhLEO2nqOxn9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722921709; c=relaxed/simple;
-	bh=gdvgR0M7GuaF+jIyMakKqoNnx8xRdznY78SgP9B1AkE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o5Ga5o7G9XJtjxyniLWZfwE0molnak7FNV8GsYWj3dTYI6/3zzNvo0VMzapKbUszb0cEtzqcBUZHdjS/3Pvp/WwR4Lk6t9QFOqUhnGEErJJVFO8HMgRiyhCHdbaVpHLLkkweJm4Kr3SYmG3iqaXtVLJjilZB+1ctwHSWLQSzQcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YYoPdNvn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C4C6C4AF0F;
-	Tue,  6 Aug 2024 05:21:49 +0000 (UTC)
+	s=arc-20240116; t=1722921763; c=relaxed/simple;
+	bh=89CyN7nUo75F69ocqp5/a3NwMOIEHh22hlpURDaHJnw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p+bLROWBFtxmfpy8X12QOn6AYavKiC/dDQBXoQtG1Uz21kTr9qWGm4XeZTW7kB0GjlMs8p9fS/Aa5rFxXSnmbr+rMY/Fkgs/IOxtqSXiYrJWgs3fU3KGlmkaJNWuyDokX02keGDua36LHEbJB2w5rc5xe3+dEBGz2Bl6h64f86c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XO3BN6Sw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C797DC32786;
+	Tue,  6 Aug 2024 05:22:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722921709;
-	bh=gdvgR0M7GuaF+jIyMakKqoNnx8xRdznY78SgP9B1AkE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YYoPdNvn1go9D9PtBxs9z46ZdcVOdHXIEkZffbfRGaT8bKOTjG4pHTiXwUAmRfRTQ
-	 D/6DG107OpbbCqxWIa9r+5sE+xehvqEHkE+viQSlwqaNQYYAMQ6FOYn1RiIoLyL3b4
-	 8E5A1iqnaCwQ868Bm9pIeMbzPqO+poHuo69uS4j8e4UzyIynv5+GQwo9kfSS4WciAf
-	 DzWeKonQR/j5ecJ5Dxa/9NFN8fazu2BN0XXClLGd7GP6Q7/Q4CR9G2R6S1NLmerE1L
-	 82VP+XYO6TQYprSk9LNQdvdvZcny4wf4xbwp8AykadMmQLoIH1XNIqmiXFIhIxg0SK
-	 q8qVH6BZsX2+w==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52efdf02d13so322918e87.2;
-        Mon, 05 Aug 2024 22:21:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWbAr0sfJnX+RhHATzWIqDWVZ0E6nq30ptS6YMzzlrI1o7MHTauzoHTK3C4yPcuYhVU5IoBxN7jlQ02wX5nlTTmd5jdYiiok5m3Jvr0
-X-Gm-Message-State: AOJu0YwAwZQJwNz3daIJFFym6w3LNPYh6HJ9+7+ov5sr96UKhzu+YndU
-	qCTnO9McN5puJ116tjBARzPDw3QEGUMLCe4J2JN41C+mFQKNxXuCpoq8KdArUkoNWWvvzPXRtnB
-	2fgS/4iWbe+dBcCFjoCFrcuJ5I2U=
-X-Google-Smtp-Source: AGHT+IGlwTXR026+z3PL1PdmiGdQDWh/rndlCBXxaWjyHBZUnzdAxOGOBmn54jLSJYDrfFLarnpwjn4Hq7VCOaVfa0c=
-X-Received: by 2002:a05:6512:104b:b0:52e:932d:88ab with SMTP id
- 2adb3069b0e04-530bb38c968mr12151755e87.23.1722921708112; Mon, 05 Aug 2024
- 22:21:48 -0700 (PDT)
+	s=k20201202; t=1722921762;
+	bh=89CyN7nUo75F69ocqp5/a3NwMOIEHh22hlpURDaHJnw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XO3BN6SwTtFgUkMCp1sN0YmfpWcr4PsL+wRcnGbltJHZUAWb09UvX7IjT6w0Jzx6B
+	 tfO5/uHfGcu3iMfDDHEDsRXQZbM5pTE02RIvTrIfSZot75L9R/JCu9bX12+D3Vhz08
+	 OcyS15pEJNy6zqUhQyk7IJ9jj4Rp78oaBxLVOrAAF0RviegNySyHQizTHrcVEyYfmA
+	 KjoJi+hv9fJi5fhrHLHB9T/rzEvSctNwZo0LxRz3ZoHq0VOys819mP97Jxwty74uix
+	 86wE+QMkWgUDRL/OXICFNzxr2GXJ3dbGAFgN8fDmLNra06r/SXoxIyjyqy7rzDcMMw
+	 k7AO5G2Y3RqrQ==
+Message-ID: <9b01084f-eac3-432e-b221-8a2c35354557@kernel.org>
+Date: Tue, 6 Aug 2024 07:22:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805090901.53986-1-gprocida@google.com> <CAGvU0Hnm5V1EpY+TfWqq5XHVJUSSxa=wHCZ+yVNb9+Ln=7mbkw@mail.gmail.com>
-In-Reply-To: <CAGvU0Hnm5V1EpY+TfWqq5XHVJUSSxa=wHCZ+yVNb9+Ln=7mbkw@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 6 Aug 2024 14:21:11 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ6PFm1rnir0jRAdxeGRe3Zu5U9_f9andqL7vHKcBenWw@mail.gmail.com>
-Message-ID: <CAK7LNAQ6PFm1rnir0jRAdxeGRe3Zu5U9_f9andqL7vHKcBenWw@mail.gmail.com>
-Subject: Re: [PATCH REPOST] lib/build_OID_registry: do not embed full $0
-To: Giuliano Procida <gprocida@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	kernel-team@android.com, elsk@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] iio: magnetometer: ak8975: Add AK09118 support
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Jonathan Albrieux <jonathan.albrieux@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux@mainlining.org,
+ Danila Tikhonov <danila@jiaxyga.com>
+References: <20240805-ak09918-v1-0-70837eebd7d8@mainlining.org>
+ <20240805-ak09918-v1-3-70837eebd7d8@mainlining.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240805-ak09918-v1-3-70837eebd7d8@mainlining.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 5, 2024 at 6:13=E2=80=AFPM Giuliano Procida <gprocida@google.co=
-m> wrote:
->
-> Please ignore this. I see other people have already posted different
-> fixes achieving much the same goal.
->
-> Though my change was much simpler!
+On 05/08/2024 22:31, Barnabás Czémán wrote:
+> From: Danila Tikhonov <danila@jiaxyga.com>
+> 
+> Add additional AK09118 to the magnetometer driver which has the same
+> register mapping and scaling as the AK09112 device.
+> 
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 
+...
 
-True.
+>  };
+>  MODULE_DEVICE_TABLE(i2c, ak8975_id);
+> @@ -1081,6 +1114,8 @@ static const struct of_device_id ak8975_of_match[] = {
+>  	{ .compatible = "ak09912", .data = &ak_def_array[AK09912] },
+>  	{ .compatible = "asahi-kasei,ak09916", .data = &ak_def_array[AK09916] },
+>  	{ .compatible = "ak09916", .data = &ak_def_array[AK09916] },
+> +	{ .compatible = "asahi-kasei,ak09918", .data = &ak_def_array[AK09918] },
+> +	{ .compatible = "ak09918", .data = &ak_def_array[AK09918] },
 
-There were suggestions to replace this with a fixed string:
+NAK. That's not a valid compatible.
 
+Best regards,
+Krzysztof
 
-https://lore.kernel.org/linux-kbuild/CAK7LNASa-KedA_CTww6unckAGkJCQTctdbk0d=
--MUsN7wQpM=3DkQ@mail.gmail.com/
-https://lore.kernel.org/linux-kbuild/ZfP1xdcYlUawm3uV@bergen.fjasle.eu/
-
-
-
-A needlessly complex patch was applied, unfortunately.
-
-
-
-
-
-
-
-
-
-
->
-> On Mon, 5 Aug 2024 at 10:09, Giuliano Procida <gprocida@google.com> wrote=
-:
-> >
-> > Using $0 makes the output of this file sensitive to the Linux build
-> > directory path. This is problematic for reproducible builds as it can
-> > affect vmlinux's .debug_lines' section and vmlinux's build ID.
-> >
-> > Signed-off-by: Giuliano Procida <gprocida@google.com>
-> > ---
-> >  lib/build_OID_registry | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/lib/build_OID_registry b/lib/build_OID_registry
-> > index d7fc32ea8ac2..06f242202036 100755
-> > --- a/lib/build_OID_registry
-> > +++ b/lib/build_OID_registry
-> > @@ -35,7 +35,7 @@ close IN_FILE || die;
-> >  #
-> >  open C_FILE, ">$ARGV[1]" or die;
-> >  print C_FILE "/*\n";
-> > -print C_FILE " * Automatically generated by ", $0, ".  Do not edit\n";
-> > +print C_FILE " * Automatically generated by build_OID_registry.  Do no=
-t edit\n";
-> >  print C_FILE " */\n";
-> >
-
-
-
-
---
-Best Regards
-Masahiro Yamada
 
