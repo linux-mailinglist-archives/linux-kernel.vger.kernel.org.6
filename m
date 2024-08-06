@@ -1,69 +1,47 @@
-Return-Path: <linux-kernel+bounces-276145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68EEF948F11
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:36:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 995D3948F18
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2412B2817BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:36:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 438BF1F2308A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DAC1C460D;
-	Tue,  6 Aug 2024 12:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4m0tszts";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wotMqU59"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAF41C3F25
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91F81C4611;
+	Tue,  6 Aug 2024 12:37:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB9A1BD507;
+	Tue,  6 Aug 2024 12:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722947765; cv=none; b=nlIImDxU0QTAG5i7HegEX6QUjOMlHcSIizuaLqgiSqCoZaEtN50Sdu/sFtTRpdBo4SugIWcu9DbIDctV5M/A0TdcnU+bvPErP5CgfS3vdIResWHAW5RKXaVj6Pl2Iu2S1iBDHGVJlX7qCTJj1nmayqsP2I6X+X7w/yl8I+QaVrA=
+	t=1722947851; cv=none; b=sZO1N9MI5yuCFC7CZmymbidhhgzLtw4qD9htrWrFs6x8zspJ5MJ0g+owJfVx8aijGxXjN8TUV50c+/9IU/UAtHsWlfQB+76JP+6WHfTsH+ivHp/NxRr+cNJOspBBNXYEBUMf+fjZtfFll8a13pZRNEaJW8mNk4n9d4pSUYR60d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722947765; c=relaxed/simple;
-	bh=Q5ZNqxDbR4EwDeeBN89lQiVRPFwV9vl6BCMgkOcCKMQ=;
+	s=arc-20240116; t=1722947851; c=relaxed/simple;
+	bh=4pUDZr3FbiuaycMG/Q848c6oZLN1YC9SHrlNtMts3lk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bNIugn39Zod4o7T+MIVZtBEnG33WVE6qTzrFZdY/+uvuI2YSvlEVEZdWT6bSJZtPjFB9KwWz7MkBcyx/NiXA4uHFImUU8SYY8zneTPDkdWpalKhVuOF3aK3V6kPfhcOQPEG3kJOF+ND/sfsa9/LJr3IEyrPFrzaMy/7FHaBGJpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4m0tszts; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wotMqU59; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 6 Aug 2024 14:36:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722947761;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LxRFPMssv0TbntD/eFDfQJABume4sd1MP+ymuPVXIMs=;
-	b=4m0tsztsBPr+9mmrcnWxq/lZkoO8odl8CGs6qI25Z1zRNYgQoKXKr4ZaByl6dBrVhFzByu
-	kzA5HK8d9DMIOtsKiVlrdcZO/8QWXdrbbKjYqqjOsCLbqdNa4KaD0fVY+45JiomSwJkueT
-	z9cNVR8YYFIPCX1QATrLaeyWFJ920wDF1X1U4QwsyNd4TId6eOQmDrskXmTeAmvKoNmWid
-	TY0AUs52gyd4bOmrCTMoq51FigtT2MDE9a8lE3nvlgfC/jvuMrcjP90VKpB1FGP4EiPciB
-	N3LbMvHa0DE1NrFVpp5vB2n9BHncTWQsw7Vj5ajqlMt7L/jfM8dkyCyNtgwDEg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722947761;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LxRFPMssv0TbntD/eFDfQJABume4sd1MP+ymuPVXIMs=;
-	b=wotMqU59S88oaztq3MncD0BL4YuXzvYzxYh4qAO3DGWbQurB/e6HrSu55TBnCKXPBZA7aM
-	OlapAP5nRhxhSTDA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-amlogic@lists.infradead.org, alsa-devel@alsa-project.org,
-	linux-kernel@vger.kernel.org,
-	Arseniy Krasnov <avkrasnov@salutedevices.com>
-Subject: Re: [PATCH] ASoC: meson: axg-fifo: fix irq scheduling issue with
- PREEMPT_RT
-Message-ID: <20240806123600.uI5LeCdp@linutronix.de>
-References: <20240806102707.3825703-1-jbrunet@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IrsP1EkognUr4nqHZSUfLRm5PGQHnlUGR6AbUW0mSmUqzIVr4wy29/RkZI3b6G/A3rlbjxkhmeN9Jvv34wnCzEuKjzjXBGG2mgrCAKcTKwlnQH5MzpANNisvJGd8x/s8Gzs/1ZjqrvsNGgcK7dUkEYLAsZWGbKOASLhUcll+XZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 940F0FEC;
+	Tue,  6 Aug 2024 05:37:54 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E4D373F766;
+	Tue,  6 Aug 2024 05:37:27 -0700 (PDT)
+Date: Tue, 6 Aug 2024 13:37:25 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v5 0/5] Add per-transport SCMI communication debug
+ statistics
+Message-ID: <ZrIZBeliMvV-__8f@bogus>
+References: <20240805131013.587016-1-sudeep.holla@arm.com>
+ <ZrDr1tDPE2A593s9@pluto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,63 +50,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240806102707.3825703-1-jbrunet@baylibre.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZrDr1tDPE2A593s9@pluto>
 
-On 2024-08-06 12:27:03 [+0200], Jerome Brunet wrote:
-> With PREEMPT_RT enabled, spinlocks become preemptible.
-With PREEMPT_RT enabled a spinlock_t becomes a sleeping lock.
+On Mon, Aug 05, 2024 at 04:12:33PM +0100, Cristian Marussi wrote:
+> On Mon, Aug 05, 2024 at 02:10:07PM +0100, Sudeep Holla wrote:
+> > This series adds support for SCMI communication debug metrict tracking.
+> > I am just sending on behalf of Luke with minor reworks in his absense.
+> > 
+> > Cristian,
+> > 
+> > I have retained your review tags, please shout if you disagree.
+> > 
+> > Regards,
+> > Sudeep
+> > 
+> 
+> Hi,
+> 
+> LGTM.
+> 
+> If this is what was on Fri on your next, I gave it a go on my setup
+> too.
+> 
+> Tested-by: Cristian Marussi <cristian.marussi@arm.com>
+> 
 
-> This is usually not a problem with spinlocks used in IRQ context since
-> IRQ handlers get threaded. However, if IRQF_ONESHOT is set, the upper half
-> of a threaded irq handler won't be threaded and this causes scheduling
-> problems if spinlocks are used in the upper half, like with regmap when
-> '.fast_io' is set.
+Thanks, I think I also modified some Kconfig text and scmi_inc_count()
+but nothing that affects testing 😉.
 
-=E2=80=A6 However, if IRQF_ONESHOT is set, the primary handler won't be
-force-threaded and runs always in hardirq context. This is a problem
-because spinlock_t requires a preemptible context on PREEMPT_RT.=20
-
-> In this particular instance, it is actually better to do everything in
-> the bottom half and it solves the problem with PREEMPT_RT.
-
-      threaded handler
-
-The term "bottom half" is usually used with softirq. The IRQ part has a
-primary handler and a threaded handler.
-
-> Reported-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
-> Closes: https://lore.kernel.org/linux-amlogic/20240729131652.3012327-1-av=
-krasnov@salutedevices.com
-> Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Fixes: b11d26660dff ("ASoC: meson: axg-fifo: use threaded irq to check pe=
-riods")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  sound/soc/meson/axg-fifo.c | 26 ++++++++++----------------
->  1 file changed, 10 insertions(+), 16 deletions(-)
->=20
-> diff --git a/sound/soc/meson/axg-fifo.c b/sound/soc/meson/axg-fifo.c
-> index 7e6090af720b..d0d05fa44d66 100644
-> --- a/sound/soc/meson/axg-fifo.c
-> +++ b/sound/soc/meson/axg-fifo.c
-> @@ -251,8 +244,9 @@ int axg_fifo_pcm_open(struct snd_soc_component *compo=
-nent,
->  	if (ret)
->  		return ret;
-> =20
-> -	ret =3D request_threaded_irq(fifo->irq, axg_fifo_pcm_irq_block,
-> -				   axg_fifo_pcm_irq_block_thread,
-> +	/* Use the bottom half of a threaded irq with non-atomic links */
-
-This requests only a threaded handler. There is no "bottom half of a
-threaded IRQ".
-
-> +	ret =3D request_threaded_irq(fifo->irq, NULL,
-> +				   axg_fifo_pcm_irq_block,
->  				   IRQF_ONESHOT, dev_name(dev), ss);
->  	if (ret)
->  		return ret;
-
-Sebastian
+-- 
+Regards,
+Sudeep
 
