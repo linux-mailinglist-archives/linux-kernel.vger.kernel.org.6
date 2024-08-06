@@ -1,176 +1,192 @@
-Return-Path: <linux-kernel+bounces-276393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D80C9492EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:27:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B13949312
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B04271C20864
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:27:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6B4DB26B5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D4418D657;
-	Tue,  6 Aug 2024 14:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1925617AE07;
+	Tue,  6 Aug 2024 14:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fz+kIJ6l"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G9SnENaK"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE8418D64B
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CBE18D623;
+	Tue,  6 Aug 2024 14:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722954435; cv=none; b=JhnQyuViL9Wc1blD/WRl6+IOnOuQGGs1wCl8PU9tW7TGOgmaBIHwgi7tNvsE5g2tTQtBvxuaurbZ6EXMsmFB2uqVfbh7G6pfHP45y+nWnbgIppJUGZhMYM9GJ5jw8xTZ0nbyTtudoyjlSoJZqkTPU7U5m6LwjwmfiJNLxnxPjXc=
+	t=1722954347; cv=none; b=iGFuxwCYZln5Apa7kPc/vdnMDm5c7q8ZKru0Phkye7YNQ9If1NP5ZwYZEcLSrh2mzuhFCPTT89YA9cGe63uDGUa/IlT3Tb13fWgYrIUNqQpgH1a90EG8PxX4wBGtyhh7hl/c70ac3WD3JfntIOnvrBpEXF85LRCKLKisUTaLqDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722954435; c=relaxed/simple;
-	bh=LzqDLxjUaammJqNbpSby8VmEGGC9p09wSXLpGOuQ93U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kq1nd33ulZzcvIDa0AOQiahBsCQPqi1KtqgpctQzCvbsXw2Sopt8H/HB+rLOwrqnAWbK97XPLCg53H7blUbpXphw7WMGrwIZmFq3hoSHTLJnd6T1lHGSF9Zfm+fnIMrNLkRLcOoM8Fx/nTkK6jT+G9N0utVrEx4kkkDFj0E4BPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fz+kIJ6l; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722954433;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=sxdMlZiVCpeBnxBeJX0VnaiMFDVq/jpkKoST9+suM0w=;
-	b=Fz+kIJ6lspKzVEU4lY58re3C5ZyyJXCGVysOtwAQWZFWCa7d9YcxvMr5iHw7Nad8mKrJGl
-	Nu1yYCLTRP9Bui0Mq4mrxRgGNQtbDSr8gxiezhb/ICWRLCr9GVI57XO1p2ww7+VeADL312
-	xKgACoG1EockJL+QA53IiIp72i+dKIA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-651-Pk9Zjrk5Oo-QKSrVolVvew-1; Tue,
- 06 Aug 2024 10:27:06 -0400
-X-MC-Unique: Pk9Zjrk5Oo-QKSrVolVvew-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 329BF191E7F6;
-	Tue,  6 Aug 2024 14:27:04 +0000 (UTC)
-Received: from llong.com (unknown [10.2.16.146])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 41C0B195605A;
-	Tue,  6 Aug 2024 14:26:40 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Naoya Horiguchi <nao.horiguchi@gmail.com>
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Huang Ying <ying.huang@intel.com>,
-	Len Brown <len.brown@intel.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH] mm/memory-failure: Use raw_spinlock_t in struct memory_failure_cpu
-Date: Tue,  6 Aug 2024 10:25:35 -0400
-Message-ID: <20240806142535.1033323-1-longman@redhat.com>
+	s=arc-20240116; t=1722954347; c=relaxed/simple;
+	bh=mnssGhPBWO68bk8UOFkUN2kFqYLjHCY4L4YhfdP1DhM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FP5IXHKrLbWUEVcGvcRwgtEbjyyTwJri/nOcBGe0R5PfnzYdyV7urxQZxqooS4wbVtazhXWfof+5/AVm9BpmssyzDSJwgO6i9OAqpOZNhQ8dByl7Z+pCCiOjUeUfAzxqSZRBVz2vEYsfXuGjCB4kDvvLacSjjvTtAuxnyTTY5Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G9SnENaK; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-264988283a3so300185fac.0;
+        Tue, 06 Aug 2024 07:25:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722954344; x=1723559144; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=yWLttfzGyrqCkqF3w1dTC2tsQvAJcZiPC68PlBswD/I=;
+        b=G9SnENaKDLEQUMY5MFaH8pY46ze7vMUPilcStz4H/Xgf87mrwZ3sS4hMPadoRYUH3D
+         PiI1TOOzNWV0ndxRXA4/XnzKRk/tvdy6+7ReYiI0s2UlKa8kPlCdSNSzo47jMvB3dt1n
+         jaWXJVelw5F9q+k5QOXYviVhIWbb2X0LBokwEfqq5MHbrytcM3SZrDX4etBHjSzYCsSg
+         dTnC5oca2Q3amSpkkrSDMtu5wAGpCTHl6GSSc8OdzglKAzuSZB45rZdd/qFULrnPwZxi
+         Oc38oOUgedvEQM66/LMEaadAgpjY2oLG1ZrZBI2mcQBELVjB5yupjAtZoAVoO/L0IZ3M
+         jJLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722954344; x=1723559144;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yWLttfzGyrqCkqF3w1dTC2tsQvAJcZiPC68PlBswD/I=;
+        b=B8O6IVn+SSkJKJScgAeKE8E1JnHKzh8K/xRrG1Sy+WKp0cZUWnZrO9bqnzFj6/32Yk
+         jopWD8TLTDAvj/LDgw/um4PePx0+KMmBGghdT64KLnRdQIy3QOswSImWZO9rqSj36dGf
+         7MNUijkORpPRoiXo4eSXFESm20X2hYdxlKD/eLxqc2ESsJSHkmamMqqFPHn8rqN1cKD1
+         cTaBQo5MnqBGnRw0Tn5kEAMZ4i4GzJ+1FJka88tMvGn72pqXKiyzrE6WtgFEsCOCDG7t
+         fqI6pB4cx9BTtMlDnnQcWnnUtO3SY5WdbUpsToFty/95Dj2YWrHkJ3X04yA0fknLqp7e
+         CuVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7UnZETonfj4d8OoacivpP0h1iCjdYRKsvJ3c/GQ0ONV+1vV5gcS11+eDIVzlnXeU7z/aLvH4h5TMgJFoYxLUd8u4XF0MulHh2R1h7AS4weQQ=
+X-Gm-Message-State: AOJu0Yy+TC1P1lpbTRNBCf2tdp8rQsJboblJlXql3lTgZvdrI0mANSFD
+	hkQJ7usPPh/f7Cnsg0+WnkD3PZUzLxO8omrggjDQbgSRk1j1dTVU
+X-Google-Smtp-Source: AGHT+IFdw480CkU/6U8NFL5cWDhUZhqJWV/yeT1Q05BEF5RVsp8jr1mHCurUd0U9gWV8N2cz0DvEGQ==
+X-Received: by 2002:a05:6870:c0cd:b0:25e:12b9:be40 with SMTP id 586e51a60fabf-26891d655c5mr16079045fac.25.1722954344579;
+        Tue, 06 Aug 2024 07:25:44 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ed14bc4sm7274038b3a.171.2024.08.06.07.25.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 07:25:43 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <d99175bb-b5ca-46e6-a781-df4d21e9b7a8@roeck-us.net>
+Date: Tue, 6 Aug 2024 07:25:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [tip: x86/urgent] x86/mm: Fix pti_clone_entry_text() for i386
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+ x86@kernel.org
+References: <172250973153.2215.13116668336106656424.tip-bot2@tip-bot2>
+ <e541b49b-9cc2-47bb-b283-2de70ae3a359@roeck-us.net>
+ <20240806085050.GQ37996@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240806085050.GQ37996@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The memory_failure_cpu structure is a per-cpu structure. Access to its
-content requires the use of get_cpu_var() to lock in the current CPU
-and disable preemption. The use of a regular spinlock_t for locking
-purpose is fine for a non-RT kernel.
+On 8/6/24 01:50, Peter Zijlstra wrote:
+> On Mon, Aug 05, 2024 at 09:52:06PM -0700, Guenter Roeck wrote:
+>> Hi Peter,
+>>
+>> On Thu, Aug 01, 2024 at 10:55:31AM -0000, tip-bot2 for Peter Zijlstra wrote:
+>>> The following commit has been merged into the x86/urgent branch of tip:
+>>>
+>>> Commit-ID:     49947e7aedfea2573bada0c95b85f6c2363bef9f
+>>> Gitweb:        https://git.kernel.org/tip/49947e7aedfea2573bada0c95b85f6c2363bef9f
+>>> Author:        Peter Zijlstra <peterz@infradead.org>
+>>> AuthorDate:    Thu, 01 Aug 2024 12:42:25 +02:00
+>>> Committer:     Peter Zijlstra <peterz@infradead.org>
+>>> CommitterDate: Thu, 01 Aug 2024 12:48:23 +02:00
+>>>
+>>> x86/mm: Fix pti_clone_entry_text() for i386
+>>>
+>>> While x86_64 has PMD aligned text sections, i386 does not have this
+>>> luxery. Notably ALIGN_ENTRY_TEXT_END is empty and _etext has PAGE
+>>> alignment.
+>>>
+>>> This means that text on i386 can be page granular at the tail end,
+>>> which in turn means that the PTI text clones should consistently
+>>> account for this.
+>>>
+>>> Make pti_clone_entry_text() consistent with pti_clone_kernel_text().
+>>>
+>>> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>>
+>> With this patch in the tree, some of my qemu tests (those with PAE enabled)
+>> report several WARNING backtraces.
+>>
+>> WARNING: CPU: 0 PID: 1 at arch/x86/mm/pti.c:256 pti_clone_pgtable+0x298/0x2dc
+>>
+>> WARNING: CPU: 0 PID: 1 at arch/x86/mm/pti.c:394 pti_clone_pgtable+0x29a/0x2dc
+>>
+>> The backtraces are repeated multiple times.
+>>
+>> Please see
+>>
+>> https://kerneltests.org/builders/qemu-x86-master/builds/253/steps/qemubuildcommand/logs/stdio
+>>
+>> for complete logs.
+> 
+> Could you try the below patch? If that don't work, could you provide the
+> .config, I'm assuming that'll work with the bits I grabbed last time.
+> 
 
-Since the integration of RT spinlock support into the v5.15 kernel,
-a spinlock_t in a RT kernel becomes a sleeping lock and taking a
-sleeping lock in a preemption disabled context is illegal resulting in
-the following kind of warning.
+Unfortunately that makes it worse: It causes qemu to quit immediately
+without logging anything.
 
-  [12135.732244] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-  [12135.732248] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 270076, name: kworker/0:0
-  [12135.732252] preempt_count: 1, expected: 0
-  [12135.732255] RCU nest depth: 2, expected: 2
-    :
-  [12135.732420] Hardware name: Dell Inc. PowerEdge R640/0HG0J8, BIOS 2.10.2 02/24/2021
-  [12135.732423] Workqueue: kacpi_notify acpi_os_execute_deferred
-  [12135.732433] Call Trace:
-  [12135.732436]  <TASK>
-  [12135.732450]  dump_stack_lvl+0x57/0x81
-  [12135.732461]  __might_resched.cold+0xf4/0x12f
-  [12135.732479]  rt_spin_lock+0x4c/0x100
-  [12135.732491]  memory_failure_queue+0x40/0xe0
-  [12135.732503]  ghes_do_memory_failure+0x53/0x390
-  [12135.732516]  ghes_do_proc.constprop.0+0x229/0x3e0
-  [12135.732575]  ghes_proc+0xf9/0x1a0
-  [12135.732591]  ghes_notify_hed+0x6a/0x150
-  [12135.732602]  notifier_call_chain+0x43/0xb0
-  [12135.732626]  blocking_notifier_call_chain+0x43/0x60
-  [12135.732637]  acpi_ev_notify_dispatch+0x47/0x70
-  [12135.732648]  acpi_os_execute_deferred+0x13/0x20
-  [12135.732654]  process_one_work+0x41f/0x500
-  [12135.732695]  worker_thread+0x192/0x360
-  [12135.732715]  kthread+0x111/0x140
-  [12135.732733]  ret_from_fork+0x29/0x50
-  [12135.732779]  </TASK>
+I created http://server.roeck-us.net/qemu/x86-v6.11-rc2/ with all
+the relevant information. Please let me know if you need anything else.
 
-Fix it by using a raw_spinlock_t for locking instead.
-
-Fixes: ea8f5fb8a71f ("HWPoison: add memory_failure_queue()")
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- mm/memory-failure.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 581d3e5c9117..d40377b3edc8 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -2417,7 +2417,7 @@ struct memory_failure_entry {
- struct memory_failure_cpu {
- 	DECLARE_KFIFO(fifo, struct memory_failure_entry,
- 		      MEMORY_FAILURE_FIFO_SIZE);
--	spinlock_t lock;
-+	raw_spinlock_t lock;
- 	struct work_struct work;
- };
- 
-@@ -2449,13 +2449,13 @@ void memory_failure_queue(unsigned long pfn, int flags)
- 	};
- 
- 	mf_cpu = &get_cpu_var(memory_failure_cpu);
--	spin_lock_irqsave(&mf_cpu->lock, proc_flags);
-+	raw_spin_lock_irqsave(&mf_cpu->lock, proc_flags);
- 	if (kfifo_put(&mf_cpu->fifo, entry))
- 		schedule_work_on(smp_processor_id(), &mf_cpu->work);
- 	else
- 		pr_err("buffer overflow when queuing memory failure at %#lx\n",
- 		       pfn);
--	spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
-+	raw_spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
- 	put_cpu_var(memory_failure_cpu);
- }
- EXPORT_SYMBOL_GPL(memory_failure_queue);
-@@ -2469,9 +2469,9 @@ static void memory_failure_work_func(struct work_struct *work)
- 
- 	mf_cpu = container_of(work, struct memory_failure_cpu, work);
- 	for (;;) {
--		spin_lock_irqsave(&mf_cpu->lock, proc_flags);
-+		raw_spin_lock_irqsave(&mf_cpu->lock, proc_flags);
- 		gotten = kfifo_get(&mf_cpu->fifo, &entry);
--		spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
-+		raw_spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
- 		if (!gotten)
- 			break;
- 		if (entry.flags & MF_SOFT_OFFLINE)
-@@ -2501,7 +2501,7 @@ static int __init memory_failure_init(void)
- 
- 	for_each_possible_cpu(cpu) {
- 		mf_cpu = &per_cpu(memory_failure_cpu, cpu);
--		spin_lock_init(&mf_cpu->lock);
-+		raw_spin_lock_init(&mf_cpu->lock);
- 		INIT_KFIFO(mf_cpu->fifo);
- 		INIT_WORK(&mf_cpu->work, memory_failure_work_func);
- 	}
--- 
-2.43.5
+Thanks,
+Guenter
 
 
