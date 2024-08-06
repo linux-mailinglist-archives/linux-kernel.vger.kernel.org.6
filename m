@@ -1,157 +1,188 @@
-Return-Path: <linux-kernel+bounces-276610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3AF1949602
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:59:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6CA0949604
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517D91F22B64
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:59:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3809D1F22C6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2BC47A4C;
-	Tue,  6 Aug 2024 16:59:07 +0000 (UTC)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2655047A66;
+	Tue,  6 Aug 2024 16:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Re7LeUep"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34AA43ABD;
-	Tue,  6 Aug 2024 16:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6415044C81;
+	Tue,  6 Aug 2024 16:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722963547; cv=none; b=qxVRa2yUOxHsv3nveH7WSKxHIP11bjkQ5s0LJL1GBoHNY/z0iJ+gQNutRXg6e1XlcQ9M8lVXRtiPoWkeDza6rWUydsB+6hzfN/8sCziiFX3jiYkggJBsyOZnFZXPEYC7p/IVFrkSVpUx8BOlHTNWN0qSr/fIYWnZXRXQ5LREVAc=
+	t=1722963557; cv=none; b=LwkLdg5vwhyfvgfRFMwnF1xLfof0IO4xQrPrjTAAdJ63nvitdvDw+fL1F/xgY98yx0TpC4p7Jhl66Ewdp/pHhSONjMTKTe/RT8Gwu0+dB3gNGX5TJMlvhRbdCvPksCBDPl36gI8y5ibimbPQGxqlX9vuw6yW59NQBkCNSDfoW2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722963547; c=relaxed/simple;
-	bh=qvV8JGLW2dG3LsVakdiuL3cEqYYt8wgtT64hscNRGjQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oByqB3UTNqfPffGDEM93ipKhwq5uGWJ7hLIB9wHuAyad+XTYnlAJt1Ge35cLs9f9SWpBeaWDMkcXAbuZz8GxpYpKkjYWzey4ZxjyBAEBYtIWGcTwvrXwUzS79pBAJH1LqUF96Q6XJVkjdd/q/s0maaJkoV6QFy+PW3NWjpXtGs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so120909866b.2;
-        Tue, 06 Aug 2024 09:59:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722963544; x=1723568344;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LP89uLPrkrqKPZrtmF0GkPrurXotyMbv3q8lZc21hMg=;
-        b=kT5D+hxxzw4n844Y8/ZMO/TrRT5dOQbS1OxxqdEO/LiwL78s3j5xzdIE4OM0pa5MVa
-         0UT+RGef28K2ZmWJEVJHRSEHdfhtX8GWnbd1wocfD3pGVSf+T7S1Vr1UTO3fmGWOm+Wq
-         Qb9lVw/vu2WVqvv5+okG6KuzpXW5H0RWH98+3+Trg++WYGupOfqNr2aPNYi+UeDp/sWN
-         TpZDSpUVWBnYVD5Vw4FrLtfAHIhlUreOzTZ65eaYHm/mJxnFAzvBtQhXzliMCKfRyvuD
-         694slJwJnAuZYoBOlHAbT2g3HWiF0KAx6v6Pnv1fZHBxlp+LwFx3VaLNVIu5pN3tqWQQ
-         TuQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhJdKhie2Ktd3CM1/Go6MNC+eDpoFsw0f39HkZ/g0hS7n6ALCeICWWZ88XQ0acJIo+WMxrGWx6ODKdM7fKknhLPw==@vger.kernel.org, AJvYcCWr9+NCqxz0o8B8HxXwTvTFKB8GiQJFwZHxJ4hQw6pN0KWexJTmuCYuZhAiOSsmAqbb8pLlG39F1lKdhG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys5hQXnRkQMZmFrOvGqSr3WIv2uFbFWI6t7SdFnPmA/IFET5+Z
-	CVqmghpO6qGfgT00ZO5KapRVgpmo61lAVzSlymm4z9xP0+7I6iKL
-X-Google-Smtp-Source: AGHT+IHAbswMI9BxH8YR9ZDX8JQAr+8YnEzv06RoxpEPlxTeePo/ZszVLZvNdGIUGgyoaZrjQSFGHg==
-X-Received: by 2002:a17:906:da8a:b0:a77:dd1c:6274 with SMTP id a640c23a62f3a-a7dc5124d64mr849584566b.69.1722963544050;
-        Tue, 06 Aug 2024 09:59:04 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-007.fbsv.net. [2a03:2880:30ff:7::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d433e8sm561863966b.135.2024.08.06.09.59.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 09:59:03 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: leit@meta.com,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Sandipan Das <sandipan.das@amd.com>,
-	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
-Subject: [PATCH v3] perf/x86/amd: Warn only on new bits set
-Date: Tue,  6 Aug 2024 09:58:48 -0700
-Message-ID: <20240806165848.3397232-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1722963557; c=relaxed/simple;
+	bh=38J3+Jcs1Gxd5oy/NKLXe7MSNL7iDXRXE5dsHskGipk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IVVHr9Sdyzs74XqVAfar7AN5p09nwW1sQGNNiffZIW7hinw5IsQo76tlvK7Kpdgr04mIaNrSvhsbobAueVUIWxlTXdpntLxk0954KX8inniTw0QmAo/x4xadqUNfU9ZEObM4FNX0/Mjg1a7EUsdb8mNZQY0XmgIKK8Zp01bvGJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Re7LeUep; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8D44C32786;
+	Tue,  6 Aug 2024 16:59:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722963557;
+	bh=38J3+Jcs1Gxd5oy/NKLXe7MSNL7iDXRXE5dsHskGipk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Re7LeUeplr1KvqRTcs5SV9nQfIjcSgNSSgs98uebgSybqNNN4bv5ys01Bfg20+vsr
+	 V5/TXEaS6Xizqg91pWRUXv+xWnxBnI4cP7a4rI/iNgOHYcf5wZfFmJ37TMzwM2Geir
+	 2wbWLoW3gkEf9BSf83Qt0MTrpc7o48K3ESQyDkyAxRE2YQjLWzrC4SpsZ4B86RmPeq
+	 BEW1Bnf5jN+nG90e8oFFEDUSSPe6zmVYTSJdubTU0mjwSlcO0lUsHmDlRSNLMZm3XZ
+	 Om7VVM+NBKpETD4tLruyB1Cpn6DsmrRsZlQYcX5Dx3eqjVt3wsNFqvvYENiIhCo50A
+	 BO2FSny73sYBw==
+Date: Tue, 6 Aug 2024 17:59:10 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Abhash Jha <abhashkumarjha123@gmail.com>
+Cc: linux-iio@vger.kernel.org, lars@metafoo.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] iio: light: apds9960: Add proximity and gesture
+ offset calibration
+Message-ID: <20240806175910.3e0b5ab9@jic23-huawei>
+In-Reply-To: <20240804134212.51682-2-abhashkumarjha123@gmail.com>
+References: <20240804134212.51682-1-abhashkumarjha123@gmail.com>
+	<20240804134212.51682-2-abhashkumarjha123@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Warning at every leaking bits can cause a flood of message, triggering
-various stall-warning mechanisms to fire, including CSD locks, which
-makes the machine to be unusable.
+On Sun,  4 Aug 2024 19:12:12 +0530
+Abhash Jha <abhashkumarjha123@gmail.com> wrote:
 
-Track the bits that are being leaked, and only warn when a new bit is
-set.
+> Proximity and gesture offset registers perform offset correction to
+> improve cross-talk performance. Added `calibbias` to the proximity
+> and gesture channels.
+> Provided facility to set calibbias based on the channel number.
+> 
+> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+Hi Abhash,
 
-That said, this patch will help with the following issues:
+LGTM. Applied to the togreg branch of iio.git and pushed out as testing
+for 0-day (build bot) to take a look at it and see if it can find anything
+we missed.
 
-1) It will tell us which bits are being set, so, it is easy to
-   communicate it back to vendor, and to do a root-cause analyzes.
+Thanks,
 
-2) It avoid the machine to be unusable, because, worst case
-   scenario, the user gets less than 60 WARNs (one per unhandled bit).
+Jonathan
 
-Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-Reviewed-by: Sandipan Das <sandipan.das@amd.com>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Changelog:
-v3:
- * Avoid potential false reporting when concurrent execution occurs on
-   different CPUs (Paul E. McKenney)
-
-v2:
-  * Improved the patch description, getting the benefits in words.
-  * https://lore.kernel.org/all/20240731154651.1555511-1-leitao@debian.org/
-
-v1:
-  * https://lore.kernel.org/all/20240524141021.3889002-1-leitao@debian.org/
-
-
- arch/x86/events/amd/core.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
-index 920e3a640cad..b4a1a2576510 100644
---- a/arch/x86/events/amd/core.c
-+++ b/arch/x86/events/amd/core.c
-@@ -943,11 +943,12 @@ static int amd_pmu_v2_snapshot_branch_stack(struct perf_branch_entry *entries, u
- static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
- {
- 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-+	static atomic64_t status_warned = ATOMIC64_INIT(0);
-+	u64 reserved, status, mask, new_bits, prev_bits;
- 	struct perf_sample_data data;
- 	struct hw_perf_event *hwc;
- 	struct perf_event *event;
- 	int handled = 0, idx;
--	u64 reserved, status, mask;
- 	bool pmu_enabled;
- 
- 	/*
-@@ -1012,7 +1013,12 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
- 	 * the corresponding PMCs are expected to be inactive according to the
- 	 * active_mask
- 	 */
--	WARN_ON(status > 0);
-+	if (status > 0) {
-+		prev_bits = atomic64_fetch_or(status, &status_warned);
-+		// A new bit was set for the very first time.
-+		new_bits = status & ~prev_bits;
-+		WARN(new_bits, "New overflows for inactive PMCs: %llx\n", new_bits);
-+	}
- 
- 	/* Clear overflow and freeze bits */
- 	amd_pmu_ack_global_status(~status);
--- 
-2.43.5
+> ---
+>  drivers/iio/light/apds9960.c | 55 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 54 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/light/apds9960.c b/drivers/iio/light/apds9960.c
+> index 1065a340b..bc966b096 100644
+> --- a/drivers/iio/light/apds9960.c
+> +++ b/drivers/iio/light/apds9960.c
+> @@ -146,6 +146,25 @@ struct apds9960_data {
+>  
+>  	/* gesture buffer */
+>  	u8 buffer[4]; /* 4 8-bit channels */
+> +
+> +	/* calibration value buffer */
+> +	int calibbias[5];
+> +};
+> +
+> +enum {
+> +	APDS9960_CHAN_PROXIMITY,
+> +	APDS9960_CHAN_GESTURE_UP,
+> +	APDS9960_CHAN_GESTURE_DOWN,
+> +	APDS9960_CHAN_GESTURE_LEFT,
+> +	APDS9960_CHAN_GESTURE_RIGHT,
+> +};
+> +
+> +static const unsigned int apds9960_offset_regs[][2] = {
+> +	[APDS9960_CHAN_PROXIMITY] = {APDS9960_REG_POFFSET_UR, APDS9960_REG_POFFSET_DL},
+> +	[APDS9960_CHAN_GESTURE_UP] = {APDS9960_REG_GOFFSET_U, 0},
+> +	[APDS9960_CHAN_GESTURE_DOWN] = {APDS9960_REG_GOFFSET_D, 0},
+> +	[APDS9960_CHAN_GESTURE_LEFT] = {APDS9960_REG_GOFFSET_L, 0},
+> +	[APDS9960_CHAN_GESTURE_RIGHT] = {APDS9960_REG_GOFFSET_R, 0},
+>  };
+>  
+>  static const struct reg_default apds9960_reg_defaults[] = {
+> @@ -255,6 +274,7 @@ static const struct iio_event_spec apds9960_als_event_spec[] = {
+>  
+>  #define APDS9960_GESTURE_CHANNEL(_dir, _si) { \
+>  	.type = IIO_PROXIMITY, \
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_CALIBBIAS), \
+>  	.channel = _si + 1, \
+>  	.scan_index = _si, \
+>  	.indexed = 1, \
+> @@ -282,7 +302,8 @@ static const struct iio_chan_spec apds9960_channels[] = {
+>  	{
+>  		.type = IIO_PROXIMITY,
+>  		.address = APDS9960_REG_PDATA,
+> -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> +			BIT(IIO_CHAN_INFO_CALIBBIAS),
+>  		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
+>  		.channel = 0,
+>  		.indexed = 0,
+> @@ -316,6 +337,28 @@ static const struct iio_chan_spec apds9960_channels[] = {
+>  	APDS9960_INTENSITY_CHANNEL(BLUE),
+>  };
+>  
+> +static int apds9960_set_calibbias(struct apds9960_data *data,
+> +		struct iio_chan_spec const *chan, int calibbias)
+> +{
+> +	int ret, i;
+> +
+> +	if (calibbias < S8_MIN || calibbias > S8_MAX)
+> +		return -EINVAL;
+> +
+> +	guard(mutex)(&data->lock);
+> +	for (i = 0; i < 2; i++) {
+> +		if (apds9960_offset_regs[chan->channel][i] == 0)
+> +			break;
+> +
+> +		ret = regmap_write(data->regmap, apds9960_offset_regs[chan->channel][i], calibbias);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +	data->calibbias[chan->channel] = calibbias;
+> +
+> +	return 0;
+> +}
+> +
+>  /* integration time in us */
+>  static const int apds9960_int_time[][2] = {
+>  	{ 28000, 246},
+> @@ -531,6 +574,12 @@ static int apds9960_read_raw(struct iio_dev *indio_dev,
+>  		}
+>  		mutex_unlock(&data->lock);
+>  		break;
+> +	case IIO_CHAN_INFO_CALIBBIAS:
+> +		mutex_lock(&data->lock);
+> +		*val = data->calibbias[chan->channel];
+> +		ret = IIO_VAL_INT;
+> +		mutex_unlock(&data->lock);
+> +		break;
+>  	}
+>  
+>  	return ret;
+> @@ -564,6 +613,10 @@ static int apds9960_write_raw(struct iio_dev *indio_dev,
+>  		default:
+>  			return -EINVAL;
+>  		}
+> +	case IIO_CHAN_INFO_CALIBBIAS:
+> +		if (val2 != 0)
+> +			return -EINVAL;
+> +		return apds9960_set_calibbias(data, chan, val);
+>  	default:
+>  		return -EINVAL;
+>  	}
 
 
