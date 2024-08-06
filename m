@@ -1,119 +1,180 @@
-Return-Path: <linux-kernel+bounces-275667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21C794882F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:05:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C46948830
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:06:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EC96B22257
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:05:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F35E51F236CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2811BA88A;
-	Tue,  6 Aug 2024 04:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6DF1BA894;
+	Tue,  6 Aug 2024 04:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fk+BkAmI"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iV67uOxS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08CC37147
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 04:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78CF13BC11;
+	Tue,  6 Aug 2024 04:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722917140; cv=none; b=jITWKm8ufxwb7OeAwsqnm4in1L9SIK3nlibUtRx7YoLER6OlPm8BW5ILh7dTuai3MSGAA3hyZe+nL85p6cheYcbXvHot658DQZtGqVSv05zGQBh1dpTZfjZMEc9+oWlfWoSThyczmkXSBtwImeU/gW++6JvMw9y6kOopCPhEqUc=
+	t=1722917162; cv=none; b=Bo66vBUcfCiLMsS5tmxO9SJfgExbf+HxumhBwmGCevRLVOEdbUkjQOkdr7Tks2z+Nz2Hfpv7Mi/PSgimidTlBQv3osItVEcAuA1tG+351fOUBjpp1tcL6WJwdnrbigbTZSbJ+U7NptdLwqoYgRxKDXhl1/94uSN09Zq2sy/A0TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722917140; c=relaxed/simple;
-	bh=ksgVEwS2g27EUf8mDdFHEkzlF4wPGczulQ17tbgdkZ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ap5jUwpOErUHYqB22sAedPn5HazHjNvaJUtNzVrP1N9fsaBB4UyVCB+C1ZjW6zkW1uQlTLzojD5F1fU7ReRrgre8fYFV30lBmROwQDkSgHJFBKPBlpGyWipCUUfpspN1hKpYRpCc7hJz8O9TkP2/6s2v7aAyo7z+zVMe2wmtodo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fk+BkAmI; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fd7509397bso144575ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 21:05:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722917138; x=1723521938; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ksgVEwS2g27EUf8mDdFHEkzlF4wPGczulQ17tbgdkZ0=;
-        b=fk+BkAmIM81iMoqcenMeoSA1x9HFTxk0sXMd7lUaXkC64r7+B0ruzt5eNaYwljIzoO
-         nes7Jwg2aYO3OT6yrQAgTuq2Zs+9aKVqLcYOCYoCyVbuejz2JX7bwVs1DRFKhUHj1iZV
-         mSwD7YEKddUFugJRyzr8N/7GmeGFjNQC8SA79vi7ZVasY0Ux59KxSm4gVLheeyFyWcAy
-         CMmlFqr87erWW0ydI6p1s6HUT8IxsqeULHP6CAV3SsZKQP3W6i9M3uHVLMdwy8BKu8RS
-         J/K0CP4A4Aume2B3PKyT/NBLaKnMyic91NiQoSxZKjWDbYFxoo5bp3E4LxQKm54udy9n
-         fvFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722917138; x=1723521938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ksgVEwS2g27EUf8mDdFHEkzlF4wPGczulQ17tbgdkZ0=;
-        b=v0+i+mqAdc0OZXbC8HYKxb8+jCharuT9DZm3oaOVgnqGRNRJiPbgYUKcAMHUseqNrt
-         H0H4bX8TltE8KkNhjzGxHmg3dWBOQNda/gw5zOhlaDLyp3y+snxIRI6XXkgdaQoJhN1h
-         HqurGzLCpvfomxg3mFvuHadNT+bBY8BrqqFRvywvbarA3YRHCqJfvPDJBuD0VsBNUNye
-         HdvzBiRMi0b33OWm6TvBSzhojLYqxLvQV8meSIqAy5CRGldEEXLK75uaiSDBH/WpBXST
-         9inqL+2iFNFCyuzhPqEQsLsiEu6L03m+4ZSLlKPcVapZ8TDm63crdEDLt5G9z2xbxpKA
-         IZdA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2G5FuJAaG7Vjk2X76AkxmJLfcYezMpqhAV8pUCzS1363XwJluxkk3ixeq8TshVm84asYasYSOW+u809vuqYZzd0rIQnwrs+YTgTBa
-X-Gm-Message-State: AOJu0YwgnR4lUnPkt0vSQ7IWcxfSuIxhnHJPbBJ3YuK84e9/6NlgeRga
-	TbgfqyFhZtN50PNZ+hO6yG5Wl+wON1WnKKxbvVsfCjgioQGZ3/NEZPTjdG/W+JHB1YVgXbLAI5M
-	9QHZeINPvvGiL0hJLhwWlUlin5VyETbL+BeFd
-X-Google-Smtp-Source: AGHT+IEDrxvK9R3CWrSgJD6d2CzZl94gIXQbXiLVxjCNAOq9smV8d5JjmmD4IsrOF+xZ+lcRwE0maLH4oISqj8kMB0o=
-X-Received: by 2002:a17:902:fc47:b0:1fb:19fb:a1f0 with SMTP id
- d9443c01a7336-2007666c84cmr1815415ad.4.1722917138011; Mon, 05 Aug 2024
- 21:05:38 -0700 (PDT)
+	s=arc-20240116; t=1722917162; c=relaxed/simple;
+	bh=zthMYi5whGTYCixA97k0CFISLk8x5aAZu/+fkQBgnQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U37fWAWi6hofwVxdVwbk1bLGz1HPcYfPzzfCOnubj/ZW1u9p0OiKj2xS9ALVZRu7Rqq/YsgQNHtiZ6+H5FntxLBaklhdzqz7WF5/u+TnBo9JnCGBDk0lLbkcJBCQVoMP3lPtUVg7za45AWfDMgFZIpr9x53mzUMbF3OF9Urgj/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iV67uOxS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FD9DC32786;
+	Tue,  6 Aug 2024 04:06:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722917162;
+	bh=zthMYi5whGTYCixA97k0CFISLk8x5aAZu/+fkQBgnQc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iV67uOxSzYlDEdHVyJvBogitQzZlH7yc+aVnTQBAuCHSzBOCUrWzcZ+NcSeyEIwou
+	 lL8gZ4PHKKiftK9Mbwu9xRMf4g8OkG/+m4q64OobQDk5iQnnSBOK+MlSl/Ws0NnEm7
+	 aT1L74f/wHpR8Etmye8p5c238aEeA8O4/WAuZiwCm6ZTtpdGhcOxMimD7iJJ+bsheQ
+	 1G2spWE/zhJj7NIcnbv4sjcHyN5eHLLJqB9o/iH/6tIs+JeMqVe0I/FVK79r11jMKf
+	 zsBRM7eBqYa9SwxAltIEuhIjAgu7SpT+U7nzM3GQJTeZhjK0A2R/QSeHom/SWqG6uD
+	 z/HFZv+oGpXBg==
+Date: Mon, 5 Aug 2024 21:06:01 -0700
+From: Kees Cook <kees@kernel.org>
+To: David Gow <davidgow@google.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>,
+	Rae Moar <rmoar@google.com>, Shuah Khan <skhan@linuxfoundation.org>,
+	Maxime Ripard <mripard@kernel.org>, Nico Pache <npache@redhat.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>, kunit-dev@googlegroups.com,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kunit: Fix kunit_kstrdup_const() with modules
+Message-ID: <202408052100.74A2316C27@keescook>
+References: <20240806020136.3481593-1-davidgow@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805194424.597244-1-irogers@google.com> <20240805194424.597244-4-irogers@google.com>
- <CAPqJEFpiy307B4OBHK4WJGjgbVm_woUrdZ+Vy_LSdQ=ECqZX-Q@mail.gmail.com>
-In-Reply-To: <CAPqJEFpiy307B4OBHK4WJGjgbVm_woUrdZ+Vy_LSdQ=ECqZX-Q@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 5 Aug 2024 21:05:26 -0700
-Message-ID: <CAP-5=fWDmdAkJSoncedZTaSgFwG+p3--jywDj9krnXSfkhh6dQ@mail.gmail.com>
-Subject: Re: [PATCH v1 4/5] perf pmu-events: Remove duplicated riscv firmware event
-To: Eric Lin <eric.lin@sifive.com>, Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Samuel Holland <samuel.holland@sifive.com>, Charles Ci-Jyun Wu <dminus@andestech.com>, 
-	Locus Wei-Han Chen <locus84@andestech.com>, Atish Patra <atishp@rivosinc.com>, 
-	Ji Sheng Teoh <jisheng.teoh@starfivetech.com>, Inochi Amaoto <inochiama@outlook.com>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Guilherme Amadio <amadio@gentoo.org>, 
-	Changbin Du <changbin.du@huawei.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, vincent.chen@sifive.com, 
-	greentime.hu@sifive.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806020136.3481593-1-davidgow@google.com>
 
-On Mon, Aug 5, 2024 at 8:54=E2=80=AFPM Eric Lin <eric.lin@sifive.com> wrote=
-:
->
-> Hi Ian,
->
-> I've sent a patch to fix it and the patch already merged. Thanks.
-> https://lore.kernel.org/all/20240719115018.27356-1-eric.lin@sifive.com/
+On Tue, Aug 06, 2024 at 10:01:34AM +0800, David Gow wrote:
+> In commit 7d3c33b290b1 ("kunit: Device wrappers should also manage driver name"),
+> the kunit_kstrdup_const() and kunit_kfree_const() were introduced as an
+> optimisation of kunit_kstrdup(), which only copy/free strings from the
+> kernel rodata.
+> 
+> However, these are inline functions, and is_kernel_rodata() only works
+> for built-in code. This causes problems in two cases:
+> - If kunit is built as a module, __{start,end}_rodata is not defined.
+> - If a kunit test using these functions is built as a module, it will
+>   suffer the same fate.
+> 
+> Restrict the is_kernel_rodata() case to when KUnit is built as a module,
+> which fixes the first case, at the cost of losing the optimisation.
+> 
+> Also, make kunit_{kstrdup,kfree}_const non-inline, so that other modules
+> using them will not accidentally depend on is_kernel_rodata(). If KUnit
+> is built-in, they'll benefit from the optimisation, if KUnit is not,
+> they won't, but the string will be properly duplicated.
 
-Hi Eric/Arnaldo,
+I wonder if this series should be refreshed:
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=devel/hardening/is_rodata
 
-Right, I already commented this should have gone through the
-perf-tools-next tree:
-https://lore.kernel.org/all/CAP-5=3DfV3NXkKsCP1WH0_qLRNpL+WuP8S3h1=3DcHaUMH=
-5MFkVHQg@mail.gmail.com/
-Arnaldo, please take Eric's patch in preference to this one.
+We gained is_kernel_rodata() and is_kernel_ro_after_init() since this
+original proposal, which is what the proposed core_kernel_rodata()
+checks.
 
-Thanks,
-Ian
+It adds a is_module_rodata...() check, so with the is_kernel_*() checks,
+it's possible to do a check across the entire kernel and all modules.
+
+-Kees
+
+> 
+> (And fix a couple of typos in the doc comment, too.)
+> 
+> Reported-by: Nico Pache <npache@redhat.com>
+> Closes: https://lore.kernel.org/all/CAA1CXcDKht4vOL-acxrARbm6JhGna8_k8wjYJ-vHONink8aZ=w@mail.gmail.com/
+> Fixes: 7d3c33b290b1 ("kunit: Device wrappers should also manage driver name")
+> Signed-off-by: David Gow <davidgow@google.com>
+> ---
+>  include/kunit/test.h | 16 +++-------------
+>  lib/kunit/test.c     | 19 +++++++++++++++++++
+>  2 files changed, 22 insertions(+), 13 deletions(-)
+> 
+> diff --git a/include/kunit/test.h b/include/kunit/test.h
+> index da9e84de14c0..5ac237c949a0 100644
+> --- a/include/kunit/test.h
+> +++ b/include/kunit/test.h
+> @@ -489,11 +489,7 @@ static inline void *kunit_kcalloc(struct kunit *test, size_t n, size_t size, gfp
+>   * Calls kunit_kfree() only if @x is not in .rodata section.
+>   * See kunit_kstrdup_const() for more information.
+>   */
+> -static inline void kunit_kfree_const(struct kunit *test, const void *x)
+> -{
+> -	if (!is_kernel_rodata((unsigned long)x))
+> -		kunit_kfree(test, x);
+> -}
+> +void kunit_kfree_const(struct kunit *test, const void *x);
+>  
+>  /**
+>   * kunit_kstrdup() - Duplicates a string into a test managed allocation.
+> @@ -527,16 +523,10 @@ static inline char *kunit_kstrdup(struct kunit *test, const char *str, gfp_t gfp
+>   * @gfp: flags passed to underlying kmalloc().
+>   *
+>   * Calls kunit_kstrdup() only if @str is not in the rodata section. Must be freed with
+> - * kunit_free_const() -- not kunit_free().
+> + * kunit_kfree_const() -- not kunit_kfree().
+>   * See kstrdup_const() and kunit_kmalloc_array() for more information.
+>   */
+> -static inline const char *kunit_kstrdup_const(struct kunit *test, const char *str, gfp_t gfp)
+> -{
+> -	if (is_kernel_rodata((unsigned long)str))
+> -		return str;
+> -
+> -	return kunit_kstrdup(test, str, gfp);
+> -}
+> +const char *kunit_kstrdup_const(struct kunit *test, const char *str, gfp_t gfp);
+>  
+>  /**
+>   * kunit_vm_mmap() - Allocate KUnit-tracked vm_mmap() area
+> diff --git a/lib/kunit/test.c b/lib/kunit/test.c
+> index e8b1b52a19ab..089c832e3cdb 100644
+> --- a/lib/kunit/test.c
+> +++ b/lib/kunit/test.c
+> @@ -874,6 +874,25 @@ void kunit_kfree(struct kunit *test, const void *ptr)
+>  }
+>  EXPORT_SYMBOL_GPL(kunit_kfree);
+>  
+> +void kunit_kfree_const(struct kunit *test, const void *x)
+> +{
+> +#if !IS_MODULE(CONFIG_KUNIT)
+> +	if (!is_kernel_rodata((unsigned long)x))
+> +#endif
+> +		kunit_kfree(test, x);
+> +}
+> +EXPORT_SYMBOL_GPL(kunit_kfree_const);
+> +
+> +const char *kunit_kstrdup_const(struct kunit *test, const char *str, gfp_t gfp)
+> +{
+> +#if !IS_MODULE(CONFIG_KUNIT)
+> +	if (is_kernel_rodata((unsigned long)str))
+> +		return str;
+> +#endif
+> +	return kunit_kstrdup(test, str, gfp);
+> +}
+> +EXPORT_SYMBOL_GPL(kunit_kstrdup_const);
+> +
+>  void kunit_cleanup(struct kunit *test)
+>  {
+>  	struct kunit_resource *res;
+> -- 
+> 2.46.0.rc2.264.g509ed76dc8-goog
+> 
+
+-- 
+Kees Cook
 
