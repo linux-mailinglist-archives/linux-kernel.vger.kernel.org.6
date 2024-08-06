@@ -1,128 +1,86 @@
-Return-Path: <linux-kernel+bounces-276946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42046949A43
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:35:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C71C3949A46
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D25B9B23430
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:35:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42C81B267C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE3F16A943;
-	Tue,  6 Aug 2024 21:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DFB165F08;
+	Tue,  6 Aug 2024 21:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5IhPkCC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q41VBHVJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA43382863;
-	Tue,  6 Aug 2024 21:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A5A80043;
+	Tue,  6 Aug 2024 21:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722980104; cv=none; b=PapRSbqZtL178X3Dx/Bttyh1QDrpnYY5Fp9caL051yDcRCRmAixrb12G8/vXYY4ZTK0rLbAvJIRXV/taeeHlW1AqOF+YEZJqlFTDn8hS/Tb9Lx6UiQq4S9wJQsl1at2LFsMdtoky0oNoD3eHJhFLVSKnQHJ5imVECa067qfw9V0=
+	t=1722980164; cv=none; b=BMaWi7AGkIBlQBHSwDrE9794RDiM2NJsNqtad3AJg8qI0DgjXkPmgoSMieuQU6KqyjgaLLgVuuhxsN5Gl6Dn+tG+kov4gpS0hf0pSqCOLWAGXJxtlTZV+uDPGFmrzjlkuBsu5p9hDUrb1UQtkUTfSAzylkw6ZD+FOHd9zp8U42Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722980104; c=relaxed/simple;
-	bh=4B0VqZXX8e0Xp86ft/ZY22AsMqEwkyCGIdkBRMWV1yM=;
+	s=arc-20240116; t=1722980164; c=relaxed/simple;
+	bh=T8VAkq6+JkZfcm1MVqAaJkaSISBV2ORR9lhXYRiIiAs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fMv3oz3XHJWEwt+jax8EIZvVbL8rSGk609/rReU06dfjhcZb7alv3/EeWOvZ8Ib+mLRJLAdKMHxUPW3tIT287Xelm6CLvBQ5oc7F2pj3hX7nkRxOPYx/qJ/H0/Bfh6+/JLxwpHynYgp7jYw6Fj01fvRgVJoXvVpTi16kicajjuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C5IhPkCC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30AA0C32786;
-	Tue,  6 Aug 2024 21:35:04 +0000 (UTC)
+	 Content-Disposition:In-Reply-To; b=HBDCE9yBbiBBShKLJLn99khoPYQvOKWm56Vj9DlhlAnWzberG+g1TrdzdRo2PzvYotNxGXf9AX9JkvX+LZzQKVL1DC4TkdaAXpSUgTb4xmmPKRd6nI1DHuwGC3xSMdhtN6+d5yTLUP7gWWzu3yO21bmEba1Dwwu4Dh/LxTh1DUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q41VBHVJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9EA7C32786;
+	Tue,  6 Aug 2024 21:36:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722980104;
-	bh=4B0VqZXX8e0Xp86ft/ZY22AsMqEwkyCGIdkBRMWV1yM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=C5IhPkCC73C0WrIXz/uZpToLCxoL49pVnrCdjLjJOS5zvMPETmL1aqNKSR8S/MKHZ
-	 EMSFA2Xf3bh5kxw81z82ULQ6QvThk5SOQl73d35e2U8a8qaq4VZr9vg+zRvG6hwtlV
-	 rfjOKidNAk63H1faNXhfuj9HO5BTr8ZPPVrxF8oyGdZJ1OSVoOYelQmJE0c3XfUeav
-	 Xvq+twhT72wm3/M3gVoMCHGjf/LKiJpUJW/V7LJp5hGZA2gfWOv/r3IHKnj8ZxwmLb
-	 accbqaDkW/TNtwmQxkAtOOp+s5EeTHMzPBlH8YfWvUpfX/QYIggnFepUkrEYUvOE0C
-	 x2ysMP5EO8CSQ==
-Received: by mercury (Postfix, from userid 1000)
-	id 1423B106066C; Tue, 06 Aug 2024 23:35:01 +0200 (CEST)
-Date: Tue, 6 Aug 2024 23:35:01 +0200
-From: Sebastian Reichel <sre@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: [GIT PULL] power-supply changes for 6.11-rc3
-Message-ID: <uw3qk5vbjkonzirjhsrjlkq34sj73g5dtf4uw4yhprf6y6dn3e@umuf6mghw3f6>
+	s=k20201202; t=1722980163;
+	bh=T8VAkq6+JkZfcm1MVqAaJkaSISBV2ORR9lhXYRiIiAs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Q41VBHVJvx2PKZvgG2Eh9xXpTloW/sNrKYl1U0Mtc8bPhUanKLrfu7tfCqgINi5yl
+	 g0IgAWLU+fxyPuhhQI6W2wO3dhRN/EIumpY2s1tZZMvl4iVeM8cxe6WlOx996uqfPm
+	 iMHqjzYhKokyjujhm3FV8UoZw89LOJS08HcRTBvZQtiLwt0AgYd0boO67FlFYobPYH
+	 u7VGstvNdr6h8+JcLDnQLis+wvhbpUmW06Y1FYNepRBC5bC27obpNeQkzgrXiK45L0
+	 7V1+otyahqkEHV/XjcPir0i1xhgkM2F5gi4WeHknLeG/qLhAZwRU4CYcJJv4LhauJf
+	 CAbbq8+PxETXQ==
+Date: Tue, 6 Aug 2024 16:36:02 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Guilherme =?utf-8?Q?Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>
+Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: remove type return
+Message-ID: <20240806213602.GA79716@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ixfyut5kjxo53sav"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAM_RzfZWns316GziuWbX-ZhO-xZm8rhssoC6tAdizGK1s3Ai+g@mail.gmail.com>
 
+On Tue, Aug 06, 2024 at 05:54:15PM -0300, Guilherme Giácomo Simões wrote:
+> Ilpo Järvinen <ilpo.jarvinen@linux.intel.com> wrote:
+> > On Sat, 3 Aug 2024, Guilherme Giacomo Simoes wrote:
+> >
+> > > I can see that the function pci_hp_add_brigde have a int return
+> > > propagation.
+> ...
 
---ixfyut5kjxo53sav
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > The lack of return value checking seems to be on the list in
+> > pci_hp_add_bridge(). So perhaps the right course of action would be to
+> > handle return values correctly.
+> 
+> Ok, so if the right course is for the driver to handle return value,
+> then this is a
+> task for the driver developers, because only they know what to do when
+> pci_hp_add_bridge() doesn't work correctly, right?
 
-Hi Linus,
+pci_hp_add_bridge() is only for hotplug drivers, so the list of
+callers is short and completely under our control.  There's plenty of
+opportunity for improving this.  Beyond just the return value, all the
+callers of pci_hp_add_bridge() should be doing much of the same work
+that could potentially be factored out.
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
-
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git tags/for-v6.11-rc
-
-for you to fetch changes up to d6cca7631a4b54a8995e3bc53e5afb11d3b0c8ff:
-
-  power: supply: qcom_battmgr: Ignore extra __le32 in info payload (2024-07-27 00:18:40 +0200)
-
-----------------------------------------------------------------
-Power Supply Fixes for 6.11 cycle
-
-* rt5033: fix driver regression causing kernel oops
-* axp288-charger: fix charge voltage setup
-* qcom-battmgr: fix thermal zone spamming errors
-* qcom-battmgr: fix init on Qualcomm X Elite
-
-----------------------------------------------------------------
-Hans de Goede (2):
-      power: supply: axp288_charger: Fix constant_charge_voltage writes
-      power: supply: axp288_charger: Round constant_charge_voltage writes down
-
-Neil Armstrong (1):
-      power: supply: qcom_battmgr: return EAGAIN when firmware service is not up
-
-Nikita Travkin (1):
-      power: supply: rt5033: Bring back i2c_set_clientdata
-
-Stephan Gerhold (1):
-      power: supply: qcom_battmgr: Ignore extra __le32 in info payload
-
- drivers/power/supply/axp288_charger.c | 24 ++++++++++++------------
- drivers/power/supply/qcom_battmgr.c   | 12 +++++++-----
- drivers/power/supply/rt5033_battery.c |  1 +
- 3 files changed, 20 insertions(+), 17 deletions(-)
-
---ixfyut5kjxo53sav
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmaylwQACgkQ2O7X88g7
-+polKA//VycZvY96wXNSB4eLTUJIudH6BWB0n7gypu5ln5d/zM4YAoaFCwy9K0y3
-iBoJopFeX/N1mOhRLhYbNCvAOfj1YSGcC6HJ3NKre5ALMzpVplpOTtxjuPhxxmWL
-ZlLCA2sJNozYySip9jPq6kOgsk/GvEMckoqb/r4l/6lkuMZHva0uM4BUZZ5TgzyQ
-jO3WJxVRtJ/2Gzz7s0Z2CFIVFBiCaoZZzWpWqzJBqYbDd3FfgPbECPFUpxMURgjd
-gpCEmDVF0QdJY5ncksMgWEbk1Xe8vp8ppvo2Usf29x+ohbMpps6nVoO6T+11vc/p
-LQUQtNV9YZpRj1beqzCzNAR3MTNeCXJJC2cK5nTOxa2or5vVGoKnAAb8Da9kvzBJ
-NUTq7b8sx35rOFWr5QFal+f+i3zyfJ7vHyXLoxuubRyXSKp5LW6P0o9YgcRYr2qu
-vTwZY7+XoLf9+tjEg3s3MxNMe4m91ywLT0XSEa/yyk9K5+uVAL5cM8cWrN7hbUqA
-oonKeXd3hUShIhFvyre2LfajEBjmaJJLXvl7Zvzh7FG2GPXOPxedeWTgrJIhchwr
-l3olSw3cLZjaRFRxKxeRkYyxV8PxHbsJQZR01QyFDouVRNiOaLXjgS/kq0G+X4Iy
-jPPMtMr1LKWo0pbo8Th4NLrM1XWrtqIMZ/GOce9Q5yc4kY2gjd0=
-=3gdF
------END PGP SIGNATURE-----
-
---ixfyut5kjxo53sav--
+Bjorn
 
