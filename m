@@ -1,287 +1,106 @@
-Return-Path: <linux-kernel+bounces-276908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 999649499F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:17:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A501F9499F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 241A228368E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:17:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 645DC283BAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A313A16CD3A;
-	Tue,  6 Aug 2024 21:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8259116A940;
+	Tue,  6 Aug 2024 21:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="el1AReON"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.dufresne@collabora.com header.b="kMK3/MuP"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0630537F8;
-	Tue,  6 Aug 2024 21:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722979011; cv=none; b=YgsgPxjG34xsys/umpIkUcs1FB2kxwiXyZpxoQdYQEIsumZ9i6rwP0YiDwdoO9Vli2uk9eW9iiCK77m+9qiwkoISvdswDBHgkMtPyIb1O+5858U0K2XEQ/m6/Ln0fp7AKP3oYHy/h+D072j2HfXESj6OYB8KIn38S3+zrKDQdIg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722979011; c=relaxed/simple;
-	bh=Sq+mLKMGhUOzIQ3d8kGR/gMMflDUZ2ceywfAml2e688=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gn2+tpu9T3yq66Svdp2tEIpzqWVguNXOyDMzfeqxqgejzOgcNMlhjU8XnfoTVPQVH4AKofs96HA4Z3k7Aqru5yG4xXQ8v+qoDfvDRMElki3jynu+W735tIDDqAyTpW1yovSfdPalpVxEGKuwfEg9a5KAaO1NlpOIHkENvg4umwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=el1AReON; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 476H6YN1012239;
-	Tue, 6 Aug 2024 21:16:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=mWT4oEiHq7+kqrAWRuMMgMQ1
-	ARKaW2NFuiMm8ozeZHI=; b=el1AReONH7vQp4816bzt40yJ9zT0Ve1Y19B0jSID
-	+shHSLSa4TWUZhCtPa0Fwp1Z/fFM/jtaf1ULbsZ/VrB6Ewehrqs3FsHln5mCYwF2
-	VOurKcISwDpMnZ2GT2uLJPbBhO1/ZA8zqpyELj8iqPSGZdKIZIcqFw4r5fw+lfte
-	wltIUiC3UZhuy6RDcr2l5uf6vA64l0zGFRWHS2un6u4pt9X44nKBG47vYcpq8Ds/
-	SHGShRzJH3WMuP3pBak6pvuHpp+v0bc0w58Viv4v+292umHIGQ+Moga1Ei5z/Qpq
-	V1F94s/F5H7Xo4z8NsT0uGgmAZGxDWjx75k8uBl3DNuM6g==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sbj6rsfg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 Aug 2024 21:16:40 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 476LGdZa010010
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 6 Aug 2024 21:16:39 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 6 Aug 2024 14:16:39 -0700
-Date: Tue, 6 Aug 2024 14:16:38 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson
-	<seanjc@google.com>
-CC: <linux-coco@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <kvm@vger.kernel.org>
-Subject: Re: [PATCH RFC 4/4] mm: guest_memfd: Add ability for mmap'ing pages
-Message-ID: <20240806141341375-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com>
- <20240805-guest-memfd-lib-v1-4-e5a29a4ff5d7@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364F86FC3;
+	Tue,  6 Aug 2024 21:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722979121; cv=pass; b=s+YXrpfVmiY8OzgFdJ7KH4ICiRJQlAnI/M6gXmYO4Xr64KJZxyZbvCNfr8D/2XstFuno8tiAh2MsCa2aHTS6PJgmJhfQlOD/gQRNbxz6KU/wInqkmOM4jpan3vLoiNDOACVvxM1/LXuPb6pWRE4E/+793oUXVyAK2X5sc9yD9ls=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722979121; c=relaxed/simple;
+	bh=1utvhZHP0c6T8Ir5t589WiTudCfRoOIw0DiDKTzIf38=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SsU4lvulrtIHhAywxnoHvVPLb/AnC+qv3/0fNWMs/u6lT/NTwoj7Z2yrcQ1m8mN4h8XdySdX4Z+W8bg0wYPEHk3LqnJPzo5/r712d1jxycW6Niej3BG73pwgYLdpU5777IszoSbUp9DsgPS/wuPQDB8r91SaoGgAs/ulibpcLdE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.dufresne@collabora.com header.b=kMK3/MuP; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: dmitry.osipenko@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1722979084; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=kJU6zPIfWUudt7/XRn7/TOg0fe55t5arfi7vARhhCP6MF7RvWzD84vIuKeFmkA4eAYNit+LKpF5uxMWaJWlWpakk4so/16te7AXgQtvctebweUfTIlNTUOcpYDiF5VuEQQ9nzwTtt6zeeNcSk3j6DGsUKoYqb3spEVlpVesO3xI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1722979084; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=1utvhZHP0c6T8Ir5t589WiTudCfRoOIw0DiDKTzIf38=; 
+	b=Vln/VZMrK75Lw8wGQ5yGeEQeZHvszyvBo7X9MMrDL8jwFcbPu7J011BtX6p3Dun79CqbpQ8hruVt5NL5Gk3SyvgrDbejSpAgMPWJiZMHK5mPXLuDJoBSxPcHwSOVplKb6jg3Zz+VjRiGC0OXJG3uYuxIJomdtO7Tcj2Y4yVcw6E=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.dufresne@collabora.com;
+	dmarc=pass header.from=<nicolas.dufresne@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1722979084;
+	s=zohomail; d=collabora.com; i=nicolas.dufresne@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=1utvhZHP0c6T8Ir5t589WiTudCfRoOIw0DiDKTzIf38=;
+	b=kMK3/MuPZXiddxJtOppeyg/qVO1KC8I7lLYcf667P+mF/nJCBXAQnGFbYsENftWv
+	Q2rfbB9P682e+5c2KG8Y+oDq8rdQmRnR7DfUuwUZG3gWtrhurdNuimzYoz5HqML9NhA
+	neornCWQdp7AypaXPGfyLMjOJtxjIAsvnSOeZvSI=
+Received: by mx.zohomail.com with SMTPS id 172297908214914.577164447111386;
+	Tue, 6 Aug 2024 14:18:02 -0700 (PDT)
+Message-ID: <3c388a51fef3d2c284fe7648ffd7215e097980a9.camel@collabora.com>
+Subject: Re: [PATCH v4 0/4] Add Synopsys DesignWare HDMI RX Controller
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Tim Surber <me@timsurber.de>, Dmitry Osipenko
+ <dmitry.osipenko@collabora.com>, Shreeya Patel
+ <shreeya.patel@collabora.com>,  heiko@sntech.de, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org,  conor+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org,  p.zabel@pengutronix.de,
+ jose.abreu@synopsys.com, nelson.costa@synopsys.com, 
+ shawn.wen@rock-chips.com, hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Date: Tue, 06 Aug 2024 17:17:58 -0400
+In-Reply-To: <06838f40-881c-4301-826b-e29a4277e663@timsurber.de>
+References: <20240719124032.26852-1-shreeya.patel@collabora.com>
+	 <6f5c4ebb-84ab-4b65-9817-ac5f6158911f@timsurber.de>
+	 <929d2f50-6b0e-4d1e-a6d3-482d615bd06a@collabora.com>
+	 <06838f40-881c-4301-826b-e29a4277e663@timsurber.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240805-guest-memfd-lib-v1-4-e5a29a4ff5d7@quicinc.com>
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: l3ryIpeZFhHhWFL8jmtDTJLDJnwKRl4D
-X-Proofpoint-GUID: l3ryIpeZFhHhWFL8jmtDTJLDJnwKRl4D
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-06_17,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- priorityscore=1501 adultscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0
- phishscore=0 mlxlogscore=999 clxscore=1015 malwarescore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408060149
+X-ZohoMailClient: External
 
-Hi Sean/Paolo,
+SGkgVGltLAoKTGUgbWFyZGkgMDYgYW/Du3QgMjAyNCDDoCAyMjozNyArMDIwMCwgVGltIFN1cmJl
+ciBhIMOpY3JpdMKgOgo+ICMjI3NvdXJjZSBzZXQgdG8gNGs2MGZwcyMjIyMKPiAtLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0KPiB2NGwyLWN0bCAtLXZlcmJvc2UgLWQgL2Rldi92aWRlbzEgCj4g
+LS1zZXQtZm10LXZpZGVvPXdpZHRoPTM4NDAsaGVpZ2h0PTIxNjAscGl4ZWxmb3JtYXQ9J05WMTIn
+IAo+IC0tc3RyZWFtLW1tYXA9NCAtLXN0cmVhbS1za2lwPTMgLS1zdHJlYW0tY291bnQ9MTAwIC0t
+c3RyZWFtLXBvbGwKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBWSURJT0NfUVVFUllD
+QVA6IG9rCj4gVklESU9DX0dfRk1UOiBvawo+IFZJRElPQ19TX0ZNVDogb2sKPiBGb3JtYXQgVmlk
+ZW8gQ2FwdHVyZSBNdWx0aXBsYW5hcjoKPiDCoMKgwqDCoCBXaWR0aC9IZWlnaHTCoMKgwqDCoMKg
+IDogMzg0MC8yMTYwCj4gwqDCoMKgwqAgUGl4ZWwgRm9ybWF0wqDCoMKgwqDCoCA6ICdOVjEyJyAo
+WS9VViA0OjI6MCkKPiDCoMKgwqDCoCBGaWVsZMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA6IE5v
+bmUKPiDCoMKgwqDCoCBOdW1iZXIgb2YgcGxhbmVzwqAgOiAxCj4gwqDCoMKgwqAgRmxhZ3PCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgOgo+IMKgwqDCoMKgIENvbG9yc3BhY2XCoMKgwqDCoMKgwqDC
+oCA6IHNSR0IKPiDCoMKgwqDCoCBUcmFuc2ZlciBGdW5jdGlvbiA6IERlZmF1bHQKPiDCoMKgwqDC
+oCBZQ2JDci9IU1YgRW5jb2Rpbmc6IERlZmF1bHQKPiDCoMKgwqDCoCBRdWFudGl6YXRpb27CoMKg
+wqDCoMKgIDogRGVmYXVsdAo+IMKgwqDCoMKgIFBsYW5lIDDCoMKgwqDCoMKgwqDCoMKgwqDCoCA6
+Cj4gwqDCoMKgwqDCoMKgwqAgQnl0ZXMgcGVyIExpbmUgOiAzODQwCj4gwqDCoMKgwqDCoMKgwqAg
+U2l6ZSBJbWFnZcKgwqDCoMKgIDogODI5NDQwMAoKWW91IGhhdmUgaGlnaGxpZ2h0ZWQgYSBidWcg
+aGVyZS4gTlYxMiBoYXMgMiBwbGFuZXMsIGJ1dCB0aGUgc2l6ZSBpbWFnZSBvbmx5CmFsbG93IGZv
+ciB0aGUgbHVtYSB0byBiZSBzdG9yZWQuCgogICBTaXplIEltYWdlOiAzODQwICogMjE2MCAqIDMg
+LyAyID0gMTI0NDE2MDAgYnl0ZXMuCgpMZXRzIGF0IGxlYXN0IGdldCB0aGF0IGZpeGVkLCBhbmQg
+Y2hlY2sgYWdhaW4uCgpOaWNvbGFzCg==
 
-Do you have a preference on when to make the kvm_gmem_prepare_folio
-callback? Previously [1], we decided it needed to be at allocation time.
-With memory being coverted shared->private, I'm suspecting the
-->prepare() callback should only be done right before marking the page
-as private?
-
-Thanks,
-Elliot
-
-On Mon, Aug 05, 2024 at 11:34:50AM -0700, Elliot Berman wrote:
-> Confidential/protected guest virtual machines want to share some memory
-> back with the host Linux. For example, virtqueues allow host and
-> protected guest to exchange data. In MMU-only isolation of protected
-> guest virtual machines, the transition between "shared" and "private"
-> can be done in-place without a trusted hypervisor copying pages.
-> 
-> Add support for this feature and allow Linux to mmap host-accessible
-> pages. When the owner provides an ->accessible() callback in the
-> struct guest_memfd_operations, guest_memfd allows folios to be mapped
-> when the ->accessible() callback returns 0.
-> 
-> To safely make inaccessible:
-> 
-> ```
-> folio = guest_memfd_grab_folio(inode, index, flags);
-> r = guest_memfd_make_inaccessible(inode, folio);
-> if (r)
->         goto err;
-> 
-> hypervisor_does_guest_mapping(folio);
-> 
-> folio_unlock(folio);
-> ```
-> 
-> hypervisor_does_s2_mapping(folio) should make it so
-> ops->accessible(...) on those folios fails.
-> 
-> The folio lock ensures atomicity.
-> 
-> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> ---
->  include/linux/guest_memfd.h |  7 ++++
->  mm/guest_memfd.c            | 81 ++++++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 87 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/guest_memfd.h b/include/linux/guest_memfd.h
-> index f9e4a27aed67..edcb4ba60cb0 100644
-> --- a/include/linux/guest_memfd.h
-> +++ b/include/linux/guest_memfd.h
-> @@ -16,12 +16,18 @@
->   * @invalidate_end: called after invalidate_begin returns success. Optional.
->   * @prepare: called before a folio is mapped into the guest address space.
->   *           Optional.
-> + * @accessible: called after prepare returns success and before it's mapped
-> + *              into the guest address space. Returns 0 if the folio can be
-> + *              accessed.
-> + *              Optional. If not present, assumes folios are never accessible.
->   * @release: Called when releasing the guest_memfd file. Required.
->   */
->  struct guest_memfd_operations {
->  	int (*invalidate_begin)(struct inode *inode, pgoff_t offset, unsigned long nr);
->  	void (*invalidate_end)(struct inode *inode, pgoff_t offset, unsigned long nr);
->  	int (*prepare)(struct inode *inode, pgoff_t offset, struct folio *folio);
-> +	int (*accessible)(struct inode *inode, struct folio *folio,
-> +			  pgoff_t offset, unsigned long nr);
->  	int (*release)(struct inode *inode);
->  };
->  
-> @@ -48,5 +54,6 @@ struct file *guest_memfd_alloc(const char *name,
->  			       const struct guest_memfd_operations *ops,
->  			       loff_t size, unsigned long flags);
->  bool is_guest_memfd(struct file *file, const struct guest_memfd_operations *ops);
-> +int guest_memfd_make_inaccessible(struct file *file, struct folio *folio);
->  
->  #endif
-> diff --git a/mm/guest_memfd.c b/mm/guest_memfd.c
-> index e9d8cab72b28..6b5609932ca5 100644
-> --- a/mm/guest_memfd.c
-> +++ b/mm/guest_memfd.c
-> @@ -9,6 +9,8 @@
->  #include <linux/pagemap.h>
->  #include <linux/set_memory.h>
->  
-> +#include "internal.h"
-> +
->  static inline int guest_memfd_folio_private(struct folio *folio)
->  {
->  	unsigned long nr_pages = folio_nr_pages(folio);
-> @@ -89,7 +91,7 @@ struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags
->  			goto out_err;
->  	}
->  
-> -	if (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP) {
-> +	if (!ops->accessible && (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP)) {
->  		r = guest_memfd_folio_private(folio);
->  		if (r)
->  			goto out_err;
-> @@ -107,6 +109,82 @@ struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags
->  }
->  EXPORT_SYMBOL_GPL(guest_memfd_grab_folio);
->  
-> +int guest_memfd_make_inaccessible(struct file *file, struct folio *folio)
-> +{
-> +	unsigned long gmem_flags = (unsigned long)file->private_data;
-> +	unsigned long i;
-> +	int r;
-> +
-> +	unmap_mapping_folio(folio);
-> +
-> +	/**
-> +	 * We can't use the refcount. It might be elevated due to
-> +	 * guest/vcpu trying to access same folio as another vcpu
-> +	 * or because userspace is trying to access folio for same reason
-> +	 *
-> +	 * folio_lock serializes the transitions between (in)accessible
-> +	 */
-> +	if (folio_maybe_dma_pinned(folio))
-> +		return -EBUSY;
-> +
-> +	if (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP) {
-> +		r = guest_memfd_folio_private(folio);
-> +		if (r)
-> +			return r;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static vm_fault_t gmem_fault(struct vm_fault *vmf)
-> +{
-> +	struct file *file = vmf->vma->vm_file;
-> +	struct inode *inode = file_inode(file);
-> +	const struct guest_memfd_operations *ops = inode->i_private;
-> +	struct folio *folio;
-> +	pgoff_t off;
-> +	int r;
-> +
-> +	folio = guest_memfd_grab_folio(file, vmf->pgoff, GUEST_MEMFD_GRAB_UPTODATE);
-> +	if (!folio)
-> +		return VM_FAULT_SIGBUS;
-> +
-> +	off = vmf->pgoff & (folio_nr_pages(folio) - 1);
-> +	r = ops->accessible(inode, folio, off, 1);
-> +	if (r) {
-> +		folio_unlock(folio);
-> +		folio_put(folio);
-> +		return VM_FAULT_SIGBUS;
-> +	}
-> +
-> +	guest_memfd_folio_clear_private(folio);
-> +
-> +	vmf->page = folio_page(folio, off);
-> +
-> +	return VM_FAULT_LOCKED;
-> +}
-> +
-> +static const struct vm_operations_struct gmem_vm_ops = {
-> +	.fault = gmem_fault,
-> +};
-> +
-> +static int gmem_mmap(struct file *file, struct vm_area_struct *vma)
-> +{
-> +	const struct guest_memfd_operations *ops = file_inode(file)->i_private;
-> +
-> +	if (!ops->accessible)
-> +		return -EPERM;
-> +
-> +	/* No support for private mappings to avoid COW.  */
-> +	if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) !=
-> +	    (VM_SHARED | VM_MAYSHARE))
-> +		return -EINVAL;
-> +
-> +	file_accessed(file);
-> +	vma->vm_ops = &gmem_vm_ops;
-> +	return 0;
-> +}
-> +
->  static long gmem_punch_hole(struct file *file, loff_t offset, loff_t len)
->  {
->  	struct inode *inode = file_inode(file);
-> @@ -220,6 +298,7 @@ static int gmem_release(struct inode *inode, struct file *file)
->  static struct file_operations gmem_fops = {
->  	.open = generic_file_open,
->  	.llseek = generic_file_llseek,
-> +	.mmap = gmem_mmap,
->  	.release = gmem_release,
->  	.fallocate = gmem_fallocate,
->  	.owner = THIS_MODULE,
-> 
-> -- 
-> 2.34.1
-> 
 
