@@ -1,206 +1,111 @@
-Return-Path: <linux-kernel+bounces-276878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F17BA949986
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:48:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 225C6949987
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A81041F25144
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:48:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFE2CB25E76
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905DF16DEB6;
-	Tue,  6 Aug 2024 20:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RKfU3VmB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F9C158DD0;
-	Tue,  6 Aug 2024 20:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE0615B55E;
+	Tue,  6 Aug 2024 20:48:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2901A18D62B;
+	Tue,  6 Aug 2024 20:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722977247; cv=none; b=TekA1eQBtPC1UYxt6PFNKkBN/V/rwERTeu3WR6mSxswvZqLG7yLSSMLsuNUnU1MMnQqT/roflIB9Dc7v7cMcLZ6GdZ/Dt/yCoBb05MKoo6lsOQoI/UsVA7JhRuMIz4hHmLSK+gFo0MuyhQLhxEv8qHGwAe7Z+AL0ujMNBOm8hIQ=
+	t=1722977309; cv=none; b=NreubjOHBCFwpx5MrNTB8dgiAeCK+OTdzYvkH0w25PZy31mqJBHbOq3ECQ/skKlMWUJ/fGgO6hguVHR9pwTQX9DKlo3D0ttz7JfqPGhi1xi/7uyx8eXnJeJdRWf7vn3qIBmkDBpYZAsef5/1mrZSsWDCK8GpOG6IB8PZDzUjHJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722977247; c=relaxed/simple;
-	bh=5VHfHgI0zPzOlQEu8RbtaZqA7/yYGLgbqOof8O+0r7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YU2PXyhHlzkJRMVem0RioP+H8cHjxyYcokZacgkSWF7Tv3W4fad7FwEOT5cebHJKnGzmYXGSdDyGVNx99b+SXsYjC+4ZkCZ6lU49jXJpUxj94eAottNxKD7DjBQtw4ZeGY+L5kL6e1IXnN1UCelCjqXhf1v3orob/gnGS0DKhTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RKfU3VmB; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722977246; x=1754513246;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5VHfHgI0zPzOlQEu8RbtaZqA7/yYGLgbqOof8O+0r7M=;
-  b=RKfU3VmBgvFUBdCYKC69adsCHFQkXkLqEtJvqdScYOmMQa6sngCLCTa5
-   7ooBhTsajiliKDIqcs50LkRbMnVQJcLR5cmMMFDKVsWVOpe+Ln1mprdF/
-   v3dGGCKYnnjkUHvObTfDYTvtxEWzTIuzurXlO+NP46KWEUJGD18XKU0xY
-   fHGgCmJ933DnzfaauUK4dHua+IJI/okcwdfRFbReU6pA/1OTuzqmJjBdq
-   8WqgmLSPzNovUR2dMw6o2zjaX18ZxYnsnBQaMh8bUvMQ5ZY0Cz83q6JjV
-   W//4FR1RXQW902lTU2ztLgSAI++5p8agGHTaaVgBMAaRJnEN7p/H9g6hZ
-   A==;
-X-CSE-ConnectionGUID: I2gr/0nrQkO7yB6AHlz0ag==
-X-CSE-MsgGUID: 70D+hjn0RqSt8FbI4WzMoQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="20990323"
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="20990323"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 13:47:25 -0700
-X-CSE-ConnectionGUID: yy9kQiL4T+6VBtV2FjBTtA==
-X-CSE-MsgGUID: 71brb65iTxmbHsAa5Cf2mQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="57185326"
-Received: from tassilo.jf.intel.com (HELO tassilo) ([10.54.38.190])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 13:47:25 -0700
-Date: Tue, 6 Aug 2024 13:47:23 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1722977309; c=relaxed/simple;
+	bh=a6DsiXojv1z/Ig3NHwypyVb6gTS4FFtygsdzyq9CcY8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sADHy18MAMMHMpltuR9YU+zc50j8W6tmlLMSu8GyNYIcm5tfEPh7GscY/WBZ2yvgG6rjNnS0OXDalNzgLGbrGf4Jnu/Q6pPan2g6R94Ysuiq5MQiTj9CSJt0ipvVegeVXFQPMkoE78aCi2+O9zb31JPgYIj7kvlHV6c6Q+IxRSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3CAA1FEC;
+	Tue,  6 Aug 2024 13:48:53 -0700 (PDT)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9D9783F766;
+	Tue,  6 Aug 2024 13:48:25 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-Message-ID: <ZrKL2youCTmO3K0Q@tassilo>
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
- <CAGudoHF9nZMfk_XbRRap+0d=VNs_i8zqTkDXxogVt_M9YGbA8Q@mail.gmail.com>
- <87ikwdtqiy.fsf@linux.intel.com>
- <44862ec7c85cdc19529e26f47176d0ecfc90d888.camel@kernel.org>
- <CAGudoHGZVBw3h_pHDaaSMeDgf3q_qn4wmkfOoG6y-CKN9sZLVQ@mail.gmail.com>
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v3 0/5] perf auxtrace: Support multiple AUX events
+Date: Tue,  6 Aug 2024 21:48:08 +0100
+Message-Id: <20240806204813.722372-1-leo.yan@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGudoHGZVBw3h_pHDaaSMeDgf3q_qn4wmkfOoG6y-CKN9sZLVQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-> Before I get to the vfs layer, there is a significant loss in the
-> memory allocator because of memcg -- it takes several irq off/on trips
-> for every alloc (needed to grab struct file *). I have a plan what to
-> do with it (handle stuff with local cmpxchg (note no lock prefix)),
-> which I'm trying to get around to. Apart from that you may note the
-> allocator fast path performs a 16-byte cmpxchg, which is again dog
-> slow and executes twice (once for the file obj, another time for the
-> namei buffer). Someone(tm) should patch it up and I have some vague
-> ideas, but 0 idea when I can take a serious stab.
+This series is to support multiple events with the *same* type in Perf
+AUX trace. As the events are same type, the trace data shares the same
+format and can be decoded by the same decoder.
 
-I just LBR sampled it on my skylake and it doesn't look
-particularly slow. You see the whole massive block including CMPXCHG16 
-gets IPC 2.7, which is rather good. If you see lots of cycles on it it's likely
-a missing cache line.
+This patch series is dependent on auxtrace refactoring patch series:
+https://lore.kernel.org/lkml/20240806204130.720977-1-leo.yan@arm.com/T/#mae62825a677381797a13252c1d071caf18d957d7
 
-    kmem_cache_free:
-        ffffffff9944ce20                        nop %edi, %edx
-        ffffffff9944ce24                        nopl  %eax, (%rax,%rax,1)
-        ffffffff9944ce29                        pushq  %rbp
-        ffffffff9944ce2a                        mov %rdi, %rdx
-        ffffffff9944ce2d                        mov %rsp, %rbp
-        ffffffff9944ce30                        pushq  %r15
-        ffffffff9944ce32                        pushq  %r14
-        ffffffff9944ce34                        pushq  %r13
-        ffffffff9944ce36                        pushq  %r12
-        ffffffff9944ce38                        mov $0x80000000, %r12d
-        ffffffff9944ce3e                        pushq  %rbx
-        ffffffff9944ce3f                        mov %rsi, %rbx
-        ffffffff9944ce42                        and $0xfffffffffffffff0, %rsp
-        ffffffff9944ce46                        sub $0x10, %rsp
-        ffffffff9944ce4a                        movq  %gs:0x28, %rax
-        ffffffff9944ce53                        movq  %rax, 0x8(%rsp)
-        ffffffff9944ce58                        xor %eax, %eax
-        ffffffff9944ce5a                        add %rsi, %r12
-        ffffffff9944ce5d                        jb 0xffffffff9944d1ea
-        ffffffff9944ce63                        mov $0xffffffff80000000, %rax
-        ffffffff9944ce6a                        xor %r13d, %r13d
-        ffffffff9944ce6d                        subq  0x17b068c(%rip), %rax
-        ffffffff9944ce74                        add %r12, %rax
-        ffffffff9944ce77                        shr $0xc, %rax
-        ffffffff9944ce7b                        shl $0x6, %rax
-        ffffffff9944ce7f                        addq  0x17b066a(%rip), %rax
-        ffffffff9944ce86                        movq  0x8(%rax), %rcx
-        ffffffff9944ce8a                        test $0x1, %cl
-        ffffffff9944ce8d                        jnz 0xffffffff9944d15c
-        ffffffff9944ce93                        nopl  %eax, (%rax,%rax,1)
-        ffffffff9944ce98                        movq  (%rax), %rcx
-        ffffffff9944ce9b                        and $0x8, %ch
-        ffffffff9944ce9e                        jz 0xffffffff9944cfea
-        ffffffff9944cea4                        test %rax, %rax
-        ffffffff9944cea7                        jz 0xffffffff9944cfea
-        ffffffff9944cead                        movq  0x8(%rax), %r14
-        ffffffff9944ceb1                        test %r14, %r14
-        ffffffff9944ceb4                        jz 0xffffffff9944cfac
-        ffffffff9944ceba                        cmp %r14, %rdx
-        ffffffff9944cebd                        jnz 0xffffffff9944d165
-        ffffffff9944cec3                        test %r14, %r14
-        ffffffff9944cec6                        jz 0xffffffff9944cfac
-        ffffffff9944cecc                        movq  0x8(%rbp), %r15
-        ffffffff9944ced0                        nopl  %eax, (%rax,%rax,1)
-        ffffffff9944ced5                        movq  0x1fe5134(%rip), %rax
-        ffffffff9944cedc                        test %r13, %r13
-        ffffffff9944cedf                        jnz 0xffffffff9944ceef
-        ffffffff9944cee1                        mov $0xffffffff80000000, %rax
-        ffffffff9944cee8                        subq  0x17b0611(%rip), %rax
-        ffffffff9944ceef                        add %rax, %r12
-        ffffffff9944cef2                        shr $0xc, %r12
-        ffffffff9944cef6                        shl $0x6, %r12
-        ffffffff9944cefa                        addq  0x17b05ef(%rip), %r12
-        ffffffff9944cf01                        movq  0x8(%r12), %rax
-        ffffffff9944cf06                        mov %r12, %r13
-        ffffffff9944cf09                        test $0x1, %al
-        ffffffff9944cf0b                        jnz 0xffffffff9944d1b1
-        ffffffff9944cf11                        nopl  %eax, (%rax,%rax,1)
-        ffffffff9944cf16                        movq  (%r13), %rax
-        ffffffff9944cf1a                        movq  %rbx, (%rsp)
-        ffffffff9944cf1e                        test $0x8, %ah
-        ffffffff9944cf21                        mov $0x0, %eax
-        ffffffff9944cf26                        cmovz %rax, %r13
-        ffffffff9944cf2a                        data16 nop
-        ffffffff9944cf2c                        movq  0x38(%r13), %r8
-        ffffffff9944cf30                        cmp $0x3, %r8
-        ffffffff9944cf34                        jnbe 0xffffffff9944d1ca
-        ffffffff9944cf3a                        nopl  %eax, (%rax,%rax,1)
-        ffffffff9944cf3f                        movq  0x23d6f72(%rip), %rax
-        ffffffff9944cf46                        mov %rbx, %rdx
-        ffffffff9944cf49                        sub %rax, %rdx
-        ffffffff9944cf4c                        cmp $0x1fffff, %rdx
-        ffffffff9944cf53                        jbe 0xffffffff9944d03a
-        ffffffff9944cf59                        movq  (%r14), %rax
-        ffffffff9944cf5c                        addq  %gs:0x66bccab4(%rip), %rax
-        ffffffff9944cf64                        movq  0x8(%rax), %rdx
-        ffffffff9944cf68                        cmpq  %r13, 0x10(%rax)
-        ffffffff9944cf6c                        jnz 0xffffffff9944d192
-        ffffffff9944cf72                        movl  0x28(%r14), %ecx
-        ffffffff9944cf76                        movq  (%rax), %rax
-        ffffffff9944cf79                        add %rbx, %rcx
-        ffffffff9944cf7c                        cmp %rbx, %rax
-        ffffffff9944cf7f                        jz 0xffffffff9944d1ba
-        ffffffff9944cf85                        movq  0xb8(%r14), %rsi
-        ffffffff9944cf8c                        mov %rcx, %rdi
-        ffffffff9944cf8f                        bswap %rdi
-        ffffffff9944cf92                        xor %rax, %rsi
-        ffffffff9944cf95                        xor %rdi, %rsi
-        ffffffff9944cf98                        movq  %rsi, (%rcx)
-        ffffffff9944cf9b                        leaq  0x2000(%rdx), %rcx
-        ffffffff9944cfa2                        movq  (%r14), %rsi
-        ffffffff9944cfa5                        cmpxchg16bx  %gs:(%rsi)
-        ffffffff9944cfaa                        jnz 0xffffffff9944cf59
-        ffffffff9944cfac                        movq  0x8(%rsp), %rax
-        ffffffff9944cfb1                        subq  %gs:0x28, %rax
-        ffffffff9944cfba                        jnz 0xffffffff9944d1fc
-        ffffffff9944cfc0                        leaq  -0x28(%rbp), %rsp
-        ffffffff9944cfc4                        popq  %rbx
-        ffffffff9944cfc5                        popq  %r12
-        ffffffff9944cfc7                        popq  %r13
-        ffffffff9944cfc9                        popq  %r14
-        ffffffff9944cfcb                        popq  %r15
-        ffffffff9944cfcd                        popq  %rbp
-        ffffffff9944cfce                        retq                            # PRED 38 cycles [126] 2.74 IPC    <-------------
+Note, a more complex case - different types of AUX events, (e.g. Arm
+CoreSight event and Arm SPE events are enabled simultaneously) - is
+still not supported.
+
+Patch 01 is to change the perf core layer in the kernel to allow
+multiple AUX events to output to single FD, so that '--per-thread' mode
+can be supported.
+
+Patch 02 validates the AUX events' CPU map. It presumes the AUX events
+do not overlap for CPU maps, otherwise, it returns failure.
+
+Patches 03, 04, 05 is to support multiple AUX events for buffer mapped
+index.
+
+As the first enabled instance, the patch series has been tested with
+multiple Arm SPE events (e.g. arm_spe_0, arm_spe_1, etc). And verified
+this patch series on Intel-PT for no regression.
+
+
+Changes from v2:
+- Added patch 01 for support per-thread mode (Adrian).
+- Added patch 02 for verifying CPU maps without overlapping (Adrian).
+- Reworked patches to fix the regression on Intel-PT (Ian).
+
+Changes from v1:
+- Added comment in patch 01 for iterating AUX events (Adrian)
+- Added patch 02 for removing unused field 'pmu' (Adrian)
+
+
+Leo Yan (5):
+  perf/core: Allow multiple AUX PMU events with the same module
+  perf auxtrace: Introduce auxtrace_record__validate_events()
+  perf auxtrace: Refactor evlist__enable_event_idx()
+  perf auxtrace: Bails out after finding the event for the map index
+  perf auxtrace: Iterate all AUX events when finish reading
+
+ kernel/events/core.c        |   3 +-
+ tools/perf/builtin-record.c |   4 ++
+ tools/perf/util/auxtrace.c  | 110 ++++++++++++++++++++++++++++++++----
+ tools/perf/util/auxtrace.h  |   7 +++
+ 4 files changed, 113 insertions(+), 11 deletions(-)
+
+-- 
+2.34.1
+
 
