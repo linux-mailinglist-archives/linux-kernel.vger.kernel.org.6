@@ -1,155 +1,150 @@
-Return-Path: <linux-kernel+bounces-275636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83ED19487DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:10:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FF919487DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BCC51F23EF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:10:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB7DDB20DE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04935A7AA;
-	Tue,  6 Aug 2024 03:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25A959164;
+	Tue,  6 Aug 2024 03:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="fT2jd/UV"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b="EQpefKrO"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E72457CB6
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18046FC3
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722913846; cv=none; b=SYKtkrQZMjLItw9+oCpNCCh8Fl5vJZnVWmuqrY3u2nAtr8d6ZEXx3xjl7Fx5vDf8P910wVpDX5YGlL/PX0WYitOpa9G96um5l4HDVtphbqV7466tHmDAF1VMwjo0HrFgOLE6rU4t4JCcpAisS1VgjhIOMn03gSnpFR8tdPovJA8=
+	t=1722914095; cv=none; b=pVEgghxZuDvVI48uQLtmWiQs03fFn1bX/neqwhpLgtVw6HB2rXsT3SBlASUzZ0YuI47kOTYzRAbFJVSsP+6E/cW+2dirL92JiZyJiBCMXq4R41eDT7sUiony18d0lTuOroIiGX5g/aOqDn01JYciITTtDNUulU9B1+0/3E2ZjFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722913846; c=relaxed/simple;
-	bh=U4HEFD8CUVMLfWTgw9z7V6Ux1UCzXOA+F012FnD1b5w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J2nyCcUFTfnNAybWPmM9VdZaC/K2DqD/iD0E6qcWno8Qk4oQjnTgmQR5ZzThF1CEfoGIWeI7x1WahOIpH7QVgQEOWTCU5xxKfCXkDgX8rnDZtMIjO8530/lq3jt1T9XD4Y987yuhVzzzsSBbvKBhNOevsHuCKnNzMztB/dGsRNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=fT2jd/UV; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2cb4b6ecb3dso208300a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 20:10:44 -0700 (PDT)
+	s=arc-20240116; t=1722914095; c=relaxed/simple;
+	bh=EIyTLfsIgCR2Keu3u5GYReyIkMMkcbSZt6Lkv7LWR58=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=LWyci7qW35pjMofLZ6tnpSmwjP3qsG2J0aNZPtjPm84aqELbE8TMOLcQw5Fp+hkxigg0Gs6XRj2ocnD+JkeWTB90RUwobH9cIgNjvQJIgDnJH6Xy8gHR738lySNsLcIJnfpiobowhNaKBtryJ8Cg2taOro23QDQ+PKhq7tj0to0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com; spf=pass smtp.mailfrom=jrtc27.com; dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b=EQpefKrO; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jrtc27.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4281c164408so579145e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 20:14:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1722913844; x=1723518644; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=jrtc27.com; s=gmail.jrtc27.user; t=1722914092; x=1723518892; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U4HEFD8CUVMLfWTgw9z7V6Ux1UCzXOA+F012FnD1b5w=;
-        b=fT2jd/UVWchKQB4APsPLTd75h6W6V9znAByLgY5fhPP5+saxBQBuiz01gNTmKN8rys
-         lCfEKhRi8H66VTZaA1LxMvyJ0p1snVM2h8a6ch7lMyRfYGBI4r9pgpUiFsjXdHygpvJ4
-         m8/Z0sjqLX+fCMKdHZFYeilDR51Xxo6BDJm7usyfTuDQiwCHMjf4vMhnADyYmezYO+m5
-         2mhGMx1MoIpB7ZUUaiUSm2SDGLJ8qouwdD4w3W+Icm7xXY0h9Zm2+OUZk5Dp6WJWP7+0
-         kcIkI5gAqYWvjE4IZ2k37S4N94VQzKe7U2G8yBdSIg435b/gZpw5mJAtnYflMpywYFuy
-         X0zg==
+        bh=dnA0PeUHKuNbqiKyg0B4D4n1V2sk6W3EUvTsNvf0wVY=;
+        b=EQpefKrOfjW47UQoaOg+s/ApTf49oLWlFmlb4D0VycN7peNxlqBg6o9sEDOLHa46Ib
+         ZHUhREO14a2hQ6OcbRG8GSNn93jgsKyvsTYJ+OD5xotTk2nPmRub4EYclmwMfM6hUFAF
+         5nzETkSFOIWKCRvUIkML2rK29N5HnazSybVRcfmxHR5UxPl5gs8NK6XMLSRGY6uBjDwS
+         U1Ysd44k8vNN+dvikxMQAGZMW9ivJmlA7ASbvJWzW9AscoeTK+Afhy9Zoj3JwO9r8j8Y
+         9gXIJAF1XIgvcOQcHJushgDgAqKBFFOMtQJhMipw+hOUYFEyugri8YJJ4LQQBqxECXM9
+         9DXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722913844; x=1723518644;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722914092; x=1723518892;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U4HEFD8CUVMLfWTgw9z7V6Ux1UCzXOA+F012FnD1b5w=;
-        b=br0D3RKUeexJXlTO1sXxBSAZBP0VQnCTRye1f+HhRsrCpbnCYovZq9J6OFksw3E6yV
-         1QlavE/uO/L49Ov0FM/bP1ezbKQkfo/MFUt0fqNin73ehCqAJqnLy2Vtg4/9QnDr9gmw
-         BKQ2q7NxjHjvOqagCLN7p2P1a7Mb5Giin5TShzt5iTTkWL4ftaBkeR/EoQvDCobghay8
-         MwLErEoU8IX23ZxN2hj0XaYmf5/cQKCqPShC3HFRbSc6Iwi1r1Ha+w1J/T8IRLgqPNN4
-         V2n0f7YItkpH42Oqi60uoHlp/Q06soZjHZf4wBrPEKshYb/FBkvCPU3e3csteqRp8rFJ
-         zKbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUo7rfKVjHPbMw9mr4LMlbFWIITGsYEcec2or8BXQd1/PNwl3/9Zd6xs91/k0hacR6w3SiU8S4ab02XXkTj7wvB2TQDaf8r7ydAENHg
-X-Gm-Message-State: AOJu0YxW7CgIeblozDKfLqbeBL1KghiYUu2h6iYtgTwAQj020nzP8Cg4
-	623nmLvu/x9m5xDOOy9EJtReCI549UTBXpsDWIpi9SF4+t1wd5Edf1J03/4hwRwgCUTROme8osL
-	DZoDevILxlJK/MQED46FlYVTHhud6ixZE7PIE
-X-Google-Smtp-Source: AGHT+IHTYparmt/OTUThIPTlzIvOrqD9cz4WdKpTshz9lzOsNEUt309813jePKD3C5KsZ33asBZLz3EEOnXCpOLA/34=
-X-Received: by 2002:a17:90a:680d:b0:2c9:a56b:8db6 with SMTP id
- 98e67ed59e1d1-2cff9559125mr12349178a91.37.1722913843669; Mon, 05 Aug 2024
- 20:10:43 -0700 (PDT)
+        bh=dnA0PeUHKuNbqiKyg0B4D4n1V2sk6W3EUvTsNvf0wVY=;
+        b=U0yu2Myv0nRvl/66sqSLfh8vY8B6Y++ZOuXgEPU/+n4HcPkK2Bx7y2kiK6yAg1PoxV
+         HED9oBuaKbbhgkzL0Yd7qlw0bdtDLi/QG0616rMbzvjyF+Kw0iRpInPgUaaN97xIH0mn
+         1nI+CFwJjDLLGIZk4vA7aTh2V30v852Sk5im15lzvr/fxQslteq+aMT0DMuRp8YAAK06
+         QgyEM96ASuRyytJczmKgHP1yF46Z0s/ftrD2WkM0NUXgyl5KBC+60JI0Fo+QLz/qZpjt
+         TzjHm6PIt3kSyc3GJXg5BY1RXrxXOoHckS8ZcwbrZl/RpBvDo7fhgUXiu7ce1N+oFYVx
+         BRnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/N2kL2hZmUIAqpre6iWKiQqTQKIQsQN38iSwJAB1I7EkJDVDdHU/+AuKzvC3jMbBYRllHRcdotTk9C7w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP1R8DRcSZWX/+sAHuvk0kdTg0TzJq1u6qsrlCIoofgdQbKUQG
+	RJWYsZiqpsf6imgl8e4NBqWaHI4oRcewNXuHxsK29FU340lWX2URLnkSzQYpsPg=
+X-Google-Smtp-Source: AGHT+IGoc6NJrzp0HaNuMdYWDlqDKUAt+5MvncZka3icw6yUOJNEnVFMF+vsFEP8NZyUYmLP7Hvhfg==
+X-Received: by 2002:a05:600c:19c9:b0:428:f41:d467 with SMTP id 5b1f17b1804b1-428e6b014c5mr96923965e9.10.1722914091868;
+        Mon, 05 Aug 2024 20:14:51 -0700 (PDT)
+Received: from smtpclient.apple ([131.111.5.201])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e08012d7sm190760575e9.22.2024.08.05.20.14.51
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Aug 2024 20:14:51 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240805082106.65847-1-jasowang@redhat.com> <CACGkMEvNyB_+fHV5aAeCQhebA8aF8+9hnjkjeEzt5bgrVgqw5Q@mail.gmail.com>
- <CACycT3sz-OOKKcmH=FgD7gp_Bhi9=nwnkTn0VgRhQBxS2Dp4qw@mail.gmail.com> <CACGkMEs4YWr5zu0_nVCvqLSFBG9U_A_mw+7AdkMwrPo_6X-gOA@mail.gmail.com>
-In-Reply-To: <CACGkMEs4YWr5zu0_nVCvqLSFBG9U_A_mw+7AdkMwrPo_6X-gOA@mail.gmail.com>
-From: Yongji Xie <xieyongji@bytedance.com>
-Date: Tue, 6 Aug 2024 11:10:32 +0800
-Message-ID: <CACycT3vYF3nwZ3k5_8G=Zok9c4qRjCcGLVQ7+RfSpK=5PToMuA@mail.gmail.com>
-Subject: Re: [PATCH] vduse: avoid using __GFP_NOFAIL
-To: Jason Wang <jasowang@redhat.com>
-Cc: Maxime Coquelin <maxime.coquelin@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Eugenio Perez Martin <eperezma@redhat.com>, virtualization@lists.linux.dev, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 21cnbao@gmail.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH] irqchip: let the probe of APLIC be earlier than IMSIC
+From: Jessica Clarke <jrtc27@jrtc27.com>
+In-Reply-To: <CABvJ_xhMAU+Ft-Ut2hMapO9dCSkz4M2PqxvdCrJS6eaSz02hLQ@mail.gmail.com>
+Date: Tue, 6 Aug 2024 04:14:40 +0100
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ LKML <linux-kernel@vger.kernel.org>,
+ linux-riscv <linux-riscv@lists.infradead.org>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <804B47DC-1A68-4219-8411-B3F7AF1B2D97@jrtc27.com>
+References: <20240802075741.316968-1-vincent.chen@sifive.com>
+ <CAAhSdy3yx=mm3M6U_Q+_WdMs12SGCypPgNkBAVc9Kwn9jgev6g@mail.gmail.com>
+ <CABvJ_xgcbyQKa1+U1MC7cLEB-SUzzNaWqKdXFp+13mni0YSvNw@mail.gmail.com>
+ <87sevj5r45.ffs@tglx>
+ <CABvJ_xhMAU+Ft-Ut2hMapO9dCSkz4M2PqxvdCrJS6eaSz02hLQ@mail.gmail.com>
+To: Vincent Chen <vincent.chen@sifive.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On Tue, Aug 6, 2024 at 10:28=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
-ote:
->
-> On Mon, Aug 5, 2024 at 6:42=E2=80=AFPM Yongji Xie <xieyongji@bytedance.co=
-m> wrote:
-> >
-> > On Mon, Aug 5, 2024 at 4:24=E2=80=AFPM Jason Wang <jasowang@redhat.com>=
- wrote:
-> > >
-> > > On Mon, Aug 5, 2024 at 4:21=E2=80=AFPM Jason Wang <jasowang@redhat.co=
-m> wrote:
-> > > >
-> > > > Barry said [1]:
-> > > >
-> > > > """
-> > > > mm doesn't support non-blockable __GFP_NOFAIL allocation. Because
-> > > > __GFP_NOFAIL without direct reclamation may just result in a busy
-> > > > loop within non-sleepable contexts.
-> > > > ""=E2=80=9C
-> > > >
-> > > > Unfortuantely, we do that under read lock. A possible way to fix th=
-at
-> > > > is to move the pages allocation out of the lock into the caller, bu=
-t
-> > > > having to allocate a huge number of pages and auxiliary page array
-> > > > seems to be problematic as well per Tetsuon [2]:
-> > > >
-> > > > """
-> > > > You should implement proper error handling instead of using
-> > > > __GFP_NOFAIL if count can become large.
-> > > > """
-> > > >
-> >
-> > I think the problem is it's hard to do the error handling in
-> > fops->release() currently.
->
-> vduse_dev_dereg_umem() should be the same, it's very hard to allow it to =
-fail.
->
-> >
-> > So can we temporarily hold the user page refcount, and release it when
-> > vduse_dev_open()/vduse_domain_release() is executed. The kernel page
-> > allocation and memcpy can be done in vduse_dev_open() which allows
-> > some error handling.
->
-> Just to make sure I understand this, the free is probably not the big
-> issue but the allocation itself.
->
+On 6 Aug 2024, at 02:56, Vincent Chen <vincent.chen@sifive.com> wrote:
+>=20
+> On Mon, Aug 5, 2024 at 4:08=E2=80=AFPM Thomas Gleixner =
+<tglx@linutronix.de> wrote:
+>>=20
+>> On Mon, Aug 05 2024 at 10:43, Vincent Chen wrote:
+>>> On Fri, Aug 2, 2024 at 7:03=E2=80=AFPM Anup Patel =
+<anup@brainfault.org> wrote:
+>>>> Secondly, changing compilation order in Makefile to influence
+>>>> the probe order will not help in any way.
+>>>>=20
+>>> I was confused here. If possible, hope you can help me clarify it.
+>>> The following is the backtrace of really_porbe() dumped by GDB.
+>>> #0  0xffffffff8092318a in really_probe ()
+>>> #1  0xffffffff80923516 in __driver_probe_device.part.0 ()
+>>> #2  0xffffffff8057c856 in driver_probe_device ()
+>>> #3  0xffffffff8057c9ba in __driver_attach ()
+>>> #4  0xffffffff8057aaa4 in bus_for_each_dev ()
+>>> #5  0xffffffff8057c3ea in driver_attach ()
+>>> #6  0xffffffff8057bc4a in bus_add_driver ()
+>>> #7  0xffffffff8057d75a in driver_register ()
+>>> #8  0xffffffff8057e83c in __platform_driver_register ()
+>>> #9  0xffffffff80a2455e in imsic_platform_driver_init ()
+>>> #10 0xffffffff8000212c in do_one_initcall ()
+>>> #11 0xffffffff80a01188 in kernel_init_freeable ()
+>>> #12 0xffffffff80928d80 in kernel_init ()
+>>>=20
+>>> According to this result, the source to call really_probe is
+>>> do_one_initcall(), regardless of whether it is APLIC or IMSIC. The
+>>> do_one_initcall() function follows the placed order of the
+>>> initialization functions in the __initcall6 section to invoke them.
+>>> The compile order determines the order of the __initcall6 section.
+>>> Therefore, I try to adjust the compile order to influence the probe
+>>> order between IMSIC and APLIC. Do I misunderstand something?
+>>=20
+>> There is no guarantee that this order is retained. The linker can =
+freely
+>> reorg the section. That's why we have deferred probing. It's neither =
+a
+>> bug nor a problem, so what are you trying to solve?
+>>=20
+>=20
+> Hi Thomas,
+> I understand now. I didn't realize that the linker could freely
+> reorganize this section. This patch won=E2=80=99t actually adjust the =
+probe
+> order. Thank you very much for the explanation
 
-Yes, so defer the allocation might be a solution.
+Also FYI your patch subject is backwards, which initially confused me.
 
-> And if we do the memcpy() in open(), it seems to be a subtle userspace
-> noticeable change? (Or I don't get how copying in vduse_dev_open() can
-> help here).
->
+Jess
 
-Maybe we don't need to do the copy in open(). We can hold the user
-page refcount until the inflight I/O is completed. That means the
-allocation of new kernel pages can be done in
-vduse_domain_map_bounce_page() and the release of old user pages can
-be done in vduse_domain_unmap_bounce_page(). Of course, we still have
-a copy (old user page -> new user spage) if the daemon calls
-vduse_dev_reg_umem() again.
-
-Thanks,
-Yongji
 
