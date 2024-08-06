@@ -1,119 +1,157 @@
-Return-Path: <linux-kernel+bounces-276837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB4E949900
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:27:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C76949914
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46EB8282A93
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:27:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6AE81F21873
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D6815688F;
-	Tue,  6 Aug 2024 20:27:06 +0000 (UTC)
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41CC16F8FD;
+	Tue,  6 Aug 2024 20:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cIxwze3f"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF9440875;
-	Tue,  6 Aug 2024 20:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9DF16F824
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722976026; cv=none; b=XF+dVwdxUzF2qk+fRVdzetpw4TkOQM/YiGrc99pz99gHVWmKfc8RMT/tQharZbc0q8DcplpYIZrN/x6lRNCqr7980q6y9lUuTzzh9hpXlYj1ldzCpCwg29TWjFtEtSC2XkOy6Mk3o/BrMvLYx/nzEtJVWMTv0eo8FUfCsSjSQFs=
+	t=1722976089; cv=none; b=UFSd3F+wBocVRJXnja4qmlF6ZLfSuMhkBl/GZciVFVAdH/H0Tq1uWQip2LOfyRmIEGkcyUiQsEVQuE7pl7lor7tJvB6dXIZ+W7q9gRqE9mGF0gFsBSSCGlqdRpeSiawQc18YU84dO1CxBC079X5RjX5bMvDvMNiNyQgEQ4URsAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722976026; c=relaxed/simple;
-	bh=LIGzCfRqqebdBfRcltouWmCzar9jPj1JAuYvgrKDy8o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lg9DwHgRdUD6yXMrhd41iB5hfRyGZvAbcNXng5Gd6KzeYfkCqB0tXi474E2uh2OPB1sda5IPK++QBB7P4oXXpN5dOMmre/y0SZxpQcXTYL7hQmCeIniR2MFagVtbCAxv28dRfG8FBd1PphnHw8Udv9ybtGn3iQhWbJeeY5tSnfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6b6199ef089so5410716d6.3;
-        Tue, 06 Aug 2024 13:27:04 -0700 (PDT)
+	s=arc-20240116; t=1722976089; c=relaxed/simple;
+	bh=PIqwq05eeSJrJAxwn95ybQWvhk0Dn6GFtbODZZoaYKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o1rSoDbAtTiwoyr8cHu1LAdptdoMWMA9f/ycOflIk1Sjzfvm+Q5fN0kKSD3a2jJ0CW+JBioeMgVJXb6l0oU3kNo+zp4GysLRN3eT6c2l5AJKSvrKaTaGHBqZrEoSXMU45ikqwjr2XBH4k+TbkmSyVgQwwoKG06MJSN4q6WCN/pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cIxwze3f; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d1cbbeeaeso800246b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 13:28:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722976086; x=1723580886; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YNJJxbMCTacBJYMokN6YIRV7m5EBShQyXf92BOxMYb0=;
+        b=cIxwze3fhA0NLN5oMfEGkw+Y+xhu0TRfWOc2qTlDrGupWGFLzfyL/DX+6f9XCXLVcJ
+         1Cms9JgteDFeN046O9vit8bsnW0a4LwamURs0iyyoEPod2HTK6gHhQ/wYeHxJprNBkRd
+         jDMk6BkyJJAHoYYzcC5peFdhjQaFFSQTd6o+t1XlhKW4F2ooJriHHtBsZcWGGqs4Buo+
+         yKWxa3wu6u20VydzceJhdt9fBbCGCrwap5PesKkuUB2WHaFmgx4wftLMjM8u32DR1Fkq
+         Tw21bG/IjN0hQJes5NBLNous4M3X4HC74mhalNQhzfzyTvcxVoKQLA4dp4vF+6cU1YGI
+         eLbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722976023; x=1723580823;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uwZfXOJPvxoJ+u8XhJj/J9BXgf+sA8551y3aceuGSSs=;
-        b=GGAtxaaPLuotBay4HlgT9B2JQuEQUihdvmgVMdc5kZzl8hJve8eIxpgRqaFZCwJxHX
-         mUSeQ0BIXkZ+RBbjsCLDs4O9KK7XR4bgOU/+Uc4mSsQlCX6M7EB+4IhUIgYKYHCwz0/O
-         c4Us4sUmTUfhR7yUjRtI4gbougt48AGDybxYNoErntO2IN525i4eG7zfAwWGS3wRDNvx
-         CPsnH261S2QxCRg2W7XxAJB7WZuUBUlHMo2B+YpZeALi9mKWn5UeW+9LeA/oL6Uj2F+k
-         XUMZ7J92eMPqqpm6QOABjiBoAk0x6gBDbhtHLzRvOHAYBQa+GFXi9y2pTw1zKtR5FHZ8
-         A7+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWKH00slN6kx45iWdZp5dJUEOdAhxx8l2kgPqR7yTuuX1r59RmP0aMIKvxJ23qFasFBU+MBaqUVXP/fmJnLGcUXo7oo1jvheB4=
-X-Gm-Message-State: AOJu0Yzuj1P3MDPiNTWn8mij06rzPJUuruOBH9ANVl2IsFcFq3qLMaHv
-	wDEIk5J9WVBc2sb4PZ2YxRnu5CGHc+mma6ly5AxDGNtG1181Y1kO
-X-Google-Smtp-Source: AGHT+IFWJRP53ZGQcILmesp11SkYwtkCw7B+T56HRmkDeDIKC0nI9Xt3v62mr8pYg6yxuQDhfxg0lA==
-X-Received: by 2002:a05:6214:5546:b0:6b9:9151:d8c1 with SMTP id 6a1803df08f44-6bb9830fbb1mr191513846d6.11.1722976023490;
-        Tue, 06 Aug 2024 13:27:03 -0700 (PDT)
-Received: from skuld-framework.localnet ([32.221.37.233])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c83d039sm50000056d6.75.2024.08.06.13.27.02
+        d=1e100.net; s=20230601; t=1722976086; x=1723580886;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YNJJxbMCTacBJYMokN6YIRV7m5EBShQyXf92BOxMYb0=;
+        b=tnnV2GMpIiyw10p54nOcmzrHh38b5gKprQo7BOXP9p7jFAtBbGjA7tVPSpisf7rjIR
+         84QuCcQXOwERg+H6/RPAYiru9Ta8Eeyz2DUGVJB8sf7jeSL4+jHXvOulytukIkCKPYs4
+         i1nHJwpA2zP0R2XZOHeSjtROLoHA4USZL4eVY39N9Gr+txV7CiEE4DgPoR4SQLA4kfHL
+         kC3+2CHgzw/x8688dTVR1byRHAFatVaBevzNplx8MqgpDJBTL3SqpeuSXywjnBbgEOkj
+         xka6inz1hwIX7H5IHboceNiwkJwoDt/4JeZ8BAB0iJl/mEqpGvgHh3GzCn1fT5/BGYo8
+         lndQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpg/oAMpsqtBoH82YjfDFr4GEf0rpI82ii6O5xlHhZZJ2EgI4Il/DyOUmX6b+p2a0r5HgGNjFl9tJ1QIrzMFhjEFlswYruC7rZ/f01
+X-Gm-Message-State: AOJu0YxnHt/KzFR/BuCs4Syg6jz6Pbcd7x2hNMRNOfV58gsSGqoBXQdA
+	/dmlC55P2Scl3jw0zH2GbOo2XruQPyxBd0AE1/M0RiyXbv9t2UBSU3afBAi9vg==
+X-Google-Smtp-Source: AGHT+IFm9uhPYUcX6BBhhu0nbe6Hn1ROfYd6y3IS8Wi4xqj74fV2681KS5TuBgKc0cmX3bLcvOgaPQ==
+X-Received: by 2002:a05:6a20:b910:b0:1c6:b364:dbd1 with SMTP id adf61e73a8af0-1c6b364e170mr7596007637.19.1722976085743;
+        Tue, 06 Aug 2024 13:28:05 -0700 (PDT)
+Received: from google.com ([2620:0:1000:2510:6419:5b4c:3008:6065])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b763562989sm7403878a12.34.2024.08.06.13.28.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 13:27:03 -0700 (PDT)
-From: Neal Gompa <neal@gompa.dev>
-To: David Howells <dhowells@redhat.com>, dwmw2@infradead.org, zxu@redhat.com,
- keyrings@vger.kernel.org, Jan Stancek <jstancek@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Jan Stancek <jstancek@redhat.com>,
- Asahi Linux <asahi@lists.linux.dev>, Hector Martin <marcan@marcan.st>,
- Janne Grunau <j@jannau.net>
-Subject:
- Re: [PATCH 0/3] sign-file,extract-cert: switch to PROVIDER API for OpenSSL >=
- 3.0
-Date: Tue, 06 Aug 2024 16:27:02 -0400
-Message-ID: <27899413.1r3eYUQgxm@skuld-framework>
-In-Reply-To: <cover.1720728319.git.jstancek@redhat.com>
-References: <cover.1720728319.git.jstancek@redhat.com>
+        Tue, 06 Aug 2024 13:28:05 -0700 (PDT)
+Date: Tue, 6 Aug 2024 13:27:58 -0700
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Conor Dooley <conor@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v5] rust: support for shadow call stack sanitizer
+Message-ID: <20240806202758.GA1634260@google.com>
+References: <20240806-shadow-call-stack-v5-1-26dccb829154@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806-shadow-call-stack-v5-1-26dccb829154@google.com>
 
-On Friday, July 12, 2024 3:11:13=E2=80=AFAM EDT Jan Stancek wrote:
-> The ENGINE interface has its limitations and it has been superseded
-> by the PROVIDER API, it is deprecated in OpenSSL version 3.0.
-> Some distros have started removing it from header files.
->=20
-> Update sign-file and extract-cert to use PROVIDER API for OpenSSL Major >=
-=3D
-> 3.
->=20
-> Tested on F39 with openssl-3.1.1, pkcs11-provider-0.5-2,
-> openssl-pkcs11-0.4.12-4 and softhsm-2.6.1-5 by using same key/cert as PEM
-> and PKCS11 and comparing that the result is identical.
->=20
-> Jan Stancek (3):
->   sign-file,extract-cert: move common SSL helper functions to a header
->   sign-file,extract-cert: avoid using deprecated ERR_get_error_line()
->   sign-file,extract-cert: use pkcs11 provider for OPENSSL MAJOR >=3D 3
->=20
->  MAINTAINERS          |   1 +
->  certs/Makefile       |   2 +-
->  certs/extract-cert.c | 138 +++++++++++++++++++++++--------------------
->  scripts/sign-file.c  | 134 +++++++++++++++++++++--------------------
->  scripts/ssl-common.h |  32 ++++++++++
->  5 files changed, 178 insertions(+), 129 deletions(-)
->  create mode 100644 scripts/ssl-common.h
+On Tue, Aug 06, 2024 at 10:01:44AM +0000, Alice Ryhl wrote:
+> This patch adds all of the flags that are needed to support the shadow
+> call stack (SCS) sanitizer with Rust, and updates Kconfig to allow
+> configurations that work.
+> 
+> The -Zfixed-x18 flag is required to use SCS on arm64, and requires rustc
+> version 1.80.0 or greater. This restriction is reflected in Kconfig.
+> 
+> When CONFIG_DYNAMIC_SCS is enabled, the build will be configured to
+> include unwind tables in the build artifacts. Dynamic SCS uses the
+> unwind tables at boot to find all places that need to be patched. The
+> -Cforce-unwind-tables=y flag ensures that unwind tables are available
+> for Rust code.
+> 
+> In non-dynamic mode, the -Zsanitizer=shadow-call-stack flag is what
+> enables the SCS sanitizer.
+> 
+> At the time of writing, all released rustc versions up to and including
+> 1.81 incorrectly think that the Rust targets aarch64-unknown-none and
+> riscv64-unknown-none-elf don't support -Zsanitizer=shadow-call-stack, so
+> the build will fail if you enable shadow call stack in non-dynamic mode.
+> See [1] for the relevant feature request. To avoid this compilation
+> failure, Kconfig is set up to reject such configurations.
+> 
+> Note that because these configurations are rejected, this patch only
+> allows SCS to be used with arm64 and not on riscv. However, once [1] is
+> implemented, I will submit a follow-up patch that allows configurations
+> without UNWIND_PATCH_PAC_INTO_SCS on sufficiently new compilers. That
+> patch will implicitly allow SCS to be enabled on riscv, but this is okay
+> because unlike arm64, riscv does not need any flags for rustc beyond
+> -Zsanitizer=shadow-call-stack.
+> 
+> It is possible to avoid the requirement of rustc 1.80.0 by using
+> -Ctarget-feature=+reserve-x18 instead of -Zfixed-x18. However, this flag
+> emits a warning during the build, so this patch does not add support for
+> using it and instead requires 1.80.0 or greater.
+> 
+> The `depends on` clause is placed on `config RUST` to avoid a situation
+> where enabling Rust silently turns off the sanitizer. Instead, turning
+> on the sanitizer results in Rust being disabled. We generally do not
+> want changes to CONFIG_RUST to result in any mitigations being changed
+> or turned off.
+> 
+> Link: https://github.com/rust-lang/rust/issues/121972 [1]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-The code looks fairly reasonable to me and behaves as expected.
+Looks good to me, thanks!
 
-I have been actively using this patch set for several weeks now across=20
-linux-6.9.y and now linux-6.10.y with good success.
+Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
 
-It is in use in production for Fedora Asahi Linux kernels with good success=
-=2E=20
-Thanks for the fixes. :)
-
-Reviewed-by: Neal Gompa <neal@gompa.dev>
-
-=2D-=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
-
-
+Sami
 
