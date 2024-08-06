@@ -1,420 +1,293 @@
-Return-Path: <linux-kernel+bounces-276340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6B759492CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:18:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D700694929B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E100B23FD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:56:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11FEBB271D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1FA200129;
-	Tue,  6 Aug 2024 13:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CFE18D634;
+	Tue,  6 Aug 2024 14:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="rU//rA0B"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2058.outbound.protection.outlook.com [40.92.102.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CxpaIOKj"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77061D2F7A;
-	Tue,  6 Aug 2024 13:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722952426; cv=fail; b=MIVJ5nulNiG7JLq/+iBWyvq3Y6n1FwgH5TQDeP/ZhAXkmdJcuC20B11h1UjNz1fL13l0hgv/77ApY2LcQ81m/aTVzEql3m0SXBC7AHWNs6XPbMDX/A51JZN/CMU4S7C+w8oDRztkJw0unSjvDldTLyDn0QiZmHqAXtGLbgz9akA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722952426; c=relaxed/simple;
-	bh=WWt522Wy8+fxjeO7Sxe6BAeCfJgYdrRui5FfQ946+vc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JIso5E3x8lLJ2TXJfvwqk4j8QRU0bEF2pZrt+jBQ+JLYbwCUIpMqouriIwfr493BC3/bajLif/dV2qdCNy2b7lfudlK8Y1fr/7KMr6kmrUiG1/UnLmden1oINWuK4i52h5fYfkBF9eGAXauyt4Ubmhyx7AVbmq66AcpvfaQXE5g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=rU//rA0B; arc=fail smtp.client-ip=40.92.102.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SkV/nDkWjlpDd6hw9RJZR4vaYZqlxj1Yni2QoUm/UHwBYfsaT1GvP8xUXlTo+JTdh34wtKo5u9ECe13S5HVwYFVGqy/DesXMtfTv5uaVTCI/bsg7Se1YI/5Ly3qrcHtyTBS7lyyRBoaGN+JL9ujH6NwMWBbJJeAxI8x7j1tKvQ43JLjPTFjQCfQRcWteuLg+/QF4SDoR1Od9jhiflqUdmjUtHZiKsBz0z43kDEZbTiLQ8GQijRUh/3Mg4YfaMASTytEvyw7bJDMOmT5nIZQ0nFaGfKYbdyKEDvv7bLNgOvJL8OPa4Ev+NOQ79GuPDE8X+Shh/kc5SiplttwGHV52qw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1YKvWjMS/3d5yhekXwRD9oNba+UDTt190X8eov0k1HE=;
- b=GtgYO83F15gmP3wnjrOCsg52N+PnLFe82NhcpqVlGQxpJCMC797F1yNyRmpA7BxUjLD8FeWM5raknW1H2bi2toBUAlQ0k0X3NZYrr6j6aQ3x4/t3ygCDp0bDE/44E3t5zxU0iz+g2zPXI9F3emZi+Og3OPkuFCXrSPg9/R7TvPvn/Sr747Md3PNs3+uM2Zz44z4p5cnyZTjni1PF4HOZXDe2tczAp/2krwLVVgCXuDDCNyVH1uoCaJKFLRXz7NBIK/iD5KZLELjgq3N/8Fcl3UPNEgMx4N7WpjdjIEAVc9eU2CqfiuWfenEGqAoenficJgOvLiPvnoqnTHqZC4FTdg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1YKvWjMS/3d5yhekXwRD9oNba+UDTt190X8eov0k1HE=;
- b=rU//rA0ByWKSC9XFKEynGZJwiCkFOA6blyF1LWGy7zvlV/hYuXX9/nC4acDuoyrCUXyjkyOW7LbFpW9IexrRUWV782YtTGpvWM0/Psug11qU0+JRXRTyfuIUNCbIGfId5W4wINxc2rX/FghX+cz0J458GtsBNunJzUCZerdF7LYHJuMa3cGKEvMAqJwRK+OLSjEWlUX/yfiHqxgllwcixTsHu3kxWi3jBWSluXzKCK2MDJ1Rg1jCgreTp6UwbOzBpxvkw2LzrXsO9huWyrZLURRY41/9t/goEFBb3D6inQwRH2V2ok62bW/fdWJ70z609pGEAZ1bY5+y7/lXOl+f2A==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- MA0P287MB1708.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:fe::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7828.26; Tue, 6 Aug 2024 13:53:28 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
- 13:53:28 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Aditya Garg <gargaditya08@live.com>
-CC: "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
-	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>, Kerem Karabay
-	<kekrby@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Orlando
- Chamberlain <orlandoch.dev@gmail.com>
-Subject: [PATCH 8/9] drm/format-helper: add helper for BGR888 to XRGB8888
- conversion
-Thread-Topic: [PATCH 8/9] drm/format-helper: add helper for BGR888 to XRGB8888
- conversion
-Thread-Index: AQHa6AgDTZhoiVxMIE++l+iOjtd1ZA==
-Date: Tue, 6 Aug 2024 13:53:28 +0000
-Message-ID: <9B1AD5F1-4539-409C-BC34-DF9E196DE6DA@live.com>
-References: <021EE0BF-93CA-4A37-863F-851078A0EFB7@live.com>
- <C0F2E161-BBAD-4AF7-B39F-015A5A609CD4@live.com>
- <C687A5C0-9922-4CDB-85C1-096CE9D82847@live.com>
- <9223E804-286F-4692-9726-2306361F1909@live.com>
- <C2CAAA64-500A-4D76-905B-DC3E2A884941@live.com>
- <BDCA0457-7A04-4705-892F-CC8DF493DBC7@live.com>
- <708F206D-3571-42E2-BA6B-5AD9EEF66073@live.com>
- <4BB7CA6D-1554-4784-9F7E-BFDBCD9D8B5A@live.com>
-In-Reply-To: <4BB7CA6D-1554-4784-9F7E-BFDBCD9D8B5A@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [4Ph7+QV4JmbJr6ZfIsb5vs605nBYE7BAunad3a05q4UClP+d0L+EYqGgcqYt3afPhyrLXKhJ0wU=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|MA0P287MB1708:EE_
-x-ms-office365-filtering-correlation-id: 964576ec-f6e8-404f-2b97-08dcb61f2642
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|461199028|19110799003|3412199025|440099028|102099032|1710799026;
-x-microsoft-antispam-message-info:
- yHeSL+GszHGZz25s1cfhm8bkClnqeb6uWYr/fjHQ/n5LIZiAOMBUMKf50ING+7k/L3MDSnMqlV4AAbJke7sttlmEX5OlH6KrDpbsYfcUajxNTy/OfDjHQ7Pe73IsJSeJTYK3w09AosVM2VbjYUK2GB6Q+D62LQ6waZN7SPxbM/z8oWYdEz3PWmPwvcXVXyS9itpiHux9rJXtnLfy7/5BktK/3rqcqWT32tOFMxCQVFE6UvJnKRzK7Iy9pWzAMuO2aL6uZQqkT4BGZk4bPMRxSWCUQeGaH9ZZKlb6LEzT59KilN9uOzoLWK9jDiB5ls87+3q7H1OKO2xNoIoP/DA8kGagj/dnvn6EHjKTas/mV3nzDvpYGC4ZYjlEQCfQCD6P8QxEWoqFx4holirIAi1MNkRA66XSJv/p2gvaCkY8oPvDb12lIoGpB3dYvJF6rHdXRsKDvR+MAN8ZX4e+btQpSizs5SDyp27Pfqiq/reJ26rH79jMh0u1scSTvwiulVcgP8hlbwX1LwMtAxCuZ3i3hYRjT6T6ufyg+wFBWGGT7h+QBzLWtlIINO+8bS2CBzJwutI4FAVjKZ1S6/WOiaC7gCJ+1072yQRKbe8osbPMf8aGa3taHRPCu1HYmbcb6dOdvixtkiRmGm6NIfFJx6quDEQqBG2hp/IBpHZPoV47ySA=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?BI3h8Xy+8YOmtoPeK9OST9ZGBoA05F+KcFO+B0r19GPACaXe5624U72dYY/R?=
- =?us-ascii?Q?FECzJYUahJ94W+VBp5VJqF9cbEmcgitXqDv53zbwbRaaI/2/NGXEY2vuBrfq?=
- =?us-ascii?Q?A3MripAH+zjUInUyag68C3oV8M8DAhOilUNyEex++5Gr5TxrUCim/jrPs5Cf?=
- =?us-ascii?Q?YHfaE5zdYbgbfi5wceEaLY+jXoG6bKxh7kois3jXYqEJefj7ygWSUUWjEk/w?=
- =?us-ascii?Q?WgRfBo2VjzZV/gTUrhyZYz1Rl2AVbjpE7RYhKA1tfckpih/Oxi3rwme2cHTX?=
- =?us-ascii?Q?7HOmQurIdNE4zhWUIgGfLoqu7Wkwb6k59/A1AlEVgwUxZhwHSmJ07sDELxy0?=
- =?us-ascii?Q?jpK0jKk7SOjDuGYc9gMGPqQgtaReBgjfzCOACF2egwTevQzvbaVBV3xekmsY?=
- =?us-ascii?Q?/FXSjrwIL1zAOL11zr1Xn+dOboGSKmNp0E1JyHzsot9JxpDDNWgMUuO02GJj?=
- =?us-ascii?Q?a4mkiDhaB8kuFKu5zJpDli/5f+9HaWmkb0oNUjQysw5GbNA/eBnkr8LEy0Aj?=
- =?us-ascii?Q?RzvKGLiH9f37I2UT2K8QUYMYQYvSsq8dFhYojJrisXhhLGn0unwZKYAtee7x?=
- =?us-ascii?Q?h2LI0OQ1K+hwQZj4pSExDOo7Mec0E3FRSLOAZ3/bv79XvAZoSUstpTlcGs1x?=
- =?us-ascii?Q?Njx+W60viI7yAwKiftI1PWDTOGWAwx7wzu16TqRaL6Ay/HkCE0SbCc4K0yWX?=
- =?us-ascii?Q?DaaYuo6qfrnKo8RmgBFfBKu7wI75vvQBAvkIzdJWJOzj/0jgBBTC+vY+ql8c?=
- =?us-ascii?Q?BJGItRrwC/a+2oiiWHCdcrUI14NPq5arFd9AwM4ctdYIjsZW8MMZipiiDqN6?=
- =?us-ascii?Q?9Xndh1MDKq4nBiXDZmIsZHaWq453CGK7/eBEFoSKnXC7vGZWpI1Va2lb6PFx?=
- =?us-ascii?Q?ZvXPNw82pBlzOFAF44wKDKF5qNBtIndHjXK1nhkOq/ebLVUaz3hvv4txH5HA?=
- =?us-ascii?Q?1szQq4pU4IK0PZBWujgLRTMi1kMLYtq3g5Oh3dT0P1CmdTzuFzQGZ4JhmfwF?=
- =?us-ascii?Q?nNnl+ykDcMmg7P/5HaJXHr30Nv6Qowgp3pBEmFx/0WM/AQhtLCkybHY3tDCN?=
- =?us-ascii?Q?ANjf8gyEgpz+R3PlgnNZXdWVMYDp+4mdJ3UYIcX9GA7hXhcv1s0UCtwW2f1P?=
- =?us-ascii?Q?zoalMXQdgAzyx8by7wiau5rOEsbpleEzXJMD4NmHPJKSis+wspRYz/Tql47O?=
- =?us-ascii?Q?cJif3vhhYC/uYVpzybsTulYrgH05bwB3FdL4P/KYJEnOv7SM8QG4xdu5/Ao/?=
- =?us-ascii?Q?k5BjpEIY9av8qtnN3EBXQOHGF6X6Zk+pQT4Zukhy1MhvEeKtO9wuIBIfjRze?=
- =?us-ascii?Q?FcbFGc3D1/ddgp6EOccZssde?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1F2EB4661E3E0A4993085A7714691867@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E9D20FABD
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722952826; cv=none; b=o/OYkgq1vbkG277FwWXG7FXhZ2j3LQC8t2VlOV9AF2U8eTeQHkHoShMD7GfUEVQ1N843e9erHse4soEIt7UMKmoXdzbp6Id+mzu7usTGoSxKNs4+inZlejTyFMhcfGakasfjuJAyHsg5WwQ1LQsf5aySHLvAw3gxzWn7SNsObDQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722952826; c=relaxed/simple;
+	bh=CGXUrPsz/OmExTM5SbVDpLX0u2V4Tt4P9Tx5vcp2+Mc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WOmCHJLfrku1ABsCZaOvCh9dTSRJFi97mExeDi9VWBfeEfGz1zyr+wMSKqSMl77voOi25pVDm7Ee7nUgU7zm+fQM1sM9nOhKnFK80oIFeML4EsvYS9MqyVi9ldmEC3tCzzeAWESMZIO/aBsxylpboz8SVj2eCvupyYpCBWtt2t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CxpaIOKj; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2cb81c0ecb4so4824097a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 07:00:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722952824; x=1723557624; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CK7ANORZUzGJICKPtXebR+TykgsKwGrzcFtwkmK0p10=;
+        b=CxpaIOKj4eC0Y1MeptRWFCnU1+MkMRa25U/2jl/V3pv5jLRczOgL5FeD9nN5HogvTV
+         9doGjCrfwW6Mm5JtJauTyT/62DRfBWMufpCOxOmttecQf9K/orPBm/0Sfp+yekTRuha1
+         nTUtjGWLiDlni8ee/AovoeMQkWQvMNCdzdg1cdhEaOC8a1ldJk2QCL1sKlsoPWY76fl7
+         H3y+UdwJ8t+RHmiG7ufzCZZf9PtHYgQYJPi4VpbFKSoSWLrVb0pnfmSvTG53GSyhw05E
+         BkzJRcDNpLZlQ/S1IzinaFHeN/wrrLtqdt2RvGrShevykwRLi6q2lqutXPWpiZ9ym0l8
+         iVwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722952824; x=1723557624;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CK7ANORZUzGJICKPtXebR+TykgsKwGrzcFtwkmK0p10=;
+        b=Yw0igTlGjLNx2tzgcVlJ1V30Rlvc0Ekjyggg70cbthQhaa/zixTqjuRfP/5eAfQWId
+         4GlZ9vXSVyVETzo3FUvJz/Fx+rvJCi2t9+FGuJ2jZn4YSf/6jmSO8l0NkPvleOGV0yrC
+         fo4HDHrQqI6KPndtn1k2f5oK8fD0d6/jtZpU8sM93OgBGrTdUwWuGbgrenvQxjQuHWbc
+         WdZf+6fJTVYSPc6J8ChpOoH01JwPH1CMgJj3wohX5VRxGcGwHX9LYU7JxrOYLuiBBK4l
+         mZV0hBnDAspN/xEeLzC6UpOvwyXN98ie67bEbACqok35pGXLICgBCgMpIpAnG8thsa1z
+         QlNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVixHzrM6R0evDHFimhUptdpiKhL2MC/HsWpw2qXOvGHG33xWxQi2PfXX4R3fx/d2WOe/Qbmc8wuJGeXkWoJritOnFj/jZGypUtYS4Q
+X-Gm-Message-State: AOJu0YzWC8xOvWl+mXzQm83doF1rXL/mXsTCiom9WwUuhE8Ww695H0ao
+	xB9IelNzZ9/DioRs3Ci5FYW6AMKQi0yGIE1gaaBNfgdAgTa7fUQ/
+X-Google-Smtp-Source: AGHT+IEMJuSc3n8itBDIcMqQLHq9b38TucY0X+Cs8gDQafx/MBSagnSSDNMUT4P1LpKXjey729/MqA==
+X-Received: by 2002:a17:90b:4c07:b0:2c8:2236:e2c3 with SMTP id 98e67ed59e1d1-2cff0b253a1mr26643464a91.17.1722952823581;
+        Tue, 06 Aug 2024 07:00:23 -0700 (PDT)
+Received: from distilledx.srmu.edu.in ([14.96.13.220])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b8a7453e92sm4415203a12.41.2024.08.06.07.00.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 07:00:23 -0700 (PDT)
+From: Tejas Vipin <tejasvipin76@gmail.com>
+To: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com
+Cc: dianders@chromium.org,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Tejas Vipin <tejasvipin76@gmail.com>
+Subject: [PATCH v3 2/2] drm/panel: startek-kd070fhfid015: transition to mipi_dsi wrapped functions
+Date: Tue,  6 Aug 2024 19:29:49 +0530
+Message-ID: <20240806135949.468636-3-tejasvipin76@gmail.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240806135949.468636-1-tejasvipin76@gmail.com>
+References: <20240806135949.468636-1-tejasvipin76@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-bafef.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 964576ec-f6e8-404f-2b97-08dcb61f2642
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2024 13:53:28.1511
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB1708
+Content-Transfer-Encoding: 8bit
 
-From: Kerem Karabay <kekrby@gmail.com>
+Use multi style wrapped functions for mipi_dsi in the
+startek-kd070fhfid015 panel.
 
-Add XRGB8888 emulation helper for devices that only support BGR888.
-
-Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
+Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
 ---
- drivers/gpu/drm/drm_format_helper.c           | 54 +++++++++++++
- .../gpu/drm/tests/drm_format_helper_test.c    | 81 +++++++++++++++++++
- include/drm/drm_format_helper.h               |  3 +
- 3 files changed, 138 insertions(+)
+ .../drm/panel/panel-startek-kd070fhfid015.c   | 115 ++++++------------
+ 1 file changed, 35 insertions(+), 80 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_format_helper.c b/drivers/gpu/drm/drm_form=
-at_helper.c
-index b1be458ed..28c0e76a1 100644
---- a/drivers/gpu/drm/drm_format_helper.c
-+++ b/drivers/gpu/drm/drm_format_helper.c
-@@ -702,6 +702,57 @@ void drm_fb_xrgb8888_to_rgb888(struct iosys_map *dst, =
-const unsigned int *dst_pi
- }
- EXPORT_SYMBOL(drm_fb_xrgb8888_to_rgb888);
-=20
-+static void drm_fb_xrgb8888_to_bgr888_line(void *dbuf, const void *sbuf, u=
-nsigned int pixels)
-+{
-+	u8 *dbuf8 =3D dbuf;
-+	const __le32 *sbuf32 =3D sbuf;
-+	unsigned int x;
-+	u32 pix;
-+
-+	for (x =3D 0; x < pixels; x++) {
-+		pix =3D le32_to_cpu(sbuf32[x]);
-+		/* write red-green-blue to output in little endianness */
-+		*dbuf8++ =3D (pix & 0x00FF0000) >> 16;
-+		*dbuf8++ =3D (pix & 0x0000FF00) >> 8;
-+		*dbuf8++ =3D (pix & 0x000000FF) >> 0;
-+	}
-+}
-+
-+/**
-+ * drm_fb_xrgb8888_to_bgr888 - Convert XRGB8888 to BGR888 clip buffer
-+ * @dst: Array of BGR888 destination buffers
-+ * @dst_pitch: Array of numbers of bytes between the start of two consecut=
-ive scanlines
-+ *             within @dst; can be NULL if scanlines are stored next to ea=
-ch other.
-+ * @src: Array of XRGB8888 source buffers
-+ * @fb: DRM framebuffer
-+ * @clip: Clip rectangle area to copy
-+ * @state: Transform and conversion state
-+ *
-+ * This function copies parts of a framebuffer to display memory and conve=
-rts the
-+ * color format during the process. Destination and framebuffer formats mu=
-st match. The
-+ * parameters @dst, @dst_pitch and @src refer to arrays. Each array must h=
-ave at
-+ * least as many entries as there are planes in @fb's format. Each entry s=
-tores the
-+ * value for the format's respective color plane at the same index.
-+ *
-+ * This function does not apply clipping on @dst (i.e. the destination is =
-at the
-+ * top-left corner).
-+ *
-+ * Drivers can use this function for BGR888 devices that don't natively
-+ * support XRGB8888.
-+ */
-+void drm_fb_xrgb8888_to_bgr888(struct iosys_map *dst, const unsigned int *=
-dst_pitch,
-+			       const struct iosys_map *src, const struct drm_framebuffer *fb,
-+			       const struct drm_rect *clip, struct drm_format_conv_state *state=
-)
-+{
-+	static const u8 dst_pixsize[DRM_FORMAT_MAX_PLANES] =3D {
-+		3,
-+	};
-+
-+	drm_fb_xfrm(dst, dst_pitch, dst_pixsize, src, fb, clip, false, state,
-+		    drm_fb_xrgb8888_to_bgr888_line);
-+}
-+EXPORT_SYMBOL(drm_fb_xrgb8888_to_bgr888);
-+
- static void drm_fb_xrgb8888_to_argb8888_line(void *dbuf, const void *sbuf,=
- unsigned int pixels)
+diff --git a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
+index 0156689f41cd..c0c95355b743 100644
+--- a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
++++ b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
+@@ -24,10 +24,10 @@
+ #include <drm/drm_modes.h>
+ #include <drm/drm_panel.h>
+ 
+-#define DSI_REG_MCAP	0xB0
+-#define DSI_REG_IS	0xB3 /* Interface Setting */
+-#define DSI_REG_IIS	0xB4 /* Interface ID Setting */
+-#define DSI_REG_CTRL	0xB6
++#define DSI_REG_MCAP	0xb0
++#define DSI_REG_IS	0xb3 /* Interface Setting */
++#define DSI_REG_IIS	0xb4 /* Interface ID Setting */
++#define DSI_REG_CTRL	0xb6
+ 
+ enum {
+ 	IOVCC = 0,
+@@ -52,92 +52,55 @@ static inline struct stk_panel *to_stk_panel(struct drm_panel *panel)
+ static int stk_panel_init(struct stk_panel *stk)
  {
- 	__le32 *dbuf32 =3D dbuf;
-@@ -1035,6 +1086,9 @@ int drm_fb_blit(struct iosys_map *dst, const unsigned=
- int *dst_pitch, uint32_t d
- 		} else if (dst_format =3D=3D DRM_FORMAT_RGB888) {
- 			drm_fb_xrgb8888_to_rgb888(dst, dst_pitch, src, fb, clip, state);
- 			return 0;
-+		} else if (dst_format =3D=3D DRM_FORMAT_BGR888) {
-+			drm_fb_xrgb8888_to_bgr888(dst, dst_pitch, src, fb, clip, state);
-+			return 0;
- 		} else if (dst_format =3D=3D DRM_FORMAT_ARGB8888) {
- 			drm_fb_xrgb8888_to_argb8888(dst, dst_pitch, src, fb, clip, state);
- 			return 0;
-diff --git a/drivers/gpu/drm/tests/drm_format_helper_test.c b/drivers/gpu/d=
-rm/tests/drm_format_helper_test.c
-index 08992636e..35cd3405d 100644
---- a/drivers/gpu/drm/tests/drm_format_helper_test.c
-+++ b/drivers/gpu/drm/tests/drm_format_helper_test.c
-@@ -60,6 +60,11 @@ struct convert_to_rgb888_result {
- 	const u8 expected[TEST_BUF_SIZE];
- };
-=20
-+struct convert_to_bgr888_result {
-+	unsigned int dst_pitch;
-+	const u8 expected[TEST_BUF_SIZE];
-+};
-+
- struct convert_to_argb8888_result {
- 	unsigned int dst_pitch;
- 	const u32 expected[TEST_BUF_SIZE];
-@@ -107,6 +112,7 @@ struct convert_xrgb8888_case {
- 	struct convert_to_argb1555_result argb1555_result;
- 	struct convert_to_rgba5551_result rgba5551_result;
- 	struct convert_to_rgb888_result rgb888_result;
-+	struct convert_to_bgr888_result bgr888_result;
- 	struct convert_to_argb8888_result argb8888_result;
- 	struct convert_to_xrgb2101010_result xrgb2101010_result;
- 	struct convert_to_argb2101010_result argb2101010_result;
-@@ -151,6 +157,10 @@ static struct convert_xrgb8888_case convert_xrgb8888_c=
-ases[] =3D {
- 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
- 			.expected =3D { 0x00, 0x00, 0xFF },
- 		},
-+		.bgr888_result =3D {
-+			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
-+			.expected =3D { 0xFF, 0x00, 0x00 },
-+		},
- 		.argb8888_result =3D {
- 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
- 			.expected =3D { 0xFFFF0000 },
-@@ -217,6 +227,10 @@ static struct convert_xrgb8888_case convert_xrgb8888_c=
-ases[] =3D {
- 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
- 			.expected =3D { 0x00, 0x00, 0xFF },
- 		},
-+		.bgr888_result =3D {
-+			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
-+			.expected =3D { 0xFF, 0x00, 0x00 },
-+		},
- 		.argb8888_result =3D {
- 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
- 			.expected =3D { 0xFFFF0000 },
-@@ -330,6 +344,15 @@ static struct convert_xrgb8888_case convert_xrgb8888_c=
-ases[] =3D {
- 				0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00,
- 			},
- 		},
-+		.bgr888_result =3D {
-+			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
-+			.expected =3D {
-+				0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00,
-+				0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00,
-+				0x00, 0x00, 0xFF, 0xFF, 0x00, 0xFF,
-+				0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF,
-+			},
-+		},
- 		.argb8888_result =3D {
- 			.dst_pitch =3D TEST_USE_DEFAULT_PITCH,
- 			.expected =3D {
-@@ -468,6 +491,17 @@ static struct convert_xrgb8888_case convert_xrgb8888_c=
-ases[] =3D {
- 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
- 			},
- 		},
-+		.bgr888_result =3D {
-+			.dst_pitch =3D 15,
-+			.expected =3D {
-+				0x0E, 0x44, 0x9C, 0x11, 0x4D, 0x05, 0xA8, 0xF3, 0x03,
-+				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+				0x6C, 0xF0, 0x73, 0x0E, 0x44, 0x9C, 0x11, 0x4D, 0x05,
-+				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+				0xA8, 0x03, 0x03, 0x6C, 0xF0, 0x73, 0x0E, 0x44, 0x9C,
-+				0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			},
-+		},
- 		.argb8888_result =3D {
- 			.dst_pitch =3D 20,
- 			.expected =3D {
-@@ -914,6 +948,52 @@ static void drm_test_fb_xrgb8888_to_rgb888(struct kuni=
-t *test)
- 	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
+ 	struct mipi_dsi_device *dsi = stk->dsi;
+-	struct device *dev = &stk->dsi->dev;
+-	int ret;
+-
+-	ret = mipi_dsi_dcs_soft_reset(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to mipi_dsi_dcs_soft_reset: %d\n", ret);
+-		return ret;
+-	}
+-	mdelay(5);
++	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
+ 
+-	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set exit sleep mode: %d\n", ret);
+-		return ret;
+-	}
+-	msleep(120);
++	mipi_dsi_dcs_soft_reset_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 5);
++	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 120);
+ 
+-	mipi_dsi_generic_write_seq(dsi, DSI_REG_MCAP, 0x04);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_MCAP, 0x04);
+ 
+ 	/* Interface setting, video mode */
+-	mipi_dsi_generic_write_seq(dsi, DSI_REG_IS, 0x14, 0x08, 0x00, 0x22, 0x00);
+-	mipi_dsi_generic_write_seq(dsi, DSI_REG_IIS, 0x0C, 0x00);
+-	mipi_dsi_generic_write_seq(dsi, DSI_REG_CTRL, 0x3A, 0xD3);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IS, 0x14, 0x08, 0x00, 0x22, 0x00);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IIS, 0x0c, 0x00);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_CTRL, 0x3a, 0xd3);
+ 
+-	ret = mipi_dsi_dcs_set_display_brightness(dsi, 0x77);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to write display brightness: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, 0x77);
+ 
+-	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY,
+-			       MIPI_DCS_WRITE_MEMORY_START);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY,
++				     MIPI_DCS_WRITE_MEMORY_START);
+ 
+-	ret = mipi_dsi_dcs_set_pixel_format(dsi, 0x77);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set pixel format: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_pixel_format_multi(&dsi_ctx, 0x77);
++	mipi_dsi_dcs_set_column_address_multi(&dsi_ctx, 0, stk->mode->hdisplay - 1);
++	mipi_dsi_dcs_set_page_address_multi(&dsi_ctx, 0, stk->mode->vdisplay - 1);
+ 
+-	ret = mipi_dsi_dcs_set_column_address(dsi, 0, stk->mode->hdisplay - 1);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set column address: %d\n", ret);
+-		return ret;
+-	}
+-
+-	ret = mipi_dsi_dcs_set_page_address(dsi, 0, stk->mode->vdisplay - 1);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set page address: %d\n", ret);
+-		return ret;
+-	}
+-
+-	return 0;
++	return dsi_ctx.accum_err;
  }
-=20
-+static void drm_test_fb_xrgb8888_to_bgr888(struct kunit *test)
-+{
-+	const struct convert_xrgb8888_case *params =3D test->param_value;
-+	const struct convert_to_bgr888_result *result =3D &params->bgr888_result;
-+	size_t dst_size;
-+	u8 *buf =3D NULL;
-+	__le32 *xrgb8888 =3D NULL;
-+	struct iosys_map dst, src;
-+
-+	struct drm_framebuffer fb =3D {
-+		.format =3D drm_format_info(DRM_FORMAT_XRGB8888),
-+		.pitches =3D { params->pitch, 0, 0 },
-+	};
-+
-+	dst_size =3D conversion_buf_size(DRM_FORMAT_BGR888, result->dst_pitch,
-+				       &params->clip, 0);
-+	KUNIT_ASSERT_GT(test, dst_size, 0);
-+
-+	buf =3D kunit_kzalloc(test, dst_size, GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buf);
-+	iosys_map_set_vaddr(&dst, buf);
-+
-+	xrgb8888 =3D cpubuf_to_le32(test, params->xrgb8888, TEST_BUF_SIZE);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, xrgb8888);
-+	iosys_map_set_vaddr(&src, xrgb8888);
-+
-+	/*
-+	 * BGR888 expected results are already in little-endian
-+	 * order, so there's no need to convert the test output.
-+	 */
-+	drm_fb_xrgb8888_to_bgr888(&dst, &result->dst_pitch, &src, &fb, &params->c=
-lip,
-+				  &fmtcnv_state);
-+	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
-+
-+	buf =3D dst.vaddr; /* restore original value of buf */
-+	memset(buf, 0, dst_size);
-+
-+	int blit_result =3D 0;
-+
-+	blit_result =3D drm_fb_blit(&dst, &result->dst_pitch, DRM_FORMAT_BGR888, =
-&src, &fb, &params->clip,
-+				  &fmtcnv_state);
-+
-+	KUNIT_EXPECT_FALSE(test, blit_result);
-+	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
-+}
-+
- static void drm_test_fb_xrgb8888_to_argb8888(struct kunit *test)
+ 
+ static int stk_panel_on(struct stk_panel *stk)
  {
- 	const struct convert_xrgb8888_case *params =3D test->param_value;
-@@ -1851,6 +1931,7 @@ static struct kunit_case drm_format_helper_test_cases=
-[] =3D {
- 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb1555, convert_xrgb8888_gen_p=
-arams),
- 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_rgba5551, convert_xrgb8888_gen_p=
-arams),
- 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_rgb888, convert_xrgb8888_gen_par=
-ams),
-+	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_bgr888, convert_xrgb8888_gen_par=
-ams),
- 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb8888, convert_xrgb8888_gen_p=
-arams),
- 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_xrgb2101010, convert_xrgb8888_ge=
-n_params),
- 	KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb2101010, convert_xrgb8888_ge=
-n_params),
-diff --git a/include/drm/drm_format_helper.h b/include/drm/drm_format_helpe=
-r.h
-index 428d81afe..aa1604d92 100644
---- a/include/drm/drm_format_helper.h
-+++ b/include/drm/drm_format_helper.h
-@@ -96,6 +96,9 @@ void drm_fb_xrgb8888_to_rgba5551(struct iosys_map *dst, c=
-onst unsigned int *dst_
- void drm_fb_xrgb8888_to_rgb888(struct iosys_map *dst, const unsigned int *=
-dst_pitch,
- 			       const struct iosys_map *src, const struct drm_framebuffer *fb,
- 			       const struct drm_rect *clip, struct drm_format_conv_state *state=
-);
-+void drm_fb_xrgb8888_to_bgr888(struct iosys_map *dst, const unsigned int *=
-dst_pitch,
-+			       const struct iosys_map *src, const struct drm_framebuffer *fb,
-+			       const struct drm_rect *clip, struct drm_format_conv_state *state=
-);
- void drm_fb_xrgb8888_to_argb8888(struct iosys_map *dst, const unsigned int=
- *dst_pitch,
- 				 const struct iosys_map *src, const struct drm_framebuffer *fb,
- 				 const struct drm_rect *clip, struct drm_format_conv_state *state);
---=20
-2.43.0
+ 	struct mipi_dsi_device *dsi = stk->dsi;
+-	struct device *dev = &stk->dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
+ 
+-	ret = mipi_dsi_dcs_set_display_on(dsi);
+-	if (ret < 0)
+-		dev_err(dev, "failed to set display on: %d\n", ret);
++	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+ 
+-	mdelay(20);
++	mipi_dsi_msleep(&dsi_ctx, 20);
+ 
+-	return ret;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static void stk_panel_off(struct stk_panel *stk)
+ {
+ 	struct mipi_dsi_device *dsi = stk->dsi;
+-	struct device *dev = &stk->dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
+ 
+ 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+ 
+-	ret = mipi_dsi_dcs_set_display_off(dsi);
+-	if (ret < 0)
+-		dev_err(dev, "failed to set display off: %d\n", ret);
++	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
++	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+ 
+-	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+-	if (ret < 0)
+-		dev_err(dev, "failed to enter sleep mode: %d\n", ret);
+-
+-	msleep(100);
++	mipi_dsi_msleep(&dsi_ctx, 100);
+ }
+ 
+ static int stk_panel_unprepare(struct drm_panel *panel)
+@@ -155,7 +118,6 @@ static int stk_panel_unprepare(struct drm_panel *panel)
+ static int stk_panel_prepare(struct drm_panel *panel)
+ {
+ 	struct stk_panel *stk = to_stk_panel(panel);
+-	struct device *dev = &stk->dsi->dev;
+ 	int ret;
+ 
+ 	gpiod_set_value(stk->reset_gpio, 0);
+@@ -175,16 +137,12 @@ static int stk_panel_prepare(struct drm_panel *panel)
+ 	gpiod_set_value(stk->reset_gpio, 1);
+ 	mdelay(10);
+ 	ret = stk_panel_init(stk);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to init panel: %d\n", ret);
++	if (ret < 0)
+ 		goto poweroff;
+-	}
+ 
+ 	ret = stk_panel_on(stk);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set panel on: %d\n", ret);
++	if (ret < 0)
+ 		goto poweroff;
+-	}
+ 
+ 	return 0;
+ 
+@@ -250,18 +208,15 @@ static int dsi_dcs_bl_get_brightness(struct backlight_device *bl)
+ static int dsi_dcs_bl_update_status(struct backlight_device *bl)
+ {
+ 	struct mipi_dsi_device *dsi = bl_get_data(bl);
+-	struct device *dev = &dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
+ 
+ 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+-	ret = mipi_dsi_dcs_set_display_brightness(dsi, bl->props.brightness);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set DSI control: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, bl->props.brightness);
++	if (dsi_ctx.accum_err)
++		return dsi_ctx.accum_err;
+ 
+ 	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+-	return 0;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static const struct backlight_ops dsi_bl_ops = {
+-- 
+2.46.0
 
 
