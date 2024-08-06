@@ -1,286 +1,166 @@
-Return-Path: <linux-kernel+bounces-276066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7574A948E00
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:43:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6818A948DDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02F541F23979
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:43:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FACD1C22F46
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723371C6893;
-	Tue,  6 Aug 2024 11:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789141C37B1;
+	Tue,  6 Aug 2024 11:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ldJorYTP"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gB1m/UP1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KJGFkoMA";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gB1m/UP1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KJGFkoMA"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC34F1C5799;
-	Tue,  6 Aug 2024 11:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E091C2324;
+	Tue,  6 Aug 2024 11:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722944501; cv=none; b=A73yMFk/FevaBkrTJ16ypyQ6QKE4XrN2W5GtIbFv5ZA0enQCwdkYTaNWdfHK6U+dhSo5T6kOEuDVNeFkYDYy7E+Pqt60wSHFM58fCDqonyv1hAJelLTaID8/OfZBglhXtB6X9xdJzI0C/4BGIsBQatmOJh0hpbKtu/IKu4kIMho=
+	t=1722944479; cv=none; b=m2KAzFzCT3lea9zLIKbET3QQOs/ECzD5ex+ZjPC/n6l5iH8KwqR8rr/GMvRbBuTLLGUoKoQSc/nRa2LLUwOxUftXs5y2O2bGpWQt9N9JWE/IV4MfAabTjZwym8dCqH8RgcaqsE/XeWDJ0IyVzKh9EjvaNBky7RxOjJyYeIrudXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722944501; c=relaxed/simple;
-	bh=Ax4BMVXvqmSBg6QIo8pDEUgQHsze4QAEeW6gBsTEWoc=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qq84FO1SSa5u7qyRY2DsqmSfwmqpUi/PF2jPcMH8yvuSF2yxfTNFCHMq8MkYH8jYRZ8sNDNnjQYnN7LcQCWkwDxL+gV5qmtPPuPJqSVBgXuK6qyhAYSgphGkMtm9+4qHo9x90V03j6Ez3kLVPrDAyks2VybYbvOEBFJbhMwSZRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ldJorYTP; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f15dd0b489so7931791fa.3;
-        Tue, 06 Aug 2024 04:41:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722944498; x=1723549298; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W8UY9azmTjhPunDkBNM5W4aID9KMi7XRKzM/JmHz9bA=;
-        b=ldJorYTPD6tkP93nPFSWrq0adRgJhIV91WYQlgQ5HOcZIU6Zu/YANt1P5H4hCUAyMO
-         5wmxe+nQdFe1AD5+ckxKtijVFD96wDcqSkaX5JRhmT4Oiz95kqaoAAl8zLXKQUNrmBRK
-         E/2aN6KZ4KchIp1LdJ1UAGQnbuWiKhw/152UbV07QPkQJgxQAQMrT2RWmoRU/7AkSCsb
-         pO/q5cHfnCamosxBd1m0ipkGntodEGwnkx3u8KAMcXwJquR19UJzbQUhvekTCRe2tp6U
-         ONU0S80v9LwEbCGCRxRs72hCkPG7UfFq0fgUomO6r2kuflJ+4oDZLw/pJk3OepbtwvbD
-         /Ekg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722944498; x=1723549298;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W8UY9azmTjhPunDkBNM5W4aID9KMi7XRKzM/JmHz9bA=;
-        b=fBBVe8oVxrizvuutufDPlS13GW42OuDe7s5WsQ0PY74w8ri3PGIROJcD1kNyyajIIi
-         nMsdicsZG0cUg1oTElBgdXC3FgyfjVH7AORFXPIdkS5MX1jxi4Sk0DeFiNyzv75iIJxq
-         0XWtND6nb4W7i0Qs/eEzkjahGWmtJlGk24SPqvYrovwP46rF8OXJYonnTXwA1i8JTV1t
-         afQbH5rL3U32Qc4OBFrFhIDB5VCJLIM5ZzUr7HDumRQuwIsOvVXpJQKJ9bDdDdzeZzSN
-         Ftd9GTYNFRNC3YeBSVDALb/Y58VCDTpI1EdeqVld3424mvONXffIzme9RUjKkWV0uzxT
-         x9NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBP4AjyydmEm3LxD5pM6UAVXgkhL8g5ysGuZkl1nRcx5dddzjOSARjScIarrN6mkE5XwJDYMo6vfwFfp6aEFZ91wfzb6evenHOK3bHzf0ymD8u4dn3YqcSy870CgI/JHzpd5j325aZyEupEZ3r8bdX7Ql+h/nnYUlrcTBbFbEF4lJgZg==
-X-Gm-Message-State: AOJu0YzWKLtjs8iobRpmWy7MD7DTXMFEK5LdbfrHLqjzgUuRNvCa+p3t
-	k5e6RBM9Mch23+GeL6sHz6zbyabcEpDALtokS7qADKI2fAMv34Fi
-X-Google-Smtp-Source: AGHT+IGx9JpvtWSSJNncxBn64nyf6VX1HlPIDvZrqJFY+6GFP8Hs6JdctNgOCKrCUWNgRJKHapbLMA==
-X-Received: by 2002:a2e:8747:0:b0:2ef:2061:8bf5 with SMTP id 38308e7fff4ca-2f15ab27c85mr88378811fa.40.1722944497625;
-        Tue, 06 Aug 2024 04:41:37 -0700 (PDT)
-Received: from localhost.localdomain (host-87-6-196-30.retail.telecomitalia.it. [87.6.196.30])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-428e6e7cce6sm176105845e9.31.2024.08.06.04.41.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 04:41:37 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Joern Engel <joern@lazybastard.org>,
-	Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1722944479; c=relaxed/simple;
+	bh=osiUu56Pden8wvlw/UtWgVtSmmDZoylOq6KwUOSfIQI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gjgxh+HhyR/6jkw+DMh5+vrPorWNmVlw/JWlDQnMOakbMkFoxKKMstgfgxdnhDjDDnKkzhy6DulDVCopVVtK6tB6N4o9fb4yTwgK+76QjfubSZ9qekkY503JsIMRQeNzgvg2RrOhQH6tE7aDLlz92c4IkbQtApd7sPc4uKvRWZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gB1m/UP1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KJGFkoMA; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gB1m/UP1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KJGFkoMA; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0A62D1FB44;
+	Tue,  6 Aug 2024 11:41:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722944476; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WjVHrdHo0zVqIEtFcBxDFXDNQccZA09P2VUyPQEiu4Q=;
+	b=gB1m/UP1d/kyYziphMWQiPexH6ysBUudfrYnNAqRrtsFuYqbFKS31JH3r5QCU8CQl/D8Y+
+	+thGwfvBplnIE1xGDFIMX0pMxlZkMyZ+D9U9yInwBMTg3Qg0WGi5lUGkbFf7lbkMKu8Asa
+	y96OeXZRUzmPkdWqHEYL2eDNYWenlv8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722944476;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WjVHrdHo0zVqIEtFcBxDFXDNQccZA09P2VUyPQEiu4Q=;
+	b=KJGFkoMAlJBBOxE/BEqzFOXBLZk8kfCKknxcDmA2Xvr0OQEg+yIqLoATBC86ulHSRM+E8s
+	W9dvBbaJpsqdvkBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="gB1m/UP1";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=KJGFkoMA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722944476; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WjVHrdHo0zVqIEtFcBxDFXDNQccZA09P2VUyPQEiu4Q=;
+	b=gB1m/UP1d/kyYziphMWQiPexH6ysBUudfrYnNAqRrtsFuYqbFKS31JH3r5QCU8CQl/D8Y+
+	+thGwfvBplnIE1xGDFIMX0pMxlZkMyZ+D9U9yInwBMTg3Qg0WGi5lUGkbFf7lbkMKu8Asa
+	y96OeXZRUzmPkdWqHEYL2eDNYWenlv8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722944476;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WjVHrdHo0zVqIEtFcBxDFXDNQccZA09P2VUyPQEiu4Q=;
+	b=KJGFkoMAlJBBOxE/BEqzFOXBLZk8kfCKknxcDmA2Xvr0OQEg+yIqLoATBC86ulHSRM+E8s
+	W9dvBbaJpsqdvkBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D8CC513981;
+	Tue,  6 Aug 2024 11:41:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hcdPNNsLsma5JwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 06 Aug 2024 11:41:15 +0000
+Date: Tue, 06 Aug 2024 13:41:50 +0200
+Message-ID: <87bk25anep.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Mark Brown <broonie@kernel.org>,
+	tiwai@suse.com,
+	mika.westerberg@linux.intel.com,
+	linux-sound@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-nvme@lists.infradead.org
-Subject: [PATCH v3 6/6] mtd: parser: add support for Airoha parser
-Date: Tue,  6 Aug 2024 13:41:16 +0200
-Message-ID: <20240806114118.17198-7-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240806114118.17198-1-ansuelsmth@gmail.com>
-References: <20240806114118.17198-1-ansuelsmth@gmail.com>
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH v2 0/3] ALSA: Add support for new HP G12 laptops
+In-Reply-To: <ZrIJBUJfgiKPCKXv@shikoro>
+References: <20240802152215.20831-1-rf@opensource.cirrus.com>
+	<8734njl7my.wl-tiwai@suse.de>
+	<554660e1-01ea-4bb4-877f-fd8deb527ce7@opensource.cirrus.com>
+	<87frrhaofs.wl-tiwai@suse.de>
+	<ZrIJBUJfgiKPCKXv@shikoro>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-1.01 / 50.00];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[renesas];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -1.01
+X-Rspamd-Queue-Id: 0A62D1FB44
 
-Add support for Airoha parser based on a post parse ofpart function.
+On Tue, 06 Aug 2024 13:29:09 +0200,
+Wolfram Sang wrote:
+> 
+> 
+> > Wolfram, has the patch been merged for your branch for 6.11?  If yes,
+> > can I pull your change, so that I can apply the patch 3 together with
+> > the SPI change?
+> 
+> Yes, you can pull i2c/for-current. Maybe I can also retrofit an
+> immutable branch for you. I'd think, though, that it is easiest to wait
+> for 6.11-rc3 which will include the I2C part of this series. Or?
 
-Airoha partition table follow normal fixed-partition implementation
-with a special implementation for the ART partition. This is always the
-last partition and is placed from the end of the flash - the partition
-size.
+Yeah, it's fine, I can wait for 6.11-rc3.
 
-To enable this special implementation for ART partition, the relevant
-node require the "airoha,dynamic-art" compatible. With that declared,
-offset value is ignored and real offset is updated with the calculated
-value.
 
-Due to usage of specific bad block management driver, the MTD size might
-vary hence the ART partition offset needs to be dynamically parsed and
-can't be declared statically.
+thanks,
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/mtd/parsers/Kconfig         | 10 +++++
- drivers/mtd/parsers/Makefile        |  1 +
- drivers/mtd/parsers/ofpart_airoha.c | 57 +++++++++++++++++++++++++++++
- drivers/mtd/parsers/ofpart_airoha.h | 18 +++++++++
- drivers/mtd/parsers/ofpart_core.c   |  6 +++
- 5 files changed, 92 insertions(+)
- create mode 100644 drivers/mtd/parsers/ofpart_airoha.c
- create mode 100644 drivers/mtd/parsers/ofpart_airoha.h
-
-diff --git a/drivers/mtd/parsers/Kconfig b/drivers/mtd/parsers/Kconfig
-index da03ab6efe04..d6c53aa16ea6 100644
---- a/drivers/mtd/parsers/Kconfig
-+++ b/drivers/mtd/parsers/Kconfig
-@@ -72,6 +72,16 @@ config MTD_OF_PARTS
- 	  flash memory node, as described in
- 	  Documentation/devicetree/bindings/mtd/mtd.yaml.
- 
-+config MTD_OF_PARTS_AIROHA
-+	bool "Airoha EN7815 partitioning support"
-+	depends on MTD_OF_PARTS && (ARCH_AIROHA || COMPILE_TEST)
-+	default ARCH_AIROHA
-+	help
-+	  This provides partitions parser for Airoha EN7815 family devices
-+	  that can have dynamic "ART" partition at the end of the flash.
-+	  It takes care of finding the correct offset and update property
-+	  with it.
-+
- config MTD_OF_PARTS_BCM4908
- 	bool "BCM4908 partitioning support"
- 	depends on MTD_OF_PARTS && (ARCH_BCMBCA || COMPILE_TEST)
-diff --git a/drivers/mtd/parsers/Makefile b/drivers/mtd/parsers/Makefile
-index 9b00c62b837a..d67f9b4d39ac 100644
---- a/drivers/mtd/parsers/Makefile
-+++ b/drivers/mtd/parsers/Makefile
-@@ -5,6 +5,7 @@ obj-$(CONFIG_MTD_BRCM_U_BOOT)		+= brcm_u-boot.o
- obj-$(CONFIG_MTD_CMDLINE_PARTS)		+= cmdlinepart.o
- obj-$(CONFIG_MTD_OF_PARTS)		+= ofpart.o
- ofpart-y				+= ofpart_core.o
-+ofpart-$(CONFIG_MTD_OF_PARTS_AIROHA)	+= ofpart_airoha.o
- ofpart-$(CONFIG_MTD_OF_PARTS_BCM4908)	+= ofpart_bcm4908.o
- ofpart-$(CONFIG_MTD_OF_PARTS_LINKSYS_NS)+= ofpart_linksys_ns.o
- obj-$(CONFIG_MTD_PARSER_IMAGETAG)	+= parser_imagetag.o
-diff --git a/drivers/mtd/parsers/ofpart_airoha.c b/drivers/mtd/parsers/ofpart_airoha.c
-new file mode 100644
-index 000000000000..5e2cc7b6376b
---- /dev/null
-+++ b/drivers/mtd/parsers/ofpart_airoha.c
-@@ -0,0 +1,57 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Christian Marangi <ansuelsmth@gmail.com>
-+ */
-+
-+#include <linux/mtd/mtd.h>
-+#include <linux/slab.h>
-+#include <linux/mtd/partitions.h>
-+
-+#include "ofpart_airoha.h"
-+
-+int airoha_partitions_post_parse(struct mtd_info *mtd,
-+				 struct mtd_partition *parts,
-+				 int nr_parts)
-+{
-+	struct mtd_partition *part;
-+	int len, a_cells, s_cells;
-+	struct device_node *pp;
-+	struct property *prop;
-+	const __be32 *reg;
-+	__be32 *new_reg;
-+
-+	part = &parts[nr_parts - 1];
-+	pp = part->of_node;
-+
-+	/* Skip if ART partition have a valid offset instead of a dynamic one */
-+	if (!of_device_is_compatible(pp, "airoha,dynamic-art"))
-+		return 0;
-+
-+	/* ART partition is set at the end of flash - size */
-+	part->offset = mtd->size - part->size;
-+
-+	/* Update the offset with the new calculate value in DT */
-+	prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-+	if (!prop)
-+		return -ENOMEM;
-+
-+	/* Reg already validated by fixed-partition parser */
-+	reg = of_get_property(pp, "reg", &len);
-+
-+	/* Fixed partition */
-+	a_cells = of_n_addr_cells(pp);
-+	s_cells = of_n_size_cells(pp);
-+
-+	prop->name = "reg";
-+	prop->length = (a_cells + s_cells) * sizeof(__be32);
-+	prop->value = kmemdup(reg, (a_cells + s_cells) * sizeof(__be32),
-+			      GFP_KERNEL);
-+	new_reg = prop->value;
-+	memset(new_reg, 0, a_cells * sizeof(__be32));
-+	new_reg[a_cells - 1] = cpu_to_be32(part->offset);
-+	if (a_cells > 1)
-+		new_reg[0] = cpu_to_be32(part->offset >> 32);
-+	of_update_property(pp, prop);
-+
-+	return 0;
-+}
-diff --git a/drivers/mtd/parsers/ofpart_airoha.h b/drivers/mtd/parsers/ofpart_airoha.h
-new file mode 100644
-index 000000000000..3e8a8456c13a
---- /dev/null
-+++ b/drivers/mtd/parsers/ofpart_airoha.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __OFPART_AIROHA_H
-+#define __OFPART_AIROHA_H
-+
-+#ifdef CONFIG_MTD_OF_PARTS_AIROHA
-+int airoha_partitions_post_parse(struct mtd_info *mtd,
-+				 struct mtd_partition *parts,
-+				 int nr_parts);
-+#else
-+static inline int airoha_partitions_post_parse(struct mtd_info *mtd,
-+					       struct mtd_partition *parts,
-+					       int nr_parts)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif
-+
-+#endif
-diff --git a/drivers/mtd/parsers/ofpart_core.c b/drivers/mtd/parsers/ofpart_core.c
-index e7b8e9d0a910..9e078636d158 100644
---- a/drivers/mtd/parsers/ofpart_core.c
-+++ b/drivers/mtd/parsers/ofpart_core.c
-@@ -16,6 +16,7 @@
- #include <linux/slab.h>
- #include <linux/mtd/partitions.h>
- 
-+#include "ofpart_airoha.h"
- #include "ofpart_bcm4908.h"
- #include "ofpart_linksys_ns.h"
- 
-@@ -23,6 +24,10 @@ struct fixed_partitions_quirks {
- 	int (*post_parse)(struct mtd_info *mtd, struct mtd_partition *parts, int nr_parts);
- };
- 
-+static struct fixed_partitions_quirks airoha_partitions_quirks = {
-+	.post_parse = airoha_partitions_post_parse,
-+};
-+
- static struct fixed_partitions_quirks bcm4908_partitions_quirks = {
- 	.post_parse = bcm4908_partitions_post_parse,
- };
-@@ -192,6 +197,7 @@ static const struct of_device_id parse_ofpart_match_table[] = {
- 	/* Generic */
- 	{ .compatible = "fixed-partitions" },
- 	/* Customized */
-+	{ .compatible = "airoha,fixed-partitions", .data = &airoha_partitions_quirks, },
- 	{ .compatible = "brcm,bcm4908-partitions", .data = &bcm4908_partitions_quirks, },
- 	{ .compatible = "linksys,ns-partitions", .data = &linksys_ns_partitions_quirks, },
- 	{},
--- 
-2.45.2
-
+Takashi
 
