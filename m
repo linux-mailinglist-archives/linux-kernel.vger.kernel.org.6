@@ -1,147 +1,77 @@
-Return-Path: <linux-kernel+bounces-275896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BCF2948BA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:51:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FD7948BA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97F301C2337D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:51:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48061B220B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21AB1BD4EE;
-	Tue,  6 Aug 2024 08:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6E01BD501;
+	Tue,  6 Aug 2024 08:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SDcMsWi2"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="kpmE/bSY"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19BC64A;
-	Tue,  6 Aug 2024 08:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BB213A884
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722934256; cv=none; b=TjsnAW29sm7sW1A50aCntH7k2DIXxW1sQ2aLWTzD+yJqqBgDc9gLK6UW0plrdvvhwWl9BCqqt1bJ5BDE+Z6rcO86o7hHpj/DUfHlxG40IcFdDwGOlrDfvJ4dhEHOYr5mtfMIB0nr1CVCWHqGDLnong80EUzLYw2+rt1HwAjtXkw=
+	t=1722934296; cv=none; b=a5aLbUh/OaDFxH7vZ3UwTZmL3miMnNV8i1txCgvc+NGfYmCrxZmuK8msrCcdz1PAHJ3XHqz6a+LWQS+gMOAhSxdmmF6+YdU7h+kZuR1unRwWxEFfqoTuyHhw0jzR1t1cIXbsPG7w2owp8R5tMJec6iboB3L4bzT7ufsbL9mfKdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722934256; c=relaxed/simple;
-	bh=I7VarCyBD/Qug+8C+rh9WS75A2zwbL/GTX0llQQ84sk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dYme+FKvGyf01aQikQyHXt5DoGvsVIMuOyQeWreChdDzqkoftOruPIsffBI2CFsyekekBoy8mi2Ha+15Wj6lammzDXqfD5CO6lAvPbc6lrM/xZspaKaN2R+c7bq0Cdj+YtF0+Os64929Tq9xuKki9eWCZk6RJkWfyl4O9kCVLxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SDcMsWi2; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=oTF9f0l8a28k+RR4zoQZfQZOZh1LqrcguKBYI1uwn5U=; b=SDcMsWi2ttkKpnQF+6TFuSvh2G
-	Z0S+TVZKM5HE4Kjy/OHZtDzCNroIG8nekJV3mDBOiQD7V53iq7OXjApGTajmt+PdPbB3xUJo+HGHu
-	9lcH2aW7e88xg8fNMBnLisVAFQ0JPdXV3TnB4tttvj7NSaLK/ib1CY5dPP5WrzaElXzlcjhe/QedL
-	XxYoMPz8AM8u7M+iXV+trOnbUgfzua/y41NQBimBFVSpGIUn+sq1FWw/WbCBS1yLri/UrwHrbqNpn
-	C4xaMYBeKzAZT2iHjvsHFa8dSTYh4bAwyU31Kgb7KWAvzBM2/jCZxgyJmXqXMU5IMFpNy6sdUnYnS
-	m4F46kUA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sbFu7-00000006OaO-0Tw3;
-	Tue, 06 Aug 2024 08:50:51 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2F1EE30049D; Tue,  6 Aug 2024 10:50:50 +0200 (CEST)
-Date: Tue, 6 Aug 2024 10:50:50 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [tip: x86/urgent] x86/mm: Fix pti_clone_entry_text() for i386
-Message-ID: <20240806085050.GQ37996@noisy.programming.kicks-ass.net>
-References: <172250973153.2215.13116668336106656424.tip-bot2@tip-bot2>
- <e541b49b-9cc2-47bb-b283-2de70ae3a359@roeck-us.net>
+	s=arc-20240116; t=1722934296; c=relaxed/simple;
+	bh=cY6OkhPHtRz9xJlrr0Wk6/Mc37QiDA311dyNNdaGZWw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NPnQ2Ji9R019EuJ7KEG9vf5Fa+dc1nLLv3s7ReGBgeEE+yoZRaMrc33oVW48e0HDlbWJrjZZ9QZp6DtPcIskvYZslv/p/i7rS/a6xKeeXxqE7D3EFa/+j7iKFFO6tcW9dSG0A7xUzPe7nkO+t+xGygVmfwuxsQUYwa+9EH21NAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=kpmE/bSY; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722934292; x=1723193492;
+	bh=cY6OkhPHtRz9xJlrr0Wk6/Mc37QiDA311dyNNdaGZWw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=kpmE/bSYoVk1y2RaJkOqP0KesYwT5nPkyLy8+M0jQvITAh7buX5AZQO1GprP4bDLq
+	 nTFJ6nF3OWOpWWT3d43yA3zb4K+32dCK3P0o5tGMkX6cmhmgiXBuOEEpuGCBebcf6d
+	 gNlRMh0QVyJzYVpPRhotIVhe87BCO0X26ER639EvwIQlM8mxRd0KDmpx2n2DI58Y6f
+	 LHPHSpQxGv0Zpp6hNj7bcvkI1/lhl4XxtV6obLnzy0dAe7OwrGRIJ5Cuf12hTiR51o
+	 InXSSaF9MIKqdMbqaqoAj1JItWzeV3u4KKhhpsVyLNzGjmCTo1TAnwAdrW8cBRj7Su
+	 ttyZuHaPdul+Q==
+Date: Tue, 06 Aug 2024 08:51:27 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Matt Gilbride <mattgilbride@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>, Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 2/6] rust: rbtree: add red-black tree implementation backed by the C version
+Message-ID: <b25537d5-97ae-4ff1-9408-2a1c13ae9585@proton.me>
+In-Reply-To: <CAH5fLgjHzYJAeZBA7JjK0_dw_m_XL+gU9x6M4Jv0tRzAH40+Pg@mail.gmail.com>
+References: <20240727-b4-rbtree-v8-0-951600ada434@google.com> <20240727-b4-rbtree-v8-2-951600ada434@google.com> <242d0107-8e2b-4856-8f4c-1d5351fdaad8@proton.me> <CAH5fLgjHzYJAeZBA7JjK0_dw_m_XL+gU9x6M4Jv0tRzAH40+Pg@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 8c4ff7885984f2caa92e83d84d71dd7d0d6b35b1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e541b49b-9cc2-47bb-b283-2de70ae3a359@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 05, 2024 at 09:52:06PM -0700, Guenter Roeck wrote:
-> Hi Peter,
-> 
-> On Thu, Aug 01, 2024 at 10:55:31AM -0000, tip-bot2 for Peter Zijlstra wrote:
-> > The following commit has been merged into the x86/urgent branch of tip:
-> > 
-> > Commit-ID:     49947e7aedfea2573bada0c95b85f6c2363bef9f
-> > Gitweb:        https://git.kernel.org/tip/49947e7aedfea2573bada0c95b85f6c2363bef9f
-> > Author:        Peter Zijlstra <peterz@infradead.org>
-> > AuthorDate:    Thu, 01 Aug 2024 12:42:25 +02:00
-> > Committer:     Peter Zijlstra <peterz@infradead.org>
-> > CommitterDate: Thu, 01 Aug 2024 12:48:23 +02:00
-> > 
-> > x86/mm: Fix pti_clone_entry_text() for i386
-> > 
-> > While x86_64 has PMD aligned text sections, i386 does not have this
-> > luxery. Notably ALIGN_ENTRY_TEXT_END is empty and _etext has PAGE
-> > alignment.
-> > 
-> > This means that text on i386 can be page granular at the tail end,
-> > which in turn means that the PTI text clones should consistently
-> > account for this.
-> > 
-> > Make pti_clone_entry_text() consistent with pti_clone_kernel_text().
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> 
-> With this patch in the tree, some of my qemu tests (those with PAE enabled)
-> report several WARNING backtraces.
-> 
-> WARNING: CPU: 0 PID: 1 at arch/x86/mm/pti.c:256 pti_clone_pgtable+0x298/0x2dc
-> 
-> WARNING: CPU: 0 PID: 1 at arch/x86/mm/pti.c:394 pti_clone_pgtable+0x29a/0x2dc
-> 
-> The backtraces are repeated multiple times.
-> 
-> Please see
-> 
-> https://kerneltests.org/builders/qemu-x86-master/builds/253/steps/qemubuildcommand/logs/stdio
-> 
-> for complete logs.
+On 06.08.24 10:41, Alice Ryhl wrote:
+> On Mon, Aug 5, 2024 at 9:02=E2=80=AFPM Benno Lossin <benno.lossin@proton.=
+me> wrote:
+>> Otherwise the patch looks good.
+>=20
+> Will you give a Reviewed-by conditional on the above changes?
 
-Could you try the below patch? If that don't work, could you provide the
-.config, I'm assuming that'll work with the bits I grabbed last time.
-
+Yes.
 
 ---
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index bfdf5f45b137..bec53f127c0d 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -634,14 +634,8 @@ void __init pti_init(void)
- 	}
- #endif
- 
--	pti_clone_user_shared();
--
- 	/* Undo all global bits from the init pagetables in head_64.S: */
- 	pti_set_kernel_image_nonglobal();
--	/* Replace some of the global bits just for shared entry text: */
--	pti_clone_entry_text();
--	pti_setup_espfix64();
--	pti_setup_vsyscall();
- }
- 
- /*
-@@ -659,7 +653,12 @@ void pti_finalize(void)
- 	 * We need to clone everything (again) that maps parts of the
- 	 * kernel image.
- 	 */
-+	pti_clone_user_shared();
-+
- 	pti_clone_entry_text();
-+	pti_setup_espfix64();
-+	pti_setup_vsyscall();
-+
- 	pti_clone_kernel_text();
- 
- 	debug_checkwx_user();
+Cheers,
+Benno
+
 
