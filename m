@@ -1,134 +1,179 @@
-Return-Path: <linux-kernel+bounces-275748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB66C948953
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:26:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2371F948955
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96AFD2843DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2C52284369
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59A01BC083;
-	Tue,  6 Aug 2024 06:26:04 +0000 (UTC)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E08C1BCA0A;
+	Tue,  6 Aug 2024 06:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="melHguTN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126B833F6
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 06:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE9F33F6;
+	Tue,  6 Aug 2024 06:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722925564; cv=none; b=ZOP951HVICWj4HPVVEsUEqXv0zRWgSEwH+s7VLvtiG9Npuj8suEVXH9q1ong7VoFRI3+JGW7xwR6jIMUxiUT7MqBf/YDztfLnPsIMXZXyQTDp4/KfyMFtDbDxAMljZ876Jo+9YMjMItc8+oONMUIrrjuG3bUvLcOYhMrMB+sDQo=
+	t=1722925567; cv=none; b=YvpgOg0vSvz7a1IsjEZ2VbxOnfDMe0SB388kYJVKTP7HjO8bEeRV/j5bAzYoxlykC5tqMmZzuUYSg2ibbdYxTTgaS/DMRkl3+2AbUXRTdNvU4mYrexv7gNWTOM7I6opvLJrvqg0fRhpyPfojOLu9Nmo3j6cg1yZXr3jKQF5zvG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722925564; c=relaxed/simple;
-	bh=2D9/B7cCWzOqKpXILArTzVdnKGk0UzyyVeuZ48lABgY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hDnSYGSQQ/ZoRVmlsrgfVgBNdA5k3XeAxMUY4Rgxj7m4mTkfd136kfdYt6GE8pYl4FrYoU4kvjgisiYW9MhwxxumVlCFpV8kKnx+kce6TIhjvrzjPJ+BP/7aXbh21kbJytTXlq6PkU9KV8yTodK1WZx+RAHNr3DAyCFk/gMJpmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2cb5b783c15so304216a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 23:26:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722925562; x=1723530362;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WkhPq34IbcaE2arSpKB/w97lz5fPFLbPZIaKkBokZu8=;
-        b=ZFT1dX7VPHP9s0ktibhKcZDuFjRjBiO7pXiY5AUOB9bX1lcdtKDLhvUKx+vtrIpdjW
-         8BqmrMcwSr6QQmJJq4ARiluaoomvFBPaLyMLp5mXsE6yXECXROiXScWZfQcOVp072GtL
-         B1HU1v7kAWbbyg+bLj+Qo7GZoXUivtpbc1K1NKHmW5iCcQyk3msMqy3ZhkGLiQGJOhGD
-         fmO2yf2DrxPT8dlOy/CWMqxQt/azvb4b1qmZngoQtE6MCgY7b5NiDglFiw/KzZu3r7GP
-         AlE9TyILh6/h1JbgJ1alR/QwPUWMJO5M+rUpvpe/sPdQ+n40IqDrta6usiY0S132Kcil
-         GCqw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/lgmqjauAB3j7tCByf0p7i7D3s46hGFTBw9IFBqq53svhZywNVLb7QF8VQz5Fh5baOPtnlrYK3H2yjrMs2aF329mBSXyOPYdPRpaN
-X-Gm-Message-State: AOJu0YyWGOcSP0CZTLIbazOe6Ya4T2hxMcedGoUicfY/dyY6JUdFxSDV
-	K58DhsuZ9okNip2pibwASKfYMlnwu3tGlwdP0pkCooUvD1/+KNyQ4x6Gn3LSVDU/xm4vEVszLZL
-	8aoJhz/lDIfXYu7OeGBe/6smNVxE=
-X-Google-Smtp-Source: AGHT+IHo7n/MNZJ8lg8MMqzWAsAsJ5eg02O4tf5knTx3tyBpIZz/+mt0tmXrnR8VVMHT2AsNR6sLe571m78S3k/SfLI=
-X-Received: by 2002:a17:90a:f486:b0:2bd:d42a:e071 with SMTP id
- 98e67ed59e1d1-2cff952441dmr16235893a91.30.1722925562001; Mon, 05 Aug 2024
- 23:26:02 -0700 (PDT)
+	s=arc-20240116; t=1722925567; c=relaxed/simple;
+	bh=BjqIFjSGsGg6TzXZZviieEcOrOvVXg+qMsTnamn2JCg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XXN+I0t4usWQcfzuj7WCQDyu8LscdQMduHbrYt38TjjHANSzjpSJ0iYXLa4Yk9Dj8FCJHIEYYvb8KzyDhtfWnniAf40KQloqqAVBphyIP7mAsnknYWLvyL1gOJJANCNGGdAu56aZlsXKZRXnHPGVGbLSf5+lVj1LYEX99HFrPRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=melHguTN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDC83C32786;
+	Tue,  6 Aug 2024 06:26:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722925567;
+	bh=BjqIFjSGsGg6TzXZZviieEcOrOvVXg+qMsTnamn2JCg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=melHguTNIyGZrnUJaeEVXfoxJLzSFUSmimL7A0qZMciOU+/Tkmk3AgHDTbJ7zOnvW
+	 C+Eqg9s2fY38yjFZiW44GJROUQavSLBeCsJ7xaIuPKj+0p6CYTAe1rIbhfeO0FbM6A
+	 Vh9hlzCAoDpwj8Y9jmw+z/Byw0ziCXO5T2jzj9KdnHBoaKi+kk0bY6uTX7sWreLKI2
+	 6kaeEB8jY/cO5xnbWVPbPn6j6QGYaZqN2kc9vEVsg2dbw8DuhkIuqipWJd2ztG4NT7
+	 S9G0q7eDOceZWeOSN0YY0fKLFv8md78ztD/hPRNKssZ1/TG0U0hu+ZSRMyrAJ9dIo3
+	 Q+bgSsjClf3Cg==
+Message-ID: <654f76d5-e4e4-477d-becf-8157792557cc@kernel.org>
+Date: Tue, 6 Aug 2024 08:26:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730191925.469649-1-namhyung@kernel.org> <CAL715W+2jmoFvEy=LpkFFwX9oQSW3qhM_D-t77p-2CCBKmpdNg@mail.gmail.com>
-In-Reply-To: <CAL715W+2jmoFvEy=LpkFFwX9oQSW3qhM_D-t77p-2CCBKmpdNg@mail.gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Mon, 5 Aug 2024 23:25:50 -0700
-Message-ID: <CAM9d7ci9PpT3A7AC65dmZbqPM8V1wGzvV_9hbdDKbRK=7q0j2Q@mail.gmail.com>
-Subject: Re: [PATCH] perf/core: Optimize event reschedule for a PMU
-To: Mingwei Zhang <mizhang@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Ravi Bangoria <ravi.bangoria@amd.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Stephane Eranian <eranian@google.com>, Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] firmware: ti_sci: Partial-IO support
+To: Markus Schneider-Pargmann <msp@baylibre.com>, Nishanth Menon <nm@ti.com>,
+ Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Vibhore Vardhan <vibhore@ti.com>, Kevin Hilman <khilman@baylibre.com>,
+ Dhruva Gole <d-gole@ti.com>, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240729080101.3859701-1-msp@baylibre.com>
+ <20240729080101.3859701-3-msp@baylibre.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240729080101.3859701-3-msp@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Mingwei,
+On 29/07/2024 10:00, Markus Schneider-Pargmann wrote:
+> +static int tisci_sys_off_handler(struct sys_off_data *data)
+> +{
+> +	struct ti_sci_info *info = data->cb_data;
+> +	int i;
+> +	int ret;
+> +	bool enter_partial_io = false;
+> +
+> +	for (i = 0; i != info->nr_wakeup_sources; ++i) {
+> +		struct platform_device *pdev =
+> +			of_find_device_by_node(info->wakeup_source_nodes[i]);
+> +
+> +		if (!pdev)
+> +			continue;
+> +
+> +		if (device_may_wakeup(&pdev->dev)) {
 
-On Mon, Aug 5, 2024 at 9:57=E2=80=AFAM Mingwei Zhang <mizhang@google.com> w=
-rote:
->
-> On Tue, Jul 30, 2024 at 12:19=E2=80=AFPM Namhyung Kim <namhyung@kernel.or=
-g> wrote:
-> >
-> > Current ctx_resched() reschedules every events in all PMUs in the
-> > context even if it only needs to do it for a single event.  This is the
-> > case when it opens a new event or enables an existing one.  What we
-> > want is to reschedule events in the PMU only.  Also perf_pmu_resched()
-> > currently calls ctx_resched() without PMU information.
-> >
-> > Let's add __perf_pmu_resched() to do the work for the given PMU only.
-> > The context time should be updated by ctx_sched_{out,in}(EVENT_TIME)
-> > outside from it.  And change the __pmu_ctx_sched_in() to be symmetrical
-> > to the _sched_out() for its arguments so that it can be called easily
-> > in the __perf_pmu_resched().
-> >
-> > Note that __perf_install_in_context() should call ctx_resched() for the
-> > very first event in the context in order to set ctx->is_active.  Later
-> > events can be handled by __perf_pmu_resched().
-> >
-> > Care should be taken when it installs a task event for a PMU and
-> > there's no CPU event for the PMU.  __perf_pmu_resched() will ask the
-> > CPU PMU context to schedule any events in it according to the group
-> > info.  But as the PMU context was not activated, it didn't set the
-> > event context pointer.  So I added new NULL checks in the
-> > __pmu_ctx_sched_{in,out}.
-> >
-> > With this change I can get 4x speed up (but actually it's proportional
-> > to the number of uncore PMU events) on a 2-socket Intel EMR machine in
-> > opening and closing a perf event for the core PMU in a loop while there
-> > are a bunch of uncore PMU events active on the CPU.  The test code
-> > (stress-pmu) follows below.
-> >
-> > Before)
-> >   # ./stress-pmu
-> >   delta: 0.087068 sec (870 usec/op)
->
-> Hi Namhyung,
->
-> I wonder how I could test the performance boost on the virtualized
-> environment. So, I assume this will have a better performance by
-> reducing the number of wrmsrs to event selectors and counters?
+...
 
-Right.
+> +			dev_dbg(info->dev, "%pOFp identified as wakeup source\n",
+> +				info->wakeup_source_nodes[i]);
+> +			enter_partial_io = true;
+> +		}
+> +	}
+> +
+> +	if (!enter_partial_io)
+> +		return NOTIFY_DONE;
+> +
+> +	ret = tisci_enter_partial_io(info);
+> +
+> +	if (ret) {
+> +		dev_err(info->dev,
+> +			"Failed to enter Partial-IO %pe, trying to do an emergency restart\n",
+> +			ERR_PTR(ret));
+> +		emergency_restart();
+> +	}
+> +
+> +	while (1);
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+>  /* Description for K2G */
+>  static const struct ti_sci_desc ti_sci_pmmc_k2g_desc = {
+>  	.default_host_id = 2,
+> @@ -3398,6 +3485,35 @@ static int ti_sci_probe(struct platform_device *pdev)
+>  		goto out;
+>  	}
+>  
+> +	if (of_property_read_bool(dev->of_node, "ti,partial-io-wakeup-sources")) {
+> +		info->nr_wakeup_sources =
+> +			of_count_phandle_with_args(dev->of_node,
+> +						   "ti,partial-io-wakeup-sources",
+> +						   NULL);
 
->
-> I wonder if I need to run multiple instances of stress-pmu to increase
-> the number of PMU context switches?
+I don't see the point of this. You have quite a static list of devices -
+just look at your DTS. Then you don't even do anything useful with the
+phandles you got here.
 
-Yep, I think it'd work.  Basically anything that opens more events in
-different PMUs.  But make sure the vcpu thread is running on the
-affected CPU (60 in my test).
+This property looks entirely useless. I already commented on the binding
+(which you did not respond to), so let's comment also here:
 
-Thanks,
-Namhyung
+No, it duplicates wakeup-source and your code shows that it is not even
+needed.
+
+Best regards,
+Krzysztof
+
 
