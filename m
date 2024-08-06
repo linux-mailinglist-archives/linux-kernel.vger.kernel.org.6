@@ -1,531 +1,216 @@
-Return-Path: <linux-kernel+bounces-277020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E13F949B2E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:15:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD5C949B2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F0F91C22AA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:15:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 191751C22ACC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C318E171E73;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622D117556C;
 	Tue,  6 Aug 2024 22:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="jMqDWrs6"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NuzCxNvx"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E5316DED9
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 22:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9322C171E5A;
+	Tue,  6 Aug 2024 22:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722982502; cv=none; b=LEB9SRZ4/Tz72bwhryguIvxhhwy1mX6aKFiHGnTxgGTIexxdO5vHUcmHinlfernNR3Fts/KZG61UQAkrPwJaRKJm/vV5CdGxzSjAX69c2RYIqASZ1ciNlhpiT94YW1lYHEuIgZXmF39MgUOms+rbWx2QTkpWQbBLLM7aMDz3SDo=
+	t=1722982502; cv=none; b=qmy5cPRzoIXTbHZ4rueFHI9PrjUL5KDO2udbDic6qt7uUgOB+SJ1HzwKi35QqKSu4wxozQS4TdaCY0ApP1Wyw72gxKyLrxaQEync2QbtFL+qSZniTuqjCcbtKejHOUq4aM1pY7uU9SxzCzW3ZDruOJVZAKoSBECbJays2cfcuTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722982502; c=relaxed/simple;
-	bh=9e0WaRPQ5tkd1BX7HOX3i9wBMmPwOQ07aBux+rhj1mE=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A4N/E8meDQY+kMqFQ7PT2jWLSri6COUG46ooSp62tqNu9U56gjIENMSe2JF1nHAcKwcb9hXnjaqQJyHzopCsho3eFhSj4TovImDtW/+8QGKT1e6Cn5bS3lRKkqqr/jdv2sFmLa0nQlmHkV94GgVYcTtZa+jYIsptp/iJrrS61K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=jMqDWrs6; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-66c7aeac627so11162177b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 15:14:59 -0700 (PDT)
+	bh=m5BjGQn0ztYT3NKsuxQ229IfQyV8rqnP0MJCBdsv/DQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Va/0sVbBput+MIxCUXRCO81sxwZf4UtAl3C+v7wU28iFytSGw8FLPO3+zDhJUuH5aYSGJtO0mvrixXx80OzS5xiYAJr3f+eJXEsubHsAsM9daq7BfKr+7yp0kJwXRm8laZZQ221YPVL6Yb5Le0n+W5vgUuO7OwZhM65LB8yTpMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NuzCxNvx; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52f04b4abdcso1691126e87.2;
+        Tue, 06 Aug 2024 15:15:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1722982499; x=1723587299; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y7m8AXjGIE//n/y8EnZvRZBr5S07q4MZ8rZJ4WK1cCs=;
-        b=jMqDWrs6bLSnltuYsOnBMGpWrgVZHOkL2SjKl5DHxh/HuwI+mne0R7ew47JA/y91rs
-         QElenEDQehlqoPcF+/x62Y3mhKTNWFrhh09XPWvsoC3Uz+vs5cnBhnCG6VcLrzXUPLLg
-         hkWuDtnLZBkm+cjt0SxhvvGK/KSrU3tBEASSBAUQxk6QiTDVU6n7zuiEgqUENhwBAN1M
-         DFK1/qq5deBnEa2yHY/nmGYHzVv0C1QEXe5Fjtj/aWRfHNRBSX0ra3J2YhndeMs78cjn
-         cqLwOUVCrzbGCw4zpS3BaS3m6WY+MKsiqqYAOfgajMAU2F9Qzga0SbDGS7WOWwoA4uKk
-         u2iA==
+        d=gmail.com; s=20230601; t=1722982499; x=1723587299; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yXjtb86nnXZiK+81bTmuvRngQoj2Z9OAz1cGyJKoh3A=;
+        b=NuzCxNvxHGPPsuNlQjMj1Dwg03s3RXkAl4sEcRZOsjeh40b6vg1/7r57ae6Bk0Q9NM
+         NoH7T5WjwDC4ys5733nwz8244eKZ7vxp5QlICXMtB0nC4tRA3dTZeQLNqIY12BYrqIxI
+         JKB04vkA66S3n3ALdsw5t5Vkp4YaHfRal4LFwhyI38Tn8BrREqnXzXjJ1KT7YCgTRe3n
+         mHpnWA9fi9AONRf/cs3Kc/4Z2M+PjYxRWeBeUUaCC40aCocLG97w9mksG9h127R3lyQf
+         UZ3JWgBVDA3yWVKUC9xAeH1XX3XJbe5Lzl+MKX++YA6Wpc3SFOvldsDX5zklghKLgtE1
+         yREg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1722982499; x=1723587299;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y7m8AXjGIE//n/y8EnZvRZBr5S07q4MZ8rZJ4WK1cCs=;
-        b=wjZa2go++Rbrj2z/15TdA3AZ+5pk5+bLNIN3hNVgPWfIBZiZz2N2H5Pnd/22oY3/6J
-         CTHOs0HaBLooRL+QM+AyA4Q1fg80PZQHyPahGOqo+BPO8Pj64C4fpe5zUP/Y0dC0zjb5
-         oj4a2hIU8qgdEd9PAV7EazZ5HXrjdXNTt1KqNUk97+SYIHlep9Si7h+sQsfzTF8THQHc
-         DZq+c6pcArwkwmamoE3E4ppuAbJVkYdHRos06emW0ABpl/9nEG9nz1Lau3RHdi3tb3NN
-         6rTmFg9jFHgqkstEwUsXUzyz7Jy3LpHMTWDzZdWYOQZ7QouW+xm9r8B4pM/LR8MRbj+t
-         0wtg==
-X-Forwarded-Encrypted: i=1; AJvYcCXRBpA+aLFbnQ8jkluxGp/vtTftHKzyAsxruMmYW7D4HyAaN424sEbG1Q9mB/SgcamONclr2OPbHfEdj7fLBW5Kgles8uqzRuj+9FBc
-X-Gm-Message-State: AOJu0Yxexqs4aAlLE1NKaGsDxBW1IygxWYFXBeaJHQQs2BrGa/3kurvG
-	yu5SG3ITI+FUXmq5JcNLEj0OW3ZJ1s3VbxpsohmTyfDNK2c60LA3fUQkM/iLREM=
-X-Google-Smtp-Source: AGHT+IGIO0sFXsBF1eTQ0icc4IIEsdk0oMud/A0qVs+YtT55Cl3ZtQ5CEJPlkw6JzrdTl3cVtoHafQ==
-X-Received: by 2002:a05:690c:701:b0:64a:d9a1:db3f with SMTP id 00721157ae682-6904c8c2bbcmr129440177b3.7.1722982499048;
-        Tue, 06 Aug 2024 15:14:59 -0700 (PDT)
-Received: from soleen.c.googlers.com.com (118.239.150.34.bc.googleusercontent.com. [34.150.239.118])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c8778e1sm50584506d6.128.2024.08.06.15.14.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yXjtb86nnXZiK+81bTmuvRngQoj2Z9OAz1cGyJKoh3A=;
+        b=siZiHvUo5WsTfVxv9sQbCDixKPAKzzVs8pBfvOxV5bAkEmVX97Wgd7tIWMfZAJzwH1
+         bjEgo7iwckcG8rW2rNxyY8t/Wd98Uqx7wga10OB8llpnJV8kom5dkU7Bn06wmqrdQ8gN
+         hYZUQRSNX+4GHHky9EsddVpruM5daCX3Oi0tcCOI0BX4Ju1mFng5ryWcOBF5PjVLUass
+         JpdtuMEndM9q4WAyg52yhPkHMo9l9Sfo92XYUDCI93gWYlfG8tBEcpmhWcYH6E9dSlTX
+         3Nn9ZWaWP+mBijrKSuICHImc3RULLD50DYeSPsQSokzs0lwDJ+ZPPd4f/b1m4PfUBNAT
+         aETA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIKf/C63jRROk/GU/rAx0VYWfsGmED0Xxwb5DLPHswtkFx2us7zoCXOBbjGHa4Y74GibNTF0e2iD5QOdlcSC3RWXoZgGKyCpRTxVIN6/6KpojlLVWj5pPo0WybDc+E1r0J
+X-Gm-Message-State: AOJu0YxS068XnFDrshJ2Xz5jgPzqbJ6IHs+8XutTg16no+MRlixKEREu
+	tXSzwlrUz3fgMPzylrLXE+UNzejczY/qgXYMXEuJ6LEZe5hX7IGhMwlwCo+z
+X-Google-Smtp-Source: AGHT+IEKpr1UFCKDIwWRxjnU/uCMgSVrE+o0Upo4NwXVrAnyDnyihhz4pz3m7yaMLFIsDF1d0jQ75A==
+X-Received: by 2002:a05:6512:3c98:b0:52b:c27c:ea1f with SMTP id 2adb3069b0e04-530bb39bf01mr11779826e87.55.1722982498234;
         Tue, 06 Aug 2024 15:14:58 -0700 (PDT)
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-To: agordeev@linux.ibm.com,
-	akpm@linux-foundation.org,
-	alexghiti@rivosinc.com,
-	aou@eecs.berkeley.edu,
-	ardb@kernel.org,
-	arnd@arndb.de,
-	bhe@redhat.com,
-	bjorn@rivosinc.com,
-	borntraeger@linux.ibm.com,
-	bp@alien8.de,
-	catalin.marinas@arm.com,
-	chenhuacai@kernel.org,
-	chenjiahao16@huawei.com,
-	christophe.leroy@csgroup.eu,
-	dave.hansen@linux.intel.com,
-	david@redhat.com,
-	dawei.li@shingroup.cn,
-	gerald.schaefer@linux.ibm.com,
-	gor@linux.ibm.com,
-	hca@linux.ibm.com,
-	hpa@zytor.com,
-	kent.overstreet@linux.dev,
-	kernel@xen0n.name,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	luto@kernel.org,
-	maobibo@loongson.cn,
-	mark.rutland@arm.com,
-	mcgrof@kernel.org,
-	mingo@redhat.com,
-	mpe@ellerman.id.au,
-	muchun.song@linux.dev,
-	namcao@linutronix.de,
-	naveen@kernel.org,
-	npiggin@gmail.com,
-	osalvador@suse.de,
-	palmer@dabbelt.com,
-	pasha.tatashin@soleen.com,
-	paul.walmsley@sifive.com,
-	peterz@infradead.org,
-	philmd@linaro.org,
-	rdunlap@infradead.org,
-	rientjes@google.com,
-	rppt@kernel.org,
-	ryan.roberts@arm.com,
-	souravpanda@google.com,
-	svens@linux.ibm.com,
-	tglx@linutronix.de,
-	tzimmermann@suse.de,
-	will@kernel.org,
-	x86@kernel.org
-Subject: [PATCH 2/2] mm: keep nid around during hot-remove
-Date: Tue,  6 Aug 2024 22:14:54 +0000
-Message-ID: <20240806221454.1971755-2-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-In-Reply-To: <20240806221454.1971755-1-pasha.tatashin@soleen.com>
-References: <20240806221454.1971755-1-pasha.tatashin@soleen.com>
+Received: from mobilestation ([95.79.225.241])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530de457b3csm3663e87.161.2024.08.06.15.14.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 15:14:57 -0700 (PDT)
+Date: Wed, 7 Aug 2024 01:14:55 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: jitendra.vegiraju@broadcom.com
+Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, 
+	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
+	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org, 
+	john.fastabend@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, 
+	andrew@lunn.ch, linux@armlinux.org.uk, horms@kernel.org, 
+	florian.fainelli@broadcom.com
+Subject: Re: [PATCH net-next v3 2/3] net: stmmac: Integrate dwxgmac4 into
+ stmmac hwif handling
+Message-ID: <o4dgczjefqjek3iqw2y3ca7pwolj5e6otjyuinpuvkwcli5xei@dzehe7xde44x>
+References: <20240802031822.1862030-1-jitendra.vegiraju@broadcom.com>
+ <20240802031822.1862030-3-jitendra.vegiraju@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802031822.1862030-3-jitendra.vegiraju@broadcom.com>
 
-nid is needed during memory hot-remove in order to account the
-information about the memmap overhead that is being removed.
+On Thu, Aug 01, 2024 at 08:18:21PM -0700, jitendra.vegiraju@broadcom.com wrote:
+> From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+> 
+> Integrate dwxgmac4 support into stmmac hardware interface handling.
+> A dwxgmac4 is an xgmac device and hence it inherits properties from
+> existing stmmac_hw table entry.
+> The quirks handling facility is used to update dma_ops field to
+> point to dwxgmac400_dma_ops when the user version field matches.
+> 
+> Signed-off-by: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/common.h |  4 +++
+>  drivers/net/ethernet/stmicro/stmmac/hwif.c   | 26 +++++++++++++++++++-
+>  drivers/net/ethernet/stmicro/stmmac/hwif.h   |  1 +
+>  3 files changed, 30 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
+> index cd36ff4da68c..9bf278e11704 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/common.h
+> +++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+> @@ -37,11 +37,15 @@
+>  #define DWXGMAC_CORE_2_10	0x21
+>  #define DWXGMAC_CORE_2_20	0x22
+>  #define DWXLGMAC_CORE_2_00	0x20
 
-In addition, we cannot use page_pgdat(pfn_to_page(pfn)) during
-hotremove after remove_pfn_range_from_zone().
+> +#define DWXGMAC_CORE_4_00	0x40
 
-We also cannot determine nid from walking through memblocks after
-remove_memory_block_devices() is called.
+DW25GMAC_CORE_4_00?
 
-Therefore, pass nid down from the beginning of hotremove to where
-it is used for the accounting purposes.
+>  
+>  /* Device ID */
+>  #define DWXGMAC_ID		0x76
 
-Reported-by: Yi Zhang <yi.zhang@redhat.com>
-Closes: https://lore.kernel.org/linux-cxl/CAHj4cs9Ax1=CoJkgBGP_+sNu6-6=6v=_L-ZBZY0bVLD3wUWZQg@mail.gmail.com
-Reported-by: Alison Schofield <alison.schofield@intel.com>
-Closes: https://lore.kernel.org/linux-mm/Zq0tPd2h6alFz8XF@aschofie-mobl2/#t
+What is the device ID in your case? Does it match to DWXGMAC_ID?
 
-Fixes: 15995a352474 ("mm: report per-page metadata information")
-Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
----
- arch/arm64/mm/mmu.c            |  5 +++--
- arch/loongarch/mm/init.c       |  5 +++--
- arch/powerpc/mm/mem.c          |  5 +++--
- arch/riscv/mm/init.c           |  5 +++--
- arch/s390/mm/init.c            |  5 +++--
- arch/x86/mm/init_64.c          |  5 +++--
- include/linux/memory_hotplug.h |  7 ++++---
- mm/memory_hotplug.c            | 18 +++++++++---------
- mm/memremap.c                  |  6 ++++--
- mm/sparse-vmemmap.c            | 14 ++++++++------
- mm/sparse.c                    | 20 +++++++++++---------
- 11 files changed, 54 insertions(+), 41 deletions(-)
+>  #define DWXLGMAC_ID		0x27
+>  
+> +/* User Version */
+> +#define DWXGMAC_USER_VER_X22	0x22
+> +
+>  #define STMMAC_CHAN0	0	/* Always supported and default for all chips */
+>  
+>  /* TX and RX Descriptor Length, these need to be power of two.
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> index 29367105df54..713cb5aa2c3e 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> @@ -36,6 +36,18 @@ static u32 stmmac_get_dev_id(struct stmmac_priv *priv, u32 id_reg)
+>  	return (reg & GENMASK(15, 8)) >> 8;
+>  }
+>  
 
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 353ea5dc32b8..cd0808d05551 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -1363,12 +1363,13 @@ int arch_add_memory(int nid, u64 start, u64 size,
- 	return ret;
- }
- 
--void arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
-+void arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap,
-+			int nid)
- {
- 	unsigned long start_pfn = start >> PAGE_SHIFT;
- 	unsigned long nr_pages = size >> PAGE_SHIFT;
- 
--	__remove_pages(start_pfn, nr_pages, altmap);
-+	__remove_pages(start_pfn, nr_pages, altmap, nid);
- 	__remove_pgd_mapping(swapper_pg_dir, __phys_to_virt(start), size);
- }
- 
-diff --git a/arch/loongarch/mm/init.c b/arch/loongarch/mm/init.c
-index bf789d114c2d..64cfbfb75c15 100644
---- a/arch/loongarch/mm/init.c
-+++ b/arch/loongarch/mm/init.c
-@@ -106,7 +106,8 @@ int arch_add_memory(int nid, u64 start, u64 size, struct mhp_params *params)
- 	return ret;
- }
- 
--void arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
-+void arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap,
-+			int nid)
- {
- 	unsigned long start_pfn = start >> PAGE_SHIFT;
- 	unsigned long nr_pages = size >> PAGE_SHIFT;
-@@ -115,7 +116,7 @@ void arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
- 	/* With altmap the first mapped page is offset from @start */
- 	if (altmap)
- 		page += vmem_altmap_offset(altmap);
--	__remove_pages(start_pfn, nr_pages, altmap);
-+	__remove_pages(start_pfn, nr_pages, altmap, nid);
- }
- 
- #ifdef CONFIG_NUMA
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index d325217ab201..74c0213f995a 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -157,12 +157,13 @@ int __ref arch_add_memory(int nid, u64 start, u64 size,
- 	return rc;
- }
- 
--void __ref arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
-+void __ref arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap,
-+			      int nid)
- {
- 	unsigned long start_pfn = start >> PAGE_SHIFT;
- 	unsigned long nr_pages = size >> PAGE_SHIFT;
- 
--	__remove_pages(start_pfn, nr_pages, altmap);
-+	__remove_pages(start_pfn, nr_pages, altmap, nid);
- 	arch_remove_linear_mapping(start, size);
- }
- #endif
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 8b698d9609e7..bf1be25cc513 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -1796,9 +1796,10 @@ int __ref arch_add_memory(int nid, u64 start, u64 size, struct mhp_params *param
- 	return ret;
- }
- 
--void __ref arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
-+void __ref arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap,
-+			      int nid)
- {
--	__remove_pages(start >> PAGE_SHIFT, size >> PAGE_SHIFT, altmap);
-+	__remove_pages(start >> PAGE_SHIFT, size >> PAGE_SHIFT, altmap, nid);
- 	remove_linear_mapping(start, size);
- 	flush_tlb_all();
- }
-diff --git a/arch/s390/mm/init.c b/arch/s390/mm/init.c
-index e3d258f9e726..bf596d87543a 100644
---- a/arch/s390/mm/init.c
-+++ b/arch/s390/mm/init.c
-@@ -290,12 +290,13 @@ int arch_add_memory(int nid, u64 start, u64 size,
- 	return rc;
- }
- 
--void arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
-+void arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap,
-+			int nid)
- {
- 	unsigned long start_pfn = start >> PAGE_SHIFT;
- 	unsigned long nr_pages = size >> PAGE_SHIFT;
- 
--	__remove_pages(start_pfn, nr_pages, altmap);
-+	__remove_pages(start_pfn, nr_pages, altmap, nid);
- 	vmem_remove_mapping(start, size);
- }
- #endif /* CONFIG_MEMORY_HOTPLUG */
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index d8dbeac8b206..5bb82fbb7c2c 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1262,12 +1262,13 @@ kernel_physical_mapping_remove(unsigned long start, unsigned long end)
- 	remove_pagetable(start, end, true, NULL);
- }
- 
--void __ref arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
-+void __ref arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap,
-+			      int nid)
- {
- 	unsigned long start_pfn = start >> PAGE_SHIFT;
- 	unsigned long nr_pages = size >> PAGE_SHIFT;
- 
--	__remove_pages(start_pfn, nr_pages, altmap);
-+	__remove_pages(start_pfn, nr_pages, altmap, nid);
- 	kernel_physical_mapping_remove(start, start + size);
- }
- #endif /* CONFIG_MEMORY_HOTPLUG */
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index ebe876930e78..47c9af202884 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -201,9 +201,10 @@ static inline bool movable_node_is_enabled(void)
- 	return movable_node_enabled;
- }
- 
--extern void arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap);
-+extern void arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap,
-+			       int nid);
- extern void __remove_pages(unsigned long start_pfn, unsigned long nr_pages,
--			   struct vmem_altmap *altmap);
-+			   struct vmem_altmap *altmap, int nid);
- 
- /* reasonably generic interface to expand the physical pages */
- extern int __add_pages(int nid, unsigned long start_pfn, unsigned long nr_pages,
-@@ -369,7 +370,7 @@ extern int sparse_add_section(int nid, unsigned long pfn,
- 		unsigned long nr_pages, struct vmem_altmap *altmap,
- 		struct dev_pagemap *pgmap);
- extern void sparse_remove_section(unsigned long pfn, unsigned long nr_pages,
--				  struct vmem_altmap *altmap);
-+				  struct vmem_altmap *altmap, int nid);
- extern struct page *sparse_decode_mem_map(unsigned long coded_mem_map,
- 					  unsigned long pnum);
- extern struct zone *zone_for_pfn_range(int online_type, int nid,
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 66267c26ca1b..c66148049fa6 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -571,7 +571,7 @@ void __ref remove_pfn_range_from_zone(struct zone *zone,
-  * calling offline_pages().
-  */
- void __remove_pages(unsigned long pfn, unsigned long nr_pages,
--		    struct vmem_altmap *altmap)
-+		    struct vmem_altmap *altmap, int nid)
- {
- 	const unsigned long end_pfn = pfn + nr_pages;
- 	unsigned long cur_nr_pages;
-@@ -586,7 +586,7 @@ void __remove_pages(unsigned long pfn, unsigned long nr_pages,
- 		/* Select all remaining pages up to the next section boundary */
- 		cur_nr_pages = min(end_pfn - pfn,
- 				   SECTION_ALIGN_UP(pfn + 1) - pfn);
--		sparse_remove_section(pfn, cur_nr_pages, altmap);
-+		sparse_remove_section(pfn, cur_nr_pages, altmap, nid);
- 	}
- }
- 
-@@ -1386,7 +1386,7 @@ bool mhp_supports_memmap_on_memory(void)
- }
- EXPORT_SYMBOL_GPL(mhp_supports_memmap_on_memory);
- 
--static void __ref remove_memory_blocks_and_altmaps(u64 start, u64 size)
-+static void __ref remove_memory_blocks_and_altmaps(u64 start, u64 size, int nid)
- {
- 	unsigned long memblock_size = memory_block_size_bytes();
- 	u64 cur_start;
-@@ -1409,7 +1409,7 @@ static void __ref remove_memory_blocks_and_altmaps(u64 start, u64 size)
- 
- 		remove_memory_block_devices(cur_start, memblock_size);
- 
--		arch_remove_memory(cur_start, memblock_size, altmap);
-+		arch_remove_memory(cur_start, memblock_size, altmap, nid);
- 
- 		/* Verify that all vmemmap pages have actually been freed. */
- 		WARN(altmap->alloc, "Altmap not fully unmapped");
-@@ -1454,7 +1454,7 @@ static int create_altmaps_and_memory_blocks(int nid, struct memory_group *group,
- 		ret = create_memory_block_devices(cur_start, memblock_size,
- 						  params.altmap, group);
- 		if (ret) {
--			arch_remove_memory(cur_start, memblock_size, NULL);
-+			arch_remove_memory(cur_start, memblock_size, NULL, nid);
- 			kfree(params.altmap);
- 			goto out;
- 		}
-@@ -1463,7 +1463,7 @@ static int create_altmaps_and_memory_blocks(int nid, struct memory_group *group,
- 	return 0;
- out:
- 	if (ret && cur_start != start)
--		remove_memory_blocks_and_altmaps(start, cur_start - start);
-+		remove_memory_blocks_and_altmaps(start, cur_start - start, nid);
- 	return ret;
- }
- 
-@@ -1532,7 +1532,7 @@ int __ref add_memory_resource(int nid, struct resource *res, mhp_t mhp_flags)
- 		/* create memory block devices after memory was added */
- 		ret = create_memory_block_devices(start, size, NULL, group);
- 		if (ret) {
--			arch_remove_memory(start, size, params.altmap);
-+			arch_remove_memory(start, size, params.altmap, nid);
- 			goto error;
- 		}
- 	}
-@@ -2275,10 +2275,10 @@ static int __ref try_remove_memory(u64 start, u64 size)
- 		 * No altmaps present, do the removal directly
- 		 */
- 		remove_memory_block_devices(start, size);
--		arch_remove_memory(start, size, NULL);
-+		arch_remove_memory(start, size, NULL, nid);
- 	} else {
- 		/* all memblocks in the range have altmaps */
--		remove_memory_blocks_and_altmaps(start, size);
-+		remove_memory_blocks_and_altmaps(start, size, nid);
- 	}
- 
- 	if (IS_ENABLED(CONFIG_ARCH_KEEP_MEMBLOCK))
-diff --git a/mm/memremap.c b/mm/memremap.c
-index 40d4547ce514..08e72959eb48 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -112,9 +112,11 @@ static void pageunmap_range(struct dev_pagemap *pgmap, int range_id)
- {
- 	struct range *range = &pgmap->ranges[range_id];
- 	struct page *first_page;
-+	int nid;
- 
- 	/* make sure to access a memmap that was actually initialized */
- 	first_page = pfn_to_page(pfn_first(pgmap, range_id));
-+	nid = page_to_nid(first_page);
- 
- 	/* pages are dead and unused, undo the arch mapping */
- 	mem_hotplug_begin();
-@@ -122,10 +124,10 @@ static void pageunmap_range(struct dev_pagemap *pgmap, int range_id)
- 				   PHYS_PFN(range_len(range)));
- 	if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
- 		__remove_pages(PHYS_PFN(range->start),
--			       PHYS_PFN(range_len(range)), NULL);
-+			       PHYS_PFN(range_len(range)), NULL, nid);
- 	} else {
- 		arch_remove_memory(range->start, range_len(range),
--				pgmap_altmap(pgmap));
-+				   pgmap_altmap(pgmap), nid);
- 		kasan_remove_zero_shadow(__va(range->start), range_len(range));
- 	}
- 	mem_hotplug_done();
-diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-index 1dda6c53370b..0dafad626ab8 100644
---- a/mm/sparse-vmemmap.c
-+++ b/mm/sparse-vmemmap.c
-@@ -469,12 +469,14 @@ struct page * __meminit __populate_section_memmap(unsigned long pfn,
- 	if (r < 0)
- 		return NULL;
- 
--	if (system_state == SYSTEM_BOOTING) {
--		mod_node_early_perpage_metadata(nid, DIV_ROUND_UP(end - start,
--								  PAGE_SIZE));
--	} else {
--		mod_node_page_state(NODE_DATA(nid), NR_MEMMAP,
--				    DIV_ROUND_UP(end - start, PAGE_SIZE));
-+	if (nid != NUMA_NO_NODE) {
-+		if (system_state == SYSTEM_BOOTING) {
-+			mod_node_early_perpage_metadata(nid, DIV_ROUND_UP(end - start,
-+									  PAGE_SIZE));
-+		} else {
-+			mod_node_page_state(NODE_DATA(nid), NR_MEMMAP,
-+					    DIV_ROUND_UP(end - start, PAGE_SIZE));
-+		}
- 	}
- 
- 	return pfn_to_page(pfn);
-diff --git a/mm/sparse.c b/mm/sparse.c
-index e4b830091d13..fc01bc5f0f1d 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -638,13 +638,15 @@ static struct page * __meminit populate_section_memmap(unsigned long pfn,
- }
- 
- static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
--		struct vmem_altmap *altmap)
-+		struct vmem_altmap *altmap, int nid)
- {
- 	unsigned long start = (unsigned long) pfn_to_page(pfn);
- 	unsigned long end = start + nr_pages * sizeof(struct page);
- 
--	mod_node_page_state(page_pgdat(pfn_to_page(pfn)), NR_MEMMAP,
--			    -1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
-+	if (nid != NUMA_NO_NODE) {
-+		mod_node_page_state(NODE_DATA(nid), NR_MEMMAP,
-+				    -1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
-+	}
- 	vmemmap_free(start, end, altmap);
- }
- static void free_map_bootmem(struct page *memmap)
-@@ -713,7 +715,7 @@ static struct page * __meminit populate_section_memmap(unsigned long pfn,
- }
- 
- static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
--		struct vmem_altmap *altmap)
-+		struct vmem_altmap *altmap, int nid)
- {
- 	kvfree(pfn_to_page(pfn));
- }
-@@ -781,7 +783,7 @@ static int fill_subsection_map(unsigned long pfn, unsigned long nr_pages)
-  * For 2 and 3, the SPARSEMEM_VMEMMAP={y,n} cases are unified
-  */
- static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
--		struct vmem_altmap *altmap)
-+		struct vmem_altmap *altmap, int nid)
- {
- 	struct mem_section *ms = __pfn_to_section(pfn);
- 	bool section_is_early = early_section(ms);
-@@ -821,7 +823,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
- 	 * section_activate() and pfn_valid() .
- 	 */
- 	if (!section_is_early)
--		depopulate_section_memmap(pfn, nr_pages, altmap);
-+		depopulate_section_memmap(pfn, nr_pages, altmap, nid);
- 	else if (memmap)
- 		free_map_bootmem(memmap);
- 
-@@ -865,7 +867,7 @@ static struct page * __meminit section_activate(int nid, unsigned long pfn,
- 
- 	memmap = populate_section_memmap(pfn, nr_pages, nid, altmap, pgmap);
- 	if (!memmap) {
--		section_deactivate(pfn, nr_pages, altmap);
-+		section_deactivate(pfn, nr_pages, altmap, nid);
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
-@@ -928,13 +930,13 @@ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
- }
- 
- void sparse_remove_section(unsigned long pfn, unsigned long nr_pages,
--			   struct vmem_altmap *altmap)
-+			   struct vmem_altmap *altmap, int nid)
- {
- 	struct mem_section *ms = __pfn_to_section(pfn);
- 
- 	if (WARN_ON_ONCE(!valid_section(ms)))
- 		return;
- 
--	section_deactivate(pfn, nr_pages, altmap);
-+	section_deactivate(pfn, nr_pages, altmap, nid);
- }
- #endif /* CONFIG_MEMORY_HOTPLUG */
--- 
-2.46.0.76.ge559c4bf1a-goog
+> +static u32 stmmac_get_user_version(struct stmmac_priv *priv, u32 id_reg)
+> +{
+> +	u32 reg = readl(priv->ioaddr + id_reg);
+> +
+> +	if (!reg) {
+> +		dev_info(priv->device, "User Version not available\n");
+> +		return 0x0;
+> +	}
+> +
+> +	return (reg & GENMASK(23, 16)) >> 16;
+> +}
+> +
 
+The User Version is purely a vendor-specific stuff defined on the
+IP-core synthesis stage. Moreover I don't see you'll need it anyway.
+
+>  static void stmmac_dwmac_mode_quirk(struct stmmac_priv *priv)
+>  {
+>  	struct mac_device_info *mac = priv->hw;
+> @@ -82,6 +94,18 @@ static int stmmac_dwmac4_quirks(struct stmmac_priv *priv)
+>  	return 0;
+>  }
+>  
+
+> +static int stmmac_dwxgmac_quirks(struct stmmac_priv *priv)
+> +{
+> +	struct mac_device_info *mac = priv->hw;
+> +	u32 user_ver;
+> +
+> +	user_ver = stmmac_get_user_version(priv, GMAC4_VERSION);
+> +	if (priv->synopsys_id == DWXGMAC_CORE_4_00 &&
+> +	    user_ver == DWXGMAC_USER_VER_X22)
+> +		mac->dma = &dwxgmac400_dma_ops;
+> +	return 0;
+> +}
+> +
+>  static int stmmac_dwxlgmac_quirks(struct stmmac_priv *priv)
+>  {
+>  	priv->hw->xlgmac = true;
+> @@ -256,7 +280,7 @@ static const struct stmmac_hwif_entry {
+>  		.mmc = &dwxgmac_mmc_ops,
+>  		.est = &dwmac510_est_ops,
+>  		.setup = dwxgmac2_setup,
+> -		.quirks = NULL,
+> +		.quirks = stmmac_dwxgmac_quirks,
+
+Why? You can just introduce a new stmmac_hw[] entry with the DW
+25GMAC-specific stmmac_dma_ops instance specified.
+
+-Serge(y)
+
+>  	}, {
+>  		.gmac = false,
+>  		.gmac4 = false,
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.h b/drivers/net/ethernet/stmicro/stmmac/hwif.h
+> index e53c32362774..6213c496385c 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/hwif.h
+> +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h
+> @@ -683,6 +683,7 @@ extern const struct stmmac_desc_ops dwxgmac210_desc_ops;
+>  extern const struct stmmac_mmc_ops dwmac_mmc_ops;
+>  extern const struct stmmac_mmc_ops dwxgmac_mmc_ops;
+>  extern const struct stmmac_est_ops dwmac510_est_ops;
+> +extern const struct stmmac_dma_ops dwxgmac400_dma_ops;
+>  
+>  #define GMAC_VERSION		0x00000020	/* GMAC CORE Version */
+>  #define GMAC4_VERSION		0x00000110	/* GMAC4+ CORE Version */
+> -- 
+> 2.34.1
+> 
+> 
 
