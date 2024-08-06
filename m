@@ -1,57 +1,63 @@
-Return-Path: <linux-kernel+bounces-276744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C85BF9497DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92E199497E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F403B23CE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:58:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CD20B250B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08E882498;
-	Tue,  6 Aug 2024 18:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0C213F45F;
+	Tue,  6 Aug 2024 18:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqFqbAUH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PjQS0Q1t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFC28F77;
-	Tue,  6 Aug 2024 18:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9D912C499;
+	Tue,  6 Aug 2024 18:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722970685; cv=none; b=bAPsK1ebbe9gnTN51xmfHJHedKqK41qD/eMTSabnvY7EB1mAWUwF/gEVOSe5HRb2s1+kqOGz8qHh01YLlHzo3rQd4yEOnN/FJbRUBAFuICYm20cboHWpoYLxRKHNTzEEENIQxEz+8lWV43E1uAmEvKgzUIDUYUmsvcLux+uFs14=
+	t=1722970737; cv=none; b=nVQezG7A8yhHtXI0LK37xFDVC3U4z7JwdabrvNW0zGxraZ5UN4xhOFKHqnGZOXToCm4lfffHoSbiV/VkwT2SXvC6t7nsELsD86GIyvg0v3Al+bcZzZ8jLVRA+MySToVXb3nk1Ibv0r7QZjF/z4ZSv3lNz4daRQh0l6boNOnW0C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722970685; c=relaxed/simple;
-	bh=XimH0OuNIUTLC54WyHG6saQ35XMNvhja1+IPfPU9k/I=;
+	s=arc-20240116; t=1722970737; c=relaxed/simple;
+	bh=nTZwvoB1swCmSCEA37kLGlL7AFlUVn7ToNTM/uTFB7c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rkIpqnCkEut9Tr2G3n91VEK3MqYWln3u3DOJy6EJAWwLBzIMKodetaSWGY9BwEZtzZs+PzhvAbQ696V8JVEhCZ6MNFxsmT9czB4DRnihAlN7TCBsCPWZ03jHgwO3Uos0mYBNUcgEiC1UrczqPI1WZeSvCWAsMD81+KwGG4EuP2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqFqbAUH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64701C32786;
-	Tue,  6 Aug 2024 18:58:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aCkZ/8Yj7W21qIwJENlN4Fpe8FvEv6xsixN8vgieuP9SuMNCEpvFYx53o8cnud72TyBZdjPDchMK8Z3HQrmIIJzeiR/WZyQSq/ba45cb80meTw+hp4np9XEG2Jd7hyLTYHNoGastskMoYDwnVo+Asx7V/Yx5UOmo/x5AzqG1H+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PjQS0Q1t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2852DC32786;
+	Tue,  6 Aug 2024 18:58:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722970685;
-	bh=XimH0OuNIUTLC54WyHG6saQ35XMNvhja1+IPfPU9k/I=;
+	s=k20201202; t=1722970737;
+	bh=nTZwvoB1swCmSCEA37kLGlL7AFlUVn7ToNTM/uTFB7c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cqFqbAUHYuQbPVnvuqQAElWSBkp5YetK7859aYaQEkMbl+2Vf0wG/H0Tig9nROcxl
-	 0eNIKbTWbW6lO59nmX2mqZN0c9g0mu4G33RDSk3mn0OT6wOo43kpuKyaTVnn06imQh
-	 8kfpnb+gq/qcKVC2tFbhssZffzdhhzZ6b1SliAqoHMydU33AMIU1mRxyd0dVflQn1e
-	 kBeF49GFrBu/rWu7CAhaNcVv7y5bqOkvIUPD4uP2+3TRUiN9AssUnJqhxxh4O7Xs8X
-	 Xl+ks2brMkNyjnP1ggJSrUm7EoboYIjYRAeacaNcq+ptpGGkvOX/ztTaeAOJtWBRKw
-	 /b7cwAp0AisNg==
-Date: Tue, 6 Aug 2024 11:58:04 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v2 04/13] xfs: make EOF allocation simpler
-Message-ID: <20240806185804.GH623936@frogsfrogsfrogs>
-References: <20240705162450.3481169-1-john.g.garry@oracle.com>
- <20240705162450.3481169-5-john.g.garry@oracle.com>
+	b=PjQS0Q1t36HxAKcFuK/KM7CYWHgFHl/N5ykYt4Eto1ExusMme3pWj14PL33gaZpek
+	 nwteGAcCY7TNhwNhw1V+BzNds7ZBpceDpB3bQOhvGBgluacdDbGY5BJlobV81xiuJz
+	 Rn52pjVRl379VEclW7Jsn7e+f/hpCaNw+tQvDJXA3LAAZEK+E6uUo6RoOztKpMNpV9
+	 8F2OdVnKBdpX26rp68uErbNntQwRJ9Wbne9cP8Q1PJErzjte+IlYpRaTWaXkmEM5yR
+	 qkVMXqJnFW88fji6rBey6mGvQrHFa4JJbrwzd0f+4ALe55cT+iN8NCKouEACPPYZEY
+	 p2cSkylsNaK2g==
+Date: Tue, 6 Aug 2024 20:58:49 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
+	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v4 05/28] rust: alloc: add module `allocator_test`
+Message-ID: <ZrJyaWhXHRciX51o@pollux.localdomain>
+References: <20240805152004.5039-1-dakr@kernel.org>
+ <20240805152004.5039-6-dakr@kernel.org>
+ <7f4b91e6-aae8-4e17-9fcd-4b1d0b2de9a0@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,274 +66,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240705162450.3481169-5-john.g.garry@oracle.com>
+In-Reply-To: <7f4b91e6-aae8-4e17-9fcd-4b1d0b2de9a0@proton.me>
 
-On Fri, Jul 05, 2024 at 04:24:41PM +0000, John Garry wrote:
-> From: Dave Chinner <dchinner@redhat.com>
+On Tue, Aug 06, 2024 at 04:54:10PM +0000, Benno Lossin wrote:
+> On 05.08.24 17:19, Danilo Krummrich wrote:
+> > `Allocator`s, such as `Kmalloc`, will be used by e.g. `Box` and `Vec` in
+> > subsequent patches, and hence this dependency propagates throughout the
+> > whole kernel.
+> > 
+> > Add the `allocator_test` module that provides an empty implementation
+> > for all `Allocator`s in the kernel, such that we don't break the
+> > `rusttest` make target in subsequent patches.
 > 
-> Currently the allocation at EOF is broken into two cases - when the
-> offset is zero and when the offset is non-zero. When the offset is
-> non-zero, we try to do exact block allocation for contiguous
-> extent allocation. When the offset is zero, the allocation is simply
-> an aligned allocation.
+> This is confusing, since you are talking about both our new `Allocator`
+> trait, allocators and the `alloc` crate `Allocator`.
+
+I never mention the `alloc` crate `Allocator` here.
+
 > 
-> We want aligned allocation as the fallback when exact block
-> allocation fails, but that complicates the EOF allocation in that it
-> now has to handle two different allocation cases. The
-> caller also has to handle allocation when not at EOF, and for the
-> upcoming forced alignment changes we need that to also be aligned
-> allocation.
+> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > ---
+> >  rust/kernel/alloc.rs                |  9 +++++++--
+> >  rust/kernel/alloc/allocator_test.rs | 19 +++++++++++++++++++
+> >  2 files changed, 26 insertions(+), 2 deletions(-)
+> >  create mode 100644 rust/kernel/alloc/allocator_test.rs
+> > 
+> > diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+> > index bc01a17df5e0..942e2755f217 100644
+> > --- a/rust/kernel/alloc.rs
+> > +++ b/rust/kernel/alloc.rs
+> > @@ -2,12 +2,17 @@
+> > 
+> >  //! Extensions to the [`alloc`] crate.
+> > 
+> > -#[cfg(not(test))]
+> > -#[cfg(not(testlib))]
+> > +#[cfg(not(any(test, testlib)))]
+> >  pub mod allocator;
+> >  pub mod box_ext;
+> >  pub mod vec_ext;
+> > 
+> > +#[cfg(any(test, testlib))]
+> > +pub mod allocator_test;
+> > +
+> > +#[cfg(any(test, testlib))]
+> > +pub use self::allocator_test as allocator;
+> > +
+> >  /// Indicates an allocation error.
+> >  #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+> >  pub struct AllocError;
+> > diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
+> > new file mode 100644
+> > index 000000000000..4785efc474a7
+> > --- /dev/null
+> > +++ b/rust/kernel/alloc/allocator_test.rs
+> > @@ -0,0 +1,19 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +#![allow(missing_docs)]
+> > +
+> > +use super::{AllocError, Allocator, Flags};
+> > +use core::alloc::Layout;
+> > +use core::ptr::NonNull;
+> > +
+> > +pub struct Kmalloc;
+> > +
+> > +unsafe impl Allocator for Kmalloc {
+> > +    unsafe fn realloc(
+> > +        _ptr: Option<NonNull<u8>>,
+> > +        _layout: Layout,
+> > +        _flags: Flags,
+> > +    ) -> Result<NonNull<[u8]>, AllocError> {
+> > +        panic!();
 > 
-> To simplify all this, pull the aligned allocation cases back into
-> the callers and leave the EOF allocation path for exact block
-> allocation only. This means that the EOF exact block allocation
-> fallback path is the normal aligned allocation path and that ends up
-> making things a lot simpler when forced alignment is introduced.
+> Does `build_error!()` also work? If yes, then I would prefer that.
+
+Probably, but it also probably doesn't matter too much. A later patch in the
+series replaces this with a `Cmalloc` implementation and type aliases all kernel
+allocators (e.g. `Kmalloc`) to it.
+
+This allows us to use our kernel `Box` and `Vec` types in userspace tests
+(rusttest target).
+
 > 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
 > ---
->  fs/xfs/libxfs/xfs_bmap.c   | 129 +++++++++++++++----------------------
->  fs/xfs/libxfs/xfs_ialloc.c |   2 +-
->  2 files changed, 54 insertions(+), 77 deletions(-)
+> Cheers,
+> Benno
 > 
-> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> index b5156bafb7be..4122a2da06ec 100644
-> --- a/fs/xfs/libxfs/xfs_bmap.c
-> +++ b/fs/xfs/libxfs/xfs_bmap.c
-> @@ -3309,12 +3309,12 @@ xfs_bmap_select_minlen(
->  static int
->  xfs_bmap_btalloc_select_lengths(
->  	struct xfs_bmalloca	*ap,
-> -	struct xfs_alloc_arg	*args,
-> -	xfs_extlen_t		*blen)
-> +	struct xfs_alloc_arg	*args)
->  {
->  	struct xfs_mount	*mp = args->mp;
->  	struct xfs_perag	*pag;
->  	xfs_agnumber_t		agno, startag;
-> +	xfs_extlen_t		blen = 0;
->  	int			error = 0;
->  
->  	if (ap->tp->t_flags & XFS_TRANS_LOWMODE) {
-> @@ -3328,19 +3328,18 @@ xfs_bmap_btalloc_select_lengths(
->  	if (startag == NULLAGNUMBER)
->  		startag = 0;
->  
-> -	*blen = 0;
->  	for_each_perag_wrap(mp, startag, agno, pag) {
-> -		error = xfs_bmap_longest_free_extent(pag, args->tp, blen);
-> +		error = xfs_bmap_longest_free_extent(pag, args->tp, &blen);
->  		if (error && error != -EAGAIN)
->  			break;
->  		error = 0;
-> -		if (*blen >= args->maxlen)
-> +		if (blen >= args->maxlen)
->  			break;
->  	}
->  	if (pag)
->  		xfs_perag_rele(pag);
->  
-> -	args->minlen = xfs_bmap_select_minlen(ap, args, *blen);
-> +	args->minlen = xfs_bmap_select_minlen(ap, args, blen);
->  	return error;
->  }
->  
-> @@ -3550,78 +3549,40 @@ xfs_bmap_exact_minlen_extent_alloc(
->   * If we are not low on available data blocks and we are allocating at
->   * EOF, optimise allocation for contiguous file extension and/or stripe
->   * alignment of the new extent.
-> - *
-> - * NOTE: ap->aeof is only set if the allocation length is >= the
-> - * stripe unit and the allocation offset is at the end of file.
->   */
->  static int
->  xfs_bmap_btalloc_at_eof(
->  	struct xfs_bmalloca	*ap,
-> -	struct xfs_alloc_arg	*args,
-> -	xfs_extlen_t		blen,
-> -	bool			ag_only)
-> +	struct xfs_alloc_arg	*args)
->  {
->  	struct xfs_mount	*mp = args->mp;
->  	struct xfs_perag	*caller_pag = args->pag;
-> +	xfs_extlen_t		alignment = args->alignment;
->  	int			error;
->  
-> +	ASSERT(ap->aeof && ap->offset);
-> +	ASSERT(args->alignment >= 1);
-> +
->  	/*
-> -	 * If there are already extents in the file, try an exact EOF block
-> -	 * allocation to extend the file as a contiguous extent. If that fails,
-> -	 * or it's the first allocation in a file, just try for a stripe aligned
-> -	 * allocation.
-> +	 * Compute the alignment slop for the fallback path so we ensure
-> +	 * we account for the potential alignemnt space required by the
-> +	 * fallback paths before we modify the AGF and AGFL here.
->  	 */
-> -	if (ap->offset) {
-> -		xfs_extlen_t	alignment = args->alignment;
-> -
-> -		/*
-> -		 * Compute the alignment slop for the fallback path so we ensure
-> -		 * we account for the potential alignment space required by the
-> -		 * fallback paths before we modify the AGF and AGFL here.
-> -		 */
-> -		args->alignment = 1;
-> -		args->alignslop = alignment - args->alignment;
-> -
-> -		if (!caller_pag)
-> -			args->pag = xfs_perag_get(mp, XFS_FSB_TO_AGNO(mp, ap->blkno));
-> -		error = xfs_alloc_vextent_exact_bno(args, ap->blkno);
-> -		if (!caller_pag) {
-> -			xfs_perag_put(args->pag);
-> -			args->pag = NULL;
-> -		}
-> -		if (error)
-> -			return error;
-> -
-> -		if (args->fsbno != NULLFSBLOCK)
-> -			return 0;
-> -		/*
-> -		 * Exact allocation failed. Reset to try an aligned allocation
-> -		 * according to the original allocation specification.
-> -		 */
-> -		args->alignment = alignment;
-> -		args->alignslop = 0;
-> -	}
-> +	args->alignment = 1;
-> +	args->alignslop = alignment - args->alignment;
->  
-> -	if (ag_only) {
-> -		error = xfs_alloc_vextent_near_bno(args, ap->blkno);
-> -	} else {
-> +	if (!caller_pag)
-> +		args->pag = xfs_perag_get(mp, XFS_FSB_TO_AGNO(mp, ap->blkno));
-> +	error = xfs_alloc_vextent_exact_bno(args, ap->blkno);
-> +	if (!caller_pag) {
-> +		xfs_perag_put(args->pag);
->  		args->pag = NULL;
-> -		error = xfs_alloc_vextent_start_ag(args, ap->blkno);
-> -		ASSERT(args->pag == NULL);
-> -		args->pag = caller_pag;
->  	}
-> -	if (error)
-> -		return error;
->  
-> -	if (args->fsbno != NULLFSBLOCK)
-> -		return 0;
-> -
-> -	/*
-> -	 * Aligned allocation failed, so all fallback paths from here drop the
-> -	 * start alignment requirement as we know it will not succeed.
-> -	 */
-> -	args->alignment = 1;
-> -	return 0;
-> +	/* Reset alignment to original specifications.  */
-> +	args->alignment = alignment;
-> +	args->alignslop = 0;
-> +	return error;
->  }
->  
->  /*
-> @@ -3687,12 +3648,19 @@ xfs_bmap_btalloc_filestreams(
->  	}
->  
->  	args->minlen = xfs_bmap_select_minlen(ap, args, blen);
-> -	if (ap->aeof)
-> -		error = xfs_bmap_btalloc_at_eof(ap, args, blen, true);
-> +	if (ap->aeof && ap->offset)
-> +		error = xfs_bmap_btalloc_at_eof(ap, args);
->  
-> +	/* This may be an aligned allocation attempt. */
->  	if (!error && args->fsbno == NULLFSBLOCK)
->  		error = xfs_alloc_vextent_near_bno(args, ap->blkno);
->  
-> +	/* Attempt non-aligned allocation if we haven't already. */
-> +	if (!error && args->fsbno == NULLFSBLOCK && args->alignment > 1)  {
-> +		args->alignment = 1;
-> +		error = xfs_alloc_vextent_near_bno(args, ap->blkno);
-
-and again going back a couple of submissions, do we have to zero
-alignslop here?
-
-https://lore.kernel.org/linux-xfs/20240621203556.GU3058325@frogsfrogsfrogs/
-
---D
-
-> +	}
-> +
->  out_low_space:
->  	/*
->  	 * We are now done with the perag reference for the filestreams
-> @@ -3714,7 +3682,6 @@ xfs_bmap_btalloc_best_length(
->  	struct xfs_bmalloca	*ap,
->  	struct xfs_alloc_arg	*args)
->  {
-> -	xfs_extlen_t		blen = 0;
->  	int			error;
->  
->  	ap->blkno = XFS_INO_TO_FSB(args->mp, ap->ip->i_ino);
-> @@ -3725,23 +3692,33 @@ xfs_bmap_btalloc_best_length(
->  	 * the request.  If one isn't found, then adjust the minimum allocation
->  	 * size to the largest space found.
->  	 */
-> -	error = xfs_bmap_btalloc_select_lengths(ap, args, &blen);
-> +	error = xfs_bmap_btalloc_select_lengths(ap, args);
->  	if (error)
->  		return error;
->  
->  	/*
-> -	 * Don't attempt optimal EOF allocation if previous allocations barely
-> -	 * succeeded due to being near ENOSPC. It is highly unlikely we'll get
-> -	 * optimal or even aligned allocations in this case, so don't waste time
-> -	 * trying.
-> +	 * If we are in low space mode, then optimal allocation will fail so
-> +	 * prepare for minimal allocation and run the low space algorithm
-> +	 * immediately.
->  	 */
-> -	if (ap->aeof && !(ap->tp->t_flags & XFS_TRANS_LOWMODE)) {
-> -		error = xfs_bmap_btalloc_at_eof(ap, args, blen, false);
-> -		if (error || args->fsbno != NULLFSBLOCK)
-> -			return error;
-> +	if (ap->tp->t_flags & XFS_TRANS_LOWMODE) {
-> +		ASSERT(args->fsbno == NULLFSBLOCK);
-> +		return xfs_bmap_btalloc_low_space(ap, args);
-> +	}
-> +
-> +	if (ap->aeof && ap->offset)
-> +		error = xfs_bmap_btalloc_at_eof(ap, args);
-> +
-> +	/* This may be an aligned allocation attempt. */
-> +	if (!error && args->fsbno == NULLFSBLOCK)
-> +		error = xfs_alloc_vextent_start_ag(args, ap->blkno);
-> +
-> +	/* Attempt non-aligned allocation if we haven't already. */
-> +	if (!error && args->fsbno == NULLFSBLOCK && args->alignment > 1)  {
-> +		args->alignment = 1;
-> +		error = xfs_alloc_vextent_start_ag(args, ap->blkno);
->  	}
->  
-> -	error = xfs_alloc_vextent_start_ag(args, ap->blkno);
->  	if (error || args->fsbno != NULLFSBLOCK)
->  		return error;
->  
-> diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
-> index 9f71a9a3a65e..40a2daeea712 100644
-> --- a/fs/xfs/libxfs/xfs_ialloc.c
-> +++ b/fs/xfs/libxfs/xfs_ialloc.c
-> @@ -780,7 +780,7 @@ xfs_ialloc_ag_alloc(
->  		 * the exact agbno requirement and increase the alignment
->  		 * instead. It is critical that the total size of the request
->  		 * (len + alignment + slop) does not increase from this point
-> -		 * on, so reset minalignslop to ensure it is not included in
-> +		 * on, so reset alignslop to ensure it is not included in
->  		 * subsequent requests.
->  		 */
->  		args.alignslop = 0;
-> -- 
-> 2.31.1
-> 
+> > +    }
+> > +}
+> > --
+> > 2.45.2
+> > 
 > 
 
