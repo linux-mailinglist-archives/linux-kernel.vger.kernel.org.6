@@ -1,225 +1,347 @@
-Return-Path: <linux-kernel+bounces-276244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECEDD9490E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:20:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CBB39490EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CC601C20A61
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:20:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 282E9B29056
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344F31D2799;
-	Tue,  6 Aug 2024 13:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754291EA0BD;
+	Tue,  6 Aug 2024 13:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LNse4MKR"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tBbKpwkc"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8071D1F50;
-	Tue,  6 Aug 2024 13:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A190A1D278B
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722950268; cv=none; b=PSoUjf/GiyJyktbDvNq58PO7BXe8c/4LLQi8yEXG79/Mw5NnR2Ay5hv7mk4dJS7HtGUuGrmxxDil6HB85oFnWxZtG54rVZwOMEzmxJTA3NQlDHwawA5wyezkkUsk78mRKPMCH73OqFBnnSqjSIWb1WE2ZrTI51eQnCTek2MqeVU=
+	t=1722950272; cv=none; b=dHxhbuIUz2Q6FcbT971caofkaASW2t4EqTiulsfABEGBTaDlP4CZyhEO4Ze0N4twvv0bdmtonkV2hGm9QwtLDw+jqx+Os9BaPIsN4zhTTGFs076npxowPLZ5jpPSv562RftM8PdUGhuerC1lT7e8Q3vjB4uJNyxt3L7VxfCxPss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722950268; c=relaxed/simple;
-	bh=GgjmkdUPZeZpAYLfxQbXQ8R7Bl5oHiBhZDy+dWxdHDo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=shDTMxfWd9WWrRDJuOH7qNW78BlmqCAgda8t9oYc2S8yq1mNaKq3kwPwM1UsthZH916g+RUOLWbKNrFBmRhSZmcgkokxg+JHlcK0Ky1RIICM3o0tcNJbAUX6W7iFxbh3TCV9qE00eaGc7Ak3B69ChZ1AUErbxwmOxt9SncZOVAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LNse4MKR; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7aac70e30dso62215966b.1;
-        Tue, 06 Aug 2024 06:17:46 -0700 (PDT)
+	s=arc-20240116; t=1722950272; c=relaxed/simple;
+	bh=TpcolhcYzJa7mTrUihg1Dco8chyK0t/QbKkXU6IEoTI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n8hF97ApT7dFsw7Wu35EzrHz8x42ov2JBqik7v0sg6H6xRZed9p1lPWky3qwJ/aYP5Ai4GMkKm2yh5KyW6Y2t3S2qsYV5rxA9fcgEKXe85TKI53QpdylvT/dqOod3WT7UbKG0b3or0q7zQ6RDiNsydko0H4YDMHPpkvqniJvIL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tBbKpwkc; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a1d0ad7113so42758685a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:17:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722950265; x=1723555065; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ocCUNlG+q7/vW2Za5R6c93ENoxlDHlio7jUu/L0+TLs=;
-        b=LNse4MKRXCq0WStZ3H8GvjnFQgyjZ+EENzCUL/qfrSGwVxlEmMiiJ9fwMMX2A3+NvX
-         KIarUhYnBTvnqJsgCPkM9lECqYnguC5Jzf6dZk9nRzHnDtPlFpsAHWdlhiuzfwe1am7g
-         h8OwA5qyRQJK6ZYBUofQ95Ru6A3M/gc9KrRmNlUlXee/TRq6TzNfgYVYkYEb4RGCEHpZ
-         FRhnNct2/zlzrEjAgZGnzoEXnAHWaZ32isPK1QXdJDb0O9S/qpWjGi47kDJBgUAZaf4s
-         6rnxJVtNXTnjaQddzRoxy0Xvg3Ljr4iGlTamgnG2xygVx0PuIcaFAYGfHXlLVGGOnxcv
-         HP8A==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722950267; x=1723555067; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JwGghAF8hyP3IJRX7Y5WfGijoa+R+QrWJZw4g1mdI54=;
+        b=tBbKpwkcloYsK/Rfm8DOjgilCDlSHMZ64fPM0ELbw2bxI/Skkfj1XmKk+ymMa6Eycl
+         vy09e48+h8WHDxTUMFU9Xj7CnrCdi07zGXGXbG1g+40G7y3gjyD/QmGC9c7SD60hUagB
+         /ID8Pa7AOt+XIU2bYqr7t7XFWIQRLRjXNZhf8Bdqn18GJOzQJxV/1d6J2k5zQlYmNsU/
+         UAio2wKr7C4Ob6m3WFddrSQlFMMpN9A/HSR11o+9NvkoaYQ0K0fMSDeY932rAP5Epg9+
+         UnVJyOccrH4Q8VFDgPPBhen3I9ny2cSFaVcilKpOGDGDUomgPemtgS5r4KH5jqL1KP0q
+         rirw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722950265; x=1723555065;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
+        d=1e100.net; s=20230601; t=1722950267; x=1723555067;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ocCUNlG+q7/vW2Za5R6c93ENoxlDHlio7jUu/L0+TLs=;
-        b=Tv8cTybY471gmfo2KZdg5q2Egel75kLoNUbnV8KD8mtK3TUL8j0gJugBlfrBgOO1zB
-         2FUBjiERm6oaK5Y7SxCyhKrdg+zVr7cV8znw4N7fqvHWp4o834ffScil8VvWYjgE+Adu
-         f4AyrLnBUVQAjU70Hbyu3nPmo75SJlIfUJLVEbl2tVpHdMjruv2ngjSu8GBKMYvDyv7F
-         muPurmwE4Ax+bb/B8OlArdy7AQDI7BOprkDseQcPOTB9D5BmcinUbZ3tllb7fpFsdaXc
-         lFQ0H54gRKkxYvGRKvfHWid3Tzs8Qs0yBLkWiX30sgSsqAFPTXjvU5l34gQ96l9oHq4O
-         aJkA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+tCpKLTTbPcBPussE0xwytJxdqAJ/6ADdinGnhttCZ1FGDOlEXgU5E6nqE5vp3sREkM+ar8e8L01mj8YEhi81WwjFYbDVgRE80sOM+v0SMJp9OypnFtVWF1Io1xvgJNNK
-X-Gm-Message-State: AOJu0Yypcrco68vlKWlf7TfdT60OmFpnt6HfiTv8xLnZezjPdOZtTZ11
-	clmUDYUJJFtCn2wkghINhs8CROhiTEFgevpuYmAF+VXkSu9gxWKQ
-X-Google-Smtp-Source: AGHT+IHxEcII4OlQFVnCMktSEztBe5ov7CYA0cUP0kAYGD8VPn9ly9nO4mNC1jhIp7lXp5r0aRVX6w==
-X-Received: by 2002:a17:907:2d0a:b0:a6f:ddb3:bf2b with SMTP id a640c23a62f3a-a7dc508f8d4mr997125266b.41.1722950264303;
-        Tue, 06 Aug 2024 06:17:44 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc9dabsm546423066b.39.2024.08.06.06.17.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 06:17:43 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 6 Aug 2024 15:17:42 +0200
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Juri Lelli <juri.lelli@redhat.com>,
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Artem Savkov <asavkov@redhat.com>
-Subject: Re: NULL pointer deref when running BPF monitor program (6.11.0-rc1)
-Message-ID: <ZrIiduf3FOL6j4mq@krava>
-References: <ZrCZS6nisraEqehw@jlelli-thinkpadt14gen4.remote.csb>
- <ZrECsnSJWDS7jFUu@krava>
- <CAADnVQLMPPavJQR6JFsi3dtaaLHB816JN4HCV_TFWohJ61D+wQ@mail.gmail.com>
+        bh=JwGghAF8hyP3IJRX7Y5WfGijoa+R+QrWJZw4g1mdI54=;
+        b=l595VGAesHta6vlc2xAX4UCzEWZjb77bazbDCNbGp+2DascOMvFptn1JRKaPgupWay
+         iJpbQYAnFO2HSGDZM0YbPi5tbyyfvnwr1Ts/6BpOs9OusI07PrvIsN50Gh0MpE/4cYtM
+         44s0uDbL8NKa9Omi7hts5A6uGlQT/aFMGjX1FQEQmEAEtyGqXYpVoHx55eP9CCKXQxXM
+         lSYUfgySUFMUH+YQIg2D2TUcd1GHe/ej29EBKSIvh5sdQyakEX1NGcIZUlUZQwPk6nhS
+         XKG4/ruCt96629HN4+p0DKPscpyzfHc2IdLR1pkqAXxSnW28uUsZpBbJjs67CuuwYmQC
+         yz0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXCRM8cm9vmTYuf3TXndsvv8pWviZJWy2O5npRm6I3fDCtGG4Ewy8DRi2HXhvfeLmpdtky7IcMb7mjo8xg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+IsTIa/09qJohpiWr//m02qVMn2htaASwdgW6t1R0cx6T7upJ
+	ytapRQ4GVhZi1GU4ojsViISmhS6mC2LDw8Q90QekXAF9SuQbXxfqvhGB74KuOmY=
+X-Google-Smtp-Source: AGHT+IHzKLrhY/8VXF9noaAho1m5/YXRwzmbEuqnqzJp2DTDVn5/I6ZeJjvlf35HsDfdnjpYKyPiiw==
+X-Received: by 2002:a05:620a:4153:b0:7a1:d08b:5b7d with SMTP id af79cd13be357-7a34efdd375mr1620618585a.62.1722950267494;
+        Tue, 06 Aug 2024 06:17:47 -0700 (PDT)
+Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a35f3fc336sm310851385a.22.2024.08.06.06.17.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 06:17:47 -0700 (PDT)
+Message-ID: <46be10c0-7ee9-489b-afc9-0e0411200d7e@baylibre.com>
+Date: Tue, 6 Aug 2024 09:17:45 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/3] dt-bindings: iio: adc: add AD762x/AD796x ADCs
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ David Lechner <dlechner@baylibre.com>,
+ Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+References: <20240731-ad7625_r1-v1-0-a1efef5a2ab9@baylibre.com>
+ <20240731-ad7625_r1-v1-1-a1efef5a2ab9@baylibre.com>
+ <20240803153540.17627489@jic23-huawei>
+Content-Language: en-US
+From: Trevor Gamblin <tgamblin@baylibre.com>
+In-Reply-To: <20240803153540.17627489@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQLMPPavJQR6JFsi3dtaaLHB816JN4HCV_TFWohJ61D+wQ@mail.gmail.com>
 
-On Mon, Aug 05, 2024 at 10:00:40AM -0700, Alexei Starovoitov wrote:
-> On Mon, Aug 5, 2024 at 9:50 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> >
-> > On Mon, Aug 05, 2024 at 11:20:11AM +0200, Juri Lelli wrote:
-> >
-> > SNIP
-> >
-> > > [  154.566882] BUG: kernel NULL pointer dereference, address: 000000000000040c
-> > > [  154.573844] #PF: supervisor read access in kernel mode
-> > > [  154.578982] #PF: error_code(0x0000) - not-present page
-> > > [  154.584122] PGD 146fff067 P4D 146fff067 PUD 10fc00067 PMD 0
-> > > [  154.589780] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
-> > > [  154.594659] CPU: 28 UID: 0 PID: 2234 Comm: thread0-13 Kdump: loaded Not tainted 6.11.0-rc1 #8
-> > > [  154.603179] Hardware name: Dell Inc. PowerEdge R740/04FC42, BIOS 2.10.2 02/24/2021
-> > > [  154.610744] RIP: 0010:bpf_prog_ec8173ca2868eb50_handle__sched_pi_setprio+0x22/0xd7
-> > > [  154.618310] Code: cc cc cc cc cc cc cc cc 0f 1f 44 00 00 66 90 55 48 89 e5 48 81 ec 30 00 00 00 53 41 55 41 56 48 89 fb 4c 8b 6b 00 4c 8b 73 08 <41> 8b be 0c 04 00 00 48 83 ff 06 0f 85 9b 00 00 00 41 8b be c0 09
-> > > [  154.637052] RSP: 0018:ffffabac60aebbc0 EFLAGS: 00010086
-> > > [  154.642278] RAX: ffffffffc03fba5c RBX: ffffabac60aebc28 RCX: 000000000000001f
-> > > [  154.649411] RDX: ffff95a90b4e4180 RSI: ffffabac4e639048 RDI: ffffabac60aebc28
-> > > [  154.656544] RBP: ffffabac60aebc08 R08: 00000023fce7674a R09: ffff95a91d85af38
-> > > [  154.663674] R10: ffff95a91d85a0c0 R11: 000000003357e518 R12: 0000000000000000
-> > > [  154.670807] R13: ffff95a90b4e4180 R14: 0000000000000000 R15: 0000000000000001
-> > > [  154.677939] FS:  00007ffa6d600640(0000) GS:ffff95c01bf00000(0000) knlGS:0000000000000000
-> > > [  154.686026] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [  154.691769] CR2: 000000000000040c CR3: 000000014b9f2005 CR4: 00000000007706f0
-> > > [  154.698903] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > [  154.706035] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > [  154.713168] PKRU: 55555554
-> > > [  154.715879] Call Trace:
-> > > [  154.718332]  <TASK>
-> > > [  154.720439]  ? __die+0x20/0x70
-> > > [  154.723498]  ? page_fault_oops+0x75/0x170
-> > > [  154.727508]  ? sysvec_irq_work+0xb/0x90
-> > > [  154.731348]  ? exc_page_fault+0x64/0x140
-> > > [  154.735275]  ? asm_exc_page_fault+0x22/0x30
-> > > [  154.739461]  ? 0xffffffffc03fba5c
-> > > [  154.742780]  ? bpf_prog_ec8173ca2868eb50_handle__sched_pi_setprio+0x22/0xd7
-> >
-> > hi,
-> > reproduced.. AFAICS looks like the bpf program somehow lost the booster != NULL
-> > check and just load the policy field without it and crash when booster is rubbish
-> >
-> > int handle__sched_pi_setprio(u64 * ctx):
-> > ; int handle__sched_pi_setprio(u64 *ctx)
-> >    0: (bf) r6 = r1
-> > ; struct task_struct *boosted = (void *) ctx[0];
-> >    1: (79) r7 = *(u64 *)(r6 +0)
-> > ; struct task_struct *booster = (void *) ctx[1];
-> >    2: (79) r8 = *(u64 *)(r6 +8)
-> > ; if (booster->policy != SCHED_DEADLINE)
-> >
-> > curious why the check disappeared, because object file has it, so I guess verifier
-> > took it out for some reason, will check
-> 
-> Juri,
-> 
-> Thanks for flagging!
-> 
-> Jiri,
-> 
-> the verifier removes the check because it assumes that pointers
-> passed by the kernel into tracepoint are valid and trusted.
+Hello,
 
-ok I was wondering that's the case, but couldn't find that in the code quickly ;-)
+On 2024-08-03 10:35 a.m., Jonathan Cameron wrote:
+> On Wed, 31 Jul 2024 09:48:03 -0400
+> Trevor Gamblin <tgamblin@baylibre.com> wrote:
+>
+>> This adds a binding specification for the Analog Devices Inc. AD7625,
+>> AD7626, AD7960, and AD7961 ADCs.
+> Given the RFC question is effectively about the binding and may influence
+> it a lot - make sure it's talked about here!
+>
+>> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+>> ---
+>>   .../devicetree/bindings/iio/adc/adi,ad7625.yaml    | 176 +++++++++++++++++++++
+>>   MAINTAINERS                                        |   9 ++
+>>   2 files changed, 185 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml
+>> new file mode 100644
+>> index 000000000000..e88db0ac2534
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml
+>> @@ -0,0 +1,176 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/iio/adc/adi,ad7625.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Analog Devices Fast PulSAR Analog to Digital Converters
+>> +
+>> +maintainers:
+>> +  - Michael Hennerich <Michael.Hennerich@analog.com>
+>> +  - Nuno Sá <nuno.sa@analog.com>
+>> +
+>> +description: |
+>> +  A family of single channel differential analog to digital converters
+>> +  in a LFCSP package. Note that these bindings are for the device when
+>> +  used with the PulSAR LVDS project:
+>> +  http://analogdevicesinc.github.io/hdl/projects/pulsar_lvds/index.html.
+> As per the discussion in the cover letter I think the need to represent
+> if the DCO+ is connected between ADC and LVDS converter strongly suggests
+> we shouldn't represent it as one aggregate device.
 
-> In this case:
->         trace_sched_pi_setprio(p, pi_task);
-> 
-> pi_task can be NULL.
-> 
-> We cannot make all tracepoint pointers to be PTR_TRUSTED | PTR_MAYBE_NULL
-> by default, since it will break a bunch of progs.
-> Instead we can annotate this tracepoint arg as __nullable and
-> teach the verifier to recognize such special arguments of tracepoints.
-> 
-> Let's think how to workaround such verifier eagerness to remove != null check.
+Just to be sure, do you mean that the PulSAR LVDS functionality should 
+be split into its own driver and then utilized by ad7625?
 
-there's probably better way, but following seems to workaround the issue
+Thank you for the feedback. I'll work on updates for all of your replies.
 
-moving the logic into func__sched_pi_setprio function with tasks arguments
-and call it with NULL from place that's never executed
+- Trevor
 
-jirka
-
-
----
-diff --git a/src/dlmon.bpf.c b/src/dlmon.bpf.c
-index 73c22d56a75f..5b99ff9e0a46 100644
---- a/src/dlmon.bpf.c
-+++ b/src/dlmon.bpf.c
-@@ -4,6 +4,8 @@
- #include <bpf/bpf_helpers.h>
- #include "dlmon.h"
- 
-+int unset;
-+
- struct dl_parameters_t {
- 	u64 runtime;
- 	u64 period;
-@@ -160,11 +162,10 @@ int handle__contention_end(u64 *ctx)
- 	return 0;
- }
- 
--SEC("tp_btf/sched_pi_setprio")
--int handle__sched_pi_setprio(u64 *ctx)
-+static __attribute__((noinline))
-+int func__sched_pi_setprio(void *ctx, struct task_struct *boosted, struct task_struct *booster)
-+
- {
--	struct task_struct *boosted = (void *) ctx[0];
--	struct task_struct *booster = (void *) ctx[1];
- 	struct dl_parameters_t *lookup;
- 	struct task_pi_event pi_event;
- 	u32 pid;
-@@ -210,6 +211,18 @@ int handle__sched_pi_setprio(u64 *ctx)
- 	return 0;
- }
- 
-+SEC("tp_btf/sched_pi_setprio")
-+int handle__sched_pi_setprio(u64 *ctx)
-+{
-+	struct task_struct *boosted = (void *) ctx[0];
-+	struct task_struct *booster = (void *) ctx[1];
-+
-+	if (unset)
-+		return func__sched_pi_setprio(ctx, boosted, NULL);
-+
-+	return func__sched_pi_setprio(ctx, boosted, booster);
-+}
-+
- SEC("tp_btf/sched_wakeup")
- int handle__sched_wakeup(u64 *ctx)
- {
+>
+>> +
+>> +  * https://www.analog.com/en/products/ad7625.html
+>> +  * https://www.analog.com/en/products/ad7626.html
+>> +  * https://www.analog.com/en/products/ad7960.html
+>> +  * https://www.analog.com/en/products/ad7961.html
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - adi,ad7625
+>> +      - adi,ad7626
+>> +      - adi,ad7960
+>> +      - adi,ad7961
+>> +
+>> +  vdd1-supply:
+>> +    description: A supply that powers the analog and digital circuitry.
+> Doesn't really tell us anything. I'd just go with
+>      vdd1-supply: true
+>      vdd2-supply: true
+>      vio-supply: true
+>
+>
+>> +
+>> +  vdd2-supply:
+>> +    description: A supply that powers the analog and digital circuitry.
+>> +
+>> +  vio-supply:
+>> +    description: A supply for the inputs and outputs.
+>> +
+>> +  ref-supply:
+>> +    description:
+>> +      Voltage regulator for the external reference voltage (REF).
+>> +
+>> +  refin-supply:
+>> +    description:
+>> +      Voltage regulator for the reference buffer input (REFIN).
+>> +
+>> +  clocks:
+>> +    description:
+>> +      The clock connected to the CLK pins, gated by the clk_gate PWM.
+>> +    maxItems: 1
+>> +
+>> +  pwms:
+>> +    maxItems: 2
+>> +
+>> +  pwm-names:
+>> +    maxItems: 2
+>> +    items:
+>> +      - const: cnv
+>> +        description: PWM connected to the CNV input on the ADC.
+>> +      - const: clk_gate
+>> +        description: PWM that gates the clock connected to the ADC's CLK input.
+>> +
+>> +  io-backends:
+>> +    description:
+>> +      The AXI ADC IP block connected to the D+/- and DCO+/- lines of the ADC.
+> So you have a backend. Great - we have something to indicate a connection
+> to or not for the DCO+/o lines.  It's a bit ugly to just repesent it as a clk
+> but that would I think work.
+>
+>> +    maxItems: 1
+>> +
+>> +  adi,en0-always-on:
+>> +    $ref: /schemas/types.yaml#/definitions/flag
+>> +    description:
+>> +      Indicates if EN0 is hard-wired to the high state. If neither this
+>> +      nor en0-gpios are present, then EN0 is hard-wired low.
+> It's unfortunate there isn't a special 'fixed' gpio-chip option where we could
+> just query it is fixed and what the state of the pin is.  This is getting
+> quite common so would be good to have a better solution.
+>
+> Linus, Bartosz - is there a better way to do this?
+>
+>> +
+>> +  adi,en1-always-on:
+>> +    $ref: /schemas/types.yaml#/definitions/flag
+>> +    description:
+>> +      Indicates if EN1 is hard-wired to the high state. If neither this
+>> +      nor en1-gpios are present, then EN1 is hard-wired low.
+>> +
+>> +  adi,en2-always-on:
+>> +    $ref: /schemas/types.yaml#/definitions/flag
+>> +    description:
+>> +      Indicates if EN2 is hard-wired to the high state. If neither this
+>> +      nor en2-gpios are present, then EN2 is hard-wired low.
+>> +
+>> +  adi,en3-always-on:
+>> +    $ref: /schemas/types.yaml#/definitions/flag
+>> +    description:
+>> +      Indicates if EN3 is hard-wired to the high state. If neither this
+>> +      nor en3-gpios are present, then EN3 is hard-wired low.
+>> +
+>> +  en0-gpios:
+>> +    description:
+>> +      Configurable EN0 pin.
+>> +
+>> +  en1-gpios:
+>> +    description:
+>> +      Configurable EN1 pin.
+>> +
+>> +  en2-gpios:
+>> +    description:
+>> +      Configurable EN2 pin.
+>> +
+>> +  en3-gpios:
+>> +    description:
+>> +      Configurable EN3 pin.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - vdd1-supply
+>> +  - vdd2-supply
+>> +  - vio-supply
+>> +  - clocks
+>> +  - pwms
+>> +  - pwm-names
+>> +  - io-backends
+>> +
+>> +- if:
+>> +  properties:
+>> +    compatible:
+>> +      contains:
+>> +        enum:
+>> +	  - adi,ad7625
+>> +	  - adi,ad7626
+>> +  then:
+>> +    properties:
+>> +      en2-gpios: false
+>> +      en3-gpios: false
+>> +      adi,en2-always-on: false
+>> +      adi,en3-always-on: false
+>> +    allOf:
+>> +      # ref-supply and refin-supply are mutually-exclusive (neither is also
+>> +      # valid)
+>> +      - if:
+>> +          required:
+>> +            - ref-supply
+>> +        then:
+>> +          properties:
+>> +            refin-supply: false
+>> +      - if:
+>> +          required:
+>> +            - refin-supply
+>> +        then:
+>> +          properties:
+>> +            ref-supply: false
+>> +
+>> +- if:
+>> +  properties:
+>> +    compatible:
+>> +      contains:
+>> +        enum:
+>> +	  - adi,ad7960
+>> +	  - adi,ad7961
+>> +  then:
+>> +    oneOf:
+>> +      required:
+>> +        - ref-supply
+>> +      required:
+>> +        - refin-supply
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    adc {
+>> +        compatible = "adi,ad7625";
+>> +        vdd1-supply = <&supply_5V>;
+>> +        vdd2-supply = <&supply_2_5V>;
+>> +        vio-supply = <&supply_2_5V>;
+>> +        io-backends = <&axi_adc>;
+>> +        clock = <&ref_clk>;
+>> +        pwms = <&axi_pwm_gen 0 0>, <&axi_pwm_gen 1 0>;
+>> +        pwm-names = "cnv", "clk_gate";
+>> +    };
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 42decde38320..2361f92751dd 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -1260,6 +1260,15 @@ F:	Documentation/devicetree/bindings/iio/addac/adi,ad74413r.yaml
+>>   F:	drivers/iio/addac/ad74413r.c
+>>   F:	include/dt-bindings/iio/addac/adi,ad74413r.h
+>>   
+>> +ANALOG DEVICES INC AD7625 DRIVER
+>> +M:	Michael Hennerich <Michael.Hennerich@analog.com>
+>> +M:	Nuno Sá <nuno.sa@analog.com>
+>> +R:	Trevor Gamblin <tgamblin@baylibre.com>
+>> +S:	Supported
+>> +W:	https://ez.analog.com/linux-software-drivers
+>> +W:	http://analogdevicesinc.github.io/hdl/projects/pulsar_lvds/index.html
+>> +F:	Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml
+>> +
+>>   ANALOG DEVICES INC AD7768-1 DRIVER
+>>   M:	Michael Hennerich <Michael.Hennerich@analog.com>
+>>   L:	linux-iio@vger.kernel.org
+>>
 
