@@ -1,145 +1,134 @@
-Return-Path: <linux-kernel+bounces-277081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B38E949C20
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:12:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF003949BE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8C10B29533
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:12:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DFC01F24343
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FC517C225;
-	Tue,  6 Aug 2024 23:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5209174ED0;
+	Tue,  6 Aug 2024 23:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bAwtcOMC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gMV/XFXX"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E3F17A593;
-	Tue,  6 Aug 2024 23:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78288176259
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 23:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722985804; cv=none; b=HqYJABw/k0c4XMAYd+vmZeyiC2WwuKlUEIcBlDd0ZpJ8RSuPhrQdzNeNYTDIdP7rcAPXTYf4iZeHda4mMNtPJoWAl/5DRRlHd0ccofL/oKnjBP4sIEAFuxoA0dLmdbJ/pRj64+cvqVqoBxhUyinJAkwBAfGcNSKHwvawWXTJ/Dk=
+	t=1722985782; cv=none; b=jQKAnL3NnOSxRmzZ4ujAcznWIPLBZqLsHMix7th6E/HTRVYFMKBoJQZfpcVScP/Y6/XxxKz1WCSYVNjN1WfXZd/K2CPRrjaW92weOJSCI/1ye1wzNp1PohFNHAAVU4e9QHAXny9bekPqXsRjfan7pOSaLERVPYy7ak26+nIAvRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722985804; c=relaxed/simple;
-	bh=F/61/VQXtzneQgOaAhBFTxqHT0QyvEg2fHmrDz3d6fc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qzickOp4fzs/fmTam76ax5BLR5FnUzOGVRVUCo7FHWWk210gTL5DUJtmgsqsJ+6pVIEBd6GQ+X0HFSqUELLcwN/9Qoh6jCAfu85UCcYzxqcIYspEUWbDDKEoakaTZEV1ab1aGqH2aT+W1ZzgJ62EygQPq85NHu4ho+OJRzvKIOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bAwtcOMC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DB346C4AF16;
-	Tue,  6 Aug 2024 23:10:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722985804;
-	bh=F/61/VQXtzneQgOaAhBFTxqHT0QyvEg2fHmrDz3d6fc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=bAwtcOMC8uO9tQnqyMg3XmA8qwx6z04MqrogLLb2sa0ckkM37lEQCb10pqiKe5Sh1
-	 fmisLW9J+woUaDJ1WuRkdMlf2ppQaPwmanZ1ABs7nrUmoeOywkpZbOvijM0iJgZSr+
-	 GRrc+9SDnopW0bT7lbT4XbO+bPLex8HyZUrSExZxqT2uc+CucKsSSiDYhc2dyTs/se
-	 q3HQRFQnsfAs13xFXF0v164/6XO2YrL130OLGwcMh3XlYX99l7xORXhsy54KZAf4qk
-	 ka5IeQgoPsUv1Pncs0bCSiRpdk+AYCOSJ61umxoJoNVYkY9UujpLl7drVDp3WCEszh
-	 zeN2ZldHpKbhQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCECFC52D6F;
-	Tue,  6 Aug 2024 23:10:03 +0000 (UTC)
-From: Daniel Gomez via B4 Relay <devnull+da.gomez.samsung.com@kernel.org>
-Date: Wed, 07 Aug 2024 01:09:26 +0200
-Subject: [PATCH 12/12] scripts/kallsyms: add compatibility support for
- macos
+	s=arc-20240116; t=1722985782; c=relaxed/simple;
+	bh=IT835fC2v1rDjmdocs/e2w/fHqOQ9+vjIdY5l1/ug1U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lUst0zrzZY8TZa/hwCA4YFuUwr2Wa6f0Clitej+P12zAH+TKhWMG/Sdm0gcl2TFswnnEkFSiAfODLuLadb6CIhu/3QE7GVgVOnHHq8rDpRtR58R4B9pWe5Q0bOw2na7jKwvWY+4b29K9MF2VJw52RrduVB/iI4UndmPLzgdkQ/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gMV/XFXX; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so7986975e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 16:09:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722985779; x=1723590579; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NT0zhPaW9fTODX07IxdKjoCwQu7dHgMY3DM7e+O1NSk=;
+        b=gMV/XFXXIrDPANUozALGodB8wo+ZbaJLwYvg2Td96R5oMLB3uxgHOls66u+GT7JSDY
+         iszUfq/ZFAC53rsmj3E6N58NRMfTskXy8eor2gYRPrT85wcriL1bjJGeqRahkb1MfuPU
+         QXmisV4kAtP3qrv0ib+iqK5VJcnVCIksu/TT7D5f9seSI2PA8AYrphkfBXkshWGqr8sI
+         FHMnUqufnAh/qTkDqNfcMuc/8rkl1s4Wf8/VUkR2WbaM2p+/q/rqmh+MLsHoMZLFaVOk
+         x0+E5vlEdKDckBmyt7WkpUSOB8U4x3EbFdwPhZagNlE+/7MQTJR4zwu/sWCfIgS0L19Q
+         uWaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722985779; x=1723590579;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NT0zhPaW9fTODX07IxdKjoCwQu7dHgMY3DM7e+O1NSk=;
+        b=mCV+YmwfNTiwdk0i3S1SmOG+dMAJkVFYQHJNYHL1aiDxIBV0y+qLldLomFbNAArkDY
+         fnfe7/En5MAqAyASy0g8J9KZ37xo6czYcravwFgavX3H7Xn6e6BVM0aeExShqJ2ckgUr
+         sngOlXrso2Cxrlbi0M3ACysH6HR7j+CsT7y6LuC9eUBSyfTC6FnyHFx/x1KEvDXLbfwi
+         xdn8J8K2dwpFT9p/Bpg2CemuYTtmHkpM0oiToCDTS8aV7svh59OTVa20P/ZG+duSrZid
+         YNRkGsUB7cQ/R/gPrxITyMK/4p+2kToxMdHZ1GdVygexenfVoD899e06gPBhZi7H/3Kd
+         /9aA==
+X-Forwarded-Encrypted: i=1; AJvYcCVR4M1syRrx3lcbfj4el506xh+jYJ4tcM1yGFQIlg9QZBkxO4ijGscMeDj7R2046RJwgmaK1r2Ye1cQdQF6wLyV10/WW5ybZZVfkNfx
+X-Gm-Message-State: AOJu0YxRRCh18SfpBxS0FcfPtjgfHGbHDjkPV7tV73oB2Rv5ppkUC8pH
+	5ny0kfRcRLndE5TR03WB3q5ueVPHVd+Tj/sGw1oDxlUBsFJpBAnXcpAmRv+18Is+qP6z5WyT51I
+	u8eM=
+X-Google-Smtp-Source: AGHT+IEJpAvUfIIvozxN0dMfVpp9KmKIUpvC4vij6YYiTxq9+3sa50E2lR8HX0TuIM9NppQUwq6ANA==
+X-Received: by 2002:adf:e58d:0:b0:368:75:2702 with SMTP id ffacd0b85a97d-36bbc0f7aa1mr12450334f8f.13.1722985778635;
+        Tue, 06 Aug 2024 16:09:38 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd02200asm14180706f8f.54.2024.08.06.16.09.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 16:09:38 -0700 (PDT)
+Message-ID: <021856e4-f48a-4cde-884a-0eaa42fcf82b@linaro.org>
+Date: Wed, 7 Aug 2024 00:09:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] media: camss: Increase the maximum frame size
+To: Jordan Crouse <jorcrous@amazon.com>, linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240802152435.35796-1-jorcrous@amazon.com>
+ <20240802152435.35796-2-jorcrous@amazon.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240802152435.35796-2-jorcrous@amazon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240807-macos-build-support-v1-12-4cd1ded85694@samsung.com>
-References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
-In-Reply-To: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
- Lucas De Marchi <lucas.demarchi@intel.com>, 
- =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
- Kirk Reiser <kirk@reisers.ca>, 
- Samuel Thibault <samuel.thibault@ens-lyon.org>, 
- Paul Moore <paul@paul-moore.com>, 
- Stephen Smalley <stephen.smalley.work@gmail.com>, 
- Ondrej Mosnacek <omosnace@redhat.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Zenghui Yu <yuzenghui@huawei.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
- speakup@linux-speakup.org, selinux@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
- Finn Behrens <me@kloenk.dev>, 
- "Daniel Gomez (Samsung)" <d+samsung@kruces.com>, gost.dev@samsung.com, 
- Daniel Gomez <da.gomez@samsung.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722985800; l=1149;
- i=da.gomez@samsung.com; s=20240621; h=from:subject:message-id;
- bh=m407j60dxP91/ofe/fC4k8KKLnSnwDft1+cuKD+Nr3Q=;
- b=9wVc3kFNW+eWlInTH68OVYW9lOTG64z9J8uGc06BNi0UKGSdgCWwd1pkJsrDb88EilcZAB+Hc
- BJiETDqZxOnA90nq/6n8hSEX1pXA+98beHklgtsWgzrpZRnNCLjTyIj
-X-Developer-Key: i=da.gomez@samsung.com; a=ed25519;
- pk=BqYk31UHkmv0WZShES6pIZcdmPPGay5LbzifAdZ2Ia4=
-X-Endpoint-Received: by B4 Relay for da.gomez@samsung.com/20240621 with
- auth_id=175
-X-Original-From: Daniel Gomez <da.gomez@samsung.com>
-Reply-To: da.gomez@samsung.com
 
-From: Daniel Gomez <da.gomez@samsung.com>
+On 02/08/2024 16:24, Jordan Crouse wrote:
+> Commit 35493d653a2d
+> ("media: camss: add support for vidioc_enum_framesizes ioctl") added a
+> maximum frame width and height but the values selected seemed to have
+> been arbitrary. In reality the cam hardware doesn't seem to have a maximum
+> size restriction so double up the maximum reported width and height to
+> allow for larger frames.
+> 
+> Also increase the maximum size checks at each point in the pipeline so
+> the increased sizes are allowed all the way down to the sensor.
 
-Commit 67bf347ba924 ("kbuild: remove PROVIDE() for kallsyms symbols")
-introduces the use of scripts/kallsyms with /dev/null as input to
-generate the kernel symbols file. This results in getline() returning
-ENOTTY as the errno value on macOS hosts. To handle this different
-behavior, add a specific #ifdef condition for macOS.
+So, I think this should be a Fixes: also.
 
-Fixes:
-+ scripts/kallsyms --base-relative /dev/null
-read_symbol: Inappropriate ioctl for device
-make[1]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 1
-make: *** [Makefile:1172: vmlinux] Error 2
+> 
+> Signed-off-by: Jordan Crouse <jorcrous@amazon.com>
+> ---
+> 
+>   drivers/media/platform/qcom/camss/camss-csid.c   | 8 ++++----
+>   drivers/media/platform/qcom/camss/camss-csiphy.c | 4 ++--
+>   drivers/media/platform/qcom/camss/camss-ispif.c  | 4 ++--
+>   drivers/media/platform/qcom/camss/camss-vfe.c    | 4 ++--
+>   drivers/media/platform/qcom/camss/camss-video.c  | 6 +++---
+>   5 files changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
+> index 858db5d4ca75..886c42c82612 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csid.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csid.c
+> @@ -752,8 +752,8 @@ static void csid_try_format(struct csid_device *csid,
+>   		if (i >= csid->res->formats->nformats)
+>   			fmt->code = MEDIA_BUS_FMT_UYVY8_1X16;
+>   
+> -		fmt->width = clamp_t(u32, fmt->width, 1, 8191);
+> -		fmt->height = clamp_t(u32, fmt->height, 1, 8191);
+> +		fmt->width = clamp_t(u32, fmt->width, 1, 16383);
+> +		fmt->height = clamp_t(u32, fmt->height, 1, 16383);
 
-Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+Feels like we should have a define instead of hard coded values repeated 
+constantly.
+
 ---
- scripts/kallsyms.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-index 0ed873491bf5..cb200120a072 100644
---- a/scripts/kallsyms.c
-+++ b/scripts/kallsyms.c
-@@ -130,7 +130,11 @@ static struct sym_entry *read_symbol(FILE *in, char **buf, size_t *buf_len)
- 	errno = 0;
- 	readlen = getline(buf, buf_len, in);
- 	if (readlen < 0) {
-+#ifndef __APPLE__
- 		if (errno) {
-+#else
-+		if (errno && errno != ENOTTY) {
-+#endif
- 			perror("read_symbol");
- 			exit(EXIT_FAILURE);
- 		}
-
--- 
-Git-146)
-
-
+bod
 
