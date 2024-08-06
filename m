@@ -1,172 +1,203 @@
-Return-Path: <linux-kernel+bounces-276431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3083C949390
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:47:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C10E9949498
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 804BBB29A97
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:47:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E37401C239D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B26E1D1748;
-	Tue,  6 Aug 2024 14:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003FB43147;
+	Tue,  6 Aug 2024 15:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PQq9Ft3R"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Z6KPdo7W"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AC21C37AD
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499C92D057
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722955631; cv=none; b=PB+jy9N3NnIqFTyT91tI2IEIlDzmnWresqpTnE+KzM7Fl2VIic0SLnbe+5AXrwRP2e7cmpGzcHxRNgiKtQFfFISqAWnvYZCxMkdjy0pIfM3xpwLkSudPRNtdQTjREEvMR0eKabfA6cZYP1bL8VZODbhMRJTIEmtY3RPPncthzL4=
+	t=1722958203; cv=none; b=U1zClbWid8HPC+l6d3oEcTpqj2cMb477IqY1Tcsv79bCybckdl/k1H2ZW5QoaNIRGtWHWcxpR4oP5A9gWD/3NM+AlTzLtHXq67n2DLPXpkh5e/WUrV7KE6BQKDnEoHWXaLj+dkeOzDoivQNmzy45akZt/gw21AptEAi5QRK5Nsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722955631; c=relaxed/simple;
-	bh=hBTxP7X9fLwoaCHY51RwPvxvsYTKg4KPz4Shp6yAntw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
-	 MIME-Version:References; b=pBvc6JkeEmQxEKRa1i5my2wBvSOXVN1IOwYuKPOL9goSoE07BOck6eD1niKXeEbjvpSG3T1KNO/p0Gu86sImtd/75KYvdMKoiuUfrjeVuskeHNYxfwEG6Y80t2jl6fy5CKx91+ALNCkuNY/6LQRvGJWsUEHdD891lEDcuYpOhB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PQq9Ft3R; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240806144706euoutp020a5b20722a1859cdcd1f0072b4916a9a~pKwOCryNV1289112891euoutp02a
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:47:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240806144706euoutp020a5b20722a1859cdcd1f0072b4916a9a~pKwOCryNV1289112891euoutp02a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1722955626;
-	bh=hBTxP7X9fLwoaCHY51RwPvxvsYTKg4KPz4Shp6yAntw=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=PQq9Ft3R76DpTquvYWu7HOrxBo8itnfn4BFxGxhClyeh/VgR0PEqugYBX/8YqVbId
-	 DVsc5UOfPbr5we/fG9hcFwCaGFnDeRw2nJe587JoztqlFwUwmj/3Gic9To/ur3b7ld
-	 dgIyzOIkRlRkNUk5el+EXIEYJuSX1SyGBDYGCEhA=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240806144706eucas1p1c798de6e79363b6f34d7d38e2168d762~pKwNv45JX2637626376eucas1p1o;
-	Tue,  6 Aug 2024 14:47:06 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 84.67.09875.A6732B66; Tue,  6
-	Aug 2024 15:47:06 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240806144705eucas1p24d12a8db41fe8a47a12185bf3f6c9f56~pKwNUD9Jh1329513295eucas1p28;
-	Tue,  6 Aug 2024 14:47:05 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240806144705eusmtrp145b5f9fbd269212022e8b517314457c5~pKwNTc6ZC0030200302eusmtrp1f;
-	Tue,  6 Aug 2024 14:47:05 +0000 (GMT)
-X-AuditID: cbfec7f4-11bff70000002693-0d-66b2376a1eb5
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id C5.8E.08810.96732B66; Tue,  6
-	Aug 2024 15:47:05 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240806144705eusmtip2d2be6a70313198ceda4368bf61fae7b4~pKwNFt5xn1333213332eusmtip2s;
-	Tue,  6 Aug 2024 14:47:05 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
-	Server (TLS) id 15.0.1497.2; Tue, 6 Aug 2024 15:47:05 +0100
-Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
-	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Tue, 6 Aug
-	2024 15:47:04 +0100
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Andy Polyakov <appro@cryptogams.org>
-CC: Jia He <justin.he@arm.com>, Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] crypto: arm64/poly1305 - move data to rodata section
-Thread-Topic: [PATCH v2] crypto: arm64/poly1305 - move data to rodata
-	section
-Thread-Index: AQHa5//zJkuz2mMGX0eEFIkrDDjbXrIaKESAgAAV+IA=
-Date: Tue, 6 Aug 2024 14:47:04 +0000
-Message-ID: <jpn3ryddqowd6t2yj22z7rfrjkr6may53ned672coghzaa5ims@gnx7q6yx2625>
-In-Reply-To: <ab440f8d-c947-4621-89e2-f348510896a9@cryptogams.org>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <C5B584B6C88F6C48B7BEDADF71BB203F@scsc.local>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1722958203; c=relaxed/simple;
+	bh=Twmfj49iW4y3mxD67LY8CqyEjBEyK6M8SFb4xcVMv7Y=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tR5ymzcbVFf7qreIwhYRpeagNGxklWFNNWV3q8k8cIbc1lWtDSv1PyrezbFpWCNpEVSw5G4tzuisJympVUbESG2k2BrkX9BtQSAVkhkE/lliJl8z6TSksVPE27+vHYHynNTgsB2Ru42bKl9KYIhDgEv2pPJAcGt18FodQz/CPK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Z6KPdo7W; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722958198; x=1723217398;
+	bh=YwudQO0jiK0IfEEbG+5NTyE56VDoSiRqzpb/min5enI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Z6KPdo7Whtoka5Yz1+LtMzuW97YzlAzVZNJM1L1mMHmM0OgeboX/Mc1MQdRkf5n8T
+	 PAzMJLwAi7wLNMphIwgNxP8X+aCvmRWuycHxccCmZGA5QdnVD3dnZeVFn+3X+X1vrC
+	 UCFXkPRs/olR0rOjP+1Y/yI3OtXEOAGLsqQ2wQuJV9qeG+oi+LnExitDf22PwdCtWi
+	 HlFYfFxMgZXdJsAgFcDUr72DT8aDWOZyZS6+2CQZOeoWMfRxO+i+euyPhJscygCtQ0
+	 KPnkbLLVrzy+KbHqxyEbaBaJ97f5112hNO1P5aXo+I2L8Puk5ZPCJzbSLL5BHtvzy9
+	 qTIdT992MZFlg==
+Date: Tue, 06 Aug 2024 14:47:16 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v4 05/10] rust: list: add macro for implementing ListItem
+Message-ID: <33fe126b-7517-4f05-8dc6-911e5f59fa58@proton.me>
+In-Reply-To: <20240806-linked-list-v4-5-23efc510ec92@google.com>
+References: <20240806-linked-list-v4-0-23efc510ec92@google.com> <20240806-linked-list-v4-5-23efc510ec92@google.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 71e90c82a51fe045827c732fa8d8723a4ae7e20b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLKsWRmVeSWpSXmKPExsWy7djPc7pZ5pvSDOY8Y7eY+6SVyeL9sh5G
-	iznnW1gsul/JWDw98YfdYtPja6wW9+/9ZLK4vGsOm0XLHVMHTo8189YwejyYuIHFY8vKm0we
-	2w6oemxa1cnmsXlJvcfnTXIB7FFcNimpOZllqUX6dglcGWuP3GQp6GavmLf1InsD4yfWLkYO
-	DgkBE4neRTxdjFwcQgIrGCVW/VjGCOF8YZSYuuQ+UBEnkPOZUeLcHFEQG6ThzdZDrBBFyxkl
-	/hyYyAThABVdWt7KDNFxmlFi714uuLmH1t9hAkmwCWhK7Du5iR3EFhHQkDj/6CAzSBGzwBRm
-	iZV/V4MVCQv4SMzY/5EFoshf4u3DLawQtpXEy4ftbCA2i4CKxLOfC8FqeAV8JW4+n8UIYnMK
-	OEk0NTSAxRkFZCUerfwFtoxZQFzi1pP5TBA/CEosmr2HGcIWk/i36yEbhK0jcfb6E0YI20Bi
-	69J9LBC2okTHsZtsEHN0JBbs/gRlW0p0P3oLNV9bYtnC18wQ9whKnJz5hAXkMQmBZ5wS+xd0
-	Qi12kbh0ookVwhaWeHV8C/sERp1ZSO6bhWTHLCQ7ZiHZMQvJjgWMrKsYxVNLi3PTU4uN8lLL
-	9YoTc4tL89L1kvNzNzECU9jpf8e/7GBc/uqj3iFGJg7GQ4wSHMxKIrxdpRvShHhTEiurUovy
-	44tKc1KLDzFKc7AoifOqpsinCgmkJ5akZqemFqQWwWSZODilGpic7/ZPP2F/4F+qf9TMTQw3
-	ZoTu85I5t/G6RHFvnoncAeFoRyHOqYI5Kuzs835Pds+e2J1i/MJD2MWz1Lsq/MtCG17t4ns6
-	rkyBB2VYGs+wNU7l7j1VuS1MKblZodnwXjhzpOIXnRPCqeHtvtOUbBVPT1zZXtK9+cKv5VN8
-	pYss/uzh9DD/Kj/l2oFAw7TD++WeFnEfDF+UeHSnTdftkFUajSqlGRdnmNwr41FOr3m1/UUe
-	w3yXve9jb+9NOtp9oPv/Gnbpx2aM6c6MFRqnZrm6KF7T/79umWhkuOpJ5SNLhRiE9hS2yz0u
-	0j6XLpwewX3njI6ZieeZgI0d1ou6XuwqOvxzw7mFMTFfm45PV2Ipzkg01GIuKk4EABDVM3DQ
-	AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOKsWRmVeSWpSXmKPExsVy+t/xe7qZ5pvSDO78V7WY+6SVyeL9sh5G
-	iznnW1gsul/JWDw98YfdYtPja6wW9+/9ZLK4vGsOm0XLHVMHTo8189YwejyYuIHFY8vKm0we
-	2w6oemxa1cnmsXlJvcfnTXIB7FF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkam
-	Svp2NimpOZllqUX6dgl6GWuP3GQp6GavmLf1InsD4yfWLkZODgkBE4k3Ww8B2VwcQgJLGSVO
-	/P/AApGQkdj45SpUkbDEn2tdbBBFHxklDl59wQ7hnGaUOH51JxOEs4JR4tfCTrAWNgFNiX0n
-	N7GD2CICGhLnHx1kBiliFpjCLLHy72omkISwgI/EjP0fWSCKfCVOr/wF1WAl8fJhOxuIzSKg
-	IvHs50KwGl6gmpvPZzGC2EIC7UwSn+ZZgNicAk4STQ0NYDWMArISj6DmMAuIS9x6Mp8J4gcB
-	iSV7zjND2KISLx//g/pNR+Ls9SeMELaBxNal+6D+V5ToOHaTDWKOjsSC3Z+gbEuJ7kdvoeZr
-	Syxb+JoZ4jZBiZMzn7BMYJSZhWT1LCTts5C0z0LSPgtJ+wJG1lWMIqmlxbnpucWGesWJucWl
-	eel6yfm5mxiBKWrbsZ+bdzDOe/VR7xAjEwfjIUYJDmYlEd6u0g1pQrwpiZVVqUX58UWlOanF
-	hxhNgWE3kVlKNDkfmCTzSuINzQxMDU3MLA1MLc2MlcR5PQs6EoUE0hNLUrNTUwtSi2D6mDg4
-	pRqYshWeHlz9Yt11/QzbQoGnexWON3yq/jYvqOZRj9pDW5blEb1lHzYsdXluYhf1voznOasQ
-	/+cfn8uibN+lvbVrfda28dNnPZb5tmsXSO7/3hIv/Wnai9by9ncq7wTsnUXMV8h08k2aGfti
-	+o3YLYfig4o3P5ug1HV/jdjLZlsfF8Vgw8jodbrxnOumREs6v51Qum/xR8FvUyvumy9qYbZp
-	tmMQ239gq++tgNNltzYyXFvp05jzMHG55teaQpsP8yWE7X5Jfmx127vvT5LNx9J7Vkr78oOl
-	39wy+qz+69UB3V/pzD7R/FMC5LOPnrYM4O9b9cyY2eN3sRbn7QtnHpx97jHL+OBUVZtpcZs3
-	T3x8SImlOCPRUIu5qDgRAGSks1LaAwAA
-X-CMS-MailID: 20240806144705eucas1p24d12a8db41fe8a47a12185bf3f6c9f56
-X-Msg-Generator: CA
-X-RootMTR: 20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381
-References: <20240806055444.528932-1-justin.he@arm.com>
-	<CGME20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381@eucas1p2.samsung.com>
-	<qd2jxjle5zf6u4vyu5x32wjhzj4t5cxrc7dbi46inhlhjxhw4s@llhfvho4l2e6>
-	<ab440f8d-c947-4621-89e2-f348510896a9@cryptogams.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 06, 2024 at 03:28:25PM GMT, Andy Polyakov wrote:
-> > I'm getting the following error with next-20240806
-> >=20
-> > make LLVM=3D1 ARCH=3Darm64 allyesconfig
-> > make LLVM=3D1 ARCH=3Darm64 -j$(nproc)
-> >=20
-> > ld.lld: error: vmlinux.a(arch/arm64/crypto/poly1305-core.o):(function p=
-oly1305_blocks_neon: .text+0x3d4): relocation R_AARCH64_ADR_PREL_LO21 out o=
-f range: 269166444 is not in [-1048576, 1048575]
+On 06.08.24 15:58, Alice Ryhl wrote:
+> Adds a macro for safely implementing the ListItem trait. As part of the
+> implementation of the macro, we also provide a HasListLinks trait
+> similar to the workqueue's HasWorkItem trait.
 >=20
-> This looks like the original version of the path. At the very least the
-> R_AARCH64_ADR_PREL_LO21 relocation is generated for the adr instruction. =
-The
-> v2 has adrp and add pair for which the relocations are
-> R_AARCH64_ADR_PREL_PG_HI21 and R_AARCH64_ADD_ABS_LO12_NC.
+> The HasListLinks trait is only necessary if you are implementing
+> ListItem using the impl_list_item macro.
 >=20
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/kernel/list.rs                    |   3 +
+>  rust/kernel/list/impl_list_item_mod.rs | 143 +++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 146 insertions(+)
 
-I see, I thought v2 was already part of next-20240806 tag. Reverting v1 and
-applying v2 works for me. Thanks for clarifying.
+I found one safety documentation nit below, with that fixed
 
-Tested-by: Daniel Gomez <da.gomez@samsung.com>
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-Daniel=
+> diff --git a/rust/kernel/list.rs b/rust/kernel/list.rs
+> index 074ae863ff5a..670d53989b8f 100644
+> --- a/rust/kernel/list.rs
+> +++ b/rust/kernel/list.rs
+> @@ -8,6 +8,9 @@
+>  use crate::types::Opaque;
+>  use core::ptr;
+>=20
+> +mod impl_list_item_mod;
+> +pub use self::impl_list_item_mod::{impl_has_list_links, impl_list_item, =
+HasListLinks};
+> +
+>  mod arc;
+>  pub use self::arc::{impl_list_arc_safe, AtomicTracker, ListArc, ListArcS=
+afe, TryNewListArc};
+>=20
+> diff --git a/rust/kernel/list/impl_list_item_mod.rs b/rust/kernel/list/im=
+pl_list_item_mod.rs
+> new file mode 100644
+> index 000000000000..30886e64b8ef
+> --- /dev/null
+> +++ b/rust/kernel/list/impl_list_item_mod.rs
+> @@ -0,0 +1,143 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +// Copyright (C) 2024 Google LLC.
+> +
+> +//! Helpers for implementing list traits safely.
+> +
+> +use crate::list::ListLinks;
+> +
+> +/// Declares that this type has a `ListLinks<ID>` field at a fixed offse=
+t.
+> +///
+> +/// This trait is only used to help implement `ListItem` safely. If `Lis=
+tItem` is implemented
+> +/// manually, then this trait is not needed. Use the [`impl_has_list_lin=
+ks!`] macro to implement
+> +/// this trait.
+> +///
+> +/// # Safety
+> +///
+> +/// All values of this type must have a `ListLinks<ID>` field at the giv=
+en offset.
+> +///
+> +/// The implementation of `raw_get_list_links` must not be changed.
+
+You require here that the implementation must not be changed, but I
+would argue that the implementation is changed in the
+`impl_has_list_links!` macro below.
+
+How about 's/implementation/behavior/` in the line above?
+
+---
+Cheers,
+Benno
+
+> +pub unsafe trait HasListLinks<const ID: u64 =3D 0> {
+> +    /// The offset of the `ListLinks` field.
+> +    const OFFSET: usize;
+> +
+> +    /// Returns a pointer to the [`ListLinks<T, ID>`] field.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The provided pointer must point at a valid struct of type `Self`=
+.
+> +    ///
+> +    /// [`ListLinks<T, ID>`]: ListLinks
+> +    // We don't really need this method, but it's necessary for the impl=
+ementation of
+> +    // `impl_has_list_links!` to be correct.
+> +    #[inline]
+> +    unsafe fn raw_get_list_links(ptr: *mut Self) -> *mut ListLinks<ID> {
+> +        // SAFETY: The caller promises that the pointer is valid. The im=
+plementer promises that the
+> +        // `OFFSET` constant is correct.
+> +        unsafe { (ptr as *mut u8).add(Self::OFFSET) as *mut ListLinks<ID=
+> }
+> +    }
+> +}
+> +
+> +/// Implements the [`HasListLinks`] trait for the given type.
+> +#[macro_export]
+> +macro_rules! impl_has_list_links {
+> +    ($(impl$(<$($implarg:ident),*>)?
+> +       HasListLinks$(<$id:tt>)?
+> +       for $self:ident $(<$($selfarg:ty),*>)?
+> +       { self$(.$field:ident)* }
+> +    )*) =3D> {$(
+> +        // SAFETY: The implementation of `raw_get_list_links` only compi=
+les if the field has the
+> +        // right type.
+> +        //
+> +        // The implementation of `raw_get_list_links` is not changed sin=
+ce the `addr_of_mut!` macro
+> +        // is equivalent to the pointer offset operation in the trait de=
+finition.
+> +        unsafe impl$(<$($implarg),*>)? $crate::list::HasListLinks$(<$id>=
+)? for
+> +            $self $(<$($selfarg),*>)?
+> +        {
+> +            const OFFSET: usize =3D ::core::mem::offset_of!(Self, $($fie=
+ld).*) as usize;
+> +
+> +            #[inline]
+> +            unsafe fn raw_get_list_links(ptr: *mut Self) -> *mut $crate:=
+:list::ListLinks$(<$id>)? {
+> +                // SAFETY: The caller promises that the pointer is not d=
+angling. We know that this
+> +                // expression doesn't follow any pointers, as the `offse=
+t_of!` invocation above
+> +                // would otherwise not compile.
+> +                unsafe { ::core::ptr::addr_of_mut!((*ptr)$(.$field)*) }
+> +            }
+> +        }
+> +    )*};
+> +}
+> +pub use impl_has_list_links;
+
 
