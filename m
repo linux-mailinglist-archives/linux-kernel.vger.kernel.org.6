@@ -1,196 +1,472 @@
-Return-Path: <linux-kernel+bounces-276496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 021A8949495
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:30:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF03794949C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A2C21F252A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:30:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A79F6281AD7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE48239855;
-	Tue,  6 Aug 2024 15:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0650238DC7;
+	Tue,  6 Aug 2024 15:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k88V720B"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="qBy1CZIa"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89C821105
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A3E29422
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722958200; cv=none; b=BjihRBLIj7S6rKPzy0Rqp2E63Sa3naR54dYNWy2ll4vun19WwAfcgPBRxCbnKyyJ+hFQzstNk1RoUFDv77jyUHOeZrObzOn7RRw6q5aCMLwh7ANxwJ7Qd2uzAVxQpovV/68LlXIJf/IEteQa+mTlclf6oy62uVDUFK6IQuCN7zc=
+	t=1722958226; cv=none; b=ZBiakFNwEhnzGzQFeSmkB/hu9pQ8o8Nl4QPg+LfPwJ8ItzLrcq9+tbx0CmkfeqKH6F83zzXI8N2+5Dyy19aXgE62pvteOJdZTTs8UZeVyh0g3LCmG/whRvPbNcGP1Gmw1JY3e5q1ScLyK2t753JCVJo9JqoLPHxcVM3z42Lfzcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722958200; c=relaxed/simple;
-	bh=PF0Vxx/H/Fh+6ybEWx6+PwT0mzFwGK4sk9orjriQwGU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aEhSmfz6KPuR3gFfom5LEEZnaC2y4yjbuDGwITWo1TEvnWu0vlWD1OULZyGXc0W1oTl1ct3Ogz4wecobPeq4CRdBWQxU9gSaaeAwtgI7TvW8ml/G/8WtyT30XgUY+mpFH8lSJYqPR5IKaLsd+NhMR6ULTxV3JGTezL3ilvZObn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k88V720B; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52efdf02d13so1316886e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 08:29:58 -0700 (PDT)
+	s=arc-20240116; t=1722958226; c=relaxed/simple;
+	bh=c0kEpEGQaxZ9gxI/y6kHR/U/wgCixCt8ScbGl1qT0d8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TijGMSGK1Cxk6AfcOjIAPmGNA5RD0R3WqRgx6MY+tvACGuq+omE+0WIfHlmucuP/L0ZegEgPDh7n2wyQczQeWnnotCa/gz5/eZV2w2sAsfqUo2CI8aCD2An/BqJATmKaFV1HA/PujoS+P+8uRhlhnY/fBQP5D+ifono25Swi9ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=qBy1CZIa; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-39b38295008so2932325ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 08:30:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722958197; x=1723562997; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=McdwXMf+aVpukum1jWBbRDvrxSrkWixRhMvgP59hNnk=;
-        b=k88V720BVBKIcCJIBbzvwKHL25gQJ8JtselYsz6TfTylt3yw8/WpSgPMdTnLaZpbW3
-         WXkKMw5ptMOGQsm7/TZ/JJqQoR5/jCTV8qeE51wqgBGmOwwLhje8UW86vDMe1ibWfQP0
-         hJ3X9MIUXvYARLmhN/ScGKpB+rLEaURk8X0+QWJvjEjfEu2yJGw1u9z6c/5YH6FN2foM
-         HwrXclkvislpuZpLkijGPmU2lK7MELLgdYQpupam3dBimBXzueLCwIN1nsY+bWXkOGyI
-         ZUlKM8ye49MSCNiW9meRItSJWH82SMmletmSLNJEv3RI6SXWJ7rQWy2LATFnPm8MCDKi
-         F9OQ==
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1722958224; x=1723563024; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yVobMjiL55rH3COneIt9qAucAKn8ar7J+EuB8wGOdKM=;
+        b=qBy1CZIakDJD40QwK+FiUWMh5r2AYtjR0VeGJC7E0UtXSgZXZK+frsA4CGDne6RhB6
+         Q4D/7DhDUXLfVRXt+UhtJRwJ5it7Z3nmY2esH/NejjKaRVID0PwIhhmcKkQLQDiZS1xk
+         r8DXBp+HEex9R1l59016Lv8EKoJAtR9C01X4m5Scj4A/cObqzr6KmSTx8a5irQSM6Mla
+         6m88r4jnxlftWcS6tEGwYBNSywXj9RNuA+m+2p6G1NV7343dP08IpaF0nxi43M/tgQ9O
+         SJ4N/aG0qd6ZDCBma82JbWjYf30SlLr+nNPAU770qPn4H0CkcNKSzIY5j3oUgJa9vika
+         i9Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722958197; x=1723562997;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722958224; x=1723563024;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=McdwXMf+aVpukum1jWBbRDvrxSrkWixRhMvgP59hNnk=;
-        b=Yv9YWbkk6fo/PHnT0myKzefi2nMbw3F19XJbMEx/xXjIqH6ufqy9+HE4yw48B058Qd
-         3OW5EMNYH6AwfdCDvDCGEQQ0+8iSoBRxeqaAif/wXwtOrlngtWUNLslNScdmCV3SiGHi
-         UdGgc2DPtFyti4lNGdA/ctBPh+EF+pb0Jp7DlcQM44oyHpv+ryKfGQXQaizuzTF0RMeJ
-         OJdXyXnEtdBu6TY3uOITl+3R51KBQppiqj7UVhFYfSs2hJw6/CIu0xt6zzHSbc4gY2V3
-         yaOcSSacVCxXkD35e/uc87SNLOrgEB5gPHOl9wK0/QBKP7OqhZQ1N0NFidx76BkCcGKO
-         h3Og==
-X-Forwarded-Encrypted: i=1; AJvYcCXPYouAyUDxbqqbQVu2SXTTeRaPDC8gasxV0BkYR5xUsBN3u4Q35MNDmplljWOzNVGKFHcuG/OQe9DB082c/ffF5z3ZFztAbLtSpihz
-X-Gm-Message-State: AOJu0Yyu30+M9rmqAzz0hZzR3MRmZA2E7DN8VAH3RPH20X/5MGRtW55Y
-	uzTAti0bzUwNI5ptjPt/h5AG9TnYtNFJBtq0QOadlTOjUFMjudU0JFAOHzhQais=
-X-Google-Smtp-Source: AGHT+IFyj16EIZLaKK/87iLqK95suicQ+dQY2KgzMLkd9+nLfafpYvKVTsIdMVkQYiVfRocIZ68TBA==
-X-Received: by 2002:a05:6512:3e26:b0:52c:dd25:9ac6 with SMTP id 2adb3069b0e04-530bb38cae9mr13232800e87.29.1722958196994;
-        Tue, 06 Aug 2024 08:29:56 -0700 (PDT)
-Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d4294fsm555274266b.103.2024.08.06.08.29.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 08:29:56 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 06 Aug 2024 16:29:46 +0100
-Subject: [PATCH 2/2] tty: serial: samsung_tty: cast the interrupt's void
- *id just once
+        bh=yVobMjiL55rH3COneIt9qAucAKn8ar7J+EuB8wGOdKM=;
+        b=rKOejsFkE2CNgmM9Q2MrXbapNFA+/gaLs5yY55z/6S37CJ85KtwT/0D+3ZIDW9X086
+         S+J4HU1on+vI94vhV6REFMlBnTK3bZlukfAEH10buzVv6Aongp+qE/KzZzRJBhM+CsWc
+         PZem2XX2nuousxyk0Sxz5+zo8xPaZDnBYYJlQBbK9a7HDfP9kBAluvvxKPOzsSk6bx/k
+         a5ItzQfpW41bYSAtJiETIYMlv0p6q9yY2sGZNsrPPnHPYZOjlGd/Q7e14cAaSjdYwGyZ
+         oyKDCZMoq4yByQ23ey4KMq89ktfIGEqzsJbd3g7Z5yFq2WU9IcLTXVLybbC1bt4A2LFX
+         l+8w==
+X-Gm-Message-State: AOJu0YzrQpwo3mrfl2zh3Vej6QmkArJqJwngsAWvTQ2Of7eVuqQO4TEF
+	Vxs79420uo/kg7/K4EBRmBThDFiS+BBsKgLjeGJQ+8cpBE6mR1EJmXE7zCg84hIAu4cCjeSog2k
+	SBYg64FPhoJeDOAKIwaBTWoN+Ggh2uT9JDokNYQ==
+X-Google-Smtp-Source: AGHT+IG8hV54ypCF9qPjAeEm1XANKOcW4GTRDtrUWp5F1qUg0fCrWwcndr/AO7b9J8Y6gzGn8lneM3wJbNgyuuv5vDY=
+X-Received: by 2002:a92:6610:0:b0:399:2c60:9951 with SMTP id
+ e9e14a558f8ab-39b1fbf5c86mr166526275ab.20.1722958224272; Tue, 06 Aug 2024
+ 08:30:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240806-samsung-tty-cleanup-v1-2-a68d3abf31fe@linaro.org>
-References: <20240806-samsung-tty-cleanup-v1-0-a68d3abf31fe@linaro.org>
-In-Reply-To: <20240806-samsung-tty-cleanup-v1-0-a68d3abf31fe@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
+References: <20240729142241.733357-1-sunilvl@ventanamicro.com> <20240729142241.733357-16-sunilvl@ventanamicro.com>
+In-Reply-To: <20240729142241.733357-16-sunilvl@ventanamicro.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Tue, 6 Aug 2024 21:00:13 +0530
+Message-ID: <CAAhSdy0r++6enRx8m=XfKgacfnVau3_VWcArY93umYe5ET-gQw@mail.gmail.com>
+Subject: Re: [PATCH v7 15/17] irqchip/riscv-imsic: Add ACPI support
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-pci@vger.kernel.org, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Samuel Holland <samuel.holland@sifive.com>, 
+	Robert Moore <robert.moore@intel.com>, Conor Dooley <conor.dooley@microchip.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Haibo Xu <haibo1.xu@intel.com>, 
+	Atish Kumar Patra <atishp@rivosinc.com>, Drew Fustini <dfustini@tenstorrent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The interrupt handler routines and helpers are casting the 'void *'
-pointer to 'struct exynos_uart_port *' all over the place.
+On Mon, Jul 29, 2024 at 7:54=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.com=
+> wrote:
+>
+> RISC-V IMSIC interrupt controller provides IPI and MSI support.
+> Currently, DT based drivers setup the IPI feature early during boot but
+> defer setting up the MSI functionality. However, in ACPI systems, PCI
+> subsystem is probed early and assume MSI controller is already setup.
+> Hence, both IPI and MSI features need to be initialized early itself.
+>
+> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
 
-There is no need for that, we can do the casting once and keep passing
-the 'struct exynos_uart_port *', simplifying the code and saving a few
-lines of code.
+LGTM.
 
-No functional changes.
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/tty/serial/samsung_tty.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+Regards,
+Anup
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 1c6d0ffe5649..971765aaeaca 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -707,9 +707,8 @@ static void enable_rx_pio(struct s3c24xx_uart_port *ourport)
- 
- static void s3c24xx_serial_rx_drain_fifo(struct s3c24xx_uart_port *ourport);
- 
--static irqreturn_t s3c24xx_serial_rx_chars_dma(void *dev_id)
-+static irqreturn_t s3c24xx_serial_rx_chars_dma(struct s3c24xx_uart_port *ourport)
- {
--	struct s3c24xx_uart_port *ourport = dev_id;
- 	struct uart_port *port = &ourport->port;
- 	struct s3c24xx_uart_dma *dma = ourport->dma;
- 	struct tty_struct *tty = tty_port_tty_get(&ourport->port.state->port);
-@@ -843,9 +842,8 @@ static void s3c24xx_serial_rx_drain_fifo(struct s3c24xx_uart_port *ourport)
- 	tty_flip_buffer_push(&port->state->port);
- }
- 
--static irqreturn_t s3c24xx_serial_rx_chars_pio(void *dev_id)
-+static irqreturn_t s3c24xx_serial_rx_chars_pio(struct s3c24xx_uart_port *ourport)
- {
--	struct s3c24xx_uart_port *ourport = dev_id;
- 	struct uart_port *port = &ourport->port;
- 
- 	uart_port_lock(port);
-@@ -855,13 +853,11 @@ static irqreturn_t s3c24xx_serial_rx_chars_pio(void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
--static irqreturn_t s3c24xx_serial_rx_irq(void *dev_id)
-+static irqreturn_t s3c24xx_serial_rx_irq(struct s3c24xx_uart_port *ourport)
- {
--	struct s3c24xx_uart_port *ourport = dev_id;
--
- 	if (ourport->dma && ourport->dma->rx_chan)
--		return s3c24xx_serial_rx_chars_dma(dev_id);
--	return s3c24xx_serial_rx_chars_pio(dev_id);
-+		return s3c24xx_serial_rx_chars_dma(ourport);
-+	return s3c24xx_serial_rx_chars_pio(ourport);
- }
- 
- static void s3c24xx_serial_tx_chars(struct s3c24xx_uart_port *ourport)
-@@ -928,9 +924,8 @@ static void s3c24xx_serial_tx_chars(struct s3c24xx_uart_port *ourport)
- 		s3c24xx_serial_stop_tx(port);
- }
- 
--static irqreturn_t s3c24xx_serial_tx_irq(void *id)
-+static irqreturn_t s3c24xx_serial_tx_irq(struct s3c24xx_uart_port *ourport)
- {
--	struct s3c24xx_uart_port *ourport = id;
- 	struct uart_port *port = &ourport->port;
- 
- 	uart_port_lock(port);
-@@ -950,11 +945,11 @@ static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
- 	irqreturn_t ret = IRQ_HANDLED;
- 
- 	if (pend & S3C64XX_UINTM_RXD_MSK) {
--		ret = s3c24xx_serial_rx_irq(id);
-+		ret = s3c24xx_serial_rx_irq(ourport);
- 		wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_RXD_MSK);
- 	}
- 	if (pend & S3C64XX_UINTM_TXD_MSK) {
--		ret = s3c24xx_serial_tx_irq(id);
-+		ret = s3c24xx_serial_tx_irq(ourport);
- 		wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_TXD_MSK);
- 	}
- 	return ret;
-@@ -971,11 +966,11 @@ static irqreturn_t apple_serial_handle_irq(int irq, void *id)
- 	if (pend & (APPLE_S5L_UTRSTAT_RXTHRESH | APPLE_S5L_UTRSTAT_RXTO)) {
- 		wr_regl(port, S3C2410_UTRSTAT,
- 			APPLE_S5L_UTRSTAT_RXTHRESH | APPLE_S5L_UTRSTAT_RXTO);
--		ret = s3c24xx_serial_rx_irq(id);
-+		ret = s3c24xx_serial_rx_irq(ourport);
- 	}
- 	if (pend & APPLE_S5L_UTRSTAT_TXTHRESH) {
- 		wr_regl(port, S3C2410_UTRSTAT, APPLE_S5L_UTRSTAT_TXTHRESH);
--		ret = s3c24xx_serial_tx_irq(id);
-+		ret = s3c24xx_serial_tx_irq(ourport);
- 	}
- 
- 	return ret;
 
--- 
-2.46.0.rc2.264.g509ed76dc8-goog
-
+> ---
+>  drivers/irqchip/irq-riscv-imsic-early.c    | 64 +++++++++++++++++++++-
+>  drivers/irqchip/irq-riscv-imsic-platform.c | 32 +++++++++--
+>  drivers/irqchip/irq-riscv-imsic-state.c    | 57 +++++++++++--------
+>  drivers/irqchip/irq-riscv-imsic-state.h    |  2 +-
+>  include/linux/irqchip/riscv-imsic.h        |  9 +++
+>  5 files changed, 134 insertions(+), 30 deletions(-)
+>
+> diff --git a/drivers/irqchip/irq-riscv-imsic-early.c b/drivers/irqchip/ir=
+q-riscv-imsic-early.c
+> index 4fbb37074d29..c5c2e6929a2f 100644
+> --- a/drivers/irqchip/irq-riscv-imsic-early.c
+> +++ b/drivers/irqchip/irq-riscv-imsic-early.c
+> @@ -5,13 +5,16 @@
+>   */
+>
+>  #define pr_fmt(fmt) "riscv-imsic: " fmt
+> +#include <linux/acpi.h>
+>  #include <linux/cpu.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+>  #include <linux/irq.h>
+>  #include <linux/irqchip.h>
+>  #include <linux/irqchip/chained_irq.h>
+> +#include <linux/irqchip/riscv-imsic.h>
+>  #include <linux/module.h>
+> +#include <linux/pci.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/smp.h>
+>
+> @@ -182,7 +185,7 @@ static int __init imsic_early_dt_init(struct device_n=
+ode *node, struct device_no
+>         int rc;
+>
+>         /* Setup IMSIC state */
+> -       rc =3D imsic_setup_state(fwnode);
+> +       rc =3D imsic_setup_state(fwnode, NULL);
+>         if (rc) {
+>                 pr_err("%pfwP: failed to setup state (error %d)\n", fwnod=
+e, rc);
+>                 return rc;
+> @@ -199,3 +202,62 @@ static int __init imsic_early_dt_init(struct device_=
+node *node, struct device_no
+>  }
+>
+>  IRQCHIP_DECLARE(riscv_imsic, "riscv,imsics", imsic_early_dt_init);
+> +
+> +#ifdef CONFIG_ACPI
+> +
+> +static struct fwnode_handle *imsic_acpi_fwnode;
+> +
+> +struct fwnode_handle *imsic_acpi_get_fwnode(struct device *dev)
+> +{
+> +       return imsic_acpi_fwnode;
+> +}
+> +
+> +static int __init imsic_early_acpi_init(union acpi_subtable_headers *hea=
+der,
+> +                                       const unsigned long end)
+> +{
+> +       struct acpi_madt_imsic *imsic =3D (struct acpi_madt_imsic *)heade=
+r;
+> +       int rc;
+> +
+> +       imsic_acpi_fwnode =3D irq_domain_alloc_named_fwnode("imsic");
+> +       if (!imsic_acpi_fwnode) {
+> +               pr_err("unable to allocate IMSIC FW node\n");
+> +               return -ENOMEM;
+> +       }
+> +
+> +       /* Setup IMSIC state */
+> +       rc =3D imsic_setup_state(imsic_acpi_fwnode, imsic);
+> +       if (rc) {
+> +               pr_err("%pfwP: failed to setup state (error %d)\n", imsic=
+_acpi_fwnode, rc);
+> +               return rc;
+> +       }
+> +
+> +       /* Do early setup of IMSIC state and IPIs */
+> +       rc =3D imsic_early_probe(imsic_acpi_fwnode);
+> +       if (rc) {
+> +               irq_domain_free_fwnode(imsic_acpi_fwnode);
+> +               imsic_acpi_fwnode =3D NULL;
+> +               return rc;
+> +       }
+> +
+> +       rc =3D imsic_platform_acpi_probe(imsic_acpi_fwnode);
+> +
+> +#ifdef CONFIG_PCI
+> +       if (!rc)
+> +               pci_msi_register_fwnode_provider(&imsic_acpi_get_fwnode);
+> +#endif
+> +
+> +       if (rc)
+> +               pr_err("%pfwP: failed to register IMSIC for MSI functiona=
+lity (error %d)\n",
+> +                      imsic_acpi_fwnode, rc);
+> +
+> +       /*
+> +        * Even if imsic_platform_acpi_probe() fails, the IPI part of IMS=
+IC can
+> +        * continue to work. So, no need to return failure. This is simil=
+ar to
+> +        * DT where IPI works but MSI probe fails for some reason.
+> +        */
+> +       return 0;
+> +}
+> +
+> +IRQCHIP_ACPI_DECLARE(riscv_imsic, ACPI_MADT_TYPE_IMSIC, NULL,
+> +                    1, imsic_early_acpi_init);
+> +#endif
+> diff --git a/drivers/irqchip/irq-riscv-imsic-platform.c b/drivers/irqchip=
+/irq-riscv-imsic-platform.c
+> index 11723a763c10..64905e6f52d7 100644
+> --- a/drivers/irqchip/irq-riscv-imsic-platform.c
+> +++ b/drivers/irqchip/irq-riscv-imsic-platform.c
+> @@ -5,6 +5,7 @@
+>   */
+>
+>  #define pr_fmt(fmt) "riscv-imsic: " fmt
+> +#include <linux/acpi.h>
+>  #include <linux/bitmap.h>
+>  #include <linux/cpu.h>
+>  #include <linux/interrupt.h>
+> @@ -348,18 +349,37 @@ int imsic_irqdomain_init(void)
+>         return 0;
+>  }
+>
+> -static int imsic_platform_probe(struct platform_device *pdev)
+> +static int imsic_platform_probe_common(struct fwnode_handle *fwnode)
+>  {
+> -       struct device *dev =3D &pdev->dev;
+> -
+> -       if (imsic && imsic->fwnode !=3D dev->fwnode) {
+> -               dev_err(dev, "fwnode mismatch\n");
+> +       if (imsic && imsic->fwnode !=3D fwnode) {
+> +               pr_err("%pfwP: fwnode mismatch\n", fwnode);
+>                 return -ENODEV;
+>         }
+>
+>         return imsic_irqdomain_init();
+>  }
+>
+> +static int imsic_platform_dt_probe(struct platform_device *pdev)
+> +{
+> +       return imsic_platform_probe_common(pdev->dev.fwnode);
+> +}
+> +
+> +#ifdef CONFIG_ACPI
+> +
+> +/*
+> + *  On ACPI based systems, PCI enumeration happens early during boot in
+> + *  acpi_scan_init(). PCI enumeration expects MSI domain setup before
+> + *  it calls pci_set_msi_domain(). Hence, unlike in DT where
+> + *  imsic-platform drive probe happens late during boot, ACPI based
+> + *  systems need to setup the MSI domain early.
+> + */
+> +int imsic_platform_acpi_probe(struct fwnode_handle *fwnode)
+> +{
+> +       return imsic_platform_probe_common(fwnode);
+> +}
+> +
+> +#endif
+> +
+>  static const struct of_device_id imsic_platform_match[] =3D {
+>         { .compatible =3D "riscv,imsics" },
+>         {}
+> @@ -370,6 +390,6 @@ static struct platform_driver imsic_platform_driver =
+=3D {
+>                 .name           =3D "riscv-imsic",
+>                 .of_match_table =3D imsic_platform_match,
+>         },
+> -       .probe =3D imsic_platform_probe,
+> +       .probe =3D imsic_platform_dt_probe,
+>  };
+>  builtin_platform_driver(imsic_platform_driver);
+> diff --git a/drivers/irqchip/irq-riscv-imsic-state.c b/drivers/irqchip/ir=
+q-riscv-imsic-state.c
+> index f9e70832863a..73faa64bffda 100644
+> --- a/drivers/irqchip/irq-riscv-imsic-state.c
+> +++ b/drivers/irqchip/irq-riscv-imsic-state.c
+> @@ -5,6 +5,7 @@
+>   */
+>
+>  #define pr_fmt(fmt) "riscv-imsic: " fmt
+> +#include <linux/acpi.h>
+>  #include <linux/cpu.h>
+>  #include <linux/bitmap.h>
+>  #include <linux/interrupt.h>
+> @@ -564,18 +565,36 @@ static int __init imsic_populate_global_dt(struct f=
+wnode_handle *fwnode,
+>         return 0;
+>  }
+>
+> +static int __init imsic_populate_global_acpi(struct fwnode_handle *fwnod=
+e,
+> +                                            struct imsic_global_config *=
+global,
+> +                                            u32 *nr_parent_irqs, void *o=
+paque)
+> +{
+> +       struct acpi_madt_imsic *imsic =3D (struct acpi_madt_imsic *)opaqu=
+e;
+> +
+> +       global->guest_index_bits =3D imsic->guest_index_bits;
+> +       global->hart_index_bits =3D imsic->hart_index_bits;
+> +       global->group_index_bits =3D imsic->group_index_bits;
+> +       global->group_index_shift =3D imsic->group_index_shift;
+> +       global->nr_ids =3D imsic->num_ids;
+> +       global->nr_guest_ids =3D imsic->num_guest_ids;
+> +       return 0;
+> +}
+> +
+>  static int __init imsic_get_parent_hartid(struct fwnode_handle *fwnode,
+>                                           u32 index, unsigned long *harti=
+d)
+>  {
+>         struct of_phandle_args parent;
+>         int rc;
+>
+> -       /*
+> -        * Currently, only OF fwnode is supported so extend this
+> -        * function for ACPI support.
+> -        */
+> -       if (!is_of_node(fwnode))
+> -               return -EINVAL;
+> +       if (!is_of_node(fwnode)) {
+> +               if (hartid)
+> +                       *hartid =3D acpi_get_intc_index_hartid(index);
+> +
+> +               if (!hartid || (*hartid =3D=3D INVALID_HARTID))
+> +                       return -EINVAL;
+> +
+> +               return 0;
+> +       }
+>
+>         rc =3D of_irq_parse_one(to_of_node(fwnode), index, &parent);
+>         if (rc)
+> @@ -594,12 +613,8 @@ static int __init imsic_get_parent_hartid(struct fwn=
+ode_handle *fwnode,
+>  static int __init imsic_get_mmio_resource(struct fwnode_handle *fwnode,
+>                                           u32 index, struct resource *res=
+)
+>  {
+> -       /*
+> -        * Currently, only OF fwnode is supported so extend this
+> -        * function for ACPI support.
+> -        */
+>         if (!is_of_node(fwnode))
+> -               return -EINVAL;
+> +               return acpi_get_imsic_mmio_info(index, res);
+>
+>         return of_address_to_resource(to_of_node(fwnode), index, res);
+>  }
+> @@ -607,20 +622,14 @@ static int __init imsic_get_mmio_resource(struct fw=
+node_handle *fwnode,
+>  static int __init imsic_parse_fwnode(struct fwnode_handle *fwnode,
+>                                      struct imsic_global_config *global,
+>                                      u32 *nr_parent_irqs,
+> -                                    u32 *nr_mmios)
+> +                                    u32 *nr_mmios,
+> +                                    void *opaque)
+>  {
+>         unsigned long hartid;
+>         struct resource res;
+>         int rc;
+>         u32 i;
+>
+> -       /*
+> -        * Currently, only OF fwnode is supported so extend this
+> -        * function for ACPI support.
+> -        */
+> -       if (!is_of_node(fwnode))
+> -               return -EINVAL;
+> -
+>         *nr_parent_irqs =3D 0;
+>         *nr_mmios =3D 0;
+>
+> @@ -632,7 +641,11 @@ static int __init imsic_parse_fwnode(struct fwnode_h=
+andle *fwnode,
+>                 return -EINVAL;
+>         }
+>
+> -       rc =3D imsic_populate_global_dt(fwnode, global, nr_parent_irqs);
+> +       if (is_of_node(fwnode))
+> +               rc =3D imsic_populate_global_dt(fwnode, global, nr_parent=
+_irqs);
+> +       else
+> +               rc =3D imsic_populate_global_acpi(fwnode, global, nr_pare=
+nt_irqs, opaque);
+> +
+>         if (rc)
+>                 return rc;
+>
+> @@ -701,7 +714,7 @@ static int __init imsic_parse_fwnode(struct fwnode_ha=
+ndle *fwnode,
+>         return 0;
+>  }
+>
+> -int __init imsic_setup_state(struct fwnode_handle *fwnode)
+> +int __init imsic_setup_state(struct fwnode_handle *fwnode, void *opaque)
+>  {
+>         u32 i, j, index, nr_parent_irqs, nr_mmios, nr_handlers =3D 0;
+>         struct imsic_global_config *global;
+> @@ -742,7 +755,7 @@ int __init imsic_setup_state(struct fwnode_handle *fw=
+node)
+>         }
+>
+>         /* Parse IMSIC fwnode */
+> -       rc =3D imsic_parse_fwnode(fwnode, global, &nr_parent_irqs, &nr_mm=
+ios);
+> +       rc =3D imsic_parse_fwnode(fwnode, global, &nr_parent_irqs, &nr_mm=
+ios, opaque);
+>         if (rc)
+>                 goto out_free_local;
+>
+> diff --git a/drivers/irqchip/irq-riscv-imsic-state.h b/drivers/irqchip/ir=
+q-riscv-imsic-state.h
+> index 5ae2f69b035b..391e44280827 100644
+> --- a/drivers/irqchip/irq-riscv-imsic-state.h
+> +++ b/drivers/irqchip/irq-riscv-imsic-state.h
+> @@ -102,7 +102,7 @@ void imsic_vector_debug_show_summary(struct seq_file =
+*m, int ind);
+>
+>  void imsic_state_online(void);
+>  void imsic_state_offline(void);
+> -int imsic_setup_state(struct fwnode_handle *fwnode);
+> +int imsic_setup_state(struct fwnode_handle *fwnode, void *opaque);
+>  int imsic_irqdomain_init(void);
+>
+>  #endif
+> diff --git a/include/linux/irqchip/riscv-imsic.h b/include/linux/irqchip/=
+riscv-imsic.h
+> index faf0b800b1b0..7494952c5518 100644
+> --- a/include/linux/irqchip/riscv-imsic.h
+> +++ b/include/linux/irqchip/riscv-imsic.h
+> @@ -8,6 +8,8 @@
+>
+>  #include <linux/types.h>
+>  #include <linux/bitops.h>
+> +#include <linux/device.h>
+> +#include <linux/fwnode.h>
+>  #include <asm/csr.h>
+>
+>  #define IMSIC_MMIO_PAGE_SHIFT          12
+> @@ -84,4 +86,11 @@ static inline const struct imsic_global_config *imsic_=
+get_global_config(void)
+>
+>  #endif
+>
+> +#ifdef CONFIG_ACPI
+> +int imsic_platform_acpi_probe(struct fwnode_handle *fwnode);
+> +struct fwnode_handle *imsic_acpi_get_fwnode(struct device *dev);
+> +#else
+> +static inline struct fwnode_handle *imsic_acpi_get_fwnode(struct device =
+*dev) { return NULL; }
+> +#endif
+> +
+>  #endif
+> --
+> 2.43.0
+>
 
