@@ -1,104 +1,115 @@
-Return-Path: <linux-kernel+bounces-276304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 292279491E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:45:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E759491EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDC71283CB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:45:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAB192846EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0281EA0D1;
-	Tue,  6 Aug 2024 13:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D60D1D6182;
+	Tue,  6 Aug 2024 13:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WoNyEOeo";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="HZraFgkj"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SB1HuP5N"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CD51EA0B1
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC86A1D2F7B;
+	Tue,  6 Aug 2024 13:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722951849; cv=fail; b=mcXfPhcJMrkSVbQluVp7Y3c259qhvOIPXYXh7/gmnXUJZaoW0veHx+RR5645L1dfdioxEwSfutSl98wJ7XY7buMM8BQExPINb4TrBLNmBvqtXldrNsO2QTkjcZiCrCbinNSLiOpbxinTneCOiUzOLMqjrqO4DM6agug/0kIr/Qc=
+	t=1722951889; cv=fail; b=T+V+Mk26HNZ+ITvZUgwwBnyrabhDXP/N3W+eC82F9CShtjfLB4otzLFE+xg/Dw1uxfnLma6MaUjm/U+oCGq5ScQSbSlqJ4kA4FKmjR9rW6sZr0R47F5Q5sxMn5OOREmr7YK8JHAoKw3gaV+/BNVJKbGJrL91YTH3P2KSdemMZCw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722951849; c=relaxed/simple;
-	bh=0BDE7FRaURATMRStK7gfECa0O+hU4I3jVWBUAF22L1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hQeFaF05fVLsYgUJciMYH86Jk6c/snooJtUJZr0QJ4K/4PdkZelc8tmFmvQqGCBsBs9HdIZFoi9cBh1vNzwDN8QaGZAP3avnApIJhtwux6MVYD/nwbqkxQcP+JTGRHvVF5JGPipjPgRRuKJUWqqq/U/pb2tjih/A5XOwAvv4Pug=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WoNyEOeo; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=HZraFgkj; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4765l8fL001723;
-	Tue, 6 Aug 2024 13:43:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:content-transfer-encoding:in-reply-to:mime-version; s=
-	corp-2023-11-20; bh=Bq2/4T+8hiYvF43CJfF3ldKON/W6mPfd9uZ05U5dBsI=; b=
-	WoNyEOeo9Me3okOc0Z7oCCnzkq9SfzoDgRqy6i9aKaJZbKrUcVGFEYYrU8r1ZsER
-	Lx99EVKaibWz/bk8wkGSHl34dFWk8cwUE+HE/wh3U6SLGg/ysAN82qnm5HV2SNhM
-	dknWuNihNhVHauLzH2P7YdK69+FhOmj5SxGXgSD1c/cR6Nqtf8YAeR9O8Qx9BkZn
-	V7NZElMKeYTxkKSUN4a7Qd/B1mLrOqMz0zRe32OXdiLz4+RjPN5ecejv+wYFufIz
-	3BL5Jq+XYET8VgHbBSqKTjhFidLrj36EAXS6YXm96AlTFz/GW2kbcZigWTjYNufs
-	5pK6R4t7/wqvlA9S9tTHVw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40sbfancrn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 06 Aug 2024 13:43:55 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 476D4D2U018374;
-	Tue, 6 Aug 2024 13:43:54 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40sb08p7f3-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 06 Aug 2024 13:43:54 +0000
+	s=arc-20240116; t=1722951889; c=relaxed/simple;
+	bh=c08DB0fUippIgNUnQj+VI3nCWNsECnmb+h5rH8XjeS0=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jxjG0JYkhA1ZusNXrkcrKAUWp7OGLSK4pCKHN45UNeSff0FYXA4OQNcdCwuhABrWwS6kQOyzwpQ4SONgSw2tB+C3/Byd2EulkDnqMI0SOIMfro8QSswJUWLrYTS50AVPPFC+zrTZwrpxUWs9tt4Jyr0JanccXKC/GLI33sS34S4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SB1HuP5N; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722951887; x=1754487887;
+  h=date:from:to:cc:subject:message-id:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=c08DB0fUippIgNUnQj+VI3nCWNsECnmb+h5rH8XjeS0=;
+  b=SB1HuP5N3ao50yMgvLpzCSHy/Unij7Hwk4Fsp/PZaOVsDHqL+C9u/3IG
+   XbUykE58rKo4XNAyREkzidtTIkCNLhjKjHKWwxtBBE47/Gl8HTwcep3GK
+   58eClr7/kcUQy/BgMwbhooQBKYeQkYqPVcomD0DF/7vSBuF5041yKzvsg
+   QfareAil7LVx2iB8DoGWuegaurXJmsa+K10prlSLJ+ZhsyTByguVpd50I
+   2G0rjqQllD9OQ1yi0nQAllpgYCqgVEiMzzMeM1E7gRtKpAUdrSa3zfAAo
+   8/vnnUOiPOrOHHqe0jnzS7//RN/m1yuuVpstOob/6u7eXSYVamgrC2Wri
+   A==;
+X-CSE-ConnectionGUID: ONX2vKEySBu9WRlzLV85Gw==
+X-CSE-MsgGUID: xZvwXItsRPeNUrTKi40VqQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="23883150"
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="23883150"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 06:44:46 -0700
+X-CSE-ConnectionGUID: vkNm5v4lTxeZA/ywPQoLAQ==
+X-CSE-MsgGUID: tifAmTNgTyihmV+oW5YCzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="60635458"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Aug 2024 06:44:45 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 6 Aug 2024 06:44:45 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 6 Aug 2024 06:44:45 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.47) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 6 Aug 2024 06:44:45 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OJL6qy9H2ct4sN5cUjOltvcVerYHmj/vqxsMGSJjaV8faS9DfadgiEhhfezerWa6IAJw++a86yWba8iEnb8LeLhlzdvRlPimZxbC2x/ALzdX7twv/lX+a4cBJhM12rbbUZ0NecyHpUPRcGb5WQ3popAUAP8EoVmOp2ncWYfqKuMToAwBrSi7GLhjowRajdd9rhFoYKD3UbEfhgkxO1L+HHEjo/aoz14hY1UfR0oprvy3Tty/iwc79bh7JXbsy7u7ko/HJFkqHkovG+6/BjYQTJShPeH2+kAw0lSc8C8Lb3ds1wt7AMmsa/HQPybj72MOaZ1TonLpnNnSzMoF0MgIPA==
+ b=YdDCErlYTRScfMd9nXrJZVn9SSbYjI6PAXzMql3Zo1qGsVTBBnrqfXJKzBvuojy8OU08c7+mQEQEhd1JTRT7vBUrFJKfsM6Aq2ZrhNcx8KO4/2V5XEqg9TMhzcSNKOZg436JsrMemw5X1CUtxpthD54j+wBxLv6dH/lMEUDYZY61XPjOQBIS3EY57EomnAyLTBEuU9E6Kfv4tiXBgRKfNHKsM0SpDuiAn+Yk7LYdi6wL4wqm1R/9U5aSWcAt6D6dfN4/efTpoSeTCjJPxOBBVRWVeRp5aTJ/FHMQKBbESOVOTzB/giCRJ7Pe/pEAIhpcjwI+x6tXMOwr8Na8BJKVAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Bq2/4T+8hiYvF43CJfF3ldKON/W6mPfd9uZ05U5dBsI=;
- b=zPYloH2tQCTkQeJY/IzlMOX5kzGLfLsPbJK13vWIgroVvv0UGcGVB4ezskfQqeQGPB+XQpImiWStorgw+xvBXuRfB7J/AcIFIjD7BJHMspq9eZi1T8UuZrLuVNbHoOtL43JfLPeN5sJY1D/DO+tq3mD2tihZ5jEJOUUXISkRYg8ceoGdJ0BI4SpfFUn9RWW/FLgvvj4LJy7hQfneCdGxeSwnfpp9A7XrL4jWneN4TtfAdqRMAOEP3xgph6pUE6QUDNtKFCBhZvMFFBnah7Cv8v2818Yh5uxmCiCaBHJwOhS+fl1Q5+svN9icjGlTI8XzHX09ZKeH+774C9JPw4Jrrw==
+ bh=EoobCzKXeNwnB0aTWTXJFscTHand60FoghTiuH6addY=;
+ b=LwwZpa6Sgbj2g7uuaTb/+nF71bDrsmdPYzyv1u54RNYKheeyxnId90RG1mnnSnXNDoUIXkcHeqKrnHqRQ3CSW+bzaMgREVwHgcIXu+3381VRu5ZAGccbmiFX/3ggOhf0g5VEyzQXBJh+gvdKqUcwq+4O2RsEPTi9GGd6awmPWk9+oVgxLrNi/VWNqWc8qAF9ohIdu/QNV1gC6Bc5PY+TV1qilJHrUMLjv7ElXTYc34nQt5miVtPYEPIcLw5FfKqPJRbGJr4atMnJC7AyKtsHU1IN3pbcsQ6m7PEdsm2a+vKr+N8gbtl+7mW6jv2uJEjPuFn7SXI0t5qK4pqXCutyBA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Bq2/4T+8hiYvF43CJfF3ldKON/W6mPfd9uZ05U5dBsI=;
- b=HZraFgkjhX+nETyExGsVRGug58CkVUfzRYX3tBiG9h/rXSb0DDE7kUOad3t7lwKT/BFmNJadFThhKIOVplqtXnEIpuArlljLKYA+NvI2/1bgjfOYa5n/Q4TV7bdUX/lnRIhNUHF92Fv++Q/o/JO1+PT9X5ByMp4ogzePSlzJSak=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by CH4PR10MB8145.namprd10.prod.outlook.com (2603:10b6:610:235::18) with
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by CO1PR11MB4788.namprd11.prod.outlook.com (2603:10b6:303:97::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23; Tue, 6 Aug
- 2024 13:43:52 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
- 13:43:52 +0000
-Date: Tue, 6 Aug 2024 14:43:48 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH 02/10] mm: introduce vma_merge_struct and abstract merge
- parameters
-Message-ID: <ddc4c351-d79f-4654-8e0e-63f22afc146f@lucifer.local>
-References: <cover.1722849859.git.lorenzo.stoakes@oracle.com>
- <f2d7cc5de8aecc50d353980f62a74a0a6fcec198.1722849859.git.lorenzo.stoakes@oracle.com>
- <20240806144754.447001bc@mordecai.tesarici.cz>
-Content-Type: text/plain; charset=utf-8
+ 2024 13:44:42 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
+ 13:44:42 +0000
+Date: Tue, 6 Aug 2024 21:44:28 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Yu Ma <yu.ma@intel.com>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, Jan Kara <jack@suse.cz>, "Tim
+ Chen" <tim.c.chen@linux.intel.com>, <linux-fsdevel@vger.kernel.org>,
+	<ying.huang@intel.com>, <feng.tang@intel.com>, <fengwei.yin@intel.com>,
+	<brauner@kernel.org>, <mjguzik@gmail.com>, <edumazet@google.com>,
+	<yu.ma@intel.com>, <linux-kernel@vger.kernel.org>, <pan.deng@intel.com>,
+	<tianyou.li@intel.com>, <tim.c.chen@intel.com>, <viro@zeniv.linux.org.uk>,
+	<oliver.sang@intel.com>
+Subject: Re: [PATCH v5 1/3] fs/file.c: remove sanity_check and add
+ likely/unlikely in alloc_fd()
+Message-ID: <202408062146.832faa23-oliver.sang@intel.com>
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240806144754.447001bc@mordecai.tesarici.cz>
-X-ClientProxiedBy: LO2P265CA0490.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:13a::15) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+In-Reply-To: <20240717145018.3972922-2-yu.ma@intel.com>
+X-ClientProxiedBy: SG2PR01CA0189.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:189::15) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,923 +117,208 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|CH4PR10MB8145:EE_
-X-MS-Office365-Filtering-Correlation-Id: 44670e66-29cb-4d93-75fb-08dcb61dceaa
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|CO1PR11MB4788:EE_
+X-MS-Office365-Filtering-Correlation-Id: d9e84194-8f5c-4b09-d7e8-08dcb61decc1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SjlXTkFMM1ZzSzdkSHdhYUl2VmpWVDJzbGV6WmRNMTU5UGpka0lpN05LaGZw?=
- =?utf-8?B?RlMva1pheGVRWUZUK0prNFk0ZWVON0pSWHR1ekEwSnZnZjJDblhYYzFraWQ5?=
- =?utf-8?B?dnJFeTlDMStVSUpGU0drV0lCZmtndHZqS0dhSzl3M1ZCWUNUWVlMUjNnWm5P?=
- =?utf-8?B?ZjY1bklRTFBVUnhoakM5Mlo3c1kyZVU0UWkwWFJuTTNkVjNlc3g0a2FJbnVL?=
- =?utf-8?B?SU9sbE5tYUpvb1V6dlZvVGhad1VxV0dLemFtQ1lGV0RkeHhnVkpudnJXc2x0?=
- =?utf-8?B?NDhVOTVIY2c2QUd0NklLK2Jrd3B4NWhMVG12OVgvRlJoc2pKZytZZTl4T3hE?=
- =?utf-8?B?R0pQdTRUTnVJQmx0L01ZMXduSHZ6d0tDL0FlTEdZdSt0R3dXSnQyMEZOMjFi?=
- =?utf-8?B?MFczTUNWWXJIei9nMWFnV0YvbHA2dFpEeHNzZHYySHZhN3RsRjlPRnNMTEhm?=
- =?utf-8?B?eENvTWRMdGhYYmdFWlN0R1NsUnE1Nld0UmNuQVMxZm55RDMyb2FEcm9GYTNw?=
- =?utf-8?B?bWZTdUtaQ3Z1dGhaOGIyaFhYQXp2elhrV0ZBSUpKSHZkbXlvSmNZNnkzMnhx?=
- =?utf-8?B?cWlOd2FzUUxzb24xdkEyaDNrdXlHK00zcm93RFZtSUVDTEUwdXdYaWMrQnpx?=
- =?utf-8?B?VE1RTWFRbDZ1Y3JQaUt5NGJRQ2NpK0ZQeHl2MGVYSTZyNm5KMGFIQkhMcmc3?=
- =?utf-8?B?K1ltRDIrREs0M3hyaFlyaTZZcDF2blVuWGpteWxrdWphbUoxYkNlVkNrcVVR?=
- =?utf-8?B?cU9ETnY4U3dEMzZPTFh3WlFSZ3pCZ0NSemVHNUJEb3FJcWpxV05ITndrWitp?=
- =?utf-8?B?WWVkUjFwdjlZQmlIMVdCS1RwT2IwNTR3R1hyRm82WmZJYTJ4OXZOUytjRGVx?=
- =?utf-8?B?b3JJMUFheDVTTVlDVTdBY2tjTVFwa0MwK2MyNEw0dVM1b2tHcHBaZjQ3azlo?=
- =?utf-8?B?U3dmNHpCaHVPWm5wUEVEL2RqWWxIbU5Fd0VtSGFhWkdidEZkYnp4MU5RT0Nl?=
- =?utf-8?B?Sk1wWXNhdVN1dXY3VjY1NUlNNlVXM3RqTWozM2NZYm13VmFpUW5TTUFZMGxz?=
- =?utf-8?B?cHU5dUsxS3JIYjgvVzdtdE1DZXRtOFduY2NuakJRa1hYWlFYUmpQRGFhbFBT?=
- =?utf-8?B?T1VGdjBnK3VwUm9RQ3VrZEk3NXVzNHYzMDU0RWR5MXh5OHBiWC82bmNSU29u?=
- =?utf-8?B?MGExNnlYdFNTdUt6SjhuNHk4OG9vMXBrNWVQN0MyOTRucStqV0FTLzE5NWpG?=
- =?utf-8?B?d0FkRUJVMlBsaldMeitPUVZuays0VXIzTExWaTRra2ZrSTJ3TVpJejJWaVJj?=
- =?utf-8?B?VjRhQy8rQWp5Y01yNEdtTXcyTUtkZ3NtSmdyS3hwS0I2RWsrZlgrUmVJUmZD?=
- =?utf-8?B?dGg3YXlCMWhqK2xFZng2aDlHMWN1RnB2Qk5nK2ZUbVNHZVFVaGRXZEdCYkJJ?=
- =?utf-8?B?SmlDb05NT0M2aVk0cjhzZ1NrdU5saU92TzRuc1NkQVluR0p3ZjBIbEFQSjEw?=
- =?utf-8?B?a3hPLzArRGxMUGpWRE9ZWDdJSXhwaUlub1JoSjFtM1c0aTFXd2s4bTFBK3Q1?=
- =?utf-8?B?VkNucE9lRWd2TUhMdm5jMWZDeGJyVXJaZEdEOWxwb3B1bm9ZUXNHQmMzYjQ1?=
- =?utf-8?B?Qld2U2VTdG5keE9mWnM4UnRJVVFSc0Y5SGE1bDJlQmVTY3hwK09taGZiYVBk?=
- =?utf-8?B?WWZ4QnRzY2hOUG05RkNaZ2hzbjI3SEpONjBCSFdXcFlEMU94YVNZODFSd2w5?=
- =?utf-8?B?RkszZVNoSnliaWlFQjBXaFdMaTJYb3dxaGZUWkt6Vmk0eGloTDlDb1dHTkZp?=
- =?utf-8?B?QXdBaTRJUS8zQmRVdDJmQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?NP6aHZ+FPxXyRF4Hn7LGnTPT6v32x262rZQSLBc0mO1KwphVOYX0AYHSVq?=
+ =?iso-8859-1?Q?4csyH2me/7Acj64r1RGcOcaCD4Jyo3bjHynTs5k1YQc/zt3kPT5Bihcsi4?=
+ =?iso-8859-1?Q?j3AlZnEbhY6jK3hHPK2o5rzd7UuRajhzRQOzvQF9l0CdTo7gpau+8i9vdH?=
+ =?iso-8859-1?Q?LqZILcGUn7uD+DwynRqjdBTvIpSiBV7OSU3E0RAtBmo2sceaL8hWc13VAd?=
+ =?iso-8859-1?Q?Tczn0mlfoSbmYv8AZ9+bJxE3B65esGOh4wgy6to07/SOEJMf0tMvTKpoT/?=
+ =?iso-8859-1?Q?ugPO/ZXavYkIt3cVaU1qoMT9dsl++LmG7uCpA9mlgj9ox0FGvaFS0yHvro?=
+ =?iso-8859-1?Q?U7nPHHROHy9ljLrfmzIuq6zCpl9afyZZvZt2icqNBHvwjXLEpdoq7XXlzO?=
+ =?iso-8859-1?Q?i3y5ercFqT58upT17KxP6LTQoh25flLXIlvuA7Hp+EabfOBEG6YLjmyZv5?=
+ =?iso-8859-1?Q?aZiw6497m3FVLIN/kRFXzBa1MdqHxYV17poAYdDqBKYoTol6W0BWroaCta?=
+ =?iso-8859-1?Q?Mp4N5SOzzvTDDht4D3Sq6KBUb0Cyj9rZmAhYehGwo8qSlz4wATYWe3wfAa?=
+ =?iso-8859-1?Q?k6gSgL3Mlvfi+g+dkNz112QSZPHKosuJyrNFKyh2rtX9Izao9EKDLl1lPX?=
+ =?iso-8859-1?Q?JNFdSCPL929qr6LOH5aAYfhJP2GNb8UBQv6Bj0xWINgJtzcnW6fB++VDQY?=
+ =?iso-8859-1?Q?YTsH9Y4iwG835sJNQuy+H9iuc4bqTY8M36igYEjA0QW+xqQGREMqS3u/ZU?=
+ =?iso-8859-1?Q?yhHruBifKxawnqkUl53ges2aWPshLaW/xb4sdr0zgkJThsXCCIi3wY+sjy?=
+ =?iso-8859-1?Q?wP6xg03SF/Pp7hKk60NFpfLrDG76WLcHsXCpuR1ecs5c41klOTcQRHKjsA?=
+ =?iso-8859-1?Q?OPjlWpz5gFLfXcJNwWzWj5S4fh4rkBL2jFAodwvQeMfyv7EQEb06dJaC1W?=
+ =?iso-8859-1?Q?1aipMWRZS+E2ZftDsWiBjYP3OuzpFgoI0c6hXfOfriEll+xpXZXslKO/4W?=
+ =?iso-8859-1?Q?SpDSX6JgYeMIb2s5tm+6Jr8K+xgtvmQiX1iHQmV7dfhN5oMlKYbvCrvfp2?=
+ =?iso-8859-1?Q?OS+a5CWjtqPH1RjDWcIfOrcwVDXQSGNDkHMlTQGgzu7lL+PcWy/D28Yqny?=
+ =?iso-8859-1?Q?Uh1xd7et+UrY52AoUubaMXTCpjSg+dl6vGXsai1USi7tI+2g0ksv7xmgnE?=
+ =?iso-8859-1?Q?czYRynBYizroNfaanTaCiR3mBxO6XKFhga2uoz+GN2t5r6dp7MY+EWG7jj?=
+ =?iso-8859-1?Q?Z9/hi83uQMiFKAgb5f9dtG+WcyKi7rjWPR3b2j7Dr+1iT1Q4RDmGyggnU/?=
+ =?iso-8859-1?Q?XPGFWqk9vEz5rv4/uZss1AMnHY6pwDLlGvdoWgkmVqZYLU0=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UUJXRCtYaUVJVVJsa3czYkcvS1JTWThrUWV3ellMdGMwVTZJZTB6YlRBRWxX?=
- =?utf-8?B?dmhzRTZLSGZmbm83cEdVcEJydEVlUWdjcDhsbFB4T3M2Tk5zMU54dDRiRjYz?=
- =?utf-8?B?TkJ0MlpOS0wyY0ZuNGtxV2Rib2oydk8va0haWEZPUVVEV2dJaGhEOTNlQmVx?=
- =?utf-8?B?OUk3WjlCNTJMYlFPZ1lTenlHWlN5b2FWZE9ybUZNUWxmazFXYndzZlVDTDNm?=
- =?utf-8?B?WmVWWDc3K3poYm1FeFcyeHQ0MEtVV2cvc1I1VXNVcjBjSHhXVmU5djJIMWxy?=
- =?utf-8?B?bFE2SGhhRy9mVmw3bkxsdFAvNmtVd01pN1V4ait6VzN0MlBFVnRRdVVzd3JZ?=
- =?utf-8?B?N2c1RlZmYlBSdGh1YXVWa1dSemVudXd6NUpDeWJkN3Vldi96ZXFNWDJFOXZB?=
- =?utf-8?B?UTZpU0NlVElhMlJ1QytWdWh0SVA0blE4c2dWVVFCdFJvUmp2RXM5SjhIaGVz?=
- =?utf-8?B?NXJYUFN6R3ZIMVpoSVlBbk91VitFblo3c1Z5NFpCTXVvQmVWVlJ2KzFkRDJ4?=
- =?utf-8?B?YVd0WE1iV0FpSUV4ZUZPUUZScnArRzlyMU9QcGRBam5LUFVOakRMRkdoTTdZ?=
- =?utf-8?B?NFNyZVRYY0NVcnhCSUJoM1NMN2NvWjgyQ1FuVUFIY3Jyc0NqMkUwd3k1K2E0?=
- =?utf-8?B?bVF6d25BbUNwMWR1b0RESEp0bmZwRDU4K0F2NkJVWDF3bXlNNUZuM3J2UUll?=
- =?utf-8?B?eUphaXc1aFhNQkJQQkpnVkR6bEVSMGovTWsrUXY5eFRURXZUcUlGalM1Zms5?=
- =?utf-8?B?Tkw1MEUvYzNxZFgrcSs0ZEFkNXgwRUR0MUw0clg2aTJZcSs2eTRMWXRPYjM0?=
- =?utf-8?B?b2ZQT1R0NG5kQkJXc1ZiZjZ1aXQvUjBDaHZhV0tlNjdKbUN6cWJzU0svOVdp?=
- =?utf-8?B?VWRPcXR4Zzl3WWQvY3pDVzJuK0ViSDM3eXVHbWlZUGZUSi9qT0xuVFFTbjkr?=
- =?utf-8?B?ZnRkbEh5akk0TmcyOU1ncmU0MG1CWU9SZDZta0V5Z2crRXcvMUlEcjZ0SS9r?=
- =?utf-8?B?Q0g1UG9VNThyblBjWjNJdEowZXovdEtDTmxjQjMxZmpwbkRVNUhhdks2QTdp?=
- =?utf-8?B?UytXNkZBb0xPcGZWeTMrTWdubXpiWVVzQy9YSzlsbE0rTkpvS0RXVjRKSFhk?=
- =?utf-8?B?cE9WQit4dWJMeFBhSEpuZ0t1SElWdkh2dVBQYXBtbVlzY3ZMaVVVbTZWZVhY?=
- =?utf-8?B?cTZUc3R5TUxOUkVTdE04Mm1rWStBbHdZREhBWis4U3NrY1FZSmg0UjI1Skpm?=
- =?utf-8?B?WlIvSkFLbVRaQWRRZDdMSERnZEQyZlREaGpzVnVHeFNiblJLYlpqUE92akJ6?=
- =?utf-8?B?YzBmNjQ1Y1lXOVN4Mzc1ZDhZNGJ5c0lSbk5WUndnamF4eElidzZHNXRaRXEw?=
- =?utf-8?B?SXZHQ0taN0JLeHZ3VGZpSzUwdTdpaWZTZ0diRlhxaXFOQ0pWazY3WkhIcVNG?=
- =?utf-8?B?RDB2UUt2QmFtTWJsOXB1ZnlqRGxqZlJqM1MxUVBjS1paT0E4Mi9uYjZnTmFx?=
- =?utf-8?B?Ujg3M3ZUdzMxVVNoOXh2MS9ObGxnL09ZcjVXcXoyd2ZIOUR3Y2hqT2pxVlZS?=
- =?utf-8?B?Njc5Q1YvczFWRzFOSTZCdGllZkdaNElyU1JKVDRQZ0tLZVJ0NUNoUjVqVVRq?=
- =?utf-8?B?b1RxTlJrd2FXeHRhYnBiemp2RTlyWHJOaWV2T0szamwzKzdpT2RyOXR5NUxI?=
- =?utf-8?B?ODBIVVhOVko3ckQvbzRFc09RYWdyckt3SjBtWFhsQzRYbFhEQXc2VFhJZ2lr?=
- =?utf-8?B?blNYMW5sRXBpaExrRW14eVBhandET2VKU1hxZTFnMUQ2bUxEZURMbmFqeVNC?=
- =?utf-8?B?Z0xIckxwZ0JVYXRrcm5qN3U4T05VWi9mamJiNE5Nc2VNTHIwQWhZRjFzdUcv?=
- =?utf-8?B?SExqZkZWdUpYVGI4NFF3UUhHaS9ETnNRaFBRZG1HTDhMNm5uZDVHMERDRjcx?=
- =?utf-8?B?dHl5bTJNdDMxUGR3aFUyK3R1MlQrYXFsNmhGUG5zZURzQUlTaWk1M0xOdFY2?=
- =?utf-8?B?SWdwZDRXYVFuWDNlWDdqaXJGbHJDQnNNemY4cS96aXRwLzMwZVB1akdkM3Yz?=
- =?utf-8?B?S2IyS3krMXdma25EbjR1UUxBYlM0OUIxVDZhbjhiQ2g5WHJEVG8rclZXdURO?=
- =?utf-8?B?YnlIVkpJZnJFSG50NGxyV0haY1JVcFNqTzJScE01TC9OeUJoVGxVbGFxRU1p?=
- =?utf-8?B?NGc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	tV4ID98DjTzhXgnvL7n131gypYsR8H49dZUaAnmC73EDxd7+mnuhGyRHG3RS9W7GmLjkBOitKfWEW07ESD42byjDADBqPpyEcNQdssbNJxsfdjIy6uWk0lFSrKddeb5Tr/hFQKR4hjvwB0GdHyhrTcHLPeuSEfljDgBScmYXCOiRjd8ifSNRpttivBzoykL6r6EKLAE8Xdv3q3sj59oj3H3lKT9n7U4aq4P3/h56R9NovFtcCGAf0ea6TxRQ1yDcpw6N1GhaWoRUyHkzPiLan4P+7paHGtKiUlHlJz+c5YGRPPSQ8+P4gjywKKEv3PgKVcCKk9BdEg/8bVx6QjG0/m6wmpKrCnWwpJxECrkx8XNrDas9deGMqxK6GrIPEe4skF783jGUNrKrYtJJKmApHdsJG2dT9aMg2+iE8vEejPCOeaZeFPTw+u2ZiGE1FZsFPRhi4YBSh1Vd/WlXV9ioknuEdszx6AkMK1F0wFwEZRCzTCBzNO7abI+dhJ6WRtQ7FM1CH5gMkH5nA2C+4eQppB5KE+mgvxnkfwJgYszGtwEeCxoR9oBPyzt9+7fBXgQdwwAIS0AzYAbs9s5PWK3C35s/TCeg46/UnJpaPxlsdNM=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44670e66-29cb-4d93-75fb-08dcb61dceaa
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?TLUVLqbiX9ggGr/EAeOdDxurCp9d3JVjgNVRH+ZM/WuWuMJCiKU4LGqPME?=
+ =?iso-8859-1?Q?oS/pnr9QaGoGQF/vSuQ717960wwjXLfczlx3XRbOJG8/3sySGCPfz67lwT?=
+ =?iso-8859-1?Q?TBai/T76RulayO2pYSD/nuuPchw/BCZvYqbE4F9SON8ArtI3uQi//erPLI?=
+ =?iso-8859-1?Q?zeizzFtlQTlLZ3isGnXjpIeyud7EH7XXoppCF1uZbDQkiPRmdex51LUvbK?=
+ =?iso-8859-1?Q?KGfl1LCTPtInhL2ew0ashtE5KLVZ7aiNAR+BPn5GARG0BcyjOZX+820kpW?=
+ =?iso-8859-1?Q?1VJ9PuMT2gIsuxXgGWv4DdN1k1MqvKqp9vtl3TCHhoGAF+B683Zpfvrh8j?=
+ =?iso-8859-1?Q?1yRbKEfjvxfR0t40uWrMkv4e7SP/LgGXuG18k7PhYAHDO68R8PMdxW0Fjs?=
+ =?iso-8859-1?Q?ddwHLTDfR+HPgQldyb45vU0diWJlgVeqhpc35bwdvzQXVJzBcvCZtYMn+f?=
+ =?iso-8859-1?Q?0Xgq88oX5OWQrZAWtZfMbh2s5nwZI20Ce9/hYZmVXvmeuzxLPkyr2/kJNg?=
+ =?iso-8859-1?Q?BHdzAUPt/SyeAygV5oAMmh9kggoEBsRqN7e39UgTrKNKxsDcaGAongtscJ?=
+ =?iso-8859-1?Q?WuQeYvL/KTRlN4bIh1sCEGdVyd3i0T4EQuqxdrlZrxOr2yuHBt4WNOViGS?=
+ =?iso-8859-1?Q?bNbRGmhGOyK/MD3B3dTYGnMxzoo+ztuZUptD+7fOyu6JdYfFAmaOmemDkV?=
+ =?iso-8859-1?Q?3kg5xPlO+ZHFMHqFqx6Gv9lJEImpg+McT/dmHHYpoLNl5XcK5t/905heog?=
+ =?iso-8859-1?Q?D4vEwL6gu6tLeaVfPzbi15MANn8WJIwt1BgAPkQtfsxBeSENFYGXI8mUQk?=
+ =?iso-8859-1?Q?GxvYaK5LQH5ra/uYt00gYIJZS1u7D1uIezwQyxiHwC+Z0teDKMJs9r11u8?=
+ =?iso-8859-1?Q?dCTac9dRpVvGG+uD+S80VRD0ua4+XaIirW0KvgK0qa9HF4unuX2dZDW1SC?=
+ =?iso-8859-1?Q?hMYuh5bwXbu6ZVB6NP/PiksnYLTxl74+7Foy/dvW6ifWay/hWcg/VIC7p7?=
+ =?iso-8859-1?Q?GSjeTtzZTBae7H/yG6ZQyDOuC9bO6Y2ZftIbkuMCeWb8bZRMLZ+GdSodj3?=
+ =?iso-8859-1?Q?TJUj3iL2LerFoepvquIgAzAwHhlYES7TxLFRobMihBpjlyuMRt6IzWTB1c?=
+ =?iso-8859-1?Q?1MgOMpdQJN3HYGFUKT4ioKHDQbLADbefi86XFelqsKWtTehJThGyMG3riB?=
+ =?iso-8859-1?Q?HC6vm5uCxmIIT7N3fY0lnPiSsmzXvs+lU8/jiVLav56GwI0kgUd3h4zWiD?=
+ =?iso-8859-1?Q?WQStMOHucJVrVQg0bMdQRH3HL+HOHfMX+xoSVDxIfckmwmDcjZ79+yF7CQ?=
+ =?iso-8859-1?Q?3rChlsVzLyr6koIrQIp3bx5c0CxGCcf+n7iFv8K4p6ZFm1CLK1YfGsRDst?=
+ =?iso-8859-1?Q?5Y/tQIVFjqncR5IE3oFiXDI3MzalFsEpeWCJ9t6AxFPcD6VXBtyxtO2qDN?=
+ =?iso-8859-1?Q?CAPlEbAslcTlVQ4Jz37SxvoZnLiikB+KhaFRplXlIplfb9hD6wv9xtVuqz?=
+ =?iso-8859-1?Q?9nW4jGc9p/SXEfZvJl3OjPwedXhxIgRSBC5mRjlkamDb4lj4SXxcudocdL?=
+ =?iso-8859-1?Q?0vG3JCsCv80td/PMKiSA+pSoLCc2UsnjadGAFN2Bw9gwNir4KGfpeDYep+?=
+ =?iso-8859-1?Q?hQy+svQbGz90OHY7tsCPeun5dos1ntvSQ8wP+amTWNiPPtEQmkIyjHDg?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9e84194-8f5c-4b09-d7e8-08dcb61decc1
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 13:43:51.9748
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 13:44:42.5497
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ygtZDpkmUCbOrtZSEI5oyGVSA2418uqRakVoT8JT/RfuTuu4Uvac5HGDlMfgnC5mrapIIi4+mot4N4lQ3gTvyWuKjxSVwQiDJXjTedMdOco=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH4PR10MB8145
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-06_11,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 adultscore=0
- mlxscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408060095
-X-Proofpoint-GUID: VVRIB-l6m8nsGY4qFIT9dJXyLjzgNJgZ
-X-Proofpoint-ORIG-GUID: VVRIB-l6m8nsGY4qFIT9dJXyLjzgNJgZ
+X-MS-Exchange-CrossTenant-UserPrincipalName: BsY+tiFiGrv+INUtki3Hi1+GW4RdgyR0Tr/t4Jm4l3O7E9wfKZVfLrgF/Vd7ACMqOX4rsNrSSayQpy7kau5LOA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4788
+X-OriginatorOrg: intel.com
 
-On Tue, Aug 06, 2024 at 02:47:54PM GMT, Petr TesaÅ™Ã­k wrote:
-> Hi Lorenzo!
->
-> On Mon,  5 Aug 2024 13:13:49 +0100
-> Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
->
-> > Rather than passing around huge numbers of parameters to numerous helper
-> > functions, abstract them into a single struct that we thread through the
-> > operation.
-> >
-> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > ---
-> >  mm/mmap.c |  76 ++++++++------
-> >  mm/vma.c  | 297 ++++++++++++++++++++++++++++++++++++++----------------
-> >  mm/vma.h  |  92 ++++++++---------
-> >  3 files changed, 294 insertions(+), 171 deletions(-)
-> >
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > index 4a9c2329b09a..f931000c561f 100644
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -1369,9 +1369,16 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
-> >  	unsigned long end = addr + len;
-> >  	unsigned long merge_start = addr, merge_end = end;
-> >  	bool writable_file_mapping = false;
-> > -	pgoff_t vm_pgoff;
-> >  	int error;
-> >  	VMA_ITERATOR(vmi, mm, addr);
-> > +	struct vma_merge_struct vmg = {
-> > +		.vmi = &vmi,
-> > +		.start = addr,
-> > +		.end = end,
-> > +		.flags = vm_flags,
-> > +		.pgoff = pgoff,
-> > +		.file = file,
-> > +	};
-> >
-> >  	/* Check against address space limit. */
-> >  	if (!may_expand_vm(mm, vm_flags, len >> PAGE_SHIFT)) {
-> > @@ -1405,8 +1412,8 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
-> >  		vm_flags |= VM_ACCOUNT;
-> >  	}
-> >
-> > -	next = vma_next(&vmi);
-> > -	prev = vma_prev(&vmi);
-> > +	next = vmg.next = vma_next(&vmi);
-> > +	prev = vmg.prev = vma_prev(&vmi);
->
-> So, next is now a shortcut for vmg.next, and prev is a shortcut for
-> vmg.prev. ATM there is only one assignment, so no big deal, but I
-> wonder if next and prev could be removed instead, same as you replaced
-> vm_pgoff with vmg.pgoff.
 
-It's simply to avoid repeatedly referencing vmg.xxx / at least reduce
-_some_ churn. Also this will get moved shortly, so it's worth looking at in
-final form.
 
->
-> Is the resulting code _too_ ugly?
->
-> >  	if (vm_flags & VM_SPECIAL) {
-> >  		if (prev)
-> >  			vma_iter_next_range(&vmi);
-> > @@ -1416,29 +1423,30 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
-> >  	/* Attempt to expand an old mapping */
-> >  	/* Check next */
-> >  	if (next && next->vm_start == end && !vma_policy(next) &&
-> > -	    can_vma_merge_before(next, vm_flags, NULL, file, pgoff+pglen,
-> > -				 NULL_VM_UFFD_CTX, NULL)) {
-> > +	    can_vma_merge_before(&vmg)) {
-> >  		merge_end = next->vm_end;
-> >  		vma = next;
-> > -		vm_pgoff = next->vm_pgoff - pglen;
-> > +		vmg.pgoff = next->vm_pgoff - pglen;
-> > +	}
-> > +
-> > +	if (vma) {
-> > +		vmg.anon_vma = vma->anon_vma;
-> > +		vmg.uffd_ctx = vma->vm_userfaultfd_ctx;
-> >  	}
-> >
-> >  	/* Check prev */
-> >  	if (prev && prev->vm_end == addr && !vma_policy(prev) &&
-> > -	    (vma ? can_vma_merge_after(prev, vm_flags, vma->anon_vma, file,
-> > -				       pgoff, vma->vm_userfaultfd_ctx, NULL) :
-> > -		   can_vma_merge_after(prev, vm_flags, NULL, file, pgoff,
-> > -				       NULL_VM_UFFD_CTX, NULL))) {
-> > +	    can_vma_merge_after(&vmg)) {
-> >  		merge_start = prev->vm_start;
-> >  		vma = prev;
-> > -		vm_pgoff = prev->vm_pgoff;
-> > +		vmg.pgoff = prev->vm_pgoff;
-> >  	} else if (prev) {
-> >  		vma_iter_next_range(&vmi);
-> >  	}
-> >
-> >  	/* Actually expand, if possible */
-> >  	if (vma &&
-> > -	    !vma_expand(&vmi, vma, merge_start, merge_end, vm_pgoff, next)) {
-> > +	    !vma_expand(&vmi, vma, merge_start, merge_end, vmg.pgoff, next)) {
-> >  		khugepaged_enter_vma(vma, vm_flags);
-> >  		goto expanded;
-> >  	}
-> > @@ -1790,25 +1798,31 @@ static int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
-> >  	 * Expand the existing vma if possible; Note that singular lists do not
-> >  	 * occur after forking, so the expand will only happen on new VMAs.
-> >  	 */
-> > -	if (vma && vma->vm_end == addr && !vma_policy(vma) &&
-> > -	    can_vma_merge_after(vma, flags, NULL, NULL,
-> > -				addr >> PAGE_SHIFT, NULL_VM_UFFD_CTX, NULL)) {
-> > -		vma_iter_config(vmi, vma->vm_start, addr + len);
-> > -		if (vma_iter_prealloc(vmi, vma))
-> > -			goto unacct_fail;
-> > -
-> > -		vma_start_write(vma);
-> > -
-> > -		init_vma_prep(&vp, vma);
-> > -		vma_prepare(&vp);
-> > -		vma_adjust_trans_huge(vma, vma->vm_start, addr + len, 0);
-> > -		vma->vm_end = addr + len;
-> > -		vm_flags_set(vma, VM_SOFTDIRTY);
-> > -		vma_iter_store(vmi, vma);
-> > -
-> > -		vma_complete(&vp, vmi, mm);
-> > -		khugepaged_enter_vma(vma, flags);
-> > -		goto out;
-> > +	if (vma && vma->vm_end == addr && !vma_policy(vma)) {
-> > +		struct vma_merge_struct vmg = {
-> > +			.prev = vma,
-> > +			.flags = flags,
-> > +			.pgoff = addr >> PAGE_SHIFT,
-> > +		};
-> > +
-> > +		if (can_vma_merge_after(&vmg)) {
-> > +			vma_iter_config(vmi, vma->vm_start, addr + len);
-> > +			if (vma_iter_prealloc(vmi, vma))
-> > +				goto unacct_fail;
-> > +
-> > +			vma_start_write(vma);
-> > +
-> > +			init_vma_prep(&vp, vma);
-> > +			vma_prepare(&vp);
-> > +			vma_adjust_trans_huge(vma, vma->vm_start, addr + len, 0);
-> > +			vma->vm_end = addr + len;
-> > +			vm_flags_set(vma, VM_SOFTDIRTY);
-> > +			vma_iter_store(vmi, vma);
-> > +
-> > +			vma_complete(&vp, vmi, mm);
-> > +			khugepaged_enter_vma(vma, flags);
-> > +			goto out;
-> > +		}
-> >  	}
-> >
-> >  	if (vma)
-> > diff --git a/mm/vma.c b/mm/vma.c
-> > index bf0546fe6eab..20c4ce7712c0 100644
-> > --- a/mm/vma.c
-> > +++ b/mm/vma.c
-> > @@ -7,16 +7,18 @@
-> >  #include "vma_internal.h"
-> >  #include "vma.h"
-> >
-> > -/*
-> > - * If the vma has a ->close operation then the driver probably needs to release
-> > - * per-vma resources, so we don't attempt to merge those if the caller indicates
-> > - * the current vma may be removed as part of the merge.
-> > - */
-> > -static inline bool is_mergeable_vma(struct vm_area_struct *vma,
-> > -		struct file *file, unsigned long vm_flags,
-> > -		struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-> > -		struct anon_vma_name *anon_name, bool may_remove_vma)
-> > +static inline bool is_mergeable_vma(struct vma_merge_struct *vmg, bool merge_next)
-> >  {
-> > +	struct vm_area_struct *vma = merge_next ? vmg->next : vmg->prev;
-> > +	/*
-> > +	 * If the vma has a ->close operation then the driver probably needs to
-> > +	 * release per-vma resources, so we don't attempt to merge those if the
-> > +	 * caller indicates the current vma may be removed as part of the merge,
-> > +	 * which is the case if we are attempting to merge the next VMA into
-> > +	 * this one.
-> > +	 */
-> > +	bool may_remove_vma = merge_next;
-> > +
->
-> This variable is used only once. If you want to clarify the double
-> meaning of the merge_next parameter, consider moving this comment
-> further down to the conditional and merely renaming the parameter.
->
-> >  	/*
-> >  	 * VM_SOFTDIRTY should not prevent from VMA merging, if we
-> >  	 * match the flags but dirty bit -- the caller should mark
-> > @@ -25,15 +27,15 @@ static inline bool is_mergeable_vma(struct vm_area_struct *vma,
-> >  	 * the kernel to generate new VMAs when old one could be
-> >  	 * extended instead.
-> >  	 */
-> > -	if ((vma->vm_flags ^ vm_flags) & ~VM_SOFTDIRTY)
-> > +	if ((vma->vm_flags ^ vmg->flags) & ~VM_SOFTDIRTY)
-> >  		return false;
-> > -	if (vma->vm_file != file)
-> > +	if (vma->vm_file != vmg->file)
-> >  		return false;
-> >  	if (may_remove_vma && vma->vm_ops && vma->vm_ops->close)
->
-> AFAICS this is the only place where may_remove_vma is used.
+Hello,
 
-Yes it is, but the point is to document what we're doing. The compiler
-simplifies all this in the generated code.
+kernel test robot noticed a 1.2% improvement of will-it-scale.per_process_ops on:
 
->
-> >  		return false;
-> > -	if (!is_mergeable_vm_userfaultfd_ctx(vma, vm_userfaultfd_ctx))
-> > +	if (!is_mergeable_vm_userfaultfd_ctx(vma, vmg->uffd_ctx))
-> >  		return false;
-> > -	if (!anon_vma_name_eq(anon_vma_name(vma), anon_name))
-> > +	if (!anon_vma_name_eq(anon_vma_name(vma), vmg->anon_name))
-> >  		return false;
-> >  	return true;
-> >  }
-> > @@ -94,16 +96,16 @@ static void init_multi_vma_prep(struct vma_prepare *vp,
-> >   * We assume the vma may be removed as part of the merge.
-> >   */
-> >  bool
-> > -can_vma_merge_before(struct vm_area_struct *vma, unsigned long vm_flags,
-> > -		struct anon_vma *anon_vma, struct file *file,
-> > -		pgoff_t vm_pgoff, struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-> > -		struct anon_vma_name *anon_name)
-> > +can_vma_merge_before(struct vma_merge_struct *vmg)
-> >  {
-> > -	if (is_mergeable_vma(vma, file, vm_flags, vm_userfaultfd_ctx, anon_name, true) &&
-> > -	    is_mergeable_anon_vma(anon_vma, vma->anon_vma, vma)) {
-> > -		if (vma->vm_pgoff == vm_pgoff)
-> > +	pgoff_t pglen = PHYS_PFN(vmg->end - vmg->start);
-> > +
-> > +	if (is_mergeable_vma(vmg, true) &&
-> > +	    is_mergeable_anon_vma(vmg->anon_vma, vmg->next->anon_vma, vmg->next)) {
-> > +		if (vmg->next->vm_pgoff == vmg->pgoff + pglen)
-> >  			return true;
-> >  	}
-> > +
-> >  	return false;
-> >  }
-> >
-> > @@ -116,18 +118,11 @@ can_vma_merge_before(struct vm_area_struct *vma, unsigned long vm_flags,
-> >   *
-> >   * We assume that vma is not removed as part of the merge.
-> >   */
-> > -bool
-> > -can_vma_merge_after(struct vm_area_struct *vma, unsigned long vm_flags,
-> > -		struct anon_vma *anon_vma, struct file *file,
-> > -		pgoff_t vm_pgoff, struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-> > -		struct anon_vma_name *anon_name)
-> > +bool can_vma_merge_after(struct vma_merge_struct *vmg)
-> >  {
-> > -	if (is_mergeable_vma(vma, file, vm_flags, vm_userfaultfd_ctx, anon_name, false) &&
-> > -	    is_mergeable_anon_vma(anon_vma, vma->anon_vma, vma)) {
-> > -		pgoff_t vm_pglen;
-> > -
-> > -		vm_pglen = vma_pages(vma);
-> > -		if (vma->vm_pgoff + vm_pglen == vm_pgoff)
-> > +	if (is_mergeable_vma(vmg, false) &&
-> > +	    is_mergeable_anon_vma(vmg->anon_vma, vmg->prev->anon_vma, vmg->prev)) {
-> > +		if (vmg->prev->vm_pgoff + vma_pages(vmg->prev) == vmg->pgoff)
-> >  			return true;
-> >  	}
-> >  	return false;
-> > @@ -180,7 +175,7 @@ void unmap_region(struct mm_struct *mm, struct ma_state *mas,
-> >   * VMA Iterator will point to the end VMA.
-> >   */
-> >  static int __split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
-> > -		       unsigned long addr, int new_below)
-> > +		       unsigned long addr, bool new_below)
-> >  {
-> >  	struct vma_prepare vp;
-> >  	struct vm_area_struct *new;
-> > @@ -261,13 +256,14 @@ static int __split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
-> >   * Split a vma into two pieces at address 'addr', a new vma is allocated
-> >   * either for the first part or the tail.
-> >   */
-> > -static int split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
-> > -		     unsigned long addr, int new_below)
-> > +static int split_vma(struct vma_merge_struct *vmg, bool new_below)
->
-> IMHO this patch is already long enough. Maybe the type change from int
-> to bool could be split out to a separate patch to reduce churn here?
 
-I don't really understand this comment. This reduces the number of lines of
-code, and it's a line I have to change anyway, so there'd be _more_ churn
-to split this out?
+commit: f1139c8e66d5c618aad04a93a2378ad9586464f9 ("[PATCH v5 1/3] fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()")
+url: https://github.com/intel-lab-lkp/linux/commits/Yu-Ma/fs-file-c-remove-sanity_check-and-add-likely-unlikely-in-alloc_fd/20240717-224830
+base: https://git.kernel.org/cgit/linux/kernel/git/vfs/vfs.git vfs.all
+patch link: https://lore.kernel.org/all/20240717145018.3972922-2-yu.ma@intel.com/
+patch subject: [PATCH v5 1/3] fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()
 
-I don't think this is really all that important, but it'd be very silly to
-split this out in my opinion.
+testcase: will-it-scale
+test machine: 256 threads 2 sockets GENUINE INTEL(R) XEON(R) (Sierra Forest) with 128G memory
+parameters:
 
->
-> >  {
-> > -	if (vma->vm_mm->map_count >= sysctl_max_map_count)
-> > +	if (vmg->vma->vm_mm->map_count >= sysctl_max_map_count)
-> >  		return -ENOMEM;
-> >
-> > -	return __split_vma(vmi, vma, addr, new_below);
-> > +	return __split_vma(vmg->vmi, vmg->vma,
-> > +			   new_below ? vmg->start : vmg->end,
-> > +			   new_below);
-> >  }
-> >
-> >  /*
-> > @@ -712,7 +708,7 @@ do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma,
-> >  		if (end < vma->vm_end && mm->map_count >= sysctl_max_map_count)
-> >  			goto map_count_exceeded;
-> >
-> > -		error = __split_vma(vmi, vma, start, 1);
-> > +		error = __split_vma(vmi, vma, start, true);
-> >  		if (error)
-> >  			goto start_split_failed;
-> >  	}
-> > @@ -725,7 +721,7 @@ do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma,
-> >  	do {
-> >  		/* Does it split the end? */
-> >  		if (next->vm_end > end) {
-> > -			error = __split_vma(vmi, next, end, 0);
-> > +			error = __split_vma(vmi, next, end, false);
-> >  			if (error)
-> >  				goto end_split_failed;
-> >  		}
-> > @@ -934,16 +930,10 @@ int do_vmi_munmap(struct vma_iterator *vmi, struct mm_struct *mm,
-> >   * **** is not represented - it will be merged and the vma containing the
-> >   *      area is returned, or the function will return NULL
-> >   */
-> > -static struct vm_area_struct
-> > -*vma_merge(struct vma_iterator *vmi, struct vm_area_struct *prev,
-> > -	   struct vm_area_struct *src, unsigned long addr, unsigned long end,
-> > -	   unsigned long vm_flags, pgoff_t pgoff, struct mempolicy *policy,
-> > -	   struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-> > -	   struct anon_vma_name *anon_name)
-> > +static struct vm_area_struct *vma_merge(struct vma_merge_struct *vmg)
-> >  {
-> > -	struct mm_struct *mm = src->vm_mm;
-> > -	struct anon_vma *anon_vma = src->anon_vma;
-> > -	struct file *file = src->vm_file;
-> > +	struct mm_struct *mm = container_of(vmg->vmi->mas.tree, struct mm_struct, mm_mt);
-> > +	struct vm_area_struct *prev = vmg->prev;
-> >  	struct vm_area_struct *curr, *next, *res;
-> >  	struct vm_area_struct *vma, *adjust, *remove, *remove2;
-> >  	struct vm_area_struct *anon_dup = NULL;
-> > @@ -953,16 +943,18 @@ static struct vm_area_struct
-> >  	bool merge_prev = false;
-> >  	bool merge_next = false;
-> >  	bool vma_expanded = false;
-> > +	unsigned long addr = vmg->start;
-> > +	unsigned long end = vmg->end;
-> >  	unsigned long vma_start = addr;
-> >  	unsigned long vma_end = end;
-> > -	pgoff_t pglen = (end - addr) >> PAGE_SHIFT;
-> > +	pgoff_t pglen = PHYS_PFN(end - addr);
-> >  	long adj_start = 0;
-> >
-> >  	/*
-> >  	 * We later require that vma->vm_flags == vm_flags,
-> >  	 * so this tests vma->vm_flags & VM_SPECIAL, too.
-> >  	 */
-> > -	if (vm_flags & VM_SPECIAL)
-> > +	if (vmg->flags & VM_SPECIAL)
-> >  		return NULL;
-> >
-> >  	/* Does the input range span an existing VMA? (cases 5 - 8) */
-> > @@ -970,27 +962,26 @@ static struct vm_area_struct
-> >
-> >  	if (!curr ||			/* cases 1 - 4 */
-> >  	    end == curr->vm_end)	/* cases 6 - 8, adjacent VMA */
-> > -		next = vma_lookup(mm, end);
-> > +		next = vmg->next = vma_lookup(mm, end);
-> >  	else
-> > -		next = NULL;		/* case 5 */
-> > +		next = vmg->next = NULL;	/* case 5 */
->
-> Again, is it worth keeping the "next" variable, or could we replace it
-> with "vmg->next" everywhere?
+	nr_task: 100%
+	mode: process
+	test: dup1
+	cpufreq_governor: performance
 
-I already responded previously but equally, I'm explicitly using a local
-variable to keep the code relatively simple and to not be constantly
-ostensibly dereferencing vmg.
 
->
-> No other comments to the rest of this patch.
->
-> Petr T
->
-> >
-> >  	if (prev) {
-> >  		vma_start = prev->vm_start;
-> >  		vma_pgoff = prev->vm_pgoff;
-> >
-> >  		/* Can we merge the predecessor? */
-> > -		if (addr == prev->vm_end && mpol_equal(vma_policy(prev), policy)
-> > -		    && can_vma_merge_after(prev, vm_flags, anon_vma, file,
-> > -					   pgoff, vm_userfaultfd_ctx, anon_name)) {
-> > +		if (addr == prev->vm_end && mpol_equal(vma_policy(prev), vmg->policy)
-> > +		    && can_vma_merge_after(vmg)) {
-> > +
-> >  			merge_prev = true;
-> > -			vma_prev(vmi);
-> > +			vma_prev(vmg->vmi);
-> >  		}
-> >  	}
-> >
-> >  	/* Can we merge the successor? */
-> > -	if (next && mpol_equal(policy, vma_policy(next)) &&
-> > -	    can_vma_merge_before(next, vm_flags, anon_vma, file, pgoff+pglen,
-> > -				 vm_userfaultfd_ctx, anon_name)) {
-> > +	if (next && mpol_equal(vmg->policy, vma_policy(next)) &&
-> > +	    can_vma_merge_before(vmg)) {
-> >  		merge_next = true;
-> >  	}
-> >
-> > @@ -1041,7 +1032,7 @@ static struct vm_area_struct
-> >  				remove = curr;
-> >  			} else {			/* case 5 */
-> >  				adjust = curr;
-> > -				adj_start = (end - curr->vm_start);
-> > +				adj_start = end - curr->vm_start;
-> >  			}
-> >  			if (!err)
-> >  				err = dup_anon_vma(prev, curr, &anon_dup);
-> > @@ -1081,13 +1072,13 @@ static struct vm_area_struct
-> >  		vma_expanded = true;
-> >
-> >  	if (vma_expanded) {
-> > -		vma_iter_config(vmi, vma_start, vma_end);
-> > +		vma_iter_config(vmg->vmi, vma_start, vma_end);
-> >  	} else {
-> > -		vma_iter_config(vmi, adjust->vm_start + adj_start,
-> > +		vma_iter_config(vmg->vmi, adjust->vm_start + adj_start,
-> >  				adjust->vm_end);
-> >  	}
-> >
-> > -	if (vma_iter_prealloc(vmi, vma))
-> > +	if (vma_iter_prealloc(vmg->vmi, vma))
-> >  		goto prealloc_fail;
-> >
-> >  	init_multi_vma_prep(&vp, vma, adjust, remove, remove2);
-> > @@ -1099,19 +1090,19 @@ static struct vm_area_struct
-> >  	vma_set_range(vma, vma_start, vma_end, vma_pgoff);
-> >
-> >  	if (vma_expanded)
-> > -		vma_iter_store(vmi, vma);
-> > +		vma_iter_store(vmg->vmi, vma);
-> >
-> >  	if (adj_start) {
-> >  		adjust->vm_start += adj_start;
-> >  		adjust->vm_pgoff += adj_start >> PAGE_SHIFT;
-> >  		if (adj_start < 0) {
-> >  			WARN_ON(vma_expanded);
-> > -			vma_iter_store(vmi, next);
-> > +			vma_iter_store(vmg->vmi, next);
-> >  		}
-> >  	}
-> >
-> > -	vma_complete(&vp, vmi, mm);
-> > -	khugepaged_enter_vma(res, vm_flags);
-> > +	vma_complete(&vp, vmg->vmi, mm);
-> > +	khugepaged_enter_vma(res, vmg->flags);
-> >  	return res;
-> >
-> >  prealloc_fail:
-> > @@ -1119,8 +1110,8 @@ static struct vm_area_struct
-> >  		unlink_anon_vmas(anon_dup);
-> >
-> >  anon_vma_fail:
-> > -	vma_iter_set(vmi, addr);
-> > -	vma_iter_load(vmi);
-> > +	vma_iter_set(vmg->vmi, addr);
-> > +	vma_iter_load(vmg->vmi);
-> >  	return NULL;
-> >  }
-> >
-> > @@ -1137,38 +1128,141 @@ static struct vm_area_struct
-> >   * The function returns either the merged VMA, the original VMA if a split was
-> >   * required instead, or an error if the split failed.
-> >   */
-> > -struct vm_area_struct *vma_modify(struct vma_iterator *vmi,
-> > -				  struct vm_area_struct *prev,
-> > -				  struct vm_area_struct *vma,
-> > -				  unsigned long start, unsigned long end,
-> > -				  unsigned long vm_flags,
-> > -				  struct mempolicy *policy,
-> > -				  struct vm_userfaultfd_ctx uffd_ctx,
-> > -				  struct anon_vma_name *anon_name)
-> > +static struct vm_area_struct *vma_modify(struct vma_merge_struct *vmg)
-> >  {
-> > -	pgoff_t pgoff = vma->vm_pgoff + ((start - vma->vm_start) >> PAGE_SHIFT);
-> > +	struct vm_area_struct *vma = vmg->vma;
-> >  	struct vm_area_struct *merged;
-> >
-> > -	merged = vma_merge(vmi, prev, vma, start, end, vm_flags,
-> > -			   pgoff, policy, uffd_ctx, anon_name);
-> > +	/* First, try to merge. */
-> > +	merged = vma_merge(vmg);
-> >  	if (merged)
-> >  		return merged;
-> >
-> > -	if (vma->vm_start < start) {
-> > -		int err = split_vma(vmi, vma, start, 1);
-> > +	/* Split any preceding portion of the VMA. */
-> > +	if (vma->vm_start < vmg->start) {
-> > +		int err = split_vma(vmg, true);
-> >
-> >  		if (err)
-> >  			return ERR_PTR(err);
-> >  	}
-> >
-> > -	if (vma->vm_end > end) {
-> > -		int err = split_vma(vmi, vma, end, 0);
-> > +	/* Split any trailing portion of the VMA. */
-> > +	if (vma->vm_end > vmg->end) {
-> > +		int err = split_vma(vmg, false);
-> >
-> >  		if (err)
-> >  			return ERR_PTR(err);
-> >  	}
-> >
-> > -	return vma;
-> > +	return vmg->vma;
-> > +}
-> > +
-> > +/* Assumes addr >= vma->vm_start. */
-> > +static pgoff_t vma_pgoff_offset(struct vm_area_struct *vma, unsigned long addr)
-> > +{
-> > +	return vma->vm_pgoff + PHYS_PFN(addr - vma->vm_start);
-> > +}
-> > +
-> > +struct vm_area_struct *vma_modify_flags(struct vma_iterator *vmi,
-> > +					struct vm_area_struct *prev,
-> > +					struct vm_area_struct *vma,
-> > +					unsigned long start, unsigned long end,
-> > +					unsigned long new_flags)
-> > +{
-> > +	struct vma_merge_struct vmg = {
-> > +		.vmi = vmi,
-> > +		.prev = prev,
-> > +		.vma = vma,
-> > +		.start = start,
-> > +		.end = end,
-> > +		.flags = new_flags,
-> > +		.pgoff = vma_pgoff_offset(vma, start),
-> > +		.file = vma->vm_file,
-> > +		.anon_vma = vma->anon_vma,
-> > +		.policy = vma_policy(vma),
-> > +		.uffd_ctx = vma->vm_userfaultfd_ctx,
-> > +		.anon_name = anon_vma_name(vma),
-> > +	};
-> > +
-> > +	return vma_modify(&vmg);
-> > +}
-> > +
-> > +struct vm_area_struct
-> > +*vma_modify_flags_name(struct vma_iterator *vmi,
-> > +		       struct vm_area_struct *prev,
-> > +		       struct vm_area_struct *vma,
-> > +		       unsigned long start,
-> > +		       unsigned long end,
-> > +		       unsigned long new_flags,
-> > +		       struct anon_vma_name *new_name)
-> > +{
-> > +	struct vma_merge_struct vmg = {
-> > +		.vmi = vmi,
-> > +		.prev = prev,
-> > +		.vma = vma,
-> > +		.start = start,
-> > +		.end = end,
-> > +		.flags = new_flags,
-> > +		.pgoff = vma_pgoff_offset(vma, start),
-> > +		.file = vma->vm_file,
-> > +		.anon_vma = vma->anon_vma,
-> > +		.policy = vma_policy(vma),
-> > +		.uffd_ctx = vma->vm_userfaultfd_ctx,
-> > +		.anon_name = new_name,
-> > +	};
-> > +
-> > +	return vma_modify(&vmg);
-> > +}
-> > +
-> > +struct vm_area_struct
-> > +*vma_modify_policy(struct vma_iterator *vmi,
-> > +		   struct vm_area_struct *prev,
-> > +		   struct vm_area_struct *vma,
-> > +		   unsigned long start, unsigned long end,
-> > +		   struct mempolicy *new_pol)
-> > +{
-> > +	struct vma_merge_struct vmg = {
-> > +		.vmi = vmi,
-> > +		.prev = prev,
-> > +		.vma = vma,
-> > +		.start = start,
-> > +		.end = end,
-> > +		.flags = vma->vm_flags,
-> > +		.pgoff = vma_pgoff_offset(vma, start),
-> > +		.file = vma->vm_file,
-> > +		.anon_vma = vma->anon_vma,
-> > +		.policy = new_pol,
-> > +		.uffd_ctx = vma->vm_userfaultfd_ctx,
-> > +		.anon_name = anon_vma_name(vma),
-> > +	};
-> > +
-> > +	return vma_modify(&vmg);
-> > +}
-> > +
-> > +struct vm_area_struct
-> > +*vma_modify_flags_uffd(struct vma_iterator *vmi,
-> > +		       struct vm_area_struct *prev,
-> > +		       struct vm_area_struct *vma,
-> > +		       unsigned long start, unsigned long end,
-> > +		       unsigned long new_flags,
-> > +		       struct vm_userfaultfd_ctx new_ctx)
-> > +{
-> > +	struct vma_merge_struct vmg = {
-> > +		.vmi = vmi,
-> > +		.prev = prev,
-> > +		.vma = vma,
-> > +		.start = start,
-> > +		.end = end,
-> > +		.flags = new_flags,
-> > +		.file = vma->vm_file,
-> > +		.anon_vma = vma->anon_vma,
-> > +		.pgoff = vma_pgoff_offset(vma, start),
-> > +		.policy = vma_policy(vma),
-> > +		.uffd_ctx = new_ctx,
-> > +		.anon_name = anon_vma_name(vma),
-> > +	};
-> > +
-> > +	return vma_modify(&vmg);
-> >  }
-> >
-> >  /*
-> > @@ -1180,8 +1274,22 @@ struct vm_area_struct
-> >  		   struct vm_area_struct *vma, unsigned long start,
-> >  		   unsigned long end, pgoff_t pgoff)
-> >  {
-> > -	return vma_merge(vmi, prev, vma, start, end, vma->vm_flags, pgoff,
-> > -			 vma_policy(vma), vma->vm_userfaultfd_ctx, anon_vma_name(vma));
-> > +	struct vma_merge_struct vmg = {
-> > +		.vmi = vmi,
-> > +		.prev = prev,
-> > +		.vma = vma,
-> > +		.start = start,
-> > +		.end = end,
-> > +		.flags = vma->vm_flags,
-> > +		.file = vma->vm_file,
-> > +		.anon_vma = vma->anon_vma,
-> > +		.pgoff = pgoff,
-> > +		.policy = vma_policy(vma),
-> > +		.uffd_ctx = vma->vm_userfaultfd_ctx,
-> > +		.anon_name = anon_vma_name(vma),
-> > +	};
-> > +
-> > +	return vma_merge(&vmg);
-> >  }
-> >
-> >  /*
-> > @@ -1193,11 +1301,22 @@ struct vm_area_struct *vma_merge_extend(struct vma_iterator *vmi,
-> >  					unsigned long delta)
-> >  {
-> >  	pgoff_t pgoff = vma->vm_pgoff + vma_pages(vma);
-> > +	struct vma_merge_struct vmg = {
-> > +		.vmi = vmi,
-> > +		.prev = vma,
-> > +		.vma = vma,
-> > +		.start = vma->vm_end,
-> > +		.end = vma->vm_end + delta,
-> > +		.flags = vma->vm_flags,
-> > +		.file = vma->vm_file,
-> > +		.pgoff = pgoff,
-> > +		.policy = vma_policy(vma),
-> > +		.uffd_ctx = vma->vm_userfaultfd_ctx,
-> > +		.anon_name = anon_vma_name(vma),
-> > +	};
-> >
-> >  	/* vma is specified as prev, so case 1 or 2 will apply. */
-> > -	return vma_merge(vmi, vma, vma, vma->vm_end, vma->vm_end + delta,
-> > -			 vma->vm_flags, pgoff, vma_policy(vma),
-> > -			 vma->vm_userfaultfd_ctx, anon_vma_name(vma));
-> > +	return vma_merge(&vmg);
-> >  }
-> >
-> >  void unlink_file_vma_batch_init(struct unlink_vma_file_batch *vb)
-> > diff --git a/mm/vma.h b/mm/vma.h
-> > index 6efdf1768a0a..c31684cc1da6 100644
-> > --- a/mm/vma.h
-> > +++ b/mm/vma.h
-> > @@ -26,6 +26,23 @@ struct unlink_vma_file_batch {
-> >  	struct vm_area_struct *vmas[8];
-> >  };
-> >
-> > +/* Represents a VMA merge operation. */
-> > +struct vma_merge_struct {
-> > +	struct vma_iterator *vmi;
-> > +	struct vm_area_struct *prev;
-> > +	struct vm_area_struct *next; /* Modified by vma_merge(). */
-> > +	struct vm_area_struct *vma; /* Either a new VMA or the one being modified. */
-> > +	unsigned long start;
-> > +	unsigned long end;
-> > +	unsigned long flags;
-> > +	pgoff_t pgoff;
-> > +	struct file *file;
-> > +	struct anon_vma *anon_vma;
-> > +	struct mempolicy *policy;
-> > +	struct vm_userfaultfd_ctx uffd_ctx;
-> > +	struct anon_vma_name *anon_name;
-> > +};
-> > +
-> >  #ifdef CONFIG_DEBUG_VM_MAPLE_TREE
-> >  void validate_mm(struct mm_struct *mm);
-> >  #else
-> > @@ -72,80 +89,53 @@ void unmap_region(struct mm_struct *mm, struct ma_state *mas,
-> >  		struct vm_area_struct *next, unsigned long start,
-> >  		unsigned long end, unsigned long tree_end, bool mm_wr_locked);
-> >
-> > -/* Required by mmap_region(). */
-> > -bool
-> > -can_vma_merge_before(struct vm_area_struct *vma, unsigned long vm_flags,
-> > -		struct anon_vma *anon_vma, struct file *file,
-> > -		pgoff_t vm_pgoff, struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-> > -		struct anon_vma_name *anon_name);
-> > -
-> > -/* Required by mmap_region() and do_brk_flags(). */
-> > -bool
-> > -can_vma_merge_after(struct vm_area_struct *vma, unsigned long vm_flags,
-> > -		struct anon_vma *anon_vma, struct file *file,
-> > -		pgoff_t vm_pgoff, struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-> > -		struct anon_vma_name *anon_name);
-> > -
-> > -struct vm_area_struct *vma_modify(struct vma_iterator *vmi,
-> > -				  struct vm_area_struct *prev,
-> > -				  struct vm_area_struct *vma,
-> > -				  unsigned long start, unsigned long end,
-> > -				  unsigned long vm_flags,
-> > -				  struct mempolicy *policy,
-> > -				  struct vm_userfaultfd_ctx uffd_ctx,
-> > -				  struct anon_vma_name *anon_name);
-> > +/*
-> > + * Can we merge the VMA described by vmg into the following VMA vmg->next?
-> > + *
-> > + * Required by mmap_region().
-> > + */
-> > +bool can_vma_merge_before(struct vma_merge_struct *vmg);
-> > +
-> > +/*
-> > + * Can we merge the VMA described by vmg into the preceding VMA vmg->prev?
-> > + *
-> > + * Required by mmap_region() and do_brk_flags().
-> > + */
-> > +bool can_vma_merge_after(struct vma_merge_struct *vmg);
-> >
-> >  /* We are about to modify the VMA's flags. */
-> > -static inline struct vm_area_struct
-> > -*vma_modify_flags(struct vma_iterator *vmi,
-> > -		  struct vm_area_struct *prev,
-> > -		  struct vm_area_struct *vma,
-> > -		  unsigned long start, unsigned long end,
-> > -		  unsigned long new_flags)
-> > -{
-> > -	return vma_modify(vmi, prev, vma, start, end, new_flags,
-> > -			  vma_policy(vma), vma->vm_userfaultfd_ctx,
-> > -			  anon_vma_name(vma));
-> > -}
-> > +struct vm_area_struct *vma_modify_flags(struct vma_iterator *vmi,
-> > +					struct vm_area_struct *prev,
-> > +					struct vm_area_struct *vma,
-> > +					unsigned long start, unsigned long end,
-> > +					unsigned long new_flags);
-> >
-> >  /* We are about to modify the VMA's flags and/or anon_name. */
-> > -static inline struct vm_area_struct
-> > +struct vm_area_struct
-> >  *vma_modify_flags_name(struct vma_iterator *vmi,
-> >  		       struct vm_area_struct *prev,
-> >  		       struct vm_area_struct *vma,
-> >  		       unsigned long start,
-> >  		       unsigned long end,
-> >  		       unsigned long new_flags,
-> > -		       struct anon_vma_name *new_name)
-> > -{
-> > -	return vma_modify(vmi, prev, vma, start, end, new_flags,
-> > -			  vma_policy(vma), vma->vm_userfaultfd_ctx, new_name);
-> > -}
-> > +		       struct anon_vma_name *new_name);
-> >
-> >  /* We are about to modify the VMA's memory policy. */
-> > -static inline struct vm_area_struct
-> > +struct vm_area_struct
-> >  *vma_modify_policy(struct vma_iterator *vmi,
-> >  		   struct vm_area_struct *prev,
-> >  		   struct vm_area_struct *vma,
-> >  		   unsigned long start, unsigned long end,
-> > -		   struct mempolicy *new_pol)
-> > -{
-> > -	return vma_modify(vmi, prev, vma, start, end, vma->vm_flags,
-> > -			  new_pol, vma->vm_userfaultfd_ctx, anon_vma_name(vma));
-> > -}
-> > +		   struct mempolicy *new_pol);
-> >
-> >  /* We are about to modify the VMA's flags and/or uffd context. */
-> > -static inline struct vm_area_struct
-> > +struct vm_area_struct
-> >  *vma_modify_flags_uffd(struct vma_iterator *vmi,
-> >  		       struct vm_area_struct *prev,
-> >  		       struct vm_area_struct *vma,
-> >  		       unsigned long start, unsigned long end,
-> >  		       unsigned long new_flags,
-> > -		       struct vm_userfaultfd_ctx new_ctx)
-> > -{
-> > -	return vma_modify(vmi, prev, vma, start, end, new_flags,
-> > -			  vma_policy(vma), new_ctx, anon_vma_name(vma));
-> > -}
-> > +		       struct vm_userfaultfd_ctx new_ctx);
-> >
-> >  struct vm_area_struct
-> >  *vma_merge_new_vma(struct vma_iterator *vmi, struct vm_area_struct *prev,
->
+
+
+
+
+Details are as below:
+-------------------------------------------------------------------------------------------------->
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20240806/202408062146.832faa23-oliver.sang@intel.com
+
+=========================================================================================
+compiler/cpufreq_governor/kconfig/mode/nr_task/rootfs/tbox_group/test/testcase:
+  gcc-13/performance/x86_64-rhel-8.3/process/100%/debian-12-x86_64-20240206.cgz/lkp-srf-2sp1/dup1/will-it-scale
+
+commit: 
+  5f30e082ab ("Merge branch 'vfs.iomap' into vfs.all")
+  f1139c8e66 ("fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()")
+
+5f30e082ab8b3431 f1139c8e66d5c618aad04a93a23 
+---------------- --------------------------- 
+         %stddev     %change         %stddev
+             \          |                \  
+    377983 ± 69%     +74.1%     658036 ± 17%  numa-meminfo.node0.AnonPages
+     18.17 ± 10%     -48.6%       9.33 ± 35%  perf-c2c.DRAM.local
+ 8.796e+08            +1.2%  8.903e+08        will-it-scale.256.processes
+   3436082            +1.2%    3477810        will-it-scale.per_process_ops
+ 8.796e+08            +1.2%  8.903e+08        will-it-scale.workload
+ 1.517e+11            -4.3%  1.452e+11        perf-stat.i.branch-instructions
+      0.03 ±  8%      +0.0        0.04 ± 36%  perf-stat.i.branch-miss-rate%
+      0.93            +3.9%       0.96        perf-stat.i.cpi
+  7.13e+11            -3.5%   6.88e+11        perf-stat.i.instructions
+      1.08            -3.4%       1.04        perf-stat.i.ipc
+      0.93            +3.4%       0.96        perf-stat.overall.cpi
+      1.08            -3.3%       1.04        perf-stat.overall.ipc
+    245130            -4.4%     234451        perf-stat.overall.path-length
+ 1.512e+11            -4.3%  1.447e+11        perf-stat.ps.branch-instructions
+ 7.106e+11            -3.5%  6.857e+11        perf-stat.ps.instructions
+ 2.156e+14            -3.2%  2.087e+14        perf-stat.total.instructions
+     14.90            -0.7       14.20        perf-profile.calltrace.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe.dup
+     12.01            -0.7       11.32        perf-profile.calltrace.cycles-pp.__x64_sys_dup.do_syscall_64.entry_SYSCALL_64_after_hwframe.dup
+     16.54            -0.7       15.88        perf-profile.calltrace.cycles-pp.entry_SYSCALL_64_after_hwframe.dup
+      6.44            -0.6        5.89        perf-profile.calltrace.cycles-pp.alloc_fd.__x64_sys_dup.do_syscall_64.entry_SYSCALL_64_after_hwframe.dup
+      2.86            -0.0        2.82        perf-profile.calltrace.cycles-pp.entry_SYSRETQ_unsafe_stack.__close
+      8.94            -0.0        8.90        perf-profile.calltrace.cycles-pp.filp_flush.__x64_sys_close.do_syscall_64.entry_SYSCALL_64_after_hwframe.__close
+      7.76            -0.0        7.72        perf-profile.calltrace.cycles-pp.locks_remove_posix.filp_flush.__x64_sys_close.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      2.58            -0.0        2.54        perf-profile.calltrace.cycles-pp.__fput_sync.__x64_sys_close.do_syscall_64.entry_SYSCALL_64_after_hwframe.__close
+      1.11            -0.0        1.10        perf-profile.calltrace.cycles-pp.syscall_exit_to_user_mode.do_syscall_64.entry_SYSCALL_64_after_hwframe.__close
+      1.33            +0.0        1.35        perf-profile.calltrace.cycles-pp.testcase
+      0.54            +0.0        0.56        perf-profile.calltrace.cycles-pp.x64_sys_call.do_syscall_64.entry_SYSCALL_64_after_hwframe.__close
+      0.79            +0.0        0.82        perf-profile.calltrace.cycles-pp.entry_SYSCALL_64_safe_stack.dup
+      1.33            +0.0        1.37        perf-profile.calltrace.cycles-pp.close@plt
+      2.73            +0.1        2.78        perf-profile.calltrace.cycles-pp._raw_spin_lock.file_close_fd.__x64_sys_close.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      1.05            +0.1        1.11        perf-profile.calltrace.cycles-pp.syscall_exit_to_user_mode.do_syscall_64.entry_SYSCALL_64_after_hwframe.dup
+      4.35            +0.1        4.42        perf-profile.calltrace.cycles-pp.file_close_fd.__x64_sys_close.do_syscall_64.entry_SYSCALL_64_after_hwframe.__close
+     22.18            +0.3       22.51        perf-profile.calltrace.cycles-pp.entry_SYSCALL_64.__close
+     21.50 ±  2%      +1.5       23.02        perf-profile.calltrace.cycles-pp.entry_SYSCALL_64.dup
+     12.10            -0.7       11.39        perf-profile.children.cycles-pp.__x64_sys_dup
+     34.79            -0.7       34.12        perf-profile.children.cycles-pp.do_syscall_64
+     38.04            -0.6       37.42        perf-profile.children.cycles-pp.entry_SYSCALL_64_after_hwframe
+      6.48            -0.6        5.90        perf-profile.children.cycles-pp.alloc_fd
+      1.86            -0.5        1.41        perf-profile.children.cycles-pp.syscall_return_via_sysret
+      0.57            -0.1        0.47        perf-profile.children.cycles-pp.fd_install
+      9.11            -0.0        9.07        perf-profile.children.cycles-pp.filp_flush
+      7.93            -0.0        7.89        perf-profile.children.cycles-pp.locks_remove_posix
+      2.61            -0.0        2.58        perf-profile.children.cycles-pp.__fput_sync
+      1.16            +0.0        1.18        perf-profile.children.cycles-pp.x64_sys_call
+      0.05            +0.0        0.07 ± 13%  perf-profile.children.cycles-pp.clockevents_program_event
+      0.51            +0.0        0.53        perf-profile.children.cycles-pp.syscall_exit_to_user_mode_prepare
+      2.17            +0.0        2.20        perf-profile.children.cycles-pp.syscall_exit_to_user_mode
+      5.72            +0.0        5.75        perf-profile.children.cycles-pp._raw_spin_lock
+      2.10            +0.0        2.13        perf-profile.children.cycles-pp.testcase
+      2.02            +0.0        2.06        perf-profile.children.cycles-pp.entry_SYSCALL_64_safe_stack
+      0.13 ±  2%      +0.0        0.17        perf-profile.children.cycles-pp.dup@plt
+      4.38            +0.1        4.46        perf-profile.children.cycles-pp.file_close_fd
+     23.00            +0.1       23.11        perf-profile.children.cycles-pp.entry_SYSRETQ_unsafe_stack
+     59.27            +0.5       59.73        perf-profile.children.cycles-pp.__close
+     28.73            +1.1       29.80        perf-profile.children.cycles-pp.entry_SYSCALL_64
+      1.86            -0.5        1.41        perf-profile.self.cycles-pp.syscall_return_via_sysret
+      2.28            -0.2        2.12        perf-profile.self.cycles-pp.alloc_fd
+      0.54            -0.1        0.43        perf-profile.self.cycles-pp.fd_install
+      7.87            -0.0        7.83        perf-profile.self.cycles-pp.locks_remove_posix
+      2.47            -0.0        2.44        perf-profile.self.cycles-pp.__fput_sync
+      1.23            +0.0        1.24        perf-profile.self.cycles-pp.file_close_fd_locked
+      1.09            +0.0        1.11        perf-profile.self.cycles-pp.x64_sys_call
+      0.51            +0.0        0.53        perf-profile.self.cycles-pp.syscall_exit_to_user_mode_prepare
+      1.29            +0.0        1.32        perf-profile.self.cycles-pp.testcase
+      5.66            +0.0        5.69        perf-profile.self.cycles-pp._raw_spin_lock
+      1.95            +0.0        1.99        perf-profile.self.cycles-pp.entry_SYSCALL_64_safe_stack
+      2.85            +0.0        2.90        perf-profile.self.cycles-pp.entry_SYSCALL_64_after_hwframe
+      0.02 ±141%      +0.0        0.06 ± 13%  perf-profile.self.cycles-pp.ktime_get
+      0.00            +0.1        0.07        perf-profile.self.cycles-pp.dup@plt
+     22.93            +0.1       23.05        perf-profile.self.cycles-pp.entry_SYSRETQ_unsafe_stack
+     10.11            +0.2       10.34        perf-profile.self.cycles-pp.dup
+     13.70            +0.3       13.98        perf-profile.self.cycles-pp.entry_SYSCALL_64
+      9.84 ±  3%      +0.7       10.51        perf-profile.self.cycles-pp.__close
+
+
+
+
+Disclaimer:
+Results have been estimated based on internal Intel analysis and are provided
+for informational purposes only. Any difference in system hardware or software
+design or configuration may affect actual performance.
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
