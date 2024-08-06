@@ -1,131 +1,111 @@
-Return-Path: <linux-kernel+bounces-275697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EA7494888D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:56:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA549488C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B2FBB22AAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:56:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19AA3B22287
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB96D1BA88A;
-	Tue,  6 Aug 2024 04:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0E61BBBE6;
+	Tue,  6 Aug 2024 04:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4fTcYv6"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="pisiyhq5"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7801AB52E;
-	Tue,  6 Aug 2024 04:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2831BB686;
+	Tue,  6 Aug 2024 04:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722920140; cv=none; b=Kboa6bKaCIHau9qR1F6a0Bx8hJM9f190xT8Pncs3CVnsSWEvJO+0LxzeWBstK5VkDaplBimT6Geb1588CatZbDeksZcFwAQpdYywxH+M/kG4tcKytGUogW2IYP3T+VnCatyH5pLwlkzLzqvPNhXLuQW5m5Fx6Jo6//lgaIBbHyg=
+	t=1722920351; cv=none; b=FOtJei21Fv0Tz8FHDzt5Qa9gCZEygYVSE8jsMDIL3aH3y+Yg0fkLs7iTD4dE6g6/LY/hEmYawN8ogU2AunLlpcauwQ+XSp/S7nxf2DrwrpSFkzdWxb21IiRaw+lSwdyezTjZyEIVVB1S3E5uUnjMbtY/DZ/Osgp0swtIt81+j8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722920140; c=relaxed/simple;
-	bh=V6aEin38HIBAhSWBUgzuxQ/TflAZ/IatsBUD75c3jOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tiM3cOScpIhyhWDpi4uQn1y4N3VSQeTd1qVubqwPQXLG3xrqgqGgLkgf73w2rigxMw5s1X56rUUTGsmPHsW0zSIk65y53dEVw6sfbwZT/XFE1jeSW/ftaXcJzKuyGHTiVQyt7tuaUjYSXsaJSv8kDsu97dYjcfNK3q9+To+3wQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V4fTcYv6; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7bcf8077742so299368a12.0;
-        Mon, 05 Aug 2024 21:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722920138; x=1723524938; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=85q65meJHydsbw2SpNer02iCevJGYGCAkmgA8yKAoQk=;
-        b=V4fTcYv6ysmJLTe3WsE5nzA5xFkMNgcNwotpGpzugh6UbAYiCZumsPjeeOyCaYK+uM
-         DIJHv8E1yRTiooOzqWnw+iTy2zYnkt1yEfuQPfRwyRYFhrmDY2juaoHwPvSvCL9ojT1R
-         behYm274AeGV7oH/AjXlOBYwodsnFsdzopxyDDmn5jvrR1cpmF1X8zrqlrreZQdGNU8v
-         /2dAUFraeu5QeDxq4oOFAPiU/TvFW49p6ECPfob5OHbHl1MDwXQjhcobPoMOMY2hID6n
-         7raLRCCVMU4mRwXRsAOjfUj4UkA1WekAWNlr/tlBAF6EoDyjwTiY+hsTEDpxnJEa4xCu
-         30Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722920138; x=1723524938;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=85q65meJHydsbw2SpNer02iCevJGYGCAkmgA8yKAoQk=;
-        b=o8AH7zbFKr1BQJ2UQeQaKPeA/mGxq9uQFOy/yG8s4wlq3IvSpCiEsfgHsjJv37wN7G
-         gdrgxnBudBF/7nYjbmWzqS4mwlQIhl0mompa9Rb+riXbgYh9s9EA7v01fWow8qeLplmU
-         n8eeL5ZMEIPRCsc2LVMmG6hhMp6onxzNn+sWWVCxhiP8tyVPVjyKfIcPmfhmO5RhY1vl
-         Td1VDshKjp1HttOH5q1VbaPCjW6AogKoWk646sAynxh/hMa4hF8zbFyxWapUnY0SuiBB
-         b1htr9Usggsh20Gcpr4n6Lh2wiYswoxrkfPbm6VYG87gaIAstWi7lfOONPDYTicgglRK
-         dnNg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1UD8HeCt3uxrCycx/mhpS208Al/k4CfGzFQcHzEI/vFkCtHrz7ngU78fIhvmGsuNHneFPfSAkVFDJi5Y=@vger.kernel.org, AJvYcCUrYeNeRVWZw/R8SGniqhlEgr5/6iTpPNfyf/OZN5YmHj3lamfrRhUm+k5cd8GfFvQEbCP+omEK@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa30wxSCSaD3OtIa3w6nmMEKqF90wnghhJamMICbTYkWtk0sBY
-	GulCCPdiYfBkEGHRtktAtMUQqa4ByJ6QrsU7Tr7BJ8eTfhnBmmR4
-X-Google-Smtp-Source: AGHT+IG9oatnH1xHVkWpI886BnKzAhj9hlfqXwSP17RhqetcsZVbRZp41LdrRYdy6alY4pR/K0sltQ==
-X-Received: by 2002:a17:90b:1094:b0:2cf:f3c5:871b with SMTP id 98e67ed59e1d1-2cff93d40f1mr16111394a91.6.1722920137930;
-        Mon, 05 Aug 2024 21:55:37 -0700 (PDT)
-Received: from localhost ([129.146.253.192])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cffb36bd3dsm8080980a91.36.2024.08.05.21.55.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 21:55:37 -0700 (PDT)
-Date: Tue, 6 Aug 2024 12:55:24 +0800
-From: Furong Xu <0x1207@gmail.com>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- xfr@outlook.com, rock.xu@nio.com
-Subject: Re: [PATCH net-next v1 0/5] net: stmmac: FPE via ethtool + tc
-Message-ID: <20240806125524.00005f51@gmail.com>
-In-Reply-To: <max7qd6eafatuse22ymmbfhumrctvf2lenwzhn6sxsm5ugebh6@udblqrtlblbf>
-References: <cover.1722421644.git.0x1207@gmail.com>
-	<max7qd6eafatuse22ymmbfhumrctvf2lenwzhn6sxsm5ugebh6@udblqrtlblbf>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-w64-mingw32)
+	s=arc-20240116; t=1722920351; c=relaxed/simple;
+	bh=sX5iIPSYoGHXXoo45QtTl6/7C4wdW//PkjhtUbTc2QA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PGmZ4UjLgO9/XXfTVUfp6uxItXPzLMaMfBGWs1jHMPH5dH+6Oa4SDxNaPvou5aVPGxXc2yLgA9E52jwhlIPr34pDP5ZIROZfF/oi6wru5eGYE3Y9ysS+7wNcPlKjxShmTpzAZd82C2jPuDBlJ34J9tLxFlMV416jAd15iuMmpuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=pisiyhq5; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=L4/FILXA7iZugntM3tril41FJCD37PeVSEelkErPAeo=; b=pisiyhq5awucHxEkKD4APLenrI
+	kaIfXIZI3KtuCPn8xIICbX00Qj7o3faEQTgrBibXaiQ7nfHAA9GF2JynDgNkUr2UmAaeFQ5XvtTSn
+	GOjgJosAV447IrW5mRl6RJw3YpRom6TxBAuJ2SnjBEqZ8/MCDs56mAgM6E/v+9gfAzOruqMqBDAxZ
+	kULe7l4jDdDwYnbsaGPz58OjDMlzrVOaceWQcwJ8VDoIXvYQocY/0r9UVzperNOX/ZHOyKzhirB2M
+	vgTHCkZYh8oLPJbrKwQhofC+1PfHro4uwUUXedWfZMO242SAm1rUQX+KOWY+mjGLThyUUSXMW1OjJ
+	irWvb3jQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sbCHp-00000001qT7-3dlh;
+	Tue, 06 Aug 2024 04:59:05 +0000
+Date: Tue, 6 Aug 2024 05:59:05 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, phillip@squashfs.org.uk,
+	squashfs-devel@lists.sourceforge.net,
+	syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V7] squashfs: Add symlink size check in squash_read_inode
+Message-ID: <20240806045905.GM5334@ZenIV>
+References: <20240805014037.GF5334@ZenIV>
+ <20240806025609.1193466-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806025609.1193466-1-lizhi.xu@windriver.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi Serge
+On Tue, Aug 06, 2024 at 10:56:09AM +0800, Lizhi Xu wrote:
 
-On Mon, 5 Aug 2024 20:11:10 +0300, Serge Semin <fancer.lancer@gmail.com> wrote:
-> Hi Furong
-> 
-> Thank you very much for the series. I am not that much aware of the
-> FPE and ethtool MAC Merge guts. But I had a thoughtful glance to the
-> FPE-handshaking algo and got to a realization that all the FPE-related
-> data defined in the include/linux/stmmac.h weren't actually
-> platform-data. All of that are the run-time settings utilized during
-> the handshaking algo execution.
-> 
-> So could you please move the fpe_cfg field to the stmmac_priv data and
-> move the FPE-related declarations from the include/linux/stmmac.h
-> header file to the drivers/net/ethernet/stmicro/stmmac/stmmac.h file?
-> It's better to be done in a pre-requisite (preparation) patch of your
-> series.
-This will be included in V2 of this patchset.
+> > Please, show me an unsigned int value N such that
+> > 
+> > _Bool mismatch(unsigned int N)
+> > {
+> > 	u32 v32 = N;
+> > 	loff_t v64 = N;
+> > 
+> > 	return (v32 > PAGE_SIZE) != (v64 > PAGE_SIZE);
+> > }
+> This always return 0, why are you asking this?
 
-> 
-> Another useful cleanup would be moving the entire FPE-implementation
-> from stmmac_main.c to a separate module. Thus the main
-> driver code would be simplified a bit. I guess it could be moved to
-> the stmmac_tc.c file since FPE is the TC-related feature. Right?
+Because that implies the equivalence between
 
-Thanks for your advice.
+	symlink_size = le32_to_cpu(something);
+	if (symlink_size > PAGE_SIZE)
+		return -EINVAL;
+	inode->i_size = symlink_size;
 
-A few weeks ago, I sent a patchset to refactor FPE implementation:
-https://lore.kernel.org/all/cover.1720512888.git.0x1207@gmail.com/
+and
 
-Vladimir suggested me to move the FPE over to the new standard API,
-then this patchset comes.
+	inode->i_size = le32_to_cpu(something);
+	if (inode->i_size > PAGE_SIZE)
+		return -EINVAL;
 
-I am working on V2 of this patchset, once this patchset get merged,
-a new FPE implementation will be sent to review.
+However, you seem to find some problem in the latter form, and
+your explanations of the reasons have been hard to understand.
+
+> > Again, on all architectures inode->i_size is capable of representing
+> > all values in range 0..4G-1 (for rather obvious reasons - we want the
+> > kernel to be able to work with files larger than 4Gb).  There is
+> > no wraparound of any kind on that assignment.
+
+> The type of loff_t is long long, so its values range is not 0..4G-1.
+
+6.3.1.3[1] When a value with integer type is converted to another integer type
+other than _Bool, if the value can be represented by the new type, it is unchanged.
+
+Possible values of u32 are all in range 0..4G-1.  All numbers in that range
+(and many others as well, but that is irrelevant here) can be represented by
+loff_t.  In other words, nothing overflow-related is happening.  
 
