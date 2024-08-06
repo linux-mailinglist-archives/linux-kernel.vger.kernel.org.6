@@ -1,297 +1,216 @@
-Return-Path: <linux-kernel+bounces-276807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679C394989F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:51:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54E2B9498A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D106A1F23037
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:51:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7662C1C21682
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56ECC14B965;
-	Tue,  6 Aug 2024 19:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425E0154BFE;
+	Tue,  6 Aug 2024 19:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxQxQcHB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MDl3p4rP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629BE18D64E;
-	Tue,  6 Aug 2024 19:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9D118D64E;
+	Tue,  6 Aug 2024 19:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722973903; cv=none; b=aqRdxaTtESttOQGkWj0WdXT/VKoCovcEpmsBOFDW/+ZKCwJ5kTiKWWykwon4jFh1I9C1dJ8BZN4F4kZoj7Pbtb5UgmhH5tNeJqApdxGwTc79jqkMh53PTbChyJ5SliemQZ24Q2lh3gLC2quqlFkg4XlHyskjuMSyGeQZzVdxdUI=
+	t=1722973992; cv=none; b=Jl7fXXKfFziZX7IUz2QTzLoSZO+T3h/g3G/eX9Ygk+hSOnuoy3J7E4x1E/PMStd20MLjzG65JNePWMcLfIWpYtx3Q1booBehNrBEBVTGgi7hgF+1gOYvZlqnpHxcbkeSuTgTN3pEammO4131lymZnSggjmj+ZTnFS80bux2JHwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722973903; c=relaxed/simple;
-	bh=oG07c9KX6QbomdUrRgyTsPU+1ShddmwxrrSiLeHEu6k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SkjCLfnqW7dERrmvo6PA6IpoG6HTBzNxo5inmg0dm1HFuWL48neW4FYp6Z6P+IjKI81DqswglpQHFYb9fHROErZ+PgAVbq3vjuvT8QGYy2iFPtq/zOisGlH8UbkZ6QJTyCnKQ2tWRX3AAD3bzSnCRIszdMNq6v+GQkCteuIo7lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxQxQcHB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD2B6C32786;
-	Tue,  6 Aug 2024 19:51:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722973902;
-	bh=oG07c9KX6QbomdUrRgyTsPU+1ShddmwxrrSiLeHEu6k=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=sxQxQcHBfUIJswLw4dtYboeD2hgx0UoPNNDq/poTSRp/leZtgUqM8BPlSqFZqgeGK
-	 iMaztn1ZbOExlh3MVdTYwPKFkkopqyP2xrPd/vsCKhuTw0PUdGT7UE0MoMl04q6foG
-	 6TrZEavlH25cIxXpB4YyzJn/T9GoQFuRdydeAW7mg7mcsfwhFlJ0NPRAi6fqk9e2Id
-	 40tEZIAK1aRqKlDMAkAin6YX5qGVDaDVJKzsWF0rw4EU+ZHOv7HgHhULAnybV2BPVq
-	 TB5h0BwCb6dlog+5RXyF7QOMZgPQgLYzJa0N6xHz+mKZmDnwyYg2DGbvnWvvx5AVoX
-	 lqPaRUVt8TEyQ==
-Message-ID: <6e5bfb627a91f308a8c10a343fe918d511a2a1c1.camel@kernel.org>
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-From: Jeff Layton <jlayton@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
-	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Andrew Morton
-	 <akpm@linux-foundation.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 06 Aug 2024 15:51:35 -0400
-In-Reply-To: <20240806-openfast-v2-1-42da45981811@kernel.org>
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIg
- UCWe8u6AIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1
- oJVAE37uW308UpVSD2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOT
- tmOdz4ZN2tdvNgozzuxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+
- 9eiVUNpxF4SiU4i9JDfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPc
- og7xvR5ENPH19ojRDCHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/
- WprhsIM7U9pse1f1gYy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EB
- ny71CZrOgD6kJwPVVAaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9
- KXE6fF7HzKxKuZMJOaEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTi
- CThbqsB20VrbMjlhpf8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XR
- MJBAB/UYb6FyC7S+mQZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1722973992; c=relaxed/simple;
+	bh=OQLJiIkny94KECYHJtVp+i8bZZ1zlTH93kKv+2o8Aig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PowfxNnI//xHbNT+DNX2HzHZcbhyNMQUbIBKw1qmnYuOg9t5yOD0iTs1023LrHDWy3qGiWtt5kXx2plKYreFtSpR4vFbwFrqtjhDKPGJk4CmXNQyPP459eXSAoqyScx3Ak0wbRtym6V8YAeKb8/UXeCe0xhhd6Mz+YGNmzizVtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MDl3p4rP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 476H6Pju021361;
+	Tue, 6 Aug 2024 19:52:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	70Lq7orQebnxRFnaTzLwJ4HqQh/eJyGl2eF5/RFh48I=; b=MDl3p4rPzpT7t6iw
+	4Y8C7wRhe+/61+PIUUI+i8pI9ObxhFjvGAmP1rYwJQLkkUetmVMn1+potifLH05r
+	EyMO5QC+7L5sMbDh7WZbc2d8iryifpM20un7z4ND7uCISeNb3r6Xv9GtQFW5TLUY
+	Gv33Igscf2adDMF1BGY7DPW5qBSh6B4ucntiRZknXovtol3qZ0cyGo1GB1JAv1ng
+	Zwq81MA/haqAW1P6V3/QOUl6o0r+dXy/uPk5YaI5fIgHU1gz59IEqL2tyQYICn+/
+	S5yLbNy7K+/nMba+yoZMzrCBOS34bKMk1zOmXfEYgQy4AvGA4qaZiqBoDfHcyg5m
+	iXdIAQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sbgs0jks-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 Aug 2024 19:52:46 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 476JqjB0008058
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 6 Aug 2024 19:52:45 GMT
+Received: from [10.71.113.127] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 6 Aug 2024
+ 12:52:44 -0700
+Message-ID: <b323a813-b02e-488b-86f9-06796f9bbf50@quicinc.com>
+Date: Tue, 6 Aug 2024 12:52:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v24 09/34] ASoC: Add SOC USB APIs for adding an USB
+ backend
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
+        <gregkh@linuxfoundation.org>, <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+ <20240801011730.4797-10-quic_wcheng@quicinc.com>
+ <09fde4e6-c3be-484d-a7a5-bd653dc42094@linux.intel.com>
+ <f761530c-a49b-4dd5-b01c-97d08931e0ab@quicinc.com>
+ <acf4de1d-d551-4539-8353-3c85aa3d965c@linux.intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <acf4de1d-d551-4539-8353-3c85aa3d965c@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: yYw0m-dlgfRq1_xa_E0JOK1i5VwHIAdk
+X-Proofpoint-GUID: yYw0m-dlgfRq1_xa_E0JOK1i5VwHIAdk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-06_16,2024-08-06_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 malwarescore=0 suspectscore=0 phishscore=0 mlxscore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408060140
 
-On Tue, 2024-08-06 at 10:32 -0400, Jeff Layton wrote:
-> Today, when opening a file we'll typically do a fast lookup, but if
-> O_CREAT is set, the kernel always takes the exclusive inode lock. I
-> assume this was done with the expectation that O_CREAT means that we
-> always expect to do the create, but that's often not the case. Many
-> programs set O_CREAT even in scenarios where the file already exists.
->=20
-> This patch rearranges the pathwalk-for-open code to also attempt a
-> fast_lookup in certain O_CREAT cases. If a positive dentry is found, the
-> inode_lock can be avoided altogether, and if auditing isn't enabled, it
-> can stay in rcuwalk mode for the last step_into.
->=20
-> One notable exception that is hopefully temporary: if we're doing an
-> rcuwalk and auditing is enabled, skip the lookup_fast. Legitimizing the
-> dentry in that case is more expensive than taking the i_rwsem for now.
->=20
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
-> Here's a revised patch that does a fast_lookup in the O_CREAT codepath
-> too. The main difference here is that if a positive dentry is found and
-> audit_dummy_context is true, then we keep the walk lazy for the last
-> component, which avoids having to take any locks on the parent (just
-> like with non-O_CREAT opens).
->=20
-> The testcase below runs in about 18s on v6.10 (on an 80 CPU machine).
-> With this patch, it runs in about 1s:
->=20
-> =C2=A0#define _GNU_SOURCE 1
-> =C2=A0#include <stdio.h>
-> =C2=A0#include <unistd.h>
-> =C2=A0#include <errno.h>
-> =C2=A0#include <fcntl.h>
-> =C2=A0#include <stdlib.h>
-> =C2=A0#include <sys/wait.h>
->=20
-> =C2=A0#define PROCS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 70
-> =C2=A0#define LOOPS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 500000
->=20
-> static int openloop(int tnum)
-> {
-> 	char *file;
-> 	int i, ret;
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	ret =3D asprintf(&file, "./tes=
-tfile%d", tnum);
-> 	if (ret < 0) {
-> 		printf("asprintf failed for proc %d", tnum);
-> 		return 1;
-> 	}
->=20
-> 	for (i =3D 0; i < LOOPS; ++i) {
-> 		int fd =3D open(file, O_RDWR|O_CREAT, 0644);
->=20
-> 		if (fd < 0) {
-> 			perror("open");
-> 			return 1;
-> 		}
-> 		close(fd);
-> 	}
-> 	unlink(file);
-> 	free(file);
-> 	return 0;
-> }
->=20
-> int main(int argc, char **argv) {
-> 	pid_t kids[PROCS];
-> 	int i, ret =3D 0;
->=20
-> 	for (i =3D 0; i < PROCS; ++i) {
-> 		kids[i] =3D fork();
-> 		if (kids[i] > 0)
-> 			return openloop(i);
-> 		if (kids[i] < 0)
-> 			perror("fork");
-> 	}
->=20
-> 	for (i =3D 0; i < PROCS; ++i) {
-> 		int ret2;
->=20
-> 		if (kids[i] > 0) {
-> 			wait(&ret2);
-> 			if (ret2 !=3D 0)
-> 				ret =3D ret2;
-> 		}
-> 	}
-> 	return ret;
-> }
-> ---
-> Changes in v2:
-> - drop the lockref patch since Mateusz is working on a better approach
-> - add trailing_slashes helper function
-> - add a lookup_fast_for_open helper function
-> - make lookup_fast_for_open skip the lookup if auditing is enabled
-> - if we find a positive dentry and auditing is disabled, don't unlazy
-> - Link to v1: https://lore.kernel.org/r/20240802-openfast-v1-0-a1cff2a330=
-63@kernel.org
-> ---
-> =C2=A0fs/namei.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++=
-++---------
-> =C2=A01 file changed, 53 insertions(+), 9 deletions(-)
->=20
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 1e05a0f3f04d..2d716fb114c9 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3518,6 +3518,47 @@ static struct dentry *lookup_open(struct nameidata=
- *nd, struct file *file,
-> =C2=A0	return ERR_PTR(error);
-> =C2=A0}
-> =C2=A0
-> +static inline bool trailing_slashes(struct nameidata *nd)
-> +{
-> +	return (bool)nd->last.name[nd->last.len];
-> +}
-> +
-> +static struct dentry *lookup_fast_for_open(struct nameidata *nd, int ope=
-n_flag)
-> +{
-> +	struct dentry *dentry;
-> +
-> +	if (open_flag & O_CREAT) {
-> +		/* Don't bother on an O_EXCL create */
-> +		if (open_flag & O_EXCL)
-> +			return NULL;
-> +
-> +		/*
-> +		 * FIXME: If auditing is enabled, then we'll have to unlazy to
-> +		 * use the dentry. For now, don't do this, since it shifts
-> +		 * contention from parent's i_rwsem to its d_lockref spinlock.
-> +		 * Reconsider this once dentry refcounting handles heavy
-> +		 * contention better.
-> +		 */
-> +		if ((nd->flags & LOOKUP_RCU) && !audit_dummy_context())
-> +			return NULL;
-> +	}
-> +
-> +	if (trailing_slashes(nd))
-> +		nd->flags |=3D LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
-> +
-> +	dentry =3D lookup_fast(nd);
+Hi Pierre,
 
-Self-NAK on this patch. We have to test for IS_ERR on the returned
-dentry here. I'll send a v3 along after I've retested it.
+On 8/1/2024 11:26 PM, Pierre-Louis Bossart wrote:
+>
+> On 8/1/24 23:43, Wesley Cheng wrote:
+>> Hi Pierre,
+>>
+>> On 8/1/2024 1:02 AM, Pierre-Louis Bossart wrote:
+>>>
+>>>> +/**
+>>>> + * struct snd_soc_usb_device
+>>>> + * @card_idx - sound card index associated with USB device
+>>>> + * @pcm_idx - PCM device index associated with USB device
+>>>> + * @chip_idx - USB sound chip array index
+>>>> + * @num_playback - number of playback streams
+>>>> + * @num_capture - number of capture streams
+>>> so here we have a clear separation between playback and capture...
+>> Thanks for the quick review of the series, I know that its a lot of work, so its much appreciated.
+>>
+>> I guess in the past revisions there was some discussions that highlighted on the fact that, currently, in our QC USB offload implementation we're supporting playback only, and maybe it should be considered to also expand on the capture path.  I went ahead and added some sprinkles of that throughout the SOC USB layer, since its vendor agnostic, and some vendors may potentially have that type of support.  Is it safe to assume that this is the right thinking?  If so, I will go and review some of the spots that may need to consider both playback and capture paths ONLY for soc-usb. (as you highlighted one below)  Else, I can note an assumption somewhere that soc-usb supports playback only and add the capture path when implemented.
+> I don't think it's as simple as playback only or playback+capture. If
+> there is no support for capture, then there is also no support for
+> devices with implicit feedback - which uses the capture path. So you
+> gradually start drawing a jagged boundary of what is supported and what
+> isn't.
+>
+> My preference would be to add capture in APIs where we can, with TODOs
+> added to make sure no one us under any illusion that the code is fully
+> tested. But at least some of the basic plumbing will be in place.
+>
+> Takashi should chime in on this...
+>
+>>>> + * @list - list head for SoC USB devices
+>>>> + **/
+>>>> +struct snd_soc_usb_device {
+>>>> +	int card_idx;
+>>>> +	int pcm_idx;
+>>>> +	int chip_idx;
+>>>> +	int num_playback;
+>>>> +	int num_capture;
+>>>> +	struct list_head list;
+>>>> +};
+>>>> +
+>>>> +/**
+>>>> + * struct snd_soc_usb
+>>>> + * @list - list head for SND SOC struct list
+>>>> + * @component - reference to ASoC component
+>>>> + * @num_supported_streams - number of supported concurrent sessions
+>>> ... but here we don't. And it's not clear what the working 'sessions'
+>>> means in the comment.
+>>>
+>>>> + * @connection_status_cb - callback to notify connection events
+>>>> + * @priv_data - driver data
+>>>> + **/
+>>>> +struct snd_soc_usb {
+>>>> +	struct list_head list;
+>>>> +	struct snd_soc_component *component;
+>>>> +	unsigned int num_supported_streams;
+>>>> +	int (*connection_status_cb)(struct snd_soc_usb *usb,
+>>>> +			struct snd_soc_usb_device *sdev, bool connected);
+>>>> +	void *priv_data;
+>>>> +};
+>>>> +/**
+>>>> + * snd_soc_usb_allocate_port() - allocate a SOC USB device
+>>> USB port?
+>> Noted, refer to the last comment.
+>>>> + * @component: USB DPCM backend DAI component
+>>>> + * @num_streams: number of offloading sessions supported
+>>> same comment, is this direction-specific or not?
+>> Depending on what you think about my first comment above, I'll also fix or remove the concept of direction entirely.
+>>>> + * @data: private data
+>>>> + *
+>>>> + * Allocate and initialize a SOC USB device.  This will populate parameters that
+>>>> + * are used in subsequent sequences.
+>>>> + *
+>>>> + */
+>>>> +struct snd_soc_usb *snd_soc_usb_allocate_port(struct snd_soc_component *component,
+>>>> +					      int num_streams, void *data)
+>>>> +{
+>>>> +	struct snd_soc_usb *usb;
+>>>> +
+>>>> +	usb = kzalloc(sizeof(*usb), GFP_KERNEL);
+>>>> +	if (!usb)
+>>>> +		return ERR_PTR(-ENOMEM);
+>>>> +
+>>>> +	usb->component = component;
+>>>> +	usb->priv_data = data;
+>>>> +	usb->num_supported_streams = num_streams;
+>>>> +
+>>>> +	return usb;
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(snd_soc_usb_allocate_port);
+>>>> +
+>>>> +/**
+>>>> + * snd_soc_usb_free_port() - free a SOC USB device
+>>>> + * @usb: allocated SOC USB device
+>>>> +
+>>>> + * Free and remove the SOC USB device from the available list of devices.
+>>> Now I am lost again on the device:port relationship. I am sure you've
+>>> explained this before but I forget things and the code isn't
+>>> self-explanatory.
+>>>
+>> Ok, I think the problem is that I'm interchanging the port and device terminology, because from the USB perspective its one device connected to a USB port, so its a one-to-one relation.  Removing that mindset, I think the proper term here would still be "port," because in the end SOC USB is always only servicing a port.  If this is the case, do you have any objections using this terminology in the Q6AFE as well as ASoC?  I will use consistent wording throughout SOC USB if so.
+> I am not sure USB uses 'port' at all. If by 'port' you meant 'connector'
+> it's not quite right, USB audio works across hubs.
+>
+Remember, this is technically the term used to explain the channel created for ASoC to communicate w/ USB.  If we use a term like "device," USB devices come and go, but this ASoC path won't be unallocated along with the USB device, since it does service/know about all the available USB devices connected to the system. (ie through usb hubs)
 
-> +
-> +	if (open_flag & O_CREAT) {
-> +		/* Discard negative dentries. Need inode_lock to do the create */
-> +		if (dentry && !dentry->d_inode) {
-> +			if (!(nd->flags & LOOKUP_RCU))
-> +				dput(dentry);
-> +			dentry =3D NULL;
-> +		}
-> +	}
-> +	return dentry;
-> +}
-> +
-> =C2=A0static const char *open_last_lookups(struct nameidata *nd,
-> =C2=A0		=C2=A0=C2=A0 struct file *file, const struct open_flags *op)
-> =C2=A0{
-> @@ -3535,28 +3576,31 @@ static const char *open_last_lookups(struct namei=
-data *nd,
-> =C2=A0		return handle_dots(nd, nd->last_type);
-> =C2=A0	}
-> =C2=A0
-> +	/* We _can_ be in RCU mode here */
-> +	dentry =3D lookup_fast_for_open(nd, open_flag);
-> +	if (IS_ERR(dentry))
-> +		return ERR_CAST(dentry);
-> +
-> =C2=A0	if (!(open_flag & O_CREAT)) {
-> -		if (nd->last.name[nd->last.len])
-> -			nd->flags |=3D LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
-> -		/* we _can_ be in RCU mode here */
-> -		dentry =3D lookup_fast(nd);
-> -		if (IS_ERR(dentry))
-> -			return ERR_CAST(dentry);
-> =C2=A0		if (likely(dentry))
-> =C2=A0			goto finish_lookup;
-> =C2=A0
-> =C2=A0		if (WARN_ON_ONCE(nd->flags & LOOKUP_RCU))
-> =C2=A0			return ERR_PTR(-ECHILD);
-> =C2=A0	} else {
-> -		/* create side of things */
-> =C2=A0		if (nd->flags & LOOKUP_RCU) {
-> +			/* can stay in rcuwalk if not auditing */
-> +			if (dentry && audit_dummy_context())
-> +				goto check_slashes;
-> =C2=A0			if (!try_to_unlazy(nd))
-> =C2=A0				return ERR_PTR(-ECHILD);
-> =C2=A0		}
-> =C2=A0		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
-> -		/* trailing slashes? */
-> -		if (unlikely(nd->last.name[nd->last.len]))
-> +check_slashes:
-> +		if (trailing_slashes(nd))
-> =C2=A0			return ERR_PTR(-EISDIR);
-> +		if (dentry)
-> +			goto finish_lookup;
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
->=20
-> ---
-> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-> change-id: 20240723-openfast-ac49a7b6ade2
->=20
-> Best regards,
+Thanks
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Wesley Cheng
+
 
