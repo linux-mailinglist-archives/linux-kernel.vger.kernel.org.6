@@ -1,89 +1,110 @@
-Return-Path: <linux-kernel+bounces-276785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B71C949862
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:34:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CECC949864
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 448F01F22258
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:34:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1186282F69
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D12146A72;
-	Tue,  6 Aug 2024 19:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BE0145A10;
+	Tue,  6 Aug 2024 19:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cdZFIVKK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UyTfmA3d"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5608812C499;
-	Tue,  6 Aug 2024 19:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F96823CE
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 19:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722972864; cv=none; b=KT8WHYnUbGXwIQfrY7ABYD8BDdqSP35sp3lAnY9bYLK0J1Qj9NRleQK8IDK4z4a+xY1wqaDlN24+PDsuK6aqngyhE8Ftpap2+bnU4VLfgoBjgcoDduFOPc9gTTbcOWv28kHL0jpEftcbRTMUQkB1QuysUIWPtTwoN78kuvhM/P8=
+	t=1722972907; cv=none; b=iSBLvb7CxoussPkT4OX3oaiovbVkIFzoaWsFJxnCAWwVxcVDTTTHdgpBvMlK/JNXVQg9u/fZPQ+PPNGAmn8xJFAgAHTORFsPRabnMyiaCD+UNw30cA7sKFRPD7qDORLNwPFZyNHEHSnbNcEcxgMtyNQn59at/lpQDvvI1rZ+fsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722972864; c=relaxed/simple;
-	bh=eTj0TWL2vBtXKJLs5erh4BI8TewdvBdBvOodO4DPvdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fYFwidSCHURpt46EkOu6VEdcjLjJStvySUeP71C++0aZ6XC7ln05iGkUIMDwrDgx4NbJx96bkvEmoaW+GGVEzmD1rLQi8mNPokYKZb87Hcy8ZFxyOVZ2RqWkrbmb/gcciuUIX0WZN+jRqAjJ7ju2tTK282ecVv9fP+BYuzLPbJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cdZFIVKK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31499C32786;
-	Tue,  6 Aug 2024 19:34:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722972864;
-	bh=eTj0TWL2vBtXKJLs5erh4BI8TewdvBdBvOodO4DPvdM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cdZFIVKKbK2oBPjIqsyRyOAMv+cG0btdr+BjgXqKHSZemwNZ8j6GsVHIw8HYxG1Zn
-	 ieC81gIMp/VhRc0zHOBi5kUEQC79JTqcTPn29u/lZg71DZpqMThcq3MjvoTIniB6Pj
-	 GlSd+L7UL84JgZYDBNs2PUHhpWbC4P9pfLYboUCanJi3Gnl9GgBeNmILPi3xlU0v6i
-	 XrWaSy4I79FSiLzsxXwZ9WjJRP2T7QVkcVhAGYavMZhkn+IvsenJGzSV5ydA9nE0JL
-	 0bzet8VAJgw+D6XtIGPnciACfAxzWhthRG2xmrOs4lLKSEuwpAE+Y/pNh4ThVH5zbE
-	 qmAvQ9pduI+2g==
-Date: Tue, 6 Aug 2024 12:34:23 -0700
-From: Kees Cook <kees@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Vitor Massaru Iha <vitor@massaru.org>, kunit-dev@googlegroups.com,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	brendanhiggins@google.com, davidgow@google.com,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v3] lib: Convert test_user_copy to KUnit test
-Message-ID: <202408061232.B6382B6DA0@keescook>
-References: <20200721174654.72132-1-vitor@massaru.org>
- <a41ab091-42d3-4e03-b0e8-89af354faadc@roeck-us.net>
+	s=arc-20240116; t=1722972907; c=relaxed/simple;
+	bh=V/T03AM219iZ6HHZcbsYExrncgiedcnXl3ocqsywHbE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iMuzg/7CUazSearXvINlAjiaZoEyGrWBZuFtmLDbN3W3P62jvTyqnoV/wp75cCfALIm5jDNCxj4dJeROA2+dQwbysuVZ++tLcSDMY0GdkVQphLZgHVmQMW48ntGp3setpCLgGZ03uYQrRDz4/ZwLhVRH4LmfUtQLofX/nPTb38s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UyTfmA3d; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a61386so1599602a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 12:35:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722972904; x=1723577704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sN15+GrqjqV+KY/9xz1S8u6+7LyFlTeZFis8FIS9u8o=;
+        b=UyTfmA3dUfznTbVN4I8fuiGrTM840W55JrfK6xGIJOwZ0+czMJt7qLQTdyA47/GsSn
+         DEfRoQ4gYwp23J3RxcofhUOjaHMPR74kMk5JFJFBvEQX7JVAo4RJNRBbn4WyT+GJ3Tni
+         QfcreyR4uI1d9AZvrcE2FWbzfJOr4OT4fzykUWCbbqpH+3xVAetnrn2L9lEYwGq/9JIl
+         b1Kr9SpXuFB5qTXso9hGlv7kameNaLyOcXBCGCQVjdC1yWddKnYqtHWW311Z+jPRu3QJ
+         I3JYsuYYuBJ/i82VdMfygdWEOOpupIrdJyVvny7J+zwtZoR1qlYvx9bo42Cl3srRgcy7
+         4Vbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722972904; x=1723577704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sN15+GrqjqV+KY/9xz1S8u6+7LyFlTeZFis8FIS9u8o=;
+        b=CKbHluMCvDqudMJ9WteLHCyBcBEQDRiQixucUyvleb/d2ykSYSnoQlJk5L3KwV3Ia1
+         G8BAU+tnxuWbGRrYEaanmI/Crl5nZVsLVwd75z5udQbx9JIHVVGHtnN3haQu+0HTfFBT
+         gaolYV0OzjSB8lufbUrPJtpea6p6tRL9Ibve3QdoMjpUXPcz1gX0UJv7tfxqkUBWTmXm
+         H5coZBnB3XaIdvaXDP2k7q2RaM0UA2/W1sHybPg7D6p/Jy+EDL8LSkhWXM0SUsOGLNHd
+         lOYU8w1C4iq2zCwVng59lMMcdnrT1bR2tie9nHNXFReuPfF11tV5dPBHdwnyglxAkK5y
+         WWEg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2if/LUr67RDzyMiFzEznEsiVmNJXjuUptaT7DyQKMm3gRZPIyfXHO1QQ0F0G46HAC59SMaVr4LjZG5gdKOOOZMpBzKqwv5x9R36f7
+X-Gm-Message-State: AOJu0YysSC2ag6D8zOygNVqm7LJjtkfSildUmbHCJpMKf0essQVgMgOL
+	9E9KhISVtPPr7s0iTz50XCoyBYfYMsPWDtTui+2CGIpPWFyC6uheYQ/ch3J5QJoOQWCY6DcBor5
+	VWhwT9NVsg8DhzTk/uAKdgNmzCItCpF0JZRuZh9O9WkGvGtczCHv8
+X-Google-Smtp-Source: AGHT+IHpyp/NcqymB1GpTBG45STzdu79GH+M+6dKGYHaOQJOfA4Nag5FMNkDx/i/JVFgiaUJ7hbh/cLTks64jO5PhjE=
+X-Received: by 2002:a17:907:6d25:b0:a77:e7b9:fda0 with SMTP id
+ a640c23a62f3a-a7dc4db2a36mr1003506566b.14.1722972902954; Tue, 06 Aug 2024
+ 12:35:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a41ab091-42d3-4e03-b0e8-89af354faadc@roeck-us.net>
+References: <20240806022143.3924396-1-alexs@kernel.org> <20240806022311.3924442-1-alexs@kernel.org>
+ <20240806123213.2a747a8321bdf452b3307fa9@linux-foundation.org>
+In-Reply-To: <20240806123213.2a747a8321bdf452b3307fa9@linux-foundation.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 6 Aug 2024 12:34:25 -0700
+Message-ID: <CAJD7tkakcaLVWi0viUqaW0K81VoCuGmkCHN4KQXp5+SSJLMB9g@mail.gmail.com>
+Subject: Re: [PATCH v5 00/21] mm/zsmalloc: add zpdesc memory descriptor for zswap.zpool
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: alexs@kernel.org, Vitaly Wool <vitaly.wool@konsulko.com>, 
+	Miaohe Lin <linmiaohe@huawei.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	minchan@kernel.org, willy@infradead.org, senozhatsky@chromium.org, 
+	david@redhat.com, 42.hyeyoo@gmail.com, nphamcs@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 06, 2024 at 08:48:43AM -0700, Guenter Roeck wrote:
-> Hi,
-> 
-> On Tue, Jul 21, 2020 at 02:46:54PM -0300, Vitor Massaru Iha wrote:
-> > This adds the conversion of the runtime tests of test_user_copy fuctions,
-> > from `lib/test_user_copy.c`to KUnit tests.
-> > 
-> > Signed-off-by: Vitor Massaru Iha <vitor@massaru.org>
-> 
-> These tests are failing (at least) for arm-v7, loongarch, and mips
-> qemu emulations; see below for failure logs.
+On Tue, Aug 6, 2024 at 12:32=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Tue,  6 Aug 2024 10:22:47 +0800 alexs@kernel.org wrote:
+>
+> > According to Metthew's plan, the page descriptor will be replace by a 8
+> > bytes mem_desc on destination purpose.
+> > https://lore.kernel.org/lkml/YvV1KTyzZ+Jrtj9x@casper.infradead.org/
+> >
+> > Here is a implement on zsmalloc to replace page descriptor by 'zpdesc',
+> > which is still overlay on struct page now. but it's a step move forward
+> > above destination.
+>
+> So the sole reason for this work is as a part of the mem_desc
+> conversion.  I'd like to hear from others who are to be involved in
+> that conversion, please - it this patchset something we should be
+> merging?
+>
 
-Oh my. Good thing this got added to KUnit, then -- the core of the tests
-haven't actually changed. I will see what I can uncover.
-
-> Any idea if those might be architecture problems, problems with qemu,
-> or problems with the test ?
-
-The last two look like NULL derefs (??) and the first seems like maybe a
-test problem (the failure looks kind of like the CONFIG_MMU=n cases that
-were fixed earlier).
-
--- 
-Kees Cook
+Matthew asked an important question here that needs to be answered by
+zsmalloc experts:
+https://lore.kernel.org/lkml/Zq0zucMFsOwATsAC@casper.infradead.org/
 
