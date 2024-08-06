@@ -1,291 +1,172 @@
-Return-Path: <linux-kernel+bounces-276429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3851594938C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:46:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3083C949390
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ACFF1C20A80
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:46:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 804BBB29A97
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71601D2795;
-	Tue,  6 Aug 2024 14:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B26E1D1748;
+	Tue,  6 Aug 2024 14:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bs05C8G2"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PQq9Ft3R"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B74017ADFD;
-	Tue,  6 Aug 2024 14:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AC21C37AD
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722955599; cv=none; b=dZKJpV6vnd0KQ0PGvww4NMvefB08QTx6zJzdAMqBzHT58YVGrWXPc8eb7mf4c1CM1/qhwbNbgWpgWWAEaHRjhJgfwnXAHv6/iXE7sQZ6JECUO4RxYEF0Lr2BWPpIv9bo4VhQ9a3VfedLWt0ylfAhbEItqeKDZAh1e41ErHjmIR0=
+	t=1722955631; cv=none; b=PB+jy9N3NnIqFTyT91tI2IEIlDzmnWresqpTnE+KzM7Fl2VIic0SLnbe+5AXrwRP2e7cmpGzcHxRNgiKtQFfFISqAWnvYZCxMkdjy0pIfM3xpwLkSudPRNtdQTjREEvMR0eKabfA6cZYP1bL8VZODbhMRJTIEmtY3RPPncthzL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722955599; c=relaxed/simple;
-	bh=RmBbJu1TgpSzvGALuwZTXfGVwNT54c2Lub564D6jxCc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KjBrG3E9kfd42wgcZl1PYruLX03ObZZv3gBi7l9csbwHfW/f0h6PL7whSo3VkczI4DB7iv5gHH6U0fXy6hEn1aEB9Wv7WwRHaa8K8q9aRtIhXQtBTyBVRUrdc0SNHZo8zCRxDsVD/cJizxYwaf4HjGEUkbqE93UfjfYqjZq+JRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bs05C8G2; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a728f74c23dso84029666b.1;
-        Tue, 06 Aug 2024 07:46:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722955595; x=1723560395; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lgP2wWVmL6FM6THg0mvDQ9WSWyQkjMnUEneO3058pTM=;
-        b=bs05C8G2WBBCGAJQMxjI/4v3GPyYBA4+jawx7eAGm5yDvj09FuJ3tPKt7/oLAjyOXD
-         H1TwBr2toUpBwe1EmAwK+J7kGMj6yRUFcpZAGXWvPRZKUColvIA1sp9RBsiIL6vU2WZJ
-         RibiOjQaFGe0IMPihIFcZ7DVgDgo38FAi3XafjS+xfz9V+7W/g4XZQJe3h8R/Ql3fvwU
-         hkybjBLeDVRPDsZ5w5FMRFX23R2b4NxLtFNfo5PSnKY5RHYdL29zZMFACbQWRUIaaWfz
-         tJvobVFy1cjbQ7tH9hoeykZ6yn1gn4to6MVvCnu6gkwmQmanePfPJAIXH+kRH7pSdWDe
-         DuLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722955595; x=1723560395;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lgP2wWVmL6FM6THg0mvDQ9WSWyQkjMnUEneO3058pTM=;
-        b=pIVwaFqklkJ4MrkrQjXIbaISyFVSppNJ3T9n05kGd7nqDbfZcUfgwt4RHBBNR87WKX
-         yE/rxYM1l5vgfHQS/igA/LXoD+ibzy4F/JjKymV00eSdf3usuppZNvnYobWlXzhmOToH
-         2tMIcZe0RDmFpsOWbxipkmczPkuJytuIkLu8KI2Qyov5/42pR+YbBO+Sy5O0Vk4SEgpA
-         OlGEt29+ChkHqgYkaYohbEtitQ7cnny4PuT529fhs343+wgihbVEDDnV2XmrWlHvi0nK
-         x+pCe8ClD7XS5g6pHmZpkhYUnEjmGlzJxRIbEKjxinUAuzqtzq00fY5oPem1BrpELdpP
-         aMOA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9glFv3blPNIYiDRsEMXINTz/l0XrhilTKBoG5Q9a6/FLB+9MvHGLFmLsLesS75F5w8G9ZFSq/SN1c42wioVgcdEMWqHRj/SHtCJBZtpXA8xOu1XLtfO+/KLH6JT3k48ix6Uq6l5tbhxwlAw==
-X-Gm-Message-State: AOJu0YzA0gz1LY2qZc/zLS4gxE2QK9K7jQUyKUEvMPnpxzDuv3+2j7KS
-	XZBg5YIjuN+M2HVXfFg0CCuZKCNIhaRJZW+qSv/xuytRHepAK7Le
-X-Google-Smtp-Source: AGHT+IGvn80pGS6jhKSCW5CgiBEcqEjIUKYOWYxFMZxnz85DufNBz7RztlGtiII14Nc8uiEg1hoxuA==
-X-Received: by 2002:a17:907:1c19:b0:a6f:4fc8:2666 with SMTP id a640c23a62f3a-a7dc506ce86mr1193200066b.44.1722955595066;
-        Tue, 06 Aug 2024 07:46:35 -0700 (PDT)
-Received: from f.. (cst-prg-92-246.cust.vodafone.cz. [46.135.92.246])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d42680sm553768566b.118.2024.08.06.07.46.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 07:46:34 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
-Date: Tue,  6 Aug 2024 16:46:28 +0200
-Message-ID: <20240806144628.874350-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722955631; c=relaxed/simple;
+	bh=hBTxP7X9fLwoaCHY51RwPvxvsYTKg4KPz4Shp6yAntw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
+	 MIME-Version:References; b=pBvc6JkeEmQxEKRa1i5my2wBvSOXVN1IOwYuKPOL9goSoE07BOck6eD1niKXeEbjvpSG3T1KNO/p0Gu86sImtd/75KYvdMKoiuUfrjeVuskeHNYxfwEG6Y80t2jl6fy5CKx91+ALNCkuNY/6LQRvGJWsUEHdD891lEDcuYpOhB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PQq9Ft3R; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240806144706euoutp020a5b20722a1859cdcd1f0072b4916a9a~pKwOCryNV1289112891euoutp02a
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:47:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240806144706euoutp020a5b20722a1859cdcd1f0072b4916a9a~pKwOCryNV1289112891euoutp02a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722955626;
+	bh=hBTxP7X9fLwoaCHY51RwPvxvsYTKg4KPz4Shp6yAntw=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+	b=PQq9Ft3R76DpTquvYWu7HOrxBo8itnfn4BFxGxhClyeh/VgR0PEqugYBX/8YqVbId
+	 DVsc5UOfPbr5we/fG9hcFwCaGFnDeRw2nJe587JoztqlFwUwmj/3Gic9To/ur3b7ld
+	 dgIyzOIkRlRkNUk5el+EXIEYJuSX1SyGBDYGCEhA=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240806144706eucas1p1c798de6e79363b6f34d7d38e2168d762~pKwNv45JX2637626376eucas1p1o;
+	Tue,  6 Aug 2024 14:47:06 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 84.67.09875.A6732B66; Tue,  6
+	Aug 2024 15:47:06 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240806144705eucas1p24d12a8db41fe8a47a12185bf3f6c9f56~pKwNUD9Jh1329513295eucas1p28;
+	Tue,  6 Aug 2024 14:47:05 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240806144705eusmtrp145b5f9fbd269212022e8b517314457c5~pKwNTc6ZC0030200302eusmtrp1f;
+	Tue,  6 Aug 2024 14:47:05 +0000 (GMT)
+X-AuditID: cbfec7f4-11bff70000002693-0d-66b2376a1eb5
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id C5.8E.08810.96732B66; Tue,  6
+	Aug 2024 15:47:05 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240806144705eusmtip2d2be6a70313198ceda4368bf61fae7b4~pKwNFt5xn1333213332eusmtip2s;
+	Tue,  6 Aug 2024 14:47:05 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
+	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
+	Server (TLS) id 15.0.1497.2; Tue, 6 Aug 2024 15:47:05 +0100
+Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
+	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Tue, 6 Aug
+	2024 15:47:04 +0100
+From: Daniel Gomez <da.gomez@samsung.com>
+To: Andy Polyakov <appro@cryptogams.org>
+CC: Jia He <justin.he@arm.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] crypto: arm64/poly1305 - move data to rodata section
+Thread-Topic: [PATCH v2] crypto: arm64/poly1305 - move data to rodata
+	section
+Thread-Index: AQHa5//zJkuz2mMGX0eEFIkrDDjbXrIaKESAgAAV+IA=
+Date: Tue, 6 Aug 2024 14:47:04 +0000
+Message-ID: <jpn3ryddqowd6t2yj22z7rfrjkr6may53ned672coghzaa5ims@gnx7q6yx2625>
+In-Reply-To: <ab440f8d-c947-4621-89e2-f348510896a9@cryptogams.org>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <C5B584B6C88F6C48B7BEDADF71BB203F@scsc.local>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLKsWRmVeSWpSXmKPExsWy7djPc7pZ5pvSDOY8Y7eY+6SVyeL9sh5G
+	iznnW1gsul/JWDw98YfdYtPja6wW9+/9ZLK4vGsOm0XLHVMHTo8189YwejyYuIHFY8vKm0we
+	2w6oemxa1cnmsXlJvcfnTXIB7FFcNimpOZllqUX6dglcGWuP3GQp6GavmLf1InsD4yfWLkYO
+	DgkBE4neRTxdjFwcQgIrGCVW/VjGCOF8YZSYuuQ+UBEnkPOZUeLcHFEQG6ThzdZDrBBFyxkl
+	/hyYyAThABVdWt7KDNFxmlFi714uuLmH1t9hAkmwCWhK7Du5iR3EFhHQkDj/6CAzSBGzwBRm
+	iZV/V4MVCQv4SMzY/5EFoshf4u3DLawQtpXEy4ftbCA2i4CKxLOfC8FqeAV8JW4+n8UIYnMK
+	OEk0NTSAxRkFZCUerfwFtoxZQFzi1pP5TBA/CEosmr2HGcIWk/i36yEbhK0jcfb6E0YI20Bi
+	69J9LBC2okTHsZtsEHN0JBbs/gRlW0p0P3oLNV9bYtnC18wQ9whKnJz5hAXkMQmBZ5wS+xd0
+	Qi12kbh0ookVwhaWeHV8C/sERp1ZSO6bhWTHLCQ7ZiHZMQvJjgWMrKsYxVNLi3PTU4uN8lLL
+	9YoTc4tL89L1kvNzNzECU9jpf8e/7GBc/uqj3iFGJg7GQ4wSHMxKIrxdpRvShHhTEiurUovy
+	44tKc1KLDzFKc7AoifOqpsinCgmkJ5akZqemFqQWwWSZODilGpic7/ZPP2F/4F+qf9TMTQw3
+	ZoTu85I5t/G6RHFvnoncAeFoRyHOqYI5Kuzs835Pds+e2J1i/MJD2MWz1Lsq/MtCG17t4ns6
+	rkyBB2VYGs+wNU7l7j1VuS1MKblZodnwXjhzpOIXnRPCqeHtvtOUbBVPT1zZXtK9+cKv5VN8
+	pYss/uzh9DD/Kj/l2oFAw7TD++WeFnEfDF+UeHSnTdftkFUajSqlGRdnmNwr41FOr3m1/UUe
+	w3yXve9jb+9NOtp9oPv/Gnbpx2aM6c6MFRqnZrm6KF7T/79umWhkuOpJ5SNLhRiE9hS2yz0u
+	0j6XLpwewX3njI6ZieeZgI0d1ou6XuwqOvxzw7mFMTFfm45PV2Ipzkg01GIuKk4EABDVM3DQ
+	AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOKsWRmVeSWpSXmKPExsVy+t/xe7qZ5pvSDO78V7WY+6SVyeL9sh5G
+	iznnW1gsul/JWDw98YfdYtPja6wW9+/9ZLK4vGsOm0XLHVMHTo8189YwejyYuIHFY8vKm0we
+	2w6oemxa1cnmsXlJvcfnTXIB7FF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkam
+	Svp2NimpOZllqUX6dgl6GWuP3GQp6GavmLf1InsD4yfWLkZODgkBE4k3Ww8B2VwcQgJLGSVO
+	/P/AApGQkdj45SpUkbDEn2tdbBBFHxklDl59wQ7hnGaUOH51JxOEs4JR4tfCTrAWNgFNiX0n
+	N7GD2CICGhLnHx1kBiliFpjCLLHy72omkISwgI/EjP0fWSCKfCVOr/wF1WAl8fJhOxuIzSKg
+	IvHs50KwGl6gmpvPZzGC2EIC7UwSn+ZZgNicAk4STQ0NYDWMArISj6DmMAuIS9x6Mp8J4gcB
+	iSV7zjND2KISLx//g/pNR+Ls9SeMELaBxNal+6D+V5ToOHaTDWKOjsSC3Z+gbEuJ7kdvoeZr
+	Syxb+JoZ4jZBiZMzn7BMYJSZhWT1LCTts5C0z0LSPgtJ+wJG1lWMIqmlxbnpucWGesWJucWl
+	eel6yfm5mxiBKWrbsZ+bdzDOe/VR7xAjEwfjIUYJDmYlEd6u0g1pQrwpiZVVqUX58UWlOanF
+	hxhNgWE3kVlKNDkfmCTzSuINzQxMDU3MLA1MLc2MlcR5PQs6EoUE0hNLUrNTUwtSi2D6mDg4
+	pRqYshWeHlz9Yt11/QzbQoGnexWON3yq/jYvqOZRj9pDW5blEb1lHzYsdXluYhf1voznOasQ
+	/+cfn8uibN+lvbVrfda28dNnPZb5tmsXSO7/3hIv/Wnai9by9ncq7wTsnUXMV8h08k2aGfti
+	+o3YLYfig4o3P5ug1HV/jdjLZlsfF8Vgw8jodbrxnOumREs6v51Qum/xR8FvUyvumy9qYbZp
+	tmMQ239gq++tgNNltzYyXFvp05jzMHG55teaQpsP8yWE7X5Jfmx127vvT5LNx9J7Vkr78oOl
+	39wy+qz+69UB3V/pzD7R/FMC5LOPnrYM4O9b9cyY2eN3sRbn7QtnHpx97jHL+OBUVZtpcZs3
+	T3x8SImlOCPRUIu5qDgRAGSks1LaAwAA
+X-CMS-MailID: 20240806144705eucas1p24d12a8db41fe8a47a12185bf3f6c9f56
+X-Msg-Generator: CA
+X-RootMTR: 20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381
+References: <20240806055444.528932-1-justin.he@arm.com>
+	<CGME20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381@eucas1p2.samsung.com>
+	<qd2jxjle5zf6u4vyu5x32wjhzj4t5cxrc7dbi46inhlhjxhw4s@llhfvho4l2e6>
+	<ab440f8d-c947-4621-89e2-f348510896a9@cryptogams.org>
 
-Opening a file grabs a reference on the terminal dentry in
-__legitimize_path(), then another one in do_dentry_open() and finally
-drops the initial reference in terminate_walk().
+On Tue, Aug 06, 2024 at 03:28:25PM GMT, Andy Polyakov wrote:
+> > I'm getting the following error with next-20240806
+> >=20
+> > make LLVM=3D1 ARCH=3Darm64 allyesconfig
+> > make LLVM=3D1 ARCH=3Darm64 -j$(nproc)
+> >=20
+> > ld.lld: error: vmlinux.a(arch/arm64/crypto/poly1305-core.o):(function p=
+oly1305_blocks_neon: .text+0x3d4): relocation R_AARCH64_ADR_PREL_LO21 out o=
+f range: 269166444 is not in [-1048576, 1048575]
+>=20
+> This looks like the original version of the path. At the very least the
+> R_AARCH64_ADR_PREL_LO21 relocation is generated for the adr instruction. =
+The
+> v2 has adrp and add pair for which the relocations are
+> R_AARCH64_ADR_PREL_PG_HI21 and R_AARCH64_ADD_ABS_LO12_NC.
+>=20
 
-That's 2 modifications which don't need to be there -- do_dentry_open()
-can consume the already held reference instead.
+I see, I thought v2 was already part of next-20240806 tag. Reverting v1 and
+applying v2 works for me. Thanks for clarifying.
 
-In order to facilitate some debugging a dedicated namei state flag was
-added to denote this happened.
+Tested-by: Daniel Gomez <da.gomez@samsung.com>
 
-When benchmarking on a 20-core vm using will-it-scale's open3_processes
-("Same file open/close"), the results are (ops/s):
-before:	3087010
-after:	4173977 (+35%)
-
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
-
-The flag thing is optional and can be dropped, but I think the general
-direction should be to add *more* asserts and whatnot (even if they are
-to land separately). A debug-only variant would not hurt.
-
-The entire "always consume regardless of error" ordeal stems from the
-corner case where open succeeds with a fully populated file object and
-then returns an error anyway. While odd, it does mean error handling
-does not get more complicated at least.
-
- fs/internal.h |  3 ++-
- fs/namei.c    | 30 +++++++++++++++++++++++-------
- fs/open.c     | 31 ++++++++++++++++++++++++++++---
- 3 files changed, 53 insertions(+), 11 deletions(-)
-
-diff --git a/fs/internal.h b/fs/internal.h
-index cdd73209eecb..9eeb7e03f81d 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -193,7 +193,8 @@ int chmod_common(const struct path *path, umode_t mode);
- int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
- 		int flag);
- int chown_common(const struct path *path, uid_t user, gid_t group);
--extern int vfs_open(const struct path *, struct file *);
-+int vfs_open_consume(const struct path *, struct file *);
-+int vfs_open(const struct path *, struct file *);
- 
- /*
-  * inode.c
-diff --git a/fs/namei.c b/fs/namei.c
-index 1bf081959066..20c5823d34dc 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -595,9 +595,10 @@ struct nameidata {
- 	umode_t		dir_mode;
- } __randomize_layout;
- 
--#define ND_ROOT_PRESET 1
--#define ND_ROOT_GRABBED 2
--#define ND_JUMPED 4
-+#define ND_ROOT_PRESET		0x00000001
-+#define ND_ROOT_GRABBED 	0x00000002
-+#define ND_JUMPED 		0x00000004
-+#define ND_PATH_CONSUMED 	0x00000008
- 
- static void __set_nameidata(struct nameidata *p, int dfd, struct filename *name)
- {
-@@ -697,6 +698,7 @@ static void terminate_walk(struct nameidata *nd)
- 			nd->state &= ~ND_ROOT_GRABBED;
- 		}
- 	} else {
-+		BUG_ON(nd->state & ND_PATH_CONSUMED);
- 		leave_rcu(nd);
- 	}
- 	nd->depth = 0;
-@@ -3683,6 +3685,7 @@ static const char *open_last_lookups(struct nameidata *nd,
- static int do_open(struct nameidata *nd,
- 		   struct file *file, const struct open_flags *op)
- {
-+	struct vfsmount *mnt;
- 	struct mnt_idmap *idmap;
- 	int open_flag = op->open_flag;
- 	bool do_truncate;
-@@ -3720,11 +3723,22 @@ static int do_open(struct nameidata *nd,
- 		error = mnt_want_write(nd->path.mnt);
- 		if (error)
- 			return error;
-+		/*
-+		 * We grab an additional reference here because vfs_open_consume()
-+		 * may error out and free the mount from under us, while we need
-+		 * to undo write access below.
-+		 */
-+		mnt = mntget(nd->path.mnt);
- 		do_truncate = true;
- 	}
- 	error = may_open(idmap, &nd->path, acc_mode, open_flag);
--	if (!error && !(file->f_mode & FMODE_OPENED))
--		error = vfs_open(&nd->path, file);
-+	if (!error && !(file->f_mode & FMODE_OPENED)) {
-+		BUG_ON(nd->state & ND_PATH_CONSUMED);
-+		error = vfs_open_consume(&nd->path, file);
-+		nd->state |= ND_PATH_CONSUMED;
-+		nd->path.mnt = NULL;
-+		nd->path.dentry = NULL;
-+	}
- 	if (!error)
- 		error = security_file_post_open(file, op->acc_mode);
- 	if (!error && do_truncate)
-@@ -3733,8 +3747,10 @@ static int do_open(struct nameidata *nd,
- 		WARN_ON(1);
- 		error = -EINVAL;
- 	}
--	if (do_truncate)
--		mnt_drop_write(nd->path.mnt);
-+	if (do_truncate) {
-+		mnt_drop_write(mnt);
-+		mntput(mnt);
-+	}
- 	return error;
- }
- 
-diff --git a/fs/open.c b/fs/open.c
-index 22adbef7ecc2..eb69af3676e3 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -905,6 +905,15 @@ static inline int file_get_write_access(struct file *f)
- 	return error;
- }
- 
-+/*
-+ * Populate struct file
-+ *
-+ * NOTE: it assumes f_path is populated and consumes the caller's reference.
-+ *
-+ * The caller must not path_put on it regardless of the error code -- the
-+ * routine will either clean it up on its own or rely on fput, which must
-+ * be issued anyway.
-+ */
- static int do_dentry_open(struct file *f,
- 			  int (*open)(struct inode *, struct file *))
- {
-@@ -912,7 +921,6 @@ static int do_dentry_open(struct file *f,
- 	struct inode *inode = f->f_path.dentry->d_inode;
- 	int error;
- 
--	path_get(&f->f_path);
- 	f->f_inode = inode;
- 	f->f_mapping = inode->i_mapping;
- 	f->f_wb_err = filemap_sample_wb_err(f->f_mapping);
-@@ -1045,6 +1053,7 @@ int finish_open(struct file *file, struct dentry *dentry,
- 	BUG_ON(file->f_mode & FMODE_OPENED); /* once it's opened, it's opened */
- 
- 	file->f_path.dentry = dentry;
-+	path_get(&file->f_path);
- 	return do_dentry_open(file, open);
- }
- EXPORT_SYMBOL(finish_open);
-@@ -1077,15 +1086,19 @@ char *file_path(struct file *filp, char *buf, int buflen)
- EXPORT_SYMBOL(file_path);
- 
- /**
-- * vfs_open - open the file at the given path
-+ * vfs_open_consume - open the file at the given path and consume the reference
-  * @path: path to open
-  * @file: newly allocated file with f_flag initialized
-  */
--int vfs_open(const struct path *path, struct file *file)
-+int vfs_open_consume(const struct path *path, struct file *file)
- {
- 	int ret;
- 
- 	file->f_path = *path;
-+	/*
-+	 * do_dentry_open() does the referene consuming regardless of its return
-+	 * value
-+	 */
- 	ret = do_dentry_open(file, NULL);
- 	if (!ret) {
- 		/*
-@@ -1098,6 +1111,17 @@ int vfs_open(const struct path *path, struct file *file)
- 	return ret;
- }
- 
-+/**
-+ * vfs_open - open the file at the given path
-+ * @path: path to open
-+ * @file: newly allocated file with f_flag initialized
-+ */
-+int vfs_open(const struct path *path, struct file *file)
-+{
-+	path_get(path);
-+	return vfs_open_consume(path, file);
-+}
-+
- struct file *dentry_open(const struct path *path, int flags,
- 			 const struct cred *cred)
- {
-@@ -1183,6 +1207,7 @@ struct file *kernel_file_open(const struct path *path, int flags,
- 		return f;
- 
- 	f->f_path = *path;
-+	path_get(&f->f_path);
- 	error = do_dentry_open(f, NULL);
- 	if (error) {
- 		fput(f);
--- 
-2.43.0
-
+Daniel=
 
