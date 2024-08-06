@@ -1,283 +1,371 @@
-Return-Path: <linux-kernel+bounces-276192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C879D948FBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:57:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78AD4948FC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50EB01F23277
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:57:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D98228339C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE4F1C57B2;
-	Tue,  6 Aug 2024 12:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48CA1C3F3C;
+	Tue,  6 Aug 2024 12:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LRcv+Vhl"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dXlzhkKm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1381C57AC
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC28D1C3F32
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722948958; cv=none; b=ghrwtmNZti5m5YsvAsyhCvQsj2JgFtLdUonJsc0dSldPCUPsNW4QaMoNAtJy072QkSznJPANXrhziICvwRFHjeEBqEWQtT6223/0iZnQeNquW9bRk0fUnw2FWFptBI7+l3xXkZyXeLB2M1QqZ+sLRDNFryjtI4RdAOm8zSllsMk=
+	t=1722949004; cv=none; b=iQ6Non/vEL+yFZkmU9+0zVZSQmm7CxlAd1C7MPatJtats2s+4XrjoAB2tw/eTN/afvZoSpvCCi5F8LLTjh4eji7GOM2zcelK0w8hN/Ah0TyMleLuH64Y4w0Q6t2PhFwaV9vEtEly0C4KHCHBrAUoSivhr0Xl/laHQ6ehS45wJ3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722948958; c=relaxed/simple;
-	bh=mAMLzpif1gNdzNGhe8KuRzYGSz6pOT3BstJuxee6FTQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
-	 MIME-Version:References; b=hNf1Lsat/+0akavhZsgH+acn6qpbTXGYN8lpJnW4EerCKHVgzEWB0hptdPjtkyUt2GCs+4IDUy1lDrmP/+5kUzKlbKuGQ2LRxbM3toyRubr7QL6zTeEEDSkEfI4PEECY4yRX4WLPc5IvJ3A/ItWdf8pTWhXPymjG9j9Dc2fotsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LRcv+Vhl; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240806125548euoutp023d2ece415f955bc8cda2e29c43b65c17~pJPCkanQ-1897718977euoutp02Y
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:55:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240806125548euoutp023d2ece415f955bc8cda2e29c43b65c17~pJPCkanQ-1897718977euoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1722948948;
-	bh=esju4BJcQQlBYz+5tBGpKzvVnAuDBBZmMHM2QWKITuM=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=LRcv+Vhl2IaTdj/QJ4R/EkiU8hq1humWgJuCPShFC2ZXfgEaRY+JV84mAqQ2eFDQu
-	 jLU8v7s67w1ckdP3mv5J8s+j5G0I/z2gYux3ArY4ST+/PpWsE8+DaEQj5INzZJQlUY
-	 mb30jNlyaC06vc+ndBVs3u33tAL9ZWh+yk98rRFE=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240806125547eucas1p2debf066641f75a76910c5e13cc385027~pJPCHLMub0165701657eucas1p2I;
-	Tue,  6 Aug 2024 12:55:47 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id A5.F5.09624.35D12B66; Tue,  6
-	Aug 2024 13:55:47 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381~pJPBl8O3v0169001690eucas1p2D;
-	Tue,  6 Aug 2024 12:55:47 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240806125547eusmtrp125c4d13f21cad7079d555451ace1e42c~pJPBlWbfB2935529355eusmtrp1K;
-	Tue,  6 Aug 2024 12:55:47 +0000 (GMT)
-X-AuditID: cbfec7f2-c11ff70000002598-63-66b21d5331e3
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 36.87.09010.35D12B66; Tue,  6
-	Aug 2024 13:55:47 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240806125546eusmtip213e82826fb0451768400eb0b5684c4eb~pJPBG9Xrq1165611656eusmtip2U;
-	Tue,  6 Aug 2024 12:55:46 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) with Microsoft SMTP
-	Server (TLS) id 15.0.1497.2; Tue, 6 Aug 2024 13:55:45 +0100
-Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
-	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Tue, 6 Aug
-	2024 13:55:45 +0100
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Jia He <justin.he@arm.com>
-CC: Herbert Xu <herbert@gondor.apana.org.au>, Andy Polyakov
-	<appro@cryptogams.org>, "David S. Miller" <davem@davemloft.net>, "Catalin
- Marinas" <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] crypto: arm64/poly1305 - move data to rodata section
-Thread-Topic: [PATCH v2] crypto: arm64/poly1305 - move data to rodata
-	section
-Thread-Index: AQHa5//zJkuz2mMGX0eEFIkrDDjbXg==
-Date: Tue, 6 Aug 2024 12:55:45 +0000
-Message-ID: <qd2jxjle5zf6u4vyu5x32wjhzj4t5cxrc7dbi46inhlhjxhw4s@llhfvho4l2e6>
-In-Reply-To: <20240806055444.528932-1-justin.he@arm.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <965179E67335EA4DB3E7CEA505837BDE@scsc.local>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1722949004; c=relaxed/simple;
+	bh=fLc1MYOd7G4PJElgJ09kwQDa07bqOByrdxppNzdUfT8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s07IDdIC9hIVKG0+ECHQLoHKYHqbSsKwm/cquDDBLX2utKpD22ereMkJMehHukUFchqWpnnjHBe8GYaQZr6O/gCYDJGx1MJd8Z+CMPQHe7ftzsA2Aw3o9EirVAguiByhhRbdW5ZJn1HbzBvGgUYOzSdsIw669gj3+8olALttA6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dXlzhkKm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722949001;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BbVHeghCxcbavlpwPUmyKdqFJPLDIUOPTBi2eefPzmU=;
+	b=dXlzhkKmjAEn3TCTmYHWPnYc2pqljveYLWLTlrdpyyYW1lRz+BjJvHlGrlMw2tb35kPrdp
+	yZOEdwGmN9VPJ8KE5zFonx4/rxIhKiB/gRlvoeuhlK0SnLjGcaoyU/sTlfx93aCzdE7XpF
+	vxIasItEcAQPOaXhFdVeP/LDRhmyvQc=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-237-JJocWgRuNbWZPOBq8NCLgA-1; Tue, 06 Aug 2024 08:56:40 -0400
+X-MC-Unique: JJocWgRuNbWZPOBq8NCLgA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42807a05413so5203615e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 05:56:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722948999; x=1723553799;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BbVHeghCxcbavlpwPUmyKdqFJPLDIUOPTBi2eefPzmU=;
+        b=fyZ2Pht6Jpf/qJXduofTdxqjTos83IxViHY4zzYNjp1Yhj07EEfl6EHFfRIZwV9KTr
+         E+1mxlqUCqOPeGcFaNYcu+C/aCNoMUM/zFlSYSMhSwJBNl20VwKTQcdPa6rtk1F2sUFc
+         1iz5bGPREsi7vgKCI11dhun994LQYwFz5ICRdyopIxbgiJ5S8BE/fl9U8idEobgt/e7s
+         gg7jDheBqJRTT70AxOLmG8LSh1bInBTpD1ViYn8ooDW9KAzkkmbsL+IZRRGS4qIAvAuc
+         GTQ8GJRpcYObmbx6YbkheqCSiJA3ea0sDYa7SglFwwXGAckNfjZEwS8KHmF4cEA3Xw49
+         3nnQ==
+X-Gm-Message-State: AOJu0YxbIDcvEAC44ES1r3EFhAL1cD/hRcwhWBO0zC/WZky8ihkakAYw
+	TQSq5KeOQVPVIzDVNeuhfwRZIIdxfOuR66VnhpIe6WpJ3pIusEUqtz15i6wRl4Q9+Wdu4E4dgNH
+	/4ZHlC9sMPPVSJWP76MqE/4IVPhJEky11PbsKILxbAfEiycl/vunXaoh5emUNyA==
+X-Received: by 2002:a05:600c:1910:b0:426:6f31:5f5c with SMTP id 5b1f17b1804b1-428e6b05c80mr103269825e9.17.1722948999332;
+        Tue, 06 Aug 2024 05:56:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IErghGnHAa8cyLzdPF1c+VPdsO4XjVa9+4FF2AWApKYF1zVoIVlBBFR4oazz8FbaqEwLOwzmw==
+X-Received: by 2002:a05:600c:1910:b0:426:6f31:5f5c with SMTP id 5b1f17b1804b1-428e6b05c80mr103269615e9.17.1722948998828;
+        Tue, 06 Aug 2024 05:56:38 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e9d887sm180338905e9.43.2024.08.06.05.56.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 05:56:38 -0700 (PDT)
+Message-ID: <1e6bcaf2-7c48-4be0-b101-ec2ddc4098ce@redhat.com>
+Date: Tue, 6 Aug 2024 14:56:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLKsWRmVeSWpSXmKPExsWy7djPc7rBspvSDC6e17WY+6SVyeL9sh5G
-	iznnW1gsul/JWDw98YfdYtPja6wW9+/9ZLK4vGsOm0XLHVMHTo8189YwejyYuIHFY8vKm0we
-	2w6oemxa1cnmsXlJvcfnTXIB7FFcNimpOZllqUX6dglcGStfzmEtaNWoaP/h2MDYp9TFyMkh
-	IWAi0bh8FmMXIxeHkMAKRokLy/YzQzhfGCWuL17NDlIlJPCZUWLlPDmYji/He6A6ljNKPHrw
-	B8oBKrrbvJ0dwjnNKLGn4Rsz3OA7czYygvSzCWhK7Du5CWyuiICcxIu+j2wgRcwCC5glui9e
-	YgNJCAv4SMzY/5EFoshf4u3DLaxdjBxAtp7E9HdWIGEWARWJc68eMIHYvAK+EquONoPN5xSw
-	kFh+cwWYzSggK/Fo5S+wXcwC4hK3nsxngvhBUGLR7D3MELaYxL9dD9kgbB2Js9efMELYBhJb
-	l+5jgbAVJTqO3WSDmKMjsWD3JyjbUuLg6TnMELa2xLKFr5kh7hGUODnzCQvIXxICrzglVnx8
-	ALXYRWLZqn6oxcISr45vYZ/AqDMLyX2zkOyYhWTHLCQ7ZiHZsYCRdRWjeGppcW56arFhXmq5
-	XnFibnFpXrpecn7uJkZgCjv97/inHYxzX33UO8TIxMF4iFGCg1lJhLerdEOaEG9KYmVValF+
-	fFFpTmrxIUZpDhYlcV7VFPlUIYH0xJLU7NTUgtQimCwTB6dUA5P7Y6l10Yu1m83u8suZV77Y
-	G9syvV5HYYaP7cTDB+1Yv69P3c8gOXXOWu930bdvP5gQe/1GVqSV+bWJ5xj4Zu2u9nFcl8cp
-	bXVrTfi93+2PZgbMVO3h731g7dU8f63x5RezMy5n/Zq0RNopJ5N9urwKx4TT9Us4n63fYPrg
-	9cGMu5uYnha01l9VeGO49dyLXQ9NpDyLP9+W3+M/PfnLhPePF0T0Fq5UjFbuZjE6dUnmd6ao
-	i6jdqbszbrVU6K7qiGpyX3ZkamHe7tef2gKkFm1f+XyDTtaDeVs5OY1K2VN/fxS/F/ntZkBQ
-	FdOj72zXbBOPNcicfHY14mEx//vqN2ecVRJKJIKZQx+m2Xq92LxOiaU4I9FQi7moOBEAMUZd
-	h9ADAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCKsWRmVeSWpSXmKPExsVy+t/xe7rBspvSDFZPYLOY+6SVyeL9sh5G
-	iznnW1gsul/JWDw98YfdYtPja6wW9+/9ZLK4vGsOm0XLHVMHTo8189YwejyYuIHFY8vKm0we
-	2w6oemxa1cnmsXlJvcfnTXIB7FF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkam
-	Svp2NimpOZllqUX6dgl6GStfzmEtaNWoaP/h2MDYp9TFyMkhIWAi8eV4D2MXIxeHkMBSRonT
-	vyeyQyRkJDZ+ucoKYQtL/LnWxQZiCwl8ZJRoPKoK0XCaUaJtyhIWCGcFo8SLb9MYQarYBDQl
-	9p3cBDZJREBO4kXfRzaQImaBBcwS3RcvgY0SFvCRmLH/IwtEka/E6ZW/gBo4gGw9ienvrEDC
-	LAIqEudePWACsXmBSlYdbWaEuMJcYsHCLrD5nAIWEstvrgCLMwrISjwCG8MJtEtc4taT+UwQ
-	HwhILNlznhnCFpV4+fgf1Gc6EmevP2GEsA0kti7dxwJhK0p0HLvJBjFHR2LB7k9QtqXEwdNz
-	mCFsbYllC18zQ9wmKHFy5hOWCYwys5CsnoWkfRaS9llI2mchaV/AyLqKUSS1tDg3PbfYSK84
-	Mbe4NC9dLzk/dxMjMDltO/Zzyw7Gla8+6h1iZOJgPMQowcGsJMLbVbohTYg3JbGyKrUoP76o
-	NCe1+BCjKTDsJjJLiSbnA9NjXkm8oZmBqaGJmaWBqaWZsZI4r2dBR6KQQHpiSWp2ampBahFM
-	HxMHp1QDkwsba4b2tqyJ7T8P87502xLP1J7mt88vl3vydYeD5xqWNnkllcRmyeRlzW9UO/TY
-	3Sa+PIVnx6/7XA92zvYSDHu/YNe1C1xPPhcc0jpepZ5kK3bivdG+h9pvDmUVhDhV+2xP+mo5
-	46OR6IbCGHbfWvG8mWeq3H5tEzyxUHKiu2b7n21r+IQliqQ3LIne25F48ZzxuezFdROmioRe
-	ZEwo32X3rPXSrbzTV2+sFr5hNP+0xY6Trs75nnXXtpppO5gubU2rSN8btqPtbmNKGfepf0/N
-	cnxWPcoNN7ORdtz0letp+ZrnBb3vlr+9y1rk9vRevo9mXW7xv4jtNqwfugrKJrRbde/3/flI
-	b2Pp49YVSizFGYmGWsxFxYkAIn85V9cDAAA=
-X-CMS-MailID: 20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381
-X-Msg-Generator: CA
-X-RootMTR: 20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381
-References: <20240806055444.528932-1-justin.he@arm.com>
-	<CGME20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381@eucas1p2.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: attempt to batch free swap entries for
+ zap_pte_range()
+To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
+ Kairui Song <kasong@tencent.com>, Chris Li <chrisl@kernel.org>,
+ "Huang, Ying" <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Ryan Roberts <ryan.roberts@arm.com>
+References: <20240806012409.61962-1-21cnbao@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240806012409.61962-1-21cnbao@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 06, 2024 at 05:54:44AM GMT, Jia He wrote:
-
-Hi Jia,
-
-> When objtool gains support for ARM in the future, it may encounter issues
-> disassembling the following data in the .text section:
-> > .Lzeros:
-> > .long   0,0,0,0,0,0,0,0
-> > .asciz  "Poly1305 for ARMv8, CRYPTOGAMS by \@dot-asm"
-> > .align  2
->=20
-> Move it to .rodata which is a more appropriate section for read-only data=
-.
->=20
-> There is a limit on how far the label can be from the instruction, hence
-> use "adrp" and low 12bits offset of the label to avoid the compilation
-> error.
->=20
-> Signed-off-by: Jia He <justin.he@arm.com>
+On 06.08.24 03:24, Barry Song wrote:
+> From: Barry Song <v-songbaohua@oppo.com>
+> 
+> Zhiguo reported that swap release could be a serious bottleneck
+> during process exits[1]. With mTHP, we have the opportunity to
+> batch free swaps.
+> Thanks to the work of Chris and Kairui[2], I was able to achieve
+> this optimization with minimal code changes by building on their
+> efforts.
+> If swap_count is 1, which is likely true as most anon memory are
+> private, we can free all contiguous swap slots all together.
+> 
+> Ran the below test program for measuring the bandwidth of munmap
+> using zRAM and 64KiB mTHP:
+> 
+>   #include <sys/mman.h>
+>   #include <sys/time.h>
+>   #include <stdlib.h>
+> 
+>   unsigned long long tv_to_ms(struct timeval tv)
+>   {
+>          return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+>   }
+> 
+>   main()
+>   {
+>          struct timeval tv_b, tv_e;
+>          int i;
+>   #define SIZE 1024*1024*1024
+>          void *p = mmap(NULL, SIZE, PROT_READ | PROT_WRITE,
+>                                  MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+>          if (!p) {
+>                  perror("fail to get memory");
+>                  exit(-1);
+>          }
+> 
+>          madvise(p, SIZE, MADV_HUGEPAGE);
+>          memset(p, 0x11, SIZE); /* write to get mem */
+> 
+>          madvise(p, SIZE, MADV_PAGEOUT);
+> 
+>          gettimeofday(&tv_b, NULL);
+>          munmap(p, SIZE);
+>          gettimeofday(&tv_e, NULL);
+> 
+>          printf("munmap in bandwidth: %ld bytes/ms\n",
+>                          SIZE/(tv_to_ms(tv_e) - tv_to_ms(tv_b)));
+>   }
+> 
+> The result is as below (munmap bandwidth):
+>                  mm-unstable  mm-unstable-with-patch
+>     round1       21053761      63161283
+>     round2       21053761      63161283
+>     round3       21053761      63161283
+>     round4       20648881      67108864
+>     round5       20648881      67108864
+> 
+> munmap bandwidth becomes 3X faster.
+> 
+> [1] https://lore.kernel.org/linux-mm/20240731133318.527-1-justinjiang@vivo.com/
+> [2] https://lore.kernel.org/linux-mm/20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org/
+> 
+> Cc: Kairui Song <kasong@tencent.com>
+> Cc: Chris Li <chrisl@kernel.org>
+> Cc: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Kalesh Singh <kaleshsingh@google.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
 > ---
-> v2:
->   - use adrp+offset to avoid compilation error(kernel test bot and Andy)
-> v1: https://lkml.org/lkml/2024/8/2/616
->=20
->  arch/arm64/crypto/poly1305-armv8.pl | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm64/crypto/poly1305-armv8.pl b/arch/arm64/crypto/poly=
-1305-armv8.pl
-> index cbc980fb02e3..22c9069c0650 100644
-> --- a/arch/arm64/crypto/poly1305-armv8.pl
-> +++ b/arch/arm64/crypto/poly1305-armv8.pl
-> @@ -473,7 +473,8 @@ poly1305_blocks_neon:
->  	subs	$len,$len,#64
->  	ldp	x9,x13,[$inp,#48]
->  	add	$in2,$inp,#96
-> -	adr	$zeros,.Lzeros
-> +	adrp	$zeros,.Lzeros
-> +	add	$zeros,$zeros,#:lo12:.Lzeros
-> =20
->  	lsl	$padbit,$padbit,#24
->  	add	x15,$ctx,#48
-> @@ -885,10 +886,13 @@ poly1305_blocks_neon:
->  	ret
->  .size	poly1305_blocks_neon,.-poly1305_blocks_neon
-> =20
-> +.pushsection .rodata
->  .align	5
->  .Lzeros:
->  .long	0,0,0,0,0,0,0,0
->  .asciz	"Poly1305 for ARMv8, CRYPTOGAMS by \@dot-asm"
-> +.popsection
+>   mm/swapfile.c | 61 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 61 insertions(+)
+> 
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index ea023fc25d08..ed872a186e81 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -156,6 +156,25 @@ static bool swap_is_has_cache(struct swap_info_struct *si,
+>   	return true;
+>   }
+>   
+> +static bool swap_is_last_map(struct swap_info_struct *si,
+> +			      unsigned long offset, int nr_pages,
+> +			      bool *has_cache)
+> +{
+> +	unsigned char *map = si->swap_map + offset;
+> +	unsigned char *map_end = map + nr_pages;
+> +	bool cached = false;
+> +
+> +	do {
+> +		if ((*map & ~SWAP_HAS_CACHE) != 1)
+> +			return false;
+> +		if (*map & SWAP_HAS_CACHE)
+> +			cached = true;
+> +	} while (++map < map_end);
+> +
+> +	*has_cache = cached;
+> +	return true;
+> +}
+> +
+>   /*
+>    * returns number of pages in the folio that backs the swap entry. If positive,
+>    * the folio was reclaimed. If negative, the folio was not reclaimed. If 0, no
+> @@ -1469,6 +1488,39 @@ static unsigned char __swap_entry_free(struct swap_info_struct *p,
+>   	return usage;
+>   }
+>   
+> +static bool try_batch_swap_entries_free(struct swap_info_struct *p,
+
+Why call it "p" here and not "si" like in the other code you are touching?
+
+> +		swp_entry_t entry, int nr, bool *any_only_cache)
+> +{
+> +	unsigned long offset = swp_offset(entry);
+> +	struct swap_cluster_info *ci;
+> +	bool has_cache = false;
+> +	bool can_batch;
+> +	int i;
+> +
+> +	/* cross into another cluster */
+> +	if (nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER)
+> +		return false;
+> +	ci = lock_cluster_or_swap_info(p, offset);
+> +	can_batch = swap_is_last_map(p, offset, nr, &has_cache);
+> +	if (can_batch) {
+> +		for (i = 0; i < nr; i++)
+> +			WRITE_ONCE(p->swap_map[offset + i], SWAP_HAS_CACHE);
+> +	}
+> +	unlock_cluster_or_swap_info(p, ci);
+> +
+> +	/* all swap_maps have count==1 and have no swapcache */
+> +	if (!can_batch)
+> +		goto out;
+> +	if (!has_cache) {
+> +		spin_lock(&p->lock);
+> +		swap_entry_range_free(p, entry, nr);
+> +		spin_unlock(&p->lock);
+> +	}
+> +	*any_only_cache = has_cache;
+> +out:
+> +	return can_batch;
+> +}
+> +
+>   /*
+>    * Drop the last HAS_CACHE flag of swap entries, caller have to
+>    * ensure all entries belong to the same cgroup.
+> @@ -1797,6 +1849,7 @@ void free_swap_and_cache_nr(swp_entry_t entry, int nr)
+>   	bool any_only_cache = false;
+>   	unsigned long offset;
+>   	unsigned char count;
+> +	bool batched;
+>   
+>   	if (non_swap_entry(entry))
+>   		return;
+> @@ -1808,6 +1861,13 @@ void free_swap_and_cache_nr(swp_entry_t entry, int nr)
+>   	if (WARN_ON(end_offset > si->max))
+>   		goto out;
+>   
+> +	if (nr > 1 && swap_count(data_race(si->swap_map[start_offset]) == 1)) {
+> +		batched = try_batch_swap_entries_free(si, entry, nr,
+> +						&any_only_cache);
+> +		if (batched)
+> +			goto reclaim;
+> +	}
 > +
 
-I'm getting the following error with next-20240806
+I'm wondering if we could find a way to clean this up to achieve here:
 
-make LLVM=3D1 ARCH=3Darm64 allyesconfig
-make LLVM=3D1 ARCH=3Darm64 -j$(nproc)
 
-ld.lld: error: vmlinux.a(arch/arm64/crypto/poly1305-core.o):(function poly1=
-305_blocks_neon: .text+0x3d4): relocation R_AARCH64_ADR_PREL_LO21 out of ra=
-nge: 269166444 is not in [-1048576, 1048575]
+if (WARN_ON(end_offset > si->max))
+	goto out;
 
-Full debug error with log context:
+/*
+  * First free all entries in the range.$
+  */
+any_only_cache = __free_swap_entries(si, entry, nr);
 
-...
-+ grep -q ^CONFIG_DEBUG_INFO_BTF=3Dy include/config/auto.conf
-+ strip_debug=3D1
-+ vmlinux_link .tmp_vmlinux1
-+ local output=3D.tmp_vmlinux1
-+ local objs
-+ local libs
-+ local ld
-+ local ldflags
-+ local ldlibs
-+ info LD .tmp_vmlinux1
-+ printf   %-7s %s\n LD .tmp_vmlinux1
-  LD      .tmp_vmlinux1
-+ shift
-+ is_enabled CONFIG_LTO_CLANG
-+ grep -q ^CONFIG_LTO_CLANG=3Dy include/config/auto.conf
-+ is_enabled CONFIG_X86_KERNEL_IBT
-+ grep -q ^CONFIG_X86_KERNEL_IBT=3Dy include/config/auto.conf
-+ objs=3Dvmlinux.a
-+ libs=3D./drivers/firmware/efi/libstub/lib.a
-+ is_enabled CONFIG_MODULES
-+ grep -q ^CONFIG_MODULES=3Dy include/config/auto.conf
-+ objs=3Dvmlinux.a .vmlinux.export.o
-+ objs=3Dvmlinux.a .vmlinux.export.o init/version-timestamp.o
-+ [ arm64 =3D um ]
-+ wl=3D
-+ ld=3Dld.lld
-+ ldflags=3D-EL  -maarch64elf -z norelro -z noexecstack --no-undefined -X -=
-shared -Bsymbolic -z notext  --no-apply-dynamic-relocs --fix-cortex-a53-843=
-419 --build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derror
-+ ldlibs=3D
-+ ldflags=3D-EL  -maarch64elf -z norelro -z noexecstack --no-undefined -X -=
-shared -Bsymbolic -z notext  --no-apply-dynamic-relocs --fix-cortex-a53-843=
-419 --build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derror=
- --script=3D./arch/arm64/kernel/vmlinux.lds
-+ [ -n 1 ]
-+ ldflags=3D-EL  -maarch64elf -z norelro -z noexecstack --no-undefined -X -=
-shared -Bsymbolic -z notext  --no-apply-dynamic-relocs --fix-cortex-a53-843=
-419 --build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derror=
- --script=3D./arch/arm64/kernel/vmlinux.lds --strip-debug
-+ is_enabled CONFIG_VMLINUX_MAP
-+ grep -q ^CONFIG_VMLINUX_MAP=3Dy include/config/auto.conf
-+ ldflags=3D-EL  -maarch64elf -z norelro -z noexecstack --no-undefined -X -=
-shared -Bsymbolic -z notext  --no-apply-dynamic-relocs --fix-cortex-a53-843=
-419 --build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derror=
- --script=3D./arch/arm64/kernel/vmlinux.lds --strip-debug -Map=3D.tmp_vmlin=
-ux1.map
-+ ld.lld -EL -maarch64elf -z norelro -z noexecstack --no-undefined -X -shar=
-ed -Bsymbolic -z notext --no-apply-dynamic-relocs --fix-cortex-a53-843419 -=
--build-id=3Dsha1 -X --pack-dyn-relocs=3Drelr --orphan-handling=3Derror --sc=
-ript=3D./arch/arm64/kernel/vmlinux.lds --strip-debug -Map=3D.tmp_vmlinux1.m=
-ap -o .tmp_vmlinux1 --whole-archive vmlinux.a .vmlinux.export.o init/versio=
-n-timestamp.o --no-whole-archive --start-group ./drivers/firmware/efi/libst=
-ub/lib.a --end-group .tmp_vmlinux0.kallsyms.o
-ld.lld: error: vmlinux.a(arch/arm64/crypto/poly1305-core.o):(function poly1=
-305_blocks_neon: .text+0x3d4): relocation R_AARCH64_ADR_PREL_LO21 out of ra=
-nge: 269166444 is not in [-1048576, 1048575]
-make[2]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 1
-make[1]: *** [/home/dagomez/src/linux-next/Makefile:1156: vmlinux] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
+/*
+  * Short-circuit the below loop if none of the entries had their
+  * reference drop to zero.
+  */
+if (!any_only_cache)
+	goto out;
 
-Any suggestion how to fix this?
 
-Daniel
 
->  .align	2
->  #if !defined(__KERNEL__) && !defined(_WIN64)
->  .comm	OPENSSL_armcap_P,4,4
-> --=20
-> 2.34.1
-> =
+
+Whereby move the fallback loop in that new function
+
+static bool __free_swap_entries(struct swap_info_struct *si,
+		swp_entry_t entry, int nr)
+{
+	const unsigned long start_offset = swp_offset(entry);
+	const unsigned long end_offset = start_offset + nr;
+	bool any_only_cache = false;
+
+	if (nr > 1 && swap_count(data_race(si->swap_map[start_offset]) == 1)) {
+		[... what try_batch_swap_entries_free() would do ...]
+	}
+
+fallback:
+	for (offset = start_offset; offset < end_offset; offset++) {
+		if (data_race(si->swap_map[offset])) {
+		[... what the fallback code would do ...]
+	}
+	return any_only_cache;
+}
+
+
+>   	/*
+>   	 * First free all entries in the range.
+>   	 */
+> @@ -1821,6 +1881,7 @@ void free_swap_and_cache_nr(swp_entry_t entry, int nr)
+>   		}
+>   	}
+>   
+> +reclaim:
+>   	/*
+>   	 * Short-circuit the below loop if none of the entries had their
+>   	 * reference drop to zero.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
