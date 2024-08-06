@@ -1,105 +1,100 @@
-Return-Path: <linux-kernel+bounces-275684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05586948864
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:33:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23614948868
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EA83B21CF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:33:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C531F23384
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFC51BA87B;
-	Tue,  6 Aug 2024 04:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lqF9i57V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9D11B580D;
+	Tue,  6 Aug 2024 04:35:33 +0000 (UTC)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472A1320C;
-	Tue,  6 Aug 2024 04:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37B3320C;
+	Tue,  6 Aug 2024 04:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722918799; cv=none; b=ab2tR+uO1B5YtVI09jFcKSi3auqQRrk4mrd38hwC8/67L7wcw4EXxHn0NwHAwI8u3Vb1zAn5j4e92ivHALxF2ynWiMenLZZjRBXM+V4WBwgZ2gxjk0NpkVOpViiha8CLsntvxvJmy8oIPeU50VFREdLUUKTa7/zv0jtn6J4eemU=
+	t=1722918933; cv=none; b=u3FimjBSk02DFlDsjqjYhA/B6VqSMCBZZzF8aKFN+fgAQ7wX4fNU6GScO+ziLOCX1y5P6JPqM93TXRc50mHIAObYTbQtsV8mG0Pb9eqIoxLobMEICr+me8puiW3VKocx6uWylNpfqlMz6w6eBWQKG/5HgoIJmTpe414L23+sSq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722918799; c=relaxed/simple;
-	bh=PZE4W39piTsyZVfoVSWQ2vHqB0rE9Is6oBhIkDMistg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MiWmCmFlAH7gmU+VfJ2wyWcdPLfMJJj0v9SikpE6wxC1UmmNERuxITlD8iVuI0UQo6CZQMgMstXRdOxoEQtCc5Sza2XqDZSrl5z/SQiXkNMlwQJQ6AD10zp4ErMm1sm7MsG/2sxHD9UujqWWNuLyfk0lg5YX9MyOeQNGpjNYpg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lqF9i57V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA93C32786;
-	Tue,  6 Aug 2024 04:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722918798;
-	bh=PZE4W39piTsyZVfoVSWQ2vHqB0rE9Is6oBhIkDMistg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lqF9i57V1jsYqOnohLIJnBnD8ZgukQjV8UYOGrRzsTxQfxnuGn6e8YCqOnELvAuiZ
-	 CRpJupqXWN3rDT1422ttFvKyx1sWGZwwKMYX3GgBYYpJPxVJ0icIDpE+G95AUdxJmU
-	 lPiwy3FKJw6palFUroaMLEMNhhNFShfBKWLNtF4BWrN6FuJQ/QgHh8jdiHDI5UC56D
-	 oTGWeAB4sdmttK4jc5qcJouxdDWG1BVm/2F+wMQWlkUimulOgJ44ackKXDwivxdJor
-	 mEJ5mTMLQI2zMnLaPaBMzzsGBa0s/k9By9899kPaErZyzCWRGVwUntkgHmLnjnXDjw
-	 +37XDPKLvFPYg==
-From: Kees Cook <kees@kernel.org>
-To: akpm@linux-foundation.org,
-	apais@linux.microsoft.com,
-	ardb@kernel.org,
-	bigeasy@linutronix.de,
-	brauner@kernel.org,
-	ebiederm@xmission.com,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	nagvijay@microsoft.com,
-	oleg@redhat.com,
-	tandersen@netflix.com,
-	vincent.whitchurch@axis.com,
-	viro@zeniv.linux.org.uk,
-	Kees Cook <kees@kernel.org>,
-	Roman Kisel <romank@linux.microsoft.com>
-Cc: apais@microsoft.com,
-	benhill@microsoft.com,
-	ssengar@microsoft.com,
-	sunilmut@microsoft.com,
-	vdso@hexbites.dev
-Subject: Re: [PATCH v3 0/2] binfmt_elf, coredump: Log the reason of the failed core dumps
-Date: Mon,  5 Aug 2024 21:33:12 -0700
-Message-Id: <172291878808.3394314.1409314003306906435.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240718182743.1959160-1-romank@linux.microsoft.com>
-References: <20240718182743.1959160-1-romank@linux.microsoft.com>
+	s=arc-20240116; t=1722918933; c=relaxed/simple;
+	bh=JCJScDxJ3qpay+OAKmELAf9M5ZqgFYX0wdAwue/GEcA=;
+	h=Date:From:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RJyHycuWO7umNW/XJMpdNzkCAQBfuVmlIYY5KUL5zydzAqq7lTpL//DLM9oMSr5nyuqt6Mm6NNrDHGHprMqTQGNzcpF6x/1LGvrl5SBOH7DKiwpEpTv514pschTZvTVzxUSv/mnP8sE0VtuZ51YsqY9Jqa/p3p4H0iTkj5nXULM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ff1cd07f56so1227165ad.2;
+        Mon, 05 Aug 2024 21:35:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722918931; x=1723523731; darn=vger.kernel.org;
+        h=84;0;0cto:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:from:date:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vRyU2not9hiDPWxYvlx8jQ6bCcdJZ51HXCAvHlN+TFw=;
+        b=e4mLoR7bMCE5YwBRJNtAy6OeBRbX2hKaZnPCdEjB/OWw2HBJ1OKzdEDr+zyLZcfkrx
+         NnFM+YDE5AuXTgR4giYj7R2jTvo0Jwwdd8kOyjXPTnIOjEArDCIt41Esgt/IJIm6lvmp
+         O3+LKbhCcfGd2nNcs7SckXgIAxKM+qvlbwGvfVi2G4JN6aYeLTTRPZu8u/bAzY08l7lL
+         P/azZtesCJj8Mc9NxinzyX7zdyzdIqyOPXhdO0odejur7XTjVTPfpwWmcywwzzm9KJNk
+         E08u4oluu3VJPYDy2MY8HwkKxVu120ChHCJX/rSk0KzG2Fm0kw1oqE2COJjFJP0ZWQ7V
+         Pj0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722918931; x=1723523731;
+        h=84;0;0cto:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:from:date:sender:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vRyU2not9hiDPWxYvlx8jQ6bCcdJZ51HXCAvHlN+TFw=;
+        b=YAEX+OZtLXnUJA6OhM/zpKniXQj2O5RBUDVr8t83qthOEnFQ69W7XAII+vxz15rGIL
+         dlVle72Q0iqszgzXdRzRJAn3GdvAdRvf6Y6XeMShXJVreNBxLUaJ+nagOgdH7FjRAJyP
+         /1kNfNVyAeubgfdcEBw3HjQEUIWmbZD/VWM+lChxKYJPaaszRuG2Gcbt1snmws9HTQHq
+         KyHPnVsNKN8T8Z5LJ/qVn6lpcjE+pp2a+YhMuWoXbWPyCRQO0wF0o21xRqN5FBql0nK/
+         LbTaV6q+yJpySOTT1a7NLx+qsMe1HHD5oFXhL8xAJmbWRs6s3BW8ruI6keLDwhK0C7/i
+         HCLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRE7RY1BX5+FGsL0LEaec6tjDHc1zVTRwKtV6P1ieflxv5H57gMZB83k75RIZb8VoA/lk0mEGAiqcYlLw3vBHlfRX6rYvxKbIOIw==
+X-Gm-Message-State: AOJu0Yx3K30RtMb1mFyeO/heLNQFqWEjMBzNNkyTVOCSnFXyFUsXbUul
+	OFQtYVUrzqsK6ZtVJj46BBUFABhrZOFfv/EdPP6W2IdY9jaSikglyozJYw==
+X-Google-Smtp-Source: AGHT+IHcUyUTXLJVa4/ZcG/d+S8f6gfgZAmnltLHmUMr59wcqjDF/6QexAIT2qxaf/15mAVq+hS2xw==
+X-Received: by 2002:a17:903:2345:b0:1fd:6d4c:24e9 with SMTP id d9443c01a7336-1ff5722df70mr185928805ad.10.1722918930749;
+        Mon, 05 Aug 2024 21:35:30 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f29fb0sm77425785ad.22.2024.08.05.21.35.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 21:35:30 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 5 Aug 2024 18:35:29 -1000
+From: Tejun Heo <tj@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the cgroup tree
+Message-ID: <ZrGoEcv5jkzwd3GY@slm.duckdns.org>
+References: <20240806133935.0dc8cdaf@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806133935.0dc8cdaf@canb.auug.org.au>
+84;0;0cTo: Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Thu, 18 Jul 2024 11:27:23 -0700, Roman Kisel wrote:
-> A powerful way to diagnose crashes is to analyze the core dump produced upon
-> the failure. Missing or malformed core dump files hinder these investigations.
-> I'd like to propose changes that add logging as to why the kernel would not
-> finish writing out the core dump file.
+On Tue, Aug 06, 2024 at 01:39:35PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> To help in diagnosing the user mode helper not writing out the entire coredump
-> contents, the changes also log short statistics on the dump collection. I'd
-> advocate for keeping this at the info level on these grounds.
+> The following commit is also in the workqueues tree as a different commit
+> (but the same patch):
 > 
-> [...]
+>   959ab6350add ("cgroup/cpuset: fix panic caused by partcmd_update")
 
-Applied to for-next/execve, thanks!
+Sorry about that. The wq tree was a bit messed up. Fixed.
 
-[1/2] coredump: Standartize and fix logging
-      https://git.kernel.org/kees/c/c114e9948c2b
-[2/2] binfmt_elf, coredump: Log the reason of the failed core dumps
-      https://git.kernel.org/kees/c/fb97d2eb542f
-
-Take care,
+Thanks.
 
 -- 
-Kees Cook
-
+tejun
 
