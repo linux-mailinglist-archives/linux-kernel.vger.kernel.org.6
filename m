@@ -1,195 +1,126 @@
-Return-Path: <linux-kernel+bounces-276726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 282B5949798
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:31:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B002A94979A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA24D1F22337
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:31:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C63B1F2340F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC53F7E0E8;
-	Tue,  6 Aug 2024 18:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6177BB15;
+	Tue,  6 Aug 2024 18:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ghpys+yy"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="W6ujq1Qx"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BE980045
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 18:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE87361FEA
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 18:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722969089; cv=none; b=MvWKi9kdpHwYfk1ChqZOGgBOgvyeKL4EwEu4fJ8bMFPq48BcdwDq+tszPUkqni1rFOpl+RzaG1BuVhTWTr37M7oc+z5Iw+hlzDyBC4HGyhjWwz5sPbUGm6mAhoO4nH+enNslhIk0ktHlgpsL/PQZtIgJW5uSF1JdBEXIoicA8LM=
+	t=1722969213; cv=none; b=oMA14Rr0r/0/VHfuCAJSQ2rDqsorA4KjX9+ug4C9IOQDFuS2G8ykdlyLHhNBfxo382n7lLVj35ILsM0Z1TA2PAgRL5LCnfHUjQkDraOIRfHJLkBFevNvB2loN/8CTfcc+715BMRexpKtgCDKNQG9AjMYvqa/OzxfKab1yp7eed8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722969089; c=relaxed/simple;
-	bh=gDFa+FKa5f3vrHKuqvFzBtyjVbQxMNl64L/P91eLMdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Y3ZW6WpEvLnO4x3hRNd6S+W0/YU4GQLnJm8dHPGX0F3Q27qmXSHoOxHSHlk7paBOqi+v7RxOQMX0L0aVZBwwyF+kB/FLbmFdjQLwpOjIYwTfjHLzXXBY6M69mBHUh+cHr1d6f2f8NeAK9kwaGIXb7wG2pMVR0Xzkj9eQLZiKtDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ghpys+yy; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d7591a8b-f546-4742-a24c-6fefa876cf4c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722969084;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+6CrD7owATAmOySky9OSR3ONjlv0xP6/AXzwWJC+46A=;
-	b=Ghpys+yySSdYNwrxrxpK/Qnah0Oo7xOivfxEKaJiSOsmLT1ky4kVS5SHe1nNh9JnghJUEf
-	pK/kZLmjIuuOpwUOOFtSZSponIqTQF121eUr4nB+mVvxNsPB43wo5Yvo8D68MHzNcHQgKg
-	e1Zdvi47h/0nw7v5pULsJSkHL6sQEHw=
-Date: Tue, 6 Aug 2024 11:31:16 -0700
+	s=arc-20240116; t=1722969213; c=relaxed/simple;
+	bh=zasWR6zw0PGiFl5giUz4J/s3nZol4hptXlqOgdgsDiw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rIflNZB5yJMSrS5fwtQZan1kqrxI2xDcOsQRC7p0eczq3d90P+f96ootiUpJDSjDgjym5OYUucss56U/cYPvGBfwps0+G6UYbc3CEUiJxL4HbfX/GxxwezVE/9HDgaSJN6iYQA0fqV+f8jlwhG3YYQRDRKQ6q1HUgjWjSuYqJyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=W6ujq1Qx; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f029e9c9cfso14666491fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 11:33:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1722969210; x=1723574010; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ms28GEaZtsEeVLD5znVUMcSsrF85gVuP0sxo+Yw2Xgg=;
+        b=W6ujq1QxGMweHUqBpOJfRpLQqQIpQN8CBF/k1l4vmPFOnv6pQjZoJuluna6AFjEZBX
+         jSZGHLLlqs6n+5Pftk9Y8YJLo42cFomW9bnWm4S75Kru6GeEDz3R+pIriy7X0HLsjtGn
+         y4f38xLir1iknN7vLAEEf2AqGd7GFXJmew4EM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722969210; x=1723574010;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ms28GEaZtsEeVLD5znVUMcSsrF85gVuP0sxo+Yw2Xgg=;
+        b=koRY5mnxZsxq9fEslf82dBeTZBo3/ZkBz8CY43zhyOjY0Syszb6mZ+vsNW3qcH86Ze
+         ETu+ZfyabYmn56quDs4P/zC7aPQXltifxMK8FauK5AyFEcI2BiPDjtegqwBsXGdDHBH6
+         elsvySWovz57+aXR92AGDLtFLWw/DD53/6w+IQBKM/9YTO//u0nyJvFnoLUJkrQ2/pZk
+         LuE2+YkDMDFDf1p4vxG2gLDE0i1KUOTjoYN7Qzy3ODZBOdpLr5ZX0nAzm/vgFXi4Jrjr
+         pPvJ7HmJuWUvhLRGvGAvTz+xYFuf5ZU9jJdEfV8dQbdqT9DKJnaOA9QASLGQx2U+F2zT
+         IP7w==
+X-Forwarded-Encrypted: i=1; AJvYcCX2lhaRbbNCSO6CR9OrJczK70Bi99m4DnVe8Bm/r+4OShhUzyoAZkZ7SW99fZVeSjPAuUxZy4hVe3tShgteifpk3XTlUd1iwqxNMHPo
+X-Gm-Message-State: AOJu0YxOO2Q+ARiiNnKXOVgeR6aNFGXu14EFI3rnXt1nFbt0CRUZI6ME
+	iOW6g5Aw3hsewkHn2oFuO34cE6AKnGIObhH3Vu7Jn2m5GW9VnGs0vscAq7SRvLgMHMT7D9Yj0Ou
+	WQmTTLQ==
+X-Google-Smtp-Source: AGHT+IH+WCgdX00lXUgxxo7IvkYleLtORi0TbbHRcc76T1ePB9wP3srFO9mHviSEpiDY5IfmI1IyYw==
+X-Received: by 2002:a2e:9845:0:b0:2ef:20ae:d117 with SMTP id 38308e7fff4ca-2f15aa88cc7mr132046291fa.10.1722969209529;
+        Tue, 06 Aug 2024 11:33:29 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f15e25092bsm15363361fa.77.2024.08.06.11.33.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 11:33:28 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ef248ab2aeso15798311fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 11:33:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUd9ICsSEGJeOGeXaBdIahSXe8+X6r1nBJGFJI5heDlHqmFzw1R1y5KV2qZV0SJPSjQ2yB2jRS2ocEQnqH3qREK3BZBZIowbKKjxrd2
+X-Received: by 2002:a2e:9cc9:0:b0:2ef:1c0f:a0f3 with SMTP id
+ 38308e7fff4ca-2f15aa88b76mr128814961fa.6.1722969208425; Tue, 06 Aug 2024
+ 11:33:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [syzbot] [bpf?] BUG: spinlock recursion in bpf_lru_push_free
-Content-Language: en-GB
-To: syzbot <syzbot+d6fb861ed047a275747a@syzkaller.appspotmail.com>,
- andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
- john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
- linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org,
- sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000b3e63e061eed3f6b@google.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <000000000000b3e63e061eed3f6b@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
+In-Reply-To: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Aug 2024 11:33:12 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh_P7UR6RiYmgBDQ4L-kgmmLMziGarLsx_0bUn5vYTJUw@mail.gmail.com>
+Message-ID: <CAHk-=wh_P7UR6RiYmgBDQ4L-kgmmLMziGarLsx_0bUn5vYTJUw@mail.gmail.com>
+Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
+To: Brian Mak <makb@juniper.net>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 6 Aug 2024 at 11:16, Brian Mak <makb@juniper.net> wrote:
+>
+> @@ -1253,5 +1266,8 @@ static bool dump_vma_snapshot(struct coredump_params *cprm)
+>                 cprm->vma_data_size += m->dump_size;
+>         }
+>
+> +       sort(cprm->vma_meta, cprm->vma_count, sizeof(*cprm->vma_meta),
+> +               cmp_vma_size, NULL);
+> +
+>         return true;
+>  }
 
-On 8/5/24 3:36 AM, syzbot wrote:
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    3d650ab5e7d9 selftests/bpf: Fix a btf_dump selftest failure
+Hmm. Realistically we only dump core in ELF, and the order of the
+segments shouldn't matter.
 
-The failure is not due to this patch.
+But I wonder if we should do this in the ->core_dump() function
+itself, in case it would have mattered for other dump formats?
 
-> git tree:       bpf-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13a4c1a1980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5efb917b1462a973
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d6fb861ed047a275747a
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/630e210de8d9/disk-3d650ab5.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/3576ca35748a/vmlinux-3d650ab5.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/5b33f099abfa/bzImage-3d650ab5.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+d6fb861ed047a275747a@syzkaller.appspotmail.com
->
-> BUG: spinlock recursion on CPU#1, syz.4.1173/11483
+IOW, instead of being at the bottom of dump_vma_snapshot(), maybe the
+sorting should be at the top of elf_core_dump()?
 
-Actually this is a known issue and has been reported a few times in the past.
+And yes, in practice I doubt we'll ever have other dump formats, and
+no, a.out isn't doing some miraculous comeback either.
 
->   lock: 0xffff888046908300, .magic: dead4ead, .owner: syz.4.1173/11483, .owner_cpu: 1
-> CPU: 1 UID: 0 PID: 11483 Comm: syz.4.1173 Not tainted 6.10.0-syzkaller-12666-g3d650ab5e7d9 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-> Call Trace:
->   <TASK>
->   __dump_stack lib/dump_stack.c:93 [inline]
->   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
->   debug_spin_lock_before kernel/locking/spinlock_debug.c:87 [inline]
->   do_raw_spin_lock+0x227/0x370 kernel/locking/spinlock_debug.c:115
->   __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:111 [inline]
->   _raw_spin_lock_irqsave+0xe1/0x120 kernel/locking/spinlock.c:162
->   bpf_lru_list_push_free kernel/bpf/bpf_lru_list.c:318 [inline]
->   bpf_common_lru_push_free kernel/bpf/bpf_lru_list.c:538 [inline]
->   bpf_lru_push_free+0x1a7/0xb60 kernel/bpf/bpf_lru_list.c:561
->   htab_lru_map_delete_elem+0x613/0x700 kernel/bpf/hashtab.c:1475
->   bpf_prog_6f5f05285f674219+0x43/0x4c
->   bpf_dispatcher_nop_func include/linux/bpf.h:1252 [inline]
->   __bpf_prog_run include/linux/filter.h:691 [inline]
->   bpf_prog_run include/linux/filter.h:698 [inline]
->   __bpf_trace_run kernel/trace/bpf_trace.c:2406 [inline]
->   bpf_trace_run2+0x2ec/0x540 kernel/trace/bpf_trace.c:2447
->   trace_contention_begin+0x117/0x140 include/trace/events/lock.h:95
+But I bet you didn't test elf_fdpic_core_dump() even if I bet it (a)
+works and (b) nobody cares.
 
-The tracepoint trace_contention_begin is the reason for spinlock recursion.
-The trace_contention_begin is in
-   queued_spin_lock_slowpath(...) {
-     ...
-     trace_contention_begin(lock, LCB_F_SPIN);
-     ...
-   }
+So moving it to the ELF side might be conceptually the right thing to do?
 
-And the bpf prog attached to trace_contention_begin() will go though spin_lock path again
-and this may cause dead lock.
+(Or is there some reason it needs to be done at snapshot time that I
+just didn't fully appreciate?)
 
-
->   __pv_queued_spin_lock_slowpath+0x114/0xdc0 kernel/locking/qspinlock.c:402
->   pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:584 [inline]
->   queued_spin_lock_slowpath+0x42/0x50 arch/x86/include/asm/qspinlock.h:51
->   queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
->   lockdep_lock+0x1b0/0x2b0 kernel/locking/lockdep.c:143
->   graph_lock kernel/locking/lockdep.c:169 [inline]
->   lookup_chain_cache_add kernel/locking/lockdep.c:3803 [inline]
->   validate_chain+0x21d/0x5900 kernel/locking/lockdep.c:3836
->   __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
->   lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
->   __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
->   _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
->   htab_lock_bucket+0x1a4/0x370 kernel/bpf/hashtab.c:167
->   htab_lru_map_delete_node+0x161/0x840 kernel/bpf/hashtab.c:817
->   __bpf_lru_list_shrink_inactive kernel/bpf/bpf_lru_list.c:225 [inline]
->   __bpf_lru_list_shrink+0x156/0x9d0 kernel/bpf/bpf_lru_list.c:271
->   bpf_lru_list_pop_free_to_local kernel/bpf/bpf_lru_list.c:345 [inline]
->   bpf_common_lru_pop_free kernel/bpf/bpf_lru_list.c:452 [inline]
->   bpf_lru_pop_free+0xd84/0x1a70 kernel/bpf/bpf_lru_list.c:504
->   prealloc_lru_pop kernel/bpf/hashtab.c:308 [inline]
->   __htab_lru_percpu_map_update_elem+0x242/0x9b0 kernel/bpf/hashtab.c:1355
->   bpf_percpu_hash_update+0x11a/0x200 kernel/bpf/hashtab.c:2421
->   bpf_map_update_value+0x347/0x540 kernel/bpf/syscall.c:181
->   generic_map_update_batch+0x60d/0x900 kernel/bpf/syscall.c:1889
->   bpf_map_do_batch+0x3e0/0x690 kernel/bpf/syscall.c:5218
->   __sys_bpf+0x377/0x810
->   __do_sys_bpf kernel/bpf/syscall.c:5817 [inline]
->   __se_sys_bpf kernel/bpf/syscall.c:5815 [inline]
->   __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5815
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fed319779f9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fed327ee048 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-> RAX: ffffffffffffffda RBX: 00007fed31b05f80 RCX: 00007fed319779f9
-> RDX: 0000000000000038 RSI: 0000000020000580 RDI: 000000000000001a
-> RBP: 00007fed319e58ee R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 000000000000000b R14: 00007fed31b05f80 R15: 00007ffcf9a1d7f8
->   </TASK>
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+           Linus
 
