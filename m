@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-276845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF999949918
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:30:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29557949919
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9843C283C42
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:30:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C803A1F21227
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F3916C6AB;
-	Tue,  6 Aug 2024 20:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD49172BBC;
+	Tue,  6 Aug 2024 20:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qAvUPekL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJ3Gu0zp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7AD166F0C
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CC716EB53;
+	Tue,  6 Aug 2024 20:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722976133; cv=none; b=QeNSp/Bq0eiHJyUnKPn46Ih3/PV9ofUrEJJHPpvZl/vxsU91B3xlK9uxn6ZLgT2x1fBAeoidVwGb9dMxLhz5TdkBE0tDq1I/NgGhIm28qRpnpXGuy4KwdNvdDHIVd+rh/WtL/83kHb5C37ZY6cZ0rvrz2/HoJkM0UiYxNhbkfzw=
+	t=1722976139; cv=none; b=scToRGERGnQwWXhJIZ2YBTIkOKZwlXTvz0q5n/Rc8uboP6TgOICtRYpGRuGm2mv1vGRQ46624wy5+FTiTa7pXPAHzcHjm4/vixSPxb6/pvJuZSxBJ6WE60W92QaTAceP6mT/PQdwnwimyz0hTTuy8yNgiRH51SPcjcUPEv4L7F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722976133; c=relaxed/simple;
-	bh=eRU6lTfWk+3oWmmHeJiEsOh57khrS6jc6a+WsnE6j+k=;
+	s=arc-20240116; t=1722976139; c=relaxed/simple;
+	bh=+L1mds7XdZNr2tLDXx7FUINDaM3YND1xEBDwsLW6GKA=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=iOImqSYywaPWbPdyZy6l/fztg9ofKUjEEiRWWLWMS46jMYAotA8JFSUK01da1Xc1FET9o5BAVVgVXDhEwFOQ1+OCxo9rXFJAfyurlwGjZay7ugxPtVW6N1WdQBdgBomLXHazsKvFaYrXo+zxTh2SaSs54aYKGPXAZ+G2I+xr7Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qAvUPekL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0436FC4AF0F;
-	Tue,  6 Aug 2024 20:28:53 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=p+7TVYJKnUlv/VHbNMPYPRFvogYhLmQjVtNT4OTiQ75jUTRKiUDjIApD4/WopU9ktqaH89Tc0FrjWdwsxIe4chL9JjKx0AhYi70yiSp9TiXe9+939otL7FsX2JRPiSuNdSg6LXXbzLroa4cvbu8ylb1e6eIOYAyy+hwQMymHlx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJ3Gu0zp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECA41C32786;
+	Tue,  6 Aug 2024 20:28:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722976133;
-	bh=eRU6lTfWk+3oWmmHeJiEsOh57khrS6jc6a+WsnE6j+k=;
+	s=k20201202; t=1722976139;
+	bh=+L1mds7XdZNr2tLDXx7FUINDaM3YND1xEBDwsLW6GKA=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=qAvUPekLTTIn7fP1Kyzy5xefgZ16MXnoQWO8hQ7C5wjaQsrs2MuMFdtNsMLtWDyX+
-	 fw7leww2LaDgvRO/ApHURhKUVIIBOIB+vcV4E/MQV/u0fW0Xyjp7sEdIeabRifXKCu
-	 qu4DsGtFPuNYb5wYfy5EIpHNt2a+2/pzJGYrzTzsePd8vYjM9F5+SWK8t3sl4XhFRl
-	 O2kKx4SAHtn7KY/96YOBfONoNOx35NXHvLrGrXGQUyA4UAgyWZdDesClbrclmUbY5W
-	 xWKjFyJJjdPvcNkJZ4Mn+S8/1S/JktZN90a14kpL6bPpvBxEMPHOpju2odYbIUjpks
-	 4RLUImDpnYv+g==
+	b=eJ3Gu0zpS8fS/uM5YLvs+JxVtosZFExcaB9DjfT/JAiZk3HVAtXYV03oWCpIrbVWt
+	 Du3fTltzirTeiPRYZSG6X5ZSrtUB4D0p7Mh/6UoJHLM0UdG9WV89BzmmNocL8f/dbd
+	 2x+BguWfDXKrSxlZJoaL2QSYThIt43WHHqdaiwsafvvCaXGbG03B+q6B0gwbyC+PuE
+	 jmfHMhoJEu9/r7HopPf2zHKQnO0ACeobrhK41ZJvboVthM1zDiIzJeDjgWjIJ9jVO7
+	 NHhZxpIW3E67a5/N2GX7+N2YuASj2RNCATBLwsijz/2ykNBMgk92s4PA5QP3bkkROF
+	 IyeD9nX24Bw8A==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id F3DC63824F34;
-	Tue,  6 Aug 2024 20:28:52 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB60239EF94A;
+	Tue,  6 Aug 2024 20:28:58 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,40 +51,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH -fixes v2] riscv: Re-introduce global icache flush in
- patch_text_XXX()
-From: patchwork-bot+linux-riscv@kernel.org
+Subject: Re: [PATCH 1/2] Bluetooth: btusb: Add new VID/PID 0489/e139 for MT7925
+From: patchwork-bot+bluetooth@kernel.org
 Message-Id: 
- <172297613179.1692635.6654179302710248006.git-patchwork-notify@kernel.org>
-Date: Tue, 06 Aug 2024 20:28:51 +0000
-References: <20240801191404.55181-1-alexghiti@rivosinc.com>
-In-Reply-To: <20240801191404.55181-1-alexghiti@rivosinc.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, andy.chiu@sifive.com,
- linux-kernel@vger.kernel.org, samuel.holland@sifive.com
+ <172297613766.1692635.8217339619604849343.git-patchwork-notify@kernel.org>
+Date: Tue, 06 Aug 2024 20:28:57 +0000
+References: <20240715061508.14077-1-jiande.lu@mediatek.com>
+In-Reply-To: <20240715061508.14077-1-jiande.lu@mediatek.com>
+To: Jiande Lu <jiande.lu@mediatek.com>
+Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
+ sean.wang@mediatek.com, chris.lu@mediatek.com, deren.Wu@mediatek.com,
+ aaron.hou@mediatek.com, steve.lee@mediatek.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
 
 Hello:
 
-This patch was applied to riscv/linux.git (fixes)
-by Palmer Dabbelt <palmer@rivosinc.com>:
+This series was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-On Thu,  1 Aug 2024 21:14:04 +0200 you wrote:
-> commit edf2d546bfd6 ("riscv: patch: Flush the icache right after
-> patching to avoid illegal insns") mistakenly removed the global icache
-> flush in patch_text_nosync() and patch_text_set_nosync() functions, so
-> reintroduce them.
+On Mon, 15 Jul 2024 14:15:07 +0800 you wrote:
+> Add VID 0489 & PID e139 for Mediatek MT7925 USB Bluetooth chip.
+> The information in /sys/kernel/debug/usb/devices about the Bluetooth
+> device is listed as the below
 > 
-> Fixes: edf2d546bfd6 ("riscv: patch: Flush the icache right after patching to avoid illegal insns")
-> Reported-by: Samuel Holland <samuel.holland@sifive.com>
-> Closes: https://lore.kernel.org/linux-riscv/a28ddc26-d77a-470a-a33f-88144f717e86@sifive.com/
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> T:  Bus=07 Lev=01 Prnt=01 Port=10 Cnt=02 Dev#=  2 Spd=480  MxCh= 0
+> D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+> P:  Vendor=0489 ProdID=e139 Rev= 1.00
+> S:  Manufacturer=MediaTek Inc.
+> S:  Product=Wireless_Device
+> S:  SerialNumber=000000000
+> C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+> A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+> E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+> E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+> I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+> E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+> E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+> I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+> E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
+> E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
 > 
 > [...]
 
 Here is the summary with links:
-  - [-fixes,v2] riscv: Re-introduce global icache flush in patch_text_XXX()
-    https://git.kernel.org/riscv/c/ee9a68394b4b
+  - [1/2] Bluetooth: btusb: Add new VID/PID 0489/e139 for MT7925
+    (no matching commit)
+  - [2/2] Bluetooth: btusb: Add new VID/PID 13d3/3604 for MT7925
+    https://git.kernel.org/bluetooth/bluetooth-next/c/bd0b4dae74b0
 
 You are awesome, thank you!
 -- 
