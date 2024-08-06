@@ -1,156 +1,80 @@
-Return-Path: <linux-kernel+bounces-276009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11E3948D2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:50:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DAD9948D32
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C2D31F24DC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:50:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD07AB27046
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B1C1C0DE8;
-	Tue,  6 Aug 2024 10:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HrVHiATj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A381C0DCB;
+	Tue,  6 Aug 2024 10:51:31 +0000 (UTC)
+Received: from mail115-95.sinamail.sina.com.cn (mail115-95.sinamail.sina.com.cn [218.30.115.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF08B1C0DC9;
-	Tue,  6 Aug 2024 10:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2181BF321
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 10:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722941386; cv=none; b=B2Nnn4z81ZVtMH1IqWC0985xJuJTZEOUuD+Gl8HsHImLN2wigVRhr85837woVInzv7h90yk16kZwvarQa7rjTrnTur1aCRcl2SNfngqUOeY9ivXcmwNLZr17HeCB7Udw+/JZLfuF0gjA5aBQAOs5ly6WynrDaib6O8cKNLKzSjY=
+	t=1722941491; cv=none; b=ohmNTmV9cQddi4LIqQoZBsV46XmcWnH4nQcIgLE1Aoub4jVzxD/G+Vp11SkZjWT/NfXFNBLatH3FujTYp2E7+PjpbIN5BorVJfTxr9nFDfjtbOVXHKAyin73t0iYXmQqXLhA30QuZ2BjLns/OQfEUWv8ryjnLb9fMjAMJ5Pu5lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722941386; c=relaxed/simple;
-	bh=PbsfPVn4g/JoIo4ioWUql/ZrNIkCK1TZ+msVS9B+B24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FoJlMYbtrVSQWj9FAU9CWg49mT50n3DeeLymOJiQmiejoTIJOE1ugtubwHR6FCYN7a8mUUw2pIGLetMww8izQtgw5EpvfTcnPdX+WqRz/nvM9ZdTM1uAnHWQIwTFBZns2xalc5M847Ourao//cYLyfP572k5bG+jjaSU2FInfSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HrVHiATj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC738C32786;
-	Tue,  6 Aug 2024 10:49:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722941386;
-	bh=PbsfPVn4g/JoIo4ioWUql/ZrNIkCK1TZ+msVS9B+B24=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HrVHiATjtOMHhnPshKkk8Jvkecu6E1LUnEvIaiQpT1i6q2BYquCpDsDKXrcqFUgg4
-	 +l16ynRMYJV6iRaQkcyedOQ+dDTeduCS0MSY9DujQOiAWpNOULtLKBjcKimrRYd7n9
-	 eSEHgW7pDXeQcGltzUmeuxqQGSlTfcqNh2d9rj6ZTXchUZFU2hxJHHnZXHXo2QMorD
-	 q74Mnowh0qJP/eMicRQ9aRyh/L86VFoplaEu3wDRXgUaeRDWbook0FhdVAUNQPhw8m
-	 /LOkGiKW9jfRzWQjCI1SR/qg2HdHl0Wbf0i1XUnw2tLeuuSuiSmto6TmCIO566ZVUm
-	 6VW7u7rmtxKNQ==
-Date: Tue, 6 Aug 2024 11:49:41 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wen Gu <guwen@linux.alibaba.com>
-Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
-	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net/smc: introduce statistics for ringbufs
- usage of net namespace
-Message-ID: <20240806104941.GT2636630@kernel.org>
-References: <20240805090551.80786-1-guwen@linux.alibaba.com>
- <20240805090551.80786-3-guwen@linux.alibaba.com>
+	s=arc-20240116; t=1722941491; c=relaxed/simple;
+	bh=L6P0WM96BT2R/yUyebIyUQxfqH2zTRgeQYUDZbf/FVw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FM/FT6k0pbcw65XxxVmcxskC8UbPDLrlAiSCA41AO0wT1oNPVXrIFEvvT9btiZnu5Ywa78TnwBYcFy4jGkPF1psy6jigKut56tjpes4Pqcw/FOFYxdDvKL5muhLEZEKHG7z6awLQQiLIMEZYhcfF8QFQq33AoXCPBIVaTn+8neM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.70.152])
+	by sina.com (10.185.250.23) with ESMTP
+	id 66B2002200005C93; Tue, 6 Aug 2024 18:51:17 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6483658913460
+X-SMAIL-UIID: 9C35B8A56B804044962FFA33CC185E40-20240806-185117-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+5a1281566cc25c9881e0@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [can?] WARNING: refcount bug in j1939_xtp_rx_cts
+Date: Tue,  6 Aug 2024 18:51:06 +0800
+Message-Id: <20240806105106.2667-1-hdanton@sina.com>
+In-Reply-To: <000000000000b5bde0061ef65fc8@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240805090551.80786-3-guwen@linux.alibaba.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 05, 2024 at 05:05:51PM +0800, Wen Gu wrote:
-> The buffer size histograms in smc_stats, namely rx/tx_rmbsize, record
-> the sizes of ringbufs for all connections that have ever appeared in
-> the net namespace. They are incremental and we cannot know the actual
-> ringbufs usage from these. So here introduces statistics for current
-> ringbufs usage of existing smc connections in the net namespace into
-> smc_stats, it will be incremented when new connection uses a ringbuf
-> and decremented when the ringbuf is unused.
+On Mon, 05 Aug 2024 14:29:36 -0700
+> syzbot found the following issue on:
 > 
-> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
+> HEAD commit:    743ff02152bc ethtool: Don't check for NULL info in prepare..
+> git tree:       net-next
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=162bd19d980000
 
-...
+#syz test net-next  743ff02152bc
 
-> diff --git a/net/smc/smc_stats.h b/net/smc/smc_stats.h
-
-...
-
-> @@ -135,38 +137,45 @@ do { \
->  } \
->  while (0)
->  
-> -#define SMC_STAT_RMB_SIZE_SUB(_smc_stats, _tech, k, _len) \
-> +#define SMC_STAT_RMB_SIZE_SUB(_smc_stats, _tech, k, _is_add, _len) \
->  do { \
-> +	typeof(_is_add) is_a = (_is_add); \
->  	typeof(_len) _l = (_len); \
->  	typeof(_tech) t = (_tech); \
->  	int _pos; \
->  	int m = SMC_BUF_MAX - 1; \
->  	if (_l <= 0) \
->  		break; \
-> -	_pos = fls((_l - 1) >> 13); \
-> -	_pos = (_pos <= m) ? _pos : m; \
-> -	this_cpu_inc((*(_smc_stats)).smc[t].k ## _rmbsize.buf[_pos]); \
-> +	if (is_a) { \
-> +		_pos = fls((_l - 1) >> 13); \
-> +		_pos = (_pos <= m) ? _pos : m; \
-> +		this_cpu_inc((*(_smc_stats)).smc[t].k ## _rmbsize.buf[_pos]); \
-> +		this_cpu_add((*(_smc_stats)).smc[t].k ## _rmbuse, _l); \
-
-Nit:
-
-I see that due to the construction of the caller, SMC_STAT_RMB_SIZE(),
-it will not occur. But checkpatch warns of possible side effects
-from reuse of _smc_stats.
-
-As great care seems to have been taken in these macros to avoid such
-problems, even if theoretical, perhaps it is worth doing so here too.
-
-f.e. A macro-local variable could store (*(_smc_stats)).smc[t] which
-     I think would both resolve the problem mentioned, and make some
-     lines shorter (and maybe easier to read).
-
-> +	} else { \
-> +		this_cpu_sub((*(_smc_stats)).smc[t].k ## _rmbuse, _l); \
-> +	} \
->  } \
->  while (0)
->  
->  #define SMC_STAT_RMB_SUB(_smc_stats, type, t, key) \
->  	this_cpu_inc((*(_smc_stats)).smc[t].rmb ## _ ## key.type ## _cnt)
->  
-> -#define SMC_STAT_RMB_SIZE(_smc, _is_smcd, _is_rx, _len) \
-> +#define SMC_STAT_RMB_SIZE(_smc, _is_smcd, _is_rx, _is_add, _len) \
->  do { \
->  	struct net *_net = sock_net(&(_smc)->sk); \
->  	struct smc_stats __percpu *_smc_stats = _net->smc.smc_stats; \
-> +	typeof(_is_add) is_add = (_is_add); \
->  	typeof(_is_smcd) is_d = (_is_smcd); \
->  	typeof(_is_rx) is_r = (_is_rx); \
->  	typeof(_len) l = (_len); \
->  	if ((is_d) && (is_r)) \
-> -		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_D, rx, l); \
-> +		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_D, rx, is_add, l); \
->  	if ((is_d) && !(is_r)) \
-> -		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_D, tx, l); \
-> +		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_D, tx, is_add, l); \
->  	if (!(is_d) && (is_r)) \
-> -		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_R, rx, l); \
-> +		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_R, rx, is_add, l); \
->  	if (!(is_d) && !(is_r)) \
-> -		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_R, tx, l); \
-> +		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_R, tx, is_add, l); \
->  } \
->  while (0)
->  
-> -- 
-> 2.32.0.3.g01195cf9f
-> 
-> 
+--- x/net/can/j1939/transport.c
++++ y/net/can/j1939/transport.c
+@@ -1505,6 +1505,7 @@ static struct j1939_session *j1939_sessi
+ 	session->state = J1939_SESSION_NEW;
+ 
+ 	skb_queue_head_init(&session->skb_queue);
++	skb_get(skb);
+ 	skb_queue_tail(&session->skb_queue, skb);
+ 
+ 	skcb = j1939_skb_to_cb(skb);
+--
 
