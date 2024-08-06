@@ -1,134 +1,197 @@
-Return-Path: <linux-kernel+bounces-276567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C6C9495BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:41:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21EBF94955E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 494BAB25D82
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:14:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 447C01C2156B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46183B1AC;
-	Tue,  6 Aug 2024 16:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F5E40875;
+	Tue,  6 Aug 2024 16:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fDxCyeNw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/fBeprb"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48083184D
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 16:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46E23BB50;
+	Tue,  6 Aug 2024 16:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722960863; cv=none; b=cPyeBB08uzMncw4qSKQ3esp8C8vwbHnjwWjEsX/qThJUDBwkHngrZt57hBTRqon8ASQNKBsuQCB2STligc0BdtqlxR8hIDGiBepj3q4QLcTbVl0Zucfsr9A+GoKdTIAHYpTl5YLBeT2bDbtUKkcJeUJsde2Lslvg1qP42fuHhFk=
+	t=1722960881; cv=none; b=nRBuwzGYLZ3pc2efEft3et6LVKrQUcAkMiMzKWE6XyoX2fYe74klJF7vmMFzBn//EgQnvv7R2ifqhOuC/Ox50ah4g7+o8XdlrldXHLmLfU11D8nfysxdl+WcSW1LLsOH9LXKlv47/06euh5fGv1y2/JjigEoUib6MP5RoRipO1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722960863; c=relaxed/simple;
-	bh=mn4bAaKh4OzlNcns15U7R+92M15go6dKF/m0kZ4fJcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ddzdmo6pnURs3Ukrbbsl17igJDwP04QqEiyL1lJQ/5/ySuoFlesfvi7gC6lB3QEpXc8suGxiOZ72xfvbDeRXDrM0ZKzbfKzX5QcyTe1Gk95X1JhlFdNB3+mnKDXpppXlDhA4jbUmdzUR0bAVVAbFkrlWYrI7uhy/8KwPlHspD8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fDxCyeNw; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722960863; x=1754496863;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mn4bAaKh4OzlNcns15U7R+92M15go6dKF/m0kZ4fJcQ=;
-  b=fDxCyeNwLxWttJZskGiiMaQrV9SfwoRQCRDFVSs+f+Ndv0gItRnFbseB
-   U0X0lfHtXL+NoHUjwNDifaqhETY+lItzfXM6jYWoPiRzhBQPxVxMCB8iu
-   ToJVk/bbreV4tSeO7AJ91O/t7+P+nnQl5GpFytmu02wsBbu1WJILJqjke
-   sEDnBhsROJegHqRJnLcmfDscdMJjUpWPA+8fFtSmv4tW4ryYLkDR1WyUo
-   OTEgZ/yTh0hiKa0s3+cNQ5IvCzDvVBwYbxhrdPW1uqmKeCRxVb7ofmekU
-   rmp7X9jV8TDTZBhFItK0S/bNnxv1K7AdZ+jxT1t9JqEj8OX/CTwAmCV3p
-   w==;
-X-CSE-ConnectionGUID: kQ5HRAVnTM+nD7Iwn2QGJQ==
-X-CSE-MsgGUID: +3t1KOpjQm2XtLxc3PAeqQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="31566797"
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="31566797"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 09:14:22 -0700
-X-CSE-ConnectionGUID: L+AMiGrRR3SsWknUUVXQcw==
-X-CSE-MsgGUID: F8dxAd+vQJ+Qrr/0i/YGwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="87215097"
-Received: from johunt-mobl9.ger.corp.intel.com (HELO intel.com) ([10.245.244.131])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 09:14:15 -0700
-Date: Tue, 6 Aug 2024 17:14:07 +0100
-From: Andi Shyti <andi.shyti@linux.intel.com>
-To: David Gow <david@davidgow.net>
-Cc: Christian =?iso-8859-15?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Somalapuram Amaranath <Amaranath.Somalapuram@amd.com>,
-	Thomas =?iso-8859-15?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Gow <david@ingeniumdigital.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Ville =?iso-8859-15?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] drm/i915: Fix ttm small BAR placement handling
-Message-ID: <ZrJLz9rZLsZh1nWo@ashyti-mobl2.lan>
-References: <20240804091851.122186-1-david@davidgow.net>
+	s=arc-20240116; t=1722960881; c=relaxed/simple;
+	bh=tB2/mRC5gXwf9PgAyMWnZSWxfpCfU9uD7nfvwxfjMps=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VrxKYatq4uW05fNLMNUjbHLVqlMzisLxDxQAvcAafv9Hpolu6lNboqiv03JnWPiaaZqW0CuCtRX3NeP/RVkxGDykkrJsyiSnZmznw9RQJnL57V8/bEvWVPvSb34jDTto+8H9EAFjZh+UPKWwe+o6Zk/NxSoyaVZdecvaTEeYR4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E/fBeprb; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so11691a12.0;
+        Tue, 06 Aug 2024 09:14:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722960878; x=1723565678; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cMBfg9FIsivhQ6JKhfKMaojGWty23eYwk42EPlBel+4=;
+        b=E/fBeprbgIR3Ef12Xr74GkaNk4VbdAHgEBrL2gkc7TKxan6oKXRAjTsAzjbfD532QW
+         D+7GziIUsjKsSwJtF5pFJiMQkYCi4kJWkXoFmK9TgIReyS5RHCQdew9b8AywV0UoP+m6
+         Wjdi58t/zVJ4kgwIAicRW5wbGw86SJ1TOPSP2L+gSOCcYZuM4MTnxEQZ4jD5qwbQ6JUt
+         qQE40WXNHgpqKM7uU3CJoZRqCYDMc3h6gG29RfWgk5UJQErthwXuOeXtAStexMMuVqun
+         8xyATLHnN08FqA9w+yvi19NpTX2SuGYX6KGsFTFqkQumNkfiNdQIxV8DLgM2nJ0vsAQD
+         k3iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722960878; x=1723565678;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cMBfg9FIsivhQ6JKhfKMaojGWty23eYwk42EPlBel+4=;
+        b=rEefwtUeXosrFVogmMeKiwONlZz4cReBKRh9QvojPWErc7T6yt2J5ieAmQb3UEcyS9
+         kBpfAOhOf0x8Jkh6cfFssnJz3APivDIsF4G9AOzC5bxdBIuFkVJD0tHVGAgO/qNdOGRT
+         YTMyr8pR6g63iVpBSFcCm1XdocYaY6y8lqfRMLd5aQrd7BQiath2NJtWdfWEKIHwinEL
+         AUFUEvezvg6Y85esIpPrcgsc1lM+i4oM4ae+GRjZhlPnDpAKtAY0kd+OBIAa+w7ezorP
+         2IEY1+kFMdKgYfitxr7bCr8s/2FrCcrUGZZoXTZHKrhITQ8YXy0Raxl/tu+uN+k1a1G6
+         JE8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUa5NTDZMBf4wKkMV+VyybM1qOW/f6sSAzCK8GY5T+fYPixQzRCL0d263C8+gqLxaCQ+W5SfgpecHitL1I8Tujpw1kwzeA3kzTNxeEojnEaeAPzwjayf7/lDnn04Qbw0G3lsSa1ZTunel/5bw==
+X-Gm-Message-State: AOJu0YyYuK8KGfSHJCk59n4gBG2POIT9+hOboWKiiDeMxT1KfqaSG82w
+	aPNz48y3r4SzDqlQlKU+IqU5ukJZn3NZ231gwy2fiUOrZL2AKzfwiREB9p76dtwH1JM6oI74Dgv
+	jrKff54qC+5UXn2irtt/YB0+E3jVjaph/
+X-Google-Smtp-Source: AGHT+IF7aNIoH7Vem0bRffzYy3YmNf3B0CnM42zo97vm1GDIbE1l0b586HyrAmRth2DwSzMI8CIQq+vgBTa1HGJf8/A=
+X-Received: by 2002:a17:907:9689:b0:a7a:a557:454e with SMTP id
+ a640c23a62f3a-a7dc5f66fe1mr1431973866b.2.1722960877593; Tue, 06 Aug 2024
+ 09:14:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240804091851.122186-1-david@davidgow.net>
+References: <20240806144628.874350-1-mjguzik@gmail.com> <20240806155319.GP5334@ZenIV>
+ <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
+In-Reply-To: <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 6 Aug 2024 18:14:25 +0200
+Message-ID: <CAGudoHEvkxf3uLL=RkgsMkUa3A6vYP6FOCfi5UwWU1nOK_qGBQ@mail.gmail.com>
+Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+On Tue, Aug 6, 2024 at 6:09=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> wr=
+ote:
+>
+> On Tue, Aug 6, 2024 at 5:53=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> =
+wrote:
+> >
+> > On Tue, Aug 06, 2024 at 04:46:28PM +0200, Mateusz Guzik wrote:
+> >
+> > > The flag thing is optional and can be dropped, but I think the genera=
+l
+> > > direction should be to add *more* asserts and whatnot (even if they a=
+re
+> > > to land separately). A debug-only variant would not hurt.
+> >
+> > Asserts do *not* clarify anything; if you want your optional flag,
+> > come up with clear description of its semantics.  In terms of state,
+> > _not_ control flow.
+> >
+>
+> It is supposed to indicate that both nd->path.mnt and nd->path.dentry
+> are no longer usable and must not even be looked at. Ideally code
+> which *does* look at them despite the flag (=3D=3D there is a bug) traps.
+>
+> However, I did not find a handy macro or anything of the sort to
+> "poison" these pointers. Instead I found tons of NULL checks all over,
+> including in lookup clean up.
+>
+> So as is I agree the flag adds next to nothing as is, but the intent
+> was to catch any use of the above pointers after what they point to
+> got consumed. Perhaps I should just drop the flag for the time being
+> and only propose it with a more fleshed out scheme later.
+>
+> > > @@ -3683,6 +3685,7 @@ static const char *open_last_lookups(struct nam=
+eidata *nd,
+> > >  static int do_open(struct nameidata *nd,
+> > >                  struct file *file, const struct open_flags *op)
+> > >  {
+> > > +     struct vfsmount *mnt;
+> > >       struct mnt_idmap *idmap;
+> > >       int open_flag =3D op->open_flag;
+> > >       bool do_truncate;
+> > > @@ -3720,11 +3723,22 @@ static int do_open(struct nameidata *nd,
+> > >               error =3D mnt_want_write(nd->path.mnt);
+> > >               if (error)
+> > >                       return error;
+> > > +             /*
+> > > +              * We grab an additional reference here because vfs_ope=
+n_consume()
+> > > +              * may error out and free the mount from under us, whil=
+e we need
+> > > +              * to undo write access below.
+> > > +              */
+> > > +             mnt =3D mntget(nd->path.mnt);
+> >
+> > It's "after vfs_open_consume() we no longer own the reference in nd->pa=
+th.mnt",
+> > error or no error...
+> >
+>
+> ok
+>
+> > >               do_truncate =3D true;
+> >
+> >
+> > >       }
+> > >       error =3D may_open(idmap, &nd->path, acc_mode, open_flag);
+> > > -     if (!error && !(file->f_mode & FMODE_OPENED))
+> > > -             error =3D vfs_open(&nd->path, file);
+> > > +     if (!error && !(file->f_mode & FMODE_OPENED)) {
+> > > +             BUG_ON(nd->state & ND_PATH_CONSUMED);
+> > > +             error =3D vfs_open_consume(&nd->path, file);
+> > > +             nd->state |=3D ND_PATH_CONSUMED;
+> > > +             nd->path.mnt =3D NULL;
+> > > +             nd->path.dentry =3D NULL;
+> >
+> > Umm...  The thing that feels wrong here is that you get an extra
+> > asymmetry with ->atomic_open() ;-/  We obviously can't do that
+> > kind of thing there (if nothing else, we have the parent directory's
+> > inode to unlock, error or no error).
+> >
+> > I don't hate that patch, but it really feels like the calling
+> > conventions are not right.  Let me try to tweak it a bit and
+> > see if anything falls out...
+>
 
-thanks for the patches and thanks Justin for debugging the issue.
+fwiw if you are looking to have vfs_open_${keyword} which accepts
+nameidata and "consumes" it, I did not go for it because vfs_open is
+in another file and I did not want to "leak" the struct there.
 
-I reviewed and merged it into drm-intel-gt-next.
+> Should you write your own patch I'm happy to give it a spin to
+> validate the win is about the same.
+>
+> I forgot to note some stuff when sending the patch, so here it is:
+> perf is highly unstable between re-runs of the benchmark because
+> struct inode itself is not aligned to anything and at least ext4 plops
+> it in in a rather arbitrary place and uses a kmem cache without any
+> magic alignment guarantees. This results in false sharing showing up
+> and disappearing depending on how (un)lucky one gets. For reported
+> results I picked the worst case.
+>
+> I had to patch one sucker for constantly getting in:
+> https://lore.kernel.org/linux-security-module/20240806133607.869394-1-mjg=
+uzik@gmail.com/T/#u
+>
+> --
+> Mateusz Guzik <mjguzik gmail.com>
 
-Thanks,
-Andi
 
-On Sun, Aug 04, 2024 at 05:18:46PM +0800, David Gow wrote:
-> From: David Gow <david@ingeniumdigital.com>
-> 
-> As described in [1], there have been a couple of regressions in the TTM
-> placement handling for i915, which adversely affect DG2 systems with
-> small BAR.  In particular, performance become very poor when eviction
-> from the mappable BAR memory is required, as suboptimal placements can
-> be preferred, leading to thrashing. This often leads to hangs of >10s,
-> during which even the compositor is unusable.
-> 
-> These regressions were largely introduced during the flag rework in
-> commit a78a8da51b36 ("drm/ttm: replace busy placement with flags v6").
-> 
-> The first patch has already been sent out[2]. I'm resending it as part
-> of this series which fixes both known regressions.
-> 
-> Thanks to Justin Brewer for bisecting the issue.
-> 
-> Cheers,
-> -- David
-> 
-> [1]: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/11255
-> [2]: https://lore.kernel.org/dri-devel/20240722074540.15295-1-david@davidgow.net/
-> 
-> ---
-> 
-> David Gow (2):
->   drm/i915: Allow evicting to use the requested placement
->   drm/i915: Attempt to get pages without eviction first
-> 
->  drivers/gpu/drm/i915/gem/i915_gem_ttm.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> -- 
-> 2.46.0
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
