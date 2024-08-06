@@ -1,216 +1,358 @@
-Return-Path: <linux-kernel+bounces-276191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE38948FBB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:56:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3FB948FA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E7B21C20AE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:56:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF05C1C20CBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BBD1C7B94;
-	Tue,  6 Aug 2024 12:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9615B1C461A;
+	Tue,  6 Aug 2024 12:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="doPODls3"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2076.outbound.protection.outlook.com [40.107.223.76])
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="NTDtzml0"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0055F1C68B6;
-	Tue,  6 Aug 2024 12:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722948939; cv=fail; b=fZgmA1e3X37tn3WivLAC7MOuXwKFijwqwJjPfP6MtCHkK/lYzdHd+X+0ZHC1gfcTzX11mMnzSqU3pXRqubllKUuyRYFGI13n1jbqCpRBUfYu5bYR4lcP95mOtgiWYTwuf1zQUWtTS18XwsZyNIIIdOLRxOwfdrMjmjGSh4Hz5I4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722948939; c=relaxed/simple;
-	bh=sV2VioKNB6dprKJTpwHGT8OvuLFTHa50tCsHqogZuNw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eInuivxpBgPcB0xjlK7Fe7Vqn/g8KhI2iXuNxvXSIv7DpFOzi5uFaMylYWQgzG22VCbNyMN+Nv7lJKBiJcbppfeDckPNW/ebL9xQaQVhNl+0lz3tr+0ZHbsPWF5eIQSLMnBGEz/ZHVLyK0zbbDJaXj4d5/uWs8R/BfJ4SGh2LuA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=doPODls3; arc=fail smtp.client-ip=40.107.223.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NoU41E/2G3ky/6NexX4s6U4gBr22tQgLjwfTHocX3OFptU3x71OSzH6VslRhUwpgpZRBnL3ty2hawH+L+XtzuUOs9IRBOg2g/5K95CYaHCZx+VAgJW4zfN7sNJ6RCjJrqzEFWSmJARAOMn2LqGmuSCjGtua7g8XmbO4Z2m/sJhBdee64j5QyKmHck+DCoMpQpL+qbAX3d+HSGETIfcPPWw7x6GMh82X3BThPRZlFms3ARpajmYxj0VjIT95i6wzkzxrMWISgWYKEnnDQwYWZcKoO+X/kJZYfVNuFvFZXr5LMjROLsRkjKY2tevJzHXdCzi2LSfLcPqQWPQGv4v4rBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/Xeld/lWBLWwjoCwAmVZ7ll51Ew+vowqsGsVy1JLH30=;
- b=GGp/4W4O9upUny2FQNBbeBvZYGLsrHHz9sIjT+lZ5W5KYzCGyZWuKSUqeNPFvWzyOSeaHJTtyAWn0QFlwnroMOacAx6aI1XxMCDnUZnuLPk48uy5utpysWL4F7wbnwsvCeyDTpmM0x40S7noEUtEhtvk79GzdJx98L7tL7c7yiH+X1+7epuBqkpApUDCr4uycHhhC5LILGsBt1ShTLmier/wG4kSH3J/E2tc9Unyeil1WX4L9vLL38IBJPT6Ox8UjE8OBtBAAnLD33+DcbJC2SsnFLtk9b3JvPopnRKKfAjX2nw9j8Nu7tj8QA4B7n7fFZ0RAqmb7oJIokTlRj4o7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/Xeld/lWBLWwjoCwAmVZ7ll51Ew+vowqsGsVy1JLH30=;
- b=doPODls3OVWtgqPAaXrTKylK3U43vIQJ47PJaAq8zyVT6QbjnCFurl0V2s0xQXaLD50PxVo1akCkZvOE+Hzzyf9BSviLUA6zTR3lUXJjFMNLHjRM+0ACLS7S4wYN1sPLNS0itsyZV1t63lBZ+6z4BoBmSPoGiPamooTkfH8G++I=
-Received: from BYAPR06CA0014.namprd06.prod.outlook.com (2603:10b6:a03:d4::27)
- by SN7PR12MB6689.namprd12.prod.outlook.com (2603:10b6:806:273::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23; Tue, 6 Aug
- 2024 12:55:35 +0000
-Received: from SJ5PEPF000001CF.namprd05.prod.outlook.com
- (2603:10b6:a03:d4:cafe::32) by BYAPR06CA0014.outlook.office365.com
- (2603:10b6:a03:d4::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27 via Frontend
- Transport; Tue, 6 Aug 2024 12:55:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001CF.mail.protection.outlook.com (10.167.242.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7849.8 via Frontend Transport; Tue, 6 Aug 2024 12:55:34 +0000
-Received: from BLR-L-RBANGORI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 6 Aug
- 2024 07:55:26 -0500
-From: Ravi Bangoria <ravi.bangoria@amd.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
-	<thomas.lendacky@amd.com>, <jmattson@google.com>
-CC: <ravi.bangoria@amd.com>, <hpa@zytor.com>, <rmk+kernel@armlinux.org.uk>,
-	<peterz@infradead.org>, <james.morse@arm.com>, <lukas.bulwahn@gmail.com>,
-	<arjan@linux.intel.com>, <j.granados@samsung.com>, <sibs@chinatelecom.cn>,
-	<nik.borisov@suse.com>, <michael.roth@amd.com>, <nikunj.dadhania@amd.com>,
-	<babu.moger@amd.com>, <x86@kernel.org>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <santosh.shukla@amd.com>,
-	<ananth.narayan@amd.com>, <sandipan.das@amd.com>, <manali.shukla@amd.com>
-Subject: [PATCH v3 4/4] KVM: SVM: Add Bus Lock Detect support
-Date: Tue, 6 Aug 2024 12:54:42 +0000
-Message-ID: <20240806125442.1603-5-ravi.bangoria@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240806125442.1603-1-ravi.bangoria@amd.com>
-References: <20240806125442.1603-1-ravi.bangoria@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABAD1FA5
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722948897; cv=none; b=p4DLFSZbnM7ojsgBF8Ax8TMSPYZQCmZg8nPNh021OQc5wOPlKmt2FydmZ93MA3ZA7hUKwwRZSK/1i6rqrPQuMuZ4MJIXXacQ3yq7fqQX1FlGdQ9q9Tm39fzC+YKnU8AUAsuwQ67sD1PUAbjJBb97f2M28EhlkBbil8f8xE91ifM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722948897; c=relaxed/simple;
+	bh=smSrY9+rQauFZcZXF8acNSkpo+JBcorP9LeYjkgv/gs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gD9E5p7RZPvM6XT4lYAc0gzYQQLQGtY8sTFTCaemYSAKcpxq23W8yG5dnlIG5mOJFx6yUCpXekO3R7deSHrKzBwnGS/DpeoGEpQUnTriDIgvwp3b895HxIryFDOm7WRQxKKxgdMl0i7S/huvGGtYY5/ME6QgOIP2UyV4x7Mn2YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=NTDtzml0; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from mordecai.tesarici.cz (unknown [213.235.133.103])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by bee.tesarici.cz (Postfix) with ESMTPSA id D45851D34A3;
+	Tue,  6 Aug 2024 14:54:50 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1722948891; bh=MWl049Bn4PnMNumCLOW2ZCWIPPF66Ed0gVhTgNbDoUo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NTDtzml0m6Oi8xF5v1/GV2FmnqiY1X19WsqteXOAoPj/pQ9c2O6R67RqSrZQdRUF0
+	 +UIQzbDhjLijPevD1Zo5BLMo8dWn/fg9Wy8z1CKSgS+uKJWDOr/eaualydOXHIUfVE
+	 n/wpGC3Gnt8jZLWFIZMDDV75ar80w2IdaAUuIJScmHkzBxh7zpHYhwRQftLrTH+/b8
+	 7KLtzAFY+C4WziUvKHdbDrznTCd26HR2hbaVGMtdBmkG1ru24mMkHMDoQSKpWpgiyu
+	 t3DKTsPi8sacGluqN4dQ+wdLri8CRBfqINXD5BWZsadMdFgBFHEmi++aQss7PzSEs/
+	 8UTeG4pCzVzHw==
+Date: Tue, 6 Aug 2024 14:54:44 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, Andrew Morton
+ <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH 04/10] mm: abstract parameters for vma_expand/shrink()
+Message-ID: <20240806145444.4e1b00da@mordecai.tesarici.cz>
+In-Reply-To: <95292b1d1215f49bd895f1aa38f54a8274c350af.1722849859.git.lorenzo.stoakes@oracle.com>
+References: <cover.1722849859.git.lorenzo.stoakes@oracle.com>
+	<95292b1d1215f49bd895f1aa38f54a8274c350af.1722849859.git.lorenzo.stoakes@oracle.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CF:EE_|SN7PR12MB6689:EE_
-X-MS-Office365-Filtering-Correlation-Id: b545426b-d1ab-41a9-0d48-08dcb6171000
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OeZBD/sB+2+4sGiHEECtZHuqLmkUzlRHjDVAn/AxxJGRkujxNMslX8RD3zLd?=
- =?us-ascii?Q?uw5CnjhiXrj8UzCxooVjcqRDkhBRBnwsvWG3oTIZmpg9R1M0z0YtSJM7EYV8?=
- =?us-ascii?Q?EoEQuXqw3tDCw3feNQ8w6fnmiCgox1olrrI7dWJyQqhDpwkR9ip6z6aQfT6b?=
- =?us-ascii?Q?HbFrMkmDasWwpH12VgJEmc2/VUhkvreDPLbr1fIy+MmBn8Ia6tc1bOpgEkXE?=
- =?us-ascii?Q?F8MgEM3gHObbRrfEiaPCbluHthnuQlv+6z+hHEgSI6grJTiHRdCv9rqiYs2s?=
- =?us-ascii?Q?A1s9iiJitNOV2g+UWQoWuQ64+pFHqMKEDjj5W6fHT2A5nkfzgsb5FWwR31/d?=
- =?us-ascii?Q?cmDqP29AuGJwJij3Q3CnGVpdHJDmhXaGFxeW+i6C7YmAFU4XNPlscS6YejpS?=
- =?us-ascii?Q?xcnIKrxBNzKUSt7rhVtJsuzskDdowLH+3tqAbOqZzmrEq8j05J2t6O+adIyd?=
- =?us-ascii?Q?KJ389xSd6SO+G9L2DI/x6nanjxjAzJPT127wtyDGBD5gAlY1tRJvrkZex59E?=
- =?us-ascii?Q?lXbZPzQeMhaAwqowX6wQCz/xDMx0wsPlGLas9i8uywqQzgZQFg46ZwhCEHuO?=
- =?us-ascii?Q?scQARsRSvPxsFAra2NSxEBv3YyAgplUGNTI+hdxxR+ThTcqGnIBmGRXTu380?=
- =?us-ascii?Q?UbyPA0BhTIyI23/KwrcpV3HnjPAAxFcoBIpj+gK06eIfHTYL+gpEs8gzY0Io?=
- =?us-ascii?Q?ph7KzRSzit8gzl0dZ7Ovhlsqe4xp1nXvgfmbgyGRrWQxuo1S/Q2e0kKZsHpf?=
- =?us-ascii?Q?GBd5GXDcdaraSfS9lEsVGQdr4lkZLbXiUCEURLHUpslgagiOwZdGK7pdvZrc?=
- =?us-ascii?Q?WpfhDlqPZ1noxibS542Zpprq29AkfhNbwGRGhEGeunw1TYmOPmUJN1b8j4pM?=
- =?us-ascii?Q?ZwKRjkq/SZroX9tpSvdBnDl0sK9/E7Aucz7RT1lu2ubJ+KjTHuAoR8Ooc6Xo?=
- =?us-ascii?Q?XJyJkL7HVXCmRMn1MScxb6wRujblTVLP0+oZILHLb2KHRZcSwKJsxMWZvQUI?=
- =?us-ascii?Q?8Lctz6/24iVt6E4RDivlQUl1HB1v8qnVbAcpN8OkxlYXKCc7yquK/kjdlsfJ?=
- =?us-ascii?Q?ybVIVUNmmibjKhK/8z5fnbgdRMrLkbgYtoXeLKFsSVbmvZOBM48+aOk01Hyx?=
- =?us-ascii?Q?ZIhu6Khp7gdHxaSThuDs2SR+MT8fMBFF3JMvRmpVmWHVjx2c2EK5UiGDtG40?=
- =?us-ascii?Q?faVW3qYPkKDy5taxwrTeQEsWficLb5ZVAQN1PtPb2NiVgpqF71eIMDP5T565?=
- =?us-ascii?Q?fMrzTNBCbvcNzEwDvzr+H2yWQcX9ub8JoOKxvHPQooEtgACpfxD+/QNiQelw?=
- =?us-ascii?Q?SEum+AVD8bW/wPGLLOfamQ4ixaLMaWGFWUnGMfYg3/CaWPvK69SsMDlHAagT?=
- =?us-ascii?Q?rjskbir6Z1c6iFHU6c1Zgfjtyd9d6VPUxFeXzpU/HKg8UC1rKVfu3ktxOOgz?=
- =?us-ascii?Q?9FvcpB9fTZ1Gi6R6pYYiQJ0E1/LVfKsc?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 12:55:34.4959
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b545426b-d1ab-41a9-0d48-08dcb6171000
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001CF.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6689
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add Bus Lock Detect support in AMD SVM. Bus Lock Detect is enabled through
-MSR_IA32_DEBUGCTLMSR and MSR_IA32_DEBUGCTLMSR is virtualized only if LBR
-Virtualization is enabled. Add this dependency in the SVM.
+On Mon,  5 Aug 2024 13:13:51 +0100
+Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
----
- arch/x86/kvm/svm/nested.c |  3 ++-
- arch/x86/kvm/svm/svm.c    | 17 ++++++++++++++---
- 2 files changed, 16 insertions(+), 4 deletions(-)
+> Equally use struct vma_merge_struct to abstract parameters for VMA
+> expansion and shrinking.
+> 
+> This leads the way to further refactoring and de-duplication by
+> standardising the interface.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  mm/mmap.c               | 30 +++++++++++--------
+>  mm/vma.c                | 66 ++++++++++++++++++-----------------------
+>  mm/vma.h                |  8 ++---
+>  tools/testing/vma/vma.c | 18 +++++++++--
+>  4 files changed, 65 insertions(+), 57 deletions(-)
+> 
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 721ced6e37b0..04145347c245 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1367,7 +1367,6 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>  	pgoff_t pglen = len >> PAGE_SHIFT;
+>  	unsigned long charged = 0;
+>  	unsigned long end = addr + len;
+> -	unsigned long merge_start = addr, merge_end = end;
+>  	bool writable_file_mapping = false;
+>  	int error;
+>  	VMA_ITERATOR(vmi, mm, addr);
+> @@ -1423,28 +1422,26 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>  	/* Attempt to expand an old mapping */
+>  	/* Check next */
+>  	if (next && next->vm_start == end && can_vma_merge_before(&vmg)) {
+> -		merge_end = next->vm_end;
+> -		vma = next;
+> +		/* We can adjust this as can_vma_merge_after() doesn't touch */
+> +		vmg.end = next->vm_end;
+> +		vma = vmg.vma = next;
+>  		vmg.pgoff = next->vm_pgoff - pglen;
+> -	}
+>  
+> -	if (vma) {
+> +		/* We may merge our NULL anon_vma with non-NULL in next. */
+>  		vmg.anon_vma = vma->anon_vma;
+> -		vmg.uffd_ctx = vma->vm_userfaultfd_ctx;
+>  	}
+>  
+>  	/* Check prev */
+>  	if (prev && prev->vm_end == addr && can_vma_merge_after(&vmg)) {
+> -		merge_start = prev->vm_start;
+> -		vma = prev;
+> +		vmg.start = prev->vm_start;
+> +		vma = vmg.vma = prev;
+>  		vmg.pgoff = prev->vm_pgoff;
+>  	} else if (prev) {
+>  		vma_iter_next_range(&vmi);
+>  	}
+>  
+>  	/* Actually expand, if possible */
+> -	if (vma &&
+> -	    !vma_expand(&vmi, vma, merge_start, merge_end, vmg.pgoff, next)) {
+> +	if (vma && !vma_expand(&vmg)) {
 
-diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-index 6f704c1037e5..97caf940815b 100644
---- a/arch/x86/kvm/svm/nested.c
-+++ b/arch/x86/kvm/svm/nested.c
-@@ -586,7 +586,8 @@ static void nested_vmcb02_prepare_save(struct vcpu_svm *svm, struct vmcb *vmcb12
- 	/* These bits will be set properly on the first execution when new_vmc12 is true */
- 	if (unlikely(new_vmcb12 || vmcb_is_dirty(vmcb12, VMCB_DR))) {
- 		vmcb02->save.dr7 = svm->nested.save.dr7 | DR7_FIXED_1;
--		svm->vcpu.arch.dr6  = svm->nested.save.dr6 | DR6_ACTIVE_LOW;
-+		/* DR6_RTM is not supported on AMD as of now. */
-+		svm->vcpu.arch.dr6  = svm->nested.save.dr6 | DR6_FIXED_1 | DR6_RTM;
- 		vmcb_mark_dirty(vmcb02, VMCB_DR);
- 	}
- 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 85631112c872..68ef5bff7fc7 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -1047,7 +1047,8 @@ void svm_update_lbrv(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_svm *svm = to_svm(vcpu);
- 	bool current_enable_lbrv = svm->vmcb->control.virt_ext & LBR_CTL_ENABLE_MASK;
--	bool enable_lbrv = (svm_get_lbr_vmcb(svm)->save.dbgctl & DEBUGCTLMSR_LBR) ||
-+	u64 dbgctl_buslock_lbr = DEBUGCTLMSR_BUS_LOCK_DETECT | DEBUGCTLMSR_LBR;
-+	bool enable_lbrv = (svm_get_lbr_vmcb(svm)->save.dbgctl & dbgctl_buslock_lbr) ||
- 			    (is_guest_mode(vcpu) && guest_can_use(vcpu, X86_FEATURE_LBRV) &&
- 			    (svm->nested.ctl.virt_ext & LBR_CTL_ENABLE_MASK));
- 
-@@ -3158,6 +3159,10 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 		if (data & DEBUGCTL_RESERVED_BITS)
- 			return 1;
- 
-+		if ((data & DEBUGCTLMSR_BUS_LOCK_DETECT) &&
-+		    !guest_cpuid_has(vcpu, X86_FEATURE_BUS_LOCK_DETECT))
-+			return 1;
-+
- 		svm_get_lbr_vmcb(svm)->save.dbgctl = data;
- 		svm_update_lbrv(vcpu);
- 		break;
-@@ -5224,8 +5229,14 @@ static __init void svm_set_cpu_caps(void)
- 	/* CPUID 0x8000001F (SME/SEV features) */
- 	sev_set_cpu_caps();
- 
--	/* Don't advertise Bus Lock Detect to guest if SVM support is absent */
--	kvm_cpu_cap_clear(X86_FEATURE_BUS_LOCK_DETECT);
-+	/*
-+	 * LBR Virtualization must be enabled to support BusLockTrap inside the
-+	 * guest, since BusLockTrap is enabled through MSR_IA32_DEBUGCTLMSR and
-+	 * MSR_IA32_DEBUGCTLMSR is virtualized only if LBR Virtualization is
-+	 * enabled.
-+	 */
-+	if (!lbrv)
-+		kvm_cpu_cap_clear(X86_FEATURE_BUS_LOCK_DETECT);
- }
- 
- static __init int svm_hardware_setup(void)
--- 
-2.34.1
+See? One more use of "next" that has gone away in the end...
 
+Petr T
+
+>  		khugepaged_enter_vma(vma, vm_flags);
+>  		goto expanded;
+>  	}
+> @@ -2359,6 +2356,13 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
+>  	VMA_ITERATOR(vmi, mm, new_start);
+>  	struct vm_area_struct *next;
+>  	struct mmu_gather tlb;
+> +	struct vma_merge_struct vmg = {
+> +		.vmi = &vmi,
+> +		.vma = vma,
+> +		.start = new_start,
+> +		.end = old_end,
+> +		.pgoff = vma->vm_pgoff,
+> +	};
+>  
+>  	BUG_ON(new_start > new_end);
+>  
+> @@ -2373,7 +2377,7 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
+>  	/*
+>  	 * cover the whole range: [new_start, old_end)
+>  	 */
+> -	if (vma_expand(&vmi, vma, new_start, old_end, vma->vm_pgoff, NULL))
+> +	if (vma_expand(&vmg))
+>  		return -ENOMEM;
+>  
+>  	/*
+> @@ -2406,6 +2410,8 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
+>  	tlb_finish_mmu(&tlb);
+>  
+>  	vma_prev(&vmi);
+> +	vmg.end = new_end;
+> +
+>  	/* Shrink the vma to just the new range */
+> -	return vma_shrink(&vmi, vma, new_start, new_end, vma->vm_pgoff);
+> +	return vma_shrink(&vmg);
+>  }
+> diff --git a/mm/vma.c b/mm/vma.c
+> index b452b472a085..3d6ce04f1b9c 100644
+> --- a/mm/vma.c
+> +++ b/mm/vma.c
+> @@ -489,30 +489,25 @@ void validate_mm(struct mm_struct *mm)
+>  /*
+>   * vma_expand - Expand an existing VMA
+>   *
+> - * @vmi: The vma iterator
+> - * @vma: The vma to expand
+> - * @start: The start of the vma
+> - * @end: The exclusive end of the vma
+> - * @pgoff: The page offset of vma
+> - * @next: The current of next vma.
+> + * @vmg: Describes a VMA expansion operation.
+>   *
+> - * Expand @vma to @start and @end.  Can expand off the start and end.  Will
+> - * expand over @next if it's different from @vma and @end == @next->vm_end.
+> - * Checking if the @vma can expand and merge with @next needs to be handled by
+> - * the caller.
+> + * Expand @vma to vmg->start and vmg->end.  Can expand off the start and end.
+> + * Will expand over vmg->next if it's different from vmg->vma and vmg->end ==
+> + * vmg->next->vm_end.  Checking if the vmg->vma can expand and merge with
+> + * vmg->next needs to be handled by the caller.
+>   *
+>   * Returns: 0 on success
+>   */
+> -int vma_expand(struct vma_iterator *vmi, struct vm_area_struct *vma,
+> -	       unsigned long start, unsigned long end, pgoff_t pgoff,
+> -	       struct vm_area_struct *next)
+> +int vma_expand(struct vma_merge_struct *vmg)
+>  {
+>  	struct vm_area_struct *anon_dup = NULL;
+>  	bool remove_next = false;
+> +	struct vm_area_struct *vma = vmg->vma;
+> +	struct vm_area_struct *next = vmg->next;
+>  	struct vma_prepare vp;
+>  
+>  	vma_start_write(vma);
+> -	if (next && (vma != next) && (end == next->vm_end)) {
+> +	if (next && (vma != next) && (vmg->end == next->vm_end)) {
+>  		int ret;
+>  
+>  		remove_next = true;
+> @@ -525,21 +520,21 @@ int vma_expand(struct vma_iterator *vmi, struct vm_area_struct *vma,
+>  	init_multi_vma_prep(&vp, vma, NULL, remove_next ? next : NULL, NULL);
+>  	/* Not merging but overwriting any part of next is not handled. */
+>  	VM_WARN_ON(next && !vp.remove &&
+> -		  next != vma && end > next->vm_start);
+> +		  next != vma && vmg->end > next->vm_start);
+>  	/* Only handles expanding */
+> -	VM_WARN_ON(vma->vm_start < start || vma->vm_end > end);
+> +	VM_WARN_ON(vma->vm_start < vmg->start || vma->vm_end > vmg->end);
+>  
+>  	/* Note: vma iterator must be pointing to 'start' */
+> -	vma_iter_config(vmi, start, end);
+> -	if (vma_iter_prealloc(vmi, vma))
+> +	vma_iter_config(vmg->vmi, vmg->start, vmg->end);
+> +	if (vma_iter_prealloc(vmg->vmi, vma))
+>  		goto nomem;
+>  
+>  	vma_prepare(&vp);
+> -	vma_adjust_trans_huge(vma, start, end, 0);
+> -	vma_set_range(vma, start, end, pgoff);
+> -	vma_iter_store(vmi, vma);
+> +	vma_adjust_trans_huge(vma, vmg->start, vmg->end, 0);
+> +	vma_set_range(vma, vmg->start, vmg->end, vmg->pgoff);
+> +	vma_iter_store(vmg->vmi, vma);
+>  
+> -	vma_complete(&vp, vmi, vma->vm_mm);
+> +	vma_complete(&vp, vmg->vmi, vma->vm_mm);
+>  	return 0;
+>  
+>  nomem:
+> @@ -550,37 +545,34 @@ int vma_expand(struct vma_iterator *vmi, struct vm_area_struct *vma,
+>  
+>  /*
+>   * vma_shrink() - Reduce an existing VMAs memory area
+> - * @vmi: The vma iterator
+> - * @vma: The VMA to modify
+> - * @start: The new start
+> - * @end: The new end
+> + * @vmg: Describes a VMA shrink operation.
+>   *
+>   * Returns: 0 on success, -ENOMEM otherwise
+>   */
+> -int vma_shrink(struct vma_iterator *vmi, struct vm_area_struct *vma,
+> -	       unsigned long start, unsigned long end, pgoff_t pgoff)
+> +int vma_shrink(struct vma_merge_struct *vmg)
+>  {
+> +	struct vm_area_struct *vma = vmg->vma;
+>  	struct vma_prepare vp;
+>  
+> -	WARN_ON((vma->vm_start != start) && (vma->vm_end != end));
+> +	WARN_ON((vma->vm_start != vmg->start) && (vma->vm_end != vmg->end));
+>  
+> -	if (vma->vm_start < start)
+> -		vma_iter_config(vmi, vma->vm_start, start);
+> +	if (vma->vm_start < vmg->start)
+> +		vma_iter_config(vmg->vmi, vma->vm_start, vmg->start);
+>  	else
+> -		vma_iter_config(vmi, end, vma->vm_end);
+> +		vma_iter_config(vmg->vmi, vmg->end, vma->vm_end);
+>  
+> -	if (vma_iter_prealloc(vmi, NULL))
+> +	if (vma_iter_prealloc(vmg->vmi, NULL))
+>  		return -ENOMEM;
+>  
+>  	vma_start_write(vma);
+>  
+>  	init_vma_prep(&vp, vma);
+>  	vma_prepare(&vp);
+> -	vma_adjust_trans_huge(vma, start, end, 0);
+> +	vma_adjust_trans_huge(vma, vmg->start, vmg->end, 0);
+>  
+> -	vma_iter_clear(vmi);
+> -	vma_set_range(vma, start, end, pgoff);
+> -	vma_complete(&vp, vmi, vma->vm_mm);
+> +	vma_iter_clear(vmg->vmi);
+> +	vma_set_range(vma, vmg->start, vmg->end, vmg->pgoff);
+> +	vma_complete(&vp, vmg->vmi, vma->vm_mm);
+>  	return 0;
+>  }
+>  
+> diff --git a/mm/vma.h b/mm/vma.h
+> index c31684cc1da6..c464d25da120 100644
+> --- a/mm/vma.h
+> +++ b/mm/vma.h
+> @@ -66,12 +66,8 @@ void init_vma_prep(struct vma_prepare *vp,
+>  void vma_complete(struct vma_prepare *vp,
+>  		  struct vma_iterator *vmi, struct mm_struct *mm);
+>  
+> -int vma_expand(struct vma_iterator *vmi, struct vm_area_struct *vma,
+> -	       unsigned long start, unsigned long end, pgoff_t pgoff,
+> -	       struct vm_area_struct *next);
+> -
+> -int vma_shrink(struct vma_iterator *vmi, struct vm_area_struct *vma,
+> -	       unsigned long start, unsigned long end, pgoff_t pgoff);
+> +int vma_expand(struct vma_merge_struct *vmg);
+> +int vma_shrink(struct vma_merge_struct *vmg);
+>  
+>  int
+>  do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma,
+> diff --git a/tools/testing/vma/vma.c b/tools/testing/vma/vma.c
+> index 48e033c60d87..d216e51206c1 100644
+> --- a/tools/testing/vma/vma.c
+> +++ b/tools/testing/vma/vma.c
+> @@ -142,10 +142,17 @@ static bool test_simple_expand(void)
+>  	struct mm_struct mm = {};
+>  	struct vm_area_struct *vma = alloc_vma(&mm, 0, 0x1000, 0, flags);
+>  	VMA_ITERATOR(vmi, &mm, 0);
+> +	struct vma_merge_struct vmg = {
+> +		.vmi = &vmi,
+> +		.vma = vma,
+> +		.start = 0,
+> +		.end = 0x3000,
+> +		.pgoff = 0,
+> +	};
+>  
+>  	ASSERT_FALSE(vma_link(&mm, vma));
+>  
+> -	ASSERT_FALSE(vma_expand(&vmi, vma, 0, 0x3000, 0, NULL));
+> +	ASSERT_FALSE(vma_expand(&vmg));
+>  
+>  	ASSERT_EQ(vma->vm_start, 0);
+>  	ASSERT_EQ(vma->vm_end, 0x3000);
+> @@ -163,10 +170,17 @@ static bool test_simple_shrink(void)
+>  	struct mm_struct mm = {};
+>  	struct vm_area_struct *vma = alloc_vma(&mm, 0, 0x3000, 0, flags);
+>  	VMA_ITERATOR(vmi, &mm, 0);
+> +	struct vma_merge_struct vmg = {
+> +		.vmi = &vmi,
+> +		.vma = vma,
+> +		.start = 0,
+> +		.end = 0x1000,
+> +		.pgoff = 0,
+> +	};
+>  
+>  	ASSERT_FALSE(vma_link(&mm, vma));
+>  
+> -	ASSERT_FALSE(vma_shrink(&vmi, vma, 0, 0x1000, 0));
+> +	ASSERT_FALSE(vma_shrink(&vmg));
+>  
+>  	ASSERT_EQ(vma->vm_start, 0);
+>  	ASSERT_EQ(vma->vm_end, 0x1000);
 
