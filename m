@@ -1,65 +1,61 @@
-Return-Path: <linux-kernel+bounces-276830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21AD79498ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:19:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5514A949907
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09332853DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:19:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04FC11F244B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D2914901A;
-	Tue,  6 Aug 2024 20:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oxGIsqQb"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16B1158DBA;
+	Tue,  6 Aug 2024 20:27:53 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CF678C8B
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B3540875;
+	Tue,  6 Aug 2024 20:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722975535; cv=none; b=CQJ70t1tDinHWlPjQB5IRShAwIWr627n2uz5T+dNEnWNV1tpnzDSx9hfvPT5oCIBEiK+0qk/1wnHtr6QPHnGwdb9ksmTMjAdJIxTGirU9Eieoed9auWjVxEZtMvuRVpduDz1vn52qkDzpzEjNFbon5VCC46s2VKQdgTYuNMSLUU=
+	t=1722976073; cv=none; b=EdloIc9FBGc6GGs2biVVgzCo4F1ITXREEe9adkyHsP1qFkTVC4KxuqcQpM6jfmBvX4RW8SSXWN1LC2QR0aoq3zuFYG6hPEg163NGdJdIH4te/e5XcKOm8pe16g5bDmWOjr2UGb+OmAcyU8CSGn0zuBFBxVLFzzfyj5sCA/q61to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722975535; c=relaxed/simple;
-	bh=QILZWBSRP6Ol78dEz9h+B6v4FoCeJflsetn/bbi3Ljk=;
+	s=arc-20240116; t=1722976073; c=relaxed/simple;
+	bh=hviKw2gsMRb17vKpnsMoBwOyTh4jnXdi7myuXldoCP0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rfoJ6z9ay9oCN09tbd92Qt5vbVOb9lIGDOHhMDhRpCP4GMxg4BUwNmg7+/E3+0Uphbu8QOKBh/cVoWVkQ7uZEWT5vCU3whr/nBGSFGz5h/aq+iSj+nJ8af6Q4IVkzoNuHT6xQgo4kWM5zhqo78G54zCVjawc5D6df2tJTqnikG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oxGIsqQb; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=i/mTPKpbvCBoHOXmYTX8EkdXEovN5m1wPdieemPEOsw=; b=oxGIsqQbi12URvbDtjHVw4Zkq4
-	QcehRtpeGh2+t0QtYHIn1tR/x31crLyEyVh7VLnWWRnXFLPO3SrX0AQ0pDV7rGnt21w7B/omGUqii
-	3uu/aDbYu5pbZDaqx+FYGuOeY2HTpK43CXsjVQPjooHCEDgL2dMVPH39P8JCZO2r7ILCRIvwOeLBZ
-	+lqsmoxVxsXB+UjgU7TSlh4c2tb9UcgIrqeCAzW5xn+3+jYGZlW9kUJ4DjESL5B7s2CBEpG9y7mBn
-	nADLyCzobD7R3DdR+hDp3Dlr0S7XoQAKOUz+svyS0ItRrHzdf+tCCTcK6XYTZhVnRSc9tnTIOsUKa
-	0rNB5yhQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sbQdr-00000006WQm-0Bsi;
-	Tue, 06 Aug 2024 20:18:47 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8DC7230066A; Tue,  6 Aug 2024 22:18:45 +0200 (CEST)
-Date: Tue, 6 Aug 2024 22:18:45 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
-	Ingo Molnar <mingo@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
-Message-ID: <20240806201845.GY37996@noisy.programming.kicks-ass.net>
-References: <ZpWjbCQPtuUcvo8r@slm.duckdns.org>
- <20240723163358.GM26750@noisy.programming.kicks-ass.net>
- <ZqAFtfSijJ-KMVHo@slm.duckdns.org>
- <20240724085221.GO26750@noisy.programming.kicks-ass.net>
- <ZrJ_9OF3TaXA3xtp@slm.duckdns.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ieH2916N38xQbteDFNxjZOkMm8y54tRvbdUCeGuFBL9NsZ0JToGWEaMURe0tQ8WVK/PUV2zr3CW4hei4OWcIzJDS4ObfU3J0mvqAVqeszAkqWuFXjK5IW9+hTPP9qrdXARx0rTHlNTE7KPpJNetPJdXDSYR/3J93tFTRgx8Ke9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 962C4300002D5;
+	Tue,  6 Aug 2024 22:20:39 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 8EA124D196; Tue,  6 Aug 2024 22:20:39 +0200 (CEST)
+Date: Tue, 6 Aug 2024 22:20:39 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	mika.westerberg@linux.intel.com, Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all
+ Devicetree based platforms
+Message-ID: <ZrKFl-dvNSNCWd8e@wunner.de>
+References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
+ <20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org>
+ <ZqyxS8spZ-ohsP3R@wunner.de>
+ <20240805133555.GC7274@thinkpad>
+ <ZrHITXLkKrDbQKQp@wunner.de>
+ <20240806124107.GB2968@thinkpad>
+ <ZrIe70Z7uFven8HH@wunner.de>
+ <20240806143918.GC2968@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,39 +64,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZrJ_9OF3TaXA3xtp@slm.duckdns.org>
+In-Reply-To: <20240806143918.GC2968@thinkpad>
 
-On Tue, Aug 06, 2024 at 09:56:36AM -1000, Tejun Heo wrote:
-> Hello, Peter.
-> 
-> On Wed, Jul 24, 2024 at 10:52:21AM +0200, Peter Zijlstra wrote:
-> ...
-> > So pick_task() came from the SCHED_CORE crud, which does a remote pick
-> > and as such isn't able to do a put -- remote is still running its
-> > current etc.
-> > 
-> > So pick_task() *SHOULD* already be considering its current and pick
-> > that if it is a better candidate than whatever is on the queue.
-> > 
-> > If we have a pick_task() that doesn't do that, it's a pre-existing bug
-> > and needs fixing anyhow.
-> 
-> I haven't applied the patch to make balance_fair() test
-> sched_fair_runnable() instead of rq->nr_running yet but after that I think
-> all review points that you raised should be addressed except for the above
-> pick_task() conversion. If you want to go ahead with this change, please do
-> so. I'll pull in tip/sched/core and update accordingly. AFAICS, it doesn't
-> make any significant difference to SCX one way or the other and I think
-> updating shouldn't be too painful.
+On Tue, Aug 06, 2024 at 08:09:18PM +0530, Manivannan Sadhasivam wrote:
+> Regarding your comment on patch 3/4, we already have the sysfs attribute
+> to control whether the device can be put into D3Cold or not and that is
+> directly coming from userspace. So there is no guarantee to assume that
+> D3Hot support is considered.
 
-OK. So my plan was to finish reading the for 6.11 pull diff, and then
-merge that eevdf patch-set I send out. Post those patches I had in
-sched/prep that re-arrange the put_prev thing. Then merge those, and
-then ask you to rebase the whole lot on top of that, after which I'll
-pull your branch.
+If a device is not allowed to be suspended to D3cold, it will only be
+suspended to D3hot.
 
-And while I'm behind my own schedule, I think we can still get all that
-sorted.
+If a port is put into anything deeper than D0, its secondary bus is
+no longer in B0 (PCI-PM r1.2 table 6-1) and children are inaccessible,
+so they're "effectively" in D3cold.  Hence if a device cannot be
+suspended to D3cold, it will block all parent bridges from being
+suspended.  That's what the logic in pci_bridge_d3_update() and
+pci_dev_check_d3cold() is doing.
 
-Anyway, I'll go stick this patch somewhere so it don't get lost.
+The d3cold_allowed attribute in sysfs is just one of several reasons
+why a device may not go to D3cold (see pci_dev_check_d3cold() for
+details).
+
+The d3cold_allowed attribute was originally intended to disable D3cold
+on devices where it was known to not work.  Nowadays this should all
+be handled automatically, which is why we've discussed moving the
+attribute to debugfs:
+
+https://lore.kernel.org/all/20230918132424.GA11357@wunner.de/
+https://lore.kernel.org/all/20231002181025.82746-1-mario.limonciello@amd.com/
+
+Thanks,
+
+Lukas
 
