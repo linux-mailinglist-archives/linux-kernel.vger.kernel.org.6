@@ -1,166 +1,226 @@
-Return-Path: <linux-kernel+bounces-275858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E834D948B1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:19:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3FE948B23
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1695C1C22722
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:19:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 006DE1F22019
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB6E166F17;
-	Tue,  6 Aug 2024 08:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A231BD00D;
+	Tue,  6 Aug 2024 08:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0IC6MIux"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mx3umcsw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120DB16A397
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC613C092;
+	Tue,  6 Aug 2024 08:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722932335; cv=none; b=Oh3icbxv1Bpo6nN0JU5OFi96e3giX9yOlWIbhxs86imVv99x29nCuD3CQN1HZyRoGGxRebZA5gUY2wWNdKCqRIkl9YElNwJscX22yvn0RABoTVKb3CYZ7a6Dpm+vVLBboh1Wq+9t3SxTkko8FKsKtI4cvGMVTR4GIUP1kjkgpVk=
+	t=1722932399; cv=none; b=FpBd6ntOIQrDgUfbir8erI6wc9s8qvhvmtrJYAl8pm353vojUMvnyCzwa6u6F5vcvqkeEJdnjYHkegICmz3hzoiZIjplEUe7KTr0OQpg3EZs6/VD9qj1ssdeQ7IoDgX4/+xPe29E9j+kj/NFGrQ0DKfLEZkBiMhiV4dx+K7Jx+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722932335; c=relaxed/simple;
-	bh=yte5vG9VKOD6lKjbDQRT7GC2pyy7NFROFw7L+XQx008=;
+	s=arc-20240116; t=1722932399; c=relaxed/simple;
+	bh=SyGxnGyC6ICq4ml8/rvgZWL+NhnuYgaPfzYh/fRYTjY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UA1/uojzUuBtI4WnFtjdWd6h1CSTLf8G5J/9xDtQJuKwr/e81DeMD1vbVYRwXSmlzcI6vKxExdHzOeGbv4JTCZtNim8ZP5+uLTBkUS3CKmYQ0G5rs7XUv+iIcZeKo01u7i1pnIq82H1uJALz3fF+nugkvJrVgKnvMj4NOmQy6T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0IC6MIux; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-81f83b14d65so15965539f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 01:18:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722932331; x=1723537131; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZBZfPqNU2oWRIpM7IHmG0mRj/x4u/OXicGm04hIfixw=;
-        b=0IC6MIux+pgbpo5gx3hlesdjiM3GruWeGzlkSdi0k1EesbjTqjN79sTO6HMxl/gdEq
-         8cSMalmHTkgm5kwuRns7ZZBcTPSGzmFFBtNYhzmU/lTYyQ7pY0tQMpStVOUyNrdFG+2r
-         5YTZzo7GtCTUrSS7l5Bn9DzrNki/idHO0Mb3HmJOqB+YA81ZV3jrNEIl7VDH5R9RqU5H
-         fgllW6H2GnQV4wUoM7DC0pMgC+pwlbbXJ9wzVM31RX/XNZ9wgoj4RpWtrNx1gHMBEc6X
-         N4BKIS/pSF0q0o62eRYz/zcyi98+zCUzUzKKqtSO2FRCS4+pCtarzVmBM7WD7uc8yblk
-         h1sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722932331; x=1723537131;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZBZfPqNU2oWRIpM7IHmG0mRj/x4u/OXicGm04hIfixw=;
-        b=ag9PCBTXwPiGxWwBB8WsOt7998/cGYv7LbJBImoCJ8YrSElOLc65v4IozhCvBcbcEM
-         fy5n4JwJINRECvTbkz+qcPXYREgVqwYwzm9EDiJwKuaoidVUUt7Y+Mtbqp/LAnh1RFWI
-         Czq5XvCjLuvRrU+iiBqisRmK0frcWHRR6GDr32c304Bo6deJgUKXXEliT78IL+mOWdxt
-         AIal9XFno9LI4GkyUChAp4jaie1R8YDo+xq/0mYVcfoVyYhL8q3ChG8N86og4TcvNToE
-         4b4RBkuVxaZgtlIqp7tzIXAYamgHlSWrV/JgPEASO+vHcMRfiI/EMXVDtGkSYVj/NnXR
-         Ie9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUR1nv4yPIzk3XKABoPluXDUXBe9WUVgXZq1KHvCP6F6rmED7uCHNuZVGCJd6ZlpqU0nO4WkEfEr8tYG6dNWFDgevYXH65JNK7HuB6A
-X-Gm-Message-State: AOJu0Yz2Dyul4CYlhnwGD7oVhM7dxsDZMUOtoA7VlWHsSkh7rnmumLUj
-	IW+xrPQoawLfj3lYb6N0W2o+3oKAmT/CkWZa1XCdPpymo+ALZFkmsfmttxWRTFU=
-X-Google-Smtp-Source: AGHT+IEnMjssfn1tHGwLEI3HboWn9lT/r3BrtKO1At+7UuPTRgGKdWYqKsk244HKY3ky2lRZhIkcZQ==
-X-Received: by 2002:a05:6602:1683:b0:807:eeef:4fb5 with SMTP id ca18e2360f4ac-81fd433fb70mr2059641239f.1.1722932331120;
-        Tue, 06 Aug 2024 01:18:51 -0700 (PDT)
-Received: from blmsp ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6a59e74sm2129519173.174.2024.08.06.01.18.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 01:18:50 -0700 (PDT)
-Date: Tue, 6 Aug 2024 10:18:47 +0200
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Nishanth Menon <nm@ti.com>, 
-	Vibhore Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
-	Sebin Francis <sebin.francis@ti.com>, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 20240801195422.2296347-1-msp@baylibre.com
-Subject: Re: [PATCH 2/3] pmdomain: ti_sci: add wakeup constraint management
-Message-ID: <5qvb3vt5s7egkyzpitgys6uylvvttrpbcar2dgshp2kk5he6sk@p34xb2xmebxq>
-References: <20240805-lpm-v6-10-constraints-pmdomain-v1-0-d186b68ded4c@baylibre.com>
- <20240805-lpm-v6-10-constraints-pmdomain-v1-2-d186b68ded4c@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nXIG/r5vk54xzoNjgq2VDp5g9VhF2fgC773c2xqepXPKmFJ1gK8c9dH/sUSj5RKQurmjLx3cnyQAd3JitAUMntPaTLJk/IHKqVOD/eWnhKYFBfX9gQs/vLXHdF3ClXxxMYGlhP4W4w1mNaEe4GCn3Y9MLKo+7JskUbzjlM8hX8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mx3umcsw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43339C32786;
+	Tue,  6 Aug 2024 08:19:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722932398;
+	bh=SyGxnGyC6ICq4ml8/rvgZWL+NhnuYgaPfzYh/fRYTjY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Mx3umcswp4/foWvsYQvzWJ2zFmWjjNzO2Ko2mEphYYZt2hwcY5FeE6orw0COIHSpE
+	 IeD4r9cLlUYFJEATFeKwpNUg+ZqyzaC9hqOQmpI27tgjIKe7Zk8ZKXzGIsvL4KVoPT
+	 7P8KN0el7G7BJQvR6iY9rLykUhfjSj/5OQHqM3EaGUFkzRvpxSzmLxx1wHKTEuUnfx
+	 hfMZZShMGPJjtCDuVXojeaQtWvocyRsgsBN+P0qpE783XjlD1fN8nU9CHlBBlmZkVP
+	 tw9h+gBMX0+6mv1YPfzqKG23K6TvvfP+on9NnIQVz+BB06oNhOyIgKpLmEzUeU55B8
+	 Bxp0aukY5AjHg==
+Date: Tue, 6 Aug 2024 10:19:56 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jonathan Corbet <corbet@lwn.net>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org, linux-mm@kvack.org, 
+	linux-doc@vger.kernel.org
+Subject: Re: [RFC PATCH 2/6] drm/cgroup: Add memory accounting DRM cgroup
+Message-ID: <20240806-poetic-awesome-impala-fb6c2f@houat>
+References: <20240627154754.74828-1-maarten.lankhorst@linux.intel.com>
+ <20240627154754.74828-3-maarten.lankhorst@linux.intel.com>
+ <20240627-paper-vicugna-of-fantasy-c549ed@houat>
+ <6cb7c074-55cb-4825-9f80-5cf07bbd6745@linux.intel.com>
+ <20240628-romantic-emerald-snake-7b26ca@houat>
+ <70289c58-7947-4347-8600-658821a730b0@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bqepzngcvumclfgj"
 Content-Disposition: inline
-In-Reply-To: <20240805-lpm-v6-10-constraints-pmdomain-v1-2-d186b68ded4c@baylibre.com>
+In-Reply-To: <70289c58-7947-4347-8600-658821a730b0@linux.intel.com>
 
-On Mon, Aug 05, 2024 at 04:38:40PM GMT, Kevin Hilman wrote:
-> During system-wide suspend, check all devices connected to PM domain
-> to see if they are wakeup-enabled.  If so, set a TI SCI device
-> constraint.
-> 
-> Note: DM firmware clears all constraints on resume.
-> 
-> Co-developed-by: Vibhore Vardhan <vibhore@ti.com>
-> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
-> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-> Signed-off-by: Dhruva Gole <d-gole@ti.com>
-> ---
->  drivers/pmdomain/ti/ti_sci_pm_domains.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
-> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> index 4dc48a97f9b8..7cd6ae957289 100644
-> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> @@ -51,6 +51,7 @@ struct ti_sci_pm_domain {
->  	struct ti_sci_genpd_provider *parent;
->  	s32 lat_constraint;
->  	bool constraint_sent;
-> +	bool wkup_constraint;
->  };
->  
->  #define genpd_to_ti_sci_pd(gpd) container_of(gpd, struct ti_sci_pm_domain, pd)
-> @@ -87,6 +88,26 @@ static inline void ti_sci_pd_clear_constraints(struct device *dev)
->  
->  	pd->lat_constraint = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
->  	pd->constraint_sent = false;
-> +	pd->wkup_constraint = false;
-> +}
-> +
-> +static inline bool ti_sci_pd_check_wkup_constraint(struct device *dev)
 
-'check' in the function name sounds like a passive function. Maybe
-ti_sci_pd_send_wkup_constraint() would indicate its purpose better?
+--bqepzngcvumclfgj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +{
-> +	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-> +	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
-> +	const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
-> +	int ret;
-> +
-> +	if (device_may_wakeup(dev)) {
-> +		ret = ti_sci->ops.pm_ops.set_device_constraint(ti_sci, pd->idx,
-> +							       TISCI_MSG_CONSTRAINT_SET);
-> +		if (!ret) {
-> +			pd->wkup_constraint = true;
-> +			dev_dbg(dev, "ti_sci_pd: ID:%d set device constraint.\n", pd->idx);
-> +		}
-> +	}
-> +
-> +	return pd->wkup_constraint;
+Hi Maarten,
 
-Is this return value used anywhere?
+On Mon, Jul 01, 2024 at 11:25:12AM GMT, Maarten Lankhorst wrote:
+> Den 2024-06-28 kl. 16:04, skrev Maxime Ripard:
+> > On Thu, Jun 27, 2024 at 09:22:56PM GMT, Maarten Lankhorst wrote:
+> >> Den 2024-06-27 kl. 19:16, skrev Maxime Ripard:
+> >>> Hi,
+> >>>
+> >>> Thanks for working on this!
+> >>>
+> >>> On Thu, Jun 27, 2024 at 05:47:21PM GMT, Maarten Lankhorst wrote:
+> >>>> The initial version was based roughly on the rdma and misc cgroup
+> >>>> controllers, with a lot of the accounting code borrowed from rdma.
+> >>>>
+> >>>> The current version is a complete rewrite with page counter; it uses
+> >>>> the same min/low/max semantics as the memory cgroup as a result.
+> >>>>
+> >>>> There's a small mismatch as TTM uses u64, and page_counter long page=
+s.
+> >>>> In practice it's not a problem. 32-bits systems don't really come wi=
+th
+> >>>>> =3D4GB cards and as long as we're consistently wrong with units, it=
+'s
+> >>>> fine. The device page size may not be in the same units as kernel pa=
+ge
+> >>>> size, and each region might also have a different page size (VRAM vs=
+ GART
+> >>>> for example).
+> >>>>
+> >>>> The interface is simple:
+> >>>> - populate drmcgroup_device->regions[..] name and size for each acti=
+ve
+> >>>>    region, set num_regions accordingly.
+> >>>> - Call drm(m)cg_register_device()
+> >>>> - Use drmcg_try_charge to check if you can allocate a chunk of memor=
+y,
+> >>>>    use drmcg_uncharge when freeing it. This may return an error code,
+> >>>>    or -EAGAIN when the cgroup limit is reached. In that case a refer=
+ence
+> >>>>    to the limiting pool is returned.
+> >>>> - The limiting cs can be used as compare function for
+> >>>>    drmcs_evict_valuable.
+> >>>> - After having evicted enough, drop reference to limiting cs with
+> >>>>    drmcs_pool_put.
+> >>>>
+> >>>> This API allows you to limit device resources with cgroups.
+> >>>> You can see the supported cards in /sys/fs/cgroup/drm.capacity
+> >>>> You need to echo +drm to cgroup.subtree_control, and then you can
+> >>>> partition memory.
+> >>>>
+> >>>> Signed-off-by: Maarten Lankhorst<maarten.lankhorst@linux.intel.com>
+> >>>> Co-developed-by: Friedrich Vock<friedrich.vock@gmx.de>
+> >>> I'm sorry, I should have wrote minutes on the discussion we had with =
+TJ
+> >>> and Tvrtko the other day.
+> >>>
+> >>> We're all very interested in making this happen, but doing a "DRM"
+> >>> cgroup doesn't look like the right path to us.
+> >>>
+> >>> Indeed, we have a significant number of drivers that won't have a
+> >>> dedicated memory but will depend on DMA allocations one way or the
+> >>> other, and those pools are shared between multiple frameworks (DRM,
+> >>> V4L2, DMA-Buf Heaps, at least).
+> >>>
+> >>> This was also pointed out by Sima some time ago here:
+> >>> https://lore.kernel.org/amd-gfx/YCVOl8%2F87bqRSQei@phenom.ffwll.local/
+> >>>
+> >>> So we'll want that cgroup subsystem to be cross-framework. We settled=
+ on
+> >>> a "device" cgroup during the discussion, but I'm sure we'll have plen=
+ty
+> >>> of bikeshedding.
+> >>>
+> >>> The other thing we agreed on, based on the feedback TJ got on the last
+> >>> iterations of his series was to go for memcg for drivers not using DMA
+> >>> allocations.
+> >>>
+> >>> It's the part where I expect some discussion there too :)
+> >>>
+> >>> So we went back to a previous version of TJ's work, and I've started =
+to
+> >>> work on:
+> >>>
+> >>>    - Integration of the cgroup in the GEM DMA and GEM VRAM helpers (t=
+his
+> >>>      works on tidss right now)
+> >>>
+> >>>    - Integration of all heaps into that cgroup but the system one
+> >>>      (working on this at the moment)
+> >>
+> >> Should be similar to what I have then. I think you could use my work to
+> >> continue it.
+> >>
+> >> I made nothing DRM specific except the name, if you renamed it the dev=
+ice
+> >> resource management cgroup and changed the init function signature to =
+take a
+> >> name instead of a drm pointer, nothing would change. This is exactly w=
+hat
+> >> I'm hoping to accomplish, including reserving memory.
+> >=20
+> > I've started to work on rebasing my current work onto your series today,
+> > and I'm not entirely sure how what I described would best fit. Let's
+> > assume we have two KMS device, one using shmem, one using DMA
+> > allocations, two heaps, one using the page allocator, the other using
+> > CMA, and one v4l2 device using dma allocations.
+> >=20
+> > So we would have one KMS device and one heap using the page allocator,
+> > and one KMS device, one heap, and one v4l2 driver using the DMA
+> > allocator.
+> >=20
+> > Would these make different cgroup devices, or different cgroup regions?
+>=20
+> Each driver would register a device, whatever feels most logical for
+> that device I suppose.
+>=20
+> My guess is that a prefix would also be nice here, so register a
+> device with name of drm/$name or v4l2/$name, heap/$name. I didn't give
+> it much thought and we're still experimenting, so just try something.
+> :)
+>=20
+> There's no limit to amount of devices, I only fixed amount of pools to
+> match TTM, but even that could be increased arbitrarily. I just don't
+> think there is a point in doing so.
 
-Best
-Markus
+Sorry, it took a while, but I implemented what (I think) we all had in
+mind here:
 
->  }
->  
->  /*
-> @@ -158,6 +179,8 @@ static int ti_sci_pd_suspend(struct device *dev)
->  	}
->  	pd->lat_constraint = val;
->  
-> +	ti_sci_pd_check_wkup_constraint(dev);
-> +
->  	return 0;
->  }
->  
-> 
-> -- 
-> 2.46.0
-> 
+https://github.com/mripard/linux/tree/device-cgroups-maarten
+
+It's rebased on top of 6.11, and with plenty of fixups to (hopefully :D)
+make your life easier.
+
+Let me know what you think,
+Maxime
+
+--bqepzngcvumclfgj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZrHcqwAKCRDj7w1vZxhR
+xXnkAQCmJVnMNyKrRw+63aZYJyNabEjZdrabgiVeTtigB3aDVAEAm0JgXIztS1rY
+4d633eaGD7BBVCPnEawqpsLem2SalQc=
+=PvlN
+-----END PGP SIGNATURE-----
+
+--bqepzngcvumclfgj--
 
