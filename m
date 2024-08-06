@@ -1,172 +1,182 @@
-Return-Path: <linux-kernel+bounces-276891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 707279499AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:55:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E87DF9499AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E504B1F24293
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:55:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F791F236D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3931163AA7;
-	Tue,  6 Aug 2024 20:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A8515ECE7;
+	Tue,  6 Aug 2024 20:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="J9LvP6Wz"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SKj/n/r4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C1315C121
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDA915573A
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722977710; cv=none; b=PqL2pH4gpuk6oudKbsIBIwXWWGYsrtm/1rb/XKY5tQmyk5nWR2yps4Yf2nMDxkzQ3x3K7Dsa/2G1fibKsiGBGq3kjzH6AmaEl4yE+p0egx3l643q7tKfRkmySH2O0pQnum18AOLRtHMdfkbDBrK5/T2gFrzh4IKjvbM4pNiJ9LY=
+	t=1722977808; cv=none; b=AUrHry39N0V4r/fcJ0imNHtLd2gR5Sr40cs33q4L4NtWtJ1NsR7cKjPW5CTMLjxPwHRueZ2eoOQtNShvutd3wt8JwpgbKKUg7iLLA7ZFl5zz4c/Y2LzCqP3uy8A9FBjJGXaRza5PATbQSE0LmQtT4UJK38cqT2qJaw2q1shqd7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722977710; c=relaxed/simple;
-	bh=Q1EFjItpPAJVvRpOJiKVEeB9t84orASFY/TzMasrm54=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dn2Iic+rmasp54kf3MbpGk22gYUooFySisgBlHL8EL9RSt9KwVxfsQOA2AA1RqFdDh951JbRMS0lmErgkpRZK7RctfUtCpM17C/t0m7h6hgvVlr4rJU62GIDFthyJLbTNGLEdXqYotWTWrUw5ZMHtCToGRm3NSpw13QiC872QSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=J9LvP6Wz; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e0bf9b821e8so975885276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 13:55:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1722977707; x=1723582507; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ddUgUKkImUJBZRqaPBh4WpQntM2pgtbxW0LlNFNQthQ=;
-        b=J9LvP6WzsHCDvrj2ADlfQxZ+5S7SpXsWuAnvGoTiKwzrkTAYtuGkWaXW9Cq5wlO9Qh
-         D/YR5zglVkofWi2ld0OZOWgxLsCXHGc38lQXqK5r5bcca0X2gefHhm9qyJE2Lutp2v51
-         quEykI75yi+ydzJrWtD9d5nocZc6CxsSsjxrSVC5RB2Cn6E5QIkuYIcSpXm/VPxfUqi9
-         5CaF3deusHY2tUaA4MYtaMnt0DekhxDLUwUvitPwjEKxVX4PJfqSxblBgzPhgre5U8pQ
-         T+MpyGKZSo+z7gB+r+bE8PqaNW13txwd38RnSxCS6zgALbcMEe+NNIuNTm79oFB+FBTD
-         dTlQ==
+	s=arc-20240116; t=1722977808; c=relaxed/simple;
+	bh=pGi/uxcZi3YrvGaOOaaM8bWfjMaJ4H2RPHu7rzO5+MY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bvD3YJp3lLYKAJOGRnU9pmI9Oz/2GecN+qDlVarCtsfwVMtFzDb88+ppdboLngkMlolC9mbLDvmGAuC+Oi6RgB+GHG4PzILK8MmoG22RvwYNoghKch0M+MrvUmLGEs1sG1IM2uhGwszeQB7z03VRGbkxXra5LwjQqh4H3zs/45w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SKj/n/r4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722977805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qe6VBZJRiQp4qF9WjYWrAkKgoBmgqYQ+VXQlPMeplEU=;
+	b=SKj/n/r49cyjdTh9mb62cNYdxSxaRVq1rajAZbZIRk001qiZE3p1GbPda19NC5vdoLY0Xi
+	yNd5xrN+pfWe8TlxFNOEKUdi23iK24bvmJAvzDNIC8usAZ25RqESozjpEjOMvuQKG1C4CJ
+	JyMxsdVdyVnPsHkNgbW/ivzZ12q1bHc=
+Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com
+ [209.85.210.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-80-PUfs89QUPZKmAqcCnZgO4w-1; Tue, 06 Aug 2024 16:56:44 -0400
+X-MC-Unique: PUfs89QUPZKmAqcCnZgO4w-1
+Received: by mail-ot1-f69.google.com with SMTP id 46e09a7af769-7092e450d23so1390466a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 13:56:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722977707; x=1723582507;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ddUgUKkImUJBZRqaPBh4WpQntM2pgtbxW0LlNFNQthQ=;
-        b=hp2OiruhToHczEg0ZftP6dONaNhub1pDnKjkLrdGOmD2phRQzitSGygbwmuya9D/Rb
-         N1CW1uW4TeD64WUGhcbfiAl/CBvfvFAYRI2gcKaPQIJ+opPV+/4Vnw2HIX3z/Wfsowxp
-         MeVAyMx3fiGxVcy4fzdgmS3FT1uT8nZ8KNk76oqu3l01zbyZCrw6GePia2RfVRm7mnNQ
-         IzpEWw/qC5F/1kql1LxyBL+wi5NZFpUGtZWIgL+uuAcfOhubl6v/7K81oD6jcSfHv9nt
-         gB8BhyHdjFGcPKbjjbqZQnVek0UqeDt2rJdN+YO8w196xEsWf5OO5qENyV5OLZgtbEzR
-         iYvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOCtTQFXfrFLSsx7Urmm2QJrW2uqDjMOgZJ8ya9Bv5af2u+YlwhuqYWcN6SL0S8WqPCxB21mOAuesUQm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxnleGxyPimliECNmbZ92CzSOSbZEEtBoeZfFfSMqGJ0ar4glI
-	kJPOAjy/hLtmHaLePo/CPI0S8aGE5HrAhKNlDmrO4OrmMa6Bbd97H97oElMwGcXTW5yP8nhAl+S
-	BBk8VcLMk9n2av4VWlKgwxG7emLS8IItZVF1+
-X-Google-Smtp-Source: AGHT+IEV3DoSxpbwywgyClpobkg3f96r+2vacgaYADkIDoHb8BVfBMUuKoLI3KKW3kNSXmapcP0+yqslrTw3VHo3MFI=
-X-Received: by 2002:a05:6902:dc9:b0:e03:5bca:aee6 with SMTP id
- 3f1490d57ef6-e0e54be0a4amr8897314276.54.1722977707114; Tue, 06 Aug 2024
- 13:55:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722977803; x=1723582603;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qe6VBZJRiQp4qF9WjYWrAkKgoBmgqYQ+VXQlPMeplEU=;
+        b=e9bkh1q1cPeBvrwpCdLEyRCJD52oIBoDhxG2AkraHkWNxt0zU7gNrtfCaC8HSOWO8F
+         FiuB84nZQboY5WuVmvuPRLvDxLFgXexk6KjEGruzYnQSkY2Sc3PhyikSrNx/Eu/3PHSO
+         kUhjy4ss/QXrIW373UWWh4B+bCWXQeRibWsZUWTH9Jtg3i/NJ42sRBEccETykuyUs0Cc
+         AL6L/yg5eCkVMFhVmxD3Z8PYk8wl+snf6f00AGsn80Z5HibBqKezfPCb+Obdnmy0h/oS
+         lf3Y4szL1iOBahnO6zGrjoPn72ModqedwKv8erpWbJmpW9lcf9ixWhi/Nsg3YYYwSGpN
+         P7lw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIjK9BC2De34FDGhEz987F/8G1eAGPy9JaBC/YiMYZatblel1EwGzI+wvHJvcQZ+4WfdZCaUFPxteWe/bRTKopEW1IxaSZy5PZsIzK
+X-Gm-Message-State: AOJu0Yy+Yao8+Yrt02pOkvexTTV2qxhv7wrnoUoGigX403Akqs469UAj
+	yJLuN4oFNCR1LjvSSH95A/vIqRRkvXvHcjik2UIcKiU7d9R1HZlGMZHqI1KmO6zFJRm9LTgnvxV
+	KtydX//5xM/hA2r9AB7LTXLtx4lhvfjcBhoyl+VXz/yDu2VQzKhd5N6gkYz84tg==
+X-Received: by 2002:a05:6358:5906:b0:1af:4626:7e42 with SMTP id e5c5f4694b2df-1af46267f7fmr1799887955d.25.1722977803166;
+        Tue, 06 Aug 2024 13:56:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEoGX6vrc5VZiBrLXAafPPUxZlhxnFoJm9EJsMe8SfamL2QQezK4MKx7rVKRflXSY3iRwu4Eg==
+X-Received: by 2002:a05:6358:5906:b0:1af:4626:7e42 with SMTP id e5c5f4694b2df-1af46267f7fmr1799885155d.25.1722977802724;
+        Tue, 06 Aug 2024 13:56:42 -0700 (PDT)
+Received: from fedora.redhat.com ([71.217.44.209])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c864c87sm50208546d6.115.2024.08.06.13.56.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 13:56:42 -0700 (PDT)
+Date: Tue, 6 Aug 2024 16:56:40 -0400
+From: "John B. Wyatt IV" <jwyatt@redhat.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, linux-pm@vger.kernel.org,
+	Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, John Kacur <jkacur@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>, Arnaldo Melo <acme@redhat.com>,
+	"John B. Wyatt IV" <sageofredondo@gmail.com>
+Subject: Re: [PATCH 0/2][RFC] Add SWIG Bindings to libcpupower
+Message-ID: <ZrKOCLYvYklsPg1K@fedora.redhat.com>
+References: <20240724221122.54601-1-jwyatt@redhat.com>
+ <1f5c24b6-f3ee-4863-8b7a-49344a550206@linuxfoundation.org>
+ <Zqv9BOjxLAgyNP5B@hatbackup>
+ <2024080405-roundish-casket-2474@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
- <1722665314-21156-21-git-send-email-wufan@linux.microsoft.com> <de7857fb-63d9-42fc-af1e-12ffcdfcdda8@molgen.mpg.de>
-In-Reply-To: <de7857fb-63d9-42fc-af1e-12ffcdfcdda8@molgen.mpg.de>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 6 Aug 2024 16:54:56 -0400
-Message-ID: <CAHC9VhRmcReVM_Le5bYor2deotnSe4OT08UYhL6xhiKCu0+3kA@mail.gmail.com>
-Subject: Re: [PATCH v20 20/20] MAINTAINERS: ipe: add ipe maintainer information
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com, 
-	jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org, 
-	axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, 
-	eparis@redhat.com, linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024080405-roundish-casket-2474@gregkh>
 
-On Sat, Aug 3, 2024 at 4:15=E2=80=AFAM Paul Menzel <pmenzel@molgen.mpg.de> =
-wrote:
->
-> Dear Fan,
->
->
-> Thank you very much for your patch. Two nits, should you sent another
-> interation: A more specific summary would avoid people having to look at
-> the message body or diff, and `git log --oneline` would be enough.
->
-> MAINTAINERS: Add IPE entry with M: Fan Wu
->
-> MAINTAINERS: Add IPE entry with Fan Wu as maintainer
->
-> Am 03.08.24 um 08:08 schrieb Fan Wu:
-> > Update MAINTAINERS to include ipe maintainer information.
->
-> I=E2=80=99d at least mention Integrity Policy Enforcement. As you not onl=
-y
-> include the maintainer information but add a new entry, I=E2=80=99d leave=
- the
-> body out, or mention that a new entry is added.
->
-> > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+Adding Arnaldo to the CC list.
 
-Working under the current assumption that a new revision is not
-needed, I can fix this up during the merge.  Fan, other-Paul, are you
-both okay with the following:
+On Sun, Aug 04, 2024 at 10:54:10AM +0200, Greg Kroah-Hartman wrote:
+> On Thu, Aug 01, 2024 at 05:24:20PM -0400, John B. Wyatt IV wrote:
+> > > On 7/24/24 16:11, John B. Wyatt IV wrote:
+> > > > SWIG is a tool packaged in Fedora and other distros that can generate
+> > > > bindings from C and C++ code for several languages including Python,
+> > > > Perl, and Go. We at Red Hat are interested in adding binding support to
+> > > > libcpupower so Python tools like rteval or tuned can make easy use of it.
+> > > > 
+> > > 
+> > > Can you elaborate on the use-case and what rteval currently does and
+> > > how it could benefit from using libcpupower with the bindings?
+> > 
+> > rteval is a Python program used to measure realtime performance. We wanted to
+> > test the effect of enabling some levels of idle-stat to see how it affects
+> > latency, and didn't want to reinvent the wheel. We thought that the Python
+> > bindings could be useful to other people as well who might want to call
+> > cpupower too from Python. I did some testing and was able to achieve this with
+> > SWIG. We sent the patchset to see what folks thought about this.
+> 
+> Is this going to require a built-time dependency on SWIG?  If not, when
+> would it be run
 
-  "MAINTAINERS: add IPE entry with Fan Wu as maintainer
+It is optional, and based on my conversation with Shuah; the bindings will be
+in a seperate makefile. It would be ran after running cpupower's
+makefile, seperately. (But one can call the other.)
 
-   Add a MAINTAINERS entry for the Integrity Policy Enforcement (IPE) LSM."
+> and who will be in charge of running it and updating the bindings?
 
-> > --
-> > v1-v16:
-> >    + Not present
-> >
-> > v17:
-> >    + Introduced
-> >
-> > v18:
-> >    + No changes
-> >
-> > v19:
-> >    + No changes
-> >
-> > v20:
-> >    + No changes
-> > ---
-> >   MAINTAINERS | 10 ++++++++++
-> >   1 file changed, 10 insertions(+)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 8766f3e5e87e..4cdf2d5a2058 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -11118,6 +11118,16 @@ T:   git git://git.kernel.org/pub/scm/linux/ke=
-rnel/git/zohar/linux-integrity.git
-> >   F:  security/integrity/
-> >   F:  security/integrity/ima/
-> >
-> > +INTEGRITY POLICY ENFORCEMENT (IPE)
-> > +M:   Fan Wu <wufan@linux.microsoft.com>
-> > +L:   linux-security-module@vger.kernel.org
-> > +S:   Supported
-> > +T:   git https://github.com/microsoft/ipe.git
-> > +F:   Documentation/admin-guide/LSM/ipe.rst
-> > +F:   Documentation/security/ipe.rst
-> > +F:   scripts/ipe/
-> > +F:   security/ipe/
-> > +
-> >   INTEL 810/815 FRAMEBUFFER DRIVER
-> >   M:  Antonino Daplas <adaplas@gmail.com>
-> >   L:  linux-fbdev@vger.kernel.org
->
-> Kind regards,
->
-> Paul
+That would be myself. If I no longer wish to continue I would reassign it to
+another person here on the real-time team at Red Hat. John Kacur (whom I am
+working with on rteval) is fine with being listed as a backup contact.
 
---=20
-paul-moore.com
+The bindings would need to be updated every time one of the functions or data
+structures listed in the .i file changes. But it can be as simple as copying the
+changed declaration from the header file to the .i file to resolve.
+
+> And finally, why do we need these at all?
+
+To provide bindings for Python programs like rteval to easily interface with
+libcpupower. It is very common for userspace programs to include bindings to
+scripting languages.
+
+> You are saying these are new
+> tests that external tools will be using, but why, if external tools are
+> required to run them, are they needed in the kernel tree at all?  Why
+> isn't this just another external test-suite that people who care about
+> measuring this type of thing going to just run on their own if desired?
+
+SWIG the tool requires the .o files compiled from libcpupower to generate
+bindings. Since we need these artifacts from a packaging and usability perspective
+it makes sense to include the bindings source code along in a seperate directory
+with the cpupower source code to generate the builds for them at the same time.
+The source code is: the .i definitions file, any future Python wrapper helpers
+around the bindings needed by SWIG, and the documentation.
+
+Why SWIG? It was chosen for this project because of:
+
+1) Many Python bindings generators are strickly Apache2 or GPL v3 licensed; and
+they may inject code into the bindings binary that will create a license conflict
+with the GPL v2. Swig was far more clear about the license status of the
+generated bindings. As described above:
+https://lore.kernel.org/linux-pm/1f5c24b6-f3ee-4863-8b7a-49344a550206@linuxfoundation.org/T/#mb7170232fb429fc242bb45c8d3d4d5ed47f0c59f
+
+2) It's extensive documentation. This is the Python section:
+https://www.swig.org/Doc4.2/Python.html#Python
+
+3) Support: SWIG has been around since 1996 and had a release 5 months ago. It's
+length of time and the acitvity in it's community makes it unlikely SWIG will
+lose support by it's developers anytime soon.
+
+4) This RFC demonstrates how quickly and with little work you can generate
+bindings for an existing C project with no code changes to that project. :-)
+There were issues getting other Python bindings generators to work as
+described in their documentation.
+
+-- 
+Sincerely,
+John Wyatt
+Software Engineer, Core Kernel
+Red Hat
+
 
