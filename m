@@ -1,107 +1,117 @@
-Return-Path: <linux-kernel+bounces-276546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25732949589
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:26:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC7D949541
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4522FB301C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:02:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139071F2252A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF01EAD2;
-	Tue,  6 Aug 2024 16:00:15 +0000 (UTC)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959D04205D;
+	Tue,  6 Aug 2024 16:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="KY90xx5s"
+Received: from mail.fris.de (mail.fris.de [116.203.77.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D433DF71
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 16:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E1E2E414;
+	Tue,  6 Aug 2024 16:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722960015; cv=none; b=I1i4QqQIc2Sdw3ORrGGgOggba77QPjgxCwONVirSieB4N+TfIeyqqVqSNL8frqiw6os4m40S6P9Ozf2R3+YqUdVzQyoyOHG/NCRDn7H7quIjwy3kCjCM3OhipHHn+3UPU75JXm699QUYy2L8Pmpgqfc3v5qXi6M/qoYUiibUK4M=
+	t=1722960431; cv=none; b=WH5A+JoQ3gUNasHKxd/6sMJLsiTvx3l/ZuRDelB56iyhbFU/+vtwrAUojgro3ceNqqyFQ2i/WYq5QZgcfu0UD7Z5vPBFRVtfmWodXbG7vCyxslw2yXvWPclReU+sfhcSr+TNj+u3NYQBqIMRNXmq6oFAZb6G0+ljG7kApiBcW/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722960015; c=relaxed/simple;
-	bh=AJHk99JRG5OpJoSoQueFp2kEW1qBz/ld8n7MnXvLs9E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cLDs4tovEJ4yKtlWkj7d+ktLmIawdNeNHdw+a3teEIELENnEZgNdXzZPvU8vLT2iWMzdEEQUpt3TZBQpSAEZqJnI8LUeuDaKTKe0dDS5Blm/L7n8LMWwPxszbit1GyycEQTE2Kl5vLNjRMIh0F2yHuZCl6fozTbc724yrbl5x8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fda7fa60a9so6490185ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 09:00:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722960013; x=1723564813;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N0OH1lK0iyrEFjZ+sxfEDU/w6C/qIfjEuNJOJDkGoH0=;
-        b=XNfiF9lT7D4R+zgRE3xxJsV++d/Ikys+Z57EvRInNTpEOU25Xdyvxspdk0btP9ZybG
-         fIv72lTk4ePcMcT+ph5hBygl2ewCeg+bzBJG10PxMRQ8ZBL6KyitCflCuuLyoCglbVFn
-         6vtGR0sPyHUOhaATZilJhaOJr1u1I26TM5sheoiCfR0hBWUKZi8KYTXLxu1U4s5pFys7
-         vUExso+Um65jG69d7maeYg2K1pZsDI49upvJb1fNB5rYfOZ+w4/sxcE01rJQ0jqfzsZp
-         VCNFCRorSt59dBlaaATAAVjyZAVo8q5itBdyvcCvL8f7qZ3xntUGCxFOLBqAoUVNVe5p
-         oOVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+3LGsQjDY2TfEyC3RHVHebiPLf6Q/CuethJLFyFk0J1cuUKsyqjKzi6dm3LSYpWIend+Nd0J9amimiWYm7Pu0gVEAEGlv7Z6l70kr
-X-Gm-Message-State: AOJu0YxpYxv6u0dMVF+hNiII35iZVsnFIaOJefsdQBV53HsrZ2SPWGhK
-	4EkwQoglaI8HpVLtKpHID4WzLELYIJwXcAv6NbHSWDDj4RIawAlwxFhcR3/Hnns=
-X-Google-Smtp-Source: AGHT+IHwXaMUruJCX9M/RHqtmhUbj4EyviX70/VCd+gvNCZm8JC044UbL01+TgvDOTnUpG7G2lRLZQ==
-X-Received: by 2002:a17:902:e54f:b0:1fb:9627:b348 with SMTP id d9443c01a7336-1ff57495ca7mr237971045ad.58.1722960012898;
-        Tue, 06 Aug 2024 09:00:12 -0700 (PDT)
-Received: from localhost ([71.212.170.185])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5905fec0sm89249425ad.149.2024.08.06.09.00.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 09:00:12 -0700 (PDT)
-From: Kevin Hilman <khilman@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Andrew Lunn
- <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, Sebastian
- Hesselbarth <sebastian.hesselbarth@gmail.com>, Nishanth Menon <nm@ti.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/6] cpufreq: omap: Drop asm includes
-In-Reply-To: <20240806-dt-api-cleanups-v1-2-459e2c840e7d@kernel.org>
-References: <20240806-dt-api-cleanups-v1-0-459e2c840e7d@kernel.org>
- <20240806-dt-api-cleanups-v1-2-459e2c840e7d@kernel.org>
-Date: Tue, 06 Aug 2024 09:00:12 -0700
-Message-ID: <7h1q313alv.fsf@baylibre.com>
+	s=arc-20240116; t=1722960431; c=relaxed/simple;
+	bh=1FQ3LjegoDnlAhkNQHHzSWeJ7LVvwRA5e/urLwMVrco=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e1HrnC2zExf+ktLs/hVwv5qCgf4Hr6mrjBDQjTWG6I7QzjjLOFsu2dM/dNEVgLV4HKFJKz4NeswTKzkZPTQW6+EhRkxQDMaBl7kjgWDCgd9NFKdLZVai/192ZZW6xOaUOyR88K+NyjBlo9nny1A4Abu1M70M30cofWO8n2sh2dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=KY90xx5s; arc=none smtp.client-ip=116.203.77.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fris.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BF4BBBFB05;
+	Tue,  6 Aug 2024 18:07:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
+	t=1722960427; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=FoB6Tdx3LKAMF9L3+LsSYtSPwQuugctbgeePMvmfXEo=;
+	b=KY90xx5swM4QYf0pUvj+LTOcvrvuU6Pwrh0Rvr+1Pyq2tYpEVtkK38xACMLymcnkBGbmcZ
+	CgFo3wTyP2MoSMApN4qpjKHxv99ubbgHSXvsuup246a9p1PMWwgzZaEBVEMCYbweeKe+t6
+	yemDJKxspVyKkEBuTn42zW7rrha7SSfYusiDNtBGlDXYmJAA/YUN5u99GxpLX75EBZzkVf
+	mwR8vbPHm8n4zffctz6Obbqo4jrzI2nMHdnh4LNDeRTfGPJn5JGxh7pLfB5XFezORb9TvM
+	v/8XYBPdWMm/mBorF8FxwHnR+5qE6Wiv9W+dkmdCIuNZ4yi7HDsLpFXcvqyqhg==
+From: Frieder Schrempf <frieder@fris.de>
+To: Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Mathieu Othacehe <m.othacehe@gmail.com>,
+	Michael Walle <mwalle@kernel.org>,
+	Parthiban Nallathambi <parthiban@linumiz.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [PATCH v4 0/2] Add support for Kontron OSM-S i.MX93 SoM and carrier  board
+Date: Tue,  6 Aug 2024 18:02:40 +0200
+Message-ID: <20240806160353.823785-1-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-"Rob Herring (Arm)" <robh@kernel.org> writes:
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-> The omap driver doesn't actually need asm/smp_plat.h, so drop it.
-> asm/cpu.h is not needed either as linux/cpu.h is already included.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Patch 1: board DT bindings
+Patch 2: add devicetrees
 
-Acked-by: Kevin Hilman <khilman@baylibre.com>
+Changes for v4:
+* Reorder enable-active-high property
+* Add dedicated pinctrl settings for different SDHC speed modes
+* Add SION bit for SDHC pinctrls as workaround for SoC erratum
 
-> ---
->  drivers/cpufreq/omap-cpufreq.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/cpufreq/omap-cpufreq.c b/drivers/cpufreq/omap-cpufreq.c
-> index 3458d5cc9b7f..de8be0a8932d 100644
-> --- a/drivers/cpufreq/omap-cpufreq.c
-> +++ b/drivers/cpufreq/omap-cpufreq.c
-> @@ -28,9 +28,6 @@
->  #include <linux/platform_device.h>
->  #include <linux/regulator/consumer.h>
->  
-> -#include <asm/smp_plat.h>
-> -#include <asm/cpu.h>
-> -
->  /* OPP tolerance in percentage */
->  #define	OPP_TOLERANCE	4
->  
->
-> -- 
-> 2.43.0
+Changes for v3:
+* remove applied patches
+* rebase onto v6.11-rc1
+
+Changes for v2:
+* remove applied patches 1 and 2
+* add tags
+* improvements suggested by Krzysztof (thanks!)
+* add missing Makefile entry for DT
+
+Frieder Schrempf (2):
+  dt-bindings: arm: fsl: Add Kontron i.MX93 OSM-S based boards
+  arm64: dts: Add support for Kontron i.MX93 OSM-S SoM and BL carrier
+    board
+
+ .../devicetree/bindings/arm/fsl.yaml          |   6 +
+ arch/arm64/boot/dts/freescale/Makefile        |   1 +
+ .../dts/freescale/imx93-kontron-bl-osm-s.dts  | 165 +++++
+ .../dts/freescale/imx93-kontron-osm-s.dtsi    | 628 ++++++++++++++++++
+ 4 files changed, 800 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
+
+-- 
+2.45.2
+
 
