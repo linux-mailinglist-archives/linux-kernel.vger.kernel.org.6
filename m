@@ -1,186 +1,130 @@
-Return-Path: <linux-kernel+bounces-275943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C10C948C45
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:42:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D67F948C48
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C058288877
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:42:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E7741C2322C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300A11BDAA4;
-	Tue,  6 Aug 2024 09:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12721BDAB2;
+	Tue,  6 Aug 2024 09:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N/vSipoG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="fvzfpPGJ"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4791BDA84
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 09:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF821BDA84;
+	Tue,  6 Aug 2024 09:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722937353; cv=none; b=sl0YtV2ecrl2zM70jWLPeOQt/Bv/iNJmJwOM/3b3stRDhEBkHvwp5PVTxkvosOGxLTs3igZqFFpzl8tqNnXVWa2wxi1GElRWwWlBQEoHgalRIUWDS0fJFKuj+MOg9+w+PvLiXDrPz5e5PndkZgvswsDXH1ghIp4L+8iUAjpiy+s=
+	t=1722937392; cv=none; b=dMJPIdV4kTyWFa2uZe90s9r9BbqbTw94Fi6Un481deRJUniutvO23LB45fIQngUYbKJoalAU4Q+Enqqz3P06bQxC4URvAW358Yz0dUj0yTOsIe8VnkSWda91kXo8Jt0qYAueECi3c686TZe9Yryw0NzzaISg3nog5md4Q5/7c8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722937353; c=relaxed/simple;
-	bh=IZn7speP+xoerFkC55ZXUSz2mmiZ42yMY/QoBdHoHZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TE1P3BybjxAVJGBejijIGeETE7xwRqav3kTtQRpbsLZWFgShYfY55x7zwZfVmp+KK5WTLmwnGXrM0I6uUQ3ltB6PxSrHwkc7hXhPp/fsLg/G04OyhJ7j2hat8FHPImSr+e+0v002ZLdMxSB/Ivh8TS+hP+4Gfh3KkYlHWvsP+HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N/vSipoG; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722937351; x=1754473351;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=IZn7speP+xoerFkC55ZXUSz2mmiZ42yMY/QoBdHoHZ8=;
-  b=N/vSipoGD6W4P+a4QU86sp5SEcd5Fg/obHwZmiGwwHJDhdMk/S3OgBYx
-   D8zxf6LTHOXFyoBUL/hA30qYBB2ciTEa7DZh//Fzy51XfD0q5M8S64OzF
-   hHazS6D/HN8dPEkwkYspQJwZR4KAwap4Zu5xAb0feIgidUNpjTQI0MxLA
-   gmDcHgyvuVLCtjiDtegiCkSiWY5640yvhhMsZJk0mvxnA2KCGkHNsxFUO
-   rCrGZMtoQiHOwjofDP8SFe+txxzlgyGw3PhQNbryJzP4yKDGZk9O2LSet
-   8KTRHYvLg85BLhzb5ghHu8ritK0Z5A0Z3mPqb2/3Ag3iJ56g+UbRPUWMX
-   g==;
-X-CSE-ConnectionGUID: ocXCAyD7TUa8NBVniWASGw==
-X-CSE-MsgGUID: quYPJrZIR4yvFIydSeaOSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="31604021"
-X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
-   d="scan'208";a="31604021"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 02:42:30 -0700
-X-CSE-ConnectionGUID: vpK+OUGMSget8k+YNLBCEA==
-X-CSE-MsgGUID: awTUVpA3RmOsjbAtUkRJJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
-   d="scan'208";a="57024709"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 06 Aug 2024 02:42:29 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sbGi2-0004MZ-20;
-	Tue, 06 Aug 2024 09:42:26 +0000
-Date: Tue, 6 Aug 2024 17:42:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: James Smart <jsmart2021@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Hannes Reinecke <hare@suse.de>, Daniel Wagner <dwagner@suse.de>,
-	Ram Vegesna <ram.vegesna@broadcom.com>
-Subject: drivers/scsi/elx/efct/efct_hw.c:227:1: warning: the frame size of
- 1136 bytes is larger than 1024 bytes
-Message-ID: <202408061721.gfnwpv1W-lkp@intel.com>
+	s=arc-20240116; t=1722937392; c=relaxed/simple;
+	bh=omalze2Bu4iTxukzVIDOxtrfHbB5LbPErAxWcpq9vdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FhxODzyidkJ3zi1ms5LQYavs+zmpW+PPw76X2Uv1U7RMWwgfm2oh6MtyaSeUvHF4+Sa6GdvnWtVvfre48Y72GEOwGr1ZC1vrNHY6c1GX3S2Egu4eoSs0e8vbFluDgofek8++uU2beC6KPvpNr7ilFtl3Ri3rOJ14gSXrnhZ40Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=fvzfpPGJ; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4769BwND012988;
+	Tue, 6 Aug 2024 02:43:01 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=5
+	Agl40LLFB+MRtquRidYE5l/zqA/1VfO5ifHr76CpR4=; b=fvzfpPGJnSj/IQLYN
+	GP/53Ny7+r8jKL+F7kYNyZvaakWD0zYhEchiU/rzxGIr2+tZI/gjYf6NIJGy7r4g
+	3kpsxMUOlS05kqEmazgtEHRDAsou+iGc1Q+LZX+HsG6LA53DBknRmszgjyBn9uNz
+	kA6OXWKIKu0a/wmheZRC1ilpddWdyI1T4HfvKq63h0BdBpLi6EKc6VLniBN4rSBD
+	T0AdX2loxYDQnU+vJji/Ya90VZvZqOGGzJb2gz3a4FhMaV/1cYQOI5sKJw59ynFt
+	I7+rvKcgUcuFgT4zNLV24CsmVwGD2RsdUx3ppCNju4sBvgZaQ9oRkGHfqZVNYTV+
+	9nizQ==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 40uh0603vv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 Aug 2024 02:43:01 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 6 Aug 2024 02:43:00 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 6 Aug 2024 02:43:00 -0700
+Received: from [10.9.8.37] (EL-LT0043.marvell.com [10.9.8.37])
+	by maili.marvell.com (Postfix) with ESMTP id 25D203F70BD;
+	Tue,  6 Aug 2024 02:42:57 -0700 (PDT)
+Message-ID: <0d0a030c-b1ba-77a7-71f5-55448f6797f6@marvell.com>
+Date: Tue, 6 Aug 2024 11:42:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi James,
-
-First bad commit (maybe != root cause):
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   b446a2dae984fa5bd56dd7c3a02a426f87e05813
-commit: ebc076b3eddc807729bd81f7bc48e798a3ddc477 scsi: elx: efct: Tie into kernel Kconfig and build process
-date:   3 years, 2 months ago
-config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20240806/202408061721.gfnwpv1W-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240806/202408061721.gfnwpv1W-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408061721.gfnwpv1W-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/scsi/elx/efct/efct_hw.c: In function 'efct_hw_cb_link':
->> drivers/scsi/elx/efct/efct_hw.c:227:1: warning: the frame size of 1136 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-     227 | }
-         | ^
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXTERNAL] [PATCH][next] net: atlantic: Aavoid
+ -Wflex-array-member-not-at-end warnings
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>
+References: <ZrDwoVKH8d6TdVxn@cute>
+Content-Language: en-US
+From: Igor Russkikh <irusskikh@marvell.com>
+In-Reply-To: <ZrDwoVKH8d6TdVxn@cute>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: oe-13ZfwP1zmYsCuprxFON-PezLvGPkZ
+X-Proofpoint-GUID: oe-13ZfwP1zmYsCuprxFON-PezLvGPkZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-06_07,2024-08-02_01,2024-05-17_01
 
 
-vim +227 drivers/scsi/elx/efct/efct_hw.c
 
-4df84e8466242d James Smart 2021-06-01  162  
-4df84e8466242d James Smart 2021-06-01  163  static int
-4df84e8466242d James Smart 2021-06-01  164  efct_hw_cb_link(void *ctx, void *e)
-4df84e8466242d James Smart 2021-06-01  165  {
-4df84e8466242d James Smart 2021-06-01  166  	struct efct_hw *hw = ctx;
-4df84e8466242d James Smart 2021-06-01  167  	struct sli4_link_event *event = e;
-4df84e8466242d James Smart 2021-06-01  168  	struct efc_domain *d = NULL;
-4df84e8466242d James Smart 2021-06-01  169  	int rc = 0;
-4df84e8466242d James Smart 2021-06-01  170  	struct efct *efct = hw->os;
-4df84e8466242d James Smart 2021-06-01  171  
-4df84e8466242d James Smart 2021-06-01  172  	efct_hw_link_event_init(hw);
-4df84e8466242d James Smart 2021-06-01  173  
-4df84e8466242d James Smart 2021-06-01  174  	switch (event->status) {
-4df84e8466242d James Smart 2021-06-01  175  	case SLI4_LINK_STATUS_UP:
-4df84e8466242d James Smart 2021-06-01  176  
-4df84e8466242d James Smart 2021-06-01  177  		hw->link = *event;
-4df84e8466242d James Smart 2021-06-01  178  		efct->efcport->link_status = EFC_LINK_STATUS_UP;
-4df84e8466242d James Smart 2021-06-01  179  
-4df84e8466242d James Smart 2021-06-01  180  		if (event->topology == SLI4_LINK_TOPO_NON_FC_AL) {
-4df84e8466242d James Smart 2021-06-01  181  			struct efc_domain_record drec = {0};
-4df84e8466242d James Smart 2021-06-01  182  
-4df84e8466242d James Smart 2021-06-01  183  			efc_log_info(hw->os, "Link Up, NPORT, speed is %d\n",
-4df84e8466242d James Smart 2021-06-01  184  				     event->speed);
-4df84e8466242d James Smart 2021-06-01  185  			drec.speed = event->speed;
-4df84e8466242d James Smart 2021-06-01  186  			drec.fc_id = event->fc_id;
-4df84e8466242d James Smart 2021-06-01  187  			drec.is_nport = true;
-4df84e8466242d James Smart 2021-06-01  188  			efc_domain_cb(efct->efcport, EFC_HW_DOMAIN_FOUND,
-4df84e8466242d James Smart 2021-06-01  189  				      &drec);
-4df84e8466242d James Smart 2021-06-01  190  		} else if (event->topology == SLI4_LINK_TOPO_FC_AL) {
-4df84e8466242d James Smart 2021-06-01  191  			u8 buf[SLI4_BMBX_SIZE];
-4df84e8466242d James Smart 2021-06-01  192  
-4df84e8466242d James Smart 2021-06-01  193  			efc_log_info(hw->os, "Link Up, LOOP, speed is %d\n",
-4df84e8466242d James Smart 2021-06-01  194  				     event->speed);
-4df84e8466242d James Smart 2021-06-01  195  
-4df84e8466242d James Smart 2021-06-01  196  			if (!sli_cmd_read_topology(&hw->sli, buf,
-4df84e8466242d James Smart 2021-06-01  197  						   &hw->loop_map)) {
-4df84e8466242d James Smart 2021-06-01  198  				rc = efct_hw_command(hw, buf, EFCT_CMD_NOWAIT,
-4df84e8466242d James Smart 2021-06-01  199  						__efct_read_topology_cb, NULL);
-4df84e8466242d James Smart 2021-06-01  200  			}
-4df84e8466242d James Smart 2021-06-01  201  
-4df84e8466242d James Smart 2021-06-01  202  			if (rc)
-4df84e8466242d James Smart 2021-06-01  203  				efc_log_debug(hw->os, "READ_TOPOLOGY failed\n");
-4df84e8466242d James Smart 2021-06-01  204  		} else {
-4df84e8466242d James Smart 2021-06-01  205  			efc_log_info(hw->os, "%s(%#x), speed is %d\n",
-4df84e8466242d James Smart 2021-06-01  206  				     "Link Up, unsupported topology ",
-4df84e8466242d James Smart 2021-06-01  207  				     event->topology, event->speed);
-4df84e8466242d James Smart 2021-06-01  208  		}
-4df84e8466242d James Smart 2021-06-01  209  		break;
-4df84e8466242d James Smart 2021-06-01  210  	case SLI4_LINK_STATUS_DOWN:
-4df84e8466242d James Smart 2021-06-01  211  		efc_log_info(hw->os, "Link down\n");
-4df84e8466242d James Smart 2021-06-01  212  
-4df84e8466242d James Smart 2021-06-01  213  		hw->link.status = event->status;
-4df84e8466242d James Smart 2021-06-01  214  		efct->efcport->link_status = EFC_LINK_STATUS_DOWN;
-4df84e8466242d James Smart 2021-06-01  215  
-4df84e8466242d James Smart 2021-06-01  216  		d = efct->efcport->domain;
-4df84e8466242d James Smart 2021-06-01  217  		if (d)
-4df84e8466242d James Smart 2021-06-01  218  			efc_domain_cb(efct->efcport, EFC_HW_DOMAIN_LOST, d);
-4df84e8466242d James Smart 2021-06-01  219  		break;
-4df84e8466242d James Smart 2021-06-01  220  	default:
-4df84e8466242d James Smart 2021-06-01  221  		efc_log_debug(hw->os, "unhandled link status %#x\n",
-4df84e8466242d James Smart 2021-06-01  222  			      event->status);
-4df84e8466242d James Smart 2021-06-01  223  		break;
-4df84e8466242d James Smart 2021-06-01  224  	}
-4df84e8466242d James Smart 2021-06-01  225  
-4df84e8466242d James Smart 2021-06-01  226  	return 0;
-4df84e8466242d James Smart 2021-06-01 @227  }
-4df84e8466242d James Smart 2021-06-01  228  
+On 8/5/2024 5:32 PM, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally. Move the conflicting declaration to
+> the end of the structure. Notice that `struct hw_atl_utils_fw_rpc` ends in
+> a flexible-array member
+> 
+> Fix the following warnings:
+> 
+> drivers/net/ethernet/aquantia/atlantic/aq_hw.h:197:36: warning: structure
+> containing a flexible array member is not at the end of another structure
+> [-Wflex-array-member-not-at-end]
+> 
+> drivers/net/ethernet/aquantia/atlantic/hw_atl/../aq_hw.h:197:36: warning:
+> structure containing a flexible array member is not at the end of another
+> structure [-Wflex-array-member-not-at-end]
 
-:::::: The code at line 227 was first introduced by commit
-:::::: 4df84e8466242de835416a4ec0c856c0e2ed26eb scsi: elx: efct: Driver initialization routines
+Hi Gustavo!
 
-:::::: TO: James Smart <jsmart2021@gmail.com>
-:::::: CC: Martin K. Petersen <martin.petersen@oracle.com>
+I was abit curious about this variable length structure, because it looks strange and not actually used by driver.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I've cross checked, and its really some outdated declaration. The structure is never used as as a flex sized struct.
+
+So better would be to do just this:
+
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.h
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.h
+@@ -226,7 +226,6 @@ struct __packed offload_info {
+        struct offload_port_info ports;
+        struct offload_ka_info kas;
+        struct offload_rr_info rrs;
+-       u8 buf[];
+ };
+
+Let me know if you want to submit this, or I can do this as well.
+
+Regards,
+  Igor
 
