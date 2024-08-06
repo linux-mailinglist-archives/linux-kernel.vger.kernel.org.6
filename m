@@ -1,363 +1,442 @@
-Return-Path: <linux-kernel+bounces-276522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1209494E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:55:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E0039494F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B20DD1F2258D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:55:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEC301F2722D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0764838DD8;
-	Tue,  6 Aug 2024 15:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01B63FB30;
+	Tue,  6 Aug 2024 15:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="EXtYiU/c"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="glL1DFVG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E0B381C4
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC5938382;
+	Tue,  6 Aug 2024 15:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722959709; cv=none; b=A/v0Katt/KZJ5NTueILA8g1EGoKJSihsuAmv82oNTWARjdom2lLxI4KVgW79e0hsj7xx91ql65sjKPxc38hXbtDDQNTnKGN36iMcptPqzy5vX5oBHisK1ERIzLdYHI9HWITiQIrKQMSCw9ur9keLQjnQta/OGeImjqsm0/KKOOA=
+	t=1722959826; cv=none; b=h2pWC/au0X99uxzjU9PCYaa1Uq/2WWQqFHIihapiZdgWiRfu8T/JPNQNYhGJSEzQSVUVgYspkO5pS8bMmZVZwSxpN4qpERlqfX2wB+RAcQSvYHkumQOImmUfUcuHy0rVnu4gVbnv6zGa2qk+YIeqWkHVc73ncaf0O61VbZGftXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722959709; c=relaxed/simple;
-	bh=V7axy5oxuBi+4AERzv0nTWdYoYSpAyyW3qH1wkMHRP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n7FRAZafjxg1F9w2diSCffx1gIi7l1oLdwZjUiohv3QdGsep8DZ6/dF8fi8npW6vGIDX/N+GNxj24TBJaaOV505aX48BO52KnA7vq+M5I+v8S25adxEnlRWDpHnfoc0jOPnH2CCeZB8r9gxsG5YirHNB65N6V79IQlUC7tRCnrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=EXtYiU/c; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-39b37b63834so3571255ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 08:55:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1722959705; x=1723564505; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2YGt/wjYo222OhPFmccSx6ThVZz+Izlc098ZQzrSAG8=;
-        b=EXtYiU/c3/q3D4AEObKfVu+gBsvYOOp1MZL+YfrxfrpnP/JMxpmZCYkvHo0in0ICw9
-         9BpuiqqwuRhlyki7rWNr/w2g94e0YJVYZw7AC54aZqPRml1XQYCAPijJaQ90ELl+Vrwr
-         JL4wV0L5VzTRb6Brxlm2BRHF9nacm0t8vIdp+4NIz7VSfhbBiZiTdjM05A314P+p+yBa
-         FQ2zecMg3fasuyoJEx2lcmUJBTwOJTYKl5cvP4CobF4SHDZtb+d1BueIVm6kIT6gGb9U
-         Utq1bMrHZB5KPLQg0Ycde5tU+0yQ4U4hYrEBtKfSoWoiC2lXosXZKJUZ3Y7reLjnFzDt
-         WiYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722959705; x=1723564505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2YGt/wjYo222OhPFmccSx6ThVZz+Izlc098ZQzrSAG8=;
-        b=nqjGoaI0ochQdpd5lmeB9sajOE8bjoINVq6bB1F7K2eIiey0EGHG4T3y4z5if7tOM8
-         SRBfT7o7joyjB22cHswA+xL4TaHemLQZ2Sl336nJOXCnp3INgD2UcVRfIBlWODER31K8
-         /roa4Jmpd9b7kx5Gtms9naN4klwtNSIBSJ3bfZ8rfK87jLExOF3kp3Qh9PwsZtf/JL6s
-         OD9WTKVCaUiHyeKzoK2sYmLffV/BRcUYj2wHxl4mFF51McFXVjG09mt+2mm3q84daSYY
-         UUouuGxU34CjoD46Dh5Vz3nWvijRGeKNsYMEAe8zZtD+yACwpU/Y62HztT+6sddI/URl
-         xXMA==
-X-Gm-Message-State: AOJu0YxgoyeJdZ94qYeh4cgIDHCNpXM8qF8ZO9tIgBfdWLZHIzn8X3Fn
-	mLUrmVK47ABwEdj0kZySY599vCPaOZbqd3dl7476YQSViRmUGwcFtAmqRZtr9RMH0RquLmCPWK9
-	rEQ3yWHcLbVb6UsXSpkAxLPaeP9imJhESV5ctpg==
-X-Google-Smtp-Source: AGHT+IFRQkuAAHgh/EsFWAb8TmrhK12DCRX1CVtn+L9OrfgAKSE7RGRF2MjbSwJgKdxgAQsqi0R98pCqTvk4tf8kIYQ=
-X-Received: by 2002:a05:6e02:1ca2:b0:383:6af0:eb0d with SMTP id
- e9e14a558f8ab-39b1fc36ab0mr214645195ab.26.1722959705121; Tue, 06 Aug 2024
- 08:55:05 -0700 (PDT)
+	s=arc-20240116; t=1722959826; c=relaxed/simple;
+	bh=2kriYzwKBZ6p789eqB1HBmLsvehw+weYrTLVVtWgZvw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ZVryivQZvSc+pB18MopWuzidYzmvYOEmfpays7KN16o5i4Xv/MEoHtpI2ZBRNZP7BfwR6TUhVVftF7d3Y5eBZM4zKxm/sMVNLdlMjr/x4nVM6Q9MoBuEUEIHzYhBrZCEIeGiYZKXNJbVQw6xKLWQBC6mPVLqCESpek6nvKdatNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=glL1DFVG; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722959824; x=1754495824;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=2kriYzwKBZ6p789eqB1HBmLsvehw+weYrTLVVtWgZvw=;
+  b=glL1DFVGUdMeLNpH4DIKrfwgxjgLohSFjrC7IPf5J2JTX9dmD7oGX8nn
+   YbgdlkRhY4Yq3HLA0fHIlqxvxR3yQv6RazU7KbxHVVv4tFwCuxHOvPLqU
+   PvGCACHwZT0ocDIgVbNxHojAAzLWJmj3+wh+eMKSuAxSjJlZ26PSXzUl7
+   /j1xenaRqloCL2Twh5EK9SYBCd5hhtMbOpGe8PvTvBLFDNUe+V8aJV2gc
+   DUU4UMTjD6jrwY5oS0x88tQEPAdwHHwwSSAn20NlHBKH22bGk6ClrlFy2
+   SvLICqviAbsmC5yTRuxffmCVDBbIWaTQsA9lYTv5lynr+KkleAyk3E9ua
+   w==;
+X-CSE-ConnectionGUID: 2SIfLhHNTnuP2rgvuvdmow==
+X-CSE-MsgGUID: oQcgfPX8SDei+d3LJ4ui2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="43514059"
+X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
+   d="scan'208";a="43514059"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 08:55:39 -0700
+X-CSE-ConnectionGUID: xpTOBgr8QdG+s09hx24j9w==
+X-CSE-MsgGUID: sYRc3FhFR0Oc6U8e7DNG9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
+   d="scan'208";a="56631092"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO localhost.localdomain) ([10.94.248.17])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 08:55:34 -0700
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Hendrik Brueckner <brueckner@linux.ibm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@arm.com>,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH V11 01/10] perf/core: Add aux_pause, aux_resume, aux_start_paused
+Date: Tue,  6 Aug 2024 18:55:05 +0300
+Message-Id: <20240806155514.17900-2-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240806155514.17900-1-adrian.hunter@intel.com>
+References: <20240806155514.17900-1-adrian.hunter@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729142241.733357-1-sunilvl@ventanamicro.com> <20240729142241.733357-17-sunilvl@ventanamicro.com>
-In-Reply-To: <20240729142241.733357-17-sunilvl@ventanamicro.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 6 Aug 2024 21:24:53 +0530
-Message-ID: <CAAhSdy2EERGy2siE4mCCGNN2ydfiKiMGwrsYts=bb52WAViYwg@mail.gmail.com>
-Subject: Re: [PATCH v7 16/17] irqchip/riscv-aplic: Add ACPI support
-To: Sunil V L <sunilvl@ventanamicro.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-pci@vger.kernel.org, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Samuel Holland <samuel.holland@sifive.com>, 
-	Robert Moore <robert.moore@intel.com>, Conor Dooley <conor.dooley@microchip.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Haibo Xu <haibo1.xu@intel.com>, 
-	Atish Kumar Patra <atishp@rivosinc.com>, Drew Fustini <dfustini@tenstorrent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 29, 2024 at 7:54=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.com=
-> wrote:
->
-> Add ACPI support in APLIC drivers. Use the mapping created early during
-> boot to get the details about the APLIC.
->
-> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-> ---
->  drivers/irqchip/irq-riscv-aplic-direct.c | 22 +++++---
->  drivers/irqchip/irq-riscv-aplic-main.c   | 69 ++++++++++++++++--------
->  drivers/irqchip/irq-riscv-aplic-main.h   |  1 +
->  drivers/irqchip/irq-riscv-aplic-msi.c    |  9 +++-
->  4 files changed, 69 insertions(+), 32 deletions(-)
->
-> diff --git a/drivers/irqchip/irq-riscv-aplic-direct.c b/drivers/irqchip/i=
-rq-riscv-aplic-direct.c
-> index 4a3ffe856d6c..34540a0ca4da 100644
-> --- a/drivers/irqchip/irq-riscv-aplic-direct.c
-> +++ b/drivers/irqchip/irq-riscv-aplic-direct.c
-> @@ -4,6 +4,7 @@
->   * Copyright (C) 2022 Ventana Micro Systems Inc.
->   */
->
-> +#include <linux/acpi.h>
->  #include <linux/bitfield.h>
->  #include <linux/bitops.h>
->  #include <linux/cpu.h>
-> @@ -189,17 +190,22 @@ static int aplic_direct_starting_cpu(unsigned int c=
-pu)
->  }
->
->  static int aplic_direct_parse_parent_hwirq(struct device *dev, u32 index=
-,
-> -                                          u32 *parent_hwirq, unsigned lo=
-ng *parent_hartid)
-> +                                          u32 *parent_hwirq, unsigned lo=
-ng *parent_hartid,
-> +                                          struct aplic_priv *priv)
->  {
->         struct of_phandle_args parent;
-> +       unsigned long hartid;
->         int rc;
->
-> -       /*
-> -        * Currently, only OF fwnode is supported so extend this
-> -        * function for ACPI support.
-> -        */
-> -       if (!is_of_node(dev->fwnode))
-> -               return -EINVAL;
-> +       if (!is_of_node(dev->fwnode)) {
-> +               hartid =3D acpi_get_ext_intc_parent_hartid(priv->id, inde=
-x);
-> +               if (hartid =3D=3D INVALID_HARTID)
-> +                       return -ENODEV;
-> +
-> +               *parent_hartid =3D hartid;
-> +               *parent_hwirq =3D RV_IRQ_EXT;
-> +               return 0;
-> +       }
->
->         rc =3D of_irq_parse_one(to_of_node(dev->fwnode), index, &parent);
->         if (rc)
-> @@ -237,7 +243,7 @@ int aplic_direct_setup(struct device *dev, void __iom=
-em *regs)
->         /* Setup per-CPU IDC and target CPU mask */
->         current_cpu =3D get_cpu();
->         for (i =3D 0; i < priv->nr_idcs; i++) {
-> -               rc =3D aplic_direct_parse_parent_hwirq(dev, i, &hwirq, &h=
-artid);
-> +               rc =3D aplic_direct_parse_parent_hwirq(dev, i, &hwirq, &h=
-artid, priv);
->                 if (rc) {
->                         dev_warn(dev, "parent irq for IDC%d not found\n",=
- i);
->                         continue;
-> diff --git a/drivers/irqchip/irq-riscv-aplic-main.c b/drivers/irqchip/irq=
--riscv-aplic-main.c
-> index 28dd175b5764..8357c5f9921a 100644
-> --- a/drivers/irqchip/irq-riscv-aplic-main.c
-> +++ b/drivers/irqchip/irq-riscv-aplic-main.c
-> @@ -4,8 +4,10 @@
->   * Copyright (C) 2022 Ventana Micro Systems Inc.
->   */
->
-> +#include <linux/acpi.h>
->  #include <linux/bitfield.h>
->  #include <linux/irqchip/riscv-aplic.h>
-> +#include <linux/irqchip/riscv-imsic.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_irq.h>
-> @@ -125,39 +127,50 @@ static void aplic_init_hw_irqs(struct aplic_priv *p=
-riv)
->         writel(0, priv->regs + APLIC_DOMAINCFG);
->  }
->
-> +#ifdef CONFIG_ACPI
-> +static const struct acpi_device_id aplic_acpi_match[] =3D {
-> +       { "RSCV0002", 0 },
-> +       {}
-> +};
-> +MODULE_DEVICE_TABLE(acpi, aplic_acpi_match);
-> +
-> +#endif
-> +
->  int aplic_setup_priv(struct aplic_priv *priv, struct device *dev, void _=
-_iomem *regs)
->  {
->         struct device_node *np =3D to_of_node(dev->fwnode);
->         struct of_phandle_args parent;
->         int rc;
->
-> -       /*
-> -        * Currently, only OF fwnode is supported so extend this
-> -        * function for ACPI support.
-> -        */
-> -       if (!np)
-> -               return -EINVAL;
-> -
->         /* Save device pointer and register base */
->         priv->dev =3D dev;
->         priv->regs =3D regs;
->
-> -       /* Find out number of interrupt sources */
-> -       rc =3D of_property_read_u32(np, "riscv,num-sources", &priv->nr_ir=
-qs);
-> -       if (rc) {
-> -               dev_err(dev, "failed to get number of interrupt sources\n=
-");
-> -               return rc;
-> -       }
-> +       if (np) {
-> +               /* Find out number of interrupt sources */
-> +               rc =3D of_property_read_u32(np, "riscv,num-sources", &pri=
-v->nr_irqs);
-> +               if (rc) {
-> +                       dev_err(dev, "failed to get number of interrupt s=
-ources\n");
-> +                       return rc;
-> +               }
->
-> -       /*
-> -        * Find out number of IDCs based on parent interrupts
-> -        *
-> -        * If "msi-parent" property is present then we ignore the
-> -        * APLIC IDCs which forces the APLIC driver to use MSI mode.
-> -        */
-> -       if (!of_property_present(np, "msi-parent")) {
-> -               while (!of_irq_parse_one(np, priv->nr_idcs, &parent))
-> -                       priv->nr_idcs++;
-> +               /*
-> +                * Find out number of IDCs based on parent interrupts
-> +                *
-> +                * If "msi-parent" property is present then we ignore the
-> +                * APLIC IDCs which forces the APLIC driver to use MSI mo=
-de.
-> +                */
-> +               if (!of_property_present(np, "msi-parent")) {
-> +                       while (!of_irq_parse_one(np, priv->nr_idcs, &pare=
-nt))
-> +                               priv->nr_idcs++;
-> +               }
-> +       } else {
-> +               rc =3D riscv_acpi_get_gsi_info(dev->fwnode, &priv->gsi_ba=
-se, &priv->id,
-> +                                            &priv->nr_irqs, &priv->nr_id=
-cs);
-> +               if (rc) {
-> +                       dev_err(dev, "failed to find GSI mapping\n");
-> +                       return rc;
-> +               }
->         }
->
->         /* Setup initial state APLIC interrupts */
-> @@ -184,7 +197,11 @@ static int aplic_probe(struct platform_device *pdev)
->          * If msi-parent property is present then setup APLIC MSI
->          * mode otherwise setup APLIC direct mode.
->          */
-> -       msi_mode =3D of_property_present(to_of_node(dev->fwnode), "msi-pa=
-rent");
-> +       if (is_of_node(dev->fwnode))
-> +               msi_mode =3D of_property_present(to_of_node(dev->fwnode),=
- "msi-parent");
-> +       else
-> +               msi_mode =3D imsic_acpi_get_fwnode(NULL) ? 1 : 0;
-> +
->         if (msi_mode)
->                 rc =3D aplic_msi_setup(dev, regs);
->         else
-> @@ -192,6 +209,11 @@ static int aplic_probe(struct platform_device *pdev)
->         if (rc)
->                 dev_err(dev, "failed to setup APLIC in %s mode\n", msi_mo=
-de ? "MSI" : "direct");
->
-> +#ifdef CONFIG_ACPI
-> +       if (!acpi_disabled)
-> +               acpi_dev_clear_dependencies(ACPI_COMPANION(dev));
-> +#endif
-> +
->         return rc;
->  }
->
-> @@ -204,6 +226,7 @@ static struct platform_driver aplic_driver =3D {
->         .driver =3D {
->                 .name           =3D "riscv-aplic",
->                 .of_match_table =3D aplic_match,
-> +               .acpi_match_table =3D ACPI_PTR(aplic_acpi_match),
->         },
->         .probe =3D aplic_probe,
->  };
-> diff --git a/drivers/irqchip/irq-riscv-aplic-main.h b/drivers/irqchip/irq=
--riscv-aplic-main.h
-> index 4393927d8c80..9fbf45c7b4f7 100644
-> --- a/drivers/irqchip/irq-riscv-aplic-main.h
-> +++ b/drivers/irqchip/irq-riscv-aplic-main.h
-> @@ -28,6 +28,7 @@ struct aplic_priv {
->         u32                     gsi_base;
->         u32                     nr_irqs;
->         u32                     nr_idcs;
-> +       u32                     id;
+Hardware traces, such as instruction traces, can produce a vast amount of
+trace data, so being able to reduce tracing to more specific circumstances
+can be useful.
 
-This "id" is only used for ACPI so better call it "acpi_id".
+The ability to pause or resume tracing when another event happens, can do
+that.
 
->         void __iomem            *regs;
->         struct aplic_msicfg     msicfg;
->  };
-> diff --git a/drivers/irqchip/irq-riscv-aplic-msi.c b/drivers/irqchip/irq-=
-riscv-aplic-msi.c
-> index 028444af48bd..f5020241e0ed 100644
-> --- a/drivers/irqchip/irq-riscv-aplic-msi.c
-> +++ b/drivers/irqchip/irq-riscv-aplic-msi.c
-> @@ -157,6 +157,7 @@ static const struct msi_domain_template aplic_msi_tem=
-plate =3D {
->  int aplic_msi_setup(struct device *dev, void __iomem *regs)
->  {
->         const struct imsic_global_config *imsic_global;
-> +       struct irq_domain *msi_domain;
->         struct aplic_priv *priv;
->         struct aplic_msicfg *mc;
->         phys_addr_t pa;
-> @@ -239,8 +240,14 @@ int aplic_msi_setup(struct device *dev, void __iomem=
- *regs)
->                  * IMSIC and the IMSIC MSI domains are created later thro=
-ugh
->                  * the platform driver probing so we set it explicitly he=
-re.
->                  */
-> -               if (is_of_node(dev->fwnode))
-> +               if (is_of_node(dev->fwnode)) {
->                         of_msi_configure(dev, to_of_node(dev->fwnode));
-> +               } else {
-> +                       msi_domain =3D irq_find_matching_fwnode(imsic_acp=
-i_get_fwnode(dev),
-> +                                                             DOMAIN_BUS_=
-PLATFORM_MSI);
-> +                       if (msi_domain)
-> +                               dev_set_msi_domain(dev, msi_domain);
-> +               }
->         }
->
->         if (!msi_create_device_irq_domain(dev, MSI_DEFAULT_DOMAIN, &aplic=
-_msi_template,
-> --
-> 2.43.0
->
+Add ability for an event to "pause" or "resume" AUX area tracing.
 
-Otherwise, this looks good to me.
+Add aux_pause bit to perf_event_attr to indicate that, if the event
+happens, the associated AUX area tracing should be paused. Ditto
+aux_resume. Do not allow aux_pause and aux_resume to be set together.
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+Add aux_start_paused bit to perf_event_attr to indicate to an AUX area
+event that it should start in a "paused" state.
 
-Regards,
-Anup
+Add aux_paused to struct hw_perf_event for AUX area events to keep track of
+the "paused" state. aux_paused is initialized to aux_start_paused.
+
+Add PERF_EF_PAUSE and PERF_EF_RESUME modes for ->stop() and ->start()
+callbacks. Call as needed, during __perf_event_output(). Add
+aux_in_pause_resume to struct perf_buffer to prevent races with the NMI
+handler. Pause/resume in NMI context will miss out if it coincides with
+another pause/resume.
+
+To use aux_pause or aux_resume, an event must be in a group with the AUX
+area event as the group leader.
+
+Example (requires Intel PT and tools patches also):
+
+ $ perf record --kcore -e intel_pt/aux-action=start-paused/k,syscalls:sys_enter_newuname/aux-action=resume/,syscalls:sys_exit_newuname/aux-action=pause/ uname
+ Linux
+ [ perf record: Woken up 1 times to write data ]
+ [ perf record: Captured and wrote 0.043 MB perf.data ]
+ $ perf script --call-trace
+ uname   30805 [000] 24001.058782799: name: 0x7ffc9c1865b0
+ uname   30805 [000] 24001.058784424:  psb offs: 0
+ uname   30805 [000] 24001.058784424:  cbr: 39 freq: 3904 MHz (139%)
+ uname   30805 [000] 24001.058784629: ([kernel.kallsyms])        debug_smp_processor_id
+ uname   30805 [000] 24001.058784629: ([kernel.kallsyms])        __x64_sys_newuname
+ uname   30805 [000] 24001.058784629: ([kernel.kallsyms])            down_read
+ uname   30805 [000] 24001.058784629: ([kernel.kallsyms])                __cond_resched
+ uname   30805 [000] 24001.058784629: ([kernel.kallsyms])                preempt_count_add
+ uname   30805 [000] 24001.058784629: ([kernel.kallsyms])                    in_lock_functions
+ uname   30805 [000] 24001.058784629: ([kernel.kallsyms])                preempt_count_sub
+ uname   30805 [000] 24001.058784629: ([kernel.kallsyms])            up_read
+ uname   30805 [000] 24001.058784629: ([kernel.kallsyms])                preempt_count_add
+ uname   30805 [000] 24001.058784838: ([kernel.kallsyms])                    in_lock_functions
+ uname   30805 [000] 24001.058784838: ([kernel.kallsyms])                preempt_count_sub
+ uname   30805 [000] 24001.058784838: ([kernel.kallsyms])            _copy_to_user
+ uname   30805 [000] 24001.058784838: ([kernel.kallsyms])        syscall_exit_to_user_mode
+ uname   30805 [000] 24001.058784838: ([kernel.kallsyms])            syscall_exit_work
+ uname   30805 [000] 24001.058784838: ([kernel.kallsyms])                perf_syscall_exit
+ uname   30805 [000] 24001.058784838: ([kernel.kallsyms])                    debug_smp_processor_id
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                    perf_trace_buf_alloc
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                        perf_swevent_get_recursion_context
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                            debug_smp_processor_id
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                        debug_smp_processor_id
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                    perf_tp_event
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                        perf_trace_buf_update
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                            tracing_gen_ctx_irq_test
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                        perf_swevent_event
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                            __perf_event_account_interrupt
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                                __this_cpu_preempt_check
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                            perf_event_output_forward
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                                perf_event_aux_pause
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                                    ring_buffer_get
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                                        __rcu_read_lock
+ uname   30805 [000] 24001.058785046: ([kernel.kallsyms])                                        __rcu_read_unlock
+ uname   30805 [000] 24001.058785254: ([kernel.kallsyms])                                    pt_event_stop
+ uname   30805 [000] 24001.058785254: ([kernel.kallsyms])                                        debug_smp_processor_id
+ uname   30805 [000] 24001.058785254: ([kernel.kallsyms])                                        debug_smp_processor_id
+ uname   30805 [000] 24001.058785254: ([kernel.kallsyms])                                        native_write_msr
+ uname   30805 [000] 24001.058785463: ([kernel.kallsyms])                                        native_write_msr
+ uname   30805 [000] 24001.058785639: 0x0
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: James Clark <james.clark@arm.com>
+---
+
+
+Changes in V11:
+	Make assignment to event->hw.aux_paused conditional on
+	(pmu->capabilities & PERF_PMU_CAP_AUX_PAUSE).
+
+Changes in V10:
+	Move aux_paused into a union within struct hw_perf_event.
+	Additional comment wrt PERF_EF_PAUSE/PERF_EF_RESUME.
+	Factor out has_aux_action() as an inline function.
+	Use scoped_guard for irqsave.
+	Move calls of perf_event_aux_pause() from __perf_event_output()
+	to __perf_event_overflow().
+
+Changes in V9:
+	Move aux_paused to struct hw_perf_event
+
+Changes in V6:
+	Removed READ/WRITE_ONCE from __perf_event_aux_pause()
+	Expanded comment about guarding against NMI
+
+Changes in V5:
+	Added James' Ack
+
+Changes in V4:
+	Rename aux_output_cfg -> aux_action
+	Reorder aux_action bits from:
+		aux_pause, aux_resume, aux_start_paused
+	to:
+		aux_start_paused, aux_pause, aux_resume
+	Fix aux_action bits __u64 -> __u32
+
+
+ include/linux/perf_event.h      | 28 +++++++++++++
+ include/uapi/linux/perf_event.h | 11 ++++-
+ kernel/events/core.c            | 72 +++++++++++++++++++++++++++++++--
+ kernel/events/internal.h        |  1 +
+ 4 files changed, 108 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 6bb0c21d6335..8e508f77f42c 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -170,6 +170,12 @@ struct hw_perf_event {
+ 		};
+ 		struct { /* aux / Intel-PT */
+ 			u64		aux_config;
++			/*
++			 * For AUX area events, aux_paused cannot be a state
++			 * flag because it can be updated asynchronously to
++			 * state.
++			 */
++			unsigned int	aux_paused;
+ 		};
+ 		struct { /* software */
+ 			struct hrtimer	hrtimer;
+@@ -294,6 +300,7 @@ struct perf_event_pmu_context;
+ #define PERF_PMU_CAP_NO_EXCLUDE			0x0040
+ #define PERF_PMU_CAP_AUX_OUTPUT			0x0080
+ #define PERF_PMU_CAP_EXTENDED_HW_TYPE		0x0100
++#define PERF_PMU_CAP_AUX_PAUSE			0x0200
+ 
+ struct perf_output_handle;
+ 
+@@ -366,6 +373,8 @@ struct pmu {
+ #define PERF_EF_START	0x01		/* start the counter when adding    */
+ #define PERF_EF_RELOAD	0x02		/* reload the counter when starting */
+ #define PERF_EF_UPDATE	0x04		/* update the counter when stopping */
++#define PERF_EF_PAUSE	0x08		/* AUX area event, pause tracing */
++#define PERF_EF_RESUME	0x10		/* AUX area event, resume tracing */
+ 
+ 	/*
+ 	 * Adds/Removes a counter to/from the PMU, can be done inside a
+@@ -405,6 +414,18 @@ struct pmu {
+ 	 *
+ 	 * ->start() with PERF_EF_RELOAD will reprogram the counter
+ 	 *  value, must be preceded by a ->stop() with PERF_EF_UPDATE.
++	 *
++	 * ->stop() with PERF_EF_PAUSE will stop as simply as possible. Will not
++	 * overlap another ->stop() with PERF_EF_PAUSE nor ->start() with
++	 * PERF_EF_RESUME.
++	 *
++	 * ->start() with PERF_EF_RESUME will start as simply as possible but
++	 * only if the counter is not otherwise stopped. Will not overlap
++	 * another ->start() with PERF_EF_RESUME nor ->stop() with
++	 * PERF_EF_PAUSE.
++	 *
++	 * Notably, PERF_EF_PAUSE/PERF_EF_RESUME *can* be concurrent with other
++	 * ->stop()/->start() invocations, just not itself.
+ 	 */
+ 	void (*start)			(struct perf_event *event, int flags);
+ 	void (*stop)			(struct perf_event *event, int flags);
+@@ -1660,6 +1681,13 @@ static inline bool has_aux(struct perf_event *event)
+ 	return event->pmu->setup_aux;
+ }
+ 
++static inline bool has_aux_action(struct perf_event *event)
++{
++	return event->attr.aux_sample_size ||
++	       event->attr.aux_pause ||
++	       event->attr.aux_resume;
++}
++
+ static inline bool is_write_backward(struct perf_event *event)
+ {
+ 	return !!event->attr.write_backward;
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 4842c36fdf80..0524d541d4e3 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -511,7 +511,16 @@ struct perf_event_attr {
+ 	__u16	sample_max_stack;
+ 	__u16	__reserved_2;
+ 	__u32	aux_sample_size;
+-	__u32	__reserved_3;
++
++	union {
++		__u32	aux_action;
++		struct {
++			__u32	aux_start_paused :  1, /* start AUX area tracing paused */
++				aux_pause        :  1, /* on overflow, pause AUX area tracing */
++				aux_resume       :  1, /* on overflow, resume AUX area tracing */
++				__reserved_3     : 29;
++		};
++	};
+ 
+ 	/*
+ 	 * User provided data if sigtrap=1, passed back to user via
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index aa3450bdc227..e8989db0de18 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -2097,7 +2097,7 @@ static void perf_put_aux_event(struct perf_event *event)
+ 
+ static bool perf_need_aux_event(struct perf_event *event)
+ {
+-	return !!event->attr.aux_output || !!event->attr.aux_sample_size;
++	return event->attr.aux_output || has_aux_action(event);
+ }
+ 
+ static int perf_get_aux_event(struct perf_event *event,
+@@ -2122,6 +2122,10 @@ static int perf_get_aux_event(struct perf_event *event,
+ 	    !perf_aux_output_match(event, group_leader))
+ 		return 0;
+ 
++	if ((event->attr.aux_pause || event->attr.aux_resume) &&
++	    !(group_leader->pmu->capabilities & PERF_PMU_CAP_AUX_PAUSE))
++		return 0;
++
+ 	if (event->attr.aux_sample_size && !group_leader->pmu->snapshot_aux)
+ 		return 0;
+ 
+@@ -7904,6 +7908,49 @@ void perf_prepare_header(struct perf_event_header *header,
+ 	WARN_ON_ONCE(header->size & 7);
+ }
+ 
++static void __perf_event_aux_pause(struct perf_event *event, bool pause)
++{
++	if (pause) {
++		if (!event->hw.aux_paused) {
++			event->hw.aux_paused = 1;
++			event->pmu->stop(event, PERF_EF_PAUSE);
++		}
++	} else {
++		if (event->hw.aux_paused) {
++			event->hw.aux_paused = 0;
++			event->pmu->start(event, PERF_EF_RESUME);
++		}
++	}
++}
++
++static void perf_event_aux_pause(struct perf_event *event, bool pause)
++{
++	struct perf_buffer *rb;
++
++	if (WARN_ON_ONCE(!event))
++		return;
++
++	rb = ring_buffer_get(event);
++	if (!rb)
++		return;
++
++	scoped_guard (irqsave) {
++		/*
++		 * Guard against self-recursion here. Another event could trip
++		 * this same from NMI context.
++		 */
++		if (READ_ONCE(rb->aux_in_pause_resume))
++			break;
++
++		WRITE_ONCE(rb->aux_in_pause_resume, 1);
++		barrier();
++		__perf_event_aux_pause(event, pause);
++		barrier();
++		WRITE_ONCE(rb->aux_in_pause_resume, 0);
++	}
++	ring_buffer_put(rb);
++}
++
+ static __always_inline int
+ __perf_event_output(struct perf_event *event,
+ 		    struct perf_sample_data *data,
+@@ -9706,6 +9753,11 @@ static int __perf_event_overflow(struct perf_event *event,
+ 
+ 	ret = __perf_event_account_interrupt(event, throttle);
+ 
++	if (event->attr.aux_pause)
++		perf_event_aux_pause(event->aux_event, true);
++	if (event->attr.aux_resume)
++		perf_event_aux_pause(event->aux_event, false);
++
+ 	if (event->prog && !bpf_overflow_handler(event, data, regs))
+ 		return ret;
+ 
+@@ -12083,11 +12135,25 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+ 	}
+ 
+ 	if (event->attr.aux_output &&
+-	    !(pmu->capabilities & PERF_PMU_CAP_AUX_OUTPUT)) {
++	    (!(pmu->capabilities & PERF_PMU_CAP_AUX_OUTPUT) ||
++	     event->attr.aux_pause || event->attr.aux_resume)) {
+ 		err = -EOPNOTSUPP;
+ 		goto err_pmu;
+ 	}
+ 
++	if (event->attr.aux_pause && event->attr.aux_resume) {
++		err = -EINVAL;
++		goto err_pmu;
++	}
++
++	if (event->attr.aux_start_paused) {
++		if (!(pmu->capabilities & PERF_PMU_CAP_AUX_PAUSE)) {
++			err = -EOPNOTSUPP;
++			goto err_pmu;
++		}
++		event->hw.aux_paused = 1;
++	}
++
+ 	if (cgroup_fd != -1) {
+ 		err = perf_cgroup_connect(cgroup_fd, event, attr, group_leader);
+ 		if (err)
+@@ -12883,7 +12949,7 @@ perf_event_create_kernel_counter(struct perf_event_attr *attr, int cpu,
+ 	 * Grouping is not supported for kernel events, neither is 'AUX',
+ 	 * make sure the caller's intentions are adjusted.
+ 	 */
+-	if (attr->aux_output)
++	if (attr->aux_output || attr->aux_action)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	event = perf_event_alloc(attr, cpu, task, NULL, NULL,
+diff --git a/kernel/events/internal.h b/kernel/events/internal.h
+index 451514442a1b..001b1cbf6f0e 100644
+--- a/kernel/events/internal.h
++++ b/kernel/events/internal.h
+@@ -51,6 +51,7 @@ struct perf_buffer {
+ 	void				(*free_aux)(void *);
+ 	refcount_t			aux_refcount;
+ 	int				aux_in_sampling;
++	int				aux_in_pause_resume;
+ 	void				**aux_pages;
+ 	void				*aux_priv;
+ 
+-- 
+2.34.1
+
 
