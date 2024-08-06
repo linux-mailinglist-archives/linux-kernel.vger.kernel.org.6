@@ -1,144 +1,276 @@
-Return-Path: <linux-kernel+bounces-276221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 483D494906F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:12:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22408949071
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0498E282B0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:12:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D02D3283C95
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C44C1D0DE9;
-	Tue,  6 Aug 2024 13:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCB81D0DD1;
+	Tue,  6 Aug 2024 13:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="IMO8n8RA"
-Received: from mail1.perex.cz (unknown [77.48.224.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2ReV+3V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674351D0DCB;
-	Tue,  6 Aug 2024 13:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D551D0DD6;
+	Tue,  6 Aug 2024 13:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722949926; cv=none; b=gItUgFRMoLNJT2yJfq++NsxJp62FpfM6YOU0fQqJUqC33M6CPz8hEF+phB4UExAbqJkHAUVgfFfC8qXJ43b/VMoe0f3CuJXCfh1eEkWUYaG8uKPmwobiKHPWXNVSVQCJAUIuln128G/jEFz1KMPaxMIrmfU+c+MMgOYsbH1Fv7Q=
+	t=1722949955; cv=none; b=qW/DQ5RPVgRlSSsU6Oi0sf9ln+NZ9wkoJwnxMcWlD5KR1ZQAP0pXZsBKkfrnbTIeZGvthhjchh1PpPgessiEGADIa9r16HPDA+ZhtWMml08mattp6lLjRgynHgzRIFOsttlyZH0nt6j++q+qZ4EJaeYTD6yeE5o77FQVues0UWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722949926; c=relaxed/simple;
-	bh=WADISkt75uVpElDDXWxSXBZg8j3vL4azJxa3bCQgXWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BBToLfao0dFrN7srgeK7dCqcX8nI1BFuTZkm8bZAOFcOiZd1EcC0p1LWL3WgeB0lnzcxP222Hz4MllKV4qGrpZhLJcgE1wv7JZyhyb+g20vCrL5MZwPflorKwKmxW6QoiNwbulcX38aoy5kIc4FcHdRQh5UJvXRVyDhlZHrlm+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=IMO8n8RA; arc=none smtp.client-ip=77.48.224.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 28A5D36280;
-	Tue,  6 Aug 2024 15:11:52 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 28A5D36280
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-	t=1722949912; bh=Hd+NSRa84YiyDnpa3qO9l6uDsTzprgKEFwx8xIXHQp8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IMO8n8RAUzKXUpC7ByLmRFloG6trCtYJer8MEQbXMH4hcFL0xg1DhFPBKNe5VWQ2j
-	 VRxPaEmHDgCOLvL22CImnrXAc5LP5Y3kI2P2cua9K6zHMHavuKddTD1ypA6m1hZdOm
-	 MJUbMdAcfM7GMk6PkHmjYR7Xxq3zZGpDEwXDHpJg=
-Received: from [192.168.100.98] (unknown [192.168.100.98])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: perex)
-	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-	Tue,  6 Aug 2024 15:11:40 +0200 (CEST)
-Message-ID: <8bcfd160-8c6a-4a1f-807c-f76e7f069b49@perex.cz>
-Date: Tue, 6 Aug 2024 15:11:39 +0200
+	s=arc-20240116; t=1722949955; c=relaxed/simple;
+	bh=DGsYcTK6eGFALIQNZ8BJVb+gMAQQ1GHI0TB0nXuutCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EbIZ8qQKUiRiyhqIDPxyjWQlBaQ2KugtRN+52tLmNOhlXBm0sD/lZMBu1kCmtA2sGmMrET+N5YGeg25vsbzJQhhtiTRyuLYMunIvBjglTTpMLJg8rzceVlidvvD0Ox+4iUeDD7RGYxl5hcqNHiv1Iv0KDA8MJmP2TFVS4RZC1AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2ReV+3V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78888C32786;
+	Tue,  6 Aug 2024 13:12:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722949954;
+	bh=DGsYcTK6eGFALIQNZ8BJVb+gMAQQ1GHI0TB0nXuutCM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k2ReV+3V/aDyaWy/h4SdEWcIkxvvw+4wm2KNoGOyhSAavyMRnDIptwNzCm5wjZAAw
+	 u3E7s1UrKWqXRJHECe3+MPO7RE9VHEc+C7bw9HLHnFNWh6WgfAnUqBbh48RB4A4oxA
+	 RS0bfz20PlvLyuc1/l5Qv/v1rNOX7OupHjRitxjWdyE8vOzD5D/CtyqBr1ln5qasal
+	 iKS7we6ArZsJDNQo0VGdOUswwwrHuF+/NjrOsgEgk4izFbYEmx2Useju7TIskdJGzq
+	 Sxalru7NKCvjsXmANp92I8GjrPaulpW9+BnYodha0eQ8hHBpgeVmvQ2P3dL7OADnhS
+	 7If6Brgy5Cq/A==
+Date: Tue, 6 Aug 2024 10:12:30 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 5/5] perf annotate: Add --skip-empty option
+Message-ID: <ZrIhPuFee8R9ZvVi@x1>
+References: <20240803211332.1107222-1-namhyung@kernel.org>
+ <20240803211332.1107222-6-namhyung@kernel.org>
+ <ZrEmZLV0vgU6GUcN@x1>
+ <ZrEyo4CSm6nKU20s@google.com>
+ <ZrE011BLww0LQQha@x1>
+ <ZrE7EWyFJ3hThopM@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] ALSA: timer: Introduce virtual userspace-driven
- timers
-To: Ivan Orlov <ivan.orlov0322@gmail.com>, tiwai@suse.com, corbet@lwn.net,
- broonie@kernel.org, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- christophe.jaillet@wanadoo.fr, aholzinger@gmx.de
-References: <20240806125243.449959-1-ivan.orlov0322@gmail.com>
- <20240806125243.449959-4-ivan.orlov0322@gmail.com>
-From: Jaroslav Kysela <perex@perex.cz>
-Content-Language: en-US
-Autocrypt: addr=perex@perex.cz; keydata=
- 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
-In-Reply-To: <20240806125243.449959-4-ivan.orlov0322@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZrE7EWyFJ3hThopM@google.com>
 
-On 06. 08. 24 14:52, Ivan Orlov wrote:
-> Implement two ioctl calls in order to support virtual userspace-driven
-> ALSA timers.
+On Mon, Aug 05, 2024 at 01:50:25PM -0700, Namhyung Kim wrote:
+> On Mon, Aug 05, 2024 at 05:23:51PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Mon, Aug 05, 2024 at 01:14:27PM -0700, Namhyung Kim wrote:
+> > > On Mon, Aug 05, 2024 at 04:22:12PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > > On Sat, Aug 03, 2024 at 02:13:32PM -0700, Namhyung Kim wrote:
+> > > > > Like in perf report, we want to hide empty events in the perf annotate
+> > > > > output.  This is consistent when the option is set in perf report.
+> > > > > 
+> > > > > For example, the following command would use 3 events including dummy.
+> > > > > 
+> > > > >   $ perf mem record -a -- perf test -w noploop
+> > > > > 
+> > > > >   $ perf evlist
+> > > > >   cpu/mem-loads,ldlat=30/P
+> > > > >   cpu/mem-stores/P
+> > > > >   dummy:u
+> > > > > 
+> > > > > Just using perf annotate with --group will show the all 3 events.
+> > > > 
+> > > > Seems unrelated, just before compiling with this patch:
+> > > > 
+> > > > root@x1:~# perf mem record -a -- perf test -w noploop
+> > > > Memory events are enabled on a subset of CPUs: 4-11
+> > > > [ perf record: Woken up 1 times to write data ]
+> > > > [ perf record: Captured and wrote 10.506 MB perf.data (2775 samples) ]
+> > > > root@x1:~#
+> > > > 
+> > > > root@x1:~# perf annotate --group --stdio2 sched_clock
+> > > > root@x1:~# perf annotate --stdio2 sched_clock
+> > > > Samples: 178  of event 'cpu_atom/mem-stores/P', 4000 Hz, Event count (approx.): 565268, [percent: local period]
+> > > > sched_clock() /usr/lib/debug/lib/modules/6.8.11-200.fc39.x86_64/vmlinux
+> > > > Percent      0xffffffff810511e0 <sched_clock>:
+> > > >                endbr64        
+> > > >    5.76        incl    pcpu_hot+0x8
+> > > >    5.47      → callq   sched_clock_noinstr
+> > > >   88.78        decl    pcpu_hot+0x8
+> > > >              ↓ je      1e     
+> > > >              → jmp     __x86_return_thunk
+> > > >          1e: → callq   __SCT__preempt_schedule_notrace
+> > > >              → jmp     __x86_return_thunk
+> > > > root@x1:~# perf annotate --group --stdio2 sched_clock
+> > > > root@x1:~# perf annotate --group --stdio sched_clock
+> > > > root@x1:~# perf annotate --group sched_clock
+> > > > root@x1:~#
+> > > > 
+> > > > root@x1:~# perf evlist
+> > > > cpu_atom/mem-loads,ldlat=30/P
+> > > > cpu_atom/mem-stores/P
+> > > > dummy:u
+> > > > root@x1:~#
+> > > > 
+> > > > root@x1:~# perf report --header-only | grep cmdline
+> > > > # cmdline : /home/acme/bin/perf mem record -a -- perf test -w noploop 
+> > > > root@x1:~#
+> > > > 
+> > > > I thought it would be some hybrid oddity but seems to be just --group
+> > > > related, seems like it stops if the first event has no samples? Because
+> > > > it works with another symbol:
+> > > 
+> > > Good catch.  Yeah I found it only checked the first event.  Something
+> > > like below should fix the issue.
+> > 
+> > Nope, with the patch applied:
+> > 
+> > root@x1:~# perf annotate --group --stdio sched_clock
+> > root@x1:~# perf annotate --stdio sched_clock
+> >  Percent |      Source code & Disassembly of vmlinux for cpu_atom/mem-stores/P (147 samples, percent: local period)
+> > -------------------------------------------------------------------------------------------------------------------
+> >          : 0                0xffffffff810511e0 <sched_clock>:
+> >     0.00 :   ffffffff810511e0:       endbr64
+> >     5.11 :   ffffffff810511e4:       incl    %gs:0x7efe2d5d(%rip)       # 33f48 <pcpu_hot+0x8>
+> >     0.13 :   ffffffff810511eb:       callq   0xffffffff821350d0
+> >    94.76 :   ffffffff810511f0:       decl    %gs:0x7efe2d51(%rip)       # 33f48 <pcpu_hot+0x8>
+> >     0.00 :   ffffffff810511f7:       je      0xffffffff810511fe
+> >     0.00 :   ffffffff810511f9:       jmp     0xffffffff82153320
+> >     0.00 :   ffffffff810511fe:       callq   0xffffffff82153990
+> >     0.00 :   ffffffff81051203:       jmp     0xffffffff82153320
+> > root@x1:~# perf annotate --group --stdio sched_clock
+> > root@x1:~# perf annotate --group --stdio2 sched_clock
+> > root@x1:~# perf annotate --group sched_clock
+> > root@x1:~#
+> 
+> Oh ok, it was not enough.  It should call evsel__output_resort() after
+> hists__match() and hists__link().  Use this instead.
 
-...
+Ok, this works:
 
-> +struct snd_utimer_info {
-> +	/*
-> +	 * To pretend being a normal timer, we need to know the frame rate and
-> +	 * the period size in frames.
-> +	 */
-> +	__u64 frame_rate;
-> +	__u64 period_size;
+Before this patch:
 
-There should be just one timer resolution in ns member (like in struct 
-snd_timer_ginfo - not frame/period members here - it's too specific). The 
-resolution can be calculated in the user space from the rate and period size.
+root@x1:~# perf annotate --stdio sched_clock
+ Percent |      Source code & Disassembly of vmlinux for cpu_atom/mem-stores/P (147 samples, percent: local period)
+-------------------------------------------------------------------------------------------------------------------
+         : 0                0xffffffff810511e0 <sched_clock>:
+    0.00 :   ffffffff810511e0:       endbr64
+    5.11 :   ffffffff810511e4:       incl    %gs:0x7efe2d5d(%rip)       # 33f48 <pcpu_hot+0x8>
+    0.13 :   ffffffff810511eb:       callq   0xffffffff821350d0
+   94.76 :   ffffffff810511f0:       decl    %gs:0x7efe2d51(%rip)       # 33f48 <pcpu_hot+0x8>
+    0.00 :   ffffffff810511f7:       je      0xffffffff810511fe
+    0.00 :   ffffffff810511f9:       jmp     0xffffffff82153320
+    0.00 :   ffffffff810511fe:       callq   0xffffffff82153990
+    0.00 :   ffffffff81051203:       jmp     0xffffffff82153320
+root@x1:~# perf annotate --group --stdio sched_clock
+root@x1:~#
 
-Also naming - the timer API uses snd_timer prefix for structures, thus 
-snd_timer_uinfo should be more appropriate.
+After:
 
-					Jaroslav
+root@x1:~# perf annotate --group --stdio sched_clock
+ Percent                 |      Source code & Disassembly of vmlinux for cpu_atom/mem-loads,ldlat=30/P, cpu_atom/mem-stores/P, dummy:u (0 samples, percent: local period)
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                         : 0                0xffffffff810511e0 <sched_clock>:
+    0.00    0.00    0.00 :   ffffffff810511e0:       endbr64
+    0.00    5.11    0.00 :   ffffffff810511e4:       incl    %gs:0x7efe2d5d(%rip)       # 33f48 <pcpu_hot+0x8>
+    0.00    0.13    0.00 :   ffffffff810511eb:       callq   0xffffffff821350d0
+    0.00   94.76    0.00 :   ffffffff810511f0:       decl    %gs:0x7efe2d51(%rip)       # 33f48 <pcpu_hot+0x8>
+    0.00    0.00    0.00 :   ffffffff810511f7:       je      0xffffffff810511fe
+    0.00    0.00    0.00 :   ffffffff810511f9:       jmp     0xffffffff82153320
+    0.00    0.00    0.00 :   ffffffff810511fe:       callq   0xffffffff82153990
+    0.00    0.00    0.00 :   ffffffff81051203:       jmp     0xffffffff82153320
+root@x1:~#
 
--- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+One example with samples for the first two events:
 
+root@x1:~# perf annotate --group --stdio2
+Samples: 2K of events 'cpu_atom/mem-loads,ldlat=30/P, cpu_atom/mem-stores/P, dummy:u', 4000 Hz, Event count (approx.): 22892183, [percent: local period]
+cgroup_rstat_updated() /usr/lib/debug/lib/modules/6.8.11-200.fc39.x86_64/vmlinux
+Percent                       0xffffffff8124e080 <cgroup_rstat_updated>:
+   0.00    0.24    0.00         endbr64                         
+                              → callq   __fentry__              
+   0.00   99.76    0.00         pushq   %r15                    
+                                movq    $0x251d4,%rcx           
+                                pushq   %r14                    
+                                movq    %rdi,%r14               
+                                pushq   %r13                    
+                                movslq  %esi,%r13               
+                                pushq   %r12                    
+                                pushq   %rbp                    
+                                pushq   %rbx                    
+                                subq    $0x10,%rsp              
+                                cmpq    $0x2000,%r13            
+                              ↓ jae     17f                     
+                          31:   movq    0x3d0(%r14),%rbx        
+                                movq    -0x7d3fb360(, %r13, 8),%r12
+                                cmpq    $0x2000,%r13            
+                              ↓ jae     19b                     
+  25.00    0.00    0.00   4d:   cmpq    $0,0x88(%r12, %rbx)     
+                              ↓ je      6b                      
+                                addq    $0x10,%rsp              
+                                popq    %rbx                    
+                                popq    %rbp                    
+                                popq    %r12                    
+  75.00    0.00    0.00         popq    %r13                    
+                                popq    %r14                    
+                                popq    %r15                    
+                              → jmp     __x86_return_thunk      
+<SNIP>
+
+And then skipping "empty" events:
+
+root@x1:~# perf annotate --group --skip-empty --stdio2 cgroup_rstat_updated | head -35
+Samples: 4  of events 'cpu_atom/mem-loads,ldlat=30/P, cpu_atom/mem-stores/P', 4000 Hz, Event count (approx.): 31851, [percent: local period]
+cgroup_rstat_updated() /usr/lib/debug/lib/modules/6.8.11-200.fc39.x86_64/vmlinux
+Percent               0xffffffff8124e080 <cgroup_rstat_updated>:
+   0.00    0.24         endbr64                 
+                      → callq   __fentry__      
+   0.00   99.76         pushq   %r15            
+                        movq    $0x251d4,%rcx   
+                        pushq   %r14            
+                        movq    %rdi,%r14       
+                        pushq   %r13            
+                        movslq  %esi,%r13       
+                        pushq   %r12            
+                        pushq   %rbp            
+                        pushq   %rbx            
+                        subq    $0x10,%rsp      
+                        cmpq    $0x2000,%r13    
+                      ↓ jae     17f             
+                  31:   movq    0x3d0(%r14),%rbx
+                        movq    -0x7d3fb360(, %r13, 8),%r12
+                        cmpq    $0x2000,%r13    
+                      ↓ jae     19b             
+  25.00    0.00   4d:   cmpq    $0,0x88(%r12, %rbx)
+                      ↓ je      6b              
+                        addq    $0x10,%rsp      
+                        popq    %rbx            
+                        popq    %rbp            
+                        popq    %r12            
+  75.00    0.00         popq    %r13            
+                        popq    %r14            
+                        popq    %r15            
+                      → jmp     __x86_return_thunk
+                  6b:   addq    %r12,%rcx       
+                        movq    %rcx,%rdi       
+                        movq    %rcx,(%rsp)     
+                      → callq   *ffffffff82151500
+root@x1:~#
+
+So, I haven't done further analysis but I think this is a separate
+issue, right?
+
+Thanks for the fix!
+
+Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+- Arnaldo
 
