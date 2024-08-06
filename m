@@ -1,214 +1,167 @@
-Return-Path: <linux-kernel+bounces-275641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458E19487E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:27:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA0F9487EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50901F231AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:27:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81DB51C21E70
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E94E58AD0;
-	Tue,  6 Aug 2024 03:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265AC41AAC;
+	Tue,  6 Aug 2024 03:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nub6Cn92"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Q1iF9viv"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B491A43ABC
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE85184D
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722914831; cv=none; b=mgNM+DwhL9bWGtYzEwNJ2bv6tG0aaJtlCakU0RSTt+vHpJMIvIVUnfsuTbZ8M3hQJcKhLpS3/iUufy50BNK58lmX8m47Ynpv5Zti952hP/biYSHlWcwP6sbmtcT30s8mDuYftZweUVDTg1KT60NwPV96xx4q6OkXYInp59B4Xns=
+	t=1722915094; cv=none; b=atWkqdkCJgPfBqR44WXZnvcd/+W4Z4YExRWhqZVkTSCu4RGwZ1WeMZc79tjKuv94EZN0vdgQoVX1j1ENv7G7vcychfpVmimVnYLzFTxhTtrWJM16fVflGPf4Lf4ypyNpBdNqudtCSWWSa+OQA/HIUVurqCbLAslPTXO5AzrNS0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722914831; c=relaxed/simple;
-	bh=OnuEf1n44ynY7vh2ncFDoC9pLo9+YMqsxh8yoxz0U00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OJhmGcaAb86z0SgAxT5hg7nuqqYlHtK9HfJbeRUf+PpF6hKSO7c6IDNF9jNgkceCgC6gmHzYGBWY98TOSKvjqAIDz6K9bfad70L5bRF+bma4Ju8Yo7I8J4/1J4HrY+SQXcStMjHC8i2IcQUmvjGBUDxZ2AsByWybPjOVOeT2bTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nub6Cn92; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 5 Aug 2024 21:26:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722914823;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vowwqyn+x5QwA/BF09y5QtbCMUxlKjhdNwTKjuKKNDQ=;
-	b=nub6Cn92YeGIK/u0ghcrcXaFjjcBJojYaOUzNOZZyOQ+LFGvdG29yhx/Tr+J6hwiN9wd9B
-	vZWbVb2OM7qAOjMnMIvfKbUA26z4hzu72bH1oThIo6RPZQuBN6bmULWw2ynPyFLw+hVbrr
-	XilwfsOMp3rXu30XvAYcklHomin8Pfk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Jose Fernandez <jose.fernandez@linux.dev>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Christian Heusel <christian@heusel.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: control extra pacman packages with
- PACMAN_EXTRAPACKAGES
-Message-ID: <odiitinwxck2dc6jori4iakp6hwqnnguk2ar6dvmbo6ugrt7nz@h65drwkv374s>
-References: <20240804000130.841636-1-jose.fernandez@linux.dev>
- <c41e3856-29f4-438f-a796-43aa957215d1@t-8ch.de>
- <g5jex6hwlsjwzryo5umw44uotww54h6ccjzzqk3fao5k3ig7df@yg2vhcxr5t6s>
- <20240806025853.GB1570554@thelio-3990X>
+	s=arc-20240116; t=1722915094; c=relaxed/simple;
+	bh=SvuoSmChBOHGdTLubBOmex8R46e7cVvpPusA8rmgPfk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fDS9Gi07ZzwG+CJlkOnzi957heHOj3crBArWPTcw5OMT6xbtggzwQYSbxmvNy5TjhV+oUuqavWK0w5SzPv9/8zBbQswAZ1+m9rfChNhTrMWy1DgrwUa/o4TIRm7A5aSKVa7BrlhS5gKGr6UUGLgcwVkA1oQf0xK0f7bipgAaHl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Q1iF9viv; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d2879bfb0so64635b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 20:31:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1722915092; x=1723519892; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z2JoVlyDoUX2ysalhvEPxZpeuSvjk1cVm0vV/c3XfoY=;
+        b=Q1iF9vivFCERseQEBSHD0Y/P1NHdjGNFqIZ4vtEdna2nBs98PiXU0I/A4WwtqnEGGY
+         eoF0PFybLnD/EZiu0spPcn9pQY/UfjgGEGbc8unRbpSXISWZV8IQSdWJziT/ycQbaoKy
+         e/rZZwsGABtZWQq8/0ChnfZwxOdRNuRXKNmZotJKpdfdc5Y5ELWXmIBAoG+jG0GXQsXW
+         m4bMUBG7/bl1zv32Ili7UQEGWK6YPp2n9LMc68MMavqSnhY0mCQObvNA6ChS3lPwI3+p
+         Zd6HR9kGqnBNtUz7Rgg9zc5vYvd7N8jkAewJdiuy6FBxI2veC7e1CQTLLmiucsRIb3il
+         scNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722915092; x=1723519892;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z2JoVlyDoUX2ysalhvEPxZpeuSvjk1cVm0vV/c3XfoY=;
+        b=bq8HbYhygpBai6T8QqF1MezAtiI7zW8XPMZpHrXLk6Z9bx0+jDqPq15qKVP5eKJk9T
+         kbeI7HHG05nhOZIjhumv8IP1B7+zZvJwdk76RKb8HqFuTqhS16oStXQ8m+zEw7+4/7d/
+         9ZY/3BtHoUM7IxScmGUsFKiljx8QfdjZkLyrkIJn4MGR+wsdBxq7dw38aq4WqH6PUq0V
+         vLqBxaWDXMN8GeUFn9/WR48kr43/n3NGwgk9/rBLbbZRtIjQ0kjx+dmmW+VMNrq50jfd
+         NEJL7YP7bqdg5kIHJVKVsYI1JZVvr/AE2cmwGcfQcyJl7sbQZfFDSbFpuX75k2uTTxrD
+         sy4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVWSR9sKRpWVrCkP/Hn1V9Qkpg8GeZAK41ct6F5eZoBRuy1Grfm6rF5m3k5vv42zNuXQXMJgziY8zqecw2N6yejiHvhxfJLGFz3wmPH
+X-Gm-Message-State: AOJu0Yxf/iw6ZHRd3aG7UpVJ+bSIhafLQmslx1Qc1oMMXLrx3W3Yfwbl
+	VzL0eiHlFCQhWZHIB/3CZz0F+tP/OvZXQ+pDVqcKLBeR5XMPpIwJyM/oQ1jlWVc=
+X-Google-Smtp-Source: AGHT+IHjB6AScazUkHn0BP4teSXOlloTlQqOI/0QMlJZDjNnp/apIsyvye9E1r70/giw8p0Wt63YyA==
+X-Received: by 2002:a05:6a00:3993:b0:70d:1048:d4eb with SMTP id d2e1a72fcca58-7106d07ea82mr10721161b3a.3.1722915091824;
+        Mon, 05 Aug 2024 20:31:31 -0700 (PDT)
+Received: from [10.255.168.175] ([139.177.225.232])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ed0d462sm6330616b3a.174.2024.08.05.20.31.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 20:31:31 -0700 (PDT)
+Message-ID: <bf9f79df-4821-4053-a1e9-f054f2ca5734@bytedance.com>
+Date: Tue, 6 Aug 2024 11:31:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240806025853.GB1570554@thelio-3990X>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 0/7] synchronously scan and reclaim empty user PTE
+ pages
+Content-Language: en-US
+To: david@redhat.com, hughd@google.com, willy@infradead.org, mgorman@suse.de,
+ muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
+ zokeefe@google.com, rientjes@google.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ the arch/x86 maintainers <x86@kernel.org>
+References: <cover.1722861064.git.zhengqi.arch@bytedance.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <cover.1722861064.git.zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 24/08/05 07:58PM, Nathan Chancellor wrote:
-> On Mon, Aug 05, 2024 at 04:30:15PM -0600, Jose Fernandez wrote:
-> > On 24/08/05 04:01PM, Thomas Weißschuh wrote:
-> > > > This changes the behavior of the pacman-pkg target to only create the
-> > > > main kernel package by default. The rest of the packages will be opt-in
-> > > > going forward.
-> > > 
-> > > I had the impression that by default all extrapackages should be
-> > > built. The variable can then be used by expert users where needed.
-> > > Other Opinions?
-> > 
-> > I think switching to defaulting to all packages is a good idea. One concern I 
-> > had was how regular users would discover the customization options. Expert users
-> > will likely look at the Makefile and figure out how to opt out.
-> 
-> I think that most users will likely want all of the packages built by
-> default. I think leaving this to be discovered by power users in the
-> Makefile is reasonable.
+Hi all,
 
-Sounds good!
+On 2024/8/5 20:55, Qi Zheng wrote:
 
-> > > > In a previous patch, there was concern that adding a new debug package
-> > > > would increase t.he package time. To address this concern and provide
-> > > > more flexibility, this change has been added to allow users to decide
-> > > > which extra packages to include before introducing an optional debug
-> > > > package [1].
-> > > 
-> > > This paragraph seems like it shouldn't be part of the final commit.
-> > > If you put it after a line with "---" it will be dropped from the
-> > > commit, like so:
-> > > 
-> > > ---
-> > > 
-> > > In a previous patch, ...
-> > 
-> > Agreed, I will move this paragraph to below --- for v2.
-> > 
-> > > 
-> > > > 
-> > > > [1] https://lore.kernel.org/lkml/20240801192008.GA3923315@thelio-3990X/T/
-> > > > 
-> > > > Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
-> > > > Reviewed-by: Peter Jung <ptr1337@cachyos.org>
-> > > > ---
-> > > >  scripts/Makefile.package |  5 +++++
-> > > >  scripts/package/PKGBUILD | 11 ++++++++---
-> > > >  2 files changed, 13 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-> > > > index 4a80584ec771..146e828cb4f1 100644
-> > > > --- a/scripts/Makefile.package
-> > > > +++ b/scripts/Makefile.package
-> > > > @@ -144,6 +144,10 @@ snap-pkg:
-> > > >  # pacman-pkg
-> > > >  # ---------------------------------------------------------------------------
-> > > >  
-> > > > +# Space-separated list of extra packages to build
-> > > > +# The available extra packages are: headers api-headers
-> > > > +PACMAN_EXTRAPACKAGES ?=
-> > > 
-> > > The assignment doesn't do anything.
-> > > Do we need the documentation if the default enables all subpackages?
-> > > 
-> > > > +
-> > > >  PHONY += pacman-pkg
-> > > >  pacman-pkg:
-> > > >  	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
-> > > > @@ -152,6 +156,7 @@ pacman-pkg:
-> > > >  		CARCH="$(UTS_MACHINE)" \
-> > > >  		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
-> > > >  		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
-> > > > +		PACMAN_EXTRAPACKAGES="$(PACMAN_EXTRAPACKAGES)" \
-> > > 
-> > > This line is superfluous.
-> > 
-> > Ack.
-> 
-> Is it superfluous if PACMAN_EXTRAPACKAGES is not exported to makepkg? If
-> I remove this while changing the default of PACMAN_EXTRAPACKAGES in
-> scripts/Makefile.package, its value is not visible in makepkg, so only
-> the default package gets built. I think
-> 
->   export PACMAN_EXTRAPACKAGES
-> 
-> is needed after the '?=' assignment line.
-
-Nathan, I removed the line and it appears to work as expected.
-
-If I set the default packages to:
-
-PACMAN_EXTRAPACKAGES ?= headers api-headers
-
-Then any of these commands builds only the main kernel package:
-
-make pacman-pkg PACMAN_EXTRAPACKAGES=
-make pacman-pkg PACMAN_EXTRAPACKAGES=""
-
-This command builds the main package + headers package:
-
-make pacman-pkg PACMAN_EXTRAPACKAGES="headers"
-
-I'm not quite sure how PACMAN_EXTRAPACKAGES makes it to makepkg without that
-line. But it appears like it does.
+[...]
 
 > 
-> > > >  		makepkg $(MAKEPKGOPTS)
-> > > >  
-> > > >  # dir-pkg tar*-pkg - tarball targets
-> > > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> > > > index 663ce300dd06..41bd0d387f0a 100644
-> > > > --- a/scripts/package/PKGBUILD
-> > > > +++ b/scripts/package/PKGBUILD
-> > > > @@ -3,10 +3,15 @@
-> > > >  # Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
-> > > >  
-> > > >  pkgbase=${PACMAN_PKGBASE:-linux-upstream}
-> > > > -pkgname=("${pkgbase}" "${pkgbase}-api-headers")
-> > > > -if grep -q CONFIG_MODULES=y include/config/auto.conf; then
-> > > > -	pkgname+=("${pkgbase}-headers")
-> > > > +pkgname=("${pkgbase}")
-> > > > +
-> > > > +_extrapackages=${PACMAN_EXTRAPACKAGES:-}
-> > > > +if [ -n "$_extrapackages" ]; then
-> > > 
-> > > No need for this check. The loop over an empty variable work fine.
-> > 
-> > Ack. Will update in v2.
-> >  
-> > > > +	for pkg in $_extrapackages; do
-> > > > +		pkgname+=("${pkgbase}-$pkg")
-> > > 
-> > > Use consistent variable references: "${pkgbase}-${pkg}"
-> > 
-> > Ack. Will update in v2.
-> > 
-> > > > +	done
-> > > >  fi
-> > > > +
-> > > >  pkgver="${KERNELRELEASE//-/_}"
-> > > >  # The PKGBUILD is evaluated multiple times.
-> > > >  # Running scripts/build-version from here would introduce inconsistencies.
-> > > > -- 
-> > > > 2.46.0
-> > > > 
+> 2. When we use mmu_gather to batch flush tlb and free PTE pages, the TLB is not
+>     flushed before pmd lock is unlocked. This may result in the following two
+>     situations:
+> 
+>     1) Userland can trigger page fault and fill a huge page, which will cause
+>        the existence of small size TLB and huge TLB for the same address.
+> 
+>     2) Userland can also trigger page fault and fill a PTE page, which will
+>        cause the existence of two small size TLBs, but the PTE page they map
+>        are different.
+> 
+>     For case 1), according to Intel's TLB Application note (317080), some CPUs of
+>     x86 do not allow it:
+> 
+>     ```
+>     If software modifies the paging structures so that the page size used for a
+>     4-KByte range of linear addresses changes, the TLBs may subsequently contain
+>     both ordinary and large-page translations for the address range.12 A reference
+>     to a linear address in the address range may use either translation. Which of
+>     the two translations is used may vary from one execution to another and the
+>     choice may be implementation-specific.
+> 
+>     Software wishing to prevent this uncertainty should not write to a paging-
+>     structure entry in a way that would change, for any linear address, both the
+>     page size and either the page frame or attributes. It can instead use the
+>     following algorithm: first mark the relevant paging-structure entry (e.g.,
+>     PDE) not present; then invalidate any translations for the affected linear
+>     addresses (see Section 5.2); and then modify the relevant paging-structure
+>     entry to mark it present and establish translation(s) for the new page size.
+>     ```
+> 
+>     We can also learn more information from the comments above pmdp_invalidate()
+>     in __split_huge_pmd_locked().
+> 
+>     For case 2), we can see from the comments above ptep_clear_flush() in
+>     wp_page_copy() that this situation is also not allowed. Even without
+>     this patch series, madvise(MADV_DONTNEED) can also cause this situation:
+> 
+>             CPU 0                         CPU 1
+> 
+>     madvise (MADV_DONTNEED)
+>     -->  clear pte entry
+>          pte_unmap_unlock
+>                                        touch and tlb miss
+> 				      --> set pte entry
+>          mmu_gather flush tlb
+> 
+>     But strangely, I didn't see any relevant fix code, maybe I missed something,
+>     or is this guaranteed by userland?
+
+I'm still quite confused about this, is there anyone who is familiar
+with this part?
+
+Thanks,
+Qi
+
+> 
+>     Anyway, this series defines the following two functions to be implemented by
+>     the architecture. If the architecture does not allow the above two situations,
+>     then define these two functions to flush the tlb before set_pmd_at().
+> 
+>     - arch_flush_tlb_before_set_huge_page
+>     - arch_flush_tlb_before_set_pte_page
+> 
+
+[...]
+
+> 
 
