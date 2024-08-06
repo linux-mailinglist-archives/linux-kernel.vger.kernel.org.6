@@ -1,215 +1,120 @@
-Return-Path: <linux-kernel+bounces-276792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5359C949877
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:37:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F44E949882
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C8B2283119
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:37:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECF62B243FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9693914830D;
-	Tue,  6 Aug 2024 19:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C7815B10F;
+	Tue,  6 Aug 2024 19:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pW3rlf/d"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2045.outbound.protection.outlook.com [40.107.93.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OMzonwQ6"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BED7711F
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 19:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722973011; cv=fail; b=WpCjHMaUwCNTXr3SYGvjbm1wrwQAw6Q2hVPZt+gUjQrYdgdJQa71EvQ4rWqac/yvNxIHVGZLdFQuzlldayomd5m1QSDolVC/Ev4lKYy/gA3mWklf4UtPUGuJFzvQD+g6cCJatndrcPj5tZBnDfzz9/BfEZd4+zWcWn4phzAko00=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722973011; c=relaxed/simple;
-	bh=FFi14VVTtioEDNdITEShckD+mpQNZ6VEk4ffSpbpkEA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UYvXtCOppZeE/83CDAjdNzewatPoDf+1UZo/W3ZuR0TqC6eX4n13hIz3ahWg4A61QdTkk4lcVSg9gKNGRuNg+RJ7QoUNJwzAKvwsyPRJM4qsGAuhC+O0NriD4o5BjXfvMMedsmS28s/XPdWuLvmAtsOZPJcOXnQ+UwfDTPcU8RY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pW3rlf/d; arc=fail smtp.client-ip=40.107.93.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X6tq8G8RyddbEwvIMuKDQoxT8PoB7qzkvnyEpB87CuCIGiAsI+Pq+TmcyarLEXqBHrsGA9JWSo9584Vi3Qzu0xcJL84A6qixDy1yyb3P4dSmaTK9u9qgmNVRUmlykm39SRPBHmpsHmvjGK8kWYkbytadAkBml+f0lFoSM1ChdUHRlCIlqZVWg9L4gEFstumHbkA8zOIR6yfSqIm420+C1qjt8DBLf9AD/TflJXEIgI3ra3H4GOwPEIBiopOVj0Rn7JXfA62lTFwsgpOWcF1Gdk9VIFY4vDd3wegMmIa/vSz3ID+MRwSJjFW+ROJsXTn3OXQVuUUkY/sOamxI6pWxKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Qex6aG/3RRLnKuITW1iGRsfgUSRLGencRU2BKIUeSuI=;
- b=P1gfDEA5wJSW+9QAVfSyksBF4ZnXlfIiQo/Qg+fhp6RAivKg2ln7vm+OUqwrqvFZmxLOv/t6Jc7Q4xBED7M0gX+rIMRkpvikR0PVqh+YCXJ/ozWpbbXozz1+UZpBplvtG71KOFGYqGDQGEpAOO/WBYfEiPn+xvnEXDdDf9l8psYiGjN1YzZml4onsOZj4nHpzgPMg/fsuSWQc/tf+DmLVILHLlAs/PobEjc3//4I63VrG0vMlarfUN0rpus+LY6ScT5cjQ69zDmAZFcWly7Rk+6LnWAuX+Sl3F1TcqWyQASdlAINuvTwJrqrgFB2JG6GR16sY3c+SiUZkMuBVSYY5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qex6aG/3RRLnKuITW1iGRsfgUSRLGencRU2BKIUeSuI=;
- b=pW3rlf/dlLHhiW+d/lO7CE/9brGHQ9a+XgWs+pFj/nTNOHIribf7VgFjUdWtZhu9o0DAXmi/WPEf/VeG9KZbcdovwgdTodfsvtFxAMQ8ZGrZFdyw5VmZX404nCDGRtAwTN9bTVwz8UkvLlinTYPl5U3OqMRuMB3h9viYVLQogz9zPbH0ttCXDNGIRJHq16kUk2aUfFHlXJYWyStKrMlyr/e2FyEw4Fy26GI+95MxgzC/0DwV4Ow9WW5FVqugTirFuAR8X9KxA/Xfqrb1sd/FOv1978Q8TpCZla62xV1+3nWR7W/AAwh54B4XjH3cADyUmkLkZtdcqPfHrnUekNd4/A==
-Received: from SJ0PR03CA0097.namprd03.prod.outlook.com (2603:10b6:a03:333::12)
- by DM6PR12MB4123.namprd12.prod.outlook.com (2603:10b6:5:21f::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27; Tue, 6 Aug
- 2024 19:36:47 +0000
-Received: from MWH0EPF000971E8.namprd02.prod.outlook.com
- (2603:10b6:a03:333:cafe::79) by SJ0PR03CA0097.outlook.office365.com
- (2603:10b6:a03:333::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27 via Frontend
- Transport; Tue, 6 Aug 2024 19:36:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- MWH0EPF000971E8.mail.protection.outlook.com (10.167.243.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.8 via Frontend Transport; Tue, 6 Aug 2024 19:36:46 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 Aug 2024
- 12:36:37 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 6 Aug 2024 12:36:37 -0700
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Tue, 6 Aug 2024 12:36:36 -0700
-Date: Tue, 6 Aug 2024 12:36:35 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <kevin.tian@intel.com>, <yi.l.liu@intel.com>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] iommufd/device: Enforce reserved IOVA also when
- attached to hwpt_nested
-Message-ID: <ZrJ7QwO+HJ6rxL6Y@Asurada-Nvidia>
-References: <20240806050201.3717816-1-nicolinc@nvidia.com>
- <20240806174242.GP478300@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE16149C74
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 19:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722973054; cv=none; b=br+ercMIILvXH6mNLhCFHduaM/SmyINcvMm5fIhtC9PYNezge/bHFv7vgboEM7ST/Rzgtle0C5idlb8MCSqr22qVMce3AmlRPnyGLmaeZ8xh6+bPyKnMsFRn6lUMxCKlJCDPau0XItiz5hDZ0oXi3IYQJjStxU+bC6z8/eQz3Ss=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722973054; c=relaxed/simple;
+	bh=FY9WL5Ew4UpGjqQRe0kjOd5ck/2a2WaUZo90dYASdOI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pYDA7go4x5LP7z8iwJ34HaHXDcVyFgt/OzW1f/ndeOQwXcR0jbZZeMhT6EgUgRr/l3Mipgdk1A+q8eYfGqPvtWxIPZBSMhya/Wtktt9aQNxwB3jiKs8zPFJqJZYzi7EiI3r1riKKvKw/vNMU66BjyPFGuA9Lty6OeibIG4yIfwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OMzonwQ6; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so20539a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 12:37:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722973051; x=1723577851; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f8uEFO9W2+FLhm25gWiA80kftcKB1qkyC9ekZLOIA6A=;
+        b=OMzonwQ6TaZPj3Q1ucGu7ke2nD9cx6vQbfrEnilcNylVMvSZDHnCedJlKy+hjalzmb
+         Fd5PbI6aKTdynVXKOIyWgVoiFHh+1e95eCz/QHHnKcU9f7ULkx9JNr8nFbmYX0zbyA3K
+         KgeEnuDa+t1hI0/yZGc0NjlByhFnIfoSXuiMWP/2A2c6c4BcOmQaMPXagTTRakEdO32s
+         7d7vLUKGNniPxzHW8hLYza1aFQHptP8Zxgz4Oa3kYnbcCYwzRD2r4cpNoHTWi69J7h8o
+         iU0YG0uKDdAMDYBwEXALrwMhfOaVVyjw/fG6RniAS5KpmuxqGRisAykV6MWH/8IzN+qt
+         tT9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722973051; x=1723577851;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f8uEFO9W2+FLhm25gWiA80kftcKB1qkyC9ekZLOIA6A=;
+        b=py6BHFji7JKoYhRzxSLBohNGQob6Hx99iBLFo+VrjjmURG5KBQXJt9p4NgSJCEkeTT
+         1IdhonMVajS7YOfq6JPSMHNTL4AWuzNEVRixgrHjDOPMGBLdH83exNv2XNaNaz9+JhiC
+         3DWDswzmWng9oRt34t59Q0mkTXAzBNmqjDarZdC/EuqUNeMDVZYbYwh+Kk84JmH1yaeD
+         aDLLkth1Enh+4T3uo5wRQkaLG4kkISsMr4+e7iLRWeKA3zbvIy1G7ymsnzUZQsArzze8
+         5uCQOXO4Rt1FcGQmLZ6xAzXg3lJG0f1GBlpgDv5Q22XD5f6ovvB+g7755G88IBtzFLHL
+         aN9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVnPBfvC8jHifXxt1CIVE0roQiXXZLaGeKBTlGxzFrJbXosYFgefDTYshB3eqZGsJ280SbGzt8OnDVym/N5LUv2tGir4v3ihi36MWzB
+X-Gm-Message-State: AOJu0YyqIrgr+iQVbISbsmGf8SNQT4tcq1sAOdlJNZ496ZiRpPfrfNco
+	qzwoHOhaBueHDSU0NtAqlYdS1+r4IfiRIC+1w2t49bFcTI5aAmrA5q45rgH9iHZ2OIJA8wtBTkv
+	rc5OeJElePSdEK3w+06dSXVAVbZMXN+ENcSu4
+X-Google-Smtp-Source: AGHT+IEW1GMKFCD4DKnyeN084/kX07o+WDR9IdrRnzwMCqQYEsxnNt1QCfmcpRWNQ2zFJ7nrXEKfvAxnQsHp0cWnkXQ=
+X-Received: by 2002:a05:6402:84c:b0:57c:b712:47b5 with SMTP id
+ 4fb4d7f45d1cf-5bba28b2757mr28024a12.4.1722973050127; Tue, 06 Aug 2024
+ 12:37:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240806174242.GP478300@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E8:EE_|DM6PR12MB4123:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6b95ee7-9375-4cc1-255c-08dcb64f1bd7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2zqNArTNhubdT0L2RyAAh9LhA6rP55BZf9AWtcjnJcbNwlK3R2sXiHfznTzu?=
- =?us-ascii?Q?8cJv/ryXF9Lnt4bWInFTgsMfbt3S2EwUz/gf7doDPmARao+VcmoYm9HDxmya?=
- =?us-ascii?Q?qS+WKO81WVC+PmE8AE9gWJtqP+E45QxgcadDboQ0MHTJQwJ+aXBpSELClHmg?=
- =?us-ascii?Q?cPAqK/jVnF4Ztf4tiPyZuHelWuM5ttmgyfCN9+7pe0kj9pfTZaK0G2YJbOE1?=
- =?us-ascii?Q?Gkoju48zLpYHjChew0M4BGfHg3mB5rxNwwZ+76Yof9+wORopCbKp92rF9nk0?=
- =?us-ascii?Q?4fNozob28YYIz9IJvPwTdOkLylqsrMve2bxD0ylkdybE1WhvTor0qd7M7Yjr?=
- =?us-ascii?Q?xQQVMow/jFOQRs3G3goY/+LHbM8xq7xS7g+jkkPStwe/YUWJIQOmUUJoMQOV?=
- =?us-ascii?Q?osX76fRhiPQESeOEzj7N+BE6vQFCh6TDG+gqu7EzrM5c+N2OJGEnjfdYPnTo?=
- =?us-ascii?Q?usXRE8KbFVp+2Yc68cgVafSczLX+a8h/pwJ78hywgwv2J/ihR2WrF/nVx+WT?=
- =?us-ascii?Q?yniV9J0fGG7AvXLBMKbRAhLI+gaf/vShdewgNIMH2o1UHPVa6jqN7Wif6zvu?=
- =?us-ascii?Q?BXRFOxWFu8bP6FxIxpuMHZPRDLJZIYG53NknrAPx81R179SYVNgZWF0G6voF?=
- =?us-ascii?Q?jQVtlLHHtmWnBEmAuXNfe7bP6JMA//NvM2Q5dMU5fxSJf9c3jRL/v6IV56S/?=
- =?us-ascii?Q?5nmijVe7pLoUugKElD2ciDCDst1zgz47ZsoBysPYFuG+FBTJUas5nwcAlzRs?=
- =?us-ascii?Q?ZenyYT7CuBYulXwFqvSCov9aKknhmzBSVNklZptFHefP0I/RtY3OzL4mtMAt?=
- =?us-ascii?Q?tPYdjJuFwitSUguf9wt3KRhhZACg8awsOEIROzDGDtVHk9Rs5LpxLxdxO/MQ?=
- =?us-ascii?Q?em4dFShBw/H3LmYdjqwF6dZe7wkiBU1gSTUOEVSlSlYohU4eZSG/+bGBfuQG?=
- =?us-ascii?Q?fEYKkXPjNdjC8p0i1zjSLMMMdqhgm906OtyfNFEHo/PoziObIhKfmhlrco5i?=
- =?us-ascii?Q?LcGRvmQFcNw41LLF9WeNoNvsu9+241PuXiC+xTAYdj/iJ75hv/6/OcYhzyyc?=
- =?us-ascii?Q?C5keDxl8xG3U6MYlUnt+c/W74CD7A1mtpEF8yU/HbhT9lIiLKTgk1tGcCj9+?=
- =?us-ascii?Q?Sa0mZt4zbPmyw/8YWl+CyKKl80GjKtpDxYtqoAaA0dKMVLiDBwJ4aE2cfrJ/?=
- =?us-ascii?Q?+FkV1Z5yREHGSCdBGGm5Oez/l9v8Yp9trcCal61g2LceAaW4F4cdp6OCBrUa?=
- =?us-ascii?Q?HrqO4yes9SzAl0WVALUkZhUlpPdmUIhj4ugTtRpLN5A8/dVPXLZnfxbKwFI8?=
- =?us-ascii?Q?Pj6hiHvKspBGGXP8jifTqC3bskNziA1MZP0vMMgGtQRmUAbhh2WOKNUWymdu?=
- =?us-ascii?Q?5+aRBY/8OPbv0bDSKBcflHQUSMWPNI9sfjRS/LDFmO+S/IhtzBCTfiABuFfH?=
- =?us-ascii?Q?JOxRmdm3W5R0v329xU8TTPW0b+GhhKa3?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 19:36:46.4430
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6b95ee7-9375-4cc1-255c-08dcb64f1bd7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000971E8.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4123
+References: <cover.1722570749.git.fahimitahera@gmail.com> <e8da4d5311be78806515626a6bd4a16fe17ded04.1722570749.git.fahimitahera@gmail.com>
+In-Reply-To: <e8da4d5311be78806515626a6bd4a16fe17ded04.1722570749.git.fahimitahera@gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 6 Aug 2024 21:36:52 +0200
+Message-ID: <CAG48ez39+ts9pNVvAxXcbk6X5_+s_yBXPUW-ZUNRxQq3aJAyrQ@mail.gmail.com>
+Subject: Re: [PATCH v8 1/4] Landlock: Add abstract unix socket connect restriction
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: outreachy@lists.linux.dev, mic@digikod.net, gnoack@google.com, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bjorn3_gh@protonmail.com, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 06, 2024 at 02:42:42PM -0300, Jason Gunthorpe wrote:
-> > -static int iommufd_hwpt_paging_attach(struct iommufd_hwpt_paging *hwpt_paging,
-> > -				      struct iommufd_device *idev)
-> > +static int
-> > +iommufd_device_attach_reserved_iova(struct iommufd_device *idev,
-> > +				    struct iommufd_hw_pagetable *hwpt)
-> >  {
-> > +	struct iommufd_hwpt_paging *hwpt_paging = to_hwpt_paging(hwpt);
-> >  	int rc;
-> 
-> This seems like the wrong place to put these types, a big point point of the
-> struct iommufd_hwpt_paging was to mark functions that should only be
-> operating on a paging hwpt.
-> 
-> The caller is expected to figure out what it is doing.
-> 
-> >  int iommufd_hw_pagetable_attach(struct iommufd_hw_pagetable *hwpt,
-> >  				struct iommufd_device *idev)
-> >  {
-> > @@ -363,11 +380,9 @@ int iommufd_hw_pagetable_attach(struct iommufd_hw_pagetable *hwpt,
-> >  		goto err_unlock;
-> >  	}
-> >  
-> > -	if (hwpt_is_paging(hwpt)) {
-> > -		rc = iommufd_hwpt_paging_attach(to_hwpt_paging(hwpt), idev);
-> > -		if (rc)
-> > -			goto err_unlock;
-> > -	}
-> 
-> Like we had here, so it would be a bit nicer to write it as more like:
-> 
-> hwpt_paging = to_hwpt_paging(hwpt);
-> if (hwpt_paging) {
-> 	rc = iommufd_hwpt_paging_attach(hwpt_paging, idev);
-> }
-> 
-> Then we can keep the clearer labeling of the function signatures.
+On Fri, Aug 2, 2024 at 6:03=E2=80=AFAM Tahera Fahimi <fahimitahera@gmail.co=
+m> wrote:
+> This patch introduces a new "scoped" attribute to the landlock_ruleset_at=
+tr
+> that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope
+> abstract Unix sockets from connecting to a process outside of
+> the same landlock domain. It implements two hooks, unix_stream_connect
+> and unix_may_send to enforce this restriction.
+[...]
+> +static bool check_unix_address_format(struct sock *const sock)
+> +{
+> +       struct unix_address *addr =3D unix_sk(sock)->addr;
+> +
+> +       if (!addr)
+> +               return true;
+> +
+> +       if (addr->len > sizeof(AF_UNIX)) {
+> +               /* handling unspec sockets */
+> +               if (!addr->name[0].sun_path)
+> +                       return true;
 
-Okay. Will keep the hwpt_paging type in the function signatures.
+addr->name[0] is a "struct sockaddr_un", whose member "sun_path" is an
+array member, not a pointer. If "addr" is a valid pointer,
+"addr->name[0].sun_path" can't be NULL.
 
-> > @@ -321,7 +321,20 @@ static inline bool hwpt_is_paging(struct iommufd_hw_pagetable *hwpt)
-> >  static inline struct iommufd_hwpt_paging *
-> >  to_hwpt_paging(struct iommufd_hw_pagetable *hwpt)
-> >  {
-> > -	return container_of(hwpt, struct iommufd_hwpt_paging, common);
-> > +	switch (hwpt->obj.type) {
-> > +	case IOMMUFD_OBJ_HWPT_PAGING:
-> > +		return container_of(hwpt, struct iommufd_hwpt_paging, common);
-> > +	case IOMMUFD_OBJ_HWPT_NESTED:
-> > +		return container_of(hwpt, struct iommufd_hwpt_nested, common)->parent;
-> > +	default:
-> > +		return NULL;
-> > +	}
-> > +}
-> 
-> There are alot of existing callers of this, I think it should get a
-> new function to do this behavior and it would only be used in a few
-> places.
-> 
-> It is not OK for a NESTING to get into most of the places that are
-> already calling this.
 
-OK. Let's add a find_hwpt_paging(struct iommufd_hw_pagetable *);
-
-Thanks
-Nicolin
+> +               if (addr->name[0].sun_path[0] =3D=3D '\0')
+> +                       if (!sock_is_scoped(sock))
+> +                               return false;
+> +       }
+> +
+> +       return true;
+> +}
 
