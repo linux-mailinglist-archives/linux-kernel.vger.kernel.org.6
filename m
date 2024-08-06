@@ -1,106 +1,160 @@
-Return-Path: <linux-kernel+bounces-276909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A501F9499F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:18:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D099499F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 645DC283BAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:18:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E2721F2402D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8259116A940;
-	Tue,  6 Aug 2024 21:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F86016BE3D;
+	Tue,  6 Aug 2024 21:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.dufresne@collabora.com header.b="kMK3/MuP"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iB2E5F8X"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364F86FC3;
-	Tue,  6 Aug 2024 21:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722979121; cv=pass; b=s+YXrpfVmiY8OzgFdJ7KH4ICiRJQlAnI/M6gXmYO4Xr64KJZxyZbvCNfr8D/2XstFuno8tiAh2MsCa2aHTS6PJgmJhfQlOD/gQRNbxz6KU/wInqkmOM4jpan3vLoiNDOACVvxM1/LXuPb6pWRE4E/+793oUXVyAK2X5sc9yD9ls=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722979121; c=relaxed/simple;
-	bh=1utvhZHP0c6T8Ir5t589WiTudCfRoOIw0DiDKTzIf38=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SsU4lvulrtIHhAywxnoHvVPLb/AnC+qv3/0fNWMs/u6lT/NTwoj7Z2yrcQ1m8mN4h8XdySdX4Z+W8bg0wYPEHk3LqnJPzo5/r712d1jxycW6Niej3BG73pwgYLdpU5777IszoSbUp9DsgPS/wuPQDB8r91SaoGgAs/ulibpcLdE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.dufresne@collabora.com header.b=kMK3/MuP; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: dmitry.osipenko@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1722979084; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=kJU6zPIfWUudt7/XRn7/TOg0fe55t5arfi7vARhhCP6MF7RvWzD84vIuKeFmkA4eAYNit+LKpF5uxMWaJWlWpakk4so/16te7AXgQtvctebweUfTIlNTUOcpYDiF5VuEQQ9nzwTtt6zeeNcSk3j6DGsUKoYqb3spEVlpVesO3xI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1722979084; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=1utvhZHP0c6T8Ir5t589WiTudCfRoOIw0DiDKTzIf38=; 
-	b=Vln/VZMrK75Lw8wGQ5yGeEQeZHvszyvBo7X9MMrDL8jwFcbPu7J011BtX6p3Dun79CqbpQ8hruVt5NL5Gk3SyvgrDbejSpAgMPWJiZMHK5mPXLuDJoBSxPcHwSOVplKb6jg3Zz+VjRiGC0OXJG3uYuxIJomdtO7Tcj2Y4yVcw6E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.dufresne@collabora.com;
-	dmarc=pass header.from=<nicolas.dufresne@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1722979084;
-	s=zohomail; d=collabora.com; i=nicolas.dufresne@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=1utvhZHP0c6T8Ir5t589WiTudCfRoOIw0DiDKTzIf38=;
-	b=kMK3/MuPZXiddxJtOppeyg/qVO1KC8I7lLYcf667P+mF/nJCBXAQnGFbYsENftWv
-	Q2rfbB9P682e+5c2KG8Y+oDq8rdQmRnR7DfUuwUZG3gWtrhurdNuimzYoz5HqML9NhA
-	neornCWQdp7AypaXPGfyLMjOJtxjIAsvnSOeZvSI=
-Received: by mx.zohomail.com with SMTPS id 172297908214914.577164447111386;
-	Tue, 6 Aug 2024 14:18:02 -0700 (PDT)
-Message-ID: <3c388a51fef3d2c284fe7648ffd7215e097980a9.camel@collabora.com>
-Subject: Re: [PATCH v4 0/4] Add Synopsys DesignWare HDMI RX Controller
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Tim Surber <me@timsurber.de>, Dmitry Osipenko
- <dmitry.osipenko@collabora.com>, Shreeya Patel
- <shreeya.patel@collabora.com>,  heiko@sntech.de, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org,  conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org,  p.zabel@pengutronix.de,
- jose.abreu@synopsys.com, nelson.costa@synopsys.com, 
- shawn.wen@rock-chips.com, hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Date: Tue, 06 Aug 2024 17:17:58 -0400
-In-Reply-To: <06838f40-881c-4301-826b-e29a4277e663@timsurber.de>
-References: <20240719124032.26852-1-shreeya.patel@collabora.com>
-	 <6f5c4ebb-84ab-4b65-9817-ac5f6158911f@timsurber.de>
-	 <929d2f50-6b0e-4d1e-a6d3-482d615bd06a@collabora.com>
-	 <06838f40-881c-4301-826b-e29a4277e663@timsurber.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEE914BF9B
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 21:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722979274; cv=none; b=g/FYcoNg7oQ+1xVm5Z9NVCdS/cNgpc5cMMGLRObI1cQ/ibz+P9OLtCtNEp101g/J62XfHYWFXYnTGlkFYxeixnbB1+mxnGlwUFOn7HkkufaoWQp4+ZTUZrRKwFxGqZxkgSHi970ZT8LL6Ji7VHZb03HB7Hdb1632N4Ihop1cBVE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722979274; c=relaxed/simple;
+	bh=heM5uA1h3O9sMxylWx0nEPtpRLemZa0vHE5S3SDNWdw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=U8OgGMEnU1KULb7IG6mfsuPZrzRd9BEJMu2x5bIZWVszuiB+2Zf4KM9FuM+rmtDZWvi4aL+0touA7BgE+XNKdsTCYsway2hzJwtjs3BAIBLozQjvBG4iMHygeHmWGM9txgkI+esXwXlFKcqYMyeJACwW+bz+i3Z3Pg958qkgZw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iB2E5F8X; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e05e3938a37so1739116276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 14:21:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722979271; x=1723584071; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4FbkHsjbrqQbuRvkdw57dKFwFPFfEB/U6kkbaRbF7t0=;
+        b=iB2E5F8Xz0nJGn4/fb9k9vvcdN20LKnrB9kwye3OD6kdx7MaoY5Qnzd7nPv5ER4BLA
+         VDQ8aj3zKzu9LLxyfDl3dnnY2BHgfl1VtBJKtcdVp/wl0Szp+nF7wp4r7I5EY/oTBiGb
+         B3CbRkJzyL7oZRs61MS4Ycn6wNn2eMUTbnyadPGoFi3uj7RAZAsnfJHqJ9ZLT8fIetfI
+         DkBKbjJ2D0KeW580h6FxpI+vLOaJxotgGjnSO3TvzxCJJH4OnxRLjkVNUaPcN64y6jup
+         rEW76zDpsKP1J7/hTrIgVohQafe2bK0ouMnY3RmWVfAY8AEwdWhApnTCvmzbc4tQqg2m
+         3i7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722979271; x=1723584071;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4FbkHsjbrqQbuRvkdw57dKFwFPFfEB/U6kkbaRbF7t0=;
+        b=OkOqCE9Byro9vIBaj/GtyiIqrtfz8KPMLo95Wcw0MiWPu2xbqVWz+XhgVTsNdqvuAv
+         G/zTOjJWn6jKjm93yddK3AdOo4myupUX7W6zENK2prt00dQEHyVmN30vIE9otmFL631s
+         DOZORR1HdjFtUWOpUvcvamO9q3vZzdnghO4MC1DLOkGi7U8x1BM1EAKKfGG0WqIamaIw
+         RJ6HmL9XgvEq9DT3CwdfXrFCCVzA3yRrh5yyt1xdaAXy4FUSEbVrFNo3D/aVvZNvTQlV
+         fsejjMPQselgir72tCC0a8fYoCqAHFVITHFJbDZz0TzT8yb7LMZME6b9aRt9eYkTS3s8
+         oyrw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5mpyfAA0MA9xO2gH9dKNjwwHaPsMWuHQn5fgAJC6N1FehVmYGD4SXblx3zSH0XY+VsdJpvNhn5Nc1EIjPMjSPXS9SO/PHtp8xG4Cf
+X-Gm-Message-State: AOJu0Yx2VFUjJ5n8AjU+eBxO3iBaeL3ImST1a63NfbTpuTESosX85EKg
+	rjQkclK9o242LxLELM+69suKmbiJw12l76QrMBPHQX56J1HneOLOgfRrvWhw9XibudGi0Iu6mPn
+	F96vOmw==
+X-Google-Smtp-Source: AGHT+IExCLgM+sXMSR6m0P1n1GnffNaAREKf4oeChWkKCDHm8cEPsESVi8hBFnwr8hMTvIMraQmWAixONaRW
+X-Received: from anyblade.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:1791])
+ (user=mmaurer job=sendgmr) by 2002:a05:6902:2605:b0:e03:62dc:63de with SMTP
+ id 3f1490d57ef6-e0bde29b508mr309326276.6.1722979270695; Tue, 06 Aug 2024
+ 14:21:10 -0700 (PDT)
+Date: Tue,  6 Aug 2024 21:20:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-ZohoMailClient: External
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
+Message-ID: <20240806212106.617164-1-mmaurer@google.com>
+Subject: [PATCH v3 00/16] Extended MODVERSIONS Support
+From: Matthew Maurer <mmaurer@google.com>
+To: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org, 
+	gary@garyguo.net, mcgrof@kernel.org, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: Matthew Maurer <mmaurer@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, neal@gompa.dev, 
+	marcan@marcan.st, j@jannau.net, asahi@lists.linux.dev, 
+	Boqun Feng <boqun.feng@gmail.com>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-SGkgVGltLAoKTGUgbWFyZGkgMDYgYW/Du3QgMjAyNCDDoCAyMjozNyArMDIwMCwgVGltIFN1cmJl
-ciBhIMOpY3JpdMKgOgo+ICMjI3NvdXJjZSBzZXQgdG8gNGs2MGZwcyMjIyMKPiAtLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0KPiB2NGwyLWN0bCAtLXZlcmJvc2UgLWQgL2Rldi92aWRlbzEgCj4g
-LS1zZXQtZm10LXZpZGVvPXdpZHRoPTM4NDAsaGVpZ2h0PTIxNjAscGl4ZWxmb3JtYXQ9J05WMTIn
-IAo+IC0tc3RyZWFtLW1tYXA9NCAtLXN0cmVhbS1za2lwPTMgLS1zdHJlYW0tY291bnQ9MTAwIC0t
-c3RyZWFtLXBvbGwKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBWSURJT0NfUVVFUllD
-QVA6IG9rCj4gVklESU9DX0dfRk1UOiBvawo+IFZJRElPQ19TX0ZNVDogb2sKPiBGb3JtYXQgVmlk
-ZW8gQ2FwdHVyZSBNdWx0aXBsYW5hcjoKPiDCoMKgwqDCoCBXaWR0aC9IZWlnaHTCoMKgwqDCoMKg
-IDogMzg0MC8yMTYwCj4gwqDCoMKgwqAgUGl4ZWwgRm9ybWF0wqDCoMKgwqDCoCA6ICdOVjEyJyAo
-WS9VViA0OjI6MCkKPiDCoMKgwqDCoCBGaWVsZMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA6IE5v
-bmUKPiDCoMKgwqDCoCBOdW1iZXIgb2YgcGxhbmVzwqAgOiAxCj4gwqDCoMKgwqAgRmxhZ3PCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgOgo+IMKgwqDCoMKgIENvbG9yc3BhY2XCoMKgwqDCoMKgwqDC
-oCA6IHNSR0IKPiDCoMKgwqDCoCBUcmFuc2ZlciBGdW5jdGlvbiA6IERlZmF1bHQKPiDCoMKgwqDC
-oCBZQ2JDci9IU1YgRW5jb2Rpbmc6IERlZmF1bHQKPiDCoMKgwqDCoCBRdWFudGl6YXRpb27CoMKg
-wqDCoMKgIDogRGVmYXVsdAo+IMKgwqDCoMKgIFBsYW5lIDDCoMKgwqDCoMKgwqDCoMKgwqDCoCA6
-Cj4gwqDCoMKgwqDCoMKgwqAgQnl0ZXMgcGVyIExpbmUgOiAzODQwCj4gwqDCoMKgwqDCoMKgwqAg
-U2l6ZSBJbWFnZcKgwqDCoMKgIDogODI5NDQwMAoKWW91IGhhdmUgaGlnaGxpZ2h0ZWQgYSBidWcg
-aGVyZS4gTlYxMiBoYXMgMiBwbGFuZXMsIGJ1dCB0aGUgc2l6ZSBpbWFnZSBvbmx5CmFsbG93IGZv
-ciB0aGUgbHVtYSB0byBiZSBzdG9yZWQuCgogICBTaXplIEltYWdlOiAzODQwICogMjE2MCAqIDMg
-LyAyID0gMTI0NDE2MDAgYnl0ZXMuCgpMZXRzIGF0IGxlYXN0IGdldCB0aGF0IGZpeGVkLCBhbmQg
-Y2hlY2sgYWdhaW4uCgpOaWNvbGFzCg==
+Previously MODVERSIONS + RUST Redux [1]
+
+This patch series is intended for use alongside the Implement
+MODVERSIONS for RUST [2] series as a replacement for the symbol name
+hashing approach used there to enable RUST and MODVERSIONS at the same
+time.
+
+Elsewhere, we've seen a desire for long symbol name support for LTO
+symbol names [3], and the previous series came up [4] as a possible
+solution rather than hashing, which some have objected [5] to.
+
+This series adds a MODVERSIONS format which uses a section per column.
+This avoids userspace tools breaking if we need to make a similar change
+to the format in the future - we would do so by adding a new section,
+rather than editing the struct definition. In the new format, the name
+section is formatted as a concatenated sequence of NUL-terminated
+strings, which allows for arbitrary length names.
+
+Currently, this series emits both the extended format and the current
+format on all modules, and prefers the extended format when checking if
+present. I'm open to various other policies via Kconfig knobs, but this
+seemed like a good initial default.
+
+The refactor to MODVERSIONS is prefixed to this series as result of an
+explicit request [6] by Luis in response to the original patchset.
+
+If you are testing this patch alongside RUST by manually removing the
+!MODVERSIONS restriction (this series doesn't remove it, because the
+CRCs don't mean what we'd want them to yet, we need the DWARF patch for
+that) and have kernel hardening enabled, you may need the CPU
+Mitigations [7] series. Without it, the foo.mod.o file produced by the
+C compiler will reference __x86_return_thunk, but foo.o will not.
+This means that the version table will not contain a version for
+__x86_return_thunk, but foo.ko will reference it, which will result
+in a version check failure.
+
+[1] https://lore.kernel.org/all/20231118025748.2778044-1-mmaurer@google.com/
+[2] https://lore.kernel.org/all/20240617175818.58219-17-samitolvanen@google.com/
+[3] https://lore.kernel.org/lkml/20240605032120.3179157-1-song@kernel.org/
+[4] https://lore.kernel.org/lkml/ZoxbEEsK40ASi1cY@bombadil.infradead.org/
+[5] https://lore.kernel.org/lkml/0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@suse.com/
+[6] https://lore.kernel.org/lkml/ZVZNh%2FPA5HiVRkeb@bombadil.infradead.org/
+[7] https://lore.kernel.org/all/20240725183325.122827-1-ojeda@kernel.org/
+
+Matthew Maurer (16):
+  module: Take const arg in validate_section_offset
+  module: Factor out elf_validity_ehdr
+  module: Factor out elf_validity_cache_sechdrs
+  module: Factor out elf_validity_cache_secstrings
+  module: Factor out elf_validity_cache_index_info
+  module: Factor out elf_validity_cache_index_mod
+  module: Factor out elf_validity_cache_index_sym
+  module: Factor out elf_validity_cache_index_str
+  module: Group section index calculations together
+  module: Factor out elf_validity_cache_strtab
+  module: Additional validation in elf_validity_cache_strtab
+  module: Reformat struct for code style
+  export_report: Rehabilitate script
+  modules: Support extended MODVERSIONS info
+  modpost: Produce extended modversion information
+  export_report: Use new version info format
+
+ arch/powerpc/kernel/module_64.c |  24 +-
+ kernel/module/internal.h        |  18 +-
+ kernel/module/main.c            | 647 ++++++++++++++++++++++++--------
+ kernel/module/version.c         |  43 +++
+ scripts/export_report.pl        |  17 +-
+ scripts/mod/modpost.c           |  39 +-
+ 6 files changed, 627 insertions(+), 161 deletions(-)
+
+-- 
+2.46.0.rc2.264.g509ed76dc8-goog
 
 
