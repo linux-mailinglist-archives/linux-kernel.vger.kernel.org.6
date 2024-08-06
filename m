@@ -1,218 +1,233 @@
-Return-Path: <linux-kernel+bounces-275845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E8C4948AE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:09:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9B0948AED
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FABF1F24EB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:09:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E098BB251F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA5916BE0B;
-	Tue,  6 Aug 2024 08:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351701BD03C;
+	Tue,  6 Aug 2024 08:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ho6b8e/Z"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="XmsDcjv2"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFE8165EF6
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722931737; cv=fail; b=Q3o9OIhSOjaRyNyvzvAhH/jbwFRFaYc5h7grPyNciTBGP4AXuSY0fr7DA2GXNIHYrsnQAC1LgdLWbf71tAdWs+ySyL4lHB8Lv7zoM3mqLTw3RSfQUOJLAwaSMR73BtcZmnND18z5H7oh2e1VKpjsBNxMlyL2JvB1U30tfET/q7Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722931737; c=relaxed/simple;
-	bh=1Cscehv3WwXtPR/TeCHPow3Rn1J7X2zqlJ27UDnG7Oo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LGCXWuSAOa0+XpB/bTCqczz2W0YjvxIMnJlT3rHiUpIgN/S5AK3pn5U64OMw0gkB2/WOBjkCzt+zF25UVP16h9tUadKx3lXflEXoDYWeNCjTkM/xV6JnoMlfXPh5M+UG6/8SuY+ieJ6nTmczZTVPJDr8fcnpnlaG6361DHw6678=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ho6b8e/Z; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722931734; x=1754467734;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=1Cscehv3WwXtPR/TeCHPow3Rn1J7X2zqlJ27UDnG7Oo=;
-  b=ho6b8e/ZuEhBNw16zWi0SCa4FGv5dP9ApiOAdBXimBe6/+SkmTHA2wq5
-   RpHw3gMI7xRtFSpPrQa34WgJ1LeOFl0p6oLRLZStqjipm+8qEgQdmHTzQ
-   LshRTNmOEYM+G32DuVNf2j3zHrTxJabVo0y+YAwrsafntfTH9oCcYjY+H
-   rMQojC+sOp7OJFMl9ZDOEPdbb8gkAMwq8wEc0lPlIrBkkg6ZOw/vj/5K/
-   Uo6mRdnTIqsJS2k0G2U6fWAG5YHJWS0JGj6vQFLwjGIInawF5fG8sA8yO
-   F+dzMtFQnCCPoLdBeSxJyRXBDWwTUgYR5MYbzNIrUTa1l2vk1db8oVbya
-   Q==;
-X-CSE-ConnectionGUID: Ari8fWWeRK67A4uhaBU3MQ==
-X-CSE-MsgGUID: DH2kJ2n5RxO1zLFLKFgdvw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="21098256"
-X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
-   d="scan'208";a="21098256"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 01:08:53 -0700
-X-CSE-ConnectionGUID: ROUkJM4lSTWTOVCB+gKEYQ==
-X-CSE-MsgGUID: +jyR42bXTeSZiHxxT72LVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
-   d="scan'208";a="87367183"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Aug 2024 01:08:53 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 6 Aug 2024 01:08:53 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 6 Aug 2024 01:08:52 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 6 Aug 2024 01:08:52 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.41) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 6 Aug 2024 01:08:52 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z4eNz6R4BSa8Sgzy19pQM8h44CQsdmDQQS47ZdR9vhTujY2RP0o0r3HW3mN5+SGF6D9y/oavRNG/ulZ+Rpmi7MWkRUWHWH7Q7bbjaBK6Zya6UpJU8Ts9O+zpbFoFbQaBgYPdp/GlxDvK2ZPOWNLfypdJ7XN4OKc2yVxFdfDNzaeQx9gCtfnov8M30721U/8XUlnsQqY2u3XqFAZ5WlZg8c/IMhPmsSSVyDU34C3nuSZ9u2skfbfahQycS8RBkpQTjH41VVyo0hcWRQILMFF/atvKLxkiT5SscPU3duqpxDyiRlBKAo0YSZiDFZSHwtkWsSDCIldcyw456tTm+RD3kA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6fW60/JfnJfzDrzpwjn25iOhuyEMTxnbdbbLTKa1N5Y=;
- b=Zx7mxgB0Blwxvpc1IpNBCjAiRbJwrhfbzdxi0KFOvKFKcRPjmXKF0ZDBJUdchYFj4/gF/ce6aEQ1ePNP0LE0DAUqAzRSwoFzLlwOLY/eVpxlz1BdnPaQWvsPQVj2rp9bExrYzhum5V87NyzzOasTDl82D+FChG8dZFOQRtBpmj4OPpTy1hISy41cjXDRKQQxaYOTzZlrnioo3ivA15zvQtsMxLk9adA/oKWBFFVAfJkVtIjJmlO6n3+pRaRjhV7f0/l0Om7JXiPdZZ3Sf7qw4NC+ixT1e3JgM7kSst21OGdgZLD14CkH/f4jYbfw4nlw+EtpQtGVyV5yd2teHH6Fsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by SJ1PR11MB6132.namprd11.prod.outlook.com (2603:10b6:a03:45d::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27; Tue, 6 Aug
- 2024 08:08:50 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%3]) with mapi id 15.20.7828.023; Tue, 6 Aug 2024
- 08:08:49 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>
-CC: "Liu, Yi L" <yi.l.liu@intel.com>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] iommufd/device: Enforce reserved IOVA also when
- attached to hwpt_nested
-Thread-Topic: [PATCH v2] iommufd/device: Enforce reserved IOVA also when
- attached to hwpt_nested
-Thread-Index: AQHa573hD9PUBMkL70Gw0JwVY8bJCbIZ31EQ
-Date: Tue, 6 Aug 2024 08:08:49 +0000
-Message-ID: <BN9PR11MB5276C2F39301A461FF84EB368CBF2@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20240806050201.3717816-1-nicolinc@nvidia.com>
-In-Reply-To: <20240806050201.3717816-1-nicolinc@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|SJ1PR11MB6132:EE_
-x-ms-office365-filtering-correlation-id: 2fcd5b5c-d9ae-4889-b37f-08dcb5ef00d3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?hrmvTePOjzX4xJMDjaYnnC+77wEal16ec41L66r7iNIFK77GXXMINlLrtauL?=
- =?us-ascii?Q?IWrPXB4fvVb45kwcOxTA3IM2t3NGJDkqf8ApuVXLaXFTUOZnHD8h2hsPhhSW?=
- =?us-ascii?Q?H4sNJjHvefPmnDY01vJZo4Reig/KxuZ/lfg3ou4X/4ml5JBSdaf9hWS8bPS3?=
- =?us-ascii?Q?iqhQzvJe/a11NOYU8NJFCweGKplVYQqacfhA35h1BWcSmASHfb6jRticybc1?=
- =?us-ascii?Q?C2fUGExtHbH4f1UGbzmQD9UHiQRL4tNIfUqHWAzcLmKu2c4EjtIorc7wEVMp?=
- =?us-ascii?Q?shLOyuP8GAdpd8YwOfwjgcEwtVfWdCJmGww0Da8M66pCBMrUxwKq4FltlCAz?=
- =?us-ascii?Q?0JaUqgJnvfVzelae2reVmhdFxA7vjptDi1jnElEG94U9vFicnATsHV5B3cUB?=
- =?us-ascii?Q?YbHJKFPEtUq3IVT7Qb4wIFD4rMoFhwqiSdwvpmHy+PDGpDY1QnrdQBc8k0BQ?=
- =?us-ascii?Q?vHEM9PUiDRJFgBgwo2fxo3t++B8+Sx3FqTZCNkDFMPyeIMmgBElz2auV6bUq?=
- =?us-ascii?Q?X2fCeSvNPHkigpklfLnRYfHBtXaxn3CnX4Ttv3cT96jZJTlnqJeCyi65wknq?=
- =?us-ascii?Q?23Lqz7dVrJuy+35GbUst1zjcklEkWa1W2Cj10CNp1DI6SXEbXLnOWY8eg/mj?=
- =?us-ascii?Q?8LhmUlLsvBS2FqfleA2u8+e7xXM/++o09dbPCcr2/IaT+HDb1Ct/4h+lspPC?=
- =?us-ascii?Q?oER/yS5mv41nI3xu1mo7kxY6psV58fx2NNlELVsZZwa5KI0NWQvVvM7roivU?=
- =?us-ascii?Q?SRMGJgf6RsIMMN4mpg7GwQbtY+VJ1RAfZeLVJDvOgB7ha/eUX2YGq8y2Ks8g?=
- =?us-ascii?Q?dg+TG6/NaWwC+2K5+k0Lmm1tEb0GvtVZEied4FAKhtQ0GGDiwJJuP6SCyGC6?=
- =?us-ascii?Q?UqmvFtzgv21LDWhE2o47YseoLJJMiKIeth/SmBXLRvYtBVOOQiIDP+ZClp7v?=
- =?us-ascii?Q?Y450JqyKUWdBn6ZojIYtRKI/J4igmN3H70drsTRb5LQ5anftc36UKdIp2JEz?=
- =?us-ascii?Q?T7IeFOSdxGYWLIIPR2EudvP1vrHLINfDOtv5y7ZSuU9R75Fe5MrON2nGIhRy?=
- =?us-ascii?Q?JYq+T79s/Xvc0cIhV+auiXobQ9iVQgcBWrR9GU9ptcPLUK4KI6+5/1lVGVgo?=
- =?us-ascii?Q?5FvjLViep7KL2NbYyPf4KWtV01fY2PrW9v0oskapG6xFZlzbHxipbb9lsqM6?=
- =?us-ascii?Q?V73nhUOCtNoHG8ET/cGJQini1Yc2wHxgZo5Kru/t6R2zvvlz/Y+x0BRgpZhT?=
- =?us-ascii?Q?3l6fY06eLo4wIv4yZfI3k2ciG+2m8REoOGGlbS/Z+NYfeMiZgnyWlx8UjEQR?=
- =?us-ascii?Q?9kctBPgQqD20LvS6Tn8uPND976P35t9t/5CThZMIf/8SYttyu3YAYNrlA54B?=
- =?us-ascii?Q?F3uz8KhoXyeW+6pGD3wRUWNDjOi8n68H77MWMtgFKpkcUwNe4w=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?wmBYcKeXbLhpVl8na4ecZ2+jCJTpy4C9/Oi5mOPDQ9sVqy0a7ZMkST92kRsQ?=
- =?us-ascii?Q?1ZDdk3R2VW4qAyM6QwbnSITP2GKIN5b++X5jdtMQ3twDMWZTiEBZmtfiyiTc?=
- =?us-ascii?Q?9Nn4H9URJ2kMsI+LkrAsb66Y7cylAty8SWZf3DFn1sVrdSeGqb5uMEpdHsi+?=
- =?us-ascii?Q?Mqz1V7y9I+ahzGjAcD4yKUB5yPrUVsLumemLxp/lSGESHT7RLWGNDQHbj7wS?=
- =?us-ascii?Q?xfB2PzO231VESoO/BNJ7URbqh0BklrZmd4BgGXSRUUTsO+j5oFCoNde+quja?=
- =?us-ascii?Q?eYeLDaAJ3VmW+KUOmE3t4+06N/a1eRp6ttslM1gV5cXKm81yKMUyXZpVCJQm?=
- =?us-ascii?Q?nu2oc9MdNVd3EjE+XmsVX71fS+PliL4GG5UI0bemDiID+0po01Eb7LFYNEk6?=
- =?us-ascii?Q?mc2hPb2wIe2rVP+Va5OFjWM/U/THESDw2R6DB719vTnl5kfgN23eA5PD3Y0l?=
- =?us-ascii?Q?NCEHfIbjGeL5cCOzF+20BLc4GphZwuF0L5hcQmMSJomt7nPunNCcpKK8FKeB?=
- =?us-ascii?Q?VeZtHuHC8Xg9nTnyieaiJFeMYnd2umBl/OjbbD18MQ5imtW7QRPi9GY41TlH?=
- =?us-ascii?Q?+I6/S5TkTKhpdwGlB+Tr/N9a8VC2+zsje6hRcVUfhCGIdEOh4WxIewIbybhi?=
- =?us-ascii?Q?Bd9iOG1yxWE+5VQN3Ww0akxFpFzcWvCz+ehK+WpiZY6aX0TUB/rlzxlvtzLk?=
- =?us-ascii?Q?UtX9VUsIG4RkLluULpA5S95f0w5WRRVbVp7X/+GxBuXv8vQUAmsJTBHS8xp8?=
- =?us-ascii?Q?mUZlS+nwI9RzH2l/tRtqrXvlVU8z9Vji5T8EmkHsralKqetKtYroMT9gTMoE?=
- =?us-ascii?Q?AAB1XRkGh46W7YWz9Vzq3ANdUEYoEi/uWFQ8K2KbIyWlPl/2UHR/QbCpiWsK?=
- =?us-ascii?Q?yng+gnSM4NBvJdB3fHpEGazkw4Sgn2LZmLlVl3zn7jweIbYVmXIbpNB9XCN/?=
- =?us-ascii?Q?7PdhXEAOvc+HWfCDl79dPVCRAGMcKYXT+Ws0XrU03VwtoIUSEeUq7TR4fIaz?=
- =?us-ascii?Q?Gyfsen2v4Koc1s+HbQrPVybE5qATWZlwSSiCIzytzDMqFnYSkvZ0a9+8S90d?=
- =?us-ascii?Q?YN+Y4VNzaEBZ7mL6sBo6WSsml4OCZTkAfnB++oWPpBKkR+fUwvOoxwu9glrx?=
- =?us-ascii?Q?+jI1YNXZxYfIu0RI9Njysx0HXWpfFjlHC8VoqUxUq+qAO2XqJvtaBEE0V4+D?=
- =?us-ascii?Q?S3XPLdscRgsOmelXVZoaKlAR2fJUULtdDxWJbZ7AK7xlyWM8X0bDU0F/20zo?=
- =?us-ascii?Q?NycenhXiHu9weOR8qWMPR8wP7o+GZZFM47l74pyovdKn8m5XK6rSHlK2rvEK?=
- =?us-ascii?Q?zmkNrretqL7C51ZR4spTWujoB04xBy01P9CjBRSkWyvRELrIc+nUfaCgjzu+?=
- =?us-ascii?Q?e/vre5GMbZ/b0xo1EkqkuSk+5WRDVEV4j6XEXTy9on/4UVIT1WV7tQbOzxmK?=
- =?us-ascii?Q?vxrhjmR+c4HXfjrXZDxBobgj2iBoyepyIrAKmtLE7i2fKn5t3QQticxAz+sr?=
- =?us-ascii?Q?fNLua7KdqMcYWR+7EcvQfjXZN7N9J8J7LF0R0Ij7q856ySoUNonUYD24MPhQ?=
- =?us-ascii?Q?Pd/ZcGa9ojEYQfxiHowMAs0xQY7w7LmKThpPtDoB?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D6B1BD00D;
+	Tue,  6 Aug 2024 08:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722931765; cv=none; b=Sz3yZ7U7vefsNyynQJcGycvNe2ku2QC6H8Ung2nsNRms63sQoSqQtBixxWsp9c4asPZfM32/mMXIcsGE3czObrWVzTvzVgbpPuouycU/yauYt5DyQxm7GqMjx2y+l5MgkxYwp6vHsbnh4pSsAQgUJyoWkSIPwRVFDEe1pFrMijU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722931765; c=relaxed/simple;
+	bh=p9xExAr/iVlA5WKy/Vdm3K4UTweFifuN4Tk4ISL/pgo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T1dHvOdxSFXOGCeu/4tluRlw3R2gnEYUGgW9eEDz0nmvtWZbq3yQgR91d/UVi3ui0rAuuybsvqN+WaRigpSWEfND9A9zJyZ4i1jovL1KV6UG/wnL9cG9MiqcJTw6glnTLzKm8BqphDPvnOuhv+2zNJCxt9JaCwGF4oaxHS5Eb2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=XmsDcjv2; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722931755; x=1723190955;
+	bh=oLUYxbAxLEUHoeTSlg1qUumJFtdJ36VEwGodmemh/PY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=XmsDcjv2fO1yqop7mqnfjuTiOl7FNw9s9ISW3yPa0nDRWitehYqxzQ6FKjEQAmYwI
+	 qZqF4/mSar91kBGRXvK38xWOkTtIgH1s54U0oRWf9ADIrCmypCCdY4cfAt8+Kc1d+5
+	 gtDO+K4sI5GorBrPfujz9tMW6iTQhF5OvI1S1ooqYEsVXhBajjwL3jgommyBK93lGc
+	 sKluFYJy2tRGUfBmAtMRfne+qeP65ez/YS/enjG6IIk3SirlUaiIHxoN8B0I+5o5cP
+	 Kp8QOswNdPH6/eU6u3Muo7hbxxQMLQFZ4pfrtJbrcnFAVZO417f/4a7XoyXM40mHOi
+	 jFF0bLPgkF52w==
+Date: Tue, 06 Aug 2024 08:09:09 +0000
+To: Andreas Hindborg <nmi@metaspace.dk>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>
+Subject: Re: [PATCH] rust: add `module_params` macro
+Message-ID: <b95cc90a-46ae-44af-90af-0fc374cd381a@proton.me>
+In-Reply-To: <87v80fme7g.fsf@metaspace.dk>
+References: <20240705111455.142790-1-nmi@metaspace.dk> <49cad242-7a7c-4e9e-beb7-4f9c493ce794@proton.me> <878qxgnyzd.fsf@metaspace.dk> <ed2f7416-2631-411d-bb49-5a580dbf51b8@proton.me> <874j84nurn.fsf@metaspace.dk> <f84e9189-b64a-4761-86f5-ccd50fb62f36@proton.me> <87zfpvmd8y.fsf@metaspace.dk> <a98ddf54-3e27-4587-8e49-f19dd1ac65a6@proton.me> <87v80fme7g.fsf@metaspace.dk>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: fa0b965016167af4b6f1337c11afc96ca1d75ead
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2fcd5b5c-d9ae-4889-b37f-08dcb5ef00d3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2024 08:08:49.5372
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 26moZuUJUiLtUSxmziOalw2LhERvx43p0ltLTRAIGlm4ddv0UI9sL13hyrC8xHK0FOJcwqFhXtOVDrGTL2jh4A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR11MB6132
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-> From: Nicolin Chen <nicolinc@nvidia.com>
-> Sent: Tuesday, August 6, 2024 1:02 PM
+On 05.08.24 12:55, Andreas Hindborg wrote:
+> "Benno Lossin" <benno.lossin@proton.me> writes:
+>> On 02.08.24 12:27, Andreas Hindborg wrote:
+>>> At a higher level where the bindings supply the parsing functions, we
+>>> can decide that passing an argument without a value yields a default
+>>> parameter value. C does this for the predefined `bool` type. The
+>>> predefined integer types does not support omitting the value.
+>>>
+>>> This patch only supports the higher level predefined parameter types,
+>>> and does not allow modules to supply their own parameter parsing
+>>> functions. None of the types we implement in this patch support passing
+>>> the argument without a value. This is intentional to mirror the C
+>>> implementation.
+>>>
+>>> To that end, I removed `NOARG_ALLOWED`, and changed the parsing functio=
+n
+>>> trait to:
+>>>
+>>>     fn try_from_param_arg(arg: &'static [u8]) -> Result<Self>;
+>>>
+>>> If/when we start supporting types like `bool` or custom parsing
+>>> functions provided by the module, we will have to update the signature
+>>> to take an `Option` to represent the case where the user passed an
+>>> argument without a value. However, to mimic C, the function must always
+>>> return a value if successful, even if the user did not supply a value t=
+o
+>>> the argument.
+>>>
+>>> Two different default values are in flight here. 1) the value that the
+>>> parameter will have before the kernel calls `try_from_param_arg` via
+>>> `set_param` and 2) the value to return from `try_from_param_arg` if the
+>>> user did not pass a value with the argument.
+>>>
+>>> For a `bool` 1) would usually be `false` and 2) would always be `true`.
+>>>
+>>> For predefined types the module would not customize 2), but 1) is usefu=
+l
+>>> to customize. For custom types where the module supplies the parsing
+>>> function, 2) would be implicitly given by the module in the parsing
+>>> function.
+>>>
+>>> In this patch set, we only have 1 default value, namely 1). We do not
+>>> need 2) because we do not support parameters without values.
+>>
+>> I am not sure that putting the default value of `my_module.param` into
+>> the `ModuleParam` trait is a good idea. It feels more correct to me to
+>> add an optional field to the part in `module!` that can be set to denote
+>> this default value -- we might also want to change the name of
+>> `default`, what do you think of `default_inactive` and `default_active`?
 >=20
-> +iommufd_group_do_replace_reserved_iova(struct iommufd_group *igroup,
-> +				       struct iommufd_hw_pagetable *hwpt)
->  {
-> -	struct iommufd_hw_pagetable *old_hwpt =3D igroup->hwpt;
-> +	struct iommufd_hwpt_paging *hwpt_paging =3D
-> to_hwpt_paging(hwpt);
->  	struct iommufd_device *cur;
->  	int rc;
->=20
->  	lockdep_assert_held(&igroup->lock);
->=20
-> -	if (!hwpt_is_paging(old_hwpt) ||
-> -	    hwpt_paging->ioas !=3D to_hwpt_paging(old_hwpt)->ioas) {
-> +	if (!hwpt_paging)
-> +		return 0;
-> +
-> +	if (hwpt_to_ioas(hwpt) &&
+> For all the predefined parameter types, the module code would never set
+> the `default_active` value. It should be part of the data parsing
+> specification for the predefined argument types.
 
-this check is always true when hwpt_paging is valid.
+So if your module has an i32 parameter, you can't set a default value to
+eg 1000?
 
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> For custom parsing functions implemented in the module, it makes sense
+> specifying this value in the trait.
+
+Couldn't I just emulate the behavior from above by creating a
+`struct MyI32(i32)` and having a default value?
+In that case, why make it more difficult instead of providing a simple
+way to do it?
+
+>> Since one might want an option by default be `true` and when one writes
+>> `my_module.param`, it should be `false`.
+>=20
+> I think this would be confusing, since the default C parameter types do
+> not have this semantic. Specifying a default true boolean as an argument
+> does not make it false in C land. TBH this also feels like the most sane
+> thing to do.
+
+Can't you also do the custom parameter parsing from above? ie have an
+integer parameter with a default value?
+Or is that frowned upon (ie not allowed through review)?
+
+>> Also as the C side shows, having default values for integer types is not
+>> really a good idea, since you might want a non-zero default value.
+>> If one does not specify the `default_active` value, then the
+>> `KERNEL_PARAM_OPS_FL_NOARG` is not set.
+>=20
+> I would rather predefine `KERNEL_PARAM_OPS_FL_NOARG` in the trait
+> implementation like C does. We would set the flag for `bool` but not for
+> integer types. For custom implementations of the trait, the developer
+> can do whatever they want.
+
+So we are only going to use it for `bool`?
+
+>> If you don't want to implement this (which I can fully understand, since
+>> we might get `syn` before anyone needs params with default values), then
+>> we should write this idea down (maybe in an issue?). But regardless, I
+>> would like to know your opinion on this topic.
+>=20
+> We can create he issue if this series is accepted without the feature.
+>=20
+>>
+>>>>> I think we need to drop the default value if we adopt the arg without
+>>>>> value scheme.
+>>>>
+>>>> Yes definitely. I don't see anything in the code doing this currently,
+>>>> right?
+>>>
+>>> The current patch uses the default value given in the `module!` macro t=
+o
+>>> initialize the parameter value.
+>>
+>> But what drops the default value, when an actual value is specified via
+>> `my_module.param=3Dvalue`? (or is the default value only assigned when
+>> nothing is specified?)
+>=20
+> Some more confusion maybe. When I wrote "drop the default value", I
+> meant remove it from the code, not specify it. I take it back though. We
+> would use the value given in the `module!` macro `default` field as
+> `default_inactive`. `default_active` is not required for integer types,
+> since they always require a value for the argument.
+>=20
+> But the drop would happen in `set_param` when the return value of
+> `core::ptr::replace` is dropped.
+
+Ah I see, I missed that.
+
+>>>>> We could also only allow `Copy` values to be used as Parameters (but
+>>>> then `str` cannot be used as a parameter...), since they can't impleme=
+nt
+>>>> `Drop`.
+>>>
+>>> We should plan on eventually supporting `String`.
+>>
+>> Yes.
+>>
+>>>>>>> Or we could just not adopt this feature in the Rust abstractions.
+>>>>>>
+>>>>>> Depends on how common this is and if people need to use it. I think =
+that
+>>>>>> what I proposed above isn't that complex, so it should be easy to
+>>>>>> implement.
+>>>>>
+>>>>> Rust modules would just force people to add "my_module.param=3D1" ins=
+tead
+>>>>> of just "my_module.param". I think that is reasonable.
+>>>>
+>>>> Eh, why do we want to give that up? I don't think it's difficult to do=
+.
+>>>
+>>> I just don't see the point. Just have the user pass `my_module.param=3D=
+1`
+>>> instead of omitting the value. Having multiple ways of specifying for
+>>> instance a true boolean just leads to confusion. Some boolean parameter=
+s
+>>> have a default value of `true`, for instance `nvme.use_cmb_sqes`. In
+>>> this case specifying `nvme.use_cmb_sqes` has no effect, even though one
+>>> might think it has.
+>>
+>> This just shows to me that a "global" default in `ModuleParam` is wrong,
+>> since for `use_cmb_sqes` one could either have a negated flag, or no
+>> default value, forcing the user to write `nvme.use_cmb_sqes=3Dfalse`.
+>=20
+> I do not think it is a good idea to be able to override the value
+> assigned to a parameter when it is given without a value. The more
+> predictable a user interface is, the better.
+
+By that argument, we should also not permit custom implementations to
+specify a default value.
+
+---
+Cheers,
+Benno
+
 
