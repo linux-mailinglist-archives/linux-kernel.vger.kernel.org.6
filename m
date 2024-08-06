@@ -1,143 +1,116 @@
-Return-Path: <linux-kernel+bounces-276204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA160948FF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:03:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FF04948FF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 537711F21CA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:03:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 966241C21415
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991921C57AF;
-	Tue,  6 Aug 2024 13:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139381C9ED7;
+	Tue,  6 Aug 2024 13:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4rPxxA5"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dOHrafx4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD521BF311;
-	Tue,  6 Aug 2024 13:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429441C579A;
+	Tue,  6 Aug 2024 13:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722949412; cv=none; b=hsW9p0tlgfGk5l26HbrFD0QwLjMvfZuzXVeBM6VOQFHzKM0kwGYidi2w4tgHHjbFf/aE9DYtoxyJfe75S7FNftbiIsLtedo2kMl3se+LbFB0GrIO+rNBH8K9y18ssU7jtirycwbfw+tHqqvL/QKf6qWyuVI/S8aqKMypV4wYLCk=
+	t=1722949462; cv=none; b=L7w5dV2fLLBMO1Zgcj0Cwk8vrQns4VY0O4f5gwUmL3kMPJP8nVjgGPlIqFaAXyAEWuK4E5BPlbVPhMVI+BlclzTSIJJyJ0UnoKVmMSW+CbVOeQVOy+fxaQCWvB2E81u0WUcn8hEbQQ9N68/lwzsTMXC0h5w0zRQnVadouSagvuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722949412; c=relaxed/simple;
-	bh=m350d+WN75F9JftrWFkla/yq9m1ER7FZxk2iY9CXx+I=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qL2PQVfskri6K3JkQdu1RpnyfPkvDpLSJ9ErXfd4jWVu0zl5TpEt+2w4QRu8cgZbokGBJcPwKD+UTMgEnJKXgFmdEnSQY2cAUpYdZkoobsLe5/BK7P8cj4nAJOrWCbof2a2j7iCvvywzRGx/oS0oTy2sUzPRhLRUXEVgHqzG+k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B4rPxxA5; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-369c609d0c7so465175f8f.3;
-        Tue, 06 Aug 2024 06:03:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722949409; x=1723554209; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=NXqcooF+h0MdP2Fz1xLEPngVq2SpaVVQUfokhORQgX0=;
-        b=B4rPxxA52mg0bGLWv751MdZb0wA+5vM83lxSqPtjZ5FAk2T2hRzPJHMyqi1Nq3dT6r
-         WdwhqVTBGUfaytK5zhstjpE4ymUVDsM3Cam/t+s9P2WSHMXRelrWTPnwS2V703DehHZ5
-         icJ9pBVdZeUPxYvDcufv3ru26j8QZRUgsMithkAPizLebVX/ePowMzfQAeQc6MgnTymh
-         2PqUIgLhiNY+RWxm3X040MGqW0tXKOflX8DrzdSnoI6Vtir3fxEnGIDAiTykMp6MqLLi
-         6k1K2IcA+VGjpHOr9j4KvEkW/f9cYunPG1H9W+8rNSVLVNGIOQLAdNqX4tAMDm1lRqqZ
-         GOqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722949409; x=1723554209;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NXqcooF+h0MdP2Fz1xLEPngVq2SpaVVQUfokhORQgX0=;
-        b=VaqJocJUA+ZuOTx8HmipWT8aQZBHn8OManjs0JttQInPT34zGlEYBVvdUSAXLnBNUM
-         Jv41/D/flgUn83qE1timvbf38obOFkbNKtXL02KvVVTQ9lZN29QiTdMo4QF3yWoYsMsW
-         BCUeqEtyO0pxCuqOfnfeiOwJN15QHisqI7DVzfqJLLBQeCzpt717Q5JEQSPG3DP3S4km
-         /aU2mN8EFQQXGx3ITmVsCRu4nfAEr9WVxCDLTeXMVgFnTi0BYtV5O0ThewtSznw/r3gP
-         tH87QX6BV8gAblEkj6vB2+42gP8rdR+JB8tAUUZlRFdbbdtNK8JkOHG8IvecpBDHqrl4
-         2L+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXWvCM7fLfU7UF09/bFam1hdKU097+P6uNyfdyl4v8NuhRX9ikpvtth33N+2NFaDmEl8BLwU4VqG2+RIZrNKKiKJZb1qF3e8vyULgbrAeUrGh45EQjSrSMRRamgC3D9nF1uFVwNJmAq2emc1NmXXntXpkMcp/3yDw2mfzb470FKtqPOzw==
-X-Gm-Message-State: AOJu0Yw8fmm5u8X3jsjlJRa8AfgeksEgmYSpJkN3qx4f2jK0eEa61AOY
-	1rxNst5yrj5T9XviCzotwOjNFeQpoSPkXIP5dSTUneTLevVVI4ga
-X-Google-Smtp-Source: AGHT+IFE9bmHdwlb1KsEb5e3xHweTxoHAD/CnO0l3FUpup1/tPLMxcnaiVALbAIQ0dYjYRMgUd3Syg==
-X-Received: by 2002:adf:e7cf:0:b0:367:4d9d:56a1 with SMTP id ffacd0b85a97d-36bbc1a5f49mr10771026f8f.45.1722949409137;
-        Tue, 06 Aug 2024 06:03:29 -0700 (PDT)
-Received: from Ansuel-XPS. (host-87-6-196-30.retail.telecomitalia.it. [87.6.196.30])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbcf0cc9csm13026496f8f.17.2024.08.06.06.03.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 06:03:28 -0700 (PDT)
-Message-ID: <66b21f20.5d0a0220.200175.4b9b@mx.google.com>
-X-Google-Original-Message-ID: <ZrIfHDm-fNcmSaHZ@Ansuel-XPS.>
-Date: Tue, 6 Aug 2024 15:03:24 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Joern Engel <joern@lazybastard.org>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v3 2/6] nvme: assign of_node to nvme device
-References: <20240806114118.17198-1-ansuelsmth@gmail.com>
- <20240806114118.17198-3-ansuelsmth@gmail.com>
- <20240806124312.GB10156@lst.de>
+	s=arc-20240116; t=1722949462; c=relaxed/simple;
+	bh=3fm4dJikrDQXPdImpdjzGgIkMNn1BpK3X8FtFGLW8fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AaYt+LkcJnpBjWlPE/OPlaHbCwt/YcHV9omBPj/N7MrZHDiHQx8pcrDx1oJ1T48yXBQJiBi3Xr7dXNmWVzIjVfMgSfkLUmPrt+98kVDtKE3uQYuigQrINnNldaIOLanOkRgeH5X2yW9VwAErXT5Ctnenb+Bfl9CWYz9wL8BCF9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dOHrafx4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79977C4AF09;
+	Tue,  6 Aug 2024 13:04:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722949461;
+	bh=3fm4dJikrDQXPdImpdjzGgIkMNn1BpK3X8FtFGLW8fg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dOHrafx4C5f4gjmBQTbibSHhrcs80YWJeUPw4gRrtYNRVU2c6ioEsSGLTacTiaF8x
+	 LIrY8c0Wnyn6RpAWKcaEDwu+siPiP0M9VdpUMeer307YPUvYEJWdW0NN3eMKM8F7uY
+	 Kc/vAqHSh6C2Xj3ELbd9aOOwocSPreUm9hYEJQhjki5nFro8L/QY+TePRMYOJoew6V
+	 9M4auph7/2oM5hkQ19bGlR/KNsyCX2s+cWPxwnRacOtTBu3nnWkIx6Uk/P7Ak/1hCn
+	 m/490guar2k+8+DEeDXhHtKl+TsyRVW2JPwvSeMFVl1prirwTaI1HYrvHEffK+hORQ
+	 U16E10B/LEuXg==
+Date: Tue, 6 Aug 2024 14:04:16 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Ivan Orlov <ivan.orlov0322@gmail.com>
+Cc: perex@perex.cz, tiwai@suse.com, corbet@lwn.net, shuah@kernel.org,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr, aholzinger@gmx.de
+Subject: Re: [PATCH v3 4/4] selftests: ALSA: Cover userspace-driven timers
+ with test
+Message-ID: <038cb9ff-4028-4179-9722-df324e29c73d@sirena.org.uk>
+References: <20240806125243.449959-1-ivan.orlov0322@gmail.com>
+ <20240806125243.449959-5-ivan.orlov0322@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="RMCFLusiTb812Ih/"
+Content-Disposition: inline
+In-Reply-To: <20240806125243.449959-5-ivan.orlov0322@gmail.com>
+X-Cookie: One picture is worth 128K words.
+
+
+--RMCFLusiTb812Ih/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240806124312.GB10156@lst.de>
 
-On Tue, Aug 06, 2024 at 02:43:12PM +0200, Christoph Hellwig wrote:
-> On Tue, Aug 06, 2024 at 01:41:12PM +0200, Christian Marangi wrote:
-> > Introduce support for a dedicated node for a nvme card. This will be a
-> > subnode of the nvme controller node that will have the "nvme-card"
-> > compatible.
-> > 
-> > This follow a similar implementation done for mmc where the specific mmc
-> > card have a dedicated of_node.
-> > 
-> > This can be used for scenario where block2mtd module is used to declare
-> > partition in DT and block2mtd is called on the root block of the nvme
-> > card, permitting the usage of fixed-partition parser or alternative
-> > ones.
-> 
-> Err, hell no.  Why would you wire up a purely PCIe device to OF?
-> PCIe is self-discovering.
->
+On Tue, Aug 06, 2024 at 01:52:43PM +0100, Ivan Orlov wrote:
 
-Well on embedded pure PCIe card most of the time are not a thing...
-Unless it's an enterprise product, everything is integrated in the pcb
-and not detachable for cost saving measure or also if the thing use PCIe
-protocol but it tighlty coupled with the SoC.
+> -TEST_GEN_PROGS := mixer-test pcm-test test-pcmtest-driver
+> +TEST_GEN_PROGS := mixer-test pcm-test utimer-test test-pcmtest-driver global-timer
 
-This implementation is already very common for all kind of pcie devices
-like wireless card, gpio expander that are integrated in the PCB and
-require property in DT like calibration data, quirks or GPIO pin
-definitions, i2c...
+This is adding the timer timer tests as standard kselftests to be run by
+the wrapper script...
 
-In modern SoC we are seeing an influx of using cheap flash storage
-option instead of NAND or NOR as modern hw require more space and price
-increase is not that high... Almost any high tier device is switching to
-using emmc and even attached NVME and simulating MTD with them for easy
-usage.
+> index 000000000000..c15ec0ba851a
+> --- /dev/null
+> +++ b/tools/testing/selftests/alsa/global-timer.c
 
-Please consider this well used scenario in emebedded where PCIe is just
-a comunication way and the concept of detachable doesn't exist at all
-and things can be described in DT as static. Also these storage are used
-for rootfs mount so userspace is not so viable.
+> +int main(int argc, char *argv[])
+> +{
+> +	int device, subdevice, timeout;
+> +
+> +	if (argc < 4) {
+> +		perror("Usage: %s <device> <subdevice> <timeout>");
+> +		return EXIT_FAILURE;
+> +	}
 
--- 
-	Ansuel
+...but this requires specific arguments to be run which the kselftest
+runner won't supply.  I'd expect it to be a good default to enumerate
+and test every possible device and generate a test for each.  However it
+looks like this is really intended not as a standalone test but rather
+as something run from within utimer-test, in that case it should be a
+TEST_GEN_PROGS_EXTENDED.
+
+--RMCFLusiTb812Ih/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmayH08ACgkQJNaLcl1U
+h9DVfwf/a9QwUeXEBDc36TW+3+RklKKoqRdN88NVI10XuBsSFPzPFxw4GgVsNWP2
+eX1PLdmNPmQb6nFxHfmgXpFpURjZt/jl6ylMzfi+haDgorIQwerh8lcDrz89rWCV
+4ckzPWX9+5VMA7zc0xC8qj59JlJFIVAZ2aCG33DochRL88PQpNeDtvt8SV4mzuyf
+bnrdslJmgrbS+YYqfUjJ/egEe689AtQTnaWPFVSn4eZk7oLUX06g/4wpU6t3MquT
+RGusbsQDrAPc/kEyCe3dBXfkIwhEQtaUiGf6L4urncjxuKLhd1VSkiT2KG9kG6wa
+5cx9r/wWC9/EAAwJydZ5NXgUl65JxQ==
+=Wsrf
+-----END PGP SIGNATURE-----
+
+--RMCFLusiTb812Ih/--
 
