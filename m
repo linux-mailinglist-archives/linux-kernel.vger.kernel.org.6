@@ -1,91 +1,144 @@
-Return-Path: <linux-kernel+bounces-275756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5CD94896F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:34:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8DBC948975
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A9C21C2336F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:34:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 861E228779C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB097710F;
-	Tue,  6 Aug 2024 06:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BC81BC9FB;
+	Tue,  6 Aug 2024 06:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="F2GAIrlc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eM1EtLTI"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73011C32;
-	Tue,  6 Aug 2024 06:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9731C32;
+	Tue,  6 Aug 2024 06:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722926073; cv=none; b=gtCF7ZyvCxxOiu0X1IFQAJzjjD3kPJ4Be3XPvU/nPNk/SS3/CS6/LCeJHlmsW66wzuYNYK2RdagJBN3E7XN+QFp2AhNAYpn1FmVr8SX+jsyB8cPKW3zfR4ZT/KDuQhGxTc7EurYdLFWFCPAH/YgQMYh+PTEuRUGxgqFZJJbCvRg=
+	t=1722926143; cv=none; b=iYPxO+HN0NcpBl7tYSxcT5cx6kokUKfmzDj/3FdNISSZZKiFuAdXX8Smt2NNB7xZMWLDQA4uX6h30hTxYQkhn6SEHXcdK1Dx2qG0uBRbqiYIpMY5g0qVs9kzDEzFBS1VB2jNTQfzW/Xq+FFum8QPG+aYNgJNBElxD69SqfDWtxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722926073; c=relaxed/simple;
-	bh=6ny41v/q49fMjNsqi+mIAkC6G8FjCC31xWJaGYUQ200=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ti+2X+ZsFk2VMzKjgYwQfcSPkEFe8GKMYsPzbOh91cM6Z1R73cEFDtYb/dUNmzlcIMTXjoFUYD/1daHAxTSZjH0Ku01nKjg9Hksqe92z/+yjcezOeBQaKoRch9eV5VS423TqIjtvCGZVCdrlU9i3rwaChdLD2LByURbcbtcomow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=F2GAIrlc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD881C32786;
-	Tue,  6 Aug 2024 06:34:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722926072;
-	bh=6ny41v/q49fMjNsqi+mIAkC6G8FjCC31xWJaGYUQ200=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F2GAIrlcrxXc6TMYbdTnXK42ReHpcb9cXU5uN11s0Mi/IJYlxZg9ohGgPgF2RytFP
-	 DrUeGkcYF1uoOHp4u4xbsiCzch1O5zq4MaG7iBGWfAgi+MIDVruFYAPHLqu8yadN9Q
-	 adFptSJUivhMWy6u6x60GOxva0VjAsGs+yyeuvmI=
-Date: Tue, 6 Aug 2024 08:34:25 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: LidongLI <wirelessdonghack@gmail.com>
-Cc: kvalo@kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-	mark.esler@canonical.com, stf_xl@wp.pl
-Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer
- Dereference&Use-After-Free Vulnerability
-Message-ID: <2024080640-senate-pushcart-c95e@gregkh>
-References: <2024080359-getaway-concave-623e@gregkh>
- <20240806035433.20901-1-wirelessdonghack@gmail.com>
+	s=arc-20240116; t=1722926143; c=relaxed/simple;
+	bh=agtSU/5MoJvugKtuYx+V07ri8VyeHWabtADyR8kE1r0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=njPUwcmEeCrKqVh0J9k1YM7eQkHx8z0h+lfZEPqVOsUei+TsfTUHIxKrsAJw4N6bZnlWn491zeLWIgw3QvRRTmmcT4GFLzGBj0gChmS8wchsHa8ul2vg0uZQCSRqtb5Bl61FPvreej9tHsNgs/YhSlC0WP1ArgQp9mw2UDd7tLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eM1EtLTI; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-709346604a7so94667a34.1;
+        Mon, 05 Aug 2024 23:35:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722926141; x=1723530941; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HRCxXeI7vH3el/0uim4BCEJl1pPDLT+wIED0mk4DVv0=;
+        b=eM1EtLTI16sqltY/yJzxUHQbw5t8rv1PpbU9CeC+aAzZqJ18lZsE0+4h2yl+F3xSRd
+         biPCflXmb06t1L66dkmoEiTwOMpEr6hy2I/LJmCYet1tlJmwo7XNu+CqLqURfj86WJqk
+         hhGBzyrS2GlcOlYrhaprwk58BFz0KmpyTj7RMfZDNzUC8iUEltrHAZaoN4hLGW9kOvNp
+         ZoatQOxz4A0aV0thUUFOeGyP+O8+iUbNGhyDmJzGoRU+xragOWtpJdKU1OWcC29nE2se
+         uNTuVp+4k0CwqAefWGkFhfaeaKot+Q+ADbh/h1jtSCV2Z49BRovEF8H9wTBSilG12FhN
+         BwEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722926141; x=1723530941;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HRCxXeI7vH3el/0uim4BCEJl1pPDLT+wIED0mk4DVv0=;
+        b=wAY1R4jNfevwC6pzWQIy2FPE+HG2MzV9tVSeOhuSi7l7rEzOckahMU+9buJtDTbn5E
+         ivIofYXlUGsRNDDTqmDAX42dUJHxipxHBf0fySIdjvDJOqpggUCv58K/C2x2pAFTDIY8
+         2VIDcLw0BD5GcrHze/MZtnyHCicRJaYWm8c6X93lWr77OUvIxCkt3/K44E5wujbrYw4q
+         oqaaM7MyRWfAM1SvHJDmUE68cXIgj6SEiQp7TqAUWz5uxhAf51Wwd54NJd+piMW582r4
+         4dgtYQiP5rRmalxk6XylBP8UMkyQM81NSXT/xeOok5JGG5WDFVws15B4SriDbjlF6LZz
+         xHdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUi8/4SGYvU9r+6a/QGBlT+nXgXqfM2z3T0nzvj7d02g2ZhA17mJrkWu/EI4jGUCddlRBBUDjADypYj6JJq/XSYmFSgxhFAL1bWxTqXN3nZ0a+81wGZ6oDbiqkwTk1oDs+iUnjo
+X-Gm-Message-State: AOJu0YyHRPjFbwwuilPTe05KySfD0P02BUMNrwPSFQxfVlIgKH/7WP8e
+	yYMl2udkOiWP0Lsn8Rk8IICSBdBdny2YaulOGNJCppPC0zz44/LB
+X-Google-Smtp-Source: AGHT+IHWvzs+rF7qmpBw5MplmloQXnF+aXC1rIEVo/PRB5JeP2wJRb64RA6Qg9UqJEwSaPJr/oUU3w==
+X-Received: by 2002:a05:6830:390c:b0:709:33b1:fc38 with SMTP id 46e09a7af769-709b997136bmr19454349a34.29.1722926141103;
+        Mon, 05 Aug 2024 23:35:41 -0700 (PDT)
+Received: from localhost.localdomain ([159.196.197.79])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b762e9f5aasm6387963a12.6.2024.08.05.23.35.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 23:35:40 -0700 (PDT)
+From: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	Shigeru Yoshida <syoshida@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jamie Bainbridge <jamie.bainbridge@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v4] net-sysfs: check device is present when showing duplex
+Date: Tue,  6 Aug 2024 16:35:27 +1000
+Message-Id: <6c6b2fecaf381b25ec8d5ecc4e30ff2a186cad48.1722925756.git.jamie.bainbridge@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806035433.20901-1-wirelessdonghack@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 06, 2024 at 11:54:33AM +0800, LidongLI wrote:
-> 
-> Hi Ted,
-> 
-> Thank you for your detailed response.
-> 
-> An attacker doesn't need to create a udev rule in the user's path because that isn't feasible. We need to consider scenarios where certain special devices (embedded systems) are designed from the outset with RT2X00 wireless network cards included in the udev rules. This is because they need to perform custom or automated functions related to the embedded system's operations.
-> 
-> Therefore, what I want to emphasize is that while this vulnerability may not affect users who do not have udev rules configured, setting udev rules is not inherently insecure. It is a normal configuration. Without udev rules, USB devices cannot be properly invoked or perform additional functions under certain conditions. It's a necessary feature.
-> 
-> However, for users utilizing RT2X00 drivers with this normal configuration, it directly allows the execution of the script without sudo, leading to a system crash. This indicates that the RT2X00 driver itself has a vulnerability that needs to be addressed. A robust and secure kernel and driver should not crash or dereference a null pointer regardless of the script run or the permissions used. We tested other drivers and did not encounter similar issues.
-> 
-> I believe this issue should be considered from two aspects:
-> 
-> 1.The vulnerability indeed requires certain conditions to be triggered, but the configuration required is normal and necessary.
+A sysfs reader can race with a device reset or removal, attempting to
+read device state when the device is not actually present.
 
-No, the configuration is not normal or necessary at all, there is no
-such default udev rule, or system configuration that allows what you
-have found to be triggered by a normal user without root permissions.
+This is the same sort of panic as observed in commit 4224cfd7fb65
+("net-sysfs: add check for netdevice being present to speed_show"):
 
-If you think there is a bug in the kernel here, wonderful, please submit
-a kernel patch to resolve the issue and we will be glad to review it.
+     [exception RIP: qed_get_current_link+17]
+  #8 [ffffb9e4f2907c48] qede_get_link_ksettings at ffffffffc07a994a [qede]
+  #9 [ffffb9e4f2907cd8] __rh_call_get_link_ksettings at ffffffff992b01a3
+ #10 [ffffb9e4f2907d38] __ethtool_get_link_ksettings at ffffffff992b04e4
+ #11 [ffffb9e4f2907d90] duplex_show at ffffffff99260300
+ #12 [ffffb9e4f2907e38] dev_attr_show at ffffffff9905a01c
+ #13 [ffffb9e4f2907e50] sysfs_kf_seq_show at ffffffff98e0145b
+ #14 [ffffb9e4f2907e68] seq_read at ffffffff98d902e3
+ #15 [ffffb9e4f2907ec8] vfs_read at ffffffff98d657d1
+ #16 [ffffb9e4f2907f00] ksys_read at ffffffff98d65c3f
+ #17 [ffffb9e4f2907f38] do_syscall_64 at ffffffff98a052fb
 
-I don't have time to look into this until next week due to travel, so
-unless someone else picks it up before then, nothing new is going to
-happen on it.
+ crash> struct net_device.state ffff9a9d21336000
+   state = 5,
 
-thanks,
+state 5 is __LINK_STATE_START (0b1) and __LINK_STATE_NOCARRIER (0b100).
+The device is not present, note lack of __LINK_STATE_PRESENT (0b10).
 
-greg k-h
+Resolve by adding the same netif_device_present() check to duplex_show.
+
+Fixes: d519e17e2d01 ("net: export device speed and duplex via sysfs")
+Signed-off-by: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+---
+v2: Restrict patch to just required path and describe problem in more
+    detail as suggested by Johannes Berg. Improve commit message format
+    as suggested by Shigeru Yoshida.
+v3: Use earlier Fixes commit as suggested by Paolo Abeni.
+v4: Typo as suggested by Simon Horman.
+---
+ net/core/net-sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+index 0e2084ce7b7572bff458ed7e02358d9258c74628..22801d165d852a6578ca625b9674090519937be5 100644
+--- a/net/core/net-sysfs.c
++++ b/net/core/net-sysfs.c
+@@ -261,7 +261,7 @@ static ssize_t duplex_show(struct device *dev,
+ 	if (!rtnl_trylock())
+ 		return restart_syscall();
+ 
+-	if (netif_running(netdev)) {
++	if (netif_running(netdev) && netif_device_present(netdev)) {
+ 		struct ethtool_link_ksettings cmd;
+ 
+ 		if (!__ethtool_get_link_ksettings(netdev, &cmd)) {
+-- 
+2.39.2
+
 
