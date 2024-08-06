@@ -1,127 +1,119 @@
-Return-Path: <linux-kernel+bounces-276549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88FBB94951F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:03:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AAD3949521
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33EC61F22978
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8050282744
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2364E7711F;
-	Tue,  6 Aug 2024 16:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A140240C03;
+	Tue,  6 Aug 2024 16:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RWMb8Din"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Ae82Rm2c"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF3039855;
-	Tue,  6 Aug 2024 16:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A3B383A2
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 16:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722960049; cv=none; b=Xask1lQm2JUno7Ku/dxJIxu3b8njdY0u8oLswESqf7oZbicIGnnKQhII/sKyBckLJNQSzO0DrTpZl6wYnKQU3yTs3PBVNRfyIrrOrmdTLq8Vllyzd5Ka2ZjEVH2+Jy67qflaPC0i543FY9n10CM9xU0uW/ElZbDzPRdYph3ASM0=
+	t=1722960082; cv=none; b=DlElrzkM6nZ1kAifKAB4t/4AyTKQTem2Gzsi8bMG3Mow81Pi64t165isoyjE3BJ2dApDuvqvF0qubzXLEgH3yuLBlxIjtvZA4z36bxCsqeUU0C35afBEN6Rplh2VTCoyvOel869C/NFt02nIgGQHFuMwUxf5eU9iyc7R2e3CLv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722960049; c=relaxed/simple;
-	bh=dgWnsxsAvivSg1NsaUmrzHE9OVk8NSPXI08WSrXTbFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MHfxIKErfk+dsYO2X/JVt0tcIKFWUarfsNHV/EcNBQYbAkTBBPXNsUoHAMvHSbjkdlw1e3+wZegy0BJZnx+o355up9ZTff5fkZUDUR30W+cj5V3K95ztILlV3+Uwb71opXjUiTjRCWaW7RbFC0ENZpFqoddqXQ9RNjTO4p+NzGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RWMb8Din; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8947BC32786;
-	Tue,  6 Aug 2024 16:00:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722960049;
-	bh=dgWnsxsAvivSg1NsaUmrzHE9OVk8NSPXI08WSrXTbFg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RWMb8DinnsQDbExSXI48mqLZXdQfdEcahKloBdwJNTneK5rXsJPuherek4DNYhnQc
-	 nMuc+iI6iLE7WXm+KdHNQhklUwK/t36LzCVZrQC4RXPbxB+1gazxyAJCNV3titjVFI
-	 hKJ2JMkWMcrxKqK6gBrldhaI/z2x21prMAyYNFxF3+bqmPklGCbZv18l0MvIdM7jT9
-	 ho1bEKE2Td2MpRJ+ef2RIwybb1Syg+enLl97MB6eZFsFHxPRKbwHorGNg6YNrvWg8C
-	 OBqud50XwNj7nyU4q5hhOqi5rldeUvkjt/O42SJ/M/Td7Fhag0dMnc0d0QC724QenI
-	 TO6A9cfCgqyIw==
-Date: Tue, 6 Aug 2024 17:00:44 +0100
-From: Conor Dooley <conor@kernel.org>
-To: =?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <barnabas.czeman@mainlining.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Albrieux <jonathan.albrieux@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux@mainlining.org,
-	Danila Tikhonov <danila@jiaxyga.com>
-Subject: Re: [PATCH v2 2/3] dt-bindings: iio: imu: magnetometer: Add ak09118
-Message-ID: <20240806-paycheck-visibly-4e114692ae98@spud>
-References: <20240806-ak09918-v2-0-c300da66c198@mainlining.org>
- <20240806-ak09918-v2-2-c300da66c198@mainlining.org>
+	s=arc-20240116; t=1722960082; c=relaxed/simple;
+	bh=X5YBMoqQLUFM306H1Z2BXgo8qpT6MtNLQreM18o6X8A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dpzMkYAOYdquUa9EqPcJ7bfqLoLBENSM+XGUIhtVcIw32GyKgwMUEyQtkTdm1UPHIKG0xoCfAdJN0wXExRyj/1pkJxsTXVjXH4p7mPr6aQPSKl0stzyhoIP1rauT5KF8EoMI31cJ9+sM/qtmMKhxzW3LgoUJTPUBs8gRYDRAF3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Ae82Rm2c; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70eec5f2401so634251b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 09:01:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722960080; x=1723564880; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pmUn79CSM7NGeo487+spu1nhxVJFwzeytMXnQ3voN7Y=;
+        b=Ae82Rm2co4yFomrdAEl6luXLAjU8DU8/5kBbJWPx3XYPmbY7nWyLs5BdWYDoVtvIhu
+         3FQiT1J7w53x8ko86R64g396kUAWBaeaQIghnkH82dbDVc182dsqL+wweM/ZP5aXc4oO
+         Bv+bDQ2UZuL1mTjRpxqlW+zzgRgh7WlYgL7Wl88I8kW+FyLE/cx3IAl5PMkPhXzblqZc
+         9PD5nzpVr/qRmUTH8dgI5CGT81llf8vjmMycZwHTLICQT+pPNxjbP/m5dBC7jj4y/Mrc
+         Cb04wievWZ1+9GfKF3eOGXtFhW3Im3D0auwcUijWzlec9+hWvHxMl7eu8OE/Jq1l1JIs
+         JadQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722960080; x=1723564880;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pmUn79CSM7NGeo487+spu1nhxVJFwzeytMXnQ3voN7Y=;
+        b=CuJxtGy1/P9LfjUry5BLe/6r1FI+6FniYhuCxOWLV8xmV4XeLeRrk9EEpko1nrJw0/
+         Y78YyYKUR5OAWaS60jm5i2LY4x3LcBEvwEkQVEYZFSAUBxkJrQwpuLLTWqK0RhgFTlOW
+         sxVOhc/0Ij1g1QqNLk32ba5/QDLnqBT39XpenKf1IwIufYQ53AB+jD+/2gdzMAFQxLXk
+         orqW154t9SP7lCvRK0f5/gfSQ7rwK2WIVFmDe60beRYYID7EKHVjad0zEaGtIIOiaG1K
+         bhgRgmTrlSQIJ9IyieWwaNurrIi3lc4rHYhXDi9/uDrdtd2rJlEItoYL2zQG9zu/elwg
+         Eo8g==
+X-Forwarded-Encrypted: i=1; AJvYcCW99QSdT/7kJLGllz1WnlEUhJRLXyK9Xwz1htlmoDjb6bv8x3jw/eM79XETM/vJiVoyOYFCfdRFjAhmHiwqxRYQmUv22JZT6yl5DAuF
+X-Gm-Message-State: AOJu0Yx4UvW+av7JOkXVRnLy2E1f6ufhNAmkyNQgYPAL6lElX9AavhkK
+	vZ3X+4dAJ4Nr3K3o32LfcjApD2MHkI+rK/4Yg3cnkKmF1cFvC+wuFXU/UTMXKnJkzVbQ40AVyRN
+	Rn2U=
+X-Google-Smtp-Source: AGHT+IHZaJbZwjYGzEHemmAnuTugwT01mg2s+D+SsDgnI0QKvC++U4SuJnwQ2R973hkmWe3Sq0R9Yg==
+X-Received: by 2002:a05:6a00:6f25:b0:70d:3354:a19b with SMTP id d2e1a72fcca58-7106d0474dcmr18128108b3a.22.1722960079863;
+        Tue, 06 Aug 2024 09:01:19 -0700 (PDT)
+Received: from localhost ([71.212.170.185])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec43944sm7116181b3a.75.2024.08.06.09.01.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 09:01:19 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Nishanth Menon <nm@ti.com>
+Cc: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
+ <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Akashdeep Kaur <a-kaur@ti.com>, Markus
+ Schneider-Pargmann <msp@baylibre.com>, Vibhore Vardhan <vibhore@ti.com>,
+ Dhruva Gole <d-gole@ti.com>
+Subject: Re: [PATCH v3] firmware: ti_sci: add CPU latency constraint management
+In-Reply-To: <20240806154415.wrsqxgyqdi2y4ae6@candy>
+References: <20240802214220.3472221-1-khilman@baylibre.com>
+ <20240806154415.wrsqxgyqdi2y4ae6@candy>
+Date: Tue, 06 Aug 2024 09:01:19 -0700
+Message-ID: <7hwmkt1vzk.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3TllyQc2YYniCF7R"
-Content-Disposition: inline
-In-Reply-To: <20240806-ak09918-v2-2-c300da66c198@mainlining.org>
+Content-Type: text/plain
 
+Nishanth Menon <nm@ti.com> writes:
 
---3TllyQc2YYniCF7R
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 14:42-20240802, Kevin Hilman wrote:
+>> During system-wide suspend, check if any of the CPUs have PM QoS
+>> resume latency constraints set.  If so, set TI SCI constraint.
+>> 
+>> TI SCI has a single system-wide latency constraint, so use the max of
+>> any of the CPU latencies as the system-wide value.
+>> 
+>> Note: DM firmware clears all constraints at resume time, so
+>> constraints need to be checked/updated/sent at each system suspend.
+>> 
+>> Co-developed-by: Vibhore Vardhan <vibhore@ti.com>
+>> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
+>> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+>> Reviewed-by: Dhruva Gole <d-gole@ti.com>
+>> Signed-off-by: Dhruva Gole <d-gole@ti.com>
+>> ---
+>> Depends on the TI SCI series where support for the constraints APIs
+>> are added:
+>> https://lore.kernel.org/r/20240801195422.2296347-1-msp@baylibre.com
+>> 
+>
+> Unless there is a reason to maintain this patch separately, Could we
+> add this to the mentioned series -> it is much easier to review and
+> merge them in one go.
 
-On Tue, Aug 06, 2024 at 08:10:19AM +0200, Barnab=E1s Cz=E9m=E1n wrote:
-> From: Danila Tikhonov <danila@jiaxyga.com>
->=20
-> Document asahi-kasei,ak09918 compatible.
+Sure, they can be combined for the next version.
 
-Please explain what makes this device incompatible with those already in
-the binding and why a fallback is not suitable.
-
-Thanks,
-Conor.
-
->=20
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> Signed-off-by: Barnab=E1s Cz=E9m=E1n <barnabas.czeman@mainlining.org>
-> ---
->  .../devicetree/bindings/iio/magnetometer/asahi-kasei,ak8975.yaml        =
- | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/magnetometer/asahi-kas=
-ei,ak8975.yaml b/Documentation/devicetree/bindings/iio/magnetometer/asahi-k=
-asei,ak8975.yaml
-> index 9790f75fc669..583cdd2fad7e 100644
-> --- a/Documentation/devicetree/bindings/iio/magnetometer/asahi-kasei,ak89=
-75.yaml
-> +++ b/Documentation/devicetree/bindings/iio/magnetometer/asahi-kasei,ak89=
-75.yaml
-> @@ -18,6 +18,7 @@ properties:
->            - asahi-kasei,ak09911
->            - asahi-kasei,ak09912
->            - asahi-kasei,ak09916
-> +          - asahi-kasei,ak09918
->        - enum:
->            - ak8975
->            - ak8963
->=20
-> --=20
-> 2.46.0
->=20
-
---3TllyQc2YYniCF7R
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrJIrAAKCRB4tDGHoIJi
-0uydAQDG0c2y7H6w4zozEzZ9VYi7IQyZI7ZDFm2zmKjet3UbjwEAkDB2RHT1yKvq
-QktGCWzF0cmqhwU+BMbBEe9J7IzyGAE=
-=BSEH
------END PGP SIGNATURE-----
-
---3TllyQc2YYniCF7R--
+Kevin
 
