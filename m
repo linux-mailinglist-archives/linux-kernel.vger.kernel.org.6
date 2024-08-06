@@ -1,190 +1,129 @@
-Return-Path: <linux-kernel+bounces-276238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8CB9490C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:18:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09EF79490C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCC51B207AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:18:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A96CC1F26DE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014951D2F7B;
-	Tue,  6 Aug 2024 13:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R+yNeu4h"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71D31D415F;
+	Tue,  6 Aug 2024 13:16:16 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0831D2F57
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50C21BE867
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722950102; cv=none; b=cLKYd4UEgqNH9dzTY8FqJfV6EtxEB4thESZQGda2m4MTrLZ61p4cJDbctm2bGG1kSbkiDXmirYD4nYBo4rYpj2KlfF0uw9/iBPsSBdQIdByRPgibzBXqI0POUe47hJcRvMjSL/6E3id5VECPTot0rGWTyxXDCBpw2/BJIHJIw08=
+	t=1722950176; cv=none; b=jzU4vOJOxXonR73v/b12Dc13qtGIfYRLxz4tvRT3wY8h4JMcciuDJUooD7+fKYThKeyRmaR2nuKdmld+fvqawhXSqaQpDbaueE0YNWB+wJWq5tL7bhlOaJAOHNAJ05W3Ah9Ffxp1kXdDDR/PwImT7q7TjDo3l3vjAOM2BB+uxwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722950102; c=relaxed/simple;
-	bh=QsHF589vatmELWtHbADH1FBmEtHqOFAgvPgCHcyZYhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d+b6TByhPeyVFffAYT2jv/Tp8/MoDq5UVC2yJUm1Ree+n2vtKz3UvXmdddrBCBC+DB69l6i1dwy1vkgxUbURrQr3YxvuMB4vgpOAGIwGL1TNXFjNM9JG7OkLUcBbWOo1gXvRHmvjdrKHMawpEyCFFGPPpn/jJWS9xVdVLhdIfDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R+yNeu4h; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722950099;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=gav+WgTfYsxeeh1+Er9Vd3yZJQcnmu7WI7/O0+JeoYw=;
-	b=R+yNeu4hX/fyXdS7elSulMCnswGK2pMDioKyCX8g5+7PAhn5sjyF0BBIZKnqQ3WO+Dpp5F
-	PeotO3roxIQfqK/Y2BjILLo6BpJVJ+krN6s6T2AP1ohj0PAYPIwTG6l3UL6/KLUcOye6vN
-	0z1T0yzl7gvgaJg6r7ZGGlC+qZ+aq9g=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-382-Hn0Xu15IM3W7AjT0yjbB5g-1; Tue, 06 Aug 2024 09:14:57 -0400
-X-MC-Unique: Hn0Xu15IM3W7AjT0yjbB5g-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-428fc34f41bso4720225e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:14:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722950096; x=1723554896;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gav+WgTfYsxeeh1+Er9Vd3yZJQcnmu7WI7/O0+JeoYw=;
-        b=XLlAdwvPldOT8cYXBnTXmVV9Y9IS9YLky4zmUVpYz65rCQtqc3tabPx3rKJAoKc9Qv
-         t9NOg7AQtdiqzmjYY+UdruymmVHlqxxTRQp/qoUCRXwbA8qe8EL/cAnxhu//2F7abmI5
-         4Gsyey3QyGtanUnd+XgNiZO3fgdjzZWRVVzUZI7H7SxOKdT+W6ciH21+wmU4NJYUI1kg
-         IvcoFTN3pjRj73j5ubuGcjd0sgdqybCokOX/G9rALJuq9K1T6CFssz513U0QQeQWrKsK
-         azLAK0gLbtUM2KXBMAU0ZXrpizHXsUEU/7XHvowBab0XCnZzQrbe9uoWLQvgBsa0qBZe
-         hXdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ9rPxSFBwLqhBbejmiGa0Nkqe3HFplsgT+aOiWiBnb+Y8Bx4jNlhUjs4gGCMxt9waZT7B9jVyVmidq2aW5LbP3aRd+Pqc0RhGU8Lu
-X-Gm-Message-State: AOJu0YypNwrRtAXnYsH9lWkQ9k9tzRUZgvQZtt/nuZtd/qSUf6EbZF+Z
-	tsZWLVxUlzpgTTswQ+rZZz5vPqXQ4l3mMfgEHqt7UX6qsAaWD3ySXaozMGcP8CIkrTaBJgFWqdB
-	YYypbePqJmPEtM82nyovxnypgqEAeBNi4wvjDY6/V8Jbhtkuy+CNl/C/RKVmnhw==
-X-Received: by 2002:a05:600c:4fcb:b0:427:9a8f:9717 with SMTP id 5b1f17b1804b1-428e6a5afc3mr126859635e9.0.1722950096319;
-        Tue, 06 Aug 2024 06:14:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF6jHrb53H6IDJztgeIGS31y125eDKjP789FcxpVkwCrI28w6A/fVody5PYRBfVSpT6cV7Inw==
-X-Received: by 2002:a05:600c:4fcb:b0:427:9a8f:9717 with SMTP id 5b1f17b1804b1-428e6a5afc3mr126859115e9.0.1722950095740;
-        Tue, 06 Aug 2024 06:14:55 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd26f9c2sm12920846f8f.116.2024.08.06.06.14.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 06:14:55 -0700 (PDT)
-Message-ID: <8f9afa5b-0a89-4adf-b532-3fb7a5f5f681@redhat.com>
-Date: Tue, 6 Aug 2024 15:14:52 +0200
+	s=arc-20240116; t=1722950176; c=relaxed/simple;
+	bh=WxVMOsooydwCvFTMcLilfNoUBQmZvwH9joUgNdC0h5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bi5a/KwCmNMSCIrB2iVMP/TNAaz24XdYLivIghHDG9I+q69DB+M/ppOFeCY2/xsyh2KPcYQNQJMHxgfs7BkoyCgKId1JFkSHmZSUAAN8mEj3Jxf1FB3ADky/Dpc8eUbBu1JjoBXrDCCVY5rBd5pNrkeVuH5qETCMAaA/hhov/jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sbK2d-0000GH-3S; Tue, 06 Aug 2024 15:15:55 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sbK2b-004xsB-NF; Tue, 06 Aug 2024 15:15:53 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sbK2b-0051Ir-1q;
+	Tue, 06 Aug 2024 15:15:53 +0200
+Date: Tue, 6 Aug 2024 15:15:53 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Jander <david@protonic.nl>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v1] arm: dts: st: Add MECIO1 and MECT1S board variants
+Message-ID: <ZrIiCX89nRDLvXtC@pengutronix.de>
+References: <20240806120332.405064-1-o.rempel@pengutronix.de>
+ <ae46118f-a692-4362-8e6b-4ef8c6369541@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 16/26] x86/numa: numa_{add,remove}_cpu: make cpu
- parameter unsigned
-To: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
- Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dan Williams <dan.j.williams@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, Davidlohr Bueso
- <dave@stgolabs.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Heiko Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Jonathan Corbet <corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>,
- Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- Samuel Holland <samuel.holland@sifive.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Thomas Gleixner <tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>,
- Will Deacon <will@kernel.org>, Zi Yan <ziy@nvidia.com>,
- devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-cxl@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- loongarch@lists.linux.dev, nvdimm@lists.linux.dev,
- sparclinux@vger.kernel.org, x86@kernel.org
-References: <20240801060826.559858-1-rppt@kernel.org>
- <20240801060826.559858-17-rppt@kernel.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240801060826.559858-17-rppt@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ae46118f-a692-4362-8e6b-4ef8c6369541@kernel.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 01.08.24 08:08, Mike Rapoport wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On Tue, Aug 06, 2024 at 02:39:31PM +0200, Krzysztof Kozlowski wrote:
+> On 06/08/2024 14:03, Oleksij Rempel wrote:
+> > From: David Jander <david@protonic.nl>
+> > 
+> > Introduce device tree support for the MECIO1 and MECT1S board variants.
+> > MECIO1 is an I/O and motor control board used in blood sample analysis
+> > machines. MECT1S is a 1000Base-T1 switch for internal machine networks
+> > of blood sample analysis machines.
+> > 
+> > Signed-off-by: David Jander <david@protonic.nl>
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > ---
+> >  .../devicetree/bindings/arm/stm32/stm32.yaml  |   8 +
+> >  arch/arm/boot/dts/st/Makefile                 |   3 +
+> >  arch/arm/boot/dts/st/stm32mp151c-mecio1r0.dts |  48 ++
+> >  arch/arm/boot/dts/st/stm32mp151c-mect1s.dts   | 297 ++++++++++
+> >  arch/arm/boot/dts/st/stm32mp153c-mecio1r1.dts |  48 ++
+> >  .../arm/boot/dts/st/stm32mp15x-mecio1-io.dtsi | 533 ++++++++++++++++++
+> >  6 files changed, 937 insertions(+)
+> >  create mode 100644 arch/arm/boot/dts/st/stm32mp151c-mecio1r0.dts
+> >  create mode 100644 arch/arm/boot/dts/st/stm32mp151c-mect1s.dts
+> >  create mode 100644 arch/arm/boot/dts/st/stm32mp153c-mecio1r1.dts
+> >  create mode 100644 arch/arm/boot/dts/st/stm32mp15x-mecio1-io.dtsi
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
+> > index 58099949e8f3a..703d4b574398d 100644
+> > --- a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
 > 
-> CPU id cannot be negative.
-> 
-> Making it unsigned also aligns with declarations in
-> include/asm-generic/numa.h used by arm64 and riscv and allows sharing
-> numa emulation code with these architectures.
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Tested-by: Zi Yan <ziy@nvidia.com> # for x86_64 and arm64
-> ---
+> Please run scripts/checkpatch.pl and fix reported warnings. Then please
+> run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Ack, I see. stm32.yaml should be in separate patch.
 
+> Some warnings can be ignored, especially from --strict run, but the code
+> here looks like it needs a fix. Feel free to get in touch if the warning
+> is not clear.
+
+What should be done with "ethernet-phy-id2000.a284" appears
+un-documente warnings? Should it be handled by
+Documentation/devicetree/bindings/net/ethernet-phy.yaml?
+
+Best regards,
+Oleksij
 -- 
-Cheers,
-
-David / dhildenb
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
