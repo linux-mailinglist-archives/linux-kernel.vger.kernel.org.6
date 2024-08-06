@@ -1,130 +1,109 @@
-Return-Path: <linux-kernel+bounces-276011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF84948D35
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:51:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED94948D51
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5581F1F25626
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:51:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1A721C235F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C631C0DD7;
-	Tue,  6 Aug 2024 10:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2WeMi27y";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="euyAOOJ3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A91E1C2300;
+	Tue,  6 Aug 2024 10:57:57 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3B31BF331;
-	Tue,  6 Aug 2024 10:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4506A17C203;
+	Tue,  6 Aug 2024 10:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722941500; cv=none; b=qfA4Cc0S1WUd3LBjVuyUhTGYapT5Zr5kiIsCppnGAOYxI79AwXC48G1+Rjif1Ky/BfH+0l76UXBMihtnPnuUFZ+UxVximI+grPtsLTOEH1uxNBi2M5/mMDID6oRkGKcosPTjbSuxfdBKEX3W4BQEjizPdDRbG5SiplqdtqTB13o=
+	t=1722941876; cv=none; b=p0Ri7eLFNRPGOhyPjDuv/QvUbfSYneBDMfu2Dfn4/gNScWebAePiN0t1wPu6GF1d96A2J+MS7VlQZY+n67KZroazsvdo39a4wTeqe4uZSBN8sMdSN/0lZj/xpu0TKmrA3aQUGUsi8zsKvNosIrAFaZnmCUcoAp8cAJJsVDWQ2P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722941500; c=relaxed/simple;
-	bh=OSQ7I0t9cNd2H0yZwwH2peMtAz0S+tCAuSnSiLxe8Bo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=nVO7kK2Q5iEjhL9LpH5b/uyQCihS68SemkvmGrqMf+DfvDs0iMdHnnKCXiPsenV5RfUzCff5xxWpPgyGi+u86TETdMCOY6Gwd3duCN0ocLv0uE0qdaIBtUysgcgtTURmQofP0zeSFj81hgsQLjS81kOsBFG7by/1bL9lT25uers=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2WeMi27y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=euyAOOJ3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 06 Aug 2024 10:51:36 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722941497;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IoRBUO/y5Ku7e+eK3VOH+lwJM+igrJMA52+dIeFhBcc=;
-	b=2WeMi27yxqBshAG5LBeXXIx+/R+xuln5ZmUYIl96BWiNAMq4yVHBIoLXRF4ckML7I/lmMv
-	5ZRg+aZeYIaQIO/RHpN7D5ruZt6I6aOMXwl513c7OzVhlrtJ4qRGlXtMZvUVHRHUX9pRp4
-	EWznqnL+/e+bZl7yybb3KCmUhYcbXpeHZc8j90yOAlH7Jspoo/l6X+/vIChfEcSN9sn9CP
-	DfpRb6ZiSNwdOcvZL3dUq7BvA6luXxW1GgagyiJB2rY8xZ9t3bqNtgjQDChgHWB2m/8Wyb
-	fwIUTBKTZqAIakvtZegm5lcSJifGnbQjFPwZa5/jNor1lSHU8mm5LozMbOmAOA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722941497;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IoRBUO/y5Ku7e+eK3VOH+lwJM+igrJMA52+dIeFhBcc=;
-	b=euyAOOJ3bsYpvhEXqUxpZp3N7gm5qrc3nAwH80xnVAzqSnWjepGxxOJqE2AWNiYWLLkYP1
-	VkHObqXOcJ7N12Aw==
-From: "tip-bot2 for Luis Claudio R. Goncalves" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] lockdep: suggest the fix for "lockdep bfs
- error:-1" on print_bfs_bug
-Cc: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <Zqkmy0lS-9Sw0M9j@uudg.org>
-References: <Zqkmy0lS-9Sw0M9j@uudg.org>
+	s=arc-20240116; t=1722941876; c=relaxed/simple;
+	bh=17xBX1L9+CmtLxN0lWeNgrQ4qgzBzJ/G5PVCEwC0ANE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aRuWZ7mHizYGiI1gweQz4X1m5D4s+FWQGPdyTDLKDx/K8Oh0cTIf4kFx0jf3VWSQSAcTdq9uGtsF/THyn1b92uwZvnlAC6Ti+wqlig/C4Etp+Qzbn3puT4UN0HR7IsopJTC4HDe6tXGIxGLwbOGPtDMORA9cN3rcwrVOkIxTdTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowACnUEA_ALJmVyfVAw--.26867S2;
+	Tue, 06 Aug 2024 18:51:49 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	delyank@fb.com
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] libbpf: check the btf_type kind to prevent error
+Date: Tue,  6 Aug 2024 18:51:42 +0800
+Message-Id: <20240806105142.2420140-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172294149671.2215.14897146884400480880.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACnUEA_ALJmVyfVAw--.26867S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruF45Aw1xtFWUGF45GF1DAwb_yoWDJFg_J3
+	Z7XFyxGrW0kanrAw1rCrZY9ry8t3Z3JF1kXanxXrZrAayYkr1DJF13Gas8ZrZYkw1IqF13
+	CrZ7Xr15tr429jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbSkFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+	0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28Icx
+	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42
+	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRiSfO3UUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-The following commit has been merged into the locking/core branch of tip:
+To prevent potential error return values, it is necessary to check the
+return value of btf__type_by_id. We can add a kind checking to fix the
+issue.
 
-Commit-ID:     7886a61ebc1f3998df5950299cbe17272bf32c59
-Gitweb:        https://git.kernel.org/tip/7886a61ebc1f3998df5950299cbe17272bf32c59
-Author:        Luis Claudio R. Goncalves <lgoncalv@redhat.com>
-AuthorDate:    Tue, 30 Jul 2024 14:45:47 -03:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 05 Aug 2024 16:54:41 +02:00
-
-lockdep: suggest the fix for "lockdep bfs error:-1" on print_bfs_bug
-
-When lockdep fails while performing the Breadth-first-search operation
-due to lack of memory, hint that increasing the value of the config
-switch LOCKDEP_CIRCULAR_QUEUE_BITS should fix the warning.
-
-Preface the scary backtrace with the suggestion:
-
-    [  163.849242] Increase LOCKDEP_CIRCULAR_QUEUE_BITS to avoid this warning:
-    [  163.849248] ------------[ cut here ]------------
-    [  163.849250] lockdep bfs error:-1
-    [  163.849263] WARNING: CPU: 24 PID: 2454 at kernel/locking/lockdep.c:2091 print_bfs_bug+0x27/0x40
-    ...
-
-Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-Reviewed-by: Waiman Long <longman@redhat.com>
-Link: https://lkml.kernel.org/r/Zqkmy0lS-9Sw0M9j@uudg.org
+Cc: stable@vger.kernel.org
+Fixes: 430025e5dca5 ("libbpf: Add subskeleton scaffolding")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- kernel/locking/lockdep.c | 3 +++
+ tools/lib/bpf/libbpf.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 726b22c..fee21f3 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -2067,6 +2067,9 @@ static noinline void print_bfs_bug(int ret)
- 	/*
- 	 * Breadth-first-search failed, graph got corrupted?
- 	 */
-+	if (ret == BFS_EQUEUEFULL)
-+		pr_warn("Increase LOCKDEP_CIRCULAR_QUEUE_BITS to avoid this warning:\n");
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index a3be6f8fac09..d1eb45d16054 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -13850,6 +13850,9 @@ int bpf_object__open_subskeleton(struct bpf_object_subskeleton *s)
+ 		var = btf_var_secinfos(map_type);
+ 		for (i = 0; i < len; i++, var++) {
+ 			var_type = btf__type_by_id(btf, var->type);
++			if (!var_type)
++				return libbpf_err(-ENOENT);
 +
- 	WARN(1, "lockdep bfs error:%d\n", ret);
- }
- 
+ 			var_name = btf__name_by_offset(btf, var_type->name_off);
+ 			if (strcmp(var_name, var_skel->name) == 0) {
+ 				*var_skel->addr = map->mmaped + var->offset;
+-- 
+2.25.1
+
 
