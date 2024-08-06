@@ -1,168 +1,80 @@
-Return-Path: <linux-kernel+bounces-276465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0BFF949423
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C09A949426
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B6BB1F26B9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:05:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074BE1F26EE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D89F1EA0D1;
-	Tue,  6 Aug 2024 15:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7451EA0DC;
+	Tue,  6 Aug 2024 15:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="iKoKFFTL"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pzr3DGZw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB0D200130
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2C81D54FB;
+	Tue,  6 Aug 2024 15:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722956674; cv=none; b=bCXX82nAS12NJhtiQxBI+hgXVywGrTXBPDbEfUkA5FiybSOQXQVxdIRC3yuTKjC8RPPpuh6C3uDm/csS5Ae34o+C7JO2n8BVLPzproEcwn7TAWUfBPdkRk2xbPDJRLNJbhYMnK12Obr5CkxY9IR3gTCiB/WhADVRjtxjUdBA+ic=
+	t=1722956709; cv=none; b=K6melYKVbQBaBTvki9aQ8rUEnNOKrqKTUcc+BAUewm0N1gpdi+yx9GVTBRrrTeOuXoFXkPti0UvSaEQLlWcX1I5k97WqFPpMxVDevoGNhLdKbUbMpNthbBHrLFqLmaYwNnqpaqSYMPOfwRClkhb3tF3Hme6xI0WpvjKyxAPBS3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722956674; c=relaxed/simple;
-	bh=LUNW9RUIstkrjibzIwDixQZwd8z0VowIYpuqj/xpKxc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RdFCg4eihC8wRxA8ZBdCKBmFszFAkSFr8EEAI2YlDbnFzF8QUp8QCRC2LSZkmOK0v8h9eAOuj8dRglG4myk8gPdnIYJIFiMjmHmHpBazqaAHrxyxMHoWC41GHmLKm+1SDQZhlAS8My7J5qL7GIK6nX4BueXfjMXTMXSFTf1O4Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=iKoKFFTL; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-81f95052c2cso40590039f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 08:04:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1722956672; x=1723561472; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uLbAu/3JQVhbekGE1m18EyrvzfniM5U0p+PtTw3SPlQ=;
-        b=iKoKFFTLryYPOWUdBF0OmGS7FVRhwN5ye0tJ32Z2psvZeXuSZkRDLQaQnzb+ToFDLk
-         KcClRqddrYOGLA2n9ajYccWuyVKbaxWA01PvF6mHH5+Xa6s1ATIe4rdPFER2wkNhm3SZ
-         3A0l8Dwz74GoTqqRm6EZssrDCa2FhAEZuSR84i3HlHV+eTz0m5WynBx18WH7lfi3dhTU
-         M754ZlFDs4GmF6YjEUz8YF7xD/Oz/7+XsyAFsMOqdZeBB1T36GQKiJByqYeK167L5FoH
-         KC8ubMrA2D+NzQJgOC1iUcrDlXTYzdZbBTJACJuxZE/o3gKv5X/A5lDTWgvdf6kAaEjL
-         QAHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722956672; x=1723561472;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uLbAu/3JQVhbekGE1m18EyrvzfniM5U0p+PtTw3SPlQ=;
-        b=TQrSN8fuBcOy21dCiB0LkToNgldWnXpBcUjAVjqkomzft8dMNWOeHfCwdlLoEtQWd1
-         ziJpXVUra3uZ5HavYXNRBDky1cP4P+61V0pGV7HYQnTOZuTZ2aTbJ+v4yr8mauMXHRC4
-         sDlcoiiMHj86w/n5K/AfCw0FZHp3IMZKLNfLFhl30kfwIVqOYG5Ak06DPm+SAFK7RTOD
-         vlt7+rmiLpCy8BAhrT4adTv0r8kU9gEK9oEcrm2Ibm+97XjUcjXNJnVPXtnMPpu/OS2T
-         ERf0aY1+Ef+HfWvGh90c+BxDtHdTGSCzok5/wrZTUWbb76NmCKEDi1lgt+FpGx7vrVgw
-         AWBA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4xCjsabRlJInv9ouj3ZFOngtMWCTmI81keLsBUz1+RXRFhsY5/54YEcfCHTM87BIglXbptjtHXbc7EcOR+d70lDhyD9YVmP+CWpei
-X-Gm-Message-State: AOJu0Yx1U4tk7/FZat4J/d+V4ORp1Y6dwqFMrcMw/E2d4ogrsMfPeEfh
-	Skdurhq5EMWEnDrHHw9aOqrq5Lfd83qOXxnuhVRcvIhBInhgtTg2dxisfp6Gp/i174At/0ID86l
-	vtC/9KmmZQKCzw0ltwCg20jQFvFtdZRgfcX/0mA==
-X-Google-Smtp-Source: AGHT+IHdYOEWf6qlsoZVXjSZ7lVz4nHt9XoyHycNquwMn333FMaz4B6ys0O5Sw1BKpWpYjBg2+pZRslO+PRicrnJai8=
-X-Received: by 2002:a92:d1cd:0:b0:39a:e86b:a76a with SMTP id
- e9e14a558f8ab-39b1fc2bbbdmr148654105ab.26.1722956671518; Tue, 06 Aug 2024
- 08:04:31 -0700 (PDT)
+	s=arc-20240116; t=1722956709; c=relaxed/simple;
+	bh=2yZTrDqUX4cbeEWUZZcepAZ+rm3PXu+PP2tqkUoTQuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dqtyxFPwAjEqdxLGEMUFcfHIU4sQGBseY9SiWZBdAgWlhe8eJMKf4yf+KfPnsvtcEvfin0jS9Pl+FzogyqI+aZgrWxIgGuPq82pth68pEC+9AvzGbaOTYEi7AUrJLzwl6N+KHM5APeAGqLcdfH7xR414HJbsPx3i3p+Y4K46ic0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pzr3DGZw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC26CC32786;
+	Tue,  6 Aug 2024 15:05:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722956708;
+	bh=2yZTrDqUX4cbeEWUZZcepAZ+rm3PXu+PP2tqkUoTQuw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pzr3DGZwmDisJAZoWjhEHney8AYqVCFkw1v99mWtchmgDnrBeOjDVKw7OiCiBp9Xe
+	 PkvSP9Io+C0UYiBu2DLn4JXrjyhyY1WKW3gVd3BTAfc7kIBSZJBUMsD9Rr2XKzWope
+	 4fPML74hQhxaIIf/B2jH3NhISE9XhQuVwSJmOvhihTpTivVNcOECdz/zGUcBPTIzuy
+	 jgTO/2+1fNlXCe3u+DkQ2muNnu/Ge1wxtf68UIjS1vuQN42uJVCV3RaxJJ9m3C2HEO
+	 6u47pQuWpw3qJTtdWsfeunFxCSAVxggcBDQCW3SR4z8obXUy/G1wGTTqDLcvWXWFYD
+	 RHjnWhZDtom6Q==
+Date: Tue, 6 Aug 2024 09:05:07 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH] dt-bindings: timer: fsl,ftm-timer: Convert to dtschema
+Message-ID: <172295670644.1526916.5235199527957758747.robh@kernel.org>
+References: <20240730171336.99090-1-animeshagarwal28@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726235234.228822-1-seanjc@google.com> <20240726235234.228822-59-seanjc@google.com>
-In-Reply-To: <20240726235234.228822-59-seanjc@google.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 6 Aug 2024 20:34:20 +0530
-Message-ID: <CAAhSdy2whfRBm9HBkr=gSwxpFHGwGtB70fKNCqG1-MeHmB1K7w@mail.gmail.com>
-Subject: Re: [PATCH v12 58/84] KVM: RISC-V: Use kvm_faultin_pfn() when mapping
- pfns into the guest
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Jul 27, 2024 at 5:24=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> Convert RISC-V to __kvm_faultin_pfn()+kvm_release_faultin_page(), which
-> are new APIs to consolidate arch code and provide consistent behavior
-> across all KVM architectures.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-
-For KVM RISC-V:
-Acked-by: Anup Patel <anup@brainfault.org>
-
-Regards,
-Anup
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730171336.99090-1-animeshagarwal28@gmail.com>
 
 
+On Tue, 30 Jul 2024 22:43:33 +0530, Animesh Agarwal wrote:
+> Convert the Freescale FlexTimer Module (FTM) Timer bindings to yaml.
+> 
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 > ---
->  arch/riscv/kvm/mmu.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
-> index 806f68e70642..f73d6a79a78c 100644
-> --- a/arch/riscv/kvm/mmu.c
-> +++ b/arch/riscv/kvm/mmu.c
-> @@ -601,6 +601,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
->         bool logging =3D (memslot->dirty_bitmap &&
->                         !(memslot->flags & KVM_MEM_READONLY)) ? true : fa=
-lse;
->         unsigned long vma_pagesize, mmu_seq;
-> +       struct page *page;
->
->         /* We need minimum second+third level pages */
->         ret =3D kvm_mmu_topup_memory_cache(pcache, gstage_pgd_levels);
-> @@ -631,7 +632,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
->
->         /*
->          * Read mmu_invalidate_seq so that KVM can detect if the results =
-of
-> -        * vma_lookup() or gfn_to_pfn_prot() become stale priort to acqui=
-ring
-> +        * vma_lookup() or __kvm_faultin_pfn() become stale priort to acq=
-uiring
->          * kvm->mmu_lock.
->          *
->          * Rely on mmap_read_unlock() for an implicit smp_rmb(), which pa=
-irs
-> @@ -647,7 +648,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
->                 return -EFAULT;
->         }
->
-> -       hfn =3D gfn_to_pfn_prot(kvm, gfn, is_write, &writable);
-> +       hfn =3D kvm_faultin_pfn(vcpu, gfn, is_write, &writable, &page);
->         if (hfn =3D=3D KVM_PFN_ERR_HWPOISON) {
->                 send_sig_mceerr(BUS_MCEERR_AR, (void __user *)hva,
->                                 vma_pageshift, current);
-> @@ -681,11 +682,7 @@ int kvm_riscv_gstage_map(struct kvm_vcpu *vcpu,
->                 kvm_err("Failed to map in G-stage\n");
->
->  out_unlock:
-> -       if ((!ret || ret =3D=3D -EEXIST) && writable)
-> -               kvm_set_pfn_dirty(hfn);
-> -       else
-> -               kvm_release_pfn_clean(hfn);
-> -
-> +       kvm_release_faultin_page(kvm, page, ret && ret !=3D -EEXIST, writ=
-able);
->         spin_unlock(&kvm->mmu_lock);
->         return ret;
->  }
-> --
-> 2.46.0.rc1.232.g9752f9e123-goog
->
+>  .../bindings/timer/fsl,ftm-timer.txt          | 31 ----------
+>  .../bindings/timer/fsl,ftm-timer.yaml         | 59 +++++++++++++++++++
+>  2 files changed, 59 insertions(+), 31 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/timer/fsl,ftm-timer.txt
+>  create mode 100644 Documentation/devicetree/bindings/timer/fsl,ftm-timer.yaml
+> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
