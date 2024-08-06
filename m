@@ -1,244 +1,128 @@
-Return-Path: <linux-kernel+bounces-276947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65147949A44
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:35:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42046949A43
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D7CF1C21652
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:35:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D25B9B23430
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B8E16CD3A;
-	Tue,  6 Aug 2024 21:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE3F16A943;
+	Tue,  6 Aug 2024 21:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dWzXm0d5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5IhPkCC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B545A80043;
-	Tue,  6 Aug 2024 21:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA43382863;
+	Tue,  6 Aug 2024 21:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722980105; cv=none; b=DTNp3P24f+FK08CD0s2pfflv208nQKVdwzS1hgKfJ7NOI8FOJ7PYp6qxQX54Ot4xChmkdkxhH+Cjaak/OqeFz5dWhpX2RyCST+htK6Dd9SHim0ueB1AC1NE0NT7oDi+Xb4/grBx9Vr8D+0R9qznEaLfyNtzJVfEacPNeehiWUis=
+	t=1722980104; cv=none; b=PapRSbqZtL178X3Dx/Bttyh1QDrpnYY5Fp9caL051yDcRCRmAixrb12G8/vXYY4ZTK0rLbAvJIRXV/taeeHlW1AqOF+YEZJqlFTDn8hS/Tb9Lx6UiQq4S9wJQsl1at2LFsMdtoky0oNoD3eHJhFLVSKnQHJ5imVECa067qfw9V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722980105; c=relaxed/simple;
-	bh=tGM+xMTtXdF3SYhLRFBMQ6Mal+S5V0On21qnP69v0Ns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nbgMCPJ2pZOjtelwcC3K7b9DB02E6LKwJCDUzR9vPRLtWIoMaCzjhwyeyk77q1VN530eaDGS4RCSYxQHgp33/xwptfURawEpDMYKK4RlgbCgUwK56A2HyTY7TtVtGNDpHNrXy8+AbI4CG8uxjfwl147MtokmuR/dryDi84IZJqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dWzXm0d5; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722980101; x=1754516101;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tGM+xMTtXdF3SYhLRFBMQ6Mal+S5V0On21qnP69v0Ns=;
-  b=dWzXm0d5zvQXiHv1avP/LthKV0H/aM8MnV+a5FPiGYUCvzvaYUXOtRqu
-   VxtZabsHL2mx1gBCc0UIWrDkQ1pDYkbU9ZrI6qF383m1Q9axfKhVd0dDx
-   pfcUYiIo8ZZa3ythagE9Ey22WYQjWsib8WtaKCoFAIpZX7kF8s1SRK5px
-   y6FOwBynTSPfrVYFzxFAddNpRM5uxGtYGNXINOVIoqYXeKQog+YR9922n
-   iyzk8LA8ad/u5H7BjwljBALU2FnXihRYjWelIQPDfibwxhJlZ2q3FNCX8
-   QLF62K8yeVGZd7hxk6rot9OhwAjQtZOHWIAu7Y5enNq/VC+IuO8QHydGO
-   Q==;
-X-CSE-ConnectionGUID: GWy3XvoxQYexidwaFrt5FA==
-X-CSE-MsgGUID: r2ESKDmlSEKC3OUvoCuRvg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="32410117"
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="32410117"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 14:35:00 -0700
-X-CSE-ConnectionGUID: 2P7qEu/uRy+1dOi5wf9UCg==
-X-CSE-MsgGUID: etScqqnQRLeKo2XIJt2QEA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="61290372"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 06 Aug 2024 14:34:57 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sbRpT-0004qa-1t;
-	Tue, 06 Aug 2024 21:34:53 +0000
-Date: Wed, 7 Aug 2024 05:34:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Luke D. Jones" <luke@ljones.dev>, linux-input@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, bentiss@kernel.org, jikos@kernel.org,
-	"Luke D. Jones" <luke@ljones.dev>
-Subject: Re: [PATCH] hid-asus-ally: Add full gamepad support
-Message-ID: <202408070520.r1N2Tpys-lkp@intel.com>
-References: <20240806081212.56860-1-luke@ljones.dev>
+	s=arc-20240116; t=1722980104; c=relaxed/simple;
+	bh=4B0VqZXX8e0Xp86ft/ZY22AsMqEwkyCGIdkBRMWV1yM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fMv3oz3XHJWEwt+jax8EIZvVbL8rSGk609/rReU06dfjhcZb7alv3/EeWOvZ8Ib+mLRJLAdKMHxUPW3tIT287Xelm6CLvBQ5oc7F2pj3hX7nkRxOPYx/qJ/H0/Bfh6+/JLxwpHynYgp7jYw6Fj01fvRgVJoXvVpTi16kicajjuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C5IhPkCC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30AA0C32786;
+	Tue,  6 Aug 2024 21:35:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722980104;
+	bh=4B0VqZXX8e0Xp86ft/ZY22AsMqEwkyCGIdkBRMWV1yM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=C5IhPkCC73C0WrIXz/uZpToLCxoL49pVnrCdjLjJOS5zvMPETmL1aqNKSR8S/MKHZ
+	 EMSFA2Xf3bh5kxw81z82ULQ6QvThk5SOQl73d35e2U8a8qaq4VZr9vg+zRvG6hwtlV
+	 rfjOKidNAk63H1faNXhfuj9HO5BTr8ZPPVrxF8oyGdZJ1OSVoOYelQmJE0c3XfUeav
+	 Xvq+twhT72wm3/M3gVoMCHGjf/LKiJpUJW/V7LJp5hGZA2gfWOv/r3IHKnj8ZxwmLb
+	 accbqaDkW/TNtwmQxkAtOOp+s5EeTHMzPBlH8YfWvUpfX/QYIggnFepUkrEYUvOE0C
+	 x2ysMP5EO8CSQ==
+Received: by mercury (Postfix, from userid 1000)
+	id 1423B106066C; Tue, 06 Aug 2024 23:35:01 +0200 (CEST)
+Date: Tue, 6 Aug 2024 23:35:01 +0200
+From: Sebastian Reichel <sre@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [GIT PULL] power-supply changes for 6.11-rc3
+Message-ID: <uw3qk5vbjkonzirjhsrjlkq34sj73g5dtf4uw4yhprf6y6dn3e@umuf6mghw3f6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ixfyut5kjxo53sav"
+Content-Disposition: inline
+
+
+--ixfyut5kjxo53sav
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240806081212.56860-1-luke@ljones.dev>
 
-Hi Luke,
+Hi Linus,
 
-kernel test robot noticed the following build warnings:
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-[auto build test WARNING on hid/for-next]
-[also build test WARNING on next-20240806]
-[cannot apply to linus/master v6.11-rc2]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Luke-D-Jones/hid-asus-ally-Add-full-gamepad-support/20240806-170850
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
-patch link:    https://lore.kernel.org/r/20240806081212.56860-1-luke%40ljones.dev
-patch subject: [PATCH] hid-asus-ally: Add full gamepad support
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240807/202408070520.r1N2Tpys-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 423aec6573df4424f90555468128e17073ddc69e)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240807/202408070520.r1N2Tpys-lkp@intel.com/reproduce)
+are available in the Git repository at:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408070520.r1N2Tpys-lkp@intel.com/
+  https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git tags/for-v6.11-rc
 
-All warnings (new ones prefixed by >>):
+for you to fetch changes up to d6cca7631a4b54a8995e3bc53e5afb11d3b0c8ff:
 
-   In file included from drivers/hid/hid-asus-ally.c:17:
-   In file included from include/linux/hid.h:29:
-   In file included from include/linux/hid_bpf.h:6:
-   In file included from include/linux/bpf.h:21:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:2228:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/hid/hid-asus-ally.c:17:
-   In file included from include/linux/hid.h:29:
-   In file included from include/linux/hid_bpf.h:6:
-   In file included from include/linux/bpf.h:31:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:25:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/hid/hid-asus-ally.c:17:
-   In file included from include/linux/hid.h:29:
-   In file included from include/linux/hid_bpf.h:6:
-   In file included from include/linux/bpf.h:31:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:25:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/hid/hid-asus-ally.c:17:
-   In file included from include/linux/hid.h:29:
-   In file included from include/linux/hid_bpf.h:6:
-   In file included from include/linux/bpf.h:31:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:25:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   drivers/hid/hid-asus-ally.c:565:10: warning: variable 'max_output_report_size' set but not used [-Wunused-but-set-variable]
-     565 |         uint8_t max_output_report_size;
-         |                 ^
-   drivers/hid/hid-asus-ally.c:1177:6: warning: variable 'cmd' set but not used [-Wunused-but-set-variable]
-    1177 |         int cmd, side, is_tr;
-         |             ^
->> drivers/hid/hid-asus-ally.c:894:1: warning: unused variable 'btn_mapping_lt_attr_group' [-Wunused-const-variable]
-     894 | ALLY_BTN_MAPPING(lt, btn_pair_lt_rt, btn_pair_side_left);
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/hid/hid-asus-ally.h:321:2: note: expanded from macro 'ALLY_BTN_MAPPING'
-     321 |         ALLY_BTN_ATTRS_GROUP(btn_##_fname, btn_mapping_##_fname)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/hid/hid-asus-ally.h:306:38: note: expanded from macro 'ALLY_BTN_ATTRS_GROUP'
-     306 |         static const struct attribute_group _fname##_attr_group = {       \
-         |                                             ^~~~~~~~~~~~~~~~~~~
-   <scratch space>:125:1: note: expanded from here
-     125 | btn_mapping_lt_attr_group
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/hid/hid-asus-ally.c:895:1: warning: unused variable 'btn_mapping_rt_attr_group' [-Wunused-const-variable]
-     895 | ALLY_BTN_MAPPING(rt, btn_pair_lt_rt, btn_pair_side_right);
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/hid/hid-asus-ally.h:321:2: note: expanded from macro 'ALLY_BTN_MAPPING'
-     321 |         ALLY_BTN_ATTRS_GROUP(btn_##_fname, btn_mapping_##_fname)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/hid/hid-asus-ally.h:306:38: note: expanded from macro 'ALLY_BTN_ATTRS_GROUP'
-     306 |         static const struct attribute_group _fname##_attr_group = {       \
-         |                                             ^~~~~~~~~~~~~~~~~~~
-   <scratch space>:167:1: note: expanded from here
-     167 | btn_mapping_rt_attr_group
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~
-   11 warnings generated.
+  power: supply: qcom_battmgr: Ignore extra __le32 in info payload (2024-07-27 00:18:40 +0200)
 
+----------------------------------------------------------------
+Power Supply Fixes for 6.11 cycle
 
-vim +/btn_mapping_lt_attr_group +894 drivers/hid/hid-asus-ally.c
+* rt5033: fix driver regression causing kernel oops
+* axp288-charger: fix charge voltage setup
+* qcom-battmgr: fix thermal zone spamming errors
+* qcom-battmgr: fix init on Qualcomm X Elite
 
-   882	
-   883	/* button map attributes, regular and macro*/
-   884	ALLY_BTN_MAPPING(m2, btn_pair_m1_m2, btn_pair_side_left);
-   885	ALLY_BTN_MAPPING(m1, btn_pair_m1_m2, btn_pair_side_right);
-   886	ALLY_BTN_MAPPING(a, btn_pair_a_b, btn_pair_side_left);
-   887	ALLY_BTN_MAPPING(b, btn_pair_a_b, btn_pair_side_right);
-   888	ALLY_BTN_MAPPING(x, btn_pair_x_y, btn_pair_side_left);
-   889	ALLY_BTN_MAPPING(y, btn_pair_x_y, btn_pair_side_right);
-   890	ALLY_BTN_MAPPING(lb, btn_pair_lb_rb, btn_pair_side_left);
-   891	ALLY_BTN_MAPPING(rb, btn_pair_lb_rb, btn_pair_side_right);
-   892	ALLY_BTN_MAPPING(ls, btn_pair_ls_rs, btn_pair_side_left);
-   893	ALLY_BTN_MAPPING(rs, btn_pair_ls_rs, btn_pair_side_right);
- > 894	ALLY_BTN_MAPPING(lt, btn_pair_lt_rt, btn_pair_side_left);
- > 895	ALLY_BTN_MAPPING(rt, btn_pair_lt_rt, btn_pair_side_right);
-   896	ALLY_BTN_MAPPING(dpad_u, btn_pair_dpad_u_d, btn_pair_side_left);
-   897	ALLY_BTN_MAPPING(dpad_d, btn_pair_dpad_u_d, btn_pair_side_right);
-   898	ALLY_BTN_MAPPING(dpad_l, btn_pair_dpad_l_r, btn_pair_side_left);
-   899	ALLY_BTN_MAPPING(dpad_r, btn_pair_dpad_l_r, btn_pair_side_right);
-   900	ALLY_BTN_MAPPING(view, btn_pair_view_menu, btn_pair_side_left);
-   901	ALLY_BTN_MAPPING(menu, btn_pair_view_menu, btn_pair_side_right);
-   902	
+----------------------------------------------------------------
+Hans de Goede (2):
+      power: supply: axp288_charger: Fix constant_charge_voltage writes
+      power: supply: axp288_charger: Round constant_charge_voltage writes down
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Neil Armstrong (1):
+      power: supply: qcom_battmgr: return EAGAIN when firmware service is not up
+
+Nikita Travkin (1):
+      power: supply: rt5033: Bring back i2c_set_clientdata
+
+Stephan Gerhold (1):
+      power: supply: qcom_battmgr: Ignore extra __le32 in info payload
+
+ drivers/power/supply/axp288_charger.c | 24 ++++++++++++------------
+ drivers/power/supply/qcom_battmgr.c   | 12 +++++++-----
+ drivers/power/supply/rt5033_battery.c |  1 +
+ 3 files changed, 20 insertions(+), 17 deletions(-)
+
+--ixfyut5kjxo53sav
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmaylwQACgkQ2O7X88g7
++polKA//VycZvY96wXNSB4eLTUJIudH6BWB0n7gypu5ln5d/zM4YAoaFCwy9K0y3
+iBoJopFeX/N1mOhRLhYbNCvAOfj1YSGcC6HJ3NKre5ALMzpVplpOTtxjuPhxxmWL
+ZlLCA2sJNozYySip9jPq6kOgsk/GvEMckoqb/r4l/6lkuMZHva0uM4BUZZ5TgzyQ
+jO3WJxVRtJ/2Gzz7s0Z2CFIVFBiCaoZZzWpWqzJBqYbDd3FfgPbECPFUpxMURgjd
+gpCEmDVF0QdJY5ncksMgWEbk1Xe8vp8ppvo2Usf29x+ohbMpps6nVoO6T+11vc/p
+LQUQtNV9YZpRj1beqzCzNAR3MTNeCXJJC2cK5nTOxa2or5vVGoKnAAb8Da9kvzBJ
+NUTq7b8sx35rOFWr5QFal+f+i3zyfJ7vHyXLoxuubRyXSKp5LW6P0o9YgcRYr2qu
+vTwZY7+XoLf9+tjEg3s3MxNMe4m91ywLT0XSEa/yyk9K5+uVAL5cM8cWrN7hbUqA
+oonKeXd3hUShIhFvyre2LfajEBjmaJJLXvl7Zvzh7FG2GPXOPxedeWTgrJIhchwr
+l3olSw3cLZjaRFRxKxeRkYyxV8PxHbsJQZR01QyFDouVRNiOaLXjgS/kq0G+X4Iy
+jPPMtMr1LKWo0pbo8Th4NLrM1XWrtqIMZ/GOce9Q5yc4kY2gjd0=
+=3gdF
+-----END PGP SIGNATURE-----
+
+--ixfyut5kjxo53sav--
 
