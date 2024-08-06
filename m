@@ -1,185 +1,260 @@
-Return-Path: <linux-kernel+bounces-276591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FECB9495C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:42:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AEAE9495C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8FB9281860
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:42:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CB8A1C2160B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEC040862;
-	Tue,  6 Aug 2024 16:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30CF642052;
+	Tue,  6 Aug 2024 16:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="INOf2f3I"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqtehuCf"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C0F2C697;
-	Tue,  6 Aug 2024 16:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B26847796;
+	Tue,  6 Aug 2024 16:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722962547; cv=none; b=Hcc7oM9NitfnG2L5O0GCHld4JS9HIPRkggBRcBfhpp1B/PVWx2U2NYUJY8ruVGu393clzBbWewtqevapdmr+LNSlikRjflIgoUergl1Y5/axz2qEeHkfMFigE8gApIcUoZVqKLtphi0j4zYmeXof3PPZOauY7J23mHJEmBiev9M=
+	t=1722962566; cv=none; b=S9pFOfNibzGhNaseVF0cDPOmQAqr1tCYfo23lwrrOnIyKQ+dvsW/msT9XsyT6oF/tRKO11m1RXZC0fmzb/C5QAFiZSNG7TQqkhJHn8R1VIMM4VezcWj6Vj/n41PKnUdGgE56NJjvbE/ZGwbiJJ24vtReTeE7qfnw6Z9BJQjBo8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722962547; c=relaxed/simple;
-	bh=3UGqH7KoicUxKYN56ZUpWZAELhcMll/UFEAkjUjWMIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ousMcfdvUqhSaOcCD3RFGeAZLkZeTDrIvvMHDup9hrD+4fczse+SMXpff7qme2J3bMz1o6A4IodPdC3UCpdzmJS8ZCDK2rCjV4UaME2E4waR2i7vaK+XKAtB5gdTkqJs9UgW7UhT814d2EUcDQ4b1lKJmkaJFkMyKuCmGh7DdoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=INOf2f3I; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1722962566; c=relaxed/simple;
+	bh=AdT4aEeZ9Gk8AbosZZ+x3YwPaRML7jqn9xtRdwdinlQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jnoQcyVxbs8wsgo3jOJfLFSB+YNIG/vJ050y4lqw4oXYDR12e0f7J706qmoXfMsm6bB5j4ONJMtXDDGb02fUpUCXS7twyB8CP9bt4x+vY7YMUVNQZeGuefcWRcYCMytDHbyUDQQy/uGjpYwUH9p2cslluc5MM+QYNycPysEfsqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lqtehuCf; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ab09739287so479386a12.3;
-        Tue, 06 Aug 2024 09:42:26 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5af326eddb2so28794a12.1;
+        Tue, 06 Aug 2024 09:42:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722962545; x=1723567345; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=3X16w1ElggSZ9F8ZzAYTc7zWyvivrO1Wvd05M2ygJUw=;
-        b=INOf2f3IO6vopteUduOuPhMxZImZN5VKmbs360+JLquQLe89Wv9sENoeMFSkaaPjgf
-         EgiqWWSn8yAfUPISszhKZryhPFR77CaRCnpqBmQChSnfxZrHqKqnXr30ZHlKfwgaiycw
-         9d/WynHSQgjthiHXZoRm0qvQlbjTOyF5eTy9/64aUCCaVY+2vJljLu6wEihOW1hz+hjK
-         WozAbWUjb5CB9qQ2PffVDoi9esDG0ru6ubdRrj3/OhHO6oZ3uwLo4bG9GjixrrZawudg
-         6Xi88FSb+HRVFfpg1XUUGDJIynwOYraaFh/St3Wun8Gn4Pq2AzNk9O9bbHO67+nGcxKu
-         t3jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722962545; x=1723567345;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1722962563; x=1723567363; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3X16w1ElggSZ9F8ZzAYTc7zWyvivrO1Wvd05M2ygJUw=;
-        b=OU3pN6nI9XV1J0zufPcoRPVqPFMdWMucr0khI/aCS+P77Gbb6IqzbmmiPmLoY2I4/Y
-         AP4j6jA/FGPZRT6rYRIkQi+FrTqHEOvf8vMC/jQDfG+kBOR6wduAgNa9i7dNwYle5DZn
-         z8hxwLrlpAYfll8n8WM3QJVxrAMy4PHny90jccbEoelq56A8OX/mC4NNjZNI/ndQBh2D
-         uCRbxd6Cm9CeGfw4Ab9YX3uhXFKad7mr+bBXOU3RS5VO0MPfiQVZys5ZXAydRf1mlYQD
-         EMSeCf5gi1uVQvfb52LNyEQbj2l6wXjMOmaRKbr3lOnJaQ6eIw+J8zKNvkzTpFo4jgIy
-         xVBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWS5rsT/pYnKpboA/Tp/avPEN8mQnzjuihZNiXbSQrDVetGk+bDmG9tdfFsDqu0onSAE8S1fPmiVS2aFNGsy626ecwNUIC9+zQo4rwNylT1x0=
-X-Gm-Message-State: AOJu0Ywhle1oQIYcvi7lq/ndZMttsFzfECekdbi0s+MvUUtLJmruubqj
-	h3mon87BNVaBBywBzO/7FsUldqByzLRiGP0a4iSJHWJpx2Jcp8qZ
-X-Google-Smtp-Source: AGHT+IGitvFO9UlX0Te4dL6QfCzPtqZYtaNJZTUoSRlQXZUATHT81F/ggxONM0Edxk8GmPwXkHegmw==
-X-Received: by 2002:a17:90b:8c2:b0:2ca:1c9e:e012 with SMTP id 98e67ed59e1d1-2cff93d4117mr14632511a91.6.1722962545327;
-        Tue, 06 Aug 2024 09:42:25 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cffb0c681esm9387870a91.25.2024.08.06.09.42.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 09:42:24 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <eab8db58-1eb5-40f7-b7c9-e58558937bf4@roeck-us.net>
-Date: Tue, 6 Aug 2024 09:42:23 -0700
+        bh=Y6Qh79VNkWq1dzOmcHPtk7SXwit1Ag/+GvQyjTy/yMA=;
+        b=lqtehuCfFnBNrSYtiBtGSN9FZFzJzEgTXnj2DzFfhfMLRxP1gFR9ZTwVAlPqe7wE+n
+         MaEC3Yql9n8cYKYn7wZ4+y1r0BGHnOZ/mLvoJV55rwnqiipgEsYNAf+QAUonmT2ZG3xa
+         +bon2V0gsrfvuXeB43vP8XubMnnOsxgnnaK/Y97lCsrAobGNIuPB1XpiFurT2nzOrAII
+         uASYDMuogtPZJ/TIWCZjGGfZysZKLt22NPAn85vobPMzdtobqVjIjru5PBV0YXvH8PXD
+         vmY4MDUc9XfVGVh0e3hmscFvEXI7D720kor0d09SCQZOEA7kyug9BIKHoFiSJC0v47lc
+         h6Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722962563; x=1723567363;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y6Qh79VNkWq1dzOmcHPtk7SXwit1Ag/+GvQyjTy/yMA=;
+        b=tTuF1LP3A1zUWJFq4chdlb4dAgtIXQ6k4MYOWFyGwW5i6UDHXa1+RJj1hPlKl75Wo5
+         n5mS+Tg9HHrZ4bbdYH/39breMq3CoLA0sQUoT1IBE79tha+WxwrbqzBvRrx/mzfKjDV5
+         wx1fJW02ywTaPboleTJJZLOdoufwZPrZyjGGmrXlY3ARui7ZuE3K8Du+mAOGPRdpCHI3
+         zsurxzldBHkpWeXvXQVwU7bZWuzEp/Vn2AisSWhlT/xpmBlUuRKkvZsd+fGycxAg2lQU
+         p9S1oVvQAO/yIXVkHndIRtCL0X8xNRM4QIlnfmRo5a4PRHGgltbWDkYdqna5n7tIaMjN
+         PTCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZR/ktZ/JfirH1v7PWj/tYCgZVyuNCQ0/Hlwd9I8/MsxwHcK9vGXONjZehRZTrQ5y/qXByaGSt2GNSiG0pW42PpM8TV+KaU1DMen2n6z65BDCyJ+Z+Jg+OTCEz/YKBFl3xPZbhvzNoMwAZow==
+X-Gm-Message-State: AOJu0YybI6Bt9c6fa8z0Yha3SIDLWCd53s0OY+J/Kkh8R8GpxtApQXB8
+	z9CKgE1KfVOg7eOJkM2V2QBanJJNv5lROrz+b9x5g+AxZ8JwuRAlV6NutOCJnHGSHbJZ38XkNPv
+	ZAd6a0UcYFSJj8NLPlREKuWFBSps=
+X-Google-Smtp-Source: AGHT+IG8ZkNY7H+nOAKXJSFZ5nYAf1bD+eT5/Q40XUAsV7ogwxlKL71lR+SPCpcvqR6v2VhDIcn8UCfWYY8mdgfPk7c=
+X-Received: by 2002:a17:907:94d4:b0:a7a:ab1a:2d79 with SMTP id
+ a640c23a62f3a-a7dc6287000mr1528350166b.29.1722962562582; Tue, 06 Aug 2024
+ 09:42:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [tip: x86/urgent] x86/mm: Fix pti_clone_entry_text() for i386
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
- x86@kernel.org
-References: <172250973153.2215.13116668336106656424.tip-bot2@tip-bot2>
- <e541b49b-9cc2-47bb-b283-2de70ae3a359@roeck-us.net>
- <20240806085050.GQ37996@noisy.programming.kicks-ass.net>
- <d99175bb-b5ca-46e6-a781-df4d21e9b7a8@roeck-us.net>
- <20240806145632.GR39708@noisy.programming.kicks-ass.net>
- <20240806150515.GS39708@noisy.programming.kicks-ass.net>
- <20240806154653.GT39708@noisy.programming.kicks-ass.net>
- <20240806155922.GH12673@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240806155922.GH12673@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240806-openfast-v2-1-42da45981811@kernel.org>
+ <CAGudoHF9nZMfk_XbRRap+0d=VNs_i8zqTkDXxogVt_M9YGbA8Q@mail.gmail.com> <915bca37dc73206b0a79f2fba4cac3255f8f6c0d.camel@kernel.org>
+In-Reply-To: <915bca37dc73206b0a79f2fba4cac3255f8f6c0d.camel@kernel.org>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 6 Aug 2024 18:42:30 +0200
+Message-ID: <CAGudoHHrYAjpaajVEWNU7mBhShQKnU5025=kodpPRSunXgKfNw@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/6/24 08:59, Peter Zijlstra wrote:
-> On Tue, Aug 06, 2024 at 05:46:53PM +0200, Peter Zijlstra wrote:
->> On Tue, Aug 06, 2024 at 05:05:15PM +0200, Peter Zijlstra wrote:
->>> On Tue, Aug 06, 2024 at 04:56:32PM +0200, Peter Zijlstra wrote:
->>>> On Tue, Aug 06, 2024 at 07:25:42AM -0700, Guenter Roeck wrote:
->>>>
->>>>> I created http://server.roeck-us.net/qemu/x86-v6.11-rc2/ with all
->>>>> the relevant information. Please let me know if you need anything else.
->>>>
->>>> So I grabbed that config, stuck it in the build dir I used last time and
->>>> upgraded gcc-13 from 13.2 ro 13.3. But alas, my build runs successfully
->>>> :/
->>>>
->>>> Is there anything else special I missed?
->>>
->>> run.sh is not exacrlty the same this time, different CPU model, that
->>> made it go.
->>>
->>> OK, lemme poke at this.
->>
->> Urgh, so crypto's late_initcall() does user-mode-helper based modprobe
->> looking for algorithms before we kick off /bin/init :/
->>
->> This makes things difficult.
->>
->> Urgh.
-> 
-> So the problem is that mark_readonly() splits a code PMD due to NX. Then
-> the second pti_clone_entry_text() finds a kernel PTE but a user PMD
-> mapping for the same address (from the early clone) and gets upset.
-> 
-> And we can't run mark_readonly() sooner, because initcall expect stuff
-> to be RW. But initcalls do modprobe, which runs user crap before we're
-> done initializing everything.
-> 
-> This is a right mess, and I really don't know what to do.
+On Tue, Aug 6, 2024 at 6:17=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
+te:
+>
+> On Tue, 2024-08-06 at 17:25 +0200, Mateusz Guzik wrote:
+> > On Tue, Aug 6, 2024 at 4:32=E2=80=AFPM Jeff Layton <jlayton@kernel.org>
+> > wrote:
+> > >
+> > > Today, when opening a file we'll typically do a fast lookup, but if
+> > > O_CREAT is set, the kernel always takes the exclusive inode lock. I
+> > > assume this was done with the expectation that O_CREAT means that
+> > > we
+> > > always expect to do the create, but that's often not the case. Many
+> > > programs set O_CREAT even in scenarios where the file already
+> > > exists.
+> > >
+> > > This patch rearranges the pathwalk-for-open code to also attempt a
+> > > fast_lookup in certain O_CREAT cases. If a positive dentry is
+> > > found, the
+> > > inode_lock can be avoided altogether, and if auditing isn't
+> > > enabled, it
+> > > can stay in rcuwalk mode for the last step_into.
+> > >
+> > > One notable exception that is hopefully temporary: if we're doing
+> > > an
+> > > rcuwalk and auditing is enabled, skip the lookup_fast. Legitimizing
+> > > the
+> > > dentry in that case is more expensive than taking the i_rwsem for
+> > > now.
+> > >
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > > Here's a revised patch that does a fast_lookup in the O_CREAT
+> > > codepath
+> > > too. The main difference here is that if a positive dentry is found
+> > > and
+> > > audit_dummy_context is true, then we keep the walk lazy for the
+> > > last
+> > > component, which avoids having to take any locks on the parent
+> > > (just
+> > > like with non-O_CREAT opens).
+> > >
+> > > The testcase below runs in about 18s on v6.10 (on an 80 CPU
+> > > machine).
+> > > With this patch, it runs in about 1s:
+> > >
+> >
+> > I don't have an opinion on the patch.
+> >
+> > If your kernel does not use apparmor and the patch manages to dodge
+> > refing the parent, then indeed this should be fully deserialized just
+> > like non-creat opens.
+> >
+>
+> Yep. Pity that auditing will slow things down, but them's the breaks...
+>
+> > Instead of the hand-rolled benchmark may I interest you in using
+> > will-it-scale instead? Notably it reports the achieved rate once per
+> > second, so you can check if there is funky business going on between
+> > reruns, gives the cpu the time to kick off turbo boost if applicable
+> > etc.
+> >
+> > I would bench with that myself, but I temporarily don't have handy
+> > access to bigger hw. Even so, the below is completely optional and
+> > perhaps more of a suggestion for the future :)
+> >
+> > I hacked up the test case based on tests/open1.c.
+> >
+> > git clone https://github.com/antonblanchard/will-it-scale.git
+> >
+> > For example plop into tests/opencreate1.c && gmake &&
+> > ./opencreate1_processes -t 70:
+> >
+> > #include <stdlib.h>
+> > #include <unistd.h>
+> > #include <sys/types.h>
+> > #include <sys/stat.h>
+> > #include <fcntl.h>
+> > #include <assert.h>
+> > #include <string.h>
+> >
+> > char *testcase_description =3D "Separate file open/close + O_CREAT";
+> >
+> > #define template        "/tmp/willitscale.XXXXXX"
+> > static char (*tmpfiles)[sizeof(template)];
+> > static unsigned long local_nr_tasks;
+> >
+> > void testcase_prepare(unsigned long nr_tasks)
+> > {
+> >         int i;
+> >         tmpfiles =3D (char(*)[sizeof(template)])malloc(sizeof(template)
+> > * nr_tasks);
+> >         assert(tmpfiles);
+> >
+> >         for (i =3D 0; i < nr_tasks; i++) {
+> >                 strcpy(tmpfiles[i], template);
+> >                 char *tmpfile =3D tmpfiles[i];
+> >                 int fd =3D mkstemp(tmpfile);
+> >
+> >                 assert(fd >=3D 0);
+> >                 close(fd);
+> >         }
+> >
+> >         local_nr_tasks =3D nr_tasks;
+> > }
+> >
+> > void testcase(unsigned long long *iterations, unsigned long nr)
+> > {
+> >         char *tmpfile =3D tmpfiles[nr];
+> >
+> >         while (1) {
+> >                 int fd =3D open(tmpfile, O_RDWR | O_CREAT, 0600);
+> >                 assert(fd >=3D 0);
+> >                 close(fd);
+> >
+> >                 (*iterations)++;
+> >         }
+> > }
+> >
+> > void testcase_cleanup(void)
+> > {
+> >         int i;
+> >         for (i =3D 0; i < local_nr_tasks; i++) {
+> >                 unlink(tmpfiles[i]);
+> >         }
+> >         free(tmpfiles);
+> > }
+> >
+> >
+>
+> Good suggestion and thanks for the testcase. With v6.10 kernel, I'm
+> seeing numbers like this at -t 70:
+>
+> min:4873 max:11510 total:418915
+> min:4884 max:10598 total:408848
+> min:3704 max:12371 total:467658
+> min:2842 max:11792 total:418239
+> min:2966 max:11511 total:414144
+> min:4756 max:11381 total:413137
+> min:4557 max:10789 total:404628
+> min:4780 max:11125 total:413349
+> min:4757 max:11156 total:405963
+>
+> ...with the patched kernel, things are significantly faster:
+>
+> min:265865 max:508909 total:21464553
+> min:263252 max:500084 total:21242190
+> min:263989 max:504929 total:21396968
+> min:263343 max:505852 total:21346829
+> min:263023 max:507303 total:21410217
+> min:263420 max:506593 total:21426307
+> min:259556 max:494529 total:20927169
+> min:264451 max:508967 total:21433676
+> min:263486 max:509460 total:21399874
+> min:263906 max:507400 total:21393015
+>
+> I can get some fancier plots if anyone is interested, but the benefit
+> of this patch seems pretty clear.
 
-And there was me thinking this one should be easy to solve. Oh well.
+In the commit message I would replace that handrolled bench thing with +/-:
+<quote>
+70-way open(.., O_RDWR | O_CREAT) calls on already existing files, one
+per-worker:
+before: 467658
+after:  21464553 (+4589%)
+</quote>
 
-Maybe Linus has an idea ? I am getting a bit wary to reporting all those
-weird problems to him, though.
+I guess it would make sense to check if unlink1_processes is doing
+fine if it's not too much hassle.
 
-Guenter
+overall pretty decent win :P
 
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
