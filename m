@@ -1,247 +1,133 @@
-Return-Path: <linux-kernel+bounces-276655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49AB949699
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:22:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0499A94969D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:24:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10DB51C213E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:22:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4F6BB25B70
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2964AEF4;
-	Tue,  6 Aug 2024 17:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7374C62E;
+	Tue,  6 Aug 2024 17:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Jp6B52kx"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="jia9AX2I"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A7B51C3E
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 17:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB47E1DDEA
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 17:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722964953; cv=none; b=GhhCLw4A/crTgnWERyP844psqW4Ve4LFm7uu9dAAjQcy0yCdbYDhcMDtTZAyPXX9qw3w1UwOsAXJLUde/Dznpj1ONr2+s93sKAyVpi/y1FhpGmw1IaR4a88TC2CNvGsPzst0KNChBoNXuzDSSBFxFdNSEEir6WOpdDHm5q8nLOo=
+	t=1722965033; cv=none; b=OPRyOqBow4tmHT3LhyyHzCb0zBDv1SdpIMjTjceWo2RWli2JjtrLxmJURABLn9vV1EH5PjPlQdbnkKEsFskrbZI9eRD2qTehmiF234g9kG4pfIt3vtsgrRxDfy08W3ZPlnvdm4I3hp2hI+sgZUboKQOoK/XsbjXHhJEwv3HNCz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722964953; c=relaxed/simple;
-	bh=m5kxkaXfCyTE8Wd83ongz8t5b5x/+elgqIVQ+v9kOtw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LtNuGE6MNqhnpDLe+ypVhBvuYQyCJpmwVTPke2nbJafgfG7RT9vJl31Bs08t6FQ8eEFWjOdo4DMtOVYMRYlTSkXu5ZTbNdVBl9Qhv+DH3tfEPILpyHfuccPrzh8i3Clzc9I9mZ6p/xIXk2JzkDQsgSHuWboB6CKCvh5XszEmbzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Jp6B52kx; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722964947; x=1723224147;
-	bh=KwacUaqJ5YYWRVk8ykzjM7Y6SD6C+YG7cpGeuP2M4TE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Jp6B52kxI5n1YaZZZWjw0rHdJWSv4GmOv6fBaO0THOOH61gXplkoVp2llxoc3hsAW
-	 XHx86PKgIdakNV8LE1KWhD4P7CIROJEfCsqEtZNUeLhpbC9Sjw8ejVzIamyN9flQK8
-	 qsew6EwgExhFV8vlQ84jALYyX2fB3Lp1BA3GXZMRJyvdfgAYKIBHANofTd66djbI3Z
-	 GVRwFlLBR2FOv7le9k0rqsXWRukKbZInu/lIElIR4ynUPeBPSduf7OyhIhdPKA6Z4I
-	 CtIf8KsbImIUfv+yNqQ4uUpHJwzjvsePw6YhzrRiu7tasfUAWzFrx5eIfScNrWr8+8
-	 Az1jBtENXUMSQ==
-Date: Tue, 06 Aug 2024 17:22:21 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 08/28] rust: types: implement `Unique<T>`
-Message-ID: <ff0826af-9430-4653-abe8-25fb80cd0e97@proton.me>
-In-Reply-To: <20240805152004.5039-9-dakr@kernel.org>
-References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-9-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 716c158e9305903de2f6bf86a219c931834c4384
+	s=arc-20240116; t=1722965033; c=relaxed/simple;
+	bh=WbFlE5+qPAkFqLnreSC1NqqOFCvXcZe2PPM30+LdzcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HlclvovBM3beyEkZ6Bnhw2Z6ZYoXzUFk2Ypa8of2PIsqTg8IkTsAiehb5Zb4N8FuXAO5Ci/Qvc/vynTWnTjMuUZbs0pYu6HOIYs0F/iq5fddDIn0SYzcEzA8pd8I04mAiRQTWhDLlH/c95v5ZNG31VedSAmoaDTnF8ZpSwRMOMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=jia9AX2I; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6b5dfcfb165so4756486d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 10:23:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1722965031; x=1723569831; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=F4rmNPnz+kGMra0RQJtqJ1i8be+boDPo204/oBt9Rcs=;
+        b=jia9AX2IwxxpNeVnIvgp/19a/HX+RXv3L7cvDxoJF+Fu43uKodSDtVMLcvttrHeoXs
+         pbAKye7Di66sH8ESpYcmctnvBXoMBks3gzdIGJDCCRQbMrAbAhFLsbndQX9UZpn9ypvs
+         TixyeUbRQ4mWxO+3tqc1z/bgaOZIT3+jhrsYo/5PIS+y+1FMKw6snw3+DUy/2YXLgLr4
+         FQNGCQC75wC1zgTzxkp/LFOFRzalJLD0GgzzM9L3dx6e6lcyl/edgplKEN391iQYcSkR
+         Ah8UpleU87LZ7JuscB/vaG026fENfZ2t62/sOxK/9AvYrNwyVgkW6bP6Uxoc/HXXih8S
+         UnDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722965031; x=1723569831;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F4rmNPnz+kGMra0RQJtqJ1i8be+boDPo204/oBt9Rcs=;
+        b=wD54emeconAK6v52Uvh1gYTdv4iLFxJIql4BU9gsCUms+FWeiCz5hAPcz2BJ9Lc75x
+         r/rTaXL4a/XSMkuvM6Z4oV5TKB37pd55JFFyDt4tTVgT74yZQ8bKLG+xqAVpPbi2QoJI
+         sYgyvZKyPkaymFa6vFfvGw3au1Bvkle7B6Vn0eEkaNvUNyHawO72Hb21DAE5qxYrcbHt
+         WOcbCZJVg6DDrBM+sSklLkXzvo4H5/oSyvwCviNgdPzQz6XXgXnjADW7xF5N0sYraXce
+         D+9AZj2Y+KABoVxbk0tBxKAZ9igkgd1rcva7JwmSCbPaSnnZdk8pESX+QuNBjHJH7RHR
+         TTfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDH4lDNqnAT3YCU5stkyp2GKbt3qCdaqzfgKfU2YL1ZcaaQFzI5Wet2/Kud6cng2sjlnz6MVYgLW4EWGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzetX8raoF6mXd8sUip4H3K4wbZV+mpKj7urnsOw8yyTW6sapzt
+	XSGzll6NUildDzBePJBUM1OovfZmpmz24Pbh49LRzigU0363EiU5YizFvLRSxGM=
+X-Google-Smtp-Source: AGHT+IGN/g/G+FXYvmY4HkM76lkSBKmxvlD+n6uvRjDt3aMuV/oycOrSHTiQPvVwSkF6jaF3MwJXew==
+X-Received: by 2002:a05:6214:5f03:b0:6b0:7ba0:ef67 with SMTP id 6a1803df08f44-6bb9840713dmr163494426d6.31.1722965030621;
+        Tue, 06 Aug 2024 10:23:50 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c79744esm48263166d6.40.2024.08.06.10.23.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 10:23:50 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sbNuX-00FYRk-Mv;
+	Tue, 06 Aug 2024 14:23:49 -0300
+Date: Tue, 6 Aug 2024 14:23:49 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: James Houghton <jthoughton@google.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	David Matlack <dmatlack@google.com>,
+	David Rientjes <rientjes@google.com>,
+	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Shaoqin Huang <shahuang@redhat.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>,
+	Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>,
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 05/11] mm: Add fast_only bool to test_young and
+ clear_young MMU notifiers
+Message-ID: <20240806172349.GQ676757@ziepe.ca>
+References: <20240724011037.3671523-1-jthoughton@google.com>
+ <20240724011037.3671523-6-jthoughton@google.com>
+ <37ae59f2-777a-4a58-ae58-4a20066364dd@redhat.com>
+ <CADrL8HUmQWDc-75p=Z2KZzHkyWCCh8xnX=+ZXm5MZ-drALjKTA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADrL8HUmQWDc-75p=Z2KZzHkyWCCh8xnX=+ZXm5MZ-drALjKTA@mail.gmail.com>
 
-On 05.08.24 17:19, Danilo Krummrich wrote:
-> Implement the `Unique` type as a prerequisite for `Box` and `Vec`
-> introduced in subsequent patches.
->=20
-> `Unique` serves as wrapper around a `NonNull`, but indicates that the
-> possessor of this wrapper owns the referent.
->=20
-> This type already exists in Rust's core library, but, unfortunately, is
-> exposed as unstable API and hence shouldn't be used in the kernel.
->=20
-> This implementation of `Unique` is almost identical, but mostly stripped
-> down to the functionality we need for `Box` and `Vec`. Additionally, all
-> unstable features are removed and / or replaced by stable ones.
->=20
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/types.rs | 183 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 183 insertions(+)
->=20
-> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> index bd189d646adb..7cf89067b5fc 100644
-> --- a/rust/kernel/types.rs
-> +++ b/rust/kernel/types.rs
-> @@ -473,3 +473,186 @@ unsafe impl AsBytes for str {}
->  // does not have any uninitialized portions either.
->  unsafe impl<T: AsBytes> AsBytes for [T] {}
->  unsafe impl<T: AsBytes, const N: usize> AsBytes for [T; N] {}
-> +
-> +/// A wrapper around a raw non-null `*mut T` that indicates that the pos=
-sessor
-> +/// of this wrapper owns the referent. Useful for building abstractions =
-like
-> +/// `Box<T>`, `Vec<T>`, `String`, and `HashMap<K, V>`.
-> +///
-> +/// Unlike `*mut T`, `Unique<T>` behaves "as if" it were an instance of =
-`T`.
-> +/// It implements `Send`/`Sync` if `T` is `Send`/`Sync`. It also implies
-> +/// the kind of strong aliasing guarantees an instance of `T` can expect=
-:
-> +/// the referent of the pointer should not be modified without a unique =
-path to
-> +/// its owning Unique.
-> +///
-> +/// If you're uncertain of whether it's correct to use `Unique` for your=
- purposes,
-> +/// consider using `NonNull`, which has weaker semantics.
-> +///
-> +/// Unlike `*mut T`, the pointer must always be non-null, even if the po=
-inter
-> +/// is never dereferenced. This is so that enums may use this forbidden =
-value
-> +/// as a discriminant -- `Option<Unique<T>>` has the same size as `Uniqu=
-e<T>`.
-> +/// However the pointer may still dangle if it isn't dereferenced.
-> +///
-> +/// Unlike `*mut T`, `Unique<T>` is covariant over `T`. This should alwa=
-ys be correct
-> +/// for any type which upholds Unique's aliasing requirements.
-> +#[repr(transparent)]
-> +pub struct Unique<T: ?Sized> {
-> +    pointer: NonNull<T>,
-> +    // NOTE: this marker has no consequences for variance, but is necess=
-ary
-> +    // for dropck to understand that we logically own a `T`.
-> +    //
-> +    // For details, see:
-> +    // https://github.com/rust-lang/rfcs/blob/master/text/0769-sound-gen=
-eric-drop.md#phantom-data
-> +    _marker: PhantomData<T>,
-> +}
-> +
-> +/// `Unique` pointers are `Send` if `T` is `Send` because the data they
-> +/// reference is unaliased. Note that this aliasing invariant is
-> +/// unenforced by the type system; the abstraction using the
-> +/// `Unique` must enforce it.
-> +unsafe impl<T: Send + ?Sized> Send for Unique<T> {}
-> +
-> +/// `Unique` pointers are `Sync` if `T` is `Sync` because the data they
-> +/// reference is unaliased. Note that this aliasing invariant is
-> +/// unenforced by the type system; the abstraction using the
-> +/// `Unique` must enforce it.
-> +unsafe impl<T: Sync + ?Sized> Sync for Unique<T> {}
-> +
-> +impl<T: Sized> Unique<T> {
-> +    /// Creates a new `Unique` that is dangling, but well-aligned.
-> +    ///
-> +    /// This is useful for initializing types which lazily allocate, lik=
-e
-> +    /// `Vec::new` does.
-> +    ///
-> +    /// Note that the pointer value may potentially represent a valid po=
-inter to
-> +    /// a `T`, which means this must not be used as a "not yet initializ=
-ed"
-> +    /// sentinel value. Types that lazily allocate must track initializa=
-tion by
-> +    /// some other means.
-> +    #[must_use]
-> +    #[inline]
-> +    pub const fn dangling() -> Self {
-> +        Unique {
-> +            pointer: NonNull::dangling(),
-> +            _marker: PhantomData,
-> +        }
-> +    }
+On Thu, Aug 01, 2024 at 04:13:40PM -0700, James Houghton wrote:
+> --- a/include/linux/mmu_notifier.h
+> +++ b/include/linux/mmu_notifier.h
+> @@ -106,6 +106,18 @@ struct mmu_notifier_ops {
+>          * clear_young is a lightweight version of clear_flush_young. Like the
+>          * latter, it is supposed to test-and-clear the young/accessed bitflag
+>          * in the secondary pte, but it may omit flushing the secondary tlb.
+> +        *
+> +        * The fast_only parameter indicates that this call should not block,
+> +        * and this function should not cause other MMU notifier calls to
+> +        * block. Usually this means that the implementation should be
+> +        * lockless.
+> +        *
+> +        * When called with fast_only, this notifier will be a no-op unless
+> +        * has_fast_aging is set on the struct mmu_notifier.
 
-I think I already asked this, but the code until this point is copied
-from the rust stdlib and nowhere cited, does that work with the
-licensing?
+If you add a has_fast_aging I wonder if it is better to introduce new
+ops instead? The semantics are a bit easier to explain that way
 
-I also think that the code above could use some improvements:
-- add an `# Invariants` section with appropriate invariants (what are
-  they supposed to be?)
-- Do we really want this type to be public and exported from the kernel
-  crate? I think it would be better if it were crate-private.
-- What do we gain from having this type? As I learned recently, the
-  `Unique` type from `core` doesn't actually put the `noalias` onto
-  `Box` and `Vec`. The functions are mostly delegations to `NonNull`, so
-  if the only advantages are that `Send` and `Sync` are already
-  implemented, then I think we should drop this.
-
-> +}
-> +
-> +impl<T: ?Sized> Unique<T> {
-> +    /// Creates a new `Unique`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `ptr` must be non-null.
-> +    #[inline]
-> +    pub const unsafe fn new_unchecked(ptr: *mut T) -> Self {
-> +        // SAFETY: the caller must guarantee that `ptr` is non-null.
-> +        unsafe {
-
-The only unsafe operation in the body is `new_unchecked` only that one
-should be wrapped in `unsafe {}`.
-
-> +            Unique {
-> +                pointer: NonNull::new_unchecked(ptr),
-> +                _marker: PhantomData,
-> +            }
-> +        }
-> +    }
-> +
-> +    /// Creates a new `Unique` if `ptr` is non-null.
-> +    #[allow(clippy::manual_map)]
-> +    #[inline]
-> +    pub fn new(ptr: *mut T) -> Option<Self> {
-> +        if let Some(pointer) =3D NonNull::new(ptr) {
-> +            Some(Unique {
-> +                pointer,
-> +                _marker: PhantomData,
-> +            })
-> +        } else {
-> +            None
-> +        }
-
-Why is this so verbose? You even needed to disable the clippy lint!
-Can't this just be?:
-
-    Some(Unique {
-        pointer: NonNull::new(ptr)?,
-        _marker: PhantomData,
-    })
-
-or maybe even
-
-    NonNull::new(ptr).map(Unique::from)
-
-
-> +    }
-> +
-> +    /// Acquires the underlying `*mut` pointer.
-> +    #[must_use =3D "`self` will be dropped if the result is not used"]
-
-This seems like an odd thing, there is no `Drop` impl that drops the
-pointee...
-
----
-Cheers,
-Benno
-
+Jason
 
