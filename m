@@ -1,130 +1,153 @@
-Return-Path: <linux-kernel+bounces-275944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D67F948C48
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:43:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8D2948C4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E7741C2322C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:43:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 016BF1F22539
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12721BDAB2;
-	Tue,  6 Aug 2024 09:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58BF1BDAB3;
+	Tue,  6 Aug 2024 09:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="fvzfpPGJ"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mlsA68eB"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF821BDA84;
-	Tue,  6 Aug 2024 09:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C55B5464E;
+	Tue,  6 Aug 2024 09:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722937392; cv=none; b=dMJPIdV4kTyWFa2uZe90s9r9BbqbTw94Fi6Un481deRJUniutvO23LB45fIQngUYbKJoalAU4Q+Enqqz3P06bQxC4URvAW358Yz0dUj0yTOsIe8VnkSWda91kXo8Jt0qYAueECi3c686TZe9Yryw0NzzaISg3nog5md4Q5/7c8I=
+	t=1722937458; cv=none; b=uKwHGN7UEp0ojagcyvZAyLv54fBGxHb432e4lxfE8qDsg8sDns1fyZvzMA9osxOxsDoZefTYgs19cuDI2DpxPugr+T0d9JQSl7R+PUgMcO3tadAY7FUUaxu3glk8OilnWox7WsmG+FJYUsC+dsig/tHWEZ4qcLFCWmZDSMXUVI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722937392; c=relaxed/simple;
-	bh=omalze2Bu4iTxukzVIDOxtrfHbB5LbPErAxWcpq9vdM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FhxODzyidkJ3zi1ms5LQYavs+zmpW+PPw76X2Uv1U7RMWwgfm2oh6MtyaSeUvHF4+Sa6GdvnWtVvfre48Y72GEOwGr1ZC1vrNHY6c1GX3S2Egu4eoSs0e8vbFluDgofek8++uU2beC6KPvpNr7ilFtl3Ri3rOJ14gSXrnhZ40Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=fvzfpPGJ; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4769BwND012988;
-	Tue, 6 Aug 2024 02:43:01 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=5
-	Agl40LLFB+MRtquRidYE5l/zqA/1VfO5ifHr76CpR4=; b=fvzfpPGJnSj/IQLYN
-	GP/53Ny7+r8jKL+F7kYNyZvaakWD0zYhEchiU/rzxGIr2+tZI/gjYf6NIJGy7r4g
-	3kpsxMUOlS05kqEmazgtEHRDAsou+iGc1Q+LZX+HsG6LA53DBknRmszgjyBn9uNz
-	kA6OXWKIKu0a/wmheZRC1ilpddWdyI1T4HfvKq63h0BdBpLi6EKc6VLniBN4rSBD
-	T0AdX2loxYDQnU+vJji/Ya90VZvZqOGGzJb2gz3a4FhMaV/1cYQOI5sKJw59ynFt
-	I7+rvKcgUcuFgT4zNLV24CsmVwGD2RsdUx3ppCNju4sBvgZaQ9oRkGHfqZVNYTV+
-	9nizQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 40uh0603vv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 Aug 2024 02:43:01 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 6 Aug 2024 02:43:00 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 6 Aug 2024 02:43:00 -0700
-Received: from [10.9.8.37] (EL-LT0043.marvell.com [10.9.8.37])
-	by maili.marvell.com (Postfix) with ESMTP id 25D203F70BD;
-	Tue,  6 Aug 2024 02:42:57 -0700 (PDT)
-Message-ID: <0d0a030c-b1ba-77a7-71f5-55448f6797f6@marvell.com>
-Date: Tue, 6 Aug 2024 11:42:57 +0200
+	s=arc-20240116; t=1722937458; c=relaxed/simple;
+	bh=9hU69UZM9LqNRrO8sJDJRoZJnTfGYjYSj/tarClKfD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E6xvXHRToAxq+k2fKzjGXhAd//VyYJbk41NTQZjVFqPUYFtKfQ6tYCztADkrvV8h2SNkiBakfc0hlE5RfxMoO9l+gL9dsRj6WriLHoYpvyIC+WrOAea7LnieoJqj2USI0txhSCZZDDA1CCcCjGwrnOe05MDVCs3jSPC4OF3/TMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mlsA68eB; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=39V3FioJp3COx+jGkYqvGEZBHRp/UIdXm+MJrO3+fOI=; b=mlsA68eBayPB+Ehqt5BfHIG9MG
+	kbbefJv7a43hgpYIc1ND/PNuetHyn3J/eDJHk7cFzAd02A9tHkpS0FAKEc0tDbde875yE/VI8InVq
+	epDGE4mguIuf/NcAFf2pkW4WD14iKoTV/qPxNJZQos3X3apC1YYPpL6S6aNA4wMqhMfPYuDZXJ1u0
+	uD/T+zWdj652DKVjXz3xeeYSBCKmoFNo5x2YSxrrqfvvmGQPvLbr4xy6nL+08kHXS1cRbmq7A4gV7
+	wS2ZEub+x8V81hQ7a04auh7SGPpFaAlWqXygoK2fAnns8LGYX8s/eHs0kaSIw5k8IHxsajG6pfIzf
+	BQgVxorA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sbGjm-00000005WhQ-01Si;
+	Tue, 06 Aug 2024 09:44:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3103130049D; Tue,  6 Aug 2024 11:44:13 +0200 (CEST)
+Date: Tue, 6 Aug 2024 11:44:13 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Chandan Babu R <chandanbabu@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	xfs <linux-xfs@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org,
+	tglx@linutronix.de
+Subject: Re: Are jump labels broken on 6.11-rc1?
+Message-ID: <20240806094413.GS37996@noisy.programming.kicks-ass.net>
+References: <20240730033849.GH6352@frogsfrogsfrogs>
+ <87o76f9vpj.fsf@debian-BULLSEYE-live-builder-AMD64>
+ <20240730132626.GV26599@noisy.programming.kicks-ass.net>
+ <20240731001950.GN6352@frogsfrogsfrogs>
+ <20240731031033.GP6352@frogsfrogsfrogs>
+ <20240731053341.GQ6352@frogsfrogsfrogs>
+ <20240731105557.GY33588@noisy.programming.kicks-ass.net>
+ <20240805143522.GA623936@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] [PATCH][next] net: atlantic: Aavoid
- -Wflex-array-member-not-at-end warnings
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>
-References: <ZrDwoVKH8d6TdVxn@cute>
-Content-Language: en-US
-From: Igor Russkikh <irusskikh@marvell.com>
-In-Reply-To: <ZrDwoVKH8d6TdVxn@cute>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: oe-13ZfwP1zmYsCuprxFON-PezLvGPkZ
-X-Proofpoint-GUID: oe-13ZfwP1zmYsCuprxFON-PezLvGPkZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-06_07,2024-08-02_01,2024-05-17_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240805143522.GA623936@frogsfrogsfrogs>
 
-
-
-On 8/5/2024 5:32 PM, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally. Move the conflicting declaration to
-> the end of the structure. Notice that `struct hw_atl_utils_fw_rpc` ends in
-> a flexible-array member
+On Mon, Aug 05, 2024 at 07:35:22AM -0700, Darrick J. Wong wrote:
+> On Wed, Jul 31, 2024 at 12:55:57PM +0200, Peter Zijlstra wrote:
+> > On Tue, Jul 30, 2024 at 10:33:41PM -0700, Darrick J. Wong wrote:
+> > 
+> > > Sooooo... it turns out that somehow your patch got mismerged on the
+> > > first go-round, and that worked.  The second time, there was no
+> > > mismerge, which mean that the wrong atomic_cmpxchg() callsite was
+> > > tested.
+> > > 
+> > > Looking back at the mismerge, it actually changed
+> > > __static_key_slow_dec_cpuslocked, which had in 6.10:
+> > > 
+> > > 	if (atomic_dec_and_test(&key->enabled))
+> > > 		jump_label_update(key);
+> > > 
+> > > Decrement, then return true if the value was set to zero.  With the 6.11
+> > > code, it looks like we want to exchange a 1 with a 0, and act only if
+> > > the previous value had been 1.
+> > > 
+> > > So perhaps we really want this change?  I'll send it out to the fleet
+> > > and we'll see what it reports tomorrow morning.
+> > 
+> > Bah yes, I missed we had it twice. Definitely both sites want this.
+> > 
+> > I'll tentatively merge the below patch in tip/locking/urgent. I can
+> > rebase if there is need.
 > 
-> Fix the following warnings:
+> Hi Peter,
 > 
-> drivers/net/ethernet/aquantia/atlantic/aq_hw.h:197:36: warning: structure
-> containing a flexible array member is not at the end of another structure
-> [-Wflex-array-member-not-at-end]
+> This morning, I noticed the splat below with -rc2.
 > 
-> drivers/net/ethernet/aquantia/atlantic/hw_atl/../aq_hw.h:197:36: warning:
-> structure containing a flexible array member is not at the end of another
-> structure [-Wflex-array-member-not-at-end]
+> WARNING: CPU: 0 PID: 8578 at kernel/jump_label.c:295 __static_key_slow_dec_cpuslocked.part.0+0x50/0x60
+> 
+> Line 295 is the else branch of this code:
+> 
+> 	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
+> 		jump_label_update(key);
+> 	else
+> 		WARN_ON_ONCE(!static_key_slow_try_dec(key));
+> 
+> Apparently static_key_slow_try_dec returned false?  Looking at that
+> function, I suppose the atomic_read of key->enabled returned 0, since it
+> didn't trigger the "WARN_ON_ONCE(v < 0)" code.  Does that mean the value
+> must have dropped from positive N to 0 without anyone ever taking the
+> jump_label_mutex?
 
-Hi Gustavo!
+One possible scenario I see:
 
-I was abit curious about this variable length structure, because it looks strange and not actually used by driver.
+  slow_dec
+    if (try_dec) // dec_not_one-ish, false
+    // enabled == 1
+				slow_inc
+				  if (inc_not_disabled) // inc_not_zero-ish
+				  // enabled == 2
+				    return
 
-I've cross checked, and its really some outdated declaration. The structure is never used as as a flex sized struct.
+    guard((mutex)(&jump_label_mutex);
+    if (atomic_cmpxchg(1,0)==1) // false, we're 2
+    
+				slow_dec
+				  if (try-dec) // dec_not_one, true
+				  // enabled == 1
+				    return
+    else
+      try_dec() // dec_not_one, false
+      WARN
 
-So better would be to do just this:
 
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.h
-@@ -226,7 +226,6 @@ struct __packed offload_info {
-        struct offload_port_info ports;
-        struct offload_ka_info kas;
-        struct offload_rr_info rrs;
--       u8 buf[];
- };
+Let me go play to see how best to cure this.
 
-Let me know if you want to submit this, or I can do this as well.
+> Unfortunately I'm a little too covfid-brained to figure this out today.
+> :(
 
-Regards,
-  Igor
+Urgh, brain-fog is the worst :/
+
 
