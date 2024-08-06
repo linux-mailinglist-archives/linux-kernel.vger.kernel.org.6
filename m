@@ -1,245 +1,129 @@
-Return-Path: <linux-kernel+bounces-275987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02014948CEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:38:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFD54948CF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACCD8286F74
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:38:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A14AB23A67
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FF71BF317;
-	Tue,  6 Aug 2024 10:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6634B1BF30D;
+	Tue,  6 Aug 2024 10:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PLBMjG/q"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnMqk+fp"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4A715A4AF;
-	Tue,  6 Aug 2024 10:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4651BDAA7;
+	Tue,  6 Aug 2024 10:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722940699; cv=none; b=g9vnOwi0xumYYGZ65RvpmUSVof01TATynKFYeA3KmRhvOwEC7FoyhcobIg48MSr+fOviME7kscYs2pDrKEx2EkkMH9OJN6FRe7Ts6UAmv55BMzsVYVjpW1wOFLrVifWTm6vN98YxL7XRAk5Y59JRYL9wWUZBqIzjGNk0PiPI9uw=
+	t=1722940720; cv=none; b=bJQXEL/sxKwLbfBMl/6oJIC5ipLVTQTXkWA0qZU4mIesbcuPEwGe/G7QVnjldbk9UnWEmL5t9QHZBurpNkHnH5oxLJtRRTYFSYQLoPWAccnrW+ljcIi1grUumNj9rs7EDeO45/XX3BMBeWuoYqOZN/RqL5W/C2LGs4ZrfPGthHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722940699; c=relaxed/simple;
-	bh=El/3bAO0l069mqw/cXVTEp+zY0hjWd3P1csIyZHu6fs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d1yF7KNQ/YA2aKgkrf6CoKbHxH5EOIPcTM58xFjskQ9xXyn+v8CagmHFDurX3QQIR19RGEz+vEgRxggq0kOiFaQ4seAs1GclveykLV9EWuw3EvfkgnU0n8CnQK5xv6GX/Sxfq/QorjFb+3yJQ0EUKef62Hr1cc8tqM2b1LCK+Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PLBMjG/q; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=W7Mfw8x3s054daJSUWaTm5SQvpi9NZcP7llJQaPfuF0=; b=PLBMjG/qkP/fCYn8wdJsdX41ae
-	1XE6tajTet2eQ63AV1V5oAD2KiIx4aYWmeNgMi0o2fpa4Se/juBqIOy0+NfM3NF5UXDlAJ8oc+AjP
-	NR3jhGEyrC5zJNI6dtvgSe/VVUwbYF1oT9hdS95F9Mh7YwAdZ5ELxJNJk8q/TWUAMFHovZYXQQbdY
-	d6DSLiz+Wu2Q9uwQCOg/axE/2d2FknLyRwBV55u1XWeM31IxAQEcsm14VUEtbQNTHqhdebRt8X/Yz
-	0czHeyf7l0alucmbjdWv02cbfctmKOmozg9MtMiF3Olh1ln8E6H5FuujYzamaeKaOLfrfhPgPFeUI
-	6TDsxLFw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sbHZx-00000006Qw3-1ZbX;
-	Tue, 06 Aug 2024 10:38:09 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 80C0630088D; Tue,  6 Aug 2024 12:38:08 +0200 (CEST)
-Date: Tue, 6 Aug 2024 12:38:08 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Chandan Babu R <chandanbabu@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	xfs <linux-xfs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org,
-	tglx@linutronix.de
-Subject: Re: Are jump labels broken on 6.11-rc1?
-Message-ID: <20240806103808.GT37996@noisy.programming.kicks-ass.net>
-References: <20240730033849.GH6352@frogsfrogsfrogs>
- <87o76f9vpj.fsf@debian-BULLSEYE-live-builder-AMD64>
- <20240730132626.GV26599@noisy.programming.kicks-ass.net>
- <20240731001950.GN6352@frogsfrogsfrogs>
- <20240731031033.GP6352@frogsfrogsfrogs>
- <20240731053341.GQ6352@frogsfrogsfrogs>
- <20240731105557.GY33588@noisy.programming.kicks-ass.net>
- <20240805143522.GA623936@frogsfrogsfrogs>
- <20240806094413.GS37996@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1722940720; c=relaxed/simple;
+	bh=05YUjKWcS8QjfXQkGcpwUyF2jmITRUMRuJ8V9/VtX4I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PReEnwBJ4NkuA3uj6LSTvnwiaQmUVkx0bVSX8Jehp8v6YC8SocehkYf4M5E4oMTXv0ZuuzNfhd+FBVl6I7UAT0XVtGh9v5R4YXmv1EnBI8X6OLvbrKONhas44LYTyGc9idmCf9PiMvz/jsxqzvaAcgM2mFiKnGmtpRn6uxQJRto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnMqk+fp; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7b594936e9bso420259a12.1;
+        Tue, 06 Aug 2024 03:38:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722940719; x=1723545519; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lBE9cbqqy9E10rFhHW0Wgihe2/UchPViyrmjttfLQ6E=;
+        b=hnMqk+fpb40Pk0Z9UPUseTZ7wmGFrkVkg6TncvPmT81FFdJlvZiDMqUpWihOLL3j4L
+         t6NZ1Mi+pYKm7X1FMDE86muzWHkzlsT5KKzNZF/55xePBdAPkxCQK05E+HF5MsgB98xP
+         8/BB0FNbIfAIxn6EXJFCynBpI57giA6eASuz0OdCGcuPQ26acIdsX+LQ6XoQyx/1fNKQ
+         5f23jjuxf7YXheG5ZNoUEdNC4qYnSvZ9tAK1rsPPuTSk7KVfhIPDNMAH5AtMcGtXVTvG
+         sLKOVmpFjTPj6QuSxq+g6jOLhHmyOJfQpIz2mzXLtLIZQ7MlR20wc7+y8IUc+wm+N2wG
+         zlfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722940719; x=1723545519;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lBE9cbqqy9E10rFhHW0Wgihe2/UchPViyrmjttfLQ6E=;
+        b=FSy+flqEVKZpL7SlfyjbBFgrpqUHoePjEz78JjukSBHsICgoVJU/RgkC8is/1DQKyH
+         qy5hF1HSff9i0H76bG9DoCyYSWO8NaeWlrUo+zoqvTCnyfQ/kyJm8XQ5wj8Yl94Yyw+H
+         dnXrOE0+aPSMf9EUlAjc+LlDmVadsAgvdmQkjZmvlvJZU8m+Y/wY5RGmKrPCdA4m5NJp
+         wk8lwSmPV/aVXECUVyDy/3uVnpNdyOq9OKK6z6je4LtBgquU73EZVOc/K2wQZlEXhSgE
+         nRR6jiTQm+Rc510SEta2nkuZYD3jlBfnemYgygO6+TERpRRbsWrFZNOdh24u66VAua/g
+         nwgA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/ldo/YQdWW9bXc6gMqLecZoYSvOVAuq8rJ93SL2btpe9xhNM15bPc52B/O7fITHpwM2S/+fWMZxBQ15NEw2rQ6o85HlvHLYd0VmO1oUoJlfhJ/xo/2eJuFYBLJghpAHCtwc9npHIEU4n/bxBfKw60TB2jfMqVnVwxMKvcVf+PSyxVwnOVmrTv
+X-Gm-Message-State: AOJu0YzRGiGajfuND8AQzGE5AcER427tT83l04QsKeBVbzmYW8zq4MC0
+	uX5p+uFg0E0a2zopVDDKlWCDcVfVdbUDUHMoJPoSZVf5ceUKQ00n
+X-Google-Smtp-Source: AGHT+IFeoNZTBJIcwXObcpVFY6Q7EaDDvgDY5rZpxHnHyuZgINHleuwM7ffl5V+qHwaBw6XGBqXTEw==
+X-Received: by 2002:a05:6a21:6f87:b0:1c4:c7ac:9e5b with SMTP id adf61e73a8af0-1c6996605e3mr12075324637.45.1722940718410;
+        Tue, 06 Aug 2024 03:38:38 -0700 (PDT)
+Received: from localhost.localdomain ([115.240.194.54])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec4169csm6775561b3a.64.2024.08.06.03.38.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 03:38:38 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: watchdog: fsl-imx-wdt: Add missing 'big-endian' property
+Date: Tue,  6 Aug 2024 16:08:16 +0530
+Message-ID: <20240806103819.10890-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806094413.GS37996@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 06, 2024 at 11:44:13AM +0200, Peter Zijlstra wrote:
-> On Mon, Aug 05, 2024 at 07:35:22AM -0700, Darrick J. Wong wrote:
-> > On Wed, Jul 31, 2024 at 12:55:57PM +0200, Peter Zijlstra wrote:
-> > > On Tue, Jul 30, 2024 at 10:33:41PM -0700, Darrick J. Wong wrote:
-> > > 
-> > > > Sooooo... it turns out that somehow your patch got mismerged on the
-> > > > first go-round, and that worked.  The second time, there was no
-> > > > mismerge, which mean that the wrong atomic_cmpxchg() callsite was
-> > > > tested.
-> > > > 
-> > > > Looking back at the mismerge, it actually changed
-> > > > __static_key_slow_dec_cpuslocked, which had in 6.10:
-> > > > 
-> > > > 	if (atomic_dec_and_test(&key->enabled))
-> > > > 		jump_label_update(key);
-> > > > 
-> > > > Decrement, then return true if the value was set to zero.  With the 6.11
-> > > > code, it looks like we want to exchange a 1 with a 0, and act only if
-> > > > the previous value had been 1.
-> > > > 
-> > > > So perhaps we really want this change?  I'll send it out to the fleet
-> > > > and we'll see what it reports tomorrow morning.
-> > > 
-> > > Bah yes, I missed we had it twice. Definitely both sites want this.
-> > > 
-> > > I'll tentatively merge the below patch in tip/locking/urgent. I can
-> > > rebase if there is need.
-> > 
-> > Hi Peter,
-> > 
-> > This morning, I noticed the splat below with -rc2.
-> > 
-> > WARNING: CPU: 0 PID: 8578 at kernel/jump_label.c:295 __static_key_slow_dec_cpuslocked.part.0+0x50/0x60
-> > 
-> > Line 295 is the else branch of this code:
-> > 
-> > 	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
-> > 		jump_label_update(key);
-> > 	else
-> > 		WARN_ON_ONCE(!static_key_slow_try_dec(key));
-> > 
-> > Apparently static_key_slow_try_dec returned false?  Looking at that
-> > function, I suppose the atomic_read of key->enabled returned 0, since it
-> > didn't trigger the "WARN_ON_ONCE(v < 0)" code.  Does that mean the value
-> > must have dropped from positive N to 0 without anyone ever taking the
-> > jump_label_mutex?
-> 
-> One possible scenario I see:
-> 
->   slow_dec
->     if (try_dec) // dec_not_one-ish, false
->     // enabled == 1
-> 				slow_inc
-> 				  if (inc_not_disabled) // inc_not_zero-ish
-> 				  // enabled == 2
-> 				    return
-> 
->     guard((mutex)(&jump_label_mutex);
->     if (atomic_cmpxchg(1,0)==1) // false, we're 2
->     
-> 				slow_dec
-> 				  if (try-dec) // dec_not_one, true
-> 				  // enabled == 1
-> 				    return
->     else
->       try_dec() // dec_not_one, false
->       WARN
-> 
-> 
-> Let me go play to see how best to cure this.
+Add missing big-endian property in watchdog/fsl-imx-wdt.yaml schema.
+This fixes dtbs_check errors.
 
-I've ended up with this, not exactly pretty :/
-
-Thomas?
-
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 ---
-diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-index 6dc76b590703..5fa2c9f094b1 100644
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -168,8 +168,8 @@ bool static_key_slow_inc_cpuslocked(struct static_key *key)
- 		jump_label_update(key);
- 		/*
- 		 * Ensure that when static_key_fast_inc_not_disabled() or
--		 * static_key_slow_try_dec() observe the positive value,
--		 * they must also observe all the text changes.
-+		 * static_key_dec() observe the positive value, they must also
-+		 * observe all the text changes.
- 		 */
- 		atomic_set_release(&key->enabled, 1);
- 	} else {
-@@ -250,7 +250,7 @@ void static_key_disable(struct static_key *key)
- }
- EXPORT_SYMBOL_GPL(static_key_disable);
+There are 12 similar errors related to this missing property from
+different blobs.
+
+./arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dtb: watchdog@2ad0000:
+Unevaluated properties are not allowed ('big-endian' was unexpected)from
+schema $id: http://devicetree.org/schemas/watchdog/fsl-imx-wdt.yaml#
+---
+ Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml b/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
+index 36b836d0620c..24d47b1701a7 100644
+--- a/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
+@@ -48,6 +48,8 @@ properties:
+   clocks:
+     maxItems: 1
  
--static bool static_key_slow_try_dec(struct static_key *key)
-+static bool static_key_dec(struct static_key *key, bool fast)
- {
- 	int v;
- 
-@@ -268,31 +268,45 @@ static bool static_key_slow_try_dec(struct static_key *key)
- 	v = atomic_read(&key->enabled);
- 	do {
- 		/*
--		 * Warn about the '-1' case though; since that means a
--		 * decrement is concurrent with a first (0->1) increment. IOW
--		 * people are trying to disable something that wasn't yet fully
--		 * enabled. This suggests an ordering problem on the user side.
-+		 * Warn about the '-1' case; since that means a decrement is
-+		 * concurrent with a first (0->1) increment. IOW people are
-+		 * trying to disable something that wasn't yet fully enabled.
-+		 * This suggests an ordering problem on the user side.
-+		 *
-+		 * Warn about the '0' case; simple underflow.
-+		 *
-+		 * Neither case should succeed and change things.
-+		 */
-+		if (WARN_ON_ONCE(v <= 0))
-+			return false;
++  big-endian: true
 +
-+		/*
-+		 * Lockless fast-path, dec-not-one like behaviour.
- 		 */
--		WARN_ON_ONCE(v < 0);
--		if (v <= 1)
-+		if (fast && v <= 1)
- 			return false;
- 	} while (!likely(atomic_try_cmpxchg(&key->enabled, &v, v - 1)));
- 
--	return true;
-+	if (fast)
-+		return true;
-+
-+	/*
-+	 * Locked slow path, dec-and-test like behaviour.
-+	 */
-+	lockdep_assert_held(&jump_label_mutex);
-+	return v == 1;
- }
- 
- static void __static_key_slow_dec_cpuslocked(struct static_key *key)
- {
- 	lockdep_assert_cpus_held();
- 
--	if (static_key_slow_try_dec(key))
-+	if (static_key_dec(key, true)) // dec-not-one
- 		return;
- 
- 	guard(mutex)(&jump_label_mutex);
--	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
-+	if (static_key_dec(key, false)) // dec-and-test
- 		jump_label_update(key);
--	else
--		WARN_ON_ONCE(!static_key_slow_try_dec(key));
- }
- 
- static void __static_key_slow_dec(struct static_key *key)
-@@ -329,7 +343,7 @@ void __static_key_slow_dec_deferred(struct static_key *key,
- {
- 	STATIC_KEY_CHECK_USE(key);
- 
--	if (static_key_slow_try_dec(key))
-+	if (static_key_dec(key, true)) // dec-not-one
- 		return;
- 
- 	schedule_delayed_work(work, timeout);
+   fsl,ext-reset-output:
+     $ref: /schemas/types.yaml#/definitions/flag
+     description: |
+-- 
+2.45.2
+
 
