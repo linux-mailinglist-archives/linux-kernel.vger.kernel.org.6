@@ -1,62 +1,57 @@
-Return-Path: <linux-kernel+bounces-277034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC75B949B63
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:39:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B421949B64
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A92372832C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:39:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C978F1F21BBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34739173345;
-	Tue,  6 Aug 2024 22:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9930172BD3;
+	Tue,  6 Aug 2024 22:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZRMda+aD"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hRggnWBP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5CB77F08;
-	Tue,  6 Aug 2024 22:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FD177F08
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 22:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722983989; cv=none; b=XlO292GKSfUZ9slEBiKLyh7MMsCkzVsxBGhsAy09tZgt+vCTi1Yhq6gOs5TVBS6MyrpS46kt7y1ZccDcXvUVYo+2EqHTWZ8ce0mC+CRXXGots0c/pKZpS9su0s7djIWPZji6evO+b6cpdN6bBt1pF4C06MjLbPUi8RIiCkvjJmo=
+	t=1722984074; cv=none; b=MyBcilEcD+i7s1ZVTv+tx4ZEf3EVmcMG8nQ/wMBi3mlZtSxOXjc/hPsd+hL3w5Hjy8DMxJ4Y8lAbP89IzrXG/fbVJHsGlhalurQRpIP1M/U5I6y7QS2QiHNnVdeg/tXlw89GM4n3KMEd7uVPB2HXQ5nG6/dgOAvxzpX/mag5CxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722983989; c=relaxed/simple;
-	bh=jJmEId4R3kd51IiNhFHMyrGgMqYmLtP9jg6gv8iF2/8=;
+	s=arc-20240116; t=1722984074; c=relaxed/simple;
+	bh=44UEzDHataWzJNxXj0NImaWdiAbe9/ovmeNH4HvCabs=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=XLVTOyT7TcUY28LleTuPLUg6fiV/IBPOdSl6Ce8Q6zncKutpwqYl6JZLXB/JzCwGmmqhmsQH0b2zGhcp2NbFChkNHc+ytQeLd59BcPtK4t3De2uFPlgJREl/Rsf2cJya1ZJNQnYxpWJbOgLoQK6TPMtCZd6LDr460KMOubdHURA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZRMda+aD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 592E3C32786;
-	Tue,  6 Aug 2024 22:39:48 +0000 (UTC)
+	 Mime-Version:Content-Type; b=ijfuhvrGXHN2Jd8mCVgJPmuqmei87E60OKqSfIe9Pvzpwm+6MMtd8WR0i0/6gn9hEzZE9EmoyK1K9+60db6hPXSE6C3cEmHJ5BQMe89NfLEepg+yOb5Hbts2ZaRVpkJMl35iiUBntH06jYY0NtzaF9P9AQ5HYODebnlQcmVobdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hRggnWBP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A869C32786;
+	Tue,  6 Aug 2024 22:41:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1722983989;
-	bh=jJmEId4R3kd51IiNhFHMyrGgMqYmLtP9jg6gv8iF2/8=;
+	s=korg; t=1722984073;
+	bh=44UEzDHataWzJNxXj0NImaWdiAbe9/ovmeNH4HvCabs=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZRMda+aDNhZBB7biIqVBaqsKAzmfTdkIf1Yoa2TeLrWVE6ulp7wdRlaFWo7ZRf1Zj
-	 VNgrxBVr3tOGrBYX50Qjj5m51QBm5QtwAjWjsjmo6WD918JPcbJK7JK4wc3Lo1xb9o
-	 JMFhe1OqgXmwYNJy7gUjEyTsyGADGodHs4iBcnYQ=
-Date: Tue, 6 Aug 2024 15:39:47 -0700
+	b=hRggnWBPgkNoW1K37OI5faFQqCdyE+EP+Tao3S28QE29rmRh3X0D2NsdoaPKTORwp
+	 E51Gyzt5uTU7XY7TPQaRPyYYrOKFZhUDzpDQgS6a8ewBmTP1JEi6e6i9l8r1R4AsKa
+	 PuyywCpdQDVLDtd/gCRTdRFX3mk5stkSE7yYLI7s=
+Date: Tue, 6 Aug 2024 15:41:12 -0700
 From: Andrew Morton <akpm@linux-foundation.org>
 To: Barry Song <21cnbao@gmail.com>
-Cc: zhiguojiang <justinjiang@vivo.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Nick Piggin
- <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann
- <arnd@arndb.de>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko
- <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, Shakeel
- Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
- linux-arch@vger.kernel.org, cgroups@vger.kernel.org, kernel test robot
- <lkp@intel.com>, opensource.kernel@vivo.com
-Subject: Re: [PATCH v2 0/3] mm: tlb swap entries batch async release
-Message-Id: <20240806153947.1af20ffccfb42f1e8d981d6f@linux-foundation.org>
-In-Reply-To: <CAGsJ_4x1tLEmRFbnUYcNYtV73SyBYpBtAx_syjfcnjrom-R+4w@mail.gmail.com>
-References: <20240731133318.527-1-justinjiang@vivo.com>
-	<20240731091715.b78969467c002fa3a120e034@linux-foundation.org>
-	<dbead7ca-e9a4-4ee8-9247-4e1ba9f6695c@vivo.com>
-	<20240806133823.5cb3f27ef30c42dad5d0c3e8@linux-foundation.org>
-	<CAGsJ_4x1tLEmRFbnUYcNYtV73SyBYpBtAx_syjfcnjrom-R+4w@mail.gmail.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, Kairui
+ Song <kasong@tencent.com>, Chris Li <chrisl@kernel.org>, "Huang, Ying"
+ <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>, Kalesh Singh
+ <kaleshsingh@google.com>, Ryan Roberts <ryan.roberts@arm.com>
+Subject: Re: [PATCH] mm: attempt to batch free swap entries for
+ zap_pte_range()
+Message-Id: <20240806154112.5d6e63b527c3a9501ef5a851@linux-foundation.org>
+In-Reply-To: <CAGsJ_4xR949nPauJ4kZpcg3cRwvcrHHWU7oSazpfGR2Tv5XNTA@mail.gmail.com>
+References: <20240806012409.61962-1-21cnbao@gmail.com>
+	<1e6bcaf2-7c48-4be0-b101-ec2ddc4098ce@redhat.com>
+	<CAGsJ_4xR949nPauJ4kZpcg3cRwvcrHHWU7oSazpfGR2Tv5XNTA@mail.gmail.com>
 X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -67,33 +62,14 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed, 7 Aug 2024 04:32:09 +0800 Barry Song <21cnbao@gmail.com> wrote:
+On Wed, 7 Aug 2024 04:44:44 +0800 Barry Song <21cnbao@gmail.com> wrote:
 
-> > > their independent mm, rather than parent and child processes share the
-> > > same mm. Therefore, when the kernel executes multiple exiting process
-> > > simultaneously, they will definitely occupy multiple CPU core resources
-> > > to complete it.
+> > > +static bool try_batch_swap_entries_free(struct swap_info_struct *p,
 > >
-> > What I'm asking is why not change those userspace processes so that they
-> > fork off a child process which shares the MM (shared mm_struct) and
-> > then the original process exits, leaving the asynchronously-running
-> > child to clean up the MM resources.
+> > Why call it "p" here and not "si" like in the other code you are touching?
 > 
-> Not Zhiguo. From my perspective as a phone engineer, this issue isn't related
-> to the parent-child process or the wait() function. Phones rely heavily on
-> mechanisms similar to the OOM killer to function efficiently. For instance,
-> if you're using apps like YouTube, TikTok, and Facebook, and then you
-> open the camera app to take a photo, the camera app becomes the foreground
-> process and demands a lot of memory. In this scenario, the phone might
-> decide to terminate the most memory-consuming and less important apps,
-> such as TikTok or YouTube, to free up memory for the camera app. TikTok
-> and YouTube become less important because they are no longer occupying
-> the phone's screen and have moved to the background. The faster TikTok
-> and YouTube can be unmapped, the quicker the camera app can launch,
-> enhancing the user experience.
+> that is because I found other _free_ functions are all using "p":
 
-I don't see how this relates to my question.
-
-Userspace can arrange for these resources to be released in an
-asynchronous fashion (can't it?).  So why change the kernel to do that?
+`p' sucks.  "pointer to something".  It's just lazy.  In this context, "si"
+has meaning; lots of it.
 
