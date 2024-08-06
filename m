@@ -1,143 +1,181 @@
-Return-Path: <linux-kernel+bounces-276975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2275949A95
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:57:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B490949AA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8130028560D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:57:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EE5B1C227FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2E5170A0D;
-	Tue,  6 Aug 2024 21:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57195170A3A;
+	Tue,  6 Aug 2024 22:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hy1CVpcL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AXafEKAl"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8EE15EFA3;
-	Tue,  6 Aug 2024 21:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136F316F850;
+	Tue,  6 Aug 2024 22:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722981459; cv=none; b=i2ZGEDKSofYOYX/aJDtFiE4l9+79epYK7QKn4Eg9xG+HXEzO4EwqOeAAYxqQu8w+VtTr/JutpnJ2oZXdhM9AYfAy+lMHP8m71OUKU0FdoYuJL6wVxIi+ph/udj5sOXqV4p8K2c3tj7UlRmy+U8GC62a7fVdTGQFk7TpjA5kRWRA=
+	t=1722981608; cv=none; b=sCcnkSCiUvXgfHjd2hrcDgEoFanB+vXXyNU2BJ9zNvUh7B+NBmfd9zbulpXjizQiEvnyO4rjo4jxfdOeD/7NG41PcGfSW5yJNp+1NS4W0mBbA49aZuK+DhjNYkS3nxBzsXyVI+rkhosAGD2odcJCOlm4eRVGUEwNOxkHzyzsAMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722981459; c=relaxed/simple;
-	bh=84nFEi3lPc5MtIUXvtDAKc58M8EwB0jW2aEDiBALJW0=;
+	s=arc-20240116; t=1722981608; c=relaxed/simple;
+	bh=OwNLSN1W0J+6Dh8h5WKA9Oa1TE84Nv+86Y1dQJADOF8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hXw4U1YVqQu7KlwZ0zAcSWVRmLkhg8VrSotAscwV+TbKwquxtUy6e1a51f9+EPCE/Y2sD+FFxQu0bnq8k+G4zxXUcZXKiuXLP3xGX/KB5BDGyA0FtoQ0tWMu4XNDZBp/sruKvND+njlknfMKBUWsQyVBqyWNro7952Hfu8R60Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hy1CVpcL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8055C32786;
-	Tue,  6 Aug 2024 21:57:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722981459;
-	bh=84nFEi3lPc5MtIUXvtDAKc58M8EwB0jW2aEDiBALJW0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hy1CVpcLOjP9pAX4Rzl9wXim1Un1wmVYZ1A8I/tfA4QajFctZhlt14RVxdFC7GKTI
-	 oSBtuDkrYBKRVyR0QOa+5IlKEGZ/kUg4oN8GL/siyqHNBhWotmdrUldV7cvMjyBm+X
-	 qX+oVRugflPYe6tz0gyY54AmImIBGEnpwXrjZePIUbfbCsQOclCv7UPz984rUIJ0NR
-	 6Xzv9lhnLTwKpgOhmqO3CEXQbVkmAnMis/dq1KOgJlOXhBMonH1d5n+rKt57SH4nKR
-	 owjdEhAXg1Ksd+L2lj/EF2hf6DxbHj5BvzwmHHQ/XgYdhcU2iBNVus47xeI7+6Azc/
-	 VpS7xNqB6Iiqw==
-Date: Tue, 6 Aug 2024 22:57:30 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, jannh@google.com,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH RFT v7 9/9] selftests/clone3: Test shadow stack support
-Message-ID: <18c16157-f75b-4054-af80-d0fe696d7370@sirena.org.uk>
-References: <20240731-clone3-shadow-stack-v7-0-a9532eebfb1d@kernel.org>
- <20240731-clone3-shadow-stack-v7-9-a9532eebfb1d@kernel.org>
- <202408052046.00BC7CBC@keescook>
- <b172c2c1-42d3-4c50-8065-9bd4ae21ffea@sirena.org.uk>
- <202408061434.1B746423@keescook>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZysKZfXDpvrpAFhxlg5VmG/sdA4tzwWtV4yfvH7wB1CJfQmIAx6EimG9hlQVVDAqAo0r0CjAUnmJVoCrnKxaokh7wbvIvTXJ+oKON0tSB3ZbnsLdNSXNpt1gM+0qXGBWiWQScMxsSIpbtrGlrKdfoM3kut2vdWBvsARJW/CjhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AXafEKAl; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fd70ba6a15so9089255ad.0;
+        Tue, 06 Aug 2024 15:00:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722981606; x=1723586406; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/50Kbw9qcagQY5OojgELJFLSQm6KtoCpbcMKlofWHNk=;
+        b=AXafEKAlVlWmksIM88AV2AGeofTSXnIhNaFFHjWCPSNbdxqcozeNCYU+rPLT1nMt+L
+         DfrHoyI87Iuu6d8770uNK1sr1syBsCiXqit0iNV0B/adCmdrDN2zOokpWKxmuFeAHyIX
+         z7SulVK7mtjZRg8razn7DURoqxhTymNTmGYeYtSCNoxNCYXO7ZxoM6nYKBBugSbXVM2Y
+         r4h1XRFhvsL8fqPHt773kQm0so2kJpGBccO0yky5mFKJiHITy/rfDNmyKd1Y35N0m9Ko
+         nR3gz2Fh5YaAH0y4EM1svqvxdR7v3+VGG/3E9+2vHJyc2JbneT9PCWx7JpJkYMOv2HnG
+         OxEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722981606; x=1723586406;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/50Kbw9qcagQY5OojgELJFLSQm6KtoCpbcMKlofWHNk=;
+        b=Cy1sK/FtxFM5Gy0MhaTkucOTSUh0j9DpiFq+crgwiIhEYvSXLK2GZDwbjqASIhV0q8
+         UE2pxr77wRtIHjt3BzHDtRBGtb9PYawR8T1WeBPDv0apfEGlEIsMn3hY8s9NHY1i4iSS
+         LaMDQ7GZUvqhT9Gg4uB+IDjbXX1TjewSPLlkoZC15oN6t7358EWejF+436BATkPZQjaT
+         UQRhoZH7TbJiuZEO+zGLIzpA6IWmOvkVlmtHY4yvtuWBjgmzaInYC58vrVe+8WYUgdf/
+         k5iuUx8flcA2FRLwyEIC4Cd6DpvP4j16vhyzXGMrAAafPptPrDpCCuCAW9K/zY0agdX5
+         zDbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWbNWqpJRpTvgQ7APanVbv7eUfQAxY7Is6rzKE14ZjgOv6CyP7YEXujlqZXbWPVzqkNgnXIMIU3GJYEwFIZiDb/rV7llaeXRIrRIFD6Nh6sRUfJPFKJUfcxG1p+WIbS8Wi34TPCWAJWEAZoKcfM++VMPnS+56R8vet3N7LbKbcZ5h8VrFpxXNUtWui
+X-Gm-Message-State: AOJu0YzPHUoF0hR8V5hURMtbDoUqCeUsHQPBoBsYcMFOLb6qHB6qT+dO
+	mVUX034c0Q3OeaL4gqoDGFiANLWLtIP+i/DKCxbezrQsqZJ1Gj0xA5vX7M6T
+X-Google-Smtp-Source: AGHT+IHXa+LRVRm/C57MqrYOQ/Vf3v239GPhpPLFEDgIDJ84hO19cKAzIjegusu4uADCXlVAQQ3Wmg==
+X-Received: by 2002:a17:902:f68f:b0:1fc:6b8b:4918 with SMTP id d9443c01a7336-1ff573bfcacmr172334305ad.41.1722981606141;
+        Tue, 06 Aug 2024 15:00:06 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200775d1b92sm20453155ad.77.2024.08.06.15.00.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 15:00:05 -0700 (PDT)
+Date: Tue, 6 Aug 2024 16:00:02 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: Jann Horn <jannh@google.com>
+Cc: outreachy@lists.linux.dev, mic@digikod.net, gnoack@google.com,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bjorn3_gh@protonmail.com, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] Landlock: Add signal control
+Message-ID: <ZrKc4i1PhdMwA77h@tahera-OptiPlex-5000>
+References: <cover.1722966592.git.fahimitahera@gmail.com>
+ <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
+ <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NIL+RWQAsqNaoQw8"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <202408061434.1B746423@keescook>
-X-Cookie: One picture is worth 128K words.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
 
+On Tue, Aug 06, 2024 at 08:56:15PM +0200, Jann Horn wrote:
+> On Tue, Aug 6, 2024 at 8:11 PM Tahera Fahimi <fahimitahera@gmail.com> wrote:
+> > Currently, a sandbox process is not restricted to send a signal
+> > (e.g. SIGKILL) to a process outside of the sandbox environment.
+> > Ability to sending a signal for a sandboxed process should be
+> > scoped the same way abstract unix sockets are scoped. Therefore,
+> > we extend "scoped" field in a ruleset with
+> > "LANDLOCK_SCOPED_SIGNAL" to specify that a ruleset will deny
+> > sending any signal from within a sandbox process to its
+> > parent(i.e. any parent sandbox or non-sandboxed procsses).
+> [...]
+> > diff --git a/security/landlock/task.c b/security/landlock/task.c
+> > index 7e8579ebae83..a73cff27bb91 100644
+> > --- a/security/landlock/task.c
+> > +++ b/security/landlock/task.c
+> > @@ -261,11 +261,54 @@ static int hook_unix_may_send(struct socket *const sock,
+> >         return -EPERM;
+> >  }
+> >
+> > +static int hook_task_kill(struct task_struct *const p,
+> > +                         struct kernel_siginfo *const info, const int sig,
+> > +                         const struct cred *const cred)
+> > +{
+> > +       bool is_scoped;
+> > +       const struct landlock_ruleset *target_dom;
+> > +
+> > +       /* rcu is already locked */
+> > +       target_dom = landlock_get_task_domain(p);
+> > +       if (cred)
+> > +               /* dealing with USB IO */
+> > +               is_scoped = domain_IPC_scope(landlock_cred(cred)->domain,
+> > +                                            target_dom,
+> > +                                            LANDLOCK_SCOPED_SIGNAL);
+> > +       else
+> > +               is_scoped = domain_IPC_scope(landlock_get_current_domain(),
+> > +                                            target_dom,
+> > +                                            LANDLOCK_SCOPED_SIGNAL);
+> 
+> This might be a bit more concise if you turn it into something like:
+> 
+> /* only USB IO supplies creds */
+> cred = cred ?: current_cred();
+> is_scoped = domain_IPC_scope(landlock_cred(cred)->domain,
+>     target_dom, LANDLOCK_SCOPED_SIGNAL);
+> 
+> but that's just a question of style, feel free to keep it as-is
+> depending on what you prefer.
+Hi Jann,
+Thanks for the feedback:)
+> > +       if (is_scoped)
+> > +               return 0;
+> > +
+> > +       return -EPERM;
+> > +}
+> > +
+> > +static int hook_file_send_sigiotask(struct task_struct *tsk,
+> > +                                   struct fown_struct *fown, int signum)
+> > +{
+> > +       bool is_scoped;
+> > +       const struct landlock_ruleset *dom, *target_dom;
+> > +       struct task_struct *result = get_pid_task(fown->pid, fown->pid_type);
+> 
+> I'm not an expert on how the fowner stuff works, but I think this will
+> probably give you "result = NULL" if the file owner PID has already
+> exited, and then the following landlock_get_task_domain() would
+> probably crash? But I'm not entirely sure about how this works.
+I considered since the file structure can always be obtained, then the
+file owner PID always exist. I can check if we can use the credentials
+stored in struct file instead.
 
---NIL+RWQAsqNaoQw8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Aug 06, 2024 at 02:43:22PM -0700, Kees Cook wrote:
-> On Tue, Aug 06, 2024 at 09:10:28PM +0100, Mark Brown wrote:
-
-> > Does this help:
-
-> > diff --git a/arch/x86/kernel/shstk.c b/arch/x86/kernel/shstk.c
-> > index 1755fa21e6fb..27acbdf44c5f 100644
-> > --- a/arch/x86/kernel/shstk.c
-> > +++ b/arch/x86/kernel/shstk.c
-> > @@ -198,13 +198,14 @@ int arch_shstk_post_fork(struct task_struct *t, struct kernel_clone_args *args)
-> >  	 * the token 64-bit.
-> >  	 */
-> >  	struct mm_struct *mm;
-> > -	unsigned long addr;
-> > +	unsigned long addr, ssp;
-
-> Yes indeed! This passes now.
-
-Ah, great - thanks!
-
-> "Shadow stack with no token" still crashes the parent. It seems to
-> crash in waitpid(). Under gdb it hangs instead, showing it's in glibc's
-> __GI___wait4(). Ah, it's crashing at c3 (ret), so shadow stack problem,
-> I imagine.
-
-Yes, likely.  They are delivered as a SEGV with SEGV_CPERR.
-
-> Does waitpid() need to be open-coded like the clone3() call too?
-
-I wouldn't have expected so, it should just be a function call and
-definitely didn't do anything funky on arm64.  It seems more likely that
-we've managed to corrupt the stack or shadow stack - most likely the new
-thread is still using the original shadow stack rather than the new one
-and so corrupts it.  Again not immediately seeing where.  I'll have
-another look tomorrow if nobody has any bright ideas before then...
-
---NIL+RWQAsqNaoQw8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaynEkACgkQJNaLcl1U
-h9Cy+gf+LU5NjrTScUyyiJIODUpW/v7Apv1f6RaV/m1ggpX3HMfNB9zB0ogLNcsh
-PVUJYEmjd6pV5sJPIRYMyjRsW01QCh2EO2Q0wAYFdq9+7oEsSFzJrEkQkbB7NGXf
-9USwXJHvjnSjI+N/Dp54Ji4E2RY25cJ9A8pLM6p7wzTudNZDvjhlnKorX9YbGxNQ
-lKVyi9Z1tkTIEW7QQSJiBSi1PsPwkdTpuXibrf2sAZ+PrFhcuFQVdDLsI82bFjGw
-tLIRZSjJwMZAOfRUBSfymvJsYp7NXzOPefBCIL4vxmz6a2HkL6IdAuD2nYvFA1A/
-vUAnzgotryebFAiVS/K3F4o6QSV1PQ==
-=ER/S
------END PGP SIGNATURE-----
-
---NIL+RWQAsqNaoQw8--
+> I think the intended way to use this hook would be to instead use the
+> "file_set_fowner" hook to record the owning domain (though the setup
+> for that is going to be kind of a pain...), see the Smack and SELinux
+> definitions of that hook. Or alternatively maybe it would be even
+> nicer to change the fown_struct to record a cred* instead of a uid and
+> euid and then use the domain from those credentials for this hook...
+> I'm not sure which of those would be easier.
+Because Landlock does not use any security blob for this purpose, I am
+not sure how to record the owner's doamin.
+The alternative way looks nice.
+> > +       /* rcu is already locked! */
+> > +       dom = landlock_get_task_domain(result);
+> > +       target_dom = landlock_get_task_domain(tsk);
+> > +       is_scoped = domain_IPC_scope(dom, target_dom, LANDLOCK_SCOPED_SIGNAL);
+> > +       put_task_struct(result);
+> > +       if (is_scoped)
+> > +               return 0;
+> > +       return -EPERM;
+> > +}
 
