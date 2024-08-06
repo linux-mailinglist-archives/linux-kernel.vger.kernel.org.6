@@ -1,69 +1,208 @@
-Return-Path: <linux-kernel+bounces-275559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C08D994872E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:02:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A7F948737
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B1B71F23888
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:02:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B63280F5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48851C2E9;
-	Tue,  6 Aug 2024 02:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762F2B665;
+	Tue,  6 Aug 2024 02:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="JXGfDxgh"
-Received: from mail-40135.protonmail.ch (mail-40135.protonmail.ch [185.70.40.135])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oPd53QJP"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B1DB65C
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AA236D
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722909741; cv=none; b=CU9CQhJQZhIkIh0ZpTtSu2gZkiQF+NyY7n2HVGaCaIzDpd1TlhIhE2vRZ62x0XvArSPS1Flvxad29DuOSGFA8oI57crlrHV6jLkpEeRqdrLSUiIwL/r3agNqMDQG0rurngwOx7fM4KIiBqCRLAoqt6lpSYgJsC/cabJIzTotJsI=
+	t=1722909888; cv=none; b=cTEOv7Ve3EbkCPiygP2nRe5lLlYthyXN5TAcTSxMdvyA5EVeVzDGj4xhGkThhx9wnEaCcyd48vvJCzSyzBXUHpGM+WG3S21Cqp8LACZJYvvz42VoNSMC9KA4a4nqYl2Sbam4qeZ8y1/8RXdr3nkAQmABMEddOUJfF1xyZEhEKS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722909741; c=relaxed/simple;
-	bh=etTwG97BDmpG0wRgq6Sl/c7ED7dV6g9senIVyhSWI8A=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z6isNNQQ0ZuANN2svE3KHvLnftnFzXLoSV4RDrHlCX4DH0+oqlaOQJVBb5rJrKyFXsHzRqB4fiSKmSTYsPHFOza4K3Xfr/udmjy85SCQSSOe54SMbYPXw7n2uZ2XTQJ6e5DfltWv2GP2qnSWRwzUF5LDZxjSo070uhYa7PRzanM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=JXGfDxgh; arc=none smtp.client-ip=185.70.40.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1722909731; x=1723168931;
-	bh=etTwG97BDmpG0wRgq6Sl/c7ED7dV6g9senIVyhSWI8A=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=JXGfDxghlO8z9gOXaWnp0G0alZS4VmAnc+BKQlngCzCXzYRlObFhwp5GOLWxCN6cJ
-	 ID41FEjsXUmBNCvpfDWXdZr39/oNZvtLNvbMGHa610CEZcrwYVCwlda+tJXkSKuQ2x
-	 BQY/39bQkMiMEQTCqdZMMzj7VxeAbPp6YPwoUafl/dnzEltvhAYze+309G7ov3/quX
-	 y8NgdFUnhBJeCjPzZRIPaKyYUzzYrs/iAiDIQEWVKRXaoAm8cwIAeGKl6Lf2pSDELX
-	 AaYkG2XSGudJyaYfd0xFSGuaL+mlCm3V3zto05KIvQBlSRFTTfwhxgR/+su/YpDIWm
-	 xMAoJY7MEGvRg==
-Date: Tue, 06 Aug 2024 02:02:05 +0000
-To: Thomas Gleixner <tglx@linutronix.de>
-From: Koakuma <koachan@protonmail.com>
-Cc: Koakuma via B4 Relay <devnull+koachan.protonmail.com@kernel.org>, "David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] sparc/vdso: Add helper function for 64-bit right shift on 32-bit target
-Message-ID: <w1fb5rPVjG8-NhVeqDTLxIpkRivcIPd0kDgm0bUQGGxXaVpPABsOAZ0-AHoRKL5O1M1T5MpBJqMdoQIjDh6QgzNuq4R7__RxDdVuVo4pbZA=@protonmail.com>
-In-Reply-To: <87y15c5c9u.ffs@tglx>
-References: <20240804-sparc-shr64-v1-1-25050968339a@protonmail.com> <871q3470nn.ffs@tglx> <Y5IejvnMTMbzucl5EK4C9ptWTnkPJlPJVKyCj1L1o2_2GPbmY5GZ55bKckWzKATaZcFF9SLCcvI4EMOhG3sifxCgEtkSdV2KDhv5jRBy9wk=@protonmail.com> <87y15c5c9u.ffs@tglx>
-Feedback-ID: 6608610:user:proton
-X-Pm-Message-ID: dcb32736b7faa89f63e46125b46248e62104a25c
+	s=arc-20240116; t=1722909888; c=relaxed/simple;
+	bh=iPlTmklNFO8quaKBrw9Ux98RUrKz2LJF8gWS8xbcp68=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=X50L71gsxjee4YapJAKTcdY0fy5nOcrwao5SFXlBxzKVUQhyxvNoKdSnVo+u2U+7EycoZZzyFN1MMlv7Madpm8Ls7qPzP2TJMJTzidNCBwitTUkdUEcWrRYHWeatRehiGVAK8QkyL8iTjf/G8HAZYIdXRZQnaEUyV9lzmuvETXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oPd53QJP; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240806020443epoutp03936e160d57a106c48aa379b932d97295~pAWkbH_bX0377803778epoutp03K
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:04:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240806020443epoutp03936e160d57a106c48aa379b932d97295~pAWkbH_bX0377803778epoutp03K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722909883;
+	bh=mjOFdIZ4+oy6JbxVkZV/Ap2mouHD6+CoUeSjtJBrFiw=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=oPd53QJPZMT6buzq16AmFNfu2o2M8LDQXDwhOzgL9QciIiGZhY9HgULgPTW47LMQ2
+	 yetO+VhZRO8a+pDA8NVC7HaFOTxyMnhX+M93tfsaVY73Ih8aws2IEtWe/h/OPUh+f+
+	 Js5hZrrroAIHArkZkpAKelED8UxxnC9kwHdu+2+k=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20240806020443epcas2p3239ab413790b8da21fef2d8eca095d18~pAWkL2EiF1427714277epcas2p3Q;
+	Tue,  6 Aug 2024 02:04:43 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.70]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4WdGpL23C1z4x9QD; Tue,  6 Aug
+	2024 02:04:42 +0000 (GMT)
+X-AuditID: b6c32a45-ffffa700000028bf-fa-66b184b97311
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	AC.87.10431.9B481B66; Tue,  6 Aug 2024 11:04:41 +0900 (KST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Subject: RE: [PATCH v2 1/2] scsi: ufs: Prepare to add HCI capabilities sysfs
+Reply-To: keosung.park@samsung.com
+Sender: Keoseong Park <keosung.park@samsung.com>
+From: Keoseong Park <keosung.park@samsung.com>
+To: Avri Altman <avri.altman@wdc.com>, "Martin K . Petersen"
+	<martin.petersen@oracle.com>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bart Van
+	Assche <bvanassche@acm.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20240804072109.2330880-2-avri.altman@wdc.com>
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20240806020441epcms2p177c881111c1a427c33dcddcc9942d790@epcms2p1>
+Date: Tue, 06 Aug 2024 11:04:41 +0900
+X-CMS-MailID: 20240806020441epcms2p177c881111c1a427c33dcddcc9942d790
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdljTVHdny8Y0g5kbFCxe/rzKZjHtw09m
+	i5eHNC0e3X7GaHF51xw2i+7rO9gslh//x+TA7nH5irfHx6e3WDz6tqxi9Pi8Sc6j/UA3UwBr
+	VLZNRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtARSgpl
+	iTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwC8wK94sTc4tK8dL281BIrQwMDI1OgwoTs
+	jA2X9jIXrBKvuDOpmamB8atQFyMnh4SAicTP3zPYQWwhgR2MEssOeXcxcnDwCghK/N0hDBIW
+	FvCRuLtmHzNEiZJE18KtzBBxA4l10/eA2WwCehJTft9hBLFFBKIljs7bDWRzcTALLGOU+Nh/
+	ngViF6/EjPanULa0xPblWxlBdnEKWEusm8UNEdaQ+LGslxnCFpW4ufotO4z9/th8RghbRKL1
+	3lmoGkGJBz93Q8UlJM59WAg1vl6i9f0pdpAbJAQmMEo0HvsDNUhf4lrHRrAiXgFfiedP3rOC
+	2CwCqhJHpnyCqnGRmDF7C9gCZgF5ie1v5zCD3MksoCmxfpc+iCkhoCxx5BYLRAWfRMfhv+ww
+	HzZs/I2VvWPeEyYIW03i0YItrBMYlWchAnoWkl2zEHYtYGRexSiWWlCcm55abFRgCI/a5Pzc
+	TYzg1KjluoNx8tsPeocYmTgYDzFKcDArifB2lW5IE+JNSaysSi3Kjy8qzUktPsRoCvTlRGYp
+	0eR8YHLOK4k3NLE0MDEzMzQ3MjUwVxLnvdc6N0VIID2xJDU7NbUgtQimj4mDU6qBqdExbXmt
+	tK2nesjp1PUhFnx1q5lDHT89/PyG1e14uSbr61fSPma+pQre51j+NOSprGgwqz12teK+0X7m
+	6ucH6r79NKq4GJ9bmKC0PUvodGQSW+alh24cS88snKkXZrO5sH5r3Sbjv5P6V1TZPjE+8E/D
+	dtbF02VW+m+EUw6s6uDYdO/rtdUBz38esJw3uyl2ww2tMAGdqXLW1zVj7HdqmLYu/vD4o6pm
+	kXnlGpc3X4K3Oe5l/S0eezPxv3rZBddLirUW52fZzVx7hP9IqUrC46ffi84dW6iZuyLec4HQ
+	mRDdzwUOO+49L2bdNU8ySHyCwiNxwfxrek3tv88smPBmjY5074b3D2x2Lg+ZxGL0X4mlOCPR
+	UIu5qDgRAFOeeWgWBAAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240804072309epcas2p2309ebc15f20ca598a91fe30a3245200f
+References: <20240804072109.2330880-2-avri.altman@wdc.com>
+	<20240804072109.2330880-1-avri.altman@wdc.com>
+	<CGME20240804072309epcas2p2309ebc15f20ca598a91fe30a3245200f@epcms2p1>
 
-Thomas Gleixner <tglx@linutronix.de> wrote:
-> I think so as sparc is having it's own VDSO implementation and does not
-> use the generic one.
+Hi Avri,
 
-Understood. Lemme move the function to sparc code then.
+> Prepare so we'll be able to read various other HCI registers.
+> While at it, fix the HCPID & HCMID register names to stand for what they
+> really are. Also replace the pm_runtime_{get/put}_sync() calls in
+> auto_hibern8_show to ufshcd_rpm_{get/put}_sync() as any host controller
+> register reads should.
+> 
+> Signed-off-by: Avri Altman <avri.altman@wdc.com>
+> ---
+>  drivers/ufs/core/ufs-sysfs.c | 38 +++++++++++++++++++++---------------
+>  include/ufs/ufshci.h         |  5 +++--
+>  2 files changed, 25 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
+> index e80a32421a8c..dec7746c98e0 100644
+> --- a/drivers/ufs/core/ufs-sysfs.c
+> +++ b/drivers/ufs/core/ufs-sysfs.c
+> @@ -198,6 +198,24 @@ static u32 ufshcd_us_to_ahit(unsigned int timer)
+>  	       FIELD_PREP(UFSHCI_AHIBERN8_SCALE_MASK, scale);
+>  }
+>  
+> +static int ufshcd_read_hci_reg(struct ufs_hba *hba, u32 *val, unsigned int reg)
+> +{
+> +	down(&hba->host_sem);
+> +	if (!ufshcd_is_user_access_allowed(hba)) {
+> +		up(&hba->host_sem);
+> +		return -EBUSY;
+> +	}
+> +
+> +	ufshcd_rpm_get_sync(hba);
+> +	ufshcd_hold(hba);
+> +	*val = ufshcd_readl(hba, reg);
+> +	ufshcd_release(hba);
+> +	ufshcd_rpm_put_sync(hba);
+> +
+> +	up(&hba->host_sem);
+> +	return 0;
+> +}
+> +
+>  static ssize_t auto_hibern8_show(struct device *dev,
+>  				 struct device_attribute *attr, char *buf)
+>  {
+> @@ -208,23 +226,11 @@ static ssize_t auto_hibern8_show(struct device *dev,
+>  	if (!ufshcd_is_auto_hibern8_supported(hba))
+>  		return -EOPNOTSUPP;
+>  
+> -	down(&hba->host_sem);
+> -	if (!ufshcd_is_user_access_allowed(hba)) {
+> -		ret = -EBUSY;
+> -		goto out;
+> -	}
+> -
+> -	pm_runtime_get_sync(hba->dev);
+> -	ufshcd_hold(hba);
+> -	ahit = ufshcd_readl(hba, REG_AUTO_HIBERNATE_IDLE_TIMER);
+> -	ufshcd_release(hba);
+> -	pm_runtime_put_sync(hba->dev);
+> -
+> -	ret = sysfs_emit(buf, "%d\n", ufshcd_ahit_to_us(ahit));
+> +	ret = ufshcd_read_hci_reg(hba, &ahit, REG_AUTO_HIBERNATE_IDLE_TIMER);
+> +	if (ret)
+> +		return ret;
+>  
+> -out:
+> -	up(&hba->host_sem);
+> -	return ret;
+> +	return sysfs_emit(buf, "%d\n", ufshcd_ahit_to_us(ahit));
+>  }
+>  
+>  static ssize_t auto_hibern8_store(struct device *dev,
+> diff --git a/include/ufs/ufshci.h b/include/ufs/ufshci.h
+> index 38fe97971a65..194e3655902e 100644
+> --- a/include/ufs/ufshci.h
+> +++ b/include/ufs/ufshci.h
+> @@ -25,8 +25,9 @@ enum {
+>  	REG_CONTROLLER_CAPABILITIES		= 0x00,
+>  	REG_MCQCAP				= 0x04,
+>  	REG_UFS_VERSION				= 0x08,
+> -	REG_CONTROLLER_DEV_ID			= 0x10,
+> -	REG_CONTROLLER_PROD_ID			= 0x14,
+> +	REG_EXT_CONTROLLER_CAPABILITIES		= 0x0C,
+> +	REG_CONTROLLER_PID			= 0x10,
+> +	REG_CONTROLLER_MID			= 0x14,
+>  	REG_AUTO_HIBERNATE_IDLE_TIMER		= 0x18,
+>  	REG_INTERRUPT_STATUS			= 0x20,
+>  	REG_INTERRUPT_ENABLE			= 0x24,
+> -- 
+> 2.25.1
+
+Looks good to me.
+
+Reviewed-by: Keoseong Park <keosung.park@samsung.com>
+
+Best Regards,
+Keoseong
 
