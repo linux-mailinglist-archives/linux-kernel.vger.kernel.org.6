@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-276933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4DB949A2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:29:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D708A949A2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929971C21CD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:29:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80FBC1F260A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9E7170A1C;
-	Tue,  6 Aug 2024 21:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC0F1741EF;
+	Tue,  6 Aug 2024 21:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGxK3eUj"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nCTbrazH"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6643316F84A
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 21:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D153171079
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 21:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722979739; cv=none; b=NK3ZQ1h5x10HofBP/vcyUx8nKMWJssUVo8qv0CI8hvvoG693dBtZg9fokuCtklU6kGfoqHu3SyUqnIsV+n6DbenQWSvmqZjEtVfilwQxe73L756n3NkSn9eQNmDeb36mrhP/PjTuW5V/GCkp7FwsxR8YZefhOf9Rk9ck5EqU6O8=
+	t=1722979739; cv=none; b=nAnjQJK3j4GgVSiJSxODYitBWJeX0gXv4822LbnBba7G82XF3ysk85xNlPwwGI6rajNQRII5GjAmYRfdrstYd28liAoCB7ueiDoLkOBw7gasmN0oz+B7+7Uw2YR8bQGFItJHa1H/fRPwXnYw42PpZWX/Kfo4w076Ph5Oe+4n+O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722979739; c=relaxed/simple;
-	bh=v4B/SCbHPpbPlEcxgqBZ7deqT9TH2TdBcorYleNkT6g=;
+	bh=NbOvkFUQVBBahWt/DJiJRCzZdNMiMtEwOXOBbIuIPh4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FT1WtvshZLKVAdUO/aTmM3p93a2BAMK1T6AiiFPxtFuXfKPaaP2ykG1ZSnuyiV7y0aub+u2dxwIexmOpFrSWCEZfJhn0CMItLrdwp8GkwP7zLx56A8jGYKHbbVetb1wD3gSGDsgH4RPeYfZDkQeW4Qj8GZUNN7METz9kFxPuKRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGxK3eUj; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version; b=D1YK1ScfZULdmH/v4cn07EIAiuu7hioKRwLopwqB/P/zd6AGvJyfvXL8k7g/b5rSPOQ9tPXRfUsKJ4GpGJTTmYT5ry6PS1Fe1CW9SjJ9ysr69UzvtLRe9Q/zpEYmAoavo3ei2rZDbtvsw12MJKLO1iuRjy/ZQP0rjDWH1viv9x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nCTbrazH; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4281ca54fd3so7421955e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 14:28:57 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-368526b1333so156719f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 14:28:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722979736; x=1723584536; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722979737; x=1723584537; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7yM1YbCcZNsiuGnwCjfcKYS7TLfeIBdj72FSrCE3wH8=;
-        b=CGxK3eUjr2iAMU39BiW5jUblPce6s6fHrtD/wpq2bk30Dcztu09uc7U5WD/1QYZ4U7
-         9TZYhh8HHHrIS25Q53YB8vgoro/nxFhzxHV5bUDt4pMkeK+KHerpSinQ6KnXhPCx9WU0
-         Ub0OuACorIBECxQOOGScK+TosLlZybXZzsPvfvK7/VuWUrbmoooXrww2NftvWgWUTKLy
-         JsmcRQZDwDeRy3uiVdNDBeHkeon6GYVCYbNuJ7Hf2og2rEqk1BNxXyh7KYeBz1EpEzSz
-         ipd4dii32Yyj7lyhTYIkslqQyAb9Bi3wxgqXZL5Erpj4YkdFoPVxccyp+qXWsoddzAhN
-         Afhg==
+        bh=udsLDmPzjgpkWsx7RYjGnyjlum6MBZ044D+jLhSjl94=;
+        b=nCTbrazHItJuHBhJL9tSCbcg2bZceaFhJaEKROnv0i+IwWVv8ZuK9Oy2zbV+ls5WEX
+         QYkYgBAcfowHiAarqPuJcEeYSIE5vnjGaSINQYDU13aJxBWhuIyNqJL7YuCt+clalL8J
+         N78lzeSuhwpQyQQRDfk+Xd9fJZUnOinzOowzfTgxfcEk05dQd0fCpmQxhcdw807TJsFT
+         LbS6P1YbAt2KUOSVi8LgNwgyEIthssZ26fCA9ccWEJdW/yh7wxw9V0PfmBZubCFLQgVo
+         NRRCrTTZSKdwRd2M3B/GwidshjQhKp6BkAgsyCkOsmG8M1TGvkJUMwH3eqVq9q4Nqj5p
+         q/mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722979736; x=1723584536;
+        d=1e100.net; s=20230601; t=1722979737; x=1723584537;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7yM1YbCcZNsiuGnwCjfcKYS7TLfeIBdj72FSrCE3wH8=;
-        b=GqIo9Ltnltl2+oFjYTbiXExCEat6yIGvkAnUBFCc0OEISJt0GW0lAmJR7uNOiAb0Wr
-         zB2tN2pnnOY/g6oitmtL4Ni+822h6QcraFPFERuj8stysbOJC9e0fVLUEcY8KQmrOW9W
-         7uJI/5yp7lDr1UMTxordAK6zB5xcRW8OA4ZEnRE3VHPLa/BRl2x/Bh4ZOFTuQ+EiXNme
-         1sx8yE+jrI0V9EAVWwSGXsWvWAwp1vUz1SeCnhxs8sRfH2a2d3YQjxKvvgU4wybkcF9D
-         1xHQP5WID3XE+871YrMfdiUotxwpIh2KS2QDgpEnq8cuhFagIfzaM/5QIapJLHqCEMJc
-         ra8A==
-X-Forwarded-Encrypted: i=1; AJvYcCW44tHPlvJ+o1LOR+e15xu4aDV5KQayx9ilCbro2u5CH/qNByto/UBbW4tWrFdXzGet8dwarFCGmlEf6k1vQa+uHz+8MR00VvX1C0OF
-X-Gm-Message-State: AOJu0YySVpHVj7UnWcz+ezkcQkXK005OcaKebWlbOcSUoWCsg7g2jvQn
-	UlHcF/bPwcni2v3NbjrnIcnDu5xH3lPSL5hBz4/lielR8HfKc0No
-X-Google-Smtp-Source: AGHT+IFKF4Keu7U+7RmhvWeb9infuYn+flZVMPxZCRs2pmlb0q/OoQxxO6a7MebGMm65QOQXTqWjeA==
-X-Received: by 2002:a05:600c:468b:b0:427:ff3b:7a20 with SMTP id 5b1f17b1804b1-428e6b7cb7bmr115877715e9.27.1722979735307;
-        Tue, 06 Aug 2024 14:28:55 -0700 (PDT)
+        bh=udsLDmPzjgpkWsx7RYjGnyjlum6MBZ044D+jLhSjl94=;
+        b=TEYYpq7T6sOmtzCu3UMjd2KqquaCSsyKS5SnFx7Ycba/y73oMBy0bx+Qcp5b8cpVaN
+         XLxeeMyH0Eyw4N+vN0cvl4deRbByxXbr11/5S9iCRsTTIyFv3N1vV609dxKYQXSd0ayz
+         My2lyKBuJQeWiUeb+KW2tO1qbrvEfOIoFVr9oF6s1HLaU3TDA3k26lpMXL5RTpTWFP6G
+         xp7GQUz1qwbWGMbEQsu7aCGIm+h4valarU8tGqOiQqFVbxzIcAKl3+JS4L0qHiqyu1Hm
+         o/iDro/HnClzbRwq3jNNEf2p7GvjoWsPJnDDBMxcg7XK5ypjNEDJ4T4s/vo2ygikaMaK
+         ZqqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgjAAiRCllI7a6uT6wkueO3OvkMxJVU9AU9JkKwKtgZfPHIE7yroYHCeNrsu+KiGWjtfUrZX/XeKZ1ZNRw+PaIaPNyvPVi3e2m+Q4O
+X-Gm-Message-State: AOJu0Yy6mvSfnktcs5xxu1/Q1o5iiDcb/LxzF6bsfvuuGpvn6m8uo0RD
+	COd21aJBW/Kpy4sYv4jCkgrFeVcdbS6qdfNhAd+EHoIFBf/BAnWM
+X-Google-Smtp-Source: AGHT+IH55gHkDsQZoE6Cj0KH26OcQ4V5BoqgtaVjG59s6McB8ZiD52DbwBs2HllTYh2L9dYrKwKDHQ==
+X-Received: by 2002:a05:6000:1785:b0:366:eadc:573f with SMTP id ffacd0b85a97d-36bf0f6dfeamr78734f8f.27.1722979736421;
+        Tue, 06 Aug 2024 14:28:56 -0700 (PDT)
 Received: from PC-PEDRO-ARCH.lan ([2001:818:e92f:6400:96b:aa92:afc0:2d3d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290501f0d5sm1858545e9.31.2024.08.06.14.28.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290501f0d5sm1858545e9.31.2024.08.06.14.28.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 14:28:54 -0700 (PDT)
+        Tue, 06 Aug 2024 14:28:56 -0700 (PDT)
 From: Pedro Falcato <pedro.falcato@gmail.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
@@ -78,9 +78,9 @@ Cc: linux-mm@kvack.org,
 	jeffxu@google.com,
 	Michael Ellerman <mpe@ellerman.id.au>,
 	Pedro Falcato <pedro.falcato@gmail.com>
-Subject: [PATCH 4/7] mm/mremap: Replace can_modify_mm with can_modify_vma
-Date: Tue,  6 Aug 2024 22:28:05 +0100
-Message-ID: <20240806212808.1885309-5-pedro.falcato@gmail.com>
+Subject: [PATCH 5/7] mseal: Fix is_madv_discard()
+Date: Tue,  6 Aug 2024 22:28:06 +0100
+Message-ID: <20240806212808.1885309-6-pedro.falcato@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240806212808.1885309-1-pedro.falcato@gmail.com>
 References: <20240806212808.1885309-1-pedro.falcato@gmail.com>
@@ -92,84 +92,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Delegate all can_modify checks to the proper places. Unmap checks are
-done in do_unmap (et al).
+is_madv_discard did its check wrong. MADV_ flags are not bitwise,
+they're normal sequential numbers. So, for instance:
+	behavior & (/* ... */ | MADV_REMOVE)
 
-This patch allows for mremap partial failure in certain cases (for
-instance, when destination VMAs aren't sealed, but the source VMA is).
-It shouldn't be too troublesome, as you'd need to go out of your way to
-do illegal operations on a VMA.
+tagged both MADV_REMOVE and MADV_RANDOM (bit 0 set) as
+discard operations. This is obviously incorrect, so use
+a switch statement instead.
 
 Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
 ---
- mm/mremap.c | 33 +++++++--------------------------
- 1 file changed, 7 insertions(+), 26 deletions(-)
+ mm/mseal.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/mm/mremap.c b/mm/mremap.c
-index e7ae140fc64..8af877d7bb0 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -676,6 +676,9 @@ static unsigned long move_vma(struct vm_area_struct *vma,
- 	if (unlikely(flags & MREMAP_DONTUNMAP))
- 		to_account = new_len;
+diff --git a/mm/mseal.c b/mm/mseal.c
+index 4591ae8d29c..2170e2139ca 100644
+--- a/mm/mseal.c
++++ b/mm/mseal.c
+@@ -23,9 +23,17 @@ static inline void set_vma_sealed(struct vm_area_struct *vma)
  
-+	if (!can_modify_vma(vma))
-+		return -EPERM;
+ static bool is_madv_discard(int behavior)
+ {
+-	return	behavior &
+-		(MADV_FREE | MADV_DONTNEED | MADV_DONTNEED_LOCKED |
+-		 MADV_REMOVE | MADV_DONTFORK | MADV_WIPEONFORK);
++	switch (behavior) {
++	case MADV_FREE:
++	case MADV_DONTNEED:
++	case MADV_DONTNEED_LOCKED:
++	case MADV_REMOVE:
++	case MADV_DONTFORK:
++	case MADV_WIPEONFORK:
++		return true;
++	}
 +
- 	if (vma->vm_ops && vma->vm_ops->may_split) {
- 		if (vma->vm_start != old_addr)
- 			err = vma->vm_ops->may_split(vma, old_addr);
-@@ -821,6 +824,10 @@ static struct vm_area_struct *vma_to_resize(unsigned long addr,
- 	if (!vma)
- 		return ERR_PTR(-EFAULT);
++	return false;
+ }
  
-+	/* Don't allow vma expansion when it has already been sealed */
-+	if (!can_modify_vma(vma))
-+		return ERR_PTR(-EPERM);
-+
- 	/*
- 	 * !old_len is a special case where an attempt is made to 'duplicate'
- 	 * a mapping.  This makes no sense for private mappings as it will
-@@ -902,19 +909,6 @@ static unsigned long mremap_to(unsigned long addr, unsigned long old_len,
- 	if ((mm->map_count + 2) >= sysctl_max_map_count - 3)
- 		return -ENOMEM;
- 
--	/*
--	 * In mremap_to().
--	 * Move a VMA to another location, check if src addr is sealed.
--	 *
--	 * Place can_modify_mm here because mremap_to()
--	 * does its own checking for address range, and we only
--	 * check the sealing after passing those checks.
--	 *
--	 * can_modify_mm assumes we have acquired the lock on MM.
--	 */
--	if (unlikely(!can_modify_mm(mm, addr, addr + old_len)))
--		return -EPERM;
--
- 	if (flags & MREMAP_FIXED) {
- 		/*
- 		 * In mremap_to().
-@@ -1079,19 +1073,6 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
- 		goto out;
- 	}
- 
--	/*
--	 * Below is shrink/expand case (not mremap_to())
--	 * Check if src address is sealed, if so, reject.
--	 * In other words, prevent shrinking or expanding a sealed VMA.
--	 *
--	 * Place can_modify_mm here so we can keep the logic related to
--	 * shrink/expand together.
--	 */
--	if (unlikely(!can_modify_mm(mm, addr, addr + old_len))) {
--		ret = -EPERM;
--		goto out;
--	}
--
- 	/*
- 	 * Always allow a shrinking remap: that just unmaps
- 	 * the unnecessary pages..
+ static bool is_ro_anon(struct vm_area_struct *vma)
 -- 
 2.46.0
 
