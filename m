@@ -1,78 +1,214 @@
-Return-Path: <linux-kernel+bounces-275640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1CC9487E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:26:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 458E19487E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ABEB284991
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:26:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50901F231AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CAB58ABC;
-	Tue,  6 Aug 2024 03:26:29 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E94E58AD0;
+	Tue,  6 Aug 2024 03:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nub6Cn92"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81893184D
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B491A43ABC
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 03:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722914788; cv=none; b=ejm5l4WdVG6tQU6t7z9GM0tkjdOFCTl2RBWYNjjG0WzTDGsNjtwb+GbXIBcGVmDu422Nhec2KAh5MQfqZhNlJcfUwGgH2Qbo/O1SpIZR/mmwroyl/NBcJpYa3wVOLd+n7GA/K8ktJFkyBs8K6BKwZ16p0WbkMLHNHSCjare55pA=
+	t=1722914831; cv=none; b=mgNM+DwhL9bWGtYzEwNJ2bv6tG0aaJtlCakU0RSTt+vHpJMIvIVUnfsuTbZ8M3hQJcKhLpS3/iUufy50BNK58lmX8m47Ynpv5Zti952hP/biYSHlWcwP6sbmtcT30s8mDuYftZweUVDTg1KT60NwPV96xx4q6OkXYInp59B4Xns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722914788; c=relaxed/simple;
-	bh=Y0MbgVd8q2mIoRcko+GgWB3F0UrqvEp+5ZgftDAQTEY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QXyXfPRyTFAC6ZNZEHeaFwfS/Q0QmrZgGgJawhR2a9HVFjLCiPNFkPywM1r90cGdvwNnWfUAOyVICOV02xL09hi4VHP7+awihUo4AuWiuLyIUS60NFYC1yzeYf8xOCi8y0PdcLMtN+jTik2I7aLa6+WVLjNS5BL/BohqoPF/2jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39b3cd1813aso3266865ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 20:26:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722914786; x=1723519586;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y0MbgVd8q2mIoRcko+GgWB3F0UrqvEp+5ZgftDAQTEY=;
-        b=p9EYion+E2NUOC2yjajrt4fgb3P1ssRGAmkxva8iCUu81Xf+LWXOTLyELYLNruiVNQ
-         6simp0bw7nmZE7DC3+J4+rDDUWv+v3dwiv5U09ppbo6pfXidZXvrG4UQntofd3IqQ5DH
-         133s1HZQOVI7wgvGJh+L3M50cBLF+kZkFzeD3ccobACB5iUNaAgAP7tOlDqGOQhyEWA8
-         dJ/9t00/dNR4NfGsAupR6jBhKzd+qTWIUO2aWZ/qALPOVyHtgFbZEK+o2pEPBRy2yntK
-         5EmnE2xYEQpWOa8x3aa+ocMsvDNIEX06sxkjNhH9DQBgCVQwKMXSFLlgVu1RnAqeKik8
-         fDAA==
-X-Gm-Message-State: AOJu0YxRL7BoRDlYE4N9XJzyKvsYbQfcVSOOFXlCmwJgdK/tnIHJ/x54
-	WE1JSSJrqPKOBX1BGejMTOBuCAGItfOPMUjSkQu9FCLzHD0cNIXT7ayInm91Ft9B+cZR9Dmosnb
-	z/EFgCSaDDnAjZurL7C2FJuRUYZ76bzoWaDldg5PdZsI6OPu2h3KvS1A=
-X-Google-Smtp-Source: AGHT+IECOGR7pTUehzqC593vmI8e9d3C3Vg3xluUc0FH15f1hEE5vxOAi3b5+f1xzYOwybsDJCmsl0J+mFmI9+fh331X4DuWhS1U
+	s=arc-20240116; t=1722914831; c=relaxed/simple;
+	bh=OnuEf1n44ynY7vh2ncFDoC9pLo9+YMqsxh8yoxz0U00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OJhmGcaAb86z0SgAxT5hg7nuqqYlHtK9HfJbeRUf+PpF6hKSO7c6IDNF9jNgkceCgC6gmHzYGBWY98TOSKvjqAIDz6K9bfad70L5bRF+bma4Ju8Yo7I8J4/1J4HrY+SQXcStMjHC8i2IcQUmvjGBUDxZ2AsByWybPjOVOeT2bTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nub6Cn92; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 5 Aug 2024 21:26:58 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1722914823;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vowwqyn+x5QwA/BF09y5QtbCMUxlKjhdNwTKjuKKNDQ=;
+	b=nub6Cn92YeGIK/u0ghcrcXaFjjcBJojYaOUzNOZZyOQ+LFGvdG29yhx/Tr+J6hwiN9wd9B
+	vZWbVb2OM7qAOjMnMIvfKbUA26z4hzu72bH1oThIo6RPZQuBN6bmULWw2ynPyFLw+hVbrr
+	XilwfsOMp3rXu30XvAYcklHomin8Pfk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Jose Fernandez <jose.fernandez@linux.dev>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Christian Heusel <christian@heusel.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: control extra pacman packages with
+ PACMAN_EXTRAPACKAGES
+Message-ID: <odiitinwxck2dc6jori4iakp6hwqnnguk2ar6dvmbo6ugrt7nz@h65drwkv374s>
+References: <20240804000130.841636-1-jose.fernandez@linux.dev>
+ <c41e3856-29f4-438f-a796-43aa957215d1@t-8ch.de>
+ <g5jex6hwlsjwzryo5umw44uotww54h6ccjzzqk3fao5k3ig7df@yg2vhcxr5t6s>
+ <20240806025853.GB1570554@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12ec:b0:39a:e9f5:5ed5 with SMTP id
- e9e14a558f8ab-39b1f7abcc0mr11870545ab.0.1722914786646; Mon, 05 Aug 2024
- 20:26:26 -0700 (PDT)
-Date: Mon, 05 Aug 2024 20:26:26 -0700
-In-Reply-To: <000000000000fa6583061ccb8e3d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d636f0061efb5bdf@google.com>
-Subject: Re: [syzbot] WARNING in __hci_cmd_sync_sk
-From: syzbot <syzbot+f52b6db1fe57bfb08d49@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240806025853.GB1570554@thelio-3990X>
+X-Migadu-Flow: FLOW_OUT
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On 24/08/05 07:58PM, Nathan Chancellor wrote:
+> On Mon, Aug 05, 2024 at 04:30:15PM -0600, Jose Fernandez wrote:
+> > On 24/08/05 04:01PM, Thomas Weißschuh wrote:
+> > > > This changes the behavior of the pacman-pkg target to only create the
+> > > > main kernel package by default. The rest of the packages will be opt-in
+> > > > going forward.
+> > > 
+> > > I had the impression that by default all extrapackages should be
+> > > built. The variable can then be used by expert users where needed.
+> > > Other Opinions?
+> > 
+> > I think switching to defaulting to all packages is a good idea. One concern I 
+> > had was how regular users would discover the customization options. Expert users
+> > will likely look at the Makefile and figure out how to opt out.
+> 
+> I think that most users will likely want all of the packages built by
+> default. I think leaving this to be discovered by power users in the
+> Makefile is reasonable.
 
-***
+Sounds good!
 
-Subject: WARNING in __hci_cmd_sync_sk
-Author: djahchankoike@gmail.com
+> > > > In a previous patch, there was concern that adding a new debug package
+> > > > would increase t.he package time. To address this concern and provide
+> > > > more flexibility, this change has been added to allow users to decide
+> > > > which extra packages to include before introducing an optional debug
+> > > > package [1].
+> > > 
+> > > This paragraph seems like it shouldn't be part of the final commit.
+> > > If you put it after a line with "---" it will be dropped from the
+> > > commit, like so:
+> > > 
+> > > ---
+> > > 
+> > > In a previous patch, ...
+> > 
+> > Agreed, I will move this paragraph to below --- for v2.
+> > 
+> > > 
+> > > > 
+> > > > [1] https://lore.kernel.org/lkml/20240801192008.GA3923315@thelio-3990X/T/
+> > > > 
+> > > > Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
+> > > > Reviewed-by: Peter Jung <ptr1337@cachyos.org>
+> > > > ---
+> > > >  scripts/Makefile.package |  5 +++++
+> > > >  scripts/package/PKGBUILD | 11 ++++++++---
+> > > >  2 files changed, 13 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> > > > index 4a80584ec771..146e828cb4f1 100644
+> > > > --- a/scripts/Makefile.package
+> > > > +++ b/scripts/Makefile.package
+> > > > @@ -144,6 +144,10 @@ snap-pkg:
+> > > >  # pacman-pkg
+> > > >  # ---------------------------------------------------------------------------
+> > > >  
+> > > > +# Space-separated list of extra packages to build
+> > > > +# The available extra packages are: headers api-headers
+> > > > +PACMAN_EXTRAPACKAGES ?=
+> > > 
+> > > The assignment doesn't do anything.
+> > > Do we need the documentation if the default enables all subpackages?
+> > > 
+> > > > +
+> > > >  PHONY += pacman-pkg
+> > > >  pacman-pkg:
+> > > >  	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
+> > > > @@ -152,6 +156,7 @@ pacman-pkg:
+> > > >  		CARCH="$(UTS_MACHINE)" \
+> > > >  		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
+> > > >  		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
+> > > > +		PACMAN_EXTRAPACKAGES="$(PACMAN_EXTRAPACKAGES)" \
+> > > 
+> > > This line is superfluous.
+> > 
+> > Ack.
+> 
+> Is it superfluous if PACMAN_EXTRAPACKAGES is not exported to makepkg? If
+> I remove this while changing the default of PACMAN_EXTRAPACKAGES in
+> scripts/Makefile.package, its value is not visible in makepkg, so only
+> the default package gets built. I think
+> 
+>   export PACMAN_EXTRAPACKAGES
+> 
+> is needed after the '?=' assignment line.
 
-#syz test
-hci_dev_cmd calls sync functions without holding the
-appropriate lock.
+Nathan, I removed the line and it appears to work as expected.
+
+If I set the default packages to:
+
+PACMAN_EXTRAPACKAGES ?= headers api-headers
+
+Then any of these commands builds only the main kernel package:
+
+make pacman-pkg PACMAN_EXTRAPACKAGES=
+make pacman-pkg PACMAN_EXTRAPACKAGES=""
+
+This command builds the main package + headers package:
+
+make pacman-pkg PACMAN_EXTRAPACKAGES="headers"
+
+I'm not quite sure how PACMAN_EXTRAPACKAGES makes it to makepkg without that
+line. But it appears like it does.
+
+> 
+> > > >  		makepkg $(MAKEPKGOPTS)
+> > > >  
+> > > >  # dir-pkg tar*-pkg - tarball targets
+> > > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > > > index 663ce300dd06..41bd0d387f0a 100644
+> > > > --- a/scripts/package/PKGBUILD
+> > > > +++ b/scripts/package/PKGBUILD
+> > > > @@ -3,10 +3,15 @@
+> > > >  # Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+> > > >  
+> > > >  pkgbase=${PACMAN_PKGBASE:-linux-upstream}
+> > > > -pkgname=("${pkgbase}" "${pkgbase}-api-headers")
+> > > > -if grep -q CONFIG_MODULES=y include/config/auto.conf; then
+> > > > -	pkgname+=("${pkgbase}-headers")
+> > > > +pkgname=("${pkgbase}")
+> > > > +
+> > > > +_extrapackages=${PACMAN_EXTRAPACKAGES:-}
+> > > > +if [ -n "$_extrapackages" ]; then
+> > > 
+> > > No need for this check. The loop over an empty variable work fine.
+> > 
+> > Ack. Will update in v2.
+> >  
+> > > > +	for pkg in $_extrapackages; do
+> > > > +		pkgname+=("${pkgbase}-$pkg")
+> > > 
+> > > Use consistent variable references: "${pkgbase}-${pkg}"
+> > 
+> > Ack. Will update in v2.
+> > 
+> > > > +	done
+> > > >  fi
+> > > > +
+> > > >  pkgver="${KERNELRELEASE//-/_}"
+> > > >  # The PKGBUILD is evaluated multiple times.
+> > > >  # Running scripts/build-version from here would introduce inconsistencies.
+> > > > -- 
+> > > > 2.46.0
+> > > > 
 
