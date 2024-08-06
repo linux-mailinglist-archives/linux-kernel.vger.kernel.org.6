@@ -1,191 +1,263 @@
-Return-Path: <linux-kernel+bounces-275732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E22948929
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:08:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E9F94892B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C785C1F23D22
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:08:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 800C31C22712
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2CE1BC089;
-	Tue,  6 Aug 2024 06:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2A1173355;
+	Tue,  6 Aug 2024 06:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g+juzmeJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ggqlBV8j"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069EC2CA5;
-	Tue,  6 Aug 2024 06:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359F52CA5
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 06:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722924482; cv=none; b=TiWdn1diXdqYPs047GYlq93uaEzpdGtRO2MS4w1Cc/g9BBFX5fLN1GO0X+lQcTlflQIuGNY5JcoT9cHu28YjoO/mNL8YCJuuPMaWREDDrWO1Y1yQ6wF7GMVJU8crNjvkk1jAgxFTDzG3Jqsz2l2yZQX1Waprs4aRWFVUx4I61IY=
+	t=1722924570; cv=none; b=WJe5ACBdOLCeShkGxqyXjpR/9JPYHaW0Gmwb/75jfICIN4wc7Q6VHCYxjlQMEPfuAvJ45a703MmsbryCuRMYnWgvddfIfAFm+Uul/vxRq2nRiSmHbpxqHuO1mWJCzMSuaLMpUk+AZFZHHdgCJ/c0jcRu32nayq+WodCrMZk3g2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722924482; c=relaxed/simple;
-	bh=mOzIDSoAAsLO7/601rZAJE7xHRiAlyD9Idw61008c7M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B7U2FfR7qSgNuedRbVbNFd4gZceKaqaXPZzyGnytsK5wRw0W7vfyQDSaD3Yy/ximfFUxAOh1qsnPHZl283UfQWguOjgU7YC8ikuJqQaVaTmpE+LY0SqqvT2gQFE+XQYzNz4vpOl7EXw/9s6col7oP/p09p5FkmPWMIIkRq/seHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g+juzmeJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D860CC32786;
-	Tue,  6 Aug 2024 06:07:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722924481;
-	bh=mOzIDSoAAsLO7/601rZAJE7xHRiAlyD9Idw61008c7M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=g+juzmeJ9lg65+ANKEEXUjJbUV/oK732V/qeGdzMKYAezNTxiskPZyZz+HFnsG1kv
-	 +wU9Y6RFZBOgFIzNGENsbIGFNBUcYNYEqNBseV0/HQfzdGmUXTzZiuPmtagAw1Rd4j
-	 ad7F0Et4q+/YNsjoi3BBhXUmsQa1iCSXKBaDXQioAtKYSJ7FEs1cd7UiTI8X566++l
-	 YE2CSna6TV1jLUrDI5hG4qn//SYN6jRSfh01mi8lMnwprNQNAZe1TmU7WTw/Pzp0CV
-	 ehU4l8ugbLx4+/3iNrA5Gze+PvfquDEFy6xe6YtudHhs4a0UO/pv6G46iuS2nJ7XH/
-	 w2IUf6aPhO2cg==
-Message-ID: <c51fb027-f8bd-4b10-b9c0-dbbe8e8cf4c1@kernel.org>
-Date: Tue, 6 Aug 2024 08:07:55 +0200
+	s=arc-20240116; t=1722924570; c=relaxed/simple;
+	bh=ZsefIYStrGDb9k8xax2Vyy8z1RQ3FSStZHl5YNa9OPc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Disposition; b=TLav8H2nzB8VywGUqO503onu9Rxtxs9WUtNSsgTJe4aCLnsZA+i/Jl/qtMHet4U3BN7Fxflw1bijF8xq2HwXaJ39BiKImggOqJIaGPcf+2wN+Dk9YFEvFcpPN4tay3MP+ui3YbmBEkCQJDGCguXXRyJWAYmhkI1ag1dUoHIp5fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ggqlBV8j; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722924565;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4SFTgS3RSxMXnR79gxMgVDPeEdFnu+n/zpjK6NCgI6U=;
+	b=ggqlBV8jLnQRy3n0eQ/kiTQzWXTpnft6U8K87cklJA0KsliLuMUHyoSzazUIpAwwY5d45V
+	STPtQSClT8eJtni59kPWh2PUJjyQV4bLqY/L97+FqWQ9LxSBA+Q9xafa49pS33noFIROiB
+	+VBiC4njxzqSkeV3ywm1itMhgTatGr8=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-46-626lUAqqMPmSf1YcJMvXdQ-1; Tue, 06 Aug 2024 02:09:24 -0400
+X-MC-Unique: 626lUAqqMPmSf1YcJMvXdQ-1
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-7a242496838so516675a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 23:09:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722924563; x=1723529363;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4SFTgS3RSxMXnR79gxMgVDPeEdFnu+n/zpjK6NCgI6U=;
+        b=tPX88pCNK/s5q0GWZQtphIhgdO4xV/TahbKh9B30gz9wsxfjQ9h69cUrRjfXe8QDUe
+         hkdNVyc/PQvvqfJdf7egZSF88BujuKr95CO+/NZTJ5UlOc4FTVm4LPSspTu0T3HM0bb2
+         8pokj0IcVOdZ4bY0hjBRe878QNa3vEpoKyhmeV8M+V38OlSV9BvD+fWQkXmkcD6aOqej
+         ruudghA1G3wM/EXqmqTDYV4F0c64F+4sAKkEKsc4JtHbsS3kCxzC1mboxfUDSSYscFFD
+         YXDWDI6o59NzBkhxDnb5/fU63BnQOwu47Bf0dOeyXIRgkfuqB0TsCa/RpWOZw/J+nOaV
+         EIAg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6eV4VMsSfrjyWdfGMZ/8q8o8hkDkwY7PKGKRc5RmHRnUzztPdc93JK1K7izxlbRDTP9gRjSqlCZLaZD6mznDrL0WfW2f3Ma/2N931
+X-Gm-Message-State: AOJu0YwWKjwrkCjbL13O2Oi0pqPdjBZN6cHvtUzrYu/3Kt0qWLH1lp+i
+	J9tiY3I/F3lGH27izu/3zhEcW0kRSnPQPOXBKBRLAfPchOQ7glQcp4agWE4UaRXgkNAWWmfLp1b
+	6WXMXEhHxQd69KLU51us0nkldYHs9j0SwFLNVZjwhJSHQqNR6REFiCHZfP34wWg==
+X-Received: by 2002:a05:6a21:a4c1:b0:1c4:dae8:c72f with SMTP id adf61e73a8af0-1c699559d86mr13937336637.19.1722924563213;
+        Mon, 05 Aug 2024 23:09:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEFAB4iDFaLVVFzQSknryXyAqbAibTwTchg6n6ZX0voJ3rtXiQO8ekPM1EV6qpN/RcplUFTmQ==
+X-Received: by 2002:a05:6a21:a4c1:b0:1c4:dae8:c72f with SMTP id adf61e73a8af0-1c699559d86mr13937320637.19.1722924562815;
+        Mon, 05 Aug 2024 23:09:22 -0700 (PDT)
+Received: from LeoBras.redhat.com ([2804:431:c7ed:e5a3:54cb:9e69:eacc:b949])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec3eb7bsm6387179b3a.48.2024.08.05.23.09.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 23:09:22 -0700 (PDT)
+From: Leonardo Bras <leobras@redhat.com>
+To: neeraj.upadhyay@kernel.org
+Cc: Leonardo Bras <leobras@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	mingo@kernel.org,
+	peterz@infradead.org,
+	paulmck@kernel.org,
+	imran.f.khan@oracle.com,
+	riel@surriel.com,
+	tglx@linutronix.de
+Subject: Re: [PATCH v2 4/3] smp: print only local CPU info when sched_clock goes backward
+Date: Tue,  6 Aug 2024 03:09:11 -0300
+Message-ID: <ZrG-B5JKw5rboCHX@LeoBras>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240724170652.809939-1-neeraj.upadhyay@kernel.org>
+References: <20240722133559.GA667117@neeraj.linux> <20240724170652.809939-1-neeraj.upadhyay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: interrupt-controller:
- aspeed,ast2400-vic: Convert to DT schema
-To: Andrew Jeffery <andrew@codeconstruct.com.au>,
- Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
-References: <20240802-dt-warnings-irq-aspeed-dt-schema-v1-0-8cd4266d2094@codeconstruct.com.au>
- <20240802-dt-warnings-irq-aspeed-dt-schema-v1-1-8cd4266d2094@codeconstruct.com.au>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240802-dt-warnings-irq-aspeed-dt-schema-v1-1-8cd4266d2094@codeconstruct.com.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On 02/08/2024 07:36, Andrew Jeffery wrote:
-> Squash warnings such as:
+On Wed, Jul 24, 2024 at 10:36:52PM +0530, neeraj.upadhyay@kernel.org wrote:
+> From: Rik van Riel <riel@surriel.com>
 > 
->     arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-galaxy100.dtb: /ahb/interrupt-controller@1e6c0080: failed to match any schema with compatible: ['aspeed,ast2400-vic']
+> About 40% of all csd_lock warnings observed in our fleet appear to
+> be due to sched_clock() going backward in time (usually only a little
+> bit), resulting in ts0 being larger than ts2.
 > 
-> The YAML DT schema defines an optional property, valid-sources, which
-> was not previously described in the prose binding. It is added to
-> document existing practice in the Aspeed devicetrees. Unfortunately
-> the property seems to predate the requirement that vendor-specific
-> properties be prefixed.
+> When the local CPU is at fault, we should print out a message reflecting
+> that, rather than trying to get the remote CPU's stack trace.
 > 
-> Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Tested-by: "Paul E. McKenney" <paulmck@kernel.org>
+> Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+> ---
+>  kernel/smp.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/kernel/smp.c b/kernel/smp.c
+> index dfcde438ef63..143ae26f96a2 100644
+> --- a/kernel/smp.c
+> +++ b/kernel/smp.c
+> @@ -253,6 +253,14 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
+>  		   csd_lock_timeout_ns == 0))
+>  		return false;
+>
+
+Hello Rik,
+Thanks for this contribution!
+Seems a really nice bug you found here :)
+
+Your solution seems very efficient, but I noticed a few (possible) issues here:
+  
+> +	if (ts0 > ts2) {
+> +		/* Our own sched_clock went backward; don't blame another CPU. */
+> +		ts_delta = ts0 - ts2;
+> +		pr_alert("sched_clock on CPU %d went backward by %llu ns\n", raw_smp_processor_id(), ts_delta);
+
+This ns number is not necessarely correct, since a few calls to 
+csd_lock_wait_toolong() may have happened before the clock going backwards.
+
+As an example we could have, for a 15ms backwards movement
+05ms: csd: [...] waiting 5000 ns for CPU#X
+10ms: csd: [...] waiting 10000 ns for CPU#X
+12ms: sched_clock on CPU X went backward by 3000 ns
+						^ wrong
+17ms: csd: [...] waiting 5000 ns for CPU#X
+			  ^reset waiting.
+
+> +		*ts1 = ts2;
+
+Second point here, above line just resets the counter, so we start printing 
+messages again, with the wrong waiting time. (see 17ms above)
+
+> +		return false;
+> +	}
+> +
 
 
-> +
-> +description:
-> +  The AST2400 and AST2500 SoC families include a legacy register layout before
-> +  a redesigned layout, but the bindings do not prescribe the use of one or the
-> +  other.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - aspeed,ast2400-vic
-> +      - aspeed,ast2500-vic
-> +
-> +  interrupt-controller: true
-> +
-> +  "#interrupt-cells":
-> +    const: 1
-> +    description:
-> +      Specifies the number of cells needed to encode an interrupt source. It
-> +      must be 1 as the VIC has no configuration options for interrupt sources.
-> +      The single cell defines the interrupt number.
-> +
-> +  valid-sources:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      One cell, bitmap of support sources for the implementation.
+Suggestion A: Save the last ts2 it succeeds, and in case of 
+the clock going backwards, adjust ts0 and ts1 to the new clock.
+This way the waiting time does not reset, and the backwards amount is 
+correct:
 
-maxItems: 2
-What does "one cell" mean? uint32? DTS has two items.
+########
+diff --git a/kernel/smp.c b/kernel/smp.c
+index aaffecdad319..e8788f7e1a78 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -213,7 +213,8 @@ static int csd_lock_wait_getcpu(call_single_data_t *csd)
+  * the CSD_TYPE_SYNC/ASYNC types provide the destination CPU,
+  * so waiting on other types gets much less information.
+  */
+-static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, int *bug_id)
++static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 *ts0, u64 *ts1, u64 *ts_save,
++                                 int *bug_id)
+ {
+        int cpu = -1;
+        int cpux;
+@@ -233,10 +234,21 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
+        }
+ 
+        ts2 = sched_clock();
++
+        /* How long since we last checked for a stuck CSD lock.*/
+        ts_delta = ts2 - *ts1;
+-       if (likely(ts_delta <= csd_lock_timeout_ns || csd_lock_timeout_ns == 0))
++       if (likely(ts_delta <= csd_lock_timeout_ns || csd_lock_timeout_ns == 0)) {
++               *ts_save = ts2;
+                return false;
++       }
++
++       if (unlikely((s64)ts_delta < 0)) {
++		/* How much clock went backwards */
++               ts_delta = *ts_save - ts2;
++               pr_alert("sched_clock on CPU %d went backward by %llu ns\n",
++                        raw_smp_processor_id(), ts_delta);
++               *ts0 -= ts_delta;
++               *ts1 -= ts_delta;
++       }
++	*ts_save = ts2;
+ 
+        firsttime = !*bug_id;
+        if (firsttime)
+@@ -248,7 +260,7 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
+                cpux = cpu;
+        cpu_cur_csd = smp_load_acquire(&per_cpu(cur_csd, cpux)); /* Before func and info. */
+        /* How long since this CSD lock was stuck. */
+-       ts_delta = ts2 - ts0;
++       ts_delta = ts2 - *ts0;
+        pr_alert("csd: %s non-responsive CSD lock (#%d) on CPU#%d, waiting %llu ns for CPU#%02d %pS(%ps).\n",
+                 firsttime ? "Detected" : "Continued", *bug_id, raw_smp_processor_id(), ts_delta,
+                 cpu, csd->func, csd->info);
+@@ -291,11 +303,11 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
+ static void __csd_lock_wait(call_single_data_t *csd)
+ {
+        int bug_id = 0;
+-       u64 ts0, ts1;
++       u64 ts0, ts1, ts_s = 0;
+ 
+        ts1 = ts0 = sched_clock();
+        for (;;) {
+-               if (csd_lock_wait_toolong(csd, ts0, &ts1, &bug_id))
++               if (csd_lock_wait_toolong(csd, &ts0, &ts1, &ts_s, &bug_id))
+                        break;
+                cpu_relax();
+        }
+##########
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
+Suggestion B: Compare to ts_save to ts2 before calculating ts_delta.
+Pros: 	Much better detection of clock goin backwards
+Cons: 	Overhead for the fastpath
+	More detections -> more messages, which is not necessarily good.
 
-Is this correct? DTS does not have parent interrupt controller for this
-device.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupt-controller
-> +  - "#interrupt-cells"
-> +
-> +allOf:
-> +  - $ref: /schemas/interrupt-controller.yaml
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    interrupt-controller@1e6c0080 {
-> +         compatible = "aspeed,ast2400-vic";
-> +         reg = <0x1e6c0080 0x80>;
-> +         interrupt-controller;
-> +         #interrupt-cells = <1>;
-
-Make the example complete - add valid-sources interupts.
+##########
++++ b/kernel/smp.c
+@@ -234,6 +234,15 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 *ts0, u64 *ts1, u
+        }
+ 
+        ts2 = sched_clock();
++       if (unlikely(*ts_save > ts2)){
++               /* How much clock went backwards */
++               ts_delta = *ts_save - ts2;
++               pr_alert("sched_clock on CPU %d went backward by %llu ns\n",
++                       raw_smp_processor_id(), ts_delta);
++               *ts0 -= ts_delta;
++               *ts1 -= ts_delta;
++       }
++       *ts_save = ts2;
+ 
+        /* How long since we last checked for a stuck CSD lock.*/
+        ts_delta = ts2 - *ts1;
+##########
 
 
+What do you think?
 
-Best regards,
-Krzysztof
+Thanks!
+Leo
 
 
