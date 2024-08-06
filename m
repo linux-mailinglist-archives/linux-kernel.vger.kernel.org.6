@@ -1,101 +1,140 @@
-Return-Path: <linux-kernel+bounces-275554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E395E948722
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:59:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30572948726
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87E211F23695
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:59:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44D981C222DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F17C2E9;
-	Tue,  6 Aug 2024 01:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311BDB676;
+	Tue,  6 Aug 2024 02:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J3yET7Yz"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="DyjuYawi"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC86AD51;
-	Tue,  6 Aug 2024 01:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD4F184D;
+	Tue,  6 Aug 2024 02:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722909557; cv=none; b=GPBtE1VHVcO7Se3zT4rzHZ6oXE9P4j4aHYucWwV0AqrmtLDdvAHL8quBKn5xc56V4YbpCSx7Jsnm+o1JdZQ8bc87P+D6sb7oXUNebPJeXSsc/g3Q0gkFaPOzEazpL/8aIpi911NaCk9BF8GFCwOb9/Pwb0JSWN+ujZpiQBRvyn8=
+	t=1722909675; cv=none; b=hXhRQGE9b6GlkuObHlYOMDOQPMGGigvps6dusjMd5tcY8jnIy4s15f9Md1zPLew2tk8+uh3MkzVWytgWWMyrKKX0fDAb0C2WH7fdu6y83R2qwgyTuMjU/Y+1EENhxj6Cf05hnLlTRUcNLBrYR6kCESBHaDJOmJrs7nKlsFcRtMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722909557; c=relaxed/simple;
-	bh=457dMZYS6I1UY/RQefy4FDvm2BkQbI+4O/PlCAzmiOw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fyJgVwTzWqmRndbx+6AgmwcTYuZZcBMptx5/Am15Ps7hITs7tvH45e9nLll+2ECabhUAAW/OOG+Dw/uEvjyNBHhEwj4J57o4ktFWT8f38t764XsUSNNraAVZoINnygSK2tGTwjvTKk/B9YqGs3OjVpHY+/xT68c/+rxlH0ot1dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J3yET7Yz; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc4fcbb131so540515ad.3;
-        Mon, 05 Aug 2024 18:59:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722909556; x=1723514356; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=457dMZYS6I1UY/RQefy4FDvm2BkQbI+4O/PlCAzmiOw=;
-        b=J3yET7YzMxfYsO61dW9Wj6jtMny8nzzTgxSB3gAIzVkoU/GL6lKj5ivQXt2qw0vMui
-         NDINYSAn1KevOwnOsMRQ3PzRSvO04hoWtBWveonyTWXQyOJH/Kj9SekXTWS996Q2hp4y
-         CWmbQeZxyPzjLm6TRLj/70thZG2Gqze//BdyTL4Xqb+A9mZ3O9TeDQmKyaEZIsrW5700
-         277UvtrhCw7QuQ24ue6tlOgagKvcpTFRX/rCAuGgN33R6XwNX8AwHkhi/S+q2TOzvYBM
-         BTl4xi3XFY4KnzlBK8e6ocCRsrzBdOSM7hp2A9ily4ngj80UitoEJrDMAe3Cik4yVPD2
-         DZ8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722909556; x=1723514356;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=457dMZYS6I1UY/RQefy4FDvm2BkQbI+4O/PlCAzmiOw=;
-        b=VwGC2Q190dvsBWz+OB7J2XeOef94swwGSLSwFlsG4RjqZorN2RbZ+GbnAvCbu3C9Xa
-         TpXXpdsKyApkCFvr+hZlnBewlKJq6Kx2ypka3ITb+5rOiSFQOswEePdE01q0PTRIa5ho
-         NgvpRVXISBeDj6v8M9/yRvuOlG3ie1leI1EG/xoMk2Dt1Ten7qI58Beql0PYF8/5LZzs
-         getldod9EsAreENlJ9c9+jc98Vmr3/4pYn+2D1+1W+rXCt4uBOTZg3RCbYCqFuePfhL/
-         r9uRT7N2asS6jZfq/ztmYCPQFfsYAinABRGY10VscG8+qXcmFeEfWwb0x8v2ZtBpX+7j
-         +KFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvJ/8zQ9AVBuMlO/A6/wy2K+eQxMWIH9jnA8V2AkF1MTHqRwXyEAn3NRNnZhQEv1DEXZIRXmRzvLTNz9L6ysqnw+aXvApbVI1YUY7p6FXTwlUlRn/5YKxr/lZndDWV8cpjUewun/E6DvNssiKfdX0319/yRGtOOO4YiQx48lTRwK5v1DNViAE=
-X-Gm-Message-State: AOJu0YxBm93XJwOFYkLrs47zaA1sQrL2/6iFnFOf2vwE2WYUC7HYob3s
-	88hdXLkpNPCo7wOIUOviD/GMXEfOftuDHKvdwh1q/7BGaSsVkPKSft2pw2DBUvrz
-X-Google-Smtp-Source: AGHT+IGm3qETp72yq8oGMbu6DJWKZg2Pdj3DkWjEN9nWmIhNOtmeYsjNnVC5K3qtOlkXFWuWXqyPwA==
-X-Received: by 2002:a17:903:2441:b0:1fb:8890:16b4 with SMTP id d9443c01a7336-1ff573c4f57mr168818035ad.48.1722909555719;
-        Mon, 05 Aug 2024 18:59:15 -0700 (PDT)
-Received: from swift.. ([123.113.254.37])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592aee19sm75286575ad.282.2024.08.05.18.59.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 18:59:15 -0700 (PDT)
-From: LidongLI <wirelessdonghack@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	mark.esler@canonical.com,
-	stf_xl@wp.pl,
-	wirelessdonghack@gmail.com
-Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer Dereference&Use-After-Free Vulnerability
-Date: Tue,  6 Aug 2024 09:59:04 +0800
-Message-Id: <20240806015904.1004435-1-wirelessdonghack@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2024080359-getaway-concave-623e@gregkh>
-References: <2024080359-getaway-concave-623e@gregkh>
+	s=arc-20240116; t=1722909675; c=relaxed/simple;
+	bh=+G3dYnQ0cpfsMR46ZgVaWGrkRceqV/ppO50AvX/RlDg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FEVdaQFyvs2J6A/6WhSrj77KNxdK5dCWNEESQwLerdD1ZrnXe3xP9Uku1rTBgckYIuOQUxdfc80q9IHq49MSESc/CbDPQIHyeBEVDYQbixnRxv0HxdVjQVQJUR42OoOKYfE1q1Bt5Wo/+x9zp2WU49aG2n/JJhbZsYszVetpIDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=DyjuYawi; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1722909671;
+	bh=bg4E/qAsWu2tlT5JbHkQmtf9JeB5TlVVndOX9oUBJns=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=DyjuYawiAIBzg/xqvIdkFxKg5M3pB84GhEJNimx33sHPmy8ncPLLj1b4r24T1P3SR
+	 /kCdawSJrpAKLyHAqLIXmhdpmqYbd6ORqggGac5jhoXpUvy0lFjSTTcx9XkGlaKG4i
+	 j2YCTDy0tugHgb37/rrhlZ/KUSV5bQZDlT0Zg8tMup4594CnFomaYHRZc7LNdv2cN5
+	 Lpgq9eqCfPdMcp22by2kuaxDPI3+aQA5Y68Txl1fpBKtkbOf/6Ln9+o4TA//4G4knQ
+	 n+Xp0IRRTs0FcOi6HtW+KZLORZ8MCEI8GuSNmgGKhXZe53XwBemCGx7N6DOLPzOPrY
+	 oq6R3OnEHh+Lw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WdGkD0kZtz4w2F;
+	Tue,  6 Aug 2024 12:01:07 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Nicholas Piggin
+ <npiggin@gmail.com>
+Cc: Jeff Xu <jeffxu@google.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Pedro Falcato <pedro.falcato@gmail.com>,
+ kernel test robot <oliver.sang@intel.com>, Jeff Xu <jeffxu@chromium.org>,
+ oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Kees Cook
+ <keescook@chromium.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, Dave
+ Hansen <dave.hansen@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Guenter Roeck <groeck@chromium.org>, Jann
+ Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, Jorge Lucangeli
+ Obes <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>, Stephen =?utf-8?Q?R?=
+ =?utf-8?Q?=C3=B6ttger?=
+ <sroettger@google.com>, Suren Baghdasaryan <surenb@google.com>, Amer Al
+ Shanawany <amer.shanawany@gmail.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ linux-api@vger.kernel.org, linux-mm@kvack.org, ying.huang@intel.com,
+ feng.tang@intel.com, fengwei.yin@intel.com
+Subject: Re: [linus:master] [mseal] 8be7258aad:
+ stress-ng.pagemove.page_remaps_per_sec -4.4% regression
+In-Reply-To: <CAHk-=wjeWqr+0Ktzbwqrw17aESe5dZm5Kt6nwqtKJX00VsDqWg@mail.gmail.com>
+References: <202408041602.caa0372-oliver.sang@intel.com>
+ <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
+ <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
+ <CALmYWFuXVCvAfrcDOCAR72z2_rmnm09QeVVqdhzqjF-fZ9ndUA@mail.gmail.com>
+ <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com>
+ <CALmYWFuCvphvLQOuQHBbFq0G8Ekyze=q45Tt4dATOt-GhO2RGg@mail.gmail.com>
+ <CAHk-=wgySgXXkZtx49Xq70X2CmSizM8siacYKncMmFWRzKjs5Q@mail.gmail.com>
+ <D38D6LJZOIQK.2GV58PGVL5K85@gmail.com>
+ <CAHk-=wjeWqr+0Ktzbwqrw17aESe5dZm5Kt6nwqtKJX00VsDqWg@mail.gmail.com>
+Date: Tue, 06 Aug 2024 12:01:06 +1000
+Message-ID: <87r0b2if4t.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+
+Linus Torvalds <torvalds@linux-foundation.org> writes:
+> On Mon, 5 Aug 2024 at 16:25, Nicholas Piggin <npiggin@gmail.com> wrote:
+>>
+>> Can userspace on other archs not unmap their vdsos?
+>
+> I think they can, and nobody cares. The "context.vdso" value stays at
+> some stale value, and anybody who tries to use it will just fail.
+>
+> So what makes powerpc special is not "you can unmap the vdso", but
+> "powerpc cares".
+>
+> I just don't quite know _why_ powerpc cares.
+
+AFAIK for CRIU the problem is signal delivery:
+
+arch/powerpc/kernel/signal_64.c:
+
+int handle_rt_signal64(struct ksignal *ksig, sigset_t *set,
+		struct task_struct *tsk)
+{
+        ...
+	/* Set up to return from userspace. */
+	if (tsk->mm->context.vdso) {
+		regs_set_return_ip(regs, VDSO64_SYMBOL(tsk->mm->context.vdso, sigtramp_rt64));
 
 
-Dear Greg,
+ie. if the VDSO is moved but mm->context.vdso is not updated, signal
+delivery will crash in userspace.
 
-Thank you, Greg!
+x86-64 always uses SA_RESTORER, and arm64 & s390 can use SA_RESTORER, so
+I think CRIU uses that to avoid problems with signal delivery when the
+VDSO is moved.
 
+riscv doesn't support SA_RESTORER but I guess CRIU doesn't support riscv
+yet so it's not become a problem.
 
-Yes, as you mentioned, it requires users to create their own udev rules, which is not common among Ubuntu personal users. However, in some non-personal user scenarios, they must pre-add udev rules to meet their needs. A simple example: in some Ubuntu embedded Linux scenarios, we found that when starting a wireless hotspot, developers must configure udev rules to ensure a stable connection, enable auto-loading of drivers, or auto-run or write USB-based auto-configuration scripts.
+There was a patch to support SA_RESTORER on powerpc, but I balked at
+merging it because I couldn't find anyone on the glibc side to say
+whether they wanted it or not. I guess I should have just merged it.
 
-Alright, thank you for your fix. We will proceed to the email you specified to request a CVE.
+There was an attempt to unify all the vdso stuff and handle the
+VDSO mremap case in generic code:
+
+  https://lore.kernel.org/lkml/20210611180242.711399-17-dima@arista.com/
+
+But I think that series got a bit big and complicated and Dmitry had to
+move on to other things.
+
+cheers
 
