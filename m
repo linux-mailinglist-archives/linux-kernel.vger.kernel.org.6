@@ -1,435 +1,430 @@
-Return-Path: <linux-kernel+bounces-275985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5530F948CDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:31:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13555948CDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9077AB22507
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:31:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34FAA1C235C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9252D1BE85D;
-	Tue,  6 Aug 2024 10:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13FA1BE85D;
+	Tue,  6 Aug 2024 10:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=angelogioacchino.delregno@collabora.com header.b="aUnkDuqE"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SftJdPiZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472F915A4AF;
-	Tue,  6 Aug 2024 10:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722940301; cv=pass; b=ttbXqx8b3fDVDYqtwFbHgESs+UZTWfAs67hXtBACtWGuH3QRdT3jTZqBWgRfgAHDQj33DCn5LRqnyPkx3RuZDiAwrKVqZUSajiFafsX7HTvnXoL9DlSiIWb45N2WfF9z9623SoWfcNAK/kUhiAmMMI89iEIGKoyirS3qhQ7R59w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722940301; c=relaxed/simple;
-	bh=dH0LrOvzIh2frbn9/nKRCFT1AGkRJjU2rKMBnJZaNiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tHIJQ24Z1vgdqrcl56pcMJX8w4LQ4J9Dt3DoYCee1o8+uVlMcrDef5d7XWNtmfkG/SQAyOJUb3b8xBDM5zCBVAKWycAmwIEv62vFkoHzDc6UU6U/IjkswX/RAlMsl14tizRQHGyt5OLGKulbKskhxus2P0/of0NbpnkWsW8W9mE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=angelogioacchino.delregno@collabora.com header.b=aUnkDuqE; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1722940269; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Xva6OmVQ8Cc1EZDDlb6MMQzqdovtQtiqdpY+b8Z3ZHRzTSZWUcRA19B9ENRpjxm6H30LzojDZViJ5waMxfGeg8qZ9Pb9Ds69e3fINqYTDL1/2tXjoJzbRGwr33ZVUcixhSl45TdKDZoYkxf3SgVe9ErTINHPfIzN+PK/Yfh/vb8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1722940269; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=jMZSW9dNRkNsxlgsHsWktyORcMwZq11R1+/Cmv9Cq7k=; 
-	b=mR/uvityYyn4wWMScSFsd/EJYsS4WVFbJ8pjwMKikQR7OT8v4jDJHGvaChCKPUkV591zKjxXroPzEbSW9mQeibuO55GlE1yNufodfkX3XWkJJrCdyCAUk0QSljdo2X2AAoP+B2p5xPN5p244Ssh9TMD9FX1PJ401jDbt31h4+9c=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=angelogioacchino.delregno@collabora.com;
-	dmarc=pass header.from=<angelogioacchino.delregno@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1722940269;
-	s=zohomail; d=collabora.com;
-	i=angelogioacchino.delregno@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=jMZSW9dNRkNsxlgsHsWktyORcMwZq11R1+/Cmv9Cq7k=;
-	b=aUnkDuqEjTWyZzyxAYP0Pme3A4sTWOKgWz9DP9bvXdkyBkeFYEED7pKDs07nqBzF
-	TQEoDzAxF6EKvpeYrpXugMkx2Uyw2lf7DELh6mpjXdpe+we9H1hCZdRnw9IIN71tTq8
-	DQ6XcRcDWFMT/0CGd7l0IYwUHBg1kTMIWuV98Xks=
-Received: by mx.zohomail.com with SMTPS id 172294026626375.17600349451243;
-	Tue, 6 Aug 2024 03:31:06 -0700 (PDT)
-Message-ID: <adac5b48-aa85-40ae-8142-8b44fd45b900@collabora.com>
-Date: Tue, 6 Aug 2024 12:31:00 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA07A15A4AF;
+	Tue,  6 Aug 2024 10:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722940384; cv=none; b=Pyq0EEChDrktS3e8wEOj4cqunjzA0vg3MAJLrxw+NhfMACX8MjN2Lny1X9vKRsnTPMbEG9G/OU8Ut1XTtxRhfXMUSKlC43UZefYZUkHOk0evQ+SVV1zLnXaGOk+rXhRhM93aW3LyoJZdWNUo1ltIb2gGDvsh2Lefoav152whsLA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722940384; c=relaxed/simple;
+	bh=WK0yUyd4B3A4zEVchWwC5BxaLN9zllyCeQGwlVdV5f4=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=sdPCg27R8lm/iq0hz5g0GsiWhERmgXITKUKIfDLq2k4MvXdh6+En0jl9R17ri6/+T2OSyewxZ8+4dvdVc1Vr9jcDfF4jSQ1/tbKoExRliLApwWYIof/FqgjNDAkU5IOpMdwiv/W78CJNNUL7U1iJy6CuISG9oI0gV5dfLQahYUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SftJdPiZ; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722940383; x=1754476383;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=WK0yUyd4B3A4zEVchWwC5BxaLN9zllyCeQGwlVdV5f4=;
+  b=SftJdPiZ50qKdhye9oqhHBshQb4UnKbxEUa/CcwFk/RuiYDEVwpYCcb4
+   4BK2dUc+1m8DSdb0e+TWSDPzkAdOe107Sg0tuVpxl5ve2EseUNtlPKnRn
+   gOWWIXoMwtWZewjtw0JAdS3nvSeIG/3vL7Pr/4N36WSccFmtwZNjjoJIm
+   kvBToStg0juLxg+wqqPoF4sLKOciQyJhJxDveS+argqS8wcCbZ6tZZSsv
+   Gv3Utq6P7rTV3KetmVAWbgiW/qDKvbxYCup05yAfSnSlmbVHZ1ypNauG7
+   ZoAVBNjwX3s0jO2jZm6U4IsBPzhEpwPt2njaTg5HCGGmaQMcBlDFwveTi
+   A==;
+X-CSE-ConnectionGUID: W1KF13huQQGdlKJpQtZsRw==
+X-CSE-MsgGUID: H0FrApNdTAymrZ0sj1ZfDQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="38400432"
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="38400432"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 03:33:03 -0700
+X-CSE-ConnectionGUID: U7OxoXkfQr2WWptWQaWupQ==
+X-CSE-MsgGUID: L8BvsL50QCW5Ngn9ZtkC1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="93999273"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.72])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 03:33:00 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 6 Aug 2024 13:32:56 +0300 (EEST)
+To: "Luke D. Jones" <luke@ljones.dev>
+cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    Hans de Goede <hdegoede@redhat.com>, corentin.chary@gmail.com
+Subject: Re: [PATCH v2 5/6] platform/x86: asus-armoury: add core count
+ control
+In-Reply-To: <20240806020747.365042-6-luke@ljones.dev>
+Message-ID: <b29283ba-22c1-95dc-dbaa-69bd4fc2dd3a@linux.intel.com>
+References: <20240806020747.365042-1-luke@ljones.dev> <20240806020747.365042-6-luke@ljones.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] dt-bindings: arm: mediatek: mmsys: Add OF graph
- support for board path
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "wenst@chromium.org" <wenst@chromium.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- =?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
- "daniel@ffwll.ch" <daniel@ffwll.ch>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
- "kernel@collabora.com" <kernel@collabora.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- =?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= <Yu-chang.Lee@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "amergnat@baylibre.com" <amergnat@baylibre.com>
-References: <20240521075717.50330-1-angelogioacchino.delregno@collabora.com>
- <20240521075717.50330-3-angelogioacchino.delregno@collabora.com>
- <e7845300fa822413f6308cb6297222cde89c39e0.camel@mediatek.com>
- <0e0fe86c-92da-43f5-89d7-8084274a908a@collabora.com>
- <0f20214ab3a86f68669ad1392398b16228e699ee.camel@mediatek.com>
- <47f05439-815e-4ca1-b20d-8e427fef0a2a@collabora.com>
- <ee0209dac731b36ffe2ee20a2ff537ce7758b01f.camel@mediatek.com>
- <aa991aa4-7e9e-4cc6-b6ae-69539700691f@collabora.com>
- <fbb00e4cc81d8e1e47fac01c3c9146148747fa55.camel@mediatek.com>
- <1e5dd38c-db1f-47e3-887b-0831a14bee54@collabora.com>
- <67594e3abfb0a17c2f7df80003c88a002842491e.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <67594e3abfb0a17c2f7df80003c88a002842491e.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=US-ASCII
 
-Il 06/08/24 10:29, CK Hu (胡俊光) ha scritto:
-> Hi, Angelo:
+On Tue, 6 Aug 2024, Luke D. Jones wrote:
+
+> Implement Intel core enablement under the asus-armoury module using the
+> fw_attributes class.
 > 
-> On Thu, 2024-07-25 at 11:46 +0200, AngeloGioacchino Del Regno wrote:
->> Il 05/07/24 11:28, CK Hu (胡俊光) ha scritto:
->>> On Tue, 2024-06-11 at 08:54 +0200, AngeloGioacchino Del Regno wrote:
->>>> Il 11/06/24 08:48, CK Hu (胡俊光) ha scritto:
->>>>> On Mon, 2024-06-10 at 10:28 +0200, AngeloGioacchino Del Regno wrote:
->>>>>> Il 06/06/24 07:29, CK Hu (胡俊光) ha scritto:
->>>>>>> Hi, Angelo:
->>>>>>>
->>>>>>> On Wed, 2024-06-05 at 13:15 +0200, AngeloGioacchino Del Regno wrote:
->>>>>>>> Il 05/06/24 03:38, CK Hu (胡俊光) ha scritto:
->>>>>>>>> Hi, Angelo:
->>>>>>>>>
->>>>>>>>> On Tue, 2024-05-21 at 09:57 +0200, AngeloGioacchino Del Regno wrote:
->>>>>>>>>> Document OF graph on MMSYS/VDOSYS: this supports up to three DDP paths
->>>>>>>>>> per HW instance (so potentially up to six displays for multi-vdo SoCs).
->>>>>>>>>>
->>>>>>>>>> The MMSYS or VDOSYS is always the first component in the DDP pipeline,
->>>>>>>>>> so it only supports an output port with multiple endpoints - where each
->>>>>>>>>> endpoint defines the starting point for one of the (currently three)
->>>>>>>>>> possible hardware paths.
->>>>>>>>>>
->>>>>>>>>> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->>>>>>>>>> Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
->>>>>>>>>> Tested-by: Alexandre Mergnat <amergnat@baylibre.com>
->>>>>>>>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>>>>>>>>> ---
->>>>>>>>>>       .../bindings/arm/mediatek/mediatek,mmsys.yaml | 28 +++++++++++++++++++
->>>>>>>>>>       1 file changed, 28 insertions(+)
->>>>>>>>>>
->>>>>>>>>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
->>>>>>>>>> index b3c6888c1457..0ef67ca4122b 100644
->>>>>>>>>> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
->>>>>>>>>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
->>>>>>>>>> @@ -93,6 +93,34 @@ properties:
->>>>>>>>>>         '#reset-cells':
->>>>>>>>>>           const: 1
->>>>>>>>>>       
->>>>>>>>>> +  port:
->>>>>>>>>> +    $ref: /schemas/graph.yaml#/properties/port
->>>>>>>>>> +    description:
->>>>>>>>>> +      Output port node. This port connects the MMSYS/VDOSYS output to
->>>>>>>>>> +      the first component of one display pipeline, for example one of
->>>>>>>>>> +      the available OVL or RDMA blocks.
->>>>>>>>>> +      Some MediaTek SoCs support multiple display outputs per MMSYS.
->>>>>>>>>
->>>>>>>>> This patch looks good to me. Just want to share another information for you.
->>>>>>>>> Here is an example that mmsys/vdosys could point to the display interface node.
->>>>>>>>>
->>>>>>>>> vdosys0: syscon@1c01a000 {
->>>>>>>>>                mmsys-display-interface = <&dsi0>, <&dsi1>, <&dp_intf0>;
->>>>>>>>> };
->>>>>>>>>       
->>>>>>>>> vdosys1: syscon@1c100000 {
->>>>>>>>>                mmsys-display-interface = <&dp_intf1>;
->>>>>>>>> };
->>>>>>>>>
->>>>>>>>> There is no conflict that mmsys/vdosys point to first component of one display pipeline or point to display interface.
->>>>>>>>> Both could co-exist.
->>>>>>>>>
->>>>>>>>
->>>>>>>> Hey CK,
->>>>>>>>
->>>>>>>> yes, this could be an alternative to the OF graphs, and I'm sure that it'd work,
->>>>>>>> even though this kind of solution would still require partial hardcoding of the
->>>>>>>> display paths up until mmsys-display-interface (so, up until DSI0, or DSI1, etc).
->>>>>>>>
->>>>>>>> The problem with a solution like this is that, well, even though it would work,
->>>>>>>> even if we ignore the suboptimal partial hardcoding, OF graphs are something
->>>>>>>> generic, while the mmsys-display-interface would be a MediaTek specific/custom
->>>>>>>> property.
->>>>>>>>
->>>>>>>> In the end, reusing generic kernel apis/interfaces/etc is always preferred
->>>>>>>> compared to custom solutions, especially in this case, in which the generic
->>>>>>>> stuff is on-par (or actually, depending purely on personal opinions, superior).
->>>>>>>>
->>>>>>>> As for the two to co-exist, I'm not sure that this is actually needed, as the
->>>>>>>> OF graphs are already (at the end of the graph) pointing to the display interface.
->>>>>>>>
->>>>>>>> In any case, just as a reminder: if there will be any need to add any custom
->>>>>>>> MediaTek specific properties later, it's ok and we can do that at any time.
->>>>>>>
->>>>>>> The alternative solution is using OF graphs to point display interface and use MediaTek specific property to first component:
->>>>>>>
->>>>>>> vdosys0: syscon@1c01a000 {
->>>>>>>               ports {
->>>>>>>                        port@0 {
->>>>>>>                                  endpoint {
->>>>>>>                                           remote-endpoint = <&dsi0_endpoint>;
->>>>>>>                                  };
->>>>>>>                        };
->>>>>>>      
->>>>>>>                        port@1 {
->>>>>>>                                  endpoint {
->>>>>>>                                           remote-endpoint = <&dsi1_endpoint>;
->>>>>>>                                  };
->>>>>>>                        };
->>>>>>>      
->>>>>>>                        port@2 {
->>>>>>>                                  endpoint {
->>>>>>>                                           remote-endpoint = <&dp_intf0_endpoint>;
->>>>>>>                                  };
->>>>>>>                        };
->>>>>>>               };
->>>>>>>      
->>>>>>>               display-first-component = <&ovl0>;
->>>>>>> };
->>>>>>>
->>>>>>> And I agree to it's better to keep only OF graphs property, so it would be
->>>>>>>
->>>>>>> vdosys0: syscon@1c01a000 {
->>>>>>>               ports {
->>>>>>>                        port@0 {
->>>>>>>                                  endpoint {
->>>>>>>                                           remote-endpoint = <&dsi0_endpoint>;
->>>>>>>                       
->>>>>>>                };
->>>>>>>                        };
->>>>>>>      
->>>>>>>                        port@1 {
->>>>>>>                                  endpoint {
->>>>>>>                                           remote-endpoint = <&dsi1_endpoint>;
->>>>>>>                               
->>>>>>>        };
->>>>>>>                        };
->>>>>>>      
->>>>>>>                        port@2 {
->>>>>>>                                  endpoint {
->>>>>>>                                           remote-endpoint = <&dp_intf0_endpoint>;
->>>>>>>                                  }
->>>>>>> ;
->>>>>>>                        };
->>>>>>>               };
->>>>>>> };
->>>>>>>
->>>>>>> Maybe we could use OF graphs for both first component and display interface and drop using MediaTek specific property.
->>>>>>>
->>>>>>
->>>>>> We could, or we can simply walk through the OF Graph in the driver and get the
->>>>>> display interface like that, as it's board-specific ;-)
->>>>>>
->>>>>> ...but anyway, let's see that later: after getting this series upstreamed, I will
->>>>>> convert all MediaTek boards (including Chromebooks) to use the graphs instead, and
->>>>>> you'll see that, at least for the currently supported boards, there's no need for
->>>>>> any custom property.
->>>>>>
->>>>>> Also, setting the DSI0/1/dpintf endpoint to VDO0 is technically wrong, as that is
->>>>>> supposed to be the last one, and a graph is conceptually supposed to go from the
->>>>>> first to the last in sequence.
->>>>>>
->>>>>> *if* we will ever need (probably not) to get the VDO0 node to point directly to
->>>>>> the last node for whatever reason, the right way would be the first one you said,
->>>>>> so, mediatek,mmsys-display-interface = <&dsi0>, <&dsi1>, etc etc
->>>>>>
->>>>>> ...or mediatek,mmsys-possible-displays = < ... phandles >
->>>>>>
->>>>>> ...or anyway, many other solutions are possible - but again, I think this is not
->>>>>> the right time to think about that. Knowing that there are eventual solutions for
->>>>>> any need that might arise in the future is enough, IMO :-)
->>>>>
->>>>> This is one routing of display pipeline and the relation of VDOSYS0 with display pipeline.
->>>>>
->>>>>                   +-- VDOSYS0 ---------------------------------------------+
->>>>>                   |                                                        |
->>>>>                   |                                                        |
->>>>> DRAM -> IOMMU ---> OVL0 -> RDMA0 -> ... -> DSC0 -> MERGE0 -> DP_INTF0 ---->
->>>>>                   |                                                        |
->>>>>                   |                                                        |
->>>>>                   +--------------------------------------------------------+
->>>>>
->>>>> Video data is read by IOMMU from DRAM and send to display pipeline. Then video data travel through first component to display interface.
->>>>> VDOSYS0 manage each component in the pipeline include first component and display interface.
->>>>> The management include clock gating, reset, video data input/output routing.
->>>>> The relationship of VDOSYTS0 with first component is the same as the relationship of VDOSYS0 with display interface.
->>>>> If VDOSYS0 is not suitable using OF graph point to display interface, VDOSYS0 is also not suitable using OF graph point to first component.
->>>>
->>>> In the cases in which VDO goes directly to the display, it *is* possible to make it
->>>> point directly to the display.
->>>>
->>>> In the cases in which the pipeline is larger, VDO still points to the display, but
->>>> only later in the pipeline.
->>
->> Sorry I have just noticed your reply while looking for the status of this series.
->>
->>> I mean VDOSYS0 is not suitable 'using OF graph' to point to both display interface and first component.
->>
->> I seriously don't get why you're saying that VDOSYS0 is not suitable for OF Graphs
->> and I'm sorry but I suspect that the reason is that you don't understand the
->> concept of what a graph defines, other than how can it be walked through by design.
->>
->>> So VDOSYS0 should use specific property to point to both display interface and first component.
->>> Maybe
->>>
->>> vdosys0 {
->>> 	dma-device = <ovl0>;
->>> 	display-interface = <&dsi0>, <&dsi1>, <&dp_intf0>;
->>> };
->>
->> What you just wrote here adds custom properties for no reason - as in, there is
->> no reason for vdosys0 to have two properties pointing one to the first component
->> and one to all of the possible display interfaces for vdosys0.
+> This allows users to enable or disable preformance or efficiency cores
+> depending on their requirements. After change a reboot is required.
 > 
-> vdosys has management relationship with these display device.
-> The hardware relationship always exist even though I have no software reason.
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> ---
+>  drivers/platform/x86/asus-armoury.c        | 208 ++++++++++++++++++++-
+>  drivers/platform/x86/asus-armoury.h        |  29 +++
+>  include/linux/platform_data/x86/asus-wmi.h |   4 +
+>  3 files changed, 240 insertions(+), 1 deletion(-)
 > 
->> Provided a graph, that graph does express the OVL0 relationship with VDO0, and
->> it does express the relationship between OVL0 and the final display interface
->> -> through expressing the relationship between OVL0 and all of the middle
->>      components until reaching the actual display interface. <-
->>
->> Anyway, the proposed snippet either:
->>    a. Invalidates the point of this series entirely, as in, graphs in this case are
->>       implemented in order to stop hardcoding display paths for each board into the
->>       driver; or
->>    b. It is exactly the same as a graph, except with different properties and without
->>       ports and endpoints.
->>
->> Moreover, there is no advantage in setting all of the possible display interfaces
->> that are connectable to VDOSYS0 in a display-interface property:
->> from a board-specific perspective, the board cares only about the interfaces that
->> are *available to that board*, and not about any other.
+> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
+> index 412e75c652a4..592ebea35ad5 100644
+> --- a/drivers/platform/x86/asus-armoury.c
+> +++ b/drivers/platform/x86/asus-armoury.c
+> @@ -39,6 +39,18 @@
+>  #define ASUS_MINI_LED_2024_STRONG 0x01
+>  #define ASUS_MINI_LED_2024_OFF 0x02
+>  
+> +enum cpu_core_type {
+> +	CPU_CORE_PERF = 0,
+> +	CPU_CORE_POWER,
+> +};
+> +
+> +enum cpu_core_value {
+> +	CPU_CORE_DEFAULT = 0,
+> +	CPU_CORE_MIN,
+> +	CPU_CORE_MAX,
+> +	CPU_CORE_CURRENT,
+> +};
+> +
+>  /* Default limits for tunables available on ASUS ROG laptops */
+>  #define PPT_CPU_LIMIT_MIN 5
+>  #define PPT_CPU_LIMIT_MAX 150
+> @@ -84,6 +96,10 @@ struct rog_tunables {
+>  	u32 dgpu_tgp_min;
+>  	u32 dgpu_tgp_max;
+>  	u32 dgpu_tgp;
+> +
+> +	u32 min_perf_cores;
+> +	u32 max_perf_cores;
+> +	u32 max_power_cores;
+>  };
+>  
+>  static const struct class *fw_attr_class;
+> @@ -148,7 +164,9 @@ static struct kobj_attribute pending_reboot = __ATTR_RO(pending_reboot);
+>  static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
+>  {
+>  	return !strcmp(attr->attr.name, "gpu_mux_mode") ||
+> -	       !strcmp(attr->attr.name, "panel_hd_mode");
+> +		!strcmp(attr->attr.name, "cores_performance") ||
+> +		!strcmp(attr->attr.name, "cores_efficiency") ||
+> +		!strcmp(attr->attr.name, "panel_hd_mode");
+>  }
+>  
+>  /**
+> @@ -576,6 +594,191 @@ static ssize_t apu_mem_possible_values_show(struct kobject *kobj,
+>  }
+>  ATTR_GROUP_ENUM_CUSTOM(apu_mem, "apu_mem", "Set the available system memory for the APU to use");
+>  
+> +static int init_max_cpu_cores(void)
+> +{
+> +	u32 cores;
+> +	int err;
+> +
+> +	asus_armoury.rog_tunables->min_perf_cores = 4;
+> +	asus_armoury.rog_tunables->max_perf_cores = 4;
+> +	asus_armoury.rog_tunables->max_power_cores = 8;
+> +
+> +	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES_MAX, &cores);
+> +	if (err)
+> +		return err;
+> +
+> +	cores &= ~ASUS_WMI_DSTS_PRESENCE_BIT;
+> +	asus_armoury.rog_tunables->max_power_cores = (cores & 0xff00) >> 8;
+> +	asus_armoury.rog_tunables->max_perf_cores = cores & 0xff;
+
+Define names for the fields returned in 'cores' using GENMASK() and use 
+FIELD_GET() here to extract them.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static ssize_t cores_value_show(struct kobject *kobj,
+> +					struct kobj_attribute *attr, char *buf,
+> +					enum cpu_core_type core_type,
+> +					enum cpu_core_value core_value)
+> +{
+> +	u32 cores;
+> +	int err;
+> +
+> +	switch (core_value) {
+> +	case CPU_CORE_DEFAULT:
+> +	case CPU_CORE_MAX:
+> +		if (core_type == CPU_CORE_PERF)
+> +			return sysfs_emit(buf, "%d\n", asus_armoury.rog_tunables->max_perf_cores);
+
+%u for u32, please check all %d, I won't mark the rest.
+
+> +		else
+> +			return sysfs_emit(buf, "%d\n", asus_armoury.rog_tunables->max_power_cores);
+> +	case CPU_CORE_MIN:
+> +		if (core_type == CPU_CORE_PERF)
+> +			return sysfs_emit(buf, "%d\n", asus_armoury.rog_tunables->min_perf_cores);
+> +		else
+> +			return sysfs_emit(buf, "%d\n", 0);
+> +	default:
+> +	break;
+
+Misindented.
+
+> +	}
+> +
+> +	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES, &cores);
+> +	if (err)
+> +		return err;
+> +
+> +	cores &= ~ASUS_WMI_DSTS_PRESENCE_BIT;
+> +	if (core_type == CPU_CORE_PERF)
+> +		cores &= 0xff;
+> +	else
+> +		cores = (cores & 0xff00) >> 8;
+
+Perhaps create a helper which takes two pointers for core types as this 
+code is similar to the one in init_max_cpu_cores().
+
+> +	return sysfs_emit(buf, "%d\n", cores);
+> +}
+> +
+> +static ssize_t cores_current_value_store(struct kobject *kobj,
+> +				struct kobj_attribute *attr, const char *buf,
+> +				enum cpu_core_type core_type)
+> +{
+> +	int result, err;
+> +	u32 cores, currentv, min, max;
+> +
+> +	result = kstrtou32(buf, 10, &cores);
+> +	if (result)
+> +		return result;
+> +
+> +	if (core_type == CPU_CORE_PERF) {
+> +		min = asus_armoury.rog_tunables->min_perf_cores;
+> +		max = asus_armoury.rog_tunables->max_perf_cores;
+> +	} else {
+> +		min = 0;
+> +		max = asus_armoury.rog_tunables->max_power_cores;
+> +	}
+> +	if (cores < min || cores > max)
+> +		return -EINVAL;
+> +
+> +	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES, &currentv);
+> +	if (err)
+> +		return err;
+> +
+> +	if (core_type == CPU_CORE_PERF)
+> +		cores |= (currentv & 0xff00);
+> +	else
+> +		cores |= currentv & 0xff;
+
+Use normal pattern to alter a field:
+	xx &= ~YY;
+	xx |= FIELD_PREP(YY, cores);
+
+Alternatively you could just recalculate it fully since you've cached the 
+values?
+
+> +
+> +	if (cores == currentv)
+> +		return 0;
+> +
+> +	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_CORES, cores, &result);
+> +	if (err) {
+> +		pr_warn("Failed to set CPU core count: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	if (result > 1) {
+> +		pr_warn("Failed to set CPU core count (result): 0x%x\n", result);
+> +		return -EIO;
+> +	}
+> +
+> +	pr_info("CPU core count changed, reboot required\n");
+> +	sysfs_notify(kobj, NULL, attr->attr.name);
+> +	asus_set_reboot_and_signal_event();
+
+What prevents two change requests racing with each other?
+
+-- 
+ i.
+
+> +	return 0;
+> +}
+> +
+> +static ssize_t cores_performance_min_value_show(struct kobject *kobj,
+> +					struct kobj_attribute *attr, char *buf)
+> +{
+> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_MIN);
+> +}
+> +
+> +static ssize_t cores_performance_max_value_show(struct kobject *kobj,
+> +					struct kobj_attribute *attr, char *buf)
+> +{
+> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_MAX);
+> +}
+> +
+> +static ssize_t cores_performance_default_value_show(struct kobject *kobj,
+> +					struct kobj_attribute *attr, char *buf)
+> +{
+> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_DEFAULT);
+> +}
+> +
+> +static ssize_t cores_performance_current_value_show(struct kobject *kobj,
+> +					struct kobj_attribute *attr, char *buf)
+> +{
+> +	return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_CURRENT);
+> +}
+> +
+> +static ssize_t cores_performance_current_value_store(struct kobject *kobj,
+> +					struct kobj_attribute *attr,
+> +					const char *buf, size_t count)
+> +{
+> +	int err;
+> +
+> +	err = cores_current_value_store(kobj, attr, buf, CPU_CORE_PERF);
+> +	if (err)
+> +		return err;
+> +
+> +	return count;
+> +}
+> +ATTR_GROUP_CORES_RW(cores_performance, "cores_performance",
+> +		"Set the max available performance cores");
+> +
+> +static ssize_t cores_efficiency_min_value_show(struct kobject *kobj,
+> +					struct kobj_attribute *attr, char *buf)
+> +{
+> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_MIN);
+> +}
+> +
+> +static ssize_t cores_efficiency_max_value_show(struct kobject *kobj,
+> +					struct kobj_attribute *attr, char *buf)
+> +{
+> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_MAX);
+> +}
+> +
+> +static ssize_t cores_efficiency_default_value_show(struct kobject *kobj,
+> +					struct kobj_attribute *attr, char *buf)
+> +{
+> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_DEFAULT);
+> +}
+> +
+> +static ssize_t cores_efficiency_current_value_show(struct kobject *kobj,
+> +					struct kobj_attribute *attr, char *buf)
+> +{
+> +	return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_CURRENT);
+> +}
+> +
+> +static ssize_t cores_efficiency_current_value_store(struct kobject *kobj,
+> +					struct kobj_attribute *attr,
+> +					const char *buf, size_t count)
+> +{
+> +	int err;
+> +
+> +	err = cores_current_value_store(kobj, attr, buf, CPU_CORE_POWER);
+> +	if (err)
+> +		return err;
+> +
+> +	return count;
+> +}
+> +ATTR_GROUP_CORES_RW(cores_efficiency, "cores_efficiency",
+> +		"Set the max available efficiency cores");
+> +
+>  /* Simple attribute creation */
+>  ATTR_GROUP_ROG_TUNABLE(ppt_pl1_spl, "ppt_pl1_spl", ASUS_WMI_DEVID_PPT_PL1_SPL, cpu_default,
+>  		       cpu_min, cpu_max, 1, "Set the CPU slow package limit");
+> @@ -631,6 +834,8 @@ static const struct asus_attr_group armoury_attr_groups[] = {
+>  	{ &dgpu_base_tgp_attr_group, ASUS_WMI_DEVID_DGPU_BASE_TGP },
+>  	{ &dgpu_tgp_attr_group, ASUS_WMI_DEVID_DGPU_SET_TGP },
+>  	{ &apu_mem_attr_group, ASUS_WMI_DEVID_APU_MEM },
+> +	{ &cores_efficiency_attr_group, ASUS_WMI_DEVID_CORES_MAX },
+> +	{ &cores_performance_attr_group, ASUS_WMI_DEVID_CORES_MAX },
+>  
+>  	{ &charge_mode_attr_group, ASUS_WMI_DEVID_CHARGE_MODE },
+>  	{ &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
+> @@ -811,6 +1016,7 @@ static int __init asus_fw_init(void)
+>  		return -ENOMEM;
+>  	}
+>  	init_rog_tunables(asus_armoury.rog_tunables);
+> +	init_max_cpu_cores();
+>  
+>  	err = asus_fw_attr_add();
+>  	mutex_unlock(&asus_armoury.mutex);
+> diff --git a/drivers/platform/x86/asus-armoury.h b/drivers/platform/x86/asus-armoury.h
+> index 96d991383b8a..da585a180125 100644
+> --- a/drivers/platform/x86/asus-armoury.h
+> +++ b/drivers/platform/x86/asus-armoury.h
+> @@ -154,6 +154,35 @@ static ssize_t enum_type_show(struct kobject *kobj, struct kobj_attribute *attr,
+>  		.name = _fsname, .attrs = _attrname##_attrs                                    \
+>  	}
+>  
+> +/* CPU core attributes need a little different in setup */
+> +#define ATTR_GROUP_CORES_RW(_attrname, _fsname, _dispname)	\
+> +__ATTR_SHOW_FMT(scalar_increment, _attrname, "%d\n", 1);	\
+> +__ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);	\
+> +static struct kobj_attribute attr_##_attrname##_current_value = \
+> +	__ASUS_ATTR_RW(_attrname, current_value);		\
+> +static struct kobj_attribute attr_##_attrname##_default_value = \
+> +	__ASUS_ATTR_RO(_attrname, default_value);		\
+> +static struct kobj_attribute attr_##_attrname##_min_value =	\
+> +	__ASUS_ATTR_RO(_attrname, min_value);			\
+> +static struct kobj_attribute attr_##_attrname##_max_value =	\
+> +	__ASUS_ATTR_RO(_attrname, max_value);			\
+> +static struct kobj_attribute attr_##_attrname##_type =		\
+> +	__ASUS_ATTR_RO_AS(type, int_type_show);			\
+> +static struct attribute *_attrname##_attrs[] = {		\
+> +		&attr_##_attrname##_current_value.attr,		\
+> +		&attr_##_attrname##_default_value.attr,		\
+> +		&attr_##_attrname##_min_value.attr,		\
+> +		&attr_##_attrname##_max_value.attr,		\
+> +		&attr_##_attrname##_scalar_increment.attr,	\
+> +		&attr_##_attrname##_display_name.attr,		\
+> +		&attr_##_attrname##_type.attr,			\
+> +		NULL						\
+> +};								\
+> +static const struct attribute_group _attrname##_attr_group = {	\
+> +		.name = _fsname,				\
+> +		.attrs = _attrname##_attrs			\
+> +}
+> +
+>  /*
+>   * ROG PPT attributes need a little different in setup as they
+>   * require rog_tunables members.
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index 287206a03763..2e7509ab5be0 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -133,6 +133,10 @@
+>  /* dgpu on/off */
+>  #define ASUS_WMI_DEVID_DGPU		0x00090020
+>  
+> +/* Intel E-core and P-core configuration in a format 0x0[E]0[P] */
+> +#define ASUS_WMI_DEVID_CORES		0x001200D2
+> + /* Maximum Intel E-core and P-core availability */
+> +#define ASUS_WMI_DEVID_CORES_MAX	0x001200D3
+>  #define ASUS_WMI_DEVID_DGPU_BASE_TGP	0x00120099
+>  #define ASUS_WMI_DEVID_DGPU_SET_TGP	0x00120098
+>  #define ASUS_WMI_DEVID_APU_MEM		0x000600C1
 > 
-> I think in the board dts, the property could be overwritten.
-> So the display interface list could be changed.
-> 
->>
->> If interfaces X and Y are available to a board, that board will have a graph for X
->> and a graph for Y, so they are both perfectly described with ... graphs!
->>
->> ...and even though the VDO0 (or the SoC, whatever) supports interface Z, if said
->> display interface is *not* present on the board, that interface will not be
->> described by any graph, because it does not pertain to that board, it's unused and
->> it's useless to describe (even though it would be possible to add it regardless of
->> whether it's usable or not on that board).
->>
->> Last thing - I don't know if you have this doubt or not, but for the sake of making
->> the stream of information complete: even dual-dsi displays can be described with a
->> graph without any issue.
-> 
-> Here is my thought to make me accept this patch (I'm not sure you agree or not)
-> dma-device and display-interface is used to point some specific device related to vdosys.
-> OF graph is used to point to the display pipeline.
-> Each has different meaning so each could co-exist.
-
-Yes, that is correct, and I agree.
-
-> According to this thought, this patch is
-> 
-> Reviewed-by: CK Hu <ck.hu@mediatek.com>
-
-Thanks for that.
-
-I hope we can get this picked for v6.12 (very likely to be the next LTS) :-)
-
-Cheers,
-Angelo.
-
-> 
->>
->>
->> Regards,
->> Angelo
->>
->>>
->>> Regards,
->>> CK
->>>
->>>>
->>>>> The job of the component in display pipeline is to process the video data,
->>>>> but the job of VDOSYS0 is to manage (clock gating, reset, routing) the pipeline.
->>>>> If the OF graph is to show the video data travel path, VDOSYS0 should not exist in the OF graph.
->>>>>
->>>>> Regards,
->>>>> CK
->>>>>
->>>>>>
->>>>>> Cheers,
->>>>>> Angelo
->>>>>>
->>>>>>> Regards,
->>>>>>> CK
->>>>>>>
->>>>>>>>
->>>>>>>> Cheers!
->>>>>>>> Angelo
->>>>>>>>
->>>>>>>>> Regards,
->>>>>>>>> CK
->>>>>>>>>
->>>>>>>>>> +    properties:
->>>>>>>>>> +      endpoint@0:
->>>>>>>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
->>>>>>>>>> +        description: Output to the primary display pipeline
->>>>>>>>>> +
->>>>>>>>>> +      endpoint@1:
->>>>>>>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
->>>>>>>>>> +        description: Output to the secondary display pipeline
->>>>>>>>>> +
->>>>>>>>>> +      endpoint@2:
->>>>>>>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
->>>>>>>>>> +        description: Output to the tertiary display pipeline
->>>>>>>>>> +
->>>>>>>>>> +    anyOf:
->>>>>>>>>> +      - required:
->>>>>>>>>> +          - endpoint@0
->>>>>>>>>> +      - required:
->>>>>>>>>> +          - endpoint@1
->>>>>>>>>> +      - required:
->>>>>>>>>> +          - endpoint@2
->>>>>>>>>> +
->>>>>>>>>>       required:
->>>>>>>>>>         - compatible
->>>>>>>>>>         - reg
->>>>>>>>
->>>>>>>>
->>>>>>
->>>>>>
->>>>
->>>>
->>>>
->>
->>
-
-
-
 
