@@ -1,208 +1,298 @@
-Return-Path: <linux-kernel+bounces-276513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E16D9494DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:52:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 720C99494CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5EA9B278B4
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93E5B1C21C93
 	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83393A268;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFFC3A8CB;
 	Tue,  6 Aug 2024 15:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKdqKCfj"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="HHujrAov"
+Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A225621105;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8271946F;
 	Tue,  6 Aug 2024 15:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722959312; cv=none; b=DxjwOzwUfEaBZlxFMv7NTq6coyPuk8f3oFmr1gaOijC2xQQ0VZy88vsB8K7DynqM901Zp0KgCkUH8oaSkmVA2zkou1ST28kRw9iraf+JjrIFEA4CHXkwZVRaZf0bEI9Sj8ZGpr1OzHVTuZhkDbv5ovh2WZRw49i56AzLwSc6WVM=
+	t=1722959312; cv=none; b=ZGE90lAA3WDxE1anXllGRMXnqHj8GEqI2p0ketGVV2PJK0OBl+qyhG6ZYEag9WCnOmKxq1JNK9gmL3LwIsZXGadRqTZAPL5wVRtH3H/HVQN/vajkND2gVOkk+LnD2MbMtjYxcgnNmcOmibLqN6Rj5uJkKhnybUB4VUtpm0qfHAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722959312; c=relaxed/simple;
-	bh=5kw9LUCe3aMCuSe3G3ahOANLyecKLgyvijitJU7k30c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=luAwIH98mJtWjoEiWM3VFMq7aYokAVBhkqvDSNAUN0ACD3+VgBC9v2D85dS0O+LYspLK8YU99JU9OAdJsQY2PdmwFTP3nsHnKBwf81v+1FMgbHtzH6NkELtBPU+CaT3CJutKQMpAKHYPkj51Vux0lDFCAP66pU5bUIF2Wo5sEM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RKdqKCfj; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-450059a25b9so8254851cf.0;
-        Tue, 06 Aug 2024 08:48:30 -0700 (PDT)
+	bh=79JKVVzj13bPR9TcVJePyTMWtYc/ZcBwbG0GynFLhKE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ggnY9RtA40Cu3Dl7qwdh3yqTYSxNoI+Ah4hB1fAIJ+yOzMvHTtdvgXsg7iQAjZ+lW8PtC0rmEsLfPHpRmURLvLx+dvcExyyK5oDKO/VF5777EKErdhJbItq/RnIKCZn3afucEASrDWOgydQRIouXN1ddFG0DZpGUmrXd9rC2k7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=HHujrAov; arc=none smtp.client-ip=207.171.190.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722959309; x=1723564109; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ebRpBwJcWZCPuxZmfUOMbhoCEFcgWL5zqoZAend3/rg=;
-        b=RKdqKCfjeIT/atDffyumtgfjRkOl85STAjVpRM9Ou54q+CYH9NSO9hb9JKhBAvKGIs
-         bLDlCQ45vM0q0jMaeGwPGPRkh1+qVQ3kVR5Fvpet9g3Wc1cXqdlkt/Auy11dPHFmD2Z8
-         syvk+WCzELCUqtGvdcPLQ8F3xsUnXm5JUfEkhlz4P33fvtmZruToFnxc3WhT1qrY2KQr
-         Fw2OISoa6A6nzbv8KGeG3qr/7UHp6eJbtvPqf4eBz2w5QFe2sdKKk9m3Z1aVmwQ5WCfE
-         AnRR8u2AijUU9VaKwE8F+sAMks2k95AwuPlBDCrCA2j1x8NAIy96Qoldn7Oix3grsOrR
-         XgXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722959309; x=1723564109;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ebRpBwJcWZCPuxZmfUOMbhoCEFcgWL5zqoZAend3/rg=;
-        b=BDk6W5FZ5QTagnT9775o9D+NbzeDEtC6KW4JDazKC/k3FFzjFN0/e+V6oo+hW+jfs6
-         H9RYUtGYPO+IL45eUSadTPEKuVXKROL7Aey5lSV+76MZp88z5uoTJhi4p+S/vxvqn4ba
-         4+UV3tu89GA9fF83rMmHyRqm7rp1OA9oamGmyJPOg1telDCgJ+fPb749kJ7S5y9p/F3v
-         VSJgDN283s3zusVscvqmBZmZcvljfGpSBWRSJ0SoEIYhJxEbhes3QY90ULuMiof2Bv45
-         x7vJlYswkYCynEaASgamHpm2+c6q8uFJyAf76RUwjy17gm3l4c00pFXZsr9+6hLqnAMK
-         0blA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDPmeNl4mlMjmJRK9r62OZfqnqwNzMKf+mk1G518Iy34nnVphEGvuKhdiFnR0DWEfNtzWTLQA54xrSWmI1k3HoqxLja9OS9zK+AgKhIArufUM2hId1chZoDVn3m4xPtjA9xrltWmAdIrAEAxDmDNHz2LMRaoGuf28EXfkmdhpAdSaYK96h92GB0sXZs7mBfUhfX8U0KjL6ty4n9FFeUUjyhn7PyAiNX16Bu4Q=
-X-Gm-Message-State: AOJu0Yz7DS9SM/wZ9hH7m1mpQnHr0EBSrESO3dvf2t76/UNjb28PufrM
-	Xo5IKFK2P+IiXD8BfAU4WjthzN5TDUF842wSYxz+WSvdrdybbhH2/souAeO7GK4dAPsm9xdrLLV
-	1wFobccglT15T99S9RRjwHqC1D9U=
-X-Google-Smtp-Source: AGHT+IGq0AW13T1iMnr8QI8qtGbWivM8zKHtCkVchJ5WVkWb7ImghZpbduhEbct+4umxMJZBc0nnwLmQXU1QtCkMlig=
-X-Received: by 2002:a05:622a:164c:b0:447:f8b1:aeb9 with SMTP id
- d75a77b69052e-4518454fdc8mr327544871cf.16.1722959309454; Tue, 06 Aug 2024
- 08:48:29 -0700 (PDT)
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazon201209; t=1722959310; x=1754495310;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=yc/1mWs6SeF5HnWAzCvUQzyjIjCuiLTryEo53m/a1v4=;
+  b=HHujrAovkv35QNQoE3kSDVDENlpgfrKlg04ay8Gk4LpTS7Tpnd1Ruf0Y
+   kaUR6eLw+tqJ0LGySMBBpJIfEM3DmCdX8hF+iXFuj90AFAtpAnW+3UQPe
+   R3kFow32R8LEWPX73IfO+bvNHa6iBBjm0OQLxCoB29PTOGnEaO/pY0Xdl
+   g=;
+X-IronPort-AV: E=Sophos;i="6.09,268,1716249600"; 
+   d="scan'208";a="360852274"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 15:48:27 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.17.79:8908]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.26.94:2525] with esmtp (Farcaster)
+ id 114b04b0-66ae-461d-8af3-867b0de2b6ff; Tue, 6 Aug 2024 15:48:26 +0000 (UTC)
+X-Farcaster-Flow-ID: 114b04b0-66ae-461d-8af3-867b0de2b6ff
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 6 Aug 2024 15:48:25 +0000
+Received: from EX19MTAUEB001.ant.amazon.com (10.252.135.35) by
+ EX19D022EUC002.ant.amazon.com (10.252.51.137) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 6 Aug 2024 15:48:25 +0000
+Received: from [127.0.0.1] (172.19.88.180) by mail-relay.amazon.com
+ (10.252.135.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34 via Frontend
+ Transport; Tue, 6 Aug 2024 15:48:23 +0000
+Message-ID: <6660faa6-4cea-4ddc-a378-ab9da9139ee9@amazon.co.uk>
+Date: Tue, 6 Aug 2024 16:48:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805200400.54267-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240805200400.54267-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <81ac76eb-8b43-457b-80be-c588ac4790e1@roeck-us.net> <CA+V-a8u0dFGmNqJWuXXH3mVVTT6dWBhSr+SM7nFyu3DAeACjNA@mail.gmail.com>
- <45d4760e-17bf-49f2-a139-d79a0202b630@roeck-us.net>
-In-Reply-To: <45d4760e-17bf-49f2-a139-d79a0202b630@roeck-us.net>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 6 Aug 2024 16:48:02 +0100
-Message-ID: <CA+V-a8sn0R3Vd7JFzitSKm24KzKUNdMf9SkFHn567X6y6nA-eg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] watchdog: Add Watchdog Timer driver for RZ/V2H(P)
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 4/4] mm: guest_memfd: Add ability for mmap'ing pages
+To: Elliot Berman <quic_eberman@quicinc.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, "Sean
+ Christopherson" <seanjc@google.com>, Fuad Tabba <tabba@google.com>, "David
+ Hildenbrand" <david@redhat.com>, <qperret@google.com>, Ackerley Tng
+	<ackerleytng@google.com>
+CC: <linux-coco@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <kvm@vger.kernel.org>,
+	James Gowans <jgowans@amazon.com>, "Kalyazin, Nikita"
+	<kalyazin@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>, "Cali,
+ Marco" <xmarcalx@amazon.co.uk>
+References: <20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com>
+ <20240805-guest-memfd-lib-v1-4-e5a29a4ff5d7@quicinc.com>
+From: Patrick Roy <roypat@amazon.co.uk>
+Content-Language: en-US
+Autocrypt: addr=roypat@amazon.co.uk; keydata=
+ xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
+ NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
+ wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
+ CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
+ AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
+ AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
+ IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
+ 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
+ 8hlxFQM=
+In-Reply-To: <20240805-guest-memfd-lib-v1-4-e5a29a4ff5d7@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi Guenter,
+On Mon, 2024-08-05 at 19:34 +0100, Elliot Berman wrote:
+> Confidential/protected guest virtual machines want to share some memory
+> back with the host Linux. For example, virtqueues allow host and
+> protected guest to exchange data. In MMU-only isolation of protected
+> guest virtual machines, the transition between "shared" and "private"
+> can be done in-place without a trusted hypervisor copying pages.
+> 
+> Add support for this feature and allow Linux to mmap host-accessible
+> pages. When the owner provides an ->accessible() callback in the
+> struct guest_memfd_operations, guest_memfd allows folios to be mapped
+> when the ->accessible() callback returns 0.
 
-On Tue, Aug 6, 2024 at 3:03=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> w=
-rote:
->
-> On 8/6/24 06:47, Lad, Prabhakar wrote:
-> > Hi Guenter,
-> >
-> ...
-> >>> +     /*
-> >>> +      * WDTCR
-> >>> +      * - CKS[7:4] - Clock Division Ratio Select - 0101b: oscclk/256
-> >>> +      * - RPSS[13:12] - Window Start Position Select - 11b: 100%
-> >>> +      * - RPES[9:8] - Window End Position Select - 11b: 0%
-> >>> +      * - TOPS[1:0] - Timeout Period Select - 11b: 16384 cycles (3FF=
-Fh)
-> >>> +      */
-> >>> +     rzv2h_wdt_setup(wdev, WDTCR_CKS_CLK_256 | WDTCR_RPSS_100 |
-> >>> +                     WDTCR_RPES_0 | WDTCR_TOPS_16384);
-> >>> +
-> >>> +     rzv2h_wdt_ping(wdev);
-> >>> +
-> >>
-> >> The need to ping the watchdog immediately after enabling it is unusual=
-.
-> >> Please explain.
-> >>
-> > The down counting operation starts only after the ping operation, so
-> > after starting the wdt a ping is issued here.
-> >
->
-> Please add that as comment to the code.
->
-Sure, I will add the below comment:
+Wouldn't the set of inaccessible folios always match exactly the set of
+folios that have PG_private=1 set? At least guest_memfd instances that
+have GUEST_MEMFD_FLAG_NO_DIRECT_MAP set, having folios without direct
+map entries marked "accessible" sound like it may cause a lot of mayhem
+(as those folios would essentially be secretmem folios, but this time
+without the GUP checks). But even more generally, wouldn't tracking
+accessibility via PG_private be enough?
 
-    /*
-     * Down counting starts after writing the sequence 00h -> FFh to the
-     * WDTRR register. Hence, call the ping operation after loading the cou=
-nter
-     */
+> To safely make inaccessible:
+> 
+> ```
+> folio = guest_memfd_grab_folio(inode, index, flags);
+> r = guest_memfd_make_inaccessible(inode, folio);
+> if (r)
+>         goto err;
+> 
+> hypervisor_does_guest_mapping(folio);
+> 
+> folio_unlock(folio);
+> ```
+> 
+> hypervisor_does_s2_mapping(folio) should make it so
+> ops->accessible(...) on those folios fails.
+> 
+> The folio lock ensures atomicity.
+> 
+> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> ---
+>  include/linux/guest_memfd.h |  7 ++++
+>  mm/guest_memfd.c            | 81 ++++++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 87 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/guest_memfd.h b/include/linux/guest_memfd.h
+> index f9e4a27aed67..edcb4ba60cb0 100644
+> --- a/include/linux/guest_memfd.h
+> +++ b/include/linux/guest_memfd.h
+> @@ -16,12 +16,18 @@
+>   * @invalidate_end: called after invalidate_begin returns success. Optional.
+>   * @prepare: called before a folio is mapped into the guest address space.
+>   *           Optional.
+> + * @accessible: called after prepare returns success and before it's mapped
+> + *              into the guest address space. Returns 0 if the folio can be
+> + *              accessed.
+> + *              Optional. If not present, assumes folios are never accessible.
+>   * @release: Called when releasing the guest_memfd file. Required.
+>   */
+>  struct guest_memfd_operations {
+>         int (*invalidate_begin)(struct inode *inode, pgoff_t offset, unsigned long nr);
+>         void (*invalidate_end)(struct inode *inode, pgoff_t offset, unsigned long nr);
+>         int (*prepare)(struct inode *inode, pgoff_t offset, struct folio *folio);
+> +       int (*accessible)(struct inode *inode, struct folio *folio,
+> +                         pgoff_t offset, unsigned long nr);
+>         int (*release)(struct inode *inode);
+>  };
+> 
+> @@ -48,5 +54,6 @@ struct file *guest_memfd_alloc(const char *name,
+>                                const struct guest_memfd_operations *ops,
+>                                loff_t size, unsigned long flags);
+>  bool is_guest_memfd(struct file *file, const struct guest_memfd_operations *ops);
+> +int guest_memfd_make_inaccessible(struct file *file, struct folio *folio);
+> 
+>  #endif
+> diff --git a/mm/guest_memfd.c b/mm/guest_memfd.c
+> index e9d8cab72b28..6b5609932ca5 100644
+> --- a/mm/guest_memfd.c
+> +++ b/mm/guest_memfd.c
+> @@ -9,6 +9,8 @@
+>  #include <linux/pagemap.h>
+>  #include <linux/set_memory.h>
+> 
+> +#include "internal.h"
+> +
+>  static inline int guest_memfd_folio_private(struct folio *folio)
+>  {
+>         unsigned long nr_pages = folio_nr_pages(folio);
+> @@ -89,7 +91,7 @@ struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags
+>                         goto out_err;
+>         }
+> 
+> -       if (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP) {
+> +       if (!ops->accessible && (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP)) {
+>                 r = guest_memfd_folio_private(folio);
+>                 if (r)
+>                         goto out_err;
+> @@ -107,6 +109,82 @@ struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags
+>  }
+>  EXPORT_SYMBOL_GPL(guest_memfd_grab_folio);
+> 
+> +int guest_memfd_make_inaccessible(struct file *file, struct folio *folio)
+> +{
+> +       unsigned long gmem_flags = (unsigned long)file->private_data;
+> +       unsigned long i;
+> +       int r;
+> +
+> +       unmap_mapping_folio(folio);
+> +
+> +       /**
+> +        * We can't use the refcount. It might be elevated due to
+> +        * guest/vcpu trying to access same folio as another vcpu
+> +        * or because userspace is trying to access folio for same reason
+> +        *
+> +        * folio_lock serializes the transitions between (in)accessible
+> +        */
+> +       if (folio_maybe_dma_pinned(folio))
+> +               return -EBUSY;
+> +
+> +       if (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP) {
+> +               r = guest_memfd_folio_private(folio);
+> +               if (r)
+> +                       return r;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static vm_fault_t gmem_fault(struct vm_fault *vmf)
+> +{
+> +       struct file *file = vmf->vma->vm_file;
+> +       struct inode *inode = file_inode(file);
+> +       const struct guest_memfd_operations *ops = inode->i_private;
+> +       struct folio *folio;
+> +       pgoff_t off;
+> +       int r;
+> +
+> +       folio = guest_memfd_grab_folio(file, vmf->pgoff, GUEST_MEMFD_GRAB_UPTODATE);
+> +       if (!folio)
+> +               return VM_FAULT_SIGBUS;
+> +
+> +       off = vmf->pgoff & (folio_nr_pages(folio) - 1);
+> +       r = ops->accessible(inode, folio, off, 1);
+> +       if (r) {
 
-> ...
->
-> > Ive now updated restart with below, so that we dont touch clocks if
-> > they are already ON,
-> >
-> >      if (!watchdog_active(wdev)) {
-> >          ret =3D clk_enable(priv->pclk);
-> >          if (ret)
-> >              return ret;
-> >
-> >          ret =3D clk_enable(priv->oscclk);
-> >          if (ret) {
-> >              clk_disable(priv->pclk);
-> >              return ret;
-> >          }
-> >      }
-> >
-> >      if (!watchdog_active(wdev))
-> >          ret =3D reset_control_deassert(priv->rstc);
-> >      else
-> >          ret =3D reset_control_reset(priv->rstc);
->
-> Please rearrange to only require a single "if (!watchdog_active())".
-> Also, please add a comment explaining the need for calling
-> reset_control_reset() if the watchdog is active.
->
-Sure I will rearrange the code and add the below comment on why reset
-operation is required when wdt is active,
+This made be stumble at first. I know you say ops->accessible returning
+0 means "this is accessible", but if I only look at this if-statement it
+reads as "if the folio is accessible, send a SIGBUS", which is not
+what's actually happening.
 
-        /*
-         * Writing to the WDT Control Register (WDTCR) or WDT Reset
-         * Control Register (WDTRCR) is possible once between the
-         * release from the reset state and the first refresh operation.
-         * so issue a reset if watchdog is active.
-         * Therefore, issue a reset if the watchdog is active.
-         */
-
-
-> >      if (ret) {
-> >          clk_disable(priv->oscclk);
-> >          clk_disable(priv->pclk);
-> >          return ret;
-> >      }
-> >
-> >      /* delay to handle clock halt after de-assert operation */
-> >      udelay(3);
-> >
-> >
-> >>> +     /*
-> >>> +      * WDTCR
-> >>> +      * - CKS[7:4] - Clock Division Ratio Select - 0000b: oscclk/1
-> >>> +      * - RPSS[13:12] - Window Start Position Select - 00b: 25%
-> >>> +      * - RPES[9:8] - Window End Position Select - 00b: 75%
-> >>> +      * - TOPS[1:0] - Timeout Period Select - 00b: 1024 cycles (03FF=
-h)
-> >>> +      */
-> >>> +     rzv2h_wdt_setup(wdev, WDTCR_CKS_CLK_1 | WDTCR_RPSS_25 |
-> >>> +                     WDTCR_RPES_75 | WDTCR_TOPS_1024);
-> >>> +     rzv2h_wdt_ping(wdev);
-> >>> +
-> >> Why is the ping here necessary ?
-> >>
-> > The down counting starts after the refresh operation, hence the WDT is =
-pinged.
-> >
->
-> Should be covered with the explanation in rzv2h_wdt_start().
->
-OK
-
-Cheers,
-Prabhakar
+> +               folio_unlock(folio);
+> +               folio_put(folio);
+> +               return VM_FAULT_SIGBUS;
+> +       }
+> +
+> +       guest_memfd_folio_clear_private(folio);
+> +
+> +       vmf->page = folio_page(folio, off);
+> +
+> +       return VM_FAULT_LOCKED;
+> +}
+> +
+> +static const struct vm_operations_struct gmem_vm_ops = {
+> +       .fault = gmem_fault,
+> +};
+> +
+> +static int gmem_mmap(struct file *file, struct vm_area_struct *vma)
+> +{
+> +       const struct guest_memfd_operations *ops = file_inode(file)->i_private;
+> +
+> +       if (!ops->accessible)
+> +               return -EPERM;
+> +
+> +       /* No support for private mappings to avoid COW.  */
+> +       if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) !=
+> +           (VM_SHARED | VM_MAYSHARE))
+> +               return -EINVAL;
+> +
+> +       file_accessed(file);
+> +       vma->vm_ops = &gmem_vm_ops;
+> +       return 0;
+> +}
+> +
+>  static long gmem_punch_hole(struct file *file, loff_t offset, loff_t len)
+>  {
+>         struct inode *inode = file_inode(file);
+> @@ -220,6 +298,7 @@ static int gmem_release(struct inode *inode, struct file *file)
+>  static struct file_operations gmem_fops = {
+>         .open = generic_file_open,
+>         .llseek = generic_file_llseek,
+> +       .mmap = gmem_mmap,
+>         .release = gmem_release,
+>         .fallocate = gmem_fallocate,
+>         .owner = THIS_MODULE,
+> 
+> --
+> 2.34.1
+> 
 
