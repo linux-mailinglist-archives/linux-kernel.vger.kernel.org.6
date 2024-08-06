@@ -1,173 +1,161 @@
-Return-Path: <linux-kernel+bounces-276472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643A294943A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:10:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E50F694943D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8782F1C212B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:10:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A73D728644F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4972B200111;
-	Tue,  6 Aug 2024 15:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93770200111;
+	Tue,  6 Aug 2024 15:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xhi5IqTc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WPNAYG0Q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E93A1D54D1;
-	Tue,  6 Aug 2024 15:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102CE1BC08F;
+	Tue,  6 Aug 2024 15:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722957011; cv=none; b=JKNTt2GlDzW0swusLbtNHRKHToWzE+ouiu8MFPeK8YAi1cHPo2uNjPxkzxBlvP+H6cNJehZf/RQBr+34Pew0vXxCPKIJHq7p20aQPD3lEsIKfRBpCbykoLlxAsEzAHTdZ4Jv/CFYwT4KAw+ukAUDt5Exbv7dUWroii0q36fDjWg=
+	t=1722957104; cv=none; b=SI4CaY3+hwMGe2agu4722+uyW5LA5buuHZWOuZDEhZzSa3DN3GqUuWOLyS3CSgt7lOaKvDyo1xK/svhYWhsWjpPfE8Bwxv8+lr3kzgWuoKr4J1RkSHv7qJnY/HX5ta05HeGE8ZOf+8E8saLOZh06pI50u3dJJmKGExdq9i/89yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722957011; c=relaxed/simple;
-	bh=czja/tbq0SHQMKQ+vQgV5ZRFDFLhH3Fj3Pwk4oEqX80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OSJNSl8POo4yhtc97Q78Iv0iE4TpoVNKyto/qi8okuNuDrQQUnSFeG8ug4TQf5fTdbo1FrTjQ8I7sGTQ2WUt3d5l8UwMw/C5RI0Yw+1ZgszCxTsKustWmr6gEnHU5SrAxv7F9Udffb9fuEF66jL3WWvdUq+X2YHvHcLvF+i8Cuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xhi5IqTc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5876C32786;
-	Tue,  6 Aug 2024 15:10:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722957011;
-	bh=czja/tbq0SHQMKQ+vQgV5ZRFDFLhH3Fj3Pwk4oEqX80=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xhi5IqTcLEmPb3yCUSErtGHsGWbGVpsHxVMrNaPFf6Y8C0uHwLElSzECtFilpe4Km
-	 lvFh2e3mGM/xlhLl10OMah7mcaGYqs+6vOlLGecpFmXe99te2mZSuwKzWKyAoRfh6M
-	 YCDqycLJmWpyloUXigN/byaFhBPvfAtXFtjKP+jO6Wev+wKGX7S+JmC2NLGx4KdfKe
-	 zs2PNoKoEaCiRLwTyZ3G7y0YQu9JX1GW1PyT0qcpZ5s1BqkNpKjhcJ1fHihLG8sGbf
-	 ORO36tBBifmWNGc1R3kY47aqYnuutkTMVDvG0wYTZix408IbSJ2bOjRc0u/1d+eRno
-	 89daTAzZtjd7A==
-Date: Tue, 6 Aug 2024 16:10:02 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, jannh@google.com,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH RFT v7 9/9] selftests/clone3: Test shadow stack support
-Message-ID: <19ee6fc9-94d7-4420-abd3-7cfdf612df0c@sirena.org.uk>
-References: <20240731-clone3-shadow-stack-v7-0-a9532eebfb1d@kernel.org>
- <20240731-clone3-shadow-stack-v7-9-a9532eebfb1d@kernel.org>
- <202408052046.00BC7CBC@keescook>
+	s=arc-20240116; t=1722957104; c=relaxed/simple;
+	bh=7iqHXjjCeAj+TidcvK4r77b9VBp1itlsXMImcsXnbgk=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gXzhKYuWjODQLQSK3C/u1DxGJytv7j7SAPoJcG3XoWR0svAOWDK1ac+V0ThzX/Phkz5xfm6MpS7qyfLpXhyIrIJ+TekhFSD5MIwqyUFcEFuJU4/0c1EjWmM41YChJlkGLzeKkf7TeBRzWPz+3ZyMS4UH5QdCDAvONJFA+XVvT0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WPNAYG0Q; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722957103; x=1754493103;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=7iqHXjjCeAj+TidcvK4r77b9VBp1itlsXMImcsXnbgk=;
+  b=WPNAYG0QbuQkXEENa+kOmzEWj+/5MIHjnm4bSnUj63ID56/4Z9UHEN53
+   XYfS8oxpIjL2ISrxR9XeAYz1SSzqvkLriEcX/LHJ83plpOeVL/7Pa4eLZ
+   dLNjllVG5Uo+0dawVNxqISA1CAG/D/hqTm6k0WHiK0VEjUqrSiNr25Pzj
+   nLzE7YWzUG0yri7+KjLhR9lSYxpl0NNp4q9icFdXDkc3ofEBlymI9hKDe
+   x3eMnIg4YJMEE85YKiasPIcX94MGmPuhtZNE/ztUBScBjiw+TLe+mgiji
+   mFYufkHFl22DIUONGwv5O/GhRMPricceMwJhhyU5rb4fz8Nm7uQzuvC7f
+   w==;
+X-CSE-ConnectionGUID: zPChqGqET6i92bjDy63JdQ==
+X-CSE-MsgGUID: /bxfriooQ5WvIpuyb9bIwg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="31650052"
+X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
+   d="scan'208";a="31650052"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 08:11:42 -0700
+X-CSE-ConnectionGUID: rsCG6K4CSa+HqeDrtlkZUg==
+X-CSE-MsgGUID: 3Q9OiXZJSfCaScnoTt5eJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
+   d="scan'208";a="60650645"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.72])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 08:11:40 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 6 Aug 2024 18:11:36 +0300 (EEST)
+To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+cc: bhelgaas@google.com, linux-pci@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: remove type return
+In-Reply-To: <20240803140443.23036-1-trintaeoitogc@gmail.com>
+Message-ID: <a7f0433d-11ab-b404-31a6-944cf9637472@linux.intel.com>
+References: <20240803140443.23036-1-trintaeoitogc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="E5K4oNFhFrjnR+eW"
-Content-Disposition: inline
-In-Reply-To: <202408052046.00BC7CBC@keescook>
-X-Cookie: One picture is worth 128K words.
+Content-Type: text/plain; charset=US-ASCII
 
+On Sat, 3 Aug 2024, Guilherme Giacomo Simoes wrote:
 
---E5K4oNFhFrjnR+eW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> I can see that the function pci_hp_add_brigde have a int return propagation.
 
-On Mon, Aug 05, 2024 at 08:54:54PM -0700, Kees Cook wrote:
-> On Wed, Jul 31, 2024 at 01:14:15PM +0100, Mark Brown wrote:
+typo in function name. Add parenthesis after function names like this:
+pci_hp_add_bridge()
 
-> > +	case CLONE3_ARGS_SHADOW_STACK:
-> > +		/* We need to specify a normal stack too to avoid corruption */
-> > +		args.shadow_stack = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN);
-> > +		args.shadow_stack_size = getpagesize();
-> > +		break;
+> But in the drivers that pci_hp_add_bridge is called, your return never is
+> cheked.
 
->   # Running test 'Shadow stack on system with shadow stack'
->   # [5496] Trying clone3() with flags 0 (size 0)
->   # I am the parent (5496). My child's pid is 5505
->   # Child exited with signal 11
->   # [5496] clone3() with flags says: 11 expected 0
->   # [5496] Result (11) is different than expected (0)
->   not ok 20 Shadow stack on system with shadow stack
+checked.
 
-> The child segfaults immediately, it seems?
+> This make me a think that the add bridge for pci hotplug drivers is not crucial
+> for functionaly and your failed only should show a message in logs.
 
-That's what I'd expect if we either didn't manage to create the shadow
-stack token in the page we mapped or we messed up in
-arch_shstk_post_fork() somehow, probably getting the wrong pointer for
-the token or not mapping things correctly.  I'll have done something
-silly, it'll doubtless be very obvious and embarrassing when I see it
-but I'm not seeing it right now...
+functionality
 
-> > +	case CLONE3_ARGS_SHADOW_STACK_NO_POINTER:
-> > +		args.shadow_stack_size = getpagesize();
-> > +		break;
+> 
+> Then, I maked this patch for remove your return propagation for this moment.
 
->   # Running test 'Shadow stack with no pointer'
->   # [5496] Trying clone3() with flags 0 (size 0)
->   # Invalid argument - Failed to create new process
->   # [5496] clone3() with flags says: -22 expected -22
->   ok 21 Shadow stack with no pointer
+Please write the commit message using imperative tone. Don't use "I", 
+"me", "you", "your", or "we" at all.
 
-> This seems like it misses the failure and reports ok
+Also, you need to signoff your patches (please read 
+Documentation/process/submitting-patches.rst).
 
-No, this is testing to make sure we get the failure - if we have
-arguments that can't possibly be valid then we should reject them with
-an error code during validation prior to trying to create the new
-thread.  The "expected -22" in the output says it's looking for an
-error.  Same for the other similar expected error code.
+The lack of return value checking seems to be on the list in
+pci_hp_add_bridge(). So perhaps the right course of action would be to 
+handle return values correctly.
 
-> > +	case CLONE3_ARGS_SHADOW_STACK_NO_TOKEN:
-> > +		args.shadow_stack = get_shadow_stack_page(0);
-> > +		args.shadow_stack_size = getpagesize();
-> > +		break;
+-- 
+ i.
 
-> This actually segfaults the parent:
-
->   # Running test 'Shadow stack with no token'
->   # [5496] Trying clone3() with flags 0x100 (size 0)
->   # I am the parent (5496). My child's pid is 5507
->   Segmentation fault
-
-Oh dear.  We possibly manage to corrupt the parent's shadow stack
-somehow?  I don't think I managed to do that in my arm64 testing.  This
-should also be something going wrong in arch_shstk_post_fork().
-
-> Let me know what would be most helpful to dig into more...
-
-It'll almost certianly be something in arch_shstk_post_fork(), that's
-the bit I couldn't test.  Just making that always return success should
-avoid the first fault, the second ought to not crash but will report a
-fail as we should be rejecting the shadow stack when we try to consume
-the token.
-
---E5K4oNFhFrjnR+eW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmayPMoACgkQJNaLcl1U
-h9AK+Af/dnTytFfO/mCKL2dX+g5P0Gg01KnQrH51RKYyd1RhRAc3iDigelulFDJD
-45pyvz6GZnK37WUn2qFlgyyq7eTn8LfAkU2ARo1YuJFOJuyeNZap8Zt5nuaO8V4+
-A7dvRiahLV64ZbTIKezt+XJyK2d0gtHGg19RQjVFwyP3LhzCRQ41hLbDS4BHLBFi
-4hpeIGqjMTkyC/buDuLkqcQn+v6mt9VgyB1ExKXWkDSwfgKgcgDuabHgPmMJKEEc
-gSzsDRoxmT5F8FQtpdFObpIJRRHlJrmHhUANThYR/lOXeU2Fnvn9VC03hNs7f02l
-wAk1gnhNtWjgU8d4jwHBeLdQJjqQkw==
-=04Ib
------END PGP SIGNATURE-----
-
---E5K4oNFhFrjnR+eW--
+> ---
+>  drivers/pci/pci.h   | 2 +-
+>  drivers/pci/probe.c | 7 +++----
+>  2 files changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 79c8398f3938..a35dbfd89961 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -189,7 +189,7 @@ static inline int pci_proc_detach_bus(struct pci_bus *bus) { return 0; }
+>  #endif
+>  
+>  /* Functions for PCI Hotplug drivers to use */
+> -int pci_hp_add_bridge(struct pci_dev *dev);
+> +void pci_hp_add_bridge(struct pci_dev *dev);
+>  
+>  #if defined(CONFIG_SYSFS) && defined(HAVE_PCI_LEGACY)
+>  void pci_create_legacy_files(struct pci_bus *bus);
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index b14b9876c030..b13c4c912eb1 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -3352,7 +3352,7 @@ void __init pci_sort_breadthfirst(void)
+>  	bus_sort_breadthfirst(&pci_bus_type, &pci_sort_bf_cmp);
+>  }
+>  
+> -int pci_hp_add_bridge(struct pci_dev *dev)
+> +void pci_hp_add_bridge(struct pci_dev *dev)
+>  {
+>  	struct pci_bus *parent = dev->bus;
+>  	int busnr, start = parent->busn_res.start;
+> @@ -3365,7 +3365,7 @@ int pci_hp_add_bridge(struct pci_dev *dev)
+>  	}
+>  	if (busnr-- > end) {
+>  		pci_err(dev, "No bus number available for hot-added bridge\n");
+> -		return -1;
+> +		return;
+>  	}
+>  
+>  	/* Scan bridges that are already configured */
+> @@ -3381,8 +3381,7 @@ int pci_hp_add_bridge(struct pci_dev *dev)
+>  	pci_scan_bridge_extend(parent, dev, busnr, available_buses, 1);
+>  
+>  	if (!dev->subordinate)
+> -		return -1;
+> +		pci_err(dev, "No bus subordinate");
+>  
+> -	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(pci_hp_add_bridge);
+> 
 
