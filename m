@@ -1,122 +1,143 @@
-Return-Path: <linux-kernel+bounces-276743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8219D9497DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:57:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1BCB9497F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E1582827E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:57:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE681C20FA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D5D7E0F4;
-	Tue,  6 Aug 2024 18:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lqGPTPBg"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F7181AC8
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 18:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3896A7CF30;
+	Tue,  6 Aug 2024 19:04:35 +0000 (UTC)
+Received: from second.openwall.net (second.openwall.net [193.110.157.125])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 8D367EAD2
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 19:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.110.157.125
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722970629; cv=none; b=FFiji2ba/R38fL5rDv2pdGmmjumMrNoO7RO81hbwxEliW+6Awxt7W2/s3eKuC9/XwuxpanMeN7rzbwxKheqXtTZkflmAzJL5sFfcul17w+rLpUuIL6kSZqE2fQa9gTtYn5PEvQ2or8axgAejE8alKoWYRQ/y8jHbOR1A6RJ0miU=
+	t=1722971074; cv=none; b=jp1xn7yokz/CRKAEeIx4pFvX5ghNO/mpIEh41nn+UGqYBbMgwK00sFHsQWEv7hdSMlDqdDL7auJqdiJsv/g/V/gAaM3trb29Fi5Mmw/U+Qx7TGV3EFBTv5nr8+Yx6xBGcU9E/NnNB9O7eF851aZwnkGWKB0NWTyjv7OSiazJB4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722970629; c=relaxed/simple;
-	bh=QsEz/njIOEwlQJd+1jweVyiPy2SWvIy81sbU5T8pWvA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XWApnz/3vwCReoJ03XYodgDDpcCOPb+ju+dMukUo5eWBbc/bqadwz7N6Bj2lGFM9yoOlxkw34G6WVggDtbLT8CzcVYMyXYZYnZ3HrLu1mzdYDKgYrGryxGgZ2YbT1i4r8M0LuOI0Vsa2q+ANtcqFBCuCAz6oBNXcHMvFEudAkYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lqGPTPBg; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1722970614; x=1723575414; i=markus.elfring@web.de;
-	bh=QsEz/njIOEwlQJd+1jweVyiPy2SWvIy81sbU5T8pWvA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=lqGPTPBgN8OeUaEeEUOtgSXcziEGan2ywLqShFZwSVnyBr+A1YaPsoe7ZgTOT0pY
-	 PrxeVMPz8Ee8FHwoU3Jh+t+LooR7LYZfAlkCXtAtMWCLGzDihbDbMP0NGQUILHvpQ
-	 i7TwtZcoZCsFtbzgLL2qwiUjZT3Rf0oSg2C37hdTnE4bps64JfhCBRxOyyXBv8ugp
-	 iavT+ZXk+fnzrSPQWV0AB86VKRq1RRTeyDlcrBeVic1qQeTFDBcgu+QBI9/Ta7FiK
-	 4L0QZaSty3CiQH1uTIqn60I5JZxG1YOhxSIdi4i7dsCp+oHUv4nyQUsjNNESxnAEF
-	 hQ1l0o5gJXCD+Zrhbg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnG2Q-1rucLq0K5U-00l11C; Tue, 06
- Aug 2024 20:56:54 +0200
-Message-ID: <de748b0f-6e05-4c36-a6ad-cc5b09718e0b@web.de>
-Date: Tue, 6 Aug 2024 20:56:53 +0200
+	s=arc-20240116; t=1722971074; c=relaxed/simple;
+	bh=kXnF4Vdg5Vrsb77LBn7YP+mgUEhG4aFshvw+dHS7Y/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qLzwDMcTDfqsVpeQYPyp5MEgl7vtinAFHGPiTvxZUbf05lToEZAD+kVkaSkNj97JY56amJz6R6VP303sCJkrdfS8D056AnO/Zsl4ctUeI+3N41MqqhzivhJeSqJj9iahzLlWxvf2+HwB9FylzoREuAtqXwUiwtHvGwgjPjCUjyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openwall.com; spf=pass smtp.mailfrom=openwall.com; arc=none smtp.client-ip=193.110.157.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openwall.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openwall.com
+Received: (qmail 11632 invoked from network); 6 Aug 2024 18:57:47 -0000
+Received: from localhost (HELO pvt.openwall.com) (127.0.0.1)
+  by localhost with SMTP; 6 Aug 2024 18:57:47 -0000
+Received: by pvt.openwall.com (Postfix, from userid 503)
+	id 0BF31A064E; Tue,  6 Aug 2024 20:57:37 +0200 (CEST)
+Date: Tue, 6 Aug 2024 20:57:37 +0200
+From: Solar Designer <solar@openwall.com>
+To: Joel Granados <j.granados@samsung.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Kees Cook <keescook@chromium.org>,
+	Thomas Wei??schuh <linux@weissschuh.net>,
+	Wen Yang <wen.yang@linux.dev>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [GIT PULL] sysctl changes for v6.11-rc1
+Message-ID: <20240806185736.GA29664@openwall.com>
+References: <CGME20240716141703eucas1p2f6ddaf91b7363dd893d37b9aa8987dc6@eucas1p2.samsung.com> <20240716141656.pvlrrnxziok2jwxt@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 00/10] AMD XDNA driver
-To: Lizhi Hou <lizhi.hou@amd.com>, dri-devel@lists.freedesktop.org,
- Oded Gabbay <ogabbay@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, George Yang <George.Yang@amd.com>,
- king.tam@amd.com, Max Zhen <max.zhen@amd.com>, Min Ma <min.ma@amd.com>,
- Narendra Gutta <VenkataNarendraKumar.Gutta@amd.com>,
- Sonal Santan <sonal.santan@amd.com>
-References: <20240805173959.3181199-1-lizhi.hou@amd.com>
- <f66e2016-d2c8-4a86-9a6f-267770f7fed5@web.de>
- <23f5f0ea-305c-15c0-4578-ef1307621d07@amd.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <23f5f0ea-305c-15c0-4578-ef1307621d07@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:J6XKjukaDhMuC6VH8csRFL8lT4765mGsvAbvwWw3KvpbqeZrG9K
- OPHyPJkXwKYZ5wh6Pq7GStAcNjj60V85x2I5Qngcew/gQeuf/jdaEx9KRc7Z4a40PCoc+rO
- t1VAMGkYxbUH//97kTli4ZXTCJi/mIPpenNF44cR5u7Lbd41f90ZL6TFB3zHcZrpZjlaWw6
- iXme0jLWYwpxZrwuQImgQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Cnd4g9rne+o=;F1I9lZDQNZ4ZXNXFHGo+KLJRTz9
- PETRrhfTsFwRxjI8CqJgh6rFg2VTVStFXS+4d0KckQ2jowmfqEKiEdKstZyMC2gOWK/12YjNe
- WnoehIBjYU1dA3++EfgiQUtF3DDG6GpsmzFMyIJJYEtpVEqyXyWTHrLh84rcxe+7I5r/zuzSH
- uWcm+vk9GI+4mLw76PhHD6JMGXHk6F+BRXM2XxFiRv2s/AeDk2ZwrjMVEeXtwdDYrY5i/Zsgl
- dnCuC6q2rsmdQtd6LfxgC18tUCG2M9eckGZkbdIxHO50LukP3/4wH8N1TZ3yNqueuBiMlOiIj
- LF1dV3wkE/HVZW7k/PiMPYrGJkQs3rX/NFt2IWPkULRPFgAnx0xvBtETHlYxqONdV63XzD408
- zJCc0lfTYfYojHwYU+XB9Irx4O4dhyV9/UoG20mkKrkgcKGbbO+ER3Bf+ElT6s+ZsevFw/Yqn
- zCKF7kRvRW8GCWhZupd706ragYUcbShdqBL43BfqSLNuZ4ZqtA0rugCeaLV1hVxYqe9Pc3Ong
- nMKkKvDn1ss/7VwahSBH+0wUChUr+R64eSWl2P4ES7HaWB97cIGjcs0HgQvdc3/XpdbCEnRnj
- LNLU9MINRuL2EShRKzi7wfpFtE+rfrckNRoJKFWRe/tJ8ydIwPvHrjVQ8gr1jXVbfEk+KQWo7
- SRKZyDdIfvWGQsj7x6o3HprfHcQWZg9uDM7AFr2sL1f+ir3MZbhaZc+3NoTfYjcwBMwDYybIa
- IT9O9CoWWhWKwASDP+cPxf5a7x/IYecVy8TOJilYf5By0uA33BUTtCFClzZl/+Evg+1a3pIgT
- sTjxTXUimByzo2mg628gigZg==
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240716141656.pvlrrnxziok2jwxt@joelS2.panther.com>
+User-Agent: Mutt/1.4.2.3i
 
->> https://lkml.org/lkml/2024/7/19/803
->> https://lore.kernel.org/linux-kernel/010a46ba-9dc4-e3e3-7894-b28b312c6a=
-b1@amd.com/
->> [01/10] accel/amdxdna: Add a new driver for AMD AI Engine
->> =E2=80=9Cguard looks cleaner. We will use it.=E2=80=9D
-> We reconsidered this request
+On Tue, Jul 16, 2024 at 04:16:56PM +0200, Joel Granados wrote:
+> sysctl changes for 6.11-rc1
+> 
+> Summary
+> 
+> * Remove "->procname == NULL" check when iterating through sysctl table arrays
+> 
+>     Removing sentinels in ctl_table arrays reduces the build time size and
+>     runtime memory consumed by ~64 bytes per array. With all ctl_table
+>     sentinels gone, the additional check for ->procname == NULL that worked in
+>     tandem with the ARRAY_SIZE to calculate the size of the ctl_table arrays is
+>     no longer needed and has been removed. The sysctl register functions now
+>     returns an error if a sentinel is used.
+> 
+> * Preparation patches for sysctl constification
+> 
+>     Constifying ctl_table structs prevents the modification of proc_handler
+>     function pointers as they would reside in .rodata. The ctl_table arguments
+>     in sysctl utility functions are const qualified in preparation for a future
+>     treewide proc_handler argument constification commit.
 
-Interesting =E2=80=A6
+As (I assume it was) expected, these changes broke out-of-tree modules.
+For LKRG, I am repairing this by adding "#if LINUX_VERSION_CODE >=
+KERNEL_VERSION(6,11,0)" checks around the corresponding module changes.
+This works.  However, I wonder if it would possibly be better for the
+kernel to introduce a corresponding "feature test macro" (or two, for
+the two changes above).  I worry that these changes (or some of them)
+could get backported to stable/longterm, which with the 6.11+ checks
+would unnecessarily break out-of-tree modules again (and again and again
+for each backport to a different kernel branch).  Feature test macro(s)
+would avoid such further breakage, as they would (be supposed to be)
+included along with the backports.
 
+Joel, Linus, or anyone else - what do you think?  And in general, would
+it be a good practice for Linux to be providing feature test macros to
+indicate this sort of changes?  Is there a naming convention for them?
 
-> and searched accel and drm subsystem. I did not see it was used.
+For omitting the ctl_table array sentinel elements, it is now possible
+to check whether register_sysctl() is a function or a macro.  I've
+tested the below and it works:
 
-Do you notice how applications of scope-based resource management are grow=
-ing
-in other subsystem areas?
++++ b/src/modules/comm_channel/p_comm_channel.c
+@@ -332,7 +332,14 @@ struct ctl_table p_lkrg_sysctl_table[] = {
+       .extra1         = &p_profile_enforce_min,
+       .extra2         = &p_profile_enforce_max,
+    },
++/*
++ * Empty element at the end of array was required when register_sysctl() was a
++ * function.  It's no longer required when it became a macro in 2023, and it's
++ * disallowed after further changes in 2024.
++ */
++#ifndef register_sysctl
+    { }
++#endif
+ };
 
+But it's a hack, which I'm unhappy about.
 
-> This does not look like a required change for upstream at this moment.
+So instead of a macro indicating that the "Remove "->procname == NULL"
+check when iterating through sysctl table arrays" change is in place, we
+could have one that indicates that the sentinel elements are no longer
+required (and no need for one indicating that they're no longer allowed,
+then).  Something like LINUX_SYSCTL_NO_SENTINELS.  This could even be
+backported to kernels that do not have the "Remove "->procname == NULL"
+check" commit, if they do have last year's removal of the requirement.
 
-Maybe.
+Alternatively, maybe "Remove "->procname == NULL" check when iterating
+through sysctl table arrays" should be reverted.  I can see how it's
+useful as a policy check for the kernel itself, so no space is
+inadvertently wasted on a sentinel element anywhere in the kernel tree,
+but maybe it isn't worth enforcing this for out-of-tree modules.  The
+impact of an extra element (if allowed) is negligible, whereas the
+impact of not having it on an older kernel is really bad.  I worry that
+some out-of-tree modules would be adapted or written for the new
+convention without a 6.11+ check, yet someone would also build and use
+them on pre-6.11.  There's no compile-time failure from omitting the
+sentinel element on a kernel where it was needed, and there isn't a
+_reliable_ runtime failure either.
 
+The other macro could be called LINUX_SYSCTL_TABLE_CONST, although I'm
+not sure whether it should apply only to the "ctl_table arguments in
+sysctl utility functions" (the change so far) or also to "Constifying
+ctl_table structs" (a near future change, right?)
 
-> We would keep the current code for this patch series.
-
-Will further collateral evolution become more attractive anyhow?
-
-Regards,
-Markus
+Alexander
 
