@@ -1,158 +1,197 @@
-Return-Path: <linux-kernel+bounces-277226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80F5F949E30
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:14:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C05949E32
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 173371F229FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:14:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ED3A2851CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA10618FDAA;
-	Wed,  7 Aug 2024 03:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nWrcy5c/"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF1F2A1D6;
+	Wed,  7 Aug 2024 03:15:25 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2565D1E495;
-	Wed,  7 Aug 2024 03:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E3018D620
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 03:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723000458; cv=none; b=SlLAF/7765LmK+/xcZP04CR8O3PfWHce6gRbRTWPbG7xergVKXgcqbImEDIZchfmTOvartAHaHqnNt9lf4pbnqZJ/PiPsnXvZp13W8yr9v/xLeBOFlnj12RBhHYLoqrx017RdHt/XveZosaL2tmZ14O9wYo+78b/fU0gqGnbptY=
+	t=1723000524; cv=none; b=hueHtTO1FEyN2FsN9ZTlzy85lx72EEpLfnAa8TdSsnWuwdlSavMr9y7wo0XgF4Kh0/eKyJIOqlzYac7zYWeqeRAV8zUHpJqA82ELFGiw9CzTMtLR5AEbYQ6xBWRbY/POZhQzlHrfQxqOGuk1Irdz8g9uTq+nDNnsEPje/20R7Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723000458; c=relaxed/simple;
-	bh=cMx1IOY71AED7TDikDFHPkAfymF6/0uPgI4EdMhJWBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Vs20/ebqrd12JwquqljLPohx4CDIO3JC2tQ5W+jkFH9rLcjc6VLfLE91cQQtGEQnYbG1pwTXF7Bszs1XtnRxqyxFxNSptaSKAa0IibUdKGe+ggmWNkU+Vh6mbht53OSSIvewtEr9arQyBNavGzBAXaNxXOK2IeqeKZKQJHSzKoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nWrcy5c/; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723000449;
-	bh=JdpwTuR4ku4UOe2zZ0+rUH2K0oLdY3dPpv1PrgnHu5g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nWrcy5c/RqyDghJVD5T28iI6f8v7HicANCZjT2/jd9hOzGaoV7Ijkan6QRpOULFUN
-	 t00O/JlSGLjIimtXMQ0eX2UrLCrSDQ3cCskXtjBPeOJZzh4StqtkAKt1+yhSGUAwIa
-	 tG08okERTyafFYg7fgdgSdkq4tzilIuMAsO5mOK2P4bKwPTWhw1cvyGk0VIjVzFMps
-	 o6Q9tE1SuXPlXBUg5Zh8Jm6EGfmN45UpQTplBPx1kl2jXA/iDVkDJhTAJY7WpNlbTX
-	 gU8ZqZ4NH0FktvP7NJD+fN0VFUNhvGDIKzyDk0A0oRxv+mfpmC3oPVbPJDKgRmJkcQ
-	 RnQ5/BaoqiSDA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WdwHz54fcz4w2J;
-	Wed,  7 Aug 2024 13:14:07 +1000 (AEST)
-Date: Wed, 7 Aug 2024 13:14:05 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kees Cook <kees@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, Jini Susan George
- <jinisusan.george@amd.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Roman Kisel <romank@linux.microsoft.com>,
- Vignesh Balasubramanian <vigbalas@amd.com>
-Subject: linux-next: manual merge of the execve tree with the tip tree
-Message-ID: <20240807131405.10e3665d@canb.auug.org.au>
+	s=arc-20240116; t=1723000524; c=relaxed/simple;
+	bh=GWu7tF3mqwnzz5fR9fNA7ElYBkMPGVwLO2/XKTG/Z5U=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=C7TefM9zGkZbuOfwCnDG98GE0Hh2X0dHowbGFPAWDEzs5yRV9WonUJgnJIEr6KUrSmWHUXV+zx6nJYV1XlDsHeHwHcT3azJ5dwt72dDJyZJ1RdHXgoFPteOMwVDCQeeVa8W7jSfsK0qPwhddSFD2KGDMjbDpoKIYOMjec7yBlj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WdwH8193JzfZP0;
+	Wed,  7 Aug 2024 11:13:24 +0800 (CST)
+Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
+	by mail.maildlp.com (Postfix) with ESMTPS id D676A14035E;
+	Wed,  7 Aug 2024 11:15:17 +0800 (CST)
+Received: from [10.173.127.72] (10.173.127.72) by
+ kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 7 Aug 2024 11:15:17 +0800
+Subject: Re: [PATCH v2] mm/memory-failure: Use raw_spinlock_t in struct
+ memory_failure_cpu
+To: Waiman Long <longman@redhat.com>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, Huang Ying
+	<ying.huang@intel.com>, Len Brown <len.brown@intel.com>, Juri Lelli
+	<juri.lelli@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Naoya
+ Horiguchi <nao.horiguchi@gmail.com>
+References: <20240806164107.1044956-1-longman@redhat.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <1ea73082-f8f0-6c6d-3c0c-9012520d1036@huawei.com>
+Date: Wed, 7 Aug 2024 11:15:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/k8V+4_H9rEjtB4OPIlXNg03";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20240806164107.1044956-1-longman@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd200019.china.huawei.com (7.221.188.193)
 
---Sig_/k8V+4_H9rEjtB4OPIlXNg03
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2024/8/7 0:41, Waiman Long wrote:
+> The memory_failure_cpu structure is a per-cpu structure. Access to its
+> content requires the use of get_cpu_var() to lock in the current CPU
+> and disable preemption. The use of a regular spinlock_t for locking
+> purpose is fine for a non-RT kernel.
+> 
+> Since the integration of RT spinlock support into the v5.15 kernel,
+> a spinlock_t in a RT kernel becomes a sleeping lock and taking a
+> sleeping lock in a preemption disabled context is illegal resulting in
+> the following kind of warning.
+> 
+>   [12135.732244] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+>   [12135.732248] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 270076, name: kworker/0:0
+>   [12135.732252] preempt_count: 1, expected: 0
+>   [12135.732255] RCU nest depth: 2, expected: 2
+>     :
+>   [12135.732420] Hardware name: Dell Inc. PowerEdge R640/0HG0J8, BIOS 2.10.2 02/24/2021
+>   [12135.732423] Workqueue: kacpi_notify acpi_os_execute_deferred
+>   [12135.732433] Call Trace:
+>   [12135.732436]  <TASK>
+>   [12135.732450]  dump_stack_lvl+0x57/0x81
+>   [12135.732461]  __might_resched.cold+0xf4/0x12f
+>   [12135.732479]  rt_spin_lock+0x4c/0x100
+>   [12135.732491]  memory_failure_queue+0x40/0xe0
+>   [12135.732503]  ghes_do_memory_failure+0x53/0x390
+>   [12135.732516]  ghes_do_proc.constprop.0+0x229/0x3e0
+>   [12135.732575]  ghes_proc+0xf9/0x1a0
+>   [12135.732591]  ghes_notify_hed+0x6a/0x150
+>   [12135.732602]  notifier_call_chain+0x43/0xb0
+>   [12135.732626]  blocking_notifier_call_chain+0x43/0x60
+>   [12135.732637]  acpi_ev_notify_dispatch+0x47/0x70
+>   [12135.732648]  acpi_os_execute_deferred+0x13/0x20
+>   [12135.732654]  process_one_work+0x41f/0x500
+>   [12135.732695]  worker_thread+0x192/0x360
+>   [12135.732715]  kthread+0x111/0x140
+>   [12135.732733]  ret_from_fork+0x29/0x50
+>   [12135.732779]  </TASK>
+> 
+> Fix it by using a raw_spinlock_t for locking instead. Also move the
+> pr_err() out of the lock critical section to avoid indeterminate latency
+> of this call.
+> 
+> Fixes: ea8f5fb8a71f ("HWPoison: add memory_failure_queue()")
 
-Hi all,
+We shouldn't have this problem before RT spinlock is supported? If so, this Fixes tag might be wrong.
 
-Today's linux-next merge of the execve tree got a conflict in:
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  mm/memory-failure.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 581d3e5c9117..7aeb5198c2a0 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -2417,7 +2417,7 @@ struct memory_failure_entry {
+>  struct memory_failure_cpu {
+>  	DECLARE_KFIFO(fifo, struct memory_failure_entry,
+>  		      MEMORY_FAILURE_FIFO_SIZE);
+> -	spinlock_t lock;
+> +	raw_spinlock_t lock;
+>  	struct work_struct work;
+>  };
+>  
+> @@ -2443,19 +2443,21 @@ void memory_failure_queue(unsigned long pfn, int flags)
+>  {
+>  	struct memory_failure_cpu *mf_cpu;
+>  	unsigned long proc_flags;
+> +	bool buffer_overflow;
+>  	struct memory_failure_entry entry = {
+>  		.pfn =		pfn,
+>  		.flags =	flags,
+>  	};
+>  
+>  	mf_cpu = &get_cpu_var(memory_failure_cpu);
+> -	spin_lock_irqsave(&mf_cpu->lock, proc_flags);
+> -	if (kfifo_put(&mf_cpu->fifo, entry))
+> +	raw_spin_lock_irqsave(&mf_cpu->lock, proc_flags);
+> +	buffer_overflow = !kfifo_put(&mf_cpu->fifo, entry);
+> +	if (!buffer_overflow)
+>  		schedule_work_on(smp_processor_id(), &mf_cpu->work);
+> -	else
+> +	raw_spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
+> +	if (buffer_overflow)
+>  		pr_err("buffer overflow when queuing memory failure at %#lx\n",
+>  		       pfn);
 
-  fs/binfmt_elf.c
+Should we put pr_err() further under put_cpu_var()?
 
-between commit:
+> -	spin_unlock_irqrestore(&mf_cpu->lock, proc_flags)
+>  	put_cpu_var(memory_failure_cpu);
+>  }
 
-  ba386777a30b ("x86/elf: Add a new FPU buffer layout info to x86 core file=
-s")
+Will below diff be more straightforward?
 
-from the tip tree and commit:
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index b68953dc9fad..be172cbc6ca9 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -2553,20 +2553,23 @@ void memory_failure_queue(unsigned long pfn, int flags)
+ {
+        struct memory_failure_cpu *mf_cpu;
+        unsigned long proc_flags;
++       bool buffer_overflow = false;
+        struct memory_failure_entry entry = {
+                .pfn =          pfn,
+                .flags =        flags,
+        };
 
-  fb97d2eb542f ("binfmt_elf, coredump: Log the reason of the failed core du=
-mps")
+        mf_cpu = &get_cpu_var(memory_failure_cpu);
+-       spin_lock_irqsave(&mf_cpu->lock, proc_flags);
++       raw_spin_lock_irqsave(&mf_cpu->lock, proc_flags);
+        if (kfifo_put(&mf_cpu->fifo, entry))
+                schedule_work_on(smp_processor_id(), &mf_cpu->work);
+        else
++               buffer_overflow = true;
++       raw_spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
++       put_cpu_var(memory_failure_cpu);
++       if (buffer_overflow)
+                pr_err("buffer overflow when queuing memory failure at %#lx\n",
+                       pfn);
+-       spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
+-       put_cpu_var(memory_failure_cpu);
+ }
+ EXPORT_SYMBOL_GPL(memory_failure_queue);
 
-from the execve tree.
+But no strong opinion.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/binfmt_elf.c
-index 01bcbe7fdebd,bf9bfd1a0007..000000000000
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@@ -2092,20 -2102,28 +2102,28 @@@ static int elf_core_dump(struct coredum
-  			phdr.p_flags |=3D PF_X;
-  		phdr.p_align =3D ELF_EXEC_PAGESIZE;
- =20
-- 		if (!dump_emit(cprm, &phdr, sizeof(phdr)))
-+ 		if (!dump_emit(cprm, &phdr, sizeof(phdr))) {
-+ 			coredump_report_failure("Error emitting program headers");
-  			goto end_coredump;
-+ 		}
-  	}
- =20
-- 	if (!elf_core_write_extra_phdrs(cprm, offset))
-+ 	if (!elf_core_write_extra_phdrs(cprm, offset)) {
-+ 		coredump_report_failure("Error writing out extra program headers");
-  		goto end_coredump;
-+ 	}
- =20
-  	/* write out the notes section */
-- 	if (!write_note_info(&info, cprm))
-+ 	if (!write_note_info(&info, cprm)) {
-+ 		coredump_report_failure("Error writing out notes");
-  		goto end_coredump;
-+ 	}
- =20
- -	/* For cell spufs */
- +	/* For cell spufs and x86 xstate */
-- 	if (elf_coredump_extra_notes_write(cprm))
-+ 	if (elf_coredump_extra_notes_write(cprm)) {
-+ 		coredump_report_failure("Error writing out extra notes");
-  		goto end_coredump;
-+ 	}
- =20
-  	/* Align to page */
-  	dump_skip_to(cprm, dataoff);
-
---Sig_/k8V+4_H9rEjtB4OPIlXNg03
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmay5n0ACgkQAVBC80lX
-0GwVegf/fFeUd296KoCVxdwGEso6Jix/wz8vJOdBfqeF9khsodIWfYX68sh5jz/z
-8QTVOqp0dAALEkUCymuTcu4H4Irjem7Ugq4heBQKqiU8xnpj0BydlGbqr5Ku+w6M
-eO5G+MmCP7hgbO7eVb7Xe0KYZCr8liFd5LN6McSamzukJrZIWx1XyMCuKoFED6Ww
-BqcgGnqBy77m4qRxWAZPHGYna+8MLC9fNzCewvubOsmtePhzJsKP6z2poQwm3gn1
-H/WPWOxpTtOBsY8AZGkAdJlxJm0qCwhvgZqDj+tMk96aDcKLiYpHH9VVr2Ym+2Cg
-KNRrDg8d31XtVxrsWRM3KQbU0Ohaqg==
-=Lt+L
------END PGP SIGNATURE-----
-
---Sig_/k8V+4_H9rEjtB4OPIlXNg03--
+Thanks.
+.
 
