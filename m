@@ -1,157 +1,163 @@
-Return-Path: <linux-kernel+bounces-277946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F49B94A886
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:25:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4284394A888
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0BD51C22DD0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:25:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DACF01F23D7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8886C1E7A52;
-	Wed,  7 Aug 2024 13:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A496C1E7A53;
+	Wed,  7 Aug 2024 13:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AO1QyPSM"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P+wYeB3j"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8DE1E7A3B;
-	Wed,  7 Aug 2024 13:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C011BDAB0
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 13:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723037114; cv=none; b=lWxQPuyaAe/LgvpRkBk/kFyUyemS1WzoqJ3GnKjOJ5t5dkKFBeFpf67JSw92HFrX/nWbiejunWH+rKPUwb//2kG2VZcTQLZod4YGtKthrWfcZ3CzYAJiMPP5e1Nc5hcw5772Zo/eR9KR8swr5m/lwFyzlrq8e6lfyg2qVqZSc78=
+	t=1723037172; cv=none; b=FPvFNp+PbyWsFU5w3xHWqX2QK58QvV5MK2gsmDkUD6d1ymzFcoAE1H90uHdYNJjUcL3XL0hJoijP0yqmgUdDUcQpQU8Hj4wGzeKwf0ifcb975X7xag68oMKwArETTlIfXyI5suG5y/JnE+Hk+CiQbz5BiWjgP/E+Mrt3ninDArk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723037114; c=relaxed/simple;
-	bh=5xCFrjEdZmLFRfA/F6wPZmAZSz2qOrZVAK9FG0yQPTU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmGboLctyLVNpAjdtW726PCuDfwnmP/+8PYtvv6Hb3PtLtV99utZwvDikj0SYrrl4H8REST3XIgvPvE1KlIXexY6xq932Hu7dEQqnnCaDVhELmexM2lLJWVFGGqX2Ksc0N6+ZPg3+ln7EqKZ6t4JTv5u7MbjW0N2lzoK5ru/CPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AO1QyPSM; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 477DP5uO100681;
-	Wed, 7 Aug 2024 08:25:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723037105;
-	bh=dTM4H9bqTaHLAvJRg1ebkGBPpTtPuA23CL/9b5SS2cs=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=AO1QyPSMpjcqdHYtCG9g51ERNSA432GQEuedshn0nq7DP9QdlfixzBwmGNnVnBQyo
-	 j7q9j0tUuFQU35yPEGHWPYXzXNKnpnol0OOrourO0uBW71b4sSPQhnSa4jjKyMhey2
-	 XOIM22DRUNJZMZPNpINcWDYTidWIVR65Ei82l+Rk=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 477DP5XN008550
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 7 Aug 2024 08:25:05 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
- Aug 2024 08:25:05 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 7 Aug 2024 08:25:05 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 477DP55T008216;
-	Wed, 7 Aug 2024 08:25:05 -0500
-Date: Wed, 7 Aug 2024 08:25:05 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Manorit Chawdhry <m-chawdhry@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Udit Kumar
-	<u-kumar1@ti.com>,
-        Neha Malcom Francis <n-francis@ti.com>,
-        Aniket Limaye
-	<a-limaye@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 0/9] Introduce J742S2 SoC and EVM
-Message-ID: <20240807132505.4aqvgsdck7pzk6kv@impale>
-References: <20240731-b4-upstream-j742s2-v3-0-da7fe3aa9e90@ti.com>
+	s=arc-20240116; t=1723037172; c=relaxed/simple;
+	bh=i08Eu++Bs5ZfYyhmfDLsgMllWxZSyJTGvRtL9wXdWUY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qT9OX9uQRt/tdvFWkJy20yexf1xpyffnuEwuBpUndFmUHhvmIZvHwjzdRUPId9sj63YQ1vG46wpj//yotWtvthZEkaz9PF0f21bslr/hx/CnTCxy7RqD4zQcay/htcjVpqhNFIyIz31MynT8pYjGnf/XAbm51kv6lkHdEtxj60M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P+wYeB3j; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723037170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vloTJ8N6rDB2OVVpi1DvU3M2IhFk9AAWb0s6CTF2pM4=;
+	b=P+wYeB3j7W9W2C9TuNeiN/49PE0dfVmmAwETSprdfMtkdM9dM9w7Uixvtx764zpf0vaYrd
+	zrvGvnp3O4DMQIhkgVqQxM5KmJiwq+9Id0mnaAo5T98yyjGi8/DsY9fcCaqsFRyr1uWx4J
+	9HAQ+XCuwA6qHVL+uHC7aG7FBTYdycQ=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-322-5-aap9TTMpC6edFXBNurNw-1; Wed, 07 Aug 2024 09:26:08 -0400
+X-MC-Unique: 5-aap9TTMpC6edFXBNurNw-1
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-692aa9db2d5so34010427b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 06:26:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723037168; x=1723641968;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vloTJ8N6rDB2OVVpi1DvU3M2IhFk9AAWb0s6CTF2pM4=;
+        b=N0VNIUb+TR/BmhHBZgaAm68HtO4Ngmfc5utvtuAwZ9z9lDdAGh2JArBYB9Rvc4dxzc
+         OGD7iDSD1FbxKGapADU9z3TbUBfqZcsT8bLGntfrDKVcrZ38A4p256y97ao3havTEOo8
+         Jhu7CnIkxKk/mpZhiNv4LgxFn0WlSnOqoYlX/+k6mADChrWxPJ0iQZTncZFaBjMwYmlq
+         NkM5HwjhnG/Js7f7EPIdulkP9jpToWRCOW/IMjl1UOFcuULtZDb84f/IMsD1RF/6fQPs
+         6Qxz/pL7vRBELZLusA1Dv0yWlz7H/9TOowlkbSJkcTQ9CDAbr4cSheZlCenSRycpA6kh
+         kqCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHtgsDBOe79jNysWAnjlDDrhzM/sLdcV9SeQrRdCCloAg+4i17hXkAwvTijfOoNrblk6NX+My+fiSsyZXZQybmywsR9Wp/jpC4Q5Dp
+X-Gm-Message-State: AOJu0YyUpWVpBZuDf8BBWUfSitW/fDisxdxCnme/545LqaH++UuiPbf9
+	XHh8Fix6QVXG+CXWWQZ513niI/HSNxL2aCwwsrJRyLEXi5NvyrsS9jwMwIv1DnN0jMPX9Rx32QO
+	X1sxQGgnNCflq5/ZSwCWzJEOIaIBljioCIJqBSLPZTjLYJQ9yTdop7gVI95SwTHvNAq8raklxDz
+	vVhD+ubrW4CPr8+efQjI881o8CWXlpm3xLw35I
+X-Received: by 2002:a81:8887:0:b0:63b:b3b8:e834 with SMTP id 00721157ae682-68963423819mr222073747b3.32.1723037168332;
+        Wed, 07 Aug 2024 06:26:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHlaQzWaMhaOL8yyUTkscgvdFCW3vr0eHO4IPz4j2TIsmeWnld07fIgPnkUYUvyGyLGq+dpPFUOtl3iXD2ZKEw=
+X-Received: by 2002:a81:8887:0:b0:63b:b3b8:e834 with SMTP id
+ 00721157ae682-68963423819mr222073587b3.32.1723037168001; Wed, 07 Aug 2024
+ 06:26:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240731-b4-upstream-j742s2-v3-0-da7fe3aa9e90@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240802072039.267446-1-dtatulea@nvidia.com>
+In-Reply-To: <20240802072039.267446-1-dtatulea@nvidia.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 7 Aug 2024 15:25:32 +0200
+Message-ID: <CAJaqyWdGNfJ3n-E2-PvkuvCiOMsLkEzYaUi5wi-C_n84-a_LAw@mail.gmail.com>
+Subject: Re: [PATCH vhost 0/7] vdpa/mlx5: Parallelize device suspend/resume
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22:40-20240731, Manorit Chawdhry wrote:
-> The series adds support for J742S2 family of SoCs. Also adds J742S2 EVM
-> Support and re-uses most of the stuff from the superset device J784s4.
-> 
-> It initially cleans up the J784s4 SoC files so that they can be
-> re-usable for j742s2 by introducing -common files. Next it cleans up the
-> EVM files for j784s4 in a similar way and then goes about adding the
-> support for j742s2.
-> 
-> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
-> ---
-> Changes in v3:
-> * Nishanth
-> - Update copyright string
-> - Add TRM link in SoC file.
-> - Refactor to split out common soc support between j742s2 and j784s4
-> 
-> - Add DTC_FLAGS as well for j742s2
-> - Link to v2: https://lore.kernel.org/r/20240730-b4-upstream-j742s2-v2-0-6aedf892156c@ti.com
-> 
-> ---
-> Manorit Chawdhry (9):
->       arm64: dts: ti: Move j784s4-{} include files to j784s4-j742s2-{}-common.dtsi
->       arm64: dts: ti: Move k3-j784s4.dtsi to k3-j784s4-j742s2-common.dtsi
->       arm64: dts: ti: Split k3-j784s4-j742s2-common.dtsi
->       arm64: dts: ti: Split k3-j784s4-j742s2-main-common.dtsi
+On Fri, Aug 2, 2024 at 9:24=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.com>=
+ wrote:
+>
+> This series parallelizes the mlx5_vdpa device suspend and resume
+> operations through the firmware async API. The purpose is to reduce live
+> migration downtime.
+>
+> The series starts with changing the VQ suspend and resume commands
+> to the async API. After that, the switch is made to issue multiple
+> commands of the same type in parallel.
+>
 
-The above 4 patches can be merged into a single patch under SoC
-refactoring.
+There is a missed opportunity processing the CVQ MQ command here,
+isn't it? It can be applied on top in another series for sure.
 
->       arm64: dts: ti: Move k3-j784s4-evm.dts to k3-j784s4-j742s2-evm-common.dtsi
->       arm64: dts: ti: Split k3-j784s4-j742s2-evm-common.dtsi
+> Finally, a bonus improvement is thrown in: keep the notifierd enabled
+> during suspend but make it a NOP. Upon resume make sure that the link
+> state is forwarded. This shaves around 30ms per device constant time.
+>
+> For 1 vDPA device x 32 VQs (16 VQPs), on a large VM (256 GB RAM, 32 CPUs
+> x 2 threads per core), the improvements are:
+>
+> +-------------------+--------+--------+-----------+
+> | operation         | Before | After  | Reduction |
+> |-------------------+--------+--------+-----------|
+> | mlx5_vdpa_suspend | 37 ms  | 2.5 ms |     14x   |
+> | mlx5_vdpa_resume  | 16 ms  | 5 ms   |      3x   |
+> +-------------------+--------+--------+-----------+
+>
 
-The above two patches can be squashed to be a single patch for evm
-refactoring.
+Looks great :).
 
->       dt-bindings: arm: ti: Add bindings for J742S2 SoCs and Boards
->       arm64: dts: ti: Introduce J742S2 SoC family
->       arm64: dts: ti: Add support for J742S2 EVM board
+Apart from the nitpick,
 
-Also it is not clear how cpsw/serdes and pcie changes are handled
-here.
+Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-> 
->  Documentation/devicetree/bindings/arm/ti/k3.yaml   |    6 +
->  arch/arm64/boot/dts/ti/Makefile                    |    4 +
->  arch/arm64/boot/dts/ti/k3-j742s2-evm.dts           |   26 +
->  arch/arm64/boot/dts/ti/k3-j742s2-main.dtsi         |   45 +
->  arch/arm64/boot/dts/ti/k3-j742s2.dtsi              |   98 +
->  arch/arm64/boot/dts/ti/k3-j784s4-evm.dts           | 1422 +---------
->  .../arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi |  150 ++
->  .../boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi   | 1436 ++++++++++
->  .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi  | 2772 ++++++++++++++++++++
->  ...tsi => k3-j784s4-j742s2-mcu-wakeup-common.dtsi} |    2 +-
->  ...l.dtsi => k3-j784s4-j742s2-thermal-common.dtsi} |    0
->  arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi         | 2764 -------------------
->  arch/arm64/boot/dts/ti/k3-j784s4.dtsi              |  135 +-
->  13 files changed, 4540 insertions(+), 4320 deletions(-)
-> ---
-> base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
-> change-id: 20240620-b4-upstream-j742s2-7ba652091550
-> 
-> Best regards,
-> -- 
-> Manorit Chawdhry <m-chawdhry@ti.com>
-> 
+For the vhost part.
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Thanks!
+
+> Note for the maintainers:
+> The first patch contains changes for mlx5_core. This must be applied
+> into the mlx5-vhost tree [0] first. Once this patch is applied on
+> mlx5-vhost, the change has to be pulled from mlx5-vdpa into the vhost
+> tree and only then the remaining patches can be applied.
+>
+> [0] https://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux.git/lo=
+g/?h=3Dmlx5-vhost
+>
+> Dragos Tatulea (7):
+>   net/mlx5: Support throttled commands from async API
+>   vdpa/mlx5: Introduce error logging function
+>   vdpa/mlx5: Use async API for vq query command
+>   vdpa/mlx5: Use async API for vq modify commands
+>   vdpa/mlx5: Parallelize device suspend
+>   vdpa/mlx5: Parallelize device resume
+>   vdpa/mlx5: Keep notifiers during suspend but ignore
+>
+>  drivers/net/ethernet/mellanox/mlx5/core/cmd.c |  21 +-
+>  drivers/vdpa/mlx5/core/mlx5_vdpa.h            |   7 +
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c             | 435 +++++++++++++-----
+>  3 files changed, 333 insertions(+), 130 deletions(-)
+>
+> --
+> 2.45.2
+>
+
 
