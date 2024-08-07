@@ -1,227 +1,229 @@
-Return-Path: <linux-kernel+bounces-277292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 223FB949EFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:13:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911F7949F05
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A54571F25A42
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:13:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00CECB246AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB59E1917E6;
-	Wed,  7 Aug 2024 05:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D64E1922E0;
+	Wed,  7 Aug 2024 05:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJA7ziTX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="r4jxOMKm"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2079.outbound.protection.outlook.com [40.107.93.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B0423CE
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 05:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723007603; cv=none; b=Sm8OfDpSNfXLepqQXBlkVvAF2SceiMgAJMoe6ROGeT/jJK8rgHo8g0H1B4sclIoS5eumi94H4wd6o6guviWCvTxqtw26emm4eFFydnXN6t9rV3leLbfeQz8mqK9xVwNBJiYTL4u5tCQZHKtor7i2JLrZjAo1Sk1AXluyRaCmNsk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723007603; c=relaxed/simple;
-	bh=um2GSGAvdjY0j0MtneCmmwl8RQ+HTQsfh/xKbEsHYF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sYZYv/C3slueNKSkYL7TCrYhxPBW9sYlSGJBM0yw0nL/sw/oszEesfDW7zMgm7olnE22XcX80JaxQ2UrPPfgjKjKphnfm7qNgfEFcFrVDbe/0ajoYjaQZLStHs85ajWoDXeqrqb5tadGAzOAMhhAYJegQNFhdiP9drWsMmpe8HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJA7ziTX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D27D0C32782;
-	Wed,  7 Aug 2024 05:13:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723007602;
-	bh=um2GSGAvdjY0j0MtneCmmwl8RQ+HTQsfh/xKbEsHYF4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eJA7ziTXO28uCUme73hpCZF3OLsHd4lwtyFCAmJ1L4eCc/QTU9cfVMxbSC3WALSoy
-	 lHrZ7UhyZbLJFuT2PtoUsIloW+Qqb1NWq+6HVLivJm59yiY4oqL7zwuLAddfm7n9KO
-	 cC8TF/iE88IPUUR+YWh2EDmpsDVew17PhYO3aYVZBA3eL/kQixnQ1Ss5lTUz+6EBth
-	 EICk472OHMMw6uQGzjGtGW6OX1AQjViyc273VX01VndWyhIxlUtPAEHPRHPF8pEM6F
-	 eOBg6WDblf2kecf8nQ7O2+5RL2itFfJ/2keTN5k6ITA6O4ukEd17AcTjK8LYuTXJ/V
-	 6hgu2UZwbqnWA==
-Message-ID: <0141fd24-ee8e-4d19-a93c-11e8d54b093a@kernel.org>
-Date: Wed, 7 Aug 2024 00:13:15 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA4B191F7B;
+	Wed,  7 Aug 2024 05:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723007693; cv=fail; b=hERQMTGKxQJJ9VPeOtPINc6FaTB3ZTVZr+cEuMptjoqSomtfD01CTWXToF1IdUI3IUl4tkSdnneXeur0X7w1AhOV4wqEi+JxQ4xLxOgqk4kfRaoKz1hEWsNx3ZoFR2zLnL+K4ZBtJ7qymP5JcuPCXxZV2Mu7EUKvLocwJLCXYQg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723007693; c=relaxed/simple;
+	bh=IbvEYfxUpu8uJp6sM8KoJiMvrQ3grjF0UH/yg6pUjIk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lRtIruvfKW5NOYm7F2VxPb+Tlce23swjxULWae03VRc+t9uKfsAfg68oxwFwVSFD33+Laq5x08k8w+cF4AlarV2Flfl4WlWPNzLYDbGtzp8VajpTV2mwmva2lDlzMYLivSZps6Lda3v7nPaQ7VjdBuATOzE3KQq3iix5RQd+sg8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=r4jxOMKm; arc=fail smtp.client-ip=40.107.93.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ogeY3tOrA0AY0LOT5qWK6T/viudwUz4r49M+doSsEBpK1DTm8hEPttDoH7AbBzPI/+PtyEPsO0Adc84546z0KAMZDL61xcgbHXcuUv/mfSY7sI+7lgfehxDJ9yKiwlzbEwsnz9BULipDZxSrDRahxzX9RoqqqPjGb4g0M60ymk3+64XbhFiRStTgleDKb5vsVQ3rq5ASWaCGKcAgsAVz9aGeZpkmov1gsI7YTG/DhltICIEy1YceTCxiRoY1CnkddjEC16G8mrpn4UoxsVPMlIQkn/kiGrJV4+Zxp8g7pg1/V0lcYfq5Dpj9WvZKr4tLXOj7/NXfV0gyZIPz9IKi6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RTVy/S40reH6dPiVHmQp8KHQmxDvKLVFHwzi2x1SwAE=;
+ b=MV0o4z8KC0uF14CbXphXYBCcJeL0SkVfu3WpHTGIpZopJsyx5UpGwMpoxikQ61AniIarRf1W+pt4ysldqskjrops2792WDjAtV7n4OFao/bVSY2Wierjh68KioBy5ANMSVSe44XksS2qPBX3M+PPp53GxqcjoJNhDNzGXAzmblBu5Zz0SqITI5veVghEZHbowL/n7ifuQjxHXDMVl0fHGJjs5z9YKYAhIGt/bikS1zQzWffAy9Is1pv9O3qe74bXRMROzPmFSqKWY8ThDuCAbw8doAPQX1ujLINppDlw1u5HRyage2Mz21PtB+3ScgwyS8ghV+7Q66VIR/EgeSJ2eA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RTVy/S40reH6dPiVHmQp8KHQmxDvKLVFHwzi2x1SwAE=;
+ b=r4jxOMKmS44aCjgXjlanbnbAZcpQRn7WccUw8RZ0lRbmzLT6H2LFnV1S6UuMh55wAQWPQslQgnMYAoxiizklLdr1YrsHP1K+yi5je36hIqCEwiQcNQ4m6Gn3KeSscR/WOWP5pLH9Zd8spUo4Ra1oRBllEU+6pjpHS7Q8wDZuDYc=
+Received: from SJ0PR03CA0168.namprd03.prod.outlook.com (2603:10b6:a03:338::23)
+ by MW6PR12MB8736.namprd12.prod.outlook.com (2603:10b6:303:244::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.29; Wed, 7 Aug
+ 2024 05:14:48 +0000
+Received: from SJ5PEPF000001EA.namprd05.prod.outlook.com
+ (2603:10b6:a03:338:cafe::49) by SJ0PR03CA0168.outlook.office365.com
+ (2603:10b6:a03:338::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.34 via Frontend
+ Transport; Wed, 7 Aug 2024 05:14:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001EA.mail.protection.outlook.com (10.167.242.198) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Wed, 7 Aug 2024 05:14:47 +0000
+Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 7 Aug 2024 00:14:41 -0500
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: <broonie@kernel.org>
+CC: <alsa-devel@alsa-project.org>, <Basavaraj.Hiregoudar@amd.com>,
+	<Sunil-kumar.Dommati@amd.com>, <venkataprasad.potturu@amd.com>, "Vijendar
+ Mukunda" <Vijendar.Mukunda@amd.com>, Ranjani Sridharan
+	<ranjani.sridharan@linux.intel.com>, Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, Bard Liao
+	<yung-chuan.liao@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+	"Kai Vehmanen" <kai.vehmanen@linux.intel.com>, Jaroslav Kysela
+	<perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Cristian Ciocaltea
+	<cristian.ciocaltea@collabora.com>, Emil Velikov
+	<emil.velikov@collabora.com>, Krzysztof Kozlowski <krzk@kernel.org>, "Ajit
+ Kumar Pandey" <AjitKumar.Pandey@amd.com>, "moderated list:SOUND - SOUND OPEN
+ FIRMWARE (SOF) DRIVERS" <sound-open-firmware@alsa-project.org>, "open
+ list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
+	<linux-sound@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH 4/8] ASoC: SOF: amd: fix for acp init sequence
+Date: Wed, 7 Aug 2024 10:43:16 +0530
+Message-ID: <20240807051341.1616925-4-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240807051341.1616925-1-Vijendar.Mukunda@amd.com>
+References: <20240807051341.1616925-1-Vijendar.Mukunda@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] Revert "drm/amd/display: add panel_power_savings
- sysfs entry to eDP connectors"
-To: Sebastian Wick <sebastian.wick@redhat.com>,
- dri-devel@lists.freedesktop.org
-Cc: Sebastian Wick <sebastian@sebastianwick.net>,
- Xaver Hugl <xaver.hugl@gmail.com>, Simon Ser <contact@emersion.fr>,
- Pekka Paalanen <pekka.paalanen@collabora.com>,
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Alex Hung <alex.hung@amd.com>,
- Hamza Mahfooz <hamza.mahfooz@amd.com>, Roman Li <roman.li@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>, Wayne Lin
- <Wayne.Lin@amd.com>, amd-gfx@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240806184214.224672-1-sebastian.wick@redhat.com>
- <20240806184214.224672-2-sebastian.wick@redhat.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20240806184214.224672-2-sebastian.wick@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001EA:EE_|MW6PR12MB8736:EE_
+X-MS-Office365-Filtering-Correlation-Id: ad08b38c-c3e0-4d04-0ca7-08dcb69fdba5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WaBr7zXNEun1y+BCI25f9ke+Vg6DMLKCb16zwVcI235cbSwG1byh7Lv3lpDc?=
+ =?us-ascii?Q?mqeAeGXsiI6lYLmHzS4DqBEQ912I7soIXQXKeBLIUGlv5sDnY9FaH9spKLUh?=
+ =?us-ascii?Q?TGKpn06cAHkZ/T1bals3DBCLhOLo2k7rnnl1Y6AU0Gfe6JSz8LQ+eEWNCrtz?=
+ =?us-ascii?Q?9VsM7KmaeZ2WAkNfi7hNnduEtW1NlMo6cDKxJ/uk/+K7PZX0gQ27v3eaEG9n?=
+ =?us-ascii?Q?r8vY0lTsDEmkr2aJvj+VGAe72NwMCkCIgO5ZtWfvRhFJBrnwcmQUOuI7kT0k?=
+ =?us-ascii?Q?xxeJycmfVYa9lU1uww9DsPZsWhH54EKTODI27maCYnXixXEvG+WOdLzcFzO3?=
+ =?us-ascii?Q?ktnKXleDeZAIzcPvFCbIHejyVjTMMcZxxkHfxxM93nwB23GTccAsVh/N9cOc?=
+ =?us-ascii?Q?9ZZ9FHBp7ZPBdf27RONyCflOXRv3qCh+SYklGZe4ZqaXwhN2Q6ERG2CZ3UC/?=
+ =?us-ascii?Q?XgMePqsbj3yD0PaczPeldQAWPuS2GCV4PXaXHbWsmh5q1NICYstYSjx9R9dt?=
+ =?us-ascii?Q?mdxJBRqNmAO25Ah6OMU5tOB2BwE5mBquLEP3pG6jYa9PPpio9XH7QcrbWAtc?=
+ =?us-ascii?Q?kyDPqSgqFFh+9CSSXAUS5egQQPvKlR1mhnGaHVIQ6KOp4RdLVQF2Id1JGEPj?=
+ =?us-ascii?Q?/qnOemKblCmr9F2DZ4Gp+ifAqZrgboXJwemcl0y8jHb7/KyhEzAnT1RyurY2?=
+ =?us-ascii?Q?zgwyaNUbFTUOkdXxPaSTHnVmFGYmdYQBc8P5b1w1rkwvew/WyzDyN0t47Acx?=
+ =?us-ascii?Q?Xdcy9vkqdhvCwYQzTuMg4VEM7p/e1QjE/xmHc7VPdvjrbCQeqtEnLku2VAFR?=
+ =?us-ascii?Q?2v2F3E7kUxIeh1Y+84VwDhrpiU8aOkGwg+IVK7WRhW2ALy6YMhTA4bAbNSLj?=
+ =?us-ascii?Q?ZP64yBTTzfngAb2Tz/oPabc3xNitk/lvo/YwW33i8E+SD+7/ivCi69joU5w9?=
+ =?us-ascii?Q?C9aZMAvFilssOnydqsMDmGugj532ULW384Cbv1wcmHMp7QaarfHcSw0eN9si?=
+ =?us-ascii?Q?ZRTFuPiNiSkowCtXlIaXfhJc9t3QWJCzasUKopjKm/eL3k3/X5ZjX+nQOxml?=
+ =?us-ascii?Q?Yw/+3Q9TV7Ko88Z9XisU3REpURgWwI1osPrtL9wyp1wkRZ1niy/O2XeAILXD?=
+ =?us-ascii?Q?SCQjO5/634JoscRAU3E2hhDmf4c2EpUIdoCnhV0Bln3xtANa1Z4mLXLNsXXc?=
+ =?us-ascii?Q?x7yGuiH/2qbk19Q0GoDyCcY27S1ayQgCAoTKoe1AcrEZ93iQOnnIH/7JSY8H?=
+ =?us-ascii?Q?nuKdeoQmI2QfhFRlLr00RJT2+G4dqTaS/fx4F8iVY4karcBSrm1L+NA4Yx03?=
+ =?us-ascii?Q?1c28iwHrXJnVZfpS3eUcwVfeVaDyi4Hu1fjj5VhRyYh9JBFvBAzZJWG21q3p?=
+ =?us-ascii?Q?SvfC2AKskfPPLZqgR+fbXsVCc4TdJ53NSznnNEYkUa3pjO9outaHO4kN3T4P?=
+ =?us-ascii?Q?te+Kn69MZ4pqRr4afXIdG/pcpOrNLiXs?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 05:14:47.9443
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad08b38c-c3e0-4d04-0ca7-08dcb69fdba5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001EA.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8736
 
-On 8/6/24 13:42, Sebastian Wick wrote:
-> From: Sebastian Wick <sebastian@sebastianwick.net>
-> 
-> This reverts commit 63d0b87213a0ba241b3fcfba3fe7b0aed0cd1cc5.
-> 
-> The panel_power_savings sysfs entry can be used to change the displayed
-> colorimetry which breaks color managed setups.
-> 
-> The "do not break userspace" rule which was violated here is enough
-> reason to revert this commit.
-> 
-> The bigger problem is that this feature is part of the display chain
-> which is supposed to be controlled by KMS. This sysfs entry bypasses the
-> DRM master process and splits control to two independent processes which
-> do not know about each other. This is what caused the broken user space.
-> It also causes modesets which can be extremely confusing for the DRM
-> master process, causing unexpected timings.
-> 
-> We should in general not allow anything other than KMS to control the
-> display path. If we make an exception to this rule, this must be first
-> discussed on dri-devel with all the stakeholders approving the
-> exception.
-> 
-> This has not happened which is the second reason to revert this commit.
-> 
-> Signed-off-by: Sebastian Wick <sebastian.wick@redhat.com>
+When ACP is not powered on by default, acp power on sequence explicitly
+invoked by programming pgfsm control mask. Update ACP pgfsm control mask
+and status mask based on ACP variant.
 
-For anyone who hasn't seen it, there has been a bunch of discussions 
-that have transpired on this topic and what to do about it on [1] as 
-well as some other linked places on that bug.
+Fixes: 846aef1d7cc0 ("ASoC: SOF: amd: Add Renoir ACP HW support")
+Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+---
+ sound/soc/sof/amd/acp.c | 21 +++++++++++++++++++--
+ sound/soc/sof/amd/acp.h |  7 +++++--
+ 2 files changed, 24 insertions(+), 4 deletions(-)
 
-Also FWIW there was a discussion on the merits of the sysfs file on 
-dri-devel during the initial patch submission [2].
-
-If this revert ends up going through, please also revert 
-0887054d14ae23061e28e28747cdea7e40be9224 in the same series so the 
-feature can "at least" be accessed by the compositor and changed at 
-runtime like the sysfs file had allowed.
-
-[1] https://gitlab.freedesktop.org/upower/power-profiles-daemon/-/issues/159
-[2] 
-https://lore.kernel.org/dri-devel/20240202152837.7388-1-hamza.mahfooz@amd.com/
-
-> ---
->   .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 80 -------------------
->   1 file changed, 80 deletions(-)
-> 
-> diff --git ./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c ../drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> index 4d4c75173fc3..16c9051d9ccf 100644
-> --- ./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> +++ ../drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> @@ -6772,82 +6772,10 @@ int amdgpu_dm_connector_atomic_get_property(struct drm_connector *connector,
->   	return ret;
->   }
->   
-> -/**
-> - * DOC: panel power savings
-> - *
-> - * The display manager allows you to set your desired **panel power savings**
-> - * level (between 0-4, with 0 representing off), e.g. using the following::
-> - *
-> - *   # echo 3 > /sys/class/drm/card0-eDP-1/amdgpu/panel_power_savings
-> - *
-> - * Modifying this value can have implications on color accuracy, so tread
-> - * carefully.
-> - */
-> -
-> -static ssize_t panel_power_savings_show(struct device *device,
-> -					struct device_attribute *attr,
-> -					char *buf)
-> -{
-> -	struct drm_connector *connector = dev_get_drvdata(device);
-> -	struct drm_device *dev = connector->dev;
-> -	u8 val;
-> -
-> -	drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
-> -	val = to_dm_connector_state(connector->state)->abm_level ==
-> -		ABM_LEVEL_IMMEDIATE_DISABLE ? 0 :
-> -		to_dm_connector_state(connector->state)->abm_level;
-> -	drm_modeset_unlock(&dev->mode_config.connection_mutex);
-> -
-> -	return sysfs_emit(buf, "%u\n", val);
-> -}
-> -
-> -static ssize_t panel_power_savings_store(struct device *device,
-> -					 struct device_attribute *attr,
-> -					 const char *buf, size_t count)
-> -{
-> -	struct drm_connector *connector = dev_get_drvdata(device);
-> -	struct drm_device *dev = connector->dev;
-> -	long val;
-> -	int ret;
-> -
-> -	ret = kstrtol(buf, 0, &val);
-> -
-> -	if (ret)
-> -		return ret;
-> -
-> -	if (val < 0 || val > 4)
-> -		return -EINVAL;
-> -
-> -	drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
-> -	to_dm_connector_state(connector->state)->abm_level = val ?:
-> -		ABM_LEVEL_IMMEDIATE_DISABLE;
-> -	drm_modeset_unlock(&dev->mode_config.connection_mutex);
-> -
-> -	drm_kms_helper_hotplug_event(dev);
-> -
-> -	return count;
-> -}
-> -
-> -static DEVICE_ATTR_RW(panel_power_savings);
-> -
-> -static struct attribute *amdgpu_attrs[] = {
-> -	&dev_attr_panel_power_savings.attr,
-> -	NULL
-> -};
-> -
-> -static const struct attribute_group amdgpu_group = {
-> -	.name = "amdgpu",
-> -	.attrs = amdgpu_attrs
-> -};
-> -
->   static void amdgpu_dm_connector_unregister(struct drm_connector *connector)
->   {
->   	struct amdgpu_dm_connector *amdgpu_dm_connector = to_amdgpu_dm_connector(connector);
->   
-> -	if (connector->connector_type == DRM_MODE_CONNECTOR_eDP &&
-> -	    amdgpu_dm_abm_level < 0)
-> -		sysfs_remove_group(&connector->kdev->kobj, &amdgpu_group);
-> -
->   	drm_dp_aux_unregister(&amdgpu_dm_connector->dm_dp_aux.aux);
->   }
->   
-> @@ -6952,14 +6880,6 @@ amdgpu_dm_connector_late_register(struct drm_connector *connector)
->   		to_amdgpu_dm_connector(connector);
->   	int r;
->   
-> -	if (connector->connector_type == DRM_MODE_CONNECTOR_eDP &&
-> -	    amdgpu_dm_abm_level < 0) {
-> -		r = sysfs_create_group(&connector->kdev->kobj,
-> -				       &amdgpu_group);
-> -		if (r)
-> -			return r;
-> -	}
-> -
->   	amdgpu_dm_register_backlight_device(amdgpu_dm_connector);
->   
->   	if ((connector->connector_type == DRM_MODE_CONNECTOR_DisplayPort) ||
+diff --git a/sound/soc/sof/amd/acp.c b/sound/soc/sof/amd/acp.c
+index d0ba641ba28c..a9f32983b3af 100644
+--- a/sound/soc/sof/amd/acp.c
++++ b/sound/soc/sof/amd/acp.c
+@@ -430,8 +430,10 @@ static irqreturn_t acp_irq_handler(int irq, void *dev_id)
+ static int acp_power_on(struct snd_sof_dev *sdev)
+ {
+ 	const struct sof_amd_acp_desc *desc = get_chip_info(sdev->pdata);
++	struct acp_dev_data *adata = sdev->pdata->hw_pdata;
+ 	unsigned int base = desc->pgfsm_base;
+ 	unsigned int val;
++	unsigned int acp_pgfsm_status_mask, acp_pgfsm_cntl_mask;
+ 	int ret;
+ 
+ 	val = snd_sof_dsp_read(sdev, ACP_DSP_BAR, base + PGFSM_STATUS_OFFSET);
+@@ -439,9 +441,24 @@ static int acp_power_on(struct snd_sof_dev *sdev)
+ 	if (val == ACP_POWERED_ON)
+ 		return 0;
+ 
+-	if (val & ACP_PGFSM_STATUS_MASK)
++	switch (adata->pci_rev) {
++	case ACP_RN_PCI_ID:
++	case ACP_VANGOGH_PCI_ID:
++		acp_pgfsm_status_mask = ACP3X_PGFSM_STATUS_MASK;
++		acp_pgfsm_cntl_mask = ACP3X_PGFSM_CNTL_POWER_ON_MASK;
++		break;
++	case ACP_RMB_PCI_ID:
++	case ACP63_PCI_ID:
++		acp_pgfsm_status_mask = ACP6X_PGFSM_STATUS_MASK;
++		acp_pgfsm_cntl_mask = ACP6X_PGFSM_CNTL_POWER_ON_MASK;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	if (val & acp_pgfsm_status_mask)
+ 		snd_sof_dsp_write(sdev, ACP_DSP_BAR, base + PGFSM_CONTROL_OFFSET,
+-				  ACP_PGFSM_CNTL_POWER_ON_MASK);
++				  acp_pgfsm_cntl_mask);
+ 
+ 	ret = snd_sof_dsp_read_poll_timeout(sdev, ACP_DSP_BAR, base + PGFSM_STATUS_OFFSET, val,
+ 					    !val, ACP_REG_POLL_INTERVAL, ACP_REG_POLL_TIMEOUT_US);
+diff --git a/sound/soc/sof/amd/acp.h b/sound/soc/sof/amd/acp.h
+index f6f0fcfeb691..321c40cc6d50 100644
+--- a/sound/soc/sof/amd/acp.h
++++ b/sound/soc/sof/amd/acp.h
+@@ -25,8 +25,11 @@
+ #define ACP_REG_POLL_TIMEOUT_US                 2000
+ #define ACP_DMA_COMPLETE_TIMEOUT_US		5000
+ 
+-#define ACP_PGFSM_CNTL_POWER_ON_MASK		0x01
+-#define ACP_PGFSM_STATUS_MASK			0x03
++#define ACP3X_PGFSM_CNTL_POWER_ON_MASK		0x01
++#define ACP3X_PGFSM_STATUS_MASK			0x03
++#define ACP6X_PGFSM_CNTL_POWER_ON_MASK		0x07
++#define ACP6X_PGFSM_STATUS_MASK			0x0F
++
+ #define ACP_POWERED_ON				0x00
+ #define ACP_ASSERT_RESET			0x01
+ #define ACP_RELEASE_RESET			0x00
+-- 
+2.34.1
 
 
