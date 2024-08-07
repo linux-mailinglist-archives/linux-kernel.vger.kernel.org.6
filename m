@@ -1,209 +1,270 @@
-Return-Path: <linux-kernel+bounces-277382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 136AE949FE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:40:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE81949FF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E3C5B24329
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:40:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93DC81C241CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E671B86CE;
-	Wed,  7 Aug 2024 06:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054C11B86DC;
+	Wed,  7 Aug 2024 06:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gTNFHFWY"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i5xaR0Xj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0855D1B582D;
-	Wed,  7 Aug 2024 06:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C951E1B582B;
+	Wed,  7 Aug 2024 06:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723012844; cv=none; b=awdtt+6SAmLJhOM165ZwI7f7FW37oA4/v31I1T17f4ihQR6u6fQTOxdWcFn7TQKoAA26KP66pIx6Bq40XSaJJPV7WhgWaReufsCaE0McvxKmNI7B0zCFiF0y4Zt9ptojuxuyQviy+WSaeLZSffo1EquvFCbyroWb24kF4zMS1N8=
+	t=1723012893; cv=none; b=BJo4TpI17SYFqpfayRdevw0RYetMPTQHV04FgpNbleBVi232AuvhJ7nlAD0JSsja2HqZoisJZ8rpdbA6y4Z8LrOy9ltTbNHimxmxks85UuYgEWSn/o75FRQafp8OshGMYEYRhSERuZjcWU3uvBU6c7cu5f/pscY3e9hCQa9uSuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723012844; c=relaxed/simple;
-	bh=Goi2i4ugpxtSNMpoLVVVDIAJoWEDpyXfKPm8meln3lM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JHjsp0X+TaiaKLMh3AAXRW/EJAiYJVs9OkX1m30kYWyscfL2PQe1oN8Zhj91iNDAwItACfvE0bORjlz5rUawB1QjXkgrvgoet2eZ9g7YFiARYJhFxTm02G3d47khbqqmrMdrFUAkC1Z7hbpRQglJHCanhAjs8oCruNo5qsmO3Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gTNFHFWY; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f029e9c9cfso21393221fa.2;
-        Tue, 06 Aug 2024 23:40:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723012841; x=1723617641; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7UGR4vb0ZNGZdQ8i6yuMwV1hdqlVxcG1Qey+Ih/wAxo=;
-        b=gTNFHFWYxPsF3g3Hk8Jig0poPK4nqcKkEKdylyyTkIM7hSgl2q9VsHD2tDIqxhYO4U
-         P51Z9pEWDvsEDJ+oMzd7jzOS+Mycay1hcfU6pmy1Jl5vB/qkvepySHUrQt/erfRoAI7b
-         l3mVI/nXAznkBazPYf4SmDdcyPZ7Mtq+taW0P2xZiGmURb32PR+5iBi1C/g0iiL0xmJ7
-         5u/G4zYbk1AygqWZUhWHHhuuygyGTjz+ChhSdcyxVe+/4FonTn9G/M770fN+9K3YleTu
-         kxgo4zlpvFhncGGWldqdw5voSoLuKhfSno43x9Jgjp1z4ujRNZ98mVTfW2cWYIhlLZp+
-         jGLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723012841; x=1723617641;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7UGR4vb0ZNGZdQ8i6yuMwV1hdqlVxcG1Qey+Ih/wAxo=;
-        b=srL6OVvTEj6wc2JCKA5GtD3jKiey8Z3Y402qBHL2VawVpKsvXEM3QzDHTKlpywvk0H
-         zJ+zgfYnM09Y9k8hoKbg6ZRBnHoG+376HGmqRonGRDHESgX2FkTyokyVqNisgqHz8xeT
-         yjopZZ5lNgRNGy40/OqBro15f33sXjzeYSLUwunMVnDtNagfsuax2WBlPcbwg2qjd0Y4
-         xIenoSGHIAaR1Z3VJrXCnvwUr9c5CUnZK1lQO6Y92XwnzpqyUz+1dyKHEu3ahmqWOPxy
-         k66OAo6wqOggi5OfrNW3rnYUMBbFB211DGcPDEFzGGzjgTFwyGVwwse8E75MKN+KYQtV
-         mSNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnkKf/itoVfLoOf+VojCYH7+ENGnEVdWNKiIgXWyzygcmA4cEfcWNZgUY/t7OpfE3JhFfbGd0x7IWpf+G3RvaAhcufYJCZVk42eGwBy/RKwzsOg3kAw7hepLfnkvQS2uFqE66kIoywV1uuPw==
-X-Gm-Message-State: AOJu0Yw7mDzGbC6QsSDAcCVxNansd2E2Xo76vazeoefClw03Nam5DPQ1
-	sHn8INWTtcQI+l1uhm94riEwvLLS89c3VwW67gLreYdbzg+C6A7mIfyYQyi7jkx4wJVtIz/Bnfs
-	/a33KtHMzzSmp5WRTEL4W6IIPWSk=
-X-Google-Smtp-Source: AGHT+IHVAKCECOC0KJ8fJKkAkXNSPo+288Gg90zCq2LGMcm+TGeGhyRhrpuXilallzb5kB2jvhDuogzKXVGev81EoO4=
-X-Received: by 2002:a2e:9dc2:0:b0:2ef:2ba5:d214 with SMTP id
- 38308e7fff4ca-2f15aa88c3dmr141362201fa.4.1723012840650; Tue, 06 Aug 2024
- 23:40:40 -0700 (PDT)
+	s=arc-20240116; t=1723012893; c=relaxed/simple;
+	bh=ekzPfVl6JUXBDUwMJIaEPIWAIu+cM3hN3EuU2UBIi6o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tEO62hp9lrQgoHBTixRhhPLg/07/HSAEQkR39bZJptMFB6RyQIdIwBdqIsq/P0Dcdn0NP33mDkSlXKdHSmrOQpqMAVr3umBCIHOCCZgvZDdLFwgUwYDo/Pbe8tTjevidshe2ol9nNu99ZsilTr4ims1oBjIc3oQFb8ohcoHiPis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i5xaR0Xj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 193B0C4AF0D;
+	Wed,  7 Aug 2024 06:41:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723012892;
+	bh=ekzPfVl6JUXBDUwMJIaEPIWAIu+cM3hN3EuU2UBIi6o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=i5xaR0Xjor2iyXJoWhbLsEHW4Ku6O7Dd6qrMQxxgAcH1SccxyADo98ywIyKYJR8k9
+	 20+CT+TDOLQkIBIRljAxLodviCKZwl+Tjenp8Hg3FsjwqIBASEEyw95p/MQ+Kwa2hD
+	 K/AQ7X1PAebJFnM4ZxDy9NsAx0F2ogCshfQPPvnX/Fa4KCd61KHduvt9p379YSuu0a
+	 mYVg94mMcw+cqkcJni+PXcYFeG3q4+/s0VzEK4gVBPePuOr+f4dfNyCaZ1tLCZcMXj
+	 uAlKNXTwtIRegTPBFSA5vbMNarA8L2sX9d1Ll8e+UtX5cfDeF1FrCKLLF2u6OpbL9/
+	 hbcfDeDq7zjIw==
+From: Mike Rapoport <rppt@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Mike Rapoport <rppt@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Will Deacon <will@kernel.org>,
+	Zi Yan <ziy@nvidia.com>,
+	devicetree@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-cxl@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	loongarch@lists.linux.dev,
+	nvdimm@lists.linux.dev,
+	sparclinux@vger.kernel.org,
+	x86@kernel.org
+Subject: [PATCH v4 00/26] mm: introduce numa_memblks
+Date: Wed,  7 Aug 2024 09:40:44 +0300
+Message-ID: <20240807064110.1003856-1-rppt@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806144628.874350-1-mjguzik@gmail.com> <20240806155319.GP5334@ZenIV>
- <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
- <20240807033820.GS5334@ZenIV> <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
- <20240807062300.GU5334@ZenIV> <20240807063350.GV5334@ZenIV>
-In-Reply-To: <20240807063350.GV5334@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 7 Aug 2024 08:40:28 +0200
-Message-ID: <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
-Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 7, 2024 at 8:33=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
->
-> On Wed, Aug 07, 2024 at 07:23:00AM +0100, Al Viro wrote:
-> >       After having looked at the problem, how about the following
-> > series:
-> >
-> > 1/5) lift path_get() *AND* path_put() out of do_dentry_open()
-> > into the callers.  The latter - conditional upon "do_dentry_open()
-> > has not set FMODE_OPENED".  Equivalent transformation.
-> >
-> > 2/5) move path_get() we'd lifted into the callers past the
-> > call of do_dentry_open(), conditionally collapse it with path_put().
-> > You'd get e.g.
-> > int vfs_open(const struct path *path, struct file *file)
-> > {
-> >         int ret;
-> >
-> >         file->f_path =3D *path;
-> >         ret =3D do_dentry_open(file, NULL);
-> >         if (!ret) {
-> >                 /*
-> >                  * Once we return a file with FMODE_OPENED, __fput() wi=
-ll call
-> >                  * fsnotify_close(), so we need fsnotify_open() here fo=
-r
-> >                  * symmetry.
-> >                  */
-> >                 fsnotify_open(file);
-> >         }
-> >       if (file->f_mode & FMODE_OPENED)
-> >               path_get(path);
-> >         return ret;
-> > }
-> >
-> > Equivalent transformation, provided that nobody is playing silly
-> > buggers with reassigning ->f_path in their ->open() instances.
-> > They *really* should not - if anyone does, we'd better catch them
-> > and fix them^Wtheir code.  Incidentally, if we find any such,
-> > we have a damn good reason to add asserts in the callers.  As
-> > in, "if do_dentry_open() has set FMODE_OPENED, it would bloody
-> > better *not* modify ->f_path".  <greps> Nope, nobody is that
-> > insane.
-> >
-> > 3/5) split vfs_open_consume() out of vfs_open() (possibly
-> > named vfs_open_borrow()), replace the call in do_open() with
-> > calling the new function.
-> >
-> > Trivially equivalent transformation.
-> >
-> > 4/5) Remove conditional path_get() from vfs_open_consume()
-> > and finish_open().  Add
-> >               if (file->f_mode & FMODE_OPENED)
-> >                       path_get(&nd->path);
-> > before terminate_walk(nd); in path_openat().
-> >
-> > Equivalent transformation - see
-> >         if (file->f_mode & (FMODE_OPENED | FMODE_CREATED)) {
-> >                 dput(nd->path.dentry);
-> >                 nd->path.dentry =3D dentry;
-> >                 return NULL;
-> >         }
-> > in lookup_open() (which is where nd->path gets in sync with what
-> > had been given to do_dentry_open() in finish_open()); in case
-> > of vfs_open_consume() in do_open() it's in sync from the very
-> > beginning.  And we never modify nd->path after those points.
-> > So we can move grabbing it downstream, keeping it under the
-> > same condition (which also happens to be true only if we'd
-> > called do_dentry_open(), so for all other paths through the
-> > whole thing it's a no-op.
-> >
-> > 5/5) replace
-> >               if (file->f_mode & FMODE_OPENED)
-> >                       path_get(&nd->path);
-> >               terminate_walk(nd);
-> > with
-> >               if (file->f_mode & FMODE_OPENED) {
-> >                       nd->path.mnt =3D NULL;
-> >                       nd->path.dentry =3D NULL;
-> >               }
-> >               terminate_walk(nd);
-> > Again, an obvious equivalent transformation.
->
-> BTW, similar to that, with that we could turn do_o_path()
-> into
->
->         struct path path;
->         int error =3D path_lookupat(nd, flags, &path);
->         if (!error) {
->                 audit_inode(nd->name, path.dentry, 0);
->                 error =3D vfs_open_borrow(&path, file);
->                 if (!(file->f_mode & FMODE_OPENED))
->                         path_put(&path);
->         }
->         return error;
-> }
->
-> and perhaps do something similar in the vicinity of
-> vfs_tmpfile() / do_o_tmpfile().
+From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 
-That's quite a bit of churn, but if you insist I can take a stab.
+Hi,
 
-fwiw I do think the weird error condition in do_dentry_open can be
-used to simplify stuff, which I still do in my v2.
+Following the discussion about handling of CXL fixed memory windows on
+arm64 [1] I decided to bite the bullet and move numa_memblks from x86 to
+the generic code so they will be available on arm64/riscv and maybe on
+loongarch sometime later.
 
-with my approach there is never a path_put needed to backpedal (it was
-already done by do_dentry_open *or* it is going to be done by whoever
-doing last fput)
+While it could be possible to use memblock to describe CXL memory windows,
+it currently lacks notion of unpopulated memory ranges and numa_memblks
+does implement this.
 
-then do_o_path would be:
-        struct path path;
-        int error =3D path_lookupat(nd, flags, &path);
-        if (!error) {
-                audit_inode(nd->name, path.dentry, 0);
-                error =3D vfs_open_consume(&path, file);
-        }
-        return error;
+Another reason to make numa_memblks generic is that both arch_numa (arm64
+and riscv) and loongarch use trimmed copy of x86 code although there is no
+fundamental reason why the same code cannot be used on all these platforms.
+Having numa_memblks in mm/ will make it's interaction with ACPI and FDT
+more consistent and I believe will reduce maintenance burden.
+
+And with generic numa_memblks it is (almost) straightforward to enable NUMA
+emulation on arm64 and riscv.
+
+The first 9 commits in this series are cleanups that are not strictly
+related to numa_memblks.
+Commits 10-16 slightly reorder code in x86 to allow extracting numa_memblks
+and NUMA emulation to the generic code.
+Commits 17-19 actually move the code from arch/x86/ to mm/ and commits 20-22
+does some aftermath cleanups.
+Commit 23 updates of_numa_init() to return error of no NUMA nodes were
+found in the device tree.
+Commit 24 switches arch_numa to numa_memblks.
+Commit 25 enables usage of phys_to_target_node() and
+memory_add_physaddr_to_nid() with numa_memblks.
+Commit 26 moves the description for numa=fake from x86 to admin-guide.
+
+[1] https://lore.kernel.org/all/20240529171236.32002-1-Jonathan.Cameron@huawei.com/
+
+v3: https://lore.kernel.org/all/20240801060826.559858-1-rppt@kernel.org
+* update allocation of offline node, thanks Jonathan
+* add comment about dependency of get_pfn_range_for_nid on
+  memblock_set_node(), per Dan
+* fix build errros with 32-bit phys_address_t reported by kbuild
+* add Acked- and Reviewed-by, thanks Dan and David
+
+v2: https://lore.kernel.org/all/20240723064156.4009477-1-rppt@kernel.org
+* rebase on v6.11-rc1
+* fix dummy_numa_init() in arch_numa, thanks Zi Yan
+* update of_numa_init() to return error of no NUMA nodes were
+* add Tested-by, thanks Zi Yan
+
+v1: https://lore.kernel.org/all/20240716111346.3676969-1-rppt@kernel.org
+* add cleanup for arch_alloc_nodedata and HAVE_ARCH_NODEDATA_EXTENSION
+* add patch that moves description of numa=fake kernel parameter from
+  x86 to admin-guide
+* reduce rounding up of node_data allocations from PAGE_SIZE to
+  SMP_CACHE_BYTES
+* restore single allocation attempt of numa_distance
+* fix several comments
+* added review tags
+
+Mike Rapoport (Microsoft) (26):
+  mm: move kernel/numa.c to mm/
+  MIPS: sgi-ip27: make NODE_DATA() the same as on all other architectures
+  MIPS: sgi-ip27: ensure node_possible_map only contains valid nodes
+  MIPS: sgi-ip27: drop HAVE_ARCH_NODEDATA_EXTENSION
+  MIPS: loongson64: rename __node_data to node_data
+  MIPS: loongson64: drop HAVE_ARCH_NODEDATA_EXTENSION
+  arch, mm: move definition of node_data to generic code
+  mm: drop CONFIG_HAVE_ARCH_NODEDATA_EXTENSION
+  arch, mm: pull out allocation of NODE_DATA to generic code
+  x86/numa: simplify numa_distance allocation
+  x86/numa: use get_pfn_range_for_nid to verify that node spans memory
+  x86/numa: move FAKE_NODE_* defines to numa_emu
+  x86/numa_emu: simplify allocation of phys_dist
+  x86/numa_emu: split __apicid_to_node update to a helper function
+  x86/numa_emu: use a helper function to get MAX_DMA32_PFN
+  x86/numa: numa_{add,remove}_cpu: make cpu parameter unsigned
+  mm: introduce numa_memblks
+  mm: move numa_distance and related code from x86 to numa_memblks
+  mm: introduce numa_emulation
+  mm: numa_memblks: introduce numa_memblks_init
+  mm: numa_memblks: make several functions and variables static
+  mm: numa_memblks: use memblock_{start,end}_of_DRAM() when sanitizing
+    meminfo
+  of, numa: return -EINVAL when no numa-node-id is found
+  arch_numa: switch over to numa_memblks
+  mm: make range-to-target_node lookup facility a part of numa_memblks
+  docs: move numa=fake description to kernel-parameters.txt
+
+ .../admin-guide/kernel-parameters.txt         |  15 +
+ .../arch/x86/x86_64/boot-options.rst          |  12 -
+ arch/arm64/include/asm/Kbuild                 |   1 +
+ arch/arm64/include/asm/mmzone.h               |  13 -
+ arch/arm64/include/asm/topology.h             |   1 +
+ arch/loongarch/include/asm/Kbuild             |   1 +
+ arch/loongarch/include/asm/mmzone.h           |  16 -
+ arch/loongarch/include/asm/topology.h         |   1 +
+ arch/loongarch/kernel/numa.c                  |  21 -
+ arch/mips/Kconfig                             |   5 -
+ arch/mips/include/asm/mach-ip27/mmzone.h      |   1 -
+ .../mips/include/asm/mach-loongson64/mmzone.h |   4 -
+ arch/mips/loongson64/numa.c                   |  28 +-
+ arch/mips/sgi-ip27/ip27-memory.c              |  12 +-
+ arch/mips/sgi-ip27/ip27-smp.c                 |   2 +
+ arch/powerpc/include/asm/mmzone.h             |   6 -
+ arch/powerpc/mm/numa.c                        |  26 +-
+ arch/riscv/include/asm/Kbuild                 |   1 +
+ arch/riscv/include/asm/mmzone.h               |  13 -
+ arch/riscv/include/asm/topology.h             |   4 +
+ arch/s390/include/asm/Kbuild                  |   1 +
+ arch/s390/include/asm/mmzone.h                |  17 -
+ arch/s390/kernel/numa.c                       |   3 -
+ arch/sh/include/asm/mmzone.h                  |   3 -
+ arch/sh/mm/init.c                             |   7 +-
+ arch/sh/mm/numa.c                             |   3 -
+ arch/sparc/include/asm/mmzone.h               |   4 -
+ arch/sparc/mm/init_64.c                       |  11 +-
+ arch/x86/Kconfig                              |   9 +-
+ arch/x86/include/asm/Kbuild                   |   1 +
+ arch/x86/include/asm/mmzone.h                 |   6 -
+ arch/x86/include/asm/mmzone_32.h              |  17 -
+ arch/x86/include/asm/mmzone_64.h              |  18 -
+ arch/x86/include/asm/numa.h                   |  26 +-
+ arch/x86/include/asm/sparsemem.h              |   9 -
+ arch/x86/mm/Makefile                          |   1 -
+ arch/x86/mm/amdtopology.c                     |   1 +
+ arch/x86/mm/numa.c                            | 622 +-----------------
+ arch/x86/mm/numa_internal.h                   |  24 -
+ drivers/acpi/numa/srat.c                      |   1 +
+ drivers/base/Kconfig                          |   1 +
+ drivers/base/arch_numa.c                      | 224 ++-----
+ drivers/cxl/Kconfig                           |   2 +-
+ drivers/dax/Kconfig                           |   2 +-
+ drivers/of/of_numa.c                          |   5 +-
+ include/asm-generic/mmzone.h                  |   5 +
+ include/asm-generic/numa.h                    |   6 +-
+ include/linux/memory_hotplug.h                |  48 --
+ include/linux/numa.h                          |   8 +
+ include/linux/numa_memblks.h                  |  58 ++
+ kernel/Makefile                               |   1 -
+ kernel/numa.c                                 |  26 -
+ mm/Kconfig                                    |  11 +
+ mm/Makefile                                   |   3 +
+ mm/mm_init.c                                  |  10 +-
+ mm/numa.c                                     |  69 ++
+ {arch/x86/mm => mm}/numa_emulation.c          |  42 +-
+ mm/numa_memblks.c                             | 571 ++++++++++++++++
+ 58 files changed, 893 insertions(+), 1166 deletions(-)
+ delete mode 100644 arch/arm64/include/asm/mmzone.h
+ delete mode 100644 arch/loongarch/include/asm/mmzone.h
+ delete mode 100644 arch/riscv/include/asm/mmzone.h
+ delete mode 100644 arch/s390/include/asm/mmzone.h
+ delete mode 100644 arch/x86/include/asm/mmzone.h
+ delete mode 100644 arch/x86/include/asm/mmzone_32.h
+ delete mode 100644 arch/x86/include/asm/mmzone_64.h
+ create mode 100644 include/asm-generic/mmzone.h
+ create mode 100644 include/linux/numa_memblks.h
+ delete mode 100644 kernel/numa.c
+ create mode 100644 mm/numa.c
+ rename {arch/x86/mm => mm}/numa_emulation.c (94%)
+ create mode 100644 mm/numa_memblks.c
 
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+-- 
+2.43.0
+
 
