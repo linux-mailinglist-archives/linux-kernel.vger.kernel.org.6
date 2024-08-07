@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-278471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB82F94B0A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:49:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140E794B0A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 015501C20FC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:49:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 812D9B2377A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C72147C98;
-	Wed,  7 Aug 2024 19:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040EF1487CE;
+	Wed,  7 Aug 2024 19:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QLhg6LK5"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TdO+HUA2"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75585146A62
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 19:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802161482FD
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 19:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723060111; cv=none; b=GSeAyZ9G6yV/0J7eKyXlkcBQDLo5enaupD9urBXZgfxVbLNe8T5csBWPAhqlWpEROpP0W51029dRzsUrug2nGcZclEo5hDQryQCs9j6iq6lclmMnXI0gNS/YRK2X4HQSvOS3u4K8LI5i41aNSzLjn9G+kOL/7wXus1Q59/DETUg=
+	t=1723060114; cv=none; b=WTU+BUCFwQGpa0d+nGjOA0TARV+RRFikVlyYQxdrlGg8JL/qQ48guXMvQ9QvWOMGDtXI3SfwaUo/+T3JJ7fNMtABxZK+iTXtox8ffGB4fUdo/L8Ef/KqBGxt4uFEUoif9sskgjKJ2trJN2VNd2tfl0uhjzS2pMwdEKHyg1Rsot0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723060111; c=relaxed/simple;
-	bh=/VcNNtJJw0P8ycOBIOS5hkIVFjnZ5JtuXWiPTpXW6DM=;
+	s=arc-20240116; t=1723060114; c=relaxed/simple;
+	bh=jlZBQTergZikBzedosCmwjPZuxq7DHRCY1RQ0v7m73s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BxVCP6tCB4fS4P95IC7xvL1mTjIH6vqeQlTtPZYLcjwSuf9OYvokhvblPA7sK+4qGC5UVvusTPlyZFKfJtA4e75k4Ejio1Uf+bHMkq7u+WI6tk2kzYQuzDJ+KCy3Mc1VvtEwyb8/KU6O1R94UDJfAmA4f++6OSsUtg/csJZH6Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QLhg6LK5; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=TSqcIfK86lVuk/Dt04YY4HdY5h7UdCfIdmFv0xQSubWcUxUuF9x4sLzr5zUbuGh2VfCBMbxtd6E6IcqoyKM/jGuUzXOv4KFeQnbdKQ1+uPwFKmwUecOYmjSWe33yvbFrHewA4uFwIb6UM3meZmoImz0AwP/6VHk5etTkGfrFfzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TdO+HUA2; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723060108;
+	s=mimecast20190719; t=1723060110;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FAGFj0FHVAq5pVRnc576bB34mI1HflD3zt6t4lJRJgM=;
-	b=QLhg6LK5r1mF0Hm0CnKTWQZqP7VuKLmJuAxCfWWZhhYwtoWp+/8vBR4b9pz25qOLNPZqlQ
-	7d/+rPgXEzfdiVnpNGKndgklUl48UmzMeIeq3G7gCp0N5VJcfIrvMXH31uOQguPAQVtwGV
-	Kpqx9/+nvM1rAWo/8Fn+UsbbqHG9/Bs=
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
- [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=DDb5b0nOIqaqJ1HBArfkZKBp6ttQDN26GIh6owjfgNA=;
+	b=TdO+HUA2uoAY7CqjdXmDAfm9Kd1zGVSx5rBwFDFs1Q86HNAapg0itjjHQ5NFivO+WKSJpD
+	9v9ignnnq+kFe59kJyKyeXol9m0w2x6VKAy9XBWMnS6ELUzjfOcTRN6gpS9iMDbkqiD+rz
+	KJofRxDWbm//GsWctR/DUoo1o5qfd5I=
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
+ [209.85.167.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-489-HJcXAUJCPvu-dyWVt5bIwA-1; Wed, 07 Aug 2024 15:48:27 -0400
-X-MC-Unique: HJcXAUJCPvu-dyWVt5bIwA-1
-Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5d5cc01aee6so12873eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 12:48:27 -0700 (PDT)
+ us-mta-473-3DBBQLP8O6aAO2zcupSXnQ-1; Wed, 07 Aug 2024 15:48:29 -0400
+X-MC-Unique: 3DBBQLP8O6aAO2zcupSXnQ-1
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3db15ea38baso53633b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 12:48:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723060106; x=1723664906;
+        d=1e100.net; s=20230601; t=1723060108; x=1723664908;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FAGFj0FHVAq5pVRnc576bB34mI1HflD3zt6t4lJRJgM=;
-        b=DTyiGO4ToXZVdNVUYtIok9rAjFGriGPISE+OV0JoRhgbF2Zs7b7LPzyxbi5dI7stK8
-         efRsx3h7TgJoKnSVE+KpOXYMQel7ZyWrMzNZjm5Kj9HbON8V4NXHqmkWxB29o/IawV1i
-         7g4lrqMa1udbCRLVfyhSpfF2NC9l27KnFuclMN44d2U6NioV5bLiT/BzA58cznD6kGyV
-         nyTv1yv5oIkJvhm77ZjXQQSdZ+2Q5SkTHKEflHi7rL1ilcmL2pARwmzlYL4j5srCtQZH
-         8K5c2cap4KfFKIdgu9CUIbhCpQ9250UZlGjm9Yx8dEdK868fm/5Z3BoH53OzPQMUautM
-         FflA==
-X-Gm-Message-State: AOJu0YxgPenEVYD8uAlTjtEOLwnKlVS1KBrJjlwm0n3y4wIwgNNmdbO4
-	o3Aqgy4slIhW00UIfsTT2Aj+NDrA0YC9hz8polWKKO4dso1P2Tsuj+tRudYJpqvp1RAT7sdiBYw
-	islaxGm+WdmQhHmF/3Fl1gjjUxcyh8c6wWIcFGL5wBaq3EyGBxjZb015RUQZuzRnz+C+jNvWotf
-	y7vNl3dI658eIc7SDQTGO39nxygwlH5wIa/obSqQqWaUc=
-X-Received: by 2002:a4a:b90c:0:b0:5cd:920:de44 with SMTP id 006d021491bc7-5d6636caa6bmr12611344eaf.2.1723060106166;
-        Wed, 07 Aug 2024 12:48:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE55jmIe/WZbCw3l3NTgyyno7WLqIqKlQdXAtW30hkxt69+d9woKPh92QMpZkY/maA+61+r6A==
-X-Received: by 2002:a4a:b90c:0:b0:5cd:920:de44 with SMTP id 006d021491bc7-5d6636caa6bmr12611307eaf.2.1723060105619;
-        Wed, 07 Aug 2024 12:48:25 -0700 (PDT)
+        bh=DDb5b0nOIqaqJ1HBArfkZKBp6ttQDN26GIh6owjfgNA=;
+        b=OLZVCEvf+gpkF3Sh921JB1ceNCRadtQ1NMoWYyt4L4RlAEXHSRbQx8V3V0MCasLRUy
+         f/APBsgiMD6/PoGUZ+tkT2uYCyrPPQzyKJDn0s0W2H3E1cUiCz5vDBqilHwTRyaie7Ll
+         SvgIxpHuDmZbemItXAbspFZgLJufDzGwU+4UZIUtp+i3qo5XM0VHRboHe3EcDE8aokL/
+         H9wyhcHyzY7YFb1clU1c9tI7wNiDviwWYleOZXr3Xac+9yZXEkySV9j70Z0SZEWIZXYJ
+         RjUfQtRGsKBOIwrWkR2hpwm5fQXgD3oCs2hu3HA/Vj/UJ5DW/ZQxvqeuSynppZkPr2An
+         wkTw==
+X-Gm-Message-State: AOJu0Yzlop6rZ8RhP69+84gRqt9x3L1HkBNWjFiLJeg3l5X9p+MH9PS5
+	xyhk84fIuDZEFYe7Fwok9d1aOl91txftfpt/NzyHtnnjhLJaad+9BZGDqJQB6iILjnZX1DvQEyT
+	hJUhgnMK/svNhNQvVKBHQOhWFpU7K/iaid3v+0zRn8/i8KPhy96FaF7VnitXo80uJrH+hRwUpPh
+	T6znEpZDP1kp9lbsYQkDuXpVMcxXYQz5ZSnDxFj/kTQwQ=
+X-Received: by 2002:a05:6358:e49f:b0:1ac:f6e3:dbcd with SMTP id e5c5f4694b2df-1af3babf83fmr1244373255d.3.1723060108372;
+        Wed, 07 Aug 2024 12:48:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGF6PD4SDnTvqRZFf7QOZAHAr54Efqd3zzz8coMqAlruM+AKE9ZSLZCO533yzyaTsEnxMNyzw==
+X-Received: by 2002:a05:6358:e49f:b0:1ac:f6e3:dbcd with SMTP id e5c5f4694b2df-1af3babf83fmr1244369055d.3.1723060107772;
+        Wed, 07 Aug 2024 12:48:27 -0700 (PDT)
 Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c78ae4asm59853256d6.33.2024.08.07.12.48.23
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c78ae4asm59853256d6.33.2024.08.07.12.48.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 12:48:24 -0700 (PDT)
+        Wed, 07 Aug 2024 12:48:27 -0700 (PDT)
 From: Peter Xu <peterx@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
@@ -100,9 +100,9 @@ Cc: "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
 	Huang Ying <ying.huang@intel.com>
-Subject: [PATCH v4 5/7] mm/x86: arch_check_zapped_pud()
-Date: Wed,  7 Aug 2024 15:48:09 -0400
-Message-ID: <20240807194812.819412-6-peterx@redhat.com>
+Subject: [PATCH v4 6/7] mm/x86: Add missing pud helpers
+Date: Wed,  7 Aug 2024 15:48:10 -0400
+Message-ID: <20240807194812.819412-7-peterx@redhat.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240807194812.819412-1-peterx@redhat.com>
 References: <20240807194812.819412-1-peterx@redhat.com>
@@ -114,111 +114,137 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce arch_check_zapped_pud() to sanity check shadow stack on PUD zaps.
-It has the same logic of the PMD helper.
+These new helpers will be needed for pud entry updates soon.  Introduce
+these helpers by referencing the pmd ones.  Namely:
 
-One thing to mention is, it might be a good idea to use page_table_check in
-the future for trapping wrong setups of shadow stack pgtable entries [1].
-That is left for the future as a separate effort.
+- pudp_invalidate()
+- pud_modify()
 
-[1] https://lore.kernel.org/all/59d518698f664e07c036a5098833d7b56b953305.camel@intel.com
-
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: x86@kernel.org
-Acked-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- arch/x86/include/asm/pgtable.h | 10 ++++++++++
- arch/x86/mm/pgtable.c          |  7 +++++++
- include/linux/pgtable.h        |  7 +++++++
- mm/huge_memory.c               |  4 +++-
- 4 files changed, 27 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/pgtable.h | 55 +++++++++++++++++++++++++++++-----
+ arch/x86/mm/pgtable.c          | 12 ++++++++
+ 2 files changed, 59 insertions(+), 8 deletions(-)
 
 diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index a2a3bd4c1bda..fdb8ac9e7030 100644
+index fdb8ac9e7030..a7c1e9cfea41 100644
 --- a/arch/x86/include/asm/pgtable.h
 +++ b/arch/x86/include/asm/pgtable.h
-@@ -174,6 +174,13 @@ static inline int pud_young(pud_t pud)
- 	return pud_flags(pud) & _PAGE_ACCESSED;
+@@ -787,6 +787,12 @@ static inline pmd_t pmd_mkinvalid(pmd_t pmd)
+ 		      __pgprot(pmd_flags(pmd) & ~(_PAGE_PRESENT|_PAGE_PROTNONE)));
  }
  
-+static inline bool pud_shstk(pud_t pud)
++static inline pud_t pud_mkinvalid(pud_t pud)
 +{
-+	return cpu_feature_enabled(X86_FEATURE_SHSTK) &&
-+	       (pud_flags(pud) & (_PAGE_RW | _PAGE_DIRTY | _PAGE_PSE)) ==
-+	       (_PAGE_DIRTY | _PAGE_PSE);
++	return pfn_pud(pud_pfn(pud),
++		       __pgprot(pud_flags(pud) & ~(_PAGE_PRESENT|_PAGE_PROTNONE)));
 +}
 +
- static inline int pte_write(pte_t pte)
- {
+ static inline u64 flip_protnone_guard(u64 oldval, u64 val, u64 mask);
+ 
+ static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+@@ -834,14 +840,8 @@ static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
+ 	pmd_result = __pmd(val);
+ 
  	/*
-@@ -1667,6 +1674,9 @@ void arch_check_zapped_pte(struct vm_area_struct *vma, pte_t pte);
- #define arch_check_zapped_pmd arch_check_zapped_pmd
- void arch_check_zapped_pmd(struct vm_area_struct *vma, pmd_t pmd);
- 
-+#define arch_check_zapped_pud arch_check_zapped_pud
-+void arch_check_zapped_pud(struct vm_area_struct *vma, pud_t pud);
-+
- #ifdef CONFIG_XEN_PV
- #define arch_has_hw_nonleaf_pmd_young arch_has_hw_nonleaf_pmd_young
- static inline bool arch_has_hw_nonleaf_pmd_young(void)
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index f5931499c2d6..d4b3ccf90236 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -926,3 +926,10 @@ void arch_check_zapped_pmd(struct vm_area_struct *vma, pmd_t pmd)
- 	VM_WARN_ON_ONCE(!(vma->vm_flags & VM_SHADOW_STACK) &&
- 			pmd_shstk(pmd));
+-	 * To avoid creating Write=0,Dirty=1 PMDs, pte_modify() needs to avoid:
+-	 *  1. Marking Write=0 PMDs Dirty=1
+-	 *  2. Marking Dirty=1 PMDs Write=0
+-	 *
+-	 * The first case cannot happen because the _PAGE_CHG_MASK will filter
+-	 * out any Dirty bit passed in newprot. Handle the second case by
+-	 * going through the mksaveddirty exercise. Only do this if the old
+-	 * value was Write=1 to avoid doing this on Shadow Stack PTEs.
++	 * Avoid creating shadow stack PMD by accident.  See comment in
++	 * pte_modify().
+ 	 */
+ 	if (oldval & _PAGE_RW)
+ 		pmd_result = pmd_mksaveddirty(pmd_result);
+@@ -851,6 +851,29 @@ static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
+ 	return pmd_result;
  }
-+
-+void arch_check_zapped_pud(struct vm_area_struct *vma, pud_t pud)
+ 
++static inline pud_t pud_modify(pud_t pud, pgprot_t newprot)
 +{
-+	/* See note in arch_check_zapped_pte() */
-+	VM_WARN_ON_ONCE(!(vma->vm_flags & VM_SHADOW_STACK) &&
-+			pud_shstk(pud));
++	pudval_t val = pud_val(pud), oldval = val;
++	pud_t pud_result;
++
++	val &= _HPAGE_CHG_MASK;
++	val |= check_pgprot(newprot) & ~_HPAGE_CHG_MASK;
++	val = flip_protnone_guard(oldval, val, PHYSICAL_PUD_PAGE_MASK);
++
++	pud_result = __pud(val);
++
++	/*
++	 * Avoid creating shadow stack PUD by accident.  See comment in
++	 * pte_modify().
++	 */
++	if (oldval & _PAGE_RW)
++		pud_result = pud_mksaveddirty(pud_result);
++	else
++		pud_result = pud_clear_saveddirty(pud_result);
++
++	return pud_result;
 +}
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index 2a6a3cccfc36..2289e9f7aa1b 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -447,6 +447,13 @@ static inline void arch_check_zapped_pmd(struct vm_area_struct *vma,
++
+ /*
+  * mprotect needs to preserve PAT and encryption bits when updating
+  * vm_page_prot
+@@ -1389,10 +1412,26 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
  }
  #endif
  
-+#ifndef arch_check_zapped_pud
-+static inline void arch_check_zapped_pud(struct vm_area_struct *vma,
-+					 pud_t pud)
++static inline pud_t pudp_establish(struct vm_area_struct *vma,
++		unsigned long address, pud_t *pudp, pud_t pud)
 +{
++	page_table_check_pud_set(vma->vm_mm, pudp, pud);
++	if (IS_ENABLED(CONFIG_SMP)) {
++		return xchg(pudp, pud);
++	} else {
++		pud_t old = *pudp;
++		WRITE_ONCE(*pudp, pud);
++		return old;
++	}
++}
++
+ #define __HAVE_ARCH_PMDP_INVALIDATE_AD
+ extern pmd_t pmdp_invalidate_ad(struct vm_area_struct *vma,
+ 				unsigned long address, pmd_t *pmdp);
+ 
++pud_t pudp_invalidate(struct vm_area_struct *vma, unsigned long address,
++		      pud_t *pudp);
++
+ /*
+  * Page table pages are page-aligned.  The lower half of the top
+  * level is used for userspace and the top half for the kernel.
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index d4b3ccf90236..9fc2dabf8427 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -641,6 +641,18 @@ pmd_t pmdp_invalidate_ad(struct vm_area_struct *vma, unsigned long address,
+ }
+ #endif
+ 
++#if defined(CONFIG_TRANSPARENT_HUGEPAGE) && \
++	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
++pud_t pudp_invalidate(struct vm_area_struct *vma, unsigned long address,
++		     pud_t *pudp)
++{
++	VM_WARN_ON_ONCE(!pud_present(*pudp));
++	pud_t old = pudp_establish(vma, address, pudp, pud_mkinvalid(*pudp));
++	flush_pud_tlb_range(vma, address, address + HPAGE_PUD_SIZE);
++	return old;
 +}
 +#endif
 +
- #ifndef __HAVE_ARCH_PTEP_GET_AND_CLEAR
- static inline pte_t ptep_get_and_clear(struct mm_struct *mm,
- 				       unsigned long address,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 0024266dea0a..81c5da0708ed 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2293,12 +2293,14 @@ int zap_huge_pud(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		 pud_t *pud, unsigned long addr)
- {
- 	spinlock_t *ptl;
-+	pud_t orig_pud;
- 
- 	ptl = __pud_trans_huge_lock(pud, vma);
- 	if (!ptl)
- 		return 0;
- 
--	pudp_huge_get_and_clear_full(vma, addr, pud, tlb->fullmm);
-+	orig_pud = pudp_huge_get_and_clear_full(vma, addr, pud, tlb->fullmm);
-+	arch_check_zapped_pud(vma, orig_pud);
- 	tlb_remove_pud_tlb_entry(tlb, pud, addr);
- 	if (vma_is_special_huge(vma)) {
- 		spin_unlock(ptl);
+ /**
+  * reserve_top_address - reserves a hole in the top of kernel address space
+  * @reserve - size of hole to reserve
 -- 
 2.45.0
 
