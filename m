@@ -1,133 +1,288 @@
-Return-Path: <linux-kernel+bounces-278356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094B494AF17
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:47:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CC394AF1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15C11F22B22
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:47:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3507B25EAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0479813DDAA;
-	Wed,  7 Aug 2024 17:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816CD13DDAF;
+	Wed,  7 Aug 2024 17:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NMrKKNaC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="f9Ww8RDd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="omWwUP+4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="f9Ww8RDd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="omWwUP+4"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCE580BEC;
-	Wed,  7 Aug 2024 17:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8239A80BEC;
+	Wed,  7 Aug 2024 17:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723052857; cv=none; b=giRYJ1VCXow2KiBJd49DUHbePBxo30iKDU7AQfMACwLP5qHvHYfduLOvuUN/DmO/g39cEXCANAg0w44Ns1F/Zos18ZSnaT4mPy7DoxubtK0Rsq6zrYw3QMNl7TSy3EjM6ca803IvoAtNzuuaATQt+fnGjVZ9XLjzxR+YD34ZKrE=
+	t=1723052907; cv=none; b=KxP+J8sZmZsjrJJkGwy/9nhEO5uJ9BoX90dWtbvPkOlhvao3xBgurFySGUGeyvCqu11f4PPaT4w6/b8o+nyYwElg4pq14kIOSSJm9FBSPpiHObq5TQzkT3RU4bnjy4urx6BFMA3Db+krkJ/BE0Ko9NWqbGYdhOeD3j/UHtKmf+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723052857; c=relaxed/simple;
-	bh=I3dBEl7gZ6UF2jKD+4y9OTtPsx5fbU5DIZcAjt0Q+pQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l/kGY7ouDfxvp/Fnx2t8l9mFJWsUoECShwf+XEG+/8AGPG6Lau8jkYdOOYODuPp9b2q8lfN4b6S6/KrmI1zAZBtiT2u+1wZRmwnGYrdKqixU4St60Sk3K02PBRrOjHkCmXYKsrJgHf8gAwLB/T544p2T56MJrP1dAcHNC+gqpbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NMrKKNaC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3D31C32781;
-	Wed,  7 Aug 2024 17:47:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723052856;
-	bh=I3dBEl7gZ6UF2jKD+4y9OTtPsx5fbU5DIZcAjt0Q+pQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NMrKKNaCEVK5Djs3ir/G5ibpZK0WbOdn1per0Oh5BOgUbbnYqKwVdmAAE5C+xVABt
-	 DyOrXtgIsofwNagQRXVGrohu6Jpd2rtx4iDeVaZKnK9V6Lu/K8uuZG/EXO4csgr2Zr
-	 1abhw+XabvcyInDzB9EiNdIc6O0ROkGf2sh2KhB2vwi/nI0qbIFaRPlybvtDjmLiTi
-	 E/2r/n0B/IIJO5nf7zwi1NfQ33MrS34xTWoZUIf7szCsONd8e9yE53a+aOYLZVsMMI
-	 0uIdQ6hfa+X5nJ1+DEr2/ZxM75HWeE8tXlwTMYulEmkzCg5Lzk8hPxOJhdeAU+oFZV
-	 StIzh/E0+m88w==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH] treewide: remove unnecessary <linux/version.h> inclusion
-Date: Thu,  8 Aug 2024 02:47:28 +0900
-Message-ID: <20240807174730.658429-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1723052907; c=relaxed/simple;
+	bh=gxnzrZK532UzXDU9oJooQnA7p6wuT0+Yfq3+XQ/ick4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=enMRPASCEFXfb0KDp0vLBHkImhCK4YjtFIcRCL2oiTD7sij0SVoCa8Q26gpzu7nhS6w7r3Kh4VEa2PUK79gYiNOY8SxAU+/vUuGA4s878Hv7G6pOD7Flb2FSSfJRa/upeBdq4Z5nDQTP333pAtPqzjvprHCaseILChsBGmuec94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=f9Ww8RDd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=omWwUP+4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=f9Ww8RDd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=omWwUP+4; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 50A101FB98;
+	Wed,  7 Aug 2024 17:48:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723052903; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=izW4UerVRQHs5fzbafGixcUtLUBiwOZn6UJ4BD67bEU=;
+	b=f9Ww8RDdu3QM3qBdVLQ3pFl3xt6Uwhalt8Ht6j4JHXjuLaBb8UnLygcN4cmM0nyj/8S6I2
+	PIvsYWE7HOtNQ4D1tOjg0shshFgmxpMDyLxwNCp+XteuAX1wu8KCUr80t6BCpx7Edq5q/K
+	bdIiDKclZJ9CYrGts8rMOk/iCM3/0sE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723052903;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=izW4UerVRQHs5fzbafGixcUtLUBiwOZn6UJ4BD67bEU=;
+	b=omWwUP+4wezOkL4Kpf3lbGnbJYY5G2hPopgIo7/F5fokQkhOKGTKA1U07/6Y1lYDy7kqB9
+	fhis+fsqqNzLitDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=f9Ww8RDd;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=omWwUP+4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723052903; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=izW4UerVRQHs5fzbafGixcUtLUBiwOZn6UJ4BD67bEU=;
+	b=f9Ww8RDdu3QM3qBdVLQ3pFl3xt6Uwhalt8Ht6j4JHXjuLaBb8UnLygcN4cmM0nyj/8S6I2
+	PIvsYWE7HOtNQ4D1tOjg0shshFgmxpMDyLxwNCp+XteuAX1wu8KCUr80t6BCpx7Edq5q/K
+	bdIiDKclZJ9CYrGts8rMOk/iCM3/0sE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723052903;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=izW4UerVRQHs5fzbafGixcUtLUBiwOZn6UJ4BD67bEU=;
+	b=omWwUP+4wezOkL4Kpf3lbGnbJYY5G2hPopgIo7/F5fokQkhOKGTKA1U07/6Y1lYDy7kqB9
+	fhis+fsqqNzLitDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3DA8213A7D;
+	Wed,  7 Aug 2024 17:48:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QLvLDmezs2Y6KAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 07 Aug 2024 17:48:23 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D8FE2A0762; Wed,  7 Aug 2024 19:48:18 +0200 (CEST)
+Date: Wed, 7 Aug 2024 19:48:18 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 09/10] ext4: drop ext4_es_is_delonly()
+Message-ID: <20240807174818.bt6b4qhub7ydy5r5@quack3>
+References: <20240802115120.362902-1-yi.zhang@huaweicloud.com>
+ <20240802115120.362902-10-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802115120.362902-10-yi.zhang@huaweicloud.com>
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,huawei.com:email,suse.com:email]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -2.51
+X-Rspamd-Queue-Id: 50A101FB98
 
-These files do not use any macros defined in <linux/version.h>.
+On Fri 02-08-24 19:51:19, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Since we don't add delayed flag in unwritten extents, so there is no
+> difference between ext4_es_is_delayed() and ext4_es_is_delonly(),
+> just drop ext4_es_is_delonly().
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+Looks good. But please also add assertion when inserting extent into status
+tree that only one of EXTENT_STATUS_WRITTEN, EXTENT_STATUS_UNWRITTEN,
+EXTENT_STATUS_DELAYED, and EXTENT_STATUS_HOLE is set.
+Also perhaps add comment to EXTENT_STATUS_DELAYED (and other) definition that
+these states are exclusive. Thanks!
 
- drivers/accessibility/speakup/genmap.c                | 1 -
- drivers/accessibility/speakup/makemapdata.c           | 1 -
- drivers/staging/media/atomisp/include/linux/atomisp.h | 1 -
- samples/trace_events/trace_custom_sched.c             | 1 -
- sound/soc/codecs/cs42l42.c                            | 1 -
- 5 files changed, 5 deletions(-)
+									Honza
 
-diff --git a/drivers/accessibility/speakup/genmap.c b/drivers/accessibility/speakup/genmap.c
-index 0125000e00d9..0882bab10fb8 100644
---- a/drivers/accessibility/speakup/genmap.c
-+++ b/drivers/accessibility/speakup/genmap.c
-@@ -10,7 +10,6 @@
- #include <stdio.h>
- #include <libgen.h>
- #include <string.h>
--#include <linux/version.h>
- #include <ctype.h>
- #include "utils.h"
- 
-diff --git a/drivers/accessibility/speakup/makemapdata.c b/drivers/accessibility/speakup/makemapdata.c
-index d7d41bb9b05f..55e4ef8a93dc 100644
---- a/drivers/accessibility/speakup/makemapdata.c
-+++ b/drivers/accessibility/speakup/makemapdata.c
-@@ -10,7 +10,6 @@
- #include <stdio.h>
- #include <libgen.h>
- #include <string.h>
--#include <linux/version.h>
- #include <ctype.h>
- #include "utils.h"
- 
-diff --git a/drivers/staging/media/atomisp/include/linux/atomisp.h b/drivers/staging/media/atomisp/include/linux/atomisp.h
-index 16c9da172c03..fefbe3cd08f3 100644
---- a/drivers/staging/media/atomisp/include/linux/atomisp.h
-+++ b/drivers/staging/media/atomisp/include/linux/atomisp.h
-@@ -20,7 +20,6 @@
- #define _ATOM_ISP_H
- 
- #include <linux/types.h>
--#include <linux/version.h>
- 
- /* struct media_device_info.hw_revision */
- #define ATOMISP_HW_REVISION_MASK	0x0000ff00
-diff --git a/samples/trace_events/trace_custom_sched.c b/samples/trace_events/trace_custom_sched.c
-index b99d9ab7db85..dd409b704b35 100644
---- a/samples/trace_events/trace_custom_sched.c
-+++ b/samples/trace_events/trace_custom_sched.c
-@@ -8,7 +8,6 @@
- #define pr_fmt(fmt) fmt
- 
- #include <linux/trace_events.h>
--#include <linux/version.h>
- #include <linux/module.h>
- #include <linux/sched.h>
- 
-diff --git a/sound/soc/codecs/cs42l42.c b/sound/soc/codecs/cs42l42.c
-index 60d366e53526..6400ac875e6f 100644
---- a/sound/soc/codecs/cs42l42.c
-+++ b/sound/soc/codecs/cs42l42.c
-@@ -11,7 +11,6 @@
- 
- #include <linux/module.h>
- #include <linux/moduleparam.h>
--#include <linux/version.h>
- #include <linux/types.h>
- #include <linux/init.h>
- #include <linux/delay.h>
+> ---
+>  fs/ext4/extents_status.c | 18 +++++++++---------
+>  fs/ext4/extents_status.h |  5 -----
+>  fs/ext4/inode.c          |  4 ++--
+>  3 files changed, 11 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
+> index e482ac818317..5fb0a02405ba 100644
+> --- a/fs/ext4/extents_status.c
+> +++ b/fs/ext4/extents_status.c
+> @@ -563,8 +563,8 @@ static int ext4_es_can_be_merged(struct extent_status *es1,
+>  	if (ext4_es_is_hole(es1))
+>  		return 1;
+>  
+> -	/* we need to check delayed extent is without unwritten status */
+> -	if (ext4_es_is_delayed(es1) && !ext4_es_is_unwritten(es1))
+> +	/* we need to check delayed extent */
+> +	if (ext4_es_is_delayed(es1))
+>  		return 1;
+>  
+>  	return 0;
+> @@ -1139,7 +1139,7 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
+>  	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+>  	ext4_lblk_t i, end, nclu;
+>  
+> -	if (!ext4_es_is_delonly(es))
+> +	if (!ext4_es_is_delayed(es))
+>  		return;
+>  
+>  	WARN_ON(len <= 0);
+> @@ -1291,7 +1291,7 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
+>  		es = rc->left_es;
+>  		while (es && ext4_es_end(es) >=
+>  		       EXT4_LBLK_CMASK(sbi, rc->first_do_lblk)) {
+> -			if (ext4_es_is_delonly(es)) {
+> +			if (ext4_es_is_delayed(es)) {
+>  				rc->ndelonly_cluster--;
+>  				left_delonly = true;
+>  				break;
+> @@ -1311,7 +1311,7 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
+>  			}
+>  			while (es && es->es_lblk <=
+>  			       EXT4_LBLK_CFILL(sbi, rc->last_do_lblk)) {
+> -				if (ext4_es_is_delonly(es)) {
+> +				if (ext4_es_is_delayed(es)) {
+>  					rc->ndelonly_cluster--;
+>  					right_delonly = true;
+>  					break;
+> @@ -2239,7 +2239,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
+>  	if (EXT4_B2C(sbi, lblk) == EXT4_B2C(sbi, end)) {
+>  		first = EXT4_LBLK_CMASK(sbi, lblk);
+>  		if (first != lblk)
+> -			f_del = __es_scan_range(inode, &ext4_es_is_delonly,
+> +			f_del = __es_scan_range(inode, &ext4_es_is_delayed,
+>  						first, lblk - 1);
+>  		if (f_del) {
+>  			ret = __insert_pending(inode, first, prealloc);
+> @@ -2251,7 +2251,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
+>  			       sbi->s_cluster_ratio - 1;
+>  			if (last != end)
+>  				l_del = __es_scan_range(inode,
+> -							&ext4_es_is_delonly,
+> +							&ext4_es_is_delayed,
+>  							end + 1, last);
+>  			if (l_del) {
+>  				ret = __insert_pending(inode, last, prealloc);
+> @@ -2264,7 +2264,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
+>  	} else {
+>  		first = EXT4_LBLK_CMASK(sbi, lblk);
+>  		if (first != lblk)
+> -			f_del = __es_scan_range(inode, &ext4_es_is_delonly,
+> +			f_del = __es_scan_range(inode, &ext4_es_is_delayed,
+>  						first, lblk - 1);
+>  		if (f_del) {
+>  			ret = __insert_pending(inode, first, prealloc);
+> @@ -2276,7 +2276,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
+>  
+>  		last = EXT4_LBLK_CMASK(sbi, end) + sbi->s_cluster_ratio - 1;
+>  		if (last != end)
+> -			l_del = __es_scan_range(inode, &ext4_es_is_delonly,
+> +			l_del = __es_scan_range(inode, &ext4_es_is_delayed,
+>  						end + 1, last);
+>  		if (l_del) {
+>  			ret = __insert_pending(inode, last, prealloc);
+> diff --git a/fs/ext4/extents_status.h b/fs/ext4/extents_status.h
+> index 5b49cb3b9aff..e484c60e55e3 100644
+> --- a/fs/ext4/extents_status.h
+> +++ b/fs/ext4/extents_status.h
+> @@ -184,11 +184,6 @@ static inline int ext4_es_is_mapped(struct extent_status *es)
+>  	return (ext4_es_is_written(es) || ext4_es_is_unwritten(es));
+>  }
+>  
+> -static inline int ext4_es_is_delonly(struct extent_status *es)
+> -{
+> -	return (ext4_es_is_delayed(es) && !ext4_es_is_unwritten(es));
+> -}
+> -
+>  static inline void ext4_es_set_referenced(struct extent_status *es)
+>  {
+>  	es->es_pblk |= ((ext4_fsblk_t)EXTENT_STATUS_REFERENCED) << ES_SHIFT;
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 8bd65a45a26a..2b301c165468 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -1645,7 +1645,7 @@ static int ext4_clu_alloc_state(struct inode *inode, ext4_lblk_t lblk)
+>  	int ret;
+>  
+>  	/* Has delalloc reservation? */
+> -	if (ext4_es_scan_clu(inode, &ext4_es_is_delonly, lblk))
+> +	if (ext4_es_scan_clu(inode, &ext4_es_is_delayed, lblk))
+>  		return 1;
+>  
+>  	/* Already been allocated? */
+> @@ -1766,7 +1766,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
+>  		 * Delayed extent could be allocated by fallocate.
+>  		 * So we need to check it.
+>  		 */
+> -		if (ext4_es_is_delonly(&es)) {
+> +		if (ext4_es_is_delayed(&es)) {
+>  			map->m_flags |= EXT4_MAP_DELAYED;
+>  			return 0;
+>  		}
+> -- 
+> 2.39.2
+> 
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
