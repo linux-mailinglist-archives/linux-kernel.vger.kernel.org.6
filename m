@@ -1,104 +1,133 @@
-Return-Path: <linux-kernel+bounces-277494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D813A94A22C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:57:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ED6394A233
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 937D0286A47
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:57:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B97891C225B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E4A1C823E;
-	Wed,  7 Aug 2024 07:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C3A1C9DD9;
+	Wed,  7 Aug 2024 07:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkqZPmQM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="j0CEZs2d"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355031C7B7C;
-	Wed,  7 Aug 2024 07:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4D51C4612;
+	Wed,  7 Aug 2024 07:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723017439; cv=none; b=ifkCMoES2QABhzGPPVvXAC9ERgesk45qC/ztiQ51W17kz4GAyKP04vIELCwBzUYPDTPFni9GX/SEfMUhcE9n+3rc1qpl/9mw5/JV2QxroKe7q22ByWCGwmgiz60jqOjvCCs5LEAuAf7p1vwcOFPIUkONkGcMwM+M2fiCn7rARUE=
+	t=1723017441; cv=none; b=CjYmA7AdwodxJlbnkVMCnXecuZTZY7T+6uR0rt8DUTMOKzbDsIQNV7ZmNNt/n3yR79rfDlrmWYKVdXIqooOZGAlmaCB24W5/LdC5NMMsid3rjiK/2+bgMr9vWBfCGgKfyfwbK8l7+cD35w5my0+TvLPgWg5yPpBfqiO6H98UPnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723017439; c=relaxed/simple;
-	bh=s08IpeR5OJliwFxXvYuOnvxCOlF6Vzqg/pmxO7QBo+c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fweAG37v/qHUTpr1bowjbrz83X9yqKkMshCu2Qc/F3EH7mKe1/JG7e+Y38IEX4qHxFOC3RIGQ62x24HmjQ1W/N6pdIQq/6QEuLlUp+kKdPqWXs46KuhHB+g6uc+2DjMQr+BSjmvmFd0iHCNrzOKhivM5UGp2RDJJuru0hfJaj5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkqZPmQM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38AEFC4AF10;
-	Wed,  7 Aug 2024 07:57:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723017439;
-	bh=s08IpeR5OJliwFxXvYuOnvxCOlF6Vzqg/pmxO7QBo+c=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZkqZPmQMHNYrrcOgKiaBDlMdww75Py2+QzisIWH+oKPgxnP1zzlBSCvZX7fMXDwxq
-	 GLkcCV92AsnN9pk51mNosUc1j0W/3SxSri4erDpXKpmdmYS2UskYyFK6ImL7t0U0Rm
-	 9cm4nUVQBhzMQvKwfvI1uCd0ZXL0Xie+Bwt8J1EzJjY5MnV4lltBrOHuWIVCdN3VJ9
-	 B0jHOUX3AMcQAcVNLSwPYtG9T6JLBd1wsQXBBbDNh/PlqEa9VJltGrD3L3MVZydH5d
-	 tEQ7J+7mYLjmOHidIJmgi39UobbACTGyVd76p4ej7CP7l9J5xuQXoXqpehHFwNfe4p
-	 1lrz1XsNukX8Q==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: renesas: fix r9a09g057_cpg_info link error
-Date: Wed,  7 Aug 2024 09:56:58 +0200
-Message-Id: <20240807075714.2156445-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1723017441; c=relaxed/simple;
+	bh=/7N5Tz0sKSwu2LMtRaCxEH9+r1pKfsmhpHHKOWcdgUY=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=A0752oikjt0ckT3sHcRd94wSYSXLazTbBp1Ip3mB56cYwtS2eXdvtQRRbmozFPWxKMQSOnZgRdPOnd32fmXnMmpfMdK/Ij1tThDmWE6nOF8fu9WLc+mYHXO3Ao7YsvSWvIiRXdf7aytxQOaKOHDeBXBLdUj0sGCb2BHOcmKw49I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=j0CEZs2d; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1723017438; x=1754553438;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=/7N5Tz0sKSwu2LMtRaCxEH9+r1pKfsmhpHHKOWcdgUY=;
+  b=j0CEZs2d+WLipY1Cmyr8RnMHbqVG56JCEa/or9XUFcsVS85XvtveoIfQ
+   1HfjouYb0CSY4OVNd/dLuz7tYzVbwM77gkyvr3uC2ZQgztrd+03r8CqYg
+   2HtJLfJc56TWwSxsnDdr/8Yja1O5QL5ChJGkuJnvWbEUYTek+Uykogw49
+   1txNgx1i//B+nWPFL3JfJWtEx15F5RAwPhtJP5UUb48u7ZTKdBOgqKOf/
+   ylVHk7Hu6YBzouVB1dUdGXje2lSYr2EMOWnUerefXrTBbAqjZH7u9Ikd0
+   kFoFynO/ZPJDFhp66vhGurc93UrypS/cw1GIuG9/eH7GavTSvWMXqTO6u
+   w==;
+X-CSE-ConnectionGUID: unfEUC1JS0q1rSj3dRuITA==
+X-CSE-MsgGUID: 0PR5oX/8QSOGT9IPxT48bg==
+X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
+   d="scan'208";a="33069002"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Aug 2024 00:57:12 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 7 Aug 2024 00:57:10 -0700
+Received: from DEN-DL-M31857.microsemi.net (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 7 Aug 2024 00:57:07 -0700
+Message-ID: <34471ead9073e0d424bb815cdc833d3ca9b94d3d.camel@microchip.com>
+Subject: Re: [PATCH v4 4/8] reset: mchp: sparx5: Add MCHP_LAN966X_PCI
+ dependency
+From: Steen Hegelund <steen.hegelund@microchip.com>
+To: Herve Codina <herve.codina@bootlin.com>, Geert Uytterhoeven
+	<geert@linux-m68k.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, "Simon
+ Horman" <horms@kernel.org>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, "Andrew
+ Lunn" <andrew@lunn.ch>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>, "Allan
+ Nielsen" <allan.nielsen@microchip.com>, Luca Ceresoli
+	<luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Wed, 7 Aug 2024 09:57:06 +0200
+In-Reply-To: <20240805101725.93947-5-herve.codina@bootlin.com>
+References: <20240805101725.93947-1-herve.codina@bootlin.com>
+	 <20240805101725.93947-5-herve.codina@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi Herve,
 
-The rzv2g-cpg.c driver unconditionally links into the r9a09g057
-one, but that may be disabled:
+On Mon, 2024-08-05 at 12:17 +0200, Herve Codina wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you
+> know the content is safe
+>=20
+> The sparx5 reset controller depends on the SPARX5 architecture or the
+> LAN966x SoC.
+>=20
+> This reset controller can be used by the LAN966x PCI device and so it
+> needs to be available when the LAN966x PCI device is enabled.
+>=20
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+> =C2=A0drivers/reset/Kconfig | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 67bce340a87e..5b5a4d99616e 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -134,7 +134,7 @@ config RESET_LPC18XX
+>=20
+> =C2=A0config RESET_MCHP_SPARX5
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool "Microchip Sparx5 reset d=
+river"
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on ARCH_SPARX5 || SOC_LAN96=
+6 || COMPILE_TEST
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on ARCH_SPARX5 || SOC_LAN96=
+6 || MCHP_LAN966X_PCI ||
+> COMPILE_TEST
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default y if SPARX5_SWITCH
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select MFD_SYSCON
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 help
+> --
+> 2.45.0
+>=20
 
-aarch64-linux-ld: drivers/clk/renesas/rzv2h-cpg.o:(.rodata+0x440): undefined reference to `r9a09g057_cpg_info'
+Looks good to me.
 
-Use the same approach here as with the rzg2l variant, using an #ifdef
-around tha data.
+Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
 
-I think both drivers would be better off doing the abstraction the other
-way round, with the platform_driver structure defined in the most specific
-file and the common bits as a library that exports common functions.
-Changing it that way would require a larger rework of course.
-
-Fixes: 42b54d52ecb7 ("clk: renesas: Add RZ/V2H(P) CPG driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/renesas/rzv2h-cpg.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index bc0c3bbdb997..34221046dc46 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -664,10 +664,12 @@ static int __init rzv2h_cpg_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id rzv2h_cpg_match[] = {
-+#ifdef CONFIG_CLK_R9A09G057
- 	{
- 		.compatible = "renesas,r9a09g057-cpg",
- 		.data = &r9a09g057_cpg_info,
- 	},
-+#endif
- 	{ /* sentinel */ }
- };
- 
--- 
-2.39.2
-
+BR
+Steen
 
