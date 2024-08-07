@@ -1,220 +1,157 @@
-Return-Path: <linux-kernel+bounces-278188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 272CE94AD1B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:41:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00AEB94AD20
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BF971F2930F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:41:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30C351C21765
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE141369AA;
-	Wed,  7 Aug 2024 15:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486DA83CD9;
+	Wed,  7 Aug 2024 15:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AVgt/sGW"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="G8nKNM/h";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PmuKlMPW"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25E713DBBC;
-	Wed,  7 Aug 2024 15:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B8284A31
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723045177; cv=none; b=dV9qBf5GvssqRK2q+6vimtD1xUqrxaojMI+DDPVX9NXw7j7CzXDlMXvxUX9+iheXAK/p1lyuhQ5UjyWXpPyePFB9bnfzdQvnSj9/ZZ2LgAR+C8Lxf8O3UWcjKFcTtNRitP5QXqMrzC6jlF6X+HMMXwBh2NHDaI+t/SeBqAde3Y0=
+	t=1723045334; cv=none; b=kYC9w7WXeZZ6LbyUL6Ky4Ly3mjgOVQGGmzfO5zZ1nJwsv5nmTHPRZ22MqxnjWIONt5LpuHWfSIDLsrC6Qbtfefw8+qe5krvL1kt8r9XpNXqq2nKxtH5daUnNz1gwKxHvVwx2H0Sln8mOuPgpiWmas9hVdJoZ431r4gF6hhpRkc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723045177; c=relaxed/simple;
-	bh=v/lW54jVExiECPHOK5dymKyF8qjzPdktdFdL9OyTjGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E7KysMQzkikt/YxkxkMvYFfXfjOy3DtIosW1x4ZADvbe9PI9kRfVH0o7BhByQemHhUciMLngtqOoR/IkhbgJA3Su/Hov8z/6HPjxdl7ZmBesWAsFH5EUVJ4wMpQcGP+1yohqGoR+oh7SpKAbbTz3lE4S80s7kKUjYFgDk1UKyuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AVgt/sGW; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fd66cddd07so491325ad.2;
-        Wed, 07 Aug 2024 08:39:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723045175; x=1723649975; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=soyrr8oKFRhnn8yi4F2C3vzDC9dotJSg6I+qdK/nTSw=;
-        b=AVgt/sGWmBcaRz9kERRWNhsSbxcN5xv7vI7JT6CTZX1FAXgh8GNaYZvDfvxwMVUZC6
-         AE+I37rO4mSFJhd1Cz0xr6FpC8/P0zDWFXUuy1gQQ74SgSvUSZu//pSJdokaBcRB8WEJ
-         muN8FyM0SyWDKxekvEb02EKoR4CxKssIXOWRbzLEWn1VoqD/0VmM2d/0nO3ex7aXo7lt
-         MZJJEdaGdsst0J42UMEpiqrFIPb03XQu/IYYZGQ8TQ2QjqeEPZ5JmlvViD/u87NWfkP0
-         MdMZBJP1kEDErRNyjhWbDvNbMovVVddYv3i3KJIhMCMLp66KGtU+wSJfQJLN24AH9m5+
-         Fd4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723045175; x=1723649975;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=soyrr8oKFRhnn8yi4F2C3vzDC9dotJSg6I+qdK/nTSw=;
-        b=jh1J14c5X3w5lRnEa6uerb89XsuDINYiGILDEvzHGkAd2eAfNQbwOHR1m97LRuYRsm
-         ohW4oSKZe0xlvjYoKZo8QJ2YkJy1siZhvm5y+rbZrueFKzqVpuLeVFcJ5QuC5y1i2nYj
-         IIs+smc7n4skGLy6kminfZ35sI5RBgejnkkvkMYG3krZRhDiy866Wc8szZ5gvgLy4QIz
-         s4MxzexulP4Zaqa1mgUnqttvvjPiPSgmz/lWZIt0pQVJoFpkvhpPtouxrPJ2s3cVzxSE
-         bbtO++80OYS7bpQTFxPMeiEx+7ZLJQhTHREnHfoxlmJZ7cUjaifutddLZ23hIutItYAh
-         dG7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUt+Ojam2fH7vWiPMc3TwBY4e4Cct9yCjrvUqyyYKK6kl5yzpUEAb4Ha1LDIYKlQHEyiUQ3T6zhi/PdLwrNzL7PNg==@vger.kernel.org, AJvYcCVmCuVphXAORG/Ni8m5fH/+xnhq7gXCbiSxSkOVqCxL1+4unCKyRbV1GXjfNDFukEd/zHg6o/y/XhuGLnw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxrf2kUTigUgaFMQgb+dNY5HR8YCACvT1k4/1cKdKFdfORTS5KR
-	l0AHIeiXJU/+SXEhwXWCtmBcRua11HYgVJXMbGzvOWFGiLpd3Pg7
-X-Google-Smtp-Source: AGHT+IEx4uXbTNouB5jgch/yIjkA+bVZUvAy0eKlMM3V8hQFzx2NaFGhwvvDMQFE3cWwXEC6Nz7MTg==
-X-Received: by 2002:a17:903:11ce:b0:1fb:4f7f:3b59 with SMTP id d9443c01a7336-1ff5723e593mr201091205ad.3.1723045175227;
-        Wed, 07 Aug 2024 08:39:35 -0700 (PDT)
-Received: from localhost.localdomain ([120.229.49.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59297329sm108097375ad.247.2024.08.07.08.39.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 08:39:34 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: namhyung@kernel.org
-Cc: irogers@google.com,
-	acme@kernel.org,
-	adrian.hunter@intel.com,
-	jolsa@kernel.org,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 9/9] perf test: Add direct off-cpu dumping test
-Date: Wed,  7 Aug 2024 23:38:43 +0800
-Message-ID: <20240807153843.3231451-10-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240807153843.3231451-1-howardchu95@gmail.com>
-References: <20240807153843.3231451-1-howardchu95@gmail.com>
+	s=arc-20240116; t=1723045334; c=relaxed/simple;
+	bh=PpDLyds5h5kxsSem1CFdBZfnjjULgatLnUyWUZvxY5o=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=CfZnA0eHpCjrGwz8565UAN6teLEkHcKCPSFX20Yuso1PzhucTYVjns+cpOfGVmkWHJFwd5y75Yopia7Fo/7VBE+HCzIZKrXpl9ULCYNk6OuAgUbqOu9LnhPKlFESyfo/CBSds0R8+GPfEISeCY0+IV5HzN7PY+MjX2G/sKrVG10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=G8nKNM/h; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PmuKlMPW; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 8E1D813833E3;
+	Wed,  7 Aug 2024 11:42:11 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Wed, 07 Aug 2024 11:42:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1723045331;
+	 x=1723131731; bh=326l5a7wkn9AVsfKxBpX7rFmljZvlN8Y6oFhj4e2ahU=; b=
+	G8nKNM/hwNjGnGUL4V3keQJhh8CmYN5tkFjBxysqxdTxjgfA7xSXUkfzgEkYiEqB
+	GpibdPgypmKig+ldZxe407OS4aIYfpq4Wg/TZh3qxpRFPWu5dAO4y3dbWAVLXnYY
+	S6m8aKM8rC9mnzOCQRJnNktGycP8Lpmeo0Jf+xVgVaFKdCQ8Tcy/UeBRI++sYERf
+	7SGZFkjr/8+DAZxgKEa7Q/FL1jFIiTrKC3oFa1Gkq2uabXs5IlGl5kx+Wm9lNJd8
+	X/6WJO3zxAIxhboy0IV6nmKYtKUPUk2Ahox9UBiIq1DJzSK0D2s8qf6e/9ML3BzE
+	xA4J1BA2bHy0RsshDdZchQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723045331; x=
+	1723131731; bh=326l5a7wkn9AVsfKxBpX7rFmljZvlN8Y6oFhj4e2ahU=; b=P
+	muKlMPWAgIBpZhXMCbq0xE1sqNfbWJTsguxk2POFaip1dEF4qWqtz1/BhYdwkJan
+	Y/qCPWNpSLJ3L3UWOt3KOUsBGHK89suJdbZZ8F4JcWtyn4mNXXb5UM7vMytl4aUV
+	T+6NnK76ymzELwlOZ3RZAgeVzq9Df6t6pqgHfLI+J4jjveLzZlGpdbOuC94B0mM1
+	lIma4J2AKfQdfTB6QGBPBTrMzPz8vZWOaX/flu+jBCYsUEk+zt4RKuhTJBQkul3A
+	1BO5QnHNwjM17Edq5/lN3i6roeZVenIr1UxCKrEoe/XJKlh8j2PiOS8jBlzKqAfd
+	6/4y/da3GVimAnUrjf6dg==
+X-ME-Sender: <xms:05WzZlPrDGFTiqSR4PNlvQ002s5TRs15q5wuRrfr2NdFfMPFoEFasw>
+    <xme:05WzZn_gZiAbUqAWuVGwR7XlMrwnvRtDDeGqxyOadlZDkT7iWEGYkVnJk1lmtjj2a
+    hh70QVeLL3mxYri0b4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledtgdelvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeel
+    jeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:05WzZkQI9EcLmtLzvmEvCEDXDz6POgBZM06G2CTC7muqKatTV01hqQ>
+    <xmx:05WzZhsJ6L0Sig7IBwU4fGRjxir4uWCZ43rnwABq58xcfIMNf-u4Mg>
+    <xmx:05WzZtfmIV9zWY98y8zlIxm4rOJMm78zyS5kfOyRFDFS-cdz-9Xl5A>
+    <xmx:05WzZt0P77fyfYwZhboULZEdKhOsKDEdlyZRvIDs5kRQPtC5fX1sTw>
+    <xmx:05WzZnuI1VPZ_hmFtfPNa7H3YEuir3R4889PMTjA6dfWej09tB3jwDTa>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 2F954B6008D; Wed,  7 Aug 2024 11:42:11 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Wed, 07 Aug 2024 17:41:50 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Harith George" <mail2hgg@gmail.com>,
+ "Yuntao Liu" <liuyuntao12@huawei.com>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Russell King" <rmk+kernel@armlinux.org.uk>,
+ "Ard Biesheuvel" <ardb@kernel.org>, harith.g@alifsemi.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Message-Id: <2083af75-e2d8-42b9-8fa6-f5b7496671bd@app.fastmail.com>
+In-Reply-To: <a65d0b09-466d-415f-9bd0-cbc5ff3539e7@gmail.com>
+References: <14e9aefb-88d1-4eee-8288-ef15d4a9b059@gmail.com>
+ <c11ba413-89f6-46b4-8d59-96306c9f1f14@huawei.com>
+ <52518ac5-53bb-4c70-ba99-4314593129dc@gmail.com>
+ <2812367a-49ad-4c88-8844-8f8493b15bbd@huawei.com>
+ <a65d0b09-466d-415f-9bd0-cbc5ff3539e7@gmail.com>
+Subject: Re: [build fail] v6.11-rc2 from "ARM: 9404/1: arm32: enable
+ HAVE_LD_DEAD_CODE_DATA_ELIMINATION"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Add a simple workload(offcpu.c) to create the scenario for direct
-off-cpu dumping.
+On Wed, Aug 7, 2024, at 17:36, Harith George wrote:
+> On 07-08-2024 20:52, liuyuntao (F) wrote:
+>> Thanks, I reproduce the link error with toolchain
+>> gcc version 9.3.0
+>> GNU ld (GNU Binutils) 2.33.1
+>>=20
+>> with same gcc version, just upgrading ld version to 2.36.1, it does n=
+ot=20
+>> segfault and build completes. there should be bugs in low version of =
+ld,
+>> and the ".reloc=C2=A0 .text, R_ARM_NONE, ." triggers that.
+>>=20
+> Thanks for confirming.
+>
+> I guess we need to add something like
+> #if !CONFIG_CC_IS_GCC || CONFIG_LD_VERSION >=3D 23600
+> around the entry-armv.S changes and maybe select=20
+> HAVE_LD_DEAD_CODE_DATA_ELIMINATION in arch/arm/Kconfig only if the sam=
+e=20
+> conditions are met ??
 
-Please run this test with 'perf test offcpu'
+I think it makes most sense to have a minimum LD
+version as a dependency for HAVE_LD_DEAD_CODE_DATA_ELIMINATION.
+Are you sure that 2.36 is the first one that works, and it's
+not just 2.33 specifically that is broken?
 
-Suggested-by: Ian Rogers <irogers@google.com>
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
----
- tools/perf/tests/builtin-test.c         |  1 +
- tools/perf/tests/shell/record_offcpu.sh | 27 +++++++++++++++++++++++++
- tools/perf/tests/tests.h                |  1 +
- tools/perf/tests/workloads/Build        |  1 +
- tools/perf/tests/workloads/offcpu.c     | 16 +++++++++++++++
- 5 files changed, 46 insertions(+)
- create mode 100644 tools/perf/tests/workloads/offcpu.c
+If so, we could use
 
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index 470a9709427d..aa33beaf58c8 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -153,6 +153,7 @@ static struct test_workload *workloads[] = {
- 	&workload__brstack,
- 	&workload__datasym,
- 	&workload__landlock,
-+	&workload__offcpu,
- };
- 
- static int num_subtests(const struct test_suite *t)
-diff --git a/tools/perf/tests/shell/record_offcpu.sh b/tools/perf/tests/shell/record_offcpu.sh
-index 67c925f3a15a..6c26f541a09a 100755
---- a/tools/perf/tests/shell/record_offcpu.sh
-+++ b/tools/perf/tests/shell/record_offcpu.sh
-@@ -6,6 +6,8 @@ set -e
- 
- err=0
- perfdata=$(mktemp /tmp/__perf_test.perf.data.XXXXX)
-+TEST_PROGRAM="perf test -w offcpu"
-+dummy_timestamp=18446744069414584
- 
- cleanup() {
-   rm -f ${perfdata}
-@@ -88,6 +90,27 @@ test_offcpu_child() {
-   echo "Child task off-cpu test [Success]"
- }
- 
-+test_offcpu_direct() {
-+  echo "Direct off-cpu test"
-+
-+  # dump off-cpu samples for task blocked for more than 1.999999s
-+  # -D for initial delay, to enable evlist
-+  if ! perf record -e dummy -D 500 --off-cpu --off-cpu-thresh 1999999 -o ${perfdata} ${TEST_PROGRAM} 2> /dev/null
-+  then
-+    echo "Direct off-cpu test [Failed record]"
-+    err=1
-+    return
-+  fi
-+  # Direct sample's timestamp should be lower than the dummy_timestamp of the at-the-end sample.
-+  if ! perf script -i ${perfdata} -F time,period | sed "s/[\.:]//g" | \
-+       awk "{ if (\$1 < ${dummy_timestamp} && \$2 > 1999999999) exit 0; else exit 1; }"
-+  then
-+    echo "Direct off-cpu test [Failed missing direct sample]"
-+    err=1
-+    return
-+  fi
-+  echo "Direct off-cpu test [Success]"
-+}
- 
- test_offcpu_priv
- 
-@@ -99,5 +122,9 @@ if [ $err = 0 ]; then
-   test_offcpu_child
- fi
- 
-+if [ $err = 0 ]; then
-+  test_offcpu_direct
-+fi
-+
- cleanup
- exit $err
-diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-index 6ea2be86b7bf..c7a5e27c4567 100644
---- a/tools/perf/tests/tests.h
-+++ b/tools/perf/tests/tests.h
-@@ -206,6 +206,7 @@ DECLARE_WORKLOAD(sqrtloop);
- DECLARE_WORKLOAD(brstack);
- DECLARE_WORKLOAD(datasym);
- DECLARE_WORKLOAD(landlock);
-+DECLARE_WORKLOAD(offcpu);
- 
- extern const char *dso_to_test;
- extern const char *test_objdump_path;
-diff --git a/tools/perf/tests/workloads/Build b/tools/perf/tests/workloads/Build
-index 5af17206f04d..0e78fd01eaf1 100644
---- a/tools/perf/tests/workloads/Build
-+++ b/tools/perf/tests/workloads/Build
-@@ -7,6 +7,7 @@ perf-test-y += sqrtloop.o
- perf-test-y += brstack.o
- perf-test-y += datasym.o
- perf-test-y += landlock.o
-+perf-test-y += offcpu.o
- 
- CFLAGS_sqrtloop.o         = -g -O0 -fno-inline -U_FORTIFY_SOURCE
- CFLAGS_leafloop.o         = -g -O0 -fno-inline -fno-omit-frame-pointer -U_FORTIFY_SOURCE
-diff --git a/tools/perf/tests/workloads/offcpu.c b/tools/perf/tests/workloads/offcpu.c
-new file mode 100644
-index 000000000000..57cee201a4c3
---- /dev/null
-+++ b/tools/perf/tests/workloads/offcpu.c
-@@ -0,0 +1,16 @@
-+#include <linux/compiler.h>
-+#include <unistd.h>
-+#include "../tests.h"
-+
-+static int offcpu(int argc __maybe_unused, const char **argv __maybe_unused)
-+{
-+	/* get past the initial delay */
-+	sleep(1);
-+
-+	/* what we want to collect as a direct sample */
-+	sleep(2);
-+
-+	return 0;
-+}
-+
-+DEFINE_WORKLOAD(offcpu);
--- 
-2.45.2
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -117,7 +117,7 @@ config ARM
+        select HAVE_KERNEL_XZ
+        select HAVE_KPROBES if !XIP_KERNEL && !CPU_ENDIAN_BE32 && !CPU_V=
+7M && !CPU_32v3
+        select HAVE_KRETPROBES if HAVE_KPROBES
+-       select HAVE_LD_DEAD_CODE_DATA_ELIMINATION
++       select HAVE_LD_DEAD_CODE_DATA_ELIMINATION if (LD_VERSION >=3D 23=
+600 || LD_IS_LLD)
+        select HAVE_MOD_ARCH_SPECIFIC
+        select HAVE_NMI
+        select HAVE_OPTPROBES if !THUMB2_KERNEL
 
+
+binutils only takes a few seconds to build from source, so
+you could just try all version from 2.25 (the oldest supported)
+to 2.36) to see which ones work.
+
+       Arnd
 
