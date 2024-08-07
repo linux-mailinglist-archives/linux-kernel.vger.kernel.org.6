@@ -1,235 +1,203 @@
-Return-Path: <linux-kernel+bounces-277598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0021294A380
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:00:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CDC294A425
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7720B1F25A15
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:00:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6D3D1F21585
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779651D174C;
-	Wed,  7 Aug 2024 08:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF1B1D47CD;
+	Wed,  7 Aug 2024 09:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="I2ZRMmUU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YoymDsDx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xu+PnEpF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YYPY+HhL"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eficly/Q"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2341CB323;
-	Wed,  7 Aug 2024 08:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E8E1CCB44;
+	Wed,  7 Aug 2024 09:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723021170; cv=none; b=PNfM0PgAiXqRV06frclt8ZeSKp3ciF0Dvw1zc3nmQBhGOhDudYcQuvNv+5cObTotVwC1VZ8uuIrDkCKQMG2aQCcRbrUjfQ3k8kR8siVYS86yNYEL8DS541rNIUZihVOuSqRbvU43bc/DtMxNMb0qzNspGzxdkGTOeCJAPhIdLGg=
+	t=1723022319; cv=none; b=m5bfyjU171ydW29MA4WarCpunELBG7cP19p2vwqpyu+LINgo7Ovzt7lUZziMAsy9aH7jJTDjR0R4DA/3YT0h+by7qOrJFjpG+IYm4gOivPklobmaVOYCML9IzLdcrsCLn26XgpzpPbm/kru15/tO6hQFcRkdBxoR+JE1DoqAdqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723021170; c=relaxed/simple;
-	bh=6AV/diuPiqIR6+i3otrNsOuiCh/ietYkh63gohM56OM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EOyF51kZ+FXYTmimGLm37OwPfGkSS6y1VBH0Bdu1mpt0fmQn3BrX+4JHG0ktwZr/Q6wj9VKKtWyNfbZPqzpf18f5I875hZLGQgrytYHbPDdDAt+ngzH79FoFPCgRDtc6ZDbN9D1/Ur4w9/Gzn3t90Ilun7PnIGI6/orJoNiEmJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=I2ZRMmUU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YoymDsDx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xu+PnEpF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YYPY+HhL; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EBD3D21C0B;
-	Wed,  7 Aug 2024 08:59:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723021167; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=egcnL+OjEgIfVD+ZzmHj3+5ro0ueUWWs23oY+r7Ncjk=;
-	b=I2ZRMmUUpJ8uH6sEpJn8OWl/v2ZZQ8a0DKaqxcqn+9zZ4f7xpFhXjIyXbRXhPt4Ffk3+gv
-	uxKwFa+3OrcVtdMfN0HT3gSfUSKm+GAovmy8oBrlPsl6z/yGIwu284eKcTpboxK63ouXLP
-	zsw2tNfAfROfECLTz/Nm/s+OHwobJ8A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723021167;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=egcnL+OjEgIfVD+ZzmHj3+5ro0ueUWWs23oY+r7Ncjk=;
-	b=YoymDsDxUPX4wLhwm+voPe8kD7GsoPhlyv7/aY/uXNhG8ZLfWNvggHEhejFNC5cPpW3xYc
-	us8pQkeb+xPdupBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=xu+PnEpF;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=YYPY+HhL
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723021166; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=egcnL+OjEgIfVD+ZzmHj3+5ro0ueUWWs23oY+r7Ncjk=;
-	b=xu+PnEpFQVK4WK7Lu0mAqhviAUvedztLU0VzlHlShNWw3ZUGghuSzRpl7LKf9CHG6zKm0w
-	LqBMuiu+J/N8JyKXzfQ5lvxnOnSftIbuvNkbaigUY5euxU2JDXM1+kvDhlLPoQr/lG7z5l
-	acEUZDzQbjwzVhZmpQgSlC6V4C1H+1U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723021166;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=egcnL+OjEgIfVD+ZzmHj3+5ro0ueUWWs23oY+r7Ncjk=;
-	b=YYPY+HhLUNLsA1BolUtDVcjUbBtL6l3nv0m+YYL4cPa2o+Hmpq/lsJO4aMgslLtJ/ls43W
-	MhqxyMAtzvzfjZDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A0D613297;
-	Wed,  7 Aug 2024 08:59:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PCS/I243s2btAgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 07 Aug 2024 08:59:26 +0000
-Message-ID: <edb8cf4f-a82c-41be-8316-dd316050d975@suse.de>
-Date: Wed, 7 Aug 2024 10:59:26 +0200
+	s=arc-20240116; t=1723022319; c=relaxed/simple;
+	bh=F7JHj5tx/WNkjygiOjcFymG8PkigNzUK09jzCY2n4cQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Jq+pvl9ILrBxM4Xmb8eFUGgepmLYaZ6vddZUFjVioJn13Wyb3RpDMQyoyYudMekDoRUORtVAQPBPvRWKaeBpf4U8TuR+qaphjAWOGubRuUGT753rFOFCcge9h17oxOJ+/mnU869Uju+VNCNai4oYqZTGeD+6cL7SAVGcdSONRJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eficly/Q; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4772MdjR012388;
+	Wed, 7 Aug 2024 09:18:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:in-reply-to:references
+	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
+	7mws3e+hPiZ9f81L9jK8hNBJFT3o16/dbOtA4SrzPe8=; b=eficly/Qy/axfXtC
+	iIBxs5amh72AMJu/MNn+9tcte6uD5ViowwjjKXtjbE04o/tbf/dxyIiyld6DS+0e
+	FfreqXS8yOd9dKi4ZJQ4H3+gRWRKNcZAyHAwdf9iUWoG6TGh0IloLICP7qm337cD
+	1rBEoHrU70jB98vRKnndPl3UIcPShZ61L5stUTCg67SMAd3bjRghfuJ8NQiiLT1g
+	t43HZGalmfDkK7jyD9XMIuuTCoT7IF1IMp3j9RZyK6SzsL88yxBZ8OEmudhYmWrh
+	OFrfV/TznLa/7LQFzKG6iqIigg1nd8SbvTi0xFu1PPhh2L8xrfGV2pL3RDrvX6mJ
+	mZZf6g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40u5t3v40h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 09:18:31 +0000 (GMT)
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4779IU5x006018;
+	Wed, 7 Aug 2024 09:18:30 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40u5t3v40f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 09:18:30 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4776sGMF024166;
+	Wed, 7 Aug 2024 09:18:29 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40syvpga88-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 09:18:29 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4779IMlT56164680
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 7 Aug 2024 09:18:24 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 947142004E;
+	Wed,  7 Aug 2024 09:18:22 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3937520040;
+	Wed,  7 Aug 2024 09:18:22 +0000 (GMT)
+Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  7 Aug 2024 09:18:22 +0000 (GMT)
+Date: Wed, 7 Aug 2024 10:59:42 +0200
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Jonathan Corbet
+ <corbet@lwn.net>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Gerald
+ Schaefer <gerald.schaefer@linux.ibm.com>
+Subject: Re: [PATCH v1 08/11] s390/uv: convert gmap_destroy_page() from
+ follow_page() to folio_walk
+Message-ID: <20240807105942.09088ba3@p-imbrenda.boeblingen.de.ibm.com>
+In-Reply-To: <20240802155524.517137-9-david@redhat.com>
+References: <20240802155524.517137-1-david@redhat.com>
+	<20240802155524.517137-9-david@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/ast: Request PCI BAR with devres
-To: Philipp Stanner <pstanner@redhat.com>, Dave Airlie <airlied@redhat.com>,
- Jocelyn Falempe <jfalempe@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org
-References: <20240807083018.8734-2-pstanner@redhat.com>
- <20240807083018.8734-4-pstanner@redhat.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20240807083018.8734-4-pstanner@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,google.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.50
-X-Rspamd-Queue-Id: EBD3D21C0B
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: o2XgfFV8At_JQmYslZlIFngIZRsFBdsZ
+X-Proofpoint-ORIG-GUID: 5-0t-jLhML_N2kJujz8vN9m8CxVGzemV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_06,2024-08-06_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
+ impostorscore=0 clxscore=1015 adultscore=0 malwarescore=0 phishscore=0
+ bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408070061
 
+On Fri,  2 Aug 2024 17:55:21 +0200
+David Hildenbrand <david@redhat.com> wrote:
 
+> Let's get rid of another follow_page() user and perform the UV calls
+> under PTL -- which likely should be fine.
+> 
+> No need for an additional reference while holding the PTL:
+> uv_destroy_folio() and uv_convert_from_secure_folio() raise the
+> refcount, so any concurrent make_folio_secure() would see an unexpted
+> reference and cannot set PG_arch_1 concurrently.
+> 
+> Do we really need a writable PTE? Likely yes, because the "destroy"
+> part is, in comparison to the export, a destructive operation. So we'll
+> keep the writability check for now.
+> 
+> We'll lose the secretmem check from follow_page(). Likely we don't care
+> about that here.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Am 07.08.24 um 10:30 schrieb Philipp Stanner:
-> ast currently ioremaps two PCI BARs using pcim_iomap(). It does not
-> perform a request on the regions, however, which would make the driver a
-> bit more robust.
->
-> PCI now offers pcim_iomap_region(), a managed function which both
-> requests and ioremaps a BAR.
->
-> Replace pcim_iomap() with pcim_iomap_region().
->
-> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
 
 > ---
->   drivers/gpu/drm/ast/ast_drv.c | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpu/drm/ast/ast_drv.c b/drivers/gpu/drm/ast/ast_drv.c
-> index aae019e79bda..1fadaadfbe39 100644
-> --- a/drivers/gpu/drm/ast/ast_drv.c
-> +++ b/drivers/gpu/drm/ast/ast_drv.c
-> @@ -287,9 +287,9 @@ static int ast_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->   	if (ret)
->   		return ret;
->   
-> -	regs = pcim_iomap(pdev, 1, 0);
-> -	if (!regs)
-> -		return -EIO;
-> +	regs = pcim_iomap_region(pdev, 1, "ast");
-> +	if (IS_ERR(regs))
-> +		return PTR_ERR(regs);
->   
->   	if (pdev->revision >= 0x40) {
->   		/*
-> @@ -311,9 +311,9 @@ static int ast_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->   
->   		if (len < AST_IO_MM_LENGTH)
->   			return -EIO;
-> -		ioregs = pcim_iomap(pdev, 2, 0);
-> -		if (!ioregs)
-> -			return -EIO;
-> +		ioregs = pcim_iomap_region(pdev, 2, "ast");
-> +		if (IS_ERR(ioregs))
-> +			return PTR_ERR(ioregs);
->   	} else {
->   		/*
->   		 * Anything else is best effort.
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+>  arch/s390/kernel/uv.c | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
+> index 35ed2aea8891..9646f773208a 100644
+> --- a/arch/s390/kernel/uv.c
+> +++ b/arch/s390/kernel/uv.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/memblock.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/swap.h>
+> +#include <linux/pagewalk.h>
+>  #include <asm/facility.h>
+>  #include <asm/sections.h>
+>  #include <asm/uv.h>
+> @@ -462,9 +463,9 @@ EXPORT_SYMBOL_GPL(gmap_convert_to_secure);
+>  int gmap_destroy_page(struct gmap *gmap, unsigned long gaddr)
+>  {
+>  	struct vm_area_struct *vma;
+> +	struct folio_walk fw;
+>  	unsigned long uaddr;
+>  	struct folio *folio;
+> -	struct page *page;
+>  	int rc;
+>  
+>  	rc = -EFAULT;
+> @@ -483,11 +484,15 @@ int gmap_destroy_page(struct gmap *gmap, unsigned long gaddr)
+>  		goto out;
+>  
+>  	rc = 0;
+> -	/* we take an extra reference here */
+> -	page = follow_page(vma, uaddr, FOLL_WRITE | FOLL_GET);
+> -	if (IS_ERR_OR_NULL(page))
+> +	folio = folio_walk_start(&fw, vma, uaddr, 0);
+> +	if (!folio)
+>  		goto out;
+> -	folio = page_folio(page);
+> +	/*
+> +	 * See gmap_make_secure(): large folios cannot be secure. Small
+> +	 * folio implies FW_LEVEL_PTE.
+> +	 */
+> +	if (folio_test_large(folio) || !pte_write(fw.pte))
+> +		goto out_walk_end;
+>  	rc = uv_destroy_folio(folio);
+>  	/*
+>  	 * Fault handlers can race; it is possible that two CPUs will fault
+> @@ -500,7 +505,8 @@ int gmap_destroy_page(struct gmap *gmap, unsigned long gaddr)
+>  	 */
+>  	if (rc)
+>  		rc = uv_convert_from_secure_folio(folio);
+> -	folio_put(folio);
+> +out_walk_end:
+> +	folio_walk_end(&fw, vma);
+>  out:
+>  	mmap_read_unlock(gmap->mm);
+>  	return rc;
 
 
