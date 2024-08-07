@@ -1,197 +1,146 @@
-Return-Path: <linux-kernel+bounces-277227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C05949E32
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:15:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD16E949E35
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ED3A2851CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:15:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E044C1C21506
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF1F2A1D6;
-	Wed,  7 Aug 2024 03:15:25 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7533F18FDDE;
+	Wed,  7 Aug 2024 03:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LRgQXWx+"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E3018D620
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 03:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB80D2119;
+	Wed,  7 Aug 2024 03:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723000524; cv=none; b=hueHtTO1FEyN2FsN9ZTlzy85lx72EEpLfnAa8TdSsnWuwdlSavMr9y7wo0XgF4Kh0/eKyJIOqlzYac7zYWeqeRAV8zUHpJqA82ELFGiw9CzTMtLR5AEbYQ6xBWRbY/POZhQzlHrfQxqOGuk1Irdz8g9uTq+nDNnsEPje/20R7Ew=
+	t=1723000569; cv=none; b=ZaldYVkeC/3KuLhbie7R7YJ9FzJRCEuZO9lBXjsD7RvjwC2sIzS00ywMHKi0R50iYqXcn++kmyXd1r5B96TGd3zFueX1jFYiJv3i4xhRhRi+RKXzqqd2XxWwy6ASSEPkCVMG4X+M+WDmoOTa4BcL8noKn448BAi7zNvIeSJRn9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723000524; c=relaxed/simple;
-	bh=GWu7tF3mqwnzz5fR9fNA7ElYBkMPGVwLO2/XKTG/Z5U=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=C7TefM9zGkZbuOfwCnDG98GE0Hh2X0dHowbGFPAWDEzs5yRV9WonUJgnJIEr6KUrSmWHUXV+zx6nJYV1XlDsHeHwHcT3azJ5dwt72dDJyZJ1RdHXgoFPteOMwVDCQeeVa8W7jSfsK0qPwhddSFD2KGDMjbDpoKIYOMjec7yBlj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WdwH8193JzfZP0;
-	Wed,  7 Aug 2024 11:13:24 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id D676A14035E;
-	Wed,  7 Aug 2024 11:15:17 +0800 (CST)
-Received: from [10.173.127.72] (10.173.127.72) by
- kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 7 Aug 2024 11:15:17 +0800
-Subject: Re: [PATCH v2] mm/memory-failure: Use raw_spinlock_t in struct
- memory_failure_cpu
-To: Waiman Long <longman@redhat.com>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, Huang Ying
-	<ying.huang@intel.com>, Len Brown <len.brown@intel.com>, Juri Lelli
-	<juri.lelli@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Naoya
- Horiguchi <nao.horiguchi@gmail.com>
-References: <20240806164107.1044956-1-longman@redhat.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <1ea73082-f8f0-6c6d-3c0c-9012520d1036@huawei.com>
-Date: Wed, 7 Aug 2024 11:15:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1723000569; c=relaxed/simple;
+	bh=MVVZFAHyYiH3YNyVOjsU+QFdGF4cWfs7Y+jCi6DEun4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DfvilRj+xjUZOf4Uuzyl7JIlXpBuD/lTmQbwvWG/mNLOFwaSz7QvIEVSpH5QwD/eZbKYwzPYEWcmT1bh45AIddZKPusK+kfkJn2ovsn6WbMQbyUpU/bCyeg5+zNXbLzbr21jAkJaxrhg7Nwa9IKm/5yDFDYAEA+CvWZYV40hKO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LRgQXWx+; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4f89c9a1610so487827e0c.3;
+        Tue, 06 Aug 2024 20:16:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723000562; x=1723605362; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MVVZFAHyYiH3YNyVOjsU+QFdGF4cWfs7Y+jCi6DEun4=;
+        b=LRgQXWx+nvJ6P//CzZEwA2mXyPzidTnIp8aacMb9Djcel4hJEV/Y+MI8GVw1m/QytT
+         /0UFx+avUUE2K50Kg28hucgGtHya3weql7+mPhPEB54Er3e6+RTxa4//h54dwZI9Oq9K
+         G0yT1HltEQFWw2m6Do9IS+V7s8uBRg/9Htg8BWTYQR6bktSYtfW6d/ofO5xDpLhV/Ou3
+         RXPzEopJKj+i3osGfL84p9wapnLB7gtSBtsgqRt4an6/VdNun4C488nOlWlypwj1lQ8p
+         lH1h4MQJLUAQr8O0YoK8kWq1ukEayUzOaHMWDenQkORN5nMdBgJkwK6wphJBMhmu2lUr
+         mo6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723000562; x=1723605362;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MVVZFAHyYiH3YNyVOjsU+QFdGF4cWfs7Y+jCi6DEun4=;
+        b=GmUcC9RoHZzHHZ+Z7q8ySOFEYnZPRifcWxckxaUiwx4mzgp96H4yZKEFcFQPGY+nD9
+         xo8abH/M5ul5sHClzhyWuGIMxKoW8l7PNSOLJTjhEmG4UnIDZhUovuD/NQNKlfNcYrs5
+         dwoYivSwg8Txp7Vtyw4b9oWKfTzmghbNpfjRUWdNKzyc3OBILB4TFgeb4fS46PQdxzTw
+         d15mBMEiFUvE7zz/J9gM/TxboDiXFnsIEa8bMWeqFzp5QEnPYwit4VYILV10df5UwLZc
+         DeDOOq2wJN1+JwJOLYvJ6UHseTWljNBeE762G6ehc9Uv/+EGWGhpamIrXrlrZVMgBhli
+         aI4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVvjWFqw66szxXfXjX/QeUiWLa8+4Uracq9IQM4R6NQCzWTG4LucrdUgs+K2IOFMCeXs/bk0XU7rnAidympwk5k7B3PZLy12qI2afMdK0LcQ/0X8Rnf7sp9GsfuhB0yEXRzuxY9mg+BL/Tacf7r0LeNjFZY6s9jzc+xQm1y3o1Mbw==
+X-Gm-Message-State: AOJu0Yzy9zCkMlx70y79VCxB+ZuuI6i5Yp1y5ghKP3UBmwacPXkCV8jP
+	In8bVzfJw8Wq4kh4m9qsZ4Zrkle2+MiDLOuB6Oln4t9Cc433PY4s40swpkA6OJ90dx1jnKJpuDn
+	ldHC2A6pNK4I26S+9hrvseJcsf5o=
+X-Google-Smtp-Source: AGHT+IG59tVZoDbMVzvzKSAK7l7FJc0CnktNyxiTyYpSu6vNAw//uaeeKNKHAHiW6OEseSSZkrK4J9uetrKiJZNhEyI=
+X-Received: by 2002:a05:6122:3120:b0:4f6:a7f7:164d with SMTP id
+ 71dfb90a1353d-4f89ff4e8c4mr19665545e0c.8.1723000562417; Tue, 06 Aug 2024
+ 20:16:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240806164107.1044956-1-longman@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd200019.china.huawei.com (7.221.188.193)
+References: <20240730183403.4176544-1-allen.lkml@gmail.com>
+ <20240730183403.4176544-6-allen.lkml@gmail.com> <20240731190829.50da925d@kernel.org>
+ <CAOMdWS+HJfjDpQX1yE+2O3nb1qAkQJC_GSiCjrrAJVrRB5r_rg@mail.gmail.com>
+ <20240801175756.71753263@kernel.org> <CAOMdWSKRFXFdi4SF20LH528KcXtxD+OL=HzSh9Gzqy9HCqkUGw@mail.gmail.com>
+ <20240805123946.015b383f@kernel.org>
+In-Reply-To: <20240805123946.015b383f@kernel.org>
+From: Allen <allen.lkml@gmail.com>
+Date: Tue, 6 Aug 2024 20:15:50 -0700
+Message-ID: <CAOMdWS+=5OVmtez1NPjHTMbYy9br8ciRy8nmsnaFguTKJQiD9g@mail.gmail.com>
+Subject: Re: [net-next v3 05/15] net: cavium/liquidio: Convert tasklet API to
+ new bottom half workqueue mechanism
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, jes@trained-monkey.org, kda@linux-powerpc.org, 
+	cai.huoqing@linux.dev, dougmill@linux.ibm.com, npiggin@gmail.com, 
+	christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org, 
+	naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com, tlfalcon@linux.ibm.com, 
+	cooldavid@cooldavid.org, marcin.s.wojtas@gmail.com, mlindner@marvell.com, 
+	stephen@networkplumber.org, nbd@nbd.name, sean.wang@mediatek.com, 
+	Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, borisp@nvidia.com, 
+	bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com, 
+	louis.peens@corigine.com, richardcochran@gmail.com, 
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acenic@sunsite.dk, linux-net-drivers@amd.com, netdev@vger.kernel.org, 
+	Sunil Goutham <sgoutham@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/8/7 0:41, Waiman Long wrote:
-> The memory_failure_cpu structure is a per-cpu structure. Access to its
-> content requires the use of get_cpu_var() to lock in the current CPU
-> and disable preemption. The use of a regular spinlock_t for locking
-> purpose is fine for a non-RT kernel.
-> 
-> Since the integration of RT spinlock support into the v5.15 kernel,
-> a spinlock_t in a RT kernel becomes a sleeping lock and taking a
-> sleeping lock in a preemption disabled context is illegal resulting in
-> the following kind of warning.
-> 
->   [12135.732244] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
->   [12135.732248] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 270076, name: kworker/0:0
->   [12135.732252] preempt_count: 1, expected: 0
->   [12135.732255] RCU nest depth: 2, expected: 2
->     :
->   [12135.732420] Hardware name: Dell Inc. PowerEdge R640/0HG0J8, BIOS 2.10.2 02/24/2021
->   [12135.732423] Workqueue: kacpi_notify acpi_os_execute_deferred
->   [12135.732433] Call Trace:
->   [12135.732436]  <TASK>
->   [12135.732450]  dump_stack_lvl+0x57/0x81
->   [12135.732461]  __might_resched.cold+0xf4/0x12f
->   [12135.732479]  rt_spin_lock+0x4c/0x100
->   [12135.732491]  memory_failure_queue+0x40/0xe0
->   [12135.732503]  ghes_do_memory_failure+0x53/0x390
->   [12135.732516]  ghes_do_proc.constprop.0+0x229/0x3e0
->   [12135.732575]  ghes_proc+0xf9/0x1a0
->   [12135.732591]  ghes_notify_hed+0x6a/0x150
->   [12135.732602]  notifier_call_chain+0x43/0xb0
->   [12135.732626]  blocking_notifier_call_chain+0x43/0x60
->   [12135.732637]  acpi_ev_notify_dispatch+0x47/0x70
->   [12135.732648]  acpi_os_execute_deferred+0x13/0x20
->   [12135.732654]  process_one_work+0x41f/0x500
->   [12135.732695]  worker_thread+0x192/0x360
->   [12135.732715]  kthread+0x111/0x140
->   [12135.732733]  ret_from_fork+0x29/0x50
->   [12135.732779]  </TASK>
-> 
-> Fix it by using a raw_spinlock_t for locking instead. Also move the
-> pr_err() out of the lock critical section to avoid indeterminate latency
-> of this call.
-> 
-> Fixes: ea8f5fb8a71f ("HWPoison: add memory_failure_queue()")
+> > Sure, please review the explanation below and let me
+> > know if it is clear enough:
+> >
+> > tasklet_enable() is used to enable a tasklet, which defers
+> > work to be executed in an interrupt context. It relies on the
+> > tasklet mechanism for deferred execution.
+> >
+> > enable_and_queue_work() combines enabling the work with
+> > scheduling it on a workqueue. This approach not only enables
+> > the work but also schedules it for execution by the workqueue
+> > system, which is more flexible and suitable for tasks needing
+> > process context rather than interrupt context.
+> >
+> > enable_and_queue_work() internally calls enable_work() to enable
+> > the work item and then uses queue_work() to add it to the workqueue.
+> > This ensures that the work item is both enabled and explicitly
+> > scheduled for execution within the workqueue system's context.
+> >
+> > As mentioned, "unconditionally scheduling the work item after
+> > enable_work() returns true should work for most users." This
+> > ensures that the work is consistently scheduled for execution,
+> > aligning with the typical workqueue usage pattern. Most users
+> > expect that enabling a work item implies it will be scheduled for
+> > execution without additional conditional logic.
+>
+> This looks good for the explanation of the APIs, but you need to
+> add another paragraph explaining why the conversion is correct
+> for the given user. Basically whether the callback is safe to
+> be called even if there's no work.
 
-We shouldn't have this problem before RT spinlock is supported? If so, this Fixes tag might be wrong.
+ Okay.
 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  mm/memory-failure.c | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
-> 
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 581d3e5c9117..7aeb5198c2a0 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -2417,7 +2417,7 @@ struct memory_failure_entry {
->  struct memory_failure_cpu {
->  	DECLARE_KFIFO(fifo, struct memory_failure_entry,
->  		      MEMORY_FAILURE_FIFO_SIZE);
-> -	spinlock_t lock;
-> +	raw_spinlock_t lock;
->  	struct work_struct work;
->  };
->  
-> @@ -2443,19 +2443,21 @@ void memory_failure_queue(unsigned long pfn, int flags)
->  {
->  	struct memory_failure_cpu *mf_cpu;
->  	unsigned long proc_flags;
-> +	bool buffer_overflow;
->  	struct memory_failure_entry entry = {
->  		.pfn =		pfn,
->  		.flags =	flags,
->  	};
->  
->  	mf_cpu = &get_cpu_var(memory_failure_cpu);
-> -	spin_lock_irqsave(&mf_cpu->lock, proc_flags);
-> -	if (kfifo_put(&mf_cpu->fifo, entry))
-> +	raw_spin_lock_irqsave(&mf_cpu->lock, proc_flags);
-> +	buffer_overflow = !kfifo_put(&mf_cpu->fifo, entry);
-> +	if (!buffer_overflow)
->  		schedule_work_on(smp_processor_id(), &mf_cpu->work);
-> -	else
-> +	raw_spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
-> +	if (buffer_overflow)
->  		pr_err("buffer overflow when queuing memory failure at %#lx\n",
->  		       pfn);
+how about the following:
 
-Should we put pr_err() further under put_cpu_var()?
+In the context of of the driver, the conversion from tasklet_enable()
+to enable_and_queue_work() is correct because the callback function
+associated with the work item is designed to be safe even if there
+is no immediate work to process. The callback function can handle
+being invoked in such situations without causing errors or undesirable
+behavior. This makes the workqueue approach a suitable and safe
+replacement for the current tasklet mechanism, as it provides the
+necessary flexibility and ensures that the work item is properly
+scheduled and executed.
 
-> -	spin_unlock_irqrestore(&mf_cpu->lock, proc_flags)
->  	put_cpu_var(memory_failure_cpu);
->  }
-
-Will below diff be more straightforward?
-
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index b68953dc9fad..be172cbc6ca9 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -2553,20 +2553,23 @@ void memory_failure_queue(unsigned long pfn, int flags)
- {
-        struct memory_failure_cpu *mf_cpu;
-        unsigned long proc_flags;
-+       bool buffer_overflow = false;
-        struct memory_failure_entry entry = {
-                .pfn =          pfn,
-                .flags =        flags,
-        };
-
-        mf_cpu = &get_cpu_var(memory_failure_cpu);
--       spin_lock_irqsave(&mf_cpu->lock, proc_flags);
-+       raw_spin_lock_irqsave(&mf_cpu->lock, proc_flags);
-        if (kfifo_put(&mf_cpu->fifo, entry))
-                schedule_work_on(smp_processor_id(), &mf_cpu->work);
-        else
-+               buffer_overflow = true;
-+       raw_spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
-+       put_cpu_var(memory_failure_cpu);
-+       if (buffer_overflow)
-                pr_err("buffer overflow when queuing memory failure at %#lx\n",
-                       pfn);
--       spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
--       put_cpu_var(memory_failure_cpu);
- }
- EXPORT_SYMBOL_GPL(memory_failure_queue);
-
-But no strong opinion.
-
-Thanks.
-.
+Thanks,
+Allen
 
