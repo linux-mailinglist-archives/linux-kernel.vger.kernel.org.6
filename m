@@ -1,164 +1,224 @@
-Return-Path: <linux-kernel+bounces-278142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C70D494ACAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:21:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0FA94AD04
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 039FA1C20E46
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:21:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C912B29EC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C816C12FB0A;
-	Wed,  7 Aug 2024 15:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1DB13C9A2;
+	Wed,  7 Aug 2024 15:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="sJp3RhL1"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tba5G9VH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074A352F62
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE37E85260;
+	Wed,  7 Aug 2024 15:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723043941; cv=none; b=VH9bbtrJuau1wMh0QWG9ryURqlKWa9bhDsomPOxZ1o4mgKJSm1KXkpD1xs9AjCBdG3a/nGjaIH7AnAlEFNafhIVMOlmfCSLnnyFiTAOMp8KnZLK4IH2G8v/4p7NObt68u5HQOj+AkK9U0DNXHr088h430l+TnveXzAvtOsNqDAg=
+	t=1723043951; cv=none; b=H12VHqrOcSYX+AKX1RMJzFLB14gayOPHTU/zKCTlr3wH5hl5zg3+aJ1Ya9t7BxpGzJxStTLKdYv8PIpsAn1a1KFUKwrAfrYJaFH0TVPzey/i9K9dog8qOCSr2qTcum5RkTW6Xn46Q/wqI88DGgM6y5YLo9sBflxpwh2RYZXzShI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723043941; c=relaxed/simple;
-	bh=lYKP4jlnJQ6qy18txJgXJHYM8dA1dqMocHmQGEgVKG4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=RB4VxdjSOt40M3I9sdYT2fHgeMt4xQDM5Z/IVIw4rvcXLUFodym9lF1mXiDLozwp9rH+SEGVnVeItWRUZaf0ki4Dxoeyk0V4TaXEgRnHhFP1haqRHiUHpyCtv64MYSJwhnj3IKMU2X0MjXViiy0mBBXIQrTXwp8dol7OqgklPTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=sJp3RhL1; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1723043933; x=1725635933;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=lYKP4jlnJQ6qy18txJgXJHYM8dA1dqMocHmQGEgVKG4=;
-	b=sJp3RhL17qPn0GbNGMrpWViLknwsSUH6QPWT0fLg/he0WVxTRX34QjadtE9bzx3a
-	n29VFjBi2AHw1uJfNhh8xXhl/eY/ytYf/yVatR1ayW23XpEA3z3cDtODnd5/tvZy
-	6SFmqQ9+ydnXnM+yD2/TEQmBOGvUAqG5g9IqbtnaXKY=;
-X-AuditID: ac14000a-03e52700000021bc-c0-66b3905c93ec
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 7A.C6.08636.D5093B66; Wed,  7 Aug 2024 17:18:53 +0200 (CEST)
-Received: from llp-hahn.hahn.test (172.25.0.11) by Berlix.phytec.de
- (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Wed, 7 Aug 2024
- 17:18:52 +0200
-From: Benjamin Hahn <B.Hahn@phytec.de>
-Date: Wed, 7 Aug 2024 17:18:45 +0200
-Subject: [PATCH v2] arm64: dts: freescale: imx8mp-phyboard-pollux: Add and
- enable TPM
+	s=arc-20240116; t=1723043951; c=relaxed/simple;
+	bh=SPE6Fim3/iZTP8g9bx27PJRqcSTjDSUfrbucJsDcrEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=c2w6agOQk8Nv0pj4RxbpI7wUMh9pMikwoP6x9cAluhp9o9y92LfRPKn5Jc4EspRh1Si+ZwUVLJXKMwwLDm89vWYnXttT6vcQV0BZbeH++TF8Ai1wdpXGrPAh9e38ZpDrbBXawsUzcfUhm9y3/S14ESzoipsJPKlju7Bs2DDrJBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tba5G9VH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBB7CC32781;
+	Wed,  7 Aug 2024 15:19:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723043950;
+	bh=SPE6Fim3/iZTP8g9bx27PJRqcSTjDSUfrbucJsDcrEU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Tba5G9VHUKd48En9J++DR0cKiGu175i47rvAl2+Pj2n0kDPB/3pVN2V/vP9r2nUIP
+	 ZHWmKBBvBsORM0FMdFlX9qLm9thrGYmJYWUBB5uGluD6b6XZBS03gIvI4sy8QrRZPk
+	 gLV9prQUWxB5x+aQmD6GlHAH1pMCyFzTwLikqysDskFp2wIxONT5FBuGlBW13qFh9V
+	 1sOj9cglhq8FC8jDWYwlINzveoYMFaUxXxmgiZfRxOYO8+tYT/mtcmSMNSrVMyg10H
+	 nJYYigNvl6Cqlx6dtRMd3mueSk8AuDfydnG2HoyWeJwf/R6r4QM32RtMmd3zlINK4f
+	 ni9XGLPod0euQ==
+Date: Wed, 7 Aug 2024 09:19:07 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] rpmsg: glink: Avoid -Wflex-array-member-not-at-end
+ warnings
+Message-ID: <ZrOQa2gew5yadyt3@cute>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240807-imx8mp-tpm-v2-1-d43f1e8f70ac@phytec.de>
-X-B4-Tracking: v=1; b=H4sIAFSQs2YC/22MwQ7CIBAFf6XZsxhAW8GT/2F60LLIHmgJENKm4
- d/Fns07zUtmdkgYCRPcux0iFkq0zA3kqYPJveYPMjKNQXJ55Yr3jPyqfGA5eHYxduC3t7C9FdC
- EENHSesSeY2NHKS9xO9pF/N6/mSJYGyptuRyU1voR3JZxOhuEsdb6BYpjRp6kAAAA
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Teresa Remmet
-	<t.remmet@phytec.de>
-CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Benjamin Hahn <B.Hahn@phytec.de>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723043932; l=1781;
- i=B.Hahn@phytec.de; s=20240126; h=from:subject:message-id;
- bh=lYKP4jlnJQ6qy18txJgXJHYM8dA1dqMocHmQGEgVKG4=;
- b=pz9z8SjBnAc8U4WIi3QE5fAAkH4to7rcO48THerSVJ7guPCRvkaJ9omfpvNMCwqsQExz7zfvW
- KNS1qZRKCgODhrcf7YsrE/whAB9NpQMdHq6TcJZGm2KUp3LNzTDVYg5
-X-Developer-Key: i=B.Hahn@phytec.de; a=ed25519;
- pk=r04clMulHz6S6js6elPBA+U+zVdDAqJyEyoNd8I3pSw=
-X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphkeLIzCtJLcpLzFFi42JZI8nAoxs7YXOawZF9jBZr9p5jsph/5Byr
-	xcOr/hYz77WyWayaupPF4uWse2wWmx5fY7W4vGsOm8X/PTvYLf5u38Ri8WKLuAO3x85Zd9k9
-	Nq3qZPPYvKTe48XmmYwe/X8NPD5vkgtgi+KySUnNySxLLdK3S+DKmNt9m73gO2/FzEmX2RsY
-	j3F3MXJySAiYSFzdtpOli5GLQ0hgCZPE5QPXGCGcB4wSD+7fZgSpYhNQk9j15jUriM0ioCJx
-	aPMCFhBbWCBc4u7hLiYQm1dAUOLkzCdAcQ4OZgFNifW79EHCzALyEtvfzmGGKLGV6JgKMV9C
-	4A6jxISdW8HmiwjsYJJ43G8IkmAWWMoocWf6N1aI84QlPu9ewwbRsZtJYvmKXrANEgKJEjtf
-	y4HUCAnIStw8v4UNol5eYtq518wQdqjE1i/bmSYwCs9Cct8shPtmIblvASPzKkah3Mzk7NSi
-	zGy9gozKktRkvZTUTYygmBJh4NrB2DfH4xAjEwfjIUYJDmYlEd7m8E1pQrwpiZVVqUX58UWl
-	OanFhxilOViUxHlXdwSnCgmkJ5akZqemFqQWwWSZODilGhi1wlYsKTQ6uCb73M+C6VL37L5f
-	ZOMICXkn1v/gaI7NX85jsufyXb55x3MfEJLnM631yXB3t18yVUa7/1uUtvYBt8OTT6ctWit2
-	7EaeHcPEk4Uz+974B9XNqBUE6oy33nan2Pq7v4/O96ZDOZYJFamZrJ+tOubcm3OXY/PRpZ5z
-	GowXHbflUGIpzkg01GIuKk4EAIHbMPeXAgAA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add support for TPM for phyBOARD Pollux.
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-Signed-off-by: Benjamin Hahn <B.Hahn@phytec.de>
+So, in order to avoid ending up with a flexible-array member in the
+middle of multiple other structs, we use the `__struct_group()`
+helper to create a new tagged `struct glink_msg_hdr`. This structure
+groups together all the members of the flexible `struct glink_msg`
+except the flexible array.
+
+As a result, the array is effectively separated from the rest of the
+members without modifying the memory layout of the flexible structure.
+We then change the type of the middle struct members currently causing
+trouble from `struct glink_msg` to `struct glink_msg_hdr`.
+
+We also want to ensure that when new members need to be added to the
+flexible structure, they are always included within the newly created
+tagged struct. For this, we use `static_assert()`. This ensures that the
+memory layout for both the flexible structure and the new tagged struct
+is the same after any changes.
+
+This approach avoids having to implement `struct glink_msg_hdr` as a
+completely separate structure, thus preventing having to maintain two
+independent but basically identical structures, closing the door to
+potential bugs in the future.
+
+We also use `container_of()` whenever we need to retrieve a pointer to
+the flexible structure, through which we can access the flexible-array
+member, if necessary.
+
+Additionally, we use the `DEFINE_RAW_FLEX()` helper for an on-stack
+definition of a flexible structure where the size for the flexible-array
+member is known at compile-time.
+
+So, with these changes, fix the following warnings:
+drivers/rpmsg/qcom_glink_native.c:51:26: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/rpmsg/qcom_glink_native.c:459:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/rpmsg/qcom_glink_native.c:846:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/rpmsg/qcom_glink_native.c:968:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/rpmsg/qcom_glink_native.c:1380:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 ---
-Changes in v2:
-- renamed tpm node to tpm@0
-- removed num-cs
-- cleanup pinctrl
-- Link to v1: https://lore.kernel.org/r/20240805-imx8mp-tpm-v1-1-1e89f0268999@phytec.de
----
- .../dts/freescale/imx8mp-phyboard-pollux-rdk.dts   | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/rpmsg/qcom_glink_native.c | 42 +++++++++++++++++--------------
+ 1 file changed, 23 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-index 00a240484c25..0e8200413557 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-@@ -103,6 +103,23 @@ reg_vcc_3v3_sw: regulator-vcc-3v3-sw {
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 82d460ff4777..ed89b810f262 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -30,11 +30,16 @@
+ #define RPM_GLINK_CID_MAX	65536
+ 
+ struct glink_msg {
+-	__le16 cmd;
+-	__le16 param1;
+-	__le32 param2;
++	/* New members MUST be added within the __struct_group() macro below. */
++	__struct_group(glink_msg_hdr, hdr, __packed,
++		__le16 cmd;
++		__le16 param1;
++		__le32 param2;
++	);
+ 	u8 data[];
+ } __packed;
++static_assert(offsetof(struct glink_msg, data) == sizeof(struct glink_msg_hdr),
++	      "struct member likely outside of __struct_group()");
+ 
+ /**
+  * struct glink_defer_cmd - deferred incoming control message
+@@ -48,7 +53,7 @@ struct glink_msg {
+ struct glink_defer_cmd {
+ 	struct list_head node;
+ 
+-	struct glink_msg msg;
++	struct glink_msg_hdr msg;
+ 	u8 data[];
+ };
+ 
+@@ -455,12 +460,9 @@ static void qcom_glink_intent_req_abort(struct glink_channel *channel)
+ static int qcom_glink_send_open_req(struct qcom_glink *glink,
+ 				    struct glink_channel *channel)
+ {
+-	struct {
+-		struct glink_msg msg;
+-		u8 name[GLINK_NAME_SIZE];
+-	} __packed req;
++	DEFINE_RAW_FLEX(struct glink_msg, req, data, GLINK_NAME_SIZE);
+ 	int name_len = strlen(channel->name) + 1;
+-	int req_len = ALIGN(sizeof(req.msg) + name_len, 8);
++	int req_len = ALIGN(sizeof(*req) + name_len, 8);
+ 	int ret;
+ 	unsigned long flags;
+ 
+@@ -476,12 +478,12 @@ static int qcom_glink_send_open_req(struct qcom_glink *glink,
+ 
+ 	channel->lcid = ret;
+ 
+-	req.msg.cmd = cpu_to_le16(GLINK_CMD_OPEN);
+-	req.msg.param1 = cpu_to_le16(channel->lcid);
+-	req.msg.param2 = cpu_to_le32(name_len);
+-	strcpy(req.name, channel->name);
++	req->cmd = cpu_to_le16(GLINK_CMD_OPEN);
++	req->param1 = cpu_to_le16(channel->lcid);
++	req->param2 = cpu_to_le32(name_len);
++	strcpy(req->data, channel->name);
+ 
+-	ret = qcom_glink_tx(glink, &req, req_len, NULL, 0, true);
++	ret = qcom_glink_tx(glink, req, req_len, NULL, 0, true);
+ 	if (ret)
+ 		goto remove_idr;
+ 
+@@ -826,7 +828,9 @@ static int qcom_glink_rx_defer(struct qcom_glink *glink, size_t extra)
+ 
+ 	INIT_LIST_HEAD(&dcmd->node);
+ 
+-	qcom_glink_rx_peek(glink, &dcmd->msg, 0, sizeof(dcmd->msg) + extra);
++	qcom_glink_rx_peek(glink,
++			   container_of(&dcmd->msg, struct glink_msg, hdr), 0,
++			   sizeof(dcmd->msg) + extra);
+ 
+ 	spin_lock(&glink->rx_lock);
+ 	list_add_tail(&dcmd->node, &glink->rx_queue);
+@@ -843,7 +847,7 @@ static int qcom_glink_rx_data(struct qcom_glink *glink, size_t avail)
+ 	struct glink_core_rx_intent *intent;
+ 	struct glink_channel *channel;
+ 	struct {
+-		struct glink_msg msg;
++		struct glink_msg_hdr msg;
+ 		__le32 chunk_size;
+ 		__le32 left_size;
+ 	} __packed hdr;
+@@ -965,7 +969,7 @@ static void qcom_glink_handle_intent(struct qcom_glink *glink,
  	};
- };
  
-+/* TPM */
-+&ecspi1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	cs-gpios = <&gpio5 9 GPIO_ACTIVE_LOW>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi1>;
-+	status = "okay";
-+
-+	tpm: tpm@0 {
-+		compatible = "infineon,slb9670", "tcg,tpm_tis-spi";
-+		reg = <0>;
-+		spi-max-frequency = <38000000>;
-+		status = "okay";
-+	};
-+};
-+
- &eqos {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_eqos>;
-@@ -300,6 +317,15 @@ &gpio4 {
- };
+ 	struct {
+-		struct glink_msg msg;
++		struct glink_msg_hdr msg;
+ 		struct intent_pair intents[];
+ 	} __packed * msg;
  
- &iomuxc {
-+	pinctrl_ecspi1: ecspi1grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_ECSPI1_MISO__ECSPI1_MISO   0x80
-+			MX8MP_IOMUXC_ECSPI1_MOSI__ECSPI1_MOSI   0x80
-+			MX8MP_IOMUXC_ECSPI1_SCLK__ECSPI1_SCLK   0x80
-+			MX8MP_IOMUXC_ECSPI1_SS0__GPIO5_IO09     0x00
-+		>;
-+	};
-+
- 	pinctrl_eqos: eqosgrp {
- 		fsl,pins = <
- 			MX8MP_IOMUXC_ENET_MDC__ENET_QOS_MDC			0x2
-
----
-base-commit: 17712b7ea0756799635ba159cc773082230ed028
-change-id: 20240805-imx8mp-tpm-3df607b1f5f1
-
-Best regards,
+@@ -1377,7 +1381,7 @@ static int __qcom_glink_send(struct glink_channel *channel,
+ 	struct glink_core_rx_intent *tmp;
+ 	int iid = 0;
+ 	struct {
+-		struct glink_msg msg;
++		struct glink_msg_hdr msg;
+ 		__le32 chunk_size;
+ 		__le32 left_size;
+ 	} __packed req;
+@@ -1685,7 +1689,7 @@ static void qcom_glink_work(struct work_struct *work)
+ 		list_del(&dcmd->node);
+ 		spin_unlock_irqrestore(&glink->rx_lock, flags);
+ 
+-		msg = &dcmd->msg;
++		msg = container_of(&dcmd->msg, struct glink_msg, hdr);
+ 		cmd = le16_to_cpu(msg->cmd);
+ 		param1 = le16_to_cpu(msg->param1);
+ 		param2 = le32_to_cpu(msg->param2);
 -- 
-Benjamin Hahn <B.Hahn@phytec.de>
+2.34.1
 
 
