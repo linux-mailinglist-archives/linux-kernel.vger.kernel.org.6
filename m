@@ -1,94 +1,109 @@
-Return-Path: <linux-kernel+bounces-277566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953B094A2FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:35:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D285D94A318
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB8AA1C236CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:35:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6945EB2E4A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CF11C9DCF;
-	Wed,  7 Aug 2024 08:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2C01C9DCF;
+	Wed,  7 Aug 2024 08:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="p7U6K7sM"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SWLl9mL2"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D5E18D640;
-	Wed,  7 Aug 2024 08:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4692868D;
+	Wed,  7 Aug 2024 08:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723019719; cv=none; b=EOesbeT76nSNcuCKE0gw24IODpVTM5duX3z6cDCywREuRIfwssfc2oRs/FZK5zqDy+kj8lOq0CKnu6ULz4NNQkAP7Fm+pKAht3k6UvX+7grvqx4SMN5bEARPC23JUazTcGIkkLF4NhwoNrlTBVKY/5gGJ+QpK4tat7J2R76SPOs=
+	t=1723019733; cv=none; b=b8Ib4R/wUabAFmt2hpGLuqHAeXwEeVSsZrQ6MWK1NM1dJfrta6TGn8WvuUGXbgyvWK1PrEpm7zMzH0kZiUAHE6qvnB+wUrVzVT0tkaf7LSo6oU6GUXGjLUrY+xn0D+01K31vRGpuQZW9/GHIIfZ1xovTQ8M/9Zc1AX2OMdXjaW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723019719; c=relaxed/simple;
-	bh=CFIVoZfM0mdsYSyF0ORbV4gOz1SQzIjEY1X6zrYWV4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hoMKeh+k4kA7V4iEQrcf8YypLrRGS/ADo58N1Zvwb9gE3LNmbMc46++KjCjC5/rCOelCeXblQI9CEXQIns/avLYBAQ1auuw8sqGzAjpjwh7W7/HKWY30GUs/Hswtm5LXavqoD1GE7orNCWX+tyVMBr5k4P2+bwh7pSg3VbWSRcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=p7U6K7sM; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id E3485A0CEC;
-	Wed,  7 Aug 2024 10:35:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=+4q3VBIj2FO2RpMFosL0
-	eyJHJ3IvPI+U7bKp+4E1ccE=; b=p7U6K7sMxMZ0AFW5Yn+HFKukr1JDWBeh002u
-	0BDDhPnnuUjlkDOkX1DAlIBFkC1yTZ9yuNRm0o/DmVuZzyCUjZ+hQZRTxnG1kA25
-	OhHz2Q4oHimzVdtG7Tb6WDLXQxZidQfDhzraiikGst+pSXV9aFzgorBUiaKGbeho
-	K2O+ro7GOSHjo7S7PZrgFFDf8IoRjwTqq0Nu5Ix8+G/fTgpb0W6PYAK93JuEOnCe
-	9QHUoG0eQJrVYdob8DxbxyNod6RTxaAaLWe6n8cx3qenUKjFA1RJrA2ojKOpIY1Y
-	Ts4cHXoEPMbXMU7VXtepXeaxNwIkEBhKeg/DGG+D5zFyrnIPJUF9MejDbQdXLzx9
-	hCOmLMiEnRQCAByBfcr3YuatvtmOhhugMBP55FFtZy7avgubU+pH0eXuZoIah/2u
-	Q5k2EZ1+xROyu7XwZdjDDpUBNAqEkrhiHflPznrGASjsjJPkBSjK23YK4exICDF+
-	RsQawH7IHfir+c+fWLOX/5Y6LOa9nDnxScj5MQZ51MHw645qg1iEL+lb1eNrU8kY
-	bBkEEabQM/GUBt8WE5zVuqaF9KJnAcwmax6nfW7e8dOBHZOcJ60pWecORgg+Gnl5
-	9fPcGexuMAesuxzh20uo+oYMc3/RSaXLaP6jwzs39W00/WeOz64NUCKJ/Z5GwbMT
-	ILXo6Ns=
-Message-ID: <317c3565-b1ea-4cce-a4e7-a52e62ee9f6a@prolan.hu>
-Date: Wed, 7 Aug 2024 10:35:14 +0200
+	s=arc-20240116; t=1723019733; c=relaxed/simple;
+	bh=hiDgDVwokVQeOjkS2BQGTUYHONZ7ZMc30SoWK70Sq4g=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D+9+mzxMUe6RW14ySBEr003c+tKp3scb8XRsEK6/UwR0eaPR7dyxfguJ91DS1qDR9dQdv7ZzbuuHlGxk0WUld0lnPGoRsCj+pLsrvr2zSGdEHqrznuVoU6vMLMV76xg4wp01r5LkR18jVocZFWWZZGwgo1XK84jTT2gf3jMPEqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SWLl9mL2; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4778ZPdi077138;
+	Wed, 7 Aug 2024 03:35:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723019725;
+	bh=fAOaZ4xLnSP5PmMNCdPVZTx2+2zABh1UiuzK+zbMX3o=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=SWLl9mL27HqUtB29m/w3IrTL/80Aun6O4w8ZZiCXi7spdi9hLkEOT/tsnKY87exT/
+	 hSvtZFOK8hfY4LT7d3O09xxIOLK1M+Ui6h0MiL3RbJWOXm7p1TBvtBWWLHYPtB4vtX
+	 PtwKDNaijQxZJjxZfSlWPXQW5Tpy6GMUzga2JKZE=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4778ZPI4104735
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 7 Aug 2024 03:35:25 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
+ Aug 2024 03:35:25 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 7 Aug 2024 03:35:25 -0500
+Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4778ZOP9073056;
+	Wed, 7 Aug 2024 03:35:25 -0500
+Date: Wed, 7 Aug 2024 14:05:24 +0530
+From: Manorit Chawdhry <m-chawdhry@ti.com>
+To: "Kumar, Udit" <u-kumar1@ti.com>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Neha Malcom Francis <n-francis@ti.com>,
+        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi <b-padhi@ti.com>,
+        Siddharth
+ Vadapalli <s-vadapalli@ti.com>
+Subject: Re: [PATCH v3 4/5] arm64: dts: ti: k3-j721e*: Add bootph-* properties
+Message-ID: <20240807083524.4ybzvvwch7e5jwck@uda0497581>
+References: <20240730-b4-upstream-bootph-all-v3-0-9bc2eccb6952@ti.com>
+ <20240730-b4-upstream-bootph-all-v3-4-9bc2eccb6952@ti.com>
+ <f042927d-b502-4124-aaee-4bddd94b8bf2@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH resubmit net 1/2] net: fec: Forward-declare
- `fec_ptp_read()`
-To: Jakub Kicinski <kuba@kernel.org>, <imx@lists.linux.dev>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Frank Li <Frank.li@nxp.com>, Wei Fang <wei.fang@nxp.com>, Shenwei Wang
-	<shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
-	<pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>
-References: <20240807082918.2558282-1-csokas.bence@prolan.hu>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <20240807082918.2558282-1-csokas.bence@prolan.hu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94854617461
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <f042927d-b502-4124-aaee-4bddd94b8bf2@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Aw, crop, I meant to say -v2 instead of "resubmit"... That's what 
-happens if you mindlessly re-use format-patch commands :/ I hope it 
-doesn't bother you _too_ much...
+Hi Udit,
 
-On 8/7/24 10:29, Csókás, Bence wrote:
-> This function is used in `fec_ptp_enable_pps()` through
-> struct cyclecounter read(). Forward declarations make
-> it clearer, what's happening.
+On 13:07-20240807, Kumar, Udit wrote:
 > 
-> Fixes: 61d5e2a251fb ("fec: Fix timer capture timing in `fec_ptp_enable_pps()`")
-> Suggested-by: Frank Li <Frank.li@nxp.com>
-> Link: https://lore.kernel.org/netdev/20240805144754.2384663-1-csokas.bence@prolan.hu/T/#ma6c21ad264016c24612048b1483769eaff8cdf20
-> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+> >   	};
+> >   	vdd_mmc1_en_pins_default: vdd-mmc1-en-default-pins {
+> > @@ -622,6 +627,7 @@ J721E_WKUP_IOPAD(0xf4, PIN_OUTPUT, 2)/* (D25) MCU_I3C0_SDA.MCU_UART0_RTSn */
+> >   			J721E_WKUP_IOPAD(0xe4, PIN_INPUT, 0) /* (H28) WKUP_GPIO0_13.MCU_UART0_RXD */
+> >   			J721E_WKUP_IOPAD(0xe0, PIN_OUTPUT, 0)/* (G29) WKUP_GPIO0_12.MCU_UART0_TXD */
+> >   		>;
+> > +		bootph-pre-ram;
+> 
+> 
+> Please make consistency between pin mux and node.
+> 
+> Here I see pin mux is bootph-pre-ram and mcu_uart is bootph-all
 
+Do we want it to be bootph-pre-ram or bootph-all?
+
+Regards,
+Manorit
 
