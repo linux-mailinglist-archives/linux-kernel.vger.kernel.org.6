@@ -1,110 +1,133 @@
-Return-Path: <linux-kernel+bounces-278454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4CEC94B071
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:26:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1FE94B073
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90FAC283A7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:26:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39331F22E73
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733C014431C;
-	Wed,  7 Aug 2024 19:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A211448C0;
+	Wed,  7 Aug 2024 19:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gG1DCMNF"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jo3xCgv3"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5499B14388F;
-	Wed,  7 Aug 2024 19:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525DC14388F;
+	Wed,  7 Aug 2024 19:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723058759; cv=none; b=dl3hTClNYWnUXdU3nq0bOmIDou//dpLGXKJE/6XKYobyAtKoCuozi3N7AHtfa6HHTOh1f7m4yuT5WeYdDq4gPNxiitWI1vnvIkC/3dSoJvIPe85oJDvEOXGWG6oEYkUXHRXIEdzdxGR6h7Kc3aX8RnmerYdTaEuDlNMCa9BKoIQ=
+	t=1723058792; cv=none; b=T9A0/juYjn04gl+THWX9brjKQkhU0LJO4tQAhiU6mbLRwZoO7hrAh9Qzm2SXTZBpBlHMgDW42gX6hMIqsc8GvJUpBOpaPljJLVQXAiLWBSj9KVEAX9qYvRPnV0R64AZuie02VOy7vm1Bwn3duFolQqhVqrDh27TlevKUZbP6NT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723058759; c=relaxed/simple;
-	bh=jq/PqrXLEa3pxfqcv0R+71WNrpDHLU/hS0kqTy3ln6Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JMqvbITFSOxTkVW8CiI1bTBNSpLoPBwYh11XLD1wBq/Z/lLtUhvT9Z5eQJCkw8E7PxVo7528ZcTguB6Rd4U9qKjvgwJH7vi120EPIW2Zy7HwUA/FhueLzggMFwdKhnd2oFjt2lyBR/hj+RQO9RyvWQ0oOnBpz1lLtmsGSC5Scn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gG1DCMNF; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1723058792; c=relaxed/simple;
+	bh=CA+AqtCxKzZ/+gGVIGdLjXmQD5y7yrWwE0ykjd+chsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pLbl8oLrEzL1BMcVOdDyBjTfp7HfEeg9i+WQW5gcpOGkrpLp68dfMC6CESztViM1OUHUj7kD/LKj+mXvoh7e1VochYAfb52/6TRPBXtw3mM4sv/mGNjdDLxv3RHDfyMt3p0lAR9lj6HVVBgoeCymM/PvqfIjIPlI//9kpSn3zKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jo3xCgv3; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4f6b7250d6dso97486e0c.0;
-        Wed, 07 Aug 2024 12:25:58 -0700 (PDT)
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-76cb5b6b3e4so145055a12.1;
+        Wed, 07 Aug 2024 12:26:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723058757; x=1723663557; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E7+ks3dDwY2zSJcOKPPopRCqEmx2fHtiEAIp/0e5Fjw=;
-        b=gG1DCMNFE0bfYxaFCQtiolrrWka3DgCMsDAoqd0Cc7W4XSRuxMc7ldqggSvAQ3KnyE
-         eOdAhGxKD9NhcZQhjwCM2CeCsxzxoieDeQfPNrSx3o6k4ZokWVKs3hbf6aqG7fxpAFI4
-         vIEVJ5nFBtg+AuuaOopwiF9T186BqcGrulwVs7O3gCrRRrSUq9fxCVh4rstP5idYmM1K
-         QjflaP0FcuF1fcRU/TaPgTBM33UDJ2y3T30OMMVZnAK81Tp0Hc+noLIvmK6DhR/wzL3t
-         K1wJX0udh3D/5rIwYLhd5URn137zCKonVvrUrW2fU1INwnqy1OfbvL/+rCDkTUf/WwjJ
-         lDWg==
+        d=gmail.com; s=20230601; t=1723058790; x=1723663590; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ntigGfQd6n61p5RxDaD02kcMehzdaU2EBhDH68tO7ZU=;
+        b=Jo3xCgv3ASWP418UCIu3BdqPBHQ4qnP5ii1wPugAM1kAfy5IDhRFcCPWziXZXYm1yI
+         A53G4UfcMV3lM0GUtNCLs0OnAB7nJtgUMk9yROg1v84qliHRxQzuQPoscPwM5fgm1bsn
+         1XnZcoIJEeqmKIlORq8F/bMUZJ4gFPH2D37kpDNP01RucrIx8ZNjd1+/8RvWuWR51sBm
+         ZSyINmJubXGK2hwuOM4jkBhhW7UfeUqewC2ubWhA9WlqCF0CGV/lOB6zyINrLgCSvScg
+         7wM3TJRKN92ewYqSXWJ/OeqqIoJIXDgQn1dtHVWmgGAifVjYJPzorR+MEd2iHkdHCSgA
+         dFrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723058757; x=1723663557;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723058790; x=1723663590;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E7+ks3dDwY2zSJcOKPPopRCqEmx2fHtiEAIp/0e5Fjw=;
-        b=t+f2S5IwVSYv1nrGXL04baqfcT6lSy4n46J2M+gx0sQmzJ8sU0popKhrLmGxzYZk1N
-         by+Rx431sid0I1Fh5pwtUSen1DhG+IFswOqeaguFGJ72opOtZ9bwnbBddDyv4OVl71Lh
-         NqZu0XeRLk7hMm11JWHnsBgkT5XWyx1p+16XcUH4aJkKs4epjnoT6ElCQjLbFyFyAxJz
-         ZuqAJoV2o4N8r38Yg4i5OagBfOThxLlgcuJv3bPlWuxZF+Qp18wPHRhBv2EQIFvyHR34
-         sYdDD3AQvTN37oak1OBXBzGZV8HAay1oUXl0eZ+P1SFdgdL60+JivyGD+AvBoiFkpDoT
-         T+rA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtzodsFCQ5nwX/Ai3O44EGAm4NqPDCQaPl/P+UN8ywWg06mHzbg4a6a/65nqgW03tF9d/ED9kZS+NKnLo9WKEfRC+MW0J0aSwfkyjaRLTOZzqfwacxRqgvy6gVbqx7qEuV51RAfI2JwGLX40HjCiR0yfCtPMsO6w7AoAoXmznKjBt+z7wJ
-X-Gm-Message-State: AOJu0YwZYSN1DuTt4hG0wl3TRsv8I5qaDZVIofiGfdq6M8NbutHsRpy/
-	dR1NMKg50R6m9rlhaYVUhftTDgEN5Gpiu90Kqe1e6NBXAsZe7KxJ1qa2d015pHTeZFWVhJkcaAj
-	VZUttVdfkMGI0eU6U63pmsBmYHl0JlNYT
-X-Google-Smtp-Source: AGHT+IHZ7Hy8CfkwRCjo+waNwMVTOTTSZrBT7/8h6o4tUqtJGoi7Eb7+cllEHgdxtssEJIOKNM/PlmLj39cKWdmqvjQ=
-X-Received: by 2002:a05:6122:3c50:b0:4f5:1d9a:ad5c with SMTP id
- 71dfb90a1353d-4f8a002274amr23871247e0c.14.1723058757092; Wed, 07 Aug 2024
- 12:25:57 -0700 (PDT)
+        bh=ntigGfQd6n61p5RxDaD02kcMehzdaU2EBhDH68tO7ZU=;
+        b=sSGyPJmwrmuH/UVe1BGR1/nXgIIyRgyPMr0m6R84IjxXGF7tJXmjvw7PMEXChm5v6r
+         4n5DbZz3AAe/LT5uXUKOId+z+UCAjodgsQIWvFzwvIRdwQGxlNyBUDKsR5wJva6psBMf
+         BMejmSGu5V5PL3RFh3IKrOMv3WyKdrUjC+/p2nD+srXfGVr+OAisdJO142xSFA1H6IlR
+         ujVo9R5Yd5EntDKyBjoAkm/wGfNWbkf7p45KB3RUWJrhA9ONZpDv0yeotIVRdkJmc3dg
+         ZqJ4CaybKuC3TATgN6fgjFiA9ZM5IgwCJSjrOPCzeFM4+roq6Gzxno4ML9y+Qib7KEjh
+         Dp0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVUxzjeJRSOrclo9ARvS9Wtlp35p0/WnYDoPlwERdqu0fLBs0otLoGKtVDppCIs8xHZsr6ZHiMILIL5GzlefvAmBA47DR0ghghBRX2J+reuTOU2+bODKSz+yty2IGoN6sT+
+X-Gm-Message-State: AOJu0Yx2BbZjHaAhmWqg56ys/PgEPKA1ex/Bx7oDgNXzBBI/TBytmwLZ
+	/MfUjbEvfZN7tquBNQZasGnEp5zoxfzmIlZIXEKxrd7YkrGrH4iM
+X-Google-Smtp-Source: AGHT+IH3GllPy2U80SQLB51JljrID3T6rPeN67ItMms+EZ9HQDEQQMz0wkn6OzDaDy6sBS8b0OAl4Q==
+X-Received: by 2002:a05:6a21:478a:b0:1c3:b102:bdfb with SMTP id adf61e73a8af0-1c6996283cdmr20628864637.43.1723058790480;
+        Wed, 07 Aug 2024 12:26:30 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b764fb53dasm8534450a12.65.2024.08.07.12.26.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 12:26:29 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 7 Aug 2024 09:26:28 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Phil Auld <pauld@redhat.com>
+Cc: torvalds@linux-foundation.org, mingo@redhat.com, peterz@infradead.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH 09/30] sched_ext: Implement BPF extensible scheduler class
+Message-ID: <ZrPKZMvrl6kGFzo-@slm.duckdns.org>
+References: <20240618212056.2833381-1-tj@kernel.org>
+ <20240618212056.2833381-10-tj@kernel.org>
+ <20240807191004.GB47824@pauld.westford.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807173336.2523757-1-pedro.falcato@gmail.com>
- <20240807173336.2523757-2-pedro.falcato@gmail.com> <20240807115824.f5c29702dda952abd709351d@linux-foundation.org>
-In-Reply-To: <20240807115824.f5c29702dda952abd709351d@linux-foundation.org>
-From: Pedro Falcato <pedro.falcato@gmail.com>
-Date: Wed, 7 Aug 2024 20:25:45 +0100
-Message-ID: <CAKbZUD3kNTKfV5yMQW7YYbRx2XJiMNM4owGiYue1Y-A=yVbWog@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mseal: Fix is_madv_discard()
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Shuah Khan <shuah@kernel.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Jeff Xu <jeffxu@chromium.org>, Kees Cook <kees@kernel.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807191004.GB47824@pauld.westford.csb>
 
-On Wed, Aug 7, 2024 at 7:58=E2=80=AFPM Andrew Morton <akpm@linux-foundation=
-.org> wrote:
->
-> On Wed,  7 Aug 2024 18:33:35 +0100 Pedro Falcato <pedro.falcato@gmail.com=
-> wrote:
->
-> > is_madv_discard did its check wrong. MADV_ flags are not bitwise,
-> > they're normal sequential numbers. So, for instance:
-> >       behavior & (/* ... */ | MADV_REMOVE)
-> >
-> > tagged both MADV_REMOVE and MADV_RANDOM (bit 0 set) as
-> > discard operations. This is obviously incorrect, so use
-> > a switch statement instead.
->
-> Please describe the userspace-visible runtime effects of this bug?
+Hello, Phil.
 
-The kernel could erroneously block certain madvises (e.g MADV_RANDOM
-or MADV_HUGEPAGE) on sealed VMAs due to them sharing bits with blocked
-MADV operations (e.g REMOVE or WIPEONFORK).
+On Wed, Aug 07, 2024 at 03:11:08PM -0400, Phil Auld wrote:
+> On Tue, Jun 18, 2024 at 11:17:24AM -1000 Tejun Heo wrote:
+> > Implement a new scheduler class sched_ext (SCX), which allows scheduling
+> > policies to be implemented as BPF programs to achieve the following:
+> > 
+> 
+> I looks like this is slated for v6.12 now?  That would be good. My initial
+> experimentation with scx has been positive.
 
-Thanks,
-Pedro
+Yeap and great to hear.
+
+> I just picked one email, not completely randomly.
+> 
+> > - Both enable and disable paths are a bit complicated. The enable path
+> >   switches all tasks without blocking to avoid issues which can arise from
+> >   partially switched states (e.g. the switching task itself being starved).
+> >   The disable path can't trust the BPF scheduler at all, so it also has to
+> >   guarantee forward progress without blocking. See scx_ops_enable() and
+> >   scx_ops_disable_workfn().
+> 
+> I think, from a supportability point of view, there needs to be a pr_info, at least,
+> in each of these places, enable and disable, with the name of the scx scheduler. It
+> looks like there is at least a pr_error for when one gets ejected due to misbehavior.
+> But there needs to be a record of when such is loaded and unloaded.
+
+Sure, that's not difficult. Will do so soon.
+
+Thanks.
+
+-- 
+tejun
 
