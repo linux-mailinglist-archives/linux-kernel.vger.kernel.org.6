@@ -1,224 +1,106 @@
-Return-Path: <linux-kernel+bounces-278143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0FA94AD04
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:36:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C67094ACB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C912B29EC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:21:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1621F23A7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1DB13C9A2;
-	Wed,  7 Aug 2024 15:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE85C132117;
+	Wed,  7 Aug 2024 15:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tba5G9VH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ECB15rtQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE37E85260;
-	Wed,  7 Aug 2024 15:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFE079945;
+	Wed,  7 Aug 2024 15:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723043951; cv=none; b=H12VHqrOcSYX+AKX1RMJzFLB14gayOPHTU/zKCTlr3wH5hl5zg3+aJ1Ya9t7BxpGzJxStTLKdYv8PIpsAn1a1KFUKwrAfrYJaFH0TVPzey/i9K9dog8qOCSr2qTcum5RkTW6Xn46Q/wqI88DGgM6y5YLo9sBflxpwh2RYZXzShI=
+	t=1723043968; cv=none; b=Rwl7xV3wfsrrIqmzJPpiEdEt2kuMmjIK3VTacOqDuPv7KFSHglEEXntsq5gE7HWxKCys/ARIf/jiUmhP58aq8Hy5XJzWn9+m/YwlOUCPYjaueya736VXnwcUkiGTKQKvnb92RQ4KBP8NEBVvnxNTpRDZDbvJ9L2bAFNO7zafCBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723043951; c=relaxed/simple;
-	bh=SPE6Fim3/iZTP8g9bx27PJRqcSTjDSUfrbucJsDcrEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=c2w6agOQk8Nv0pj4RxbpI7wUMh9pMikwoP6x9cAluhp9o9y92LfRPKn5Jc4EspRh1Si+ZwUVLJXKMwwLDm89vWYnXttT6vcQV0BZbeH++TF8Ai1wdpXGrPAh9e38ZpDrbBXawsUzcfUhm9y3/S14ESzoipsJPKlju7Bs2DDrJBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tba5G9VH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBB7CC32781;
-	Wed,  7 Aug 2024 15:19:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723043950;
-	bh=SPE6Fim3/iZTP8g9bx27PJRqcSTjDSUfrbucJsDcrEU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Tba5G9VHUKd48En9J++DR0cKiGu175i47rvAl2+Pj2n0kDPB/3pVN2V/vP9r2nUIP
-	 ZHWmKBBvBsORM0FMdFlX9qLm9thrGYmJYWUBB5uGluD6b6XZBS03gIvI4sy8QrRZPk
-	 gLV9prQUWxB5x+aQmD6GlHAH1pMCyFzTwLikqysDskFp2wIxONT5FBuGlBW13qFh9V
-	 1sOj9cglhq8FC8jDWYwlINzveoYMFaUxXxmgiZfRxOYO8+tYT/mtcmSMNSrVMyg10H
-	 nJYYigNvl6Cqlx6dtRMd3mueSk8AuDfydnG2HoyWeJwf/R6r4QM32RtMmd3zlINK4f
-	 ni9XGLPod0euQ==
-Date: Wed, 7 Aug 2024 09:19:07 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] rpmsg: glink: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <ZrOQa2gew5yadyt3@cute>
+	s=arc-20240116; t=1723043968; c=relaxed/simple;
+	bh=H9uirerAjlrbXHWwHjRISmeI1bhKgb+jLbNxkCJr9cY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I+dzJPGJWOuWr8RdhQJa8IvCXbMm5XQKhWIEL/EpnQXsmXtXTnLMR6p0Jaz8gELrAxrRkKNkbGDCkxg+l/L+ay9xLkf/dZyfl0oebkovs6GdQfUsRlyFAI31kxPmMu3xvbMO/J0bkj6YM7p5JU7oMYmviqcpQaDpktgYF9I5M0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ECB15rtQ; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723043967; x=1754579967;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=H9uirerAjlrbXHWwHjRISmeI1bhKgb+jLbNxkCJr9cY=;
+  b=ECB15rtQrHr/Pj8P0eAAXq7iWHGoLY6aN0oKzOwK8VWzpCkMfR4mbgpL
+   m/Ps5MHrQXg8HHFPJ3AKAkkABdZQhvplblcVpnShZjHlsTOn/3GM02KZT
+   AOQu8Xj/6S+zbGhaKBjh+o6JXRmlHXGdBIbhwD0N0Ixz7be0d/hnP/viz
+   8yuyuHNa6Y1DbTjcO7pqtoUsCkIX01wzcrD1tutn0uD2UDdgjB/Gx9QrS
+   Y3SFrmx9iwlj3ulDM4ZyT2mAsUiY+nxhOf6G/rEhswk9l/ad1BgyBJod+
+   QfVGm3nJM2c77t7cewRrgUewb/IX0b+PjeP6RAfhzlSoMBZZBdYCrF98G
+   Q==;
+X-CSE-ConnectionGUID: rd4RENwsSQqheq7TVyd/Xw==
+X-CSE-MsgGUID: /AMX3bhlScawU5ibN3riyg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21092142"
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="21092142"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 08:19:26 -0700
+X-CSE-ConnectionGUID: mHINKmwnRsOskRxFjzYdDA==
+X-CSE-MsgGUID: JmY74sp/S0KbvBBhovh8Iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="61537980"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 08:19:25 -0700
+Received: from [10.212.63.105] (kliang2-mobl1.ccr.corp.intel.com [10.212.63.105])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 972C620CFED6;
+	Wed,  7 Aug 2024 08:19:23 -0700 (PDT)
+Message-ID: <2a32a538-b86c-40ec-8b85-17f793c0bfac@linux.intel.com>
+Date: Wed, 7 Aug 2024 11:19:22 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] perf: Per PMU context reschedule and misc
+To: Peter Zijlstra <peterz@infradead.org>, mingo@kernel.org
+Cc: acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240807112924.448091402@infradead.org>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240807112924.448091402@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
 
-So, in order to avoid ending up with a flexible-array member in the
-middle of multiple other structs, we use the `__struct_group()`
-helper to create a new tagged `struct glink_msg_hdr`. This structure
-groups together all the members of the flexible `struct glink_msg`
-except the flexible array.
 
-As a result, the array is effectively separated from the rest of the
-members without modifying the memory layout of the flexible structure.
-We then change the type of the middle struct members currently causing
-trouble from `struct glink_msg` to `struct glink_msg_hdr`.
+On 2024-08-07 7:29 a.m., Peter Zijlstra wrote:
+> Hi,
+> 
+> This is 'fallout' from Namhyung posting his per-pmu ctx_resched() patches. It
+> started with me trying to clean up and get rid of corner cases, and then got
+> involved when Kan noted the time keeping issue.
+> 
+> Anyway, please review / test.
+> 
 
-We also want to ensure that when new members need to be added to the
-flexible structure, they are always included within the newly created
-tagged struct. For this, we use `static_assert()`. This ensures that the
-memory layout for both the flexible structure and the new tagged struct
-is the same after any changes.
+Except for the tiny nit, the patch series looks good to me.
 
-This approach avoids having to implement `struct glink_msg_hdr` as a
-completely separate structure, thus preventing having to maintain two
-independent but basically identical structures, closing the door to
-potential bugs in the future.
+Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
 
-We also use `container_of()` whenever we need to retrieve a pointer to
-the flexible structure, through which we can access the flexible-array
-member, if necessary.
-
-Additionally, we use the `DEFINE_RAW_FLEX()` helper for an on-stack
-definition of a flexible structure where the size for the flexible-array
-member is known at compile-time.
-
-So, with these changes, fix the following warnings:
-drivers/rpmsg/qcom_glink_native.c:51:26: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/rpmsg/qcom_glink_native.c:459:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/rpmsg/qcom_glink_native.c:846:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/rpmsg/qcom_glink_native.c:968:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/rpmsg/qcom_glink_native.c:1380:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- drivers/rpmsg/qcom_glink_native.c | 42 +++++++++++++++++--------------
- 1 file changed, 23 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 82d460ff4777..ed89b810f262 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -30,11 +30,16 @@
- #define RPM_GLINK_CID_MAX	65536
- 
- struct glink_msg {
--	__le16 cmd;
--	__le16 param1;
--	__le32 param2;
-+	/* New members MUST be added within the __struct_group() macro below. */
-+	__struct_group(glink_msg_hdr, hdr, __packed,
-+		__le16 cmd;
-+		__le16 param1;
-+		__le32 param2;
-+	);
- 	u8 data[];
- } __packed;
-+static_assert(offsetof(struct glink_msg, data) == sizeof(struct glink_msg_hdr),
-+	      "struct member likely outside of __struct_group()");
- 
- /**
-  * struct glink_defer_cmd - deferred incoming control message
-@@ -48,7 +53,7 @@ struct glink_msg {
- struct glink_defer_cmd {
- 	struct list_head node;
- 
--	struct glink_msg msg;
-+	struct glink_msg_hdr msg;
- 	u8 data[];
- };
- 
-@@ -455,12 +460,9 @@ static void qcom_glink_intent_req_abort(struct glink_channel *channel)
- static int qcom_glink_send_open_req(struct qcom_glink *glink,
- 				    struct glink_channel *channel)
- {
--	struct {
--		struct glink_msg msg;
--		u8 name[GLINK_NAME_SIZE];
--	} __packed req;
-+	DEFINE_RAW_FLEX(struct glink_msg, req, data, GLINK_NAME_SIZE);
- 	int name_len = strlen(channel->name) + 1;
--	int req_len = ALIGN(sizeof(req.msg) + name_len, 8);
-+	int req_len = ALIGN(sizeof(*req) + name_len, 8);
- 	int ret;
- 	unsigned long flags;
- 
-@@ -476,12 +478,12 @@ static int qcom_glink_send_open_req(struct qcom_glink *glink,
- 
- 	channel->lcid = ret;
- 
--	req.msg.cmd = cpu_to_le16(GLINK_CMD_OPEN);
--	req.msg.param1 = cpu_to_le16(channel->lcid);
--	req.msg.param2 = cpu_to_le32(name_len);
--	strcpy(req.name, channel->name);
-+	req->cmd = cpu_to_le16(GLINK_CMD_OPEN);
-+	req->param1 = cpu_to_le16(channel->lcid);
-+	req->param2 = cpu_to_le32(name_len);
-+	strcpy(req->data, channel->name);
- 
--	ret = qcom_glink_tx(glink, &req, req_len, NULL, 0, true);
-+	ret = qcom_glink_tx(glink, req, req_len, NULL, 0, true);
- 	if (ret)
- 		goto remove_idr;
- 
-@@ -826,7 +828,9 @@ static int qcom_glink_rx_defer(struct qcom_glink *glink, size_t extra)
- 
- 	INIT_LIST_HEAD(&dcmd->node);
- 
--	qcom_glink_rx_peek(glink, &dcmd->msg, 0, sizeof(dcmd->msg) + extra);
-+	qcom_glink_rx_peek(glink,
-+			   container_of(&dcmd->msg, struct glink_msg, hdr), 0,
-+			   sizeof(dcmd->msg) + extra);
- 
- 	spin_lock(&glink->rx_lock);
- 	list_add_tail(&dcmd->node, &glink->rx_queue);
-@@ -843,7 +847,7 @@ static int qcom_glink_rx_data(struct qcom_glink *glink, size_t avail)
- 	struct glink_core_rx_intent *intent;
- 	struct glink_channel *channel;
- 	struct {
--		struct glink_msg msg;
-+		struct glink_msg_hdr msg;
- 		__le32 chunk_size;
- 		__le32 left_size;
- 	} __packed hdr;
-@@ -965,7 +969,7 @@ static void qcom_glink_handle_intent(struct qcom_glink *glink,
- 	};
- 
- 	struct {
--		struct glink_msg msg;
-+		struct glink_msg_hdr msg;
- 		struct intent_pair intents[];
- 	} __packed * msg;
- 
-@@ -1377,7 +1381,7 @@ static int __qcom_glink_send(struct glink_channel *channel,
- 	struct glink_core_rx_intent *tmp;
- 	int iid = 0;
- 	struct {
--		struct glink_msg msg;
-+		struct glink_msg_hdr msg;
- 		__le32 chunk_size;
- 		__le32 left_size;
- 	} __packed req;
-@@ -1685,7 +1689,7 @@ static void qcom_glink_work(struct work_struct *work)
- 		list_del(&dcmd->node);
- 		spin_unlock_irqrestore(&glink->rx_lock, flags);
- 
--		msg = &dcmd->msg;
-+		msg = container_of(&dcmd->msg, struct glink_msg, hdr);
- 		cmd = le16_to_cpu(msg->cmd);
- 		param1 = le16_to_cpu(msg->param1);
- 		param2 = le32_to_cpu(msg->param2);
--- 
-2.34.1
-
+Thanks,
+Kan
 
