@@ -1,322 +1,210 @@
-Return-Path: <linux-kernel+bounces-277659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689E094A45C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:33:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B799D94A47F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EBB528217C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:33:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F059B2C3BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933161C9DC9;
-	Wed,  7 Aug 2024 09:33:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A6E1D1F66;
+	Wed,  7 Aug 2024 09:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jGfM7taW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5071C7B92
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 09:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD5C1D1722
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 09:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723023193; cv=none; b=OjpDBvhw8L/Nd9yAZIWbvgC/6DODu/+pEhsiKqP4ijaz6lWkWk9do1CnQszC5FtdU+RshgY0Hqip0EJW2Dk7s8akTBuOV156t3t//GzuxLyLZ0BUIRLwrLK2l2IV5xebgOxnRQzIAlsrptGaKu0NFmK3GX/TFUezALlBiH2zG8I=
+	t=1723023207; cv=none; b=f/Cmc+rGy8Xmf2qVYJI7+QKfdE0MSGRYFJ1XkwG4fItDBTmswcU/bLs2BzuDSs+TtFVl0VEUx4eqIsm6NyoL/hTODPpzVQyPNIBYKYeYIuLy6S/qdePRw94G/nFzZx/ed5XE9Y+jZXw5Gju2p34Nf4wNzPys+t8q3vr4G/QVHSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723023193; c=relaxed/simple;
-	bh=9cBlLjWnohHOUDqYILmBFHo9g1733FnDO+5oqwyLpgU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DwLwrrxv28+LUV/JiZiWNLxJdIp7JkolMJWwSU3QImI+aZcSv4rAA+ruguK13QzyJauDi6qILSTTAg5idd8xdMpwh6xIFxvxnh5xm7mXUhVe2fgQWOiPTtCxkwFYCMGWgh5rMCwamFTQ65ZL+cr7qvo/Kid8ImYElSZqp/OqUxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sbd2L-0007oY-SO; Wed, 07 Aug 2024 11:32:53 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sbd2K-0059yf-VZ; Wed, 07 Aug 2024 11:32:52 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sbd2K-00Dsl2-2t;
-	Wed, 07 Aug 2024 11:32:52 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v1 1/1] net: phy: dp83tg720: Add cable testing support
-Date: Wed,  7 Aug 2024 11:32:51 +0200
-Message-Id: <20240807093251.3308737-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1723023207; c=relaxed/simple;
+	bh=VXzHaQm7XQbvOf5JyZxW17M3OZXWaTO3C/rchFehAvk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=algjvQ50/YLOsdNZ/jWLv3qIvaDkBViHoqJNm2FRPTyJDecipahDzbUkOpmkcmZFBHQZMK3e8NhZLJeodjdabSqQhIhMisY9gRJcn1CZpH18oPsCAMJ+cLxKQJ0buPXUXyAic1eWa2gvlRBt7EVoxiOu38nD60c5dj9Xb4wpxT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jGfM7taW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723023204;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=r1ao3oI2bC/T6YUDOi/z140Hom9Lwuz/axm2MilPj98=;
+	b=jGfM7taWlRY5BxXo0hm2ixuBhfjfyQgtHA+clp6QrUyhCjaPsa6fXu6j5CnkvudLm7Xonz
+	M0THgopqSk6XBc2JacdeU/mu5ns6MziRp76LgMMJNxaVHo2wM/Ba/QypTpMUWLSmTNPJ/b
+	BT8b5X7UzBSbZcKlAPrwCcQCzQp8WXY=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-481-gB3o_7RCN0SViS33Yc7xxA-1; Wed, 07 Aug 2024 05:33:22 -0400
+X-MC-Unique: gB3o_7RCN0SViS33Yc7xxA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42816096cb8so17593965e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 02:33:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723023201; x=1723628001;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=r1ao3oI2bC/T6YUDOi/z140Hom9Lwuz/axm2MilPj98=;
+        b=FnSXAbPUJogpqJAqK3W5bO6mLxt67VviFXnKqtP8Iq1FBtX5HRh9cz8uBd/wUPocUZ
+         T4Rbll3kUuYAgUKqSVQ8qKfe7hTxvVK2QICz0Z6ETaFa4BQnGY9typefFVSzIzZC5jje
+         TcRDrlIf/BLBYMnWQyKtP87JFAcr5M7KfZuByRLYahSNQrWWtQk3VE5hV+DQIpI0mwSr
+         xsVsys+Tk1hXFRHmeD3CgGMgQ707jS1iZILc7IRM3GNdthph/Gc80NvQs1NCkEimpD04
+         NXOzNmnkH+dAXHKxU4CC/D/Y0HLsWvUPJKK9wJWcGC/VM/AmqZspBEFiCOIYHLr/KR1o
+         SiOw==
+X-Gm-Message-State: AOJu0YymeSclb3t7X2TcFUW6SThS4gxKtAYiUr64aWWOBBb2PWHW5q4t
+	e9W1AbYSNV6h6pzOzYxkvqwbsH8e47ltUJMETQdrTzjCORS5yWaUcKdGMWOIGTmpOrIMH+pIHy7
+	MPvJRHW8YPZ/IBJltTrF6YdfT9QfiPQN5YDtzEANzCJtiUfHZ5oCrEJgPCfUPpg==
+X-Received: by 2002:a05:600c:1c25:b0:426:5520:b835 with SMTP id 5b1f17b1804b1-428e6af241dmr135922205e9.5.1723023200864;
+        Wed, 07 Aug 2024 02:33:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGZ1EiCG7QsRTDVlK5w+6p4nKm5oU+kZSr1yFuVMrc+A2gerQdJIOXN4JQj6G7CIHOFRMSO6g==
+X-Received: by 2002:a05:600c:1c25:b0:426:5520:b835 with SMTP id 5b1f17b1804b1-428e6af241dmr135921805e9.5.1723023200220;
+        Wed, 07 Aug 2024 02:33:20 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c708:1a00:df86:93fe:6505:d096? (p200300cbc7081a00df8693fe6505d096.dip0.t-ipconnect.de. [2003:cb:c708:1a00:df86:93fe:6505:d096])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429059719ebsm19899155e9.18.2024.08.07.02.33.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 02:33:19 -0700 (PDT)
+Message-ID: <aa577d5c-a992-4f82-aecf-266cb940d5a7@redhat.com>
+Date: Wed, 7 Aug 2024 11:33:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 00/11] mm: replace follow_page() by folio_walk
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+References: <20240802155524.517137-1-david@redhat.com>
+ <20240807111534.4e79d7fd@p-imbrenda.boeblingen.de.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240807111534.4e79d7fd@p-imbrenda.boeblingen.de.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Introduce cable testing support for the DP83TG720 PHY. This implementation
-is based on the "DP83TG720S-Q1: Configuring for Open Alliance Specification
-Compliance (Rev. B)" application note.
+On 07.08.24 11:15, Claudio Imbrenda wrote:
+> On Fri,  2 Aug 2024 17:55:13 +0200
+> David Hildenbrand <david@redhat.com> wrote:
+> 
+>> Looking into a way of moving the last folio_likely_mapped_shared() call
+>> in add_folio_for_migration() under the PTL, I found myself removing
+>> follow_page(). This paves the way for cleaning up all the FOLL_, follow_*
+>> terminology to just be called "GUP" nowadays.
+>>
+>> The new page table walker will lookup a mapped folio and return to the
+>> caller with the PTL held, such that the folio cannot get unmapped
+>> concurrently. Callers can then conditionally decide whether they really
+>> want to take a short-term folio reference or whether the can simply
+>> unlock the PTL and be done with it.
+>>
+>> folio_walk is similar to page_vma_mapped_walk(), except that we don't know
+>> the folio we want to walk to and that we are only walking to exactly one
+>> PTE/PMD/PUD.
+>>
+>> folio_walk provides access to the pte/pmd/pud (and the referenced folio
+>> page because things like KSM need that), however, as part of this series
+>> no page table modifications are performed by users.
+>>
+>> We might be able to convert some other walk_page_range() users that really
+>> only walk to one address, such as DAMON with
+>> damon_mkold_ops/damon_young_ops. It might make sense to extend folio_walk
+>> in the future to optionally fault in a folio (if applicable), such that we
+>> can replace some get_user_pages() users that really only want to lookup
+>> a single page/folio under PTL without unconditionally grabbing a folio
+>> reference.
+>>
+>> I have plans to extend the approach to a range walker that will try
+>> batching various page table entries (not just folio pages) to be a better
+>> replace for walk_page_range() -- and users will be able to opt in which
+>> type of page table entries they want to process -- but that will require
+>> more work and more thoughts.
+>>
+>> KSM seems to work just fine (ksm_functional_tests selftests) and
+>> move_pages seems to work (migration selftest). I tested the leaf
+>> implementation excessively using various hugetlb sizes (64K, 2M, 32M, 1G)
+>> on arm64 using move_pages and did some more testing on x86-64. Cross
+>> compiled on a bunch of architectures.
+>>
+>> I am not able to test the s390x Secure Execution changes, unfortunately.
+> 
+> The whole series looks good to me, but I do not feel confident enough
+> about all the folio details to actually r-b any of the non-s390
+> patches. (I do have a few questions, though)
+> 
+> As for the s390 patches: they look fine. I have tested the series on
+> s390 and nothing caught fire.
+> 
+> We will be able to get more CI coverage once this lands in -next.
 
-The feature has been tested with cables of various lengths:
-- No cable: 1m till open reported.
-- 5 meter cable: reported properly.
-- 20 meter cable: reported as 19m.
-- 40 meter cable: reported as cable ok.
+Thanks for the review! Note that it's already in -next.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/phy/dp83tg720.c | 188 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 188 insertions(+)
-
-diff --git a/drivers/net/phy/dp83tg720.c b/drivers/net/phy/dp83tg720.c
-index c706429b225a2..4c0982825bbd8 100644
---- a/drivers/net/phy/dp83tg720.c
-+++ b/drivers/net/phy/dp83tg720.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2023 Pengutronix, Oleksij Rempel <kernel@pengutronix.de>
-  */
- #include <linux/bitfield.h>
-+#include <linux/ethtool_netlink.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/phy.h>
-@@ -14,6 +15,17 @@
- #define DP83TG720S_STS_MII_INT			BIT(7)
- #define DP83TG720S_LINK_STATUS			BIT(0)
- 
-+/* TDR Configuration Register (0x1E) */
-+#define DP83TG720S_TDR_CFG			0x1e
-+/* 1b = TDR start, 0b = No TDR */
-+#define DP83TG720S_TDR_START			BIT(15)
-+/* 1b = TDR auto on link down, 0b = Manual TDR start */
-+#define DP83TG720S_CFG_TDR_AUTO_RUN		BIT(14)
-+/* 1b = TDR done, 0b = TDR in progress */
-+#define DP83TG720S_TDR_DONE			BIT(1)
-+/* 1b = TDR fail, 0b = TDR success */
-+#define DP83TG720S_TDR_FAIL			BIT(0)
-+
- #define DP83TG720S_PHY_RESET			0x1f
- #define DP83TG720S_HW_RESET			BIT(15)
- 
-@@ -22,18 +34,192 @@
- /* Power Mode 0 is Normal mode */
- #define DP83TG720S_LPS_CFG3_PWR_MODE_0		BIT(0)
- 
-+/* TDR Fault Status Register (0x030F) */
-+#define DP83TG720S_TDR_FAULT_STATUS		0x30f
-+/* TDR fault distance */
-+#define DP83TG720S_TDR_FAULT_DISTANCE_MASK	GENMASK(13, 8)
-+/* TDR fault type */
-+#define DP83TG720S_TDR_FAULT_TYPE_MASK		GENMASK(7, 4)
-+#define DP83TG720S_TDR_FAULT_TYPE_SHORT		0x3 /* 0011 = Short */
-+#define DP83TG720S_TDR_FAULT_TYPE_OPEN		0x6 /* 0110 = Open */
-+#define DP83TG720S_TDR_FAULT_TYPE_NOISE		0x5 /* 0101 = Noise */
-+#define DP83TG720S_TDR_FAULT_TYPE_OK		0x7 /* 0111 = Cable OK */
-+#define DP83TG720S_TDR_FAULT_TYPE_PROGRESS	0x8 /* 1000 = Test in progress */
-+#define DP83TG720S_TDR_FAULT_TYPE_NP		0xD /* 1101 = Test not possible */
-+/* TDR readiness and state */
-+#define DP83TG720S_TDR_STATE_MASK		GENMASK(1, 0)
-+#define DP83TG720S_TDR_STATE_READY		0x1 /* 01 = TDR ready for activation */
-+#define DP83TG720S_TDR_STATE_ON			0x2 /* 10 = TDR On */
-+
-+/* Register 0x0301: TDR Configuration 2 */
-+#define DP83TG720S_TDR_CFG2			0x301
-+
-+/* Register 0x0303: TDR Configuration 3 */
-+#define DP83TG720S_TDR_CFG3			0x303
-+
-+/* Register 0x0304: TDR Configuration 4 */
-+#define DP83TG720S_TDR_CFG4			0x304
-+
-+/* Register 0x0405: Unknown Register */
-+#define DP83TG720S_UNKNOWN_0405			0x405
-+
-+/* Register 0x0576: TDR Master Link Down Control */
-+#define DP83TG720S_TDR_MASTER_LINK_DOWN		0x576
-+
- #define DP83TG720S_RGMII_DELAY_CTRL		0x602
- /* In RGMII mode, Enable or disable the internal delay for RXD */
- #define DP83TG720S_RGMII_RX_CLK_SEL		BIT(1)
- /* In RGMII mode, Enable or disable the internal delay for TXD */
- #define DP83TG720S_RGMII_TX_CLK_SEL		BIT(0)
- 
-+/* Register 0x083F: Unknown Register */
-+#define DP83TG720S_UNKNOWN_083F			0x83f
-+
- #define DP83TG720S_SQI_REG_1			0x871
- #define DP83TG720S_SQI_OUT_WORST		GENMASK(7, 5)
- #define DP83TG720S_SQI_OUT			GENMASK(3, 1)
- 
- #define DP83TG720_SQI_MAX			7
- 
-+/**
-+ * dp83tg720_get_fault_type - Convert TDR fault type to ethtool result code.
-+ * @fault_type: Fault type value from the PHY.
-+ *
-+ * Returns: Corresponding ethtool result code.
-+ */
-+static int dp83tg720_get_fault_type(int fault_type)
-+{
-+	switch (fault_type) {
-+	case DP83TG720S_TDR_FAULT_TYPE_SHORT:
-+		return ETHTOOL_A_CABLE_RESULT_CODE_SAME_SHORT;
-+	case DP83TG720S_TDR_FAULT_TYPE_OPEN:
-+		return ETHTOOL_A_CABLE_RESULT_CODE_OPEN;
-+	case DP83TG720S_TDR_FAULT_TYPE_NOISE:
-+		return ETHTOOL_A_CABLE_RESULT_CODE_UNSPEC;
-+	case DP83TG720S_TDR_FAULT_TYPE_OK:
-+	default:
-+		return ETHTOOL_A_CABLE_RESULT_CODE_OK;
-+	}
-+}
-+
-+/**
-+ * dp83tg720_cable_test_start - Start the cable test for the DP83TG720 PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ *
-+ * This sequence is based on the documented procedure for the DP83TG720 PHY.
-+ *
-+ * Returns: 0 on success, a negative error code on failure.
-+ */
-+static int dp83tg720_cable_test_start(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	/* Initialize the PHY to run the TDR test as described in the
-+	 * "DP83TG720S-Q1: Configuring for Open Alliance Specification
-+	 * Compliance (Rev. B)" application note.
-+	 * Most of the registers are not documented. Some of register names
-+	 * are guessed by comparing the register offsets with the DP83TD510E.
-+	 */
-+
-+	/* Force master link down */
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2,
-+			       DP83TG720S_TDR_MASTER_LINK_DOWN, 0x0400);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG2,
-+			    0xa008);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG3,
-+			    0x0928);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG4,
-+			    0x0004);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_UNKNOWN_0405,
-+			    0x6400);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_UNKNOWN_083F,
-+			    0x3003);
-+	if (ret)
-+		return ret;
-+
-+	/* Start the TDR */
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG,
-+			       DP83TG720S_TDR_START);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+/**
-+ * dp83tg720_cable_test_get_status - Get the status of the cable test for the
-+ *                                   DP83TG720 PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ * @finished: Pointer to a boolean that indicates whether the test is finished.
-+ *
-+ * The function sets the @finished flag to true if the test is complete.
-+ *
-+ * Returns: 0 on success or a negative error code on failure.
-+ */
-+static int dp83tg720_cable_test_get_status(struct phy_device *phydev,
-+					   bool *finished)
-+{
-+	int ret, stat;
-+
-+	*finished = false;
-+
-+	/* Read the TDR status */
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Check if the TDR test is done */
-+	if (!(ret & DP83TG720S_TDR_DONE))
-+		return 0;
-+
-+	/* Check for TDR test failure */
-+	if (!(ret & DP83TG720S_TDR_FAIL)) {
-+		int fault_type;
-+		int location;
-+
-+		/* Read fault status */
-+		ret = phy_read_mmd(phydev, MDIO_MMD_VEND2,
-+				   DP83TG720S_TDR_FAULT_STATUS);
-+		if (ret < 0)
-+			return ret;
-+
-+		/* Get fault type */
-+		fault_type = FIELD_GET(DP83TG720S_TDR_FAULT_TYPE_MASK, ret);
-+		stat = dp83tg720_get_fault_type(fault_type);
-+
-+		/* Determine fault location */
-+		location = FIELD_GET(DP83TG720S_TDR_FAULT_DISTANCE_MASK,
-+				     ret) * 100;
-+		ethnl_cable_test_fault_length(phydev, ETHTOOL_A_CABLE_PAIR_A,
-+					      location);
-+	} else {
-+		/* Active link partner or other issues */
-+		stat = ETHTOOL_A_CABLE_RESULT_CODE_UNSPEC;
-+	}
-+
-+	*finished = true;
-+
-+	ethnl_cable_test_result(phydev, ETHTOOL_A_CABLE_PAIR_A, stat);
-+
-+	return phy_init_hw(phydev);
-+}
-+
-+
- static int dp83tg720_config_aneg(struct phy_device *phydev)
- {
- 	int ret;
-@@ -201,6 +387,8 @@ static struct phy_driver dp83tg720_driver[] = {
- 	.config_init	= dp83tg720_config_init,
- 	.get_sqi	= dp83tg720_get_sqi,
- 	.get_sqi_max	= dp83tg720_get_sqi_max,
-+	.cable_test_start = dp83tg720_cable_test_start,
-+	.cable_test_get_status = dp83tg720_cable_test_get_status,
- 
- 	.suspend	= genphy_suspend,
- 	.resume		= genphy_resume,
 -- 
-2.39.2
+Cheers,
+
+David / dhildenb
 
 
