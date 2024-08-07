@@ -1,131 +1,191 @@
-Return-Path: <linux-kernel+bounces-278380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C3B94AF7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:17:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A46794AF7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6861C2129C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:17:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DEB31C21120
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680031422D5;
-	Wed,  7 Aug 2024 18:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F8213F43E;
+	Wed,  7 Aug 2024 18:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="vK+s93Bm"
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BFnDfoB7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oCi0/loU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A7F18D648
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650F963CB;
+	Wed,  7 Aug 2024 18:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723054619; cv=none; b=qj9ImZB+YLFRWInM5anGDHp/9Y0O/brZSveRC7a8yb4VL5igiLyfRet0znQxS1I6tip2CZWLHA8WwPDxBl/eBLd2b4uNGTDa0Eo1TqGgqBm/CKD4bAGBbNMfvE0Faxaksi0CvR1yE1cpySGuHyxH+sHpNSeiy1e4eRpNyFOMDY0=
+	t=1723054618; cv=none; b=A/ZoAKcSDyiKKPIfRnRjNYIuWxChHLG3nvLeaeGw98LMnr2yYMDMbrEGE6GPXBmJigxJjQNnpeaEEqRvacfzU4IF6xwWJGtk2JcUxYwCOstlU45qW1MHYCMcS515EADP0+vVtxjEZzIxq1mGj2taae2P30+ahajhLPVA8JbHs4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723054619; c=relaxed/simple;
-	bh=t0UbQCNoIRW1BDPtlmscIk4bNj5SvbNJmJAQ2vzhIc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TDUTTFcJhpU9rPZl3LqyVdomdJs+Na6kps57IM6DF3i3BY9VfmTdbT9Y2sNZ8xg8ZsBWaULuKlxfEEQjT6vIvy3CVHKMwDk8sxwErv9RSv/qRSg9H8dqmNejuMgNh/HyeL/rqRLMRzOxRV/MXftWJIYuMngwZVqpLAcLVjlP0ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=vK+s93Bm; arc=none smtp.client-ip=45.157.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WfJKd1mlCzktY;
-	Wed,  7 Aug 2024 20:16:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1723054613;
-	bh=e4v4cHOXu3daGmidLDolI+XJc3ecJMkNhgA4af0TWPg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vK+s93BmP2oAOoj2R9uGVJ7Br4v+ZNBu36lRhvJPJET0Y85vV2KMDzm/WEfoA9Urc
-	 ZrkUXZlJobyUnFsDFM8Zxc07xn6rO9p1lPqc0RhQtDBet2XsN12CPuGDP9ebGpoxuu
-	 fv+ETOOBKBQraJiyFD8Oc0StWnt68JlhkUcw9wxI=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WfJKb6kN3zr9f;
-	Wed,  7 Aug 2024 20:16:51 +0200 (CEST)
-Date: Wed, 7 Aug 2024 20:16:47 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jann Horn <jannh@google.com>
-Cc: Tahera Fahimi <fahimitahera@gmail.com>, outreachy@lists.linux.dev, 
-	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] Landlock: Add signal control
-Message-ID: <20240807.Yee4al2lahCo@digikod.net>
-References: <cover.1722966592.git.fahimitahera@gmail.com>
- <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
- <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
+	s=arc-20240116; t=1723054618; c=relaxed/simple;
+	bh=fovnZ+mR1PwPdA+bmfn7kZU6EdTCr9GwZubpU50GBSA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=TDUV4aBBW1dA8BPBNOplOb9oD+WEqr0T+aAUC17o2BjAnSG7NvdKPwc55VsbHQIJrdKoMtndmiuyItD99CKUhN7+qDdiFPyX/R96P8VGAgwqs3610HTwhHppzospyqX7QqBFqz1y5KqdTdmdJ2bB/Nk+n4Wm1r4yHoSfL/SUqZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BFnDfoB7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oCi0/loU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 07 Aug 2024 18:16:53 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723054614;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cNLONl1f2zcfsl0InUB3MoJrhRtPKlaRMQA1J9B0LD4=;
+	b=BFnDfoB7NMqV1tlQdm5lR34CKZx4H/KT0CRiEYxleRiOTykEENbPuajDovSe2CEeMPYum8
+	5ankM/uyXCMsU1/FEBwOUIouW4bwjNDgNm36uIOC9VeqACTrDak3dMZ+liq94WP6vkzAmo
+	qMRHqkNyrxRwXAxUI6e3lWKreVg/TXM+QylPdPvxihHk6hEpCtWAJIL/Kz9SBjYz0nWiiY
+	kIgy5PApIvy22ww0LKqQo3pKQQS4HvgMulisi/0MPcjm+pGmoXAeM3WeOfCDynYmZRPOhN
+	bPzNFhgQ/wx0ozeu6iLaE/DI6JgYeaJoeN7tT/TCMEbJRFf64dYVXZOa3qtrBw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723054614;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cNLONl1f2zcfsl0InUB3MoJrhRtPKlaRMQA1J9B0LD4=;
+	b=oCi0/loUDkPuCiILYssPNQSYDXmIjhK8oxVVELIgwWBUxtosJKRiXWI95UW1kX68s+2Fim
+	qG4+ZPJBG6hkCLDA==
+From: "tip-bot2 for Chen Yu" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/paravirt: Fix incorrect virt spinlock setting
+ on bare metal
+Cc: Prem Nath Dey <prem.nath.dey@intel.com>,
+ Xiaoping Zhou <xiaoping.zhou@intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+ Nikolay Borisov <nik.borisov@suse.com>, Chen Yu <yu.c.chen@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240806112207.29792-1-yu.c.chen@intel.com>
+References: <20240806112207.29792-1-yu.c.chen@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Message-ID: <172305461394.2215.8417540090685275248.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 06, 2024 at 11:55:27PM +0200, Jann Horn wrote:
-> On Tue, Aug 6, 2024 at 8:56 PM Jann Horn <jannh@google.com> wrote:
-> > On Tue, Aug 6, 2024 at 8:11 PM Tahera Fahimi <fahimitahera@gmail.com> wrote:
-> > > Currently, a sandbox process is not restricted to send a signal
-> > > (e.g. SIGKILL) to a process outside of the sandbox environment.
-> > > Ability to sending a signal for a sandboxed process should be
-> > > scoped the same way abstract unix sockets are scoped. Therefore,
-> > > we extend "scoped" field in a ruleset with
-> > > "LANDLOCK_SCOPED_SIGNAL" to specify that a ruleset will deny
-> > > sending any signal from within a sandbox process to its
-> > > parent(i.e. any parent sandbox or non-sandboxed procsses).
-> [...]
-> > > +       if (is_scoped)
-> > > +               return 0;
-> > > +
-> > > +       return -EPERM;
-> > > +}
-> > > +
-> > > +static int hook_file_send_sigiotask(struct task_struct *tsk,
-> > > +                                   struct fown_struct *fown, int signum)
+The following commit has been merged into the x86/urgent branch of tip:
 
-I was wondering if we should handle this case, but I guess it makes
-sense to have a consistent policy for all kind of user-triggerable
-signals.
+Commit-ID:     e639222a51196c69c70b49b67098ce2f9919ed08
+Gitweb:        https://git.kernel.org/tip/e639222a51196c69c70b49b67098ce2f9919ed08
+Author:        Chen Yu <yu.c.chen@intel.com>
+AuthorDate:    Tue, 06 Aug 2024 19:22:07 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 07 Aug 2024 20:04:38 +02:00
 
-> > > +{
-> > > +       bool is_scoped;
-> > > +       const struct landlock_ruleset *dom, *target_dom;
-> > > +       struct task_struct *result = get_pid_task(fown->pid, fown->pid_type);
-> >
-> > I'm not an expert on how the fowner stuff works, but I think this will
-> > probably give you "result = NULL" if the file owner PID has already
-> > exited, and then the following landlock_get_task_domain() would
-> > probably crash? But I'm not entirely sure about how this works.
-> >
-> > I think the intended way to use this hook would be to instead use the
-> > "file_set_fowner" hook to record the owning domain (though the setup
-> > for that is going to be kind of a pain...), see the Smack and SELinux
-> > definitions of that hook. Or alternatively maybe it would be even
-> > nicer to change the fown_struct to record a cred* instead of a uid and
-> > euid and then use the domain from those credentials for this hook...
-> > I'm not sure which of those would be easier.
-> 
-> (For what it's worth, I think the first option would probably be
-> easier to implement and ship for now, since you can basically copy
-> what Smack and SELinux are already doing in their implementations of
-> these hooks. I think the second option would theoretically result in
-> nicer code, but it might require a bit more work, and you'd have to
-> include the maintainers of the file locking code in the review of such
-> refactoring and have them approve those changes. So if you want to get
-> this patchset into the kernel quickly, the first option might be
-> better for now?)
-> 
+x86/paravirt: Fix incorrect virt spinlock setting on bare metal
 
-I agree, let's extend landlock_file_security with a new "fown" pointer
-to a Landlock domain. We'll need to call landlock_get_ruleset() in
-hook_file_send_sigiotask(), and landlock_put_ruleset() in a new
-hook_file_free_security().
+The kernel can change spinlock behavior when running as a guest. But this
+guest-friendly behavior causes performance problems on bare metal.
 
-I would be nice to to replace the redundant informations in fown_struct
-but that can wait.
+The kernel uses a static key to switch between the two modes.
+
+In theory, the static key is enabled by default (run in guest mode) and
+should be disabled for bare metal (and in some guests that want native
+behavior or paravirt spinlock).
+
+A performance drop is reported when running encode/decode workload and
+BenchSEE cache sub-workload.
+
+Bisect points to commit ce0a1b608bfc ("x86/paravirt: Silence unused
+native_pv_lock_init() function warning"). When CONFIG_PARAVIRT_SPINLOCKS is
+disabled the virt_spin_lock_key is incorrectly set to true on bare
+metal. The qspinlock degenerates to test-and-set spinlock, which decreases
+the performance on bare metal.
+
+Set the default value of virt_spin_lock_key to false. If booting in a VM,
+enable this key. Later during the VM initialization, if other
+high-efficient spinlock is preferred (e.g. paravirt-spinlock), or the user
+wants the native qspinlock (via nopvspin boot commandline), the
+virt_spin_lock_key is disabled accordingly.
+
+This results in the following decision matrix:
+
+X86_FEATURE_HYPERVISOR         Y    Y       Y     N
+CONFIG_PARAVIRT_SPINLOCKS      Y    Y       N     Y/N
+PV spinlock                    Y    N       N     Y/N
+
+virt_spin_lock_key             N    Y/N     Y     N
+
+Fixes: ce0a1b608bfc ("x86/paravirt: Silence unused native_pv_lock_init() function warning")
+Reported-by: Prem Nath Dey <prem.nath.dey@intel.com>
+Reported-by: Xiaoping Zhou <xiaoping.zhou@intel.com>
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+Suggested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Suggested-by: Nikolay Borisov <nik.borisov@suse.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/20240806112207.29792-1-yu.c.chen@intel.com
+---
+ arch/x86/include/asm/qspinlock.h | 12 +++++++-----
+ arch/x86/kernel/paravirt.c       |  7 +++----
+ 2 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
+index a053c12..68da67d 100644
+--- a/arch/x86/include/asm/qspinlock.h
++++ b/arch/x86/include/asm/qspinlock.h
+@@ -66,13 +66,15 @@ static inline bool vcpu_is_preempted(long cpu)
+ 
+ #ifdef CONFIG_PARAVIRT
+ /*
+- * virt_spin_lock_key - enables (by default) the virt_spin_lock() hijack.
++ * virt_spin_lock_key - disables by default the virt_spin_lock() hijack.
+  *
+- * Native (and PV wanting native due to vCPU pinning) should disable this key.
+- * It is done in this backwards fashion to only have a single direction change,
+- * which removes ordering between native_pv_spin_init() and HV setup.
++ * Native (and PV wanting native due to vCPU pinning) should keep this key
++ * disabled. Native does not touch the key.
++ *
++ * When in a guest then native_pv_lock_init() enables the key first and
++ * KVM/XEN might conditionally disable it later in the boot process again.
+  */
+-DECLARE_STATIC_KEY_TRUE(virt_spin_lock_key);
++DECLARE_STATIC_KEY_FALSE(virt_spin_lock_key);
+ 
+ /*
+  * Shortcut for the queued_spin_lock_slowpath() function that allows
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index 5358d43..fec3815 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -51,13 +51,12 @@ DEFINE_ASM_FUNC(pv_native_irq_enable, "sti", .noinstr.text);
+ DEFINE_ASM_FUNC(pv_native_read_cr2, "mov %cr2, %rax", .noinstr.text);
+ #endif
+ 
+-DEFINE_STATIC_KEY_TRUE(virt_spin_lock_key);
++DEFINE_STATIC_KEY_FALSE(virt_spin_lock_key);
+ 
+ void __init native_pv_lock_init(void)
+ {
+-	if (IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS) &&
+-	    !boot_cpu_has(X86_FEATURE_HYPERVISOR))
+-		static_branch_disable(&virt_spin_lock_key);
++	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
++		static_branch_enable(&virt_spin_lock_key);
+ }
+ 
+ static void native_tlb_remove_table(struct mmu_gather *tlb, void *table)
 
