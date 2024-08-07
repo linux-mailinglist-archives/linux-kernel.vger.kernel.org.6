@@ -1,138 +1,175 @@
-Return-Path: <linux-kernel+bounces-277713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E08994A52D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:11:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB1FD94A517
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12943B232D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:11:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A401C21033
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038A71803A;
-	Wed,  7 Aug 2024 10:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78981D3633;
+	Wed,  7 Aug 2024 10:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E0eyPeDv"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGwv+vRz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033013A267;
-	Wed,  7 Aug 2024 10:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05251D1F73;
+	Wed,  7 Aug 2024 10:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723025503; cv=none; b=blqTRfJV+bKZsM/hRBkbQTm7LNRT+w41KSdK6ntXE4sOpcLBqs2SV3VPw/tv5ets7Hk6fR9P+cORaTP6cZBnvhFFTGSqH2QF9AwFfxkfXn/S+vniPXzxkNe8hW32RODnAkH5iOEZxwMWCPprmuDhsjkhNYcrq+0ys5Wa651QAxw=
+	t=1723025296; cv=none; b=VAC0geUZsNeZ8GMH1H9cx8xkujfvZfSa6l0VgAiMxaqMbMZcjFHVy5hNXI5Qw5HFCMwbpfOYRavs+vMfHwM6tB/j38KOVdbiZ6ifegDh1XOGddJXvKjt0/6Kj5UUYbYG4l7MPeuR4ezfhP/21KNkS9u0c+dHgCex4rwReIiOmvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723025503; c=relaxed/simple;
-	bh=veUbiv8qCal4E3RokmCcyjVyL8LTrG+dgLC5DGzo4VA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iQ79RSQrjyfBtBHKabXoy+nxlnecKIJCUzdhuwNRGp4/dNuyiKdVUQw+NzZK01KhxpoTIoSXxVBLQtvr84VKORNtqBfkqDqzc6XdLklS5sb96EsfNLwmnrOr5LLzhI7nbbhHsns6q5uVyIW1nWtIqotSPqX/XscKyF+y4SxNwd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E0eyPeDv; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7a18ba4143bso1136650a12.2;
-        Wed, 07 Aug 2024 03:11:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723025501; x=1723630301; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=s0dwJOC2ZWNngEJesupegftfLNs6Uf6v6IZl3J0jAqg=;
-        b=E0eyPeDv8YwXP8lFVe4nmgzHzRNlMub9Z4KXvL1y5feRM90YSH8PkGrDylfTyzER/V
-         etlFL8Q5oxRWY4k8ZYD/9jGtft0TSgz9FG1gkqpWbXMDQo/5ZoO8Ovmw4SzCbRK0nXB6
-         qn3qrS6v9aLUsqNsEBrlQbgoMZPRrmLnCIkf6f1efj+83FYDiNlMG6WqH52v4tAwHObJ
-         T1jJnrK4nd1xuoPcOD+JSZRt6ghDUWwIue/wM/4iqnfDXcWBJ/PVYvpFLivJvPfF4xrb
-         WjQxrE41JQcHg9kUCCJzICa4MPdEMShZgrwEZQgxVYFZuokRSHtGFIxNY9d2u6P96EPJ
-         O9qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723025501; x=1723630301;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s0dwJOC2ZWNngEJesupegftfLNs6Uf6v6IZl3J0jAqg=;
-        b=D/nr/qFztdkzI0EJV9vGvudUR0mkaimthvqbA5VOIW0WpfWhMYSxgCPuYh/noVSLmB
-         7b484EauiJtxAzuoL3B7PpC+3yaZK6//Pz6OR3q7BtLOCjJPh2pzkbF+enn/y3nJcyOM
-         iOBnAxHt6QX1WItc/2CKszg7zA+FsHAV0NQ3sjO+XeiMDcNSAI8I87IA5MFz3yIOSHZ8
-         oXaR2xcOpf+GWxwW6HP6LsLZTL7cOwgTfVqc7HPygUtkAaJ/Aq4bUeprzjIfgYErHl/F
-         RldaDGN27SF32h+L51NRxA/Hfki4IbKAvtOh96wy/bpKTAKS/9pvQmINYG4basX8d5It
-         VgfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjc4lfjsiu24VI5n4ov9AeXWbfzjAe039fp5AMgCthOpOOc1knCUyWypbPF6F5Pbbzo4Qb6N0N3JsbSdCd+8clTli60+AkxkANpKaJ
-X-Gm-Message-State: AOJu0Yw9Rq0gK/kOEMSXivLOOWnbF1ZWGfyRvVcE5LUQWKkvu0rREfSY
-	R7Uke41dAcL/i5cXtUYhKjPZfnfvYFrgJiOw7773R0mwRWNZrM3FnMWXm4rJQBE=
-X-Google-Smtp-Source: AGHT+IEGUFhUEV3Rj5VIDIAC+w7BtmGng4ZDZ+GC+6FOtAVZQXJdnt7pCzK280DlwW6gCAZDp8cXKQ==
-X-Received: by 2002:a17:90a:8a12:b0:2c9:e24d:bbaa with SMTP id 98e67ed59e1d1-2cff9526da4mr18320765a91.27.1723025501174;
-        Wed, 07 Aug 2024 03:11:41 -0700 (PDT)
-Received: from localhost.localdomain ([218.150.196.174])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b3b34c1bsm1141175a91.39.2024.08.07.03.11.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 03:11:40 -0700 (PDT)
-From: Moon Yeounsu <yyyynoom@gmail.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Moon Yeounsu <yyyynoom@gmail.com>
-Subject: [PATCH v3] net: ethernet: use ip_hdrlen() instead of bit shift
-Date: Wed,  7 Aug 2024 19:07:21 +0900
-Message-ID: <20240807100721.101498-1-yyyynoom@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1723025296; c=relaxed/simple;
+	bh=pbz9/mWikLj58LPIdHZGqQeOO3Hv+c3Hn1bmQqtGTqE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=n/M3HFW6h9pFEvgDBhoRiAMLZ1GBRGTUPwr4gFKnW92NnigUCf9/WPv05jtazXY/nfZfkIXB2e9u3s+zsBEQG1DIBYAsJ7XEHYXLRVhC+qBUhDCOOwniMOgMaFT90XUzTgKy1nWCem//qDZxPXHYdjZtKywynMV28TLyAlV3uOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGwv+vRz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41E3CC32782;
+	Wed,  7 Aug 2024 10:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723025295;
+	bh=pbz9/mWikLj58LPIdHZGqQeOO3Hv+c3Hn1bmQqtGTqE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JGwv+vRzTcQ/uEot7V4X4z1XWtWOrbl9g9l//D1Nyh/AxgOt7LhAFiqLL8DBuyrsC
+	 3INwE3Wn0kxGybNgy0/e2C8aF3fIld4pSPt4R1ZY1RybxNcL2I7BM8rJH5S68rBZtV
+	 E2Z0S8T55WUSOGxp+cHmdbMgeMWdNDwP/CAOc/wkbo1OhSKAH88I1y0mpdE9drrqRg
+	 zjUehHRCWdVufCGZVz1vJJbcqbrlR71U6AJy/DIXT6WhN/EGF90M3LZlaj/iFSllSV
+	 Dh45g7qpHLyXl1lt9aMTz5eYBnzTAclzE+xpZLZRDZt7VoMBbZ4YOijy6J5i8FpFM1
+	 KW1eQv3GTbAtQ==
+Date: Wed, 7 Aug 2024 19:08:09 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Song Liu <songliubraving@meta.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Song Liu <song@kernel.org>,
+ "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
+ <linux-trace-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>, Petr
+ Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, Nathan
+ Chancellor <nathan@kernel.org>, "morbo@google.com" <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Luis Chamberlain
+ <mcgrof@kernel.org>, Leizhen <thunder.leizhen@huawei.com>,
+ "kees@kernel.org" <kees@kernel.org>, Kernel Team <kernel-team@meta.com>,
+ Matthew Maurer <mmaurer@google.com>, Sami Tolvanen
+ <samitolvanen@google.com>
+Subject: Re: [PATCH v2 3/3] tracing/kprobes: Use APIs that matches symbols
+ without .XXX suffix
+Message-Id: <20240807190809.cd316e7f813400a209aae72a@kernel.org>
+In-Reply-To: <BEEE3F89-717B-44A4-8571-68DA69408DA4@fb.com>
+References: <20240802210836.2210140-1-song@kernel.org>
+	<20240802210836.2210140-4-song@kernel.org>
+	<20240806144426.00ed349f@gandalf.local.home>
+	<B53E6C7F-7FC4-4B4B-9F06-8D7F37B8E0EB@fb.com>
+	<20240806160049.617500de@gandalf.local.home>
+	<20240806160149.48606a0b@gandalf.local.home>
+	<6F6AC75C-89F9-45C3-98FF-07AD73C38078@fb.com>
+	<20240807090146.88b38c2fbd1cd8db683be22c@kernel.org>
+	<BEEE3F89-717B-44A4-8571-68DA69408DA4@fb.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-`ip_hdr(skb)->ihl << 2` is the same as `ip_hdrlen(skb)`
-Therefore, we should use a well-defined function not a bit shift
-to find the header length.
+On Wed, 7 Aug 2024 00:19:20 +0000
+Song Liu <songliubraving@meta.com> wrote:
 
-It also compresses two lines to a single line.
+> 
+> 
+> > On Aug 6, 2024, at 5:01 PM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > 
+> > On Tue, 6 Aug 2024 20:12:55 +0000
+> > Song Liu <songliubraving@meta.com> wrote:
+> > 
+> >> 
+> >> 
+> >>> On Aug 6, 2024, at 1:01 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >>> 
+> >>> On Tue, 6 Aug 2024 16:00:49 -0400
+> >>> Steven Rostedt <rostedt@goodmis.org> wrote:
+> >>> 
+> >>>>>>> + if (IS_ENABLED(CONFIG_LTO_CLANG) && !addr)
+> >>>>>>> + addr = kallsyms_lookup_name_without_suffix(trace_kprobe_symbol(tk));
+> >>>>>>> +    
+> >>>>>> 
+> >>>>>> So you do the lookup twice if this is enabled?
+> >>>>>> 
+> >>>>>> Why not just use "kallsyms_lookup_name_without_suffix()" the entire time,
+> >>>>>> and it should work just the same as "kallsyms_lookup_name()" if it's not
+> >>>>>> needed?    
+> >>>>> 
+> >>>>> We still want to give priority to full match. For example, we have:
+> >>>>> 
+> >>>>> [root@~]# grep c_next /proc/kallsyms
+> >>>>> ffffffff81419dc0 t c_next.llvm.7567888411731313343
+> >>>>> ffffffff81680600 t c_next
+> >>>>> ffffffff81854380 t c_next.llvm.14337844803752139461
+> >>>>> 
+> >>>>> If the goal is to explicitly trace c_next.llvm.7567888411731313343, the
+> >>>>> user can provide the full name. If we always match _without_suffix, all
+> >>>>> of the 3 will match to the first one. 
+> >>>>> 
+> >>>>> Does this make sense?  
+> >>>> 
+> >>>> Yes. Sorry, I missed the "&& !addr)" after the "IS_ENABLED()", which looked
+> >>>> like you did the command twice.
+> >>> 
+> >>> But that said, does this only have to be for llvm? Or should we do this for
+> >>> even gcc? As I believe gcc can give strange symbols too.
+> >> 
+> >> I think most of the issue comes with LTO, as LTO promotes local static
+> >> functions to global functions. IIUC, we don't have GCC built, LTO enabled
+> >> kernel yet.
+> >> 
+> >> In my GCC built, we have suffixes like ".constprop.0", ".part.0", ".isra.0", 
+> >> and ".isra.0.cold". We didn't do anything about these before this set. So I 
+> >> think we are OK not handling them now. We sure can enable it for GCC built
+> >> kernel in the future.
+> > 
+> > Hmm, I think it should be handled as it is. This means it should do as
+> > livepatch does. Since I expected user will check kallsyms if gets error,
+> > we should keep this as it is. (if a symbol has suffix, it should accept
+> > symbol with suffix, or user will get confused because they can not find
+> > which symbol is kprobed.)
+> > 
+> > Sorry about the conclusion (so I NAK this), but this is a good discussion. 
+> 
+> Do you mean we do not want patch 3/3, but would like to keep 1/3 and part 
+> of 2/3 (remove the _without_suffix APIs)? If this is the case, we are 
+> undoing the change by Sami in [1], and thus may break some tracing tools. 
 
-Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
----
-v1: use ip_hdrlen() instead of bit shift
-Reference: https://lore.kernel.org/all/20240802054421.5428-1-yyyynoom@gmail.com/
+What tracing tools may be broke and why?
 
-v2: remove unnecessary parentheses
-- Remove extra () [Christophe Jaillet, Simon Horman]
-- Break long lines [Simon Horman]
-Reference: https://lore.kernel.org/all/20240803022949.28229-1-yyyynoom@gmail.com/
+For this suffix problem, I would like to add another patch to allow probing on
+suffixed symbols. (It seems suffixed symbols are not available at this point)
 
-v3: create a standalone patch
-- Start with a new thread
-- Include the change logs,
-- Create a standalone patch [Christophe Jaillet]
+The problem is that the suffixed symbols maybe a "part" of the original function,
+thus user has to carefully use it.
 
- drivers/net/ethernet/jme.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> Sami, could you please share your thoughts on this? 
 
-diff --git a/drivers/net/ethernet/jme.c b/drivers/net/ethernet/jme.c
-index b06e24562973..d8be0e4dcb07 100644
---- a/drivers/net/ethernet/jme.c
-+++ b/drivers/net/ethernet/jme.c
-@@ -946,15 +946,13 @@ jme_udpsum(struct sk_buff *skb)
- 	if (skb->protocol != htons(ETH_P_IP))
- 		return csum;
- 	skb_set_network_header(skb, ETH_HLEN);
--	if ((ip_hdr(skb)->protocol != IPPROTO_UDP) ||
--	    (skb->len < (ETH_HLEN +
--			(ip_hdr(skb)->ihl << 2) +
--			sizeof(struct udphdr)))) {
-+
-+	if (ip_hdr(skb)->protocol != IPPROTO_UDP ||
-+	    skb->len < (ETH_HLEN + ip_hdrlen(skb) + sizeof(struct udphdr))) {
- 		skb_reset_network_header(skb);
- 		return csum;
- 	}
--	skb_set_transport_header(skb,
--			ETH_HLEN + (ip_hdr(skb)->ihl << 2));
-+	skb_set_transport_header(skb, ETH_HLEN + ip_hdrlen(skb));
- 	csum = udp_hdr(skb)->check;
- 	skb_reset_transport_header(skb);
- 	skb_reset_network_header(skb);
+Sami, I would like to know what problem you have on kprobes.
+
+Thank you,
+
+> 
+> If this works, I will send next version with 1/3 and part of 2/3. 
+> 
+> Thanks,
+> Song
+> 
+> [1] https://lore.kernel.org/all/20210408182843.1754385-8-samitolvanen@google.com/
+> 
+
+
 -- 
-2.45.2
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
