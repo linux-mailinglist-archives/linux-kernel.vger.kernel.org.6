@@ -1,145 +1,192 @@
-Return-Path: <linux-kernel+bounces-278702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5AE94B3D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:44:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96E3C94B3D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F361C20DBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:44:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22A791F249EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F57315665C;
-	Wed,  7 Aug 2024 23:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E282B15687C;
+	Wed,  7 Aug 2024 23:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bxHDZ1PF"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="upK82fJx"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0615D155C83
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 23:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611DB146596
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 23:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723074252; cv=none; b=amESxdoLQvY1Kc//3Sz7NSu0QPnSSjy/UqvJl5xiV8iBVi85xlM4berNGHtrgZzAtncMX187zHCe7LDncVVnSMhPFRIBHP/NkVZoDiK6vEohX7yPqHmCD5sxmdvUiEeNBgzYF0fuF3lhbyDtnwIMSv789qDdf7/zyeE5wVjuSVY=
+	t=1723074340; cv=none; b=D24I8bMw0k3XnwTCUIhG7h8QCpuGqZD6cyq5fM+Sw9Lrbf1M3pNhgWCDo4hVYDMQgE8Hyw4qnsGBDYvd3OUX3G2QZ+tfPeV/fJZLYNOQsAM2l60qd+7pCtQh4d7y5NVknQNWkmp0B1VvFSEkpLHEhEZGk6zfZIzR8jYHf3LWJEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723074252; c=relaxed/simple;
-	bh=qDQiKEv6k9UML3kamA1nH5tNqN81EHmMEWsFVFxtecI=;
+	s=arc-20240116; t=1723074340; c=relaxed/simple;
+	bh=zaOh2SrN78k13gIAB523hKMDCQwuksmMWM6kmyL4JCE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LoTrid5ig4xtsTYafQR3rgav0Mlo8tXZn9P47WBUGGe4Bfe+E0BPH1p7Q28HQJxPNE6qbHI0B/jdsyCYTA3Mw7WIBvtw330MX9y/lywpnFMivjxqFyr3v9nnUtb4wineBgBr07Ag7oSybcQkOXg9fyk46I/TnwWQnCTuibei9Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bxHDZ1PF; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfef5980a69so405770276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 16:44:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=r6LVpn6qg7vgKMpMz0MdfCtBSZ2u9QQrg0eMTrj4aMcLNWn1OF4J+6KVupWzt9370e+IE2LhfJV+H0fWJogBmxO5UtI9cXFyaKN0JTWveWp7HJiPsp60TgVTYtSIhhvz3lqaOJEmMdrqCbnTEj5XatxpqfrevXWLooTnE00DwPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=upK82fJx; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4281d812d3eso4294075e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 16:45:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723074250; x=1723679050; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1723074337; x=1723679137; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3dX9h7u30CCZYgKeYGhflIbAKtLicQOaB5Q+NrRVtTA=;
-        b=bxHDZ1PFApFGr8g5xcakA1kcqZ3e93oPwpgcXQFluQ41jf29IDrhdB9nD5UVcK4sCD
-         I474DG5yoEy9YbRRPHpw103Ou6SR4BLJ86Flp85ryYQR8O/qd/Q2nOO0rUcBPsrT3oix
-         Hr9Lflz44BZm7Z7zI5Wgr60tkyvtIx2c4EBoSxKit92ieddSHJMkKyebaEMGtfOoPefZ
-         M9dk9hVSwqgAfJ66eez56sLggO+6Me5juSy4SJ03w2vgyQc3quWBoDs8Fb31PV81Wtsm
-         dgkEpt3N6e55UdnwcWWtDqzsTjB0hHoY9Qu/XainbK3QaMdXpRMQV9X57T/z8QopGmR8
-         QyPw==
+        bh=zaOh2SrN78k13gIAB523hKMDCQwuksmMWM6kmyL4JCE=;
+        b=upK82fJx3fOM49m0lroBGccsssYkfAuK3nkq4Pe4Rjo+LwOMpGQROxuhVzR4FIs7p4
+         Bcp3CmojFkxh4/2/2jeUUziD2z4IxIt90SXPVkT6ZqIF6+rYQ8b0i/zLy3z2vgbVsb4g
+         xHM+fMLOnLOxy7XoCJ+d5wqNeb+MkGSijwai8BovIhOI+0lCUBXcVunIBtjWP3YK7yQi
+         WqO8T4m/beh8Un54qnRXWfLRK3TMS2Kn04OV/UYbPVdJyttphglR5gQo2TrZGBJCaXc1
+         ivvET1JqcgkAT8T7FGQ4VmiAwGyFAhvnYciNpnVkyiBGCZEIZdhuMvvFKVtYRPcDdpin
+         qANQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723074250; x=1723679050;
+        d=1e100.net; s=20230601; t=1723074337; x=1723679137;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3dX9h7u30CCZYgKeYGhflIbAKtLicQOaB5Q+NrRVtTA=;
-        b=tjLfwP4uR9cPlTDeB9E4sp+BVSvo2SCMxWVDmGvrJxG1z/C4ND8rRNpw/TDfypnQC5
-         6Xmh3WOyJxV2iwv+i0rA4MnBA6rJ+deh5YWeNIkUuWpYLtaPpu4S3D6I+QJwIg8Im9d7
-         Hij6mR3F2sFr19p9VTAslZYbREZfTmWNsOsI8+xngfnmCskhLglCU0bddVs2wk9so0ZZ
-         nJhz2BhBnt0goqozChrRttBa1UAUqhFKTB6cHPb8uB3UoDMlIWAHPS+u+NpOzWKSQK46
-         SqdX8nbH8rhtPXPAJfZu8M66+p0LsuUFAE5DXHGM9eXljP6vJVITqWydYkXt4z5reZBK
-         1/hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXT2+0whOp85DQDWTaYvOFtVh4QAm5McuqcvLlbSTmn/HZo7WwFri/8fiyw9EDttN/Dk3EKoU30RKBWeys7jJhiT+pWk45mt+xj/34G
-X-Gm-Message-State: AOJu0Yy/+DLSYON2Meukfo/gtjcU3uRh+aYbH5SyEkIjrDF0PqaSBfx7
-	r8CAfjPJabPn1meXioOT8Hv/NS7AIdzIZG+4XI8ISubPDgwd9qhef4GrMFy3Buyt3tGMfzIALPx
-	y/RtONNFR4QIcb6yYSqQNpxpb5T80Pgo1hZ2+
-X-Google-Smtp-Source: AGHT+IEHjqPNJl4NBLXpmlk8UH1R7GzDMR74vtPfZk/5xC8XSotD1uI2NHd2yLQyMszK3pEoXURs00deXIOJmJ8ZyXM=
-X-Received: by 2002:a05:6902:240f:b0:e0e:499f:3d88 with SMTP id
- 3f1490d57ef6-e0e9db13681mr250205276.26.1723074249935; Wed, 07 Aug 2024
- 16:44:09 -0700 (PDT)
+        bh=zaOh2SrN78k13gIAB523hKMDCQwuksmMWM6kmyL4JCE=;
+        b=IhlkDZI4tvcb/88WAHN7dnS/QUUn1eZrczJprN5sIfKPKOy2ymX+CwAPoRcsq2pggh
+         d3z3ckLVa8iIVtbdtEGMmf04Vtbqm90FE1QShWFPjqaNLC+Ps6hFrU8kbBX7oUhwhv4X
+         MwthANu/2/PudyY6jl/T5ltB6KUu5f/YhFe06lNYRIYaJkTNX4tl4G5XSMONNb/QjAtE
+         Xdj+Or0fvjTuNDKSFJt4l3mJkZTJx9pFBT3Ma4dGHg1sUTUKJF+ilpPUXq8wtPlyvFm0
+         4XZGNFSgergk0ikGnhAzoIdttnOBOh/3Q+reD68GJPGe0mH4tYlwPPjHadiOStp3UQGz
+         0R2w==
+X-Gm-Message-State: AOJu0YxA15v/pzPlJqQvfs5pBL1HE1So94CXmAoxilxwCJs03NNcJ8Mz
+	4qER/hbvpMRwGczQK+v8EgT57tOSidj6PX7Rz+R806dS+BnKXOcUjdgyr1zgnX9fp/z3zn5jLhT
+	5hgZ9w6oVKX6R6IzkN23Xkxop51C7CHbt4WDE
+X-Google-Smtp-Source: AGHT+IEMy5+rvA8Xz5XXMZ4V8cfK+CB3M8rXAjQ//+EAwYb7kYKY/NsJjZngCQzHzQMhpt1v7lVc4+xra3gtXcLRy7U=
+X-Received: by 2002:adf:f842:0:b0:366:f04d:676f with SMTP id
+ ffacd0b85a97d-36d274dc2e5mr83350f8f.12.1723074336434; Wed, 07 Aug 2024
+ 16:45:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801171747.3155893-1-kpsingh@kernel.org> <CAHC9VhRO-weTJPGcrkgntFLG3RPRCUvHh9m+uduDN+q4hzyhGg@mail.gmail.com>
- <CACYkzJ6486mzW97LF+QrHhM9-pZt0QPWFH+oCrTmubGkJVvGhw@mail.gmail.com>
- <20240806022002.GA1570554@thelio-3990X> <CAHC9VhTZPsgO=h-zutQ9_LuaAVKZDdE2SwECHt01QSkgB_qexQ@mail.gmail.com>
- <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com> <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
-In-Reply-To: <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 7 Aug 2024 19:43:59 -0400
-Message-ID: <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: KP Singh <kpsingh@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
-	peterz@infradead.org, Guenter Roeck <linux@roeck-us.net>
+References: <20240805093245.889357-1-jgowans@amazon.com>
+In-Reply-To: <20240805093245.889357-1-jgowans@amazon.com>
+From: David Matlack <dmatlack@google.com>
+Date: Wed, 7 Aug 2024 16:45:07 -0700
+Message-ID: <CALzav=ddnKykNSH1WVM5i74MFHSj7BO+bZWkfQpRO0fc0g8_mQ@mail.gmail.com>
+Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
+To: James Gowans <jgowans@amazon.com>
+Cc: linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Steve Sistare <steven.sistare@oracle.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Anthony Yznaga <anthony.yznaga@oracle.com>, Mike Rapoport <rppt@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-fsdevel@vger.kernel.org, 
+	Usama Arif <usama.arif@bytedance.com>, kvm@vger.kernel.org, 
+	Alexander Graf <graf@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>, 
+	Paul Durrant <pdurrant@amazon.co.uk>, Nicolas Saenz Julienne <nsaenz@amazon.es>, 
+	James Houghton <jthoughton@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 7, 2024 at 6:45=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote:
-> On Wed, Aug 7, 2024 at 10:45=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Tue, Aug 6, 2024 at 5:41=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> > > On Mon, Aug 5, 2024 at 10:20=E2=80=AFPM Nathan Chancellor <nathan@ker=
-nel.org> wrote:
-> >
-> > ...
-> >
-> > > > For what it's worth, I have not noticed any issues in my -next test=
-ing
-> > > > with this patch applied but I only build architectures that build w=
-ith
-> > > > LLVM due to the nature of my work. If exposure to more architecture=
-s is
-> > > > desirable, perhaps Guenter Roeck would not mind testing it with his
-> > > > matrix?
-> > >
-> > > Thanks Nathan.
-> > >
-> > > I think the additional testing would be great, KP can you please work
-> > > with Guenter to set this up?
-> >
->
-> Adding Guenter directly to this thread.
->
-> > Is that something you can do KP?  I'm asking because I'm looking at
-> > merging some other patches into lsm/dev and I need to make a decision
-> > about the static call patches (hold off on merging the other patches
-> > until the static call testing is complete, or yank the static call
-> > patches until testing is complete and then re-merge).  Understanding
-> > your ability to do the additional testing, and a rough idea of how
->
-> I have done the best of the testing I could do here. I think we should
-> let this run its normal course and see if this breaks anything. I am
-> not sure how testing is done before patches are merged and what else
-> you expect me to do?
+Hi James,
 
-That is why I was asking you to get in touch with Guenter to try and
-sort out what needs to be done to test this across different
-architectures.
+On Mon, Aug 5, 2024 at 2:33=E2=80=AFAM James Gowans <jgowans@amazon.com> wr=
+ote:
+>
+> In this patch series a new in-memory filesystem designed specifically
+> for live update is implemented. Live update is a mechanism to support
+> updating a hypervisor in a way that has limited impact to running
+> virtual machines. This is done by pausing/serialising running VMs,
+> kexec-ing into a new kernel, starting new VMM processes and then
+> deserialising/resuming the VMs so that they continue running from where
+> they were. To support this, guest memory needs to be preserved.
 
-With all due respect, this patchset has a history of not being as
-tested as well as I would like; we had the compilation warning on gcc
-and then the linux-next breakage.  The gcc problem wasn't a major
-problem (although it was disappointing, especially considering the
-context around it), but I consider the linux-next breakage fairly
-serious and would like to have some assurance beyond your "it's okay,
-trust me" this time around.  If there really is no way to practically
-test this patchset across multiple arches prior to throwing it into
-linux-next, so be it, but I want to see at least some effort towards
-trying to make that happen.
+How do you envision VM state (or other userspace state) being
+preserved? I guess it could just be regular files on this filesystem
+but I wonder if that would become inefficient if the files are
+(eventually) backed with PUD-sized allocations.
 
---=20
-paul-moore.com
+>
+> Guestmemfs implements preservation acrosss kexec by carving out a large
+> contiguous block of host system RAM early in boot which is then used as
+> the data for the guestmemfs files. As well as preserving that large
+> block of data memory across kexec, the filesystem metadata is preserved
+> via the Kexec Hand Over (KHO) framework (still under review):
+> https://lore.kernel.org/all/20240117144704.602-1-graf@amazon.com/
+>
+> Filesystem metadata is structured to make preservation across kexec
+> easy: inodes are one large contiguous array, and each inode has a
+> "mappings" block which defines which block from the filesystem data
+> memory corresponds to which offset in the file.
+>
+> There are additional constraints/requirements which guestmemfs aims to
+> meet:
+>
+> 1. Secret hiding: all filesystem data is removed from the kernel direct
+> map so immune from speculative access. read()/write() are not supported;
+> the only way to get at the data is via mmap.
+>
+> 2. Struct page overhead elimination: the memory is not managed by the
+> buddy allocator and hence has no struct pages.
+
+I'm curious if there any downsides of eliminating struct pages? e.g.
+Certain operations/features in the kernel relevant for running VMs
+that do not work?
+
+>
+> 3. PMD and PUD level allocations for TLB performance: guestmemfs
+> allocates PMD-sized pages to back files which improves TLB perf (caveat
+> below!). PUD size allocations are a next step.
+>
+> 4. Device assignment: being able to use guestmemfs memory for
+> VFIO/iommufd mappings, and allow those mappings to survive and continue
+> to be used across kexec.
+>
+>
+> Next steps
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> The idea is that this patch series implements a minimal filesystem to
+> provide the foundations for in-memory persistent across kexec files.
+> One this foundation is in place it will be extended:
+>
+> 1. Improve the filesystem to be more comprehensive - currently it's just
+> functional enough to demonstrate the main objective of reserved memory
+> and persistence via KHO.
+>
+> 2. Build support for iommufd IOAS and HWPT persistence, and integrate
+> that with guestmemfs. The idea is that if VMs have DMA devices assigned
+> to them, DMA should continue running across kexec. A future patch series
+> will add support for this in iommufd and connect iommufd to guestmemfs
+> so that guestmemfs files can remain mapped into the IOMMU during kexec.
+>
+> 3. Support a guest_memfd interface to files so that they can be used for
+> confidential computing without needing to mmap into userspace.
+>
+> 3. Gigantic PUD level mappings for even better TLB perf.
+>
+> Caveats
+> =3D=3D=3D=3D=3D=3D=3D
+>
+> There are a issues with the current implementation which should be
+> solved either in this patch series or soon in follow-on work:
+>
+> 1. Although PMD-size allocations are done, PTE-level page tables are
+> still created. This is because guestmemfs uses remap_pfn_range() to set
+> up userspace pgtables. Currently remap_pfn_range() only creates
+> PTE-level mappings. I suggest enhancing remap_pfn_range() to support
+> creating higher level mappings where possible, by adding pmd_special
+> and pud_special flags.
+
+This might actually be beneficial.
+
+Creating PTEs for userspace mappings would make it for UserfaultFD to
+intercept at PAGE_SIZE granularity. A big pain point for Google with
+using HugeTLB is the inability to use UsefaultFD to intercept at
+PAGE_SIZE for the post-copy phase of VM Live Migration.
+
+As long as the memory is physically contiguous it should be possible
+for KVM to still map it into the guest with PMD or PUD mappings.
+KVM/arm64 already even has support for that for VM_PFNMAP VMAs.
 
