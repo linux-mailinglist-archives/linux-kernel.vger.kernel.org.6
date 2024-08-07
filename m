@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-278670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7588E94B358
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:02:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F9394B35C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1E8AB21660
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:02:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 263712842DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E673A15534D;
-	Wed,  7 Aug 2024 23:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EC4155352;
+	Wed,  7 Aug 2024 23:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="KvAdU5j7"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Hfl7BBb6"
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A201509A5
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 23:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9B213B59E
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 23:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723071749; cv=none; b=oDpmBeeQmyrVjqSq75iFdmuXHRaAQaTvS+AfJcaaXEDApzzJoACjxnX5vH/gNauXTZvBb1JHmXvddf0GAZkt/C5K2uc7TwzZCbA/A9w3hJxyhu9BAh7OBl9NxgnXGnE91oMshMcb2Uzljk22Vl14Els+VMsRWSU4FNTQ8I+ixPo=
+	t=1723071840; cv=none; b=BmaXPZGYfeUY9Cr6Cn2DbBtfu/BcuEDmifjZhHfscDIqPlgUMfn324GnXIE3NFSFOBdQCumoKXVbJq6QMP2bsJRj8sog5eoDU9OLzVvzN0CV/ZkMDM2jYUY3v6eF1d5GZxo3awBajH4rO/7/8e7okX5N1PFf2qG9ikoTOUMrx+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723071749; c=relaxed/simple;
-	bh=bGfGmIvN4LgjGe/YihMCaOOIeQ3b3YsYqHBmKo0OQm0=;
+	s=arc-20240116; t=1723071840; c=relaxed/simple;
+	bh=UdSQmDx8maSr+/eYEdptnJ9imLOTTvkh3g1mrwFhLZQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OohWszeLSRD42U4Bh68nHwSQN5CRWk3bqnZFmQDbwnEUf8kwBLMLHpu5TcTF8vXovEK5a+m1IrTfRoB2fUFNIc8NRQRFeTCNcTyohoBM121aJN0C+IvDR4DcquGl1KqBMrt7SCTuWOnNUd5CGFYJPUnKUrbpASIJgudBK3zEsD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=KvAdU5j7; arc=none smtp.client-ip=198.137.202.136
+	 In-Reply-To:Content-Type; b=L+wgxYA0FqGRakRRZweN4yTBxtlZmn9RdIVk1qR55sfbPnSefw8+qth0/Uxxt1rWl2AXQs6HeLH1dJx/RfQRMlQmGrhyIEZW0SPTnIbuD4kldSXZYatHjffUd7SPENRIzScTgqM7qJt2GBnOV57+8Fa7p/vrKnYB4kn4uQ9YSHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Hfl7BBb6; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Received: from [192.168.7.205] ([71.202.166.45])
 	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 477N1sSZ1030790
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 477N3V1Q1031105
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 7 Aug 2024 16:01:55 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 477N1sSZ1030790
+	Wed, 7 Aug 2024 16:03:32 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 477N3V1Q1031105
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024071601; t=1723071716;
-	bh=/RpYSgkgK1pZSxoPPSXOAaB1SyMlWH6qpsd1Hx1cWnI=;
+	s=2024071601; t=1723071813;
+	bh=EX6d1CiGu8if9kgJgq4kQXdqNMUEdF5RhzLk+09IciE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KvAdU5j7vA7qGMEReHzs03trqR8zYf9h7NLdwGYBd3GEZLRBQT/MKf6dUmPHNXLh8
-	 5MQfKlhCYmAadz1Q7KLzFqteMVHClv7Z7O+2Vghkw1b+0eYXmKGfpdj+lOYsFHtC/5
-	 YaOn9qOD52FFQhO+wulJBoE+K63WNGcWcQ4JS2OwPyk3LpfMxVI83kpuydC5twZt1L
-	 MWqc27UxrHFXsdhHCMjTdD+yPduL2jnqTmMylyH6gQNffUE9JvDbLhRcdoXnlQwzva
-	 k6fINZGVMiijV0TRDUDQ7RTRqzPbYP3FgxUOe+8EAam1hYO6e7J55WEABKOD1/yV60
-	 f3BUsL2HQQa3w==
-Message-ID: <0f2ac93d-5fb5-471d-9244-75f98a8fec45@zytor.com>
-Date: Wed, 7 Aug 2024 16:01:54 -0700
+	b=Hfl7BBb6Uxvl/o0R0UiCWULuzOY2fc8yj290z/Trj5tWWRCrIbawgkNZES2RqrYqu
+	 bfSNUGVHSMccqIZ2Vj+/3UvOS6d65uzJZPLUEB48xIKssytOAsAuc9Nv+RQgO5nWmd
+	 2Y9I89WCcEEIsjeT7gnyfH7WGBvI1fbyCjqKJ5zdPdw95qBYE9WOn1UIg76oYGAVno
+	 o112RWUupJTRV6hCy/QZi3jGo0sDNIfRFWUVh+Vy0AMuhIb2DWXLc281w9pQrhPSBw
+	 rwmEF36Av2n+AeufhMreOYgcZpRX4nb4VIThzX8tDqdEc9JEc0e6uDRC46rXL3EPhs
+	 sdNEQp1sxwKew==
+Message-ID: <f3b75c38-169f-43a2-bced-d9d6153b8d55@zytor.com>
+Date: Wed, 7 Aug 2024 16:03:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,12 +57,14 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v1 1/3] x86/entry: Test ti_work for zero before processing
  individual bits
-To: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Cc: mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, peterz@infradead.org,
-        andrew.cooper3@citrix.com, seanjc@google.com
+To: Brian Gerst <brgerst@gmail.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+        hpa@zytor.com, peterz@infradead.org, andrew.cooper3@citrix.com,
+        seanjc@google.com
 References: <20240807054722.682375-1-xin@zytor.com>
- <20240807054722.682375-2-xin@zytor.com> <874j7w2oju.ffs@tglx>
+ <20240807054722.682375-2-xin@zytor.com>
+ <CAMzpN2iS076ysZ37gjrz6MGWc62sD9uw0ODTJtzOO1U4kp309A@mail.gmail.com>
 Content-Language: en-US
 From: Xin Li <xin@zytor.com>
 Autocrypt: addr=xin@zytor.com; keydata=
@@ -99,17 +101,14 @@ Autocrypt: addr=xin@zytor.com; keydata=
  PYbAkjBbm+tuJ/Sm+5Yp5T/BnKz21FoCS8uvTiziHj2H7Cuekn6F8EYhegONm+RVg3vikOpn
  gao85i4HwQTK9/D1wgJIQkdwWXVMZ6q/OALaBp82vQ2U9sjTyFXgDjglgh00VRAHP7u1Rcu4
  l75w1xInsg==
-In-Reply-To: <874j7w2oju.ffs@tglx>
+In-Reply-To: <CAMzpN2iS076ysZ37gjrz6MGWc62sD9uw0ODTJtzOO1U4kp309A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/7/2024 11:08 AM, Thomas Gleixner wrote:
->> -	fpregs_assert_state_consistent();
-> Please keep this unconditional and independent of ti_work. It's a debug
-> feature and you kill coverage with making it conditional on ti_work.
+On 8/7/2024 9:21 AM, Brian Gerst wrote:
+>> +               fpregs_assert_state_consistent();
+> This call was originally unconditional, and does nothing if
+> TIF_NEED_FPU_LOAD is set.
 
-Sigh, I'm an idiot.
-
-Thanks!
-     Xin
+lost my mind! Thanks!
 
