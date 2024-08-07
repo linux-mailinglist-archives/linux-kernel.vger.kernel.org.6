@@ -1,72 +1,219 @@
-Return-Path: <linux-kernel+bounces-278232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D8494ADAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:08:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D997F94ADB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 054AF1C211F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:08:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62ADE1F2164D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5109113D51B;
-	Wed,  7 Aug 2024 16:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8538132121;
+	Wed,  7 Aug 2024 16:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sUrqXRYl"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EaZPsiRF"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2067.outbound.protection.outlook.com [40.107.237.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5E013A868
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723046815; cv=none; b=CzirU09/kmpjSPJ2MGkZ5qUBEccqB0ax/MTX2d8KVKZVQU+GTcYho9pBKtm60y9H9zH1qRCJD1Vi3sOuHQIlBMVPLnj+hgJUNQ8SGPGaxAtz7dGfAx77CBRnoBfKJlZA/xhxUGVBucwf6IzrkAZGwq8N1/cNpRu8yKTUIOKBUkE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723046815; c=relaxed/simple;
-	bh=Ox8dAYeKznv8tFNqpz7vNpNAB4UpgPt9H2/s9qBhm/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kuanqKx1Vaz422Z/Gbb8NLfzJQ2JjfoLXFt5cQcdfGFhKTluVQDSbe/9xLVO7jMqSb5AB61/G9Wt9fdgiCNkqUx4fo1rWBrxH3RuRRo3IwrNXCN4v1wO55kq4H858W7w0nx3CDx7R8mqOP05elKiVYXZ8N34QSlQggHQJXla8Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sUrqXRYl; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 7 Aug 2024 12:06:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723046811;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LF5jjwkwqJB7FolX23lAfKKpsUXDA65/uxW4dbAo5pA=;
-	b=sUrqXRYlveEoOCMnqMx9KJ4CdAg5HWr6M5gePcsejsvw3LpuoWVH4gju0HklT6VJ80KqGd
-	WvLcftemUsqNbKbzqs9QUYfrxd8aIn8YsiOxrSJYrb4SoD2z13hBitNB4ZEIkepK0DPCMg
-	dc6pdLYVh7HO2vUmVNg15jZcM0tCxjE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Xiaxi Shen <shenxiaxi26@gmail.com>, corbet@lwn.net, 
-	javier.carrasco.cruz@gmail.com, "open list:BCACHEFS" <linux-bcachefs@vger.kernel.org>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Fix a spelling error in a doc of bcachefs
-Message-ID: <bdws7d7askhlctcwfgwieml56dr4vqjuvi7bavwkldjdcuzk3u@cbneggmx2w2b>
-References: <20240807071005.16329-1-shenxiaxi26@gmail.com>
- <2dfa76a7-eeae-4b05-bfcd-684ae7ade963@linuxfoundation.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A54C12C473
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723046884; cv=fail; b=GUIQtlPmQ2RyzY85zFzsRCd4DWyLzegcHAAwxHZIZvQQ3nV9Nmov+NedtJ9jo58Sh0ZVZvyJwEDyG+qpUjlGh0hDIHuN6PiY7g3/gy8l0kn5ZDox0kUYferM+5xWrFAE+fUY6vWWdJr4RBkK+wWs2NnjYJKCgyV6P/L2ifYg4LM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723046884; c=relaxed/simple;
+	bh=PxrhL3ph9ho8LiCxlj9ok75tjlGAtNpP15r71xGl+SM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=K1x7vq67gJCgybbJ7vbrijs74tpALVvioMgyiDXBWMQItTrngPCVPcaG7n11a1dR9BgbdfN7/XS6nIK+Q9qRIJUE7/VbAECeGTywnMofMTD2mRQ0OgWFBHdr8ZhsI1IPineALvHUhDlEBNA+Sx41DiHWR73O0Zt5XT4KHRW1F8A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EaZPsiRF; arc=fail smtp.client-ip=40.107.237.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CHEO7ydXHJIW3j8fwkyylBxnit6r72rYxV9mAh2TQ7Du8BkHYe2rjYfuiY2YfHg1yEFM9zfX5aO1HRwN/oQ+umv3hIb3quKDQkOR6Nrgjf21UJ1C54qKElJxVOCVVM4Ue3tO8RLgawo3NAMDS6Sxqn6kO8UbDflZivN/ymOz9HGjDlJO+69Muh+bDGctxxBfCq1qKMtEoMb5EeHSBj3uBUniOxItB6VcefQLEGapq1j5CX0jfjodmWwjossizIh1vNhQVM6VFZ0wvUMIywIapJDFYsC368q352r3YrrLQ09FTLGYtQ5zGpxQoUobe4CtFLt6x9Wu2KWgfVXVAF/5Nw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cPVvIaU6lqkOMFkIhQExTNmaOaL50UXPYSr/BeCga8E=;
+ b=TAStNyp0cbpgkvJvkAAzBWk3hIpPSfCao63p+P0JC3WcMUmbsReaCjOa9YKT1NufTdJPsIS2qCqYiDDzk+8xa2q6UBS+WaxAt89PKIFyE/5FkBB4FK/OPGK/AtKyv3XHa42PJ8i0epWqsZW1dV/7StWnP5EbrqS5atPzO5eJyOx8QUjcp//RH6YamSR3Md//zZT1624EH23+SNYNhANNcYzXuGqJwqaoS5rrJAs4Jhd7QJbALerZJ7I5z/RDK4mRqmfDEcaTcyWn9P58TFlHE5UgAIpi/wR3nXVfiPWdZ2DLsrS4eRyuKQNUo0701lQjvOAPwknoBWPE3maUq6qYUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=web.de smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cPVvIaU6lqkOMFkIhQExTNmaOaL50UXPYSr/BeCga8E=;
+ b=EaZPsiRFAcfBbfYhTIU8+8sbSpgm/NGtvoANBITGROpZvztb+MJZPeJvJlKwIdpvqH4j8wWMJP/V56GE+tWHfwbK6F4jHc1Rm6qLkp3hIvmEL8wpkeEwQuWWBC21xQj+njegncBGhYFNKz0jhOTpufle5IpUaTgvLwCNltgbyHs=
+Received: from CH2PR05CA0047.namprd05.prod.outlook.com (2603:10b6:610:38::24)
+ by BY5PR12MB4050.namprd12.prod.outlook.com (2603:10b6:a03:207::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Wed, 7 Aug
+ 2024 16:07:59 +0000
+Received: from DS3PEPF000099D8.namprd04.prod.outlook.com
+ (2603:10b6:610:38:cafe::ef) by CH2PR05CA0047.outlook.office365.com
+ (2603:10b6:610:38::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.11 via Frontend
+ Transport; Wed, 7 Aug 2024 16:07:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS3PEPF000099D8.mail.protection.outlook.com (10.167.17.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Wed, 7 Aug 2024 16:07:58 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 7 Aug
+ 2024 11:07:52 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 7 Aug
+ 2024 11:07:52 -0500
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 7 Aug 2024 11:07:51 -0500
+Message-ID: <fc3fcd69-8d6e-4758-4e0b-16a52b764680@amd.com>
+Date: Wed, 7 Aug 2024 09:07:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2dfa76a7-eeae-4b05-bfcd-684ae7ade963@linuxfoundation.org>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V2 01/10] accel/amdxdna: Add a new driver for AMD AI
+ Engine
+Content-Language: en-US
+To: Markus Elfring <Markus.Elfring@web.de>, <dri-devel@lists.freedesktop.org>,
+	Oded Gabbay <ogabbay@kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>, George Yang <George.Yang@amd.com>,
+	<king.tam@amd.com>, Max Zhen <max.zhen@amd.com>, Min Ma <min.ma@amd.com>,
+	Narendra Gutta <VenkataNarendraKumar.Gutta@amd.com>, Sonal Santan
+	<sonal.santan@amd.com>
+References: <20240805173959.3181199-2-lizhi.hou@amd.com>
+ <d7b4ea8a-74c5-40db-bf11-f8345f570ef5@web.de>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <d7b4ea8a-74c5-40db-bf11-f8345f570ef5@web.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099D8:EE_|BY5PR12MB4050:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9a72ef82-6918-4b73-7256-08dcb6fb1b47
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UVE5bnpLekllZjlTL1hzVnlZUVo3N1JxcE9mUVNCYVhVMHNRVnZBUHdHbFEr?=
+ =?utf-8?B?L3AzdnB4NUZON3QrM3RhT3M4M3F6Z1U5VGh6NWtUN0NRRkIxYXV1b3lvNzVr?=
+ =?utf-8?B?eWlWcWZ4T3hnVDVDQUF2U3pCTWtnc0lRQ2R2MDF1M2R5WGpvQ2NhaHVMMnVj?=
+ =?utf-8?B?TnpORGlpblkwaVpDS1daMVZXQjlrQUJVcWJLWDE2MEtWeDM0MThxSmQ2SnRa?=
+ =?utf-8?B?RlpnRjZXVkZoRTlhbGdmQmIvb2M3czE5WGk0d1hlOU1EekFTb3R4dEVhbDFh?=
+ =?utf-8?B?RTdYcVdScmtTUEhkY250cVJwa2VmYVhxWEIyTGYxR21uOFZaVkVGTDRaR1dT?=
+ =?utf-8?B?Z0p5T3NyM2dqYURlT0ZsMHl5d054L2ZKYjBBN1VIV3kvMkZ4NUd1RlNRdjVy?=
+ =?utf-8?B?NW8vVXdQb3lDWGtsdXEvU3dUeVpyZmczWFJXeXJqcS8zcWdkd2lxS2oveG43?=
+ =?utf-8?B?Vm1ZRHFxMlZyR200dk9FVEZ6TmtRZ0pJa1V2dkU2Z3ZBWjdDV3hqdmN1bVBL?=
+ =?utf-8?B?amhKSHlZTTRZdDRaWFpmTFREd3hWaGdRajl6bzN1SStFRU5ENHRBNEIxclhq?=
+ =?utf-8?B?VTVodFpGMWo3aVdHb2pOUnRscHdJZTdybE40V2xCVU1yMVBrMk9pWW4xYnIy?=
+ =?utf-8?B?aU9VTUNOZXBEdjRCREdiTnVnSVJTWSs5QWxvVzc0QVpCdzBxQ0c3dEdEeWZC?=
+ =?utf-8?B?a0dkUUlnSzRKUFYyMHRJWEwrR3BMUnFXbUpoZHArVWJJL2orSUlBS0ZETndZ?=
+ =?utf-8?B?dzZ1UWlzNWtRNXVYVHRxQVczblJDRzlBTEpLdTEySFFHNWU4R2hVT1lNTkZ5?=
+ =?utf-8?B?cVlMNXd4VVZ2YVRqMldEQlRlZHNlNnFBeXFPV3ZEdURmKzFud1FzM09LRU0w?=
+ =?utf-8?B?UVpJZjlWM0k4b3ZPbFM4a0VXYkhMditHaTZ1dFp5Z0Z4Rk5TN0hHQ1lCUlQ3?=
+ =?utf-8?B?SW1XZkdMK1RiWEhJbHlxK05JZ1RxbmhsbWFXZ1gyWHVEV2ZoOVg2UC8wR21m?=
+ =?utf-8?B?a3UrMTdyWWZLYmdDcm1ubjZWR2ZsSkh2N3FnQmlzQWJDcWlncFgyODBnQ2VZ?=
+ =?utf-8?B?QnlFVEQweDhSSitaQ0NqblZ1VTVSZCtUeHpVb3Q4Z1cyRzZvczI4UkZVM2dY?=
+ =?utf-8?B?SytsdUZwN3lqaHB1czd2TThUd0RHbW9uZ2JvQ3k3TGhmMGFaOTZWRGYxcWg5?=
+ =?utf-8?B?bC9FSjR1bXNrTy9mUHJDeVlZek9lVTJrR1cyRUw0WHc0a3Q5ajNZVG8vTDlm?=
+ =?utf-8?B?TTk5V1ZsMENXa085b1Q4bks3aFBSQUFFeFA2ZythVUd4SUd1WU5VSG9vdGVS?=
+ =?utf-8?B?cmp1UTJpL2NjK3IyTS94TFRSWE9aVXNWaFVPWk1UMHZTdHBjMnNjakZJY2dq?=
+ =?utf-8?B?NWFvejYwMEhFdTdUdERCSVEwVGN4ZGNmWFNLVjI0NDNpaEl5cGVYU3JobE5E?=
+ =?utf-8?B?TUVKQmMwdDlmLy9VbVV1NXRaWTB2MUpkZi9EN2JlQnNmUnFHSzB3bUxNSGJw?=
+ =?utf-8?B?REJVUGsraitGeXhKRDdENktFODExYzladFdGTW1tSHJsWG03MGJDVUtXamZj?=
+ =?utf-8?B?TFgwalFEMFRXVGQ2dnByYmxnNiswMWZIekJDT1d5OEJFekUzUGxwK2cvQVBP?=
+ =?utf-8?B?Rk5nWWxBMWVpRHc4alU5SHJKNk1hMmFtTTlqVnp1YzhTVUxBeFQ5WkVXZGVD?=
+ =?utf-8?B?MHh3MEptL1RITjRnNU5TSUJ4bHNqUXFwTXUvQjBSRzZ5RmYwRFlQVGVUSFBE?=
+ =?utf-8?B?NEREYVAwTWtlOWNaQ3BWWHZZaXNQY25aS1NEdGE5ZXBIRy9BSUV5KzNGcWxs?=
+ =?utf-8?B?dklXenZoTFk4Z1JBcFhvMVlwMm1UbVZrMWdNaGNZVHRBSzhUTUNobG1rWVBv?=
+ =?utf-8?B?RXQrcithL21GWW1BbHNMcDVsQmdPQjRuVitGcXdCRGhHcVE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 16:07:58.9544
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a72ef82-6918-4b73-7256-08dcb6fb1b47
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099D8.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4050
 
-On Wed, Aug 07, 2024 at 09:42:12AM GMT, Shuah Khan wrote:
-> On 8/7/24 01:10, Xiaxi Shen wrote:
-> 
-> Missing commit message --
 
-I wasn't going to commit this, because I don't like taking patches that
-do nothing more than fix spelling, but since it in fact does not need a
-commit message for something so trivial I am applying it.
+On 8/7/24 04:06, Markus Elfring wrote:
+> If you temporarily find the circumstances too challenging for applications
+> of scope-based resource management, I suggest to use the following statements instead
+> (so that a bit of redundant code can be avoided).
+>
+>
+>
+> …
+>> +++ b/drivers/accel/amdxdna/aie2_pci.c
+>> @@ -0,0 +1,182 @@
+> …
+>> +static int aie2_init(struct amdxdna_dev *xdna)
+>> +{
+> …
+>> +	release_firmware(fw);
+>> +	return 0;
+> 	ret = 0;
+> 	goto release_fw;
+
+I believe compiler will do the optimization. And I prefer current code 
+which only error branch jumps to the corresponding cleanup.
+
+
+Thanks,
+
+Lizhi
+
+>
+> …
+>> +release_fw:
+>> +	release_firmware(fw);
+>> +
+>> +	return ret;
+>> +}
+> …
+>
+>
+> Otherwise (in case further collateral evolution will become more desirable):
+> …
+>> +static int aie2_init(struct amdxdna_dev *xdna)
+>> +{
+> …
+>> +	const struct firmware *fw;
+> I propose to take another software design option better into account.
+>
+> * You may reduce the scope of such a local variable.
+>
+> * How do you think about to use the attribute “__free(firmware)”?
+>    https://elixir.bootlin.com/linux/v6.11-rc2/source/include/linux/firmware.h#L214
+>
+> …
+>> +	ret = request_firmware(&fw, ndev->priv->fw_path, &pdev->dev);
+> …
+>
+>
+> Regards,
+> Markus
 
