@@ -1,121 +1,145 @@
-Return-Path: <linux-kernel+bounces-277779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F7C94A656
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:54:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59EA794A65D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D459F2860CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:54:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1589E281A25
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415BB1E3CA4;
-	Wed,  7 Aug 2024 10:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A1A1E2109;
+	Wed,  7 Aug 2024 10:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="dF3RJzUL"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ULDjLgRm"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D491E2874
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AD515B57D;
+	Wed,  7 Aug 2024 10:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723027957; cv=none; b=T05IKwUmOXprzJKf/Qev7jq+DV9gsHp/owQz/kYou//BJT+GaL453nRfZvolurTJN/AY6NZyV4IOmMeVbKMeZjUW03H0kn86n1T4z6UMZbhkUdTq5Jl4cHaM9jACsmF8NGpP+7uks2Je7ePDQF5l0+i0cpCRssknhjkKJOF7oDA=
+	t=1723028085; cv=none; b=CXKZnjn7tFllAVg405YfNEFQpiJ/CTZ3K++zX/SU8ZZdfzt3tF2NpMB3F+m818s5Gnn4Ae3fbrnVVnzyNuUQ5drXeE/NDRRl0agFubXqBuZDK/zwpNRnnM/MejdLgfXbAyX14VI1jMaRbk/OCEoAbBg/JzuHX6XPIuimWcAZ5IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723027957; c=relaxed/simple;
-	bh=ELCNY+rxDsgDHW/+80Up8lrF6MCpVdjED27XLaBDzH4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pF/itPV8CU1fETFJccKa90oBNFz/09c7EKbXicdhpve+x7NgEMqc3V4BLrR35uMs87ycfuutf/JPTir7u/KYrhPYdc7ygx8Nx5B+cOemvahkKNfgVWJ8d/HwFQPCuXV5RKCj4U4TMJGahEJqYAxiQeFF/kZ2Alu7KKQVYcX7XRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=dF3RJzUL; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2cb510cd097so1356314a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 03:52:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1723027955; x=1723632755; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rwt3lSi6Z4A8hazmpA+Rnhfblb1do8j78yHI+U6dKhk=;
-        b=dF3RJzULJS2Goew1JEFG/yvDfwLU4RVMn9cAvzUl+u1jHLa9MxOx/P/WEi8IJdLjDJ
-         kLqKp+ZKRlc/AckV9Uk1rppEGJVNxVs5V8kpQjxVGiXTM4PgdQkfcnZBU9KwiVxAWNqK
-         d4kEvMbnFVZ4bZMg2aLORAVeQwUDBuOAE6EnA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723027955; x=1723632755;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rwt3lSi6Z4A8hazmpA+Rnhfblb1do8j78yHI+U6dKhk=;
-        b=Se8yj+hoBQC2D7AxSgJRmwIqZi87sKuE7vEOAtqo3EjP9sgfhr7k8+wAva8kqX/ZGN
-         dYjMyhkEPI2NcRSiOFgxZ0Q8zp+lrHalp/lf0RO5KIKNXAZjn73kBSHC6ktEy6vgIrtk
-         /6V8JV3Ygnl8Vwv/w8HoO5IFwtS370lYdTJBTqDeKZ265GqnHI2QzlVDqnfbcleMmn9B
-         UKMlH2N5Jpvg9cuZ0pNfk0MMbO5Gf7+SpwMlCJqiAu0GBhCG6bn1GbHO0EZMt4fudPZ4
-         RT/tXjIW0g2Zch2rZM11YF8gsLuYC+uTkTeDnPye7aUhS5bZBTbF7w3FNICUccnKFePc
-         4Qow==
-X-Gm-Message-State: AOJu0Yz07C3ewDD0dFQ8/lHx9Fh20JIpfdDxvBB3LTzZdP6RR3jlOxss
-	4HpZOZVUIQsqyIP6MuoVNd+KtvNNtVHbhTvjBlhj751kKLEhTRc+xh5cdNlh36FC4TLnMWB8PcT
-	lbMK+UVnkX05s52q05ZLe5X7yueugnmixClPu6A5ifDufF2a1qxnZuqnpobvtrZklGhcAGYW7ke
-	L4mVLpwFLrU38y84ctDHZzre+hs8d0PY4N5GuRbsczUbqJhA==
-X-Google-Smtp-Source: AGHT+IHQHmxsKg8noU+VS7nStysBMV3Pv8KiIJj6AJXy8lsYF2lj11qRXOGJgJLKkMCqvSt9X0bocw==
-X-Received: by 2002:a17:90b:1b0a:b0:2cb:e429:f525 with SMTP id 98e67ed59e1d1-2cff9524435mr21812519a91.33.1723027954846;
-        Wed, 07 Aug 2024 03:52:34 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b3a9cba6sm1241481a91.12.2024.08.07.03.52.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 03:52:34 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: sdf@google.com,
-	edumazet@google.com,
-	kuba@kernel.org,
-	mkarsten@uwaterloo.ca,
-	Joe Damato <jdamato@fastly.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH net-next] eventpoll: Don't re-zero eventpoll fields
-Date: Wed,  7 Aug 2024 10:52:31 +0000
-Message-Id: <20240807105231.179158-1-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1723028085; c=relaxed/simple;
+	bh=M0aJMIl1tKX6mdJ2CgRErtb3XgMV71w2eZ8MP2LQRoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=maOcbSrHeL0xBc84kOI8MPKtp+4RPXaFE7ig0qvvr05+r057wUw6lbet8Vt/GgHfBXS1uEx9Du+gVatD8lXLlb2kIVh7PT167LoQIsiEhbiiukkXYK4BbwCoOuzDgugQdFYRDotR9jlRyP/9KzrVB604mCfxgAQOYtfRHQaLykM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ULDjLgRm; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A59242EC;
+	Wed,  7 Aug 2024 12:53:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1723028028;
+	bh=M0aJMIl1tKX6mdJ2CgRErtb3XgMV71w2eZ8MP2LQRoY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ULDjLgRmJJFbLwcwFrRD7xwTygjJAlh6xUlTNiIgPqblfjmp2iV0ykeFjNLhRRo7S
+	 5jVC733XifjLE4II+3p+FG3iz8bXBCgeZGwJG99Z5L8SJEfXWZlahMgbnSQ1tHC/Ih
+	 qQexxA5j0aQF1QvBvZEqyZFCrPxgE+v4KINwcNc4=
+Date: Wed, 7 Aug 2024 13:54:18 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Haibo Chen <haibo.chen@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+	Frank Li <Frank.li@nxp.com>
+Subject: Re: [PATCH v7 0/4] ADP5585 GPIO expander, PWM and keypad controller
+ support
+Message-ID: <20240807105418.GA8562@pendragon.ideasonboard.com>
+References: <20240722121100.2855-1-laurent.pinchart@ideasonboard.com>
+ <20240725161616.GJ501857@google.com>
+ <20240801131044.GF6756@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240801131044.GF6756@google.com>
 
-Remove redundant and unnecessary code.
+Hi Lee,
 
-ep_alloc uses kzalloc to create struct eventpoll, so there is no need to
-set fields to defaults of 0. This was accidentally introduced in commit
-85455c795c07 ("eventpoll: support busy poll per epoll instance") and
-expanded on in follow-up commits.
+On Thu, Aug 01, 2024 at 02:10:44PM +0100, Lee Jones wrote:
+> On Thu, 25 Jul 2024, Lee Jones wrote:
+> > On Mon, 22 Jul 2024, Laurent Pinchart wrote:
+> > 
+> > > Hello,
+> > > 
+> > > This patch series introduces support for the Analog Devices ADP5585, a
+> > > GPIO expander, PWM and keyboard controller. It models the chip as an MFD
+> > > device, and includes DT bindings (1/4), an MFD driver (2/4) and drivers
+> > > for the GPIO (3/4) and PWM (4/4) functions.
+> > > 
+> > > Support for the keypad controller is left out, as I have no means to
+> > > test it at the moment. The chip also includes a tiny reset controller,
+> > > as well as a 3-bit input programmable logic block, which I haven't tried
+> > > to support (and also have no means to test).
+> > > 
+> > > The driver is based on an initial version from the NXP BSP kernel, then
+> > > extensively and nearly completely rewritten, with added DT bindings. I
+> > > have nonetheless retained original authorship. Clark, Haibo, if you
+> > > would prefer not being credited and/or listed as authors, please let me
+> > > know.
+> > > 
+> > > Compared to v6, this version addresses small review comments. I believe
+> > > it is ready to go, as the PWM and GPIO drivers have been acked by the
+> > > respective subsystem maintainers, and I have addressed Lee's comments on
+> > > the MFD side. Lee, if there's no more issue, could you apply this to
+> > > your tree for v6.12 ?
+> > > 
+> > > Clark Wang (1):
+> > >   pwm: adp5585: Add Analog Devices ADP5585 support
+> > > 
+> > > Haibo Chen (2):
+> > >   mfd: adp5585: Add Analog Devices ADP5585 core support
+> > >   gpio: adp5585: Add Analog Devices ADP5585 support
+> > > 
+> > > Laurent Pinchart (1):
+> > >   dt-bindings: mfd: Add Analog Devices ADP5585
+> > > 
+> > >  .../devicetree/bindings/mfd/adi,adp5585.yaml  |  92 +++++++
+> > >  .../devicetree/bindings/trivial-devices.yaml  |   4 -
+> > >  MAINTAINERS                                   |  11 +
+> > >  drivers/gpio/Kconfig                          |   7 +
+> > >  drivers/gpio/Makefile                         |   1 +
+> > >  drivers/gpio/gpio-adp5585.c                   | 229 ++++++++++++++++++
+> > >  drivers/mfd/Kconfig                           |  12 +
+> > >  drivers/mfd/Makefile                          |   1 +
+> > >  drivers/mfd/adp5585.c                         | 205 ++++++++++++++++
+> > >  drivers/pwm/Kconfig                           |   7 +
+> > >  drivers/pwm/Makefile                          |   1 +
+> > >  drivers/pwm/pwm-adp5585.c                     | 184 ++++++++++++++
+> > >  include/linux/mfd/adp5585.h                   | 126 ++++++++++
+> > >  13 files changed, 876 insertions(+), 4 deletions(-)
+> > >  create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+> > >  create mode 100644 drivers/gpio/gpio-adp5585.c
+> > >  create mode 100644 drivers/mfd/adp5585.c
+> > >  create mode 100644 drivers/pwm/pwm-adp5585.c
+> > >  create mode 100644 include/linux/mfd/adp5585.h
+> > 
+> > Note to self: This looks good to go.  Merge after -rc1 is released.
+> 
+> Submitted for build testing.
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
-Reviewed-by: Martin Karsten <mkarsten@uwaterloo.ca>
----
- fs/eventpoll.c | 5 -----
- 1 file changed, 5 deletions(-)
+Are those tests public ? Will the series eventually be merged in
+https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/ ?
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index f53ca4f7fced..6c0a1e9715ea 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -2200,11 +2200,6 @@ static int do_epoll_create(int flags)
- 		error = PTR_ERR(file);
- 		goto out_free_fd;
- 	}
--#ifdef CONFIG_NET_RX_BUSY_POLL
--	ep->busy_poll_usecs = 0;
--	ep->busy_poll_budget = 0;
--	ep->prefer_busy_poll = false;
--#endif
- 	ep->file = file;
- 	fd_install(fd, file);
- 	return fd;
+> Note to self: ib-mfd-gpio-pwm-6.12
+
 -- 
-2.25.1
+Regards,
 
+Laurent Pinchart
 
