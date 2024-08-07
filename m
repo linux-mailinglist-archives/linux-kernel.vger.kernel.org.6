@@ -1,102 +1,184 @@
-Return-Path: <linux-kernel+bounces-278174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD3294AD05
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:36:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A17994AD09
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD0DC280CD5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:36:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB79B1F23320
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CF112C491;
-	Wed,  7 Aug 2024 15:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABDD112C7FD;
+	Wed,  7 Aug 2024 15:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iYRh1umq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N/3co653"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71BD12C470;
-	Wed,  7 Aug 2024 15:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321F683A09
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723044979; cv=none; b=pKJIQdyw0oX7pu5P/QbkMWnfRTA5I93spveEVSaPHfHuOE5jldYzGFUF0P/oYvwDPiYHvkBjnvLKKw8sBIVXzUtTppUWnYW2svnX5P4UFnnkSHSQyDnLSzGrwQ/lTzaw/A27uB/+g8SXq9jXTysQtcKEvmCYEC5CrkiXtQUihbM=
+	t=1723045031; cv=none; b=b1WhphWQrG0zJd20wjQJzkVq2orYdWR7eGXBHweFH3QNRn+c6NTZ9tg1n/U5cIt1Ml5JFVuJj6tOHk4YQW9v5Y1Sh8TCilYmXGxMhZR8vRiehFhGFkafc2JulKCkTto59duSCOvt1jMLkQ+ptZ61xUL4idgYKyFGbYWzGGU/moA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723044979; c=relaxed/simple;
-	bh=9QVLeQCW/J7CQH54rEo+rJ9Qssi3FxB6Q8eSeTt7hjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sL2GeTKTTcHKphBDLanuHd1wlZTkLMlzORNrGWPTi4Jyy1pncWUiFfbpn587QUnmUmIVynDWhCG0nBEHargM+4ot6sv4CQLFyZpSi3hkOrY+QzwR10m7Xna5Qgew+Plk5y5Xcwi5BK+1H+ZdX9630L1BbwqKTf1XG9HVD6dO8BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iYRh1umq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A3EAC32781;
-	Wed,  7 Aug 2024 15:36:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723044978;
-	bh=9QVLeQCW/J7CQH54rEo+rJ9Qssi3FxB6Q8eSeTt7hjU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iYRh1umq773iGpPC2TmWbtHl+nHRUkQxlYFbM14hjGWZ25Am6jIgf9VI9Xpi7mRy2
-	 YxTNzuB1SJ7VdoAj1ZVAA7mee6VcHTtXFWQiOaUBVt1p3dD6CieUzizRbYk3TGzPei
-	 kUpBL0yANPeAjk4n6Xu7s4BH7uf0xL8cIm/dEpuQlPJR1uzYcxuXw6weXGyxD0rEwr
-	 57ZAbuuGwT96fNH+u6sqXGuaBcdZuc34EjcgNhjlzbWkm4S+8eimOS+JjOKOqF0Yq9
-	 W0YYzFYS4IsTCmxm4QxAFW51CqvurD91RkhWzx3raZ+WdNrlUS4MN6wusuav1+5oql
-	 hJzy8oBROdZ3g==
-Date: Wed, 7 Aug 2024 08:36:16 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: ERROR: modpost: "__popcountsi2" [fs/bcachefs/bcachefs.ko]
- undefined!
-Message-ID: <20240807153616.GA2942016@thelio-3990X>
-References: <202408070432.X6n56VaY-lkp@intel.com>
+	s=arc-20240116; t=1723045031; c=relaxed/simple;
+	bh=TnQEyb0TlgRVKqCdGgpXS/fUm2oWRGW1oabB34py4bg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e9uw07W6OeLXe5bA8EWsqnk2B8qqGniIlBy8D9CuAOLrEAZWCXDTDxbWbP8ukrRtnkoU30xza6HHeLLkABrvHvMkBk5mpwINUA/vplFhGKtoXZIC9x/Ei8Vy3XAf/ltWPRFEqwZoa66dkOJs6HaxM8rLFN9vaCWad7gg9VNmQWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N/3co653; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso67995e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 08:37:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723045027; x=1723649827; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hbpU8BGJSDy9tSmR37aKx0UzOOARJ4TFknyzCo/3gdo=;
+        b=N/3co653IyjPYikGfIFszGhOtPFqaijB22y+1pXtpm2GURfC2INI4qJiosINxl8u0F
+         iX2xYIxV6P0neRNpopZrGZXD6GQfq4XyH4LzHlFnqNWDH5HVstW/s0BCYdHeAVQGN3VO
+         eWB/7NyjtDL9eFN2jEa1ghIUo+1PHXWa+yyJpqvauPI3AY8q4pk2IV9b8okdgTYvDM1h
+         n3W7v2nf0yPgc6YfNvCifJB8OSMQlsNxKFM7MvS5f7NVifLdnMoScHw2CRWCMDRgtYlQ
+         wAOWPpRQSGFgDN19qIzS1PaaVuWx8sYy9vakNwtftsTkgKrMlhvcR81rs+vftMr6uf72
+         r6Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723045027; x=1723649827;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hbpU8BGJSDy9tSmR37aKx0UzOOARJ4TFknyzCo/3gdo=;
+        b=fwaGOecf7FyMJPCHVThAzfVLvsKXoRnnHMfOyqPF7b3Xj9CoZfn0y8Oq9oSQ4mT47/
+         ubCw9c21Kakqxz7QXHJSaaaz8dS7h6+FuzwKzO3QY06e2+mZ5humR8N22i0TL/+e/mK5
+         B141uvvjCR6pRRdRANVlCJw3Egc/FlpVtJ07Y9oMLvOTE1jIui2t+kgxls1pRTJOD2Oj
+         ExJNEP+1YyksSInD6gwZ4EVqAb7SqVuW3vYiUwkI9dQ7r5aY2pyQAv6aeEEE1cquefiX
+         Htbbv8snsXFOwqD1yB1Y9nZDuy7r3lfs+C41U39d8wLPmCR9brpy+60fqXuiudDOitjV
+         VoFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2pwT/0h9mNEL5SUvVax6s3a+ZTtbmOPXFhPyfboEHAebbJwN6UoEFxwNOYrMnkLRSaI/uceP4PqnA7lagULh5EShUH3wyGB0LRnub
+X-Gm-Message-State: AOJu0Yz45p2TX8fFe+L/Wvwif5QvZXs8smbHLNJDYV7LWDC3qKrkdBkw
+	JaQjCbOqQ36Kxpnbwdox3mCmUUhOOV0VAnLoj+AZlhM+lSoAII4UXH0AFWADc9A=
+X-Google-Smtp-Source: AGHT+IEqJQdYKe2aGkUMUTlf/XKpYzvifcfU8LhAtDUz7xW59bDxFNzJvVrYScEyagfTJNRrKgoQHA==
+X-Received: by 2002:a05:600c:3501:b0:427:9922:4526 with SMTP id 5b1f17b1804b1-428e6aebc74mr141633305e9.7.1723045027306;
+        Wed, 07 Aug 2024 08:37:07 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42905971993sm35089695e9.16.2024.08.07.08.37.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 08:37:06 -0700 (PDT)
+Message-ID: <ff12ce12-41d6-4aa5-ab97-222b07146e36@linaro.org>
+Date: Wed, 7 Aug 2024 16:37:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202408070432.X6n56VaY-lkp@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/13] media: qcom: camss: csiphy: Add an init callback to
+ CSI PHY devices
+To: Depeng Shao <quic_depengs@quicinc.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20240709160656.31146-1-quic_depengs@quicinc.com>
+ <20240709160656.31146-5-quic_depengs@quicinc.com>
+ <6dfc2c79-fc6d-4eed-bf3f-94396130cb4f@linaro.org>
+ <fafda7d5-3853-428a-b0eb-9993fc2d4f56@linaro.org>
+ <4426c0e0-f877-409c-b2d2-a5aac5e8c645@linaro.org>
+ <1226d080-d1fc-4e06-ac81-84e93cb314e0@quicinc.com>
+ <8f935a7d-87b5-479c-a98e-c95671dbe259@linaro.org>
+ <7c03280f-908d-435d-acef-b6bf4f865029@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <7c03280f-908d-435d-acef-b6bf4f865029@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 07, 2024 at 04:43:13AM +0800, kernel test robot wrote:
-> Hi Kent,
+On 07/08/2024 16:03, Depeng Shao wrote:
+> Hi Bryan,
 > 
-> First bad commit (maybe != root cause):
+> On 8/7/2024 10:04 PM, Bryan O'Donoghue wrote:
+>> On 07/08/2024 14:08, Depeng Shao wrote:
+>>> Hi Vladimir,
+>>>
+>>> On 8/5/2024 5:26 AM, Vladimir Zapolskiy wrote:
+>>>> Hi Bryan,
+>>>>
+>>>> On 8/1/24 11:16, Bryan O'Donoghue wrote:
+>>>>> On 01/08/2024 00:43, Vladimir Zapolskiy wrote:
+>>>>>>> +    ret = csiphy->res->hw_ops->init(csiphy);
+>>>>>>
+>>>>>> Here.
+>>>>>
+>>>>> What name would make more sense to you ?
+>>>>
+>>>> according to the implementation the .init() call just fills some 
+>>>> data in
+>>>> memory, so I believe this could be handled at build time, if it's done
+>>>> carefully enough...
+>>>>
+>>>
+>>> This camss-csiphy-3ph-1-0.c is reused by many platforms, the old 
+>>> platforms have same CSI_COMMON_CTR register offset, their offset are 
+>>> 0x800, but some new platforms may have different CSI_COMMON_CTR 
+>>> register offset, for example, the CSI_COMMON_CTR register offset is 
+>>> 0x1000 in sm8550, then we need to add new file to support the new 
+>>> csiphy HW, e.g., camss-csiphy-3ph-2-0.c, so Bryan asked me to develop 
+>>> the CSIPHY driver based on his changes, then we just need few code to 
+>>> enable new CSIPHY.
+>>>
+>>> Regarding the hw_ops->init interface, since it fills HW register 
+>>> configurations and HW register offset, then maybe, it also can be 
+>>> called as HW operation.
+>>>
+>>> And looks like we can't move it to camss-csiphy.c since it does 
+>>> platform specific operation and it is related to the registers.
+>>>
+>>> Please feel free to share other comments if you don't agree with it. 
+>>> Thanks.
+>>>
+>>>
+>>> Thanks,
+>>> Depeng
+>>
+>> So, I agree the phy init data could be obtained via resource structs 
+>> but, rather than add yet more patches to this series, I'd say we can 
+>> make the move to a separate resource struct pointer at a later date.
+>>
+>> Lets drop this patch and @Depeng we can then do
+>>
 > 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   eb5e56d1491297e0881c95824e2050b7c205f0d4
-> commit: 9ae82fe6ace1b267005758ccfb2347a4a6aa4398 bcachefs: Inline make_bfloat() into __build_ro_aux_tree()
-> date:   10 months ago
-> config: arm-randconfig-002-20240805 (https://download.01.org/0day-ci/archive/20240807/202408070432.X6n56VaY-lkp@intel.com/config)
-> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 423aec6573df4424f90555468128e17073ddc69e)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240807/202408070432.X6n56VaY-lkp@intel.com/reproduce)
+>> +    regs->offset = 0x800;
+>>
+>> media: qcom: camss: csiphy-3ph: Use an offset variable to find common 
+>> control regs
+>>
 > 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202408070432.X6n56VaY-lkp@intel.com/
 > 
-> All errors (new ones prefixed by >>, old ones prefixed by <<):
-...
-> ERROR: modpost: "__popcountsi2" [fs/ext4/ext4.ko] undefined!
-> ERROR: modpost: "__popcountsi2" [fs/fat/fat.ko] undefined!
-> ERROR: modpost: "__popcountsi2" [fs/hfsplus/hfsplus.ko] undefined!
-> ERROR: modpost: "__popcountsi2" [fs/xfs/xfs.ko] undefined!
-> ERROR: modpost: "__popcountsi2" [fs/gfs2/gfs2.ko] undefined!
-> >> ERROR: modpost: "__popcountsi2" [fs/bcachefs/bcachefs.ko] undefined!
-> ERROR: modpost: "__aeabi_uldivmod" [fs/bcachefs/bcachefs.ko] undefined!
-> ERROR: modpost: "__popcountsi2" [drivers/block/virtio_blk.ko] undefined!
-> ERROR: modpost: "__popcountsi2" [drivers/net/ipa/ipa.ko] undefined!
-> ERROR: modpost: "__popcountsi2" [drivers/memory/emif.ko] undefined!
-> WARNING: modpost: suppressed 5 unresolved symbol warnings because there were too many)
+> Do you mean only drop "[PATCH 04/13] media: qcom: camss: csiphy: Add an 
+> init callback to CSI PHY devices"?
+> 
+> 
+> [PATCH 05/13] media: qcom: camss: csiphy-3ph: Move CSIPHY variables to 
+> data field inside csiphy struct
+> Do you mean this is still needed? Just don't move the code from 
+> csiphy_gen2_config_lanes to csiphy_init, right?
+> 
+> 
+> [PATCH 06/13] media: qcom: camss: csiphy-3ph: Use an offset variable to 
+> find common control regs
+> The offset change is also needed, just need to add the offset for 
+> different platform in csiphy_gen2_config_lanes .
+> 
+> Please correct me if my understanding is wrong. Thanks.
 
-Intel folks, can you upgrade your build of Clang main to
-https://github.com/llvm/llvm-project/commit/4527fba9ad6bc682eceda603150bfaec65ec6916?
-The current revision is broken and unrelated changes are getting
-notified. There might be one more regression that I am looking into, so
-consider not going further than that revision.
+Correct.
 
-Cheers,
-Nathan
+---
+bod
+
 
