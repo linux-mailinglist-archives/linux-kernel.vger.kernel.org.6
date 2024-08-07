@@ -1,125 +1,123 @@
-Return-Path: <linux-kernel+bounces-277454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E24D94A1A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:28:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2A6F94A1AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDEE028649B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:28:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4DB41C2142B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0195C1C7B93;
-	Wed,  7 Aug 2024 07:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0063B1C9DC3;
+	Wed,  7 Aug 2024 07:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="aPurxjKR"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXJV31Ik"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036DC1C7B81
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 07:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E881C8227;
+	Wed,  7 Aug 2024 07:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723015674; cv=none; b=q4ja1TPhp0tc8EUy8g21ojNtWHHatZvigfJDqIh6F/oUFH7B0U2c9oM5l2SFFbsiV5mrMLxnJeBrJsoLtSBnHIKXf8DdxEGdABpohsduTPrRNILfX14FyQx4aPATXixw7I0+rDYLj1/dKfyW4RIpkUVoaTz+4uR87hRf7dIlYnk=
+	t=1723015684; cv=none; b=HlOWUyFShyjNH3dw/Cs5RozA30l5T/azTtj3H6/ObyJZ7gOFFU8WI/CrqVbVX6hOKv2EQWJeGCR2AvwFqFbEy53gtZ48o69NpzX7N+q2pr2AznXYf1bXKK0XBFiuKG7sCLEg5WuVx0UmVPB6m2xJSYjtHshws7UUeFZeOWs0S+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723015674; c=relaxed/simple;
-	bh=xpcdVMCOMS6ZEUxGHrLtt6WYnma8jov+VO8vTgPH3Lw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WF3Hq0+2ytcxg57QXecmK/ZiMWgnjlBXalC5BuUrcb+0lLcQuoU+of58Lpb8sxZoJH514qHRpcxyiZVnU1pMTjmzAVEir90WvlxFJD43Z+ymv0ShMbRTG3hlGlep2RY0DIsHv2JQD3v+twKNJBiwxP9FmZqYrylFfJu9noeyWbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=aPurxjKR; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723015670; x=1723274870;
-	bh=INMG5HrhyREBaOaaWbYVtgtotk53aCP+1xHBSxmczYI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=aPurxjKRvSEaRucKuZ7JFILRNT/3RTNud9f4LmE/jkxnZFtWpKFgq+kawQZh80BNW
-	 U8/Q24+n7rc9dwUMx5mC+ua2PKyuuIuct5ARNqEzj4UMYTVjztugcBz/EpCcoy7N3j
-	 2UtWpqFIVVemoF6ldD+pu8wTA+fGTlUkV2YxcmkHSvOmPm027O7pbD4OP7aCdRqA5H
-	 nupogAy0AAa+uWjfCMZ3eXWPoYWZwh0AGQ+RZTb5Gstql+ufw7yrzigkwP1MX5IFTT
-	 F8zUZV0aFNZS9GWe9zWSPk/mNenjyENT1cH9lizbhXe+0nSZMl8hGkh5kcBDe0nPrn
-	 ZKHUgQppFXN+g==
-Date: Wed, 07 Aug 2024 07:27:43 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 08/28] rust: types: implement `Unique<T>`
-Message-ID: <f3457432-dc83-4a19-b75a-88b914430733@proton.me>
-In-Reply-To: <ZrKt7K68W1Jh6nhr@pollux>
-References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-9-dakr@kernel.org> <ff0826af-9430-4653-abe8-25fb80cd0e97@proton.me> <ZrKt7K68W1Jh6nhr@pollux>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 76ed0ca302491360577dc6e8f86574c9d2d01ecb
+	s=arc-20240116; t=1723015684; c=relaxed/simple;
+	bh=rzeSJsULbcsf2Gu22Whhsxpv53BYzX2PUXl/2j3hhbs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MHy1ZEomuEo3n57Ols8d6uZpBTUmlq7OjpNvY/BJEThN4IvuZYjXxBLHJBT19lgRoaDChJvHk4+P/g9AAOvl/8PZiTJqywJLptrii2sGed+tdvqgADx3T9uDCPdLOeNwHKEcn4rRd7hhhbLpzyIXV8kv8OnW+z4D6Tr2Iq75CpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXJV31Ik; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A5B1C4AF0D;
+	Wed,  7 Aug 2024 07:27:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723015683;
+	bh=rzeSJsULbcsf2Gu22Whhsxpv53BYzX2PUXl/2j3hhbs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sXJV31Ik+Ks4MMQWe4CjLJM8Wx7dQOci+rjj1Ks9OWII/NKt9Zsdyb6Q+kKfXL7yy
+	 Rt033WRoS2nCFQqEdKsmYTXR4aaOU+r5nCZqDWvfBTK0HWSQpgPO+TYpCuEST2+ho/
+	 Is+sfwi63CPrtowy5Vmob6lKDdEJa+dTVv8uKGLpUXUv0kj/ngsiBUVxmGsLL8UU8L
+	 61NejA6T3YuxcIOdMH50vMgycKWSV7gULVH18JA0Cqz5QhKkwkvXUkRp/Q/Q/TkzEa
+	 Agk/cFBT9WWXIXeGmSaC7WxW+t4rrcLXyUVCkl7qEtLeGIzsDBUzzwbCh8MBFJe71V
+	 5iec1XNAQN1+w==
+Message-ID: <3020262e-f3b2-4921-b33b-8d0d7babf36a@kernel.org>
+Date: Wed, 7 Aug 2024 09:27:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] dt-bindings: arm: qcom: Document QCS9100 compatible
+To: Tengfei Fan <quic_tengfan@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@quicinc.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240806-add_qcs9100_soc_id-v1-0-04d14081f304@quicinc.com>
+ <20240806-add_qcs9100_soc_id-v1-3-04d14081f304@quicinc.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240806-add_qcs9100_soc_id-v1-3-04d14081f304@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 07.08.24 01:12, Danilo Krummrich wrote:
-> On Tue, Aug 06, 2024 at 05:22:21PM +0000, Benno Lossin wrote:
->> On 05.08.24 17:19, Danilo Krummrich wrote:
->>> +impl<T: Sized> Unique<T> {
->>> +    /// Creates a new `Unique` that is dangling, but well-aligned.
->>> +    ///
->>> +    /// This is useful for initializing types which lazily allocate, l=
-ike
->>> +    /// `Vec::new` does.
->>> +    ///
->>> +    /// Note that the pointer value may potentially represent a valid =
-pointer to
->>> +    /// a `T`, which means this must not be used as a "not yet initial=
-ized"
->>> +    /// sentinel value. Types that lazily allocate must track initiali=
-zation by
->>> +    /// some other means.
->>> +    #[must_use]
->>> +    #[inline]
->>> +    pub const fn dangling() -> Self {
->>> +        Unique {
->>> +            pointer: NonNull::dangling(),
->>> +            _marker: PhantomData,
->>> +        }
->>> +    }
->>
->> I think I already asked this, but the code until this point is copied
->> from the rust stdlib and nowhere cited, does that work with the
->> licensing?
->>
->> I also think that the code above could use some improvements:
->> - add an `# Invariants` section with appropriate invariants (what are
->>   they supposed to be?)
->> - Do we really want this type to be public and exported from the kernel
->>   crate? I think it would be better if it were crate-private.
->> - What do we gain from having this type? As I learned recently, the
->>   `Unique` type from `core` doesn't actually put the `noalias` onto
->>   `Box` and `Vec`. The functions are mostly delegations to `NonNull`, so
->>   if the only advantages are that `Send` and `Sync` are already
->>   implemented, then I think we should drop this.
->=20
-> I originally introduced it for the reasons described in [1], but mainly t=
-o make
-> clear that the owner of this thing also owns the memory behind the pointe=
-r and
-> the `Send` and `Sync` stuff you already mentioned.
+On 06/08/2024 06:19, Tengfei Fan wrote:
+> Add the compatible for QCS9100 SoC.
 
-I would prefer if we make that explicit, since it is rather error-prone
-when creating new pointer types (and one should have to think about
-thread safety).
+Standard reply: we see that from the diff. Oh wait, no! The diff is
+doing something entirely else.
 
----
-Cheers,
-Benno
+You do much more - change SA8775p bindings.
 
-> If no one else has objections we can also just drop it. Personally, I'm f=
-ine
-> either way.
->=20
-> [1] https://docs.rs/rust-libcore/latest/core/ptr/struct.Unique.html
+Commit msg should say why you are doing such invasive change.
+
+Best regards,
+Krzysztof
 
 
