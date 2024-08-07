@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-277470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6725C94A1CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:33:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BB894A1C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9906C1C213E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:33:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDB8B1F21867
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFB31CCB46;
-	Wed,  7 Aug 2024 07:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DAF1C9ECA;
+	Wed,  7 Aug 2024 07:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qH5quQns"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BrLn6V3C"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60791CB324
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 07:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DA01C9DE7
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 07:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723015905; cv=none; b=tCb9cc8Ek7dqRJFnNq3AB8hnKLjXT11lZn1GW8P138yEx4FWiQJ6B5T00cxzOPUdbukxNI/6ZNVxSremiZHXkf0ofwZTFHNHKtp8ABBLaHbs4YPln5SBo6vJOgnjRFuXpuAn6C9Y3O6VeKvODcVJ72G4b8aRaEx1KJJRm+fMY7s=
+	t=1723015900; cv=none; b=HRGYxb9bqILs38DnUmbmt8TJ0HIDqN1YsupgGGTy2LKVcaRNt3thbajlht3FDvfrQBP83dICkPjVDChXebgYAorxbldqadLQXDlAGtq9DIWrcinAISiulXbYu8fUfcV8FgrVRWReDxH1MxDbUrt/UBdPkzKI2C6pxd/1k2IpkxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723015905; c=relaxed/simple;
-	bh=68HIudlpGk+ESEOygYNQxPojYTg/dxgEFFDRbpcvT9E=;
+	s=arc-20240116; t=1723015900; c=relaxed/simple;
+	bh=Fyf147nmWm0HWzBPlS492Q/Gdv+ZSkkrV6PKaTePt8w=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lUwIicvGAexK7MxWRM781SoZvII3sYswojpqZkSUhb0CQdk5zNIMvEa35F4x989cUykqGLVxCaeuMepzmbYaA/3au/WJXt5kugUfA09nwNCjXyEbpEAYNyH7Jc3awoi3GwySvurk1eeWTwgiyAnpufvjMh4yhUvlFTHlbdlm2oI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qH5quQns; arc=none smtp.client-ip=115.124.30.110
+	 MIME-Version; b=hwI5VGgt6Z9bAQUj5ltalAXUNooOYhcvivzzQ3PSao3zGEQKc6ZgkfeRNgVAoXT9akCXyf/AWf74Rpc6SI7AHKZlemTRr7xz8toQkhYSjLyXeTgpqFg6HQD8DUghQUW7FfetPHTRt8yuNop6jggOtozmxZ3yoWqCQ+O/oz/0x/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BrLn6V3C; arc=none smtp.client-ip=115.124.30.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1723015895; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=CJ17mJWuqe6d52h6IBrZyk6CffbeYGvkfB1+lwHpEl4=;
-	b=qH5quQnsdnDI4JbOS/1CvsVU5K2Lx1vyDJ/af2zfBsQ/xaWr1VQh1S9NRhpAP83PfVom1Fg/pkQj+CRSrtWyOjYhiWZ3wpK7q6jMcR2vIhmvcn8Syy9oV6C7dKU+BaaAgEKZCmeGefI/KTITc9uB615439BwHi3X0mGj0+9vlug=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=17;SR=0;TI=SMTPD_---0WCI1T.-_1723015893;
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WCI1T.-_1723015893)
+	t=1723015896; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=+R9mz0zB2CI8dFveIvPvJwpF+8EOZp0Xn71CWrw5Br0=;
+	b=BrLn6V3CtcULyXhNiUvZpl0mWGE8mKUY2eZEDY/KfdMhLwqg/h5MSOWDFbMKeIHc68QVIKwz4C53oAzFSUJm+R0JySN5UvtK8uDqog/gJyrbmAeBqO6lgY1mSyYvvJSa3Ycead4w8gpHmlDQxU8/wgspXFF6N5Savp6frPLEg9U=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R411e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=17;SR=0;TI=SMTPD_---0WCI3giE_1723015894;
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WCI3giE_1723015894)
           by smtp.aliyun-inc.com;
-          Wed, 07 Aug 2024 15:31:33 +0800
+          Wed, 07 Aug 2024 15:31:34 +0800
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
 To: akpm@linux-foundation.org,
 	hughd@google.com
@@ -57,9 +57,9 @@ Cc: willy@infradead.org,
 	baolin.wang@linux.alibaba.com,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 06/10] mm: shmem: use swap_free_nr() to free shmem swap entries
-Date: Wed,  7 Aug 2024 15:31:11 +0800
-Message-Id: <15eea8558d8980e6cf64ce8cd826cd0267742eed.1723012159.git.baolin.wang@linux.alibaba.com>
+Subject: [PATCH v4 07/10] mm: shmem: support large folio allocation for shmem_replace_folio()
+Date: Wed,  7 Aug 2024 15:31:12 +0800
+Message-Id: <bb7618a28a771acc86ca8756d56a7a9f73935ca3.1723012159.git.baolin.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <cover.1723012159.git.baolin.wang@linux.alibaba.com>
 References: <cover.1723012159.git.baolin.wang@linux.alibaba.com>
@@ -71,89 +71,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As a preparation for supporting shmem large folio swapout, use swap_free_nr()
-to free some continuous swap entries of the shmem large folio when the
-large folio was swapped in from the swap cache. In addition, the index
-should also be round down to the number of pages when adding the swapin
-folio into the pagecache.
+To support large folio swapin for shmem in the following patches, add
+large folio allocation for the new replacement folio in shmem_replace_folio().
+Moreover large folios occupy N consecutive entries in the swap cache
+instead of using multi-index entries like the page cache, therefore
+we should replace each consecutive entries in the swap cache instead
+of using the shmem_replace_entry().
+
+As well as updating statistics and folio reference count using the number
+of pages in the folio.
 
 Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 ---
- mm/shmem.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ mm/shmem.c | 54 +++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 31 insertions(+), 23 deletions(-)
 
 diff --git a/mm/shmem.c b/mm/shmem.c
-index d0d54939da48..f6bab42180ea 100644
+index f6bab42180ea..d94f02ad7bd1 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -1961,6 +1961,7 @@ static void shmem_set_folio_swapin_error(struct inode *inode, pgoff_t index,
- 	struct address_space *mapping = inode->i_mapping;
- 	swp_entry_t swapin_error;
- 	void *old;
-+	int nr_pages;
+@@ -1889,28 +1889,24 @@ static bool shmem_should_replace_folio(struct folio *folio, gfp_t gfp)
+ static int shmem_replace_folio(struct folio **foliop, gfp_t gfp,
+ 				struct shmem_inode_info *info, pgoff_t index)
+ {
+-	struct folio *old, *new;
+-	struct address_space *swap_mapping;
+-	swp_entry_t entry;
+-	pgoff_t swap_index;
+-	int error;
+-
+-	old = *foliop;
+-	entry = old->swap;
+-	swap_index = swap_cache_index(entry);
+-	swap_mapping = swap_address_space(entry);
++	struct folio *new, *old = *foliop;
++	swp_entry_t entry = old->swap;
++	struct address_space *swap_mapping = swap_address_space(entry);
++	pgoff_t swap_index = swap_cache_index(entry);
++	XA_STATE(xas, &swap_mapping->i_pages, swap_index);
++	int nr_pages = folio_nr_pages(old);
++	int error = 0, i;
  
- 	swapin_error = make_poisoned_swp_entry();
- 	old = xa_cmpxchg_irq(&mapping->i_pages, index,
-@@ -1969,6 +1970,7 @@ static void shmem_set_folio_swapin_error(struct inode *inode, pgoff_t index,
- 	if (old != swp_to_radix_entry(swap))
- 		return;
- 
-+	nr_pages = folio_nr_pages(folio);
- 	folio_wait_writeback(folio);
- 	delete_from_swap_cache(folio);
  	/*
-@@ -1976,8 +1978,8 @@ static void shmem_set_folio_swapin_error(struct inode *inode, pgoff_t index,
- 	 * won't be 0 when inode is released and thus trigger WARN_ON(i_blocks)
- 	 * in shmem_evict_inode().
+ 	 * We have arrived here because our zones are constrained, so don't
+ 	 * limit chance of success by further cpuset and node constraints.
  	 */
--	shmem_recalc_inode(inode, -1, -1);
--	swap_free(swap);
-+	shmem_recalc_inode(inode, -nr_pages, -nr_pages);
-+	swap_free_nr(swap, nr_pages);
+ 	gfp &= ~GFP_CONSTRAINT_MASK;
+-	VM_BUG_ON_FOLIO(folio_test_large(old), old);
+-	new = shmem_alloc_folio(gfp, 0, info, index);
++	new = shmem_alloc_folio(gfp, folio_order(old), info, index);
+ 	if (!new)
+ 		return -ENOMEM;
+ 
+-	folio_get(new);
++	folio_ref_add(new, nr_pages);
+ 	folio_copy(new, old);
+ 	flush_dcache_folio(new);
+ 
+@@ -1920,18 +1916,25 @@ static int shmem_replace_folio(struct folio **foliop, gfp_t gfp,
+ 	new->swap = entry;
+ 	folio_set_swapcache(new);
+ 
+-	/*
+-	 * Our caller will very soon move newpage out of swapcache, but it's
+-	 * a nice clean interface for us to replace oldpage by newpage there.
+-	 */
++	/* Swap cache still stores N entries instead of a high-order entry */
+ 	xa_lock_irq(&swap_mapping->i_pages);
+-	error = shmem_replace_entry(swap_mapping, swap_index, old, new);
++	for (i = 0; i < nr_pages; i++) {
++		void *item = xas_load(&xas);
++
++		if (item != old) {
++			error = -ENOENT;
++			break;
++		}
++
++		xas_store(&xas, new);
++		xas_next(&xas);
++	}
+ 	if (!error) {
+ 		mem_cgroup_replace_folio(old, new);
+-		__lruvec_stat_mod_folio(new, NR_FILE_PAGES, 1);
+-		__lruvec_stat_mod_folio(new, NR_SHMEM, 1);
+-		__lruvec_stat_mod_folio(old, NR_FILE_PAGES, -1);
+-		__lruvec_stat_mod_folio(old, NR_SHMEM, -1);
++		__lruvec_stat_mod_folio(new, NR_FILE_PAGES, nr_pages);
++		__lruvec_stat_mod_folio(new, NR_SHMEM, nr_pages);
++		__lruvec_stat_mod_folio(old, NR_FILE_PAGES, -nr_pages);
++		__lruvec_stat_mod_folio(old, NR_SHMEM, -nr_pages);
+ 	}
+ 	xa_unlock_irq(&swap_mapping->i_pages);
+ 
+@@ -1951,7 +1954,12 @@ static int shmem_replace_folio(struct folio **foliop, gfp_t gfp,
+ 	old->private = NULL;
+ 
+ 	folio_unlock(old);
+-	folio_put_refs(old, 2);
++	/*
++	 * The old folio are removed from swap cache, drop the 'nr_pages'
++	 * reference, as well as one temporary reference getting from swap
++	 * cache.
++	 */
++	folio_put_refs(old, nr_pages + 1);
+ 	return error;
  }
  
- /*
-@@ -1996,7 +1998,7 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
- 	struct swap_info_struct *si;
- 	struct folio *folio = NULL;
- 	swp_entry_t swap;
--	int error;
-+	int error, nr_pages;
- 
- 	VM_BUG_ON(!*foliop || !xa_is_value(*foliop));
- 	swap = radix_to_swp_entry(*foliop);
-@@ -2043,6 +2045,7 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
- 		goto failed;
- 	}
- 	folio_wait_writeback(folio);
-+	nr_pages = folio_nr_pages(folio);
- 
- 	/*
- 	 * Some architectures may have to restore extra metadata to the
-@@ -2056,19 +2059,20 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
- 			goto failed;
- 	}
- 
--	error = shmem_add_to_page_cache(folio, mapping, index,
-+	error = shmem_add_to_page_cache(folio, mapping,
-+					round_down(index, nr_pages),
- 					swp_to_radix_entry(swap), gfp);
- 	if (error)
- 		goto failed;
- 
--	shmem_recalc_inode(inode, 0, -1);
-+	shmem_recalc_inode(inode, 0, -nr_pages);
- 
- 	if (sgp == SGP_WRITE)
- 		folio_mark_accessed(folio);
- 
- 	delete_from_swap_cache(folio);
- 	folio_mark_dirty(folio);
--	swap_free(swap);
-+	swap_free_nr(swap, nr_pages);
- 	put_swap_device(si);
- 
- 	*foliop = folio;
 -- 
 2.39.3
 
