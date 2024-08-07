@@ -1,107 +1,236 @@
-Return-Path: <linux-kernel+bounces-278317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F11E994AEA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9856B94AEA5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E63D1F22C72
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:05:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDCAC1F2203F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614D413B59E;
-	Wed,  7 Aug 2024 17:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD5513AA2B;
+	Wed,  7 Aug 2024 17:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCwa3mb/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wy5Lna3w";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5pHlj4/I";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wy5Lna3w";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5pHlj4/I"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23FD12F398;
-	Wed,  7 Aug 2024 17:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2757C12F398
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 17:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723050347; cv=none; b=lNZCdVA7TWVupWj7wE6c9aRcXrIJl2TXMI8T1vTQHsCiE+BZ/2xLQ3c8uXCEI0NvqjirRCtuvvEWR8/2GaBMFDNwhxQELEPyM4aauqnqjp4oysNdXK/RW34Ro7wsts1yf5ma+xGZeWjMuKLL1xDPzdaJ8KH1YhSeIoii3pkeAcA=
+	t=1723050357; cv=none; b=pN4EPwUe1o0Rm6dpr0NQtJ0Z7I1dZ0rYaBW42iSKopqrMoZoL6OnUOTD+j+Re7LQPb2dFi6eoDXftcF6IW1Zdsq5qHx/lwCAPuugpeA9rOLbVgni2TnicngeR/OktWlnCuaQtuyBJn1TL3rATHEXKP3K3rNUTMl4EsKrUCObc9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723050347; c=relaxed/simple;
-	bh=aTViCyKmbUpyeYhUXvYqN+xUH5sZrDigFA7fo5bgqGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ilwbn7rwrVLz5pHARvpo1Z/igCQZGGLMk8Nb6hVbAM2e07cwiV79fVH5ebN454Q1IQdftswHXAkGDkPD0fEkO6bwghi8EsMxzjAS5waEHYVX/nJFZn3ojsFwz7GDFJ7GxwUtzktj0Mx0G1oXwD+KUdIr2PGKjTCHdkoTiH/rOH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jCwa3mb/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 094D4C4AF0D;
-	Wed,  7 Aug 2024 17:05:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723050347;
-	bh=aTViCyKmbUpyeYhUXvYqN+xUH5sZrDigFA7fo5bgqGQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jCwa3mb/XrIlgV09o0SIJuC3Bxlnx0rEHSw1m4Oy2YR0d4feUg2BaRAuaKBYHEJ0b
-	 tsfJ6Ddn65nw0Myc9Hh0SPb1WuaovIr+Ei2w2gS2iTn4YvqnO2OufUS3QmZq6HLMFs
-	 qgRABE3wvB6kwfYsGFxxzwzIbY26OBNKKhgKH2qU8L+TcsQj2H7TD82ok/SmKQvTsF
-	 TimrbSSy3m3R+tGUEyj6jUbykPwYQs/uHHS3Q4QPwKrVQWomIBLr1vGREz6DWNvAMr
-	 Zl3BRtTEYe69XJnNW8/xCsThl2CiEhTwtUKMs18d6ams4mumPCy8veLi28vQoRclYR
-	 w3MtwR4EnMWPg==
-Date: Wed, 7 Aug 2024 18:05:42 +0100
-From: Simon Horman <horms@kernel.org>
-To: Manoj Vishwanathan <manojvishy@google.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	netdev@vger.kernel.org, David Decotigny <decot@google.com>,
-	linux-kernel@vger.kernel.org,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	intel-wired-lan@lists.osuosl.org
-Subject: Re: [Intel-wired-lan] [PATCH] [PATCH iwl-net] idpf: Acquire the lock
- before accessing the xn->salt
-Message-ID: <20240807170542.GE3006561@kernel.org>
-References: <20240803182548.2932270-1-manojvishy@google.com>
- <20240805182159.3547482-1-manojvishy@google.com>
- <04affbd5-828a-4327-8b84-8767c1c139f1@intel.com>
- <CA+M8utN7FbwMF5QN8O0a0Qnd3ykQwq7O4QkHMVEaBj2jE9BEYw@mail.gmail.com>
+	s=arc-20240116; t=1723050357; c=relaxed/simple;
+	bh=n67DpQ5JBL4AWdSpSRwPcfvOnXqrnu9iNbDVT3XIRT8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IlStZWWWDCKtX2UFGBG7QinduDu5mWnUwH5o938XMYt/bsWEcwDjeac3EDb7PxFOVCKvYYRnw9o2MibDyexyZAi9nN44fsb2b+Kc3xLZ+e2L69h54N1Equdgm5MoNF0Abk8YRhSK03kyeug2nSfvz/sDKEPHIVCUTW/Iau84OQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wy5Lna3w; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5pHlj4/I; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wy5Lna3w; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5pHlj4/I; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4ADCA21A4A;
+	Wed,  7 Aug 2024 17:05:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723050354; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fQ4KRW/DL/2M87as73hZG/ssVMR89MBs9aVcextAUhQ=;
+	b=Wy5Lna3wl5ZwxBrRKK+Y96zISYGnEGAa+c7MmmvtNsVq0jLfENKxgoImXspt/t/i2hIY5q
+	y0sHy3EtcRksXy/CYWU3OarVMpvQIoHoPTSG5zbs7gmGm64bE3/dch6Jo8iAs5ONMyqxpj
+	H3Az4hr3nCJguqZ6SGa0UqSXlJers64=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723050354;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fQ4KRW/DL/2M87as73hZG/ssVMR89MBs9aVcextAUhQ=;
+	b=5pHlj4/IxsD99rUsAOTbU1nD1VK7fqVUoRYiyN29UU+JNFWfEu6mdoeNehavf/Y+zc0hj0
+	VFoA7uIjjrlB/xCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Wy5Lna3w;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="5pHlj4/I"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723050354; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fQ4KRW/DL/2M87as73hZG/ssVMR89MBs9aVcextAUhQ=;
+	b=Wy5Lna3wl5ZwxBrRKK+Y96zISYGnEGAa+c7MmmvtNsVq0jLfENKxgoImXspt/t/i2hIY5q
+	y0sHy3EtcRksXy/CYWU3OarVMpvQIoHoPTSG5zbs7gmGm64bE3/dch6Jo8iAs5ONMyqxpj
+	H3Az4hr3nCJguqZ6SGa0UqSXlJers64=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723050354;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fQ4KRW/DL/2M87as73hZG/ssVMR89MBs9aVcextAUhQ=;
+	b=5pHlj4/IxsD99rUsAOTbU1nD1VK7fqVUoRYiyN29UU+JNFWfEu6mdoeNehavf/Y+zc0hj0
+	VFoA7uIjjrlB/xCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3696E13297;
+	Wed,  7 Aug 2024 17:05:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id f25MDHKps2ZOGwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 07 Aug 2024 17:05:54 +0000
+Message-ID: <c89d07bd-979c-4a69-b73d-53f7e91b09f0@suse.cz>
+Date: Wed, 7 Aug 2024 19:05:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+M8utN7FbwMF5QN8O0a0Qnd3ykQwq7O4QkHMVEaBj2jE9BEYw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 14/19] mm: Create/affine kswapd to its preferred node
+Content-Language: en-US
+To: Frederic Weisbecker <frederic@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+References: <20240807160228.26206-1-frederic@kernel.org>
+ <20240807160228.26206-15-frederic@kernel.org>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240807160228.26206-15-frederic@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.50
+X-Rspamd-Queue-Id: 4ADCA21A4A
 
-On Wed, Aug 07, 2024 at 06:58:59AM -0700, Manoj Vishwanathan wrote:
-> Thanks Przemek & Olek for your quick feedback and responses.
-> Hi Olek,
-> I can add more details about the issue we faced in the commit message.
-> The bug we had here was a virtchnl delay leading to the xn->salt
-> mismatch. This could be due to several factors including default CPU
-> bounded kworker workqueue for virtchnl message processing being
-> starved by aggressive userspace load causing the virtchnl to be
-> delayed. While debugging this issue, this locking order  appeared like
-> a potential issue, hence the change was made.
-> But, this change is more a clean up we felt based on concurrent access
-> to the virtchnl transaction struct and does not fix the issue. This is
-> more of the patch to do the right thing before we access the "xn".
-> I wanted to start with a first patch to the community for acceptance
-> followed by a series of other patches that are general clean up or
-> improvements to IDPF in general. Will follow with with [PATCH v3]
+On 8/7/24 18:02, Frederic Weisbecker wrote:
+> kswapd is dedicated to a specific node. As such it wants to be
+> preferrably affine to it, memory and CPUs-wise.
+> 
+> Use the proper kthread API to achieve that. As a bonus it takes care of
+> CPU-hotplug events and CPU-isolation on its behalf.
+> 
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
-Still, I am a little confused about the protection offered to xn->salt.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-My analysis is as follows, where guarded is used loosely to mean
-the lock is held.
+But there's a bug to fix:
 
-* In idpf_vc_xn_pop_free() it is guarded by vcxn_mngr->xn_bm_lock.
+> ---
+>  mm/vmscan.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index cfa839284b92..b8ee3bf8fa29 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -7159,10 +7159,6 @@ static int kswapd(void *p)
+>  	unsigned int highest_zoneidx = MAX_NR_ZONES - 1;
+>  	pg_data_t *pgdat = (pg_data_t *)p;
+>  	struct task_struct *tsk = current;
+> -	const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
+> -
+> -	if (!cpumask_empty(cpumask))
+> -		set_cpus_allowed_ptr(tsk, cpumask);
+>  
+>  	/*
+>  	 * Tell the memory management that we're a "memory allocator",
+> @@ -7331,7 +7327,7 @@ void __meminit kswapd_run(int nid)
+>  
+>  	pgdat_kswapd_lock(pgdat);
+>  	if (!pgdat->kswapd) {
+> -		pgdat->kswapd = kthread_run(kswapd, pgdat, "kswapd%d", nid);
+> +		pgdat->kswapd = kthread_create_on_node(kswapd, pgdat, nid, "kswapd%d", nid);
+>  		if (IS_ERR(pgdat->kswapd)) {
+>  			/* failure at boot is fatal */
+>  			pr_err("Failed to start kswapd on node %d，ret=%ld\n",
+> @@ -7339,6 +7335,7 @@ void __meminit kswapd_run(int nid)
+>  			BUG_ON(system_state < SYSTEM_RUNNING);
+>  			pgdat->kswapd = NULL;
+>  		}
+> +		wake_up_process(pgdat->kswapd);
 
-* In idpf_vc_xn_exec() it is guarded by:
-  1. vcxn_mngr->xn_bm_lock when idpf_vc_xn_pop_free is called
-  2. idpf_vc_xn_lock, otherwise
+		should be in an else { } branch as it only ends up with BUG() during early
+boot and not when hotplugging later
 
-* And with this patch, in idpf_vc_xn_forward_reply it is guarded
-  by idpf_vc_xn_lock().
+>  	}
+>  	pgdat_kswapd_unlock(pgdat);
+>  }
 
-This doesn't seem entirely consistent.
-
-Also, please don't top-post on Kernel mailing lists.
-
-...
 
