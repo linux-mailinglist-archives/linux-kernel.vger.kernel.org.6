@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-278068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F95B94AA76
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:40:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C684994AA8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD4151F21652
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:40:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2995B2CDC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F41684A5C;
-	Wed,  7 Aug 2024 14:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDDB85270;
+	Wed,  7 Aug 2024 14:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y+lFol/P"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xl6duz5M"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320668248C
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A3C84D04
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723041575; cv=none; b=RVdVH70DTbRExZwahgv4sgKLHcJBkLfwblIIhg5O5hUrqDeWa4nvkdoZZGKFQHnv0MFIqTOgi3Vdu+B3tyXfmqVdwDL8w7QE5dGLdFqU39SX7/saeYot02hsrigHvJijod/ToDUD1v07dkUWQDtMcXdzuh64xbqfICm+Qp5/F6s=
+	t=1723041577; cv=none; b=CyLncKAO5hmAsbP2tmPeawG6FCDKB0sHdFedq9Yl86GBIZia0AvowzJ8mrGIxSmnHxsMt3cHAK2NUjoK1SFxQ939rVgOKq0YoYPT4j+RNYJyHysbZPW3Zx0Tdbtszkah5irx586AaS8dXAll3/sjalXKkx1RGzsNnASHbfBZaZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723041575; c=relaxed/simple;
-	bh=WPQeRoVjbHyBaB1jP3uLP9qNWJc7u6TPtPAVY/T4QWc=;
+	s=arc-20240116; t=1723041577; c=relaxed/simple;
+	bh=AuD1e/htfG1lFR9kSdMvIEtoeOyeABqQKaB/QtDE2F8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qYyoxWDgp7ne7GU5YSMGYVT6d5icj2+gH2nrfS/JHf8UDulhwhzsgfYUNDP+7LBT5Kidk4V9QKcls8gNbrqR1d5qB3hmrb8Wl6fmU7vbp+QBYYhwAWyIzj4ztpQO41+4B/weY3yIwiJ1hDydEfg+frsOd22ELez3K/0N9IOG3rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y+lFol/P; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=EAQGQIr/2LzkuQFzsu6fRQrlsokR3yXZWLtCSzKQvlK9/NifkQgYQqH3dSnBZn27CgDrFSE9dA+fRIBkSbS9VaRIr1MVzcXPVjcbdLLeo7aybBKNp55IbqQ/IsLpsZHxosjTRf/q3o3DnytyFBjuMJIPyJVQAHB5F3WGu/9BXzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xl6duz5M; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70eb4de4eb9so1911521b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 07:39:33 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70eb4de4eb9so1911538b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 07:39:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723041573; x=1723646373; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1723041576; x=1723646376; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xF7GVsamqUptJkU2gJsmYYeaq0bMeaFAbotmm0oMB2I=;
-        b=Y+lFol/P8Q4R1pWvopj1ZoMSp7EKBxyQ4RTxNSKQ2vnDhcEfPcphf+FBuBtLYZobBh
-         RQPxOERnnqJHstai2rswgjLa7o7vEsclPo2tbeFWoMbh/z5n2izJlTF2Z3i/5S6TzFND
-         aShY/M6l/yu8gOud83JDbO8EBnBs+7G/Tq/58XTrRgALe5X5yUEy5cIttQyt7olCEluA
-         NaSVQUOzxdkjTTZa5yUkM06HEp4LRyFtzlL5IQv5W8jAQsQQe93x3XEgkqHNyh7O+EyX
-         d8xI06k16kVQciE2LW7L1t26zgE9TRwewo/bmnWhCf71FaDGAto1FLRsc+IiiB532zW7
-         2atw==
+        bh=26uLUGt1PbHjw3R3dD99uteqgjJ71bdj6keYRqjuSeo=;
+        b=xl6duz5MIKSbbkUrFT/cd6sTwK25ZYwWq75wbDbcuUH6IQs0qdBKUQQyXhDjH1otd4
+         UnvShibEA3kicEQLFSKwQVRZYefcfp+OdRvK+JvDpbp7lJUiDRmw39r8eHSzIRcwVSJt
+         4XBsPlQXKC4Jod5l9adDefdkxuJdZCVAFKoamRDObiBNwmEsWKjTX7IBNUePDUkoOaLI
+         z7iRNU7VsJv4cSxOoM6s/eBxra4RvyqoYEI9wWzdFX0Hx++EZ7SoPs97DfY6k/LadAXy
+         Z2U4GR8WujkH+7ZEu0ZDmFx+SLI27pcPtTI8feDpIjezk09ngHg3h4KC1JGehPIw+f54
+         3m4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723041573; x=1723646373;
+        d=1e100.net; s=20230601; t=1723041576; x=1723646376;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xF7GVsamqUptJkU2gJsmYYeaq0bMeaFAbotmm0oMB2I=;
-        b=eU6tLwfQkYLfCQyhIZ4HLuo45ePV6wwqcBuVtfx5PcZpknqphdb7FhB9httIYPf19d
-         mIXpytFRfVpYjXGSXhusbr5tjU6Xbg2mB9oKxGiaJu1dLmRugca7RvO0JGZMmy+2FMOu
-         DVTsUfJ7ZMCeFQN1q+Ic36sEnG24ZPv1vo+Mv0iGgqY8xbWkHAXosVsvJHDg/Y1ZuIv3
-         9qHXsI6MYrhZpQdnyUI9a4Ge42M/ikS5koNwWpz/4vGL7SEUvG5G+RO1J9XU4hdkV/Fo
-         Cia98H7kMkfOj/B4rZpg9s70wsfjK2ENm2Mn7NO7ytTFKR1jcPpvbBkxbutUVaLLchrP
-         gYxA==
-X-Gm-Message-State: AOJu0YwSSkEmt8ZuRtdK3KcjRnITT+KRlOMeraDO0TYThghRlZHmguux
-	KAjL8xqnUH2Mx7JtNIw9d1xxWGX+V8rh/EFCiKFaRtlCYByIZjRDi0WQV4LVy0Va/thGPnORs1Z
-	y+gd1Rpc65g==
-X-Google-Smtp-Source: AGHT+IGZjcSEFFHc8gAyc+MxGkh5ALwM7EKisvXylP1dqOQgjdhJFnjvbXfvVU14q3/0qmnCLiu4AepSqnEP/g==
+        bh=26uLUGt1PbHjw3R3dD99uteqgjJ71bdj6keYRqjuSeo=;
+        b=HBmPFRFPLzanjkfgFgo9kBRVY4qaCBFzHBKOUWtnW+i+ewYKlXPIZJp77bCmNKvffn
+         hnfrKjUE37Fz/rIlp1lWCkSHhhiqx6VKhty/k1rAwP+mkgkvDdVQbbKCuLpQBdo6lb2p
+         a8TNmUVoezJ7tfxFhI4p9SttpJLje0/jQAH+wU6bqHWXeDASVKUDn0DUF/NAlzM+oUjA
+         scfExbKgktICPAk6Xq1EDUDV37+fwCdFJ1EXG1HBXVYtF5/Q+op3EfOrz3h1lHSd+B/1
+         3UukcE0b9HpKBZ7ppokaUstc906B7gr61Q7MFufk7DYJCzHK6FpyZ/vUFzSlZAWbO+WY
+         t0ZQ==
+X-Gm-Message-State: AOJu0Yw7uUGzhoLCZI4WTSyzj/ltkmwXhCpjNz88NznukXE45xzalDDz
+	N+L5NsKy6JGSwfQ+SnG15uAatZ2gA7DWjhNKjoZkhmDCaWHG7PEiKOV9QsM7GAIa2+QcPWVIBNQ
+	gGQZjm85y2A==
+X-Google-Smtp-Source: AGHT+IEZMcCt1x+PG1vtH8TF7MugLb9TpmzKqwXDpbLZ8DPfCHSERoPeDJ86A+OyXAQiHcK24I8oxCxpxP4D/A==
 X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
- (user=cmllamas job=sendgmr) by 2002:a05:6a00:9168:b0:710:4d06:93b3 with SMTP
- id d2e1a72fcca58-7106d0735d4mr416051b3a.3.1723041573417; Wed, 07 Aug 2024
- 07:39:33 -0700 (PDT)
-Date: Wed,  7 Aug 2024 14:39:18 +0000
+ (user=cmllamas job=sendgmr) by 2002:a05:6a00:6f0b:b0:710:4d1c:9ee0 with SMTP
+ id d2e1a72fcca58-7106d0861efmr343810b3a.4.1723041575752; Wed, 07 Aug 2024
+ 07:39:35 -0700 (PDT)
+Date: Wed,  7 Aug 2024 14:39:19 +0000
 In-Reply-To: <20240807143922.919604-1-cmllamas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,81 +72,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240807143922.919604-1-cmllamas@google.com>
 X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240807143922.919604-3-cmllamas@google.com>
-Subject: [PATCH v2 2/3] lockdep: clarify size for LOCKDEP_*_BITS configs
+Message-ID: <20240807143922.919604-4-cmllamas@google.com>
+Subject: [PATCH v2 3/3] lockdep: document MAX_LOCKDEP_CHAIN_HLOCKS calculation
 From: Carlos Llamas <cmllamas@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>
 Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	Carlos Llamas <cmllamas@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>, 
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
+	Andrew Morton <akpm@linux-foundation.org>, Carlos Llamas <cmllamas@google.com>, 
+	Waiman Long <longman@redhat.com>, Huang Ying <ying.huang@intel.com>, 
+	"J. R. Okajima" <hooanon05g@gmail.com>, Boqun Feng <boqun.feng@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The LOCKDEP_*_BITS configs control the size of internal structures used
-by lockdep. The size is calculated as a power of two of the configured
-value (e.g. 16 => 64KB). Update these descriptions to more accurately
-reflect this, as "Bitsize" can be misleading.
+Define a macro AVG_LOCKDEP_CHAIN_DEPTH to document the magic number '5'
+used in the calculation of MAX_LOCKDEP_CHAIN_HLOCKS. The number
+represents the estimated average depth (number of locks held) of a lock
+chain. The calculation of MAX_LOCKDEP_CHAIN_HLOCKS was first added in
+commit 443cd507ce7f ("lockdep: add lock_class information to lock_chain
+and output it").
 
-Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+Suggested-by: Waiman Long <longman@redhat.com>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: J. R. Okajima <hooanon05g@gmail.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Boqun Feng <boqun.feng@gmail.com>
 Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Waiman Long <longman@redhat.com>
 Cc: Will Deacon <will@kernel.org>
 Signed-off-by: Carlos Llamas <cmllamas@google.com>
 ---
- lib/Kconfig.debug | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+v2: switched the comment for a macro as suggested by Waiman Long.
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index baaaedfde0cb..e0614a415348 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1505,7 +1505,7 @@ config LOCKDEP_SMALL
- 	bool
+ kernel/locking/lockdep_internals.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
+index bbe9000260d0..20f9ef58d3d0 100644
+--- a/kernel/locking/lockdep_internals.h
++++ b/kernel/locking/lockdep_internals.h
+@@ -119,7 +119,8 @@ static const unsigned long LOCKF_USED_IN_IRQ_READ =
  
- config LOCKDEP_BITS
--	int "Bitsize for MAX_LOCKDEP_ENTRIES"
-+	int "Size for MAX_LOCKDEP_ENTRIES (as Nth power of 2)"
- 	depends on LOCKDEP && !LOCKDEP_SMALL
- 	range 10 24
- 	default 15
-@@ -1513,7 +1513,7 @@ config LOCKDEP_BITS
- 	  Try increasing this value if you hit "BUG: MAX_LOCKDEP_ENTRIES too low!" message.
+ #define MAX_LOCKDEP_CHAINS	(1UL << MAX_LOCKDEP_CHAINS_BITS)
  
- config LOCKDEP_CHAINS_BITS
--	int "Bitsize for MAX_LOCKDEP_CHAINS"
-+	int "Size for MAX_LOCKDEP_CHAINS (as Nth power of 2)"
- 	depends on LOCKDEP && !LOCKDEP_SMALL
- 	range 10 21
- 	default 16
-@@ -1521,7 +1521,7 @@ config LOCKDEP_CHAINS_BITS
- 	  Try increasing this value if you hit "BUG: MAX_LOCKDEP_CHAINS too low!" message.
+-#define MAX_LOCKDEP_CHAIN_HLOCKS (MAX_LOCKDEP_CHAINS*5)
++#define AVG_LOCKDEP_CHAIN_DEPTH		5
++#define MAX_LOCKDEP_CHAIN_HLOCKS (MAX_LOCKDEP_CHAINS * AVG_LOCKDEP_CHAIN_DEPTH)
  
- config LOCKDEP_STACK_TRACE_BITS
--	int "Bitsize for MAX_STACK_TRACE_ENTRIES"
-+	int "Size for MAX_STACK_TRACE_ENTRIES (as Nth power of 2)"
- 	depends on LOCKDEP && !LOCKDEP_SMALL
- 	range 10 26
- 	default 19
-@@ -1529,7 +1529,7 @@ config LOCKDEP_STACK_TRACE_BITS
- 	  Try increasing this value if you hit "BUG: MAX_STACK_TRACE_ENTRIES too low!" message.
+ extern struct lock_chain lock_chains[];
  
- config LOCKDEP_STACK_TRACE_HASH_BITS
--	int "Bitsize for STACK_TRACE_HASH_SIZE"
-+	int "Size for STACK_TRACE_HASH_SIZE (as Nth power of 2)"
- 	depends on LOCKDEP && !LOCKDEP_SMALL
- 	range 10 26
- 	default 14
-@@ -1537,7 +1537,7 @@ config LOCKDEP_STACK_TRACE_HASH_BITS
- 	  Try increasing this value if you need large STACK_TRACE_HASH_SIZE.
- 
- config LOCKDEP_CIRCULAR_QUEUE_BITS
--	int "Bitsize for elements in circular_queue struct"
-+	int "Size for elements in circular_queue struct (as Nth power of 2)"
- 	depends on LOCKDEP
- 	range 10 26
- 	default 12
 -- 
 2.46.0.rc2.264.g509ed76dc8-goog
 
