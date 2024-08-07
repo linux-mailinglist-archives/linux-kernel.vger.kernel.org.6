@@ -1,209 +1,107 @@
-Return-Path: <linux-kernel+bounces-278316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A258494AE9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F11E994AEA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498311F241F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:03:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E63D1F22C72
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A9B13BACC;
-	Wed,  7 Aug 2024 17:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614D413B59E;
+	Wed,  7 Aug 2024 17:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ql03aaoV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCwa3mb/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8313307B;
-	Wed,  7 Aug 2024 17:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23FD12F398;
+	Wed,  7 Aug 2024 17:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723050218; cv=none; b=tGRPtlHaPSsxOriDGpJM8ukDg059DsrTlQaK8GdQq+y2yNtgMRiLf8jH6FMtwiCaPzjpINomj7PPL9c8lxyU6NEdPltQa4GZzuCaK8uS5bQKbbEOQ2+j1+wSc9NVmEhCiz/vAcsTbMZuHw+dGfx3HR9amlt/J/Ft8l4fh+7bU4E=
+	t=1723050347; cv=none; b=lNZCdVA7TWVupWj7wE6c9aRcXrIJl2TXMI8T1vTQHsCiE+BZ/2xLQ3c8uXCEI0NvqjirRCtuvvEWR8/2GaBMFDNwhxQELEPyM4aauqnqjp4oysNdXK/RW34Ro7wsts1yf5ma+xGZeWjMuKLL1xDPzdaJ8KH1YhSeIoii3pkeAcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723050218; c=relaxed/simple;
-	bh=29Op1y/ig47K7J8uJlH2X4F5/WmxoJFIXx0QeTBHGNo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P465Anw181qvlyJb7sd1ONuKcAXC8/S3dAVCVl5+azyNAT05wzHMr3Ps6K0IXyyP4ntiKB2qvu00uRvUsPCmhuCs1YsK0o0ZfTllPY3c1RPC+CyNpnPL0WWS6lK+c8kD2WUAbBIEG2ZLWbUyJqRMaMdIFP+ebrvTaVUrO6LonLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ql03aaoV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1440FC4AF10;
-	Wed,  7 Aug 2024 17:03:38 +0000 (UTC)
+	s=arc-20240116; t=1723050347; c=relaxed/simple;
+	bh=aTViCyKmbUpyeYhUXvYqN+xUH5sZrDigFA7fo5bgqGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ilwbn7rwrVLz5pHARvpo1Z/igCQZGGLMk8Nb6hVbAM2e07cwiV79fVH5ebN454Q1IQdftswHXAkGDkPD0fEkO6bwghi8EsMxzjAS5waEHYVX/nJFZn3ojsFwz7GDFJ7GxwUtzktj0Mx0G1oXwD+KUdIr2PGKjTCHdkoTiH/rOH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jCwa3mb/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 094D4C4AF0D;
+	Wed,  7 Aug 2024 17:05:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723050218;
-	bh=29Op1y/ig47K7J8uJlH2X4F5/WmxoJFIXx0QeTBHGNo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ql03aaoVMLZFyQnodYf+hE5WZBevQSf7uSCG5iWFM4N58KNOk5kcQ1BIAjGfCac/s
-	 lnCslhE5gUHDgY8HGsqFDL1J2qQP1YwONfvYAbuPbku/ybfbBT8xmEIKYSJpA5Lx4Z
-	 xwkU+z+TtEFBBqh2HOCRDSZEejhmDIQ1aR3anaHveNCelwPild6hTsiLQR77TMhwnl
-	 izBYKayDkT/PpGBziH/+N4N0xupOT2cbQRF6s1Xk+ol2dDmRmBnh6QOf6ABgjh/37K
-	 MLzbb7TlPFR+cHwD9BEH3bQlJFQ+nxdz68cQoaOllEaZtMCP+OcY7kUMhRsvht1qZ0
-	 8epnBQhh+6Y8Q==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52efa16aad9so52344e87.0;
-        Wed, 07 Aug 2024 10:03:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCD/1HCgipY5Za8dKqEaKz1t6TS1kGXeLrQxa1I6sD0ouIjohGjkfI0/JaL8+J55KWJeQAucPtgZ8b4kHJHQAWLpAaeQ7AI8pC4WU3NHJDtddaHN7kP6Dnu3YTK45tdX0vKSUeTCN92m5C
-X-Gm-Message-State: AOJu0Ywd8zra1/HJ3y3JFRSIRh2m53Y2g3IdSIbQ6A3+GXvX9p8aPxE4
-	PNUowu7ypn3tfVKYVH+9n8oXvqjy7g1e5DGZgPRohDBetiAZiF7WX6/T8xdFqF4iYxfGe1ZHUlk
-	jTrwJRmCcPZ28OOVZAngSwC3wupM=
-X-Google-Smtp-Source: AGHT+IEJpQw1eQ5bPZfJqwbCAtS80FtybHbn39Xj+8LaRJEv3/5vxGQ+uvrQrBov4rxwwHmSAnNhHBrDxNyGCfv4uhM=
-X-Received: by 2002:a05:6512:b21:b0:52c:d76a:867f with SMTP id
- 2adb3069b0e04-530bb3041acmr12138586e87.0.1723050216641; Wed, 07 Aug 2024
- 10:03:36 -0700 (PDT)
+	s=k20201202; t=1723050347;
+	bh=aTViCyKmbUpyeYhUXvYqN+xUH5sZrDigFA7fo5bgqGQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jCwa3mb/XrIlgV09o0SIJuC3Bxlnx0rEHSw1m4Oy2YR0d4feUg2BaRAuaKBYHEJ0b
+	 tsfJ6Ddn65nw0Myc9Hh0SPb1WuaovIr+Ei2w2gS2iTn4YvqnO2OufUS3QmZq6HLMFs
+	 qgRABE3wvB6kwfYsGFxxzwzIbY26OBNKKhgKH2qU8L+TcsQj2H7TD82ok/SmKQvTsF
+	 TimrbSSy3m3R+tGUEyj6jUbykPwYQs/uHHS3Q4QPwKrVQWomIBLr1vGREz6DWNvAMr
+	 Zl3BRtTEYe69XJnNW8/xCsThl2CiEhTwtUKMs18d6ams4mumPCy8veLi28vQoRclYR
+	 w3MtwR4EnMWPg==
+Date: Wed, 7 Aug 2024 18:05:42 +0100
+From: Simon Horman <horms@kernel.org>
+To: Manoj Vishwanathan <manojvishy@google.com>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	netdev@vger.kernel.org, David Decotigny <decot@google.com>,
+	linux-kernel@vger.kernel.org,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	intel-wired-lan@lists.osuosl.org
+Subject: Re: [Intel-wired-lan] [PATCH] [PATCH iwl-net] idpf: Acquire the lock
+ before accessing the xn->salt
+Message-ID: <20240807170542.GE3006561@kernel.org>
+References: <20240803182548.2932270-1-manojvishy@google.com>
+ <20240805182159.3547482-1-manojvishy@google.com>
+ <04affbd5-828a-4327-8b84-8767c1c139f1@intel.com>
+ <CA+M8utN7FbwMF5QN8O0a0Qnd3ykQwq7O4QkHMVEaBj2jE9BEYw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807022718.24838-2-jose.fernandez@linux.dev>
- <CAK7LNAS4t_naRxdxFTaj9zrdf2Hjjoaq+cBO4Gx7=PhCJk9+4w@mail.gmail.com> <f65f1d49-8c6f-45e9-a4b2-30d4cfff10b1@t-8ch.de>
-In-Reply-To: <f65f1d49-8c6f-45e9-a4b2-30d4cfff10b1@t-8ch.de>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 8 Aug 2024 02:02:59 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATuA4O3xVLcp5Lywr4njaUneKOJwPHZa11YQe63KXQpMA@mail.gmail.com>
-Message-ID: <CAK7LNATuA4O3xVLcp5Lywr4njaUneKOJwPHZa11YQe63KXQpMA@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: control extra pacman packages with PACMAN_EXTRAPACKAGES
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Jose Fernandez <jose.fernandez@linux.dev>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Christian Heusel <christian@heusel.eu>, 
-	Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+M8utN7FbwMF5QN8O0a0Qnd3ykQwq7O4QkHMVEaBj2jE9BEYw@mail.gmail.com>
 
-On Thu, Aug 8, 2024 at 1:41=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisssc=
-huh.net> wrote:
->
-> On 2024-08-07 22:37:47+0000, Masahiro Yamada wrote:
-> > On Wed, Aug 7, 2024 at 11:28=E2=80=AFAM Jose Fernandez <jose.fernandez@=
-linux.dev> wrote:
-> > >
-> > > Introduce a new variable, PACMAN_EXTRAPACKAGES, in the Makefile.packa=
-ge
-> > > to control the creation of additional packages by the pacman-pkg targ=
-et.
-> > >
-> > > The headers and api-headers packages will be included by default if
-> > > PACMAN_EXTRAPACKAGES is not set. This changes the previous behavior
-> > > where api-headers was always included, and headers was conditionally
-> > > included if CONFIG_MODULES=3Dy. Now, this decision is delegated to th=
-e
-> > > user.
-> > >
-> > > To disable extra packages, set PACMAN_EXTRAPACKAGES to an empty value=
-:
-> > >
-> > > make pacman-pkg PACMAN_EXTRAPACKAGES=3D
-> > >
-> > > or
-> > >
-> > > make pacman-pkg PACMAN_EXTRAPACKAGES=3D""
-> > >
-> > > Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
-> > > Reviewed-by: Peter Jung <ptr1337@cachyos.org>
-> > > ---
-> > > v1 -> v2: Build all extra packages by default. Remove unnecessary lin=
-es.
-> >
-> >
-> > I see only the main package built by default.
->
-> Same.
->
-> Do we even need PACMAN_EXTRAPACKAGES in the Makefile?
-> IMO having it in the PKGBUILD would be enough.
-> It can still be overriden from the commandline.
->
-> > >
-> > > In a previous patch, there was concern that adding a new debug packag=
-e
-> > > would increase the package time. To address this concern and provide
-> > > more flexibility, this change has been added to allow users to decide
-> > > which extra packages to include before introducing an optional debug
-> > > package [1].
-> > >
-> > > [1] https://lore.kernel.org/lkml/20240801192008.GA3923315@thelio-3990=
-X/T/
-> > >
-> > >  scripts/Makefile.package |  2 ++
-> > >  scripts/package/PKGBUILD | 11 +++++++----
-> > >  2 files changed, 9 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-> > > index 4a80584ec771..ccdf8ba41f0b 100644
-> > > --- a/scripts/Makefile.package
-> > > +++ b/scripts/Makefile.package
-> > > @@ -144,6 +144,8 @@ snap-pkg:
-> > >  # pacman-pkg
-> > >  # ------------------------------------------------------------------=
----------
-> > >
-> > > +PACMAN_EXTRAPACKAGES ?=3D headers api-headers
-> >
-> > Meaningless line.
-> >
-> >
-> > Since 'export' is missing,
-> > this default line is not propagated to PKGBUILD.
-> >
-> >
-> > Nathan also mentioned 'export' would be needed if you wanted to
-> > describe this here.
-> >
-> > https://lore.kernel.org/linux-kbuild/20240806025853.GB1570554@thelio-39=
-90X/
->
-> Same as above.
->
-> > > +
-> > >  PHONY +=3D pacman-pkg
-> > >  pacman-pkg:
-> > >         @ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBU=
-ILD
-> > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> > > index 663ce300dd06..8de869f9b1d4 100644
-> > > --- a/scripts/package/PKGBUILD
-> > > +++ b/scripts/package/PKGBUILD
-> > > @@ -3,10 +3,13 @@
-> > >  # Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org=
->
-> > >
-> > >  pkgbase=3D${PACMAN_PKGBASE:-linux-upstream}
-> > > -pkgname=3D("${pkgbase}" "${pkgbase}-api-headers")
-> > > -if grep -q CONFIG_MODULES=3Dy include/config/auto.conf; then
-> > > -       pkgname+=3D("${pkgbase}-headers")
-> > > -fi
-> > > +pkgname=3D("${pkgbase}")
-> > > +
-> > > +_extrapackages=3D${PACMAN_EXTRAPACKAGES:-}
-> >
-> >
-> > Instead of adding inconsistent defaults in two places,
-> > I would write like this:
-> >
-> > _extrapackages=3D${PACMAN_EXTRAPACKAGES-headers api-headers}
->
-> Agreed.
->
-> > Lastly, I will never accept new error messages
-> > with CONFIG_MODULES=3Dn.
->
-> Could you elaborate?
-> For me this works fine with CONFIG_MODULES=3Dn.
-> (After having fixed the above issues so all subpackages are built)
+On Wed, Aug 07, 2024 at 06:58:59AM -0700, Manoj Vishwanathan wrote:
+> Thanks Przemek & Olek for your quick feedback and responses.
+> Hi Olek,
+> I can add more details about the issue we faced in the commit message.
+> The bug we had here was a virtchnl delay leading to the xn->salt
+> mismatch. This could be due to several factors including default CPU
+> bounded kworker workqueue for virtchnl message processing being
+> starved by aggressive userspace load causing the virtchnl to be
+> delayed. While debugging this issue, this locking order  appeared like
+> a potential issue, hence the change was made.
+> But, this change is more a clean up we felt based on concurrent access
+> to the virtchnl transaction struct and does not fix the issue. This is
+> more of the patch to do the right thing before we access the "xn".
+> I wanted to start with a first patch to the community for acceptance
+> followed by a series of other patches that are general clean up or
+> improvements to IDPF in general. Will follow with with [PATCH v3]
 
+Still, I am a little confused about the protection offered to xn->salt.
 
+My analysis is as follows, where guarded is used loosely to mean
+the lock is held.
 
-$ make  allnoconfig pacman-pkg
+* In idpf_vc_xn_pop_free() it is guarded by vcxn_mngr->xn_bm_lock.
 
+* In idpf_vc_xn_exec() it is guarded by:
+  1. vcxn_mngr->xn_bm_lock when idpf_vc_xn_pop_free is called
+  2. idpf_vc_xn_lock, otherwise
 
-Check the linux-headers log closely.
+* And with this patch, in idpf_vc_xn_forward_reply it is guarded
+  by idpf_vc_xn_lock().
 
+This doesn't seem entirely consistent.
 
+Also, please don't top-post on Kernel mailing lists.
 
-
---=20
-Best Regards
-Masahiro Yamada
+...
 
