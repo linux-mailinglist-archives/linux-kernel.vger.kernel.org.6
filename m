@@ -1,306 +1,187 @@
-Return-Path: <linux-kernel+bounces-277166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1D3949D69
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:38:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E34949D6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DBB8B22EEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D1091C21FFD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D585E15B98F;
-	Wed,  7 Aug 2024 01:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InEEFb0b"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB78D15E5B5;
+	Wed,  7 Aug 2024 01:39:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1503910E6;
-	Wed,  7 Aug 2024 01:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0A215DBA5
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 01:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722994719; cv=none; b=jfGy1mZLNEkj6MYatOjeofp7lCKYQ0DHgusGH3X7qLm1oknIjlTv2l51S+C7tETCtn0REqXJkp14Ah8Lguv12GW7/+SxfwipjIIxQ4r32R0CHfzmyp71CjWdWYv4CROwbJueGVRYQ2zkCGiwr4V90dj781paa+zD0+Bf5fEqU0E=
+	t=1722994744; cv=none; b=QOmZRo5EE4jGoBNJ6SBOi1rDG+/Xq0Oi1Od2YFzXPtegFkZVlIpjiKsx3he79aSHCODeJdDbe35TvqEYnv2LqDvHDCzK0PTZXjg8QaZ4ZJe/qflNzivWBkpUoT8TWh7BkaAoul8r4VvNTjW5LdcSMMTofkNaJOHFA3uaCIyP6KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722994719; c=relaxed/simple;
-	bh=aq571yIABuYPvn/nuYMrjdNF9xC2kKU/Qby+jvtGjXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F6fzIkp+T+jUyD8Sdt8ne+IgNQWfcu/yI60Oy8MMajgA3uS9K7y8v2aIQ9IMORFhpezG/WtwMl7FpsGkRnamNR5Ydmo6qxOf6LTwL2P3UrBRPWhZMzo81rk2spab7a6QxZOgu/n8GSlCPrCgDf6R8Qs7Cs+/1Tl4/3Q2URINbJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=InEEFb0b; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc56fd4de1so3128595ad.0;
-        Tue, 06 Aug 2024 18:38:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722994717; x=1723599517; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=NlI5kXXyG7eO9dy96MNv0FUqgJQRkfbNuYx0yu4wY+4=;
-        b=InEEFb0bINUKXGRwn9dCLhBQT3hfrbSkVWkHdUi+3ed0MnMJ3a0lf0wuZaB0vLHAFs
-         4qrgeM63rK3p2zTUsTVfZEAYfVQmwV/kwr/PLfzxg97LUFMinb+8chNSPZyt6+9zUgbX
-         nDjST/EWrrv2PcjcBL4dlgTv/mLP+S+v8Xv/oiW0PQLFLitYjQvtPZt2F7BY4cOAqgct
-         N7+DXlCBGWEXmLffhuSJcTKyfXDGU7Tan/0d8Bd8RNnuOQje2iiHNXq3LnFMofg8Cem8
-         svN9DqWKryTi8v4oygJvQoYN51Ue6BU+SFcIgPDbCVE+DmCjAJGaM5h6HH03BscMIuS4
-         Nl4g==
+	s=arc-20240116; t=1722994744; c=relaxed/simple;
+	bh=vBorneo7NNjztSavhEh6/9iqIz87QxLbG4KQd3uvXgE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=KvCGWA2vuKz1lfqq/GhSmZZZ3MIPioTCEHxre5D8o25KOAZqOujJmuXozkNCU3ZUBNaWU/L2RhlhoORvZYA7VvRhDrfCplQXv0py9YYsqL1rVivHTkdtbWdqpCPPT5mYArTOwrE9VPuhK2HUR6F4qYryfRLDJjuLx6RNl4h9h2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8223aed779aso152340139f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 18:39:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722994717; x=1723599517;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NlI5kXXyG7eO9dy96MNv0FUqgJQRkfbNuYx0yu4wY+4=;
-        b=ZDaNVCqJDTYoR/eYyUT3i84a4zHvhobw1qAWhlrbGtDlP3wD9dsFBCeYk/vR75sFry
-         j6rWz7B2bcxLwhsKfu9UPHVmi4k8Vych9eb6Dxr+stsC6V5EDsDsJDolAPDxwlz5wz6U
-         zziEH3ugTTFPRKXWoQAa0w6+QyoAzxZyfj/bDN+8mhFgs5b9Dc8rm56OdGy5L6Je+lyQ
-         7oiXDPH5nZgTw6Lc7urRgFTGH2JCl17ZAyghzdoIdbHJJco9S5g5f0ppTgisrdO9AxsD
-         HWbNNxiB1Ytp7BVhziwcO7FSDeYQ9+7EQpOFAa4IcMEsHSkiZacPL+u/8wSBn1WzzMe5
-         eBBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrxuedtrYxkYa6zNkPlV8QRuSYVDztWb+TFq1rhj08GgKHzJqTD3uKJvan70+GOseoEHwXzZL2pwXTcxt9RxDs5qxWoOqUJTC5TXjX
-X-Gm-Message-State: AOJu0YwUXGXVPYPir2Il/vHTnyIxyWbrdfCYCh3kfTS/q1oY5TtFQqIw
-	EO7x22LMKHLrb+7bbzCtdbEGWHrPMXfs7MlKfFa5/13JfwkaWiLh
-X-Google-Smtp-Source: AGHT+IF8HBsHSr2X8dtCiVhdRxQ/ZczgPzO4my7ifdx42r5vf4h9UT+TqZPDpLkpkkbrpcDDemBXsw==
-X-Received: by 2002:a17:902:c403:b0:1fd:6033:f94e with SMTP id d9443c01a7336-200855683a3mr9677265ad.27.1722994716991;
-        Tue, 06 Aug 2024 18:38:36 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f19cb7sm94081565ad.33.2024.08.06.18.38.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 18:38:35 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <78933046-09ec-4dc9-9ab1-f00b4cceab27@roeck-us.net>
-Date: Tue, 6 Aug 2024 18:38:34 -0700
+        d=1e100.net; s=20230601; t=1722994742; x=1723599542;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7zpBYwB2iO0E5wdHoCC5ZBXqg6tZgbJBaFHzCxiDVXs=;
+        b=hZqK3vUvUzD1T+c0s7sdE5+pbnHXYdIl9vWlVJnE6ft06sRyCfEAs/R5FbLVCzPuTz
+         0ZrryCWWlpzHKXQYKCs76/c7JWRON4aXdMeputzyZY0vIwynweDxS7uSwv1i6Bu1zgcB
+         OkMBzczW9+FVyJ3O9FtK+x/s4C/v/taXrHsDIpSoxqHEgd7yPSems7bIFQI7GMkTOP5z
+         jnpurFsUdFkW/Qk2+0rSRBDQYkzE4J6lapFYOmJsgO2cmrjj0HwhT1L0RigVGQgHyUBV
+         VDse6Ph33zS/yiFOnqTqA4FlZ/T7/E/hsLMuGsuMaWg6rAzH+FDwcZqK8xVFEVDqbOND
+         HNVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3NnQclfY4WbLPrzMBdU7YY3qKXHkqTsh5isUOqn/9WfTgWdOSCdFG7dSNrABXoXiw+kPd4xYnb0b65pGccZ/zGZXSxraLVnZ9IXOC
+X-Gm-Message-State: AOJu0YyIPbRQ3tm87E8RcY04cC/qM3wks0uHWjjQUkBFNl9ZjD8UzSc2
+	yGND3xjAgPSgjwE6Z/4IS+wsTvrK8p2mfUXCjtrCcyljjW71N40hW819dgWI8eum0ZjHfnYAKtA
+	CeRiOvQlOap4DjxrbROHfy6q1axHBcGre20xkTKC6bojEmilOeYTibF4=
+X-Google-Smtp-Source: AGHT+IEq2WkNpgIbzyf5/az3sUv6jIfJ6vd2RHnI31JDrOU2P5VlRLWToa+NxKSQWuzj45Fyw0adBzUkI9FcF7/TkxaA0zAR9Gla
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
- Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
- Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org
-References: <20240731095022.970699670@linuxfoundation.org>
- <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
- <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
- <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <87le194kuq.ffs@tglx>
- <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz> <87frrh44mf.ffs@tglx>
- <c54ab27ff0f0bb3e9e681eec9a62549e5e245a6b.camel@HansenPartnership.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <c54ab27ff0f0bb3e9e681eec9a62549e5e245a6b.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:640c:b0:81f:c103:3e73 with SMTP id
+ ca18e2360f4ac-81fd434b50emr36169739f.1.1722994741772; Tue, 06 Aug 2024
+ 18:39:01 -0700 (PDT)
+Date: Tue, 06 Aug 2024 18:39:01 -0700
+In-Reply-To: <tencent_AA68577B46C9D3704361497763B7E44E5705@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000889130061f0df9ea@google.com>
+Subject: Re: [syzbot] [can?] WARNING: refcount bug in j1939_session_put
+From: syzbot <syzbot+ad601904231505ad6617@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/6/24 17:49, James Bottomley wrote:
-> On Wed, 2024-08-07 at 01:24 +0200, Thomas Gleixner wrote:
->> Cc+: Helge, parisc ML
->>
->> We're chasing a weird failure which has been tracked down to the
->> placement of the division library functions (I assume they are
->> imported
->> from libgcc).
->>
->> See the thread starting at:
->>
->>   
->> https://lore.kernel.org/all/718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net
->>
->> On Tue, Aug 06 2024 at 21:25, Vlastimil Babka wrote:
->>> On 8/6/24 19:33, Thomas Gleixner wrote:
->>>>
->>>> So this change adds 16 bytes to __softirq() which moves the
->>>> division
->>>> functions up by 16 bytes. That's all it takes to make the stupid
->>>> go
->>>> away....
->>>
->>> Heh I was actually wondering if the division is somhow messed up
->>> because
->>> maxobj = order_objects() and order_objects() does a division. Now I
->>> suspect
->>> it even more.
->>
->> check_slab() calls into that muck, but I checked the disassembly of a
->> working and a broken kernel and the only difference there is the
->> displacement offset when the code calculates the call address, but
->> that's as expected a difference of 16 bytes.
->>
->> Now it becomes interesting.
->>
->> I added a unused function after __do_softirq() into the softirq text
->> section and filled it with ASM nonsense so that it occupies exactly
->> one
->> page. That moves $$divoI, which is what check_slab() calls, exactly
->> one
->> page forward:
->>
->>      -0000000041218c70 T $$divoI
->>      +0000000041219c70 T $$divoI
->>
->> Guess what happens? If falls on it's nose again.
->>
->> Now with that ASM gunk I can steer the size conveniently. It works up
->> to:
->>
->>      0000000041219c50 T $$divoI
->>
->> and fails for
->>
->>      0000000041219c60 T $$divoI
->>      0000000041219c70 T $$divoI
->>
->> and works again at
->>
->>      0000000041219c80 T $$divoI
-> 
-> So just on this, you seem to have proved that only exact multiples of
-> 48 work.  In terms of how PA-RISC caching works that's completely nuts
-> ... however, there may be something else at work, like stack frame
-> alignment.
-> 
->>
->> So I added the following:
->>
->> +extern void testme(void);
->> +extern unsigned int testsize;
->> +
->> +unsigned int testsize = 192;
->> +
->> +void __init testme(void)
->> +{
->> +       pr_info("TESTME: %lu\n", PAGE_SIZE / testsize);
->> +}
->>
->> called that _before_ mm_core_init() from init/main.c and adjusted my
->> ASM hack to make $$divoI be at:
->>
->>      0000000041219c70 T $$divoI
->>
->> again and surprisingly the output is:
->>
->>      [    0.000000] softirq: TESTME: 21
-> 
-> OK, why is that surprising?  4096/192 is 21 due to integer rounding.
-> 
+Hello,
 
-Problem is that it sometimes wrongly returns 16. But not always.
-The surprise may be that it is not consistently wrong, even if
-divU is at the same location.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING: refcount bug in j1939_session_put
 
->> Now I went back to the hppa64 gcc version 12.2.0 again and did the
->> same ASM gunk adjustment so that $$divoI ends up at the offset 0xc70
->> in the page and the same happens.
->>
->> So it's not a compiler dependent problem.
->>
->> But then I added a testme() call to the error path and get:
->>
->> [    0.000000] softirq: TESTME: 21
->> [    0.000000]
->> =====================================================================
->> ========
->> [    0.000000] BUG kmem_cache_node (Not tainted): objects 21 > max 16
->> size 192 sorder 0
->>
->> Now what's wrong?
->>
->> Adding more debug:
->>
->> [    0.000000] BUG kmem_cache_node (Not tainted): objects 21 > max 16
->> size 192 sorder 0 21
->>
->> where the last '21' is the output of the same call which made maxobj
->> go
->> south:
->>
->>   static int check_slab(struct kmem_cache *s, struct slab *slab)
->>   {
->>          int maxobj;
->> @@ -1386,8 +1388,10 @@ static int check_slab(struct kmem_cache
->>   
->>          maxobj = order_objects(slab_order(slab), s->size);
->>          if (slab->objects > maxobj) {
->> -               slab_err(s, slab, "objects %u > max %u",
->> -                       slab->objects, maxobj);
->> +               testme();
->> +               slab_err(s, slab, "objects %u > max %u size %u sorder
->> %u %u",
->> +                        slab->objects, maxobj, s->size,
->> slab_order(slab),
->> +                        order_objects(slab_order(slab), s->size));
->>                  return 0;
->>          }
->>          if (slab->inuse > slab->objects) {
->>
->> I don't know and I don't want to know TBH...
-> 
-> OK, so you're telling us we have a problem with slab_order on parisc
-> ... that's folio_order, so it smells like a parisc bug with
-> folio_test_large?  Unfortuntely I'm a bit pissed in an airport lounge
-> on my way to the UK, so I've lost access to my pa test rig and can't
-> test further for a while.
-> 
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 0 PID: 6083 at lib/refcount.c:28 refcount_warn_saturate+0x15a/0x1d0 lib/refcount.c:28
+Modules linked in:
+CPU: 0 UID: 0 PID: 6083 Comm: syz.0.15 Not tainted 6.10.0-syzkaller-12610-g743ff02152bc-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:refcount_warn_saturate+0x15a/0x1d0 lib/refcount.c:28
+Code: 00 17 40 8c e8 67 97 a5 fc 90 0f 0b 90 90 eb 99 e8 1b 89 e3 fc c6 05 76 7d 31 0b 01 90 48 c7 c7 60 17 40 8c e8 47 97 a5 fc 90 <0f> 0b 90 90 e9 76 ff ff ff e8 f8 88 e3 fc c6 05 50 7d 31 0b 01 90
+RSP: 0018:ffffc90000007698 EFLAGS: 00010246
+RAX: 6323259a0841a200 RBX: ffff88802b9bdea4 RCX: ffff888022580000
+RDX: 0000000080000101 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000003 R08: ffffffff81559432 R09: 1ffff1101724519a
+R10: dffffc0000000000 R11: ffffed101724519b R12: ffff88801e999868
+R13: ffff88802b9bdea4 R14: ffff8880251b4000 R15: ffff88801e999800
+FS:  00007fec0e7436c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000000 CR3: 000000007d7b2000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ kfree_skb_reason include/linux/skbuff.h:1260 [inline]
+ kfree_skb include/linux/skbuff.h:1269 [inline]
+ j1939_session_destroy net/can/j1939/transport.c:283 [inline]
+ __j1939_session_release net/can/j1939/transport.c:295 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ j1939_session_put+0x230/0x4b0 net/can/j1939/transport.c:300
+ j1939_tp_cmd_recv net/can/j1939/transport.c:2114 [inline]
+ j1939_tp_recv+0x7fe/0x1050 net/can/j1939/transport.c:2162
+ j1939_can_recv+0x732/0xb20 net/can/j1939/main.c:108
+ deliver net/can/af_can.c:572 [inline]
+ can_rcv_filter+0x359/0x7f0 net/can/af_can.c:606
+ can_receive+0x31c/0x470 net/can/af_can.c:663
+ can_rcv+0x144/0x260 net/can/af_can.c:687
+ __netif_receive_skb_one_core net/core/dev.c:5660 [inline]
+ __netif_receive_skb+0x2e0/0x650 net/core/dev.c:5774
+ process_backlog+0x662/0x15b0 net/core/dev.c:6107
+ __napi_poll+0xcb/0x490 net/core/dev.c:6771
+ napi_poll net/core/dev.c:6840 [inline]
+ net_rx_action+0x89b/0x1240 net/core/dev.c:6962
+ handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
+RIP: 0010:_raw_spin_unlock_irqrestore+0xd8/0x140 kernel/locking/spinlock.c:194
+Code: 9c 8f 44 24 20 42 80 3c 23 00 74 08 4c 89 f7 e8 0e 9c 3b f6 f6 44 24 21 02 75 52 41 f7 c7 00 02 00 00 74 01 fb bf 01 00 00 00 <e8> 63 c1 a3 f5 65 8b 05 64 b7 44 74 85 c0 74 43 48 c7 04 24 0e 36
+RSP: 0018:ffffc9000320f8c0 EFLAGS: 00000206
+RAX: 6323259a0841a200 RBX: 1ffff92000641f1c RCX: ffffffff81701f3a
+RDX: dffffc0000000000 RSI: ffffffff8bead5a0 RDI: 0000000000000001
+RBP: ffffc9000320f950 R08: ffffffff9351e90f R09: 1ffffffff26a3d21
+R10: dffffc0000000000 R11: fffffbfff26a3d22 R12: dffffc0000000000
+R13: 1ffff92000641f18 R14: ffffc9000320f8e0 R15: 0000000000000246
+ j1939_sk_send_loop net/can/j1939/socket.c:1164 [inline]
+ j1939_sk_sendmsg+0xe01/0x14c0 net/can/j1939/socket.c:1277
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
+ ___sys_sendmsg net/socket.c:2651 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fec0d9773b9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fec0e743048 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007fec0db05f80 RCX: 00007fec0d9773b9
+RDX: 0000000000000000 RSI: 0000000020000280 RDI: 0000000000000003
+RBP: 00007fec0d9e48e6 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007fec0db05f80 R15: 00007ffcb6839088
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	9c                   	pushf
+   1:	8f 44 24 20          	pop    0x20(%rsp)
+   5:	42 80 3c 23 00       	cmpb   $0x0,(%rbx,%r12,1)
+   a:	74 08                	je     0x14
+   c:	4c 89 f7             	mov    %r14,%rdi
+   f:	e8 0e 9c 3b f6       	call   0xf63b9c22
+  14:	f6 44 24 21 02       	testb  $0x2,0x21(%rsp)
+  19:	75 52                	jne    0x6d
+  1b:	41 f7 c7 00 02 00 00 	test   $0x200,%r15d
+  22:	74 01                	je     0x25
+  24:	fb                   	sti
+  25:	bf 01 00 00 00       	mov    $0x1,%edi
+* 2a:	e8 63 c1 a3 f5       	call   0xf5a3c192 <-- trapping instruction
+  2f:	65 8b 05 64 b7 44 74 	mov    %gs:0x7444b764(%rip),%eax        # 0x7444b79a
+  36:	85 c0                	test   %eax,%eax
+  38:	74 43                	je     0x7d
+  3a:	48                   	rex.W
+  3b:	c7                   	.byte 0xc7
+  3c:	04 24                	add    $0x24,%al
+  3e:	0e                   	(bad)
+  3f:	36                   	ss
 
-I think the problem is rather that divU, for some unknown reason, sometimes returns
-bad results. The divU implementation in libgcc isn't exactly easy to understand.
-There may be some context problem, such as the upper bits of some register not
-being cleared under some circumstances. Look at my recent commits into
-arch/parisc for examples how similar problems survived for a long time in the
-Linux kernel.
 
-I'd strongly suspect a qemu emulation problem if it wasn't for those other
-problems. Still, I think it is very likely that the problem lies in qemu,
-but we might need a confirmation one way or the other from a test on real
-hardware.
+Tested on:
 
-Thanks,
-Guenter
+commit:         743ff021 ethtool: Don't check for NULL info in prepare..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=141bc85d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5efb917b1462a973
+dashboard link: https://syzkaller.appspot.com/bug?extid=ad601904231505ad6617
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1221dff9980000
 
 
