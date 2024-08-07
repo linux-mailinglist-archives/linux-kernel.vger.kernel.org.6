@@ -1,144 +1,101 @@
-Return-Path: <linux-kernel+bounces-277904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7495094A7ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:41:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C091294A7F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AF111F25D6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:41:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B86F1F26873
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15AA1E7A3B;
-	Wed,  7 Aug 2024 12:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B43D1E6749;
+	Wed,  7 Aug 2024 12:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="Sg2C5rmU"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="koKOUPAy"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A711E6741
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 12:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B2E1DD3AF
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 12:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723034482; cv=none; b=bILkAXUe/H/9WcLWa5DZwlOFvcsieXf/8gYyeXa0MsXuG2jwNSXyc+pQnm264b6GFmbUh2gxeuqr1bvdiTmL0os9yMtNLeQtVnE4hfohdiQrlQXqKIfjw33CEXck2ZZsLutHXzhYOMia6P4DvMFieH/wOpw4XvSJY0IWi+TI71s=
+	t=1723034557; cv=none; b=VKcGBlzauU+I/c7SB7FeYAl8+fcXXqQjV+0zyXLmQuppyd/PkD/KwrmqLavjwLyKgLli8xpKt2cZYFHBcwlicHJqTf8TQgTb0E0IXS2vb1vW4xaUJNbcnYzrukUcywz0qD5gzU9im3OXV5/TTYPHzF4lv9/GKdvrAVVHrcL3T5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723034482; c=relaxed/simple;
-	bh=KZOBwXMeTqYf9uEvqEpZvSolFwFcgHme74bk/4UkW6M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C3euobNEBDDCL9FVhkUHIr+AN3/VjjEFTutTbBo5yTOtDFcHb6kDXo8qnFR5iatZ1WTaeUGFrZyRXKqH5XuW2D9JVXKpfjTJnoxuBG723NRrv1wIPrDJiFd3B/X5OpiOf1mOlNd6asG6fdxLsX29Bc+TcSuPai6Wo3vKiVcOSO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=Sg2C5rmU; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1723034478;
-	bh=1aE2cbYKmjRRZKMb9FZa+Csx+YG7mtBDoiTvd1y2/SU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Sg2C5rmUsrFsqB+/CRJzTHnIP6xmWqhy/9TubY/RNKmKWWeTjgP+vaVt67AVzTZPf
-	 iklksF8ozO1/pUEUnPh6yFOQ4I327udvpjuydImzJBygfquHjGxbehs4uMchmZHUFm
-	 0A9i79ZQEyuCRkIwT5WeWMAzz03crWZEzk16n0H60TH6qjJrY5K15pdSvTt+F5/eSt
-	 fgUAcvAO+iARo6Uob3f7RgSar6DyTvksewkHZlS4FkNuFQbMKDMRLhE9EBtKH1pqzy
-	 Rx530mNH5cy0e7Ie65ib9m58MUjUmJ+UtOPA1ZtZU7aZ4hpc3sM4Gl4wURb8d+1XoK
-	 5kyXGW/QLTpDg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wf8tQ3Cp8z4x3J;
-	Wed,  7 Aug 2024 22:41:18 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: <linux-mm@kvack.org>
-Cc: <linuxppc-dev@lists.ozlabs.org>,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	christophe.leroy@csgroup.eu,
-	jeffxu@chromium.org,
-	jeffxu@google.com,
-	Liam.Howlett@oracle.com,
-	linux-kernel@vger.kernel.org,
-	npiggin@gmail.com,
-	oliver.sang@intel.com,
-	pedro.falcato@gmail.com
-Subject: [PATCH 4/4] powerpc/vdso: Refactor error handling
-Date: Wed,  7 Aug 2024 22:41:03 +1000
-Message-ID: <20240807124103.85644-4-mpe@ellerman.id.au>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240807124103.85644-1-mpe@ellerman.id.au>
-References: <20240807124103.85644-1-mpe@ellerman.id.au>
+	s=arc-20240116; t=1723034557; c=relaxed/simple;
+	bh=dC1Gqu+ImAfjVByCQHuV657Tr7jIv7TZOwNXzQfDCT0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=igx8GKDIeWFLsFPP9w5WJi8gUqLfPkfBGwqBl/rezHmf9HGRfGwDM4xTiRY5S5JCc7RDxNhbNgnzwEVG6LXlQNTkfJjcYPoqnHPZEsUnll2Rr05TdkFou/lK9nJQtyrYHknGnA+2q3FXNp94wEc0X+uQkRbLXCzsz63sDFkTwec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=koKOUPAy; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4280bca3960so12710145e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 05:42:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723034554; x=1723639354; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dC1Gqu+ImAfjVByCQHuV657Tr7jIv7TZOwNXzQfDCT0=;
+        b=koKOUPAyxBR4fz5wHc9M97hE0J+oxW4fEmKLMwRbArj4bYyZfpItBbh1/i3+UfUQGm
+         GnmK4UuY/bVCQ2VWahE+paYGvn08hBsXXFW4exBA0o+e3wvSWGTaeVtood8jRgHFFgfx
+         7dige0ulLHr44iV3xeabno1pP41WAWbV3EfMTU/eGLdoSmQed0m0fZfVDa7H4LWVL9yF
+         VVbViv/bE9nbHqNWQtZBMw+A2oG5TPhj89C7GinsS5pQFmUuuNGHcwmZSZJQ1Vml9r9Y
+         dJwV1MJI8TpChjYZHvjjYpxgt2j0A28jset14aZmSCASiYJDslaTeIItaUxwM0REMw8D
+         F46A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723034554; x=1723639354;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dC1Gqu+ImAfjVByCQHuV657Tr7jIv7TZOwNXzQfDCT0=;
+        b=r70ngGCUV0tgV7Pl5qwYPfTVFhVUfO45PUw9EU1+/3chFlYTPyEqPoq8QyDji7T4U7
+         m6Eos2jYZ6a+qECi91cCEoZGdnouekx/pqc1hu6lZirFjaOIznjMV66zXV1umNEsb/i2
+         30fp1CWpTgfWYA2Hx2207wamdnH7vZWspV0P/NjTk7taSDHIYzuDTemyItmoN3gaanCt
+         YhdqMXKOuu9E6xa7OJGgPY0C8tNzD8XmAE+PHafUJKxIocV7gmcnwE6BB+Me3ndL5Y2y
+         33/aQC+2Q0PXsMMl84EOMSG/k4/QW6p8RCVX3ZO+eMD0yWjrneVBM5NFA3BChyIMSNrL
+         AoQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbH36QcQLxSZNMTWY66ytTeo/5v2LJV21FHx6oLE2F7fpQ9o+GfDMIQaKWTW6qv+N+ghxjkR8680cLUDgVMkXl16Cl3lP30psJNvYG
+X-Gm-Message-State: AOJu0YzVt2y6BBn7a87tlbOVXLoU1C67bp4ntqYKxLFor4n4Q5EwHNi2
+	4cWNtUcrB6GFGzhoHJrGSfRuTu6g63klbQVegLdAWa9FiYJ0yAeicX/fx5SIyEq9+BnAZ4KgjP4
+	08j52iGneDW40AAeVHwZqwdXflRZtHEHqnZvT
+X-Google-Smtp-Source: AGHT+IHMOwVO5PgoY1ty91l1/Mip8oCnfxb9A32cACdLXHKInsEtqb2h7xNIx7PEOPNHhk73co0BRxXODtmm62aFDIQ=
+X-Received: by 2002:adf:cc89:0:b0:368:68d3:32b3 with SMTP id
+ ffacd0b85a97d-36bbc11aaa5mr11469188f8f.26.1723034554173; Wed, 07 Aug 2024
+ 05:42:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-11-dakr@kernel.org>
+In-Reply-To: <20240805152004.5039-11-dakr@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 7 Aug 2024 14:42:21 +0200
+Message-ID: <CAH5fLgjsHQvJB6O_81O6hBx_XHocQXv8qCEZZXmUeNgQuNZv3A@mail.gmail.com>
+Subject: Re: [PATCH v4 10/28] rust: treewide: switch to our kernel `Box` type
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
+	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
+	zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, 
+	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Linus noticed that the error handling in __arch_setup_additional_pages()
-fails to clear the mm VDSO pointer if _install_special_mapping()
-fails. In practice there should be no actual bug, because if there's an
-error the VDSO pointer is cleared later in arch_setup_additional_pages().
+On Mon, Aug 5, 2024 at 5:21=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
+rote:
+>
+> Now that we got the kernel `Box` type in place, convert all existing
+> `Box` users to make use of it.
+>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-However it's no longer necessary to set the pointer before installing
-the mapping. Commit c1bab64360e6 ("powerpc/vdso: Move to
-_install_special_mapping() and remove arch_vma_name()") reworked the
-code so that the VMA name comes from the vm_special_mapping.name, rather
-than relying on arch_vma_name().
-
-So rework the code to only set the VDSO pointer once the mappings have
-been installed correctly, and remove the stale comment.
-
-Depends-on: c1bab64360e6 ("powerpc/vdso: Move to _install_special_mapping() and remove arch_vma_name()")
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
----
- arch/powerpc/kernel/vdso.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
-
-diff --git a/arch/powerpc/kernel/vdso.c b/arch/powerpc/kernel/vdso.c
-index 220a76cae7c1..ee4b9d676cff 100644
---- a/arch/powerpc/kernel/vdso.c
-+++ b/arch/powerpc/kernel/vdso.c
-@@ -214,13 +214,6 @@ static int __arch_setup_additional_pages(struct linux_binprm *bprm, int uses_int
- 	/* Add required alignment. */
- 	vdso_base = ALIGN(vdso_base, VDSO_ALIGNMENT);
- 
--	/*
--	 * Put vDSO base into mm struct. We need to do this before calling
--	 * install_special_mapping or the perf counter mmap tracking code
--	 * will fail to recognise it as a vDSO.
--	 */
--	mm->context.vdso = (void __user *)vdso_base + vvar_size;
--
- 	vma = _install_special_mapping(mm, vdso_base, vvar_size,
- 				       VM_READ | VM_MAYREAD | VM_IO |
- 				       VM_DONTDUMP | VM_PFNMAP, &vvar_spec);
-@@ -240,10 +233,15 @@ static int __arch_setup_additional_pages(struct linux_binprm *bprm, int uses_int
- 	vma = _install_special_mapping(mm, vdso_base + vvar_size, vdso_size,
- 				       VM_READ | VM_EXEC | VM_MAYREAD |
- 				       VM_MAYWRITE | VM_MAYEXEC, vdso_spec);
--	if (IS_ERR(vma))
-+	if (IS_ERR(vma)) {
- 		do_munmap(mm, vdso_base, vvar_size, NULL);
-+		return PTR_ERR(vma);
-+	}
- 
--	return PTR_ERR_OR_ZERO(vma);
-+	// Now that the mappings are in place, set the mm VDSO pointer
-+	mm->context.vdso = (void __user *)vdso_base + vvar_size;
-+
-+	return 0;
- }
- 
- int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-@@ -257,8 +255,6 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 		return -EINTR;
- 
- 	rc = __arch_setup_additional_pages(bprm, uses_interp);
--	if (rc)
--		mm->context.vdso = NULL;
- 
- 	mmap_write_unlock(mm);
- 	return rc;
--- 
-2.45.2
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
