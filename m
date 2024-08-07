@@ -1,67 +1,73 @@
-Return-Path: <linux-kernel+bounces-277784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F14E594A676
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:58:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E378E94A696
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F9451F214FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:58:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9682B21BAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3281B1E2139;
-	Wed,  7 Aug 2024 10:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606CA1DE841;
+	Wed,  7 Aug 2024 10:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="cdbifF88"
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="3AmOfpf6"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4ADB1D1738;
-	Wed,  7 Aug 2024 10:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3A11D1F5C
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723028269; cv=none; b=SFitCgoPaNsUCWY4Vg8mLeOmdHeblA4KH8WwtzcoMJIQYibWso3gjW0Ct+UCJBT/5F84SZqbW+IyrXSNnA7uI4cvRpJ5itqOq5lg5k95khjrouMVj2HW+vOL5kWy7iH7pmrnEvYwn84CAX/zLVKyWufESuKTnNSL0BNzeWbKkFA=
+	t=1723028354; cv=none; b=cUF4DJaeruHE3HDLqgEHN0X+iGRwGI8cmK6jRc/cBNpy7rHi2jPBz3iB/LkQlN2b6zuKWad6OcwQa1xTjd0QV4Bxb0cnJHdkmRn2lfXoj4FAhp0pNqSyvCw8fK+kibjqoP6iDZWwCUmSPYE7p5esO7eeYhH/lPK3nQlrybIe4DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723028269; c=relaxed/simple;
-	bh=ZgH7A2ZO6yKpcNTlE8j6Z+iSswLeJpdXuQNBPE0sIGY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=HROV/eMtCzexVLyt2Dt2IMD6jYuTblBNLLZGr2Xb+Lq8eG9nvAXvmDGBDS5ne3e1D9TUh686m8a4KLHA344mDCa2SwdS0+WMRrSSJJA4gUsQj0o3cDkTCf1vIaeP9S5CXy/dYzyN/Xs0e07OaH9a5iYTzdUldm4r0aVA9I1+YoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=cdbifF88; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1723028354; c=relaxed/simple;
+	bh=u+6VHEXI1ThY3t5HEzYYUuJTk15j2JpbS9Sl6CJtr/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j+x9IKa1Yc+t5qW9ma21a4A00Ur+/ItKoVyGTGxJ7rHpkMXazIiZLYhDs1DreazBGFOmsWFhafUHP+mOtAtKmko/ENGWV1buqoa8eka05JY6FQ6MIPr010D0QAGgrC7DzV+D19Akb3ACh4SLllVBuBod7HYfDotlb+Uf2mwkCrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=3AmOfpf6; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4280bca3960so11967055e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 03:59:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1723028267; x=1754564267;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=K1wbAjQgCV2HPVCwJGecBjVjCFk8bfSuThCS0V+F/t0=;
-  b=cdbifF88AYu//le8mJ06ZSJ7WNEWWAS8VPsAK8EmXP5PfXqTxC+Nd/ag
-   6vL9AMJVXgB+m5tnpZqLZ4GZNQDnfypSInDq26PqnSyBi0oBviZrf6g97
-   rIDc/9OXNVqqVGThrHKa10/jvfvN6s6wyqwGp0fw9eklyoHt8MjY6+BDQ
-   s=;
-X-IronPort-AV: E=Sophos;i="6.09,269,1716249600"; 
-   d="scan'208";a="415778407"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 10:57:43 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:46048]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.23.195:2525] with esmtp (Farcaster)
- id dda17874-2d26-4bad-bc3c-f9b1df6447f9; Wed, 7 Aug 2024 10:57:42 +0000 (UTC)
-X-Farcaster-Flow-ID: dda17874-2d26-4bad-bc3c-f9b1df6447f9
-Received: from EX19D003UWB004.ant.amazon.com (10.13.138.24) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 7 Aug 2024 10:57:42 +0000
-Received: from EX19MTAUWC001.ant.amazon.com (10.250.64.145) by
- EX19D003UWB004.ant.amazon.com (10.13.138.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 7 Aug 2024 10:57:41 +0000
-Received: from [127.0.0.1] (172.19.88.180) by mail-relay.amazon.com
- (10.250.64.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34 via Frontend
- Transport; Wed, 7 Aug 2024 10:57:38 +0000
-Message-ID: <90886a03-ad62-4e98-bc05-63875faa9ccc@amazon.co.uk>
-Date: Wed, 7 Aug 2024 11:57:35 +0100
+        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1723028351; x=1723633151; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5O2rit9Q+ZZhRmqaKun7IBIxVijWuGY2dSoTeZQJZF0=;
+        b=3AmOfpf6C+0AVlrWeov8/v8BA+Yy2o5Xb0VdHj6tq6nO8w9SE1A0IgJ35xPk8KNcs/
+         2ss7myD+wHZsIfHTmClE6qRG6MO6wa3UDTa1BcFdpQsqovV9SW+h0NmC2e4QoUOMMVuA
+         dX8tIbN7GEd6Ra29usYQ9VqHmpcpEQgn+ucGNgA+eHi6/19ztIi14vpNHScTnlN9qc4b
+         szHeKUbeKMDSQpdZgrf8zPIJShPx7ZEy+kFrUl1ABX8BAL/SVloGFGykT1SIo+MnQFyT
+         eDDZEyi4APYfk20vsklDBE0nWsKLDczJCSnk9WoQ5Mk7HjtdwOntC2XBtcontBKnAfQj
+         94Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723028351; x=1723633151;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5O2rit9Q+ZZhRmqaKun7IBIxVijWuGY2dSoTeZQJZF0=;
+        b=hF5FG5NYhLVZ+NgOoMgsOmoMbz3bWB+GOeTHBQYUmyPYHJX4FH2gt9z5VAXj6TjGIX
+         ywRYKdkh167hTHHa8hhM7dyBMIHMSZAX7yQm9DkycDKu+QYBGLtymzXQPqcFZi7VszLX
+         RPfOz9AcNoQd51DrPLiQD0p73yeXwVsPlyaRoCX4skrOM6xfkF9RrTLJaSr2GafAb5yT
+         IwjRUr+816DEIMBVExYpFXl++JYlzsO1EkzA4W10oO2GLCI2BKK6rcyg5lmW4F3qX9jI
+         7z+PeQo49sfb4WVvww2Opf7h607vFsX+5O5yrXjRvpuKYiKEuLiYSxIjHISEMIYyR+Jf
+         RL6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXvy+ks6WGtfj7w+s6cuZQ52FG2E0LMOgqi050IkbwCF7llrrR/KmZSV3SVkHn5vaxAjKP9VCIoRO8CHVP8bPx69iAsuQsosG5qNBK5
+X-Gm-Message-State: AOJu0YwtIzgyEA4gelNKIQ9805+Kn2pi58o9NqAUa//yyRttw1pX+j40
+	76TRcVq+EKbVPaRt/ZW+c5z/LYSqoAXztYcXARZMqNMi7qm/6BAN8f5Kt/3BgOU=
+X-Google-Smtp-Source: AGHT+IHu8VOa75qPUk9i12DMFYh6diJZyO59h33/RoK30l2WFmOpb5mk6OaZrGPRV7EwsO5iH9crDw==
+X-Received: by 2002:a05:600c:4ece:b0:426:5ee5:3130 with SMTP id 5b1f17b1804b1-428e6ae2802mr110158745e9.3.1723028350414;
+        Wed, 07 Aug 2024 03:59:10 -0700 (PDT)
+Received: from [192.168.0.101] ([84.69.19.168])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429059a8912sm23963875e9.38.2024.08.07.03.59.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 03:59:10 -0700 (PDT)
+Message-ID: <363ceea7-4168-408d-a6bf-3a46d971dd48@ursulin.net>
+Date: Wed, 7 Aug 2024 11:59:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,325 +75,168 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/4] mm: guest_memfd: Add option to remove guest
- private memory from direct map
-From: Patrick Roy <roypat@amazon.co.uk>
-To: Elliot Berman <quic_eberman@quicinc.com>
-CC: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini
-	<pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Fuad Tabba
-	<tabba@google.com>, David Hildenbrand <david@redhat.com>,
-	<qperret@google.com>, Ackerley Tng <ackerleytng@google.com>,
-	<linux-coco@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <kvm@vger.kernel.org>,
-	James Gowans <jgowans@amazon.com>, "Kalyazin, Nikita"
-	<kalyazin@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>, "Cali,
- Marco" <xmarcalx@amazon.co.uk>
-References: <20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com>
- <20240805-guest-memfd-lib-v1-3-e5a29a4ff5d7@quicinc.com>
- <3fc11402-53e1-4325-a3ee-5ebd616b5b63@amazon.co.uk>
- <20240806104702482-0700.eberman@hu-eberman-lv.qualcomm.com>
- <a43ae745-9907-425f-b09d-a49405d6bc2d@amazon.co.uk>
-Content-Language: en-US
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <a43ae745-9907-425f-b09d-a49405d6bc2d@amazon.co.uk>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: Too large alloc in gem_exec_reloc test? (was Re: [linus:master]
+ [mm/slab] 2e8000b826: WARNING:at_mm/util.c:#__kvmalloc_node_noprof)
+To: Kees Cook <kees@kernel.org>, kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+ Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+ Dave Airlie <airlied@redhat.com>, Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gfx@lists.freedesktop.org,
+ linux-hardening@vger.kernel.org
+References: <202408041614.dbe4b7fd-lkp@intel.com>
+ <202408051141.7FB8D9C98@keescook>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+In-Reply-To: <202408051141.7FB8D9C98@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
+Hi,
 
-On Wed, 2024-08-07 at 07:48 +0100, Patrick Roy wrote:
+On 05/08/2024 19:48, Kees Cook wrote:
+> This seems like some kind of pre-existing issue in the igt test, reachable
+> via eb_copy_relocations(). The only warning in kvmalloc_node_noprof() is:
 > 
+>          /* Don't even allow crazy sizes */
+>          if (unlikely(size > INT_MAX)) {
+>                  WARN_ON_ONCE(!(flags & __GFP_NOWARN));
+>                  return NULL;
+>          }
 > 
-> On Tue, 2024-08-06 at 21:13 +0100, Elliot Berman wrote:
->> On Tue, Aug 06, 2024 at 04:39:24PM +0100, Patrick Roy wrote:
->>>
->>> Hi Elliot,
->>>
->>> On Mon, 2024-08-05 at 19:34 +0100, Elliot Berman wrote:
->>>> This patch was reworked from Patrick's patch:
->>>> https://lore.kernel.org/all/20240709132041.3625501-6-roypat@amazon.co.uk/
->>>
->>> yaay :D
->>>
->>>> While guest_memfd is not available to be mapped by userspace, it is
->>>> still accessible through the kernel's direct map. This means that in
->>>> scenarios where guest-private memory is not hardware protected, it can
->>>> be speculatively read and its contents potentially leaked through
->>>> hardware side-channels. Removing guest-private memory from the direct
->>>> map, thus mitigates a large class of speculative execution issues
->>>> [1, Table 1].
->>>>
->>>> Direct map removal do not reuse the `.prepare` machinery, since
->>>> `prepare` can be called multiple time, and it is the responsibility of
->>>> the preparation routine to not "prepare" the same folio twice [2]. Thus,
->>>> instead explicitly check if `filemap_grab_folio` allocated a new folio,
->>>> and remove the returned folio from the direct map only if this was the
->>>> case.
->>>
->>> My patch did this, but you separated the PG_uptodate logic from the
->>> direct map removal, right?
->>>
->>>> The patch uses release_folio instead of free_folio to reinsert pages
->>>> back into the direct map as by the time free_folio is called,
->>>> folio->mapping can already be NULL. This means that a call to
->>>> folio_inode inside free_folio might deference a NULL pointer, leaving no
->>>> way to access the inode which stores the flags that allow determining
->>>> whether the page was removed from the direct map in the first place.
->>>
->>> I thought release_folio was only called for folios with PG_private=1?
->>> You choose PG_private=1 to mean "this folio is in the direct map", so it
->>> gets called for exactly the wrong folios (more on that below, too).
->>>
->>
->> PG_private=1 should be meaning "this folio is not in the direct map".
-> 
-> Right. I just checked my patch and it indeed means the same there. No
-> idea what I was on about yesterday. I think I only had Paolo's comment
-> about using folio->private for refcounting sharings in mind, so I
-> thought "to use folio->private, you need PG_private=1, therefore
-> PG_private=1 means shared" (I just checked, and while
-> folio_attach_private causes PG_private=1 to be set, page_set_private
-> does not). Obviously my comments below and especially here on PG_private
-> were nonsense. Sorry about that!
-> 
->>>> [1]: https://download.vusec.net/papers/quarantine_raid23.pdf
->>>>
->>>> Cc: Patrick Roy <roypat@amazon.co.uk>
->>>> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
->>>> ---
->>>>  include/linux/guest_memfd.h |  8 ++++++
->>>>  mm/guest_memfd.c            | 65 ++++++++++++++++++++++++++++++++++++++++++++-
->>>>  2 files changed, 72 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/include/linux/guest_memfd.h b/include/linux/guest_memfd.h
->>>> index be56d9d53067..f9e4a27aed67 100644
->>>> --- a/include/linux/guest_memfd.h
->>>> +++ b/include/linux/guest_memfd.h
->>>> @@ -25,6 +25,14 @@ struct guest_memfd_operations {
->>>>         int (*release)(struct inode *inode);
->>>>  };
->>>>
->>>> +/**
->>>> + * @GUEST_MEMFD_FLAG_NO_DIRECT_MAP: When making folios inaccessible by host, also
->>>> + *                                  remove them from the kernel's direct map.
->>>> + */
->>>> +enum {
->>>> +       GUEST_MEMFD_FLAG_NO_DIRECT_MAP          = BIT(0),
->>>> +};
->>>> +
->>>>  /**
->>>>   * @GUEST_MEMFD_GRAB_UPTODATE: Ensure pages are zeroed/up to date.
->>>>   *                             If trusted hyp will do it, can ommit this flag
->>>> diff --git a/mm/guest_memfd.c b/mm/guest_memfd.c
->>>> index 580138b0f9d4..e9d8cab72b28 100644
->>>> --- a/mm/guest_memfd.c
->>>> +++ b/mm/guest_memfd.c
->>>> @@ -7,9 +7,55 @@
->>>>  #include <linux/falloc.h>
->>>>  #include <linux/guest_memfd.h>
->>>>  #include <linux/pagemap.h>
->>>> +#include <linux/set_memory.h>
->>>> +
->>>> +static inline int guest_memfd_folio_private(struct folio *folio)
->>>> +{
->>>> +       unsigned long nr_pages = folio_nr_pages(folio);
->>>> +       unsigned long i;
->>>> +       int r;
->>>> +
->>>> +       for (i = 0; i < nr_pages; i++) {
->>>> +               struct page *page = folio_page(folio, i);
->>>> +
->>>> +               r = set_direct_map_invalid_noflush(page);
->>>> +               if (r < 0)
->>>> +                       goto out_remap;
->>>> +       }
->>>> +
->>>> +       folio_set_private(folio);
->>>
->>> Mh, you've inverted the semantics of PG_private in the context of gmem
->>> here, compared to my patch. For me, PG_private=1 meant "this folio is
->>> back in the direct map". For you it means "this folio is removed from
->>> the direct map".
->>>
->>> Could you elaborate on why you require these different semantics for
->>> PG_private? Actually, I think in this patch series, you could just drop
->>> the PG_private stuff altogether, as the only place you do
->>> folio_test_private is in guest_memfd_clear_private, but iirc calling
->>> set_direct_map_default_noflush on a page that's already in the direct
->>> map is a NOOP anyway.
->>>
->>> On the other hand, as Paolo pointed out in my patches [1], just using a
->>> page flag to track direct map presence for gmem is not enough. We
->>> actually need to keep a refcount in folio->private to keep track of how
->>> many different actors request a folio's direct map presence (in the
->>> specific case in my patch series, it was different pfn_to_gfn_caches for
->>> the kvm-clock structures of different vcpus, which the guest can place
->>> into the same gfn). While this might not be a concern for the the
->>> pKVM/Gunyah case, where the guest dictates memory state, it's required
->>> for the non-CoCo case where KVM/userspace can set arbitrary guest gfns
->>> to shared if it needs/wants to access them for whatever reason. So for
->>> this we'd need to have PG_private=1 mean "direct map entry restored" (as
->>> if PG_private=0, there is no folio->private).
->>>
->>> [1]: https://lore.kernel.org/kvm/20240709132041.3625501-1-roypat@amazon.co.uk/T/#m0608c4b6a069b3953d7ee97f48577d32688a3315
->>>
->>
->> I wonder if we can use the folio refcount itself, assuming we can rely
->> on refcount == 1 means we can do shared->private conversion.
->>
->> In gpc_map_gmem, we convert private->shared. There's no problem here in
->> the non-CoCo case.
->>
->> In gpc_unmap, we *try* to convert back from shared->private. If
->> refcount>2, then the conversion would fail. The last gpc_unmap would be
->> able to successfully convert back to private.
->>
->> Do you see any concerns with this approach?
-> 
-> The gfn_to_pfn_cache does not keep an elevated refcount on the cached
-> page, and instead responds to MMU notifiers to detect whether the cached
-> translation has been invalidated, iirc. So the folio refcount will
-> not reflect the number of gpcs holding that folio.
-> 
->>>> +       return 0;
->>>> +out_remap:
->>>> +       for (; i > 0; i--) {
->>>> +               struct page *page = folio_page(folio, i - 1);
->>>> +
->>>> +               BUG_ON(set_direct_map_default_noflush(page));
->>>> +       }
->>>> +       return r;
->>>> +}
->>>> +
->>>> +static inline void guest_memfd_folio_clear_private(struct folio *folio)
->>>> +{
->>>> +       unsigned long start = (unsigned long)folio_address(folio);
->>>> +       unsigned long nr = folio_nr_pages(folio);
->>>> +       unsigned long i;
->>>> +
->>>> +       if (!folio_test_private(folio))
->>>> +               return;
->>>> +
->>>> +       for (i = 0; i < nr; i++) {
->>>> +               struct page *page = folio_page(folio, i);
->>>> +
->>>> +               BUG_ON(set_direct_map_default_noflush(page));
->>>> +       }
->>>> +       flush_tlb_kernel_range(start, start + folio_size(folio));
->>>> +
->>>> +       folio_clear_private(folio);
->>>> +}
->>>>
->>>>  struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags)
->>>>  {
->>>> +       unsigned long gmem_flags = (unsigned long)file->private_data;
->>>>         struct inode *inode = file_inode(file);
->>>>         struct guest_memfd_operations *ops = inode->i_private;
->>>>         struct folio *folio;
->>>> @@ -43,6 +89,12 @@ struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags
->>>>                         goto out_err;
->>>>         }
->>>>
->>>> +       if (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP) {
->>>> +               r = guest_memfd_folio_private(folio);
->>>> +               if (r)
->>>> +                       goto out_err;
->>>> +       }
->>>> +
->>>
->>> How does a caller of guest_memfd_grab_folio know whether a folio needs
->>> to be removed from the direct map? E.g. how can a caller know ahead of
->>> time whether guest_memfd_grab_folio will return a freshly allocated
->>> folio (which thus needs to be removed from the direct map), vs a folio
->>> that already exists and has been removed from the direct map (probably
->>> fine to remove from direct map again), vs a folio that already exists
->>> and is currently re-inserted into the direct map for whatever reason
->>> (must not remove these from the direct map, as other parts of
->>> KVM/userspace probably don't expect the direct map entries to disappear
->>> from underneath them). I couldn't figure this one out for my series,
->>> which is why I went with hooking into the PG_uptodate logic to always
->>> remove direct map entries on freshly allocated folios.
->>>
->>
->> gmem_flags come from the owner. If the caller (in non-CoCo case) wants
+> So, something is too big in the test?
 
-Ah, oops, I got it mixed up with the new `flags` parameter. 
+Yes, and I think it was reported before, _and_ I tried to fix it.. 
+(https://patchwork.freedesktop.org/patch/594928/?series=133871&rev=1) It 
+looks it fell through the cracks. Now pushed, thank you for reviews!
 
->> to restore the direct map right away, it'd have to be a direct
->> operation. As an optimization, we could add option that asks for page in
->> "shared" state. If allocating new page, we can return it right away
->> without removing from direct map. If grabbing existing folio, it would
->> try to do the private->shared conversion.
+Regards,
 
-My concern is more with the implicit shared->private conversion that
-happens on every call to guest_memfd_grab_folio (and thus
-kvm_gmem_get_pfn) when grabbing existing folios. If something else
-marked the folio as shared, then we cannot punch it out of the direct
-map again until that something is done using the folio (when working on
-my RFC, kvm_gmem_get_pfn was indeed called on existing folios that were
-temporarily marked shared, as I was seeing panics because of this). And
-if the folio is currently private, there's nothing to do. So either way,
-guest_memfd_grab_folio shouldn't touch the direct map entry for existing
-folios.
+Tvrtko
 
+> -Kees
+> 
+> On Sun, Aug 04, 2024 at 04:56:40PM +0800, kernel test robot wrote:
 >>
->> Thanks for the feedback, it was helpful!
+>> hi, Kees Cook,
 >>
->> - Elliot
+>> as we understand, this commit is not the root cause of WARNING. the WARNING just
+>> changes the form from (2) to (1) due to this commit.
 >>
->>>>         /*
->>>>          * Ignore accessed, referenced, and dirty flags.  The memory is
->>>>          * unevictable and there is no storage to write back to.
->>>> @@ -213,14 +265,25 @@ static bool gmem_release_folio(struct folio *folio, gfp_t gfp)
->>>>         if (ops->invalidate_end)
->>>>                 ops->invalidate_end(inode, offset, nr);
->>>>
->>>> +       guest_memfd_folio_clear_private(folio);
->>>> +
->>>>         return true;
->>>>  }
->>>>
->>>> +static void gmem_invalidate_folio(struct folio *folio, size_t offset, size_t len)
->>>> +{
->>>> +       /* not yet supported */
->>>> +       BUG_ON(offset || len != folio_size(folio));
->>>> +
->>>> +       BUG_ON(!gmem_release_folio(folio, 0));
->>>> +}
->>>> +
->>>>  static const struct address_space_operations gmem_aops = {
->>>>         .dirty_folio = noop_dirty_folio,
->>>>         .migrate_folio = gmem_migrate_folio,
->>>>         .error_remove_folio = gmem_error_folio,
->>>>         .release_folio = gmem_release_folio,
->>>> +       .invalidate_folio = gmem_invalidate_folio,
->>>>  };
->>>>
->>>>  static inline bool guest_memfd_check_ops(const struct guest_memfd_operations *ops)
->>>> @@ -241,7 +304,7 @@ struct file *guest_memfd_alloc(const char *name,
->>>>         if (!guest_memfd_check_ops(ops))
->>>>                 return ERR_PTR(-EINVAL);
->>>>
->>>> -       if (flags)
->>>> +       if (flags & ~GUEST_MEMFD_FLAG_NO_DIRECT_MAP)
->>>>                 return ERR_PTR(-EINVAL);
->>>>
->>>>         /*
->>>>
->>>> --
->>>> 2.34.1
->>>>
->>>
->>> Best,
->>> Patrick
->>>
+>> 67f2df3b82d091ed 2e8000b826fcd2716449d09753d
+>> ---------------- ---------------------------
+>>         fail:runs  %reproduction    fail:runs
+>>             |             |             |
+>>             :6          100%           6:6     dmesg.WARNING:at_mm/util.c:#__kvmalloc_node_noprof  <--- (1)
+>>            6:6          -67%            :6     dmesg.WARNING:at_mm/util.c:#kvmalloc_node_noprof    <--- (2)
+>>
+>> however, we failed to bisect (2). so below report is FYI what we observed in our
+>> tests. not sure if it can give any hint to some real issues.
+>>
+>>
+>>
+>> Hello,
+>>
+>> kernel test robot noticed "WARNING:at_mm/util.c:#__kvmalloc_node_noprof" on:
+>>
+>> commit: 2e8000b826fcd2716449d09753d5ed843067881e ("mm/slab: Introduce kvmalloc_buckets_node() that can take kmem_buckets argument")
+>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>>
+>> [test failed on linus/master      786c8248dbd33a5a7a07f7c6e55a7bfc68d2ca48]
+>> [test failed on linux-next/master 9ec6ec93f2c1e6cd2911e2a4acd5ac85e13bb3e2]
+>>
+>> in testcase: igt
+>> version: igt-x86_64-73e21b2bb-1_20240623
+>> with following parameters:
+>>
+>> 	group: gem_exec_reloc
+>>
+>>
+>>
+>> compiler: gcc-13
+>> test machine: 8 threads 1 sockets Intel(R) Core(TM) i7-7700 CPU @ 3.60GHz (Kaby Lake) with 32G memory
+>>
+>> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>>
+>>
+>>
+>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <oliver.sang@intel.com>
+>> | Closes: https://lore.kernel.org/oe-lkp/202408041614.dbe4b7fd-lkp@intel.com
+>>
+>>
+>>
+>> The kernel config and materials to reproduce are available at:
+>> https://download.01.org/0day-ci/archive/20240804/202408041614.dbe4b7fd-lkp@intel.com
+>>
+>>
+>> [  928.741334][ T5136] ------------[ cut here ]------------
+>> [  928.747005][ T5136] WARNING: CPU: 2 PID: 5136 at mm/util.c:650 __kvmalloc_node_noprof+0x142/0x190
+>> [  928.755967][ T5136] Modules linked in: btrfs blake2b_generic xor zstd_compress raid6_pq libcrc32c intel_rapl_msr intel_rapl_common x86_pkg_temp_thermal ipmi_devintf ipmi_msghandler sd_mod intel_powerclamp t10_pi coretemp crc64_rocksoft_generic crc64_rocksoft crc64 kvm_intel sg i915 kvm crct10dif_pclmul crc32_pclmul crc32c_intel drm_buddy ghash_clmulni_intel intel_gtt sha512_ssse3 drm_display_helper mei_wdt ttm rapl drm_kms_helper ahci wmi_bmof libahci mei_me video intel_cstate intel_uncore idma64 libata mei i2c_designware_platform i2c_i801 i2c_designware_core i2c_smbus pinctrl_sunrisepoint wmi acpi_pad binfmt_misc loop drm fuse dm_mod ip_tables
+>> [  928.812981][ T5136] CPU: 2 PID: 5136 Comm: gem_exec_reloc Tainted: G S                 6.10.0-rc1-00009-g2e8000b826fc #1
+>> [  928.823924][ T5136] Hardware name: Dell Inc. OptiPlex 7050/062KRH, BIOS 1.2.0 12/22/2016
+>> [  928.832080][ T5136] RIP: 0010:__kvmalloc_node_noprof+0x142/0x190
+>> [  928.838186][ T5136] Code: c4 06 0e 00 48 83 c4 18 48 83 c4 08 5b 5d 41 5c 41 5d 41 5e c3 cc cc cc cc 49 be 00 00 00 00 00 20 00 00 eb 9f 80 e7 20 75 de <0f> 0b eb da 48 c7 c7 f0 fe cf 84 e8 5e 2c 19 00 e9 3f ff ff ff 48
+>> [  928.857727][ T5136] RSP: 0018:ffffc9000e82f6f8 EFLAGS: 00010246
+>> [  928.863744][ T5136] RAX: 0000000000000000 RBX: 00000000000000c0 RCX: 0000000000000013
+>> [  928.871647][ T5136] RDX: 000000000007ffff RSI: ffffffff81a13806 RDI: 0000000000000000
+>> [  928.879565][ T5136] RBP: 0000000080000000 R08: 0000000000000001 R09: 0000000000000000
+>> [  928.887466][ T5136] R10: ffffc9000e82f6f8 R11: 0000000000000000 R12: 00000000ffffffff
+>> [  928.895375][ T5136] R13: 0000000000000000 R14: 0000000004000000 R15: ffffc9000e82f9b0
+>> [  928.903288][ T5136] FS:  00007f0ff830d8c0(0000) GS:ffff88879db00000(0000) knlGS:0000000000000000
+>> [  928.912151][ T5136] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [  928.918679][ T5136] CR2: 00007f0ff8100000 CR3: 00000008162e0004 CR4: 00000000003706f0
+>> [  928.926595][ T5136] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> [  928.934489][ T5136] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>> [  928.942382][ T5136] Call Trace:
+>> [  928.945631][ T5136]  <TASK>
+>> [  928.948499][ T5136]  ? __warn+0xcc/0x260
+>> [  928.952503][ T5136]  ? __kvmalloc_node_noprof+0x142/0x190
+>> [  928.957994][ T5136]  ? report_bug+0x261/0x2c0
+>> [  928.962429][ T5136]  ? handle_bug+0x6d/0x90
+>> [  928.966692][ T5136]  ? exc_invalid_op+0x17/0x40
+>> [  928.971327][ T5136]  ? asm_exc_invalid_op+0x1a/0x20
+>> [  928.976295][ T5136]  ? __kmalloc_node_noprof+0x3b6/0x4e0
+>> [  928.981709][ T5136]  ? __kvmalloc_node_noprof+0x142/0x190
+>> [  928.987199][ T5136]  ? __kvmalloc_node_noprof+0x53/0x190
+>> [  928.992590][ T5136]  eb_copy_relocations+0x166/0x450 [i915]
+>> [  928.998467][ T5136]  eb_relocate_parse_slow+0xd5/0x860 [i915]
+>> [  929.004513][ T5136]  i915_gem_do_execbuffer+0xaa5/0x2420 [i915]
+>> [  929.010657][ T5136]  ? unwind_get_return_address+0x5e/0xa0
+>> [  929.016135][ T5136]  ? arch_stack_walk+0xac/0x100
+>> [  929.020836][ T5136]  ? __pfx_i915_gem_do_execbuffer+0x10/0x10 [i915]
+>> [  929.027424][ T5136]  ? kasan_save_track+0x14/0x30
+>> [  929.032147][ T5136]  ? __kasan_kmalloc+0x8f/0xa0
+>> [  929.036759][ T5136]  ? __pfx___might_resched+0x10/0x10
+>> [  929.041892][ T5136]  ? check_heap_object+0x6f/0x4b0
+>> [  929.046766][ T5136]  i915_gem_execbuffer2_ioctl+0x2b2/0x680 [i915]
+>> [  929.053171][ T5136]  ? __pfx_i915_gem_execbuffer2_ioctl+0x10/0x10 [i915]
+>> [  929.060100][ T5136]  drm_ioctl_kernel+0x16f/0x2e0 [drm]
+>> [  929.065417][ T5136]  ? __pfx_drm_ioctl_kernel+0x10/0x10 [drm]
+>> [  929.071239][ T5136]  drm_ioctl+0x4d0/0xad0 [drm]
+>> [  929.075948][ T5136]  ? __pfx_i915_gem_execbuffer2_ioctl+0x10/0x10 [i915]
+>> [  929.082882][ T5136]  ? __pfx_drm_ioctl+0x10/0x10 [drm]
+>> [  929.088119][ T5136]  ? __fget_light+0x57/0x420
+>> [  929.092587][ T5136]  __x64_sys_ioctl+0x137/0x1b0
+>> [  929.097212][ T5136]  do_syscall_64+0x5f/0x170
+>> [  929.101572][ T5136]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>> [  929.107321][ T5136] RIP: 0033:0x7f0ffa6b7c5b
+>> [  929.111603][ T5136] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+>> [  929.131013][ T5136] RSP: 002b:00007ffda154ae00 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+>> [  929.139261][ T5136] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007f0ffa6b7c5b
+>> [  929.147077][ T5136] RDX: 00007ffda154af10 RSI: 0000000040406469 RDI: 0000000000000004
+>> [  929.154890][ T5136] RBP: 00007ffda154af10 R08: 0000000000000004 R09: 0000000100000000
+>> [  929.162704][ T5136] R10: 00007f0ffa7a8298 R11: 0000000000000246 R12: 0000000040406469
+>> [  929.170515][ T5136] R13: 0000000000000004 R14: 00007f0f78200000 R15: 0000000000000002
+>> [  929.178329][ T5136]  </TASK>
+>> [  929.181207][ T5136] ---[ end trace 0000000000000000 ]---
+>>
+>>
+>> -- 
+>> 0-DAY CI Kernel Test Service
+>> https://github.com/intel/lkp-tests/wiki
+>>
+> 
 
