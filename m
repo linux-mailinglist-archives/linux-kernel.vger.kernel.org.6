@@ -1,92 +1,72 @@
-Return-Path: <linux-kernel+bounces-278231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 540A594ADAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:08:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D8494ADAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09E91F217E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:08:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 054AF1C211F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA39613AA4C;
-	Wed,  7 Aug 2024 16:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5109113D51B;
+	Wed,  7 Aug 2024 16:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QbqMEAre";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Vjpe8cWi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sUrqXRYl"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B801312C53B;
-	Wed,  7 Aug 2024 16:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5E013A868
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723046791; cv=none; b=SynK2mog70erxRwfQODDlSqcVxSNfPQXAorkWiR3IBbm6FDadYzeYWJAJN3mQ4q4YZw0V1n5j0Ri95CtqRSY9FLF/ZywNEGk7IWxWegQOZHbjYufuNlLtjyqq7ltn4AKAxowuIHGsYgqIt30OBwCi7QSK3NWwJSe/JZhNwo5THo=
+	t=1723046815; cv=none; b=CzirU09/kmpjSPJ2MGkZ5qUBEccqB0ax/MTX2d8KVKZVQU+GTcYho9pBKtm60y9H9zH1qRCJD1Vi3sOuHQIlBMVPLnj+hgJUNQ8SGPGaxAtz7dGfAx77CBRnoBfKJlZA/xhxUGVBucwf6IzrkAZGwq8N1/cNpRu8yKTUIOKBUkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723046791; c=relaxed/simple;
-	bh=R7Qllx4JZW1zg7H7gr7aYgLNKiP6/QMMESmdaEgPzEw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZphpAtXbWLnLLT1Pz/Q6XPx8HcmkElPccx0V63/w3JGZylvk0vqLwvY6l6DySQ17toFh6/7kXhB5x8Lreuw6XosUduQS1ilU9FVocwl2WDcWj+eTxP+RUxzv0pY3xZkYiU6ll+f+AwQQsx6X1oz8qAoympJRMf+m4bIfHvjwiVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QbqMEAre; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Vjpe8cWi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723046788;
+	s=arc-20240116; t=1723046815; c=relaxed/simple;
+	bh=Ox8dAYeKznv8tFNqpz7vNpNAB4UpgPt9H2/s9qBhm/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kuanqKx1Vaz422Z/Gbb8NLfzJQ2JjfoLXFt5cQcdfGFhKTluVQDSbe/9xLVO7jMqSb5AB61/G9Wt9fdgiCNkqUx4fo1rWBrxH3RuRRo3IwrNXCN4v1wO55kq4H858W7w0nx3CDx7R8mqOP05elKiVYXZ8N34QSlQggHQJXla8Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sUrqXRYl; arc=none smtp.client-ip=91.218.175.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 7 Aug 2024 12:06:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723046811;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=z52v8Sqeswu8CGSorbo0wWNBPUOgPGQL89gbTfBDJO4=;
-	b=QbqMEAreoNIgckPSgEw3a/M7zZyGIQYxUuptE5DfYAsi11tMCsqXkzMR4DQ3HELQbQWo9q
-	JBpuM10v5CeeGtwZ4MGgPnXhxfnKW6V1cwEPZ3MmxstdpM5A9z5fRd+m4PnBVYB1nwM8Ll
-	ZuYlp7xbTR0rI+5FVCbj8jXw2bbWHKoWD4vZAs0PUu72uryEJxRf6FtwYIzZTMSQ+W5DQ1
-	HpatqIl/d3Q9m5fOY9NuiKismm4oMZO3hQrSJ0gaXLUqqcsE3PUas4yXAySYAjQNEHlFn1
-	Y0Q2dzkTvIbvDT19JQdjskHMeqeQ1cBhd/kbXTkhbgotxhB0zMVu22zSFJ/5EQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723046788;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z52v8Sqeswu8CGSorbo0wWNBPUOgPGQL89gbTfBDJO4=;
-	b=Vjpe8cWiXkXmqG7GXMUtntPL0PJQs2ZR6ZUjCkNswXcHzXBOwYux6r70GxFRynedRIoxpl
-	HWHcEfUvfU5k3YBg==
-To: Kim Phillips <kim.phillips@amd.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, x86@kernel.org
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, Michael Roth
- <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>, Nikunj A
- Dadhania <nikunj@amd.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>, "H.
- Peter Anvin" <hpa@zytor.com>, Kishon
- Vijay Abraham I <kvijayab@amd.com>, Kim Phillips <kim.phillips@amd.com>
-Subject: Re: [PATCH 1/2] x86/cpufeatures: Add "Allowed SEV Features" Feature
-In-Reply-To: <20240802015732.3192877-2-kim.phillips@amd.com>
-References: <20240802015732.3192877-1-kim.phillips@amd.com>
- <20240802015732.3192877-2-kim.phillips@amd.com>
-Date: Wed, 07 Aug 2024 18:06:27 +0200
-Message-ID: <87o7642u7w.ffs@tglx>
+	bh=LF5jjwkwqJB7FolX23lAfKKpsUXDA65/uxW4dbAo5pA=;
+	b=sUrqXRYlveEoOCMnqMx9KJ4CdAg5HWr6M5gePcsejsvw3LpuoWVH4gju0HklT6VJ80KqGd
+	WvLcftemUsqNbKbzqs9QUYfrxd8aIn8YsiOxrSJYrb4SoD2z13hBitNB4ZEIkepK0DPCMg
+	dc6pdLYVh7HO2vUmVNg15jZcM0tCxjE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Xiaxi Shen <shenxiaxi26@gmail.com>, corbet@lwn.net, 
+	javier.carrasco.cruz@gmail.com, "open list:BCACHEFS" <linux-bcachefs@vger.kernel.org>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Fix a spelling error in a doc of bcachefs
+Message-ID: <bdws7d7askhlctcwfgwieml56dr4vqjuvi7bavwkldjdcuzk3u@cbneggmx2w2b>
+References: <20240807071005.16329-1-shenxiaxi26@gmail.com>
+ <2dfa76a7-eeae-4b05-bfcd-684ae7ade963@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2dfa76a7-eeae-4b05-bfcd-684ae7ade963@linuxfoundation.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 01 2024 at 20:57, Kim Phillips wrote:
-> From: Kishon Vijay Abraham I <kvijayab@amd.com>
->
-> Add CPU feature detection for "Allowed SEV Features" to allow the
-> Hypervisor to enforce that SEV-ES and SEV-SNP guest VMs cannot
-> enable features (via SEV_FEATURES) that the Hypervisor does not
-> support or wish to be enabled.
+On Wed, Aug 07, 2024 at 09:42:12AM GMT, Shuah Khan wrote:
+> On 8/7/24 01:10, Xiaxi Shen wrote:
+> 
+> Missing commit message --
 
-Can you please add this new feature bit to the CPUID database
-
-    https://gitlab.com/x86-cpuid.org/x86-cpuid-db
-
-Thanks,
-
-        tglx
+I wasn't going to commit this, because I don't like taking patches that
+do nothing more than fix spelling, but since it in fact does not need a
+commit message for something so trivial I am applying it.
 
