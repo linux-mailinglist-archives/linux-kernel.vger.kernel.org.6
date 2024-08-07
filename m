@@ -1,138 +1,188 @@
-Return-Path: <linux-kernel+bounces-278179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F92994AD53
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:47:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD65094AD0C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70030B2FA60
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:39:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D075D1C21314
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFB212F5B1;
-	Wed,  7 Aug 2024 15:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462F612C522;
+	Wed,  7 Aug 2024 15:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="htepBJlS"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YsR9WEVL"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AD882D70;
-	Wed,  7 Aug 2024 15:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE8084DE4;
+	Wed,  7 Aug 2024 15:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723045142; cv=none; b=c5fFrTrM6yxIa0qYE1c472zMGJH2FZqixKm4f3AauuaPDaGnYMujljSIaIMxIvudTjJGFX0Dk7XMGK5eLK2vFzZm/HR8A4NYa/hTEEZEpPb2yJyen/QZkXo6YYg6p3TMU5cdFk9G7xZ/VQgY5TNrtNlKe0K4YxZTdaUCKgD9N/w=
+	t=1723045136; cv=none; b=lZiEp/jd87Ge7NWp1kBPUObniiv4ZWBDBe8dlkq4bI41TSGbmfxdTKtXV7Vm5EZeSpBHlI8i9E3IhDUlTemEZ/llOHsv5tCPQiIulf1uovIXKzsS9ydfAsWMx/ZWzmtAg1B7pPZCoQEST8q0cwdoQEweHrnql73EMQ4rPCdzZtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723045142; c=relaxed/simple;
-	bh=XXrVvazBPCVSRU5/OT0GJvBZ8iw+n2FkA749zr9ireI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9ZWOSHnBpRicYs309v/sdRrcNgHOH44Njpo8302auEOHs6pnajz+P7IMWF2U/h/gMXoUNppFDmQaKPezisxCHs3ZLCPFbc8WUSyrV0MqgdNR8UZ0MPzxdXPZ8Lt7AeZQNfaEsji9/fyFAiracW1bk9HeDb4FugtXivqykmEnpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=htepBJlS; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=fGlMApxeReVSP5e96DejXHnM7BqtFE0t1NLvKtj+CC8=; b=htepBJlSv3TXweGvYd1e/IcXP9
-	4aO+giJbJx58b60SZVRn3eji+s+y9amraDXY4LVEUteLM7SR02UOpc8vukAhiNM3hLIxKcJPAkmbJ
-	zRZlFecOIxqHiPW1wPgHUTJDyiPHiqz5F+w354386gFDlGa0PApMHGWAbO/XXxmhZbNDLTC8xy/yx
-	0Ptc+QPZL+VInnSrxKunCnIMQAB3N2fmTMC1GL0Rr7F4qPUyMPZl0hEXNUHrg640wDwe3YPXBkLV0
-	bQ8Bs3liwACPMSV89v3xmItYRDrloNNvcxplq9DgWCFQGIciJiObO9xXxkqPzeBNIbBB+VjiDh915
-	vni9YOpQ==;
-Received: from [2001:9e8:9f8:5201:3235:adff:fed0:37e6] (port=41026 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1sbikQ-009fVq-7r;
-	Wed, 07 Aug 2024 17:38:46 +0200
-Date: Wed, 7 Aug 2024 17:38:28 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: da.gomez@samsung.com
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	William Hubbs <w.d.hubbs@gmail.com>,
-	Chris Brannon <chris@the-brannons.com>,
-	Kirk Reiser <kirk@reisers.ca>,
-	Samuel Thibault <samuel.thibault@ens-lyon.org>,
-	Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org,
-	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org,
-	llvm@lists.linux.dev, Finn Behrens <me@kloenk.dev>,
-	"Daniel Gomez (Samsung)" <d+samsung@kruces.com>,
-	gost.dev@samsung.com
-Subject: Re: [PATCH 06/12] selinux/genheaders: include bitsperlong and
- posix_types headers
-Message-ID: <20240807-outgoing-charcoal-collie-0ee37e@lindesnes>
-References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
- <20240807-macos-build-support-v1-6-4cd1ded85694@samsung.com>
+	s=arc-20240116; t=1723045136; c=relaxed/simple;
+	bh=2VYp0BI/kPi28iuKF1qBrEFXPnNCKO/C9rxIuPP1jnw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q1l4wkE5eApbn3CJid6jiRE9BEmREmOobyyLWGuveJ4g6TqgaY3tr/qeBc1jpw8stzewpquDBB2MgZJdeoVgpvsO2dkoPFiSBjSYqgCsI6f+TpkBrKo4x/Hq2Ao+MobYlzymgbG1xMOZV4SpjuiwHgOgOYtdSDH+tDgDDGbtd3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YsR9WEVL; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7a1be7b5d70so956953a12.0;
+        Wed, 07 Aug 2024 08:38:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723045134; x=1723649934; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3JFWGoKjky3ndaB5sBCSGzwEOQ6qqMNssjKu1Qp1eRM=;
+        b=YsR9WEVLB65xeWXv9Q/RRkrctKJqdHJ6dvjx3Ro5TaTUweLOk8GoWZibvB1bwIqbGG
+         pnc7QJxE8z7C+kDcl0cZJjoLfDQJx+j3vBQQ/FZ2LI3OSiSITGGywdpEbobJdO66qmlz
+         yUoSgF4aAhNdnz999krrQC0HQgI9sElTzNM1cGliKxvM4JEq6RSOIPCGOJqkoO0x78eo
+         FfsX2JrxpqZ496KG5l88OWDpO7x+iUmOz0SfqDe1n2uWWfXXa89bLep8GOxak3fgtnAG
+         vtWC2/bXyQHB7ROkbSxmv98/GHTO3/9ACoxIdmZS5jzwuNk6Jg9O73vy6QXcIzK8dVWN
+         nN5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723045134; x=1723649934;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3JFWGoKjky3ndaB5sBCSGzwEOQ6qqMNssjKu1Qp1eRM=;
+        b=AXe2DKXe+VVvSXot6qAyCRVDSRgGxWaQak7y8/7rajs65DewuSTFvmu6ZoZnkaxFP/
+         ixRZmwJSW6Vf15TNg7mLX5Xa6Ls+j3tdlf/bfkH6kKjiCU76JTq8Yrgp0NBg1hQ+0CWf
+         YKwCkim4IM+edWfrUunjJ6aCHLX6fwSjiIWtixWgaPnUGXd9M91VingJGPpqIj7lUBp8
+         P+6nK9wIfuacPQu97G6RwlAkJAheojeVJiGHCikF20XB6Qj1JakM4clGOO2TantaKjX2
+         hHruXl9skPQu0SeXzmOaK/BPjxXiQ9jOLwAwKHUNb7gSkLdURnT3tO0M1Fr6ZV3Bop+r
+         ni+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWMzeb1snjRqcWpuan1imWk3wWzQPhNjXcelNQtj/+9F7V0eXR4oMDUQJNPrdEio8s8GLhm80RXNCUn9Mj2Zi2InPFrcsdOgV7SfUpRTcK9+gKAqPz5PGJhkEL1E20p3acWWd/6af052kjHcHgp4A==
+X-Gm-Message-State: AOJu0YyHKzXXYPT1yGFwqe6zM2CBF3bAP2Y1XCGQ+hvNNmjGPmhvGPTl
+	2togmBnNH8V/HahN4cbbCctHA15fdeGZFU7m6Rl2TCq2gXwRVu9S
+X-Google-Smtp-Source: AGHT+IGP+OP4jwPFT7gS6plDcxAgEeDUUx8BYzXV/9E+u+oURvXPxh2384VYFJYiM/i8pSxmsuRMMw==
+X-Received: by 2002:a17:902:da89:b0:1fb:77e7:27b2 with SMTP id d9443c01a7336-200854f9c4amr38134975ad.18.1723045133908;
+        Wed, 07 Aug 2024 08:38:53 -0700 (PDT)
+Received: from localhost.localdomain ([120.229.49.55])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59297329sm108097375ad.247.2024.08.07.08.38.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 08:38:53 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: namhyung@kernel.org
+Cc: irogers@google.com,
+	acme@kernel.org,
+	adrian.hunter@intel.com,
+	jolsa@kernel.org,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/9] perf record --off-cpu: Dump off-cpu samples directly
+Date: Wed,  7 Aug 2024 23:38:34 +0800
+Message-ID: <20240807153843.3231451-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807-macos-build-support-v1-6-4cd1ded85694@samsung.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 07, 2024 at 01:09:20AM +0200, Daniel Gomez via B4 Relay wrote:
-> From: Daniel Gomez <da.gomez@samsung.com>
-> 
-> The genheaders requires the bitsperlong.h and posix_types.h headers.
-> To ensure these headers are found during compilation on macOS hosts,
-> add usr/include to HOST_EXTRACFLAGS in the genheaders Makefile. This
-> adjustment allows the compiler to locate all necessary headers when they
-> are not available by default on macOS.
-> 
-> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-> ---
->  scripts/selinux/genheaders/Makefile | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/scripts/selinux/genheaders/Makefile b/scripts/selinux/genheaders/Makefile
-> index 1faf7f07e8db..017149c90f8e 100644
-> --- a/scripts/selinux/genheaders/Makefile
-> +++ b/scripts/selinux/genheaders/Makefile
-> @@ -2,4 +2,5 @@
->  hostprogs-always-y += genheaders
->  HOST_EXTRACFLAGS += \
->  	-I$(srctree)/include/uapi -I$(srctree)/include \
-> -	-I$(srctree)/security/selinux/include
-> +	-I$(srctree)/security/selinux/include \
-> +	-I$(srctree)/usr/include
+Changes in v4:
+ - Minimize the size of data output by perf_event_output()
+ - Keep only one off-cpu event
+ - Change off-cpu threshold's unit to microseconds
+ - Set a default off-cpu threshold
+ - Print the correct error message for the field 'embed' in perf data header
 
-'make headers' composes the UAPI header tree in $(objtree)/usr/include.
-So, if you build out-of-source, -I$(srctree)/usr/include will not match.
-Just remove the '$(srctree)/' prefix as '$(objtree)/' is always '.'.
+Changes in v3:
+ - Add off-cpu-thresh argument
+ - Process direct off-cpu samples in post
 
-But I am suspecting that this break cross-building.
+Changes in v2:
+ - Remove unnecessary comments.
+ - Rename function off_cpu_change_type to off_cpu_prepare_parse
 
-Kind regards,
-Nicolas
+v1:
+
+As mentioned in: https://bugzilla.kernel.org/show_bug.cgi?id=207323
+
+Currently, off-cpu samples are dumped when perf record is exiting. This
+results in off-cpu samples being after the regular samples. This patch
+series makes possible dumping off-cpu samples on-the-fly, directly into
+perf ring buffer. And it dispatches those samples to the correct format
+for perf.data consumers.
+
+Before:
+```
+     migration/0      21 [000] 27981.041319: 2944637851    cycles:P:  ffffffff90d2e8aa record_times+0xa ([kernel.kallsyms])
+            perf  770116 [001] 27981.041375:          1    cycles:P:  ffffffff90ee4960 event_function+0xf0 ([kernel.kallsyms])
+            perf  770116 [001] 27981.041377:          1    cycles:P:  ffffffff90c184b1 intel_bts_enable_local+0x31 ([kernel.kallsyms])
+            perf  770116 [001] 27981.041379:      51611    cycles:P:  ffffffff91a160b0 native_sched_clock+0x30 ([kernel.kallsyms])
+     migration/1      26 [001] 27981.041400: 4227682775    cycles:P:  ffffffff90d06a74 wakeup_preempt+0x44 ([kernel.kallsyms])
+     migration/2      32 [002] 27981.041477: 4159401534    cycles:P:  ffffffff90d11993 update_load_avg+0x63 ([kernel.kallsyms])
+
+sshd  708098 [000] 18446744069.414584:     286392 offcpu-time: 
+	    79a864f1c8bb ppoll+0x4b (/usr/lib/libc.so.6)
+	    585690935cca [unknown] (/usr/bin/sshd)
+```
+
+After:
+```
+            perf  774767 [003] 28178.033444:        497           cycles:P:  ffffffff91a160c3 native_sched_clock+0x43 ([kernel.kallsyms])
+            perf  774767 [003] 28178.033445:     399440           cycles:P:  ffffffff91c01f8d nmi_restore+0x25 ([kernel.kallsyms])
+         swapper       0 [001] 28178.036639:  376650973           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+         swapper       0 [003] 28178.182921:  348779378           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+    blueman-tray    1355 [000] 28178.627906:  100184571 offcpu-time: 
+	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
+	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+	    7fff24e862d8 [unknown] ([unknown])
+
+
+    blueman-tray    1355 [000] 28178.728137:  100187539 offcpu-time: 
+	    7528eef1c39d __poll+0x4d (/usr/lib/libc.so.6)
+	    7528edf7d8fd [unknown] (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528edf1af95 g_main_context_iteration+0x35 (/usr/lib/libglib-2.0.so.0.8000.2)
+	    7528eda4ab86 g_application_run+0x1f6 (/usr/lib/libgio-2.0.so.0.8000.2)
+	    7528ee6aa596 [unknown] (/usr/lib/libffi.so.8.1.4)
+	    7fff24e862d8 [unknown] ([unknown])
+
+
+         swapper       0 [000] 28178.463253:  195945410           cycles:P:  ffffffff91a1ae99 intel_idle+0x59 ([kernel.kallsyms])
+     dbus-broker     412 [002] 28178.464855:  376737008           cycles:P:  ffffffff91c000a0 entry_SYSCALL_64+0x20 ([kernel.kallsyms])
+```
+
+
+Howard Chu (9):
+  perf evsel: Set BPF output to system-wide
+  perf record --off-cpu: Add --off-cpu-thresh
+  perf record --off-cpu: Parse offcpu-time event
+  perf record off-cpu: Dump direct off-cpu samples in BPF
+  perf record --off-cpu: Dump total off-cpu time at the end.
+  perf evsel: Delete unnecessary = 0
+  perf record --off-cpu: Parse BPF output embedded data
+  perf header: Add field 'embed'
+  perf test: Add direct off-cpu dumping test
+
+ tools/perf/builtin-record.c             |  26 ++++
+ tools/perf/builtin-script.c             |   5 +-
+ tools/perf/tests/builtin-test.c         |   1 +
+ tools/perf/tests/shell/record_offcpu.sh |  27 ++++
+ tools/perf/tests/tests.h                |   1 +
+ tools/perf/tests/workloads/Build        |   1 +
+ tools/perf/tests/workloads/offcpu.c     |  16 +++
+ tools/perf/util/bpf_off_cpu.c           | 176 +++++++++++++++---------
+ tools/perf/util/bpf_skel/off_cpu.bpf.c  | 135 ++++++++++++++++++
+ tools/perf/util/evsel.c                 |  49 ++++---
+ tools/perf/util/evsel.h                 |  13 ++
+ tools/perf/util/header.c                |  12 ++
+ tools/perf/util/off_cpu.h               |  10 +-
+ tools/perf/util/record.h                |   1 +
+ tools/perf/util/session.c               |  16 ++-
+ 15 files changed, 401 insertions(+), 88 deletions(-)
+ create mode 100644 tools/perf/tests/workloads/offcpu.c
+
+-- 
+2.45.2
+
 
