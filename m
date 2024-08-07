@@ -1,144 +1,161 @@
-Return-Path: <linux-kernel+bounces-278294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F031A94AE64
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:49:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D1C94AE69
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:50:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A539728389B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:49:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0569B22539
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D441813C3C2;
-	Wed,  7 Aug 2024 16:48:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521782D05D
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BC913AD3F;
+	Wed,  7 Aug 2024 16:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HJF/O2p9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NqleyJK3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C4F2D05D;
+	Wed,  7 Aug 2024 16:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723049331; cv=none; b=Erj+esyh998HDex0b3OwdFclHws0aNQvOrh22WhPbwqjToe0nS9d8AEe1/Atx/C76yC+9TP9x1f2a/od9Zzcpqy9yuk+Kga29I+FEw/Td5gYgsFnh4WyptrcvOJEFPvDfivH6h/67zL3HyEgXQtZy+H0mpiOaocP10inkIS9VvM=
+	t=1723049433; cv=none; b=JuhSp7ikZgzAdXCg73lU7jYFOLlGNXb7XWZeKUkQEG1FoBn/7byJKldQoXZUtJNaMNUQ+y4/wIGHra5kXisSkqtk9jR1G9MlmtpqyGgkhp86v4bgr2gusqRjjhHa/fjS3FJ4JlVi2mbGnlh6cdh0bPy0s1QjlcjA3V+2wmFsjYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723049331; c=relaxed/simple;
-	bh=Cg4idp8Y8dHiIfUeaJPMIoEe6gjWTzhVsYXnt4MWgH8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NBOQ4dsa+aDQU9tn3tnoI/XtHHnMh+swnbH2XUgjkGN2HywSkAHbRnznfhJh/QFs5uxK+PmGs+mFts6BEnmZ0rvHy9HQp7brUIzJoSZbZaacR7tkBgBSlkVmUm/LhAF9qWfI5hPZQp/9ujxvzAnpuXgoKeJfRlLQKNf6VoT1KW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EAC63FEC;
-	Wed,  7 Aug 2024 09:49:12 -0700 (PDT)
-Received: from [10.1.27.29] (PF4Q20KV.arm.com [10.1.27.29])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 50AF03F766;
-	Wed,  7 Aug 2024 09:48:45 -0700 (PDT)
-Message-ID: <4dd7f210-c03e-4203-b8e9-1c26a7f8fe79@arm.com>
-Date: Wed, 7 Aug 2024 17:48:46 +0100
+	s=arc-20240116; t=1723049433; c=relaxed/simple;
+	bh=HGL0oXbjlbRusyfBugrb+Rkg/33YKXeRPuHpw4R//M8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cFVhFg5zYPtwbfIbQTKRu0tmO/6MAKZhynm1BJCcXgFE4hEeFS1M9GXz3m/DsG1iJZ0CyzICt1tQ1ewaCy3HWTQQk9aDHoIEH9cefEI4U7gukzb25PyRK8pwQB8yejKVLDf9YnL1Oh26ujdO1/gVi0djV4a0CkR/IoKjAcA9/ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HJF/O2p9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NqleyJK3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723049429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PbgZu6jJQqKx5eAg7S2Xg9YY/wFzAD6EqlFUAxNjEeU=;
+	b=HJF/O2p9rsdZjb8UOWRDijV69igFLVGikVu+KTg/Sn1mqyUaoSZB9O1AyPte13G+yccrxo
+	v22aEze8FDSuMBjaLH9bALFuDOhVfibi34KDTRvJh34XdwZXay7vjYtO5FEytUIzj3cmoM
+	OLgCrIiSxRhjp9oAXirmaNHD8IftrOBzFJtO2lU6VSkHl5XHe79uI/N4Qf8b6M8ngS5tJa
+	MnYVBKxBOkV+nCJa9WSOmOUGaQAGrqgDDmycBcdOLjkbLt0WjrhScpY8SXH9am/Lnu1d3V
+	zo0nsnlxP6QWz6X0CBNqdiM3ctGifCHv5ORBJchs4D4xCoTcYpi7u0rNvXm0Iw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723049429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PbgZu6jJQqKx5eAg7S2Xg9YY/wFzAD6EqlFUAxNjEeU=;
+	b=NqleyJK3nVo3JhF6hXxD1TCGsGQPsFNlNsFQetaDWwzunij//nGt0dU2OJGiwhG7S9Bkob
+	VWhLbHCpcT38dvDA==
+To: Yunhong Jiang <yunhong.jiang@linux.intel.com>, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, rafael@kernel.org, lenb@kernel.org,
+ kirill.shutemov@linux.intel.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+ yunhong.jiang@linux.intel.com
+Subject: Re: [PATCH 3/7] x86/dt: Support the ACPI multiprocessor wakeup for
+ device tree
+In-Reply-To: <20240806221237.1634126-4-yunhong.jiang@linux.intel.com>
+References: <20240806221237.1634126-1-yunhong.jiang@linux.intel.com>
+ <20240806221237.1634126-4-yunhong.jiang@linux.intel.com>
+Date: Wed, 07 Aug 2024 18:50:29 +0200
+Message-ID: <87frrg2s6i.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf scripts python arm-cs-trace-disasm.py: Skip disasm
- if address continuity is broken
-To: James Clark <james.clark@linaro.org>,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- scclevenger@os.amperecomputing.com
-Cc: acme@redhat.com, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- darren@os.amperecomputing.com, james.clark@arm.com, suzuki.poulose@arm.com,
- Al.Grant@arm.com, Mike Leach <mike.leach@linaro.org>
-References: <20240719092619.274730-1-gankulkarni@os.amperecomputing.com>
- <6920de94-a9c8-47f4-840f-391d1ec85c0c@os.amperecomputing.com>
- <8f6f221b-4c9a-42e1-b8ce-1f492caee184@linaro.org>
- <0a697a54-5dd8-4351-a651-991724690db2@os.amperecomputing.com>
- <ce4af204-874f-404c-a7aa-42dc6693d072@linaro.org>
- <a197123a-be59-4052-9615-cac79ffa357a@os.amperecomputing.com>
- <543813f6-cb1f-4759-b26f-75246750814d@linaro.org>
- <f72038a0-c6b5-4245-8515-3b735ca38cbb@linaro.org>
- <ae1b2d8c-588a-4f0a-b3c9-c869f8dd0f25@os.amperecomputing.com>
- <00fac24c-d664-4ebb-8c60-f4697b7f76c1@linaro.org>
- <8b53a424-19f7-4042-a2db-e1c5d051f9cc@os.amperecomputing.com>
- <6adf84fa-b755-4d7a-957a-9bf01e442238@linaro.org>
- <d71dff17-6f1e-4a67-89c6-7ecc86af0f3a@linaro.org>
- <6f535bb6-2cee-48e6-93f1-ea19887bae74@os.amperecomputing.com>
- <027c76a9-9bd4-43e9-a170-8391a0037291@linaro.org>
- <3d7a6f93-0555-48fa-99cb-bf26b53c2da5@os.amperecomputing.com>
- <d6170beb-754e-4be3-8ff7-18acddccf077@linaro.org>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <d6170beb-754e-4be3-8ff7-18acddccf077@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi all,
+On Tue, Aug 06 2024 at 15:12, Yunhong Jiang wrote:
+>  
+> -static int __init acpi_mp_setup_reset(u64 reset_vector)
+> +static int __init __maybe_unused acpi_mp_setup_reset(u64 reset_vector)
+>  {
+>  	struct x86_mapping_info info = {
+>  		.alloc_pgt_page = alloc_pgt_page,
+> @@ -226,7 +228,7 @@ static int acpi_wakeup_cpu(u32 apicid, unsigned long start_ip)
+>  	return 0;
+>  }
+>  
+> -static void acpi_mp_disable_offlining(struct acpi_madt_multiproc_wakeup *mp_wake)
+> +static void __maybe_unused acpi_mp_disable_offlining(struct
+> acpi_madt_multiproc_wakeup *mp_wake)
 
-On 8/7/2024 3:53 PM, James Clark wrote:
+Please move those functions into the #ifdef CONFIG_ACPI
 
-A minor suggestion: if the discussion is too long, please delete the
-irrelevant message ;)
+>  {
+>  	cpu_hotplug_disable_offlining();
+>  
+> @@ -248,6 +250,7 @@ static void acpi_mp_disable_offlining(struct acpi_madt_multiproc_wakeup *mp_wake
+>  	mp_wake->mailbox_address = 0;
+>  }
+>  
+> +#ifdef CONFIG_ACPI
+>  int __init acpi_parse_mp_wake(union acpi_subtable_headers *header,
+> +
+> +#ifdef CONFIG_OF
+> +int __init dtb_parse_mp_wake(u64 *wake_mailbox_paddr)
 
-[...]
+Why not returning the mailbox physical address and 0 on failure instead
+of that pointer and a integer return value which is ignored at the call
+site?
 
->> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
->> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
->> @@ -257,6 +257,11 @@ def process_event(param_dict):
->>                  print("Stop address 0x%x is out of range [ 0x%x .. 0x%x
->> ] for dso %s" % (stop_addr, int(dso_start), int(dso_end), dso))
->>                  return
->>
->> +       if (stop_addr < start_addr):
->> +               if (options.verbose == True):
->> +                       print("Packet Dropped, Discontinuity detected
->> [stop_add:0x%x start_addr:0x%x ] for dso %s" % (stop_addr, start_addr,
->> dso))
->> +               return
->> +
-> 
-> I suppose my only concern with this is that it hides real errors and
-> Perf shouldn't be outputting samples that go backwards. Considering that
-> fixing this in OpenCSD and Perf has a much wider benefit I think that
-> should be the ultimate goal. I'm putting this on my todo list for now
-> (including Steve's merging idea).
+> +{
+> +	struct device_node *node;
+> +	u64 mailaddr;
+> +	int ret = 0;
+> +
+> +	node = of_find_node_by_path("/cpus");
+> +	if (!node)
+> +		return -ENODEV;
+> +
+> +	if (of_property_match_string(node, "enable-method",
+> +				     "acpi-wakeup-mailbox") < 0) {
 
-In the perf's util/cs-etm.c file, it handles DISCONTINUITY with:
+Please use the 100 characters line width and spare the line break.
 
-   case CS_ETM_DISCONTINUITY:
-        /*
-         * The trace is discontinuous, if the previous packet is
-         * instruction packet, set flag PERF_IP_FLAG_TRACE_END
-         * for previous packet.
-         */
-        if (prev_packet->sample_type == CS_ETM_RANGE)
-                prev_packet->flags |= PERF_IP_FLAG_BRANCH |
-                                      PERF_IP_FLAG_TRACE_END;
+> +		pr_err("No acpi wakeup mailbox enable-method\n");
+> +		ret = -ENODEV;
+> +		goto done;
+> +	}
+> +
+> +	/*
+> +	 * No support to the MADT reset vector yet.
 
-I am wandering if OpenCSD has passed the correct info so Perf decoder can
-detect the discontinuity. If yes, then the flag 'PERF_IP_FLAG_TRACE_END' will
-be set (it is a general flag in branch sample), then we can consider use it in
-the python script to handle discontinuous data.
+s/to/for/
 
-> 
-> But in the mean time what about having a force option?
-> 
->> +       if (stop_addr < start_addr):
->> +               if (options.verbose == True or not options.force):
->> +                       print("Packet Dropped, Discontinuity detected
->> [stop_add:0x%x start_addr:0x%x ] for dso %s" % (stop_addr, start_addr,
->> dso))
->> +               if (not options.force):
->> +                       return
+Also a single line comment is sufficient for this.
 
-If the stop address is less than the start address, it must be something
-wrong. In this case, we can report a warning for discontinuity and directly
-return (also need to save the `addr` into global variable for next parsing).
+> +	 */
+> +	cpu_hotplug_disable_offlining();
+> +
+> +	if (of_property_read_u64(node, "wakeup-mailbox-addr", &mailaddr)) {
+> +		pr_err("Invalid wakeup mailbox addr\n");
+> +		ret = -EINVAL;
+> +		goto done;
+> +	}
+> +	acpi_mp_wake_mailbox_paddr = mailaddr;
+> +	if (wake_mailbox_paddr)
+> +		*wake_mailbox_paddr = mailaddr;
+> +	pr_info("dt wakeup-mailbox: addr 0x%llx\n", mailaddr);
+> +	apic_update_callback(wakeup_secondary_cpu_64, acpi_wakeup_cpu);
+> +done:
 
-I prefer to not add force option for this case - eventually, this will consume
-much time for reporting this kind of failure and need to root causing it. A
-better way is we just print out the reasoning in the log and continue to dump.
+newline before the label please. Up there you waste 3 lines for a
+trivial comment and here you make the code unreadable...
 
 Thanks,
-Leo
+
+        tglx
+
+
 
