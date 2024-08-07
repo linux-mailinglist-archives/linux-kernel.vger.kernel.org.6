@@ -1,308 +1,197 @@
-Return-Path: <linux-kernel+bounces-278361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3230494AF3A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:56:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D811E94AF3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6A851F23209
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:56:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9307728356A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528CA13DDC0;
-	Wed,  7 Aug 2024 17:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C25D13E021;
+	Wed,  7 Aug 2024 17:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="InL0bEFU"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/o+bFLz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923CB13C9A7
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 17:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE0779DC5;
+	Wed,  7 Aug 2024 17:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723053371; cv=none; b=gDksfXtxTMvxkkkWZrMgzoLmyg2VAlfSZ9jB7LS2vwmWmoo+GqVRjCxwUUkmrBa7miPLOa/3tu7Ge9JtqEvd6FKxGqytWCEWnOsHbFTEz4suF399Laa3GvKvrkVWWsLR+GAEgshtn4CUbHms6JbcmqZi8bKp6soSmy1Wj/Z3DGw=
+	t=1723053421; cv=none; b=V4ttQPVZKvqhFh3e1Wntja6uvtQAENIDD6M64GqbnvOYgSLNxGj/pZixP2ohyNr0ZDjhYWmsMG/AOrjxWyRi5YsAH5xCp+DG2hNJ2md3a/MqgSx9oN2jkcLmAqki65y15MLnLZfEL43tV6OgxIuw7sI/w3ae92k5386TS1LJawg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723053371; c=relaxed/simple;
-	bh=6uOf5s52tG+8Vy0GYiklTIODGUI/L652kgcPgH9uiXQ=;
+	s=arc-20240116; t=1723053421; c=relaxed/simple;
+	bh=d6FviukTHiKvwlSWQr9NXWxc5Auyu7tuMFl3vBaAdjs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k9pvrZcNQ3fzs76yOH972pcLgzYKBQxvXKAYosXAWKtG0MWu4WP/qZhd6FJvld0MU3B7gyOBe+r3xtvuHPExDUQlfhYclh/6Go/sbKTOZUK5ZRAe/UGYKbu/c+iHla2wGNIwvM16wkLvIsMmhjQ9UrOjjaG+T/MtamGxjP9XHT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=InL0bEFU; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc692abba4so1687725ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 10:56:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1723053368; x=1723658168; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CIsLECqYOdZrI8qSJNosdOQy1k7IMWa6VZp48zwfYak=;
-        b=InL0bEFUrirO2hmOJaqwan402hb0R2Nw8h0xgvbtm+wbWSFB7ns2Bf2m++bOqkSPqp
-         iGpBr0bp8Q0CkKfp2ber4ofLuv83tCglBXzNSV/aSUHdQGOu0ztyyKFHhU6IC0JPIrxp
-         tSIW2pOKqgPgWT7VyfwASg3n6k2OYs6X57X6vV8e0G+/6WkhKVWpp1fNswietBq2JENg
-         AVNxlGrHXlfr7leKF5uli7XQ/H23GR8+IUY30IRPrLDyH2HyTsHYLnQGWoUl6ifxrG2s
-         h9WCYNa0wgxm8fx/TTZIANunaCFomSzZp0l6RR6ica9fgffkGqGVXmkBhpokW+NHsiOh
-         ncZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723053368; x=1723658168;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CIsLECqYOdZrI8qSJNosdOQy1k7IMWa6VZp48zwfYak=;
-        b=l0m0D9Xp2mIAUbkAdod3xWtxHeacNq6IqRrl1cCnUgd7zvySCc4pzBE7lRiguqwzQb
-         6BUt4MMJH5RyDzSRagP+B2apwzHmXkOXNzES0Hgy5BUqwF3+epGbl9z7rEnwllutHx/i
-         vwSbhRLppUIYTv8lk0LqUOeCAR0OOTqUGZ6mvAW5EEB+WBpcafF5mGLBTuD/ficD+rAd
-         vNvXrSxVjcY70HQGMzohP8MS2MiYorBONxQwWyIwk3Zor9nc9/fkohT5WCmHAnn4foN+
-         lflV4GdYePwaBelUC3Gjc6wGldmZ9nBXv2SVxtrt1lX+XeB++YYNh6AWelpvkAnmzAXK
-         yJiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVk72FUtcjQVPYeaGD9VQWJ60rixFBildw1dBCbnfuXuWvt3JF3TbDeb90Fa+p2VH3Ew4Pa0dZNvtFOetVnNKHxoxAgxISJNYCheXjV
-X-Gm-Message-State: AOJu0YxNs2a5EZaGH8Jr/3fGOHa50xlM2kyWv8/we69YTTtLBD03CYa5
-	alvAygtscQI1m2RvjSlseCSPIQ3OCOsB5H4pYpnYXwO2nSRdlVTu/e9oHzl4Shc=
-X-Google-Smtp-Source: AGHT+IFTv/8yrRoRq9RQ9HsBX7+9iJcN5jG9mmxStROSH6/8TM+4bgNqOr4C+BCMrwK30KYYVM/3kQ==
-X-Received: by 2002:a17:902:fac4:b0:1fc:5ed5:ff51 with SMTP id d9443c01a7336-1ff57421a7emr138490255ad.43.1723053367593;
-        Wed, 07 Aug 2024 10:56:07 -0700 (PDT)
-Received: from ghost ([2601:647:6700:64d0:b4d6:3d2:4f2e:547])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f19d17sm109547075ad.42.2024.08.07.10.56.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 10:56:06 -0700 (PDT)
-Date: Wed, 7 Aug 2024 10:56:03 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Evan Green <evan@rivosinc.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Yangyu Chen <cyy@cyyself.name>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Erick Archer <erick.archer@gmx.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 2/2] RISC-V: hwprobe: Add SCALAR to misaligned perf
- defines
-Message-ID: <ZrO1MxZH+GwC5FQS@ghost>
-References: <20240627172238.2460840-1-evan@rivosinc.com>
- <20240627172238.2460840-3-evan@rivosinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gl9uD0FdpZ8tbIeS96tWSKR9gc5VewghaLOQDk2Tmz4lus/MLK4xtFhAXVbzcrzKH875499XTxQdJcyk4tCFOrV71sGGnJcaCMH/SFLCYNP7V2MbiMcUiA3qS+evCfgCJR9JtW5D3g/sVMYlxwO2+ke5mgqS3h50ohmZ4I9LCWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/o+bFLz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FF6EC32781;
+	Wed,  7 Aug 2024 17:57:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723053420;
+	bh=d6FviukTHiKvwlSWQr9NXWxc5Auyu7tuMFl3vBaAdjs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p/o+bFLzRpX/kG9wl/VqVnEVMAq7bUZ5UhKhMZ49mLwKAkyx0xZ0RqtLhvFnievQQ
+	 HVCxtRwHYw1K5w7ssuZzwNsgtbjRS7Sjh0xZpDQitYR37EVCSNjgEawF/OyTgrij0K
+	 VQEDIo3TygCrHK/OJxXz98yN25Pm99nAkpH2Leln5mgzwDlpUCB+5QnzY62eTLOPVB
+	 vMnm2vauNABOlfNrpwWm0ywybRE/YlfOCE60rXlPHqrp9aATnpvsnjFR2eep6aoVdz
+	 /uYogGIxldjN8+QLHSb7YHYWZ26bkMVFR8OzABK9PxY2cq6D1F3Y045KA8Nd5bskU9
+	 WyVgbr691yDZQ==
+Date: Wed, 7 Aug 2024 10:56:58 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux-Arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH 06/10] tools/include: Sync uapi/asm-generic/unistd.h with
+ the kernel sources
+Message-ID: <ZrO1aqysu-jtYbtC@google.com>
+References: <20240806225013.126130-1-namhyung@kernel.org>
+ <20240806225013.126130-7-namhyung@kernel.org>
+ <10a643ba-cafe-411e-855e-d93d8144f470@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240627172238.2460840-3-evan@rivosinc.com>
+In-Reply-To: <10a643ba-cafe-411e-855e-d93d8144f470@app.fastmail.com>
 
-On Thu, Jun 27, 2024 at 10:22:38AM -0700, Evan Green wrote:
-> In preparation for misaligned vector performance hwprobe keys, rename
-> the hwprobe key values associated with misaligned scalar accesses to
-> include the term SCALAR. Leave the old defines in place to maintain
-> source compatibility.
-> 
-> This change is intended to be a functional no-op.
-> 
-> Signed-off-by: Evan Green <evan@rivosinc.com>
-> Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-> 
-> ---
-> 
-> Changes in v3:
->  - Leave the old defines in place (Conor, Palmer)
-> 
-> Changes in v2:
->  - Added patch to rename misaligned perf key values (Palmer)
-> 
->  Documentation/arch/riscv/hwprobe.rst       | 14 +++++++-------
->  arch/riscv/include/uapi/asm/hwprobe.h      |  5 +++++
->  arch/riscv/kernel/sys_hwprobe.c            | 10 +++++-----
->  arch/riscv/kernel/traps_misaligned.c       |  6 +++---
->  arch/riscv/kernel/unaligned_access_speed.c | 12 ++++++------
->  5 files changed, 26 insertions(+), 21 deletions(-)
-> 
-> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
-> index 7121a00a8464..0d14e9d83a78 100644
-> --- a/Documentation/arch/riscv/hwprobe.rst
-> +++ b/Documentation/arch/riscv/hwprobe.rst
-> @@ -243,23 +243,23 @@ The following keys are defined:
->    the performance of misaligned scalar native word accesses on the selected set
->    of processors.
->  
-> -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNKNOWN`: The performance of misaligned
-> -    accesses is unknown.
-> +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN`: The performance of
-> +    misaligned accesses is unknown.
+Hello,
 
-Hey Evan,
-
-This series hasn't landed yet, can you rebase and resend? There is a
-patch [1] that changes the wording of this description to "misaligned
-scalar" instead of "misaligned". Can you apply that wording change to
-these new keys?
-
-- Charlie
-
-Link: https://lore.kernel.org/linux-riscv/CAJgzZorn5anPH8dVPqvjVWmLKqTi5bkLDR=FH-ZAcdXFnNe8Eg@mail.gmail.com/
-
->  
-> -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_EMULATED`: Misaligned accesses are
-> +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED`: Misaligned accesses are
->      emulated via software, either in or below the kernel.  These accesses are
->      always extremely slow.
->  
-> -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SLOW`: Misaligned native word
-> +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_SLOW`: Misaligned native word
->      sized accesses are slower than the equivalent quantity of byte accesses.
->      Misaligned accesses may be supported directly in hardware, or trapped and
->      emulated by software.
->  
-> -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_FAST`: Misaligned native word
-> +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_FAST`: Misaligned native word
->      sized accesses are faster than the equivalent quantity of byte accesses.
->  
-> -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNSUPPORTED`: Misaligned accesses are
-> -    not supported at all and will generate a misaligned address fault.
-> +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_UNSUPPORTED`: Misaligned accesses
-> +    are not supported at all and will generate a misaligned address fault.
->  
->  * :c:macro:`RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE`: An unsigned int which
->    represents the size of the Zicboz block in bytes.
-> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
-> index 7ebb2f2cc4cf..bcb2d91241d5 100644
-> --- a/arch/riscv/include/uapi/asm/hwprobe.h
-> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
-> @@ -80,6 +80,11 @@ struct riscv_hwprobe {
->  #define		RISCV_HWPROBE_MISALIGNED_MASK		(7 << 0)
->  #define RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE	6
->  #define RISCV_HWPROBE_KEY_MISALIGNED_SCALAR_PERF	7
-> +#define		RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN		0
-> +#define		RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED	1
-> +#define		RISCV_HWPROBE_MISALIGNED_SCALAR_SLOW		2
-> +#define		RISCV_HWPROBE_MISALIGNED_SCALAR_FAST		3
-> +#define		RISCV_HWPROBE_MISALIGNED_SCALAR_UNSUPPORTED	4
->  /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
->  
->  /* Flags */
-> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
-> index b18639020c61..d5541f6c843e 100644
-> --- a/arch/riscv/kernel/sys_hwprobe.c
-> +++ b/arch/riscv/kernel/sys_hwprobe.c
-> @@ -176,13 +176,13 @@ static u64 hwprobe_misaligned(const struct cpumask *cpus)
->  			perf = this_perf;
->  
->  		if (perf != this_perf) {
-> -			perf = RISCV_HWPROBE_MISALIGNED_UNKNOWN;
-> +			perf = RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN;
->  			break;
->  		}
->  	}
->  
->  	if (perf == -1ULL)
-> -		return RISCV_HWPROBE_MISALIGNED_UNKNOWN;
-> +		return RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN;
->  
->  	return perf;
->  }
-> @@ -190,12 +190,12 @@ static u64 hwprobe_misaligned(const struct cpumask *cpus)
->  static u64 hwprobe_misaligned(const struct cpumask *cpus)
->  {
->  	if (IS_ENABLED(CONFIG_RISCV_EFFICIENT_UNALIGNED_ACCESS))
-> -		return RISCV_HWPROBE_MISALIGNED_FAST;
-> +		return RISCV_HWPROBE_MISALIGNED_SCALAR_FAST;
->  
->  	if (IS_ENABLED(CONFIG_RISCV_EMULATED_UNALIGNED_ACCESS) && unaligned_ctl_available())
-> -		return RISCV_HWPROBE_MISALIGNED_EMULATED;
-> +		return RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED;
->  
-> -	return RISCV_HWPROBE_MISALIGNED_SLOW;
-> +	return RISCV_HWPROBE_MISALIGNED_SCALAR_SLOW;
->  }
->  #endif
->  
-> diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
-> index b62d5a2f4541..192cd5603e95 100644
-> --- a/arch/riscv/kernel/traps_misaligned.c
-> +++ b/arch/riscv/kernel/traps_misaligned.c
-> @@ -338,7 +338,7 @@ int handle_misaligned_load(struct pt_regs *regs)
->  	perf_sw_event(PERF_COUNT_SW_ALIGNMENT_FAULTS, 1, regs, addr);
->  
->  #ifdef CONFIG_RISCV_PROBE_UNALIGNED_ACCESS
-> -	*this_cpu_ptr(&misaligned_access_speed) = RISCV_HWPROBE_MISALIGNED_EMULATED;
-> +	*this_cpu_ptr(&misaligned_access_speed) = RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED;
->  #endif
->  
->  	if (!unaligned_enabled)
-> @@ -532,13 +532,13 @@ static bool check_unaligned_access_emulated(int cpu)
->  	unsigned long tmp_var, tmp_val;
->  	bool misaligned_emu_detected;
->  
-> -	*mas_ptr = RISCV_HWPROBE_MISALIGNED_UNKNOWN;
-> +	*mas_ptr = RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN;
->  
->  	__asm__ __volatile__ (
->  		"       "REG_L" %[tmp], 1(%[ptr])\n"
->  		: [tmp] "=r" (tmp_val) : [ptr] "r" (&tmp_var) : "memory");
->  
-> -	misaligned_emu_detected = (*mas_ptr == RISCV_HWPROBE_MISALIGNED_EMULATED);
-> +	misaligned_emu_detected = (*mas_ptr == RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED);
->  	/*
->  	 * If unaligned_ctl is already set, this means that we detected that all
->  	 * CPUS uses emulated misaligned access at boot time. If that changed
-> diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/kernel/unaligned_access_speed.c
-> index a9a6bcb02acf..160628a2116d 100644
-> --- a/arch/riscv/kernel/unaligned_access_speed.c
-> +++ b/arch/riscv/kernel/unaligned_access_speed.c
-> @@ -34,9 +34,9 @@ static int check_unaligned_access(void *param)
->  	struct page *page = param;
->  	void *dst;
->  	void *src;
-> -	long speed = RISCV_HWPROBE_MISALIGNED_SLOW;
-> +	long speed = RISCV_HWPROBE_MISALIGNED_SCALAR_SLOW;
->  
-> -	if (per_cpu(misaligned_access_speed, cpu) != RISCV_HWPROBE_MISALIGNED_UNKNOWN)
-> +	if (per_cpu(misaligned_access_speed, cpu) != RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN)
->  		return 0;
->  
->  	/* Make an unaligned destination buffer. */
-> @@ -95,14 +95,14 @@ static int check_unaligned_access(void *param)
->  	}
->  
->  	if (word_cycles < byte_cycles)
-> -		speed = RISCV_HWPROBE_MISALIGNED_FAST;
-> +		speed = RISCV_HWPROBE_MISALIGNED_SCALAR_FAST;
->  
->  	ratio = div_u64((byte_cycles * 100), word_cycles);
->  	pr_info("cpu%d: Ratio of byte access time to unaligned word access is %d.%02d, unaligned accesses are %s\n",
->  		cpu,
->  		ratio / 100,
->  		ratio % 100,
-> -		(speed == RISCV_HWPROBE_MISALIGNED_FAST) ? "fast" : "slow");
-> +		(speed == RISCV_HWPROBE_MISALIGNED_SCALAR_FAST) ? "fast" : "slow");
->  
->  	per_cpu(misaligned_access_speed, cpu) = speed;
->  
-> @@ -110,7 +110,7 @@ static int check_unaligned_access(void *param)
->  	 * Set the value of fast_misaligned_access of a CPU. These operations
->  	 * are atomic to avoid race conditions.
->  	 */
-> -	if (speed == RISCV_HWPROBE_MISALIGNED_FAST)
-> +	if (speed == RISCV_HWPROBE_MISALIGNED_SCALAR_FAST)
->  		cpumask_set_cpu(cpu, &fast_misaligned_access);
->  	else
->  		cpumask_clear_cpu(cpu, &fast_misaligned_access);
-> @@ -188,7 +188,7 @@ static int riscv_online_cpu(unsigned int cpu)
->  	static struct page *buf;
->  
->  	/* We are already set since the last check */
-> -	if (per_cpu(misaligned_access_speed, cpu) != RISCV_HWPROBE_MISALIGNED_UNKNOWN)
-> +	if (per_cpu(misaligned_access_speed, cpu) != RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN)
->  		goto exit;
->  
->  	buf = alloc_pages(GFP_KERNEL, MISALIGNED_BUFFER_ORDER);
-> -- 
-> 2.34.1
+On Wed, Aug 07, 2024 at 09:11:01AM +0200, Arnd Bergmann wrote:
+> On Wed, Aug 7, 2024, at 00:50, Namhyung Kim wrote:
+> > And arch syscall tables to pick up changes from:
+> >
+> >   b1e31c134a8a powerpc: restore some missing spu syscalls
+> >   d3882564a77c syscalls: fix compat_sys_io_pgetevents_time64 usage
+> >   54233a425403 uretprobe: change syscall number, again
+> >   63ded110979b uprobe: Change uretprobe syscall scope and number
+> >   9142be9e6443 x86/syscall: Mark exit[_group] syscall handlers __noreturn
+> >   9aae1baa1c5d x86, arm: Add missing license tag to syscall tables files
+> >   5c28424e9a34 syscalls: Fix to add sys_uretprobe to syscall.tbl
+> >   190fec72df4a uprobe: Wire up uretprobe system call
+> >
+> > This should be used to beautify syscall arguments and it addresses
+> > these tools/perf build warnings:
+> >
+> >   Warning: Kernel ABI header differences:
+> >   diff -u tools/arch/arm64/include/uapi/asm/unistd.h 
+> > arch/arm64/include/uapi/asm/unistd.h
+> >   diff -u tools/include/uapi/asm-generic/unistd.h 
+> > include/uapi/asm-generic/unistd.h
+> >   diff -u tools/perf/arch/x86/entry/syscalls/syscall_64.tbl 
+> > arch/x86/entry/syscalls/syscall_64.tbl
+> >   diff -u tools/perf/arch/powerpc/entry/syscalls/syscall.tbl 
+> > arch/powerpc/kernel/syscalls/syscall.tbl
+> >   diff -u tools/perf/arch/s390/entry/syscalls/syscall.tbl 
+> > arch/s390/kernel/syscalls/syscall.tbl
+> >
+> > Please see tools/include/uapi/README for details (it's in the first patch
+> > of this series).
+> >
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: linux-arch@vger.kernel.org
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/arch/arm64/include/uapi/asm/unistd.h    | 24 +------------------
+> >  tools/include/uapi/asm-generic/unistd.h       |  2 +-
+> >  .../arch/powerpc/entry/syscalls/syscall.tbl   |  6 ++++-
+> >  .../perf/arch/s390/entry/syscalls/syscall.tbl |  2 +-
+> >  .../arch/x86/entry/syscalls/syscall_64.tbl    |  8 ++++---
+> >  5 files changed, 13 insertions(+), 29 deletions(-)
+> >
+> > diff --git a/tools/arch/arm64/include/uapi/asm/unistd.h 
+> > b/tools/arch/arm64/include/uapi/asm/unistd.h
+> > index 9306726337fe..df36f23876e8 100644
+> > --- a/tools/arch/arm64/include/uapi/asm/unistd.h
+> > +++ b/tools/arch/arm64/include/uapi/asm/unistd.h
+> > -
+> > -#define __ARCH_WANT_RENAMEAT
+> > -#define __ARCH_WANT_NEW_STAT
+> > -#define __ARCH_WANT_SET_GET_RLIMIT
+> > -#define __ARCH_WANT_TIME32_SYSCALLS
+> > -#define __ARCH_WANT_MEMFD_SECRET
+> > -
+> > -#include <asm-generic/unistd.h>
+> > +#include <asm/unistd_64.h>
 > 
+> This part won't work by itself, since you don't pick up
+> the generated asm/unistd_64.h header but keep the old
+> asm-generic/unistd.h header. Both have the same contents,
+> so the easy way to do this is to just keep the existing
+> version of the arm64 header for 6.11 and add a script to
+> generate it in 6.12 the way we do for x86, using an
+> architecture-independent script.
+
+Thanks for the review, I'll drop the arm64 parts for now.
+
+> 
+> > @@ -68,7 +69,7 @@
+> >  57	common	fork			sys_fork
+> >  58	common	vfork			sys_vfork
+> >  59	64	execve			sys_execve
+> > -60	common	exit			sys_exit
+> > +60	common	exit			sys_exit			-			noreturn
+> >  61	common	wait4			sys_wait4
+> >  62	common	kill			sys_kill
+> >  63	common	uname			sys_newuname
+> 
+> Have you checked if this works correctly with the
+> existing tools/perf/arch/x86/entry/syscalls/syscalltbl.sh?
+
+Yep, the script only cares about the number and the name.
+
+  # the params are: nr abi name entry compat
+  # use _ for intentionally unused variables according to SC2034
+  while read nr _ name _ _; do
+      if [ $nr -ge 512 ] ; then # discard compat sycalls
+          break
+      fi
+  
+      emit "$nr" "$name"
+      max_nr=$nr
+  done < $sorted_table
+
+The only difference I see was the added uretprobe syscall.
+
+  $ tools/arch/x86/entry/syscalls/syscalltbl.sh tools/arch/x86/entry/syscalls/syscall_64.tbl x86_64 > b
+  (apply this series...)
+  $ tools/arch/x86/entry/syscalls/syscalltbl.sh tools/arch/x86/entry/syscalls/syscall_64.tbl x86_64 > a
+  
+  $ diff -u b a
+  --- b	2024-08-07 10:28:04.267738574 -0700
+  +++ a	2024-08-07 10:28:18.543965369 -0700
+  @@ -334,6 +334,7 @@
+   	[332] = "statx",
+   	[333] = "io_pgetevents",
+   	[334] = "rseq",
+  +	[335] = "uretprobe",
+   	[424] = "pidfd_send_signal",
+   	[425] = "io_uring_setup",
+   	[426] = "io_uring_enter",
+
+Thanks,
+Namhyung
+
+> 
+> Since not just table file contents but also the file format
+> changed here, there is a good chance that the output
+> is no longer what we need.
+> 
+> Unfortunately, the format on x86 is now incompatible with
+> the one on s390. I have a patch to change s390 in the future
+> so we can use a single script for all of them.
+> 
+>       Arnd
 
