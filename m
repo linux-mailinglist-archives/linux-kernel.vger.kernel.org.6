@@ -1,167 +1,131 @@
-Return-Path: <linux-kernel+bounces-278330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C5C94AEC7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:22:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 264D894AEC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90F51F21A79
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:22:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5F081F23077
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6970713DB99;
-	Wed,  7 Aug 2024 17:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1025113CAA5;
+	Wed,  7 Aug 2024 17:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vojkabYJ"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owWgzSrk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F2613D533
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 17:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4849C6BB4B;
+	Wed,  7 Aug 2024 17:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723051353; cv=none; b=M5LCEfjhRpGBE1VPLB3C6RPcIakWLU2JLrmBEMEtQmdVDHJee0kj1i2Jt9bwXc+BkV+2gCajAMJis4PJiC5D4GGPfiSQKEIie2tdQUz+JlFowyOzoTz5+8JOBn3yLHW+lkKgAsBM3Eg0XWzK5OChBjvpFXJUcXijewYIubF2LjM=
+	t=1723051349; cv=none; b=jy6Gs3451Z60NZqYFMKXAdGSaHxVtuA9NtXnPW8QVdfTQ/8jc7aX7kb9+uQteCCujrAf2sHA90l3UAVq1roWM46vPDHJtusfF94zwbIE5705o8AV8TEZ+PJNH/jEuGRe/Wf8wjpJMIKKPTJ6Jbjz12F87vBeSPS+DoZ846le3lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723051353; c=relaxed/simple;
-	bh=FB03wuWz1lVB1LR8cmxDBitcZxa89F3VugKzV/0aqDk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X8Ly3LrYTLUPs2qEucVrajBBVFKQk4LDlNOZBDmGkfqsiMaZkkb5iQqPmNGuhlv9TiEsYOyHGxzes0CqW3M3G/INPH1e5noC4K5NHW3chU+DgnlBaj6Q9ZADCJBf5n3ogUQSmBuaqhrTL2A9OKwMrmN5I5Ayes04TB/b5ix4G28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vojkabYJ; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4518d9fa2f4so21011cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 10:22:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723051351; x=1723656151; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LWky7w5Y44GMnU5k0FIP2ItcitwGvR0+r6HDv8rR6Cs=;
-        b=vojkabYJm5b5xtMZM5XX/Fz0H6CnRE/ULp268jVWvVux9LJvNo9vEjTZA47bHd9E4S
-         6bEEQlIyEqAWstOysSyfyUGywIcUUFaTuXK8nCVFJ6d1HWqgOBeVsf6PoU2d08+BLArF
-         CSoFkny0h3DI5LXbjgiGKVyzsGr/8u+kRTTmcy10jPeU8MOA+bWeqRLsW17tOP+Sl6BS
-         MaXGToEW+IlIGpE2o6+xd5x/7buk3C4se699BZ3P5Ibm6VJBd4BdySq/z6dd38cTtgmG
-         QjhF6VDlLAtVWvalQGApZaBZ6da8Qgf4/bwHIHaln5pHjAux0G5Htw0Sw++w/fSLqfY+
-         Z27g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723051351; x=1723656151;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LWky7w5Y44GMnU5k0FIP2ItcitwGvR0+r6HDv8rR6Cs=;
-        b=awpVO37PPdDFfI5aggVGV64R3Tb2T6P9PZ1hOV+C0Nml9pYy/82CLEZyzxRleFzF7y
-         /ooYRV8kwyWs4CK7RhKam898aogEwu26rg4Fxwo5S32nnxnZoSNy3jwQHbzMJ/6Stje1
-         lyrlehe0QqhxXVZxa5qj5c8ns/tEzeM/7mhtYfrUk+i3gfe7d2iyYe8PVeJxvFO8z+Q/
-         2OM8Xsoz97lZIwvbx1OYnzSp2YgXoZkP8tg6vJAHffICFPREucPHc+ncRQ/RZNlILEeP
-         /O+npFNjbHlP0+VrV52afwOJ4otU7nOEyq7560NWsd7O7el8gXle9HxacNHsn9ygBtvU
-         M6xA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNQRtl8zgaSyIokUm6AyXc4G7fQDRwQ0f0Z8NKZJba+3XZr48YfH9CLW3LScdrYDeyjY2tanFyP7paZhgFDVfwKeJFBnv1ACkrb/1v
-X-Gm-Message-State: AOJu0YzvYkpVfQqSDY9npQSBbbxjsN1xQyo2PJeINoxoMFOka1BKg+Wm
-	SkzMGfNnmqR64q7H8LKxNRDN97HK/osrDCyjPnNm24gBDoXzoKoMiCoClBRxOjbXvazCjRp6iNq
-	Pv/DsLK4Z2SpleRG/KQ8NJud3MU/j5XbKiV61
-X-Google-Smtp-Source: AGHT+IFd+q79tszYvqSxFu+Q65wSSLbtU/f7m9GI+TMXMbzFnzWiar7KmKanyMxfgwhNMMOTUJY8dCqJThehgXfoiac=
-X-Received: by 2002:ac8:5794:0:b0:447:e0e1:2a7b with SMTP id
- d75a77b69052e-451c7825bc5mr3560471cf.23.1723051350880; Wed, 07 Aug 2024
- 10:22:30 -0700 (PDT)
+	s=arc-20240116; t=1723051349; c=relaxed/simple;
+	bh=y6mJiL+/McAto5QWkflfrjZFdn6Y74RBYK1IE0EbZGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s6BsEtz2h7aLKPkSpN2DeFJ3B3/v9LCkZrqlsj9chPyPCmC/mP57MKXKLZdl9jzWO062bMLdiJZYp4xnT/CtwPk4ftCC7pzSPiHbW16UGYoEtmnzhJLRoGszkjS0J5AoJ01sT4uEL3uz+MHEVF4LQkvDEBrIQqyqccwLjsfn3wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owWgzSrk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D85A0C32781;
+	Wed,  7 Aug 2024 17:22:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723051348;
+	bh=y6mJiL+/McAto5QWkflfrjZFdn6Y74RBYK1IE0EbZGw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=owWgzSrkOEo9kWqWUr5x4wRzvi88VoT4jyWIx4s9aUtJ4IjvpB5xpLTsI+nCi09gj
+	 lRw+2eWqz0Rg0CS59/LJD0bJA4JRd/koUNFZ+rZk+QVKEyxV4dRYPdjestJAO1Rhvp
+	 ZuchR+43Vc612jJdJlt1Yh3lJ4+2XOlsH5/KvZaAGspGfz2+m18CSPqCvM/H2OAbuA
+	 ksq7IdAiYcwfL2/TnfGSs/Cjilr0KZ6YWdoAUYo9j5gQTWOLWfS5RnMqFpDkx87Q3g
+	 Xssz6QmBN+iHUNaeVfuyzx/v29adPahGaDjVJyfjL2mtuZqa8/0vZPEQq+86pwdPGk
+	 J0JR7yRdGP2hg==
+Date: Wed, 7 Aug 2024 18:22:23 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org,
+	Marc Zyngier <maz@kernel.org>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, Lewis Hanly <lewis.hanly@microchip.com>
+Subject: Re: [RFC v7 4/6] gpio: mpfs: add polarfire soc gpio support
+Message-ID: <20240807-epileptic-pessimism-a7866dbadae4@spud>
+References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
+ <20240723-underage-wheat-7dd65c2158e7@wendy>
+ <CACRpkdbRE695f-+do1HYpOZ6e4qxgUBWJzEPO2hTCuZ3xxYHQg@mail.gmail.com>
+ <20240806-breeze-crazily-84d4e4af8f4e@spud>
+ <CACRpkdbMxuhe2HQZ-Av1R7JW94rS0FosPO-utYNsFO8avR3TbQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801224349.25325-1-seanjc@google.com>
-In-Reply-To: <20240801224349.25325-1-seanjc@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Wed, 7 Aug 2024 10:21:53 -0700
-Message-ID: <CADrL8HXVNcbcuu9qF3wtkccpW6_QEnXQ1ViWEceeS9QGdQUTiw@mail.gmail.com>
-Subject: Re: [ANNOUNCE] PUCK Agenda - 2024.08.07 - KVM userfault
- (guest_memfd/HugeTLB postcopy)
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Xu <peterx@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, Axel Rasmussen <axelrasmussen@google.com>, 
-	David Matlack <dmatlack@google.com>, Anish Moorthy <amoorthy@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2+uJzAu790xEQaKU"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbMxuhe2HQZ-Av1R7JW94rS0FosPO-utYNsFO8avR3TbQ@mail.gmail.com>
+
+
+--2+uJzAu790xEQaKU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 1, 2024 at 3:44=E2=80=AFPM Sean Christopherson <seanjc@google.c=
-om> wrote:
->
-> Early warning for next week's PUCK since there's actually a topic this ti=
-me.
-> James is going to lead a discussion on KVM userfault[*](name subject to c=
-hange).
+On Wed, Aug 07, 2024 at 06:55:58PM +0200, Linus Walleij wrote:
+> On Tue, Aug 6, 2024 at 7:18=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
+ote:
+> > On Mon, Aug 05, 2024 at 10:04:53AM +0200, Linus Walleij wrote:
+>=20
+> > > Is it possible to use augmented generic MMIO, i.e just override these
+> > > two functions that
+> > > need special handling?
+> >
+> > I'll look into it - as I mentioned under the --- line, I really didn't
+> > touch most of the driver and there's comments from Lewis' submission
+> > that still apply.
+>=20
+> Thanks Conor, thanks for taking this over, too many patch sets fall
+> on the floor.
 
-Thanks for attending, everyone!
+Meh, it always bugged me that upstreaming driver was given up on because
+fixing the interrupts was "hard". It'd be a poor example to others if I
+le the driver sit downstream as a result.
 
-We seemed to arrive at the following conclusions:
+> I'm mostly fine merging it like this and then improving
+> it in-tree as well, I'm not as insistent on things being perfect before
+> merging as long as they are maintained.
 
-1. For guest_memfd, stage 2 mapping installation will never go through
-GUP / virtual addresses to do the GFN --> PFN translation, including
-when it supports non-private memory.
-2. Something like KVM Userfault is indeed necessary to handle
-post-copy for guest_memfd VMs, especially when guest_memfd supports
-non-private memory.
-3. We should not hook into the overall GFN --> HVA translation, we
-should only be hooking the GFN --> PFN translation steps to figure out
-how to create stage 2 mappings. That is, KVM's own accesses to guest
-memory should just go through mm/userfaultfd.
-4. We don't need the concept of "async userfaults" (making KVM block
-when attempting to access userfault memory) in KVM Userfault.
+The gpio side of things might not be too bad, but the irqchip side is
+crap (it has an of_iomap() in it for example*), and if the irqchip driver
+needs work it feels sensible to improve on both before merging anything.
+Unless of course, you think it would be reasonable to rip the interrupt
+support out of the gpio driver, merge that and incrementally add it
+while also improving the things you and the earlier review mentioned
+w.r.t. regmap?
 
-So I need to think more about what exactly the API should look like
-for controlling if a page should exit to userspace before KVM is
-allowed to map it into stage 2 and if this should apply to all of
-guest memory or only guest_memfd.
+Cheers,
+Conor.
 
-It sounds like it may most likely be something like a per-VM bitmap
-that describes which pages are allowed to be mapped into stage 2,
-applying to all memory, not just guest_memfd memory. Even though it is
-solving a problem for guest_memfd specifically, it is slightly cleaner
-to have it apply to all memory.
+* Getting rid of the of_iomap() needs me to rewrite parts of the clock
+driver, which seemed overkill until I knew whether or not the approach
+was permitted.
 
-If this per-VM bitmap applies to all memory, then we don't need to
-wait for guest_memfd to support non-private memory before working on a
-full implementation. But if not, perhaps it makes sense to wait.
+--2+uJzAu790xEQaKU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-There will be a 30 minute session at LPC to discuss this topic more. I
-hope to see you there!
+-----BEGIN PGP SIGNATURE-----
 
-Here are the slides[2].
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrOtTwAKCRB4tDGHoIJi
+0gNfAQCL3AK7b7Rag0SuAREO6VHwuSZM26U4wr2nM7r1q6SmAwD9HTu8K4xzfaDX
+SbK/WfgJsXClolZ0GfJezsgv+yu4RAw=
+=Sm0o
+-----END PGP SIGNATURE-----
 
-Thanks!
-
-PS: I'll be away from August 9 - 25.
-
-[2]: https://docs.google.com/presentation/d/1Al9amGumF3ZPX2Wu50mQ4nkPRZZdBJ=
-itXmMH3n7j_RE/edit?usp=3Dsharing
-
-
-> I Cc'd folks a few folks that I know are interested, please forward this =
-on
-> as needed.
->
-> Early warning #2, PUCK is canceled for August 14th, as I'll be traveling,=
- though
-> y'all are welcome to meet without me.
->
-> [*] https://lore.kernel.org/all/20240710234222.2333120-1-jthoughton@googl=
-e.com
->
-> Time:     6am PDT
-> Video:    https://meet.google.com/vdb-aeqo-knk
-> Phone:    https://tel.meet/vdb-aeqo-knk?pin=3D3003112178656
->
-> Calendar: https://calendar.google.com/calendar/u/0?cid=3DY182MWE1YjFmNjQ0=
-NzM5YmY1YmVkN2U1ZWE1ZmMzNjY5Y2UzMmEyNTQ0YzVkYjFjN2M4OTE3MDJjYTUwOTBjN2Q1QGd=
-yb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20
-> Drive:    https://drive.google.com/drive/folders/1aTqCrvTsQI9T4qLhhLs_l98=
-6SngGlhPH?resourcekey=3D0-FDy0ykM3RerZedI8R-zj4A&usp=3Ddrive_link
->
-> Future Schedule:
-> Augst   7th - KVM userfault
-> August 14th - Canceled (Sean unavailable)
-> August 21st - Available
-> August 28th - Available
+--2+uJzAu790xEQaKU--
 
