@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-277903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A30994A7EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:41:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7495094A7ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDE1A1C21927
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:41:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AF111F25D6D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A951E7A33;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15AA1E7A3B;
 	Wed,  7 Aug 2024 12:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="re1F/HFl"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="Sg2C5rmU"
 Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0FB1E673E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A711E6741
 	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 12:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723034481; cv=none; b=DG+e537QMAUEv+UZIqkrUkCMo3d8vrb+XpKI9hhA4OD/Mo42ly+HoodIs36OR/EQ1CIM7eRuWrshFgsByRtl0b2iwyuIxlwkrLW0TKteI/QBcIS3x2dpjnR6ih56LKWCBK5bxlavKpBWWbz++ikyjoKc9r6KnTKCafsrU+N5gUc=
+	t=1723034482; cv=none; b=bILkAXUe/H/9WcLWa5DZwlOFvcsieXf/8gYyeXa0MsXuG2jwNSXyc+pQnm264b6GFmbUh2gxeuqr1bvdiTmL0os9yMtNLeQtVnE4hfohdiQrlQXqKIfjw33CEXck2ZZsLutHXzhYOMia6P4DvMFieH/wOpw4XvSJY0IWi+TI71s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723034481; c=relaxed/simple;
-	bh=nwsawbgPE9DKXMD/rk5K3Gd3GJ+Mgf1vFc/XKJTYnMc=;
+	s=arc-20240116; t=1723034482; c=relaxed/simple;
+	bh=KZOBwXMeTqYf9uEvqEpZvSolFwFcgHme74bk/4UkW6M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u4HWREo5YsW4XTgbIDN719DW+KXMfR/Mv/CnQbw+vzcKuv80zFtg2swFPmNqL0vbYlgC8pUNKaYNyQlv6DuNt5g0QJ2Z6uzPhu+M40h55B0jClG6IADmrL0c3VL31p7FhD0KB6oB5KAOVhurMLdMQ24Ypeclj0L5mXaiXvmf5Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=re1F/HFl; arc=none smtp.client-ip=150.107.74.76
+	 MIME-Version; b=C3euobNEBDDCL9FVhkUHIr+AN3/VjjEFTutTbBo5yTOtDFcHb6kDXo8qnFR5iatZ1WTaeUGFrZyRXKqH5XuW2D9JVXKpfjTJnoxuBG723NRrv1wIPrDJiFd3B/X5OpiOf1mOlNd6asG6fdxLsX29Bc+TcSuPai6Wo3vKiVcOSO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=Sg2C5rmU; arc=none smtp.client-ip=150.107.74.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
 	s=201909; t=1723034478;
-	bh=QjfKRN3jFgFE9slzX/Y7/OFqIAzh7Vj4YduCO+Bbs98=;
+	bh=1aE2cbYKmjRRZKMb9FZa+Csx+YG7mtBDoiTvd1y2/SU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=re1F/HFllgXuLG0vL03AaY1ZdY9ENmZMfwFbyeOUiEJQCOf3WuIi8t9ohKoypRrwe
-	 TjwlXQOS/9cYjEzOnNTn/fu97NsI9/LjkXfLrh7a2jt+O9No/p9gDwiHgfYSKPB6ca
-	 XHWAAbp2+kQLMbHzwi0+IAqRLON3nuzaoCKUPKJEZn/0fr7kodZgSUtdMv6l9gFK8B
-	 Fe/csI1WU6YFiiAh3nZHdIS3qXBtbpVtjoedRXqfktjVN1rA8m6M7oWGmKEmfOKS1a
-	 GxNGEayC9TISOdGLQHPApNFmAcUEyzG/YJiE+u3VM+OBsjZl69jGJIubsSbogLVszK
-	 +y50sJBEiKt/A==
+	b=Sg2C5rmUsrFsqB+/CRJzTHnIP6xmWqhy/9TubY/RNKmKWWeTjgP+vaVt67AVzTZPf
+	 iklksF8ozO1/pUEUnPh6yFOQ4I327udvpjuydImzJBygfquHjGxbehs4uMchmZHUFm
+	 0A9i79ZQEyuCRkIwT5WeWMAzz03crWZEzk16n0H60TH6qjJrY5K15pdSvTt+F5/eSt
+	 fgUAcvAO+iARo6Uob3f7RgSar6DyTvksewkHZlS4FkNuFQbMKDMRLhE9EBtKH1pqzy
+	 Rx530mNH5cy0e7Ie65ib9m58MUjUmJ+UtOPA1ZtZU7aZ4hpc3sM4Gl4wURb8d+1XoK
+	 5kyXGW/QLTpDg==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wf8tP6syQz4wbp;
-	Wed,  7 Aug 2024 22:41:17 +1000 (AEST)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wf8tQ3Cp8z4x3J;
+	Wed,  7 Aug 2024 22:41:18 +1000 (AEST)
 From: Michael Ellerman <mpe@ellerman.id.au>
 To: <linux-mm@kvack.org>
 Cc: <linuxppc-dev@lists.ozlabs.org>,
@@ -59,9 +59,9 @@ Cc: <linuxppc-dev@lists.ozlabs.org>,
 	npiggin@gmail.com,
 	oliver.sang@intel.com,
 	pedro.falcato@gmail.com
-Subject: [PATCH 3/4] mm: Remove arch_unmap()
-Date: Wed,  7 Aug 2024 22:41:02 +1000
-Message-ID: <20240807124103.85644-3-mpe@ellerman.id.au>
+Subject: [PATCH 4/4] powerpc/vdso: Refactor error handling
+Date: Wed,  7 Aug 2024 22:41:03 +1000
+Message-ID: <20240807124103.85644-4-mpe@ellerman.id.au>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240807124103.85644-1-mpe@ellerman.id.au>
 References: <20240807124103.85644-1-mpe@ellerman.id.au>
@@ -73,126 +73,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that powerpc no longer uses arch_unmap() to handle VDSO unmapping,
-there are no meaningful implementions left. Drop support for it
-entirely, and update comments which refer to it.
+Linus noticed that the error handling in __arch_setup_additional_pages()
+fails to clear the mm VDSO pointer if _install_special_mapping()
+fails. In practice there should be no actual bug, because if there's an
+error the VDSO pointer is cleared later in arch_setup_additional_pages().
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+However it's no longer necessary to set the pointer before installing
+the mapping. Commit c1bab64360e6 ("powerpc/vdso: Move to
+_install_special_mapping() and remove arch_vma_name()") reworked the
+code so that the VMA name comes from the vm_special_mapping.name, rather
+than relying on arch_vma_name().
+
+So rework the code to only set the VDSO pointer once the mappings have
+been installed correctly, and remove the stale comment.
+
+Depends-on: c1bab64360e6 ("powerpc/vdso: Move to _install_special_mapping() and remove arch_vma_name()")
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 ---
- arch/powerpc/include/asm/mmu_context.h |  5 -----
- arch/x86/include/asm/mmu_context.h     |  5 -----
- include/asm-generic/mm_hooks.h         | 11 +++--------
- mm/mmap.c                              | 12 +++---------
- 4 files changed, 6 insertions(+), 27 deletions(-)
+ arch/powerpc/kernel/vdso.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/mmu_context.h b/arch/powerpc/include/asm/mmu_context.h
-index 9b8c1555744e..a334a1368848 100644
---- a/arch/powerpc/include/asm/mmu_context.h
-+++ b/arch/powerpc/include/asm/mmu_context.h
-@@ -260,11 +260,6 @@ static inline void enter_lazy_tlb(struct mm_struct *mm,
+diff --git a/arch/powerpc/kernel/vdso.c b/arch/powerpc/kernel/vdso.c
+index 220a76cae7c1..ee4b9d676cff 100644
+--- a/arch/powerpc/kernel/vdso.c
++++ b/arch/powerpc/kernel/vdso.c
+@@ -214,13 +214,6 @@ static int __arch_setup_additional_pages(struct linux_binprm *bprm, int uses_int
+ 	/* Add required alignment. */
+ 	vdso_base = ALIGN(vdso_base, VDSO_ALIGNMENT);
  
- extern void arch_exit_mmap(struct mm_struct *mm);
- 
--static inline void arch_unmap(struct mm_struct *mm,
--			      unsigned long start, unsigned long end)
--{
--}
+-	/*
+-	 * Put vDSO base into mm struct. We need to do this before calling
+-	 * install_special_mapping or the perf counter mmap tracking code
+-	 * will fail to recognise it as a vDSO.
+-	 */
+-	mm->context.vdso = (void __user *)vdso_base + vvar_size;
 -
- #ifdef CONFIG_PPC_MEM_KEYS
- bool arch_vma_access_permitted(struct vm_area_struct *vma, bool write,
- 			       bool execute, bool foreign);
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 8dac45a2c7fc..80f2a3187aa6 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -232,11 +232,6 @@ static inline bool is_64bit_mm(struct mm_struct *mm)
- }
- #endif
+ 	vma = _install_special_mapping(mm, vdso_base, vvar_size,
+ 				       VM_READ | VM_MAYREAD | VM_IO |
+ 				       VM_DONTDUMP | VM_PFNMAP, &vvar_spec);
+@@ -240,10 +233,15 @@ static int __arch_setup_additional_pages(struct linux_binprm *bprm, int uses_int
+ 	vma = _install_special_mapping(mm, vdso_base + vvar_size, vdso_size,
+ 				       VM_READ | VM_EXEC | VM_MAYREAD |
+ 				       VM_MAYWRITE | VM_MAYEXEC, vdso_spec);
+-	if (IS_ERR(vma))
++	if (IS_ERR(vma)) {
+ 		do_munmap(mm, vdso_base, vvar_size, NULL);
++		return PTR_ERR(vma);
++	}
  
--static inline void arch_unmap(struct mm_struct *mm, unsigned long start,
--			      unsigned long end)
--{
--}
--
- /*
-  * We only want to enforce protection keys on the current process
-  * because we effectively have no access to PKRU for other
-diff --git a/include/asm-generic/mm_hooks.h b/include/asm-generic/mm_hooks.h
-index 4dbb177d1150..6eea3b3c1e65 100644
---- a/include/asm-generic/mm_hooks.h
-+++ b/include/asm-generic/mm_hooks.h
-@@ -1,8 +1,8 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * Define generic no-op hooks for arch_dup_mmap, arch_exit_mmap
-- * and arch_unmap to be included in asm-FOO/mmu_context.h for any
-- * arch FOO which doesn't need to hook these.
-+ * Define generic no-op hooks for arch_dup_mmap and arch_exit_mmap
-+ * to be included in asm-FOO/mmu_context.h for any arch FOO which
-+ * doesn't need to hook these.
-  */
- #ifndef _ASM_GENERIC_MM_HOOKS_H
- #define _ASM_GENERIC_MM_HOOKS_H
-@@ -17,11 +17,6 @@ static inline void arch_exit_mmap(struct mm_struct *mm)
- {
+-	return PTR_ERR_OR_ZERO(vma);
++	// Now that the mappings are in place, set the mm VDSO pointer
++	mm->context.vdso = (void __user *)vdso_base + vvar_size;
++
++	return 0;
  }
  
--static inline void arch_unmap(struct mm_struct *mm,
--			unsigned long start, unsigned long end)
--{
--}
--
- static inline bool arch_vma_access_permitted(struct vm_area_struct *vma,
- 		bool write, bool execute, bool foreign)
- {
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 24bd6aa9155c..adaaf1ef197a 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2789,7 +2789,7 @@ do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma,
-  *
-  * This function takes a @mas that is either pointing to the previous VMA or set
-  * to MA_START and sets it up to remove the mapping(s).  The @len will be
-- * aligned and any arch_unmap work will be preformed.
-+ * aligned.
-  *
-  * Return: 0 on success and drops the lock if so directed, error and leaves the
-  * lock held otherwise.
-@@ -2809,16 +2809,12 @@ int do_vmi_munmap(struct vma_iterator *vmi, struct mm_struct *mm,
- 		return -EINVAL;
+ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+@@ -257,8 +255,6 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 		return -EINTR;
  
- 	/*
--	 * Check if memory is sealed before arch_unmap.
--	 * Prevent unmapping a sealed VMA.
-+	 * Check if memory is sealed, prevent unmapping a sealed VMA.
- 	 * can_modify_mm assumes we have acquired the lock on MM.
- 	 */
- 	if (unlikely(!can_modify_mm(mm, start, end)))
- 		return -EPERM;
+ 	rc = __arch_setup_additional_pages(bprm, uses_interp);
+-	if (rc)
+-		mm->context.vdso = NULL;
  
--	 /* arch_unmap() might do unmaps itself.  */
--	arch_unmap(mm, start, end);
--
- 	/* Find the first overlapping VMA */
- 	vma = vma_find(vmi, end);
- 	if (!vma) {
-@@ -3232,14 +3228,12 @@ int do_vma_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma,
- 	struct mm_struct *mm = vma->vm_mm;
- 
- 	/*
--	 * Check if memory is sealed before arch_unmap.
--	 * Prevent unmapping a sealed VMA.
-+	 * Check if memory is sealed, prevent unmapping a sealed VMA.
- 	 * can_modify_mm assumes we have acquired the lock on MM.
- 	 */
- 	if (unlikely(!can_modify_mm(mm, start, end)))
- 		return -EPERM;
- 
--	arch_unmap(mm, start, end);
- 	return do_vmi_align_munmap(vmi, vma, mm, start, end, uf, unlock);
- }
- 
+ 	mmap_write_unlock(mm);
+ 	return rc;
 -- 
 2.45.2
 
