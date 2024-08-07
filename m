@@ -1,147 +1,195 @@
-Return-Path: <linux-kernel+bounces-277105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85053949C8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:02:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC536949C8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14DB7283CFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:02:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5111DB23351
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDF34A0A;
-	Wed,  7 Aug 2024 00:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9ECAEDE;
+	Wed,  7 Aug 2024 00:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VyArvJZm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="crVnqlK5"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A704E817;
-	Wed,  7 Aug 2024 00:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D544A03;
+	Wed,  7 Aug 2024 00:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722988928; cv=none; b=DYJupc3n4PnL2gcs7byUckOVZvFTfW18Fv07twd0dXrQXu7wiWYWCHWxSjQcDf0jH0U6s8OZDDRmwGA83gAFBHl5w4l+naHKq65aeLQbTg6EraXvm69iAk6Wi3dMF0CBWERE5NXJodsmJYQudJKjmiL6D9BaZNxdxHm2uLo7pN0=
+	t=1722989086; cv=none; b=T1jQH1bRrnIm3qX5c9iuLa4wlCecbzqS0mpA9UJoSNV2fkEvecY6n+HEWd/eVTTOTHNBxx8mTcm05gZu7100L2lPCrcMs336UlKIQFWojlnYgOrV20uuybtHSiUbk4gsqZ7LnI0Z6a2sO9JEDn3BVfwFpfTkPCFsYBlbq2hOM8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722988928; c=relaxed/simple;
-	bh=iZQwoKXmd4y5JYgAIsSoD5NbVcgC7h8OZcIMlcokcP8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=q2NHxnpTwwzkTt7ghnXzXTo8XJSuLn+A6FHuWhrdLU1Vh9hiEZLYB8KD6H3GZ9h+bsO45iArBxOiB1p9JfohSP1X2QoVAaSpkmsCb40/Aczt+LEisAugkI335fCRdXkf57mFneZJqOgj02qNLNa316ZDUzkkd13MLqWF/BltyMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VyArvJZm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C2FDC32786;
-	Wed,  7 Aug 2024 00:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722988928;
-	bh=iZQwoKXmd4y5JYgAIsSoD5NbVcgC7h8OZcIMlcokcP8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VyArvJZm6q6+ZSi0ZNleZzuoGBGiVnfpUl+UtLX+KRz8pcLWO43m+UOr/54QSXwtF
-	 QL9IVNfonB8WhvjE6swnefbUW25OWEYtjdKguZsDrKD50vGML8FxoGSccjXRLN42Xh
-	 UjvVPH0DCG/JQOLqVAeP7ds6+tVdttWWRIbhqav/J+HSU2sUa6yspbbSpGkijv2c9c
-	 E2UPQ2taDlDLTSoVyK8Hk5V5MbywU7rsnfTA706mgULWSNUz1LuQhAefVi16fG4hV9
-	 d3iy3B7n3OfJOMPTsgbht67bb9mSsZUgMI9smplZIuFMJa3MK1PVpuY2TcwTfcZ+AB
-	 o6fNjIOPvp9KQ==
-Date: Wed, 7 Aug 2024 09:01:46 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Song Liu <song@kernel.org>,
- "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, LKML
- <linux-kernel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
- <linux-trace-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>, Petr
- Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, Nathan
- Chancellor <nathan@kernel.org>, "morbo@google.com" <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>, Luis Chamberlain
- <mcgrof@kernel.org>, Leizhen <thunder.leizhen@huawei.com>,
- "kees@kernel.org" <kees@kernel.org>, Kernel Team <kernel-team@meta.com>,
- Matthew Maurer <mmaurer@google.com>, Sami Tolvanen
- <samitolvanen@google.com>, Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2 3/3] tracing/kprobes: Use APIs that matches symbols
- without .XXX suffix
-Message-Id: <20240807090146.88b38c2fbd1cd8db683be22c@kernel.org>
-In-Reply-To: <6F6AC75C-89F9-45C3-98FF-07AD73C38078@fb.com>
-References: <20240802210836.2210140-1-song@kernel.org>
-	<20240802210836.2210140-4-song@kernel.org>
-	<20240806144426.00ed349f@gandalf.local.home>
-	<B53E6C7F-7FC4-4B4B-9F06-8D7F37B8E0EB@fb.com>
-	<20240806160049.617500de@gandalf.local.home>
-	<20240806160149.48606a0b@gandalf.local.home>
-	<6F6AC75C-89F9-45C3-98FF-07AD73C38078@fb.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722989086; c=relaxed/simple;
+	bh=4Kkhe+inc4ljsIQXc7G2vZ6On64/i5jOImYxQ1okxmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SY/jfyC5Uqp1Enk5rOylTqYQZoOOod6A2zIb4TtMIlMUbKQbSasIgfDtLPFHPQiAvBgwX5i0p5Sy1EUInx3DrNVzExxcLXdpI3FpP1LytJmXTDNHzp7j0qusb64T1NU5VCohkpMw6RDqFYtDAgofYLD+Tqc93hk/qkvJDML3/90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=crVnqlK5; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722989074;
+	bh=Jmj0zEwO/2sF8FN834SI9UG12wmU1Vwqshq+i48ODQ8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=crVnqlK5zCvCUoIMp7hbofcaXEa6LfztBxy/SnpSiJXhKm3LEOgzmGgvT8uWIVuRa
+	 a+xgbbh5WGsi3L2AMISeZLT7EcoE/WBSo32un4Gd9JJeDzIvdODuTbBgGo79vuXRMm
+	 1V+RlxpwIlrhi57LOnBgFv1pLos57W4WZTtnEdgYAPzK04FApEmdxwuF5Dwe9m9sfc
+	 gtgFcJEedQ5rZd4HSlv7xisNEbVOyta4VvmorkSa4f+nzxDaSVgZ5BSpqt8U+Ga8qQ
+	 MGGwCHhDdNzdww4LJiHlRl/wIAXmnoySye5A7rMLasesl7h5h82QiL6vcFrZbB1RWM
+	 keJqpRhiH0IfA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wdr5G0fspz4w2F;
+	Wed,  7 Aug 2024 10:04:34 +1000 (AEST)
+Date: Wed, 7 Aug 2024 10:04:33 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>, Al Viro
+ <viro@zeniv.linux.org.uk>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the vfs-brauner tree with the vfs-fixes
+ tree
+Message-ID: <20240807100433.16e92156@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/atET8ukcMB/s5z9Ex_1g9K=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, 6 Aug 2024 20:12:55 +0000
-Song Liu <songliubraving@meta.com> wrote:
+--Sig_/atET8ukcMB/s5z9Ex_1g9K=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> 
-> > On Aug 6, 2024, at 1:01 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > On Tue, 6 Aug 2024 16:00:49 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> >>>>> + if (IS_ENABLED(CONFIG_LTO_CLANG) && !addr)
-> >>>>> + addr = kallsyms_lookup_name_without_suffix(trace_kprobe_symbol(tk));
-> >>>>> +    
-> >>>> 
-> >>>> So you do the lookup twice if this is enabled?
-> >>>> 
-> >>>> Why not just use "kallsyms_lookup_name_without_suffix()" the entire time,
-> >>>> and it should work just the same as "kallsyms_lookup_name()" if it's not
-> >>>> needed?    
-> >>> 
-> >>> We still want to give priority to full match. For example, we have:
-> >>> 
-> >>> [root@~]# grep c_next /proc/kallsyms
-> >>> ffffffff81419dc0 t c_next.llvm.7567888411731313343
-> >>> ffffffff81680600 t c_next
-> >>> ffffffff81854380 t c_next.llvm.14337844803752139461
-> >>> 
-> >>> If the goal is to explicitly trace c_next.llvm.7567888411731313343, the
-> >>> user can provide the full name. If we always match _without_suffix, all
-> >>> of the 3 will match to the first one. 
-> >>> 
-> >>> Does this make sense?  
-> >> 
-> >> Yes. Sorry, I missed the "&& !addr)" after the "IS_ENABLED()", which looked
-> >> like you did the command twice.
-> > 
-> > But that said, does this only have to be for llvm? Or should we do this for
-> > even gcc? As I believe gcc can give strange symbols too.
-> 
-> I think most of the issue comes with LTO, as LTO promotes local static
-> functions to global functions. IIUC, we don't have GCC built, LTO enabled
-> kernel yet.
-> 
-> In my GCC built, we have suffixes like ".constprop.0", ".part.0", ".isra.0", 
-> and ".isra.0.cold". We didn't do anything about these before this set. So I 
-> think we are OK not handling them now. We sure can enable it for GCC built
-> kernel in the future. 
+Hi all,
 
-Hmm, I think it should be handled as it is. This means it should do as
-livepatch does. Since I expected user will check kallsyms if gets error,
-we should keep this as it is. (if a symbol has suffix, it should accept
-symbol with suffix, or user will get confused because they can not find
-which symbol is kprobed.)
+Today's linux-next merge of the vfs-brauner tree got a conflict in:
 
-Sorry about the conclusion (so I NAK this), but this is a good discussion. 
+  tools/testing/selftests/core/close_range_test.c
 
-Thanks,
+between commit:
 
-> 
-> Thanks,
-> Song
-> 
-> 
-> 
+  9a2fa1472083 ("fix bitmap corruption on close_range() with CLOSE_RANGE_UN=
+SHARE")
 
+from the vfs-fixes tree and commit:
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+  b7fcee976159 ("selftests: add F_CREATED_QUERY tests")
+
+from the vfs-brauner tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc tools/testing/selftests/core/close_range_test.c
+index 12b4eb9d0434,3e829666281d..000000000000
+--- a/tools/testing/selftests/core/close_range_test.c
++++ b/tools/testing/selftests/core/close_range_test.c
+@@@ -589,39 -593,39 +593,74 @@@ TEST(close_range_cloexec_unshare_syzbot
+  	EXPECT_EQ(close(fd3), 0);
+  }
+ =20
+ +TEST(close_range_bitmap_corruption)
+ +{
+ +	pid_t pid;
+ +	int status;
+ +	struct __clone_args args =3D {
+ +		.flags =3D CLONE_FILES,
+ +		.exit_signal =3D SIGCHLD,
+ +	};
+ +
+ +	/* get the first 128 descriptors open */
+ +	for (int i =3D 2; i < 128; i++)
+ +		EXPECT_GE(dup2(0, i), 0);
+ +
+ +	/* get descriptor table shared */
+ +	pid =3D sys_clone3(&args, sizeof(args));
+ +	ASSERT_GE(pid, 0);
+ +
+ +	if (pid =3D=3D 0) {
+ +		/* unshare and truncate descriptor table down to 64 */
+ +		if (sys_close_range(64, ~0U, CLOSE_RANGE_UNSHARE))
+ +			exit(EXIT_FAILURE);
+ +
+ +		ASSERT_EQ(fcntl(64, F_GETFD), -1);
+ +		/* ... and verify that the range 64..127 is not
+ +		   stuck "fully used" according to secondary bitmap */
+ +		EXPECT_EQ(dup(0), 64)
+ +			exit(EXIT_FAILURE);
+ +		exit(EXIT_SUCCESS);
+ +	}
+ +
+ +	EXPECT_EQ(waitpid(pid, &status, 0), pid);
+ +	EXPECT_EQ(true, WIFEXITED(status));
+ +	EXPECT_EQ(0, WEXITSTATUS(status));
+ +}
+ +
++ TEST(fcntl_created)
++ {
++ 	for (int i =3D 0; i < 101; i++) {
++ 		int fd;
++ 		char path[PATH_MAX];
++=20
++ 		fd =3D open("/dev/null", O_RDONLY | O_CLOEXEC);
++ 		ASSERT_GE(fd, 0) {
++ 			if (errno =3D=3D ENOENT)
++ 				SKIP(return,
++ 					   "Skipping test since /dev/null does not exist");
++ 		}
++=20
++ 		/* We didn't create "/dev/null". */
++ 		EXPECT_EQ(fcntl(fd, F_CREATED_QUERY, 0), 0);
++ 		close(fd);
++=20
++ 		sprintf(path, "aaaa_%d", i);
++ 		fd =3D open(path, O_CREAT | O_RDONLY | O_CLOEXEC, 0600);
++ 		ASSERT_GE(fd, 0);
++=20
++ 		/* We created "aaaa_%d". */
++ 		EXPECT_EQ(fcntl(fd, F_CREATED_QUERY, 0), 1);
++ 		close(fd);
++=20
++ 		fd =3D open(path, O_RDONLY | O_CLOEXEC);
++ 		ASSERT_GE(fd, 0);
++=20
++ 		/* We're opening it again, so no positive creation check. */
++ 		EXPECT_EQ(fcntl(fd, F_CREATED_QUERY, 0), 0);
++ 		close(fd);
++ 		unlink(path);
++ 	}
++ }
++=20
+  TEST_HARNESS_MAIN
+
+--Sig_/atET8ukcMB/s5z9Ex_1g9K=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmayuhEACgkQAVBC80lX
+0Gztfgf+PGxM2G9Kkj/9G/ydQttjCb6IChCLsYWmiNHA44o2TFp1IZsOJQ9OOPF4
+koY1X3RbOSllqxYX4ZHpk4qumaIVY3AdKgKLsVyWmFWmmOko4XyD2PsvAIzLRBdb
+vuS3CF+G4SejAnxKnH34rde/Emj5SA4o6XS5hIyFUD2f15JsrYgiB0/evGTG2VnX
+F5c4/esi+KvlejJSNx9/mX2kGcSjrh5rYjcCOmbke93xx/c2d7Rb6t/IeES6SxBl
+jKANr6tlNqbi5tUC/LQ4pQzti9e2sNhVbSrAyDLd3QKlh+PrPTgFHCHdKL7NCpaZ
+Uf8yII3FYVePTDy4VgG9Q343FkkZMA==
+=IJJW
+-----END PGP SIGNATURE-----
+
+--Sig_/atET8ukcMB/s5z9Ex_1g9K=--
 
