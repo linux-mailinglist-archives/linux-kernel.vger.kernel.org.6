@@ -1,154 +1,125 @@
-Return-Path: <linux-kernel+bounces-278160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CF0694AD7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:00:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5ED94ACE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CFF2B23512
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:29:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E17D51C22A9B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD905126F02;
-	Wed,  7 Aug 2024 15:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7F612C470;
+	Wed,  7 Aug 2024 15:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="oR6kY+5M"
-Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OPLHmfDe"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7754383A06
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA5712C473
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723044562; cv=none; b=DGTITrluw5x/Ff8vyKIewR+0qtQ/JyEmBm/3K7SCtT2Lvxk/flPV2xhpHOw+NyJOlNy0ulQm+id2uiTQwcG2Rb1uTWUnkfMbxAVPODJIyr9/06xWAi9Fq69WxdkupFDYfJ3n93apJdptFx9ft6XsHKddHVM87orHoqzbFjj7mfU=
+	t=1723044565; cv=none; b=MEIg02abpuYMCBpHE25fq5lPR5VzMrmHFxyiKWDRTFsBnJ6aivozjyo1xOs9Jb8pboDDLT0brtVP4WfRzf7mGmzhLU4LZldBYGSzHmu1Ey57oyJnLgMRnS29F9tH7uB/nz1z4JBFMBiJMiup3qvid0GWXqsffp4W/HLQtTsO6Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723044562; c=relaxed/simple;
-	bh=W/j7ofAjp4lBil8BOqJhV6WZEhxedjS2h6klOSbHmqw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WeIc0FAKE8PHOCq4MjU06fColsiSnpsk5wY6aFBvNM8ZZ6uW3cK+D7Ov+vsKb2E8aYJf1vvuWClJjDLCgFqtd47nYXZmfrESZPGII+eBfpH2X+jtXEPzJTus5FQEbQ3JIedMmPHyf9AK+SLKlvvuvg94CkvG+S4fIVEnx691fto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=oR6kY+5M; arc=none smtp.client-ip=35.89.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
-	by cmsmtp with ESMTPS
-	id bfXRsG6s8VpzpbibCsb4Co; Wed, 07 Aug 2024 15:29:14 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id bibCsvFLsks1PbibCsc9F1; Wed, 07 Aug 2024 15:29:14 +0000
-X-Authority-Analysis: v=2.4 cv=Ud+aS7SN c=1 sm=1 tr=0 ts=66b392ca
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=ZI_cG6RJAAAA:8 a=VwQbUJbxAAAA:8
- a=T5MvzxAiUVsB-E4yPXoA:9 a=QEXdDO2ut3YA:10 a=CiASUvFRIoiJKylo2i9u:22
- a=AjGcO6oz07-iQ99wixmX:22 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=59150sAKwGxpaYJCN77m/MKm7XHRkgxuo8ao1z77FlU=; b=oR6kY+5MtJW2lfQQH8jwxz/n+p
-	ld81JKyBLNDPwW+Cml04V8/YNZ+m9EbK5fYlWqkS0DRw06/eEgGGUPTtx3nWFQyZpzaojkyN1PZa9
-	9q/6p2pNuzRgaxr1FKfrxYzuDnBBB1FXNnjn6AY9BaqaDoS+8awdi3FOxFb2eZWIe8u8yTNvanslK
-	0+zoFCavSaelECC3pbjxZKOwO0Lwyoe3rpXYgP/FOTsELsFK6xrG8w+rraBprKCIUUaiX5pNx63jx
-	eE2ASEnOyS5h8EGLvwM1SA6TMbQHbC2AoP2EG1nXMde48ypRIC0zac58hZ7JFoqf4df5RPez/EtMp
-	HzQUZgyA==;
-Received: from [201.172.173.139] (port=60294 helo=[192.168.15.5])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sbib9-003NZG-27;
-	Wed, 07 Aug 2024 10:29:11 -0500
-Message-ID: <bcb88692-a384-4da8-b2b9-a116ecb17530@embeddedor.com>
-Date: Wed, 7 Aug 2024 09:29:09 -0600
+	s=arc-20240116; t=1723044565; c=relaxed/simple;
+	bh=B3qUjQUBKSoj6DiE5izmtCoNi2oQX3kGXMYImbc+tBs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nv/wflrqM8iYDy65zyJzash4HMmQrCqhfiAB+vODPSoIdwFeEDTaOlrfnz1WG361tH4eFGm4j4LzNb6IJ6tBmCj70+n/iSt1h+UdfEOumAqccOEqfv3hoi/WJmNNpkNBLxzeneiyYGOELZb48nz//QaSXcTclx9vSsTSXlIG88A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OPLHmfDe; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-690b6cbce11so19418217b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 08:29:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1723044563; x=1723649363; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XKQ9M/o3NVnkKygQpCqhb1IVgEtJMwyJqqnPTlCGvnU=;
+        b=OPLHmfDeHvharH0vkYihAnB/ZGgtqUKLbKoW+CEPsh4Dx3rKc/CHDdcllju+l3ra31
+         7ox3oLQL4Hnym4ajlIc8z/paMK6mA/AG1PRZlfVmVal3DU7w1Q1V+1EYrIt8ui7GEhqv
+         10OWiuL5PDl+CYHGjhwg0zTG8tokh0CEPogjz7jvykwVXXBeThjwABHD7UOpkhKRxcKC
+         sMIUUjkYs+VWqpB9/skIUnmT8TK80z18eyNqaNruxkzaLq87N5N++oQ+F9EnTkegS07k
+         pugRWXKAv61wUzYeLvIHpr+bKaYdJqICSCzHXXORB2mooUp7QSYmwafYYzY2YtY+dIaO
+         F/OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723044563; x=1723649363;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XKQ9M/o3NVnkKygQpCqhb1IVgEtJMwyJqqnPTlCGvnU=;
+        b=LNiHltfkgBeILW77M2RGzuoFiI8EO0bmntCR0gdEStCm9qr+mprnMo+VydztuiYpMn
+         GUoSB0D49HXklSVXhmgbS6J/wytcPbbHki74JLTvgHgGFOukLCNukPNdkO7k33+Jherd
+         uLNJbrvOlILH56m4pA/aLfrBSFVKHiigyhlERtU4R9CV1i01PUZ1uYmRkyH2D5n//2Fb
+         IovRM0hyqSTo0oCBYISEz/Lk3wx9zzzlxTz1nN3vfpx2UlPt7ebm/t0LPPvc3Ktr8C4k
+         Cl3aWCVXfVWbEu+PV5pr/zMu9PVrmahGCD3eGJAb/bXxW//jSfB9DuI7boDzA/8cWM+V
+         xTTA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1FDvr/DbSJatcRtFVshNnBPwMnWIaCe0pGwKbYNcx7XonjryDr66UIstiLhCg882yO8fyHzbGY1XPcXZSZWU/NcUl5zxINjdKf03U
+X-Gm-Message-State: AOJu0Yz8w2fR+iS//L5OPt8siEe9HdiROHMmmkaFBTuZSI7657esRNFA
+	Lx7fQyNre6VKlEvQtp11GkvhqoEj3USlt9JueF6LuKrGdSV2SO7znJO+mN1V0AV7SbUsuXs+EU1
+	WQ0TNuf8dVPbaj/8ir5V0dkZhrFwIasU27xBA
+X-Google-Smtp-Source: AGHT+IFxKYsOrG4ilAXTKiWlIY9sugsT5cdso9SZyJ4+TO3rkpTxQeSesfajzSgpUnqosNMbojqCvWGpQGpS+lQXelM=
+X-Received: by 2002:a25:c341:0:b0:e06:fe1a:ffd8 with SMTP id
+ 3f1490d57ef6-e0bde3ee72cmr18086030276.31.1723044562667; Wed, 07 Aug 2024
+ 08:29:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rcu: Annotate struct kvfree_rcu_bulk_data with
- __counted_by()
-To: Thorsten Blum <thorsten.blum@toblux.com>, paulmck@kernel.org,
- frederic@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
- josh@joshtriplett.org, boqun.feng@gmail.com, urezki@gmail.com,
- rostedt@goodmis.org, mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
- qiang.zhang1211@gmail.com, kees@kernel.org, gustavoars@kernel.org
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20240807095459.1400-2-thorsten.blum@toblux.com>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240807095459.1400-2-thorsten.blum@toblux.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sbib9-003NZG-27
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.5]) [201.172.173.139]:60294
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfP2dQZq44CUfsv5Yf/JriflpmlmGYnqhspR7WkAW3x7Jbrar7ZyaOM3tIrwILst/Op7Ej6COdvbmNqMK0kW4bD9LAKQBjMTzGp7lThzN0xIJ+H7DDxBo
- KBPoHgmdDDa5CMgQw4unpPQPhR2PTbnGsv3ua+Yi58ApDrQvr95+CCEWJafRGREdxHtLSRQNt33vmF7t9YLyFdNkgxznR0DAzX7WS5wyHMXFIBPAyvNaYGpG
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com> <20240807-macos-build-support-v1-6-4cd1ded85694@samsung.com>
+In-Reply-To: <20240807-macos-build-support-v1-6-4cd1ded85694@samsung.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 7 Aug 2024 11:29:11 -0400
+Message-ID: <CAHC9VhS=KGRCbk-zy4aMiNfi2aMRX6YBP8H3VNAw7pY85TxDRA@mail.gmail.com>
+Subject: Re: [PATCH 06/12] selinux/genheaders: include bitsperlong and
+ posix_types headers
+To: da.gomez@samsung.com
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Lucas De Marchi <lucas.demarchi@intel.com>, 
+	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
+	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org, 
+	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
+	Finn Behrens <me@kloenk.dev>, "Daniel Gomez (Samsung)" <d+samsung@kruces.com>, gost.dev@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 07/08/24 03:55, Thorsten Blum wrote:
-> Add the __counted_by compiler attribute to the flexible array member
-> records to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE.
-> 
-> Increment nr_records before adding a new pointer to the records array.
-> 
-
-Looks good.
-
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-
-Thanks
---
-Gustavo
-
+On Tue, Aug 6, 2024 at 7:10=E2=80=AFPM Daniel Gomez via B4 Relay
+<devnull+da.gomez.samsung.com@kernel.org> wrote:
+>
+> From: Daniel Gomez <da.gomez@samsung.com>
+>
+> The genheaders requires the bitsperlong.h and posix_types.h headers.
+> To ensure these headers are found during compilation on macOS hosts,
+> add usr/include to HOST_EXTRACFLAGS in the genheaders Makefile. This
+> adjustment allows the compiler to locate all necessary headers when they
+> are not available by default on macOS.
+>
+> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
 > ---
->   kernel/rcu/tree.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index e641cc681901..76d8d75dd8b3 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -3227,7 +3227,7 @@ struct kvfree_rcu_bulk_data {
->   	struct list_head list;
->   	struct rcu_gp_oldstate gp_snap;
->   	unsigned long nr_records;
-> -	void *records[];
-> +	void *records[] __counted_by(nr_records);
->   };
->   
->   /*
-> @@ -3767,7 +3767,8 @@ add_ptr_to_bulk_krc_lock(struct kfree_rcu_cpu **krcp,
->   	}
->   
->   	// Finally insert and update the GP for this page.
-> -	bnode->records[bnode->nr_records++] = ptr;
-> +	bnode->nr_records++;
-> +	bnode->records[bnode->nr_records - 1] = ptr;
->   	get_state_synchronize_rcu_full(&bnode->gp_snap);
->   	atomic_inc(&(*krcp)->bulk_count[idx]);
->   
+>  scripts/selinux/genheaders/Makefile | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+
+This patch, and 7/12, look fine to me.  I can pull them into the
+SELinux tree now, or would you prefer them to go via a different tree?
+
+--=20
+paul-moore.com
 
