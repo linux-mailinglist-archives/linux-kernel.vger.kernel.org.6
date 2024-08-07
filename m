@@ -1,200 +1,158 @@
-Return-Path: <linux-kernel+bounces-278202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2855094AD60
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:52:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF3494AD64
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2301281031
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:52:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C6B28140D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A9812D1E9;
-	Wed,  7 Aug 2024 15:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63BD131E4B;
+	Wed,  7 Aug 2024 15:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HvejrY7s"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIS3ycco"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE42D12A14C
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A6183CD9;
+	Wed,  7 Aug 2024 15:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723045934; cv=none; b=MyXKQFLdwjQeouBL/SwK6j+wtxyt5CdRYp6bsgf28XAAE7P0EHfgdG1OInNhiCCQqjrdxRQJoAwv74nqvX4fajQx4iyqckVPPVFJcafLdXeMgtM5YznihQ/+nMLB15uG/iDpthGdBRjCksHVui83olZ7IEs/+d45KeK5pI0KveQ=
+	t=1723045981; cv=none; b=MuxuCstk2pkvc3W0I25I2Hv/jO0WdxU2MBgOOD7YXELr7MmjNiw5zfxxNomwOWPZqtM65gxncFUxv9Ec5oJsQPyCjAJzg/9FqrZYi4ZXVICD9qj0thqD2VUhm5sQjW1rSk04hp9wPIKGVnIbhbQwgk7DgIvEakrYP96zng8PpHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723045934; c=relaxed/simple;
-	bh=MTxacAatWTOpYma2qqk2MFtnl6sscbXpCf0B0L3Rvxo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Avaef9wSOgC4JKHBNTF066lxl0Jk6z8qHsfix8uJo5aXWv51edoXaVBWfBTEluf1qGSTPp5lnOZNS7LJDjKpnoKaYSwp4GPrLpUH6g4JuvkOuL/VF2nnSATJ8gHCc+54eG8iQWUihO0wI+BacNQ2N3BVP8aR+KCtynsdK+g1Rh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HvejrY7s; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4281c164408so174975e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 08:52:12 -0700 (PDT)
+	s=arc-20240116; t=1723045981; c=relaxed/simple;
+	bh=wXPWh6k6pBHGMN6va5P/75EbKPnOuDRurzYoTKaEwVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aAERzijJqkEAw+vnMxeivEueYlkEqlWdcTZOPP+wxiFEuake/c+ut7wsgSsbB1fEGDjF6x8odEMFrePnIQKRRN5map4Qw7eyv+oz/LjoHxVUuE5FoItAMPRJaXN0tlp9uaudaecp9hxw0njKSNDR0MlNkmOIFEW76qTNSh2EtPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CIS3ycco; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5b4e2db85ecso307803a12.0;
+        Wed, 07 Aug 2024 08:52:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723045931; x=1723650731; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oRFdCUk81EgAuZOPUgff1QAMGIx+EiDXi2BrG6XIJyg=;
-        b=HvejrY7sgXAnhuLCIQPlpnwzfvgUxoE4fAKrn5gBhx3/pYp9DtIQ3JJzzcdGhfIM4K
-         1U3eu9asMhoNrqLetT0J5G6H9Mmz41HEsYA4vCjBbt2ySoW8CNUDido7hkaoR/y+gksg
-         B7gJfGuDGIi3Q/mn9Nq6Lkm7QS83zDnh+nHG4Ft4Uz6mRNQxhgBLeU5Z0o+xptQ/2Rur
-         NqugPv9DXMzSMgY4MO9ByoXF8N8gN4UpcOdR1iJtM0xxSt30HMK1D02TflZHAjVJ/hDJ
-         9YuZQ+twqMfPkcymJ+vQ/aWXyn3PJ2jE7pMGMZudhiIrIFUtfmDexiVExIWjgifo2wFt
-         fmFA==
+        d=gmail.com; s=20230601; t=1723045977; x=1723650777; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qUiUvKTQQVHMdxw66WRr+aSl8RyfjXAJRd+5JETrf0E=;
+        b=CIS3yccoop1Vm7QSyYKH7mplxP58XXnemHPJCvJSqYohsUUzp7o9d/yUgt/Q2sqKVm
+         AL4HWVJRngj6s/VZISjS6oWDyVuYHw6OM87qtyRKw8IM1Q3IsJChDe9tt2C4wKXWYNJ8
+         rUVbEyJRjj4xoymMQH/L3kXlU0PqxpQxXUUX3LiwkIMTQCr6MJR6crxqNUdWQjjPXAm0
+         BbK3MW3rVRCEL7dtrTWWIzFkp37iGMU3Nku1MFAbbOgcp73NDA0dfr5oLQkR9iZEC4OZ
+         ga/tdr9kHAcBQE5jnHbf+OjxQyACnakJgzHwWHP4kO4C8oZzfwZb1Bw57Xrnwrxq5NIa
+         pYsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723045931; x=1723650731;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oRFdCUk81EgAuZOPUgff1QAMGIx+EiDXi2BrG6XIJyg=;
-        b=PTxvDXuNre4t3d6+wlomoj2LLKdSbSlDJ9BEQbLM0gSoxqq00CzbttVf0bQ4LbPYzC
-         vkiUvs6Qqr5iXKiJUVzyIB4Xx3obgDfNBw6W++6Lcy/UVB0vypOavT14WGmqKohY4sKu
-         B3pYbHDUD7Wegrm22pTyVIj+1hskoR/G4BDLhPHFBJ4Gr3nkJTRm2cFcGZrn9aqxW8zJ
-         wS/qEM2RE3AnqgaIjm50m/zgDrYPO/K/iVXAK9E3ItfMIEB048GBBoMZRW66dUJkilUR
-         nZcUQMpq34Xa4nC+0WdiqKk/AyLLP9TNGRGHMDDy35CsFfGQjbp4rpRLVFY4oL/3TCH0
-         UDFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYamaYXX46Dkd3pjTWxGA5Nh4JHnUGeg38JkuEdpVnlNz+FYRAz1Acd9aSc8oLnVvHalpQ47E/jMM2LPaI3J495w1rjMPtALqh6zzA
-X-Gm-Message-State: AOJu0YzL2NI6BLbhnd3CXjd6pxWELHAOUiARkAHgZqMQekjZkQTbfrBB
-	LCPDKGVmSRrTqv2IbYNRQn/wwajmmR3JVwou/xeadoQX6fgZTvtfgs2WZDUAHOg=
-X-Google-Smtp-Source: AGHT+IEEeoPN6j8nzeZeQO+PeuL8PISW2uSCLYbhFOCXh07DB880ZpSmwybG7OY/YQmH+1Lm/6eO9A==
-X-Received: by 2002:a5d:4e90:0:b0:368:591:9bc1 with SMTP id ffacd0b85a97d-36bbc1bd311mr11569869f8f.46.1723045930947;
-        Wed, 07 Aug 2024 08:52:10 -0700 (PDT)
-Received: from localhost.localdomain ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd0261c2sm16428839f8f.57.2024.08.07.08.52.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 08:52:10 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-	peterz@infradead.org
-Cc: James Clark <james.clark@linaro.org>,
-	Al Grant <al.grant@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH v2] drivers/perf: arm_spe: Use perf_allow_kernel() for permissions
-Date: Wed,  7 Aug 2024 16:51:53 +0100
-Message-Id: <20240807155153.2714025-1-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1723045977; x=1723650777;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qUiUvKTQQVHMdxw66WRr+aSl8RyfjXAJRd+5JETrf0E=;
+        b=KDNV01rSIErHik1eCXOANnThF5xq6vKEH61R3IgpwDdGfsFk+c3u/vC4nryAHVOjka
+         SxszNFv7GXKXk4AWh34T3QiD21VY8D/zkrcjU8yTNVNgR8TLvXdhyg2mQV3WPMcGfIxt
+         s8T5J1hU979dG4hkby6icPtNqGWJ0icmN0OsYpDfypB2l2gHF+KqCKrULRUqa0zT4+wC
+         MR9SsZzhd6AuUxpSwtevSYrzC3IfscEniq4vftGI6I/KYA5X3Osq72XHshxRUh6EqwZ8
+         xx5krLMzMvnNeqSwk6D3G/Z8DD+0ZBwDcNudzwYsY+MrMwUC9e8NYP9bAvlGLiLJgsyS
+         xTZA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8spC0gtMpPDOIMlfNOqq9dhzd5tyBVp6GXj+kyxO9omlKSJJbkRU1tSRB8sXe3dSIK63WkV3P@vger.kernel.org, AJvYcCW5ceGAo9/8enUNDVXPxgsC6+f/LJvJKYJTKa3CtlpOzOdDAl+ns0tBLq2dU8bfFfynOwrcf1M/JRfLi1m5BKk=@vger.kernel.org, AJvYcCXUKFSG+zHAMUX942aiCs3KXUKEe0utrGJrriGZZ/HKegdB1Ipux9s5l11CziO6aJWc49MgmeSQ9sp++uet@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSUxDs7FhnrlKnRI0RBMxht/SohmP8g8AdzwYKf4HyQMeDK01o
+	kbngTkrzJfeIuuKKNkEmywWaqtOs8WbmwNLIJqqaRgyy71FTJvYC
+X-Google-Smtp-Source: AGHT+IGFO3IapnBF3tCg1oFuCGSR2iozMJtvYIm+8ITSbjakxWwa/3Sic7jLMArrMzztkADGamL5nA==
+X-Received: by 2002:a17:907:6d06:b0:a7a:b895:6571 with SMTP id a640c23a62f3a-a7dc51b4cf1mr864700466b.9.1723045976910;
+        Wed, 07 Aug 2024 08:52:56 -0700 (PDT)
+Received: from [192.168.0.104] (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d437dfsm654958766b.133.2024.08.07.08.52.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 08:52:56 -0700 (PDT)
+Message-ID: <f24782cf-bace-491e-9cf9-28d515d4fc54@gmail.com>
+Date: Wed, 7 Aug 2024 17:52:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] staging: rtl8192e: Constify struct
+ lib80211_crypto_ops
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ stas.yakovlev@gmail.com, kvalo@kernel.org, gregkh@linuxfoundation.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, johannes@sipsolutions.net
+Cc: linux-wireless@vger.kernel.org, linux-staging@lists.linux.dev,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <cover.1722839425.git.christophe.jaillet@wanadoo.fr>
+ <dfda6343781ae3d50cd2ec7bbdcf76a489b6922a.1722839425.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <dfda6343781ae3d50cd2ec7bbdcf76a489b6922a.1722839425.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For other PMUs, PERF_SAMPLE_PHYS_ADDR requires perf_allow_kernel()
-rather than just perfmon_capable(). Because PMSCR_EL1_PA is another form
-of physical address, make it consistent and use perf_allow_kernel() for
-SPE as well. PMSCR_EL1_PCT and PMSCR_EL1_CX also get the same change.
+On 8/5/24 08:40, Christophe JAILLET wrote:
+> Now that functions in lib80211 handle "const struct lib80211_crypto_ops",
+> some structure can be constified as well.
+> 
+> Constifying these structures moves some data to a read-only section, so
+> increase overall security.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+> 
+> Changes in v2:
+>    - No changes
+> 
+> v1: https://lore.kernel.org/all/81be9eb42a2339eaa7466578773945a48904d3b5.1715443223.git.christophe.jaillet@wanadoo.fr/
+> ---
+>   drivers/staging/rtl8192e/rtllib_crypt_ccmp.c | 2 +-
+>   drivers/staging/rtl8192e/rtllib_crypt_tkip.c | 2 +-
+>   drivers/staging/rtl8192e/rtllib_crypt_wep.c  | 2 +-
+>   3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c b/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
+> index 639877069fad..138733cb00e2 100644
+> --- a/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
+> +++ b/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
+> @@ -378,7 +378,7 @@ static void rtllib_ccmp_print_stats(struct seq_file *m, void *priv)
+>   		   ccmp->dot11rsna_stats_ccmp_decrypt_errors);
+>   }
+>   
+> -static struct lib80211_crypto_ops rtllib_crypt_ccmp = {
+> +static const struct lib80211_crypto_ops rtllib_crypt_ccmp = {
+>   	.name			= "R-CCMP",
+>   	.init			= rtllib_ccmp_init,
+>   	.deinit			= rtllib_ccmp_deinit,
+> diff --git a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
+> index dc0917b03511..74dc8326c886 100644
+> --- a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
+> +++ b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
+> @@ -678,7 +678,7 @@ static void rtllib_tkip_print_stats(struct seq_file *m, void *priv)
+>   		   tkip->dot11RSNAStatsTKIPLocalMICFailures);
+>   }
+>   
+> -static struct lib80211_crypto_ops rtllib_crypt_tkip = {
+> +static const struct lib80211_crypto_ops rtllib_crypt_tkip = {
+>   	.name			= "R-TKIP",
+>   	.init			= rtllib_tkip_init,
+>   	.deinit			= rtllib_tkip_deinit,
+> diff --git a/drivers/staging/rtl8192e/rtllib_crypt_wep.c b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
+> index 10092f6884ff..aa18c060d727 100644
+> --- a/drivers/staging/rtl8192e/rtllib_crypt_wep.c
+> +++ b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
+> @@ -209,7 +209,7 @@ static void prism2_wep_print_stats(struct seq_file *m, void *priv)
+>   	seq_printf(m, "key[%d] alg=WEP len=%d\n", wep->key_idx, wep->key_len);
+>   }
+>   
+> -static struct lib80211_crypto_ops rtllib_crypt_wep = {
+> +static const struct lib80211_crypto_ops rtllib_crypt_wep = {
+>   	.name			= "R-WEP",
+>   	.init			= prism2_wep_init,
+>   	.deinit			= prism2_wep_deinit,
 
-This improves consistency and indirectly fixes the following error
-message which is misleading because perf_event_paranoid is not taken
-into account by perfmon_capable():
-
-  $ perf record -e arm_spe/pa_enable/
-
-  Error:
-  Access to performance monitoring and observability operations is
-  limited. Consider adjusting /proc/sys/kernel/perf_event_paranoid
-  setting ...
-
-Suggested-by: Al Grant <al.grant@arm.com>
-Signed-off-by: James Clark <james.clark@linaro.org>
----
-Changes since v1:
-
-  * Export perf_allow_kernel() instead of sysctl_perf_event_paranoid
-
- drivers/perf/arm_spe_pmu.c | 9 ++++-----
- include/linux/perf_event.h | 8 +-------
- kernel/events/core.c       | 9 +++++++++
- 3 files changed, 14 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
-index 9100d82bfabc..3569050f9cf3 100644
---- a/drivers/perf/arm_spe_pmu.c
-+++ b/drivers/perf/arm_spe_pmu.c
-@@ -41,7 +41,7 @@
- 
- /*
-  * Cache if the event is allowed to trace Context information.
-- * This allows us to perform the check, i.e, perfmon_capable(),
-+ * This allows us to perform the check, i.e, perf_allow_kernel(),
-  * in the context of the event owner, once, during the event_init().
-  */
- #define SPE_PMU_HW_FLAGS_CX			0x00001
-@@ -50,7 +50,7 @@ static_assert((PERF_EVENT_FLAG_ARCH & SPE_PMU_HW_FLAGS_CX) == SPE_PMU_HW_FLAGS_C
- 
- static void set_spe_event_has_cx(struct perf_event *event)
- {
--	if (IS_ENABLED(CONFIG_PID_IN_CONTEXTIDR) && perfmon_capable())
-+	if (IS_ENABLED(CONFIG_PID_IN_CONTEXTIDR) && !perf_allow_kernel(&event->attr))
- 		event->hw.flags |= SPE_PMU_HW_FLAGS_CX;
- }
- 
-@@ -745,9 +745,8 @@ static int arm_spe_pmu_event_init(struct perf_event *event)
- 
- 	set_spe_event_has_cx(event);
- 	reg = arm_spe_event_to_pmscr(event);
--	if (!perfmon_capable() &&
--	    (reg & (PMSCR_EL1_PA | PMSCR_EL1_PCT)))
--		return -EACCES;
-+	if (reg & (PMSCR_EL1_PA | PMSCR_EL1_PCT))
-+		return perf_allow_kernel(&event->attr);
- 
- 	return 0;
- }
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 1a8942277dda..e336306b8c08 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1602,13 +1602,7 @@ static inline int perf_is_paranoid(void)
- 	return sysctl_perf_event_paranoid > -1;
- }
- 
--static inline int perf_allow_kernel(struct perf_event_attr *attr)
--{
--	if (sysctl_perf_event_paranoid > 1 && !perfmon_capable())
--		return -EACCES;
--
--	return security_perf_event_open(attr, PERF_SECURITY_KERNEL);
--}
-+int perf_allow_kernel(struct perf_event_attr *attr);
- 
- static inline int perf_allow_cpu(struct perf_event_attr *attr)
- {
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index aa3450bdc227..ae7d63c0c593 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -13351,6 +13351,15 @@ const struct perf_event_attr *perf_event_attrs(struct perf_event *event)
- 	return &event->attr;
- }
- 
-+int perf_allow_kernel(struct perf_event_attr *attr)
-+{
-+	if (sysctl_perf_event_paranoid > 1 && !perfmon_capable())
-+		return -EACCES;
-+
-+	return security_perf_event_open(attr, PERF_SECURITY_KERNEL);
-+}
-+EXPORT_SYMBOL_GPL(perf_allow_kernel);
-+
- /*
-  * Inherit an event from parent task to child task.
-  *
--- 
-2.34.1
+Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 
 
