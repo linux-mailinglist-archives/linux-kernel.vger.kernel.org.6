@@ -1,326 +1,162 @@
-Return-Path: <linux-kernel+bounces-277320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C618949F39
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:35:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7142B949F33
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 801821C229A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:35:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9430E1C22B97
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CFE193070;
-	Wed,  7 Aug 2024 05:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F760193078;
+	Wed,  7 Aug 2024 05:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KsoaZxig"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="My6lnOYo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B588192B73;
-	Wed,  7 Aug 2024 05:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57917192B73
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 05:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723008921; cv=none; b=VjT5XczPvReAz0fIES2fEH9XgCJLzE8Kve6vYbtSol9mGjpIllZy0kGAjelVSAynNhpuEssk36hxvPHwvTMaW5F+UjKIvejic6PdEscRQyWQpJIYGJ5fLUlevdzB2+KGJerV8LLiOazNGS7eniNrQ+qDeDUtd2c3blsB80X4/n0=
+	t=1723008915; cv=none; b=Romirsa0RlmHDxu4WJ/hSRyLbj2va+mXwgbDH/fJwWf6oVNW6DDFvvIJK46CSeBa/6avyT6FsZXa2QONjvJqZe8MSAyI1ksHrpPBpVPqOy0aVGJPPnAlepRE2fn/RYf0uCWjs8hYYqWXIXfstxrrXMKJwBtL+GDIqHvKUpPw7WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723008921; c=relaxed/simple;
-	bh=efnOEQDC0rXwUpa20GpPNBy6klilF65JJ7SYSG3HWoA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YGRux7gv/0s7akr6Klky1EQQT5LwmTBaFp+TyKh1HCjX7tjR22tNnSPxMCS6R31un9Yrr/s/3Z50cIgQcOw3C5Q42auDmhYnS0nOwYfpjnsc7PY/do3pn5Ta3HFqnPEx50CIr9MtT8sA9zlcl52gJLlfLNj4CTudsHBBCwcCueU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KsoaZxig; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 476H6rRt020486;
-	Wed, 7 Aug 2024 05:35:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jRgXRFeJDCis8cPxN8UrXOSAz6qIJ8ZHtZYKdMkMbcw=; b=KsoaZxig+Fh0EQsh
-	GHNJd5Ln9UCcpCdp86ooutuJ1LPvmS1AMM+/NK8Gqlxt6dlqwgMM0r7aauzSlwK8
-	H1CRlc3vJ6m7/QvgJwAXg4iZTXYX4ffElT22QNdxFwoWgX9QVndjnB/hDqOD1UTO
-	ZXXpnErDVJhaPllHoWRRwHa3VOWXrzLfcm6EWilvEfw8pN042RZajXSaPEvw6z/S
-	qCU6wF2yhLs70YNEC3wlLXJKsqN/itlzzKuyszp0IWjKhDicwgcvZgTMBcX78HjR
-	nIAOkSD/3xJD623vu6Ert6nmdv+iOjyI6zj87qwTOvz93i9bY2yPiJd1lLcjVc4x
-	iO5D3Q==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40scmu1mtk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 Aug 2024 05:35:14 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4775ZC5X018430
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 7 Aug 2024 05:35:12 GMT
-Received: from hu-depengs-sha.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 6 Aug 2024 22:35:06 -0700
-From: Depeng Shao <quic_depengs@quicinc.com>
-To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>
-CC: <quic_depengs@quicinc.com>, <inux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        Yongsheng Li
-	<quic_yon@quicinc.com>
-Subject: [PATCH 2/2] arm64: dts: qcom: sm8550: camss: Add CAMSS block definition
-Date: Wed, 7 Aug 2024 11:04:00 +0530
-Message-ID: <20240807053400.1916581-3-quic_depengs@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240807053400.1916581-1-quic_depengs@quicinc.com>
-References: <20240807053400.1916581-1-quic_depengs@quicinc.com>
+	s=arc-20240116; t=1723008915; c=relaxed/simple;
+	bh=hGVnw0pu3bPOom0FlMmVfOfs7KNbrtqDnyGrJinkMHE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=efuvLSYY53vudaEI2OXk2O8M+G4pj1RwCF0BH6Fcv3pmSnhJcqPqPpGgfeJdcrhx1N8WwMjkG/yWBKUTPfH9DMXwXvwjDMheqbMoGUMncYCVi0Mibncjazaw2Qjw2GhnA2OswtU1u2ioKJOoeYd8cYSm1vbxT1pi09MgfXf6KS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=My6lnOYo; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723008912; x=1754544912;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hGVnw0pu3bPOom0FlMmVfOfs7KNbrtqDnyGrJinkMHE=;
+  b=My6lnOYoBpZ/a9o/me8e+bLz4BV6nWzgJODflmumHdbFqX3C6cHWRC0y
+   zHU3U2KsoRdGtGpWmhD5UFO3usPbQPui44EhyjR3PzkG1dB29SMh0Ky+p
+   TCp6z3Cp6WXwvKn3bI94iSz9q5if++SPGtWimNsKB9ITFMvIQEOE1kFOs
+   0D0LoR/bFsCPtCHxBCOUbVa4PPw0Jx5yWdDT699UXHo4hPA95BMUO6j7a
+   EUofM7PkvV1eZPrkqTSufeY2WwFbEqKl+yB6FVnjZkDzj3ttT9MJToh+M
+   cGJbQh/P3UpPgfRLXoEsYhrXWlzzoqmE5VDYiDaR7EOJKrntC5moP/sD+
+   Q==;
+X-CSE-ConnectionGUID: wCMa+Ie/Sey1Y6oATPCbFA==
+X-CSE-MsgGUID: oS71XXBhTSuk5m0sEJYESA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="38567742"
+X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
+   d="scan'208";a="38567742"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 22:35:10 -0700
+X-CSE-ConnectionGUID: UHCp/JICRoOljhNN5St32A==
+X-CSE-MsgGUID: +FbrnZteQeqM/PO8cAPXGQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
+   d="scan'208";a="56956181"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.248.220]) ([10.125.248.220])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 22:35:06 -0700
+Message-ID: <315e95d4-064d-4322-a9d3-97e96c013b4d@linux.intel.com>
+Date: Wed, 7 Aug 2024 13:35:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 2PMyoJ2rA7yDNScneD9toTIA7Z9tdQCg
-X-Proofpoint-GUID: 2PMyoJ2rA7yDNScneD9toTIA7Z9tdQCg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-07_02,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- clxscore=1015 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
- lowpriorityscore=0 priorityscore=1501 suspectscore=0 spamscore=0
- mlxlogscore=992 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408070035
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Will Deacon <will@kernel.org>,
+ Kunkun Jiang <jiangkunkun@huawei.com>, Robin Murphy <robin.murphy@arm.com>,
+ Joerg Roedel <joro@8bytes.org>, Nicolin Chen <nicolinc@nvidia.com>,
+ Michael Shavit <mshavit@google.com>, Mostafa Saleh <smostafa@google.com>,
+ "moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ wanghaibin.wang@huawei.com, yuzenghui@huawei.com, tangnianyao@huawei.com
+Subject: Re: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
+ scenarios
+To: Pranjal Shrivastava <praan@google.com>, Jason Gunthorpe <jgg@ziepe.ca>
+References: <6147caf0-b9a0-30ca-795e-a1aa502a5c51@huawei.com>
+ <7d5a8b86-6f0d-50ef-1b2f-9907e447c9fc@huawei.com>
+ <20240724102417.GA27376@willie-the-truck>
+ <c2f6163e-47f0-4dce-b077-7751816be62f@linux.intel.com>
+ <CAN6iL-QvE29-t4B+Ucg+AYMPhr9cqDa8xGj9oz_MAO5uyZyX2g@mail.gmail.com>
+ <5e8e6857-44c9-40a1-f86a-b8b5aae65bfb@huawei.com>
+ <20240805123001.GB9326@willie-the-truck> <ZrDwolC6oXN44coq@google.com>
+ <20240806124943.GF676757@ziepe.ca> <ZrJIM8-pS31grIVR@google.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <ZrJIM8-pS31grIVR@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add CAMSS block definition for sm8550.
+On 2024/8/6 23:58, Pranjal Shrivastava wrote:
+> On Tue, Aug 06, 2024 at 09:49:43AM -0300, Jason Gunthorpe wrote:
+>> On Mon, Aug 05, 2024 at 03:32:50PM +0000, Pranjal Shrivastava wrote:
+>>> Here's the updated diff:
+>>> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+>>> index a31460f9f3d4..ed2b106e02dd 100644
+>>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+>>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+>>> @@ -1777,7 +1777,7 @@ static int arm_smmu_handle_evt(struct arm_smmu_device *smmu, u64 *evt)
+>>>   		goto out_unlock;
+>>>   	}
+>>>   
+>>> -	iommu_report_device_fault(master->dev, &fault_evt);
+>>> +	ret = iommu_report_device_fault(master->dev, &fault_evt);
+>>>   out_unlock:
+>>>   	mutex_unlock(&smmu->streams_mutex);
+>>>   	return ret;
+>>> diff --git a/drivers/iommu/intel/svm.c b/drivers/iommu/intel/svm.c
+>>> index 0e3a9b38bef2..7684e7562584 100644
+>>> --- a/drivers/iommu/intel/svm.c
+>>> +++ b/drivers/iommu/intel/svm.c
+>>> @@ -532,6 +532,9 @@ void intel_svm_page_response(struct device *dev, struct iopf_fault *evt,
+>>>   	bool last_page;
+>>>   	u16 sid;
+>>>   
+>>> +	if (!evt)
+>>> +		return;
+>>> +
+>> I'm not sure this make sense??
+>>
+>> The point of this path is for the driver to retire the fault with a
+>> failure. This prevents that from happing on Intel and we are back to
+>> loosing track of a fault.
+>>
+>> All calls to iommu_report_device_fault() must result in
+>> page_response() properly retiring whatever the event was.
+>>
+>>> +static void iopf_error_response(struct device *dev, struct iommu_fault *fault)
+>>> +{
+>>> +	const struct iommu_ops *ops = dev_iommu_ops(dev);
+>>> +	struct iommu_page_response resp = {
+>>> +		.pasid = fault->prm.pasid,
+>>> +		.grpid = fault->prm.grpid,
+>>> +		.code = IOMMU_PAGE_RESP_INVALID
+>>> +	};
+>>> +
+>>> +	ops->page_response(dev, NULL, &resp);
+>>> +}
+>> The issue originates here, why is this NULL?
+>>
+>> void iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
+>> {
+>>
+>> The caller has an evt? I think we should pass it down.
+> Hmm, I agree, I don't see `iommu_report_device_fault` be called anywhere
+> with a NULL evt. Hence, it does make sense to pass the evt down and
+> ensure we don't lose track of the event.
+> 
+> I'm assuming that we retired the if (!evt) check from intel->page
+> response since we didn't have any callers of intel->page_response
+> with a NULL evt. (Atleast, for now, I don't see that happen).
+> 
+> Lu, Will -- Any additional comments/suggestions for this?
 
-This drop contains definitions for the following components on sm8550:
+No. If evt is passed down in the above code, there is no need to add
+such check anymore.
 
-VFE * 3
-VFE Lite * 2
-CSID * 3
-CSID Lite * 2
-CSIPHY * 8
-
-Co-developed-by: Yongsheng Li <quic_yon@quicinc.com>
-Signed-off-by: Yongsheng Li <quic_yon@quicinc.com>
-Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sm8550.dtsi | 199 +++++++++++++++++++++++++++
- 1 file changed, 199 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-index 4c9820adcf52..58fc8792953d 100644
---- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-@@ -2747,6 +2747,205 @@ videocc: clock-controller@aaf0000 {
- 			#power-domain-cells = <1>;
- 		};
- 
-+		camss: camss@acb7000 {
-+			compatible = "qcom,sm8550-camss";
-+
-+			reg = <0 0x0acb7000 0 0xd00>,
-+			      <0 0x0acb9000 0 0xd00>,
-+			      <0 0x0acbb000 0 0xd00>,
-+			      <0 0x0acca000 0 0xa00>,
-+			      <0 0x0acce000 0 0xa00>,
-+			      <0 0x0acb6000 0 0x1000>,
-+			      <0 0x0ace4000 0 0x2000>,
-+			      <0 0x0ace6000 0 0x2000>,
-+			      <0 0x0ace8000 0 0x2000>,
-+			      <0 0x0acea000 0 0x2000>,
-+			      <0 0x0acec000 0 0x2000>,
-+			      <0 0x0acee000 0 0x2000>,
-+			      <0 0x0acf0000 0 0x2000>,
-+			      <0 0x0acf2000 0 0x2000>,
-+			      <0 0x0ac62000 0 0xf000>,
-+			      <0 0x0ac71000 0 0xf000>,
-+			      <0 0x0ac80000 0 0xf000>,
-+			      <0 0x0accb000 0 0x1800>,
-+			      <0 0x0accf000 0 0x1800>;
-+			reg-names = "csid0",
-+				    "csid1",
-+				    "csid2",
-+				    "csid_lite0",
-+				    "csid_lite1",
-+				    "csid_top",
-+				    "csiphy0",
-+				    "csiphy1",
-+				    "csiphy2",
-+				    "csiphy3",
-+				    "csiphy4",
-+				    "csiphy5",
-+				    "csiphy6",
-+				    "csiphy7",
-+				    "vfe0",
-+				    "vfe1",
-+				    "vfe2",
-+				    "vfe_lite0",
-+				    "vfe_lite1";
-+
-+			clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-+				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-+				 <&camcc CAM_CC_CPAS_FAST_AHB_CLK>,
-+				 <&camcc CAM_CC_CPAS_IFE_LITE_CLK>,
-+				 <&camcc CAM_CC_CPAS_IFE_0_CLK>,
-+				 <&camcc CAM_CC_CPAS_IFE_1_CLK>,
-+				 <&camcc CAM_CC_CPAS_IFE_2_CLK>,
-+				 <&camcc CAM_CC_CSID_CLK>,
-+				 <&camcc CAM_CC_CSIPHY0_CLK>,
-+				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY1_CLK>,
-+				 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY2_CLK>,
-+				 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY3_CLK>,
-+				 <&camcc CAM_CC_CSI3PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY4_CLK>,
-+				 <&camcc CAM_CC_CSI4PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY5_CLK>,
-+				 <&camcc CAM_CC_CSI5PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY6_CLK>,
-+				 <&camcc CAM_CC_CSI6PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY7_CLK>,
-+				 <&camcc CAM_CC_CSI7PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSID_CSIPHY_RX_CLK>,
-+				 <&camcc CAM_CC_IFE_0_CLK>,
-+				 <&camcc CAM_CC_IFE_0_FAST_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_1_CLK>,
-+				 <&camcc CAM_CC_IFE_1_FAST_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_2_CLK>,
-+				 <&camcc CAM_CC_IFE_2_FAST_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CSID_CLK>,
-+				 <&gcc GCC_CAMERA_HF_AXI_CLK>;
-+
-+			clock-names = "camnoc_axi",
-+				      "cpas_ahb",
-+				      "cpas_fast_ahb_clk",
-+				      "cpas_ife_lite",
-+				      "cpas_vfe0",
-+				      "cpas_vfe1",
-+				      "cpas_vfe2",
-+				      "csid",
-+				      "csiphy0",
-+				      "csiphy0_timer",
-+				      "csiphy1",
-+				      "csiphy1_timer",
-+				      "csiphy2",
-+				      "csiphy2_timer",
-+				      "csiphy3",
-+				      "csiphy3_timer",
-+				      "csiphy4",
-+				      "csiphy4_timer",
-+				      "csiphy5",
-+				      "csiphy5_timer",
-+				      "csiphy6",
-+				      "csiphy6_timer",
-+				      "csiphy7",
-+				      "csiphy7_timer",
-+				      "csiphy_rx",
-+				      "vfe0",
-+				      "vfe0_fast_ahb",
-+				      "vfe1",
-+				      "vfe1_fast_ahb",
-+				      "vfe2",
-+				      "vfe2_fast_ahb",
-+				      "vfe_lite",
-+				      "vfe_lite_ahb",
-+				      "vfe_lite_cphy_rx",
-+				      "vfe_lite_csid",
-+				      "gcc_axi_hf";
-+
-+			interconnects = <&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_CAMERA_CFG 0>,
-+					<&mmss_noc MASTER_CAMNOC_HF 0 &mc_virt SLAVE_EBI1 0>,
-+					<&mmss_noc MASTER_CAMNOC_ICP 0 &mc_virt SLAVE_EBI1 0>,
-+					<&mmss_noc MASTER_CAMNOC_SF 0 &mc_virt SLAVE_EBI1 0>;
-+			interconnect-names = "ahb",
-+					     "hf_0_mnoc",
-+					     "icp_mnoc",
-+					     "sf_0_mnoc";
-+
-+			interrupts = <GIC_SPI 601 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 603 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 477 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 478 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 479 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 602 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 688 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 606 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			interrupt-names = "csid0",
-+					  "csid1",
-+					  "csid2",
-+					  "csid_lite0",
-+					  "csid_lite1",
-+					  "csiphy0",
-+					  "csiphy1",
-+					  "csiphy2",
-+					  "csiphy3",
-+					  "csiphy4",
-+					  "csiphy5",
-+					  "csiphy6",
-+					  "csiphy7",
-+					  "vfe0",
-+					  "vfe1",
-+					  "vfe2",
-+					  "vfe_lite0",
-+					  "vfe_lite1";
-+
-+			iommus = <&apps_smmu 0x800 0x20>;
-+
-+			power-domains = <&camcc CAM_CC_IFE_0_GDSC>,
-+					<&camcc CAM_CC_IFE_1_GDSC>,
-+					<&camcc CAM_CC_IFE_2_GDSC>,
-+					<&camcc CAM_CC_TITAN_TOP_GDSC>;
-+
-+			power-domain-names = "ife0",
-+					     "ife1",
-+					     "ife2",
-+					     "top";
-+
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+				};
-+
-+				port@3 {
-+					reg = <3>;
-+				};
-+			};
-+		};
-+
- 		camcc: clock-controller@ade0000 {
- 			compatible = "qcom,sm8550-camcc";
- 			reg = <0 0x0ade0000 0 0x20000>;
--- 
-2.34.1
-
+Thanks,
+baolu
 
