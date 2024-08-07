@@ -1,112 +1,167 @@
-Return-Path: <linux-kernel+bounces-278328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB6A94AED7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:25:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C5C94AEC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B60EB263D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:20:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90F51F21A79
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E6113CA9C;
-	Wed,  7 Aug 2024 17:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6970713DB99;
+	Wed,  7 Aug 2024 17:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kh4TkjoY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vojkabYJ"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E7C6BB4B;
-	Wed,  7 Aug 2024 17:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F2613D533
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 17:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723051223; cv=none; b=al9GFLyhvYBgdnsDn7s3ZE9loj+6mIpeQJSxKXyhxp2T7b6KZ6mXABaQ+AYlPXrKvPqvM0neBm7QIy3owwQ+ptKZjhuuDLzDWrn7ThtqIhsA1itvuu9wizc44Lj8QoHMn/McILorZn3gO/2M1qmFUqaPsa3nVEsvry8Xc6fEPDQ=
+	t=1723051353; cv=none; b=M5LCEfjhRpGBE1VPLB3C6RPcIakWLU2JLrmBEMEtQmdVDHJee0kj1i2Jt9bwXc+BkV+2gCajAMJis4PJiC5D4GGPfiSQKEIie2tdQUz+JlFowyOzoTz5+8JOBn3yLHW+lkKgAsBM3Eg0XWzK5OChBjvpFXJUcXijewYIubF2LjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723051223; c=relaxed/simple;
-	bh=t/xnzJIShAShSeheceeLkwe+qhphG8/7tsBvktmb1r0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FiHHejV8KK52xEV8gjZWeiBVRe5R1PqavDIhO91MLkE5KRbiJkJrH6dw3Gla+b3GH7i+Eir7wM8Kl08UhdGQ+Nd8rPHebJEVg/1d4KmJLhMbADf0GLfZI3kpH1V3hTx4EtKZTJHz342qe+patjlmARjB89/uAChKdaCO8NV4oNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kh4TkjoY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03DCEC32781;
-	Wed,  7 Aug 2024 17:20:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723051223;
-	bh=t/xnzJIShAShSeheceeLkwe+qhphG8/7tsBvktmb1r0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Kh4TkjoYLS9AA3aue+UMQFwV4x2jWY07SOuzLZfTDPGteH3nzQ6qeHRPe7HPGctXK
-	 RNySl1ddcP33JRqjDWmWeEjjnQ+6PUu5uw4o1HdgL8pCE4i2Kh3dqyqahRMcFgIUU3
-	 2N/TNsGe0bzTYmJMwrytavlaaozMVgwltFlKoPMGg0o+f+oZQ3DGX7fhyh0/IAEKKc
-	 4IpJlBQ2qK4mWUH0b0BxXxZedNzzWdp5H6rq97j6uGJbr4Aj6s4im4qfZkrRTwTw/Z
-	 AmmayJMj1ZtZ996ShxTEKwpVV2AEsHzSheNaTV31pkWxq7DDy+44IpXyFzxlPhZv/X
-	 jIlbbLWNdt0gA==
-Message-ID: <effc195f-9f0e-4e0d-95ab-5bae22702f95@kernel.org>
-Date: Wed, 7 Aug 2024 10:20:20 -0700
+	s=arc-20240116; t=1723051353; c=relaxed/simple;
+	bh=FB03wuWz1lVB1LR8cmxDBitcZxa89F3VugKzV/0aqDk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X8Ly3LrYTLUPs2qEucVrajBBVFKQk4LDlNOZBDmGkfqsiMaZkkb5iQqPmNGuhlv9TiEsYOyHGxzes0CqW3M3G/INPH1e5noC4K5NHW3chU+DgnlBaj6Q9ZADCJBf5n3ogUQSmBuaqhrTL2A9OKwMrmN5I5Ayes04TB/b5ix4G28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vojkabYJ; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4518d9fa2f4so21011cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 10:22:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723051351; x=1723656151; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LWky7w5Y44GMnU5k0FIP2ItcitwGvR0+r6HDv8rR6Cs=;
+        b=vojkabYJm5b5xtMZM5XX/Fz0H6CnRE/ULp268jVWvVux9LJvNo9vEjTZA47bHd9E4S
+         6bEEQlIyEqAWstOysSyfyUGywIcUUFaTuXK8nCVFJ6d1HWqgOBeVsf6PoU2d08+BLArF
+         CSoFkny0h3DI5LXbjgiGKVyzsGr/8u+kRTTmcy10jPeU8MOA+bWeqRLsW17tOP+Sl6BS
+         MaXGToEW+IlIGpE2o6+xd5x/7buk3C4se699BZ3P5Ibm6VJBd4BdySq/z6dd38cTtgmG
+         QjhF6VDlLAtVWvalQGApZaBZ6da8Qgf4/bwHIHaln5pHjAux0G5Htw0Sw++w/fSLqfY+
+         Z27g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723051351; x=1723656151;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LWky7w5Y44GMnU5k0FIP2ItcitwGvR0+r6HDv8rR6Cs=;
+        b=awpVO37PPdDFfI5aggVGV64R3Tb2T6P9PZ1hOV+C0Nml9pYy/82CLEZyzxRleFzF7y
+         /ooYRV8kwyWs4CK7RhKam898aogEwu26rg4Fxwo5S32nnxnZoSNy3jwQHbzMJ/6Stje1
+         lyrlehe0QqhxXVZxa5qj5c8ns/tEzeM/7mhtYfrUk+i3gfe7d2iyYe8PVeJxvFO8z+Q/
+         2OM8Xsoz97lZIwvbx1OYnzSp2YgXoZkP8tg6vJAHffICFPREucPHc+ncRQ/RZNlILEeP
+         /O+npFNjbHlP0+VrV52afwOJ4otU7nOEyq7560NWsd7O7el8gXle9HxacNHsn9ygBtvU
+         M6xA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNQRtl8zgaSyIokUm6AyXc4G7fQDRwQ0f0Z8NKZJba+3XZr48YfH9CLW3LScdrYDeyjY2tanFyP7paZhgFDVfwKeJFBnv1ACkrb/1v
+X-Gm-Message-State: AOJu0YzvYkpVfQqSDY9npQSBbbxjsN1xQyo2PJeINoxoMFOka1BKg+Wm
+	SkzMGfNnmqR64q7H8LKxNRDN97HK/osrDCyjPnNm24gBDoXzoKoMiCoClBRxOjbXvazCjRp6iNq
+	Pv/DsLK4Z2SpleRG/KQ8NJud3MU/j5XbKiV61
+X-Google-Smtp-Source: AGHT+IFd+q79tszYvqSxFu+Q65wSSLbtU/f7m9GI+TMXMbzFnzWiar7KmKanyMxfgwhNMMOTUJY8dCqJThehgXfoiac=
+X-Received: by 2002:ac8:5794:0:b0:447:e0e1:2a7b with SMTP id
+ d75a77b69052e-451c7825bc5mr3560471cf.23.1723051350880; Wed, 07 Aug 2024
+ 10:22:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] nbd: correct the maximum value for discard sectors
-To: Josef Bacik <josef@toxicpanda.com>, Wouter Verhelst <w@uter.be>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
- nbd@other.debian.org, linux-kernel@vger.kernel.org
-References: <20240803130432.5952-1-w@uter.be>
- <20240806133058.268058-1-w@uter.be> <20240806133058.268058-3-w@uter.be>
- <20240807135625.GA242945@perftesting>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20240807135625.GA242945@perftesting>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240801224349.25325-1-seanjc@google.com>
+In-Reply-To: <20240801224349.25325-1-seanjc@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Wed, 7 Aug 2024 10:21:53 -0700
+Message-ID: <CADrL8HXVNcbcuu9qF3wtkccpW6_QEnXQ1ViWEceeS9QGdQUTiw@mail.gmail.com>
+Subject: Re: [ANNOUNCE] PUCK Agenda - 2024.08.07 - KVM userfault
+ (guest_memfd/HugeTLB postcopy)
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Xu <peterx@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Axel Rasmussen <axelrasmussen@google.com>, 
+	David Matlack <dmatlack@google.com>, Anish Moorthy <amoorthy@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/08/07 6:56, Josef Bacik wrote:
-> On Tue, Aug 06, 2024 at 03:30:56PM +0200, Wouter Verhelst wrote:
->> The version of the NBD protocol implemented by the kernel driver
->> currently has a 32 bit field for length values. As the NBD protocol uses
->> bytes as a unit of length, length values larger than 2^32 bytes cannot
->> be expressed.
->>
->> Update the max_hw_discard_sectors field to match that.
->>
->> Signed-off-by: Wouter Verhelst <w@uter.be>
->> Fixes: 268283244c0f018dec8bf4a9c69ce50684561f46
->> ---
->>  drivers/block/nbd.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
->> index 20e9f9fdeaae..1457f0c8a4a4 100644
->> --- a/drivers/block/nbd.c
->> +++ b/drivers/block/nbd.c
->> @@ -339,7 +339,7 @@ static int __nbd_set_size(struct nbd_device *nbd, loff_t bytesize,
->>  
->>  	lim = queue_limits_start_update(nbd->disk->queue);
->>  	if (nbd->config->flags & NBD_FLAG_SEND_TRIM)
->> -		lim.max_hw_discard_sectors = UINT_MAX;
->> +		lim.max_hw_discard_sectors = UINT_MAX / blksize;
-> 
-> We use 512 as the "sectors" measurement throughout the block layer, so our limit
-> is actually
-> 
-> UINT32_MAX >> 9
+On Thu, Aug 1, 2024 at 3:44=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
+>
+> Early warning for next week's PUCK since there's actually a topic this ti=
+me.
+> James is going to lead a discussion on KVM userfault[*](name subject to c=
+hange).
 
-UINT_MAX >> SECTOR_SHIFT
+Thanks for attending, everyone!
 
-would be better.
+We seemed to arrive at the following conclusions:
 
-> 
-> since we can only send at most UINT32_MAX as our length.  Fix it to be that for
-> both patches and you should be good.  Thanks,
-> 
-> Josef
-> 
+1. For guest_memfd, stage 2 mapping installation will never go through
+GUP / virtual addresses to do the GFN --> PFN translation, including
+when it supports non-private memory.
+2. Something like KVM Userfault is indeed necessary to handle
+post-copy for guest_memfd VMs, especially when guest_memfd supports
+non-private memory.
+3. We should not hook into the overall GFN --> HVA translation, we
+should only be hooking the GFN --> PFN translation steps to figure out
+how to create stage 2 mappings. That is, KVM's own accesses to guest
+memory should just go through mm/userfaultfd.
+4. We don't need the concept of "async userfaults" (making KVM block
+when attempting to access userfault memory) in KVM Userfault.
 
--- 
-Damien Le Moal
-Western Digital Research
+So I need to think more about what exactly the API should look like
+for controlling if a page should exit to userspace before KVM is
+allowed to map it into stage 2 and if this should apply to all of
+guest memory or only guest_memfd.
 
+It sounds like it may most likely be something like a per-VM bitmap
+that describes which pages are allowed to be mapped into stage 2,
+applying to all memory, not just guest_memfd memory. Even though it is
+solving a problem for guest_memfd specifically, it is slightly cleaner
+to have it apply to all memory.
+
+If this per-VM bitmap applies to all memory, then we don't need to
+wait for guest_memfd to support non-private memory before working on a
+full implementation. But if not, perhaps it makes sense to wait.
+
+There will be a 30 minute session at LPC to discuss this topic more. I
+hope to see you there!
+
+Here are the slides[2].
+
+Thanks!
+
+PS: I'll be away from August 9 - 25.
+
+[2]: https://docs.google.com/presentation/d/1Al9amGumF3ZPX2Wu50mQ4nkPRZZdBJ=
+itXmMH3n7j_RE/edit?usp=3Dsharing
+
+
+> I Cc'd folks a few folks that I know are interested, please forward this =
+on
+> as needed.
+>
+> Early warning #2, PUCK is canceled for August 14th, as I'll be traveling,=
+ though
+> y'all are welcome to meet without me.
+>
+> [*] https://lore.kernel.org/all/20240710234222.2333120-1-jthoughton@googl=
+e.com
+>
+> Time:     6am PDT
+> Video:    https://meet.google.com/vdb-aeqo-knk
+> Phone:    https://tel.meet/vdb-aeqo-knk?pin=3D3003112178656
+>
+> Calendar: https://calendar.google.com/calendar/u/0?cid=3DY182MWE1YjFmNjQ0=
+NzM5YmY1YmVkN2U1ZWE1ZmMzNjY5Y2UzMmEyNTQ0YzVkYjFjN2M4OTE3MDJjYTUwOTBjN2Q1QGd=
+yb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20
+> Drive:    https://drive.google.com/drive/folders/1aTqCrvTsQI9T4qLhhLs_l98=
+6SngGlhPH?resourcekey=3D0-FDy0ykM3RerZedI8R-zj4A&usp=3Ddrive_link
+>
+> Future Schedule:
+> Augst   7th - KVM userfault
+> August 14th - Canceled (Sean unavailable)
+> August 21st - Available
+> August 28th - Available
 
