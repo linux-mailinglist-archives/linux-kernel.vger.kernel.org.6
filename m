@@ -1,549 +1,209 @@
-Return-Path: <linux-kernel+bounces-278512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD3F94B120
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:18:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2277D94B122
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 896061F2248C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:18:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78C12822B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AD4145FEE;
-	Wed,  7 Aug 2024 20:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF7D364BC;
+	Wed,  7 Aug 2024 20:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VLQQ1Z+R"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b="TNLazwZP"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F8113F45F
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 20:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10C82B9C6
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 20:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723061888; cv=none; b=RIO5k6aDWHW9u1Z7wC/0z9DgsiiGoPfz53itWIF7jdPOm0l/e/XslYZFlIXyQmi/w/zotuIRb1sCPaQSSCA54MquTVKSxn9sXailPNxwgvJo6lcq03V9tvY0I85S5XuFj0eFAD3ukgwj1Nx53j+u2zbx4HOvnHGQACN2bnbsW8k=
+	t=1723061991; cv=none; b=kaSDpfm2KoK6XOGtabUe0BBI/hiL2x5mJcwBU2taT3etB9S/jXig0pnDrqtU2Ic1LP/tQnRMRxDilofgo8v88+ufG4gQVx6dqk/kl0tOvUBXc3yv1nhWeoq19rsChAmqFaquqMgRt0YMLlYF8/G5Zdj4lFG6epILzZ3l1YBBjxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723061888; c=relaxed/simple;
-	bh=3oZmI4Bk2FG6XWDFzjxcfPmaEjo1nrh01Kq43vuvXBo=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=DNM00aba9DZaRqZz5/dQQ51agUsIoT5+k/yo9lfgXjQw+rX+WE1/VWXzsSXe2Cj6cD2a6qiOGR1w6jEKiPqfr/gzPIbi9LdZJOCgOftL2t8lcnJMhPG2AV0WL9/gvaScirriLmRIj8XqhZ7bfkY1f8pDE/8jiJ2lVu/q/i60OXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VLQQ1Z+R; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723061884;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PB7jDj4g6YqOIndRvSsTnVMDnIANmZYWu0a84ms3HyI=;
-	b=VLQQ1Z+RqO9rGtd2gLMmNLwQWo5mi13fE4/OHVE3W2wZGtrAl2NGech6qKeHNNeyY4kdwm
-	Zdq1XyCdJjQkGQSqUgp2294VdeccD9fUdxVxU4wJPdfIo8oM2R6XbrcIyOw9i8d8m654oo
-	hmMq0MrknbvR1VilmITsYfNpSRtZeEU=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-680-8jQ4ErJNP96l7RqN3XcAIg-1; Wed,
- 07 Aug 2024 16:18:00 -0400
-X-MC-Unique: 8jQ4ErJNP96l7RqN3XcAIg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 592AA1955D65;
-	Wed,  7 Aug 2024 20:17:58 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.216])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3256C300018D;
-	Wed,  7 Aug 2024 20:17:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAKPOu+-4LQM2-Ciro0LbbhVPa+YyHD3BnLL+drmG5Ca-b4wmLg@mail.gmail.com>
-References: <CAKPOu+-4LQM2-Ciro0LbbhVPa+YyHD3BnLL+drmG5Ca-b4wmLg@mail.gmail.com> <20240729091532.855688-1-max.kellermann@ionos.com> <3575457.1722355300@warthog.procyon.org.uk> <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com> <CAKPOu+-4C7qPrOEe=trhmpqoC-UhCLdHGmeyjzaUymg=k93NEA@mail.gmail.com> <3717298.1722422465@warthog.procyon.org.uk>
-To: Max Kellermann <max.kellermann@ionos.com>,
-    Hristo Venev <hristo@venev.name>
-Cc: dhowells@redhat.com, Ilya Dryomov <idryomov@gmail.com>,
-    Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-    willy@infradead.org, ceph-devel@vger.kernel.org,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [RFC][PATCH] netfs: Fix handling of USE_PGPRIV2 and WRITE_TO_CACHE flags
+	s=arc-20240116; t=1723061991; c=relaxed/simple;
+	bh=Mm5xBsEiMBizqy8uFWth36byIVjNv5JDXV//ZZE3CgE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lARW+wFdIv5D4Lzh0+sbcSJk6ZF7abpxDlKRljznGaFxJ0D+3CQchgKuOXYqXBgYfGj8edV6kDcxWsE6DcMPiv7XxBtxclLuLWfsonHs9clClWD1esCbCiDn7aWv5a39RBz940AfStTraNS1+qI3wMjy17rJY9PwePfSUkrqiHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net; spf=pass smtp.mailfrom=opensrcsec.com; dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b=TNLazwZP; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensrcsec.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so375513a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 13:19:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=grsecurity.net; s=grsec; t=1723061988; x=1723666788; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=l7FXBsAmmx0UR85DFWCTR+dBZBa9+irjHF1xNp8r5Cc=;
+        b=TNLazwZPVc8f4wBBs65ruk0Fd1xfgAJfbj+gOPU6adNS1g8FvT3z9/BtaYPBukZL4U
+         9LSthpNK8UPtuZPSNsUWw43R+9O86kPdhYlN/RjuJaXUHELvkkz0HDQuaw1/rBS0FSgK
+         DMhAsvknulp62p+PYlG8Exm1MKC5I+YHdy6aT9KGUkd/J7nvq88OHUaKzmo69jFj1Dnx
+         p/w+VqT5Ubs9y/6SIe5ElZ3oZqaWbtC4c1nEYOtba3SdaQmBlYLAAsF3h0fuFey5fRf4
+         QQtKzjBG6ULntcK07KqPuJeoEAR/MDbtSm8cTq9j442pURpDI3PKVbGoBI+WoAjdrgZq
+         t9hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723061988; x=1723666788;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l7FXBsAmmx0UR85DFWCTR+dBZBa9+irjHF1xNp8r5Cc=;
+        b=RVOp9Ak+/LQU6x4doAijob+uJyK6gFdjDZ8YU/LsZg1sOWI3ksoMQN79gV9WVxqjzT
+         OFyik+0ECLzirWgGlVcInOHEX3EJROr8XWOvAA5AmN2ugH+49RhXcMNlcN0h8r8Edl+U
+         4MemZv/XpyXgQLLauOjPfB9/eeLn9Iy5tlDqerHMcmUYDFgNh4RIaa2m8tw9hcgwywvP
+         +TTQh5kTUp1vUEt7NJx7tk8NZUdrbR6X5qTDr/qFth0chxBm6Iyy8+2qtvwLC234hX4N
+         PWfUmgmW0+ZtepV8DLnZoY3/g8aO93Qrwu0CYABHtPQZ8V3qt0uCDTpEjRyv1ldIaJ9h
+         HlJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVncYtondzH41qU+5Ba+Idb5ycxBI3SY0d6CmcoAThT25tHAnZZHgViFhxnOkN2GEaWReQnd/KZeQQP3exQZFlTyDorsCPPWRprvjfp
+X-Gm-Message-State: AOJu0YwyO3Zz/7LIqw76UiP1h1rRGOLxAHTJb0ANRYg0e0u8JqYUKSbH
+	OkLd1pSc7n8K7lkXHopr5KE58TNtqlwKDP+QEis2yRf8u42qtXrG7+afbcFCAGI=
+X-Google-Smtp-Source: AGHT+IGq+5OOobsAtqc09kR2IC6V2HMMsXNeozGUItHZXoV2jzuY8WjysyjBN8Z08Bx6GiPskP/Ntw==
+X-Received: by 2002:a05:6402:2690:b0:5b4:cbba:902a with SMTP id 4fb4d7f45d1cf-5bba3672b67mr2880824a12.4.1723061987575;
+        Wed, 07 Aug 2024 13:19:47 -0700 (PDT)
+Received: from ?IPV6:2003:f6:af11:9b00:1236:f9a6:4d0d:776? (p200300f6af119b001236f9a64d0d0776.dip0.t-ipconnect.de. [2003:f6:af11:9b00:1236:f9a6:4d0d:776])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ba442ed7f1sm5650505a12.81.2024.08.07.13.19.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 13:19:47 -0700 (PDT)
+Message-ID: <178d8e10-1dd8-48de-858f-1a04c419c331@grsecurity.net>
+Date: Wed, 7 Aug 2024 22:19:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <861628.1723061874.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 07 Aug 2024 21:17:54 +0100
-Message-ID: <861629.1723061874@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] tracefs: Don't overlay 'struct inode'
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Ajay Kaher <ajay.kaher@broadcom.com>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, =?UTF-8?Q?Ilkka_Naulap=C3=A4=C3=A4?=
+ <digirigawa@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
+ Brad Spengler <spender@grsecurity.net>
+References: <20240807115143.45927-1-minipli@grsecurity.net>
+ <20240807115143.45927-3-minipli@grsecurity.net>
+ <20240807093545.4ec51d61@gandalf.local.home>
+Content-Language: en-US, de-DE
+From: Mathias Krause <minipli@grsecurity.net>
+Autocrypt: addr=minipli@grsecurity.net; keydata=
+ xsDNBF4u6F8BDAC1kCIyATzlCiDBMrbHoxLywJSUJT9pTbH9MIQIUW8K1m2Ney7a0MTKWQXp
+ 64/YTQNzekOmta1eZFQ3jqv+iSzfPR/xrDrOKSPrw710nVLC8WL993DrCfG9tm4z3faBPHjp
+ zfXBIOuVxObXqhFGvH12vUAAgbPvCp9wwynS1QD6RNUNjnnAxh3SNMxLJbMofyyq5bWK/FVX
+ 897HLrg9bs12d9b48DkzAQYxcRUNfL9VZlKq1fRbMY9jAhXTV6lcgKxGEJAVqXqOxN8DgZdU
+ aj7sMH8GKf3zqYLDvndTDgqqmQe/RF/hAYO+pg7yY1UXpXRlVWcWP7swp8OnfwcJ+PiuNc7E
+ gyK2QEY3z5luqFfyQ7308bsawvQcFjiwg+0aPgWawJ422WG8bILV5ylC8y6xqYUeSKv/KTM1
+ 4zq2vq3Wow63Cd/qyWo6S4IVaEdfdGKVkUFn6FihJD/GxnDJkYJThwBYJpFAqJLj7FtDEiFz
+ LXAkv0VBedKwHeBaOAVH6QEAEQEAAc0nTWF0aGlhcyBLcmF1c2UgPG1pbmlwbGlAZ3JzZWN1
+ cml0eS5uZXQ+wsERBBMBCgA7AhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEd7J359B9
+ wKgGsB94J4hPxYYBGYYFAmBbH/cCGQEACgkQJ4hPxYYBGYaX/gv/WYhaehD88XjpEO+yC6x7
+ bNWQbk7ea+m82fU2x/x6A9L4DN/BXIxqlONzk3ehvW3wt1hcHeF43q1M/z6IthtxSRi059RO
+ SarzX3xfXC1pc5YMgCozgE0VRkxH4KXcijLyFFjanXe0HzlnmpIJB6zTT2jgI70q0FvbRpgc
+ rs3VKSFb+yud17KSSN/ir1W2LZPK6er6actK03L92A+jaw+F8fJ9kJZfhWDbXNtEE0+94bMa
+ cdDWTaZfy6XJviO3ymVe3vBnSDakVE0HwLyIKvfAEok+YzuSYm1Nbd2T0UxgSUZHYlrUUH0y
+ tVxjEFyA+iJRSdm0rbAvzpwau5FOgxRQDa9GXH6ie6/ke2EuZc3STNS6EBciJm1qJ7xb2DTf
+ SNyOiWdvop+eQZoznJJte931pxkRaGwV+JXDM10jGTfyV7KT9751xdn6b6QjQANTgNnGP3qs
+ TO5oU3KukRHgDcivzp6CWb0X/WtKy0Y/54bTJvI0e5KsAz/0iwH19IB0vpYLzsDNBF4u6F8B
+ DADwcu4TPgD5aRHLuyGtNUdhP9fqhXxUBA7MMeQIY1kLYshkleBpuOpgTO/ikkQiFdg13yIv
+ q69q/feicsjaveIEe7hUI9lbWcB9HKgVXW3SCLXBMjhCGCNLsWQsw26gRxDy62UXRCTCT3iR
+ qHP82dxPdNwXuOFG7IzoGBMm3vZbBeKn0pYYWz2MbTeyRHn+ZubNHqM0cv5gh0FWsQxrg1ss
+ pnhcd+qgoynfuWAhrPD2YtNB7s1Vyfk3OzmL7DkSDI4+SzS56cnl9Q4mmnsVh9eyae74pv5w
+ kJXy3grazD1lLp+Fq60Iilc09FtWKOg/2JlGD6ZreSnECLrawMPTnHQZEIBHx/VLsoyCFMmO
+ 5P6gU0a9sQWG3F2MLwjnQ5yDPS4IRvLB0aCu+zRfx6mz1zYbcVToVxQqWsz2HTqlP2ZE5cdy
+ BGrQZUkKkNH7oQYXAQyZh42WJo6UFesaRAPc3KCOCFAsDXz19cc9l6uvHnSo/OAazf/RKtTE
+ 0xGB6mQN34UAEQEAAcLA9gQYAQoAIAIbDBYhBHeyd+fQfcCoBrAfeCeIT8WGARmGBQJeORkW
+ AAoJECeIT8WGARmGXtgL/jM4NXaPxaIptPG6XnVWxhAocjk4GyoUx14nhqxHmFi84DmHUpMz
+ 8P0AEACQ8eJb3MwfkGIiauoBLGMX2NroXcBQTi8gwT/4u4Gsmtv6P27Isn0hrY7hu7AfgvnK
+ owfBV796EQo4i26ZgfSPng6w7hzCR+6V2ypdzdW8xXZlvA1D+gLHr1VGFA/ZCXvVcN1lQvIo
+ S9yXo17bgy+/Xxi2YZGXf9AZ9C+g/EvPgmKrUPuKi7ATNqloBaN7S2UBJH6nhv618bsPgPqR
+ SV11brVF8s5yMiG67WsogYl/gC2XCj5qDVjQhs1uGgSc9LLVdiKHaTMuft5gSR9hS5sMb/cL
+ zz3lozuC5nsm1nIbY62mR25Kikx7N6uL7TAZQWazURzVRe1xq2MqcF+18JTDdjzn53PEbg7L
+ VeNDGqQ5lJk+rATW2VAy8zasP2/aqCPmSjlCogC6vgCot9mj+lmMkRUxspxCHDEms13K41tH
+ RzDVkdgPJkL/NFTKZHo5foFXNi89kA==
+In-Reply-To: <20240807093545.4ec51d61@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The attached patch gets me most of the way there, applied on the top of th=
-e
-reversion one.  See:
+On 07.08.24 15:35, Steven Rostedt wrote:
+> On Wed,  7 Aug 2024 13:51:39 +0200
+> Mathias Krause <minipli@grsecurity.net> wrote:
+> 
+>> diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
+>> index f704d8348357..a7769857962a 100644
+>> --- a/fs/tracefs/internal.h
+>> +++ b/fs/tracefs/internal.h
+>> @@ -10,10 +10,8 @@ enum {
+>>  };
+>>  
+>>  struct tracefs_inode {
+>> -	union {
+>> -		struct inode            vfs_inode;
+>> -		struct rcu_head		rcu;
+>> -	};
+>> +	struct inode		vfs_inode;
+>> +	struct rcu_head		rcu;
+> 
+> I rather not make this structure any bigger for the rcu element that is not
+> used until freed.
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log=
-/?h=3Dnetfs-fixes
+Uhm, at least for my config, it won't consume more memory, as the slab
+object is big enough to cover up for the additional two machine words:
 
-There's still an occasional slab-use-after-free that pops up:
+root@deb11-amd64:~# slabinfo tracefs_inode_cache
 
-	BUG: KASAN: slab-use-after-free in xa_head+0xe/0x70
-	Read of size 8 at addr ffff8881b2cf6df8 by task kworker/0:1/9
-	...
-	 xa_head+0xe/0x70
-	 xas_start+0xca/0x140
-	 xas_load+0x16/0x110
-	 xas_find+0x84/0x1f0
-	 __fscache_clear_page_bits+0x136/0x340
-	...
+Slabcache: tracefs_inode_cache  Aliases:  0 Order :  3 Objects: 144
+** Reclaim accounting active
 
-where the thing being allocated is a ceph inode.
+Sizes (bytes)     Slabs              Debug                Memory
+------------------------------------------------------------------------
+Object :    1200  Total  :       6   Sanity Checks : Off  Total:  196608
+SlabObj:    1328  Full   :       4   Redzoning     : Off  Used :  172800
+SlabSiz:   32768  Partial:       0   Poisoning     : Off  Loss :   23808
+Loss   :     128  CpuSlab:       2   Tracking      : Off  Lalig:   18432
+Align  :       8  Objects:      24   Tracing       : Off  Lpadd:    5376
+[...]
 
-Note that Hristo's patch is not sufficient.
+While the size of 'struct tracefs_inode' is 1200 bytes for my kernel
+build (LOCKDEP bloats it quite a lot), the slab object size is 1328
+bytes, i.e. 128 bytes wasted per object which can, for sure, cover up
+for these additional members.
 
-David
----
-    netfs: Fix handling of USE_PGPRIV2 and WRITE_TO_CACHE flags
-    =
+> 
+>>  	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
+>>  	struct list_head	list;
+>>  	unsigned long           flags;
+> 
+> Perhaps:
+> 
+> diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
+> index f704d8348357..ab6d6c3d835d 100644
+> --- a/fs/tracefs/internal.h
+> +++ b/fs/tracefs/internal.h
+> @@ -10,12 +10,12 @@ enum {
+>  };
+>  
+>  struct tracefs_inode {
+> +	struct inode            vfs_inode;
+> +	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
+>  	union {
+> -		struct inode            vfs_inode;
+> +		struct list_head	list;
+>  		struct rcu_head		rcu;
+>  	};
+> -	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
+> -	struct list_head	list;
+>  	unsigned long           flags;
+>  	void                    *private;
+>  };
 
-    The NETFS_RREQ_USE_PGPRIV2 and NETFS_RREQ_WRITE_TO_CACHE flags aren't =
-used
-    correctly.  The problem is that we try to set them up in the request
-    initialisation, but we the cache may be in the process of setting up s=
-till,
-    and so the state may not be correct.  Further, we secondarily sample t=
-he
-    cache state and make contradictory decisions later.
-    =
+I'd rather not exchange trashing one RCU-walked list for another. Or how
+will this play out for the RCU walk in tracefs_apply_options() if
+there's a concurrent call to tracefs_free_inode() which will now trash
+the list_head tracefs_apply_options() is walking over?
 
-    The issue arises because we set up the cache resources, which allows t=
-he
-    cache's ->prepare_read() to switch on NETFS_SREQ_COPY_TO_CACHE - which
-    triggers cache writing even if we didn't set the flags when allocating=
-.
-    =
-
-    Fix this in the following way:
-    =
-
-     (1) Drop NETFS_ICTX_USE_PGPRIV2 and instead set NETFS_RREQ_USE_PGPRIV=
-2 in
-         ->init_request() rather than trying to juggle that in
-         netfs_alloc_request().
-    =
-
-     (2) Repurpose NETFS_RREQ_USE_PGPRIV2 to merely indicate that if cachi=
-ng is
-         to be done, then PG_private_2 is to be used rather than only sett=
-ing
-         it if we decide to cache and then having netfs_rreq_unlock_folios=
-()
-         set the non-PG_private_2 writeback-to-cache if it wasn't set.
-    =
-
-     (3) Split netfs_rreq_unlock_folios() into two functions, one of which
-         contains the deprecated code for using PG_private_2 to avoid
-         accidentally doing the writeback path - and always use it if
-         USE_PGPRIV2 is set.
-    =
-
-     (4) As NETFS_ICTX_USE_PGPRIV2 is removed, make netfs_write_begin() al=
-ways
-         wait for PG_private_2.  This function is deprecated and only used=
- by
-         ceph anyway, and so label it so.
-    =
-
-     (5) Drop the NETFS_RREQ_WRITE_TO_CACHE flag and use
-         fscache_operation_valid() on the cache_resources instead.  This h=
-as
-         the advantage of picking up the result of netfs_begin_cache_read(=
-) and
-         fscache_begin_write_operation() - which are called after the obje=
-ct is
-         initialised and will wait for the cache to come to a usable state=
-.
-    =
-
-    Just reverting ae678317b95e[1] isn't a sufficient fix, so this need to=
- be
-    applied on top of that.  Without this as well, things like:
-    =
-
-     rcu: INFO: rcu_sched detected expedited stalls on CPUs/tasks: {
-    =
-
-    and:
-    =
-
-     WARNING: CPU: 13 PID: 3621 at fs/ceph/caps.c:3386
-    =
-
-    may happen, along with some UAFs due to PG_private_2 not getting used =
-to
-    wait on writeback completion.
-    =
-
-    Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio->priv=
-ate and marking dirty")
-    Reported-by: Max Kellermann <max.kellermann@ionos.com>
-    Signed-off-by: David Howells <dhowells@redhat.com>
-    cc: Ilya Dryomov <idryomov@gmail.com>
-    cc: Xiubo Li <xiubli@redhat.com>
-    cc: Hristo Venev <hristo@venev.name>
-    cc: Jeff Layton <jlayton@kernel.org>
-    cc: Matthew Wilcox <willy@infradead.org>
-    cc: ceph-devel@vger.kernel.org
-    cc: netfs@lists.linux.dev
-    cc: linux-fsdevel@vger.kernel.org
-    cc: linux-mm@kvack.org
-    Link: https://lore.kernel.org/r/3575457.1722355300@warthog.procyon.org=
-.uk/ [1]
-
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 73b5a07bf94d..cc0a2240de98 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -424,6 +424,9 @@ static int ceph_init_request(struct netfs_io_request *=
-rreq, struct file *file)
- 	struct ceph_netfs_request_data *priv;
- 	int ret =3D 0;
- =
-
-+	/* [DEPRECATED] Use PG_private_2 to mark folio being written to the cach=
-e. */
-+	__set_bit(NETFS_RREQ_USE_PGPRIV2, &rreq->flags);
-+
- 	if (rreq->origin !=3D NETFS_READAHEAD)
- 		return 0;
- =
-
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 8f8de8f33abb..71cd70514efa 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -577,8 +577,6 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
- =
-
- 	/* Set parameters for the netfs library */
- 	netfs_inode_init(&ci->netfs, &ceph_netfs_ops, false);
--	/* [DEPRECATED] Use PG_private_2 to mark folio being written to the cach=
-e. */
--	__set_bit(NETFS_ICTX_USE_PGPRIV2, &ci->netfs.flags);
- =
-
- 	spin_lock_init(&ci->i_ceph_lock);
- =
-
-diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index 424048f9ed1f..79d83abb655b 100644
---- a/fs/netfs/buffered_read.c
-+++ b/fs/netfs/buffered_read.c
-@@ -9,6 +9,97 @@
- #include <linux/task_io_accounting_ops.h>
- #include "internal.h"
- =
-
-+/*
-+ * [DEPRECATED] Unlock the folios in a read operation for when the filesy=
-stem
-+ * is using PG_private_2 and direct writing to the cache from here rather=
- than
-+ * marking the page for writeback.
-+ *
-+ * Note that we don't touch folio->private in this code.
-+ */
-+static void netfs_rreq_unlock_folios_pgpriv2(struct netfs_io_request *rre=
-q)
-+{
-+	struct netfs_io_subrequest *subreq;
-+	struct folio *folio;
-+	pgoff_t start_page =3D rreq->start / PAGE_SIZE;
-+	pgoff_t last_page =3D ((rreq->start + rreq->len) / PAGE_SIZE) - 1;
-+	size_t account =3D 0;
-+	bool subreq_failed =3D false;
-+
-+	XA_STATE(xas, &rreq->mapping->i_pages, start_page);
-+
-+	/* Walk through the pagecache and the I/O request lists simultaneously.
-+	 * We may have a mixture of cached and uncached sections and we only
-+	 * really want to write out the uncached sections.  This is slightly
-+	 * complicated by the possibility that we might have huge pages with a
-+	 * mixture inside.
-+	 */
-+	subreq =3D list_first_entry(&rreq->subrequests,
-+				  struct netfs_io_subrequest, rreq_link);
-+	subreq_failed =3D (subreq->error < 0);
-+
-+	trace_netfs_rreq(rreq, netfs_rreq_trace_unlock_pgpriv2);
-+
-+	rcu_read_lock();
-+	xas_for_each(&xas, folio, last_page) {
-+		loff_t pg_end;
-+		bool pg_failed =3D false;
-+		bool folio_started =3D false;
-+
-+		if (xas_retry(&xas, folio))
-+			continue;
-+
-+		pg_end =3D folio_pos(folio) + folio_size(folio) - 1;
-+
-+		for (;;) {
-+			loff_t sreq_end;
-+
-+			if (!subreq) {
-+				pg_failed =3D true;
-+				break;
-+			}
-+
-+			if (!folio_started &&
-+			    test_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags) &&
-+			    fscache_operation_valid(&rreq->cache_resources)) {
-+				trace_netfs_folio(folio, netfs_folio_trace_copy_to_cache);
-+				folio_start_private_2(folio);
-+				folio_started =3D true;
-+			}
-+
-+			pg_failed |=3D subreq_failed;
-+			sreq_end =3D subreq->start + subreq->len - 1;
-+			if (pg_end < sreq_end)
-+				break;
-+
-+			account +=3D subreq->transferred;
-+			if (!list_is_last(&subreq->rreq_link, &rreq->subrequests)) {
-+				subreq =3D list_next_entry(subreq, rreq_link);
-+				subreq_failed =3D (subreq->error < 0);
-+			} else {
-+				subreq =3D NULL;
-+				subreq_failed =3D false;
-+			}
-+
-+			if (pg_end =3D=3D sreq_end)
-+				break;
-+		}
-+
-+		if (!pg_failed) {
-+			flush_dcache_folio(folio);
-+			folio_mark_uptodate(folio);
-+		}
-+
-+		if (!test_bit(NETFS_RREQ_DONT_UNLOCK_FOLIOS, &rreq->flags)) {
-+			if (folio->index =3D=3D rreq->no_unlock_folio &&
-+			    test_bit(NETFS_RREQ_NO_UNLOCK_FOLIO, &rreq->flags))
-+				kdebug("no unlock");
-+			else
-+				folio_unlock(folio);
-+		}
-+	}
-+	rcu_read_unlock();
-+}
-+
- /*
-  * Unlock the folios in a read operation.  We need to set PG_writeback on=
- any
-  * folios we're going to write back before we unlock them.
-@@ -35,6 +126,12 @@ void netfs_rreq_unlock_folios(struct netfs_io_request =
-*rreq)
- 		}
- 	}
- =
-
-+	/* Handle deprecated PG_private_2 case. */
-+	if (test_bit(NETFS_RREQ_USE_PGPRIV2, &rreq->flags)) {
-+		netfs_rreq_unlock_folios_pgpriv2(rreq);
-+		goto out;
-+	}
-+
- 	/* Walk through the pagecache and the I/O request lists simultaneously.
- 	 * We may have a mixture of cached and uncached sections and we only
- 	 * really want to write out the uncached sections.  This is slightly
-@@ -52,7 +149,6 @@ void netfs_rreq_unlock_folios(struct netfs_io_request *=
-rreq)
- 		loff_t pg_end;
- 		bool pg_failed =3D false;
- 		bool wback_to_cache =3D false;
--		bool folio_started =3D false;
- =
-
- 		if (xas_retry(&xas, folio))
- 			continue;
-@@ -66,17 +162,8 @@ void netfs_rreq_unlock_folios(struct netfs_io_request =
-*rreq)
- 				pg_failed =3D true;
- 				break;
- 			}
--			if (test_bit(NETFS_RREQ_USE_PGPRIV2, &rreq->flags)) {
--				if (!folio_started && test_bit(NETFS_SREQ_COPY_TO_CACHE,
--							       &subreq->flags)) {
--					trace_netfs_folio(folio, netfs_folio_trace_copy_to_cache);
--					folio_start_private_2(folio);
--					folio_started =3D true;
--				}
--			} else {
--				wback_to_cache |=3D
--					test_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags);
--			}
-+
-+			wback_to_cache |=3D test_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags)=
-;
- 			pg_failed |=3D subreq_failed;
- 			sreq_end =3D subreq->start + subreq->len - 1;
- 			if (pg_end < sreq_end)
-@@ -124,6 +211,7 @@ void netfs_rreq_unlock_folios(struct netfs_io_request =
-*rreq)
- 	}
- 	rcu_read_unlock();
- =
-
-+out:
- 	task_io_account_read(account);
- 	if (rreq->netfs_ops->done)
- 		rreq->netfs_ops->done(rreq);
-@@ -395,7 +483,7 @@ static bool netfs_skip_folio_read(struct folio *folio,=
- loff_t pos, size_t len,
- }
- =
-
- /**
-- * netfs_write_begin - Helper to prepare for writing
-+ * netfs_write_begin - Helper to prepare for writing [DEPRECATED]
-  * @ctx: The netfs context
-  * @file: The file to read from
-  * @mapping: The mapping to read from
-@@ -426,6 +514,9 @@ static bool netfs_skip_folio_read(struct folio *folio,=
- loff_t pos, size_t len,
-  * inode before calling this.
-  *
-  * This is usable whether or not caching is enabled.
-+ *
-+ * Note that this should be considered deprecated and netfs_perform_write=
-()
-+ * used instead.
-  */
- int netfs_write_begin(struct netfs_inode *ctx,
- 		      struct file *file, struct address_space *mapping,
-@@ -507,11 +598,9 @@ int netfs_write_begin(struct netfs_inode *ctx,
- 	netfs_put_request(rreq, false, netfs_rreq_trace_put_return);
- =
-
- have_folio:
--	if (test_bit(NETFS_ICTX_USE_PGPRIV2, &ctx->flags)) {
--		ret =3D folio_wait_private_2_killable(folio);
--		if (ret < 0)
--			goto error;
--	}
-+	ret =3D folio_wait_private_2_killable(folio);
-+	if (ret < 0)
-+		goto error;
- have_folio_no_wait:
- 	*_folio =3D folio;
- 	_leave(" =3D 0");
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index f4a642727479..0faea0cee179 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -57,10 +57,6 @@ struct netfs_io_request *netfs_alloc_request(struct add=
-ress_space *mapping,
- =
-
- 	__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
- 	if (cached) {
--		__set_bit(NETFS_RREQ_WRITE_TO_CACHE, &rreq->flags);
--		if (test_bit(NETFS_ICTX_USE_PGPRIV2, &ctx->flags))
--			/* Filesystem uses deprecated PG_private_2 marking. */
--			__set_bit(NETFS_RREQ_USE_PGPRIV2, &rreq->flags);
- 	}
- 	if (file && file->f_flags & O_NONBLOCK)
- 		__set_bit(NETFS_RREQ_NONBLOCK, &rreq->flags);
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index 9258d30cffe3..d35bb0f25d69 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -102,7 +102,7 @@ struct netfs_io_request *netfs_create_write_req(struct=
- address_space *mapping,
- 	_enter("R=3D%x", wreq->debug_id);
- =
-
- 	ictx =3D netfs_inode(wreq->inode);
--	if (test_bit(NETFS_RREQ_WRITE_TO_CACHE, &wreq->flags))
-+	if (fscache_operation_valid(&wreq->cache_resources))
- 		fscache_begin_write_operation(&wreq->cache_resources, netfs_i_cookie(ic=
-tx));
- =
-
- 	wreq->contiguity =3D wreq->start;
-diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
-index 7202ce84d0eb..bf29a65c5027 100644
---- a/fs/nfs/fscache.c
-+++ b/fs/nfs/fscache.c
-@@ -265,6 +265,8 @@ static int nfs_netfs_init_request(struct netfs_io_requ=
-est *rreq, struct file *fi
- {
- 	rreq->netfs_priv =3D get_nfs_open_context(nfs_file_open_context(file));
- 	rreq->debug_id =3D atomic_inc_return(&nfs_netfs_debug_id);
-+	/* [DEPRECATED] Use PG_private_2 to mark folio being written to the cach=
-e. */
-+	__set_bit(NETFS_RREQ_USE_PGPRIV2, &rreq->flags);
- =
-
- 	return 0;
- }
-diff --git a/fs/nfs/fscache.h b/fs/nfs/fscache.h
-index fbed0027996f..e8adae1bc260 100644
---- a/fs/nfs/fscache.h
-+++ b/fs/nfs/fscache.h
-@@ -81,8 +81,6 @@ static inline void nfs_netfs_put(struct nfs_netfs_io_dat=
-a *netfs)
- static inline void nfs_netfs_inode_init(struct nfs_inode *nfsi)
- {
- 	netfs_inode_init(&nfsi->netfs, &nfs_netfs_ops, false);
--	/* [DEPRECATED] Use PG_private_2 to mark folio being written to the cach=
-e. */
--	__set_bit(NETFS_ICTX_USE_PGPRIV2, &nfsi->netfs.flags);
- }
- extern void nfs_netfs_initiate_read(struct nfs_pgio_header *hdr);
- extern void nfs_netfs_read_completion(struct nfs_pgio_header *hdr);
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 5d0288938cc2..983816608f15 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -73,8 +73,6 @@ struct netfs_inode {
- #define NETFS_ICTX_ODIRECT	0		/* The file has DIO in progress */
- #define NETFS_ICTX_UNBUFFERED	1		/* I/O should not use the pagecache */
- #define NETFS_ICTX_WRITETHROUGH	2		/* Write-through caching */
--#define NETFS_ICTX_USE_PGPRIV2	31		/* [DEPRECATED] Use PG_private_2 to ma=
-rk
--						 * write to cache on read */
- };
- =
-
- /*
-@@ -269,7 +267,6 @@ struct netfs_io_request {
- #define NETFS_RREQ_DONT_UNLOCK_FOLIOS	3	/* Don't unlock the folios on com=
-pletion */
- #define NETFS_RREQ_FAILED		4	/* The request failed */
- #define NETFS_RREQ_IN_PROGRESS		5	/* Unlocked when the request completes =
-*/
--#define NETFS_RREQ_WRITE_TO_CACHE	7	/* Need to write to the cache */
- #define NETFS_RREQ_UPLOAD_TO_SERVER	8	/* Need to write to the server */
- #define NETFS_RREQ_NONBLOCK		9	/* Don't block if possible (O_NONBLOCK) */
- #define NETFS_RREQ_BLOCKED		10	/* We blocked */
-diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
-index 24ec3434d32e..606b4a0f92da 100644
---- a/include/trace/events/netfs.h
-+++ b/include/trace/events/netfs.h
-@@ -51,6 +51,7 @@
- 	EM(netfs_rreq_trace_resubmit,		"RESUBMT")	\
- 	EM(netfs_rreq_trace_set_pause,		"PAUSE  ")	\
- 	EM(netfs_rreq_trace_unlock,		"UNLOCK ")	\
-+	EM(netfs_rreq_trace_unlock_pgpriv2,	"UNLCK-2")	\
- 	EM(netfs_rreq_trace_unmark,		"UNMARK ")	\
- 	EM(netfs_rreq_trace_wait_ip,		"WAIT-IP")	\
- 	EM(netfs_rreq_trace_wait_pause,		"WT-PAUS")	\
-
+Thanks,
+Mathias
 
