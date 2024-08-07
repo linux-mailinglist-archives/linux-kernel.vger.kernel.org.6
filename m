@@ -1,230 +1,265 @@
-Return-Path: <linux-kernel+bounces-277882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D480D94A79C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:19:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC4A94A7A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 029B91C20A9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:19:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C16C81C217B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C260A1E4EE6;
-	Wed,  7 Aug 2024 12:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BEF1E6729;
+	Wed,  7 Aug 2024 12:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HM9ib1AI"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RKHVsAg7"
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2A21E2861
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 12:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F721C9DD6;
+	Wed,  7 Aug 2024 12:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723033169; cv=none; b=AR9XcEDfTi6PpkxbORaV01Li7kDEej4pFUYFueso0elX42sGLO71bYsWftQrwxIoz+PyoNb5mUFc+hbVXHYjChLjdHhrOOsGxZSXZfTwcjxcyL/Idu1d+Ax6Bq1TRuQfHX5dXZFVf/CwLZMUSFTLZpAuYaSzBfLFPGeaeHmozpM=
+	t=1723033425; cv=none; b=MO1TpC/a8VJdhTqgXb1c7jqCn44lSxTseznx2B3XbBSCccoD/AqCNnoLmqB3ZM+fTzK4576hZZmDV7JqJQbb3tbu4fa/6OQ1PPOm/+2D+I/VI51P5kWCqhwdQymjOwXxng/EG0Z/QZ7jLDKlSRdu7LMRbrpDzawYsiYi3s4TMAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723033169; c=relaxed/simple;
-	bh=0DFYGbhwqxzeqKqLqab+r4JEd+FMdTwoWChLpZQfJXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e0XLoH2YwtkMtnPLysGOhsJ7x0K5CpVKZHr3XCTRJjZRh22UY6k9XTb8T6KMpT+eyD8oQz7r+oDw3YBolTaVcSO3kviOifWW9If5MIgWA71/bqvriasIkvm98+Y+JxLbdhfLqfhKaNiaTaOk6mXvO2H5Isi7MgcKb+L704cAOlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HM9ib1AI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 994CE2EC;
-	Wed,  7 Aug 2024 14:18:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1723033114;
-	bh=0DFYGbhwqxzeqKqLqab+r4JEd+FMdTwoWChLpZQfJXg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HM9ib1AIQVr/VZtm+JSRARBKl2FZlzClBzKb8xfO9Wfbxb8Xsr8lXN7f5mgelDiQl
-	 Uj3DkMkS8ICa1R+4zLyqFCbb8pd01VB7yyPtp80WojB8BMLvQ0HBazyGkhMJUnp/AM
-	 QCLB8D6fzsC4pugixwUMtiPRLTgkfjjR0Hw7Tusg=
-Message-ID: <4ed3791f-bc5a-46f1-88e1-2441c7f9c8d4@ideasonboard.com>
-Date: Wed, 7 Aug 2024 15:19:23 +0300
+	s=arc-20240116; t=1723033425; c=relaxed/simple;
+	bh=Kd8ZYPHe25vG2eDzqFvrOHnmPDTkChniLiTdkVWbau8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QCnFO0Q/EiXxNOdOE9slAsApZBPUDyG9zcK3VHxm3J9cSl4L9YPsZzwQK0uQ0mg3BpMAxdTRSk118ipMUq0A5JVwKQt+PzPRXzhvLfMSO//dFrVw++XRPOkPZsuryHsKuvFwYzAbnVVDZCFSbkZj7moZv3FMr5WUP5vIZHdMLSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RKHVsAg7; arc=none smtp.client-ip=80.12.242.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id bfgVsJsx2KPqXbfgVsKM2e; Wed, 07 Aug 2024 14:22:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1723033353;
+	bh=P5S3EiUnzX8DlZ1LXJZ7HdgTZoR7+DwXQZ88EGRCynw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=RKHVsAg7q85zqrxD81rEM2BuP0isjBUjHF7q/qWPIiphEqyPJapEiyy7d5ivj+JmS
+	 KBtUKcjzIKhb/yeZbmWn7iXR7KL5O0eBMSzqFwiarzA4ncnN5oIYEOE3JX2y4WxSXU
+	 dT70jZvYcn/DWXraL4cVGx/yUUCxNLM7T8lEzDbS3xysNwe25tlTK8PDC0FsrcD712
+	 oILy5LOheHcKSotBtTKxF+qkAxV13M2r7pICb3SEgWRZjnr2xwtem7/2YDlDPkGQsT
+	 PfIY2h4NAHkmPJyI0pECHFiNqdlcAvyJ+VSRRJ49rWDmIst9ZbtpM6MoMXXJAbaTj/
+	 1zoYvVV//vTyA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 07 Aug 2024 14:22:33 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next] net: sungem_phy: Constify struct mii_phy_def
+Date: Wed,  7 Aug 2024 14:22:26 +0200
+Message-ID: <54c3b30930f80f4895e6fa2f4234714fdea4ef4e.1723033266.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/mipi-dsi: Fix devm unregister & detach
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240619-dsi-devres-fix-v1-1-a5c59310a52e@ideasonboard.com>
- <20240626-gabby-ladybug-of-freedom-08e6eb@houat>
- <66ab4206-d1c8-4aad-99a7-c4c316e343a9@ideasonboard.com>
- <20240626-warping-nondescript-mustang-bfce27@houat>
- <b7cf71b8-76fd-4638-a7b6-cc8dbae635bf@ideasonboard.com>
- <20240702-bold-exotic-mamba-fdbba4@houat>
- <7293448e-e8cc-4522-b39c-5ad133e5f732@ideasonboard.com>
- <20240725-natural-giga-crane-d54067@houat>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20240725-natural-giga-crane-d54067@houat>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+'struct mii_phy_def' are not modified in this driver.
 
-On 25/07/2024 14:28, Maxime Ripard wrote:
-> On Mon, Jul 15, 2024 at 11:32:34AM GMT, Tomi Valkeinen wrote:
->> On 02/07/2024 14:43, Maxime Ripard wrote:
->>> Hi Tomi,
->>>
->>> On Wed, Jun 26, 2024 at 06:53:40PM GMT, Tomi Valkeinen wrote:
->>>> On 26/06/2024 18:07, Maxime Ripard wrote:
->>>>> On Wed, Jun 26, 2024 at 12:55:39PM GMT, Tomi Valkeinen wrote:
->>>>>> On 26/06/2024 11:49, Maxime Ripard wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>> On Wed, Jun 19, 2024 at 12:07:48PM GMT, Tomi Valkeinen wrote:
->>>>>>>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->>>>>>>>
->>>>>>>> When a bridge driver uses devm_mipi_dsi_device_register_full() or
->>>>>>>> devm_mipi_dsi_attach(), the resource management is moved to devres,
->>>>>>>> which releases the resource automatically when the bridge driver is
->>>>>>>> unbound.
->>>>>>>>
->>>>>>>> However, if the DSI host goes away first, the host unregistration code
->>>>>>>> will automatically detach and unregister any DSI peripherals, without
->>>>>>>> notifying the devres about it. So when the bridge driver later is
->>>>>>>> unbound, the resources are released a second time, leading to crash.
->>>>>>>
->>>>>>> That's super surprising. mipi_dsi_device_unregister calls
->>>>>>> device_unregister, which calls device_del, which in turn calls
->>>>>>> devres_release_all.
->>>>>>
->>>>>> Hmm, right.
->>>>>>
->>>>>>> If that doesn't work like that, then it's what needs to be fixed, and
->>>>>>> not worked around in the MIPI-DSI bus.
->>>>>>
->>>>>> Well, something causes a crash for both the device register/unregister case
->>>>>> and the attach/detach case, and the call stacks and debug prints showed a
->>>>>> double unregister/detach...
->>>>>>
->>>>>> I need to dig up the board and check again why the devres_release_all() in
->>>>>> device_del() doesn't solve this. But I can probably only get back to this in
->>>>>> August, so it's perhaps best to ignore this patch for now.
->>>>>>
->>>>>> However, the attach/detach case is still valid? I see no devres calls in the
->>>>>> detach paths.
->>>>>
->>>>> I'm not sure what you mean by the attach/detach case. Do you expect
->>>>> device resources allocated in attach to be freed when detach run?
->>>>
->>>> Ah, never mind, the devres_release_all() would of course deal with that too.
->>>>
->>>> However, I just realized/remembered why it crashes.
->>>>
->>>> devm_mipi_dsi_device_register_full() and devm_mipi_dsi_attach() are given a
->>>> device which is used for the devres. This device is probably always the
->>>> bridge device. So when the bridge device goes away, so do those resources.
->>>>
->>>> The mipi_dsi_device_unregister() call deals with a DSI device, which was
->>>> created in devm_mipi_dsi_device_register_full(). Unregistering that DSI
->>>> device, which does happen when the DSI host is removed, does not affect the
->>>> devres of the bridge.
->>>>
->>>> So, unloading the DSI host driver causes mipi_dsi_device_unregister() and
->>>> mipi_dsi_detach() to be called (as part of mipi_dsi_host_unregister()), and
->>>> unloading the bridge driver causes them to be called again via devres.
->>>
->>> Sorry, that's one of the things I don't quite get. Both functions are
->>> exclusively(?) called from I2C bridges, so the device passed there
->>> should be a i2c_client instance, and thus the MIPI-DSI host going away
->>> will not remove those i2c devices, only the MIPI-DSI ones, right?
->>
->> Yes.
->>
->>> So if we remove the host, the MIPI-DSI device will be detached and
->>> removed through the path you were explaing with the i2c client lingering
->>> around. And if we remove the I2C device, then devm will kick in and will
->>> detach and remove the MIPI-DSI device.
->>
->> Right.
->>
->>> Or is it the other way around? That if you remove the host, the device
->>> is properly detached and removed, but there's still the devm actions
->>> lingering around in the i2c device with pointers to the mipi_dsi_device
->>> that was first created, but since destroyed?
->>>
->>> And thus, if the i2c device ever goes away, we get a use-after-free?
->>
->> Hmm, I'm not sure I understand what you mean here... Aren't you describing
->> the same thing in both of these cases?
->>
->> In any case, to expand the description a bit, module unloading is quite
->> fragile. I do get a crash if I first unload the i2c bridge module, and only
->> then go and unload the other ones in the DRM pipeline. But I think module
->> unloading will very easily crash, whatever the DRM drivers being used are,
->> so it's not related to this particular issue.
->>
->> In my view, the unload sequence that should be supported (for development
->> purposes, not for production) is to start the unload from the display
->> controller module, which tears down the DRM pipeline, and going from there
->> towards the panels/connectors.
->>
->> Of course, it would be very nice if the module unloading worked perfectly,
->> but afaics fixing all that's related to module unloading would be a
->> multi-year project... So, I just want to keep the sequence I described above
->> working, which allows using modules while doing driver development.
-> 
-> FTR, I'm all for supporting module unloading. The discussion above was
-> about what is broken exactly, so we can come up with a good solution.
+Constifying these structures moves some data to a read-only section, so
+increase overall security.
 
-Does that mean that you're ok with the patch, or that something should 
-be improved?
+While at it fix the checkpatch warning related to this patch (some missing
+newlines and spaces around *)
 
-  Tomi
+On a x86_64, with allmodconfig:
+Before:
+======
+  27709	    928	      0	  28637	   6fdd	drivers/net/sungem_phy.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  28157	    476	      0	  28633	   6fd9	drivers/net/sungem_phy.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+---
+ drivers/net/sungem_phy.c   | 35 +++++++++++++++++++----------------
+ include/linux/sungem_phy.h |  2 +-
+ 2 files changed, 20 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/net/sungem_phy.c b/drivers/net/sungem_phy.c
+index d591e33268e5..55aa8d0c8e1f 100644
+--- a/drivers/net/sungem_phy.c
++++ b/drivers/net/sungem_phy.c
+@@ -893,7 +893,7 @@ static const struct mii_phy_ops bcm5201_phy_ops = {
+ 	.read_link	= genmii_read_link,
+ };
+ 
+-static struct mii_phy_def bcm5201_phy_def = {
++static const struct mii_phy_def bcm5201_phy_def = {
+ 	.phy_id		= 0x00406210,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5201",
+@@ -912,7 +912,7 @@ static const struct mii_phy_ops bcm5221_phy_ops = {
+ 	.read_link	= genmii_read_link,
+ };
+ 
+-static struct mii_phy_def bcm5221_phy_def = {
++static const struct mii_phy_def bcm5221_phy_def = {
+ 	.phy_id		= 0x004061e0,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5221",
+@@ -930,7 +930,8 @@ static const struct mii_phy_ops bcm5241_phy_ops = {
+ 	.poll_link	= genmii_poll_link,
+ 	.read_link	= genmii_read_link,
+ };
+-static struct mii_phy_def bcm5241_phy_def = {
++
++static const struct mii_phy_def bcm5241_phy_def = {
+ 	.phy_id		= 0x0143bc30,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5241",
+@@ -949,7 +950,7 @@ static const struct mii_phy_ops bcm5400_phy_ops = {
+ 	.read_link	= bcm54xx_read_link,
+ };
+ 
+-static struct mii_phy_def bcm5400_phy_def = {
++static const struct mii_phy_def bcm5400_phy_def = {
+ 	.phy_id		= 0x00206040,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5400",
+@@ -968,7 +969,7 @@ static const struct mii_phy_ops bcm5401_phy_ops = {
+ 	.read_link	= bcm54xx_read_link,
+ };
+ 
+-static struct mii_phy_def bcm5401_phy_def = {
++static const struct mii_phy_def bcm5401_phy_def = {
+ 	.phy_id		= 0x00206050,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5401",
+@@ -987,7 +988,7 @@ static const struct mii_phy_ops bcm5411_phy_ops = {
+ 	.read_link	= bcm54xx_read_link,
+ };
+ 
+-static struct mii_phy_def bcm5411_phy_def = {
++static const struct mii_phy_def bcm5411_phy_def = {
+ 	.phy_id		= 0x00206070,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5411",
+@@ -1007,7 +1008,7 @@ static const struct mii_phy_ops bcm5421_phy_ops = {
+ 	.enable_fiber   = bcm5421_enable_fiber,
+ };
+ 
+-static struct mii_phy_def bcm5421_phy_def = {
++static const struct mii_phy_def bcm5421_phy_def = {
+ 	.phy_id		= 0x002060e0,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5421",
+@@ -1026,7 +1027,7 @@ static const struct mii_phy_ops bcm5421k2_phy_ops = {
+ 	.read_link	= bcm54xx_read_link,
+ };
+ 
+-static struct mii_phy_def bcm5421k2_phy_def = {
++static const struct mii_phy_def bcm5421k2_phy_def = {
+ 	.phy_id		= 0x002062e0,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5421-K2",
+@@ -1045,7 +1046,7 @@ static const struct mii_phy_ops bcm5461_phy_ops = {
+ 	.enable_fiber   = bcm5461_enable_fiber,
+ };
+ 
+-static struct mii_phy_def bcm5461_phy_def = {
++static const struct mii_phy_def bcm5461_phy_def = {
+ 	.phy_id		= 0x002060c0,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5461",
+@@ -1064,7 +1065,7 @@ static const struct mii_phy_ops bcm5462V_phy_ops = {
+ 	.read_link	= bcm54xx_read_link,
+ };
+ 
+-static struct mii_phy_def bcm5462V_phy_def = {
++static const struct mii_phy_def bcm5462V_phy_def = {
+ 	.phy_id		= 0x002060d0,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "BCM5462-Vesta",
+@@ -1094,7 +1095,7 @@ static const struct mii_phy_ops marvell88e1111_phy_ops = {
+ /* two revs in darwin for the 88e1101 ... I could use a datasheet
+  * to get the proper names...
+  */
+-static struct mii_phy_def marvell88e1101v1_phy_def = {
++static const struct mii_phy_def marvell88e1101v1_phy_def = {
+ 	.phy_id		= 0x01410c20,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "Marvell 88E1101v1",
+@@ -1102,7 +1103,8 @@ static struct mii_phy_def marvell88e1101v1_phy_def = {
+ 	.magic_aneg	= 1,
+ 	.ops		= &marvell88e1101_phy_ops
+ };
+-static struct mii_phy_def marvell88e1101v2_phy_def = {
++
++static const struct mii_phy_def marvell88e1101v2_phy_def = {
+ 	.phy_id		= 0x01410c60,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "Marvell 88E1101v2",
+@@ -1110,7 +1112,8 @@ static struct mii_phy_def marvell88e1101v2_phy_def = {
+ 	.magic_aneg	= 1,
+ 	.ops		= &marvell88e1101_phy_ops
+ };
+-static struct mii_phy_def marvell88e1111_phy_def = {
++
++static const struct mii_phy_def marvell88e1111_phy_def = {
+ 	.phy_id		= 0x01410cc0,
+ 	.phy_id_mask	= 0xfffffff0,
+ 	.name		= "Marvell 88E1111",
+@@ -1127,7 +1130,7 @@ static const struct mii_phy_ops generic_phy_ops = {
+ 	.read_link	= genmii_read_link
+ };
+ 
+-static struct mii_phy_def genmii_phy_def = {
++static const struct mii_phy_def genmii_phy_def = {
+ 	.phy_id		= 0x00000000,
+ 	.phy_id_mask	= 0x00000000,
+ 	.name		= "Generic MII",
+@@ -1136,7 +1139,7 @@ static struct mii_phy_def genmii_phy_def = {
+ 	.ops		= &generic_phy_ops
+ };
+ 
+-static struct mii_phy_def* mii_phy_table[] = {
++static const struct mii_phy_def *mii_phy_table[] = {
+ 	&bcm5201_phy_def,
+ 	&bcm5221_phy_def,
+ 	&bcm5241_phy_def,
+@@ -1156,9 +1159,9 @@ static struct mii_phy_def* mii_phy_table[] = {
+ 
+ int sungem_phy_probe(struct mii_phy *phy, int mii_id)
+ {
++	const struct mii_phy_def *def;
+ 	int rc;
+ 	u32 id;
+-	struct mii_phy_def* def;
+ 	int i;
+ 
+ 	/* We do not reset the mii_phy structure as the driver
+diff --git a/include/linux/sungem_phy.h b/include/linux/sungem_phy.h
+index c505f30e8b68..eecc7eb63bfb 100644
+--- a/include/linux/sungem_phy.h
++++ b/include/linux/sungem_phy.h
+@@ -40,7 +40,7 @@ enum {
+ /* An instance of a PHY, partially borrowed from mii_if_info */
+ struct mii_phy
+ {
+-	struct mii_phy_def*	def;
++	const struct mii_phy_def *def;
+ 	u32			advertising;
+ 	int			mii_id;
+ 
+-- 
+2.45.2
 
 
