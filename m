@@ -1,189 +1,129 @@
-Return-Path: <linux-kernel+bounces-277896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB51094A7DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:39:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50EC794A7DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A23D3284EF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:39:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C27285018
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BB31DF69D;
-	Wed,  7 Aug 2024 12:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE1F1E674E;
+	Wed,  7 Aug 2024 12:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHhygbNi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIoJAty5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5975E1E4EEA;
-	Wed,  7 Aug 2024 12:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33EB01E6725;
+	Wed,  7 Aug 2024 12:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723034376; cv=none; b=qpEXr+1c1Ncf7UowbOgB2TEFZS3tGWCU9SSvRWkFnLG2SMhbKdzLB306wT4GNEBLK4sDJcTPQjWvGDqp4xGrdEW8zuzcT+pjL/CcNsrOkJSqbx+rmjbDo+023pEKgq//s8JPtp/mwwmUVIHMuPJ9W/357eMz/TKFbh4CtNom60w=
+	t=1723034383; cv=none; b=mtEKatywUnSlwPenQ6+H0aZx2av4yAz/HIUXpJ8rP6iV5b0b18W6jUfXfpXgd5ytrwqMxghxriybU9ZJUsCL2B73pUC/FOP8P2GE7e3qk4MQvMroDvZin1V1/QE+CK1ZUe7AseYMOJGk8sDqy9zgSdSJiu+d8BruTNYprN+5/MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723034376; c=relaxed/simple;
-	bh=avHj+3sbrQo6Pt/QvWPK48xY86bpWTVvh+F0RyJp3NU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ciiq5Ujz/mh+nd8TlSgtXMWp3/zIp3P3yNCCbwH7ysT487r51CPpK+yPiNE1u5ue8wqikTge6/UVkTfmmtU14Nf2tsvWPJowbz/bBVf3PwtK69BSkhXcJSOJ64G+XFLLFniq8oXEe7VEzE90WSu5yr0R+aKwJa3ToC282QQ6Y9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHhygbNi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66EF5C32782;
-	Wed,  7 Aug 2024 12:39:30 +0000 (UTC)
+	s=arc-20240116; t=1723034383; c=relaxed/simple;
+	bh=Eqn14IBRJtx73uJB1xT2++xne0vqAkKUAtQPKTkKmTs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pUDUOHvGUE3BYuxH1POqLNtB5VRnbQ9RQUFWhYwhibm5Oaqa/vgCH10kv6FvNUvQlaXB04JG+N4LZoZYRCmYZLTLf0PoYrp04AK83P1NcRQcAfLNm3KZFaA0aYcyWRlwRQfvEfxzTopoQybmE5gKVEMj/dWuOUoi4gjRuF4LBNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIoJAty5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77C60C32782;
+	Wed,  7 Aug 2024 12:39:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723034375;
-	bh=avHj+3sbrQo6Pt/QvWPK48xY86bpWTVvh+F0RyJp3NU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jHhygbNiFM+5UHK4Z2S7XT7kVPvXSbA6kz5X1mmtE0Pz4lPVlPsW2RB/fSYFSc9Wl
-	 uXhdozvBH6Szkdl4F/NoIPlgcvVzAlYUbqxvztYd5wTcDUc4wEYKjN6Sja/4q//vEY
-	 6JomWfDkJpRrZ8cPFSiZLgzCLE/l/4VoUaDADuEpFiB9Kuno3r/4s04eU2wiECugDc
-	 k7PdX/0NqsPLDPbXMEAKQrJYh1DHLWr0B8V9H+DFeBnQosE38VFWlhLZQ6A4c9uKsZ
-	 F4C7N2GvmxFw9xnimC0QQuvEJF9ilQdHaCpSewf537udWC7VtW+yUGtwOqN5WGQc45
-	 ZbpVb0JCf+8WQ==
-Date: Wed, 7 Aug 2024 13:39:27 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, jannh@google.com,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH RFT v7 9/9] selftests/clone3: Test shadow stack support
-Message-ID: <e5e5c0fc-3425-4020-ae7c-4b7fd0f1f263@sirena.org.uk>
-References: <20240731-clone3-shadow-stack-v7-0-a9532eebfb1d@kernel.org>
- <20240731-clone3-shadow-stack-v7-9-a9532eebfb1d@kernel.org>
- <202408052046.00BC7CBC@keescook>
- <19ee6fc9-94d7-4420-abd3-7cfdf612df0c@sirena.org.uk>
- <202408062022.34F3558@keescook>
+	s=k20201202; t=1723034382;
+	bh=Eqn14IBRJtx73uJB1xT2++xne0vqAkKUAtQPKTkKmTs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UIoJAty56mbdMDN9d0piijai7GKzzrRt9MLyktqpF5gnU6V52PAv0t5DzONeqZ9qS
+	 b3+6oLsPumsFyh2i11eO6tE9KPyDpt/uvq+CLaExXnDB5mesWG8ZzC0ePFQI7l8Wbj
+	 3SlZIJUjM+jGUY5aIU2XBqBtVa1uUSNeDKTqhAXCJr1BSYcKxnGX31VEQgsoaNForv
+	 EK6xwx0/ljMeBJy2LiHb0f46GbyUH75NBd447KRX74A/q5ALajBQ/lO5Xf1k90fNa0
+	 RqyRVXG4BMCOCCvGCOsybBQ2K0pO7cpUHtMuiUDO3na4FeUUzsGKYBRRyNNMhP0LpD
+	 +xI6zeQdhwO6A==
+Message-ID: <1c0ff0fa-73d3-400f-a58d-15fb9b0574d1@kernel.org>
+Date: Wed, 7 Aug 2024 14:39:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="S00mVDclYxF4Bm5D"
-Content-Disposition: inline
-In-Reply-To: <202408062022.34F3558@keescook>
-X-Cookie: Offer may end without notice.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: sm8550: camss: Add CAMSS block
+ definition
+To: Depeng Shao <quic_depengs@quicinc.com>, andersson@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ bryan.odonoghue@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com,
+ Yongsheng Li <quic_yon@quicinc.com>
+References: <20240807123333.2056518-1-quic_depengs@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240807123333.2056518-1-quic_depengs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 07/08/2024 14:33, Depeng Shao wrote:
+> Add CAMSS block definition for sm8550.
+> 
+> This drop contains definitions for the following components on sm8550:
 
---S00mVDclYxF4Bm5D
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+1. Subject: there is no prefix camss. There is no such file, directory
+or module.
 
-On Tue, Aug 06, 2024 at 10:08:44PM -0700, Kees Cook wrote:
-> On Tue, Aug 06, 2024 at 04:10:02PM +0100, Mark Brown wrote:
+2. You already sent this, so this should be v2 or v3 or vX. Provide
+changelog under ---.
 
-> > >   # Running test 'Shadow stack with no token'
+If there is going to be resend, please fix above.
 
-> It took me a while to figure out where a thread switches shstk (even
-> without this series):
+3. If this was tested on aim300, I am surprised this being not enabled
+on aim300.
 
-> kernel_clone, copy_process, copy_thread, fpu_clone, update_fpu_shstk
-> (and shstk_alloc_thread_stack is called just before update_fpu_shstk).
+Best regards,
+Krzysztof
 
-> I don't understand the token consumption in arch_shstk_post_fork(). This
-> wasn't needed before with the fixed-size new shstk, why is it needed
-> now?
-
-Concerns were raised on earlier rounds of review that since instead of
-allocating the shadow stack as part of creating the new thread we are
-using a previously allocated shadow stack someone could use this as part
-of an exploit.  You could just jump on top of any existing shadow stack
-and cause writes to it.
-
-> Anyway, my attempt to trace the shstk changes for the test:
-
-> write(1, "TAP version 13\n", 15)        = 15
-> write(1, "1..2\n", 5)                   = 5
-> clone3({flags=0, exit_signal=18446744073709551615, stack=NULL, stack_size=0}, 104) = -1 EINVAL (Invalid argument)
-> write(1, "# clone3() syscall supported\n", 29) = 29
-> map_shadow_stack(NULL, 4096, 0)         = 125837480497152
-> write(1, "# Shadow stack supportd\n", 24) = 24
-> write(1, "# Running test 'Shadow stack wit"..., 44) = 44
-> getpid()                                = 4943
-> write(1, "# [4943] Trying clone3() with fl"..., 51) = 51
-> map_shadow_stack(NULL, 4096, 0)         = 125837480488960
-> clone3({flags=CLONE_VM, exit_signal=SIGCHLD, stack=NULL, stack_size=0, /* bytes 88..103 */ "\x00\xf0\x52\xd2\x72\x72\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00"} => {/* bytes 88..103 */ "\x00\xf0\x52\xd2\x72\x72\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00"}, 104) = 4944
-> getpid()                                = 4943
-> write(1, "# I am the parent (4943). My chi"..., 49strace: Process 4944 attached
-> ) = 49
-> [pid  4944] --- SIGSEGV {si_signo=SIGSEGV, si_code=SEGV_CPERR, si_addr=NULL} ---
-> [pid  4943] wait4(-1,  <unfinished ...>
-> [pid  4944] +++ killed by SIGSEGV (core dumped) +++
-
-So we created the thread, then before we get to the wait4() in the
-parent we start delivering a SEGV_CPERR to the child.  The flow for the
-child is as expected.
-
-> <... wait4 resumed>[{WIFSIGNALED(s) && WTERMSIG(s) == SIGSEGV && WCOREDUMP(s)}], __WALL, NULL) = 4944
-> --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_DUMPED, si_pid=4944, si_uid=0, si_status=SIGSEGV, si_utime=0, si_stime=0} ---
-> --- SIGSEGV {si_signo=SIGSEGV, si_code=SEGV_MAPERR, si_addr=0x7272d21fffe8} ---
-> +++ killed by SIGSEGV (core dumped) +++
-
-Then the parent gets an ordinary segfault, not a shadow stack specific
-one, like some memory got deallocated underneath it or a pointer got
-corrupted.
-
-> [  569.153288] shstk_setup: clone3[4943] ssp:7272d2200000
-> [  569.153998] process: copy_thread: clone3[4943] new_ssp:7272d2530000
-> [  569.154002] update_fpu_shstk: clone3[4943] ssp:7272d2530000
-> [  569.154008] shstk_post_fork: clone3[4944]
-> [  569.154011] shstk_post_fork: clone3[4944] sending SIGSEGV post fork
-
-> I don't see an update_fpu_shstk for 4944? Should I with this test?
-
-I'd only expect to see one update, my understanding is that that update
-is for the child but happening in the context of the parent as the hild
-is not yet started.
-
-Does this help:
-
-diff --git a/arch/x86/kernel/shstk.c b/arch/x86/kernel/shstk.c
-index 27acbdf44c5f..d7005974aff5 100644
---- a/arch/x86/kernel/shstk.c
-+++ b/arch/x86/kernel/shstk.c
-@@ -258,6 +258,8 @@ unsigned long shstk_alloc_thread_stack(struct task_struct *tsk,
- 	if (args->shadow_stack) {
- 		addr = args->shadow_stack;
- 		size = args->shadow_stack_size;
-+		shstk->base = 0;
-+		shstk->size = 0;
- 	} else {
- 		/*
- 		 * For CLONE_VFORK the child will share the parents
-
---S00mVDclYxF4Bm5D
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmazav4ACgkQJNaLcl1U
-h9D/7wgAhaU38O4Y+//rCpGPk8ZtbpvGM54DNJvI/AbLeVgZ4ZQ5h+f2Wo7+7UZW
-w6Noo++V0zo7d+XcPPjWLB+xdUFsVQKH4P2Ma2u8ajdkXJD3zcohuxY1CcC+FDJf
-PIVn8xq6385gRPZjcfcV7yRsVa+Hw1yVJ6JmLd6Znn77XXTL+7NuoR9l/VVGzHKW
-0FzwL4PTVhPyBsPSeboy3zvfm9u7Ek4ED3cMH7IW+iokq0tCQKn8vf3ODsP471Hu
-kfj+/a7grljPMrvTEZcOySCx6w0afEqL5P7xnlIrOjfqLrIAS8NRnlZf911gDqXW
-mJNMHSPYhn6ZGyREtN40nKuOqEdECg==
-=7XsP
------END PGP SIGNATURE-----
-
---S00mVDclYxF4Bm5D--
 
