@@ -1,95 +1,103 @@
-Return-Path: <linux-kernel+bounces-278421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6233D94B015
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:54:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD7D94B016
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 943F01C21DCE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:54:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9976A284827
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EF413D25E;
-	Wed,  7 Aug 2024 18:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ZL+8xYWV"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705C1142E90;
+	Wed,  7 Aug 2024 18:54:49 +0000 (UTC)
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0D42770E;
-	Wed,  7 Aug 2024 18:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67771428F3;
+	Wed,  7 Aug 2024 18:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723056882; cv=none; b=NZ/LHUrEX+SoyE8Ljy2gkfxBrRg550PWPeAMdwtEfDzkykzqFboUv1raRsWgzarn8l2zkTf2ArXwADCFvNUu0TT67GYPWI0qOAkw5/O0MOBHW054cqPw36Yq0kmNH/jU2hzRTO17OWZFOW3cLzWCt9nhCz84t7B7l59d3RIfwlY=
+	t=1723056889; cv=none; b=jH2ttVU1OBd8/r2UVLN+vL2umLjdzm/AkvXVQfSIFVXJe2XQ5DzfDkbID07DD3MJA8PttKLoh2+dFsRfEErIHvoW/KRcVmhX4le8QtH1j88yXSLX8LhXKVFobZybTUnuavBzHcYf1kjBgQwa5F9ms1CA0h4QU+jvsGGo6hvYBrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723056882; c=relaxed/simple;
-	bh=eS5OgVnptRZen/HahpgvKUIcE9oPU+vpkiUvT4UU0jI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=f7l82bXoq14JXHhghQ6m6vihJOoUbLYwhrZAFYFa53hozXw4/gA52QgWanhHHy60QyAvjSfryPjuMhmBtiHqLnTuwHINcGE95GWx/LXc6SGGh/Kv3JUSsJYmUET36mScbhTEglZqg50a8I7dWcDO5aMX3Pr+NUVPErkGh+AffeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ZL+8xYWV; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2C6CF418B1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1723056872; bh=HT5EcgEnMFiayl2D7AjPhk3oSJU+IUjydwWSqwJ7WBc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ZL+8xYWV8yK+HQI8E2uPeOxQmBGm+Y0EsjghmRWH0Uk2WNgdyeHWuqs0UVgYa4P8A
-	 dzAHyJ7g1SUpadFFV2v7BmToXcXvgM0nNCg5B5DOcstq64OnJSAAWQ1IUYLAfRP3v4
-	 Gk0F0kNM5ARys62gHRMCbikPpwfY7kIltJvOkwDtBwQZ4Hsw1g+cF4mNTE4kS5J2q9
-	 ZOJa5SuuOce/CElJ+9oB375vrIfOD8X2pOcl3sXAWwa5Xqrbwzy6uP7Vq0iydvf8tj
-	 Ty8OdCetrES8ORXMIarcyfV+mRgC5tc1gQLeL7jZpV8Ma+9pYZLLy/263aetaBULMd
-	 pyQ3ql2n3JY8A==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 2C6CF418B1;
-	Wed,  7 Aug 2024 18:54:32 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Breno Leitao <leitao@debian.org>, Akinobu Mita <akinobu.mita@gmail.com>
-Cc: kuba@kernel.org, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] docs: fault-injection: document cache-filter feature
- for failslab
-In-Reply-To: <20240726120930.3231333-1-leitao@debian.org>
-References: <20240726120930.3231333-1-leitao@debian.org>
-Date: Wed, 07 Aug 2024 12:54:31 -0600
-Message-ID: <87plqkrwns.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1723056889; c=relaxed/simple;
+	bh=76yvAM+UpEbVXx7GXsbI2Zqu+E3evoZtbABWa3EDE0U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e59pbqMEHD3fTmIRVOtb+xXylJnS1W9+BXosiyx54BWzosKdE13BTEPQ4DQcVEl1sAmzxLKd+HgM2A4wwgvuP1TqO/6O7EubHQTMR6ZBZYeKuubKctfeEJ8/TVAwyWEymDjePfsjBtFFLaeTxq9zUZ0J2tIxPgjJ33y637Tb+DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7a130ae7126so126559a12.0;
+        Wed, 07 Aug 2024 11:54:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723056887; x=1723661687;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1imuq1Y5pnXOMpobYE2ECgyePeKad/viC/fTIre5Uss=;
+        b=fq4LOUSMGjAHAzZcd2ldeiond1XAKWmrrH67AlE7oXOVG1WegT82/Hd5l4nBdjASq4
+         oUYU54tmgQlxdjxxsf8zfvv+OLsQssP5E/6TWLUDgWlQJjmvgylJtr9j0vVATX/eJJrU
+         x/ySRKNN+tkVcpIQwIt2PWSRz/KSE+k6KhrXiHRICGpkeYiZ562Q5k5eQMNWCLI+GvPI
+         dVGyGTxUfmQqjRYrLuPdRbp1h9/sCcX65ghzvTSJs523oMs/pj7hjk/qxtQAJm83X9c0
+         2lZgXfliS6fb/wVsQxxXaAHfqnqeAstQ2x45YCXiUrMSyBB70Lv/dmEiASUUhEUqSUW4
+         UZzA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7zD3+I+U2iFiSN82daJ0wLutQ7RmuL0xc0fQTZABMpqjf4mKe80omspWuScXlLOWnXR8C5H0RXh2lyIOcpC7sq095NdHe4y3ukIsMggCK7ChzhE8EiWoyFDGkRZiFpIaVzR9iyQo70VB/8ppsbQ==
+X-Gm-Message-State: AOJu0YwfCd/s/P+QmFrh14pFj3V2YwoP2RmtFF8XMri42rIUET0r3Gsx
+	qMWecT1bSc0g+VFda/wLmC8PfyJXzpW1Nn5+W91rz+vMh2H2fEfpXAfMWw2YawwCwR9V3pH0i0U
+	OTSjXJQ+kl4OaYfXt5IVqIsJdBZw=
+X-Google-Smtp-Source: AGHT+IFd65zGATKjgDD0j0s8JJCpUaylkMJtTo43/IfuQ2vBHNtcKq6DjWD2rDvMABtm8DHr0qojowLr6/VLFX6bp7g=
+X-Received: by 2002:a05:6a20:7495:b0:1c0:e329:5c51 with SMTP id
+ adf61e73a8af0-1c699581ce7mr27301807637.13.1723056886636; Wed, 07 Aug 2024
+ 11:54:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240807112924.448091402@infradead.org>
+In-Reply-To: <20240807112924.448091402@infradead.org>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Wed, 7 Aug 2024 11:54:34 -0700
+Message-ID: <CAM9d7ci7zEQUPTLLUdNci49fJHiM_6iiCn_Gpp05aEPyrJBmAg@mail.gmail.com>
+Subject: Re: [PATCH 0/5] perf: Per PMU context reschedule and misc
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, acme@kernel.org, mark.rutland@arm.com, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, 
+	adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Breno Leitao <leitao@debian.org> writes:
+Hi Peter,
 
-> The failslab fault injection mechanism has an undocumented capability
-> that provides significant utility in testing and debugging. This feature,
-> introduced in commit 4c13dd3b48fcb ("failslab: add ability to filter slab
-> caches"), allows for targeted error injection into specific slab caches.
+On Wed, Aug 7, 2024 at 4:56=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
+> wrote:
 >
-> However, it was inadvertently left undocumented at the time of its
-> implementation.
+> Hi,
 >
-> Add documentation for the cache-filter feature in the failslab mode
-> description. Also, providing a practical example demonstrating how to
-> use cache-filter to inject failures specifically when allocating socket
-> buffers (skbs).
+> This is 'fallout' from Namhyung posting his per-pmu ctx_resched() patches=
+. It
+> started with me trying to clean up and get rid of corner cases, and then =
+got
+> involved when Kan noted the time keeping issue.
 >
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
->  .../fault-injection/fault-injection.rst       | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
+> Anyway, please review / test.
 
-I've applied this, thanks.
+It works blazingly fast!
 
-It seems to me that the fault-injection docs should really move under
-dev-tools; does anybody object to that?
+  # ./stress-pmu
+  delta: 0.000307 sec (3 usec/op)
+
+I found a problem with my patch that it called __pmu_ctx_sched_out() for
+nothing (I guess is_active only has EVENT_TIME).  I thought ctx_sched_out()
+would stop if it doesn't change EVENT_ALL but it iterated all PMUs anyway.
+
+But with this change we don't need ctx_sched_out(EVENT_TIME) anymore.
+
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
 
 Thanks,
-
-jon
+Namhyung
 
