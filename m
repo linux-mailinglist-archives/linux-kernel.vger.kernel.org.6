@@ -1,136 +1,154 @@
-Return-Path: <linux-kernel+bounces-278378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8E2194AF7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:17:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D9894AF84
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65082B21CD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:17:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 094761F22155
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858E413F012;
-	Wed,  7 Aug 2024 18:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FFE13F43E;
+	Wed,  7 Aug 2024 18:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hEbtDLOP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MplMbMIc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WAVHaSug"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651341097B;
-	Wed,  7 Aug 2024 18:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514BF78C7E;
+	Wed,  7 Aug 2024 18:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723054617; cv=none; b=V3YxHYSVD+eLPrJghazGan/AWAH97hd0+5BaOvxuS5XRyD7YFd2eC53LagCvFWM3QO1Rweo1LQ0r6UZ6WAQ21tskIjxM1633nMyPJtc8iGE0KedR+EMfmvBqGYJavJt+pR40qolyYSFCWEkVuh9RI3BJjJSuL49TTWKBkYLYVeI=
+	t=1723054778; cv=none; b=jcwqhYcNBxgzbQBnYGiQS3VEWP84rzzyqqsw4i8AaQcTlpa5EPjBC5bQjC1RNZYhMr8KT9rJ0dBMoODhcKajZDzoGinQaUFI/Tnlc8Lw+ao4eqHFFHVclOELs5Sx+xet5dSUeftb2gdzZmigErrSURA/Jg2tOKxTyxCytv4NDnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723054617; c=relaxed/simple;
-	bh=yROIA677TF/ptHCBZbQ8b2PKtK+5AvIjyvqIXIWKyVo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=kmv20dRv+1kn07yABlHjC1TqVofUKJiwbD+CBiE1pIY4DKdBQjVyHG2ON34SSI8NJWc66m2hW+nOBbQtw9fq2YdbydOszPYZqm0+pUJRJX6362G9I8phEtV0MoJthu0thy/omrzbMyhlbvPrJo9EX4plpXd5vHBWfixanejKND4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hEbtDLOP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MplMbMIc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 07 Aug 2024 18:16:54 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723054614;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tsx5wVhT3+i+fjxR8PZdNQ8s4YXnX0S5IV0PNFpN8gg=;
-	b=hEbtDLOP9FvS7ipUoZ/kwf20PTfx+siuvNv/95KYVQmsmIy3yYJVyLn+3E64UtfkcplHPZ
-	381e3PKsOiQI9tCkJE68mOyoXqmW088S977S6JaYBgtgLOUkxJkJ9uZdHeXYAJ5S6cw5oY
-	UIB72uzBIG8HYKppEQjNQyJMd/qan/hMRlYBxMgF90xT2nA/CCQmBLWEeSUq0CCeXsyict
-	AVcBbkLziR0+ys3teEnKQ3ep2Qj66//jgbVV6Fs8PRg0GTEKD4I6WqgVwF+B5I/arFrzNs
-	22j50wcHmrY52pgYjdOL46gf6wHY1rKtq5KP1l54R0DQKpMErK3Dr9HO4nt4ww==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723054614;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tsx5wVhT3+i+fjxR8PZdNQ8s4YXnX0S5IV0PNFpN8gg=;
-	b=MplMbMIc+hC08PxgO0iP5918GSKqGGx2R3yKn/pX/wGxFh1cjjhuDn1/uagvAcsR8UnEk4
-	WaUsnpM0B8qiIsDA==
-From: "tip-bot2 for Zhiquan Li" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/urgent] x86/acpi: Remove __ro_after_init from acpi_mp_wake_mailbox
-Cc: Zhiquan Li <zhiquan1.li@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240805103531.1230635-1-zhiquan1.li@intel.com>
-References: <20240805103531.1230635-1-zhiquan1.li@intel.com>
+	s=arc-20240116; t=1723054778; c=relaxed/simple;
+	bh=P+T4BKP1YW+rpCuUoCu3NP8xYBTKn2cfdYb5TO1WseY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iV/21QZd2eVBK/KB6MNFKg6hbGXq/qr+oIfXRgT1kvujejFdzE+ZxBSU0hwMVmCgRP0PYHlxgEo2DV+SXvK1fzpaFrU0ivyQ3EkpazwQEFz5IoGIx36Q8DpEQsbMfSsn2HI5EUt/5OiEQOau+niYyGXRkijCkeFsxCy9AXtnZQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WAVHaSug; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7a115c427f1so110721a12.0;
+        Wed, 07 Aug 2024 11:19:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723054776; x=1723659576; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HLh/tGSnf4KVpltLnZCFCEYBN1Sy0qgXLUyy8qKyWvY=;
+        b=WAVHaSugDcz6c/yoLVp98Wfv5+cuGbzA1MuD/vdWriEqVymI5AaUa07TcKef6u9uXC
+         GF1M7SL591BNjk5Va60l87cbm+m2v1k43ganEGHzYCgnXC9JCdoIaf6k1RixzcOA3ULG
+         DLooDLJpUFvsVv+gdfXh3aUu2h4WSa5pqzrkI4O9R596uHf7w0BzCuqJSKjea99BiJTq
+         eB+0IqUx58KpZCaz0v/Ju6+Q9+ml/q2lKxEZXCP+BQwLMh7zZ5rB6HEaJzsMoFvQ8bkD
+         5VsLxGRblRDJyXBF3gqXyRpZO2ND028jSQwderQYZ3kFAP76H8UD7kHfS9EezZx2SwKm
+         wGFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723054776; x=1723659576;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HLh/tGSnf4KVpltLnZCFCEYBN1Sy0qgXLUyy8qKyWvY=;
+        b=V7Niwff0JtFqD8qdS3T0eW2JLtl1k1B/uqNKXxcGSfLW77UV5TAoxCs3vb+j6Lx0tJ
+         7Gl1ZMJ0gNy6t553Afyb+sAQW3LbZZ5/Q31ov8Q5bBr+fwPgGUxQH8HpoOe/07jEclrM
+         NCA+HRpWmlG1C0onYgzW9AM1RT1igxRzmTx142+wyK1tlae92T4dy0rHX6LevnNo1hxk
+         NxU5qiTM7stTtrtakELlLAfHLS8n/EN/0gWW9InaDH1iYRa8jE2b0xzt2/2UijGbEs6h
+         Biuo8x8imOkhMXW4azE/SUskz/dSV5kF2MtwypJrU5NR8KXhypgD0Dpvhgex506X8n8n
+         bDNg==
+X-Forwarded-Encrypted: i=1; AJvYcCV68lR1GuCTBvcOCWWxn9RKukzDWMlEpqovqd7ffxmcGsVDzC+Yq3I3cursatqeCOFQkIyv5hDaGMyV9NIZkujcPyGhWwQ8mOKpPidHS+jiMeFZ15DP+DCS1nCsPj351oBLw1TvQaLTjTQ=
+X-Gm-Message-State: AOJu0YwLssjYoeSX2nH57J4NrAC7t1nVzkJKw6UlAJru2SpnZiS+h16l
+	vIc9/Q92FBuKTvPEVqS0X2JnjoNppy2m5BajVAU06njtdKeN7Z/b
+X-Google-Smtp-Source: AGHT+IEa6XbSxxD+9mFxIUaBupGjgBWy+l5Fv4hGRQwAlhZkls51VFy+7Rfm128EkQxaLmeVuiW+VQ==
+X-Received: by 2002:a17:90b:d94:b0:2c9:5f1e:1a62 with SMTP id 98e67ed59e1d1-2cff95401f4mr18063745a91.36.1723054776380;
+        Wed, 07 Aug 2024 11:19:36 -0700 (PDT)
+Received: from embed-PC.. ([110.225.178.109])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b374b3cesm1913041a91.48.2024.08.07.11.19.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 11:19:36 -0700 (PDT)
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: jdelvare@suse.com,
+	linux@roeck-us.net
+Cc: skhan@linuxfoundation.org,
+	rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] hwmon: (lm93) Return error values on read failure
+Date: Wed,  7 Aug 2024 23:47:46 +0530
+Message-Id: <20240807181746.508972-1-abhishektamboli9@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172305461432.2215.4437111892574627588.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/urgent branch of tip:
+Fix the issue of lm93_read_byte() and lm93_read_word() return 0 on
+read failure after retries, which could be confused with valid data.
 
-Commit-ID:     ab84ba647f2c94ac4d0c3fc6951c49f08aa1fcf7
-Gitweb:        https://git.kernel.org/tip/ab84ba647f2c94ac4d0c3fc6951c49f08aa1fcf7
-Author:        Zhiquan Li <zhiquan1.li@intel.com>
-AuthorDate:    Mon, 05 Aug 2024 18:35:31 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 07 Aug 2024 20:04:38 +02:00
+Address the TODO: what to return in case of error?
 
-x86/acpi: Remove __ro_after_init from acpi_mp_wake_mailbox
-
-On a platform using the "Multiprocessor Wakeup Structure"[1] to startup
-secondary CPUs the control processor needs to memremap() the physical
-address of the MP Wakeup Structure mailbox to the variable
-acpi_mp_wake_mailbox, which holds the virtual address of mailbox.
-
-To wake up the AP the control processor writes the APIC ID of AP, the
-wakeup vector and the ACPI_MP_WAKE_COMMAND_WAKEUP command into the mailbox.
-
-Current implementation doesn't consider the case which restricts boot time
-CPU bringup to 1 with the kernel parameter "maxcpus=1" and brings other
-CPUs online later from user space as it sets acpi_mp_wake_mailbox to
-read-only after init.  So when the first AP is tried to brought online
-after init, the attempt to update the variable results in a kernel panic.
-
-The memremap() call that initializes the variable cannot be moved into
-acpi_parse_mp_wake() because memremap() is not functional at that point in
-the boot process. Also as the APs might never be brought up, keep the
-memremap() call in acpi_wakeup_cpu() so that the operation only takes place
-when needed.
-
-Fixes: 24dd05da8c79 ("x86/apic: Mark acpi_mp_wake_* variables as __ro_after_init")
-Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Link: https://lore.kernel.org/all/20240805103531.1230635-1-zhiquan1.li@intel.com
+Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
 ---
- arch/x86/kernel/acpi/madt_wakeup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwmon/lm93.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/acpi/madt_wakeup.c b/arch/x86/kernel/acpi/madt_wakeup.c
-index 6cfe762..d5ef621 100644
---- a/arch/x86/kernel/acpi/madt_wakeup.c
-+++ b/arch/x86/kernel/acpi/madt_wakeup.c
-@@ -19,7 +19,7 @@
- static u64 acpi_mp_wake_mailbox_paddr __ro_after_init;
+diff --git a/drivers/hwmon/lm93.c b/drivers/hwmon/lm93.c
+index be4853fad80f..b76f3c1c6297 100644
+--- a/drivers/hwmon/lm93.c
++++ b/drivers/hwmon/lm93.c
+@@ -798,6 +798,7 @@ static unsigned LM93_ALARMS_FROM_REG(struct block1_t b1)
+ static u8 lm93_read_byte(struct i2c_client *client, u8 reg)
+ {
+ 	int value, i;
++	int ret;
  
- /* Virtual address of the Multiprocessor Wakeup Structure mailbox */
--static struct acpi_madt_multiproc_wakeup_mailbox *acpi_mp_wake_mailbox __ro_after_init;
-+static struct acpi_madt_multiproc_wakeup_mailbox *acpi_mp_wake_mailbox;
+ 	/* retry in case of read errors */
+ 	for (i = 1; i <= MAX_RETRIES; i++) {
+@@ -808,14 +809,14 @@ static u8 lm93_read_byte(struct i2c_client *client, u8 reg)
+ 			dev_warn(&client->dev,
+ 				 "lm93: read byte data failed, address 0x%02x.\n",
+ 				 reg);
++			ret = value;
+ 			mdelay(i + 3);
+ 		}
  
- static u64 acpi_mp_pgd __ro_after_init;
- static u64 acpi_mp_reset_vector_paddr __ro_after_init;
+ 	}
+ 
+-	/* <TODO> what to return in case of error? */
+ 	dev_err(&client->dev, "lm93: All read byte retries failed!!\n");
+-	return 0;
++	return ret;
+ }
+ 
+ static int lm93_write_byte(struct i2c_client *client, u8 reg, u8 value)
+@@ -836,6 +837,7 @@ static int lm93_write_byte(struct i2c_client *client, u8 reg, u8 value)
+ static u16 lm93_read_word(struct i2c_client *client, u8 reg)
+ {
+ 	int value, i;
++	int ret;
+ 
+ 	/* retry in case of read errors */
+ 	for (i = 1; i <= MAX_RETRIES; i++) {
+@@ -846,14 +848,14 @@ static u16 lm93_read_word(struct i2c_client *client, u8 reg)
+ 			dev_warn(&client->dev,
+ 				 "lm93: read word data failed, address 0x%02x.\n",
+ 				 reg);
++			ret = value;
+ 			mdelay(i + 3);
+ 		}
+ 
+ 	}
+ 
+-	/* <TODO> what to return in case of error? */
+ 	dev_err(&client->dev, "lm93: All read word retries failed!!\n");
+-	return 0;
++	return ret;
+ }
+ 
+ static int lm93_write_word(struct i2c_client *client, u8 reg, u16 value)
+-- 
+2.34.1
+
 
