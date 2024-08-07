@@ -1,178 +1,104 @@
-Return-Path: <linux-kernel+bounces-277492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE32694A21D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:56:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D813A94A22C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C2AD2858E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:56:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 937D0286A47
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04EA1C7B7C;
-	Wed,  7 Aug 2024 07:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E4A1C823E;
+	Wed,  7 Aug 2024 07:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GvGNjCaW"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkqZPmQM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12071C4610
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 07:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355031C7B7C;
+	Wed,  7 Aug 2024 07:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723017393; cv=none; b=Ja8JtVOOGphKZ3N/yx9oVDE9wa+nHqferw90llX4k72b7NTbrsvJCz+Hy6UjkXLmSkEP5GliwEiF5D6YMMCSHEik3T36w1/VKPnBskyDrPekJBr8Uf7hew5Ng+t1EXXKgyOYDAfIGSnAJ//f+MFGfnvwjkaW3GApgLBmipqnVmw=
+	t=1723017439; cv=none; b=ifkCMoES2QABhzGPPVvXAC9ERgesk45qC/ztiQ51W17kz4GAyKP04vIELCwBzUYPDTPFni9GX/SEfMUhcE9n+3rc1qpl/9mw5/JV2QxroKe7q22ByWCGwmgiz60jqOjvCCs5LEAuAf7p1vwcOFPIUkONkGcMwM+M2fiCn7rARUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723017393; c=relaxed/simple;
-	bh=IAZMes1qZEhf4/i8wwZhwnmT1ZqHqAuTI4RLTexGsj8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=M/MxkiMkWUxPIc9/gepQqaGbo2sQ24WhC3abuO6CE/fexzRY4HNx1iR3avbZBIR5KQee5HRt2jNT6K4wNLKXwmb5Rk6vnO2BR3Rjd5i8LrPLdoz2GnNrcUc34A8qGcqsjo4Oj6lQkx74vxlvzuEASj9qEsUYdl04/7LHdWWuce0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GvGNjCaW; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4257d5fc9b7so14102225e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 00:56:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723017389; x=1723622189; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ktBsuVntx5CKBaIkvERUELLULJMhvpoXFdOfuPtWMM=;
-        b=GvGNjCaWLX2LzyX0N+x4mkQNfDgeAS6iji4/ewTh4c3j1Nu+6sT3Ak8fjyNXYiFtZ5
-         gxVdAD+oQESj6dsowEJMYYIUWAmB7i/daBbK7BjKnaM/VT1d2beU3eso7SdPJHnnFc14
-         r7+JdTan4jxb//VMqrGQZ4LfCn510W5H2fhqlP9U3SSOwIjHwwkdWY0znDFrjqIMLVta
-         tBL+bAk1T2R7bJbX106Lblmezq0gtQuMZ4pv8NRVFPG4djypA8HxVGVKxs9hFoXiSkW5
-         vU2Fu2Azuz2Kkf8O1/yO6/ps0sVMGYwn8ar0Vpf5N4fGW03YIS6SdwoQbDls6eQCvtpK
-         zLOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723017389; x=1723622189;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ktBsuVntx5CKBaIkvERUELLULJMhvpoXFdOfuPtWMM=;
-        b=a9U9ErUo35/S+kphkgThQd9EqaY13yxmqJ54hNc3N0KsAP2YGAan6iqldPFxKaxYB7
-         nPIgkTJnLKSBmq+7muhKmABUpUQNCfuv3//0LaWaW7GeMB3ZWUxm3FwU8LJU3EcqgMWK
-         Sqxyluk6/M0b6mwXORdxOM49HB3t/EYSOfFeDcgwksZHP6ajtmotW7OV4Z83MpxDZrHn
-         8RlfaQFs4rzdfrYX7FXFXV/9fTEslVmiAz6FXLRiNSPNiEeYwJVVpvbGIdAZOFOaMQ/K
-         +3gTo2GdzyWoq2xO/Bxwaf0bcXnVB+RfbtPSsuD5t66W4r/FMzN37AgsE9uGRY96oh1m
-         x1og==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ7sM33gLnb3b4CvjO5YHFjtZerIx3mC7rW2lNhL7IEPQ2Eq7LidAQC1YZA7405rFDYsAuqP/vv0RZVNGuQKoSf8m4Tzh/KQ56OmHK
-X-Gm-Message-State: AOJu0Yy0Wlu02hY9nUSzbzvn36FJfkZcupE4hesInKcUPT2H+QLol/6F
-	pUw7FV2AvCCPNT9PNYA6UnmhEuvjQEZhlymXhPubQab2Y23vuyyFMgive5hF6Rw=
-X-Google-Smtp-Source: AGHT+IGskVKryQc7c2Sq7ODREtI2rDRljGWb2FWdDD6mhqLi5bMAsqY/qQptHY9YdskM5dh8W7Fw0A==
-X-Received: by 2002:a05:600c:4713:b0:426:593c:9359 with SMTP id 5b1f17b1804b1-428e6b954cfmr178276335e9.32.1723017388917;
-        Wed, 07 Aug 2024 00:56:28 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:90f1:3c4c:261c:b0f5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42905991434sm16305765e9.30.2024.08.07.00.56.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 00:56:28 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Xianwei Zhao <xianwei.zhao@amlogic.com>,  Krzysztof Kozlowski
- <krzk@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>,  Michael
- Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
-  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>,  Chuan Liu <chuan.liu@amlogic.com>,
-  Kevin Hilman <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: fix C3 PLL input parameter
-In-Reply-To: <2da06dac-7a1a-461c-956d-13b74320723e@linaro.org> (Krzysztof
-	Kozlowski's message of "Wed, 7 Aug 2024 07:44:18 +0200")
-References: <20240806-c3_add_node-v1-0-c0de41341632@amlogic.com>
-	<20240806-c3_add_node-v1-1-c0de41341632@amlogic.com>
-	<b63fe216-ee29-489e-a175-e1525ac12722@kernel.org>
-	<86b01ecb-6ca8-496e-b3a8-0b21bb951a60@amlogic.com>
-	<2da06dac-7a1a-461c-956d-13b74320723e@linaro.org>
-Date: Wed, 07 Aug 2024 09:56:27 +0200
-Message-ID: <1jikwczrys.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1723017439; c=relaxed/simple;
+	bh=s08IpeR5OJliwFxXvYuOnvxCOlF6Vzqg/pmxO7QBo+c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fweAG37v/qHUTpr1bowjbrz83X9yqKkMshCu2Qc/F3EH7mKe1/JG7e+Y38IEX4qHxFOC3RIGQ62x24HmjQ1W/N6pdIQq/6QEuLlUp+kKdPqWXs46KuhHB+g6uc+2DjMQr+BSjmvmFd0iHCNrzOKhivM5UGp2RDJJuru0hfJaj5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkqZPmQM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38AEFC4AF10;
+	Wed,  7 Aug 2024 07:57:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723017439;
+	bh=s08IpeR5OJliwFxXvYuOnvxCOlF6Vzqg/pmxO7QBo+c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZkqZPmQMHNYrrcOgKiaBDlMdww75Py2+QzisIWH+oKPgxnP1zzlBSCvZX7fMXDwxq
+	 GLkcCV92AsnN9pk51mNosUc1j0W/3SxSri4erDpXKpmdmYS2UskYyFK6ImL7t0U0Rm
+	 9cm4nUVQBhzMQvKwfvI1uCd0ZXL0Xie+Bwt8J1EzJjY5MnV4lltBrOHuWIVCdN3VJ9
+	 B0jHOUX3AMcQAcVNLSwPYtG9T6JLBd1wsQXBBbDNh/PlqEa9VJltGrD3L3MVZydH5d
+	 tEQ7J+7mYLjmOHidIJmgi39UobbACTGyVd76p4ej7CP7l9J5xuQXoXqpehHFwNfe4p
+	 1lrz1XsNukX8Q==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: renesas: fix r9a09g057_cpg_info link error
+Date: Wed,  7 Aug 2024 09:56:58 +0200
+Message-Id: <20240807075714.2156445-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Wed 07 Aug 2024 at 07:44, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+From: Arnd Bergmann <arnd@arndb.de>
 
-> On 07/08/2024 03:55, Xianwei Zhao wrote:
->> Hi Krzysztof,
->>      Thanks for your review.
->> 
->> On 2024/8/6 21:10, Krzysztof Kozlowski wrote:
->>> [ EXTERNAL EMAIL ]
->>>
->>> On 06/08/2024 12:27, Xianwei Zhao via B4 Relay wrote:
->>>> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
->>>>
->>>> Add C3 PLL controller input clock parameters "fix".
->>>
->>> What is "parameters" here? Why you are adding it? Is it missing?
->>> Something is not working?
->>>
->> Yes. The previous submission was lost.
->
-> What submission is lost?
->
+The rzv2g-cpg.c driver unconditionally links into the r9a09g057
+one, but that may be disabled:
 
-He means it was just forgotten in the submission and noboby picked up on
-it at the time. He is not not trying to sneak anything new. That input
-is used everywhere in the driver and nothing would work without it.
+aarch64-linux-ld: drivers/clk/renesas/rzv2h-cpg.o:(.rodata+0x440): undefined reference to `r9a09g057_cpg_info'
 
-It is just an honest mistake that he is trying to correct
+Use the same approach here as with the rzg2l variant, using an #ifdef
+around tha data.
 
-Indeed the description could certainly detail this a bit more
+I think both drivers would be better off doing the abstraction the other
+way round, with the platform_driver structure defined in the most specific
+file and the common bits as a library that exports common functions.
+Changing it that way would require a larger rework of course.
 
->> 
->>>>
->>>> Fixes: 0e6be855a96d ("dt-bindings: clock: add Amlogic C3 PLL clock controller")
->>>
->>> Why? What bug are you fixing?
->> 
->> The input clock of PLL clock controller need the clock whose fw_name is 
->> called "fix".
->
-> Then explain this in commit msg.
->
->>>
->>>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
->>>> ---
->>>>   Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml | 7 +++++--
->>>>   1 file changed, 5 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
->>>> index 43de3c6fc1cf..700865cc9792 100644
->>>> --- a/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
->>>> +++ b/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
->>>> @@ -24,11 +24,13 @@ properties:
->>>>       items:
->>>>         - description: input top pll
->>>>         - description: input mclk pll
->>>> +      - description: input fix pll
->>>>
->>>>     clock-names:
->>>>       items:
->>>>         - const: top
->>>>         - const: mclk
->>>> +      - const: fix
->>>
->>> and that's not an ABI break because?
->> This is "fixed" clock.
->> I will modify "fix" to "fixed",in next version.
+Fixes: 42b54d52ecb7 ("clk: renesas: Add RZ/V2H(P) CPG driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/renesas/rzv2h-cpg.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-No keep the original name. No reason to change it and make more of a mess.
-
->
-> With "fixed" it is still ABI break, right?
-
-It is an ABI break but on a new and immature platform.
-Noboby could really use that platform at this stage, so nothing is going
-to break on anyone really.
-
->
-> Best regards,
-> Krzysztof
-
+diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
+index bc0c3bbdb997..34221046dc46 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.c
++++ b/drivers/clk/renesas/rzv2h-cpg.c
+@@ -664,10 +664,12 @@ static int __init rzv2h_cpg_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id rzv2h_cpg_match[] = {
++#ifdef CONFIG_CLK_R9A09G057
+ 	{
+ 		.compatible = "renesas,r9a09g057-cpg",
+ 		.data = &r9a09g057_cpg_info,
+ 	},
++#endif
+ 	{ /* sentinel */ }
+ };
+ 
 -- 
-Jerome
+2.39.2
+
 
