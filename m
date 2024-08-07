@@ -1,144 +1,109 @@
-Return-Path: <linux-kernel+bounces-277686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D24894A4BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:51:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390A694A4BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 913C71C21069
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:51:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3B0F1F22AAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0D11D174F;
-	Wed,  7 Aug 2024 09:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6361D1F67;
+	Wed,  7 Aug 2024 09:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M0ZdMHXs"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GaH0JaAH"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC0E1AE87B;
-	Wed,  7 Aug 2024 09:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945F61C6899;
+	Wed,  7 Aug 2024 09:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723024267; cv=none; b=kk0JFv07oZiahElpm1fdqGKy7ji2TziFdLH55hPyDBuTHhZph/eScxE3FgHp6T5+1SjNmCxxq7eTIIpq+QGCOMsBEzF6RMP4JyolUFNmWP0abFGJwoUGszXxSH3eAcCGNwk6gBs6SNTAsrVR1W0FMwigsJimqiM7WTfGgOs6Czo=
+	t=1723024268; cv=none; b=TS2WFExj3pJooHtGkHaQiaKcZqlc5EpkTMRg7OfdQIikrQpd7/ffYsRPumrCDOWlad5gmXsCmn/8G2EjZAZGMEe9pdm43A38j3bX7qvkO4mpdvjd/ics2OC6sRSdD6GKSF1W8EpCG6C775pD1MLLlGhFRB1XIVw4k+laznagZmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723024267; c=relaxed/simple;
-	bh=bujS5tNHpPQZuSVa4aVCvUXPM+htXR7bDrzdJ/qKEAk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UcrZ3c0Zt7rOQhk7Ik2/B339PCI/7Ge0DmoAcfRP9Xxwpn/boKgFJ6FDr4x6Gul2BSpMX1OunykKLMSwiM1cZA034CLeTKK+6FD6LDh17ZhUnVvluZmoVrq1uMG5gAVCX69cPlf+6mz0oaLDc5N8b/3FdbeI8pI1zNfOYxm9sN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M0ZdMHXs; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1723024268; c=relaxed/simple;
+	bh=x9RrYOQoqM0N/+EXIAcKxOANoIPzAEMXgY3AnYDZ7Mo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=tInMfROiochYOWwUBUfBWRIyD5o69drHewuQ7LnkcOyw7WG5rICOP+oT4uvFXVutYgqFocI2MNuDC4wuJrADAgHg5HMtCl2avNJEVjxa807TDpwCAf+bXHt3lE842m8HlUeNz02vCN/nj+/xY0XZOz+HB7EJFpeJlIP0zl7d/h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GaH0JaAH; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7d89bb07e7so201715766b.3;
-        Wed, 07 Aug 2024 02:51:05 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f16767830dso16532741fa.0;
+        Wed, 07 Aug 2024 02:51:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723024264; x=1723629064; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hXnNRuyOF/eWPZMzqKvL4vKAqfDFwvUatk3tLmfpuAc=;
-        b=M0ZdMHXsi2PleYfnnERcrKEhIsrA5fX/x+xNQNSWXrN3+LqDb2PuZkPINy3/bCEYJh
-         7rFGk7LlOAmrD9/4yf+c50YjG7X2yovzEoYuZQk9JN0vEmH+QjuwszC2VJsYBOl+++Ng
-         9GJBnY0F2wm0n7ZcFbYR6VWufR5ua/td4J47jqxcVIOgVRoOU82uKRjLqHSxSVijuF34
-         CXUbKRg/K0zpBEyE2w2l00l9hgo/yCattMYNklXsxZyJXuaqMGfXYQzRtvH7/DimUY39
-         J2zboDzJB90Z8HuTioP+t2STINfMqi8z0oFJI0OXQbVkNIKoiLpwr0+gHkjtTS9PksMb
-         dPDA==
+        d=gmail.com; s=20230601; t=1723024265; x=1723629065; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=poExAmqkt64eH1e6VYHoIlA0b9OJ8PRsnpcDsZX2m9Y=;
+        b=GaH0JaAHv+fGsB6kyup1PuDxXad3hsm0nFCvy+Bo0hulVs8sSvBe6qPeQdGHHTTO05
+         +sXN3RL7Fnr9Mhir0sin3iP3UazshrphKYCeQq5qyX4XfnEaVgtTU2VpGilU9qrzRwER
+         AGXS2fs9sNVQIGOysU14iowWlmFSVVmPoULFH6vh3JdupW2J7WyygG/P5zgjWDf+TT79
+         AVW+ovMpc5nXnIWYzs2TNoRjXj3+JuZ1aGbWs52htQPO0GDCOTt3PFWyFCMwa3C1hMra
+         sSiAY4JXBc5ktzVkl3wT9Tr57svnDZddlf8HBLMYHM5qYT/koD2l3w5oYevxf/Cdu8qH
+         ONog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723024264; x=1723629064;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1723024265; x=1723629065;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hXnNRuyOF/eWPZMzqKvL4vKAqfDFwvUatk3tLmfpuAc=;
-        b=W7N4nlZdahiEdjCDvzWdwXa2w55T1pAdEJr4Z3Lfr8VtgPF6UUatkIPZOFRwfHEWp9
-         ILx6gFRMZtHPJSU/bQ62/gN9lRpmgC8LDO+8EFDCSV7fBRZ3CdqbN4vse63HkmrcTwBD
-         +QG/NkXSKhBJYegMQiStVvAYbM+jCuQ1ArMwcXiYB+iQmfgV+SjMSZVzCsmg6qSgC3ov
-         mPV1M6QxUI43Kir3yph1gR5EJnXoo7GV7BFEWtUXZmFIpL0eogSJIex0U7qCm8oz0hOJ
-         tzTVm1KMPnNLieUGn1mrEpes6Q8S+1BWior8R99W8v8Oii3hyiHQp5mNgBHilt2NUI43
-         YZ3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXGtTfHmwcTYDDzmjllSKiWBjPgQNuyFyeNmvQSk1IEz9jvVB+LWSP7TMRBLf/GLJAEBcB+8rMv0prGtFQc8FcP2Toyy6Tb5NEOfXSxBsL3X3iyJFbJMLVAZ6Pb2LqwNdsY2223znhOgadjvA==
-X-Gm-Message-State: AOJu0YwfGOxLgrsnFT8+PsCYwRklOveCMhSckuSCGTJL32HVaJ1IizO7
-	sLgx17xtNekYJ2wk6/b9w/8HcAdMTtefNUNu4YUwFjQhvdLd/3Pnqfy6cE0s/kP/m/AjpOnJd/O
-	+VeL0aaM08n7DvRAgbY2BedmqY6I=
-X-Google-Smtp-Source: AGHT+IFuJJSAfymoexc0xceu8yZeIOR19MjOxo/KrMwNuaFAvLrwDjZiBvHSS4OvimC9+1oqlh885P3WoOUlevBROHo=
-X-Received: by 2002:a17:907:3d8c:b0:a7a:b643:654b with SMTP id
- a640c23a62f3a-a7dc507105dmr1388891266b.50.1723024263619; Wed, 07 Aug 2024
- 02:51:03 -0700 (PDT)
+        bh=poExAmqkt64eH1e6VYHoIlA0b9OJ8PRsnpcDsZX2m9Y=;
+        b=W9QNAt1hSl/mtCx9ig24NeZsv5dbrxsQQkVJ9x6STFFYJYng6DFU+O3Y9PLDEGa1yM
+         H6d7yPmFM9emQ+AFRMHI9Nuog833w0U2Tk2mW493mVI78uHmPcv98zEakeu8pTEuBGr1
+         MztfSmyGusLR+PpXxDC29KFavJVRaHD9eY0YPBZ/gUGOqLzWpSqarSZm90CpABMkGP/G
+         OWnWsIWrZZ2RnkeuBcu67AdY7uJsU16jJLdI4w9J5il5WTN5Yvv9VLU9NSusGZ/NCppS
+         C5Nzu6da4pV4s71gNQ6aqkzypjO0synn+5fPngCnp8uhl2XkLmF4TY3qXilXs37uyjn+
+         fLiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsTHoGeuLLNszNRE1GWh1Jcdb7lGpjWAo/285ZfXNcPIblKezQuSLTyII7bpYHKzVg7G9VCG/GVipAmFuLwwXJGL6c87ysduyiDKTe
+X-Gm-Message-State: AOJu0YwLGxrWw9WSyCZ+n6n9ic+3uZsbTe2+Rh2WilJY58X0eaoWDTzD
+	EdgTEhxB9FQpSHX0bEHhBz7/mSdVC171TKVK3rI2EC7tLJMVRFI8M5hJBA==
+X-Google-Smtp-Source: AGHT+IGtRm2MZyxQU5DjwTqC6R1Nmt8+aoLA0OU4Od4FnrlrFk85aBMUFhTKsEthWOj89EVGfQ9R8Q==
+X-Received: by 2002:a2e:b04b:0:b0:2f0:1a44:cdea with SMTP id 38308e7fff4ca-2f15aaab091mr108222631fa.26.1723024264260;
+        Wed, 07 Aug 2024 02:51:04 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290580c546sm21499445e9.40.2024.08.07.02.51.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 02:51:03 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Guenter Roeck <linux@roeck-us.net>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] watchdog: Fix spelling mistake in ABI documentation
+Date: Wed,  7 Aug 2024 10:51:03 +0100
+Message-Id: <20240807095103.4174982-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806144628.874350-1-mjguzik@gmail.com> <20240806155319.GP5334@ZenIV>
- <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
- <20240807033820.GS5334@ZenIV> <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
- <20240807062300.GU5334@ZenIV> <20240807063350.GV5334@ZenIV>
- <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
- <20240807070552.GW5334@ZenIV> <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
- <20240807075218.GX5334@ZenIV> <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
-In-Reply-To: <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 7 Aug 2024 11:50:50 +0200
-Message-ID: <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
-Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-This eventually broke:
+There is a spelling mistake, pretimeout_avaialable_governors should
+be pretimeout_available_governors. Fix it.
 
-[ 1297.949437] BUG: kernel NULL pointer dereference, address: 0000000000000028
-[ 1297.951840] #PF: supervisor read access in kernel mode
-[ 1297.953548] #PF: error_code(0x0000) - not-present page
-[ 1297.954984] PGD 109590067 P4D 0
-[ 1297.955533] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
-[ 1297.956340] CPU: 18 UID: 0 PID: 1113 Comm: cron Not tainted
-6.11.0-rc1-00003-g80efb96e5cd4 #291
-[ 1297.958090] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
-BIOS rel-1.16.1-0-g3208b098f51a-prebuilt.qemu.org 04/01/2014
-[ 1297.959926] RIP: 0010:vfs_tmpfile+0x162/0x230
-[ 1297.960666] Code: b2 8b 55 48 83 e2 20 83 fa 01 19 ff 81 e7 00 f0
-ff ff 81 c7 20 10 00 00 a9 00 40 00
-04 75 90 48 8b 85 a0 00 00 00 4c 8b 48 30 <49> 8b 51 28 48 8b 92 b8 03
-00 00 48 85 d2 0f 84 71 ff ff ff 48 8b
-[ 1297.963682] RSP: 0018:ff38d126c19c3cc0 EFLAGS: 00010246
-[ 1297.964549] RAX: ff2c2c8c89a3b980 RBX: 0000000000000000 RCX: 0000000000000002
-[ 1297.965714] RDX: 0000000000000000 RSI: ff2c2c8c89a3ba30 RDI: 0000000000000020
-[ 1297.966872] RBP: ff2c2c8c91917b00 R08: 0000000000000000 R09: 0000000000000000
-[ 1297.968046] R10: 0000000000000000 R11: ff2c2c8c91cd23f0 R12: ffffffffb7b91e20
-[ 1297.969202] R13: ff38d126c19c3d48 R14: ff2c2c8c89a3b980 R15: ff2c2c8c89a00a58
-[ 1297.970364] FS:  00007ff81cb63840(0000) GS:ff2c2c91e7a80000(0000)
-knlGS:0000000000000000
-[ 1297.971694] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1297.972645] CR2: 0000000000000028 CR3: 000000010cf58001 CR4: 0000000000371ef0
-[ 1297.973825] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 1297.974996] DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
-[ 1297.976175] Call Trace:
-[ 1297.976609]  <TASK>
-[ 1297.976978]  ? __die+0x23/0x70
-[ 1297.977501]  ? page_fault_oops+0x15c/0x480
-[ 1297.978191]  ? jbd2_journal_stop+0x13c/0x2d0
-[ 1297.978903]  ? exc_page_fault+0x78/0x170
-[ 1297.979564]  ? asm_exc_page_fault+0x26/0x30
-[ 1297.980262]  ? vfs_tmpfile+0x162/0x230
-[ 1297.980891]  path_openat+0xc70/0x12b0
-[ 1297.981507]  ? __count_memcg_events+0x58/0xf0
-[ 1297.982233]  ? handle_mm_fault+0xb9/0x260
-[ 1297.982903]  ? do_user_addr_fault+0x2ed/0x6e0
-[ 1297.983636]  do_filp_open+0xb0/0x150
-[ 1297.984241]  do_sys_openat2+0x91/0xc0
-[ 1297.984855]  __x64_sys_openat+0x57/0xa0
-[ 1297.985504]  do_syscall_64+0x52/0x150
-[ 1297.986128]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ Documentation/ABI/testing/sysfs-class-watchdog | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-tripping ip:
-vfs_tmpfile+0x162/0x230:
-fsnotify_parent at include/linux/fsnotify.h:81
-(inlined by) fsnotify_file at include/linux/fsnotify.h:131
-(inlined by) fsnotify_open at include/linux/fsnotify.h:401
-(inlined by) vfs_tmpfile at fs/namei.c:3781
-
+diff --git a/Documentation/ABI/testing/sysfs-class-watchdog b/Documentation/ABI/testing/sysfs-class-watchdog
+index 94fb74615951..70eabccf0557 100644
+--- a/Documentation/ABI/testing/sysfs-class-watchdog
++++ b/Documentation/ABI/testing/sysfs-class-watchdog
+@@ -76,7 +76,7 @@ Description:
+ 		timeout when the pretimeout interrupt is delivered.  Pretimeout
+ 		is an optional feature.
+ 
+-What:		/sys/class/watchdog/watchdogn/pretimeout_avaialable_governors
++What:		/sys/class/watchdog/watchdogn/pretimeout_available_governors
+ Date:		February 2017
+ Contact:	Wim Van Sebroeck <wim@iguana.be>
+ Description:
 -- 
-Mateusz Guzik <mjguzik gmail.com>
+2.39.2
+
 
