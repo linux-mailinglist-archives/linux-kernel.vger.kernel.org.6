@@ -1,126 +1,133 @@
-Return-Path: <linux-kernel+bounces-277424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439F194A149
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:01:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D5E794A133
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0DA61F28566
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:01:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 470331F23BA8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B151BE22E;
-	Wed,  7 Aug 2024 07:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E86A1B86C9;
+	Wed,  7 Aug 2024 06:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="YBQu1plp"
-Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RxJUMTbC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73207C6D4
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 07:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5C018FC9B;
+	Wed,  7 Aug 2024 06:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723014092; cv=none; b=TySvmUrfy8SngZQKh8eVS4gsKJmrknynpI0qp8Y3Nlw8dfjVktiEiBM1SvKPCoK32RZK8LIr2I5v+4Ostkg2jM2h5jQP+WZgRSilmrlOS6KYtVXB42ymOCLD30hJh0JND47gW/SsyPGM4rwkK7+vwGSrHgxS4gK2rBYhDsbpxGw=
+	t=1723013800; cv=none; b=BBC0w5GS9iNnn1NzkefujP4CIZt2351B2xrh/FyO26F4Fd9NBjNpcvRqQvVj0m0Dxzm3SgirBQWPFLM1c7bv/Zd9+cW15wowzu5lg7FTSxTmCeTgQdMeAFMVjEy86KSp2t2DpunRhb0Ytqi9gn5TMmhJI9tEnHMVql+j7f75v+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723014092; c=relaxed/simple;
-	bh=QuB4zfRZoa1J6Umi4r5O8NHozHLRwJzc2ojSnc5z8VA=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=iP0Jixqle9An+qnKcoHw/kToLy+h2zh92FbOlsVRChz5zlPx6wguZYrDofXHE2PeDT4vcMYdNpZWoIibS/MG19pSTW+47LXTt673MJI3bdxnHn1DDGVhp0xWXwi5RwsF6/wW2upnxHZP0l5X9z4oJbHKBrN3Hyi3siQXVg6QTS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=YBQu1plp; arc=none smtp.client-ip=203.205.221.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1723013780; bh=5ES3zOtEV7QigLhw3QMK5L0aUE1F+ixfuHWctuvAepg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=YBQu1plpSKy26nLdRD+7uzlVG4YybDx8pv/aPune3rxgzntk3BWy4TfT8UxDXswSC
-	 03G9qj0AqHSjBEfKP0aL05sDJyC3FEEwq805LOpxAcCm2oBb/nq6j7HaK9Qh1Q4Lp/
-	 fgN2aYtukcXHiEd/rqns160pVf112uN77RGBT57U=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id E12A1CE3; Wed, 07 Aug 2024 14:56:18 +0800
-X-QQ-mid: xmsmtpt1723013778tacs74o91
-Message-ID: <tencent_6F9E3F1BBF4B3A1B5E25B6BA7BBB14331108@qq.com>
-X-QQ-XMAILINFO: N/WmRbclY25GFGzFT90N7o615/GuGkoi32E6ugKVe4ZrTctbgvAOhtcLlbJo0o
-	 YJy3bNrdHnYevC1Pi9nbCFt7gh04MSPyrbSPz4hHDa9Ex4y+/6Y3K1PQiFYyJixlgXe9lXhwrNGR
-	 Fv/h7wu09UdI2frwZGXXL38jYSJxAs/Dtcke2sc3ImoeyFx85PXXjAOYw0yQbxax7XJdyFPh9+LD
-	 F9bdZ1V3vmSjB3C6B5Auxk/hQqKIy0qNwRtG/CWWLgJyLe6LCED72DKcfUtxEjWNf8QznkkteJOz
-	 L6KwLAwp88YZT1TndtCR7cENZx4DtacB0SZbGFjoz/8m/SD+zrn/ahkZpyIbNfbqAgOiOX0ULjFG
-	 ykBksf4V1DSla5ZTy4rkt8EDfiQzAP9FjC+DjHJkQsoXS7IM8GOxc5q8NAw/fdB3OrT99A7QuDRw
-	 TzGqbKLrac4+DE6roxoh5WVO6Ysh86IsHjNsAbbvf8G2CAsIJSxMR+hP6GhPV8CgVsUvwn4tT0bZ
-	 RY9TbGjwPSvqBRTbFsj3sUUnWROwYOFJlV8JXRaca0p3VY/JZETNBuHSlp9cHABWwe4MqZ3PY7Ul
-	 XElLgcp92QyRA6x7b61xMgNsdh/HjrmFZmJuUAbMUa92ToJfbN1M0mjx14QnGqiD+zXphwhL06Pe
-	 HCmyyRp2rCcsAPVc0FGNi4s+fn/bId8w6dD8TEtkU6qSRWUJd/YNA9FppNJLMFvCIX47CuxwdPtL
-	 0UY+bzRRKWlOhtWzW5B4JqUjKmNtDtTvWW67kbRP4gOqfwE4GaA55kBG4bGxDhJg11U6LfHN6Qdk
-	 VbdoHQiFV5kr+uWKHxX5hAq6rxoiiukvNMjnVRJxHijQq8yMsP0E+X+nnxeL98GdUqIT7DoPjdYk
-	 g+XnBOYcmx/HacXoTZoK4gta+k5d4HsbtHTljOQW5WleDj71BzqTZl/z+Ue8YKR9EoI+yX/mUUeM
-	 teOhTUFFb4dt8xhNhA41e8X4PgmifAq3f4grK2Q9c=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [can?] WARNING: refcount bug in j1939_session_put
-Date: Wed,  7 Aug 2024 14:56:19 +0800
-X-OQ-MSGID: <20240807065618.117322-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000af9991061ef63774@google.com>
-References: <000000000000af9991061ef63774@google.com>
+	s=arc-20240116; t=1723013800; c=relaxed/simple;
+	bh=/po+MddZ8FuEEl3M+jBbRCwteNi78BYA5nu6cGjx2VY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RDDqjpt2kJrKHdPtILptSaov/dxVi23TqHaiYM7YH1JZendmK7TrTt3/AUzr0F+RU4QPCUl6GSrxeiGLmrGk+vNhTfowNHnGZVPiRKisGrL8Ktk0ajXxx0vwI69/sjQp+Ik5t7YWXYlYvkI/XsTDAfiR84jJJxmxNBNmjAidogs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RxJUMTbC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1B82C32782;
+	Wed,  7 Aug 2024 06:56:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723013800;
+	bh=/po+MddZ8FuEEl3M+jBbRCwteNi78BYA5nu6cGjx2VY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RxJUMTbC1ubEa2ORv1BFPR9CH5Uks5e8Bqy4iR6ws+Rpc46GWeFbivuhK9ohC+Q3s
+	 xe2Wc5ABWJ2CMaoJC/Wpae34/VquBHXMNQ+dbaHYqZeKLn3wKM0aITozFDpdhmLPoq
+	 uF9RzbuMPuQNRQLf0/kbqIOTR7SwEdJDE/0o0ANUDb0S/qqzoDF+RWgyFNohmEPdlI
+	 W1VNrmmv5xTJYeA7A3Fcd9pGrfyMjmLdEb5jhgrQlQsaRvq2UMstOI9rC0qlltcJJ/
+	 9uenXmKFRJmQ9vBCeGYPaC+fb+EXJcY49W55hlhEwvmM4J7xrtSIYdiH0jnWkAe3b0
+	 NNM5MPyvNi0CQ==
+Message-ID: <c177faaf-b66b-4f3d-a7d5-dc07b5332331@kernel.org>
+Date: Wed, 7 Aug 2024 08:56:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dt-bindings: net: Add rk3576 dwmac bindings
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ David Wu <david.wu@rock-chips.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ "David S . Miller" <davem@davemloft.net>
+References: <20240802173918.301668-1-detlev.casanova@collabora.com>
+ <20240802173918.301668-3-detlev.casanova@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240802173918.301668-3-detlev.casanova@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Fixes: c9c0ee5f20c5 ("net: skbuff: Skip early return in skb_unref when debugging")
+On 02/08/2024 19:38, Detlev Casanova wrote:
+> Add a rockchip,rk3576-gmac compatible for supporting the 2 gmac
+> devices on the rk3576.
+> 
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+>  Documentation/devicetree/bindings/net/rockchip-dwmac.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Root cause: In commit c9c0ee5f20c5, There are following rules:
-In debug builds (CONFIG_DEBUG_NET set), the reference count is always  decremented, even when it's 1
+As Johan Jonker pointed out, this is incomplete. Just git grep for
+rockchip compatibles...
 
-This rule will cause the reference count to be 0 after calling skc_unref,
-which will affect the release of skb.
-
-#syz test: net-next 743ff02152bc
-
-diff --git a/net/can/j1939/transport.c b/net/can/j1939/transport.c
-index 4be73de5033c..712c0ae4f329 100644
---- a/net/can/j1939/transport.c
-+++ b/net/can/j1939/transport.c
-@@ -279,6 +279,8 @@ static void j1939_session_destroy(struct j1939_session *session)
- 	while ((skb = skb_dequeue(&session->skb_queue)) != NULL) {
- 		/* drop ref taken in j1939_session_skb_queue() */
- 		skb_unref(skb);
-+
-+		printk("refcnt: %d, skb: %p, %s\n", refcount_read(&skb->users), skb, __func__);
- 		kfree_skb(skb);
- 	}
- 	__j1939_session_drop(session);
-@@ -341,6 +343,7 @@ static void j1939_session_skb_drop_old(struct j1939_session *session)
- 	if ((do_skcb->offset + do_skb->len) < offset_start) {
- 		__skb_unlink(do_skb, &session->skb_queue);
- 		/* drop ref taken in j1939_session_skb_queue() */
-+		printk("refcnt: %d, skb: %p, %s\n", refcount_read(&do_skb->users), do_skb, __func__);
- 		skb_unref(do_skb);
- 		spin_unlock_irqrestore(&session->skb_queue.lock, flags);
- 
-@@ -365,6 +368,7 @@ void j1939_session_skb_queue(struct j1939_session *session,
- 	skcb->flags |= J1939_ECU_LOCAL_SRC;
- 
- 	skb_get(skb);
-+	printk("refcnt: %d, skb: %p, %s\n", refcount_read(&skb->users), skb, __func__);
- 	skb_queue_tail(&session->skb_queue, skb);
- }
- 
-@@ -1505,7 +1509,7 @@ static struct j1939_session *j1939_session_new(struct j1939_priv *priv,
- 	session->state = J1939_SESSION_NEW;
- 
- 	skb_queue_head_init(&session->skb_queue);
--	skb_queue_tail(&session->skb_queue, skb);
-+	j1939_session_skb_queue(session, skb);
- 
- 	skcb = j1939_skb_to_cb(skb);
- 	memcpy(&session->skcb, skcb, sizeof(session->skcb));
+Best regards,
+Krzysztof
 
 
