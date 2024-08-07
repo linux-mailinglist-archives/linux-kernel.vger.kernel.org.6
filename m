@@ -1,94 +1,100 @@
-Return-Path: <linux-kernel+bounces-278279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F11294AE36
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:33:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3248194AE38
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C28D1C21A68
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:33:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD6A51F28C04
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D13137776;
-	Wed,  7 Aug 2024 16:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AF11369AA;
+	Wed,  7 Aug 2024 16:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IXxSgf1f";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IAZwAJN2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pacQHUzn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2A52209B;
-	Wed,  7 Aug 2024 16:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787D72209B;
+	Wed,  7 Aug 2024 16:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723048389; cv=none; b=NeZ99ixIDkNqhYuTOTZMIAPDi/bUdkDcz/vxPLlQ3Fj0ue8vriGIeUJ14zskll+OGlPSxHZSAx66SFT9HhtACUPR6M5LjidHgoA+BeYS7bEgwEz9ahWCQ7la8ieYiCNTLX4v9BH1Hll0w5c6z7sWQD2+GdjNUw8ZZQ00Ivl4v+A=
+	t=1723048516; cv=none; b=TxIinaWRE9aw07o08fjoSD96zV2QCq3oXwZEjc9QTSm33i4KrB4WcGC+59P8U+HELH/oOi5pveTTSQeTBFhcwagh1z1j2N2KtHxcXZ09zHiw2EbLPWcwzCTnOIe6uqdZo+rxGGLNQeMwTsI8vOiOxMnJHHTBq/02a9u3SzUeAKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723048389; c=relaxed/simple;
-	bh=QcaoM3knCrcyCzNjVhMc1BR/aHxtXeyzabBB7jGj+GM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oOX/vzgPG401+VoMfBAon5wAIoCF917EiaRMLzI2ohnaye/t4XM9zyPCIlZcC6ugfIubBCGWdLc9AEwnpFg0QgNKO8yHlVKGxaWjLJFkXbztfvth5CSPCtilkENc+z9lY59qS1Q8JFgRzzyLkONw6IAU708NePPvElAm29B2pSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IXxSgf1f; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IAZwAJN2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723048380;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7D4xZeauwBUzmOsESqLrF3sQCklkSjK5aSbTXbcdoDU=;
-	b=IXxSgf1fQ2whPtmoVVG3jOz2Y6gMqFkh4KyI3YbZ/K1fjACh9ZycnYtaFjfcuCDagX4tX3
-	GJwXQhgs9llVOoN6zD0T4Jq2fJvy38Dwsega8ruQrux4dB/ICug/0mmJW1fsIhfGimiRH2
-	0jgbfpNCJZPgKU4hrquEyB3UNFx5f/gv2KZ/1US4y10Lmy5H4EizwZ2cc8Y3X6wmJ8phfg
-	VcfDcV8eJw9JWv54GftW5qvfzPmw7igvvp69LFb2NMxPT77Nw51OwIjHtXBNZ/N5uA8Cui
-	TVzwFPgFpk/UAvepaoFBgBZubmoMD1IGAbdzueKUkLdYAtJj+0UWPfrvMRiQ0g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723048380;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7D4xZeauwBUzmOsESqLrF3sQCklkSjK5aSbTXbcdoDU=;
-	b=IAZwAJN2npsOtAU417nhztzJSj8xyeFS+PBQmZ6Rvk/eXXfdX7G40mpGVWyTtEw/XQwrrD
-	dLopzQR3uHGaUiBA==
-To: Babu Moger <babu.moger@amd.com>, corbet@lwn.net, fenghua.yu@intel.com,
- reinette.chatre@intel.com, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org,
- rdunlap@infradead.org, tj@kernel.org, peterz@infradead.org,
- yanjiewtw@gmail.com, babu.moger@amd.com, kim.phillips@amd.com,
- lukas.bulwahn@gmail.com, seanjc@google.com, jmattson@google.com,
- leitao@debian.org, jpoimboe@kernel.org, rick.p.edgecombe@intel.com,
- kirill.shutemov@linux.intel.com, jithu.joseph@intel.com,
- kai.huang@intel.com, kan.liang@linux.intel.com,
- daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
- ilpo.jarvinen@linux.intel.com, peternewman@google.com,
- maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
-Subject: Re: [PATCH v6 04/22] x86/resctrl: Detect Assignable Bandwidth
- Monitoring feature details
-In-Reply-To: <851bfbee0fd53631acae8d209796d52ce8051e68.1722981659.git.babu.moger@amd.com>
-References: <cover.1722981659.git.babu.moger@amd.com>
- <851bfbee0fd53631acae8d209796d52ce8051e68.1722981659.git.babu.moger@amd.com>
-Date: Wed, 07 Aug 2024 18:33:00 +0200
-Message-ID: <87ikwc2szn.ffs@tglx>
+	s=arc-20240116; t=1723048516; c=relaxed/simple;
+	bh=RCZCL7h5UkWNj58Vaysmd73SIQcercRo3wSY7LzStdc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bwd1VPC8hOVaWmqzOD9SwDxaN+ijRTQQ4tQZSmZ6FKNewU5SPfKDWi0FZNTeYWt3Tv6/fgZC68D42dNmtg7lD2dNltY5PEUYjNMy01GodWUDkhY1SfQsFdel/jySgbXdyKQ55IF+Dtd2aJV6QZVe+A7p8KBVDxD5V4UxGa73iFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pacQHUzn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F0F1C32781;
+	Wed,  7 Aug 2024 16:35:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723048516;
+	bh=RCZCL7h5UkWNj58Vaysmd73SIQcercRo3wSY7LzStdc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pacQHUznhGIVVG7B+bEKUuI0XOPjLktoc1SwfysdDQWmc7GiGHxwLKmWPzkT8qAmY
+	 Z6crHfc/rfCN3m/HMvj3AarAS9YynSoNSnbVpAjZGU/yH6cUXKmV1APD7zii5SvaMf
+	 cNCiD3qDzoOV5veTmztKVAy0BzTxe/mII84QPdRpdDcsDSGt+qd/U5u/Aljl+yqNMo
+	 aKYrSBAlncINIidGlmW1WPpfCHKiXO2n8FVBL2Mco9Td3Ie+UdlLla7oL5UGRIxDBW
+	 qtfPKdJp9WZj+Vn/VY2z+Vf3WL/ijvQxsrgOv8Ax0dR29X3X7g1OIW+iKdK5XVFK+K
+	 O8m1qeTG5FtSg==
+From: neeraj.upadhyay@kernel.org
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	paulmck@kernel.org,
+	joel@joelfernandes.org,
+	frederic@kernel.org,
+	boqun.feng@gmail.com,
+	urezki@gmail.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	qiang.zhang1211@gmail.com,
+	neeraj.iitr10@gmail.com,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+Subject: [PATCH 0/2] Modify RCU Tasks to scan idle tasks
+Date: Wed,  7 Aug 2024 22:05:04 +0530
+Message-Id: <20240807163506.434885-1-neeraj.upadhyay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 06 2024 at 17:00, Babu Moger wrote:
-> ABMC feature details are reported via CPUID Fn8000_0020_EBX_x5.
-> Bits Description
-> 15:0 MAX_ABMC Maximum Supported Assignable Bandwidth
->      Monitoring Counter ID + 1
+From: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
 
-This one wants to be in the database too
+Architectures for which all deep-idle and entry-exit functions are
+marked noinstr, synchronize_rcu_tasks_rude() is not required. However,
+disabling synchronize_rcu_tasks_rude() for such architectures require
+RCU-tasks to pay attention to idle tasks until they enter the context
+where RCU is not watching. In addition, NMI context need to track RCU-tasks
+entry/exit for NO_HZ_FULL CPUs. This series adds changes for both of
+these requirements.
 
-Thanks,
+The series is available in git tree at:
+https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.git/log/?h=rcu-tasks-watch-idle.07.08.24a
 
-        tglx
+
+- Neeraj
+
+
+Neeraj Upadhyay (2):
+  rcu-tasks: Make RCU-Tasks pay attention to idle tasks
+  context_tracking: Invoke Tasks-RCU enter/exit for NMI context
+
+ .../RCU/Design/Requirements/Requirements.rst  |  12 +-
+ kernel/context_tracking.c                     |   6 +-
+ kernel/rcu/rcu.h                              |   4 +
+ kernel/rcu/tasks.h                            | 107 ++++++++++++------
+ kernel/rcu/tree.c                             |  12 +-
+ kernel/rcu/tree_exp.h                         |   2 +-
+ 6 files changed, 91 insertions(+), 52 deletions(-)
+
+-- 
+2.40.1
+
 
