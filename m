@@ -1,285 +1,179 @@
-Return-Path: <linux-kernel+bounces-277546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D458D94A2C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:27:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2212494A30A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFCDA1C223FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:27:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1330B22FF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBAC1CB313;
-	Wed,  7 Aug 2024 08:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C71E1C9DF0;
+	Wed,  7 Aug 2024 08:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C3WN5WbT"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dBHag/Cr"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9366C1CB30E
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 08:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1584F1C8FD1
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 08:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723019141; cv=none; b=bWGL6bPe4ERzkHa4QRpoQDBM30pg04pc+bJ5WUevoYKmnZ25mJR31CmIUO7HYQZMetcyXrfVuwrJVaaVu5r+zPpmVBWk86rZBJKYXbfip53g2q3SYmAKqROxKeJjDCmbrODJOFWydpYaADReWYluYy4HrQfCh/vvA3FpMsurFqQ=
+	t=1723019207; cv=none; b=H6S03Xof4m5RJOnXvupOXCxwKrBmF0XBzt3DoaT54ROyWSnS68mEuOjNMBcfUyJMKXq+Z297WuZzIiYDc3ITEXFE5ONYeQNVYL+Rc998C16zlIux72jAFM1cPMC/y/LNtKrBpQaPm2H5RDurmAnSQpPJuNmEc4BYARkFarGw2/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723019141; c=relaxed/simple;
-	bh=TE0dMbcGCouZl9eTik1kK4YJtAM4y+zty2arx2p8O8k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DUF0yLAknkaBBczpIXND5xMfd+en4n8SQZQwBnj/tawpBeTYf7hhmE8nyI+iBgS2guiN11HcNjX20/F4FeRcJZE5XuL5BooA6dnJJW89xmvPwCm3gZWME4DHlZtDabjO1rzs7Kl2t1Pawp0jjIfP83d0jAVdYR+MEa0bwDfUD/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C3WN5WbT; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-71871d5e087so918967a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 01:25:39 -0700 (PDT)
+	s=arc-20240116; t=1723019207; c=relaxed/simple;
+	bh=tj7dPLjohlXqXC4UMPaCrmG8QKp9rTWHCWtYtTDim9g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SmfpV1miT+017EpFBhMkZHh+nXDWmCWVhSVJdOb9sunqtxpZJZLGP+Ku3Cxm7OUQ2vmY66YpooO+q2fUSd9Ts+maMv5N3d+UwrEbNS8ixbqTX7Fncy5E+cWBYn8ckMP3S0qf9u4XArHET8kXQxanssH5pcpzq83WMsutGvxuZQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dBHag/Cr; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42803bbf842so14379955e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 01:26:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723019139; x=1723623939; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BlFQkb2cMvN1c1QVMf0JMKTkCt490ubd3m2R1WYvp/E=;
-        b=C3WN5WbTXyB0YRM1ZeBstPG+BA5bQ8YWOUmRxWxteylUEMaEUVxJ0a0+XmyBhead9k
-         Yj6/08i3N+lkSdXa9q0ybsLhgwFxIyM9oUqbargZ6E4TGTlE7QTALGM6k0zU2rpvlE/a
-         Fp1X3ySjMEx21ErdQB7nXowEmvbuM+7vxfW2dNYIfZ1q/v3Ft6+Bj1brTjjXwRQ5BHh7
-         tVHN7Q26T5+rQc8Z/cDQtB+mCnX7Xmnv8eX/aGoWOpr/ISC78TTofwVB/0iAPKuGPzdW
-         OOYO/oSHXH4Hmj1LQO+CnIm8AyeDW0ojnAc/+8/55EB/KhVuQAQofWZkWJ1y2dRu1uDB
-         7OOw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723019203; x=1723624003; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JZHByOv0mOQel4KMBZjJK3uZiiCwuwlf50RnLCFOcRk=;
+        b=dBHag/CrOYN+vaKffxSqOiozgEMO5b7XAqzo8yaPVzkuSpHd8vppwVJAl61EvHXgcD
+         BS4IDl6DLU6tRZ4prR4RAMovpR315lJL0YD8cQPPMcsPmS72RlktBb7Fc6IGP13V8wKO
+         zq5ruxWQTPngbeRaE+7ZDcwtA2BrNhoRoMbxgt/x+SkAvaeES9WFjBWsLNawV3wLcvmx
+         bBsxPBVXcEjCR9GkITHjG6WtOF5MZvVKOiaw2tiuRX8RvU/HwP+MElQbcMHOZHXJ3Yok
+         DHTUal8TNRYFz702fO+usksGpuTlfhc9/V/HD1hviXP67O9N+X1UJqNoVW+bPovEnGAG
+         PA3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723019139; x=1723623939;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723019203; x=1723624003;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BlFQkb2cMvN1c1QVMf0JMKTkCt490ubd3m2R1WYvp/E=;
-        b=Lybhw9Bg/UYLrmtkWHEmmjyQZHdcKfm98xgX2KlnxyTGZ+4FINlUwz1+K3voMhgJ8y
-         HkaGxWCSWLwNW0aFG1h3lntiOc7AdsiACN/rxHYw5niqtzspknC6CKOFSUKHjk636ruI
-         XH6dH3hQ8bGUGkwrqBkU4pK06ro5H6Gbn5f4dLOftguKI/BlJtatiFsBNsZTQLOZ4fbY
-         sLh/0tWhNjm6cd68Ljs32DuliHsf/6NS1e1CtOzTbICmScxiw80UjveO9uN7SfNNiBUK
-         pYrHXLFgmuIzO5pr8FLcZuo+YpBti3DsWx6UwkhfciRn4Dfrn+uaUFu2VfiaX23K0jsk
-         XaEg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4jiaH4HOpGO/I+putamRYC1Tlxh9Z1wJrtfxKADELBYNh/RkMp8wN/e+JYn+s6Qel/Bzc3nv5dDBMAr1jl2MqYUiVuphHsBVeD0xd
-X-Gm-Message-State: AOJu0YyGa/MDHtA9ajoHp3hwpBEuXcwy6rNd8R1aJeAW/gQLpH3EBM7T
-	LwAKZuWgJXZUW+EL9fGsVVgN2hCjdSRpM95i0KMh2Z9FSdhEIrPA
-X-Google-Smtp-Source: AGHT+IG8xn5/66z7PTJPV4BCOi2Y/r1TSf0uignh/HpGSQRadyx5jGGO3Tw+w7ebVq7amQ4F6zh+BA==
-X-Received: by 2002:a05:6a20:de16:b0:1c6:ba8b:1e41 with SMTP id adf61e73a8af0-1c6ba8b1ebfmr12002331637.1.1723019138731;
-        Wed, 07 Aug 2024 01:25:38 -0700 (PDT)
-Received: from barry-desktop.hub ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ed0d457sm7911763b3a.156.2024.08.07.01.25.34
+        bh=JZHByOv0mOQel4KMBZjJK3uZiiCwuwlf50RnLCFOcRk=;
+        b=JilRI1bx6nJ6NyF87KDMQ2lrgtiNz8WSuv6FtzB0NBHMwO2xhULZiqrSg1+Ih9T/Wd
+         c106PN6V8Bf/woV+TJmDPGP6RHW8sZ1BbVWbLgQNvwH/DoEJteIzOVrniyWwzP5IQZoG
+         mFANWjJlyOADJ+F0csmQH2yQwiJUcbuJ00MXO8cA9gdpJy2dHDDk7Mk3HmAljZ5luTZI
+         I4mDvR/JI7BAN+42p9bAOO3eGec5aCJGKyg3+ID37mFN2GjQZyw3n2M7qFwL3WgA0gGg
+         lNH5kR3GChmRUjmc7Zr8HNL8wdfQETS6f8YXPgI/tYCwPH8xEbSAIC5VozAqgeKJ8iy7
+         U+pA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSmYBPIXjh+c0T68ahGqiGwFgZSpyfYV1sdSFw9zaFvE7PaKbA77+uXnTvB+xxlgBKZrMcm57EquDi4xaY04pvK63COWq+0x1Dat/G
+X-Gm-Message-State: AOJu0YyyirTgyLMvnuEyrhrbQt+TZlu+eSthKPl8mqh5ZoU+rQz125XN
+	hX1tYF/kRbZ9JVl2gP5W400z3iDEYeWQbu5BSPtnF41CtQ+viIB6e1MpCmlCA1XqVivFvIS/pMy
+	CQAA8Lw==
+X-Google-Smtp-Source: AGHT+IFz38MFkpvdt0BKpKNIiKOyIyBho+s/Gh9rbf8GDZAtKNc/QE+/bIeiT1DD/pgoorf5EawALA==
+X-Received: by 2002:a5d:5510:0:b0:368:6606:bd01 with SMTP id ffacd0b85a97d-36bbc1c4abfmr13978046f8f.55.1723019203144;
+        Wed, 07 Aug 2024 01:26:43 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:90f1:3c4c:261c:b0f5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290580cb80sm18381625e9.45.2024.08.07.01.26.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 01:25:38 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: justinjiang@vivo.com,
-	chrisl@kernel.org,
-	david@redhat.com,
-	hughd@google.com,
-	kaleshsingh@google.com,
-	kasong@tencent.com,
-	linux-kernel@vger.kernel.org,
-	ryan.roberts@arm.com,
-	v-songbaohua@oppo.com,
-	ying.huang@intel.com
-Subject: [PATCH v2 2/2] mm: attempt to batch free swap entries for zap_pte_range()
-Date: Wed,  7 Aug 2024 20:25:08 +1200
-Message-Id: <20240807082508.358322-3-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240807082508.358322-1-21cnbao@gmail.com>
-References: <20240807082508.358322-1-21cnbao@gmail.com>
+        Wed, 07 Aug 2024 01:26:42 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
+  Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
+ <airlied@gmail.com>,  Daniel Vetter <daniel@ffwll.ch>,  Kevin Hilman
+ <khilman@baylibre.com>,  dri-devel@lists.freedesktop.org,
+  linux-amlogic@lists.infradead.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/9] drm/meson: dw-hdmi: split resets out of hw init.
+In-Reply-To: <CAFBinCCvWFCCvb9gPvv0-eudG=iuKROk5rPSiorKTnHcToDfTQ@mail.gmail.com>
+	(Martin Blumenstingl's message of "Tue, 6 Aug 2024 22:49:40 +0200")
+References: <20240730125023.710237-1-jbrunet@baylibre.com>
+	<20240730125023.710237-6-jbrunet@baylibre.com>
+	<CAFBinCCvWFCCvb9gPvv0-eudG=iuKROk5rPSiorKTnHcToDfTQ@mail.gmail.com>
+Date: Wed, 07 Aug 2024 10:26:42 +0200
+Message-ID: <1ja5hozqkd.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Barry Song <v-songbaohua@oppo.com>
+On Tue 06 Aug 2024 at 22:49, Martin Blumenstingl <martin.blumenstingl@googl=
+email.com> wrote:
 
-Zhiguo reported that swap release could be a serious bottleneck
-during process exits[1]. With mTHP, we have the opportunity to
-batch free swaps.
-Thanks to the work of Chris and Kairui[2], I was able to achieve
-this optimization with minimal code changes by building on their
-efforts.
-If swap_count is 1, which is likely true as most anon memory are
-private, we can free all contiguous swap slots all together.
+> Hi Jerome,
+>
+> On Tue, Jul 30, 2024 at 2:50=E2=80=AFPM Jerome Brunet <jbrunet@baylibre.c=
+om> wrote:
+>>
+>> This prepares the migration to regmap usage.
+>>
+>> To properly setup regmap, the APB needs to be in working order.
+>> This is easier handled if the resets are not mixed with hw init.
+>>
+>> More checks are required to determine if the resets are needed
+>> on resume or not. Add a note for this.
+>>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> ---
+>>  drivers/gpu/drm/meson/meson_dw_hdmi.c | 14 +++++++++-----
+>>  1 file changed, 9 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/mes=
+on/meson_dw_hdmi.c
+>> index 5cd3264ab874..47aa3e184e98 100644
+>> --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
+>> +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+>> @@ -581,11 +581,6 @@ static void meson_dw_hdmi_init(struct meson_dw_hdmi=
+ *meson_dw_hdmi)
+>>         /* Bring HDMITX MEM output of power down */
+>>         regmap_update_bits(priv->hhi, HHI_MEM_PD_REG0, 0xff << 8, 0);
+>>
+>> -       /* Reset HDMITX APB & TX & PHY */
+>> -       reset_control_reset(meson_dw_hdmi->hdmitx_apb);
+>> -       reset_control_reset(meson_dw_hdmi->hdmitx_ctrl);
+>> -       reset_control_reset(meson_dw_hdmi->hdmitx_phy);
+>> -
+>>         /* Enable APB3 fail on error */
+>>         if (!meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A)) {
+>>                 writel_bits_relaxed(BIT(15), BIT(15),
+>> @@ -675,6 +670,10 @@ static int meson_dw_hdmi_bind(struct device *dev, s=
+truct device *master,
+>>                 return PTR_ERR(meson_dw_hdmi->hdmitx_phy);
+>>         }
+>>
+>> +       reset_control_reset(meson_dw_hdmi->hdmitx_apb);
+>> +       reset_control_reset(meson_dw_hdmi->hdmitx_ctrl);
+>> +       reset_control_reset(meson_dw_hdmi->hdmitx_phy);
+> The old out of tree vendor driver [0] enables the "isfr" and "iahb"
+> (in P_HHI_HDMI_CLK_CNTL and P_HHI_GCLK_MPEG2) clocks before triggering
+> the resets.
+> Previously meson_dw_hdmi's behavior was identical as it enabled the
+> clocks in meson_dw_hdmi_bind() and only later triggered the resets.
+>
+> I'm totally fine with moving the resets to meson_dw_hdmi_bind() but I
+> think it should happen after devm_clk_bulk_get_all_enable() has been
+> called (to keep the order and thus avoid side-effects that we don't
+> know about yet).
 
-Ran the below test program for measuring the bandwidth of munmap
-using zRAM and 64KiB mTHP:
+Good point.
 
- #include <sys/mman.h>
- #include <sys/time.h>
- #include <stdlib.h>
+I was also thinking about squashing this with the regmap patch.
+I've split it apart for v1 to make things a bit more clear but it only
+really makes sense with the regmap conversion.=20
 
- unsigned long long tv_to_ms(struct timeval tv)
- {
-        return tv.tv_sec * 1000 + tv.tv_usec / 1000;
- }
+>
+> Also out of curiosity: are you planning to convert the driver to use
+> devm_reset_control_bulk_get_exclusive()?
+>
 
- main()
- {
-        struct timeval tv_b, tv_e;
-        int i;
- #define SIZE 1024*1024*1024
-        void *p = mmap(NULL, SIZE, PROT_READ | PROT_WRITE,
-                                MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-        if (!p) {
-                perror("fail to get memory");
-                exit(-1);
-        }
+It's been a while this I've done that. I remember I thought about it.
+I think it was a bit more difficult to use that clocks. I was looking at
+making the driver a bit more clean and simple. It was not really helping
+to move it in that direction IIRC.
 
-        madvise(p, SIZE, MADV_HUGEPAGE);
-        memset(p, 0x11, SIZE); /* write to get mem */
+>
+> Best regards,
+> Martin
+>
+>
+> [0] https://github.com/endlessm/linux-s905x/blob/master/drivers/amlogic/h=
+dmi/hdmi_tx_20/hw/hdmi_tx_hw.c#L470
 
-        madvise(p, SIZE, MADV_PAGEOUT);
-
-        gettimeofday(&tv_b, NULL);
-        munmap(p, SIZE);
-        gettimeofday(&tv_e, NULL);
-
-        printf("munmap in bandwidth: %ld bytes/ms\n",
-                        SIZE/(tv_to_ms(tv_e) - tv_to_ms(tv_b)));
- }
-
-The result is as below (munmap bandwidth):
-                mm-unstable  mm-unstable-with-patch
-   round1       21053761      63161283
-   round2       21053761      63161283
-   round3       21053761      63161283
-   round4       20648881      67108864
-   round5       20648881      67108864
-
-munmap bandwidth becomes 3X faster.
-
-[1] https://lore.kernel.org/linux-mm/20240731133318.527-1-justinjiang@vivo.com/
-[2] https://lore.kernel.org/linux-mm/20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org/
-
-Cc: Kairui Song <kasong@tencent.com>
-Cc: Chris Li <chrisl@kernel.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Kalesh Singh <kaleshsingh@google.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: David Hildenbrand <david@redhat.com>
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
----
- mm/swapfile.c | 78 +++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 67 insertions(+), 11 deletions(-)
-
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 35cb58373493..25c3f98fa8d5 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -156,6 +156,25 @@ static bool swap_is_has_cache(struct swap_info_struct *si,
- 	return true;
- }
- 
-+static bool swap_is_last_map(struct swap_info_struct *si,
-+			      unsigned long offset, int nr_pages,
-+			      bool *has_cache)
-+{
-+	unsigned char *map = si->swap_map + offset;
-+	unsigned char *map_end = map + nr_pages;
-+	bool cached = false;
-+
-+	do {
-+		if ((*map & ~SWAP_HAS_CACHE) != 1)
-+			return false;
-+		if (*map & SWAP_HAS_CACHE)
-+			cached = true;
-+	} while (++map < map_end);
-+
-+	*has_cache = cached;
-+	return true;
-+}
-+
- /*
-  * returns number of pages in the folio that backs the swap entry. If positive,
-  * the folio was reclaimed. If negative, the folio was not reclaimed. If 0, no
-@@ -1469,6 +1488,53 @@ static unsigned char __swap_entry_free(struct swap_info_struct *si,
- 	return usage;
- }
- 
-+static bool __swap_entries_free(struct swap_info_struct *si,
-+				swp_entry_t entry, int nr)
-+{
-+	unsigned long offset = swp_offset(entry);
-+	unsigned int type = swp_type(entry);
-+	struct swap_cluster_info *ci;
-+	bool has_cache = false;
-+	unsigned char count;
-+	bool can_batch;
-+	int i;
-+
-+	if (nr <= 1 || swap_count(data_race(si->swap_map[offset])) != 1)
-+		goto fallback;
-+	/* cross into another cluster */
-+	if (nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER)
-+		goto fallback;
-+
-+	ci = lock_cluster_or_swap_info(si, offset);
-+	can_batch = swap_is_last_map(si, offset, nr, &has_cache);
-+	if (can_batch) {
-+		for (i = 0; i < nr; i++)
-+			WRITE_ONCE(si->swap_map[offset + i], SWAP_HAS_CACHE);
-+	}
-+	unlock_cluster_or_swap_info(si, ci);
-+
-+	if (!can_batch)
-+		goto fallback;
-+	if (!has_cache) {
-+		spin_lock(&si->lock);
-+		swap_entry_range_free(si, entry, nr);
-+		spin_unlock(&si->lock);
-+	}
-+	return has_cache;
-+
-+fallback:
-+	for (i = 0; i  < nr; i++) {
-+		if (data_race(si->swap_map[offset + i])) {
-+			count = __swap_entry_free(si, swp_entry(type, offset + i));
-+			if (count == SWAP_HAS_CACHE)
-+				has_cache = true;
-+		} else {
-+			WARN_ON_ONCE(1);
-+		}
-+	}
-+	return has_cache;
-+}
-+
- /*
-  * Drop the last HAS_CACHE flag of swap entries, caller have to
-  * ensure all entries belong to the same cgroup.
-@@ -1792,11 +1858,9 @@ void free_swap_and_cache_nr(swp_entry_t entry, int nr)
- {
- 	const unsigned long start_offset = swp_offset(entry);
- 	const unsigned long end_offset = start_offset + nr;
--	unsigned int type = swp_type(entry);
- 	struct swap_info_struct *si;
- 	bool any_only_cache = false;
- 	unsigned long offset;
--	unsigned char count;
- 
- 	if (non_swap_entry(entry))
- 		return;
-@@ -1811,15 +1875,7 @@ void free_swap_and_cache_nr(swp_entry_t entry, int nr)
- 	/*
- 	 * First free all entries in the range.
- 	 */
--	for (offset = start_offset; offset < end_offset; offset++) {
--		if (data_race(si->swap_map[offset])) {
--			count = __swap_entry_free(si, swp_entry(type, offset));
--			if (count == SWAP_HAS_CACHE)
--				any_only_cache = true;
--		} else {
--			WARN_ON_ONCE(1);
--		}
--	}
-+	any_only_cache = __swap_entries_free(si, entry, nr);
- 
- 	/*
- 	 * Short-circuit the below loop if none of the entries had their
--- 
-2.34.1
-
+--=20
+Jerome
 
