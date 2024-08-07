@@ -1,123 +1,170 @@
-Return-Path: <linux-kernel+bounces-277601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6042994A38A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:01:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 253A794A392
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FCEB1C22EB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:01:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFAA9282969
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1E41C9ECF;
-	Wed,  7 Aug 2024 09:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BFB1C9ECF;
+	Wed,  7 Aug 2024 09:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DFPXhE37"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J75ezucW"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9621C9DDE;
-	Wed,  7 Aug 2024 09:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F1613A3F0;
+	Wed,  7 Aug 2024 09:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723021289; cv=none; b=WLxBnwI+Go3hjWKzIuRZV1Bl/4z6zh2k8YpGgJGLjqlqDeohDdnMw8hKTxYVX3QgilL9fX/Cc/LD/2WpiTyfFx0/Pe6Z8zWBwd33BvRuWBeEW0bmuOi3Px0WKjl8eTr6DuvEiladSdEKFRJSnfUOpdQnXrmk7yzbt5/16ihg3Mg=
+	t=1723021613; cv=none; b=H3iCVuSKzdWq32vLckdG+bhp5G+azaKc0MZK8j6Lfsy9rmvxJwj+8YXas8OYzzXQsZVnpj7C2i2QtwghlyRXRvkD345ycDGIiyAflW1iH144SYkLmkxiKfsz5MD6S0Qlg9JVFBiGK7hzCm7F8X1G2h9UhOmVoIaC8lJHpsylM7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723021289; c=relaxed/simple;
-	bh=SlX8DXsZ+LVAASbH3Cqud1npEMh02BJvpmBSpjguCLs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n4dVj9rvW0D0OwQ0mOMxDG30kCTTO7SDIbh90178eCBNM9p5pyTKAAMyGesCzefAsKKeRPM3Sit9YKEPv2BUyIn2V3fvD9Em1bkNhYtt4yFPXyKeYNMCZUgK8B+sNQZheoIa3ZdjqECR3PQHhq8Mz19CaW+Y5a+KhGD9SW1ijVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DFPXhE37; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1723021613; c=relaxed/simple;
+	bh=LoM9qznV0IlQTaUDNlfNn2R0PKStHWfD+gtr7Cl9FwE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RjITB7jqrYtgAyj4xcHbSnJZFnfngtI79xB20gJtMu+zo7+q98zwDP7BsMOPovHdPFgiFGGp3ZVruK9ZfWPhn4t5TCNzk3vHVJ6ogb0daHn3id2Gd+4mEGZpITNj1ojbp8ZJ46pFFN1J/Mh+LDd9bg5sgkWUCJYHBK5bSDwjsdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J75ezucW; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fd66cddd4dso16660945ad.2;
-        Wed, 07 Aug 2024 02:01:27 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42817bee9e8so10541705e9.3;
+        Wed, 07 Aug 2024 02:06:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723021287; x=1723626087; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vZyYZcWScXx3hCzshTooGI4mg6we9/4Iww+0qQQ3pQ0=;
-        b=DFPXhE37DXE06k+MbhfnqTf/3KEnNc61tIZAON/IZitYeZCNFL+SrYqFCpX49Pla7m
-         Iju2FKOwYN5EXGcbrX7QVU2Xz4Ss4ggzNLn/9WvmgeCvNXCSCG8HmzYNoUo5Fb0rVi3J
-         kd1y9Z/OrUrXI/EjZ+0xJv4MHoaYolmhSDgtyjFKvqWX4ZUH80AULwNO4pHG2AEts08J
-         sul7XolCTaQqAvIF4JK/1cKfVpKasuDI5UNsItXW7ZUFvX5O4RH9NeXGcjZKkjaix5Cr
-         zj8x52qo0Uqy5T3MRYtRuAA+8rE2pXWdwIZr5W3yCW77Ltmy7tVropOkE8vffrqvXU34
-         LXPA==
+        d=gmail.com; s=20230601; t=1723021610; x=1723626410; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WSRzgmeCCQAVMTySTj2A9ia0afQrp/O2UyDWk6Pf3Yc=;
+        b=J75ezucWR/oAFMejVlIKTkxp2jLjVvvkrfES980lXO7UO2HkRX8pM4sid7Q0GkBuRq
+         4ikABTAEdppsrPBT77hHfawqCJpaD8xk3j+VKaIw3omAW7DXAKNC5yyti4gsh2VCSgJ5
+         g5ViSTOd+rfL/Tehb+NvS9ufgQFC5qkiTfPTQPaTWLluZZ8+RvDyiQ13tZZKXAgSs7WW
+         zVEEb/XAiE959LtfOJCTpXPTR1+cn0tqBB9OhcOuXTVpIFibOSUU17SbG6D+9SMXslS1
+         JfSOVAJSkZU7QEoh2EG4Yb48yIedpb6wgrWjrZcuXf2l/M8Yn8CmTRnkN9K/e2w6iV4a
+         DI1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723021287; x=1723626087;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vZyYZcWScXx3hCzshTooGI4mg6we9/4Iww+0qQQ3pQ0=;
-        b=GKK581+zsjFZ+jg3IQPf33QAo5YbgcElaMGg0JW8xWkKwgGgTFekZIrH/Zu3VJS/S4
-         YcbVqLtuuWLAzbmssaIWDj5oUBlqBc1wNnM5KQx33jLfc/lgPXEMy7PKOYJ5erRmU+mp
-         YEzUK8x4N5Y3z1QzI4TUfLmJ9iJkpvm7OfiM4E7SR/w/PcSJnUJeBNRtk/iR1Y3hq2yA
-         VDomr4MMfljC4g07PXCu0Pw01pst6dnuAlEiLSzQsJ5vKGIib6IPAvqNGU6uwxYjvKdv
-         lIXQH+NsWxa3TUXPuuoZP+b7Rw6m/0FA7cX0H1HvhZY/x5hQu7VI2Ni3W2Tq0SarO4H2
-         c1WA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQIo3YuikvDM227R5UvzDzFH1doUOk/YrEmv/4d9+zLzLZWOCVVSW9R9rlQ6Xi9lLypWjNUYJSEf79FMIGXJesKpq0fDpeoOpGU8y1EGhisd/ZIYytsxj+8Cz3BehmbTYfqUbd3B4Z
-X-Gm-Message-State: AOJu0Yzq6TeG8kNzJI4/vzPMYKXVtfUi5Euk6Ox+r4TzJ89VuEYCqfLw
-	+iccX+PQEDLY5/Hd9ZMSW2haLaox6lnf1JG9AVNBynvk+90BiTWR
-X-Google-Smtp-Source: AGHT+IGS0K1I+nQ+fdK7tmFOM7XFjxcXffIfoQoZ1ulc1qDVT/0KTpNDWEz9eunY8iwx/PemP6mjFQ==
-X-Received: by 2002:a17:903:1251:b0:1fb:9b91:d7c9 with SMTP id d9443c01a7336-1ff5722d9aemr255334385ad.4.1723021286963;
-        Wed, 07 Aug 2024 02:01:26 -0700 (PDT)
-Received: from localhost.localdomain (c-76-133-147-99.hsd1.ca.comcast.net. [76.133.147.99])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20077167703sm29747145ad.86.2024.08.07.02.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 02:01:26 -0700 (PDT)
-From: Daniel Yang <danielyangkang@gmail.com>
-To: skhan@linuxfoundation.org
-Cc: danielyangkang@gmail.com,
-	Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	dm-devel@lists.linux.dev,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Documentation: dm-crypt.rst warning + error fix
-Date: Wed,  7 Aug 2024 02:01:21 -0700
-Message-Id: <20240807090121.61064-1-danielyangkang@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1723021610; x=1723626410;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WSRzgmeCCQAVMTySTj2A9ia0afQrp/O2UyDWk6Pf3Yc=;
+        b=JbsWkkfbTMVMIYDGNIFmhGcuO10euLNWt+7boGxMi04JWbduF4vhRTfVR6K1t7OxYq
+         8TZAobFX24bgTR6GKoFglumayrTA2M05I9CWjPg2oIQKzXKXPXbJW9grbJKBfMdBqjPt
+         c/tdAvoX+jFe5o1Q5V4VB/wk98b4Fysxqpm6AxfJfhbUdXQYpigUIFBVdBofHMWfWAE9
+         G+I64DA9CzFc026dTDnzviHV/4jFfqEB9T62xXlZ0IVXqroNTxPAY7li65TxexAlppQU
+         VfXCpcfiBH3/kccxVUZjldl6ShMDhxoM1ndonScCfKx1J20WrGuu98D0pG6IUf2tkwJu
+         z8yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhPiD+6vOmuwND4bqYQn5fvfkB32l2i6BOeQ11UJDXpHgKAm0m7LnSt4TrNYfXKTLBE4C3PzGxCT4rEqsRJKoBfA9LTKGt3IRvTOHithxq/dQJbWPu6F4BJs/JLywGTP4BUimIb33pCOoJeUDLeHQRVPIJPKrJHFuim9MRtxZdmv51svs=
+X-Gm-Message-State: AOJu0Yy3oyBtK7SGQEYJc1P5L1iOZMjgHlNceM9rv0JkKJgAwEGL4MfR
+	5x4QuuXUw/+JLE1ws4Q1papBjAFV3Ipy9VdVmWQUKUrtUK1OqyGc
+X-Google-Smtp-Source: AGHT+IFMpoUHlHWlbkB3eohP4eK2zXUuP2QcpgMIHU2OX7c3gSoOvpg1ry/bFrW4WKHnDulUPU3WsQ==
+X-Received: by 2002:a05:600c:578e:b0:425:5ec3:570b with SMTP id 5b1f17b1804b1-428f7668cfdmr55636105e9.35.1723021609617;
+        Wed, 07 Aug 2024 02:06:49 -0700 (PDT)
+Received: from [192.168.1.106] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd06dfb4sm15336788f8f.103.2024.08.07.02.06.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 02:06:49 -0700 (PDT)
+Message-ID: <f217cd23-88a3-e8d5-641b-482734c8f2e0@gmail.com>
+Date: Wed, 7 Aug 2024 12:06:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v1 00/10] Add minimal Exynos8895 SoC and SM-G950F support
+Content-Language: en-US
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240807082843.352937-1-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20240807082843.352937-1-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
----
- .../admin-guide/device-mapper/dm-crypt.rst        | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+Unfortunately, it turned out that I have an issue with my git
 
-diff --git a/Documentation/admin-guide/device-mapper/dm-crypt.rst b/Documentation/admin-guide/device-mapper/dm-crypt.rst
-index e625830d335..552c9155165 100644
---- a/Documentation/admin-guide/device-mapper/dm-crypt.rst
-+++ b/Documentation/admin-guide/device-mapper/dm-crypt.rst
-@@ -162,13 +162,14 @@ iv_large_sectors
- 
- 
- Module parameters::
--max_read_size
--max_write_size
--   Maximum size of read or write requests. When a request larger than this size
--   is received, dm-crypt will split the request. The splitting improves
--   concurrency (the split requests could be encrypted in parallel by multiple
--   cores), but it also causes overhead. The user should tune these parameters to
--   fit the actual workload.
-+
-+   max_read_size
-+   max_write_size
-+      Maximum size of read or write requests. When a request larger than this size
-+      is received, dm-crypt will split the request. The splitting improves
-+      concurrency (the split requests could be encrypted in parallel by multiple
-+      cores), but it also causes overhead. The user should tune these parameters to
-+      fit the actual workload.
- 
- 
- Example scripts
--- 
-2.39.2
+configuration. I'm sorry for the inconvenience, I'll resend a V2
 
+without the sendemail.from.
+
+
+On 8/7/24 11:28, ivo.ivanov.ivanov1@gmail.com wrote:
+> From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>
+> Hi folks,
+>
+> This series adds initial SoC support for the Exynos 8895 SoC and also
+> initial board support for Samsung Galaxy S8 phone (SM-G950F), codenamed
+> dreamlte.
+>
+> The Exynos 8895 SoC is also used in S8 Plus (dream2lte), Note 8 (greatlte)
+> and Meizu 15 Plus (m1891). Currently DT is added for the Exynos 8895 SoC
+> and dreamlte, but it should be really easy to adapt for the other devices
+> with the same SoC.
+>
+> The support added in this series consists of:
+> * cpus
+> * pinctrl
+> * gpio
+> * simple-framebuffer
+> * pstore
+>
+> This is enough to reach a minimal initramfs shell using an upstream kernel.
+> More platform support will be added in the future.
+>
+> The preferred way to boot this device is by using a small shim bl called
+> uniLoader [1], which packages the mainline kernel and DT and jumps to
+> the kernel. This is done in order to work around some issues caused by
+> the stock, and non-replacable Samsung S-Boot bootloader. For example,
+> S-Boot leaves the decon trigger control unset, which causes the framebuffer
+> to not refresh. 
+>
+> [1] https://github.com/ivoszbg/uniLoader
+>
+> Kind regards,
+>
+> Ivaylo.
+>
+> Ivaylo Ivanov (10):
+>   dt-bindings: arm: cpus: Add Samsung Mongoose M2
+>   dt-bindings: hwinfo: samsung,exynos-chipid: add exynos8895 compatible
+>   soc: samsung: exynos-chipid: add exynos8895 SoC support
+>   dt-bindings: pinctrl: samsung: Add compatible for Exynos8895 SoC
+>   pinctrl: samsung: Add exynos8895 SoC pinctrl configuration
+>   dt-bindings: pinctrl: samsung: add exynos8895-wakeup-eint compatible
+>   dt-bindings: soc: samsung: exynos-pmu: Add exynos8895 compatible
+>   arm64: dts: exynos: Add initial support for exynos8895 SoC
+>   dt-bindings: arm: samsung: Document dreamlte board binding
+>   arm64: dts: exynos: Add initial support for Samsung Galaxy S8
+>
+>  .../devicetree/bindings/arm/cpus.yaml         |    1 +
+>  .../bindings/arm/samsung/samsung-boards.yaml  |    6 +
+>  .../hwinfo/samsung,exynos-chipid.yaml         |    1 +
+>  .../samsung,pinctrl-wakeup-interrupt.yaml     |    1 +
+>  .../bindings/pinctrl/samsung,pinctrl.yaml     |    1 +
+>  .../bindings/soc/samsung/exynos-pmu.yaml      |    1 +
+>  arch/arm64/boot/dts/exynos/Makefile           |    1 +
+>  .../boot/dts/exynos/exynos8895-dreamlte.dts   |  126 ++
+>  .../boot/dts/exynos/exynos8895-pinctrl.dtsi   | 1378 +++++++++++++++++
+>  arch/arm64/boot/dts/exynos/exynos8895.dtsi    |  253 +++
+>  .../pinctrl/samsung/pinctrl-exynos-arm64.c    |  137 ++
+>  drivers/pinctrl/samsung/pinctrl-exynos.h      |   10 +
+>  drivers/pinctrl/samsung/pinctrl-samsung.c     |    2 +
+>  drivers/pinctrl/samsung/pinctrl-samsung.h     |    1 +
+>  drivers/soc/samsung/exynos-chipid.c           |    1 +
+>  15 files changed, 1920 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895-pinctrl.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895.dtsi
+>
 
