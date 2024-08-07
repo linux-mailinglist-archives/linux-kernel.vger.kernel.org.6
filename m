@@ -1,74 +1,47 @@
-Return-Path: <linux-kernel+bounces-278081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7500D94AAA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:51:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83FC394AAA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973E71C20FC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:51:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B08B1F22A2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F4380BEC;
-	Wed,  7 Aug 2024 14:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C243481AB4;
+	Wed,  7 Aug 2024 14:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I5Y9DfSh"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JDoWj/o3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA81A78281
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67447E0E9;
+	Wed,  7 Aug 2024 14:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723042281; cv=none; b=Yksb8CqVer7ToyxIE+w+e30P3/VY3G257Zo9QVbjBoWgwvVYK0THS5TxKkIJBdEuzqUAlGw447xz9nRFUR4gEwEU0vvnT8kXnTFPkXgPqW2hfMkxAlLdUwBIxvPNct6NA4aW52kdtb0W3BaVgqJ0Pq/JOmAHk5vKDXAxtb98s8E=
+	t=1723042297; cv=none; b=mdxeImqKg4xzfrUYvDo0u80Z00ZO8ox/0q1Q9AxuRVSfDL8uApuR/Pzfs6r3+zMO2JzA6VLqRU0PCRp3E/44r6QgUMQHnfymUaaX/PQHDhVSemNmyjjI269O7cUbmc1jERroFtQ9hoav9GeBC9QjLyrb/XBt4VzSuMj7z2YVBug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723042281; c=relaxed/simple;
-	bh=jXzllFmlCYPGCf1n/wBOuxhFMMy21gaDr7qlaM5aYD8=;
+	s=arc-20240116; t=1723042297; c=relaxed/simple;
+	bh=XObzYOPHhby3ggLwzGEaQzICqe4oj78DHpF5ya8vOCg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fMTmkMNxSkZ0NZBB9h75XTVgIwnhM1Sk17KJcUI+gLhTX/30YHxSJtarPw3y5YFcONkm25Roa8SdIIbHF/jH21TH/Mpsy9RnwFpihyrvgurs2OlAaal/WR8sknh9TWm9iwHyMutycG2u8ZYsqx+ocpbhen6hkyXs0utoBzORF1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I5Y9DfSh; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fc56fd4de1so7375085ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 07:51:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723042278; x=1723647078; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=BDY7J9/W8/VU13G8TqO3gSsNHmFTzvPA7EjNyvdNsjA=;
-        b=I5Y9DfShWc7tdOPQx6gX4WWi6YThpZRKpUjTu0VqlSeXvxPg5rniIOFhhAgBv9sZ86
-         JZPIPaR8yGRE/DHB/BLBg6P3CSfk45b2E41RLhyfRUC++W/YbUjzzm9gU+yfnjJuCgMS
-         vhqH0l0MfKOVovnPR/Qofwqu1V+xyF5/OOXq1KZxd1oMvdPRK0QfAo17BwtDQnzAk9MM
-         MITqW1yY7dnADdfrme7UcYDOysTmd2IVKntOcOzvycISmDZ5NnOSkMVLvoFWyGNgg5A2
-         4Qc0lGBYITH5QpeUSwT6+Ej6oVsqI4IAwlwacUy2kT3/rxnAQh5zNiRWSbH/2clM35aK
-         u+RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723042278; x=1723647078;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BDY7J9/W8/VU13G8TqO3gSsNHmFTzvPA7EjNyvdNsjA=;
-        b=g6A/a8975Z5vuirJRVLC4T7EFJ5tVtRTUwScoMTBxpFzPCnnnzm7Z38GtvM386Jwhg
-         /klbRTfHzGgaa563WV6sfvA7k1YyVA1teZEL3skIFnIep8oi4JiQtmBCXrUyTRqFrEXg
-         etvOoI/CUGXA5rrIWf/c2dCTUE5RiSQ0UH9amRabOXSEjBPFjHRttiQmeTsnmnGWrmST
-         h2pqSbkfAUqm1QHYf0i9QNnWkuHp893cjlrqvNP1nYs++1GytKZQdKghDAPLrI6oTSUE
-         +YXCAR4MCChNUd3iXGg7MLNMEZJIDXmPXYDYcBnd6H2mOf8yjlYWCFtWbpkhWLbnCpSP
-         M+RQ==
-X-Gm-Message-State: AOJu0YweyA4hzdRY6cn0A8BEfJRwdr4IJ3GMrGdoeKAn8GHsf/iT7wk7
-	DFh6t/o+TBSwRqzyB4Yamqfpk1+Z4Rvhe4ffSksmcDR6QX1nkBdx
-X-Google-Smtp-Source: AGHT+IE2NV4rr0g1/11a1aKAvLCV87PMjl+pIpr+3Z4hPKHGfZAvPqsdzuPXdheQ2SyYk7IR/MwzcQ==
-X-Received: by 2002:a17:902:e541:b0:1fb:4f57:6a65 with SMTP id d9443c01a7336-2008555ec6emr36244045ad.30.1723042278039;
-        Wed, 07 Aug 2024 07:51:18 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592b3643sm107035815ad.290.2024.08.07.07.51.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 07:51:16 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <5cc43ed9-b4f8-49f5-99ee-b411bb144085@roeck-us.net>
-Date: Wed, 7 Aug 2024 07:51:15 -0700
+	 In-Reply-To:Content-Type; b=Dh2l2ZMfvhoHx56kBHpdfnyW5f15zuVXPgsdGGAs108JYPYxAY4mCtHx5FAbfbHRb0n3MkIGoDhQdjVTkyP4hKbiq8FR/II9kLQisBZHxeo2YsqoUX6PO0fSaGAZ9SqadO2R9BCjhaibh9vQkRfBCZ/tpGA4y38Kpdl+b5wPjDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JDoWj/o3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 988B5C32781;
+	Wed,  7 Aug 2024 14:51:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723042296;
+	bh=XObzYOPHhby3ggLwzGEaQzICqe4oj78DHpF5ya8vOCg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JDoWj/o3qbZAwXN8osA7o/fQR5rR2a9sf1glg85R5aDIHg3UcenfyND5ai2Qq09ds
+	 ASl7C5d2WRpFXDiGUCrwQSUyoPiFIQVP2YlJ1Whxfe8KyyoONMOOKbzz5rERB7JI7r
+	 wY92XhGA1DrYK3GiCzjOVAfH5SXsYcG/QG/dIFXVs09lASk9fk7wWDuyI7J2cv60Z4
+	 w2pTnfKEDwV85KCSgFc6wzIf/wQM/i/tEcLVnD6jJ5uqVoNiaSCc9Rh2udTEWZBsoO
+	 xvJBSjOWwaId4b7ifJVGwtfxmSzaM9jHc4B3hShYyV0aX2MDJ13pRHUsUKIDdmo/v3
+	 V+2RzEXdLSdLQ==
+Message-ID: <0fb55319-0bae-4bb0-bce6-ebdbdd68f765@kernel.org>
+Date: Wed, 7 Aug 2024 16:51:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,92 +49,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 16/23] powerpc/e500: Switch to 64 bits PGD on 85xx (32
- bits)
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Nicholas Piggin <npiggin@gmail.com>, "linux-mm@kvack.org"
- <linux-mm@kvack.org>, Peter Xu <peterx@redhat.com>,
- Jason Gunthorpe <jgg@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- Oscar Salvador <osalvador@suse.de>
-References: <cover.1719928057.git.christophe.leroy@csgroup.eu>
- <ca85397df02564e5edc3a3c27b55cf43af3e4ef3.1719928057.git.christophe.leroy@csgroup.eu>
- <2c7adbc9-609d-41a9-8a3b-a63d59e21a1f@roeck-us.net>
- <AM0PR07MB496234BE973D5458C53517F29BB12@AM0PR07MB4962.eurprd07.prod.outlook.com>
- <4f46d614-0fbb-452b-a778-b7b3a7f6da8b@roeck-us.net>
- <b73e991e-5f66-455e-a271-e10511ebeaef@csgroup.eu>
+Subject: Re: [PATCH] arm64: dts: qcom: sm8550: camss: Add CAMSS block
+ definition
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Depeng Shao <quic_depengs@quicinc.com>, andersson@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com,
+ Yongsheng Li <quic_yon@quicinc.com>
+References: <20240807123333.2056518-1-quic_depengs@quicinc.com>
+ <1c0ff0fa-73d3-400f-a58d-15fb9b0574d1@kernel.org>
+ <c2a3e578-b098-450f-96f6-a3ae321f2b4c@kernel.org>
+ <85cc52aa-4593-49f5-9438-1ee3f09d2d71@quicinc.com>
+ <336e5679-f04e-47aa-9655-df88fde9de21@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <b73e991e-5f66-455e-a271-e10511ebeaef@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <336e5679-f04e-47aa-9655-df88fde9de21@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 8/7/24 03:11, Christophe Leroy wrote:
-> Hi,
-> 
-> Le 31/07/2024 à 18:35, Guenter Roeck a écrit :
->> On 7/31/24 08:36, LEROY Christophe wrote:
->>>
->>> Hi Guenter,
->>> Thanks for this report. I'm afk this week, i"ll have a look at it in more détails next week.
->>> But to be sûre, does that Oops match the bisected commit ? Because pmd_leaf()  for e500 doesn't exist yet so pmd_write() shouldnt be called.
->>> I did validate all my changes with mpc8544 on qemu when i implemented this séries, using map_hugetlb mm selftest. What test tool are you using ?
+On 07/08/2024 16:17, Bryan O'Donoghue wrote:
+> On 07/08/2024 13:53, Depeng Shao wrote:
+>> Hi Krzysztof,
 >>
->> Nothing special; it is just a qemu boot test with various module test and debug options enabled,
->> using a root file system generated with buildroot.
+>> On 8/7/2024 8:43 PM, Krzysztof Kozlowski wrote:
+>>> On 07/08/2024 14:39, Krzysztof Kozlowski wrote:
+>>>> On 07/08/2024 14:33, Depeng Shao wrote:
+>>>>> Add CAMSS block definition for sm8550.
+>>>>>
+>>>>> This drop contains definitions for the following components on sm8550:
+>>>>
+>>>> 1. Subject: there is no prefix camss. There is no such file, directory
+>>>> or module.
+>>>>
+>>
+>> Thanks for the comment, will remove this.
+>>
+>>>> 2. You already sent this, so this should be v2 or v3 or vX. Provide
+>>>> changelog under ---.
+>>>>
+>>>> If there is going to be resend, please fix above.
+>>>>
+>>
+>> Sure, I thought it might be a new series, so I didn't add v*, will add 
+>> v1, and v2 change log in new version series.
+>>
+>>>> 3. If this was tested on aim300, I am surprised this being not enabled
+>>>> on aim300.
+>>>
+>>
+>> It was tested long times ago, but the patches wasn't sent out for 
+>> reviewing early due to the team's internal schedule.
+>>
+>>> One more thing, bindings were not accepted, thus this patch should not
+>>> go in. There were no new bindings, so I assume patchset is using
+>>> rejected ones.
+>>>
+>>> It's fine to send it to get some comments, although would be nice to
+>>> mention to maintainer that this cannot be picked up as is. :(
+>>>
+>>
+>> Sure, I will resend the dtsi patch until the bindings are accepted, send 
+>> this patches because you posted the comments in other series.
+>>
+>> https://lore.kernel.org/all/0324e8e8-2ad4-4ce6-9616-3038b8e02ff9@quicinc.com/
+>>
+>> Thanks,
+>> Depeng
+>>
+>>
 > 
-> I still don't get anything with mpc85xx_defconfig.
+> Recommend
 > 
-> Can you tell with debug options you use and which module tests ?
+> 1. Send out your yaml and dts in one series
 > 
+> 2. Driver series can be posted in parallel
 
-Please see http://server.roeck-us.net/qemu/ppc-v6.11-rc2/.
+The binding should go with the driver. Also usually discussion about
+driver brings comments, thus changes, to the bindings.
 
-Thanks,
-Guenter
+Sorry, DTSI and DTS should wait till bindings got accepted to media
+subsystem.
+
+
+Best regards,
+Krzysztof
 
 
