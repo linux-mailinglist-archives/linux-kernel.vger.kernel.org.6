@@ -1,128 +1,103 @@
-Return-Path: <linux-kernel+bounces-278405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E31894AFE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:34:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A20A394AFE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCFCF1C21A50
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:34:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BE39B26297
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9CF1411DF;
-	Wed,  7 Aug 2024 18:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C75142E85;
+	Wed,  7 Aug 2024 18:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="d5BHXrjs"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dyiGKsbK"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F923140360;
-	Wed,  7 Aug 2024 18:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0331386C6;
+	Wed,  7 Aug 2024 18:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723055577; cv=none; b=OwkIAKKjysgs6YPH2CCYHqV08MIifM70oenRzW3H0uW+cUyzs51COKLGGuqXR4OWzJ/w+qWnD3Sgg1fHwvEY2hVrZ/Mn6vhbfEBEulBjrVE/qtghgufXyylxX9dzyrsQcgtf0bqbhj/0NMnaBm8yVbFRB1s+B5g2Bink4qaOEtY=
+	t=1723055623; cv=none; b=FabkPVgVSC0tAxp9TzM8ZcVD25BffsoI/oR3/xVxj69c18Z27nBvQgJpMXI69+AZqt/tj3gKj4QrJZQUX5Y7R4EJPXDihg5d+OGwQ4+dpU3qwvqZrxzWt0D0hoqwW/IhKs2SRK4u2hmKGg3isU7BjGTB6LfNKsKtBrF0TPvB7Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723055577; c=relaxed/simple;
-	bh=R/0ulANenEVovkW6klYol7c/WG5nO+/ERArwTJnpj8A=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=d222xzGTOoVFrl/AVHw78IKJiydfN4U+Tm9TFkwTbDrDKFkPv+J+RNXPDKv2JfCwHhd1DgrMHkoHp9pNKdEZjbiBZVE9HtTjNT0wCLCbw7KtMUYT6z3dXQB1nx2ZLptFKesYW6tgrewtwYdWJJM5+kWFJxvNH4LNte0t+lw0Kv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=d5BHXrjs; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1723055623; c=relaxed/simple;
+	bh=viDE7+qxvDbtQha2LNMPjQljnlwfV+/PdDCK+VhHq44=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FKuqEXT9vf//6A7kxmDyVNegRmO7UmMLsuwh8mAN3xsVwTIg1NSSIPRY8hNyBN5WJaP9nc0qAP8hIJhzxVLSltCCchtLU1rTlEvZv/ifVqEirxFLZYK3SNEQrHFbOeHjbqyaRKO8eFy2NprHEZoUlCB9EMv37wvy6YUh8w4OKmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dyiGKsbK; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ef2cce8be8so1215971fa.1;
+        Wed, 07 Aug 2024 11:33:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723055620; x=1723660420; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1MxBRAH0Ag1ClcuTsky8lb49iobr7PX00s08176mpWw=;
+        b=dyiGKsbKZFXIjh35apmaz7n/mTQ+q0LriGjJwxmUmRnA0lmRcsmccSeXiMsuXhsE5H
+         AEjqkaYWaD5U1W/3mJlVOdX2ELQ72sWOIazDGUAahCrMzGQCn+gRW+xn1KbMfaBRl3U8
+         z2QipXJ9cyWYuslBhYjXt8jPMLu/5yuuYwbogZ72Xf4uHPRcGuSAwgLAUMYnTLm13VLx
+         Cq93Xg4GX4TMJox9jqnVczH2umV6Km1xKdYuw/D3HPV67gb4hRMN+LGK/55gvqLwLXTE
+         Y0DR8EpGEr3hqwMpNxqpF3Rl+SPDhocQWw/XXf+jMZjcK8t0vrFXyS2B0qw5YY0YkQC7
+         MFFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723055620; x=1723660420;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1MxBRAH0Ag1ClcuTsky8lb49iobr7PX00s08176mpWw=;
+        b=hQH2HzwTudSVLLbgy855r8lvTumAzlcZKj9/rxafuzxEf46Eiz+i2IdXyFI5CcMTeu
+         Wg/zYrNU56DrqWj1isv4AObw/Q50vE8YpSntB2BlBbeE1Ecf2X4OxViwTFK7v/6I0PBw
+         SUsVaZk7ZkBE3wgdbPvZPNBYKqRnlt6hOGQphn7ltg+RD5/3eKksg5LVPBCiDLcFFwEU
+         y0IPS+8g1Sye5JubYL83QArOdEsEprTfeZhGvNwhsWo+/4t2XHitICOhIFWehDW/AJZe
+         9BZ+Ggmilyi/ApWfvmc/mNxylXtL4dKlDeHE4wsbQvECBxKvEZ1VzygP+9kevITU4apv
+         JVLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdDS6x/N8uTuDclqqJEt5Cgs+0dBw55tia0xYVDXPU3HaL23Zxq90ZpB1QCy8nsYGOviNP/o2ZGq3KGFd5tYYyupXxmrhWpLCTfv64NPn5lhfQ+PWoXwljzNRgDQJe6D0h7S21japMWUilQpegE5prB7vJ0kbOsfC5dq7XtyvvbQ==
+X-Gm-Message-State: AOJu0Ywj3p5n/UDwACGgKbMySjJkMcio0LsGrXcY41qswH3UemcZp7Hq
+	gid5qQjUY1MTpwz3pvuFohJfBy6KudYGt5OsgDLESGtAH8kueU62y+xqrG7pQFjiTAD4oqdKh9c
+	mkSvt7hr+UGPtePFqZLzklYi45qI=
+X-Google-Smtp-Source: AGHT+IHhFw9ZRB1L2uLpvRmL8fArsvCLSfCmS3oB6tt5t43QMtj+sCg22Sz/be3OHydK8/4XolzUp/7xJXr3PR+JZt4=
+X-Received: by 2002:a2e:b602:0:b0:2ef:17f7:6e1d with SMTP id
+ 38308e7fff4ca-2f15aa85eeamr137158281fa.4.1723055619166; Wed, 07 Aug 2024
+ 11:33:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1723055571;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uPhLM9T/fLlMrEKInffkblL2I9r8PE3dC5RrRLFYkOs=;
-	b=d5BHXrjsF/rxyvxtJfaz4qEvZkd3JMM+ozTmqbuuIdwjZMdba3mn7mk4lJoWgUmk10AWzd
-	NmxxpoVYDrBoVE6QNfr8Qf2N7jUzF9xX4YbSWd8iEfHmUglvQxNnEPbxTbJdzoHdEVnF35
-	FUK88vDOzbPfw0MMgDgvd34/4WLxq/blweX53gPIzZqEs51hYPD67tFMtDrzFS0UdtdmrC
-	5HvLm+Ygswi3cYCjzKAN32JB0RiQmFhE5mOric0kzwWUhA399cN+SdDzgIKOtrIPMfChGU
-	+3hssPajcaN3xqvldJGqLaN9Df6I2NrsVhEr14iC3dt0lU9wa3YfrAur3QkvXg==
-Date: Wed, 07 Aug 2024 20:32:51 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Florian Klink <flokli@flokli.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Sebastian Reichel <sebastian.reichel@collabora.com>, Kever Yang
- <kever.yang@rock-chips.com>, Muhammed Efe Cetin <efectn@protonmail.com>,
- FUKAUMI Naoki <naoki@radxa.com>, =?UTF-8?Q?Tam=C3=A1s_Sz=C5=B1cs?=
- <tszucs@protonmail.ch>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: rockchip: add rfkill node for M.2 E wifi
- on orangepi-5-plus
-In-Reply-To: <krvprzy3iz5b7n37eo2mb6sol6pcjkxsjdbdi6sxeebwveqtnr@e52cvrlkdjsa>
-References: <20240807162001.1737829-1-flokli@flokli.de>
- <20240807170030.1747381-1-flokli@flokli.de>
- <a10e70e2d67b9d63f2296b36b4cb3719@manjaro.org>
- <krvprzy3iz5b7n37eo2mb6sol6pcjkxsjdbdi6sxeebwveqtnr@e52cvrlkdjsa>
-Message-ID: <1b2e1b1b321f84f5cbff2ae18c3eba2e@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+References: <20240806230904.71194-1-song@kernel.org> <20240806230904.71194-4-song@kernel.org>
+ <ZrM_dOOcdbC7sMTV@krava> <CAPhsuW7PEUKyOCYctTy6K3v0m+-UA83cvYpFS3-Ur0rU9LoNxg@mail.gmail.com>
+In-Reply-To: <CAPhsuW7PEUKyOCYctTy6K3v0m+-UA83cvYpFS3-Ur0rU9LoNxg@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 7 Aug 2024 11:33:28 -0700
+Message-ID: <CAADnVQ+EX+PnXNhePFU3oMAD4vxVQvKb8sWqhPLc4GbUJ8LOTw@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 3/3] selftests/bpf: Add tests for bpf_get_dentry_xattr
+To: Song Liu <song@kernel.org>
+Cc: Jiri Olsa <olsajiri@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Kernel Team <kernel-team@meta.com>, Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	liamwisehart@meta.com, lltang@meta.com, shankaran@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-08-07 20:14, Florian Klink wrote:
-> On Wed, Aug 07, 2024 at 07:24:27PM GMT, Dragan Simic wrote:
->> On 2024-08-07 19:00, Florian Klink wrote:
->>> This follows the same logic as 82d40b141a4c ("arm64: dts: rockchip: 
->>> add
->>> rfkill node for M.2 Key E WiFi on rock-5b").
->>> 
->>> On the orangepi-5-plus, there's also a GPIO pin connecting the WiFi
->>> enable signal inside the M.2 Key E slot.
->>> 
->>> The exact GPIO PIN can be validated in the Armbian rk-5.10-rkr4 
->>> kernel
->>> rk3588-orangepi-5-plus.dtsi file [1], which contains a `wifi_disable`
->>> node referencing RK_PC4 on &gpio0.
->>> 
->>> Signed-off-by: Florian Klink <flokli@flokli.de>
->>> Tested-by: Florian Klink <flokli@flokli.de>
->> 
->> I forgot to mention that providing a Tested-by tag is redundant when
->> there's already a Signed-off-by tag, because the latter already 
->> implies
->> the former.
-> 
-> This came after I sent the v3. Generally I wish people would test 
-> things
-> - though too often it's not. I explicitly tested this to work (with a
-> wifi module added to that slot being unblock-able afterwards), and
-> wanted to point that out, thus adding the Tested-by.
+On Wed, Aug 7, 2024 at 7:40=E2=80=AFAM Song Liu <song@kernel.org> wrote:
+>
+> > +struct dentry;
+> > > +/* Description
+> > > + *  Returns xattr of a dentry
+> > > + * Returns__bpf_kfunc
+> >
+> > nit, extra '__bpf_kfunc' suffix?
+>
+> Good catch.. I somehow got it from bpf_sock_addr_set_sun_path.
 
-In general, some time should be allowed between sending consecutive
-versions of the same patch, so people can provide their feedback.
-
-When it comes to testing the submitted patches, please note that signing
-off a patch implies that the signer has already, to the best of their
-abilities, made sure that the patch works as described and expected.
-
-With all that in mind, please allow me to repeat that a Tested-by tag
-should not be provided from the same person that the Signed-off-by tag
-is already coming from.  It's simply redundant.
-
-> DCO 1.1 doesn't say anything about Tested-by, it's mostly legalese 
-> about
-> being allowed to send out the patch, and understanding the consequences
-> regarding licensing. It doesn't require the person adding their
-> Signed-Off-By to have tested it.
-
-Well, not all rules are to be followed blindly, and some documentation
-perhaps needs updating or expanding to be more precise.  On top of that,
-having something absent from the documentation doesn't necessarily mean
-that some additional rules don't apply.  It's many times simply about
-applying common sense.
+Fixed up both while applying.
 
