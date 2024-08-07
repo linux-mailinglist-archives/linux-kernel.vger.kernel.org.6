@@ -1,167 +1,285 @@
-Return-Path: <linux-kernel+bounces-278055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE7294AA34
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:34:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7585E94AA3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A279281279
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:34:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37D432857AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFD37BAF7;
-	Wed,  7 Aug 2024 14:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8942F7BB0A;
+	Wed,  7 Aug 2024 14:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b6bd+2AY"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gBiKZje5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B351D2B9A1;
-	Wed,  7 Aug 2024 14:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BD87605E
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723041252; cv=none; b=r/QGkQtu5RWcYy4f3RkOjt+Y6VmPROHnelbBitB73F/ZdSUfOPbVC/OKjuZ/1oXZT1qVRHtZ4ayqgHbHIYEuMEXMEhx4goHBO20LwL8Xmp+I9BZRr/hOGT/v/AaNNCjJuUekTiMGOn3HzaHt0unoAv1qXFEeYddaNXP9tJIDpfE=
+	t=1723041331; cv=none; b=o83JzoQV1U0b4fPwOjHc3dG8LpziArolosxrZ3sAZAbccPN5Zkd6ClrL3UKM0vF/5VODIgwJSyPfZViOorITInC1fKLNa1uK3DaX+Ykko0noWFQrhzNJSqWeoFbPT/yzDAiGKKhRL7XTE4Cl4qqpSwYdNqSA6U6NwJe2Ye0jj7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723041252; c=relaxed/simple;
-	bh=WqkhNT4x7/zQlM4AhmFxq4Q+ZY4U6nP+ET/fhr6SeRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L6ZJSGr+DmnqQ91Fxv8Rfv9MXIs4F4kn8b9DK+8pNIZFkn4ew+u1U1OdC6W1GaZnVI3lDksA+XNS7pi4hYtyxSW4FuvGbclxjogXmWFQztPljTmxA5Tj7CCPbCrrJMeQ7Brp/OCAgwSM0NVPkrRz+6naxmB/gGaueqsKF6gKYxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b6bd+2AY; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jkNguGjcftL7vwINObLdbFR92eHWY0kd9agR1JH7w6w=; b=b6bd+2AYpZJxUv+Pl0+aUW9ZdA
-	ilPREVFTAntdp7SYyHawfVlrWu9oa7IHIfMO5V+7Z+b4VrS2ZfNLgfZBwSvRaRCy67DLaTIIZ2YXI
-	8rlaRX7BWS3Z7WE6vWo2Bg+LRH/nqyczCM0fx01lYC8s2xL9bk6vJ/2KDhfBX1bHeVxa4Z/L9Ct93
-	6t5xMXboQVgxMNg0lpVNnChlPtzGGPnnfoPaBmlZ0rZotJ7+3khUYKrOJaI0FIHHs0Y6uEmCurd0p
-	CjgPhlb/jUBV3U+GXdbu/pPkMKdcDV2ZJ/nM2GuCVfobyLNR9UGMbA+3B/nEEt+yP1UPE70n9Knuf
-	PHdMhTWQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sbhjs-00000006dRC-1A60;
-	Wed, 07 Aug 2024 14:34:08 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 65FB830033D; Wed,  7 Aug 2024 16:34:07 +0200 (CEST)
-Date: Wed, 7 Aug 2024 16:34:07 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Chandan Babu R <chandanbabu@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	xfs <linux-xfs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org
-Subject: Re: Are jump labels broken on 6.11-rc1?
-Message-ID: <20240807143407.GC31338@noisy.programming.kicks-ass.net>
-References: <87o76f9vpj.fsf@debian-BULLSEYE-live-builder-AMD64>
- <20240730132626.GV26599@noisy.programming.kicks-ass.net>
- <20240731001950.GN6352@frogsfrogsfrogs>
- <20240731031033.GP6352@frogsfrogsfrogs>
- <20240731053341.GQ6352@frogsfrogsfrogs>
- <20240731105557.GY33588@noisy.programming.kicks-ass.net>
- <20240805143522.GA623936@frogsfrogsfrogs>
- <20240806094413.GS37996@noisy.programming.kicks-ass.net>
- <20240806103808.GT37996@noisy.programming.kicks-ass.net>
- <875xsc4ehr.ffs@tglx>
+	s=arc-20240116; t=1723041331; c=relaxed/simple;
+	bh=Ixwh94R0R572SAoYT5WNBK2lJtobe9oaUKjlghCVYzc=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=r0Ac83/tp3K+DYnjRk1E13WeeHQTzz4AyjF/22Lxg1C8h4qG2KhhZuZv9Q6/+QzmqwcvQwDljgU1llRUhqG/LrYIeMHj2OJ5zqufFEd9hNYujWJRTv2ZxyxiOD/ySIPFHug4VXM9uJx4gEnHtMWkwdrVx3ib9VcYvTtdLe9wDCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gBiKZje5; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723041329; x=1754577329;
+  h=date:from:to:cc:subject:message-id;
+  bh=Ixwh94R0R572SAoYT5WNBK2lJtobe9oaUKjlghCVYzc=;
+  b=gBiKZje56gGfwJrXch3NvyIW5QJ29ucQCEn9vqVl4Fm8y6gqfTTc3C/M
+   qTvvveDOTOT1JpH6UptrbxOpUc/x01iJj8PcW7tLmyeUM0pImekGKtfUx
+   roFg/zvZl5v4klaXY9upWf9HF0jqjqhcK8ox6vc53WXG6n5/3bhXtWR13
+   xsvyJhFEB0C6+19nYccUkM4Ai2R0VRHQLR3E2xTv7VwlcajTX6XlN3ncE
+   8Fd9cf1QZTWGbcKr7tcls1ck0j1N2Qb/DNNwmHhLfzDQkRJmFv5WOwinK
+   dgQ+p589+Db48vH1GiFBFB84clFM8OQQsQpw+2NeP6ZUjhbkMtyNEZTGR
+   A==;
+X-CSE-ConnectionGUID: jZKESlO2SzSTDICxz+RvwA==
+X-CSE-MsgGUID: LsspPc8yRlOLOfDYouhHZw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21234422"
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="21234422"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 07:35:29 -0700
+X-CSE-ConnectionGUID: aMIFlkTuSuqqiGKznClKFQ==
+X-CSE-MsgGUID: y1wViIJTQZ2V0y6670f3Dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="80117570"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 07 Aug 2024 07:35:27 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sbhl3-0005Sg-1M;
+	Wed, 07 Aug 2024 14:35:23 +0000
+Date: Wed, 07 Aug 2024 22:34:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:non-rcu/next] BUILD SUCCESS
+ f01f18f2ed7db28c225b105b24fd3f22de90cdd9
+Message-ID: <202408072220.MwBFCjmU-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <875xsc4ehr.ffs@tglx>
 
-On Wed, Aug 07, 2024 at 04:03:12PM +0200, Thomas Gleixner wrote:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git non-rcu/next
+branch HEAD: f01f18f2ed7db28c225b105b24fd3f22de90cdd9  Merge branches 'cmpxchg.2024.08.06a', 'lkmm.2024.08.02a', 'kcsan.2024.08.01a' and 'misc.2024.08.02a' into HEAD
 
-> > +	if (static_key_dec(key, true)) // dec-not-one
-> 
-> Eeew.
+elapsed time: 776m
 
-:-) I knew you'd hate on that
+configs tested: 193
+configs skipped: 7
 
-> Something like the below?
-> 
-> Thanks,
-> 
->         tglx
-> ---
-> @@ -250,49 +250,71 @@ void static_key_disable(struct static_ke
->  }
->  EXPORT_SYMBOL_GPL(static_key_disable);
->  
-> -static bool static_key_slow_try_dec(struct static_key *key)
-> +static bool static_key_dec(struct static_key *key, bool dec_not_one)
->  {
-> +	int v = atomic_read(&key->enabled);
->  
->  	do {
->  		/*
-> +		 * Warn about the '-1' case; since that means a decrement is
-> +		 * concurrent with a first (0->1) increment. IOW people are
-> +		 * trying to disable something that wasn't yet fully enabled.
-> +		 * This suggests an ordering problem on the user side.
-> +		 *
-> +		 * Warn about the '0' case; simple underflow.
->  		 */
-> +		if (WARN_ON_ONCE(v <= 0))
-> +			return v;
-> +
-> +		if (dec_not_one && v == 1)
-> +			return v;
-> +
->  	} while (!likely(atomic_try_cmpxchg(&key->enabled, &v, v - 1)));
->  
-> +	return v;
-> +}
-> +
-> +/*
-> + * Fastpath: Decrement if the reference count is greater than one
-> + *
-> + * Returns false, if the reference count is 1 or -1 to force the caller
-> + * into the slowpath.
-> + *
-> + * The -1 case is to handle a decrement during a concurrent first enable,
-> + * which sets the count to -1 in static_key_slow_inc_cpuslocked(). As the
-> + * slow path is serialized the caller will observe 1 once it acquired the
-> + * jump_label_mutex, so the slow path can succeed.
-> + */
-> +static bool static_key_dec_not_one(struct static_key *key)
-> +{
-> +	int v = static_key_dec(key, true);
-> +
-> +	return v != 1 && v != -1;
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-	if (v < 0)
-		return false;
+tested configs:
+alpha                             allnoconfig   gcc-13.2.0
+alpha                             allnoconfig   gcc-13.3.0
+alpha                            allyesconfig   gcc-13.3.0
+alpha                               defconfig   gcc-13.2.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                                 defconfig   gcc-13.2.0
+arc                         haps_hs_defconfig   gcc-13.2.0
+arc                        nsim_700_defconfig   gcc-13.2.0
+arc                   randconfig-001-20240807   gcc-13.2.0
+arc                   randconfig-002-20240807   gcc-13.2.0
+arm                              allmodconfig   gcc-13.2.0
+arm                              allmodconfig   gcc-14.1.0
+arm                               allnoconfig   clang-20
+arm                               allnoconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-13.2.0
+arm                                 defconfig   gcc-13.2.0
+arm                           h3600_defconfig   gcc-13.2.0
+arm                         lpc18xx_defconfig   gcc-13.2.0
+arm                          pxa910_defconfig   gcc-13.2.0
+arm                   randconfig-001-20240807   gcc-13.2.0
+arm                   randconfig-002-20240807   gcc-13.2.0
+arm                   randconfig-003-20240807   gcc-13.2.0
+arm                   randconfig-004-20240807   gcc-13.2.0
+arm                           sama7_defconfig   gcc-13.2.0
+arm                           sunxi_defconfig   gcc-13.2.0
+arm64                            allmodconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-14.1.0
+arm64                               defconfig   gcc-13.2.0
+arm64                 randconfig-001-20240807   gcc-13.2.0
+arm64                 randconfig-002-20240807   gcc-13.2.0
+arm64                 randconfig-003-20240807   gcc-13.2.0
+arm64                 randconfig-004-20240807   gcc-13.2.0
+csky                              allnoconfig   gcc-13.2.0
+csky                              allnoconfig   gcc-14.1.0
+csky                                defconfig   gcc-13.2.0
+csky                  randconfig-001-20240807   gcc-13.2.0
+csky                  randconfig-002-20240807   gcc-13.2.0
+hexagon                          allmodconfig   clang-20
+hexagon                           allnoconfig   clang-20
+hexagon                          allyesconfig   clang-20
+i386                             allmodconfig   clang-18
+i386                             allmodconfig   gcc-12
+i386                              allnoconfig   clang-18
+i386                              allnoconfig   gcc-12
+i386                             allyesconfig   clang-18
+i386                             allyesconfig   gcc-12
+i386         buildonly-randconfig-001-20240807   clang-18
+i386         buildonly-randconfig-002-20240807   clang-18
+i386         buildonly-randconfig-003-20240807   clang-18
+i386         buildonly-randconfig-003-20240807   gcc-12
+i386         buildonly-randconfig-004-20240807   clang-18
+i386         buildonly-randconfig-005-20240807   clang-18
+i386         buildonly-randconfig-006-20240807   clang-18
+i386         buildonly-randconfig-006-20240807   gcc-12
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240807   clang-18
+i386                  randconfig-001-20240807   gcc-12
+i386                  randconfig-002-20240807   clang-18
+i386                  randconfig-003-20240807   clang-18
+i386                  randconfig-004-20240807   clang-18
+i386                  randconfig-004-20240807   gcc-12
+i386                  randconfig-005-20240807   clang-18
+i386                  randconfig-005-20240807   gcc-12
+i386                  randconfig-006-20240807   clang-18
+i386                  randconfig-011-20240807   clang-18
+i386                  randconfig-012-20240807   clang-18
+i386                  randconfig-012-20240807   gcc-11
+i386                  randconfig-013-20240807   clang-18
+i386                  randconfig-014-20240807   clang-18
+i386                  randconfig-015-20240807   clang-18
+i386                  randconfig-016-20240807   clang-18
+i386                  randconfig-016-20240807   gcc-12
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-13.2.0
+loongarch                         allnoconfig   gcc-14.1.0
+loongarch                           defconfig   gcc-13.2.0
+loongarch             randconfig-001-20240807   gcc-13.2.0
+loongarch             randconfig-002-20240807   gcc-13.2.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-13.2.0
+m68k                              allnoconfig   gcc-14.1.0
+m68k                             allyesconfig   gcc-14.1.0
+m68k                          amiga_defconfig   gcc-13.2.0
+m68k                                defconfig   gcc-13.2.0
+m68k                        m5307c3_defconfig   gcc-13.2.0
+m68k                            mac_defconfig   gcc-13.2.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-13.2.0
+microblaze                        allnoconfig   gcc-14.1.0
+microblaze                       allyesconfig   gcc-14.1.0
+microblaze                          defconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-14.1.0
+nios2                             allnoconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-14.1.0
+nios2                               defconfig   gcc-13.2.0
+nios2                 randconfig-001-20240807   gcc-13.2.0
+nios2                 randconfig-002-20240807   gcc-13.2.0
+openrisc                          allnoconfig   gcc-14.1.0
+openrisc                         allyesconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-14.1.0
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   gcc-14.1.0
+parisc                           allyesconfig   gcc-14.1.0
+parisc                              defconfig   gcc-14.1.0
+parisc                randconfig-001-20240807   gcc-13.2.0
+parisc                randconfig-002-20240807   gcc-13.2.0
+parisc64                            defconfig   gcc-13.2.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   gcc-14.1.0
+powerpc                          allyesconfig   gcc-14.1.0
+powerpc                   currituck_defconfig   gcc-13.2.0
+powerpc                         ps3_defconfig   gcc-13.2.0
+powerpc               randconfig-001-20240807   gcc-13.2.0
+powerpc               randconfig-003-20240807   gcc-13.2.0
+powerpc64             randconfig-001-20240807   gcc-13.2.0
+powerpc64             randconfig-002-20240807   gcc-13.2.0
+powerpc64             randconfig-003-20240807   gcc-13.2.0
+riscv                            allmodconfig   gcc-14.1.0
+riscv                             allnoconfig   gcc-14.1.0
+riscv                            allyesconfig   gcc-14.1.0
+riscv                               defconfig   gcc-14.1.0
+riscv                 randconfig-001-20240807   gcc-13.2.0
+riscv                 randconfig-002-20240807   gcc-13.2.0
+s390                             allmodconfig   clang-20
+s390                              allnoconfig   clang-20
+s390                              allnoconfig   gcc-14.1.0
+s390                             allyesconfig   clang-20
+s390                             allyesconfig   gcc-14.1.0
+s390                                defconfig   gcc-14.1.0
+s390                  randconfig-001-20240807   gcc-13.2.0
+s390                  randconfig-002-20240807   gcc-13.2.0
+sh                               allmodconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-13.2.0
+sh                                allnoconfig   gcc-14.1.0
+sh                               allyesconfig   gcc-14.1.0
+sh                                  defconfig   gcc-14.1.0
+sh                    randconfig-001-20240807   gcc-13.2.0
+sh                    randconfig-002-20240807   gcc-13.2.0
+sh                           se7750_defconfig   gcc-13.2.0
+sh                          urquell_defconfig   gcc-13.2.0
+sparc                            allmodconfig   gcc-14.1.0
+sparc64                             defconfig   gcc-14.1.0
+sparc64               randconfig-001-20240807   gcc-13.2.0
+sparc64               randconfig-002-20240807   gcc-13.2.0
+um                               allmodconfig   clang-20
+um                               allmodconfig   gcc-13.3.0
+um                                allnoconfig   clang-17
+um                                allnoconfig   gcc-14.1.0
+um                               allyesconfig   gcc-12
+um                               allyesconfig   gcc-13.3.0
+um                                  defconfig   gcc-14.1.0
+um                             i386_defconfig   gcc-13.2.0
+um                             i386_defconfig   gcc-14.1.0
+um                    randconfig-001-20240807   gcc-13.2.0
+um                    randconfig-002-20240807   gcc-13.2.0
+um                           x86_64_defconfig   gcc-14.1.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64       buildonly-randconfig-001-20240807   clang-18
+x86_64       buildonly-randconfig-002-20240807   clang-18
+x86_64       buildonly-randconfig-003-20240807   clang-18
+x86_64       buildonly-randconfig-004-20240807   clang-18
+x86_64       buildonly-randconfig-005-20240807   clang-18
+x86_64       buildonly-randconfig-006-20240807   clang-18
+x86_64                              defconfig   clang-18
+x86_64                              defconfig   gcc-11
+x86_64                randconfig-001-20240807   clang-18
+x86_64                randconfig-002-20240807   clang-18
+x86_64                randconfig-003-20240807   clang-18
+x86_64                randconfig-004-20240807   clang-18
+x86_64                randconfig-005-20240807   clang-18
+x86_64                randconfig-006-20240807   clang-18
+x86_64                randconfig-011-20240807   clang-18
+x86_64                randconfig-012-20240807   clang-18
+x86_64                randconfig-013-20240807   clang-18
+x86_64                randconfig-014-20240807   clang-18
+x86_64                randconfig-015-20240807   clang-18
+x86_64                randconfig-016-20240807   clang-18
+x86_64                randconfig-071-20240807   clang-18
+x86_64                randconfig-072-20240807   clang-18
+x86_64                randconfig-073-20240807   clang-18
+x86_64                randconfig-074-20240807   clang-18
+x86_64                randconfig-075-20240807   clang-18
+x86_64                randconfig-076-20240807   clang-18
+x86_64                          rhel-8.3-rust   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
+xtensa                            allnoconfig   gcc-14.1.0
+xtensa                randconfig-001-20240807   gcc-13.2.0
+xtensa                randconfig-002-20240807   gcc-13.2.0
 
-	/*
-	 * Notably, 0 (underflow) returns true such that it bails out
-	 * without doing anything.
-	 */
-	return v != 1;
-
-Perhaps?
-
-> +}
-> +
-> +/*
-> + * Slowpath: Decrement and test whether the refcount hit 0.
-> + *
-> + * Returns true if the refcount hit zero, i.e. the previous value was one.
-> + */
-> +static bool static_key_dec_and_test(struct static_key *key)
-> +{
-> +	int v = static_key_dec(key, false);
-> +
-> +	lockdep_assert_held(&jump_label_mutex);
-> +	return v == 1;
->  }
-
-But yeah, this is nicer!
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
