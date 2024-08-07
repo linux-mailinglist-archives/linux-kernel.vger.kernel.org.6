@@ -1,78 +1,88 @@
-Return-Path: <linux-kernel+bounces-278581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B1BE94B225
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:29:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADF2F94B228
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD2611C21207
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:29:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B3D71F2286F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3015014A62A;
-	Wed,  7 Aug 2024 21:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6075214D29C;
+	Wed,  7 Aug 2024 21:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tzwr8WW1"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oCiV7Iw8"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7627C13E409
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 21:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E02E149DFF;
+	Wed,  7 Aug 2024 21:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723066142; cv=none; b=vDivEivRhzCPhN6K7gcQm4rjKpatZSQHp4kZ44iIVhoafdskAO8+hHsh9q4Jxoi990aFw2+YX6H+oPt+4TsdbJZXFteqaBQ1c1wh4lIuwApLTHay0I1ijxm8/aCkm8exIgprWAG/u899npwv5UErtPFDzmzZZgzlWUoPfbK3i2c=
+	t=1723066160; cv=none; b=O7KMeIYmZA8X+FkxGWSI46lA2qVKy1MiySQb5CW3iNOQ0IYzCnHMb3TmUFiVRDhJMxac/h/0UDJqaVsobOFfWVFDrH8b8VEUIM+GNsUlY5q6n4sXR2trUL5lJeVyZuPWpa1AA1dG9m/YvG8shCTLolCKK3pUPojPKr56jt8FJ7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723066142; c=relaxed/simple;
-	bh=ZUX9+fCy+0B7oLMMSZ5tfzYOYda/SvhNBtJufwVTXRA=;
+	s=arc-20240116; t=1723066160; c=relaxed/simple;
+	bh=qzOKWUz41TYDR4cdz3l1k0/R2WuyA/BV//cD3NYMHPA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZJk1PAjFJs+E4ZIHkXbMFb+C/gRQgSLBMrm4wafBZKMuFbuIBeSEWsTL8Bmu8GFW5AdhtJh6rjAZmoAi0sOYNTJNmVEgtAIMhGTEVaqfO+Ih0rrZXPmNPbm5K7riEgEsfKfQwqOUq0a54bWw0+MPjyPnNKD8kK6reOuQdpEAqOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tzwr8WW1; arc=none smtp.client-ip=198.175.65.17
+	 Content-Type:Content-Disposition:In-Reply-To; b=kHqwoUuclyVARk1f8XY5q5kOwr9TVgcw0ObrSL3bXE0Yti6EvHQp/PWD6wncSyIVB4IeXu1VUYp0lP/+ee8xaEfvDnfUHwW5GLloke+F/TooTeJIyq7xsAZwOvrpdaAKePF9a/xJlxPfQwtvmWUh0xv+Jc7aMEiWs1w5pnMec0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oCiV7Iw8; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723066140; x=1754602140;
+  t=1723066157; x=1754602157;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=ZUX9+fCy+0B7oLMMSZ5tfzYOYda/SvhNBtJufwVTXRA=;
-  b=Tzwr8WW1c9vGTtwFKXwNVyOk9wSdkF4KhLW4weWhB9qxvth9ZvAY7uKB
-   hMPnwjWzuYevJexFCS9/E3DPMoWqVW2Wo1behFrCpA3v4uifq7fRtV5m3
-   ataP69mZLC5SWL9u35Q3j9oj2UMTNB3GGOoUu5f9vzCCG3R14edHaiPdK
-   5g5WQHBIKUM5rWUdAhlMxKqksr3DE8i+b1mZaaaPVwUZJMWTPQZNwlL2H
-   DwGeseGe736lkfvQU+iQgUMdy/XXz5G8wpk5sfeLUvuwYJBbn5QFo9UqQ
-   GyJfBTd1SQkuCjO99LNpGWGUuvwsFKZnPem5qefs829hudhRilz8i1ri/
+  bh=qzOKWUz41TYDR4cdz3l1k0/R2WuyA/BV//cD3NYMHPA=;
+  b=oCiV7Iw8+I8Odsc5z8PttO3CwpV4pEeWDLpYTzIOnNDyYGMVwSAlwflB
+   cn2nGi+S8mvbOEH9XzqtmpJYxADGhbN/9F5XBvv5+w9MNYisQsRCcRgfC
+   Qe75/r6iKwZXotwrUVI1RufpvITYwPfMSdd8Nsu38wjnLDwmWIF4YvBuN
+   mayBndEXcGGLpNnNns+67bbNsq54iD8MAiaXR0wY+8XqMA7W+kCN6p7QS
+   xvzW0C6dCFrkSlfLYs/gehtewCJjx280rmPw1SEIKCfcLPaZccH1lEVG4
+   Rci8tR71GLzfc/dpkJzw0DujfzSVa5OwwIElFOiRdnaKSADWGKLoPsmCU
    Q==;
-X-CSE-ConnectionGUID: fUyCfh15SJGxDoY/CFzbVw==
-X-CSE-MsgGUID: QCIXlGKVQ4i7b+v2HBhkiw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21286244"
+X-CSE-ConnectionGUID: ujpH8Y4QSluMV/Hud3zBSg==
+X-CSE-MsgGUID: 5tEF9MG5S3KFyjf95R0Xnw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21286273"
 X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
-   d="scan'208";a="21286244"
+   d="scan'208";a="21286273"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 14:29:00 -0700
-X-CSE-ConnectionGUID: EQqxYnucTvukEsTBxWCF1A==
-X-CSE-MsgGUID: vQFOEMQBR8y6JhP2VHcKeQ==
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 14:29:14 -0700
+X-CSE-ConnectionGUID: VO5TdQLCThqYeLxhxHYGww==
+X-CSE-MsgGUID: iSgMtuprRgqN7ExnMuFUDg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
-   d="scan'208";a="56947503"
+   d="scan'208";a="56947521"
 Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 07 Aug 2024 14:28:57 -0700
+  by fmviesa008.fm.intel.com with ESMTP; 07 Aug 2024 14:29:08 -0700
 Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sboDB-0005jQ-2h;
-	Wed, 07 Aug 2024 21:28:51 +0000
-Date: Thu, 8 Aug 2024 05:27:45 +0800
+	id 1sboDM-0005jV-21;
+	Wed, 07 Aug 2024 21:29:02 +0000
+Date: Thu, 8 Aug 2024 05:27:46 +0800
 From: kernel test robot <lkp@intel.com>
-To: Breno Leitao <leitao@debian.org>, martin.petersen@oracle.com,
-	Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, leit@meta.com,
-	"open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)" <MPT-FusionLinux.pdl@broadcom.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] scsi: message: fusion: Remove unused variable
-Message-ID: <202408080515.uSFIs9Q0-lkp@intel.com>
-References: <20240807094000.398857-1-leitao@debian.org>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Joern Engel <joern@lazybastard.org>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Wolfram Sang <wsa-dev@sang-engineering.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-nvme@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v3 6/6] mtd: parser: add support for Airoha parser
+Message-ID: <202408080559.nVw5Qez6-lkp@intel.com>
+References: <20240806114118.17198-7-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,49 +91,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240807094000.398857-1-leitao@debian.org>
+In-Reply-To: <20240806114118.17198-7-ansuelsmth@gmail.com>
 
-Hi Breno,
+Hi Christian,
 
-kernel test robot noticed the following build warnings:
+kernel test robot noticed the following build errors:
 
-[auto build test WARNING on mkp-scsi/for-next]
-[also build test WARNING on linus/master v6.11-rc2 next-20240807]
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on mtd/mtd/fixes linus/master v6.11-rc2 next-20240807]
+[cannot apply to mtd/mtd/next]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Breno-Leitao/scsi-message-fusion-Remove-unused-variable/20240807-174402
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git for-next
-patch link:    https://lore.kernel.org/r/20240807094000.398857-1-leitao%40debian.org
-patch subject: [PATCH] scsi: message: fusion: Remove unused variable
-config: i386-buildonly-randconfig-001-20240808 (https://download.01.org/0day-ci/archive/20240808/202408080515.uSFIs9Q0-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240808/202408080515.uSFIs9Q0-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-nvme-Document-nvme-card-compatible/20240806-195029
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240806114118.17198-7-ansuelsmth%40gmail.com
+patch subject: [PATCH v3 6/6] mtd: parser: add support for Airoha parser
+config: arc-randconfig-r121-20240807 (https://download.01.org/0day-ci/archive/20240808/202408080559.nVw5Qez6-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240808/202408080559.nVw5Qez6-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408080515.uSFIs9Q0-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408080559.nVw5Qez6-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
->> drivers/message/fusion/mptsas.c:4235:2: warning: ignoring return value of function declared with 'warn_unused_result' attribute [-Wunused-result]
-    4235 |         scsi_device_reprobe(sdev);
-         |         ^~~~~~~~~~~~~~~~~~~ ~~~~
-   1 warning generated.
-
-
-vim +/warn_unused_result +4235 drivers/message/fusion/mptsas.c
-
-  4230	
-  4231	static void
-  4232	mptsas_reprobe_lun(struct scsi_device *sdev, void *data)
-  4233	{
-  4234		sdev->no_uld_attach = data ? 1 : 0;
-> 4235		scsi_device_reprobe(sdev);
-  4236	}
-  4237	
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_performance.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-hub.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
+>> ERROR: modpost: "of_update_property" [drivers/mtd/parsers/ofpart.ko] undefined!
 
 -- 
 0-DAY CI Kernel Test Service
