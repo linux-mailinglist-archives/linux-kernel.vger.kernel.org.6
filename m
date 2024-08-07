@@ -1,154 +1,142 @@
-Return-Path: <linux-kernel+bounces-277899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B201994A7E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:41:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE36D94A7D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66D4F1F223A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:41:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FCB21F22349
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDE21E6738;
-	Wed,  7 Aug 2024 12:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960041E6723;
+	Wed,  7 Aug 2024 12:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="NYcehtKO"
-Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="lYIHgvXD"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9CC1E6723;
-	Wed,  7 Aug 2024 12:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6241C4638
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 12:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723034457; cv=none; b=iqUPc4dkGJ9oUUMhyXprbBICi3uZy8LlHgPM5q1AkKo4B4oP4MfUzuw986gNdOQntvRlVQtOkJ1gdp/plyB6HisYgBOA0XoMI2XkuOi/F6a6kabg3CQR7PUuRBQnMO54dhNvtJkIM1re1klgzOsT7FveQlyQhG6+fju2yY/aMLY=
+	t=1723034345; cv=none; b=YcouH0T63V1n47Dh1jkjykwcceKUMreulj09XgrkLFaV6zmU9m1p08C9f48sqvCUK8ja0RuYzhCIgbIWYdodZ2sfVHa13PBLGqIko514KhIEdbZAAq4NbAP7+2gla0N+lYZn6KDJ1mNFYpn5RFtetLco6Ljzqbs5VoMuvtLg7oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723034457; c=relaxed/simple;
-	bh=YehjdJhVQfE1SmMkcg6Vh92i4QqpLbWygY3qyRqS24M=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=GC42cO7majJ8Bf712GFIb3dpU0OkXsUWfEvrS0vCQ0+Nm1MhuEPPHhqSMs3WWgmsG+Mmn+AS+y4akPJRZyw9yU/4ocf9LskT7FCcalMUyK5go2C9pSMpxrEkuKdOUIk29TgUUEaXwIlAhOGtkTuxEp2csGAKeflYI+x8IZoLfRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=NYcehtKO; arc=none smtp.client-ip=203.205.221.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1723034151; bh=O8EFHvhwR3zwhlu6IVyc3fhL292dVDPjyYhLVFCwx/U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=NYcehtKOF5ngNu+W+izX80ZjT6s4vNFNY316+dqjPH/hWOTyrGPHcuPl3QtW0CFFZ
-	 UARTf8oW298PRDgjePGIR2IYe92O2JBFM8yYxnfvf5T1X1k9EUFmLrSSdhgzus8fig
-	 PKq7Tcv2oBSOHcdwDPOy2D0ZNk5rTguFfMdUrzu8=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
-	id 8EF23485; Wed, 07 Aug 2024 20:35:47 +0800
-X-QQ-mid: xmsmtpt1723034147tl0ll2659
-Message-ID: <tencent_BB8B66363CC7375A97D436964A80745F7709@qq.com>
-X-QQ-XMAILINFO: M/NR0wiIuy70Tm+qlsdo2pf6f8nFpD+KrPBYeIwgja1uUH6yN6aCauzhpeBrNS
-	 /bvbDYlXxThybRPDEIo+E8MEER5lBoWsY5uF1tmy9Gm0+4BZql9jxcPM67GqsJbtziDFg8goENk5
-	 INYeTNB2tNc07Fx8I23cQ39bJ3xGkjJ6pCaFjkzNhpS/leH1q0DW65VDdGH6UEjhGq+uwFIqpaD3
-	 Crik8uYze2DfCfArnPZWHeTmG9QoDZytieWydhd7ulLPzxPrnZkhppD+Nk7mODMAPqrFVkg9IDpq
-	 rWwmxjntkuPXk0m9eSMu+T6S02gQ/QQ3+eJMkXfLwjCtdN19K9Rmyui0p8a3YL4jb8fJ3uPD6IHI
-	 sYZuKW8mlkKWeZ/RmRSbtccHfp3iWlXZT5fRbL9xUSxXb7QmxBLDfaktWIF7HhJhd+eJaSgYs6kM
-	 aRRKzPGWBMow5MRCPxsWZnHw4GEp4tl4/Y1c9nRA1hhS8kQuxZO9LG9u2Nd1PsRGyqAaJAfiPaoX
-	 YJBMEsOG9JQ657PKqs/ADl92szjk8gIgz0ATMy9CHbYri2+PrBbDUOlMuXZOpk0df8mbqNXkzRET
-	 II3HYVhbHraY2e/+wKQfy6KLYKfb85zhwnnY4/h4S8aqRrl37nlmY8B50u2qJNnN4RCBtUYx5WPS
-	 8mWC/5NyG4dwHKYfeigYhRRVXfaHDmVGzmp4ZShQFYnZngZDkSNVwhQrpPvE2isKbuWIfcIBRLGa
-	 oBlXvTv+P1M258CwHAvnBzRqiME+ajR3TX7ePO1Wryw/q2PisSks6Yjs5imZIAzONM+whnBkHgmj
-	 EoqyHtFFcQuhQ8L57+dhUUJ0ctknxSsrbuS3jpZWPiHCxpJ45arVnTi8Chz5Zyv3o35B7JO+5rGx
-	 hqJ8HMmzcyFwfftKfwSFTQShKjxIc0zOoIIjt7qKQQy2iwCpWl7MA5ITR5AEZRFPTkj3K3OU4v3x
-	 a5mgk5ABM=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kernel@pengutronix.de,
-	kuba@kernel.org,
-	leitao@debian.org,
-	linux-can@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mkl@pengutronix.de,
-	netdev@vger.kernel.org,
-	o.rempel@pengutronix.de,
-	pabeni@redhat.com,
-	robin@protonic.nl,
-	socketcan@hartkopp.net,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH net-next] can: j1939: fix uaf in j1939_session_destroy
-Date: Wed,  7 Aug 2024 20:35:47 +0800
-X-OQ-MSGID: <20240807123546.460919-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000af9991061ef63774@google.com>
-References: <000000000000af9991061ef63774@google.com>
+	s=arc-20240116; t=1723034345; c=relaxed/simple;
+	bh=Mw6wKc2ti6LY5idHC/sVr+2dbNzF+B634uVPlEp2LKQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YlDj8O24e5aBZMlt/PevdAr3TEtMnhRhEduQ+LOLkAzik4p9U+ct/zjblALe1BNNr8sRgPI2Ytc/aaSwnK6O9PpyoYeKJz48Dq9FKTCUIpoTNvgNyysnz5e+R2Fpu/oZ4Vek2TcX4oN7efL1s8PBEd0CWpqkhRQ5bp7CYI3jMBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=lYIHgvXD; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso1895595a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 05:39:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1723034342; x=1723639142; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OnUFp98oxeUnctnSDs6TX1a8Wvygl0TqIj4jMlE8iGk=;
+        b=lYIHgvXDRgOquolVGTVoQjBv4o29CzUrksbsJPFOF/B6nKhk/iKbBTdqjaBauIjg2e
+         cKxlUXHQI7jN+/SUjGFJidOeUtU+a/Lrm595Y9v03c/qmZe3ebYUzVacPQiNsspAvgn+
+         /Oskp1K6d9sZQDKS6kLsahgpyCpMTlkqWyXFY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723034342; x=1723639142;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OnUFp98oxeUnctnSDs6TX1a8Wvygl0TqIj4jMlE8iGk=;
+        b=Uup+XJ3wSgIo9/46vS1M7S91hTOtlf292MkNC8MP2anQbE62j8cHoc4KOQcUfzRL/v
+         Zq4f22QpPiF5xGXLFknh2PN1lH7+LZr+96qiO6fxT66scF8SSjXwo2f/+KtLFNub+Wrb
+         tHHg1Qhn9HttA5nS7ALwJYCOX4ybRTAF+fNS4FcG2+7ZRao61NXBInLPEwjLBYs/epRd
+         5ZPAONOOe0vqqGAMGpbRoE1OW0kXbqStWsSL2KAavH3Z/9WVL2E3leCZ4si6l+xHIIaK
+         gyy0F76XH+kK6+lAoAb4RsreUhhPxHofRMppkxheWOlmrYgkALJpSQDPIOUzLOfBaxjR
+         z63A==
+X-Forwarded-Encrypted: i=1; AJvYcCWzSNcrqygialL0uzxuinErQLp18D/JraVxNrlOHCRta3Nvx3KSCFH9CMjSGpQ9dkyk6IW503P2UM1FjSketL5DG7tSb6xrmDvGQsr7
+X-Gm-Message-State: AOJu0Yw/fvAQx4J2+BPnZ1V7AYCPyWZyV390HX5Dwr9qDhKqgfPvRStO
+	hGNeGrdww7XM6JR2mJu2Q7F0SI6mwod0ThHbM8P/K/KsjUuyXUVxpq3eqsTHBu6pzn7JF/SFUA/
+	fCRqQTPF3/w4KDtKiV+yK2y1mX4z+hy02qp32fg==
+X-Google-Smtp-Source: AGHT+IHFwDCBsgcnW5WchVhEPgcMtyfiG3UZcQkJplOkeEuntHKc8WivmqlczosZUlA4ogqE5T7gtqDWLirva45IL8c=
+X-Received: by 2002:a17:906:7303:b0:a7a:b4bd:d0eb with SMTP id
+ a640c23a62f3a-a7dc4e8764cmr1344622766b.24.1723034342168; Wed, 07 Aug 2024
+ 05:39:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240624185345.11113-1-michael@amarulasolutions.com>
+In-Reply-To: <20240624185345.11113-1-michael@amarulasolutions.com>
+From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date: Wed, 7 Aug 2024 14:38:51 +0200
+Message-ID: <CAOf5uwkhThmTEuhYAxAgLqg86PEHJ49wWp67RahVhio=O2OfQw@mail.gmail.com>
+Subject: Re: [RFC PATCH] drm/panel: synaptics-r63353: Fix regulator unbalance
+To: neil.armstrong@linaro.org, Doug Anderson <dianders@chromium.org>
+Cc: quic_jesszhan@quicinc.com, sam@ravnborg.org, mripard@kernel.org, 
+	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The root cause of this problem is when both of the following conditions
-are met simultaneously:
-[1] Introduced commit c9c0ee5f20c5, There are following rules:
-In debug builds (CONFIG_DEBUG_NET set), the reference count is always
-decremented, even when it's 1.
+Hi Doug
 
-[2] When executing sendmsg, the newly created session did not increase the
-skb reference count, only added skb to the session's skb_queue.
++cc Doug
 
-The solution is:
-When creating a new session, do not add the skb to the skb_queue.
-Instead, when using skb, uniformly use j1939_session_skb_queue to add
-the skb to the queue and increase the skb reference count through it.
+I have seen that you have done some re-working and investigation on
+drm stack, do you have some
+suggestion on this case?
 
-Fixes: c9c0ee5f20c5 ("net: skbuff: Skip early return in skb_unref when debugging")
-Reported-and-tested-by: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=ad601904231505ad6617
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- net/can/j1939/socket.c    | 7 ++++---
- net/can/j1939/transport.c | 2 +-
- 2 files changed, 5 insertions(+), 4 deletions(-)
+On Mon, Jun 24, 2024 at 8:53=E2=80=AFPM Michael Trimarchi
+<michael@amarulasolutions.com> wrote:
+>
+> The shutdown function can be called when the display is already
+> unprepared. For example during reboot this trigger a kernel
+> backlog. Calling the drm_panel_unprepare, allow us to avoid
+> to trigger the kernel warning
+>
+> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+> ---
+>
+> It's not obviovus if shutdown can be dropped or this problem depends
+> on the display stack as it is implmented. More feedback is required
+> here
+>
+> ---
+>  drivers/gpu/drm/panel/panel-synaptics-r63353.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/panel/panel-synaptics-r63353.c b/drivers/gpu=
+/drm/panel/panel-synaptics-r63353.c
+> index 169c629746c7..17349825543f 100644
+> --- a/drivers/gpu/drm/panel/panel-synaptics-r63353.c
+> +++ b/drivers/gpu/drm/panel/panel-synaptics-r63353.c
+> @@ -325,7 +325,7 @@ static void r63353_panel_shutdown(struct mipi_dsi_dev=
+ice *dsi)
+>  {
+>         struct r63353_panel *rpanel =3D mipi_dsi_get_drvdata(dsi);
+>
+> -       r63353_panel_unprepare(&rpanel->base);
+> +       drm_panel_unprepare(&rpanel->base);
+>  }
+>
+>  static const struct r63353_desc sharp_ls068b3sx02_data =3D {
+> --
+> 2.43.0
+>
 
-diff --git a/net/can/j1939/socket.c b/net/can/j1939/socket.c
-index 305dd72c844c..ec78bee1bfa6 100644
---- a/net/can/j1939/socket.c
-+++ b/net/can/j1939/socket.c
-@@ -1170,10 +1170,11 @@ static int j1939_sk_send_loop(struct j1939_priv *priv,  struct sock *sk,
- 					break;
- 				}
- 			}
--		} else {
--			skcb->offset = session->total_queued_size;
--			j1939_session_skb_queue(session, skb);
- 		}
-+		/* Session is ready, add it to skb queue and increase ref count.
-+		 */
-+		skcb->offset = session->total_queued_size;
-+		j1939_session_skb_queue(session, skb);
- 
- 		todo_size -= segment_size;
- 		session->total_queued_size += segment_size;
-diff --git a/net/can/j1939/transport.c b/net/can/j1939/transport.c
-index 4be73de5033c..dd503bc3adb5 100644
---- a/net/can/j1939/transport.c
-+++ b/net/can/j1939/transport.c
-@@ -1505,7 +1505,6 @@ static struct j1939_session *j1939_session_new(struct j1939_priv *priv,
- 	session->state = J1939_SESSION_NEW;
- 
- 	skb_queue_head_init(&session->skb_queue);
--	skb_queue_tail(&session->skb_queue, skb);
- 
- 	skcb = j1939_skb_to_cb(skb);
- 	memcpy(&session->skcb, skcb, sizeof(session->skcb));
-@@ -1548,6 +1547,7 @@ j1939_session *j1939_session_fresh_new(struct j1939_priv *priv,
- 		kfree_skb(skb);
- 		return NULL;
- 	}
-+	j1939_session_skb_queue(session, skb);
- 
- 	/* alloc data area */
- 	skb_put(skb, size);
--- 
-2.43.0
 
+--=20
+Michael Nazzareno Trimarchi
+Co-Founder & Chief Executive Officer
+M. +39 347 913 2170
+michael@amarulasolutions.com
+__________________________________
+
+Amarula Solutions BV
+Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
+T. +31 (0)85 111 9172
+info@amarulasolutions.com
+www.amarulasolutions.com
 
