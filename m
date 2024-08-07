@@ -1,167 +1,238 @@
-Return-Path: <linux-kernel+bounces-277881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26CA994A79A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:18:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E7FD94A7A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6D65280F54
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:18:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7D9AB2242F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987D31E6723;
-	Wed,  7 Aug 2024 12:18:28 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE3A1E4F13;
+	Wed,  7 Aug 2024 12:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="mfTfp811";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="d6Xurfcv"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52B91C6880;
-	Wed,  7 Aug 2024 12:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572481C37B0;
+	Wed,  7 Aug 2024 12:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723033108; cv=none; b=mixl6j1DOFMKddpE+ITwz1hfRPAh5KvA0Ox6nog4U36oAZ/Zb0PpPw6d/yljD/GleqbKhg0aPFkD5lFlK+keggDL/cWya53AgH4iwLOzWXupen2z2TRYCjLFQidSTTFZJurGZTSU3exBipHZLFR+lAT/ZriqGAxMqEoqjZy8jS0=
+	t=1723033271; cv=none; b=CwuglKQebaPvjRmXYX4KDBkp5aVdPYHSXFrgRRfAOUFZUlGgjucAx/d2Hm9foFGvC2RtifRSqzEZ4fbzZqZgxmJ82tUjdtaAkjWUu/kPJ7LWeZGOOelrDADNNi3CCbBJF3V6vkx0cJJ4StT0jyB21s66OXQV3jOugAI6dJygbOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723033108; c=relaxed/simple;
-	bh=AP4rbMbRZn32pcJB0YS/Lu1lnbVzzDIy5mY/CNRCtjQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=midDHcyFYA8yEdihBzuc0U3ejUjozBaUVv1DLdAda5RBILpWYHQr7FHs4+DQ8ET7aj1cIuZS96v4v0RiV7skHEKJaiANKavDZ5HZR/80g1dWMgWluPfsYyRuBFwKrBTEYDhn/dfsLIf38S4PMdGfhFyEPLmZvxzl7b1yM46+S8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wf8Md71Wqz4f3kvs;
-	Wed,  7 Aug 2024 20:18:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 50BFB1A12EB;
-	Wed,  7 Aug 2024 20:18:20 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCHr4UKZrNm9g8ZBA--.25468S3;
-	Wed, 07 Aug 2024 20:18:20 +0800 (CST)
-Subject: Re: [PATCH v2 03/10] ext4: don't set EXTENT_STATUS_DELAYED on
- allocated blocks
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240802115120.362902-1-yi.zhang@huaweicloud.com>
- <20240802115120.362902-4-yi.zhang@huaweicloud.com>
- <20240806152327.td572f7elpel4aeo@quack3>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <685055bc-0d56-6cf3-7716-f27e448c8c38@huaweicloud.com>
-Date: Wed, 7 Aug 2024 20:18:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1723033271; c=relaxed/simple;
+	bh=1A6K0pJ8eOSKcVLh3x1qr1Ju0aPsXSm3yyGHkt973JU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=It2uL9WwLDjsE+VTHpFBs0rdFh+DfvTwghOXzqlvScaL64nM/gQoXb6dUUTBNEQ34tuLUM58UOUffmX6oQaxRInUpwLyRjM1xtbyQwaEzHab860rQ9wiue53azm2A7bpC2ACtw93jheLrFkdKp2TC+akXZVOj0ARXNulMTTRZZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=mfTfp811; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=d6Xurfcv reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1723033265; x=1754569265;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=W9AoAUndBtl0FZOFTVxj/U4a/ipvfy1DskBxqtse6Ck=;
+  b=mfTfp811cugFyTwMiucItVG8bNHUNJhoDTcb6z8/8zuP8WXyctlok3ky
+   4MEbWeSd6Kg5k1oHoQte1vbqeCyIWwjoa6aFsvaHZssIUX0m5t4f+E7Su
+   fkzy+3+33w4LC4+bXvYrRB05AcORyofdktayAVNPFdFnzjiBgZWSN9ZWC
+   FAkzxfCt5hatAx8IsSvtyvv8pZ3TQ7CXzFzigdOaQsYxovlG4+D9T70wy
+   hTy3Aw80U0vIajsuijxVN3XCKktfFeFUbJzZiwJQl+2lZ2G6N3yqDgE06
+   p+5v/TuKxKb4T4TQxzSlJLEpoutDxp0vB5cVMnvGDpBtb5a2M0Hqu27Oh
+   Q==;
+X-CSE-ConnectionGUID: Fd6x0rHaSHaE8RRvLnygkQ==
+X-CSE-MsgGUID: Fn4xV/B5QCKZw1Y0KFIT4w==
+X-IronPort-AV: E=Sophos;i="6.09,269,1716242400"; 
+   d="scan'208";a="38292858"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 07 Aug 2024 14:21:03 +0200
+X-CheckPoint: {66B366AE-35-CC8A42C9-EEB26961}
+X-MAIL-CPID: E035F2E2B0B4EEB6A9ADCD96DF82BD37_2
+X-Control-Analysis: str=0001.0A782F28.66B366AF.0039,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 46CAB167598;
+	Wed,  7 Aug 2024 14:20:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1723033258;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=W9AoAUndBtl0FZOFTVxj/U4a/ipvfy1DskBxqtse6Ck=;
+	b=d6XurfcvyQJaIjifnCrU8gLOsTnA1AkDYGp/Z+dhweUxfDcWa4aHtYhJ3fd5uzk1voF1OI
+	Z7jv+kap0fFa+X6JN/aKvCim6MM2ZLsYjAVUApTkFFGVDbvv9LGEYL8qLPHHT9O08jcjlo
+	hIicu6t++ox1XzbzkZL8A7k3DzlgIc2N3nsR9w+llHc7cs1O6MseRuEC4NQrpLwhyDVnft
+	6gwMJqa+YRmHQZC/IF+h93aptCTD02+TqEMzcVOL1fGz8BxO9I7xquHdR+7wd4E8RsVMfD
+	zMpAGG+6+DwaZT8sPI4j8JCbg7X32g3RM5W/OehDNK7e9TQGK8nDfu7vW8fuZg==
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@ew.tq-group.com,
+	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH v3] arm64: dts: ti: k3-am642-tqma64xxl-mbax4xxl: add PRU Ethernet support
+Date: Wed,  7 Aug 2024 14:19:21 +0200
+Message-ID: <20240807121922.3180213-1-matthias.schiffer@ew.tq-group.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240806152327.td572f7elpel4aeo@quack3>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCHr4UKZrNm9g8ZBA--.25468S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxXF48Zw4kKr4kJFWDKF1ftFb_yoW5ur47pr
-	WxCr1rGa18Xw1UuayIvw4xWr1F9a10krWUCF409ry5Xa1rGryS9F1UJFWjgFWqgrWIyF1F
-	qFW5u3s7CayfCFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 2024/8/6 23:23, Jan Kara wrote:
-> On Fri 02-08-24 19:51:13, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> Since we always set EXT4_GET_BLOCKS_DELALLOC_RESERVE when allocating
->> delalloc blocks, there is no need to keep delayed flag on the unwritten
->> extent status entry, so just drop it after allocation.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Let me improve the changelog because I was confused for some time before I
-> understood:
-> 
-> Currently, we release delayed allocation reservation when removing delayed
-> extent from extent status tree (which also happens when overwriting one
-> extent with another one). When we allocated unwritten extent under
-> some delayed allocated extent, we don't need the reservation anymore and
-> hence we don't need to preserve the EXT4_MAP_DELAYED status bit. Inserting
-> the new extent into extent status tree will properly release the
-> reservation.
-> 
+Add PRU Ethernet controller and PHY nodes, as it was previously done for
+the AM64x EVM Device Trees.
 
-Thanks for your review and change log improvement. My original idea was very
-simple, after patch 2, we always set EXT4_GET_BLOCKS_DELALLOC_RESERVE when
-allocating blocks for delalloc extent, these two conditions in the 'if'
-branch can never be true at the same time, so they become dead code and I
-dropped them.
+Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+---
 
-	if (!(flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE) &&
-	    ext4_es_scan_range(inode, &ext4_es_is_delayed, ...)
+v3:
+- Rebased to v6.11-rc1
 
-But after thinking your change log, I agree with you that we have already
-properly update the reservation by searching delayed blocks through
-ext4_es_delayed_clu() in ext4_ext_map_blocks() when we allocated unwritten
-extent under some delayed allocated extent even it's not from the write
-back path, so I think we can also drop them even without patch 2. But just
-one point, I think the last last sentence isn't exactly true before path 6,
-should it be "Allocating the new extent blocks will properly release the
-reservation." now ?
+v2:
+- Dropped binding change patch
+- Moved prueth device node to DTS toplevel, matching the AM64x EVM
+- Update firmware filenames to match EVM
 
-Thanks,
-Yi.
+ .../dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts    | 98 +++++++++++++++++++
+ 1 file changed, 98 insertions(+)
 
-> Otherwise feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
-> 								Honza
-> 
-> 
->> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
->> index 91b2610a6dc5..e9ce1e4e6acb 100644
->> --- a/fs/ext4/inode.c
->> +++ b/fs/ext4/inode.c
->> @@ -558,12 +558,6 @@ static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
->>  
->>  	status = map->m_flags & EXT4_MAP_UNWRITTEN ?
->>  			EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
->> -	if (!(flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE) &&
->> -	    !(status & EXTENT_STATUS_WRITTEN) &&
->> -	    ext4_es_scan_range(inode, &ext4_es_is_delayed, map->m_lblk,
->> -			       map->m_lblk + map->m_len - 1))
->> -		status |= EXTENT_STATUS_DELAYED;
->> -
->>  	ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
->>  			      map->m_pblk, status);
->>  
->> @@ -682,11 +676,6 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
->>  
->>  		status = map->m_flags & EXT4_MAP_UNWRITTEN ?
->>  				EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
->> -		if (!(flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE) &&
->> -		    !(status & EXTENT_STATUS_WRITTEN) &&
->> -		    ext4_es_scan_range(inode, &ext4_es_is_delayed, map->m_lblk,
->> -				       map->m_lblk + map->m_len - 1))
->> -			status |= EXTENT_STATUS_DELAYED;
->>  		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
->>  				      map->m_pblk, status);
->>  	}
->> -- 
->> 2.39.2
->>
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
+index c40ad67cee019..c2a62cb763a59 100644
+--- a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
++++ b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
+@@ -24,6 +24,8 @@ / {
+ 
+ 	aliases {
+ 		ethernet0 = &cpsw_port1;
++		ethernet1 = &icssg1_emac0;
++		ethernet2 = &icssg1_emac1;
+ 		i2c1 = &mcu_i2c0;
+ 		mmc1 = &sdhci1;
+ 		serial0 = &mcu_uart0;
+@@ -71,6 +73,66 @@ led-1 {
+ 		};
+ 	};
+ 
++	icssg1_eth: icssg1-eth {
++		compatible = "ti,am642-icssg-prueth";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pru_icssg1_rgmii1_pins>, <&pru_icssg1_rgmii2_pins>;
++		interrupt-parent = <&icssg1_intc>;
++		interrupts = <24 0 2>, <25 1 3>;
++		interrupt-names = "tx_ts0", "tx_ts1";
++		dmas = <&main_pktdma 0xc200 15>, /* egress slice 0 */
++		       <&main_pktdma 0xc201 15>, /* egress slice 0 */
++		       <&main_pktdma 0xc202 15>, /* egress slice 0 */
++		       <&main_pktdma 0xc203 15>, /* egress slice 0 */
++		       <&main_pktdma 0xc204 15>, /* egress slice 1 */
++		       <&main_pktdma 0xc205 15>, /* egress slice 1 */
++		       <&main_pktdma 0xc206 15>, /* egress slice 1 */
++		       <&main_pktdma 0xc207 15>, /* egress slice 1 */
++		       <&main_pktdma 0x4200 15>, /* ingress slice 0 */
++		       <&main_pktdma 0x4201 15>; /* ingress slice 1 */
++		dma-names = "tx0-0", "tx0-1", "tx0-2", "tx0-3",
++			    "tx1-0", "tx1-1", "tx1-2", "tx1-3",
++			    "rx0", "rx1";
++		sram = <&oc_sram>;
++		firmware-name = "ti-pruss/am64x-sr2-pru0-prueth-fw.elf",
++				"ti-pruss/am64x-sr2-rtu0-prueth-fw.elf",
++				"ti-pruss/am64x-sr2-txpru0-prueth-fw.elf",
++				"ti-pruss/am64x-sr2-pru1-prueth-fw.elf",
++				"ti-pruss/am64x-sr2-rtu1-prueth-fw.elf",
++				"ti-pruss/am64x-sr2-txpru1-prueth-fw.elf";
++		ti,prus = <&pru1_0>, <&rtu1_0>, <&tx_pru1_0>, <&pru1_1>, <&rtu1_1>, <&tx_pru1_1>;
++		ti,pruss-gp-mux-sel = <2>,	/* MII mode */
++				      <2>,
++				      <2>,
++				      <2>,	/* MII mode */
++				      <2>,
++				      <2>;
++		ti,mii-g-rt = <&icssg1_mii_g_rt>;
++		ti,mii-rt = <&icssg1_mii_rt>;
++		ti,iep = <&icssg1_iep0>,  <&icssg1_iep1>;
++
++		ethernet-ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			icssg1_emac0: port@0 {
++				reg = <0>;
++				phy-handle = <&icssg1_phy0c>;
++				phy-mode = "rgmii-id";
++				/* Filled in by bootloader */
++				local-mac-address = [00 00 00 00 00 00];
++			};
++
++			icssg1_emac1: port@1 {
++				reg = <1>;
++				phy-handle = <&icssg1_phy03>;
++				phy-mode = "rgmii-id";
++				/* Filled in by bootloader */
++				local-mac-address = [00 00 00 00 00 00];
++			};
++		};
++	};
++
+ 	fan0: pwm-fan {
+ 		compatible = "pwm-fan";
+ 		pinctrl-names = "default";
+@@ -154,6 +216,42 @@ &epwm5 {
+ 	status = "okay";
+ };
+ 
++&icssg1_mdio {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pru_icssg1_mdio_pins>;
++	status = "okay";
++
++	/* phy-mode is fixed up to rgmii-rxid by prueth driver to account for
++	 * the SoC integration, so the only rx-internal-delay and no
++	 * tx-internal-delay is set for the PHYs.
++	 */
++
++	icssg1_phy03: ethernet-phy@3 {
++		compatible = "ethernet-phy-ieee802.3-c22";
++		reg = <0x3>;
++		reset-gpios = <&main_gpio1 47 GPIO_ACTIVE_LOW>;
++		reset-assert-us = <1000>;
++		reset-deassert-us = <1000>;
++		ti,rx-fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
++		ti,tx-fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
++		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
++		ti,clk-output-sel = <DP83867_CLK_O_SEL_OFF>;
++	};
++
++	icssg1_phy0c: ethernet-phy@c {
++		compatible = "ethernet-phy-ieee802.3-c22";
++		reg = <0xc>;
++		reset-gpios = <&main_gpio1 51 GPIO_ACTIVE_LOW>;
++		reset-assert-us = <1000>;
++		reset-deassert-us = <1000>;
++		ti,rx-fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
++		ti,tx-fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
++		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
++		ti,clk-output-sel = <DP83867_CLK_O_SEL_OFF>;
++	};
++};
++
++
+ &main_gpio0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&main_gpio0_digital_pins>,
+-- 
+TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht München, HRB 105018
+Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+https://www.tq-group.com/
 
 
