@@ -1,132 +1,124 @@
-Return-Path: <linux-kernel+bounces-277238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83FDF949E43
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:23:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D5A949E48
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 401C228644F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:23:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C11A1B23A11
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591E017AE1D;
-	Wed,  7 Aug 2024 03:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Q+YfgxQI"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B172116D33A;
+	Wed,  7 Aug 2024 03:31:03 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447B218D648
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 03:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5092A1CF
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 03:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723001013; cv=none; b=QVmr7x/yruQbpK70V76WtqQqARghGgUEv58RDpWUA+HgxHI9wWPABMQ8rA3cmXpGGwHGjzDNfj/fZjSn3C3pbqF6YC1VYZIGMvYCX95Hmw7GxsrJn3Iw73xbHjkzoyk6xc4+ZefMeP/5+QZPVfRzzzPAkZVJ40Spty3vdKZ4jbE=
+	t=1723001463; cv=none; b=dr4h2hy/X47u2q5okbkMf2vlD9eI2cxeWOpfmhfxJdWm35ZEtIIRohEqK/LZpVDlSPDGq8QeGr2/SHELSeyjxZhcxw94VV020WO831wgU8UwfUFfHbVzlOUE/1uPHfrguaQewMO2Gw9et3vlYBoC0Osp72ow4tl7XveL+B+bU7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723001013; c=relaxed/simple;
-	bh=MSZRdPB7tQPdZmenGNepOe2UXyZ6olFqWjSe40VO59Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kk0c2koO3L84XL4+Ucx+sFGEbrpVWc0KTLyVAEOaAghBGM/LQiC0jRiCj7crtBA3wdp5lHKYfxwSr4DZxZxmQxSE25T9gMojIBWIUX/rK+TgFdWohaHjgv3hpogfhExYO2CgyEvTLC2sinp8ihrnFq0D+IggXQ8EF10s6oFy8Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Q+YfgxQI; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7b594936e9bso1006835a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 20:23:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1723001011; x=1723605811; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jYiqLHOYT/UvSrPxb13rz+5rfnkguhZae8NxRF4xj0A=;
-        b=Q+YfgxQIuDTaXtPe/qx0EW/lPHsvQseQ/t5vwVcGRafUPKC7fz7pGqEMccy9I8nDYu
-         41jw/PdCLfsqXKP+t5csRT1mk7Uy/O1A8cPhgu3op8aRgVigFbXjzp4WZweciwKK/EA7
-         JwyRikFj8gSHb4klnDPVEd8mBHojWuY9HCz2ac/b8A7Xr2Gxg9L5uq6tMfZC8lQZ0mlP
-         zy4UqkdGht5u/zlqgyl+XO0w62HyIlzoH+9qhbJtnv7ogOyuQTzu5SfwA9mWN8jZRwbj
-         N0Pnar4azBWuiAkQLkONjO9Gt2ZVWgr686A1YuvCaYc4ngbDylJugFmNBkbDwI4cgkIa
-         M4Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723001011; x=1723605811;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jYiqLHOYT/UvSrPxb13rz+5rfnkguhZae8NxRF4xj0A=;
-        b=aTTk7SSE7oBenO74E/DfgAkkGwsamYsDZ6nNed1hEzEb4xww+oD2sGoA6RziY5fQ0E
-         /71M6XPS1jThzsg7KaIuEXZngixBf+hSmzS44EtkGoYCzfPds7gEmDqMR6LO/mj4dXcW
-         NJOlbvSiZO5xjarAyXTIS+VcRcmoVQeRh4OHEP1BCsJl9OafClEnfVIstsXNcen33rWn
-         ZtTnc8uE9YjryMRqJa0YaQoS5RV6MjodYQrKPGQo7T/POqTK86Q9TAGHFttdcsUSV2vo
-         Bt9GwgqQmJX5LgmP8XW8Mi08P1La9zPhWkDOU7HS07YvQYSUVOqJUFqLsFDndarE8RtZ
-         co5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUiHQ5MeQRjkBbEQMcDTa5UdHPo8PSbB5O3mFbKpvn/SCHkw7E/RCZZBLjrsrde/RlzY3JeoNzOTyS6AEK8yxKHa4oCcZpngaYasMHy
-X-Gm-Message-State: AOJu0YzvGH0cnIKafTkMkJOaPzw1NdHHxnJ9UvXLHkzl3XJdDaT7BrWM
-	WUzXsJB7x9ymvk3++qZNgc89a7worvQ+Arof7VnptwYv7osmf/dfORDIweafCX4=
-X-Google-Smtp-Source: AGHT+IH7L0KNDBz70xq/NORMivPYJerKWa0aowDLP0OkhebCIuGFZq9AsCyfTZra7ipH77FI7JlrdQ==
-X-Received: by 2002:a05:6a21:2d07:b0:1c4:8690:9862 with SMTP id adf61e73a8af0-1c69965eb46mr18256505637.43.1723001011569;
-        Tue, 06 Aug 2024 20:23:31 -0700 (PDT)
-Received: from ubuntu20.04 ([203.208.189.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f53832sm94679255ad.73.2024.08.06.20.23.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 20:23:30 -0700 (PDT)
-From: Yang Jihong <yangjihong@bytedance.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	leo.yan@arm.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: yangjihong@bytedance.com
-Subject: [PATCH v3 3/3] perf dwarf-aux: Fix build fail when HAVE_DWARF_GETLOCATIONS_SUPPORT undefined
-Date: Wed,  7 Aug 2024 11:23:19 +0800
-Message-Id: <20240807032319.1828962-1-yangjihong@bytedance.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1723001463; c=relaxed/simple;
+	bh=4rXWRUAjfP9qmxJTCRSAlmpJwsky84QeRRGkZpPqtVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GXJsuHPM+MlvjD76f7EiyMifZlk3Hu+XxLWDy4t7NopQgnUyBXNtE3T2QUZDYBjyzZ5vxHq1Q57gjQfUFrBGKnzs7+0x9uUdDahG5lT/qN/tA/aYHj2g0zKdorCJ17Lzutk16E6uOtgoN21k0wxULasvDIuK8u6NRE7cm7HZKJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from [2601:18c:9101:a8b6:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1sbXJM-000000005S1-41om;
+	Tue, 06 Aug 2024 23:26:04 -0400
+Date: Tue, 6 Aug 2024 23:26:04 -0400
+From: Rik van Riel <riel@surriel.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-team@meta.com, x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Dave
+ Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH] x86,panic,nmi: use trylock when taking the nmi_desc lock
+ from NMI context
+Message-ID: <20240806232604.36e963fd@imladris.surriel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: riel@surriel.com
 
-commit 3796eba7c137 move #else block of #ifdef HAVE_DWARF_GETLOCATIONS_SUPPORT
-code from dwarf-aux.c to dwarf-aux.h, in which die_get_var_range() used ENOTSUP
-macro, but dwarf-aux.h was not self-contained and did not include file errno.h.
+When nmi_panic runs on a system with kdump enabled, the kernel ends up
+trying to take a spinlock from NMI context. This should normally succeed,
+since NMI handler registration is rare, and panic has its own locking
+mechanism to make sure only one drives the kernel panic.
 
-As a result, the build failed when HAVE_DWARF_GETLOCATIONS_SUPPORT macro was not
-defined, and the error log is as follows:
+However, this spinlock will still make lockdep unhappy, and may result
+in the lockdep splat hiding the actual source of the underlying panic.
 
-  In file included from util/disasm.h:8,
-                   from util/annotate.h:16,
-                   from builtin-top.c:23:
-  util/dwarf-aux.h: In function 'die_get_var_range':
-  util/dwarf-aux.h:184:10: error: 'ENOTSUP' undeclared (first use in this function)
-    184 |  return -ENOTSUP;
-        |          ^~~~~~~
-  util/dwarf-aux.h:184:10: note: each undeclared identifier is reported only once for each function it appears
+[ 39675.176729] WARNING: inconsistent lock state
+[ 39675.176734] inconsistent {INITIAL USE} -> {IN-NMI} usage.
+...
+[ 39675.176817]        CPU0
+[ 39675.176818]        ----
+[ 39675.176818]   lock(&nmi_desc[0].lock);
+[ 39675.176821]   <Interrupt>
+[ 39675.176822]     lock(&nmi_desc[0].lock);
+...
+[ 39675.176866]  <NMI>
+[ 39675.176868]  dump_stack_lvl+0x3d/0xf0
+[ 39675.176874]  lock_acquire+0x1ac/0x290
+[ 39675.176879]  ? __register_nmi_handler+0x4f/0x140
+[ 39675.176889]  _raw_spin_lock_irqsave+0x5a/0x90
+[ 39675.176896]  ? __register_nmi_handler+0x4f/0x140
+[ 39675.176901]  __register_nmi_handler+0x4f/0x140
+[ 39675.176905]  ? kdump_nmi_shootdown_cpus+0x20/0x20
+[ 39675.176915]  nmi_shootdown_cpus+0x6a/0xe0
+[ 39675.176922]  kdump_nmi_shootdown_cpus+0x11/0x20
+[ 39675.176928]  native_machine_crash_shutdown+0x46/0xc0
+[ 39675.176936]  __crash_kexec+0xe4/0x120
+[ 39675.176948]  ? dump_stack_lvl+0x3d/0xf0
+[ 39675.176951]  ? __crash_kexec+0xce/0x120
+[ 39675.176957]  ? panic+0x134/0x380
+[ 39675.176967]  ? nmi_panic+0x27/0x40
 
-Fixes: 3796eba7c137 ("perf dwarf-aux: Move #else block of #ifdef HAVE_DWARF_GETLOCATIONS_SUPPORT code to the header file")
-Reviewed-by: Leo Yan <leo.yan@arm.com>
-Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
+Since taking this lock from NMI context should just succeed
+anyway, use a trylock to make lockdep happy.
+
+Signed-off-by: Rik van Riel <riel@surriel.com>
 ---
- tools/perf/util/dwarf-aux.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/nmi.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/dwarf-aux.h b/tools/perf/util/dwarf-aux.h
-index 24446412b869..277085a49294 100644
---- a/tools/perf/util/dwarf-aux.h
-+++ b/tools/perf/util/dwarf-aux.h
-@@ -6,6 +6,7 @@
-  */
+diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
+index ed163c8c8604..b7f759bb28ee 100644
+--- a/arch/x86/kernel/nmi.c
++++ b/arch/x86/kernel/nmi.c
+@@ -171,7 +171,17 @@ int __register_nmi_handler(unsigned int type, struct nmiaction *action)
+ 	if (WARN_ON_ONCE(!action->handler || !list_empty(&action->list)))
+ 		return -EINVAL;
  
- #include <dwarf.h>
-+#include <errno.h>
- #include <elfutils/libdw.h>
- #include <elfutils/libdwfl.h>
- #include <elfutils/version.h>
+-	raw_spin_lock_irqsave(&desc->lock, flags);
++	if (in_nmi()) {
++		/*
++		 * We cannot take a spinlock from NMI code. This can happen
++		 * from nmi_panic. Only one CPU can panic, so the trylock
++		 * should normally succeed.
++		 */
++		if (!raw_spin_trylock_irqsave(&desc->lock, flags))
++			return 1;
++	} else {
++		raw_spin_lock_irqsave(&desc->lock, flags);
++	}
+ 
+ 	/*
+ 	 * Indicate if there are multiple registrations on the
 -- 
-2.25.1
+2.45.2
 
 
