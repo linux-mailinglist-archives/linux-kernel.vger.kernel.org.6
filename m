@@ -1,112 +1,183 @@
-Return-Path: <linux-kernel+bounces-277722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA78394A542
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:18:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF60A94A545
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95273283F9E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:18:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BDDA1F22595
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9761DD39C;
-	Wed,  7 Aug 2024 10:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9591DD391;
+	Wed,  7 Aug 2024 10:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="DKDLLKiB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XCdt3K5w"
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Idgia6FU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C31F1D363F;
-	Wed,  7 Aug 2024 10:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E229313F435
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723025923; cv=none; b=GLN95MNnXo9YeSm6t88zzbE8lLzEUFbxKDbb+ZPqmUUHMd7Ow3USvwtNHVMWDST1C0K0a8whxaPFGgGY7Z71pjmez9pVrAqQz+KzDil7EJAeCqadjV8MlFowyWYH+K7G2+n9MaLtVtrh4tkBr/o66aODR+PZ9czUtcUT2zs0m9E=
+	t=1723025983; cv=none; b=i0FcvVETxeoVizcVRiaH1iTtnhYX6lxT22gfXPFGe20KBSY5M1F9jq1o6fW/I8TIIlCLq8JxxSNLLGn05FSJq6TKgJTrFFjYQZh4nZkhVjtHLFUiYE7OOSSBip/G/r0lhtENfXKJVabwPllj5CSvhtJ+u+0g1FFCvh0namOHEX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723025923; c=relaxed/simple;
-	bh=X0HeSAtzmsjESSKMcmxnTmFKNCAPomDKOxgSsDBnavU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YGSTY6WF50hPhAZTmaGOioOLz7xNL+aG6SvMolHHWy/9vMEeSViZEgOjEfBk7FgAjB5V7xS+zceQ7nWRZi8KrH2VW8EAlBTz/P9z6HX6UtMirKYWEq3NxvxyczL5Ra0OiSkcxFWfZWK+/KyZp30Nte9p0zenilnlHNPlgCwYQkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=DKDLLKiB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XCdt3K5w; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 6B9C41151AE5;
-	Wed,  7 Aug 2024 06:18:40 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Wed, 07 Aug 2024 06:18:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1723025920; x=1723112320; bh=QbAgmVgVp0
-	hFDTgUq0qc7ahe7ZcxYiE4fZDH0BN/XlQ=; b=DKDLLKiBWa6yd3lhxf9b1sNLlR
-	1kSgtOex2pafyHTWkOAG/rser/YG7BYW+O4R6PaKrOR1BK81CRclaGEuflHOwzy2
-	IFzVkro1six68WtUvLGDriwUODHGhbLQ5b3rwYySSmO41iaKXC268BGuirIsMR0/
-	zVZghFJ1qCUu3KpaOpcoLTFSea2DUiEwZH+jS0i8BB6GVq9JzUWGX9TGnSZzVwqz
-	S/FJHycZvEBfaowNkyEzh6YQsreLTXppNu7JdCgw6R2qpGj26eF54KOrQpMzI/J6
-	dwzeaj1nxaNjVJl5Yui6JYytdRmsWJjOu60I/o3uHcV7fquFg8Tdv1OJB0nQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1723025920; x=1723112320; bh=QbAgmVgVp0hFDTgUq0qc7ahe7Zcx
-	YiE4fZDH0BN/XlQ=; b=XCdt3K5wHu+skkEXVu0Xq2zUCV6njAWYJdVisdUIM9ZJ
-	Whu52d9iRPAoH+DxuAW7TphKVF4fmVGYJ2h/bJcFYPIcsx62imrRI/U94JZ0LuDc
-	IGJyQabQXEAHD0sRqft/FtGfJjaoRrYQIDJyliMn8UXsyardm2L3gpbVzfwcQA8r
-	7xbJpAGbIDmltH17Z+nozGELQSpD560Tzb8a12G2jYHxRlQdHZyeLN89HotPzmzK
-	2xlWfgqohWtpyRFGsWrsJrZw21dPGQA7kwT4jLHRvoNiCU+I6pW5NuX1vBS5DccJ
-	HZi1gpKzcnD38hthYQMrkkmV/vfHvG47gMHspbeCvA==
-X-ME-Sender: <xms:AEqzZm_PKx9xknBeIgCtHCE5g1nH_6UlNTOB_VSJA4_bIdKbh5itRw>
-    <xme:AEqzZmsoT2aqFoP_0aFud4FJcMYhIaHEl0nQGLJz_1IxQ_eVz06a1F5QEgWBhSXY-
-    RI4BVa7jqnF2g>
-X-ME-Received: <xmr:AEqzZsCvCLKB6muEr3G4yW5nIBJUa1iL3X-xcAw3GnymRa_q8tUvUcr18bzK98h0Fd1k-q0uXGLLbBOHVPGSokn_R6VwC-MVKAGqDA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledtgddviecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvve
-    dvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
-    drtghomhdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:AEqzZufAfGW3q0ZtIAiz4d1-QYo7wP91o9KMDLMq8DTL8kyUyikHWw>
-    <xmx:AEqzZrNwpa5TfpgZy8NUN85LqyvNwft0z792QWFIYxPfREUzG_tgUw>
-    <xmx:AEqzZolqnJ9HPWGN1SV9rBKgg0IzFbo23xRI7qOm7bUrGpktiDcOWA>
-    <xmx:AEqzZtsDOvRjqAF6eLMuIbaRhuPhYIJ5T5Edi6b6YrLzVwhlmaZ8Jg>
-    <xmx:AEqzZsGVZWT7b0xrJ9117RrJMy7lgX9MKFbvF2vCHKpry-1AIq8s1r-x>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 7 Aug 2024 06:18:39 -0400 (EDT)
-Date: Wed, 7 Aug 2024 12:18:38 +0200
-From: Greg KH <greg@kroah.com>
-To: Chris Wulff <crwulff@gmail.com>
-Cc: Chris Wulff <Chris.Wulff@biamp.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	David Sands <David.Sands@biamp.com>
-Subject: Re: [PATCH v2 1/1] USB: gadget: f_hid: Add GET_REPORT via userspace
- IOCTL
-Message-ID: <2024080733-guileless-t-shirt-c4ff@gregkh>
-References: <CO1PR17MB541952864266039BAA7BBBD3E10F2@CO1PR17MB5419.namprd17.prod.outlook.com>
- <2024073114-singular-stream-1dd9@gregkh>
- <CAB0kiB+tzV2JPc2X_WKr5yMJ5sy7QO2o0mcqUdD8CMd68EGmhw@mail.gmail.com>
- <CAB0kiBKpzQjcH02ckCFH0Uxv4QGVLEwVUE_ZtE8L9zd7H0Ow-w@mail.gmail.com>
+	s=arc-20240116; t=1723025983; c=relaxed/simple;
+	bh=jCQe1+WJ0Nr3UqeS8XMQK27sq3EZAl2ovaWk33fBMaM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EF2C81tiikWD/cjc4HreDs7mbUb58DFCBEewACrIOGPleMdfRpqYv/PH1hEr31X3tybHubKyRDf8mfMy7NAENUd6/8f92D/ygF1g7JTz3azVaJcVre0kJZgkRe7t2KYUg+3DWXFz3RvHcms03B/U1fB1iu76keGgL0eLhXNA1gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Idgia6FU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723025981;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=l3j9thVqxgTGMMDLXE5ey5ZuR1T0BA2a6EheF/6eHlg=;
+	b=Idgia6FUpTfqlms/rw0qTWQa5i9SazruDOrvVOu0T/qzpy7V110sKkvfGeOm0OXGwL/vVm
+	HJEAsRd9l6UbU7HU4vHol8HjPV4xXfQXNAZH/ALlwwv22IGIhIvvsumg5TQ0FM8FTMYqvN
+	xq4KvDY07WV132MJhuFlfOI4XiPlstE=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-492-Bnts_K5ZOcOHQ_ey0qWLgg-1; Wed, 07 Aug 2024 06:19:39 -0400
+X-MC-Unique: Bnts_K5ZOcOHQ_ey0qWLgg-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4280b119a74so11359135e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 03:19:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723025978; x=1723630778;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=l3j9thVqxgTGMMDLXE5ey5ZuR1T0BA2a6EheF/6eHlg=;
+        b=izyjCb/Z8lDbwVyfvzn3D8i1CezFvg3LHlzVUhmlkh2q4Tjl27Tc0exi2/eUX3LL/I
+         sygUMD1UeggI4U9VTB3VJV86ufFVjt2OM8sP9phMJ4rQJAVTQDD3JYn7G6ajBAMKx6mo
+         bliWm/J3RE0Cl5Co1JUcm5hulyria1yploztCxZMUmbGHf17yvnAuWS8SBbgOybauTNT
+         pDakC4JeLhoDSO/eK1inNz35CAf2pZ9lh+Lsp5ZmAUUskdXfwPgeC+O0zIp1fb92meKw
+         2McKHS8z5r/WllJ0V+I+PbFv2zLpVwkh+3WX4+RAApWjT6vRWLKyT/aqjTB7unsqN9pq
+         tb0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVwEREtf1FSqJnUA0rh70i8QwbAMl28/jP/Mo6zU7VT7zIwp0QPKXpEQe9uVllBeEPZe1kUdB3WK6PDAWCdyoaDFUFl/QTMNqOLstpz
+X-Gm-Message-State: AOJu0YxHnKnq8sH3AsajhuNloRV/3he1GBvphNOouxirIxfwf0XDZzHE
+	lY13DjwbjSy9s5AHEp1+rf6qGmUo4Y8YSbDkUMEyI+c6aF70E8hwWXeK9l+U36a5VTHv5jKXpB2
+	YP89qilxwaWNCMlJSfaTAX6EZpEA3ZC0+wffvD0iRi4jmICR+q1hXPpzZqkGI7g==
+X-Received: by 2002:a05:600c:3108:b0:426:6326:4cec with SMTP id 5b1f17b1804b1-428e6b81f29mr124726605e9.29.1723025978477;
+        Wed, 07 Aug 2024 03:19:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGWL/HdKUC4KMcdCS9s+K9PhrR1PVyh6TJtYb5iySo5wnNZlIxfFJ1dXmUaMx1oC+ho4X5KoQ==
+X-Received: by 2002:a05:600c:3108:b0:426:6326:4cec with SMTP id 5b1f17b1804b1-428e6b81f29mr124726445e9.29.1723025977976;
+        Wed, 07 Aug 2024 03:19:37 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c708:1a00:df86:93fe:6505:d096? (p200300cbc7081a00df8693fe6505d096.dip0.t-ipconnect.de. [2003:cb:c708:1a00:df86:93fe:6505:d096])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290580cb80sm22936105e9.45.2024.08.07.03.19.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 03:19:37 -0700 (PDT)
+Message-ID: <04a1b98e-efd1-4a77-8f42-7aa5255306b2@redhat.com>
+Date: Wed, 7 Aug 2024 12:19:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAB0kiBKpzQjcH02ckCFH0Uxv4QGVLEwVUE_ZtE8L9zd7H0Ow-w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mm: attempt to batch free swap entries for
+ zap_pte_range()
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, justinjiang@vivo.com,
+ chrisl@kernel.org, hughd@google.com, kaleshsingh@google.com,
+ kasong@tencent.com, linux-kernel@vger.kernel.org, ryan.roberts@arm.com,
+ v-songbaohua@oppo.com, ying.huang@intel.com
+References: <20240807082508.358322-1-21cnbao@gmail.com>
+ <20240807082508.358322-3-21cnbao@gmail.com>
+ <e50abade-c44e-41d4-b7bf-b9d54920e2a4@redhat.com>
+ <CAGsJ_4zFfnwc1kstNO53gdeUzzon5_tamDcC-mTUUS_PQEjF0A@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAGsJ_4zFfnwc1kstNO53gdeUzzon5_tamDcC-mTUUS_PQEjF0A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 04, 2024 at 10:19:03AM -0400, Chris Wulff wrote:
-> Greg,
+>>
+>>> +     if (!has_cache) {
+>>> +             spin_lock(&si->lock);
+>>
+>> I'm no expert on that code, but we might drop the cluster lock the take
+>> the swap_info lock and then retake the cluster lock. I assume there are
+>> no races we are worrying about here, right?
 > 
->   It looks like this still applies clean with no changes to the diff
->   on the latest usb-next. Do you still want me to re-post it?
+> I suppose so. Even the original single-entry code follows the same pattern:
+> 
+> static unsigned char __swap_entry_free(struct swap_info_struct *p,
+>         swp_entry_t entry)
+> {
+>           struct swap_cluster_info *ci;
+>           unsigned long offset = swp_offset(entry);
+>           unsigned char usage;
+> 
+>           ci = lock_cluster_or_swap_info(p, offset);
+>           usage = __swap_entry_free_locked(p, offset, 1);
+>           unlock_cluster_or_swap_info(p, ci);
+>           if (!usage)
+>                    free_swap_slot(entry);
+> 
+>           return usage;
+> }
+> 
+> I assume that once we mark them as SWAP_HAS_CACHE, no one else
+> will touch them except ourselves.
 
-Yes please.
+That makes sense, thanks!
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
