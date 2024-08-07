@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-277346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91A8949F89
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:01:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76734949F8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:02:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34651B256BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:01:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3230B281517
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43406198E7B;
-	Wed,  7 Aug 2024 06:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B73D198E85;
+	Wed,  7 Aug 2024 06:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IYb+Kc1j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AXjskSX9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA9218FDB2;
-	Wed,  7 Aug 2024 06:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA055198A05;
+	Wed,  7 Aug 2024 06:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723010481; cv=none; b=KBzTdOG1gm+JoVAtFrXPawLoMVxkp0dbnfsilT7mZ3HpAtFlcP+eGGYoZL5SBHIthA1Vepp9qdT/chAvvhJT3eZF/xegiPExfLGSEhUm5xB2TTFqAuTq9hh1fWE5hsR1Zs4Ypj/NXa1lafi6ItRy8XFMlXbA5268mzWBqIV2A6Q=
+	t=1723010534; cv=none; b=nxRVljqYwA82xPxwX45aMArtjeScu1g2mfoHPb6+KR2ula2pj2T2/kavWF/E9zxsaYSUcnzosG9TJN+vruW1jgw2SMnYBJDMA6LMlWY7BVIJwuidX4K2nncO0SVGGwOKeSOdkZRpDh7H1FmG9xtiVC42N6HRIDrKqTSbtkRRsk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723010481; c=relaxed/simple;
-	bh=6aCA53X5jzvfdeLem/L46yF1CP6EkhlWtgkMvl/xF4Q=;
+	s=arc-20240116; t=1723010534; c=relaxed/simple;
+	bh=z2V184Vmgmu32nS1TdXGmvemffUep3Ddffigp+4F4SQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P6UVAA47rPoVkvwA5Fw8JN+xjbCdVW9fyVCuAm0cWmCceU2eOMRQxvWJWZZYHKIcMNM/imeUBJQJTIjOLC8Z+kN3grFIRLnfcVJkzVWAkqRcwxvuFIgxre0FmNcSlek+vN4plvV/hMd/abWxr0uO1R1fZwRSbC5j4kKTII7JvPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IYb+Kc1j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00740C32782;
-	Wed,  7 Aug 2024 06:01:17 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=cwSJ6B41KcJXbwYC0CLgg7MX0LaSaYAuOKzMdWYFdDjfm7/+euMd7VBELqOv1QFy6yFsJvL5tESiaTkWBxcSkZ5+5E7KOFrx3JKeoyUvFTO/E5CmzXlfRvR1poSpX5YCqOihi2mRzbncD82vlRBfNBcDccxc0lrCnlD+tzfJfqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AXjskSX9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D588C32782;
+	Wed,  7 Aug 2024 06:02:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723010481;
-	bh=6aCA53X5jzvfdeLem/L46yF1CP6EkhlWtgkMvl/xF4Q=;
+	s=k20201202; t=1723010534;
+	bh=z2V184Vmgmu32nS1TdXGmvemffUep3Ddffigp+4F4SQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IYb+Kc1j1l4ERrOPZVC1Bq1OBDcIb1K0xbqon0Kpz3tcpcIUBb+W3Ue2ppnBGaKNL
-	 XV0RE2B7FuLnR/tcn+/Zo6fizLsBcz4di731ZVAr7DpLx5zvDU8S9u3T2z66dN2F99
-	 dObqxM7f70EK0hNL8COTh3Ghkf6wEN8RzX/XhVjNFrTAQXjW5qbXNu+l7azIsDO9vp
-	 EtAjjgzzpIjyd+rgC86Cu8i10A4TV9dGjic3k/XB9MSXUAMkb+HgHBRZI6mCVnM4d7
-	 VEi/DKuju0Ykq8efQp92wkp2WJM1EoAbmQa4x7KFh8vb0Q+ukI8tjYNcYBpx2yJLu5
-	 Ddw0Ah0ZZGrSw==
-Message-ID: <4210df09-1625-4865-a80c-8b38056ce172@kernel.org>
-Date: Wed, 7 Aug 2024 08:01:16 +0200
+	b=AXjskSX9JWyFQdlqOBxPh5behKlCeONHMxv5/KAmHFL/TMjMFgqxe6XM3W6MX5epX
+	 Zsn2zdiEf/UE8dt85HEgaGkBJbLaeea+UIDTJ/sLY6VOwZ6t9BglwvZjI1mJtLFpzL
+	 t1zHB3BU6WUIPzKnv0EBsMAoZsrE/Gvk+ZXesAaHPs7LPUD3EHYIIVb45ikd5eJzBT
+	 KboAuc8gqQSIqc7XgE352rbtnusGqfscR8b7C96iJilBUcd5qxZknop0Ddejgb3A/6
+	 P3QWb4RPV74r6g0QuH2j70GjTwpg5DTFBMFPla8ICOXW0JkWzKRf+WuJAWV17MoJBQ
+	 hxfPFXo0ec9HQ==
+Message-ID: <1477822a-9622-4e21-aaf4-92877050ee82@kernel.org>
+Date: Wed, 7 Aug 2024 08:02:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,33 +112,24 @@ Content-Transfer-Encoding: 7bit
 
 On 06/08/2024 22:13, Vladimir Zapolskiy wrote:
 >> +
->> +  reg:
->> +    maxItems: 1
+>> +additionalProperties: false
 >> +
->> +  interrupts:
->> +    maxItems: 1
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/lpc32xx-clock.h>
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
 >> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  clock-names:
->> +    const: timerclk
->> +
->> +  resets:
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - clocks
->> +  - clock-names
+>> +    timer@4004c000 {
+>> +        compatible = "nxp,lpc3220-timer";
+>> +        reg = <0x4004c000 0x1000>;
+>> +        interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
+>> +        clocks = <&clk LPC32XX_CLK_TIMER1>;
+>> +        clock-names = "timerclk";
+>> +    };
 > 
-> Since there is always just a single supply clock, there is no need to
-> specify "clock-names" as a required one, please change it.
+> I would appreciate, if you can use scripts/get_maintainer.pl in future.
 
-??? That's a conversion. Why do you expect changing several DTS files
-and maybe also driver? That's not needed for conversion. No.
+It was used and everything is fine. What are you complaining here about?
 
 Best regards,
 Krzysztof
