@@ -1,223 +1,222 @@
-Return-Path: <linux-kernel+bounces-278350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2E194AF06
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:41:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE2A94AF07
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BC93B254A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:41:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7628B23B99
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A8413D63D;
-	Wed,  7 Aug 2024 17:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB7384DF1;
+	Wed,  7 Aug 2024 17:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y3g4WFyC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xgxkXLTZ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HlkjxqrP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iVhA26L6"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ja0YGOaK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57AD8286A;
-	Wed,  7 Aug 2024 17:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9EB5473E
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 17:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723052474; cv=none; b=bwBWOkuhbBa3Aj4Xp17isqyNGYxnrWMozG8MmsbapoDUh94ZyzLMUYq2sdDsWHoKEOL3Xwb1IMplgdCDh/gQEl4tTJHAIy08BgmY7OIyrdB7Inb+ng9BRBbBIaH+sVU/J3vInSHnZv+7iKYp0cfP1hS9wIKaYjYeOCxAFfNT+rs=
+	t=1723052521; cv=none; b=lagARiN4oUrrMnCjF9pK6GgfAsaw1tvsU5M/t8L6k4PDZDcLtr4wAMPt31ETQykBpv1IGq3lF3MUmoCEjl7roXX5/h71tw8Yt7UpGYhfM4FfTJv+7kZ0nvCOsIV3R6tWgDGwxpU1bQIgfOtnu3Saykm/+MMuq5wJ4kwxUFB5mCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723052474; c=relaxed/simple;
-	bh=Rq4GKEjVRYzNeNaspEUvwi/V1zw0jvP8g0nu4QQVLh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OmXRW/epPBAIh4zi90WDgFh/QbmYSuXUU1/aHeHvUoLgNU4cHjRkxtsQ6CoUi8/UBu6Ta5euRGzNfNBKE3cu7cIpuTlIk1IlfJdEMfCTR5UbBHvMWapMnldieAVRCFMd9ZuyuyT59snXi1wLzW/QJOLUj8NBDx8xe9bnC4upl5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y3g4WFyC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xgxkXLTZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HlkjxqrP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iVhA26L6; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1723052521; c=relaxed/simple;
+	bh=CVxGnbYxyWdeq1to6LVJWzjdQVPDhffQ7txQylIs9U0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JMIhqOZSfj/xLdDqgZYoNJS1qoCexo6C+VYUNjABHmzudWOp6bDQcI2rnMSSsq+BNEJqYdVHBClmeUKMoGzkUjJJZgAoKrks98BxMT3zMFo7CoEfsckyiAXbVLt9Pa7ZDgrKGDqKEYOkfqh0VMCkxX8Q3ZbW0rOnR4X/p0GR9uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ja0YGOaK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723052518;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l+G1rF0xB5wVkdizZPldbuBkAl5Yi92S8O7hUPInPz4=;
+	b=Ja0YGOaKdgGEe6cDgilsk0XeXHZMgUyXLu9y7Mbz/aIB0jIa27YJtkVW+PVwhn4ZL4hkD6
+	8JvwNo6xhmMXUW++Y3+BCVBjQchpsAIR0gy7mXqNvHVAl6tCR/Ik5feGwBZbstJU80/XNO
+	lB05SdHDIa5bsxN4sUJ9Ql5ii3ax74g=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-74-AV0eZAM2OseFvj-03Z1NYg-1; Wed,
+ 07 Aug 2024 13:41:54 -0400
+X-MC-Unique: AV0eZAM2OseFvj-03Z1NYg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E13841FB95;
-	Wed,  7 Aug 2024 17:41:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723052470; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s/GtgqVmUziMUsWkZ8W64gEKilUHrvGZFRWvP/oTBUM=;
-	b=Y3g4WFyCJxbW0zWQHw5nHgEF6tD4w1cThYmE8jdkFnwpi2c3iLZt2mb71sFjIObr6Zqku4
-	ia+z8Y4wkYeV/opb6PnxtkfcunWo7cqv9tg6PbxnNKTLI56NYFiiMKnA1osnW6faHY21az
-	e9J0x7B4d13C7giQVLZCb13GH/VJKjM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723052470;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s/GtgqVmUziMUsWkZ8W64gEKilUHrvGZFRWvP/oTBUM=;
-	b=xgxkXLTZ35jeJE4KMkuDvfo77W2P0ghTr9GAioVu49P2HqoMf6I3WQjHebSGHn4oxDa0KF
-	QquWCb5Sw37ikQAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=HlkjxqrP;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=iVhA26L6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723052468; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s/GtgqVmUziMUsWkZ8W64gEKilUHrvGZFRWvP/oTBUM=;
-	b=HlkjxqrPYUYLApG6KaK/a+oqpE5Kg7ycpR8XuaDCDfW2jesvhzBy+b99D53z5WLJ1oWXU4
-	rFo1gN0ssEJUtRTgHVV+Q3VFXI5oJoFbE9XCSBxKMG1s7JaaVDmRAUHe8QWeVKvOQbuDwV
-	vbccHYCC7BN3jKjJcFVFJHMCk6uL7Hw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723052468;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s/GtgqVmUziMUsWkZ8W64gEKilUHrvGZFRWvP/oTBUM=;
-	b=iVhA26L6dnPTetdpirt2k1YYRn0z5K9EJsqxzWpGnUpVFHbAwNyG5pOxGd9Ndbdsy5sboe
-	7vBGfVNYUqM8dBCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D054813A7D;
-	Wed,  7 Aug 2024 17:41:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TkibMrSxs2Y+JgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 07 Aug 2024 17:41:08 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 7117AA0762; Wed,  7 Aug 2024 19:41:08 +0200 (CEST)
-Date: Wed, 7 Aug 2024 19:41:08 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 06/10] ext4: update delalloc data reserve spcae in
- ext4_es_insert_extent()
-Message-ID: <20240807174108.l2bbbhlnpznztp34@quack3>
-References: <20240802115120.362902-1-yi.zhang@huaweicloud.com>
- <20240802115120.362902-7-yi.zhang@huaweicloud.com>
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2254A1944B2D;
+	Wed,  7 Aug 2024 17:41:53 +0000 (UTC)
+Received: from [10.2.16.123] (unknown [10.2.16.123])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3BE4F300018D;
+	Wed,  7 Aug 2024 17:41:50 +0000 (UTC)
+Message-ID: <0ca188a3-9861-49a4-a6f1-ba6ad726c5f0@redhat.com>
+Date: Wed, 7 Aug 2024 13:41:50 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240802115120.362902-7-yi.zhang@huaweicloud.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [0.49 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim]
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: E13841FB95
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: 0.49
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm/memory-failure: Use raw_spinlock_t in struct
+ memory_failure_cpu
+To: Miaohe Lin <linmiaohe@huawei.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Huang Ying <ying.huang@intel.com>, Len Brown <len.brown@intel.com>,
+ Juri Lelli <juri.lelli@redhat.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Naoya Horiguchi <nao.horiguchi@gmail.com>
+References: <20240806164107.1044956-1-longman@redhat.com>
+ <1ea73082-f8f0-6c6d-3c0c-9012520d1036@huawei.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <1ea73082-f8f0-6c6d-3c0c-9012520d1036@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri 02-08-24 19:51:16, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Now that we update data reserved space for delalloc after allocating
-> new blocks in ext4_{ind|ext}_map_blocks(), and if bigalloc feature is
-> enabled, we also need to query the extents_status tree to calculate the
-> exact reserved clusters. This is complicated now and it appears that
-> it's better to do this job in ext4_es_insert_extent(), because
-> __es_remove_extent() have already count delalloc blocks when removing
-> delalloc extents and __revise_pending() return new adding pending count,
-> we could update the reserved blocks easily in ext4_es_insert_extent().
-> 
-> Thers is one special case needs to concern is the quota claiming, when
-> bigalloc is enabled, if the delayed cluster allocation has been raced
-> by another no-delayed allocation(e.g. from fallocate) which doesn't
-> cover the delayed blocks:
-> 
->   |<       one cluster       >|
->   hhhhhhhhhhhhhhhhhhhdddddddddd
->   ^            ^
->   |<          >| < fallocate this range, don't claim quota again
-> 
-> We can't claim quota as usual because the fallocate has already claimed
-> it in ext4_mb_new_blocks(), we could notice this case through the
-> removed delalloc blocks count.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-...
-> @@ -926,9 +928,27 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
->  			__free_pending(pr);
->  			pr = NULL;
->  		}
-> +		pending = err3;
->  	}
->  error:
->  	write_unlock(&EXT4_I(inode)->i_es_lock);
-> +	/*
-> +	 * Reduce the reserved cluster count to reflect successful deferred
-> +	 * allocation of delayed allocated clusters or direct allocation of
-> +	 * clusters discovered to be delayed allocated.  Once allocated, a
-> +	 * cluster is not included in the reserved count.
-> +	 *
-> +	 * When bigalloc is enabled, allocating non-delayed allocated blocks
-> +	 * which belong to delayed allocated clusters (from fallocate, filemap,
-> +	 * DIO, or clusters allocated when delalloc has been disabled by
-> +	 * ext4_nonda_switch()). Quota has been claimed by ext4_mb_new_blocks(),
-> +	 * so release the quota reservations made for any previously delayed
-> +	 * allocated clusters.
-> +	 */
-> +	resv_used = rinfo.delonly_cluster + pending;
-> +	if (resv_used)
-> +		ext4_da_update_reserve_space(inode, resv_used,
-> +					     rinfo.delonly_block);
+On 8/6/24 23:15, Miaohe Lin wrote:
+> On 2024/8/7 0:41, Waiman Long wrote:
+>> The memory_failure_cpu structure is a per-cpu structure. Access to its
+>> content requires the use of get_cpu_var() to lock in the current CPU
+>> and disable preemption. The use of a regular spinlock_t for locking
+>> purpose is fine for a non-RT kernel.
+>>
+>> Since the integration of RT spinlock support into the v5.15 kernel,
+>> a spinlock_t in a RT kernel becomes a sleeping lock and taking a
+>> sleeping lock in a preemption disabled context is illegal resulting in
+>> the following kind of warning.
+>>
+>>    [12135.732244] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+>>    [12135.732248] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 270076, name: kworker/0:0
+>>    [12135.732252] preempt_count: 1, expected: 0
+>>    [12135.732255] RCU nest depth: 2, expected: 2
+>>      :
+>>    [12135.732420] Hardware name: Dell Inc. PowerEdge R640/0HG0J8, BIOS 2.10.2 02/24/2021
+>>    [12135.732423] Workqueue: kacpi_notify acpi_os_execute_deferred
+>>    [12135.732433] Call Trace:
+>>    [12135.732436]  <TASK>
+>>    [12135.732450]  dump_stack_lvl+0x57/0x81
+>>    [12135.732461]  __might_resched.cold+0xf4/0x12f
+>>    [12135.732479]  rt_spin_lock+0x4c/0x100
+>>    [12135.732491]  memory_failure_queue+0x40/0xe0
+>>    [12135.732503]  ghes_do_memory_failure+0x53/0x390
+>>    [12135.732516]  ghes_do_proc.constprop.0+0x229/0x3e0
+>>    [12135.732575]  ghes_proc+0xf9/0x1a0
+>>    [12135.732591]  ghes_notify_hed+0x6a/0x150
+>>    [12135.732602]  notifier_call_chain+0x43/0xb0
+>>    [12135.732626]  blocking_notifier_call_chain+0x43/0x60
+>>    [12135.732637]  acpi_ev_notify_dispatch+0x47/0x70
+>>    [12135.732648]  acpi_os_execute_deferred+0x13/0x20
+>>    [12135.732654]  process_one_work+0x41f/0x500
+>>    [12135.732695]  worker_thread+0x192/0x360
+>>    [12135.732715]  kthread+0x111/0x140
+>>    [12135.732733]  ret_from_fork+0x29/0x50
+>>    [12135.732779]  </TASK>
+>>
+>> Fix it by using a raw_spinlock_t for locking instead. Also move the
+>> pr_err() out of the lock critical section to avoid indeterminate latency
+>> of this call.
+>>
+>> Fixes: ea8f5fb8a71f ("HWPoison: add memory_failure_queue()")
+> We shouldn't have this problem before RT spinlock is supported? If so, this Fixes tag might be wrong.
+OK, I can take out the Fixes tag. It is hard to pinpoint a particular RT 
+related commit.
+>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>   mm/memory-failure.c | 18 ++++++++++--------
+>>   1 file changed, 10 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>> index 581d3e5c9117..7aeb5198c2a0 100644
+>> --- a/mm/memory-failure.c
+>> +++ b/mm/memory-failure.c
+>> @@ -2417,7 +2417,7 @@ struct memory_failure_entry {
+>>   struct memory_failure_cpu {
+>>   	DECLARE_KFIFO(fifo, struct memory_failure_entry,
+>>   		      MEMORY_FAILURE_FIFO_SIZE);
+>> -	spinlock_t lock;
+>> +	raw_spinlock_t lock;
+>>   	struct work_struct work;
+>>   };
+>>   
+>> @@ -2443,19 +2443,21 @@ void memory_failure_queue(unsigned long pfn, int flags)
+>>   {
+>>   	struct memory_failure_cpu *mf_cpu;
+>>   	unsigned long proc_flags;
+>> +	bool buffer_overflow;
+>>   	struct memory_failure_entry entry = {
+>>   		.pfn =		pfn,
+>>   		.flags =	flags,
+>>   	};
+>>   
+>>   	mf_cpu = &get_cpu_var(memory_failure_cpu);
+>> -	spin_lock_irqsave(&mf_cpu->lock, proc_flags);
+>> -	if (kfifo_put(&mf_cpu->fifo, entry))
+>> +	raw_spin_lock_irqsave(&mf_cpu->lock, proc_flags);
+>> +	buffer_overflow = !kfifo_put(&mf_cpu->fifo, entry);
+>> +	if (!buffer_overflow)
+>>   		schedule_work_on(smp_processor_id(), &mf_cpu->work);
+>> -	else
+>> +	raw_spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
+>> +	if (buffer_overflow)
+>>   		pr_err("buffer overflow when queuing memory failure at %#lx\n",
+>>   		       pfn);
+> Should we put pr_err() further under put_cpu_var()?
 
-I'm not sure I understand here. We are inserting extent into extent status
-tree. We are replacing resv_used clusters worth of space with delayed
-allocation reservation with normally allocated clusters so we need to
-release the reservation (mballoc already reduced freeclusters counter).
-That I understand. In normal case we should also claim quota because we are
-converting from reserved into allocated state. Now if we allocated blocks
-under this range (e.g. from fallocate()) without
-EXT4_GET_BLOCKS_DELALLOC_RESERVE, we need to release quota reservation here
-instead of claiming it. But I fail to see how rinfo.delonly_block > 0 is
-related to whether EXT4_GET_BLOCKS_DELALLOC_RESERVE was set when allocating
-blocks for this extent or not.
+Yes, we should probably enable preemption first before calling pr_err(). 
+Will make the change in v2.
 
-At this point it would seem much clearer if we passed flag to
-ext4_es_insert_extent() whether EXT4_GET_BLOCKS_DELALLOC_RESERVE was set
-when allocating extent or not instead of computing delonly_block and
-somehow infering from that. But maybe I miss some obvious reason why that
-is correct.
+Thanks,
+Longman
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+>> -	spin_unlock_irqrestore(&mf_cpu->lock, proc_flags)
+>>   	put_cpu_var(memory_failure_cpu);
+>>   }
+> Will below diff be more straightforward?
+>
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index b68953dc9fad..be172cbc6ca9 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -2553,20 +2553,23 @@ void memory_failure_queue(unsigned long pfn, int flags)
+>   {
+>          struct memory_failure_cpu *mf_cpu;
+>          unsigned long proc_flags;
+> +       bool buffer_overflow = false;
+>          struct memory_failure_entry entry = {
+>                  .pfn =          pfn,
+>                  .flags =        flags,
+>          };
+>
+>          mf_cpu = &get_cpu_var(memory_failure_cpu);
+> -       spin_lock_irqsave(&mf_cpu->lock, proc_flags);
+> +       raw_spin_lock_irqsave(&mf_cpu->lock, proc_flags);
+>          if (kfifo_put(&mf_cpu->fifo, entry))
+>                  schedule_work_on(smp_processor_id(), &mf_cpu->work);
+>          else
+> +               buffer_overflow = true;
+> +       raw_spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
+> +       put_cpu_var(memory_failure_cpu);
+> +       if (buffer_overflow)
+>                  pr_err("buffer overflow when queuing memory failure at %#lx\n",
+>                         pfn);
+> -       spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
+> -       put_cpu_var(memory_failure_cpu);
+>   }
+>   EXPORT_SYMBOL_GPL(memory_failure_queue);
+>
+> But no strong opinion.
+>
+> Thanks.
+> .
+>
+
 
