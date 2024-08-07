@@ -1,139 +1,194 @@
-Return-Path: <linux-kernel+bounces-278098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6689D94AAD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:57:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B30C94AAD2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1760D2821ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C1A22820D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C223F81741;
-	Wed,  7 Aug 2024 14:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E539C823C8;
+	Wed,  7 Aug 2024 14:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="agfj9nYg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="q2pOlN4i"
-Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="pBLw2wmY"
+Received: from CWXP265CU009.outbound.protection.outlook.com (mail-ukwestazon11021082.outbound.protection.outlook.com [52.101.100.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A6D8120D
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723042659; cv=none; b=ZG2T8nhsQwCGPLg8BFGe8fcWCKHIMsReOyjAqX93Qm42Wz1xFKzaDlJ6ohhajWr3MIU9XE2rpcBZU1ZxZFwIcGiWmvykzXhlyTsdH56k7jx3ZaihWSQkvxST+NGdznKfU97WyC/2CSiu/h/qd632NnlorGD0QvlnAXxklZ+FMXc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723042659; c=relaxed/simple;
-	bh=3aP9K4B7juzX56vt7E6OrqGb60S0shertZ2jcYxfXEo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=ZLc5LoltuaUnzLKfuUq3M2YkXm4dy6OaBfbj/dSxOIzPu6hO8DrQ0AVUg9SyTqfBSEUd6D7CNFHmIuXBUiOqIewcE1PxNx4gi6Q73WNkkGW52MXZ2bIQxkTfVVk8HXjEWJfwjPTR5hfGEb27bsdPPQtzq0X39TZNn8XWmcCPrqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=agfj9nYg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=q2pOlN4i; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 4CE151388026;
-	Wed,  7 Aug 2024 10:57:37 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Wed, 07 Aug 2024 10:57:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1723042657;
-	 x=1723129057; bh=SKhiuzky2s355ePdeYR6vOR9bJWsi88XGi4FdI2nQq8=; b=
-	agfj9nYgX9u9r4IK58is+dOwqXl48GKfU8zIiGA4hudJIV9fTn3hDjWAi1QJh2T2
-	MhQ86z3wuHGf7hThYvQrFfRZ1IpHgl1h63FZcCgFARe4cwINdmRu2rN5iA8tFCWR
-	UhylR/u5ipLDvx/DI0Gpgc9rP299gfmkLYp8mrO1HDrOQkWaWncQN5K3a0CnZkpm
-	MerDKW2RAwd32TtkQew4GbUMR2rUAac56HECYIuNKD9PFtMAScwDhvBlBUpFGJ90
-	tnwXpn6emIOOmKx08AtGu/B5XlJU2pYxxnA8e92YOzFWJr8cLG08jNazAhODLNtZ
-	9eoS9V8lagq2FHi2QNqKug==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723042657; x=
-	1723129057; bh=SKhiuzky2s355ePdeYR6vOR9bJWsi88XGi4FdI2nQq8=; b=q
-	2pOlN4iuKkSvZL6D/+eiLN5oAAKZQfzqxvvklOn1saWguvO4FKQWI54sGCwoY6TA
-	JA+SO5zc8QFctJbqyKcSOjzoSww3BY9AvS+b5tCvy1fDeIcHZsLtFMPwibucdZER
-	c/yjChKIksFzrewEax+noJ4vqUgUiuPGILYB9JoJuQn4rhG7Ox2MZC6NXFuyFwU3
-	iN2TUMidH/giIXVpFGX4YNaBGERphqwo9DVp8o4PYuTHUgtykAYrGd0wU/7O0Fyq
-	eZ2Mb+Xe04yEtBBN6yMERVJbIW0tFpsWBGbTlXPpAhdBSI8HxcAn65tmjGnINXn0
-	FGPJODiB7Q2knPMFDnzag==
-X-ME-Sender: <xms:YYuzZvXaGFvDmJsd8hmWk9t5lxZtxGvPPPr74mz7s3TN0vTL4c85Jw>
-    <xme:YYuzZnl0H7atKd42EuhvtcOBFv7m7DzjZpWlX54_whGascYi-iUxCvF7fIc9fvS7Z
-    hb-xfO7985VBcR5xJM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledtgdekvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeevueejtdfgtdejudeltddttdevffdvledugffhtdfgueekgfekhffgfeelkeei
-    jeenucffohhmrghinhepghhnuhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphht
-    thhopedt
-X-ME-Proxy: <xmx:YYuzZral9RL8knvosn2sIzo5Eeh60yzfEIG2p3UnIQeKnSNqLt1u5g>
-    <xmx:YYuzZqV-JKJLXUdgJk3URc8YAlgZLxR0Fg_0LnCE6CErn7BwKs6GDA>
-    <xmx:YYuzZpnuseU_dqGRaDuoWgO_DEcVR0eeIQJQ3wYtBER72FpUiqz4Xw>
-    <xmx:YYuzZnepEs1cRNMnEmPOpzf1MZqYLTHLLzVhQHV3ZopSmRdMzNupUQ>
-    <xmx:YYuzZvgmhFOzD42mw4ijITqB2te-YuHduwpCTJqpMAn1od7S4Txr6WNC>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 1E30BB6008D; Wed,  7 Aug 2024 10:57:37 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0904F7B3F3;
+	Wed,  7 Aug 2024 14:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.100.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723042646; cv=fail; b=bWaWvD/DjODBcDiy1sNyIfYYa+3UneGOSIIKI27/GMgLDfqNb5MOK2g6GbyV1xouUuHvltcbuFjAM1LM/0n2JWUBqz+73WTC1l/W/vR2l0z+RBvJYOob4y1n6e+YutbpiXkxVNd3uswCzH9ozaAdwhjghyND329InMr8Z5wZSH8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723042646; c=relaxed/simple;
+	bh=AK8Hm7tGpPSkBLXddY2U/wIEj4Ln2g8c5LdmXp/EdJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fcZNRAoY5+O6K9acPJVj6ti5VceJl7X0GrN4/foXKDe5YuSewZPk3h3HNdG+XDRROLItZhX2+fADQ2IZ2d3gGZTGcM5Ikm5rlWDatdyjMSPH15zmFQY7XQQjIOz1wQkGI7sxGxY8tFKg8eSdoXmgID76phgTDc+nDnp4tL6dQmM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=pBLw2wmY; arc=fail smtp.client-ip=52.101.100.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OpJwG+TN/VGStmghV5fSlLJbHxe4M4RdgIru95pN76aGhEsswzj8Q5HSUtM2pCdC4fxFnIrj+8WxrHe1aYI1gMPzkZSrCLVMzjya4ytAeK/sKBZfnDnxCPvawvmOEi6rIGeB00VUwRc8QIFQL/EE7ui42mg1tXc/WSCQkYUN40iZmikQ84Zj8tJ5IZk9ZCio9EuUbg+m4YqIN6gdIjSSvt8y0hVnVfsAWFs1zbWLrMft5IYMeiuhx7jdERwoyCOQ0eBCpHEvgGwwYKhANTyv4/LMUkwcRztafsFganjrzSWuutLSj/K9RO8eI+KE+u4oYcBSO3RbD4HjVW0is09AoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kfO3vQAR9MZfaLWtyPC9fREnrWtcxFyrdl07USqhVMg=;
+ b=DsD8AJhR7Kt2vKR/cne+gwwOMwHnNYPeIG+57xRNZFmo0sxcnOnHehGdJAx5pQxFavlvkf0ZW5eJYVHli34mAp3jMPOyHOoCulsklGroikv5ko361Kn5EtzCNuPyM6oFBjOxwvUUI9IxfZmkmxIKCgJEey/10jqo0z9gUbC63YosYTd23z4wJz2787RMyAZTVaU3C9sHlyTWUlA3n/1JQTc+8L+EiLdxL03iGLIsw6xc9ShWxHt49BCS/d5NiR+DtKdJA57MbMY91ic9l7l1/xaRDwOHhK3LNt+TVlOhYX5dk7GB6TO5pD2rDT3nCxKqt1T/fjpeI6T5r9D+i9pkQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kfO3vQAR9MZfaLWtyPC9fREnrWtcxFyrdl07USqhVMg=;
+ b=pBLw2wmYtS4wuCREwf/5aKTPftKgGzdVCSRmCnITlTLRv5UHLJFXd2CXz4eDHoOSHsNDPhR5KdxUf+9IzCDsFkJ1fXIaZF4XFvmewcs/DXwdplmlEZ8izpCHil+Fi5A/rUFcE3UNS/nxseh5WsTTC74OjUmc7+AS4ZvHLU30oLU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LO0P265MB3452.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:16f::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Wed, 7 Aug
+ 2024 14:57:21 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%7]) with mapi id 15.20.7849.008; Wed, 7 Aug 2024
+ 14:57:21 +0000
+Date: Wed, 7 Aug 2024 15:57:19 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, "=?UTF-8?B?QmrDtnJu?= Roy Baron"
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
+ Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Arve =?UTF-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos
+ <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes
+ <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren
+ Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>,
+ Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Daniel Xu <dxu@dxuuu.xyz>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+ Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, Kees Cook
+ <kees@kernel.org>
+Subject: Re: [PATCH v8 5/8] rust: security: add abstraction for secctx
+Message-ID: <20240807155719.005d9e74@eugeo>
+In-Reply-To: <20240725-alice-file-v8-5-55a2e80deaa8@google.com>
+References: <20240725-alice-file-v8-0-55a2e80deaa8@google.com>
+	<20240725-alice-file-v8-5-55a2e80deaa8@google.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0434.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a9::7) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 07 Aug 2024 16:56:56 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Peter Zijlstra" <peterz@infradead.org>
-Cc: "Josh Poimboeuf" <jpoimboe@kernel.org>, linux-kernel@vger.kernel.org,
- x86@kernel.org
-Message-Id: <4afdfafc-ca43-4919-97e8-aefdb1feadcc@app.fastmail.com>
-In-Reply-To: <20240807141801.GB31338@noisy.programming.kicks-ass.net>
-References: <ea203f8e-8dd4-46f6-ada5-a2bf5ea8185e@app.fastmail.com>
- <20240807141801.GB31338@noisy.programming.kicks-ass.net>
-Subject: Re: new objtool warnings with gcc-14
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO0P265MB3452:EE_
+X-MS-Office365-Filtering-Correlation-Id: a69b0c46-ec90-4e32-4826-08dcb6f13d61
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?so+UOBoRZfC2dJyjNllQW96RyEXYqxRmJChuSc4Hw6IhnyKWXr4ADodjxPlr?=
+ =?us-ascii?Q?sMF0caKbie2Wo0EBql5ZKPrHWqW6NMWBxQqQVpXLIQYS9Qpq4xE6CvKZrcNZ?=
+ =?us-ascii?Q?r8MIxibBTJG+Ifm4GA9GbHo9QXNj6n0AYy3YXfllz+GTXTGwSaLNpohZOjqo?=
+ =?us-ascii?Q?x6fQN9A07o8vLD9LLujfXzgu6OXrCcTr32eVGDdZNj4o/sbD653lKD4Vh2Lv?=
+ =?us-ascii?Q?l4k2h+U8ZnPkAXGqKxcfGor1PVB0ooMmIoRUvmg1lnxbYHcGgVgECtVQdtop?=
+ =?us-ascii?Q?oLDvwetrNI2pJcdKI+PbTjKYPuxyl/1HNEEMzIqQdXZWDxf6Q0aiaSpadVaQ?=
+ =?us-ascii?Q?SixEEcAMwGdBHkij4OfcanElauTWEHi9fxElGeLRftGC1Iu9WtEHG30Qolic?=
+ =?us-ascii?Q?8kzqV3zaRsa01pr2WJ2JdMzRoTKHkb/86AEgCw9chXmJe64tXxH9WCgphzET?=
+ =?us-ascii?Q?HkOFX5C6WQ4rCoxut4SZIc8HrmE30cxl8Gc+V0VjZQKBcAhxlGXZcU3s0HKm?=
+ =?us-ascii?Q?O5/GN+zmr6Ikiow1nuxBvA9uidIYed5BAQYKbCJKERAQhx3rCTKVq9SJMAIc?=
+ =?us-ascii?Q?/vcQ7Y7c6g3/meKiAKGv9SOa+WejMYfuNzUqeFvhXAwMb79LtDheyXQ5euzF?=
+ =?us-ascii?Q?/ewrCVzs5jMlysvoNdxNflnwmuIehG3MbT27yCQXz0AEzV5vUYKYNRDvDOV3?=
+ =?us-ascii?Q?TqA4qGRpIdHsArTmbiiGpgUuhtTL6EU2ZfQmqZaNy8pugzCjUUDVBuHaSrxX?=
+ =?us-ascii?Q?Z9QPIR+3lWwuL2gArQOPRiYR5HceMurN3qvDiRIA2gqN6WydN+qd/Y0ERepq?=
+ =?us-ascii?Q?FtEQJKI7fIg7xMISA01yPqdkhS79TzxLDf1nxvQlMt3dotFhuPHoHoqBc16g?=
+ =?us-ascii?Q?+JRNRhRKiOeuuInPgaBB85I/2S869nrAOuFdZvRjaB+UkVjQ1pAoLhjlQSuK?=
+ =?us-ascii?Q?5a0q4Hp4Hjl+FR/z2QM3qvluPstZVhJt0d2hDxT6JZFJ7hDx2DEGs0mWgRZF?=
+ =?us-ascii?Q?Qxh7tGwbGwJCZNl1dmwa0jLv6S63jMB3IWNrKnY5XJdErqpePg1pfJNyyU0v?=
+ =?us-ascii?Q?SL++EDSmAl6EAKcDqb1HJ7Op4vvWorWz+5pxOjfINQ11trVsw0ca/aPln8cf?=
+ =?us-ascii?Q?FKJMRVB0IM+T0rdTZenwc9mCtlow8ea2a7/bn45HpLDLc5a286mAplOJ6Wk6?=
+ =?us-ascii?Q?vOm2Jn21l9lFvT1WEE6j3EQxmDOMZp58GKWfEEyyA8W6x5N0yL6tqxXZkVXs?=
+ =?us-ascii?Q?mOwQ0NvW7DvR7ZbSoRLloXVwfi1UYmTUhjDSB3L/7cRiJx7pMMpCpZuG8kP7?=
+ =?us-ascii?Q?iFZf60KB70MpukD8+UsKWeSyUYcoZ05lSNJCkAj35Oj+pg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?b/2iHngz1AMDhh2Zojlp88pfJdVk93gcrkpcJl9rhWl9FaqFUQZLMztpAjbR?=
+ =?us-ascii?Q?iIxZZyFH+aJiDOgQBKUyrZKIRsdA1GHBLGypxTsoS5ydS6Nk6NvmZO1LVkWR?=
+ =?us-ascii?Q?O//bmBpFoXrcfjOB20Z4Wk19+8YeZ9FCvK3qiKq7c7U+qGUtY9cuo4DdwflX?=
+ =?us-ascii?Q?pUEksCfUCUnIuQv7xYOLpkyS4lHcuFpsOqBMvJZ+ysj0DJzGXxs8HxMb3MwU?=
+ =?us-ascii?Q?FvIK80sNq2b9aHHlMyBn0f8HkUCXENjaiN4+LE0TIxGtPnLDrPwbblTiNQ5C?=
+ =?us-ascii?Q?VOep1iHQtsxE8tGTfLGIA9uO93GM9ltHHL2BovPpgR6nBKP91RnKeV+Itxgd?=
+ =?us-ascii?Q?GrMd+5dOYhnQBuluQSzNFtP7Tu2htbWYHRmGCSCorjDLrYa128NeR4LgoU3M?=
+ =?us-ascii?Q?RGpNZA1OP6C2p2YxZEmiE8w3Qu/VhqX9SwDj/AQBkBiecrnsnip/7NcuoGam?=
+ =?us-ascii?Q?/6NTJ7IuDkZEE09GcZ0eq7xO3557ozy5XZsa0OK1+P6E6haF9dmAXwpwUtJ0?=
+ =?us-ascii?Q?HE2FM84WD8uAkR3Yq/KIGIjM6VObSI6VohWiu/mIzdYxktHWfyFk+jrBulAw?=
+ =?us-ascii?Q?8HKbVNCcRVB12srq28YxtgozkZBRUgWJJ3gyt8TZZiodkjztx3NV5138Egoc?=
+ =?us-ascii?Q?1GGUjRHz6j9RYjIVs5WdraOsl8tKRTwN6pdOg3PN7ENEaBTN2k6fhgFNRZpl?=
+ =?us-ascii?Q?WICpdQyHWO1JrAb+xWwyqcbaJCx9y6he3cB9G7j4i2dG4mivgDT9q9Uj1F6z?=
+ =?us-ascii?Q?2VaN+vQCrveZnABl61VahLPkWdX+yzCynil32YtAFbCG/3RXMwagSxYsTZoE?=
+ =?us-ascii?Q?qwz8+ZEAYHvwl/KImWIUA87ifYioSAGnSBJu4vPiMtrGaPMcm4aGrQ2/agI3?=
+ =?us-ascii?Q?3MRHkaNHGOPc35XYv9zmRRyhxV0wP+Z1PPD60+DLRbCfRRHlEXesijcCeCFi?=
+ =?us-ascii?Q?Nr2pi5Usj4TEI3Bw07fOAUF+JyvAZQ5a/cyoi4grVYlJKHUul408AveXT4q/?=
+ =?us-ascii?Q?Yql/SvSjBmDwsfOIBXpK4VlTmmjFrOOlck88fb9cI4ijptfu8T/TxGHn91OS?=
+ =?us-ascii?Q?1NBpYZCHSkRCtwjHtyOxkXNVxnntM4GtmHXAF2F08pG2PaRryQ1q0YbKt9MH?=
+ =?us-ascii?Q?CO6XzOixXPFSXEQbk++x2JY6Fg/umDQTKTO21DDMnmhxWRvup516sNUqYaGS?=
+ =?us-ascii?Q?ETp6PoIfLERRzDxHyf9O2eAoNdvvTZWIY1KGHLrjUlEK6TKlU344kbPUr2Az?=
+ =?us-ascii?Q?NRPjm3RO2DocCIPF30wXOgOG0hf3KoJdIbPeXvJqIfOPgaZl/Y3/eqTnQW1+?=
+ =?us-ascii?Q?RJdxMiFuQBSvXviAmlCyu4j6Ay/7ue1R9HXlHiKx95OUZOnoIQDs/SFCwaDQ?=
+ =?us-ascii?Q?ERnB2srwrtiXVCyuW1muKlZKmh2yJGUU3yBoTKmsZcqwziHjL0mE7PMjuOpf?=
+ =?us-ascii?Q?bgLepGb0SNct/r1hihg5fRePFJds/cJSPc1SWGIdB9IkncsF/yU+UAElA5IH?=
+ =?us-ascii?Q?6pwpm+osyXuLzpUmLnb5CiaCwXJoza5kJXSsjSBfEv4yYSwQzJj2oUergG6f?=
+ =?us-ascii?Q?ZXYlq9cYaUl4AYwUYkGMxUIxlY0qOOfmuIm9Y2v4?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: a69b0c46-ec90-4e32-4826-08dcb6f13d61
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 14:57:21.4121
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: i1NbRSnIekYC6rYcjv7aMZN6WtZVAVVCY0lQXkdFr0A/GD+GoXf/gT3CU79BCvAGwlqRkD4sK9BEJaOIIOfQ8A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P265MB3452
 
-On Wed, Aug 7, 2024, at 16:18, Peter Zijlstra wrote:
-> On Wed, Aug 07, 2024 at 03:56:45PM +0200, Arnd Bergmann wrote:
->> I see some objtool warnings with gcc-14.2.0 that I don't show
->> up on gcc-14.1 or older:
->> 
->> vmlinux.o: warning: objtool: adis16260_write_raw() falls through to next function adxrs290_read_avail()
->> vmlinux.o: warning: objtool: adis16400_write_raw() falls through to next function adis16400_show_flash_count()
->> vmlinux.o: warning: objtool: x86_init_dev_msi_info+0x61: relocation to !ENDBR: irq_chip_retrigger_hierarchy+0x0
->> vmlinux.o: warning: objtool: rza1_irqc_probe+0x257: relocation to !ENDBR: irq_chip_retrigger_hierarchy+0x0
->> vmlinux.o: warning: objtool: .export_symbol+0x5908: data relocation to !ENDBR: irq_chip_retrigger_hierarchy+0x0
->> vmlinux.o: warning: objtool: .export_symbol+0x35b18: data relocation to !ENDBR: stpcpy+0x0
->
-> https://gcc.gnu.org/PR116174
->
-> As such, I've been blissfully ignoring all GCC-14 issues.
+On Thu, 25 Jul 2024 14:27:38 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-Ok. I can confirm that reverting b644126237a1 ("Align tight&hot
-loop without considering max skipping bytes.") in gcc-14.2 avoids
-the ENDBR issue.
+> Add an abstraction for viewing the string representation of a security
+> context.
+> 
+> This is needed by Rust Binder because it has a feature where a process
+> can view the string representation of the security context for incoming
+> transactions. The process can use that to authenticate incoming
+> transactions, and since the feature is provided by the kernel, the
+> process can trust that the security context is legitimate.
+> 
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
+> Reviewed-by: Trevor Gross <tmgross@umich.edu>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-The first two warnings in the list, about adis16260_write_raw()
-and adis16400_write_raw() apparently already show up with older
-compilers, so those are unrelated.
+Reviewed-by: Gary Guo <gary@garyguo.net>
 
-The problem here is the unreachable() in code like:
-
-      adis_dev_auto_scoped_lock(adis) {
-             if (t >= 0x0A)
-                      adis->spi->max_speed_hz = ADIS16260_SPI_SLOW;
-             else
-                      adis->spi->max_speed_hz = ADIS16260_SPI_FAST;
-             return __adis_write_reg_8(adis, ADIS16260_SMPL_PRD, t);
-      }
-      unreachable();
-
-     Arnd
+> ---
+>  rust/bindings/bindings_helper.h |  1 +
+>  rust/helpers.c                  | 21 ++++++++++++
+>  rust/kernel/cred.rs             |  8 +++++
+>  rust/kernel/lib.rs              |  1 +
+>  rust/kernel/security.rs         | 74 +++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 105 insertions(+)
 
