@@ -1,193 +1,181 @@
-Return-Path: <linux-kernel+bounces-277332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADA0949F60
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:49:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1BB8949F62
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9396C1C23272
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:49:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EF60B23A4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B327619752C;
-	Wed,  7 Aug 2024 05:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F2C197545;
+	Wed,  7 Aug 2024 05:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1TKo++0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QfDJMK27"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6A16BFA3;
-	Wed,  7 Aug 2024 05:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2AB6BFA3;
+	Wed,  7 Aug 2024 05:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723009774; cv=none; b=m2AclW8Icqvw+qODt4C90jn7sqLcTyw5/so+AFOGkjbRxytR9nednn/MI8SevbxRCw0oLWRG89ISwFlum3NhCSCaRJVN6yhY7r9MipzrI/A3neu5E+ORO3aCCYkvK4nGVpbUE9adIFvNXXjgC6y4nS2QchiuEnGv+gTTXzPh+Xw=
+	t=1723009792; cv=none; b=RFbNRI3o+9fuZJnS17mOpPK0OTo8UD6+oleONs4jaBZCDrar0W1cbHUFcvMj93hUp2DyoIBQ8ZTpIAAftwKWkdQS5cmxWHYnC3GFqctL/VUaUhYhIVX7tiOglhX+alM3pIQRLMMy3/pBU7j2Qd3m6BuKqnWUAlG7r2o2+maRHVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723009774; c=relaxed/simple;
-	bh=NfrOBcjO/1edtJr1f92xqBL5hzAd7ZcuUUv/ggnDR9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J8ihSW43EZVb19NelqRicd6Yr4pO7cdgT8e25ixtzuZlxfEFXPWdi4MMkGgIBupfGsUlSeLcBRLgCpixBzOEeprytzKSpPo/GRFlL8SAC2Tq2aVuKLSwmj0qkfmqaFQ/pJX6g5HH8M+98neVLjIqH2YXLoElINrgRX9nFuSHS04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1TKo++0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E926C32782;
-	Wed,  7 Aug 2024 05:49:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723009774;
-	bh=NfrOBcjO/1edtJr1f92xqBL5hzAd7ZcuUUv/ggnDR9k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=m1TKo++0oG4AuvFgbcX7Zd8lsvYZaSD5VQREoYuRyBL9UOmMw8NaTjxEXZ8E6Mxp/
-	 M23nhWPGk+9QsPjZWRZWVq0pSveUuu8MCFTHwEZr41luoWO28Zgawm7f1UyJDUjT3Z
-	 VeG1qrEi3eHrQlCSaQmkEAZ175EHtvzSdbTeO1PWy7p/S2wZ4vabV/KLy2ZZyer6Ze
-	 Gd1eAZN4zSd7REZJDZTZQqSbgwX1ZdDHMrPdKBYBDXCSELrxovpExoA2Jzwxmacgz5
-	 JjbfP45q3uuwOOibgDaewyPgAYamRzyr3+Bksk53uK0FC46DxVJpbS/SxnWOrgeqqQ
-	 cm5/vnS8qjzoA==
-Message-ID: <03b8a48c-e97e-4d7b-8378-66cc55ed56f7@kernel.org>
-Date: Wed, 7 Aug 2024 07:49:27 +0200
+	s=arc-20240116; t=1723009792; c=relaxed/simple;
+	bh=FHpddn2Dre2u92rA4iiaH2DthAsRJ94/WAzrQ9Onn2s=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=saHhtkgTmhrdb1CT3xOisrcjqyYMxjiyyGLQ5xLalWlOMfmpdrUYIFxFl2tzMLKAklQh76FusiLlYXHc8cb8zMhGca3HNXoJD9J+JFSVUmEZFuxLLg4XLPuBWGqMHML0RkBKy5VdeYG4Pan2f1Vcqqw4i+N/vQQlw4Yss11nctE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QfDJMK27; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4775njVg115639;
+	Wed, 7 Aug 2024 00:49:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723009785;
+	bh=9v4SsW5LT+D9asmZl5EMLQv7Ll3Zd1TIuhJiBGmhV2I=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=QfDJMK27ogEIdppwe4eFQSmJotSfkK9aWLt7FflBLDawtVWNcjoXOHc1qgSeVmqYk
+	 z4WHq/XZpNIb+x1z3frUETfNEwF21v2wkpykOBTl6n7ZAv6vv723f8DOw4g85ScsnS
+	 YU51Xxhbm34KFmA09rBkfTyv2NdGT4i57PSYL/us=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4775njNt024554
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 7 Aug 2024 00:49:45 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
+ Aug 2024 00:49:45 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 7 Aug 2024 00:49:45 -0500
+Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4775niIV054740;
+	Wed, 7 Aug 2024 00:49:45 -0500
+Date: Wed, 7 Aug 2024 11:19:44 +0530
+From: Manorit Chawdhry <m-chawdhry@ti.com>
+To: Neha Malcom Francis <n-francis@ti.com>
+CC: Nishanth Menon <nm@ti.com>, Andrew Davis <afd@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Aniket Limaye
+	<a-limaye@ti.com>,
+        Udit Kumar <u-kumar1@ti.com>, Beleswar Padhi
+	<b-padhi@ti.com>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>
+Subject: Re: [PATCH v3 1/5] arm64: dts: ti: k3-j721s2*: Add bootph-*
+ properties
+Message-ID: <20240807054944.g6xgiamjn76xlv2g@uda0497581>
+References: <20240730-b4-upstream-bootph-all-v3-0-9bc2eccb6952@ti.com>
+ <20240730-b4-upstream-bootph-all-v3-1-9bc2eccb6952@ti.com>
+ <bcd96f9f-54bd-4793-b9f1-04a011f2df82@ti.com>
+ <20240806150700.uw4xdanjr4ypdvm3@rasping>
+ <20240807052628.jclbmw4zs72jm6km@uda0497581>
+ <8a910e2f-aaf2-40cd-8131-a1a2531a12c8@ti.com>
+ <20240807054243.pvfgexgusahe7d4x@uda0497581>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] clk: rockchip: Add dt-binding header for rk3576
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com,
- Sugar Zhang <sugar.zhang@rock-chips.com>
-References: <20240802214053.433493-1-detlev.casanova@collabora.com>
- <20240802214053.433493-3-detlev.casanova@collabora.com>
- <1600ee06-ac19-436f-8229-1bb44b29c683@kernel.org>
- <2949191.e9J7NaK4W3@trenzalore>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2949191.e9J7NaK4W3@trenzalore>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240807054243.pvfgexgusahe7d4x@uda0497581>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 06/08/2024 17:23, Detlev Casanova wrote:
-> On Sunday, 4 August 2024 05:53:57 EDT Krzysztof Kozlowski wrote:
->> On 02/08/2024 23:35, Detlev Casanova wrote:
->>> From: Elaine Zhang <zhangqing@rock-chips.com>
->>>
->>> Add the dt-bindings header for the rk3576, that gets shared between
->>> the clock controller and the clock references in the dts.
->>>
->>> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
->>> Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
->>> [rebased, separate clocks and resets]
->>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
->>
->> Please use subject prefixes matching the subsystem. You can get them for
->> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
->> your patch is touching. For bindings, the preferred subjects are
->> explained here:
->> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patche
->> s.html#i-for-patch-submitters
->>> ---
->>>
->>>  .../dt-bindings/clock/rockchip,rk3576-cru.h   | 589 ++++++++++++++++++
->>>  .../dt-bindings/reset/rockchip,rk3576-cru.h   | 484 ++++++++++++++
->>>  2 files changed, 1073 insertions(+)
->>>  create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
->>>  create mode 100644 include/dt-bindings/reset/rockchip,rk3576-cru.h
->>
->> These are bindings. Must be squashed with previous patch.
-> 
-> Ok, so you'd rather have a commit for reset definitions (dt-bindings: reset: 
-> Add rk3576 reset definitions) and another one for clock definitions + 
-> Documentation (dt-bindings: clock: Add rk3576 clock definitions and 
-> documentation) ?
-> 
->>> diff --git a/include/dt-bindings/clock/rockchip,rk3576-cru.h
->>> b/include/dt-bindings/clock/rockchip,rk3576-cru.h new file mode 100644
->>> index 0000000000000..14b54543d1a11
->>> --- /dev/null
->>> +++ b/include/dt-bindings/clock/rockchip,rk3576-cru.h
->>> @@ -0,0 +1,589 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->>
->> Weird license. Why not using recommended one?
-> 
-> Oh right, I suppose "GPL-2.0 OR MIT" is better ? At least that is what I see 
-> for rk3588. include/dt-bindings/clock/rockchip,rv1126-cru.h uses "GPL-2.0+ OR 
-> MIT" though.
-> 
->>> +/*
->>> + * Copyright (c) 2023 Rockchip Electronics Co. Ltd.
->>> + * Author: Elaine Zhang <zhangqing@rock-chips.com>
->>> + */
->>> +
->>> +#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK3576_H
->>> +#define _DT_BINDINGS_CLK_ROCKCHIP_RK3576_H
->>> +
->>> +/* cru-clocks indices */
->>> +
->>> +/* cru plls */
->>> +#define PLL_BPLL			1
->>> +#define PLL_LPLL			3
->>> +#define PLL_VPLL			4
->>> +#define PLL_AUPLL			5
->>> +#define PLL_CPLL			6
->>> +#define PLL_GPLL			7
->>> +#define PLL_PPLL			9
->>
->> Nope, indices start from 1 and are incremented continuously.
-> 
-> Why start at 1 ? RK3588 starts at 0 for clocks and resets
+Hi Neha,
 
-Or 0, even better, sure.
+On 11:12-20240807, Manorit Chawdhry wrote:
+> Hi Neha,
+> 
+> On 11:03-20240807, Neha Malcom Francis wrote:
+> > Hi Manorit
+> > 
+> > On 07/08/24 10:56, Manorit Chawdhry wrote:
+> > > Hi Nishanth,
+> > > 
+> > > On 10:07-20240806, Nishanth Menon wrote:
+> > > > On 09:43-20240806, Andrew Davis wrote:
+> > > > > On 7/30/24 4:53 AM, Manorit Chawdhry wrote:
+> > > > > > Adds bootph-* properties to the leaf nodes to enable U-boot to
+> > > > > > utilise them.
+> > > > > 
+> > > > > U-Boot? Let's try to pretend like this is a generic property and
+> > > > > just say "bootloader" :)
+> > > > > > @@ -445,6 +446,7 @@ flash@0 {
+> > > > > >    		cdns,tchsh-ns = <60>;
+> > > > > >    		cdns,tslch-ns = <60>;
+> > > > > >    		cdns,read-delay = <4>;
+> > > > > > +		bootph-all;
+> > > > 
+> > > > Here and elsewhere, follow:
+> > > > 	https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n117
+> > > 
+> > > Could you tell me what are you seeing wrong? The dts-coding-style that
+> > > you shared doesn't tell a specific location for bootph-* properties so
+> > > using the generic reasoning.
+> > > 
+> > > "1. Most important properties start the node: compatible then bus addressing to
+> > >     match unit address."
+> > > 
+> > > This is the least important property considering Linux and hence the
+> > > reasoning was that it should come in the last. Also, j722s and am62p
+> > > follow the same convention so it was taken from there only.
+> > > 
+> > 
+> > Not sure if this is what he meant, but bootph-* comes under standard/common
+> > properties as per my understanding of the coding style. And status needs to
+> > be at the very end if it's there (in this case it's not but just
+> > mentioning).
+> 
+> I see status property being at the top of many nodes so I don't think
+> it's even followed right now, with that reasoning, I don't think I can
+> use that point for ordering the dt nodes. If it's under common nodes
+> then also I think it's in the appropriate location considering that even
+> in those properties it is the least important and should be coming in
+> the last. If you see any problem with this node then please let me know
+> in the ordering.
 
-Best regards,
-Krzysztof
+Maybe I missed, cdns would be vendor property I assume, let me get
+Nishanth's ack as to that is what he wants and this is indeed under
+common/standard nodes then would move it to the appropriate location. 
 
+Though again, j722s and am62p don't seem to be following this
+convention so not really sure what he means actually tbh.
+
+Regards,
+Manorit
+
+> 
+> Regards,
+> Manorit
+> 
+> > 
+> > > Regards,
+> > > Manorit
+> > > 
+> > > > 
+> > > > 
+> > > > > >    	};
+> > > > > >    };
+> > > > > > 
+> > > > 
+> > > > -- 
+> > > > Regards,
+> > > > Nishanth Menon
+> > > > Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+> > 
+> > -- 
+> > Thanking You
+> > Neha Malcom Francis
 
