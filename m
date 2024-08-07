@@ -1,70 +1,62 @@
-Return-Path: <linux-kernel+bounces-278539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804D594B194
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F36EC94B197
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 383AE1F222FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:47:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D1701F239A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A6B147C6E;
-	Wed,  7 Aug 2024 20:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5441465A1;
+	Wed,  7 Aug 2024 20:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CMqUanrO"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Az5T4qvP"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A985E146D55
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 20:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E2C13BACC;
+	Wed,  7 Aug 2024 20:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723063618; cv=none; b=CNscjQDwO1QTUCc+aDrQi2Ua+4glk0qlXZqHp9MGTRe3dYfTWGWWErAK1Kzxqr04f/W14/8flKPb0hi4ciKT+gGyYXIhsEl9mo278K2XL2edqusUwJ62H+I8ypac6qKTE3sIrSS3e2lZaUbUJAoQwLIWdDTaUdpZGPdDVuS131U=
+	t=1723063723; cv=none; b=orEgkyU+EjurRb02Be9uJdVOcRdmuM9FqOWWEPc2rgYkRR7ZSRV6D3bEZ9sl1n9Si4AYSAEN6p0dcUXvr2rqFU2u5yn8FTs2MawYTEtR8aEr8Ugay0oBgAEBF8hTw2lmRj6nXH4RFBQnV8OYc0qy+U6riZpij0VdQa8hytxL2DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723063618; c=relaxed/simple;
-	bh=EdBhtzfqLSsBAVJRjdv1ckOtbFndr92/RF3/x62BOCk=;
+	s=arc-20240116; t=1723063723; c=relaxed/simple;
+	bh=6RLZhYyVze7Qf2dpV9zJ9RB9FVEijxyr7/i9fW3b1bg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GFP9L+HfyIV0qUYsPlHBiYLJQFdS/yzF/jyRsG3JVhW7K5G9qfQ9EhcqPZ6CojaNhsZV8U7mC8q+OPeLklijYV3M3mifJTvDbld92/gvBfHXw8IeW4ypK/KdRl300HJ3wE9nqc1Oi88gapHa3FpAc3sA2S9JE8uaxOtJajS4U0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CMqUanrO; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-39b37637977so219915ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 13:46:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1723063616; x=1723668416; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RqgcGDUaTNp/sTXO9LQ0+BWl+Zjdb1Zqdieng1PIeM4=;
-        b=CMqUanrO4/kfSRTt3dV83U1cPAbnV/CdKhmO6SLiI2+NhdZ/RoIrHoGZbsRO0v/A7u
-         MZuyNN8mM86+ovQfqLoYMT/YCp6XxeF57uBtWEpBhVdJ/rd04bL+PBo5PWCvadZEWthg
-         yFbF/pkHVeVCSwv4R6A08hrmIF8BZ0rsZyUPs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723063616; x=1723668416;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RqgcGDUaTNp/sTXO9LQ0+BWl+Zjdb1Zqdieng1PIeM4=;
-        b=vnRB8QWXvNcExlbHXNBdHBIqCUGL4NKBgJHJdum1TPqoFc5HumAYoBOqylPmmt2g/C
-         xsj43ze1cZonYu0q0/i+Pes11UM1iVUVXxRB4wrz3Z8ZVv01sbh7ifQ+33NesGohCCDW
-         ptCcLaVhUcEX4o4WFDCFIU3MUETcoXrbyPbWYyk5d55RVOhLHg0lKX5A9tNSeTczxgHu
-         NAw0dFtCpualoYbPmeZxcil5txmEGWo7KONtUUcSbEZY4+yUlwfpfUVmsqTW458gs5IO
-         LQEOGuExzCdGAuhQeLA37+ur2K1MJRbRXtC2LgimLjAP4b52GVXxzqDwv/z/vBy6pLsg
-         ebng==
-X-Forwarded-Encrypted: i=1; AJvYcCVnflZagZcZ6lHkyl0uhBpUTxn1ulwb44+HBE9vVLnzod8WynhIPoW757AfGp+HC1Iez19O16MBZ3oxwnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFNWMyKPIJS/RlvLdqi0LZ2jVvtpA7XfirqONOYDSmynd0Q2ko
-	PsVOuX7DaA8f2+qvY+SnSVpBa2xN5+0L7gcXVgFmtuZjKk9fAwUce5HMOqkUIq8=
-X-Google-Smtp-Source: AGHT+IFB+Zx0494eTKzW3GVBD7MHU8uPNoAfHKFsQqBPKr+K5SAwkwE8u/oTmRkBv6+IFzrktgEChw==
-X-Received: by 2002:a6b:7c4c:0:b0:81f:8f3a:5689 with SMTP id ca18e2360f4ac-81fd42bcd22mr1222964139f.0.1723063615771;
-        Wed, 07 Aug 2024 13:46:55 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d69a87b4sm3007508173.64.2024.08.07.13.46.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 13:46:55 -0700 (PDT)
-Message-ID: <5cbf7f15-cea7-4f82-ae9f-62e08d1afa93@linuxfoundation.org>
-Date: Wed, 7 Aug 2024 14:46:54 -0600
+	 In-Reply-To:Content-Type; b=SwzeYsWKXKLcmuF/ZpJLFKx9D43s4VWyxzkITO7uDUx3v7T/K6pw9V4YF7i64LrTm6bUQykQ5OpnFQbSFEm6+fv9JXPJp2mqrDq2nBsj6HsjhEFTS2kYZBaUDcNkUIN1RfL0oEGAD0mSInaytD257gtT3iy5353dFrdm+BziAO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Az5T4qvP; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WfMhn4GWpzlgVnF;
+	Wed,  7 Aug 2024 20:48:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1723063720; x=1725655721; bh=6RLZhYyVze7Qf2dpV9zJ9RB9
+	FVEijxyr7/i9fW3b1bg=; b=Az5T4qvPE0ZT1iRRAyrAXWsSavkMRPyCA3KGXMmv
+	780DU0HuxwUxwcsSNwkCrT03jcrL9klGoCtiBwNt3ESCi4Po/DZVFy8BifdkIivG
+	hIwyhe/AWyVeZ3vZk7CEfPHpM28l5skIo5+qbHmr2E3jo6n1BjnG4QNkilyYs2us
+	dxTU0Kx7mF8471IPFMB6zMAUzJPUNPG2up/0pVSWuCHUdtWZD+g3gCHIPkzmpRAo
+	oaB26wRfRMZihl1CquhNNWqpGrn4goAMOAn2g4AgADJRkQ5iklP3eNHN0RdJslwL
+	06pDjQl6BlCvmV9FOQqZF42SfuZTYIoVkmySPnanIYi3bw==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id RIj3ivleSjip; Wed,  7 Aug 2024 20:48:40 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WfMhl29qSzlgTGW;
+	Wed,  7 Aug 2024 20:48:38 +0000 (UTC)
+Message-ID: <9e71721f-9154-4c52-a87a-55a60d1db16e@acm.org>
+Date: Wed, 7 Aug 2024 13:48:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,44 +64,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/uprobes: Add a basic uprobe testcase
-To: Steven Rostedt <rostedt@goodmis.org>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Shuah Khan <shuah@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- oleg@redhat.com, jolsa@kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <171651179523.161068.3164659198838770307.stgit@devnote2>
- <20240807163638.528b72a1@gandalf.local.home>
+Subject: Re: [PATCH v2 1/2] scsi: ufs: Prepare to add HCI capabilities sysfs
+To: Avri Altman <avri.altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240804072109.2330880-1-avri.altman@wdc.com>
+ <20240804072109.2330880-2-avri.altman@wdc.com>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240807163638.528b72a1@gandalf.local.home>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240804072109.2330880-2-avri.altman@wdc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/7/24 14:36, Steven Rostedt wrote:
-> On Fri, 24 May 2024 09:49:55 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
->> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
->>
->> Add a basic uprobe testcase which checks whether add/remove/trace
->> operations works on /bin/sh.
->>
->> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> 
-> Shuah, can you take this too.
+On 8/4/24 12:21 AM, Avri Altman wrote:
+> Prepare so we'll be able to read various other HCI registers.
+> While at it, fix the HCPID & HCMID register names to stand for what they
+> really are. Also replace the pm_runtime_{get/put}_sync() calls in
+> auto_hibern8_show to ufshcd_rpm_{get/put}_sync() as any host controller
+> register reads should.
 
-Yes.
-
-> 
-> -- Steve
-
-Applied to linux-kselftest next for Linux 6.12-rc1.
-
-thanks,
--- Shuah
-
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
