@@ -1,140 +1,90 @@
-Return-Path: <linux-kernel+bounces-278149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E12094AD56
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:49:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9BC94ACC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7A4DB2B727
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:23:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDBDB1C2294C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D21485654;
-	Wed,  7 Aug 2024 15:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nbr1uIGE"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A8812C460;
+	Wed,  7 Aug 2024 15:23:04 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA9B768FD
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E350B12BEBE
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723044171; cv=none; b=lteE5Nps7YGg3GzwyGREYkXSAybsMYEy8oixcKdMzxzrw+pgOMLVQvJ4XjBPw0PYEcLlSkmZh+tXiZ3EqJcdLHLt6wFiH+AUvnAtP77++nNkjpGAqyeLw42d15LnRxrS3FHgOGLcNUI7+x+Ntsg4TgCKiIhULLw4aZGDxLfTMLY=
+	t=1723044183; cv=none; b=AOIN/EF5zrz26VNMmH/6WJnTPzTLYGwR/GoipmqhS/H2mni8sMjNlH6Q/Gyqc9el6ey4s0ot3khD7s8vT0WBm51klkAsHdghngL0gyuH+TsadxbFDZspV3xWtxKOldvdcmFlf9ltn/rVS1vJYY9RD7whh+8ANm4dfisl+YcfoMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723044171; c=relaxed/simple;
-	bh=b400N+knfVALmbzGgPj3BTbRD+oELeXUCqkW+G8VIW8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=f01G5u19JaeOLOcqxYlJk2KOY6sXPuuB1lpqJyDOzmKAWXCrwx+kdiiXlqjBV6A+Lyxk9JHuuaBHrllLAsU+uQS+CUNCULBGMapS3A9OrX4zmisStLuFLmRqczgsQU2cXnhJsaJeddd/kqSlJ7TBmXC39KgvZy66a974lHbocpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nbr1uIGE; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-428f5c0833bso6228785e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 08:22:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723044167; x=1723648967; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b400N+knfVALmbzGgPj3BTbRD+oELeXUCqkW+G8VIW8=;
-        b=nbr1uIGE6Tl9bgsKyljrKH0N2j2DtlW1huEQl2IFRlPqMxk3eYpZTZfytu7HtU3Nrd
-         nsluPTIirbHupzh8EZOs5quFuSEA0KdVfqmudHkTtyaRi7NMJ8JkVjbmoHOujAgLkHfO
-         wDWMZpBlveuiLXBBbObVYUzhC+OryhQF9nCUYxmg4FJtlASNHDSK1e7rN1iwNOVFFBNJ
-         cYPzmIDgVnEZwuk/PBm8XauQmex0PBm+kGqwLlHRDRbYJO9xAPecgAR63ntDcGN2MIbZ
-         D/TZ2VnghfcIMLQVGXyTfY9PXUZl/iklrHsoldVfzEs2ymyN4N2iro6usvJr1DePetup
-         NRXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723044167; x=1723648967;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b400N+knfVALmbzGgPj3BTbRD+oELeXUCqkW+G8VIW8=;
-        b=QnzJ6lgJwQ8zmpN17TCO2r4CryfaCMEyvQQu4/JoMr8DBfIgky/I3U+Oe08Jnlr9X8
-         dTIMcGD6RDFy04ujLj8M+pq6vgu6vclBZoovReEKm/cFqR7fi3AkelhRf4LUoS9k1KJf
-         kVpvH8KBK734NV3ycFU2YV0ccc4bnv2FqiIbwrDSp5Iozq4ekOyusp3RDXUtct35aCzF
-         VaYxdClm354+l8fLkgBT3asomBEmG6pnaUqoKLCPRxUVzJL46zRdOpfWh2c6UH2mlByd
-         epb9pwA6s7J1OkqxOQtSP3R/bmpG2L+DZ+BjrhMZOKf/fz4XZUScgYNmUm5sNK81OXYr
-         GZnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWizcs3e+bgQODHlhkE62gg10bDfllVCi7n05w/id2Wkc0ssgxd3Z0LRTI4pZiHdkVyqaaGRoCckql6eixPw1hvWpTnrBogJtxvFvWg
-X-Gm-Message-State: AOJu0YyTEWrEQsli3bqaOCV6APkenQmeTkoLL1p7ELicJijY+eENUjVj
-	TQmHUKG9885jF+0fvpeLqEUznGUqeVWgON2d0SgN5IvbkDwBeoxQlF0pW/6Qz4w=
-X-Google-Smtp-Source: AGHT+IEee9/+95rBHM9qmfhHhWhuk6lT6qGII5W5sxauIeebfdopV9mCLXxpK67d6U+eT9QpOoZVag==
-X-Received: by 2002:a05:600c:4f14:b0:426:698b:791f with SMTP id 5b1f17b1804b1-4290509fda7mr20851805e9.3.1723044167397;
-        Wed, 07 Aug 2024 08:22:47 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:90f1:3c4c:261c:b0f5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290580c970sm34320015e9.46.2024.08.07.08.22.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 08:22:47 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linus.walleij@linaro.org,  neil.armstrong@linaro.org,
-  khilman@baylibre.com,  martin.blumenstingl@googlemail.com,
-  linux-gpio@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-amlogic@lists.infradead.org,  linux-kernel@vger.kernel.org,
-  kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 0/3] pinctrl: meson: Constify some structure
-In-Reply-To: <c8eca123-8ca8-4dfc-acc6-3e196ff0c844@wanadoo.fr> (Christophe
-	JAILLET's message of "Wed, 7 Aug 2024 17:08:27 +0200")
-References: <cover.1723022467.git.christophe.jaillet@wanadoo.fr>
-	<1jy158xvwz.fsf@starbuckisacylon.baylibre.com>
-	<c8eca123-8ca8-4dfc-acc6-3e196ff0c844@wanadoo.fr>
-Date: Wed, 07 Aug 2024 17:22:46 +0200
-Message-ID: <1jttfwxsqh.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1723044183; c=relaxed/simple;
+	bh=kACrunjvDB/DSQMdxOVsjAqK3jNN66NyvYykrJSHotM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=o/0dvtK+GtNECINe6yorZEsPnTFlYfGIHCPUO6aR4z5GRgC/CZpvXocFoLQTBjWqj2Klw6KbaHpHfHealyRIB5FQJQXUFTbByuoMyYc8Xc9CnvVovzihvOn280q5YSg81BqCDeYbGYmy9S9sruNpO2Vj7syqHpCCADpysXTnQNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WfDMn43JBz20l6g;
+	Wed,  7 Aug 2024 23:18:29 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0D801140113;
+	Wed,  7 Aug 2024 23:22:56 +0800 (CST)
+Received: from [10.67.109.211] (10.67.109.211) by
+ kwepemg500010.china.huawei.com (7.202.181.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 7 Aug 2024 23:22:55 +0800
+Message-ID: <2812367a-49ad-4c88-8844-8f8493b15bbd@huawei.com>
+Date: Wed, 7 Aug 2024 23:22:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [build fail] v6.11-rc2 from "ARM: 9404/1: arm32: enable
+ HAVE_LD_DEAD_CODE_DATA_ELIMINATION"
+Content-Language: en-US
+To: Harith George <mail2hgg@gmail.com>, <arnd@arndb.de>,
+	<linus.walleij@linaro.org>, <rmk+kernel@armlinux.org.uk>, <ardb@kernel.org>,
+	<harith.g@alifsemi.com>
+CC: <linux-arm-kernel-join@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <14e9aefb-88d1-4eee-8288-ef15d4a9b059@gmail.com>
+ <c11ba413-89f6-46b4-8d59-96306c9f1f14@huawei.com>
+ <52518ac5-53bb-4c70-ba99-4314593129dc@gmail.com>
+From: "liuyuntao (F)" <liuyuntao12@huawei.com>
+In-Reply-To: <52518ac5-53bb-4c70-ba99-4314593129dc@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-On Wed 07 Aug 2024 at 17:08, Christophe JAILLET <christophe.jaillet@wanadoo=
-.fr> wrote:
+Thanks, I reproduce the link error with toolchain
+gcc version 9.3.0
+GNU ld (GNU Binutils) 2.33.1
 
-> Le 07/08/2024 =C3=A0 16:14, Jerome Brunet a =C3=A9crit=C2=A0:
->> On Wed 07 Aug 2024 at 11:30, Christophe JAILLET <christophe.jaillet@wana=
-doo.fr> wrote:
->>=20
->>> These 3 patches constify some structures in order to move some data to a
->>> read-only section, so increase overall security.
->>>
->>> It is splitted in 3 to ease review.
->> I'm not entirely sure it eases review in this case.
->> If a v2 is necessary, I think a single patch would be better.
->>=20
->>> Patch 1: struct meson_pmx_group and meson_pmx_func
->>> patch 2: struct meson_bank
->>> patch 3: struct meson_pmx_bank
->> Is there any reason for leaving out 'struct meson_pinctrl_data' and
->> 'struct meson_axg_pmx_data' ? I don't think they get modified but maybe
->> I missed it.
->
-> No good reasons.
->
-> I'll send a v2 with everything constified all at once.
->
-> Should I take the R-b and T-b below, for the v2?
->
+with same gcc version, just upgrading ld version to 2.36.1, it does not 
+segfault and build completes. there should be bugs in low version of ld,
+and the ".reloc  .text, R_ARM_NONE, ." triggers that.
 
-Leave them out. I'll test again and report.
-Thanks for this
 
->
-> Thanks for the review and comment.
->
-> CJ
->
->>=20
->>>
->>> All patches are only compile tested.
->> Looks good anyway
->> Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
->> On the vim3l:
->> Tested-by: Jerome Brunet <jbrunet@baylibre.com>
->>=20
-
---=20
-Jerome
+On 2024/8/7 19:51, Harith George wrote:
+> 
+> 
+> On 07-08-2024 15:19, liuyuntao (F) wrote:
+>> It seems to be ok with vexpress_defconfig in mainline tree v6.11-rc2,
+>> I may need your .config/code file for further testing.
+>>
+> Please find attached minimal patches just for your testing. "make 
+> ARCH=arm e7_defconfig; make ARCH=arm xipImage"
+> 
+> Thanks,
+> Warm Regards,
+> Harith
 
