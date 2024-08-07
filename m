@@ -1,161 +1,135 @@
-Return-Path: <linux-kernel+bounces-278697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E94EF94B3AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:36:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE16894B3AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4F852835F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:36:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5A1C1C21066
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB79155CAF;
-	Wed,  7 Aug 2024 23:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4561F155A5B;
+	Wed,  7 Aug 2024 23:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UM2X/B9A"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DI7d1GE3"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070E82B9A1;
-	Wed,  7 Aug 2024 23:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A452B9A1;
+	Wed,  7 Aug 2024 23:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723073790; cv=none; b=nZ9Ah/P06eRJRku+2Wpws4wdDsD0qz1fouSCZeWK3t488VnkCoP83lTnfipBnGwLhtBx1WTbKmrrwqHH8/fh55RFvZNTNQAcAJ8LqbXSvB7idLl+GS7ZtZZxL/koRmEbWjXwQ+7sJgmSft3u0h7AN079PJfJauHzBzJ2I8+ZB4A=
+	t=1723073961; cv=none; b=JKO06O0yXPrQF5KPo93MrDgO5AkVHK3RBaECYmRF2LH4f6cC2MqItZxBSpJqCjGIwIiwWO1wvS9Mxep2neBT25wP4s76uhcSNKrMEuBKU/KTyhKeB8NxtBMrMyNqbxedJS9+TmipFHSXB4iBa7FyPnNGOocwigPeWO6vY3+bk+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723073790; c=relaxed/simple;
-	bh=qSbCFaZH+G6lzKlJZVve6DFWjFuUgcmFFYwA/SjX21I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O68UGB+Vosq376VXJET/IdpGwBQXBbc9EB/DqlacGnC2Dr1nm2x1qpMm4A75DCIm//GMx1yh/zQ5YCHHMflD++acGPDPxUz9Kp32H5Mh1Jv0UkWiLZfy/DbHRJ3Sp1xXJZKnCsHQsmNSHyelm3rom6Sv5JbC3klWwxWjhOsQdJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UM2X/B9A; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1723073961; c=relaxed/simple;
+	bh=paORnyQpzJ03P5vxAgXOwzUdZgz1DX+OHOfaY9cuOhM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UTaTySnyuKdIjPmIqFzBBiBMEiZCNAEBjsEYSvfrjUeqWWIBnBEwz8rq0+PExqa0g6cau7+rUXtvxOs+Rt5GNCPH6tFLWRvjcLzP1mgmuXSHwVTNkB5oAYD2/Tgu4IlY1NHJPTVO4K7LJ/Kma4t66tHAizk1aIFvP+E9FKCQytQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DI7d1GE3; arc=none smtp.client-ip=209.85.221.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc587361b6so4444325ad.2;
-        Wed, 07 Aug 2024 16:36:28 -0700 (PDT)
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4f52cc4d3beso144048e0c.3;
+        Wed, 07 Aug 2024 16:39:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723073788; x=1723678588; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3bI2iAB50s/sgrD0as33mPKfx3YGxvdhWBB75P/hORk=;
-        b=UM2X/B9AUArun2CGL5B/ESsIFSOoyLs0To6tWh8SYpQYvrrlnbI50iF4CW0EkPtAz6
-         /GzYN/nc01O0RP5UBzVjkGu4c7Jzfkrvr9hLYag5E9gHWdGOZ+Z+kduaAdoyLpY/eFLW
-         5qkTL1HrPxy0wCOkSOguQr55AdxqToKw/mrcsau9aBAHxMyfCdBR5FGPDi2ubApgNAMY
-         sKMTKrsKC3brwbLWTHibplXcfIMJSK8bO6DuyCgoC724umxRae/k/9EH0+P5/ZAoLies
-         Mcz61uoTfaHpQU1jVXTE5ILf6l2U5DXiDkPen5LaeXImjwEOPw8WUMmWgSpuzRNLYEa6
-         lOcQ==
+        d=gmail.com; s=20230601; t=1723073959; x=1723678759; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pCHmliBndJK/MPPvHoPCBgyseherKeenX7Lly3rzXJ4=;
+        b=DI7d1GE39vJ+0dq1ANZECutbFln2RdENBxux2kp9yc17Y1EW7G0Zfw185M1BQKhP/Y
+         c5T1CejcxYAyb2N36KIEW9i5ehjrHMC23yzWLbrSVPY6WXJSi7ZQBaqlPQ50AevfG1UC
+         PQy+6eorPjaa0dXe4Rcj45ALIgGB450OzuWxuKT6aK9vVnRXDshJDgqLTVA6d75yjE14
+         iWl+JaUWCDTIgsQSkvJayCmvTx+1dAwx6eYoRhzImaK3Ff1t9rqzzObjBQZjwE7/uAvg
+         fI+L+1yOrIolEZAmqmSuWDq2o3a3bG5ud6r+hOyLoqfKK84EB26Rqzv/lm1NT+cgHJzq
+         W3Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723073788; x=1723678588;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3bI2iAB50s/sgrD0as33mPKfx3YGxvdhWBB75P/hORk=;
-        b=FVpeu0gd3qEmKySFyburBwbV4qYlwzvodoYX8oUIpGuD+JTUv8p2cuA1FfRk8f7Hlv
-         rFzwDR4RR02fOELdatpZMSicJIUSSFNJT+VusXLe6OZFHx6etmSKdPVBJB2Cr2JHeAst
-         wXNjk/EN/b8z0XAgmXOPuDfq/kLv9YOuzUwpSrWvU1h7cjnPYr3qo5Gh4UrH1bUhqZkK
-         6oYwL74EyQtwV3Wd923zRnOzq1KTOV/gVrKO5aNsky2Ws+xHtn9s9bWSwm5HVy1YXMVL
-         dg0x8HTC8px2JBxzO0WHyVVrnygNrf0XJ0Igddm9gkJ/5zrY8eYLzJZCKPj+iisObgkt
-         Qy0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVBlEEeP6SjdesdhuXrBW51/9XruKTHmUi6lwBcVa7FboYNOmE9UflZhCh9O7pxIvNTCGXfqbjq+B0CTWb+Kl6R9lnTRRW8l+C/gZFBn0vU2BrskAZMKygKsdPN47x3lUzN9bv8tFu2D0j7WBhy4KEEAdClN+TYem4kns1CER+EQKk1Epnh0frbvsei
-X-Gm-Message-State: AOJu0YyScqRMvQUTzLIWh4rTUjFBrEnaZfZ18Q7LwCgcusiC85caL6q/
-	5fpQFeQCCN6cGhkSBTcM+QlAtI8YWZabanIQFi4qoKJEY7FmepD5VuuaaUhi
-X-Google-Smtp-Source: AGHT+IHvCp3huaVdNK2AR/421T2J1J8zVwb1EDAWJDXPQ4FGbjP9mkC7qxfimpUomsC/h8MQ6DOH6g==
-X-Received: by 2002:a17:902:d2ca:b0:1fb:8a3b:ee9a with SMTP id d9443c01a7336-200952e28admr2942865ad.61.1723073788023;
-        Wed, 07 Aug 2024 16:36:28 -0700 (PDT)
-Received: from tahera-OptiPlex-5000 ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59176eb6sm112030645ad.196.2024.08.07.16.36.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 16:36:27 -0700 (PDT)
-Date: Wed, 7 Aug 2024 17:36:25 -0600
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Jann Horn <jannh@google.com>, outreachy@lists.linux.dev,
-	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] Landlock: Add signal control
-Message-ID: <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
-References: <cover.1722966592.git.fahimitahera@gmail.com>
- <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
- <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
- <20240807.Yee4al2lahCo@digikod.net>
+        d=1e100.net; s=20230601; t=1723073959; x=1723678759;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pCHmliBndJK/MPPvHoPCBgyseherKeenX7Lly3rzXJ4=;
+        b=CG7sjTqAqRPY42KU74uWEZbDgxKMgeVoVJKCpVdpURtYfJGIovPjcFp1FEQ5+Jzjeg
+         HHXzhlokt4pOzqdnQofPxA2oxF2BFwqBcgEbvNbqIJqOVP9FZiUshgcSEQX/LKkw9Tn8
+         MIsYPf5uqSCPLjBSHc3Y58UkpOB9lYkmWO0xAzDHLFkbKYaYKNlDKq57eABix7GsNMWz
+         5IOF3TSHX9baTSDB0CkXWRuyIaojdPc3h4N94mbHkL7T60fpkMRDbu5iwsgYMpuJLbwb
+         odmWuiLdqzoXR6iEcP9la9Y6JXxOdzTSouMUyq30BiJvezj4KuBMw7C0P1G/UMyMAMmz
+         +YPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUq9K8yjHhsO3znOTfbC6T2pLKTX/kzyOx3L/N7WcnxhS0wLBh8Am/A0qm9BSPZFXsv+0YIvwDANlJqzxiAATQNLahn9J9Xul8UA3CimwS7nsM/RwK/VW4aDZvh0Y8xMevC3DfhXv6b
+X-Gm-Message-State: AOJu0Yxyk07wTZQ+eJUGtskRyP4oF5WDUKMK2biSw3OQI+z044SfDqtX
+	tZgMrlKf85WMJhh5ORn2/F3NRCM5dwpftgS7/BhW4iWe9VzDpUSr0HC0ngIuVpTHywQD1uGtstL
+	PJAlGpwUEe+irVhz8+FpsDB6ZRag=
+X-Google-Smtp-Source: AGHT+IEb7LFhEnW+VTMmmgDZX+tSGRjjI+Y41vEhb5T37N5WymQlm+mb0e0bLODgm9yn2/fBRYvsrtc20qYE8538UH0=
+X-Received: by 2002:a05:6122:3b16:b0:4f5:26c6:bf13 with SMTP id
+ 71dfb90a1353d-4f90298ac3bmr341882e0c.13.1723073958906; Wed, 07 Aug 2024
+ 16:39:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240807.Yee4al2lahCo@digikod.net>
+References: <20240806230118.1332763-1-alistair.francis@wdc.com>
+ <20240806230118.1332763-2-alistair.francis@wdc.com> <cbc54dfb-6699-ae15-f40e-d3b5969fc806@linux.intel.com>
+In-Reply-To: <cbc54dfb-6699-ae15-f40e-d3b5969fc806@linux.intel.com>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Thu, 8 Aug 2024 09:38:52 +1000
+Message-ID: <CAKmqyKNiT=yDw0ScwAxODpaQ-0fJRM5eEBxGTpbTe22N-UAfNQ@mail.gmail.com>
+Subject: Re: [PATCH v15 2/4] PCI/DOE: Rename Discovery Response Data Object
+ Contents to type
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org, 
+	Jonathan.Cameron@huawei.com, Lukas Wunner <lukas@wunner.de>, alex.williamson@redhat.com, 
+	christian.koenig@amd.com, kch@nvidia.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, logang@deltatee.com, 
+	LKML <linux-kernel@vger.kernel.org>, chaitanyak@nvidia.com, rdunlap@infradead.org, 
+	Alistair Francis <alistair.francis@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 07, 2024 at 08:16:47PM +0200, Mickaël Salaün wrote:
-> On Tue, Aug 06, 2024 at 11:55:27PM +0200, Jann Horn wrote:
-> > On Tue, Aug 6, 2024 at 8:56 PM Jann Horn <jannh@google.com> wrote:
-> > > On Tue, Aug 6, 2024 at 8:11 PM Tahera Fahimi <fahimitahera@gmail.com> wrote:
-> > > > Currently, a sandbox process is not restricted to send a signal
-> > > > (e.g. SIGKILL) to a process outside of the sandbox environment.
-> > > > Ability to sending a signal for a sandboxed process should be
-> > > > scoped the same way abstract unix sockets are scoped. Therefore,
-> > > > we extend "scoped" field in a ruleset with
-> > > > "LANDLOCK_SCOPED_SIGNAL" to specify that a ruleset will deny
-> > > > sending any signal from within a sandbox process to its
-> > > > parent(i.e. any parent sandbox or non-sandboxed procsses).
-> > [...]
-> > > > +       if (is_scoped)
-> > > > +               return 0;
-> > > > +
-> > > > +       return -EPERM;
-> > > > +}
-> > > > +
-> > > > +static int hook_file_send_sigiotask(struct task_struct *tsk,
-> > > > +                                   struct fown_struct *fown, int signum)
-> 
-> I was wondering if we should handle this case, but I guess it makes
-> sense to have a consistent policy for all kind of user-triggerable
-> signals.
-> 
-> > > > +{
-> > > > +       bool is_scoped;
-> > > > +       const struct landlock_ruleset *dom, *target_dom;
-> > > > +       struct task_struct *result = get_pid_task(fown->pid, fown->pid_type);
-> > >
-> > > I'm not an expert on how the fowner stuff works, but I think this will
-> > > probably give you "result = NULL" if the file owner PID has already
-> > > exited, and then the following landlock_get_task_domain() would
-> > > probably crash? But I'm not entirely sure about how this works.
-> > >
-> > > I think the intended way to use this hook would be to instead use the
-> > > "file_set_fowner" hook to record the owning domain (though the setup
-> > > for that is going to be kind of a pain...), see the Smack and SELinux
-> > > definitions of that hook. Or alternatively maybe it would be even
-> > > nicer to change the fown_struct to record a cred* instead of a uid and
-> > > euid and then use the domain from those credentials for this hook...
-> > > I'm not sure which of those would be easier.
-> > 
-> > (For what it's worth, I think the first option would probably be
-> > easier to implement and ship for now, since you can basically copy
-> > what Smack and SELinux are already doing in their implementations of
-> > these hooks. I think the second option would theoretically result in
-> > nicer code, but it might require a bit more work, and you'd have to
-> > include the maintainers of the file locking code in the review of such
-> > refactoring and have them approve those changes. So if you want to get
-> > this patchset into the kernel quickly, the first option might be
-> > better for now?)
-> > 
-> 
-> I agree, let's extend landlock_file_security with a new "fown" pointer
-> to a Landlock domain. We'll need to call landlock_get_ruleset() in
-> hook_file_send_sigiotask(), and landlock_put_ruleset() in a new
-> hook_file_free_security().
-I think we should add a new hook (hook_file_set_owner()) to initialize
-the "fown" pointer and call landlock_get_ruleset() in that? If we do not
-have hook_file_set_owner to store domain in "fown", can you please give
-me a hint on where to do that?
-Thanks 
-> I would be nice to to replace the redundant informations in fown_struct
-> but that can wait.
+On Wed, Aug 7, 2024 at 6:03=E2=80=AFPM Ilpo J=C3=A4rvinen
+<ilpo.jarvinen@linux.intel.com> wrote:
+>
+> On Wed, 7 Aug 2024, Alistair Francis wrote:
+>
+> > PCIe r6.1 (which was published July 24) describes a "Vendor ID", a
+> > "Data Object Type" and "Next Index" as the fields in the DOE
+> > Discovery Response Data Object. The DOE driver currently uses
+> > both the terms type and prot for the second element.
+> >
+> > This patch renames all uses of the DOE Discovery Response Data Object
+> > to use type as the second element of the object header, instead of
+> > type/prot as it currently is.
+> >
+> > Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > ---
+>
+> > diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_reg=
+s.h
+> > index 94c00996e633..795e49304ae4 100644
+> > --- a/include/uapi/linux/pci_regs.h
+> > +++ b/include/uapi/linux/pci_regs.h
+> > @@ -1146,9 +1146,12 @@
+> >  #define PCI_DOE_DATA_OBJECT_DISC_REQ_3_INDEX         0x000000ff
+> >  #define PCI_DOE_DATA_OBJECT_DISC_REQ_3_VER           0x0000ff00
+> >  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_VID           0x0000ffff
+> > -#define PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL              0x00ff000=
+0
+> > +#define PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE          0x00ff0000
+>
+> This change (removal of the old define) is inside UAPI header, so it does
+> seem something that is not allowed.
+>
+> >  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_NEXT_INDEX    0xff000000
+> >
+> > +/* Deprecated old name, replaced with PCI_DOE_DATA_OBJECT_DISC_RSP_3_T=
+YPE */
+> > +#define PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL              PCI_DOE_D=
+ATA_OBJECT_DISC_RSP_3_TYPE
+
+The old define is kept here though
+
+Alistair
 
