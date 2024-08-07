@@ -1,213 +1,91 @@
-Return-Path: <linux-kernel+bounces-277215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6CA2949DF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:54:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB65949DEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D03F284603
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:54:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E381D1F22E19
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C6717AE0E;
-	Wed,  7 Aug 2024 02:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RtwXg5AH"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5915A29CEC;
+	Wed,  7 Aug 2024 02:50:10 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF4B1C3D
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 02:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFF818D63E
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 02:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722999274; cv=none; b=kFW+tqm4lkDaYSMB0MI8lhdMaDsQC9ffeXDRPcoM0tKYQsa9jsXby8HNs/jXDAb9gjw8aj1HSpbOurEkub3IyR2GfhSlkk1PqllknwFfbrEB+4bTOKk9tqfMQtwNWYvLj/SC4qvi183nELk1MvTAzLVyR8uw7zh46xnkq5YHUag=
+	t=1722999009; cv=none; b=fqB43yOwp3p+xohTrIL+E99KRPrsUuenN2AtlbH3odbk4e/+CoHgrDt889sfIJNyaZPA/aBBn2VsIR9NVXZQr/mgarSALpE53dhd/aRrh9CpSXg+cvcM42l41U1DhU+PpAzgKTXxNys/CSaH3oC28TuqXftMIMo8WyyfnFFzYKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722999274; c=relaxed/simple;
-	bh=UEYdL6BiqNkjuEsoZrCtybf+BkwaYQKzgsqMHJRTOJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a+p5rtgjsw2dSI+BNyFZcq88n3RlluiPBg5KB2z6NhVt2bfLMwaVFgHZcHdu+69haMZo4riaU5SxsCGzCuDQEsGz1rBLdvRQnVEonG9C9bV8b8Bcw+ihgXCEx90kVoESkPt5VWrAt2o0G8sUr2P+l1dAmtbHDr3bg9tMTIRZkVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RtwXg5AH; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d18d4b94cso1004273b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 19:54:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722999272; x=1723604072; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PzP6P7jRClmLKoX/zmWy4IvF4yzdI1M2oWohKmGOdlU=;
-        b=RtwXg5AH5bO5c6OKs526yTgz95apYkoDX1LNan/gNYjrGCxI2F7Z4kAiPORUNkpsrz
-         Uy2bEEuc+q8zMBKWjf+koEqw1GLjX4kT8bhXnLFiaRTUQ+VMXLBo3tt9tuPk/UvjBofr
-         c4bp8HIeyDwZbMTV2K3ePwdUNexVaX/VSoCZdT2WhiqnKafr4ryMk18tFUQDGkMSfe6W
-         6jX371INTCughS7m1OG0tR3eBdN+uE6u5G1CnplPW3ndVbxPjNYdP/LOVbPQTLdNU8RQ
-         61RLMsJW+hvMKSKStDMheVGrsMGHmmthx4cmouwT+XbjbXEY9NxH1rNs7Nc3aq71+rzX
-         QTYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722999272; x=1723604072;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PzP6P7jRClmLKoX/zmWy4IvF4yzdI1M2oWohKmGOdlU=;
-        b=kGpoBeshV08wDQnY2oWIBT/Wa5uGC9QKXY3mkskgDGO8LmHgpyoAZy4XZaq7/eu1BB
-         umZG1hoViROsJpw1fb9pd0TyMLeKc0Q0+mtSW7My5LyEk55CFrdcyGa0hna5AhozBBFd
-         W/2S+VzV75u2iPXMiLR4TpHPAkMAPWv4vk8wFbN5ne/q2xRAUfPEmjBj7u5O6PMI1W0+
-         fo1tXgiHswXX3v8qODiHpUrGb/kKKsHxZ6jokl9bpMhN9GuvBOky6xOXqap/lBSmH3rA
-         iwzxl0L+FqCLxsW4T7U5z9VdfkihkiqK4SBcfwUOgTwlY52ptr0/vyPYXB3BsbaS7xoS
-         m+uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlkkvSA1lZFjk+mqzCyb5P8/LMOF5YzDM7JlXnwe1srOatSuENWD0vq8Zoir4nw3Yq5Bny1ZytQASrL8aUgfCcYdBvaOCO9WKt9j4R
-X-Gm-Message-State: AOJu0YzbhSlDawxop2HDbdjOsa/Krd2q2YwSo4VWhn5VAtmTfwI9by3s
-	7U5y6vdO/wgDmEi3fxQVyprCrpXuF4KaUwq5Gav9+8Jd8Drk3DR0N2cLL7qGNg==
-X-Google-Smtp-Source: AGHT+IGDGjPoQZeMECEmhH67AI5SImkYnGCx2Jb6OA/XvWaCIb6UIZpaUoEU2T8qCZV1fYjeSaqAPA==
-X-Received: by 2002:a05:6a20:d80d:b0:1c4:c305:121b with SMTP id adf61e73a8af0-1c6995aa85fmr18467603637.29.1722999271499;
-        Tue, 06 Aug 2024 19:54:31 -0700 (PDT)
-Received: from thinkpad ([120.60.72.69])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec400e4sm7589256b3a.62.2024.08.06.19.54.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 19:54:31 -0700 (PDT)
-Date: Wed, 7 Aug 2024 08:24:23 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 03/12] PCI: brcmstb: Use common error handling code in
- brcm_pcie_probe()
-Message-ID: <20240807025423.GF3412@thinkpad>
-References: <20240731222831.14895-1-james.quinlan@broadcom.com>
- <20240731222831.14895-4-james.quinlan@broadcom.com>
+	s=arc-20240116; t=1722999009; c=relaxed/simple;
+	bh=GEe2h9ptlZsPXZkFPyDYsVmYGHSe5o9DPZX4iSKlg6c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MR7jBLhwV0iidQ2ybcvBqk4Z31VfX/nZ+RmzMPDjvbE5mqY5KC5CTGqeeObyfBeVS292kgPjbGS3Vcdrsiwtevv9+iC+cCfUDxncrXrD9Alr/ZC09W5g2J1Q/ERn5HVXg7+nJ5uqxm++SWnZ7GeHYsZ7V8EkvpU0SPCEFiokOkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Wdvfg4WCgz1S78X;
+	Wed,  7 Aug 2024 10:45:15 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 80E98180042;
+	Wed,  7 Aug 2024 10:49:58 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
+ (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 7 Aug
+ 2024 10:49:57 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <dennis@kernel.org>, <tj@kernel.org>, <cl@linux.com>,
+	<mpe@ellerman.id.au>, <npiggin@gmail.com>, <christophe.leroy@csgroup.eu>,
+	<naveen@kernel.org>, <linux-mm@kvack.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH -next v2] powerpc: Remove useless config comment in asm/percpu.h
+Date: Wed, 7 Aug 2024 10:56:04 +0800
+Message-ID: <20240807025604.2817577-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240731222831.14895-4-james.quinlan@broadcom.com>
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-On Wed, Jul 31, 2024 at 06:28:17PM -0400, Jim Quinlan wrote:
-> o Move the clk_prepare_enable() below the resource allocations.
-> o Move the clk_prepare_enable() out of __brcm_pcie_remove() but
->   add it to the end of brcm_pcie_remove().
-> o Add a jump target (clk_disable_unprepare) so that a bit of exception
->   handling can be better reused at the end of this function implementation.
-> o Use dev_err_probe() where it makes sense.
-> 
+commit 0db880fc865f ("powerpc: Avoid nmi_enter/nmi_exit in real mode
+interrupt.") has a config comment typo, and the #if/#else/#endif section
+is small and doesn't nest additional #ifdefs so the comment is useless
+and should be removed completely.
 
-Thanks for using the imperative tone. It would be nice to have the patch
-description as a single paragraph in a continuous manner instead of bullet
-points.
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Suggested-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+v2:
+- Remove instead of change the comment.
+---
+ arch/powerpc/include/asm/percpu.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Mani
-
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> ---
->  drivers/pci/controller/pcie-brcmstb.c | 34 ++++++++++++---------------
->  1 file changed, 15 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index c08683febdd4..7595e7009192 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -1473,7 +1473,6 @@ static void __brcm_pcie_remove(struct brcm_pcie *pcie)
->  		dev_err(pcie->dev, "Could not stop phy\n");
->  	if (reset_control_rearm(pcie->rescal))
->  		dev_err(pcie->dev, "Could not rearm rescal reset\n");
-> -	clk_disable_unprepare(pcie->clk);
->  }
->  
->  static void brcm_pcie_remove(struct platform_device *pdev)
-> @@ -1484,6 +1483,7 @@ static void brcm_pcie_remove(struct platform_device *pdev)
->  	pci_stop_root_bus(bridge->bus);
->  	pci_remove_root_bus(bridge->bus);
->  	__brcm_pcie_remove(pcie);
-> +	clk_disable_unprepare(pcie->clk);
->  }
->  
->  static const int pcie_offsets[] = {
-> @@ -1613,31 +1613,26 @@ static int brcm_pcie_probe(struct platform_device *pdev)
->  
->  	pcie->ssc = of_property_read_bool(np, "brcm,enable-ssc");
->  
-> -	ret = clk_prepare_enable(pcie->clk);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "could not enable clock\n");
-> -		return ret;
-> -	}
->  	pcie->rescal = devm_reset_control_get_optional_shared(&pdev->dev, "rescal");
-> -	if (IS_ERR(pcie->rescal)) {
-> -		clk_disable_unprepare(pcie->clk);
-> +	if (IS_ERR(pcie->rescal))
->  		return PTR_ERR(pcie->rescal);
-> -	}
-> +
->  	pcie->perst_reset = devm_reset_control_get_optional_exclusive(&pdev->dev, "perst");
-> -	if (IS_ERR(pcie->perst_reset)) {
-> -		clk_disable_unprepare(pcie->clk);
-> +	if (IS_ERR(pcie->perst_reset))
->  		return PTR_ERR(pcie->perst_reset);
-> -	}
->  
-> -	ret = reset_control_reset(pcie->rescal);
-> +	ret = clk_prepare_enable(pcie->clk);
->  	if (ret)
-> -		dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
-> +		return dev_err_probe(&pdev->dev, ret, "could not enable clock\n");
-> +
-> +	ret = reset_control_reset(pcie->rescal);
-> +	if (dev_err_probe(&pdev->dev, ret, "failed to deassert 'rescal'\n"))
-> +		goto clk_disable_unprepare;
->  
->  	ret = brcm_phy_start(pcie);
->  	if (ret) {
->  		reset_control_rearm(pcie->rescal);
-> -		clk_disable_unprepare(pcie->clk);
-> -		return ret;
-> +		goto clk_disable_unprepare;
->  	}
->  
->  	ret = brcm_pcie_setup(pcie);
-> @@ -1654,10 +1649,8 @@ static int brcm_pcie_probe(struct platform_device *pdev)
->  	msi_np = of_parse_phandle(pcie->np, "msi-parent", 0);
->  	if (pci_msi_enabled() && msi_np == pcie->np) {
->  		ret = brcm_pcie_enable_msi(pcie);
-> -		if (ret) {
-> -			dev_err(pcie->dev, "probe of internal MSI failed");
-> +		if (dev_err_probe(pcie->dev, ret, "probe of internal MSI failed"))
->  			goto fail;
-> -		}
->  	}
->  
->  	bridge->ops = pcie->type == BCM7425 ? &brcm7425_pcie_ops : &brcm_pcie_ops;
-> @@ -1678,6 +1671,9 @@ static int brcm_pcie_probe(struct platform_device *pdev)
->  
->  fail:
->  	__brcm_pcie_remove(pcie);
-> +clk_disable_unprepare:
-> +	clk_disable_unprepare(pcie->clk);
-> +
->  	return ret;
->  }
->  
-> -- 
-> 2.17.1
-> 
-
+diff --git a/arch/powerpc/include/asm/percpu.h b/arch/powerpc/include/asm/percpu.h
+index 634970ce13c6..ecf5ac70cfae 100644
+--- a/arch/powerpc/include/asm/percpu.h
++++ b/arch/powerpc/include/asm/percpu.h
+@@ -23,7 +23,7 @@ DECLARE_STATIC_KEY_FALSE(__percpu_first_chunk_is_paged);
+ 		(static_key_enabled(&__percpu_first_chunk_is_paged.key))
+ #else
+ #define percpu_first_chunk_is_paged	false
+-#endif /* CONFIG_PPC64 && CONFIG_SMP */
++#endif
+ 
+ #include <asm-generic/percpu.h>
+ 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.34.1
+
 
