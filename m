@@ -1,124 +1,135 @@
-Return-Path: <linux-kernel+bounces-277239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D5A949E48
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:31:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA1C949E68
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C11A1B23A11
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:31:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD3EC1C229B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B172116D33A;
-	Wed,  7 Aug 2024 03:31:03 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1F01974F4;
+	Wed,  7 Aug 2024 03:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nUpMPUwv"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5092A1CF
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 03:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EE4190464;
+	Wed,  7 Aug 2024 03:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723001463; cv=none; b=dr4h2hy/X47u2q5okbkMf2vlD9eI2cxeWOpfmhfxJdWm35ZEtIIRohEqK/LZpVDlSPDGq8QeGr2/SHELSeyjxZhcxw94VV020WO831wgU8UwfUFfHbVzlOUE/1uPHfrguaQewMO2Gw9et3vlYBoC0Osp72ow4tl7XveL+B+bU7Y=
+	t=1723002026; cv=none; b=h1W4orI8u3VIp2XItSLEL086lNDnFdPpgWKn1t8MVwbmW/O2hYA9ycoHD6yhRBcV5mlcLQswdb7UnxBVVhdBv8AUFosxtnAlsGrs6XzSQSxOPqfgNk0S1lyTwUN9fnNTeXo8UYnAVkVyy4dW9p7OJG/JNtl/KRGdt1DBw8W3pUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723001463; c=relaxed/simple;
-	bh=4rXWRUAjfP9qmxJTCRSAlmpJwsky84QeRRGkZpPqtVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GXJsuHPM+MlvjD76f7EiyMifZlk3Hu+XxLWDy4t7NopQgnUyBXNtE3T2QUZDYBjyzZ5vxHq1Q57gjQfUFrBGKnzs7+0x9uUdDahG5lT/qN/tA/aYHj2g0zKdorCJ17Lzutk16E6uOtgoN21k0wxULasvDIuK8u6NRE7cm7HZKJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from [2601:18c:9101:a8b6:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1sbXJM-000000005S1-41om;
-	Tue, 06 Aug 2024 23:26:04 -0400
-Date: Tue, 6 Aug 2024 23:26:04 -0400
-From: Rik van Riel <riel@surriel.com>
-To: linux-kernel@vger.kernel.org
-Cc: kernel-team@meta.com, x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>
-Subject: [PATCH] x86,panic,nmi: use trylock when taking the nmi_desc lock
- from NMI context
-Message-ID: <20240806232604.36e963fd@imladris.surriel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1723002026; c=relaxed/simple;
+	bh=6qLLfjhX0tZiP2H4jz2shkgck70CQ7aC1/wNyf6TcPw=;
+	h=To:Cc:Message-Id:In-Reply-To:References:From:Subject:Date; b=PwkrmmTb0ums2H2jD+ReDgytfMXNaMpWyI53tPJzx+PEzzbVX9TmfW9aIRymqZqbj2FxPvDCRAvNL1VVaXbYASZKai9OwFyXHK3cM8UNAO8hBbt5qAq/e5eN9zUF6wMBjvVFv2Bu+7b7lrswSbHtqfUfz1sZLBa63HYv9BOJChM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nUpMPUwv; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id D76A3138FD03;
+	Tue,  6 Aug 2024 23:40:23 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 06 Aug 2024 23:40:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+	:feedback-id:from:from:in-reply-to:in-reply-to:message-id
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723002023; x=
+	1723088423; bh=vLn0goGDX4sqfQLpdSkswCxsEwLWmBY95Y+aKANfndA=; b=n
+	UpMPUwvHxSDx4WeqwxB4GZbZqvb6q0j4lhjMycmLlsqA9ygngNAf1VVrwDWAZxEG
+	LLo0uATazNurr3KjNqZzEdMUaKjtgPH48ER5oy0JGp4DsuonDC1IqFMakgtvP7+v
+	zN12bBnd9FXm5/9KnIya5BuwShCMGuOgwv5v5cJpp6nOKh5vyIzaoRBVwaZO3z1a
+	Pa8qV+jiZzOpjUBzYvP1amWY0sF5LUqea8xtfr/ruOPGqj0P8xcGl4cmcy8w6voa
+	ICSF24s6C0jYcprYKxNq5ODDytI5jvLKr/aKT3IrUewU2w+U2XXGsZABbklBq+g4
+	h+ZZzYg4fuQcGk346YHEA==
+X-ME-Sender: <xms:p-yyZu1zd5OgH_am8_BoBJF58DIQFMqce-4ixrxA3lfJxZW9TNqnUQ>
+    <xme:p-yyZhFmdchCsfKiMJg_UPhMiDfVyj1KLxDf8IP3pdVUj4bnyJL3aGskOXPuVd9B-
+    dKp5OZa0D8QZ56_qJw>
+X-ME-Received: <xmr:p-yyZm4TvKCTmSrrfyEy_Olg_dcBiQHrYamDidlJRDQJU9bupoUldLlNjWc_3IP01lnWc4cE00PepGLivcK95645k0gX3XuvSwA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeelgdejiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefvvefkjghfhffuffestddtredttddttdenucfhrhhomhephfhinhhnucfvhhgr
+    ihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepvefggfdthffhfeevuedugfdtuefgfeettdevkeeigefgudelteeggeeuheegffff
+    necuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomhepfhhthh
+    grihhnsehlihhnuhigqdhmieekkhdrohhrghdpnhgspghrtghpthhtoheptd
+X-ME-Proxy: <xmx:p-yyZv2F1PtE8T7TCpYRl6sJzc_eMvAiRVU9tTBWL8S49YBEcjJ06A>
+    <xmx:p-yyZhEfXlG0kUh3EdN7p5nBdtZjYggluX62rcR8RJT7gDeI3pUyBA>
+    <xmx:p-yyZo8cjxdkmtu8rOrP1OY4tnFBS30tzE5aX2OVO80jGSpvnKqtrw>
+    <xmx:p-yyZmk0CWQdqH7nX1g-7-8WNpzdL9ao7CIxd5-fjX34jgntfuyRFA>
+    <xmx:p-yyZo2WuGIKea_yxRoGiD23vDNHLk_WST7OtdNXWXImfFuvif_ZP4S9>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 6 Aug 2024 23:40:21 -0400 (EDT)
+To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+    "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Hannes Reinecke <hare@suse.com>,
+    Michael Schmitz <schmitzmic@gmail.com>,
+    Ondrej Zary <linux@zary.sk>,
+    Stan Johnson <userm57@yahoo.com>,
+    linux-scsi@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Message-Id: <f155ba5ce93055cbc6ac6d4026673f40f826edb8.1723001788.git.fthain@linux-m68k.org>
+In-Reply-To: <cover.1723001788.git.fthain@linux-m68k.org>
+References: <cover.1723001788.git.fthain@linux-m68k.org>
+From: Finn Thain <fthain@linux-m68k.org>
+Subject: [PATCH 05/11] scsi: mac_scsi: Enable scatter/gather by default
+Date: Wed, 07 Aug 2024 13:36:28 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Sender: riel@surriel.com
 
-When nmi_panic runs on a system with kdump enabled, the kernel ends up
-trying to take a spinlock from NMI context. This should normally succeed,
-since NMI handler registration is rare, and panic has its own locking
-mechanism to make sure only one drives the kernel panic.
+Now that FLAG_DMA_FIXUP has itself been fixed up, it can be used to enable
+scatter/gather. Increase the default value for sg_tablesize to SG_ALL
+for those systems which are compatible with FLAG_DMA_FIXUP.
 
-However, this spinlock will still make lockdep unhappy, and may result
-in the lockdep splat hiding the actual source of the underlying panic.
-
-[ 39675.176729] WARNING: inconsistent lock state
-[ 39675.176734] inconsistent {INITIAL USE} -> {IN-NMI} usage.
-...
-[ 39675.176817]        CPU0
-[ 39675.176818]        ----
-[ 39675.176818]   lock(&nmi_desc[0].lock);
-[ 39675.176821]   <Interrupt>
-[ 39675.176822]     lock(&nmi_desc[0].lock);
-...
-[ 39675.176866]  <NMI>
-[ 39675.176868]  dump_stack_lvl+0x3d/0xf0
-[ 39675.176874]  lock_acquire+0x1ac/0x290
-[ 39675.176879]  ? __register_nmi_handler+0x4f/0x140
-[ 39675.176889]  _raw_spin_lock_irqsave+0x5a/0x90
-[ 39675.176896]  ? __register_nmi_handler+0x4f/0x140
-[ 39675.176901]  __register_nmi_handler+0x4f/0x140
-[ 39675.176905]  ? kdump_nmi_shootdown_cpus+0x20/0x20
-[ 39675.176915]  nmi_shootdown_cpus+0x6a/0xe0
-[ 39675.176922]  kdump_nmi_shootdown_cpus+0x11/0x20
-[ 39675.176928]  native_machine_crash_shutdown+0x46/0xc0
-[ 39675.176936]  __crash_kexec+0xe4/0x120
-[ 39675.176948]  ? dump_stack_lvl+0x3d/0xf0
-[ 39675.176951]  ? __crash_kexec+0xce/0x120
-[ 39675.176957]  ? panic+0x134/0x380
-[ 39675.176967]  ? nmi_panic+0x27/0x40
-
-Since taking this lock from NMI context should just succeed
-anyway, use a trylock to make lockdep happy.
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@linux-m68k.org>
 ---
- arch/x86/kernel/nmi.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/scsi/mac_scsi.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
-index ed163c8c8604..b7f759bb28ee 100644
---- a/arch/x86/kernel/nmi.c
-+++ b/arch/x86/kernel/nmi.c
-@@ -171,7 +171,17 @@ int __register_nmi_handler(unsigned int type, struct nmiaction *action)
- 	if (WARN_ON_ONCE(!action->handler || !list_empty(&action->list)))
- 		return -EINVAL;
+diff --git a/drivers/scsi/mac_scsi.c b/drivers/scsi/mac_scsi.c
+index 2e9fad1e3069..6ab7d82c9a99 100644
+--- a/drivers/scsi/mac_scsi.c
++++ b/drivers/scsi/mac_scsi.c
+@@ -432,7 +432,7 @@ static struct scsi_host_template mac_scsi_template = {
+ 	.eh_host_reset_handler	= macscsi_host_reset,
+ 	.can_queue		= 16,
+ 	.this_id		= 7,
+-	.sg_tablesize		= 1,
++	.sg_tablesize		= SG_ALL,
+ 	.cmd_per_lun		= 2,
+ 	.dma_boundary		= PAGE_SIZE - 1,
+ 	.cmd_size		= sizeof(struct NCR5380_cmd),
+@@ -470,6 +470,9 @@ static int __init mac_scsi_probe(struct platform_device *pdev)
+ 	if (setup_hostid >= 0)
+ 		mac_scsi_template.this_id = setup_hostid & 7;
  
--	raw_spin_lock_irqsave(&desc->lock, flags);
-+	if (in_nmi()) {
-+		/*
-+		 * We cannot take a spinlock from NMI code. This can happen
-+		 * from nmi_panic. Only one CPU can panic, so the trylock
-+		 * should normally succeed.
-+		 */
-+		if (!raw_spin_trylock_irqsave(&desc->lock, flags))
-+			return 1;
-+	} else {
-+		raw_spin_lock_irqsave(&desc->lock, flags);
-+	}
++	if (macintosh_config->ident == MAC_MODEL_IIFX)
++		mac_scsi_template.sg_tablesize = 1;
++
+ 	instance = scsi_host_alloc(&mac_scsi_template,
+ 	                           sizeof(struct NCR5380_hostdata));
+ 	if (!instance)
+@@ -491,6 +494,9 @@ static int __init mac_scsi_probe(struct platform_device *pdev)
  
- 	/*
- 	 * Indicate if there are multiple registrations on the
+ 	host_flags |= setup_toshiba_delay > 0 ? FLAG_TOSHIBA_DELAY : 0;
+ 
++	if (instance->sg_tablesize > 1)
++		host_flags |= FLAG_DMA_FIXUP;
++
+ 	error = NCR5380_init(instance, host_flags | FLAG_LATE_DMA_SETUP);
+ 	if (error)
+ 		goto fail_init;
 -- 
-2.45.2
+2.39.5
 
 
