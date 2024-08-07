@@ -1,120 +1,102 @@
-Return-Path: <linux-kernel+bounces-278444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B52294B050
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:11:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2BB594B053
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 503D328302C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:11:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D478F1C2141B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1D414374C;
-	Wed,  7 Aug 2024 19:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADD8143759;
+	Wed,  7 Aug 2024 19:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O0TyrD9G"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iI/SKBmj"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BF314373F
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 19:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D02313D61A
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 19:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723057894; cv=none; b=WQP6U+0ppkRGqpjlvA/PChinMAbCuxaS5C7v0t1uvAhoYeCBdlRWAgPCn1yyLUjjYGyOwZvNza0Vaz6yif9v7OSfCTShsjwaSXKsqKCwVknhEFxelt1Jocy6x1Z9/UcdTHHD+vkgIEXdOb8f/T2QGsA5P4FZVmy+gopVMBwHqr8=
+	t=1723057940; cv=none; b=XiAsWN6M/THFaNKFA0bg4L9wB/xXkTdeY02gZ5QLtwjE5RoH5wBjetve9hc0IiOA3lcK8ef63oc1CrbQ9XSC/UpmgpRjPOkL2FgyVu4ERjAsv2gJpZOxGOyF4OXRUwqO3qwAlllZU4KLxPw0CjdK3LSP6VPN7l0x+066uEXd36U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723057894; c=relaxed/simple;
-	bh=boXeYOgmsSI7jQLPP3rC9V5QHVs6M7/EC/tK6josOQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nm8Ggjvt/lYqeR5s8cPFizaktVeGZSys4AZDL7DxIGDoup6eZ3JGjIm4iXiFMBO9aiWmU56aW3OaQ+UvXU3kPhAHiVmlS3GYl+92hTv27COZuNiqgTpf7uaVElUMhNzKrrtl5Ts3l0Lf5Ex0I/54Zd1O7Kn4Qs1iU4XfApGDFBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O0TyrD9G; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723057889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pJygTm4A1Krh0SDaiBDWtmj5UAGZGfoNSdvtHXlv38I=;
-	b=O0TyrD9GAB+NjGihjNr+ku0iBRmfZZZ7vkT6rHUPQGOrmPnMvQlRS/znv3LavgIok3lyjS
-	iPwMdBo758WooWGKURXUVjrENeJ3vjdDfW3JPJfn+YBbOlDMChr7idef2HfLdqYqI6q4eE
-	l/k11UxnfoZ29WA25pLSZqw0MJ7fv1E=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-422-a8dQgaBMNuKkAzi5nzscvw-1; Wed,
- 07 Aug 2024 15:11:24 -0400
-X-MC-Unique: a8dQgaBMNuKkAzi5nzscvw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DC2DE1944B2F;
-	Wed,  7 Aug 2024 19:11:19 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.33.13])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8A52319560A3;
-	Wed,  7 Aug 2024 19:11:10 +0000 (UTC)
-Date: Wed, 7 Aug 2024 15:11:08 -0400
-From: Phil Auld <pauld@redhat.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: torvalds@linux-foundation.org, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	joshdon@google.com, brho@google.com, pjt@google.com,
-	derkling@google.com, haoluo@google.com, dvernet@meta.com,
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-	andrea.righi@canonical.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH 09/30] sched_ext: Implement BPF extensible scheduler class
-Message-ID: <20240807191004.GB47824@pauld.westford.csb>
-References: <20240618212056.2833381-1-tj@kernel.org>
- <20240618212056.2833381-10-tj@kernel.org>
+	s=arc-20240116; t=1723057940; c=relaxed/simple;
+	bh=2X2h9LiJJRq0WAJU7n+3LeTpaoc6WL6ZoTN7c5aELvE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sfvN6vTrrb9YtALhRm3vF4tCBPOYyfS2dz/NDc0Pz/gk8VwF5Z27KUgdY9pVNcJM4Y6p3f7Dqe9Ccn/a2qO6KAK0F94o2xI9nYpZ60oz/kX9ZC6GZME/Rwe5oKCTyvEGvVxg2GfziElRfMV9JYBpSg6eIF9LE4H2STKEZv/5OF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iI/SKBmj; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so88a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 12:12:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723057937; x=1723662737; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2X2h9LiJJRq0WAJU7n+3LeTpaoc6WL6ZoTN7c5aELvE=;
+        b=iI/SKBmjbgrCKCOydEl8isayp22/7/WXRT3ecZu+rJoWBkwXG9AwV51xWWm/Ow27WN
+         RkvgiHR0cWtu4zjwOHO6pGPzBOTR8VxtZSET/6USI8T8aUv90Gi9feBX7h0yr/b36hsI
+         TUBNaG0GO9ochb8rG0JG7gMG6M8pNX5WjsAtS90M0UMLRKwYMovejzYDW37B/UcFwczb
+         +sfwjUosNOHf7LwWCBONpHODSnit8/UUQIagBSPTi/wrSBu/aTF0qbR2zN3LK5in4OEN
+         3pUbxMyVfnlZYer2MmeDG5jsrVSN9TVgY7mcyBBTAxeXWjYVDIcQNLDfbJD54bbKgEjF
+         Nd0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723057937; x=1723662737;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2X2h9LiJJRq0WAJU7n+3LeTpaoc6WL6ZoTN7c5aELvE=;
+        b=m6/hhhygMFRB9TgGIkLMM+oMXcCbJ7RY6O3AGG9MRaW67E3DJj3/CArz+cyo+jhEJN
+         DbuRACf2fruszkbM09+8HT27qPXb1grhqzn4b7CBffMUSiabjSPE3edqVoFqhxd9dn+c
+         5nyoVMb5L0J08N1OFrmRNLb3FXLtYA7rASyGc7I6/disHuO8D86364gYySDjxBfCG/7w
+         sVhlgH0/LnmjFE8v8p15s4qyw21vShWaqrnfml5NWE7JwJ2nhGLoZ/miTCm+Hou9hnwl
+         OK60qoS5Cn2bSHHe3+wtnEVoyr9Q57iqronLHRKheFEq901VhKHYsXiNfnduKn+VjI2B
+         4NQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUA2uvOlFy+g3R+s9RskolyDyQoCrCRamF2PtkYSICtmKjOYS9SAXjSS5Cw+pVxOOsMmmR+EbFKIzbLkzwOtBt0T6t67/SERMO8mUUs
+X-Gm-Message-State: AOJu0YyRvVBiNwKfv8Z+r2983u2RkVUh6KJzbRynsSA5sv1kyJJUL0mW
+	LszWbsEe5qyee9UTY6MQspSqqzKvqxb+BynGihhxAkPtLYAq/0u9OaFaW+IHtYyiikowHeohGNX
+	XxEc9wf6hIv+qC+t2lcUx6+oCtgXx45pHZTqU
+X-Google-Smtp-Source: AGHT+IGl+QLY/JeOk9uLTXZpix+8pBmxBKzxAVmZdPD/JP2FYHZQYL2R8eq4pkZGbizVR/lDwOnfM0bZq0HQLVUJLes=
+X-Received: by 2002:a05:6402:2791:b0:5b8:ccae:a8b8 with SMTP id
+ 4fb4d7f45d1cf-5bbb002ac3dmr19257a12.3.1723057935560; Wed, 07 Aug 2024
+ 12:12:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618212056.2833381-10-tj@kernel.org>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz> <20240807-b4-slab-kfree_rcu-destroy-v2-1-ea79102f428c@suse.cz>
+In-Reply-To: <20240807-b4-slab-kfree_rcu-destroy-v2-1-ea79102f428c@suse.cz>
+From: Jann Horn <jannh@google.com>
+Date: Wed, 7 Aug 2024 21:11:39 +0200
+Message-ID: <CAG48ez1zR6+FxGFTT5=AmzLkwVSWfBDXsSOPs3pWW96ncZz+bg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] mm, slab: dissolve shutdown_cache() into its caller
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, Joel Fernandes <joel@joelfernandes.org>, 
+	Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Zqiang <qiang.zhang1211@gmail.com>, Julia Lawall <Julia.Lawall@inria.fr>, 
+	Jakub Kicinski <kuba@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+	"Uladzislau Rezki (Sony)" <urezki@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	kasan-dev@googlegroups.com, Mateusz Guzik <mjguzik@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+On Wed, Aug 7, 2024 at 12:31=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+> There's only one caller of shutdown_cache() so move the code into it.
+> Preparatory patch for further changes, no functional change.
+>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-On Tue, Jun 18, 2024 at 11:17:24AM -1000 Tejun Heo wrote:
-> Implement a new scheduler class sched_ext (SCX), which allows scheduling
-> policies to be implemented as BPF programs to achieve the following:
-> 
-
-I looks like this is slated for v6.12 now?  That would be good. My initial
-experimentation with scx has been positive.
-
-I just picked one email, not completely randomly.
-
-> - Both enable and disable paths are a bit complicated. The enable path
->   switches all tasks without blocking to avoid issues which can arise from
->   partially switched states (e.g. the switching task itself being starved).
->   The disable path can't trust the BPF scheduler at all, so it also has to
->   guarantee forward progress without blocking. See scx_ops_enable() and
->   scx_ops_disable_workfn().
-
-I think, from a supportability point of view, there needs to be a pr_info, at least,
-in each of these places, enable and disable, with the name of the scx scheduler. It
-looks like there is at least a pr_error for when one gets ejected due to misbehavior.
-But there needs to be a record of when such is loaded and unloaded.
-
-
-Thoughts?
-
-
-Cheers,
-Phil
-
-
-
+Reviewed-by: Jann Horn <jannh@google.com>
 
