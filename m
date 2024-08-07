@@ -1,258 +1,103 @@
-Return-Path: <linux-kernel+bounces-278248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD9594ADE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:19:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF9394AE21
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B54711F22B3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8282844E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD67137776;
-	Wed,  7 Aug 2024 16:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700D513C697;
+	Wed,  7 Aug 2024 16:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HVf+NKFl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=flokli.de header.i=@flokli.de header.b="QnRpCDis"
+Received: from mail.flokli.de (mail.flokli.de [116.203.226.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462FA131E38;
-	Wed,  7 Aug 2024 16:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A41C13C676;
+	Wed,  7 Aug 2024 16:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.226.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723047585; cv=none; b=QVPH15O97cM8SQ8CiveEW984QL12F8okS/8SSao09JnytUJpKYSBBzvq7tHim4X7KEsknOty5ogFlc308GomLeT3s/HBzNiTJLDNIytJNoMUj6EvcFc1NC+hFV1EeachZ4lJLUfOt3T2ub6yvLIVXPfHNRL4ExS3xbVc55SNkQE=
+	t=1723048008; cv=none; b=hcgfSci3r59hdrzoU6ppnqlIv6pf0eyW0Zqlhfx28S5+/af9mGiiB/zIwSd131F1xdc/76jYTFZuzBzqLIet5ry/BQ4O0KMuXPkL/QY4lOckG0ddpMScldKbFw1MIiZP1tH/6IE1HPtjnSqbSl4A4kR0qVgSqXPoEQuwQRhL9OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723047585; c=relaxed/simple;
-	bh=koobHu2VSfpdR59P+3UJi1CotOU281nr2YLgb37Sa78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJ6CF3bH7t4QisGIqB3uPrTydHW5RJYm6sETg20fB7UoqP5b1shMD6piIN3D/OTCz7wJSoQFaA3coIqUEPb0ILFf6lHUoIXC+cbk0t32oDdZE+ua4S6SF/NyNZLa2xO8Cb+6TcfpiuDJKh8ZDsbqubiJ61HOAWSgg9IeMvLtG0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HVf+NKFl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC528C4AF0E;
-	Wed,  7 Aug 2024 16:19:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723047584;
-	bh=koobHu2VSfpdR59P+3UJi1CotOU281nr2YLgb37Sa78=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HVf+NKFlTm6gf6cZvQRIf/T3SgbS3HFSkaNF0F0fWR2ceLYdvRMLIioaf7TXDxc2C
-	 zY/rAsF3syVahcSEmHXk7bjhBpmaZvrLg5qrbxiXvkdDkcI5YBTR+ROA9ytljTt9H4
-	 raNWQ5x+tSMawZ0YJJ8Hu+/MAz41Eeyk9vDiaj4c2vaoT7MWpC5aFZlLBvg7Zg5Rn/
-	 9fZ1uZuZbHesy198XvV020UjK4ptZTif/RnA2wN8NzwyH4wHj8QnsoCDcv0BUeknPR
-	 OwAssROsGZ2BaPJGB1i0I8rA1Eb3diugOBXLwxz4eKMko+3dsXozw8CCvoKaqT1uoy
-	 vchAn0tyzFW8g==
-Date: Wed, 7 Aug 2024 09:19:44 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v3 12/14] xfs: Unmap blocks according to forcealign
-Message-ID: <20240807161944.GJ6051@frogsfrogsfrogs>
-References: <20240801163057.3981192-1-john.g.garry@oracle.com>
- <20240801163057.3981192-13-john.g.garry@oracle.com>
- <20240806201438.GP623936@frogsfrogsfrogs>
- <5e4e6fdb-03fe-4541-8f09-8300665551a2@oracle.com>
+	s=arc-20240116; t=1723048008; c=relaxed/simple;
+	bh=nRl6NFtv5qCjJ3bS1qt9Kk/vd3/H6TnGKCO7mHKrAg8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=afQfzBDQAFu/8KcAxSL/TV8RgwZgFxNyK6aIf0qkVKaStmZFebstNOeQ5eS3rlV7lsy+4jaRPhtEm1HxtktwYOtJzWncpCM0/cAt9kKJgMtp+JqazhkSMiMhSIOjfDwPU8GUipJsgu818HPrlc6MCGsF37rO6rr9RmE8rVL34CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=flokli.de; spf=pass smtp.mailfrom=flokli.de; dkim=pass (1024-bit key) header.d=flokli.de header.i=@flokli.de header.b=QnRpCDis; arc=none smtp.client-ip=116.203.226.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=flokli.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flokli.de
+From: Florian Klink <flokli@flokli.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flokli.de; s=mail;
+	t=1723047609; bh=xzTHPU4ay+ojdbSyqF8Os8imRNbH54y0xGyqIDsp8TI=;
+	h=From:To:Subject:Date;
+	b=QnRpCDisb3Xljb/+6HX+YkFlvqGPXsLih7lMAmZPSgaasfWfoyu17PsMb2e+DiOJg
+	 Rs94BZfEa1ebxQys2TaZyGHDUC5bKO7JQTpEIyNN1MVbsqmha2kuODdpbkCPUNemfX
+	 52KZLRa0eB2XxhBOpagIccyxGhe0mRNHtTJPZ9zE=
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Florian Klink <flokli@flokli.de>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Muhammed Efe Cetin <efectn@protonmail.com>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	=?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: rockchip: add rfkill node for M.2 E wifi on orangepi-5-plus
+Date: Wed,  7 Aug 2024 19:20:01 +0300
+Message-ID: <20240807162001.1737829-1-flokli@flokli.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5e4e6fdb-03fe-4541-8f09-8300665551a2@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 07, 2024 at 02:40:36PM +0100, John Garry wrote:
-> On 06/08/2024 21:14, Darrick J. Wong wrote:
-> > On Thu, Aug 01, 2024 at 04:30:55PM +0000, John Garry wrote:
-> > > For when forcealign is enabled, blocks in an inode need to be unmapped
-> > > according to extent alignment, like what is already done for rtvol.
-> > > 
-> > > Change variable isrt in __xfs_bunmapi() to a bool, as that is really what
-> > > it is.
-> > > 
-> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > > ---
-> > >   fs/xfs/libxfs/xfs_bmap.c | 48 +++++++++++++++++++++++++++++-----------
-> > >   fs/xfs/xfs_inode.c       | 16 ++++++++++++++
-> > >   fs/xfs/xfs_inode.h       |  2 ++
-> > >   3 files changed, 53 insertions(+), 13 deletions(-)
-> > > 
-> > > diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> > > index 0c3df8c71c6d..d6ae344a17fc 100644
-> > > --- a/fs/xfs/libxfs/xfs_bmap.c
-> > > +++ b/fs/xfs/libxfs/xfs_bmap.c
-> > > @@ -5409,6 +5409,25 @@ xfs_bmap_del_extent_real(
-> > >   	return 0;
-> > >   }
-> > > +static xfs_extlen_t
-> > > +xfs_bunmapi_align(
-> > > +	struct xfs_inode	*ip,
-> > > +	xfs_fsblock_t		fsbno,
-> > > +	xfs_extlen_t *off)
-> > > +{
-> > > +	struct xfs_mount	*mp = ip->i_mount;
-> > > +
-> > > +	if (XFS_IS_REALTIME_INODE(ip))
-> > > +		return xfs_inode_alloc_fsbsize_align(ip, fsbno, off);
-> > > +	/*
-> > > +	 * The agbno for the fsbno is aligned to extsize, but the fsbno itself
-> > > +	 * is not necessarily aligned (to extsize), so use agbno to determine
-> > > +	 * mod+offset to the alloc unit boundary.
-> > > +	 */
-> > > +	return xfs_inode_alloc_fsbsize_align(ip, XFS_FSB_TO_AGBNO(mp, fsbno),
-> > > +					off);
-> > > +}
-> > > +
-> > >   /*
-> > >    * Unmap (remove) blocks from a file.
-> > >    * If nexts is nonzero then the number of extents to remove is limited to
-> > > @@ -5430,7 +5449,8 @@ __xfs_bunmapi(
-> > >   	xfs_extnum_t		extno;		/* extent number in list */
-> > >   	struct xfs_bmbt_irec	got;		/* current extent record */
-> > >   	struct xfs_ifork	*ifp;		/* inode fork pointer */
-> > > -	int			isrt;		/* freeing in rt area */
-> > > +	bool			isrt;		/* freeing in rt area */
-> > > +	bool			isforcealign;	/* forcealign inode */
-> > >   	int			logflags;	/* transaction logging flags */
-> > >   	xfs_extlen_t		mod;		/* rt extent offset */
-> > >   	struct xfs_mount	*mp = ip->i_mount;
-> > > @@ -5468,6 +5488,8 @@ __xfs_bunmapi(
-> > >   	}
-> > >   	XFS_STATS_INC(mp, xs_blk_unmap);
-> > >   	isrt = xfs_ifork_is_realtime(ip, whichfork);
-> > > +	isforcealign = (whichfork != XFS_ATTR_FORK) &&
-> > > +			xfs_inode_has_forcealign(ip);
-> > >   	end = start + len;
-> > >   	if (!xfs_iext_lookup_extent_before(ip, ifp, &end, &icur, &got)) {
-> > > @@ -5486,6 +5508,8 @@ __xfs_bunmapi(
-> > >   	extno = 0;
-> > >   	while (end != (xfs_fileoff_t)-1 && end >= start &&
-> > >   	       (nexts == 0 || extno < nexts)) {
-> > > +		xfs_extlen_t off;
-> > 
-> > I got really confused because I thought this was a file block offset and
-> > only after more digging realized that this is a sometimes dummy
-> > adjustment variable.
-> 
-> yeah, I put it here to use the common helper in both callsites
-> 
-> > 
-> > > +
-> > >   		/*
-> > >   		 * Is the found extent after a hole in which end lives?
-> > >   		 * Just back up to the previous extent, if so.
-> > > @@ -5519,18 +5543,18 @@ __xfs_bunmapi(
-> > >   		if (del.br_startoff + del.br_blockcount > end + 1)
-> > >   			del.br_blockcount = end + 1 - del.br_startoff;
-> > > -		if (!isrt || (flags & XFS_BMAPI_REMAP))
-> > > +		if ((!isrt && !isforcealign) || (flags & XFS_BMAPI_REMAP))
-> > >   			goto delete;
-> > > -		mod = xfs_rtb_to_rtxoff(mp,
-> > > -				del.br_startblock + del.br_blockcount);
-> > > +		mod = xfs_bunmapi_align(ip,
-> > > +				del.br_startblock + del.br_blockcount, &off);
-> > >   		if (mod) {
-> > 
-> > Oof.  I don't like how this loop body has the rtx adjustment code
-> > inlined into it.  We only use the isrt flag for the one test above.
-> > I tried hoisting this into something less gross involving separate
-> > adjustment functions but then you have to pass in so many outer
-> > variables that it becomes a mess.
-> > 
-> > The best I can come up with for now is:
-> > 
-> > 	unsigned int		alloc_fsb = xfs_inode_alloc_fsbsize(ip);
-> > 	/* no more isrt/isforcealign bools */
-> > 
-> > ...
-> > 
-> > 		if (alloc_fsb == 1 || (flags & XFS_BMAPI_REMAP))
-> > 			goto delete;
-> 
-> ok, good
-> 
-> > 
-> > 		mod = do_div(del.br_startblock + del.br_blockcount,
-> > 				alloc_fsb);
-> 
-> Note that xfs_bunmapi_align() uses agbno for !rt
+This follows the same logic as 82d40b141a4c7ab66, which did the same
+for rock-5b.
 
-Right, I forgot about that.  Can we make the name say that we're
-computing the offset within an allocunit?  It's not actually aligning
-any of its parameters.
+The GPIO pin connecting the WiFi enable signal inside the M.2 Key E slot
+is the same as there.
 
-static inline unsigned int
-xfs_bmap_alloc_unit_offset(
-	struct xfs_inode	*ip,
-	xfs_fsblock_t		fsbno,
-	unsigned int		alloc_fsb)
-{
-	xfs_agblock_t		agbno;
+This can be validated in
+arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dtsi from Armbian
+rk-5.10-rkr4 kernel, which contains a `wifi_disable` node with that same
+GPIO pin.
 
-	if (XFS_IS_REALTIME_INODE(ip))
-		return do_div(fsbno, alloc_fsb);
+Signed-off-by: Florian Klink <flokli@flokli.de>
+Tested-by: Florian Klink <flokli@flokli.de>
+---
+ arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-	agbno = XFS_FSB_TO_AGBNO(ip->i_mount, fsbno);
-	return agbno % alloc_fsb;
-}
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+index e74871491ef5..c3a6812cc93a 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+@@ -105,6 +105,13 @@ led {
+ 		};
+ 	};
+ 
++	rfkill {
++		compatible = "rfkill-gpio";
++		label = "rfkill-pcie-wlan";
++		radio-type = "wlan";
++		shutdown-gpios = <&gpio0 RK_PC4 GPIO_ACTIVE_HIGH>;
++	};
++
+ 	sound {
+ 		compatible = "simple-audio-card";
+ 		pinctrl-names = "default";
+-- 
+2.45.2
 
-		mod = xfs_bmap_alloc_unit_offset(ip,
-				del.br_startblock + del.br_blockcount,
-				alloc_fsb);
-
-and
-
-		mod = xfs_bmap_alloc_unit_offset(ip, del.br_startblock,
-				alloc_fsb);
-
---D
-
-> 
-> > 		if (mod) {
-> > 
-> > >   			/*
-> > > -			 * Realtime extent not lined up at the end.
-> > > +			 * Not aligned to allocation unit on the end.
-> > >   			 * The extent could have been split into written
-> > >   			 * and unwritten pieces, or we could just be
-> > >   			 * unmapping part of it.  But we can't really
-> > > -			 * get rid of part of a realtime extent.
-> > > +			 * get rid of part of an extent.
-> > >   			 */
-> > >   			if (del.br_state == XFS_EXT_UNWRITTEN) {
-> > >   				/*
-> > > @@ -5554,7 +5578,7 @@ __xfs_bunmapi(
-> > >   			ASSERT(del.br_state == XFS_EXT_NORM);
-> > >   			ASSERT(tp->t_blk_res > 0);
-> > >   			/*
-> > > -			 * If this spans a realtime extent boundary,
-> > > +			 * If this spans an extent boundary,
-> > >   			 * chop it back to the start of the one we end at.
-> > >   			 */
-> > >   			if (del.br_blockcount > mod) {
-> > > @@ -5571,14 +5595,12 @@ __xfs_bunmapi(
-> > >   			goto nodelete;
-> > >   		}
-> > > -		mod = xfs_rtb_to_rtxoff(mp, del.br_startblock);
-> > > +		mod = xfs_bunmapi_align(ip, del.br_startblock, &off);
-> > >   		if (mod) {
-> > > -			xfs_extlen_t off = mp->m_sb.sb_rextsize - mod;
-> > 
-> > 		mod = do_div(del.br_startblock, alloc_fsb);
-> > 		if (mod) {
-> > 			xfs_extlen_t off = alloc_fsb - mod;
-> > 
-> > At least then you don't need this weird xfs_inode_alloc_fsbsize_align
-> > that passes back two xfs_extlen_t arguments.
-> 
-> Sure, but same point about xfs_bunmapi_align() using agbno. I suppose I can
-> just make the change to not have xfs_bunmapi_align() be passed the off
-> address pointer, and do the calcation here for off here (as you suggest).
-> 
-> Thanks,
-> John
-> 
 
