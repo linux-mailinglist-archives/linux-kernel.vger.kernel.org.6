@@ -1,145 +1,185 @@
-Return-Path: <linux-kernel+bounces-277780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59EA794A65D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:54:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B605E94A66B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1589E281A25
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:54:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C8031F23B2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A1A1E2109;
-	Wed,  7 Aug 2024 10:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEBFB1E2138;
+	Wed,  7 Aug 2024 10:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ULDjLgRm"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UVEJLaFb"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AD515B57D;
-	Wed,  7 Aug 2024 10:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288E31D416A
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723028085; cv=none; b=CXKZnjn7tFllAVg405YfNEFQpiJ/CTZ3K++zX/SU8ZZdfzt3tF2NpMB3F+m818s5Gnn4Ae3fbrnVVnzyNuUQ5drXeE/NDRRl0agFubXqBuZDK/zwpNRnnM/MejdLgfXbAyX14VI1jMaRbk/OCEoAbBg/JzuHX6XPIuimWcAZ5IE=
+	t=1723028146; cv=none; b=LL6XhWHXcwD8VBhcpBtchZqeYRjfENiqjDNgTxpDCfbrBtcIUlZz0FlHhP7VNjFOmnYxYR9hs/zbiG1/8Ki1F091fY1ITHKawhaxp52/M7jTmJgQnrGpvBkCMtHZYhJnwaYePJCv81ufCn5dAcxM4/kkiAglEuN0s2Z2qgFxUkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723028085; c=relaxed/simple;
-	bh=M0aJMIl1tKX6mdJ2CgRErtb3XgMV71w2eZ8MP2LQRoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=maOcbSrHeL0xBc84kOI8MPKtp+4RPXaFE7ig0qvvr05+r057wUw6lbet8Vt/GgHfBXS1uEx9Du+gVatD8lXLlb2kIVh7PT167LoQIsiEhbiiukkXYK4BbwCoOuzDgugQdFYRDotR9jlRyP/9KzrVB604mCfxgAQOYtfRHQaLykM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ULDjLgRm; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A59242EC;
-	Wed,  7 Aug 2024 12:53:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1723028028;
-	bh=M0aJMIl1tKX6mdJ2CgRErtb3XgMV71w2eZ8MP2LQRoY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ULDjLgRmJJFbLwcwFrRD7xwTygjJAlh6xUlTNiIgPqblfjmp2iV0ykeFjNLhRRo7S
-	 5jVC733XifjLE4II+3p+FG3iz8bXBCgeZGwJG99Z5L8SJEfXWZlahMgbnSQ1tHC/Ih
-	 qQexxA5j0aQF1QvBvZEqyZFCrPxgE+v4KINwcNc4=
-Date: Wed, 7 Aug 2024 13:54:18 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Haibo Chen <haibo.chen@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
-	Frank Li <Frank.li@nxp.com>
-Subject: Re: [PATCH v7 0/4] ADP5585 GPIO expander, PWM and keypad controller
- support
-Message-ID: <20240807105418.GA8562@pendragon.ideasonboard.com>
-References: <20240722121100.2855-1-laurent.pinchart@ideasonboard.com>
- <20240725161616.GJ501857@google.com>
- <20240801131044.GF6756@google.com>
+	s=arc-20240116; t=1723028146; c=relaxed/simple;
+	bh=4VeYB/5KjZu1xP4yhehU2c+3ldJcBRoEhBeRIzBgB1M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y6IdrZ73tua7n8BFeFdSMsG/wa24f3wudP35ALwqFv6wXCNEN9l/d6NoGK6IlGaAQk6ESfUd+ipvqPuRzaJdk28lJbcMDUjFwGWbr+i8/45gCvunf6quYxSbK5Ep39n1LGa2B8J6haw7fAN4V/SzNYQiLKlXAvRcDMjsNvTdHgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UVEJLaFb; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3685b9c8998so937116f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 03:55:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723028141; x=1723632941; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g1CfpUgJXS7BrN7tAFA68qWsxl5eht2ofVsjd8s8rPw=;
+        b=UVEJLaFbfMUwjaKEz2LQce5F3791HikaDXswCKrZ4hOJc8ztcyQ2E+WND5OYMbZyUL
+         LsH8vnQwF43e4E0segbL4u9sF1imxeOHgWD2/Hznj4EhGssd/QdpGTYVNxM+nvcxlveL
+         4R9Ufv+/6Dz8EZdQQhVsXNf3r3e3RbRYuxJN+NrXjWhe2I5v5Abx1tEywBF/AW4OiwOD
+         fuRWHXgQMHgAvtfqmnnOuDM/+hU2aUPp+lWe9bcOFHd3zDSy7YiKqCAIS/zaKLdLjMpj
+         I62lSoo0Z/LlKUAxDKHcl7DXySyVVT6ogZwshuwvIwjhyen37jBPOOzOhBhLmqDoW9Z0
+         aIUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723028141; x=1723632941;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g1CfpUgJXS7BrN7tAFA68qWsxl5eht2ofVsjd8s8rPw=;
+        b=Z0Pscaqc1Xd10Qh+EL/3VMlD3b++BdVl0WcqpQTUpmmSMP25hKxHeBUf0Ir20X84Tz
+         x9BI5qpvcnOZkmdkwWMcEP4zR9K9mCOPVV128th0rXIP+pzsfDPTdWlD9ieUXDJqT8I1
+         RIUDarD0REOVoF637/t9IpZQQhgpUAeQHoihGQZZ3aST2sjyDplhETDOLd0EBJk9SG7n
+         NAy9Rz6TCDYQ2iWbR1HfCyNmQ8IyfcgEqmusxJSzngvIJMFzOffJbhrR3Iy5BMvThbVW
+         SC70yFUhXdHs3xCb7S22xpQFDUyJkzCBSJcyKRA/JKMguKr8eTZiWPU0j+XpbhyKGGBE
+         Wgow==
+X-Forwarded-Encrypted: i=1; AJvYcCXsMo7HMS4klmwBq0maB98VMdBYCt7IcS02xd3Cjj0badtBhDH+SID9DBzEFtWHJ8/y/KKg2BFFcOJF9NUwYdleWwCVB2xgRkf9tubV
+X-Gm-Message-State: AOJu0YxP+ixnQ9knlCEGof/9mdsdwKjXyctPl0IIg7Q1cFclzt3erI7V
+	Y8S/6sTFQ1nQCWIBhm1EQI5nRxM5ti9i+N4OJqNeGILEQOyV2efzLxDllj5EP30=
+X-Google-Smtp-Source: AGHT+IGt+z3jjIQ5JZ71Sm7Hm7Y023gn/0oFOumyjerqnx97PjhdWlctYsTLYdnmPaqcAi0kbDv17g==
+X-Received: by 2002:a05:6000:8:b0:368:747c:5a04 with SMTP id ffacd0b85a97d-36bbc10f6c5mr9798605f8f.25.1723028141352;
+        Wed, 07 Aug 2024 03:55:41 -0700 (PDT)
+Received: from localhost.localdomain ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd059891sm15644743f8f.73.2024.08.07.03.55.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 03:55:41 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: James Clark <james.clark@linaro.org>,
+	Al Grant <al.grant@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH] drivers/perf: arm_spe: Use perf_allow_kernel() for permissions
+Date: Wed,  7 Aug 2024 11:54:41 +0100
+Message-Id: <20240807105441.2156738-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240801131044.GF6756@google.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Lee,
+For other PMUs, PERF_SAMPLE_PHYS_ADDR requires perf_allow_kernel()
+rather than just perfmon_capable(). Because PMSCR_EL1_PA is another form
+of physical address, make it consistent and use perf_allow_kernel() for
+SPE as well. PMSCR_EL1_PCT and PMSCR_EL1_CX also get the same change.
 
-On Thu, Aug 01, 2024 at 02:10:44PM +0100, Lee Jones wrote:
-> On Thu, 25 Jul 2024, Lee Jones wrote:
-> > On Mon, 22 Jul 2024, Laurent Pinchart wrote:
-> > 
-> > > Hello,
-> > > 
-> > > This patch series introduces support for the Analog Devices ADP5585, a
-> > > GPIO expander, PWM and keyboard controller. It models the chip as an MFD
-> > > device, and includes DT bindings (1/4), an MFD driver (2/4) and drivers
-> > > for the GPIO (3/4) and PWM (4/4) functions.
-> > > 
-> > > Support for the keypad controller is left out, as I have no means to
-> > > test it at the moment. The chip also includes a tiny reset controller,
-> > > as well as a 3-bit input programmable logic block, which I haven't tried
-> > > to support (and also have no means to test).
-> > > 
-> > > The driver is based on an initial version from the NXP BSP kernel, then
-> > > extensively and nearly completely rewritten, with added DT bindings. I
-> > > have nonetheless retained original authorship. Clark, Haibo, if you
-> > > would prefer not being credited and/or listed as authors, please let me
-> > > know.
-> > > 
-> > > Compared to v6, this version addresses small review comments. I believe
-> > > it is ready to go, as the PWM and GPIO drivers have been acked by the
-> > > respective subsystem maintainers, and I have addressed Lee's comments on
-> > > the MFD side. Lee, if there's no more issue, could you apply this to
-> > > your tree for v6.12 ?
-> > > 
-> > > Clark Wang (1):
-> > >   pwm: adp5585: Add Analog Devices ADP5585 support
-> > > 
-> > > Haibo Chen (2):
-> > >   mfd: adp5585: Add Analog Devices ADP5585 core support
-> > >   gpio: adp5585: Add Analog Devices ADP5585 support
-> > > 
-> > > Laurent Pinchart (1):
-> > >   dt-bindings: mfd: Add Analog Devices ADP5585
-> > > 
-> > >  .../devicetree/bindings/mfd/adi,adp5585.yaml  |  92 +++++++
-> > >  .../devicetree/bindings/trivial-devices.yaml  |   4 -
-> > >  MAINTAINERS                                   |  11 +
-> > >  drivers/gpio/Kconfig                          |   7 +
-> > >  drivers/gpio/Makefile                         |   1 +
-> > >  drivers/gpio/gpio-adp5585.c                   | 229 ++++++++++++++++++
-> > >  drivers/mfd/Kconfig                           |  12 +
-> > >  drivers/mfd/Makefile                          |   1 +
-> > >  drivers/mfd/adp5585.c                         | 205 ++++++++++++++++
-> > >  drivers/pwm/Kconfig                           |   7 +
-> > >  drivers/pwm/Makefile                          |   1 +
-> > >  drivers/pwm/pwm-adp5585.c                     | 184 ++++++++++++++
-> > >  include/linux/mfd/adp5585.h                   | 126 ++++++++++
-> > >  13 files changed, 876 insertions(+), 4 deletions(-)
-> > >  create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-> > >  create mode 100644 drivers/gpio/gpio-adp5585.c
-> > >  create mode 100644 drivers/mfd/adp5585.c
-> > >  create mode 100644 drivers/pwm/pwm-adp5585.c
-> > >  create mode 100644 include/linux/mfd/adp5585.h
-> > 
-> > Note to self: This looks good to go.  Merge after -rc1 is released.
-> 
-> Submitted for build testing.
+This improves consistency and indirectly fixes the following error
+message which is misleading because perf_event_paranoid is not taken
+into account by perfmon_capable():
 
-Are those tests public ? Will the series eventually be merged in
-https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/ ?
+  $ perf record -e arm_spe/pa_enable/
 
-> Note to self: ib-mfd-gpio-pwm-6.12
+  Error:
+  Access to performance monitoring and observability operations is
+  limited. Consider adjusting /proc/sys/kernel/perf_event_paranoid
+  setting ...
 
+Suggested-by: Al Grant <al.grant@arm.com>
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+ drivers/perf/arm_spe_pmu.c | 9 ++++-----
+ kernel/events/core.c       | 1 +
+ security/security.c        | 1 +
+ 3 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+index 9100d82bfabc..3569050f9cf3 100644
+--- a/drivers/perf/arm_spe_pmu.c
++++ b/drivers/perf/arm_spe_pmu.c
+@@ -41,7 +41,7 @@
+ 
+ /*
+  * Cache if the event is allowed to trace Context information.
+- * This allows us to perform the check, i.e, perfmon_capable(),
++ * This allows us to perform the check, i.e, perf_allow_kernel(),
+  * in the context of the event owner, once, during the event_init().
+  */
+ #define SPE_PMU_HW_FLAGS_CX			0x00001
+@@ -50,7 +50,7 @@ static_assert((PERF_EVENT_FLAG_ARCH & SPE_PMU_HW_FLAGS_CX) == SPE_PMU_HW_FLAGS_C
+ 
+ static void set_spe_event_has_cx(struct perf_event *event)
+ {
+-	if (IS_ENABLED(CONFIG_PID_IN_CONTEXTIDR) && perfmon_capable())
++	if (IS_ENABLED(CONFIG_PID_IN_CONTEXTIDR) && !perf_allow_kernel(&event->attr))
+ 		event->hw.flags |= SPE_PMU_HW_FLAGS_CX;
+ }
+ 
+@@ -745,9 +745,8 @@ static int arm_spe_pmu_event_init(struct perf_event *event)
+ 
+ 	set_spe_event_has_cx(event);
+ 	reg = arm_spe_event_to_pmscr(event);
+-	if (!perfmon_capable() &&
+-	    (reg & (PMSCR_EL1_PA | PMSCR_EL1_PCT)))
+-		return -EACCES;
++	if (reg & (PMSCR_EL1_PA | PMSCR_EL1_PCT))
++		return perf_allow_kernel(&event->attr);
+ 
+ 	return 0;
+ }
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index aa3450bdc227..4a69583e329a 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -417,6 +417,7 @@ static struct kmem_cache *perf_event_cache;
+  *   2 - disallow kernel profiling for unpriv
+  */
+ int sysctl_perf_event_paranoid __read_mostly = 2;
++EXPORT_SYMBOL_GPL(sysctl_perf_event_paranoid);
+ 
+ /* Minimum for 512 kiB + 1 user control page */
+ int sysctl_perf_event_mlock __read_mostly = 512 + (PAGE_SIZE / 1024); /* 'free' kiB per user */
+diff --git a/security/security.c b/security/security.c
+index 8cee5b6c6e6d..70cc9206e902 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -5610,6 +5610,7 @@ int security_perf_event_open(struct perf_event_attr *attr, int type)
+ {
+ 	return call_int_hook(perf_event_open, attr, type);
+ }
++EXPORT_SYMBOL_GPL(security_perf_event_open);
+ 
+ /**
+  * security_perf_event_alloc() - Allocate a perf event LSM blob
 -- 
-Regards,
+2.34.1
 
-Laurent Pinchart
 
