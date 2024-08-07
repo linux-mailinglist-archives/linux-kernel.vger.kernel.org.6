@@ -1,154 +1,125 @@
-Return-Path: <linux-kernel+bounces-278365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E092394AF48
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0A9A94AF51
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C3461C21B07
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:58:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CDA01C21A5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244841422BC;
-	Wed,  7 Aug 2024 17:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA9213E41D;
+	Wed,  7 Aug 2024 18:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JfQpXxZY"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE6E13E41F;
-	Wed,  7 Aug 2024 17:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="aunZM4VX"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814DD12F5B1;
+	Wed,  7 Aug 2024 18:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723053471; cv=none; b=YPYErrhhN944vn/AXjvqNR5LCRVntxZMjuTosSDvU32aC3SsHWrMetogBoDVqiFRN/mrD5Wg5rWwn7TURmTMUyLDVWkL4Qtg7+CRftltv6yIFmG8CboxEEaBjzSxNmCotmHzyVoOKus6lwswH48vCxyryDtNThHQKtg3JaNZ42c=
+	t=1723053690; cv=none; b=Hz32SbJagyXJ1FOYMSkTXxuj3AEv/aQ3Yz0GBChXUWA0JlA5KCLkdjDYSUaWine0sszzd8bCDAeowtsgNqPhRZbKEYAXheD6ImB2qmBrhYXsVkbmuUGat5TvMfoBx8d9iM8BwhZ5gzT01RHoiyrMkGn48TNo+CVa8cwt8ufVdYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723053471; c=relaxed/simple;
-	bh=EJaNkWx/y6M/BndspDA0u/hBD5TnejbZPqX+oXi3PFY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qX78u7WmVtZT/Nhp15Ss9GKyDfZ6TfYB83QWaoIFxeg+U/QapBL/atCTJ74IyryhJOXy5ajj2KMCCK9c8a29PZ4F7WBQVyt6OQeAF8oxF/8wmcT3WJMGj6X7G8Btzzg+OTd48gLF5P/KAQi7k5I+Zu2cWSbPTSV21m/HmQZkHZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JfQpXxZY; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5d5af743b8fso81350eaf.3;
-        Wed, 07 Aug 2024 10:57:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723053469; x=1723658269; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JIYZPj0XxrcTT0DiLPDJV5xAwl/g4Iu8eyMqfnptQAM=;
-        b=JfQpXxZYpM3KM9KIgCg4VQViugOl6NQwa0wMLxKm2KS0eDMM2boHjpajSXm8beWU1K
-         ubiXPT4t6WjBvGodll+dZBcSpNDLax1ppVM0VdmXcMLq2N+rrx1o859jHLBPQOp3KvLn
-         uG1K8/nSFmjshilKPvdTPgqd9Vo/THsJjl+hNUPWUHj5sCd0lz9EZx95h9oAbdZ1OyeL
-         8MkM6f8swRVX7j5QKwUjoYgZngm79uFmepReH4u1jpu6wpfRQPeccii+NRrsTgGcTaqv
-         jJV19+19UC2LMMh1i11KRPtxqCY4FLLi0TsJsO4vgSvUdgrCFyf7mi5XPL1CIOmZAqUF
-         zF3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723053469; x=1723658269;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JIYZPj0XxrcTT0DiLPDJV5xAwl/g4Iu8eyMqfnptQAM=;
-        b=coao2iHR0lki/EDEQ32UjDp6bz9dSuJaFAtbPCI6ooeWpi19mPjt1S7XC7ORv1XAfm
-         C2qp75g89E7Js7fDZAhnoYO5X9vlY6V0g86kwNR5fwvUQRU6jgWyleKkxqAzPf/lC0dP
-         dPS9xxRbA7tZopzpfMNZiuAXrXLeHPbAbhtLner6UcwWKVvw3gxeZrTzmhYOsMzX04/B
-         G8JSQ9P496eO9/pkRUThFVZSMaXI9XTDeeJvODQfti4LI9qsWil619B8BtFO2IfKhtcn
-         vldFxtxLPVjXjfOFqXRzrJNhOeUX5se93t5J37TvIylzTBrmniV0jPV5+Hdn9uQfTHgK
-         QX3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXAkG7eTnfOxWDVqQ9YyYvejugMvBfuYjrN8LkLrQhUaAZTynFWsD/mMtTLHnW1rI2MYkHauJ1tPZ9P5EaqZvbagLQ+zR8oWTfcn5gZkqlUZBi2bacfFJAmw424NWt+zbWXUKVJ95PVcgCCaWgrDRNF6dGfSPvwWpW0JpxH9tiacfogE9M5
-X-Gm-Message-State: AOJu0Yy17RwdbLok+Ii2sO5NUmWCdJGmQ1m6Vl/1rNYhlxt0f+Lh8BFu
-	sDSQngyQQmC7vBfkF+cVj77DEb7w6cWzYHXRAelsqxrz0BbIv0Yt
-X-Google-Smtp-Source: AGHT+IH97XDaol1t2S2FYFv+WYC75ETsVyeFNRfItRFLlIPkRstLsyqQlWf9Oz8ZC2b+2yulKgvC0A==
-X-Received: by 2002:a05:6358:6481:b0:1ac:f722:4c1 with SMTP id e5c5f4694b2df-1af3bac737emr1583733055d.24.1723053468467;
-        Wed, 07 Aug 2024 10:57:48 -0700 (PDT)
-Received: from dev0.. ([49.43.168.245])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c211cf0726sm204429a12.16.2024.08.07.10.57.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 10:57:48 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	shuah@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	Abhinav Jain <jain.abhinav177@gmail.com>
-Subject: [PATCH v4 2/2] selftests: net: Add on/off checks for non-fixed features of interface
-Date: Wed,  7 Aug 2024 17:57:17 +0000
-Message-Id: <20240807175717.7775-3-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240807175717.7775-1-jain.abhinav177@gmail.com>
-References: <20240807175717.7775-1-jain.abhinav177@gmail.com>
+	s=arc-20240116; t=1723053690; c=relaxed/simple;
+	bh=yqp0uOSR8Q8K4/5lXUBRuESQesWcvdBjwX8QJL9PB5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k+AmHHyOhpYanh0CYlUyM6jXi4svgJzyNY7/PQJhFmKbjS1cOPS2750Jc9UiIEdC3pPkK6DI9A+RLfI+LZKpipYOJKUG0ATL3f3jIWh9QZy59v/l3x0RmBx+LWMONlRyLsvBaTx6vO4QVBPg2IOdE7+J96qPgeeh+ZyaQXrABpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=aunZM4VX; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.106.151] (unknown [131.107.174.23])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C5D4820B7165;
+	Wed,  7 Aug 2024 11:01:21 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C5D4820B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1723053682;
+	bh=JBD5S5GVsNdnH6wjmW/+nIlLS6fh9sw+q0ZHaDgSzqo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aunZM4VX0xcprS96+2RmSgZf60XSA27qvPVhz6D4bvlUDHm+AAedz7t9cP58XP5T7
+	 3Kw+15MQrOnztwHPz4/UKECWCiy/kTOPbSWECYJk+1FBYPIsOxRjrLe6i/+8l5mh0W
+	 ZoKEt4JNNiwgMXddXYZEieQG4zU6t4SqwHnsWmMw=
+Message-ID: <080c93d1-9c02-478f-a0be-f4bd3869c1fd@linux.microsoft.com>
+Date: Wed, 7 Aug 2024 11:01:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 20/20] MAINTAINERS: ipe: add ipe maintainer
+ information
+To: Paul Menzel <pmenzel@molgen.mpg.de>, Paul Moore <paul@paul-moore.com>
+Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+ tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com,
+ snitzer@kernel.org, mpatocka@redhat.com, eparis@redhat.com,
+ linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+ linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ audit@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
+ <1722665314-21156-21-git-send-email-wufan@linux.microsoft.com>
+ <de7857fb-63d9-42fc-af1e-12ffcdfcdda8@molgen.mpg.de>
+ <CAHC9VhRmcReVM_Le5bYor2deotnSe4OT08UYhL6xhiKCu0+3kA@mail.gmail.com>
+ <5880e801-e896-4bf0-9a69-2cf5acb51ec3@molgen.mpg.de>
+Content-Language: en-US
+From: Fan Wu <wufan@linux.microsoft.com>
+In-Reply-To: <5880e801-e896-4bf0-9a69-2cf5acb51ec3@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Implement on/off testing for all non-fixed features via while loop.
-Save the initial state so that it can be restored after on/off checks.
 
-Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
----
- tools/testing/selftests/net/netdevice.sh | 37 +++++++++++++++++++++++-
- 1 file changed, 36 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/net/netdevice.sh b/tools/testing/selftests/net/netdevice.sh
-index 279c44271047..c47fb984616d 100755
---- a/tools/testing/selftests/net/netdevice.sh
-+++ b/tools/testing/selftests/net/netdevice.sh
-@@ -124,7 +124,42 @@ kci_netdev_ethtool()
- 		return 1
- 	fi
- 	echo "PASS: $netdev: ethtool list features"
--	#TODO for each non fixed features, try to turn them on/off
-+
-+	while read -r FEATURE VALUE FIXED; do
-+		[ "$FEATURE" != "Features" ] || continue # Skip "Features"
-+		[ "$FIXED" != "[fixed]" ] || continue # Skip fixed features
-+		feature="${FEATURE%:*}"
-+
-+		initial_state=$(ethtool -k "$netdev" | grep "$feature:" \
-+			| awk '{print $2}')
-+		ethtool --offload "$netdev" "$feature" off
-+		if [ $? -eq 0 ]; then
-+			echo "PASS: $netdev: Turned off feature: $feature"
-+		else
-+			echo "FAIL: $netdev: Failed to turn off feature:" \
-+				"$feature"
-+		fi
-+
-+		ethtool --offload "$netdev" "$feature" on
-+		if [ $? -eq 0 ]; then
-+			echo "PASS: $netdev: Turned on feature: $feature"
-+		else
-+			echo "FAIL: $netdev: Failed to turn on feature:" \
-+				"$feature"
-+		fi
-+
-+		#restore the feature to its initial state
-+		ethtool --offload "$netdev" "$feature" "$initial_state"
-+		if [ $? -eq 0 ]; then
-+			echo "PASS: $netdev: Restore feature $feature" \
-+				"to initial state $initial_state"
-+		else
-+			echo "FAIL: $netdev: Failed to restore feature" \
-+				"$feature to default $initial_state"
-+		fi
-+
-+	done < "$TMP_ETHTOOL_FEATURES"
-+
- 	rm "$TMP_ETHTOOL_FEATURES"
- 
- 	kci_netdev_ethtool_test 74 'dump' "ethtool -d $netdev"
--- 
-2.34.1
+On 8/6/2024 9:48 PM, Paul Menzel wrote:
+> Dear Paul,
+> 
+> 
+> Am 06.08.24 um 22:54 schrieb Paul Moore:
+>> On Sat, Aug 3, 2024 at 4:15 AM Paul Menzel wrote:
+> 
+>>> Thank you very much for your patch. Two nits, should you sent another
+>>> interation: A more specific summary would avoid people having to look at
+>>> the message body or diff, and `git log --oneline` would be enough.
+>>>
+>>> MAINTAINERS: Add IPE entry with M: Fan Wu
+>>>
+>>> MAINTAINERS: Add IPE entry with Fan Wu as maintainer
+>>>
+>>> Am 03.08.24 um 08:08 schrieb Fan Wu:
+>>>> Update MAINTAINERS to include ipe maintainer information.
+>>>
+>>> I’d at least mention Integrity Policy Enforcement. As you not only
+>>> include the maintainer information but add a new entry, I’d leave the
+>>> body out, or mention that a new entry is added.
+>>>
+>>>> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+>>
+>> Working under the current assumption that a new revision is not
+>> needed, I can fix this up during the merge.  Fan, other-Paul, are you
+>> both okay with the following:
+>>
+>>    "MAINTAINERS: add IPE entry with Fan Wu as maintainer
+>>
+>>     Add a MAINTAINERS entry for the Integrity Policy Enforcement (IPE) 
+>> LSM."
+> 
+> Thank you. That is fine by me.
+> 
+> 
+> Kind regards,
+> 
+> Paul
+> 
+> 
+
+Hi Paul and Paul,
+
+Thank you both for your feedback and coordination on this. I'm good with 
+the proposed changes and appreciate your efforts.
+
+-Fan
+
+
 
 
