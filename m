@@ -1,243 +1,400 @@
-Return-Path: <linux-kernel+bounces-278139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D318494ACA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:20:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B60694AC94
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 839BF281CDF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:20:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E59B1C223F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FD112C7FD;
-	Wed,  7 Aug 2024 15:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0558684A22;
+	Wed,  7 Aug 2024 15:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QubD58VG"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2068.outbound.protection.outlook.com [40.107.236.68])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HBDf3MXC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EC679949;
-	Wed,  7 Aug 2024 15:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723043909; cv=fail; b=evZP8KJ9vfeDOZe8NmxugLyS1YaMZNjORWE/UeSE/aznfLON1e5V7ekg+ntasteO/JeZEn8/PBkMAFDt7ScYQ2xIZv6lDFTpMa7dvDZBj0n8jFsolRMq306nErZLEUROV8EKxDYlMo+IJ1FqGN0ZQ8SkV5RxZuxA/PPwTY2NmTM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723043909; c=relaxed/simple;
-	bh=dm4vU9LmxJor9k+TGamv2Yo6oPTG7aVdDB3Sabd7v3k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pG7VthKFyqj5KwlSBOGWxbuaD70KHijjw2i7Wt7OHCn/BkYiWzua4vPthWu0QmGrKk2v+ONwaJ5wl4lRaw3qirUQ0j+T8DbRPUnyHN4HCUPmAHk4GQwDb//OFjEc6jjADhlwqISwf2aHAh2TifEdXGinKqnnVcwW9UJsqq4LpWw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QubD58VG; arc=fail smtp.client-ip=40.107.236.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uASGWldfckLdp2Xkvl2GgXWmeH0xTG/8OvkYgW2Tijj0pD3GOBVZqzo3E9K8dApPoA1Y+Ac6smfmKMgwB88VYL2wsMhL5PRgo8Ydsw99Fui4ox6sOPB5OGrhbFkHWV4F9XQVEuMI3jF+SZj1iEeW6cTQ2vHCEOkFmO1auTfXRyBf5g4qjEVCkn8oS2/0Ft9ZQiR+rDT75cqgqU5OeNk3CKC2SEiaTjHm65vDTcc0P1nJBZ1ZryIqPphWlpbRVlltqee4yj8S69E4xC48w0RWAPu6atCakyc7ikken8nijB+/ndss0MIV9SjD4ByTZ2fFVzumhiIHq3rMfjAKz/2eEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bFwnRwtCAegQbxdYZ9WG0kvFW7XZdhwDbKqmw1mh588=;
- b=v3n5YaQv9kgr5uUp/c6jTeZ2Qt3TVh2jd39tj6ycxRLbaqna6q6+/Mm8K0ku87IIY98wOM7t5VTWCpV7iouZS0K4rjryeN5Q5KFn4nxOsEv/yIKIGSyJahW7E6tzn+XWg/DmOAix2hoW07Nvkcb18bCefsoblCD0MRoPtVojUZc7y0F8GxiXMUlG20C+FGCeFkXebqE4z7zFx7dOuhiI+OVB07umpB58mYP6T6Yl0XnBasHoOxGk1YrrOZo5iwi0ai6qjo9X9O7Bb8tvG8TV/Y4u2TRvUKXa6A/USBESa6lnqCJsrSqsmxmJSDRQM+2a7FDjLyJoNtgXXXg/SAnABQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bFwnRwtCAegQbxdYZ9WG0kvFW7XZdhwDbKqmw1mh588=;
- b=QubD58VGpmtaMHcNFVBXHFm4uS45F6PbmcA+61/1io3iXPECG1QHpnHiz/TJ4tq8d5jWTLkCXKFObPvuE3mvtQcFpdn5Nu2GU8H76f6unHYULHzWeN3YvyWysJqiqdHVuqLTzPl0vyRvMlKFaC3wb/Y0H+y/k+IDZfnw0I7bwSA=
-Received: from DM6PR07CA0126.namprd07.prod.outlook.com (2603:10b6:5:330::9) by
- IA0PR12MB8421.namprd12.prod.outlook.com (2603:10b6:208:40f::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.12; Wed, 7 Aug 2024 15:18:22 +0000
-Received: from DS2PEPF0000343A.namprd02.prod.outlook.com
- (2603:10b6:5:330:cafe::ad) by DM6PR07CA0126.outlook.office365.com
- (2603:10b6:5:330::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.12 via Frontend
- Transport; Wed, 7 Aug 2024 15:18:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- DS2PEPF0000343A.mail.protection.outlook.com (10.167.18.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7849.8 via Frontend Transport; Wed, 7 Aug 2024 15:18:22 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 7 Aug
- 2024 10:18:21 -0500
-Received: from ubuntu.mshome.net (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 7 Aug 2024 10:18:20 -0500
-From: Stewart Hildebrand <stewart.hildebrand@amd.com>
-To: Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?q?Ilpo=20J=C3=A4rvinen?=
-	<ilpo.jarvinen@linux.intel.com>
-CC: Stewart Hildebrand <stewart.hildebrand@amd.com>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 8/8] PCI: Align small BARs
-Date: Wed, 7 Aug 2024 11:17:17 -0400
-Message-ID: <20240807151723.613742-9-stewart.hildebrand@amd.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240807151723.613742-1-stewart.hildebrand@amd.com>
-References: <20240807151723.613742-1-stewart.hildebrand@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0978D33CD2;
+	Wed,  7 Aug 2024 15:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723043845; cv=none; b=J9CFwCsvWmMRiRi3yYeLQfvXlEEfnomyHCKjDM/9LQ86aLYPrn9rGtwbwHJTXUxNg9+uye5xmbTJ2pHpXuK31w0rumBkNDCnoHywIxTt1v5CSJSofnWMnoAeNl43bajscEREW4asL1fwvrf3KWFjVKEoWE8XM269uv9B0lghLsc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723043845; c=relaxed/simple;
+	bh=uK3eMVCO9lr4xJ4ncEL+z7nxBH9o1xcjKd+B8geHLFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mNReqJkvAP/o52/pfHQnhwPtnIHJBV92t+BPeyR2ybkzG+CUsWCrZ7sPU40bktzYj2M0lT6tBQ8/+P2kpO2Lmbp0GBhl/SmKy7tdDq5I9tooBZqgoEhHE5cXboPejQNMLqZFLez7BxKxb1EgaJQRTOTHV3ftcpVXTJ2qjOQI7ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HBDf3MXC; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723043843; x=1754579843;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=uK3eMVCO9lr4xJ4ncEL+z7nxBH9o1xcjKd+B8geHLFo=;
+  b=HBDf3MXCvplm0VrtfRdsSjBQgEQpTdx3nsRgGkQz8BFt4ue2MQmJoSrz
+   QkuAnMJdjfCTGnamd8wMSD749GoRKLDbVdL2MAu1FTpfFFfG2elvU0hdO
+   dHuTErSbojzKr0oNji7Jpyctj8z9qpvEj1MlmkoS5fMafYrAkoNRUMl7+
+   tvLpI/ihBrf7N7QyDuo/09JFCiOSD4RPE9K36nG4MjLjkOmjopSX+aRyM
+   hs2JWfjXs/oguBUH6hB9SaDBc5m8zNYE72ELJfBf1B+SRmmW0R8QOvbVF
+   ELI84B1S9eS2Z56QKqxQPHAuu0Z3iosGFFwmDhBpZL20kKekPaDZ7xP61
+   Q==;
+X-CSE-ConnectionGUID: J/h4fC8OTEOBWqFob7x/GQ==
+X-CSE-MsgGUID: 4EDE9KN9QX6I0owlU/xW4Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="32511419"
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="32511419"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 08:17:22 -0700
+X-CSE-ConnectionGUID: KhtWx5ugTzSv9+F7VYJOkg==
+X-CSE-MsgGUID: yAtXTmGRQ7iuFp3qgDJfQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="57099236"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 08:17:21 -0700
+Received: from [10.212.63.105] (kliang2-mobl1.ccr.corp.intel.com [10.212.63.105])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 465FC20CFED6;
+	Wed,  7 Aug 2024 08:17:20 -0700 (PDT)
+Message-ID: <b38cc358-8e46-48bd-88c0-ff4b8db6bd15@linux.intel.com>
+Date: Wed, 7 Aug 2024 11:17:18 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: stewart.hildebrand@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF0000343A:EE_|IA0PR12MB8421:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2c9e4a61-4369-46eb-1628-08dcb6f42d09
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6D66cjtFM25064WASyk9G3DAy78Qz0DlmgQcK7HCNVUajBpwTAfqTMhJXQIx?=
- =?us-ascii?Q?2wUSvhu3jh2RSuH8iytreuOO5KdQZPrnZvReRmWtv7MB79X46thbvDkvucmS?=
- =?us-ascii?Q?yqHnhPET1muCdADMSFtF+QuDh3HLIyHy3+QiDtm2PJs0xtiqM9yULexSOQOI?=
- =?us-ascii?Q?37To+0rvjQBGJMkXOYcIpLNikcQ7XYgEIWgEYuCl8sx7WT9Uv+f4aeRgk3/X?=
- =?us-ascii?Q?v+O9KnKRPHTrW/qpAgjHmie00uVXdx0qJHgLiGBk53rw7+psmdiQ56KM5Q4c?=
- =?us-ascii?Q?rdjPOKHFaFhfCZ0LXPMrUHLXaRD96fIMbvZknDnQ3nAzODR+2ikPUWdVwUkB?=
- =?us-ascii?Q?xSrn2FFhztZoms5uCXJTqRFE7GwG2Jz8QaBevdGu4uYGVh9MRmRJV/DzPRB7?=
- =?us-ascii?Q?tyVhghwwm7OpmlZV5huw5//pTlYQUdFtSI/jzSLMJrTx3w4ABF41vJnCClm1?=
- =?us-ascii?Q?589484ahd25bJXUWWOaOgKZIgtmE0Eap4HUyh79gH87JtAyqWVgncqFYYLNc?=
- =?us-ascii?Q?logWi3SSBlysqjtVI9TEGYTWtjTRzv5v5C3QdJtAlp3keKp6KhKNPn8+jvFo?=
- =?us-ascii?Q?yuNrsb8VGw3NEvkIyFrvdZYUFfjBaYPVL6+malME9GXbYUucHyp1MsneAaj7?=
- =?us-ascii?Q?qsFWvER1o0AFAq5QECm5g9p9w9Qn28To6WivKI71IVMBl++gyXDSI3PdiZ76?=
- =?us-ascii?Q?mz3hu0KjRDS11J/zGDx1TN6vOJ+6037ViaH+sFcjLTjJATwts/qVn5IVEWSq?=
- =?us-ascii?Q?7DPrpM59ODF5BM+nFSPrt/Mrq8Pm+96RdBZD/S/nzItqYNI0lCMpLp3hX6p0?=
- =?us-ascii?Q?fMA4t4TJwNUbsniOIjX/kpqnLrZw7jtmhporc+Oj/n+KIp0Tpq+J9aaMyAfi?=
- =?us-ascii?Q?a+jMRWUfLVql7NXGOAohGtBcPTa5lPzIknREMJkCvRjkuzc63KXCBjZu3u/Z?=
- =?us-ascii?Q?TvR759QTUum0Cp8cPcCQsPjYTVmBFQl7etP+eYhYK+SNsdQRl8A3Vy885j/q?=
- =?us-ascii?Q?c4Dh6Flvi5B/0LBHyDles7eKTLdm6zGI1vUyyu+6sJHK5NFTea7ZDVplRioq?=
- =?us-ascii?Q?+wXHEErFCKdeMVF4k55cNfGu5tf8z5nUtXs7bSr4M3IKqLUrcAHFTTFJmNf2?=
- =?us-ascii?Q?vNLuGlU0bvEYOKY3U5dBRnrvGbFftt0dMSZQ+w3TYOJD1ts1+DGhtOXVI5H9?=
- =?us-ascii?Q?NrMyR0e7ywgaaDMdxfLQXWobN+I0o8eSHHyRCUyYLwIBOOPQjMH5+/rip3xt?=
- =?us-ascii?Q?2BKVt0VU7FnTE9erUpZDF8YCvK4h0AaG62wRSvbSH3UF7JVFN4qbcvq1opmQ?=
- =?us-ascii?Q?oXU9l3eCmaTVkqQEZuj7YKB9VyF7uzZPWMdcOcVUn9TEZBy8kZfdya/26VRX?=
- =?us-ascii?Q?yDN4IH8pMkU8oRgaNFPa0reKMFZZiW4YsxgI55UbZZJLr55tgKn/H0z1IPwy?=
- =?us-ascii?Q?/cPGEOyRGN+A1j6F1+2XUTaLUUYXLKoG?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 15:18:22.2519
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c9e4a61-4369-46eb-1628-08dcb6f42d09
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF0000343A.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8421
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] perf: Add context time freeze
+To: Peter Zijlstra <peterz@infradead.org>, mingo@kernel.org
+Cc: acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240807112924.448091402@infradead.org>
+ <20240807115550.250637571@infradead.org>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240807115550.250637571@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In this context, "small" is defined as less than max(SZ_4K, PAGE_SIZE).
 
-Issues observed when small BARs are not sufficiently aligned are:
 
-1. Devices to be passed through (to e.g. a Xen HVM guest) with small
-BARs require each memory BAR to be page aligned. Currently, the only way
-to guarantee this alignment from a user perspective is to fake the size
-of the BARs using the pci=resource_alignment= option. This is a bad user
-experience, and faking the BAR size is not always desirable. For
-example, pcitest is a tool that is useful for PCI passthrough validation
-with Xen, but pcitest fails with a fake BAR size.
+On 2024-08-07 7:29 a.m., Peter Zijlstra wrote:
+> Many of the the context reschedule users are of the form:
+> 
+>   ctx_sched_out(.type = EVENT_TIME);
+>   ... modify context
+>   ctx_resched();
+> 
+> With the idea that the whole reschedule happens with a single
+> time-stamp, rather than with each ctx_sched_out() advancing time and
+> ctx_sched_in() re-starting time, creating a non-atomic experience.
+> 
+> However, Kan noticed that since this completely stops time, it
+> actually looses a bit of time between the stop and start. Worse, now
+> that we can do partial (per PMU) reschedules, the PMUs that are not
+> scheduled out still observe the time glitch.
+> 
+> Replace this with:
+> 
+>   ctx_time_freeze();
+>   ... modify context
+>   ctx_resched();
+> 
+> With the assumption that this happens in a perf_ctx_lock() /
+> perf_ctx_unlock() pair.
+> 
+> The new ctx_time_freeze() will update time and sets EVENT_FROZEN, and
+> ensures EVENT_TIME and EVENT_FROZEN remain set, this avoids
+> perf_event_time_now() from observing a time wobble from not seeing
+> EVENT_TIME for a little while.
+> 
+> Additionally, this avoids loosing time between
+> ctx_sched_out(EVENT_TIME) and ctx_sched_in(), which would re-set the
+> timestamp.
+> 
+> Reported-by: Kan Liang <kan.liang@linux.intel.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  kernel/events/core.c |  128 ++++++++++++++++++++++++++++++++++-----------------
+>  1 file changed, 86 insertions(+), 42 deletions(-)
+> 
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -155,20 +155,55 @@ static int cpu_function_call(int cpu, re
+>  	return data.ret;
+>  }
+>  
+> +enum event_type_t {
+> +	EVENT_FLEXIBLE	= 0x01,
+> +	EVENT_PINNED	= 0x02,
+> +	EVENT_TIME	= 0x04,
+> +	EVENT_FROZEN	= 0x08,
+> +	/* see ctx_resched() for details */
+> +	EVENT_CPU	= 0x10,
+> +	EVENT_CGROUP	= 0x20,
+> +
+> +	/* compound helpers */
+> +	EVENT_ALL         = EVENT_FLEXIBLE | EVENT_PINNED,
+> +	EVENT_TIME_FROZEN = EVENT_TIME | EVENT_FROZEN,
+> +};
+> +
+> +static inline void __perf_ctx_lock(struct perf_event_context *ctx)
+> +{
+> +	raw_spin_lock(&ctx->lock);
+> +	WARN_ON_ONCE(ctx->is_active & EVENT_FROZEN);
+> +}
+> +
+>  static void perf_ctx_lock(struct perf_cpu_context *cpuctx,
+>  			  struct perf_event_context *ctx)
+>  {
+> -	raw_spin_lock(&cpuctx->ctx.lock);
+> +	__perf_ctx_lock(&cpuctx->ctx);
+>  	if (ctx)
+> -		raw_spin_lock(&ctx->lock);
+> +		__perf_ctx_lock(ctx);
+> +}
+> +
+> +static inline void __perf_ctx_unlock(struct perf_event_context *ctx)
+> +{
+> +	/*
+> +	 * If ctx_sched_in() didn't again set any ALL flags, clean up
+> +	 * after ctx_sched_out() by clearing is_active.
+> +	 */
+> +	if (ctx->is_active & EVENT_FROZEN) {
+> +		if (!(ctx->is_active & EVENT_ALL))
 
-2. Devices with multiple small BARs could have the MSI-X tables located
-in one of its small BARs. This may lead to the MSI-X tables being mapped
-in the same 4k region as other data. The PCIe 6.1 specification (section
-7.7.2 MSI-X Capability and Table Structure) says we probably should
-avoid that.
+Nit:
+It may be better to add a macro/inline function to replace all the
+(ctx->is_active & EVENT_ALL) check? For example,
 
-To improve the user experience (i.e. don't require the user to specify
-pci=resource_alignment=), and increase conformance to PCIe spec, set the
-default minimum resource alignment of memory BARs to the greater of 4k
-or PAGE_SIZE.
++static inline bool perf_ctx_has_active_events(struct perf_event_context
+*ctx)
++{
++	return ctx->is_active & EVENT_ALL;
++}
+...
++	if (ctx->is_active & EVENT_FROZEN) {
++		if (!perf_ctx_has_active_events(ctx))
++			ctx->is_active = 0;
++		else
++			ctx->is_active &= ~EVENT_FROZEN;
 
-Quoting the comment in
-drivers/pci/pci.c:pci_request_resource_alignment(), there are two ways
-we can increase the resource alignment:
+It can tell very straightforwardly that we want to clear all flags if
+there is no active event.
+The EVENT_ALL may bring confusion. It actually means all events, not all
+event types. The developer may have to go to the define and figure out
+what exactly the EVENT_ALL includes.
 
-1) Increase the size of the resource.  BARs are aligned on their
-   size, so when we reallocate space for this resource, we'll
-   allocate it with the larger alignment.  This also prevents
-   assignment of any other BARs inside the alignment region, so
-   if we're requesting page alignment, this means no other BARs
-   will share the page.
+Thanks,
+Kan
 
-   The disadvantage is that this makes the resource larger than
-   the hardware BAR, which may break drivers that compute things
-   based on the resource size, e.g., to find registers at a
-   fixed offset before the end of the BAR.
-
-2) Retain the resource size, but use IORESOURCE_STARTALIGN and
-   set r->start to the desired alignment.  By itself this
-   doesn't prevent other BARs being put inside the alignment
-   region, but if we realign *every* resource of every device in
-   the system, none of them will share an alignment region.
-
-Changing pcibios_default_alignment() results in the second method of
-alignment with IORESOURCE_STARTALIGN.
-
-The new default alignment may be overridden by arches by implementing
-pcibios_default_alignment(), or by the user on a per-device basis with
-the pci=resource_alignment= option (although this reverts to using
-IORESOURCE_SIZEALIGN).
-
-Signed-off-by: Stewart Hildebrand <stewart.hildebrand@amd.com>
----
-Preparatory patches in this series are prerequisites to this patch.
-
-v2->v3:
-* new subject (was: "PCI: Align small (<4k) BARs")
-* clarify 4k vs PAGE_SIZE in commit message
-
-v1->v2:
-* capitalize subject text
-* s/4 * 1024/SZ_4K/
-* #include <linux/sizes.h>
-* update commit message
-* use max(SZ_4K, PAGE_SIZE) for alignment value
----
- drivers/pci/pci.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index af34407f2fb9..efdd5b85ea8c 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -31,6 +31,7 @@
- #include <asm/dma.h>
- #include <linux/aer.h>
- #include <linux/bitfield.h>
-+#include <linux/sizes.h>
- #include "pci.h"
- 
- DEFINE_MUTEX(pci_slot_mutex);
-@@ -6484,7 +6485,12 @@ struct pci_dev __weak *pci_real_dma_dev(struct pci_dev *dev)
- 
- resource_size_t __weak pcibios_default_alignment(void)
- {
--	return 0;
-+	/*
-+	 * Avoid MSI-X tables being mapped in the same 4k region as other data
-+	 * according to PCIe 6.1 specification section 7.7.2 MSI-X Capability
-+	 * and Table Structure.
-+	 */
-+	return max(SZ_4K, PAGE_SIZE);
- }
- 
- /*
--- 
-2.46.0
-
+> +			ctx->is_active = 0;
+> +		else
+> +			ctx->is_active &= ~EVENT_FROZEN;
+> +	}
+> +	raw_spin_unlock(&ctx->lock);
+>  }
+>  
+>  static void perf_ctx_unlock(struct perf_cpu_context *cpuctx,
+>  			    struct perf_event_context *ctx)
+>  {
+>  	if (ctx)
+> -		raw_spin_unlock(&ctx->lock);
+> -	raw_spin_unlock(&cpuctx->ctx.lock);
+> +		__perf_ctx_unlock(ctx);
+> +	__perf_ctx_unlock(&cpuctx->ctx);
+>  }
+>  
+>  #define TASK_TOMBSTONE ((void *)-1L)
+> @@ -370,16 +405,6 @@ static void event_function_local(struct
+>  	(PERF_SAMPLE_BRANCH_KERNEL |\
+>  	 PERF_SAMPLE_BRANCH_HV)
+>  
+> -enum event_type_t {
+> -	EVENT_FLEXIBLE = 0x1,
+> -	EVENT_PINNED = 0x2,
+> -	EVENT_TIME = 0x4,
+> -	/* see ctx_resched() for details */
+> -	EVENT_CPU = 0x8,
+> -	EVENT_CGROUP = 0x10,
+> -	EVENT_ALL = EVENT_FLEXIBLE | EVENT_PINNED,
+> -};
+> -
+>  /*
+>   * perf_sched_events : >0 events exist
+>   */
+> @@ -2332,18 +2357,39 @@ group_sched_out(struct perf_event *group
+>  }
+>  
+>  static inline void
+> -ctx_time_update(struct perf_cpu_context *cpuctx, struct perf_event_context *ctx)
+> +__ctx_time_update(struct perf_cpu_context *cpuctx, struct perf_event_context *ctx, bool final)
+>  {
+>  	if (ctx->is_active & EVENT_TIME) {
+> +		if (ctx->is_active & EVENT_FROZEN)
+> +			return;
+>  		update_context_time(ctx);
+> -		update_cgrp_time_from_cpuctx(cpuctx, false);
+> +		update_cgrp_time_from_cpuctx(cpuctx, final);
+>  	}
+>  }
+>  
+>  static inline void
+> +ctx_time_update(struct perf_cpu_context *cpuctx, struct perf_event_context *ctx)
+> +{
+> +	__ctx_time_update(cpuctx, ctx, false);
+> +}
+> +
+> +/*
+> + * To be used inside perf_ctx_lock() / perf_ctx_unlock(). Lasts until perf_ctx_unlock().
+> + */
+> +static inline void
+> +ctx_time_freeze(struct perf_cpu_context *cpuctx, struct perf_event_context *ctx)
+> +{
+> +	ctx_time_update(cpuctx, ctx);
+> +	if (ctx->is_active & EVENT_TIME)
+> +		ctx->is_active |= EVENT_FROZEN;
+> +}
+> +
+> +static inline void
+>  ctx_time_update_event(struct perf_event_context *ctx, struct perf_event *event)
+>  {
+>  	if (ctx->is_active & EVENT_TIME) {
+> +		if (ctx->is_active & EVENT_FROZEN)
+> +			return;
+>  		update_context_time(ctx);
+>  		update_cgrp_time_from_event(event);
+>  	}
+> @@ -2822,7 +2868,7 @@ static int  __perf_install_in_context(vo
+>  #endif
+>  
+>  	if (reprogram) {
+> -		ctx_sched_out(ctx, NULL, EVENT_TIME);
+> +		ctx_time_freeze(cpuctx, ctx);
+>  		add_event_to_ctx(event, ctx);
+>  		ctx_resched(cpuctx, task_ctx, event->pmu_ctx->pmu,
+>  			    get_event_type(event));
+> @@ -2968,8 +3014,7 @@ static void __perf_event_enable(struct p
+>  	    event->state <= PERF_EVENT_STATE_ERROR)
+>  		return;
+>  
+> -	if (ctx->is_active)
+> -		ctx_sched_out(ctx, NULL, EVENT_TIME);
+> +	ctx_time_freeze(cpuctx, ctx);
+>  
+>  	perf_event_set_state(event, PERF_EVENT_STATE_INACTIVE);
+>  	perf_cgroup_event_enable(event, ctx);
+> @@ -2977,19 +3022,15 @@ static void __perf_event_enable(struct p
+>  	if (!ctx->is_active)
+>  		return;
+>  
+> -	if (!event_filter_match(event)) {
+> -		ctx_sched_in(ctx, NULL, EVENT_TIME);
+> +	if (!event_filter_match(event))
+>  		return;
+> -	}
+>  
+>  	/*
+>  	 * If the event is in a group and isn't the group leader,
+>  	 * then don't put it on unless the group is on.
+>  	 */
+> -	if (leader != event && leader->state != PERF_EVENT_STATE_ACTIVE) {
+> -		ctx_sched_in(ctx, NULL, EVENT_TIME);
+> +	if (leader != event && leader->state != PERF_EVENT_STATE_ACTIVE)
+>  		return;
+> -	}
+>  
+>  	task_ctx = cpuctx->task_ctx;
+>  	if (ctx->task)
+> @@ -3263,7 +3304,7 @@ static void __pmu_ctx_sched_out(struct p
+>  	struct perf_event *event, *tmp;
+>  	struct pmu *pmu = pmu_ctx->pmu;
+>  
+> -	if (ctx->task && !ctx->is_active) {
+> +	if (ctx->task && !(ctx->is_active & EVENT_ALL)) {
+>  		struct perf_cpu_pmu_context *cpc;
+>  
+>  		cpc = this_cpu_ptr(pmu->cpu_pmu_context);
+> @@ -3338,24 +3379,29 @@ ctx_sched_out(struct perf_event_context
+>  	 *
+>  	 * would only update time for the pinned events.
+>  	 */
+> -	if (is_active & EVENT_TIME) {
+> -		/* update (and stop) ctx time */
+> -		update_context_time(ctx);
+> -		update_cgrp_time_from_cpuctx(cpuctx, ctx == &cpuctx->ctx);
+> +	__ctx_time_update(cpuctx, ctx, ctx == &cpuctx->ctx);
+> +
+> +	/*
+> +	 * CPU-release for the below ->is_active store,
+> +	 * see __load_acquire() in perf_event_time_now()
+> +	 */
+> +	barrier();
+> +	ctx->is_active &= ~event_type;
+> +
+> +	if (!(ctx->is_active & EVENT_ALL)) {
+>  		/*
+> -		 * CPU-release for the below ->is_active store,
+> -		 * see __load_acquire() in perf_event_time_now()
+> +		 * For FROZEN, preserve TIME|FROZEN such that perf_event_time_now()
+> +		 * does not observe a hole. perf_ctx_unlock() will clean up.
+>  		 */
+> -		barrier();
+> +		if (ctx->is_active & EVENT_FROZEN)
+> +			ctx->is_active &= EVENT_TIME_FROZEN;
+> +		else
+> +			ctx->is_active = 0;
+>  	}
+>  
+> -	ctx->is_active &= ~event_type;
+> -	if (!(ctx->is_active & EVENT_ALL))
+> -		ctx->is_active = 0;
+> -
+>  	if (ctx->task) {
+>  		WARN_ON_ONCE(cpuctx->task_ctx != ctx);
+> -		if (!ctx->is_active)
+> +		if (!(ctx->is_active & EVENT_ALL))
+>  			cpuctx->task_ctx = NULL;
+>  	}
+>  
+> @@ -3943,7 +3989,7 @@ ctx_sched_in(struct perf_event_context *
+>  
+>  	ctx->is_active |= (event_type | EVENT_TIME);
+>  	if (ctx->task) {
+> -		if (!is_active)
+> +		if (!(is_active & EVENT_ALL))
+>  			cpuctx->task_ctx = ctx;
+>  		else
+>  			WARN_ON_ONCE(cpuctx->task_ctx != ctx);
+> @@ -4424,7 +4470,7 @@ static void perf_event_enable_on_exec(st
+>  
+>  	cpuctx = this_cpu_ptr(&perf_cpu_context);
+>  	perf_ctx_lock(cpuctx, ctx);
+> -	ctx_sched_out(ctx, NULL, EVENT_TIME);
+> +	ctx_time_freeze(cpuctx, ctx);
+>  
+>  	list_for_each_entry(event, &ctx->event_list, event_entry) {
+>  		enabled |= event_enable_on_exec(event, ctx);
+> @@ -4437,8 +4483,6 @@ static void perf_event_enable_on_exec(st
+>  	if (enabled) {
+>  		clone_ctx = unclone_ctx(ctx);
+>  		ctx_resched(cpuctx, ctx, NULL, event_type);
+> -	} else {
+> -		ctx_sched_in(ctx, NULL, EVENT_TIME);
+>  	}
+>  	perf_ctx_unlock(cpuctx, ctx);
+>  
+> 
+> 
+> 
 
