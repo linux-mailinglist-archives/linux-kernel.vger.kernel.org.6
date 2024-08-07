@@ -1,164 +1,152 @@
-Return-Path: <linux-kernel+bounces-277290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84446949EF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:09:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03124949EF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10D1F1F25A45
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:09:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81FEAB23C1F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2AF1917F2;
-	Wed,  7 Aug 2024 05:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D0C1917F7;
+	Wed,  7 Aug 2024 05:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LLmfN8p2"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2060.outbound.protection.outlook.com [40.107.93.60])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c00UH+8l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E4A1E520;
-	Wed,  7 Aug 2024 05:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723007360; cv=fail; b=SmyQfhm/jfDV9hc8LAcPinEkno2gRDa8GD12i7OG5XqjtVkCMh3n86PxFxPra6mjcztlV7B79CegKgF8CZGrp2R+FU6CrLGq4q30mK5vvNaSVgL6dMWbgwfNt6UmThjh0K+y9NkYvLUCwOHdBmwvgnvLl7IFCklp6K8n8i367l4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723007360; c=relaxed/simple;
-	bh=lJgs8IE/U+vR2H19Hg3rrBeJUe//fkqHXSEHCm6Udhs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bnkQdcltvOy/JlMVT/PMjnzODQYxjgqu67FqPtc2lUtgthahyxfKtkgLCh04x5Q3uxupBdZYtukW9uM1VrRk9OYoW2zlWgLJDG/rAdG/sOGTFhQ8Ng+cx07DPK7Jfu1ZcdePgojgq9zeZiAFwpVNLj2h+4g8RvtZ1GM7mwcjwtY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LLmfN8p2; arc=fail smtp.client-ip=40.107.93.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dxVIA1yqV4GtrtZRh7zh+QV/2co4TEMgZl+gViZNpZpQ97Fx8123opqTnC1qHvrZS6LcosttabPL0i0wGd8YiB8mQ/wRGsDQSyCMDJVIsNlZB1YMtaFlGQvd5hXIDV88TfUTpZeDx15DpbVUrbVnwnsLToRKqSZXlrdLSvLBw1rBzFSsGHUGiQbt/6pvOOwG2k/u8fC03CSjL9HoVrMqdDl5GRlLVoDdBAtbrR/gEkL3HcZDOnZVSZkzu2Rg/hU+ntNn2AsUHO7+wBk+ahSvNLevigVFyy3n3bhWe6za3cu98QR1kmg2GksV2swoT0v5wi3T/5SPe8J/qzdlxA2cyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i4XpOq0sD6iKIaIU3wBjg4JjTSKWAR2yTAz6PpuNNL8=;
- b=yJtsY1g94cLpFHUn1ixxV1HxEj4LqAS4nkvbO8W227w16naieNLsVxFH/CGh1KOBG4GqV9/Ll9TtphCImHIBU4K/9KFIg79GwGmNOMg8C78e+tIdLE3KrUdD9Vlcdg3q/UDobwE4MUAyHC7HDYyC6UL9n6AR4xk9cVXiHwbnSdy7a5mKOkdzX2BexoYp3aixjMjdW4cA7QGMe6oEUUEksQWi3adUZpvXpDk2el29y9KA3lp0/U5Juq3gZjC0CEUOcqz6tpjBaitqCxhfS8lpZh2SbTjz+s3Z6eEzRkjES27r0UA/9+Xf1V0UGfKzkRz+7SrBmqRrm3RZQpgy4CDxoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i4XpOq0sD6iKIaIU3wBjg4JjTSKWAR2yTAz6PpuNNL8=;
- b=LLmfN8p2wc3w2OES4WzHjeSynVeRW1NkuUgWwkL2J7EF5NlKvQqYw2hJSi5ZTfUqOnYL7jP1cqu57cyNzyVtuz/NqycguMY8SyHf8Hayg1Itzg8IROa6pNMcerWby/jcIL9zJXlg59g7y5FySTMSz3kpGymMSO0A+1TchC3Y31A=
-Received: from BN9PR03CA0616.namprd03.prod.outlook.com (2603:10b6:408:106::21)
- by CY8PR12MB7586.namprd12.prod.outlook.com (2603:10b6:930:99::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27; Wed, 7 Aug
- 2024 05:09:12 +0000
-Received: from BN2PEPF0000449E.namprd02.prod.outlook.com
- (2603:10b6:408:106:cafe::28) by BN9PR03CA0616.outlook.office365.com
- (2603:10b6:408:106::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.29 via Frontend
- Transport; Wed, 7 Aug 2024 05:09:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF0000449E.mail.protection.outlook.com (10.167.243.149) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7849.8 via Frontend Transport; Wed, 7 Aug 2024 05:09:12 +0000
-Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 7 Aug 2024 00:09:07 -0500
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: <broonie@kernel.org>
-CC: <alsa-devel@alsa-project.org>, <krzk@kernel.org>,
-	<Basavaraj.Hiregoudar@amd.com>, <Sunil-kumar.Dommati@amd.com>,
-	<venkataprasad.potturu@amd.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, "open list:SOUND
- - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH] ASoC: amd: acp: remove MODULE_ALIAS for SoundWire machine driver
-Date: Wed, 7 Aug 2024 10:38:39 +0530
-Message-ID: <20240807050846.1616725-1-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872311E520;
+	Wed,  7 Aug 2024 05:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723007325; cv=none; b=MrKFdl6wVdGPD9svnGLB39YHfK93HRmVDXrhX+GoRrxsS/UPpRXYhwcdynA1xKU8/39v17hgGyOB+LCsZCQtcrMVyXd2zls2J7JQP31yHC3CmVyENcXtnrEF0hbsbUWekK5celAoVWopb3Nlp46jvcE15ZXkESg5NLsMccSA9mE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723007325; c=relaxed/simple;
+	bh=rMJIVJGD7w7rXi3irWQa3y1ymUDOt1gvvDwCfHlyrZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o3qgbIjNDLsBE7AI96+95ICH29ITo+G+fsYyrZgNBMuXgkJsCvNUz5LbzFsp+pE+mG/3MZDjeN13I/9GuTGZHFKSM4mfAC/gSBtDHPG++shmQtU72GU7iz6m5/T6DipjyhqPmPmt2ivllI1LNbKY/oHW5D560l+Ua/OJnjUWLl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c00UH+8l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB898C32782;
+	Wed,  7 Aug 2024 05:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723007325;
+	bh=rMJIVJGD7w7rXi3irWQa3y1ymUDOt1gvvDwCfHlyrZ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c00UH+8llPhhdrDVu+De7lHJN4WoRtwVPFNs4hD+tJakysI7l4+Bqooi/WOMfhH6R
+	 vKt1ixQgRptJg5VlAcNbpFNChNWVa9OD/7w7PsUaqj5Pm2TPb/NMg1n83+++FqXISB
+	 GWoUfO+du5XxmGirSTMZiv7DewWMFSRPcPtUQn/Wq+4fHNM/2dXjZA/XolU6SN4m+C
+	 FI9l49E+ZLUvrAH5GEoKxsYB7XKVdo/NZZiaa40AYhmXRtATXDG3NFqZacQQkMJ0Na
+	 yqJlZDlwNplIFI7dM4yU9wembxMjXCN+eYKi9W4wJzygMmIewaSS9KJHGcCO9Rz41j
+	 JiCpDNtljkLlQ==
+Date: Tue, 6 Aug 2024 22:08:44 -0700
+From: Kees Cook <kees@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, jannh@google.com,
+	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH RFT v7 9/9] selftests/clone3: Test shadow stack support
+Message-ID: <202408062022.34F3558@keescook>
+References: <20240731-clone3-shadow-stack-v7-0-a9532eebfb1d@kernel.org>
+ <20240731-clone3-shadow-stack-v7-9-a9532eebfb1d@kernel.org>
+ <202408052046.00BC7CBC@keescook>
+ <19ee6fc9-94d7-4420-abd3-7cfdf612df0c@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF0000449E:EE_|CY8PR12MB7586:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e4645fe-1c24-49a8-b373-08dcb69f1390
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ymQ0d+C9zn+GqPRHKtatU6P1qHma4553hp1+u4Tuoi649yJ0RCCSwmenWbKs?=
- =?us-ascii?Q?07lLfva4i7KxOjovzh21plZ2EyuvYjsmfeSn3oUfNJDGCiTk4FtmNfTwu4A1?=
- =?us-ascii?Q?I2yYFahjHiYW6cBxvbU+emUbm0BjacJl/9Hi71cHHde8GuiAd5EsivFwM4ZL?=
- =?us-ascii?Q?HEoDvi/nUNUbKa0gTKcFxscUsPEN1Gx3d6a4IgEWnE1rRpjP1o25cJ8Gw3aJ?=
- =?us-ascii?Q?7pKtzMtYFhpHt8VBveXM3H/TGBe4tyODIUou2qioW7eOdErX7cn1Mr1+iQGC?=
- =?us-ascii?Q?e56Mwqmw6h4fA0PvlFGAll0WzCCtGubxSgSvHSHRKKqSYX8GJq/gGfE4JyY/?=
- =?us-ascii?Q?gwLaGHC8Cjvx75MxmXz4RRyV4BG4mLawi9G95g/ndCDZX0c3XPArNfr+rcc6?=
- =?us-ascii?Q?l49k1TBCwmEdgjD3/lmrnJfe62pgEG1Q2t8HuFme7UtfxDaMp+g7JQsAxHUo?=
- =?us-ascii?Q?RKLJM4a26eciwW49bCb1jkDy//uqOh91OV1xRUevvhOoOc2miyxdBe52nAJj?=
- =?us-ascii?Q?O1+NXPk4YJtUyoa1TJ4n3yOIssYDlMWPHT1g/ZBQapBpVcoO0yh3IdF21RVx?=
- =?us-ascii?Q?WafRGoA4B29rQ870HFxzPYtFVskp67QEWsf+fT8/GbolqHRJDfLeapAHcq9o?=
- =?us-ascii?Q?+WOWH7GMBHO083ZBbIT0h1QWls25lrQ4rLxtBZ3X7jekEj++Of/IEEqKaea7?=
- =?us-ascii?Q?uCruchSQqDi8mvU5TEfqe9ISNHCFdYsazMIoF9vVxLD/kW2t266X0OYqk0SL?=
- =?us-ascii?Q?IbPXNuBmB7q7TDoN7ImdHVrBc6O3v27JGnDAlm7FgUVyFc4MX4QVafKTzuTL?=
- =?us-ascii?Q?LpLOr967FhfIAv6o7qjhK4Zv4vbtoIpd3oBHLv7xAFoFNYcif4PZMLRwih0A?=
- =?us-ascii?Q?fVPQryj/i8PRrM7h6qHmVbtGcTwzVPLdVG8ilAMjS4a4avjgsQ220um8nwWf?=
- =?us-ascii?Q?YOdq/4LCJkyPtzqt15/7h1zzkdsUg/P1L8UQaXJv3StjheKeJ9T1PZjk/7oe?=
- =?us-ascii?Q?O7SML9r+fKthjUHpRNiu7gdAk7Ar2eBjbvqSdMZoWDuOw4ZdSrUtqwZ2Loe+?=
- =?us-ascii?Q?EcEPaTh2AIrbG2JHGU+oVrP/LKaunV/Owg0gXUj53UmpgaIt6hmVeTZh68h+?=
- =?us-ascii?Q?o/e1qEh5QlX6+1BVMku8m78x48M1lpe1ZXuGsGhQaBtUn+Z/5ArZ4VsaC4z0?=
- =?us-ascii?Q?2w6QBaWLChxukPSZmr/2flIVBFeTxL2V2eT25xwbhU/fqBSUaNTutaezcMTT?=
- =?us-ascii?Q?LSPfQ8c9nC199sQQSm+DBubhPYIvnDgiJ0IAN/8igYueVhvDdCwNJBum5fIk?=
- =?us-ascii?Q?j9MFH10/QDJqh8tDDzTnBHD8OFTVblYqfyytiB0Oox2Ea/XDZr+lksansJJl?=
- =?us-ascii?Q?koaFhZjP2lwh5zAajgmunYERIgIj3M3pSu74i2AMluiefUJ0WZpGALDRMryK?=
- =?us-ascii?Q?KDTKd1Qnl17as6js4/+uctbhzYeKnErM?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 05:09:12.3292
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e4645fe-1c24-49a8-b373-08dcb69f1390
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF0000449E.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7586
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19ee6fc9-94d7-4420-abd3-7cfdf612df0c@sirena.org.uk>
 
-As module device table added for AMD SoundWire machine driver MODULE_ALIAS
-is not required. Remove MODULE_ALIAS for AMD SoundWire machine driver.
+On Tue, Aug 06, 2024 at 04:10:02PM +0100, Mark Brown wrote:
+> On Mon, Aug 05, 2024 at 08:54:54PM -0700, Kees Cook wrote:
+> > This actually segfaults the parent:
+> 
+> >   # Running test 'Shadow stack with no token'
+> >   # [5496] Trying clone3() with flags 0x100 (size 0)
+> >   # I am the parent (5496). My child's pid is 5507
+> >   Segmentation fault
+> 
+> Oh dear.  We possibly manage to corrupt the parent's shadow stack
+> somehow?  I don't think I managed to do that in my arm64 testing.  This
+> should also be something going wrong in arch_shstk_post_fork().
+> 
+> > Let me know what would be most helpful to dig into more...
+> 
+> It'll almost certianly be something in arch_shstk_post_fork(), that's
+> the bit I couldn't test.  Just making that always return success should
+> avoid the first fault, the second ought to not crash but will report a
+> fail as we should be rejecting the shadow stack when we try to consume
+> the token.
 
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
----
- sound/soc/amd/acp/acp-sdw-sof-mach.c | 1 -
- 1 file changed, 1 deletion(-)
+It took me a while to figure out where a thread switches shstk (even
+without this series):
 
-diff --git a/sound/soc/amd/acp/acp-sdw-sof-mach.c b/sound/soc/amd/acp/acp-sdw-sof-mach.c
-index 3419675e45a9..f7e4af850309 100644
---- a/sound/soc/amd/acp/acp-sdw-sof-mach.c
-+++ b/sound/soc/amd/acp/acp-sdw-sof-mach.c
-@@ -738,5 +738,4 @@ module_platform_driver(sof_sdw_driver);
- MODULE_DESCRIPTION("ASoC AMD SoundWire Generic Machine driver");
- MODULE_AUTHOR("Vijendar Mukunda <Vijendar.Mukunda@amd.com");
- MODULE_LICENSE("GPL");
--MODULE_ALIAS("platform:amd_sof_sdw");
- MODULE_IMPORT_NS(SND_SOC_SDW_UTILS);
+kernel_clone, copy_process, copy_thread, fpu_clone, update_fpu_shstk
+(and shstk_alloc_thread_stack is called just before update_fpu_shstk).
+
+I don't understand the token consumption in arch_shstk_post_fork(). This
+wasn't needed before with the fixed-size new shstk, why is it needed
+now?
+
+Anyway, my attempt to trace the shstk changes for the test:
+
+write(1, "TAP version 13\n", 15)        = 15
+write(1, "1..2\n", 5)                   = 5
+clone3({flags=0, exit_signal=18446744073709551615, stack=NULL, stack_size=0}, 104) = -1 EINVAL (Invalid argument)
+write(1, "# clone3() syscall supported\n", 29) = 29
+map_shadow_stack(NULL, 4096, 0)         = 125837480497152
+write(1, "# Shadow stack supportd\n", 24) = 24
+write(1, "# Running test 'Shadow stack wit"..., 44) = 44
+getpid()                                = 4943
+write(1, "# [4943] Trying clone3() with fl"..., 51) = 51
+map_shadow_stack(NULL, 4096, 0)         = 125837480488960
+clone3({flags=CLONE_VM, exit_signal=SIGCHLD, stack=NULL, stack_size=0, /* bytes 88..103 */ "\x00\xf0\x52\xd2\x72\x72\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00"} => {/* bytes 88..103 */ "\x00\xf0\x52\xd2\x72\x72\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00"}, 104) = 4944
+getpid()                                = 4943
+write(1, "# I am the parent (4943). My chi"..., 49strace: Process 4944 attached
+) = 49
+[pid  4944] --- SIGSEGV {si_signo=SIGSEGV, si_code=SEGV_CPERR, si_addr=NULL} ---
+[pid  4943] wait4(-1,  <unfinished ...>
+[pid  4944] +++ killed by SIGSEGV (core dumped) +++
+<... wait4 resumed>[{WIFSIGNALED(s) && WTERMSIG(s) == SIGSEGV && WCOREDUMP(s)}], __WALL, NULL) = 4944
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_DUMPED, si_pid=4944, si_uid=0, si_status=SIGSEGV, si_utime=0, si_stime=0} ---
+--- SIGSEGV {si_signo=SIGSEGV, si_code=SEGV_MAPERR, si_addr=0x7272d21fffe8} ---
++++ killed by SIGSEGV (core dumped) +++
+
+[  569.153288] shstk_setup: clone3[4943] ssp:7272d2200000
+[  569.153998] process: copy_thread: clone3[4943] new_ssp:7272d2530000
+[  569.154002] update_fpu_shstk: clone3[4943] ssp:7272d2530000
+[  569.154008] shstk_post_fork: clone3[4944]
+[  569.154011] shstk_post_fork: clone3[4944] sending SIGSEGV post fork
+
+I don't see an update_fpu_shstk for 4944? Should I with this test?
+
+And the parent dies with SEGV_MAPERR??
+
+I'll keep looking in the morning ...
+
 -- 
-2.34.1
-
+Kees Cook
 
