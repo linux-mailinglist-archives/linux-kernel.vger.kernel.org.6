@@ -1,163 +1,123 @@
-Return-Path: <linux-kernel+bounces-277853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63BF994A74E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:57:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04C7894A757
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A8E1F25531
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:57:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B35C62862C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E321E4EEE;
-	Wed,  7 Aug 2024 11:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657C11E6722;
+	Wed,  7 Aug 2024 11:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HT9Y7P3l"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="blJDFxq/"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD9D1E4879
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 11:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D201E4879
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 11:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723031864; cv=none; b=rsT+BBY/b0xd6y4jKhgELMqQH2MGexjcVaYLEpnKlg8I+5gphNJcWbIzq7BqFPjMsMFO9NQMzsiaAjvVI+hQBNNOJp2IgO8DtMZOIDBvzE93K012YiEyzNjBhr05u+WfG2U9w4+VAST2i8jC4P/gjlC6YoRbU11vrdgGf/Yh1mY=
+	t=1723031903; cv=none; b=IsoVJ6P82nIdFNPbkEWGAjP/CmcyJMkL4mPMqSp6yQv0TnzwpiD7DMKV3oEO5Z72PGBKqiVcalciZbd4qZFcs3xppbAmoCn+ENejiZARGa74I/35w/bhEBj+338U0igMjL8Ty3FRXurjXw2k4hoJmw7NQd0NQdWxToKCrni15l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723031864; c=relaxed/simple;
-	bh=ekbA+CBk1rCX5m1LXJaRRsfyTg0RWY0moQLq9XtTTSQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F56c3NWq3zJH8QZT6R8cJ+I8zx47JZ8oM0hOr+kQsuZ5XPOQHPJJXhIWWpvDYZyunWIOBb+u/BD10oTkumTgglk6gpO5bLbW+OmnR4K28ScDqbYDC2Du/X0FeWIezssnRDa0pVlLiFQ8I0yqNr2ZCIXg/onGerpeZH3O3Z5vEwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HT9Y7P3l; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723031862; x=1754567862;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ekbA+CBk1rCX5m1LXJaRRsfyTg0RWY0moQLq9XtTTSQ=;
-  b=HT9Y7P3lyjMAyJUjRHlodLuOTAADogCrmJZCghuhMpnvXwh4InPg+ogD
-   T+vbEyoP6uAIph9T2KOwJ8NUtarz3RvA2qPQOTC1x2Pu74dMqlPvXLMFb
-   bC0bdmV7RPLxWpQmSIcsEV/nf7QKVaxKroEG2CrXrVuVumq22EbCm6Gjs
-   nbKSMek89nS6pn0eOmcc7jkaHsIl0I2ARje5YFxqZ4dsTon0FrWyOngo7
-   QtRuADdl3lPgJEBe1HTbclMcqJLl++zHhSXBv4bUaSvutW0bq6P3PpexW
-   XjgigbxClDjJl5zA7hEXWHBLlFtQcPyqWc16TOzVKuU2Qs2dwdkClMOYj
-   w==;
-X-CSE-ConnectionGUID: VLY5vGadSG+qMa5/Pvm+Cg==
-X-CSE-MsgGUID: fIANXNQBTKGvg+HgagNBag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="38551771"
-X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
-   d="scan'208";a="38551771"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 04:57:41 -0700
-X-CSE-ConnectionGUID: zxsB1Y2KQF2TDcc8vqPBsQ==
-X-CSE-MsgGUID: M1aydhkdQx+bP/W0gKWydA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
-   d="scan'208";a="87498630"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 04:57:42 -0700
-Received: from [10.212.63.105] (kliang2-mobl1.ccr.corp.intel.com [10.212.63.105])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id F07E420CFECD;
-	Wed,  7 Aug 2024 04:57:39 -0700 (PDT)
-Message-ID: <bfc6c316-99c5-4115-b8f1-83890d7adf38@linux.intel.com>
-Date: Wed, 7 Aug 2024 07:57:38 -0400
+	s=arc-20240116; t=1723031903; c=relaxed/simple;
+	bh=OFBYbEbxE7IS+Qv7SDH4FfPtfE7Rg5E1zGlU0PewGMg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ogrYcncZtRWnvkmBebRQ9j/oHLQ7pc3ah5WTQ2kwIphYWWX8nc+5rt7SnqIaM+vFu/cQFR8rV8iKQk22mR0Zumls3pLUuzUswmjPtA84IpTt4DjISacVbKDYDqe7Zxd2Q/tDwc04wROmvW6EOvoZiKzWJIwW1BSPioeIUzY0Eas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=blJDFxq/; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ef248ab2aeso26239681fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 04:58:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723031899; x=1723636699; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QvuttAjkPLAVMHVOXYUgt5mVS3UMEYPJRu5N4V28dSg=;
+        b=blJDFxq/ORTmJmQPqk1w9Avq2jTyUhku4gIdJJi+XXJxTE+WrkbqWk5m27q7bQa5Dt
+         sqnkZyLiIHorhiCxkxlKytI8jaXyamYmpokBPlv5mefysHB3MFdD/w1sAjGl4tf3P/5m
+         7jMMMP76TbGgqufgR1hkY3kmuA0HM4Fg6sF/R0i5sc8y/hNAmBBeg1NDFnFyKtbMEgBV
+         DZLYtWbbX6gBsnF8V1eqxNqR22XcZm4bu2FoL7U61Ngt7sBWq6WD+TA3xNXDI3BWEpBs
+         NdY+Lf8iXGRXQvQ0FMsmQvwO42bQBsRu2Tna+Y4Z2kVJGc148ngyrZzM37D/kgtK3QtQ
+         maKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723031899; x=1723636699;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QvuttAjkPLAVMHVOXYUgt5mVS3UMEYPJRu5N4V28dSg=;
+        b=sk+gB8znwNxmkIAiFiowZaMq6I8qcmbv3eGxkwPX8/zylMQhB4VelpBKI0X3/noezp
+         sML0VSGHdM5ac1mHwYYlPRMiZOUKW5yyRhtCJH+QhnnFLkx/sooI3kdvdDroI1yvkYBk
+         SAS0pcquFCIXTLn+hBXPXYTc5R524EQlQGOak/Rw8CX9qumw997aYE146BxtBZelvpnG
+         rZjcPPdGFFFbOY0gRmkVTtKNqmtoMhzbkAxS3MzGfzfDOAzaUVfcf2lPfL9KoAzhzKXY
+         jEJCDKemu25sj3dT1ySBhsn7bNBU/GhRqEMlQUCOX+YIkYfVJ3zgtx9tHLV+1YDNZcm6
+         yJQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVB744flyK3/uZahsMkfEOI/7hmYkHiJa8CAyZdE5hm70MP3FjYx+MSixoDnkMqWqXYfvBJD+XtXz3+RxjUs9YBKQhEyLhrTNb2bvF1
+X-Gm-Message-State: AOJu0YwlbH0Q4zPi/m8kAwpheClub58hLx0NKZwOzLS2TOJYPvMDEpe5
+	XT53zC5QPF1guITGcft1vmN2fYHbK/TElEvhvVWu9UYCKcl37+Jzp6i3T/7G+oE=
+X-Google-Smtp-Source: AGHT+IFMahW1ZeQ+4SdbQZtKjEpytqYR6C40gi+5yPvZkfOWWpUhdF1d4i/TPsvRGYmNl8byMwOdqg==
+X-Received: by 2002:a2e:b790:0:b0:2ef:2c3c:512a with SMTP id 38308e7fff4ca-2f15ab5cce3mr148444871fa.42.1723031898236;
+        Wed, 07 Aug 2024 04:58:18 -0700 (PDT)
+Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d45239sm631017466b.119.2024.08.07.04.58.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 04:58:17 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v2 0/2] tty: serial: samsung_tty: simple cleanups
+Date: Wed, 07 Aug 2024 12:58:17 +0100
+Message-Id: <20240807-samsung-tty-cleanup-v2-0-1db5afc9d41b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/9] perf report: Display the branch counter histogram
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: acme@kernel.org, irogers@google.com, peterz@infradead.org,
- mingo@kernel.org, linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
- ak@linux.intel.com, eranian@google.com
-References: <20240703200356.852727-1-kan.liang@linux.intel.com>
- <20240703200356.852727-7-kan.liang@linux.intel.com>
- <CAM9d7cgQWLdec063U+c1su_O9jchv5HSTQ0S0tQJ_q96hjgjXw@mail.gmail.com>
- <9b7c5c61-ef8c-43a8-bf1c-7ff32b4c8bee@linux.intel.com>
- <CAM9d7cgE=cDyeOyXrRZt53vKD=FRSqQRMz8=f=bGT-gzm2jjkg@mail.gmail.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <CAM9d7cgE=cDyeOyXrRZt53vKD=FRSqQRMz8=f=bGT-gzm2jjkg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAFlhs2YC/32NTQqDMBBGryKz7pQk/iBd9R7iYqoTHbCJJCoV8
+ e5NPUCX78H3vgMiB+EIj+yAwJtE8S6BuWXQjeQGRukTg1GmULWqMNI7rm7AZdmxm5jcOqO1xLr
+ UJZm6gLScA1v5XNWmTTxKXHzYr5NN/+z/3qZRIVV1n9PL5trycxJHwd99GKA9z/ML995HELcAA
+ AA=
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-Hi Namhyung,
+While looking through the samsung tty driver, I've spotted a few things that
+can be simplified by removing unused function arguments and by avoiding some
+duplicated variables and casting.
 
-On 2024-08-06 7:29 p.m., Namhyung Kim wrote:
->>>>            57.55%            2.5M        0.00%           3             |A   |-   |                 ...
->>>>            25.27%            1.1M        0.00%           2             |AA  |-   |                 ...
->>>>            15.61%          667.2K        0.00%           1             |A   |-   |                 ...
->>>>             0.16%            6.9K        0.81%         575             |A   |-   |                 ...
->>>>             0.16%            6.8K        1.38%         977             |AA  |-   |                 ...
->>>>             0.16%            6.8K        0.04%          28             |AA  |B   |                 ...
->>>>             0.15%            6.6K        1.33%         946             |A   |-   |                 ...
->>>>             0.11%            4.5K        0.06%          46             |AAA+|-   |                 ...
->>>>             0.10%            4.4K        0.88%         624             |A   |-   |                 ...
->>>>             0.09%            3.7K        0.74%         524             |AAA+|B   |                 ...
->>> I think this format assumes short width and might not work
->>> well when it has more events with bigger width.  Maybe
->>> A=<n>, B=<n> ?
->> The purpose of "AAA" is to print a histogram here which can give the end
->> user a straightforward image of the distribution. The A=<n> may not be
->> that obvious.
-> I understand your point.  But I think we need to provide an easily
-> parse-able format at least for CSV output.
+There are no functional changes here.
 
-I guess we may use a similar method of perf script in patch 8.
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v2:
+- fix -Wdiscarded-qualifiers warnings
+- collect tags
+- Link to v1: https://lore.kernel.org/r/20240806-samsung-tty-cleanup-v1-0-a68d3abf31fe@linaro.org
 
-By default, the histogram will be output.
-If an user want a number, -v should be used.
+---
+André Draszik (2):
+      tty: serial: samsung_tty: drop unused argument to irq handlers
+      tty: serial: samsung_tty: cast the interrupt's void *id just once
 
-$perf report --total-cycles --stdio -v
+ drivers/tty/serial/samsung_tty.c | 33 ++++++++++++++-------------------
+ 1 file changed, 14 insertions(+), 19 deletions(-)
+---
+base-commit: 1e391b34f6aa043c7afa40a2103163a0ef06d179
+change-id: 20240806-samsung-tty-cleanup-ffae1515a284
 
-# Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles
-   Branch Counter                    >
-# ...............  ..............  ...........  ..........
-..............................  ..................>
-#
-            4.61%          116.4K        0.00%          91
-        A=3+,B=1                     >
-            4.28%          108.0K        0.00%          26
-        A=1 ,B=1                     >
-            3.42%           86.4K        0.00%          81
-        A=3+,B=1                     >
-            2.84%           71.6K        0.00%          50
-        A=3+,B=-                     >
-            2.65%           66.8K        0.00%         178
-        A=3+,B=1          [__lock_acq>
-            2.26%           57.1K        0.00%          44
-        A=2 ,B=-                     >
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
-Without -v,
-$perf report --total-cycles --stdio
-
-# Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles
-   Branch Counter                    >
-# ...............  ..............  ...........  ..........
-..............................  ..................>
-#
-            4.61%          116.4K        0.00%          91
-      |AAA+|B+  |                    >
-            4.28%          108.0K        0.00%          26
-      |A   |B   |                    >
-            3.42%           86.4K        0.00%          81
-      |AAA+|B+  |                    >
-            2.84%           71.6K        0.00%          50
-      |AAA+|-   |                    >
-            2.65%           66.8K        0.00%         178
-      |AAA+|B+  |         [__lock_acq>
-            2.26%           57.1K        0.00%          44
-      |AA  |-   |                    >
-
-What do you think?
-
-Thanks,
-Kan
 
