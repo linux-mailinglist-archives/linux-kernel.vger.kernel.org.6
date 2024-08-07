@@ -1,155 +1,136 @@
-Return-Path: <linux-kernel+bounces-277198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AAD0949DBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:24:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D82A0949DC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC9C71C220A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:24:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ECB31F24543
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120ED18FC92;
-	Wed,  7 Aug 2024 02:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCE018FDC2;
+	Wed,  7 Aug 2024 02:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMycbZv7"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LArhQhKR"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1CF3C39;
-	Wed,  7 Aug 2024 02:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D4D16D33A
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 02:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722997474; cv=none; b=iOYWA0N6vtzW3ivxMOAQIEldwDIa41fVrV7Cm+Eq8A0++7SmSDcOK46dUPCthn2IyjAXQxEsnA8MSvwtEk2mM/XoR0ceojEfhomCeoX3/88Ut77DFBt/jeg3kL6w4Guep5Ey+6Dxuk9BY/l6ZaLLsOXxpvyx3j5S5gym7kmdLw4=
+	t=1722997721; cv=none; b=X+ctKE1BYe6o+DqOMWrmQOQkaHXR2FY7qZ9BQYPNlmip1bO0ViqZSwzpun8FwoKfEthFWSMrwffnuOFt4q/EVUfQqgjKe899sE8zGDg5OWhjs+xmBPJ2+g5jQOngxBtiNi18rsFFhPyhmZrqGjE6b3J0768DO79f+bJrjhwqu+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722997474; c=relaxed/simple;
-	bh=v0kBmE43YlyqgpNzaA7PTbgDjoysRsbIXFDpJihmBDk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pa1j1wfTYmPSp9LzJPT4Njn85w2oFTgbdW6ssJLN29xC/4h/wLGV8MTXz+uBNavp++I5OWf5Eqi1mDeTmubju97hqfeU1MIijzSjaTP66JCXhtIFJVe5cOzxXxGVH/Wzoq/ZMCGD8U4WlxwklIulJWLa/ekENqUWf7j9iveRlnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMycbZv7; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7abe5aa9d5so160124266b.1;
-        Tue, 06 Aug 2024 19:24:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722997471; x=1723602271; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JJVW4JUs6tIGlHuX7z/ZpxScapue3IbzYQ89DLUH3K4=;
-        b=AMycbZv7jPwkkItTWQtMdhcCTI1c4DFABSD8IFoQBaYBPDOtzVC7uChqrS1BMXAt8k
-         VXYfv1cPB9NPmnmVoE1LugAJA8O9WM70GCR1ULdkDMxyhU/IjdkC5/vbfV1dQ/eKPRIl
-         80udKwhovsA0V2giWIxKZ9nV3UH8BoJDU8uqp4HiU1k0i8c7ToHDHu5b6AyrDGPFBdcv
-         houodCpMnFRE6hCVbTs8MqQ9WfhcSUonKZWoHPkt8jOKIm4D99SuPxZg6mxIEFfXu/zY
-         rOibTGJk/sZG9GMYnt9EsQRYC6VckKXw4j/tq2+isV+lb3fQUAeK1nPHG4JvIx1vewCm
-         5cFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722997471; x=1723602271;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JJVW4JUs6tIGlHuX7z/ZpxScapue3IbzYQ89DLUH3K4=;
-        b=nW/m4oJU7XABSKeba+6kk7IkIut6tC+rt8GEzQfoHQt/OF4W8fbH+nEFAfOnSzpCJA
-         rE56c2yEGoHqiV7uA8pcLe74kEbBGry9r1OCOuwdRiWxLTHBVzptPI8T7AePtnqvKpxc
-         QLDEJQlAvCLT7OmBpG9kPPz2FTZOc9YK5DD92M2dH7YlFz90+nS1VT83MdC2mgfH+ihJ
-         CfI4EtOQCnw6zEcN1XchF0SpOrCq8UNtGhKGbRc3CNkU5XteisT5S5a2W1C/BLGsNf1s
-         78OQhMWRrGg0wqIOgzUq7cS+2J7UbrL93atsc8DGwc9HdV1b7+CF2aYKshubQs1i8/7x
-         uACg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLK0+bAzZJEJQO6QQutZ3LBhytrSRRG4EJfVlxnGxWFQ135GasLJ1uY3YZYv/FhzwupUiPOHA1JOFuGxFuvuIvUTXDwfKZ013kSlhrca47+PR58oKnhySQ5joqQ+/Oh1vA4RWo610EBzU/Sg==
-X-Gm-Message-State: AOJu0Yx2338t1yYKQglfH+0erf+P4CuuG327b/dNbcF6J5fXY9LmJuqn
-	g5Gtpo6KxyRNA4SNMF7381HkcHG+9MWEgwHCuFUuGWBudXYQya8Wcmb0mlrrFcz7Q+kXWQnJxb/
-	j61FUGqZa3K5c9lrhsBwAGwMXakx+lG3a
-X-Google-Smtp-Source: AGHT+IHvKOW8fLDHaNjGabpCgZZGfLyCLUdEUF4DS9eMzC4sB/BjG1WaPIZaoz2rNA8u3dRK+cDawyLg5WIOlDNErN4=
-X-Received: by 2002:a17:907:72c5:b0:a77:e2e3:354d with SMTP id
- a640c23a62f3a-a7dc4fae1a6mr1362886766b.23.1722997470548; Tue, 06 Aug 2024
- 19:24:30 -0700 (PDT)
+	s=arc-20240116; t=1722997721; c=relaxed/simple;
+	bh=XYEizIxioPTaNK4XTRmxkn6Dt9oD7j4ACSvOAeNhy1Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dsQSeHsSF7VLfrQtGeOKDA4j6Sc6OWDUQkCTAo94neG5J2W4mrgj+8hKTqJAcOb3+MVbdZdpJLBDjCTG0yZWroMAp/BU+UM0AbEXzgxztKSa6Iad4n3AZ5B5VeEvpPFKTH61GVOgaNLH2pqsR755dd0VPLqdBcQYAYcC2M1Aj9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LArhQhKR; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1722997716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=AHYXMHiHBActcUlgT7XphbKcLiDQZ8kITOmMf3n0jEs=;
+	b=LArhQhKR6C+bl30yJDPf6855wKjk7uWwjH8iasdSsST/fvDOsi6TTxoFeZzVkk0quCG1M2
+	XFdMaD2B6J7l1LMIz3a154wFI6/dLAWFGOyJiXNjSpAbCk41Hs3jEn7lYRYnqy6UF0bhJ2
+	XGwob46ZHrjLvkhyzYK2MvThStcFGoQ=
+From: Jose Fernandez <jose.fernandez@linux.dev>
+To: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Christian Heusel <christian@heusel.eu>
+Cc: Jose Fernandez <jose.fernandez@linux.dev>,
+	Peter Jung <ptr1337@cachyos.org>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] kbuild: control extra pacman packages with PACMAN_EXTRAPACKAGES
+Date: Tue,  6 Aug 2024 20:27:18 -0600
+Message-ID: <20240807022718.24838-2-jose.fernandez@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805100109.14367-1-rgbi3307@gmail.com> <2024080635-neglector-isotope-ea98@gregkh>
- <CAHOvCC4-298oO9qmBCyrCdD_NZYK5e+gh+SSLQWuMRFiJxYetA@mail.gmail.com>
- <2024080615-ointment-undertone-9a8e@gregkh> <CAHOvCC7OLfXSN-dExxSFrPACj3sd09TAgrjT1eC96idKirrVJw@mail.gmail.com>
- <000001dae86b$04955090$0dbff1b0$@wewakecorp.com>
-In-Reply-To: <000001dae86b$04955090$0dbff1b0$@wewakecorp.com>
-From: JaeJoon Jung <rgbi3307@gmail.com>
-Date: Wed, 7 Aug 2024 11:24:18 +0900
-Message-ID: <CAHOvCC6Cwh=x_TJ3COgtOc9fkrdWQDn9fd3jEkZtN8QGaCpMZQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] lib/htree: Add locking interface to new Hash Tree
-To: lsahn@wewakecorp.com
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Sasha Levin <levinsasha928@gmail.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	maple-tree@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello, Pedro Falcato
-----------------------------
-Thank you for your advice.
-Hash Tree is a new implementation and does not have any users yet.
-And it will likely take some time for many people to recognize and
-demonstrate its superiority.
+Introduce a new variable, PACMAN_EXTRAPACKAGES, in the Makefile.package
+to control the creation of additional packages by the pacman-pkg target.
 
-Hello, Darrick J. Wong
-------------------------------
-rhashtable was coded using the structure below,
-struct rhash_head
-struct rhashtable
-It doesn't seem to be a Linux Kernel standard API.
+The headers and api-headers packages will be included by default if
+PACMAN_EXTRAPACKAGES is not set. This changes the previous behavior
+where api-headers was always included, and headers was conditionally
+included if CONFIG_MODULES=y. Now, this decision is delegated to the
+user.
 
-And, as for the Rosebush you mentioned, I checked the related
-information in the link below.
-https://lore.kernel.org/lkml/20240222203726.1101861-1-willy@infradead.org/
+To disable extra packages, set PACMAN_EXTRAPACKAGES to an empty value:
 
-I think "Matthew Wilcox" who developed this would be well aware of this.
-Since he developed XArray which is currently running in the kernel, I
-would appreciate his advice.
+make pacman-pkg PACMAN_EXTRAPACKAGES=
 
+or
 
-Hello, lsahn@wewakecorp.com
-------------------------------------------
-The Hash Tree I implemented uses HTREE_HASH_KEY to keep the tree balanced.
-You can check the macro below in include/linux/htree.h.
+make pacman-pkg PACMAN_EXTRAPACKAGES=""
 
-#define HTREE_HASH_KEY(idx, d, bits)    ( sizeof(idx) <= 4 ?    \
-        (((u32)idx + d) * htgr32[d]) >> (32 - bits) :           \
-        (((u64)idx + d) * htgr64[d]) >> (64 - bits) )
+Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
+Reviewed-by: Peter Jung <ptr1337@cachyos.org>
+---
+v1 -> v2: Build all extra packages by default. Remove unnecessary lines.
 
-The hash keys are distributed using each GOLDEN RATIO value at each
-depth of the tree.
-The standard deviation of the hash key is less than 4.
-The function that tests and computes this is _htree_hash_dev() in the
-lib/htree-test.c
+In a previous patch, there was concern that adding a new debug package
+would increase the package time. To address this concern and provide
+more flexibility, this change has been added to allow users to decide
+which extra packages to include before introducing an optional debug
+package [1].
 
-Thanks.
-From JaeJoon Jung
+[1] https://lore.kernel.org/lkml/20240801192008.GA3923315@thelio-3990X/T/
 
-On Wed, 7 Aug 2024 at 10:42, <lsahn@wewakecorp.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: owner-linux-mm@kvack.org <owner-linux-mm@kvack.org> On Behalf Of
-> > JaeJoon Jung
-> > Sent: Wednesday, August 7, 2024 9:22 AM
-> > To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Linus Torvalds <torvalds@linux-foundation.org>; Sasha Levin
-> > <levinsasha928@gmail.com>; Liam R . Howlett <Liam.Howlett@oracle.com>;
-> > Matthew Wilcox <willy@infradead.org>; linux-kernel@vger.kernel.org; linux-
-> > mm@kvack.org; maple-tree@lists.infradead.org; linux-
-> > fsdevel@vger.kernel.org
-> > Subject: Re: [PATCH v2 1/2] lib/htree: Add locking interface to new Hash
-> > Tree
->
-> ...
->
-> > The Hash Tree I implemented manages the Tree with the characteristic
-> > of a hash that is accessed in O(1).
-> > Even if the tree gets deeper, the search time does not increase.
-> > There is no rotation cost because the tree is kept balanced by hash key.
->
-> How does it keep balancing?
->
+ scripts/Makefile.package |  2 ++
+ scripts/package/PKGBUILD | 11 +++++++----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+index 4a80584ec771..ccdf8ba41f0b 100644
+--- a/scripts/Makefile.package
++++ b/scripts/Makefile.package
+@@ -144,6 +144,8 @@ snap-pkg:
+ # pacman-pkg
+ # ---------------------------------------------------------------------------
+ 
++PACMAN_EXTRAPACKAGES ?= headers api-headers
++
+ PHONY += pacman-pkg
+ pacman-pkg:
+ 	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
+diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+index 663ce300dd06..8de869f9b1d4 100644
+--- a/scripts/package/PKGBUILD
++++ b/scripts/package/PKGBUILD
+@@ -3,10 +3,13 @@
+ # Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+ 
+ pkgbase=${PACMAN_PKGBASE:-linux-upstream}
+-pkgname=("${pkgbase}" "${pkgbase}-api-headers")
+-if grep -q CONFIG_MODULES=y include/config/auto.conf; then
+-	pkgname+=("${pkgbase}-headers")
+-fi
++pkgname=("${pkgbase}")
++
++_extrapackages=${PACMAN_EXTRAPACKAGES:-}
++for pkg in $_extrapackages; do
++	pkgname+=("${pkgbase}-${pkg}")
++done
++
+ pkgver="${KERNELRELEASE//-/_}"
+ # The PKGBUILD is evaluated multiple times.
+ # Running scripts/build-version from here would introduce inconsistencies.
+-- 
+2.46.0
+
 
