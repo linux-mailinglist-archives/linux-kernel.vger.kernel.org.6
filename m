@@ -1,154 +1,172 @@
-Return-Path: <linux-kernel+bounces-277577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 875A294A345
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:48:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4D394A344
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B905289600
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:48:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D12F21C22830
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0591CB329;
-	Wed,  7 Aug 2024 08:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="mt1ISLtg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MWKyLLBt"
-Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EEA1C9ED8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947041C9ED1;
 	Wed,  7 Aug 2024 08:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="apuVklc4"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FD63A267;
+	Wed,  7 Aug 2024 08:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723020477; cv=none; b=k8769VljREpr2HPI9OAxDqBMt/LKgiUqYKwmeVRottNbkgJo6mFUPcLJxPUWtq49ws5oMXE744petkLy2bb23Ma29pLx+xmZ+Eabbqj459Hg11t81gYcvb4rtjnnggcCMOAOx/AaSGswhnqyfLOumevGYJOxuWZpAdAdAGlSUJE=
+	t=1723020474; cv=none; b=tvOQhXpgkPsIboP4Asp/vaO4N5hmIjgsrpGF4+SBONxgLJzinp2NzEaq6mLtSiv3Cjkk8GtwpL/12LhZOr+3/C1Wjl9VcMSuEGh9IcBOn9NzW0RUjrMQki78EsM354mns4DotNSGTBSRydqM7n0yNSdGnpxdkVRiRSyV5+wNB80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723020477; c=relaxed/simple;
-	bh=D/4g9iSpdCu9/6X1854okWB4SvxpMW9c9SdjmIf3uLo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=gmoMKz9qra41NqF17LKuk7L+2rHTxHbyillIV4fX/hV9O2XsxVa9GnCW5aD3DixIat9TbmVaFMuNnPfHkn9p1vnQo7D9iEnxDah3paeLrEd9ZFQr92f83mXRaR48x2gP2eTgLebnnNRIAUrUJRC+mwo/Btgm0ScRXuQ5SCnUoYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=mt1ISLtg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MWKyLLBt; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id BB9F5138FCCB;
-	Wed,  7 Aug 2024 04:47:54 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Wed, 07 Aug 2024 04:47:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1723020474;
-	 x=1723106874; bh=8cdJSPVUAdCYHD4i9n6JllUQ32KC29sx+ZdNKg4EM2Q=; b=
-	mt1ISLtgJ4wPrVpN8XOSY6V2fc7T6NL6YDE28T+dgv6vXmLuLOJcU5pz4woOUb3e
-	ReAGYhEeIVSshGhHWA8im6UczAR20Yy0qsW396qqDYQ1iEq887CcCjf2h2nUqhNh
-	fI6WzUvbA3RTvKZhpeQVIuYn/rjW8dicjN6F2MSpIphADJRDpv1qI64P5rUt42dj
-	WBpdiL+jiQrS8f65MKmhcxCjld4NfGxCwp9RrMhzRkrPv4ChWQH2kRiqR9Il9IxW
-	Nn5BxJhaJuSe9PbDTu4zLZI17axf+uSxYClqL9OgD8bQ2uhEM4mOjY4lA8m7P5Fy
-	P34cR+Q6iPmQUY2ndccOJA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723020474; x=
-	1723106874; bh=8cdJSPVUAdCYHD4i9n6JllUQ32KC29sx+ZdNKg4EM2Q=; b=M
-	WKyLLBtl8lMsgJgcxKinlxOEhOA/emue/bwI8nkTo4b6++1Zsj+oBAzZAj6ghV6Q
-	+Cq4UyDgJyz3m99EwTF+TAga2FlY0XJqG75hZ8AYwR2meRV2S3D0FtEs9nL3aNbz
-	RS2JWWnxhHHyPTPaRlu1Y8MONGmFM3mh+1tCKWM8+hFZRmKx5pJmkug3Ap00hhpr
-	FXwZmmTstnOnGdiJInx79jS33NBXp1hWUq60loFHrkWTHKHU9W9RiliHMNkXzum8
-	ea40B36uDsS7CYUZQoIXcxVOHDoydNQ/2bP9vH4uqij3sO0kR6c1AQ8pM61BhpbC
-	662+4+Lkj92YFArgGMEJw==
-X-ME-Sender: <xms:ujSzZkbyLShVvafvELKLrQJ8LU_Il43rjUcyQ13XW2yH1i1xFYSRqw>
-    <xme:ujSzZvYnubeJ9o-xkvo0uhyxKJjcZ98jAwjzHsUSKFlNCCFJ5FEAl-5_dkkL81CJ9
-    d-grAHgLTjVYzTAhBk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledtgddtkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdv
-    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:ujSzZu9f5bXwwafSDSWl3osS70qcTCiNjITSjd91_Nf3Ljy0vS4hEA>
-    <xmx:ujSzZur-EX7Rkrt8W-SjNq_hXfdncDFDBoARU450Dgwqwl4egT2n1g>
-    <xmx:ujSzZvqJqwBhjuDoGEr1U3QeEf9P8ccTsFNl8vEkZw-N9GxZPXd4cQ>
-    <xmx:ujSzZsT3XubuL_13vJq_7MV2WtO1wisvJieE0MkuvI2pEHbk1dCEug>
-    <xmx:ujSzZrowJb6m6X8hk1pnkU-pyGTzSCwheNommCjWwymBfNHN60yugiKS>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 17D47B6008D; Wed,  7 Aug 2024 04:47:53 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1723020474; c=relaxed/simple;
+	bh=bZUZlG3iZqWM6zNuA9QoCZ+B1pqhylsgwBvpTEWeh2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ca/Y/ObkaC5IpnnLOFlsZXeYb0RaSQH/qvHl9gz9LFeAvSXnC7hBJTXHgIZoIlR8DTlGkZRnmwd1cCuHZ1ZL2KsfbcMOoV/trCm65ZWiqW5aGIryOYx35tte9JwIp9BugnZw7I2R1yMkyJxH4ewP1lkRuuqGt+oPru2DZlcwujs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=apuVklc4; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5ba482282d3so2018746a12.2;
+        Wed, 07 Aug 2024 01:47:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723020471; x=1723625271; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KKZKz+yYZuMxg39mJXtEjiiI7Fxr+H8aAatxlvRJKwM=;
+        b=apuVklc4fhH68KGqr0TJ2D8DTXtMBSu2rCqc654tWDRxKuBsc5MbGbngXXwAFDoThe
+         kGO9OdSpXDFyih8UrwActSIwww+UHOfQqLOkcPntyXeaBd4/KgMEbdCbWT4NPML73PcV
+         DacpiWJwmbJssFecRBbEPDFBHYDirHOL4WagtxQXGBsyPSOh6JUvZ7eskjhaGF4s2zJy
+         G6NXirlUsmv1izmbO0Th2SqKnd4/p5GVcHw+Ow8IbqVHaKDnwdClLDhs4jEt3VGcdlNl
+         Yg7D9DmAltoFX528BDbPhF+IceGno+8Ew+sFPGe4+pOSmoncBl8fDacXF10G+tixCauu
+         qloQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723020471; x=1723625271;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KKZKz+yYZuMxg39mJXtEjiiI7Fxr+H8aAatxlvRJKwM=;
+        b=lVGdjX9O8CjGNmsvQ6BEkVGZnkXVyRL2e3oBTllh5MuW6P4wccujaS7K4VCjx5ZcFk
+         CJoWz6LnOr8hf6FeP6pkUdcGdfs9ZDUUXvg6ilc+fVkCnZ7zuMMtw5BI2Lv9gtaBHc1o
+         RWnXn2M5l5lmiP4jL+gv8BWHoPp0gv3UhjbXP/HCmDxHTJElDaA48NE9QCcWE+G4cwES
+         R6SIYLpqo+wTCvSmjugve9iB/fn/3AdQsVYk73glKbXahXFTiuwoCjT/+/iXIx2guZ3i
+         OGTtJ8wTbK9zMbmGaHfY34M6gB0rmGFRf/2bOy0GGJGDIatCeVduRS4rGraco018/FqO
+         aO7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU7J95BIAZ5QmawD/1BL1NpmLT1b5Z3z04Mw1PyZCI2/wnkpr8Jk4xUYtVGQ3EOklFLVDBmrYGEDp5FsbSB9ecUsfHr8ozSbF67Cdj1QQDoTIenXd4tTpC1xYs2o6v37aON623LpPKePMM=
+X-Gm-Message-State: AOJu0YxufGcb2Z2e6/Re4mHbbneWhCyI2oc6G7/kLyxqxC6XUz/LJHS4
+	olIfQmnoMr/7ysDuoTjDHLu+du3DGB5ifw60fQpy8S7pJLyPhLDyeVzsoU0pfBnMnBX2WE8MVfR
+	SOZQAPnHFqNu82VZGzXmEJfcgGTypEofv
+X-Google-Smtp-Source: AGHT+IHbc9us9SbX5Undu4ye5qsyec9b817rZTm3Gri0WK3DQmIwf9wychGWJIgbFFASj5CYnTxEIJVm0UHa6T3jBZc=
+X-Received: by 2002:aa7:d755:0:b0:5a2:1693:1a2f with SMTP id
+ 4fb4d7f45d1cf-5b7f39e01e5mr12282162a12.12.1723020471017; Wed, 07 Aug 2024
+ 01:47:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 07 Aug 2024 10:47:28 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Pierre-Louis Bossart" <pierre-louis.bossart@linux.intel.com>,
- "Arnd Bergmann" <arnd@kernel.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
- "Peter Ujfalusi" <peter.ujfalusi@linux.intel.com>,
- "Bard Liao" <yung-chuan.liao@linux.intel.com>,
- "Ranjani Sridharan" <ranjani.sridharan@linux.intel.com>,
- "Daniel Baluta" <daniel.baluta@nxp.com>,
- "Seppo Ingalsuo" <seppo.ingalsuo@linux.intel.com>
-Cc: "Kai Vehmanen" <kai.vehmanen@linux.intel.com>,
- "Mark Brown" <broonie@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>,
- "Takashi Iwai" <tiwai@suse.com>, "Nathan Chancellor" <nathan@kernel.org>,
- "Nick Desaulniers" <ndesaulniers@google.com>,
- "Bill Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
- "Brent Lu" <brent.lu@intel.com>, sound-open-firmware@alsa-project.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev
-Message-Id: <b821f357-8a11-4814-8ae0-e0e8d8cd4afb@app.fastmail.com>
-In-Reply-To: <250c63d7-d81e-49ea-ac8f-2e3496075f20@linux.intel.com>
-References: <20240807080302.2372297-1-arnd@kernel.org>
- <250c63d7-d81e-49ea-ac8f-2e3496075f20@linux.intel.com>
-Subject: Re: [PATCH] sound: sof: ioc4-topology: avoid extra dai_params copy
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20240807-imx290-avail-v1-0-666c130c7601@skidata.com>
+ <20240807-imx290-avail-v1-2-666c130c7601@skidata.com> <6072611.lOV4Wx5bFT@steina-w>
+In-Reply-To: <6072611.lOV4Wx5bFT@steina-w>
+From: Benjamin Bara <bbara93@gmail.com>
+Date: Wed, 7 Aug 2024 10:47:39 +0200
+Message-ID: <CAJpcXm6Bv37GUsttdGDDgX1Do+KC_xVSwHV7M5_aEuvhuv6u3A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] media: i2c: imx290: Check for availability in probe()
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 7, 2024, at 10:37, Pierre-Louis Bossart wrote:
-> On 8/7/24 10:02, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->> 
->> The snd_pcm_hw_params structure is really too large to fit on the
->> stack. Because of the way that clang inlines functions, it ends up
->> twice in one function, which exceeds the 1024 byte limit for 32-bit
->> architecutes:
->> 
->> sound/soc/sof/ipc4-topology.c:1700:1: error: stack frame size (1304) exceeds limit (1024) in 'sof_ipc4_prepare_copier_module' [-Werror,-Wframe-larger-than]
->> sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
->> 
->>>From what I can tell, this was unintentional, as both
->> sof_ipc4_prepare_dai_copier() and sof_ipc4_prepare_copier_module() make a
->> copy for the same purpose, but copying it once has the exact same effect.
+Hi Alexander,
+
+On Wed, 7 Aug 2024 at 10:33, Alexander Stein
+<alexander.stein@ew.tq-group.com> wrote:
+> Hi Benjamin,
 >
-> Humm, not sure. I think the copy was intentional so that if one of the
-> fixups fails, then the initial hw_params structure is not modified.
+> Am Mittwoch, 7. August 2024, 10:10:28 CEST schrieb Benjamin Bara:
+> > Currently, the V4L2 subdevice is also created when the device is not
+> > available/connected. In this case, dmesg shows the following:
+> >
+> > [   10.419510] imx290 7-001a: Error writing reg 0x301c: -6
+> > [   10.428981] imx290 7-001a: Error writing reg 0x3020: -6
+> > [   10.442712] imx290 7-001a: Error writing reg 0x3018: -6
+> > [   10.454018] imx290 7-001a: Error writing reg 0x3020: -6
+> >
+> > which seems to come from imx290_ctrl_update() after the subdev init is
+> > finished. However, as the errors are ignored, the subdev is initialized
+> > but simply does not work. From userspace perspective, there is no
+> > visible difference between a working and not-working subdevice (except
+> > when trying it out or watching for the error message).
+> >
+> > This commit adds a simple availability check before starting with the
+> > subdev initialization to error out instead.
+>
+> There is already a patch reading the ID register at [1]. This also reads =
+the
+> ID register. But I don't have any documentation regarding that register,
+> neither address nor values definitions. If there is known information abo=
+ut
+> that I would prefer reading the ID and compare it to expected values.
 
-It's clear that one of the two copies was intentional, however
-the same logic exists in the caller, which passes the copied
-ref_params into sof_ipc4_prepare_dai_copier() instead of the live
-'fe_params'. If sof_ipc4_prepare_dai_copier() fails, the copy
-is discarded by returning the error, and otherwise it gets
-passed on to sof_ipc4_init_input_audio_fmt().
+Thanks for the link - it seems like Laurent has dropped the patch for
+the more recent kernel versions on their GitLab.
 
-> Also not sure why a compiler would think inlining such a large function
-> is a good idea?
+This was also my initial intention, but similar to you, I don't have a
+docu describing this register, so I am not sure where the info is coming
+from and if it really contains the identification/type info. Probably
+Laurent has more infos on that.
 
-I think clang prefers to inline large functions in order to better
-do larger scale optimizations. gcc starts by inlining small leaf
-functions and doesn't get to this one.
+Best regards
+Benjamin
 
-Note that the actual problem of having two giant structures on the
-stack does not change through inlining, the risk of overflowing
-the 8kb thread stack and the cost of maintaining these variables
-is the same. The only difference is that clang triggers the warning
-because it sees the total stack size where gcc doesn't see it.
-
-    Arnd
+> Best regards,
+> Alexander
+>
+> [1] https://gitlab.com/ideasonboard/nxp/linux/-/commit/85ce725f1de7c16133=
+bfb92b2ab0d3d84efcdb47
+>
+> > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+> > ---
+> >  drivers/media/i2c/imx290.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
+> > index 4150e6e4b9a6..a86076e42a36 100644
+> > --- a/drivers/media/i2c/imx290.c
+> > +++ b/drivers/media/i2c/imx290.c
+> > @@ -1580,6 +1580,11 @@ static int imx290_probe(struct i2c_client *clien=
+t)
+> >       pm_runtime_set_autosuspend_delay(dev, 1000);
+> >       pm_runtime_use_autosuspend(dev);
+> >
+> > +     /* Make sure the sensor is available before V4L2 subdev init. */
+> > +     ret =3D cci_read(imx290->regmap, IMX290_STANDBY, NULL, NULL);
+> > +     if (ret)
+> > +             goto err_pm;
+> > +
+> >       /* Initialize the V4L2 subdev. */
+> >       ret =3D imx290_subdev_init(imx290);
+> >       if (ret)
+> >
+> >
+>
+>
+> --
+> TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Ge=
+rmany
+> Amtsgericht M=C3=BCnchen, HRB 105018
+> Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan S=
+chneider
+> http://www.tq-group.com/
+>
+>
 
