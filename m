@@ -1,131 +1,120 @@
-Return-Path: <linux-kernel+bounces-277354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32027949FA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:09:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF437949FA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B552E283CCC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:09:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A2D81F2471B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF7A19D887;
-	Wed,  7 Aug 2024 06:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7359819DF49;
+	Wed,  7 Aug 2024 06:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="FwvCYAMx"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HdnzMYuZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83B019D081;
-	Wed,  7 Aug 2024 06:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723010946; cv=pass; b=YMgLnGYCLZwoWo6fOKtGs/X3girljah6CapW1rGY3mel4bhIUjS1mRKfthoju7DAKt9baA0Ls1tT6vgXd7rrARRfjySspTwlhVZAQ7ouLWXhDFvpg8HU31snwhf3DD4QSVkKPoyF3ZJGAReeriG+M86Qi69mA6iOVe2y6+/ExAw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723010946; c=relaxed/simple;
-	bh=zqix6/Y9EAnHCD78hNdu6wnaiC7NJWBNTLc/qLIXYdA=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eeCpDRxm11XkF1oPL31R9RY+BGXItOcyFDCslLBOOaAk7KEGsDTok0T99R3JEnP9oVUNFLaRTwZTPumMwr1G92dVVf0NN83vlgidBCYPyG75+Mox6dm8ActfrrNj4ZRJKQi6ypY+Jo5yjVZ/7iVpbiWj+52UXRkRf1YMLxX0zDI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=FwvCYAMx; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: Usama.Anjum@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723010932; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=BJGi0Yr1kJwYlWqEqTxxQWcZ6uqgfhczC3g5lkJ8PwOQwDvC71yqQTW2dFrxXkAaPPMUjAZc6M8oKfPZrs5Rw90u+Ad0U19VJVRbE88Dth4HIWC8oD6CYdbf2lf9d7+zJlt2Wng9isupyouPm9LJsW/oGQzP4WEuG+nTWXqVgBM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723010932; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=DxRlp7hpua5LRbqfeatf97wHNzDk4//q2dzIKmCGBiQ=; 
-	b=jM/bgaDCvcy3mMA8u+5k/8IJxjDacWa1frJEys6LmcMIBSfyL6EmyTp6hPRmCRDyo+0HYZ5WkXoLnci8N36L4O13/b5MnsGHKcEUC3Lnh+Ff+c3k58qawHT/BnY2oAbbCOiXpwd2vITa81ZGwT2YHPubZxPp2cQsw6N2NHZ0wA4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723010932;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=DxRlp7hpua5LRbqfeatf97wHNzDk4//q2dzIKmCGBiQ=;
-	b=FwvCYAMxRIMvfuSXZH4qcNjayrbIG6++Gc9lzOG1F5MoQD9F3XtSJddgWLjXXxLn
-	UxiBXNVbqvlIUHlfjY+aDyfo2c0hZwetCOrodlBdO/oEiyB+2KDxFPnGSKZBApO5/v1
-	zMVWZUxu2METARsOeVUKEt2yDs5PMqrSj1Nlbs4I=
-Received: by mx.zohomail.com with SMTPS id 1723010930974862.6719533491794;
-	Tue, 6 Aug 2024 23:08:50 -0700 (PDT)
-Message-ID: <ca500f5c-57e7-43bc-9a1a-015021582af2@collabora.com>
-Date: Wed, 7 Aug 2024 11:08:43 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CAC19D081;
+	Wed,  7 Aug 2024 06:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723010950; cv=none; b=XQkX1eHvadP0KUBjXaWizDBWvcreVpg23uICuof5SwT6qqERZ+yPj5gGVMSjuTV6kF9c2it0fSksRPTUPe0m/CpG3qkucw+QY2KEJSDqcsJm5qgl9q/AUVcvp+4YDFNpA4R5dDN3/hRRUP3ilSyFzloU+/7eRTvfnbtw5lNevW0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723010950; c=relaxed/simple;
+	bh=SuxFkzjIjdP0NFpzTyDjZFERVPF4wIASkMgOigUWRKE=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=LyI1eYYEzeBNGfOmvP+ibft0a1haDzdRK+9KDWPP6Wsl9oar9g3bAKl8uXEfex3ByIv+J9c191fKI+TjIFGFdZPenBzoMfesD/BP5+kjtUpG8QQbPtJYRfj3hWrl84gVWYNH29Mwl/gRCay/mcStuvO9oVVy0t+Lwij+sPvOYVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HdnzMYuZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B830C32782;
+	Wed,  7 Aug 2024 06:09:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723010950;
+	bh=SuxFkzjIjdP0NFpzTyDjZFERVPF4wIASkMgOigUWRKE=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=HdnzMYuZ4TZqqo6zRJqsZ1OqX4n9QZWmqMK2Ravq5beXVYX2GfvZ35zSAh7jRSFVa
+	 5pFyfHVfZX267w/aCG2i7RGUcIa4O8csXTBfi1VYg9uWuYRZO7OiWPIzrghDRsLDOR
+	 HD6DpjRfKcltql+7jDkgAEdzzW4qMztE/rbb6hAO6gY3w8zDgsqI8B3bDLT0KNvhB8
+	 pWtzVlG4RvXK7ZZm8FyuQcZM7wR7o33tcDzWu1GFMabmr1j0sXo5aBVCTvSNxf8RqH
+	 UYbBiy/FwgFlOExS3jscuP/9rhafdWSktC5YU8dSAE0uumyTgOU9US0NqxilIGIzJf
+	 LPFzujPS4yH+w==
+From: Kalle Valo <kvalo@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,  ath12k@lists.infradead.org,
+  linux-wireless@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: linux-next: request to include ath.git tree
+References: <87ed7163yd.fsf@kernel.org>
+	<20240807080423.45efb506@canb.auug.org.au>
+Date: Wed, 07 Aug 2024 09:09:07 +0300
+In-Reply-To: <20240807080423.45efb506@canb.auug.org.au> (Stephen Rothwell's
+	message of "Wed, 7 Aug 2024 08:04:23 +1000")
+Message-ID: <87wmks50fw.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, kernel@collabora.com, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH] selftests: kvm: fix mkdir error when building for
- non-supported arch
-To: Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240806121029.1199794-1-usama.anjum@collabora.com>
- <6a3b2f3c-b733-4f64-a550-2f7dcbaf7cb7@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <6a3b2f3c-b733-4f64-a550-2f7dcbaf7cb7@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain
 
-On 8/6/24 9:00 PM, Shuah Khan wrote:
-> On 8/6/24 06:10, Muhammad Usama Anjum wrote:
->> The mkdir generates an error when kvm suite is build for non-supported
-> 
-> built
-> unsupported
-> 
->> architecture such as arm. Fix it by ignoring the error from mkdir.
->>
->> mkdir: missing operand
->> Try 'mkdir --help' for more information.
-> 
-> Simply suppressing the message isn't a good fix. Can you investigate
-> a bit more on why mkdir is failing and the architectures it is failing
-> on?
-> 
-> This change simply suppresses the error message and continues - Should
-> this error end the build process or not run mkdir to begin with by
-> checking why $(sort $(dir $(TEST_GEN_PROGS)))) results in an empty
-> string?
-The tests are specified on per architecture basis. As KVM isn't supported on arm, there are no tests in TEST_GEN_PROGS and it is empty. While lib.mk infrastructure has support to ignore and not build anything in such cases, the Makefile's behaviour isn't robust enough.
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-I think the better fix would be to check if TEST_GEN_PROGS isn't empty and then call mkdir. I'll reiterate and send the fix.
+> Hi Kalle,
+>
+> On Tue, 06 Aug 2024 18:55:38 +0300 Kalle Valo <kvalo@kernel.org> wrote:
+>>
+>> ath.git is a tree for Atheros and Qualcomm Wi-Fi drivers residing under
+>> drivers/net/wireless/ath/. Jeff and I are the maintainers. Over the
+>> years multiple people have been requesting including the tree to
+>> linux-next and finally we are biting the bullet.
+>> 
+>> So we are requesting to pull two branches from our ath.git tree to linux-next:
+>> 
+>> git://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git for-current
+>> git://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git for-next
+>> 
+>> for-current feeds the wireless tree and for-next feeds the wireless-next
+>> tree.
+>
+> Added from today.
 
-> 
->>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->>   tools/testing/selftests/kvm/Makefile | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
->> index 48d32c5aa3eb7..8ff46a0a8d1cd 100644
->> --- a/tools/testing/selftests/kvm/Makefile
->> +++ b/tools/testing/selftests/kvm/Makefile
->> @@ -317,7 +317,7 @@ $(LIBKVM_S_OBJ): $(OUTPUT)/%.o: %.S $(GEN_HDRS)
->>   $(LIBKVM_STRING_OBJ): $(OUTPUT)/%.o: %.c
->>       $(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -ffreestanding $< -o $@
->>   -$(shell mkdir -p $(sort $(dir $(TEST_GEN_PROGS))))
->> +$(shell mkdir -p $(sort $(dir $(TEST_GEN_PROGS))) > /dev/null 2>&1)
->>   $(SPLIT_TEST_GEN_OBJ): $(GEN_HDRS)
->>   $(TEST_GEN_PROGS): $(LIBKVM_OBJS)
->>   $(TEST_GEN_PROGS_EXTENDED): $(LIBKVM_OBJS)
-> 
-> 
-> thanks,
-> -- Shuah
+Thanks!
+
+> I have listed just you as a contect, should I list anyone else (or a
+> mailing list)?
+
+Please add Jeff and our ath10k list (all our build reports go to the
+ath10k list):
+
+Jeff Johnson <jjohnson@kernel.org>
+ath10k@lists.infradead.org
+
+>> Because our for-next branch is very active one problem with is that the
+>> chances of having conflicts between the branches is high and that would
+>> be extra work for you :/ Do you have any suggestions for this? For
+>> example, should we create temporary merges for you or something like
+>> that? Just for this reason we do try to keep the number of patches going
+>> to for-current minimal and only take important fixes.
+>
+> Well, your for-next branch should only contain patches that are ready
+> for integration i.e. reviewed and unit tested, so it should not be all
+> that busy.  I expect you may also have a development branch for patches
+> you are still testing.
+
+Yeah, we do have a separate pending branch which is used for testing and
+review.
+
+> Otherwise, you should concentrate on your own tree and I will notify
+> you of conflicts (and ask advice if the conflicts are too difficult
+> for me to resolve).
+
+Great, that sounds good.
 
 -- 
-BR,
-Muhammad Usama Anjum
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
