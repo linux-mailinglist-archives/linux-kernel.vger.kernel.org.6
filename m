@@ -1,146 +1,199 @@
-Return-Path: <linux-kernel+bounces-277228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD16E949E35
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:16:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39CC6949E38
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E044C1C21506
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:16:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8C0F28529B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7533F18FDDE;
-	Wed,  7 Aug 2024 03:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDA417AE0C;
+	Wed,  7 Aug 2024 03:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LRgQXWx+"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nQtyPQ0T"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB80D2119;
-	Wed,  7 Aug 2024 03:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F206A2119
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 03:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723000569; cv=none; b=ZaldYVkeC/3KuLhbie7R7YJ9FzJRCEuZO9lBXjsD7RvjwC2sIzS00ywMHKi0R50iYqXcn++kmyXd1r5B96TGd3zFueX1jFYiJv3i4xhRhRi+RKXzqqd2XxWwy6ASSEPkCVMG4X+M+WDmoOTa4BcL8noKn448BAi7zNvIeSJRn9Q=
+	t=1723000586; cv=none; b=XK7yI0PP6j3EX5OH/FBPfGhhK8Ur22G5GZnmH1nO9AWI/YhL9U4f/Dns5BACHX0FAaJ4KIwEkZzdcOm6dn0882h8GpUFw9vTOKdxNZTgR8aulByYj3TZU0hKOxwZVWRFd8Y46/u2GItwGCcPs2H/G/ea9xFyvNMuPodwacJ2r1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723000569; c=relaxed/simple;
-	bh=MVVZFAHyYiH3YNyVOjsU+QFdGF4cWfs7Y+jCi6DEun4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DfvilRj+xjUZOf4Uuzyl7JIlXpBuD/lTmQbwvWG/mNLOFwaSz7QvIEVSpH5QwD/eZbKYwzPYEWcmT1bh45AIddZKPusK+kfkJn2ovsn6WbMQbyUpU/bCyeg5+zNXbLzbr21jAkJaxrhg7Nwa9IKm/5yDFDYAEA+CvWZYV40hKO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LRgQXWx+; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4f89c9a1610so487827e0c.3;
-        Tue, 06 Aug 2024 20:16:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723000562; x=1723605362; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MVVZFAHyYiH3YNyVOjsU+QFdGF4cWfs7Y+jCi6DEun4=;
-        b=LRgQXWx+nvJ6P//CzZEwA2mXyPzidTnIp8aacMb9Djcel4hJEV/Y+MI8GVw1m/QytT
-         /0UFx+avUUE2K50Kg28hucgGtHya3weql7+mPhPEB54Er3e6+RTxa4//h54dwZI9Oq9K
-         G0yT1HltEQFWw2m6Do9IS+V7s8uBRg/9Htg8BWTYQR6bktSYtfW6d/ofO5xDpLhV/Ou3
-         RXPzEopJKj+i3osGfL84p9wapnLB7gtSBtsgqRt4an6/VdNun4C488nOlWlypwj1lQ8p
-         lH1h4MQJLUAQr8O0YoK8kWq1ukEayUzOaHMWDenQkORN5nMdBgJkwK6wphJBMhmu2lUr
-         mo6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723000562; x=1723605362;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MVVZFAHyYiH3YNyVOjsU+QFdGF4cWfs7Y+jCi6DEun4=;
-        b=GmUcC9RoHZzHHZ+Z7q8ySOFEYnZPRifcWxckxaUiwx4mzgp96H4yZKEFcFQPGY+nD9
-         xo8abH/M5ul5sHClzhyWuGIMxKoW8l7PNSOLJTjhEmG4UnIDZhUovuD/NQNKlfNcYrs5
-         dwoYivSwg8Txp7Vtyw4b9oWKfTzmghbNpfjRUWdNKzyc3OBILB4TFgeb4fS46PQdxzTw
-         d15mBMEiFUvE7zz/J9gM/TxboDiXFnsIEa8bMWeqFzp5QEnPYwit4VYILV10df5UwLZc
-         DeDOOq2wJN1+JwJOLYvJ6UHseTWljNBeE762G6ehc9Uv/+EGWGhpamIrXrlrZVMgBhli
-         aI4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVvjWFqw66szxXfXjX/QeUiWLa8+4Uracq9IQM4R6NQCzWTG4LucrdUgs+K2IOFMCeXs/bk0XU7rnAidympwk5k7B3PZLy12qI2afMdK0LcQ/0X8Rnf7sp9GsfuhB0yEXRzuxY9mg+BL/Tacf7r0LeNjFZY6s9jzc+xQm1y3o1Mbw==
-X-Gm-Message-State: AOJu0Yzy9zCkMlx70y79VCxB+ZuuI6i5Yp1y5ghKP3UBmwacPXkCV8jP
-	In8bVzfJw8Wq4kh4m9qsZ4Zrkle2+MiDLOuB6Oln4t9Cc433PY4s40swpkA6OJ90dx1jnKJpuDn
-	ldHC2A6pNK4I26S+9hrvseJcsf5o=
-X-Google-Smtp-Source: AGHT+IG59tVZoDbMVzvzKSAK7l7FJc0CnktNyxiTyYpSu6vNAw//uaeeKNKHAHiW6OEseSSZkrK4J9uetrKiJZNhEyI=
-X-Received: by 2002:a05:6122:3120:b0:4f6:a7f7:164d with SMTP id
- 71dfb90a1353d-4f89ff4e8c4mr19665545e0c.8.1723000562417; Tue, 06 Aug 2024
- 20:16:02 -0700 (PDT)
+	s=arc-20240116; t=1723000586; c=relaxed/simple;
+	bh=FzNLjTPfou6CK/yKMp4OHflCEackPGU8SxE//ZWgKJ0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=NwpiXm5u1GKT+0ODOtkh97HWJE7EjsL/AzhdefSrF2AYvU6VLSK8UbCf0Tc9A0Bbdv66NN5CULF1MSS9fDKEwwoaPK/Q5ccclhnSEg8LByk2uZUE9ZOLbp3rBdwRIEcdXhAonAE+xfR/enxFj5WCrSxRAiayfUK25ueRYy4YRjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nQtyPQ0T; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240807031620epoutp04407556a97001b08a40e1024157851c32~pU_ZIDRp71422614226epoutp04c
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 03:16:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240807031620epoutp04407556a97001b08a40e1024157851c32~pU_ZIDRp71422614226epoutp04c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1723000581;
+	bh=4S8yRftVJB84hYtDxOLjR85E5LvSHUbCJOtjuuOSh5w=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=nQtyPQ0T81tRfWdNHejeFF2yCw5KRDf2QVv2BqPrHSRFhpwyCBwDd/MKCcvGin3xv
+	 wYyyKDpPieFjn5ai/OjTv/UKTN52rLutpDwxsJHPaSwMmhTr69BZ76rKXguGKFOsXl
+	 6eiXMZs+8DAOZlW5z3DnaNNXUtDCjxiuRoF6Do2M=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240807031620epcas5p4bac06811e6add2dd2ada0d762caeb6b6~pU_YX2d7J0870508705epcas5p49;
+	Wed,  7 Aug 2024 03:16:20 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4WdwLV2W3Bz4x9Q2; Wed,  7 Aug
+	2024 03:16:18 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	11.8E.09743.207E2B66; Wed,  7 Aug 2024 12:16:18 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240807031558epcas5p444e86f971799210e63d8f3a66371bd94~pU_EKzGBK0870508705epcas5p4I;
+	Wed,  7 Aug 2024 03:15:58 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240807031558epsmtrp23583b006dd7cf9168cfd8076b0a39f78~pU_EJyQXC3064330643epsmtrp2f;
+	Wed,  7 Aug 2024 03:15:58 +0000 (GMT)
+X-AuditID: b6c32a4a-3b1fa7000000260f-64-66b2e7022925
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	36.A6.07567.EE6E2B66; Wed,  7 Aug 2024 12:15:58 +0900 (KST)
+Received: from FDSFTE582 (unknown [107.122.82.121]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240807031556epsmtip232e4158e6232bfa47649be5e895ae26f~pU_Ci4ihJ2295922959epsmtip2H;
+	Wed,  7 Aug 2024 03:15:56 +0000 (GMT)
+From: "Vishnu Reddy" <vishnu.reddy@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+	<s.nawrocki@samsung.com>, <alim.akhtar@samsung.com>,
+	<linus.walleij@linaro.org>
+Cc: <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <pankaj.dubey@samsung.com>,
+	<ravi.patel@samsung.com>, <gost.dev@samsung.com>
+In-Reply-To: <e9963fb7-b963-49b4-96a3-3637f9892784@linaro.org>
+Subject: RE: [PATCH v4] pinctrl: samsung: Add support for pull-up and
+ pull-down
+Date: Wed, 7 Aug 2024 08:45:54 +0530
+Message-ID: <00c701dae878$1f1ced80$5d56c880$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730183403.4176544-1-allen.lkml@gmail.com>
- <20240730183403.4176544-6-allen.lkml@gmail.com> <20240731190829.50da925d@kernel.org>
- <CAOMdWS+HJfjDpQX1yE+2O3nb1qAkQJC_GSiCjrrAJVrRB5r_rg@mail.gmail.com>
- <20240801175756.71753263@kernel.org> <CAOMdWSKRFXFdi4SF20LH528KcXtxD+OL=HzSh9Gzqy9HCqkUGw@mail.gmail.com>
- <20240805123946.015b383f@kernel.org>
-In-Reply-To: <20240805123946.015b383f@kernel.org>
-From: Allen <allen.lkml@gmail.com>
-Date: Tue, 6 Aug 2024 20:15:50 -0700
-Message-ID: <CAOMdWS+=5OVmtez1NPjHTMbYy9br8ciRy8nmsnaFguTKJQiD9g@mail.gmail.com>
-Subject: Re: [net-next v3 05/15] net: cavium/liquidio: Convert tasklet API to
- new bottom half workqueue mechanism
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, jes@trained-monkey.org, kda@linux-powerpc.org, 
-	cai.huoqing@linux.dev, dougmill@linux.ibm.com, npiggin@gmail.com, 
-	christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org, 
-	naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com, tlfalcon@linux.ibm.com, 
-	cooldavid@cooldavid.org, marcin.s.wojtas@gmail.com, mlindner@marvell.com, 
-	stephen@networkplumber.org, nbd@nbd.name, sean.wang@mediatek.com, 
-	Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, borisp@nvidia.com, 
-	bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com, 
-	louis.peens@corigine.com, richardcochran@gmail.com, 
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acenic@sunsite.dk, linux-net-drivers@amd.com, netdev@vger.kernel.org, 
-	Sunil Goutham <sgoutham@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJjDs2r5CFDDZj4rtEoUnejfp+kLAG3jwHHAfOZ+Paw7XfJQA==
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOJsWRmVeSWpSXmKPExsWy7bCmpi7T801pBou3cVs8mLeNzeLmgZ1M
+	Fntfb2W3mPJnOZPFpsfXWC02z//DaHF51xw2ixnn9zFZLNr6hd3i4Yc97BaH37SzOnB73Lm2
+	h81j85J6j74tqxg9Pm+SC2CJyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LI
+	S8xNtVVy8QnQdcvMATpKSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgUqBXnJhb
+	XJqXrpeXWmJlaGBgZApUmJCd8WTqO8aCOQIVl+ZsYmpgXMzbxcjJISFgItG6eDJjFyMXh5DA
+	bkaJjUtusoEkhAQ+MUr87VCASHxjlPj9dzI7TMeWfR1QRXsZJY5O4YUoesEosXPmd5YuRg4O
+	NgF9ieYbEiA1IgITGSWm3QIbxCzwkFFi4v1PrCAJTgE7iVN9+8BsYYFAibtr5oMNZRFQkVg1
+	/yhYnFfAUuLcxW1MELagxMmZT1hAbGYBeYntb+cwQxykIPHz6TJWiGVOEh8OfIeqEZc4+rOH
+	GWSxhMBaDomX756yQTS4SCxc9xDqG2GJV8e3QNlSEp/f7YWqSZZY//sUO8gzEgI5Ej3TFCDC
+	9hIHrswB+5FZQFNi/S59iLCsxNRT65gg1vJJ9P5+wgQR55XYMQ/GVpM4Nmk6K4QtI9G54gbj
+	BEalWUg+m4Xks1lIPpiFsG0BI8sqRsnUguLc9NRi0wKjvNRyeHQn5+duYgSnWC2vHYwPH3zQ
+	O8TIxMF4iFGCg1lJhLc5fFOaEG9KYmVValF+fFFpTmrxIUZTYHBPZJYSTc4HJvm8knhDE0sD
+	EzMzMxNLYzNDJXHe161zU4QE0hNLUrNTUwtSi2D6mDg4pRqYYm5+K8lSWVor3/LuarLgRtYV
+	Wn/ObHtW/XeuyZQ9q1YY2Ut6+kxaZaEq+F/vlfK0D6e88vR4p1U8z2QIPcNT5C76IcTUtm1j
+	LHfblFffvL22d/z3//UkSsMrJohZ+ZKz8TfBVb7xq+1klvKee5vw1/zKy/cVs1TDFs9Y5mWr
+	6hNYWNbnfGp12dr8Kb/a+6u5BTfEqoUbJ84OOvf0ysdr2g05f59cyna5mWHEt3rlDYeN333T
+	EuuvN12+lJPsrs67/5FA9KugDzo2c9fubppTdIDjq7RJexDrJ/Zta0O7fF7u6IotWFC54PTh
+	VxvkNS8nNj6b+764UevXXMPHD849fnsx58mPdWU7hJo+Z/TxKrEUZyQaajEXFScCAGGhK2Y6
+	BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWy7bCSvO67Z5vSDBqOCls8mLeNzeLmgZ1M
+	Fntfb2W3mPJnOZPFpsfXWC02z//DaHF51xw2ixnn9zFZLNr6hd3i4Yc97BaH37SzOnB73Lm2
+	h81j85J6j74tqxg9Pm+SC2CJ4rJJSc3JLEst0rdL4Mp4MvUdY8EcgYpLczYxNTAu5u1i5OSQ
+	EDCR2LKvg62LkYtDSGA3o8TE93/ZIRIyEh/ubGGGsIUlVv57zg5R9IxRor37AGMXIwcHm4C+
+	RPMNCZC4iMBkRol9bT1gRcwCzxklNr2YxwTRcZBRYsHnaawgozgF7CRO9e0Ds4UF/CW2THvA
+	CGKzCKhIrJp/FCzOK2Apce7iNiYIW1Di5MwnLCA2s4C2RO/DVkYIW15i+9s5UOcpSPx8ugys
+	V0TASeLDge9Q9eISR3/2ME9gFJ6FZNQsJKNmIRk1C0nLAkaWVYySqQXFuem5yYYFhnmp5XrF
+	ibnFpXnpesn5uZsYwfGmpbGD8d78f3qHGJk4GA8xSnAwK4nwNodvShPiTUmsrEotyo8vKs1J
+	LT7EKM3BoiTOazhjdoqQQHpiSWp2ampBahFMlomDU6qBqfwKB19MfmuHsZdtoEDmQiWR6pSc
+	T09m5qmmvFxm+vtNhNvZ6822HyZz+eqEXyr9KBibkL669WvEW92QyxnlxwwPSG08svbS4Q5h
+	28QW1/rQPzsFNs0pTjewWCWvcijEaVvi6X129zo72m5Ou2RS3JBdrrX2gP+Elns13zw1rjAK
+	rX7+xOZX8wdBlxVzbjgwbdrpKhByf8ZBC80aVsv9qn+X681Icb6TIH/0sgbnDqX7Ov6XmovZ
+	DW/wTje+29K6tILZgu+J8Ryd5X9iEmfWPzt9s7ShyvHMj9ru+TNVy2NKNre3+XSeL0o5v+OD
+	pUbzdZ9/rXwPl7Sm3Zn2l9vGqWmnSXRsfuqbDcXH7qsqsRRnJBpqMRcVJwIANBPJrCYDAAA=
+X-CMS-MailID: 20240807031558epcas5p444e86f971799210e63d8f3a66371bd94
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240729154736epcas5p111a53e297c7f8c3122bf491cabaf74b8
+References: <CGME20240729154736epcas5p111a53e297c7f8c3122bf491cabaf74b8@epcas5p1.samsung.com>
+	<20240729153631.24536-1-vishnu.reddy@samsung.com>
+	<e9963fb7-b963-49b4-96a3-3637f9892784@linaro.org>
 
-> > Sure, please review the explanation below and let me
-> > know if it is clear enough:
+
+
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Sent: 04 August 2024 20:15
+> To: Vishnu Reddy <vishnu.reddy@samsung.com>;
+> s.nawrocki@samsung.com; alim.akhtar@samsung.com;
+> linus.walleij@linaro.org
+> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
+> soc@vger.kernel.org; linux-gpio@vger.kernel.org; linux-
+> kernel@vger.kernel.org; pankaj.dubey@samsung.com;
+> ravi.patel@samsung.com; gost.dev@samsung.com
+> Subject: Re: [PATCH v4] pinctrl: samsung: Add support for pull-up and pull-
+> down
+> 
+> On 29/07/2024 17:36, Vishnu Reddy wrote:
+> > Gpiolib framework has the implementation of setting up the PUD
+> > configuration for GPIO pins but there is no driver support.
 > >
-> > tasklet_enable() is used to enable a tasklet, which defers
-> > work to be executed in an interrupt context. It relies on the
-> > tasklet mechanism for deferred execution.
+> > Add support to handle the PUD configuration request from the userspace
+> > in samsung pinctrl driver.
 > >
-> > enable_and_queue_work() combines enabling the work with
-> > scheduling it on a workqueue. This approach not only enables
-> > the work but also schedules it for execution by the workqueue
-> > system, which is more flexible and suitable for tasks needing
-> > process context rather than interrupt context.
-> >
-> > enable_and_queue_work() internally calls enable_work() to enable
-> > the work item and then uses queue_work() to add it to the workqueue.
-> > This ensures that the work item is both enabled and explicitly
-> > scheduled for execution within the workqueue system's context.
-> >
-> > As mentioned, "unconditionally scheduling the work item after
-> > enable_work() returns true should work for most users." This
-> > ensures that the work is consistently scheduled for execution,
-> > aligning with the typical workqueue usage pattern. Most users
-> > expect that enabling a work item implies it will be scheduled for
-> > execution without additional conditional logic.
->
-> This looks good for the explanation of the APIs, but you need to
-> add another paragraph explaining why the conversion is correct
-> for the given user. Basically whether the callback is safe to
-> be called even if there's no work.
+> > Signed-off-by: Vishnu Reddy <vishnu.reddy@samsung.com>
+> > ---
+> 
+> Where is the changelog? What happened with this patch?
 
- Okay.
+Sorry, I missed to include changelog in all previous version of patches.
+I will take care this part in future, below are the changelogs:
 
-how about the following:
+changes in v4:
+- Update code in s5pv210_pud_value_init and s3c64xx_pud_value_init
+functions for storing the pud values into array using macro names
+instead of loop.
+- Removed unnecessary and weird style comments.
+- Updated proper comments.
+- Fixed typo errors.
+- Updated macro names based on suggestions which got in v3 review
+comments.
 
-In the context of of the driver, the conversion from tasklet_enable()
-to enable_and_queue_work() is correct because the callback function
-associated with the work item is designed to be safe even if there
-is no immediate work to process. The callback function can handle
-being invoked in such situations without causing errors or undesirable
-behavior. This makes the workqueue approach a suitable and safe
-replacement for the current tasklet mechanism, as it provides the
-necessary flexibility and ensures that the work item is properly
-scheduled and executed.
+changes in v3:
+- Add new code to get the s5pv210 and s3c64xx and other exynos
+series of pull down, pull up and disable values into an array and use
+it in set config function for pud configuration.
+- Add clock enable and disable setting while accessing registers.
 
-Thanks,
-Allen
+changes in v2:
+- Updated the macro names based on review comment that suggested
+to follow the naming conventions according the file how previous macro
+names defined.
+
+Do let me know if I need to revise the patch or you are okay to consider
+above changelog?
+
+Regards,
+Vishnu Reddy
+> 
+> Best regards,
+> Krzysztof
+
+
 
