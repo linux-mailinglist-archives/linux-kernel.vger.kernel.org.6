@@ -1,91 +1,137 @@
-Return-Path: <linux-kernel+bounces-277212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB65949DEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB3E949DF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E381D1F22E19
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:50:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A47FB1F21C96
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5915A29CEC;
-	Wed,  7 Aug 2024 02:50:10 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B5418FDB3;
+	Wed,  7 Aug 2024 02:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="aPFezs42"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFF818D63E
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 02:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991E61C3D
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 02:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722999009; cv=none; b=fqB43yOwp3p+xohTrIL+E99KRPrsUuenN2AtlbH3odbk4e/+CoHgrDt889sfIJNyaZPA/aBBn2VsIR9NVXZQr/mgarSALpE53dhd/aRrh9CpSXg+cvcM42l41U1DhU+PpAzgKTXxNys/CSaH3oC28TuqXftMIMo8WyyfnFFzYKs=
+	t=1722999385; cv=none; b=KI56ZeoRa51vcsLr7lry46SdHzFekZA4d5kEl+VWLMRsdE9D8MWB/HOIj0XCR7fmfps+cp0f4JD8bn2hLXNw/im+kkaKPCyFEjFfsYOPmsHc7l/6UrFwHPfDg4VX4dVanpebUUxdGvJU47dqQC2B3pqzQ7zmtm/7/iE7RZimzzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722999009; c=relaxed/simple;
-	bh=GEe2h9ptlZsPXZkFPyDYsVmYGHSe5o9DPZX4iSKlg6c=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MR7jBLhwV0iidQ2ybcvBqk4Z31VfX/nZ+RmzMPDjvbE5mqY5KC5CTGqeeObyfBeVS292kgPjbGS3Vcdrsiwtevv9+iC+cCfUDxncrXrD9Alr/ZC09W5g2J1Q/ERn5HVXg7+nJ5uqxm++SWnZ7GeHYsZ7V8EkvpU0SPCEFiokOkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Wdvfg4WCgz1S78X;
-	Wed,  7 Aug 2024 10:45:15 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 80E98180042;
-	Wed,  7 Aug 2024 10:49:58 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 7 Aug
- 2024 10:49:57 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <dennis@kernel.org>, <tj@kernel.org>, <cl@linux.com>,
-	<mpe@ellerman.id.au>, <npiggin@gmail.com>, <christophe.leroy@csgroup.eu>,
-	<naveen@kernel.org>, <linux-mm@kvack.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next v2] powerpc: Remove useless config comment in asm/percpu.h
-Date: Wed, 7 Aug 2024 10:56:04 +0800
-Message-ID: <20240807025604.2817577-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722999385; c=relaxed/simple;
+	bh=JBpBBhkDJfOw3+w90FL4ukIexECNtzJq8a86OZUQaLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K08wPlGpXStp5EL4LqIIPf7/wXoqJi3hvWNz3JsJj7nJrDd52in0GD2bwWMTWWzdn5eWDS+RVMk7HtfVaM+AK/4YINSloi8FdyKWyY6U3FxMKvL7n2wkpODisvsmGPcMGoB1eiHBkdN7clkf0Sbqkepl1gMBszA0sMsDOVR4Stk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=aPFezs42; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fd69e44596so3546115ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 19:56:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722999383; x=1723604183; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=o+V4K81vXA0WeuPGCt6+s1/avlSkzQ1zOQany/lZfO0=;
+        b=aPFezs42scbjusZndJz4pTA4vck5+6G1qvWygWkxhzSomUujxwk52fo/bwAxuRXyRj
+         FANzJQENEV4qyOHS5bRyp9jxkHGroAJ0DnbrzPau4+ieevqSozrlseiL5Hz4tmMjWOpI
+         Qo3IMiQ7lBPmmwC80Ym0MAcnMtre7zL7ON1xTxRlezrQD4rC/6EdVqcvTd5NBoy2p+UM
+         Jsm/g4jjnED1YXnGSeIIO5RzKt9KUexBcf8/xiqA68yR7QOjIs/zI4VOFPbzjL0PbcDg
+         BbSuQr/TeV8ngeJNNc+/YMYCMqqgs7v8IST30EuBddf8QADSXYJMnQjxj5221fO5qeq2
+         NtDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722999383; x=1723604183;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o+V4K81vXA0WeuPGCt6+s1/avlSkzQ1zOQany/lZfO0=;
+        b=kOoZ2LrzvDCHxQ8mWw/PCBD8n1jksIMeQPFHqF1DSg8jw1OGaaLpBf/9wCOJ70lY8Y
+         cIuwb//pTpzFrsY6i2WGTYccsKSccavCQgfXgXzqJsPzxuwjuWyofL0NW4BRxNhlYRgR
+         Ctcg4kI5gAkRtlUhfEhejdZO/1k5KdpjzWc3PGaa4lPoK9nNhfJ6jQG5cIfjP7DVURKq
+         ZmgEcADyYHTQ5hxeCY3wqiMSJ2RQAONQhbcIC4VUgNjhz800gyIhqjoI7F9q96tQMGvh
+         d3lbFtOY4fvjTTgX66K0mZhBLvrhR+2Dq3CnUXKzaXLO31pO8IZJ8caPspxR39HcRpSg
+         LyXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKmS3pp1lY2QsSSZGHdECBFdCs6Vecqb3x7oVh2wu79LaAXyZ4bieTq0aeTSn+zbaTGM0CSnokopKa0wqP5JZLVl1TPohLgpRDE2F4
+X-Gm-Message-State: AOJu0Yyh4UTJRbm9mWUIZmrIV1B9xNdUa89nbFf4egrRpJ8aPRdyA0vY
+	SAMLBTh3f9hvqgRXEOod1X5DVHTzeMmnetcNLM7Yyme9UllJftt9LYInWkq3wHI=
+X-Google-Smtp-Source: AGHT+IFFWSdGW3Xq4NimlVtQbi66SucoaH++gBvkskF4/64XmMaDXQsEPFAluYx4y3Hn/v7cWQpKqA==
+X-Received: by 2002:a17:902:d4ca:b0:1ff:43a8:22f2 with SMTP id d9443c01a7336-20085523055mr12362815ad.24.1722999382850;
+        Tue, 06 Aug 2024 19:56:22 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5917b6eesm94502555ad.222.2024.08.06.19.56.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 19:56:22 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sbWqZ-0084r0-1U;
+	Wed, 07 Aug 2024 12:56:19 +1000
+Date: Wed, 7 Aug 2024 12:56:19 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
+Message-ID: <ZrLiU+gGUKIOk1kA@dread.disaster.area>
+References: <20240806144628.874350-1-mjguzik@gmail.com>
+ <ZrKo23cfS2jtN9wF@dread.disaster.area>
+ <CAGudoHEt-mmZaihzTYxmf3KF_LsEC=astL2fOB+SOWGMPOCcFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+In-Reply-To: <CAGudoHEt-mmZaihzTYxmf3KF_LsEC=astL2fOB+SOWGMPOCcFw@mail.gmail.com>
 
-commit 0db880fc865f ("powerpc: Avoid nmi_enter/nmi_exit in real mode
-interrupt.") has a config comment typo, and the #if/#else/#endif section
-is small and doesn't nest additional #ifdefs so the comment is useless
-and should be removed completely.
+On Wed, Aug 07, 2024 at 12:55:07AM +0200, Mateusz Guzik wrote:
+> On Wed, Aug 7, 2024 at 12:51 AM Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > On Tue, Aug 06, 2024 at 04:46:28PM +0200, Mateusz Guzik wrote:
+> > >       error = may_open(idmap, &nd->path, acc_mode, open_flag);
+> > > -     if (!error && !(file->f_mode & FMODE_OPENED))
+> > > -             error = vfs_open(&nd->path, file);
+> > > +     if (!error && !(file->f_mode & FMODE_OPENED)) {
+> > > +             BUG_ON(nd->state & ND_PATH_CONSUMED);
+> >
+> > Please don't litter new code with random BUG_ON() checks. If this
+> > every happens, it will panic a production kernel and the fix will
+> > generate a CVE.
+> >
+> > Given that these checks should never fire in a production kernel
+> > unless something is corrupting memory (i.e. the end is already
+> > near), these should be considered debug assertions and we should
+> > treat them that way from the start.
+> >
+> > i.e. we really should have a VFS_ASSERT() or VFS_BUG_ON() (following
+> > the VM_BUG_ON() pattern) masked by a CONFIG_VFS_DEBUG option so they
+> > are only included into debug builds where there is a developer
+> > watching to debug the system when one of these things fires.
+> >
+> > This is a common pattern for subsystem specific assertions.  We do
+> > this in all the major filesystems, the MM subsystem does this
+> > (VM_BUG_ON), etc.  Perhaps it is time to do this in the VFS code as
+> > well....
+> 
+> I agree, I have this at the bottom of my todo list.
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Suggested-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
-v2:
-- Remove instead of change the comment.
----
- arch/powerpc/include/asm/percpu.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Good to know.
 
-diff --git a/arch/powerpc/include/asm/percpu.h b/arch/powerpc/include/asm/percpu.h
-index 634970ce13c6..ecf5ac70cfae 100644
---- a/arch/powerpc/include/asm/percpu.h
-+++ b/arch/powerpc/include/asm/percpu.h
-@@ -23,7 +23,7 @@ DECLARE_STATIC_KEY_FALSE(__percpu_first_chunk_is_paged);
- 		(static_key_enabled(&__percpu_first_chunk_is_paged.key))
- #else
- #define percpu_first_chunk_is_paged	false
--#endif /* CONFIG_PPC64 && CONFIG_SMP */
-+#endif
- 
- #include <asm-generic/percpu.h>
- 
+> The only reason I BUG_ON'ed here is because proper debug macros are not present.
+> 
+> fwiw v2 does not have any of this, so...
+
+Yeah, I didn't notice there was a v2 patch before I wrote this.
+
+-Dave.
 -- 
-2.34.1
-
+Dave Chinner
+david@fromorbit.com
 
