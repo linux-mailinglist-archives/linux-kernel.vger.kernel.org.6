@@ -1,136 +1,121 @@
-Return-Path: <linux-kernel+bounces-277502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC7294A247
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:00:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29CC694A244
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40516289F7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:00:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7B222896DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A161C9DD5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C561C9DC9;
 	Wed,  7 Aug 2024 07:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QMvjp/OO"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RdzdZWBW"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1360D18FC9B;
-	Wed,  7 Aug 2024 07:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE5C144D29;
+	Wed,  7 Aug 2024 07:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723017588; cv=none; b=JRF+4BbaQCDJS7ulKXV1WuKw3Ukufy8VbEpq1/Vu+SSySB2ZydtJYkggBGHI/MPNzd4ytjOBu37cNk8w+7lk74YKIY2QohbEvRk5Fo0hQ7CbWwk88f9KVPLHRYNerPmkusQbPejs0XAGT0jit1pJpPG0PkZ4K64Ff/Yw4Bq5K/I=
+	t=1723017588; cv=none; b=Ndz1uSoU4+dGwchtMxwTvDAm4YfGWMGCoOytjC8izthl2Hv3vdY1w2q9BuQwFDhyOQjXs9S5IZ5OAH9Whf2D5ISk4JgYcDjsqVX8EFwytVEiTjNI/pHmy4Lvt/Qgu+cy7Pymvy7DvzFGtBmMaeSNfOdcxIK5pUR1h058vGMpROM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723017588; c=relaxed/simple;
-	bh=a3R1nAFpgbZ+ugVoveuOybAEJqCG/E+Hv2lrEJiQJpU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CLlR36B5gMPivuBpOAQ68hX+YJ/rB0qqc8WDJDmwKkLyflVi1JYNEj+rBeuBhW/+u9BVOIx3tMu4TlyFcwzzWVDbdd4Q5ImbQ9XqraB4bAqCfrNrZp2w+c63aZSIlk5z5SQPYzs01xEf1cf8wViwUjgQj7x3AG6Hm9yJIdVAres=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QMvjp/OO; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7ad02501c3so160679166b.2;
-        Wed, 07 Aug 2024 00:59:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723017585; x=1723622385; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OD041rVr0/bqnmQDK60pFVQ7SGAq6cO0PN7cSI2Hkxg=;
-        b=QMvjp/OOdMWj6DbT4Y4HSMnboMnDNTewdmZP+RC+n4g8MssVVoRET2bJRnSqWXMShs
-         hZKpTS3g8lB4TeafwsgZ6HCQ8tFWOTFELWto409ewKYAMBhPnSjTGDr/7kKXSuuFqUvV
-         hBCezjVs1QY3RmjkZ4vRBJIENTA+s9al5l4QxzGQ6QAKTJmLCkt8U235PO4xUYu0t273
-         pC8FceL+a9tWIINTCPVf1n2dvTVWtOGDDfAYFE94Mt0WUDMGMz8Tu3TdoNRCi2yGbls1
-         265GfPB7E/p1Mccradf1alEVxgWVR9z4lxgYVrau5wWIQSkMJ8Kb+hZ47twg7KzbpXDK
-         S4wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723017585; x=1723622385;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OD041rVr0/bqnmQDK60pFVQ7SGAq6cO0PN7cSI2Hkxg=;
-        b=QIpWbrEtYW2SVeZfpmZ3/QP4rPBkzRJybXPBL6czmubfOUMEbwvKZ6TWiG2hXU3wBo
-         D0f+9aQgYV6296N3qcHJ8jWjJnNSAM2Ip1deJGTMx/bs029vAu98zm+57mS9Tm5yJfol
-         styxMyjoRTdEpkhpbg/OAvQ6Lh/RjwbybGSMwvVIotBzE95/MDxRFBeM84ls+LIG274j
-         kVNpObInOfs9Dh0NFSHYH5GMaWqRj407MZwz0kR/fC+I8jqfr3MJTecmo/yQlbYyo3Ok
-         NF3xFb1UX5P0NKqO2gaCw9hSp+ZHmgXBuJEK0QAQRp0P3M8OBZGkfpraE9foeDmtKWti
-         rKGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwsq3TY/O+en5uq+FRVjysfLrzP4NlCXlRtVTP73WLCSeW67rWFDqT+ZQFUiwmFx3uInB5GYl7toNWE7vAk6Crce4jRQEDTBw5rqr1Rvp16DfuLi8mZY989rplXTBT/8HdY5CwepIbDuRhBQ==
-X-Gm-Message-State: AOJu0Yxo1zcsetklUM64zeaIDOMM6Mp5/rT+BFBbTjNMRMdkV4fvWYDC
-	PXxJilrGG7rmE31BWDZA7epKHT0jQ7FyvRV0GGTtitx9RLHD67kiqwBAXqMeUGlQhbPJqRsyndn
-	VQsGSzpkOpTwIZJ/MtLi6qa6KR78=
-X-Google-Smtp-Source: AGHT+IEn+9dywqjHwNP69lt4kLvHznMFKp/OWWFMn7LVHwBjIu5q5S/bAQmJAPSUX1x0O9C7MZazIpeLNUDIR8gfPyA=
-X-Received: by 2002:a17:907:d16:b0:a7a:bae8:f297 with SMTP id
- a640c23a62f3a-a7dc5016569mr1194659966b.15.1723017585048; Wed, 07 Aug 2024
- 00:59:45 -0700 (PDT)
+	bh=zYzAtRiF4orYxRvBpY+VuFup2ncaBYONQVFwZPWHuas=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mrka5x27Ncj2zUaXYj/mNUYy2pEG4wgJ5vGloJa/VfzcHAHux8An5Oj8cy7XVEzXf+p/k0Yowt3+QccFqle19Gb5+eWE56HOYsOqH2sR15KUXK69rOjAcdGkYXSdGgSNk2ghizGkIvkKHIObwJFcwSPoZ3xgsQTj6F067he1MCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RdzdZWBW; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1723017582; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=vvvjupWc4j10IBI8L7PaFxsixpLd56P6tlLAVeyw3XM=;
+	b=RdzdZWBWpjYtOjCVWfmbi3HBHIszuwwt9j4z3fQ/IXcfPT/ydWzLG4rlK3a9AWU4UneHF0uPGkQesJIK7/IGr+mBz+AY/E25GolrERwd674sR7uo3RU5ufCa2VZC1lwnjYRR3LH+UOv4dn/8kwyWGV16CKVRh5xMqjQL3bVwaKQ=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R701e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0WCIDror_1723017579;
+Received: from localhost(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0WCIDror_1723017579)
+          by smtp.aliyun-inc.com;
+          Wed, 07 Aug 2024 15:59:42 +0800
+From: Wen Gu <guwen@linux.alibaba.com>
+To: wenjia@linux.ibm.com,
+	jaka@linux.ibm.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com,
+	tonylu@linux.alibaba.com,
+	guwen@linux.alibaba.com,
+	linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next v2 0/2] net/smc: introduce ringbufs usage statistics
+Date: Wed,  7 Aug 2024 15:59:37 +0800
+Message-Id: <20240807075939.57882-1-guwen@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806144628.874350-1-mjguzik@gmail.com> <20240806155319.GP5334@ZenIV>
- <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
- <20240807033820.GS5334@ZenIV> <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
- <20240807062300.GU5334@ZenIV> <20240807063350.GV5334@ZenIV>
- <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
- <20240807070552.GW5334@ZenIV> <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
- <20240807075218.GX5334@ZenIV>
-In-Reply-To: <20240807075218.GX5334@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 7 Aug 2024 09:59:33 +0200
-Message-ID: <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
-Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 7, 2024 at 9:52=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
->
-> On Wed, Aug 07, 2024 at 09:22:59AM +0200, Mateusz Guzik wrote:
->
-> > Well it's your call, you wrote the thing and I need the problem out of
-> > the way, so I'm not going to argue about the patchset.
-> >
-> > I verified it boots and provides the expected perf win [I have to
-> > repeat it is highly variable between re-runs because of ever-changing
-> > offsets between different inode allocations resulting in different
-> > false-sharing problems; i'm going to separately mail about that]
-> >
-> > I think it will be fine to copy the result from my commit message and
-> > denote it's from a different variant achieving the same goal.
-> >
-> > That said feel free to use my commit message in whatever capacity,
-> > there is no need to mention me.
->
-> Original analysis had been yours, same for "let's change the calling
-> conventions for do_dentry_open() wrt path refcounting", same for
-> the version I'd transformed into that...  FWIW, my approach to
-> that had been along the lines of "how do we get it consistently,
-> whether we go through vfs_open() or finish_open()", which pretty
-> much required keeping hold on the path until just before
-> terminate_walk().  This "transfer from nd->path to whatever borrowed
-> it" was copied from path_openat() (BTW, might be worth an inlined helper
-> next to terminate_walk(), just to document that it's not an accidental
-> property of terminate_walk()) and that was pretty much it.
->
-> Co-developed-by: seems to be the usual notation these days for
-> such situations - that really had been incremental changes.
->
-> Anyway, I really need to get some sleep before writing something
-> usable as commit messages...
+Currently, we have histograms that show the sizes of ringbufs that ever
+used by SMC connections. However, they are always incremental and since
+SMC allows the reuse of ringbufs, we cannot know the actual amount of
+ringbufs being allocated or actively used.
 
-Nobody is getting a Turing award for noticing the extra ref trip and elidin=
-g it.
+So this patch set introduces statistics for the amount of ringbufs that
+actually allocated by link group and actively used by connections of a
+certain net namespace, so that we can react based on these memory usage
+information, e.g. active fallback to TCP.
 
-Co-developed-by is fine with me if you insist on sharing credit.
+With appropriate adaptations of smc-tools, we can obtain these ringbufs
+usage information:
 
-My only objective here is to expedite the fix so that I can get on
-with speeding up refcount management. :)
---=20
-Mateusz Guzik <mjguzik gmail.com>
+$ smcr -d linkgroup
+LG-ID    : 00000500
+LG-Role  : SERV
+LG-Type  : ASYML
+VLAN     : 0
+PNET-ID  :
+Version  : 1
+Conns    : 0
+Sndbuf   : 12910592 B    <-
+RMB      : 12910592 B    <-
+
+or
+
+$ smcr -d stats
+[...]
+RX Stats
+  Data transmitted (Bytes)      869225943 (869.2M)
+  Total requests                 18494479
+  Buffer usage  (Bytes)          12910592 (12.31M)  <-
+  [...]
+
+TX Stats
+  Data transmitted (Bytes)    12760884405 (12.76G)
+  Total requests                 36988338
+  Buffer usage  (Bytes)          12910592 (12.31M)  <-
+  [...]
+[...]
+
+Wen Gu (2):
+  net/smc: introduce statistics for allocated ringbufs of link group
+  net/smc: introduce statistics for ringbufs usage of net namespace
+
+ include/uapi/linux/smc.h |  6 ++++
+ net/smc/smc_core.c       | 72 ++++++++++++++++++++++++++++++++++------
+ net/smc/smc_core.h       |  2 ++
+ net/smc/smc_stats.c      |  8 +++++
+ net/smc/smc_stats.h      | 28 +++++++++++-----
+ 5 files changed, 96 insertions(+), 20 deletions(-)
+
+-- 
+2.32.0.3.g01195cf9f
+
 
