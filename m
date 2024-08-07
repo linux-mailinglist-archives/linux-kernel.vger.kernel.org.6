@@ -1,53 +1,77 @@
-Return-Path: <linux-kernel+bounces-278509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E74794B117
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:16:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B2394B11C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F5EE1C20A60
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC951F223A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CAB4146585;
-	Wed,  7 Aug 2024 20:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0AB214262C;
+	Wed,  7 Aug 2024 20:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D6vNrSRw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZsUpgqrm"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545CB14535E;
-	Wed,  7 Aug 2024 20:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60422A1D1
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 20:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723061769; cv=none; b=l8ELbI6jHKJ+39ZfPuQBiWXpV36HMnBZXNfRUwzR1TGXhqsFKP6I1onTRpCOK/3b5TkETJRlvcOo6Hko9CBWvcwPeBjUf9a6GhBlwBFqOdDTsUaGX1izuDR9q5T+9gilxjeHOpyImBE9wnYOjbw+vnDSAfkeBeFzGNfKxLXZsHQ=
+	t=1723061863; cv=none; b=HVjMqvaARa4gWwIBNAER7pKf/5zVtXwsWhHlhwk/3oItO5ygWQFHGqavNvkhmyNqlIEv0XXf00IR46YHtLPD8ln/htOcQS9NYIJSwz2+JGNbN93APHzBmDvblX0vu4Hgl1n1GKaSwTimidmiAvJRvEnnTyp/HneHmTV7AYB3Fcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723061769; c=relaxed/simple;
-	bh=7/OqWItGPKI+OQj8DnkDipK910zUpsiUMnfkGAvKhj0=;
+	s=arc-20240116; t=1723061863; c=relaxed/simple;
+	bh=cSb+FUcQicIiySHJpDDVRukywdeX42oCYfKaaf/c9B0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=jkaHk+lBS5W1SKr2px6+ki75AL8tCCFij9HEpB17rhwX+AfitJerX5VYPBaMJFjoDMuNs1dzYjIV8/2XVDaiGaczc9zo7de8C4j1qQNkQI8XcUaZhVf6WSB8Uj913RT9rLTOLY55kqlSAQ5fJAnNNHpkJCUNgTActucNZLdgTy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D6vNrSRw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3E5AC32781;
-	Wed,  7 Aug 2024 20:16:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723061769;
-	bh=7/OqWItGPKI+OQj8DnkDipK910zUpsiUMnfkGAvKhj0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=D6vNrSRwJ6aMsuhPmuTj0mg2dUCuk21SY8Y7L+p2LHXcXlBlkljr3ej8+yJo3tdzb
-	 P5fXJ9T4rlXO4SGEoB3dUtoi6Dv5PzxEXRP8rIV8PdDYdO3glZfn+LMdgWAOA2e86N
-	 gN0gnxfBuoG6vDEM0mHBO0yuzUMm1iLReXBShkCDoOTQBUgOch2ZmFPSuoJph9oIFh
-	 hquq65b7AYTAQg3FG+OoqXhhJh2UWXop9tR9S/ILGogkP2IgbzgghvU0UJoV30wAP3
-	 iVNezflE2DmH4LnqVZW980UvFhf3aEj9JKVXO2/EDQZYB/5dVa66CRWVd/0aRc5QIf
-	 0XBx+VfHdogbA==
-Date: Wed, 7 Aug 2024 15:16:06 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ian <4dark@outlook.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-Subject: Re: [PATCH] PCI: Adjust pci_sysfs_init() to device_initcall
-Message-ID: <20240807201606.GA109435@bhelgaas>
+	 Content-Disposition; b=Ku7ZuPEwB2Jjl7ZR+4Q8Ip2bz7RCb23xwRVQTCImUyZRRwadrwXorHCxC2rWKHswEqBG2zo16J1DiryZGCut5CkFGDsTDXb1k09aukQPpM76BWrmdx66VeLIcR4MlLcA2ah5MPxUVIzJ3819zvNYFmMRb/6Plv2VkQ7acaNHGMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZsUpgqrm; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fd90c2fc68so3053395ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 13:17:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723061861; x=1723666661; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=1MZT3yew4MwIli3H2zmVW+Q7xdPnnG8KCmzZPSX5NqY=;
+        b=ZsUpgqrmtmZw9QBG7jhiIEdp2g+rK8g5wcf7W0++mB1fXz6RaRhJppl4FX2/D2rUvq
+         rgYeb5RhOLuOb4Tb/Hd2JH5N66oluz/7xQFMeKxNS5gHY3NKu0VtEou9QVYCx8/xhd4B
+         kqQ0F6fW2jwT4YPI09U3tjX8SaNNXrzFb3qJe2srYcQVJkq514ZURwMG9GHJUMAGRPBJ
+         t3bV9XsQTuUQsCkKCVwcgOW8Zxt4lZWU+IOEPV/miP8Fyxll5r5Bt+3nlFSu+S54PGHm
+         /TCko1J0fGLZHcL5UNNsRtvFBKUhZvXAOXNFixJbRYs5RF5hhx8VE0rxhID3wiwbZKmj
+         x/1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723061861; x=1723666661;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1MZT3yew4MwIli3H2zmVW+Q7xdPnnG8KCmzZPSX5NqY=;
+        b=Nj3XeEt0wbCGKCujWpOsYJU2IMZAvu8oUrEI+zmK1A5wBNSq5D1g8CxXThuI99PIMJ
+         L0/eYHn29+hC9dH2wn/MjHNA4eL0n8qYyLEdR2a2uXQ+fMuRknaQWZABlHkcsXDk6+fF
+         zP/Sduxcz2baskxKlSeh4OuTUy+w/lghsH/3OzjU500X0AVxDnivcnm/ED/uOEawRF4D
+         AHfig7u9mIBT3AwXOevaS/7R+/nCzxIQxrXBbTlwWCQ55FxcN/xzlEifabc/DfD2wS0r
+         lkmenUIUqy9Ues+giO9VjBSjTid9W9968IC6bYTu6FJNmWDukAcCPtW8WvEn+jIlrCf3
+         USjg==
+X-Gm-Message-State: AOJu0YxLcw7H64XtCF8T49Ll9jB1qk7MYNsKAd1PXGVRo8fDT/WowtTS
+	HyFM2uP1+hrBmRPLCR2jyMnBX+AnFobyzyv76WWDyrBE3Dq+RBGg
+X-Google-Smtp-Source: AGHT+IHpSVwY/iwUhTBtmyBVV6+OUBst3piTk3bJepJfgFfVBHVqew7ZyXj0LhUF26fi6TmpEEzbGw==
+X-Received: by 2002:a17:903:32c2:b0:1fd:aac9:a712 with SMTP id d9443c01a7336-1ff573510b0mr209603995ad.37.1723061860795;
+        Wed, 07 Aug 2024 13:17:40 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f53832sm110389425ad.73.2024.08.07.13.17.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 13:17:40 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 7 Aug 2024 10:17:38 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH sched_ext/for-6.12] sched_ext: Fix unsafe list iteration in
+ process_ddsp_deferred_locals()
+Message-ID: <ZrPWYqSbif3eTME4@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,60 +80,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SY0P300MB04687548090B73E40AF97D8897B82@SY0P300MB0468.AUSP300.PROD.OUTLOOK.COM>
 
-[+cc Krzysztof]
+process_ddsp_deferred_locals() executes deferred direct dispatches to the
+local DSQs of remote CPUs. It iterates the tasks on
+rq->scx.ddsp_deferred_locals list, removing and calling
+dispatch_to_local_dsq() on each. However, the list is protected by the rq
+lock that can be dropped by dispatch_to_local_dsq() temporarily, so the list
+can be modified during the iteration, which can lead to oopses and other
+failures.
 
-On Wed, Aug 07, 2024 at 06:34:34PM +0800, Ian wrote:
-> From: Ian Ding <4dark@outlook.com>
-> 
-> When the controller driver uses async probe
-> (.probe_type = PROBE_PREFER_ASYNCHRONOUS), pci_host_probe() is not
-> guaranteed to run before pci_sysfs_init(), kernel may call
-> pci_create_sysfs_dev_files() twice in pci_sysfs_init() and
-> pci_host_probe() -> pci_bus_add_device(), and dump stack:
-> 
->     sysfs: cannot create duplicate filename
-> 
-> Signed-off-by: Ian Ding <4dark@outlook.com>
-> ---
->  drivers/pci/pci-sysfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index dd0d9d9bc..bef25fecb 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -1534,7 +1534,7 @@ static int __init pci_sysfs_init(void)
->  
->  	return 0;
->  }
-> -late_initcall(pci_sysfs_init);
-> +device_initcall(pci_sysfs_init);
+Fix it by popping from the head of the list instead of iterating the list.
 
-This is certainly a problem that needs to be solved, but I don't think
-this approach is necessarily safe.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: 5b26f7b920f7 ("sched_ext: Allow SCX_DSQ_LOCAL_ON for direct dispatches")
+---
+ kernel/sched/ext.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-There's a long discussion about some of the issues at
-https://lore.kernel.org/linux-pci/20200716110423.xtfyb3n6tn5ixedh@pali/t/#u
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -2726,17 +2726,19 @@ static void set_next_task_scx(struct rq
+ 
+ static void process_ddsp_deferred_locals(struct rq *rq)
+ {
+-	struct task_struct *p, *tmp;
++	struct task_struct *p;
+ 
+ 	lockdep_assert_rq_held(rq);
+ 
+ 	/*
+ 	 * Now that @rq can be unlocked, execute the deferred enqueueing of
+ 	 * tasks directly dispatched to the local DSQs of other CPUs. See
+-	 * direct_dispatch().
++	 * direct_dispatch(). Keep popping from the head instead of using
++	 * list_for_each_entry_safe() as dispatch_local_dsq() may unlock @rq
++	 * temporarily.
+ 	 */
+-	list_for_each_entry_safe(p, tmp, &rq->scx.ddsp_deferred_locals,
+-				 scx.dsq_list.node) {
++	while ((p = list_first_entry_or_null(&rq->scx.ddsp_deferred_locals,
++				struct task_struct, scx.dsq_list.node))) {
+ 		s32 ret;
+ 
+ 		list_del_init(&p->scx.dsq_list.node);
 
-The goal is to remove pci_sysfs_init() completely, but we haven't
-quite got there yet.
-
-Since that thread, Krzysztof has made great progress by converting
-most sysfs files to static attributes, e.g.,
-
-  506140f9c06b ("PCI/sysfs: Convert "index", "acpi_index", "label" to static attributes")
-  d93f8399053d ("PCI/sysfs: Convert "vpd" to static attribute")
-  f42c35ea3b13 ("PCI/sysfs: Convert "reset" to static attribute")
-  527139d738d7 ("PCI/sysfs: Convert "rom" to static attribute")
-  e1d3f3268b0e ("PCI/sysfs: Convert "config" to static attribute")
-
-but there are still a couple things left.
-
->  static struct attribute *pci_dev_dev_attrs[] = {
->  	&dev_attr_boot_vga.attr,
-> -- 
-> 2.25.1
-> 
 
