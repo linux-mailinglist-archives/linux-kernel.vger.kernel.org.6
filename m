@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-278648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E8294B315
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:32:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C7094B31B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2481F283B30
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:32:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BFD11F237BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28554155336;
-	Wed,  7 Aug 2024 22:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9984155325;
+	Wed,  7 Aug 2024 22:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uTzcFy5K"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VoagAPr3"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F7915099D
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 22:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F401145B31
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 22:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723069962; cv=none; b=gOpCfvYabCG8mI6DN+xGQAE5f7azzLVhaDu7rSXGwZU0j4mR9w6bJZ1QZ1LzKwRLBLV7+7cX3LRJPaWHA+ayWpjD0zngqlzuseBlLSd5Bbt+dinYAyycth5rmClwJ2pdXodUaGH8xRA5d7/wm0yqUem82MPasIJbVZXAly4AqH0=
+	t=1723070056; cv=none; b=c6CYi3ogwRIBbv8DyLUiOynNCfCdHoh0E2u1deR0lt554zzuQrCz4tjdf4rDbzd3mxaWlyZnQUC7I9SUD0rDKQkJNdUkm0c9L1xUnM3c6xqzgu7gtEwOdWWMNVvz2vfrEfYY6hVSx4q8yNLESaedHo3yYoaP/t3V+DBOtpWB0A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723069962; c=relaxed/simple;
-	bh=IDNMT6o5KfwYfTY17255Evt0lbZnm4CnEGRfht11BXg=;
+	s=arc-20240116; t=1723070056; c=relaxed/simple;
+	bh=Hnvwb4GsJ5xhBtc2iD024XC8qkygckvf+U3nq/Qf0EA=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Y3CiiLDj9P+H4dt5lzF9b4n+wqiruKbQyemDT2vX52ndDk0EFJgr+2Hzy9ycDh25PyeIauVcr5CPGRwFuNq1M2lAkdPfzZ64iIHuVw0EMNDRRi7HZtd6+QrjpjoISoAPIThbeRiGNhUUigoENXGRotu/B85s7vuC6ybQu7Lpru0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uTzcFy5K; arc=none smtp.client-ip=209.85.216.45
+	 MIME-Version:Content-Type; b=pQIIKHtwVRUIyhgJzJFFD9jE0/7T+/VnCPNa3NWY614sygQ/q8F5hk71Y1rYia8O93uCtGPXBGvn1bi6dKTlQpGHFzLAD1J8cSKT1lUkIJGbjjwEKJqd4RkYddU3cFJVahLmT8pGcEgqGrNXfUAZ657oJ3NakPwutQFSTlODYrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VoagAPr3; arc=none smtp.client-ip=209.85.215.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2cf93dc11c6so324267a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 15:32:40 -0700 (PDT)
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-75a6c290528so257051a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 15:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723069960; x=1723674760; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723070054; x=1723674854; darn=vger.kernel.org;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d/17UOMKe5oLrCx17iNXp2TK19+E7NavssE5gQNb1UE=;
-        b=uTzcFy5KJ/o0wgVO6cwiMO95ampEkQU3+xrQTC3CK2uJvzJv8CXVzP4iCph9qZNEid
-         Le8puIBl7KfQzgselIBYOujnNFujmYmrLqnOlZhyKb/F/bYHMQi0in0MedqkgfFmBKXw
-         x8BfEHTNTrm9wpdemZZnOLyaCfFJO/BYIZnlz/7KyE6IamnXHdj2GHjxD42g9oKa3LtH
-         MjLrUr6tEe4ZY8c/MrBMfm+6S7G47TcyLVp6yZhLsKTeQ6nPlrJ7v0Bc8R587p+fkjIP
-         oB07UwIF2uSqtmKmgqg7m2J+L0nXtKgtTZeSBQZuhcIyxLNxyPqTIwmrAObThL1Lxb0g
-         Zrvw==
+        bh=lfrHG1WH6erSaIaipwT8ciCPWYlneUqYmls1urpaYsI=;
+        b=VoagAPr3LTpvMW/5oFp+Aq4x38SRbqHwYuvwty/A60pg7LqRAv80O2qA+NToFgyw2J
+         8QxAGA+37onm6+2mr7idMTyRnUfC42r5TAPIs6PhipcMvz87sIFfdTnJIfmSCIkpXi8S
+         w50Ehee+QA93nAcn7FuR52ryY0IQDgCWolKYAMQRyBLqFRfUoDBXDNvYxhssrOgLB9dw
+         syAePxjF0c413lJPvPVrODmNw1R+wtsN94bLIf3u2OWCyWnP64NYyhxQiFXVHr1eZsu3
+         3ag2MRZ3FQK9ilibwPGdfwbOYt1TbeWherfYSSWz1GRWX3A0kcww6HMBZpyRE4IHQzuN
+         1C9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723069960; x=1723674760;
+        d=1e100.net; s=20230601; t=1723070054; x=1723674854;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d/17UOMKe5oLrCx17iNXp2TK19+E7NavssE5gQNb1UE=;
-        b=HdUyWqFyXZPcdtqxfWS+srvJm488cxRKs6DqK2DXDWdzk+4xiZmv9Uf6g552X1QWZT
-         UlEtw9XayOMsqtD2u/OpuQfKj7yckghwuNpwBl1u6Swq3yepiX1XRq5+nyPx71CIKEAR
-         qMq2RSLQRyK5iKYaK7x1dMaMkQhpgGFh3b7ZBTjTkEXAvV1L2CfDQ0zE/KlGGiGH3CS5
-         JEadzntfNJViSJ0ACC4+2NZniWezU+29EjD2WB0GU8+DtmXvlDlWCAq0fIjkUrRMJoHP
-         y2RodKSC0W3LNPau1Sn3e7G7jFCHcHSA/yO7viHAeSzyHt4D6O1r0Z4SrvPNkQeRKwGk
-         XZvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdMdwTmT2HHkelnh421FHbt5c6Z5P1eoT1qSM1pFVwolvc3gFNhbh2fKyZJfS0spe2G5A2YaN54B5tIIajBt310d1SOCmaN6IzVjTD
-X-Gm-Message-State: AOJu0YzK6zk/IK4VMa0IQIpOJpbPn7L+dKF3vrlb6OLJuPXy9HHq7bc/
-	t+oKw2E6tfygatpDHgKBg7X/b5/BDxZB6xEWc9wWALxGKLTltLX1nHk0MY8B6lI=
-X-Google-Smtp-Source: AGHT+IF6ltj6rd3uaMmAKqZ9lRxXF6GH8BM7xXm35nsHglv5MkLIzgBV5TQkDCcootMgdowWsa/ZAw==
-X-Received: by 2002:a17:90b:1254:b0:2c9:96fc:ac52 with SMTP id 98e67ed59e1d1-2d1c347b2b5mr29119a91.26.1723069960420;
-        Wed, 07 Aug 2024 15:32:40 -0700 (PDT)
+        bh=lfrHG1WH6erSaIaipwT8ciCPWYlneUqYmls1urpaYsI=;
+        b=xEA6qlBgrc43yYMsd4VzlIz7IECeTx7v9gWWjIN02cVBf8JUufddi+ogd4NIvIXRrh
+         Am8+/z5aSjkbSdJIMS/XzEi8/33ekT8M/A4JWgiFKbaXyqSRaOQltL7hgeZnTlT/pPvW
+         DJOrKBBBTGpt3vx1Ih2HkA7nHj2uwV5WNMpkvFWCxjm/FX6puC8stIv17sheemXS3ptm
+         IsszUlpLK9hsjzAj7XcZITbtb7I4yMn0Kjy6HNx0aIJRszPQglSOaRJqFZDX0aYblZti
+         f0FkSaS3dZw/nG4QfhdVgKEJU8Ez70o78qjObF0ckcXUD8UmuhhpV/EpCA3jYmOYT4+F
+         mSfA==
+X-Forwarded-Encrypted: i=1; AJvYcCVv6oVVRfwBo9gGPIPYunaCkrqrip9qQ+rdA2MrzPp1d6i3lS/pGYv1Eqv1QL36Ro4VYhsO9we/n7sAWq+kLsFrsBD/qkqV/0VqFGpN
+X-Gm-Message-State: AOJu0YyhJ+ucWP1hHfJQy/DbhqAa7itzeGFw1i8OIV5K80UsiA+nmOXQ
+	rpT3MZEgFZxsFmkyembo5lEws197OeSt7NeT0BEei7LzIj0xMzMArc5xzAtl4Qo=
+X-Google-Smtp-Source: AGHT+IG39+No54Rw/miCMksXv5QcGuWzil+DCVtmW0Rz/pFwmk6IgrNbAr9fPsdspRzM1slcOMQVlg==
+X-Received: by 2002:a05:6a20:c21:b0:1c2:912f:ca70 with SMTP id adf61e73a8af0-1c69966e0b6mr16020999637.42.1723070053844;
+        Wed, 07 Aug 2024 15:34:13 -0700 (PDT)
 Received: from localhost ([2804:14c:87d5:5261:6c30:472f:18a6:cae1])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b3b5a39bsm2102276a91.50.2024.08.07.15.32.39
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59176eb6sm111615725ad.196.2024.08.07.15.34.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 15:32:39 -0700 (PDT)
+        Wed, 07 Aug 2024 15:34:13 -0700 (PDT)
 From: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 To: Mark Brown <broonie@kernel.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
@@ -84,14 +84,14 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
   linux-fsdevel@vger.kernel.org,  linux-arch@vger.kernel.org,
   linux-mm@kvack.org,  linux-kselftest@vger.kernel.org,
   linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 35/40] kselftest/arm64: Add a GCS test program built
- with the system libc
-In-Reply-To: <20240801-arm64-gcs-v10-35-699e2bd2190b@kernel.org> (Mark Brown's
-	message of "Thu, 01 Aug 2024 13:07:02 +0100")
+Subject: Re: [PATCH v10 36/40] kselftest/arm64: Add test coverage for GCS
+ mode locking
+In-Reply-To: <20240801-arm64-gcs-v10-36-699e2bd2190b@kernel.org> (Mark Brown's
+	message of "Thu, 01 Aug 2024 13:07:03 +0100")
 References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
-	<20240801-arm64-gcs-v10-35-699e2bd2190b@kernel.org>
-Date: Wed, 07 Aug 2024 19:32:38 -0300
-Message-ID: <87jzgsdkvt.fsf@linaro.org>
+	<20240801-arm64-gcs-v10-36-699e2bd2190b@kernel.org>
+Date: Wed, 07 Aug 2024 19:34:11 -0300
+Message-ID: <87frrgdkt8.fsf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,21 +102,29 @@ Content-Type: text/plain
 
 Mark Brown <broonie@kernel.org> writes:
 
-> There are things like threads which nolibc struggles with which we want
-> to add coverage for, and the ABI allows us to test most of these even if
-> libc itself does not understand GCS so add a test application built
-> using the system libc.
+> Verify that we can lock individual GCS mode bits, that other modes
+> aren't affected and as a side effect also that every combination of
+> modes can be enabled.
+>
+> Normally the inability to reenable GCS after disabling it would be an
+> issue with testing but fortunately the kselftest_harness runs each test
+> within a fork()ed child.  This can be inconvenient for some kinds of
+> testing but here it means that each test is in a separate thread and
+> therefore won't be affected by other tests in the suite.
+>
+> Once we get toolchains with support for enabling GCS by default we will
+> need to take care to not do that in the build system but there are no
+> such toolchains yet so it is not yet an issue.
 >
 > Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 > Signed-off-by: Mark Brown <broonie@kernel.org>
 > ---
->  tools/testing/selftests/arm64/gcs/.gitignore |   1 +
->  tools/testing/selftests/arm64/gcs/Makefile   |   4 +-
->  tools/testing/selftests/arm64/gcs/gcs-util.h |  10 +
->  tools/testing/selftests/arm64/gcs/libc-gcs.c | 736 +++++++++++++++++++++++++++
->  4 files changed, 750 insertions(+), 1 deletion(-)
+>  tools/testing/selftests/arm64/gcs/.gitignore    |   1 +
+>  tools/testing/selftests/arm64/gcs/Makefile      |   2 +-
+>  tools/testing/selftests/arm64/gcs/gcs-locking.c | 200 ++++++++++++++++++++++++
+>  3 files changed, 202 insertions(+), 1 deletion(-)
 
-The libc-gcs test passes on my FVP setup:
+The gcs-locking test passes on my FVP setup:
 
 Tested-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 
