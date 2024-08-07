@@ -1,346 +1,160 @@
-Return-Path: <linux-kernel+bounces-278416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D5F794AFFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:48:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FCC94AFFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEDE0B21285
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:48:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF79C282DE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF39142E60;
-	Wed,  7 Aug 2024 18:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124A913D52E;
+	Wed,  7 Aug 2024 18:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FETmy3bu"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2084.outbound.protection.outlook.com [40.107.92.84])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="USSz9Ogw"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485471419A1
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723056472; cv=fail; b=iM7rAsqs4ukuLfScyjROqJPHZsCNQtEXDRVww+AWqpnle6QZluK88gs68UWO5fxv5lEVFr3EJuJpvg/q9ChoR1FT171eTPhfbk0wuk22sIghSN8/Ra85hHueSDGNsg3K0V2205+8S7sui6Kw8rqwUjBAoiwUzIMgt/joCicgdG4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723056472; c=relaxed/simple;
-	bh=F7FVosElILQIFJHEHADUyxNWezGPRESfS06VoZUDl7A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HSWmk/W+lghgMg2RRywWjKyomrNmJKkRBELgw0XaM9s1DkI1sBOzKM9ufBA4tNU5i/bl3NRE+vZb3aJFMiNZhbjlTlNkELwDSUKHHSPuHCaJbGsFdPmUf8x5OlaOxn4LF85EzFAg/aFeOpFBUBpqai+VaSeY1kR/nFlG8ZgO2fQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FETmy3bu; arc=fail smtp.client-ip=40.107.92.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Esb0IlDmlSIiHbYnVOm1uKUg4Tij+M8Imq9tIA53QrRYtA+IiSkDlnZJknslinig7+spOu7CGER/3ZEStsRBzA6NDpXCyNm6RQjKF1ztiYK30Gdsbcw/D4ugbJCnz8RSg+aP4hZtc95hDLiPClOtUsGWJvdSMPkucKKvXGRPVyactceccNOgRNGOrHQjVA4Nx3g3wDv/jURupUqSSwJB38r1NLVGSausfDxfZvpu97I8p32pSBWmQajpkjEamt21SNIMPuRf7sF4r84Juyd55J5bunw0vnCm7WjFlM1V1moOQCmcWQFzfMg9GWRcL1b/2bnAT/ZwoEsZ7WorJOiW2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oT/pQGYcgUuRIzmbUBqNmoaaYENPUPT2ty2iiEUcBpY=;
- b=jQp9yjOw7HLIwp6d8jG5Cyt4rv/bF3U0QlQ35nWJsZOJm35iX4pcmRAlcnAAsNtLKye9/Qe0hja2mbLkPeilvYhJ9AMO6eSHEe3j2+uV9dOvnS13asRyCAScexjQyGa53+eaoGvtSZQ1h2VjY+E6A9Ip5JuBQZ2vqHS574iEU905DWd6Bt4bjKYTvCFDOvAbl0K7uao1DNlCmLr4B2c6D5PB6iESuY1nMlKl0RBIG4exNNyVvasVNvZ93Tu8ejP//j2zHuU9iZsViwpr4wbLrfSrVK08imE7j3pb0wITp7ZpGDQFUaVn1yUS5MCSIEulbig/a9WKhWXm4suLZeEjKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oT/pQGYcgUuRIzmbUBqNmoaaYENPUPT2ty2iiEUcBpY=;
- b=FETmy3bu+fvUxmX4s4qz6FHF52IHVY9gzpv/i8qmvu376j0UUpsoNLEdAvoIrWh8DHF5K+c07FNvOyfNxTK7dO1R/UmF7HBmuq4ful7TJQeeHHIxzacIKmoNPL71VuwsiQuxlFghgJx79nKbPYJHtAalCU5Kxq73K04s4L8psZDGpOjsodXNNQkNJlErTgyiO63ejnQqiAWo05Jr4mUh7+jGSz9b5oLrI3Ao0I/ycAoySXrplq0reDjldnxzfdakyRqjDSwGF9kq0pfUQE5kvHQpIvgUpS7YKGQR4bx02/wfXifgf+1R72dhh1Cl9GP7XKb2hQlSOVTvOoX9nscNdw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CYXPR12MB9320.namprd12.prod.outlook.com (2603:10b6:930:e6::9)
- by LV3PR12MB9185.namprd12.prod.outlook.com (2603:10b6:408:199::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23; Wed, 7 Aug
- 2024 18:47:46 +0000
-Received: from CYXPR12MB9320.namprd12.prod.outlook.com
- ([fe80::9347:9720:e1df:bb5f]) by CYXPR12MB9320.namprd12.prod.outlook.com
- ([fe80::9347:9720:e1df:bb5f%3]) with mapi id 15.20.7828.023; Wed, 7 Aug 2024
- 18:47:46 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	linux-kernel@vger.kernel.org,
-	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH 2/2] mm/migrate: move common code to numa_migrate_check (was numa_migrate_prep)
-Date: Wed,  7 Aug 2024 14:47:30 -0400
-Message-ID: <20240807184730.1266736-2-ziy@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240807184730.1266736-1-ziy@nvidia.com>
-References: <20240807184730.1266736-1-ziy@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BN6PR17CA0043.namprd17.prod.outlook.com
- (2603:10b6:405:75::32) To CYXPR12MB9320.namprd12.prod.outlook.com
- (2603:10b6:930:e6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC5D2770E
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723056727; cv=none; b=P38VdgQFWC1gkXlFpc+QZBWrbkozGcXtAp3WBD08xqlM8AN1iVJYtosEsLKEARG0oaLijCLB7iWQohFB2BikV0Jup93yXjGxG17pMGacv1s/3p08rWbvP/sbhHtiaDCnUp5RrS5eI0170RwMatzDjy1WqTWx4esNkWs0d1eu354=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723056727; c=relaxed/simple;
+	bh=uqnEFoTEUK/4p+qjGedIlfsJVMEBWzdRLsRdD6mLOWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GahJMDnGkt8VFrxd/UACL9sSHTOeksKe5m1y5fE2DIwhM4Qb++BCMVNqdFIDry1bEEQCgdOtNpcGqA5aMqocwGQYO0qfAExxnS3Q2evKCELGD6QuJ3OHMKoDTOLF4UKQLHn8n8zVPkkXJiRJhY+4waXYKwvNDfPPo6brbZWBszQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=USSz9Ogw; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4779lNn6006676;
+	Wed, 7 Aug 2024 18:51:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=myjIk1jplhDKGHKUR6onVW7OzlU
+	VF9vD9ubGmB2w2zg=; b=USSz9OgwE4k6gwTLCHczD3YvSKcVE26XvNLggL7Vp5V
+	nuud1qXotOidh0+DI4RNEITo4cZrW1LH9E9n8lkKgAYjTxKsil2k74dBk/ZTFISY
+	olkH7dbIIUkmhW3PMi07UEJa1sF3MJjVb7LiLjgJ0FrIT6IkAMSqH4KYBCYZRWTr
+	bF4+cC9mGP3TAtygGMjQD8YqyJadIqooDKLYACk0YS8AK46K4pKJFbkDVRNNP4eX
+	gUATY7sZYPwsV1TR3vl5AGJUO9nDqK2ifojDtS7sIqd/zqiQ4uLlSz5M6UUXoPxL
+	pjfba4CQ4qFuRmGirlBTcJuKgk7nMFk53Sr3axN3b8g==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40uqcmu4sk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 18:51:34 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 477I9bEo024386;
+	Wed, 7 Aug 2024 18:51:33 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40sy90tmwq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 18:51:33 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 477IpRXA10682840
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 7 Aug 2024 18:51:29 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A32DB20043;
+	Wed,  7 Aug 2024 18:51:27 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A10BA20040;
+	Wed,  7 Aug 2024 18:51:26 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.171.4.225])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed,  7 Aug 2024 18:51:26 +0000 (GMT)
+Date: Wed, 7 Aug 2024 20:51:24 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+Message-ID: <ZrPCLM7saGqOc0YU@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+References: <20240731095022.970699670@linuxfoundation.org>
+ <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
+ <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
+ <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz>
+ <f63c6789-b01a-4d76-b7c9-74c04867bc13@roeck-us.net>
+ <CAHk-=wjmumbT73xLkSAnnxDwaFE__Ny=QCp6B_LE2aG1SUqiTg@mail.gmail.com>
+ <CAHk-=wiss_E41A1uH0-1MXF-GjxzW_Rbz+Xbs+fbr-vyQFpo4g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYXPR12MB9320:EE_|LV3PR12MB9185:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12a17b7a-36d5-4a77-b070-08dcb7116d9e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?mZYBk/ff6knOYXlfLXHc2FeL9GEqvsFfv3LsEowfxpIryswFtIEgzsTWKwjE?=
- =?us-ascii?Q?ZpSugmDJR++IvW5BvLdbPjcqfAI6SnSEZ6E2azzpz/MVVfnakUOJ6b9v/tO7?=
- =?us-ascii?Q?/x38hycTSRV3/6fjlgjFXMWHE+xI5NN9KvLpNA3jCXjB4SGUZwXyi82Rpg9p?=
- =?us-ascii?Q?V7zRLzG+1dcROtSxKEFIOF1RzptjGHP9Qppyv3BKb1sE+4mNsvFIVadBae2Y?=
- =?us-ascii?Q?DxIFa/8NDZqjUJYrj4zUPzU6TANTDnN95Jo0F27OdLKyHGw7/tbE0zN+SH0w?=
- =?us-ascii?Q?wXZ6qzVn6Pqglr9Fasqyu0rD5OH4oG7ko0VTuFy4UzLEBExAKOjE8qSj9nn6?=
- =?us-ascii?Q?OpVyrcQHwX/XWNP8Mod5/Ck/z5O1HvCP4U58Cy5rZWYyehy9OIC8wCW3PbuN?=
- =?us-ascii?Q?ZGl/mr+JnBL9DwDCFp2OqRiaLfh8ijDRPSnuxCCp7eD73K/lyB0DEiGNuxBu?=
- =?us-ascii?Q?rqcva1WCKA9pIRluxLwpRu1LmPcKtoZLkrdXynydicIGBgQ4XYT9nzdNiC8W?=
- =?us-ascii?Q?IUyCiDNITq+gifcrZ7kYqkj0sr3iSi3uRSlKEFF++zTAENS0l7EbeCv5MQt0?=
- =?us-ascii?Q?4ekGRYPuvpjImPtuHpag4C3MtUCFzP2S0ubb+7sdQnziJW19XtE5tjbMblYh?=
- =?us-ascii?Q?TyAxtBgy2vwbvyD+nusddewfaoMIGR2eR8Hk1SUbCO9UGQoGeA++mnc8u76R?=
- =?us-ascii?Q?SiJYpT2TWSS5/mQCQY6sIfieqM8oPIXOzY7mkrlcbI5GtdaqZO1+833twDwi?=
- =?us-ascii?Q?jVKJxciYE3mJ7GizuEGaC3HX0nQq7JkIXbKcTHDyg6alfq1aBO4L6F9md8iX?=
- =?us-ascii?Q?4iHjy5FSOM85UrPtPotEZMSM8ZrfwQwGUr77ZipqX9ye8a31PmmSEHxW3hG7?=
- =?us-ascii?Q?Eo6KfheEw4rhF5XjqBDnkPF3MlsCQ07bjs4bMSLAwuR0p8NtACKjpTN8pXe9?=
- =?us-ascii?Q?eCqA8Pat53tjdeY/KQ2A5OdCvWGNEmeVLHMlvhD36WO19O1dbi+BSzrBAa+K?=
- =?us-ascii?Q?7icjqo+oVDQ4ZwQUiyFHN4+Kpid3nL3YTVwxpQ3dmAhPnoZL5ukTNl2fPTiY?=
- =?us-ascii?Q?ftVyA5gI+2vHIZB8yhdKnryhkk1E0BK12/iRgL8/9n52LlbVekUw3dFHH5Go?=
- =?us-ascii?Q?QPalD5gsyePqFQ8l0G2EJOGoLdceObGSXI2KnvsreMoLEdSm2CcwrxIlou5B?=
- =?us-ascii?Q?tfM6+1PBMG66C9n7QL7owmLPAa4CIRZGNGJDxj7Wz6wLx/zWWY2okKVQw+99?=
- =?us-ascii?Q?PcrtUP6tjf80TcXJZ4sVbi3z/+dh+UPk4QdIeEPxU9F5Z/VieoWGE+Niv+Sp?=
- =?us-ascii?Q?aD8rTeHXfCLE4pEUhIePmqLhlQk1aj3NkZxFVkpDppdQDA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYXPR12MB9320.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?N4McOZpF1LlApirnqA2VCh2saTCVvUAyDFm5H69aSkdnMc+cHdY3NJW+E1zu?=
- =?us-ascii?Q?Dy9+8oiw50W9u1Hb719ATZ3I1iFKp1alozJEEbriNH3L7isdh+JJ/Zp20F6/?=
- =?us-ascii?Q?GqtEthnlYv/5viMHReO504JV4eqm5E4qIDGZqIVRzIjrML3hvr9mS8h6E9n2?=
- =?us-ascii?Q?4p8PgEicukExfI6+SuD4dEb3y4caz2TeRMJVmN+T9j9GUM+oJJPiwUMvtCiH?=
- =?us-ascii?Q?Ss/gJ6jTV/QOqwbH8ji//jyvRKFesaxb6hFIVIghN33Af7qTuOwBd8c3/KxW?=
- =?us-ascii?Q?jALqAb4K0J1R4LXSJRAdCc24yeLw8uGPfMECnIPOe7Q7zMmbulsomj5HOWDx?=
- =?us-ascii?Q?X9KESaupmKRKnF3dX4NdkuMCZWfZN/r34fLCEpxsIx/+gFJTt98yG/mKLQSz?=
- =?us-ascii?Q?UBh4ObhtW5tYpzYXbcmn9J3WeGM1u0shIZB+zq3rUwD+Q/WOS3dDpTHL/mb1?=
- =?us-ascii?Q?4lpj3kQtKyMOEeukVjkf16XdVLDXvwUpFmR+QwSUpz5hEkuR64KInJhtHKM6?=
- =?us-ascii?Q?KpMx7vXfj339UIWRUjCxbHmDxw3CXU25hMl6UF9Na321DgggoY1RtlV3UkER?=
- =?us-ascii?Q?cOXaxlzJ+7/G8nxA9NBFWi8LDpDnnWAd3YAUGN4M/OKAefxNKrXq2yJxU8cL?=
- =?us-ascii?Q?uXq3U5FbevbXXZohF1sCecHdeEWLL/7inM/D3YZNPlvj2YvMtsIX4QZQyf/5?=
- =?us-ascii?Q?3ShKpESnzudo0YVpOj4Bsa/VdmZHxAGy3sbszCZrjyoZfAnGVF4DKf6lwgLX?=
- =?us-ascii?Q?jMQIzokxm1HJNlqnkI+POXx4pAe4987AvnGPG4qOn6ItziCnFtqeeebyoXSD?=
- =?us-ascii?Q?npwNODR8DEZiRJe4QpMYTt0ypYApvxXtrMZIJG+n2ddFFZX7KUNCjhACGr8f?=
- =?us-ascii?Q?Lkhupq/Za24/BaZgYOaKCdgTzzZkXIjK4iwfyUpPvZxZV0AYGU8JPv02m22r?=
- =?us-ascii?Q?tnJjlQAPpEDqbBXEAQE2QabB9HOdOmwlCxL7Mytx9Pe+VTHwCPfvz2IU3DrL?=
- =?us-ascii?Q?85sUjMS0oLiwRqmXXCW2ni2pKQyiuc7AjJdr725mPNFp4Vnq+CNK5716nGfn?=
- =?us-ascii?Q?uSjEWGziXJJGZY4e53bGrujg58xVhDNwhqrdDI92IGlXzoTQcQLsGrY5cuWb?=
- =?us-ascii?Q?yyVMPgPkk43T3xPv2xZsaeYpLC8esSu37mNPAUvedYwS8Pic2D1MVYxB8a4W?=
- =?us-ascii?Q?u7l4mddOECfrqfuJ9Pqjm2AHMKo5gos10vaRfvFvFaIeH0cERyEVCp4A30Y1?=
- =?us-ascii?Q?hwyoMgxJDXzBaV1fscXyTktVXC5yMekWx0LTWauIFJnW3KeEH++0ksV9OmOU?=
- =?us-ascii?Q?8Ue9IXpULO1loCuHSlir5oBcmw0bpnVJ1U/ALzxf/j1jtTOOlkDVA6Vd31Rj?=
- =?us-ascii?Q?Qph9iqpsrYi41lxs3fdS2jOZ/1zebO67W9PfUjeGHeo8g8PN+iipWOWi/w0W?=
- =?us-ascii?Q?aQgiNtTRTyYYurWemWx33yOn1MkGCanclhd6o1ypKINi81fm6pMww9hDGyQS?=
- =?us-ascii?Q?TulyP02wOwVySBIOmGKNlGPFmLllBeqHkLlMk/3mB8X4YqMXOUpUczwup+4u?=
- =?us-ascii?Q?nAjhjoS24W1QwriqTK8=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12a17b7a-36d5-4a77-b070-08dcb7116d9e
-X-MS-Exchange-CrossTenant-AuthSource: CYXPR12MB9320.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 18:47:46.2294
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OSCqx9jh/4r1uvFvLHtnHKAyzZdaBLygxR3FDGXha4CdGLVvNAqSMcALkfiLCe2M
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9185
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiss_E41A1uH0-1MXF-GjxzW_Rbz+Xbs+fbr-vyQFpo4g@mail.gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 75wiWQMFail5IVE_49tyL7VLokPFOhMB
+X-Proofpoint-ORIG-GUID: 75wiWQMFail5IVE_49tyL7VLokPFOhMB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_11,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
+ priorityscore=1501 impostorscore=0 mlxscore=0 malwarescore=0 spamscore=0
+ suspectscore=0 mlxlogscore=342 bulkscore=0 adultscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408070128
 
-do_numa_page() and do_huge_pmd_numa_page() share a lot of common code. To
-reduce redundancy, move common code to numa_migrate_prep() and rename
-the function to numa_migrate_check() to reflect its functionality.
+On Tue, Aug 06, 2024 at 10:49:58AM -0700, Linus Torvalds wrote:
 
-Now do_huge_pmd_numa_page() also checks shared folios to set TNF_SHARED
-flag.
+Hi Linus,
 
-Suggested-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Zi Yan <ziy@nvidia.com>
----
- mm/huge_memory.c | 14 ++-------
- mm/internal.h    |  5 ++--
- mm/memory.c      | 76 ++++++++++++++++++++++++------------------------
- 3 files changed, 44 insertions(+), 51 deletions(-)
+Though this turned out to be a parisc issue, I'll still answer in
+case you are interested.
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index a3c018f2b554..9b312cae6775 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1699,18 +1699,10 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
- 	if (!folio)
- 		goto out_map;
- 
--	/* See similar comment in do_numa_page for explanation */
--	if (!writable)
--		flags |= TNF_NO_GROUP;
--
- 	nid = folio_nid(folio);
--	/*
--	 * For memory tiering mode, cpupid of slow memory page is used
--	 * to record page access time.  So use default value.
--	 */
--	if (!folio_use_access_time(folio))
--		last_cpupid = folio_last_cpupid(folio);
--	target_nid = numa_migrate_prep(folio, vmf, haddr, nid, &flags);
-+
-+	target_nid = numa_migrate_check(folio, vmf, haddr, &flags, writable,
-+					&last_cpupid);
- 	if (target_nid == NUMA_NO_NODE)
- 		goto out_map;
- 	if (migrate_misplaced_folio_prepare(folio, vma, target_nid)) {
-diff --git a/mm/internal.h b/mm/internal.h
-index 52f7fc4e8ac3..fb16e18c9761 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1191,8 +1191,9 @@ void vunmap_range_noflush(unsigned long start, unsigned long end);
- 
- void __vunmap_range_noflush(unsigned long start, unsigned long end);
- 
--int numa_migrate_prep(struct folio *folio, struct vm_fault *vmf,
--		      unsigned long addr, int page_nid, int *flags);
-+int numa_migrate_check(struct folio *folio, struct vm_fault *vmf,
-+		      unsigned long addr, int *flags, bool writable,
-+		      int *last_cpupid);
- 
- void free_zone_device_folio(struct folio *folio);
- int migrate_device_coherent_page(struct page *page);
-diff --git a/mm/memory.c b/mm/memory.c
-index 503d493263df..b093df652c11 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -5368,16 +5368,43 @@ static vm_fault_t do_fault(struct vm_fault *vmf)
- 	return ret;
- }
- 
--int numa_migrate_prep(struct folio *folio, struct vm_fault *vmf,
--		      unsigned long addr, int page_nid, int *flags)
-+int numa_migrate_check(struct folio *folio, struct vm_fault *vmf,
-+		      unsigned long addr, int *flags,
-+		      bool writable, int *last_cpupid)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 
-+	/*
-+	 * Avoid grouping on RO pages in general. RO pages shouldn't hurt as
-+	 * much anyway since they can be in shared cache state. This misses
-+	 * the case where a mapping is writable but the process never writes
-+	 * to it but pte_write gets cleared during protection updates and
-+	 * pte_dirty has unpredictable behaviour between PTE scan updates,
-+	 * background writeback, dirty balancing and application behaviour.
-+	 */
-+	if (!writable)
-+		*flags |= TNF_NO_GROUP;
-+
-+	/*
-+	 * Flag if the folio is shared between multiple address spaces. This
-+	 * is later used when determining whether to group tasks together
-+	 */
-+	if (folio_likely_mapped_shared(folio) && (vma->vm_flags & VM_SHARED))
-+		*flags |= TNF_SHARED;
-+	/*
-+	 * For memory tiering mode, cpupid of slow memory page is used
-+	 * to record page access time.  So use default value.
-+	 */
-+	if (folio_use_access_time(folio))
-+		*last_cpupid = (-1 & LAST_CPUPID_MASK);
-+	else
-+		*last_cpupid = folio_last_cpupid(folio);
-+
- 	/* Record the current PID acceesing VMA */
- 	vma_set_access_pid_bit(vma);
- 
- 	count_vm_numa_event(NUMA_HINT_FAULTS);
--	if (page_nid == numa_node_id()) {
-+	if (folio_nid(folio) == numa_node_id()) {
- 		count_vm_numa_event(NUMA_HINT_FAULTS_LOCAL);
- 		*flags |= TNF_FAULT_LOCAL;
- 	}
-@@ -5442,13 +5469,13 @@ static void numa_rebuild_large_mapping(struct vm_fault *vmf, struct vm_area_stru
- static vm_fault_t do_numa_page(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
-+	pte_t old_pte = vmf->orig_pte;
-+	pte_t pte;
- 	struct folio *folio = NULL;
- 	int nid = NUMA_NO_NODE;
- 	bool writable = false, ignore_writable = false;
- 	bool pte_write_upgrade = vma_wants_manual_pte_write_upgrade(vma);
--	int last_cpupid;
--	int target_nid;
--	pte_t pte, old_pte;
-+	int target_nid, last_cpupid = (-1 & LAST_CPUPID_MASK);
- 	int flags = 0, nr_pages;
- 
- 	/*
-@@ -5456,10 +5483,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
- 	 * table lock, that its contents have not changed during fault handling.
- 	 */
- 	spin_lock(vmf->ptl);
--	/* Read the live PTE from the page tables: */
--	old_pte = ptep_get(vmf->pte);
--
--	if (unlikely(!pte_same(old_pte, vmf->orig_pte))) {
-+	if (unlikely(!pte_same(old_pte, ptep_get(vmf->pte)))) {
- 		pte_unmap_unlock(vmf->pte, vmf->ptl);
- 		goto out;
- 	}
-@@ -5479,35 +5503,11 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
- 	if (!folio || folio_is_zone_device(folio))
- 		goto out_map;
- 
--	/*
--	 * Avoid grouping on RO pages in general. RO pages shouldn't hurt as
--	 * much anyway since they can be in shared cache state. This misses
--	 * the case where a mapping is writable but the process never writes
--	 * to it but pte_write gets cleared during protection updates and
--	 * pte_dirty has unpredictable behaviour between PTE scan updates,
--	 * background writeback, dirty balancing and application behaviour.
--	 */
--	if (!writable)
--		flags |= TNF_NO_GROUP;
--
--	/*
--	 * Flag if the folio is shared between multiple address spaces. This
--	 * is later used when determining whether to group tasks together
--	 */
--	if (folio_likely_mapped_shared(folio) && (vma->vm_flags & VM_SHARED))
--		flags |= TNF_SHARED;
--
- 	nid = folio_nid(folio);
- 	nr_pages = folio_nr_pages(folio);
--	/*
--	 * For memory tiering mode, cpupid of slow memory page is used
--	 * to record page access time.  So use default value.
--	 */
--	if (folio_use_access_time(folio))
--		last_cpupid = (-1 & LAST_CPUPID_MASK);
--	else
--		last_cpupid = folio_last_cpupid(folio);
--	target_nid = numa_migrate_prep(folio, vmf, vmf->address, nid, &flags);
-+
-+	target_nid = numa_migrate_check(folio, vmf, vmf->address, &flags,
-+					writable, &last_cpupid);
- 	if (target_nid == NUMA_NO_NODE)
- 		goto out_map;
- 	if (migrate_misplaced_folio_prepare(folio, vma, target_nid)) {
-@@ -5529,7 +5529,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
- 					       vmf->address, &vmf->ptl);
- 		if (unlikely(!vmf->pte))
- 			goto out;
--		if (unlikely(!pte_same(ptep_get(vmf->pte), vmf->orig_pte))) {
-+		if (unlikely(!pte_same(old_pte, ptep_get(vmf->pte)))) {
- 			pte_unmap_unlock(vmf->pte, vmf->ptl);
- 			goto out;
- 		}
--- 
-2.43.0
+...
+> Or maybe it's the s390 ffs().
+> 
+> It looks like
+> 
+>   static inline int ffs(int word)
+>   {
+>         unsigned long mask = 2 * BITS_PER_LONG - 1;
+>         unsigned int val = (unsigned int)word;
+> 
+>         return (1 + (__flogr(-val & val) ^ (BITS_PER_LONG - 1))) & mask;
+>   }
+> 
+> where s390 has this very odd "flogr" instruction ("find last one G
+> register"?) for the non-constant case.
+> 
+> That uses a "union register_pair" but only ever uses the "even"
+> register without ever using the full 128-bit part or the odd register.
+> So the other register in the register pair is uninitialized.
 
+In case of "flogr" instruction the odd register contains output data only.
+There is no need to initialize it.
+
+> Does that cause random compiler issues based on register allocation?
+
+Using the register_pair guarantees that an even+odd register pair
+is "reserved". As result, the register allocation prevents "flogr"
+instruction from corrupting otherwise random odd register.
+
+> Just for fun, does something like this make any difference?
+> 
+>   --- a/arch/s390/include/asm/bitops.h
+>   +++ b/arch/s390/include/asm/bitops.h
+>   @@ -305,6 +305,7 @@ static inline unsigned char __flogr(unsigned long word)
+>                 union register_pair rp;
+> 
+>                 rp.even = word;
+>   +             rp.odd = 0;
+>                 asm volatile(
+>                         "       flogr   %[rp],%[rp]\n"
+>                         : [rp] "+d" (rp.pair) : : "cc");
+...
+
+>               Linus
+
+Thanks!
 
