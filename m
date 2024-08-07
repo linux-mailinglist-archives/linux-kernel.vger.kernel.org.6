@@ -1,134 +1,99 @@
-Return-Path: <linux-kernel+bounces-278048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE6D94AA18
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:28:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B93594AA1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2840828404A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:28:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E4671C210D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D4F78291;
-	Wed,  7 Aug 2024 14:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D2D77F0B;
+	Wed,  7 Aug 2024 14:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nWxFXq/F"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TaM8UTfW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA43D5914C
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB6C6F30E;
+	Wed,  7 Aug 2024 14:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723040920; cv=none; b=qJDNdUvPaOrXvOn4b4qwCmgL1hmfTQDK2DfNyNNXzTytvSQsHtiF0H1+8PFL3c2eaYWJ3ILbfiYtVfVhOXajJBWaccY2AvPEaWnXkJ2YpLv2kdDERxeGvPSKvYVBdpd9uVRYaEyoxtP/qKI1raO0GleP2HBQ53q66IzAikesetY=
+	t=1723040961; cv=none; b=Wi/0ZgPZ62YecIAahFAVr440dlhGM0EYbgbjvYG64l/KyJ6WMqsCMxvn3tvSHxI2v5C5S1mFsRWaKQQWNcvcU+uOSC3d+Y3nqLbGWoTxLwpAkiySNsxk5qR7hXi2b+NtnmSlUdyqB5b7Z8CLrxH7OHIjGZkwMUlZajfGeosXXs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723040920; c=relaxed/simple;
-	bh=sjYkFCUHkzVFgdYIjhNjUTc7FfQpRSU/xEpkvL0kysY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yjz1dqc0z1kroZyoW9oPSjjuqvgAFISpe4fq+YYcMwiylAdVBkr3I6x3SOvf7a+Pcz7TXCSK9yC+b3A7T4LbssZZGMqxpSIj8Qo+e0KOQ+HH6bX2Ing+8biLPTQDjp+R99wPNHrnWc912F5Rj+mVJGZZaas8K5v6sEOk3hQJd+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nWxFXq/F; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1ff4fa918afso12785295ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 07:28:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723040918; x=1723645718; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VKuKBySJ6S+gvs4v9HSUedwC/HHVUTjFlzosJrPtZ9k=;
-        b=nWxFXq/F60747HVCiU27onWE2W+OUS5FiS2NLsFJ2ShBqsLo4MtR9lskHzo16/Rzui
-         rkMsECbh4i4qHXMD+53o3JPxpTaCNYER8pGMB7kz6u4iOqNRPbChzzjnjo5+Y7KHKF/+
-         CiX5loVjJ5mgcXbCD3bBI5olLEsQsoS/QSoqFxST11IHzLQ2WLmHki7w1hQDLt4jGPE3
-         f7tOCdcULocYYx4nh7FAbvfz3KQwHyaqarmXhlmBjB1vR8wldSVyKM3nBzA30sBs/aHd
-         /5qhK540Rwq+P8/Vw4JkqNChEFOIe6KtefapWIVlmU5OWhQRTa+IzOHcI/amE1Q6g5vK
-         ooHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723040918; x=1723645718;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VKuKBySJ6S+gvs4v9HSUedwC/HHVUTjFlzosJrPtZ9k=;
-        b=CgzCirDprAV6y0mjmkliWby2qh/VY15EMErhWvb0xDUBoxutyFNZb5wQ7S/lJb93/L
-         49ehA88zL2XbxYL/XSEpsZ4pmNhFRdRgCzgDep5NhkruYkIMzotExYcH+uF9/raNO5AY
-         K3uqH+pNcRYD0pDWa5TuwkeqUG0QtPS7Q2zvwgqRnSFY/RWkttE6YyVN+DbCKS8kpcQJ
-         mu0zinuEORXp5p1IZWgefOmpCKJCG1OMYv4V7m0PPE2uu12Crt7yE7wbjuZLcbcU05De
-         jpYAoqcyAKklVODzvnTfIUdPKMa4ihtbu7hke8czjLtZe05+dnhOZ+tgVEHyLBaXblhQ
-         NU3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWqIhighodq2pfJxfZjcMaEa3o3yxWZUzlqPnHqKW+WeJva/U8ICiqEk9p2UrlTyllo76sg6OtFLhGggVn5FJleIy+GBcwwtDIV5i/g
-X-Gm-Message-State: AOJu0Yygdabg41lnQptEYxE8B5opD8bRgplJNgUv8WfB34bmpWVKeaXa
-	wtuNCUPU9eZ1pXHFWiZFSfpSJRdbHDoI8d/cuzQxILlzptazPCctSzC5CzYIiQ==
-X-Google-Smtp-Source: AGHT+IHZGNj+CO42m9jtmxWeNlytFnAG0AsbIOFpHxbImnUwc5QhUJCTK/KRugcCs3bD/VRGGFL7CQ==
-X-Received: by 2002:a17:902:d2ce:b0:1fb:93d6:9fef with SMTP id d9443c01a7336-1ff572ecfc9mr201757215ad.38.1723040917595;
-        Wed, 07 Aug 2024 07:28:37 -0700 (PDT)
-Received: from google.com (57.145.233.35.bc.googleusercontent.com. [35.233.145.57])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5927ef2bsm107265385ad.227.2024.08.07.07.28.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 07:28:36 -0700 (PDT)
-Date: Wed, 7 Aug 2024 14:28:32 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Waiman Long <longman@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, kernel-team@android.com,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH 2/3] lockdep: clarify size for LOCKDEP_*_BITS configs
-Message-ID: <ZrOEkD9RpvdtqXDK@google.com>
-References: <20240806010128.402852-1-cmllamas@google.com>
- <20240806010128.402852-3-cmllamas@google.com>
- <218314e9-7c7c-490c-bb2e-9611243cade3@redhat.com>
- <ZrI3mFLUwDyEMRIB@google.com>
- <e378ac65-73cc-4829-b605-f164c67dc5ae@redhat.com>
- <ZrJgnP5Nv03k8rMG@boqun-archlinux>
+	s=arc-20240116; t=1723040961; c=relaxed/simple;
+	bh=1c1Vw1Y3wDE2nnNr4XeVDLbR5X7Ybtyob5X9ATir400=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bKy8t1iGskjWwCPuvyQSeuyF57sp/eFdVQZLehGJQePbW8APlD+nq/d7niiF011a/hxnJ4DREXKoWDQdORN6cP1mXm+2XTxorV82V6DuR2bno3I2c4QNLwS0e4RWU8nlm4WMOSZKflaahLWPi51yl4wIDDI3ZQKMr8Lw3zQQnrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TaM8UTfW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5E6DC32781;
+	Wed,  7 Aug 2024 14:29:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723040961;
+	bh=1c1Vw1Y3wDE2nnNr4XeVDLbR5X7Ybtyob5X9ATir400=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TaM8UTfWrH88zcE0C3pA5l5f08rB1sESch4y+uc4LhGLz4F9feWm0rdN6q9PcljAp
+	 mF0MvdyICrrGU/WSBfp3v1skYNUJJ+1+DqdC2z4nsq06ssSTgm/iKFno0Q6+SaBpox
+	 DO3r6/9xGb9pc13HbitMxdHvd16EWGK7bvRKUsiQjP6Mhj3pRnsdWQnDaub84uPg5W
+	 tLKebGXFUSQ6TXBwGXZZFwJLpCeny4XANUHFUFBvXncBBJDY++wipbVE878yIxPm7q
+	 yYh6Ic0ieX8z8HhwqC8411VReOFY/99EPD69BeR0cwySG6L94rQLIT+CyI738j/wls
+	 +Az2BI3Zmciwg==
+From: Christian Brauner <brauner@kernel.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	edumazet@google.com,
+	kuba@kernel.org,
+	mkarsten@uwaterloo.ca,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH net-next] eventpoll: Don't re-zero eventpoll fields
+Date: Wed,  7 Aug 2024 16:29:07 +0200
+Message-ID: <20240807-zugeparkt-andacht-adb372d9e470@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240807105231.179158-1-jdamato@fastly.com>
+References: <20240807105231.179158-1-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrJgnP5Nv03k8rMG@boqun-archlinux>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1142; i=brauner@kernel.org; h=from:subject:message-id; bh=1c1Vw1Y3wDE2nnNr4XeVDLbR5X7Ybtyob5X9ATir400=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRtbtnJkje7bE2XPdd3tTbNhD7BW5OXyS+Z6hF8/pAhQ 4rhtp7OjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlMq2X4zWKxf3oPg9Mpv6h9 Wcu5f3yp1thokT1jR9gjBrUZXm3bpzMy3N9a8ehF0esbs39/Zw04/3j79Gyd6VMee6soHODZd5V jATMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 06, 2024 at 10:42:52AM -0700, Boqun Feng wrote:
-> On Tue, Aug 06, 2024 at 10:52:52AM -0400, Waiman Long wrote:
-> > 
-> > On 8/6/24 10:47, Carlos Llamas wrote:
-> > > On Mon, Aug 05, 2024 at 09:36:43PM -0400, Waiman Long wrote:
-> > > > Many kernel developers understand that BITS refers to a size of 2^n. Besides
-> > > > LOCKDEP, there are also many instances of such use in other kconfig entries.
-> > > > It can be a bit odd to explicitly state that just for LOCKDEP.
-> > > > 
-> > > > Cheers,
-> > > > Longman
-> > > Right, and similar to BITS there is SHIFT, which is also a common way to
-> > > specify the 2^n values. I'd point out though, that it is also common to
-> > > clarify the "power of two" explicitly. To name a few examples that are
-> > > doing so: SECURITY_SELINUX_SIDTAB_HASH_BITS, NODES_SHIFT, CMA_ALIGNMENT,
-> > > IP_VS_SH_TAB_BITS, LOG_BUF_SHIFT but there is more.
-> > > 
-> > > Perhaps this is because the audience for these configs is not always a
-> > > kernel developer?
-> > > 
-> > > Anyway, this is pretty much a trivial patch to address Andrew's comment
-> > > below. But let me know if you think I should drop it, it seems to me it
-> > > can be helpful.
-> > > 
-> > >    [...]
-> > >    btw, the help text "Bitsize for MAX_LOCKDEP_CHAINS" is odd.  What's a
-> > >    bitsize?  Maybe "bit shift count for..." or such.
-> > 
-> > I am not against this patch. Currently I am neutral. Let's see what Boqun
-> > think about it.
-> > 
+On Wed, 07 Aug 2024 10:52:31 +0000, Joe Damato wrote:
+> Remove redundant and unnecessary code.
 > 
-> This looks good to me. Maybe it's a bit verbose but that's what the doc
-> part should be: providing enough information so more people can be on
-> the same page. Please keep this one, thanks!
+> ep_alloc uses kzalloc to create struct eventpoll, so there is no need to
+> set fields to defaults of 0. This was accidentally introduced in commit
+> 85455c795c07 ("eventpoll: support busy poll per epoll instance") and
+> expanded on in follow-up commits.
+> 
+> [...]
 
-Sounds good. I'll send out the v2 and keep this patch then.
+Applied to the vfs.misc.jeff branch of the vfs/vfs.git tree.
+Patches in the vfs.misc.jeff branch should appear in linux-next soon.
 
-Thanks,
-Carlos Llamas
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc.jeff
+
+[1/1] eventpoll: Don't re-zero eventpoll fields
+      https://git.kernel.org/vfs/vfs/c/394923595c20
 
