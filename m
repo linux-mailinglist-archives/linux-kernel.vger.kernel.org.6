@@ -1,94 +1,88 @@
-Return-Path: <linux-kernel+bounces-277193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 667AA949DB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:14:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 704A9949D9E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B884CB24187
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:13:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E76D51F240F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECEC196DA2;
-	Wed,  7 Aug 2024 02:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724A118FDAB;
+	Wed,  7 Aug 2024 02:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WyMajqkU"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2083.outbound.protection.outlook.com [40.107.92.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOVFMPgw"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA1CBE6F;
-	Wed,  7 Aug 2024 02:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722996749; cv=fail; b=b2SttnlURtkSEzURwKnTLELAYOiSj35gTTJXzTKWfgStNtKShTy9VmdvL/ssbh01nlbOb5IH5t+wcZrC5OYTMmWu9F4wG10S0u4jVnZBZWiKz29u9XHSRWrCIXYxKbRYjXR0fkY6n8b4R01TeWLu2F3vlhLdhrs1G/I4xspChlk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722996749; c=relaxed/simple;
-	bh=Ak1RQZ3NCchBLSzeVr1nTkZsjb+7NyPvHd4OnlWvgKk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RbJrFl9Dv0FGpSlvBeua7oUNAdIy5WXmQbYFj12TND0k1QbH1/ZQzcpwk41rNbdp1uUuYwkPs4TA51Hgw2ZjoHE4QsVtqpgsdIHlkQQJ6IyjJtAt2hJaAU3CDxLhy3TpehSTLcDz08hHTaGzkIG1y7eOEowrQzi51qUjLCb82/8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WyMajqkU; arc=fail smtp.client-ip=40.107.92.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EALP/PC047J/rIyn+1999fgpe24fmLCcrtIf2APSHucA6YluvLGWZh8+1ph041/X2dEsjmV6hsTtXmdjkHvMkW5MnNl1VDRMKEqUp5IsVLU6emU1B6/mxPegAZYmbxdIox9lLyeWK3psh4cQKsOiVPzsjgLW5eILEFIYd+JzsktdoqStMExrLuq+X/LTA4zHDliWlwEebMwl4ElPTqb3eF9KbikkCSv8FX+QAWZfyQkoqzTTQZQVuk6ESSnBXt/scFwOiZWZ5hTYNUHD2vaUzAmrsrI63JLhnLLewHwnVdwJxESY3GCQ1v2Au3dGwuF8bR76ZqDd3Tk2MV4Yg1A3lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PaTqD6GVnBngTTPeqFmyn3fgvm6Z8fAbprgFssFM/WQ=;
- b=HVF6nPlK3mS+vH2wnCyha8QAJNjMxRMeOxds95VVD92z7xGMyyt3dRHEOuvOKJJYRU6qzz9077pkbDGheSeaW490G3UcYEC283XM68gMJKB8flfQYkPL5JXSjuLNQCn/HA+7yZQac5V4Li4dp2CPBq9wE1V9qV6PXZRFXmsErzkS8cEaQqP03+jTNt96gMX6WQALEteBBd3MOtYffPN2JSr4fFv8Fweoo8+On6W+0WWTzCfbF9hGeGj2xuI9jjLofMNYWl3dlTfjDKeYfzWMkROAvjqJGi/U3L+fiGT2hkvjI0shg6ePrhLWrqbUlzecCdNdTSesR5I1yMeE69BFog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PaTqD6GVnBngTTPeqFmyn3fgvm6Z8fAbprgFssFM/WQ=;
- b=WyMajqkUzGg6/47z/r72BBATb7rYKBNLPfKayZ+8axb2h0PG/v+gde3+8/RwnX0jognPzF84qQ9v7RO3yJq9iAoWYwEn6VoLg5qhuEtMjdYN2EGy3Rz+A46VEljq4lNs4P04t4bqgi11PFJ6LfusQVMQ9eVozyc07fKkLXAHdZdjhMbJzBD7dr8FOhwcyCiQffCL5YL6VQbA4R8p90ycJxAh/X8I13nJo1QDZoVP39xbrTVDWIYhkv5GfIz2Q5f92IQg9xIPVkqQxL0OEgyk4/avWQt/DXgQUgZivuhkpNJna4/bwn0CIscUSWDN9+5+xkf7MP2ZAZUUzE9gY7NSZg==
-Received: from SA1P222CA0172.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c3::28)
- by IA1PR12MB8407.namprd12.prod.outlook.com (2603:10b6:208:3d9::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27; Wed, 7 Aug
- 2024 02:12:24 +0000
-Received: from SN1PEPF00036F3C.namprd05.prod.outlook.com
- (2603:10b6:806:3c3:cafe::92) by SA1P222CA0172.outlook.office365.com
- (2603:10b6:806:3c3::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22 via Frontend
- Transport; Wed, 7 Aug 2024 02:12:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SN1PEPF00036F3C.mail.protection.outlook.com (10.167.248.20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7828.19 via Frontend Transport; Wed, 7 Aug 2024 02:12:23 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 Aug 2024
- 19:12:05 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 Aug 2024
- 19:12:05 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 6 Aug 2024 19:12:04 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <will@kernel.org>
-CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@nvidia.com>,
-	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
-Subject: [PATCH v11 7/9] iommu/arm-smmu-v3: Add struct arm_smmu_impl
-Date: Tue, 6 Aug 2024 19:11:52 -0700
-Message-ID: <8f6fd78b4c4358e65e9d171d90aa4a3dac392f09.1722993435.git.nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1722993435.git.nicolinc@nvidia.com>
-References: <cover.1722993435.git.nicolinc@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644B72BB09;
+	Wed,  7 Aug 2024 02:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722996722; cv=none; b=W6IXcNMiVgf05K3lxGNV9vDW9AjECspxOcr8+JWH3L6Ydeyb2GXRBwG4BEHJYSym7kYn1fpErKRMYPIvQhbOQRViBTOxhoXWTGD4O2q4tVksC7lMMHQM+YowkJvAxV4UQ86/OHyzSlXq05oYc7HhmDDdoqa9KjZV0Kbj2MDDYtA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722996722; c=relaxed/simple;
+	bh=44WDQBza0lcKUll2NGUPxK2VGi0L6nAGFIU5xsX9pKY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VW4jPkYzPwJziMrgTmnvkY5hhcyCuZ87t/5OAjREWCwmTdoMsnaTDWvMx3zt2Buhum74+wk8VZaFiwh9mpjBb+FYuiYfpKMJn7bo5V/GUvvgvK90IhlZIjOOv+VgaiVswkOdSK+sOCLsnmqbaXDE2fQdfQkI6UB0JkwFp6MFTEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOVFMPgw; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3db1270da60so806406b6e.2;
+        Tue, 06 Aug 2024 19:12:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722996720; x=1723601520; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UIr4fcH/6RBz0tisKFlvXXUTv5tES5dflg1RDhO5Thc=;
+        b=DOVFMPgwqP5AZxGbgHr2QTwnAg68TyAcUWQz6coUwY5xAuSfGG+5sb/9cw4paih9eQ
+         UQatc5NtrpX3xAu8QoFKWZP7HsfY/wbDk3FMOhDfz58Go9GBuTCK0qTTpSplkSIKOLiE
+         7OJk3LXG5K1Ycdw6DYQoxzcxPDpbw38G/VrQgIwM7K/8b9sqT16SAvVpwIAqNsMOgEwB
+         nA/W4Qj3SffqDtRUo7SnDcD0lTUg317GDwHiNgGJ3CSSTltF0qb3r/gxW35OZM7VQyxu
+         fUWE/EWWqCskAXVasAnsqRcQRFjdwKKpYUMyqEeMWSbwZ83aCJgJwpYF/Xcj4xUv9yyK
+         CMbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722996720; x=1723601520;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UIr4fcH/6RBz0tisKFlvXXUTv5tES5dflg1RDhO5Thc=;
+        b=tRbEWxdzdqDyVvNJZTteb37td4FxYc2CsbjchQHhR8cgl9blFn++u+inG+0SEmrCtn
+         yHncNqJBmIIin1N05CTZ8GB1w2Okz7e+DppzmlF/2ohAZbVOA0a+XWubAknPoTm/pz06
+         hZaoKllR+rqYXWJYdEuYBLEQivJ9fAqj8bX0J6B4aHmcnYAFTfmWT8J+AG6lWw64Y4iD
+         cYayGOxdxBN4ncoh6lhNqpbGRpXym528VQKX934pT+4Tk4rupBOzVvaEJInNfvoB0ELl
+         q2oD9jdUJnaWCl85OXdFMxgO5xPpf/EbYvMxnR9mQPC956583ENIWAFpawTrvvPcvwYB
+         kymg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBoptXdgfvygTpRJgYi2GLMRJ8UgbpiaMcseGYKeWSUZYo5wPoshU6ups8uUzcW5CiAHwFO/5thrfYTyfxT/ZN1DMUw5aD4h3BNHlQ6XRtrxesCtGTojxExB0l6e8LI2d/tzdaiDsP0G7ieZADmfVv5zi2AAC+y4qOpAWHVuskKEovCj7E6+Q=
+X-Gm-Message-State: AOJu0YyNu6fZ6fa6lVhFzO8Q/BaYIR75965HKHiV43FZDumm1CxkNIFF
+	8E+U2Srxr8MRrwgduTrwzvQMiqvOjq5sfK2YEIgTDxt/ykMJfRswMENU3mT7/MFP
+X-Google-Smtp-Source: AGHT+IF47oPVx1N8yrrTBkzTqcQwPch8CBXirgw69xrsWGlzzqWhB+8gjrTktNXfY7nqdlLrxZrdrA==
+X-Received: by 2002:a05:6870:7187:b0:260:e611:c09 with SMTP id 586e51a60fabf-26891f27131mr20472153fac.47.1722996720371;
+        Tue, 06 Aug 2024 19:12:00 -0700 (PDT)
+Received: from swift.. ([221.216.134.120])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec74068sm7773029b3a.95.2024.08.06.19.11.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 19:12:00 -0700 (PDT)
+From: LidongLI <wirelessdonghack@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	mark.esler@canonical.com,
+	stf_xl@wp.pl,
+	wirelessdonghack@gmail.com,
+	tytso@mit.edu,
+	stern@rowland.harvard.edu
+Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer Dereference&Use-After-Free Vulnerability
+Date: Wed,  7 Aug 2024 10:11:52 +0800
+Message-Id: <20240807021152.10474-1-wirelessdonghack@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <2024080359-getaway-concave-623e@gregkh>
+References: <2024080359-getaway-concave-623e@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,245 +90,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF00036F3C:EE_|IA1PR12MB8407:EE_
-X-MS-Office365-Filtering-Correlation-Id: d637e5a5-5df8-40ab-9db9-08dcb686605b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kMb/ryLbNYxpT0ivf8XkwyGlWUWo1PaUNThxqutSV8Dtk+aRpYVV+x2LR0Zt?=
- =?us-ascii?Q?2i09YCF4reKfp6eINecXVxnfyMg4Wz42hijjDqAWZjon1wVeQTs049ZykwWg?=
- =?us-ascii?Q?OQXeyvlDgjLepn/YQNgifXBwQFj0h2AKQZPg0OLU47l8h1DB5nuAv1YXb9ee?=
- =?us-ascii?Q?hJFpgVHUN11EbzBfokSisPqMdRjQg4yGi6SGbFkxnWuGK9NwYNM3rjn4JFYi?=
- =?us-ascii?Q?0AfMRZ08lKSLGGYcsaiaTFkVpawiFcy6JgMCEpNJ0E0S3k12VU1ttkWDdLZs?=
- =?us-ascii?Q?J3gVUXAFvqP5q3ydir24G12tO5BQTHCoQq9/0d+xlIfu4IwbgqG6tmEwlm3x?=
- =?us-ascii?Q?5wnRyNd0HXwGjRbGHWafK1veqj2G6U16T7JGMkjIeoEGyTKf/IFzLSgU12rh?=
- =?us-ascii?Q?BkUiZNfp3nOEfCcZ3BAkY60LaYyHKRuxT+poeceAm9wOI4UL+l4KwiNk7iB5?=
- =?us-ascii?Q?2kpJkZHeKmdUsXNMqCJ0VAoFQA2/RMQZiwGc4SwKRWgE98Q8pwrVfoHQxp0w?=
- =?us-ascii?Q?zxOm6IgPg/FQ56UU0Jk/ai0BJPi7CynRlGFGl7K7czhjmvIyLSObZN71ykj+?=
- =?us-ascii?Q?mf0owEb6qVZss19L/fR7AiY+PRQaYtBKSvfWUKYXCbc0TUYdACm16xnchJWa?=
- =?us-ascii?Q?h0edO5GAoWo5ZTMd19zDd4+FGYSx6g61+9RTXIzqzizG+rBTDAn1t6LuzkGU?=
- =?us-ascii?Q?j4+adYbK8JPLYmxyH9af3QFAThR1xKBR1SWRDr6flXaZxDTtS44+kLxjsWp/?=
- =?us-ascii?Q?10nj9wmKAstQbB23wp9udrROVNPdyKVZ1leDGTxuwsYtqD/r4kpZKjSSmg0l?=
- =?us-ascii?Q?6eCbTqGH1dFiXTqpzz4BaHRQe2SF/m2rzuU6vjFQKJmFqn6UPnQy/IV+XaTQ?=
- =?us-ascii?Q?Qr86o7cMhfoSksnfLQMHXOBU/iUqdNL5tFSyXko1jCR3DKsOl0ktbrFSzYco?=
- =?us-ascii?Q?uisRzbTVIHT3pG4zjIWfDQ8Mx6PrNsIGOLvSdzY56ohHBqBqvLQYItbT1mlj?=
- =?us-ascii?Q?RnmbsHhKV4MWMPTWFzY0F20VW/cIu+G9yCsgMzwiTqGhyPRdOlxw4Z/R7SDA?=
- =?us-ascii?Q?jShXJ3ERV0zPKFL+r2zue/qYayWNHJ53td2u3uNPYwMJ5NIpqDxpaZ8VGqqC?=
- =?us-ascii?Q?Po/RJcjTa9tM4y3fcdgcWSKeHxQNDhPK5B4yyLJ8veQKaJtIjjUjc5WU77C2?=
- =?us-ascii?Q?Y5q35ZsB/aHOFKF+k2omv5e/O3AMUhU/ZuyuWvf5CIdZRdVldEiE1yeHgGSJ?=
- =?us-ascii?Q?tKmaHP2rxOzFCd8VZj94Iq6jUcOhhVoB6FLp+LjFnOK/SsNMPEhA+G5RI6ai?=
- =?us-ascii?Q?sV2nuZ2877FTr8MkN6jtB7wEWBv8A4bxiGolFDqvZ/TeFkqV4srAClbEAKbl?=
- =?us-ascii?Q?PZVixinCN9e6pzxdwLTyzPhW0G15bCm5a0qUEy1RkXa2bPCg3vxjJNdr//jO?=
- =?us-ascii?Q?g4cUB0uCgi0NE3bBvoFPhVKEruKGZh6H?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 02:12:23.6695
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d637e5a5-5df8-40ab-9db9-08dcb686605b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF00036F3C.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8407
 
-NVIDIA Tegra241 implemented SMMU in a slightly different way that supports
-a CMDQV extension feature as a secondary CMDQ for virtualization cases.
 
-Mimicing the arm-smmu (v2) driver, introduce a new struct arm_smmu_impl to
-accommodate impl routines.
+Dear 
 
-Suggested-by: Will Deacon <will@kernel.org>
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 67 +++++++++++++++++----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h | 19 ++++++
- 2 files changed, 74 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index e764236a9216..18d940c65e2c 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -338,7 +338,12 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
- 
- static struct arm_smmu_cmdq *arm_smmu_get_cmdq(struct arm_smmu_device *smmu)
- {
--	return &smmu->cmdq;
-+	struct arm_smmu_cmdq *cmdq = NULL;
-+
-+	if (smmu->impl && smmu->impl->get_secondary_cmdq)
-+		cmdq = smmu->impl->get_secondary_cmdq(smmu);
-+
-+	return cmdq ?: &smmu->cmdq;
- }
- 
- static bool arm_smmu_cmdq_needs_busy_polling(struct arm_smmu_device *smmu,
-@@ -4044,6 +4049,14 @@ static int arm_smmu_device_reset(struct arm_smmu_device *smmu)
- 		return ret;
- 	}
- 
-+	if (smmu->impl && smmu->impl->device_reset) {
-+		ret = smmu->impl->device_reset(smmu);
-+		if (ret) {
-+			dev_err(smmu->dev, "failed to reset impl\n");
-+			return ret;
-+		}
-+	}
-+
- 	return 0;
- }
- 
-@@ -4347,8 +4360,23 @@ static void acpi_smmu_get_options(u32 model, struct arm_smmu_device *smmu)
- 	dev_notice(smmu->dev, "option mask 0x%x\n", smmu->options);
- }
- 
--static int arm_smmu_device_acpi_probe(struct platform_device *pdev,
--				      struct arm_smmu_device *smmu)
-+static struct arm_smmu_device *
-+arm_smmu_impl_acpi_probe(struct arm_smmu_device *smmu,
-+			 struct acpi_iort_node *node)
-+{
-+	/*
-+	 * DSDT might hold some SMMU extension, so we have no option but to go
-+	 * through the ACPI tables unconditionally. On success, this returns a
-+	 * copy of smmu struct holding an impl pointer. Otherwise, an impl may
-+	 * choose to return an ERR_PTR as an error out, or to return the pass-
-+	 * in smmu pointer as a fallback to the standard SMMU.
-+	 */
-+	return arm_smmu_impl_acpi_dsdt_probe(smmu, node);
-+}
-+
-+static struct arm_smmu_device *
-+arm_smmu_device_acpi_probe(struct platform_device *pdev,
-+			   struct arm_smmu_device *smmu)
- {
- 	struct acpi_iort_smmu_v3 *iort_smmu;
- 	struct device *dev = smmu->dev;
-@@ -4372,18 +4400,20 @@ static int arm_smmu_device_acpi_probe(struct platform_device *pdev,
- 		smmu->features |= ARM_SMMU_FEAT_HA;
- 	}
- 
--	return 0;
-+	return arm_smmu_impl_acpi_probe(smmu, node);
- }
- #else
--static inline int arm_smmu_device_acpi_probe(struct platform_device *pdev,
--					     struct arm_smmu_device *smmu)
-+static struct arm_smmu_device *
-+arm_smmu_device_acpi_probe(struct platform_device *pdev,
-+			   struct arm_smmu_device *smmu)
- {
--	return -ENODEV;
-+	return ERR_PTR(-ENODEV);
- }
- #endif
- 
--static int arm_smmu_device_dt_probe(struct platform_device *pdev,
--				    struct arm_smmu_device *smmu)
-+static struct arm_smmu_device *
-+arm_smmu_device_dt_probe(struct platform_device *pdev,
-+			 struct arm_smmu_device *smmu)
- {
- 	struct device *dev = &pdev->dev;
- 	u32 cells;
-@@ -4401,7 +4431,7 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
- 	if (of_dma_is_coherent(dev->of_node))
- 		smmu->features |= ARM_SMMU_FEAT_COHERENCY;
- 
--	return ret;
-+	return ret ? ERR_PTR(ret) : smmu;
- }
- 
- static unsigned long arm_smmu_resource_size(struct arm_smmu_device *smmu)
-@@ -4453,6 +4483,14 @@ static void arm_smmu_rmr_install_bypass_ste(struct arm_smmu_device *smmu)
- 	iort_put_rmr_sids(dev_fwnode(smmu->dev), &rmr_list);
- }
- 
-+static void arm_smmu_impl_remove(void *data)
-+{
-+	struct arm_smmu_device *smmu = data;
-+
-+	if (smmu->impl && smmu->impl->device_remove)
-+		smmu->impl->device_remove(smmu);
-+}
-+
- static int arm_smmu_device_probe(struct platform_device *pdev)
- {
- 	int irq, ret;
-@@ -4467,10 +4505,14 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 	smmu->dev = dev;
- 
- 	if (dev->of_node) {
--		ret = arm_smmu_device_dt_probe(pdev, smmu);
-+		smmu = arm_smmu_device_dt_probe(pdev, smmu);
- 	} else {
--		ret = arm_smmu_device_acpi_probe(pdev, smmu);
-+		smmu = arm_smmu_device_acpi_probe(pdev, smmu);
- 	}
-+	if (IS_ERR(smmu))
-+		return PTR_ERR(smmu);
-+
-+	ret = devm_add_action_or_reset(dev, arm_smmu_impl_remove, smmu);
- 	if (ret)
- 		return ret;
- 
-@@ -4560,6 +4602,7 @@ static void arm_smmu_device_remove(struct platform_device *pdev)
- {
- 	struct arm_smmu_device *smmu = platform_get_drvdata(pdev);
- 
-+	arm_smmu_impl_remove(smmu);
- 	iommu_device_unregister(&smmu->iommu);
- 	iommu_device_sysfs_remove(&smmu->iommu);
- 	arm_smmu_device_disable(smmu);
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-index 71818f586036..38d4a84e2c82 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-@@ -14,6 +14,9 @@
- #include <linux/mmzone.h>
- #include <linux/sizes.h>
- 
-+struct arm_smmu_device;
-+struct acpi_iort_node;
-+
- /* MMIO registers */
- #define ARM_SMMU_IDR0			0x0
- #define IDR0_ST_LVL			GENMASK(28, 27)
-@@ -627,9 +630,25 @@ struct arm_smmu_strtab_cfg {
- 	u32				strtab_base_cfg;
- };
- 
-+struct arm_smmu_impl {
-+	int (*device_reset)(struct arm_smmu_device *smmu);
-+	void (*device_remove)(struct arm_smmu_device *smmu);
-+	struct arm_smmu_cmdq *(*get_secondary_cmdq)(struct arm_smmu_device *smmu);
-+};
-+
-+static inline struct arm_smmu_device *
-+arm_smmu_impl_acpi_dsdt_probe(struct arm_smmu_device *smmu,
-+			      struct acpi_iort_node *node)
-+{
-+	return smmu;
-+}
-+
- /* An SMMUv3 instance */
- struct arm_smmu_device {
- 	struct device			*dev;
-+	/* An SMMUv3 implementation */
-+	const struct arm_smmu_impl	*impl;
-+
- 	void __iomem			*base;
- 	void __iomem			*page1;
- 
--- 
-2.43.0
+
+Yes, dev.reset does indeed require root privileges, but what we find abnormal is, as I noted in the POC, a normal reset is not problematic. However, after time.sleep(0.1), it triggers some issues.
+
+import usb.core
+dev = usb.core.find(idVendor=0xb58e, idProduct=0x0005)
+time.sleep(0.1) # It actually needs a sleep of 0.1 or 0.2 seconds to take effect; otherwise, it follows normal development logic. For example, when there is an exception error like 'resource busy', a dev.reset is required.
+dev.reset()
+
+
+
+
+Thank you for your response. Yes, I am able to test patches. Please provide the necessary patches, and I will conduct the tests to verify their effectiveness.
+
+Best regards
 
 
