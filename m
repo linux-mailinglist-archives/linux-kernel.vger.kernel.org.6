@@ -1,142 +1,144 @@
-Return-Path: <linux-kernel+bounces-278061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AD0E94AA5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:38:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E02394AA66
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 027BC286537
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:38:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6567281E04
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF0882C76;
-	Wed,  7 Aug 2024 14:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB17D8002E;
+	Wed,  7 Aug 2024 14:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETRb7TJ+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KjmEc/25"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF3F82862;
-	Wed,  7 Aug 2024 14:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7208F757F2
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723041426; cv=none; b=ffRjW59/t2ZR5On7vFmA4UiuUhNPsxEv5FdqEtwsp5jY+VlcglEyOqTm2aXNsKWfYGtqS/RfPihy242vPkQ7LA/JMAwNKYPqQ6VfhkZfyiefVerb4ivzIGQKoGxPM3aFqqMTYyRgmwMugyJrJG610zc5ndH+Y8yqOtv5VgnsgMQ=
+	t=1723041448; cv=none; b=LDNWp+ywm9RL3dooZNVzwCzgfUMOuen9EYxoC1ujaA6iKsceEbcqb3818mDU/v+5HTb9BXx/gXB2RdRx2BDT0pBOYfRYGK7b7dtKr0v2cNni+Q32BNZwJd1BlnJ3MrHCvrdxhV0M75oRcL4Dhq7B7RWVXSOwuOOaZ+e2weedr1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723041426; c=relaxed/simple;
-	bh=yglhBzKi3NcaNGNFvbg8JxrI+mqUfjwDOqRUe/qh52k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RYT8CdASyQozv19lQ4az/t+bw/il1Xi7gprye37YtowTvqH8aqxgX6aZK1ImES4aqXIbp2iBrvmMXmG2tbYPRqu+Qm64xpF58+UMETnJI5qVcC+VPqu0gN1e1JpWBRKDqVnNddbvApKFepHvzNZIDpvEQYe3/T5ValP7UwkZk8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETRb7TJ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56210C4AF19;
-	Wed,  7 Aug 2024 14:37:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723041426;
-	bh=yglhBzKi3NcaNGNFvbg8JxrI+mqUfjwDOqRUe/qh52k=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=ETRb7TJ+h08Hf+sfFv3QS+DAyOIYGB+YBdE4R3ZhjQLaG+naqvrcnWCfNmMElRvi3
-	 zIBsE1vyGeG0V8YsNojSK7KimkPEqn/m1VYhPRIMnhkNFgyiQKTjYsDBJsxyh4cwSu
-	 /xFgWRu+jo75cCpFr6RGzLViXcnLZZGgkyeqKYJnU74PAwBIxNHBfIZl2+LK0K88xP
-	 zRiFgHzF5u5xF4gdFYNScPWfanJhzb+ynR5dVy29IFd5HhSE9XWx/IFV7zm72znrvr
-	 /FEfz6+Qu41bF3RM3slDJwOZXxTcNtrVMptvHftQgSim9OAr7kYFqm5dLwzbHMh+Ic
-	 yBBmzWXBS2JCA==
-Message-ID: <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Andrew Morton <akpm@linux-foundation.org>, Mateusz Guzik
- <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 07 Aug 2024 10:36:58 -0400
-In-Reply-To: <20240807-erledigen-antworten-6219caebedc0@brauner>
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
-	 <20240807-erledigen-antworten-6219caebedc0@brauner>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIg
- UCWe8u6AIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1
- oJVAE37uW308UpVSD2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOT
- tmOdz4ZN2tdvNgozzuxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+
- 9eiVUNpxF4SiU4i9JDfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPc
- og7xvR5ENPH19ojRDCHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/
- WprhsIM7U9pse1f1gYy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EB
- ny71CZrOgD6kJwPVVAaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9
- KXE6fF7HzKxKuZMJOaEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTi
- CThbqsB20VrbMjlhpf8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XR
- MJBAB/UYb6FyC7S+mQZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1723041448; c=relaxed/simple;
+	bh=yCdkQ7/2tMkcEeFdGMDnJIR5LtLUAVGR0TVpFDG8DMU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sUGWJazl2xT/cZfaD+kMHTPVfyWdQrd1DXuX9C9fUONZIZ6uAyA7GJhpIDQv2+G1lS6LUBOE8GLH3samsWJYe+npJIaJHUPPbbNKH89ZEVEQ/vueNUPho4a5/O8geu90fJV6/dG/1uzxRjdw7KefkvHJFxgUc4L2lEDVd0/lEy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KjmEc/25; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f1870c355cso19655391fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 07:37:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723041445; x=1723646245; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QDq7CBu31RtHS+zX+Dsqd1NEBtaTlUV0/5eE9A6umII=;
+        b=KjmEc/25PvOJPOfCm5POdhe5S3I3vl/JH9tOH3Fsv5/NU6laWBDcXpwSopcoS2GYMh
+         56mBZl7HvZxPiBhBrtR9Prsmox9AB+74Nwvtao85hjLRtmJluyOjiRA8HTyZsi9+qm97
+         qWSSUujxM4Ej9QYFwNXdILwEZqMWInGTBQSISzO3el/eSgTmckXj3XNKfRp1m3hSHyck
+         jSGHCtr+r1xz0oG8sNl8yEyywINlEmBS68OJjXJM5sCm0HwS+Uy+N6Ld+18GDqN/PpPd
+         wdYRRcGRxX5I6rdUnE57UpnDdsMw4imalQFGCzzr91x37gKohKHrUEcCTwZ+6HOliWy5
+         KG/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723041445; x=1723646245;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QDq7CBu31RtHS+zX+Dsqd1NEBtaTlUV0/5eE9A6umII=;
+        b=HnbrM6f+vcNRRK1Us7f6cC7YCDWdkC7IsemASh7bwl/z/VqT7zUEEe5GD0JMp+VLYA
+         rvc7DgueE5pAE2W1OTHrxg4vamnJApy+nv8WIP42aSssvzEyzZw+SezgYe/3NR41z0qf
+         gTX8623NP8G487IyHqv9wApxCGpAbrkEGUN0AAABxcTTXEUzeyx1AxTogMJYurseU/Rg
+         cQTYT4/N0DmOArsGbE77ogr1NE2rZdlJrmSrZ3YlP2TYy1EyTk3UHg9tF2inX0gygDl7
+         KIamyezf6ZE1CflrR41za29iMXLRPi7zyGUng/g0FWMHdpkyFEEAfC8QIoJgQZ6d2Tn3
+         pskQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHa3xJ/FK0QTj+T5QCfe84w8XJhqdd+me02zHfmUmpUifTZEEhrW1qJRuvFholBFxvjS5fxoM0L3Emzuh7CWv8Iaf+DaW/WR3psjHx
+X-Gm-Message-State: AOJu0YwHs9Fn0ROWMHPv1I0p4g5HyrjxXuWXIQT1Xx7ExfT/HGLmAwZz
+	JJDdvcOYM9dAq00jtG5Q9Ug7/Mi1z66JO+Zm4H0zYyIJEw71kh+utSbU/Uh5Mb+WFTMXkTjmLpR
+	4xCIrTtuBEXOAdsd4YPp/Oz55Hv8=
+X-Google-Smtp-Source: AGHT+IHUixa64DDNXcCvuHmzvxQeIQKCd9G6ETNw3IrebfGG8OtK8H/UfalAmhoErP9xz76uypwDkXTJP2OyuWuClPc=
+X-Received: by 2002:a2e:8e98:0:b0:2ef:24a9:a75d with SMTP id
+ 38308e7fff4ca-2f15aa95c7dmr120690541fa.14.1723041444208; Wed, 07 Aug 2024
+ 07:37:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <Zq2qQW62G63dr70s@archie.me> <8734ng4e91.ffs@tglx>
+In-Reply-To: <8734ng4e91.ffs@tglx>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Wed, 7 Aug 2024 16:37:12 +0200
+Message-ID: <CAFULd4YZbK5bvLCfEnX7y0qZUgtQuw6FfGMBKm-qjVMZvH8XWw@mail.gmail.com>
+Subject: Re: Fwd: error: 'const_pcpu_hot' causes a section type conflict with
+ 'pcpu_hot' when compiling with -flto
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, x86@kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Breno Leitao <leitao@debian.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Takashi Iwai <tiwai@suse.de>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Stas Sergeev <stsp2@yandex.ru>, mrwizardwizard <terrym3201@protonmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2024-08-07 at 16:26 +0200, Christian Brauner wrote:
-> > +static struct dentry *lookup_fast_for_open(struct nameidata *nd, int o=
-pen_flag)
-> > +{
-> > +	struct dentry *dentry;
-> > +
-> > +	if (open_flag & O_CREAT) {
-> > +		/* Don't bother on an O_EXCL create */
-> > +		if (open_flag & O_EXCL)
-> > +			return NULL;
-> > +
-> > +		/*
-> > +		 * FIXME: If auditing is enabled, then we'll have to unlazy to
-> > +		 * use the dentry. For now, don't do this, since it shifts
-> > +		 * contention from parent's i_rwsem to its d_lockref spinlock.
-> > +		 * Reconsider this once dentry refcounting handles heavy
-> > +		 * contention better.
-> > +		 */
-> > +		if ((nd->flags & LOOKUP_RCU) && !audit_dummy_context())
-> > +			return NULL;
->=20
-> Hm, the audit_inode() on the parent is done independent of whether the
-> file was actually created or not. But the audit_inode() on the file
-> itself is only done when it was actually created. Imho, there's no need
-> to do audit_inode() on the parent when we immediately find that file
-> already existed. If we accept that then this makes the change a lot
-> simpler.
->=20
-> The inconsistency would partially remain though. When the file doesn't
-> exist audit_inode() on the parent is called but by the time we've
-> grabbed the inode lock someone else might already have created the file
-> and then again we wouldn't audit_inode() on the file but we would have
-> on the parent.
->=20
-> I think that's fine. But if that's bothersome the more aggressive thing
-> to do would be to pull that audit_inode() on the parent further down
-> after we created the file. Imho, that should be fine?...
->=20
-> See https://gitlab.com/brauner/linux/-/commits/vfs.misc.jeff/?ref_type=3D=
-heads
-> for a completely untested draft of what I mean.
+On Wed, Aug 7, 2024 at 4:08=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de>=
+ wrote:
+>
+> On Sat, Aug 03 2024 at 10:55, Bagas Sanjaya wrote:
+> >> when compiling linux kernel 6.9-6.10 with -flto
+> >>
+> >> compiler outputs:
+> >>
+> >> ./arch/x86/include/asm/current.h:42:25: error: 'const_pcpu_hot' causes=
+ a section type conflict with 'pcpu_hot' const_pcpu_hot);
+> >
+> > He could reproduce the build error on mainline:
+>
+> That's caused by:
+>
+>   ed2f752e0e0a ("x86/percpu: Introduce const-qualified const_pcpu_hot to =
+micro-optimize code generation")
+>
+> Uros?
 
-Yeah, that's a lot simpler. That said, my experience when I've worked
-with audit in the past is that people who are using it are _very_
-sensitive to changes of when records get emitted or not. I don't like
-this, because I think the rules here are ad-hoc and somewhat arbitrary,
-but keeping everything working exactly the same has been my MO whenever
-I have to work in there.
+I have taken the discussion to the bugreport, where the potential
+patch is also posted.
 
-If a certain access pattern suddenly generates a different set of
-records (or some are missing, as would be in this case), we might get
-bug reports about this. I'm ok with simplifying this code in the way
-you suggest, but we may want to do it in a patch on top of mine, to
-make it simple to revert later if that becomes necessary.
---=20
-Jeff Layton <jlayton@kernel.org>
+For reference, my answer is as follows:
+
+--cut here--
+(In reply to mrwizardwizard from comment #0)
+
+> when compiling linux kernel 6.9-6.10 with -flto
+
+You need a whole lot more patches to successfully compile kernel with
+GCC LTO. The last revision can be found at:
+
+https://lore.kernel.org/lkml/20221114114344.18650-1-jirislaby@kernel.org/
+
+The patchset defines CONFIG_LTO, which can be used to disable
+offending optimization, something like the to-be attached patch.
+
+Ideally, a LTO-compatible "const __seg_gs" qualified alias to struct
+pcpu_hot should be declared, so LTO can retain the disabled
+optimization, but ...
+
+... the LTO patchset was rejected mainly due to:
+- the performance is the same
+- the resulting image is bigger
+- we need a whole lot of ugly hacks to placate the linker.
+--cut here--
+
+Thanks,
+Uros.
 
