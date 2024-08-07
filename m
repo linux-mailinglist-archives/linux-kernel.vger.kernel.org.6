@@ -1,288 +1,433 @@
-Return-Path: <linux-kernel+bounces-278357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70CC394AF1B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:48:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9174294AF1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3507B25EAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:48:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5168B28277D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816CD13DDAF;
-	Wed,  7 Aug 2024 17:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2007013DBBB;
+	Wed,  7 Aug 2024 17:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="f9Ww8RDd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="omWwUP+4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="f9Ww8RDd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="omWwUP+4"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="No/sbuDw"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8239A80BEC;
-	Wed,  7 Aug 2024 17:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE2080BEC;
+	Wed,  7 Aug 2024 17:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723052907; cv=none; b=KxP+J8sZmZsjrJJkGwy/9nhEO5uJ9BoX90dWtbvPkOlhvao3xBgurFySGUGeyvCqu11f4PPaT4w6/b8o+nyYwElg4pq14kIOSSJm9FBSPpiHObq5TQzkT3RU4bnjy4urx6BFMA3Db+krkJ/BE0Ko9NWqbGYdhOeD3j/UHtKmf+o=
+	t=1723052972; cv=none; b=sPwMt5Q0l4iOYf9oybdrcdXlRHGxjVmgY/9TcgRgKZfoiga2IlPSc8tOOAhYc9tiwNVNu2erfKDkPXloVnLjAJBI/Vcycf7FTr7OO70XppGna6Qi50DWIehXB9PSO2Md85JgoRqMRzcFuT2JGdnLk0NafY9OulMegwONh3bEq+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723052907; c=relaxed/simple;
-	bh=gxnzrZK532UzXDU9oJooQnA7p6wuT0+Yfq3+XQ/ick4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=enMRPASCEFXfb0KDp0vLBHkImhCK4YjtFIcRCL2oiTD7sij0SVoCa8Q26gpzu7nhS6w7r3Kh4VEa2PUK79gYiNOY8SxAU+/vUuGA4s878Hv7G6pOD7Flb2FSSfJRa/upeBdq4Z5nDQTP333pAtPqzjvprHCaseILChsBGmuec94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=f9Ww8RDd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=omWwUP+4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=f9Ww8RDd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=omWwUP+4; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 50A101FB98;
-	Wed,  7 Aug 2024 17:48:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723052903; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=izW4UerVRQHs5fzbafGixcUtLUBiwOZn6UJ4BD67bEU=;
-	b=f9Ww8RDdu3QM3qBdVLQ3pFl3xt6Uwhalt8Ht6j4JHXjuLaBb8UnLygcN4cmM0nyj/8S6I2
-	PIvsYWE7HOtNQ4D1tOjg0shshFgmxpMDyLxwNCp+XteuAX1wu8KCUr80t6BCpx7Edq5q/K
-	bdIiDKclZJ9CYrGts8rMOk/iCM3/0sE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723052903;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=izW4UerVRQHs5fzbafGixcUtLUBiwOZn6UJ4BD67bEU=;
-	b=omWwUP+4wezOkL4Kpf3lbGnbJYY5G2hPopgIo7/F5fokQkhOKGTKA1U07/6Y1lYDy7kqB9
-	fhis+fsqqNzLitDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=f9Ww8RDd;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=omWwUP+4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723052903; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=izW4UerVRQHs5fzbafGixcUtLUBiwOZn6UJ4BD67bEU=;
-	b=f9Ww8RDdu3QM3qBdVLQ3pFl3xt6Uwhalt8Ht6j4JHXjuLaBb8UnLygcN4cmM0nyj/8S6I2
-	PIvsYWE7HOtNQ4D1tOjg0shshFgmxpMDyLxwNCp+XteuAX1wu8KCUr80t6BCpx7Edq5q/K
-	bdIiDKclZJ9CYrGts8rMOk/iCM3/0sE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723052903;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=izW4UerVRQHs5fzbafGixcUtLUBiwOZn6UJ4BD67bEU=;
-	b=omWwUP+4wezOkL4Kpf3lbGnbJYY5G2hPopgIo7/F5fokQkhOKGTKA1U07/6Y1lYDy7kqB9
-	fhis+fsqqNzLitDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3DA8213A7D;
-	Wed,  7 Aug 2024 17:48:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QLvLDmezs2Y6KAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 07 Aug 2024 17:48:23 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D8FE2A0762; Wed,  7 Aug 2024 19:48:18 +0200 (CEST)
-Date: Wed, 7 Aug 2024 19:48:18 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 09/10] ext4: drop ext4_es_is_delonly()
-Message-ID: <20240807174818.bt6b4qhub7ydy5r5@quack3>
-References: <20240802115120.362902-1-yi.zhang@huaweicloud.com>
- <20240802115120.362902-10-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1723052972; c=relaxed/simple;
+	bh=vwVFVJ437s2NUe8y0TBBM9NijBKE+VjU3xJNqqLVThY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sjY6xhNkJxobgX7ViI46LVYnbVvhMIt8C2Zmp25pJZi9nE+P3kurF3fEVGCrsqgUSPZ8LmQwd+sYQ6cCGDXhmXdOuJguVcVwKLnLiPgYFExK1R01wX71mOosLP11t5pv/6BHVgOc517RITCIRngN+zvsK2cgc8fhaVXcc0Sg1EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=No/sbuDw; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1ff4568676eso1913185ad.0;
+        Wed, 07 Aug 2024 10:49:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723052970; x=1723657770; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qR5cCt6kou7hmjHi+oJlhFr4sKYHLP9uRI0PwSElXls=;
+        b=No/sbuDwZUqmKoXZ002+B+qR8FbPtBX0V9Bu9XTnT3e9LHuFLIzYbSa8qbjrzonw+e
+         LSx+6hj0Zc8VH/bnf9VNOxpOQVLGgsZBAB9EW84j1NqNk7McgsXXVdjJjcRLr2v5nQZO
+         t6LnyxaiLXSfjK5dX7GlNKLkS8qFAJ655Oqege5s5h7zTtlGO4RWGD7C57vA0455rCh0
+         mnnOdPaSictoe9U1v+CQweu2FlcJsAMbXqdMmV3BtAACDQ2n919fsxCM6SghdqSjhYvQ
+         gJGK2pA81qSEHIdto+BGpO9/dSAG4lsu9KnPKD+CtqUcCORkky1z/yMzUkb2EzShMpjN
+         JqsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723052970; x=1723657770;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qR5cCt6kou7hmjHi+oJlhFr4sKYHLP9uRI0PwSElXls=;
+        b=BBByLatFXrgzZNM+RzMzCqQBxSSBY2i+E0cgE+eTYD0paGBTEb9Ej4iODt8+p4pulb
+         PFQJODIYCq4Hyd7CxpINm4YB96oJlm+FL6/QzVMjFOi3f+dGDkOs8KbtlFA83sQ2TvTx
+         ESXeN1knt8Gc88N297FSU9atunx6r8ElbcG74A2Z2AYUfJQoH1HUOyT/I4my6gGBpHQR
+         EUo6toI63v6irU9CUcplCnrvnWMEcoPgy9XKbeBCjxLiL/5iEAQCVjhehz6X4ktSx4nK
+         vvaZ0nBxPw5oA6beNdovNp8hK2a5BYw5hhyIuvcRFYMijELCDNuSKWvO7SHcx+gGkMP1
+         XGTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUb4IO1s7z84NCBK3ICNvsnInMkLvimo5Zad4WWpj04EvpN844C7zZQP7S2HHrONPnMY7XNhQB58BI2UkNwsmOBm+B3Uy7nAWFUFNhAmpK7CnW2gijYlHQoGNAFmtV/Z3Sn
+X-Gm-Message-State: AOJu0YyI4Cg33Xnf+Tzo5v7ccpHNb68kj9OzAtod8CLb2/vSyNUya+Y8
+	4KmI2UQIiZijVaKE+J0i2OS64Ua2Ld0UMVnnk8qLWIC3FTav6JEq95MVb1P4zDD+L5GKhPDTD7l
+	SgyTT7xhDs2YZQr4xAJdFEyOHw+g=
+X-Google-Smtp-Source: AGHT+IE4KS0/XzE42qUIvzRVvn4oiluxftBRz5JYDkWVKqiBXRasLg1I0MLBQS7bbdifbi60TULv6SvpIk1I4Vs2w1Y=
+X-Received: by 2002:a17:902:e74b:b0:1fb:7e13:a7c5 with SMTP id
+ d9443c01a7336-1ff573cc565mr258426385ad.45.1723052970005; Wed, 07 Aug 2024
+ 10:49:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240802115120.362902-10-yi.zhang@huaweicloud.com>
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,huawei.com:email,suse.com:email]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -2.51
-X-Rspamd-Queue-Id: 50A101FB98
+References: <Zo1hBFS7c_J-Yx-7@casper.infradead.org> <20240710091631.GT27299@noisy.programming.kicks-ass.net>
+ <20240710094013.GF28838@noisy.programming.kicks-ass.net> <CAJuCfpF3eSwW_Z48e0bykCh=8eohAuACxjXBbUV_sjrVwezxdw@mail.gmail.com>
+ <CAEf4BzZPGG9_P9EWosREOw8owT6+qawmzYr0EJhOZn8khNn9NQ@mail.gmail.com>
+ <CAJuCfpELNoDrVyyNV+fuB7ju77pqyj0rD0gOkLVX+RHKTxXGCA@mail.gmail.com>
+ <ZqRtcZHWFfUf6dfi@casper.infradead.org> <20240730131058.GN33588@noisy.programming.kicks-ass.net>
+ <CAJuCfpFUQFfgx0BWdkNTAiOhBpqmd02zarC0y38gyB5OPc0wRA@mail.gmail.com>
+ <CAEf4BzavWOgCLQoNdmPyyqHcm7gY5USKU5f1JWfyaCbuc_zVAA@mail.gmail.com>
+ <20240803085312.GP39708@noisy.programming.kicks-ass.net> <CAEf4BzYPpkhKtuaT-EbyKeB13-uBeYf8LjR9CB=xaXYHnwsyAQ@mail.gmail.com>
+ <CAEf4BzZ26FNTguRh_X9_5eQZvOeKb+c-o3mxSzoM2+TF3NqaWA@mail.gmail.com>
+ <CAJuCfpFqEjG7HCx1F=Q3fScYAhaAou0Un2SFpibimkxZr7Jsbw@mail.gmail.com> <CAJuCfpGsDbcDy9s7NwZuaf2S+v9RMGjoC9NUVszDG3kwCMHCXg@mail.gmail.com>
+In-Reply-To: <CAJuCfpGsDbcDy9s7NwZuaf2S+v9RMGjoC9NUVszDG3kwCMHCXg@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 7 Aug 2024 10:49:17 -0700
+Message-ID: <CAEf4BzZeLg0WsYw2M7KFy0+APrPaPVBY7FbawB9vjcA2+6k69Q@mail.gmail.com>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, rostedt@goodmis.org, 
+	Matthew Wilcox <willy@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org, andrii@kernel.org, 
+	linux-kernel@vger.kernel.org, oleg@redhat.com, jolsa@kernel.org, clm@meta.com, 
+	bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 02-08-24 19:51:19, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Since we don't add delayed flag in unwritten extents, so there is no
-> difference between ext4_es_is_delayed() and ext4_es_is_delonly(),
-> just drop ext4_es_is_delonly().
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On Tue, Aug 6, 2024 at 10:13=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Tue, Aug 6, 2024 at 6:36=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
+com> wrote:
+> >
+> > On Mon, Aug 5, 2024 at 9:08=E2=80=AFPM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
+> > >
+> > > On Sun, Aug 4, 2024 at 4:22=E2=80=AFPM Andrii Nakryiko
+> > > <andrii.nakryiko@gmail.com> wrote:
+> > > >
+> > > > On Sat, Aug 3, 2024 at 1:53=E2=80=AFAM Peter Zijlstra <peterz@infra=
+dead.org> wrote:
+> > > > >
+> > > > > On Fri, Aug 02, 2024 at 10:47:15PM -0700, Andrii Nakryiko wrote:
+> > > > >
+> > > > > > Is there any reason why the approach below won't work?
+> > > > >
+> > > > > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > > > > > index 8be9e34e786a..e21b68a39f13 100644
+> > > > > > --- a/kernel/events/uprobes.c
+> > > > > > +++ b/kernel/events/uprobes.c
+> > > > > > @@ -2251,6 +2251,52 @@ static struct uprobe
+> > > > > > *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
+> > > > > >         struct uprobe *uprobe =3D NULL;
+> > > > > >         struct vm_area_struct *vma;
+> > > > > >
+> > > > > > +#ifdef CONFIG_PER_VMA_LOCK
+> > > > > > +       vm_flags_t flags =3D VM_HUGETLB | VM_MAYEXEC | VM_MAYSH=
+ARE, vm_flags;
+> > > > > > +       struct file *vm_file;
+> > > > > > +       struct inode *vm_inode;
+> > > > > > +       unsigned long vm_pgoff, vm_start, vm_end;
+> > > > > > +       int vm_lock_seq;
+> > > > > > +       loff_t offset;
+> > > > > > +
+> > > > > > +       rcu_read_lock();
+> > > > > > +
+> > > > > > +       vma =3D vma_lookup(mm, bp_vaddr);
+> > > > > > +       if (!vma)
+> > > > > > +               goto retry_with_lock;
+> > > > > > +
+> > > > > > +       vm_lock_seq =3D READ_ONCE(vma->vm_lock_seq);
+> > > > >
+> > > > > So vma->vm_lock_seq is only updated on vma_start_write()
+> > > >
+> > > > yep, I've looked a bit more at the implementation now
+> > > >
+> > > > >
+> > > > > > +
+> > > > > > +       vm_file =3D READ_ONCE(vma->vm_file);
+> > > > > > +       vm_flags =3D READ_ONCE(vma->vm_flags);
+> > > > > > +       if (!vm_file || (vm_flags & flags) !=3D VM_MAYEXEC)
+> > > > > > +               goto retry_with_lock;
+> > > > > > +
+> > > > > > +       vm_inode =3D READ_ONCE(vm_file->f_inode);
+> > > > > > +       vm_pgoff =3D READ_ONCE(vma->vm_pgoff);
+> > > > > > +       vm_start =3D READ_ONCE(vma->vm_start);
+> > > > > > +       vm_end =3D READ_ONCE(vma->vm_end);
+> > > > >
+> > > > > None of those are written with WRITE_ONCE(), so this buys you not=
+hing.
+> > > > > Compiler could be updating them one byte at a time while you load=
+ some
+> > > > > franken-update.
+> > > > >
+> > > > > Also, if you're in the middle of split_vma() you might not get a
+> > > > > consistent set.
+> > > >
+> > > > I used READ_ONCE() only to prevent the compiler from re-reading tho=
+se
+> > > > values. We assume those values are garbage anyways and double-check
+> > > > everything, so lack of WRITE_ONCE doesn't matter. Same for
+> > > > inconsistency if we are in the middle of split_vma().
+> > > >
+> > > > We use the result of all this speculative calculation only if we fi=
+nd
+> > > > a valid uprobe (which could be a false positive) *and* if we detect
+> > > > that nothing about VMA changed (which is what I got wrong, but
+> > > > honestly I was actually betting on others to help me get this right
+> > > > anyways).
+> > > >
+> > > > >
+> > > > > > +       if (bp_vaddr < vm_start || bp_vaddr >=3D vm_end)
+> > > > > > +               goto retry_with_lock;
+> > > > > > +
+> > > > > > +       offset =3D (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr=
+ - vm_start);
+> > > > > > +       uprobe =3D find_uprobe_rcu(vm_inode, offset);
+> > > > > > +       if (!uprobe)
+> > > > > > +               goto retry_with_lock;
+> > > > > > +
+> > > > > > +       /* now double check that nothing about VMA changed */
+> > > > > > +       if (vm_lock_seq !=3D READ_ONCE(vma->vm_lock_seq))
+> > > > > > +               goto retry_with_lock;
+> > > > >
+> > > > > Since vma->vma_lock_seq is only ever updated at vma_start_write()=
+ you're
+> > > > > checking you're in or after the same modification cycle.
+> > > > >
+> > > > > The point of sequence locks is to check you *IN* a modification c=
+ycle
+> > > > > and retry if you are. You're now explicitly continuing if you're =
+in a
+> > > > > modification.
+> > > > >
+> > > > > You really need:
+> > > > >
+> > > > >    seq++;
+> > > > >    wmb();
+> > > > >
+> > > > >    ... do modification
+> > > > >
+> > > > >    wmb();
+> > > > >    seq++;
+> > > > >
+> > > > > vs
+> > > > >
+> > > > >   do {
+> > > > >           s =3D READ_ONCE(seq) & ~1;
+> > > > >           rmb();
+> > > > >
+> > > > >           ... read stuff
+> > > > >
+> > > > >   } while (rmb(), seq !=3D s);
+> > > > >
+> > > > >
+> > > > > The thing to note is that seq will be odd while inside a modifica=
+tion
+> > > > > and even outside, further if the pre and post seq are both even b=
+ut not
+> > > > > identical, you've crossed a modification and also need to retry.
+> > > > >
+> > > >
+> > > > Ok, I don't think I got everything you have written above, sorry. B=
+ut
+> > > > let me explain what I think I need to do and please correct what I
+> > > > (still) got wrong.
+> > > >
+> > > > a) before starting speculation,
+> > > >   a.1) read and remember current->mm->mm_lock_seq (using
+> > > > smp_load_acquire(), right?)
+> > > >   a.2) read vma->vm_lock_seq (using smp_load_acquire() I presume)
+> > > >   a.3) if vm_lock_seq is odd, we are already modifying VMA, so bail
+> > > > out, try with proper mmap_lock
+> > > > b) proceed with the inode pointer fetch and offset calculation as I=
+'ve coded it
+> > > > c) lookup uprobe by inode+offset, if failed -- bail out (if succeed=
+ed,
+> > > > this could still be wrong)
+> > > > d) re-read vma->vm_lock_seq, if it changed, we started modifying/ha=
+ve
+> > > > already modified VMA, bail out
+> > > > e) re-read mm->mm_lock_seq, if that changed -- presume VMA got
+> > > > modified, bail out
+> > > >
+> > > > At this point we should have a guarantee that nothing about mm
+> > > > changed, nor that VMA started being modified during our speculative
+> > > > calculation+uprobe lookup. So if we found a valid uprobe, it must b=
+e a
+> > > > correct one that we need.
+> > > >
+> > > > Is that enough? Any holes in the approach? And thanks for thoroughl=
+y
+> > > > thinking about this, btw!
+> > >
+> > > Ok, with slight modifications to the details of the above (e.g., ther=
+e
+> > > is actually no "odd means VMA is being modified" thing with
+> > > vm_lock_seq),
+> >
+> > Correct. Instead of that (vm_lock_seq->vm_lock_seq =3D=3D mm->mm_lock_s=
+eq)
+> > means your VMA is write-locked and is being modified.
+> >
+> > > I ended up with the implementation below. Basically we
+> > > validate that mm->mm_lock_seq didn't change and that vm_lock_seq !=3D
+> > > mm_lock_seq (which otherwise would mean "VMA is being modified").
+> >
+> > Validating that mm->mm_lock_seq did not change does not provide you
+> > with useful information. It only means that between the point where
+> > you recorded mm->mm_lock_seq and where you are checking it, there was
+> > an mmap_write_unlock() or mmap_write_downgrade() call. Your VMA might
+> > not have even been part of that modification for which mmap_lock was
+> > taken.
+> >
+> > In theory what you need is simpler (simplified code for explanation onl=
+y):
+> >
+> > int vm_lock_seq =3D vma->vm_lock_seq;
+> > if (vm_lock_seq =3D=3D mm->mm_lock_seq)
+> >         goto bail_out; /* VMA is write-locked */
+> >
+> > /* copy required VMA attributes */
+> >
+> > if (vm_lock_seq !=3D vma->vm_lock_seq)
+> >         goto bail_out; /* VMA got write-locked */
+> >
+> > But this would require proper ACQUIRE/RELEASE semantics for
+> > vma->vm_lock_seq which is currently not there because all reads/writes
+> > to vma->vm_lock_seq that matter are done under vma->vm_lock->lock
+> > protection, so additional ordering is not required. If you decide to
+> > add that semantics for vma->vm_lock_seq, please make sure that
+> > pagefault path performance does not regress.
+> >
+> > > There is a possibility that vm_lock_seq =3D=3D mm_lock_seq just by
+> > > accident, which is not a correctness problem, we'll just fallback to
+> > > locked implementation until something about VMA or mm_struct itself
+> > > changes. Which is fine, and if mm folks ever change this locking
+> > > schema, this might go away.
+> > >
+> > > If this seems on the right track, I think we can just move
+> > > mm_start_vma_specuation()/mm_end_vma_speculation() into
+> > > include/linux/mm.h.
+> > >
+> > > And after thinking a bit more about READ_ONCE() usage, I changed them
+> > > to data_race() to not trigger KCSAN warnings. Initially I kept
+> > > READ_ONCE() only around vma->vm_file access, but given we never chang=
+e
+> > > it until vma is freed and reused (which would be prevented by
+> > > guard(rcu)), I dropped READ_ONCE() and only added data_race(). And
+> > > even data_race() is probably not necessary.
+> > >
+> > > Anyways, please see the patch below. Would be nice if mm folks
+> > > (Suren?) could confirm that this is not broken.
+> > >
+> > >
+> > >
+> > > Author: Andrii Nakryiko <andrii@kernel.org>
+> > > Date:   Fri Aug 2 22:16:40 2024 -0700
+> > >
+> > >     uprobes: add speculative lockless VMA to inode resolution
+> > >
+> > >     Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > >
+> > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > > index 3de311c56d47..bee7a929ff02 100644
+> > > --- a/kernel/events/uprobes.c
+> > > +++ b/kernel/events/uprobes.c
+> > > @@ -2244,6 +2244,70 @@ static int is_trap_at_addr(struct mm_struct
+> > > *mm, unsigned long vaddr)
+> > >         return is_trap_insn(&opcode);
+> > >  }
+> > >
+> > > +#ifdef CONFIG_PER_VMA_LOCK
+> > > +static inline void mm_start_vma_speculation(struct mm_struct *mm, in=
+t
+> > > *mm_lock_seq)
+> > > +{
+> > > +       *mm_lock_seq =3D smp_load_acquire(&mm->mm_lock_seq);
+> > > +}
+> > > +
+> > > +/* returns true if speculation was safe (no mm and vma modification
+> > > happened) */
+> > > +static inline bool mm_end_vma_speculation(struct vm_area_struct *vma=
+,
+> > > int mm_lock_seq)
+> > > +{
+> > > +       int mm_seq, vma_seq;
+> > > +
+> > > +       mm_seq =3D smp_load_acquire(&vma->vm_mm->mm_lock_seq);
+> > > +       vma_seq =3D READ_ONCE(vma->vm_lock_seq);
+> > > +
+> > > +       return mm_seq =3D=3D mm_lock_seq && vma_seq !=3D mm_seq;
+> >
+> > After spending some time on this I think what you do here is
+> > semantically correct but sub-optimal.
+>
 
-Looks good. But please also add assertion when inserting extent into status
-tree that only one of EXTENT_STATUS_WRITTEN, EXTENT_STATUS_UNWRITTEN,
-EXTENT_STATUS_DELAYED, and EXTENT_STATUS_HOLE is set.
-Also perhaps add comment to EXTENT_STATUS_DELAYED (and other) definition that
-these states are exclusive. Thanks!
+Yes, requiring that mm_lock_seq doesn't change is too pessimistic, but
+relative to the frequency of uprobe/uretprobe triggering (and how fast
+the lookup is) this won't matter much. Absolute majority of uprobe
+lookups will manage to succeed while none of mm's VMAs change at all.
+So I felt like that's ok, at least for starters.
 
-									Honza
+My goal is to minimize intrusion into purely mm-related code, this
+whole uprobe work is already pretty large and sprawling, I don't want
+to go on another quest to change locking semantics for vma, if I don't
+absolutely have to :) But see below for adjusted logic based on your
+comments.
 
-> ---
->  fs/ext4/extents_status.c | 18 +++++++++---------
->  fs/ext4/extents_status.h |  5 -----
->  fs/ext4/inode.c          |  4 ++--
->  3 files changed, 11 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-> index e482ac818317..5fb0a02405ba 100644
-> --- a/fs/ext4/extents_status.c
-> +++ b/fs/ext4/extents_status.c
-> @@ -563,8 +563,8 @@ static int ext4_es_can_be_merged(struct extent_status *es1,
->  	if (ext4_es_is_hole(es1))
->  		return 1;
->  
-> -	/* we need to check delayed extent is without unwritten status */
-> -	if (ext4_es_is_delayed(es1) && !ext4_es_is_unwritten(es1))
-> +	/* we need to check delayed extent */
-> +	if (ext4_es_is_delayed(es1))
->  		return 1;
->  
->  	return 0;
-> @@ -1139,7 +1139,7 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
->  	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
->  	ext4_lblk_t i, end, nclu;
->  
-> -	if (!ext4_es_is_delonly(es))
-> +	if (!ext4_es_is_delayed(es))
->  		return;
->  
->  	WARN_ON(len <= 0);
-> @@ -1291,7 +1291,7 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
->  		es = rc->left_es;
->  		while (es && ext4_es_end(es) >=
->  		       EXT4_LBLK_CMASK(sbi, rc->first_do_lblk)) {
-> -			if (ext4_es_is_delonly(es)) {
-> +			if (ext4_es_is_delayed(es)) {
->  				rc->ndelonly_cluster--;
->  				left_delonly = true;
->  				break;
-> @@ -1311,7 +1311,7 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
->  			}
->  			while (es && es->es_lblk <=
->  			       EXT4_LBLK_CFILL(sbi, rc->last_do_lblk)) {
-> -				if (ext4_es_is_delonly(es)) {
-> +				if (ext4_es_is_delayed(es)) {
->  					rc->ndelonly_cluster--;
->  					right_delonly = true;
->  					break;
-> @@ -2239,7 +2239,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
->  	if (EXT4_B2C(sbi, lblk) == EXT4_B2C(sbi, end)) {
->  		first = EXT4_LBLK_CMASK(sbi, lblk);
->  		if (first != lblk)
-> -			f_del = __es_scan_range(inode, &ext4_es_is_delonly,
-> +			f_del = __es_scan_range(inode, &ext4_es_is_delayed,
->  						first, lblk - 1);
->  		if (f_del) {
->  			ret = __insert_pending(inode, first, prealloc);
-> @@ -2251,7 +2251,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
->  			       sbi->s_cluster_ratio - 1;
->  			if (last != end)
->  				l_del = __es_scan_range(inode,
-> -							&ext4_es_is_delonly,
-> +							&ext4_es_is_delayed,
->  							end + 1, last);
->  			if (l_del) {
->  				ret = __insert_pending(inode, last, prealloc);
-> @@ -2264,7 +2264,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
->  	} else {
->  		first = EXT4_LBLK_CMASK(sbi, lblk);
->  		if (first != lblk)
-> -			f_del = __es_scan_range(inode, &ext4_es_is_delonly,
-> +			f_del = __es_scan_range(inode, &ext4_es_is_delayed,
->  						first, lblk - 1);
->  		if (f_del) {
->  			ret = __insert_pending(inode, first, prealloc);
-> @@ -2276,7 +2276,7 @@ static int __revise_pending(struct inode *inode, ext4_lblk_t lblk,
->  
->  		last = EXT4_LBLK_CMASK(sbi, end) + sbi->s_cluster_ratio - 1;
->  		if (last != end)
-> -			l_del = __es_scan_range(inode, &ext4_es_is_delonly,
-> +			l_del = __es_scan_range(inode, &ext4_es_is_delayed,
->  						end + 1, last);
->  		if (l_del) {
->  			ret = __insert_pending(inode, last, prealloc);
-> diff --git a/fs/ext4/extents_status.h b/fs/ext4/extents_status.h
-> index 5b49cb3b9aff..e484c60e55e3 100644
-> --- a/fs/ext4/extents_status.h
-> +++ b/fs/ext4/extents_status.h
-> @@ -184,11 +184,6 @@ static inline int ext4_es_is_mapped(struct extent_status *es)
->  	return (ext4_es_is_written(es) || ext4_es_is_unwritten(es));
->  }
->  
-> -static inline int ext4_es_is_delonly(struct extent_status *es)
-> -{
-> -	return (ext4_es_is_delayed(es) && !ext4_es_is_unwritten(es));
-> -}
-> -
->  static inline void ext4_es_set_referenced(struct extent_status *es)
->  {
->  	es->es_pblk |= ((ext4_fsblk_t)EXTENT_STATUS_REFERENCED) << ES_SHIFT;
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 8bd65a45a26a..2b301c165468 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -1645,7 +1645,7 @@ static int ext4_clu_alloc_state(struct inode *inode, ext4_lblk_t lblk)
->  	int ret;
->  
->  	/* Has delalloc reservation? */
-> -	if (ext4_es_scan_clu(inode, &ext4_es_is_delonly, lblk))
-> +	if (ext4_es_scan_clu(inode, &ext4_es_is_delayed, lblk))
->  		return 1;
->  
->  	/* Already been allocated? */
-> @@ -1766,7 +1766,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
->  		 * Delayed extent could be allocated by fallocate.
->  		 * So we need to check it.
->  		 */
-> -		if (ext4_es_is_delonly(&es)) {
-> +		if (ext4_es_is_delayed(&es)) {
->  			map->m_flags |= EXT4_MAP_DELAYED;
->  			return 0;
->  		}
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Actually, after staring at this code some more I think
+> vma->vm_lock_seq not having proper ACQUIRE/RELEASE semantics would
+> bite us here as well. The entire find_active_uprobe_speculative()
+> might be executing while mmap_lock is write-locked (so, mm_seq =3D=3D
+> mm_lock_seq is satisfied) and we might miss that the VMA is locked due
+> to vma->vm_lock_seq read/write reordering. Though it's late and I
+> might have missed some memory barriers which would prevent this
+> scenario...
+
+So, please bear with me, if it's a stupid question. But don't all
+locks have implicit ACQUIRE and RELEASE semantics already? At least
+that's my reading of Documentation/memory-barriers.txt.
+
+So with that, wouldn't it be OK to just change
+READ_ONCE(vma->vm_lock_seq) to smp_load_acquire(&vma->vm_lock_seq) and
+mitigate the issue you pointed out?
+
+
+So maybe something like below:
+
+rcu_read_lock()
+
+vma =3D find_vma(...)
+if (!vma) /* bail */
+
+vm_lock_seq =3D smp_load_acquire(&vma->vm_lock_seq);
+mm_lock_seq =3D smp_load_acquire(&vma->mm->mm_lock_seq);
+/* I think vm_lock has to be acquired first to avoid the race */
+if (mm_lock_seq =3D=3D vm_lock_seq)
+    /* bail, vma is write-locked */
+
+... perform uprobe lookup logic based on vma->vm_file->f_inode ...
+
+if (smp_load_acquire(&vma->vm_lock_seq) !=3D vm_lock_seq)
+    /* bail, VMA might have changed */
+
+Thoughts?
+
+>
+> > This check means that there was no call to
+> > mmap_write_unlock()/mmap_write_downgrade() since
+> > mm_start_vma_speculation() and the vma is not currently locked. To
+> > unlock a write-locked VMA you do need to call
+> > map_write_unlock()/mmap_write_downgrade(), so I think this check would
+> > guarantee that your vma was not locked and modified from under us.
+> > However this will also trigger false positives if
+> > mmap_write_unlock()/mmap_write_downgrade() was called but the vma you
+> > are using was never locked. So, it will bail out more than necessary.
+> > Maybe it's ok?
+> >
+> > > +}
+> > > +
+
+[...]
 
