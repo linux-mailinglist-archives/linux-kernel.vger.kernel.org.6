@@ -1,265 +1,175 @@
-Return-Path: <linux-kernel+bounces-277885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC4A94A7A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:24:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5D7394A7A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C16C81C217B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:23:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79A2C286648
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BEF1E6729;
-	Wed,  7 Aug 2024 12:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1038B1E672D;
+	Wed,  7 Aug 2024 12:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RKHVsAg7"
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bd3Wn+py";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8fQVj1Ps";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oop01eNG";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J8Ka3YmO"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F721C9DD6;
-	Wed,  7 Aug 2024 12:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE061C9DD6;
+	Wed,  7 Aug 2024 12:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723033425; cv=none; b=MO1TpC/a8VJdhTqgXb1c7jqCn44lSxTseznx2B3XbBSCccoD/AqCNnoLmqB3ZM+fTzK4576hZZmDV7JqJQbb3tbu4fa/6OQ1PPOm/+2D+I/VI51P5kWCqhwdQymjOwXxng/EG0Z/QZ7jLDKlSRdu7LMRbrpDzawYsiYi3s4TMAM=
+	t=1723033546; cv=none; b=aMtUpdez5P9XAgnGZSVOz+bdbGYQTSIgWmTHjY/pFZ4FbDQkEqhxcYDQKwEZGLGNr1NUQjcbyhrcrHfRoWEZgWdMZmc3qvVLTDZt3pUk7VMf7EXaJieDl6ysMMEuuQ8OnLTLu8/izkjRjvt/1PmY4vfrQADtVoTtC/g0gKW3JZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723033425; c=relaxed/simple;
-	bh=Kd8ZYPHe25vG2eDzqFvrOHnmPDTkChniLiTdkVWbau8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QCnFO0Q/EiXxNOdOE9slAsApZBPUDyG9zcK3VHxm3J9cSl4L9YPsZzwQK0uQ0mg3BpMAxdTRSk118ipMUq0A5JVwKQt+PzPRXzhvLfMSO//dFrVw++XRPOkPZsuryHsKuvFwYzAbnVVDZCFSbkZj7moZv3FMr5WUP5vIZHdMLSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RKHVsAg7; arc=none smtp.client-ip=80.12.242.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id bfgVsJsx2KPqXbfgVsKM2e; Wed, 07 Aug 2024 14:22:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1723033353;
-	bh=P5S3EiUnzX8DlZ1LXJZ7HdgTZoR7+DwXQZ88EGRCynw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=RKHVsAg7q85zqrxD81rEM2BuP0isjBUjHF7q/qWPIiphEqyPJapEiyy7d5ivj+JmS
-	 KBtUKcjzIKhb/yeZbmWn7iXR7KL5O0eBMSzqFwiarzA4ncnN5oIYEOE3JX2y4WxSXU
-	 dT70jZvYcn/DWXraL4cVGx/yUUCxNLM7T8lEzDbS3xysNwe25tlTK8PDC0FsrcD712
-	 oILy5LOheHcKSotBtTKxF+qkAxV13M2r7pICb3SEgWRZjnr2xwtem7/2YDlDPkGQsT
-	 PfIY2h4NAHkmPJyI0pECHFiNqdlcAvyJ+VSRRJ49rWDmIst9ZbtpM6MoMXXJAbaTj/
-	 1zoYvVV//vTyA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 07 Aug 2024 14:22:33 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next] net: sungem_phy: Constify struct mii_phy_def
-Date: Wed,  7 Aug 2024 14:22:26 +0200
-Message-ID: <54c3b30930f80f4895e6fa2f4234714fdea4ef4e.1723033266.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1723033546; c=relaxed/simple;
+	bh=KXUfVtnXLyXqEnbGZRas1EUNJDaDnjU5WDVJX9vPLkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lZ8JUaO7o+Lxi9njP4COsg9O51+XdZL27ZUQSEYXoooYPWU3Py5XUAHBsTmGhxnKDSGOrv0mkPLR/eCb6oi5v27sxRLbHe+mKVsoAzh2LL6xG0QrGqsX+WGIUNcAZipNm+vVtb8TV956oBsTDoUoUTwSQTvuESQfh8cyVBwZ52s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bd3Wn+py; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8fQVj1Ps; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oop01eNG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J8Ka3YmO; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5CA421F396;
+	Wed,  7 Aug 2024 12:25:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723033541; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yVWjAs9WXrl4kGgXGATPkVai9PljP0etPSTQQnS2QiI=;
+	b=bd3Wn+py9efQxXW3smgg7jWhVe14RwWStx4yd+9rm3RSots00g1+pMF8Rxi99XkI0Oa3ZV
+	ffKJfsoGd9hBJyR79g97A1yjz+avRUU3YYCJrFi9CxgZAD8tXLWQTLz5AuzkAA1I7R0hHZ
+	HZuFqDRcKeYfr0PX9SAmW8igYpYe4tY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723033541;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yVWjAs9WXrl4kGgXGATPkVai9PljP0etPSTQQnS2QiI=;
+	b=8fQVj1Psr2pB7zzi/JFRxgVGhdNpUPbPydqVCH7CJ8h1B91xrbmHVjI8k2KN7bzY+/JOzM
+	ULLsvKvFhNPorcDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=oop01eNG;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=J8Ka3YmO
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723033540; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yVWjAs9WXrl4kGgXGATPkVai9PljP0etPSTQQnS2QiI=;
+	b=oop01eNGkx0mPBr5oUBWM9I23aXnYMryYtskQ6clC/qMJ7j1BufNd5fgbi7VxkLJbvuJC/
+	faVEHigyzxcey6HK1izbuRtp7Om3kmkKMGiwHlV0K/+84vH+UIM2PeAZL6x1ylUaF7Mz7H
+	9nU9fGSf6VEoXf6nprg90vwlmZnIkws=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723033540;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yVWjAs9WXrl4kGgXGATPkVai9PljP0etPSTQQnS2QiI=;
+	b=J8Ka3YmONW96GsfVhq+lIJJXvXtL3PEvRJKVAvV1diw1Y6hN2UdE5T1a2fUvsbPp1uojOU
+	sf7KQNJ7IfQSarDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3E75313A7D;
+	Wed,  7 Aug 2024 12:25:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /cv6DsRns2YzQQAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Wed, 07 Aug 2024 12:25:40 +0000
+Date: Wed, 7 Aug 2024 14:25:39 +0200
+From: Daniel Wagner <dwagner@suse.de>
+To: Stefan Hajnoczi <stefanha@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
+	Sagi Grimberg <sagi@grimberg.me>, Thomas Gleixner <tglx@linutronix.de>, 
+	Christoph Hellwig <hch@lst.de>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	John Garry <john.g.garry@oracle.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Kashyap Desai <kashyap.desai@broadcom.com>, 
+	Sumit Saxena <sumit.saxena@broadcom.com>, Shivasharan S <shivasharan.srikanteshwara@broadcom.com>, 
+	Chandrakanth patil <chandrakanth.patil@broadcom.com>, Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>, 
+	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, Nilesh Javali <njavali@marvell.com>, 
+	GR-QLogic-Storage-Upstream@marvell.com, Jonathan Corbet <corbet@lwn.net>, 
+	Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>, 
+	Sridhar Balaraman <sbalaraman@parallelwireless.com>, "brookxu.cn" <brookxu.cn@gmail.com>, 
+	Ming Lei <ming.lei@redhat.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org, virtualization@lists.linux.dev, 
+	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com, 
+	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 00/15] honor isolcpus configuration
+Message-ID: <f48a032f-e1e0-42fc-afc6-5aa5ccc3514d@flourine.local>
+References: <20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de>
+ <CAJSP0QVod5DA2hdNFrpN+HZcfm6Bg11teRmt5d+MBTB1wH4vZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJSP0QVod5DA2hdNFrpN+HZcfm6Bg11teRmt5d+MBTB1wH4vZg@mail.gmail.com>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.01 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[35];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.dk,kernel.org,grimberg.me,linutronix.de,lst.de,oracle.com,redhat.com,broadcom.com,marvell.com,lwn.net,suse.de,parallelwireless.com,gmail.com,vger.kernel.org,lists.infradead.org,lists.linux.dev,microchip.com];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[gitlab.com:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:dkim]
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: 5CA421F396
+X-Spam-Level: 
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -0.01
 
-'struct mii_phy_def' are not modified in this driver.
+On Tue, Aug 06, 2024 at 09:09:50AM GMT, Stefan Hajnoczi wrote:
+> On Tue, 6 Aug 2024 at 08:10, Daniel Wagner <dwagner@suse.de> wrote:
+> > The only stall I was able to trigger
+> > reliable was with qemu's PCI emulation. It looks like when a CPU is
+> > offlined, the PCI affinity is reprogrammed but qemu still routes IRQs to
+> > an offline CPU instead to newly programmed destination CPU. All worked
+> > fine on real hardware.
+> 
+> Hi Daniel,
+> Please file a QEMU bug report here (or just reply to this emails with
+> details on how to reproduce the issue and I'll file the issue on your
+> behalf):
+> https://gitlab.com/qemu-project/qemu/-/issues
+> 
+> We can also wait until your Linux patches have landed if that makes it
+> easier to reproduce the bug.
 
-Constifying these structures moves some data to a read-only section, so
-increase overall security.
-
-While at it fix the checkpatch warning related to this patch (some missing
-newlines and spaces around *)
-
-On a x86_64, with allmodconfig:
-Before:
-======
-  27709	    928	      0	  28637	   6fdd	drivers/net/sungem_phy.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  28157	    476	      0	  28633	   6fd9	drivers/net/sungem_phy.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
----
- drivers/net/sungem_phy.c   | 35 +++++++++++++++++++----------------
- include/linux/sungem_phy.h |  2 +-
- 2 files changed, 20 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/net/sungem_phy.c b/drivers/net/sungem_phy.c
-index d591e33268e5..55aa8d0c8e1f 100644
---- a/drivers/net/sungem_phy.c
-+++ b/drivers/net/sungem_phy.c
-@@ -893,7 +893,7 @@ static const struct mii_phy_ops bcm5201_phy_ops = {
- 	.read_link	= genmii_read_link,
- };
- 
--static struct mii_phy_def bcm5201_phy_def = {
-+static const struct mii_phy_def bcm5201_phy_def = {
- 	.phy_id		= 0x00406210,
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "BCM5201",
-@@ -912,7 +912,7 @@ static const struct mii_phy_ops bcm5221_phy_ops = {
- 	.read_link	= genmii_read_link,
- };
- 
--static struct mii_phy_def bcm5221_phy_def = {
-+static const struct mii_phy_def bcm5221_phy_def = {
- 	.phy_id		= 0x004061e0,
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "BCM5221",
-@@ -930,7 +930,8 @@ static const struct mii_phy_ops bcm5241_phy_ops = {
- 	.poll_link	= genmii_poll_link,
- 	.read_link	= genmii_read_link,
- };
--static struct mii_phy_def bcm5241_phy_def = {
-+
-+static const struct mii_phy_def bcm5241_phy_def = {
- 	.phy_id		= 0x0143bc30,
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "BCM5241",
-@@ -949,7 +950,7 @@ static const struct mii_phy_ops bcm5400_phy_ops = {
- 	.read_link	= bcm54xx_read_link,
- };
- 
--static struct mii_phy_def bcm5400_phy_def = {
-+static const struct mii_phy_def bcm5400_phy_def = {
- 	.phy_id		= 0x00206040,
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "BCM5400",
-@@ -968,7 +969,7 @@ static const struct mii_phy_ops bcm5401_phy_ops = {
- 	.read_link	= bcm54xx_read_link,
- };
- 
--static struct mii_phy_def bcm5401_phy_def = {
-+static const struct mii_phy_def bcm5401_phy_def = {
- 	.phy_id		= 0x00206050,
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "BCM5401",
-@@ -987,7 +988,7 @@ static const struct mii_phy_ops bcm5411_phy_ops = {
- 	.read_link	= bcm54xx_read_link,
- };
- 
--static struct mii_phy_def bcm5411_phy_def = {
-+static const struct mii_phy_def bcm5411_phy_def = {
- 	.phy_id		= 0x00206070,
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "BCM5411",
-@@ -1007,7 +1008,7 @@ static const struct mii_phy_ops bcm5421_phy_ops = {
- 	.enable_fiber   = bcm5421_enable_fiber,
- };
- 
--static struct mii_phy_def bcm5421_phy_def = {
-+static const struct mii_phy_def bcm5421_phy_def = {
- 	.phy_id		= 0x002060e0,
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "BCM5421",
-@@ -1026,7 +1027,7 @@ static const struct mii_phy_ops bcm5421k2_phy_ops = {
- 	.read_link	= bcm54xx_read_link,
- };
- 
--static struct mii_phy_def bcm5421k2_phy_def = {
-+static const struct mii_phy_def bcm5421k2_phy_def = {
- 	.phy_id		= 0x002062e0,
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "BCM5421-K2",
-@@ -1045,7 +1046,7 @@ static const struct mii_phy_ops bcm5461_phy_ops = {
- 	.enable_fiber   = bcm5461_enable_fiber,
- };
- 
--static struct mii_phy_def bcm5461_phy_def = {
-+static const struct mii_phy_def bcm5461_phy_def = {
- 	.phy_id		= 0x002060c0,
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "BCM5461",
-@@ -1064,7 +1065,7 @@ static const struct mii_phy_ops bcm5462V_phy_ops = {
- 	.read_link	= bcm54xx_read_link,
- };
- 
--static struct mii_phy_def bcm5462V_phy_def = {
-+static const struct mii_phy_def bcm5462V_phy_def = {
- 	.phy_id		= 0x002060d0,
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "BCM5462-Vesta",
-@@ -1094,7 +1095,7 @@ static const struct mii_phy_ops marvell88e1111_phy_ops = {
- /* two revs in darwin for the 88e1101 ... I could use a datasheet
-  * to get the proper names...
-  */
--static struct mii_phy_def marvell88e1101v1_phy_def = {
-+static const struct mii_phy_def marvell88e1101v1_phy_def = {
- 	.phy_id		= 0x01410c20,
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Marvell 88E1101v1",
-@@ -1102,7 +1103,8 @@ static struct mii_phy_def marvell88e1101v1_phy_def = {
- 	.magic_aneg	= 1,
- 	.ops		= &marvell88e1101_phy_ops
- };
--static struct mii_phy_def marvell88e1101v2_phy_def = {
-+
-+static const struct mii_phy_def marvell88e1101v2_phy_def = {
- 	.phy_id		= 0x01410c60,
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Marvell 88E1101v2",
-@@ -1110,7 +1112,8 @@ static struct mii_phy_def marvell88e1101v2_phy_def = {
- 	.magic_aneg	= 1,
- 	.ops		= &marvell88e1101_phy_ops
- };
--static struct mii_phy_def marvell88e1111_phy_def = {
-+
-+static const struct mii_phy_def marvell88e1111_phy_def = {
- 	.phy_id		= 0x01410cc0,
- 	.phy_id_mask	= 0xfffffff0,
- 	.name		= "Marvell 88E1111",
-@@ -1127,7 +1130,7 @@ static const struct mii_phy_ops generic_phy_ops = {
- 	.read_link	= genmii_read_link
- };
- 
--static struct mii_phy_def genmii_phy_def = {
-+static const struct mii_phy_def genmii_phy_def = {
- 	.phy_id		= 0x00000000,
- 	.phy_id_mask	= 0x00000000,
- 	.name		= "Generic MII",
-@@ -1136,7 +1139,7 @@ static struct mii_phy_def genmii_phy_def = {
- 	.ops		= &generic_phy_ops
- };
- 
--static struct mii_phy_def* mii_phy_table[] = {
-+static const struct mii_phy_def *mii_phy_table[] = {
- 	&bcm5201_phy_def,
- 	&bcm5221_phy_def,
- 	&bcm5241_phy_def,
-@@ -1156,9 +1159,9 @@ static struct mii_phy_def* mii_phy_table[] = {
- 
- int sungem_phy_probe(struct mii_phy *phy, int mii_id)
- {
-+	const struct mii_phy_def *def;
- 	int rc;
- 	u32 id;
--	struct mii_phy_def* def;
- 	int i;
- 
- 	/* We do not reset the mii_phy structure as the driver
-diff --git a/include/linux/sungem_phy.h b/include/linux/sungem_phy.h
-index c505f30e8b68..eecc7eb63bfb 100644
---- a/include/linux/sungem_phy.h
-+++ b/include/linux/sungem_phy.h
-@@ -40,7 +40,7 @@ enum {
- /* An instance of a PHY, partially borrowed from mii_if_info */
- struct mii_phy
- {
--	struct mii_phy_def*	def;
-+	const struct mii_phy_def *def;
- 	u32			advertising;
- 	int			mii_id;
- 
--- 
-2.45.2
-
+Thanks for the offer. I tried simplify the setup and come up with
+producer using qemu directly instead with libvirt. And now it works just
+fine. I'll try to figure out what the magic argument...
 
