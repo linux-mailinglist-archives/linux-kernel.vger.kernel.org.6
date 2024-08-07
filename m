@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-277935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDCC94A866
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:13:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8327794A870
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A201B21342
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:13:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 386A41F21901
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E871E7A2E;
-	Wed,  7 Aug 2024 13:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2E61E7A49;
+	Wed,  7 Aug 2024 13:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GStIOZn5"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eAmhcnpv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E39155C83
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 13:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9821CCB32
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 13:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723036412; cv=none; b=l04tgfIOrG0QhYXFucs1fFzzQZ+SZjdq7SLLO/1C1esRjGrLp8ItaEckyM5xWjnBhOwaHns3/hZK3vQglz52OIVROlIQ9TrqLRCTX8K3D3Hm79FcCVlrUG1GODkB8I64M7JG/o3XkZGNXG0wjA/D+M4bJfvwtaYJGajkj5ifliI=
+	t=1723036642; cv=none; b=jF3ZjZaHZqt60IU3XGqySxYnjK7Hq/gvni6eYR/Bmb8xyQVXsuMxBXD0VrYhFH37b7EEBY3GJgWOdancAXDqXE+WLQ981eYmcxTKknAWAIWh+A8aPTFNzsNs5v17SlgEiZgZAZraunt2ghmfuBmwNGuWuKUEsvgDeVsZEDCZq6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723036412; c=relaxed/simple;
-	bh=u7ed/2Weoxr+YdpOE1EMtMcWyTBdf5L+GUHUD8Fk84Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MI9lIyUjwXnYs0nznImtnZbVscwS6vh9YDMvQ7SVfrq2RltMT+K9kGVJDhzZ89Cqd3W52oQy02qMowkQsZ6ssyN8HJgitms47LzGCUB17Q6qG6kvCURlRNuszjVxsRGjeEgTRXuiCRb9EDASwvF7m23XBPjygfbAdWV3p3V5lfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GStIOZn5; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7094641d4e6so766230a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 06:13:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723036410; x=1723641210; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u7ed/2Weoxr+YdpOE1EMtMcWyTBdf5L+GUHUD8Fk84Q=;
-        b=GStIOZn5pBDvxUkiRH/1kFHtwDSGqdPv/D4SNj1vf/Cg8OVDbB+qQ1ck2ZqJdKVhzv
-         aI++iGoqNzoZKWK/Xj9gJ37cbHCNDg+1JJ+j9bOGUszVf13r1mSWgEDg8W6OiL+orYUp
-         PL6fOpXMHm4y/CuXAnoDk6nm8v8WnKos6VE4f0xu8Kmcz3ZLBMpjhZqL3B6db9cvsKTv
-         NBzTe8+cEVFudN3PpftbuYEOUz4DAqZx2Id9TE31PAk2LjWkqikuTbadZ06EfdqpfHm8
-         svu3t9XCf/RwQb7QyexY5eZPN5ORiCbIEHxBbn+ELMCP+EmDOUYzO60aEZPRvLTYRbfS
-         xhKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723036410; x=1723641210;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u7ed/2Weoxr+YdpOE1EMtMcWyTBdf5L+GUHUD8Fk84Q=;
-        b=uPhcoaogNLacM+5/Y/s8yjyjZK1a2iD21D55AFIV7edXJ9O98fv/JMnOAkfoGPadHB
-         rYVrZ944AqSKn2IWY4Wehgc3/3VNH90uSDaOMmh5WziNy5fuuReKA3ELq33m8eNyLrX5
-         u/eh8ia3pPnaI4DY8CiN2kn0gGQjZhEA6pWwS1vQjtCjCnKlk2zpJtin9cCkzYbz4h56
-         /UUsh64+D6cKGZ/kNOwjGcIqhrRBE8ynOw3dzxEnt7R9otDSX/AsnKA4x5+tTmBoujB5
-         +RQMtloJPKlEVXiq/n/hk/mFl0VSBCqUZjA5lvaMEGb67RjlOr4zW6/Q8MmGNcekA7nL
-         9dBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQsKyTT31bEoVrZNyR7M6sXw0kulDg+eAaBF+/p4cE5QDIOGkE59SMHR6U62UymlUtqkVTsYhgDQVdjXxaWzJIJjoWuAdnH4nrOgAh
-X-Gm-Message-State: AOJu0Yxrjg0p+M6tFI2H+SeGUgRp0WZCsMHh605c4I4cVMbKH1J0kg61
-	Xt6We2QcxZ7VPHuuW6nY9RqtWYrO5oD48AyyXyDc4h9gXYGzRujiz1aYaxlPguQrYWLRMSM7tCY
-	3Y6yZ40y/OObv6DNmH7F1FVbzkvI=
-X-Google-Smtp-Source: AGHT+IGcUJm2zcLpzucEqHA+016xcCdViDf6243shSYybmTdgJYwU0OtVNu+quSxGE3UQwEuxCkNUPCytzC1FVxnwU0=
-X-Received: by 2002:a05:6358:c6a2:b0:1ad:a25:a6d8 with SMTP id
- e5c5f4694b2df-1af3bb93427mr1635895955d.27.1723036410351; Wed, 07 Aug 2024
- 06:13:30 -0700 (PDT)
+	s=arc-20240116; t=1723036642; c=relaxed/simple;
+	bh=vSo75lzjQkETXPUOV+jM9s7j37MlUuGx+J1YmnX/Wf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q2s4pwaUaqtSaMrWvD1yf3djQWNu8cDnxzZdZvUl8rnXEsvTxbadQ6y9i8gqJ7vHu/p5vongYX7x6yffhgYKPtMLiEAjMtR6wpm+eCnoOfUfUros3Ff2gdURLFTvM+KHxKwxGHoI1CDB6r1gxNaL8+DLhK+L4zxs1czSyG8q7dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eAmhcnpv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723036640;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HHA0OK62AwchNJ57FFfHC78h5WPF4JbQaFxR5tsk1xg=;
+	b=eAmhcnpvl/2eNn9cpDs3BOrWWqnW3+dEXoZprGiEJirGovC4FcJSecImq2PusOyya3GIKY
+	/0BYA7eYY9UD/EFXcNS7qisFxrKj2GzthzIuEhArNclPzLErsmMmMMqNcTMFy6ON2/sDUX
+	o9VOp0egYuQm2BQNzCPXHHUUn1Ox7tM=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-650-nl3OrPbNP4W8m8ZBwtmkdg-1; Wed,
+ 07 Aug 2024 09:17:15 -0400
+X-MC-Unique: nl3OrPbNP4W8m8ZBwtmkdg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B6F1F19541AA;
+	Wed,  7 Aug 2024 13:17:13 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.97])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5BAB819560A3;
+	Wed,  7 Aug 2024 13:17:10 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  7 Aug 2024 15:17:11 +0200 (CEST)
+Date: Wed, 7 Aug 2024 15:17:07 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org
+Subject: Re: [PATCH 6/8] perf/uprobe: split uprobe_unregister()
+Message-ID: <20240807131707.GB27715@redhat.com>
+References: <20240731214256.3588718-1-andrii@kernel.org>
+ <20240731214256.3588718-7-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806212808.1885309-1-pedro.falcato@gmail.com>
- <20240806212808.1885309-3-pedro.falcato@gmail.com> <4a84c992-58ed-459e-bf84-02c59ba1d00d@lucifer.local>
-In-Reply-To: <4a84c992-58ed-459e-bf84-02c59ba1d00d@lucifer.local>
-From: Pedro Falcato <pedro.falcato@gmail.com>
-Date: Wed, 7 Aug 2024 14:13:19 +0100
-Message-ID: <CAKbZUD2pVQAyUNJjRxoS1VOnJ09winf79eXUDgn_1V4OH2UzDA@mail.gmail.com>
-Subject: Re: [PATCH 2/7] mm/munmap: Replace can_modify_mm with can_modify_vma
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	oliver.sang@intel.com, torvalds@linux-foundation.org, jeffxu@google.com, 
-	Michael Ellerman <mpe@ellerman.id.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731214256.3588718-7-andrii@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, Aug 7, 2024 at 2:02=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Tue, Aug 06, 2024 at 10:28:03PM GMT, Pedro Falcato wrote:
-> > We were doing an extra mmap tree traversal just to check if the entire
-> > range is modifiable. This can be done when we iterate through the VMAs
-> > instead.
-> >
-> > Note that this removes the arch_unmap() callsites and therefore isn't
-> > quite ready for Proper(tm) upstreaming.
->
-> If this isn't ready for upstreaming which is it being submitted as a patc=
-h
-> series and not an RFC or such?
+I guess you know this, but just in case...
 
-Crap... I wasn't sure whether to mark this as RFC or not (I wasn't
-sure if this could be applied as a hotfix, yes it's a little risky but
-the changes themselves are simple, and fix an active regression).
-I'll err on the side of caution next time :)
-
+On 07/31, Andrii Nakryiko wrote:
 >
-> Liam is likely to do some significant rework of this arch_unmap() stuff
-> soon, and is certainly significantly reworking the munmap() logic, so to
+> --- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+> +++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+> @@ -478,7 +478,8 @@ static void testmod_unregister_uprobe(void)
+>  	mutex_lock(&testmod_uprobe_mutex);
+>  
+>  	if (uprobe.uprobe) {
+> -		uprobe_unregister(uprobe.uprobe, &uprobe.consumer);
+> +		uprobe_unregister_nosync(uprobe.uprobe, &uprobe.consumer);
+> +		uprobe_unregister_sync();
+>  		uprobe.offset = 0;
+>  		uprobe.uprobe = NULL;
 
-FWIW there was a new series posted at
-https://lore.kernel.org/linuxppc-dev/20240807124103.85644-1-mpe@ellerman.id=
-.au/T/#m353eb23fc263033c9ca023ead6fa82d1a1ff3263
-that do away with arch_unmap altogether (resulting from our exchange
-on the regression thread).
+this chunk has the trivial conlicts with tip perf/core
 
-> avoid conflicts it goes doubly that if this isn't meant for upstream then
-> it should be RFC'd.
->
-> >
-> > Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
->
-> This patch doesn't apply in the mm-unstable tree. If you want your series
-> to come in through the mm tree you need to rebase on this.
->
-> I made a major change to file structure which moves a bunch of mm/mmap.c
-> stuff to mm/vma.c (similarly moving things around in headers), which is
-> why.
->
-> It also means I can't sensibly review it... :)
+db61e6a4eee5a selftests/bpf: fix uprobe.path leak in bpf_testmod
+adds path_put(&uprobe.path) here
 
-ACK. I'll rebase on mm-unstable for v2, sorry for the time lost.
+3c83a9ad0295e make uprobe_register() return struct uprobe *
+removes the "uprobe.offset = 0;" line.
 
---=20
-Pedro
+Oleg.
+
 
