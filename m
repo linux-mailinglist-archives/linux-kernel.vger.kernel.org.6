@@ -1,229 +1,148 @@
-Return-Path: <linux-kernel+bounces-277652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 228DB94A44A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:30:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597BB94A44D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 964481F2331B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:30:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BDD2281CCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0497D1CCB30;
-	Wed,  7 Aug 2024 09:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6630A1D0DC0;
+	Wed,  7 Aug 2024 09:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KEH94C0V";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="stZfgEGd";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KEH94C0V";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="stZfgEGd"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="a5qUT5lD"
+Received: from msa.smtpout.orange.fr (smtp-73.smtpout.orange.fr [80.12.242.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A518413F435
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 09:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F143A267
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 09:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723023018; cv=none; b=ECU0QQOwrauxPGemAyEGECa/iGqBCd/WU4sPYLBVV13sh8j5Ta6/SXkBfyOI1xGm+JXTt96UUzhlgurfSYq+hI/tHJteds+F9vgDIoLdPqCIHD0JM1EsskLrdqG/392sRwgNZFaC1l995nYT2WrHUrvi7GUpu5iDl23O6xSn+uQ=
+	t=1723023079; cv=none; b=Bil4eJM6zlldm8gVPsFW2BHq/s/LHj7y2jGvfF7hpz1rQ5kuPfYifo+6mNf5imrpqQeDhGoOPA99yVMwok5YgXN4b/Kl6pqb+KIvGoUIv0a4olvsbX+FgC4Dw2Dxa4PnYk/RNYi7Gg531zF1aO4AwBE/gZsBcNIowxcQrrDrLPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723023018; c=relaxed/simple;
-	bh=iBwSElW7/bGjjlIgMt5MwMhqoVEnZ1qEhtTJ2Xsjuw4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KtclvOuAdtIp7SHohZlXLI0UShofieJ703MvZ4aMvi98M5gb1KhkmX+jKbHszckxgYIfxvE87A/iUJwhb1j/zCzLimDd999Uv8RqEd0EaSoU8K04lST2lnscAqGj0A0Tx8ocFxNAMp9BfofTsE8tpADeBqpEo5atlMTDVzt+hto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KEH94C0V; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=stZfgEGd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KEH94C0V; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=stZfgEGd; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B52BF21B79;
-	Wed,  7 Aug 2024 09:30:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723023014; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LhM+tJw0ZvhBM0ppB6xSr68FJ9X0AGS0EoEn7WLfbTQ=;
-	b=KEH94C0VSSClbVs+IHMgmtLdflfj40u4QaOwdTKjxwIX8b9Y+H1C41ERZqcmLGEE8D+Tm+
-	5IZGyIHnHS0ZbPvQ5ZPsQX2RG44B85VE43Z3a39ZLnHbsx1DQONpCMOJ15JOcup6rzx9WM
-	zcGqgVq9khWDLi2iAaUpTmefYtqpI4k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723023014;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LhM+tJw0ZvhBM0ppB6xSr68FJ9X0AGS0EoEn7WLfbTQ=;
-	b=stZfgEGdVYSAY/V+mgzPtBobLhQgY2M1f34/sEE17IhnUJfI+iESJeI2EW0XsrOYjLaeJh
-	c1S3STgA052vfzAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=KEH94C0V;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=stZfgEGd
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723023014; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LhM+tJw0ZvhBM0ppB6xSr68FJ9X0AGS0EoEn7WLfbTQ=;
-	b=KEH94C0VSSClbVs+IHMgmtLdflfj40u4QaOwdTKjxwIX8b9Y+H1C41ERZqcmLGEE8D+Tm+
-	5IZGyIHnHS0ZbPvQ5ZPsQX2RG44B85VE43Z3a39ZLnHbsx1DQONpCMOJ15JOcup6rzx9WM
-	zcGqgVq9khWDLi2iAaUpTmefYtqpI4k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723023014;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LhM+tJw0ZvhBM0ppB6xSr68FJ9X0AGS0EoEn7WLfbTQ=;
-	b=stZfgEGdVYSAY/V+mgzPtBobLhQgY2M1f34/sEE17IhnUJfI+iESJeI2EW0XsrOYjLaeJh
-	c1S3STgA052vfzAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5714913A7D;
-	Wed,  7 Aug 2024 09:30:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0QfmE6Y+s2bGDAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 07 Aug 2024 09:30:14 +0000
-Date: Wed, 07 Aug 2024 11:30:53 +0200
-Message-ID: <87r0b07k8i.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: <broonie@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<lgirdwood@gmail.com>,
-	<perex@perex.cz>,
-	<pierre-louis.bossart@linux.intel.com>,
-	<13564923607@139.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<liam.r.girdwood@intel.com>,
-	<cameron.berkenpas@gmail.com>,
-	<baojun.xu@ti.com>,
-	<soyer@irl.hu>,
-	<Baojun.Xu@fpt.com>,
-	<robinchen@ti.com>
-Subject: Re: [PATCH v1] ALSA: ASoC/tas2781: fix wrong calibrated data order
-In-Reply-To: <20240807075541.1458-1-shenghao-ding@ti.com>
-References: <20240807075541.1458-1-shenghao-ding@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1723023079; c=relaxed/simple;
+	bh=5tPWi08O5qzNfmwk5NjD9LrsMpBYwEvC/I+o1C/aDUU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aDnuFG/qRjqi00HxMMdJVF/3Aqrg9VLWK40ehAtzuXDiqqeXJBOtsN2Fys96sos6ZKPtx2tt+QWK4XOtOxGAD7VVCGCqBoVkRWCIkRifnwDYEk/pAub3CBC4TfEg8i08IE4TMokib1tYLW8tyeP4Q1ZC2vWpv0QRBvfI9KHU3bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=a5qUT5lD; arc=none smtp.client-ip=80.12.242.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id bd0dsp4BgEfqMbd0dsKOjo; Wed, 07 Aug 2024 11:31:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1723023068;
+	bh=2qDpc338vFqtRKWlFJJWiHrZKzxO9fZfTIrYjI9ogs4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=a5qUT5lDdKymjqBOdI/vLqm1Z1CwtzAfHwkQ3nhOaGVORDnH+eSSynlNTrpH5yQN6
+	 mClMWt1l2e70ZaoEUP6hsdtHpfyygX3SA3jJndvEOiRat8EWn+wlicqc67P3zFC6uM
+	 /UA8zVl20HNeHkqFaL56mZVas2HFuR+qZBkwxtwJGA5fxCDwuHe++h/kUnvYqaTM+C
+	 0O6k9INFiyhAzMe5X7dy4Bf1XXOsNr5XDCSn4tGSlXKBEZHzpI7FUQSqikBsDlJMGQ
+	 /X+qCpabcVQ1V4ka495o4/mEO7kTfidjVBgnojXu+49WKlAEC3R5Htw/XMCakTllzn
+	 VwTmW+jj1U//Q==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 07 Aug 2024 11:31:08 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linus.walleij@linaro.org,
+	neil.armstrong@linaro.org,
+	khilman@baylibre.com,
+	jbrunet@baylibre.com,
+	martin.blumenstingl@googlemail.com
+Cc: linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/3] pinctrl: meson: Constify some structure
+Date: Wed,  7 Aug 2024 11:30:54 +0200
+Message-ID: <cover.1723022467.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[139.com,gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,gmail.com,perex.cz,139.com,alsa-project.org,vger.kernel.org,intel.com,ti.com,irl.hu,fpt.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,ti.com:email]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -2.01
-X-Rspamd-Queue-Id: B52BF21B79
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 07 Aug 2024 09:55:40 +0200,
-Shenghao Ding wrote:
-> 
-> From: Baojun Xu <baojun.xu@ti.com>
-> 
-> Wrong calibration data order cause sound too low in some device.
-> Fix wrong calibrated data order, add calibration data converssion
-> by get_unaligned_be32() after reading from UEFI.
-> 
-> Fixes: 5be27f1e3ec9 ("ALSA: hda/tas2781: Add tas2781 HDA driver")
-> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
-> 
-> ---
-> v1:
->  - Change copyright date, and add new maintainer.
->  - Add unaligned.h included for get_unaligned_be32().
->  - In tas2781_apply_calib(), change data address transfer directly to
->    get data by get_unaligned_be32(), and send address to device.
-> ---
->  sound/pci/hda/tas2781_hda_i2c.c | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
-> 
-> diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
-> index 49bd7097d..4dc3350d5 100644
-> --- a/sound/pci/hda/tas2781_hda_i2c.c
-> +++ b/sound/pci/hda/tas2781_hda_i2c.c
-> @@ -2,10 +2,12 @@
->  //
->  // TAS2781 HDA I2C driver
->  //
-> -// Copyright 2023 Texas Instruments, Inc.
-> +// Copyright 2023 - 2024 Texas Instruments, Inc.
->  //
->  // Author: Shenghao Ding <shenghao-ding@ti.com>
-> +// Current maintainer: Baojun Xu <baojun.xu@ti.com>
->  
-> +#include <asm/unaligned.h>
->  #include <linux/acpi.h>
->  #include <linux/crc8.h>
->  #include <linux/crc32.h>
-> @@ -519,20 +521,21 @@ static void tas2781_apply_calib(struct tasdevice_priv *tas_priv)
->  	static const unsigned char rgno_array[CALIB_MAX] = {
->  		0x74, 0x0c, 0x14, 0x70, 0x7c,
->  	};
-> -	unsigned char *data;
-> -	int i, j, rc;
-> +	int i, j, rc, data;
-> +	int offset = 0;
+These 3 patches constify some structures in order to move some data to a
+read-only section, so increase overall security.
 
-data should be __be32 type, to be more explicit.
+It is splitted in 3 to ease review.
+Patch 1: struct meson_pmx_group and meson_pmx_func
+patch 2: struct meson_bank
+patch 3: struct meson_pmx_bank
 
+All patches are only compile tested.
 
-Takashi
+In order to compile them, I update Kconfig to add some "| COMPILE_TEST"
+on depends line.
+Should it be useful, I can send a patch to add it, but I don't think it
+would be that useful.
 
->  
->  	for (i = 0; i < tas_priv->ndev; i++) {
-> -		data = tas_priv->cali_data.data +
-> -			i * TASDEVICE_SPEAKER_CALIBRATION_SIZE;
->  		for (j = 0; j < CALIB_MAX; j++) {
-> +			data = get_unaligned_be32(
-> +				&tas_priv->cali_data.data[offset]);
->  			rc = tasdevice_dev_bulk_write(tas_priv, i,
->  				TASDEVICE_REG(0, page_array[j], rgno_array[j]),
-> -				&(data[4 * j]), 4);
-> +				(unsigned char *)&data, 4);
->  			if (rc < 0)
->  				dev_err(tas_priv->dev,
->  					"chn %d calib %d bulk_wr err = %d\n",
->  					i, j, rc);
-> +			offset += 4;
->  		}
->  	}
->  }
-> -- 
-> 2.40.1
-> 
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  10818	  11696	      0	  22514	   57f2	drivers/pinctrl/meson/pinctrl-amlogic-c3.o
+  17198	  17680	      0	  34878	   883e	drivers/pinctrl/meson/pinctrl-amlogic-t7.o
+  14161	  11200	      0	  25361	   6311	drivers/pinctrl/meson/pinctrl-meson8b.o
+  17348	  12512	      0	  29860	   74a4	drivers/pinctrl/meson/pinctrl-meson8.o
+   3070	    324	      0	   3394	    d42	drivers/pinctrl/meson/pinctrl-meson8-pmx.o
+   9317	   9648	      0	  18965	   4a15	drivers/pinctrl/meson/pinctrl-meson-a1.o
+  12115	  11664	      0	  23779	   5ce3	drivers/pinctrl/meson/pinctrl-meson-axg.o
+   2470	    120	      0	   2590	    a1e	drivers/pinctrl/meson/pinctrl-meson-axg-pmx.o
+  15125	  15224	      0	  30349	   768d	drivers/pinctrl/meson/pinctrl-meson-g12a.o
+  13800	  10160	      0	  23960	   5d98	drivers/pinctrl/meson/pinctrl-meson-gxbb.o
+  13040	   9648	      0	  22688	   58a0	drivers/pinctrl/meson/pinctrl-meson-gxl.o
+  20507	   1132	     48	  21687	   54b7	drivers/pinctrl/meson/pinctrl-meson.o
+  12212	  12880	      0	  25092	   6204	drivers/pinctrl/meson/pinctrl-meson-s4.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  22114	    384	      0	  22498	   57e2	drivers/pinctrl/meson/pinctrl-amlogic-c3.o
+  34510	    384	      0	  34894	   884e	drivers/pinctrl/meson/pinctrl-amlogic-t7.o
+  24945	    440	      0	  25385	   6329	drivers/pinctrl/meson/pinctrl-meson8b.o
+  29412	    440	      0	  29852	   749c	drivers/pinctrl/meson/pinctrl-meson8.o
+   3070	    324	      0	   3394	    d42	drivers/pinctrl/meson/pinctrl-meson8-pmx.o
+  18597	    384	      0	  18981	   4a25	drivers/pinctrl/meson/pinctrl-meson-a1.o
+  23315	    496	      0	  23811	   5d03	drivers/pinctrl/meson/pinctrl-meson-axg.o
+   2470	    120	      0	   2590	    a1e	drivers/pinctrl/meson/pinctrl-meson-axg-pmx.o
+  29877	    504	      0	  30381	   76ad	drivers/pinctrl/meson/pinctrl-meson-g12a.o
+  23496	    456	      0	  23952	   5d90	drivers/pinctrl/meson/pinctrl-meson-gxbb.o
+  22224	    456	      0	  22680	   5898	drivers/pinctrl/meson/pinctrl-meson-gxl.o
+  20507	   1132	     48	  21687	   54b7	drivers/pinctrl/meson/pinctrl-meson.o
+  24692	    384	      0	  25076	   61f4	drivers/pinctrl/meson/pinctrl-meson-s4.o
+
+Christophe JAILLET (3):
+  pinctrl: meson: Constify struct meson_pmx_group and meson_pmx_func
+  pinctrl: meson: Constify struct meson_bank
+  pinctrl: meson: Constify struct meson_pmx_bank
+
+ drivers/pinctrl/meson/pinctrl-amlogic-c3.c    |  8 +++---
+ drivers/pinctrl/meson/pinctrl-amlogic-t7.c    |  8 +++---
+ drivers/pinctrl/meson/pinctrl-meson-a1.c      |  8 +++---
+ drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c | 12 ++++-----
+ drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h |  2 +-
+ drivers/pinctrl/meson/pinctrl-meson-axg.c     | 16 ++++++------
+ drivers/pinctrl/meson/pinctrl-meson-g12a.c    | 16 ++++++------
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c    | 12 ++++-----
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c     | 12 ++++-----
+ drivers/pinctrl/meson/pinctrl-meson-s4.c      |  8 +++---
+ drivers/pinctrl/meson/pinctrl-meson.c         | 25 ++++++++++---------
+ drivers/pinctrl/meson/pinctrl-meson.h         |  6 ++---
+ drivers/pinctrl/meson/pinctrl-meson8-pmx.c    |  6 ++---
+ drivers/pinctrl/meson/pinctrl-meson8.c        | 12 ++++-----
+ drivers/pinctrl/meson/pinctrl-meson8b.c       | 12 ++++-----
+ 15 files changed, 82 insertions(+), 81 deletions(-)
+
+-- 
+2.45.2
+
 
