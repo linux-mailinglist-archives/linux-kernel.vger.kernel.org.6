@@ -1,110 +1,72 @@
-Return-Path: <linux-kernel+bounces-278545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77D094B1A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:56:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17CA294B1AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E3AA1F231F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:56:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAFF9281C14
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED36146A9B;
-	Wed,  7 Aug 2024 20:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B19146A62;
+	Wed,  7 Aug 2024 20:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="CENRsVxL"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lB+tF3Ba"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880FA2575F;
-	Wed,  7 Aug 2024 20:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137162575F;
+	Wed,  7 Aug 2024 20:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723064168; cv=none; b=IstOUNq+/an8pnAZ6pSVe6g4ibLIGbGLXAhsl4WQtBPk7IyPlh7L2WekLLQS+x5syXJWQak2K/2Ev6L28NWHDqau0c9kb2Jw9nPSieq3BwRTHPXkvubE6SNIk/UZZKEBRus5x9dEPhaluNxzsHt3H63EIN1j7suV1XhnxEcIKBU=
+	t=1723064246; cv=none; b=pPMlGsu5cOa7V/Jl/+Glyrm60MUToNneAO557QLvFE8En4oPSNgCstzVOKffH+LSohMgyAhw0giiv6kUB/ul4xCmueHeWkpBES69b4r7DWqTgm0+HAI2szV36+GYdznu+6C9tAchS2b+YsudOX2a7oKplHS2vUj01n3SfGAFYYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723064168; c=relaxed/simple;
-	bh=oasgz1nL0IJSjGJv2d4Ya9Zhj2u6ldXOLklj1B473V8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AylQlZUPU6A4c5CaaIPYuJ67Zf56/pfW+YMsgzCSaUUwx89LHLrTNpHrv4y76MHrsiQpIAWVgI8wCgnz61AkI1aXYQqy5rLLMtlDsHeup6KEVqUs4HUneMe4+OkZKHoB9V/cnMWEex35/qJzovzG6QF63Y3UnxRVTRCkAE1Bbfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=CENRsVxL; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WfMsG72pJzlgVnF;
-	Wed,  7 Aug 2024 20:56:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1723064161; x=1725656162; bh=w+JJjxCdnwFJOiB9JQ6tYzxa
-	I1ITC7unatpf+kxjDRg=; b=CENRsVxLm4i5PY+bmEolxU3bklrXn4GEgph8kMgz
-	uAwBfZyKm3D0nEJbsMS7yozE+kMye0oDo+fJJ8mfbEAWEQfV/a27Mq+EwM2WQqf7
-	OkwF7zaIuZ1VoFKpf3SpmKRVEBcN1bW2u/N8BX5aoN2bpPqv6/Jfn6NyqBncisdc
-	WhSqz1lHWVaEkxIgLF+3LvckXMYfS4Z6btH4LnlQuZcLEjziiQr0hLhjeykksZq3
-	zVCckfJwtv2hMcFwLnc37iFAJXUTVjxntxX+iTqbiS+kcBcajKZgSe24h4QfMFKA
-	rpv4g2GXHQq65mzj6Jg3U0dbCRV5rtA0jC9so78yST5dRQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id JQebXUt6PTwp; Wed,  7 Aug 2024 20:56:01 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WfMsD2NvGzlgTGW;
-	Wed,  7 Aug 2024 20:55:59 +0000 (UTC)
-Message-ID: <28624a6d-fdc7-4458-8e8f-f8d764cd4b5b@acm.org>
-Date: Wed, 7 Aug 2024 13:55:58 -0700
+	s=arc-20240116; t=1723064246; c=relaxed/simple;
+	bh=CoT9kc9SyDZefE7l/baC5uJQkkoclRK2DyCLVA/Cmps=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=S9+vIanQ7vs1a/t/ZUDKJVQxqvGZtuuoR1QEd2HBHLVXV3ZIoXboU31XBbMySS38z4IzS2+iE7jNmk17LcE9FD8iCO09VfoPnuZcrAN+d+LElKCG2X6tFAVGs1RkoF3MGGOxgCYXyWAzqVg1e9xO18R5oRDrfaHiHBuzXJN8OGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lB+tF3Ba; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CEA7C32781;
+	Wed,  7 Aug 2024 20:57:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723064243;
+	bh=CoT9kc9SyDZefE7l/baC5uJQkkoclRK2DyCLVA/Cmps=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=lB+tF3BamOf4tSVH8rciCBPjpGks/O6PHAQc+nBS+W4H6TkuoxmEWZihwEgkEK1DL
+	 540CZ04Y5xBw1PaLD0XIAzlZdlhTKuZsETaxHrG7iEvGXXYIj/aw8or/Wez5rTh6Ls
+	 7mZ2h3gF3XoHJs4rNMgx4Za+pFBYpx59uHqsF8NSNgkcZvO3wjCmRmBKC12b7RbZ+E
+	 iKvTRWaM1UUWGANRF3HwsAVxgzQNucTwzgAQ5Q8iKydLiYcHGjZo7dEoJuKYktfrfe
+	 m17IYBl7iWtpvRs+3JywWtQ/AID4Ki5100jo96DNc9qRx1YhHzYv6+SXe6OxTeeVBo
+	 A/7K10EaBcsBQ==
+Message-ID: <d673b1539ad5d4abfff29900461f9209.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] scsi: ufs: Add HCI capabilities sysfs group
-To: Avri Altman <avri.altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240804072109.2330880-1-avri.altman@wdc.com>
- <20240804072109.2330880-3-avri.altman@wdc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240804072109.2330880-3-avri.altman@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2024080709283455745026@rock-chips.com>
+References: <20240806073832.13568-1-zhangqing@rock-chips.com>, <cca491b4b4f5716e634f7c0ce0c574af.sboyd@kernel.org> <2024080709283455745026@rock-chips.com>
+Subject: Re: Re: [PATCH v1] clk: gate: export clk_gate_endisable
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>, linux-rockchip <linux-rockchip@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, huangtao <huangtao@rock-chips.com>, =?utf-8?b?5byg5a2m5bm/?= <sugar.zhang@rock-chips.com>
+To: heiko <heiko@sntech.de>, mturquette <mturquette@baylibre.com>, zhangqing@rock-chips.com <zhangqing@rock-chips.com>, =?utf-8?b?5p2o5Yev?= <kever.yang@rock-chips.com>
+Date: Wed, 07 Aug 2024 13:57:21 -0700
+User-Agent: alot/0.10
 
-On 8/4/24 12:21 AM, Avri Altman wrote:
-> +What:		/sys/bus/platform/drivers/ufshcd/ufshci_capabilities/capabilities
+Quoting zhangqing@rock-chips.com (2024-08-06 18:28:34)
+> Hi=EF=BC=8C
+>=20
+> Some modules, which need to do workaround, need to disabled the clock dir=
+ectly,
+> independent of the reference count.
 
-That path seems wrong to me. I think that "ufshcd" should be changed
-into something like ${host_driver_name}/${ufshci_instance_name}. An 
-example from a Pixel 8 device:
-
-$ adb shell ls /sys/bus/platform/drivers/*ufs*
-/sys/bus/platform/drivers/exynos-ufs:
-13200000.ufs
-module
-uevent
-
-/sys/bus/platform/drivers/ufshcd-hisi:
-bind
-uevent
-unbind
-
-> +What:		/sys/bus/platform/devices/*.ufs/ufshci_capabilities/capabilities
-> +Date:		August 2024
-> +Contact:	Avri Altman <avri.altman@wdc.com>
-> +Description:
-> +		Host Capabilities register group: host controller capabiities register.
-> +		Symbol - CAP.  Offset: 0x00 - 0x03.
-
-Please fix the spelling error that was already reported by Keoseong
-Park. Otherwise this patch looks good to me.
-
-Thanks,
-
-Bart.
+We don't want clk consumers going behind the clk provider and turning it
+off and on. You'll need to figure out some other way to do this. Are
+there really other consumers besides the one changing the pin to a gpio?
+If there's only one user then it seems like clk_disable() should work?
 
