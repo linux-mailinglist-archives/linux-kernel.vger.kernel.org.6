@@ -1,136 +1,87 @@
-Return-Path: <linux-kernel+bounces-277663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8689E94A46A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:35:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D30B094A49A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A14D51C20B6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:35:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AFDEB23235
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB921D0DE3;
-	Wed,  7 Aug 2024 09:35:19 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89C61D1F62;
+	Wed,  7 Aug 2024 09:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btbhCRAZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB921B86C2;
-	Wed,  7 Aug 2024 09:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22B81D0DE3;
+	Wed,  7 Aug 2024 09:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723023319; cv=none; b=X9OUw6xLA3mudZMyZFjFB2NaUSDvIbC0+23Kml/OkCRweXTG84IPI8pZkv+m135ePXcEcUWRJUn6aWqlNkgJmoSAx72351SZNQacEXoSD1Od/RgMJLbefJ66VpWMl6V3odHIMywIQ3ybO8MGnkLzDGIiGzXb9PHNZ9iQzrDGemw=
+	t=1723023365; cv=none; b=OnauMIN6cxWEriQXdrgaPjuJ4CA13ikOKMufNwvrolnr9AkwtuxYvx37a0de6neVl6UMXtNK5qM/Ag8thftAeWXWJf48znP33BQb77rF0YsYw6OwInS1bPSUBCRLQGPtFSa3S95NxBhoEztkJeVCJ4V2joVrzEXWI0jDfo4nqbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723023319; c=relaxed/simple;
-	bh=0rhb2vRZQeOGURRtbcyH5apu/JN8DC3SqwjnxjklUAc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dX4UfjTjrcx9tge2ywAOPIenrQ0u/4lOWC/0kd4rhPlmGXHUWMCgcSglc9CvLZGil79khqfEMPjqQPdN1htdj+HdOBkIZ1CpEOVqoo3rYfOaBa/Nm9at9rW8e/cE7TfGhbkIjQZu/Yk33KXcQBp+2d3BdiGTCyDqSTqx9yA13Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sbd4G-0006qI-Rp; Wed, 07 Aug 2024 11:34:52 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>
-Cc: lee@kernel.org, jdelvare@suse.com, linux@roeck-us.net,
- dmitry.torokhov@gmail.com, pavel@ucw.cz, krzk+dt@kernel.org,
- conor+dt@kernel.org, ukleinek@debian.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-hwmon@vger.kernel.org,
- linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject:
- Re: [PATCH v3 1/7] dt-bindings: mfd: add binding for qnap,ts433-mcu devices
-Date: Wed, 07 Aug 2024 11:34:51 +0200
-Message-ID: <1895730.u6TykanW85@diego>
-In-Reply-To: <20240805191723.GA2636745-robh@kernel.org>
-References:
- <20240731212430.2677900-1-heiko@sntech.de>
- <20240731212430.2677900-2-heiko@sntech.de>
- <20240805191723.GA2636745-robh@kernel.org>
+	s=arc-20240116; t=1723023365; c=relaxed/simple;
+	bh=SIN474AVw4y1MoDQyBN2l9zLDxAG8yJpM+IZg/xSlBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=byqVjajC/B0duFc7woJ0JC+/TPyJSLxIUSKlJdzaCQg4IUbYz1Xov2KdZjrO9ro5zpMm2fgg8q/R1e2o4h7HgEZI7vT+hqlSlEnzvRMphS32VJamtg2ymfuxLI0cqxRcll/cOTy8SerPIfT3aX3/cetNO0PSOqdKXGKxDpWziqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btbhCRAZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E42EDC4AF0B;
+	Wed,  7 Aug 2024 09:35:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723023364;
+	bh=SIN474AVw4y1MoDQyBN2l9zLDxAG8yJpM+IZg/xSlBk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=btbhCRAZArjLvUl8j5Ej+vHzQoO1vTjwqrNsQBIT0/x406nNG6tlbPi9O+sN17d4Y
+	 QICBpuxQ5Bjmn0gXNfW6CQYVZcH8G9ejnTHAA9QFo2zZkYlDWAI6Ot2tDmga9anM+b
+	 WGgtBA/ZIv47FtykXIpoPT2AFtuvlcGoPU21CF4LWL98hI/ZRbIPlQfOtpM6SjubXy
+	 OlCR91eQljQjrJdxLmEtfQYDLsvKApDB3/uWNI88bc+X4QiyQeaPCNomUP+ive0rEL
+	 gGm3BEKgE3wm60LcEtCDTOpcEofl8MTOn6i7t19oigLeiBJBu3URtJDBmLKsiEuJyf
+	 nO0JARebaxVPA==
+Date: Wed, 7 Aug 2024 11:35:56 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: kernel test robot <oliver.sang@intel.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	Linux Memory Management List <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, linux-bcachefs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	ecryptfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-um@lists.infradead.org, linux-mtd@lists.infradead.org, 
+	jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org, 
+	ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, 
+	linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org, reiserfs-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [linux-next:master] [fs]  cdc4ad36a8:
+ kernel_BUG_at_include/linux/page-flags.h
+Message-ID: <20240807-fazit-bergbahn-25781f6167b7@brauner>
+References: <202408062249.2194d51b-lkp@intel.com>
+ <ZrLuBz1eBdgFzIyC@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZrLuBz1eBdgFzIyC@casper.infradead.org>
 
-Hi Rob,
-
-Am Montag, 5. August 2024, 21:17:23 CEST schrieb Rob Herring:
-> On Wed, Jul 31, 2024 at 11:24:24PM +0200, Heiko Stuebner wrote:
-> > These MCUs can be found in network attached storage devices made by QNAP.
-> > They are connected to a serial port of the host device and provide
-> > functionality like LEDs, power-control and temperature monitoring.
+On Wed, Aug 07, 2024 at 04:46:15AM GMT, Matthew Wilcox wrote:
+> On Tue, Aug 06, 2024 at 10:26:17PM +0800, kernel test robot wrote:
+> > kernel test robot noticed "kernel_BUG_at_include/linux/page-flags.h" on:
 > > 
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> >  .../bindings/mfd/qnap,ts433-mcu.yaml          | 43 +++++++++++++++++++
-> >  1 file changed, 43 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/mfd/qnap,ts433-mcu.yaml
+> > commit: cdc4ad36a871b7ac43fcc6b2891058d332ce60ce ("fs: Convert aops->write_begin to take a folio")
+> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
 > > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/qnap,ts433-mcu.yaml b/Documentation/devicetree/bindings/mfd/qnap,ts433-mcu.yaml
-> > new file mode 100644
-> > index 0000000000000..5ae19d8faedbd
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mfd/qnap,ts433-mcu.yaml
-> > @@ -0,0 +1,43 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/mfd/qnap,ts433-mcu.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: QNAP NAS on-board Microcontroller
-> > +
-> > +maintainers:
-> > +  - Heiko Stuebner <heiko@sntech.de>
-> > +
-> > +description:
-> > +  QNAP embeds a microcontroller on their NAS devices adding system feature
-> > +  as PWM Fan control, additional LEDs, power button status and more.
+> > [test failed on linux-next/master 1e391b34f6aa043c7afa40a2103163a0ef06d179]
+> > 
+> > in testcase: boot
 > 
-> Doesn't really look like the binding is complete.
-
-Hmm, apart from the fan subnode, anything else that is missing?
-
-Input device does not need data from devicetree, as the existence
-of the button and buzzer is attached to the specific mcu-compatible.
-
-Similar for the LEDs I guess, their number and color are a property
-of the MCU variant used. I guess one could do subnodes for the
-linux,default-trigger property?
-
-
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - qnap,ts433-mcu
-> > +
-> > +  "#cooling-cells":
-> > +    const: 2
-> > +
-> > +  cooling-levels:
-> > +    description: PWM duty cycle values corresponding to thermal cooling states.
-> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +    items:
-> > +      maximum: 255
+> This patch should fix it.
 > 
-> These are fan properties and should be in a "fan" node referencing 
-> hwmon/fan-common.yaml.
+> Christian, can you squash the fix in?
 
-ok, I'll add a fan-0 subnode as some hwmon already does and move the
-cooling properties into it.
-
-
-Heiko
-
-
+Yep, done!
 
