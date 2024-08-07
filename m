@@ -1,361 +1,146 @@
-Return-Path: <linux-kernel+bounces-277535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C5294A2A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:24:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C40B794A2AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7057B1F23FB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:24:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4D4E1C20B67
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F8A1C9DF8;
-	Wed,  7 Aug 2024 08:24:19 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDCE1C9DDA;
-	Wed,  7 Aug 2024 08:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135D31C9DF9;
+	Wed,  7 Aug 2024 08:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Rg8j+3Vc"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974C71B86E4;
+	Wed,  7 Aug 2024 08:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723019059; cv=none; b=qLZqKB4tFrC4F/RPZyOOAI7tJO5T40a09zJxQJ/jmFk490BUy+lDQltXDf1TB8hiA1oBYLKIKwiNHcXBFCV3xo1cWL+AGh7OxnGtQ1c8+aAklc/zKp9ZPtjVIzfBV5kp+jY84tzzBI0qv4TInqXio5Ls6y/OZCDHzYs77zsHNr8=
+	t=1723019097; cv=none; b=S3aOA8sn7W4nLc//skTncolyksogrq8KOT2wCYKnM5lgHzyS1nk3PLMp6CM/6e7pDg8xB40ZSCgOJ0N4UrBCidcj1MJTAlu9usL7pzpuG47EcbdcTYUxjkHz7u13tmyj3Ahlb5MXzANYASnrIjtedGBBM2VhPjdcU/Y4/I9hLXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723019059; c=relaxed/simple;
-	bh=X/JptzBp44C9v+duQp9x/39KcrWm0ygGr5LVQ4+tAbo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LlKNkiDRpnTKEgtTxs/8/KiRYtzb/nBUu9m+9sfUaDRNwTx08+Ixq23CGsWZwRwPFKDbWSup0Udrcrran1jL8nK+YBRXF5R85uvMH+gG+QXMU1xrJkpKvIFMYJqxp8IBTG5z4Fq7my8VLnDgifC3mnoFh/U0jp1/rbsE/bvc2JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.4.132])
-	by gateway (Coremail) with SMTP id _____8BxXZsvL7Nm_yYKAA--.5568S3;
-	Wed, 07 Aug 2024 16:24:15 +0800 (CST)
-Received: from [10.20.4.132] (unknown [10.20.4.132])
-	by front1 (Coremail) with SMTP id qMiowMBxsuEuL7NmVLUHAA--.10864S2;
-	Wed, 07 Aug 2024 16:24:14 +0800 (CST)
-Message-ID: <77b249fd-3cf7-4cb4-a2b4-64c0c2ba96fa@loongson.cn>
-Date: Wed, 7 Aug 2024 16:24:14 +0800
+	s=arc-20240116; t=1723019097; c=relaxed/simple;
+	bh=jTSQ9E81KojCaFDWB1w5/HjMpqVYlR4k0h6Jqp/5j2U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rGP05lPrgLWXGKxqiXIrPsmu4K0J/1/XnT97dj3jrkADvq5fEE5rMKkL/Aa9cZDCknqgJiWaA17JbS+BLxyjhMSUVxcbmdyFKojxk4wjmz+IWuzSnbFlbk/+nS1TT5iSdhyfW6aFJyHfTTevinv/gRl8R/l5UtPiD34bBaEU4PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Rg8j+3Vc; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 81b64dee549611ef87684b57767b52b1-20240807
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=TYpmLePV8CkFljJT9h9dhUwbsRUKgB1IhEwyhGGACDA=;
+	b=Rg8j+3VcTAQJd8YO7R1GXx6TbgqOdtpRifYcORoIkaKUyA5A16fSjNa1DTo3KyMbqzLNq8HMWhwSGqAAlKbEvjPel3Z/E0yY59zLOX/hiNwvRse4xEOB1rjVr2XuBBNxGpZxBlu2vZv+z2a3I+FuoWurC0/7A39bZAhXrYfV9Co=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:27c1bec6-7f7b-401e-8586-a977182d5be8,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:d5ded53e-6019-4002-9080-12f7f4711092,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULN,TF_CID_SPAM_SNR
+X-UUID: 81b64dee549611ef87684b57767b52b1-20240807
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
+	(envelope-from <yunfei.dong@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 252034388; Wed, 07 Aug 2024 16:24:46 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 7 Aug 2024 16:24:47 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 7 Aug 2024 16:24:46 +0800
+From: Yunfei Dong <yunfei.dong@mediatek.com>
+To: =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?=
+	<nfraprado@collabora.com>, Sebastian Fricke <sebastian.fricke@collabora.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>
+CC: Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
+	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>, Yunfei
+ Dong <yunfei.dong@mediatek.com>, <linux-media@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v4 0/7] media: mediatek: vcodec: fix v4l2_ctrl_request_complete fail
+Date: Wed, 7 Aug 2024 16:24:30 +0800
+Message-ID: <20240807082444.21280-1-yunfei.dong@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>
-Subject: Re: [PATCH v2 2/3] tty: serial: 8250: Add loongson uart driver
- support
-To: Krzysztof Kozlowski <krzk@kernel.org>, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name,
- p.zabel@pengutronix.de
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, loongarch@lists.linux.dev
-References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
- <20240804063834.70022-2-zhenghaowei@loongson.cn>
- <84ff11bd-1d11-4d66-a56b-84bf915af346@kernel.org>
-Content-Language: en-US
-In-Reply-To: <84ff11bd-1d11-4d66-a56b-84bf915af346@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBxsuEuL7NmVLUHAA--.10864S2
-X-CM-SenderInfo: x2kh0w5kdr4v3l6o00pqjv00gofq/1tbiAQECBGayEXMQKgABsL
-X-Coremail-Antispam: 1Uk129KBj93XoW3GFyxJF18Gw43Aw1fXw4fJFc_yoWfJr45pF
-	yDtF4qkrWjqFyxGw1kXr1UZFWavr1Ikr12kry7Ka4akr90y3sYgryrKFyq9r9YyrWkCryj
-	vF1UCrWI9F15XFXCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_Gr1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
-	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
-	Jw0_WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwI
-	xGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwCFI7km07C267AKxVWUtVW8ZwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
-	x2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E
-	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4ZqXDUUUU
+Content-Type: text/plain
+X-MTK: N
 
+v4l2_m2m_buf_done is called in lat work queue, v4l2_ctrl_request_complete
+is called in core queue. The request status of output queue will be set to
+MEDIA_REQUEST_STATE_COMPLETE when v4l2_m2m_buf_done is called, leading to
+output queue request complete fail. Must move v4l2_ctrl_request_complete
+in front of v4l2_m2m_buf_done.
 
-在 2024/8/4 23:33, Krzysztof Kozlowski 写道:
-> On 04/08/2024 08:38,zhenghaowei@loongson.cn wrote:
->> From: Haowei Zheng<zhenghaowei@loongson.cn>
->>
->> Due to certain hardware design challenges, we have opted to
->> utilize a dedicated UART driver to probe the UART interface.
->>
->> Presently, we have defined four parameters — 'fractional-division',
->> 'invert-rts', 'invert-dtr', 'invert-cts', and 'invert-dsr' — which
->> will be employed as needed.
->>
->> Signed-off-by: Haowei Zheng<zhenghaowei@loongson.cn>
->> ---
->>   drivers/tty/serial/8250/8250_loongson.c | 208 ++++++++++++++++++++++++
->>   drivers/tty/serial/8250/8250_port.c     |   8 +
->>   drivers/tty/serial/8250/Kconfig         |   9 +
->>   drivers/tty/serial/8250/Makefile        |   1 +
->>   include/uapi/linux/serial_core.h        |   1 +
->>   5 files changed, 227 insertions(+)
->>   create mode 100644 drivers/tty/serial/8250/8250_loongson.c
->>
->> diff --git a/drivers/tty/serial/8250/8250_loongson.c b/drivers/tty/serial/8250/8250_loongson.c
->> new file mode 100644
->> index 000000000000..eb16677f1dde
->> --- /dev/null
->> +++ b/drivers/tty/serial/8250/8250_loongson.c
->> @@ -0,0 +1,208 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +/*
->> + * Copyright (C) 2020-2024 Loongson Technology Corporation Limited
->> + */
->> +
->> +#include <linux/acpi.h>
-> How is this used?
+Patch 1 setting request complete before buffer done
+Patch 2 change flush decode order when stream off
+Patch 3 flush decoder before stream off
+Patch 4 using input information to get vb2 buffer
+Patch 5 store source vb2 buffer
+Patch 6 replace v4l2_m2m_next_src_buf with v4l2_m2m_src_buf_remove
+Patch 7 remove media request checking
 
-I forgot to drop it, Before this, when the kernel was booted in ACPI 
-mode, we used acpi_match_table
+---
+compared with v3:
+- fix flush decoder issue when userspace stream off capture queue firstly
+- fluster test result same with v3
 
-for driver registration. To maintain code simplicity, now we use 
-"PRP0001" for driver registration, so we
+compared with v2:
+- add patch 5/6/7 to fix decode again issue
+- add fluster test result with mt8195 platform(same with no changed):
+  1> ./fluster.py run -d GStreamer-VP8-V4L2SL-Gst1.0 -j1 -t 90
+     VP8-TEST-VECTORS 59/61
+  2> ./fluster.py run -d GStreamer-VP9-V4L2SL-Gst1.0 -j1 -t 90
+     VP9-TEST-VECTORS 276/305
+  3> ./fluster.py run -d GStreamer-AV1-V4L2SL-Gst1.0 -j1 -t 90
+     AV1-TEST-VECTORS 237/239
+  4> ./fluster.py run -d GStreamer-H.264-V4L2SL-Gst1.0 -j1 -t 90
+     JVT-AVC_V1       95/135
+  5> ./fluster.py run -d GStreamer-H.265-V4L2SL-Gst1.0 -j1 -t 90
+     JCT-VC-HEVC_V1   142/147
 
-don't need 'acpi.h' anymore.
+compared with v1:
+- add patch 2/3/4 to fix timing issue.
+---
+Yunfei Dong (7):
+  media: mediatek: vcodec: setting request complete before buffer done
+  media: mediatek: vcodec: change flush decode order when stream off
+  media: mediatek: vcodec: flush decoder before stream off
+  media: mediatek: vcodec: using input information to get vb2 buffer
+  media: mediatek: vcodec: store source vb2 buffer
+  media: mediatek: vcodec: replace v4l2_m2m_next_src_buf with
+    v4l2_m2m_src_buf_remove
+  media: mediatek: vcodec: remove media request checking
 
->> +#include <linux/clk.h>
-> And this?
-Currently, it doesn't seem to serve much purpose, and I will remove it 
-in the next version.
->> +#include <linux/console.h>
->> +#include <linux/delay.h>
->> +#include <linux/io.h>
->> +#include <linux/module.h>
->> +#include <linux/reset.h>
->> +
->> +#include "8250.h"
->> +
->> +struct loongson_uart_data {
->> +	struct reset_control *rst;
->> +	int line;
->> +	int mcr_invert;
->> +	int msr_invert;
->> +};
-> ...
->
->> +static int loongson_uart_probe(struct platform_device *pdev)
->> +{
->> +	struct uart_8250_port uart = {};
->> +	struct loongson_uart_data *data;
->> +	struct uart_port *port;
->> +	struct resource *res;
->> +	int ret;
->> +
->> +	port = &uart.port;
->> +	spin_lock_init(&port->lock);
->> +
->> +	port->flags		= UPF_SHARE_IRQ | UPF_FIXED_PORT | UPF_FIXED_TYPE;
->> +	port->iotype		= UPIO_MEM;
->> +	port->regshift		= 0;
->> +	port->dev		= &pdev->dev;
->> +	port->type		= (unsigned long)device_get_match_data(&pdev->dev);
->> +	port->serial_in		= loongson_serial_in;
->> +	port->serial_out	= loongson_serial_out;
->> +
->> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	if (!res)
->> +		return -ENODEV;
->> +
->> +	port->membase = devm_ioremap(&pdev->dev, res->start, resource_size(res));
->> +	if (!port->membase)
->> +		return -ENOMEM;
->> +
-> Use wrapper combining both calls.
+ .../mediatek/vcodec/decoder/mtk_vcodec_dec.c  | 44 ++++++++---------
+ .../vcodec/decoder/mtk_vcodec_dec_drv.h       |  4 +-
+ .../vcodec/decoder/mtk_vcodec_dec_stateless.c | 48 ++++++++++++++-----
+ .../vcodec/decoder/vdec/vdec_av1_req_lat_if.c | 18 +++----
+ .../decoder/vdec/vdec_h264_req_multi_if.c     |  4 +-
+ .../decoder/vdec/vdec_hevc_req_multi_if.c     |  4 +-
+ .../vcodec/decoder/vdec/vdec_vp9_req_lat_if.c | 19 ++++----
+ .../mediatek/vcodec/decoder/vdec_msg_queue.h  |  4 +-
+ 8 files changed, 85 insertions(+), 60 deletions(-)
 
-I got it, did you mean like this?
-
-+    res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+    if (!res)
-+        return -ENODEV;
-+
-+    port->mapbase = res->start;
-+    port->mapsize = resource_size(res);
-+
-+    port->membase = devm_ioremap(&pdev->dev, port->mapbase, port->mapsize);
-+    if (!port->membase)
-  +       return -ENOMEM;
-
->> +	port->mapbase = res->start;
->> +	port->mapsize = resource_size(res);
->> +
->> +	port->irq = platform_get_irq(pdev, 0);
->> +	if (port->irq < 0)
->> +		return -EINVAL;
->> +
->> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
->> +	if (!data)
->> +		return -ENOMEM;
->> +
->> +	port->private_data = data;
->> +
->> +	if (device_property_read_bool(&pdev->dev, "fractional-division")) {
->> +		port->get_divisor = loongson_frac_get_divisor;
->> +		port->set_divisor = loongson_frac_set_divisor;
->> +	}
->> +
->> +	if (device_property_read_bool(&pdev->dev, "rts-invert"))
->> +		data->mcr_invert |= UART_MCR_RTS;
->> +
->> +	if (device_property_read_bool(&pdev->dev, "dtr-invert"))
->> +		data->mcr_invert |= UART_MCR_DTR;
->> +
->> +	if (device_property_read_bool(&pdev->dev, "cts-invert"))
->> +		data->msr_invert |= UART_MSR_CTS;
->> +
->> +	if (device_property_read_bool(&pdev->dev, "dsr-invert"))
->> +		data->msr_invert |= UART_MSR_DSR;
->> +
->> +	data->rst = devm_reset_control_get_optional_shared(&pdev->dev, NULL);
->> +	if (IS_ERR(data->rst))
->> +		return PTR_ERR(data->rst);
->> +
->> +	device_property_read_u32(&pdev->dev, "clock-frequency", &port->uartclk);
->> +
->> +	ret = reset_control_deassert(data->rst);
->> +	if (ret)
->> +		goto err_unprepare;
->> +
->> +	ret = serial8250_register_8250_port(&uart);
->> +	if (ret < 0)
->> +		goto err_unprepare;
->> +
->> +	platform_set_drvdata(pdev, data);
->> +	data->line = ret;
->> +
->> +	return 0;
->> +
->> +err_unprepare:
->> +
->> +	return ret;
->> +}
->> +
->> +static void loongson_uart_remove(struct platform_device *pdev)
->> +{
->> +	struct loongson_uart_data *data = platform_get_drvdata(pdev);
->> +
->> +	serial8250_unregister_port(data->line);
->> +	reset_control_assert(data->rst);
->> +}
->> +
->> +#ifdef CONFIG_PM_SLEEP
->> +static int loongson_uart_suspend(struct device *dev)
->> +{
->> +	struct loongson_uart_data *data = dev_get_drvdata(dev);
->> +
->> +	serial8250_suspend_port(data->line);
->> +
->> +	return 0;
->> +}
->> +
->> +static int loongson_uart_resume(struct device *dev)
->> +{
->> +	struct loongson_uart_data *data = dev_get_drvdata(dev);
->> +
->> +	serial8250_resume_port(data->line);
->> +
->> +	return 0;
->> +}
->> +#endif
->> +
->> +static const struct dev_pm_ops loongson_uart_pm_ops = {
->> +	SET_SYSTEM_SLEEP_PM_OPS(loongson_uart_suspend, loongson_uart_resume)
->> +};
->> +
->> +static const struct of_device_id of_platform_serial_table[] = {
->> +	{.compatible = "loongson,ls7a-uart", .data = (void *)PORT_LOONGSON},
-> Why do you need match data if there is no choice?
-
-Considering whether new port types might be added in the future.
-
-Of course, currently it doesn't seem necessary to do so.
-
->> +	{},
->> +};
->> +MODULE_DEVICE_TABLE(of, of_platform_serial_table);
->> +
->> +static struct platform_driver loongson_uart_driver = {
->> +	.probe = loongson_uart_probe,
->> +	.remove = loongson_uart_remove,
->> +	.driver = {
->> +		.name = "ls7a-uart",
->> +		.pm = &loongson_uart_pm_ops,
->> +		.of_match_table = of_match_ptr(of_platform_serial_table),
-> Except that this does not build... drop of_match_ptr(), not needed and
-> causes warnings.
->
-Ok, I got it.
->> +	},
->> +};
->> +
->> +module_platform_driver(loongson_uart_driver);
->> +
->> +MODULE_DESCRIPTION("LOONGSON 8250 Driver");
->> +MODULE_AUTHOR("Haowei Zheng<zhenghaowei@loongson.cn>");
->> +MODULE_LICENSE("GPL");
->> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
->> index 2786918aea98..60b72c785028 100644
->> --- a/drivers/tty/serial/8250/8250_port.c
->> +++ b/drivers/tty/serial/8250/8250_port.c
->> @@ -319,6 +319,14 @@ static const struct serial8250_config uart_config[] = {
->>   		.rxtrig_bytes	= {1, 8, 16, 30},
->>   		.flags		= UART_CAP_FIFO | UART_CAP_AFE,
->>   	},
->> +	[PORT_LOONGSON] = {
->> +		.name		= "Loongson",
->> +		.fifo_size	= 16,
->> +		.tx_loadsz	= 16,
->> +		.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_10,
->> +		.rxtrig_bytes   = {1, 4, 8, 14},
->> +		.flags		= UART_CAP_FIFO,
->> +	},
->>   };
->>   
->>   /* Uart divisor latch read */
->> diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
->> index 47ff50763c04..a696afc4f8a8 100644
->> --- a/drivers/tty/serial/8250/Kconfig
->> +++ b/drivers/tty/serial/8250/Kconfig
->> @@ -568,6 +568,15 @@ config SERIAL_8250_BCM7271
->>   	  including DMA support and high accuracy BAUD rates, say
->>   	  Y to this option. If unsure, say N.
->>   
->> +config SERIAL_8250_LOONGSON
->> +	tristate "Loongson 8250 serial port support"
->> +	default SERIAL_8250
->> +	depends on SERIAL_8250
->> +	depends on LOONGARCH || MIPS
-> MIPS? Why?
->
-> You also miss COMPILE_TEST.
->
->
->
-> Best regards,
-> Krzysztof
-
-The addition of mips was intended to maintain compatibility with 
-loongson-3a4000 and earlier chips.
-
-Currently, it appears that this lacks sufficient validation, and I will 
-remove it in the next version.
-
-
-I compiled and verified it on the Loongson 3A6000 machine, and currently 
-it seems to have issues.
-
-I will fix the compilation problem in the next version.
-
-
-Best regards,
-
-Haowei Zheng
+-- 
+2.46.0
 
 
