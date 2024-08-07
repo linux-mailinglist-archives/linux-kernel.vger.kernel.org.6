@@ -1,315 +1,185 @@
-Return-Path: <linux-kernel+bounces-277916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5EAF94A81D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:55:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A73094A821
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 492D81F25285
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:55:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5AE0280F8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD4B1E673C;
-	Wed,  7 Aug 2024 12:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95E21E6752;
+	Wed,  7 Aug 2024 12:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fO/+oOvc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="P2RZQvx9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F5T0QIp2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="P2RZQvx9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F5T0QIp2"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B7A1DF66F
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 12:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723035293; cv=fail; b=ZrBsOYokrJ6N7zsUie00dwJiWavB+yy4KVXyMqSVJVQalqqxhjsKQp0yftKbuk7tHoxuYLqSHwU1ZtqHoIpqHaAcTTLrG+qg4SFCw0apT9hPXf/rXRakZvhJed4ECvYO8LTKFN4WckqWSv1oKzlcmb0fBShRQ94ru+jUIWLz4vg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723035293; c=relaxed/simple;
-	bh=r6tj3TgVFNXGfVv+Pf9qiCNFjhjh5UFiiASzhAMfkT8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=tLDZKWq3/mXHgmMj8B8/gXlfDfmzv1eP6k4xqIgj933V8v/1QUgdNSzD+XWSSgILSs3iNEB7cuUno7e7fQ02G6vtEpEL9flmsrEyWuZqqWvK9e7/01SI00RVsm8iCHr695/xUg5qgtVHwsSBJkAhkarTO2IlWYKmNbag9apWNoU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fO/+oOvc; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723035292; x=1754571292;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=r6tj3TgVFNXGfVv+Pf9qiCNFjhjh5UFiiASzhAMfkT8=;
-  b=fO/+oOvcRwI6f/ZqXkvPa3eHaTvXqXaI4rz0Xbt53P7PGgejGrtwF1k7
-   GACLSqVSg7PJp7UzE6TUoOkaM/PBeM7s9mlnheId65z8xBddl7Ck252Hd
-   VvHTDHdh/LdqR9Jkbos71JeRc9uiGMa/Lg39VvoHx3YOioZcmrpxCw9ji
-   He6w0JD1pSrKDFLoPId2ZOwOlkJyFYvKFX4pDmbfiLr9YEHccCWN4Otuc
-   Se2Tdgs+aCA4/ADDnsQBSBFYQTAcu23OiS0V6jiykX30zlngfyGB5iZuI
-   7q3A8ZkPq/5J4CAlPy0aKKIuY8OeeqnQzDywmjbLZ63gdORPR6nMMfCNf
-   A==;
-X-CSE-ConnectionGUID: pw2Qy5sZQz2pXDMnL5Eiaw==
-X-CSE-MsgGUID: ZMqr8khsSuukUDXlEx8JgA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="20766344"
-X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
-   d="scan'208";a="20766344"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 05:54:51 -0700
-X-CSE-ConnectionGUID: 6gFiu+KnRqauJelxQ0L9fQ==
-X-CSE-MsgGUID: DKm4q8g8QN+63VrsWU68fw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
-   d="scan'208";a="87509747"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Aug 2024 05:54:51 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 7 Aug 2024 05:54:50 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 7 Aug 2024 05:54:50 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 7 Aug 2024 05:54:50 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EF0HWljDMi+VgldgRBfY+3W0PcYerxcI9Mrc1NfTBaK1T5P8wPVDtDs9iR8BFRyj+zqSPTKlrG8imTshsLjVTMce1eOTuXghS4cQMIJMNW6Mfo0jYNPfVz8bvtMJOylZ2Uw/bsf33WgihUETXmjSMeBHiL102tlLfe2sPyyCnrdTL/2YS1YaMC8JwyJlTg+dzim+AL9yus1ZM+PIBfzoe4L3hDKOm1uJWoH8JjxHif5N2IDUFRQ4b4NtNO2uJ4xdA1cbvpvoEIWkKqIiTD8NVFkguDOl6Btc1CV7OaPgurV9BOTAPCffh7pqM+c7FJQIBMhCIEthVghsf8Giq/vS6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Bo8WiXoJYyumXBEfpelMCCIM8wLVwH4XWzFYORfmZYA=;
- b=IS5snj74wWQtuEABmee6ceQKsbfUNIsyrHYEXTjQippMbUvaVCQ53rGFF5qJUQU/0MygZk9xM/6eVEp5MJzBssxK3DPGA3TvklI7KiEqxlz50Wu6xI5g7HnQQzJjeVhTJ5fLDMB/Ce/jCGgvksdoLoQIX/oDLS+COvoSwAalyFfKwJGPvDv+TtaXyweGLTpy13mcOPwUoLgmjBNg+F0bz4lVUrGnHPvCwZRN6Z0gZ3Uo34Im5CH4WjpZEZ9j6//ULPRlMkqbTuPahA0Qzs0M8ZDAFryMoXSTzADipDai7Bm9y16ChUFg3cmC7WHaEKrqcSW93hgr0A9O/UwChlMYTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
- by MW4PR11MB6569.namprd11.prod.outlook.com (2603:10b6:303:1e1::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Wed, 7 Aug
- 2024 12:54:48 +0000
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44%7]) with mapi id 15.20.7828.023; Wed, 7 Aug 2024
- 12:54:48 +0000
-Date: Wed, 7 Aug 2024 07:54:41 -0500
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-CC: <thomas.hellstrom@linux.intel.com>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-	<daniel@ffwll.ch>, <intel-xe@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<himal.prasad.ghimiray@intel.com>, <francois.dugast@intel.com>,
-	<rodrigo.vivi@intel.com>, <aravind.iddamsetty@linux.intel.com>,
-	<anshuman.gupta@intel.com>
-Subject: Re: [PATCH v1] drm/xe/uapi: Bring back reset uevent
-Message-ID: <heyznf7itnfzxq2onoknc2b6fvwtfww4vntama4b6edb24s4zy@adtwfvkzkad4>
-References: <20240806043231.624645-1-raag.jadav@intel.com>
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240806043231.624645-1-raag.jadav@intel.com>
-X-ClientProxiedBy: MW4PR04CA0202.namprd04.prod.outlook.com
- (2603:10b6:303:86::27) To CY5PR11MB6139.namprd11.prod.outlook.com
- (2603:10b6:930:29::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4FE1E3CBE;
+	Wed,  7 Aug 2024 12:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723035398; cv=none; b=AAvR37xwf4j+APbMbBp9wYAoiMZyXiVDQRU9jkS7zcR+jTK9gi9qYUpCIwydw7HW0dCleLE5vwwhn5hs3dikAGIAUUzXNndcYXCqdS48uT7qneoauhOGxyeTY5TyzJwsci12H7OVPcTCRAsZ8LmyNsTECVb4oXyTbH3FgvLEseU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723035398; c=relaxed/simple;
+	bh=jAP3UPV8S7dAg52wzDeIKI73r8ibmTUCvbRmjAy8WdA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hiyHaYRTEvs5NsFXZwb09JIsjoW3sClzt9SYv3gKxG7h+iUVWOrlDbNrYx+fGD8cgc2P973hOmLJsEzCrGNNGX7O0OafscUQ/OgFsIrXnzVG3v0S+kEXRSu+zcvZezbqOvINUvApUeNuSvFIIWguqe0DR42USDwYh3LLYJdBYlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=P2RZQvx9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=F5T0QIp2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=P2RZQvx9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=F5T0QIp2; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1532B1F396;
+	Wed,  7 Aug 2024 12:56:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723035394; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ef6g7R8oFl691anvsvAI4zaSbxmFbfpd2rm1KW+VcIg=;
+	b=P2RZQvx9cv0poYr2J5oIp+sNFASV09NUbDlv3rsVT987H1s8Dui6fVYAdgI/rbwfDegpzi
+	2fU6W9iRgUzXqznyfAIxtwX7mqG5O70wRKAer5+++Ysz+q60avrywH0OMuMrA6OqjLqgpU
+	IMU5neRLwWRJzm+59HJLycBNZ4yZTRs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723035394;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ef6g7R8oFl691anvsvAI4zaSbxmFbfpd2rm1KW+VcIg=;
+	b=F5T0QIp2RkOQJd63D7qqB+fi5ZcpQ2pMyJ+YpAsFoQQGIgCV3QmvOdLrhm/RVwMzqddUpN
+	bmBNwW1Rq0EMHZAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=P2RZQvx9;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=F5T0QIp2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723035394; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ef6g7R8oFl691anvsvAI4zaSbxmFbfpd2rm1KW+VcIg=;
+	b=P2RZQvx9cv0poYr2J5oIp+sNFASV09NUbDlv3rsVT987H1s8Dui6fVYAdgI/rbwfDegpzi
+	2fU6W9iRgUzXqznyfAIxtwX7mqG5O70wRKAer5+++Ysz+q60avrywH0OMuMrA6OqjLqgpU
+	IMU5neRLwWRJzm+59HJLycBNZ4yZTRs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723035394;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ef6g7R8oFl691anvsvAI4zaSbxmFbfpd2rm1KW+VcIg=;
+	b=F5T0QIp2RkOQJd63D7qqB+fi5ZcpQ2pMyJ+YpAsFoQQGIgCV3QmvOdLrhm/RVwMzqddUpN
+	bmBNwW1Rq0EMHZAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0A85913297;
+	Wed,  7 Aug 2024 12:56:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7kiQAgJvs2a1SgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 07 Aug 2024 12:56:34 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id BBFA2A0762; Wed,  7 Aug 2024 14:56:33 +0200 (CEST)
+Date: Wed, 7 Aug 2024 14:56:33 +0200
+From: Jan Kara <jack@suse.cz>
+To: Joe Damato <jdamato@fastly.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, sdf@google.com, edumazet@google.com,
+	kuba@kernel.org, mkarsten@uwaterloo.ca,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH net-next] eventpoll: Don't re-zero eventpoll fields
+Message-ID: <20240807125633.dlwr6rx6yzl4ippv@quack3>
+References: <20240807105231.179158-1-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|MW4PR11MB6569:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6527934-a635-414e-70c3-08dcb6e01e58
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?e0L2KLnXWAHnisw9K9lDgA7snIFZTjPpiRssz2HcWWWVdAs7hyC749myQAkb?=
- =?us-ascii?Q?3W7CCv5Rio6Db6dZqeC7CHTasUVdDP/sb+x09wjef69oGj2rBv7mSlQJCsg3?=
- =?us-ascii?Q?qzKEx92rIr4xAgXia8/kkApephMIruQMyjhBEnitre0JDab/NpRt2qJPbzCH?=
- =?us-ascii?Q?mHTI78S/gk/ZtRRTgrKa0TPdbU1DyV7R4Sz8QG0CQnC4PpXnApJRqSo7KFD0?=
- =?us-ascii?Q?X2OHYPFCGFl+Pjmk07UJVEf5r6k7jF4shs971Au4Z/U3AJ7MN0eYXgiicthT?=
- =?us-ascii?Q?aQ9dGhWV9tfzqP+JXKQxBagTZL1rTquZvvqSZTwUE0LoZA20u9t7ADY7CyOO?=
- =?us-ascii?Q?9v/Mbf0dKMGuUd0dA7RSirJF7AEAFhQSYgFjSmIHhLmSFnUBoKWh9O2TYxMQ?=
- =?us-ascii?Q?L36j+o5YcyvKz/4RACyzInmLAnMeVLGBLgBqp252HsH6zStnUokpzYiy8dYP?=
- =?us-ascii?Q?YjgXGF8NC6g+rMBAyKWMHrKohHbf0g9vhJLwwMDhkwu3L390LV8YrW/3Ep7Y?=
- =?us-ascii?Q?2EB0Lh26px2m03k1h55JwrmD7hLmMoPqtewY1IOstQSPW4MlXdfWpwzH6qTB?=
- =?us-ascii?Q?JYcefZtgZUQ7tyq38XEYyXR0MSPJx5+ziehdfjpkqax8xm7YzeLJX7nnnz0i?=
- =?us-ascii?Q?ZEmUqzhW3X06TDT+czjwXDII4n1o/JJQBMKC3uAqkJmEyjZlUeGxm1DOxn5f?=
- =?us-ascii?Q?jjLLhP5mRoM1OOl3GJ9fTLHuxuU2jzNwfaGGa8k540mYUa6YY+qHuT9YAR7E?=
- =?us-ascii?Q?MiZcD/fOZkBnisECzfz8kRbFRxX+zYLgJMxsVnO0n39IaLQnH8erBKR9sT84?=
- =?us-ascii?Q?zxCyshkctTziHxht4NcLffAu440dmW0R4dnkMrIiXvzuosRdFG5Yl9DCHCz7?=
- =?us-ascii?Q?keZkoPORJllsEJQ9tf4wQ1/0UYtu3NZ6S0s6/jngpYz7UEiC4NsFweTmnP/6?=
- =?us-ascii?Q?3soAaOGBlO8zlEyMVjA3Q3sUk4hZqz43EOvgW4KGs8lkBp+WeubB+MhtH6H6?=
- =?us-ascii?Q?bokcvqBVL5KQzhdeGfshNRe8ZZrjrblVqxEXuI3GVpSMEfjq9qWH+Aa/Xas2?=
- =?us-ascii?Q?MXFdnRihEYCzRUhYSOI57OYJ96unNpqZf3I0LEpR7OUyNEQdwvEad/eKh7XI?=
- =?us-ascii?Q?xsWI9IwwxF/OHKhpBep1Uq4ZZCqnPBLluj5kpiAsc6ISrI+c8E2rTboSY/Sb?=
- =?us-ascii?Q?mSeupR0CXgfI6xVFfPtKrRHPF9H3DZLSyxbBVpTYx1ujZ9S9A3Ahk01Shb+F?=
- =?us-ascii?Q?flHn8KB2ci2DpX/iDLAUQsoZJrvDLwcSeeoHc4rJRBzXpBxJu0yw5mm01mxQ?=
- =?us-ascii?Q?Ye3AKQWPfKZVF3ongrNXaZtnHpSbUNXY32/8v7AW//h4sA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bVssNJiY3DfAqwv0UoKKnGtJa1Q3UaUvUqy8iZx/bljKlkJQip60tE83R1CD?=
- =?us-ascii?Q?8A25R84NUXqRvZG8yn6kyq/jkaLEqZ4zvsesU7Z208+UEzCf/HysgE5L0LAD?=
- =?us-ascii?Q?wnGoVYgfAQqmwdNjjVga4x8EqoyopHbkMGNPIan0IQ7/Yplwh336n0jnfdwr?=
- =?us-ascii?Q?Lc98GSnxN9rUFx/1GphK602+tx/BtFmApBVeKDytOAHnb3uywmMRVefaSMC9?=
- =?us-ascii?Q?ltOxu4as2GDlOF1kDQaOoVmbEvRjKm1i707KRqPu4D81V4MnOM8XuzL5VbVe?=
- =?us-ascii?Q?2loqetXWGfZX9XVPY035um5JAkS5zt6kPqTSV+l+/R/zR5e1UNJU+AYrCwQP?=
- =?us-ascii?Q?ku4xHSEynffMAHYez9TcghJw4NXN7zg3fqX9Mn8YIzk5tsLHwTaXsF8vi4SH?=
- =?us-ascii?Q?rljwEFqI3GCaq3oIopZhoDIIbR2G1RAJXe4u9hxnONGn75pc35FblYflPVQa?=
- =?us-ascii?Q?CnYrH9gZ7fIaBDbJmWOqTZy05Fn2arkibBguj4QZ1xjmcvVJ6P8bmvugxgJ4?=
- =?us-ascii?Q?erEQpsNBFSy38bfNTBmUnEfmGVvkM+BGpqSkznJfHaRlxFB3eL8hY/yM0oBf?=
- =?us-ascii?Q?Q5x4csFjLDiOJKitohe1OEHSUu3rEo2xkbjuc5HEq3+ztCb/KKkGEwJa5N6T?=
- =?us-ascii?Q?mocH7YXOswNVYozBimN0flY4lhxhE/Wr/Lmk3VO7nFokaKbBvJFV9vI03jkP?=
- =?us-ascii?Q?5yWVEXQ0xXQhcTgptKwHBqV53UVzYPOtnVzpyhisvEAT6hhrudsTotr3y4yM?=
- =?us-ascii?Q?0epT0462EOHjmNKoWETwKBdV8Ro+pcMCNztjoja3WQp0VObGUiKpkB6oH0Sl?=
- =?us-ascii?Q?mihX+LprH2n8dpatIm1efUmgjqt4GW1sjYno6Jlw+TVMnNq9vUSXyjWEiEWf?=
- =?us-ascii?Q?aUns8ZRT8YnGLtdvb1ivm/uLsWX1R9+1/ttxoctxTjpQgj/VAypBDbdFESTh?=
- =?us-ascii?Q?JDxE32X/0AIhJRHtkMkfkRkeODpzvEloRhdJDYdBEpdzpjSuWo4nx/gHcecf?=
- =?us-ascii?Q?qQWj8nYq0V5x4F0eo14CjjdO/3MggCI0l3RkRjxR1rCIq0L/MaL/9LBlv24m?=
- =?us-ascii?Q?IUKJGCdH78PzzND5OYq0qyXObFel5uudg6pBQMwvsR+tTNNgXlpmpBrJ73e5?=
- =?us-ascii?Q?mGar84/hrdT+qrzeHLNQQs8l33bWPmBS6JwvHK/fG+H4BmUoStnVBK0P6edt?=
- =?us-ascii?Q?XioVUnUImXcwrwO4cvFCApEwCG/djlBorab7dzkQ3sZc/xufVh61oVSqZYW9?=
- =?us-ascii?Q?PzGL6vOFg3Ox28WYiMGMlr3+SJstErNb1OMVURU6JChBX1LfqdkNb4atZu+e?=
- =?us-ascii?Q?z+LNWiuRo3df6h2xoZQ4aXuAsAM6mXTeW6Z2OuTBrf+bJNJ4UWYFIQx2QLHF?=
- =?us-ascii?Q?EtO729IYn7ga0mCwhQhfw57jb+uhMRC3u7HSr6kp8l40dtwEgl/w29Dq25nJ?=
- =?us-ascii?Q?wLTGbuVz2+0hiwnyNr1Ur4nO2ulf9pvIUUgvl9aoGk+pl7NCyjEbn74X80DJ?=
- =?us-ascii?Q?gEBbf8JJrbq5kXX5fNirtcZuOrfAx1/vpaoNoovFhgLqzOoa/bxSWCoc022d?=
- =?us-ascii?Q?aUti7nPn5ef9cz93sWXI/eYcJQkKYd8R73x9LHKg25VeqdISNIVYezr2LETQ?=
- =?us-ascii?Q?ow=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6527934-a635-414e-70c3-08dcb6e01e58
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 12:54:47.9471
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: p2Xu/UXYy7SuQMRlGXjADR0JFC3y9lxkuSfklu7iWLUEZ4zw8Vq0MqPN3VozHSMUb4h2e1xX8GrtFBo+LjIRTE2rOsRHRBSh+qbTX0YF+Yc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6569
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807105231.179158-1-jdamato@fastly.com>
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	MISSING_XM_UA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: 1532B1F396
 
-On Tue, Aug 06, 2024 at 10:02:31AM GMT, Raag Jadav wrote:
->From: Lucas De Marchi <lucas.demarchi@intel.com>
->
->Bring back uevent for gt reset failure with better uapi naming.
->With this in place we can receive failure event using udev.
->
->$ udevadm monitor --property --kernel
->monitor will print the received events for:
->KERNEL - the kernel uevent
->
->KERNEL[871.188570] change   /devices/pci0000:00/0000:00:01.0/0000:01:00.0/0000:02:01.0/0000:03:00.0 (pci)
->ACTION=change
->DEVPATH=/devices/pci0000:00/0000:00:01.0/0000:01:00.0/0000:02:01.0/0000:03:00.0
->SUBSYSTEM=pci
->DEVICE_STATUS=NEEDS_RESET
->REASON=GT_RESET_FAILED
->TILE_ID=0
->GT_ID=0
->DRIVER=xe
->PCI_CLASS=30000
->PCI_ID=8086:56B1
->PCI_SUBSYS_ID=8086:1210
->PCI_SLOT_NAME=0000:03:00.0
->MODALIAS=pci:v00008086d000056B1sv00008086sd00001210bc03sc00i00
->SEQNUM=6104
->
->Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+On Wed 07-08-24 10:52:31, Joe Damato wrote:
+> Remove redundant and unnecessary code.
+> 
+> ep_alloc uses kzalloc to create struct eventpoll, so there is no need to
+> set fields to defaults of 0. This was accidentally introduced in commit
+> 85455c795c07 ("eventpoll: support busy poll per epoll instance") and
+> expanded on in follow-up commits.
+> 
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> Reviewed-by: Martin Karsten <mkarsten@uwaterloo.ca>
 
-please drop my s-o-b here and don't add me as the author of this patch,
-which I certainly am not.
+Looks good. Feel free to add:
 
-You need to point to the commit where it was reverted and *why* it's ok
-to have this uapi now.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Lucas De Marchi
+								Honza
 
-
->Signed-off-by: Raag Jadav <raag.jadav@intel.com>
->---
-> drivers/gpu/drm/xe/xe_gt.c | 27 +++++++++++++++++++++++++--
-> include/uapi/drm/xe_drm.h  | 17 +++++++++++++++++
-> 2 files changed, 42 insertions(+), 2 deletions(-)
->
->diff --git a/drivers/gpu/drm/xe/xe_gt.c b/drivers/gpu/drm/xe/xe_gt.c
->index b04e47186f5b..5ceef0059861 100644
->--- a/drivers/gpu/drm/xe/xe_gt.c
->+++ b/drivers/gpu/drm/xe/xe_gt.c
->@@ -740,6 +740,30 @@ static int do_gt_restart(struct xe_gt *gt)
-> 	return 0;
-> }
->
->+static void xe_uevent_gt_reset_failure(struct pci_dev *pdev, u8 tile_id, u8 gt_id)
->+{
->+	char *reset_event[5];
->+
->+	reset_event[0] = DRM_XE_RESET_REQUIRED_UEVENT;
->+	reset_event[1] = DRM_XE_RESET_REQUIRED_UEVENT_REASON_GT;
->+	reset_event[2] = kasprintf(GFP_KERNEL, "TILE_ID=%d", tile_id);
->+	reset_event[3] = kasprintf(GFP_KERNEL, "GT_ID=%d", gt_id);
->+	reset_event[4] = NULL;
->+	kobject_uevent_env(&pdev->dev.kobj, KOBJ_CHANGE, reset_event);
->+
->+	kfree(reset_event[2]);
->+	kfree(reset_event[3]);
->+}
->+
->+static void gt_reset_failed(struct xe_gt *gt, int err)
->+{
->+	xe_gt_err(gt, "reset failed (%pe)\n", ERR_PTR(err));
->+
->+	/* Notify userspace about gt reset failure */
->+	xe_uevent_gt_reset_failure(to_pci_dev(gt_to_xe(gt)->drm.dev),
->+				   gt_to_tile(gt)->id, gt->info.id);
->+}
->+
-> static int gt_reset(struct xe_gt *gt)
-> {
-> 	int err;
->@@ -795,8 +819,7 @@ static int gt_reset(struct xe_gt *gt)
-> 	XE_WARN_ON(xe_uc_start(&gt->uc));
-> 	xe_pm_runtime_put(gt_to_xe(gt));
-> err_fail:
->-	xe_gt_err(gt, "reset failed (%pe)\n", ERR_PTR(err));
->-
->+	gt_reset_failed(gt, err);
-> 	xe_device_declare_wedged(gt_to_xe(gt));
->
-> 	return err;
->diff --git a/include/uapi/drm/xe_drm.h b/include/uapi/drm/xe_drm.h
->index 19619d4952a8..9ea3be97535e 100644
->--- a/include/uapi/drm/xe_drm.h
->+++ b/include/uapi/drm/xe_drm.h
->@@ -20,6 +20,7 @@ extern "C" {
->  *   2. Extension definition and helper structs
->  *   3. IOCTL's Query structs in the order of the Query's entries.
->  *   4. The rest of IOCTL structs in the order of IOCTL declaration.
->+ *   5. uEvents
->  */
->
-> /**
->@@ -1686,6 +1687,22 @@ struct drm_xe_oa_stream_info {
-> 	__u64 reserved[3];
-> };
->
->+/**
->+ * DOC: uevent generated by xe on it's pci node.
->+ *
->+ * DRM_XE_RESET_REQUIRED_UEVENT - Event is generated when device needs reset.
->+ * The REASON is provided along with the event for which reset is required.
->+ * On the basis of REASONS, additional information might be supplied.
->+ */
->+#define DRM_XE_RESET_REQUIRED_UEVENT "DEVICE_STATUS=NEEDS_RESET"
->+
->+/**
->+ * DRM_XE_RESET_REQUIRED_UEVENT_REASON_GT - Reason provided to DRM_XE_RESET_REQUIRED_UEVENT
->+ * incase of gt reset failure. The additional information supplied is tile id and
->+ * gt id of the gt unit for which reset has failed.
->+ */
->+#define DRM_XE_RESET_REQUIRED_UEVENT_REASON_GT "REASON=GT_RESET_FAILED"
->+
-> #if defined(__cplusplus)
-> }
-> #endif
->-- 
->2.34.1
->
+> ---
+>  fs/eventpoll.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index f53ca4f7fced..6c0a1e9715ea 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -2200,11 +2200,6 @@ static int do_epoll_create(int flags)
+>  		error = PTR_ERR(file);
+>  		goto out_free_fd;
+>  	}
+> -#ifdef CONFIG_NET_RX_BUSY_POLL
+> -	ep->busy_poll_usecs = 0;
+> -	ep->busy_poll_budget = 0;
+> -	ep->prefer_busy_poll = false;
+> -#endif
+>  	ep->file = file;
+>  	fd_install(fd, file);
+>  	return fd;
+> -- 
+> 2.25.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
