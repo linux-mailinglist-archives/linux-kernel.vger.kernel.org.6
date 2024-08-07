@@ -1,108 +1,153 @@
-Return-Path: <linux-kernel+bounces-278393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ADF794AFA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:25:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7210194AFA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BD54B262AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:25:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A306A1C2130D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E87D13E028;
-	Wed,  7 Aug 2024 18:25:13 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8320F63CB;
+	Wed,  7 Aug 2024 18:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="U25YeUgr"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D372C6BB;
-	Wed,  7 Aug 2024 18:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF656F30B
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723055112; cv=none; b=hDPOx9j/e9srveqI73i7aO5So2nZfJUxkXdwIXmO4CoIhIMDRT4zXCqlGDcyRKVPoFqzWLRMq3zPywI0O0FrW4Dl5Mdoq/7Br2v5VCZYh0bk3jAVk2EwwoQqn014h7JePd0JF+scz/TJE1qYZFVC4j/NQNWmHHhoaKJG1hcqJo4=
+	t=1723055177; cv=none; b=tdnDBW0hzAtrnjasao9TKhcTxZ8wk0sQCPJXkewBbP1vPpv3ScvxDc3brquyabzLNnPwcYWMsAzx+EH/U2yoFul634pzhjTcLN/CAt756tK+Y0wG/MfP3Vl+4j5ZAB4ZBvPTwNUc/NQ+lznQGk2fkwaB4Dsq2VO+gKrqWDen+5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723055112; c=relaxed/simple;
-	bh=KKUu24oD2Wy0fXUYtZnkfFiLYDp69U/4eCTYHvVNweE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JJqF+PyQQ1Z8i1mQoVi69wZrCTAJOwBY+tp+gUaNV832AeAnZ25h/nx4JmoOJkomcI7p6//Dhe1QXqRtWYlwLuaX3flH3jDh8OX9ojDQ7EfJvbBgi2kSpvrrq3VMxE+4HE+vhBLUYdn+hhaNmwHWlyuqGl8EV3vOA+hFnINV6rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sblL6-0002jz-NF; Wed, 07 Aug 2024 20:24:48 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Dragan Simic <dsimic@manjaro.org>, Florian Klink <flokli@flokli.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Kever Yang <kever.yang@rock-chips.com>,
- Muhammed Efe Cetin <efectn@protonmail.com>, FUKAUMI Naoki <naoki@radxa.com>,
- =?utf-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@protonmail.ch>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v2] arm64: dts: rockchip: add rfkill node for M.2 E wifi on
- orangepi-5-plus
-Date: Wed, 07 Aug 2024 20:24:47 +0200
-Message-ID: <4124439.ReJHH8Nr61@diego>
-In-Reply-To: <krvprzy3iz5b7n37eo2mb6sol6pcjkxsjdbdi6sxeebwveqtnr@e52cvrlkdjsa>
-References:
- <20240807162001.1737829-1-flokli@flokli.de>
- <a10e70e2d67b9d63f2296b36b4cb3719@manjaro.org>
- <krvprzy3iz5b7n37eo2mb6sol6pcjkxsjdbdi6sxeebwveqtnr@e52cvrlkdjsa>
+	s=arc-20240116; t=1723055177; c=relaxed/simple;
+	bh=LLEn5MDBQHmrgyVACBfMnS4xxjGfc9LgvIlsA65/wbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ldT4LkrONyAH3rlO6S0//T7zWkv24KUAWnppuVwk8QpBN9VxdWi7a8+BSze9hagJDWfPhuT5XBfki5jXw59cgpveY/ywHE8JGW1VQwA4v84V14at7cQyoqM1F0JScCpasmH0oIPCPMCW8TFT2ukX4pi+FtTPQ66MKs6V0DbbJO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=U25YeUgr; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-267b7ef154aso151195fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 11:26:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1723055174; x=1723659974; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qIRgOrphujOZNK9+4f2LlAnWUepvShfv1Q6TgIqEiJY=;
+        b=U25YeUgrVPQWiF6HNsyfeZr/rCPFqUJ7IKPJII7YfwojnUDQWwJGvEtmoAV8EED88P
+         q7N0sf7Eukm+5ZnhcifkiVtCU8R3MkL1huBoD/Bv5dVwBnNIaEausahv1d83yrv13EyM
+         ALiLyllcGQpc53rY5KFwGVv+/nBUC1XuRTJYUz3yjYtedvVmpgtcmU6Lokj5Fb/DpgtS
+         HYDPwsjITnGYFmnIwlbJvGWRBnUyRDO++CxN7pgt2/y/LeBfTjph9Nc+t6o7P5dinyJz
+         foo9dfdQvFqum8wQn+QtKGcRgQ45+JBFBuiXhcTH6lAsbldgcY9+w8X2wGvnnFKCzlBH
+         w+qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723055174; x=1723659974;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qIRgOrphujOZNK9+4f2LlAnWUepvShfv1Q6TgIqEiJY=;
+        b=I9AdtxtXucNxI3cCUhiIHbRsQcYMaSUJK9IupbL9ioxqBH7ROMmuMpfuBHHAjCxFJr
+         2vbg7csBJIcuZMk6foOeOtVLdhaMQVrHES3WtajU5VfY/RTMBUjfhgf4fZAwYsIr5+aD
+         4C8mgOzw1sc8ab3j30zpbwqDBVUUYG33IQhPGJCSSpd2/6i+dZDXZv15OU1RUdhctY9X
+         2JO3z/9XUUduigk1v8wnNRS6Dvvjo7Pg3FLu+xy2/ovaXF1zZf+5FqegErAHbt4uL11C
+         UvPPKQKK3Y7scmwsO/c5KX2SRF1I5j0eheLOHbGCqDNLrF69DgRSvTitGvttLgfbZFVq
+         svdg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6+b1W8Hp/wAaACgj/Sg8eCKt2sWam9z2kFW4DVuTuJTxdZAm98vdlyN7YBuJK9JGAQiPHbdaqFo9tSLKR2q24ZiztcZ9NV3kkwC6o
+X-Gm-Message-State: AOJu0Yx1RhU5HQ5fiHRDBZ+BQ5zI0tsKuTVGEl4skZHzOFZk/t5Nfp6Z
+	eMs4e3me6J0lStTIevhUosJf5OYhj9+yKdJafbLkQHGqpY3uo7hCFaxW2WYhNn4=
+X-Google-Smtp-Source: AGHT+IF4dmL7QQFh54XoTTYzluGtiIHPWtm1r4ZnSMjpESeur6JHnnxQaalp3hZhfOljJo1uPFxdYA==
+X-Received: by 2002:a05:6870:4693:b0:260:e6a6:396c with SMTP id 586e51a60fabf-26891d5aebfmr23740831fac.30.1723055173896;
+        Wed, 07 Aug 2024 11:26:13 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.90])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3786bbcffsm82167785a.99.2024.08.07.11.26.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 11:26:13 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sblMR-003SUs-9y;
+	Wed, 07 Aug 2024 15:26:11 -0300
+Date: Wed, 7 Aug 2024 15:26:11 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: James Houghton <jthoughton@google.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	David Matlack <dmatlack@google.com>,
+	David Rientjes <rientjes@google.com>,
+	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Shaoqin Huang <shahuang@redhat.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>,
+	Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>,
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 05/11] mm: Add fast_only bool to test_young and
+ clear_young MMU notifiers
+Message-ID: <20240807182611.GH8473@ziepe.ca>
+References: <20240724011037.3671523-1-jthoughton@google.com>
+ <20240724011037.3671523-6-jthoughton@google.com>
+ <37ae59f2-777a-4a58-ae58-4a20066364dd@redhat.com>
+ <CADrL8HUmQWDc-75p=Z2KZzHkyWCCh8xnX=+ZXm5MZ-drALjKTA@mail.gmail.com>
+ <20240806172349.GQ676757@ziepe.ca>
+ <CADrL8HXFK=1cUS+0Z5k048U4rzpTNL634f57VtJ7TD_umrbNiA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADrL8HXFK=1cUS+0Z5k048U4rzpTNL634f57VtJ7TD_umrbNiA@mail.gmail.com>
 
-Am Mittwoch, 7. August 2024, 20:14:24 CEST schrieb Florian Klink:
-> On Wed, Aug 07, 2024 at 07:24:27PM GMT, Dragan Simic wrote:
-> >On 2024-08-07 19:00, Florian Klink wrote:
-> >>This follows the same logic as 82d40b141a4c ("arm64: dts: rockchip: add
-> >>rfkill node for M.2 Key E WiFi on rock-5b").
-> >>
-> >>On the orangepi-5-plus, there's also a GPIO pin connecting the WiFi
-> >>enable signal inside the M.2 Key E slot.
-> >>
-> >>The exact GPIO PIN can be validated in the Armbian rk-5.10-rkr4 kernel
-> >>rk3588-orangepi-5-plus.dtsi file [1], which contains a `wifi_disable`
-> >>node referencing RK_PC4 on &gpio0.
-> >>
-> >>Signed-off-by: Florian Klink <flokli@flokli.de>
-> >>Tested-by: Florian Klink <flokli@flokli.de>
+On Wed, Aug 07, 2024 at 08:02:26AM -0700, James Houghton wrote:
+> On Tue, Aug 6, 2024 at 10:23 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
 > >
-> >I forgot to mention that providing a Tested-by tag is redundant when
-> >there's already a Signed-off-by tag, because the latter already implies
-> >the former.
+> > On Thu, Aug 01, 2024 at 04:13:40PM -0700, James Houghton wrote:
+> > > --- a/include/linux/mmu_notifier.h
+> > > +++ b/include/linux/mmu_notifier.h
+> > > @@ -106,6 +106,18 @@ struct mmu_notifier_ops {
+> > >          * clear_young is a lightweight version of clear_flush_young. Like the
+> > >          * latter, it is supposed to test-and-clear the young/accessed bitflag
+> > >          * in the secondary pte, but it may omit flushing the secondary tlb.
+> > > +        *
+> > > +        * The fast_only parameter indicates that this call should not block,
+> > > +        * and this function should not cause other MMU notifier calls to
+> > > +        * block. Usually this means that the implementation should be
+> > > +        * lockless.
+> > > +        *
+> > > +        * When called with fast_only, this notifier will be a no-op unless
+> > > +        * has_fast_aging is set on the struct mmu_notifier.
+> >
+> > If you add a has_fast_aging I wonder if it is better to introduce new
+> > ops instead? The semantics are a bit easier to explain that way
 > 
-> This came after I sent the v3. Generally I wish people would test things
-> - though too often it's not. I explicitly tested this to work (with a
-> wifi module added to that slot being unblock-able afterwards), and
-> wanted to point that out, thus adding the Tested-by.
-> 
-> DCO 1.1 doesn't say anything about Tested-by, it's mostly legalese about
-> being allowed to send out the patch, and understanding the consequences
-> regarding licensing. It doesn't require the person adding their
-> Signed-Off-By to have tested it.
+> v5 implemented these with a new op[1]. *Just* having the new op is
+> kind of problematic -- we have yet another op to do something very
+> similar to what already exists. We are left with two options:
+> consolidate everything into a single notifier[2] or add a new
+> parameter to test/clear_young()[3]. The latter, implemented in this
+> v6, is somewhat simpler to implement (fewer LoC, reduces some
+> duplication in KVM), though it does indeed make the explanation for
+> test/clear_young() slightly more complex. I don't feel very strongly,
+> but unless you do, I think I just ought to stick with how the v6 does
+> it. :)
 
-While the DCO may not say it, everyone else will simply require it though ;-) .
+If it does makes the code simpler then it is probably the better choice
 
-Aka no maintainer will apply a patch without the submitter having tested
-their change. This is just implicitly expected.
-
-Like if it comes to light later that the change was not tested before
-submission that creates quite a trust-issue between submitter and
-maintainer on future submissions.
-
-
-Heiko
-
-
+Jason
 
