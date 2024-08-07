@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-277334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 381BF949F66
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:50:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC73F949F6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34AB81C22963
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:50:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A47151F265EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CFC197548;
-	Wed,  7 Aug 2024 05:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D83197A9A;
+	Wed,  7 Aug 2024 05:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WZXq+WWh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L0Ueeqx7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C415E2F5A;
-	Wed,  7 Aug 2024 05:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79A8B646;
+	Wed,  7 Aug 2024 05:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723009828; cv=none; b=MgHhhlWaAjTPo7Mg6XlEDrh/y8lEzopwfvBJpBXBpVUZgg393fwOrbrzEIoLOkAbYRlJnk/MqaodzAepWpn/zRlgrRm4VFHt5TdH7iYKpjdjNLMGeGo7KRD+v6g03ZnUFNDJI5hQyd/515S/qCdTDsXLsVzDC/nO162YpF+Xw+A=
+	t=1723009978; cv=none; b=SHnCHO4XuZlkm3nAM3+PIW1clsGHj+13T/hP5oyEV/DqjPeoAsznulo3V99oudKj1AVfT173ciyNVV2kHfUrtmnA1xHDinurC5hjRWiy6z0Kav0sb5MBoSCXRsCkYgNF29BIDEF69FqNIg/Qa4ZECLBJnCiGVNST4+RlmkE9Dt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723009828; c=relaxed/simple;
-	bh=lmP+ZdXHsac+0RiSFGbAJ99rlOluNKgbG+I2rcL9z34=;
+	s=arc-20240116; t=1723009978; c=relaxed/simple;
+	bh=zxa8it9ACc1nNWzi1H7KvHyZMX1C87mye13Y5AbFxuI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mmse8OUymLVWBgmdOuLJNf6E4Eq8jvBXqHOhSP4/IQZdAnD2rCPShdFdRQwi8ZBDkbHjz7ahQeQMfe5bgCQ73pXZtWog0rAMd+WhRQr1/8gGHGY8l7vavy74OxUAC4nDvAV0esjYbpXzeJwleJRGHgir+3fl/rujeKcUMIzntoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WZXq+WWh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 758B3C32782;
-	Wed,  7 Aug 2024 05:50:24 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=pZMHdxayaQ7fB/tMgcLHd9TM0+ifT9Bs22bciSQR/gvtMzXb8DSpHU5CG8l2bUZI5eUBB90cF/tOlA0AEDVnwjcAVqnGnaZvXk2ReBzBjFksGSezROmkr56o9au02N70Yw4S2kkqxwFv8JnKsvyCbC4IufpFe43ociPBOtPRQ60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L0Ueeqx7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12B1BC32782;
+	Wed,  7 Aug 2024 05:52:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723009828;
-	bh=lmP+ZdXHsac+0RiSFGbAJ99rlOluNKgbG+I2rcL9z34=;
+	s=k20201202; t=1723009978;
+	bh=zxa8it9ACc1nNWzi1H7KvHyZMX1C87mye13Y5AbFxuI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WZXq+WWh7iDH6qDzRIpWG2icW6XSliR2uGkAKn0fSSBcEKr8+xz3Ypzxke18JHTfO
-	 /uY+ncEeuN90ZsNUfl1OMt/2XJBzQh4b6fPEeax2rMDUvOmSr+os0C2Bnyk5pLxp/C
-	 I+VPmHa1Zq/qSST+NX35BpocDFz+MFfEwahnBHySiHd8e3j9Sca0+vslLhLi0UG8BX
-	 sPVYUZpv+o+GzMGqYsNt8CLzmvRRkbtYOyABK2NsaLIu1NL/xJ4Q1stKkwdoHqtGr+
-	 DowDmEAExyJwfGK2/xVWpj0jTkZCbO1zrkHBHYnaJCB3nOWMtAhn9ckImH7cFoo1is
-	 ZZxJUmp89oO6A==
-Message-ID: <fedcf52c-1eb4-4b3e-a945-3a05330c41ef@kernel.org>
-Date: Wed, 7 Aug 2024 07:50:22 +0200
+	b=L0Ueeqx7oAFtGBa01rfgAhgzi8PJcIFMwynUxb+XzcHuWYobDk/v6iqh1wdPfRPYv
+	 PEnW2iIdd4P5ifzSfrBZTs0d/EtBDzsqeiTaFPWanncppsiFFV0vtGYpxwSEabeQ6L
+	 B7SXRirSG/zDp0F3JssdHlWMn5RwvWt+skJ/Fn0gCSGl0tOaIrp0YiqMUSHywFlUdl
+	 6XuPs7QiqwBU+9mCZoMqscfoErJJH8Yr2EofXz2UO0+CO4TKFrIVPGdaZsRSlG3Mrl
+	 F7HgFqhru7f4yPY9qaTaJq7hKmNB+/d8QRkrV+9PoLMZrzbMuYXwLZOvBEzlUsu0wQ
+	 Fknm6WzvB+dtA==
+Message-ID: <8bd860af-02dd-44fd-b5fc-dc37ef4b79eb@kernel.org>
+Date: Wed, 7 Aug 2024 07:52:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: add rk3576 cru bindings
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-References: <20240802214053.433493-1-detlev.casanova@collabora.com>
- <20240802214053.433493-2-detlev.casanova@collabora.com>
- <87503c5b-95dc-463b-8363-3e1fab03f8f2@kernel.org>
- <1975336.PYKUYFuaPT@trenzalore>
+Subject: Re: [PATCH 1/2] dt-bindings: media: camss: Add qcom,sm8550-camss
+ binding
+To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, andersson@kernel.org,
+ konrad.dybcio@linaro.org
+Cc: inux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240807053400.1916581-1-quic_depengs@quicinc.com>
+ <20240807053400.1916581-2-quic_depengs@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,31 +105,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <1975336.PYKUYFuaPT@trenzalore>
+In-Reply-To: <20240807053400.1916581-2-quic_depengs@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06/08/2024 23:22, Detlev Casanova wrote:
->>> +    maxItems: 2
->>> +
->>> +  clock-names:
->>> +    items:
->>> +      - const: xin24m
->>> +      - const: xin32k
->>> +
->>> +  assigned-clocks: true
->>> +
->>> +  assigned-clock-rates: true
->>> +
->>> +  assigned-clock-parents: true
->>
->> Drop  all these three
+On 07/08/2024 07:33, Depeng Shao wrote:
+> Add bindings for qcom,sm8550-camss in order to support the camera
+> subsystem for sm8550.
 > 
-> Why dro pthese if I need them in the device tree ? Should I remove them from 
-> there as well ? It seems to be working without it.
+> Co-developed-by: Yongsheng Li <quic_yon@quicinc.com>
+> Signed-off-by: Yongsheng Li <quic_yon@quicinc.com>
+> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
 
-Because they are already accepted via dependency of clocks. This is just
-redundant. Please trim your replies to relevant content.
+Why are you duplicating the bindings? This was already sent and was
+reviewed. Asking us to review the same thing twice is WASTE of time.
+
+NAK.
 
 Best regards,
 Krzysztof
