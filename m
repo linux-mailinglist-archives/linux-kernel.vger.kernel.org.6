@@ -1,177 +1,264 @@
-Return-Path: <linux-kernel+bounces-277115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D400949CC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:26:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D236949CCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 447E81C22117
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:26:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1BC51F245BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE015168D0;
-	Wed,  7 Aug 2024 00:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14FD46BF;
+	Wed,  7 Aug 2024 00:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="l7XpvUHo"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="e+cXRFb/"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818428F45
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 00:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C0CB674
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 00:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722990404; cv=none; b=qb/uWB0LZ5We05JSfWJzW4SlaNO1VUCPXKj/B4LpjNsgv/WW97YISF9r0QpFfU9hTkQ90za7utW1SqGX9jZwtOPso6JeaJjImhvNwATiJagUmhD5Zn/D8IEgilctxGCMCOgqzvJuVRL5z7ogwqRJe09LjC9ZqYLXApGG3P1HZD8=
+	t=1722990706; cv=none; b=U4eRg+w40VV5up/b9WQ2UyRsM0v1wsCZ4urVt+k7heHrDYknOB00Ux3PbXivBaHo3g1yep4GDU/N8CY2DO69Hko478WdgcfGp6wGoXGCe1AEslt44lWSAND2+vjZ3SoVvINzKEBm5+K5lMJM6Zl/UWbqFwfo3kO1ou26F5T9L4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722990404; c=relaxed/simple;
-	bh=NB28XXPt6f6vAkrX1gx8U+5oCdbpfCq3hFiJuurRBHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OigMZKajI1fhpMLCTTFmLHpWOQdTNc/VUiFzt7+Jb9KG0Fr2YMCj1VJNir5CZzWqk7o6gOi86tvVu8aHadgSMhyaxjgOzlTmIiMYmXZooF4vM4miOz9tu1PDIza/5p92PI76YoOWVTx3hINNdceYFHRPkILmfXYZprHPPqd8pD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=l7XpvUHo; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2689f749649so798278fac.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 17:26:42 -0700 (PDT)
+	s=arc-20240116; t=1722990706; c=relaxed/simple;
+	bh=hacy5mno4SE477aLGkms4pcURrshsIYaghRvD/Vlia0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Nox/Alpf2bUE894JW6W7IF9pWwDBLNOU6XaRzBj2sZJ2rlqYuzx2ABF0AtU31EhquTdl2Kocfl7IGljB60tjMHPJk0dX4d9baOs6uJWr8nfnZs9wEX/HaM3GkmpW3omHQ6UH9tDmDjux5xyw2N/0F+pK8vWJUb4HNmPDyGI1ejo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=e+cXRFb/; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-81f9339e544so55531939f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 17:31:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722990401; x=1723595201; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ia2b2riLaw9KHmD+vv//YlOKCUSXJz+nA2ks+FBP5Bc=;
-        b=l7XpvUHoHF+tWW+F+RflwMcsYRzQifRMGsaZXpifDfE0SJj2L105kRFLyEfH/lYy2a
-         +IEpQZs2u0fAnwZ/j6RGnPxklZERB3vCgV5ouggZ84tgOwcHCmu4gH3Gp0imN1mF6IK9
-         h4fYx5ukmm/pcm6t1Rf0q+3qraTVMGosm3LXbSTaF0URrjgNmPE/0AUEcB35LNqK3qeu
-         oAtuswrs9wil24d4WUCvRtDNdSzEAPjJevAQjY3hUw8DTkbcvyNnfu0dHQdO6aI52iNQ
-         jONvWx2WiIPZiviN/3JUQ8IOW+/rWm8zalyyFuaWq31N5vWK+JzQV5kHC8TD0T3VWZcq
-         MAyQ==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722990704; x=1723595504; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qmFKXoGZwfZnYgj1DayB62f8TZphYzJ75TSkCe5doRI=;
+        b=e+cXRFb/YrWWLjN7GaQXB3mWK/C5389WVlrhRBbEbANoX/oVg8SoMJj3NpgmS3MhAy
+         7x+8WzGyCCPFKFNSQGdL+EZLnkH0RgaTG9wQkwLRNJicBnQwKEHiKC0i9zl0Ez1Z3IhM
+         I70+TgGJMdkhxiy+WVh406lbsohT7v6rBxgAXm4/L9Mju3tX7a4zxFrdjspNZQTXj9K0
+         fmKq0nAAqvMwkbKZG+150SPk8hT+xjado7osER9Os/dLyZzL/NMnEmx/XCPl1g5yIRUy
+         HFEt2FPRW9BK/nnNgucZMaV91ed/D8WNZl3ePsCK9cMOFoz09hATWWeLnYXCSAIlOdrV
+         jDjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722990401; x=1723595201;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ia2b2riLaw9KHmD+vv//YlOKCUSXJz+nA2ks+FBP5Bc=;
-        b=mSnwemHE92Ekd9qpH7r9zeXeXdRHFg59xQt2MzfxJqualh3R4jCBpiDXgv7MS7Xvz0
-         YUpY8LxWl+bnMWLGWDLaK5thlaOvMByOaRBZVw8cLdg3m/Cra7kzjgGWvVfz1Qr2KKCa
-         uSFiCrt8amVgmi7n6xSgaimVXN+xzDbFIHJeQOAfi7D9vidXa+jn5+DZowiC558zdoje
-         x/IjzujFy5263IThuVSEP1NjCvYVPafwjMtRRjYO0HjDssquaVfKFAfqJwShevfhT9QB
-         wS7CP4u9wuoM96vH4f2DjFB462JChDDc8OmQ1kkNdgOiLaC7mBN2xrujJ5AZ/1uVVKe/
-         VrMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWg4awAgndBNOdPxB+CB/bUOLKAKQGSzrzIEdJQiV9LBZVGMz1a3lgw/43fRKvXaoaJFVL7jVblIHIcVgY6iENvnweT10MqErO+2zkv
-X-Gm-Message-State: AOJu0YwUDNoJcpIrRnDrnx4GZ1ueHxrok9ezptH6CwRxo6AtrSXLdsrF
-	Ff3BDs2uOOeoMAej3ZkL+WIBsUqyrWv4r9HzHvAoms3QB9oLj6NNLQ9LmqKF7Vs=
-X-Google-Smtp-Source: AGHT+IGV6WNs4YYIr7yFxSPfcTvPPZ8LQkUPz4VtZAj9s6avntQdJy9VCYliAnmLBUVc1humn+nk6A==
-X-Received: by 2002:a05:6870:519:b0:261:6c0:8a2a with SMTP id 586e51a60fabf-26891d4ba75mr20502868fac.20.1722990401568;
-        Tue, 06 Aug 2024 17:26:41 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ece0911sm7466093b3a.132.2024.08.06.17.26.41
+        d=1e100.net; s=20230601; t=1722990704; x=1723595504;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qmFKXoGZwfZnYgj1DayB62f8TZphYzJ75TSkCe5doRI=;
+        b=cxyD3Q206dn/FG6nwXdHDyYYBnPVmXz1mupZbIXZpXwz8KXdgSAgfKUU1QzvCzrE9u
+         QDsE8YzhiEXWMwWkLYYJvIc1Te0o+a+9QonL3A4xFK68g605a5t4dgF5OR0GwpIE67fP
+         /5PL5KWT3//2zXuZe8IiDhsvZjJcL24TD7nCNHKFP6Cb9lYBdjm0JoOpbZ887x27Yxal
+         mssU40SqurYcqAvuj6uHU57qaG3eWfy+7QFr20wLKErFkTfNMQUl1i3JgcKS1A5pNnD9
+         /ptk6rKDHW602gIfz+ybtEVqGp6v8Y0f6qtglJxr07gPzmiCbqY7doDfjm/47F60sXsX
+         gltA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3zw/IoM+l5CIXrF7fScf+SXC/QliOjWCZt7UALLBfnjNdRedpmsrPu5BiuyiAECHpWenWDlA6GAECxVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3f6yyCaChqmMR/GzereHQZsahG/0VxhKbwk2Ma3WPpDkmDvgf
+	/HTjAYnvbml7d9JFdHCcwu8pvi16HaBgJsD7jMqtW4Mx+qKy/4I5JNV7DqitvDo=
+X-Google-Smtp-Source: AGHT+IGwwyszG0CNT0JAFMndi0eaSYc/oFh0VHN9tlAF+a5IcvBOCM39f9Fn28nQRfIlK5+QN9fOxw==
+X-Received: by 2002:a05:6e02:1d95:b0:380:f340:ad66 with SMTP id e9e14a558f8ab-39b1fc1348dmr227275905ab.26.1722990703557;
+        Tue, 06 Aug 2024 17:31:43 -0700 (PDT)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b762e9f5aasm7476174a12.6.2024.08.06.17.31.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 17:26:41 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sbUVi-007xHk-12;
-	Wed, 07 Aug 2024 10:26:38 +1000
-Date: Wed, 7 Aug 2024 10:26:38 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com,
-	dchinner@redhat.com, hch@lst.de, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	catherine.hoang@oracle.com, martin.petersen@oracle.com
-Subject: Re: [PATCH v3 01/14] xfs: only allow minlen allocations when near
- ENOSPC
-Message-ID: <ZrK/Pq0KJKj0sLO9@dread.disaster.area>
-References: <20240801163057.3981192-1-john.g.garry@oracle.com>
- <20240801163057.3981192-2-john.g.garry@oracle.com>
- <20240806185138.GF623936@frogsfrogsfrogs>
+        Tue, 06 Aug 2024 17:31:42 -0700 (PDT)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH v9 00/13] riscv: Add support for xtheadvector
+Date: Tue, 06 Aug 2024 17:31:36 -0700
+Message-Id: <20240806-xtheadvector-v9-0-62a56d2da5d0@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806185138.GF623936@frogsfrogsfrogs>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGjAsmYC/33Qu07EMBAF0F9ZuSZoxuMnFf+BKPwkLtigZGUtW
+ uXfcZaCYCLKsXzu9fjGljSXtLCn043NqZalTOc22IcTC6M7v6WhxDYzDlyAJBiulzG5WFO4TPN
+ giCJF1F5wYo18zCmX6z3u5bXNY1natc97esXt9DtIgf0dVHGAgXKSFqPOCPZ5LnVayjk8humdb
+ VmV7zx2D6m8eaudMArJRSUOPO1930/N+5zJJm+VMunAix+vgXdeNM99azYcokc88HLn//TL5oU
+ XRuago5T5wKud532/aj5YlwEJsgM48HrvRef1tr8WaBFcdHS0v/nPm60/gyBsn4ekO7+u6xcBr
+ rZ2awIAAA==
+To: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
+ Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>, 
+ Andy Chiu <andy.chiu@sifive.com>, Jessica Clarke <jrtc27@jrtc27.com>, 
+ Andrew Jones <ajones@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ Charlie Jenkins <charlie@rivosinc.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, Heiko Stuebner <heiko@sntech.de>, 
+ Heiko Stuebner <heiko@sntech.de>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722990701; l=7570;
+ i=charlie@rivosinc.com; s=20231120; h=from:subject:message-id;
+ bh=hacy5mno4SE477aLGkms4pcURrshsIYaghRvD/Vlia0=;
+ b=mmnaEmpUee/f4Zf0LA0h354GYefY/89ORkPfp6B4DMo6T3hYWyAIF/pw7KmSeXh5yT8xKbSbV
+ 8QG+nKQVY5MD8/770ix9gLM9OCS/0STHcw/61Gavj1L9vA8AG6oE7Q6
+X-Developer-Key: i=charlie@rivosinc.com; a=ed25519;
+ pk=t4RSWpMV1q5lf/NWIeR9z58bcje60/dbtxxmoSfBEcs=
 
-On Tue, Aug 06, 2024 at 11:51:38AM -0700, Darrick J. Wong wrote:
-> On Thu, Aug 01, 2024 at 04:30:44PM +0000, John Garry wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > When we are near ENOSPC and don't have enough free
-> > space for an args->maxlen allocation, xfs_alloc_space_available()
-> > will trim args->maxlen to equal the available space. However, this
-> > function has only checked that there is enough contiguous free space
-> > for an aligned args->minlen allocation to succeed. Hence there is no
-> > guarantee that an args->maxlen allocation will succeed, nor that the
-> > available space will allow for correct alignment of an args->maxlen
-> > allocation.
-> > 
-> > Further, by trimming args->maxlen arbitrarily, it breaks an
-> > assumption made in xfs_alloc_fix_len() that if the caller wants
-> > aligned allocation, then args->maxlen will be set to an aligned
-> > value. It then skips the tail alignment and so we end up with
-> > extents that aren't aligned to extent size hint boundaries as we
-> > approach ENOSPC.
-> > 
-> > To avoid this problem, don't reduce args->maxlen by some random,
-> > arbitrary amount. If args->maxlen is too large for the available
-> > space, reduce the allocation to a minlen allocation as we know we
-> > have contiguous free space available for this to succeed and always
-> > be correctly aligned.
-> > 
-> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > ---
-> >  fs/xfs/libxfs/xfs_alloc.c | 19 ++++++++++++++-----
-> >  1 file changed, 14 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
-> > index 59326f84f6a5..d559d992c6ef 100644
-> > --- a/fs/xfs/libxfs/xfs_alloc.c
-> > +++ b/fs/xfs/libxfs/xfs_alloc.c
-> > @@ -2524,14 +2524,23 @@ xfs_alloc_space_available(
-> >  	if (available < (int)max(args->total, alloc_len))
-> >  		return false;
-> >  
-> > +	if (flags & XFS_ALLOC_FLAG_CHECK)
-> > +		return true;
-> > +
-> >  	/*
-> > -	 * Clamp maxlen to the amount of free space available for the actual
-> > -	 * extent allocation.
-> > +	 * If we can't do a maxlen allocation, then we must reduce the size of
-> > +	 * the allocation to match the available free space. We know how big
-> > +	 * the largest contiguous free space we can allocate is, so that's our
-> > +	 * upper bound. However, we don't exaclty know what alignment/size
-> > +	 * constraints have been placed on the allocation, so we can't
-> > +	 * arbitrarily select some new max size. Hence make this a minlen
-> > +	 * allocation as we know that will definitely succeed and match the
-> > +	 * callers alignment constraints.
-> >  	 */
-> > -	if (available < (int)args->maxlen && !(flags & XFS_ALLOC_FLAG_CHECK)) {
-> > -		args->maxlen = available;
-> > +	alloc_len = args->maxlen + (args->alignment - 1) + args->minalignslop;
-> > +	if (longest < alloc_len) {
-> > +		args->maxlen = args->minlen;
-> 
-> Same question as the June 21st posting:
-> 
-> Is it possible to reduce maxlen the largest multiple of the alignment
-> that is still less than @longest?
+xtheadvector is a custom extension that is based upon riscv vector
+version 0.7.1 [1]. All of the vector routines have been modified to
+support this alternative vector version based upon whether xtheadvector
+was determined to be supported at boot.
 
-Perhaps.
+vlenb is not supported on the existing xtheadvector hardware, so a
+devicetree property thead,vlenb is added to provide the vlenb to Linux.
 
-The comment does say "we don't exaclty know what alignment/size
-constraints have been placed on the allocation, so we can't
-arbitrarily select some new max size."
+There is a new hwprobe key RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0 that is
+used to request which thead vendor extensions are supported on the
+current platform. This allows future vendors to allocate hwprobe keys
+for their vendor.
 
-Given this unknown I simply punted the issue and went straight to
-selecting a size the caller has guaranteed will be valid for their
-constraints.
+Support for xtheadvector is also added to the vector kselftests.
 
--Dave.
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 
+[1] https://github.com/T-head-Semi/thead-extension-spec/blob/95358cb2cca9489361c61d335e03d3134b14133f/xtheadvector.adoc
+
+---
+This series is a continuation of a different series that was fragmented
+into two other series in an attempt to get part of it merged in the 6.10
+merge window. The split-off series did not get merged due to a NAK on
+the series that added the generic riscv,vlenb devicetree entry. This
+series has converted riscv,vlenb to thead,vlenb to remedy this issue.
+
+The original series is titled "riscv: Support vendor extensions and
+xtheadvector" [3].
+
+The series titled "riscv: Extend cpufeature.c to detect vendor
+extensions" is still under development and this series is based on that
+series! [4]
+
+I have tested this with an Allwinner Nezha board. I ran into issues
+booting the board after 6.9-rc1 so I applied these patches to 6.8. There
+are a couple of minor merge conflicts that do arrise when doing that, so
+please let me know if you have been able to boot this board with a 6.9
+kernel. I used SkiffOS [1] to manage building the image, but upgraded
+the U-Boot version to Samuel Holland's more up-to-date version [2] and
+changed out the device tree used by U-Boot with the device trees that
+are present in upstream linux and this series. Thank you Samuel for all
+of the work you did to make this task possible.
+
+[1] https://github.com/skiffos/SkiffOS/tree/master/configs/allwinner/nezha
+[2] https://github.com/smaeul/u-boot/commit/2e89b706f5c956a70c989cd31665f1429e9a0b48
+[3] https://lore.kernel.org/all/20240503-dev-charlie-support_thead_vector_6_9-v6-0-cb7624e65d82@rivosinc.com/
+[4] https://lore.kernel.org/lkml/20240719-support_vendor_extensions-v3-4-0af7587bbec0@rivosinc.com/T/
+
+---
+Changes in v9:
+- Rebase onto palmer's for-next
+- Fix sparse error in arch/riscv/kernel/vendor_extensions/thead.c
+- Fix maybe-uninitialized warning in arch/riscv/include/asm/vendor_extensions/vendor_hwprobe.h
+- Wrap some long lines
+- Link to v8: https://lore.kernel.org/r/20240724-xtheadvector-v8-0-cf043168e137@rivosinc.com
+
+Changes in v8:
+- Rebase onto palmer's for-next
+- Link to v7: https://lore.kernel.org/r/20240724-xtheadvector-v7-0-b741910ada3e@rivosinc.com
+
+Changes in v7:
+- Add defs for has_xtheadvector_no_alternatives() and has_xtheadvector()
+  when vector disabled. (Palmer)
+- Link to v6: https://lore.kernel.org/r/20240722-xtheadvector-v6-0-c9af0130fa00@rivosinc.com
+
+Changes in v6:
+- Fix return type of is_vector_supported()/is_xthead_supported() to be bool
+- Link to v5: https://lore.kernel.org/r/20240719-xtheadvector-v5-0-4b485fc7d55f@rivosinc.com
+
+Changes in v5:
+- Rebase on for-next
+- Link to v4: https://lore.kernel.org/r/20240702-xtheadvector-v4-0-2bad6820db11@rivosinc.com
+
+Changes in v4:
+- Replace inline asm with C (Samuel)
+- Rename VCSRs to CSRs (Samuel)
+- Replace .insn directives with .4byte directives
+- Link to v3: https://lore.kernel.org/r/20240619-xtheadvector-v3-0-bff39eb9668e@rivosinc.com
+
+Changes in v3:
+- Add back Heiko's signed-off-by (Conor)
+- Mark RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0 as a bitmask
+- Link to v2: https://lore.kernel.org/r/20240610-xtheadvector-v2-0-97a48613ad64@rivosinc.com
+
+Changes in v2:
+- Removed extraneous references to "riscv,vlenb" (Jess)
+- Moved declaration of "thead,vlenb" into cpus.yaml and added
+  restriction that it's only applicable to thead cores (Conor)
+- Check CONFIG_RISCV_ISA_XTHEADVECTOR instead of CONFIG_RISCV_ISA_V for
+  thead,vlenb (Jess)
+- Fix naming of hwprobe variables (Evan)
+- Link to v1: https://lore.kernel.org/r/20240609-xtheadvector-v1-0-3fe591d7f109@rivosinc.com
+
+---
+Charlie Jenkins (12):
+      dt-bindings: riscv: Add xtheadvector ISA extension description
+      dt-bindings: cpus: add a thead vlen register length property
+      riscv: dts: allwinner: Add xtheadvector to the D1/D1s devicetree
+      riscv: Add thead and xtheadvector as a vendor extension
+      riscv: vector: Use vlenb from DT for thead
+      riscv: csr: Add CSR encodings for CSR_VXRM/CSR_VXSAT
+      riscv: Add xtheadvector instruction definitions
+      riscv: vector: Support xtheadvector save/restore
+      riscv: hwprobe: Add thead vendor extension probing
+      riscv: hwprobe: Document thead vendor extensions and xtheadvector extension
+      selftests: riscv: Fix vector tests
+      selftests: riscv: Support xtheadvector in vector tests
+
+Heiko Stuebner (1):
+      RISC-V: define the elements of the VCSR vector CSR
+
+ Documentation/arch/riscv/hwprobe.rst               |  10 +
+ Documentation/devicetree/bindings/riscv/cpus.yaml  |  19 ++
+ .../devicetree/bindings/riscv/extensions.yaml      |  10 +
+ arch/riscv/Kconfig.vendor                          |  26 ++
+ arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi      |   3 +-
+ arch/riscv/include/asm/cpufeature.h                |   2 +
+ arch/riscv/include/asm/csr.h                       |  15 +
+ arch/riscv/include/asm/hwprobe.h                   |   3 +-
+ arch/riscv/include/asm/switch_to.h                 |   2 +-
+ arch/riscv/include/asm/vector.h                    | 225 +++++++++++----
+ arch/riscv/include/asm/vendor_extensions/thead.h   |  42 +++
+ .../include/asm/vendor_extensions/thead_hwprobe.h  |  19 ++
+ .../include/asm/vendor_extensions/vendor_hwprobe.h |  37 +++
+ arch/riscv/include/uapi/asm/hwprobe.h              |   3 +-
+ arch/riscv/include/uapi/asm/vendor/thead.h         |   3 +
+ arch/riscv/kernel/cpufeature.c                     |  52 +++-
+ arch/riscv/kernel/kernel_mode_vector.c             |   8 +-
+ arch/riscv/kernel/process.c                        |   4 +-
+ arch/riscv/kernel/signal.c                         |   6 +-
+ arch/riscv/kernel/sys_hwprobe.c                    |   5 +
+ arch/riscv/kernel/vector.c                         |  24 +-
+ arch/riscv/kernel/vendor_extensions.c              |  10 +
+ arch/riscv/kernel/vendor_extensions/Makefile       |   2 +
+ arch/riscv/kernel/vendor_extensions/thead.c        |  18 ++
+ .../riscv/kernel/vendor_extensions/thead_hwprobe.c |  19 ++
+ tools/testing/selftests/riscv/vector/.gitignore    |   3 +-
+ tools/testing/selftests/riscv/vector/Makefile      |  17 +-
+ .../selftests/riscv/vector/v_exec_initval_nolibc.c |  94 +++++++
+ tools/testing/selftests/riscv/vector/v_helpers.c   |  68 +++++
+ tools/testing/selftests/riscv/vector/v_helpers.h   |   8 +
+ tools/testing/selftests/riscv/vector/v_initval.c   |  22 ++
+ .../selftests/riscv/vector/v_initval_nolibc.c      |  68 -----
+ .../selftests/riscv/vector/vstate_exec_nolibc.c    |  20 +-
+ .../testing/selftests/riscv/vector/vstate_prctl.c  | 305 +++++++++++++--------
+ 34 files changed, 901 insertions(+), 271 deletions(-)
+---
+base-commit: 7c08a2615f149f64fb1bb4660997e152fb3a11a7
+change-id: 20240530-xtheadvector-833d3d17b423
 -- 
-Dave Chinner
-david@fromorbit.com
+- Charlie
+
 
