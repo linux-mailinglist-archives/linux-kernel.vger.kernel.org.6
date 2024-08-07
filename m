@@ -1,164 +1,151 @@
-Return-Path: <linux-kernel+bounces-277376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1940C949FD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:34:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF53949FD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 497171C225E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:34:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADC082864D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7971B5818;
-	Wed,  7 Aug 2024 06:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68011B5826;
+	Wed,  7 Aug 2024 06:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="FRY2Rt1c"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="OcCMCGd+"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F115E2F5A;
-	Wed,  7 Aug 2024 06:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723012434; cv=none; b=hBuJySaqAV9ewXdTI6VQYPAvRKiANhIdZnxi174pQMH8rSX2llxbNA3221AUGbH0LZMKfG6FkITipm4BW66J6dqa6+M+2/uJFsl824wC18Jx26/RKXQgMy4P5aUKe3jzXEoC4fXKMyMyHuP0aiiJHEkelUdpguQ652wPLcv/l2k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723012434; c=relaxed/simple;
-	bh=HexqomGxq4QNblrFAaRU3frGctUtQoVjetodoDFP+ug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aZic4RxSNEzv9F7XsknmkIWvpDzVlHDBeymJYV1YCIrBoej2LBJ7JUxWj5hXlUzzzaxWdrDPkN7paFbbmg48EeR47mWUA4xXh8HttN19OtFKXEKJv+h+SmM1VyJ5i2Okq4NYRshYBWLktkbGnqPvBu+6pBdQ+P0w9NRJm+S8+uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=FRY2Rt1c; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jsJQqLqyoht9ZRPg7hY8RhyerLZz2EuFdx93CoJ5IwM=; b=FRY2Rt1c6CwuFhy8FptzMl83pk
-	EggkRB+iYddw5p+CG5hBg5Z3R/tSlHPTv/kaHyQcGSHKTn0y8TAhWl+nlx5VZQfE/CWFf3XWdeXy/
-	j8Wrt804GA+qZxsH7O1huD9NEw5s9KbtSelik4lw8w/OoylBi696WacGepDOMLg29hvPyf0R2Anjl
-	xlWHM9/HmB/Y+zepf1zEQTf1f+CwSxHuAB6g3U8SxRnRrua+BeBUxCTqC9uAUqOapZvF2VYsFZqy0
-	+pGBK98IhLzJdL3BVYjzX4OdPtJc9ugRNg8+g0L/CkaxcsUrz9boDaWYeLBkKBNDsg1AQ77wEcWiB
-	Hkb5MAoA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sbaF4-00000002FaH-0eMb;
-	Wed, 07 Aug 2024 06:33:50 +0000
-Date: Wed, 7 Aug 2024 07:33:50 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
-Message-ID: <20240807063350.GV5334@ZenIV>
-References: <20240806144628.874350-1-mjguzik@gmail.com>
- <20240806155319.GP5334@ZenIV>
- <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
- <20240807033820.GS5334@ZenIV>
- <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
- <20240807062300.GU5334@ZenIV>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4662B1B5805;
+	Wed,  7 Aug 2024 06:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723012459; cv=pass; b=iYviWVHZhggXaaIq3khj1UKs2gzxiBMnGSIHwvXK0woct37fVKlqVdjsq5oTjNbQEm/sJ76WRCMpehmJ/rfAPwPsMleQuiTMDyFpAHxF2bUFPu9ta93e/8jPE06h7yJwBXvWLfCRZAqx1Lnx7XE9ydScwdl6bd4gXisCcUcbDw0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723012459; c=relaxed/simple;
+	bh=PjY1kIXXa/+Uvf6D4rCAZkO8Q7OqC9WNlDXVzCDIaYA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Ywud1RAUJWd+23f46LfK3p5Pxg9Q9SVA7wJelAvX9WzDfoPuyzjSYQwVdmfgipaHWbhzzoF1zwKG6iMZjYs0DS6LyEGsZlNx1PbUQMr3NaAszPgZPU/fVArbZgU/yHt9sCyGUjG8jwe2JHF5pVFt/50W14B6TjyqUJY6IBoGSZ4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=OcCMCGd+; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: Usama.Anjum@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723012446; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=IWZNbuVjFdgfwNfwnjJxv9fWk0L8MnWfKZSuFDTFJCewZNaJRWuyYZKyyruqu6GU1x40O6CWWPTu5D4MuDY9IDUffiVlWZ9QF5B+OUWpSXM9St3giP4pFtITUh4NYVEwA5J1Ue+H/I8jLds9VCpnQtEfhnZQxF9RH0BFi2yzFOw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723012446; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=cN9VwZ3ux/dSwp942c5/KewkPym2XQ/3TqOiMuYs6Ok=; 
+	b=Od1flUVT55hKI3FWebFnHRSg2u7/hZYwYPpBibzQL0QjcSzsYrP91lgSwPcA18mq0GOQYh2pF/TAmv6q+UMZaPb8IehpCS905ko8lcICJxGwJbeM7J/Sanw3fO0EbtMELRlNKdWm8sxeb4RTACWfM6Kda8zWrdfJtt/N9HvM24w=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723012446;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=cN9VwZ3ux/dSwp942c5/KewkPym2XQ/3TqOiMuYs6Ok=;
+	b=OcCMCGd+QC227b27+w1f9IIQvzqCqH49GS9cJ2ST9ND/2J+3Itl1iFD9+bFRXWT2
+	/2FFwTmViXUq2JRzVpfLRlSK4g6T5YjdXFQUrTolWBdIjB8UJmXCDBp1Zg17CddLdkb
+	4dhNRS03hKoYX9R1HvAqLgEXXZoBCdygsb+JwRdM=
+Received: by mx.zohomail.com with SMTPS id 1723012444268333.907844900133;
+	Tue, 6 Aug 2024 23:34:04 -0700 (PDT)
+Message-ID: <5703a55a-95ab-44ee-a070-2bca6e9e23bc@collabora.com>
+Date: Wed, 7 Aug 2024 11:33:58 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807062300.GU5334@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, kernel@collabora.com, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH] selftests: kvm: fix mkdir error when building for
+ non-supported arch
+To: Paolo Bonzini <pbonzini@redhat.com>
+References: <20240806121029.1199794-1-usama.anjum@collabora.com>
+ <6a3b2f3c-b733-4f64-a550-2f7dcbaf7cb7@linuxfoundation.org>
+ <ca500f5c-57e7-43bc-9a1a-015021582af2@collabora.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <ca500f5c-57e7-43bc-9a1a-015021582af2@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Wed, Aug 07, 2024 at 07:23:00AM +0100, Al Viro wrote:
-> 	After having looked at the problem, how about the following
-> series:
+On 8/7/24 11:08 AM, Muhammad Usama Anjum wrote:
+> On 8/6/24 9:00 PM, Shuah Khan wrote:
+>> On 8/6/24 06:10, Muhammad Usama Anjum wrote:
+>>> The mkdir generates an error when kvm suite is build for non-supported
+>>
+>> built
+>> unsupported
+>>
+>>> architecture such as arm. Fix it by ignoring the error from mkdir.
+>>>
+>>> mkdir: missing operand
+>>> Try 'mkdir --help' for more information.
+>>
+>> Simply suppressing the message isn't a good fix. Can you investigate
+>> a bit more on why mkdir is failing and the architectures it is failing
+>> on?
+>>
+>> This change simply suppresses the error message and continues - Should
+>> this error end the build process or not run mkdir to begin with by
+>> checking why $(sort $(dir $(TEST_GEN_PROGS)))) results in an empty
+>> string?
+> The tests are specified on per architecture basis. As KVM isn't supported on arm, there are no tests in TEST_GEN_PROGS and it is empty. While lib.mk infrastructure has support to ignore and not build anything in such cases, the Makefile's behaviour isn't robust enough.
 > 
-> 1/5) lift path_get() *AND* path_put() out of do_dentry_open()
-> into the callers.  The latter - conditional upon "do_dentry_open()
-> has not set FMODE_OPENED".  Equivalent transformation.
-> 
-> 2/5) move path_get() we'd lifted into the callers past the
-> call of do_dentry_open(), conditionally collapse it with path_put().
-> You'd get e.g.
-> int vfs_open(const struct path *path, struct file *file)
-> {
->         int ret;
-> 
->         file->f_path = *path;
->         ret = do_dentry_open(file, NULL);
->         if (!ret) {
->                 /*
->                  * Once we return a file with FMODE_OPENED, __fput() will call
->                  * fsnotify_close(), so we need fsnotify_open() here for
->                  * symmetry.
->                  */
->                 fsnotify_open(file);
->         }
-> 	if (file->f_mode & FMODE_OPENED)
-> 		path_get(path);
->         return ret;
-> }
-> 
-> Equivalent transformation, provided that nobody is playing silly
-> buggers with reassigning ->f_path in their ->open() instances.
-> They *really* should not - if anyone does, we'd better catch them
-> and fix them^Wtheir code.  Incidentally, if we find any such,
-> we have a damn good reason to add asserts in the callers.  As
-> in, "if do_dentry_open() has set FMODE_OPENED, it would bloody
-> better *not* modify ->f_path".  <greps> Nope, nobody is that
-> insane.
-> 
-> 3/5) split vfs_open_consume() out of vfs_open() (possibly
-> named vfs_open_borrow()), replace the call in do_open() with
-> calling the new function.
-> 
-> Trivially equivalent transformation.
-> 
-> 4/5) Remove conditional path_get() from vfs_open_consume()
-> and finish_open().  Add
-> 		if (file->f_mode & FMODE_OPENED)
-> 			path_get(&nd->path);
-> before terminate_walk(nd); in path_openat().
-> 
-> Equivalent transformation - see
->         if (file->f_mode & (FMODE_OPENED | FMODE_CREATED)) {
->                 dput(nd->path.dentry);
->                 nd->path.dentry = dentry;
->                 return NULL;
->         }
-> in lookup_open() (which is where nd->path gets in sync with what
-> had been given to do_dentry_open() in finish_open()); in case
-> of vfs_open_consume() in do_open() it's in sync from the very
-> beginning.  And we never modify nd->path after those points.
-> So we can move grabbing it downstream, keeping it under the
-> same condition (which also happens to be true only if we'd
-> called do_dentry_open(), so for all other paths through the
-> whole thing it's a no-op.
-> 
-> 5/5) replace
-> 		if (file->f_mode & FMODE_OPENED)
-> 			path_get(&nd->path);
-> 		terminate_walk(nd);
-> with
-> 		if (file->f_mode & FMODE_OPENED) {
-> 			nd->path.mnt = NULL;
-> 			nd->path.dentry = NULL;
-> 		}
-> 		terminate_walk(nd);
-> Again, an obvious equivalent transformation.
+> I think the better fix would be to check if TEST_GEN_PROGS isn't empty and then call mkdir. I'll reiterate and send the fix.
 
-BTW, similar to that, with that we could turn do_o_path()
-into
+Waiting on Paolo's response before sending the following fix. Maybe he
+has better idea here.
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@ -317,7 +317,9 @@ $(LIBKVM_S_OBJ): $(OUTPUT)/%.o: %.S $(GEN_HDRS)
+ $(LIBKVM_STRING_OBJ): $(OUTPUT)/%.o: %.c
+ 	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -ffreestanding $< -o $@
 
-        struct path path;
-        int error = path_lookupat(nd, flags, &path);
-        if (!error) {
-                audit_inode(nd->name, path.dentry, 0);
-                error = vfs_open_borrow(&path, file);
-		if (!(file->f_mode & FMODE_OPENED))
-			path_put(&path);
-        }
-        return error;
-}
+-$(shell mkdir -p $(sort $(dir $(TEST_GEN_PROGS))))
++ifneq ($(strip $(TEST_GEN_PROGS)),)
++$(shell mkdir -p $(sort $(dir $(TEST_GEN_PROGS))))
++endif
+ $(SPLIT_TEST_GEN_OBJ): $(GEN_HDRS)
+ $(TEST_GEN_PROGS): $(LIBKVM_OBJS)
+ $(TEST_GEN_PROGS_EXTENDED): $(LIBKVM_OBJS)
 
-and perhaps do something similar in the vicinity of
-vfs_tmpfile() / do_o_tmpfile().
+
+> 
+>>
+>>>
+>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>>> ---
+>>>   tools/testing/selftests/kvm/Makefile | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+>>> index 48d32c5aa3eb7..8ff46a0a8d1cd 100644
+>>> --- a/tools/testing/selftests/kvm/Makefile
+>>> +++ b/tools/testing/selftests/kvm/Makefile
+>>> @@ -317,7 +317,7 @@ $(LIBKVM_S_OBJ): $(OUTPUT)/%.o: %.S $(GEN_HDRS)
+>>>   $(LIBKVM_STRING_OBJ): $(OUTPUT)/%.o: %.c
+>>>       $(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -ffreestanding $< -o $@
+>>>   -$(shell mkdir -p $(sort $(dir $(TEST_GEN_PROGS))))
+>>> +$(shell mkdir -p $(sort $(dir $(TEST_GEN_PROGS))) > /dev/null 2>&1)
+>>>   $(SPLIT_TEST_GEN_OBJ): $(GEN_HDRS)
+>>>   $(TEST_GEN_PROGS): $(LIBKVM_OBJS)
+>>>   $(TEST_GEN_PROGS_EXTENDED): $(LIBKVM_OBJS)
+>>
+>>
+>> thanks,
+>> -- Shuah
+> 
+
+-- 
+BR,
+Muhammad Usama Anjum
+
 
