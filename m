@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-277327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1F3949F4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:44:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59605949F4F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:45:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C265B23635
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:44:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6B21C22B40
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D767195B33;
-	Wed,  7 Aug 2024 05:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F71196C6C;
+	Wed,  7 Aug 2024 05:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GHKksDzv"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kqJKIweK"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657A3194AE2
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 05:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0465E1957FD
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 05:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723009464; cv=none; b=AsZNzxkKEtDR1rDdeSWlHwMb3EjGpKcalIV7Rr2rrrxemZxJEiOjlYoetVfa1xoQLoLCri/YrCuNFKLsOB72fnCHskTRyJBdFcOkFrDakujsw3McFT/VRMFCmjqUsegyw+W7Q1BsMDUMphU5ic4kQ/x4opyPaxS3170n3llYP28=
+	t=1723009493; cv=none; b=SnTYtREdujw34L0PWAgxq18bLnIOUvWEzjU+QLgqDaDzkHrJwGeIsno6EQNH8jjfVAtWPXqvle0msTS2+7Pn9y/Ak7MyVmz0Kf6XBKzc3LAtCEhl5JnFG299I2yRyPGcglE/7k6Hj8OcMqFMC4J4jHU1tTKgI/6unk0Exl1s82o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723009464; c=relaxed/simple;
-	bh=fapQ6x5gI2JOlVQoGQ5d8o/Q1AMF9TM+MVs5rh/JsJk=;
+	s=arc-20240116; t=1723009493; c=relaxed/simple;
+	bh=JE/r6oRaW9pWCNR+Vxh7Jmv7Eddt6ZRPoHulVg+7nwg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L1ZiTjT30yNXQcx5pL6V8feQdQsm63uWAQviUL6OOCK9oz7QPi5FagCvamXz5MIeuYbaaKI51KPjcoxTtT+6rdihrkO/vNNkuGSoh1p7TpYQflkMK1VppOtI5xyMHNu/E3NbgJbnWZM4p9u9S3qF4sVRQTUg1ZerB/kh37RylU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GHKksDzv; arc=none smtp.client-ip=209.85.128.51
+	 In-Reply-To:Content-Type; b=bvpJWrcQMYzdDAYqUC0RDNrFyvESUsiCVPxvCU9JIXRA80nHDEPtU4twUJ6IIVwLmX6/BjY/kiCzCF4oQkyXq24ThUSvnTI9SOrwk2aveC6FH2he1q4qiLrLC9hh9pAUw7vPjXSQ2fcohOjXvBpZm5UvIZ8LyUmjX7JzkcCFtjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kqJKIweK; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4281d812d3eso13234905e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 22:44:22 -0700 (PDT)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3687fd09251so744510f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 22:44:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723009461; x=1723614261; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723009490; x=1723614290; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=YYvtAZV3TwwDs8P6LWcM/NhmCgmBu7Q/FCcb43o0uvc=;
-        b=GHKksDzvrlqXzabLG0pblhh7Xlq9xSximyZtY2+JFUu4aUTmGH+fGhDRMOvATCcWig
-         8SyEa3D6aK7SHzdeyjPYS54wR6xqEhI0/lW/orMUyCIqNuMLupHQ3NXF2wEFLKhaHxiN
-         ui6lmsOrE9Wuwv8r+zyv4VI7o9pUQ2H3kclinzquZGlva9wLLA/auPoptnGwdHbqeR5v
-         HnFsikoFxd1lOp7Mo8fgWKFHEkVWn+kLHqalNsg5ZtlDMxooHT6BM0J67OJudYMaBfwe
-         d85oDLXxMOD75rAEQ7RbVX+fQ6yZW94cab1Su6DSWzeMnB65MZFVxw/D0KQ04MsXBOQ+
-         R7tA==
+        bh=G0OWf6ez8Gxgf5JPBmv/oBu1hvtNwPXnbUW+1HDzI78=;
+        b=kqJKIweKmt4hkelJubP0mCtDJqX+FY1dzAIfRDO1XxCdPQpc7J+GyR2ko8XsQNazfo
+         GadUeFLPItLCwRQVaM0W8W3Tk0pVZnCygHSGGMVXd7OkS2yHQCn3yeXdIwUYgn4QopVt
+         BfSnTKlT75+YNLly+W4aGz3V0jSlePAmxBAhv2iFSlZDCBiEObJufwPzgLae+jR6W8NQ
+         CHg2zm7aL35Wsgy6T2fYCG8tNjsPln3e5jpxsgiHkI4PkbyCzomhVpYLZrtAK6pzuCfn
+         hdPZEg5FJMcWZF5LIkLh8g3m4n6SPrKRfTpOweC5Bp4Xq3oLRImb9KhpJzFw5qP/qOUZ
+         Vdyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723009461; x=1723614261;
+        d=1e100.net; s=20230601; t=1723009490; x=1723614290;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YYvtAZV3TwwDs8P6LWcM/NhmCgmBu7Q/FCcb43o0uvc=;
-        b=xK8rJEObsfAAg9EbgrY6HDK0muy7QronS1A7JjIrOJAjpe+V3KQqkysqCB8adJEQew
-         tt5AHg/hFynCx76FhDc+rhzyaOGOZ2/Q+WPCkftAcvmCOESwEBOcR2c4AyYQe13alLzb
-         GKn+zt3e8tv2h9nWFl5G0Ro7tYOmFamDJB3Rt/6PLXamuiiMC7ScsP4QPyC8gExm+e0a
-         l7R+kNrYf69H+b81kC82rW/NSQSPdz39s9GhMxY33xFH8Y0MWJeOpMdMYycWTV6ZwnHe
-         uXJIias38xrAti/qyS46s1AyDf/2Ygy1CeXHNhcBign2kIUdyN3pgtIlJ7Phh/fffJd6
-         7EVg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1+7DSm2I4F2ZDKllN3fVcyu0Vc/GNt9PKZ6bH8Zr4wWn+7rF9fjSreMSw3m8fLslAvdHgrkkUiol14JESEwBB5Djzk63pwYLPpMj+
-X-Gm-Message-State: AOJu0YzfzDOtjyvAxsYlKwKYCeWdeSCwgaPuE/CpRjHcDxrA0X1hkQpI
-	h8IdPdHyncAkqSwr5/GcPA8/wNinbaCMzqL5si8AfBM4FNwnQyG1CM2KBWxa04g=
-X-Google-Smtp-Source: AGHT+IHnxbGaADuzPzhsRwpihnt7TlQp4Jv+4CgR5BaN9LOP9hfqFhkfMtk5yaw27R7dHOFcHll7Rw==
-X-Received: by 2002:a05:600c:a4c:b0:426:6e9a:7a1e with SMTP id 5b1f17b1804b1-428e6b95ac9mr124815655e9.35.1723009460544;
-        Tue, 06 Aug 2024 22:44:20 -0700 (PDT)
+        bh=G0OWf6ez8Gxgf5JPBmv/oBu1hvtNwPXnbUW+1HDzI78=;
+        b=vYpeUc0LLWKAyh1d8Y1VT60vNzC3wtwfP+J5WTQpx5S/Be4zxj3uM2EuDQWk0cHyuY
+         bdqIwUohJf956Ulsz28ZF+bpNyRf3BRmRU5y+BLG+k4RkBrcm+4qGKhcdMwFisrU3E3d
+         bdtl1+IcoGHTps0g74hDaRXdlAzhw4+hdtVa8SC0ErqakUcUR7+82vVcbnvk8UUlRtC9
+         n4id5AWZA/yG9XqvG4QABR6iXjOYcZEj69Nwy+EOqHAiQ5dmnM1AZOy5NRPLmY6b5C9c
+         8M9Z1lNozkG03yQUotVE7ZVHPGgjxrI8aweYkdWGlzGoB2+wLuIVESySQpfFICsrJZDl
+         FhYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXP1s4vdVrm1QwT+jGH+aSKtYqiiIbmS9gElos5N9WcziEaGQheeJnAcO+FR5RdoyhO8ObQb6LI8DstZWYb2aY3AmLpVAC8ltVU2G3b
+X-Gm-Message-State: AOJu0YznU8yqiklDp7mug8lb3tHwkXYJKXnCdM7zsEb8x9aNkSa7v+nH
+	86kJ9+8mQFHp3WK13Y3ISwafN8MvT9tPLk1qBdjkHFQA/L3jS1pWPLM6v9zrA/4=
+X-Google-Smtp-Source: AGHT+IHc5vuzTBW4h6d1QGoBakXdzthyZ6QBCEOqs6EeG+t7ZawahJ0UefaucaaNo9LxA4PEzcg4DA==
+X-Received: by 2002:a5d:64a1:0:b0:367:43ce:9c91 with SMTP id ffacd0b85a97d-36bbc0f9fb6mr13352499f8f.27.1723009490152;
+        Tue, 06 Aug 2024 22:44:50 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429057aa0bbsm11225755e9.26.2024.08.06.22.44.19
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd06d7dasm14685983f8f.97.2024.08.06.22.44.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 22:44:20 -0700 (PDT)
-Message-ID: <2da06dac-7a1a-461c-956d-13b74320723e@linaro.org>
-Date: Wed, 7 Aug 2024 07:44:18 +0200
+        Tue, 06 Aug 2024 22:44:49 -0700 (PDT)
+Message-ID: <6ff63eb7-81f4-4d3e-b96f-890432ec184a@linaro.org>
+Date: Wed, 7 Aug 2024 07:44:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: clock: fix C3 PLL input parameter
+Subject: Re: [PATCH 3/3] arm64: dts: amlogic: add C3 AW419 board
 To: Xianwei Zhao <xianwei.zhao@amlogic.com>,
  Krzysztof Kozlowski <krzk@kernel.org>,
  Neil Armstrong <neil.armstrong@linaro.org>,
@@ -91,9 +91,9 @@ Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org
 References: <20240806-c3_add_node-v1-0-c0de41341632@amlogic.com>
- <20240806-c3_add_node-v1-1-c0de41341632@amlogic.com>
- <b63fe216-ee29-489e-a175-e1525ac12722@kernel.org>
- <86b01ecb-6ca8-496e-b3a8-0b21bb951a60@amlogic.com>
+ <20240806-c3_add_node-v1-3-c0de41341632@amlogic.com>
+ <c82b6e70-8f2f-4b37-9186-7c49aea019bd@kernel.org>
+ <59f37c77-d57b-4568-ad9e-6d50791ae5f7@amlogic.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -140,67 +140,24 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <86b01ecb-6ca8-496e-b3a8-0b21bb951a60@amlogic.com>
+In-Reply-To: <59f37c77-d57b-4568-ad9e-6d50791ae5f7@amlogic.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/08/2024 03:55, Xianwei Zhao wrote:
-> Hi Krzysztof,
->      Thanks for your review.
-> 
-> On 2024/8/6 21:10, Krzysztof Kozlowski wrote:
->> [ EXTERNAL EMAIL ]
+On 07/08/2024 04:37, Xianwei Zhao wrote:
+>>> +#include "amlogic-c3.dtsi"
+>>> +
+>>> +/ {
+>>> +     model = "Amlogic C308l aw419 Development Board";
+>>> +     compatible = "amlogic,aw419", "amlogic,c3";
 >>
->> On 06/08/2024 12:27, Xianwei Zhao via B4 Relay wrote:
->>> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
->>>
->>> Add C3 PLL controller input clock parameters "fix".
+>> Where are the bindings? Why do you add bindings without boards? Or
+>> boards without bindings?
 >>
->> What is "parameters" here? Why you are adding it? Is it missing?
->> Something is not working?
->>
-> Yes. The previous submission was lost.
+> The bindings of board aw419 was submitted with board aw409.
+> The commit number is cb3f4e8cacfa7b32ed8b9dff1282c0d4aaf42e88.
 
-What submission is lost?
-
-> 
->>>
->>> Fixes: 0e6be855a96d ("dt-bindings: clock: add Amlogic C3 PLL clock controller")
->>
->> Why? What bug are you fixing?
-> 
-> The input clock of PLL clock controller need the clock whose fw_name is 
-> called "fix".
-
-Then explain this in commit msg.
-
->>
->>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
->>> ---
->>>   Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml | 7 +++++--
->>>   1 file changed, 5 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
->>> index 43de3c6fc1cf..700865cc9792 100644
->>> --- a/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
->>> +++ b/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
->>> @@ -24,11 +24,13 @@ properties:
->>>       items:
->>>         - description: input top pll
->>>         - description: input mclk pll
->>> +      - description: input fix pll
->>>
->>>     clock-names:
->>>       items:
->>>         - const: top
->>>         - const: mclk
->>> +      - const: fix
->>
->> and that's not an ABI break because?
-> This is "fixed" clock.
-> I will modify "fix" to "fixed",in next version.
-
-With "fixed" it is still ABI break, right?
+Why are you adding bindings separate from DTS?
 
 Best regards,
 Krzysztof
