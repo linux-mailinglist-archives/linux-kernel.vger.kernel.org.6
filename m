@@ -1,57 +1,62 @@
-Return-Path: <linux-kernel+bounces-277443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E8C894A18A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:20:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D18B94A191
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E27D283231
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:20:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A32B92866E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF231C68AE;
-	Wed,  7 Aug 2024 07:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A3F1C7B91;
+	Wed,  7 Aug 2024 07:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="I9dJ3ANn"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="o3yBmlWr"
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235E51C6894
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 07:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2061C7B76;
+	Wed,  7 Aug 2024 07:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723015210; cv=none; b=tIsAmS6RlEkPnNzurLRanfHazn+m7KCmY43qXnRvfnvycakT8V5ykzRbLbdKYB4icwHQ10OBOJhjomY5pL+fwPchAKNB0yoOEgeL3xeSlQ6+ubpgumDZ7PMjc+yXOrGnRwZxjt0o9Tp3wYatSlOW+J/UqvLG8vefaE/LGPnNywI=
+	t=1723015278; cv=none; b=NlsWwN/c6rtCnrRH9K8Zb9kpIdEUQ7dARgZWg2Ya7XpYqnXJPpXlMwPSNmIG10O7DeQMrehl8bmqueob9K+eS0qpXsUpHSRelm5oyHDP1reViDp3cO+OZdRKaqBVzeOqBXi7RpFNT3K+v7IYFDsf49ejtPnQ9t5haiw1v+Rn/FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723015210; c=relaxed/simple;
-	bh=RJwUJxfIBPMSut0rEHrV8tGIWbldPEe3N9S8MBuwf9I=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NWU7QT0XKc3ev1gQrUDYRjRS/yWOvTwNpHomJWJQ4bgwOy7qSuvBd6FBav2OkOKJjEA7ROH8/XxwiyiMKZTlxm9OfAx+6dkWk6k6OK2v2MvDmbvf3joh1rDAC0xmbpkQF7L45d9inwUuY7mj9gHd7LJiWJ2NcJ7ABAkq/bWSG+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=I9dJ3ANn; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723015205; x=1723274405;
-	bh=d7WjM1fl0r5fOzo7wZwr2DKQdA65pFC6ffA5pNGPgWQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=I9dJ3ANnSLpGw/HOT9sVnCXKTNJoIJmZqKLkrPRI9UAttGPCaF7hUFR+Dyrrw5DMg
-	 9I95AezDf/DSYzgUVUlXjHFRXcXghgOF8nfODsHdI1eZeLnLHtufBdQ7wWiiXvJADY
-	 bpRMNh9LRBNoSOP1BA4Y096otNWHiOGhTG05le++JfggUNGp6vBPr7tEYc01XMJiFX
-	 oGfz+cKArS4NcXHY/KuVCZLb67Oij3hDrjQlX9N3FM/d2rVX0kH003Rs838rvLR3Qi
-	 gCnXS+GwIsj9GbUsID6dDLV0/bdhiPqbl4wmuxO5ZaEgxM6hVo/vEFlSHOOw5G4HP7
-	 dxrjqp2ukmdQg==
-Date: Wed, 07 Aug 2024 07:20:03 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 05/28] rust: alloc: add module `allocator_test`
-Message-ID: <6aaf4e2d-7968-4a7c-a522-73e6788ee0ee@proton.me>
-In-Reply-To: <ZrJyaWhXHRciX51o@pollux.localdomain>
-References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-6-dakr@kernel.org> <7f4b91e6-aae8-4e17-9fcd-4b1d0b2de9a0@proton.me> <ZrJyaWhXHRciX51o@pollux.localdomain>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 1491d30a83cf2a2f344e14d4e652da05c12a0258
+	s=arc-20240116; t=1723015278; c=relaxed/simple;
+	bh=7GiOD3hAA5u3pX+4hiB33+FC3gICUOjC8VXRM5Uh38Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H+lmmDpfncWzVzzZIapsimwN5IRFRt8ko12SQr8eCxDEbScXnGq7dno4x318Pebubi0i2KckyEshcoLuPOturcfGgsmd9xtx0GkXp4Dd/yU20Xx7eBJJXmEIXk74FTBs/njyu1Cx//o/pUzNkPlzu1nqcnRUMytfqR8afvfYtbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=o3yBmlWr; arc=none smtp.client-ip=83.166.143.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Wf1n1016jzp2P;
+	Wed,  7 Aug 2024 09:21:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1723015268;
+	bh=f6mO+1q8PwKecFRsqn5TluZM5OL5Ouz6M2O6XTeSBls=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o3yBmlWrwUnT0/LpaGMbiFtkJP2TpwalO8gphuckK1ZkYcx9S0LKPI4lQLomvEdkL
+	 hSYynCxLoo/r8IBdxaiezxyjBCDV8sn/X0F5JW3aXA66vUECSy7abj+h0wWwAsHRA2
+	 SNHkthlv+ufZKpD+iuoTytOUDo5waLHu+UGwYy50=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Wf1mz65nKzF6C;
+	Wed,  7 Aug 2024 09:21:07 +0200 (CEST)
+Date: Wed, 7 Aug 2024 09:21:03 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jann Horn <jannh@google.com>
+Cc: Tahera Fahimi <fahimitahera@gmail.com>, outreachy@lists.linux.dev, 
+	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v8 1/4] Landlock: Add abstract unix socket connect
+ restriction
+Message-ID: <20240807.mieloh8bi8Ae@digikod.net>
+References: <cover.1722570749.git.fahimitahera@gmail.com>
+ <e8da4d5311be78806515626a6bd4a16fe17ded04.1722570749.git.fahimitahera@gmail.com>
+ <20240803.iefooCha4gae@digikod.net>
+ <20240806.nookoChoh2Oh@digikod.net>
+ <CAG48ez2ZYzB+GyDLAx7y2TobE=MLXWucQx0qjitfhPSDaaqjiA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,97 +64,147 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez2ZYzB+GyDLAx7y2TobE=MLXWucQx0qjitfhPSDaaqjiA@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On 06.08.24 20:58, Danilo Krummrich wrote:
-> On Tue, Aug 06, 2024 at 04:54:10PM +0000, Benno Lossin wrote:
->> On 05.08.24 17:19, Danilo Krummrich wrote:
->>> `Allocator`s, such as `Kmalloc`, will be used by e.g. `Box` and `Vec` i=
-n
->>> subsequent patches, and hence this dependency propagates throughout the
->>> whole kernel.
->>>
->>> Add the `allocator_test` module that provides an empty implementation
->>> for all `Allocator`s in the kernel, such that we don't break the
->>> `rusttest` make target in subsequent patches.
->>
->> This is confusing, since you are talking about both our new `Allocator`
->> trait, allocators and the `alloc` crate `Allocator`.
->=20
-> I never mention the `alloc` crate `Allocator` here.
+On Tue, Aug 06, 2024 at 10:46:43PM +0200, Jann Horn wrote:
+> On Tue, Aug 6, 2024 at 9:36 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Sat, Aug 03, 2024 at 01:29:09PM +0200, Mickaël Salaün wrote:
+> > > On Thu, Aug 01, 2024 at 10:02:33PM -0600, Tahera Fahimi wrote:
+> > > > This patch introduces a new "scoped" attribute to the landlock_ruleset_attr
+> > > > that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope
+> > > > abstract Unix sockets from connecting to a process outside of
+> > > > the same landlock domain. It implements two hooks, unix_stream_connect
+> > > > and unix_may_send to enforce this restriction.
+> [...]
+> > Here is a refactoring that is easier to read and avoid potential pointer
+> > misuse:
+> >
+> > static bool domain_is_scoped(const struct landlock_ruleset *const client,
+> >                              const struct landlock_ruleset *const server,
+> >                              access_mask_t scope)
+> > {
+> >         int client_layer, server_layer;
+> >         struct landlock_hierarchy *client_walker, *server_walker;
+> >
+> >         if (WARN_ON_ONCE(!client))
+> >                 return false;
+> >
+> >         client_layer = client->num_layers - 1;
+> >         client_walker = client->hierarchy;
+> >
+> >         /*
+> >          * client_layer must be a signed integer with greater capacity than
+> >          * client->num_layers to ensure the following loop stops.
+> >          */
+> >         BUILD_BUG_ON(sizeof(client_layer) > sizeof(client->num_layers));
+> >
+> >         if (!server) {
+> >                 /*
+> >                  * Walks client's parent domains and checks that none of these
+> >                  * domains are scoped.
+> >                  */
+> >                 for (; client_layer >= 0; client_layer--) {
+> >                         if (landlock_get_scope_mask(client, client_layer) &
+> >                             scope)
+> >                                 return true;
+> >                 }
+> >                 return false;
+> >         }
+> >
+> >         server_layer = server->num_layers - 1;
+> >         server_walker = server->hierarchy;
+> >
+> >         /*
+> >          * Walks client's parent domains down to the same hierarchy level as
+> >          * the server's domain, and checks that none of these client's parent
+> >          * domains are scoped.
+> >          */
+> >         for (; client_layer > server_layer; client_layer--) {
+> >                 if (landlock_get_scope_mask(client, client_layer) & scope)
+> >                         return true;
+> >
+> >                 client_walker = client_walker->parent;
+> >         }
+> >
+> >         /*
+> >          * Walks server's parent domains down to the same hierarchy level as
+> >          * the client's domain.
+> >          */
+> >         for (; server_layer > client_layer; server_layer--)
+> >                 server_walker = server_walker->parent;
+> >
+> >         for (; client_layer >= 0; client_layer--) {
+> >                 if (landlock_get_scope_mask(client, client_layer) & scope) {
+> >                         /*
+> >                          * Client and server are at the same level in the
+> >                          * hierarchy.  If the client is scoped, the request is
+> >                          * only allowed if this domain is also a server's
+> >                          * ancestor.
+> >                          */
 
-Seems like I confused myself...
+We can move this comment before the if and...
 
->>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
->>> ---
->>>  rust/kernel/alloc.rs                |  9 +++++++--
->>>  rust/kernel/alloc/allocator_test.rs | 19 +++++++++++++++++++
->>>  2 files changed, 26 insertions(+), 2 deletions(-)
->>>  create mode 100644 rust/kernel/alloc/allocator_test.rs
->>>
->>> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
->>> index bc01a17df5e0..942e2755f217 100644
->>> --- a/rust/kernel/alloc.rs
->>> +++ b/rust/kernel/alloc.rs
->>> @@ -2,12 +2,17 @@
->>>
->>>  //! Extensions to the [`alloc`] crate.
->>>
->>> -#[cfg(not(test))]
->>> -#[cfg(not(testlib))]
->>> +#[cfg(not(any(test, testlib)))]
->>>  pub mod allocator;
->>>  pub mod box_ext;
->>>  pub mod vec_ext;
->>>
->>> +#[cfg(any(test, testlib))]
->>> +pub mod allocator_test;
->>> +
->>> +#[cfg(any(test, testlib))]
->>> +pub use self::allocator_test as allocator;
->>> +
->>>  /// Indicates an allocation error.
->>>  #[derive(Copy, Clone, PartialEq, Eq, Debug)]
->>>  pub struct AllocError;
->>> diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/al=
-locator_test.rs
->>> new file mode 100644
->>> index 000000000000..4785efc474a7
->>> --- /dev/null
->>> +++ b/rust/kernel/alloc/allocator_test.rs
->>> @@ -0,0 +1,19 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +
->>> +#![allow(missing_docs)]
->>> +
->>> +use super::{AllocError, Allocator, Flags};
->>> +use core::alloc::Layout;
->>> +use core::ptr::NonNull;
->>> +
->>> +pub struct Kmalloc;
->>> +
->>> +unsafe impl Allocator for Kmalloc {
->>> +    unsafe fn realloc(
->>> +        _ptr: Option<NonNull<u8>>,
->>> +        _layout: Layout,
->>> +        _flags: Flags,
->>> +    ) -> Result<NonNull<[u8]>, AllocError> {
->>> +        panic!();
->>
->> Does `build_error!()` also work? If yes, then I would prefer that.
->=20
-> Probably, but it also probably doesn't matter too much. A later patch in =
-the
-> series replaces this with a `Cmalloc` implementation and type aliases all=
- kernel
-> allocators (e.g. `Kmalloc`) to it.
+> >                         if (server_walker == client_walker)
+> >                                 return false;
+> >
+> >                         return true;
 
-What prevents you from doing the `Cmalloc` patch here? `build_error!`
-probably doesn't work, since we probably allocate in rusttest, right?
+...add this without the curly braces:
 
----
-Cheers,
-Benno
+return server_walker != client_walker;
 
+> >                 }
+> >                 client_walker = client_walker->parent;
+> >                 server_walker = server_walker->parent;
+> >         }
+> >         return false;
+> > }
+> 
+> I think adding something like this change on top of your code would
+> make it more concise (though this is entirely untested):
+> 
+> --- /tmp/a      2024-08-06 22:37:33.800158308 +0200
+> +++ /tmp/b      2024-08-06 22:44:49.539314039 +0200
+> @@ -15,25 +15,12 @@
+>           * client_layer must be a signed integer with greater capacity than
+>           * client->num_layers to ensure the following loop stops.
+>           */
+>          BUILD_BUG_ON(sizeof(client_layer) > sizeof(client->num_layers));
+> 
+> -        if (!server) {
+> -                /*
+> -                 * Walks client's parent domains and checks that none of these
+> -                 * domains are scoped.
+> -                 */
+> -                for (; client_layer >= 0; client_layer--) {
+> -                        if (landlock_get_scope_mask(client, client_layer) &
+> -                            scope)
+> -                                return true;
+> -                }
+> -                return false;
+> -        }
+
+This loop is redundant with the following one, but it makes sure there
+is no issue nor inconsistencies with the server or server_walker
+pointers.  That's the only approach I found to make sure we don't go
+through a path that could use an incorrect pointer, and makes the code
+easy to review.
+
+> -
+> -        server_layer = server->num_layers - 1;
+> -        server_walker = server->hierarchy;
+> +        server_layer = server ? (server->num_layers - 1) : -1;
+> +        server_walker = server ? server->hierarchy : NULL;
+
+We would need to change the last loop to avoid a null pointer deref.
+
+> 
+>          /*
+>           * Walks client's parent domains down to the same hierarchy level as
+>           * the server's domain, and checks that none of these client's parent
+>           * domains are scoped.
+> 
 
