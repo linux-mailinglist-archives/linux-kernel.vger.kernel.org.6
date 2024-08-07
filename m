@@ -1,149 +1,117 @@
-Return-Path: <linux-kernel+bounces-278397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 188C794AFB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:29:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EDFF94AFB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBC92283009
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:29:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F51C1C219F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9300213BC35;
-	Wed,  7 Aug 2024 18:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8683E13D262;
+	Wed,  7 Aug 2024 18:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="gAS1Gu4q"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZfBypa4c"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDC12C6BB;
-	Wed,  7 Aug 2024 18:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3F963CB
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723055362; cv=none; b=tGQvMpjNPsPJMez2yygabZ348Ml/HSrAT6qzPikXK5U8Wvrn4T6Cg/5hCr3F3lkadSHIMdnK8qnvtTABZHQo2K39qmUIxjMm65een4Ecqv7U83wXBoRU3g5a87u6/iIYSnbjeCdNgWT+l+fsvF4rYRYZn0pGxA8G6s9o/yAm5e0=
+	t=1723055383; cv=none; b=RnVjdbJS56INdw1LkNCAEYiX6HCqXNtKvUILccmKr2bDY8Llb6GKMnTAnKQd8cc+KD37nu2UpzSR9Kn/66TxzclJkZ/Twd/sTqQcsnjhOa/zxMRQ+Wk8x20k/zvp9OLJPDzGGYXpGObC8zMNb9b5SKnQG7IGB5ZS5fl63Apn1AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723055362; c=relaxed/simple;
-	bh=hymLWoyV7ht6ypbp/U4Xl6MRVpEFOPRbV+1LTvu/f9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FwT0AbaLs73PKkRI7tFOFWeezuy6bG2qEjWOi2BBPAtbBB04745RpmlgV9EGMD5fO1xVO/KSSj2NtZ7BKz6g5EKSQc1bAcMzEwHLwfmhkzCXoFguxyudSa6ewM06r+Hpy6N53VGwrGTGRwdv6Wq/HGKbZMRqEjY9bM2ZwQ+gkZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=gAS1Gu4q; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Z7pgQwVDo65YP6uPtDpNzmw1a9FUYGQ17ingsCWikoc=; b=gAS1Gu4q4PHuMhob6d7Hj6LTFb
-	6bFvpKvpgSKkrgY6gZGykTR27h87vvzZ40oKz9sV9lxa7/xxK3PlEibTJ3qgAa2xsxVahT3FhqG+M
-	AdLn4RSBmqErl9dw3S464i8Eod54HC4r4mNbeHjonw60SnFI15jMJZrPcnmXdpA//85B7J7kMtyNJ
-	cbMKXM+7Z3uGHLFCSCqbFG46fpKlizHbk89SmxkUz57MKGrRzQHTceUDiJRAiKDWAk5Oh7orw7O0n
-	xf6ipnQmQcyb7R9BDULly8+ZUwAb0c5aTbrUAFxDv6n3/Zt0+0NCYjgxJecfL3RMdCc5RSmn9+WIT
-	UjBMTeFQ==;
-Received: from [2001:9e8:9f8:5201:6f0:21ff:fe91:394] (port=55800 helo=bergen)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1sblPK-00AK7q-7c;
-	Wed, 07 Aug 2024 20:29:10 +0200
-Date: Wed, 7 Aug 2024 20:29:05 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH] kbuild: avoid scripts/kallsyms parsing /dev/null
-Message-ID: <ZrO88YnT8vg5oQGz@bergen>
-References: <20240807181148.660157-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1723055383; c=relaxed/simple;
+	bh=x0Gh5dUsX+OKIN85uHpwP2suPY7Lk0xxfxy9XFiU05A=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=i7vHIfBZpwPUf+Lt3DvMhi1FDHnYWgmGz+HSZ/K641SVRRx/v35jFDvy1vqztwwOHgS+jiuuk00faquz0zMO8cPNsssDMMUA47tJOzsEVABNjVaSUg/LHpK0o2ubVE+E8qWLkCC2H7OSLoS6wR9gH3ij/sA21wpH/PyUdC4hZw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZfBypa4c; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723055381;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=iuEaMCr3ZjxEalj9opHIoSUEzllr1XxNMoFfZ/TmzCw=;
+	b=ZfBypa4cwhlRiFE08QqxmAbK+N7F1+PB7s0cy52b5iEXJr8Y1SQWwi6L44KxCVTxH4J2P0
+	IUNvRvyC11m4kjW9rhhKN6i4e8iFRELHXIn5oKgSIwHzUvxBmrenQkg5svOskLIehj8W/L
+	ipjcOqz9E2Z7fQXi2mrYNEE4h8QbX5g=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-398-QkwZ5qnCORuhPJNyCio-rg-1; Wed,
+ 07 Aug 2024 14:29:39 -0400
+X-MC-Unique: QkwZ5qnCORuhPJNyCio-rg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D77B51955F0D;
+	Wed,  7 Aug 2024 18:29:36 +0000 (UTC)
+Received: from localhost (unknown [10.22.32.137])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 75B9A19560A3;
+	Wed,  7 Aug 2024 18:29:35 +0000 (UTC)
+Date: Wed, 7 Aug 2024 15:29:34 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: LKML <linux-kernel@vger.kernel.org>,
+	linux-rt-users <linux-rt-users@vger.kernel.org>,
+	stable-rt <stable-rt@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Carsten Emde <C.Emde@osadl.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Daniel Wagner <daniel.wagner@suse.com>,
+	Tom Zanussi <tom.zanussi@linux.intel.com>,
+	Clark Williams <williams@redhat.com>,
+	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
+	Jeff Brady <jeffreyjbrady@gmail.com>,
+	Luis Goncalves <lgoncalv@redhat.com>
+Subject: [ANNOUNCE] 5.10.223-rt115
+Message-ID: <ZrO9DhtFiajWqT5w@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="m7D6HnzGoX8PnQSC"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240807181148.660157-1-masahiroy@kernel.org>
-X-Operating-System: Debian GNU/Linux 12.6
-Jabber-ID: nicolas@jabber.no
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+Hello RT-list!
 
---m7D6HnzGoX8PnQSC
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm pleased to announce the 5.10.223-rt115 stable release.
 
-On Thu 08 Aug 2024 03:03:00 GMT, Masahiro Yamada wrote:
-> On macOS, getline() sets ENOTTY to errno if it is requested to read
-> from /dev/null.
->=20
-> If this is worth fixing, I would rather pass an empty file to
-> scripts/kallsyms instead of adding the ugly #ifdef __APPLE__.
->=20
-> Fixes: c442db3f49f2 ("kbuild: remove PROVIDE() for kallsyms symbols")
-> Reported-by: Daniel Gomez <da.gomez@samsung.com>
-> Closes: https://lore.kernel.org/all/20240807-macos-build-support-v1-12-4c=
-d1ded85694@samsung.com/
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
->=20
->  scripts/link-vmlinux.sh | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-> index f7b2503cdba9..41c68ae3415d 100755
-> --- a/scripts/link-vmlinux.sh
-> +++ b/scripts/link-vmlinux.sh
-> @@ -219,7 +219,8 @@ kallsymso=3D
->  strip_debug=3D
-> =20
->  if is_enabled CONFIG_KALLSYMS; then
-> -	kallsyms /dev/null .tmp_vmlinux0.kallsyms
-> +	truncate -s0 .tmp_vmlinux.kallsyms0.syms
-> +	kallsyms .tmp_vmlinux.kallsyms0.syms .tmp_vmlinux0.kallsyms
->  fi
-> =20
->  if is_enabled CONFIG_KALLSYMS || is_enabled CONFIG_DEBUG_INFO_BTF; then
-> --=20
-> 2.43.0
->=20
->=20
+This release is just an update to the new stable 5.10.223
+version and no RT specific changes have been made.
 
-Thanks!  I definitely support moving special MacOS support from source=20
-code into scripts and Makefiles.
+You can get this release via the git tree at:
 
-Might you want to add a comment to truncate, to prevent accidental=20
-attempts to revert/refactor this?
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+  branch: v5.10-rt
+  Head SHA1: 8f0c430ef27fe8f996d85ae3ddfc71f643fd5a8a
 
-Kind regards,
-Nicolas
+Or to build 5.10.223-rt115 directly, the following patches should be applied:
 
---m7D6HnzGoX8PnQSC
-Content-Type: application/pgp-signature; name="signature.asc"
+  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
 
------BEGIN PGP SIGNATURE-----
+  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.223.xz
 
-iQIzBAABCAAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAmazvPAACgkQB1IKcBYm
-Emk6UhAAxb9yy+rWy/BcJtl8533FQ4kFHrm9ddEVOQnctWSilpuMba3gP2Kf1gy8
-8zVdq57XKg4zmJk2qySS46Og0hbl3Fo6967I+ZIXJCMPxc9V787h+75UJsLdTKzk
-9bDMVT2PSBk1LMRB6rK9y0G1IuheafU6roozFQr+x7+DfSelw1ShYD7/Zmgv90EZ
-vQLCQDLlg0vlYkqvcecedKMIU0OISXn+csvEho6ukeVpIDzHCuSw2L39Af6argdf
-r6L8Gta96qIhDxHoesNcWZxLH52mQotUMKBoDnto+Rom2o+uOL3Q/o/54Q0qQoQQ
-5EBdlkDkcrziToe1g2VCL0Lt6+Tn2jCKuOfdIPVaV/xa8vtmJRL5Wv6xyCNw1zYh
-bGlF+C/eVr8YZ5vBgnyUdtSTlNDx/4QtF8X05jRYRc+wHO1tUV2g3Mr18+6ULtbo
-yoaDZHJV8T7MCD1IZXvMxJ9GX5EV1hRCdrCScxFoIyXG2Q6n4pOXoSrKAqeqL77F
-qsIkjuTwkS14OEbzSlwfBIUZfCrxpMz9LZNhoVOevif5AwJiowyltsBYpcySBeUK
-IwUJ1DZoLCkMLpH2t+8It271qVhYSv/y3ETwGE/5YSBzUMOdEBsONS7gBXNdBLaB
-eYjf3fMuvMbmRCluEw3BgoCRbQJCR7yEEXqiQMns5wthndukiTE=
-=Dq6u
------END PGP SIGNATURE-----
+  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.223-rt115.patch.xz
 
---m7D6HnzGoX8PnQSC--
+Signing key fingerprint:
+
+  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Luis
+
 
