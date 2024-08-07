@@ -1,58 +1,64 @@
-Return-Path: <linux-kernel+bounces-278220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3641A94AD90
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:05:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD26294AD93
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4BF0282BA3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:05:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74FD91F22614
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC8D1428F3;
-	Wed,  7 Aug 2024 16:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8085143891;
+	Wed,  7 Aug 2024 16:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0tqa4vR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9esigVt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632BF1422BF
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8AFD14375A;
+	Wed,  7 Aug 2024 16:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723046583; cv=none; b=X+HtGn+iyZBuMIKzV+RWKP4OTVgWws1AK9ollF2xwnoeiBxLvtTw1rB+fTZj1PFPuh/sx/XxRDsAkhNef3z319SvOcjJ3JekkcQa4lRawRD2SPHo+7HmBEHjcZHDkbDSQe5mBOBsk5dP71PW8gNL28SV8iKls5k+oWFq1sfTHsU=
+	t=1723046587; cv=none; b=Vuko3T7EBZk+rLiLYJRKRd2RcZzM09gZt8RnEsYeHZVmdHWs731DZNspsJ7dx/qMvJfaKIVoBFz766Ot9XjNNyVLRwhwDIM1JqjkSTTnd0L5sj1o8pcPLSNxlVvuJTuDRirzq0KGRQUUxcp/sCdgXIjNfBrocL1ThfiXOK9Yyoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723046583; c=relaxed/simple;
-	bh=SK/q9IX8+ZNrXySOpPmzKAM8VwetiutydeoRgKiyPao=;
+	s=arc-20240116; t=1723046587; c=relaxed/simple;
+	bh=ZmzCkFGiO4uVOjClN5Ffq3kFJzGfD03UONhdrDRJsTk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MYaojNr1D/reCmQEoRwn43CEw2LfHF3fl0xBLw6K41KIWowIfitasQOWKs2BhcgWUOEQucf0/LuENa1sKKEDHN2DCxxn8yNRHfuZbLELsPt3H2qd6xdhJZ0XMOzxzhbJyrR01ATH/krIDaJTKmf6WnjtSDWzaPJrZzyqa+/1aCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0tqa4vR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F7BDC4AF0D;
-	Wed,  7 Aug 2024 16:03:00 +0000 (UTC)
+	 MIME-Version; b=pEwoqNdiSMww/phz3cyPpVrOagYl8uuEPOi50gRwPqva0YnqpY2DuhGdR9FXvAvrA7fM9xhdUi+XDRuWWjkG00x8vinZkXJ30J32OSLNPaq5EGZMO0GDnjK5XA2yHoYwBMbB4CdW9yzK9ZFV0V2qa7K3DQIMLgMJODOeI5ed1+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9esigVt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B64BC4AF0E;
+	Wed,  7 Aug 2024 16:03:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723046583;
-	bh=SK/q9IX8+ZNrXySOpPmzKAM8VwetiutydeoRgKiyPao=;
+	s=k20201202; t=1723046586;
+	bh=ZmzCkFGiO4uVOjClN5Ffq3kFJzGfD03UONhdrDRJsTk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=I0tqa4vREUqleGdV5pz1r+3P8GP3DGNCYbuiIbQoCnqf8v7lCCPwF8WzdJXttqRnD
-	 jiZer64nx31xK+LJfvcwyZV8TEqXi12vnJOTri7FSJI5yxJDy6Qp5jvKo1RXkH05FA
-	 R1wQkE1/FP6a4ktvGL/JxmVaPfVwcceMmp6aLks8JR1CbSM9QAyGyxA/M3WvD87bI6
-	 yGefvdko26oXnAA+UtM1oRww+601YYqnKrfnAkJNSL+9fbioWnDF6B673/op8BPSxA
-	 R7i1+mwAfCx3fDOof7NkFbUKL1BRxoK9wM9gBAoWHhKaFUnCQWYOI/BYH9lkrW7Nm6
-	 791Wkwsp4bmJQ==
+	b=u9esigVtaNkWaPmmPvQ6OxFME/PuYU8prUzvVEQ/DiH4Ak6Pojoi+lLOfQtPX3vPM
+	 t3/arDejOOyBdaKNAxEJ0Z0hjwhMCDGLKdUbPQGNRyAH8nQRnXCSE9MbhRo3Lm5PXX
+	 w9v0xh44sRaqnxgqyTf3WU5wFaTfBbLIUgLIg7hB6wDRbBQGZEJjOzyQs3RGEbV2xv
+	 5gTZM9Iu7uXB/xQrTrQXhUmLN2bvwensqNmNXFEoQmOy84l0NOC9GS7gvu9mbMg4zn
+	 hphW3nif5vh4tAu4LUPva9fU/XGSfy6f8Oe2BKcudPpxCRWO6wvhlD2JfCoT75Yi9T
+	 heeFkQmGbt8hw==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <kees@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 10/19] net: pktgen: Use kthread_create_on_node()
-Date: Wed,  7 Aug 2024 18:02:16 +0200
-Message-ID: <20240807160228.26206-11-frederic@kernel.org>
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michal Hocko <mhocko@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	linux-mm@kvack.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	rcu@vger.kernel.org
+Subject: [PATCH 11/19] kthread: Make sure kthread hasn't started while binding it
+Date: Wed,  7 Aug 2024 18:02:17 +0200
+Message-ID: <20240807160228.26206-12-frederic@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240807160228.26206-1-frederic@kernel.org>
 References: <20240807160228.26206-1-frederic@kernel.org>
@@ -64,37 +70,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use the proper API instead of open coding it.
+Make sure the kthread is sleeping in the schedule_preempt_disabled()
+call before calling its handler when kthread_bind[_mask]() is called
+on it. This provides a sanity check verifying that the task is not
+randomly blocked later at some point within its function handler, in
+which case it could be just concurrently awaken, leaving the call to
+do_set_cpus_allowed() without any effect until the next voluntary sleep.
 
+Rely on the wake-up ordering to ensure that the newly introduced "started"
+field returns the expected value:
+
+    TASK A                                   TASK B
+    ------                                   ------
+READ kthread->started
+wake_up_process(B)
+   rq_lock()
+   ...
+   rq_unlock() // RELEASE
+                                           schedule()
+                                              rq_lock() // ACQUIRE
+                                              // schedule task B
+                                              rq_unlock()
+                                              WRITE kthread->started
+
+Similarly, writing kthread->started before subsequent voluntary sleeps
+will be visible after calling wait_task_inactive() in
+__kthread_bind_mask(), reporting potential misuse of the API.
+
+Upcoming patches will make further use of this facility.
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- net/core/pktgen.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ kernel/kthread.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/net/core/pktgen.c b/net/core/pktgen.c
-index ea55a758a475..b80b2704588c 100644
---- a/net/core/pktgen.c
-+++ b/net/core/pktgen.c
-@@ -3883,17 +3883,14 @@ static int __net_init pktgen_create_thread(int cpu, struct pktgen_net *pn)
- 	list_add_tail(&t->th_list, &pn->pktgen_threads);
- 	init_completion(&t->start_done);
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index f7be976ff88a..ecb719f54f7a 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -53,6 +53,7 @@ struct kthread_create_info
+ struct kthread {
+ 	unsigned long flags;
+ 	unsigned int cpu;
++	int started;
+ 	int result;
+ 	int (*threadfn)(void *);
+ 	void *data;
+@@ -382,6 +383,8 @@ static int kthread(void *_create)
+ 	schedule_preempt_disabled();
+ 	preempt_enable();
  
--	p = kthread_create_on_node(pktgen_thread_worker,
--				   t,
--				   cpu_to_node(cpu),
--				   "kpktgend_%d", cpu);
-+	p = kthread_create_on_cpu(pktgen_thread_worker, t, cpu, "kpktgend_%d");
- 	if (IS_ERR(p)) {
- 		pr_err("kthread_create_on_node() failed for cpu %d\n", t->cpu);
- 		list_del(&t->th_list);
- 		kfree(t);
- 		return PTR_ERR(p);
- 	}
--	kthread_bind(p, cpu);
++	self->started = 1;
 +
- 	t->tsk = p;
+ 	ret = -EINTR;
+ 	if (!test_bit(KTHREAD_SHOULD_STOP, &self->flags)) {
+ 		cgroup_kthread_ready();
+@@ -540,7 +543,9 @@ static void __kthread_bind(struct task_struct *p, unsigned int cpu, unsigned int
  
- 	pe = proc_create_data(t->tsk->comm, 0600, pn->proc_dir,
+ void kthread_bind_mask(struct task_struct *p, const struct cpumask *mask)
+ {
++	struct kthread *kthread = to_kthread(p);
+ 	__kthread_bind_mask(p, mask, TASK_UNINTERRUPTIBLE);
++	WARN_ON_ONCE(kthread->started);
+ }
+ 
+ /**
+@@ -554,7 +559,9 @@ void kthread_bind_mask(struct task_struct *p, const struct cpumask *mask)
+  */
+ void kthread_bind(struct task_struct *p, unsigned int cpu)
+ {
++	struct kthread *kthread = to_kthread(p);
+ 	__kthread_bind(p, cpu, TASK_UNINTERRUPTIBLE);
++	WARN_ON_ONCE(kthread->started);
+ }
+ EXPORT_SYMBOL(kthread_bind);
+ 
 -- 
 2.45.2
 
