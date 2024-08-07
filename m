@@ -1,135 +1,189 @@
-Return-Path: <linux-kernel+bounces-278113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC8794AB33
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:04:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F85494AB4C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 093BB1C21ECD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:04:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 555862817E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06C512A177;
-	Wed,  7 Aug 2024 15:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0598212F588;
+	Wed,  7 Aug 2024 15:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ceitQJsN"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aP9NnCxR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8078723CE;
-	Wed,  7 Aug 2024 15:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C2878C67;
+	Wed,  7 Aug 2024 15:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723043006; cv=none; b=IPH4iFQcOiQ9SqHhFsLxPsdfTM0e6Sq5PcEbHQimaQV0b3L+tP1KG5i6Hgkxm37cCSd+Xk3FyutZcqrxp8By5sRdPNc2JBkznySTGlgPlyOA2QoN+HfwMNdiIdrfK8hcBX+ben8Hn6kdwSbahVg+jtKd3B1p2tWgkZvQ3IVuW34=
+	t=1723043051; cv=none; b=a0zya9PrABJMKsFKM7xJMrgkUop2gapVxDeVNWhxP+izJHsiVOjRBtn04C3FVXtdD0yjv8gxI7Twe3eLkdpt8bYk/Ys+PNgh5ZfWtqDRzAUPR3F4b4Vngw71g+d4eBeSNz/ZVuckPDDCAEg2pM4tGn/AiIVu9kbCr/UTYu+nY8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723043006; c=relaxed/simple;
-	bh=nRMrw4V9Pr41+Lv5ihVF8n+cyXHutqNgOrphUFs46B8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NzYEqTC7Ctmk90OekPm1TskR7eGboZ6jngEswcuDoxmLsN7fiwZ024BGHIWqeAQTNwp5tnDxTfJoVWXvM8RhvGMn3fxuoFRv2QZF64UYNzwVnH7wle5VzWHfBwthXAO2JUZyNQVE3h1V2HfYuS8OozHOKCv27kb+O8dGVWwPP0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ceitQJsN; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f149845d81so23509611fa.0;
-        Wed, 07 Aug 2024 08:03:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723043003; x=1723647803; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nRMrw4V9Pr41+Lv5ihVF8n+cyXHutqNgOrphUFs46B8=;
-        b=ceitQJsNoEVsRSGNmaWvfIV3Dic7UF7N2uzAVz88/s5o2vBEcRU1/c0MVrlwoPpnwJ
-         FjVIFVFL0eX0NhL6dgqMlnCYbHAHcHojZ1X+7q9nPwmLQuDw9Z7y/hjT5TS0qEurnKC0
-         BayQFA21XMOlPG7HKjfHLn1+rk3Ll5BYNkS7bDEdkX7Sbx3DDNgxYGdbL38lsh8Ucy4W
-         w0yikD5UbiqAnlTIoPY4MQArNmXFqVyIa5z54HRcLAlnEMw+RWk8F/JgQz6tS2oype6/
-         tlVwv/T76XIDtYn0lIvekYpqEm8W+L9W3e638+0LRAP5aP0dqz4iaB4WwpBwxjk0xdtD
-         jvmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723043003; x=1723647803;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nRMrw4V9Pr41+Lv5ihVF8n+cyXHutqNgOrphUFs46B8=;
-        b=nT82RclxLF0iAv/KsUsUcWPrsCN2cZaGYeMhRDIL9SAi1PcIBCWvzhu6QvUsJFVIup
-         nGPsLAwImqrkIfEed44qWo/BvSVAEKeqx/S9IE93GtiSg7Qs4rLV6sNkhcSqTR05mZzP
-         wUyDJT34LxSkN+mCqUYGmjJ6ZGYAFf1q4pMHftbrW8NC5ItzYb6BDuj8ugJqLy0OpIVv
-         hx59wYt6gJiypiuCk3apMBvoPu4KKF+JWKwUetrIw/a9DuC4IxiaMMAMS0PNnaLIEyQZ
-         dn0Doc0k0aWz5ySaqxmkNLohyZ8w95Oi/XxyHUegAm5I/zY7jPmbzwn+wiDTlSrgYxph
-         I6NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUY/A4nRuYiWHAlyCrLvDctDWJGXbKKUwsGz4mVTekGHRo48w+i+AkFrCKs/qFw1xHSDBiPqrbHjQX9ETbDNRyWJiYnXle+PwqFXf835M4OA4uboaCk9XdU7C1dgJatZ6MY+gGVnFbGzMo6Ta9l
-X-Gm-Message-State: AOJu0Yzuez0qyP33qp77ZOR7SdJWYJ21CvCvIP8NWiGx4gBmDFv2Ql/s
-	8jAACA2TzDZ/rZBpmy60dwmjHLVqWEWQIj1HrQC2vswvsxwBalvlp+pwwmBIVX2MY/++2C3UAOE
-	3d13MWAUxH8aeFl30YSV4igtfWrA=
-X-Google-Smtp-Source: AGHT+IFHVvEQ0ERmGM9Z9oiubHndmesWcONaitsAYkyBKiSKbwUzIkD4KlYucskdiUerAijqBlVinTDKhFuBgTdgOcc=
-X-Received: by 2002:a2e:2c11:0:b0:2ef:243b:6dce with SMTP id
- 38308e7fff4ca-2f15aa84ec7mr114696851fa.10.1723043002139; Wed, 07 Aug 2024
- 08:03:22 -0700 (PDT)
+	s=arc-20240116; t=1723043051; c=relaxed/simple;
+	bh=AW4oJxgDMSIGfvbiUjJMohsaTkK3nVI+Ow/6ORgTGqo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EqhGNsP1FgnyZ2yDv0LjwKGVIX0riX53LjDbfIYgN9rs4fMihg33EzOf76FKzfSUPFbtSQxu4LiqgucABJ7L5MN5WQYGKctiJqNjfer3AHIx0aG3NIWQhQbfeN3spghfWP3FcLjnm1c1CIAs4S59OPbpdKi2Lf/vjqZF97dwBXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aP9NnCxR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4778DxN5002857;
+	Wed, 7 Aug 2024 15:04:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ROn9BmIOv923LfjYstHIrvLocxc6Z7XaPrBDmX4KWWQ=; b=aP9NnCxRmnimuSqK
+	c0Dgvt3hIyWLhjtqRkNOKaqr86QKIMvnAger9CEfpSxukWwWcq9AJpm2JX72g74x
+	su4GtRuHRmD87Hs2XnLyDuZWaSlq3SFNrcExvyTkorgbw9ar6ICa6jvYTe+Au8T8
+	he/4kBO8fAGYcC4BrDfHB96C2CV6xSYH7bjLX6OCxEMvLSwImS0M4iBmV8pWHjJR
+	2Lm/Ganss4A6/l5lxf2/o/Q+Vn5OTcJGg0GLyAgPQ97Ot4XwVkA3phLF9yegFM1v
+	1kP6C4Holt/31sag5KJ4CyU4UHJ1p8p0Q+B/BrJochut+hhnFi+CQowiWgr6bZdZ
+	/xhqdA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sdu9axea-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 15:04:03 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 477F42Kt010601
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 7 Aug 2024 15:04:02 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
+ 08:03:57 -0700
+Message-ID: <7c03280f-908d-435d-acef-b6bf4f865029@quicinc.com>
+Date: Wed, 7 Aug 2024 23:03:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731-hci_qca_fixes-v1-0-59dad830b243@linaro.org>
- <20240731-hci_qca_fixes-v1-3-59dad830b243@linaro.org> <1723fdc3-33b9-4518-8f25-161ab59ecf21@notapiano>
- <CAMRc=MdSH6n=QKwWnT9zNaBito34t+BpCufQDjnAOaeC5iuD+Q@mail.gmail.com>
-In-Reply-To: <CAMRc=MdSH6n=QKwWnT9zNaBito34t+BpCufQDjnAOaeC5iuD+Q@mail.gmail.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Wed, 7 Aug 2024 11:03:09 -0400
-Message-ID: <CABBYNZ+1XpSDvt41zEYYQ4AraCucOM7FDSVhhkGNsCgr9-hc6g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] Bluetooth: hci_qca: fix a NULL-pointer derefence at shutdown
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, Marcel Holtmann <marcel@holtmann.org>, 
-	Wren Turkal <wt@penguintechs.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/13] media: qcom: camss: csiphy: Add an init callback to
+ CSI PHY devices
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>,
+        <rfoss@kernel.org>, <todor.too@gmail.com>, <mchehab@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <quic_eberman@quicinc.com>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+References: <20240709160656.31146-1-quic_depengs@quicinc.com>
+ <20240709160656.31146-5-quic_depengs@quicinc.com>
+ <6dfc2c79-fc6d-4eed-bf3f-94396130cb4f@linaro.org>
+ <fafda7d5-3853-428a-b0eb-9993fc2d4f56@linaro.org>
+ <4426c0e0-f877-409c-b2d2-a5aac5e8c645@linaro.org>
+ <1226d080-d1fc-4e06-ac81-84e93cb314e0@quicinc.com>
+ <8f935a7d-87b5-479c-a98e-c95671dbe259@linaro.org>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <8f935a7d-87b5-479c-a98e-c95671dbe259@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: NE36SZdm1nl2VGnKMJk62g9sNeGw72lo
+X-Proofpoint-GUID: NE36SZdm1nl2VGnKMJk62g9sNeGw72lo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_11,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 mlxlogscore=709 suspectscore=0 malwarescore=0
+ clxscore=1015 phishscore=0 spamscore=0 bulkscore=0 mlxscore=0
+ impostorscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408070106
 
-Hi Bartosz, Nicolas,
+Hi Bryan,
 
-On Wed, Aug 7, 2024 at 3:53=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
+On 8/7/2024 10:04 PM, Bryan O'Donoghue wrote:
+> On 07/08/2024 14:08, Depeng Shao wrote:
+>> Hi Vladimir,
+>>
+>> On 8/5/2024 5:26 AM, Vladimir Zapolskiy wrote:
+>>> Hi Bryan,
+>>>
+>>> On 8/1/24 11:16, Bryan O'Donoghue wrote:
+>>>> On 01/08/2024 00:43, Vladimir Zapolskiy wrote:
+>>>>>> +    ret = csiphy->res->hw_ops->init(csiphy);
+>>>>>
+>>>>> Here.
+>>>>
+>>>> What name would make more sense to you ?
+>>>
+>>> according to the implementation the .init() call just fills some data in
+>>> memory, so I believe this could be handled at build time, if it's done
+>>> carefully enough...
+>>>
+>>
+>> This camss-csiphy-3ph-1-0.c is reused by many platforms, the old 
+>> platforms have same CSI_COMMON_CTR register offset, their offset are 
+>> 0x800, but some new platforms may have different CSI_COMMON_CTR 
+>> register offset, for example, the CSI_COMMON_CTR register offset is 
+>> 0x1000 in sm8550, then we need to add new file to support the new 
+>> csiphy HW, e.g., camss-csiphy-3ph-2-0.c, so Bryan asked me to develop 
+>> the CSIPHY driver based on his changes, then we just need few code to 
+>> enable new CSIPHY.
+>>
+>> Regarding the hw_ops->init interface, since it fills HW register 
+>> configurations and HW register offset, then maybe, it also can be 
+>> called as HW operation.
+>>
+>> And looks like we can't move it to camss-csiphy.c since it does 
+>> platform specific operation and it is related to the registers.
+>>
+>> Please feel free to share other comments if you don't agree with it. 
+>> Thanks.
+>>
+>>
+>> Thanks,
+>> Depeng
+> 
+> So, I agree the phy init data could be obtained via resource structs 
+> but, rather than add yet more patches to this series, I'd say we can 
+> make the move to a separate resource struct pointer at a later date.
+> 
+> Lets drop this patch and @Depeng we can then do
+> 
+
+> +    regs->offset = 0x800;
+> 
+> media: qcom: camss: csiphy-3ph: Use an offset variable to find common 
+> control regs
 >
-> On Wed, Aug 7, 2024 at 12:44=E2=80=AFAM N=C3=ADcolas F. R. A. Prado
-> <nfraprado@collabora.com> wrote:
-> >
-> > On Wed, Jul 31, 2024 at 05:20:50PM +0200, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > > Unlike qca_regulator_init(), qca_power_shutdown() may be called for
-> > > QCA_ROME which does not have qcadev->bt_power assigned. Add a
-> > > NULL-pointer check before dereferencing the struct qca_power pointer.
-> > >
-> > > Fixes: eba1718717b0 ("Bluetooth: hci_qca: make pwrseq calls the defau=
-lt if available")
-> > > Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > Closes: https://lore.kernel.org/linux-bluetooth/su3wp6s44hrxf4ijvsdfz=
-bvv4unu4ycb7kkvwbx6ltdafkldir@4g7ydqm2ap5j/
-> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Hi,
-> >
-> > I just noticed we're still hitting this issue in mainline (saw it on th=
-e
-> > mt8183-juniper platform in KernelCI). I see this commit was merged 6 da=
-ys ago to
-> > bluetooth-next, but it seems there wasn't a pull request with this fix =
-yet to
-> > include it in 6.11. I'm wondering if it's still going to be sent.
-> >
-> > Thanks,
-> > N=C3=ADcolas
->
-> The patches are in next so I don't see why they wouldn't be sent upstream=
-.
->
-> Moving Luiz and Marcel to To: to make sure they see this message.
 
-I was on a business trip last week, will prepare the pull request later tod=
-ay.
 
---=20
-Luiz Augusto von Dentz
+Do you mean only drop "[PATCH 04/13] media: qcom: camss: csiphy: Add an 
+init callback to CSI PHY devices"?
+
+
+[PATCH 05/13] media: qcom: camss: csiphy-3ph: Move CSIPHY variables to 
+data field inside csiphy struct
+Do you mean this is still needed? Just don't move the code from 
+csiphy_gen2_config_lanes to csiphy_init, right?
+
+
+[PATCH 06/13] media: qcom: camss: csiphy-3ph: Use an offset variable to 
+find common control regs
+The offset change is also needed, just need to add the offset for 
+different platform in csiphy_gen2_config_lanes .
+
+Please correct me if my understanding is wrong. Thanks.
+
+> As a bonus that's one less patch for this series which @ 13 patches is 
+> already large.
+> 
+> ---
+> bod
+
+Thanks,
+Depeng
+
 
