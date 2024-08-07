@@ -1,141 +1,167 @@
-Return-Path: <linux-kernel+bounces-278054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E3F694AA25
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:32:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BE7294AA34
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9E16B2BE95
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:31:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A279281279
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5191179B7E;
-	Wed,  7 Aug 2024 14:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFD37BAF7;
+	Wed,  7 Aug 2024 14:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IBGBM403"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b6bd+2AY"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E2A339B1;
-	Wed,  7 Aug 2024 14:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B351D2B9A1;
+	Wed,  7 Aug 2024 14:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723041079; cv=none; b=CGiJErIdxfqw3O2vNZFn0uMruX8wl0QWKwclztEJ2sQl9CVxmtDRpHlLSsvRqWjdpbr2nHUUM5D88kPEij/mwQbpRE+ZXEZGDqc/obv6eHYHoygYq2P5XBegBfr1iRZI5rAlUOG6RUd+DN5jRA92D2Bc76ju0EoXPTqZW4WLRes=
+	t=1723041252; cv=none; b=r/QGkQtu5RWcYy4f3RkOjt+Y6VmPROHnelbBitB73F/ZdSUfOPbVC/OKjuZ/1oXZT1qVRHtZ4ayqgHbHIYEuMEXMEhx4goHBO20LwL8Xmp+I9BZRr/hOGT/v/AaNNCjJuUekTiMGOn3HzaHt0unoAv1qXFEeYddaNXP9tJIDpfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723041079; c=relaxed/simple;
-	bh=cxTU1D6c0kRGYNTYsw/HcNCvx+qua9So1XJ+sb5d45k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WrxtwnucLxa4p/M9wsNodGl1KL5Qb/o3hz5h68fhxmdpYwXY3Lm6shDQ1mHTU1ppP+aZCGktpWRQ37b5v5SbUVCVDxrBSW1cb1uwM1UUXHf4uqT3RZ3Oz/OSZ4FCofmEqndbgxDtLu1ddaTzK1CMb3UWFHM6bvp+YSFL1HD8jeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IBGBM403; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so1356565b3a.1;
-        Wed, 07 Aug 2024 07:31:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723041077; x=1723645877; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lm6qhwqKoFxy+V0aw7PJqQZ53pl3pN22qzvw1DoD/Gk=;
-        b=IBGBM403l1c0IQwgRCYghUydY/Sw6izdcIOQAhZixBtKlhmkWboSSNQ2y9kNldki+N
-         YPwcPT0gByWq4tpxa2JFR6oBvDiHxK+sStZ1KlRiIYK06pnAruqMYAEJ/vWtIKBDVvbJ
-         sfubfem67+dwHz6COWRTDAlvQdIR6i19T9EooT0RG0oTULMR1S0ASw+K6X7j9SDjOr/P
-         geJL2xXyrmLAR1qdvd7GY9I6ZK6V0ssPsFLBu6rNNxJKQUIceBacVwl9ZTpvGrSGy9AP
-         pJEXicCbMAsMk4h4HG7q//iGJwHmr7G1jZoHFuzwEkqnDZvOdBsw42uxyBS8FdJO3pEd
-         AS7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723041077; x=1723645877;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lm6qhwqKoFxy+V0aw7PJqQZ53pl3pN22qzvw1DoD/Gk=;
-        b=H0o7wOzdhe3narQ9lCxTiNyLjDISb2S7MB84dXWJDunQ7o60NcOR3UKzWt4UVtvNw8
-         0N5KfeCbTyvhjYUXMEVFhJpn0IQyI/GbdaHzBuSz825upol2jhYVkuNzQkcFBuwX8HJc
-         yQDEP8B3cUUkaT1tFFEXxkiyA3/U8eTwqwrXWxssUKVugbUuRHF50kT2IuHCR6arDVUD
-         DotHMlMI+dHIFSPL2VQAJZoscfb4ARq+SYCv8v1YWn8i9zFIuP3Fh+tLb9CUVZN2lXww
-         XS/ud+CJSpJp7yp8fRFkByMFckolWEo5Y4aFcemdFYSzzq45k5JUyx4QlziFMmEDAgTt
-         RgnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHhArQihnPSUwfCCLV+E3Ro4nZgGKcXtoU+nfv0qL/45hESHYOTXut1ZhyRSS9vWIV4RHGAf2a6FZn+t/ab3tbewHD7gBqru58A9ztHHyUGn5eVcZrkFJd2nhaarw13C0O
-X-Gm-Message-State: AOJu0YxxRsbPJALQSDNGOP1Nl5G+3GU7gEXEyAngx8TOfCCqxRVhqmQ/
-	HdAa3LQU5rIrzjPPb7RsBkK9IsnFnRK6HXvsIsWHGGAwF8+yBEIr
-X-Google-Smtp-Source: AGHT+IH6NryRyDMofSB/jsIwYGXdt07dU5k6dgv5xCjHoK7kFcldevahcJ0egT+7YJZWTt11eKqL3A==
-X-Received: by 2002:a05:6a00:2190:b0:710:4d4b:1af with SMTP id d2e1a72fcca58-7106cf993cdmr25750332b3a.7.1723041077501;
-        Wed, 07 Aug 2024 07:31:17 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ecdffe4sm8420667b3a.128.2024.08.07.07.31.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 07:31:17 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: martin.lau@linux.dev
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH bpf-next] bpf: remove __btf_name_valid() and change to btf_name_valid_identifier()
-Date: Wed,  7 Aug 2024 23:31:10 +0900
-Message-Id: <20240807143110.181497-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723041252; c=relaxed/simple;
+	bh=WqkhNT4x7/zQlM4AhmFxq4Q+ZY4U6nP+ET/fhr6SeRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L6ZJSGr+DmnqQ91Fxv8Rfv9MXIs4F4kn8b9DK+8pNIZFkn4ew+u1U1OdC6W1GaZnVI3lDksA+XNS7pi4hYtyxSW4FuvGbclxjogXmWFQztPljTmxA5Tj7CCPbCrrJMeQ7Brp/OCAgwSM0NVPkrRz+6naxmB/gGaueqsKF6gKYxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b6bd+2AY; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jkNguGjcftL7vwINObLdbFR92eHWY0kd9agR1JH7w6w=; b=b6bd+2AYpZJxUv+Pl0+aUW9ZdA
+	ilPREVFTAntdp7SYyHawfVlrWu9oa7IHIfMO5V+7Z+b4VrS2ZfNLgfZBwSvRaRCy67DLaTIIZ2YXI
+	8rlaRX7BWS3Z7WE6vWo2Bg+LRH/nqyczCM0fx01lYC8s2xL9bk6vJ/2KDhfBX1bHeVxa4Z/L9Ct93
+	6t5xMXboQVgxMNg0lpVNnChlPtzGGPnnfoPaBmlZ0rZotJ7+3khUYKrOJaI0FIHHs0Y6uEmCurd0p
+	CjgPhlb/jUBV3U+GXdbu/pPkMKdcDV2ZJ/nM2GuCVfobyLNR9UGMbA+3B/nEEt+yP1UPE70n9Knuf
+	PHdMhTWQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sbhjs-00000006dRC-1A60;
+	Wed, 07 Aug 2024 14:34:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 65FB830033D; Wed,  7 Aug 2024 16:34:07 +0200 (CEST)
+Date: Wed, 7 Aug 2024 16:34:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Chandan Babu R <chandanbabu@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	xfs <linux-xfs@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org
+Subject: Re: Are jump labels broken on 6.11-rc1?
+Message-ID: <20240807143407.GC31338@noisy.programming.kicks-ass.net>
+References: <87o76f9vpj.fsf@debian-BULLSEYE-live-builder-AMD64>
+ <20240730132626.GV26599@noisy.programming.kicks-ass.net>
+ <20240731001950.GN6352@frogsfrogsfrogs>
+ <20240731031033.GP6352@frogsfrogsfrogs>
+ <20240731053341.GQ6352@frogsfrogsfrogs>
+ <20240731105557.GY33588@noisy.programming.kicks-ass.net>
+ <20240805143522.GA623936@frogsfrogsfrogs>
+ <20240806094413.GS37996@noisy.programming.kicks-ass.net>
+ <20240806103808.GT37996@noisy.programming.kicks-ass.net>
+ <875xsc4ehr.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <875xsc4ehr.ffs@tglx>
 
-__btf_name_valid() can be completely replaced with 
-btf_name_valid_identifier, and since most of the time you already call 
-btf_name_valid_identifier instead of __btf_name_valid , it would be 
-appropriate to rename the __btf_name_valid function to 
-btf_name_valid_identifier and remove __btf_name_valid.
+On Wed, Aug 07, 2024 at 04:03:12PM +0200, Thomas Gleixner wrote:
 
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- kernel/bpf/btf.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+> > +	if (static_key_dec(key, true)) // dec-not-one
+> 
+> Eeew.
 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 520f49f422fe..674b38c33c74 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -790,7 +790,7 @@ const char *btf_str_by_offset(const struct btf *btf, u32 offset)
- 	return NULL;
- }
- 
--static bool __btf_name_valid(const struct btf *btf, u32 offset)
-+static bool btf_name_valid_identifier(const struct btf *btf, u32 offset)
- {
- 	/* offset must be valid */
- 	const char *src = btf_str_by_offset(btf, offset);
-@@ -811,11 +811,6 @@ static bool __btf_name_valid(const struct btf *btf, u32 offset)
- 	return !*src;
- }
- 
--static bool btf_name_valid_identifier(const struct btf *btf, u32 offset)
--{
--	return __btf_name_valid(btf, offset);
--}
--
- /* Allow any printable character in DATASEC names */
- static bool btf_name_valid_section(const struct btf *btf, u32 offset)
- {
-@@ -4629,7 +4624,7 @@ static s32 btf_var_check_meta(struct btf_verifier_env *env,
- 	}
- 
- 	if (!t->name_off ||
--	    !__btf_name_valid(env->btf, t->name_off)) {
-+	    !btf_name_valid_identifier(env->btf, t->name_off)) {
- 		btf_verifier_log_type(env, t, "Invalid name");
- 		return -EINVAL;
- 	}
---
+:-) I knew you'd hate on that
+
+> Something like the below?
+> 
+> Thanks,
+> 
+>         tglx
+> ---
+> @@ -250,49 +250,71 @@ void static_key_disable(struct static_ke
+>  }
+>  EXPORT_SYMBOL_GPL(static_key_disable);
+>  
+> -static bool static_key_slow_try_dec(struct static_key *key)
+> +static bool static_key_dec(struct static_key *key, bool dec_not_one)
+>  {
+> +	int v = atomic_read(&key->enabled);
+>  
+>  	do {
+>  		/*
+> +		 * Warn about the '-1' case; since that means a decrement is
+> +		 * concurrent with a first (0->1) increment. IOW people are
+> +		 * trying to disable something that wasn't yet fully enabled.
+> +		 * This suggests an ordering problem on the user side.
+> +		 *
+> +		 * Warn about the '0' case; simple underflow.
+>  		 */
+> +		if (WARN_ON_ONCE(v <= 0))
+> +			return v;
+> +
+> +		if (dec_not_one && v == 1)
+> +			return v;
+> +
+>  	} while (!likely(atomic_try_cmpxchg(&key->enabled, &v, v - 1)));
+>  
+> +	return v;
+> +}
+> +
+> +/*
+> + * Fastpath: Decrement if the reference count is greater than one
+> + *
+> + * Returns false, if the reference count is 1 or -1 to force the caller
+> + * into the slowpath.
+> + *
+> + * The -1 case is to handle a decrement during a concurrent first enable,
+> + * which sets the count to -1 in static_key_slow_inc_cpuslocked(). As the
+> + * slow path is serialized the caller will observe 1 once it acquired the
+> + * jump_label_mutex, so the slow path can succeed.
+> + */
+> +static bool static_key_dec_not_one(struct static_key *key)
+> +{
+> +	int v = static_key_dec(key, true);
+> +
+> +	return v != 1 && v != -1;
+
+	if (v < 0)
+		return false;
+
+	/*
+	 * Notably, 0 (underflow) returns true such that it bails out
+	 * without doing anything.
+	 */
+	return v != 1;
+
+Perhaps?
+
+> +}
+> +
+> +/*
+> + * Slowpath: Decrement and test whether the refcount hit 0.
+> + *
+> + * Returns true if the refcount hit zero, i.e. the previous value was one.
+> + */
+> +static bool static_key_dec_and_test(struct static_key *key)
+> +{
+> +	int v = static_key_dec(key, false);
+> +
+> +	lockdep_assert_held(&jump_label_mutex);
+> +	return v == 1;
+>  }
+
+But yeah, this is nicer!
 
