@@ -1,135 +1,129 @@
-Return-Path: <linux-kernel+bounces-277646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF3094A43D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:23:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D8594A440
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB9731C215AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:23:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75F631C2182B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF6C1D0DC1;
-	Wed,  7 Aug 2024 09:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFA11CCB46;
+	Wed,  7 Aug 2024 09:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2Gw/vFI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="gSTdqmA8"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8872F1CCB2B;
-	Wed,  7 Aug 2024 09:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7125F811E2
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 09:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723022577; cv=none; b=A+kJbrGKtuqHabXZdtIM8USKlDepE751o2TJjaJ6V5JNPhOTZoeQD+sgZlx0Y2A+XQK08BLMFhPZV3yHLvUWdfL22uWaA7ze8Wv3IAGRJkzlx5FpFeRptIYP8/NHvTzg7GUxyn70fZ5Z25jjFx74Qsf+wKn0rleSzxomzp9icaQ=
+	t=1723022630; cv=none; b=a6QTS9dv73sBHxLc9ebFsB81KlLyZpo+uPhc9nxo1lCOkc76jAjZ7XU0nvm1Fk48YINladmE4VHdJyyuFWd7FxgfGjC6xAJsAz7RBhwKZ4GxQ6o9j0wH49RnVfYlffG83zZzWVCCbMjn1D0upfnHmubt+55JeGXSB9O4EqYpZ2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723022577; c=relaxed/simple;
-	bh=MEpgyBqa/MtgNTX9ShLP9jGGGWgu9mr/N/3Yti8fh08=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WPki9r8UocDwwrBjkpVISAXxloF9KEgDoTduOsYP8NRVDeEc45o95wPyvcRc8bryVtgbOwdfoniwBiyIS0Yx/yYRVcKCuv9g8QJNmllXFUHcRvG0Y26kbSI5QGYjv7kf3LADqNBNX5tp3VRBgqPWAPaHoj2iaurI+z4Z3B7vOrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2Gw/vFI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 174CDC32782;
-	Wed,  7 Aug 2024 09:22:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723022577;
-	bh=MEpgyBqa/MtgNTX9ShLP9jGGGWgu9mr/N/3Yti8fh08=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O2Gw/vFIijALA40hfRKDrBgTnq/ZDrjV4p/At88kDYZ4G45SBskTerSRKyjCsR3UF
-	 xTZmhGq8mfrn2yywEVUceofm1VudXnjvPAZj2Uv35FUYtX3bnC/xXIQueURIBidDsP
-	 LPSr3+6J0ssD+i7l+n+Q2q2Ji80eN0Zb4T7kaB/gFmJ2M1BisWxL5pQYAgnwMpQ6gJ
-	 2jTWlO/4RUxVM9IeOxyjt3yMi7SSghdwPkdzWSGaGMub3LiFKd6Pps5bdhzpFyWt5P
-	 Y2BfNi2267t7SX69eYCYibKNi388zxZcQm8IxFO3B+tcRtoBwVarC+hPqB5fqvXzhx
-	 pR7x+gM24gwQQ==
-Message-ID: <811ac81c-9220-4918-a3f8-d52519a367b0@kernel.org>
-Date: Wed, 7 Aug 2024 11:22:50 +0200
+	s=arc-20240116; t=1723022630; c=relaxed/simple;
+	bh=l5Mj/BasNGyIDd8XRpsbwqmxFm681e6x+uIFItW6sOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wg1jGL2WOHN6CfJsj0TUkyQI18b7JeHPz4ARNguawrQ6NGlX4tY8mtr3Qn57WMboRNad9O9tom/2RE0OhINBaabXcSlMjUjDo6i97oVZ9by3F6IZigNaTBZtH50TtrGn9KKxZ8hMvSVYZNzH/NSxYVdQPiMeYAsjDiAy8P9VO5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=gSTdqmA8; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fd640a6454so13574855ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 02:23:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1723022629; x=1723627429; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0W3ELwTgJqrVr9YXSIirH10n9Jhjm2A/ho7Bv2qO5pI=;
+        b=gSTdqmA8y2pfuGf2cFpw+4G/tuw1+be6E7TnnfZPfQ5l/fxa5Pei9mDIsGZjfNcbVm
+         25MvP67eeqSVYiiacJYFDanSNSJ7QTTEu3pyjcE5i+t9Iw4KCn5ZrXzxNaWq4yITGp3F
+         V2DR0Q5ukWgr7CceieDrIWiLknMzYAkmnw1uyMkuTvq8AjHbqDHgCYINZ7QDOenIbVNc
+         mKoo0Lc/rFWjHxnYLttu/1dqt84qIC1Cx/Rvh/zyGRv8imtqaqZnXDHft+aRruLNgnQs
+         KY9VPH4S0s5VEpHEhu+8u5WBmbwcsao0o5+XNeWniWULBaGXvxRsk/tWEY6oD6u5vCfL
+         ugWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723022629; x=1723627429;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0W3ELwTgJqrVr9YXSIirH10n9Jhjm2A/ho7Bv2qO5pI=;
+        b=J8Iqm1iVQyupMoFDbzQyaAOblxvucjtMB6hr4nxFytFQt4dww+Pwbr9rJAq5LUGu+R
+         hyjHqUjuNqk/2iD3ps9tBNE6de4W5xdPXOOlVq9gSO70oqzrU2h9Sop4uUxaSogLuU6p
+         tCjkMAJC9sUYS3MmhOGzt/1tuBn/IiAM7ihbmoToBQa4mOJF4C7FMWSuV2hC2fgyD47N
+         s9JE44lqDu68pAx3rybkTCD8FZo0kAi6++x3zbsLIquehhTEuM0xR+WRwd33dG2NnwfV
+         MO/XIToLi7ZEdVdWg5jovimY+Nf1xQrJH+fx5f0hiXuxo6nNrWg90bYZowLKXEsXICfy
+         YKQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXnMz5HStXVbUEV9N40MC+jbqj6ej4rzd53SC8U7tyswzjOSZphttc4OAoRHH3F2mLkCRZJ7w78SNHMp6Fr9zFrhcda1q7y1qrqKl3s
+X-Gm-Message-State: AOJu0YzX0oqQaF5GC25BrSzRxHDKlj5YeqvCgQFPRuEK04WXKonXUnMq
+	r/Wpr9V9eDurESa2ag7UT01lO6AUJm49DB31Spc2MOQvEd25PkRU/Hn7d41hT90vqSLb1bIenCM
+	AUvk4WA==
+X-Google-Smtp-Source: AGHT+IH+LveGfKWKMUa68Hj8gRwcrWvlHYa2Pnf6BOphdfXnSgszfHvPeUra7j0FqX/u6iQlXjUmSg==
+X-Received: by 2002:a17:903:1247:b0:1f9:f018:6973 with SMTP id d9443c01a7336-1ff574a1e32mr185937235ad.51.1723022628595;
+        Wed, 07 Aug 2024 02:23:48 -0700 (PDT)
+Received: from sunil-laptop ([106.51.198.16])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f2734dsm102294715ad.41.2024.08.07.02.23.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 02:23:48 -0700 (PDT)
+Date: Wed, 7 Aug 2024 14:53:42 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 2/2] serial: 8250_platform: fix uart_8250_port initializer
+Message-ID: <ZrM9HlzTjX0MjbM5@sunil-laptop>
+References: <20240807075751.2206508-1-arnd@kernel.org>
+ <20240807075751.2206508-2-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/10] Add minimal Exynos8895 SoC and SM-G950F support
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240807090858.356366-1-ivo.ivanov.ivanov1@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240807090858.356366-1-ivo.ivanov.ivanov1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807075751.2206508-2-arnd@kernel.org>
 
-On 07/08/2024 11:08, Ivaylo Ivanov wrote:
-> Hi folks,
+Hi Arnd,
+
+On Wed, Aug 07, 2024 at 09:57:44AM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> This series adds initial SoC support for the Exynos 8895 SoC and also
-> initial board support for Samsung Galaxy S8 phone (SM-G950F), codenamed
-> dreamlte.
+> The first element in uart_8250_port is a structure, so initializing
+> it to 0 causes a warning on newer compilers:
 > 
-> When sending out the V1 series it turned out that I had sendemail.from
-> enabled for some reason. I'm really sorry for the inconvenience caused by
-> that.
+> drivers/tty/serial/8250/8250_platform.c: In function 'serial8250_platform_probe':
+> drivers/tty/serial/8250/8250_platform.c:111:40: error: excess elements in struct initializer [-Werror]
+>   111 |         struct uart_8250_port uart = { 0 };
 > 
-> The Exynos 8895 SoC is also used in S8 Plus (dream2lte), Note 8 (greatlte)
-> and Meizu 15 Plus (m1891). Currently DT is added for the Exynos 8895 SoC
-> and dreamlte, but it should be really easy to adapt for the other devices
-> with the same SoC.
+> Use the modern empty {} initializer instead that works on all
+> supported compilers.
 > 
+> Fixes: d9e5a0ce2f16 ("serial: 8250_platform: Enable generic 16550A platform devices")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/tty/serial/8250/8250_platform.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
+> index c9ef988d58b3..2a3765334843 100644
+> --- a/drivers/tty/serial/8250/8250_platform.c
+> +++ b/drivers/tty/serial/8250/8250_platform.c
+> @@ -108,7 +108,7 @@ void __init serial8250_isa_init_ports(void)
+>  static int serial8250_platform_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> -	struct uart_8250_port uart = { 0 };
+> +	struct uart_8250_port uart = { };
+Thanks! I was not sure about this. So, I sent a patch to use memset just
+couple of hours ago. I sent different fix for other ACPI_PTR issue as
+well. But I think your fixes are better.
 
-No, no no. One big patchset per 24h. You got fast feedback not to send v2.
+Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
 
-Implement all comments you already received.
-
-Best regards,
-Krzysztof
-
+Thanks!
+Sunil
 
