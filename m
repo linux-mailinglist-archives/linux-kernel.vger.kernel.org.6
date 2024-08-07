@@ -1,149 +1,115 @@
-Return-Path: <linux-kernel+bounces-277317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E96949F32
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:33:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7993949F37
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23472880F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:33:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42361B24BC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8915192B97;
-	Wed,  7 Aug 2024 05:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E3D192B8D;
+	Wed,  7 Aug 2024 05:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XGonyJ6X"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZxaMKZHH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCDB1922CD;
-	Wed,  7 Aug 2024 05:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA747194AF3;
+	Wed,  7 Aug 2024 05:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723008824; cv=none; b=HKkYHIMs32gLt/cism0IWd5bYjSCY36165xxXIXbkIq2y1dWZNiM1RmIPP4eHyFpUbq/JkF7+VEdhp9enHDT+zHt9fLbSt6JB0Lv/IbMypr54lKWk/bg0M/cOH3nQLm//KfRzqEpcYTUl1+r131/qH8+jKIPn7xl3Ct3JvygNOg=
+	t=1723008920; cv=none; b=ExObfoiCwEG/IzOsb251atMmeH4Hw9fIFGt0oW47K3ooQWwLLTfCL5T3Q3vGBXmqV1o2E0B7nw3F+1tcmLgAipgYOiPDIlwH8gN9XNcOW59epNCUWqEJg8tP9paCq9AzP0F4EnQHesRxDNJxKtw/ZClNwj6GuyiI7Xl5Q1L6rJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723008824; c=relaxed/simple;
-	bh=8cqCOcubney2ExlB6qalaPiCIXXl+Hi9oZ/IGf2LFH8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Nh0vawCxtzlNuWwyjx3vbFC1Z0114HkGNjyvgfaLZX6ZP2R8kfbQ2F1KOVaQ0hGfI0t6S9psbtyUXEijERSLA5H0CRXJifGTdPxHxO/UpwT7TNVbr8Zli5doT2i6Gm/YbWUYlkp2VeRF7T6r5cqkg8kPkEgBGGFXO9sUAonG2Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XGonyJ6X; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4775XZQp021692;
-	Wed, 7 Aug 2024 00:33:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723008815;
-	bh=UqP/Mn+qe0l/Bk4LShUp7zWxlQ3sZIa6pTWZ82c1mxo=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=XGonyJ6Xoh6EXWge3+DqcXhcqiuCvQU2YZ34so9fbjuQXrVp2h8MPGm01/NWlv5sJ
-	 VPJE7Kta9TUG621B4SoGdqynP4aBGzwOd2tSXi91MbcX6mIm8Fel097DoK6Uv9MuLv
-	 LZ1BZ2TtxhzdimvKBEkBXNkHaFjfo09iLHrj1MJE=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4775XZMP127221
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 7 Aug 2024 00:33:35 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
- Aug 2024 00:33:34 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 7 Aug 2024 00:33:34 -0500
-Received: from [172.24.227.36] (a0497641-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.36] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4775XUt2024626;
-	Wed, 7 Aug 2024 00:33:30 -0500
-Message-ID: <8a910e2f-aaf2-40cd-8131-a1a2531a12c8@ti.com>
-Date: Wed, 7 Aug 2024 11:03:29 +0530
+	s=arc-20240116; t=1723008920; c=relaxed/simple;
+	bh=XxaRfb147WUAGq/iTa0dnyUrGYwHVGmi7LHML9J7s4E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TdJYkgHKJdquPGyagT5SP2ECHFGaUQkUIhNG+gXsvO0nqoCbQxr7brrTOPgVcO3Nig5HZvhIz71qnLefH0QWBnFfHqiuXMOJLRHlUic0Aq+Q6youJbHSRfHBAsaay05LAWebIOOxF8z8lCqQ0gybYUCjJiliAj7B2xSJj2KYxXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZxaMKZHH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 476H6RIu007179;
+	Wed, 7 Aug 2024 05:35:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=7dA2ZJrxDvaX9bd/oJzXFA
+	1HGZ12rQ9T6TmKtmvIJX4=; b=ZxaMKZHHJUxGLTGvMQ2n4D89PhuTcTgNhZ/8bW
+	Upod9eBm6IY0u0VKAXddcJWG/b+EILYK+CHCW+Ojcs0DY5/l0ER4LPllai4yBiGk
+	TXxxLhOzdft1TpY0bflJ7ZYAJTnUwb4x8t1gWawTZZ7hmXdZzpPWntIyDfevdPaK
+	C85KWON373tfXKBczaOdC1PUk5ALLaUiolZql/gSrDbXUseAFxMialYpyzOv9xbI
+	5LGXPiXYiAtpgfDJFUmoFN4pU4tcwMn/vVvckzoTh3+y7kc+iv782/VsCRG1644S
+	H8afJ7YOG5Lc7nA8tNXl3J/RF87hSiU7Zdue2F1Nn7sYFqJw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40scx6sq5d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 05:35:06 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4775Z5pE018281
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 7 Aug 2024 05:35:05 GMT
+Received: from hu-depengs-sha.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 6 Aug 2024 22:35:00 -0700
+From: Depeng Shao <quic_depengs@quicinc.com>
+To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>
+CC: <quic_depengs@quicinc.com>, <inux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+Subject: [PATCH v1 0/2] Add sm8550 CAMSS core dtsi
+Date: Wed, 7 Aug 2024 11:03:58 +0530
+Message-ID: <20240807053400.1916581-1-quic_depengs@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] arm64: dts: ti: k3-j721s2*: Add bootph-*
- properties
-To: Manorit Chawdhry <m-chawdhry@ti.com>, Nishanth Menon <nm@ti.com>
-CC: Andrew Davis <afd@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Aniket Limaye <a-limaye@ti.com>,
-        Udit Kumar
-	<u-kumar1@ti.com>, Beleswar Padhi <b-padhi@ti.com>,
-        Siddharth Vadapalli
-	<s-vadapalli@ti.com>
-References: <20240730-b4-upstream-bootph-all-v3-0-9bc2eccb6952@ti.com>
- <20240730-b4-upstream-bootph-all-v3-1-9bc2eccb6952@ti.com>
- <bcd96f9f-54bd-4793-b9f1-04a011f2df82@ti.com>
- <20240806150700.uw4xdanjr4ypdvm3@rasping>
- <20240807052628.jclbmw4zs72jm6km@uda0497581>
-Content-Language: en-US
-From: Neha Malcom Francis <n-francis@ti.com>
-In-Reply-To: <20240807052628.jclbmw4zs72jm6km@uda0497581>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: HqPOOlSBp6CzIgoDV9JXJDW8k0NmFozS
+X-Proofpoint-GUID: HqPOOlSBp6CzIgoDV9JXJDW8k0NmFozS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_02,2024-08-06_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 bulkscore=0 clxscore=1011 suspectscore=0 phishscore=0
+ spamscore=0 adultscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501
+ mlxlogscore=626 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408070035
 
-Hi Manorit
+The sm8550 provides Camera SubSystem hardware interface similar to
+antecedent parts sdm845 and sm8250, but different interrupt lines,
+clocks and other resources are declared.
 
-On 07/08/24 10:56, Manorit Chawdhry wrote:
-> Hi Nishanth,
-> 
-> On 10:07-20240806, Nishanth Menon wrote:
->> On 09:43-20240806, Andrew Davis wrote:
->>> On 7/30/24 4:53 AM, Manorit Chawdhry wrote:
->>>> Adds bootph-* properties to the leaf nodes to enable U-boot to
->>>> utilise them.
->>>
->>> U-Boot? Let's try to pretend like this is a generic property and
->>> just say "bootloader" :)
->>>> @@ -445,6 +446,7 @@ flash@0 {
->>>>    		cdns,tchsh-ns = <60>;
->>>>    		cdns,tslch-ns = <60>;
->>>>    		cdns,read-delay = <4>;
->>>> +		bootph-all;
->>
->> Here and elsewhere, follow:
->> 	https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n117
-> 
-> Could you tell me what are you seeing wrong? The dts-coding-style that
-> you shared doesn't tell a specific location for bootph-* properties so
-> using the generic reasoning.
-> 
-> "1. Most important properties start the node: compatible then bus addressing to
->     match unit address."
-> 
-> This is the least important property considering Linux and hence the
-> reasoning was that it should come in the last. Also, j722s and am62p
-> follow the same convention so it was taken from there only.
-> 
+This dtsi definition has been developed and validated on a AIM300 AIoT
+board, the description for this board can be found from below link.
+https://lore.kernel.org/lkml/20240618072202.2516025-1-quic_tengfan@quicinc.com/
 
-Not sure if this is what he meant, but bootph-* comes under standard/common 
-properties as per my understanding of the coding style. And status needs to be 
-at the very end if it's there (in this case it's not but just mentioning).
+The driver can be found from below link.
+https://lore.kernel.org/all/20240709160656.31146-1-quic_depengs@quicinc.com/
 
-> Regards,
-> Manorit
-> 
->>
->>
->>>>    	};
->>>>    };
->>>>
->>
->> -- 
->> Regards,
->> Nishanth Menon
->> Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Depeng Shao (2):
+  dt-bindings: media: camss: Add qcom,sm8550-camss binding
+  arm64: dts: qcom: sm8550: camss: Add CAMSS block definition
 
+ .../bindings/media/qcom,sm8550-camss.yaml     | 517 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sm8550.dtsi          | 199 +++++++
+ 2 files changed, 716 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,sm8550-camss.yaml
+
+
+base-commit: d4560686726f7a357922f300fc81f5964be8df04
 -- 
-Thanking You
-Neha Malcom Francis
+2.34.1
+
 
