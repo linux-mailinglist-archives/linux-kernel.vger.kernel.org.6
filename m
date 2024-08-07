@@ -1,189 +1,97 @@
-Return-Path: <linux-kernel+bounces-277447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC2794A196
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:24:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F23E594A199
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49970285119
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:24:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DB161F261D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECD01C7B8A;
-	Wed,  7 Aug 2024 07:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BD91C7B94;
+	Wed,  7 Aug 2024 07:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="UiREsEBy"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GA1snIiW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E201C6890
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 07:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED521C6890;
+	Wed,  7 Aug 2024 07:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723015435; cv=none; b=cn2VLhBzXCB/p5NFOd+sbmfJHmri4Db7g0aCBrphp+dwAS36/EG8aDn47U/pbVlbVllqwjRNAYbEa34iCaobbJDtGpAMByNCwIuIxesYX/cfIRPibzxosQ2CL5LcJR6T63o6Iz8E2/jl8R6j/CwO5uEqjeOTkBgVF92SE5j+HRU=
+	t=1723015457; cv=none; b=mW8YEQXL1xLiSz6mKtK/8CM9NJgAZeTf53E+szPhg9HQCGldvUvYgChDiuvc2s1/0r4RnjjSKqxbqj4e2Iv7V3QzuwacZbAQUiZ9DhIdiZ7QtD6bTQ9/qJMibfJZUtVxcabG4LdrV0yB/RgYWeNZG19EHVJ9chhWZJ1Uhc8J6C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723015435; c=relaxed/simple;
-	bh=xdGo4xSoahzawkf/UMWpDpfNeuykWh4zVfbIV78aXr4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b6PRXy5cSJ2czIzn8LwfWRw8GOF2GN4SHwm6vXGkyHDJ1EDelOLb3jNeMwUEXakDWwE4uTLw5a6D/caWv0/eM9wHzkpbGKev8ZVHaRKRoRD+ZvPs7gdhDblZbpEF6p5MpPUd2iCLpuinYKaUty0oWdItIQdLs9XLDsPGusj6ThA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=UiREsEBy; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723015431; x=1723274631;
-	bh=xxaFpg0Ze3aE/zz773LrPtPLPWXfOgXdS9SauyJpIPY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=UiREsEByLc3Xkbi86UfWyGqYHWtGWlWuGPEoKO/FEImNOI4LXISIq8TJ7C10IfSLK
-	 Hx2e/NwfHQkSsN81/mPngQKx6QHZ+Ljw0xcvTDcjI0i8G295Yzt3tMfcM/nLToIVkT
-	 6+S3y+exEc4ee4IbR0aFPIdM6fYFuY2mkcAtWZutvk8VdhCmWGveaFP1LlMfGwQ8b8
-	 vGR/jDi40MxOPhC2li6hKwllQjP0GgEM6RK9ncMaQA9FJ+i82PhZFJie8wb8LtliZB
-	 1hQ28VaKnAB0lKED1vfq4qSo2k0xWABixZ11g7DZLRL++tVVNimrxtptR6w3Mav8ey
-	 ZlSR0PK7Xl9Dg==
-Date: Wed, 07 Aug 2024 07:23:48 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 06/28] rust: alloc: implement `Vmalloc` allocator
-Message-ID: <64498fd9-b3f1-46f4-aebe-e5ff65634a86@proton.me>
-In-Reply-To: <ZrJzJyj7kej0hA0p@pollux.localdomain>
-References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-7-dakr@kernel.org> <9c144953-819d-44fa-9bb5-af6fa93a5042@proton.me> <ZrJzJyj7kej0hA0p@pollux.localdomain>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 1280b02a83101c11cf2e540fcb2f068fe473cd92
+	s=arc-20240116; t=1723015457; c=relaxed/simple;
+	bh=/1ACmVmn+d0im98aAJLAH949L5nHjlBCDiUz+YcaGYw=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=G0roEflG+TsRs5wlZ6z+KKyTWU2IlbmUBZTeScN0PPFxaF1uB3l+/7ATxD5fqulHLiWR/1kRMj9FVu74EoRRIDFPWqANSj68pi1opRPndhWGtY6vbtoqsd4bXncOW+RvZgxPYa12CcdiBFMMLHksh+A4lKXmlriydu3kWh4HO78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GA1snIiW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08C1CC32782;
+	Wed,  7 Aug 2024 07:24:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723015457;
+	bh=/1ACmVmn+d0im98aAJLAH949L5nHjlBCDiUz+YcaGYw=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=GA1snIiWGJeW2K0zNHnTIHKgRwj3cHXuukxEc1jkxmflMX/py5bm6ClUvC0ISq7Dd
+	 HIOsZ+HCd4JdIk2du5vXHlZC6GDjKqkjwVAkS/JI1GGFwLn+d7dU/R19UEiP9479Il
+	 nfJ1KC/T+f0gAShaWDbrM3WkIhkqyHKtRmMkmD0K06S1OSuvjM4FF3Lx0LdoScCRoN
+	 u+RkcvcdYTyWH49YmntHXJUQWAzipJxV0BeN4sD5YbVKYkXwBM3RNedSt3Bj7PTAfA
+	 pV5qWA/RZIYdqHoMwyDVFNTxMRrs4JfKtYCS6yw9M2yXpWAka2VlTGhpaseKsmAhAw
+	 Zy1Zwb1QQrtEQ==
+From: Kalle Valo <kvalo@kernel.org>
+To: Guillaume Nault <gnault@redhat.com>
+Cc: Simon Horman <horms@kernel.org>,  hhorace <hhoracehsu@gmail.com>,
+  johannes@sipsolutions.net,  davem@davemloft.net,  edumazet@google.com,
+  kuba@kernel.org,  pabeni@redhat.com,  linux-kernel@vger.kernel.org,
+  linux-wireless@vger.kernel.org,  netdev@vger.kernel.org,  Ido Schimmel
+ <idosch@nvidia.com>
+Subject: Re: [PATCH] wifi: cfg80211: fix bug of mapping AF3x to incorrect
+ User Priority
+References: <20240805071743.2112-1-hhoracehsu@gmail.com>
+	<20240806090844.GR2636630@kernel.org> <ZrIDQq1g6w/zO25l@debian>
+Date: Wed, 07 Aug 2024 10:24:13 +0300
+In-Reply-To: <ZrIDQq1g6w/zO25l@debian> (Guillaume Nault's message of "Tue, 6
+	Aug 2024 13:04:34 +0200")
+Message-ID: <87ttfwiyn6.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On 06.08.24 21:01, Danilo Krummrich wrote:
-> On Tue, Aug 06, 2024 at 05:00:24PM +0000, Benno Lossin wrote:
->> On 05.08.24 17:19, Danilo Krummrich wrote:
->>> Implement `Allocator` for `Vmalloc`, the kernel's virtually contiguous
->>> allocator, typically used for larger objects, (much) larger than page
->>> size.
->>>
->>> All memory allocations made with `Vmalloc` end up in `vrealloc()`.
->>>
->>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
->>> ---
->>>  rust/helpers.c                      |  7 +++++++
->>>  rust/kernel/alloc/allocator.rs      | 32 +++++++++++++++++++++++++++++
->>>  rust/kernel/alloc/allocator_test.rs |  1 +
->>>  3 files changed, 40 insertions(+)
->>>
->>> diff --git a/rust/helpers.c b/rust/helpers.c
->>> index 9f7275493365..7406943f887d 100644
->>> --- a/rust/helpers.c
->>> +++ b/rust/helpers.c
->>> @@ -33,6 +33,7 @@
->>>  #include <linux/sched/signal.h>
->>>  #include <linux/slab.h>
->>>  #include <linux/spinlock.h>
->>> +#include <linux/vmalloc.h>
->>>  #include <linux/wait.h>
->>>  #include <linux/workqueue.h>
->>>
->>> @@ -199,6 +200,12 @@ void *rust_helper_krealloc(const void *objp, size_=
-t new_size, gfp_t flags)
->>>  }
->>>  EXPORT_SYMBOL_GPL(rust_helper_krealloc);
->>>
->>> +void *rust_helper_vrealloc(const void *p, size_t size, gfp_t flags)
->>> +{
->>> +=09return vrealloc(p, size, flags);
->>> +}
->>> +EXPORT_SYMBOL_GPL(rust_helper_vrealloc);
->>> +
->>>  /*
->>>   * `bindgen` binds the C `size_t` type as the Rust `usize` type, so we=
- can
->>>   * use it in contexts where Rust expects a `usize` like slice (array) =
-indices.
->>> diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocat=
-or.rs
->>> index c6ad1dd59dd0..bb55895cbd03 100644
->>> --- a/rust/kernel/alloc/allocator.rs
->>> +++ b/rust/kernel/alloc/allocator.rs
->>> @@ -9,6 +9,7 @@
->>>
->>>  use crate::alloc::{AllocError, Allocator};
->>>  use crate::bindings;
->>> +use crate::pr_warn;
->>>
->>>  /// The contiguous kernel allocator.
->>>  ///
->>> @@ -16,6 +17,12 @@
->>>  /// `bindings::krealloc`.
->>>  pub struct Kmalloc;
->>>
->>> +/// The virtually contiguous kernel allocator.
->>> +///
->>> +/// The vmalloc allocator allocates pages from the page level allocato=
-r and maps them into the
->>> +/// contiguous kernel virtual space.
->>> +pub struct Vmalloc;
->>
->> One thing that I should also have mentioned for `Kmalloc`, do we want
->> these types to also have values? I don't think that we need them to be,
->> so we could declare them as `pub enum Vmalloc {}`.
->=20
-> What the difference? Would `pub enum Vmalloc {}` be better for some reaso=
-n?
+Guillaume Nault <gnault@redhat.com> writes:
 
-It doesn't make a huge difference, it doesn't allow you to create a
-value of type `Vmalloc` (as there are no values of that type). So
-you can't accidentally use the type where it shouldn't be used.
-If we use `pub struct Vmalloc;`, then you can do this:
+> On Tue, Aug 06, 2024 at 10:08:44AM +0100, Simon Horman wrote:
+>> + Guillaume and Ido
+>> 
+>> On Mon, Aug 05, 2024 at 03:17:42PM +0800, hhorace wrote:
+>> > According to RFC8325 4.3, Multimedia Streaming: AF31(011010, 26), 
+>> > AF32(011100, 28), AF33(011110, 30) maps to User Priority = 4 
+>> > and AC_VI (Video).
+>> > 
+>> > However, the original code remain the default three Most Significant
+>> > Bits (MSBs) of the DSCP, which makes AF3x map to User Priority = 3
+>> > and AC_BE (Best Effort).
+>> > 
+>> > Signed-off-by: hhorace <hhoracehsu@gmail.com>
+>> 
+>> Adding Guillaume and Ido as this relates to DSCP.
+>
+> Thanks. The patch looks good to me (only missing a Fixes tag).
+>
+> Just a note to hhorace: the entry for CS5 (case 40) is useless as CS5
+> is 101000. So the value of the 3 high order bits already is 5 (in case
+> you want to make a followup patch for net-next).
 
-    let a =3D Vmalloc;
+Minor clarification: cfg80211 patches go to wireless-next, not net-next.
 
-you can't really do anything with it (as there are no methods on that
-type), but it might be confusing for people.
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
->>> @@ -141,6 +153,26 @@ unsafe fn alloc_zeroed(&self, layout: Layout) -> *=
-mut u8 {
->>>      }
->>>  }
->>>
->>> +unsafe impl Allocator for Vmalloc {
->>> +    unsafe fn realloc(
->>> +        ptr: Option<NonNull<u8>>,
->>> +        layout: Layout,
->>> +        flags: Flags,
->>> +    ) -> Result<NonNull<[u8]>, AllocError> {
->>> +        let realloc =3D ReallocFunc::vrealloc();
->>> +
->>> +        // TODO: Support alignments larger than PAGE_SIZE.
->>> +        if layout.align() > bindings::PAGE_SIZE {
->>> +            pr_warn!("Vmalloc does not support alignments larger than =
-PAGE_SIZE yet.\n");
->>> +            return Err(AllocError);
->>> +        }
->>> +
->>> +        // SAFETY: If not `None`, `ptr` is guaranteed to point to vali=
-d memory, which was previously
->>> +        // allocated with this `Allocator`.
->>> +        unsafe { realloc.call(ptr, layout, flags) }
->>
->> I am a bit confused, for `Kmalloc`, you manually returned
->> `NonNull::dangling` when allocating a zero-sized allocation, but here
->> you don't?
->>
->=20
-> I do, it's the exact same implementation for krealloc(), vrealloc() and
-> kvrealloc(). That why I added the `ReallocFunc` abstraction.
-
-Oh yeah, my bad.
-
----
-Cheers
-Benno
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
