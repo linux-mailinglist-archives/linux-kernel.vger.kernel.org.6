@@ -1,155 +1,86 @@
-Return-Path: <linux-kernel+bounces-277569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B83F94A310
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:40:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C5FC94A35A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 221591F2276E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:40:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7D61C241BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C901C9DE3;
-	Wed,  7 Aug 2024 08:39:58 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F85E1D0DF1;
+	Wed,  7 Aug 2024 08:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="VeOTFGLY"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6487E22334;
-	Wed,  7 Aug 2024 08:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6523B1C9ED1;
+	Wed,  7 Aug 2024 08:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723019998; cv=none; b=nXBHUHvV5siBqR1Eb0skVS/BNtesX7GOV+AAmRgIxXtgPGuqjg7LEki+z/vdZWEPd7fUoii7xsAFihNTL7Wh1W9FlZYJijcZiA48ZSc/d7VzJC9+I1CUs6d8HNigzUO1ssCiekMRHjDx3skeGvMTaE8qX0fJygrgSW3FJ7Yvx+M=
+	t=1723020557; cv=none; b=grVHCBv9kqDgzn0DkkCRV1X2jcniHL339KBNSuT1dX80DhwjkUFTW7dBPjqMnNOYsUsoKZ7jdw9muRrIIO7gooCIp6FlGJsEx/Mf5ZNEQ87Y+gCRWmoh5D/b9VerABIBVzViloawQEbjyhDxl6oCI3srSjD2y1Hd0dTHqVJkAEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723019998; c=relaxed/simple;
-	bh=jzTnMXgFQA5iLaUC95ZNLIfjeuXrnP8ESJAhmX0zsKs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YYFEBtlEX8bCP8GGYiIqA0etZ2OhUWWMLFlGwTXWWtVG8o7BwK7xb3eJGz6062N0rjDolO+PryYUYOIWrKkbw/AfLCPEjzBqSBizmbj/JzhtAJMCq7IzOuw8fsTb2s0Ss61WzHH8tCmxbngS024SOh4lY4JYY8Eq6p752/ErKC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 997C3C32782;
-	Wed,  7 Aug 2024 08:39:56 +0000 (UTC)
-Message-ID: <c9e6ed97-bb42-465a-9bce-797adb44906f@xs4all.nl>
-Date: Wed, 7 Aug 2024 10:39:54 +0200
+	s=arc-20240116; t=1723020557; c=relaxed/simple;
+	bh=rCHPPbTWaPBj3q4qgNv6Q4boFMkM2mOM5k75QEyACsg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UJyaveSXc8xGPE4rv0yeyWxoXrtK9FXo8TeOeZRf5152RGMFkjH9o5JMvXWukCNlJDjuCrbeuHYkKZUUl4mYMEcmnddeXE2NQ0eAkBd7kGFXQd+jVMfN0n60dov3+7AI/liP47L3dS2HeUFrX4mPEH493qbSMRCs10uO6BHvjTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=VeOTFGLY; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1723020005;
+	bh=rCHPPbTWaPBj3q4qgNv6Q4boFMkM2mOM5k75QEyACsg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=VeOTFGLYwvm/ckObBN2Y+5f4cHxrZx64RCbPSkM5WdpMN3WXUR2bXeRjsECmknLaq
+	 jc785ECVLrdshK20tO5vGTspi6NJD6EVeeqzmRHCeX/13qd4zgWo0Ji4cRr79GL+rp
+	 JxzJAvP9C5ewrIkvmYV6M3r9mLwkdKExufXxhQ5M=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 7CB2366F24;
+	Wed,  7 Aug 2024 04:40:00 -0400 (EDT)
+Message-ID: <6c7ec8196fe01aa651f8b59b445b70de79137181.camel@xry111.site>
+Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART controller
+From: Xi Ruoyao <xry111@xry111.site>
+To: =?gb2312?Q?=D6=A3=BA=C0=CD=FE?= <zhenghaowei@loongson.cn>, Krzysztof
+ Kozlowski <krzk@kernel.org>, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, robh@kernel.org,  krzk+dt@kernel.org,
+ conor+dt@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name, 
+ p.zabel@pengutronix.de
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, loongarch@lists.linux.dev
+Date: Wed, 07 Aug 2024 16:39:58 +0800
+In-Reply-To: <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
+References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+	 <4d1f2426-b43c-4727-8387-f18edf937163@kernel.org>
+	 <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/3] media: videodev2: Add flag to unconditionally
- enumerate pixel formats
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, mchehab@kernel.org,
- ezequiel@vanguardiasur.com.ar
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-References: <20240731093457.29095-1-benjamin.gaignard@collabora.com>
- <20240731093457.29095-2-benjamin.gaignard@collabora.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20240731093457.29095-2-benjamin.gaignard@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 31/07/2024 11:34, Benjamin Gaignard wrote:
-> When the index is ORed with V4L2_FMTDESC_FLAG_ENUM_ALL the
-> driver clears the flag and enumerate all the possible formats,
-> ignoring any limitations from the current configuration.
-> Drivers which do not support this flag yet always return an EINVAL.
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-> ---
-> change in version 6:
-> - Change flag name.
-> - Improve documentation.
-> 
->  .../userspace-api/media/v4l/vidioc-enum-fmt.rst  | 16 +++++++++++++++-
->  .../media/videodev2.h.rst.exceptions             |  1 +
->  include/uapi/linux/videodev2.h                   |  3 +++
->  3 files changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> index 3adb3d205531..1112dc9044b2 100644
-> --- a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> +++ b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> @@ -85,7 +85,15 @@ the ``mbus_code`` field is handled differently:
->      * - __u32
->        - ``index``
->        - Number of the format in the enumeration, set by the application.
-> -	This is in no way related to the ``pixelformat`` field.
-> +        This is in no way related to the ``pixelformat`` field.
-> +        When the index is ORed with ``V4L2_FMTDESC_FLAG_ENUM_ALL`` the
-> +        driver clears the flag and enumerate all the possible formats,
+On Wed, 2024-08-07 at 16:23 +0800, =E9=83=91=E8=B1=AA=E5=A8=81 wrote:
+> The file "drivers/tty/serial/8250/8250_loongson.c" will be created in=20
+> the patch
+>=20
+> "tty: serial: 8250: Add loongson uart driver support". Is it=20
+> inappropriate to reference it here?
 
-enumerate -> enumerates
+You should add this line in the second patch then.  Separating a large
+change into multiple patches in a series is not for formalities' sake.=20
+Each patch should be logically intact on its own.
 
-> +        ignoring any limitations from the current configuration. Drivers
-> +        which do not support this flag yet always return an ``EINVAL``
-
-Drop the 'yet'.
-
-But this raises a question: should this flag only be supported by drivers
-that can actually return different format lists depending on this flag?
-
-Or can it be supported as well by a driver where this makes no difference?
-
-I'm inclined to limit it to drivers that actually can return different
-results. If nothing else, that will indicate to the application that this
-is actually possible.
-
-If we agree on that, then that should be documented as well.
-
-> +        error code.
-> +        Formats enumerated when using ``V4L2_FMTDESC_FLAG_ENUM_ALL`` flag
-> +        shouldn't be used when calling :c:func:`VIDIOC_ENUM_FRAMESIZES`
-> +        or :c:func:`VIDIOC_ENUM_FRAMEINTERVALS`.
->      * - __u32
->        - ``type``
->        - Type of the data stream, set by the application. Only these types
-> @@ -234,6 +242,12 @@ the ``mbus_code`` field is handled differently:
->  	valid. The buffer consists of ``height`` lines, each having ``width``
->  	Data Units of data and the offset (in bytes) between the beginning of
->  	each two consecutive lines is ``bytesperline``.
-> +    * - ``V4L2_FMTDESC_FLAG_ENUM_ALL``
-> +      - 0x80000000
-> +      - When the applications ORs ``index`` with ``V4L2_FMTDESC_FLAG_ENUM_ALL`` flag
-> +        the driver enumerates all the possible pixel formats without taking care
-> +        of any already set configuration. Drivers which do not support this flag
-> +        yet, always return ``EINVAL``.
-
-Drop 'yet'
-
->  
->  Return Value
->  ============
-> diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> index bdc628e8c1d6..0a9ea9686c24 100644
-> --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> @@ -216,6 +216,7 @@ replace define V4L2_FMT_FLAG_CSC_YCBCR_ENC fmtdesc-flags
->  replace define V4L2_FMT_FLAG_CSC_HSV_ENC fmtdesc-flags
->  replace define V4L2_FMT_FLAG_CSC_QUANTIZATION fmtdesc-flags
->  replace define V4L2_FMT_FLAG_META_LINE_BASED fmtdesc-flags
-> +replace define V4L2_FMTDESC_FLAG_ENUM_ALL fmtdesc-flags
->  
->  # V4L2 timecode types
->  replace define V4L2_TC_TYPE_24FPS timecode-type
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 4e91362da6da..421a30cb0c51 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -904,6 +904,9 @@ struct v4l2_fmtdesc {
->  #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
->  #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
->  
-> +/*  Format description flag, to be ORed with the index */
-> +#define V4L2_FMTDESC_FLAG_ENUM_ALL		0x80000000
-> +
->  	/* Frame Size and frame rate enumeration */
->  /*
->   *	F R A M E   S I Z E   E N U M E R A T I O N
-
-Regards,
-
-	Hans
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
