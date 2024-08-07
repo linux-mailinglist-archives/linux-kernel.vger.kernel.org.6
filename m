@@ -1,130 +1,113 @@
-Return-Path: <linux-kernel+bounces-278303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52D994AE7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:57:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65FA894AE83
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86D87285DEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:57:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 119271F222B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D30513B59E;
-	Wed,  7 Aug 2024 16:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB50213B783;
+	Wed,  7 Aug 2024 16:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iLACsGuJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CspDVK3w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A4D84D02;
-	Wed,  7 Aug 2024 16:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0862C13A3F6;
+	Wed,  7 Aug 2024 16:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723049825; cv=none; b=fZbJzokAI3151olyE62L88q6j+DOrpA84WWyPbgfR0AytY10hEMwFivGQ8cmo+IuYZJgnlVg2gyFFvFD29rJdafAyzI3SRZniVL4w47kbHCTewSvLVEqLKArHhouOhkLoX7s1VfXHfo+BKy2UCLGOzfGRt0E/gHE3JQMQJQdtLI=
+	t=1723049946; cv=none; b=QxR4oPKCeGR8KWPD/VlOv5YDzKZlAw+gJPz5lsqOAq+VTfLnM7SNAK9VudNdxUTfrh/MgXJ6rY24JEBXoPJQ4ZAG8NUIxY8EQTAyh/eWyhD86uMpcN/qJBaUMyb+2WzeJsyTOz/Y+Jyb8FQUVJ87tazNQCd0doNtr/ObNXjMKHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723049825; c=relaxed/simple;
-	bh=xDm+ivfSN/HC2ca9CTYeLvWnqKmqIYVJSNyWdx/9SYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TLrMqGdhVLQeFndOebkOgEkjotd7FMdxtQyq8Z9AEms5ipD7X4UBrf+8vz9NFhSJY12qk8XbCiu3pDNww9tVbKBUDIgLVRU9COxotdkLne3PjV3EN/OuNjlJIVMBVM3+yFXfJral6Jw8C0BYndiMlP/qnuY5bMeyMiV+MIkSpNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iLACsGuJ; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723049824; x=1754585824;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xDm+ivfSN/HC2ca9CTYeLvWnqKmqIYVJSNyWdx/9SYM=;
-  b=iLACsGuJIaIjC0FK5qQa47qG7Zj8VmE7MwDTr//YwZtbaDJi6IUDLeVS
-   jpiickJJCo8aqvI6fO3ur4+i+TAvKgDOAAMb4mdZFyMyrIEcPsmFUVhXA
-   2VCDkFq0HMB7tT0b/loK65AvZAnFBrK59l7OyHYXrNrhWaWmHbM0gGLer
-   BGxKQBipG+4opppeTZ/JUVqoUl5TBIDY82pLtdiMt2dO+7GSgzDXrc74a
-   JlBKAWB71iuWfUR7XYj86UfFUm+R8pxVtxE76V5L27MgtvsitDPbJl1Ik
-   6AxiwcSDgO6Dz3x7zQ2S7AjhgqRLk+jC8ALdPqvGccKsOdDf1xV6laSTq
-   w==;
-X-CSE-ConnectionGUID: Gr5CoyC2Q1yfTJyrT/WBSg==
-X-CSE-MsgGUID: PZ+S5ZinT+K9IDT24kKG0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="32277178"
-X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
-   d="scan'208";a="32277178"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 09:57:03 -0700
-X-CSE-ConnectionGUID: FLWJikZ0TZyuhtQlQSPiog==
-X-CSE-MsgGUID: jT9W66pUT3qz+yOP4pslIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
-   d="scan'208";a="56598375"
-Received: from yjiang5-mobl.amr.corp.intel.com (HELO localhost) ([10.124.166.194])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 09:56:59 -0700
-Date: Wed, 7 Aug 2024 09:56:58 -0700
-From: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, rafael@kernel.org, lenb@kernel.org,
-	kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: Re: [PATCH 2/7] dt-bindings: x86: Add ACPI wakeup mailbox
-Message-ID: <20240807165658.GA17382@yjiang5-mobl.amr.corp.intel.com>
-References: <20240806221237.1634126-1-yunhong.jiang@linux.intel.com>
- <20240806221237.1634126-3-yunhong.jiang@linux.intel.com>
- <ce4903f2-2a9d-45c4-bd4d-ac5165211a83@kernel.org>
+	s=arc-20240116; t=1723049946; c=relaxed/simple;
+	bh=dPEdhycVTOguP7QecWh2DLLxhHRJ4mnqR6lRY3q91o8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oTjNWdSiCEt97R7Uh0yziv54LgHHNcb472XF29T8+7Z/TbnZskx4YtezFQbHNcSg8iH6VD80fgEKdO8mz9oCaLkKt52qmhi/EBmSMFbOhErcPiPTwX3lOmwVbsK8A0e2YPRBReSWpYSaI9pidZileKA+hCXkPibKlU1MlFVwylQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CspDVK3w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 905B9C32781;
+	Wed,  7 Aug 2024 16:59:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723049945;
+	bh=dPEdhycVTOguP7QecWh2DLLxhHRJ4mnqR6lRY3q91o8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=CspDVK3wd+jRFcuLGCeShKTTd8tY+e04zAx8Y9cxjm7jKJMSUg44wQnhtjROu6/Y6
+	 /D7lNY6r1PqQoRzZhLG6nWmSmy/Pqu4rZhF6WRn3ODgnQ0QRxg+QKPfDQUrfugKl7u
+	 K9Tlb8IFGi/MtHxGpaGUEf+YXaq55OCAKF3y2pKTNyhNwZwwSi+xgmwZ8yCTjOXAJX
+	 la1s0001V4ghioc4GvSuw5l+apgiVWv05qwX5vTvSI/SN1ltea01Uk6UsY8wl5kfML
+	 /RMzhwCRCPBb5pTesnTLCey0BLJNLuNQXNWbsu2nIMEgm05+vj5rE2TRxGuqCNxrWn
+	 7/rBQq/sct6aQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Subject: [PATCH 0/3] dt-bindings: Convert and move Mediatek clock syscons
+Date: Wed, 07 Aug 2024 10:58:52 -0600
+Message-Id: <20240807-dt-mediatek-clk-v1-0-e8d568abfd48@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ce4903f2-2a9d-45c4-bd4d-ac5165211a83@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMyns2YC/x3MQQqAIBBA0avIrBtQiYquEi0GHWuoLDQiiO6et
+ HyL/x/InIQz9OqBxJdk2WOBqRS4meLEKL4YrLa17nSL/sSNvdDJC7p1wc4EarhtApGDUh2Jg9z
+ /cRjf9wNnlYZBYQAAAA==
+To: Stephen Boyd <sboyd@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Chun-Jie Chen <chun-jie.chen@mediatek.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org
+X-Mailer: b4 0.15-dev
 
-On Wed, Aug 07, 2024 at 07:57:43AM +0200, Krzysztof Kozlowski wrote:
-> On 07/08/2024 00:12, Yunhong Jiang wrote:
-> > Add the binding to use the ACPI wakeup mailbox mechanism to bringup APs.
-> 
-> We do not have bindings for ACPI. I think in the past it was mentioned
-> pretty clear - we do not care what ACPI has in the wild.
+This series converts all the Mediatek syscon bindings which are clock 
+controllers to DT schema format moving them to 'clock' directory. The 
+existing schemas in arm/mediatek/ which are clock and reset controllers 
+are also moved to 'clock' directory.
 
-Thank you for review.
-Can you please give a bit more information on "do not have bindings for ACPI"?
-We don't put the ACPI table into the device tree, but reuse some existing ACPI
-mailbox mechanism. Is this acceptable for you?
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Rob Herring (Arm) (3):
+      dt-bindings: clock: mediatek,apmixedsys: Fix "mediatek,mt6779-apmixed" compatible
+      dt-bindings: Move Mediatek clock controllers to "clock" directory
+      dt-bindings: clock: mediatek: Convert MediaTek clock syscons to schema
 
-> 
-> > 
-> > Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-> > ---
-> >  .../devicetree/bindings/x86/wakeup.yaml       | 41 +++++++++++++++++++
-> >  1 file changed, 41 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/x86/wakeup.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/x86/wakeup.yaml b/Documentation/devicetree/bindings/x86/wakeup.yaml
-> > new file mode 100644
-> > index 000000000000..8af40dcdb592
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/x86/wakeup.yaml
-> > @@ -0,0 +1,41 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +
-> > +$id: http://devicetree.org/schemas/x86/wakeup.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> 
-> This was absolutely never tested and does not look like proper bindings
-> file. This just does not work. Go to example-schema and use it as template.
-> 
-> NAK
-> 
-> Best regards,
-> Krzysztof
-Oops, I used the example-schema but apparently did something wrong. Will have a
-check.
+ .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 24 ------
+ .../bindings/arm/mediatek/mediatek,camsys.txt      | 24 ------
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      | 30 -------
+ .../bindings/arm/mediatek/mediatek,ipesys.txt      | 22 -----
+ .../bindings/arm/mediatek/mediatek,ipu.txt         | 43 ----------
+ .../bindings/arm/mediatek/mediatek,jpgdecsys.txt   | 22 -----
+ .../bindings/arm/mediatek/mediatek,mcucfg.txt      | 23 ------
+ .../bindings/arm/mediatek/mediatek,mfgcfg.txt      | 25 ------
+ .../bindings/arm/mediatek/mediatek,mipi0a.txt      | 28 -------
+ .../bindings/arm/mediatek/mediatek,vcodecsys.txt   | 27 -------
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     | 29 -------
+ .../bindings/arm/mediatek/mediatek,vencltsys.txt   | 22 -----
+ .../bindings/arm/mediatek/mediatek,vencsys.txt     | 26 ------
+ .../bindings/clock/mediatek,apmixedsys.yaml        |  2 +-
+ .../{arm/mediatek => clock}/mediatek,infracfg.yaml |  2 +-
+ .../mediatek => clock}/mediatek,mt8186-clock.yaml  |  2 +-
+ .../mediatek,mt8186-sys-clock.yaml                 |  2 +-
+ .../mediatek => clock}/mediatek,mt8192-clock.yaml  |  2 +-
+ .../mediatek,mt8192-sys-clock.yaml                 |  2 +-
+ .../mediatek => clock}/mediatek,mt8195-clock.yaml  |  2 +-
+ .../mediatek,mt8195-sys-clock.yaml                 |  2 +-
+ .../{arm/mediatek => clock}/mediatek,pericfg.yaml  |  2 +-
+ .../devicetree/bindings/clock/mediatek,syscon.yaml | 93 ++++++++++++++++++++++
+ 23 files changed, 102 insertions(+), 354 deletions(-)
+---
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+change-id: 20240807-dt-mediatek-clk-81fa6e76faac
 
---jyh
-> 
+Best regards,
+-- 
+Rob Herring (Arm) <robh@kernel.org>
+
 
