@@ -1,132 +1,139 @@
-Return-Path: <linux-kernel+bounces-277827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 120A294A70C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:37:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B2694A712
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:39:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5265FB22004
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:37:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D489B22C56
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC6C1E3CD3;
-	Wed,  7 Aug 2024 11:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5BQyklx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC0A1E4873;
+	Wed,  7 Aug 2024 11:39:15 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96ACF1B86DB;
-	Wed,  7 Aug 2024 11:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6861E2101;
+	Wed,  7 Aug 2024 11:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723030643; cv=none; b=TlYiBAV2kCHnVgwZJvs6ZDVtlTDSiPIP2KHVIa2kGPtLjVaDlLewuK4FJF/2Q0ITxXJT+G5zfG93B8zzoXs9gKXwwwxrxwdqNh+YaYqBuTwdV8d5zTpc8D44jJLaJP8rzNrWpw37wYQ0D9ZbDKFtMycQY6ZNRTfjB5wz0CyRoIo=
+	t=1723030754; cv=none; b=mvhi+g5zEJJrnp9PE0jBY1ZTqXAfr9xpFaFbLALJMjedHw9ev6EA4TLjXM508buFiOlCXqwYLmGGndIoIT8cyT2d78YRMIsoKLMDUDQ4ak0P1prA0EwbtsNgDGtvQbs+13GBeYSnyhanyqBPZvthKPkEEVj7jFr/dSlmQLFl4fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723030643; c=relaxed/simple;
-	bh=f36Eut4cpuTeN/nHR83eH313AyJ5JQ3s2RGRYRnZE2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F9zV/s5GB/DvK8J96EayTFDpPqrMAzMm4HJa0/dnCCpoZJCwtpaWwDh8pUf9qvekAqsxpQaFFPSJwDVDqUtH5UoEBYjyuW3H9tslJ1MpvTnZ+XlEhPCS/7Zn6Za60u+J9QUtHZAU6RlwBev8Wr6V1CwdyA7GgUuvxdrS3CuwkBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5BQyklx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FBAAC32782;
-	Wed,  7 Aug 2024 11:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723030643;
-	bh=f36Eut4cpuTeN/nHR83eH313AyJ5JQ3s2RGRYRnZE2U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U5BQyklxnmNN5PAXzuPelTAWieKNWfAsDmMIfL6P1mZ1nq+oy7hBxwu7BgG6CW0Cf
-	 MANwNVDDKlb+/RtVlrjpxcyVAWb8UCkDS17WsJwjB2JFDb7gsmFpSu5zEeABoAk+uh
-	 LY5lkJfGKMIYcBixGENYZT9XAqoNlArnLzpOEv4xfF5s0RE9Z1o87t/AqT/J8OKPbr
-	 7faYb3lVH4mef0qPvRQvjDjru+nbiAYdM2UuGR+qerm1kgcB1U9eTx0HDDto0dcu7/
-	 9Tgx5fzaAc+nRxG23Tn9Bf8QSWiFCRvRNda7pD9chEFE22oPcTk+lsTOwHs73W9auG
-	 ybhnGmm9Y2Lxw==
-Message-ID: <0892524d-e9c1-4b27-8622-11cd697451ea@kernel.org>
-Date: Wed, 7 Aug 2024 19:37:22 +0800
+	s=arc-20240116; t=1723030754; c=relaxed/simple;
+	bh=iWxaPO9BnrtCywje5tM/thdF9F2kH6y/xZ/ldwKobN0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=lIblUhDTvTbKbxw5fHKyV+2KEwo/Spp9jAK2A9I3lQpaU9vCdYDEjVdp/1WF4HdxNhO13Y95sC/spgoFDriCVXqKKPh+pk/Q/T6MoJ7JNzuvNSeKBf8rKfldELL14UWZM9HKvF4/FPOmf9VSctDJNy+RfCpNZtxokFvojxr6YR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wf7VQ0843z4f3jrt;
+	Wed,  7 Aug 2024 19:38:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5BABB1A0568;
+	Wed,  7 Aug 2024 19:39:07 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAXPoTZXLNmb38WBA--.25043S3;
+	Wed, 07 Aug 2024 19:39:07 +0800 (CST)
+Subject: Re: [PATCH 5/6] iomap: drop unnecessary state_lock when setting ifs
+ uptodate bits
+To: Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>
+Cc: Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ djwong@kernel.org, hch@infradead.org, brauner@kernel.org,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
+ <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
+ <Zqwi48H74g2EX56c@dread.disaster.area>
+ <b40a510d-37b3-da50-79db-d56ebd870bf0@huaweicloud.com>
+ <Zqx824ty5yvwdvXO@dread.disaster.area>
+ <1b99e874-e9df-0b06-c856-edb94eca16dc@huaweicloud.com>
+ <20240805124252.nco2rblmgf6x7z4s@quack3>
+ <20240805140023.inte2rxlhumkfvrh@quack3>
+ <ZrD0TKDHWhwiEoz_@casper.infradead.org>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <ed3c1368-766b-9a54-ec88-b0cde033775f@huaweicloud.com>
+Date: Wed, 7 Aug 2024 19:39:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] f2fs: Require FMODE_WRITE for atomic write ioctls
-To: Jann Horn <jannh@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240806-f2fs-atomic-write-v1-1-8a586e194fd7@google.com>
+In-Reply-To: <ZrD0TKDHWhwiEoz_@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-Autocrypt: addr=chao@kernel.org; keydata=
- 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
-In-Reply-To: <20240806-f2fs-atomic-write-v1-1-8a586e194fd7@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAXPoTZXLNmb38WBA--.25043S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4xWr1kXw1ftrWxGFWkCrg_yoW8ZF1kpF
+	Wjg3Z2kr4kJF4I9rnFya18J34Fk34xJw15GF1xGr12yF95uF1SgFy3tF1UuF18Gwsaga1I
+	vFyUJas7ZF1UA37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2024/8/6 22:07, Jann Horn wrote:
-> The F2FS ioctls for starting and committing atomic writes check for
-> inode_owner_or_capable(), but this does not give LSMs like SELinux or
-> Landlock an opportunity to deny the write access - if the caller's FSUID
-> matches the inode's UID, inode_owner_or_capable() immediately returns true.
+On 2024/8/5 23:48, Matthew Wilcox wrote:
+> On Mon, Aug 05, 2024 at 04:00:23PM +0200, Jan Kara wrote:
+>> Actually add Matthew to CC ;)
 > 
-> There are scenarios where LSMs want to deny a process the ability to write
-> particular files, even files that the FSUID of the process owns; but this
-> can currently partially be bypassed using atomic write ioctls in two ways:
+> It's OK, I was reading.
 > 
->   - F2FS_IOC_START_ATOMIC_REPLACE + F2FS_IOC_COMMIT_ATOMIC_WRITE can
->     truncate an inode to size 0
->   - F2FS_IOC_START_ATOMIC_WRITE + F2FS_IOC_ABORT_ATOMIC_WRITE can revert
->     changes another process concurrently made to a file
-> 
-> Fix it by requiring FMODE_WRITE for these operations, just like for
-> F2FS_IOC_MOVE_RANGE. Since any legitimate caller should only be using these
-> ioctls when intending to write into the file, that seems unlikely to break
-> anything.
-> 
-> Fixes: 88b88a667971 ("f2fs: support atomic writes")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jann Horn <jannh@google.com>
+> FWIW, I agree with Dave; the locking complexity in this patch was
+> horrendous.  I was going to get to the same critique he had, but I first
+> wanted to understand what the thought process was.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Yes, I'd like to change to use the solution as Dave suggested.
+
+> 
+>>>> Ha, right, I missed the comments of this function, it means that there are
+>>>> some special callers that hold table lock instead of folio lock, is it
+>>>> pte_alloc_map_lock?
+>>>>
+>>>> I checked all the filesystem related callers and didn't find any real
+>>>> caller that mark folio dirty without holding folio lock and that could
+>>>> affect current filesystems which are using iomap framework, it's just
+>>>> a potential possibility in the future, am I right?
+> 
+> Filesystems are normally quite capable of taking the folio lock to
+> prevent truncation.  It's the MM code that needs the "or holding the
+> page table lock" get-out clause.  I forget exactly which callers it
+> is; I worked through them a few times.  It's not hard to put a
+> WARN_ON_RATELIMIT() into folio_mark_dirty() and get a good sampling.
+> 
+> There's also a "or holding a buffer_head locked" get-out clause that
+> I'm not sure is documented anywhere, but obviously that doesn't apply
+> to the iomap code.
+
+Thanks for your answer, I've found some callers.
 
 Thanks,
+Yi.
+
+> 
+>>> There used to be quite a few places doing that. Now that I've checked all
+>>> places I was aware of got actually converted to call folio_mark_dirty() under
+>>> a folio lock (in particular all the cases happening on IO completion, folio
+>>> unmap etc.). Matthew, are you aware of any place where folio_mark_dirty()
+>>> would be called for regular file page cache (block device page cache is in a
+>>> different situation obviously) without folio lock held?
+> 
+> Yes, the MM code definitely applies to regular files as well as block
+> devices.
+> 
+
 
