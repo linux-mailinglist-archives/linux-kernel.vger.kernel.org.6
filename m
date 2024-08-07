@@ -1,126 +1,142 @@
-Return-Path: <linux-kernel+bounces-278062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380EE94AA5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:38:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD0E94AA5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2171C2112B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:38:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 027BC286537
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7802283CC8;
-	Wed,  7 Aug 2024 14:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF0882C76;
+	Wed,  7 Aug 2024 14:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLfFGb3k"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETRb7TJ+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE5782D83;
-	Wed,  7 Aug 2024 14:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF3F82862;
+	Wed,  7 Aug 2024 14:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723041429; cv=none; b=OXVUIxtEmN5eT8tCVXvYair0WTK2hdnWuabSp7PTmhUUIJGlM8TC3MaxW6IH/5kOc3ty6kxCSHp/VXaiZnz9kgCGCRKhRRyEUdeLisLiMoUC0Fajk92Zvr10V5tRua4koEnBwFj8vhU6LwiHDGSgzEqHZA+tNWS2DY2JV4+FjYA=
+	t=1723041426; cv=none; b=ffRjW59/t2ZR5On7vFmA4UiuUhNPsxEv5FdqEtwsp5jY+VlcglEyOqTm2aXNsKWfYGtqS/RfPihy242vPkQ7LA/JMAwNKYPqQ6VfhkZfyiefVerb4ivzIGQKoGxPM3aFqqMTYyRgmwMugyJrJG610zc5ndH+Y8yqOtv5VgnsgMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723041429; c=relaxed/simple;
-	bh=OvsePmij4+qC4W0XpuSnvTsV4TtAWofQcxSiTpAA81U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Iazg0Qo9WcXwW5gyhQaMWW9lxc4Q8kScsIgae9wyKBzvZzd+uqfLjZKWwICvIM0S00YjQTYMi7j5nWzaE4RjoT7AcyqTH0xw4/lKdDGdhl/Fg1aJ7m51xT7uwNV3qsK1kos9/KZ94lCwzMKH24na2h6ZZlZtOmh25j/RTOXnijo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLfFGb3k; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2cb63ceff6dso1473002a91.1;
-        Wed, 07 Aug 2024 07:37:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723041427; x=1723646227; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tuLdRBZiE9n4+MHp5PGhajsyIvVYgnsZblL4IXj+RGc=;
-        b=YLfFGb3kWldgzaEtH9CIodOR9pCFGlBBYSQg+y/UsHsCt+Ozjwtlrevl7Ae0xAoxxF
-         llC8cbWb6IafSI7wInNbjbEubmbQVizN8IKKSuxoRgCD6x3gWrE0nfF+h8iAxNi61ShV
-         TQbeSHnvRsApgbsPWIiaM0YcET1W7eJE+Z1KrKjqxh5hpeyXsBaE3QjqfJW5l2i7aOML
-         OvqA85Oo3fjP4vsStFICtf1WpU2gvFoECg0LmM22uaTd46kQWCrE3TwRqR6nDN6T+iJM
-         8vEW3xV/m2BpgK/zfXjvqc6bXD/2hFbyqtxPMw3t9j2vhQ+/z0+yaoe83haCeJggNCr8
-         HpoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723041427; x=1723646227;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tuLdRBZiE9n4+MHp5PGhajsyIvVYgnsZblL4IXj+RGc=;
-        b=vi7LHHWe2YM6SAwHMzCFFwSt1a3BQU1rT4y9muuzAQcXNYh+oasuAqS9U6BcKwdTgX
-         rZyoRLHHj98llg1X8aHqsGUKPUHkdAPv3mJ4EDREp44bYgu7KNMFVCZkiEChXATR+ZME
-         Xe6PR/1t002i1Hxwiyj7/KPKXixt+zoUijDlaSZYbYLvqFaIB0081PHA6B770iag3tCe
-         6JQrV094l4wE6Usz1v1+XfWBjYUrifvuOKFJIoYdsz791DXMuFcony71EHceb9slMIKK
-         nkbRbhtM7f+EsrhWDlev8nYN2ZhBjYy0I915vBn+Tcvah26j1o0OZpPOZRLvfKIQmmhW
-         8BWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVb+Mvzc4hDFd7P7I1kLGtbw3kgNlJvrOnENMTVlBDwQdfyYUbUyH2pHhIteUAj6mNABCFVNw/iCTFEPYzXoym2xdcj06YDBpfWvu6ytmEBl8dfn91UOfdyEUPVkoRhAQvH1vaqvA==
-X-Gm-Message-State: AOJu0YwhJPso5mlxiLXuZ/9eek4AixO2QsqMwlf2ymiqHsAZXzSgaqvY
-	BhuHI52HsEl0IoZ3y9jn7r9iBz1LOWfl67X/XhUqRF9cC86DqHj7Fn3f1VxD4oHZyI3Vv5szBZi
-	Z85YSMDzJ34e1DRku+RinYJ07I8A=
-X-Google-Smtp-Source: AGHT+IFlLvDiv/HFD9TrRoW6wsN4VyG2V9kNVMnuTY2clV+LzI2BSWPAt4ZzooRHLhiaelzqc9i1X9y7/GL61gSRECE=
-X-Received: by 2002:a17:90a:5586:b0:2d0:d82:60ae with SMTP id
- 98e67ed59e1d1-2d00d827ab8mr12757085a91.37.1723041427326; Wed, 07 Aug 2024
- 07:37:07 -0700 (PDT)
+	s=arc-20240116; t=1723041426; c=relaxed/simple;
+	bh=yglhBzKi3NcaNGNFvbg8JxrI+mqUfjwDOqRUe/qh52k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RYT8CdASyQozv19lQ4az/t+bw/il1Xi7gprye37YtowTvqH8aqxgX6aZK1ImES4aqXIbp2iBrvmMXmG2tbYPRqu+Qm64xpF58+UMETnJI5qVcC+VPqu0gN1e1JpWBRKDqVnNddbvApKFepHvzNZIDpvEQYe3/T5ValP7UwkZk8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETRb7TJ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56210C4AF19;
+	Wed,  7 Aug 2024 14:37:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723041426;
+	bh=yglhBzKi3NcaNGNFvbg8JxrI+mqUfjwDOqRUe/qh52k=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ETRb7TJ+h08Hf+sfFv3QS+DAyOIYGB+YBdE4R3ZhjQLaG+naqvrcnWCfNmMElRvi3
+	 zIBsE1vyGeG0V8YsNojSK7KimkPEqn/m1VYhPRIMnhkNFgyiQKTjYsDBJsxyh4cwSu
+	 /xFgWRu+jo75cCpFr6RGzLViXcnLZZGgkyeqKYJnU74PAwBIxNHBfIZl2+LK0K88xP
+	 zRiFgHzF5u5xF4gdFYNScPWfanJhzb+ynR5dVy29IFd5HhSE9XWx/IFV7zm72znrvr
+	 /FEfz6+Qu41bF3RM3slDJwOZXxTcNtrVMptvHftQgSim9OAr7kYFqm5dLwzbHMh+Ic
+	 yBBmzWXBS2JCA==
+Message-ID: <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
+Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+From: Jeff Layton <jlayton@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Andrew Morton <akpm@linux-foundation.org>, Mateusz Guzik
+ <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 07 Aug 2024 10:36:58 -0400
+In-Reply-To: <20240807-erledigen-antworten-6219caebedc0@brauner>
+References: <20240806-openfast-v2-1-42da45981811@kernel.org>
+	 <20240807-erledigen-antworten-6219caebedc0@brauner>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIg
+ UCWe8u6AIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1
+ oJVAE37uW308UpVSD2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOT
+ tmOdz4ZN2tdvNgozzuxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+
+ 9eiVUNpxF4SiU4i9JDfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPc
+ og7xvR5ENPH19ojRDCHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/
+ WprhsIM7U9pse1f1gYy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EB
+ ny71CZrOgD6kJwPVVAaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9
+ KXE6fF7HzKxKuZMJOaEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTi
+ CThbqsB20VrbMjlhpf8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XR
+ MJBAB/UYb6FyC7S+mQZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807090057.1334-1-thunder.leizhen@huaweicloud.com>
-In-Reply-To: <20240807090057.1334-1-thunder.leizhen@huaweicloud.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Wed, 7 Aug 2024 10:36:56 -0400
-Message-ID: <CAEjxPJ5jKHVqCD7dZUK-UYq=op6D_rC6FmnRvQ=sk9uwuQ6sUw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] selinux: add the processing of the failure of avc_add_xperms_decision()
-To: thunder.leizhen@huaweicloud.com
-Cc: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Zhen Lei <thunder.leizhen@huawei.com>, 
-	Nick Kralevich <nnk@google.com>, Jeff Vander Stoep <jeffv@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 7, 2024 at 5:02=E2=80=AFAM <thunder.leizhen@huaweicloud.com> wr=
-ote:
->
-> From: Zhen Lei <thunder.leizhen@huawei.com>
->
-> When avc_add_xperms_decision() fails, the information recorded by the new
-> avc node is incomplete. In this case, the new avc node should be released
-> instead of replacing the old avc node.
->
-> Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
-> Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+On Wed, 2024-08-07 at 16:26 +0200, Christian Brauner wrote:
+> > +static struct dentry *lookup_fast_for_open(struct nameidata *nd, int o=
+pen_flag)
+> > +{
+> > +	struct dentry *dentry;
+> > +
+> > +	if (open_flag & O_CREAT) {
+> > +		/* Don't bother on an O_EXCL create */
+> > +		if (open_flag & O_EXCL)
+> > +			return NULL;
+> > +
+> > +		/*
+> > +		 * FIXME: If auditing is enabled, then we'll have to unlazy to
+> > +		 * use the dentry. For now, don't do this, since it shifts
+> > +		 * contention from parent's i_rwsem to its d_lockref spinlock.
+> > +		 * Reconsider this once dentry refcounting handles heavy
+> > +		 * contention better.
+> > +		 */
+> > +		if ((nd->flags & LOOKUP_RCU) && !audit_dummy_context())
+> > +			return NULL;
+>=20
+> Hm, the audit_inode() on the parent is done independent of whether the
+> file was actually created or not. But the audit_inode() on the file
+> itself is only done when it was actually created. Imho, there's no need
+> to do audit_inode() on the parent when we immediately find that file
+> already existed. If we accept that then this makes the change a lot
+> simpler.
+>=20
+> The inconsistency would partially remain though. When the file doesn't
+> exist audit_inode() on the parent is called but by the time we've
+> grabbed the inode lock someone else might already have created the file
+> and then again we wouldn't audit_inode() on the file but we would have
+> on the parent.
+>=20
+> I think that's fine. But if that's bothersome the more aggressive thing
+> to do would be to pull that audit_inode() on the parent further down
+> after we created the file. Imho, that should be fine?...
+>=20
+> See https://gitlab.com/brauner/linux/-/commits/vfs.misc.jeff/?ref_type=3D=
+heads
+> for a completely untested draft of what I mean.
 
-Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+Yeah, that's a lot simpler. That said, my experience when I've worked
+with audit in the past is that people who are using it are _very_
+sensitive to changes of when records get emitted or not. I don't like
+this, because I think the rules here are ad-hoc and somewhat arbitrary,
+but keeping everything working exactly the same has been my MO whenever
+I have to work in there.
 
-> ---
->  security/selinux/avc.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-> index 7087cd2b802d8d8..b49c44869dc4627 100644
-> --- a/security/selinux/avc.c
-> +++ b/security/selinux/avc.c
-> @@ -907,7 +907,11 @@ static int avc_update_node(u32 event, u32 perms, u8 =
-driver, u8 xperm, u32 ssid,
->                 node->ae.avd.auditdeny &=3D ~perms;
->                 break;
->         case AVC_CALLBACK_ADD_XPERMS:
-> -               avc_add_xperms_decision(node, xpd);
-> +               rc =3D avc_add_xperms_decision(node, xpd);
-> +               if (rc) {
-> +                       avc_node_kill(node);
-> +                       goto out_unlock;
-> +               }
->                 break;
->         }
->         avc_node_replace(node, orig);
-> --
-> 2.34.1
->
+If a certain access pattern suddenly generates a different set of
+records (or some are missing, as would be in this case), we might get
+bug reports about this. I'm ok with simplifying this code in the way
+you suggest, but we may want to do it in a patch on top of mine, to
+make it simple to revert later if that becomes necessary.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
