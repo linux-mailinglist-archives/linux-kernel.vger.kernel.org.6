@@ -1,57 +1,60 @@
-Return-Path: <linux-kernel+bounces-277804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54CF94A6B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:10:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBB1E94A6B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E70DE1C20D2E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:09:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 983BE282728
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABE61E286B;
-	Wed,  7 Aug 2024 11:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="k0pGSXgg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B511E2134;
+	Wed,  7 Aug 2024 11:10:37 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EA21E515;
-	Wed,  7 Aug 2024 11:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFD21E515
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 11:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723028995; cv=none; b=iISw6bPh8nrpfUM14cNKxZb2UeypucLSp6tV+RKmOAMb+aL4OZpViAH5HXMBUz/vGapiAv5EZMKrPQr/Gq1wEmx7g8Int8IWqG7zHqTBzX5xnok+Sa6GVtUawpQp0hW87JHV9nTL1SRPKn2NcHbitzTtZbSgtBHVmmrpwJKOL0w=
+	t=1723029037; cv=none; b=trjRla66sBAghjE30JVieuaGK2RHGunxLh8AOma3xiIGkhpVGqCTFWZom/WbWVuJgnTZf9dOlXFU58yDOP/FmG/w5p6qy90zNBQJC1WX7oephb3NCGlv/C1tNA1k/osNIi3ja2WNF5rQJLIWrzZr/VLDW6h6Bs1xSVHMwvGC0rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723028995; c=relaxed/simple;
-	bh=uq7KVb7mBK3tb5wST8u9PxVjIXdhkXdG2GGoihOhfWQ=;
+	s=arc-20240116; t=1723029037; c=relaxed/simple;
+	bh=w/33/4xPAAyjcsz8TUb0CK3jGN3A18eYdaVHZPd7ki8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V/0e59YMlQnKasEPTnaEGXD0PMXPxO9INTbgX4DucD2Q2jJp9StqBPrlQNpRA5+A7NgfPFmOTQPaJcop6DP5LTrLDrF56s9OFuMDSf3tORRTl1x6g/44HDLVBWY8EmKwwHvn+vVWOwYFqKs24sqEbF3F+YDlqRXUIyP/0NAfnug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=k0pGSXgg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3228C32782;
-	Wed,  7 Aug 2024 11:09:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723028995;
-	bh=uq7KVb7mBK3tb5wST8u9PxVjIXdhkXdG2GGoihOhfWQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k0pGSXggjSioooBfCXmp1pBZ67mX/Bhxx9Fw4EjPdCl8LwdCUr8oF3K+GnOpbbitu
-	 GnnQToQoKPZpay77e1SbkAWl7NoRi1WutxF+3IZB0etbJ9YZXnzZRDDPhQuSD/U4wR
-	 ldLD9S411g6GsDvbRQ9aA9Chp++ekJ81RZaVUaco=
-Date: Wed, 7 Aug 2024 13:09:52 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH 0/2] tty: serial: samsung_tty: simple cleanups
-Message-ID: <2024080714-spongy-wannabe-7a9e@gregkh>
-References: <20240806-samsung-tty-cleanup-v1-0-a68d3abf31fe@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ie4vD44K2mgsipbe8NIxPl8BPYaATfAr5Gxq7+eAvyFPspvaJg3a3XIRVtakYLeCooV4iSlnruWw4507Cr+dXFS9E9apMAVmWBDAkofcV83T/hK+tkqjWlzP7arxbJd3ZyvAxW0+Wyr2w1aeziXXMihhqvXb9TnosQnoNJDd5dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sbeYk-00079C-Us; Wed, 07 Aug 2024 13:10:26 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sbeYj-005B53-UC; Wed, 07 Aug 2024 13:10:25 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sbeYj-006vAm-2d;
+	Wed, 07 Aug 2024 13:10:25 +0200
+Date: Wed, 7 Aug 2024 13:10:25 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v1 1/1] net: phy: dp83tg720: Add cable testing
+ support
+Message-ID: <ZrNWIfcCjHm4G4d9@pengutronix.de>
+References: <20240807093251.3308737-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,32 +63,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240806-samsung-tty-cleanup-v1-0-a68d3abf31fe@linaro.org>
+In-Reply-To: <20240807093251.3308737-1-o.rempel@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2024 at 04:29:44PM +0100, André Draszik wrote:
-> While looking through the samsung tty driver, I've spotted a few things that
-> can be simplified by removing unused function arguments and by avoiding some
-> duplicated variables and casting.
+
+On Wed, Aug 07, 2024 at 11:32:51AM +0200, Oleksij Rempel wrote:
+> Introduce cable testing support for the DP83TG720 PHY. This implementation
+> is based on the "DP83TG720S-Q1: Configuring for Open Alliance Specification
+> Compliance (Rev. B)" application note.
 > 
-> There are no functional changes here.
+> The feature has been tested with cables of various lengths:
+> - No cable: 1m till open reported.
+> - 5 meter cable: reported properly.
+> - 20 meter cable: reported as 19m.
+> - 40 meter cable: reported as cable ok.
 > 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > ---
-> André Draszik (2):
->       tty: serial: samsung_tty: drop unused argument to irq handlers
->       tty: serial: samsung_tty: cast the interrupt's void *id just once
+ 
+There is missing PHY_POLL_CABLE_TEST, i'll send v2 soon.
 
-This series blows up the build for me, are you sure you tested it?
-
-drivers/tty/serial/samsung_tty.c: In function ‘s3c64xx_serial_handle_irq’:
-drivers/tty/serial/samsung_tty.c:948:45: error: passing argument 1 of ‘s3c24xx_serial_rx_irq’ discards ‘const’ qualifier from pointer target type [-Werror=discarded-qualifiers]
-  948 |                 ret = s3c24xx_serial_rx_irq(ourport);
-      |                                             ^~~~~~~
-drivers/tty/serial/samsung_tty.c:856:68: note: expected ‘struct s3c24xx_uart_port *’ but argument is of type ‘const struct s3c24xx_uart_port *’
-
-And so on...
-
-
-
+Regards,
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
