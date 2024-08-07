@@ -1,76 +1,60 @@
-Return-Path: <linux-kernel+bounces-277944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB7C794A881
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:24:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD3C94A883
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A70322858F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:24:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F84B1C2339E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB0E1E7A46;
-	Wed,  7 Aug 2024 13:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1567B1E7A55;
+	Wed,  7 Aug 2024 13:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QSOkTQXv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ERHApvv2"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D084AEE5;
-	Wed,  7 Aug 2024 13:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953C81E4841;
+	Wed,  7 Aug 2024 13:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723037079; cv=none; b=FAABTWzvY+gzbyaWMs3hAczpJ+ie2PC5pkv5wXFCW43omGBwpGRb+kSEOT+3VIAAe54QqULeoBVpKUM+S1i89L+0h+61NL1gGqwG0zfXZBYOUgrWyOeA33KdxCzuUQqxlHTXLTXpItE5LkNBDY9z248GJaU0orRgiaKXLyTV2iA=
+	t=1723037105; cv=none; b=CkAZEYvBKGNmlBLUinr9sqPbQOGnYMdc9BmxaYkq24fOZxRSfhOxtOeX5O52vgXlmJW5T2EO1BDFausnfBtiZVtR5QC+wbxbzIWZFWWBlB4pGKdCFDj1oU4TTc4qZYbOUBttDihrxGpTDsdpO/NyQhM6skd9fUctNkl3JMJ3Lgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723037079; c=relaxed/simple;
-	bh=x/4yPIAf9q1wfWiVA6KbXYBEOAZjBG33Dys3A3QZTL0=;
+	s=arc-20240116; t=1723037105; c=relaxed/simple;
+	bh=5sTsQmQzYhRTAbmChHE+o+gvUzG3WVCy6zCqtU/RKF4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GXVzLorKHI2oCMy/FWAU2Axtog2yhB3+x4wJDa89dGuNwQxEyN45CyQMGJARcF2Uba/G1Y9Ir+c+aaMbPL/CNRdun4PqaKDTuO/+6C2yaHy30Jy7pmQbFKO6a0vlwoH/5P0XozZU2DMS+wn/SIjCrMsq2kPD+aJ7EkNxxH4njIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QSOkTQXv; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723037078; x=1754573078;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=x/4yPIAf9q1wfWiVA6KbXYBEOAZjBG33Dys3A3QZTL0=;
-  b=QSOkTQXv3VlseWgPWBPU5wGRZjYO3OpxVM3Rb+xpqvH7s6ulxb2/asA5
-   KsEbipUrPltnug/B5ZYFkegh5XN6ih4MqFdX3hQ7Qh5u68NCw/Hu72SYr
-   DU6JD8e+PPBHDKHqbLlHFcIOopbgoOWXWnN0g0Sn+BKwFXth7pUrwMtO7
-   3cbSr3tOXDXdvkJaHqKokYeD0msmL6CXgP7hO+kXzPjarQLdBtEfdKDEV
-   L0iIBcFdYKLGrupiDSsr08J1D5GGQF7l/LoHGAa8C0Z4guBKjexCKZW1y
-   YKV6KbYbg997GRi2zEB/BIAi3+N8rPtg/AHAHiWJWz0M8coVeXKlAvd/c
-   Q==;
-X-CSE-ConnectionGUID: KWk8hbMfSRWmuUy8g9WKww==
-X-CSE-MsgGUID: HpDO6VB/RuOCmUv/stAW4A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21225704"
-X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
-   d="scan'208";a="21225704"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 06:24:37 -0700
-X-CSE-ConnectionGUID: OI0ZN9nIR0WBrEAzJjhCuQ==
-X-CSE-MsgGUID: aKUXzt+rR32vNNBYELVfPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
-   d="scan'208";a="56798834"
-Received: from dhhellew-desk2.ger.corp.intel.com.ger.corp.intel.com (HELO intel.com) ([10.245.245.2])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 06:24:31 -0700
-Date: Wed, 7 Aug 2024 14:24:27 +0100
-From: Andi Shyti <andi.shyti@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
-	daniel@ffwll.ch, linux@roeck-us.net,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	anshuman.gupta@intel.com, badal.nilawar@intel.com,
-	riana.tauro@intel.com, ashutosh.dixit@intel.com,
-	karthik.poosa@intel.com, andriy.shevchenko@linux.intel.com
-Subject: Re: [PATCH v3] drm/i915/hwmon: expose fan speed
-Message-ID: <ZrN1i2snlz8tSA1M@ashyti-mobl2.lan>
-References: <20240807123018.827506-1-raag.jadav@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YXfhX/9e5gmU5uIlfRM/A1tFT9r1KYcF7lvC7I4X4yGGVS06C2CcO9164mFW1F5MeB+xQjZ6XVPhdPaq8oAkPbvtrgx4tfih/trTJ/HSetZ84PzNDBwwT9DMwFg0atSv8u/KewuCClLXvoVcNmcGGE+TM5OodwHqu33jZlIjw3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ERHApvv2; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=C8IaSNiVMhb8QCqL5FFLaHsUZ/2W+UHTURc1tvPuCUA=; b=ERHApvv2o7BX21z+NnAAfGluDF
+	1Y7ibZ7nly4+LVi5A1TylpViB02QyPsB4jBRyE6Y2ApdlgN/zcZf2b6LIF8XpnIvjPaaP/Dynx8Md
+	rWlEnNwvmMHcy+B+ckDvmqfTnZLCjFwB64NX8R6OYyUdrME+GSCp0n/eHee16hm1lZrA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sbgeq-004Ccc-7S; Wed, 07 Aug 2024 15:24:52 +0200
+Date: Wed, 7 Aug 2024 15:24:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v1 1/1] net: phy: dp83tg720: Add cable testing
+ support
+Message-ID: <ff096c1c-00bf-4e55-9400-fb869749b07f@lunn.ch>
+References: <20240807093251.3308737-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,85 +63,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240807123018.827506-1-raag.jadav@intel.com>
+In-Reply-To: <20240807093251.3308737-1-o.rempel@pengutronix.de>
 
-Hi Raag,
+On Wed, Aug 07, 2024 at 11:32:51AM +0200, Oleksij Rempel wrote:
+> Introduce cable testing support for the DP83TG720 PHY. This implementation
+> is based on the "DP83TG720S-Q1: Configuring for Open Alliance Specification
+> Compliance (Rev. B)" application note.
 
-> +static umode_t
-> +hwm_fan_is_visible(const struct hwm_drvdata *ddat, u32 attr)
+Does the OA specification describe all these registers? Should we
+expect other devices to be identical?
+
+> +/**
+> + * dp83tg720_get_fault_type - Convert TDR fault type to ethtool result code.
+> + * @fault_type: Fault type value from the PHY.
+> + *
+> + * Returns: Corresponding ethtool result code.
+> + */
+> +static int dp83tg720_get_fault_type(int fault_type)
 > +{
-> +	struct i915_hwmon *hwmon = ddat->hwmon;
-> +
-> +	switch (attr) {
-> +	case hwmon_fan_input:
-> +		return i915_mmio_reg_valid(hwmon->rg.fan_speed) ? 0444 : 0;
-> +	default:
-> +		return 0;
-> +	}
+> +	switch (fault_type) {
+> +	case DP83TG720S_TDR_FAULT_TYPE_SHORT:
+> +		return ETHTOOL_A_CABLE_RESULT_CODE_SAME_SHORT;
+> +	case DP83TG720S_TDR_FAULT_TYPE_OPEN:
+> +		return ETHTOOL_A_CABLE_RESULT_CODE_OPEN;
+> +	case DP83TG720S_TDR_FAULT_TYPE_NOISE:
+> +		return ETHTOOL_A_CABLE_RESULT_CODE_UNSPEC;
 
-Why do we need switch case here?
-Why can't this function become a single "return " line?
+You could add a new type for this. I think some implementations will
+also re-try a few times to see if a quiet period can be found.
 
-> +}
-> +
-> +static int
-> +hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
-> +{
-> +	struct i915_hwmon *hwmon = ddat->hwmon;
-> +	struct hwm_fan_info *fi = &ddat->fi;
-> +	u32 reg_val, pulses, time, time_now;
-> +	intel_wakeref_t wakeref;
-> +	long rotations;
-> +	int ret = 0;
-> +
-> +	switch (attr) {
-> +	case hwmon_fan_input:
-> +		with_intel_runtime_pm(ddat->uncore->rpm, wakeref) {
-> +			mutex_lock(&hwmon->hwmon_lock);
-> +
-> +			reg_val = intel_uncore_read(ddat->uncore, hwmon->rg.fan_speed);
-> +			time_now = jiffies_to_msecs(jiffies);
-> +
-> +			/* Handle overflow */
-> +			if (reg_val >= fi->reg_val_prev)
-> +				pulses = reg_val - fi->reg_val_prev;
-> +			else
-> +				pulses = UINT_MAX - fi->reg_val_prev + reg_val;
-> +
-> +			/*
-> +			 * HW register value is accumulated count of pulses from
-> +			 * PWM fan with the scale of 2 pulses per rotation.
-> +			 */
-> +			rotations = pulses >> 1;
-> +			time = time_now - fi->time_prev;
-> +
-> +			if (unlikely(!time)) {
-> +				ret = -EAGAIN;
-> +				mutex_unlock(&hwmon->hwmon_lock);
-> +				break;
-> +			}
-> +
-> +			/* Convert to minutes for calculating RPM */
-> +			*val = DIV_ROUND_UP(rotations * (60 * MSEC_PER_SEC), time);
-> +
-> +			fi->reg_val_prev = reg_val;
-> +			fi->time_prev = time_now;
-> +
-> +			mutex_unlock(&hwmon->hwmon_lock);
-> +		}
-> +		return ret;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-
-same here, can we make this function:
-
-if (attr != hwmon_fan_input)
-	return -EOPNOTSUPP;
-
-and then save all the indentation.
-
-Are we expecting more cases here?
-
-Andi
+	Andrew
 
