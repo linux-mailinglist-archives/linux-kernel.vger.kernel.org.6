@@ -1,358 +1,242 @@
-Return-Path: <linux-kernel+bounces-277204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F203949DD2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:37:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67726949DD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B0E31C2269D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:37:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 259A6283464
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B48F190065;
-	Wed,  7 Aug 2024 02:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892172119;
+	Wed,  7 Aug 2024 02:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lkiLuaSH"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="OertJyA6"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2128.outbound.protection.outlook.com [40.107.255.128])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884F7157A59
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 02:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722998224; cv=none; b=YBJ+Wdce6//AXF1E7ebMq/PskPJxK1DiB/WYp+49uRG/Pj7iK2UYzlAKdjOegsM2whR4zl1ZNbSu3a60+FrfkntIrwa2g7B9QXPzkJofosTROEoI9Unu/GtPqGufzJ+Q077xkdoR/yE96RaXk8EEGsC9BrAuLSBFzRl6g6U7XTM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722998224; c=relaxed/simple;
-	bh=uuDYVrBcHuJYm5yNU4n2eqe4vt3oerM46cQj8ax/3oM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QmT1t+wLBYPIrTKNUAD0slEG+vedTQP7hyYHWW1yytMsVZx7RbdwOyPge5spAYddBsABhUhKnpN8+lwcx1Z7kzToERH7aUIvL1VUX6Jyqb8MG6dHw9vUnIyqKo+Hfm5MM9LQDO/zvKZJ++mttOBHh0CRJGbFOEuw1nacPRyNFg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lkiLuaSH; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3db50abf929so931713b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 19:37:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722998221; x=1723603021; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZvmmLFhC09oq0o2xBVohmEoFMpltsYFPcH3KrPOyLgA=;
-        b=lkiLuaSH9V58d6p5pYi/zCaWGz2HQIWBjqTnUolY0N86uLfF3InOV4JvRvE/jr5313
-         BnjQS7XULlrHqtUGL9J5cAdvso6EM5nN0ppv89VWUmYr1LEDTSOyg+2j9i0nuzFTbI0c
-         ZpUI+u1mje89UW4KNhqMUKF4mgziYdLbdjA2bLJDesjMxlydq53BnfZmxkhkB5rbz51x
-         mk/UzcunEUafOl8Xq3I7WD7xUwlJxz6fILu0SETtpT6HQz5tmnw/AlXsQMyi7Wr5Pcfn
-         rZhgtD+gr9kJg58nfcqf3ZkkovX9vkjy2VlmQ2b4lAyWZNoiMl6atWNX0ox+sh3CJf13
-         rRqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722998221; x=1723603021;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZvmmLFhC09oq0o2xBVohmEoFMpltsYFPcH3KrPOyLgA=;
-        b=Juz6lXRjFrjRmrKyyZrTYU8xcBCdEKlCfQ6bSDUuGj7QaEiEzQrTrWxR5tlRIqQyDW
-         8Eo0Wa1Un817WuDB2+ofgKQ2Jo7U39P+WZZEr2XrO3QLiNiEw7of/OI1atCPLAj/44CE
-         e35Vg8gcIjAHyDWfCcloJzgpq3d8PAfrRJXILkWg5njPywf/VNQmGavWdYdNPpou5JYF
-         L5JDeXfvKOMp41ajxsJzE5HxN5GkvqjxU01W+eB3gNRoUejvNdSzQBAwlovldJPG/XY1
-         ddi9lhEtSiHEtW1Z/2/OwbzQXO0wmil8+1YmHcEfQWqCjXQQSZMPXPGyOL8D+5s5p6UO
-         fnpg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7DI4T3iwlJ9ScxW5PUnKJUpcTRrhn25Kegt9nr5yL8+kv+nD7ZQ5RQKvr8KPBxl4CIvfU+KJ2cs7O5J86IshEIjRn9gzVM1je0fP/
-X-Gm-Message-State: AOJu0YxHmn/ZvSkk2hf+1h6QIqwJGq3tcYeT++SiEpkZZNrkFm+OAG7a
-	dG1ZWYZvpTADW8aqshl9/OTQL+84q/NMzr++3o0yto+vq0yEGBggn9R+HFR/6w==
-X-Google-Smtp-Source: AGHT+IF5ERNcpKWlnzVJ2lsDzG0HuLkv3XdnM0McCYVBapTBM+caDvyJHzS1b1ifM5q1m5rGdoV1LA==
-X-Received: by 2002:a05:6870:d109:b0:261:1deb:f0ee with SMTP id 586e51a60fabf-26891b0ef9amr22023790fac.13.1722998221595;
-        Tue, 06 Aug 2024 19:37:01 -0700 (PDT)
-Received: from thinkpad ([120.60.72.69])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ecfc335sm7536474b3a.152.2024.08.06.19.36.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 19:37:01 -0700 (PDT)
-Date: Wed, 7 Aug 2024 08:06:42 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v8 05/11] PCI: imx6: Introduce SoC specific callbacks for
- controlling REFCLK
-Message-ID: <20240807023642.GC3412@thinkpad>
-References: <20240729-pci2_upstream-v8-0-b68ee5ef2b4d@nxp.com>
- <20240729-pci2_upstream-v8-5-b68ee5ef2b4d@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788162AD02;
+	Wed,  7 Aug 2024 02:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.128
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722998242; cv=fail; b=ZWvtqx0beLGDEJ4iWJxKMkNoQfTn4QsXJNsj4dUf4Rnd5082BDlB9n1LEnMPTe+kHk0vzGmUI/wU/7VPNgzmMVd06FBeU0EdzKgBYbiZfWRVZD2gdqOsp4tHwtWN/EA4DuYvul1Y0++xSLaGeL07nulYhV8UqlTSQnh69UN86wI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722998242; c=relaxed/simple;
+	bh=6wLaSlGQkclz9GAly8CKRpiSuVr2L6IjMfJxJYM3jiQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KjEj8/ZkadglJONf/rJXFP706A6grdvNXKyMHj3kCdpTDHF8H4Jrlgo3k+jU7uWgtAePper08XPJyYGozrfldxAoWXgMLuO9QmSv96D0esaPGWhHuAKWqw+jYlvb+smVaPpKLjqSFwKSvAJFbREgu1WoBw9ZaOOKnjM8fScD/EE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=OertJyA6; arc=fail smtp.client-ip=40.107.255.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=e9adGnfaQzDLLUugGbufoe7j1mnpaLpSc8j/lDAEi1mFrP0LcdIBWVGizp0rMjPCUAwYFgZ59iNDnraTxl4D6ozOWl5IPAOijQ7FzhbhM1KVIoBZvH9KIKUtA3T7Notxxm6U1LtFS9xa2iIIEDrGn1foTpgm4b3RmjuLuklQdT6jLlha6h/zOKqhKoQJ1A6Pd8G22gLdiLtdqvLhhvxBMnLE/Wtb1P5ptNOnIYikmmwp9qAHk+JTrETSvyshpqltPXSlVQJ91SnW3LC6qQ2onFAcHZSUjgttdBhIycgZBvIKBIptxJZt9VhizjnnkTsUZx2XDw79fnizRVY4vMzU+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uwQYbVpqNT+clF56x6sYrJaBUonOtMNk+EMNgI814Vs=;
+ b=AmyPXpscNXdqJmNY7k3FI4mddw7Utw7WVewjEcPttY3298jKE73KO2KFNfPBbCXYrUiI1NH8lNhzzm+YiIflPhLj58Fe5FQ9VzydHCZ80DmB4iqTcV35iQsGd9z/9HPGUf+G4GWKU5k3q/2uFBufLVWMGfP/bZonaqpjN7FMd5IMg0Q1ZefYn37FKJuSbCJz6ZSyKX7rrT7BRcYTT4OrmSQt5RFUxq8wfAWeoKTosT8t1I5W+8uhg0/zRtewZy27iIdEZwLui2WdctsBwNjV/gZJHeeZ4E17EKjAqHVUUROY9VMSS5hZdEDxYfeM6WM7FA0R4BiWnwltb63v+XTdow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uwQYbVpqNT+clF56x6sYrJaBUonOtMNk+EMNgI814Vs=;
+ b=OertJyA6NswvwroPSL1Y48igOJ0G0L0qn/TP85N17mTL3A3deI72QVn8ZuhYee0YyLmRqL6iUm5nLcYlSAHpHNTEKlKzbZMPUBvuGYR9JxennJV59WPM/I0SR1+z12PQWQxbkcNp8dsjzhk3vupF970A8xeVAkOuCIDouWKzgSD4IPpUkxTez+kRJLu8p04TthZu1q1fcs4xEpN6wxJsnT3C+W7z5xD9njIkONkzI07zn+GbVROhkcHsvPsMBtScJVvGmFAZAOorwAuFYQz7u3sCbLCLmwKSYCrSEkLLvAnYnXXxCx0e26fc4YZdqXLsCZo5RVnn07ShKtFuFcLf8Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
+ by TY0PR03MB6630.apcprd03.prod.outlook.com (2603:1096:400:207::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Wed, 7 Aug
+ 2024 02:37:17 +0000
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::ac4e:718:3b03:3123]) by TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::ac4e:718:3b03:3123%4]) with mapi id 15.20.7828.023; Wed, 7 Aug 2024
+ 02:37:17 +0000
+Message-ID: <59f37c77-d57b-4568-ad9e-6d50791ae5f7@amlogic.com>
+Date: Wed, 7 Aug 2024 10:37:11 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64: dts: amlogic: add C3 AW419 board
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240806-c3_add_node-v1-0-c0de41341632@amlogic.com>
+ <20240806-c3_add_node-v1-3-c0de41341632@amlogic.com>
+ <c82b6e70-8f2f-4b37-9186-7c49aea019bd@kernel.org>
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+In-Reply-To: <c82b6e70-8f2f-4b37-9186-7c49aea019bd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR02CA0047.apcprd02.prod.outlook.com
+ (2603:1096:4:196::14) To TYZPR03MB6896.apcprd03.prod.outlook.com
+ (2603:1096:400:289::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240729-pci2_upstream-v8-5-b68ee5ef2b4d@nxp.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|TY0PR03MB6630:EE_
+X-MS-Office365-Filtering-Correlation-Id: 92209d72-60a5-4894-6dfb-08dcb689da17
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aldDRS83dm11YWFMLytGcnNLY2syWkpyMVRES3QzbklJT2gyTE1jRGdSU2pT?=
+ =?utf-8?B?UDliVFZ4djNLU09IREp1djVmd2tYUVYvelM1aEphOUMwVFJlUmdQQ3o5Y2Fz?=
+ =?utf-8?B?VklLeW1SMEdkLzR4Ri94czJVbnRRckxtMEI0cENkU0tDdThYUnNpc2QyaDNx?=
+ =?utf-8?B?elpRYzdnS2NoUVBpTUdyckhrMnJNbXV6Mko2SHl4cmhEMTlXTVc1eG1hOTM1?=
+ =?utf-8?B?OGcwNFlab1Q4OE0rZHBwWlNxUGNtdDZ1Z21nMmZXdk0wQkRKTlNmQUFNVnhR?=
+ =?utf-8?B?UnRzdnZud1dza0h4bWVhOUV6ekZ2NnFOcTlvZitOSXgza1lQc3VRZEN5Wmtj?=
+ =?utf-8?B?cGhON1RnT0R3K3k4VmpwcjJhUkxmOHc2REZOeEdCcGpFL0ZlaCtTT2lhRkxa?=
+ =?utf-8?B?VFRTcXdzUld1WGNQTXo5dzNFUy9WNnluSVlrOXlKL1VrQnYzdC9HVjNSV05X?=
+ =?utf-8?B?V0tiaWhZY05nMmgzZkNzdkh4bWlFd0V1MWVQME8waGhxRm1JZklyRkNoWlpi?=
+ =?utf-8?B?dk1SZXg5V2IrMlZSZWlwTDVwc1ZEMVRaNEphbGJiNzVQZ001aVJZN3ZLeTlK?=
+ =?utf-8?B?a3BKbTdDSHdRNVl2bXBXSXNWcm9qOHlQYXFvalh1bnFMMXZ0dWtTUlo0QUZl?=
+ =?utf-8?B?Wld6a3N5RXlCRjB4WVZmWkRhUjhPRW5IZmh2U09LUEl6a3ZZdFE5ZzRjSU1S?=
+ =?utf-8?B?U2N4djVrU0E3d3JUYTI3bmJGc1p4VXlYQm5NQW9OWjdYYVZvS01YcmpQbGJw?=
+ =?utf-8?B?WXptVEJRQmtHUzdOb2V4TkdZTUJZMi9iOTROL0V1U0xWOUtyYmVMVnhVMXhk?=
+ =?utf-8?B?aVdFYVUzSUlrOGZRZWJPbEk1d1dzdDZaNkw5VjdOeTRjeDRVV2g5OGI1UXNZ?=
+ =?utf-8?B?OW1MdFdTRlRjQ0VtQk5IajY1Nm9OYVVEWU1XRDAzcStCWDZVMHdWcXFSQmNY?=
+ =?utf-8?B?b29KODBVN1kxdGozd3A2ckNRMmIxWGh4VVpPdHRVdmplS2szWmFpUy9GVi9i?=
+ =?utf-8?B?YWFRMU9kSEFjaFplaWNJVGNxNTkxbGozK1VUbEFvNDVPZkpoMHpUS1oxQ1Uz?=
+ =?utf-8?B?QklUQnhTbFcwY1NRZm84aHNEMGRqa3BpRTg2SXdLY0ZuN0JPWFJLSEdFd3Y0?=
+ =?utf-8?B?eG1ONFhoK0Mra0hLMEVOL2IwNUJxSW1PTDcrWi8rZ0F4bVNNMVh3M2xrZ29K?=
+ =?utf-8?B?bFNFOXdUZDk4eUc3dHJySFlLdWJ0ZDJCNHdGVWVuL0ZqdGpYa0tJM0QxRDMz?=
+ =?utf-8?B?Ulh2TmZrSnppL1BJZmI4cUdPTzNzN0lzRDlvY3pDK25hS0xtTVJzQ2JNc1NN?=
+ =?utf-8?B?NUEwUGZSelloUi9UblI5V2krUXZzMHArbVJ5ZUc5bFRmbWl0dkpleUE2bmZl?=
+ =?utf-8?B?TnJURHFLeDRzVTBwd0QvSHFKc2NmS3ZxUjRHWHJRU0ZrQXdyWnBuaGl1NnBZ?=
+ =?utf-8?B?REM0RGJ5K1U2L0tJZ3p4UXl1Q1EwbnR6QTRBV1h0MkxXOW4xMVFMT1JocFhp?=
+ =?utf-8?B?U09ONGJtaWRrVnF4NGsrNlBvaFVCMloydzJML3hZekQrY0dRUTJhb2tJODlJ?=
+ =?utf-8?B?dG1rUE1OR29XUUtoSTF6cWdObllaV1Q5eUIzR1N1NE0rbkZycC9IaExhdlJO?=
+ =?utf-8?B?cGpzalBaZysrdmlzUzM1M1FsZGRESVdtSm5DMnlaRzZLMC93Y2JtK3dHRGdQ?=
+ =?utf-8?B?WU9qbUtTSE5uei9vQUovTzk0a01uVkpXeGxmcmU0ZTV3WU05SVhmbm5ES0NY?=
+ =?utf-8?B?ajJ0SVBPTndESTRMcWNRZmhRN3MyY2dKeC9kc0E4ZC9GWWJuS0YrVG1SenlB?=
+ =?utf-8?B?NmMxaDZCSXI3eGcxaTlrK1NtdmpLWVlZd25uZWx5eTBQcXV2TE83eWExd2I5?=
+ =?utf-8?Q?VMJid0yHwlrYb?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Qld5UStFQVB0Ujc1aGd1cTl4dDNPOVRiQjFXRC9JKzVsQ3dYRjB0ZTcvTUt1?=
+ =?utf-8?B?ZHFuTkpwdE1DRlpwZHRmcFVIWk13SXlOdzJxYWxDcE8ycUdRN3J2eVhMN1FM?=
+ =?utf-8?B?dmVIa3ozL3dCbk53QkdaZ0I5M0xzZnNKWEg1d2wwa2FYWWJYVks2bUhmbWZw?=
+ =?utf-8?B?MkhiUm8zamo3ZXlPY0pqVTlMZGI4L2laUU0zanhKcWFpVE03K2p0SzlKaGVY?=
+ =?utf-8?B?VTZ5di9UQUhhYmRmOXZGcytpK29XN1FJb0pNSzloM21kK3pOeTlQVG1Lbzk0?=
+ =?utf-8?B?M1FrU2dES1R3UnR0Z2kzMmttS090YnJncUZJbGVGTmhtUk1FRG9MbDlDVXZh?=
+ =?utf-8?B?eHVqTWV0QnlNUE9sazZpWSszN2t6REQ0RWozSFNFQjVQUkdseHhsaE1JUnJZ?=
+ =?utf-8?B?WEEveHZKMGxSUnJrZlBoWUdVZ2xQSnh0RzJQK1dXWk1EaXdJSGRVeHEybjVo?=
+ =?utf-8?B?ZFNKT29tNktQdXBCazBiWFFldlBRbUNnRVRDQlJFMUNMdGFqZVlSbGJsUVBv?=
+ =?utf-8?B?SU9oMkNwdFJWZnVEcnF2OWtKYVJIOGJRck40RXNtQjM0SXlVWGZjMHBibExa?=
+ =?utf-8?B?bmtqTXJYRDNnQ0FRLy9QdFE3RDE4S1FRQmYyNnQwZnZZWnBGOXl3YUU4L05X?=
+ =?utf-8?B?TFhBb3gwWG9PdjdBNlRoc2ZiYjNwdnRuQ3NPV09oYjZWQVVta2E3Z2JwNHlY?=
+ =?utf-8?B?SS9sTWxnbnJXa0xPRERERVByb0EycVhNUEs0WWxoUTYrQUI4dXF1M2FkUW9J?=
+ =?utf-8?B?K2ZoZmJOdituTVFsUnFUZG5FK2FwTWZueWZjd2tPdDhVQlByNmlUQXQ3MHMv?=
+ =?utf-8?B?R1J1aHpBOU9kbzNaVy9wczVYNkJVcVpCOThReGdpTGVTTkVSUkcyWnRmYmE3?=
+ =?utf-8?B?ejNtNDhzdTJRZUJGaXJzS2ZyT0xWUHlrQ3FqbVJBdXNUaFdTVVo2V2NXUzVt?=
+ =?utf-8?B?dXlsNzZSbklPRHZrRGxZM3gzSGtZd3lJMHlLdGxNRlVqT0szcGdiTitxR1dx?=
+ =?utf-8?B?R214OGcvU3RuM2NBS2R6OTRwYmI1UHJMOEJrdmdnbDFNcHdGSE9abGhFc0ll?=
+ =?utf-8?B?N2pPZnd0OVVuVWpLUmtLSEtKV0ZDbTJKdHVoc1pjTitYTGpRK0RKT0ZNNnRr?=
+ =?utf-8?B?ekRMWTNLQi85MXBCT3FsR1VLU29Cb2tNcEZsa2Y2dXRNOC9qcHNsVmVyR1hm?=
+ =?utf-8?B?R1hWSm1CL2xTQ1htTnJ5aHJKMTFWeGZwSVpZeThWc1UxNWw5bmZrUGxWSkhp?=
+ =?utf-8?B?MUJYNWRhVml2alUrdU9mMTJUQjhiaFNEOFlpcW5RQVhmREw1cW55QUh1NmJ2?=
+ =?utf-8?B?eTNDQTVLQ2UvY29WRlI3TW1kV2gvMFkvQTN6SldCdGw0UWtzQjBJRFJtUnRN?=
+ =?utf-8?B?aXhrNnF3dE44KzlVTlFRVmNWWkRTb3ZUOFlPSTY4d094bWNCTlptV041aHEx?=
+ =?utf-8?B?dTdYNnI1VWFQdkx2WnlYZWI0ZkFkSTJaNGtGUWpPc1ZXS0hwSEZDY2JVclhq?=
+ =?utf-8?B?Rngwa0RseFhBeFMrNGc4YTQxMEE1M3cxb3N2YVZlUlovWnphVms1bVZYamNF?=
+ =?utf-8?B?clZHY2lwSWYxVks4czRsYUM3YTJVaEtOVGFLcVJKbEJ3VHJhMGRGZ3FoaG01?=
+ =?utf-8?B?aUFBMkhNT0c0T09PN1NMQjM3dm8vU1dPS1hKSlNYckJZaDJBM1NQTHBYb3ho?=
+ =?utf-8?B?WXF5YmNGVHhmSmhpUmhyZjViV0tZL1c2NXMzMHpNQ0RrVDJSb3c5dnh6bFEz?=
+ =?utf-8?B?aHkwNlF3U1RaU3NBdWp5c1drb3ZJNUE0aEpEaERZVDZtd2F3ZmFxUkc2SFJm?=
+ =?utf-8?B?TXRZa1V6RFFMcjdKQW9GSTFCTk1pci8vbEw0Rjh0VUpVRFgrMUl0dzhhYnl6?=
+ =?utf-8?B?Qjl4aUYzWkpYZlk4cis0eTcvWC8xT21pMHhJZVVOUVhKYXJpRS9ObHMyQnJX?=
+ =?utf-8?B?aHk5ZlVtNjljS1VDckpmRkVpTzE3ZGdYSWc3QlFSeExoeEZaeDg5RGN5enZC?=
+ =?utf-8?B?YkVLVlMzaEFySXhmNVprbEtlVzA3NjgvT05zT1ZZL0o2aWM2MWFGWktIaFdU?=
+ =?utf-8?B?MFYxRVBpQXFMNWFEUHVaUnJUYnY0d0JJQlpiSmlldWxmdVlrS1JLOW15TWpm?=
+ =?utf-8?B?QW1BUmc5MUcwc3hMdHRXU0Y3RkNHclUxdHJRZFlWUXEyanpUcy9tZjAvMkJT?=
+ =?utf-8?B?Rmc9PQ==?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 92209d72-60a5-4894-6dfb-08dcb689da17
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 02:37:17.1012
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dJO28n1tbecqzwLiLKOjspjXhhjIVOKgXX+dJqxYZar4ClqX11oGFFy6rdPE/8rTgH740qRdZC+7qpfJrkejznKjp4BMiqcgMVEmkmmlheY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR03MB6630
 
-On Mon, Jul 29, 2024 at 04:18:12PM -0400, Frank Li wrote:
-> Instead of using the switch case statement to enable/disable the reference
-> clock handled by this driver itself, let's introduce a new callback
-> enable_ref_clk() and define it for platforms that require it. This
-> simplifies the code.
+Hi Krzysztof,
+     Thanks for your reply.
+
+On 2024/8/6 21:14, Krzysztof Kozlowski wrote:
+> [ EXTERNAL EMAIL ]
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 111 ++++++++++++++++------------------
->  1 file changed, 51 insertions(+), 60 deletions(-)
+> On 06/08/2024 12:27, Xianwei Zhao via B4 Relay wrote:
+>> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>>
+>> Add Amlogic C3 C308L AW419 board.
+>>
+>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>> ---
+>>   arch/arm64/boot/dts/amlogic/Makefile               |   1 +
+>>   .../boot/dts/amlogic/amlogic-c3-c308l-aw419.dts    | 278 +++++++++++++++++++++
+>>   2 files changed, 279 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
+>> index 29417f04f886..2fbda8419c65 100644
+>> --- a/arch/arm64/boot/dts/amlogic/Makefile
+>> +++ b/arch/arm64/boot/dts/amlogic/Makefile
+>> @@ -2,6 +2,7 @@
+>>   dtb-$(CONFIG_ARCH_MESON) += amlogic-a4-a113l2-ba400.dtb
+>>   dtb-$(CONFIG_ARCH_MESON) += amlogic-a5-a113x2-av400.dtb
+>>   dtb-$(CONFIG_ARCH_MESON) += amlogic-c3-c302x-aw409.dtb
+>> +dtb-$(CONFIG_ARCH_MESON) += amlogic-c3-c308l-aw419.dtb
+>>   dtb-$(CONFIG_ARCH_MESON) += amlogic-t7-a311d2-an400.dtb
+>>   dtb-$(CONFIG_ARCH_MESON) += amlogic-t7-a311d2-khadas-vim4.dtb
+>>   dtb-$(CONFIG_ARCH_MESON) += meson-a1-ad401.dtb
+>> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts b/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
+>> new file mode 100644
+>> index 000000000000..d28fd2a1acf0
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
+>> @@ -0,0 +1,278 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
+>> + */
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include "amlogic-c3.dtsi"
+>> +
+>> +/ {
+>> +     model = "Amlogic C308l aw419 Development Board";
+>> +     compatible = "amlogic,aw419", "amlogic,c3";
 > 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 443c7c75f2842..b68a817ccc86b 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -102,6 +102,7 @@ struct imx_pcie_drvdata {
->  	const u32 mode_mask[IMX_PCIE_MAX_INSTANCES];
->  	const struct pci_epc_features *epc_features;
->  	int (*init_phy)(struct imx_pcie *pcie);
-> +	int (*enable_ref_clk)(struct imx_pcie *pcie, bool enable);
->  };
->  
->  struct imx_pcie {
-> @@ -583,21 +584,20 @@ static int imx_pcie_attach_pd(struct device *dev)
->  	return 0;
->  }
->  
-> -static int imx_pcie_enable_ref_clk(struct imx_pcie *imx_pcie)
-> +static int imx6sx_pcie_enable_ref_clk(struct imx_pcie *imx_pcie, bool enable)
->  {
-> -	unsigned int offset;
-> -	int ret = 0;
-> +	if (enable)
-> +		regmap_clear_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> +				  IMX6SX_GPR12_PCIE_TEST_POWERDOWN);
->  
-> -	switch (imx_pcie->drvdata->variant) {
-> -	case IMX6SX:
-> -		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> -				   IMX6SX_GPR12_PCIE_TEST_POWERDOWN, 0);
-> -		break;
-> -	case IMX6QP:
-> -	case IMX6Q:
-> +	return 0;
-> +}
-> +
-> +static int imx6q_pcie_enable_ref_clk(struct imx_pcie *imx_pcie, bool enable)
-> +{
-> +	if (enable) {
->  		/* power up core phy and enable ref clock */
-> -		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1,
-> -				   IMX6Q_GPR1_PCIE_TEST_PD, 0 << 18);
-> +		regmap_clear_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1, IMX6Q_GPR1_PCIE_TEST_PD);
->  		/*
->  		 * the async reset input need ref clock to sync internally,
->  		 * when the ref clock comes after reset, internal synced
-> @@ -605,55 +605,33 @@ static int imx_pcie_enable_ref_clk(struct imx_pcie *imx_pcie)
->  		 * add one ~10us delay here.
->  		 */
->  		usleep_range(10, 100);
-> -		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1,
-> -				   IMX6Q_GPR1_PCIE_REF_CLK_EN, 1 << 16);
-> -		break;
-> -	case IMX7D:
-> -	case IMX95:
-> -	case IMX95_EP:
-> -		break;
-> -	case IMX8MM:
-> -	case IMX8MM_EP:
-> -	case IMX8MQ:
-> -	case IMX8MQ_EP:
-> -	case IMX8MP:
-> -	case IMX8MP_EP:
-> -		offset = imx_pcie_grp_offset(imx_pcie);
-> -		/*
-> -		 * Set the over ride low and enabled
-> -		 * make sure that REF_CLK is turned on.
-> -		 */
-> -		regmap_update_bits(imx_pcie->iomuxc_gpr, offset,
-> -				   IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE,
-> -				   0);
-> -		regmap_update_bits(imx_pcie->iomuxc_gpr, offset,
-> -				   IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN,
-> -				   IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN);
-> -		break;
-> +		regmap_set_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1, IMX6Q_GPR1_PCIE_REF_CLK_EN);
-> +	} else {
-> +		regmap_clear_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1, IMX6Q_GPR1_PCIE_REF_CLK_EN);
-> +		regmap_set_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1, IMX6Q_GPR1_PCIE_TEST_PD);
->  	}
->  
-> -	return ret;
-> +	return 0;
->  }
->  
-> -static void imx_pcie_disable_ref_clk(struct imx_pcie *imx_pcie)
-> +static int imx8mm_pcie_enable_ref_clk(struct imx_pcie *imx_pcie, bool enable)
->  {
-> -	switch (imx_pcie->drvdata->variant) {
-> -	case IMX6QP:
-> -	case IMX6Q:
-> -		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1,
-> -				IMX6Q_GPR1_PCIE_REF_CLK_EN, 0);
-> -		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR1,
-> -				IMX6Q_GPR1_PCIE_TEST_PD,
-> -				IMX6Q_GPR1_PCIE_TEST_PD);
-> -		break;
-> -	case IMX7D:
-> -		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> -				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
-> -				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
-> -		break;
-> -	default:
-> -		break;
-> +	int offset = imx_pcie_grp_offset(imx_pcie);
-> +
-> +	if (enable) {
-> +		regmap_clear_bits(imx_pcie->iomuxc_gpr, offset, IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE);
-> +		regmap_set_bits(imx_pcie->iomuxc_gpr, offset, IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN);
->  	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx7d_pcie_enable_ref_clk(struct imx_pcie *imx_pcie, bool enable)
-> +{
-> +	if (!enable)
-> +		regmap_set_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> +				IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
-> +	return 0;
->  }
->  
->  static int imx_pcie_clk_enable(struct imx_pcie *imx_pcie)
-> @@ -666,10 +644,12 @@ static int imx_pcie_clk_enable(struct imx_pcie *imx_pcie)
->  	if (ret)
->  		return ret;
->  
-> -	ret = imx_pcie_enable_ref_clk(imx_pcie);
-> -	if (ret) {
-> -		dev_err(dev, "unable to enable pcie ref clock\n");
-> -		goto err_ref_clk;
-> +	if (imx_pcie->drvdata->enable_ref_clk) {
-> +		ret = imx_pcie->drvdata->enable_ref_clk(imx_pcie, true);
-> +		if (ret) {
-> +			dev_err(dev, "Failed to enable PCIe REFCLK\n");
-> +			goto err_ref_clk;
-> +		}
->  	}
->  
->  	/* allow the clocks to stabilize */
-> @@ -684,7 +664,8 @@ static int imx_pcie_clk_enable(struct imx_pcie *imx_pcie)
->  
->  static void imx_pcie_clk_disable(struct imx_pcie *imx_pcie)
->  {
-> -	imx_pcie_disable_ref_clk(imx_pcie);
-> +	if (imx_pcie->drvdata->enable_ref_clk)
-> +		imx_pcie->drvdata->enable_ref_clk(imx_pcie, false);
->  	clk_bulk_disable_unprepare(imx_pcie->drvdata->clks_cnt, imx_pcie->clks);
->  }
->  
-> @@ -1460,6 +1441,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_off[0] = IOMUXC_GPR12,
->  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
->  		.init_phy = imx_pcie_init_phy,
-> +		.enable_ref_clk = imx6q_pcie_enable_ref_clk,
->  	},
->  	[IMX6SX] = {
->  		.variant = IMX6SX,
-> @@ -1474,6 +1456,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_off[0] = IOMUXC_GPR12,
->  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
->  		.init_phy = imx6sx_pcie_init_phy,
-> +		.enable_ref_clk = imx6sx_pcie_enable_ref_clk,
->  	},
->  	[IMX6QP] = {
->  		.variant = IMX6QP,
-> @@ -1489,6 +1472,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_off[0] = IOMUXC_GPR12,
->  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
->  		.init_phy = imx_pcie_init_phy,
-> +		.enable_ref_clk = imx6q_pcie_enable_ref_clk,
->  	},
->  	[IMX7D] = {
->  		.variant = IMX7D,
-> @@ -1501,6 +1485,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_off[0] = IOMUXC_GPR12,
->  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
->  		.init_phy = imx7d_pcie_init_phy,
-> +		.enable_ref_clk = imx7d_pcie_enable_ref_clk,
->  	},
->  	[IMX8MQ] = {
->  		.variant = IMX8MQ,
-> @@ -1514,6 +1499,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_off[1] = IOMUXC_GPR12,
->  		.mode_mask[1] = IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE,
->  		.init_phy = imx8mq_pcie_init_phy,
-> +		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
->  	},
->  	[IMX8MM] = {
->  		.variant = IMX8MM,
-> @@ -1525,6 +1511,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.clks_cnt = ARRAY_SIZE(imx8mm_clks),
->  		.mode_off[0] = IOMUXC_GPR12,
->  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
-> +		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
->  	},
->  	[IMX8MP] = {
->  		.variant = IMX8MP,
-> @@ -1536,6 +1523,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.clks_cnt = ARRAY_SIZE(imx8mm_clks),
->  		.mode_off[0] = IOMUXC_GPR12,
->  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
-> +		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
->  	},
->  	[IMX95] = {
->  		.variant = IMX95,
-> @@ -1562,6 +1550,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_mask[1] = IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE,
->  		.epc_features = &imx8m_pcie_epc_features,
->  		.init_phy = imx8mq_pcie_init_phy,
-> +		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
->  	},
->  	[IMX8MM_EP] = {
->  		.variant = IMX8MM_EP,
-> @@ -1574,6 +1563,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_off[0] = IOMUXC_GPR12,
->  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
->  		.epc_features = &imx8m_pcie_epc_features,
-> +		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
->  	},
->  	[IMX8MP_EP] = {
->  		.variant = IMX8MP_EP,
-> @@ -1586,6 +1576,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_off[0] = IOMUXC_GPR12,
->  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
->  		.epc_features = &imx8m_pcie_epc_features,
-> +		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
->  	},
->  	[IMX95_EP] = {
->  		.variant = IMX95_EP,
+> Where are the bindings? Why do you add bindings without boards? Or
+> boards without bindings?
 > 
-> -- 
-> 2.34.1
+The bindings of board aw419 was submitted with board aw409.
+The commit number is cb3f4e8cacfa7b32ed8b9dff1282c0d4aaf42e88.
+> Best regards,
+> Krzysztof
 > 
-
--- 
-மணிவண்ணன் சதாசிவம்
 
