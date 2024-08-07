@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-277847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E81D494A748
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:56:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81CC494A74A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9638E1F23BAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:56:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41C7C1F240BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B111E4EF2;
-	Wed,  7 Aug 2024 11:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48151E6742;
+	Wed,  7 Aug 2024 11:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iTPpt8P+"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BKiECp4b"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2433171E69;
-	Wed,  7 Aug 2024 11:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC5C1E4F04;
+	Wed,  7 Aug 2024 11:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723031789; cv=none; b=H6iQo7BPiF35X/atE8ntS++2tZgRslhxhfudl6XcwHD0/GO/hDTAxcS6oxqZ/U12Me3nn+TIReog1e3QGNTt4NWn2lWvtcGfYPqLSPRdW25OHJMtDwI+mYKPfMHLUC1EeJVfi6f006RZ0IYY7DbD6BpFqeu3gXw6+KCzs/CyFEs=
+	t=1723031792; cv=none; b=bFMnRmDSIVSZ4BYeq8ahPoVF3ZNWWDIxap9V9nTppFsuBRflk64kk2slEmekVH1OO1vwPsHzF2gf7tQubz4NDy92y3vSRDkFdG4ZgBkYxylHPsadFZPH1L6LAZt8GRGaNYvir7hfXxiOZPvKwaaf4N0+Y7HOS39U/zOMHDaSgGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723031789; c=relaxed/simple;
-	bh=uMFl+7ygjlbqWs0UDPLyRXIAhdtOiGqRDnVBA/mNfdA=;
+	s=arc-20240116; t=1723031792; c=relaxed/simple;
+	bh=NCLV3XRv4F70DO/lDLYGUKSAExlAGjF5MiNF6cNiI1g=;
 	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=TVP15+scxYmoNhql6bRjLH39H1ttj+Wdkqy2irYB+oH29ZKWWLEIC6kI07bsJV7Vok9N0Lz/vblVzSa3j3P5xFEWJtz0k5nEhR6RCUpUS+R1v/sqkzuWOR26ZIC3gzx06DNKjDRpfu6ruOKAibYxMPYKcSTcnkdzJmO1HmWvUxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iTPpt8P+; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type; b=MQmZSDmNGfLXji84wYfh/HsFPmOrGBJvrXDnpoqnbaD10W8HXBHlTtnvbj2EwMlLmDKJjqOVrQwmnrN7G2aNnMTcv08ZT9G0AQVFGnM/SDI5qLN52yakJ+A1a9LAFEKDt3PJNtJFOHx9es0ZwqGj9N0v58p7irWBcvCONfKPgEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BKiECp4b; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
+	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=5P0E9yKnMuzgmP4VzsJaPEqiK0GCko+7ZBlVG8EI9A4=; b=iTPpt8P+yvP3cOUYj3HP4q3/Xj
-	m0AxjNp3Uqe54q+a0Fg7+wRD3JGU8F7eEVsYpS0gnLtgZGlIcGRqcdyaQEE1eZ1DjKLZixvgL7bqs
-	br5aGYafOxVsoKK6a2l1diHAYHn4w41S7O41jZ27kuxm3Ayl2A4fh2NlO7XyuLH2QbYAYvC9/5433
-	7CQWtha6aqcvBJd6jtzDy1Ys1jJvhg807vV5uj0EzPrOIt1g0emCWyL2yua/HOwE8I1AlX8y6mCEm
-	Sqem7IvnGawtLaygGbE6dcS6c1WruZJbqj2B5IaJT9S2iU0KVSVX3mAI9el6xcR/XOpUeU7aXaVu4
-	dpFr26+g==;
+	bh=fk1YC0a9penq8DhSiSBUazh/i3TIeiQXPW6dmx7/vqk=; b=BKiECp4bzsHN+8TBk4EdBU/2hS
+	OaatYv2X8xW3jKXmFoK1A1xCV1EFnN5fb0AgDB0qvMcvUj7DhYn4W5AGaLxYjuGCU5cIFQpJfAVXd
+	0hxUlOdi1+T05wi9SobGWJiSZkapgPsdFHfDX0gvyB0/MODK9eF26yMoTNoGNr9YxqYEaGFSWJcWz
+	FPdd3fPROVFC+9CAsam7BoAPnZBuCUTpE3+R2dhJ+eZwMj9TrJ5Fa1dJS0fgKW88l1hc8cYiesRGm
+	Hh8lOvAWE1pfj0++5/iL2J+yASKNn+QdPGMsypsPd1tR5EfnmlnERipwB5NlTzURX0V06AGtq5coI
+	5dc7kWVQ==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sbfHC-00000007FPh-2En8;
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sbfHC-00000006cCk-25bd;
 	Wed, 07 Aug 2024 11:56:22 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 9307A30074E; Wed,  7 Aug 2024 13:56:21 +0200 (CEST)
-Message-Id: <20240807115550.031212518@infradead.org>
+	id 970B2300AA5; Wed,  7 Aug 2024 13:56:21 +0200 (CEST)
+Message-Id: <20240807115550.138301094@infradead.org>
 User-Agent: quilt/0.65
-Date: Wed, 07 Aug 2024 13:29:26 +0200
+Date: Wed, 07 Aug 2024 13:29:27 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: mingo@kernel.org
 Cc: peterz@infradead.org,
@@ -62,7 +62,7 @@ Cc: peterz@infradead.org,
  kan.liang@linux.intel.com,
  linux-perf-users@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] perf: Extract a few helpers
+Subject: [PATCH 3/5] perf: Fix event_function_call() locking
 References: <20240807112924.448091402@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,90 +72,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-The context time update code is repeated verbatim a few times.
+All the event_function/@func call context already uses perf_ctx_lock()
+except for the !ctx->is_active case. Make it all consistent.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/events/core.c |   39 ++++++++++++++++++++++-----------------
- 1 file changed, 22 insertions(+), 17 deletions(-)
+ kernel/events/core.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -2330,6 +2330,24 @@ group_sched_out(struct perf_event *group
- 		event_sched_out(event, ctx);
+@@ -263,6 +263,7 @@ static int event_function(void *info)
+ static void event_function_call(struct perf_event *event, event_f func, void *data)
+ {
+ 	struct perf_event_context *ctx = event->ctx;
++	struct perf_cpu_context *cpuctx = this_cpu_ptr(&perf_cpu_context);
+ 	struct task_struct *task = READ_ONCE(ctx->task); /* verified in event_function */
+ 	struct event_function_struct efs = {
+ 		.event = event,
+@@ -291,22 +292,22 @@ static void event_function_call(struct p
+ 	if (!task_function_call(task, event_function, &efs))
+ 		return;
+ 
+-	raw_spin_lock_irq(&ctx->lock);
++	perf_ctx_lock(cpuctx, ctx);
+ 	/*
+ 	 * Reload the task pointer, it might have been changed by
+ 	 * a concurrent perf_event_context_sched_out().
+ 	 */
+ 	task = ctx->task;
+ 	if (task == TASK_TOMBSTONE) {
+-		raw_spin_unlock_irq(&ctx->lock);
++		perf_ctx_unlock(cpuctx, ctx);
+ 		return;
+ 	}
+ 	if (ctx->is_active) {
+-		raw_spin_unlock_irq(&ctx->lock);
++		perf_ctx_unlock(cpuctx, ctx);
+ 		goto again;
+ 	}
+ 	func(event, NULL, ctx, data);
+-	raw_spin_unlock_irq(&ctx->lock);
++	perf_ctx_unlock(cpuctx, ctx);
  }
  
-+static inline void
-+ctx_time_update(struct perf_cpu_context *cpuctx, struct perf_event_context *ctx)
-+{
-+	if (ctx->is_active & EVENT_TIME) {
-+		update_context_time(ctx);
-+		update_cgrp_time_from_cpuctx(cpuctx, false);
-+	}
-+}
-+
-+static inline void
-+ctx_time_update_event(struct perf_event_context *ctx, struct perf_event *event)
-+{
-+	if (ctx->is_active & EVENT_TIME) {
-+		update_context_time(ctx);
-+		update_cgrp_time_from_event(event);
-+	}
-+}
-+
- #define DETACH_GROUP	0x01UL
- #define DETACH_CHILD	0x02UL
- #define DETACH_DEAD	0x04UL
-@@ -2349,10 +2367,7 @@ __perf_remove_from_context(struct perf_e
- 	struct perf_event_pmu_context *pmu_ctx = event->pmu_ctx;
- 	unsigned long flags = (unsigned long)info;
- 
--	if (ctx->is_active & EVENT_TIME) {
--		update_context_time(ctx);
--		update_cgrp_time_from_cpuctx(cpuctx, false);
--	}
-+	ctx_time_update(cpuctx, ctx);
- 
- 	/*
- 	 * Ensure event_sched_out() switches to OFF, at the very least
-@@ -2437,12 +2452,8 @@ static void __perf_event_disable(struct
- 	if (event->state < PERF_EVENT_STATE_INACTIVE)
- 		return;
- 
--	if (ctx->is_active & EVENT_TIME) {
--		update_context_time(ctx);
--		update_cgrp_time_from_event(event);
--	}
--
- 	perf_pmu_disable(event->pmu_ctx->pmu);
-+	ctx_time_update_event(ctx, event);
- 
- 	if (event == event->group_leader)
- 		group_sched_out(event, ctx);
-@@ -4529,10 +4540,7 @@ static void __perf_event_read(void *info
- 		return;
- 
- 	raw_spin_lock(&ctx->lock);
--	if (ctx->is_active & EVENT_TIME) {
--		update_context_time(ctx);
--		update_cgrp_time_from_event(event);
--	}
-+	ctx_time_update_event(ctx, event);
- 
- 	perf_event_update_time(event);
- 	if (data->group)
-@@ -4732,10 +4740,7 @@ static int perf_event_read(struct perf_e
- 		 * May read while context is not active (e.g., thread is
- 		 * blocked), in that case we cannot update context time
- 		 */
--		if (ctx->is_active & EVENT_TIME) {
--			update_context_time(ctx);
--			update_cgrp_time_from_event(event);
--		}
-+		ctx_time_update_event(ctx, event);
- 
- 		perf_event_update_time(event);
- 		if (group)
+ /*
 
 
 
