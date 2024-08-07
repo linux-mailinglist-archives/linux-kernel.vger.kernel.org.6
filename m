@@ -1,129 +1,189 @@
-Return-Path: <linux-kernel+bounces-278419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F31694B010
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:53:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 401BE94B013
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAAC7B22B57
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:53:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3F2CB22CB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF5F1422C4;
-	Wed,  7 Aug 2024 18:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C161422BC;
+	Wed,  7 Aug 2024 18:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aho2UIMq"
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=soulik.info header.i=@soulik.info header.b="w7TFhca1"
+Received: from kozue.soulik.info (kozue.soulik.info [108.61.200.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E84813F43A;
-	Wed,  7 Aug 2024 18:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AC82770E;
+	Wed,  7 Aug 2024 18:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.61.200.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723056822; cv=none; b=HIsmoS+QkAC3hnUZkl1Lk744ItjFHUrfU8fU1v0n123hF86BnKs5fmlx12FleOkRYvPnoKdaw+KUyCQMWUm/RO/CnO0ayBfVUE45Rpt1jcsbW2RPfASD5f0ypGm00Os1VEJToJX7qvyaDiCXd3BfFs0KzIGuJVmwG9u9P1hTT/8=
+	t=1723056863; cv=none; b=X9H8RrdSV2D67nhKWY5ICQJdOYp9Y7Ja74JH/gcmLcFj/qtjb3FcUqVmnZqSTvVw9nenLgtrgWiqQFhR8npXvzx7Nnyc6J7MpE1v5ORfGaqaP7apwHRP60iYNwaYCNLUy9bTp4ZsHtTO/8jO0Uj8jTjszDJF83exr2xgnn/d9zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723056822; c=relaxed/simple;
-	bh=e9IyYXy2oprSPFD8Ke8Dj7pvrFwX8/hQdl3qzz158Oo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kL4U0sG4QAkIRWHYFFYmnxF/KPg/VtTK7pyREWTMCwPwY90rBKCHd6o2QmHTtzalfWD1Ja5OMENR8NpchZNhuIsn17DehDA9znaitn/GerP6EWfW8Q/3JvMCe/Qmk+u5y23Kp62DmV07Eyo0W1K8kenT+orb8R8SwXuYVfY1l6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aho2UIMq; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-48ffdfae096so35429137.0;
-        Wed, 07 Aug 2024 11:53:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723056820; x=1723661620; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mrxfRKvkVDz5Xf+hzvJmQ6Nw1sDrNkZo7rKJhKh6E44=;
-        b=aho2UIMqPXo44dduWn8il/BWR9O8ch8IZ8cy1mp0c2y7aL4sd2avs+h/fz5WQmK7le
-         f04C2fDKqs8dHeSLNBXVoVzkZK8i3gmb/fBqzE94kLfGOSse3SazpWzxBYFl5YOEJu/6
-         8dsBmRBt1gW1feJh0uyC9T8TBUW5zHY5aAMXqKB2/OLgclduoz9iSjwvGmuvc/2MFFUp
-         RoipTPIOn34TNtGftTKnQ7QtJvBLP/50EodbGue6izVyDfPwIwIgpik89SXlWy356DXM
-         2ntnQ3qwyBvMO3iHWI8C7V1eNlr+LQ8/XKyzDYbBDBppt/M5Mgc50ycJ1NrxvDxxVRfL
-         TRxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723056820; x=1723661620;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mrxfRKvkVDz5Xf+hzvJmQ6Nw1sDrNkZo7rKJhKh6E44=;
-        b=m5w9Hfm4RF1DJHvEJciZPrNtS8BthAOJvPIdIp0Hs/14AAKk2hzLkWYBIHJgmpHOcM
-         QPZ3+xQyLQNOuKlD54oCbNG1yyhD2TmFg0/zW61RAwXJq0YV/JB+rqV9rUOjpmh/q9hR
-         58wjJDMzqjffYcZjg6BxqNA1thvkznzpmer3ypsCaZ/i4qcR/ho+OjIDswKGqzKjbgAi
-         Bzn0EIbrSgEl9MVMc8yi8okHWQvdewF5UGVImOhGSGbB6/rXfoAZl6uSclqlDVPUxjVO
-         D/CmW1a6KEHkAWrfiUeDjR3Wrz7Y00BFGzqk3xuetL89JvgHQywXJOXro4/giDnIZCoc
-         KxWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkP3FbrndDGcNAiV+Gq1OOjIhrGThc781bo4WZphW7m2hKubiqVDoCS5+mUo04Jw7y3DDk4Qg70dOqps/H@vger.kernel.org, AJvYcCW9Yi+VOGbBMQjLdXG3jZxxKPPh2uV09KkrPllSHZC6WfvyqvRKvIVWPkCLR/GGDuGXa08ZeXO+pZY=@vger.kernel.org, AJvYcCWaoOT2oRA7kn7UV0Of5eC2S8hkfJpLsUaYfXEYj+3/pmN1pj+BBkY9spD3ggQoCcCucTUmVXdn7CWQaTaejuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQWUGk1vPVrj4Thl1hUfP4dgiT1ZMUvcA8TPSViOvPIZvMiCid
-	TkY8W/bjKM7OxYavQBDOvRDkUPhld3wVgx4YPKmr3hbnRxar5vro
-X-Google-Smtp-Source: AGHT+IHLEQSvEuEV5aYuygNTojlWpO3dDQyyeV0soFivtuciDnfsodcfJQqmA8+V5DyV9/XZlcF5BQ==
-X-Received: by 2002:a05:6102:f10:b0:48f:23b4:1d96 with SMTP id ada2fe7eead31-4945be09d61mr17260089137.16.1723056819863;
-        Wed, 07 Aug 2024 11:53:39 -0700 (PDT)
-Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-83c07d00b53sm1647518241.10.2024.08.07.11.53.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 11:53:39 -0700 (PDT)
-From: David Hunter <david.hunter.linux@gmail.com>
-To: david.hunter.linux@gmail.com
-Cc: corbet@lwn.net,
-	javier.carrasco.cruz@gmail.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux@roeck-us.net,
-	skhan@linuxfoundation.org,
-	wim@linux-watchdog.org
-Subject: [PATCH v3] Documentation: Capitalize Fahrenheit in watchdog-api.rst
-Date: Wed,  7 Aug 2024 14:53:32 -0400
-Message-Id: <20240807185332.61624-1-david.hunter.linux@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240723131849.264939-1-david.hunter.linux@gmail.com>
-References: <20240723131849.264939-1-david.hunter.linux@gmail.com>
+	s=arc-20240116; t=1723056863; c=relaxed/simple;
+	bh=Oy3Arc9xnm29CObRN4hnz61tzv8F5MKNJjwlTCeU/D4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UwEICz14WjSSTp2ENWgbyeVJUkzMSQS4u5thgJiMuPrxrK2NjAUZHzo6IFedwhK7jiA9zU90v09tuB2MwZmE0vZBB3c541neZlEQ4EpkIZFDBS9U6L1sRSRehvIsR0s9XmX0Fhj01W6nNXdemabim/GHE6k8M5FW++f0xSNOqrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soulik.info; spf=pass smtp.mailfrom=soulik.info; dkim=pass (1024-bit key) header.d=soulik.info header.i=@soulik.info header.b=w7TFhca1; arc=none smtp.client-ip=108.61.200.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soulik.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soulik.info
+Received: from [192.168.10.7] (unknown [10.0.12.132])
+	by kozue.soulik.info (Postfix) with ESMTPSA id ECB522FE4F7;
+	Thu,  8 Aug 2024 03:54:47 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 kozue.soulik.info ECB522FE4F7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=soulik.info; s=mail;
+	t=1723056888; bh=a4G2GaIu3qEW2hkacxQ3XBO0hk1/jOYpCv/D8YD+r2I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=w7TFhca1n/5Pp47Cz5kUFBfYNgckGPV3rQicX+X+b0Xw3eMg3VJyAXXbyB4K9TZvG
+	 CnpnrMRcFmn5XthsMw5iq8v+OblghItw5l9D86UZ4AHukmaTrAVSbCLnSaPlqYYJOn
+	 NInnI6EemCUkIlNVm4hy2s0LvBe+4GzJIz/5D+JY=
+Message-ID: <3a3695a1-367c-4868-b6e1-1190b927b8e7@soulik.info>
+Date: Thu, 8 Aug 2024 02:54:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: tuntap: add ioctl() TUNGETQUEUEINDX to fetch queue
+ index
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: netdev@vger.kernel.org, jasowang@redhat.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org
+References: <20240731111940.8383-1-ayaka@soulik.info>
+ <66aa463e6bcdf_20b4e4294ea@willemb.c.googlers.com.notmuch>
+ <bd69202f-c0da-4f46-9a6c-2375d82a2579@soulik.info>
+ <66aab3614bbab_21c08c29492@willemb.c.googlers.com.notmuch>
+ <3d8b1691-6be5-4fe5-aa3f-58fd3cfda80a@soulik.info>
+ <66ab87ca67229_2441da294a5@willemb.c.googlers.com.notmuch>
+ <343bab39-65c5-4f02-934b-84b6ceed1c20@soulik.info>
+ <66ab99162673_246b0d29496@willemb.c.googlers.com.notmuch>
+ <328c71e7-17c7-40f4-83b3-f0b8b40f4730@soulik.info>
+ <66acf6cc551a0_2751b6294bf@willemb.c.googlers.com.notmuch>
+Content-Language: en-US
+From: Randy Li <ayaka@soulik.info>
+In-Reply-To: <66acf6cc551a0_2751b6294bf@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Capitalize "fahrenheit," a spelling mistake.
+Hello Willem
 
-Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
----
-V2 -> V3:
- - Fixed misspelling of "Capitalize" in commit message. 
- - Put Tags and Kernel Subsystem in subject
- - Put changelog after commit message
+On 2024/8/2 23:10, Willem de Bruijn wrote:
+> Randy Li wrote:
+>> On 2024/8/1 22:17, Willem de Bruijn wrote:
+>>> Randy Li wrote:
+>>>> On 2024/8/1 21:04, Willem de Bruijn wrote:
+>>>>> Randy Li wrote:
+>>>>>> On 2024/8/1 05:57, Willem de Bruijn wrote:
+>>>>>>> nits:
+>>>>>>>
+>>>>>>> - INDX->INDEX. It's correct in the code
+>>>>>>> - prefix networking patches with the target tree: PATCH net-next
+>>>>>> I see.
+>>>>>>> Randy Li wrote:
+>>>>>>>> On 2024/7/31 22:12, Willem de Bruijn wrote:
+>>>>>>>>> Randy Li wrote:
+>>>>>>>>>> We need the queue index in qdisc mapping rule. There is no way to
+>>>>>>>>>> fetch that.
+>>>>>>>>> In which command exactly?
+>>>>>>>> That is for sch_multiq, here is an example
+>>>>>>>>
+>>>>>>>> tc qdisc add dev  tun0 root handle 1: multiq
+>>>>>>>>
+>>>>>>>> tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip dst
+>>>>>>>> 172.16.10.1 action skbedit queue_mapping 0
+>>>>>>>> tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip dst
+>>>>>>>> 172.16.10.20 action skbedit queue_mapping 1
+>>>>>>>>
+>>>>>>>> tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip dst
+>>>>>>>> 172.16.10.10 action skbedit queue_mapping 2
+>>>>>>> If using an IFF_MULTI_QUEUE tun device, packets are automatically
+>>>>>>> load balanced across the multiple queues, in tun_select_queue.
+>>>>>>>
+>>>>>>> If you want more explicit queue selection than by rxhash, tun
+>>>>>>> supports TUNSETSTEERINGEBPF.
+>>>>>> I know this eBPF thing. But I am newbie to eBPF as well I didn't figure
+>>>>>> out how to config eBPF dynamically.
+>>>>> Lack of experience with an existing interface is insufficient reason
+>>>>> to introduce another interface, of course.
+>>>> tc(8) was old interfaces but doesn't have the sufficient info here to
+>>>> complete its work.
+>>> tc is maintained.
+>>>
+>>>> I think eBPF didn't work in all the platforms? JIT doesn't sound like a
+>>>> good solution for embeded platform.
+>>>>
+>>>> Some VPS providers doesn't offer new enough kernel supporting eBPF is
+>>>> another problem here, it is far more easy that just patching an old
+>>>> kernel with this.
+>>> We don't add duplicative features because they are easier to
+>>> cherry-pick to old kernels.
+>> I was trying to say the tc(8) or netlink solution sound more suitable
+>> for general deploying.
+>>>> Anyway, I would learn into it while I would still send out the v2 of
+>>>> this patch. I would figure out whether eBPF could solve all the problem
+>>>> here.
+>>> Most importantly, why do you need a fixed mapping of IP address to
+>>> queue? Can you explain why relying on the standard rx_hash based
+>>> mapping is not sufficient for your workload?
+>> Server
+>>
+>>     |
+>>
+>>     |------ tun subnet (e.x. 172.16.10.0/24) ------- peer A (172.16.10.1)
+>>
+>> |------ peer B (172.16.10.3)
+>>
+>> |------  peer C (172.16.10.20)
+>>
+>> I am not even sure the rx_hash could work here, the server here acts as
+>> a router or gateway, I don't know how to filter the connection from the
+>> external interface based on rx_hash. Besides, VPN application didn't
+>> operate on the socket() itself.
+>>
+>> I think this question is about why I do the filter in the kernel not the
+>> userspace?
+>>
+>> It would be much more easy to the dispatch work in kernel, I only need
+>> to watch the established peer with the help of epoll(). Kernel could
+>> drop all the unwanted packets. Besides, if I do the filter/dispatcher
+>> work in the userspace, it would need to copy the packet's data to the
+>> userspace first, even decide its fate by reading a few bytes from its
+>> beginning offset. I think we can avoid such a cost.
+> A custom mapping function is exactly the purpose of TUNSETSTEERINGEBPF.
+>
+> Please take a look at that. It's a lot more elegant than going through
+> userspace and then inserting individual tc skbedit filters.
 
-V1 -> V2: 
- - Fixed imperative mood 
- - Fixed misspelling of "Fahrenheit" in Subject
+I checked how this socket filter works, I think we still need this 
+serial of patch.
 
-V2: https://lore.kernel.org/lkml/7b7ca7e0-6bd2-45ab-bd9b-40331a8e6fdd@roeck-us.net/
+If I was right, this eBPF doesn't work like a regular socket filter. The 
+eBPF's return value here means the target queue index not the size of 
+the data that we want to keep from the sk_buf parameter's buf.
 
-V1: https://lore.kernel.org/lkml/20240723131849.264939-1-david.hunter.linux@gmail.com/
+Besides, according to 
+https://ebpf-docs.dylanreimerink.nl/linux/program-type/BPF_PROG_TYPE_SOCKET_FILTER/
 
- Documentation/watchdog/watchdog-api.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
----
-diff --git a/Documentation/watchdog/watchdog-api.rst b/Documentation/watchdog/watchdog-api.rst
-index 800dcd7586f2..78e228c272cf 100644
---- a/Documentation/watchdog/watchdog-api.rst
-+++ b/Documentation/watchdog/watchdog-api.rst
-@@ -249,7 +249,7 @@ Note that not all devices support these two calls, and some only
- support the GETBOOTSTATUS call.
- 
- Some drivers can measure the temperature using the GETTEMP ioctl.  The
--returned value is the temperature in degrees fahrenheit::
-+returned value is the temperature in degrees Fahrenheit::
- 
-     int temperature;
-     ioctl(fd, WDIOC_GETTEMP, &temperature);
--- 
-2.34.1
+I think the eBPF here can modify neither queue_mapping field nor hash 
+field here.
+
+> See SKF_AD_QUEUE for classic BPF and __sk_buff queue_mapping for eBPF.
+
+Is it a map type BPF_MAP_TYPE_QUEUE?
+
+Besides, I think the eBPF in TUNSETSTEERINGEBPF would NOT take 
+queue_mapping.
+
+If I want to drop packets for unwanted destination, I think 
+TUNSETFILTEREBPF is what I need?
+
+That would lead to lookup the same mapping table twice, is there a 
+better way for the CPU cache?
 
 
