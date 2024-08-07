@@ -1,102 +1,125 @@
-Return-Path: <linux-kernel+bounces-277670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1335B94A491
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:40:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C70494A492
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43A9C1C20E92
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:40:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251CF281D7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0B41D0DD8;
-	Wed,  7 Aug 2024 09:39:56 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9521D0DFD;
+	Wed,  7 Aug 2024 09:40:17 +0000 (UTC)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D801CB32D
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 09:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CED1CB32D;
+	Wed,  7 Aug 2024 09:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723023596; cv=none; b=tlrC4QJN+bFbKKqBcn4dHGRyH3C6P9xx1/DlmOkk35K+8ZOw9JGpryWB4deSLCY8wPZbgc1/JkO2zdaI9epoV9Yz9nyZAuleY6LKEK3KJoD2NY9DwuD4v1dGrzTTjrm5wJ/4qj8O+r8f0iAR8/ekY+v5AqF7foQvXWYwkwQQs20=
+	t=1723023617; cv=none; b=DbTi7IiLvFsmaRn39Ty5X2H6Qccp0hfWGR1G+lGcH072gV7vmPz72XkE1PicY0BLW3MneXxsAstDbIAo3jIOZx+g3x5H+8YDlO3pu+BwZK4Pl/hftNE+v/VxrxpJ0RYlPGT2KhOhtES55ogVxzuE+lF+7iKzYexZXeHKtootyJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723023596; c=relaxed/simple;
-	bh=Se8ZNwRAjR9otbT64/9951NejPTVeEk4ZzicIlEtSaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oAxzGwXBRqpk8jI1Zs4u5PnlnUS1GKl3QJ5FuP+E8ge3V4Kt6K7JSq4zvcbeGc1awVCI4IhApA25hORIcxRnjk7rZGfW9viqJfvQtMvSoX4z7pElGH5wdrwt35UuDwjKQX031FQmj60+AOIJcR39ZKPjxHPOIw+15BHuwTj2ghY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wf4lw4gQ0z20l7l;
-	Wed,  7 Aug 2024 17:35:24 +0800 (CST)
-Received: from kwepemg200007.china.huawei.com (unknown [7.202.181.34])
-	by mail.maildlp.com (Postfix) with ESMTPS id D65501A016C;
-	Wed,  7 Aug 2024 17:39:50 +0800 (CST)
-Received: from [10.45.183.231] (10.45.183.231) by
- kwepemg200007.china.huawei.com (7.202.181.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 7 Aug 2024 17:39:49 +0800
-Message-ID: <7ae6fa16-80d3-4478-baae-b5bc06531e0c@huawei.com>
-Date: Wed, 7 Aug 2024 17:39:44 +0800
+	s=arc-20240116; t=1723023617; c=relaxed/simple;
+	bh=tsLd12Q21S0XxO69H0s5LApGcYUZEie2HvPNE2IhMuQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T4byC2Q4orhxPH7ILSzCxgYh6pgWWKd+PuyFTNMzVi+Es1L+HaJQ05H3X7cOAzTkrDP3lI77uXt6xnLlcavBb2TEd8fgBTRR9iLJd8JpK0fC4nkGBk4zOwZ0U4v/MTf2d001ZgQKU4tIA4TpMo00+oTLQmwpEeMEp3ik/I+Wvds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5ba43b433beso1804962a12.1;
+        Wed, 07 Aug 2024 02:40:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723023614; x=1723628414;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XIJe01rMNUiVH87w2wFawTwUkJYekoCY1EChG0NNQhM=;
+        b=UshJQSp6Cxt05nHiu5RHH/H72iSiVf/VcpTFb5XpKgfSX7JK9tU5V7hKTFlczGyf2p
+         EDket7INpvhKKS3prg3iWFtMu0J/aKghd+UOjJZsWquJe8mBwSTCNnBLijpsNS5uY8p+
+         Z+9qEZqms1VBARfUDlsisGM4YSPhAG0TZF3EC4hM26XfSXuwjDW1WGP6SbC+IaiwSmOd
+         Pb1FGwnoly6qU7HqV3U0TIvKC1uw7+XMt7AdrCOCqAJKGYT3wKx71/uSgu7gHQF//TP2
+         6jlA6CJmvG27AvQwymjgisuk+oAyhNpdcJAKU51PIB+EYYIz4HGGT9MHp7qKJosDokdn
+         4ybQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFOQrQLRcCpE7z6XuTn72k8lWepgwqvBvhpLwdxkt6Nq99OmyExF1spJ/PJhmg7vo/u3GKE5geqn1IMbgxTq/aSMmCbEFm4u+Ry6ctdV/Nta9DhvMN3EnS5lBc1H7VykbjCZ0cHvArIw==
+X-Gm-Message-State: AOJu0YwuFcHlvb38f04O9+EjzeBtxLr6OrUSXt9YrY4a9ATEHUqGkVTy
+	xGXH0bAiY7QAkRpoIPiWkH+3RgdVRxzbMaJfYlQcv8TdBhYzQ4nL
+X-Google-Smtp-Source: AGHT+IFGFXyzPJyU+3ZO6aR/vJvOsoR7CD4nWairtbEuBiPfLL88RNN6LQscDwHMcXSf7Gb4A8ObyA==
+X-Received: by 2002:a17:907:724b:b0:a7a:c083:8575 with SMTP id a640c23a62f3a-a7dc4ae31afmr1377036266b.0.1723023613413;
+        Wed, 07 Aug 2024 02:40:13 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-004.fbsv.net. [2a03:2880:30ff:4::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0cb9esm622404366b.78.2024.08.07.02.40.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 02:40:13 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: martin.petersen@oracle.com,
+	Sathya Prakash <sathya.prakash@broadcom.com>,
+	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
+Cc: leit@meta.com,
+	MPT-FusionLinux.pdl@broadcom.com (open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)),
+	linux-scsi@vger.kernel.org (open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] scsi: message: fusion: Remove unused variable
+Date: Wed,  7 Aug 2024 02:39:59 -0700
+Message-ID: <20240807094000.398857-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/deadline: Fix imbalanced task reference
-To: Juri Lelli <juri.lelli@redhat.com>
-CC: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
-	<dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall
-	<bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
-	<vschneid@redhat.com>, <linux-kernel@vger.kernel.org>, Wander Costa
-	<wcosta@redhat.com>
-References: <20240807083015.1385303-1-zhangqiao22@huawei.com>
- <ZrM3rZFGg_nPEjjV@jlelli-thinkpadt14gen4.remote.csb>
-From: Zhang Qiao <zhangqiao22@huawei.com>
-In-Reply-To: <ZrM3rZFGg_nPEjjV@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg200007.china.huawei.com (7.202.181.34)
 
+There are two unused variable in mptsas, and the compiler complains
+about it. Let's get them removed.
 
+	drivers/message/fusion/mptsas.c:4234:6: warning: variable 'rc' set but not used [-Wunused-but-set-variable]
+	 4234 |         int rc;
+	drivers/message/fusion/mptsas.c:4793:17: warning: variable 'timeleft' set but not used [-Wunused-but-set-variable]
+	 4793 |         unsigned long    timeleft;
 
-Hi,
-在 2024/8/7 17:00, Juri Lelli 写道:
-> Hi,
-> 
-> On 07/08/24 16:30, Zhang Qiao wrote:
->> When starting a deadline inactive_timer, the task_struct refs will
->> be incremented only if dl_server is not set. But when canceling the
->> inactive_timer, the task refs will be decremented whether dl_server is
->> set or not, leading to a task reference imbalance issue.
->>
->> This patch fixes the imbalanced reference by adding a '!dl_server()'
->> checker before calling put_task_struct().
->>
->> Fixes: 63ba8422f876 ("sched/deadline: Introduce deadline servers")
->> Signed-off-by: Zhang Qiao <zhangqiao22@huawei.com>
-> 
-> Isn't this equivalent to Wander's patch below?
-> 
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ drivers/message/fusion/mptsas.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-Yeah, i didn't notice it.
+diff --git a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
+index a0bcb0864ecd..cd920faff16a 100644
+--- a/drivers/message/fusion/mptsas.c
++++ b/drivers/message/fusion/mptsas.c
+@@ -4231,10 +4231,8 @@ mptsas_find_phyinfo_by_phys_disk_num(MPT_ADAPTER *ioc, u8 phys_disk_num,
+ static void
+ mptsas_reprobe_lun(struct scsi_device *sdev, void *data)
+ {
+-	int rc;
+-
+ 	sdev->no_uld_attach = data ? 1 : 0;
+-	rc = scsi_device_reprobe(sdev);
++	scsi_device_reprobe(sdev);
+ }
+ 
+ static void
+@@ -4790,7 +4788,6 @@ mptsas_issue_tm(MPT_ADAPTER *ioc, u8 type, u8 channel, u8 id, u64 lun,
+ 	MPT_FRAME_HDR	*mf;
+ 	SCSITaskMgmt_t	*pScsiTm;
+ 	int		 retval;
+-	unsigned long	 timeleft;
+ 
+ 	*issue_reset = 0;
+ 	mf = mpt_get_msg_frame(mptsasDeviceResetCtx, ioc);
+@@ -4826,8 +4823,7 @@ mptsas_issue_tm(MPT_ADAPTER *ioc, u8 type, u8 channel, u8 id, u64 lun,
+ 	mpt_put_msg_frame_hi_pri(mptsasDeviceResetCtx, ioc, mf);
+ 
+ 	/* Now wait for the command to complete */
+-	timeleft = wait_for_completion_timeout(&ioc->taskmgmt_cmds.done,
+-	    timeout*HZ);
++	wait_for_completion_timeout(&ioc->taskmgmt_cmds.done, timeout * HZ);
+ 	if (!(ioc->taskmgmt_cmds.status & MPT_MGMT_STATUS_COMMAND_GOOD)) {
+ 		retval = -1; /* return failure */
+ 		dtmprintk(ioc, printk(MYIOC_s_ERR_FMT
+-- 
+2.43.5
 
-> https://lore.kernel.org/lkml/20240724142253.27145-3-wander@redhat.com/
-> 
-
-
-
-Thanks,
-Zhang Qiao.
-> Thanks,
-> Juri
-> 
-> 
-> 
 
