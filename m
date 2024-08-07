@@ -1,242 +1,278 @@
-Return-Path: <linux-kernel+bounces-277729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2F194A567
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:27:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824CE94A58A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 745101C20306
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:27:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6DEBB28765
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4761DD3B1;
-	Wed,  7 Aug 2024 10:27:04 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BAF1DE846;
+	Wed,  7 Aug 2024 10:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cLY3/utF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aKb3bOME";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cLY3/utF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aKb3bOME"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5FA1803A
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82311C823D;
+	Wed,  7 Aug 2024 10:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723026423; cv=none; b=Au1OJ8ysKw1SrJMXzhW2N/HtXRI6/MnX2lWPk+dpJZWBaOJgY1scH7vCk2DWseSwjnDQRQ1OjGQxOdJMqVKTlJQ3H92pExrpK/Fkd826xl9NnsM1s5b/XeSPVQHS1Nv5B3XqALEWabvbXCqOicbhKn2QG9WHrmLbLRyQoKhKIbk=
+	t=1723026703; cv=none; b=K0zLRhccWozs5JnCZ2C3vGEVfvHlqcrqLorTK3JpgXODiOaOVBHrc3gmU+E0lEgMnF15CGWP21SMRfx0KMDNFxEfE9AZ1dXjGE3qhNbGuRle6iF7OJvN8P/dJoANTDMS26i91JJWy+2M6VHcnLMCROzeFj8v02TGUz38gBWJrSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723026423; c=relaxed/simple;
-	bh=8INA9PN3D3vFUNYja6UFIHKU2EbiqBnPoJpxLq2TfxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FVTWBrq2Xgt/uuMQnpmlFeIUux83Kvy9MB2cKN2D4p5jmSSvRmfo7vnCW7vUB02hSTMZ5ach2lgyAnZliDaEV+1CYDL9pFr8R8SRvKMb0ReqO/OSLXv3fCso7m4ohqAMrF0foM0LEyu9WD2D28TjiQInN4eazduDwZHdnd11IEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sbdsS-0003ur-4r; Wed, 07 Aug 2024 12:26:44 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sbdsP-005AZU-K2; Wed, 07 Aug 2024 12:26:41 +0200
-Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
+	s=arc-20240116; t=1723026703; c=relaxed/simple;
+	bh=f1UN3sUNh+9LBaSZt6eaV0/ZDh2ZO0Hxr7n+OHWD/3g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IEcu8xAjZNeQj2PMwhtqz3I9bHywoHZqZt7TByRNd9PO49yeVLnSxaRQe3651fJ6SL9ysYmqa4LO/t/Aguzp9r6bAWOzukK0NBmCDoWdLTUc/yUFOlSDrS1ZEL6N5IYQ86VU0mu3jSnLIH1/JkTG7XYo5N0xL9CS00ualpkXpnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cLY3/utF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aKb3bOME; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cLY3/utF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aKb3bOME; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 3BC37318A36;
-	Wed, 07 Aug 2024 10:26:41 +0000 (UTC)
-Date: Wed, 7 Aug 2024 12:26:41 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Wei Fang <wei.fang@nxp.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, kernel@pengutronix.de
-Subject: Re: [PATCH v2 1/1] net: fec: using page pool to manage RX buffers
-Message-ID: <20240807-rustling-literate-cormorant-08d7a8-mkl@pengutronix.de>
-References: <20220930204427.1299077-1-shenwei.wang@nxp.com>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9D1BE21B30;
+	Wed,  7 Aug 2024 10:31:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723026693; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MYAQdZfiQ9b2HS7QQayr4v2PzJCMJBGtNuCobIJ9kog=;
+	b=cLY3/utFzR5G3V/XxZK66w1hKI7zztrmY2agOcJq2AtoIbw0KWSjpeZCldsX94i4eEQSV4
+	KoTs0wdmYXemgTm1TPUpfcr782fz/9E9l4YQLA8wvpn4zbENmVTG8Kk9Uj7JBHCBZhpcAD
+	lWxbMEzL60zqw5BIi3i4FvJE3gPz3eY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723026693;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MYAQdZfiQ9b2HS7QQayr4v2PzJCMJBGtNuCobIJ9kog=;
+	b=aKb3bOMEXUnsdzgDug3GWG+Gfd26M4sIVpomf1zjqE4sNJKZax0GGgM3p4N7i13iwnmkq0
+	cjtKorDtNeDJ2tBg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="cLY3/utF";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=aKb3bOME
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723026693; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MYAQdZfiQ9b2HS7QQayr4v2PzJCMJBGtNuCobIJ9kog=;
+	b=cLY3/utFzR5G3V/XxZK66w1hKI7zztrmY2agOcJq2AtoIbw0KWSjpeZCldsX94i4eEQSV4
+	KoTs0wdmYXemgTm1TPUpfcr782fz/9E9l4YQLA8wvpn4zbENmVTG8Kk9Uj7JBHCBZhpcAD
+	lWxbMEzL60zqw5BIi3i4FvJE3gPz3eY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723026693;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MYAQdZfiQ9b2HS7QQayr4v2PzJCMJBGtNuCobIJ9kog=;
+	b=aKb3bOMEXUnsdzgDug3GWG+Gfd26M4sIVpomf1zjqE4sNJKZax0GGgM3p4N7i13iwnmkq0
+	cjtKorDtNeDJ2tBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7078B13297;
+	Wed,  7 Aug 2024 10:31:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KnTUGgVNs2YsHwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 07 Aug 2024 10:31:33 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH v2 0/7] mm, slub: handle pending kfree_rcu() in
+ kmem_cache_destroy()
+Date: Wed, 07 Aug 2024 12:31:13 +0200
+Message-Id: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="s4llhy42hfqhiqap"
-Content-Disposition: inline
-In-Reply-To: <20220930204427.1299077-1-shenwei.wang@nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPFMs2YC/42NQQ6CMBBFr2Jm7ZgyKQquvIchhraDNBowM0BEw
+ t2tnMDle8l/fwFliaxw3i0gPEWNfZeA9jvwbd3dGWNIDGTImlOWo7Ooz9rhoxHmm/gRA+sg/Yx
+ FHgI5ChxKgrR/CTfxvbWvVeI26tDLvF1N2c/+U50yNGiPjsrCeiKTX3RUPvgPVOu6fgGMaZPzw
+ AAAAA==
+To: "Paul E. McKenney" <paulmck@kernel.org>, 
+ Joel Fernandes <joel@joelfernandes.org>, 
+ Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>, 
+ Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
+ Julia Lawall <Julia.Lawall@inria.fr>, Jakub Kicinski <kuba@kernel.org>, 
+ "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Roman Gushchin <roman.gushchin@linux.dev>, 
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, 
+ Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, 
+ Jann Horn <jannh@google.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+ Vlastimil Babka <vbabka@suse.cz>
+X-Mailer: b4 0.14.1
+X-Spam-Level: 
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 9D1BE21B30
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[kernel.org,joelfernandes.org,joshtriplett.org,gmail.com,linux.com,google.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_CC(0.00)[goodmis.org,efficios.com,gmail.com,inria.fr,kernel.org,zx2c4.com,linux-foundation.org,linux.dev,kvack.org,vger.kernel.org,google.com,googlegroups.com,suse.cz];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[27];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLsm9p66qmnckghmjmpccdnq6s)];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
+Also in git:
+https://git.kernel.org/vbabka/l/slab-kfree_rcu-destroy-v2r2
 
---s4llhy42hfqhiqap
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Since SLOB was removed, we have allowed kfree_rcu() for objects
+allocated from any kmem_cache in addition to kmalloc().
 
-Hello,
+Recently we have attempted to replace existing call_rcu() usage with
+kfree_rcu() where the callback is a plain kmem_cache_free(), in a series
+by Julia Lawall [1].
 
-while looking at the fec driver I noticed the following not explicitly
-initialized variable.=20
+Jakub Kicinski pointed out [2] this was tried already in batman-adv but
+had to be reverted due to kmem_cache_destroy() failing due to objects
+remaining in the cache, despite rcu_barrier() being used.
 
-On 30.09.2022 15:44:27, Shenwei Wang wrote:
-> This patch optimizes the RX buffer management by using the page
-> pool. The purpose for this change is to prepare for the following
-> XDP support. The current driver uses one frame per page for easy
-> management.
+Jason Donenfeld found the culprit [3] being a35d16905efc ("rcu: Add
+basic support for kfree_rcu() batching") causing rcu_barrier() to be
+insufficient.
 
-[...]
+This was never a problem for kfree_rcu() usage on kmalloc() objects as
+the kmalloc caches are never destroyed, but arbitrary caches can be,
+e.g. due to module unload.
 
-> diff --git a/drivers/net/ethernet/freescale/fec.h b/drivers/net/ethernet/=
-freescale/fec.h
-> index b0100fe3c9e4..33f84a30e167 100644
-> --- a/drivers/net/ethernet/freescale/fec.h
-> +++ b/drivers/net/ethernet/freescale/fec.h
-> @@ -17,6 +17,7 @@
->  #include <linux/clocksource.h>
->  #include <linux/net_tstamp.h>
->  #include <linux/pm_qos.h>
-> +#include <linux/bpf.h>
->  #include <linux/ptp_clock_kernel.h>
->  #include <linux/timecounter.h>
->  #include <dt-bindings/firmware/imx/rsrc.h>
-> @@ -346,8 +347,11 @@ struct bufdesc_ex {
->   * the skbuffer directly.
->   */
->=20
-> +#define FEC_ENET_XDP_HEADROOM	(XDP_PACKET_HEADROOM)
-> +
->  #define FEC_ENET_RX_PAGES	256
-> -#define FEC_ENET_RX_FRSIZE	2048
-> +#define FEC_ENET_RX_FRSIZE	(PAGE_SIZE - FEC_ENET_XDP_HEADROOM \
-> +		- SKB_DATA_ALIGN(sizeof(struct skb_shared_info)))
->  #define FEC_ENET_RX_FRPPG	(PAGE_SIZE / FEC_ENET_RX_FRSIZE)
->  #define RX_RING_SIZE		(FEC_ENET_RX_FRPPG * FEC_ENET_RX_PAGES)
->  #define FEC_ENET_TX_FRSIZE	2048
-> @@ -517,6 +521,12 @@ struct bufdesc_prop {
->  	unsigned char dsize_log2;
->  };
->=20
-> +struct fec_enet_priv_txrx_info {
-> +	int	offset;
-> +	struct	page *page;
-> +	struct  sk_buff *skb;
-> +};
-> +
->  struct fec_enet_priv_tx_q {
->  	struct bufdesc_prop bd;
->  	unsigned char *tx_bounce[TX_RING_SIZE];
-> @@ -532,7 +542,14 @@ struct fec_enet_priv_tx_q {
->=20
->  struct fec_enet_priv_rx_q {
->  	struct bufdesc_prop bd;
-> -	struct  sk_buff *rx_skbuff[RX_RING_SIZE];
-> +	struct  fec_enet_priv_txrx_info rx_skb_info[RX_RING_SIZE];
-> +
-> +	/* page_pool */
-> +	struct page_pool *page_pool;
-> +	struct xdp_rxq_info xdp_rxq;
-> +
-> +	/* rx queue number, in the range 0-7 */
-> +	u8 id;
+Out of the possible solutions collected by Paul McKenney [4] the most
+appealing to me is "kmem_cache_destroy() lingers for kfree_rcu()" as
+it adds no additional concerns to kfree_rcu() users.
 
-This number is never explicitly initialized, I think it's always 0.
+We already have the precedence in some parts of the kmem_cache cleanup
+being done asynchronously for SLAB_TYPESAFE_BY_RCU caches. The v1 of
+this RFC took the same approach for asynchronously waiting for pending
+kfree_rcu(). Mateusz Guzik on IRC questioned this approach, and it turns
+out the rcu_barrier() used to be synchronous before commit 657dc2f97220
+("slab: remove synchronous rcu_barrier() call in memcg cache release
+path") and the motivation for that is no longer applicable. So instead
+in v2 the existing barrier is reverted to be synchronous, and the new
+barrier for kfree_rcu() is also called sychronously.
 
->  };
->=20
->  struct fec_stop_mode_gpr {
-> diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethe=
-rnet/freescale/fec_main.c
-> index 59921218a8a4..169950e43b88 100644
-> --- a/drivers/net/ethernet/freescale/fec_main.c
-> +++ b/drivers/net/ethernet/freescale/fec_main.c
-> @@ -66,6 +66,8 @@
->  #include <linux/mfd/syscon.h>
->  #include <linux/regmap.h>
->  #include <soc/imx/cpuidle.h>
-> +#include <linux/filter.h>
-> +#include <linux/bpf.h>
->=20
->  #include <asm/cacheflush.h>
->=20
-> @@ -422,6 +424,48 @@ fec_enet_clear_csum(struct sk_buff *skb, struct net_=
-device *ndev)
->  	return 0;
->  }
->=20
-> +static int
-> +fec_enet_create_page_pool(struct fec_enet_private *fep,
-> +			  struct fec_enet_priv_rx_q *rxq, int size)
-> +{
-> +	struct page_pool_params pp_params =3D {
-> +		.order =3D 0,
-> +		.flags =3D PP_FLAG_DMA_MAP | PP_FLAG_DMA_SYNC_DEV,
-> +		.pool_size =3D size,
-> +		.nid =3D dev_to_node(&fep->pdev->dev),
-> +		.dev =3D &fep->pdev->dev,
-> +		.dma_dir =3D DMA_FROM_DEVICE,
-> +		.offset =3D FEC_ENET_XDP_HEADROOM,
-> +		.max_len =3D FEC_ENET_RX_FRSIZE,
-> +	};
-> +	int err;
-> +
-> +	rxq->page_pool =3D page_pool_create(&pp_params);
-> +	if (IS_ERR(rxq->page_pool)) {
-> +		err =3D PTR_ERR(rxq->page_pool);
-> +		rxq->page_pool =3D NULL;
-> +		return err;
-> +	}
-> +
-> +	err =3D xdp_rxq_info_reg(&rxq->xdp_rxq, fep->netdev, rxq->id, 0);
+The new kvfree_rcu_barrier() was provided by Uladzislau Rezki in a patch
+[5] carried now by this series.
 
-But it's used here.
+There is also a bunch of preliminary cleanup steps. The potentially
+visible one is that sysfs and debugfs directories, as well as
+/proc/slabinfo record of the cache are now removed immediately during
+kmem_cache_destroy() - previously this would be delayed for
+SLAB_TYPESAFE_BY_RCU caches or left around forever if leaked objects
+were detected. Even though we no longer have the delayed removal, leaked
+objects should not prevent the cache to be recreated including its sysfs
+and debugfs directories, so it's better to make this cleanup anyway.
+The immediate removal is the simplest solution (compared to e.g.
+renaming the directories) and should not make debugging harder - while
+it won't be possible to check debugfs for allocation traces of leaked
+objects, they are listed with more detail in dmesg anyway.
 
-> +	if (err < 0)
-> +		goto err_free_pp;
-> +
-> +	err =3D xdp_rxq_info_reg_mem_model(&rxq->xdp_rxq, MEM_TYPE_PAGE_POOL,
-> +					 rxq->page_pool);
-> +	if (err)
-> +		goto err_unregister_rxq;
-> +
-> +	return 0;
-> +
-> +err_unregister_rxq:
-> +	xdp_rxq_info_unreg(&rxq->xdp_rxq);
-> +err_free_pp:
-> +	page_pool_destroy(rxq->page_pool);
-> +	rxq->page_pool =3D NULL;
-> +	return err;
-> +}
+[1] https://lore.kernel.org/all/20240609082726.32742-1-Julia.Lawall@inria.fr/
+[2] https://lore.kernel.org/all/20240612143305.451abf58@kernel.org/
+[3] https://lore.kernel.org/all/Zmo9-YGraiCj5-MI@zx2c4.com/
+[4] https://docs.google.com/document/d/1v0rcZLvvjVGejT3523W0rDy_sLFu2LWc_NR3fQItZaA/edit
+[5] https://lore.kernel.org/all/20240801111039.79656-1-urezki@gmail.com/
 
-regards,
-Marc
+To: Paul E. McKenney <paulmck@kernel.org>
+To: Joel Fernandes <joel@joelfernandes.org>
+To: Josh Triplett <josh@joshtriplett.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+CC: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Zqiang <qiang.zhang1211@gmail.com>
+Cc: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Jason A. Donenfeld <Jason@zx2c4.com>
+Cc: Uladzislau Rezki (Sony) <urezki@gmail.com>
+To: Christoph Lameter <cl@linux.com>
+To: David Rientjes <rientjes@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+Cc: rcu@vger.kernel.org
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Marco Elver <elver@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: kasan-dev@googlegroups.com
+Cc: Jann Horn <jannh@google.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+Changes in v2:
+- Include the necessary barrier implementation (by Uladzislau Rezki)
+- Switch to synchronous barriers (Mateusz Guzik)
+- Moving of kfence_shutdown_cache() outside slab_mutex done in a
+  separate step for review and bisectability.
+- Additional kunit test for destroying a cache with leaked object.
+- Link to v1: https://lore.kernel.org/r/20240715-b4-slab-kfree_rcu-destroy-v1-0-46b2984c2205@suse.cz
 
---s4llhy42hfqhiqap
-Content-Type: application/pgp-signature; name="signature.asc"
+---
+Uladzislau Rezki (Sony) (1):
+      rcu/kvfree: Add kvfree_rcu_barrier() API
 
------BEGIN PGP SIGNATURE-----
+Vlastimil Babka (6):
+      mm, slab: dissolve shutdown_cache() into its caller
+      mm, slab: unlink slabinfo, sysfs and debugfs immediately
+      mm, slab: move kfence_shutdown_cache() outside slab_mutex
+      mm, slab: reintroduce rcu_barrier() into kmem_cache_destroy()
+      mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()
+      kunit, slub: add test_kfree_rcu() and test_leak_destroy()
 
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmazS90ACgkQKDiiPnot
-vG8Fkwf+Ps9pjpSLtQV8dyl9uZnQPKfe7NElj8fvdZfRsIsj5CtvCyFCyebQn4HZ
-5Lz9KDa1mJszjuou3Lpp5t9mrMfxDcCeiF1wLBZRYB2gz+MNNtRJmtGrszljVfJx
-PeUFt1H0BnqOgxpNyOk6SJ8Qc50bK+ekikcrHIXv4Hn1UQIVJU/SEfqpQ2ZJ7ggh
-JR07NflWtzD7OrMuHLE+kfXxKIZpj9sJ59b2t0LujGRjo5a61+yuajYIr/aXtq/7
-Y17Oi6Pz9JqP1z/Q/VviCSsOqCg+hri+BSo3cFJc1Q7emgw6CDC32C5S++U83W9h
-Xq41EHPD7Sz3mjPbOx3JpmgcColM5g==
-=NCqU
------END PGP SIGNATURE-----
+ include/linux/rcutiny.h |   5 +++
+ include/linux/rcutree.h |   1 +
+ kernel/rcu/tree.c       | 103 ++++++++++++++++++++++++++++++++++++++++----
+ lib/slub_kunit.c        |  31 ++++++++++++++
+ mm/slab_common.c        | 111 ++++++++++++++----------------------------------
+ 5 files changed, 163 insertions(+), 88 deletions(-)
+---
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+change-id: 20240715-b4-slab-kfree_rcu-destroy-85dd2b2ded92
 
---s4llhy42hfqhiqap--
+Best regards,
+-- 
+Vlastimil Babka <vbabka@suse.cz>
+
 
