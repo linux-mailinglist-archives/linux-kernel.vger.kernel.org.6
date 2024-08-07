@@ -1,94 +1,201 @@
-Return-Path: <linux-kernel+bounces-278349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD7094AF03
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8540694AEF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CA201C21A6F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:38:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F6301C21BA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BF913D52E;
-	Wed,  7 Aug 2024 17:38:50 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F40E13D52E;
+	Wed,  7 Aug 2024 17:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KSpGaFRJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sERAv430"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C1013BACC;
-	Wed,  7 Aug 2024 17:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD62C12C465;
+	Wed,  7 Aug 2024 17:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723052329; cv=none; b=jui5YjiXb0LVyeGGEgrfSAQz+XOz2grLeAWPaIMQNTY7PLHoTYDjAFvI74SVepi/GCnQG28rr4A59DVSSZ/MKLn3A67O1WMcTW6OGN8F55bV3nOJPaCsX6TTNtoMEHIgfkxvgaCn7qWgKb6ksGmI4VbKjvEOiLNDw7sHYyxYUT4=
+	t=1723052010; cv=none; b=TaGxW3Ifv0CTSjTa/qSkIsuvJzLJ+reWXTnKA4RUmw1Z8a3FNIUDykP6MBMyRKLmTlTcKy6J3y5JWrIjfmLoX2+g26M9qSxUlPF6emV460FNunMAKok8gp89xhTfmhCp1zx1ws7XTF4Un2fnE291/xT8HO9B2uvae7LGhCCuZ7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723052329; c=relaxed/simple;
-	bh=G34MLcZek6ZJZmuPIY647FHUQkHgp9qvo38MQTEokPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ADQENME5QZ4UE6cqJ46dctCm2pLbt+vwrKK6uXdazIMS1Unn8lYNAl2UtfHOFoIqeSZiKohRh03eBaD0jVowlg4WFsr6H3uwTejq08QYAEwSbcR2lW2Lz0w5X7u0ywe3IWXQ2W5oh8MzuCYlFtD1wz2DqfCimGX6eUlIwxToba4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 4F6161C0082; Wed,  7 Aug 2024 19:33:29 +0200 (CEST)
-Date: Wed, 7 Aug 2024 19:32:50 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 00/86] 6.1.104-rc1 review
-Message-ID: <ZrOvwlaMUY7+KvZs@duo.ucw.cz>
-References: <20240807150039.247123516@linuxfoundation.org>
+	s=arc-20240116; t=1723052010; c=relaxed/simple;
+	bh=k5Q4CZ8cUfM1zYiJ/MG0eS7kuEq1mdGVpXNIl1FNhYM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FkGD/v8uOo4lVV824yBbBgiEZT/B9DI9RVzjBzwPyGslo/vj7tzWmmj6aNyxBnAZ0pt+EZaSlacYx6SE5E9VQel6xm/v25BwPuz3fJdM4B9qsvl/ieizs5yP4m9vI9HD/xxtEfidurhAKgiE94GN8850+6smjjeCM8MMXrzIjZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KSpGaFRJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sERAv430; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723052007;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xuqh98j/r4CgK85vbcGJbJsFxU9Ph3Ujqns0jxVK4rk=;
+	b=KSpGaFRJjJqdYd2TE3dKamP43ILEw+i4AnMR6H7g0AivhWljstUXJnasMe0Jx3DkS9EJJa
+	NjDV3SibOT1ES+2gOdsfoXp7b96IpdA86fNxYxwept1zelRiEshaVM366AbCzuUliy723C
+	eDDL8FNm1Gwvx4fTevugizs/VWz5I/+iN/BAZSqjbWtQ6ud2RxUkx5hJ5z3+ch/mYgSSzz
+	8q6QQFO6ENFwqiUJ/BRXx+sSMFvLFxTxP5cm7fK9tZSh/m23Vx7ZS5ztdN1+hi8hYUHlJd
+	wy/Nx3K396D3dRVxfkhFCD32AQaPn59QLCWtypAzWNJZ+j6t2F+nWyonMGLbpQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723052007;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xuqh98j/r4CgK85vbcGJbJsFxU9Ph3Ujqns0jxVK4rk=;
+	b=sERAv430bitc2W3PXrAlMhOokYz+X84Wg06SWRIFgozuoJrjLNnrauo2nv7ZgTVN7isig3
+	EX6IA11ofipHk7CQ==
+To: Yunhong Jiang <yunhong.jiang@linux.intel.com>, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, rafael@kernel.org, lenb@kernel.org,
+ kirill.shutemov@linux.intel.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+ yunhong.jiang@linux.intel.com
+Subject: Re: [PATCH 6/7] x86/hyperv: Reserve real mode when ACPI wakeup
+ mailbox is available
+In-Reply-To: <20240806221237.1634126-7-yunhong.jiang@linux.intel.com>
+References: <20240806221237.1634126-1-yunhong.jiang@linux.intel.com>
+ <20240806221237.1634126-7-yunhong.jiang@linux.intel.com>
+Date: Wed, 07 Aug 2024 19:33:26 +0200
+Message-ID: <87a5ho2q6x.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="YO9CkmFFup0qxjMs"
-Content-Disposition: inline
-In-Reply-To: <20240807150039.247123516@linuxfoundation.org>
+Content-Type: text/plain
 
+On Tue, Aug 06 2024 at 15:12, Yunhong Jiang wrote:
+> +static void __init hv_reserve_real_mode(void)
+> +{
+> +	phys_addr_t mem;
+> +	size_t size = real_mode_size_needed();
+> +
+> +	/*
+> +	 * We only need the memory to be <4GB since the 64-bit trampoline goes
+> +	 * down to 32-bit mode.
+> +	 */
+> +	mem = memblock_phys_alloc_range(size, PAGE_SIZE, 0, SZ_4G);
+> +	if (!mem)
+> +		panic("No sub-4G memory is available for the trampoline\n");
+> +	set_real_mode_mem(mem);
+> +}
 
---YO9CkmFFup0qxjMs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We really don't need another copy of reserve_real_mode(). See uncompiled
+patch below. It does not panic when the allocation fails, but why do you
+want to panic in that case? If it's not there then the system boots with
+a single CPU, so what.
 
-Hi!
+>  void __init hv_vtl_init_platform(void)
+>  {
+>  	pr_info("Linux runs in Hyper-V Virtual Trust Level\n");
+>  
+>  	if (wakeup_mailbox_addr) {
+>  		x86_platform.hyper.is_private_mmio = hv_is_private_mmio_tdx;
+> +		x86_platform.realmode_reserve = hv_reserve_real_mode;
+>  	} else {
+>  		x86_platform.realmode_reserve = x86_init_noop;
+>  		x86_platform.realmode_init = x86_init_noop;
+> @@ -259,7 +276,8 @@ int __init hv_vtl_early_init(void)
+>  		panic("XSAVE has to be disabled as it is not supported by this module.\n"
+>  			  "Please add 'noxsave' to the kernel command line.\n");
+>  
+> -	real_mode_header = &hv_vtl_real_mode_header;
+> +	if (!wakeup_mailbox_addr)
+> +		real_mode_header = &hv_vtl_real_mode_header;
 
-> This is the start of the stable review cycle for the 6.1.104 release.
-> There are 86 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Why is that not suffient to be done in hv_vtl_init_platform() inside the
+condition which clears x86_platform.realmode_reserve/init?
 
-CIP testing did not find any problems here:
+x86_platform.realmode_init() is invoked from an early initcall while
+hv_vtl_init_platform() is called during early boot.
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
+Thanks,
 
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---YO9CkmFFup0qxjMs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iFwEABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZrOvwgAKCRAw5/Bqldv6
-8iUSAJinslmJCrfhZq6IulbXHydHv7rAAKCEL1OeNkbaE1dkP0bI1v3fRuWcYA==
-=sThu
------END PGP SIGNATURE-----
-
---YO9CkmFFup0qxjMs--
+        tglx
+---
+--- a/arch/x86/include/asm/x86_init.h
++++ b/arch/x86/include/asm/x86_init.h
+@@ -31,12 +31,18 @@ struct x86_init_mpparse {
+  *				platform
+  * @memory_setup:		platform specific memory setup
+  * @dmi_setup:			platform specific DMI setup
++ * @realmode_limit:		platform specific address limit for the realmode trampoline
++ *				(default 1M)
++ * @reserve_bios:		platform specific address limit for reserving the BIOS area
++ *				(default 1M)
+  */
+ struct x86_init_resources {
+ 	void (*probe_roms)(void);
+ 	void (*reserve_resources)(void);
+ 	char *(*memory_setup)(void);
+ 	void (*dmi_setup)(void);
++	unsigned long realmode_limit;
++	unsigned long reserve_bios;
+ };
+ 
+ /**
+--- a/arch/x86/kernel/x86_init.c
++++ b/arch/x86/kernel/x86_init.c
+@@ -8,6 +8,7 @@
+ #include <linux/ioport.h>
+ #include <linux/export.h>
+ #include <linux/pci.h>
++#include <linux/sizes.h>
+ 
+ #include <asm/acpi.h>
+ #include <asm/bios_ebda.h>
+@@ -68,6 +69,8 @@ struct x86_init_ops x86_init __initdata
+ 		.reserve_resources	= reserve_standard_io_resources,
+ 		.memory_setup		= e820__memory_setup_default,
+ 		.dmi_setup		= dmi_setup,
++		.realmode_limit		= SZ_1M,
++		.reserve_bios		= SZ_1M,
+ 	},
+ 
+ 	.mpparse = {
+--- a/arch/x86/realmode/init.c
++++ b/arch/x86/realmode/init.c
+@@ -45,7 +45,7 @@ void load_trampoline_pgtable(void)
+ 
+ void __init reserve_real_mode(void)
+ {
+-	phys_addr_t mem;
++	phys_addr_t mem, limit = x86_init.resources.realmode_limit;
+ 	size_t size = real_mode_size_needed();
+ 
+ 	if (!size)
+@@ -54,17 +54,15 @@ void __init reserve_real_mode(void)
+ 	WARN_ON(slab_is_available());
+ 
+ 	/* Has to be under 1M so we can execute real-mode AP code. */
+-	mem = memblock_phys_alloc_range(size, PAGE_SIZE, 0, 1<<20);
++	mem = memblock_phys_alloc_range(size, PAGE_SIZE, 0, limit);
+ 	if (!mem)
+-		pr_info("No sub-1M memory is available for the trampoline\n");
++		pr_info("No memory below %lluM for the real-mode trampoline\n", limit >> 20);
+ 	else
+ 		set_real_mode_mem(mem);
+ 
+-	/*
+-	 * Unconditionally reserve the entire first 1M, see comment in
+-	 * setup_arch().
+-	 */
+-	memblock_reserve(0, SZ_1M);
++	/* Reserve the entire first 1M, if enabled. See comment in setup_arch(). */
++	if (x86_init.resources.reserve_bios)
++		memblock_reserve(0, x86_init.resources.reserve_bios);
+ }
+ 
+ static void __init sme_sev_setup_real_mode(struct trampoline_header *th)
 
