@@ -1,89 +1,80 @@
-Return-Path: <linux-kernel+bounces-278547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517A294B1AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:57:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F2994B1B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1E6AB20DBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:57:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35D61F22B55
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE6B147C74;
-	Wed,  7 Aug 2024 20:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="NQMueTKy"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371091494AC;
+	Wed,  7 Aug 2024 21:00:32 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F50146585;
-	Wed,  7 Aug 2024 20:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEF71422D5;
+	Wed,  7 Aug 2024 21:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723064255; cv=none; b=Y1KnpiXfmsx4hR47sAxaLa12T8x4CJHx2ioWOHBdC3MCk3/K/UaQ52om0q1woNhppHANZmxQpbGuAYel3uHc/S65llLDBwh0vJQK7K+1w4x3U8vE5HE2bAUnxc2iipnYHbC83UIG4gQX20qRhePBRXKL7SEiv+4m4IiABtfI0jk=
+	t=1723064431; cv=none; b=tKEu2Cy6GMdTG+My6x+Mo+R4kxEtkRNaTAG0NepeWGUw3wacRpL5XVSGaXiFoY/gcG+LaYDlh8MMxcr5XkIi3f2vtw6UZpFjdO4q/4bQ6zsqG10NgovJ9zxrPO4D3snQVrS2n4IB3koGjFdBminmAZjS5YruhFMhM8OSZuCseBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723064255; c=relaxed/simple;
-	bh=lJX0D4OyVWWr9tCe87V41NDjVu4MfrrbvpiyYTYcK7Y=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H5KNH9R2KbKAPD1tZYO1Vh0dLLvNbO1hgik7kfUPle0zLBQ7oN4VjNLWmZRAefWqBtEcgD2Q5heejdV2mV4H3vgj+gQsLZUhl2r+J/p31EgyfqJrg/gBqV1DlVGtKzIjNlbjAPdeH4ym+Q3dFcsMez10uJOUDTBR8Yy4Z8vvDhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=NQMueTKy; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723064249; x=1723323449;
-	bh=6KUh5dMzqW/isG1WMZVBXDAqaCMl8AmRgKwdpJgumNI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=NQMueTKyMITuDxThP5MPcBvLQe3anwegBPA3rhCxjZXbF2wmeR+CIDzJqmR/7a4LX
-	 X9Csp9v8qeEDiY8Km7SmP1FwxLQZYQOMwcgaQPspGZFTHCgSiukRPX9DhpOsUapMtW
-	 9XQwwef1fDcFP21ysk/t2cJ1W3dsl0diDtfwDtKneOsWRwY6K43TXJDD8TBPiR/ftd
-	 MrdLABLNM1e76774UzVFomWHkOsOuGKwe4V8SG4Hk9UF11rrK5nMc4mPtVeVIQamm1
-	 /4bEUwNsb4wuR92Tf3jhJ+VCrAILMBbcd3aHEgoQgjmHTA7xw9MxdUBnz7BuskbNZ7
-	 oKIer2m0p6G5Q==
-Date: Wed, 07 Aug 2024 20:57:22 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 10/28] rust: treewide: switch to our kernel `Box` type
-Message-ID: <1b17b4b3-69b4-4af1-a816-b401a1bb6ef2@proton.me>
-In-Reply-To: <20240805152004.5039-11-dakr@kernel.org>
-References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-11-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: df1d5307bc7aea13047904479f23ee45b5fc73f1
+	s=arc-20240116; t=1723064431; c=relaxed/simple;
+	bh=X+Ll5BBGlCfJJhWXkpa0zwIju42PoV8MDuvOtuyKQ2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VxoiBffjcNP23eQNU3ugMPp/+gGUC0e3m9xCo6rDAzDVwT1xcgvcKObT39ZD5bZ3Ay/CecSmcf2J2DIqz7IwGUz4OsIxeCanrxKAmciiQUnMrlb0hrjozBc+40y5XUbdtMJhfFUq71F/YoLZJaRIRxBj7bQj1OH9vkRNvaMNNSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F237C32781;
+	Wed,  7 Aug 2024 21:00:30 +0000 (UTC)
+Date: Wed, 7 Aug 2024 17:00:29 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Cc: Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme  G. Piccoli"@web.codeaurora.org,
+	Jonathan Corbet <corbet@lwn.net>, Mike Rapoport <rppt@kernel.org>
+Subject: [PATCH] pstore/ramoops: Fix typo as there is no "reserver"
+Message-ID: <20240807170029.3c1ff651@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 05.08.24 17:19, Danilo Krummrich wrote:
-> Now that we got the kernel `Box` type in place, convert all existing
-> `Box` users to make use of it.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-You missed a couple usages of `Box`:
-- `rust/macros/lib.rs:{242,251,281}`
-- `drivers/block/rnull.rs:{35,50}`
+For some reason my finger always hits the 'r' after typing "reserve".
+Fix the typo in the Documentation example.
 
-or is that intentional? (for me rnull doesn't compile after this patch)
-
+Fixes: d9d814eebb1ae ("pstore/ramoops: Add ramoops.mem_name= command line option")
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
-Cheers,
-Benno
+Note, I did have this fixed, but the previous version was pulled:
+  https://lore.kernel.org/linux-trace-kernel/20240613233446.283241953@goodmis.org/
 
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/init.rs               | 41 ++++++++++++++++---------------
->  rust/kernel/init/__internal.rs    |  2 +-
->  rust/kernel/sync/arc.rs           | 17 ++++++-------
->  rust/kernel/sync/condvar.rs       |  4 +--
->  rust/kernel/sync/lock/mutex.rs    |  2 +-
->  rust/kernel/sync/lock/spinlock.rs |  2 +-
->  rust/kernel/workqueue.rs          | 20 +++++++--------
->  7 files changed, 44 insertions(+), 44 deletions(-)
+ Documentation/admin-guide/ramoops.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/ramoops.rst b/Documentation/admin-guide/ramoops.rst
+index 6f534a707b2a..2eabef31220d 100644
+--- a/Documentation/admin-guide/ramoops.rst
++++ b/Documentation/admin-guide/ramoops.rst
+@@ -129,7 +129,7 @@ Setting the ramoops parameters can be done in several different manners:
+     takes a size, alignment and name as arguments. The name is used
+     to map the memory to a label that can be retrieved by ramoops.
+ 
+-	reserver_mem=2M:4096:oops  ramoops.mem_name=oops
++	reserve_mem=2M:4096:oops  ramoops.mem_name=oops
+ 
+ You can specify either RAM memory or peripheral devices' memory. However, when
+ specifying RAM, be sure to reserve the memory by issuing memblock_reserve()
+-- 
+2.43.0
 
 
