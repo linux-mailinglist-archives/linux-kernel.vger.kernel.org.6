@@ -1,124 +1,165 @@
-Return-Path: <linux-kernel+bounces-277624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4789A94A3ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:15:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7019794A404
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07631F21B6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:15:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 290D2282E51
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE611CCB3C;
-	Wed,  7 Aug 2024 09:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7241D0DC5;
+	Wed,  7 Aug 2024 09:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Rf7aVBM3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="xeEtXVae"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B7C1CB327;
-	Wed,  7 Aug 2024 09:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E5A1CCB27;
+	Wed,  7 Aug 2024 09:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723022109; cv=none; b=CqCfDCZ8A9pZ1DWDzGl7Mp34eQVXDTKksX0yB5XGmN+kfcEgUJXqo9AV6yei0/bwn/pI2isqYYE5q/OtJFiHNm1t7yli6fHu2idG9Z3k0E/+on4ix5ap/uS/707NIbpft0Vqi0f5tsT5RsFf8dYeINuU9FSGtMY7FsdTh0BZEsw=
+	t=1723022210; cv=none; b=isL1Kzen5b4diIT6AO3KcqGjZ9lkbZ2HIj33wblmTVCjZrmrO0rFRVJknwTcLA7Pdw/JyW57KQsO7+aY/ApyAjJjNgsO6hWyMdi/VdolfR8uUoOjADMjztZ08G6J0//NN4p8K+ObyAYIzcYezeWU9M+fZ0/qBL4BS/FNs7w8Kn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723022109; c=relaxed/simple;
-	bh=0Ee4NBZ+XU3FD/drwenXmyRdjIDUUWcGifl0p5oAzWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OfEXXX+3weILYImkVdphNBd8ARtE1TIhpUfeJlP1yuBBKYgmZylZMp0AKFIm7Bzh/GIQpXK90lnuq9QITTb183r9uMIx7ca35dPHzQCmnQ0ngZpoL3crcKl5hEmYaeQaeejH0i5M4peAmbk518l64ywuNz/Ggd14/qF72rDelt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Rf7aVBM3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4778Ajne012183;
-	Wed, 7 Aug 2024 09:15:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CzGHoSxoysOv/3+tXWrfwRAbEspulTcaP6k/36tWkec=; b=Rf7aVBM35fH1Re3e
-	9hdggsGmAlqONYXFKnJxZGSvl8/CeDez5oTi0LATKFOOpYSMxHth1qk9w+VN6VtX
-	thYiCHSGV9dNldMs+zbJfa9XQQKqqqouoNRG0L7NauFccjFo1sDi2Z/1d2NTEKhs
-	6D8kkOePt6SzshGwWew3Ka1APo/2mqQg7uwkNAuDwzMPXt31/AC4VNGex7UQmpjd
-	nfbuYa+mlrNHaH5NYU8MUceZh8H581d4BA7itLYDClX8zTajW7Zv7SiFIUmo3n90
-	HsOzCanb6P31kjssjwQSZGKGiRr6TdspJgkbrPw0su0lhlr5lyTG+/GsPt1FW4RI
-	Xgw1Pg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sbj6t7hj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 Aug 2024 09:15:03 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4779F1dd010544
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 7 Aug 2024 09:15:01 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
- 02:14:56 -0700
-Message-ID: <773dc5b5-a537-4e6d-8e71-d2cb405c98fd@quicinc.com>
-Date: Wed, 7 Aug 2024 17:14:54 +0800
+	s=arc-20240116; t=1723022210; c=relaxed/simple;
+	bh=c/slf/jw/OchoUyvGIOG9Xcv1iNRWWO2Xh+P4JpQCLQ=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nKu2UFLhwfJ1629D/ApKGvGAWAKQkp5Jm5Ew1DmUc5C+44l/p1dSAQ6PGgetzQe1/Wy7evEaCSImEpbXbwc9ZkUB89iIhdotMBinTW6Q9O6/d8BrTroDa4EBJOEojuBxsNOM3sXSVXUBy4Eq74tbxOxBTDzd5zxmhRwTwzcI0+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=xeEtXVae; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1723022209; x=1754558209;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=c/slf/jw/OchoUyvGIOG9Xcv1iNRWWO2Xh+P4JpQCLQ=;
+  b=xeEtXVaeeytfiZvrmFuN4PO3/ey0/FREfZUd0lKl6/KC0VHOp9Qynu1e
+   YEXl3ylFeISMeMUdQbuwqpVl4nJLkeInp/+GuCvXVFyZxq5/PMGMH1T1x
+   6vxJYAf7gVp2u5FyK7yXKRSIt3qRHqzh0SFUDjA5khKtmHtoHK9PwoVsW
+   1rfa2U8+k3d1hBaa59V4GLJu+G0FnoqHlKMb9Ds964+byUy+jIQ9jgauG
+   k2gCRENhpsNTeHsAnzyj1eUSO3k64MnBtiEU3vTOeN24oDQcrkEL8c9A/
+   Du4Xq0isQmKuC4CoA2fib2qaJSfKxmd+OEg0ADttqCMqdFDIo30Ft+x/l
+   A==;
+X-CSE-ConnectionGUID: eofU3f1ZQCKrHjE+RvmBAQ==
+X-CSE-MsgGUID: sAfpxfwFR/Khxbw6o7ocXw==
+X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
+   d="scan'208";a="30199139"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Aug 2024 02:15:45 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 7 Aug 2024 02:15:04 -0700
+Received: from DEN-DL-M31857.microsemi.net (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 7 Aug 2024 02:14:59 -0700
+Message-ID: <442332f001bf81a1cd8733d5c2ae94d344e5a286.camel@microchip.com>
+Subject: Re: [PATCH v4 5/8] reset: mchp: sparx5: Allow building as a module
+From: Steen Hegelund <steen.hegelund@microchip.com>
+To: Herve Codina <herve.codina@bootlin.com>, Geert Uytterhoeven
+	<geert@linux-m68k.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, "Simon
+ Horman" <horms@kernel.org>, Lee Jones <lee@kernel.org>, Arnd Bergmann
+	<arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+	<dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Lars Povlsen <lars.povlsen@microchip.com>, Daniel Machon
+	<daniel.machon@microchip.com>, <UNGLinuxDriver@microchip.com>, Rob Herring
+	<robh@kernel.org>, Saravana Kannan <saravanak@google.com>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, "Andrew
+ Lunn" <andrew@lunn.ch>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>, "Allan
+ Nielsen" <allan.nielsen@microchip.com>, Luca Ceresoli
+	<luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?ISO-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>
+Date: Wed, 7 Aug 2024 11:14:58 +0200
+In-Reply-To: <20240805101725.93947-6-herve.codina@bootlin.com>
+References: <20240805101725.93947-1-herve.codina@bootlin.com>
+	 <20240805101725.93947-6-herve.codina@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] dt-bindings: arm: qcom: Document QCS9100 compatible
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240806-add_qcs9100_soc_id-v1-0-04d14081f304@quicinc.com>
- <20240806-add_qcs9100_soc_id-v1-3-04d14081f304@quicinc.com>
- <3020262e-f3b2-4921-b33b-8d0d7babf36a@kernel.org>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <3020262e-f3b2-4921-b33b-8d0d7babf36a@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _iOxX2f88qH79RQw9V2RgXrKQu0U2xhq
-X-Proofpoint-GUID: _iOxX2f88qH79RQw9V2RgXrKQu0U2xhq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-07_06,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- priorityscore=1501 adultscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0
- phishscore=0 mlxlogscore=853 clxscore=1015 malwarescore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408070063
 
+Hi Herve,
 
+On Mon, 2024-08-05 at 12:17 +0200, Herve Codina wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you
+> know the content is safe
+>=20
+> From: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+>=20
+> This reset controller can be used by the LAN966x PCI device.
+>=20
+> The LAN966x PCI device driver can be built as a module and this reset
+> controller driver has no reason to be a builtin driver in that case.
+>=20
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+> =C2=A0drivers/reset/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2 +-
+> =C2=A0drivers/reset/reset-microchip-sparx5.c | 2 ++
+> =C2=A02 files changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 5b5a4d99616e..88350aa8a51c 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -133,7 +133,7 @@ config RESET_LPC18XX
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This enables the r=
+eset controller driver for NXP
+> LPC18xx/43xx SoCs.
+>=20
+> =C2=A0config RESET_MCHP_SPARX5
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool "Microchip Sparx5 reset driver=
+"
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tristate "Microchip Sparx5 reset dr=
+iver"
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on ARCH_SPARX5 || SOC_=
+LAN966 || MCHP_LAN966X_PCI ||
+> COMPILE_TEST
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default y if SPARX5_SWITCH
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select MFD_SYSCON
+> diff --git a/drivers/reset/reset-microchip-sparx5.c
+> b/drivers/reset/reset-microchip-sparx5.c
+> index 636e85c388b0..69915c7b4941 100644
+> --- a/drivers/reset/reset-microchip-sparx5.c
+> +++ b/drivers/reset/reset-microchip-sparx5.c
+> @@ -158,6 +158,7 @@ static const struct of_device_id
+> mchp_sparx5_reset_of_match[] =3D {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 { }
+> =C2=A0};
+> +MODULE_DEVICE_TABLE(of, mchp_sparx5_reset_of_match);
+>=20
+> =C2=A0static struct platform_driver mchp_sparx5_reset_driver =3D {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .probe =3D mchp_sparx5_reset_p=
+robe,
+> @@ -180,3 +181,4 @@ postcore_initcall(mchp_sparx5_reset_init);
+>=20
+> =C2=A0MODULE_DESCRIPTION("Microchip Sparx5 switch reset driver");
+> =C2=A0MODULE_AUTHOR("Steen Hegelund <steen.hegelund@microchip.com>");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.45.0
+>=20
 
-On 8/7/2024 3:27 PM, Krzysztof Kozlowski wrote:
-> On 06/08/2024 06:19, Tengfei Fan wrote:
->> Add the compatible for QCS9100 SoC.
-> 
-> Standard reply: we see that from the diff. Oh wait, no! The diff is
-> doing something entirely else.
-> 
-> You do much more - change SA8775p bindings.
-> 
-> Commit msg should say why you are doing such invasive change.
-> 
-> Best regards,
-> Krzysztof
-> 
+Looks good to me.
 
-I will explain the reason why change SA8775p bindings for support 
-QCS9100 in the commit message of the next version patch series.
+Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
 
--- 
-Thx and BRs,
-Tengfei Fan
+BR
+Steen
 
