@@ -1,311 +1,204 @@
-Return-Path: <linux-kernel+bounces-277525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC79194A284
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:16:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E950F94A25D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C3101F2487B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:16:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42F53B28ECA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53FD801;
-	Wed,  7 Aug 2024 08:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="0/n2miuX"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306B41C3F31;
+	Wed,  7 Aug 2024 08:06:28 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699A41422D6;
-	Wed,  7 Aug 2024 08:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D57982863
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 08:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723018593; cv=none; b=eyrRi9qIEhojl8auopavCOjogErwoW0hW2uc5NmSqpdxv3q5yMUL8+2xaZXmWC9AATNk6DSlPizIn62QFZYPPghnG3ST8FoRzLSKw5QE2hyfIN+MpA8loZCVGhrgR/FvK3CMJbSxDMuMLx5256uZx8SMXCGXPzUR5rfc4ROZsu4=
+	t=1723017987; cv=none; b=QsgSTayyRXT5xNjmgz4e8I4JSr7I7mOW3gLsVfjvltczTztbD6eqjdf2ZcTkQTcSWRbR9FCBUSoK4wKkP0UOJF/iYRdYzMIfIZ8rW9pX5B6uTzd7FvHPQ/ki2561Z3mL7t/rcIqyes063p+CfRGBAQ7lNOzTdXAjdrSLncdIkzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723018593; c=relaxed/simple;
-	bh=25w59Rt5BTELj9IC5xUKHVYO4WwvnwMypFP5D5jJq2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jMJOC3tdUBB/1phMrWREbyak78kRSrJunsvxBw9rNWKjiamjNUQGRLCu8DtIg2a6aO/GMyZri6G9eHJvadDen4nowM+eGMDz/jyUmTta4f9NTqzhiBMY5l2D3RaoJ71j6sJzeCPHZ3w6FjfHQB0y3zy1XfXfgp3hqdRC05/P0zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=0/n2miuX; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477509Dx006872;
-	Wed, 7 Aug 2024 09:41:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	hIDSWg+YoC7FJuVuv17qP2JIw07+enJVD1nEaVne5Oc=; b=0/n2miuXulb9zyGV
-	sOjbKx85gD5mRPLmT37CZFwmr6qxCQpGT9nk8kuXMD+OrwFq/wD9e45VGmHYWwzM
-	328g09heL4y0lbNJc7s8aa1dF3NKUp1XFXlJIpI3H/JHIrOr/byUA3LsvjgVbO/U
-	YwYubyT5DkZQcl4KrINPQNUncp26+yAAFUW4PkQWsZB/dr12mwKstzLd89YlXwKf
-	Bjr36zQd9R5mFdzTVcJYDuFojFmNZQHrekwnbq0JMfSvjA3ayQ9u1hjJpIv3dSlk
-	INyh9bwKWHWdGS2aUtGhCYRkQzoyugDTeUVoBlKVOuqTZSPS8zyc/0WwKROeRd3b
-	/4j0OA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40tu6rhhu8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 Aug 2024 09:41:24 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B5B734002D;
-	Wed,  7 Aug 2024 09:41:18 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C8EB122F7C4;
-	Wed,  7 Aug 2024 09:40:52 +0200 (CEST)
-Received: from [10.252.10.189] (10.252.10.189) by EQNDAG1NODE4.st.com
- (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 7 Aug
- 2024 09:40:52 +0200
-Message-ID: <99b1155f-9c3f-4249-8f6c-f369decc2727@foss.st.com>
-Date: Wed, 7 Aug 2024 09:40:51 +0200
+	s=arc-20240116; t=1723017987; c=relaxed/simple;
+	bh=OLJC7WIi/YVvouXXbG+qgsD5JqDKLtG4xt3AZpMVPRk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=KB61ZeKQwn4jsJlSnpTe3aIGcADoxQiXUOCcTSedqW81GpvV1FV26pw3b3H8jeumpXuo4GO91jV9zkfTu9tyRMWqi/B5py8BcOFulBjFQns+/HRMQZHjDCjHxFPyEg/Cw9fnZXE3wNTZI8FALgM+XV1jjNxhntYTr06Bexdfcjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f7fb0103fso69183839f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 01:06:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723017985; x=1723622785;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NPyDpF/qZao+PcJQw2T5V5PZGFz/IsS/WZWVVXORGyg=;
+        b=RI0iNgMp1WMly2fSUMkQo7rc9+W4e3sDfq4dwb3GjzwFxfP1109X5vyAJ6JYezsaqo
+         /BLmukF1uOu751IT0OEYDd3XCUPjIljqjZ1k0nkfJqT25PxI46+H5+LYaO4J9+E7IOUm
+         6dlgGSZPPEORZ6LQ+VGh+O2w6+GiWElW6w928b7Xs5fRnnuhsXL0ETsvo11ls5A4dCCe
+         uO2vAIxghwqAvgAV+zWSQiO8qDs0XNDATloE9fxQeqwJumgPwm2g0CMpbzzmy6PenMoF
+         mqxBTbiTz0CfnGtsV+OyBtq7vxnV4M1UKwqYHlYTYxkDIkannwTg99Vqv8XTjOqMePqq
+         Db9w==
+X-Forwarded-Encrypted: i=1; AJvYcCV6crBOkIRVyDdqZpeI/yuNysyv2PL5nv7ABtmn06oqzsrpcDMguorFI8mmiH7uZxciZqfgxPgyFsPrbgrISrIMDppnMown1heRsXA+
+X-Gm-Message-State: AOJu0YxCHnJyFJwHMVOPTiJxQkoMy/7+i8Taq/rnF1NMXeDP72Bm9pMu
+	sRLrjhxC7+DVt5LzeKQ+8OpBXOAs1oACWyIfKY6nP+K+jxVgddN0WigLn1UgPNmroN5YRr7FgQ7
+	wsKib3f0URXsd/JqrwXLQs8BIEvP7FuA0dOW62CuryUjHJ2kFdxsM1wM=
+X-Google-Smtp-Source: AGHT+IFw+lvtHH6wNrzOeeyoYZiaO+QYbVDCZhZAUINvkHpl5igpuymwK5YKiXATXg7FIVANLp0knbBD12+6VLYWJdDgLPwp3r0L
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 8/9] iio: add iio backend support to sd modulator
-To: Jonathan Cameron <jic23@kernel.org>
-CC: <fabrice.gasnier@foss.st.com>, Lars-Peter Clausen <lars@metafoo.de>,
-        Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240730084640.1307938-1-olivier.moysan@foss.st.com>
- <20240730084640.1307938-9-olivier.moysan@foss.st.com>
- <20240806175106.09a53784@jic23-huawei>
-Content-Language: en-US
-From: Olivier MOYSAN <olivier.moysan@foss.st.com>
-In-Reply-To: <20240806175106.09a53784@jic23-huawei>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To EQNDAG1NODE4.st.com
- (10.75.129.133)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-07_04,2024-08-06_01,2024-05-17_01
+X-Received: by 2002:a05:6e02:1c23:b0:395:fa9a:3187 with SMTP id
+ e9e14a558f8ab-39b54502233mr1235635ab.3.1723017985247; Wed, 07 Aug 2024
+ 01:06:25 -0700 (PDT)
+Date: Wed, 07 Aug 2024 01:06:25 -0700
+In-Reply-To: <0000000000002e944b061bcfd65f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f3e751061f136220@google.com>
+Subject: Re: [syzbot] [net?] [s390?] possible deadlock in smc_vlan_by_tcpsk
+From: syzbot <syzbot+c75d1de73d3b8b76272f@syzkaller.appspotmail.com>
+To: agordeev@linux.ibm.com, alibuda@linux.alibaba.com, davem@davemloft.net, 
+	edumazet@google.com, guwen@linux.alibaba.com, jaka@linux.ibm.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tonylu@linux.alibaba.com, wenjia@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jonathan,
+syzbot has found a reproducer for the following issue on:
 
-On 8/6/24 18:51, Jonathan Cameron wrote:
-> On Tue, 30 Jul 2024 10:46:38 +0200
-> Olivier Moysan <olivier.moysan@foss.st.com> wrote:
-> 
->> The legacy sd modulator driver registers the sigma delta modulator as
->> an IIO channel provider. This implementation is not convenient when the
->> SD modulator has to be cascaded with another IIO device. The scaling
->> information is distributed across devices, which makes it difficult to
->> report consistent scaling data on IIO devices.
->>
->> The solution is to expose these cascaded IIO devices as an aggregate
->> device, which report global scaling information.
->> Add IIO backend support to SD modulator to allow scaling information
->> management.
->>
->> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-> I've applied this fixup given changes in the backend code that crossed
-> with this.
-> 
-> diff --git a/drivers/iio/adc/sd_adc_modulator.c b/drivers/iio/adc/sd_adc_modulator.c
-> index 06f9c5cacd53..654b6a38b650 100644
-> --- a/drivers/iio/adc/sd_adc_modulator.c
-> +++ b/drivers/iio/adc/sd_adc_modulator.c
-> @@ -74,6 +74,11 @@ static const struct iio_backend_ops sd_backend_ops = {
->          .read_raw = iio_sd_mod_read,
->   };
->   
-> +static const struct iio_backend_info sd_backend_info = {
-> +       .name = "sd-modulator",
-> +       .ops = &sd_backend_ops,
-> +};
-> +
->   static int iio_sd_mod_register(struct platform_device *pdev)
->   {
->          struct device *dev = &pdev->dev;
-> @@ -131,7 +136,7 @@ static int iio_sd_mod_probe(struct platform_device *pdev)
->                  priv->vref_mv = ret / 1000;
->          }
->   
-> -       return devm_iio_backend_register(&pdev->dev, &sd_backend_ops, priv);
-> +       return devm_iio_backend_register(&pdev->dev, &sd_backend_info, priv);
->   };
-> 
-> Please give it a quick spin. Hopefully I didn't break anything.
-> 
-> Jonathan
+HEAD commit:    d4560686726f Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=119f30f5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=505ed4a1dd93463a
+dashboard link: https://syzkaller.appspot.com/bug?extid=c75d1de73d3b8b76272f
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e2fc5d980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16307a7d980000
 
-I did a quick check. All looks fine to me.
-Thanks for the fixup and the merge.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-d4560686.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3304e311b45d/vmlinux-d4560686.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c5fa8d141fd4/bzImage-d4560686.xz
 
-Regards
-Olivier
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c75d1de73d3b8b76272f@syzkaller.appspotmail.com
 
-> 
->> ---
->>   drivers/iio/adc/Kconfig            |  1 +
->>   drivers/iio/adc/sd_adc_modulator.c | 92 +++++++++++++++++++++++++++++-
->>   2 files changed, 92 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
->> index bd028d59db63..43ff8182b2ea 100644
->> --- a/drivers/iio/adc/Kconfig
->> +++ b/drivers/iio/adc/Kconfig
->> @@ -1195,6 +1195,7 @@ config SD_ADC_MODULATOR
->>   	tristate "Generic sigma delta modulator"
->>   	select IIO_BUFFER
->>   	select IIO_TRIGGERED_BUFFER
->> +	select IIO_BACKEND
->>   	help
->>   	  Select this option to enables sigma delta modulator. This driver can
->>   	  support generic sigma delta modulators.
->> diff --git a/drivers/iio/adc/sd_adc_modulator.c b/drivers/iio/adc/sd_adc_modulator.c
->> index 327cc2097f6c..06f9c5cacd53 100644
->> --- a/drivers/iio/adc/sd_adc_modulator.c
->> +++ b/drivers/iio/adc/sd_adc_modulator.c
->> @@ -6,11 +6,14 @@
->>    * Author: Arnaud Pouliquen <arnaud.pouliquen@st.com>.
->>    */
->>   
->> +#include <linux/iio/backend.h>
->>   #include <linux/iio/iio.h>
->>   #include <linux/iio/triggered_buffer.h>
->>   #include <linux/module.h>
->>   #include <linux/mod_devicetable.h>
->>   #include <linux/platform_device.h>
->> +#include <linux/property.h>
->> +#include <linux/regulator/consumer.h>
->>   
->>   static const struct iio_info iio_sd_mod_iio_info;
->>   
->> @@ -24,7 +27,54 @@ static const struct iio_chan_spec iio_sd_mod_ch = {
->>   	},
->>   };
->>   
->> -static int iio_sd_mod_probe(struct platform_device *pdev)
->> +struct iio_sd_backend_priv {
->> +	struct regulator *vref;
->> +	int vref_mv;
->> +};
->> +
->> +static int iio_sd_mod_enable(struct iio_backend *backend)
->> +{
->> +	struct iio_sd_backend_priv *priv = iio_backend_get_priv(backend);
->> +
->> +	if (priv->vref)diff --git a/drivers/iio/adc/sd_adc_modulator.c b/drivers/iio/adc/sd_adc_modulator.c
-> index 06f9c5cacd53..654b6a38b650 100644
-> --- a/drivers/iio/adc/sd_adc_modulator.c
-> +++ b/drivers/iio/adc/sd_adc_modulator.c
-> @@ -74,6 +74,11 @@ static const struct iio_backend_ops sd_backend_ops = {
->          .read_raw = iio_sd_mod_read,
->   };
->   
-> +static const struct iio_backend_info sd_backend_info = {
-> +       .name = "sd-modulator",
-> +       .ops = &sd_backend_ops,
-> +};
-> +
->   static int iio_sd_mod_register(struct platform_device *pdev)
->   {
->          struct device *dev = &pdev->dev;
-> @@ -131,7 +136,7 @@ static int iio_sd_mod_probe(struct platform_device *pdev)
->                  priv->vref_mv = ret / 1000;
->          }
->   
-> -       return devm_iio_backend_register(&pdev->dev, &sd_backend_ops, priv);
-> +       return devm_iio_backend_register(&pdev->dev, &sd_backend_info, priv);
->   };
->> +		return regulator_enable(priv->vref);
->> +
->> +	return 0;
->> +};
->> +
->> +static void iio_sd_mod_disable(struct iio_backend *backend)
->> +{
->> +	struct iio_sd_backend_priv *priv = iio_backend_get_priv(backend);
->> +
->> +	if (priv->vref)
->> +		regulator_disable(priv->vref);
->> +};
->> +
->> +static int iio_sd_mod_read(struct iio_backend *backend, struct iio_chan_spec const *chan, int *val,
->> +			   int *val2, long mask)
->> +{
->> +	struct iio_sd_backend_priv *priv = iio_backend_get_priv(backend);
->> +
->> +	switch (mask) {
->> +	case IIO_CHAN_INFO_SCALE:
->> +		*val = priv->vref_mv;
->> +		return IIO_VAL_INT;
->> +
->> +	case IIO_CHAN_INFO_OFFSET:
->> +		*val = 0;
->> +		return IIO_VAL_INT;
->> +	}
->> +
->> +	return -EOPNOTSUPP;
->> +};
->> +
->> +static const struct iio_backend_ops sd_backend_ops = {
->> +	.enable = iio_sd_mod_enable,
->> +	.disable = iio_sd_mod_disable,
->> +	.read_raw = iio_sd_mod_read,
->> +};
->> +
->> +static int iio_sd_mod_register(struct platform_device *pdev)
->>   {
->>   	struct device *dev = &pdev->dev;
->>   	struct iio_dev *iio;
->> @@ -45,6 +95,45 @@ static int iio_sd_mod_probe(struct platform_device *pdev)
->>   	return devm_iio_device_register(&pdev->dev, iio);
->>   }
->>   
->> +static int iio_sd_mod_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct regulator *vref;
->> +	struct iio_sd_backend_priv *priv;
->> +	int ret;
->> +
->> +	/* If sd modulator is not defined as an IIO backend device, fallback to legacy */
->> +	if (!device_property_present(dev, "#io-backend-cells"))
->> +		return iio_sd_mod_register(pdev);
->> +
->> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->> +	if (!priv)
->> +		return -ENOMEM;
->> +
->> +	/*
->> +	 * Get regulator reference if any, but don't enable regulator right now.
->> +	 * Rely on enable and disable callbacks to manage regulator power.
->> +	 */
->> +	vref = devm_regulator_get_optional(dev, "vref");
->> +	if (IS_ERR(vref)) {
->> +		if (PTR_ERR(vref) != -ENODEV)
->> +			return dev_err_probe(dev, PTR_ERR(vref), "Failed to get vref\n");
->> +	} else {
->> +		/*
->> +		 * Retrieve voltage right now, as regulator_get_voltage() provides it whatever
->> +		 * the state of the regulator.
->> +		 */
->> +		ret = regulator_get_voltage(vref);
->> +		if (ret < 0)
->> +			return ret;
->> +
->> +		priv->vref = vref;
->> +		priv->vref_mv = ret / 1000;
->> +	}
->> +
->> +	return devm_iio_backend_register(&pdev->dev, &sd_backend_ops, priv);
->> +};
->> +
->>   static const struct of_device_id sd_adc_of_match[] = {
->>   	{ .compatible = "sd-modulator" },
->>   	{ .compatible = "ads1201" },
->> @@ -65,3 +154,4 @@ module_platform_driver(iio_sd_mod_adc);
->>   MODULE_DESCRIPTION("Basic sigma delta modulator");
->>   MODULE_AUTHOR("Arnaud Pouliquen <arnaud.pouliquen@st.com>");
->>   MODULE_LICENSE("GPL v2");
->> +MODULE_IMPORT_NS(IIO_BACKEND);
-> 
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-rc2-syzkaller-00013-gd4560686726f #0 Not tainted
+------------------------------------------------------
+syz-executor492/5336 is trying to acquire lock:
+ffffffff8fa20ee8 (rtnl_mutex){+.+.}-{3:3}, at: smc_vlan_by_tcpsk+0x251/0x620 net/smc/smc_core.c:1853
+
+but task is already holding lock:
+ffff888033d60258 (sk_lock-AF_INET6){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1607 [inline]
+ffff888033d60258 (sk_lock-AF_INET6){+.+.}-{0:0}, at: smc_connect+0xd5/0x760 net/smc/af_smc.c:1650
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (sk_lock-AF_INET6){+.+.}-{0:0}:
+       lock_sock_nested+0x3a/0xf0 net/core/sock.c:3543
+       lock_sock include/net/sock.h:1607 [inline]
+       sockopt_lock_sock net/core/sock.c:1061 [inline]
+       sockopt_lock_sock+0x54/0x70 net/core/sock.c:1052
+       do_ipv6_setsockopt+0x216a/0x47b0 net/ipv6/ipv6_sockglue.c:567
+       ipv6_setsockopt+0xe3/0x1a0 net/ipv6/ipv6_sockglue.c:993
+       udpv6_setsockopt+0x7d/0xd0 net/ipv6/udp.c:1702
+       do_sock_setsockopt+0x222/0x480 net/socket.c:2324
+       __sys_setsockopt+0x1a4/0x270 net/socket.c:2347
+       __do_sys_setsockopt net/socket.c:2356 [inline]
+       __se_sys_setsockopt net/socket.c:2353 [inline]
+       __x64_sys_setsockopt+0xbd/0x160 net/socket.c:2353
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (rtnl_mutex){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3133 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+       validate_chain kernel/locking/lockdep.c:3868 [inline]
+       __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
+       lock_acquire kernel/locking/lockdep.c:5759 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       smc_vlan_by_tcpsk+0x251/0x620 net/smc/smc_core.c:1853
+       __smc_connect+0x44d/0x4830 net/smc/af_smc.c:1522
+       smc_connect+0x2fc/0x760 net/smc/af_smc.c:1702
+       __sys_connect_file+0x15f/0x1a0 net/socket.c:2061
+       __sys_connect+0x149/0x170 net/socket.c:2078
+       __do_sys_connect net/socket.c:2088 [inline]
+       __se_sys_connect net/socket.c:2085 [inline]
+       __x64_sys_connect+0x72/0xb0 net/socket.c:2085
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(sk_lock-AF_INET6);
+                               lock(rtnl_mutex);
+                               lock(sk_lock-AF_INET6);
+  lock(rtnl_mutex);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor492/5336:
+ #0: ffff888033d60258 (sk_lock-AF_INET6){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1607 [inline]
+ #0: ffff888033d60258 (sk_lock-AF_INET6){+.+.}-{0:0}, at: smc_connect+0xd5/0x760 net/smc/af_smc.c:1650
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 5336 Comm: syz-executor492 Not tainted 6.11.0-rc2-syzkaller-00013-gd4560686726f #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2186
+ check_prev_add kernel/locking/lockdep.c:3133 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+ validate_chain kernel/locking/lockdep.c:3868 [inline]
+ __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
+ lock_acquire kernel/locking/lockdep.c:5759 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+ smc_vlan_by_tcpsk+0x251/0x620 net/smc/smc_core.c:1853
+ __smc_connect+0x44d/0x4830 net/smc/af_smc.c:1522
+ smc_connect+0x2fc/0x760 net/smc/af_smc.c:1702
+ __sys_connect_file+0x15f/0x1a0 net/socket.c:2061
+ __sys_connect+0x149/0x170 net/socket.c:2078
+ __do_sys_connect net/socket.c:2088 [inline]
+ __se_sys_connect net/socket.c:2085 [inline]
+ __x64_sys_connect+0x72/0xb0 net/socket.c:2085
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6fc285ad49
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffeaafd57c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f6fc285ad49
+RDX: 000000000000001c RSI: 0000000020000200 RDI: 0000000000000004
+RBP: 00000000000f4240 R08: 0000000000000001 R09: 0000000000000001
+R10: 0000000000000001 R11: 0000000000000246 R12: 00007ffeaafd5820
+R13: 00007f6fc28a8406 R14: 0000000000000003 R15: 00007ffeaafd5800
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
