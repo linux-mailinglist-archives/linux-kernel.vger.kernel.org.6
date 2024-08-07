@@ -1,227 +1,229 @@
-Return-Path: <linux-kernel+bounces-278593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A9594B247
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:41:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9D894B24B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADA72284F87
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:41:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF9D41F21750
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185EB15099D;
-	Wed,  7 Aug 2024 21:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA35414F9FD;
+	Wed,  7 Aug 2024 21:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eoh+y125"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LSPEPToA"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8161487C5;
-	Wed,  7 Aug 2024 21:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4330484D25;
+	Wed,  7 Aug 2024 21:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723066870; cv=none; b=AVjJoClcFr+X2ACsSwQRKAICxe2ggiPjf+co7kVqeG33NIlBCqL7NpzqlPHH0n0cH+XvidvlDGROFxoFRRjzg3e80tXEUjOdgNOxPsMLdRoDOClQ6ETIg41UZeXeFexQ1s34AlA+TiA7kUSDB/diTFq2/EnOz4qRAsiCaYRQY3Q=
+	t=1723067035; cv=none; b=YWLJBGf2WDlwdGa2qHhDSwsgJUGEQcHDDUILA4mnzULjNDpBULb/Ux1z/XYASX1xsJLDRLKLBN6DObAF0mguKfe5GIL3KcSG9t2aAtyA9J0H0q3+OhsEJYdrwiA/JK3X40pKiwCSTo2OOH+JGt5CGnry4SNnSlOyzZdkDwdH9eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723066870; c=relaxed/simple;
-	bh=U9b5NJ/d7sXrqDLaTOjIBs7J8P7i5Yr/Qh8TY3t8pYk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
-	 MIME-Version:References; b=L3P3Ry0/lif0PwhvwfvtHVojmP4BOW8RH4aP80edTvggz2TuFv9dQiRpC7r0ePa3ynO7X9Qh8e/INOZQOlec4IaeqmggtMCtKZECJ7AO5wLDG3hvwBmahUPRea58edY6z8EvYtuhIXWEepdjxz1CC5gFeWjH/ewSMCuroLSauOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=eoh+y125; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240807214103euoutp0286d834639ba8aa714d9556f0b19d04e6~pkC7SmCzn2897028970euoutp02G;
-	Wed,  7 Aug 2024 21:41:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240807214103euoutp0286d834639ba8aa714d9556f0b19d04e6~pkC7SmCzn2897028970euoutp02G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1723066863;
-	bh=U9b5NJ/d7sXrqDLaTOjIBs7J8P7i5Yr/Qh8TY3t8pYk=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=eoh+y125LSEMhYWv1XSGfR8uf+fg0vQ5+ng+xaHOSd1yamPNhVdoqnD4hED9Tz7CL
-	 4Wkj4mby3HaIBs2swODgu+PynhEcEiL84JjZJx4VBKsW22ajJWte8/NFcCFhjtC06g
-	 dpU6dpi7jEpVgX0EaWUsHHDcZYw6qdb2B7vJyt+k=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240807214102eucas1p2ec508ef133b6ed8e34a02166a1a2b3c7~pkC65jyIg1274012740eucas1p2z;
-	Wed,  7 Aug 2024 21:41:02 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 6F.54.09620.EE9E3B66; Wed,  7
-	Aug 2024 22:41:02 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240807214101eucas1p217cf97d4159f939dfc39c3d5ac474679~pkC5oDN_T1290512905eucas1p2n;
-	Wed,  7 Aug 2024 21:41:01 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240807214101eusmtrp1022fa8100d0cb6d066eda8ae0bcf4a83~pkC5nD7SL0518405184eusmtrp1s;
-	Wed,  7 Aug 2024 21:41:01 +0000 (GMT)
-X-AuditID: cbfec7f5-d1bff70000002594-f8-66b3e9ee1a8e
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 8C.D8.08810.DE9E3B66; Wed,  7
-	Aug 2024 22:41:01 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240807214101eusmtip238d094010ef43e294429215ff51615e4~pkC5Uswv90288002880eusmtip2x;
-	Wed,  7 Aug 2024 21:41:01 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
-	Server (TLS) id 15.0.1497.2; Wed, 7 Aug 2024 22:41:00 +0100
-Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
-	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Wed, 7 Aug
-	2024 22:41:00 +0100
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Nicolas Schier <nicolas@fjasle.eu>
-CC: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
-	<nathan@kernel.org>, Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?utf-8?B?VGhvbWFzIEhlbGxzdHLDtm0=?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>, William Hubbs <w.d.hubbs@gmail.com>, "Chris
- Brannon" <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>, "Samuel
- Thibault" <samuel.thibault@ens-lyon.org>, Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek
-	<omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
-	Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
-	<oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, Suzuki K
-	Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, Jiri Slaby
-	<jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, "Bill
- Wendling" <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"speakup@linux-speakup.org" <speakup@linux-speakup.org>,
-	"selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-serial@vger.kernel.org"
-	<linux-serial@vger.kernel.org>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>, Finn Behrens <me@kloenk.dev>, "Daniel Gomez
- (Samsung)" <d+samsung@kruces.com>, "gost.dev@samsung.com"
-	<gost.dev@samsung.com>
-Subject: Re: [PATCH 06/12] selinux/genheaders: include bitsperlong and
- posix_types headers
-Thread-Topic: [PATCH 06/12] selinux/genheaders: include bitsperlong and
-	posix_types headers
-Thread-Index: AQHa6FXbkJm8qubdXUykvjPm57XXT7Ib3kMAgABlSYA=
-Date: Wed, 7 Aug 2024 21:41:00 +0000
-Message-ID: <sbj3c3tlafewy2n4pylbnpb4gwylpnyxovdykfy3dhk2wqmpry@ekhhe3mgqnd6>
-In-Reply-To: <20240807-outgoing-charcoal-collie-0ee37e@lindesnes>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0CB3C3B719E6BE4EB7218E0F9C092221@scsc.local>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1723067035; c=relaxed/simple;
+	bh=lkGBHmKx8utfBumhDKHFBqKXIafzXpT/uwm6N8Wpdx8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kMdVrpVageDJ0rHeMn80IFt1pU2xiqs4vdk+LZuciwllN5qmNETevfKw71DAxpYQlJTORDx8BhWtlEIB9d1TNLnP15Z3Ilhx9sgLpSfwkm3uLLaG+VJ4U9CHJlbyogUFTaIoOrgprrWLwGFJOJQzXtRECWARuXJzjqCMSTTWCtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LSPEPToA; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef27bfd15bso2630721fa.2;
+        Wed, 07 Aug 2024 14:43:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723067031; x=1723671831; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jll19MbGKA1ExOhPJwMcVT0BjOA2+xszLa20Qb3/6ts=;
+        b=LSPEPToARVot12Eiqr1ie0bnutF3FnWWBOvh2F/N2K9ptgEBP0X4Vau6xF+ngdztkw
+         nKeSuW7MdYUMyTKpGPCWQHTDnFz1Ie9vAmPOBneJgmiSStg8YeeUWwKJ/KkKQQaQ6wYp
+         tsTN8OCdNvub0JIsMMeHQriAYZtk9skcK4e+36iypOLeV63uZmlrkNpbK6riyX1NSBRo
+         /s1tGikRxWNz6Yd+sg/AWmxeuV/BpBoeZaJwt+ctH/13OWcZIkrqvpWrzFhfmJOVd5VA
+         5g4IHNQ2n8w17OqDT+Y5qKHAfTgVcFEhNji0Oykeq6m+2Mc0yxuHCVSypYkaYxne7IYg
+         d0RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723067031; x=1723671831;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jll19MbGKA1ExOhPJwMcVT0BjOA2+xszLa20Qb3/6ts=;
+        b=vqRstsUvtxKYGJuUBuytDdVahc0mW0L3W2Vh3GITSK2i0OaDh9A9uvclEFrbtU3uUW
+         cJPVvEHuIZVnsGUlJxcNF1IfJsv349PR80kkQoa3C0dBZPk7lEsBd40noJJTbX0BwtO0
+         SFoL9K5FhGn9pCxLcP/9WnlL27jMKRGqWxLhUZKOhPiElHtnZOzL27TC61qC50UBIUtb
+         wdNj/MAVIj1vLGn03vZUMevCjGQ+RXYrTyxdZzgLBEpGpGlxclh1mBDI5DwEH6q57Zdh
+         c0ivgJbJa/mSuZtlnjUUSWAcF6xjmsm3nMnO1y3y1voSZ5vid1VIkn7l+Eszh/nTthyp
+         JH2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXq6QnGpeVk33a8noweZCVDcPRHC0fp2hJDcaVWisfCPNSLAwwa9OpTNQv1Fo/WHARM/hDxpeCzAafgE/CfOS85gTO4RXrv22iF3POF8Bo/v6gwxURKnXBMZWEyX/qzfJQPKrvZV4G5rQ==
+X-Gm-Message-State: AOJu0YwXV50dcbyzpvJtYr2oh00+gqxLLNGM+eYAWnSbl6qFI+aC1eyj
+	YsC1Az3iD4OFxep0JnFQRdEmgjtfc86Ir00ktsLfcF8DxqyWs5JUCw5AdV+ETOVhxh3OPKNdWoN
+	ocD2jft4mtVjFVkx809m3BeE/X9Q=
+X-Google-Smtp-Source: AGHT+IFVIyLTqdb8azfpb133JgIONeq3ywsb/Aea06oSsz8r2rgOsh6GqvlrMVg47Bz/l18QM1G0RB+ZwFoW1rvyyzI=
+X-Received: by 2002:a2e:9110:0:b0:2ef:2c20:e061 with SMTP id
+ 38308e7fff4ca-2f15aab0a5emr132863931fa.22.1723067030885; Wed, 07 Aug 2024
+ 14:43:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Ta1BUZRjHfc+ey0Jix4WRNwTLHdORYIVB4wWcUsI6Y+N0mSmLyWwHDujE
-	bXahzA8NuYIBauCCxsIu9zu1dWAZWLkI6MLKLQYCFBVWwGABgQwQB9lgjxe+/Z73+T////N8
-	eIUC0XnKSXgyIpqVRUjDxKQtXmVY6nJ/OFER4vE0cxdq7c/F0EzheYAMpeMCdNVyV4AsVSkC
-	1Ds/QyJFnpZEjyvGMTRUX4Shh2pndLksj0SabiOOzJXNOOJG+gi0rK/GUI8+k0TteRcoNJra
-	QKKxkUIS5czpcGQaHiBQTaaRQHXaHhJxPY8IFJ9QSKBzJWMkmk22YOhBXSuB0pamSDSdfINC
-	g5eu4KhB1Ueh4sdXAOpqMVCoqroDoH+6lAClDw4CNFm9alo5lUKg3HhvdPbOPnSr4A/qgCtT
-	rikHTK2hg2TqFrJxRt9UQTI1qrsUk83FMGevTxNMXu0ExnClCSSjSdBgjOXCMMFct+RSTE5s
-	moDRGD9hGtTlFDOU1IJ9DANt9wezYSe/Y2V73vnG9kTbzDIW1el8Sr1YgseC2a2JwEYI6b2Q
-	Uy4JEoGtUEQXA5hh/Jvii/8AnMm8ivHFIwDV/5qp5yPzkxU43yhaVT3oxV+oLqpLyTWViG4D
-	cNAU+sK4d/mOdZykd8N6I2dlB3onXJ47Q66JBHTNq/Dy1G9grWFPfwXb4jpxXnQMFpmGAM++
-	UKFQWhNwegdsaFy0vtvRR6B21GBlG/og1C/xPoB2gfdLnljDBLQjvD2ahfE3bIa5GbUCnrfA
-	Fb2J5NkNdvSPAp49oK6gHudZDNUD6at64arPbqjV7+HRB/bdD+Hdt8PUJBPFb7MZGtNHn03G
-	b4TXOsN5DoC6+Lln7vbQ3FJJJQM31brlVC8DVC8DVOsCVOsCsgFRChzZGHl4KCv3imC/l8il
-	4fKYiFBJUGQ4B1Y/TNtKy3w1KDbPSZoAJgRNAAoFYgc7xVEuRGQXLP3hNCuLPC6LCWPlTWCr
-	EBc72r0Z/DorokOl0ey3LBvFyp53MaGNUyyWT7pFafEsT7czAcfcHXwizNGer5niM5CreTbS
-	vXFngNew6tz2/BSP1rj2Mot9SLZ/Hf0hd2Smfdr90I+f30wrnuQ+5RZcdm3AppTBrbrmQ8mx
-	LiFfqgMMqf7DyuTCRD/he6f3PlW+QW7bEXuzoUThN3FvwenP6NR5v5UsTcZx8duBQZ0b93tJ
-	yaGRe6hjhR7Qe/912DkwxXFsWja+bSm3v+zGpaSvb435+nsPvg+D4kbyPV8ZePfXUJ+Ri6eK
-	3HIyOo8e/N3+I+qAqblb2xFdpqMls4fzTFt+bly5VmD3wYZNkuG2Lt/irqKfPoNfOG8iFE/2
-	sWW/5Be+Jer2ua1bDJNMinH5Camnq0Aml/4PNR3JhJ8EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TeVDUZRjHe3/ngrP5k0PeOAw3D7RaWM53jQijqR/dTKVOiLjiChTX7EJT
-	1h8gXoAYlzAssCCXXAUth4DAFtLCtiGj4oKRqLAYh4QMEGzDQAs/G/nv88z7/T7P831nHh5u
-	kUXb8sKjYqWyKEmEgDIndCvdw69OT9SfcOmcfR71DBRjaKb8AkCaqnEcXVu9h6PVpnQc9S/M
-	UCixpJZCS/XjGLrfcQVDfxfYo+zqEgopb2oJNNlwnUCqUT2JllubMXS7NZ9Cv5ek0siQpabQ
-	2Gg5hS7PNhLo4YNBErXka0nUXnubQqrbcyQ6m1ROonOVYxR6kraKoUftPSS6ZHxMoem0X2k0
-	lJFDILVCT6OKpRyA+ro1NGpq7gXor75MgHKHhgCaajY1bXicTqLis17o9J8e6G5ZHe27l61R
-	1gC2TdNLse3/FBFsa2c9xbYo7tFskSqOPd01TbIlbRMYq6pKolhlkhJjV1MfkGzXajHNXo6/
-	hLNKbQCrLqih2fsp3djH8HOhtyw6LlbqGBYtj31dEChCrkKRGAld3cVCkZtX0D5XD4Gzj/dx
-	aUT4V1KZs89RYZhuZhmLuWH/dcFiJREPntglAzMeZNzhwlQ9kQzMeRZMGYAJdzoA92APf5q/
-	Q3JsCZf1yRQnmgWwYjyB5AodgMamc0+LCgBP5S4QaxaK2QM7tCp6ja2YXXB59hS1xjjTshnq
-	G15bY0vmMNSduWHS80yaINij9+bk+2BiYua6nGB2QPUvi+sb8ZkPYK1BA7hZGRic7K9ZfzBj
-	9sNW4w/rDBgHOFL5L83NsoF/GAoxLgIDS9v6cI6t4cToytNor8DeAcPTyC6wsayD4FgACwZz
-	8bXdcFOW2lZnDsVQP3KC674dZqU8pLnVtkBtroFIA/aKDYMVz8yKZ2bFBrNig7kIkFXAShon
-	jwyNlIuEckmkPC4qVBgSHakCpvNo0hjrm4FyclbYCTAe6ASQhwus+IkHVScs+Mcl35yUyqKD
-	ZXERUnkn8DB9XDpuax0SbbqvqNhgkaeLh8jdU+ziIfZ0E9jw/WPOSyyYUEms9EupNEYq+9+H
-	8cxs47Ezgp0Ols7IXL/4XOCsnn/9wKbf1BNWTi8uaFfcbhL2X/TxcT9CUSs3+6yhsW/u6P4h
-	JzenY/PioCOKQouUW1bx6WkD1Q7JzVezyTeMYSsXtr5tGH7r2/6Xd86M3O02TLV/dHHLdo04
-	UxksfL96bIf3YPWttpV5TR0vxTevMW+315HFk+/M+Qbu7nlXZ5PvJ8g61Lu0uEn9ScB4Biqd
-	+DTxoh+/Ir9X2umYnt3dFa7LeSHysI96Fx1lrdFf+/HqlW125TAk3e5Q64fzkqkwf2brwc1R
-	WqfhbS/lrdjldCUU+Tt5v7mHTAr4rlDsmHf+vVLdAf33ytHQweq608cCFD8bDamPlgSEPEwi
-	2ovL5JL/AKfD4POnBAAA
-X-CMS-MailID: 20240807214101eucas1p217cf97d4159f939dfc39c3d5ac474679
-X-Msg-Generator: CA
-X-RootMTR: 20240807153904eucas1p2264f7363ae2474c20c6dc1b84a232815
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240807153904eucas1p2264f7363ae2474c20c6dc1b84a232815
-References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
-	<20240807-macos-build-support-v1-6-4cd1ded85694@samsung.com>
-	<CGME20240807153904eucas1p2264f7363ae2474c20c6dc1b84a232815@eucas1p2.samsung.com>
-	<20240807-outgoing-charcoal-collie-0ee37e@lindesnes>
+References: <20240807165320.56450-1-shenxiaxi26@gmail.com>
+In-Reply-To: <20240807165320.56450-1-shenxiaxi26@gmail.com>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 7 Aug 2024 16:43:39 -0500
+Message-ID: <CAH2r5mu_hvBnbzbRnpzjAULubsTf5o4TsD3Piqjwn6HsF7BC8A@mail.gmail.com>
+Subject: Re: [PATCH] Fix spelling errors in Server Message Block
+To: Xiaxi Shen <shenxiaxi26@gmail.com>
+Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com, 
+	sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com, 
+	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gV2VkLCBBdWcgMDcsIDIwMjQgYXQgMDU6Mzg6MjhQTSBHTVQsIE5pY29sYXMgU2NoaWVyIHdy
-b3RlOg0KPiBPbiBXZWQsIEF1ZyAwNywgMjAyNCBhdCAwMTowOToyMEFNICswMjAwLCBEYW5pZWwg
-R29tZXogdmlhIEI0IFJlbGF5IHdyb3RlOg0KPiA+IEZyb206IERhbmllbCBHb21leiA8ZGEuZ29t
-ZXpAc2Ftc3VuZy5jb20+DQo+ID4gDQo+ID4gVGhlIGdlbmhlYWRlcnMgcmVxdWlyZXMgdGhlIGJp
-dHNwZXJsb25nLmggYW5kIHBvc2l4X3R5cGVzLmggaGVhZGVycy4NCj4gPiBUbyBlbnN1cmUgdGhl
-c2UgaGVhZGVycyBhcmUgZm91bmQgZHVyaW5nIGNvbXBpbGF0aW9uIG9uIG1hY09TIGhvc3RzLA0K
-PiA+IGFkZCB1c3IvaW5jbHVkZSB0byBIT1NUX0VYVFJBQ0ZMQUdTIGluIHRoZSBnZW5oZWFkZXJz
-IE1ha2VmaWxlLiBUaGlzDQo+ID4gYWRqdXN0bWVudCBhbGxvd3MgdGhlIGNvbXBpbGVyIHRvIGxv
-Y2F0ZSBhbGwgbmVjZXNzYXJ5IGhlYWRlcnMgd2hlbiB0aGV5DQo+ID4gYXJlIG5vdCBhdmFpbGFi
-bGUgYnkgZGVmYXVsdCBvbiBtYWNPUy4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwg
-R29tZXogPGRhLmdvbWV6QHNhbXN1bmcuY29tPg0KPiA+IC0tLQ0KPiA+ICBzY3JpcHRzL3NlbGlu
-dXgvZ2VuaGVhZGVycy9NYWtlZmlsZSB8IDMgKystDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyIGlu
-c2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvc2NyaXB0
-cy9zZWxpbnV4L2dlbmhlYWRlcnMvTWFrZWZpbGUgYi9zY3JpcHRzL3NlbGludXgvZ2VuaGVhZGVy
-cy9NYWtlZmlsZQ0KPiA+IGluZGV4IDFmYWY3ZjA3ZThkYi4uMDE3MTQ5YzkwZjhlIDEwMDY0NA0K
-PiA+IC0tLSBhL3NjcmlwdHMvc2VsaW51eC9nZW5oZWFkZXJzL01ha2VmaWxlDQo+ID4gKysrIGIv
-c2NyaXB0cy9zZWxpbnV4L2dlbmhlYWRlcnMvTWFrZWZpbGUNCj4gPiBAQCAtMiw0ICsyLDUgQEAN
-Cj4gPiAgaG9zdHByb2dzLWFsd2F5cy15ICs9IGdlbmhlYWRlcnMNCj4gPiAgSE9TVF9FWFRSQUNG
-TEFHUyArPSBcDQo+ID4gIAktSSQoc3JjdHJlZSkvaW5jbHVkZS91YXBpIC1JJChzcmN0cmVlKS9p
-bmNsdWRlIFwNCj4gPiAtCS1JJChzcmN0cmVlKS9zZWN1cml0eS9zZWxpbnV4L2luY2x1ZGUNCj4g
-PiArCS1JJChzcmN0cmVlKS9zZWN1cml0eS9zZWxpbnV4L2luY2x1ZGUgXA0KPiA+ICsJLUkkKHNy
-Y3RyZWUpL3Vzci9pbmNsdWRlDQo+IA0KPiAnbWFrZSBoZWFkZXJzJyBjb21wb3NlcyB0aGUgVUFQ
-SSBoZWFkZXIgdHJlZSBpbiAkKG9ianRyZWUpL3Vzci9pbmNsdWRlLg0KPiBTbywgaWYgeW91IGJ1
-aWxkIG91dC1vZi1zb3VyY2UsIC1JJChzcmN0cmVlKS91c3IvaW5jbHVkZSB3aWxsIG5vdCBtYXRj
-aC4NCj4gSnVzdCByZW1vdmUgdGhlICckKHNyY3RyZWUpLycgcHJlZml4IGFzICckKG9ianRyZWUp
-LycgaXMgYWx3YXlzICcuJy4NCg0KVGhlICdoZWFkZXJzJyB0YXJnZXQgYWxzbyBkZXBsb3lzIGlu
-c3RhbGxzIHRoZSBoZWFkZXJzIGluIGFyY2gvJChTUkNBUkNIKS8NCmluY2x1ZGUvdWFwaSwgc28g
-SSd2ZSB1cGRhdGVkIHNlbGludXgvZ2VuaGVhZGVycy9NYWtlZmlsZSB0byB0aGUgZm9sbG93aW5n
-Og0KDQpkaWZmIC0tZ2l0IGEvc2NyaXB0cy9zZWxpbnV4L2dlbmhlYWRlcnMvTWFrZWZpbGUgYi9z
-Y3JpcHRzL3NlbGludXgvZ2VuaGVhZGVycy9NYWtlZmlsZQ0KaW5kZXggMWZhZjdmMDdlOGRiLi5h
-ZTFmMTk1YjZmNjcgMTAwNjQ0DQotLS0gYS9zY3JpcHRzL3NlbGludXgvZ2VuaGVhZGVycy9NYWtl
-ZmlsZQ0KKysrIGIvc2NyaXB0cy9zZWxpbnV4L2dlbmhlYWRlcnMvTWFrZWZpbGUNCkBAIC0yLDQg
-KzIsNiBAQA0KIGhvc3Rwcm9ncy1hbHdheXMteSArPSBnZW5oZWFkZXJzDQogSE9TVF9FWFRSQUNG
-TEFHUyArPSBcDQogICAgICAgIC1JJChzcmN0cmVlKS9pbmNsdWRlL3VhcGkgLUkkKHNyY3RyZWUp
-L2luY2x1ZGUgXA0KLSAgICAgICAtSSQoc3JjdHJlZSkvc2VjdXJpdHkvc2VsaW51eC9pbmNsdWRl
-DQorICAgICAgIC1JJChzcmN0cmVlKS9zZWN1cml0eS9zZWxpbnV4L2luY2x1ZGUgXA0KKyAgICAg
-ICAtSSQob2JqdHJlZSkvYXJjaC8kKFNSQ0FSQ0gpL2luY2x1ZGUvZ2VuZXJhdGVkL3VhcGkgXA0K
-KyAgICAgICAtSSQob2JqdHJlZSkvYXJjaC8kKFNSQ0FSQ0gpL2luY2x1ZGUvdWFwaQ0KDQpUaGUg
-aW5jbHVkZSBwYXRoIC1JJChvYmp0cmVlKS9hcmNoLyQoU1JDQVJDSCkvaW5jbHVkZS9nZW5lcmF0
-ZWQvdWFwaQ0KZW5hYmxlcyBsb2NhdGluZyB0aGUgYXNtL3R5cGVzLmguDQoNClRoZSBpbmNsdWRl
-IHBhdGggLUkkKG9ianRyZWUpL2FyY2gvJChTUkNBUkNIKS9pbmNsdWRlL3VhcGkgZW5hYmxlcw0K
-bG9jYXRpbmcgdGhlIGFzbS9iaXRzcGVybG9uZy5oIGFuZCBhc20vcG9zaXhfdHlwZXMuaC4NCg0K
-PiANCj4gQnV0IEkgYW0gc3VzcGVjdGluZyB0aGF0IHRoaXMgYnJlYWsgY3Jvc3MtYnVpbGRpbmcu
-DQoNCknigJl2ZSB0ZXN0ZWQgdGhpcyBjaGFuZ2Ugb24gbWFjT1Mgd2l0aCBBUkNIPWFybTY0LCBh
-cyB3ZWxsIGFzIG9uIERlYmlhbiB3aXRoDQpBUkNIPWFybTY0IGFuZCBBUkNIPXg4Nl82NC4gSXMg
-aXQgZW5vdWdoIHRvIGp1c3QgY29uZmlybSB0aGF0IGNyb3NzLWJ1aWxkaW5nDQpzdGlsbCB3b3Jr
-cyBhZnRlciB0aGlzIGNoYW5nZT8NCg0KPiANCj4gS2luZCByZWdhcmRzLA0KPiBOaWNvbGFz
+merged into cifs-2.6.git for-next
+
+
+On Wed, Aug 7, 2024 at 11:53=E2=80=AFAM Xiaxi Shen <shenxiaxi26@gmail.com> =
+wrote:
+>
+> Fixed typos in various files under fs/smb/client/
+>
+> Signed-off-by: Xiaxi Shen <shenxiaxi26@gmail.com>
+> ---
+>  fs/smb/client/cifsglob.h  | 4 ++--
+>  fs/smb/client/misc.c      | 2 +-
+>  fs/smb/client/smbdirect.c | 8 ++++----
+>  fs/smb/client/transport.c | 2 +-
+>  4 files changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
+> index f6d1f075987f..66677b8fc9be 100644
+> --- a/fs/smb/client/cifsglob.h
+> +++ b/fs/smb/client/cifsglob.h
+> @@ -345,7 +345,7 @@ struct smb_version_operations {
+>         /* connect to a server share */
+>         int (*tree_connect)(const unsigned int, struct cifs_ses *, const =
+char *,
+>                             struct cifs_tcon *, const struct nls_table *)=
+;
+> -       /* close tree connecion */
+> +       /* close tree connection */
+>         int (*tree_disconnect)(const unsigned int, struct cifs_tcon *);
+>         /* get DFS referrals */
+>         int (*get_dfs_refer)(const unsigned int, struct cifs_ses *,
+> @@ -816,7 +816,7 @@ struct TCP_Server_Info {
+>          * Protected by @refpath_lock and @srv_lock.  The @refpath_lock i=
+s
+>          * mostly used for not requiring a copy of @leaf_fullpath when ge=
+tting
+>          * cached or new DFS referrals (which might also sleep during I/O=
+).
+> -        * While @srv_lock is held for making string and NULL comparions =
+against
+> +        * While @srv_lock is held for making string and NULL comparisons=
+ against
+>          * both fields as in mount(2) and cache refresh.
+>          *
+>          * format: \\HOST\SHARE[\OPTIONAL PATH]
+> diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
+> index b28ff62f1f15..3fe5bfc389d0 100644
+> --- a/fs/smb/client/misc.c
+> +++ b/fs/smb/client/misc.c
+> @@ -352,7 +352,7 @@ checkSMB(char *buf, unsigned int total_read, struct T=
+CP_Server_Info *server)
+>                                  * on simple responses (wct, bcc both zer=
+o)
+>                                  * in particular have seen this on
+>                                  * ulogoffX and FindClose. This leaves
+> -                                * one byte of bcc potentially unitialize=
+d
+> +                                * one byte of bcc potentially uninitiali=
+zed
+>                                  */
+>                                 /* zero rest of bcc */
+>                                 tmp[sizeof(struct smb_hdr)+1] =3D 0;
+> diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
+> index d74e829de51c..7bcc379014ca 100644
+> --- a/fs/smb/client/smbdirect.c
+> +++ b/fs/smb/client/smbdirect.c
+> @@ -406,7 +406,7 @@ static void smbd_post_send_credits(struct work_struct=
+ *work)
+>                         else
+>                                 response =3D get_empty_queue_buffer(info)=
+;
+>                         if (!response) {
+> -                               /* now switch to emtpy packet queue */
+> +                               /* now switch to empty packet queue */
+>                                 if (use_receive_queue) {
+>                                         use_receive_queue =3D 0;
+>                                         continue;
+> @@ -618,7 +618,7 @@ static struct rdma_cm_id *smbd_create_id(
+>
+>  /*
+>   * Test if FRWR (Fast Registration Work Requests) is supported on the de=
+vice
+> - * This implementation requries FRWR on RDMA read/write
+> + * This implementation requires FRWR on RDMA read/write
+>   * return value: true if it is supported
+>   */
+>  static bool frwr_is_supported(struct ib_device_attr *attrs)
+> @@ -2177,7 +2177,7 @@ static int allocate_mr_list(struct smbd_connection =
+*info)
+>   * MR available in the list. It may access the list while the
+>   * smbd_mr_recovery_work is recovering the MR list. This doesn't need a =
+lock
+>   * as they never modify the same places. However, there may be several C=
+PUs
+> - * issueing I/O trying to get MR at the same time, mr_list_lock is used =
+to
+> + * issuing I/O trying to get MR at the same time, mr_list_lock is used t=
+o
+>   * protect this situation.
+>   */
+>  static struct smbd_mr *get_mr(struct smbd_connection *info)
+> @@ -2311,7 +2311,7 @@ struct smbd_mr *smbd_register_mr(struct smbd_connec=
+tion *info,
+>         /*
+>          * There is no need for waiting for complemtion on ib_post_send
+>          * on IB_WR_REG_MR. Hardware enforces a barrier and order of exec=
+ution
+> -        * on the next ib_post_send when we actaully send I/O to remote p=
+eer
+> +        * on the next ib_post_send when we actually send I/O to remote p=
+eer
+>          */
+>         rc =3D ib_post_send(info->id->qp, &reg_wr->wr, NULL);
+>         if (!rc)
+> diff --git a/fs/smb/client/transport.c b/fs/smb/client/transport.c
+> index adfe0d058701..6e68aaf5bd20 100644
+> --- a/fs/smb/client/transport.c
+> +++ b/fs/smb/client/transport.c
+> @@ -1289,7 +1289,7 @@ compound_send_recv(const unsigned int xid, struct c=
+ifs_ses *ses,
+>  out:
+>         /*
+>          * This will dequeue all mids. After this it is important that th=
+e
+> -        * demultiplex_thread will not process any of these mids any futh=
+er.
+> +        * demultiplex_thread will not process any of these mids any furt=
+her.
+>          * This is prevented above by using a noop callback that will not
+>          * wake this thread except for the very last PDU.
+>          */
+> --
+> 2.34.1
+>
+>
+
+
+--=20
+Thanks,
+
+Steve
 
