@@ -1,194 +1,128 @@
-Return-Path: <linux-kernel+bounces-278097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B30C94AAD2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:57:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC0294AAD8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C1A22820D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:57:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B801C2173D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E539C823C8;
-	Wed,  7 Aug 2024 14:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E8C823AF;
+	Wed,  7 Aug 2024 14:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="pBLw2wmY"
-Received: from CWXP265CU009.outbound.protection.outlook.com (mail-ukwestazon11021082.outbound.protection.outlook.com [52.101.100.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H99cg1bS"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0904F7B3F3;
-	Wed,  7 Aug 2024 14:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.100.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723042646; cv=fail; b=bWaWvD/DjODBcDiy1sNyIfYYa+3UneGOSIIKI27/GMgLDfqNb5MOK2g6GbyV1xouUuHvltcbuFjAM1LM/0n2JWUBqz+73WTC1l/W/vR2l0z+RBvJYOob4y1n6e+YutbpiXkxVNd3uswCzH9ozaAdwhjghyND329InMr8Z5wZSH8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723042646; c=relaxed/simple;
-	bh=AK8Hm7tGpPSkBLXddY2U/wIEj4Ln2g8c5LdmXp/EdJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fcZNRAoY5+O6K9acPJVj6ti5VceJl7X0GrN4/foXKDe5YuSewZPk3h3HNdG+XDRROLItZhX2+fADQ2IZ2d3gGZTGcM5Ikm5rlWDatdyjMSPH15zmFQY7XQQjIOz1wQkGI7sxGxY8tFKg8eSdoXmgID76phgTDc+nDnp4tL6dQmM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=pBLw2wmY; arc=fail smtp.client-ip=52.101.100.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OpJwG+TN/VGStmghV5fSlLJbHxe4M4RdgIru95pN76aGhEsswzj8Q5HSUtM2pCdC4fxFnIrj+8WxrHe1aYI1gMPzkZSrCLVMzjya4ytAeK/sKBZfnDnxCPvawvmOEi6rIGeB00VUwRc8QIFQL/EE7ui42mg1tXc/WSCQkYUN40iZmikQ84Zj8tJ5IZk9ZCio9EuUbg+m4YqIN6gdIjSSvt8y0hVnVfsAWFs1zbWLrMft5IYMeiuhx7jdERwoyCOQ0eBCpHEvgGwwYKhANTyv4/LMUkwcRztafsFganjrzSWuutLSj/K9RO8eI+KE+u4oYcBSO3RbD4HjVW0is09AoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kfO3vQAR9MZfaLWtyPC9fREnrWtcxFyrdl07USqhVMg=;
- b=DsD8AJhR7Kt2vKR/cne+gwwOMwHnNYPeIG+57xRNZFmo0sxcnOnHehGdJAx5pQxFavlvkf0ZW5eJYVHli34mAp3jMPOyHOoCulsklGroikv5ko361Kn5EtzCNuPyM6oFBjOxwvUUI9IxfZmkmxIKCgJEey/10jqo0z9gUbC63YosYTd23z4wJz2787RMyAZTVaU3C9sHlyTWUlA3n/1JQTc+8L+EiLdxL03iGLIsw6xc9ShWxHt49BCS/d5NiR+DtKdJA57MbMY91ic9l7l1/xaRDwOHhK3LNt+TVlOhYX5dk7GB6TO5pD2rDT3nCxKqt1T/fjpeI6T5r9D+i9pkQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kfO3vQAR9MZfaLWtyPC9fREnrWtcxFyrdl07USqhVMg=;
- b=pBLw2wmYtS4wuCREwf/5aKTPftKgGzdVCSRmCnITlTLRv5UHLJFXd2CXz4eDHoOSHsNDPhR5KdxUf+9IzCDsFkJ1fXIaZF4XFvmewcs/DXwdplmlEZ8izpCHil+Fi5A/rUFcE3UNS/nxseh5WsTTC74OjUmc7+AS4ZvHLU30oLU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by LO0P265MB3452.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:16f::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Wed, 7 Aug
- 2024 14:57:21 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%7]) with mapi id 15.20.7849.008; Wed, 7 Aug 2024
- 14:57:21 +0000
-Date: Wed, 7 Aug 2024 15:57:19 +0100
-From: Gary Guo <gary@garyguo.net>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, "=?UTF-8?B?QmrDtnJu?= Roy Baron"
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
- Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Arve =?UTF-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos
- <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes
- <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren
- Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Daniel Xu <dxu@dxuuu.xyz>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
- Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, Kees Cook
- <kees@kernel.org>
-Subject: Re: [PATCH v8 5/8] rust: security: add abstraction for secctx
-Message-ID: <20240807155719.005d9e74@eugeo>
-In-Reply-To: <20240725-alice-file-v8-5-55a2e80deaa8@google.com>
-References: <20240725-alice-file-v8-0-55a2e80deaa8@google.com>
-	<20240725-alice-file-v8-5-55a2e80deaa8@google.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0434.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a9::7) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147E080BF8;
+	Wed,  7 Aug 2024 14:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723042688; cv=none; b=INskcQsBhFFJ5tmbyOFSckhx5Cm2IaaHQGZZtTvfc5YFlIJfPt19Gcd6lYJ6aleT2yL6ewGSzDmeRvnxMon3S0qVpzobxfYr3rj929Rrz39zUfrwe709TR9OC/VWLYIkPOzr1pJ8EJrK5wSWVazC3EzevOr0phmMrA95NjHr3H4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723042688; c=relaxed/simple;
+	bh=qVznd9P5OEpZiNYPaWiEPGPDivKEA64oSkps+3rnKOY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AXvCc4n8MCV7h+xWRP5wsaj3wiXVJ7vWuCSPYQ+/XxwElCN58c/nAeZvIblzZGpB35+hGXHUs9Oy6K8r2CI3tIDEIXgyF4HFPoP4GxMKEFArwP/rlK5F+J7VoTQUpnJj3LoHhZVNtwjUxJjRu12AGES5KyvdA9xpGy49ZGnMkFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H99cg1bS; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42812945633so14056765e9.0;
+        Wed, 07 Aug 2024 07:58:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723042685; x=1723647485; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KfIk4TSI81SsyrNk2hyW9UN9PuOKnr5OVUU+Hp8oa+E=;
+        b=H99cg1bSABOdUPp5KhLoXIUxs/jmAicrvmLly6mTQSEsKDtKNg8r0eLtzehO81zsIY
+         VOVj7wA9b1AFDN+c0ZDEF7159l3KF7Mwd8WI1WiGu8NsCmu97nSjjItVetK7dvT9E+VM
+         RfUBrlsWI46/4Dua1yN40fPWsGIhT3hz10vNcrCcv8o/xkGnujV0MtprikKZ7aDh7d1t
+         1vZwzUrpQ+1c80Aph+jz4jPv2DQRteZ4/aBXV5h9R+TKyvEMxpa0N/34YIsLIUEp0KX9
+         BwK02JjtLTxNCs8hXRUHlBv0dUQoP28epdaqcc7r6mRAbfYAFyBEm6SVBcU5e1s+dFR5
+         Fxaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723042685; x=1723647485;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KfIk4TSI81SsyrNk2hyW9UN9PuOKnr5OVUU+Hp8oa+E=;
+        b=GMP3vD0HCBUNwHT77qozCk5Fuvg/YBQs97x48lKsHzEdYIStkXv/UBWNQJfxay/v07
+         zKTeWaAcwRhsrJxc/CjfyTLaLexuKX1oQre6/uJxA6ZNnQcMg7kPSBiPc2smof5xJOSW
+         CTrmkENx1HNDYfPwpaLdREnoAV0x/133l/1FU/+MAB12t1/G4iss+pTszP4iFLpVGUNm
+         e8yIhhBWa2hYkQa+xoX5cUxjNsn//7nR2v8nL1vbdbcDtNkbNSEno8sW9SBDalEc472N
+         EbMaE+jUeYP1nzuX4gJm8JRA/4HIUECkJLx5eLMkCeyNjxvJZeFL1JYGPwijDt3rmCsq
+         E04A==
+X-Forwarded-Encrypted: i=1; AJvYcCUSh/zS+b6o/iuJ3Zwc+cgw46S9vYieUU8T89WctZPzVUMAFTCmrkvs/QOEBcOgfFunZ983GWoVYmcTLInUpDv0yjKzz9iCjNAVMf7wlWPM//iXV754o9aAEN1d45X6Q4mRYb8fjeikDCzS/EdNPBkSiiZHe6NLFXqP1rjVAIvUxSwoLQ==
+X-Gm-Message-State: AOJu0YzKC/gx7VCN11YJ57A7MYNiXnrF6gMSvf8O14PtRlPBYnqFUT4d
+	FG78tUjFilxjK9kPsJfA28jIhrfG0VE0kAA5srjS9vp7yfKQljyM
+X-Google-Smtp-Source: AGHT+IHK7NZ+wqyO67FZRL0zeC+aZ382NHKk9ACDoZwHGgYt4mYBwFHjuKM9bHVwg+jIssleHM7vvQ==
+X-Received: by 2002:a05:600c:19ce:b0:428:151b:e8e with SMTP id 5b1f17b1804b1-428e6af0a27mr130317025e9.10.1723042685111;
+        Wed, 07 Aug 2024 07:58:05 -0700 (PDT)
+Received: from HYB-hhAwRlzzMZb.ad.analog.com ([5.2.194.157])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42905971993sm33273055e9.16.2024.08.07.07.58.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 07:58:04 -0700 (PDT)
+From: Dumitru Ceclan <mitrutzceclan@gmail.com>
+X-Google-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+Subject: [PATCH 0/2] Add support for AD4113
+Date: Wed, 07 Aug 2024 17:58:03 +0300
+Message-Id: <20240807-ad4113-v1-0-2d338f702c7b@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO0P265MB3452:EE_
-X-MS-Office365-Filtering-Correlation-Id: a69b0c46-ec90-4e32-4826-08dcb6f13d61
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?so+UOBoRZfC2dJyjNllQW96RyEXYqxRmJChuSc4Hw6IhnyKWXr4ADodjxPlr?=
- =?us-ascii?Q?sMF0caKbie2Wo0EBql5ZKPrHWqW6NMWBxQqQVpXLIQYS9Qpq4xE6CvKZrcNZ?=
- =?us-ascii?Q?r8MIxibBTJG+Ifm4GA9GbHo9QXNj6n0AYy3YXfllz+GTXTGwSaLNpohZOjqo?=
- =?us-ascii?Q?x6fQN9A07o8vLD9LLujfXzgu6OXrCcTr32eVGDdZNj4o/sbD653lKD4Vh2Lv?=
- =?us-ascii?Q?l4k2h+U8ZnPkAXGqKxcfGor1PVB0ooMmIoRUvmg1lnxbYHcGgVgECtVQdtop?=
- =?us-ascii?Q?oLDvwetrNI2pJcdKI+PbTjKYPuxyl/1HNEEMzIqQdXZWDxf6Q0aiaSpadVaQ?=
- =?us-ascii?Q?SixEEcAMwGdBHkij4OfcanElauTWEHi9fxElGeLRftGC1Iu9WtEHG30Qolic?=
- =?us-ascii?Q?8kzqV3zaRsa01pr2WJ2JdMzRoTKHkb/86AEgCw9chXmJe64tXxH9WCgphzET?=
- =?us-ascii?Q?HkOFX5C6WQ4rCoxut4SZIc8HrmE30cxl8Gc+V0VjZQKBcAhxlGXZcU3s0HKm?=
- =?us-ascii?Q?O5/GN+zmr6Ikiow1nuxBvA9uidIYed5BAQYKbCJKERAQhx3rCTKVq9SJMAIc?=
- =?us-ascii?Q?/vcQ7Y7c6g3/meKiAKGv9SOa+WejMYfuNzUqeFvhXAwMb79LtDheyXQ5euzF?=
- =?us-ascii?Q?/ewrCVzs5jMlysvoNdxNflnwmuIehG3MbT27yCQXz0AEzV5vUYKYNRDvDOV3?=
- =?us-ascii?Q?TqA4qGRpIdHsArTmbiiGpgUuhtTL6EU2ZfQmqZaNy8pugzCjUUDVBuHaSrxX?=
- =?us-ascii?Q?Z9QPIR+3lWwuL2gArQOPRiYR5HceMurN3qvDiRIA2gqN6WydN+qd/Y0ERepq?=
- =?us-ascii?Q?FtEQJKI7fIg7xMISA01yPqdkhS79TzxLDf1nxvQlMt3dotFhuPHoHoqBc16g?=
- =?us-ascii?Q?+JRNRhRKiOeuuInPgaBB85I/2S869nrAOuFdZvRjaB+UkVjQ1pAoLhjlQSuK?=
- =?us-ascii?Q?5a0q4Hp4Hjl+FR/z2QM3qvluPstZVhJt0d2hDxT6JZFJ7hDx2DEGs0mWgRZF?=
- =?us-ascii?Q?Qxh7tGwbGwJCZNl1dmwa0jLv6S63jMB3IWNrKnY5XJdErqpePg1pfJNyyU0v?=
- =?us-ascii?Q?SL++EDSmAl6EAKcDqb1HJ7Op4vvWorWz+5pxOjfINQ11trVsw0ca/aPln8cf?=
- =?us-ascii?Q?FKJMRVB0IM+T0rdTZenwc9mCtlow8ea2a7/bn45HpLDLc5a286mAplOJ6Wk6?=
- =?us-ascii?Q?vOm2Jn21l9lFvT1WEE6j3EQxmDOMZp58GKWfEEyyA8W6x5N0yL6tqxXZkVXs?=
- =?us-ascii?Q?mOwQ0NvW7DvR7ZbSoRLloXVwfi1UYmTUhjDSB3L/7cRiJx7pMMpCpZuG8kP7?=
- =?us-ascii?Q?iFZf60KB70MpukD8+UsKWeSyUYcoZ05lSNJCkAj35Oj+pg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?b/2iHngz1AMDhh2Zojlp88pfJdVk93gcrkpcJl9rhWl9FaqFUQZLMztpAjbR?=
- =?us-ascii?Q?iIxZZyFH+aJiDOgQBKUyrZKIRsdA1GHBLGypxTsoS5ydS6Nk6NvmZO1LVkWR?=
- =?us-ascii?Q?O//bmBpFoXrcfjOB20Z4Wk19+8YeZ9FCvK3qiKq7c7U+qGUtY9cuo4DdwflX?=
- =?us-ascii?Q?pUEksCfUCUnIuQv7xYOLpkyS4lHcuFpsOqBMvJZ+ysj0DJzGXxs8HxMb3MwU?=
- =?us-ascii?Q?FvIK80sNq2b9aHHlMyBn0f8HkUCXENjaiN4+LE0TIxGtPnLDrPwbblTiNQ5C?=
- =?us-ascii?Q?VOep1iHQtsxE8tGTfLGIA9uO93GM9ltHHL2BovPpgR6nBKP91RnKeV+Itxgd?=
- =?us-ascii?Q?GrMd+5dOYhnQBuluQSzNFtP7Tu2htbWYHRmGCSCorjDLrYa128NeR4LgoU3M?=
- =?us-ascii?Q?RGpNZA1OP6C2p2YxZEmiE8w3Qu/VhqX9SwDj/AQBkBiecrnsnip/7NcuoGam?=
- =?us-ascii?Q?/6NTJ7IuDkZEE09GcZ0eq7xO3557ozy5XZsa0OK1+P6E6haF9dmAXwpwUtJ0?=
- =?us-ascii?Q?HE2FM84WD8uAkR3Yq/KIGIjM6VObSI6VohWiu/mIzdYxktHWfyFk+jrBulAw?=
- =?us-ascii?Q?8HKbVNCcRVB12srq28YxtgozkZBRUgWJJ3gyt8TZZiodkjztx3NV5138Egoc?=
- =?us-ascii?Q?1GGUjRHz6j9RYjIVs5WdraOsl8tKRTwN6pdOg3PN7ENEaBTN2k6fhgFNRZpl?=
- =?us-ascii?Q?WICpdQyHWO1JrAb+xWwyqcbaJCx9y6he3cB9G7j4i2dG4mivgDT9q9Uj1F6z?=
- =?us-ascii?Q?2VaN+vQCrveZnABl61VahLPkWdX+yzCynil32YtAFbCG/3RXMwagSxYsTZoE?=
- =?us-ascii?Q?qwz8+ZEAYHvwl/KImWIUA87ifYioSAGnSBJu4vPiMtrGaPMcm4aGrQ2/agI3?=
- =?us-ascii?Q?3MRHkaNHGOPc35XYv9zmRRyhxV0wP+Z1PPD60+DLRbCfRRHlEXesijcCeCFi?=
- =?us-ascii?Q?Nr2pi5Usj4TEI3Bw07fOAUF+JyvAZQ5a/cyoi4grVYlJKHUul408AveXT4q/?=
- =?us-ascii?Q?Yql/SvSjBmDwsfOIBXpK4VlTmmjFrOOlck88fb9cI4ijptfu8T/TxGHn91OS?=
- =?us-ascii?Q?1NBpYZCHSkRCtwjHtyOxkXNVxnntM4GtmHXAF2F08pG2PaRryQ1q0YbKt9MH?=
- =?us-ascii?Q?CO6XzOixXPFSXEQbk++x2JY6Fg/umDQTKTO21DDMnmhxWRvup516sNUqYaGS?=
- =?us-ascii?Q?ETp6PoIfLERRzDxHyf9O2eAoNdvvTZWIY1KGHLrjUlEK6TKlU344kbPUr2Az?=
- =?us-ascii?Q?NRPjm3RO2DocCIPF30wXOgOG0hf3KoJdIbPeXvJqIfOPgaZl/Y3/eqTnQW1+?=
- =?us-ascii?Q?RJdxMiFuQBSvXviAmlCyu4j6Ay/7ue1R9HXlHiKx95OUZOnoIQDs/SFCwaDQ?=
- =?us-ascii?Q?ERnB2srwrtiXVCyuW1muKlZKmh2yJGUU3yBoTKmsZcqwziHjL0mE7PMjuOpf?=
- =?us-ascii?Q?bgLepGb0SNct/r1hihg5fRePFJds/cJSPc1SWGIdB9IkncsF/yU+UAElA5IH?=
- =?us-ascii?Q?6pwpm+osyXuLzpUmLnb5CiaCwXJoza5kJXSsjSBfEv4yYSwQzJj2oUergG6f?=
- =?us-ascii?Q?ZXYlq9cYaUl4AYwUYkGMxUIxlY0qOOfmuIm9Y2v4?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: a69b0c46-ec90-4e32-4826-08dcb6f13d61
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 14:57:21.4121
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: i1NbRSnIekYC6rYcjv7aMZN6WtZVAVVCY0lQXkdFr0A/GD+GoXf/gT3CU79BCvAGwlqRkD4sK9BEJaOIIOfQ8A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P265MB3452
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHuLs2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDcyNT3cQUE0NDY92kxEQz47Q0S0sjE1MloOKCotS0zAqwQdGxtbUAJqs
+ OOVgAAAA=
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: mitrutz_ceclan@gmail.com, linux-iio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dumitru Ceclan <dumitru.ceclan@analog.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723042683; l=1015;
+ i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
+ bh=qVznd9P5OEpZiNYPaWiEPGPDivKEA64oSkps+3rnKOY=;
+ b=uI2jy7uHn7y0qemFbnlETVO86UzOgm1aKTHFUfxiIozwS8C0FyOBq6nzWT1d9E+I1t/yNDasB
+ PrH586mPdgyCAx2G9vrbNvstf1qpm/kJFJ6T61Q5TzuKV4v7Twh5/bN
+X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
+ pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
 
-On Thu, 25 Jul 2024 14:27:38 +0000
-Alice Ryhl <aliceryhl@google.com> wrote:
+This patch series adds support for the AD4113 ADC within the existing
+AD7173 driver.
 
-> Add an abstraction for viewing the string representation of a security
-> context.
-> 
-> This is needed by Rust Binder because it has a feature where a process
-> can view the string representation of the security context for incoming
-> transactions. The process can use that to authenticate incoming
-> transactions, and since the feature is provided by the kernel, the
-> process can trust that the security context is legitimate.
-> 
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-> Reviewed-by: Trevor Gross <tmgross@umich.edu>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+The AD4113 is a low power, low noise, 16-bit, Σ-Δ analog-to-digital
+converter (ADC) that integrates an analog front end (AFE) for four
+fully differential or eight single-ended inputs.
 
-Reviewed-by: Gary Guo <gary@garyguo.net>
+The part is not released yet and the documentation is not public.
+Register map is identical to AD4114. Particularities of this model are
+no temperature sensor and 8 VINx inputs.
 
-> ---
->  rust/bindings/bindings_helper.h |  1 +
->  rust/helpers.c                  | 21 ++++++++++++
->  rust/kernel/cred.rs             |  8 +++++
->  rust/kernel/lib.rs              |  1 +
->  rust/kernel/security.rs         | 74 +++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 105 insertions(+)
+Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+---
+Dumitru Ceclan (2):
+      dt-bindings: adc: ad7173: add support for ad4113
+      iio: adc: ad7173: add support for ad4113
+
+ .../devicetree/bindings/iio/adc/adi,ad7173.yaml    |  3 +++
+ drivers/iio/adc/ad7173.c                           | 22 +++++++++++++++++++++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
+---
+base-commit: 1c61e13d7dc9003662bd7fd6064dfea67e64b014
+change-id: 20240725-ad4113-baa63ff99245
+
+Best regards,
+-- 
+Dumitru Ceclan <dumitru.ceclan@analog.com>
+
 
