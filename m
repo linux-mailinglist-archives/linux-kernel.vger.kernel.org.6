@@ -1,213 +1,191 @@
-Return-Path: <linux-kernel+bounces-278653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54AE294B326
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEEF94B32E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 303591C216F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:37:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D60A1C211F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7082014EC50;
-	Wed,  7 Aug 2024 22:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A7B15534D;
+	Wed,  7 Aug 2024 22:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2guZOYZ9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IB5N8gDs"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PS1GHYCS"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19197811E2
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 22:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391C515444E
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 22:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723070247; cv=none; b=YrB4w1+U59P2MxNlO7MfcAIQ1jQwR7tznGJBrGrIx6HI9YRlcoCMSz/Mgd9SjqHVUMrAcN01FlBT71fwnkz47bZj4Umn7t9ashvX/U1y63gELR5PVl+ZeHaOAStVeNqRk9bc029kydoQUampt1w9UeZSvZSeRIZeoehbAEgHsUw=
+	t=1723070400; cv=none; b=msnnM8+CcS5Es0jZPxRzMMVNRR1ce8Na0HQHjD3AcVveKjX+PHvAal4RRfPZjaeCZVSLlZlr7M71OG+077pMBShHA3KIaWT6w+JQAU/NlhBQHsQJ9UdMEwpJGbPMv/0uyV7Oxc9gcKNIkOrbBAEhmYKsNiqstG9yfCYISoHnTq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723070247; c=relaxed/simple;
-	bh=I+nh1RcrayyOe4E6ICcgBqkW0+LUwAubE2kU08fGfRY=;
+	s=arc-20240116; t=1723070400; c=relaxed/simple;
+	bh=R0SrDgf7L16NODV3yYTuPsDAteT3U+k3VaocKclBG0w=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NOm9Xj1s//xzxEAsSme3uq1rywnJEYrCyVEsBX5hE83+ggx583ipSw9ISKHapISoMncaBTpjxaiquWQspUNeI2CtiC7/H6+jLnuMAT9SU+29hN1dwGhMCZMOHGsVqaijd6Tn3SGrOtqyEQe3QyMgqGWbO6tLDS7nZsBo1jsoijQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2guZOYZ9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IB5N8gDs; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723070242;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ijzboojuY5XpUno0lk+35UbNznLU2ucd6kpR6qcMWxg=;
-	b=2guZOYZ99eyTcewCEP8xSZxwsHPHCJoQsL15+KAEcO68JB85EE+Hd6SCbExGA8OqLINdLh
-	mX32IGFpl1TmhRwBqJ+dF0jiQHcEBoZBV+AltYSVcbizerrFhRVdNW9OkKsHUlLl/RpVL9
-	iyJoFp1hsL/2Izml40cfR4Bgi2fluswxwsvarN4ZmHFECUAurABZ5b6xRyopii7S45bIcd
-	FEtgLFzszmtb4INfqVZrUIR9w6gSju9DqSiPuZF37VxavgThej1oJKme+a1nQ2rLwmKD82
-	RoYUBkCzU/T/WzNZWB+ndNEBkuWHKIi+tMWb5a+GNDneBs2LwmGEj77sWmPIfQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723070242;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ijzboojuY5XpUno0lk+35UbNznLU2ucd6kpR6qcMWxg=;
-	b=IB5N8gDs6FBpyO8gAD9i3Vzt37QlGsQG8iqeySMgtnjM8GKUrJWBMjTtXMeWMZFSrrqVIv
-	yXjA4dOnrV6rqPBg==
-To: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Oscar Salvador <osalvador@suse.de>, Dan Williams
- <dan.j.williams@intel.com>, James Houghton <jthoughton@google.com>,
- Matthew Wilcox <willy@infradead.org>, Nicholas Piggin <npiggin@gmail.com>,
- Rik van Riel <riel@surriel.com>, Dave Jiang <dave.jiang@intel.com>, Andrew
- Morton <akpm@linux-foundation.org>, x86@kernel.org, Ingo Molnar
- <mingo@redhat.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, "Kirill
- A . Shutemov" <kirill@shutemov.name>, peterx@redhat.com,
- linuxppc-dev@lists.ozlabs.org, Mel Gorman <mgorman@techsingularity.net>,
- Hugh Dickins <hughd@google.com>, Borislav Petkov <bp@alien8.de>, David
- Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, Dave
- Hansen <dave.hansen@linux.intel.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Huang Ying <ying.huang@intel.com>
-Subject: Re: [PATCH v4 6/7] mm/x86: Add missing pud helpers
-In-Reply-To: <20240807194812.819412-7-peterx@redhat.com>
-References: <20240807194812.819412-1-peterx@redhat.com>
- <20240807194812.819412-7-peterx@redhat.com>
-Date: Thu, 08 Aug 2024 00:37:21 +0200
-Message-ID: <875xsc0xjy.ffs@tglx>
+	 MIME-Version:Content-Type; b=hlUvdPtNN42DgyfFK5bCbJawhXmrOpdmTmEwMOEsO90jZgGj58E5ACKcd/bl/m2VSr+8O5kAwHvD3So9CfRvjluOsujjKOjOUFLrtMSHn/pEBTBubzyQtAc/QRd17F/tZJWkxJsT0MhbPKprYrCqudbuX0gGQ9EONqs5vzXabks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PS1GHYCS; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7107b16be12so325947b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 15:39:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723070397; x=1723675197; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fpaMsRHZ95ToRGUxAfb1zMIumId8sRSoShxy8vDFiIM=;
+        b=PS1GHYCSsdhNsf2JH9O5SgvWihuGsWagFQAO8BMu/E2y9eG2/I4QGmCWhbIg7XKQ1N
+         S3C43ji3Zv6uqXbbcFmipRiCRMLEK+kxjkFRKJJsTiRLOiN1c1vzUnqun3/v+3sFFgZL
+         ySJAdHyEIrAhyBwT8R86GeRfqmbFNY9yUgMes1rqGd1i6jE9J6blpnnFkeJoH0mj1eR1
+         LKp4UO/gELnqE7QBOOC052U0+Y/BJ0FYYRuE6SgeMiBfGOxUAyzcSpeNZMfm1ju57kwy
+         7/KK4R7ihtdklVAU3gxwX8d/9XjjLVU/x0eC8uLz+nZLS0z3X6pbvj+MU7M92TrPy8tQ
+         eI1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723070397; x=1723675197;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fpaMsRHZ95ToRGUxAfb1zMIumId8sRSoShxy8vDFiIM=;
+        b=Fc/p8W7XaCmqlhCKYGXtbD1rUqFilL2mjEI9aQ182rOYQUwZuRUF4ednxBvYGJFc26
+         lRKmvxTGhVPZsP1OR1IvuiXabtoz0qkIjNSSbotbavFmV5YBOBjqNwfC26zsP/P0yeqo
+         6LSNY4t3yVOxglOH6/kjzIAJIzhU8w4aQBIEDYdWc179CoRQMCO/bBC4qKlV8RCKl2+4
+         xJE5zV1OeYUDYMh62YwUGVya8v4TbtdzISPP2WZXG/4Ejb/gyoBBggT33/G5xSCwK/zR
+         c2pNzk7g+zUxrboD9kFtK8tN4C+h0fw0ZUWNkjtRX2JutffIoQllQ/Xz98eeclIx0QDJ
+         oeeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU17N3R2UF+LydEKbu9nRngJUZchuuryJhaMM6R9y5zmY5Q+d0paB5hSL7sdwMfAj/uQU2YWabRFpcygYdgxFbYWbji1PZtMeC+aVjY
+X-Gm-Message-State: AOJu0YwDn+eYJTFXJ91sLqocxa5XpVzRxNAXM+lZ21BmQq7yK8ccnbDY
+	mZ95Cjad8966fIePmuhFXsn4sYESu2a/KeIfevv9n7ulcyQuhpQqINvkuEICYwU=
+X-Google-Smtp-Source: AGHT+IESQPvEwbmsSFYakbTK2ll0Tt3rDUIt6IHjj6Copl3/ebwJm0vHuqLsOiAaukYjvG1usCbD8Q==
+X-Received: by 2002:a05:6a00:3cc3:b0:706:6b29:9cf0 with SMTP id d2e1a72fcca58-710cae8d2e0mr108951b3a.30.1723070397365;
+        Wed, 07 Aug 2024 15:39:57 -0700 (PDT)
+Received: from localhost ([2804:14c:87d5:5261:6c30:472f:18a6:cae1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb2cc9bfsm12167b3a.137.2024.08.07.15.39.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 15:39:56 -0700 (PDT)
+From: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
+ <will@kernel.org>,  Jonathan Corbet <corbet@lwn.net>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Marc Zyngier <maz@kernel.org>,  Oliver Upton
+ <oliver.upton@linux.dev>,  James Morse <james.morse@arm.com>,  Suzuki K
+ Poulose <suzuki.poulose@arm.com>,  Arnd Bergmann <arnd@arndb.de>,  Oleg
+ Nesterov <oleg@redhat.com>,  Eric Biederman <ebiederm@xmission.com>,
+  Shuah Khan <shuah@kernel.org>,  "Rick P. Edgecombe"
+ <rick.p.edgecombe@intel.com>,  Deepak Gupta <debug@rivosinc.com>,  Ard
+ Biesheuvel <ardb@kernel.org>,  Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+  Kees Cook <kees@kernel.org>,  "H.J. Lu" <hjl.tools@gmail.com>,  Paul
+ Walmsley <paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>,
+  Albert Ou <aou@eecs.berkeley.edu>,  Florian Weimer <fweimer@redhat.com>,
+  Christian Brauner <brauner@kernel.org>,  Ross Burton
+ <ross.burton@arm.com>,  linux-arm-kernel@lists.infradead.org,
+  linux-doc@vger.kernel.org,  kvmarm@lists.linux.dev,
+  linux-fsdevel@vger.kernel.org,  linux-arch@vger.kernel.org,
+  linux-mm@kvack.org,  linux-kselftest@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 38/40] kselftest/arm64: Add a GCS stress test
+In-Reply-To: <20240801-arm64-gcs-v10-38-699e2bd2190b@kernel.org> (Mark Brown's
+	message of "Thu, 01 Aug 2024 13:07:05 +0100")
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+	<20240801-arm64-gcs-v10-38-699e2bd2190b@kernel.org>
+Date: Wed, 07 Aug 2024 19:39:54 -0300
+Message-ID: <877ccsdkjp.fsf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 07 2024 at 15:48, Peter Xu wrote:
-> These new helpers will be needed for pud entry updates soon.  Introduce
-> these helpers by referencing the pmd ones.  Namely:
+Mark Brown <broonie@kernel.org> writes:
+
+> Add a stress test which runs one more process than we have CPUs spinning
+> through a very recursive function with frequent syscalls immediately prior
+> to return and signals being injected every 100ms. The goal is to flag up
+> any scheduling related issues, for example failure to ensure that barriers
+> are inserted when moving a GCS using task to another CPU. The test runs f=
+or
+> a configurable amount of time, defaulting to 10 seconds.
 >
-> - pudp_invalidate()
-> - pud_modify()
+> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  tools/testing/selftests/arm64/gcs/.gitignore       |   2 +
+>  tools/testing/selftests/arm64/gcs/Makefile         |   6 +-
+>  tools/testing/selftests/arm64/gcs/asm-offsets.h    |   0
+>  .../selftests/arm64/gcs/gcs-stress-thread.S        | 311 ++++++++++++
+>  tools/testing/selftests/arm64/gcs/gcs-stress.c     | 530 +++++++++++++++=
+++++++
+>  5 files changed, 848 insertions(+), 1 deletion(-)
 
-Zero content about what these helpers do and why they are needed. That's
-not how it works, really.
+Unfortunately, gcs-stress still fails on my FVP setup. I tested on an
+arm64 defconfig with and without THP enabled with, the same results:
 
-  
-> +static inline pud_t pud_mkinvalid(pud_t pud)
-> +{
-> +	return pfn_pud(pud_pfn(pud),
-> +		       __pgprot(pud_flags(pud) & ~(_PAGE_PRESENT|_PAGE_PROTNONE)));
+$ sudo ./run_kselftest.sh -t arm64:gcs-stress -o 600
+TAP version 13
+1..1
+# overriding timeout to 600
+# selftests: arm64: gcs-stress
+# TAP version 13
+# 1..9
+# # 8 CPUs, 9 GCS threads
+# # Will run for 10s
+# # Started Thread-4870
+# # Started Thread-4871
+# # Started Thread-4872
+# # Started Thread-4873
+# # Started Thread-4874
+# # Started Thread-4875
+# # Started Thread-4876
+# # Started Thread-4877
+# # Started Thread-4878
+# # Waiting for 9 children
+# # Waiting for 9 children
+# # Thread-4870: Failed to enable GCS
+# # Thread-4871: Failed to enable GCS
+# # Thread-4872: Failed to enable GCS
+# # Thread-4873: Failed to enable GCS
+# # Thread-4876: Failed to enable GCS
+# # Thread-4875: Failed to enable GCS
+# # Thread-4874: Failed to enable GCS
+# # Thread-4878: Failed to enable GCS
+# # Thread-4877: Failed to enable GCS
+# # Sending signals, timeout remaining: 10000ms
+# # Sending signals, timeout remaining: 9900ms
+# # Sending signals, timeout remaining: 9800ms
+       =E2=8B=AE
+# # Sending signals, timeout remaining: 300ms
+# # Sending signals, timeout remaining: 200ms
+# # Sending signals, timeout remaining: 100ms
+# # Finishing up...
+# # Thread-4870 exited with error code 255
+# not ok 1 Thread-4870
+# # Thread-4871 exited with error code 255
+# not ok 2 Thread-4871
+# # Thread-4872 exited with error code 255
+# not ok 3 Thread-4872
+# # Thread-4873 exited with error code 255
+# not ok 4 Thread-4873
+# # Thread-4874 exited with error code 255
+# not ok 5 Thread-4874
+# # Thread-4875 exited with error code 255
+# not ok 6 Thread-4875
+# # Thread-4876 exited with error code 255
+# not ok 7 Thread-4876
+# # Thread-4877 exited with error code 255
+# not ok 8 Thread-4877
+# # Thread-4878 exited with error code 255
+# not ok 9 Thread-4878
+# # Totals: pass:0 fail:9 xfail:0 xpass:0 skip:0 error:0
+ok 1 selftests: arm64: gcs-stress
+bauermann@armv94:/var/tmp/selftests-arm64-gcs-v10$ echo $?
+0
 
-100 characters...
-
-> +}
-> +
->  static inline u64 flip_protnone_guard(u64 oldval, u64 val, u64 mask);
->  
->  static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
-> @@ -834,14 +840,8 @@ static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
->  	pmd_result = __pmd(val);
->  
->  	/*
-> -	 * To avoid creating Write=0,Dirty=1 PMDs, pte_modify() needs to avoid:
-> -	 *  1. Marking Write=0 PMDs Dirty=1
-> -	 *  2. Marking Dirty=1 PMDs Write=0
-> -	 *
-> -	 * The first case cannot happen because the _PAGE_CHG_MASK will filter
-> -	 * out any Dirty bit passed in newprot. Handle the second case by
-> -	 * going through the mksaveddirty exercise. Only do this if the old
-> -	 * value was Write=1 to avoid doing this on Shadow Stack PTEs.
-> +	 * Avoid creating shadow stack PMD by accident.  See comment in
-> +	 * pte_modify().
-
-The changelog is utterly silent about this comment update.
-
->  	 */
->  	if (oldval & _PAGE_RW)
->  		pmd_result = pmd_mksaveddirty(pmd_result);
-> @@ -851,6 +851,29 @@ static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
->  	return pmd_result;
->  }
->  
-> +static inline pud_t pud_modify(pud_t pud, pgprot_t newprot)
-> +{
-> +	pudval_t val = pud_val(pud), oldval = val;
-> +	pud_t pud_result;
-> +
-> +	val &= _HPAGE_CHG_MASK;
-> +	val |= check_pgprot(newprot) & ~_HPAGE_CHG_MASK;
-> +	val = flip_protnone_guard(oldval, val, PHYSICAL_PUD_PAGE_MASK);
-> +
-> +	pud_result = __pud(val);
-> +
-> +	/*
-> +	 * Avoid creating shadow stack PUD by accident.  See comment in
-> +	 * pte_modify().
-> +	 */
-> +	if (oldval & _PAGE_RW)
-> +		pud_result = pud_mksaveddirty(pud_result);
-> +	else
-> +		pud_result = pud_clear_saveddirty(pud_result);
-> +
-> +	return pud_result;
-> +}
-> +
->  /*
->   * mprotect needs to preserve PAT and encryption bits when updating
->   * vm_page_prot
-> @@ -1389,10 +1412,26 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
->  }
->  #endif
->  
-> +static inline pud_t pudp_establish(struct vm_area_struct *vma,
-> +		unsigned long address, pud_t *pudp, pud_t pud)
-
-Random line break alignment.... See documentation.
-
-> +{
-> +	page_table_check_pud_set(vma->vm_mm, pudp, pud);
-> +	if (IS_ENABLED(CONFIG_SMP)) {
-> +		return xchg(pudp, pud);
-> +	} else {
-> +		pud_t old = *pudp;
-> +		WRITE_ONCE(*pudp, pud);
-
-Lacks a newline between variable declaration and code.
-
-But seriously, why optimizing for !SMP? That's a pointless exercise and
-a guarantee for bitrot.
-
-> +		return old;
-> +	}
-> +}
-> +
->  #define __HAVE_ARCH_PMDP_INVALIDATE_AD
->  extern pmd_t pmdp_invalidate_ad(struct vm_area_struct *vma,
->  				unsigned long address, pmd_t *pmdp);
->  
-> +pud_t pudp_invalidate(struct vm_area_struct *vma, unsigned long address,
-> +		      pud_t *pudp);
-
-While 'extern' is not required, please keep the file style consistent
-and use the 100 characters...
-
-> --- a/arch/x86/mm/pgtable.c
-> +++ b/arch/x86/mm/pgtable.c
-> @@ -641,6 +641,18 @@ pmd_t pmdp_invalidate_ad(struct vm_area_struct *vma, unsigned long address,
->  }
->  #endif
->  
-> +#if defined(CONFIG_TRANSPARENT_HUGEPAGE) && \
-> +	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
-> +pud_t pudp_invalidate(struct vm_area_struct *vma, unsigned long address,
-> +		     pud_t *pudp)
-> +{
-> +	VM_WARN_ON_ONCE(!pud_present(*pudp));
-> +	pud_t old = pudp_establish(vma, address, pudp, pud_mkinvalid(*pudp));
-> +	flush_pud_tlb_range(vma, address, address + HPAGE_PUD_SIZE);
-> +	return old;
-
-Your keyboard clearly lacks a newline key ...
-
-Thanks,
-
-        tglx
+--=20
+Thiago
 
