@@ -1,73 +1,64 @@
-Return-Path: <linux-kernel+bounces-277222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8BA4949E28
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:09:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48557949E2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74013284C7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:09:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B32284C98
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7E515CD54;
-	Wed,  7 Aug 2024 03:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858CAB667;
+	Wed,  7 Aug 2024 03:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Yaq9buyM"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hGMQHYzd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C30335B5
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 03:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02CA190464;
+	Wed,  7 Aug 2024 03:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723000181; cv=none; b=pYlQxaSM4gN0wQUnYfk7B/2zC0gt45ypGVPgPRvsc612XVnwSyLcx+JhB1Hv7jUiWeHUVuLJf3s5s74toTzgro70XFHbs4IKrOz0Wo6BnsnMMOxQq6pJz0iE3hU7e00qeXijSapBIgD885z8H/srtV8X8qj9MUKlPwL55gGUeUg=
+	t=1723000189; cv=none; b=gLqNFCNfdgrDNGVtWrr/SoDqpJ12XiZyV8SJYoO/IEah5SMG90fzDveegb7kUOmYxDECeW2GJ1d5Nu8raUv6ljsOkOoLQ7nTtOVIgBpu00PGMjlJyXlIj1owMFNRHNfWw5Cwq00ffonoDlMq1RwzA5yoIuB+Qgy4uqW9P/8/f3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723000181; c=relaxed/simple;
-	bh=/Y+5bPdFTrBkCAoWYWE6pK9I0pUVLEdzAMx9qk6by8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AT32NAiVI5+DzJJafCYX5mumF9AsII3Q+2pTAcjL5q/M2MdvBXl67NmMHooNWkWSX8N9yS4kQsmCXtuB3PUTxD/iZj3HDNPuitBNeDEgTS+paeD3RxhQ3JbKH4DV1j5+0zTFkxOCR6I8J47BvDjfFdO6MY7+pPGEU+gEt8TgDIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Yaq9buyM; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d2357df99so65711b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 20:09:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1723000179; x=1723604979; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=p+tXfgdSdy3/a8aVP1yms8C2yNn64Nb95H3YLP/iWv4=;
-        b=Yaq9buyMiH1qPVH+oFueQLZ1kW9XCxK6FtHH/CvF+eVOm5gWAJjgJmRM/JWOfKqjWR
-         oAlQcEWsIcOMzB42QPYBgm2H0Sl6h/AguOw4DrURh4U/uFejzAA953CjPbkKFsb0l2q6
-         YhP18wVqYaZen+7rvWcNXkolo0PXgl9mFyYusjBQHSQKwWqrDhDxWX72NOXiQiVNbvRM
-         aPoc7RQTXxd079zWwiX1qSG2JD7/iZk9QLG6AEk7l9CEwPDc8MhSYY3w7trDmlWq1C+S
-         w20yvxEcWHa8Nawb8QTLXC33WbDsiqnGPGyAj3Nj7uqqRgVpdLYXoWmCHj+ABlNi9H1N
-         rhzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723000179; x=1723604979;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p+tXfgdSdy3/a8aVP1yms8C2yNn64Nb95H3YLP/iWv4=;
-        b=svMOMUMzn1uCW/ZLemJ+t7k3Wk0rqV8CibjkSdzyLqKaf9IpIsmTePu305cztJQmWO
-         a4J4Hc1OODx31/53IubXbVdYNY+gSr+r4EpIaVzBWwaQjXW7i/LuvovDnLX6gnY99nZB
-         NENDB10cGX5i4j8ZnKHYvUn+HrQLUtAet0GbtkRlkSP3rPaKwhwF4bnzIARKpgczW+4o
-         GCOUxmq/4ilRLBPWOElEJUrWgJFx2eOmu1NziiiCvy35rOtbi+Szebp0asTBEOU3UCY4
-         nMwomOmwUoZiC1uNMtYuCFjmHG5Lv7aYhy0DVP6eJ3IxrqJ+jACKV72EQNgIiDfj62Q9
-         F5jA==
-X-Forwarded-Encrypted: i=1; AJvYcCXg0xqWUHkzUYidufT+5vOUxuiYqBO8DWrsSJrPg4a4Aiul6nFE9OtP+zJzPwEYTeBlk1yhRo73oZFcRxA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPKL9ac6nRTlKz+Uuj/zClvlVh9ye2rjemwr1a4s0YHT9KJZjW
-	EDP1ysuLOeHPjCNy0Mbi3R9wxCWPp6jC6G7DTPqWmZvHNQiDa7Ub93iQs0CKAaE=
-X-Google-Smtp-Source: AGHT+IGNdJ4lsslw/4kIK+2+a9FPU0qfrhQMJO0FhiVALS6W4bUsiQ4MMZ6BHJsYbnxb8vUBuXEqhw==
-X-Received: by 2002:a05:6a00:1152:b0:70b:705f:8c5d with SMTP id d2e1a72fcca58-7106d0992c6mr11779872b3a.4.1723000178606;
-        Tue, 06 Aug 2024 20:09:38 -0700 (PDT)
-Received: from [10.255.168.175] ([139.177.225.232])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ed15367sm7811965b3a.175.2024.08.06.20.09.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 20:09:37 -0700 (PDT)
-Message-ID: <6a535435-724c-46b5-95b2-103b183753bf@bytedance.com>
-Date: Wed, 7 Aug 2024 11:09:33 +0800
+	s=arc-20240116; t=1723000189; c=relaxed/simple;
+	bh=tcCwEw94oJRiTgSV9/wM7rVN49zNEGbd3/OMrNi6krI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ss1Xeu6ZCZeyCTttoeO51aQR89d+iKcxzpZy60EQLLral0ZnuF95AzGeutD9hHfOsJMRRyvGkMFGdyXeGot1M0v2jyRSKxF/tYNq5tVCSy6tT1/sV69drwd877yMw9gbgwcq0oOsbCyxZt2jyabgqSNQrPX8htn0Rtr347ubJsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hGMQHYzd; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723000188; x=1754536188;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=tcCwEw94oJRiTgSV9/wM7rVN49zNEGbd3/OMrNi6krI=;
+  b=hGMQHYzdxQw9nrvRio7NT6CKkEnvHOResq4A4/R16TPCjDoNyP+Vw7XF
+   uN6C5+cYn/rv0hq0vb4aDs0tjp+u2gBZdCh8Zbx64ImXzO5B6m3iWtR2r
+   KYtExswuUrnXoYsM4hjjZ9FjvYlFX0TgFmuTFr23QFLn22+eWZ7onotxi
+   KXr5uxOyRG5iRx396/hNeNr4KozOUKXqtoskZwGNfvtLhHNtQ4Nh7jjqY
+   Y3t6GQGMjt7YBruHEDE+84pQmENZ4AmbgMqudIGHKUxOXAJhE08QeOHF0
+   aBJxGDHClVUiGK7ziIQyo1bZT7XnGfhuybropB8P2G0ljFURewQmuOC3e
+   A==;
+X-CSE-ConnectionGUID: pbjScJNPRxOCT8Qq0gdeig==
+X-CSE-MsgGUID: aJKLYnLwS36+UeA665fQPg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="38559649"
+X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
+   d="scan'208";a="38559649"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 20:09:47 -0700
+X-CSE-ConnectionGUID: TUvPvJvuQqeS1aDt7zgrnw==
+X-CSE-MsgGUID: uX1GjfU/SrSzttTxOf/JXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
+   d="scan'208";a="56677655"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.248.220]) ([10.125.248.220])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 20:09:43 -0700
+Message-ID: <05381ccb-bdbb-4342-8a2f-11ee72454eda@linux.intel.com>
+Date: Wed, 7 Aug 2024 11:09:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,35 +66,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 2/7] mm: introduce CONFIG_PT_RECLAIM
+Cc: baolu.lu@linux.intel.com, Gerd Bayer <gbayer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Joerg Roedel <jroedel@suse.de>,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-s390@vger.kernel.org
+Subject: Re: [PATCH] iommu/s390: Implement blocking domain
+To: Niklas Schnelle <schnelle@linux.ibm.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Matthew Rosato <mjrosato@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+References: <20240806-blocking_domain-v1-1-8abc18e37e52@linux.ibm.com>
 Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>
-Cc: hughd@google.com, willy@infradead.org, mgorman@suse.de,
- muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
- zokeefe@google.com, rientjes@google.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1722861064.git.zhengqi.arch@bytedance.com>
- <7c726839e2610f1873d9fa2a7c60715796579d1a.1722861064.git.zhengqi.arch@bytedance.com>
- <20485870-2156-4b60-a8f7-bc3d9a2f98f9@redhat.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <20485870-2156-4b60-a8f7-bc3d9a2f98f9@redhat.com>
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240806-blocking_domain-v1-1-8abc18e37e52@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 2024/8/6 22:25, David Hildenbrand wrote:
-> On 05.08.24 14:55, Qi Zheng wrote:
->> This configuration variable will be used to build the code needed
->> to free empty user page table pages.
->>
->> This feature is not available on all architectures yet, so
->> ARCH_SUPPORTS_PT_RECLAIM is needed. We can remove it once all
->> architectures support this feature.
+On 2024/8/6 21:45, Niklas Schnelle wrote:
+> This fixes a crash when surprise hot-unplugging a PCI device. This crash
+> happens because during hot-unplug __iommu_group_set_domain_nofail()
+> attaching the default domain fails when the platform no longer
+> recognizes the device as it has already been removed and we end up with
+> a NULL domain pointer and UAF. This is exactly the case referred to in
+> the second comment in __iommu_device_set_domain() and just as stated
+> there if we can instead attach the blocking domain the UAF is prevented
+> as this can handle the already removed device. Implement the blocking
+> domain to use this handling. This would still leave us with a warning
+> for a failed attach. As failing to attach when the device is no longer
+> present is expected behavior turn this into an explicit -ENODEV error
+> and don't warn for it. Also change the error return for a NULL zdev to
+> -EIO as we don't want to ignore this case that would be a serious bug.
 > 
-> Please squash this into #4
-
-OK, will do.
-
+> Fixes: c76c067e488c ("s390/pci: Use dma-iommu layer")
+> Signed-off-by: Niklas Schnelle<schnelle@linux.ibm.com>
+> ---
+> Note: I somewhat suspect this to be related to the following discussion
+> or at least we have seen the same backtraces in reports that we suspect
+> to be caused by the issue fixed with this patch. In the case I was able
+> to reproduce with vfio-pci pass-through to a KVM guest I got a different
+> trace though.
 > 
+> Organizational note: I'll be on vacation starting Thursday. Matt will
+> then take over and sent new revisions as necessary.
+> ---
+>   drivers/iommu/iommu.c      |  7 ++++--
+>   drivers/iommu/s390-iommu.c | 55 ++++++++++++++++++++++++++++++++++++++--------
+>   2 files changed, 51 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index ed6c5cb60c5a..91b3b23bf55c 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -119,8 +119,11 @@ static int __iommu_group_set_domain(struct iommu_group *group,
+>   static void __iommu_group_set_domain_nofail(struct iommu_group *group,
+>   					    struct iommu_domain *new_domain)
+>   {
+> -	WARN_ON(__iommu_group_set_domain_internal(
+> -		group, new_domain, IOMMU_SET_DOMAIN_MUST_SUCCEED));
+> +	int ret = __iommu_group_set_domain_internal(
+> +		group, new_domain, IOMMU_SET_DOMAIN_MUST_SUCCEED);
+> +
+> +	/* Allow attach to fail when the device is gone */
+> +	WARN_ON(ret && ret != -ENODEV);
+
+The return values of attach_dev have been documented in include/linux
+/iommu.h:
+
+/**
+  * struct iommu_domain_ops - domain specific operations
+  * @attach_dev: attach an iommu domain to a device
+  *  Return:
+  * * 0          - success
+  * * EINVAL     - can indicate that device and domain are incompatible 
+due to
+  *                some previous configuration of the domain, in which 
+case the
+  *                driver shouldn't log an error, since it is legitimate 
+for a
+  *                caller to test reuse of existing domains. Otherwise, 
+it may
+  *                still represent some other fundamental problem
+  * * ENOMEM     - out of memory
+  * * ENOSPC     - non-ENOMEM type of resource allocation failures
+  * * EBUSY      - device is attached to a domain and cannot be changed
+  * * ENODEV     - device specific errors, not able to be attached
+  * * <others>   - treated as ENODEV by the caller. Use is discouraged
+
+ENODEV is obviously not suitable for the case of 'device is gone'.
+
+Thanks,
+baolu
 
