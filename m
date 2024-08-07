@@ -1,182 +1,172 @@
-Return-Path: <linux-kernel+bounces-278127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45FEE94AC60
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:14:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5474E94AC83
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E93C61F24CBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:14:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 781EF1C2154E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84930823DE;
-	Wed,  7 Aug 2024 15:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD9384E04;
+	Wed,  7 Aug 2024 15:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="rYBtNKuO"
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="WVUZ1oEw"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8018289E
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2D233CD2;
+	Wed,  7 Aug 2024 15:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723043666; cv=none; b=b+dfx8gBDOgjRDa+EkbwhgOiFrHbFY2pfIqqKDAVlNMFxaBZ3OBxP//BdNGyrBQZstt8emeST/IJotlC0wnnIJc58EGYx2BDolovsdixChwRhz7SSOQtzvAYGUQ356c2lBTvIN2R7RuVo86tPIzITEBDHdqYc2a/zNeUXo7yDlo=
+	t=1723043756; cv=none; b=NdB2wS7pHeYR4KWrTQFy/Vbt63xnxNiMe8UgvclG9BsBPBPGgnDVkL4ga3TT7JrtTqhBIdlwv4/Ac46bnucI4tuvgsTcPjCbb/4a9RMN8FpS+aHsbrDR8syzCRTzvczYhaj/qVUtqU9jYGi6Bzkorop9BVT58H3zPz/p2wkueBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723043666; c=relaxed/simple;
-	bh=7Tp7ucPRBB+fxNVCk+S6+A1Ke54+/R0646GFqWL9qn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MMZq5HI5e6rUw4H9qVmwethfVVaZWu4CVqwtIReMyy9GSpyag4BzrvQk2l+w7ixQUdR+U5jprGl/QMs51jOyTp3FAhu8LdMR9aI26QnoNYz+DJo1Ry0lLxNWBz3a9zPiXJvegC1+1AEXeODKCrcgSmfaXakwm+/LQJByzdwD6yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=rYBtNKuO; arc=none smtp.client-ip=84.16.66.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WfDGw22cQzZmq;
-	Wed,  7 Aug 2024 17:14:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1723043656;
-	bh=pq3zt1F/Me0xMXRivd/QVwEg5HhWQNAo2gPJVW36cf0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rYBtNKuOKL0yiW00PYl6421y8XjnBnDBCEJpko4v43xJ6mQwQ9SOQTaUXLIMlmQ1P
-	 OIatPJxYzx3Bf6VbZhBAPa14loezCF81H2GCBe6Cz8jQbVRIMsTL7/5rvXrh3KFT2o
-	 3QZPIHdSqNDGmOOwI13T4mycAEHExensALzCujnM=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WfDGv43T6zT9w;
-	Wed,  7 Aug 2024 17:14:15 +0200 (CEST)
-Date: Wed, 7 Aug 2024 17:14:11 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v8 4/4] Landlock: Document
- LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET and ABI versioning
-Message-ID: <20240807.uLohy7ohYo8A@digikod.net>
-References: <cover.1722570749.git.fahimitahera@gmail.com>
- <bbb4af1cb0933fea3307930a74258b8f78cba084.1722570749.git.fahimitahera@gmail.com>
+	s=arc-20240116; t=1723043756; c=relaxed/simple;
+	bh=fGBCywsutW3NjgrC9Ve6Qzx0bwXdOQ99qyoNgGNCcTI=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=PYdv89qTPQZC0+vj0IAJ8A1BB5o/FekoKhGK628esuzzmB954v+gxklRBarQQaSRdB+WLxx23WBMhBSNIAo0bksg+l00fh0XBpRi4dXgbrBo0Qx2HBw58PfBThGfoGUas+bA/Q90jxZFD8P2Vx8bnpAQDO0N3y1qqBjk2zrrNLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=WVUZ1oEw; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 5A57CE450D;
+	Wed,  7 Aug 2024 15:15:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1723043746;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dK78BrKy6mLK/z1CVSmRJ+MbobVrp0HlEUG5n8TM4L4=;
+	b=WVUZ1oEwijeOty0DYuoRaSliKdYkd12+mmrEwx0GkRWgDPdrIqcDri69unLrul5a9SauP4
+	FOXH++okSgfma1ufH5ztSLh4iMFEqHR2n19e+sgCds4h4RbAAJBK2ptRTP79yyJhTF5rRC
+	qRB71Roy2W7psJBzOhbAGpXSERxAUSkzVrjxIHXU573H5ANmwWIieyhwhBs6DJgEvJkAYY
+	v9r/ct7LvsqP5zfek5KlNBZ6mQ9UT74EGoKR0kn2bKHdocXibQx2XxE9Frbi7cyrOPwpQE
+	lFaMGTZJM2ARFPQLMKIaWaJUECq9nrVVckihnw2nwR0vmPUSW4xw3vkqRwAEHQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Date: Wed, 07 Aug 2024 17:15:46 +0200
+From: barnabas.czeman@mainlining.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Albrieux <jonathan.albrieux@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux@mainlining.org
+Subject: Re: [PATCH v2 1/3] iio: magnetometer: ak8975: Fix reading for ak099xx
+ sensors
+In-Reply-To: <20240806171925.7c512c63@jic23-huawei>
+References: <20240806-ak09918-v2-0-c300da66c198@mainlining.org>
+ <20240806-ak09918-v2-1-c300da66c198@mainlining.org>
+ <20240806171925.7c512c63@jic23-huawei>
+Message-ID: <96c2bcfbebc9e6d97d97f32aec9249db@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bbb4af1cb0933fea3307930a74258b8f78cba084.1722570749.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
 
-On Thu, Aug 01, 2024 at 10:02:36PM -0600, Tahera Fahimi wrote:
-> Introducing LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET as an IPC scoping
-> mechanism in Landlock ABI version 6, and updating ruleset_attr,
-> Landlock ABI version, and access rights code blocks based on that.
+On 2024-08-06 18:19, Jonathan Cameron wrote:
+> On Tue, 06 Aug 2024 08:10:18 +0200
+> Barnabás Czémán <barnabas.czeman@mainlining.org> wrote:
 > 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> ---
-> v8:
-> - Improving documentation by specifying differences between scoped and
->   non-scoped domains.
-> - Adding review notes of version 7.
-> - Update date
-> v7:
-> - Add "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" explanation to IPC scoping
->   section and updating ABI to version 6.
-> - Adding "scoped" attribute to the Access rights section.
-> - In current limitation, unnamed sockets are specified as sockets that
->   are not restricted.
-> - Update date
-> ---
->  Documentation/userspace-api/landlock.rst | 33 ++++++++++++++++++++++--
->  1 file changed, 31 insertions(+), 2 deletions(-)
+> Hi Barnabás,
 > 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index 07b63aec56fa..d602567b5139 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -8,7 +8,7 @@ Landlock: unprivileged access control
->  =====================================
->  
->  :Author: Mickaël Salaün
-> -:Date: April 2024
-> +:Date: August 2024
->  
->  The goal of Landlock is to enable to restrict ambient rights (e.g. global
->  filesystem or network access) for a set of processes.  Because Landlock
-> @@ -81,6 +81,8 @@ to be explicit about the denied-by-default access rights.
->          .handled_access_net =
->              LANDLOCK_ACCESS_NET_BIND_TCP |
->              LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> +        .scoped =
-> +            LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET,
->      };
->  
->  Because we may not know on which kernel version an application will be
-> @@ -119,6 +121,9 @@ version, and only use the available subset of access rights:
->      case 4:
->          /* Removes LANDLOCK_ACCESS_FS_IOCTL_DEV for ABI < 5 */
->          ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
-> +    case 5:
-> +        /* Removes LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET for ABI < 6 */
-> +        ruleset_attr.scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
->      }
->  
->  This enables to create an inclusive ruleset that will contain our rules.
-> @@ -306,6 +311,23 @@ To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
->  process, a sandboxed process should have a subset of the target process rules,
->  which means the tracee must be in a sub-domain of the tracer.
->  
-> +IPC Scoping
-> +-----------
-> +
-> +Similar to the implicit `Ptrace restrictions`_, we may want to further restrict
-> +interactions between sandboxes. Each Landlock domain can be explicitly scoped
-> +for a set of actions by specifying it on a ruleset. For example, if a sandboxed
-> +process should not be able to :manpage:`connect(2)` to a non-sandboxed process
-> +through abstract :manpage:`unix(7)` sockets, we can specify such restriction
-> +with ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``.
-> +
-> +A sandboxed process can connect to a non-sandboxed process when its domain is
-> +not scoped. If a process's domain is scoped, it can only connect to processes in
-
-...it can only connect to sockets created by proccesses in the same
-scoped domain.
-
-> +the same scoped domain.
-> +
-> +IPC scoping does not support Landlock rules, so if a domain is scoped, no rules
-> +can be added to allow accessing to a resource outside of the scoped domain.
-> +
->  Truncating files
->  ----------------
->  
-> @@ -404,7 +426,7 @@ Access rights
->  -------------
->  
->  .. kernel-doc:: include/uapi/linux/landlock.h
-> -    :identifiers: fs_access net_access
-> +    :identifiers: fs_access net_access scope
->  
->  Creating a new ruleset
->  ----------------------
-> @@ -541,6 +563,13 @@ earlier ABI.
->  Starting with the Landlock ABI version 5, it is possible to restrict the use of
->  :manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right.
->  
-> +Abstract Unix sockets Restriction  (ABI < 6)
-
-Let's follow the capitalization used by man pages: "UNIX" instead of
-"Unix".
-
-> +--------------------------------------------
-> +
-> +With ABI version 6, it is possible to restrict connection to an abstract Unix socket
-> +through ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``, thanks to the ``scoped`` ruleset
-> +attribute.
-> +
->  .. _kernel_support:
->  
->  Kernel support
-> -- 
-> 2.34.1
+> Welcome to IIO.
 > 
+>> ST2 register read should be placed after read measurment data,
+>> because it will get correct values after it.
+> 
+> What is the user visible result of this? Do we detect errors when none
+> are there?  Do we have a datasheet reference for the status being
+> update on the read command, not after the trigger?
+>> 
+> Needs a Fixes tag to let us know how far to backport the fix.
+> 
+> A few comments inline.
+> 
+>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> ---
+>>  drivers/iio/magnetometer/ak8975.c | 31 
+>> +++++++++++++++----------------
+>>  1 file changed, 15 insertions(+), 16 deletions(-)
+>> 
+>> diff --git a/drivers/iio/magnetometer/ak8975.c 
+>> b/drivers/iio/magnetometer/ak8975.c
+>> index dd466c5fa621..925d76062b3e 100644
+>> --- a/drivers/iio/magnetometer/ak8975.c
+>> +++ b/drivers/iio/magnetometer/ak8975.c
+>> @@ -692,22 +692,7 @@ static int ak8975_start_read_axis(struct 
+>> ak8975_data *data,
+>>  	if (ret < 0)
+>>  		return ret;
+>> 
+>> -	/* This will be executed only for non-interrupt based waiting case 
+>> */
+>> -	if (ret & data->def->ctrl_masks[ST1_DRDY]) {
+>> -		ret = i2c_smbus_read_byte_data(client,
+>> -					       data->def->ctrl_regs[ST2]);
+>> -		if (ret < 0) {
+>> -			dev_err(&client->dev, "Error in reading ST2\n");
+>> -			return ret;
+>> -		}
+>> -		if (ret & (data->def->ctrl_masks[ST2_DERR] |
+>> -			   data->def->ctrl_masks[ST2_HOFL])) {
+>> -			dev_err(&client->dev, "ST2 status error 0x%x\n", ret);
+>> -			return -EINVAL;
+>> -		}
+>> -	}
+>> -
+> This completely removes the check from the _fill_buffer() path
+> 
+>> -	return 0;
+>> +	return !(ret & data->def->ctrl_masks[ST1_DRDY]);
+> returning a positive value here is unusual enough you should add a 
+> comment for
+> the function + use that return value.
+> 
+>>  }
+>> 
+>>  /* Retrieve raw flux value for one of the x, y, or z axis.  */
+>> @@ -731,6 +716,20 @@ static int ak8975_read_axis(struct iio_dev 
+>> *indio_dev, int index, int *val)
+>>  	ret = i2c_smbus_read_i2c_block_data_or_emulated(
+>>  			client, def->data_regs[index],
+>>  			sizeof(rval), (u8*)&rval);
+> No longer gated on ret & data->def->ctrl_masks[ST1_DRDY] which seems 
+> unintentional.
+It is checked exactly before the measurement data read, it is the return 
+value of ak8975_start_read_axis.
+The read section should be ST1 -> measurement -> ST2, exactly the same 
+can be found in the datasheets.
+> 
+> Still need a check on ret here.
+> 
+>> +	ret = i2c_smbus_read_byte_data(client,
+>> +				       data->def->ctrl_regs[ST2]);
+>> +	if (ret < 0) {
+>> +		dev_err(&client->dev, "Error in reading ST2\n");
+>> +		goto exit;
+>> +	}
+>> +
+>> +	if (ret & (data->def->ctrl_masks[ST2_DERR] |
+>> +		   data->def->ctrl_masks[ST2_HOFL])) {
+>> +		dev_err(&client->dev, "ST2 status error 0x%x\n", ret);
+>> +		ret = -EINVAL;
+>> +		goto exit;
+>> +	}
+>> +
+>>  	if (ret < 0)
+>>  		goto exit;
+> 
+> And this one ends up redundant I think which suggests to me the
+> code is inserted a few lines early.
+> 
+>> 
+>> 
 
