@@ -1,324 +1,160 @@
-Return-Path: <linux-kernel+bounces-278209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3809694AD80
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:02:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F0B94AD83
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C03A31F23250
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:02:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68AA41F234B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599D0131E4B;
-	Wed,  7 Aug 2024 16:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C6D12FF9C;
+	Wed,  7 Aug 2024 16:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GVnYCrvn"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="quoGmIS9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E71084DE4
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED8984037
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723046513; cv=none; b=taZsNICxXsDPBMhCr39Iu45p+6EYiWKp/KA3SnlsmrwPv3SsPlto7v+oRXe/fLtjDtE0PnE2UYX9VDVtsacoCjIvCvVo62M66k6SKpbspzR5xpOiFjHhWBWJUMmGNr8rsshhVYKVunfM6xz1+i0ugfNUimrv2jOJb6oxyTiw4A4=
+	t=1723046560; cv=none; b=kLJYS0tU+f2O0QUnsiajA+ThmCaM+HaTaESXCEQ61J/9H3VqJiJPbyE33jWnwhGw/FeSSa2rZrHdx5OKju2XFOAmZIIMjHtMy7C8rJyRR6FqlfRSyubq/c5MtlzuBVB1w2hYQSzWVbI5SietgCNubRYz4pa0HYL7kWkvXN8TwZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723046513; c=relaxed/simple;
-	bh=wysYm/qNgdUnSgwXEaScb6MDEVFUEQXszalkaSmx6xc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c/MpW43CIDvsK/9tI+LnMx4SKX6NW8mzFoRjql8el6S+vMSl0dD0wrTR1N1wYNbnb69GpYfjurmi0PvCB/5xutDZXvoQJIG+k21CRaZBLh7dIvWlMSgTCkeVQx9v2Y7XlFM66nJhYpgH7N5aWuoXXZ8TAGIccJiY5Vr7dqBLKBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GVnYCrvn; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso3056095a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 09:01:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1723046508; x=1723651308; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wfWrl8VZD19FKxaJR7VaPIQTf2XncwvdYl+52yGeefs=;
-        b=GVnYCrvnRoVXziX0LBYeILmdi7S7nlrPgAZJoPWGFf4NX1IS9skjAQvoS9UCfaYfz0
-         C5YhxgbXM/5pCnWTspPdd+kb/PcSJnuRjfknUd2i1HSxWfWHCXqbNR1L5i6P+kGIJwxo
-         1F882S19KVnVSB1x/bPqMascQThG9+HOYFzf4HIPMEXfx0FXe4b95KEzqmHP4A0U95NZ
-         NBLXcbu3nj0IyjqA0IPMS/YsKzhZgrZZfFTlvdLGCr7miAIq+Az6OnO1ylP7jSxnGVcb
-         pSqMqHrY0RCKq7PG7Pe29mIuWfUNus0EztfMZjEZTjswZ0BKihKunT0cjlS+Z8SlMYe7
-         xGiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723046508; x=1723651308;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wfWrl8VZD19FKxaJR7VaPIQTf2XncwvdYl+52yGeefs=;
-        b=QLt55sb98H7sCP25phPHhcm3oFyaagIMVr9gxxTaNzTyeF549mYg1uyXhCnQsC/Pai
-         33xg2eegd0y4o4Vcg1sQbML8Qf1xEDdjCAbnfG4bMe/U4d+caGXaZKulM0r5BtMDStQV
-         xBkirBzVkIXx2s12l5zQVcOUALKoMO/dQy1QITK9i0e7YkrOire+FhxeuNmm61z+IA6a
-         bfQMOuU6l+J91iudX5svTfh/HLwCvdr31oxwSnPxeIZtHj1Qwru3GQT1kXvLTIpsF0Nj
-         n39NyFJpEPEiLynU4Wd6U+omNktQ61p00XElpucOy4lnwzKm8L51P9mLJsA4DDJ8nKal
-         QM/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWccfCOwBbhgwwDCdqVa2VrXt2aOSYsaxDRShW9if6lI37mi/qemkFvA61cB8Mc+d+9N5EnJLDcO9lfcnQs6WOIs8xv0EkayrM6F0H1
-X-Gm-Message-State: AOJu0Yx5c44JMLhqLma9UViQIil3a7y2yE9RyAk06By1YKceL9SDcp6g
-	wB5HfxczgUyRrVM7q2Y8EOf3hJrA2nPAx5/4WG4Lh6sZNGKc/mXZbQp1eyJ8lBY=
-X-Google-Smtp-Source: AGHT+IHWrqwniJn2eVz5Em10yrKJfh8xr+5TVRXfs5U2EgWU1CtTRoAJrPQuOP6c/LaL/2ZVfbQ52Q==
-X-Received: by 2002:aa7:c518:0:b0:5af:7b5a:8185 with SMTP id 4fb4d7f45d1cf-5b7f56fe0f6mr13501535a12.27.1723046508124;
-        Wed, 07 Aug 2024 09:01:48 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.5])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b839c25558sm7180604a12.32.2024.08.07.09.01.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 09:01:47 -0700 (PDT)
-Message-ID: <89f51615-0dee-4ab0-ab72-e3c057fee1e7@tuxon.dev>
-Date: Wed, 7 Aug 2024 19:01:46 +0300
+	s=arc-20240116; t=1723046560; c=relaxed/simple;
+	bh=O+LenZbv8ERwXgEZM1N6J8yGHn4TzK8Xn01ChhuIDOI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iQIWZBCchrViFUGDkjVDBGR+gp2stmx1sKs355kNV9FpIoiKKkSSFbzcqb/F26mRTylHn8x5h/PpM4dNHM/HPjaiR3g24RzcU9XNhhJq5RvrfeejDVFesvHqm52uFgyVt5um4PgV+Krl9rHgWF/lCEwzD8qTvSsQIktJFk6bdXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=quoGmIS9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC9AC4AF0B;
+	Wed,  7 Aug 2024 16:02:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723046559;
+	bh=O+LenZbv8ERwXgEZM1N6J8yGHn4TzK8Xn01ChhuIDOI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=quoGmIS9J6tc4UUj304QhKWjjbpmoZTMZFfecvX5sGEfqHp/eO1WP35sNqiVcxMqY
+	 7Z1Nq4A/TPjqC+D8Jhclpo3ifw8z2k97fF7nn7WVVzsBxP9XHdc/8j5fQA3UildoVK
+	 1tomM74wO4MTnUl3KPzWsfD90AYD8RXQzUfWal1c4asMezqIKRIDh38c6mwiuYLkfB
+	 nBxvkOWsjgxjmPktTMmHjSrFEzEFRvKMJ9pYIb9j0HxtPjKzfuv+ld0s4owvEuKWCA
+	 qQYv2OwKfiv1B2FVkdA0HKMbLpzUHAeICeTlmMe6vdauU7ni/xF8wtYL0fMvgeFgFP
+	 TfvKy0YOXMgRA==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH 00/19] kthread: Introduce preferred affinity v2
+Date: Wed,  7 Aug 2024 18:02:06 +0200
+Message-ID: <20240807160228.26206-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: microchip: Rename node, sub-node, and clean up
- spacing
-Content-Language: en-US
-To: Andrei Simion <andrei.simion@microchip.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240723131228.189308-1-andrei.simion@microchip.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240723131228.189308-1-andrei.simion@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Andrei,
+Affining kthreads follow either of three existing different patterns:
 
-On 23.07.2024 16:12, Andrei Simion wrote:
-> Cosmetic work:
+1) Per-CPU kthreads must stay affine to a single CPU and never execute
+   relevant code on any other CPU. This is currently handled by smpboot
+   code which takes care of CPU-hotplug operations.
 
-Can you please format it as follows:
+2) Kthreads that _have_ to be affine to a specific set of CPUs and can't
+   run anywhere else. The affinity is set through kthread_bind_mask()
+   and the subsystem takes care by itself to handle CPU-hotplug operations.
 
-> Rename the eeprom node according to device tree specification.
+3) Kthreads that _prefer_ to be affine to a specific NUMA node.
 
-One patch for this.
+4) Similar to the previous point but kthreads have a _preferred_ affinity
+   different than a node. It is set manually like any other task and
+   CPU-hotplug is supposed to be handled by the relevant subsystem so
+   that the task is properly reaffined whenever a given CPU from the
+   preferred affinity comes up or down. Also care must be taken so that
+   the preferred affinity doesn't cross housekeeping cpumask boundaries.
 
-> Rename the usb node according to device tree specification.
+Currently the preferred affinity patterns (3 and 4) have at least 4
+identified users, with more or less success when it comes to handle
+CPU-hotplug operations and CPU isolation.
 
-One patch for this.
+This is a infrastructure proposal to handle this (after cleanups from 01
+to 10).
 
-> Rename the led sub nodes according to device tree specification.
+Frederic Weisbecker (19):
+  arm/bL_switcher: Use kthread_run_on_cpu()
+  x86/resctrl: Use kthread_run_on_cpu()
+  firmware: stratix10-svc: Use kthread_run_on_cpu()
+  scsi: bnx2fc: Use kthread_create_on_cpu()
+  scsi: bnx2i: Use kthread_create_on_cpu()
+  scsi: qedi: Use kthread_create_on_cpu()
+  soc/qman: test: Use kthread_run_on_cpu()
+  kallsyms: Use kthread_run_on_cpu()
+  lib: test_objpool: Use kthread_run_on_cpu()
+  net: pktgen: Use kthread_create_on_node()
+  kthread: Make sure kthread hasn't started while binding it
+  kthread: Default affine kthread to its preferred NUMA node
+  mm: Create/affine kcompactd to its preferred node
+  mm: Create/affine kswapd to its preferred node
+  kthread: Implement preferred affinity
+  rcu: Use kthread preferred affinity for RCU boost
+  kthread: Unify kthread_create_on_cpu() and
+    kthread_create_worker_on_cpu() automatic format
+  treewide: Introduce kthread_run_worker[_on_cpu]()
+  rcu: Use kthread preferred affinity for RCU exp kworkers
 
-One patch for this.
+ arch/arm/common/bL_switcher.c                 |  10 +-
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c     |  28 +--
+ arch/x86/kvm/i8254.c                          |   2 +-
+ crypto/crypto_engine.c                        |   2 +-
+ drivers/cpufreq/cppc_cpufreq.c                |   2 +-
+ drivers/firmware/stratix10-svc.c              |   9 +-
+ drivers/gpu/drm/drm_vblank_work.c             |   2 +-
+ .../drm/i915/gem/selftests/i915_gem_context.c |   2 +-
+ drivers/gpu/drm/i915/gt/selftest_execlists.c  |   2 +-
+ drivers/gpu/drm/i915/gt/selftest_hangcheck.c  |   2 +-
+ drivers/gpu/drm/i915/gt/selftest_slpc.c       |   2 +-
+ drivers/gpu/drm/i915/selftests/i915_request.c |   8 +-
+ drivers/gpu/drm/msm/disp/msm_disp_snapshot.c  |   2 +-
+ drivers/gpu/drm/msm/msm_atomic.c              |   2 +-
+ drivers/gpu/drm/msm/msm_gpu.c                 |   2 +-
+ drivers/gpu/drm/msm/msm_kms.c                 |   2 +-
+ .../platform/chips-media/wave5/wave5-vpu.c    |   2 +-
+ drivers/net/dsa/mv88e6xxx/chip.c              |   2 +-
+ drivers/net/ethernet/intel/ice/ice_dpll.c     |   2 +-
+ drivers/net/ethernet/intel/ice/ice_gnss.c     |   2 +-
+ drivers/net/ethernet/intel/ice/ice_ptp.c      |   2 +-
+ drivers/platform/chrome/cros_ec_spi.c         |   2 +-
+ drivers/ptp/ptp_clock.c                       |   2 +-
+ drivers/scsi/bnx2fc/bnx2fc_fcoe.c             |   7 +-
+ drivers/scsi/bnx2i/bnx2i_init.c               |   7 +-
+ drivers/scsi/qedi/qedi_main.c                 |   6 +-
+ drivers/soc/fsl/qbman/qman_test_stash.c       |   6 +-
+ drivers/spi/spi.c                             |   2 +-
+ drivers/usb/typec/tcpm/tcpm.c                 |   2 +-
+ drivers/vdpa/vdpa_sim/vdpa_sim.c              |   2 +-
+ drivers/watchdog/watchdog_dev.c               |   2 +-
+ fs/erofs/zdata.c                              |   2 +-
+ include/linux/cpuhotplug.h                    |   1 +
+ include/linux/kthread.h                       |  56 ++++-
+ kernel/kallsyms_selftest.c                    |   4 +-
+ kernel/kthread.c                              | 214 ++++++++++++++++--
+ kernel/rcu/tree.c                             |  94 ++------
+ kernel/rcu/tree_plugin.h                      |  11 +-
+ kernel/workqueue.c                            |   2 +-
+ lib/test_objpool.c                            |  19 +-
+ mm/compaction.c                               |  43 +---
+ mm/vmscan.c                                   |   7 +-
+ net/core/pktgen.c                             |   7 +-
+ net/dsa/tag_ksz.c                             |   2 +-
+ net/dsa/tag_ocelot_8021q.c                    |   2 +-
+ net/dsa/tag_sja1105.c                         |   2 +-
+ 46 files changed, 334 insertions(+), 259 deletions(-)
 
-> Rename the pmic node according to the device tree specification.
-
-One patch for this.
-
-> Clean up spacing and indentation.
-
-One patch for this.
-
-
-> 
-> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
-> ---
-> Modifications Based On:
-> https://lore.kernel.org/linux-arm-kernel/c4b23da5-10fc-476e-8acc-8ba0815f5def@kernel.org/
-
-You had here 6 patches all addressing "Align the eeprom nodename".
-
-Few comments bellow.
-
-Thank you,
-Claudiu Beznea
-
-> ---
->  arch/arm/boot/dts/microchip/aks-cdu.dts       | 12 +++++-----
->  arch/arm/boot/dts/microchip/animeo_ip.dts     | 10 ++++----
->  .../dts/microchip/at91-cosino_mega2560.dts    |  2 +-
->  arch/arm/boot/dts/microchip/at91-foxg20.dts   |  4 ++--
->  .../arm/boot/dts/microchip/at91-qil_a9260.dts |  4 ++--
->  .../boot/dts/microchip/at91-sam9_l9260.dts    |  2 +-
->  .../arm/boot/dts/microchip/at91-sam9x60ek.dts |  6 ++---
->  .../dts/microchip/at91-sama5d27_som1.dtsi     |  2 +-
->  .../dts/microchip/at91-sama5d27_som1_ek.dts   | 14 +++++------
->  .../dts/microchip/at91-sama5d27_wlsom1.dtsi   |  2 +-
->  .../dts/microchip/at91-sama5d29_curiosity.dts |  2 +-
->  .../boot/dts/microchip/at91-sama5d2_icp.dts   | 10 ++++----
->  .../dts/microchip/at91-sama5d2_ptc_ek.dts     |  8 +++----
->  .../dts/microchip/at91-sama5d2_xplained.dts   |  8 +++----
->  .../dts/microchip/at91-sama5d3_xplained.dts   |  6 ++---
->  .../dts/microchip/at91-sama5d4_ma5d4evk.dts   |  6 ++---
->  .../dts/microchip/at91-sama5d4_xplained.dts   |  6 ++---
->  .../arm/boot/dts/microchip/at91-sama5d4ek.dts |  6 ++---
->  .../arm/boot/dts/microchip/at91-sama7g5ek.dts |  2 +-
->  arch/arm/boot/dts/microchip/at91-vinco.dts    |  6 ++---
->  arch/arm/boot/dts/microchip/at91rm9200.dtsi   |  4 ++--
->  arch/arm/boot/dts/microchip/at91rm9200ek.dts  | 10 ++++----
->  arch/arm/boot/dts/microchip/at91sam9260.dtsi  |  4 ++--
->  arch/arm/boot/dts/microchip/at91sam9260ek.dts | 10 ++++----
->  arch/arm/boot/dts/microchip/at91sam9261.dtsi  |  4 ++--
->  arch/arm/boot/dts/microchip/at91sam9261ek.dts | 10 ++++----
->  arch/arm/boot/dts/microchip/at91sam9263.dtsi  |  4 ++--
->  arch/arm/boot/dts/microchip/at91sam9263ek.dts | 12 +++++-----
->  arch/arm/boot/dts/microchip/at91sam9g20ek.dts |  4 ++--
->  .../boot/dts/microchip/at91sam9g20ek_2mmc.dts |  4 ++--
->  .../dts/microchip/at91sam9g20ek_common.dtsi   |  6 ++---
->  .../at91sam9g25-gardena-smart-gateway.dts     | 24 +++++++++----------
->  arch/arm/boot/dts/microchip/at91sam9g45.dtsi  |  6 ++---
->  .../boot/dts/microchip/at91sam9m10g45ek.dts   |  6 ++---
->  arch/arm/boot/dts/microchip/at91sam9n12.dtsi  |  4 ++--
->  arch/arm/boot/dts/microchip/at91sam9n12ek.dts | 10 ++++----
->  arch/arm/boot/dts/microchip/at91sam9rl.dtsi   |  2 +-
->  arch/arm/boot/dts/microchip/at91sam9rlek.dts  |  2 +-
->  arch/arm/boot/dts/microchip/at91sam9x5.dtsi   |  6 ++---
->  arch/arm/boot/dts/microchip/at91sam9x5cm.dtsi |  4 ++--
->  arch/arm/boot/dts/microchip/ethernut5.dts     |  4 ++--
->  arch/arm/boot/dts/microchip/evk-pro3.dts      |  4 ++--
->  arch/arm/boot/dts/microchip/mpa1600.dts       |  2 +-
->  arch/arm/boot/dts/microchip/pm9g45.dts        |  4 ++--
->  arch/arm/boot/dts/microchip/sam9x60.dtsi      |  6 ++---
->  arch/arm/boot/dts/microchip/sama5d2.dtsi      |  6 ++---
->  arch/arm/boot/dts/microchip/sama5d3.dtsi      |  6 ++---
->  arch/arm/boot/dts/microchip/sama5d34ek.dts    |  2 +-
->  arch/arm/boot/dts/microchip/sama5d3xmb.dtsi   |  6 ++---
->  .../boot/dts/microchip/sama5d3xmb_cmp.dtsi    |  2 +-
->  arch/arm/boot/dts/microchip/sama5d4.dtsi      |  6 ++---
->  arch/arm/boot/dts/microchip/tny_a9263.dts     |  2 +-
->  .../boot/dts/microchip/usb_a9260_common.dtsi  |  4 ++--
->  arch/arm/boot/dts/microchip/usb_a9263.dts     |  4 ++--
->  54 files changed, 156 insertions(+), 156 deletions(-)
-> 
-
-[ ... ]
-
->  
-> @@ -258,10 +258,10 @@ pinctrl_i2c1_default: i2c1_default {
->  				};
->  
->  				pinctrl_i2c1_gpio: i2c1_gpio {
-> -                                        pinmux = <PIN_PD4__GPIO>,
-> -                                                 <PIN_PD5__GPIO>;
-> -                                        bias-disable;
-> -                                };
-> +					pinmux = <PIN_PD4__GPIO>,
-> +						 <PIN_PD5__GPIO>;
-> +					bias-disable;
-> +				};
->  
-
-Please remove this extra line here, too.
-
-[ ... ]
-
-> -			usb1: gadget@fff78000 {
-> +			usb1: usb@fff78000 {
->  				atmel,vbus-gpio = <&pioA 25 GPIO_ACTIVE_HIGH>;
->  				status = "okay";
->  			};
-> @@ -86,7 +86,7 @@ pinctrl@fffff200 {
->  				mmc0 {
->  					pinctrl_board_mmc0: mmc0-board {
->  						atmel,pins =
-> -							<AT91_PIOE 18 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH 	/* PE18 gpio CD pin pull up and deglitch */
-> +							<AT91_PIOE 18 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH	/* PE18 gpio CD pin pull up and deglitch */
-
-What was wrong here?
-
->  							 AT91_PIOE 19 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP>;	/* PE19 gpio WP pin pull up */
->  					};
->  				};
-> @@ -207,7 +207,7 @@ data@7ca0000 {
->  			};
->  		};
-
-[ ...]
-
-> diff --git a/arch/arm/boot/dts/microchip/at91sam9g25-gardena-smart-gateway.dts b/arch/arm/boot/dts/microchip/at91sam9g25-gardena-smart-gateway.dts
-> index af70eb8a3a02..60560e4c1696 100644
-> --- a/arch/arm/boot/dts/microchip/at91sam9g25-gardena-smart-gateway.dts
-> +++ b/arch/arm/boot/dts/microchip/at91sam9g25-gardena-smart-gateway.dts
-> @@ -37,71 +37,71 @@ button {
->  	leds {
->  		compatible = "gpio-leds";
->  
-> -		power_blue {
-> +		led-0 {
->  			label = "smartgw:power:blue";
->  			gpios = <&pioC 21 GPIO_ACTIVE_HIGH>;
->  			default-state = "off";
->  		};
->  
-> -		power_green {
-> +		led-1 {
->  			label = "smartgw:power:green";
->  			gpios = <&pioC 20 GPIO_ACTIVE_HIGH>;
->  			default-state = "on";
->  		};
->  
-> -		power_red {
-> +		led-2 {
->  			label = "smartgw:power:red";
->  			gpios = <&pioC 19 GPIO_ACTIVE_HIGH>;
->  			default-state = "off";
->  		};
->  
-> -		radio_blue {
-> +		led-3 {
->  			label = "smartgw:radio:blue";
->  			gpios = <&pioC 18 GPIO_ACTIVE_HIGH>;
->  			default-state = "off";
->  		};
->  
-> -		radio_green {
-> +		led-4 {
->  			label = "smartgw:radio:green";
->  			gpios = <&pioC 17 GPIO_ACTIVE_HIGH>;
->  			default-state = "off";
->  		};
->  
-> -		radio_red {
-> +		led-5 {
->  			label = "smartgw:radio:red";
->  			gpios = <&pioC 16 GPIO_ACTIVE_HIGH>;
->  			default-state = "off";
->  		};
->  
-> -		internet_blue {
-> +		led-6 {
->  			label = "smartgw:internet:blue";
->  			gpios = <&pioC 15 GPIO_ACTIVE_HIGH>;
->  			default-state = "off";
->  		};
->  
-> -		internet_green {
-> +		led-7 {
->  			label = "smartgw:internet:green";
->  			gpios = <&pioC 14 GPIO_ACTIVE_HIGH>;
->  			default-state = "off";
->  		};
->  
-> -		internet_red {
-> +		led-8 {
->  			label = "smartgw:internet:red";
->  			gpios = <&pioC 13 GPIO_ACTIVE_HIGH>;
->  			default-state = "off";
->  		};
->  
-> -		heartbeat {
-> +		led-9 {
->  			label = "smartgw:heartbeat";
->  			gpios = <&pioB 8 GPIO_ACTIVE_HIGH>;
->  			linux,default-trigger = "heartbeat";
->  		};
->  
-> -		pb18 {
-> +		led-pb18 {
->  			status = "disabled";
->  		};
->  
-> -		pd21 {
-> +		led-pd21 {
-
-Why used led-<old-label> for some leds and led-<integer> for other? Valid
-for other files.
+-- 
+2.45.2
 
 
