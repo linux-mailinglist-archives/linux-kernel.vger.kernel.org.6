@@ -1,107 +1,98 @@
-Return-Path: <linux-kernel+bounces-278575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25D2D94B207
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:22:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8BC94B20C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5721D1C20DFA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:22:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7889BB2369A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B45C149E09;
-	Wed,  7 Aug 2024 21:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63ED152787;
+	Wed,  7 Aug 2024 21:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NFxu8Hb1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="FAUjXsw6"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3907F364BC;
-	Wed,  7 Aug 2024 21:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B5F149DFF
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 21:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723065719; cv=none; b=HokbIkEsjZZFRkW0IRjERTSlPdBgfGkwUnP6sVnzXetO2noScDWtvnkOG+mJc+BtjzfW6hIwvqKN/rrs8baoBs6xxPnGbfnI3GstRtBFW4O5up2C2C3sLZpAESEbbmgzUS7rBgMSQiCKixVmC2wmXmfM46n+30XYUGkL4g5M4Kk=
+	t=1723065793; cv=none; b=sKUCX0qVD7xXvS164k84o0BV7XGUcaptRbEb50Jbh3SvxL/MvPVNUKBMIPipCx03iVViwEqbYA8BaIXbV1dVAgTRN4SvR5+AVbuEu/sthQn828HLqEfa92O67UgpSTdM8jO+X+fKhTJQ9ezX3OFLMUMftmf497L0D1GZGpwDchQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723065719; c=relaxed/simple;
-	bh=Dq1+AV92i31+4oeKeLoCAinDWxNJUx71g/nSYf1wiqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f7o+bkazJXWj55YoZElSltSUvpjMIcOc1fnVdY0LBWgyQzw4L2SvJHAox5TyC/37SDZOGyqsUSBDZ9o7nsgYp3+uf6Y8u/8UK4/uyA0IkRP3voCj2gtICJCoygKIdDBydYN3SQfB1MpdK2++IxtI7tC1wXoSxaQUud9RGxsitS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NFxu8Hb1; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723065718; x=1754601718;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Dq1+AV92i31+4oeKeLoCAinDWxNJUx71g/nSYf1wiqo=;
-  b=NFxu8Hb1+5p5jj3bz79LSDNIYAErrsCii5xwH2q/qpq7KoSTgutXMOiW
-   fMNE+RH47lmGwaJp3waOE/Xm4OGHSdFP8sJu27koxrwpnxk3uUnG/hVPM
-   ouMEtHHLzPsjidjOv2lHrwBwmzSNY+4RG2AMjBRpLrBdwLp/4fhNc85Th
-   yWiau2NLe0DR5JxbOjpEs1Yawe5LIhfQL36S7NE9xPpCQWWlNurUprNDW
-   Yc2yIuNfboD4g9eTU9BWMp3KJw7nfrQJkJbfMdN0j0SJU0GwdYhvS+XY4
-   gW8wLQ8WKXZkV59pLCJbtbskQrZ5/eQOunt2T11LupetC48jETVpSSUwJ
-   Q==;
-X-CSE-ConnectionGUID: c5BoWpXmTaWdefejmtAHEg==
-X-CSE-MsgGUID: 5CcD4M7QTJqIpYyeV6wWJQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21285331"
-X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
-   d="scan'208";a="21285331"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 14:21:57 -0700
-X-CSE-ConnectionGUID: 5nV0nHCrQNqcrggwMFCChg==
-X-CSE-MsgGUID: SnpUb/X8QU65IyoY1zD1rA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
-   d="scan'208";a="56946448"
-Received: from dneilan-mobl1.ger.corp.intel.com (HELO intel.com) ([10.245.245.42])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 14:21:52 -0700
-Date: Wed, 7 Aug 2024 22:21:48 +0100
-From: Andi Shyti <andi.shyti@linux.intel.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: jani.nikula@linux.intel.com, rodrigo.vivi@intel.com,
-	joonas.lahtinen@linux.intel.com, tursulin@ursulin.net,
-	airlied@gmail.com, daniel@ffwll.ch, ville.syrjala@linux.intel.com,
-	stanislav.lisovskiy@intel.com, intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] drm/i915: Fix NULL ptr deref in
- intel_async_flip_check_uapi()
-Message-ID: <ZrPlbBGFAGLVfGf3@ashyti-mobl2.lan>
-References: <20240806092249.2407555-1-make24@iscas.ac.cn>
+	s=arc-20240116; t=1723065793; c=relaxed/simple;
+	bh=p3pjHis6/COI1zY/O5SGsUSb3ei7m7/wigXReUSzACM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sm32GYd7gZrYULnmunI0UwDmRs6SpteSmx6kLcEkYQMOvv8obaUg5KE/FLtP4wA8HH/vR1cyqlVUI3XvXjAvsAkiJRhQH9eO6sJEfv9MkNKP5qqDXl/a3gmwhtFXI30tf+OjZqHHpu7jLfZlXjcqA3c/AvABJmM/W1JN+qLNJaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=FAUjXsw6; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1723065788; x=1723324988;
+	bh=ZYp3FbyerYWcaq8Uq45xquBH7mSWC+VI9xQMDrEeGvI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=FAUjXsw65kOdHW2JdjUIe43nokNsHamwyk2XrVALtOQLV8yizk87QfLtjiQ7BRTll
+	 jLPoQir1BN6aUlfDvAriSyHhTWnYiVucqEuUhnVlkQ1ja85J7eo/5Qc0y4sgdHNqPV
+	 q4/CHEAesryREeWVNrn+8TDbAtw7eOaMWx5o6+8MVNl7k0NlDZCMOP320Kje02LkRw
+	 tHHeIhvtxC+sM3WG+SQi7wOsWjVwq6KziOQQah3tuLtEwyvi4c/kz78nW3OS8WngTA
+	 mNeGdnUOFpqgC9yPXCtTBGTgsT+DUdHJlgFfmUHZ27t7PrwSzHevtTAZeTAG+6mmUG
+	 d0gSLc2962vaQ==
+Date: Wed, 07 Aug 2024 21:23:04 +0000
+To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4 21/28] rust: alloc: remove `GlobalAlloc` and `krealloc_aligned`
+Message-ID: <498e0141-8df5-46a7-b891-e1cb754f49e2@proton.me>
+In-Reply-To: <20240805152004.5039-22-dakr@kernel.org>
+References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-22-dakr@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 03289486c9ece5d1de07baad5aa1cf5ed473528f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806092249.2407555-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ma,
+On 05.08.24 17:19, Danilo Krummrich wrote:
+> Now that we have all the `Allocator`s and the kernel `Box` and `Vec`
+> implementations in place, remove `GlobalAlloc` and `krealloc_aligned`.
 
-> diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm/i915/display/intel_display.c
-> index c2c388212e2e..9dd7b5985d57 100644
-> --- a/drivers/gpu/drm/i915/display/intel_display.c
-> +++ b/drivers/gpu/drm/i915/display/intel_display.c
-> @@ -6115,7 +6115,7 @@ static int intel_async_flip_check_uapi(struct intel_atomic_state *state,
->  		return -EINVAL;
->  	}
->  
-> -	if (intel_crtc_needs_modeset(new_crtc_state)) {
-> +	if (new_crtc_state && intel_crtc_needs_modeset(new_crtc_state)) {
+When I try to compile this patch, then I get this error:
 
-new_crtc_state is used also earlier. If it was NULL you wouldn't
-have reached this state.
+      UPD     include/generated/utsversion.h
+      CC      init/version-timestamp.o
+      KSYMS   .tmp_vmlinux0.kallsyms.S
+      AS      .tmp_vmlinux0.kallsyms.o
+      LD      .tmp_vmlinux1
+    ld.lld: error: undefined symbol: __rust_realloc
+    >>> referenced by usercopy_64.c
+    >>>               vmlinux.o:(alloc::raw_vec::finish_grow::<alloc::alloc=
+::Global>)
+   =20
+    ld.lld: error: undefined symbol: __rust_alloc
+    >>> referenced by usercopy_64.c
+    >>>               vmlinux.o:(alloc::raw_vec::finish_grow::<alloc::alloc=
+::Global>)
+    make[2]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 1
 
-Have you experienced a null pointer dereference or is it some
-code analyzer that reported this? Can you explain how
-intel_atomic_get_new_crtc_state() can return NULL?
+So maybe the `#[global_allocator]` needs to stay until we remove the
+`alloc` dependency?
 
-For now this is nacked.
+---
+Cheers,
+Benno
 
-Thanks,
-Andi
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  rust/kernel/alloc/allocator.rs | 63 ++--------------------------------
+>  1 file changed, 2 insertions(+), 61 deletions(-)
+
 
