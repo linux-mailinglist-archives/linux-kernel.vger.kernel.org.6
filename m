@@ -1,184 +1,356 @@
-Return-Path: <linux-kernel+bounces-278176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A17994AD09
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:37:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92BFB94AD0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB79B1F23320
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:37:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1684C1F246D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABDD112C7FD;
-	Wed,  7 Aug 2024 15:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C41A12FB34;
+	Wed,  7 Aug 2024 15:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N/3co653"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIKUrHkZ"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321F683A09
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F25C83A09;
+	Wed,  7 Aug 2024 15:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723045031; cv=none; b=b1WhphWQrG0zJd20wjQJzkVq2orYdWR7eGXBHweFH3QNRn+c6NTZ9tg1n/U5cIt1Ml5JFVuJj6tOHk4YQW9v5Y1Sh8TCilYmXGxMhZR8vRiehFhGFkafc2JulKCkTto59duSCOvt1jMLkQ+ptZ61xUL4idgYKyFGbYWzGGU/moA=
+	t=1723045041; cv=none; b=Xnn8znJAesLcW4k6iAAVUqxVM0v9TQWcEgnwpq0Z6m/QlaEp10AvGRjgDYAFfoMof+3KTcExP4aaa+zWB32iBEvZVK5mAX5fQ8bP3NhXEaXt+xwO5vKunrd5Edkemv5hZd+jq5bPbKdDW5n1/z+YWH1yoHA6+aS0jxQTzMGxfHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723045031; c=relaxed/simple;
-	bh=TnQEyb0TlgRVKqCdGgpXS/fUm2oWRGW1oabB34py4bg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e9uw07W6OeLXe5bA8EWsqnk2B8qqGniIlBy8D9CuAOLrEAZWCXDTDxbWbP8ukrRtnkoU30xza6HHeLLkABrvHvMkBk5mpwINUA/vplFhGKtoXZIC9x/Ei8Vy3XAf/ltWPRFEqwZoa66dkOJs6HaxM8rLFN9vaCWad7gg9VNmQWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N/3co653; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso67995e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 08:37:08 -0700 (PDT)
+	s=arc-20240116; t=1723045041; c=relaxed/simple;
+	bh=cME/CNuivEIRgMbaWVvqx7cTV4kbXmD+L1ME+tCD4So=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VH+7E6rPoo3tinF7+qG36dOgQd5JN0DNA9xKrJ9rAJMBSLnQ5idnWDJH/Ovslug3nsLDrfEdNgyCblazbrGAZRDb+J4hsh5dPXxhCTt2LoUrjqe97haxTdgtjazD5EwT1ginKF4YQ215wQMDswdzIwtDyoRELmqhqE1kXbQD9aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIKUrHkZ; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fc587361b6so344355ad.2;
+        Wed, 07 Aug 2024 08:37:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723045027; x=1723649827; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hbpU8BGJSDy9tSmR37aKx0UzOOARJ4TFknyzCo/3gdo=;
-        b=N/3co653IyjPYikGfIFszGhOtPFqaijB22y+1pXtpm2GURfC2INI4qJiosINxl8u0F
-         iX2xYIxV6P0neRNpopZrGZXD6GQfq4XyH4LzHlFnqNWDH5HVstW/s0BCYdHeAVQGN3VO
-         eWB/7NyjtDL9eFN2jEa1ghIUo+1PHXWa+yyJpqvauPI3AY8q4pk2IV9b8okdgTYvDM1h
-         n3W7v2nf0yPgc6YfNvCifJB8OSMQlsNxKFM7MvS5f7NVifLdnMoScHw2CRWCMDRgtYlQ
-         wAOWPpRQSGFgDN19qIzS1PaaVuWx8sYy9vakNwtftsTkgKrMlhvcR81rs+vftMr6uf72
-         r6Kw==
+        d=gmail.com; s=20230601; t=1723045039; x=1723649839; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=M9faQjhj9HyRE5tjfr7yyMpjIH/ArqZ0OMI2C1S+AgE=;
+        b=YIKUrHkZsByH2GXHdrT5CNyJcbQSnV88bODzxqjcjmnfFjHfoqoujOONeddY9Rcpu7
+         pivQ9v6RSiH44+gxBzCVy4Iox0SpHWSRellblZxRz5a1ajA517gEQvR+d3sIHWeKZY5D
+         w/At/MyOVTDFDDSpuC49pXtFvnk6B14o5JSWqQbTddiee3XvayPlYQFZCxtpTqNeZpCL
+         9Ghw6Q/mjpgXqhOuUG7f7/88TWGiF0mO4DTepw5VbLQtxru4CnFTCnNTRwRL3zwwikI4
+         XQAGsGXm/gu4Uinuw7AvUa9EqUXQ8Hq1P3EbS77xqs2z4XvefeSPlS6uGxdM/yyGMRkw
+         szzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723045027; x=1723649827;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1723045039; x=1723649839;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hbpU8BGJSDy9tSmR37aKx0UzOOARJ4TFknyzCo/3gdo=;
-        b=fwaGOecf7FyMJPCHVThAzfVLvsKXoRnnHMfOyqPF7b3Xj9CoZfn0y8Oq9oSQ4mT47/
-         ubCw9c21Kakqxz7QXHJSaaaz8dS7h6+FuzwKzO3QY06e2+mZ5humR8N22i0TL/+e/mK5
-         B141uvvjCR6pRRdRANVlCJw3Egc/FlpVtJ07Y9oMLvOTE1jIui2t+kgxls1pRTJOD2Oj
-         ExJNEP+1YyksSInD6gwZ4EVqAb7SqVuW3vYiUwkI9dQ7r5aY2pyQAv6aeEEE1cquefiX
-         Htbbv8snsXFOwqD1yB1Y9nZDuy7r3lfs+C41U39d8wLPmCR9brpy+60fqXuiudDOitjV
-         VoFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2pwT/0h9mNEL5SUvVax6s3a+ZTtbmOPXFhPyfboEHAebbJwN6UoEFxwNOYrMnkLRSaI/uceP4PqnA7lagULh5EShUH3wyGB0LRnub
-X-Gm-Message-State: AOJu0Yz45p2TX8fFe+L/Wvwif5QvZXs8smbHLNJDYV7LWDC3qKrkdBkw
-	JaQjCbOqQ36Kxpnbwdox3mCmUUhOOV0VAnLoj+AZlhM+lSoAII4UXH0AFWADc9A=
-X-Google-Smtp-Source: AGHT+IEqJQdYKe2aGkUMUTlf/XKpYzvifcfU8LhAtDUz7xW59bDxFNzJvVrYScEyagfTJNRrKgoQHA==
-X-Received: by 2002:a05:600c:3501:b0:427:9922:4526 with SMTP id 5b1f17b1804b1-428e6aebc74mr141633305e9.7.1723045027306;
-        Wed, 07 Aug 2024 08:37:07 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42905971993sm35089695e9.16.2024.08.07.08.37.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 08:37:06 -0700 (PDT)
-Message-ID: <ff12ce12-41d6-4aa5-ab97-222b07146e36@linaro.org>
-Date: Wed, 7 Aug 2024 16:37:05 +0100
+        bh=M9faQjhj9HyRE5tjfr7yyMpjIH/ArqZ0OMI2C1S+AgE=;
+        b=Nw87PJ3Kk/oTYVDPr4qGhRn0aIn2qtztNNP1WkYzjwuAYpfXPbEQOmO/ch79tTtZtn
+         X7LRe/P/AAGhcBZtqRu1OtXlkbu6uzuhlZlYvhKsm8VUxFC5yfGmKnMsKJL2GHG7diz/
+         qakbC3Tse4CJI0GW6kvroOkgjW0wG0DiDDaPSGXg/VNz7ITlZyAYBz7MgkPFcUSJMVbD
+         fzk5Cic8Gz5Tl0Sy5pe4sXaFOnoloLvSdZD/NWjYxyt8eSQHhZdPG5gxTwnRhKaOxsdO
+         Ot3jqzDLRY6xCnmGPDNdn+M40fNJWui6oMhVZ4tSVe30cl8qwMAf2bPmpp8+B/VkkJU3
+         bOlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFWsKSe7knaVSaFAP1BKDCVm6re/lwj6C5VIoDrQ5vtMC61t3glgXAMFN6dbzCjFS6sz8MNciac0+8jaGOfg5DX+enTQyLJOhuKbbQm8++w2xE60gRc0PGDLkk8i7egqM0JaXU2Z5Yo9gFh01dwy51w9CBXmaF+sMpbJmVm2/9HXMq+n3Qku7Yql5m
+X-Gm-Message-State: AOJu0YzmWf9U3bZIxbcOMEJoA84l6pCa3oytC7O5fyosidhs18nU+lqV
+	5GMYhMMR0k8pKugJ+2qVIx3SY2iC7wf6i74+MDJeyC1CIwrI3xRn
+X-Google-Smtp-Source: AGHT+IEJP6bPphORnmL1DEGjHxND2u8bwkJQkHc/B34mzyPi05b83ek3vdKEHZeSrhjG9VvazzmOog==
+X-Received: by 2002:a17:902:d4c3:b0:1fd:73e6:83ce with SMTP id d9443c01a7336-1ff57113f17mr220203365ad.0.1723045038413;
+        Wed, 07 Aug 2024 08:37:18 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f29de7sm107844355ad.26.2024.08.07.08.37.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 08:37:17 -0700 (PDT)
+Date: Wed, 7 Aug 2024 09:37:15 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com,
+	jmorris@namei.org, serge@hallyn.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bjorn3_gh@protonmail.com, jannh@google.com, netdev@vger.kernel.org
+Subject: Re: [PATCH v8 1/4] Landlock: Add abstract unix socket connect
+ restriction
+Message-ID: <ZrOUq6rBRS1Fch42@tahera-OptiPlex-5000>
+References: <cover.1722570749.git.fahimitahera@gmail.com>
+ <e8da4d5311be78806515626a6bd4a16fe17ded04.1722570749.git.fahimitahera@gmail.com>
+ <20240803.iefooCha4gae@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/13] media: qcom: camss: csiphy: Add an init callback to
- CSI PHY devices
-To: Depeng Shao <quic_depengs@quicinc.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20240709160656.31146-1-quic_depengs@quicinc.com>
- <20240709160656.31146-5-quic_depengs@quicinc.com>
- <6dfc2c79-fc6d-4eed-bf3f-94396130cb4f@linaro.org>
- <fafda7d5-3853-428a-b0eb-9993fc2d4f56@linaro.org>
- <4426c0e0-f877-409c-b2d2-a5aac5e8c645@linaro.org>
- <1226d080-d1fc-4e06-ac81-84e93cb314e0@quicinc.com>
- <8f935a7d-87b5-479c-a98e-c95671dbe259@linaro.org>
- <7c03280f-908d-435d-acef-b6bf4f865029@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <7c03280f-908d-435d-acef-b6bf4f865029@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240803.iefooCha4gae@digikod.net>
 
-On 07/08/2024 16:03, Depeng Shao wrote:
-> Hi Bryan,
+On Sat, Aug 03, 2024 at 01:29:04PM +0200, Mickaël Salaün wrote:
+> On Thu, Aug 01, 2024 at 10:02:33PM -0600, Tahera Fahimi wrote:
+> > This patch introduces a new "scoped" attribute to the landlock_ruleset_attr
+> > that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope
+> > abstract Unix sockets from connecting to a process outside of
+> > the same landlock domain. It implements two hooks, unix_stream_connect
+> > and unix_may_send to enforce this restriction.
+> > 
+> > Closes: https://github.com/landlock-lsm/linux/issues/7
+> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> > 
+> > ---
+> > v8:
+> > - Code refactoring (improve code readability, renaming variable, etc.) based
+> >   on reviews by Mickaël Salaün on version 7.
+> > - Adding warn_on_once to check (impossible) inconsistencies.
+> > - Adding inline comments.
+> > - Adding check_unix_address_format to check if the scoping socket is an abstract
+> >   unix sockets.
+> > v7:
+> >  - Using socket's file credentials for both connected(STREAM) and
+> >    non-connected(DGRAM) sockets.
+> >  - Adding "domain_sock_scope" instead of the domain scoping mechanism used in
+> >    ptrace ensures that if a server's domain is accessible from the client's
+> >    domain (where the client is more privileged than the server), the client
+> >    can connect to the server in all edge cases.
+> >  - Removing debug codes.
+> > v6:
+> >  - Removing curr_ruleset from landlock_hierarchy, and switching back to use
+> >    the same domain scoping as ptrace.
+> >  - code clean up.
+> > v5:
+> >  - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
+> >  - Adding curr_ruleset to hierarachy_ruleset structure to have access from
+> >    landlock_hierarchy to its respective landlock_ruleset.
+> >  - Using curr_ruleset to check if a domain is scoped while walking in the
+> >    hierarchy of domains.
+> >  - Modifying inline comments.
+> > V4:
+> >  - Rebased on Günther's Patch:
+> >    https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
+> >    so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is removed.
+> >  - Adding get_scope_accesses function to check all scoped access masks in a ruleset.
+> >  - Using socket's file credentials instead of credentials stored in peer_cred
+> >    for datagram sockets. (see discussion in [1])
+> >  - Modifying inline comments.
+> > V3:
+> >  - Improving commit description.
+> >  - Introducing "scoped" attribute to landlock_ruleset_attr for IPC scoping
+> >    purpose, and adding related functions.
+> >  - Changing structure of ruleset based on "scoped".
+> >  - Removing rcu lock and using unix_sk lock instead.
+> >  - Introducing scoping for datagram sockets in unix_may_send.
+> > V2:
+> >  - Removing wrapper functions
+> > 
+> > [1]https://lore.kernel.org/all/20240610.Aifee5ingugh@digikod.net/
+> > ----
+> > ---
+> >  include/uapi/linux/landlock.h |  30 +++++++
+> >  security/landlock/limits.h    |   3 +
+> >  security/landlock/ruleset.c   |   7 +-
+> >  security/landlock/ruleset.h   |  23 ++++-
+> >  security/landlock/syscalls.c  |  14 ++-
+> >  security/landlock/task.c      | 155 ++++++++++++++++++++++++++++++++++
+> >  6 files changed, 225 insertions(+), 7 deletions(-)
 > 
-> On 8/7/2024 10:04 PM, Bryan O'Donoghue wrote:
->> On 07/08/2024 14:08, Depeng Shao wrote:
->>> Hi Vladimir,
->>>
->>> On 8/5/2024 5:26 AM, Vladimir Zapolskiy wrote:
->>>> Hi Bryan,
->>>>
->>>> On 8/1/24 11:16, Bryan O'Donoghue wrote:
->>>>> On 01/08/2024 00:43, Vladimir Zapolskiy wrote:
->>>>>>> +Â Â Â  ret = csiphy->res->hw_ops->init(csiphy);
->>>>>>
->>>>>> Here.
->>>>>
->>>>> What name would make more sense to you ?
->>>>
->>>> according to the implementation the .init() call just fills some 
->>>> data in
->>>> memory, so I believe this could be handled at build time, if it's done
->>>> carefully enough...
->>>>
->>>
->>> This camss-csiphy-3ph-1-0.c is reused by many platforms, the old 
->>> platforms have same CSI_COMMON_CTR register offset, their offset are 
->>> 0x800, but some new platforms may have different CSI_COMMON_CTR 
->>> register offset, for example, the CSI_COMMON_CTR register offset is 
->>> 0x1000 in sm8550, then we need to add new file to support the new 
->>> csiphy HW, e.g., camss-csiphy-3ph-2-0.c, so Bryan asked me to develop 
->>> the CSIPHY driver based on his changes, then we just need few code to 
->>> enable new CSIPHY.
->>>
->>> Regarding the hw_ops->init interface, since it fills HW register 
->>> configurations and HW register offset, then maybe, it also can be 
->>> called as HW operation.
->>>
->>> And looks like we can't move it to camss-csiphy.c since it does 
->>> platform specific operation and it is related to the registers.
->>>
->>> Please feel free to share other comments if you don't agree with it. 
->>> Thanks.
->>>
->>>
->>> Thanks,
->>> Depeng
->>
->> So, I agree the phy init data could be obtained via resource structs 
->> but, rather than add yet more patches to this series, I'd say we can 
->> make the move to a separate resource struct pointer at a later date.
->>
->> Lets drop this patch and @Depeng we can then do
->>
+> > diff --git a/security/landlock/task.c b/security/landlock/task.c
+> > index 849f5123610b..7e8579ebae83 100644
+> > --- a/security/landlock/task.c
+> > +++ b/security/landlock/task.c
+> > @@ -13,6 +13,8 @@
+> >  #include <linux/lsm_hooks.h>
+> >  #include <linux/rcupdate.h>
+> >  #include <linux/sched.h>
+> > +#include <net/sock.h>
+> > +#include <net/af_unix.h>
+> >  
+> >  #include "common.h"
+> >  #include "cred.h"
+> > @@ -108,9 +110,162 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
+> >  	return task_ptrace(parent, current);
+> >  }
+> >  
+> > +static bool walk_and_check(const struct landlock_ruleset *const child,
+> > +			   struct landlock_hierarchy **walker,
+> > +			   size_t base_layer, size_t deep_layer,
+> > +			   access_mask_t check_scoping)
 > 
->> +Â Â Â  regs->offset = 0x800;
->>
->> media: qcom: camss: csiphy-3ph: Use an offset variable to find common 
->> control regs
->>
+> s/check_scoping/scope/
 > 
+> > +{
+> > +	if (!child || base_layer < 0 || !(*walker))
 > 
-> Do you mean only drop "[PATCH 04/13] media: qcom: camss: csiphy: Add an 
-> init callback to CSI PHY devices"?
+> I guess it should be:
+> WARN_ON_ONCE(!child || base_layer < 0 || !(*walker))
 > 
+> > +		return false;
+> > +
+> > +	for (deep_layer; base_layer < deep_layer; deep_layer--) {
 > 
-> [PATCH 05/13] media: qcom: camss: csiphy-3ph: Move CSIPHY variables to 
-> data field inside csiphy struct
-> Do you mean this is still needed? Just don't move the code from 
-> csiphy_gen2_config_lanes to csiphy_init, right?
+> No need to pass deep_layer as argument:
+> deep_layer = child->num_layers - 1
 > 
+> > +		if (check_scoping & landlock_get_scope_mask(child, deep_layer))
+> > +			return false;
+> > +		*walker = (*walker)->parent;
+> > +		if (WARN_ON_ONCE(!*walker))
+> > +			/* there is an inconsistency between num_layers
 > 
-> [PATCH 06/13] media: qcom: camss: csiphy-3ph: Use an offset variable to 
-> find common control regs
-> The offset change is also needed, just need to add the offset for 
-> different platform in csiphy_gen2_config_lanes .
+> Please use full sentences starting with a capital letter and ending with
+> a dot, and in this case start with "/*"
 > 
-> Please correct me if my understanding is wrong. Thanks.
+> > +			 * and landlock_hierarchy in the ruleset
+> > +			 */
+> > +			return false;
+> > +	}
+> > +	return true;
+> > +}
+> > +
+> > +/**
+> > + * domain_IPC_scope - Checks if the client domain is scoped in the same
+> > + *		      domain as the server.
+> 
+> Actually, you can remove IPC from the function name.
+> 
+> > + *
+> > + * @client: IPC sender domain.
+> > + * @server: IPC receiver domain.
+> > + *
+> > + * Check if the @client domain is scoped to access the @server; the @server
+> > + * must be scoped in the same domain.
+> 
+> Returns true if...
+> 
+> > + */
+> > +static bool domain_IPC_scope(const struct landlock_ruleset *const client,
+> > +			     const struct landlock_ruleset *const server,
+> > +			     access_mask_t ipc_type)
+> > +{
+> > +	size_t client_layer, server_layer = 0;
+> > +	int base_layer;
+> > +	struct landlock_hierarchy *client_walker, *server_walker;
+> > +	bool is_scoped;
+> > +
+> > +	/* Quick return if client has no domain */
+> > +	if (!client)
+> > +		return true;
+> > +
+> > +	client_layer = client->num_layers - 1;
+> > +	client_walker = client->hierarchy;
+> > +	if (server) {
+> > +		server_layer = server->num_layers - 1;
+> > +		server_walker = server->hierarchy;
+> > +	}
+> 
+> } else {
+> 	server_layer = 0;
+> 	server_walker = NULL;
+> }
+> 
+> > +	base_layer = (client_layer > server_layer) ? server_layer :
+> > +						     client_layer;
+> > +
+> > +	/* For client domain, walk_and_check ensures the client domain is
+> > +	 * not scoped until gets to base_layer.
+> 
+> until gets?
+> 
+> > +	 * For server_domain, it only ensures that the server domain exist.
+> > +	 */
+> > +	if (client_layer != server_layer) {
+> 
+> bool is_scoped;
+It is defined above. 
+> > +		if (client_layer > server_layer)
+> > +			is_scoped = walk_and_check(client, &client_walker,
+> > +						   server_layer, client_layer,
+> > +						   ipc_type);
+> > +		else
+> 
+> server_walker may be uninitialized and still read here, and maybe later
+> in the for loop.  The whole code should maks sure this cannot happen,
+> and a test case should check this.
+I think this case never happens, since the server_walker can be read
+here if there are more than one layers in server domain which means that
+the server_walker is not unintialized.
 
-Correct.
-
----
-bod
-
+> > +			is_scoped = walk_and_check(server, &server_walker,
+> > +						   client_layer, server_layer,
+> > +						   ipc_type & 0);
+> 
+> "ipc_type & 0" is the same as "0"
+> 
+> > +		if (!is_scoped)
+> 
+> The name doesn't reflect the semantic. walk_and_check() should return
+> the inverse.
+> 
+> > +			return false;
+> > +	}
+> 
+> This code would be simpler:
+> 
+> if (client_layer > server_layer) {
+> 	base_layer = server_layer;
+> 	// TODO: inverse boolean logic
+> 	if (!walk_and_check(client, &client_walker,
+> 				   base_layer, ipc_type))
+> 		return false;
+> } else (client_layer < server_layer) {
+> 	base_layer = client_layer;
+> 	// TODO: inverse boolean logic
+> 	if (!walk_and_check(server, &server_walker,
+> 				   base_layer, 0))
+> 		return false;
+> } else {
+> 	base_layer = client_layer;
+> }
+> 
+> 
+> I think we can improve more to make sure there is no path/risk of
+> inconsistent pointers.
+> 
+> 
+> > +	/* client and server are at the same level in hierarchy. If client is
+> > +	 * scoped, the server must be scoped in the same domain
+> > +	 */
+> > +	for (base_layer; base_layer >= 0; base_layer--) {
+> > +		if (landlock_get_scope_mask(client, base_layer) & ipc_type) {
+> 
+> With each multi-line comment, the first line should be empty:
+> /*
+>  * This check must be here since access would be denied only if
+> 
+> > +			/* This check must be here since access would be denied only if
+> > +			 * the client is scoped and the server has no domain, so
+> > +			 * if the client has a domain but is not scoped and the server
+> > +			 * has no domain, access is guaranteed.
+> > +			 */
+> > +			if (!server)
+> > +				return false;
+> > +
+> > +			if (server_walker == client_walker)
+> > +				return true;
+> > +
+> > +			return false;
+> > +		}
+> > +		client_walker = client_walker->parent;
+> > +		server_walker = server_walker->parent;
+> > +		/* Warn if there is an incosistenncy between num_layers and
+> 
+> Makes sure there is no inconsistency between num_layers and
+> 
+> 
+> > +		 * landlock_hierarchy in each of rulesets
+> > +		 */
+> > +		if (WARN_ON_ONCE(base_layer > 0 &&
+> > +				 (!server_walker || !client_walker)))
+> > +			return false;
+> > +	}
+> > +	return true;
+> > +}
 
