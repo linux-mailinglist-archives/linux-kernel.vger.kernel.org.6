@@ -1,597 +1,493 @@
-Return-Path: <linux-kernel+bounces-277163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABA91949D63
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:34:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32343949D65
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE6B21C21BF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:34:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A282B1F242EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C4F15B56E;
-	Wed,  7 Aug 2024 01:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6B115CD64;
+	Wed,  7 Aug 2024 01:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KRSsPOZS"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZDdSZQax"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B636F159598
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 01:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A771215B113
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 01:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722994488; cv=none; b=CbLckFCzAHJsGeBwOhuNiclJodiOPFsegXH8T3vK5XUmy8QnYIMA3vPzzseb9ziZkn+GHtlrhDe9wpNxHyOaMBt+xdsODplQqeACHNhxuFtd/0mixZomTybkJWZSDqAS+5YlIyVlEVJ/OyTuxsmGA5jJSQurX7FPFMDc6afgRFQ=
+	t=1722994582; cv=none; b=e49cBQs/xSW58QX0IY/KTsjhzOt0TBGjaN2Bxmti5jjO6efXbn0kADBmF52X140DYxnQxbFSXt3NugNESQchOT9C3D22sICs/CSMha1pF9ZaqLyq0f0VRsnzEJ2XV7Soe6DSSnS6je8IphgtoGfg++rzsOQT4AUDzTOsGmrPRTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722994488; c=relaxed/simple;
-	bh=roDbgKnN4jwF5bZ+MI0OwImeNYhSYwb7VCiHMd9nZ68=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lmsfn07OWXUMRVOcp7eqWlZMX0ZgGj2UexP0xAQBIdkC0KHEen5bJ32rJV9VA4lzp8iVSEySiZkyJT1X2ysTtyR3j1HUymAW3ASWYIqMY2k4bTqVR16rDfsFjxm7NxMsF0DpWSeh0AYsQyfqGk0kupDiCpTAgzQmg6TcuSVqwVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KRSsPOZS; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fee6435a34so12732595ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 18:34:45 -0700 (PDT)
+	s=arc-20240116; t=1722994582; c=relaxed/simple;
+	bh=dAx1wJjnC55G7JZp/KeV7qVIwoD2n/XPZSykS5/OZVM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I3OGmuDQqlC3wLlHRmvcO+svThDhVxQGULuXue6STyONzYqyGvVd5/ZWLUW60jgjFwP0/X5tfGmTXgft2NBCJgI+b4qh8kH/F6b1QOvUqxMgb2GefbvXtW9hWKVYHqLj1HV2KM9N/l6iGkl/Qxz+USt0JOjPxz9hdQekbAUlG7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZDdSZQax; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-691c85525ebso11643737b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 18:36:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722994485; x=1723599285; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1722994580; x=1723599380; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NmSjhXOFQYFO7KmqcvsNGpWkpKulwZvFPktcub+aRMA=;
-        b=KRSsPOZSjO/N+JJ+DZERy9gCaJ5/Pj0oo1hpKKOZXzsjWKuq9+8PnkSnJUtIFBiDo3
-         GX5pHnmCsPuPb+1Rf3tIiArvXLMPpA+UCEx7opDkj18/DRQx3SlTVfJB1o9SM9j1b8CW
-         KsRcqr58zMI26mYzqsEI/W3F7jUNEdryV6/hGGuha11SQfnLs98e/dJDYWv035i5X0ob
-         DEk2mxDQrQ8Kn7ui+E/vzYORFQNf9GPJ+9LfbkPzjYhM+t5ZciBZur+O8JN/qD14tb69
-         FxaYJ448ti1nhG6SXMfH8gVCCydUnnui4K9BLd2YIXdnW2LSycjKBFyfqLC4CbHakXhj
-         QBnw==
+        bh=Tdl7f0aHz3AZhx8k9i5pXOhQEPNy1w2diIjEuj/AMss=;
+        b=ZDdSZQaxffw9MsCqddj2SdDhaWOXYUMNoT8GFzkef/aPr8uonW1w0yCN2kWuu5usW0
+         QRIqjYq+dPR1gVdFIXSba3F8+OOQEFPQXRH2bqbODOYZl/0/h1lnOABM+Z4AjKIYPH6a
+         Y6CSiYnvPZI8yI51sctV/LLdKXRGvkKDPJWBefnkX1fUCew5sKq5VUe72bC5aqGggqfj
+         1+6VTjiGi/dRUBHkwxG6p/dA1m1dUGy2Ed2esG8akqgerM8d2o2+w6mAgt3ZtY7mfhRl
+         Dy+cs7+J6eD0MxRhRHLzVhV5MVU2KhXNLWmjKq7Z2erw4UiGbpEgYetVQYvT85MeaBLP
+         ITGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722994485; x=1723599285;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722994580; x=1723599380;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NmSjhXOFQYFO7KmqcvsNGpWkpKulwZvFPktcub+aRMA=;
-        b=vk5l6wQ36AnfrH5Cm4QFbzfDkfhhKZQjjBj5duO8k6iU6zVkIYxzl4Zq9NzuM1weKB
-         sHqVlLgg6eLbjSL7T8AJg8DXhLRMqfsUKKbFqEAm1hzkMm2pFiHos17+++pw3NOuxxrT
-         ZRIWtGm2YGPtnbCJqX41IHiMi6O6F/9i4tZ6MxeIclgy0kt93Yocivw3/BFJSfFTE9At
-         s+2Mhu+3BTQoTnxC4s2HYSHCpJfYnLihjHs9VRbPIFDExtjxtnOPlnvASP51UNHM9Ydo
-         9iWEiGJOmxBdDDAWSTlBvqLGyaK6m164LFDytWB09kYrdJfbBBIqipGQKtoAssligjQW
-         /v6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXjIM9H5pdJb56b99rD0olK2oB/D+YH/tWiT435q+Fu/LX8yMlBn9G6TIGWfxe3+RWVFqKHnVBEi7ku+mvjvVR7ea+9YPoU7DWCpdcB
-X-Gm-Message-State: AOJu0YyCZZQI5oGWzAq1D2FMFzIkTNj80DO0QrOuz93eyYwbPE0arhy1
-	7PoUqrJBJKvEcHWfYCyfeHvZ75g11ZVRA+ECgwuLJBhNOUwKnu6u
-X-Google-Smtp-Source: AGHT+IFMTS9jExx+YVhXbLvb9JOGGwlgAP4I8XBRzhl0MpBwTpvZJDxb0PL1WizgxCqELJOi2jMH2g==
-X-Received: by 2002:a17:903:32ce:b0:1fb:8cab:ccc9 with SMTP id d9443c01a7336-1ff573cca00mr163113095ad.45.1722994484816;
-        Tue, 06 Aug 2024 18:34:44 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f21de1sm93829745ad.25.2024.08.06.18.34.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 18:34:44 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: 21cnbao@gmail.com
-Cc: akpm@linux-foundation.org,
-	chrisl@kernel.org,
-	david@redhat.com,
-	hughd@google.com,
-	kaleshsingh@google.com,
-	kasong@tencent.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	ryan.roberts@arm.com,
-	v-songbaohua@oppo.com,
-	ying.huang@intel.com
-Subject: Re: [PATCH] mm: attempt to batch free swap entries for zap_pte_range()
-Date: Wed,  7 Aug 2024 13:34:26 +1200
-Message-Id: <20240807013427.103571-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAGsJ_4wjFS9Yr=vb3kPWpfCrxn58AE7VifrwcvAYvMPfsC_KEg@mail.gmail.com>
-References: <CAGsJ_4wjFS9Yr=vb3kPWpfCrxn58AE7VifrwcvAYvMPfsC_KEg@mail.gmail.com>
+        bh=Tdl7f0aHz3AZhx8k9i5pXOhQEPNy1w2diIjEuj/AMss=;
+        b=OzD5Xr5u46tw8tLaiJ2XS+i5dmEjIl1TJNmxRwKl11tIPodwD5E9bh676xOb3Cs9sa
+         Ucl3oJL1XclhUoh0gNn+MrL+K1lu+cj6p2LPy9k7QT19yVJsT7c+wcK8QWxk5hNH5y1E
+         +ph3LSh73BaQBkKjN83qvJKQ91r45rIJ3HA73fPswa7FSPVt81y6aWPR8v2yyVhwaqDX
+         dfMcKyc+4Piu8aNJBJBqRZFQev7XTTY8Es+vya1U3o9+9OKMItQ7jKmMShbQl3f+VKDT
+         lve3Fjb1KsYyUNQusLsYgIFgTGGgvLMPtZiuX5U/qhpO8/sOoVbme6Vl0Q3chZs8NzLu
+         g01g==
+X-Forwarded-Encrypted: i=1; AJvYcCVyqoGoOJVT5vRY1EqiggGX5+MionPW3DCghGjXjfxGmmGibyJK7vDlkxQiIP8fiwBQWreVj28MQ0/EKBdsG0OvC20fA62w21JYENQ5
+X-Gm-Message-State: AOJu0YxWPEy8NgI9XI49ozJx8MekgE9lzQbZWyoifOfywlEANp3waNOc
+	Fi5UrhRM/7jfH/+AFrHMjdeCbtBQkItq1aiTS725mVNf33YDgmAGdTXZbbSVx+Gvac62v1Uy28Q
+	oPIFtfcy9G+GR1yDRxAwQdYS5JIePwSGoK76p
+X-Google-Smtp-Source: AGHT+IFk3dCJxraH2ciFb+NG/euaLvoHKlcgNrXp/rfqyOzUfalif22QDUxbyd8TLmYeOKi9XlF0kRESFmAvG4N7C7o=
+X-Received: by 2002:a05:690c:2910:b0:632:77ca:dafd with SMTP id
+ 00721157ae682-6994e688610mr3940887b3.10.1722994579240; Tue, 06 Aug 2024
+ 18:36:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <Zo1hBFS7c_J-Yx-7@casper.infradead.org> <20240710091631.GT27299@noisy.programming.kicks-ass.net>
+ <20240710094013.GF28838@noisy.programming.kicks-ass.net> <CAJuCfpF3eSwW_Z48e0bykCh=8eohAuACxjXBbUV_sjrVwezxdw@mail.gmail.com>
+ <CAEf4BzZPGG9_P9EWosREOw8owT6+qawmzYr0EJhOZn8khNn9NQ@mail.gmail.com>
+ <CAJuCfpELNoDrVyyNV+fuB7ju77pqyj0rD0gOkLVX+RHKTxXGCA@mail.gmail.com>
+ <ZqRtcZHWFfUf6dfi@casper.infradead.org> <20240730131058.GN33588@noisy.programming.kicks-ass.net>
+ <CAJuCfpFUQFfgx0BWdkNTAiOhBpqmd02zarC0y38gyB5OPc0wRA@mail.gmail.com>
+ <CAEf4BzavWOgCLQoNdmPyyqHcm7gY5USKU5f1JWfyaCbuc_zVAA@mail.gmail.com>
+ <20240803085312.GP39708@noisy.programming.kicks-ass.net> <CAEf4BzYPpkhKtuaT-EbyKeB13-uBeYf8LjR9CB=xaXYHnwsyAQ@mail.gmail.com>
+ <CAEf4BzZ26FNTguRh_X9_5eQZvOeKb+c-o3mxSzoM2+TF3NqaWA@mail.gmail.com>
+In-Reply-To: <CAEf4BzZ26FNTguRh_X9_5eQZvOeKb+c-o3mxSzoM2+TF3NqaWA@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 6 Aug 2024 18:36:06 -0700
+Message-ID: <CAJuCfpFqEjG7HCx1F=Q3fScYAhaAou0Un2SFpibimkxZr7Jsbw@mail.gmail.com>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, rostedt@goodmis.org, 
+	Matthew Wilcox <willy@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org, andrii@kernel.org, 
+	linux-kernel@vger.kernel.org, oleg@redhat.com, jolsa@kernel.org, clm@meta.com, 
+	bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 7, 2024 at 10:23 AM Barry Song <21cnbao@gmail.com> wrote:
+On Mon, Aug 5, 2024 at 9:08=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
 >
-> On Wed, Aug 7, 2024 at 6:41 AM Andrew Morton <akpm@linux-foundation.org> wrote:
+> On Sun, Aug 4, 2024 at 4:22=E2=80=AFPM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
 > >
-> > On Wed, 7 Aug 2024 04:44:44 +0800 Barry Song <21cnbao@gmail.com> wrote:
-> >
-> > > > > +static bool try_batch_swap_entries_free(struct swap_info_struct *p,
-> > > >
-> > > > Why call it "p" here and not "si" like in the other code you are touching?
+> > On Sat, Aug 3, 2024 at 1:53=E2=80=AFAM Peter Zijlstra <peterz@infradead=
+.org> wrote:
 > > >
-> > > that is because I found other _free_ functions are all using "p":
+> > > On Fri, Aug 02, 2024 at 10:47:15PM -0700, Andrii Nakryiko wrote:
+> > >
+> > > > Is there any reason why the approach below won't work?
+> > >
+> > > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > > > index 8be9e34e786a..e21b68a39f13 100644
+> > > > --- a/kernel/events/uprobes.c
+> > > > +++ b/kernel/events/uprobes.c
+> > > > @@ -2251,6 +2251,52 @@ static struct uprobe
+> > > > *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
+> > > >         struct uprobe *uprobe =3D NULL;
+> > > >         struct vm_area_struct *vma;
+> > > >
+> > > > +#ifdef CONFIG_PER_VMA_LOCK
+> > > > +       vm_flags_t flags =3D VM_HUGETLB | VM_MAYEXEC | VM_MAYSHARE,=
+ vm_flags;
+> > > > +       struct file *vm_file;
+> > > > +       struct inode *vm_inode;
+> > > > +       unsigned long vm_pgoff, vm_start, vm_end;
+> > > > +       int vm_lock_seq;
+> > > > +       loff_t offset;
+> > > > +
+> > > > +       rcu_read_lock();
+> > > > +
+> > > > +       vma =3D vma_lookup(mm, bp_vaddr);
+> > > > +       if (!vma)
+> > > > +               goto retry_with_lock;
+> > > > +
+> > > > +       vm_lock_seq =3D READ_ONCE(vma->vm_lock_seq);
+> > >
+> > > So vma->vm_lock_seq is only updated on vma_start_write()
 > >
-> > `p' sucks.  "pointer to something".  It's just lazy.  In this context, "si"
-> > has meaning; lots of it.
+> > yep, I've looked a bit more at the implementation now
+> >
+> > >
+> > > > +
+> > > > +       vm_file =3D READ_ONCE(vma->vm_file);
+> > > > +       vm_flags =3D READ_ONCE(vma->vm_flags);
+> > > > +       if (!vm_file || (vm_flags & flags) !=3D VM_MAYEXEC)
+> > > > +               goto retry_with_lock;
+> > > > +
+> > > > +       vm_inode =3D READ_ONCE(vm_file->f_inode);
+> > > > +       vm_pgoff =3D READ_ONCE(vma->vm_pgoff);
+> > > > +       vm_start =3D READ_ONCE(vma->vm_start);
+> > > > +       vm_end =3D READ_ONCE(vma->vm_end);
+> > >
+> > > None of those are written with WRITE_ONCE(), so this buys you nothing=
+.
+> > > Compiler could be updating them one byte at a time while you load som=
+e
+> > > franken-update.
+> > >
+> > > Also, if you're in the middle of split_vma() you might not get a
+> > > consistent set.
+> >
+> > I used READ_ONCE() only to prevent the compiler from re-reading those
+> > values. We assume those values are garbage anyways and double-check
+> > everything, so lack of WRITE_ONCE doesn't matter. Same for
+> > inconsistency if we are in the middle of split_vma().
+> >
+> > We use the result of all this speculative calculation only if we find
+> > a valid uprobe (which could be a false positive) *and* if we detect
+> > that nothing about VMA changed (which is what I got wrong, but
+> > honestly I was actually betting on others to help me get this right
+> > anyways).
+> >
+> > >
+> > > > +       if (bp_vaddr < vm_start || bp_vaddr >=3D vm_end)
+> > > > +               goto retry_with_lock;
+> > > > +
+> > > > +       offset =3D (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr - v=
+m_start);
+> > > > +       uprobe =3D find_uprobe_rcu(vm_inode, offset);
+> > > > +       if (!uprobe)
+> > > > +               goto retry_with_lock;
+> > > > +
+> > > > +       /* now double check that nothing about VMA changed */
+> > > > +       if (vm_lock_seq !=3D READ_ONCE(vma->vm_lock_seq))
+> > > > +               goto retry_with_lock;
+> > >
+> > > Since vma->vma_lock_seq is only ever updated at vma_start_write() you=
+'re
+> > > checking you're in or after the same modification cycle.
+> > >
+> > > The point of sequence locks is to check you *IN* a modification cycle
+> > > and retry if you are. You're now explicitly continuing if you're in a
+> > > modification.
+> > >
+> > > You really need:
+> > >
+> > >    seq++;
+> > >    wmb();
+> > >
+> > >    ... do modification
+> > >
+> > >    wmb();
+> > >    seq++;
+> > >
+> > > vs
+> > >
+> > >   do {
+> > >           s =3D READ_ONCE(seq) & ~1;
+> > >           rmb();
+> > >
+> > >           ... read stuff
+> > >
+> > >   } while (rmb(), seq !=3D s);
+> > >
+> > >
+> > > The thing to note is that seq will be odd while inside a modification
+> > > and even outside, further if the pre and post seq are both even but n=
+ot
+> > > identical, you've crossed a modification and also need to retry.
+> > >
+> >
+> > Ok, I don't think I got everything you have written above, sorry. But
+> > let me explain what I think I need to do and please correct what I
+> > (still) got wrong.
+> >
+> > a) before starting speculation,
+> >   a.1) read and remember current->mm->mm_lock_seq (using
+> > smp_load_acquire(), right?)
+> >   a.2) read vma->vm_lock_seq (using smp_load_acquire() I presume)
+> >   a.3) if vm_lock_seq is odd, we are already modifying VMA, so bail
+> > out, try with proper mmap_lock
+> > b) proceed with the inode pointer fetch and offset calculation as I've =
+coded it
+> > c) lookup uprobe by inode+offset, if failed -- bail out (if succeeded,
+> > this could still be wrong)
+> > d) re-read vma->vm_lock_seq, if it changed, we started modifying/have
+> > already modified VMA, bail out
+> > e) re-read mm->mm_lock_seq, if that changed -- presume VMA got
+> > modified, bail out
+> >
+> > At this point we should have a guarantee that nothing about mm
+> > changed, nor that VMA started being modified during our speculative
+> > calculation+uprobe lookup. So if we found a valid uprobe, it must be a
+> > correct one that we need.
+> >
+> > Is that enough? Any holes in the approach? And thanks for thoroughly
+> > thinking about this, btw!
 >
-> Agreed. I'll also clean up the existing "p" in those _free_ functions
-> while sending
-> v2.
+> Ok, with slight modifications to the details of the above (e.g., there
+> is actually no "odd means VMA is being modified" thing with
+> vm_lock_seq),
 
-well. we are having "p" everywhere. will be a separate patch for this cleanup:
+Correct. Instead of that (vm_lock_seq->vm_lock_seq =3D=3D mm->mm_lock_seq)
+means your VMA is write-locked and is being modified.
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index ea023fc25d08..d130cce3a02d 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -532,7 +532,7 @@ static void free_cluster(struct swap_info_struct *si, struct swap_cluster_info *
-  * added to free cluster list and its usage counter will be increased by 1.
-  * Only used for initialization.
-  */
--static void inc_cluster_info_page(struct swap_info_struct *p,
-+static void inc_cluster_info_page(struct swap_info_struct *si,
- 	struct swap_cluster_info *cluster_info, unsigned long page_nr)
- {
- 	unsigned long idx = page_nr / SWAPFILE_CLUSTER;
-@@ -553,28 +553,28 @@ static void inc_cluster_info_page(struct swap_info_struct *p,
-  * which means no page in the cluster is in use, we can optionally discard
-  * the cluster and add it to free cluster list.
-  */
--static void dec_cluster_info_page(struct swap_info_struct *p,
-+static void dec_cluster_info_page(struct swap_info_struct *si,
- 				  struct swap_cluster_info *ci, int nr_pages)
- {
--	if (!p->cluster_info)
-+	if (!si->cluster_info)
- 		return;
- 
- 	VM_BUG_ON(ci->count < nr_pages);
- 	VM_BUG_ON(cluster_is_free(ci));
--	lockdep_assert_held(&p->lock);
-+	lockdep_assert_held(&si->lock);
- 	lockdep_assert_held(&ci->lock);
- 	ci->count -= nr_pages;
- 
- 	if (!ci->count) {
--		free_cluster(p, ci);
-+		free_cluster(si, ci);
- 		return;
- 	}
- 
- 	if (!(ci->flags & CLUSTER_FLAG_NONFULL)) {
- 		VM_BUG_ON(ci->flags & CLUSTER_FLAG_FREE);
- 		if (ci->flags & CLUSTER_FLAG_FRAG)
--			p->frag_cluster_nr[ci->order]--;
--		list_move_tail(&ci->list, &p->nonfull_clusters[ci->order]);
-+			si->frag_cluster_nr[ci->order]--;
-+		list_move_tail(&ci->list, &si->nonfull_clusters[ci->order]);
- 		ci->flags = CLUSTER_FLAG_NONFULL;
- 	}
- }
-@@ -872,19 +872,19 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- 	return found;
- }
- 
--static void __del_from_avail_list(struct swap_info_struct *p)
-+static void __del_from_avail_list(struct swap_info_struct *si)
- {
- 	int nid;
- 
--	assert_spin_locked(&p->lock);
-+	assert_spin_locked(&si->lock);
- 	for_each_node(nid)
--		plist_del(&p->avail_lists[nid], &swap_avail_heads[nid]);
-+		plist_del(&si->avail_lists[nid], &swap_avail_heads[nid]);
- }
- 
--static void del_from_avail_list(struct swap_info_struct *p)
-+static void del_from_avail_list(struct swap_info_struct *si)
- {
- 	spin_lock(&swap_avail_lock);
--	__del_from_avail_list(p);
-+	__del_from_avail_list(si);
- 	spin_unlock(&swap_avail_lock);
- }
- 
-@@ -905,13 +905,13 @@ static void swap_range_alloc(struct swap_info_struct *si, unsigned long offset,
- 	}
- }
- 
--static void add_to_avail_list(struct swap_info_struct *p)
-+static void add_to_avail_list(struct swap_info_struct *si)
- {
- 	int nid;
- 
- 	spin_lock(&swap_avail_lock);
- 	for_each_node(nid)
--		plist_add(&p->avail_lists[nid], &swap_avail_heads[nid]);
-+		plist_add(&si->avail_lists[nid], &swap_avail_heads[nid]);
- 	spin_unlock(&swap_avail_lock);
- }
- 
-@@ -1291,22 +1291,22 @@ int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
- 
- static struct swap_info_struct *_swap_info_get(swp_entry_t entry)
- {
--	struct swap_info_struct *p;
-+	struct swap_info_struct *si;
- 	unsigned long offset;
- 
- 	if (!entry.val)
- 		goto out;
--	p = swp_swap_info(entry);
--	if (!p)
-+	si = swp_swap_info(entry);
-+	if (!si)
- 		goto bad_nofile;
--	if (data_race(!(p->flags & SWP_USED)))
-+	if (data_race(!(si->flags & SWP_USED)))
- 		goto bad_device;
- 	offset = swp_offset(entry);
--	if (offset >= p->max)
-+	if (offset >= si->max)
- 		goto bad_offset;
--	if (data_race(!p->swap_map[swp_offset(entry)]))
-+	if (data_race(!si->swap_map[swp_offset(entry)]))
- 		goto bad_free;
--	return p;
-+	return si;
- 
- bad_free:
- 	pr_err("%s: %s%08lx\n", __func__, Unused_offset, entry.val);
-@@ -1339,14 +1339,14 @@ static struct swap_info_struct *swap_info_get_cont(swp_entry_t entry,
- 	return p;
- }
- 
--static unsigned char __swap_entry_free_locked(struct swap_info_struct *p,
-+static unsigned char __swap_entry_free_locked(struct swap_info_struct *si,
- 					      unsigned long offset,
- 					      unsigned char usage)
- {
- 	unsigned char count;
- 	unsigned char has_cache;
- 
--	count = p->swap_map[offset];
-+	count = si->swap_map[offset];
- 
- 	has_cache = count & SWAP_HAS_CACHE;
- 	count &= ~SWAP_HAS_CACHE;
-@@ -1362,7 +1362,7 @@ static unsigned char __swap_entry_free_locked(struct swap_info_struct *p,
- 		count = 0;
- 	} else if ((count & ~COUNT_CONTINUED) <= SWAP_MAP_MAX) {
- 		if (count == COUNT_CONTINUED) {
--			if (swap_count_continued(p, offset, count))
-+			if (swap_count_continued(si, offset, count))
- 				count = SWAP_MAP_MAX | COUNT_CONTINUED;
- 			else
- 				count = SWAP_MAP_MAX;
-@@ -1372,9 +1372,9 @@ static unsigned char __swap_entry_free_locked(struct swap_info_struct *p,
- 
- 	usage = count | has_cache;
- 	if (usage)
--		WRITE_ONCE(p->swap_map[offset], usage);
-+		WRITE_ONCE(si->swap_map[offset], usage);
- 	else
--		WRITE_ONCE(p->swap_map[offset], SWAP_HAS_CACHE);
-+		WRITE_ONCE(si->swap_map[offset], SWAP_HAS_CACHE);
- 
- 	return usage;
- }
-@@ -1453,16 +1453,16 @@ struct swap_info_struct *get_swap_device(swp_entry_t entry)
- 	return NULL;
- }
- 
--static unsigned char __swap_entry_free(struct swap_info_struct *p,
-+static unsigned char __swap_entry_free(struct swap_info_struct *si,
- 				       swp_entry_t entry)
- {
- 	struct swap_cluster_info *ci;
- 	unsigned long offset = swp_offset(entry);
- 	unsigned char usage;
- 
--	ci = lock_cluster_or_swap_info(p, offset);
--	usage = __swap_entry_free_locked(p, offset, 1);
--	unlock_cluster_or_swap_info(p, ci);
-+	ci = lock_cluster_or_swap_info(si, offset);
-+	usage = __swap_entry_free_locked(si, offset, 1);
-+	unlock_cluster_or_swap_info(si, ci);
- 	if (!usage)
- 		free_swap_slot(entry);
- 
-@@ -1473,27 +1473,27 @@ static unsigned char __swap_entry_free(struct swap_info_struct *p,
-  * Drop the last HAS_CACHE flag of swap entries, caller have to
-  * ensure all entries belong to the same cgroup.
-  */
--static void swap_entry_range_free(struct swap_info_struct *p, swp_entry_t entry,
-+static void swap_entry_range_free(struct swap_info_struct *si, swp_entry_t entry,
- 				  unsigned int nr_pages)
- {
- 	unsigned long offset = swp_offset(entry);
--	unsigned char *map = p->swap_map + offset;
-+	unsigned char *map = si->swap_map + offset;
- 	unsigned char *map_end = map + nr_pages;
- 	struct swap_cluster_info *ci;
- 
--	ci = lock_cluster(p, offset);
-+	ci = lock_cluster(si, offset);
- 	do {
- 		VM_BUG_ON(*map != SWAP_HAS_CACHE);
- 		*map = 0;
- 	} while (++map < map_end);
--	dec_cluster_info_page(p, ci, nr_pages);
-+	dec_cluster_info_page(si, ci, nr_pages);
- 	unlock_cluster(ci);
- 
- 	mem_cgroup_uncharge_swap(entry, nr_pages);
--	swap_range_free(p, offset, nr_pages);
-+	swap_range_free(si, offset, nr_pages);
- }
- 
--static void cluster_swap_free_nr(struct swap_info_struct *sis,
-+static void cluster_swap_free_nr(struct swap_info_struct *si,
- 		unsigned long offset, int nr_pages,
- 		unsigned char usage)
- {
-@@ -1501,26 +1501,26 @@ static void cluster_swap_free_nr(struct swap_info_struct *sis,
- 	DECLARE_BITMAP(to_free, BITS_PER_LONG) = { 0 };
- 	int i, nr;
- 
--	ci = lock_cluster_or_swap_info(sis, offset);
-+	ci = lock_cluster_or_swap_info(si, offset);
- 	while (nr_pages) {
- 		nr = min(BITS_PER_LONG, nr_pages);
- 		for (i = 0; i < nr; i++) {
--			if (!__swap_entry_free_locked(sis, offset + i, usage))
-+			if (!__swap_entry_free_locked(si, offset + i, usage))
- 				bitmap_set(to_free, i, 1);
- 		}
- 		if (!bitmap_empty(to_free, BITS_PER_LONG)) {
--			unlock_cluster_or_swap_info(sis, ci);
-+			unlock_cluster_or_swap_info(si, ci);
- 			for_each_set_bit(i, to_free, BITS_PER_LONG)
--				free_swap_slot(swp_entry(sis->type, offset + i));
-+				free_swap_slot(swp_entry(si->type, offset + i));
- 			if (nr == nr_pages)
- 				return;
- 			bitmap_clear(to_free, 0, BITS_PER_LONG);
--			ci = lock_cluster_or_swap_info(sis, offset);
-+			ci = lock_cluster_or_swap_info(si, offset);
- 		}
- 		offset += nr;
- 		nr_pages -= nr;
- 	}
--	unlock_cluster_or_swap_info(sis, ci);
-+	unlock_cluster_or_swap_info(si, ci);
- }
- 
- /*
-@@ -1646,28 +1646,28 @@ int swap_swapcount(struct swap_info_struct *si, swp_entry_t entry)
- int swp_swapcount(swp_entry_t entry)
- {
- 	int count, tmp_count, n;
--	struct swap_info_struct *p;
-+	struct swap_info_struct *si;
- 	struct swap_cluster_info *ci;
- 	struct page *page;
- 	pgoff_t offset;
- 	unsigned char *map;
- 
--	p = _swap_info_get(entry);
--	if (!p)
-+	si = _swap_info_get(entry);
-+	if (!si)
- 		return 0;
- 
- 	offset = swp_offset(entry);
- 
--	ci = lock_cluster_or_swap_info(p, offset);
-+	ci = lock_cluster_or_swap_info(si, offset);
- 
--	count = swap_count(p->swap_map[offset]);
-+	count = swap_count(si->swap_map[offset]);
- 	if (!(count & COUNT_CONTINUED))
- 		goto out;
- 
- 	count &= ~COUNT_CONTINUED;
- 	n = SWAP_MAP_MAX + 1;
- 
--	page = vmalloc_to_page(p->swap_map + offset);
-+	page = vmalloc_to_page(si->swap_map + offset);
- 	offset &= ~PAGE_MASK;
- 	VM_BUG_ON(page_private(page) != SWP_CONTINUED);
- 
-@@ -1681,7 +1681,7 @@ int swp_swapcount(swp_entry_t entry)
- 		n *= (SWAP_CONT_MAX + 1);
- 	} while (tmp_count & COUNT_CONTINUED);
- out:
--	unlock_cluster_or_swap_info(p, ci);
-+	unlock_cluster_or_swap_info(si, ci);
- 	return count;
- }
- 
-@@ -2542,52 +2542,52 @@ static int setup_swap_extents(struct swap_info_struct *sis, sector_t *span)
- 	return generic_swapfile_activate(sis, swap_file, span);
- }
- 
--static int swap_node(struct swap_info_struct *p)
-+static int swap_node(struct swap_info_struct *si)
- {
- 	struct block_device *bdev;
- 
--	if (p->bdev)
--		bdev = p->bdev;
-+	if (si->bdev)
-+		bdev = si->bdev;
- 	else
--		bdev = p->swap_file->f_inode->i_sb->s_bdev;
-+		bdev = si->swap_file->f_inode->i_sb->s_bdev;
- 
- 	return bdev ? bdev->bd_disk->node_id : NUMA_NO_NODE;
- }
- 
--static void setup_swap_info(struct swap_info_struct *p, int prio,
-+static void setup_swap_info(struct swap_info_struct *si, int prio,
- 			    unsigned char *swap_map,
- 			    struct swap_cluster_info *cluster_info)
- {
- 	int i;
- 
- 	if (prio >= 0)
--		p->prio = prio;
-+		si->prio = prio;
- 	else
--		p->prio = --least_priority;
-+		si->prio = --least_priority;
- 	/*
- 	 * the plist prio is negated because plist ordering is
- 	 * low-to-high, while swap ordering is high-to-low
- 	 */
--	p->list.prio = -p->prio;
-+	si->list.prio = -si->prio;
- 	for_each_node(i) {
--		if (p->prio >= 0)
--			p->avail_lists[i].prio = -p->prio;
-+		if (si->prio >= 0)
-+			si->avail_lists[i].prio = -si->prio;
- 		else {
--			if (swap_node(p) == i)
--				p->avail_lists[i].prio = 1;
-+			if (swap_node(si) == i)
-+				si->avail_lists[i].prio = 1;
- 			else
--				p->avail_lists[i].prio = -p->prio;
-+				si->avail_lists[i].prio = -si->prio;
- 		}
- 	}
--	p->swap_map = swap_map;
--	p->cluster_info = cluster_info;
-+	si->swap_map = swap_map;
-+	si->cluster_info = cluster_info;
- }
- 
--static void _enable_swap_info(struct swap_info_struct *p)
-+static void _enable_swap_info(struct swap_info_struct *si)
- {
--	p->flags |= SWP_WRITEOK;
--	atomic_long_add(p->pages, &nr_swap_pages);
--	total_swap_pages += p->pages;
-+	si->flags |= SWP_WRITEOK;
-+	atomic_long_add(si->pages, &nr_swap_pages);
-+	total_swap_pages += si->pages;
- 
- 	assert_spin_locked(&swap_lock);
- 	/*
-@@ -2600,40 +2600,40 @@ static void _enable_swap_info(struct swap_info_struct *p)
- 	 * which allocates swap pages from the highest available priority
- 	 * swap_info_struct.
- 	 */
--	plist_add(&p->list, &swap_active_head);
-+	plist_add(&si->list, &swap_active_head);
- 
- 	/* add to available list iff swap device is not full */
--	if (p->highest_bit)
--		add_to_avail_list(p);
-+	if (si->highest_bit)
-+		add_to_avail_list(si);
- }
- 
--static void enable_swap_info(struct swap_info_struct *p, int prio,
-+static void enable_swap_info(struct swap_info_struct *si, int prio,
- 				unsigned char *swap_map,
- 				struct swap_cluster_info *cluster_info)
- {
- 	spin_lock(&swap_lock);
--	spin_lock(&p->lock);
--	setup_swap_info(p, prio, swap_map, cluster_info);
--	spin_unlock(&p->lock);
-+	spin_lock(&si->lock);
-+	setup_swap_info(si, prio, swap_map, cluster_info);
-+	spin_unlock(&si->lock);
- 	spin_unlock(&swap_lock);
- 	/*
- 	 * Finished initializing swap device, now it's safe to reference it.
- 	 */
--	percpu_ref_resurrect(&p->users);
-+	percpu_ref_resurrect(&si->users);
- 	spin_lock(&swap_lock);
--	spin_lock(&p->lock);
--	_enable_swap_info(p);
--	spin_unlock(&p->lock);
-+	spin_lock(&si->lock);
-+	_enable_swap_info(si);
-+	spin_unlock(&si->lock);
- 	spin_unlock(&swap_lock);
- }
- 
--static void reinsert_swap_info(struct swap_info_struct *p)
-+static void reinsert_swap_info(struct swap_info_struct *si)
- {
- 	spin_lock(&swap_lock);
--	spin_lock(&p->lock);
--	setup_swap_info(p, p->prio, p->swap_map, p->cluster_info);
--	_enable_swap_info(p);
--	spin_unlock(&p->lock);
-+	spin_lock(&si->lock);
-+	setup_swap_info(si, si->prio, si->swap_map, si->cluster_info);
-+	_enable_swap_info(si);
-+	spin_unlock(&si->lock);
- 	spin_unlock(&swap_lock);
- }
- 
-@@ -3019,20 +3019,20 @@ static struct swap_info_struct *alloc_swap_info(void)
- 	return p;
- }
- 
--static int claim_swapfile(struct swap_info_struct *p, struct inode *inode)
-+static int claim_swapfile(struct swap_info_struct *si, struct inode *inode)
- {
- 	if (S_ISBLK(inode->i_mode)) {
--		p->bdev = I_BDEV(inode);
-+		si->bdev = I_BDEV(inode);
- 		/*
- 		 * Zoned block devices contain zones that have a sequential
- 		 * write only restriction.  Hence zoned block devices are not
- 		 * suitable for swapping.  Disallow them here.
- 		 */
--		if (bdev_is_zoned(p->bdev))
-+		if (bdev_is_zoned(si->bdev))
- 			return -EINVAL;
--		p->flags |= SWP_BLKDEV;
-+		si->flags |= SWP_BLKDEV;
- 	} else if (S_ISREG(inode->i_mode)) {
--		p->bdev = inode->i_sb->s_bdev;
-+		si->bdev = inode->i_sb->s_bdev;
- 	}
- 
- 	return 0;
-@@ -3067,7 +3067,7 @@ __weak unsigned long arch_max_swapfile_size(void)
- 	return generic_max_swapfile_size();
- }
- 
--static unsigned long read_swap_header(struct swap_info_struct *p,
-+static unsigned long read_swap_header(struct swap_info_struct *si,
- 					union swap_header *swap_header,
- 					struct inode *inode)
- {
-@@ -3098,9 +3098,9 @@ static unsigned long read_swap_header(struct swap_info_struct *p,
- 		return 0;
- 	}
- 
--	p->lowest_bit  = 1;
--	p->cluster_next = 1;
--	p->cluster_nr = 0;
-+	si->lowest_bit  = 1;
-+	si->cluster_next = 1;
-+	si->cluster_nr = 0;
- 
- 	maxpages = swapfile_maximum_size;
- 	last_page = swap_header->info.last_page;
-@@ -3118,7 +3118,7 @@ static unsigned long read_swap_header(struct swap_info_struct *p,
- 		if ((unsigned int)maxpages == 0)
- 			maxpages = UINT_MAX;
- 	}
--	p->highest_bit = maxpages - 1;
-+	si->highest_bit = maxpages - 1;
- 
- 	if (!maxpages)
- 		return 0;
+> I ended up with the implementation below. Basically we
+> validate that mm->mm_lock_seq didn't change and that vm_lock_seq !=3D
+> mm_lock_seq (which otherwise would mean "VMA is being modified").
 
+Validating that mm->mm_lock_seq did not change does not provide you
+with useful information. It only means that between the point where
+you recorded mm->mm_lock_seq and where you are checking it, there was
+an mmap_write_unlock() or mmap_write_downgrade() call. Your VMA might
+not have even been part of that modification for which mmap_lock was
+taken.
+
+In theory what you need is simpler (simplified code for explanation only):
+
+int vm_lock_seq =3D vma->vm_lock_seq;
+if (vm_lock_seq =3D=3D mm->mm_lock_seq)
+        goto bail_out; /* VMA is write-locked */
+
+/* copy required VMA attributes */
+
+if (vm_lock_seq !=3D vma->vm_lock_seq)
+        goto bail_out; /* VMA got write-locked */
+
+But this would require proper ACQUIRE/RELEASE semantics for
+vma->vm_lock_seq which is currently not there because all reads/writes
+to vma->vm_lock_seq that matter are done under vma->vm_lock->lock
+protection, so additional ordering is not required. If you decide to
+add that semantics for vma->vm_lock_seq, please make sure that
+pagefault path performance does not regress.
+
+> There is a possibility that vm_lock_seq =3D=3D mm_lock_seq just by
+> accident, which is not a correctness problem, we'll just fallback to
+> locked implementation until something about VMA or mm_struct itself
+> changes. Which is fine, and if mm folks ever change this locking
+> schema, this might go away.
 >
-> Thanks
-> Barry
+> If this seems on the right track, I think we can just move
+> mm_start_vma_specuation()/mm_end_vma_speculation() into
+> include/linux/mm.h.
+>
+> And after thinking a bit more about READ_ONCE() usage, I changed them
+> to data_race() to not trigger KCSAN warnings. Initially I kept
+> READ_ONCE() only around vma->vm_file access, but given we never change
+> it until vma is freed and reused (which would be prevented by
+> guard(rcu)), I dropped READ_ONCE() and only added data_race(). And
+> even data_race() is probably not necessary.
+>
+> Anyways, please see the patch below. Would be nice if mm folks
+> (Suren?) could confirm that this is not broken.
+>
+>
+>
+> Author: Andrii Nakryiko <andrii@kernel.org>
+> Date:   Fri Aug 2 22:16:40 2024 -0700
+>
+>     uprobes: add speculative lockless VMA to inode resolution
+>
+>     Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+>
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 3de311c56d47..bee7a929ff02 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -2244,6 +2244,70 @@ static int is_trap_at_addr(struct mm_struct
+> *mm, unsigned long vaddr)
+>         return is_trap_insn(&opcode);
+>  }
+>
+> +#ifdef CONFIG_PER_VMA_LOCK
+> +static inline void mm_start_vma_speculation(struct mm_struct *mm, int
+> *mm_lock_seq)
+> +{
+> +       *mm_lock_seq =3D smp_load_acquire(&mm->mm_lock_seq);
+> +}
+> +
+> +/* returns true if speculation was safe (no mm and vma modification
+> happened) */
+> +static inline bool mm_end_vma_speculation(struct vm_area_struct *vma,
+> int mm_lock_seq)
+> +{
+> +       int mm_seq, vma_seq;
+> +
+> +       mm_seq =3D smp_load_acquire(&vma->vm_mm->mm_lock_seq);
+> +       vma_seq =3D READ_ONCE(vma->vm_lock_seq);
+> +
+> +       return mm_seq =3D=3D mm_lock_seq && vma_seq !=3D mm_seq;
+
+After spending some time on this I think what you do here is
+semantically correct but sub-optimal.
+
+This check means that there was no call to
+mmap_write_unlock()/mmap_write_downgrade() since
+mm_start_vma_speculation() and the vma is not currently locked. To
+unlock a write-locked VMA you do need to call
+map_write_unlock()/mmap_write_downgrade(), so I think this check would
+guarantee that your vma was not locked and modified from under us.
+However this will also trigger false positives if
+mmap_write_unlock()/mmap_write_downgrade() was called but the vma you
+are using was never locked. So, it will bail out more than necessary.
+Maybe it's ok?
+
+> +}
+> +
+> +static struct uprobe *find_active_uprobe_speculative(unsigned long bp_va=
+ddr)
+> +{
+> +       const vm_flags_t flags =3D VM_HUGETLB | VM_MAYEXEC | VM_MAYSHARE;
+> +       struct mm_struct *mm =3D current->mm;
+> +       struct uprobe *uprobe;
+> +       struct vm_area_struct *vma;
+> +       struct file *vm_file;
+> +       struct inode *vm_inode;
+> +       unsigned long vm_pgoff, vm_start;
+> +       int mm_lock_seq;
+> +       loff_t offset;
+> +
+> +       guard(rcu)();
+> +
+> +       mm_start_vma_speculation(mm, &mm_lock_seq);
+> +
+> +       vma =3D vma_lookup(mm, bp_vaddr);
+> +       if (!vma)
+> +               return NULL;
+> +
+> +       vm_file =3D data_race(vma->vm_file);
+> +       if (!vm_file || (vma->vm_flags & flags) !=3D VM_MAYEXEC)
+> +               return NULL;
+> +
+> +       vm_inode =3D data_race(vm_file->f_inode);
+> +       vm_pgoff =3D data_race(vma->vm_pgoff);
+> +       vm_start =3D data_race(vma->vm_start);
+> +
+> +       offset =3D (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vm_star=
+t);
+> +       uprobe =3D find_uprobe_rcu(vm_inode, offset);
+> +       if (!uprobe)
+> +               return NULL;
+> +
+> +       /* now double check that nothing about MM and VMA changed */
+> +       if (!mm_end_vma_speculation(vma, mm_lock_seq))
+> +               return NULL;
+> +
+> +       /* happy case, we speculated successfully */
+> +       return uprobe;
+> +}
+> +#else /* !CONFIG_PER_VMA_LOCK */
+> +static struct uprobe *find_active_uprobe_speculative(unsigned long bp_va=
+ddr)
+> +{
+> +       return NULL;
+> +}
+> +#endif /* CONFIG_PER_VMA_LOCK */
+> +
+>  /* assumes being inside RCU protected region */
+>  static struct uprobe *find_active_uprobe_rcu(unsigned long bp_vaddr,
+> int *is_swbp)
+>  {
+> @@ -2251,6 +2315,10 @@ static struct uprobe
+> *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
+>         struct uprobe *uprobe =3D NULL;
+>         struct vm_area_struct *vma;
+>
+> +       uprobe =3D find_active_uprobe_speculative(bp_vaddr);
+> +       if (uprobe)
+> +               return uprobe;
+> +
+>         mmap_read_lock(mm);
+>         vma =3D vma_lookup(mm, bp_vaddr);
+>         if (vma) {
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index cc760491f201..211a84ee92b4 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -3160,7 +3160,7 @@ void __init proc_caches_init(void)
+>                         NULL);
+>         files_cachep =3D kmem_cache_create("files_cache",
+>                         sizeof(struct files_struct), 0,
+> -                       SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
+> +
+> SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT|SLAB_TYPESAFE_BY_RCU,
+>                         NULL);
+>         fs_cachep =3D kmem_cache_create("fs_cache",
+>                         sizeof(struct fs_struct), 0,
+>
+>
+> >
+> > P.S. This is basically the last big blocker towards linear uprobes
+> > scalability with the number of active CPUs. I have
+> > uretprobe+SRCU+timeout implemented and it seems to work fine, will
+> > post soon-ish.
+> >
+> > P.P.S Also, funny enough, below was another big scalability limiter
+> > (and the last one) :) I'm not sure if we can just drop it, or I should
+> > use per-CPU counter, but with the below change and speculative VMA
+> > lookup (however buggy, works ok for benchmarking), I finally get
+> > linear scaling of uprobe triggering throughput with number of CPUs. We
+> > are very close.
+> >
+> > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> > index f7443e996b1b..64c2bc316a08 100644
+> > --- a/kernel/trace/trace_uprobe.c
+> > +++ b/kernel/trace/trace_uprobe.c
+> > @@ -1508,7 +1508,7 @@ static int uprobe_dispatcher(struct
+> > uprobe_consumer *con, struct pt_regs *regs)
+> >         int ret =3D 0;
+> >
+> >         tu =3D container_of(con, struct trace_uprobe, consumer);
+> > -       tu->nhit++;
+> > +       //tu->nhit++;
+> >
+> >         udd.tu =3D tu;
+> >         udd.bp_addr =3D instruction_pointer(regs);
+> >
+> >
+> > > > +
+> > > > +       /* happy case, we speculated successfully */
+> > > > +       rcu_read_unlock();
+> > > > +       return uprobe;
+> > > > +
+> > > > +retry_with_lock:
+> > > > +       rcu_read_unlock();
+> > > > +       uprobe =3D NULL;
+> > > > +#endif
+> > > > +
+> > > >         mmap_read_lock(mm);
+> > > >         vma =3D vma_lookup(mm, bp_vaddr);
+> > > >         if (vma) {
+> > > > diff --git a/kernel/fork.c b/kernel/fork.c
+> > > > index cc760491f201..211a84ee92b4 100644
+> > > > --- a/kernel/fork.c
+> > > > +++ b/kernel/fork.c
+> > > > @@ -3160,7 +3160,7 @@ void __init proc_caches_init(void)
+> > > >                         NULL);
+> > > >         files_cachep =3D kmem_cache_create("files_cache",
+> > > >                         sizeof(struct files_struct), 0,
+> > > > -                       SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
+> > > > + SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT|SLAB_TYPESAFE_BY_RCU,
+> > > >                         NULL);
+> > > >         fs_cachep =3D kmem_cache_create("fs_cache",
+> > > >                         sizeof(struct fs_struct), 0,
 
