@@ -1,466 +1,1091 @@
-Return-Path: <linux-kernel+bounces-278368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4675894AF5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:05:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39C4F94AF5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEC531F2326D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:05:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 430411C21299
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252DF13E039;
-	Wed,  7 Aug 2024 18:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A7E13E3E5;
+	Wed,  7 Aug 2024 18:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1MiEuC7Y"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lvxiRCRf"
+Received: from msa.smtpout.orange.fr (msa-210.smtpout.orange.fr [193.252.23.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DE21A269
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03C11386C6;
+	Wed,  7 Aug 2024 18:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723053907; cv=none; b=HWNGc1ljhHrf63EWhdCnbtNtmhfw3hQZ9BrqE945ZGQVY7mK6Su/7rMcbfQfl3KoOgKNiTNi2v9knknljV04CXx6DGL6Fx+Fu29zSSh2kgkeFo5yaMV3DIbBA3f1k7EGnqPeYqUnmWs9eYM5KnJyGEejKCbJSFNJsyDAjuhEh30=
+	t=1723053968; cv=none; b=YyrHoSeH89KjjrrZ15fnSCRCaujl/VthbkpcDlF9KrLovwnDpkZPuxOfc1cXqrehqA5THTCw7VFT8aBzfREXdB4ZAqf9pJbLONVBIUSwz5PsDjsZrHitOd9STn0qqZ14h03oTRYYD6a3SRUcpyF/3RPp3L3y16w7pU2cbXov580=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723053907; c=relaxed/simple;
-	bh=oRos3Ge80f04MfgtS+swv0jZmGGH/Xfr1xUo/EPATC4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R7y2hShbxqxYBpmnF/jf+zu43AywXd9SxBzK2Nu+wW87pRUHBgCssO7GI2WAh+wcnQzRNGMsKNe7QCq29rMXcW3uOgTm8BR2e3Tn4Le5+xYwQYxWoxpK+XR33Legmk/aHEC3ua6uLfmFdwbsS+dhljWe3BQ9tiuOEMIJvTWezCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1MiEuC7Y; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-661d7e68e89so1242067b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 11:05:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723053905; x=1723658705; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b7iErunzT7+DheYcvJtvulCCeS2UYMP+UD8Hfyw3lkQ=;
-        b=1MiEuC7YP44qtvRZmhET2lkEVcnURZ3+KaGOWQ2swGpxkdIGwrHoIFJeGOutkQCY2i
-         HiYILWobYni1xr0jkeYP/g0JE2YgmoD0ySuExIYywY2eJ3ayH8wsEJGP/KXn2EC4odY6
-         7bj2GWW5jNhp9AjbhemNvGp3RCnhL5fKd3W3IA9f0yjqXCZ2kdJRrGPvzJi9Ju8t/URc
-         AONKVNHT+1OT/eYdQirE0+WXp2Jam+c3rX5dAsexo5vejxqUvtkwiU2LAmIvNdNMB5gR
-         WTMPv9MmBECGMOZVnikin138vPeFhXdq6DMkaq7SOOwxAKgv4eI+Fe+8Kn0Af8WEdNzr
-         7fWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723053905; x=1723658705;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b7iErunzT7+DheYcvJtvulCCeS2UYMP+UD8Hfyw3lkQ=;
-        b=pjtsk0m14Oefg+21JjBDcrhufxQ2C/fV68wAYROMWWGhuCdcguipsGllqSS1KThMgJ
-         14CQT7IzfEmovF5CPWBkpnmr3vwfoiKqnq/2PhwKVqx5T2T0QhYxu0YIr8+NQ1U5Jr3Q
-         TaUR6+9vxmvZQL9dEkd8hjywEc8DTKkLpWU8ypNGfFWRbvQT/seTJ4xkbpEkUtzneshB
-         vHNcj/oUS4rrZyUGvcGj833wgKsMuL00950oha0Dyq+BvTMd3+SZ1ri7sNNt+PKOuVQA
-         h7z97nXb8/5VHMAlz+xcSe6L71ycJ/58zomjuqN8MlYqyQtswETfByKGl57AO+D2TIze
-         oqjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXm1g7FheNeGjEIg/OeLh6oOOMmcnVJGYVCM6pXRrsLtDNMzC2qg0qzhaMNmnDj18iui6tT3PnUxWlLSJaG+50nUSPDrQ0I650bnY3U
-X-Gm-Message-State: AOJu0YwHAjUMzW3e11YwXGHL1n+VkV4G5mG5K3m+ba7aXmDjc6c0nxHN
-	zQ+uPXqJoXNdSTvqk+QC9OjVIai2U6mZsrWZb0eod5d+03/drGPxKGZUz3Mnc1/aSxrtXS3G1Om
-	9ZLvlgEejILU3XbXnuFiP1o5uFiaJPzuJXDnb
-X-Google-Smtp-Source: AGHT+IE8bZG2Cfu/qdDsvENIrverxK7bhQ0qfxGag4y9HoBFoBXbURX+YzmlezJjl/6/s4oMmKfgPw/b4MzsiLksSmQ=
-X-Received: by 2002:a0d:fe43:0:b0:622:c892:6ae7 with SMTP id
- 00721157ae682-69910bdb347mr27814967b3.12.1723053904487; Wed, 07 Aug 2024
- 11:05:04 -0700 (PDT)
+	s=arc-20240116; t=1723053968; c=relaxed/simple;
+	bh=FjR7cH/AXMgF2qcIHMvs3kP9ryNU/T4uBvQzOETdKkU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OZIl6rq2DNwU/cAAIbCLHn1K4tuD+7gyLnrSlMvKl2DGlLQgU7nnTK5h/Z0h/Sy5Di4tFNH3TLcDOpYhsdXzqDNeThpRB+Qg9HJEAIJdEw2OR0abHBbxONerE50FGidzTuOxMU8gzmniRbqkqvzhtZMgpVrZHLCNlNjJv6d5bbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lvxiRCRf; arc=none smtp.client-ip=193.252.23.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id bl2lskduHJ0ftbl2lsPwG0; Wed, 07 Aug 2024 20:05:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1723053956;
+	bh=XsnSip/UQMIfmGG+Nu8wWlXtm1D/0x/299eGd5I7dcg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=lvxiRCRfF4KyaWIc26xf68UmUOmjY58SMy5bssxDpvg4dl5OaVAYYKBLWSbyOxRDx
+	 AlJVqkAr2rHki/q3bgO0m7u1U5EXQvzbr4qp5T2mSxCxCP3mt3ifFBBk1M4fKdgbMN
+	 Bij04lfj8RT70+hCuPbgEpTQDIlY4BhNl54ZqcLI4rIAEcqcWCigAVsTsCbmvoiTeG
+	 fJn871hGkU6gF/V2AafQ+A0gphhbw758RbAvRWsUCDKM21xgS6WXD2KFU2FdunrnRM
+	 4gSK6AqWf9XqRIb70o58fFa/ApLjcnW9uoLBx4m/ZBAVKkEg1ES6LqdefTdGEjMrZE
+	 CkPe1LQSF01CQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 07 Aug 2024 20:05:56 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org
+Subject: [PATCH v2] pinctrl: meson: Constify some structures
+Date: Wed,  7 Aug 2024 20:05:36 +0200
+Message-ID: <f74e326bd7d48003c06219545bad7c2ef1a84bf8.1723053850.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zo1hBFS7c_J-Yx-7@casper.infradead.org> <20240710091631.GT27299@noisy.programming.kicks-ass.net>
- <20240710094013.GF28838@noisy.programming.kicks-ass.net> <CAJuCfpF3eSwW_Z48e0bykCh=8eohAuACxjXBbUV_sjrVwezxdw@mail.gmail.com>
- <CAEf4BzZPGG9_P9EWosREOw8owT6+qawmzYr0EJhOZn8khNn9NQ@mail.gmail.com>
- <CAJuCfpELNoDrVyyNV+fuB7ju77pqyj0rD0gOkLVX+RHKTxXGCA@mail.gmail.com>
- <ZqRtcZHWFfUf6dfi@casper.infradead.org> <20240730131058.GN33588@noisy.programming.kicks-ass.net>
- <CAJuCfpFUQFfgx0BWdkNTAiOhBpqmd02zarC0y38gyB5OPc0wRA@mail.gmail.com>
- <CAEf4BzavWOgCLQoNdmPyyqHcm7gY5USKU5f1JWfyaCbuc_zVAA@mail.gmail.com>
- <20240803085312.GP39708@noisy.programming.kicks-ass.net> <CAEf4BzYPpkhKtuaT-EbyKeB13-uBeYf8LjR9CB=xaXYHnwsyAQ@mail.gmail.com>
- <CAEf4BzZ26FNTguRh_X9_5eQZvOeKb+c-o3mxSzoM2+TF3NqaWA@mail.gmail.com>
- <CAJuCfpFqEjG7HCx1F=Q3fScYAhaAou0Un2SFpibimkxZr7Jsbw@mail.gmail.com>
- <CAJuCfpGsDbcDy9s7NwZuaf2S+v9RMGjoC9NUVszDG3kwCMHCXg@mail.gmail.com> <CAEf4BzZeLg0WsYw2M7KFy0+APrPaPVBY7FbawB9vjcA2+6k69Q@mail.gmail.com>
-In-Reply-To: <CAEf4BzZeLg0WsYw2M7KFy0+APrPaPVBY7FbawB9vjcA2+6k69Q@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 7 Aug 2024 18:04:49 +0000
-Message-ID: <CAJuCfpFp+_n_t7ufKt=uEdoaeMykpEVZXCcsj5wqOMvJq+EcHw@mail.gmail.com>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, rostedt@goodmis.org, 
-	Matthew Wilcox <willy@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org, andrii@kernel.org, 
-	linux-kernel@vger.kernel.org, oleg@redhat.com, jolsa@kernel.org, clm@meta.com, 
-	bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 7, 2024 at 5:49=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Tue, Aug 6, 2024 at 10:13=E2=80=AFPM Suren Baghdasaryan <surenb@google=
-.com> wrote:
-> >
-> > On Tue, Aug 6, 2024 at 6:36=E2=80=AFPM Suren Baghdasaryan <surenb@googl=
-e.com> wrote:
-> > >
-> > > On Mon, Aug 5, 2024 at 9:08=E2=80=AFPM Andrii Nakryiko
-> > > <andrii.nakryiko@gmail.com> wrote:
-> > > >
-> > > > On Sun, Aug 4, 2024 at 4:22=E2=80=AFPM Andrii Nakryiko
-> > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > >
-> > > > > On Sat, Aug 3, 2024 at 1:53=E2=80=AFAM Peter Zijlstra <peterz@inf=
-radead.org> wrote:
-> > > > > >
-> > > > > > On Fri, Aug 02, 2024 at 10:47:15PM -0700, Andrii Nakryiko wrote=
-:
-> > > > > >
-> > > > > > > Is there any reason why the approach below won't work?
-> > > > > >
-> > > > > > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.=
-c
-> > > > > > > index 8be9e34e786a..e21b68a39f13 100644
-> > > > > > > --- a/kernel/events/uprobes.c
-> > > > > > > +++ b/kernel/events/uprobes.c
-> > > > > > > @@ -2251,6 +2251,52 @@ static struct uprobe
-> > > > > > > *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
-> > > > > > >         struct uprobe *uprobe =3D NULL;
-> > > > > > >         struct vm_area_struct *vma;
-> > > > > > >
-> > > > > > > +#ifdef CONFIG_PER_VMA_LOCK
-> > > > > > > +       vm_flags_t flags =3D VM_HUGETLB | VM_MAYEXEC | VM_MAY=
-SHARE, vm_flags;
-> > > > > > > +       struct file *vm_file;
-> > > > > > > +       struct inode *vm_inode;
-> > > > > > > +       unsigned long vm_pgoff, vm_start, vm_end;
-> > > > > > > +       int vm_lock_seq;
-> > > > > > > +       loff_t offset;
-> > > > > > > +
-> > > > > > > +       rcu_read_lock();
-> > > > > > > +
-> > > > > > > +       vma =3D vma_lookup(mm, bp_vaddr);
-> > > > > > > +       if (!vma)
-> > > > > > > +               goto retry_with_lock;
-> > > > > > > +
-> > > > > > > +       vm_lock_seq =3D READ_ONCE(vma->vm_lock_seq);
-> > > > > >
-> > > > > > So vma->vm_lock_seq is only updated on vma_start_write()
-> > > > >
-> > > > > yep, I've looked a bit more at the implementation now
-> > > > >
-> > > > > >
-> > > > > > > +
-> > > > > > > +       vm_file =3D READ_ONCE(vma->vm_file);
-> > > > > > > +       vm_flags =3D READ_ONCE(vma->vm_flags);
-> > > > > > > +       if (!vm_file || (vm_flags & flags) !=3D VM_MAYEXEC)
-> > > > > > > +               goto retry_with_lock;
-> > > > > > > +
-> > > > > > > +       vm_inode =3D READ_ONCE(vm_file->f_inode);
-> > > > > > > +       vm_pgoff =3D READ_ONCE(vma->vm_pgoff);
-> > > > > > > +       vm_start =3D READ_ONCE(vma->vm_start);
-> > > > > > > +       vm_end =3D READ_ONCE(vma->vm_end);
-> > > > > >
-> > > > > > None of those are written with WRITE_ONCE(), so this buys you n=
-othing.
-> > > > > > Compiler could be updating them one byte at a time while you lo=
-ad some
-> > > > > > franken-update.
-> > > > > >
-> > > > > > Also, if you're in the middle of split_vma() you might not get =
-a
-> > > > > > consistent set.
-> > > > >
-> > > > > I used READ_ONCE() only to prevent the compiler from re-reading t=
-hose
-> > > > > values. We assume those values are garbage anyways and double-che=
-ck
-> > > > > everything, so lack of WRITE_ONCE doesn't matter. Same for
-> > > > > inconsistency if we are in the middle of split_vma().
-> > > > >
-> > > > > We use the result of all this speculative calculation only if we =
-find
-> > > > > a valid uprobe (which could be a false positive) *and* if we dete=
-ct
-> > > > > that nothing about VMA changed (which is what I got wrong, but
-> > > > > honestly I was actually betting on others to help me get this rig=
-ht
-> > > > > anyways).
-> > > > >
-> > > > > >
-> > > > > > > +       if (bp_vaddr < vm_start || bp_vaddr >=3D vm_end)
-> > > > > > > +               goto retry_with_lock;
-> > > > > > > +
-> > > > > > > +       offset =3D (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vad=
-dr - vm_start);
-> > > > > > > +       uprobe =3D find_uprobe_rcu(vm_inode, offset);
-> > > > > > > +       if (!uprobe)
-> > > > > > > +               goto retry_with_lock;
-> > > > > > > +
-> > > > > > > +       /* now double check that nothing about VMA changed */
-> > > > > > > +       if (vm_lock_seq !=3D READ_ONCE(vma->vm_lock_seq))
-> > > > > > > +               goto retry_with_lock;
-> > > > > >
-> > > > > > Since vma->vma_lock_seq is only ever updated at vma_start_write=
-() you're
-> > > > > > checking you're in or after the same modification cycle.
-> > > > > >
-> > > > > > The point of sequence locks is to check you *IN* a modification=
- cycle
-> > > > > > and retry if you are. You're now explicitly continuing if you'r=
-e in a
-> > > > > > modification.
-> > > > > >
-> > > > > > You really need:
-> > > > > >
-> > > > > >    seq++;
-> > > > > >    wmb();
-> > > > > >
-> > > > > >    ... do modification
-> > > > > >
-> > > > > >    wmb();
-> > > > > >    seq++;
-> > > > > >
-> > > > > > vs
-> > > > > >
-> > > > > >   do {
-> > > > > >           s =3D READ_ONCE(seq) & ~1;
-> > > > > >           rmb();
-> > > > > >
-> > > > > >           ... read stuff
-> > > > > >
-> > > > > >   } while (rmb(), seq !=3D s);
-> > > > > >
-> > > > > >
-> > > > > > The thing to note is that seq will be odd while inside a modifi=
-cation
-> > > > > > and even outside, further if the pre and post seq are both even=
- but not
-> > > > > > identical, you've crossed a modification and also need to retry=
-.
-> > > > > >
-> > > > >
-> > > > > Ok, I don't think I got everything you have written above, sorry.=
- But
-> > > > > let me explain what I think I need to do and please correct what =
-I
-> > > > > (still) got wrong.
-> > > > >
-> > > > > a) before starting speculation,
-> > > > >   a.1) read and remember current->mm->mm_lock_seq (using
-> > > > > smp_load_acquire(), right?)
-> > > > >   a.2) read vma->vm_lock_seq (using smp_load_acquire() I presume)
-> > > > >   a.3) if vm_lock_seq is odd, we are already modifying VMA, so ba=
-il
-> > > > > out, try with proper mmap_lock
-> > > > > b) proceed with the inode pointer fetch and offset calculation as=
- I've coded it
-> > > > > c) lookup uprobe by inode+offset, if failed -- bail out (if succe=
-eded,
-> > > > > this could still be wrong)
-> > > > > d) re-read vma->vm_lock_seq, if it changed, we started modifying/=
-have
-> > > > > already modified VMA, bail out
-> > > > > e) re-read mm->mm_lock_seq, if that changed -- presume VMA got
-> > > > > modified, bail out
-> > > > >
-> > > > > At this point we should have a guarantee that nothing about mm
-> > > > > changed, nor that VMA started being modified during our speculati=
-ve
-> > > > > calculation+uprobe lookup. So if we found a valid uprobe, it must=
- be a
-> > > > > correct one that we need.
-> > > > >
-> > > > > Is that enough? Any holes in the approach? And thanks for thoroug=
-hly
-> > > > > thinking about this, btw!
-> > > >
-> > > > Ok, with slight modifications to the details of the above (e.g., th=
-ere
-> > > > is actually no "odd means VMA is being modified" thing with
-> > > > vm_lock_seq),
-> > >
-> > > Correct. Instead of that (vm_lock_seq->vm_lock_seq =3D=3D mm->mm_lock=
-_seq)
-> > > means your VMA is write-locked and is being modified.
-> > >
-> > > > I ended up with the implementation below. Basically we
-> > > > validate that mm->mm_lock_seq didn't change and that vm_lock_seq !=
-=3D
-> > > > mm_lock_seq (which otherwise would mean "VMA is being modified").
-> > >
-> > > Validating that mm->mm_lock_seq did not change does not provide you
-> > > with useful information. It only means that between the point where
-> > > you recorded mm->mm_lock_seq and where you are checking it, there was
-> > > an mmap_write_unlock() or mmap_write_downgrade() call. Your VMA might
-> > > not have even been part of that modification for which mmap_lock was
-> > > taken.
-> > >
-> > > In theory what you need is simpler (simplified code for explanation o=
-nly):
-> > >
-> > > int vm_lock_seq =3D vma->vm_lock_seq;
-> > > if (vm_lock_seq =3D=3D mm->mm_lock_seq)
-> > >         goto bail_out; /* VMA is write-locked */
-> > >
-> > > /* copy required VMA attributes */
-> > >
-> > > if (vm_lock_seq !=3D vma->vm_lock_seq)
-> > >         goto bail_out; /* VMA got write-locked */
-> > >
-> > > But this would require proper ACQUIRE/RELEASE semantics for
-> > > vma->vm_lock_seq which is currently not there because all reads/write=
-s
-> > > to vma->vm_lock_seq that matter are done under vma->vm_lock->lock
-> > > protection, so additional ordering is not required. If you decide to
-> > > add that semantics for vma->vm_lock_seq, please make sure that
-> > > pagefault path performance does not regress.
-> > >
-> > > > There is a possibility that vm_lock_seq =3D=3D mm_lock_seq just by
-> > > > accident, which is not a correctness problem, we'll just fallback t=
-o
-> > > > locked implementation until something about VMA or mm_struct itself
-> > > > changes. Which is fine, and if mm folks ever change this locking
-> > > > schema, this might go away.
-> > > >
-> > > > If this seems on the right track, I think we can just move
-> > > > mm_start_vma_specuation()/mm_end_vma_speculation() into
-> > > > include/linux/mm.h.
-> > > >
-> > > > And after thinking a bit more about READ_ONCE() usage, I changed th=
-em
-> > > > to data_race() to not trigger KCSAN warnings. Initially I kept
-> > > > READ_ONCE() only around vma->vm_file access, but given we never cha=
-nge
-> > > > it until vma is freed and reused (which would be prevented by
-> > > > guard(rcu)), I dropped READ_ONCE() and only added data_race(). And
-> > > > even data_race() is probably not necessary.
-> > > >
-> > > > Anyways, please see the patch below. Would be nice if mm folks
-> > > > (Suren?) could confirm that this is not broken.
-> > > >
-> > > >
-> > > >
-> > > > Author: Andrii Nakryiko <andrii@kernel.org>
-> > > > Date:   Fri Aug 2 22:16:40 2024 -0700
-> > > >
-> > > >     uprobes: add speculative lockless VMA to inode resolution
-> > > >
-> > > >     Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > >
-> > > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > > > index 3de311c56d47..bee7a929ff02 100644
-> > > > --- a/kernel/events/uprobes.c
-> > > > +++ b/kernel/events/uprobes.c
-> > > > @@ -2244,6 +2244,70 @@ static int is_trap_at_addr(struct mm_struct
-> > > > *mm, unsigned long vaddr)
-> > > >         return is_trap_insn(&opcode);
-> > > >  }
-> > > >
-> > > > +#ifdef CONFIG_PER_VMA_LOCK
-> > > > +static inline void mm_start_vma_speculation(struct mm_struct *mm, =
-int
-> > > > *mm_lock_seq)
-> > > > +{
-> > > > +       *mm_lock_seq =3D smp_load_acquire(&mm->mm_lock_seq);
-> > > > +}
-> > > > +
-> > > > +/* returns true if speculation was safe (no mm and vma modificatio=
-n
-> > > > happened) */
-> > > > +static inline bool mm_end_vma_speculation(struct vm_area_struct *v=
-ma,
-> > > > int mm_lock_seq)
-> > > > +{
-> > > > +       int mm_seq, vma_seq;
-> > > > +
-> > > > +       mm_seq =3D smp_load_acquire(&vma->vm_mm->mm_lock_seq);
-> > > > +       vma_seq =3D READ_ONCE(vma->vm_lock_seq);
-> > > > +
-> > > > +       return mm_seq =3D=3D mm_lock_seq && vma_seq !=3D mm_seq;
-> > >
-> > > After spending some time on this I think what you do here is
-> > > semantically correct but sub-optimal.
-> >
->
-> Yes, requiring that mm_lock_seq doesn't change is too pessimistic, but
-> relative to the frequency of uprobe/uretprobe triggering (and how fast
-> the lookup is) this won't matter much. Absolute majority of uprobe
-> lookups will manage to succeed while none of mm's VMAs change at all.
-> So I felt like that's ok, at least for starters.
->
-> My goal is to minimize intrusion into purely mm-related code, this
-> whole uprobe work is already pretty large and sprawling, I don't want
-> to go on another quest to change locking semantics for vma, if I don't
-> absolutely have to :) But see below for adjusted logic based on your
-> comments.
->
-> > Actually, after staring at this code some more I think
-> > vma->vm_lock_seq not having proper ACQUIRE/RELEASE semantics would
-> > bite us here as well. The entire find_active_uprobe_speculative()
-> > might be executing while mmap_lock is write-locked (so, mm_seq =3D=3D
-> > mm_lock_seq is satisfied) and we might miss that the VMA is locked due
-> > to vma->vm_lock_seq read/write reordering. Though it's late and I
-> > might have missed some memory barriers which would prevent this
-> > scenario...
->
-> So, please bear with me, if it's a stupid question. But don't all
-> locks have implicit ACQUIRE and RELEASE semantics already? At least
-> that's my reading of Documentation/memory-barriers.txt.
->
-> So with that, wouldn't it be OK to just change
-> READ_ONCE(vma->vm_lock_seq) to smp_load_acquire(&vma->vm_lock_seq) and
-> mitigate the issue you pointed out?
->
->
-> So maybe something like below:
->
-> rcu_read_lock()
->
-> vma =3D find_vma(...)
-> if (!vma) /* bail */
->
-> vm_lock_seq =3D smp_load_acquire(&vma->vm_lock_seq);
-> mm_lock_seq =3D smp_load_acquire(&vma->mm->mm_lock_seq);
-> /* I think vm_lock has to be acquired first to avoid the race */
-> if (mm_lock_seq =3D=3D vm_lock_seq)
->     /* bail, vma is write-locked */
->
-> ... perform uprobe lookup logic based on vma->vm_file->f_inode ...
->
-> if (smp_load_acquire(&vma->vm_lock_seq) !=3D vm_lock_seq)
->     /* bail, VMA might have changed */
->
-> Thoughts?
+The following structures are not modified in these drivers.
+  - struct meson_bank
+  - struct meson_pmx_bank
+  - struct meson_pmx_func
+  - struct meson_pmx_group
+  - struct meson_pinctrl_data
+  - struct meson_axg_pmx_data
 
-Hi Andrii,
-I've prepared a quick patch following Peter's suggestion in [1] to
-make mm->mm_lock_seq a proper seqcount. I'll post it shortly as RFC so
-you can try it out. I think that would be a much cleaner solution.
-I'll post a link to it shortly.
-Thanks,
-Suren.
+Constifying these structures moves some data to a read-only section, so
+increase overall security.
 
-[1] https://lore.kernel.org/all/20240730134605.GO33588@noisy.programming.ki=
-cks-ass.net/
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  10818	  11696	      0	  22514	   57f2	drivers/pinctrl/meson/pinctrl-amlogic-c3.o
+  17198	  17680	      0	  34878	   883e	drivers/pinctrl/meson/pinctrl-amlogic-t7.o
+  14161	  11200	      0	  25361	   6311	drivers/pinctrl/meson/pinctrl-meson8b.o
+  17348	  12512	      0	  29860	   74a4	drivers/pinctrl/meson/pinctrl-meson8.o
+   3070	    324	      0	   3394	    d42	drivers/pinctrl/meson/pinctrl-meson8-pmx.o
+   9317	   9648	      0	  18965	   4a15	drivers/pinctrl/meson/pinctrl-meson-a1.o
+  12115	  11664	      0	  23779	   5ce3	drivers/pinctrl/meson/pinctrl-meson-axg.o
+   2470	    120	      0	   2590	    a1e	drivers/pinctrl/meson/pinctrl-meson-axg-pmx.o
+  15125	  15224	      0	  30349	   768d	drivers/pinctrl/meson/pinctrl-meson-g12a.o
+  13800	  10160	      0	  23960	   5d98	drivers/pinctrl/meson/pinctrl-meson-gxbb.o
+  13040	   9648	      0	  22688	   58a0	drivers/pinctrl/meson/pinctrl-meson-gxl.o
+  20507	   1132	     48	  21687	   54b7	drivers/pinctrl/meson/pinctrl-meson.o
+  12212	  12880	      0	  25092	   6204	drivers/pinctrl/meson/pinctrl-meson-s4.o
 
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  22242	    248	      0	  22490	   57da	drivers/pinctrl/meson/pinctrl-amlogic-c3.o
+  34638	    248	      0	  34886	   8846	drivers/pinctrl/meson/pinctrl-amlogic-t7.o
+  25137	    232	      0	  25369	   6319	drivers/pinctrl/meson/pinctrl-meson8b.o
+  29604	    232	      0	  29836	   748c	drivers/pinctrl/meson/pinctrl-meson8.o
+   3070	    324	      0	   3394	    d42	drivers/pinctrl/meson/pinctrl-meson8-pmx.o
+  18725	    248	      0	  18973	   4a1d	drivers/pinctrl/meson/pinctrl-meson-a1.o
+  23539	    248	      0	  23787	   5ceb	drivers/pinctrl/meson/pinctrl-meson-axg.o
+   2470	    120	      0	   2590	    a1e	drivers/pinctrl/meson/pinctrl-meson-axg-pmx.o
+  30101	    256	      0	  30357	   7695	drivers/pinctrl/meson/pinctrl-meson-g12a.o
+  23688	    248	      0	  23936	   5d80	drivers/pinctrl/meson/pinctrl-meson-gxbb.o
+  22416	    248	      0	  22664	   5888	drivers/pinctrl/meson/pinctrl-meson-gxl.o
+  20507	   1132	     48	  21687	   54b7	drivers/pinctrl/meson/pinctrl-meson.o
+  24820	    248	      0	  25068	   61ec	drivers/pinctrl/meson/pinctrl-meson-s4.o
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
 
->
-> >
-> > > This check means that there was no call to
-> > > mmap_write_unlock()/mmap_write_downgrade() since
-> > > mm_start_vma_speculation() and the vma is not currently locked. To
-> > > unlock a write-locked VMA you do need to call
-> > > map_write_unlock()/mmap_write_downgrade(), so I think this check woul=
-d
-> > > guarantee that your vma was not locked and modified from under us.
-> > > However this will also trigger false positives if
-> > > mmap_write_unlock()/mmap_write_downgrade() was called but the vma you
-> > > are using was never locked. So, it will bail out more than necessary.
-> > > Maybe it's ok?
-> > >
-> > > > +}
-> > > > +
->
-> [...]
+In order to compile them, I've updated Kconfig to add some "| COMPILE_TEST"
+on 'depends' line.
+Should it be useful, I can send a patch to add it, but I don't think it
+would be that useful.
+
+Changes in v2:
+  - Merge 3 patches into only 1   [Jerome Brunet]
+  - Add constification of struct meson_pinctrl_data and
+    struct meson_axg_pmx_data   [Jerome Brunet]
+
+v1: https://lore.kernel.org/all/cover.1723022467.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/pinctrl/meson/pinctrl-amlogic-c3.c    | 12 ++++-----
+ drivers/pinctrl/meson/pinctrl-amlogic-t7.c    | 12 ++++-----
+ drivers/pinctrl/meson/pinctrl-meson-a1.c      | 12 ++++-----
+ drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c | 12 ++++-----
+ drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h |  2 +-
+ drivers/pinctrl/meson/pinctrl-meson-axg.c     | 24 +++++++++---------
+ drivers/pinctrl/meson/pinctrl-meson-g12a.c    | 24 +++++++++---------
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c    | 16 ++++++------
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c     | 16 ++++++------
+ drivers/pinctrl/meson/pinctrl-meson-s4.c      | 12 ++++-----
+ drivers/pinctrl/meson/pinctrl-meson.c         | 25 ++++++++++---------
+ drivers/pinctrl/meson/pinctrl-meson.h         |  8 +++---
+ drivers/pinctrl/meson/pinctrl-meson8-pmx.c    |  6 ++---
+ drivers/pinctrl/meson/pinctrl-meson8.c        | 16 ++++++------
+ drivers/pinctrl/meson/pinctrl-meson8b.c       | 16 ++++++------
+ 15 files changed, 107 insertions(+), 106 deletions(-)
+
+diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-c3.c b/drivers/pinctrl/meson/pinctrl-amlogic-c3.c
+index 04f1e87bae99..776d32465ab9 100644
+--- a/drivers/pinctrl/meson/pinctrl-amlogic-c3.c
++++ b/drivers/pinctrl/meson/pinctrl-amlogic-c3.c
+@@ -375,7 +375,7 @@ static const unsigned int spi_a_mosi_a_pins[]		= { GPIOA_3 };
+ static const unsigned int gen_clk_a4_pins[]		= { GPIOA_4 };
+ static const unsigned int clk12_24_a_pins[]		= { GPIOA_5 };
+ 
+-static struct meson_pmx_group c3_periphs_groups[] = {
++static const struct meson_pmx_group c3_periphs_groups[] = {
+ 	GPIO_GROUP(GPIOE_0),
+ 	GPIO_GROUP(GPIOE_1),
+ 	GPIO_GROUP(GPIOE_2),
+@@ -987,7 +987,7 @@ static const char * const lcd_groups[] = {
+ 	"lcd_clk_a", "lcd_clk_x", "lcd_hs", "lcd_vs",
+ };
+ 
+-static struct meson_pmx_func c3_periphs_functions[] = {
++static const struct meson_pmx_func c3_periphs_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(uart_a),
+ 	FUNCTION(uart_b),
+@@ -1036,7 +1036,7 @@ static struct meson_pmx_func c3_periphs_functions[] = {
+ 	FUNCTION(lcd),
+ };
+ 
+-static struct meson_bank c3_periphs_banks[] = {
++static const struct meson_bank c3_periphs_banks[] = {
+ 	/* name  first  last  irq  pullen  pull  dir  out  in ds */
+ 	BANK_DS("X",      GPIOX_0,      GPIOX_13,   40, 53,
+ 		0x03, 0,  0x04, 0,  0x02, 0,  0x01, 0, 0x00, 0, 0x07, 0),
+@@ -1054,7 +1054,7 @@ static struct meson_bank c3_periphs_banks[] = {
+ 		0x73, 0,  0x74, 0,  0x72, 0,  0x71, 0, 0x70, 0, 0x77, 0),
+ };
+ 
+-static struct meson_pmx_bank c3_periphs_pmx_banks[] = {
++static const struct meson_pmx_bank c3_periphs_pmx_banks[] = {
+ 	/* name	            first	 last        reg offset */
+ 	BANK_PMX("B",      GPIOB_0,     GPIOB_14,    0x00, 0),
+ 	BANK_PMX("X",      GPIOX_0,     GPIOX_13,    0x03, 0),
+@@ -1065,12 +1065,12 @@ static struct meson_pmx_bank c3_periphs_pmx_banks[] = {
+ 	BANK_PMX("TEST_N", GPIO_TEST_N, GPIO_TEST_N, 0x02, 0),
+ };
+ 
+-static struct meson_axg_pmx_data c3_periphs_pmx_banks_data = {
++static const struct meson_axg_pmx_data c3_periphs_pmx_banks_data = {
+ 	.pmx_banks	= c3_periphs_pmx_banks,
+ 	.num_pmx_banks	= ARRAY_SIZE(c3_periphs_pmx_banks),
+ };
+ 
+-static struct meson_pinctrl_data c3_periphs_pinctrl_data = {
++static const struct meson_pinctrl_data c3_periphs_pinctrl_data = {
+ 	.name		= "periphs-banks",
+ 	.pins		= c3_periphs_pins,
+ 	.groups		= c3_periphs_groups,
+diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-t7.c b/drivers/pinctrl/meson/pinctrl-amlogic-t7.c
+index 0aed5de3f068..cfd98b9dcb68 100644
+--- a/drivers/pinctrl/meson/pinctrl-amlogic-t7.c
++++ b/drivers/pinctrl/meson/pinctrl-amlogic-t7.c
+@@ -535,7 +535,7 @@ static const unsigned int i2c0_sck_h_pins[]		= { GPIOH_7 };
+ /* Bank H func3 */
+ static const unsigned int pcieck_reqn_h_pins[]		= { GPIOH_2 };
+ 
+-static struct meson_pmx_group t7_periphs_groups[] = {
++static const struct meson_pmx_group t7_periphs_groups[] = {
+ 	GPIO_GROUP(GPIOB_0),
+ 	GPIO_GROUP(GPIOB_1),
+ 	GPIO_GROUP(GPIOB_2),
+@@ -1443,7 +1443,7 @@ static const char * const mic_mute_groups[] = {
+ 	"mic_mute_key", "mic_mute_led",
+ };
+ 
+-static struct meson_pmx_func t7_periphs_functions[] = {
++static const struct meson_pmx_func t7_periphs_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(emmc),
+ 	FUNCTION(nor),
+@@ -1524,7 +1524,7 @@ static struct meson_pmx_func t7_periphs_functions[] = {
+ 	FUNCTION(mic_mute),
+ };
+ 
+-static struct meson_bank t7_periphs_banks[] = {
++static const struct meson_bank t7_periphs_banks[] = {
+ 	/* name  first  last  irq pullen  pull  dir  out  in  ds */
+ 	BANK_DS("D",      GPIOD_0,     GPIOD_12, 57, 69,
+ 		0x03, 0,  0x04,  0,  0x02,  0, 0x01, 0,  0x00, 0, 0x07, 0),
+@@ -1552,7 +1552,7 @@ static struct meson_bank t7_periphs_banks[] = {
+ 		0x83, 0,  0x84,  0,  0x82, 0,  0x81,  0, 0x80, 0, 0x87, 0),
+ };
+ 
+-static struct meson_pmx_bank t7_periphs_pmx_banks[] = {
++static const struct meson_pmx_bank t7_periphs_pmx_banks[] = {
+ 	/*      name	    first	 last        reg  offset */
+ 	BANK_PMX("D",      GPIOD_0,     GPIOD_12,    0x0a,  0),
+ 	BANK_PMX("E",      GPIOE_0,     GPIOE_6,     0x0c,  0),
+@@ -1568,12 +1568,12 @@ static struct meson_pmx_bank t7_periphs_pmx_banks[] = {
+ 	BANK_PMX("TEST_N", GPIO_TEST_N, GPIO_TEST_N, 0x09,  0),
+ };
+ 
+-static struct meson_axg_pmx_data t7_periphs_pmx_banks_data = {
++static const struct meson_axg_pmx_data t7_periphs_pmx_banks_data = {
+ 	.pmx_banks	= t7_periphs_pmx_banks,
+ 	.num_pmx_banks	= ARRAY_SIZE(t7_periphs_pmx_banks),
+ };
+ 
+-static struct meson_pinctrl_data t7_periphs_pinctrl_data = {
++static const struct meson_pinctrl_data t7_periphs_pinctrl_data = {
+ 	.name		= "periphs-banks",
+ 	.pins		= t7_periphs_pins,
+ 	.groups		= t7_periphs_groups,
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-a1.c b/drivers/pinctrl/meson/pinctrl-meson-a1.c
+index d2ac9ca72a3e..20c4323d4223 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-a1.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-a1.c
+@@ -339,7 +339,7 @@ static const unsigned int tst_out11_pins[]		= { GPIOA_11 };
+ static const unsigned int mute_key_pins[]		= { GPIOA_4 };
+ static const unsigned int mute_en_pins[]		= { GPIOA_5 };
+ 
+-static struct meson_pmx_group meson_a1_periphs_groups[] = {
++static const struct meson_pmx_group meson_a1_periphs_groups[] = {
+ 	GPIO_GROUP(GPIOP_0),
+ 	GPIO_GROUP(GPIOP_1),
+ 	GPIO_GROUP(GPIOP_2),
+@@ -832,7 +832,7 @@ static const char * const mute_groups[] = {
+ 	"mute_key", "mute_en",
+ };
+ 
+-static struct meson_pmx_func meson_a1_periphs_functions[] = {
++static const struct meson_pmx_func meson_a1_periphs_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(psram),
+ 	FUNCTION(pwm_a),
+@@ -875,7 +875,7 @@ static struct meson_pmx_func meson_a1_periphs_functions[] = {
+ 	FUNCTION(mute),
+ };
+ 
+-static struct meson_bank meson_a1_periphs_banks[] = {
++static const struct meson_bank meson_a1_periphs_banks[] = {
+ 	/* name  first  last  irq  pullen  pull  dir  out  in  ds*/
+ 	BANK_DS("P",  GPIOP_0,  GPIOP_12,  0,  12, 0x3,  0,  0x4,  0,
+ 		0x2,  0,  0x1,  0,  0x0,  0,  0x5,  0),
+@@ -889,7 +889,7 @@ static struct meson_bank meson_a1_periphs_banks[] = {
+ 		0x42,  0,  0x41,  0,  0x40,  0,  0x45,  0),
+ };
+ 
+-static struct meson_pmx_bank meson_a1_periphs_pmx_banks[] = {
++static const struct meson_pmx_bank meson_a1_periphs_pmx_banks[] = {
+ 	/*  name	 first	    lask    reg	offset  */
+ 	BANK_PMX("P",    GPIOP_0, GPIOP_12, 0x0, 0),
+ 	BANK_PMX("B",    GPIOB_0, GPIOB_6,  0x2, 0),
+@@ -898,12 +898,12 @@ static struct meson_pmx_bank meson_a1_periphs_pmx_banks[] = {
+ 	BANK_PMX("A",    GPIOA_0, GPIOA_11, 0x8, 0),
+ };
+ 
+-static struct meson_axg_pmx_data meson_a1_periphs_pmx_banks_data = {
++static const struct meson_axg_pmx_data meson_a1_periphs_pmx_banks_data = {
+ 	.pmx_banks	= meson_a1_periphs_pmx_banks,
+ 	.num_pmx_banks	= ARRAY_SIZE(meson_a1_periphs_pmx_banks),
+ };
+ 
+-static struct meson_pinctrl_data meson_a1_periphs_pinctrl_data = {
++static const struct meson_pinctrl_data meson_a1_periphs_pinctrl_data = {
+ 	.name		= "periphs-banks",
+ 	.pins		= meson_a1_periphs_pins,
+ 	.groups		= meson_a1_periphs_groups,
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
+index cad411d90727..00c3829216d6 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c
+@@ -27,10 +27,10 @@
+ 
+ static int meson_axg_pmx_get_bank(struct meson_pinctrl *pc,
+ 			unsigned int pin,
+-			struct meson_pmx_bank **bank)
++			const struct meson_pmx_bank **bank)
+ {
+ 	int i;
+-	struct meson_axg_pmx_data *pmx = pc->data->pmx_data;
++	const struct meson_axg_pmx_data *pmx = pc->data->pmx_data;
+ 
+ 	for (i = 0; i < pmx->num_pmx_banks; i++)
+ 		if (pin >= pmx->pmx_banks[i].first &&
+@@ -42,7 +42,7 @@ static int meson_axg_pmx_get_bank(struct meson_pinctrl *pc,
+ 	return -EINVAL;
+ }
+ 
+-static int meson_pmx_calc_reg_and_offset(struct meson_pmx_bank *bank,
++static int meson_pmx_calc_reg_and_offset(const struct meson_pmx_bank *bank,
+ 			unsigned int pin, unsigned int *reg,
+ 			unsigned int *offset)
+ {
+@@ -59,10 +59,10 @@ static int meson_pmx_calc_reg_and_offset(struct meson_pmx_bank *bank,
+ static int meson_axg_pmx_update_function(struct meson_pinctrl *pc,
+ 			unsigned int pin, unsigned int func)
+ {
++	const struct meson_pmx_bank *bank;
+ 	int ret;
+ 	int reg;
+ 	int offset;
+-	struct meson_pmx_bank *bank;
+ 
+ 	ret = meson_axg_pmx_get_bank(pc, pin, &bank);
+ 	if (ret)
+@@ -82,8 +82,8 @@ static int meson_axg_pmx_set_mux(struct pinctrl_dev *pcdev,
+ 	int i;
+ 	int ret;
+ 	struct meson_pinctrl *pc = pinctrl_dev_get_drvdata(pcdev);
+-	struct meson_pmx_func *func = &pc->data->funcs[func_num];
+-	struct meson_pmx_group *group = &pc->data->groups[group_num];
++	const struct meson_pmx_func *func = &pc->data->funcs[func_num];
++	const struct meson_pmx_group *group = &pc->data->groups[group_num];
+ 	struct meson_pmx_axg_data *pmx_data =
+ 		(struct meson_pmx_axg_data *)group->data;
+ 
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h
+index 67147ebaef1b..63b9d471e980 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h
++++ b/drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h
+@@ -17,7 +17,7 @@ struct meson_pmx_bank {
+ };
+ 
+ struct meson_axg_pmx_data {
+-	struct meson_pmx_bank *pmx_banks;
++	const struct meson_pmx_bank *pmx_banks;
+ 	unsigned int num_pmx_banks;
+ };
+ 
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
+index 8f4e7154b73f..fa2df4896390 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
+@@ -352,7 +352,7 @@ static const unsigned int tdmb_dout2_pins[] = {GPIOA_12};
+ static const unsigned int tdmb_din3_pins[] = {GPIOA_13};
+ static const unsigned int tdmb_dout3_pins[] = {GPIOA_13};
+ 
+-static struct meson_pmx_group meson_axg_periphs_groups[] = {
++static const struct meson_pmx_group meson_axg_periphs_groups[] = {
+ 	GPIO_GROUP(GPIOZ_0),
+ 	GPIO_GROUP(GPIOZ_1),
+ 	GPIO_GROUP(GPIOZ_2),
+@@ -675,7 +675,7 @@ static const unsigned int jtag_ao_tms_pins[] = {GPIOAO_7};
+ /* gen_clk */
+ static const unsigned int gen_clk_ee_pins[] = {GPIOAO_13};
+ 
+-static struct meson_pmx_group meson_axg_aobus_groups[] = {
++static const struct meson_pmx_group meson_axg_aobus_groups[] = {
+ 	GPIO_GROUP(GPIOAO_0),
+ 	GPIO_GROUP(GPIOAO_1),
+ 	GPIO_GROUP(GPIOAO_2),
+@@ -955,7 +955,7 @@ static const char * const gen_clk_ee_groups[] = {
+ 	"gen_clk_ee",
+ };
+ 
+-static struct meson_pmx_func meson_axg_periphs_functions[] = {
++static const struct meson_pmx_func meson_axg_periphs_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(emmc),
+ 	FUNCTION(nor),
+@@ -987,7 +987,7 @@ static struct meson_pmx_func meson_axg_periphs_functions[] = {
+ 	FUNCTION(tdmc),
+ };
+ 
+-static struct meson_pmx_func meson_axg_aobus_functions[] = {
++static const struct meson_pmx_func meson_axg_aobus_functions[] = {
+ 	FUNCTION(gpio_aobus),
+ 	FUNCTION(uart_ao_a),
+ 	FUNCTION(uart_ao_b),
+@@ -1003,7 +1003,7 @@ static struct meson_pmx_func meson_axg_aobus_functions[] = {
+ 	FUNCTION(gen_clk_ee),
+ };
+ 
+-static struct meson_bank meson_axg_periphs_banks[] = {
++static const struct meson_bank meson_axg_periphs_banks[] = {
+ 	/*   name    first      last       irq	     pullen  pull    dir     out     in  */
+ 	BANK("Z",    GPIOZ_0,	GPIOZ_10, 14,  24, 3,  0,  3,  0,  9,  0,  10, 0,  11, 0),
+ 	BANK("BOOT", BOOT_0,	BOOT_14,  25,  39, 4,  0,  4,  0,  12, 0,  13, 0,  14, 0),
+@@ -1012,12 +1012,12 @@ static struct meson_bank meson_axg_periphs_banks[] = {
+ 	BANK("Y", 	 GPIOY_0,	GPIOY_15, 84,  99, 1,  0,  1,  0,  3,  0,  4,  0,  5,  0),
+ };
+ 
+-static struct meson_bank meson_axg_aobus_banks[] = {
++static const struct meson_bank meson_axg_aobus_banks[] = {
+ 	/*   name    first      last      irq	pullen  pull    dir     out     in  */
+ 	BANK("AO",   GPIOAO_0,  GPIOAO_13, 0, 13, 0,  16,  0, 0,  0,  0,  0, 16,  1,  0),
+ };
+ 
+-static struct meson_pmx_bank meson_axg_periphs_pmx_banks[] = {
++static const struct meson_pmx_bank meson_axg_periphs_pmx_banks[] = {
+ 	/*	 name	 first		lask	   reg	offset  */
+ 	BANK_PMX("Z",	 GPIOZ_0, GPIOZ_10, 0x2, 0),
+ 	BANK_PMX("BOOT", BOOT_0,  BOOT_14,  0x0, 0),
+@@ -1026,21 +1026,21 @@ static struct meson_pmx_bank meson_axg_periphs_pmx_banks[] = {
+ 	BANK_PMX("Y",	 GPIOY_0, GPIOY_15, 0x8, 0),
+ };
+ 
+-static struct meson_axg_pmx_data meson_axg_periphs_pmx_banks_data = {
++static const struct meson_axg_pmx_data meson_axg_periphs_pmx_banks_data = {
+ 	.pmx_banks	= meson_axg_periphs_pmx_banks,
+ 	.num_pmx_banks = ARRAY_SIZE(meson_axg_periphs_pmx_banks),
+ };
+ 
+-static struct meson_pmx_bank meson_axg_aobus_pmx_banks[] = {
++static const struct meson_pmx_bank meson_axg_aobus_pmx_banks[] = {
+ 	BANK_PMX("AO", GPIOAO_0, GPIOAO_13, 0x0, 0),
+ };
+ 
+-static struct meson_axg_pmx_data meson_axg_aobus_pmx_banks_data = {
++static const struct meson_axg_pmx_data meson_axg_aobus_pmx_banks_data = {
+ 	.pmx_banks	= meson_axg_aobus_pmx_banks,
+ 	.num_pmx_banks = ARRAY_SIZE(meson_axg_aobus_pmx_banks),
+ };
+ 
+-static struct meson_pinctrl_data meson_axg_periphs_pinctrl_data = {
++static const struct meson_pinctrl_data meson_axg_periphs_pinctrl_data = {
+ 	.name		= "periphs-banks",
+ 	.pins		= meson_axg_periphs_pins,
+ 	.groups		= meson_axg_periphs_groups,
+@@ -1054,7 +1054,7 @@ static struct meson_pinctrl_data meson_axg_periphs_pinctrl_data = {
+ 	.pmx_data	= &meson_axg_periphs_pmx_banks_data,
+ };
+ 
+-static struct meson_pinctrl_data meson_axg_aobus_pinctrl_data = {
++static const struct meson_pinctrl_data meson_axg_aobus_pinctrl_data = {
+ 	.name		= "aobus-banks",
+ 	.pins		= meson_axg_aobus_pins,
+ 	.groups		= meson_axg_aobus_groups,
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-g12a.c b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
+index 32830269a5b4..e2788bfc5874 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-g12a.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
+@@ -436,7 +436,7 @@ static const unsigned int tdm_c_dout1_z_pins[]		= { GPIOZ_3 };
+ static const unsigned int tdm_c_dout2_z_pins[]		= { GPIOZ_4 };
+ static const unsigned int tdm_c_dout3_z_pins[]		= { GPIOZ_5 };
+ 
+-static struct meson_pmx_group meson_g12a_periphs_groups[] = {
++static const struct meson_pmx_group meson_g12a_periphs_groups[] = {
+ 	GPIO_GROUP(GPIOZ_0),
+ 	GPIO_GROUP(GPIOZ_1),
+ 	GPIO_GROUP(GPIOZ_2),
+@@ -860,7 +860,7 @@ static const unsigned int tdm_ao_b_dout2_pins[]		= { GPIOAO_6 };
+ /* mclk0_ao */
+ static const unsigned int mclk0_ao_pins[]		= { GPIOAO_9 };
+ 
+-static struct meson_pmx_group meson_g12a_aobus_groups[] = {
++static const struct meson_pmx_group meson_g12a_aobus_groups[] = {
+ 	GPIO_GROUP(GPIOAO_0),
+ 	GPIO_GROUP(GPIOAO_1),
+ 	GPIO_GROUP(GPIOAO_2),
+@@ -1253,7 +1253,7 @@ static const char * const mclk0_ao_groups[] = {
+ 	"mclk0_ao",
+ };
+ 
+-static struct meson_pmx_func meson_g12a_periphs_functions[] = {
++static const struct meson_pmx_func meson_g12a_periphs_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(emmc),
+ 	FUNCTION(nor),
+@@ -1295,7 +1295,7 @@ static struct meson_pmx_func meson_g12a_periphs_functions[] = {
+ 	FUNCTION(tdm_c),
+ };
+ 
+-static struct meson_pmx_func meson_g12a_aobus_functions[] = {
++static const struct meson_pmx_func meson_g12a_aobus_functions[] = {
+ 	FUNCTION(gpio_aobus),
+ 	FUNCTION(uart_ao_a),
+ 	FUNCTION(uart_ao_b),
+@@ -1317,7 +1317,7 @@ static struct meson_pmx_func meson_g12a_aobus_functions[] = {
+ 	FUNCTION(mclk0_ao),
+ };
+ 
+-static struct meson_bank meson_g12a_periphs_banks[] = {
++static const struct meson_bank meson_g12a_periphs_banks[] = {
+ 	/* name  first  last  irq  pullen  pull  dir  out  in  ds */
+ 	BANK_DS("Z",    GPIOZ_0,  GPIOZ_15,  IRQID_GPIOZ_0,  IRQID_GPIOZ_15,
+ 		4,  0,  4,  0,  12,  0, 13,  0,  14,  0,  5, 0),
+@@ -1333,7 +1333,7 @@ static struct meson_bank meson_g12a_periphs_banks[] = {
+ 		2,  0,  2,  0,   6,  0,  7,  0,   8,  0,  2, 0),
+ };
+ 
+-static struct meson_bank meson_g12a_aobus_banks[] = {
++static const struct meson_bank meson_g12a_aobus_banks[] = {
+ 	/* name  first  last  irq  pullen  pull  dir  out  in  ds */
+ 	BANK_DS("AO",   GPIOAO_0, GPIOAO_11, IRQID_GPIOAO_0, IRQID_GPIOAO_11,
+ 		3,  0,  2,  0,   0,  0,  4,  0,   1,  0,  0, 0),
+@@ -1342,7 +1342,7 @@ static struct meson_bank meson_g12a_aobus_banks[] = {
+ 		3, 16,  2, 16,   0, 16,  4, 16,   1, 16,  1, 0),
+ };
+ 
+-static struct meson_pmx_bank meson_g12a_periphs_pmx_banks[] = {
++static const struct meson_pmx_bank meson_g12a_periphs_pmx_banks[] = {
+ 	/*	 name	 first	  last	    reg	 offset  */
+ 	BANK_PMX("Z",    GPIOZ_0, GPIOZ_15, 0x6, 0),
+ 	BANK_PMX("H",    GPIOH_0, GPIOH_8,  0xb, 0),
+@@ -1352,17 +1352,17 @@ static struct meson_pmx_bank meson_g12a_periphs_pmx_banks[] = {
+ 	BANK_PMX("X",    GPIOX_0, GPIOX_19, 0x3, 0),
+ };
+ 
+-static struct meson_axg_pmx_data meson_g12a_periphs_pmx_banks_data = {
++static const struct meson_axg_pmx_data meson_g12a_periphs_pmx_banks_data = {
+ 	.pmx_banks	= meson_g12a_periphs_pmx_banks,
+ 	.num_pmx_banks	= ARRAY_SIZE(meson_g12a_periphs_pmx_banks),
+ };
+ 
+-static struct meson_pmx_bank meson_g12a_aobus_pmx_banks[] = {
++static const struct meson_pmx_bank meson_g12a_aobus_pmx_banks[] = {
+ 	BANK_PMX("AO",  GPIOAO_0, GPIOAO_11, 0x0, 0),
+ 	BANK_PMX("E",   GPIOE_0,  GPIOE_2,   0x1, 16),
+ };
+ 
+-static struct meson_axg_pmx_data meson_g12a_aobus_pmx_banks_data = {
++static const struct meson_axg_pmx_data meson_g12a_aobus_pmx_banks_data = {
+ 	.pmx_banks	= meson_g12a_aobus_pmx_banks,
+ 	.num_pmx_banks	= ARRAY_SIZE(meson_g12a_aobus_pmx_banks),
+ };
+@@ -1375,7 +1375,7 @@ static int meson_g12a_aobus_parse_dt_extra(struct meson_pinctrl *pc)
+ 	return 0;
+ }
+ 
+-static struct meson_pinctrl_data meson_g12a_periphs_pinctrl_data = {
++static const struct meson_pinctrl_data meson_g12a_periphs_pinctrl_data = {
+ 	.name		= "periphs-banks",
+ 	.pins		= meson_g12a_periphs_pins,
+ 	.groups		= meson_g12a_periphs_groups,
+@@ -1389,7 +1389,7 @@ static struct meson_pinctrl_data meson_g12a_periphs_pinctrl_data = {
+ 	.pmx_data	= &meson_g12a_periphs_pmx_banks_data,
+ };
+ 
+-static struct meson_pinctrl_data meson_g12a_aobus_pinctrl_data = {
++static const struct meson_pinctrl_data meson_g12a_aobus_pinctrl_data = {
+ 	.name		= "aobus-banks",
+ 	.pins		= meson_g12a_aobus_pins,
+ 	.groups		= meson_g12a_aobus_groups,
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+index 2867f397fec6..4e8b9d7c2e4b 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+@@ -307,7 +307,7 @@ static const unsigned int spdif_out_ao_13_pins[] = { GPIOAO_13 };
+ static const unsigned int ao_cec_pins[]		= { GPIOAO_12 };
+ static const unsigned int ee_cec_pins[]		= { GPIOAO_12 };
+ 
+-static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
++static const struct meson_pmx_group meson_gxbb_periphs_groups[] = {
+ 	GPIO_GROUP(GPIOZ_0),
+ 	GPIO_GROUP(GPIOZ_1),
+ 	GPIO_GROUP(GPIOZ_2),
+@@ -541,7 +541,7 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
+ 	GROUP(sdcard_clk,	2,	11),
+ };
+ 
+-static struct meson_pmx_group meson_gxbb_aobus_groups[] = {
++static const struct meson_pmx_group meson_gxbb_aobus_groups[] = {
+ 	GPIO_GROUP(GPIOAO_0),
+ 	GPIO_GROUP(GPIOAO_1),
+ 	GPIO_GROUP(GPIOAO_2),
+@@ -798,7 +798,7 @@ static const char * const cec_ao_groups[] = {
+ 	"ao_cec", "ee_cec",
+ };
+ 
+-static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
++static const struct meson_pmx_func meson_gxbb_periphs_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(emmc),
+ 	FUNCTION(nor),
+@@ -829,7 +829,7 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
+ 	FUNCTION(tsin_b),
+ };
+ 
+-static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
++static const struct meson_pmx_func meson_gxbb_aobus_functions[] = {
+ 	FUNCTION(gpio_aobus),
+ 	FUNCTION(uart_ao),
+ 	FUNCTION(uart_ao_b),
+@@ -845,7 +845,7 @@ static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
+ 	FUNCTION(cec_ao),
+ };
+ 
+-static struct meson_bank meson_gxbb_periphs_banks[] = {
++static const struct meson_bank meson_gxbb_periphs_banks[] = {
+ 	/*   name    first      last       irq       pullen  pull    dir     out     in  */
+ 	BANK("X",    GPIOX_0,	GPIOX_22,  106, 128, 4,  0,  4,  0,  12, 0,  13, 0,  14, 0),
+ 	BANK("Y",    GPIOY_0,	GPIOY_16,   89, 105, 1,  0,  1,  0,  3,  0,  4,  0,  5,  0),
+@@ -857,12 +857,12 @@ static struct meson_bank meson_gxbb_periphs_banks[] = {
+ 	BANK("CLK",  GPIOCLK_0,	GPIOCLK_3, 129, 132, 3, 28,  3, 28,  9, 28, 10, 28, 11, 28),
+ };
+ 
+-static struct meson_bank meson_gxbb_aobus_banks[] = {
++static const struct meson_bank meson_gxbb_aobus_banks[] = {
+ 	/*   name    first      last       irq    pullen  pull    dir     out     in  */
+ 	BANK("AO",   GPIOAO_0,  GPIOAO_13, 0, 13, 0,  16, 0, 0,   0,  0,  0, 16,  1,  0),
+ };
+ 
+-static struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data = {
++static const struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data = {
+ 	.name		= "periphs-banks",
+ 	.pins		= meson_gxbb_periphs_pins,
+ 	.groups		= meson_gxbb_periphs_groups,
+@@ -875,7 +875,7 @@ static struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data = {
+ 	.pmx_ops	= &meson8_pmx_ops,
+ };
+ 
+-static struct meson_pinctrl_data meson_gxbb_aobus_pinctrl_data = {
++static const struct meson_pinctrl_data meson_gxbb_aobus_pinctrl_data = {
+ 	.name		= "aobus-banks",
+ 	.pins		= meson_gxbb_aobus_pins,
+ 	.groups		= meson_gxbb_aobus_groups,
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+index a2f25fa02852..9171de657f97 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+@@ -301,7 +301,7 @@ static const unsigned int spdif_out_ao_9_pins[] = { GPIOAO_9 };
+ static const unsigned int ao_cec_pins[]		= { GPIOAO_8 };
+ static const unsigned int ee_cec_pins[]		= { GPIOAO_8 };
+ 
+-static struct meson_pmx_group meson_gxl_periphs_groups[] = {
++static const struct meson_pmx_group meson_gxl_periphs_groups[] = {
+ 	GPIO_GROUP(GPIOZ_0),
+ 	GPIO_GROUP(GPIOZ_1),
+ 	GPIO_GROUP(GPIOZ_2),
+@@ -527,7 +527,7 @@ static struct meson_pmx_group meson_gxl_periphs_groups[] = {
+ 	GROUP(pwm_f_clk,	8,	30),
+ };
+ 
+-static struct meson_pmx_group meson_gxl_aobus_groups[] = {
++static const struct meson_pmx_group meson_gxl_aobus_groups[] = {
+ 	GPIO_GROUP(GPIOAO_0),
+ 	GPIO_GROUP(GPIOAO_1),
+ 	GPIO_GROUP(GPIOAO_2),
+@@ -763,7 +763,7 @@ static const char * const cec_ao_groups[] = {
+ 	"ao_cec", "ee_cec",
+ };
+ 
+-static struct meson_pmx_func meson_gxl_periphs_functions[] = {
++static const struct meson_pmx_func meson_gxl_periphs_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(emmc),
+ 	FUNCTION(nor),
+@@ -793,7 +793,7 @@ static struct meson_pmx_func meson_gxl_periphs_functions[] = {
+ 	FUNCTION(tsin_b),
+ };
+ 
+-static struct meson_pmx_func meson_gxl_aobus_functions[] = {
++static const struct meson_pmx_func meson_gxl_aobus_functions[] = {
+ 	FUNCTION(gpio_aobus),
+ 	FUNCTION(uart_ao),
+ 	FUNCTION(uart_ao_b),
+@@ -807,7 +807,7 @@ static struct meson_pmx_func meson_gxl_aobus_functions[] = {
+ 	FUNCTION(cec_ao),
+ };
+ 
+-static struct meson_bank meson_gxl_periphs_banks[] = {
++static const struct meson_bank meson_gxl_periphs_banks[] = {
+ 	/*   name    first      last       irq	     pullen  pull    dir     out     in  */
+ 	BANK("X",    GPIOX_0,	GPIOX_18,   89, 107, 4,  0,  4,  0,  12, 0,  13, 0,  14, 0),
+ 	BANK("DV",   GPIODV_0,	GPIODV_29,  83,  88, 0,  0,  0,  0,  0,  0,  1,  0,  2,  0),
+@@ -818,12 +818,12 @@ static struct meson_bank meson_gxl_periphs_banks[] = {
+ 	BANK("CLK",  GPIOCLK_0,	GPIOCLK_1, 108, 109, 3, 28,  3, 28,  9, 28, 10, 28, 11, 28),
+ };
+ 
+-static struct meson_bank meson_gxl_aobus_banks[] = {
++static const struct meson_bank meson_gxl_aobus_banks[] = {
+ 	/*   name    first      last      irq	pullen  pull    dir     out     in  */
+ 	BANK("AO",   GPIOAO_0,  GPIOAO_9, 0, 9, 0,  16, 0, 0,   0,  0,  0, 16,  1,  0),
+ };
+ 
+-static struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data = {
++static const struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data = {
+ 	.name		= "periphs-banks",
+ 	.pins		= meson_gxl_periphs_pins,
+ 	.groups		= meson_gxl_periphs_groups,
+@@ -836,7 +836,7 @@ static struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data = {
+ 	.pmx_ops	= &meson8_pmx_ops,
+ };
+ 
+-static struct meson_pinctrl_data meson_gxl_aobus_pinctrl_data = {
++static const struct meson_pinctrl_data meson_gxl_aobus_pinctrl_data = {
+ 	.name		= "aobus-banks",
+ 	.pins		= meson_gxl_aobus_pins,
+ 	.groups		= meson_gxl_aobus_groups,
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-s4.c b/drivers/pinctrl/meson/pinctrl-meson-s4.c
+index 60c7d5003e8a..872948699e9f 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-s4.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-s4.c
+@@ -411,7 +411,7 @@ static const unsigned int s2_demod_gpio0_pins[]		= { GPIOZ_12 };
+ static const unsigned int gen_clk_z9_pins[]		= { GPIOZ_9 };
+ static const unsigned int gen_clk_z12_pins[]		= { GPIOZ_12 };
+ 
+-static struct meson_pmx_group meson_s4_periphs_groups[] = {
++static const struct meson_pmx_group meson_s4_periphs_groups[] = {
+ 	GPIO_GROUP(GPIOE_0),
+ 	GPIO_GROUP(GPIOE_1),
+ 
+@@ -1100,7 +1100,7 @@ static const char * const s2_demod_groups[] = {
+ 	"s2_demod_gpio3", "s2_demod_gpio2", "s2_demod_gpio1", "s2_demod_gpio0",
+ };
+ 
+-static struct meson_pmx_func meson_s4_periphs_functions[] = {
++static const struct meson_pmx_func meson_s4_periphs_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(i2c0),
+ 	FUNCTION(i2c1),
+@@ -1160,7 +1160,7 @@ static struct meson_pmx_func meson_s4_periphs_functions[] = {
+ 	FUNCTION(s2_demod),
+ };
+ 
+-static struct meson_bank meson_s4_periphs_banks[] = {
++static const struct meson_bank meson_s4_periphs_banks[] = {
+ 	/* name  first  last  irq  pullen  pull  dir  out  in */
+ 	BANK_DS("B", GPIOB_0,    GPIOB_13,  0, 13,
+ 		0x63,  0,  0x64,  0,  0x62, 0,  0x61, 0,  0x60, 0, 0x67, 0),
+@@ -1180,7 +1180,7 @@ static struct meson_bank meson_s4_periphs_banks[] = {
+ 		0x83,  0,  0x84,  0,  0x82, 0,  0x81,  0, 0x80, 0, 0x87, 0),
+ };
+ 
+-static struct meson_pmx_bank meson_s4_periphs_pmx_banks[] = {
++static const struct meson_pmx_bank meson_s4_periphs_pmx_banks[] = {
+ 	/*name	            first	 lask        reg offset*/
+ 	BANK_PMX("B",      GPIOB_0,     GPIOB_13,    0x00, 0),
+ 	BANK_PMX("C",      GPIOC_0,     GPIOC_7,     0x9,  0),
+@@ -1192,12 +1192,12 @@ static struct meson_pmx_bank meson_s4_periphs_pmx_banks[] = {
+ 	BANK_PMX("TEST_N", GPIO_TEST_N, GPIO_TEST_N, 0xf,  0)
+ };
+ 
+-static struct meson_axg_pmx_data meson_s4_periphs_pmx_banks_data = {
++static const struct meson_axg_pmx_data meson_s4_periphs_pmx_banks_data = {
+ 	.pmx_banks	= meson_s4_periphs_pmx_banks,
+ 	.num_pmx_banks	= ARRAY_SIZE(meson_s4_periphs_pmx_banks),
+ };
+ 
+-static struct meson_pinctrl_data meson_s4_periphs_pinctrl_data = {
++static const struct meson_pinctrl_data meson_s4_periphs_pinctrl_data = {
+ 	.name		= "periphs-banks",
+ 	.pins		= meson_s4_periphs_pins,
+ 	.groups		= meson_s4_periphs_groups,
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+index ef002b9dd464..253a0cc57e39 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.c
++++ b/drivers/pinctrl/meson/pinctrl-meson.c
+@@ -70,7 +70,7 @@ static const unsigned int meson_bit_strides[] = {
+  * Return:	0 on success, a negative value on error
+  */
+ static int meson_get_bank(struct meson_pinctrl *pc, unsigned int pin,
+-			  struct meson_bank **bank)
++			  const struct meson_bank **bank)
+ {
+ 	int i;
+ 
+@@ -94,11 +94,12 @@ static int meson_get_bank(struct meson_pinctrl *pc, unsigned int pin,
+  * @reg:	the computed register offset
+  * @bit:	the computed bit
+  */
+-static void meson_calc_reg_and_bit(struct meson_bank *bank, unsigned int pin,
++static void meson_calc_reg_and_bit(const struct meson_bank *bank,
++				   unsigned int pin,
+ 				   enum meson_reg_type reg_type,
+ 				   unsigned int *reg, unsigned int *bit)
+ {
+-	struct meson_reg_desc *desc = &bank->regs[reg_type];
++	const struct meson_reg_desc *desc = &bank->regs[reg_type];
+ 
+ 	*bit = (desc->bit + pin - bank->first) * meson_bit_strides[reg_type];
+ 	*reg = (desc->reg + (*bit / 32)) * 4;
+@@ -181,7 +182,7 @@ static int meson_pinconf_set_gpio_bit(struct meson_pinctrl *pc,
+ 				      unsigned int reg_type,
+ 				      bool arg)
+ {
+-	struct meson_bank *bank;
++	const struct meson_bank *bank;
+ 	unsigned int reg, bit;
+ 	int ret;
+ 
+@@ -198,7 +199,7 @@ static int meson_pinconf_get_gpio_bit(struct meson_pinctrl *pc,
+ 				      unsigned int pin,
+ 				      unsigned int reg_type)
+ {
+-	struct meson_bank *bank;
++	const struct meson_bank *bank;
+ 	unsigned int reg, bit, val;
+ 	int ret;
+ 
+@@ -261,7 +262,7 @@ static int meson_pinconf_set_output_drive(struct meson_pinctrl *pc,
+ static int meson_pinconf_disable_bias(struct meson_pinctrl *pc,
+ 				      unsigned int pin)
+ {
+-	struct meson_bank *bank;
++	const struct meson_bank *bank;
+ 	unsigned int reg, bit = 0;
+ 	int ret;
+ 
+@@ -280,7 +281,7 @@ static int meson_pinconf_disable_bias(struct meson_pinctrl *pc,
+ static int meson_pinconf_enable_bias(struct meson_pinctrl *pc, unsigned int pin,
+ 				     bool pull_up)
+ {
+-	struct meson_bank *bank;
++	const struct meson_bank *bank;
+ 	unsigned int reg, bit, val = 0;
+ 	int ret;
+ 
+@@ -308,7 +309,7 @@ static int meson_pinconf_set_drive_strength(struct meson_pinctrl *pc,
+ 					    unsigned int pin,
+ 					    u16 drive_strength_ua)
+ {
+-	struct meson_bank *bank;
++	const struct meson_bank *bank;
+ 	unsigned int reg, bit, ds_val;
+ 	int ret;
+ 
+@@ -399,7 +400,7 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
+ 
+ static int meson_pinconf_get_pull(struct meson_pinctrl *pc, unsigned int pin)
+ {
+-	struct meson_bank *bank;
++	const struct meson_bank *bank;
+ 	unsigned int reg, bit, val;
+ 	int ret, conf;
+ 
+@@ -435,7 +436,7 @@ static int meson_pinconf_get_drive_strength(struct meson_pinctrl *pc,
+ 					    unsigned int pin,
+ 					    u16 *drive_strength_ua)
+ {
+-	struct meson_bank *bank;
++	const struct meson_bank *bank;
+ 	unsigned int reg, bit;
+ 	unsigned int val;
+ 	int ret;
+@@ -528,7 +529,7 @@ static int meson_pinconf_group_set(struct pinctrl_dev *pcdev,
+ 				   unsigned long *configs, unsigned num_configs)
+ {
+ 	struct meson_pinctrl *pc = pinctrl_dev_get_drvdata(pcdev);
+-	struct meson_pmx_group *group = &pc->data->groups[num_group];
++	const struct meson_pmx_group *group = &pc->data->groups[num_group];
+ 	int i;
+ 
+ 	dev_dbg(pc->dev, "set pinconf for group %s\n", group->name);
+@@ -587,8 +588,8 @@ static void meson_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
+ static int meson_gpio_get(struct gpio_chip *chip, unsigned gpio)
+ {
+ 	struct meson_pinctrl *pc = gpiochip_get_data(chip);
++	const struct meson_bank *bank;
+ 	unsigned int reg, bit, val;
+-	struct meson_bank *bank;
+ 	int ret;
+ 
+ 	ret = meson_get_bank(pc, gpio, &bank);
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
+index 34fc4e8612e4..7883ea31a001 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.h
++++ b/drivers/pinctrl/meson/pinctrl-meson.h
+@@ -110,15 +110,15 @@ struct meson_bank {
+ struct meson_pinctrl_data {
+ 	const char *name;
+ 	const struct pinctrl_pin_desc *pins;
+-	struct meson_pmx_group *groups;
+-	struct meson_pmx_func *funcs;
++	const struct meson_pmx_group *groups;
++	const struct meson_pmx_func *funcs;
+ 	unsigned int num_pins;
+ 	unsigned int num_groups;
+ 	unsigned int num_funcs;
+-	struct meson_bank *banks;
++	const struct meson_bank *banks;
+ 	unsigned int num_banks;
+ 	const struct pinmux_ops *pmx_ops;
+-	void *pmx_data;
++	const void *pmx_data;
+ 	int (*parse_dt)(struct meson_pinctrl *pc);
+ };
+ 
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8-pmx.c b/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
+index 7f22aa0f8e36..10adf52edda6 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8-pmx.c
+@@ -32,7 +32,7 @@
+ static void meson8_pmx_disable_other_groups(struct meson_pinctrl *pc,
+ 					    unsigned int pin, int sel_group)
+ {
+-	struct meson_pmx_group *group;
++	const struct meson_pmx_group *group;
+ 	struct meson8_pmx_data *pmx_data;
+ 	int i, j;
+ 
+@@ -57,8 +57,8 @@ static int meson8_pmx_set_mux(struct pinctrl_dev *pcdev, unsigned func_num,
+ 			      unsigned group_num)
+ {
+ 	struct meson_pinctrl *pc = pinctrl_dev_get_drvdata(pcdev);
+-	struct meson_pmx_func *func = &pc->data->funcs[func_num];
+-	struct meson_pmx_group *group = &pc->data->groups[group_num];
++	const struct meson_pmx_func *func = &pc->data->funcs[func_num];
++	const struct meson_pmx_group *group = &pc->data->groups[group_num];
+ 	struct meson8_pmx_data *pmx_data =
+ 		(struct meson8_pmx_data *)group->data;
+ 	int i, ret = 0;
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
+index dd17100efdcf..3da7f3799c3f 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8.c
+@@ -405,7 +405,7 @@ static const unsigned int i2s_out_ch01_ao_pins[] = { GPIOAO_11 };
+ 
+ static const unsigned int hdmi_cec_ao_pins[]	= { GPIOAO_12 };
+ 
+-static struct meson_pmx_group meson8_cbus_groups[] = {
++static const struct meson_pmx_group meson8_cbus_groups[] = {
+ 	GPIO_GROUP(GPIOX_0),
+ 	GPIO_GROUP(GPIOX_1),
+ 	GPIO_GROUP(GPIOX_2),
+@@ -745,7 +745,7 @@ static struct meson_pmx_group meson8_cbus_groups[] = {
+ 	GROUP(sdxc_cmd_b,	2,	4),
+ };
+ 
+-static struct meson_pmx_group meson8_aobus_groups[] = {
++static const struct meson_pmx_group meson8_aobus_groups[] = {
+ 	GPIO_GROUP(GPIOAO_0),
+ 	GPIO_GROUP(GPIOAO_1),
+ 	GPIO_GROUP(GPIOAO_2),
+@@ -1015,7 +1015,7 @@ static const char * const hdmi_cec_ao_groups[] = {
+ 	"hdmi_cec_ao"
+ };
+ 
+-static struct meson_pmx_func meson8_cbus_functions[] = {
++static const struct meson_pmx_func meson8_cbus_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(sd_a),
+ 	FUNCTION(sdxc_a),
+@@ -1051,7 +1051,7 @@ static struct meson_pmx_func meson8_cbus_functions[] = {
+ 	FUNCTION(spdif),
+ };
+ 
+-static struct meson_pmx_func meson8_aobus_functions[] = {
++static const struct meson_pmx_func meson8_aobus_functions[] = {
+ 	FUNCTION(gpio_aobus),
+ 	FUNCTION(uart_ao),
+ 	FUNCTION(remote),
+@@ -1063,7 +1063,7 @@ static struct meson_pmx_func meson8_aobus_functions[] = {
+ 	FUNCTION(hdmi_cec_ao),
+ };
+ 
+-static struct meson_bank meson8_cbus_banks[] = {
++static const struct meson_bank meson8_cbus_banks[] = {
+ 	/*   name    first     last         irq       pullen  pull    dir     out     in  */
+ 	BANK("X",    GPIOX_0,  GPIOX_21,    112, 133, 4,  0,  4,  0,  0,  0,  1,  0,  2,  0),
+ 	BANK("Y",    GPIOY_0,  GPIOY_16,    95,  111, 3,  0,  3,  0,  3,  0,  4,  0,  5,  0),
+@@ -1074,12 +1074,12 @@ static struct meson_bank meson8_cbus_banks[] = {
+ 	BANK("BOOT", BOOT_0,   BOOT_18,     39,   57, 2,  0,  2,  0,  9,  0, 10,  0, 11,  0),
+ };
+ 
+-static struct meson_bank meson8_aobus_banks[] = {
++static const struct meson_bank meson8_aobus_banks[] = {
+ 	/*   name    first     last         irq    pullen  pull    dir     out     in  */
+ 	BANK("AO",   GPIOAO_0, GPIO_TEST_N, 0, 13, 0, 16,  0,  0,  0,  0,  0, 16,  1,  0),
+ };
+ 
+-static struct meson_pinctrl_data meson8_cbus_pinctrl_data = {
++static const struct meson_pinctrl_data meson8_cbus_pinctrl_data = {
+ 	.name		= "cbus-banks",
+ 	.pins		= meson8_cbus_pins,
+ 	.groups		= meson8_cbus_groups,
+@@ -1092,7 +1092,7 @@ static struct meson_pinctrl_data meson8_cbus_pinctrl_data = {
+ 	.pmx_ops	= &meson8_pmx_ops,
+ };
+ 
+-static struct meson_pinctrl_data meson8_aobus_pinctrl_data = {
++static const struct meson_pinctrl_data meson8_aobus_pinctrl_data = {
+ 	.name		= "ao-bank",
+ 	.pins		= meson8_aobus_pins,
+ 	.groups		= meson8_aobus_groups,
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
+index 6cd4b3ec1b40..a71e1f41358a 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8b.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
+@@ -349,7 +349,7 @@ static const unsigned int eth_ref_clk_pins[]	= { DIF_3_N };
+ static const unsigned int eth_mdc_pins[]	= { DIF_4_P };
+ static const unsigned int eth_mdio_en_pins[]	= { DIF_4_N };
+ 
+-static struct meson_pmx_group meson8b_cbus_groups[] = {
++static const struct meson_pmx_group meson8b_cbus_groups[] = {
+ 	GPIO_GROUP(GPIOX_0),
+ 	GPIO_GROUP(GPIOX_1),
+ 	GPIO_GROUP(GPIOX_2),
+@@ -603,7 +603,7 @@ static struct meson_pmx_group meson8b_cbus_groups[] = {
+ 	GROUP(eth_rxd2,		7,	23),
+ };
+ 
+-static struct meson_pmx_group meson8b_aobus_groups[] = {
++static const struct meson_pmx_group meson8b_aobus_groups[] = {
+ 	GPIO_GROUP(GPIOAO_0),
+ 	GPIO_GROUP(GPIOAO_1),
+ 	GPIO_GROUP(GPIOAO_2),
+@@ -869,7 +869,7 @@ static const char * const tsin_b_groups[] = {
+ 	"tsin_d0_b", "tsin_clk_b", "tsin_sop_b", "tsin_d_valid_b"
+ };
+ 
+-static struct meson_pmx_func meson8b_cbus_functions[] = {
++static const struct meson_pmx_func meson8b_cbus_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(sd_a),
+ 	FUNCTION(sdxc_a),
+@@ -903,7 +903,7 @@ static struct meson_pmx_func meson8b_cbus_functions[] = {
+ 	FUNCTION(clk_24m),
+ };
+ 
+-static struct meson_pmx_func meson8b_aobus_functions[] = {
++static const struct meson_pmx_func meson8b_aobus_functions[] = {
+ 	FUNCTION(gpio_aobus),
+ 	FUNCTION(uart_ao),
+ 	FUNCTION(uart_ao_b),
+@@ -917,7 +917,7 @@ static struct meson_pmx_func meson8b_aobus_functions[] = {
+ 	FUNCTION(hdmi_cec),
+ };
+ 
+-static struct meson_bank meson8b_cbus_banks[] = {
++static const struct meson_bank meson8b_cbus_banks[] = {
+ 	/*   name        first          last        irq       pullen   pull     dir      out      in   */
+ 	BANK("X0..11",	 GPIOX_0,	GPIOX_11,   97, 108,  4,  0,   4,  0,   0,  0,   1,  0,   2,  0),
+ 	BANK("X16..21",	 GPIOX_16,	GPIOX_21,  113, 118,  4, 16,   4, 16,   0, 16,   1, 16,   2, 16),
+@@ -938,12 +938,12 @@ static struct meson_bank meson8b_cbus_banks[] = {
+ 	BANK("DIF",	 DIF_0_P,	DIF_4_N,    -1,  -1,  5,  8,   5,  8,  12, 12,  13, 12,  14, 12),
+ };
+ 
+-static struct meson_bank meson8b_aobus_banks[] = {
++static const struct meson_bank meson8b_aobus_banks[] = {
+ 	/*   name    first     lastc        irq    pullen  pull    dir     out     in  */
+ 	BANK("AO",   GPIOAO_0, GPIO_TEST_N, 0, 13, 0,  16, 0, 0,  0,  0,  0, 16,  1,  0),
+ };
+ 
+-static struct meson_pinctrl_data meson8b_cbus_pinctrl_data = {
++static const struct meson_pinctrl_data meson8b_cbus_pinctrl_data = {
+ 	.name		= "cbus-banks",
+ 	.pins		= meson8b_cbus_pins,
+ 	.groups		= meson8b_cbus_groups,
+@@ -956,7 +956,7 @@ static struct meson_pinctrl_data meson8b_cbus_pinctrl_data = {
+ 	.pmx_ops	= &meson8_pmx_ops,
+ };
+ 
+-static struct meson_pinctrl_data meson8b_aobus_pinctrl_data = {
++static const struct meson_pinctrl_data meson8b_aobus_pinctrl_data = {
+ 	.name		= "aobus-banks",
+ 	.pins		= meson8b_aobus_pins,
+ 	.groups		= meson8b_aobus_groups,
+-- 
+2.45.2
+
 
