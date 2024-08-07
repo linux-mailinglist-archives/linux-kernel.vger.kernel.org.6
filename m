@@ -1,130 +1,145 @@
-Return-Path: <linux-kernel+bounces-278285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D672594AE41
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:38:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 711FD94AE44
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13A2F1C21750
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:38:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9951E1C216CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1FC139CE9;
-	Wed,  7 Aug 2024 16:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F2C13774B;
+	Wed,  7 Aug 2024 16:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kiKz9yac"
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LiUE3Qso"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CFF2209B;
-	Wed,  7 Aug 2024 16:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32152F3E
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723048710; cv=none; b=cEYvbpczp3VsFJZCRh0Q1ysfe2HNC7H4o3bMgyVyly+LnObMrxn+N9Rs8uHrJdvGtJvUU/T3qjeVHb/e3S+7tfe+pUtB+myst/H1G8wPf5QPb5vYxBGaCENWBBjblrr7+rZvqvTxggru8XNLBq9wkoDRUIAEhPNEApVm+1nfnBQ=
+	t=1723048780; cv=none; b=LOssPEHBNyLAkf2KKTwUdkA6KTFYYZ5g21XjS72TvGwSTaCLY0SCvjXIgmzc7tkT8uo/iXJdjHFvIFzOGR23rRvLIRA/ETj8z9VA0J7M13vn5/AwrRnmjF+YRgXX3LoejLSYtIE/IT7/rVyIyUOLW6HfjDaSW5/aVLpXx5jW4F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723048710; c=relaxed/simple;
-	bh=7UoBEwKBvrQT2AMxf80k+ltND63+oKRLomyxe7Y1++A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tif4CgMWzKNibvrmHeQtUuoPMaLsgdB6KnpQlIczLCF8/Iy/3rSdMTbZoTDc/arrC7tw+917vVAQjBxSB9B+QJx6Hjx2qgdndiBJSEafXYx3XKVen2MbARkWgP66K/6KzjeBWqLThr3UDFoErFuvsfecfAiVEPZ6mQA44rqTzwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kiKz9yac; arc=none smtp.client-ip=209.85.221.172
+	s=arc-20240116; t=1723048780; c=relaxed/simple;
+	bh=7jUDM+xLtypuR3LWObie88czTNQttanVUl62e9mzloI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jE5nzfE/qXfVrGIg0XGRe9jugU5MLCgm/hG/INoFmNTZieS1GQKBmoxdqRvI431oCfzcPaLMKgYo/wMtAZHd8t34tDluK3kw0z47OCgf930fTkVRAvELQDz0LedsK39V7GjFgi3mmJsED4T1rfMzmEVhh3DANMAv5a7Iod6Vn1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LiUE3Qso; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4f527c0c959so17793e0c.1;
-        Wed, 07 Aug 2024 09:38:28 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc65329979so1253055ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 09:39:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723048707; x=1723653507; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8mgCmD2KAcrYzQNy1uvrHNBnFb3EiB9zFOmW/TFGDZ8=;
-        b=kiKz9yacHSeNozVU3nKAoo/EazPIftDagpxFYFzQle4Ow3OHr59Fnw6oOZ+ZFUe2j3
-         AfBqzag2EFHTLiC/pQhhwEipEcQbgblwrRijpa2X6acnNYQVW1ck0zFWGJKXyLWSjVJF
-         lGt5WDsUDuGiVmI/VYZHHEwjc5HhJl0heZ4Ln13NZ0pIIpDOOqdvAcw8D1yV/fpiZ8QK
-         tQ3Q+MP7ouSBI8kmq6A/Jc4gOt4kVheE2ld/Wblht5j2MRqNl4r9MFEXkuWVK0R4vQar
-         bJrbjS4wOSa3ysAYevwZGxIhQf+AkGGrg7ut3muAUzBi0UPGP4QvCdVhUmyJNj9zoVId
-         xTeA==
+        d=gmail.com; s=20230601; t=1723048778; x=1723653578; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SCzZ2NG+7iTC4t2x8SaeAedg7WRJblJNbmhLrG4zTO0=;
+        b=LiUE3Qso1wSsbPPgqCYJLaXBLO/9ag3GowUWNoiHVaMYXKQ9NSajXUZUA6Hbdkygvv
+         xnI6DI+I4F+34ZpPPe4q1jTuNFpxRIKrwJS56oCL1oifldrnvAKDUlF+b98l4gsATU+Q
+         3NhyWkLXdvfbKMsQFt0IbRE8xaqhzy2k7LSUKq/6XJO0wNO3g6Div/4IZZtrGEycNXzP
+         ginWNwMBoip8G26wm3QH2VB4kNbJao6aPsT0yirmOsfjNfMSJVp0MqoQ0v9Daq9xwds/
+         nf/dd4PVvmfyl0wdgTlcmVQizoZM5EjvabqCxuCYoP1m6zgdrlKMPhiVw5828+WTUlwI
+         khYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723048707; x=1723653507;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8mgCmD2KAcrYzQNy1uvrHNBnFb3EiB9zFOmW/TFGDZ8=;
-        b=HBe23N8gPVMREHCd75i0ZzhY3mUjch1DO++hrSktCGopZX4wwjS7smsCo8k+F8Y9ZT
-         ifgIVmEW1wzLuIazeJPRaSp/S33gtJfSXmqsfSN5qszDXgxcq1fGN4b5Q+HX/njF+4ac
-         IKCtSOv8G6gUwixjt84qVa6DH3kMSoi8uVfNd5ebNE8Yc36/TTgGbQKifPIGCE4hTF41
-         yiLy8sAfnvae+cQJWbpypGGyEIA888F2RAx7oXI3t2o9lFueYN6zhYb2rsYd/0/k1Mdx
-         c9G1m2sNKlx/tJEQgc/HJkTevLye+v+UKypcTJ2ZEPSV+F+YMzHi/7N6knj6+Vf2ln2L
-         UGFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3jMJiPsdQHtf1GDAdPY7d1PeDeSQyi478MohMQO6T7gfA1Yg1q7py5R71hYlwngncAXd8owdI7sY2rO+KqAedenixlahWyjxwdJl2ym8rcObhMdmu+EdqEC6d8q8HiP/HHv9iM/g+klK+rqSpVbeBCJH1DV8fpW8P2H2xBSSMtV0EppeRJ5exMLbcGSKY
-X-Gm-Message-State: AOJu0YwAutz9oQAi0h9VN1na83hUAhPVOH41b2CaMDGBIKaXTHLNKAE2
-	bsKBvfr1htGlcEv6g7CCSJ46zAWN41yebI2hxngJTGtjn8nOVObosXXUu6RRKPrWnQUeif6APl0
-	KskLz4y2SJRCYjKsKZEVZtX3I2+k=
-X-Google-Smtp-Source: AGHT+IEaPdM7pIWYj7gKtQjNufq1NVzXdVjvhAsj0E+4bsWTLCUCwCLraq7BAD6I5PzYhwVL6S2vmNZdAhIlxFNafD8=
-X-Received: by 2002:a05:6122:1d16:b0:4f2:f1f1:a9f2 with SMTP id
- 71dfb90a1353d-4f89ff6c61dmr22140799e0c.4.1723048707355; Wed, 07 Aug 2024
- 09:38:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723048778; x=1723653578;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SCzZ2NG+7iTC4t2x8SaeAedg7WRJblJNbmhLrG4zTO0=;
+        b=tLqMIRZxDPQyT3c2Zr3mBtBfDq25W2ncJSl+pj09/Icqb1koxKtkFmT9xK/vQ1cpcW
+         q92d8qS7JV3w3oFGtAiEpf7NwcKKiMTNOmRmLyZpfQqI1lY1/BzcrKcEVmk5TgHGA9ke
+         02VMHBmvXqcfezDigMDjCZWN6wzqYFRvnA5gw00+5gjaaahRREwLBRtgGpFBtOpbWjf3
+         YDa7eVNjEQFUCHNOsQLrFg1WeTy22Q9goGzqnst6IHDf79X5HOK672occFD+/LLAwq4k
+         1MCCxj1oGHwAJK2EoUdGGMX06FvyQKCKLlbzfqWWEEgbhmM3eeISx2Fbq5YPXttzHl9n
+         alRw==
+X-Gm-Message-State: AOJu0YzjWniWvyV5pq8czMkblTwLSowZcB9YiN9IbSVQ2zkXgzCM73yX
+	Vl4kGaakmx6VL8sR+00f/19ANeeoUNvWEMKEI50wf0EZIe4pjvcQ
+X-Google-Smtp-Source: AGHT+IEfg0P/zq5fbIeplhyr9GmYwmn9uUCIRSBW2duRXm7pFZpUMxC4ayytohYsd7+LmJC7gsIpnQ==
+X-Received: by 2002:a17:902:ecc5:b0:1fd:8f66:b070 with SMTP id d9443c01a7336-1ff57464d40mr264528465ad.57.1723048777926;
+        Wed, 07 Aug 2024 09:39:37 -0700 (PDT)
+Received: from localhost ([216.228.127.130])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5905e58fsm108734075ad.177.2024.08.07.09.39.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 09:39:37 -0700 (PDT)
+Date: Wed, 7 Aug 2024 09:39:34 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Leonardo Bras <leobras@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
+Subject: Re: [PATCH 2/2] sched/topology: optimize topology_span_sane()
+Message-ID: <ZrOjRqdita_dOjk9@yury-ThinkPad>
+References: <20240802175750.1152788-1-yury.norov@gmail.com>
+ <20240802175750.1152788-3-yury.norov@gmail.com>
+ <xhsmhy159mz0g.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <ZrJk00cmVaUIAr4G@yury-ThinkPad>
+ <xhsmhv80cmoc1.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807153544.2754247-1-jeffxu@chromium.org>
-In-Reply-To: <20240807153544.2754247-1-jeffxu@chromium.org>
-From: Pedro Falcato <pedro.falcato@gmail.com>
-Date: Wed, 7 Aug 2024 17:38:16 +0100
-Message-ID: <CAKbZUD2xDdbxOTvR3-P=636jvhG_JPO3h79tgB59dfPmv046hg@mail.gmail.com>
-Subject: Re: [PATCH v1] selftest mm/mseal: fix test_seal_mremap_move_dontunmap_anyaddr
-To: jeffxu@chromium.org
-Cc: akpm@linux-foundation.org, willy@infradead.org, 
-	torvalds@linux-foundation.org, Liam.Howlett@oracle.com, jeffxu@google.com, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, dave.hansen@intel.com, linux-hardening@vger.kernel.org, 
-	lorenzo.stoakes@oracle.com, mpe@ellerman.id.au, oliver.sang@intel.com, 
-	vbabka@suse.cz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xhsmhv80cmoc1.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 
-On Wed, Aug 7, 2024 at 4:35=E2=80=AFPM <jeffxu@chromium.org> wrote:
-<snip>
->         /* shrink from 4 pages to 2 pages. */
-> -       ret2 =3D mremap(ptr, size, 2 * page_size, 0, 0);
-> +       ret2 =3D sys_mremap(ptr, size, 2 * page_size, 0, 0);
->         if (seal) {
-> -               FAIL_TEST_IF_FALSE(ret2 =3D=3D MAP_FAILED);
-> +               FAIL_TEST_IF_FALSE(ret2 =3D=3D (void *) MAP_FAILED);
+On Wed, Aug 07, 2024 at 03:53:18PM +0200, Valentin Schneider wrote:
+> On 06/08/24 11:00, Yury Norov wrote:
+> > On Tue, Aug 06, 2024 at 05:50:23PM +0200, Valentin Schneider wrote:
+> >> On 02/08/24 10:57, Yury Norov wrote:
+> >> > The function may call cpumask_equal with tl->mask(cpu) == tl->mask(i),
+> >> > even when cpu != i.
+> >>
+> >> For which architecture have you observed this? AFAIA all implementations of
+> >> tl->sched_domain_mask_f are built on a per-CPU cpumask.
+> >
+> > x86_64, qemu emulating 16 CPUs in 4 nodes, Linux 6.10, approximately
+> > defconfig.
+> 
+> For the default_topology:
+> cpu_smt_mask() # SMT
+>   (per_cpu(cpu_sibling_map, cpu))
+> 
+> cpu_clustergroup_mask() # CLS
+>   per_cpu(cpu_l2c_shared_map, cpu);
+> 
+> cpu_coregroup_mask() # MC
+>   per_cpu(cpu_llc_shared_map, cpu);
+> 
+> cpu_cpu_mask() # PKG
+>   cpumask_of_node(cpu_to_node(cpu));
+> 
+> Ok so PKG can potentially hit that condition, and so can any
+> sched_domain_mask_f that relies on the node masks...
+> 
+> I'm thinking ideally we should have checks in place to ensure all
+> node_to_cpumask_map[] masks are disjoint, then we could entirely skip the levels
+> that use these masks in topology_span_sane(), but there's unfortunately no
+> nice way to flag them... Also there would cases where there's no real
+> difference between PKG and NODE other than NODE is still based on a per-cpu
+> cpumask and PKG isn't, so I don't see a nicer way to go about this.
+> 
+> Please add something like the following to the changelog, and with that:
+> Reviewed-by: Valentin Schneider <vschneid@redhat.com>
 
-MAP_FAILED is already void *
+Sure, will do.
 
-<snip>
-> @@ -1449,18 +1457,16 @@ static void test_seal_mremap_move_dontunmap_anyad=
-dr(bool seal)
->         }
->
->         /*
-> -        * The 0xdeaddead should not have effect on dest addr
-> +        * The 0xdead0000 should not have effect on dest addr
->          * when MREMAP_DONTUNMAP is set.
->          */
-> -       ret2 =3D mremap(ptr, size, size, MREMAP_MAYMOVE | MREMAP_DONTUNMA=
-P,
-> -                       0xdeaddead);
-> +       ret2 =3D sys_mremap(ptr, size, size, MREMAP_MAYMOVE | MREMAP_DONT=
-UNMAP,
-> +                       (void *) 0xdead0000);
-
-You still didn't explain why this test is actually needed. Why are you
-testing MREMAP_DONTUNMAP's hint system?
-This has nothing to do with mseal, you already test the
-MREMAP_DONTUNMAP and MREMAP_FIXED paths in other tests.
-You also don't know if 0xdead0000 is a valid page (hexagon for
-instance seems to support 256KiB and 1MiB pages, so does ppc32, and
-this is not something that should be hardcoded).
-
-I'm not a fan of just throwing random flags for tests, it should be
-somewhat logical.
-
---=20
-Pedro
+> """
+> Some topology levels (e.g. PKG in default_topology[]) have a
+> sched_domain_mask_f implementation that reuses the same mask for several
+> CPUs (in PKG's case, one mask for all CPUs in the same NUMA node).
+> 
+> For such topology levels, repeating cpumask_equal() checks is wasteful -
+> check that the tl->mask(i) pointers aren't the same first.
+> """
 
