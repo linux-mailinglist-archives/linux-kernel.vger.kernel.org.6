@@ -1,130 +1,115 @@
-Return-Path: <linux-kernel+bounces-278194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E53EA94AD25
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:43:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA0D694AD22
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99871281CA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:43:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612E51F2986C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AF9126F02;
-	Wed,  7 Aug 2024 15:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F83613A250;
+	Wed,  7 Aug 2024 15:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="bxeYvS+X";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="exKmP3jz"
-Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Lhy9+T+I"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27001364BC;
-	Wed,  7 Aug 2024 15:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D97F12C54D
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723045395; cv=none; b=kD03oO+wUCPP+otgqJfy3OE1nWZWql9DbeTj8uTAR27cL8YPMJZkL//AJF4buf/aIJdTBMamtK0WdMsFpYJjdGVeQzQ9UjTLxiSUFwWhi8S8+SZE/CCuOGcCnomXNp6OZeEGoN6sP53GZMYGaF8karOMzR55c6x6wW/YlXBKQKE=
+	t=1723045337; cv=none; b=CAXDuuzKHZKgPG2r5I3l48XcVX+JWXrHj547V0TC9pd5OLXpAX4k1rq4xaYpZ1OlkVlQKs2YWlIqZ96wxhzhq3cQofamMPVcsihimvxvwTlJe2wqM2SckTyYN0O4fdkFkfiozlFhm12N1xRDDoWC42m+FKbqOF7iVD0rZ1RntQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723045395; c=relaxed/simple;
-	bh=++TeG6EHfEJD65UKnaVWPlbeLkN+PdeGteBNaUB37sU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=cFTXeKhe9if77dV8La5ckS7WbWDZReG1VNLQNDzBGJ85ijJTL7aHZIBoPwNq5YYKb0/b+7bCVbX86CqpKYTYjnaZDkyP7OKzGcjobGxGJP0j4yVXZbr2LcKW2/N4tlq+3NfnwSLqc0q1vEby2s7+utekU7uXDfO8wXJlVWGqalE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=bxeYvS+X; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=exKmP3jz; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 49219114EA9D;
-	Wed,  7 Aug 2024 11:43:13 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Wed, 07 Aug 2024 11:43:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1723045393;
-	 x=1723131793; bh=GmXLkrFZAsugNyP57xRFNgv2S9AFoG7Hpwkv4yw8wuw=; b=
-	bxeYvS+XLKJTyVoWC4GwjqSI2peT76zGkI3b3SJ4cMozO6eCo90ZA7GW3bVwxkKd
-	Q1Vct9AxPjzBO40EJXzJ2MJP7rkg6K68kvFOExNjG9aMZhdtU8X70JBqDS8pAa+4
-	ZeCJjxV3PAucqqcIOXOdyptNb75t6T0MchTrUgWr92Tmd3DSJ1DFcg7K/wyNHVXi
-	1UUJvgtG/Vnpn7elYuomTCkN79F7a072cncoggwMUdi22/80fHqy3Hr0FCqThbnv
-	XCFPB2s+OoumFeqe6FF+3g8Z/7FjUhHUsGhobriwQG/y2PXXeGYyUfDkd2zld2EG
-	WO43NRhMLukCpkS98MUqZA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723045393; x=
-	1723131793; bh=GmXLkrFZAsugNyP57xRFNgv2S9AFoG7Hpwkv4yw8wuw=; b=e
-	xKmP3jzjwzEi3xr+5dJ/nKvhdnUCgs5trLyhS3cR+Dp2Pl50lHMn3NsY288gZ7e8
-	wLpMoUOjaG1yA1ej09ITc4MtLzU7Di8idxng2MiTLiyep43Vap+1zr8aVq6WT4Jx
-	nKg0vWti10jMPZR24kTqcqalFYyXZe8cwhGF4595BMfZxX4rI7DnlHoFTtOfYUWF
-	TNUYv8aS2KbFqQ9SfcyRUVJht4sn9S6di1ue+SuZWgSWenMjHvNcNo4KbUUlw3bc
-	fewP+uxyLPyq+OqOd2PN2kd0pVDuLxjjfn/KCjsUTeJ6A2JPlNUbWqOe3gm05cDm
-	cE4Du7WX90fT21RIJ3ZXw==
-X-ME-Sender: <xms:EJazZpIxO6cWtA-7XcQEs8_iuPolxyF5dApHJ9hj89YOb18tWBnPFg>
-    <xme:EJazZlJjS_llroA7_Q3Q0sGJMawBpC0S4OordxfaWTwrVG93LX7lblWPULvPQvjry
-    IvdkX0DaZ9_0lT01wo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledtgdelvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdv
-    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:EJazZhtOTYO95RWKtu_-hYlrmF00XW2QHgHrL67TJdQrI0pT8QL4VQ>
-    <xmx:EJazZqbv3Qv23N7qWw_hE8lrX8Ea-xhaIGWSU0eYQaXNR3CJ9KpSJw>
-    <xmx:EJazZgbyGZDbogV8cN2B6h3FqmY5dO96PHjBpWXJhFd-MCN5GMdrBg>
-    <xmx:EJazZuAM7Hy50f4w-Y7ssuECjBv8083MGJGq71z9hWSZ-iY4tzEU1A>
-    <xmx:EZazZgM9J1Hj1voS7a0XIddiivmxcCnr13whQ1rhSym7gyb7nmAr3hkY>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 75F3DB6008F; Wed,  7 Aug 2024 11:43:12 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1723045337; c=relaxed/simple;
+	bh=p7PVqR202pLZcsTbDjLFYNgJzn0bloqG+abqcVgvaJU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fIqAyFiYJGD+dmCE8ipwFSkog6O2UEMVgnpEt0VvxO+YqJ79czkHHxtzf09WvcY4uVu4gxSlh5oprpmi4nIu3vrEHQiqNeJdab0NKKw27itIWiXRvx9tZYXbzVpdKaBdwsIVwKLL+UC4a3QynECGySWKXKGUMTVWuKzIdN10/9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Lhy9+T+I; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-39aecad3ea7so1372355ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 08:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1723045334; x=1723650134; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DuwHjHFvIH5yzRbowDpjPZeGCKe893MON8qjCHt6NA8=;
+        b=Lhy9+T+I9SlgQZCWx24/UGQHRvTeLwvMIeRMfwswfx5SfSSA3ytbsYDKCEyGTdLHOv
+         WorBAKpn+AFeEMMni3W6jXM+vSCA9v1f5gUrWZ/me/iGSDGAwRJw/BWSleH/ZOhVlCMd
+         YFWmO8cMjBgCh/ZZv51O7qVoSyNoSdohO0CUE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723045334; x=1723650134;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DuwHjHFvIH5yzRbowDpjPZeGCKe893MON8qjCHt6NA8=;
+        b=I/CmCiqCqtAZ9jJFL4SU0bNpIDzIeFaE8pzTVA/23HOGIuDiXWW47qj4zowdhsL31J
+         0Wvm4Dk3ODLxztMPQ6LZIJSBZpnmGbCGDIHmE5lpxSyrrxQtEn4K8zrXmI2JSfMybNyY
+         gE7QXJu7gDww0bnJZMc0WuTom+OPHVyuanVJLCUc8hUY/8r0C0Fr82qY/Nna2+Ty0FCr
+         WS95qnyXnGb8ZN5o/eJQNXl9eifLiK5Ml/arsLTWxpVvtKinDV6Y3HdFjNZ+u0dKBqVu
+         n5bmsyYlah47Susa2d8MzOnOJJouRSa1lGKZ1fWhH4JKbSmXZDRzZPWlWkCG+dZzTHeA
+         qYvw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/iHU9CZS7pO2FlbUKbAOyqTOU/PSRprP2pV57PxgetJSJPnoMKoT3rb5iiLm/lx9fVc9/Nb4RU0NJQBizswgQ6qmC1h/K0aXEbCNr
+X-Gm-Message-State: AOJu0YwZ5naxMq6Wrz5eFQ8grZP0ocWX62IZF27Sil6r0t8gILzeBEab
+	6Zm1hq5TMwDv13I0qXyMBRbp4KgWiywos8uyeaTnMPwhvEi8qZHjvKGKNseSBL4=
+X-Google-Smtp-Source: AGHT+IENm7ilj2AMmEwQJYpawRWrkgTZs3Cq1oL1+5AjSJCsF6nenoG7T6ZS8wtXFNT1iOwrbP88qQ==
+X-Received: by 2002:a05:6e02:1b0f:b0:38e:cdf9:8878 with SMTP id e9e14a558f8ab-39b1fc6194bmr121613445ab.5.1723045333621;
+        Wed, 07 Aug 2024 08:42:13 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39b20ab4f73sm45805565ab.39.2024.08.07.08.42.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 08:42:13 -0700 (PDT)
+Message-ID: <2dfa76a7-eeae-4b05-bfcd-684ae7ade963@linuxfoundation.org>
+Date: Wed, 7 Aug 2024 09:42:12 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 07 Aug 2024 17:42:03 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Stewart Hildebrand" <stewart.hildebrand@amd.com>,
- "Bjorn Helgaas" <bhelgaas@google.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "Sam Ravnborg" <sam@ravnborg.org>,
- "Yongji Xie" <elohimes@gmail.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Philipp Stanner" <pstanner@redhat.com>
-Cc: x86@kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org
-Message-Id: <877b71ea-341b-4013-bbee-8f4df9c961c9@app.fastmail.com>
-In-Reply-To: <20240807151723.613742-1-stewart.hildebrand@amd.com>
-References: <20240807151723.613742-1-stewart.hildebrand@amd.com>
-Subject: Re: [PATCH v3 0/8] PCI: Align small BARs
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Fix a spelling error in a doc of bcachefs
+To: Xiaxi Shen <shenxiaxi26@gmail.com>, kent.overstreet@linux.dev,
+ corbet@lwn.net
+Cc: javier.carrasco.cruz@gmail.com,
+ "open list:BCACHEFS" <linux-bcachefs@vger.kernel.org>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240807071005.16329-1-shenxiaxi26@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240807071005.16329-1-shenxiaxi26@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 7, 2024, at 17:17, Stewart Hildebrand wrote:
-> In this context, "small" is defined as max(SZ_4K, PAGE_SIZE).
->
-> This series sets the default minimum resource alignment to
-> max(SZ_4K, PAGE_SIZE) for memory BARs. In preparation, it makes an
-> optimization and addresses some corner cases observed when reallocating
-> BARs. I consider the prepapatory patches to be prerequisites to changing
-> the default BAR alignment.
+On 8/7/24 01:10, Xiaxi Shen wrote:
 
-It's probably worth noting that Linux does not support any
-architectures with software page sizes smaller than 4KB,
-and it would likely break a lot of assumptions, so
-max(SZ_4K, PAGE_SIZE) is really the same as PAGE_SIZE
-in practice.
+Missing commit message --
 
+> Signed-off-by: Xiaxi Shen <shenxiaxi26@gmail.com>
+> ---
+>   Documentation/filesystems/bcachefs/CodingStyle.rst | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/filesystems/bcachefs/CodingStyle.rst b/Documentation/filesystems/bcachefs/CodingStyle.rst
+> index 0c45829a4899..01de555e21d8 100644
+> --- a/Documentation/filesystems/bcachefs/CodingStyle.rst
+> +++ b/Documentation/filesystems/bcachefs/CodingStyle.rst
+> @@ -175,7 +175,7 @@ errors in our thinking by running our code and seeing what happens. If your
+>   time is being wasted because your tools are bad or too slow - don't accept it,
+>   fix it.
+>   
+> -Put effort into your documentation, commmit messages, and code comments - but
+> +Put effort into your documentation, commit messages, and code comments - but
+>   don't go overboard. A good commit message is wonderful - but if the information
+>   was important enough to go in a commit message, ask yourself if it would be
+>   even better as a code comment.
 
-     Arnd
+thanks,
+-- Shuah
 
