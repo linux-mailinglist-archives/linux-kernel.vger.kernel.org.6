@@ -1,176 +1,141 @@
-Return-Path: <linux-kernel+bounces-278240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE73A94ADC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:11:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50F1794ADC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65ADF282D2E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:11:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59C94B2DEF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A8D13DDD1;
-	Wed,  7 Aug 2024 16:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B8E13B2A4;
+	Wed,  7 Aug 2024 16:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b="DD6GQlZM"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a2boA3KY"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF4A13DDAB
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723047012; cv=pass; b=qRF4BbXNqgY7q/RuKWsSmRh71AR0MLEkHbgRCaswp6yaWaJTMcJcxjD2ZCL/ejAht5uuSgpojFF+zaE0SwdQEIrCoukUiW28PhK7Q29YMlxvCF3W/cZMLiIrYq5Ar1q7rlPyJ321nVVCrg2z5SnDdn+OG8Rk1zLiCEf+poYerQ4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723047012; c=relaxed/simple;
-	bh=sROwnvTcKTfH5gVoAWXbqJpei36CUEbmi71WPQC0ZvI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ol1re8iIoiyWcEJl7BUi6H3XVoyTRlOMAi6IoRLXiWVM4QALL5s7qHdWVpgXdc8GGZ1x5mABL3E6SYmlfHVT2lUfGyhflJIOR7o7CK4BUih6yQQhWSEisVGE5wqTRpUdfpFrbmDV+gARdzD2D6fFlUnp3/gPxQrBbheiWjZN7w0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b=DD6GQlZM; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723046997; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=W4Zus2hENAMm5ZsWBInsQ7YmSnMaVHxCP3fyXlLNKxM6XYxDZgkpBa6ZidE8xOX4aExDfS44oDkEyf6qCb6X5J5axGgzGTgVhZrSxgR2htTdshK8qnxA9T3xCm0cqkBrJ5z5/pvIToHAc0tkwJzJXv4qPibHsMCMGkIk8gljqdo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723046997; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=11EFsbnPxyKsf7C0lUvlu5OAIQuBwlJBo38EBnGl8NM=; 
-	b=JuM2X7IxN2ir8+zmss1385fx3nafSIOLwZV/+hg1waJ/1a8/CGdpKOqGZmLSH+q0jOfh+NXAjHxZzwUVss0XUQqACL3vggqbPNtMHRvUSX9jyy8hsgJgYA6KxRICQrvgtkppQZhRyy5E6n+PQhgzLgin50NPy6oAy2wj3D8y0RM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=mary.guillemard@collabora.com;
-	dmarc=pass header.from=<mary.guillemard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723046997;
-	s=zohomail; d=collabora.com; i=mary.guillemard@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=11EFsbnPxyKsf7C0lUvlu5OAIQuBwlJBo38EBnGl8NM=;
-	b=DD6GQlZM74wIqHMdSHGvkxgpPDo8AariMILBPvvPTmBcqYnOGHynmXkB89eMcZ+n
-	p6z2Qq2N6isSNJ+dxnX7K1LLtz5/nmq4WTO+mZ+Mlbd8hfgxLvoBSuvT4TG6ksEPE/u
-	SuhMsP/2h+rnn46nUmOE+EbtEUsntyHfm17at28k=
-Received: by mx.zohomail.com with SMTPS id 1723046995358371.2106901029101;
-	Wed, 7 Aug 2024 09:09:55 -0700 (PDT)
-From: Mary Guillemard <mary.guillemard@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-	kernel@collabora.com,
-	Mary Guillemard <mary.guillemard@collabora.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH 3/3] drm/panfrost: Handle JD_REQ_CYCLE_COUNT
-Date: Wed,  7 Aug 2024 18:08:59 +0200
-Message-ID: <20240807160900.149154-4-mary.guillemard@collabora.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240807160900.149154-1-mary.guillemard@collabora.com>
-References: <20240807160900.149154-1-mary.guillemard@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE6D126F1E;
+	Wed,  7 Aug 2024 16:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723046955; cv=none; b=KjEGIEnxu97y91W0lZMdLbL9hr3pqcFj9SMHbmusHho5wD79dhRv0hu/XvVIzvpCsC/S5hPMOizuKqn/uyYFvr2n+35mO5BxGAD/gYXD5UbZ0Y1IYGeS0/SnAJpMUEzF3Bs3cmbw5cPFDiy72U8saqv380+unjK16q31LGP02L8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723046955; c=relaxed/simple;
+	bh=YA2ZuyFNRNxqyBRIOQWI6/ABTXBLPVPilssOyCvAofk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dfnBByU34cyojtmFdbLOIs4oXPgrB+tg+wT1/41VRoEjR5erFLfFHhg57PI7oEbUibRDdF/xM+Q5PHB9G1bkj821sQmje30bi3c9Pu9TaiQkI8TGEzKJEK8E4LE+qKryanv1wc24My8MBr77HQIIySJrEfKX5JmgUzRHbjQZLKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=a2boA3KY; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 477G95JY071948;
+	Wed, 7 Aug 2024 11:09:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723046945;
+	bh=jzPSemYePbBHFr/+nsxFkMDC+tdgXWS4uZbaeSlS+mQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=a2boA3KY/mGKS5/ZM3OendLtaEOet8Nx/703NuGD7QWvF3XD8R1XjdfBXq5m1JopM
+	 dhh9O4e8gX5GU5360YSum2yzRaYDuwaQrYYHTKV9bi2ExDyIxum9UXn+FylkBjY/v/
+	 j004mCliaSmt2+weLv9WRm9bqoXPOZ0lzxumRTTA=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 477G95NQ106351
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 7 Aug 2024 11:09:05 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
+ Aug 2024 11:09:05 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 7 Aug 2024 11:09:05 -0500
+Received: from [137.167.6.133] (lt5cg1094w5k.dhcp.ti.com [137.167.6.133])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 477G92jj042671;
+	Wed, 7 Aug 2024 11:09:02 -0500
+Message-ID: <e91645a1-aa5e-49bc-915b-f1bf9805ef51@ti.com>
+Date: Wed, 7 Aug 2024 19:09:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/17] wifi: cc33xx: Add acx.c, acx.h
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>, <linux-wireless@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Sabeeh Khan <sabeeh-khan@ti.com>
+References: <20240806170018.638585-1-michael.nemanov@ti.com>
+ <20240806170018.638585-6-michael.nemanov@ti.com>
+ <813f5d6b-eda8-46d6-b152-9e7cdf737729@kernel.org>
+Content-Language: en-US
+From: "Nemanov, Michael" <michael.nemanov@ti.com>
+In-Reply-To: <813f5d6b-eda8-46d6-b152-9e7cdf737729@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-If a job requires cycle counters or system timestamps propagation, we
-must enable cycle counting before issuing a job and disable it right
-after the job completes.
+On 8/7/2024 10:15 AM, Krzysztof Kozlowski wrote:
+> On 06/08/2024 19:00, Michael Nemanov wrote:
+>> These file contain various WLAN-oriented APIs
+>>
+>> Signed-off-by: Michael Nemanov <michael.nemanov@ti.com>
+>> ---
+>>   drivers/net/wireless/ti/cc33xx/acx.c | 1011 ++++++++++++++++++++++++++
+>>   drivers/net/wireless/ti/cc33xx/acx.h |  835 +++++++++++++++++++++
+>>   2 files changed, 1846 insertions(+)
+>>   create mode 100644 drivers/net/wireless/ti/cc33xx/acx.c
+>>   create mode 100644 drivers/net/wireless/ti/cc33xx/acx.h
+>>
+>> diff --git a/drivers/net/wireless/ti/cc33xx/acx.c b/drivers/net/wireless/ti/cc33xx/acx.c
+>> new file mode 100644
+>> index 000000000000..3c9b590e69b1
+>> --- /dev/null
+>> +++ b/drivers/net/wireless/ti/cc33xx/acx.c
+>> @@ -0,0 +1,1011 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
+>> + */
+>> +
+>> +#include "acx.h"
+>> +
+>> +int cc33xx_acx_clear_statistics(struct cc33xx *cc)
+>> +{
+>> +	struct acx_header *acx;
+>> +	int ret = 0;
+>> +
+>> +	cc33xx_debug(DEBUG_ACX, "acx clear statistics");
+> 
+> So you just re-implemented tracing.
+> 
+> No, I asked to drop such silly entry/exit messages because you duplicate
+> existing mechanisms in the kernel.
+> 
+> That's a no everywhere. Do not write such code. You can have useful
+> debug statements when tracing or kprobes or whatever you want is not
+> sufficient.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Since this extends the uAPI and because userland needs a way to advertise
-features like VK_KHR_shader_clock conditionally, we bumps the driver
-minor version.
+OK, I misunderstood the previous exchange with you and Kalle Valo. I'll 
+remove all entry / exit cc33xx_debug traces. Non-trivial ones are OK 
+tough, right?
 
-Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
----
- drivers/gpu/drm/panfrost/panfrost_drv.c |  8 ++++++--
- drivers/gpu/drm/panfrost/panfrost_job.c | 10 ++++++++++
- 2 files changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-index d94c9bf5a7f9..fe983defdfdf 100644
---- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-@@ -21,6 +21,8 @@
- #include "panfrost_gpu.h"
- #include "panfrost_perfcnt.h"
- 
-+#define JOB_REQUIREMENTS (PANFROST_JD_REQ_FS | PANFROST_JD_REQ_CYCLE_COUNT)
-+
- static bool unstable_ioctls;
- module_param_unsafe(unstable_ioctls, bool, 0600);
- 
-@@ -262,7 +264,7 @@ static int panfrost_ioctl_submit(struct drm_device *dev, void *data,
- 	if (!args->jc)
- 		return -EINVAL;
- 
--	if (args->requirements && args->requirements != PANFROST_JD_REQ_FS)
-+	if (args->requirements && args->requirements & ~JOB_REQUIREMENTS)
- 		return -EINVAL;
- 
- 	if (args->out_sync > 0) {
-@@ -601,6 +603,8 @@ static const struct file_operations panfrost_drm_driver_fops = {
-  * - 1.0 - initial interface
-  * - 1.1 - adds HEAP and NOEXEC flags for CREATE_BO
-  * - 1.2 - adds AFBC_FEATURES query
-+ * - 1.3 - adds JD_REQ_CYCLE_COUNT job requirement for SUBMIT
-+ *       - adds SYSTEM_TIMESTAMP and SYSTEM_TIMESTAMP_FREQUENCY queries
-  */
- static const struct drm_driver panfrost_drm_driver = {
- 	.driver_features	= DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ,
-@@ -614,7 +618,7 @@ static const struct drm_driver panfrost_drm_driver = {
- 	.desc			= "panfrost DRM",
- 	.date			= "20180908",
- 	.major			= 1,
--	.minor			= 2,
-+	.minor			= 3,
- 
- 	.gem_create_object	= panfrost_gem_create_object,
- 	.gem_prime_import_sg_table = panfrost_gem_prime_import_sg_table,
-diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
-index df49d37d0e7e..d8c215c0c672 100644
---- a/drivers/gpu/drm/panfrost/panfrost_job.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-@@ -159,6 +159,9 @@ panfrost_dequeue_job(struct panfrost_device *pfdev, int slot)
- 	struct panfrost_job *job = pfdev->jobs[slot][0];
- 
- 	WARN_ON(!job);
-+	if (job->requirements & PANFROST_JD_REQ_CYCLE_COUNT)
-+		panfrost_cycle_counter_put(pfdev);
-+
- 	if (job->is_profiled) {
- 		if (job->engine_usage) {
- 			job->engine_usage->elapsed_ns[slot] +=
-@@ -219,6 +222,9 @@ static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
- 
- 	panfrost_job_write_affinity(pfdev, job->requirements, js);
- 
-+	if (job->requirements & PANFROST_JD_REQ_CYCLE_COUNT)
-+		panfrost_cycle_counter_get(pfdev);
-+
- 	/* start MMU, medium priority, cache clean/flush on end, clean/flush on
- 	 * start */
- 	cfg |= JS_CONFIG_THREAD_PRI(8) |
-@@ -693,8 +699,12 @@ panfrost_reset(struct panfrost_device *pfdev,
- 	spin_lock(&pfdev->js->job_lock);
- 	for (i = 0; i < NUM_JOB_SLOTS; i++) {
- 		for (j = 0; j < ARRAY_SIZE(pfdev->jobs[0]) && pfdev->jobs[i][j]; j++) {
-+			if (pfdev->jobs[i][j]->requirements & PANFROST_JD_REQ_CYCLE_COUNT)
-+				panfrost_cycle_counter_put(pfdev);
-+
- 			if (pfdev->jobs[i][j]->is_profiled)
- 				panfrost_cycle_counter_put(pfdev->jobs[i][j]->pfdev);
-+
- 			pm_runtime_put_noidle(pfdev->dev);
- 			panfrost_devfreq_record_idle(&pfdev->pfdevfreq);
- 		}
--- 
-2.45.2
+Thanks and regards,
+Michael.
 
 
