@@ -1,172 +1,110 @@
-Return-Path: <linux-kernel+bounces-278544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D021194B1A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:56:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C77D094B1A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77C3D1F22D72
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:56:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E3AA1F231F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD99146A76;
-	Wed,  7 Aug 2024 20:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED36146A9B;
+	Wed,  7 Aug 2024 20:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPtmR41C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="CENRsVxL"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112D62575F;
-	Wed,  7 Aug 2024 20:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880FA2575F;
+	Wed,  7 Aug 2024 20:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723064154; cv=none; b=YjEX/+jELMQluf/LsLwjxZabetIrcKostuEvUdotqLtkoc7wK3ZTliioZXa5lEyDSN/ZMQigMFjhcpFrI0D7OgQh3pQjGKotxw6m8VRv7krxk0rTncOikhPgnYlhHJSiu3x5mW/U2H//zsW74coF2N8RSc0QDM8hxE7Kym2Bcqc=
+	t=1723064168; cv=none; b=IstOUNq+/an8pnAZ6pSVe6g4ibLIGbGLXAhsl4WQtBPk7IyPlh7L2WekLLQS+x5syXJWQak2K/2Ev6L28NWHDqau0c9kb2Jw9nPSieq3BwRTHPXkvubE6SNIk/UZZKEBRus5x9dEPhaluNxzsHt3H63EIN1j7suV1XhnxEcIKBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723064154; c=relaxed/simple;
-	bh=EaZgcA3NtRAmtxQ7KZE96Vk2UBjW9UO69pLCY10zeOU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Ib9Fbx2Yiin7hmxrLsXAJiDyEpsfcN36t4hHCn4n3Y6wDOxJnMC4wM6OoVq/9aae5ghqaU3Bpjw4P6A4uuoBi55qvttFBfGXgnhnkGJvfMutnToQVtb2tkZeLZYzAYeGMSv0DaxRKR1XnAA53AzpYhG2bDl0aDte5aiW0ZciCA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lPtmR41C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A3EFC32781;
-	Wed,  7 Aug 2024 20:55:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723064153;
-	bh=EaZgcA3NtRAmtxQ7KZE96Vk2UBjW9UO69pLCY10zeOU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lPtmR41C4gg3atA2WrJ4WPsI4+3VjEXnkpMl/2QBNAD9rzgCm805CjQUYQIrVG4oI
-	 myMKNdhyxoMIRaiZep7hSjD1qYN598NiOe9vWsWZ5StkTgod1PQ3rYNHDgmYdgim1p
-	 CQabP3YQaQfw4qR1adoDmX/+2R0mZbWQiiuyiYtvbJg7O5XxGva++AMnYJQnrSdKtC
-	 3aiFa7aO4yQhiK7VFAy0o87UPWGKpo+2DOdF50i/pHVJrIg+FWKKXuUtRTl/B4Gfc4
-	 5h7WOXXs5H1cw7lMYniX81Vsa1GD24Uf/S8AVma0JmwOWo52fY0fm2g1e6HsW9MYg/
-	 i77DTdIrALRgQ==
-Date: Thu, 8 Aug 2024 05:55:46 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Song Liu <song@kernel.org>,
- "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, LKML
- <linux-kernel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
- <linux-trace-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>, Petr
- Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, Nathan
- Chancellor <nathan@kernel.org>, "morbo@google.com" <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>, Luis Chamberlain
- <mcgrof@kernel.org>, Leizhen <thunder.leizhen@huawei.com>,
- "kees@kernel.org" <kees@kernel.org>, Kernel Team <kernel-team@meta.com>,
- Matthew Maurer <mmaurer@google.com>, Sami Tolvanen
- <samitolvanen@google.com>
-Subject: Re: [PATCH v2 3/3] tracing/kprobes: Use APIs that matches symbols
- without .XXX suffix
-Message-Id: <20240808055546.9b7f8089a10713d83ba29a75@kernel.org>
-In-Reply-To: <BEEE3F89-717B-44A4-8571-68DA69408DA4@fb.com>
-References: <20240802210836.2210140-1-song@kernel.org>
-	<20240802210836.2210140-4-song@kernel.org>
-	<20240806144426.00ed349f@gandalf.local.home>
-	<B53E6C7F-7FC4-4B4B-9F06-8D7F37B8E0EB@fb.com>
-	<20240806160049.617500de@gandalf.local.home>
-	<20240806160149.48606a0b@gandalf.local.home>
-	<6F6AC75C-89F9-45C3-98FF-07AD73C38078@fb.com>
-	<20240807090146.88b38c2fbd1cd8db683be22c@kernel.org>
-	<BEEE3F89-717B-44A4-8571-68DA69408DA4@fb.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723064168; c=relaxed/simple;
+	bh=oasgz1nL0IJSjGJv2d4Ya9Zhj2u6ldXOLklj1B473V8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AylQlZUPU6A4c5CaaIPYuJ67Zf56/pfW+YMsgzCSaUUwx89LHLrTNpHrv4y76MHrsiQpIAWVgI8wCgnz61AkI1aXYQqy5rLLMtlDsHeup6KEVqUs4HUneMe4+OkZKHoB9V/cnMWEex35/qJzovzG6QF63Y3UnxRVTRCkAE1Bbfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=CENRsVxL; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WfMsG72pJzlgVnF;
+	Wed,  7 Aug 2024 20:56:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1723064161; x=1725656162; bh=w+JJjxCdnwFJOiB9JQ6tYzxa
+	I1ITC7unatpf+kxjDRg=; b=CENRsVxLm4i5PY+bmEolxU3bklrXn4GEgph8kMgz
+	uAwBfZyKm3D0nEJbsMS7yozE+kMye0oDo+fJJ8mfbEAWEQfV/a27Mq+EwM2WQqf7
+	OkwF7zaIuZ1VoFKpf3SpmKRVEBcN1bW2u/N8BX5aoN2bpPqv6/Jfn6NyqBncisdc
+	WhSqz1lHWVaEkxIgLF+3LvckXMYfS4Z6btH4LnlQuZcLEjziiQr0hLhjeykksZq3
+	zVCckfJwtv2hMcFwLnc37iFAJXUTVjxntxX+iTqbiS+kcBcajKZgSe24h4QfMFKA
+	rpv4g2GXHQq65mzj6Jg3U0dbCRV5rtA0jC9so78yST5dRQ==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id JQebXUt6PTwp; Wed,  7 Aug 2024 20:56:01 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WfMsD2NvGzlgTGW;
+	Wed,  7 Aug 2024 20:55:59 +0000 (UTC)
+Message-ID: <28624a6d-fdc7-4458-8e8f-f8d764cd4b5b@acm.org>
+Date: Wed, 7 Aug 2024 13:55:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] scsi: ufs: Add HCI capabilities sysfs group
+To: Avri Altman <avri.altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240804072109.2330880-1-avri.altman@wdc.com>
+ <20240804072109.2330880-3-avri.altman@wdc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240804072109.2330880-3-avri.altman@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 7 Aug 2024 00:19:20 +0000
-Song Liu <songliubraving@meta.com> wrote:
+On 8/4/24 12:21 AM, Avri Altman wrote:
+> +What:		/sys/bus/platform/drivers/ufshcd/ufshci_capabilities/capabilities
 
-> 
-> 
-> > On Aug 6, 2024, at 5:01 PM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > 
-> > On Tue, 6 Aug 2024 20:12:55 +0000
-> > Song Liu <songliubraving@meta.com> wrote:
-> > 
-> >> 
-> >> 
-> >>> On Aug 6, 2024, at 1:01 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> >>> 
-> >>> On Tue, 6 Aug 2024 16:00:49 -0400
-> >>> Steven Rostedt <rostedt@goodmis.org> wrote:
-> >>> 
-> >>>>>>> + if (IS_ENABLED(CONFIG_LTO_CLANG) && !addr)
-> >>>>>>> + addr = kallsyms_lookup_name_without_suffix(trace_kprobe_symbol(tk));
-> >>>>>>> +    
-> >>>>>> 
-> >>>>>> So you do the lookup twice if this is enabled?
-> >>>>>> 
-> >>>>>> Why not just use "kallsyms_lookup_name_without_suffix()" the entire time,
-> >>>>>> and it should work just the same as "kallsyms_lookup_name()" if it's not
-> >>>>>> needed?    
-> >>>>> 
-> >>>>> We still want to give priority to full match. For example, we have:
-> >>>>> 
-> >>>>> [root@~]# grep c_next /proc/kallsyms
-> >>>>> ffffffff81419dc0 t c_next.llvm.7567888411731313343
-> >>>>> ffffffff81680600 t c_next
-> >>>>> ffffffff81854380 t c_next.llvm.14337844803752139461
-> >>>>> 
-> >>>>> If the goal is to explicitly trace c_next.llvm.7567888411731313343, the
-> >>>>> user can provide the full name. If we always match _without_suffix, all
-> >>>>> of the 3 will match to the first one. 
-> >>>>> 
-> >>>>> Does this make sense?  
-> >>>> 
-> >>>> Yes. Sorry, I missed the "&& !addr)" after the "IS_ENABLED()", which looked
-> >>>> like you did the command twice.
-> >>> 
-> >>> But that said, does this only have to be for llvm? Or should we do this for
-> >>> even gcc? As I believe gcc can give strange symbols too.
-> >> 
-> >> I think most of the issue comes with LTO, as LTO promotes local static
-> >> functions to global functions. IIUC, we don't have GCC built, LTO enabled
-> >> kernel yet.
-> >> 
-> >> In my GCC built, we have suffixes like ".constprop.0", ".part.0", ".isra.0", 
-> >> and ".isra.0.cold". We didn't do anything about these before this set. So I 
-> >> think we are OK not handling them now. We sure can enable it for GCC built
-> >> kernel in the future.
-> > 
-> > Hmm, I think it should be handled as it is. This means it should do as
-> > livepatch does. Since I expected user will check kallsyms if gets error,
-> > we should keep this as it is. (if a symbol has suffix, it should accept
-> > symbol with suffix, or user will get confused because they can not find
-> > which symbol is kprobed.)
-> > 
-> > Sorry about the conclusion (so I NAK this), but this is a good discussion. 
-> 
-> Do you mean we do not want patch 3/3, but would like to keep 1/3 and part 
-> of 2/3 (remove the _without_suffix APIs)? If this is the case, we are 
-> undoing the change by Sami in [1], and thus may break some tracing tools. 
+That path seems wrong to me. I think that "ufshcd" should be changed
+into something like ${host_driver_name}/${ufshci_instance_name}. An 
+example from a Pixel 8 device:
 
-BTW, I confirmed that the PATCH 1/3 and 2/3 fixes kprobes to probe on suffixed
-symbols correctly. (because 1/3 allows to search suffixed symbols) 
+$ adb shell ls /sys/bus/platform/drivers/*ufs*
+/sys/bus/platform/drivers/exynos-ufs:
+13200000.ufs
+module
+uevent
 
-/sys/kernel/tracing # cat dynamic_events 
-p:kprobes/p_c_stop_llvm_17132674095431275852_0 c_stop.llvm.17132674095431275852
-p:kprobes/p_c_stop_llvm_8011538628216713357_0 c_stop.llvm.8011538628216713357
-p:kprobes/p_c_stop_0 c_stop
+/sys/bus/platform/drivers/ufshcd-hisi:
+bind
+uevent
+unbind
 
-Thank you,
+> +What:		/sys/bus/platform/devices/*.ufs/ufshci_capabilities/capabilities
+> +Date:		August 2024
+> +Contact:	Avri Altman <avri.altman@wdc.com>
+> +Description:
+> +		Host Capabilities register group: host controller capabiities register.
+> +		Symbol - CAP.  Offset: 0x00 - 0x03.
 
-> 
-> Sami, could you please share your thoughts on this? 
-> 
-> If this works, I will send next version with 1/3 and part of 2/3. 
-> 
-> Thanks,
-> Song
-> 
-> [1] https://lore.kernel.org/all/20210408182843.1754385-8-samitolvanen@google.com/
-> 
+Please fix the spelling error that was already reported by Keoseong
+Park. Otherwise this patch looks good to me.
 
+Thanks,
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Bart.
 
