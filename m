@@ -1,156 +1,103 @@
-Return-Path: <linux-kernel+bounces-278675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E3194B362
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:07:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A34894B363
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49F83B21C36
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:07:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB81C282924
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DD9155352;
-	Wed,  7 Aug 2024 23:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8601553B3;
+	Wed,  7 Aug 2024 23:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYrq3A7D"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMsEHE3y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE34364A0;
-	Wed,  7 Aug 2024 23:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F18615380A;
+	Wed,  7 Aug 2024 23:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723072069; cv=none; b=P1VtqeKhSeN6En6655kDDl0c2NVDHA7My267xFbsdtarVI/Cu9uidhl2Ww3ZVC7z1BV1bm9EtMLpD+H4KcGpuaHnCBiI/7RKkSPt6Aleweo5qYui8EfQK1c7ip2DNpdHoybLet9vXTU9sjtqhuQPV22ox0DkmaYtlws4JEdQDvg=
+	t=1723072100; cv=none; b=Wm/GXvC633mbnFzZsGHUn+vj22+FjF9iXEjsXnyA1ih066lsfrPFuzB8RiOvCT0bT+xPGoAjXc65wZYSJJCtgiQ7Dsst+jV4zMPPzlI97OoA1gt39rgCp5wz3knohHF0AzFybtkfNBs8c2iOPeIbB53XcEZgUdI7pd612nituR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723072069; c=relaxed/simple;
-	bh=QFdGDo42xkMzLQ888Gr0OEbavqEArnt+H5CQVqXMwyQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jCpI2x1SYQYg1hF+Jyu66haKXU1RqZkv2Qgrbw/K4A+OFerJGhyP/3G9PhSO1wNWTFNTJ/TXHFCA8vQuxcUitDpm6FDsRRyj9apwMyTngpA6Msoj856nC7hzMeLeNGxD0rQj+FwJIX7rAoLJKE36LvmM+DuU8z4kaldwcfzaSCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EYrq3A7D; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2cb55418470so368300a91.1;
-        Wed, 07 Aug 2024 16:07:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723072067; x=1723676867; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rkMTCVGBwPmwmtxlY3yv9Iichvp/gtKA7mIwg9HUlL0=;
-        b=EYrq3A7DilUKvSECLMqM7jWH8z6kfA9S9hbn0U26Fhlcr4YA/YXB5bVmTY2hCaENmY
-         vAchdHjwLs8lozrchD/lPL68btgqWKHIqZg3K9mzhfnchpHOJUm/JkaXHbwn3z44wF8+
-         AgBjm/0krLs63GMf6vAq/u66hcuEnQUAIYhBugY5RuNq3fAd57Erb98ejoXbcf77YoEu
-         Fgmz/5UncWtcA0YkIl+wRQgLfei60F95wCQ6Kt/tTsspOcDZdRQOzlTa/+HFJvCp4ddu
-         vtbX5+ooMhpRYsWW4TvFWgUFvfDLkX2+c3S8QWW3H44FDMu9lkgHcgDIB3QXFpdx3HqY
-         9kIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723072067; x=1723676867;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rkMTCVGBwPmwmtxlY3yv9Iichvp/gtKA7mIwg9HUlL0=;
-        b=Fruz28MUZp+UpnzJCsSbdOnLk8Ukjc/2ARdKjiUmApxbn15ykYkJCy9BjDZ0RumlAG
-         nW9FDgNOLHcj/PUSINHOkM3AxP3StJMjiQwT5fS4JvM1QTlz91ai6SQxKICJhwOqnETo
-         hbBei2g0gz87eZrxyIr2S5yDfCqsffSLIr/w/5VS3NKWlNAH5PYKfeO4flLmORy+FZ0K
-         1ejWCj+uzGLHVLmakdvas+tv48BIL9yHU4mHfO4H69ir+IIiGVRJE87mLHzpMIwCq5kh
-         Xm5np3hVj09C3lxfOIEWWT1m3cKnpZU9TmVWMisPciN91dXyImqH3gt/+6TiF/u01bSJ
-         R56Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVGfNLDnjT6zFASsuNMnecSC2aSdNq7wMnMcJjHNJLzCsqMNL9w1hKghqponTG5bhbC2G6Scr/Ubf81dPiGKQp7lB+IVtg1v4KLHkzJ
-X-Gm-Message-State: AOJu0Yyelqh+Ah3L31X8UXHL40tLIJ8W3HoyJuatkrBwrSC6DVhOMNnW
-	/hAYJA07KIEKOl+9/wc3onDgycrCUKrsMgEYXYBEEq7tM6SIzTgJWHmJww==
-X-Google-Smtp-Source: AGHT+IG/iDAQTfmE/m0J4jpOP5n3ZKSWdJ4Gq6ZyyfyI63IkOUdDgZav+BwtCtXquNtTmSipGd6GRw==
-X-Received: by 2002:a17:90a:ea04:b0:2c9:9b65:af4d with SMTP id 98e67ed59e1d1-2d1c33705eemr140206a91.7.1723072066804;
-        Wed, 07 Aug 2024 16:07:46 -0700 (PDT)
-Received: from carrot.. (i222-151-34-139.s42.a014.ap.plala.or.jp. [222.151.34.139])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b36da847sm2312080a91.32.2024.08.07.16.07.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 16:07:46 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] nilfs2: fix state management in error path of log writing function
-Date: Thu,  8 Aug 2024 08:07:42 +0900
-Message-Id: <20240807230742.11151-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723072100; c=relaxed/simple;
+	bh=bHfCnWmNYxbaKKzxHQTqa7O20DJNwlaKnBAYJ0PhuyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kqVs2tfUOX2QDIrBGxTWpPVVYiM73UxWM8ddrxjQTrD4pkBj8zm4ydwxFTff7suQZBab6SIRVVGPOow4dCY7QtTMDbujqsA650g9bFZaqZnuZv+YncHBt82BugES5EOgI0oWbA3kaJweh18WbsXxcDSO2SDdn8juIz081osXaRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMsEHE3y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3EF0C32781;
+	Wed,  7 Aug 2024 23:08:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723072099;
+	bh=bHfCnWmNYxbaKKzxHQTqa7O20DJNwlaKnBAYJ0PhuyI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nMsEHE3y/pWW1U1EllnlhbwwlaFzPhDnZ5q/9mRghGr4oAJty127nwLRLPVLg7vVd
+	 ZBIdT24VQTCCKEWOAfdo2QrTPEuFyDo25XLMPF64VT6NqjWICwEvCAZeksEcqm4UYv
+	 Dq0Au5x7W1SKp51k7oGn/sTtqydDvHM4cKzsvIswHKkeWCIZAbSDWGcfJ80XYwSufY
+	 +HQVahl1WUh+j7yXzxORAL/4hLHpwgXYs3JHOcOlnErBlQGhnvn045k5yGM6+sxw79
+	 qVJPo8R1IMUzqh0RYcY1iUhF6cNit0U7rHge153dn+Us9Yg1mNmOmqo61hn+Pv0vZ8
+	 T2/7j72Xsz6ag==
+Date: Thu, 8 Aug 2024 01:08:12 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
+	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v4 10/28] rust: treewide: switch to our kernel `Box` type
+Message-ID: <ZrP-XHrIQr2qBWkM@pollux>
+References: <20240805152004.5039-1-dakr@kernel.org>
+ <20240805152004.5039-11-dakr@kernel.org>
+ <1b17b4b3-69b4-4af1-a816-b401a1bb6ef2@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1b17b4b3-69b4-4af1-a816-b401a1bb6ef2@proton.me>
 
-After commit a694291a6211 ("nilfs2: separate wait function from
-nilfs_segctor_write") was applied, the log writing function
-nilfs_segctor_do_construct() was able to issue I/O requests
-continuously even if user data blocks were split into multiple logs
-across segments, but two potential flaws were introduced in its error
-handling.
+On Wed, Aug 07, 2024 at 08:57:22PM +0000, Benno Lossin wrote:
+> On 05.08.24 17:19, Danilo Krummrich wrote:
+> > Now that we got the kernel `Box` type in place, convert all existing
+> > `Box` users to make use of it.
+> 
+> You missed a couple usages of `Box`:
+> - `rust/macros/lib.rs:{242,251,281}`
+> - `drivers/block/rnull.rs:{35,50}`
+> 
+> or is that intentional? (for me rnull doesn't compile after this patch)
 
-First, if nilfs_segctor_begin_construction() fails while creating the
-second or subsequent logs, the log writing function returns without
-calling nilfs_segctor_abort_construction(), so the writeback flag set
-on pages/folios will remain uncleared.  This causes page cache
-operations to hang waiting for the writeback flag.  For example,
-truncate_inode_pages_final(), which is called via nilfs_evict_inode()
-when an inode is evicted from memory, will hang.
+No, I missed them. I probably messed up my .config. I really thought I had
+everything relevent enabled for compilation.
 
-Second, the NILFS_I_COLLECTED flag set on normal inodes remain
-uncleared.  As a result, if the next log write involves checkpoint
-creation, that's fine, but if a partial log write is performed that
-does not, inodes with NILFS_I_COLLECTED set are erroneously removed
-from the "sc_dirty_files" list, and their data and b-tree blocks may
-not be written to the device, corrupting the block mapping.
+Gonna fix those.
 
-Fix these issues by correcting the jump destination of the error
-branch in nilfs_segctor_do_construct() and the condition for calling
-nilfs_redirty_inodes(), which clears the NILFS_I_COLLECTED flag.
-
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Fixes: a694291a6211 ("nilfs2: separate wait function from nilfs_segctor_write")
-Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: stable@vger.kernel.org
----
-Hi Andrew, please apply this as a bug fix.
-
-This fixes error path flaws of the log writing function that was
-discovered during error injection testing, which could lead to a hang
-due to the writeback flag not being cleared on folios, and potential
-filesystem corruption due to missing blocks in the log after an error.
-
-Thanks,
-Ryusuke Konishi
-
- fs/nilfs2/segment.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
-index 0ca3110d6386..8b3225bd08ed 100644
---- a/fs/nilfs2/segment.c
-+++ b/fs/nilfs2/segment.c
-@@ -2056,7 +2056,7 @@ static int nilfs_segctor_do_construct(struct nilfs_sc_info *sci, int mode)
- 
- 		err = nilfs_segctor_begin_construction(sci, nilfs);
- 		if (unlikely(err))
--			goto out;
-+			goto failed;
- 
- 		/* Update time stamp */
- 		sci->sc_seg_ctime = ktime_get_real_seconds();
-@@ -2120,10 +2120,9 @@ static int nilfs_segctor_do_construct(struct nilfs_sc_info *sci, int mode)
- 	return err;
- 
-  failed_to_write:
--	if (sci->sc_stage.flags & NILFS_CF_IFILE_STARTED)
--		nilfs_redirty_inodes(&sci->sc_dirty_files);
--
-  failed:
-+	if (mode == SC_LSEG_SR && nilfs_sc_cstage_get(sci) >= NILFS_ST_IFILE)
-+		nilfs_redirty_inodes(&sci->sc_dirty_files);
- 	if (nilfs_doing_gc())
- 		nilfs_redirty_inodes(&sci->sc_gc_inodes);
- 	nilfs_segctor_abort_construction(sci, nilfs, err);
--- 
-2.34.1
-
+> 
+> ---
+> Cheers,
+> Benno
+> 
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > ---
+> >  rust/kernel/init.rs               | 41 ++++++++++++++++---------------
+> >  rust/kernel/init/__internal.rs    |  2 +-
+> >  rust/kernel/sync/arc.rs           | 17 ++++++-------
+> >  rust/kernel/sync/condvar.rs       |  4 +--
+> >  rust/kernel/sync/lock/mutex.rs    |  2 +-
+> >  rust/kernel/sync/lock/spinlock.rs |  2 +-
+> >  rust/kernel/workqueue.rs          | 20 +++++++--------
+> >  7 files changed, 44 insertions(+), 44 deletions(-)
+> 
 
