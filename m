@@ -1,106 +1,79 @@
-Return-Path: <linux-kernel+bounces-277821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B66E894A6F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:27:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D8B794A74D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4D881C20EFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:27:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46E31284B72
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800421E3CB2;
-	Wed,  7 Aug 2024 11:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAB01E7A32;
+	Wed,  7 Aug 2024 11:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="1JLQb4vY"
-Received: from pv50p00im-ztdg10022001.me.com (pv50p00im-ztdg10022001.me.com [17.58.6.58])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MQ7BgjWp"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44A01B9B49
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 11:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93578171E69;
+	Wed,  7 Aug 2024 11:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723030038; cv=none; b=B1481AyeQv356XNoyYZfykvnoqf2fKus6e/Df0ob2pNdgHktnl6kPMDTQAeJ1n0/OBdq5pp6jquuXF2Dcd9ZBf5PMtkMOct2/DiNcodapKUuBe6+q0weIsM28msP6lCFI1J1XI7xFpUDf2XF7i9bQsIa+gRsHE5xYrhg31vkkn0=
+	t=1723031793; cv=none; b=GjrAbJ5kJdnLZvBqJ7CWyVIKdXk822CWLisEpGj1jjZjDXwmPm7h+d73Ikecul4L8/nJ/zpSe9Rs3p5s7H4MDBwf8LswUMw+uvFTRJi21LLJX5IgUtZog+sLlU0yqP6Bvq/ghMG/bvpY0MySI9O+/HvrUtww4p203eigawu0RG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723030038; c=relaxed/simple;
-	bh=BC5G3mC/E/fQkj8sGiyIoN+g7KJtK2B5erQLVGhnfSs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WUomI9PsYEoMDsjfmzDW13xKYH61mWcjiUFMQeYf0x0maUQWnK7DZnQlJFmxXPu83T489SF44/aMJQbo6iLw83I46YkLxPhZbth6mHQh0XOq+PbQSffWqLp3scnMGT5MNJD9O3vHo+CMI3/f+3poRkYCQoastmrFLRzy0Q1SPbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=1JLQb4vY; arc=none smtp.client-ip=17.58.6.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1723030037;
-	bh=5ZmxY7UmQB1fdPfCLjMzQpERdF7rKPqNFy7nvgCNoBo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=1JLQb4vYd9s7r+0yPygVTj1Rg2+/VP4kPeil2NC5ykV4CSy5xVvK1FrNROJiHe7Fl
-	 ogsJqeKSvyIXeLgeg5J95Tq5u+ef/hKePXA+h0Gp9ogGhRQyZrD84era0uMYryPFXU
-	 Hs1l6J/TrfCkJ+I8nJj/w5Y2KgYefwy/RtSe8bI19SmV+i+yBK8EwhmcwT/bGZ+1JK
-	 VHn0HdRpUTESfox4pcvCehLbv/dYIzLaSwNs2CWF2zrSRnmc2gpaDzW0fnf4zFrBDB
-	 0rurPhzRSlsWyTnwYs56IWernN5528apBdXM+VbK0SwxkZHPRCyuKLnWrcU4flTzGT
-	 9QyRZuDrKdTPA==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10022001.me.com (Postfix) with ESMTPSA id 0462C3E1E0D;
-	Wed,  7 Aug 2024 11:27:13 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Wed, 07 Aug 2024 19:26:49 +0800
-Subject: [PATCH] arm64: defconfig: Enable UHID as module
+	s=arc-20240116; t=1723031793; c=relaxed/simple;
+	bh=ZtKMqdZ0X79oOtPHLiqIbrTmz1vuAlbbHU+ivBe+c+8=;
+	h=Message-Id:Date:From:To:Cc:Subject; b=HzewAo0DLAaVA0YnHzSA2L4vJOsAflTRrC0TR+pei2N4+b9XrLDemu+1rNo7jhIR5DexVVeE49a+ItrqSpwz0GlIsZ/Dqb7n5eqvEZBiduljGhmeNnBBbTSegFwgMIHUiYGdWqBbhMwaJcEJ1evYOv3khSncco5lSOrCRtRE9yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MQ7BgjWp; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Subject:Cc:To:From:Date:Message-Id:
+	Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=ZtKMqdZ0X79oOtPHLiqIbrTmz1vuAlbbHU+ivBe+c+8=; b=MQ7BgjWpADKL0kTYR3cVnsZbEP
+	0wDlbTlEB9TR3At5xDfGiiCfrj9OmEINfESw9Ivutzw3TINKRog1y2zn2PhTFQCngin0bVyDJG+GH
+	ARn33El/AcJJqxhvAavwqSoTjVl23o3YvZ5XaFINFrshTdrgec1H1YiaE2Hbaczl0paZuBG7Ytoza
+	r7g5sAzu7T2g2QBz+mp2+R2SpZws94OtTZzE+ez1Cq4Sw+CMtI+7TrBDIkF8PLM0IGVsj23sL82/M
+	/Jk33iqU+hWWcZRIBqvlxVs6KBuDVJCL+icFDkb5AarkBHd7U/fFCYH+nLl1f8QMbLJxJPd32IBsn
+	fZaJohBA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sbfHC-00000007FPe-2F3j;
+	Wed, 07 Aug 2024 11:56:22 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
+	id 88B2630033D; Wed,  7 Aug 2024 13:56:21 +0200 (CEST)
+Message-Id: <20240807112924.448091402@infradead.org>
+User-Agent: quilt/0.65
+Date: Wed, 07 Aug 2024 13:29:24 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: mingo@kernel.org
+Cc: peterz@infradead.org,
+ acme@kernel.org,
+ namhyung@kernel.org,
+ mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com,
+ jolsa@kernel.org,
+ irogers@google.com,
+ adrian.hunter@intel.com,
+ kan.liang@linux.intel.com,
+ linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] perf: Per PMU context reschedule and misc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240807-uhid_arm64_defconfig-v1-1-4b8de59a2d5e@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAPhZs2YC/x3MTQqAIBBA4avErBMmk4quEhH+jDWLLJQiCO+et
- PwW772QKDIlGKsXIt2c+AgFTV2B3XRYSbArBolS4YC9uDZ2i457pxZH3h7B8yoUmobaDo0iCSU
- 9I3l+/u005/wBbDoBZGYAAAA=
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-ORIG-GUID: QtaAuQR9L2PABageUBrxn08X9_WARQ8u
-X-Proofpoint-GUID: QtaAuQR9L2PABageUBrxn08X9_WARQ8u
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-07_08,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0
- suspectscore=0 clxscore=1011 spamscore=0 adultscore=0 bulkscore=0
- mlxlogscore=648 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2308100000 definitions=main-2408070080
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+Hi,
 
-Enable UHID as module to use Bluetooth mouse and keyboard.
+This is 'fallout' from Namhyung posting his per-pmu ctx_resched() patches. It
+started with me trying to clean up and get rid of corner cases, and then got
+involved when Kan noted the time keeping issue.
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 7d32fca64996..5607cb7fa580 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1043,6 +1043,7 @@ CONFIG_SND_SOC_LPASS_TX_MACRO=m
- CONFIG_SND_SIMPLE_CARD=m
- CONFIG_SND_AUDIO_GRAPH_CARD=m
- CONFIG_SND_AUDIO_GRAPH_CARD2=m
-+CONFIG_UHID=m
- CONFIG_HID_MULTITOUCH=m
- CONFIG_I2C_HID_ACPI=m
- CONFIG_I2C_HID_OF=m
-
----
-base-commit: d4560686726f7a357922f300fc81f5964be8df04
-change-id: 20240807-uhid_arm64_defconfig-40b1e360b4e2
-
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
+Anyway, please review / test.
 
 
