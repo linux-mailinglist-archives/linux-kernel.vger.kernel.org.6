@@ -1,144 +1,156 @@
-Return-Path: <linux-kernel+bounces-278145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB42594ACBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:23:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FD494ACBC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E634B23D97
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:22:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A75331F26223
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6417512BF02;
-	Wed,  7 Aug 2024 15:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6159B13AD2F;
+	Wed,  7 Aug 2024 15:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAsphRfe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UES/YOVf"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB4984E04;
-	Wed,  7 Aug 2024 15:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0C079949;
+	Wed,  7 Aug 2024 15:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723044027; cv=none; b=kV9Wj87SFDohqh+1t848y7nI/vkTm6AIVjs6+kMqP9lqEqdcpm2hob+xArHu8Nx70IkY5WZuQd14YOey5W0L4rxAX6uGOQnjpziWVtIzOqiMQntMGb3L66JCBmDPrZy61047bodoM8RCnb+HGnisL3p8RzuICGTZfdjVq12byW0=
+	t=1723044056; cv=none; b=CqrSOkjdn01nhCcnUG2Y1gA5MAFeVN9Wk/JCedFevtBYJS1SxbkmXRdkkrQlEjwvCSMTPVOvBLdyUl7XkfYps2Gqgn3uxBMIeIELGHFQCzUUpWx+/SBKj/NtGj48OZaWHAwp/PcbdQvqnNax940J/WmgRgnTSI7T2vN1jS/Zk04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723044027; c=relaxed/simple;
-	bh=xERSTfQqUvdd2k3tAtUqyYEs/LVRZsmS4yVoWayUT+E=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=ljtqXhMy1CiUv/fv1nm7ckYmeE3C9+iw7i6mcIyff1gjHo72e/n6fHyiG9NQx3+9a+YAZraIR+h8pVHVD3ctRH7ZZ3OnjDXu4VfLoXN1J/hpXxvn81jdwfs8p+2kUkXxZNWHLiyW5q+Gb9uMGc5fWVuascaTK7pSATDRryC8/HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAsphRfe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE2BCC32781;
-	Wed,  7 Aug 2024 15:20:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723044027;
-	bh=xERSTfQqUvdd2k3tAtUqyYEs/LVRZsmS4yVoWayUT+E=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=GAsphRfeDUfnMH1Vai3L+59Pwz/5hOlhZEhnZy+82Suaphx0tjjim+AGlEAmMYCPd
-	 Y3X2HhARfVMOiaCGSNUbBGPn9+xxpJbiUhPx9/ENpXhS5XAI4DwQYIFQu1OFpvV3aP
-	 IKtlwiR2xXYrj6+pX6aJjJFYCCaF+smjFYI3M6EoE8Ov/w1HzlvfJsZPUomkJtmnnW
-	 jvFCjYz5BPtoRVAb9a+lZjpNrKp55P6oxsN5dZgGmEw7rbUUZPmb7sSn6U1IzfsKse
-	 YHho8C49xpNHhT3yZBexGxnwtfdWptmblEY1ST+dRHAQ+r/vELsBXhMovmXw+/C7BV
-	 VHzNOJNBio1Rg==
-Date: Wed, 07 Aug 2024 09:20:25 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1723044056; c=relaxed/simple;
+	bh=W21qXUGI24TuhC78WlGUMYCFeu9yFRSWaPh4zZaK2As=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FpSW5Z8+BJoAFz7CnZFHbu2rOQf1BMDBjkvlolVh8l0Fy9VUmkniPjVLr36LkbHbA2bsBfWkKVNfW7IP4LXSwoDJw4jxacoSQ22KKZvKmutuL35Y9EERWXPAMVVj+t9HouhdOiSc7vlbvNYxxSluMLFouRRV4sm5B/+7F6dZb9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UES/YOVf; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BBC2A6AF;
+	Wed,  7 Aug 2024 17:19:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1723044000;
+	bh=W21qXUGI24TuhC78WlGUMYCFeu9yFRSWaPh4zZaK2As=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UES/YOVf7zcHAEx57eOgp1Ve1BbRtTr4TjOaf1PVu1DuCtTYvubMsNJIZBTFHWl2i
+	 j5966Oo0bzHtKtl4XzwxfUAS2npUt5blSgTBO7TKrTNIKycsTj2Mq44AV+eiuti1V+
+	 x+Id6hwIXXi1KQXZSezjkv21PmZpv+rLW+K/4m9k=
+Date: Wed, 7 Aug 2024 18:20:27 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: CK Hu =?utf-8?B?KOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"paul.elder@ideasonboard.com" <paul.elder@ideasonboard.com>,
+	"mchehab@kernel.org" <mchehab@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	Andy Hsieh =?utf-8?B?KOisneaZuueakyk=?= <Andy.Hsieh@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"jstephan@baylibre.com" <jstephan@baylibre.com>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"fsylvestre@baylibre.com" <fsylvestre@baylibre.com>,
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>,
+	"pnguyen@baylibre.com" <pnguyen@baylibre.com>
+Subject: Re: [PATCH v6 4/5] media: platform: mediatek: isp_30: add mediatek
+ ISP3.0 camsv
+Message-ID: <20240807152027.GC18695@pendragon.ideasonboard.com>
+References: <20240729-add-mtk-isp-3-0-support-v6-0-c374c9e0c672@baylibre.com>
+ <20240729-add-mtk-isp-3-0-support-v6-4-c374c9e0c672@baylibre.com>
+ <6a7467cde347600015078fe7aa25c4b46c45e96d.camel@mediatek.com>
+ <20240731082958.GM8146@pendragon.ideasonboard.com>
+ <289ea20cb549f8fd76343776bf2a0871a33d4068.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Richard Acayan <mailingradian@gmail.com>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Daniel Vetter <daniel@ffwll.ch>, devicetree@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
- Maxime Ripard <mripard@kernel.org>, Rob Clark <robdclark@gmail.com>, 
- freedreno@lists.freedesktop.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-kernel@vger.kernel.org, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org, 
- Sean Paul <sean@poorly.run>
-In-Reply-To: <20240806214452.16406-7-mailingradian@gmail.com>
-References: <20240806214452.16406-7-mailingradian@gmail.com>
-Message-Id: <172304385687.2508167.11953351079557363254.robh@kernel.org>
-Subject: Re: [PATCH v2 0/4] drm/msm/adreno: Add A615 GPU for SDM670 and
- Pixel 3a
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <289ea20cb549f8fd76343776bf2a0871a33d4068.camel@mediatek.com>
 
+Hi CK,
 
-On Tue, 06 Aug 2024 17:44:54 -0400, Richard Acayan wrote:
-> This adds support for the speed-binned A615 GPU on SDM670.
+On Wed, Aug 07, 2024 at 01:31:57AM +0000, CK Hu (胡俊光) wrote:
+> On Wed, 2024-07-31 at 11:29 +0300, Laurent Pinchart wrote:
+> > On Wed, Jul 31, 2024 at 02:59:51AM +0000, CK Hu (胡俊光) wrote:
+> > > On Mon, 2024-07-29 at 16:48 +0200, Julien Stephan wrote:
+> > > >  From: Phi-bang Nguyen <pnguyen@baylibre.com>
+> > > >
+> > > > This driver provides a path to bypass the SoC ISP so that image data
+> > > > coming from the SENINF can go directly into memory without any image
+> > > > processing. This allows the use of an external ISP.
+> > > >
+> > > > Signed-off-by: Phi-bang Nguyen <pnguyen@baylibre.com>
+> > > > Signed-off-by: Florian Sylvestre <fsylvestre@baylibre.com>
+> > > > [Paul Elder fix irq locking]
+> > > > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> > > > Co-developed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > Co-developed-by: Julien Stephan <jstephan@baylibre.com>
+> > > > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> > > > ---
+> > >
+> > > [snip]
+> > >
+> > > > +
+> > > > +static void mtk_cam_cmos_vf_enable(struct mtk_cam_dev *cam_dev,
+> > > > +   bool enable, bool pak_en)
+> > > > +{
+> > > > +struct device *dev = cam_dev->dev;
+> > > > +
+> > > > +if (pm_runtime_get_sync(dev) < 0) {
+> > > > +dev_err(dev, "failed to get pm_runtime\n");
+> > > > +goto out;
+> > > > +}
+> > > > +
+> > > > +if (enable)
+> > > > +cam_dev->hw_functions->mtk_cam_cmos_vf_hw_enable(cam_dev);
+> > >
+> > > Directly call mtk_camsv30_cmos_vf_hw_enable().
+> >
+> > The goal, when this was developed, was to support multiple generations
+> > of hardware with a single driver. I think it's a worthwhile goal, but at
+> > the same time, I'm not sure that will ever happen as I'm not aware of
+> > plans to upstream Genio 350 and 500 support (which is a bad sad, as it's
+> > more or less working out-of-tree). I'm thus fine either way, and if we
+> > think the most likely outcome is that this driver will only support
+> > Genio 300, I'm fine dropping the abstraction layer.
 > 
-> Changes since v1 (20240730013844.41951-6-mailingradian@gmail.com):
-> - add Acked-by tag (1/4)
-> - add OPPs exclusive to some speed bins (3/4)
-> - enable GMU by default (3/4)
-> 
-> Richard Acayan (4):
->   dt-bindings: display/msm/gmu: Add SDM670 compatible
->   drm/msm/adreno: add a615 support
->   arm64: dts: qcom: sdm670: add gpu
->   arm64: dts: qcom: sdm670-google-sargo: enable gpu
-> 
->  .../devicetree/bindings/display/msm/gmu.yaml  |   1 +
->  .../boot/dts/qcom/sdm670-google-sargo.dts     |   9 +
->  arch/arm64/boot/dts/qcom/sdm670.dtsi          | 180 ++++++++++++++++++
->  drivers/gpu/drm/msm/adreno/a6xx_catalog.c     |  27 +++
->  4 files changed, 217 insertions(+)
-> 
-> --
-> 2.46.0
-> 
-> 
-> 
+> I know this goal.
+> For the mtk_camsv_30_setup(), in new SoC, if only one line in this function is different,
+> should we duplicate the whole function and modify only one line?
+> I think we don't know what would happen in future,
+> so we should not design for something which we have no any information.
 
+For future platforms, I fully agree with you. For Genio 350 and 500 we
+have already identified some common elements. However, as there's no
+point to upstream those at the moment, and as we can't review an
+abstraction layer properly if support for only a single platform is
+available, I'm fine dropping the abstraction.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+> > > > +else
+> > > > +cam_dev->hw_functions->mtk_cam_cmos_vf_hw_disable(cam_dev);
+> > >
+> > > Directly call mtk_camsv30_cmos_vf_hw_disable().
+> > >
+> > > > +
+> > > > +out:
+> > > > +pm_runtime_put_autosuspend(dev);
+> > > > +}
+> > > > +
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+-- 
+Regards,
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y qcom/sdm670-google-sargo.dtb' for 20240806214452.16406-7-mailingradian@gmail.com:
-
-arch/arm64/boot/dts/qcom/sdm670-google-sargo.dtb: iommu@5040000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['qcom,sdm670-smmu-v2', 'qcom,adreno-smmu', 'qcom,smmu-v2'] is too long
-	['qcom,sdm670-smmu-v2', 'qcom,adreno-smmu', 'qcom,smmu-v2'] is too short
-	'qcom,sdm670-smmu-v2' is not one of ['qcom,msm8996-smmu-v2', 'qcom,msm8998-smmu-v2', 'qcom,sdm630-smmu-v2', 'qcom,sm6375-smmu-v2']
-	'qcom,sdm670-smmu-v2' is not one of ['qcom,qcm2290-smmu-500', 'qcom,qdu1000-smmu-500', 'qcom,sa8775p-smmu-500', 'qcom,sc7180-smmu-500', 'qcom,sc7280-smmu-500', 'qcom,sc8180x-smmu-500', 'qcom,sc8280xp-smmu-500', 'qcom,sdm670-smmu-500', 'qcom,sdm845-smmu-500', 'qcom,sdx55-smmu-500', 'qcom,sdx65-smmu-500', 'qcom,sdx75-smmu-500', 'qcom,sm6115-smmu-500', 'qcom,sm6125-smmu-500', 'qcom,sm6350-smmu-500', 'qcom,sm6375-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250-smmu-500', 'qcom,sm8350-smmu-500', 'qcom,sm8450-smmu-500', 'qcom,sm8550-smmu-500', 'qcom,sm8650-smmu-500', 'qcom,x1e80100-smmu-500']
-	'qcom,sdm670-smmu-v2' is not one of ['qcom,qcm2290-smmu-500', 'qcom,sc7180-smmu-500', 'qcom,sc7280-smmu-500', 'qcom,sc8180x-smmu-500', 'qcom,sc8280xp-smmu-500', 'qcom,sdm845-smmu-500', 'qcom,sm6115-smmu-500', 'qcom,sm6350-smmu-500', 'qcom,sm6375-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250-smmu-500', 'qcom,sm8350-smmu-500', 'qcom,sm8450-smmu-500']
-	'qcom,sdm670-smmu-v2' is not one of ['qcom,qcm2290-smmu-500', 'qcom,sa8775p-smmu-500', 'qcom,sc7280-smmu-500', 'qcom,sc8180x-smmu-500', 'qcom,sc8280xp-smmu-500', 'qcom,sm6115-smmu-500', 'qcom,sm6125-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250-smmu-500', 'qcom,sm8350-smmu-500', 'qcom,sm8450-smmu-500', 'qcom,sm8550-smmu-500', 'qcom,sm8650-smmu-500', 'qcom,x1e80100-smmu-500']
-	'qcom,sdm670-smmu-v2' is not one of ['qcom,sc7280-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250-smmu-500']
-	'qcom,sdm670-smmu-v2' is not one of ['qcom,msm8996-smmu-v2', 'qcom,sc7180-smmu-v2', 'qcom,sdm630-smmu-v2', 'qcom,sdm845-smmu-v2', 'qcom,sm6350-smmu-v2', 'qcom,sm7150-smmu-v2']
-	'qcom,sdm845-smmu-v2' was expected
-	'marvell,ap806-smmu-500' was expected
-	'qcom,sdm670-smmu-v2' is not one of ['nvidia,tegra186-smmu', 'nvidia,tegra194-smmu', 'nvidia,tegra234-smmu']
-	'arm,mmu-500' was expected
-	'qcom,sdm670-smmu-v2' is not one of ['arm,mmu-400', 'arm,mmu-401']
-	'qcom,sdm670-smmu-v2' is not one of ['arm,smmu-v1', 'arm,smmu-v2', 'arm,mmu-400', 'arm,mmu-401', 'arm,mmu-500', 'cavium,smmu-v2']
-	'qcom,smmu-v2' was expected
-	'qcom,smmu-500' was expected
-	'nvidia,smmu-500' was expected
-	'arm,smmu-v2' was expected
-	'arm,smmu-v1' was expected
-	from schema $id: http://devicetree.org/schemas/iommu/arm,smmu.yaml#
-arch/arm64/boot/dts/qcom/sdm670-google-sargo.dtb: /soc@0/iommu@5040000: failed to match any schema with compatible: ['qcom,sdm670-smmu-v2', 'qcom,adreno-smmu', 'qcom,smmu-v2']
-
-
-
-
-
+Laurent Pinchart
 
