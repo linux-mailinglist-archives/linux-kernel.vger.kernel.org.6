@@ -1,160 +1,165 @@
-Return-Path: <linux-kernel+bounces-278336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F65394AEE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:28:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE9F94AEED
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 315891C219D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:28:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFC992837BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FF013D296;
-	Wed,  7 Aug 2024 17:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DDB13DB90;
+	Wed,  7 Aug 2024 17:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d2b8pU1Z"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C3WnMR57"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0567D3F5;
-	Wed,  7 Aug 2024 17:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F9913D630;
+	Wed,  7 Aug 2024 17:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723051721; cv=none; b=Mhky9J1/TuR67i59M9c5GWao3aXEDyChcgtj1C+CYz5m5XGgNNhC6sdXiwAxVV9GEaAGbEZ7Uke0f7XUFE6UW/b/iRMS4qzgMAQzXAlBjrF+dh9MwDR5QBcwqRicHYo5UKv150Egg68mAcNFCiRo2whSk1lOvjua6E9QcXWwBck=
+	t=1723051903; cv=none; b=hMDmftbDiNE4O8Ufde4RoN4Dklquv/sYWuzMdkCuEPZacIw1+4NVDoZXSeUPeo2gzphBnz/VPs6A4rg2QnRT/C6kq+vzz9sZl8zlnJ/fMnScbzLpY85/iTkbPi86vDJWTyBeNE/fkGxrCwPKArY2vNXroy037cNteBoGHLx1+EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723051721; c=relaxed/simple;
-	bh=MUALS8Umpq1keJgbRfbbRTcK0j1X8drt15taBBEiMbw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ms74Gz5umapLz1oLc+XpY+anwLnf0W1kFKs0R3/eFsY5pnsKNZkHTwOXOKHaXQX83dLLWZtBn2IijBTaRBizi8TPRYTzKum0PRDlWXCFCuWj63/4Mj3+mnmKy7txtWLU/2Du4ZP67SfqZXLSfNlXlu361Aulx7SmOaD3+xcH3rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d2b8pU1Z; arc=none smtp.client-ip=209.85.208.43
+	s=arc-20240116; t=1723051903; c=relaxed/simple;
+	bh=uflYueoD1tLlX3GuEa822CoPP05fKD2n7yhiqlNCizU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fJ7dD9bvxQv+9Cz3dYPHXamifuX4LU0fsGGniKVpWfyXlWrxrEYGuEsFMu2tlaEmnGk1EF1UBglPyVkSZkqp9dpwhwJnYKSYr/qjsxq1a+0TPfiIUkwoQUQGnNpjVUbmGn2V/ElUG2gqpUlC0o05nVD/uSdAfbFpWefkskYDYsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C3WnMR57; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5bba25c1e15so33936a12.2;
-        Wed, 07 Aug 2024 10:28:39 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2cfdafdb914so124996a91.2;
+        Wed, 07 Aug 2024 10:31:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723051718; x=1723656518; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BpG2opqgTiMlM/9bwByG7p5GesbXYmkZCBUf7QukF2s=;
-        b=d2b8pU1Z/B363hNdrSJNrFriWHEYg2HG4Ro0UT5hx0UKNN2bE1c/dm4ahtSlkwxivQ
-         me2+OZfcV444+OpaCFx+PWkRydAHkKQWCbXSaIl3ZEW9ADb3V+Z9Qls5R2I8FbGw26YH
-         PUPkHnyX4W384985pSgSjHgGscxHwZ6BQYl3zNhY5SiJk5nFBupwgwXDNL9hxtRFu7I0
-         nB3aZ1slvE9qEEufp6i1U8DjVKnlh9qy7R2/H/IkwkWMzdT7RjCUW1MZE8MovJALBzMl
-         +D+qAE9cI9BgzQ9KBUnwu9+5nqyGk9GkOnkR1hJS0lS1TmApxb1JpAKsp2Hi/EnSVWF2
-         dN6A==
+        d=gmail.com; s=20230601; t=1723051898; x=1723656698; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5d7J/4yEruzV5At/gWizedTK39nzWjVwsfpwk6woQGA=;
+        b=C3WnMR57kK+FTOyfKN5/9NMVuoMsnD8q3ZtqdVNvNV4bD9iJTkRBG8ltQipTmfCQBl
+         hZvUkQZJ+eLNq0vQJ69ST4W6CwgC1T6mWtl4GXsfhG6+1nR9zTuNvMxOnPZp5W4eqhmz
+         lh6eepMB51TOUmqin8BnaKHEsVMadXHaNBRoukIIpU7pKShksTa+l4uwPc2iho0DLdQz
+         670yNkNlRPNX3NHvL1Vb3L/RAfSTdEIZR6oqo0b7MjSIL8WA3J5rK8zyabAJyj2h/yUy
+         Ik0dVhVUmKWsw/euPCGoA34CLCWp7ygp3DreMTTS+a5Gq1NP2rKCwXmgXDXkt65tjWcG
+         YtmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723051718; x=1723656518;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BpG2opqgTiMlM/9bwByG7p5GesbXYmkZCBUf7QukF2s=;
-        b=ecuekpBUhHkyVYNJeMkN7107LuSCY10pHon15HF+1NBQQNCRsqjkoUAVAOTOzEIYua
-         WxU0umiVvcukhTZz31U8aacXnLmciwFe8ksLFVobnffASmfSrZ2eF2L9mu8Mv2CSvAUd
-         L65g53uslHGn2c6+zuckH8cXfE6zIhc2r/sj1CgpLdXVhUItW0C6Ir74k/6SqkkoYCab
-         J3ctLXvqz4Gi1g5TAA53v4SNI/SGEO6PJ91Sm6TX5QI1h9Esv3ICTLxT22YFEYTK1L9j
-         XBOzg8PUylTb1qn+2eXiKylGj++08MbLjt+43LAZWwdazOABfhpUx0dJ9Z5H7IucLEfJ
-         mY7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWoU55XCaD/cbW+YS/xS8c1JXINdN9qb2a8IsRjUdefsGOiPj7WmLE7xk6GUFeAwoYUKMmF2V+iBOYTPGu+za6bTPMTQHXf5v4hrwYI3JaZNwGziiKkLmtDJmrbcI+sN75JVpm39B9ZIwKP3MNSWPPMZcAnVYEhav7ZSZo5VnLV6BDY1D0=
-X-Gm-Message-State: AOJu0YxukKA7y13v1Y4sEVB+ue5W2hVHrH4F3XopYINV8532RWvdFUjy
-	8U3ibgksG4/G19oC5pbINmZeY24Jj/y9RSHNFPBDdvxzQrKV67nM
-X-Google-Smtp-Source: AGHT+IFyQ6tRnNYtpE0HntxxHcQ/7t4dWy9ZE8DPyHF015sSEv6HtzNOSolIxpqZww1lGBr2ZcuEFQ==
-X-Received: by 2002:a05:6402:718:b0:5a2:3453:aaf2 with SMTP id 4fb4d7f45d1cf-5b7f3cc5469mr13608697a12.10.1723051717370;
-        Wed, 07 Aug 2024 10:28:37 -0700 (PDT)
-Received: from ?IPv6:2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78? ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83b82f308sm7200821a12.63.2024.08.07.10.28.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 10:28:37 -0700 (PDT)
-Message-ID: <225a94c3d0e8f70238aa9a486e7752ad6cb20283.camel@gmail.com>
-Subject: Re: [PATCH v1 08/10] arm64: dts: exynos: Add initial support for
- exynos8895 SoC
-From: David Virag <virag.david003@gmail.com>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, Krzysztof Kozlowski
- <krzk@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Sylwester
- Nawrocki <s.nawrocki@samsung.com>, Linus Walleij
- <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-  devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Date: Wed, 07 Aug 2024 19:29:51 +0200
-In-Reply-To: <5274b8a1-b81c-3979-ed6c-3572f6a6cfc2@gmail.com>
-References: <20240807082843.352937-1-ivo.ivanov.ivanov1@gmail.com>
-	 <20240807082843.352937-9-ivo.ivanov.ivanov1@gmail.com>
-	 <e6b4e0d8-7183-4ff4-a373-cb1c0c98d993@kernel.org>
-	 <5274b8a1-b81c-3979-ed6c-3572f6a6cfc2@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+        d=1e100.net; s=20230601; t=1723051898; x=1723656698;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5d7J/4yEruzV5At/gWizedTK39nzWjVwsfpwk6woQGA=;
+        b=gL0BLluG8UhnIDLStvQ37ijAkHZ5wmywgPIMg6xP2BYB5EwM/aVljPNynbJLo+Jdj7
+         zxs707LeLiuWRoPKij+9kheYw3loRvTSCbfgC+MPjpJKg8AdvsFC0XnsZ72Ngl3rTUJs
+         ruBB8IathGsxlnRSFric2ztWDF70AQBXkNAI4hHBMMmZmgZ9+RdClS7ybtmtrbj1SexN
+         WDSGi5az6VpKFe0skdvpXR44286+qnRDa3LcYP9kxL+EGC2aF90a7RHk/BxJzuzGRiSI
+         gkH8Ps8jwTa+ELC7dr+XEeU5MNk5TXWD+TiTMW6Um2Z9QhJo2wc6PvrFDNI7K0nl/413
+         AxyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUeaceAqbXA7+YvYB2vT8kUv2F5YaSxJw1RjEuuwR5HBck+qJORy60y0G8R57+xjeTa24eO83O7dMLXaVaTqz6oGJrd8pI7Lt1rZrR3ljDqeYXb7clPWqMgMWAleeoQctEQ48VCi7nAuRJ7kSSOBHBYK42DEv6QoScSSAsFcqOtE38tBb36
+X-Gm-Message-State: AOJu0YyMjC9YNDTBruMB4l2K+D9QhMZv+sMqLguy5071Rxl89oJArqzF
+	dEEG1RGBTLwgtB/4fL+5KR47uqDo8CJmjncAu/2H/0JC0V4VRDkVDXkv1jQ+dP9CiNYJ991mxKv
+	8g1KIr+7TeJzus9McxM6Ngb6cU24=
+X-Google-Smtp-Source: AGHT+IFDuDk2NdEDJnyKuXgLW1ptdEIOeOcF8bxBtoUxJzofHGVHtX12rlUAP9/UEpI2QqIJP7Iql/MwpGUcY2sxX1g=
+X-Received: by 2002:a17:90b:4b91:b0:2ca:7e87:15ea with SMTP id
+ 98e67ed59e1d1-2cff9513044mr18575294a91.34.1723051897642; Wed, 07 Aug 2024
+ 10:31:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240731214256.3588718-1-andrii@kernel.org> <20240807132922.GC27715@redhat.com>
+ <CAEf4BzZSyuFexZfwZs1bA9S=O0FHejw_tE6PXm5h8ftMsuSROw@mail.gmail.com> <20240807171113.GD27715@redhat.com>
+In-Reply-To: <20240807171113.GD27715@redhat.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 7 Aug 2024 10:31:25 -0700
+Message-ID: <CAEf4BzZ8SaFK4iMtPPxYZQjHOvaPqpKApE8=Bz+h29xq+xMEsA@mail.gmail.com>
+Subject: Re: [PATCH 0/8] uprobes: RCU-protected hot path optimizations
+To: Oleg Nesterov <oleg@redhat.com>, Liao Chang <liaochang1@huawei.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
+	paulmck@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2024-08-07 at 14:20 +0300, Ivaylo Ivanov wrote:
->=20
-> On 8/7/24 12:20, Krzysztof Kozlowski wrote:
-> > On 07/08/2024 10:28, ivo.ivanov.ivanov1@gmail.com=C2=A0wrote:
-> > > From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-[snip]
-> > >=20
-> > > +
-> > > +	timer {
-> > > +		compatible =3D "arm,armv8-timer";
-> > > +		/* Hypervisor Virtual Timer interrupt is not
-> > > wired to GIC */
-> > > +		interrupts =3D <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8)
-> > > | IRQ_TYPE_LEVEL_LOW)>,
-> > > +			=C2=A0=C2=A0=C2=A0=C2=A0 <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8)
-> > > | IRQ_TYPE_LEVEL_LOW)>,
-> > > +			=C2=A0=C2=A0=C2=A0=C2=A0 <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8)
-> > > | IRQ_TYPE_LEVEL_LOW)>,
-> > > +			=C2=A0=C2=A0=C2=A0=C2=A0 <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8)
-> > > | IRQ_TYPE_LEVEL_LOW)>;
-> > > +		clock-frequency =3D <26000000>;
-> > Hm? I think this was explicitly disallowed.
->=20
-> It's weird. Without the clock-frequency property it fails early
-> during the
->=20
-> boot process and I can't get any logs from pstore or simple-
-> framebuffer.
->=20
-> Yet it's not set on similar platforms (exynos7885, autov9). Perhaps I
->=20
-> could alias the node and set it in the board device tree..? That
-> doesn't
->=20
-> sound right.
+On Wed, Aug 7, 2024 at 10:11=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wro=
+te:
+>
+> On 08/07, Andrii Nakryiko wrote:
+> >
+> > Yes, I was waiting for more of Peter's comments, but I guess I'll just
+> > send a v2 today.
+>
+> OK,
+>
+> > I'll probably include the SRCU+timeout logic for
+> > return_instances, and maybe lockless VMA parts as well.
+>
+> Well, feel free to do what you think right, but perhaps it would be
+> better to push this series first? at least 1-4.
 
-This sounds like CNTFRQ_EL0 is not set properly by the firmware.
-Now, if I read the documentation properly, this can be only set from
-EL3, which in your case is... not easy.
+Ok, I can send those first 4 patches first and hopefully we can land
+them soon and move to the next part. I just also wrote up details
+about that crash in rb_find_rcu().
 
-On my Galaxy A8 2018 (Exynos7885) I remember the old Android 8
-bootloader not being able to boot mainline, but Android 9 bootloaders
-did. I did not take the time to check if it was related to this, but it
-is my guess.
+>
+> As for lockless VMA. To me this needs more discussions. I didn't read
 
-Your best bet is that maybe Samsung decided to fix this on the latest
-bootloader, and upgrading will fix it. (Though if it's already on an
-Android 9 based bootloader and it's still broken, my guess is a newer
-version won't fix it, but who knows)
+We are still discussing, feel free to join the conversation.
 
-Or... Exynos8895 has a known bootrom vulnerability, you could force the
-SoC into USB Download mode, and use the exploit to boot into a patched
-bootloader. This is of course pretty tedious.
+> your conversation with Peter and Suren carefully, but I too have some
+> concerns. Most probably I am wrong, and until I saw this thread I didn't
+> even know that vm_area_free() uses call_rcu() if CONFIG_PER_VMA_LOCK,
+> but still.
+>
+> > > As for 8/8 - I leave it to you and Peter. I'd prefer SRCU though ;)
+> >
+> > Honestly curious, why the preference?
+>
+> Well, you can safely ignore me, but since you have asked ;)
+>
+> I understand what SRCU does, and years ago I even understood (I hope)
+> the implementation. More or less the same for rcu_tasks. But as for
+> the _trace flavour, I simply fail to understand its semantics.
 
-Your only actually relistic choice is submitting without this line and
-manually adding it while actually using the phone (or making the
-chainloaded bootloader/boot wrapper add it).
+Ok, I won't try to repeat Paul's explanations. If you are curious you
+can find them in comments to my previous batch register/unregister API
+patches.
 
-Not optimal, but it is what it is...
+>
+> > BTW, while you are here :) What can you say about
+> > current->sighand->siglock use in handle_singlestep()?
+>
+> It should die, and this looks simple. I disagree with the patches
+> from Liao, see the
+> https://lore.kernel.org/all/20240801082407.1618451-1-liaochang1@huawei.co=
+m/
+> thread, but I agree with the intent.
 
-Best Regards,
-David
+I wasn't aware of this patch, thanks for mentioning it. Strange that
+me or at least bpf@vger.kernel.org wasn't CC'ed.
 
+Liao, please cc bpf@ mailing list for future patches like that.
+
+>
+> IMO, we need a simple "bool restore_sigpending" in uprobe_task, it will m=
+ake the
+> necessary changes really simple.
+
+The simpler the better, I can't comment on correctness as I don't
+understand the logic well enough. Are you going to send a patch with
+your bool flag proposal?
+
+>
+> (To clarify. In fact I think that a new TIF_ or even PF_ flag makes more =
+sense,
+>  afaics it can have more users. But I don't think that uprobes can provid=
+e enough
+>  justification for that right now)
+>
+> Oleg.
+>
 
