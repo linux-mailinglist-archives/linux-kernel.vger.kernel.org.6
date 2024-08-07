@@ -1,95 +1,73 @@
-Return-Path: <linux-kernel+bounces-277745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FFF94A5A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:35:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC8B94A5B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64AE61C210F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:35:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0101F21140
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782661DD3B5;
-	Wed,  7 Aug 2024 10:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFE91DD398;
+	Wed,  7 Aug 2024 10:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WCjZymr5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kacA7n7Z";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WCjZymr5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kacA7n7Z"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PjCuGerk"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDC61D3641
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F8D13F435
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723026882; cv=none; b=Dqlxw4RB0WC0qKAEzr6U1Vc5x/NuRc4eftXYkpiaTi3wt3ELboSKjlZar35KsdMmc2YqBLD58xPDYvLr727eQMQSVHWAYn4vUJDiKTw12Q9zzapsUPz2MVuVvk+RDYg2zWVgi5RpQjcG156+XRu41cry9sTMG4+2AwmZUrdxaos=
+	t=1723027045; cv=none; b=tBdDGZsK6O+jofAmqgnFE6gIc9lGAUge/8emTb66oH+tUefPiPV4E5wUnTqK9X1M8RuqX0bZ3bfUtRbAiYtmDk1KI20zmioci8M3DY8kZpV0CnsEiCQGtvmnZErYg1X7FKSUSkFlumlVrlxwnVW0FW8mx4ajf0hKbUr6neCz+9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723026882; c=relaxed/simple;
-	bh=RM2zTsfTmYwjLgEaNFtP9kWNdfS6XLKtGB/YbgCCXro=;
+	s=arc-20240116; t=1723027045; c=relaxed/simple;
+	bh=+eVNZMHRCsv7bg+ozffFmWdiRY6EWZcQF8pTOvaPYi4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WVDiOmNvgsoX+in3nETD2naZvGNYt2cUvLFOrwf8UzaxI+wkLdKl/+h4GpXugleqTzJ2zzSGjoUF7ntKCNX+ZyN2Q4gWarSeUZvwNPdCnyWg9qPohxB8cplUU0U3PHc0bDxEyj60mkhaCfy3GhCSdVqYAeT3G8RxSyrXk87B2qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WCjZymr5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kacA7n7Z; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WCjZymr5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kacA7n7Z; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E11B221D05;
-	Wed,  7 Aug 2024 10:34:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723026878; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=St1W696W8Wp5SNFYj9xdHue1hGJpxWYLvydA0+nkKhc=;
-	b=WCjZymr59KD7e/bIhrEVm7ZMWuGdAlb+s/7qrOPLpZySfO3ZTKE7LmDQ+EEyh8JkV9fv14
-	N5Y6Jo+1xxghtjm+nYnX+7mhxmhhpN5U5+0LNLG69JBd9tOlUTerylENDZdjIq+GstgHUn
-	b3EreM9nVefE/AGO36rS6uEPx4V5+wk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723026878;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=St1W696W8Wp5SNFYj9xdHue1hGJpxWYLvydA0+nkKhc=;
-	b=kacA7n7ZDldHciEaRBOOY4IXTgXyk+snyDTUqqkWO/0HbYzyF9HkV2rf2VOH+buBKrTUvk
-	Nng3eb5P0+BUGBAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=WCjZymr5;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=kacA7n7Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723026878; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=St1W696W8Wp5SNFYj9xdHue1hGJpxWYLvydA0+nkKhc=;
-	b=WCjZymr59KD7e/bIhrEVm7ZMWuGdAlb+s/7qrOPLpZySfO3ZTKE7LmDQ+EEyh8JkV9fv14
-	N5Y6Jo+1xxghtjm+nYnX+7mhxmhhpN5U5+0LNLG69JBd9tOlUTerylENDZdjIq+GstgHUn
-	b3EreM9nVefE/AGO36rS6uEPx4V5+wk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723026878;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=St1W696W8Wp5SNFYj9xdHue1hGJpxWYLvydA0+nkKhc=;
-	b=kacA7n7ZDldHciEaRBOOY4IXTgXyk+snyDTUqqkWO/0HbYzyF9HkV2rf2VOH+buBKrTUvk
-	Nng3eb5P0+BUGBAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C795913297;
-	Wed,  7 Aug 2024 10:34:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BGBUML5Ns2YwIAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 07 Aug 2024 10:34:38 +0000
-Message-ID: <6de91cc3-3942-471b-9f89-5eec144fb33e@suse.cz>
-Date: Wed, 7 Aug 2024 12:34:38 +0200
+	 In-Reply-To:Content-Type; b=b9jxqHmjKSpJm9WCMXjsq3Jb7QK7EVF1rndQY0U+0XSO9RQMEKcq0E+fy4AJH41EuJM/98+B13Lxya2fCzgwIW3EdZe2MqiZuNSoBbYN6G1fiekVN16cfLvGtkj/NJFf5hHgyGo0wAfAOoBua3RZ3A74Miu7b9HNa0ZdqS6jWN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PjCuGerk; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52efa16aad9so2154163e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 03:37:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723027042; x=1723631842; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZtCQR4llpSQl4Ce3bHRxPr7DOi5yHbkr62zhtLRBZ+U=;
+        b=PjCuGerkf2noJoqWj2tMKINqc6T1GCNcji3R7+n3O5CnVDV782r2Xv6HzoWP08guZf
+         0oE6b4T3h0+YCkEUWJDNswf6wKX5HT/jJGps44xGs3bINEkW/yhnmvM0lnIgc64pRr50
+         kBEOrg8sAH+rYGlYsBdKx7A/L97lJVnqOZyNa6TRNfDhYt34riuNH99F6mM+p01aka1o
+         szAukrRW9OgjjDezg5J4fl/wE1AYkt3q39Ui3RQlPwaiCy1HLDF80kmk6hcmdl+cHG9j
+         /ETE2RjUJOZHIkjyH/t6SHXpj2k1G3Ma6scoeKxrYo7dTG/0jVEuVuTmzi6hafnFvYm4
+         jpWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723027042; x=1723631842;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZtCQR4llpSQl4Ce3bHRxPr7DOi5yHbkr62zhtLRBZ+U=;
+        b=clOTLLTPs1TCiSeUXwijlemB1neE35Nd+r+6frOTarGxGTHAJV4unQnq48hpwTpeq+
+         t0Iwc92O2qT+NBZqvO5khQHckHlgNCJbV9cJFE5G7YoXFMtYOQwuvtmaU1WBMZK8vsjt
+         yQ5hrw/FJKSh3tOJKFtsJRkrmSG7sUj5FURJAQRLuQ09y7HzB7WhjECLR5SLBEXW26Nt
+         /KC4GakaydK+1z4Edg6kYRN1Tsx41spMDQwJU4AV9YYf2DdR3N9Uw3bFUfKmiakQIsb+
+         D/XhseJ+TxZCAbD06xJ1qo79P4fVvhZDFmQl3TgZ2MvrCfgGH9wwfm8h/DZZ0fSqm53k
+         SA7w==
+X-Gm-Message-State: AOJu0YxonpjXpRa4bW6LSUW795+/i92efwGxRltffbdNnz0H2i8xM46N
+	MGfL4g2Xx6CNgBPIFQw94NeqijdJS8f8HKMutq2HEZLeX8/A+olGx0IRfrPdyBVHY+FpNWWwUg8
+	H
+X-Google-Smtp-Source: AGHT+IFWwx7rLRv7+flp6Qt7KN7Rfr939cJSrryBKNbjkCy0kv0cVckwj4XS6cvKdooZF/iTAYmZoA==
+X-Received: by 2002:a05:6512:1094:b0:52e:9ebe:7325 with SMTP id 2adb3069b0e04-530bb374627mr11571201e87.31.1723027041666;
+        Wed, 07 Aug 2024 03:37:21 -0700 (PDT)
+Received: from ?IPV6:2003:e5:8729:4000:29eb:6d9d:3214:39d2? (p200300e58729400029eb6d9d321439d2.dip0.t-ipconnect.de. [2003:e5:8729:4000:29eb:6d9d:3214:39d2])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c83cbf0sm55134536d6.83.2024.08.07.03.37.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 03:37:21 -0700 (PDT)
+Message-ID: <b46c051f-98c2-4748-8423-3e3a4511b043@suse.com>
+Date: Wed, 7 Aug 2024 12:37:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,156 +75,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] slab: Warn on duplicate cache names when DEBUG_VM=y
-To: Pedro Falcato <pedro.falcato@gmail.com>, Christoph Lameter
- <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240807090746.2146479-1-pedro.falcato@gmail.com>
+Subject: Re: [PATCH 0/5] xen: fix dom0 PV boot on some AMD machines
+To: linux-kernel@vger.kernel.org, x86@kernel.org
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, xen-devel@lists.xenproject.org
+References: <20240807103338.22007-1-jgross@suse.com>
 Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240807090746.2146479-1-pedro.falcato@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+In-Reply-To: <20240807103338.22007-1-jgross@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com,linux.com,kernel.org,google.com,lge.com,linux-foundation.org];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[linux.dev,gmail.com,kvack.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -3.00
-X-Rspamd-Queue-Id: E11B221D05
 
-On 8/7/24 11:07, Pedro Falcato wrote:
-> Duplicate slab cache names can create havoc for userspace tooling that
-> expects slab cache names to be unique. This is a reasonable expectation.
+On 07.08.24 12:33, Juergen Gross wrote:
+> There have been reports of failed boots with Xen due to an overlap of
+> the kernel's memory with ACPI NVS reported in the E820 map of the host.
 > 
-> Sadly, too many duplicate name problems are out there in the wild, so
-> simply pr_warn instead of pr_err() + failing the sanity check.
+> This series fixes this issue by moving the NVS area in dom0 to some
+> higher address.
 > 
-> Link: https://lore.kernel.org/linux-fsdevel/2d1d053da1cafb3e7940c4f25952da4f0af34e38.1722293276.git.osandov@fb.com/
-> Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
-> ---
-> v2:
->  - Replace the pr_err() + failure with a simple pr_warn
+> Juergen Gross (5):
+>    xen: use correct end address of kernel for conflict checking
+>    xen: introduce generic helper checking for memory map conflicts
+>    xen: move checks for e820 conflicts further up
+>    xen: move max_pfn in xen_memory_setup() out of function scope
+>    xen: tolerate ACPI NVS memory overlapping with Xen allocated memory
 > 
-> Contrary to Vlastimil's suggestion, we don't seem to require a refcount
-> == 0 check, because shutdown_cache already synchronously deletes the cache from the list (even reusing
-> the same list_head for TYPESAFE_BY_RCU).
+>   arch/x86/xen/mmu_pv.c  |   5 +-
+>   arch/x86/xen/setup.c   | 242 +++++++++++++++++++++++++++++++++--------
+>   arch/x86/xen/xen-ops.h |   3 +-
+>   3 files changed, 201 insertions(+), 49 deletions(-)
+> 
 
-It's not deleted when leaked objects are detected and the destroy is
-aborted. But in this series that should no longer happen so then it will be
-fine:
+Please ignore this series, messed up the "Tested-by:" of Marek by omitting
+the tag. Will resend.
 
-https://lore.kernel.org/all/20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz/
 
-> 
->  mm/slab_common.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 40b582a014b..1abe6a577d5 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -88,6 +88,19 @@ unsigned int kmem_cache_size(struct kmem_cache *s)
->  EXPORT_SYMBOL(kmem_cache_size);
->  
->  #ifdef CONFIG_DEBUG_VM
-> +
-> +static bool kmem_cache_is_duplicate_name(const char *name)
-> +{
-> +	struct kmem_cache *s;
-> +
-> +	list_for_each_entry(s, &slab_caches, list) {
-> +		if (!strcmp(s->name, name))
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  static int kmem_cache_sanity_check(const char *name, unsigned int size)
->  {
->  	if (!name || in_interrupt() || size > KMALLOC_MAX_SIZE) {
-> @@ -95,6 +108,11 @@ static int kmem_cache_sanity_check(const char *name, unsigned int size)
->  		return -EINVAL;
->  	}
->  
-> +	if (kmem_cache_is_duplicate_name(name)) {
-> +		/* Duplicate names will confuse slabtop, et al */
-> +		pr_warn("%s: name %s already exists as a cache\n", __func__, name);
-> +	}
-> +
->  	WARN_ON(strchr(name, ' '));	/* It confuses parsers */
->  	return 0;
->  }
-
+Juergen
 
