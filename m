@@ -1,151 +1,183 @@
-Return-Path: <linux-kernel+bounces-277338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98817949F6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:51:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C5EC949F5A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41B5F1F25917
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:51:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC785B21017
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3EB198E9B;
-	Wed,  7 Aug 2024 05:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE764197A97;
+	Wed,  7 Aug 2024 05:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="CH7ZK5O4"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="V7yuAw9q"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781321917F8
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 05:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8E1190694;
+	Wed,  7 Aug 2024 05:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723009843; cv=none; b=n+/0Jlb2ASmN2WoY3M5+QG52tLDExPxkK4U1wYwcUQvgUrjf7xKXOM3oTPMun9qB4n/NDYfezviAF/dgK063X0SwoS4Fsl4DjpfepWSJJliO8TY14rF5XC1upc9WHpod/8zslm7U0UakZyddR7wOhl3r8f2AbwDo9z2NaS7Btag=
+	t=1723009716; cv=none; b=If/yZwrdPdopYCXM2EE6TBzOIDhTM69ejE7fsnBhH4RIBuFXJ5vy01cSzDpOMDJFvT8ajYOSpDyvxzwGM1kvcKdnDe7KpapZzqcenLQFP6944Ub51mhDidtbidMpdXwHGqwDwdSntHKVCIWPfNWmXHzfqC9/TYF2hFLnTLVOocQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723009843; c=relaxed/simple;
-	bh=tlCvRoYaLMPU5gQj378kknU4aYbegHbHq8Y8IuOxgj8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nFAfJzuqTBL0B8DjItBFg1QH+6R96RVTBBW8nJ2fxm0OEptV5QdIFjuf38+v0y5l6E669ByN0A38mOtbhX6TMVJnN3DXAQVkfj8T+E4CFrnDJTJkQS3hgLUnQL44RhsZzHEvI6uHBasPClzh0W0/MnTHhRDsdaAddITJm8TruqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=CH7ZK5O4; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 4775lNip682395
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Tue, 6 Aug 2024 22:47:29 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4775lNip682395
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024071601; t=1723009649;
-	bh=PpuvlTdRkxoiU3regBqhao5DL93njt/uaEV2ZJVl618=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CH7ZK5O45KBmjBvXg76Qa5tZy0CVVosDNGNiWc1dkkrywPJl+JmlWvnLivv5uPNzV
-	 cRC+nP3zZ6Nl0j2Wa6pUvLQv/GOI7ABhHI+YPV7eq97V2LrBGXgFwhd/H0D+n6DtRQ
-	 lT8Eiur3jkQiTHgPAkftQ3JsihJ/jxLNfRhJtGv8KweueRs3hEyKRT/LAMeD5ZmBj+
-	 RIZuzX4ok03Lu4pPnpxx+TRcsp9aNnwqr9j90ZEi+E6gakr5yKTZU7iKSps0O4c5Eu
-	 lVHhgFkzibr2XfnL5i5Y9XrWDkhT8ap0gHJ0Zncjc1HRQmGJ3AsDeJR2wY7+Wu+Toc
-	 MYl9au81vpvow==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        peterz@infradead.org, andrew.cooper3@citrix.com, seanjc@google.com
-Subject: [PATCH v1 3/3] x86/entry: Set FRED RSP0 on return to userspace instead of context switch
-Date: Tue,  6 Aug 2024 22:47:22 -0700
-Message-ID: <20240807054722.682375-4-xin@zytor.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240807054722.682375-1-xin@zytor.com>
-References: <20240807054722.682375-1-xin@zytor.com>
+	s=arc-20240116; t=1723009716; c=relaxed/simple;
+	bh=Lme3h3V4nz7h8Lv9TQzwhuctctrKEEQvirQRzNGSHBA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WfZ62jJW2uqyLYtIVcsbHiwq/hsqzoFyNMoEMEZdI+P+fPQA4vU9a+mda/hwxFt8+itkMefVtAuvvKq11oBgqS/YkVK0iDlNyooGT8U7csuignpqc3pq6n4Zixe8kiZ4Y57RgwpvaZaiDVyOVNs4idgbZP4ZyQyIROJBTm8ORP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=V7yuAw9q; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4775mScO115415;
+	Wed, 7 Aug 2024 00:48:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723009708;
+	bh=EN+C7VUG79TmgtUXkbb02Zjw5u8BCVWVVZrzM3q+R2M=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=V7yuAw9qNtH+EhOGazAxcKUBULRfbo/N91RQuWZe1DMT4hX+8uWPrXMVunUPO84ih
+	 pWkII+maO+w+tp3+oTstmdWn7bjOkVgVw/hLv2Y2X5ypORuEdfCO8UvxlGGYzgNQNG
+	 PHO3y5xPPdaFu5JfKvPAGu7CbY5n26RP3L61ozkY=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4775mSht023926
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 7 Aug 2024 00:48:28 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
+ Aug 2024 00:48:27 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 7 Aug 2024 00:48:27 -0500
+Received: from [172.24.227.36] (a0497641-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.36] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4775mNl3047372;
+	Wed, 7 Aug 2024 00:48:23 -0500
+Message-ID: <99da73bf-87a1-4402-9008-3d9076074d14@ti.com>
+Date: Wed, 7 Aug 2024 11:18:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] arm64: dts: ti: k3-j721s2*: Add bootph-*
+ properties
+To: Manorit Chawdhry <m-chawdhry@ti.com>
+CC: Nishanth Menon <nm@ti.com>, Andrew Davis <afd@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Aniket Limaye
+	<a-limaye@ti.com>,
+        Udit Kumar <u-kumar1@ti.com>, Beleswar Padhi
+	<b-padhi@ti.com>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>
+References: <20240730-b4-upstream-bootph-all-v3-0-9bc2eccb6952@ti.com>
+ <20240730-b4-upstream-bootph-all-v3-1-9bc2eccb6952@ti.com>
+ <bcd96f9f-54bd-4793-b9f1-04a011f2df82@ti.com>
+ <20240806150700.uw4xdanjr4ypdvm3@rasping>
+ <20240807052628.jclbmw4zs72jm6km@uda0497581>
+ <8a910e2f-aaf2-40cd-8131-a1a2531a12c8@ti.com>
+ <20240807054243.pvfgexgusahe7d4x@uda0497581>
+Content-Language: en-US
+From: Neha Malcom Francis <n-francis@ti.com>
+In-Reply-To: <20240807054243.pvfgexgusahe7d4x@uda0497581>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-FRED RSP0 is a per task constant pointing to top of its kernel stack
-for user level event delivery, and needs to be updated when a task is
-scheduled in.
 
-Introduce a new TI flag TIF_LOAD_USER_STATES to track whether FRED RSP0
-needs to be loaded, and do the actual load of FRED RSP0 in
-arch_exit_to_user_mode_prepare() if the TI flag is set, thus to avoid a
-fair number of WRMSRs in both KVM and the kernel.
 
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
----
- arch/x86/include/asm/entry-common.h | 5 +++++
- arch/x86/include/asm/switch_to.h    | 3 +--
- arch/x86/include/asm/thread_info.h  | 2 ++
- arch/x86/kernel/cpu/cpuid-deps.c    | 1 -
- 4 files changed, 8 insertions(+), 3 deletions(-)
+On 07/08/24 11:12, Manorit Chawdhry wrote:
+> Hi Neha,
+> 
+> On 11:03-20240807, Neha Malcom Francis wrote:
+>> Hi Manorit
+>>
+>> On 07/08/24 10:56, Manorit Chawdhry wrote:
+>>> Hi Nishanth,
+>>>
+>>> On 10:07-20240806, Nishanth Menon wrote:
+>>>> On 09:43-20240806, Andrew Davis wrote:
+>>>>> On 7/30/24 4:53 AM, Manorit Chawdhry wrote:
+>>>>>> Adds bootph-* properties to the leaf nodes to enable U-boot to
+>>>>>> utilise them.
+>>>>>
+>>>>> U-Boot? Let's try to pretend like this is a generic property and
+>>>>> just say "bootloader" :)
+>>>>>> @@ -445,6 +446,7 @@ flash@0 {
+>>>>>>     		cdns,tchsh-ns = <60>;
+>>>>>>     		cdns,tslch-ns = <60>;
+>>>>>>     		cdns,read-delay = <4>;
+>>>>>> +		bootph-all;
+>>>>
+>>>> Here and elsewhere, follow:
+>>>> 	https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n117
+>>>
+>>> Could you tell me what are you seeing wrong? The dts-coding-style that
+>>> you shared doesn't tell a specific location for bootph-* properties so
+>>> using the generic reasoning.
+>>>
+>>> "1. Most important properties start the node: compatible then bus addressing to
+>>>      match unit address."
+>>>
+>>> This is the least important property considering Linux and hence the
+>>> reasoning was that it should come in the last. Also, j722s and am62p
+>>> follow the same convention so it was taken from there only.
+>>>
+>>
+>> Not sure if this is what he meant, but bootph-* comes under standard/common
+>> properties as per my understanding of the coding style. And status needs to
+>> be at the very end if it's there (in this case it's not but just
+>> mentioning).
+> 
+> I see status property being at the top of many nodes so I don't think
+> it's even followed right now, with that reasoning, I don't think I can
+> use that point for ordering the dt nodes. If it's under common nodes
+> then also I think it's in the appropriate location considering that even
+> in those properties it is the least important and should be coming in
+> the last. If you see any problem with this node then please let me know
+> in the ordering.
+> 
 
-diff --git a/arch/x86/include/asm/entry-common.h b/arch/x86/include/asm/entry-common.h
-index 4c78b99060b5..ae365579efb3 100644
---- a/arch/x86/include/asm/entry-common.h
-+++ b/arch/x86/include/asm/entry-common.h
-@@ -51,6 +51,11 @@ static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
- 		if (ti_work & _TIF_USER_RETURN_NOTIFY)
- 			fire_user_return_notifiers();
- 
-+		if (cpu_feature_enabled(X86_FEATURE_FRED) &&
-+		    (ti_work & _TIF_LOAD_USER_STATES))
-+			wrmsrns(MSR_IA32_FRED_RSP0,
-+				(unsigned long)task_stack_page(current) + THREAD_SIZE);
-+
- 		if (unlikely(ti_work & _TIF_IO_BITMAP))
- 			tss_update_io_bitmap();
- 
-diff --git a/arch/x86/include/asm/switch_to.h b/arch/x86/include/asm/switch_to.h
-index c3bd0c0758c9..a31ea544cc0e 100644
---- a/arch/x86/include/asm/switch_to.h
-+++ b/arch/x86/include/asm/switch_to.h
-@@ -71,8 +71,7 @@ static inline void update_task_stack(struct task_struct *task)
- 	this_cpu_write(cpu_tss_rw.x86_tss.sp1, task->thread.sp0);
- #else
- 	if (cpu_feature_enabled(X86_FEATURE_FRED)) {
--		/* WRMSRNS is a baseline feature for FRED. */
--		wrmsrns(MSR_IA32_FRED_RSP0, (unsigned long)task_stack_page(task) + THREAD_SIZE);
-+		set_thread_flag(TIF_LOAD_USER_STATES);
- 	} else if (cpu_feature_enabled(X86_FEATURE_XENPV)) {
- 		/* Xen PV enters the kernel on the thread stack. */
- 		load_sp0(task_top_of_stack(task));
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index 12da7dfd5ef1..fb51904651c0 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -106,6 +106,7 @@ struct thread_info {
- #define TIF_BLOCKSTEP		25	/* set when we want DEBUGCTLMSR_BTF */
- #define TIF_LAZY_MMU_UPDATES	27	/* task is updating the mmu lazily */
- #define TIF_ADDR32		29	/* 32-bit address space on 64 bits */
-+#define TIF_LOAD_USER_STATES	30	/* Load user level states */
- 
- #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
- #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
-@@ -128,6 +129,7 @@ struct thread_info {
- #define _TIF_BLOCKSTEP		(1 << TIF_BLOCKSTEP)
- #define _TIF_LAZY_MMU_UPDATES	(1 << TIF_LAZY_MMU_UPDATES)
- #define _TIF_ADDR32		(1 << TIF_ADDR32)
-+#define _TIF_LOAD_USER_STATES	(1 << TIF_LOAD_USER_STATES)
- 
- /* flags to check in __switch_to() */
- #define _TIF_WORK_CTXSW_BASE					\
-diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
-index b7d9f530ae16..8bd84114c2d9 100644
---- a/arch/x86/kernel/cpu/cpuid-deps.c
-+++ b/arch/x86/kernel/cpu/cpuid-deps.c
-@@ -83,7 +83,6 @@ static const struct cpuid_dep cpuid_deps[] = {
- 	{ X86_FEATURE_AMX_TILE,			X86_FEATURE_XFD       },
- 	{ X86_FEATURE_SHSTK,			X86_FEATURE_XSAVES    },
- 	{ X86_FEATURE_FRED,			X86_FEATURE_LKGS      },
--	{ X86_FEATURE_FRED,			X86_FEATURE_WRMSRNS   },
- 	{}
- };
- 
+Aren't cdns,-* vendor specific properties?
+
+Also I understand that most DTS aren't following majority of the rules, but 
+considering it was a review comment I assume they want a check on what goes in 
+at least so I've mentioned what I think they're asking for.
+
+> Regards,
+> Manorit
+> 
+>>
+>>> Regards,
+>>> Manorit
+>>>
+>>>>
+>>>>
+>>>>>>     	};
+>>>>>>     };
+>>>>>>
+>>>>
+>>>> -- 
+>>>> Regards,
+>>>> Nishanth Menon
+>>>> Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+>>
+>> -- 
+>> Thanking You
+>> Neha Malcom Francis
+
 -- 
-2.45.2
-
+Thanking You
+Neha Malcom Francis
 
