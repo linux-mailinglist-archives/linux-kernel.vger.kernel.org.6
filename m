@@ -1,142 +1,163 @@
-Return-Path: <linux-kernel+bounces-278190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B35D494ADA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:08:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6541994ADC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6519EB30D9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:42:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B28EFB215AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905C8132132;
-	Wed,  7 Aug 2024 15:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=lausen.nl header.i=@lausen.nl header.b="PvQIOcNq"
-Received: from devico.uberspace.de (devico.uberspace.de [185.26.156.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE96D12F38B;
+	Wed,  7 Aug 2024 15:49:51 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A5512D1EA
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639D312CDBF;
+	Wed,  7 Aug 2024 15:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723045293; cv=none; b=jt44MX/rffm3HFz5YEiOhcK/MsSzFt2xfKu39YyiPJYLAnapFtqkzg2Rzw60OWfjwsiDIrStfmUzeNZh9HeayXbRikIUtAkUeCM11D2ZljytVJIDnw0xMmSFxm3Uu3LUooYlRT+ux38pH2arin+/AjXB8RlUhJTYDGB2INQ8oDc=
+	t=1723045791; cv=none; b=RiH1eH/7/3Xit2TlUUbTawh+ElkDeb//3qrhvnbpbIDxWsWp16eueWwtbQcVj+ZKidoafhA3OW1APTXBa9S2Gp3s/306q6PR1cZH0k75mlYOyU3ka2ArmHIeS9pmOW5XFNch1Sr1E25E0IBAxds4apHed1VNDe8niBG+dv5vwik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723045293; c=relaxed/simple;
-	bh=Dm1h2rVViWETRpyaAucj7ynN3gHM14g/8UZq8htTnjk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=psMgDJ58jWRJQ0/8Tfo7AgZvE8de0QmmrTpS1SwqpF0a2yG/AVXeBr63p73Rls6ggXUe0vHHWcb2mPMMSJQt8T84zyhj8louf7UANX5v5mW6ju5bff8IR7e2dNyNpycEyOXyL4nwPw3D5vmtDmjeOYYlU1jg3KMZIvufNePGRGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lausen.nl; spf=pass smtp.mailfrom=lausen.nl; dkim=fail (0-bit key) header.d=lausen.nl header.i=@lausen.nl header.b=PvQIOcNq reason="key not found in DNS"; arc=none smtp.client-ip=185.26.156.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lausen.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lausen.nl
-Received: (qmail 8920 invoked by uid 990); 7 Aug 2024 15:41:21 -0000
-Authentication-Results: devico.uberspace.de;
-	auth=pass (plain)
-Received: from unknown (HELO unkown) (::1)
-	by devico.uberspace.de (Haraka/3.0.1) with ESMTPSA; Wed, 07 Aug 2024 17:41:21 +0200
-Message-ID: <f0d1da69-d52a-484e-8255-b9639c358a71@lausen.nl>
-Date: Wed, 7 Aug 2024 11:41:18 -0400
+	s=arc-20240116; t=1723045791; c=relaxed/simple;
+	bh=zSjQCmlr2o7LzRlv1gR6+tsqoni0n9y0ZEa8DcvWYsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=knTOuanliThB7sPafTfKW/BbiAlVYBoz1GhBB6k17FdgOBL7r0yb1yXMgyBBnWF+WdxRy4LFoqDJrCroPKYDF5czGb+gqDZqXlu+10LTduCS6XoAdNgg/qI5AsG+iGO7ogunIX7UU1L0CpdtT/h3rfLYC1Zrmzpt9ft6+zMDhKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0E7FC32781;
+	Wed,  7 Aug 2024 15:49:49 +0000 (UTC)
+Date: Wed, 7 Aug 2024 11:49:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Mathias Krause <minipli@grsecurity.net>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Ajay Kaher <ajay.kaher@broadcom.com>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?=
+ <digirigawa@gmail.com>, Brad Spengler <spender@grsecurity.net>
+Subject: Re: [PATCH 2/2] tracefs: Don't overlay 'struct inode'
+Message-ID: <20240807114948.6d57af23@gandalf.local.home>
+In-Reply-To: <20240807134453.GZ5334@ZenIV>
+References: <20240807115143.45927-1-minipli@grsecurity.net>
+	<20240807115143.45927-3-minipli@grsecurity.net>
+	<20240807093545.4ec51d61@gandalf.local.home>
+	<20240807134453.GZ5334@ZenIV>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] drm/msm/dpu1: don't choke on disabling the
- writeback connector
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Jeykumar Sankaran <jsanka@codeaurora.org>, stable@vger.kernel.org
-References: <20240802-dpu-fix-wb-v2-0-7eac9eb8e895@linaro.org>
- <20240802-dpu-fix-wb-v2-1-7eac9eb8e895@linaro.org>
- <57cdac1a-1c4d-4299-8fde-92ae054fc6c0@lausen.nl>
- <61D52432-DD30-4C43-BD5E-1CC9F84DF5B9@linaro.org>
-Content-Language: en-US
-From: Leonard Lausen <leonard@lausen.nl>
-Autocrypt: addr=leonard@lausen.nl; keydata=
- xsFNBFDqr+kBEACh9pVkQnCP8c748JdNX3KKYZTtSgRDr9ZFIE5V5S39ws9kTxEOGFgUld4c
- zP5yU8hSO69khQi+AS9yqwUp/2vV6yQHh9m+aUJYSoI3Lj5/qj/NSaroF+Y5EPws23JgKYhs
- V/3yF81Z2sYvVMg5wpj+ZXOEd6Jzslu2vtaJ84p4qDXsHWC3JIkPicjGIOuIvuML8BLILPDL
- UfwYBLHAec4QXoeh8dz6GgDHR2wGjLKna3J11dtP1iD/pxZuSZCe2/rHSoVUI6295mrj10yM
- zCjYv7vQ3EEDMcMRVge/bN3J96mf252CiRO1uUpvhtB/H2Oq0laCLGhi31cp/f4vy025PNFR
- jELX/wx4AZhebfuRHwiFy9I+uECF421OA3hRTdS8ckDReXGrPfDkezrrSNhN+KT0WOoHLyng
- K0+KHwMBUJZqE4Fdiztjy3biQmu4+ELbeGJNW+k8n8olfX51CyGN0pwpuubNozguk6jFsG/7
- FtbK/RaK9T7oNfQXdcf7ywsebmn1QoPvwMFYPWqZxPWU015duGkDbSp9kt3l9vLreQ6VO+RI
- tq3jptPvQ6OJhLyliUf8+2Zr65xh/qN7GHVNHuZ1zkVlk7V06VUcaUGADvEtZrPOJZkYugOB
- A9YsvIRCPd90RjbD6N4sGSOasVQ6cRohfdsXGMGEp/PN5iC0MwARAQABzSJMZW9uYXJkIExh
- dXNlbiA8bGVvbmFyZEBsYXVzZW4ubmw+wsGXBBMBCgBBAhsDAh4BAheABQsJCAcDBRUKCQgL
- BRYCAwEAAhkBFiEEelfi8Cpy2ys5+bzjORPXzM1/prwFAmZ8CagFCRlTwL8ACgkQORPXzM1/
- pry1OhAAi/ylFn6InN/cc3xWBdtgmsFSrSjzifSJiPsmuXG3gyt1ahet6/o7tVFOAgFqQPzL
- c7Law5opYWmi0QsWYHu3FBiK8g0FhxysW3SXP7FQHsRfP1UxOPinUDPbJmuUiSXGe7c917Qo
- OxcveA30Q49/T+AUtmIQYoFLGqRgNVN/scn46vDISB30vPLlhSPw7TxZWsVaLrNsO/BOhsoX
- Vu7IjP0Jgpv31ujVoQALPN0fd87IMVTgqySRa5eECcaJefZx/eLGclZ2OoWrrlU3yfYZkZUR
- B4460uGnyzZtbGyT1cVIb3v/ZSoHaGGruJIHk8mEcB4pVRc4RFW2dY2/oH/FPMEBHW++fIcf
- tVQgd34TNuJFZVQTckbwlvTanQuvlkLC1N7gay7/6o3y9GIQ9JLV3KV+uscPEZwxaR+J+iIw
- NOVFWJIE9BaXVKG+KM2SNmjt/P3CUYGZlk3gIKy5/BUDji14I3r2OU6A11gMtO8HVk+lqQiA
- u0B4VALri0V/rvno8Pm1rwDkLoZe+oeIW6WKLuTgUldqgnj/dSImvloBtsVyyOyX+E0PFMIY
- 5PMpQyarTINS2zk1MSIk+vCOd5ZDmRGwhoWt99bqIrZvOHRQvbU3jV3AhQpkssfNJeheiXKx
- TrzmtW9RB3tRVdq8X/4D216XW+9WeT/JjJQk5vtUAfnOwU0EUOqv6QEQANSFO5XUwDbF13Vv
- otNX3l6cVbvoIqSQrfH91vRAjrYKxpTsPOiqqaFkclamp+f+s58U52ukbx4vy1VvnVHWkgWb
- W9qmbGhW5qSbJpsxL4lslZ09vX9x1/EzyjPRjSGFTcSWLfnHphcT8HRjrbj1gpPmznGq2SOC
- +6urDsL3DZeGjYXeN6RgM0kwIxlFVdg2Mj1PACTbCq3vAmti4YNl9nqqtrPanA/E1urX3XgK
- +zGk3U6vDa9SZtoTr6/ySATJO3XB4uo+W7jTBUSAtLk5nCTrPnrqf8CBTOryuElFsxbI/R4T
- CenVJuYj8yUf+xcjQdrB34DppXScCaTQJIZTRIRXa4omPUQej6xxeaRPrrQfpa//ii01t7KV
- JJ58N2NFius2yrgud00Le0BXTmr1nbEsAntCpTPvgIOL6KTfnvmSYsxg3XVGq0PkCbGQbO8n
- Z7Br4f6HfHL4TI/Yn0Rze+nBF7d8qguNUrpfPUchbgTz+r7HRzwj0HXFstrC2Lv3hQWj7cEM
- JmEcZjJY1TRJIY48CqdiLNur9wffqHQrPwPwv8WB8QYN6louQtCR5DuEexY0E+PyEOGSWweP
- z2rNr53ri/zaWRp2q5ENuwL2zDNxurx+1oFAO7o934cbH1xjGjbWoMq8Cs7cvxg3DLUYwl3B
- 4XcEvsXLwsO9Jz1g+Fu7ABEBAAHCwXwEGAEKACYCGwwWIQR6V+LwKnLbKzn5vOM5E9fMzX+m
- vAUCZnwJ2AUJGVPA7wAKCRA5E9fMzX+mvMmLEACBjiRcPaTiBLCk8VTJupCuap8qZGN9EiVC
- yXBT5s42Rh0j/5A1yI2Wo4LrhSLEDzXyuwOwxLTcb3+zwC53Ggsd39B/k//DD4rOLaBKVw5L
- vwpKfwMUG/SCCwzyXDSuhHKL+/8drC11i/iLUwz3qNXNJy7f+6U6g5kcm7ECnVpW658zGJ23
- U12XedIhIxWE60LKmyavFtlQRYYLDGI2LGZq0pO7J0Tztnt6k8c53SJuHL++7iFV6CDMFqCw
- HeK3MID4P9xy1hr4v4aW6FVV+7RZyU1BuWfySZWixxDsUNg0D7Ad4V0IRrz35FxOs06Usd07
- UyLdkhPol5x/NaWaKXHM5LjqjDDs3HoJgJX9Py/jL8xacnySx50h6IdzdFAYFwWzMEHxRYBY
- If8vac26ssYn5jK4/mMPx4wQ3tBvvVI7mQj/II7kQua2f5ndeOMtTG4U0sUxxKTKZJrtlxjb
- +qAYcACNLbHizXmKAkBgmprOuc5xat52thdz9vHqTf4Lq48W5ptXyxNPqC9MVWDV6C6tb7IY
- lBYs3LsNw//WuLgj5JSvRhFGZs1+3BirP7e/cLELOriu7hC6W+qbVCSb9wuyGeQrYparvLtn
- NPHVgeBBAUsUbFlEsaAbsF7q4I6Mv0Cg61IER5/CKqWzQWiVZ9mLSDYZq2LEK4XvhgvBRJ5q Sw==
-In-Reply-To: <61D52432-DD30-4C43-BD5E-1CC9F84DF5B9@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Bar: --
-X-Rspamd-Report: BAYES_HAM(-2.860288) XM_UA_NO_VERSION(0.01) MIME_GOOD(-0.1)
-X-Rspamd-Score: -2.950288
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=lausen.nl; s=uberspace;
-	h=from:to:cc:subject:date;
-	bh=Dm1h2rVViWETRpyaAucj7ynN3gHM14g/8UZq8htTnjk=;
-	b=PvQIOcNqVdWPNZufM7HSSmdNoDCElvZIrnkDtbf6OoLs6Sg3CN90hOU8uKJb3jDwTl+6ak6W0G
-	OXFAciVX5Lp4vBSmkAy+ECZBmPPaXf4ZXC3zvBxvUnoCVRVbSsMAoMP9HWrHHoAFHdO4J/gXs64Z
-	xBJCCPD+U5oXyiQ72WcnSraLEC4J1/vQMaEBP6MTYGoUObde4HPfSsrGZXJG3R3Q5TBkUTAwJ/mv
-	3Q02ycC6IF1PW3AR+gAAcoCaVddUaWctw7EG+AXsUcNAXRSeOhDpKzhi6HLzAxqvOdASMLem+KLb
-	U+tOKH3cIsAbZPZX6a5QB8NNs6g03uIYtFvgikOUO825Ov35Vg0XJ8OwAaVos7LgqnbJe4lybJSh
-	HQQT4Iy7x3SQXm3fCgO5foCrl4XXiJkyLiRZfny6zwqEWtCkZW2VOazMWOJ0boLskJV7cSK4DkGD
-	y7zu6mNBAaCQE+XiQSLpBGXcKRIvi6YbpgBsGJBCScbRWx7GaRhSQ/8vyeGR9V56hmJOTF8kd3dO
-	wk0c0+nxnT6qvPfuO7eUVUy+pWahBsyLpWAB6fLP7UoRjlhXEwkqyLM/n1MT8cU3cy843wptWb3B
-	0uL7LdAjK8SBEjzHFOXwqBFU9Ly8Lii9gY6KJhsncYcCb/Ih2nt8AXksHdxmG4BLehB1erYjYvu/
-	g=
 
-On 8/7/24 06:44, Dmitry Baryshkov wrote:> Could you please clarify, I was under the impression that currently whole suspend/resume is broken, so it's more than a dmesg message.
+On Wed, 7 Aug 2024 14:44:53 +0100
+Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-71174f362d67 specifically, or v6.9 more broadly regress in that we get "[dpu
-error]connector not connected 3" and "[drm:drm_mode_config_helper_resume]
-*ERROR* Failed to resume (-22)" if suspending and resuming the system while
-external display is connected over USB-C DP. Suspend and resume itself
-still works, and the external display also works after the resume, albeit
-perhaps with a small delay due to the dpu error. This is also mentioned in
-the issue description of https://gitlab.freedesktop.org/drm/msm/-/issues/57.
-So while suspend/resume isn't fully broken, the error is still unexpected and
-I thus bisected and identified 71174f362d67 as the first commit to trigger it.
-While your patch avoids the dpu/drm error, it triggers issue with the CRTC state,
-breaking the CRTC functionality after resume.
+> On Wed, Aug 07, 2024 at 09:35:45AM -0400, Steven Rostedt wrote:
+> 
+> > Perhaps:
+> > 
+> > diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
+> > index f704d8348357..ab6d6c3d835d 100644
+> > --- a/fs/tracefs/internal.h
+> > +++ b/fs/tracefs/internal.h
+> > @@ -10,12 +10,12 @@ enum {
+> >  };
+> >  
+> >  struct tracefs_inode {
+> > +	struct inode            vfs_inode;
+> > +	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
+> >  	union {
+> > -		struct inode            vfs_inode;
+> > +		struct list_head	list;
+> >  		struct rcu_head		rcu;
+> >  	};
+> > -	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
+> > -	struct list_head	list;
+> >  	unsigned long           flags;
+> >  	void                    *private;
+> >  };  
+> 
+> 	Your current variant gives you an RCU-delayed call of
+> tracefs_free_inode(), which schedules an RCU-delayed call of
+> tracefs_free_inode_rcu().
+> 
+> 	Do you really need that double RCU delay to start with?
+> Because if you do not, just do that list_del_rcu() in ->destroy_inode()
+> (which is called without an RCU delay) and have kmem_cache_free()
+> in ->free_inode() (which is called *with* RCU delay started after
+> the call of ->destroy_inode()).
 
-Might we be facing a race condition here, which is accidentally exposed by
-71174f362d67 but requires a separate fix?
+Thanks, I didn't know about these.
+
+So I could use destroy_inode() for the removing of the link list, and then
+free_inode to free it. Something like:
+
+diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+index 1028ab6d9a74..ae2cb2221acd 100644
+--- a/fs/tracefs/inode.c
++++ b/fs/tracefs/inode.c
+@@ -53,15 +53,14 @@ static struct inode *tracefs_alloc_inode(struct super_block *sb)
+ 	return &ti->vfs_inode;
+ }
+ 
+-static void tracefs_free_inode_rcu(struct rcu_head *rcu)
++static void tracefs_free_inode(struct inode *inode)
+ {
+-	struct tracefs_inode *ti;
++	struct tracefs_inode *ti = get_tracefs(inode);
+ 
+-	ti = container_of(rcu, struct tracefs_inode, rcu);
+ 	kmem_cache_free(tracefs_inode_cachep, ti);
+ }
+ 
+-static void tracefs_free_inode(struct inode *inode)
++static void tracefs_destroy_inode(struct inode *inode)
+ {
+ 	struct tracefs_inode *ti = get_tracefs(inode);
+ 	unsigned long flags;
+@@ -69,8 +68,6 @@ static void tracefs_free_inode(struct inode *inode)
+ 	spin_lock_irqsave(&tracefs_inode_lock, flags);
+ 	list_del_rcu(&ti->list);
+ 	spin_unlock_irqrestore(&tracefs_inode_lock, flags);
+-
+-	call_rcu(&ti->rcu, tracefs_free_inode_rcu);
+ }
+ 
+ static ssize_t default_read_file(struct file *file, char __user *buf,
+@@ -437,6 +434,7 @@ static int tracefs_drop_inode(struct inode *inode)
+ static const struct super_operations tracefs_super_operations = {
+ 	.alloc_inode    = tracefs_alloc_inode,
+ 	.free_inode     = tracefs_free_inode,
++	.destroy_inode  = tracefs_destroy_inode,
+ 	.drop_inode     = tracefs_drop_inode,
+ 	.statfs		= simple_statfs,
+ 	.show_options	= tracefs_show_options,
+diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
+index f704d8348357..d83c2a25f288 100644
+--- a/fs/tracefs/internal.h
++++ b/fs/tracefs/internal.h
+@@ -10,10 +10,7 @@ enum {
+ };
+ 
+ struct tracefs_inode {
+-	union {
+-		struct inode            vfs_inode;
+-		struct rcu_head		rcu;
+-	};
++	struct inode            vfs_inode;
+ 	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
+ 	struct list_head	list;
+ 	unsigned long           flags;
+
+
+I'll run this under some more tests and see if it doesn't crash.
+
+I'll apply the first patch of this series too, and then probably use this
+one.
+
+-- Steve
 
