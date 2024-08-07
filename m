@@ -1,175 +1,373 @@
-Return-Path: <linux-kernel+bounces-277710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB1FD94A517
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:08:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A2594A523
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A401C21033
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:08:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9A1B1F22801
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78981D3633;
-	Wed,  7 Aug 2024 10:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199C31D4159;
+	Wed,  7 Aug 2024 10:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGwv+vRz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TUPmhRdW"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05251D1F73;
-	Wed,  7 Aug 2024 10:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C19F1C6899;
+	Wed,  7 Aug 2024 10:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723025296; cv=none; b=VAC0geUZsNeZ8GMH1H9cx8xkujfvZfSa6l0VgAiMxaqMbMZcjFHVy5hNXI5Qw5HFCMwbpfOYRavs+vMfHwM6tB/j38KOVdbiZ6ifegDh1XOGddJXvKjt0/6Kj5UUYbYG4l7MPeuR4ezfhP/21KNkS9u0c+dHgCex4rwReIiOmvA=
+	t=1723025416; cv=none; b=kRCch11xVMBJn936x0toT5sfSLAcItxTLE3jub6sfY9yJYnS/eQQxOaNvME8biqssA2BBRixi3vCnouZd7U8DWYRmCjThrJRGqkwC5n4PmDHO8uL05EZlPW5uZTADSXMPCsVNaiA6c2EYRG1epfwgkowq9WCt9Pp5W9OC/VmvHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723025296; c=relaxed/simple;
-	bh=pbz9/mWikLj58LPIdHZGqQeOO3Hv+c3Hn1bmQqtGTqE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=n/M3HFW6h9pFEvgDBhoRiAMLZ1GBRGTUPwr4gFKnW92NnigUCf9/WPv05jtazXY/nfZfkIXB2e9u3s+zsBEQG1DIBYAsJ7XEHYXLRVhC+qBUhDCOOwniMOgMaFT90XUzTgKy1nWCem//qDZxPXHYdjZtKywynMV28TLyAlV3uOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGwv+vRz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41E3CC32782;
-	Wed,  7 Aug 2024 10:08:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723025295;
-	bh=pbz9/mWikLj58LPIdHZGqQeOO3Hv+c3Hn1bmQqtGTqE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JGwv+vRzTcQ/uEot7V4X4z1XWtWOrbl9g9l//D1Nyh/AxgOt7LhAFiqLL8DBuyrsC
-	 3INwE3Wn0kxGybNgy0/e2C8aF3fIld4pSPt4R1ZY1RybxNcL2I7BM8rJH5S68rBZtV
-	 E2Z0S8T55WUSOGxp+cHmdbMgeMWdNDwP/CAOc/wkbo1OhSKAH88I1y0mpdE9drrqRg
-	 zjUehHRCWdVufCGZVz1vJJbcqbrlR71U6AJy/DIXT6WhN/EGF90M3LZlaj/iFSllSV
-	 Dh45g7qpHLyXl1lt9aMTz5eYBnzTAclzE+xpZLZRDZt7VoMBbZ4YOijy6J5i8FpFM1
-	 KW1eQv3GTbAtQ==
-Date: Wed, 7 Aug 2024 19:08:09 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Song Liu <song@kernel.org>,
- "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, LKML
- <linux-kernel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
- <linux-trace-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>, Petr
- Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, Nathan
- Chancellor <nathan@kernel.org>, "morbo@google.com" <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>, Luis Chamberlain
- <mcgrof@kernel.org>, Leizhen <thunder.leizhen@huawei.com>,
- "kees@kernel.org" <kees@kernel.org>, Kernel Team <kernel-team@meta.com>,
- Matthew Maurer <mmaurer@google.com>, Sami Tolvanen
- <samitolvanen@google.com>
-Subject: Re: [PATCH v2 3/3] tracing/kprobes: Use APIs that matches symbols
- without .XXX suffix
-Message-Id: <20240807190809.cd316e7f813400a209aae72a@kernel.org>
-In-Reply-To: <BEEE3F89-717B-44A4-8571-68DA69408DA4@fb.com>
-References: <20240802210836.2210140-1-song@kernel.org>
-	<20240802210836.2210140-4-song@kernel.org>
-	<20240806144426.00ed349f@gandalf.local.home>
-	<B53E6C7F-7FC4-4B4B-9F06-8D7F37B8E0EB@fb.com>
-	<20240806160049.617500de@gandalf.local.home>
-	<20240806160149.48606a0b@gandalf.local.home>
-	<6F6AC75C-89F9-45C3-98FF-07AD73C38078@fb.com>
-	<20240807090146.88b38c2fbd1cd8db683be22c@kernel.org>
-	<BEEE3F89-717B-44A4-8571-68DA69408DA4@fb.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723025416; c=relaxed/simple;
+	bh=3geILOQKguehSc6CHYFbtZK9lmxQOnTTa3CMyswIst4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QfLrY3GQ4Uka9aykRWFuoP73fzYsez9Q5avIKEBtP1QBZo5OlExY1Q65OdY7a74vxgUDnlWm2McnJRzfvCugZbxO9A2hnYop8cLSsgo3J++2utPRHKIonoKfQz5jOYGfoukGh5zNGjAvjAUzd86dG5kLSbzw87urV2sabGQAvew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TUPmhRdW; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7C0821BF203;
+	Wed,  7 Aug 2024 10:09:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723025403;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k5BGqJI/ev/belov1hsrruBFGrYZxU1Unm6iwJDXADo=;
+	b=TUPmhRdWjO9JNhnOiRGL61xQIzPr5WsceG2EwvtaTxyj8uRQI95g+daK4eu9DM/BqXSzkK
+	8YNzgK3ImrLELTqobMwZ/7xfMMBl6IFDXVPea6GvQP1qbhCHCdSQz47hWiYHt8v01wasRY
+	rpWo2J0qeMP0Vm7L4lv4eMnRdSe5tz26dB7dL6Hs8hGtkQ2Dpdigm7AhZIAriO7AUQOX5A
+	jCYfHm2gS+/o+Od7CegM/vgVVOCdlKaneFthnJMxnu4l90ya2cMtx8lJPk9zFz/psPQVvc
+	9jH5QhFLfBwlPgLTYF8Ufg8xQzJOxvngmPLExruVRGcVqdLvMB1Pfv7l2G6ThQ==
+Date: Wed, 7 Aug 2024 12:09:56 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Simon Horman
+ <horms@kernel.org>, Lee Jones <lee@kernel.org>, Arnd Bergmann
+ <arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Lars Povlsen <lars.povlsen@microchip.com>, Steen
+ Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon
+ <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Rob Herring
+ <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 1/8] misc: Add support for LAN966x PCI device
+Message-ID: <20240807120956.30c8264e@bootlin.com>
+In-Reply-To: <CAHp75VdtFET87R9DZbz27vEeyv4K5bn7mxDCnBVdpFVJ=j6qtg@mail.gmail.com>
+References: <20240805101725.93947-1-herve.codina@bootlin.com>
+	<20240805101725.93947-2-herve.codina@bootlin.com>
+	<CAHp75VdtFET87R9DZbz27vEeyv4K5bn7mxDCnBVdpFVJ=j6qtg@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Wed, 7 Aug 2024 00:19:20 +0000
-Song Liu <songliubraving@meta.com> wrote:
+Hi Andy,
+
+On Mon, 5 Aug 2024 22:13:38 +0200
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+
+> On Mon, Aug 5, 2024 at 12:19 PM Herve Codina <herve.codina@bootlin.com> wrote:
+> >
+> > Add a PCI driver that handles the LAN966x PCI device using a device-tree
+> > overlay. This overlay is applied to the PCI device DT node and allows to
+> > describe components that are present in the device.
+> >
+> > The memory from the device-tree is remapped to the BAR memory thanks to
+> > "ranges" properties computed at runtime by the PCI core during the PCI
+> > enumeration.
+> >
+> > The PCI device itself acts as an interrupt controller and is used as the
+> > parent of the internal LAN966x interrupt controller to route the
+> > interrupts to the assigned PCI INTx interrupt.  
+> 
+> ...
+> 
+> + device.h
+
+Will be added.
 
 > 
+> > +#include <linux/irq.h>
+> > +#include <linux/irqdomain.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of_platform.h>  
 > 
-> > On Aug 6, 2024, at 5:01 PM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > 
-> > On Tue, 6 Aug 2024 20:12:55 +0000
-> > Song Liu <songliubraving@meta.com> wrote:
-> > 
-> >> 
-> >> 
-> >>> On Aug 6, 2024, at 1:01 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> >>> 
-> >>> On Tue, 6 Aug 2024 16:00:49 -0400
-> >>> Steven Rostedt <rostedt@goodmis.org> wrote:
-> >>> 
-> >>>>>>> + if (IS_ENABLED(CONFIG_LTO_CLANG) && !addr)
-> >>>>>>> + addr = kallsyms_lookup_name_without_suffix(trace_kprobe_symbol(tk));
-> >>>>>>> +    
-> >>>>>> 
-> >>>>>> So you do the lookup twice if this is enabled?
-> >>>>>> 
-> >>>>>> Why not just use "kallsyms_lookup_name_without_suffix()" the entire time,
-> >>>>>> and it should work just the same as "kallsyms_lookup_name()" if it's not
-> >>>>>> needed?    
-> >>>>> 
-> >>>>> We still want to give priority to full match. For example, we have:
-> >>>>> 
-> >>>>> [root@~]# grep c_next /proc/kallsyms
-> >>>>> ffffffff81419dc0 t c_next.llvm.7567888411731313343
-> >>>>> ffffffff81680600 t c_next
-> >>>>> ffffffff81854380 t c_next.llvm.14337844803752139461
-> >>>>> 
-> >>>>> If the goal is to explicitly trace c_next.llvm.7567888411731313343, the
-> >>>>> user can provide the full name. If we always match _without_suffix, all
-> >>>>> of the 3 will match to the first one. 
-> >>>>> 
-> >>>>> Does this make sense?  
-> >>>> 
-> >>>> Yes. Sorry, I missed the "&& !addr)" after the "IS_ENABLED()", which looked
-> >>>> like you did the command twice.
-> >>> 
-> >>> But that said, does this only have to be for llvm? Or should we do this for
-> >>> even gcc? As I believe gcc can give strange symbols too.
-> >> 
-> >> I think most of the issue comes with LTO, as LTO promotes local static
-> >> functions to global functions. IIUC, we don't have GCC built, LTO enabled
-> >> kernel yet.
-> >> 
-> >> In my GCC built, we have suffixes like ".constprop.0", ".part.0", ".isra.0", 
-> >> and ".isra.0.cold". We didn't do anything about these before this set. So I 
-> >> think we are OK not handling them now. We sure can enable it for GCC built
-> >> kernel in the future.
-> > 
-> > Hmm, I think it should be handled as it is. This means it should do as
-> > livepatch does. Since I expected user will check kallsyms if gets error,
-> > we should keep this as it is. (if a symbol has suffix, it should accept
-> > symbol with suffix, or user will get confused because they can not find
-> > which symbol is kprobed.)
-> > 
-> > Sorry about the conclusion (so I NAK this), but this is a good discussion. 
+> > +#include <linux/pci.h>  
 > 
-> Do you mean we do not want patch 3/3, but would like to keep 1/3 and part 
-> of 2/3 (remove the _without_suffix APIs)? If this is the case, we are 
-> undoing the change by Sami in [1], and thus may break some tracing tools. 
+> > +#include <linux/pci_ids.h>  
+> 
+> AFAIU pci_ids..h is guaranteed to be included by pci.h, but having it
+> here explicitly doesn't make it worse, so up to you.
 
-What tracing tools may be broke and why?
-
-For this suffix problem, I would like to add another patch to allow probing on
-suffixed symbols. (It seems suffixed symbols are not available at this point)
-
-The problem is that the suffixed symbols maybe a "part" of the original function,
-thus user has to carefully use it.
+I will keep pci_ids.h
 
 > 
-> Sami, could you please share your thoughts on this? 
+> > +#include <linux/slab.h>  
+> 
+> ...
+> 
+> > +static irqreturn_t pci_dev_irq_handler(int irq, void *data)
+> > +{
+> > +       struct pci_dev_intr_ctrl *intr_ctrl = data;
+> > +       int ret;
+> > +
+> > +       ret = generic_handle_domain_irq(intr_ctrl->irq_domain, 0);
+> > +       return IRQ_RETVAL(!ret);  
+> 
+> Hmm... I dunno if it was me who suggested IRQ_RETVAL() here, but it
+> usually makes sense for the cases where ret is not inverted.
+> 
+> Perhaps
+> 
+>   if (ret)
+>     return NONE;
+>   return HANDLED;
+> 
+> is slightly better in this case?
 
-Sami, I would like to know what problem you have on kprobes.
-
-Thank you,
+Right. I will use a more compact version:
+  return ret ? IRQ_NONE : IRQ_HANDLED;
 
 > 
-> If this works, I will send next version with 1/3 and part of 2/3. 
+> > +}  
 > 
-> Thanks,
-> Song
+> ...
 > 
-> [1] https://lore.kernel.org/all/20210408182843.1754385-8-samitolvanen@google.com/
+> > +static struct pci_dev_intr_ctrl *pci_dev_create_intr_ctrl(struct pci_dev *pdev)
+> > +{
+> > +       struct pci_dev_intr_ctrl *intr_ctrl;
+> > +       struct fwnode_handle *fwnode;
+> > +       int ret;  
 > 
+> > +       if (!pdev->irq)
+> > +               return ERR_PTR(-EOPNOTSUPP);  
+> 
+> Before even trying to get it via APIs? (see below as well)
+> Also, when is it possible to have 0 here?
 
+pdev->irq can be 0 if the PCI device did not request any IRQ
+(i.e. PCI_INTERRUPT_PIN in PCI config header is 0).
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+I use that to check whether or not INTx is supported.
+
+Even if this code is present in the LAN966x PCI driver, it can be use as a
+starting point for other drivers and may be moved to a common part in the
+future.
+
+Do you think I should remove it ?
+
+If keeping it is fine, I will add a comment.
+
+> 
+> > +       fwnode = dev_fwnode(&pdev->dev);
+> > +       if (!fwnode)
+> > +               return ERR_PTR(-ENODEV);
+> > +
+> > +       intr_ctrl = kmalloc(sizeof(*intr_ctrl), GFP_KERNEL);  
+> 
+> Hmm... Why not use __free()?
+
+Well, just because I am not used to using __free() and I didn't think
+about it.
+
+I will use it in the next operation.
+
+> 
+> > +       if (!intr_ctrl)
+> > +               return ERR_PTR(-ENOMEM);
+> > +
+> > +       intr_ctrl->pci_dev = pdev;
+> > +
+> > +       intr_ctrl->irq_domain = irq_domain_create_linear(fwnode, 1, &pci_dev_irq_domain_ops,
+> > +                                                        intr_ctrl);
+> > +       if (!intr_ctrl->irq_domain) {
+> > +               pci_err(pdev, "Failed to create irqdomain\n");
+> > +               ret = -ENOMEM;
+> > +               goto err_free_intr_ctrl;
+> > +       }  
+> 
+> > +       ret = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_INTX);
+> > +       if (ret < 0) {
+> > +               pci_err(pdev, "Unable alloc irq vector (%d)\n", ret);
+> > +               goto err_remove_domain;
+> > +       }  
+> 
+> I am wondering if you even need this in case you want solely INTx.
+
+I have the feeling that it is needed.
+pci_alloc_irq_vectors() will call pci_intx() which in turn enables INT
+clearing PCI_COMMAND_INTX_DISABLE flag in the PCI_COMMAND config word.
+
+> 
+> > +       intr_ctrl->irq = pci_irq_vector(pdev, 0);  
+> 
+> Don't remember documentation by heart for this, but the implementation
+> suggests that it can be called without the above for retrieving INTx.
+
+So, with the above said, I will keep both pci_alloc_irq_vectors() and
+pci_irq_vector() calls.
+
+> 
+> > +       ret = request_irq(intr_ctrl->irq, pci_dev_irq_handler, IRQF_SHARED,
+> > +                         dev_name(&pdev->dev), intr_ctrl);  
+> 
+> pci_name() ? (IIRC the macro name)
+
+Indeed, will be changed.
+
+> 
+> > +       if (ret) {
+> > +               pci_err(pdev, "Unable to request irq %d (%d)\n", intr_ctrl->irq, ret);
+> > +               goto err_free_irq_vector;
+> > +       }
+> > +
+> > +       return intr_ctrl;
+> > +
+> > +err_free_irq_vector:
+> > +       pci_free_irq_vectors(pdev);
+> > +err_remove_domain:
+> > +       irq_domain_remove(intr_ctrl->irq_domain);
+> > +err_free_intr_ctrl:
+> > +       kfree(intr_ctrl);
+> > +       return ERR_PTR(ret);
+> > +}  
+> 
+> ...
+> 
+> > +static void devm_pci_dev_remove_intr_ctrl(void *data)
+> > +{  
+> 
+> > +       struct pci_dev_intr_ctrl *intr_ctrl = data;  
+> 
+> It can be eliminated
+> 
+> static void devm_pci_...(void *intr_ctrl)
+
+I will update.
+
+> 
+> > +       pci_dev_remove_intr_ctrl(intr_ctrl);
+> > +}  
+> 
+> ...
+> 
+> > +static int lan966x_pci_load_overlay(struct lan966x_pci *data)
+> > +{
+> > +       u32 dtbo_size = __dtbo_lan966x_pci_end - __dtbo_lan966x_pci_begin;
+> > +       void *dtbo_start = __dtbo_lan966x_pci_begin;
+> > +       int ret;
+> > +
+> > +       ret = of_overlay_fdt_apply(dtbo_start, dtbo_size, &data->ovcs_id, dev_of_node(data->dev));
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       return 0;  
+> 
+> return of_overlay_fdt_apply() ?
+
+Yes indeed.
+
+> 
+> > +}  
+> 
+> ...
+> 
+> > +static int lan966x_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> > +{
+> > +       struct device *dev = &pdev->dev;
+> > +       struct lan966x_pci *data;
+> > +       int ret;
+> > +
+> > +       /*
+> > +        * On ACPI system, fwnode can point to the ACPI node.
+> > +        * This driver needs an of_node to be used as the device-tree overlay
+> > +        * target. This of_node should be set by the PCI core if it succeeds in
+> > +        * creating it (CONFIG_PCI_DYNAMIC_OF_NODES feature).
+> > +        * Check here for the validity of this of_node.
+> > +        */
+> > +       if (!dev_of_node(dev)) {  
+> 
+> > +               dev_err(dev, "Missing of_node for device\n");
+> > +               return -EINVAL;  
+> 
+> return dev_err_probe() ?
+
+Yes, I will update.
+
+> 
+> > +       }
+> > +
+> > +       /* Need to be done before devm_pci_dev_create_intr_ctrl.
+> > +        * It allocates an IRQ and so pdev->irq is updated.
+> > +        */
+> > +       ret = pcim_enable_device(pdev);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       ret = devm_pci_dev_create_intr_ctrl(pdev);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> > +       if (!data)
+> > +               return -ENOMEM;
+> > +
+> > +       pci_set_drvdata(pdev, data);
+> > +       data->dev = dev;
+> > +
+> > +       ret = lan966x_pci_load_overlay(data);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       pci_set_master(pdev);
+> > +
+> > +       ret = of_platform_default_populate(dev_of_node(dev), NULL, dev);
+> > +       if (ret)
+> > +               goto err_unload_overlay;
+> > +
+> > +       return 0;
+> > +
+> > +err_unload_overlay:
+> > +       lan966x_pci_unload_overlay(data);
+> > +       return ret;
+> > +}  
+> 
+> ...
+> 
+> > +#include <dt-bindings/clock/microchip,lan966x.h>
+> > +#include <dt-bindings/interrupt-controller/irq.h>
+> > +#include <dt-bindings/mfd/atmel-flexcom.h>
+> > +#include <dt-bindings/phy/phy-lan966x-serdes.h>  
+> 
+> > +#include <dt-bindings/gpio/gpio.h>  
+> 
+> Alphabetical order?
+
+Yes indeed.
+
+Thanks for the review.
+
+Best regards,
+Hervé
 
