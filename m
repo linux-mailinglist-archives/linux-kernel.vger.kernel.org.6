@@ -1,173 +1,203 @@
-Return-Path: <linux-kernel+bounces-278115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6367C94AB50
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:05:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AEDF94AB68
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A0BB282C59
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:05:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D53C1C22842
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6432413213A;
-	Wed,  7 Aug 2024 15:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0ADA1386C9;
+	Wed,  7 Aug 2024 15:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BiBqr+6K"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="zRzZF8Jf"
+Received: from LO3P265CU004.outbound.protection.outlook.com (mail-uksouthazon11020121.outbound.protection.outlook.com [52.101.196.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B551823C8
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723043057; cv=none; b=sRlPZdpU2Ka0XwlJwkOictuAZbxeK4T1i67C82t9CDxo44k5H2bXFm4Zk34uYRsS4OH9JphZDEuxI3h7B57876ozzcz0oHzxKKSAneXk6AWl5O8n1uSUrCBql549WJyGkL6wANS7FABoeCzxoLVYIZNXkcxna+6ol34OyAj8oRM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723043057; c=relaxed/simple;
-	bh=9/AgtS1xl+hUVG+/ngIpGUPthHDHXYwAlaqfvl9/mj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RTekeaqbVw5YvJMzYZdC78XLjLfl76LmOFpf6qX24vyPQnLLTfbAv7hHvnoFf6H8hESHRxL3l/cZIk67FYPXBK8r8ttLF0lKeGqWaAVI7IzfD8lo29viVsC/yuEas5XqxYn/fIIlz0/Yst6iR78ZPQoxttkOYF9WzF8ZgPaUavQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BiBqr+6K; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-710afd56c99so784728b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 08:04:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723043055; x=1723647855; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RIRNLkw9dTzgIpXpghTsmUqrsJ/SAPgpl7FytrsGTJU=;
-        b=BiBqr+6KUH9+ux6k7PZl+koLT18Suii6gOs9vLxNU55YJ7nRtd0LMfcZFJvfJ0ojpN
-         HMVqiRDdGuo9PbiXMyXw60t/pZgs7OlKAOC1kRj5vwuIE5bzR0B2YZJ99ivLonC44Hf9
-         WHQBcTDGMlvLySjPfIduCbCmKaA+DlFOZfuPzweqfK8055FI58Xq9JgwWL2PZ2QP05jG
-         vy1/E5kQWSec9hwrt2/ImYFIURbTbDOommzeUiYgA60Ya0eQ7DUe1cQfAPVYZHj5oQLb
-         KfDK4AZaNPK2y5/VySnkSavtaYdeYLW+j4Ns5n4c6zVZNNr4s4gBY/hgFOiRxhso0Pw6
-         0N1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723043055; x=1723647855;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RIRNLkw9dTzgIpXpghTsmUqrsJ/SAPgpl7FytrsGTJU=;
-        b=OWMt4lBHmhWmkWFvxSPJOdYPO0K91KPXVsUcUI8AVgpvvNNSDdXBSgkVLDJUBdrBlh
-         KE2/7RH6Cc3O6+iH3kg2UY6BEIL/bg24qSDO28h4nQRp2Tl5U3hqwibh4RUQiVrs82br
-         sySgAbq2eLXmrvaO5zMg5qEjmUg1Tls1Skrzlyx6q9kM5hRKmr8v7y1W2NzDeP5eR0mI
-         3E1XGp0xAE8tXKoSAvF0o5v8XYh2eFmUwF+SdP1rF2VyGAe5VvjoPcK4SPYsJC2jsBtI
-         ojnq7td3Nd/GT8Ajczu4TQow1GOtvztYhXwaWyL/Cs4wjVuK1AdfDSkG2Z514Opzys3M
-         MdWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZaJHWxTaYdQUcIvw0blZrfFibtQp8xGjZ4huFGc1p73/Mq2OmRrmba84yju+YmJRrOr7rMRVCPDA7VJU0D5iCGQij+hRSvd7RMcbz
-X-Gm-Message-State: AOJu0Yx8PI2sZqJjDfVOuHbPlGkvslxTDn/jrcDd7rXvi5cF8egJs4ml
-	CvpvBYmTOIKJV+OJkN5GVg4uS1VGAfjH663QwOGHu64y0i0VFGrt036z/GMeRA==
-X-Google-Smtp-Source: AGHT+IFUq3a888UA6wQ7lTpYeaEGuRpyGPntz4KOze7iKWL5Lbq2AqEWrIvFsDKl9yLEGbIl3Z7fZw==
-X-Received: by 2002:a05:6a00:9155:b0:70d:32bf:aa45 with SMTP id d2e1a72fcca58-710bc916b4fmr3349555b3a.14.1723043055153;
-        Wed, 07 Aug 2024 08:04:15 -0700 (PDT)
-Received: from thinkpad ([120.60.60.211])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ecfd064sm8809352b3a.170.2024.08.07.08.04.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 08:04:14 -0700 (PDT)
-Date: Wed, 7 Aug 2024 20:33:57 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 09/12] PCI: brcmstb: Refactor for chips with many
- regular inbound windows
-Message-ID: <20240807150357.GB5664@thinkpad>
-References: <20240731222831.14895-1-james.quinlan@broadcom.com>
- <20240731222831.14895-10-james.quinlan@broadcom.com>
- <20240807140401.GJ3412@thinkpad>
- <c32a28f3-aa64-4e89-a8f7-acfaed8ac090@broadcom.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F095582488;
+	Wed,  7 Aug 2024 15:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.196.121
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723043104; cv=fail; b=uIknAQTX2stM6kArE8rkcOLZZLFvKILZQU3U9t53lHsXCZq/C2nlV85I7bsIuwiCqZ3e336ilXQ7YJLiM0YRTbeNu6W/v5AqIaBf1BjD2USqFxZp3IC59DAodvl7xOIAqY670wjQtvd3awMkBY1EyGPb2xps5HL2ucZMLKagiG4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723043104; c=relaxed/simple;
+	bh=jQ78UKfVO5FIckjplKHNmdkzvv+dgy5/hsPujWn/xHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=N+/KNmcsWvQ9ja3JjsahYN41c1/cBdvlC4uvWmyZKHWslmbmNLieh9grnHzCSX5aBCmhznMAc1n40HXn1nN3AzBiyqa+LvsbO7ePoW1HTtaAYOaZCSXbPt5f9mmnrnKAX2rci45cmuYhgas7amEY9jf2g4vmaCH0BGi2Daxhwtk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=zRzZF8Jf; arc=fail smtp.client-ip=52.101.196.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G6YPxhYPeTImoBtr8IS599e/RWQT5lBAZDMDgV7d2/qCFRdu+9ht1YHFG9/SS42YEZS6KJsAWell0W8X2XIXm5NzhRt22wiKrDKsjkWiLU9g12orO8P9c4fbxukv+14gIDoFHloQ84vCJIsUkMLmBn7wuUoWcjcrg56VWODHgo55uCSZyxj9yvNMFJcAsgWKfl3OZQux0sy2F8/OT9cC8SFJBI1SS3XSgC/aQU19Vs0Gt9KMgP24w5wT8KkJkolLaoksgRfqXCThc1IFP4qUC7JJmUzuk6YX2uWCRTC8Y/BY/1RzYAx1YVAc4Rket2By8AQLKDporZkwjimvTZIYJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0bHJFWLxgMfcjKcxelRM6bLAn7LciTIB7InU3epgXeE=;
+ b=F6v6TfToN1rD2VgovFalfRBWgTpwpgrbpcuMnjnW3tbyyzYeOlvExrWX4hST07pmtS2wRzsI+5fNCLImv6qBqa9biDv7tohp1up239osaJQbtA7sdTxWwrYpxFmov36QO0ahOj43JZypLr7PxQ8nXLqpf0zfdxlUeThus7lYGw58uRCQXZCYLXhJsV/T7T212D1a6bEN/iJNuJsrnqYAnOLmJ9/cBc8cTciJrHLD39wHwqmNv5DGC9oEqeTH2rfwN9IDtSL8ipBLNC4zgmfY+LgA1Vt0iobgOxXUKTHcpvkxrMrkCj35n27W41RVG0EnT2JLTS6P84FE+VXaZx61Kg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0bHJFWLxgMfcjKcxelRM6bLAn7LciTIB7InU3epgXeE=;
+ b=zRzZF8JfbFZG4T41E5X7C9ZTlCiWXvkepsAI/otC10fQ56wjj58qssiXRM+eovm4bL9mB4KZ4Wtf9fN7910SHZprsMhDvjCz4GHK8GgEiE7w81P/sh0OQxNHpxym/bkBjwa5dAeqqAE56ZqhHkwn2I1q/RsLM/AErldBXG9+XEs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LO0P265MB5779.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:264::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Wed, 7 Aug
+ 2024 15:04:59 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%7]) with mapi id 15.20.7849.008; Wed, 7 Aug 2024
+ 15:04:59 +0000
+Date: Wed, 7 Aug 2024 16:04:57 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, "=?UTF-8?B?QmrDtnJu?= Roy Baron"
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
+ Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Arve =?UTF-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos
+ <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes
+ <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren
+ Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>,
+ Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Daniel Xu <dxu@dxuuu.xyz>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+ Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, Kees Cook
+ <kees@kernel.org>
+Subject: Re: [PATCH v8 6/8] rust: file: add `FileDescriptorReservation`
+Message-ID: <20240807160457.73445f04@eugeo>
+In-Reply-To: <20240725-alice-file-v8-6-55a2e80deaa8@google.com>
+References: <20240725-alice-file-v8-0-55a2e80deaa8@google.com>
+	<20240725-alice-file-v8-6-55a2e80deaa8@google.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0587.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:295::15) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c32a28f3-aa64-4e89-a8f7-acfaed8ac090@broadcom.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO0P265MB5779:EE_
+X-MS-Office365-Filtering-Correlation-Id: 564a6e91-4552-4675-6df5-08dcb6f24e87
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BQxWBXc8gA/7OY2gpN7UsMXgzBrXMgl/oet2cA6o8yqXBqnqTgVOW3JbfVdz?=
+ =?us-ascii?Q?dLBkFCDc2nrp3oYrClRh2tsoedza3PJ/DjLVsBYtYZUKeB5U+YmiwaawM1Pt?=
+ =?us-ascii?Q?DvlalZ+jqvrMtN8BjnHl/vGs3goOFyxALgoBoSAdrS4EhYoxSwabM/1VJn2h?=
+ =?us-ascii?Q?P1evNuZF/qc6oEAuldO+ojgdBLpDqb7gc70g2X0imxz/HRmR8yAYjsRjfwMW?=
+ =?us-ascii?Q?TkcS3pSKL5jDZeXrXQkoA7o66v/cVG73QxwvmenBysbg9Z3XtNxlpfAa3mo6?=
+ =?us-ascii?Q?F15H2CDRtWVZ3Dz9RsBGQppU3RSjFE4dlYdYrCJovI9LBrmiU1T6NgXjlkve?=
+ =?us-ascii?Q?lGGKBYdxNHu86UIJF0HuPbywbnnpOB41GIomLyG1z3D93gYRFt5hsiLKZMgc?=
+ =?us-ascii?Q?jxGzzt3xQjSnwBD5VM54QpXMihbJBspaX24DhoxQWvb+OoQ+7dsSWxqsEw1h?=
+ =?us-ascii?Q?CEC+4Bw3EFLygIGVdyDcIjZGjLxsuzsK0oxGRjdcHB9T95J3r3n1oytXCFtJ?=
+ =?us-ascii?Q?uE5pYdeOrI9RlVr37XStA/YfaDJeaygCbjW6nAc5a/bwAl1Q+3C/xBYYrB7K?=
+ =?us-ascii?Q?2m0RJPY5dt5Kl90bCpFnjROiAGa5ujFV9cIahyAwhRsnKaceZaMKK/0bku3+?=
+ =?us-ascii?Q?1o+4oj9MLoxqETA3uDmX0U9pLdnNeTN8aGGjADkMlK4YyQIP+cVmxiy9k67J?=
+ =?us-ascii?Q?2OkxZl8mX0BQKe1oSdIM725mTBixrdPYg2dmcV4ePskeVrbMun0TE0eekbNK?=
+ =?us-ascii?Q?yYN3w6APoUmiengtvODL/OEOuCk6OeEomi/TOXnNaHZTfrV9ntpplUFSfD2R?=
+ =?us-ascii?Q?PG1qowhRVzfKQKu6/6Uvfv479dYMqCq4wNRmNq0zbZKyDs9DuDUZdnSNu/0r?=
+ =?us-ascii?Q?SlQocOJ+9dAr1foqVyc9yRAL8ibSg0vnlgVQfKMUKJYXb0uwIu270F7h7ot8?=
+ =?us-ascii?Q?g/o5TtznmHMGA1nyAwHODr2WDLP8QeO4cXFqekCG2CS6d9mRTrRto4LmmZWR?=
+ =?us-ascii?Q?WhPj2K9nzTLuYwi0jXO0WFve3t4CZMftcE8jkH4I7/qQGGLXuWnMmj1jiWzK?=
+ =?us-ascii?Q?ihNPRhE5Pm1awFm89tPFHyPIi47H6u/YNxWM/V2T5zPJza39ZsIHpbH27F1x?=
+ =?us-ascii?Q?PFe8EHmluICpgRNTcaO7iEMQxrbrHX/LErhzV3ue1cfjuhfe/0q6pJXR7lCg?=
+ =?us-ascii?Q?orjDk39VOnx0Ng35zxsQwr6auib5qH8xilCgLGfIhn3WMDYfFMPGgTf11sfc?=
+ =?us-ascii?Q?Ema15fklfhoWG0NYHLq4ZMJwGJZAHeH/gldxmm4dJFAli9r8YlfXLFLDxMth?=
+ =?us-ascii?Q?Gk3FOHJpvCvMnqBxZxrhEHiWiJ21GAgZRPUt8pDeviyd9w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Qtcf50Go1wtkcVI4J7Fl0xp4GuzQfDozgFjiinL/U5nWZHO2Dn0LKKrfCyN2?=
+ =?us-ascii?Q?G64TJBCzVsW32jx3uHq4w3UswblofxDKqc5VKxNY3IiNGpBy8IFutki0SL/m?=
+ =?us-ascii?Q?T6YV2IfP11scXA7tb9emDEiHW/pZIH5I7TALyNU2D/F/hT4AsyIDGxPRuZu8?=
+ =?us-ascii?Q?XBw1h98W65FXTyIjMvFs5ngAS+tD8uPw54D3fEsnqj79pVU9PtgSzHEQJEG5?=
+ =?us-ascii?Q?Fdc88hxfJFmGG6sXcnTbj/uMaXxFv6FC3RZUHK8WRT3Mg7S5HnMnBu1RAJkS?=
+ =?us-ascii?Q?GlcVCDJgKGcUl6kVUAY19Ml2/dJqu+kix7s4PnJzyNWWdVCv749PB7pn9z6T?=
+ =?us-ascii?Q?ugBl9QFHe0GqIw85QCEOeJgiLCzZWzvd8sLLXC/IeFVWK3fdVdQ7pnNhA2sf?=
+ =?us-ascii?Q?XITIR298K+DVCReeAqzfPPNOU3IvUVDWF5Q+ZpVzzAaPd3HHLID4hEDbD/FO?=
+ =?us-ascii?Q?RLzgV2IgttU5dya4kYpx2fdPKToGBrvSTro6u3WmfvE/UA7m4/mR34Eepue4?=
+ =?us-ascii?Q?iHl6lozliIXrngB/ojsOQQQgF8Gnwayk3n+umQg63LSB0fFcU+qQmdCwm2R9?=
+ =?us-ascii?Q?8D/fT+LcQ/AyrZ2uQ3DLxI5X3GIRaHjNyktIkOsDsF7OnnpMxy+BGcwyaJVj?=
+ =?us-ascii?Q?Dfwwc996w/MxxaitEymK+q77qjjqzm6QfaIgy7Ogx8XcxeYJFXLxqYyYVh9T?=
+ =?us-ascii?Q?SqqjoCnX9MGLBPBhKPtdiDxu1+UEuKR/JNF0rqPKzq2rU4y/B94netV9xqU5?=
+ =?us-ascii?Q?7O9sy4Gqm8vyDT24CviCnyo3PNZVhXtHxeb73xH7RYR82owenZ+q7W34dzPN?=
+ =?us-ascii?Q?/sugh6fCswooB4RHHtViKwZyRybFss5Kdxl1ug+QOg+fOodW387YS5g+Mqoi?=
+ =?us-ascii?Q?imvMHDpAeeuXBGQ0FiBDmiOwStNG/lcHPKCwdyVMDEO5TM3sA0rWOpiMmPFx?=
+ =?us-ascii?Q?nZHM+fEC9wUKx5K6kDDWblXj1bqTRtnv+CBY4/pBf3v106piDJmB/tFTGCAW?=
+ =?us-ascii?Q?/Q9wVuzeOfJNYigc0TNLiSa21eabmA6iJQZIVJow/doTcFpPQiFEIKH89Mo5?=
+ =?us-ascii?Q?MlGdrI3svtvcbBg/Cu1F2FoefvkWu6x7ZwUw6eSqR6AdmcehX4czxzHaL9OJ?=
+ =?us-ascii?Q?hirUgd8TF2Uq93C6CeO7WOHBz0AsXwcDTkQHR+lVfIynxRv7EBdwRjT7lG/g?=
+ =?us-ascii?Q?yW/UvUpx6ylLTp/TZ+6pJjk2cMFfo1quH22Eng1qOmWztYYAkMDWFaLo1xJ1?=
+ =?us-ascii?Q?LtGSbwKkRdx7bLPtQTem9qBdpaNu5Q1f/c6piF0LDhLuQX8HnI3lsxE4zMvv?=
+ =?us-ascii?Q?7rnVuikivKiQ02uBkP++D4pn38HlyxmMFn63sjn/C/Hcx8wewY6nxlRio+UP?=
+ =?us-ascii?Q?J9pAMSqdt8ugjCCLS0eQrj2F0SGCve3Hss8RX4vDtNxiGi09tuS4O8OxNawO?=
+ =?us-ascii?Q?Mq7v+A4BG+NtAnL1HJBEnSv8vy71/N9NX9xuTK/eyD+P4rtukaFKclxT0q96?=
+ =?us-ascii?Q?NpBzXE0lzueXc2tzedVAJTHcfxxixc0hdwPOJP8IZm/LpIkRWbaLQfPLP1U0?=
+ =?us-ascii?Q?WXEaKqXwEkSBlDw4Ss7Hv3X1zukUX+nB8YsV8K5u?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 564a6e91-4552-4675-6df5-08dcb6f24e87
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 15:04:59.7031
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SrClhRY4B6l+yktWs0MOy039eXvMvnB5y67goO1gan7v/D4jWXWtIPUNq9FiNLzMIS8ZnE2hI6KBDFmplvfiRQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P265MB5779
 
-On Wed, Aug 07, 2024 at 07:16:44AM -0700, Florian Fainelli wrote:
+On Thu, 25 Jul 2024 14:27:39 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
+
+> From: Wedson Almeida Filho <wedsonaf@gmail.com>
 > 
+> Allow for the creation of a file descriptor in two steps: first, we
+> reserve a slot for it, then we commit or drop the reservation. The first
+> step may fail (e.g., the current process ran out of available slots),
+> but commit and drop never fail (and are mutually exclusive).
 > 
-> On 8/7/2024 7:04 AM, Manivannan Sadhasivam wrote:
-> > On Wed, Jul 31, 2024 at 06:28:23PM -0400, Jim Quinlan wrote:
-> > > Provide support for new chips with multiple inbound windows while
-> > > keeping the legacy support for the older chips.
-> > > 
-> > > In existing chips there are three inbound windows with fixed purposes: the
-> > > first was for mapping SoC internal registers, the second was for memory,
-> > > and the third was for memory but with the endian swapped.  Typically, only
-> > > one window was used.
-> > > 
-> > > Complicating the inbound window usage was the fact that the PCIe HW would
-> > > do a baroque internal mapping of system memory, and concatenate the regions
-> > > of multiple memory controllers.
-> > > 
-> > > Newer chips such as the 7712 and Cable Modem SOCs take a step forward and
-> > > drop the internal mapping while providing for multiple inbound windows.
-> > > This works in concert with the dma-ranges property, where each provided
-> > > range becomes an inbound window.
-> > > 
-> > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > > ---
+> This is needed by Rust Binder when fds are sent from one process to
+> another. It has to be a two-step process to properly handle the case
+> where multiple fds are sent: The operation must fail or succeed
+> atomically, which we achieve by first reserving the fds we need, and
+> only installing the files once we have reserved enough fds to send the
+> files.
 > 
-> [snip]
+> Fd reservations assume that the value of `current` does not change
+> between the call to get_unused_fd_flags and the call to fd_install (or
+> put_unused_fd). By not implementing the Send trait, this abstraction
+> ensures that the `FileDescriptorReservation` cannot be moved into a
+> different process.
 > 
-> > > +static void set_inbound_win_registers(struct brcm_pcie *pcie,
-> > > +				      const struct inbound_win *inbound_wins,
-> > > +				      int num_inbound_wins)
-> > > +{
-> > > +	void __iomem *base = pcie->base;
-> > > +	int i;
-> > > +
-> > > +	for (i = 1; i <= num_inbound_wins; i++) {
-> > > +		u64 pci_offset = inbound_wins[i].pci_offset;
-> > > +		u64 cpu_addr = inbound_wins[i].cpu_addr;
-> > > +		u64 size = inbound_wins[i].size;
-> > > +		u32 reg_offset = brcm_bar_reg_offset(i);
-> > > +		u32 tmp = lower_32_bits(pci_offset);
-> > > +
-> > > +		u32p_replace_bits(&tmp, brcm_pcie_encode_ibar_size(size),
-> > > +				  PCIE_MISC_RC_BAR1_CONFIG_LO_SIZE_MASK);
-> > > +
-> > > +		/* Write low */
-> > > +		writel(tmp, base + reg_offset);
-> > 
-> > Can you use writel_relaxed() instead? Here and below. I don't see a necessity to
-> > use the barrier that comes with non-relaxed version of writel.
-> 
-> Out of curiosity what is the reasoning here for asking to use
-> writel_relaxed(), this is not a hot path, this is a configuration path
-> anyway. I am not certain clear on the implication of using writel_relaxed()
-> on systems like 7712/2712 where the busing is different from the other STB
-> chips.
+> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
+> Reviewed-by: Trevor Gross <tmgross@umich.edu>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-It is the general recommendation (although not documented). If the code path do
-not need ordering/barrier, then there is no need for non-relaxed variants.
+Reviewed-by: Gary Guo <gary@garyguo.net>
 
-Btw, if the register accesses are to the same domain (like PCIe), then certainly
-you do not need barrier as writes to the same domain are ordered.
-
-Problem with readl/writel is that the drivers started using non-relaxed variants
-as if it is a norm and completely ignored the relaxed variants.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+> ---
+>  rust/kernel/fs/file.rs | 75 +++++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 74 insertions(+), 1 deletion(-)
 
