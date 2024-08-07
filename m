@@ -1,109 +1,86 @@
-Return-Path: <linux-kernel+bounces-277268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2340949E8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:46:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03DB9949E51
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FD3E1C22104
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:46:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C1AD1C213E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3EF1917FA;
-	Wed,  7 Aug 2024 03:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE14191F78;
+	Wed,  7 Aug 2024 03:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="i9fx5piN"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="F6CYRYPn"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A5E372;
-	Wed,  7 Aug 2024 03:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD39433BB;
+	Wed,  7 Aug 2024 03:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723002298; cv=none; b=AHK//WYlErdzILwxtVN46DvoIqzqNyt9SGG4FXmR0f1O2kXFtVIi0EJw01fQ2yB/uEhb3Gn9c8nuDYmvUB/h0Qs9wU6EOVW9rgA80vc5+0v4RqIVEh7E5L4sOSckC5QD72RLZxpe2YIxw74pXSec1Q93Z5bsgXDyzCkmOFeK0ho=
+	t=1723001906; cv=none; b=rfnMU4bf8GGbx2aR/k2UorgqfmY9EUY4G7/bfGhR0olT0uD7DSee3Bzn8ngbqDX35KdVgt2l3VMUzihW34A/6i8y59FrWRktKKA5SNtnT6CKSux5h5nI1xY7HJVLJV6YUIDrIIj/PIr9nskz6WtE6ZR/aNFA7cZiWhKndalA/Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723002298; c=relaxed/simple;
-	bh=IJyzsrd/JdNLjO9PSggzuX2zIs7jIBS8QaV26qcUUmo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QqCuWsitftnR5Kvsdy2Jlr2br5/L4nYginpPDgG0GYo62CUjUeDQMkVhZuI/z1BWhow05v+ordhU2rx6hfHLoYZjU7XlThEVqhS8DXPdhWrTqJC6jMlRoWwHF+pc/5cvMUkkXXikDDQBuuYcUyyi39FCt8DC6t8QaZL+1Yone38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=i9fx5piN; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4773iabcF1925829, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1723002276; bh=IJyzsrd/JdNLjO9PSggzuX2zIs7jIBS8QaV26qcUUmo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=i9fx5piNCIm3OC/kBK7+9/8agdiWtO/IL+vYesaMtrSobqJTNrDhkhsQ6OEQixrBe
-	 Zx8HAzpwGC5IBsUKiKl0nAWVm1rdodg1XPTwNUdlwZMVqUoVCpeR883B6lomsq8At4
-	 Ink5/pdHJFcG9f3iR4sJ1g5L7ZQt1wGIz3JyzF1khZAIoRZBq7FPsE9SUaJl12g8VQ
-	 gLErs2Z6kfB5vHxHUDP9imG055zPvZyt553RV5HK48GnVJt+ac5YG0BYI6lXPlXxu/
-	 HN/KZBfe7+IedfIo+4sCMuTtkUz1aDEHHxHo0MGetWRu1KtDI8nC0/BwGQv8MeQSnW
-	 U6KwjTuCW1yYg==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 4773iabcF1925829
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 7 Aug 2024 11:44:36 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 7 Aug 2024 11:44:36 +0800
-Received: from RTDOMAIN (172.21.210.74) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 7 Aug
- 2024 11:44:36 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <andrew@lunn.ch>, <jiri@resnulli.us>, <horms@kernel.org>,
-        <rkannoth@marvell.com>, <jdamato@fastly.com>, <pkshih@realtek.com>,
-        <larry.chiu@realtek.com>, "Justin
- Lai" <justinlai0215@realtek.com>
-Subject: [PATCH net-next v26 13/13] MAINTAINERS: Add the rtase ethernet driver entry
-Date: Wed, 7 Aug 2024 11:37:23 +0800
-Message-ID: <20240807033723.485207-14-justinlai0215@realtek.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240807033723.485207-1-justinlai0215@realtek.com>
-References: <20240807033723.485207-1-justinlai0215@realtek.com>
+	s=arc-20240116; t=1723001906; c=relaxed/simple;
+	bh=n7K26IFYadrogACCn1wjHepgBJNfjFO93kUwnpijaTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KHSii5aseTPWWfpilGaXXXDAcXTRnO+EUf1cnZbWMBxYM3rmaAZU1vf0vDpfQog5WA8J3rgiOyawk8kGxK7cmIvK5EURTSbYTqRLmKDhI3I6xk1I43IcHGoN9qPYzN+FHFgCCgDQ6X4tkDUYVgFrOBGkpPrxU1RjQVqLCjvg1ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=F6CYRYPn; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=x04CPEwFzXiLJZI5LYcEdT0KXHdqtDShGTVN9ZcE9Ew=; b=F6CYRYPnVTBkB7IsWQNLrCjBH0
+	TBq8OsrCyHdY81fK0m73g0NULxzP1v09mNU6IJnWHEJdUTx45k1EjxcJ2inxe+9XYg8K0UMhyL+oW
+	bzT7Bn8/Xrlp1CK1Z4IvynoV4XevbOxr5x6eC6kC4Tin046WLZDt6tCV34PpOOfeyZFW/1vUuuIlp
+	ZMGf8qVQ2R0EN9Sd3UPw3jPf4KZTl+kICWXmFIsqNHD2gHckj+BKciCPCBt9P/EJmMZ49FzIehQAr
+	wR6E+EUioG5lDVc21KFvld3MXh2uKT2b6vgc0rFsgpj3PLFeGScKZlGyNBkqT1gpaz+7f53BhKUca
+	r8aqxTDQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sbXVE-00000002DJM-3XvO;
+	Wed, 07 Aug 2024 03:38:20 +0000
+Date: Wed, 7 Aug 2024 04:38:20 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
+Message-ID: <20240807033820.GS5334@ZenIV>
+References: <20240806144628.874350-1-mjguzik@gmail.com>
+ <20240806155319.GP5334@ZenIV>
+ <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Add myself and Larry Chiu as the maintainer for the rtase ethernet driver.
+On Tue, Aug 06, 2024 at 06:09:43PM +0200, Mateusz Guzik wrote:
 
-Signed-off-by: Justin Lai <justinlai0215@realtek.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+> It is supposed to indicate that both nd->path.mnt and nd->path.dentry
+> are no longer usable and must not even be looked at. Ideally code
+> which *does* look at them despite the flag (== there is a bug) traps.
+> 
+> However, I did not find a handy macro or anything of the sort to
+> "poison" these pointers. Instead I found tons of NULL checks all over,
+> including in lookup clean up.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8766f3e5e87e..af8a6ab8db20 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19845,6 +19845,13 @@ L:	linux-remoteproc@vger.kernel.org
- S:	Maintained
- F:	drivers/tty/rpmsg_tty.c
- 
-+RTASE ETHERNET DRIVER
-+M:	Justin Lai <justinlai0215@realtek.com>
-+M:	Larry Chiu <larry.chiu@realtek.com>
-+L:	netdev@vger.kernel.org
-+S:	Maintained
-+F:	drivers/net/ethernet/realtek/rtase/
-+
- RTL2830 MEDIA DRIVER
- L:	linux-media@vger.kernel.org
- S:	Orphan
--- 
-2.34.1
-
+Unless I'm misreading you, those existing NULLs have nothing to do with
+poisoning of any sort.  Or any kind of defensive programming, while we are
+at it.  Those are about the cleanups on failed transition from lazy mode;
+if we have already legitimized some of the references (i.e. bumped the
+refcounts there) by the time we'd run into a stale one, we need to drop
+the ones we'd grabbed on the way out.  And the easiest way to do that
+is to leave that until terminate_walk(), when we'll be out of RCU mode.
+The references that were *NOT* grabbed obviously should be left alone
+rather than dropped.  Which is where those NULL assignments come from.
 
