@@ -1,128 +1,209 @@
-Return-Path: <linux-kernel+bounces-278707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C7594B3E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:53:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E16E294B3E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD9841C20F24
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:53:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 918B62831D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E436A15665C;
-	Wed,  7 Aug 2024 23:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AE1156237;
+	Wed,  7 Aug 2024 23:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lUTzyUWT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLqJnFlQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFA4145B0F;
-	Wed,  7 Aug 2024 23:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B9D145FF5;
+	Wed,  7 Aug 2024 23:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723074777; cv=none; b=DxOPeYSygZMhbVSHhFIOLm9vpJLEVv8IwBC7KaOK7pXKJ1oRRKaT6Fl7G5YAb70iFYnrjlW4qLEd1Felr4mR+JmfNxlIoRR01XiiYi2SAVtcV5P7ToTcPTF+5xEfuRFeYTbnLBQYgo5bVIw1BZnqSlLC22I3qMXkq2qunayKpfU=
+	t=1723074887; cv=none; b=J4v6Ip195NrAUEy1Tvb/rvh6D1j3nffAkJbaIUJCEjexfgwibI9obFjtMdjUM516gcLVdCQt2QwQ/hY+7n04OglhmPXv6X7Bmnq+CX7YfbZYRDVQXgdReHAyzJGBMenzu36gPlZe38E90jzivVMri4Pi7h9/AH3JfkD4tmWFA9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723074777; c=relaxed/simple;
-	bh=uzVsJuCix+UZD2X1hZ44hFcHSZGxTwvDOwV3zE11SjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SKjXVqq/kT8HVGPO/1avCUIlb/+AL5lbBmtclp3ffqeqZKWHQHiUoXx7qx465q1SEBg/0XN4MYohjUFfdLY1B8oSGfYHUKTlkv5IAC6xhpD3oUZBiOB+fPUd2Td2gQwJIbRHeIzuAQDW64IT2kiB91SQAhsYsLlAIljdJWnrUZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lUTzyUWT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61FD9C32781;
-	Wed,  7 Aug 2024 23:52:56 +0000 (UTC)
+	s=arc-20240116; t=1723074887; c=relaxed/simple;
+	bh=NAdP41DihZcu/8i1gtQGWAr6Z7t9lMz25DMefhKAAk4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y/O/14dx86YsdrRLzxHYvwjtMSZXzrq4k6lMN2c18yh9f2lPxFmhSa3uX50jo1aGnR/0Ok72YPnW8/J+wxOlKmJuAEUGXq92ekWWety2hPPZz9piKa8aa3AtrRTfSOJBaEV+3A94jDgABlI8762DbI5dafZRQY6KRIv21kOE9HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLqJnFlQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEB59C32781;
+	Wed,  7 Aug 2024 23:54:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723074776;
-	bh=uzVsJuCix+UZD2X1hZ44hFcHSZGxTwvDOwV3zE11SjA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lUTzyUWTBEf9VMmvrBNitbtpaA3Gm2DHXc1RBhITmey20FRVkGkcUyyU2je2ohvIx
-	 55qsUiBjSN3tfCnaJDRUdthYtEkpJg0RwkXESJu1tKKtnO2YL6RvjdKhCqkMg1fDo7
-	 uTCp/T9tSq+plY90Bd1DuKW1nE/fpK5H+JxkI0IFqdGUCdtPn2v277rEviehzGXndl
-	 wSjRRbR+3r+JI88BuKwrwzuRuIWIAaWBDWSbu7o8SXAipi3HdM9ymcMYe+PqAmYxrd
-	 MsMljNnqsh68XQyXvVVk0fuHXu7I3AWpyj+biX6O2sVCwda7zmAqaPQG+Gqb+MN8VU
-	 acPylerBRtmqA==
-Date: Wed, 7 Aug 2024 16:52:55 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: irogers@google.com, acme@kernel.org, adrian.hunter@intel.com,
-	jolsa@kernel.org, kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 8/9] perf header: Add field 'embed'
-Message-ID: <ZrQI1w1B3hnWbd6j@google.com>
-References: <20240807153843.3231451-1-howardchu95@gmail.com>
- <20240807153843.3231451-9-howardchu95@gmail.com>
+	s=k20201202; t=1723074886;
+	bh=NAdP41DihZcu/8i1gtQGWAr6Z7t9lMz25DMefhKAAk4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HLqJnFlQYbwjfw6dPy4VIL14sLtSjr8Q/FcP/JtJdHSMObinDUxv2v0YUTuSgiZef
+	 by/s9PRL47Pnka7rPzHhdIVE6jkaJwcmW7wRqCBOt4SkKBxnChP2cMp+jwgnn6/xmj
+	 L+Kn1LEac/ttW6611/R6bAQ5zDl0SGodi1i3ucBNh4YIl2yV4ZJgUbE1AkdWcmqXWu
+	 BO8D8ZrWtnIwUDCSHFYjmbRrQMOqg8NE0+zS2j5Dyml0HfaUu3WnpQt1Qfqy0pHI7B
+	 gOERu64lbIe9LUKt7Q+4A97JpqujBE4ZIESrqceFcYcPekGvhv7wultNOttFFELkMJ
+	 EHn0hzJzIfUEA==
+From: Kees Cook <kees@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Kees Cook <kees@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Jann Horn <jannh@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Marco Elver <elver@google.com>,
+	linux-mm@kvack.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] slab: Introduce kmalloc_obj() and family
+Date: Wed,  7 Aug 2024 16:54:41 -0700
+Message-Id: <20240807235433.work.317-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240807153843.3231451-9-howardchu95@gmail.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4691; i=kees@kernel.org; h=from:subject:message-id; bh=NAdP41DihZcu/8i1gtQGWAr6Z7t9lMz25DMefhKAAk4=; b=owGbwMvMwCVmps19z/KJym7G02pJDGlbOB2V2i0e3zKTabc8yFu/afqs6TNiFY1a974NtLgQY 2Jw69+bjlIWBjEuBlkxRZYgO/c4F4+37eHucxVh5rAygQxh4OIUgIl85mX4n3J2k8ahi90ss3Uu 5xn4+G3f9XjPqvN7cxIcbSoO1hwo+MfIsLHuLUtUdnzjqRVf5U0vHElhPyfJMkXxsvpvxnvnWvv F2QA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 07, 2024 at 11:38:42PM +0800, Howard Chu wrote:
-> We have to save the embedded data's sample type for it to be consumed
-> correctly by perf script or perf report.
-> 
-> This will approach most definitely break some perf.data convertor.
-> 
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> ---
->  tools/perf/util/header.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-> index 55e9553861d0..d60e77d5c25c 100644
-> --- a/tools/perf/util/header.c
-> +++ b/tools/perf/util/header.c
-> @@ -80,6 +80,7 @@ const char perf_version_string[] = PERF_VERSION;
->  
->  struct perf_file_attr {
->  	struct perf_event_attr	attr;
-> +	__u64 embed;
+Introduce type-aware kmalloc-family helpers to replace the common
+idioms for single, array, and flexible object allocations:
 
-Can we just set bpf_output.attr correctly and get rid of this?
+	ptr = kmalloc(sizeof(*ptr), gfp);
+	ptr = kcalloc(count, sizeof(*ptr), gfp);
+	ptr = kmalloc_array(count, sizeof(*ptr), gfp);
+	ptr = kcalloc(count, sizeof(*ptr), gfp);
+	ptr = kmalloc(struct_size(ptr, flex_member, count), gfp);
 
-Thanks,
-Namhyung
+These become, respectively:
 
+	kmalloc_obj(p, gfp);
+	kzalloc_obj(p, count, gfp);
+	kmalloc_obj(p, count, gfp);
+	kzalloc_obj(p, count, gfp);
+	kmalloc_obj(p, flex_member, count, gfp);
 
->  	struct perf_file_section	ids;
->  };
->  
-> @@ -3713,6 +3714,7 @@ static int perf_session__do_write_header(struct perf_session *session,
->  		}
->  		f_attr = (struct perf_file_attr){
->  			.attr = evsel->core.attr,
-> +			.embed = evsel->sample_type_embed,
->  			.ids  = {
->  				.offset = evsel->id_offset,
->  				.size   = evsel->core.ids * sizeof(u64),
-> @@ -4147,6 +4149,14 @@ static int read_attr(int fd, struct perf_header *ph,
->  
->  		ret = readn(fd, ptr, left);
->  	}
-> +
-> +	ret = readn(fd, &f_attr->embed, sizeof(f_attr->embed));
-> +	if (ret <= 0) {
-> +		pr_debug("failed to read %d bytes of embedded sample type\n",
-> +			 (int)sizeof(f_attr->embed));
-> +		return -1;
-> +	}
-> +
->  	/* read perf_file_section, ids are read in caller */
->  	ret = readn(fd, &f_attr->ids, sizeof(f_attr->ids));
->  
-> @@ -4272,6 +4282,8 @@ int perf_session__read_header(struct perf_session *session, int repipe_fd)
->  		tmp = lseek(fd, 0, SEEK_CUR);
->  		evsel = evsel__new(&f_attr.attr);
->  
-> +		evsel->sample_type_embed = f_attr.embed;
-> +
->  		if (evsel == NULL)
->  			goto out_delete_evlist;
->  
-> -- 
-> 2.45.2
-> 
+These each return the size of the allocation, so that other common
+idioms can be converted easily as well. For example:
+
+	info->size = struct_size(ptr, flex_member, count);
+	ptr = kmalloc(info->size, gfp);
+
+becomes:
+
+	info->size = kmalloc_obj(ptr, flex_member, count, gfp);
+
+Internal introspection of allocated type also becomes possible, allowing
+for alignment-aware choices and future hardening work. For example,
+adding __alignof(*ptr) as an argument to the internal allocators so that
+appropriate/efficient alignment choices can be made, or being able to
+correctly choose per-allocation offset randomization within a bucket
+that does not break alignment requirements.
+
+Additionally, once __builtin_get_counted_by() is added by GCC[1] and
+Clang[2], it will be possible to automatically set the counted member of
+a struct with a counted_by FAM, further eliminating open-coded redundant
+initializations, and can internally check for "too large" allocations
+based on the type size of the counter variable:
+
+	if (count > type_max(ptr->flex_count))
+		fail...;
+	info->size = struct_size(ptr, flex_member, count);
+	ptr = kmalloc(info->size, gfp);
+	ptr->flex_count = count;
+
+becomes (i.e. unchanged from earlier example):
+
+	info->size = kmalloc_obj(ptr, flex_member, count, gfp);
+
+Replacing all existing simple code patterns found via Coccinelle[3]
+shows what could be replaced immediately (saving roughly 1,500 lines):
+
+ 7040 files changed, 14128 insertions(+), 15557 deletions(-)
+
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=116016 [1]
+Link: https://github.com/llvm/llvm-project/issues/99774 [2]
+Link: https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/kmalloc_obj-assign-size.cocci [3]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
+Cc: Bill Wendling <morbo@google.com>
+Cc: Justin Stitt <justinstitt@google.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Marco Elver <elver@google.com>
+Cc: linux-mm@kvack.org
+---
+ include/linux/slab.h | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index eb2bf4629157..46801c28908e 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -686,6 +686,44 @@ static __always_inline __alloc_size(1) void *kmalloc_noprof(size_t size, gfp_t f
+ }
+ #define kmalloc(...)				alloc_hooks(kmalloc_noprof(__VA_ARGS__))
+ 
++#define __alloc_obj3(ALLOC, P, COUNT, FLAGS)			\
++({								\
++	size_t __obj_size = size_mul(sizeof(*P), COUNT);	\
++	void *__obj_ptr;					\
++	(P) = __obj_ptr = ALLOC(__obj_size, FLAGS);		\
++	if (!__obj_ptr)						\
++		__obj_size = 0;					\
++	__obj_size;						\
++})
++
++#define __alloc_obj2(ALLOC, P, FLAGS)	__alloc_obj3(ALLOC, P, 1, FLAGS)
++
++#define __alloc_obj4(ALLOC, P, FAM, COUNT, FLAGS)		\
++({								\
++	size_t __obj_size = struct_size(P, FAM, COUNT);		\
++	void *__obj_ptr;					\
++	(P) = __obj_ptr = ALLOC(__obj_size, FLAGS);		\
++	if (!__obj_ptr)						\
++		__obj_size = 0;					\
++	__obj_size;						\
++})
++
++#define kmalloc_obj(...)					\
++	CONCATENATE(__alloc_obj,				\
++		    COUNT_ARGS(__VA_ARGS__))(kmalloc, __VA_ARGS__)
++
++#define kzalloc_obj(...)					\
++	CONCATENATE(__alloc_obj,				\
++		    COUNT_ARGS(__VA_ARGS__))(kzalloc, __VA_ARGS__)
++
++#define kvmalloc_obj(...)					\
++	CONCATENATE(__alloc_obj,				\
++		    COUNT_ARGS(__VA_ARGS__))(kvmalloc, __VA_ARGS__)
++
++#define kvzalloc_obj(...)					\
++	CONCATENATE(__alloc_obj,				\
++		    COUNT_ARGS(__VA_ARGS__))(kvzalloc, __VA_ARGS__)
++
+ #define kmem_buckets_alloc(_b, _size, _flags)	\
+ 	alloc_hooks(__kmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, _b), _flags, NUMA_NO_NODE))
+ 
+-- 
+2.34.1
+
 
