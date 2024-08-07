@@ -1,190 +1,181 @@
-Return-Path: <linux-kernel+bounces-277508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1615F94A254
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:02:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA17D94A255
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C33CB285502
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:02:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74556282E8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33C71C9DE0;
-	Wed,  7 Aug 2024 08:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DC21B86C9;
+	Wed,  7 Aug 2024 08:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQ7XTtpg"
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AXOjVuXY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847AB1C9DD9
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 08:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC1E1917F1;
+	Wed,  7 Aug 2024 08:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723017758; cv=none; b=Umhcf8A80Sf06de0bmIM5Sl20y9A3Q1ANFU/55Ql5VW3jDTNvxG+sXN/UE77F3CyooDTC8mepjBhmmbCUGfM9ADNZopK4dYOQGt3R/vrNjjtpaLrgJWIdtEPXmKd3QELXg0VGpJkg9FkuXTw42ybOOs6I0MWW12BBjKOds2NIPk=
+	t=1723017791; cv=none; b=b5T9Zz3IVmKLmkubeBpGPX3tjcfA7w7YnKiVHq0y/j9wtHP/8amIXIApMw7rOYS2UC+5yCKUoo3OP04qRVAxNV8OnsOMwMZBE4MnANhNEaid3NGtJLpPpyRP6ag0la5sRE6zOWXAT3xjBJbJsVUUhdC7RpltPfhrSZ6KhhTSDQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723017758; c=relaxed/simple;
-	bh=aIMiyZiVaHy10m8mxq1vpUxxSsxkODEwGQFmQgbwAUI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N4FT1aITHJC7LCCcG6/J9lpNZuEVQIpH/+HVuoeSoD/4drimv8yg5WcbpBSPVvfJHm6Pj676GNVfH4E1NwHnMzV96I2W7Ot6TpQEnbIv5kQThe8AwTtYfhp4SkUL/VU52tdPGfsdTexjQUptWlmYGqs9OgSeI4xbDlz/B2xuvpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SQ7XTtpg; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-492a76c0cfbso439801137.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 01:02:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723017755; x=1723622555; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OrC1zyhgI13/nLN4qEM/vJhW0qbHo7qD5kYtXY0vUn4=;
-        b=SQ7XTtpgm7O00z1HurkVthnGhy2SRuwUkBHw7rL2ctmM0DtrqoGw5c3BqL9kivGX6Y
-         PDhaMQkJH+Ol/oxdHBlLjhOd1wUauNytxRedOwhkznosPnXrypoN79NWw+4RF0GOmO7D
-         wyk4P4vAyfbGp4PrLriMn12XlpjM9W9T6oucPdubnecjvLqcNbCGqDXkVgs0OdrdStqP
-         dNZLmXzFd0+ys1O+/6JKByA1VWrfR0n78JcWmuK6hJRS3Wa1F2O4guSHBF+WfP8KnMQ1
-         A25FTAuek7g99Y8EZlYcauoth+hstAZljBUNbhxk7pUDF/5YSA6ilj3a+QRzWpL2N7vg
-         HseA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723017755; x=1723622555;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OrC1zyhgI13/nLN4qEM/vJhW0qbHo7qD5kYtXY0vUn4=;
-        b=aMUMNYBO61TPMnoIewQNWk2im6nG17Sz1Y8OW002bcDzirJRQiALODZZkK02xNe+vn
-         hTWDs7IYRs9jhtJ/I0C/feWaRnkAQgwJINrkTBdb4iJLv3nr2jHgDSzepvqgoFMRYyQ8
-         jQtqNLcQdQXiKpUbsqX4weKsyD6981k8x4LdarfrGZbjGwGij2LddlZiLfXlqmXZPrkQ
-         OXzGBPLdLJBl1HFz166qaaVMfkVzoxSQWixdC8bBWMSVVgVuLhulIejkivw4U5tHpj8q
-         uoJ4UgNUzncbwsvaRUmcgrI4LcDbyhoW3DO2B3QhLQb1fXWF67/2fb3T0iOMfU7T/Z2b
-         15mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnXNJ6O6Kf+8slX580pnMtbgzcpjfZCMwVAFxvhRe7Bp3MmviP52kP0fdmTsd9eRteGv+GsNYhyo2T6IRo73Mjf2cnA1Oqzs8i+12t
-X-Gm-Message-State: AOJu0YxD3Xcq9r/RNq55F5xu2AHG/vFaDYYoG8vLnw5FVf5qMybTsM4+
-	zZBKZ0QfwDTb2dYnCI0+1NXDBm1ra/SFI/k7oAlmFMV2B1A/Mt+t4Ctas1pEVQOw3bwpIqoKe8q
-	aGTUAf5M/ohet9KLZyHRgcelzTAk=
-X-Google-Smtp-Source: AGHT+IGDeVEkcFRK2EhFGcYSbbGbZ0gsGUWaUdS6Ykzr5I4kI8nBtwdDG6GYt/r1raX/X/atHihbdcuNWrW3pR7Vshc=
-X-Received: by 2002:a05:6102:f0f:b0:492:aa42:e0cd with SMTP id
- ada2fe7eead31-4945bf24f3amr22339260137.29.1723017755163; Wed, 07 Aug 2024
- 01:02:35 -0700 (PDT)
+	s=arc-20240116; t=1723017791; c=relaxed/simple;
+	bh=QLoeyfbr6ACoE9T0you1YuvKuNhANsEAcuxwVoYWnQw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f8DzQ/u5BYLqv1aL7fxk9ZUfgksibVBNIvmalTvDxkd6HMiTdVqm6h1lAUxxUI+emQ+2xSos91hiHXSOSPPaMsvIrNZSdet6l/ncGn341XKd8QGLzBVOkLiqQOmoJ+K7l8PEjzO1/i+uzjOAu5rki/21JieMYkZRRZZTWUpZr5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AXOjVuXY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3FC0C32782;
+	Wed,  7 Aug 2024 08:03:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723017789;
+	bh=QLoeyfbr6ACoE9T0you1YuvKuNhANsEAcuxwVoYWnQw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=AXOjVuXYUNFqaeafp3VLK4e5ZPIAfDLvgZIYrA7Mt8fAJo3jQzegObONgXwcdS504
+	 iDZrwFTpzohJB6pikcszN3rN95wLSp3gGGnEtr9WnMZYXHa5os/kluO3yM6nKIHUlp
+	 tqscp/9scfBWR42ItGSCHZzOAzSy35UGZ4lgvlHooW90orlp9TLtA53PqKuxcL6uDf
+	 N0odeqfavQoQchnVoP4fpZdqb/DPTfPE7UHL8e5ko5B9qfR7ATefIH2ea2oBCNXbbU
+	 5ILpVw9OluXJTyZugacWS0++LFu5XsX6Dzrs0sldwnHMysls9a08e8/WxbOP+sdu/3
+	 M0991xP8mOPcw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Seppo Ingalsuo <seppo.ingalsuo@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Brent Lu <brent.lu@intel.com>,
+	sound-open-firmware@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] sound: sof: ioc4-topology: avoid extra dai_params copy
+Date: Wed,  7 Aug 2024 10:02:27 +0200
+Message-Id: <20240807080302.2372297-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1723012159.git.baolin.wang@linux.alibaba.com> <af23b3bdee8ade5bb44706c7c3058d07d6d369ac.1723012159.git.baolin.wang@linux.alibaba.com>
-In-Reply-To: <af23b3bdee8ade5bb44706c7c3058d07d6d369ac.1723012159.git.baolin.wang@linux.alibaba.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 7 Aug 2024 20:02:24 +1200
-Message-ID: <CAGsJ_4wFNDQ8vJDjt70kG+pShi13_BDa7P2=DtoNZ8Ypy+Gd0w@mail.gmail.com>
-Subject: Re: [PATCH v4 02/10] mm: swap: extend swap_shmem_alloc() to support
- batch SWAP_MAP_SHMEM flag setting
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org, 
-	david@redhat.com, wangkefeng.wang@huawei.com, chrisl@kernel.org, 
-	ying.huang@intel.com, ryan.roberts@arm.com, shy828301@gmail.com, 
-	ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com, 
-	p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 7, 2024 at 7:31=E2=80=AFPM Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
->
-> To support shmem large folio swap operations, add a new parameter to
-> swap_shmem_alloc() that allows batch SWAP_MAP_SHMEM flag setting for
-> shmem swap entries.
->
-> While we are at it, using folio_nr_pages() to get the number of pages
-> of the folio as a preparation.
->
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Reviewed-by: Barry Song <baohua@kernel.org>
+The snd_pcm_hw_params structure is really too large to fit on the
+stack. Because of the way that clang inlines functions, it ends up
+twice in one function, which exceeds the 1024 byte limit for 32-bit
+architecutes:
 
-> ---
->  include/linux/swap.h | 4 ++--
->  mm/shmem.c           | 6 ++++--
->  mm/swapfile.c        | 4 ++--
->  3 files changed, 8 insertions(+), 6 deletions(-)
->
-> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> index 1c8f844a9f0f..248db1dd7812 100644
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -481,7 +481,7 @@ void put_swap_folio(struct folio *folio, swp_entry_t =
-entry);
->  extern swp_entry_t get_swap_page_of_type(int);
->  extern int get_swap_pages(int n, swp_entry_t swp_entries[], int order);
->  extern int add_swap_count_continuation(swp_entry_t, gfp_t);
-> -extern void swap_shmem_alloc(swp_entry_t);
-> +extern void swap_shmem_alloc(swp_entry_t, int);
->  extern int swap_duplicate(swp_entry_t);
->  extern int swapcache_prepare(swp_entry_t entry, int nr);
->  extern void swap_free_nr(swp_entry_t entry, int nr_pages);
-> @@ -548,7 +548,7 @@ static inline int add_swap_count_continuation(swp_ent=
-ry_t swp, gfp_t gfp_mask)
->         return 0;
->  }
->
-> -static inline void swap_shmem_alloc(swp_entry_t swp)
-> +static inline void swap_shmem_alloc(swp_entry_t swp, int nr)
->  {
->  }
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 4a5254bfd610..22cdc10f27ea 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1452,6 +1452,7 @@ static int shmem_writepage(struct page *page, struc=
-t writeback_control *wbc)
->         struct shmem_sb_info *sbinfo =3D SHMEM_SB(inode->i_sb);
->         swp_entry_t swap;
->         pgoff_t index;
-> +       int nr_pages;
->
->         /*
->          * Our capabilities prevent regular writeback or sync from ever c=
-alling
-> @@ -1484,6 +1485,7 @@ static int shmem_writepage(struct page *page, struc=
-t writeback_control *wbc)
->         }
->
->         index =3D folio->index;
-> +       nr_pages =3D folio_nr_pages(folio);
->
->         /*
->          * This is somewhat ridiculous, but without plumbing a SWAP_MAP_F=
-ALLOC
-> @@ -1536,8 +1538,8 @@ static int shmem_writepage(struct page *page, struc=
-t writeback_control *wbc)
->         if (add_to_swap_cache(folio, swap,
->                         __GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN,
->                         NULL) =3D=3D 0) {
-> -               shmem_recalc_inode(inode, 0, 1);
-> -               swap_shmem_alloc(swap);
-> +               shmem_recalc_inode(inode, 0, nr_pages);
-> +               swap_shmem_alloc(swap, nr_pages);
->                 shmem_delete_from_page_cache(folio, swp_to_radix_entry(sw=
-ap));
->
->                 mutex_unlock(&shmem_swaplist_mutex);
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index ea023fc25d08..88d73880aada 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -3604,9 +3604,9 @@ static int __swap_duplicate(swp_entry_t entry, unsi=
-gned char usage, int nr)
->   * Help swapoff by noting that swap entry belongs to shmem/tmpfs
->   * (in which case its reference count is never incremented).
->   */
-> -void swap_shmem_alloc(swp_entry_t entry)
-> +void swap_shmem_alloc(swp_entry_t entry, int nr)
->  {
-> -       __swap_duplicate(entry, SWAP_MAP_SHMEM, 1);
-> +       __swap_duplicate(entry, SWAP_MAP_SHMEM, nr);
->  }
->
->  /*
-> --
-> 2.39.3
->
+sound/soc/sof/ipc4-topology.c:1700:1: error: stack frame size (1304) exceeds limit (1024) in 'sof_ipc4_prepare_copier_module' [-Werror,-Wframe-larger-than]
+sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
+
+From what I can tell, this was unintentional, as both
+sof_ipc4_prepare_dai_copier() and sof_ipc4_prepare_copier_module() make a
+copy for the same purpose, but copying it once has the exact same effect.
+
+Remove the extra copy and change the direct struct assignment to
+an explicit memcpy() call to make it clearer to the reader that this
+is what happens. Note that gcc treats struct assignment as a memcpy()
+that may be inlined anyway, so the resulting object code is the same.
+
+Fixes: f9209644ae76 ("ASoC: SOF: ipc4-topology: Correct DAI copier config and NHLT blob request")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ sound/soc/sof/ipc4-topology.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
+
+diff --git a/sound/soc/sof/ipc4-topology.c b/sound/soc/sof/ipc4-topology.c
+index 87be7f16e8c2..77f6850010f6 100644
+--- a/sound/soc/sof/ipc4-topology.c
++++ b/sound/soc/sof/ipc4-topology.c
+@@ -1651,7 +1651,6 @@ sof_ipc4_prepare_dai_copier(struct snd_sof_dev *sdev, struct snd_sof_dai *dai,
+ 			    struct snd_pcm_hw_params *params, int dir)
+ {
+ 	struct sof_ipc4_available_audio_format *available_fmt;
+-	struct snd_pcm_hw_params dai_params = *params;
+ 	struct sof_ipc4_copier_data *copier_data;
+ 	struct sof_ipc4_pin_format *pin_fmts;
+ 	struct sof_ipc4_copier *ipc4_copier;
+@@ -1676,7 +1675,7 @@ sof_ipc4_prepare_dai_copier(struct snd_sof_dev *sdev, struct snd_sof_dai *dai,
+ 		num_pin_fmts = available_fmt->num_input_formats;
+ 	}
+ 
+-	ret = sof_ipc4_adjust_params_to_dai_format(sdev, &dai_params, pin_fmts,
++	ret = sof_ipc4_adjust_params_to_dai_format(sdev, params, pin_fmts,
+ 						   num_pin_fmts);
+ 	if (ret)
+ 		return ret;
+@@ -1684,15 +1683,11 @@ sof_ipc4_prepare_dai_copier(struct snd_sof_dev *sdev, struct snd_sof_dai *dai,
+ 	single_bitdepth = sof_ipc4_copier_is_single_bitdepth(sdev, pin_fmts,
+ 							     num_pin_fmts);
+ 	ret = snd_sof_get_nhlt_endpoint_data(sdev, dai, single_bitdepth,
+-					     &dai_params,
++					     params,
+ 					     ipc4_copier->dai_index,
+ 					     ipc4_copier->dai_type, dir,
+ 					     &ipc4_copier->copier_config,
+ 					     &copier_data->gtw_cfg.config_length);
+-	/* Update the params to reflect the changes made in this function */
+-	if (!ret)
+-		*params = dai_params;
+-
+ 	return ret;
+ }
+ 
+@@ -1784,9 +1779,9 @@ sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
+ 		 * for capture.
+ 		 */
+ 		if (dir == SNDRV_PCM_STREAM_PLAYBACK)
+-			ref_params = *fe_params;
++			memcpy(&ref_params, fe_params, sizeof(ref_params));
+ 		else
+-			ref_params = *pipeline_params;
++			memcpy(&ref_params, pipeline_params, sizeof(ref_params));
+ 
+ 		copier_data->gtw_cfg.node_id &= ~SOF_IPC4_NODE_INDEX_MASK;
+ 		copier_data->gtw_cfg.node_id |=
+@@ -1819,7 +1814,7 @@ sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
+ 		 * In case of capture the ref_params returned will be used to
+ 		 * find the input configuration of the copier.
+ 		 */
+-		ref_params = *fe_params;
++		memcpy(&ref_params, fe_params, sizeof(ref_params));
+ 		ret = sof_ipc4_prepare_dai_copier(sdev, dai, &ref_params, dir);
+ 		if (ret < 0)
+ 			return ret;
+@@ -1829,7 +1824,7 @@ sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
+ 		 * input configuration of the copier.
+ 		 */
+ 		if (dir == SNDRV_PCM_STREAM_PLAYBACK)
+-			ref_params = *pipeline_params;
++			memcpy(&ref_params, pipeline_params, sizeof(ref_params));
+ 
+ 		break;
+ 	}
+@@ -1838,7 +1833,7 @@ sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
+ 		ipc4_copier = (struct sof_ipc4_copier *)swidget->private;
+ 		copier_data = &ipc4_copier->data;
+ 		available_fmt = &ipc4_copier->available_fmt;
+-		ref_params = *pipeline_params;
++		memcpy(&ref_params, pipeline_params, sizeof(ref_params));
+ 
+ 		break;
+ 	}
+-- 
+2.39.2
+
 
