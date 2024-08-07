@@ -1,136 +1,147 @@
-Return-Path: <linux-kernel+bounces-277104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06659949C8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:01:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85053949C8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 381AA1C21680
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:01:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14DB7283CFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F982BCFF;
-	Wed,  7 Aug 2024 00:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDF34A0A;
+	Wed,  7 Aug 2024 00:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="2ih/FZYd"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VyArvJZm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263A0ECC
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 00:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A704E817;
+	Wed,  7 Aug 2024 00:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722988851; cv=none; b=seuYLRWhP+0yFNllJFfHPHFhe9ljuG8FZ36pe5eAuzDlfBmdt1zykzPauuh3hZlgNs8mdLDlIW7FjYqD2dglJ9WL0XT6WL5/qnFfbxEM9swDhCAKQsvMitaCmqoEv1PQmMImtga+1/z+4tkNzsvXn77h85RpoyxtT43DLUn7BSo=
+	t=1722988928; cv=none; b=DYJupc3n4PnL2gcs7byUckOVZvFTfW18Fv07twd0dXrQXu7wiWYWCHWxSjQcDf0jH0U6s8OZDDRmwGA83gAFBHl5w4l+naHKq65aeLQbTg6EraXvm69iAk6Wi3dMF0CBWERE5NXJodsmJYQudJKjmiL6D9BaZNxdxHm2uLo7pN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722988851; c=relaxed/simple;
-	bh=2aSqKoeIL7H1XnqTVZYnhSa9Sxg7fRAqjT3icKRimgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=triUyjxzpNYG+uGzULTzBPb3cR2Qjo3R9CjLfTVo6zgQefG5tRLA/wxyrjmpv4dJrPJ3jL1ptl1+ldvNtSGO7JBroNKwLK/PDIvZqlpWYErUuiRXjWsegHZHea8SkWAi9PqEb4TAV6Jsw6HqRuEtRZTJsnQA2e13nnottdlnQ+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=2ih/FZYd; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so873106b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 17:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722988849; x=1723593649; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lkbg7RhfRFm56OQaj9VVBTsqBGFrSx4GH7fUN2VwLaI=;
-        b=2ih/FZYduh6OtbjRXFmnVTT6gz1TB6WTlsbuyQFdRP51vzzaFYLEFlYVn2D4Ds85Nl
-         BOFR7UOWqF/aCpGtg9ABr1H4MZpK3P405gjcSPg1TA5OQUhplcT9l6d5KYHV2T9rn2Hz
-         aMpWVy75TJnl1BXP6jrp8CvIoIUkYPJBqhW5ZKwCp2+lETGLuW5J1ROTbG9woa/+Lujx
-         uTueIBAcxJ1sxURBo3UFkmoYJ1FSnqUL6NJXFn1GuPjodBSBWlwsNIpVF457zfZcZsY+
-         APE0ZtwALC7SAH/OMemCuh8OutajnZIIVtvq7sl7glJV62WX1nCQaot60xlTAnzdJ80+
-         ZukA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722988849; x=1723593649;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lkbg7RhfRFm56OQaj9VVBTsqBGFrSx4GH7fUN2VwLaI=;
-        b=orXpOhxZRnrDSTF0bWEtY3a99lkm0dXF/RVbzuPjAZtljt0/bMt+lLX4rJKmfNF0ea
-         7fI0qsTQDqEYb7LTQAqOQbUayx0gtylBqD9csldkqb7m3wFKEZ9P1DgRIHSex8CHCfjh
-         LKfesBjOxsxSDCO/qhJ+F18uoMCJob20GP61qzd0VufvB9cJzdE36MH9NctqzqEpXTOM
-         Yyx4JhfLeckBMhaSB1i7YIXix70oNAP2p9NVvpdJYL4qGWsK8dLMUFePGV/Oo9qmWi1D
-         92SUmeE/FgViQgoVwYMZZ5je9Y93CJw5IirktYpu6t8Zwskq+EsjjONOczGS9Yovbtb3
-         YKBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUD9frASpN9MU3mv0X2bZfhxF4FK9Lx7+KyQPir12xXE5GpxvpXhkX0/TxxrkuD7LPnWm1NmSIgfms+FXj2kFZNWZo/XHEJ3cY5pKNo
-X-Gm-Message-State: AOJu0YzwL1vopZX1o2G+phUh+1Lk3gRrlGzNBW69NEASPn6CxFoYKuXC
-	JCF3U/KsVNqEQ+N9qk/PaTxMhgN58WhYzqYdtaRjGyoFs+dojjlu3JD/0dsunew=
-X-Google-Smtp-Source: AGHT+IGjuYHFxiGqFhb6phLGMfE0TvNxItmu2KVYzOt2XbeUv5QmT4Am5+FxycPh4+8CFBdU8ZnNvg==
-X-Received: by 2002:a05:6a00:194f:b0:70d:3104:425a with SMTP id d2e1a72fcca58-7106d02ba22mr21668337b3a.23.1722988849335;
-        Tue, 06 Aug 2024 17:00:49 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ecfccd3sm7673423b3a.144.2024.08.06.17.00.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 17:00:48 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sbU6g-007vzC-2Y;
-	Wed, 07 Aug 2024 10:00:46 +1000
-Date: Wed, 7 Aug 2024 10:00:46 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com,
-	dchinner@redhat.com, hch@lst.de, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	catherine.hoang@oracle.com, martin.petersen@oracle.com
-Subject: Re: [PATCH v3 04/14] xfs: make EOF allocation simpler
-Message-ID: <ZrK5Lu1+oqqyG3ke@dread.disaster.area>
-References: <20240801163057.3981192-1-john.g.garry@oracle.com>
- <20240801163057.3981192-5-john.g.garry@oracle.com>
- <20240806185853.GI623936@frogsfrogsfrogs>
+	s=arc-20240116; t=1722988928; c=relaxed/simple;
+	bh=iZQwoKXmd4y5JYgAIsSoD5NbVcgC7h8OZcIMlcokcP8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=q2NHxnpTwwzkTt7ghnXzXTo8XJSuLn+A6FHuWhrdLU1Vh9hiEZLYB8KD6H3GZ9h+bsO45iArBxOiB1p9JfohSP1X2QoVAaSpkmsCb40/Aczt+LEisAugkI335fCRdXkf57mFneZJqOgj02qNLNa316ZDUzkkd13MLqWF/BltyMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VyArvJZm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C2FDC32786;
+	Wed,  7 Aug 2024 00:02:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722988928;
+	bh=iZQwoKXmd4y5JYgAIsSoD5NbVcgC7h8OZcIMlcokcP8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VyArvJZm6q6+ZSi0ZNleZzuoGBGiVnfpUl+UtLX+KRz8pcLWO43m+UOr/54QSXwtF
+	 QL9IVNfonB8WhvjE6swnefbUW25OWEYtjdKguZsDrKD50vGML8FxoGSccjXRLN42Xh
+	 UjvVPH0DCG/JQOLqVAeP7ds6+tVdttWWRIbhqav/J+HSU2sUa6yspbbSpGkijv2c9c
+	 E2UPQ2taDlDLTSoVyK8Hk5V5MbywU7rsnfTA706mgULWSNUz1LuQhAefVi16fG4hV9
+	 d3iy3B7n3OfJOMPTsgbht67bb9mSsZUgMI9smplZIuFMJa3MK1PVpuY2TcwTfcZ+AB
+	 o6fNjIOPvp9KQ==
+Date: Wed, 7 Aug 2024 09:01:46 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Song Liu <songliubraving@meta.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Song Liu <song@kernel.org>,
+ "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
+ <linux-trace-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>, Petr
+ Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, Nathan
+ Chancellor <nathan@kernel.org>, "morbo@google.com" <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Luis Chamberlain
+ <mcgrof@kernel.org>, Leizhen <thunder.leizhen@huawei.com>,
+ "kees@kernel.org" <kees@kernel.org>, Kernel Team <kernel-team@meta.com>,
+ Matthew Maurer <mmaurer@google.com>, Sami Tolvanen
+ <samitolvanen@google.com>, Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v2 3/3] tracing/kprobes: Use APIs that matches symbols
+ without .XXX suffix
+Message-Id: <20240807090146.88b38c2fbd1cd8db683be22c@kernel.org>
+In-Reply-To: <6F6AC75C-89F9-45C3-98FF-07AD73C38078@fb.com>
+References: <20240802210836.2210140-1-song@kernel.org>
+	<20240802210836.2210140-4-song@kernel.org>
+	<20240806144426.00ed349f@gandalf.local.home>
+	<B53E6C7F-7FC4-4B4B-9F06-8D7F37B8E0EB@fb.com>
+	<20240806160049.617500de@gandalf.local.home>
+	<20240806160149.48606a0b@gandalf.local.home>
+	<6F6AC75C-89F9-45C3-98FF-07AD73C38078@fb.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806185853.GI623936@frogsfrogsfrogs>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 06, 2024 at 11:58:53AM -0700, Darrick J. Wong wrote:
-> On Thu, Aug 01, 2024 at 04:30:47PM +0000, John Garry wrote:
-> > @@ -3688,12 +3649,19 @@ xfs_bmap_btalloc_filestreams(
-> >  	}
-> >  
-> >  	args->minlen = xfs_bmap_select_minlen(ap, args, blen);
-> > -	if (ap->aeof)
-> > -		error = xfs_bmap_btalloc_at_eof(ap, args, blen, true);
-> > +	if (ap->aeof && ap->offset)
-> > +		error = xfs_bmap_btalloc_at_eof(ap, args);
-> >  
-> > +	/* This may be an aligned allocation attempt. */
-> >  	if (!error && args->fsbno == NULLFSBLOCK)
-> >  		error = xfs_alloc_vextent_near_bno(args, ap->blkno);
-> >  
-> > +	/* Attempt non-aligned allocation if we haven't already. */
-> > +	if (!error && args->fsbno == NULLFSBLOCK && args->alignment > 1)  {
-> > +		args->alignment = 1;
-> > +		error = xfs_alloc_vextent_near_bno(args, ap->blkno);
+On Tue, 6 Aug 2024 20:12:55 +0000
+Song Liu <songliubraving@meta.com> wrote:
+
 > 
-> Oops, I just replied to the v2 thread instead of this.
 > 
-> From
-> https://lore.kernel.org/linux-xfs/20240621203556.GU3058325@frogsfrogsfrogs/
+> > On Aug 6, 2024, at 1:01 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> > 
+> > On Tue, 6 Aug 2024 16:00:49 -0400
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > 
+> >>>>> + if (IS_ENABLED(CONFIG_LTO_CLANG) && !addr)
+> >>>>> + addr = kallsyms_lookup_name_without_suffix(trace_kprobe_symbol(tk));
+> >>>>> +    
+> >>>> 
+> >>>> So you do the lookup twice if this is enabled?
+> >>>> 
+> >>>> Why not just use "kallsyms_lookup_name_without_suffix()" the entire time,
+> >>>> and it should work just the same as "kallsyms_lookup_name()" if it's not
+> >>>> needed?    
+> >>> 
+> >>> We still want to give priority to full match. For example, we have:
+> >>> 
+> >>> [root@~]# grep c_next /proc/kallsyms
+> >>> ffffffff81419dc0 t c_next.llvm.7567888411731313343
+> >>> ffffffff81680600 t c_next
+> >>> ffffffff81854380 t c_next.llvm.14337844803752139461
+> >>> 
+> >>> If the goal is to explicitly trace c_next.llvm.7567888411731313343, the
+> >>> user can provide the full name. If we always match _without_suffix, all
+> >>> of the 3 will match to the first one. 
+> >>> 
+> >>> Does this make sense?  
+> >> 
+> >> Yes. Sorry, I missed the "&& !addr)" after the "IS_ENABLED()", which looked
+> >> like you did the command twice.
+> > 
+> > But that said, does this only have to be for llvm? Or should we do this for
+> > even gcc? As I believe gcc can give strange symbols too.
 > 
-> Do we have to zero args->alignslop here?
+> I think most of the issue comes with LTO, as LTO promotes local static
+> functions to global functions. IIUC, we don't have GCC built, LTO enabled
+> kernel yet.
+> 
+> In my GCC built, we have suffixes like ".constprop.0", ".part.0", ".isra.0", 
+> and ".isra.0.cold". We didn't do anything about these before this set. So I 
+> think we are OK not handling them now. We sure can enable it for GCC built
+> kernel in the future. 
 
-No. It should always be zero here to begin with. It is the
-responsibility of the allocation attempt that modifies
-args->alignment and args->alignslop to reset them to original values
-on allocation failure.
+Hmm, I think it should be handled as it is. This means it should do as
+livepatch does. Since I expected user will check kallsyms if gets error,
+we should keep this as it is. (if a symbol has suffix, it should accept
+symbol with suffix, or user will get confused because they can not find
+which symbol is kprobed.)
 
-The only places we use alignslop are xfs_bmap_btalloc_at_eof() and
-xfs_ialloc_ag_alloc(). They both zero it and reset args->alignment
-on allocation failure before falling through to the next allocation
-attempt.
+Sorry about the conclusion (so I NAK this), but this is a good discussion. 
 
--Dave.
+Thanks,
+
+> 
+> Thanks,
+> Song
+> 
+> 
+> 
+
+
 -- 
-Dave Chinner
-david@fromorbit.com
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
