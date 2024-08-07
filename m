@@ -1,84 +1,77 @@
-Return-Path: <linux-kernel+bounces-278678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5A394B36C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:12:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E3194B362
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D5071C215A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:12:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49F83B21C36
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9277155725;
-	Wed,  7 Aug 2024 23:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DD9155352;
+	Wed,  7 Aug 2024 23:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="NQ+lNwEj"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYrq3A7D"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D511509A5;
-	Wed,  7 Aug 2024 23:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE34364A0;
+	Wed,  7 Aug 2024 23:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723072322; cv=none; b=RGkdYQrO3ENCBPvVnozbBqHMLnUGKvTo63jaCC7bWfuJ/zBw2EpwNNhnBRmrzVs2HMqF/1tJ3ZR2E4MH41WHziDPp7sgKyssDYEyOXwIbufVnQ/Sl1JXhMQ7ZsMQeJ1wIYYQje104ADr4GL1j6rhy3ZNwexWRiSFq+Z38EKZAV4=
+	t=1723072069; cv=none; b=P1VtqeKhSeN6En6655kDDl0c2NVDHA7My267xFbsdtarVI/Cu9uidhl2Ww3ZVC7z1BV1bm9EtMLpD+H4KcGpuaHnCBiI/7RKkSPt6Aleweo5qYui8EfQK1c7ip2DNpdHoybLet9vXTU9sjtqhuQPV22ox0DkmaYtlws4JEdQDvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723072322; c=relaxed/simple;
-	bh=mmEQt4WLPvu1Q6AjOhQsDjmILJgncsyY4a/depz6Jr4=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=eoAbXoapUwdsBZ3Mpt9LPR9ifSjqNhy3wl57bOInLpmrN2lleV2qyWYTWve2yssijkIWs91f7PizAVHT/pFBorkLHzCJ4xWzM5B/4sCPTMTYStQ8VljX+bMw4bP3y7SvYcp6CKWZDzans358BUn09KInOhvARqClx2Up6MTBm3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=NQ+lNwEj; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1723072013; bh=YfgS1SOKBc6BkxAyhWP7vMJVEPZCK6J/CiIBhINzIAY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=NQ+lNwEjhe1CteIS4mqCIbYEycTE+5BxjIg9CZ0DPoj33aMSEllzt08Dg+G8FProv
-	 51DTOF53ta1DkMduiEvuIOexb/h7OktTBOJwJCKCfY0mCl0Hxp1srg3LOL60e9zEjg
-	 XWBjQtrjZ1HFm6p3ZtYcwVWmHVuvk36jArlAoiKU=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id 1B0B88A3; Thu, 08 Aug 2024 07:06:48 +0800
-X-QQ-mid: xmsmtpt1723072008tza6m1i5m
-Message-ID: <tencent_91A42CC56E749550E926ED26CE0C78A26F0A@qq.com>
-X-QQ-XMAILINFO: OATpkVjS499uizFEc16KZAMm3J790h8RsmN+sb/uxy8sVMn0nkMJMSs0TSg4CL
-	 Efg1wOMGQJPEmEgoN6Wly+Qni0L43YHUre9MZKDXNBqK+dW/ufDYaO+t4bsL1id9OoErSbCwMjUQ
-	 ORd/UdVVwQNLtlcqPAkcKXoswa2dn4XBIYaeirKfAZu17UzqpX78dhGJ94U96q+rF6SO7D/+h36X
-	 Zld8fFQ2Mdk6dlv5FwoYuWSghOIsUOCuJ3ELXauwG7woMyhMjAZ3Hg4zXGDlTnFDsQZbXKaXU/lj
-	 T/j2iq6NFFSrM9iy53Sw7mehKaoCP+wHq3YRQ7q9qazP93Rtp8DXB29sLNRFFR0qhsnSrzErBOfW
-	 aeXv0MzxpGoMPlGlBzIRz6LifCh5fmhydqcPkdndzloqc7oKtZBXHLfxtFxZWhn2CmJrMaJOiMWM
-	 TGf9rwBynp0xQPbz5QU2puaMD8Cd2ONIHHpQRSH4WQvSEjCaSFalyBzO/pIljCaQNqUFqkI19Ooq
-	 h/YCJFIdybRHEiau1LDtVUF1Htuq9wZ06MWqX+yYYdTjZmIofold14YG4Q7QrVKjqhRGk8TTuqQr
-	 hzG5wB5wIxNhjVWuKvUeXwgYuPvpHNdD006kaSgkQX4QOA7g5bWpeSPbCgmWeDxwha2YLRlXhVWc
-	 L3QlQZjwsm72Adfxe3O1d4l/7w0LW4YBiDSftRmYGaW4/WQonwPE9H48lpUxgi9dqUIzgUD3Qw1F
-	 mj7vu/girtvD4vg2pV/ULiuAjocVvGJ220tfgNrvUOsf1ZtbWVS/EgGGyfsQHPPDW9DFIO1q2hp8
-	 QPFm0/hVVbuDhvGLNICXslFR5C+LizqMazRB/P0Dawb6B3LYGOjbbM7bi9MNxnGXNHAhgheLPv9J
-	 5l7Pvv82wtvhE5+u9ZW40zCXp5hYo0PtAf4F3zv3epqh7qhZs/E4130pkv7NTb6ZGKBlz7YUNz/F
-	 nfbe/S1Xl7GRGuWCW2C5H+rqkQWtXlhH6Te0BnHx8=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: leitao@debian.org
-Cc: davem@davemloft.net,
-	eadavis@qq.com,
-	edumazet@google.com,
-	kernel@pengutronix.de,
-	kuba@kernel.org,
-	linux-can@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mkl@pengutronix.de,
-	netdev@vger.kernel.org,
-	o.rempel@pengutronix.de,
-	pabeni@redhat.com,
-	robin@protonic.nl,
-	socketcan@hartkopp.net,
-	syzbot+ad601904231505ad6617@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [can?] WARNING: refcount bug in j1939_session_put
-Date: Thu,  8 Aug 2024 07:06:48 +0800
-X-OQ-MSGID: <20240807230647.592287-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <ZrMqFN4vE7WHRBjE@gmail.com>
-References: <ZrMqFN4vE7WHRBjE@gmail.com>
+	s=arc-20240116; t=1723072069; c=relaxed/simple;
+	bh=QFdGDo42xkMzLQ888Gr0OEbavqEArnt+H5CQVqXMwyQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jCpI2x1SYQYg1hF+Jyu66haKXU1RqZkv2Qgrbw/K4A+OFerJGhyP/3G9PhSO1wNWTFNTJ/TXHFCA8vQuxcUitDpm6FDsRRyj9apwMyTngpA6Msoj856nC7hzMeLeNGxD0rQj+FwJIX7rAoLJKE36LvmM+DuU8z4kaldwcfzaSCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EYrq3A7D; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2cb55418470so368300a91.1;
+        Wed, 07 Aug 2024 16:07:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723072067; x=1723676867; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rkMTCVGBwPmwmtxlY3yv9Iichvp/gtKA7mIwg9HUlL0=;
+        b=EYrq3A7DilUKvSECLMqM7jWH8z6kfA9S9hbn0U26Fhlcr4YA/YXB5bVmTY2hCaENmY
+         vAchdHjwLs8lozrchD/lPL68btgqWKHIqZg3K9mzhfnchpHOJUm/JkaXHbwn3z44wF8+
+         AgBjm/0krLs63GMf6vAq/u66hcuEnQUAIYhBugY5RuNq3fAd57Erb98ejoXbcf77YoEu
+         Fgmz/5UncWtcA0YkIl+wRQgLfei60F95wCQ6Kt/tTsspOcDZdRQOzlTa/+HFJvCp4ddu
+         vtbX5+ooMhpRYsWW4TvFWgUFvfDLkX2+c3S8QWW3H44FDMu9lkgHcgDIB3QXFpdx3HqY
+         9kIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723072067; x=1723676867;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rkMTCVGBwPmwmtxlY3yv9Iichvp/gtKA7mIwg9HUlL0=;
+        b=Fruz28MUZp+UpnzJCsSbdOnLk8Ukjc/2ARdKjiUmApxbn15ykYkJCy9BjDZ0RumlAG
+         nW9FDgNOLHcj/PUSINHOkM3AxP3StJMjiQwT5fS4JvM1QTlz91ai6SQxKICJhwOqnETo
+         hbBei2g0gz87eZrxyIr2S5yDfCqsffSLIr/w/5VS3NKWlNAH5PYKfeO4flLmORy+FZ0K
+         1ejWCj+uzGLHVLmakdvas+tv48BIL9yHU4mHfO4H69ir+IIiGVRJE87mLHzpMIwCq5kh
+         Xm5np3hVj09C3lxfOIEWWT1m3cKnpZU9TmVWMisPciN91dXyImqH3gt/+6TiF/u01bSJ
+         R56Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVGfNLDnjT6zFASsuNMnecSC2aSdNq7wMnMcJjHNJLzCsqMNL9w1hKghqponTG5bhbC2G6Scr/Ubf81dPiGKQp7lB+IVtg1v4KLHkzJ
+X-Gm-Message-State: AOJu0Yyelqh+Ah3L31X8UXHL40tLIJ8W3HoyJuatkrBwrSC6DVhOMNnW
+	/hAYJA07KIEKOl+9/wc3onDgycrCUKrsMgEYXYBEEq7tM6SIzTgJWHmJww==
+X-Google-Smtp-Source: AGHT+IG/iDAQTfmE/m0J4jpOP5n3ZKSWdJ4Gq6ZyyfyI63IkOUdDgZav+BwtCtXquNtTmSipGd6GRw==
+X-Received: by 2002:a17:90a:ea04:b0:2c9:9b65:af4d with SMTP id 98e67ed59e1d1-2d1c33705eemr140206a91.7.1723072066804;
+        Wed, 07 Aug 2024 16:07:46 -0700 (PDT)
+Received: from carrot.. (i222-151-34-139.s42.a014.ap.plala.or.jp. [222.151.34.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b36da847sm2312080a91.32.2024.08.07.16.07.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 16:07:46 -0700 (PDT)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] nilfs2: fix state management in error path of log writing function
+Date: Thu,  8 Aug 2024 08:07:42 +0900
+Message-Id: <20240807230742.11151-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,34 +80,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Wed, 7 Aug 2024 01:02:28 -0700, Breno Leitao wrote:
-> > Fixes: c9c0ee5f20c5 ("net: skbuff: Skip early return in skb_unref when debugging")
-> >
-> > Root cause: In commit c9c0ee5f20c5, There are following rules:
-> > In debug builds (CONFIG_DEBUG_NET set), the reference count is always  decremented, even when it's 1
-> 
-> That is the goal, to pick problems like the one reported here. I.e, the
-> reference shouldn't be negative. If that is the case, it means that
-> there is a bug, and the skb is being unreferenced more than what it
-> needs to.
-Got it, I will remove the Fixes tag.
-> 
-> > This rule will cause the reference count to be 0 after calling skc_unref,
-> > which will affect the release of skb.
-> >
-> > The solution I have proposed is:
-> > Before releasing the SKB during session destroy, check the CONFIG_DEBUG_NET
-> > and skb_unref return values to avoid reference count errors caused by a
-> > reference count of 0 when releasing the SKB.
-> 
-> I am not sure this is the best approach. I would sugest finding where
-> the skb is being unreferenced first, so, it doesn't need to be
-> unreferenced again.
-> 
-> This suggestion is basically working around the findings.
+After commit a694291a6211 ("nilfs2: separate wait function from
+nilfs_segctor_write") was applied, the log writing function
+nilfs_segctor_do_construct() was able to issue I/O requests
+continuously even if user data blocks were split into multiple logs
+across segments, but two potential flaws were introduced in its error
+handling.
 
-BR,
---
-Edward
+First, if nilfs_segctor_begin_construction() fails while creating the
+second or subsequent logs, the log writing function returns without
+calling nilfs_segctor_abort_construction(), so the writeback flag set
+on pages/folios will remain uncleared.  This causes page cache
+operations to hang waiting for the writeback flag.  For example,
+truncate_inode_pages_final(), which is called via nilfs_evict_inode()
+when an inode is evicted from memory, will hang.
+
+Second, the NILFS_I_COLLECTED flag set on normal inodes remain
+uncleared.  As a result, if the next log write involves checkpoint
+creation, that's fine, but if a partial log write is performed that
+does not, inodes with NILFS_I_COLLECTED set are erroneously removed
+from the "sc_dirty_files" list, and their data and b-tree blocks may
+not be written to the device, corrupting the block mapping.
+
+Fix these issues by correcting the jump destination of the error
+branch in nilfs_segctor_do_construct() and the condition for calling
+nilfs_redirty_inodes(), which clears the NILFS_I_COLLECTED flag.
+
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Fixes: a694291a6211 ("nilfs2: separate wait function from nilfs_segctor_write")
+Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc: stable@vger.kernel.org
+---
+Hi Andrew, please apply this as a bug fix.
+
+This fixes error path flaws of the log writing function that was
+discovered during error injection testing, which could lead to a hang
+due to the writeback flag not being cleared on folios, and potential
+filesystem corruption due to missing blocks in the log after an error.
+
+Thanks,
+Ryusuke Konishi
+
+ fs/nilfs2/segment.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
+index 0ca3110d6386..8b3225bd08ed 100644
+--- a/fs/nilfs2/segment.c
++++ b/fs/nilfs2/segment.c
+@@ -2056,7 +2056,7 @@ static int nilfs_segctor_do_construct(struct nilfs_sc_info *sci, int mode)
+ 
+ 		err = nilfs_segctor_begin_construction(sci, nilfs);
+ 		if (unlikely(err))
+-			goto out;
++			goto failed;
+ 
+ 		/* Update time stamp */
+ 		sci->sc_seg_ctime = ktime_get_real_seconds();
+@@ -2120,10 +2120,9 @@ static int nilfs_segctor_do_construct(struct nilfs_sc_info *sci, int mode)
+ 	return err;
+ 
+  failed_to_write:
+-	if (sci->sc_stage.flags & NILFS_CF_IFILE_STARTED)
+-		nilfs_redirty_inodes(&sci->sc_dirty_files);
+-
+  failed:
++	if (mode == SC_LSEG_SR && nilfs_sc_cstage_get(sci) >= NILFS_ST_IFILE)
++		nilfs_redirty_inodes(&sci->sc_dirty_files);
+ 	if (nilfs_doing_gc())
+ 		nilfs_redirty_inodes(&sci->sc_gc_inodes);
+ 	nilfs_segctor_abort_construction(sci, nilfs, err);
+-- 
+2.34.1
 
 
