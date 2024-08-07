@@ -1,121 +1,127 @@
-Return-Path: <linux-kernel+bounces-277372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECBCF949FCD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:28:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B729949FCF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A52A1284233
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:28:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF269283C38
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5C91B32BF;
-	Wed,  7 Aug 2024 06:28:00 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600D41B32C3;
+	Wed,  7 Aug 2024 06:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="B0nU2MyR"
+Received: from mail-oi1-f194.google.com (mail-oi1-f194.google.com [209.85.167.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBF31B29C5;
-	Wed,  7 Aug 2024 06:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7A11B29A0
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 06:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723012080; cv=none; b=ZRj7t11D+nwheGu8i6hz39z69qMiVzoi9365xvtalU6fxTvZpmbiaZIoCfA8mwwklX5Cj9R578vWYpaOrf55sgwN/vhhbMgoAkgKU6eoTJ67Vy/o+6dDFF27RK7BR5n7bRM2Rs/cXHSWUfvYKOhrY8JpLx4ASF8HapEbvqsiB1s=
+	t=1723012128; cv=none; b=n7qQBKSB42f+u7AnSKkG2GFdemZxgO1XaPNYpp0N7J/n9f7ovm97HiQykSgOeyYXdIrPkVxAThPqWCJj/ZVro9Ddnahcmz0+wEif5AqUef8SfNyesEPVDeCMItXE364t1zUMl7uZwKHp2kSSq4bVyG9in067BeIQW1mf71/B6tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723012080; c=relaxed/simple;
-	bh=5M+DIdusGSA7JOx3wGFaBqWCLkpdzKxkFnMf2utQf6A=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=nTNXEuLX9XWMWEIevrF0pjZYRhEaKzOnnUrLk0Fprp5Q+3Kx5M2/rX73smWn/PbLee5dXpjNJdDkPnFRxG7FExOe+D39CBb5w1/Y2bWGJPX3EdMI8XUX7AIt+E3QJShs6n41wc3EzXGZEPuvL8fWb0wxT0IFPYMyph+6nLf+9Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wf0bH5gnLz4f3js9;
-	Wed,  7 Aug 2024 14:27:39 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 249D11A06D7;
-	Wed,  7 Aug 2024 14:27:53 +0800 (CST)
-Received: from [10.174.178.55] (unknown [10.174.178.55])
-	by APP4 (Coremail) with SMTP id gCh0CgBXfoTnE7NmEy8CBA--.15279S3;
-	Wed, 07 Aug 2024 14:27:53 +0800 (CST)
-Subject: Re: [PATCH 1/1] selinux: Fix potential counting error in
- avc_add_xperms_decision()
-To: Paul Moore <paul@paul-moore.com>, Zhen Lei <thunder.leizhen@huawei.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org,
- linux-kernel@vger.kernel.org, Nick Kralevich <nnk@google.com>,
- Jeff Vander Stoep <jeffv@google.com>
-References: <20240806065113.1317-1-thunder.leizhen@huaweicloud.com>
- <CAEjxPJ59=rHFovk3scmkhLuiAdu2uinGiua60y0naJ0e95GLmg@mail.gmail.com>
- <CAHC9VhTWye8Pm3EUr-Fy-mxq+6H1ThtAekqZd0nXX70f8xP5rw@mail.gmail.com>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huaweicloud.com>
-Message-ID: <eb0d43b5-dc2a-6aec-da5b-493c86b3ae8b@huaweicloud.com>
-Date: Wed, 7 Aug 2024 14:27:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+	s=arc-20240116; t=1723012128; c=relaxed/simple;
+	bh=ilBp4mbpWbt8P/is+bSZyTJdtYmg+2K6PWzsUAJQ5pk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iaCI60c9aqtAl/pNiNQDJkYKxRuJbjGn1LY4EH0x6yIjzhrgyFgvOVRJHLYfOkOv7Z8G2sneTBEbFi0JxJPIkCzKHKCZ09O6uZUlVEAWEBtqkYOAwCejVrfOXqexjYin9436PwkFN9Z0lhWELSx3IRggGLVvt8b7fFxXznzB3eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=B0nU2MyR; arc=none smtp.client-ip=209.85.167.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-oi1-f194.google.com with SMTP id 5614622812f47-3db1270da60so895011b6e.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 23:28:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1723012125; x=1723616925; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L3Cnd6mFtbJSGETFPCDN577bknl11oPzpBdGoJxqsrA=;
+        b=B0nU2MyRN8MH+8mz+VOalxkCqQtFv7AvEjRfgBVgI0QFiLC7rxgb82bTV/LRiUEybt
+         JmuE3mq7RowCETbb7Xw/AmjaGQXFWFXGKQSwZ/kSDtO3l0CgoPPNoSStJLEjP4qwekMm
+         cwsKRW76QC4mUVPLRqsdqZCgE5BdVEkCg6A4LdweHKLSd4w8Aw8x0ICI99O3oQh6GEn6
+         UmEFVWN15+dTypkATrd6L45xZjhzdKBUjUsUWDEhfFXsZoTBp+WUTeikhgtofqRKOofJ
+         7ncv+CgdsLMz/pdP9I/V6T6JiskLz1MqN3VaYNXQxtatRYcHflYINg7D3iXYlk3D/HQ9
+         TvWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723012125; x=1723616925;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L3Cnd6mFtbJSGETFPCDN577bknl11oPzpBdGoJxqsrA=;
+        b=rJw7W+h3bg6SGvuWzCfj3oEWwzs7j2eL6QkMMeiQrC6po3f34t9WfwIqAu7acXXi2D
+         X1wXwWpvUaRSQ01qlrEGuMYvg2AG5NJsk56rb2SI97wohKUHJatw1irO6CfejLYZ3KEb
+         UNco3pu3tu/ap7weGpwkG9xgUvNhpaC6Lvn5wrY695pxnStrlvFN/CfBbcnJ1k+uik6e
+         TOKUxspDBwtxkCQhyyc50LUoLPDr4Rankx9Q9Wcbet0ZI7EvSuyaJov7OHBfV5rXwQ2p
+         BPXqO/3ZKdci/q03eRsPY31fiiq8YBrObuRND1ePvxAmwN7trhWK862Miav06/S8h9RD
+         4QLA==
+X-Gm-Message-State: AOJu0Yza5B1d5aRejn88ZojQcsnz++DMC5BISb5854WWed27o3D2wqAH
+	0udeXnzhAW8ABT8e7IF4Hk6AVE45ECKQLZZJ9U+sxTkFeZmh5O9tmbDPmggjBnxBsSm8dqG090s
+	fqZa4P8rB
+X-Google-Smtp-Source: AGHT+IG3+LYLTW06u/7CE9JfA6rsragN66yfaT4Kj6PNe9WVItBbqMTO8KeQtcDjSJembalV746lYA==
+X-Received: by 2002:a05:6870:fb8d:b0:260:f5c6:e9ec with SMTP id 586e51a60fabf-26891d22d97mr21093052fac.17.1723012125203;
+        Tue, 06 Aug 2024 23:28:45 -0700 (PDT)
+Received: from sunil-pc.tail07344b.ts.net ([106.51.198.16])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec416b5sm7794916b3a.58.2024.08.06.23.28.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 23:28:44 -0700 (PDT)
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] serial: 8250_platform: Fix unused acpi_platform_serial_table warning
+Date: Wed,  7 Aug 2024 11:58:39 +0530
+Message-ID: <20240807062839.1738705-1-sunilvl@ventanamicro.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhTWye8Pm3EUr-Fy-mxq+6H1ThtAekqZd0nXX70f8xP5rw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXfoTnE7NmEy8CBA--.15279S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrtF4UAr1rGFWrKFW5Zr1UWrg_yoWDCrg_ZF
-	yvyw1qv3ykXFsrJanrCry3XF13GF1rCas8Z34kuF9rZFyUJFWkXFy0yF1kZw43Can7XF9x
-	KFn5AFZ29w12vjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4AYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
-	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHD
-	UUUUU==
-X-CM-SenderInfo: hwkx0vthuozvpl2kv046kxt4xhlfz01xgou0bp/
 
+The LKP reports below warning.
 
+>> drivers/tty/serial/8250/8250_platform.c:271:36: warning: 'acpi_platform_serial_table' defined but not used [-Wunused-const-variable=]
 
-On 2024/8/7 5:55, Paul Moore wrote:
-> On Tue, Aug 6, 2024 at 9:26 AM Stephen Smalley
-> <stephen.smalley.work@gmail.com> wrote:
->> On Tue, Aug 6, 2024 at 2:51 AM <thunder.leizhen@huaweicloud.com> wrote:
->>> From: Zhen Lei <thunder.leizhen@huawei.com>
->>>
->>> The count increases only when a node is successfully added to
->>> the linked list.
->>>
->>> Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
->>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
->>
->> This looks correct to me ...
-> 
-> It looks good to me too, unless I hear any objections I'm going to
-> merge this into selinux/stable-6.11 and send it up to Linux during the
-> v6.11-rcX cycle.
-> 
->> ... but I also notice that the caller is not
->> checking or handling the return code for the -ENOMEM situation.
-> 
-> Good catch.  We should also fix this, ideally in the same PR where we
-> send the count/len fix.
-> 
-> Zhen Lei, would you mind working on a separate fix for checking the
-> error code in the caller?
+     271 | static const struct acpi_device_id acpi_platform_serial_table[] = {
+         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Yeah, I'd love to.
+This is because some architectures don't define either ACPI or
+MODULE/MODULE_DEVICE_TABLE. So, keep acpi_platform_serial_table under
+CONFIG_ACPI to fix the warning on such architectures.
 
-> 
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202407310047.PIoWlrZZ-lkp@intel.com/
+Fixes: d9e5a0ce2f16 ("serial: 8250_platform: Enable generic 16550A platform devices")
+Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+---
+ drivers/tty/serial/8250/8250_platform.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
+index bdfb16bed4f2..168e635002aa 100644
+--- a/drivers/tty/serial/8250/8250_platform.c
++++ b/drivers/tty/serial/8250/8250_platform.c
+@@ -268,11 +268,13 @@ static int serial8250_resume(struct platform_device *dev)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_ACPI
+ static const struct acpi_device_id acpi_platform_serial_table[] = {
+ 	{ "RSCV0003", 0 }, // RISC-V Generic 16550A UART
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(acpi, acpi_platform_serial_table);
++#endif
+ 
+ static struct platform_driver serial8250_isa_driver = {
+ 	.probe		= serial8250_probe,
 -- 
-Regards,
-  Zhen Lei
+2.43.0
 
 
