@@ -1,87 +1,190 @@
-Return-Path: <linux-kernel+bounces-277961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C692294A8B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:37:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A07694A8B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8169E1F219CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:37:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5DF1C208DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338B8200118;
-	Wed,  7 Aug 2024 13:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF14E1EA0DC;
+	Wed,  7 Aug 2024 13:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="fn5GoOJ3"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ASLUBGSf"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD2EB664;
-	Wed,  7 Aug 2024 13:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6A91E7A4A;
+	Wed,  7 Aug 2024 13:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723037815; cv=none; b=jjXtTD3cUn6L7onmV/GRuPtsGA8uwXUzjf9ew6xTTnqJs8r7CfZjxPJ1jvUjLXnQddYaAC/IUPkGzF2gABHgZehNT2AcvRh/fLdshxidcna0ROAEQXiEJLju5ayCffChoAsFceCFmPjV37EK6nVyNl1dAPlP+sVPUUotU8CV5xc=
+	t=1723037831; cv=none; b=hm8JrzRg/xiyTMQ6AEs8+1NALnbvssyH4QDb1Wu/MZowiHluhdp+AVNvToDCLaXZvOohdQgPA3gj+sd0GPo8FDKzzp0vVf7TXOmh//gVgLWrTetdnoB5R6HjjNJZq69TifqIGB7jJnW8wKenoGgq0PhTDeREE56X9Grghsuwh2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723037815; c=relaxed/simple;
-	bh=oRW6p8QnLw8cxsnh4q9FbcVBrF0LDmrlfTyxgEBpuJs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pMaFJxZs4rQzjqTeoEH3+PeVCuED8XX8ECsR0QCItmB0xThjgAW9gGhrVhSVR+VhbtjI/0mFCyLsjaWIvmGbOBXu/lSHeBhLEX23kuIjqThAlY2ZWSU+wQv9T/Vj33TPtTI2HVCG+tZ6iADhwysH6F+8STNlIH2tB6J4i3j6AYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=fn5GoOJ3; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=70Q31U0CBD5gW7Yc2VyHq7sFK+Q9/HxJowQGpKs3dFw=; b=fn
-	5GoOJ3HyvAxSNYGMG5juhCBOTuoX8np3zqRAlbgt5KeTrHs4fNvxDCNrchimkgxOgyt1Eb4cBYLP3
-	Eljpo8rRNwoln0fZbREPZxZ0xZt3GW30qHtsUw42lRkt30wwuUa5NASzemBJFdHci3Hh5MSquidSz
-	dJHc1cXtpRLFvHs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sbgqM-004Chq-9V; Wed, 07 Aug 2024 15:36:46 +0200
-Date: Wed, 7 Aug 2024 15:36:46 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>
-Cc: Fugang Duan <B38611@freescale.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Lucas Stach <l.stach@pengutronix.de>, imx@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Fabio Estevam <festevam@gmail.com>, Wei Fang <wei.fang@nxp.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>
-Subject: Re: [PATCH resubmit net] net: fec: Stop PPS on driver remove
-Message-ID: <30d65bc4-22ae-4db8-bed3-442b18d564b8@lunn.ch>
-References: <20240805145735.2385752-1-csokas.bence@prolan.hu>
- <20240807080956.2556602-1-csokas.bence@prolan.hu>
+	s=arc-20240116; t=1723037831; c=relaxed/simple;
+	bh=dCITDVu+ma/sDwxdhmxDkxVcsFqyr3HcxLXF4/8Xj+I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hAXn2rHrWC3ZnB094BW+WLvvCvgTXrB/nyNzG+O6aYlQzFGo/alIdOgKnrbIp3eDJeRjJxrapt7RUpA/cMkvp9PqHl8fLU9dxSNaV5MF3YvYW7xuJseWwWRKy45/xeCyOFzrW7oE3XGu3VS4Tti2xrFnfbrLDIkG8vJ9p97+MIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ASLUBGSf; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so1047711a12.1;
+        Wed, 07 Aug 2024 06:37:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723037828; x=1723642628; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=96dMCeWaUUcq05xNdKVW2u3NImhSxQTfs/zSYg+df90=;
+        b=ASLUBGSfsKx2HB4WiwRDzwGE6YP2F+WfEb1S9x9MKhihr/1KsPMxtuFUUvTkgW/TA7
+         2uKuWklOVMOkpleB4M6jKBx4V5P8suN0ru0TDv+b/ss8uRTH0kUxJSIYY7p/Kmi7IoJY
+         JXbVE6c0o1I+5WChNXK6eXXnQyXFcnWEo5eWV7ENW5NZXAr1l5WjMCyDDk5vMdXC188f
+         6QScU1gzVZBuHWFhE33GXeEIo+NGk8Girk85ev0ecXk+wj4dAfBRIoX5VqA+bsNtvk6a
+         gRPCC0gTZxIFL109UZILMYSZeDDnsl+gqqAXCbXw2k8JSeX1qTxaAPuvieRjqUzcvSgL
+         YwLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723037828; x=1723642628;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=96dMCeWaUUcq05xNdKVW2u3NImhSxQTfs/zSYg+df90=;
+        b=ok2WpzDpfD0rndMpW4r8Y+2ICYeOKzO+e5XsA4ZqfqBanKdFZyithA6ChEdSdyquTT
+         NypYrBHF+VBsIE1gmUYbzmG4+FNA8Eg1a5quKDSRMBcOHU3N/JcxvOSK6zoTD7m+D/K+
+         qIFoR9zmvtaiIn4tS/sx5xnDR/X1IrKmI5KftYk9s5q+SZLCSd7NWtZwZwLiiYPSEQ3m
+         fLpwsKDToh5B3QAPfI8MXzwLhqheLTRyTsCn6H4UzYvdaamUy8vl1XDAK7fDxwsSjSIO
+         vWbUHFBYxLvMsudILuM3AUd6CIs4kHT26Q/55U72ms3j0iyDgv5RIhVwUB5ne37CwwcK
+         bqPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWz/x4Dc8yKk50LFVx8rb5GfDWouwnmbz7xIRUjo1g996jIu1Ki5cnhxerx6BOkn6v48tlVNSCRXWD9fLiMLMxIA/AgkLNY6sGf5dEx
+X-Gm-Message-State: AOJu0YzRtHpKj15aump7ApfQweIqBzgN9jVDTr8FepKU9x1r6Fq9Jj2n
+	YiIjO56GQrAcL/21o7u6YH/0F8GeQTYNdu3FFFYhuQBAVtdUdqe8i+VhRmfp
+X-Google-Smtp-Source: AGHT+IH9EWNnQE5LbWJRJU24BPbS6YGoAFewVE8VoqODppOQPfEG657NHSze5SCIkPZsmsqeHgP7Zg==
+X-Received: by 2002:a05:6402:1ecf:b0:582:7394:a83d with SMTP id 4fb4d7f45d1cf-5bba36f16e6mr1846749a12.12.1723037828070;
+        Wed, 07 Aug 2024 06:37:08 -0700 (PDT)
+Received: from [127.0.1.1] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bb884cddf4sm3808312a12.66.2024.08.07.06.37.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 06:37:07 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Wed, 07 Aug 2024 15:37:03 +0200
+Subject: [PATCH] leds: pca995x: Fix device child node usage in
+ pca995x_probe()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240807080956.2556602-1-csokas.bence@prolan.hu>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240807-leds-pca995x-fix-fwnode-usage-v1-1-8057c84dc583@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAH54s2YC/x2MQQqDMBAAvyJ7diEJNZh+pXiIyaZdKFGyVAXx7
+ 108zGFgmBOEGpPAszuh0cbCS1WxfQfpE+ubkLM6OOMeZjQev5QF1xRDGA4srOx1yYQ/iRoXH3K
+ wNNrZJdDH2kib+/+arusPbI0vKW8AAAA=
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Isai Gaspar <isaiezequiel.gaspar@nxp.com>, Marek Vasut <marex@denx.de>, 
+ Jonathan Cameron <jic23@kernel.org>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723037827; l=3654;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=dCITDVu+ma/sDwxdhmxDkxVcsFqyr3HcxLXF4/8Xj+I=;
+ b=f0J6K+8ngIczaA/mOyK24bLNv+qX38oK3eX5vUncgMmMlAR1rrI06tRkjI2Y8r94d9DxSEqmJ
+ AfSioBSWyFvA/TCywZy+uksCqfJt9eq4eC2JlXugom+KWB0X0/l1Jhu
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Wed, Aug 07, 2024 at 10:09:56AM +0200, Csókás, Bence wrote:
-> PPS was not stopped in `fec_ptp_stop()`, called when
-> the adapter was removed. Consequentially, you couldn't
-> safely reload the driver with the PPS signal on.
-> 
-> Fixes: 32cba57ba74b ("net: fec: introduce fec_ptp_stop and use in probe fail path")
-> 
-> Reviewed-by: Fabio Estevam <festevam@gmail.com>
-> Link: https://lore.kernel.org/netdev/CAOMZO5BzcZR8PwKKwBssQq_wAGzVgf1ffwe_nhpQJjviTdxy-w@mail.gmail.com/T/#m01dcb810bfc451a492140f6797ca77443d0cb79f
-> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+The current implementation accesses the `child` fwnode handle outside of
+device_for_each_child_node() without incrementing its refcount.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Add the missing call to `fwnode_handle_get(child)`.
 
-    Andrew
+The cleanup process where `child` is accessed is not right either
+because a single call to `fwnode_handle_put()` is carried out in case of
+an error, ignoring unasigned nodes at the point when the error happens.
+
+Keep `child` inside of the first loop, and use the helper pointer that
+receives references via `fwnode_handle_get()` to handle the child nodes
+within the second loop. Keeping `child` inside the first node has also
+the advantage that the scoped version of the loop can be used.
+
+Fixes: ee4e80b2962e ("leds: pca995x: Add support for PCA995X chips")
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+This issue has been found while reviewing the recently applied commit
+3ec05e5feacd ("leds: pca995x: Use device_for_each_child_node() to access
+device child nodes"), which required some conflict resolution to be
+applied.
+
+This driver makes use of the variable `child` outside the
+_for_each_child_node() loop as it that variable contained the right
+address at the point where `fwnode_handle_put(child)` is called, which
+is not a valid assumption. `child` is assigned to led_fwnodes[reg]
+without incrementing its refcount, and the cleanup is off as well
+because even if that was correct, a single child node would be
+de-allocated.
+
+A similar fix was provided in the series where forementioned commit
+was included for leds-bd2606mvv.c [1].
+
+Link: https://lore.kernel.org/all/20240721-device_for_each_child_node-available-v2-3-f33748fd8b2d@gmail.com/ [1]
+---
+ drivers/leds/leds-pca995x.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
+index 83bc9669544c..11c7bb69573e 100644
+--- a/drivers/leds/leds-pca995x.c
++++ b/drivers/leds/leds-pca995x.c
+@@ -120,12 +120,11 @@ static const struct regmap_config pca995x_regmap = {
+ static int pca995x_probe(struct i2c_client *client)
+ {
+ 	struct fwnode_handle *led_fwnodes[PCA995X_MAX_OUTPUTS] = { 0 };
+-	struct fwnode_handle *child;
+ 	struct device *dev = &client->dev;
+ 	const struct pca995x_chipdef *chipdef;
+ 	struct pca995x_chip *chip;
+ 	struct pca995x_led *led;
+-	int i, reg, ret;
++	int i, j, reg, ret;
+ 
+ 	chipdef = device_get_match_data(&client->dev);
+ 
+@@ -143,7 +142,7 @@ static int pca995x_probe(struct i2c_client *client)
+ 
+ 	i2c_set_clientdata(client, chip);
+ 
+-	device_for_each_child_node(dev, child) {
++	device_for_each_child_node_scoped(dev, child) {
+ 		ret = fwnode_property_read_u32(child, "reg", &reg);
+ 		if (ret)
+ 			return ret;
+@@ -152,7 +151,7 @@ static int pca995x_probe(struct i2c_client *client)
+ 			return -EINVAL;
+ 
+ 		led = &chip->leds[reg];
+-		led_fwnodes[reg] = child;
++		led_fwnodes[reg] = fwnode_handle_get(child);
+ 		led->chip = chip;
+ 		led->led_no = reg;
+ 		led->ldev.brightness_set_blocking = pca995x_brightness_set;
+@@ -171,7 +170,8 @@ static int pca995x_probe(struct i2c_client *client)
+ 						     &chip->leds[i].ldev,
+ 						     &init_data);
+ 		if (ret < 0) {
+-			fwnode_handle_put(child);
++			for (j = i; j < PCA995X_MAX_OUTPUTS; j++)
++				fwnode_handle_put(led_fwnodes[j]);
+ 			return dev_err_probe(dev, ret,
+ 					     "Could not register LED %s\n",
+ 					     chip->leds[i].ldev.name);
+
+---
+base-commit: 1e391b34f6aa043c7afa40a2103163a0ef06d179
+change-id: 20240806-leds-pca995x-fix-fwnode-usage-f69d91e81b2c
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
