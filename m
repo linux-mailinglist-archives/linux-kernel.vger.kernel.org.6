@@ -1,192 +1,130 @@
-Return-Path: <linux-kernel+bounces-278677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB0994B369
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:11:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CD6394B374
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1F11F21643
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:11:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91291B22D92
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BE915574C;
-	Wed,  7 Aug 2024 23:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373DC155731;
+	Wed,  7 Aug 2024 23:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldPGJCN3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKa+PcGu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C943A364A0;
-	Wed,  7 Aug 2024 23:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775A313C8EA;
+	Wed,  7 Aug 2024 23:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723072251; cv=none; b=adou6n3UW0KBVAdtYA+aSEZradNRXP/jdEEhi0j8IbCEiZ1hZ+pK3yOeG656wQfLcLTpaKJZP/yqYSlmH3wTJvEVaFefxVenXO3NJnoJ/P6/1CxZbOSzDJlCT3W7CnSHMv907i+l62aG1EbtFCs3/MdUNVtEoupqvvUMDz5pIFk=
+	t=1723072464; cv=none; b=dBlASPiRqZyLRJ9Vp8IcNAs/uPrkAcpHtOMm1dkXuNqLyf0ux2YRNn7l5zGkuTWwD88AFftetFxpsuNnSrFMK5d4dYwd5fmJq+hoYQTd00HrCbKpVX0p29PFCOcfP7eX5CDC95cxbIkuOILRmzITrRSPKy80p5ub6Kvf1uKOZ40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723072251; c=relaxed/simple;
-	bh=2Arp6skp4lsIU7gY1P9i7DjssGu8XkY+Mw3cDuEayR4=;
+	s=arc-20240116; t=1723072464; c=relaxed/simple;
+	bh=MMApE+y1i7TH7kcZ40ixxUx/3NG1Vliy3cWf2maCfB0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qk06qg60/a+kOObOk0rRo9zSoolcbsonm6Ym15LmNazEZzwqA7VNFqyRdLeUcZIyoRQKpPHoMh6dJplLj6H6mzcsg1w1qdoJbUOgNMr6qvT32+I06XnCteLRC0jHZZPd7bE+7nhp/NEGM/PsgcwveBePe4l2SFPpdVYLt8TycrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldPGJCN3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 981DAC32781;
-	Wed,  7 Aug 2024 23:10:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lKSQuUZ4nT+43mztvkvRCiPPzQxBQCti5gXC52pv4skYxFzKItoKlOzzpKvUZAN0uirRjQvNzPNsOzXp7LFZbHHd1z1IUMyopo5ZAoIdT3jWlGCR9ubJrQGvUADuSZzwf9nKwI/dzwrY9vLhBKNLbcZ6Mo+bGjKHxpeim9K6Mao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKa+PcGu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A46A9C32781;
+	Wed,  7 Aug 2024 23:14:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723072250;
-	bh=2Arp6skp4lsIU7gY1P9i7DjssGu8XkY+Mw3cDuEayR4=;
+	s=k20201202; t=1723072464;
+	bh=MMApE+y1i7TH7kcZ40ixxUx/3NG1Vliy3cWf2maCfB0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ldPGJCN3ZIDgEu+JqjWfyq8SgqSslLPbqwCyfHIbYErRgOIehLhNY8ykRxM5cqxN9
-	 8zLt6qFaoEsTxmdXQlNeR0GOWyyv/7LlHYqTjDpl4km+Lh47gWxn+QwWAJaeeqkxcz
-	 uey7J7Tw+gewcUdJBkGWJ82NhjTlRwlecbrGKGlxaayUVXo1f76DhrTcwNCN3CiL93
-	 ultdDjdKSdDB7QJyUD/EV35Yp/s59ljLUg+KSXR6aZZe4Ahby+4ueC364F2qE305Qx
-	 0/p7XcxLIbWOKxEwma0XAlfBY5zIca/keWPAYZ//Kqxe8p3Kfr1BpQ5agkDMyXC0M2
-	 CHZ/DousmFKBQ==
-Date: Thu, 8 Aug 2024 00:10:46 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 38/40] kselftest/arm64: Add a GCS stress test
-Message-ID: <ZrP-9gHsvVHr2Y5B@finisterre.sirena.org.uk>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-38-699e2bd2190b@kernel.org>
- <877ccsdkjp.fsf@linaro.org>
+	b=vKa+PcGuo/Dhror5cMn2zoQ8FexRnmFm3o1ZnK9g8G8+ueTpV4uForWkP5f1o5/P+
+	 dBymeQJ5sRti6IRQ5L6LQXA66qIgbuIlDp/+kPjC0Zgs7K5nzE5yQs+AYGG9VFPcQe
+	 Rq/g8/Utb26N9rGhqXbrDN169YoXJiC3O7YD7T+7eSnBFWhtbXii/1UIuC7iuLH1T5
+	 TAGRD5W723gCYRSZhMQqXGPa+t9ZjOsGGW7SgKdAxexjBweQi01quk29K8KVLvVVTb
+	 OLJiveMgNZNU0U/B7GTZd7MqdZIjlS5a6l7hl88k+P+CdMtnpTokfBhBGpTO89Kor1
+	 pAMRnA5lVNclg==
+Date: Thu, 8 Aug 2024 00:14:18 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Mary Strodl <mstrodl@csh.rit.edu>
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
+	urezki@gmail.com, hch@infradead.org, linux-mm@kvack.org, lee@kernel.org, 
+	linux-i2c@vger.kernel.org, s.hauer@pengutronix.de, christian.gmeiner@gmail.com
+Subject: Re: [PATCH v2 0/2] Add support for Congatec CGEB BIOS interface
+Message-ID: <qqb5ho7urmhy6e55efu3uxiz4gupikhiqgngilzx35djfgouf2@wlo336gdkoer>
+References: <20240801160610.101859-1-mstrodl@csh.rit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+DPYyleG5oZF9XZc"
-Content-Disposition: inline
-In-Reply-To: <877ccsdkjp.fsf@linaro.org>
-X-Cookie: Your love life will be... interesting.
-
-
---+DPYyleG5oZF9XZc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240801160610.101859-1-mstrodl@csh.rit.edu>
 
-On Wed, Aug 07, 2024 at 07:39:54PM -0300, Thiago Jung Bauermann wrote:
-> Mark Brown <broonie@kernel.org> writes:
+Hi Mary,
 
-> > Add a stress test which runs one more process than we have CPUs spinning
-> > through a very recursive function with frequent syscalls immediately prior
+On Thu, Aug 01, 2024 at 12:06:08PM GMT, Mary Strodl wrote:
+> The following series adds support for the Congatec CGEB interface
+> found on some Congatec x86 boards. The CGEB interface is a BIOS
+> interface which provides access to onboard peripherals like I2C
+> busses and watchdogs. It works by mapping BIOS code and searching
+> for magic values which specify the entry points to the CGEB call.
+> The CGEB call is an API provided by the BIOS which provides access
+> to the functions in an ioctl like fashion.
+> 
+> At the request of some folks last time this series went out, CGEB
+> now has a userspace component which runs the x86 blob (rather than
+> running it directly in the kernel), which sends requests back and
+> forth using the cn_netlink API.
 
-> Unfortunately, gcs-stress still fails on my FVP setup. I tested on an
-> arm64 defconfig with and without THP enabled with, the same results:
+this little paragraph is the closest to a changelog I can see.
+Could you please write up a real changlog and list all the
+changes from v1 to v2?
 
-Can you please try to investigate why this is happening on your system?
-I am unable to reproduce this, for example the actual branch that was
-posted gave this:
+You can do it as reply to this e-mail, but please, next time do
+it either in the cover letter or for each patch.
 
-# selftests: arm64: gcs-stress
-# TAP version 13
-# 1..9
-# # 8 CPUs, 9 GCS threads
-# # Will run for 10s
-# # Started Thread-8350
-# # Started Thread-8351
-# # Started Thread-8352
-# # Started Thread-8353
-# # Started Thread-8354
-# # Started Thread-8355
-# # Started Thread-8356
-# # Started Thread-8357
-# # Started Thread-8358
-# # Thread-8350: Running
+Thanks,
+Andi
 
-...
-
-# # Sending signals, timeout remaining: 100ms
-# # Finishing up...
-# # Thread-8351: Terminated by signal 15, no error
-# # Thread-8352: Terminated by signal 15, no error
-# # Thread-8353: Terminated by signal 15, no error
-# # Thread-8354: Terminated by signal 15, no error
-# # Thread-8355: Terminated by signal 15, no error
-# # Thread-8357: Terminated by signal 15, no error
-# # Thread-8358: Terminated by signal 15, no error
-# ok 1 Thread-8350
-# ok 2 Thread-8351
-# ok 3 Thread-8352
-# ok 4 Thread-8353
-# ok 5 Thread-8354
-# ok 6 Thread-8355
-# ok 7 Thread-8356
-# ok 8 Thread-8357
-# ok 9 Thread-8358
-# # Thread-8356: Terminated by signal 15, no error
-# # Thread-8350: Terminated by signal 15, no error
-# # Totals: pass:9 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-and Anders also ran the selftests successfully, including with THP
-enabled (as noted in the changelog those issues should now be resolved).
-THP issues should not have been relevant for this test as it doesn't
-fork with GCS enabled.
-
-> # # Thread-4870: Failed to enable GCS
-
-which is printed if a basic PR_SET_SHADOW_STACK_STATUS fails immediately
-the program starts executing:
-
-function _start
-        // Run with GCS
-        mov     x0, PR_SET_SHADOW_STACK_STATUS
-        mov     x1, PR_SHADOW_STACK_ENABLE
-        mov     x2, xzr
-        mov     x3, xzr
-        mov     x4, xzr
-        mov     x5, xzr
-        mov     x8, #__NR_prctl
-        svc     #0
-        cbz     x0, 1f
-        puts    "Failed to enable GCS\n"
-        b       abort
-
-the defines for which all seem up to date (and unlikely to fail in
-system or config specific fashions).  What happens if you try to execute
-the gcs-stress-thread binary directly, does strace show anything
-interesting?  If you instrument arch_set_shadow_stack_status() in the
-kernel does it show anything?
-
---+DPYyleG5oZF9XZc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaz/vUACgkQJNaLcl1U
-h9D82gf+KEl5xAmYb9cWom+7gcXMomlPJMrkA7dYPaZDmS1e+GV/mZGvgZoHdWQD
-5vVHwhl1MUOzyDonNieLL2Oa07SBlqSmg8D6TvELS/I2CllFObqIVtNWO2d7DYW2
-/fOtJrFUTKWlteufFlt34Q9f9zp0AMkeEWhKVhLL00MKm0/6eKrZsDPRN/4gbtbt
-yY6VNkJCYivlodKM8zBXd/dkWKo3kMcl5gSYlVExD7tbMhwpdg1VLVn/Nwnmlb1O
-/yOj8phnDdEZt6AbpagWi78WSdXp9K2KE5JohOtw+CQlaaK2ekeaswe6qwV8Ijn/
-i2dbu6EJf382fN3bB+lB+CrVXX0UsQ==
-=kdke
------END PGP SIGNATURE-----
-
---+DPYyleG5oZF9XZc--
+> You can find a reference implementation of the userspace helper here:
+> https://github.com/Mstrodl/cgeb-helper
+> 
+> I didn't get an answer when I asked where the userspace component
+> should live, so I didn't put a ton of work into getting the helper
+> up to snuff since similar userspace helpers (like v86d) are not
+> in-tree. If folks would like the helper in-tree, that's fine too.
+> 
+> This series is based on the excellent work of Sascha Hauer and
+> Christian Gmeiner. You can find their original work here:
+> 
+> http://patchwork.ozlabs.org/patch/219756/
+> http://patchwork.ozlabs.org/patch/219755/
+> http://patchwork.ozlabs.org/patch/219757/
+> 
+> http://patchwork.ozlabs.org/patch/483262/
+> http://patchwork.ozlabs.org/patch/483264/
+> http://patchwork.ozlabs.org/patch/483261/
+> http://patchwork.ozlabs.org/patch/483263/
+> 
+> Mary Strodl (1):
+>   x86: Add basic support for the Congatec CGEB BIOS interface
+> 
+> Sascha Hauer (1):
+>   i2c: Add Congatec CGEB I2C driver
+> 
+>  drivers/i2c/busses/Kconfig             |    7 +
+>  drivers/i2c/busses/Makefile            |    1 +
+>  drivers/i2c/busses/i2c-congatec-cgeb.c |  189 ++++
+>  drivers/mfd/Kconfig                    |   10 +
+>  drivers/mfd/Makefile                   |    1 +
+>  drivers/mfd/congatec-cgeb.c            | 1139 ++++++++++++++++++++++++
+>  include/linux/mfd/congatec-cgeb.h      |  111 +++
+>  include/uapi/linux/connector.h         |    4 +-
+>  8 files changed, 1461 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/i2c/busses/i2c-congatec-cgeb.c
+>  create mode 100644 drivers/mfd/congatec-cgeb.c
+>  create mode 100644 include/linux/mfd/congatec-cgeb.h
+> 
+> -- 
+> 2.45.2
+> 
 
