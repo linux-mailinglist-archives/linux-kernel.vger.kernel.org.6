@@ -1,156 +1,242 @@
-Return-Path: <linux-kernel+bounces-277728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902E294A559
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:25:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E2F194A567
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9B16B26682
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:25:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 745101C20306
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B721D1729;
-	Wed,  7 Aug 2024 10:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JYngykoS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4761DD3B1;
+	Wed,  7 Aug 2024 10:27:04 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A334A1DD39D
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5FA1803A
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723026313; cv=none; b=KzXHhFoC9o49Gz/t0mlBRygPBGAjbbJ62iiqEWe/bXKdNv2TfIXw7T/U01zi/45ypSJF7ABJ4lQr+Oqx3k0BijcvSatsit1skzvgT2NNsH6SuLNxdmrPNvb+pvHIPiAfKi9EzHqkLtnJw/Cuos4BP1VW/S/1afn7N3HfMkcBCts=
+	t=1723026423; cv=none; b=Au1OJ8ysKw1SrJMXzhW2N/HtXRI6/MnX2lWPk+dpJZWBaOJgY1scH7vCk2DWseSwjnDQRQ1OjGQxOdJMqVKTlJQ3H92pExrpK/Fkd826xl9NnsM1s5b/XeSPVQHS1Nv5B3XqALEWabvbXCqOicbhKn2QG9WHrmLbLRyQoKhKIbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723026313; c=relaxed/simple;
-	bh=hOCZ+GOo8ddJAc837ZmiCPmlPJQZfhv/jg3HcXSwZJc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XStTBo+In0rBaBMC0lw1FZ5oPlpCRiwV9R0l0B05nmm7RvYEa7skNd34yhUlsCpVEQ7+J6DRLfFM/3aifzzC/gV5TJroyo9w9HBhm1cUfj01rPOHZFBebtg3B2lpHv9NGE9TmCE+Sl9AKib8Ym6WBHfEq/n3FzD3d+S9/mpaPBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JYngykoS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723026310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qKr5o03hOgeY5mMH9I+zX5gWnfZedpywYbJmmdN0XrU=;
-	b=JYngykoSLJQniC5zblbzjzLA5SEFkf/nYJg9T8xDCacwpu+yD61/J8Xz/uZwfrVTpNw6Xc
-	LPvpnN3JLkeg/e1t56T3W2ZbmKLelXya5BSGsWBp1pl2HsVQVj9VTKVPZxCY6qiG02u3GA
-	iIt4ip+jAWNyqjFQcKwvyyJX/lcuIc8=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-369-ni3lf-RCOuOvIrm5PBZb-g-1; Wed, 07 Aug 2024 06:25:09 -0400
-X-MC-Unique: ni3lf-RCOuOvIrm5PBZb-g-1
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5bba487c111so193333a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 03:25:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723026307; x=1723631107;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qKr5o03hOgeY5mMH9I+zX5gWnfZedpywYbJmmdN0XrU=;
-        b=jwfzoiH+IUbC07LcbEaytlvZv5DuLy1PVpoxgh5pOAGHZ7+bLmJIxPA2rOgyu6gkvG
-         KeyHEBSJXZj1xDL7D4x8kPj+TpM2aDfIPITAwZcgeGljSRBDC5Ej3Wlq5SmS7ViHKhvU
-         TfSCRvytFkUS4p2LGwp7aAwmKenkK39ZHsGUuMQPSVDl/8fFk4abqPJ4R7vElQe3fYn/
-         GzPeYTIgja82g94OkdzvWhB0T3yn2EBzYrxHRyuekPeps5sYtGKEVo9X4LFpmjgjpJfN
-         WKXkwJ8C7Mq2lNtnRgvXOvhhbjP2grGxw9E055/zSpAWuoevuhrKyFrkGDhuee9dO2/e
-         E6Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLT+VACTv5lVas8cNa0Kt+mr5w2ka/ecU0T53OVMUa0oh3qzndsSlNbW92WsjG6IoJ6LiqQz2zsE3Pp8bV/3U2xG2WAtjxLJsewADZ
-X-Gm-Message-State: AOJu0YzbFTl0NIco8gWZzzjcNy+DYn3EmSHiRljKNgOVrvQFj0Wmb+u2
-	ndUbh4pv4ZgXTmC6vYdxON1uDIzFC1x11SqgdWmCXc4+j+vgo2EFcJS/rwN49sDJHj997MvHqvD
-	t59dMB4992Z/cF5ghQ/KStk4yqH0CQeTeGOR092cTITZevzgNzZPNcB/nYGRNlQ==
-X-Received: by 2002:a05:6402:40c5:b0:5b9:462d:c53c with SMTP id 4fb4d7f45d1cf-5b9462dcf53mr15779395a12.6.1723026307201;
-        Wed, 07 Aug 2024 03:25:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHKU5pngRUkJ93655Cskv4fXvNSoHRSaMMNyZsujYLi/pNlxeqKlTnLCO41rUMJegB040lfFA==
-X-Received: by 2002:a05:6402:40c5:b0:5b9:462d:c53c with SMTP id 4fb4d7f45d1cf-5b9462dcf53mr15779364a12.6.1723026306697;
-        Wed, 07 Aug 2024 03:25:06 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83bf38fafsm6781109a12.80.2024.08.07.03.25.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 03:25:06 -0700 (PDT)
-Message-ID: <5145dd51-d095-4185-920e-eafb33219e07@redhat.com>
-Date: Wed, 7 Aug 2024 12:25:05 +0200
+	s=arc-20240116; t=1723026423; c=relaxed/simple;
+	bh=8INA9PN3D3vFUNYja6UFIHKU2EbiqBnPoJpxLq2TfxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FVTWBrq2Xgt/uuMQnpmlFeIUux83Kvy9MB2cKN2D4p5jmSSvRmfo7vnCW7vUB02hSTMZ5ach2lgyAnZliDaEV+1CYDL9pFr8R8SRvKMb0ReqO/OSLXv3fCso7m4ohqAMrF0foM0LEyu9WD2D28TjiQInN4eazduDwZHdnd11IEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sbdsS-0003ur-4r; Wed, 07 Aug 2024 12:26:44 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sbdsP-005AZU-K2; Wed, 07 Aug 2024 12:26:41 +0200
+Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 3BC37318A36;
+	Wed, 07 Aug 2024 10:26:41 +0000 (UTC)
+Date: Wed, 7 Aug 2024 12:26:41 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Wei Fang <wei.fang@nxp.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, kernel@pengutronix.de
+Subject: Re: [PATCH v2 1/1] net: fec: using page pool to manage RX buffers
+Message-ID: <20240807-rustling-literate-cormorant-08d7a8-mkl@pengutronix.de>
+References: <20220930204427.1299077-1-shenwei.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] acpi video: force native for Apple MacbookPro9,2
-To: Esther Shimanovich <eshimanovich@chromium.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240806-acpi-video-quirk-v1-1-369d8f7abc59@chromium.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240806-acpi-video-quirk-v1-1-369d8f7abc59@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-Hi,
-
-On 8/6/24 10:08 PM, Esther Shimanovich wrote:
-> It used to be that the MacbookPro9,2 used its native intel backlight
-> device until the following commit was introduced:
-> commit b1d36e73cc1c ("drm/i915: Don't register backlight when another
-> backlight should be used (v2)")
-> This commit forced this model to use its firmware acpi_video backlight
-> device instead.
-> 
-> That worked fine until an additional commit was added:
-> commit 92714006eb4d ("drm/i915/backlight: Do not bump min brightness
-> to max on enable")
-> That commit uncovered a bug in the MacbookPro 9,2's acpi_video
-> backlight firmware; the backlight does not come back up after resume.
-> 
-> Add DMI quirk to select the working native intel interface instead
-> so that the backlight successfully comes back up after resume.
-> 
-> Signed-off-by: Esther Shimanovich <eshimanovich@chromium.org>
-
-Thanks, patch looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="s4llhy42hfqhiqap"
+Content-Disposition: inline
+In-Reply-To: <20220930204427.1299077-1-shenwei.wang@nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
+--s4llhy42hfqhiqap
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
->  drivers/acpi/video_detect.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
-> index c11cbe5b6eaa..2d377414f873 100644
-> --- a/drivers/acpi/video_detect.c
-> +++ b/drivers/acpi/video_detect.c
-> @@ -547,6 +547,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
->  		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookAir9,1"),
->  		},
->  	},
-> +	{
-> +	 .callback = video_detect_force_native,
-> +	 /* Apple MacBook Pro 9,2 */
-> +	 .matches = {
-> +		DMI_MATCH(DMI_SYS_VENDOR, "Apple Inc."),
-> +		DMI_MATCH(DMI_PRODUCT_NAME, "MacBookPro9,2"),
-> +		},
-> +	},
->  	{
->  	 /* https://bugzilla.redhat.com/show_bug.cgi?id=1217249 */
->  	 .callback = video_detect_force_native,
-> 
-> ---
-> base-commit: d9ef02e56f0fd3668b6d7cb17f9399ea53f12edd
-> change-id: 20240806-acpi-video-quirk-f1c9f01f07d9
-> 
-> Best regards,
+Hello,
 
+while looking at the fec driver I noticed the following not explicitly
+initialized variable.=20
+
+On 30.09.2022 15:44:27, Shenwei Wang wrote:
+> This patch optimizes the RX buffer management by using the page
+> pool. The purpose for this change is to prepare for the following
+> XDP support. The current driver uses one frame per page for easy
+> management.
+
+[...]
+
+> diff --git a/drivers/net/ethernet/freescale/fec.h b/drivers/net/ethernet/=
+freescale/fec.h
+> index b0100fe3c9e4..33f84a30e167 100644
+> --- a/drivers/net/ethernet/freescale/fec.h
+> +++ b/drivers/net/ethernet/freescale/fec.h
+> @@ -17,6 +17,7 @@
+>  #include <linux/clocksource.h>
+>  #include <linux/net_tstamp.h>
+>  #include <linux/pm_qos.h>
+> +#include <linux/bpf.h>
+>  #include <linux/ptp_clock_kernel.h>
+>  #include <linux/timecounter.h>
+>  #include <dt-bindings/firmware/imx/rsrc.h>
+> @@ -346,8 +347,11 @@ struct bufdesc_ex {
+>   * the skbuffer directly.
+>   */
+>=20
+> +#define FEC_ENET_XDP_HEADROOM	(XDP_PACKET_HEADROOM)
+> +
+>  #define FEC_ENET_RX_PAGES	256
+> -#define FEC_ENET_RX_FRSIZE	2048
+> +#define FEC_ENET_RX_FRSIZE	(PAGE_SIZE - FEC_ENET_XDP_HEADROOM \
+> +		- SKB_DATA_ALIGN(sizeof(struct skb_shared_info)))
+>  #define FEC_ENET_RX_FRPPG	(PAGE_SIZE / FEC_ENET_RX_FRSIZE)
+>  #define RX_RING_SIZE		(FEC_ENET_RX_FRPPG * FEC_ENET_RX_PAGES)
+>  #define FEC_ENET_TX_FRSIZE	2048
+> @@ -517,6 +521,12 @@ struct bufdesc_prop {
+>  	unsigned char dsize_log2;
+>  };
+>=20
+> +struct fec_enet_priv_txrx_info {
+> +	int	offset;
+> +	struct	page *page;
+> +	struct  sk_buff *skb;
+> +};
+> +
+>  struct fec_enet_priv_tx_q {
+>  	struct bufdesc_prop bd;
+>  	unsigned char *tx_bounce[TX_RING_SIZE];
+> @@ -532,7 +542,14 @@ struct fec_enet_priv_tx_q {
+>=20
+>  struct fec_enet_priv_rx_q {
+>  	struct bufdesc_prop bd;
+> -	struct  sk_buff *rx_skbuff[RX_RING_SIZE];
+> +	struct  fec_enet_priv_txrx_info rx_skb_info[RX_RING_SIZE];
+> +
+> +	/* page_pool */
+> +	struct page_pool *page_pool;
+> +	struct xdp_rxq_info xdp_rxq;
+> +
+> +	/* rx queue number, in the range 0-7 */
+> +	u8 id;
+
+This number is never explicitly initialized, I think it's always 0.
+
+>  };
+>=20
+>  struct fec_stop_mode_gpr {
+> diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethe=
+rnet/freescale/fec_main.c
+> index 59921218a8a4..169950e43b88 100644
+> --- a/drivers/net/ethernet/freescale/fec_main.c
+> +++ b/drivers/net/ethernet/freescale/fec_main.c
+> @@ -66,6 +66,8 @@
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/regmap.h>
+>  #include <soc/imx/cpuidle.h>
+> +#include <linux/filter.h>
+> +#include <linux/bpf.h>
+>=20
+>  #include <asm/cacheflush.h>
+>=20
+> @@ -422,6 +424,48 @@ fec_enet_clear_csum(struct sk_buff *skb, struct net_=
+device *ndev)
+>  	return 0;
+>  }
+>=20
+> +static int
+> +fec_enet_create_page_pool(struct fec_enet_private *fep,
+> +			  struct fec_enet_priv_rx_q *rxq, int size)
+> +{
+> +	struct page_pool_params pp_params =3D {
+> +		.order =3D 0,
+> +		.flags =3D PP_FLAG_DMA_MAP | PP_FLAG_DMA_SYNC_DEV,
+> +		.pool_size =3D size,
+> +		.nid =3D dev_to_node(&fep->pdev->dev),
+> +		.dev =3D &fep->pdev->dev,
+> +		.dma_dir =3D DMA_FROM_DEVICE,
+> +		.offset =3D FEC_ENET_XDP_HEADROOM,
+> +		.max_len =3D FEC_ENET_RX_FRSIZE,
+> +	};
+> +	int err;
+> +
+> +	rxq->page_pool =3D page_pool_create(&pp_params);
+> +	if (IS_ERR(rxq->page_pool)) {
+> +		err =3D PTR_ERR(rxq->page_pool);
+> +		rxq->page_pool =3D NULL;
+> +		return err;
+> +	}
+> +
+> +	err =3D xdp_rxq_info_reg(&rxq->xdp_rxq, fep->netdev, rxq->id, 0);
+
+But it's used here.
+
+> +	if (err < 0)
+> +		goto err_free_pp;
+> +
+> +	err =3D xdp_rxq_info_reg_mem_model(&rxq->xdp_rxq, MEM_TYPE_PAGE_POOL,
+> +					 rxq->page_pool);
+> +	if (err)
+> +		goto err_unregister_rxq;
+> +
+> +	return 0;
+> +
+> +err_unregister_rxq:
+> +	xdp_rxq_info_unreg(&rxq->xdp_rxq);
+> +err_free_pp:
+> +	page_pool_destroy(rxq->page_pool);
+> +	rxq->page_pool =3D NULL;
+> +	return err;
+> +}
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--s4llhy42hfqhiqap
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmazS90ACgkQKDiiPnot
+vG8Fkwf+Ps9pjpSLtQV8dyl9uZnQPKfe7NElj8fvdZfRsIsj5CtvCyFCyebQn4HZ
+5Lz9KDa1mJszjuou3Lpp5t9mrMfxDcCeiF1wLBZRYB2gz+MNNtRJmtGrszljVfJx
+PeUFt1H0BnqOgxpNyOk6SJ8Qc50bK+ekikcrHIXv4Hn1UQIVJU/SEfqpQ2ZJ7ggh
+JR07NflWtzD7OrMuHLE+kfXxKIZpj9sJ59b2t0LujGRjo5a61+yuajYIr/aXtq/7
+Y17Oi6Pz9JqP1z/Q/VviCSsOqCg+hri+BSo3cFJc1Q7emgw6CDC32C5S++U83W9h
+Xq41EHPD7Sz3mjPbOx3JpmgcColM5g==
+=NCqU
+-----END PGP SIGNATURE-----
+
+--s4llhy42hfqhiqap--
 
