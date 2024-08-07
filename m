@@ -1,187 +1,166 @@
-Return-Path: <linux-kernel+bounces-278486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB40A94B0E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:06:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446D594B0E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07F5E1C219EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:06:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6E811F22FD8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67599145A15;
-	Wed,  7 Aug 2024 20:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF966145B0B;
+	Wed,  7 Aug 2024 20:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lw6sEx9b"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gl8WZrpf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628911448C7;
-	Wed,  7 Aug 2024 20:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6072E82499;
+	Wed,  7 Aug 2024 20:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723061186; cv=none; b=Mgeh4ELADpYwMfDzgXf+n7bs8EusmADJS6DC9Ei4uCTatdli1VBry2CHB3gOh37O9+bXYcecHMVr/egZh5KhlPgS2zDly5V/pvOZCVgdDpBnYDxVuBBXAP8cUhaGcjMAs16gxiEY35nKqUoSrPDae0K/o0SNQ40puqQx4Wn7HHc=
+	t=1723061167; cv=none; b=NV7EWT9RmnrDL7T3rhUI99mmEM3Nyc/9pzlU3zXSfgwZPKrgbQAGZZeqWQr04Bl27bb0C7yNU94McgxlssWF98+t8YWOKXpDXrUJ53nFRrByhATLxKXIQbDEG89HWb5f7WKMQU0k9S2IhGD2/Ds83xYFNlzOfgVIzBDA5dzs4mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723061186; c=relaxed/simple;
-	bh=PROBiw0sarCM3nOobK70TOAENhBCdBEH39cijO+nsW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Edj7gI+Ybnpay+OxWTjCs0md+XQL2CCGYLcN86vqVrsjofpehEydhi4mtJWInH1By76krGZTiO8ZxEANSQEcF9gGzCWENlXmePI9dt6Y9WOUBQowLiIcEC82gcWNwvvQOMUh9yb28oKaPrcuo1C8+yO6Xm6Iy0vw3vKDnxqxd8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lw6sEx9b; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723061184; x=1754597184;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PROBiw0sarCM3nOobK70TOAENhBCdBEH39cijO+nsW0=;
-  b=Lw6sEx9bTAniWCHreS04uxbyLHzSZG3/6KXbkkvYCEsOQunHzeJh0Vbe
-   63AhytopqhAz+kJMzQw4Pwe2CVKvhL9IZuvQdqCwh9nIgc/6ZxhOIyxSe
-   /HkpU7lDxYt+NbUbv84+vD0XN/Wg+oflMdFENQ2bef9hS4jLtNT2YQbod
-   IzuA6ANAKniSiXrnWIoVPZKZ1zvWSrAOZ2/764L5JhfFMZtn/FZa6N9Rm
-   0KMqm0SkgMpNuggPWA2MKlpcJ510EL14Zg3jX5ECttJXpy82g7WqXZgcK
-   N4ZKGjl9WGaiVRO97DHc80d0DA+tf1sbewNeqShjQayah9+vtRup+Tzwl
-   Q==;
-X-CSE-ConnectionGUID: SBD719i6QdGquvcMxx61fw==
-X-CSE-MsgGUID: kcycni7wQ2+oJ673SWg5mA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="31826399"
-X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
-   d="scan'208";a="31826399"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 13:06:24 -0700
-X-CSE-ConnectionGUID: V83V2bC7SHOzgT8cTDJKtQ==
-X-CSE-MsgGUID: kwcFdcVaQnG70uwLbTcSwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
-   d="scan'208";a="56918330"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 07 Aug 2024 13:06:21 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sbmvL-0005gW-1r;
-	Wed, 07 Aug 2024 20:06:19 +0000
-Date: Thu, 8 Aug 2024 04:05:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: 824731276@qq.com, axboe@kernel.dk
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	baiguo@kylinos.cn
-Subject: Re: [PATCH] block:added printing when bio->bi_status fails
-Message-ID: <202408080348.jL0uiVq7-lkp@intel.com>
-References: <tencent_F71A15579D1E52ED0B58EF2F3607AA883308@qq.com>
+	s=arc-20240116; t=1723061167; c=relaxed/simple;
+	bh=tP5PZPiSOfnHtE2NF+/nff/1qVnyTM8U4pN2u4dY22w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=a7ClPsAsJ9oGRm6mS1kW2SzmhgS8rJiJPz3NhSy9Ow15ETrJcFOvhURTvwmSPN64fzFvEFBkWglDz/bEOuNU/vu16Q0ZXhXstXEOIGoQCnncP5MXj5EnnndQfhNgw4HKUrIbRmWe3Msjl8Dy4qIcSYEr0qTj+o8Xy7waawHZOdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gl8WZrpf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477I2CCO016435;
+	Wed, 7 Aug 2024 20:05:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BBQkqFMaehnNVf00RomtVqmkJg9WcgOkBeKwzL5TMP8=; b=Gl8WZrpfsq2WndmI
+	vq8ltohYyFRNsQAOOipCQh8AY3CKAU9orOFIjFKQy0/IwVK7qM++/1CFtBXWhRkI
+	+v8nzim8SsXu4MoDcH9kmgQ54yZ5v3ZrEibnkVVkI/+dehSKb/M98CvR18kk/0c5
+	HAj4B3v//ASNN1SES+XeGFR8sCMlhTu/fnsA2f5gHf5rAlgyl7cicSCOuqwA7sT9
+	oQ6yhVzdNyuAvwwlkLhqIQQC30k3WTXxL7nDr1OGyLaRs2Gxf3uqCx74qk3bqV6E
+	WbRtyPWvTvpZVUiBLhiBpS7XlswmpzGCJYPeVPdb9SKtenkhVelHRA6OpbxJ55bQ
+	DmgG7g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vdupg851-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 20:05:37 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 477K5akV014973
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 7 Aug 2024 20:05:36 GMT
+Received: from [10.71.113.127] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
+ 13:05:35 -0700
+Message-ID: <09aa3611-42bb-413a-b5a6-6d08045e5c00@quicinc.com>
+Date: Wed, 7 Aug 2024 13:05:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_F71A15579D1E52ED0B58EF2F3607AA883308@qq.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v24 17/34] ASoC: qcom: qdsp6: Add USB backend ASoC driver
+ for Q6
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
+        <gregkh@linuxfoundation.org>, <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+ <20240801011730.4797-18-quic_wcheng@quicinc.com>
+ <5f37c04d-f564-40b9-a9f3-d071ea0a6f19@linux.intel.com>
+ <1a284449-204a-4d01-90c9-ec6b1ed56e30@quicinc.com>
+ <1a2d0962-405d-4ccf-a0da-00a624c0f3e8@linux.intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <1a2d0962-405d-4ccf-a0da-00a624c0f3e8@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: mjrcji4RzpWV_B4Ua1x-VexTrXY01KX0
+X-Proofpoint-GUID: mjrcji4RzpWV_B4Ua1x-VexTrXY01KX0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_11,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 impostorscore=0 mlxscore=0
+ clxscore=1015 mlxlogscore=999 spamscore=0 bulkscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408070141
 
-Hi,
+Hi Pierre,
 
-kernel test robot noticed the following build errors:
+On 8/1/2024 11:32 PM, Pierre-Louis Bossart wrote:
+>
+> On 8/2/24 01:10, Wesley Cheng wrote:
+>> Hi Pierre,
+>>
+>> On 8/1/2024 1:40 AM, Pierre-Louis Bossart wrote:
+>>>
+>>>> +static int q6usb_hw_params(struct snd_pcm_substream *substream,
+>>>> +			   struct snd_pcm_hw_params *params,
+>>>> +			   struct snd_soc_dai *dai)
+>>>> +{
+>>>> +	struct q6usb_port_data *data = dev_get_drvdata(dai->dev);
+>>>> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+>>>> +	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
+>>>> +	struct q6afe_port *q6usb_afe;
+>>>> +	struct snd_soc_usb_device *sdev;
+>>>> +	int ret;
+>>>> +
+>>>> +	/* No active chip index */
+>>>> +	if (list_empty(&data->devices))
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	mutex_lock(&data->mutex);
+>>>> +	sdev = list_last_entry(&data->devices, struct snd_soc_usb_device, list);
+>>>> +
+>>>> +	q6usb_afe = q6afe_port_get_from_id(cpu_dai->dev, USB_RX);
+>>>> +	if (IS_ERR(q6usb_afe))
+>>>> +		goto out;
+>>>> +
+>>>> +	/* Notify audio DSP about the devices being offloaded */
+>>>> +	ret = afe_port_send_usb_dev_param(q6usb_afe, sdev->card_idx,
+>>>> +						sdev->pcm_idx);
+>>>> +
+>>>> +out:
+>>>> +	mutex_unlock(&data->mutex);
+>>>> +
+>>>> +	return ret;
+>>>> +}
+>>> Humm, multiple questions here
+>>>
+>>> a) is this intentional that the params are not used in a hw_params routine?
+>> Think this was answered in patch#34.
+> yes, but that really begs the question if the format check shouldn't be
+> added here.
 
-[auto build test ERROR on axboe-block/for-next]
-[also build test ERROR on linus/master v6.11-rc2 next-20240807]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Sure, I'm not against squashing the format check to this patch.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/824731276-qq-com/block-added-printing-when-bio-bi_status-fails/20240807-174005
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-patch link:    https://lore.kernel.org/r/tencent_F71A15579D1E52ED0B58EF2F3607AA883308%40qq.com
-patch subject: [PATCH] block:added printing when bio->bi_status fails
-config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20240808/202408080348.jL0uiVq7-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240808/202408080348.jL0uiVq7-lkp@intel.com/reproduce)
+Thanks
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408080348.jL0uiVq7-lkp@intel.com/
+Wesley Cheng
 
-All errors (new ones prefixed by >>):
-
->> block/bio.c:1620:29: error: no member named 'bi_disk' in 'struct bio'
-    1620 |         if (bio->bi_status && bio->bi_disk)
-         |                               ~~~  ^
-   block/bio.c:1622:36: error: no member named 'bi_disk' in 'struct bio'
-    1622 |                                 __func__, bio->bi_status, bio->bi_disk->major,\
-         |                                                           ~~~  ^
-   include/linux/printk.h:465:60: note: expanded from macro 'printk'
-     465 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                            ^~~~~~~~~~~
-   include/linux/printk.h:437:19: note: expanded from macro 'printk_index_wrap'
-     437 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                                 ^~~~~~~~~~~
-   block/bio.c:1623:10: error: no member named 'bi_disk' in 'struct bio'
-    1623 |                                 bio->bi_disk->first_minor);
-         |                                 ~~~  ^
-   include/linux/printk.h:465:60: note: expanded from macro 'printk'
-     465 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                            ^~~~~~~~~~~
-   include/linux/printk.h:437:19: note: expanded from macro 'printk_index_wrap'
-     437 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                                 ^~~~~~~~~~~
-   3 errors generated.
-
-
-vim +1620 block/bio.c
-
-  1589	
-  1590	/**
-  1591	 * bio_endio - end I/O on a bio
-  1592	 * @bio:	bio
-  1593	 *
-  1594	 * Description:
-  1595	 *   bio_endio() will end I/O on the whole bio. bio_endio() is the preferred
-  1596	 *   way to end I/O on a bio. No one should call bi_end_io() directly on a
-  1597	 *   bio unless they own it and thus know that it has an end_io function.
-  1598	 *
-  1599	 *   bio_endio() can be called several times on a bio that has been chained
-  1600	 *   using bio_chain().  The ->bi_end_io() function will only be called the
-  1601	 *   last time.
-  1602	 **/
-  1603	void bio_endio(struct bio *bio)
-  1604	{
-  1605	again:
-  1606		if (!bio_remaining_done(bio))
-  1607			return;
-  1608		if (!bio_integrity_endio(bio))
-  1609			return;
-  1610	
-  1611		blk_zone_bio_endio(bio);
-  1612	
-  1613		rq_qos_done_bio(bio);
-  1614	
-  1615		if (bio->bi_bdev && bio_flagged(bio, BIO_TRACE_COMPLETION)) {
-  1616			trace_block_bio_complete(bdev_get_queue(bio->bi_bdev), bio);
-  1617			bio_clear_flag(bio, BIO_TRACE_COMPLETION);
-  1618		}
-  1619	
-> 1620		if (bio->bi_status && bio->bi_disk)
-  1621			printk(KERN_ERR "bio: %s status is %d, disk[%d:%d]\n",\
-  1622					__func__, bio->bi_status, bio->bi_disk->major,\
-  1623					bio->bi_disk->first_minor);
-  1624	
-  1625		/*
-  1626		 * Need to have a real endio function for chained bios, otherwise
-  1627		 * various corner cases will break (like stacking block devices that
-  1628		 * save/restore bi_end_io) - however, we want to avoid unbounded
-  1629		 * recursion and blowing the stack. Tail call optimization would
-  1630		 * handle this, but compiling with frame pointers also disables
-  1631		 * gcc's sibling call optimization.
-  1632		 */
-  1633		if (bio->bi_end_io == bio_chain_endio) {
-  1634			bio = __bio_chain_endio(bio);
-  1635			goto again;
-  1636		}
-  1637	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>>> b) if yes, could this be replaced by a .prepare callback
+>>>
+>>> c) along the same lines as b), is suspend-resume during playback
+>>> supported? Usually this is handled with a .prepare callback to restore
+>>> connections.
+>> I don't see us supporting that throughout any of the QC based DAI drivers, so this probably isn't implemented yet.  In terms of supporting system PM suspend for this USB offload path, we're going to explicitly stop the audio stream from the USB offload driver (qc_audio_offload) before we suspend the usb device. (refer to qc_usb_audio_offload_suspend()
+> The system suspend-resume during playback is not enabled in all
+> platforms indeed, it mostly depends on what userspace does. IIRC this is
+> required for Chrome/CRAS and it's supported by aplay.
 
