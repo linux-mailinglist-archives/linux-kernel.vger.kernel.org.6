@@ -1,161 +1,187 @@
-Return-Path: <linux-kernel+bounces-278020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B20B94A983
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:11:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D83C494A984
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E52F1C20C97
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:11:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DEE1280D9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076E53A1C4;
-	Wed,  7 Aug 2024 14:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A051039FFE;
+	Wed,  7 Aug 2024 14:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cTkkFEZi"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oheWyQBM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xSaLPbez"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16692C69B
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3374528399
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723039897; cv=none; b=gAxwpn8vAuWB3OUWaUDjx/K06/uUi9CfkOdiLvoK0Tl8zmuyceLvEUSaXpuyhKIvcti+Ud/vWrz+BwqQ+Njj8r/5//C3BuEPwu8mqGwYpdRc2zmpC7iyj0oVL7DjkT3ezXRyw11CBtTTA+RaRh1ZHVsNaBHxPS0SVn90oR6b4hM=
+	t=1723039914; cv=none; b=rjfuwXA19Bk3cwdBli3AScku8+WM2Eu8/xaeYmZKkRtnrKuNucHflsmYYS9KRPydA9y+thMpKuFwjDAE9sI2RukKsA7g9UYGY6jgGJtCJejKAlzcfdLtmCupj+LLKNCkVzk/xK4r2S7s9dFIB7YI6YxpukMbIlmaS6agNmk22I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723039897; c=relaxed/simple;
-	bh=YGJIzKe9bPUamv33TRtk3adS2klN2aPE5f8iLZyx3ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GtokmIFYTk/3rwvNR+QoKjhDgpdO+Ig2iflAB/3h2Lh1a8gmlta/X6N/26BAyjf+y9GYHoMmrQvbijTOVZEkcBWaKLxWiCDic/0BItQQjV+P9/5fkJ9eGIG52UFtsbLTq3cPFv5miQqDUzuNzh/I+L6bvhgYBIzbzoYrjXn4a40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cTkkFEZi; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70d399da0b5so1494983b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 07:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723039895; x=1723644695; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rimw5Jn9uH+cdYJjb+50EhdPc5GlcLFDSEPep8LTiow=;
-        b=cTkkFEZi4uxgju6ytG/iQaEckyKiSxKaVNDn8Ykixf1w36GISpicieaG1p37ek/DF/
-         oDVjszsmivuTDprnxJFDNmvNj76mYzdFiWGIsqu402DBTNQG1mMFrCwXSsZlLkAv6LC2
-         bmzjoQ/p1/yFy3eiu3tj8iNkzCO19/nve14DBISHMbYiLLkzmImf5VttoW6NSXbKuZt6
-         wWMnB3HBAffz9jAmmdQOgbg9XjMCsLPlgZXFv7R7lMFIzYkaqgzuv7DuJ4A4e4TW7irW
-         e5uoPyRqxkeKEV3l462sG9qNTi7mZQjU2XVcSRe3A2+e9FkgTrxjdjoJ+SxjrxUcaCM5
-         wRoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723039895; x=1723644695;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rimw5Jn9uH+cdYJjb+50EhdPc5GlcLFDSEPep8LTiow=;
-        b=sl/9FVJ9YBIOVfmtc2L126HC1SGEygBDdCdYBqgBuwjgvsxmb2wEHkfacvp7MeRf3a
-         2V7xjUPhfQc8YHEkOBBS32dG2r7T/aNyKLsoSv2IikOBRsvbzjKZGRfil5lEYEhvXtbX
-         J8/IBtXP46F3Zc3jWiXyclweOHGcrx+dFUXWhLpQg4AxaDnFhaZCOtRgcgMqrp0RKkSC
-         tvdf8emRdL1z3vP5r/0twytNaBf2nSLMtaAPQfM3J+RVTSSKG0QD1R8IaZZ03onspaXA
-         bEkAdIvhtg4muS9XM3IbeHGv0jlRg8AFsbYAC5575znh+IyZ5ZDa70aRZDiCCCkLAjAb
-         sXBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGVfD4cuQt3NUMZwr81HPXP/FNIkFOhqXqamXf6ajCRnEWVZCJPnKgpnbKpr5lfGhlAE63unTQg00O0xg73kTwVfkOQurbVC89cjy8
-X-Gm-Message-State: AOJu0Yx3W2lGT5sIIkzr1e3LXSIbbaZuUeO4C+LuZcPr/AjLCH8/xVjZ
-	RYKJj+EcKlYtoO+Pp22mMeZsOZdWjgrS0+OCsVGiSWmnWgOLgxinIgt/w1bJlw==
-X-Google-Smtp-Source: AGHT+IGodAwSN1lMhVJFTLhKee9VbLa7+wzCnQRfzZCvZUvMjJkNY3ENmfDIA5EFtx44ruALqfnj2g==
-X-Received: by 2002:a05:6a20:12cd:b0:1c4:919f:368d with SMTP id adf61e73a8af0-1c69966bacamr27493687637.49.1723039894907;
-        Wed, 07 Aug 2024 07:11:34 -0700 (PDT)
-Received: from thinkpad ([120.60.60.211])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7109d5e0318sm4277892b3a.121.2024.08.07.07.11.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 07:11:34 -0700 (PDT)
-Date: Wed, 7 Aug 2024 19:41:17 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 10/12] PCI: brcmstb: Check return value of all
- reset_control_xxx calls
-Message-ID: <20240807141117.GK3412@thinkpad>
-References: <20240731222831.14895-1-james.quinlan@broadcom.com>
- <20240731222831.14895-11-james.quinlan@broadcom.com>
+	s=arc-20240116; t=1723039914; c=relaxed/simple;
+	bh=vRRU7EOYazizOoY3qdicbHX7zveXmxX8FSHnVkmj9gc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jA62qZNsRAQSEi90F/G9FuUB41/jYunEuU0RU07b1FRoIHGNjtMkdOPqHn9GYwSvL/Rmuf5TEurB9WeEdi8eoa2iJG99nlcnU9pN4wdenWEmjs8lwrNcFUKrCFXYUEdJw8bq2FLGltxfqd+aoYthk3gAyDQms7iAxOdB2OAyiuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oheWyQBM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xSaLPbez; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723039911;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HUYAMeejBq+6dWwULzKkxmmdiZjAXsl6Rcbo+GWpq/g=;
+	b=oheWyQBMIGZ8fgW2TrheSvdEKVvH4heica9j6j6dYMVVwdYiFK5eAlSzWRz/b1E8mH6Gnw
+	zhKzFQ48deHdsnbLQuaSUS9IYIXOW5T7I/yNiW9JFOLRrwTv/eK1KLyGXaHFk6w3h/P/jD
+	X/HzwH7MIBbaz5yBp7bNPviuD/Kx3ZF7mrIhSY4PM2M8iIbbfYsSdlwEBiNlzn+RckR51R
+	OO1B1AbewtKrvUUGmR7XOoTgDAXG4Fo9y2znZtyTSQRG8VVABh8u2p1WiVy6TdIiIiJa0q
+	3Z16wOrdeXrHCZRkSc8sNDp41wvo7gRXIx8xrcPpHG9lRFD5RJn5MgMgw4wrjA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723039911;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HUYAMeejBq+6dWwULzKkxmmdiZjAXsl6Rcbo+GWpq/g=;
+	b=xSaLPbezn9i9PTGio2/ZCJyD5ZI5E/8qZ100L0IVXzByZ1hHCwv4Zv+IxU2PZgt6wfP/YP
+	8zjGKOKnxKi6FtCg==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v7 30/35] printk: Add helper for flush type logic
+In-Reply-To: <ZrNcr5-uZoQnSHii@pathway.suse.cz>
+References: <20240804005138.3722656-1-john.ogness@linutronix.de>
+ <20240804005138.3722656-31-john.ogness@linutronix.de>
+ <ZrNcr5-uZoQnSHii@pathway.suse.cz>
+Date: Wed, 07 Aug 2024 16:17:51 +0206
+Message-ID: <87zfpozal4.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240731222831.14895-11-james.quinlan@broadcom.com>
+Content-Type: text/plain
 
-On Wed, Jul 31, 2024 at 06:28:24PM -0400, Jim Quinlan wrote:
-> Always check the return value for invocations of reset_control_xxx() and
-> propagate the error to the next level.  Although the current functions
-> in reset-brcmstb.c cannot fail, this may someday change.
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+On 2024-08-07, Petr Mladek <pmladek@suse.com> wrote:
+> I would suggest to change the semantic and set the _preferred_
+> flush method instead of an _available_ one.
 
-One comment below. With that addressed,
+I will need to evaluate this closely. I worry that the caller needs to
+understands how the helper function is choosing the preference. For
+example, at the end you make a suggestion that is broken with this
+suggested change.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>> +		if (ft.nbcon_atomic) {
+>> +			stop_seq = prb_next_reserve_seq(prb);
+>> +			goto again;
+>> +		}
+>
+> BTW: I wonder how this code would look like after adding the printk
+>      threads. We should do "goto again" only when ft.nbcon_atomic
+>      is the preferred (only available) flush type for nbcon consoles.
 
-> Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
-> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> ---
->  drivers/pci/controller/pcie-brcmstb.c | 102 ++++++++++++++++++--------
->  1 file changed, 73 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index 0ecca3d9576f..c4ceb1823a79 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
+	if (ft.nbcon_offload) {
+		...
+	} else if (ft.nbcon_atomic) {
+		...
+	}
 
-[...]
+>      IMHO, it is another reason to change the semantic.
 
->  static int pci_dev_may_wakeup(struct pci_dev *dev, void *data)
-> @@ -1478,9 +1514,12 @@ static int brcm_pcie_suspend_noirq(struct device *dev)
->  {
->  	struct brcm_pcie *pcie = dev_get_drvdata(dev);
->  	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(pcie);
-> -	int ret;
-> +	int ret, rret;
-> +
-> +	ret = brcm_pcie_turn_off(pcie);
-> +	if (ret)
-> +		return ret;
->  
-> -	brcm_pcie_turn_off(pcie);
->  	/*
->  	 * If brcm_phy_stop() returns an error, just dev_err(). If we
->  	 * return the error it will cause the suspend to fail and this is a
-> @@ -1509,7 +1548,10 @@ static int brcm_pcie_suspend_noirq(struct device *dev)
->  						     pcie->sr->supplies);
->  			if (ret) {
->  				dev_err(dev, "Could not turn off regulators\n");
-> -				reset_control_reset(pcie->rescal);
-> +				rret = reset_control_reset(pcie->rescal);
-> +				if (rret)
-> +					dev_err(dev, "failed to reset 'rascal' controller ret=%d\n",
-> +						rret);
+The caller does not need to rely on the helper "choosing" the right
+one. I understand your point that: It is easier for the caller when we
+can blindly rely on the helper to choose for us. But I worry that if we
+ever adjust the helper, we might break various call sites that blindly
+rely on the helper making a certain choice. If the helper's job is only
+to say what is possible, then I would worry less for the future when we
+may need to adjust the helper.
 
-I don't think it is really necessary to capture the return value in err path.
-Unable to turn off the regulator itself is fatal, so we could just assert reset
-and hope for the best.
+>> +	printk_get_console_flush_type(&ft);
+>
+> It is a nice trick to call printk_get_console_flush_type() this early.
+> I allows to hack the result when processing the hacky LOGLEVEL_SCHED ;-)
+>
+>> +
+>>  	/* If called from the scheduler, we can not call up(). */
+>>  	if (level == LOGLEVEL_SCHED) {
+>>  		level = LOGLEVEL_DEFAULT;
+>>  		do_trylock_unlock = false;
+>> -		defer_legacy = true;
+>> +	} else {
+>> +		do_trylock_unlock = ft.legacy_direct;
+>>  	}
+>
+> We could hack the @ft structure directly here:
+>
+> 	if (level == LOGLEVEL_SCHED) {
+> 		level = LOGLEVEL_DEFAULT;
+> 		ft.legacy_offload |= ft.legacy_direct;
+> 		ft.legacy_direct = false;
+> 	}
 
-- Mani
+The hack seems a bit complicated to me. Especially when the helper is
+choosing preferred methods. I will think about it.
 
--- 
-மணிவண்ணன் சதாசிவம்
+>> +	if (!cpuhp_tasks_frozen) {
+>> +		printk_get_console_flush_type(&ft);
+>> +		if (ft.legacy_direct) {
+>> +			if (console_trylock())
+>> +				console_unlock();
+>
+> Why do we actually call only the legacy loop here?
+> IMHO, we should also do
+>
+> 	if (ft.nbcon_atomic)
+>  		nbcon_atomic_flush_pending();
+
+Atomic consoles do not care if a CPU was online or not. I can add this,
+but I expect there is nothing for the atomic console to flush. And when
+threading is added, we would need the extra code to avoid atomic
+flushing:
+
+	if (!ft.nbcon_offload && ft.nbcon_atomic)                
+		nbcon_atomic_flush_pending();
+
+>> @@ -3327,7 +3316,8 @@ void console_flush_on_panic(enum con_flush_mode mode)
+>>  	if (mode == CONSOLE_REPLAY_ALL)
+>>  		__console_rewind_all();
+>>  
+>> -	if (!have_boot_console)
+>> +	printk_get_console_flush_type(&ft);
+>> +	if (ft.nbcon_atomic)
+>>  		nbcon_atomic_flush_pending();
+>
+> I would use "ft.legacy_direct" also below for the decision about
+> the legacy loop:
+>
+> -	if (legacy_allow_panic_sync)
+> +	if (ft.legacy_direct)
+> 		console_flush_all(false, &next_seq, &handover);
+
+No, because it would mean the console is not flushed if the CPU is in
+the deferred state. That is why I added an extra comment in the helper
+saying that console_flush_on_panic() will _always_ flush directly.
+
+I thought about adding that extra logic into the helper, but it really
+isn't possible. @legacy_allow_panic_sync does not matter if there are no
+nbcon consoles. So somehow the helper would need to know that CPU is in
+the deferred state, but now it is allowed to do direct printing.
+
+So it seemed more straight forward to have console_flush_on_panic() not
+care about what is allowed (for legacy). It is going to flush directly
+no matter what.
+
+I will reconsider your suggestions about the helper and also compare the
+end result at the call sites (also with threading changes applied) to
+see what looks simpler to maintain.
+
+John
 
