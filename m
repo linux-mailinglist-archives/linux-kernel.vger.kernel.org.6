@@ -1,137 +1,243 @@
-Return-Path: <linux-kernel+bounces-278384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA9694AF90
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:21:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F6D94AF95
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79CC4B24945
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:21:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80DB11F2292A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7D713E02E;
-	Wed,  7 Aug 2024 18:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5308762DF;
+	Wed,  7 Aug 2024 18:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o8In/KR9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q/AR+8Gw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U40SNU4Z"
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33AD762DF
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229772C6BB;
+	Wed,  7 Aug 2024 18:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723054872; cv=none; b=mFtloGOUg1plXl6AwkGS5bhpzRHg66fWTkCos/z6XRkP1ExHM9qrmVk+eDF+t7jkAkftyB5TLzqXt6ifCIzz4ATa1JW1hxBbTLZJderNJaXFwlspOp7rP/wqcN4racltKsRLIQNmeuoJcjnSGToE0+gOf26kkFfRF+AcYCbMuPg=
+	t=1723054927; cv=none; b=df96uIvZbABgHPYwnYT+IqaqsVLG8Sno5yB+TqJiADfRHbDbTyIcy47kwgMrGtWHem/J3QI0oZN+frqfAiXF1R9hDHk6CJahMnw9q6Du+AkEX/g0QrmxUxvMExxvH0HbWyqSUe790/57VupZXa85aAC40gPV6NmYmbS+SmObww8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723054872; c=relaxed/simple;
-	bh=FD9Tpd1iL3F0FAsGJjkeeLcfZM9a1xLxGOk1VpxfNvI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=D05GpgGsoxzFeVZ6F6ysJTYn1nV5t3juH3MoHDjGoihmNph9kJGTPQ+QQEs0gN7NAWyM78ne21G11uXzKdBQHGwlKdLRKbCP5OUAw2h35vCCqfMl682h0KJfRFlfv3STEU5+rrdFP+IuiEqQGTF3dnnrDx/U3qcQ6wMXaWMOzjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o8In/KR9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q/AR+8Gw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723054868;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2HrLmZ9XeHOhUS8WYo0E0BBl1AsID+YPzMkVyxdWeqc=;
-	b=o8In/KR9wW9IGRyuBxLNV4pqUidRxrRczrg2XlNey/cWD47peE21R7cr9CNuI0hVqzsfb4
-	HUV/hEl8eG/zzHkShAOQ6fzCktsimR5QEN9utvbC8C2JXb/i64zGBvk1SlGIKf2pdj/+ql
-	gd3o7sgJPzRLKmrJV3brNU7c/nQ5YkXnq62V8bTic0013zABO3DZFAq21b9mp3l3DDLvaM
-	qT7QM4Fu2QoxtSL0g/PuTbWw6hoPapyaGuC+4kV7B2MfPZi3s3ycnMpboZw4obvlKx4mpZ
-	Ud58UoIlGUSOTUa+K1/vVyT+E6h9HM4XgR7DBiAiZI3AlEj0WXkkO8p/9K9M2A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723054868;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2HrLmZ9XeHOhUS8WYo0E0BBl1AsID+YPzMkVyxdWeqc=;
-	b=q/AR+8GwWpPjpOxD5eYfL1QahX2Nrc3iyA71yGYklpQhkI1QVAXPmm7FGSZiq4aWDvwuv0
-	ndzimejTo/WWiYCg==
-To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org
-Cc: mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- x86@kernel.org, hpa@zytor.com, peterz@infradead.org,
- andrew.cooper3@citrix.com, seanjc@google.com
-Subject: Re: [PATCH v1 1/3] x86/entry: Test ti_work for zero before
- processing individual bits
-In-Reply-To: <874j7w2oju.ffs@tglx>
-References: <20240807054722.682375-1-xin@zytor.com>
- <20240807054722.682375-2-xin@zytor.com> <874j7w2oju.ffs@tglx>
-Date: Wed, 07 Aug 2024 20:21:08 +0200
-Message-ID: <87v80c19ez.ffs@tglx>
+	s=arc-20240116; t=1723054927; c=relaxed/simple;
+	bh=fDfcFdmakI++BkXYuEP/btbJ62BTnOOKW0jQ+rr4vxo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t7dovMEJqFRA3fnAwl61fRJoVdtWZ6S0C8HNWx2xwAbA1WziBPo/kf3kCHTBoo3xbKJO6Wyyg9Tebg8M0dNBpWSqvhc4Ffs2C8efiqU3EhvoTMzwbYu4pTMkOSlH91OM3ROyL7q9yBkjYBjcCjVn1KO1E8qYOaMSzclSS+PG8Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U40SNU4Z; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-492959b906eso57284137.0;
+        Wed, 07 Aug 2024 11:22:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723054925; x=1723659725; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YiD65ALE8vSuJ/TYiGjXSUpB/Z9nRB8hNQrAdGVuTNM=;
+        b=U40SNU4ZNy6fs6pxRMcWZS3ZcoKvlG/bLE9Cc8yPPRH96oIZ3GCnSxGc20r9+chZgr
+         DoZhUnKETNM2Nx4WVLbQwvondbkabhdOSv0U7vVEM09JDoN856WsoNpSvm30yOBBQaqZ
+         P5Yw5ifv07IqabsVk0QiQrzkIDjhoJHp3gquyrnY4SBKybyPKekQA8L3DNtAEuX++b0I
+         tI/h9hdzdi4I7uLzBn8iba/BQnwzCGPchHqYFI+wDV5rTaMbL21SXtRMuwgtP4Fc2+bL
+         GMcEv77paQLdh5VYe839Jdo2LKbd1Zq7DHQ532kqiGw0s2/BYRNfXpfZRyjMp8fgrr3R
+         kA1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723054925; x=1723659725;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YiD65ALE8vSuJ/TYiGjXSUpB/Z9nRB8hNQrAdGVuTNM=;
+        b=kZi826eQrI8M4JxFoP0/hSSYZU3vwNkc6uDrG7zfJwISMAHWM/0ZedUh1h3ySs+vEf
+         9QUOD4DgIlnDjs6vl6l19FZ4FV4+urQ1VTZKZ0OgIluIo2ZCL+NwRK3EioDZL4+kZDrg
+         c5CFmboiFvPCD0rO5sJDldh984IffLNpQx9Zj5BDhTvqyVoO9AWCkHnRTDuhFRdzetDE
+         tlhXBz0yNchveJqkYp8/oPzEgkIv+5EBsbJsgPZv3xNFSjshRKXUCI9K69iS+Ns2yj+I
+         a6EHFJxFGQHfWWfU/4X+RwJriIfeQrnmyegaEahD4Fu7jbDqIlAkND7UUYdn+6oOwmaQ
+         X2eA==
+X-Forwarded-Encrypted: i=1; AJvYcCVerB5AupnAv9lPozowuDlkpk3kS+ZBIns1xpmLTqz451K5gXVAw8wttGS+bMuiQJIAogFWMrmFZGd0Y7KFv0jwJDeZuewU5jZXZs2s
+X-Gm-Message-State: AOJu0YzTOhfA2cUD/kE6LFh8BIpfvqA9ub1u9zKcQKXgdMGGj8yFrRDQ
+	CbUNaHYhb1Fh0vHMAShIIMGqzRY+mtL3eaWGEWwCqGOtntOweNt/XiB79EW7F/Vgey09wpIHS0x
+	jnSQCGv1MghAg4NLsgLr/MOvlPexisKNSq58=
+X-Google-Smtp-Source: AGHT+IF+J5Zq7SgYt7XYbQ2oOHbhfYqZksxMQWoCSQ7rhmm9huPiKHpPgRelTV3bZdIXPOJzmMs2DkgqaKhPVbX6vTU=
+X-Received: by 2002:a05:6102:6d1:b0:492:a11f:a87a with SMTP id
+ ada2fe7eead31-4945bf055d5mr23227164137.25.1723054924882; Wed, 07 Aug 2024
+ 11:22:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <c0967665-343d-4ca9-90a0-a072159c1056@leemhuis.info> <ZrOwPx+jhEM+sJFM@nandaa-linux-dev.lp3xo4ddmz1ulowbk5mwlke0vc.bx.internal.cloudapp.net>
+In-Reply-To: <ZrOwPx+jhEM+sJFM@nandaa-linux-dev.lp3xo4ddmz1ulowbk5mwlke0vc.bx.internal.cloudapp.net>
+From: Anthony Nandaa <profnandaa@gmail.com>
+Date: Wed, 7 Aug 2024 21:21:53 +0300
+Message-ID: <CAACuyFWCsnYQvqsz9ZuCCkxZ9hPC_BjSLF_mDj_0aPwmXqj3_g@mail.gmail.com>
+Subject: Re: [regression] smb: client: - Failure to mount DFS namespaces
+ without ASCII symbols
+To: Linux regressions mailing list <regressions@lists.linux.dev>, smfrench@gmail.com, 
+	Paulo Alcantara <pc@manguebit.com>
+Cc: linux-cifs@vger.kernel.org, gkorobeynikov@astralinux.ru, 
+	linux-kernel@vger.kernel.org, annandaa@linux.microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 07 2024 at 20:08, Thomas Gleixner wrote:
-> On Tue, Aug 06 2024 at 22:47, Xin Li wrote:
->> In most cases, ti_work values passed to arch_exit_to_user_mode_prepare()
->> are zeros, e.g., 99% in kernel build tests.  So an obvious optimization
->> is to test ti_work for zero before processing individual bits in it.
->>
->> In addition, Intel 0day tests find no perf regression with this change.
->>
->> Suggested-by: H. Peter Anvin (Intel) <hpa@zytor.com>
->> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
->> ---
->>  arch/x86/include/asm/entry-common.h | 16 +++++++++-------
->>  1 file changed, 9 insertions(+), 7 deletions(-)
->>
->> diff --git a/arch/x86/include/asm/entry-common.h b/arch/x86/include/asm/entry-common.h
->> index fb2809b20b0a..4c78b99060b5 100644
->> --- a/arch/x86/include/asm/entry-common.h
->> +++ b/arch/x86/include/asm/entry-common.h
->> @@ -47,15 +47,17 @@ static __always_inline void arch_enter_from_user_mode(struct pt_regs *regs)
->>  static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
->>  						  unsigned long ti_work)
->>  {
->> -	if (ti_work & _TIF_USER_RETURN_NOTIFY)
->> -		fire_user_return_notifiers();
->> +	if (unlikely(ti_work)) {
->> +		if (ti_work & _TIF_USER_RETURN_NOTIFY)
->> +			fire_user_return_notifiers();
->>  
->> -	if (unlikely(ti_work & _TIF_IO_BITMAP))
->> -		tss_update_io_bitmap();
->> +		if (unlikely(ti_work & _TIF_IO_BITMAP))
->> +			tss_update_io_bitmap();
->>  
->> -	fpregs_assert_state_consistent();
+On Wed, 7 Aug 2024 at 20:34, Anthony Nandaa <profnandaa@gmail.com> wrote:
 >
-> Please keep this unconditional and independent of ti_work. It's a debug
-> feature and you kill coverage with making it conditional on ti_work.
+> On Fri, Aug 02, 2024 at 11:44:18AM +0200, Linux regression tracking (Thor=
+sten Leemhuis) wrote:
+> > Hi, Thorsten here, the Linux kernel's regression tracker.
+> >
+> > Paulo, I noticed a report about a regression in bugzilla.kernel.org tha=
+t
+> > appears to be caused by this change of yours:
+> >
+> > 3ae872de410751 ("smb: client: fix shared DFS root mounts with different
+> > prefixes") [v6.5-rc1]
+> >
+> > As many (most?) kernel developers don't keep an eye on the bug tracker,
+> > I decided to write this mail. To quote from
+> > https://bugzilla.kernel.org/show_bug.cgi?id=3D219083 :
+> >
+> > >  Gleb Korobeynikov 2024-07-22 10:59:46 UTC
+> > >
+> > > Windows version of SMB host: Windows Server 2022 Standard x64
+> > > Kernel: 6.3.13(upstream)
+> ~~~~~~~~~~~~^~~~ Testing with same WS2022 host with 6.11.0-rc1+
+>
+> > > CONFIG_CIFS_DFS_UPCALL
+> > >
+> > > In the function cifs_inval_name_dfs_link_error(), a check was added f=
+or tcon->origin_fullpath (3ae872de410751fe5e629e04da491a632d95201c). I beli=
+eve it's unnecessary because when mounting a dfs name without ASCII charact=
+ers, we always fail at this check and exit the function, leading to dfs nam=
+espaces not being mounted
+> > >
+> > > Steps to reproduce:
+> > >
+> > > 1. At Windows, create DFS namespace with name containing non-ASCII sy=
+mbols (for example =D0=B4=D1=84=D1=81)
+> > >
+> > > 2. mount -t cifs \\\\<smb_server>\\=D0=B4=D1=84=D1=81  /tmp/dfs -o do=
+main=3D...,user=3D...,password=3D...
+> > >
+> > > result:
+> > > mount error(2): No such file or directory
+> > > Refer to the mount.cifs(8) manual page (e.g. man mount.cifs) and kern=
+el log messages (dmesg)
+> > >
+> I couldn't repro this issue.
+> I rebuilt the cifs modules both on master and in the recent
+> for-next@cecb49e3594c2a69163865c214b71fff26d5761d sources:
+>
+>         $ sudo mount -t cifs //WIN-31GSG2M9E6N/=D0=B4=D1=84=D1=81 /mnt/ut=
+f_repro -o `
+>                 username=3Dadministrator,password=3Dxxx
+>         $ ls -l /mnt/utf_repro
+>         total 0
+>         -rwxr-xr-x 1 root root 0 Aug  7 15:54 hello_cifs.txt
+>         drwxr-xr-x 2 root root 0 Aug  7 15:54 test_utf8_=D0=B4=D1=84=D1=
+=81
+>
+>         // nothing outstanding in dmesg
+>         [430885.246220] CIFS: Attempting to mount //WIN-31GSG2M9E6N/=D0=
+=B4=D1=84=D1=81
+>
+> Is there anything I might be missing?
+My bad, I wasn't creating a DFS namespace, it was just a share.
 
-Also spare the extra indentation level and do:
+I have also seen the recent updates on
+https://bugzilla.kernel.org/show_bug.cgi?id=3D219083
+I had missed that.
+>
+> > > CIFS debug log:
+> > > [Mon Jul 22 11:00:24 2024] CIFS: Status code returned 0xc0000033 STAT=
+US_OBJECT_NAME_INVALID
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2maperror.c: Mappin=
+g SMB2 status code 0xc0000033 to POSIX err -2
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/dfs_cache.c: dfs_cache=
+_noreq_update_tgthint: path: \test.local\=D0=B4=D1=84=D1=81
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_=
+smb_ses: ses_count=3D2
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_=
+smb_ses: ses ipc: \\test.local\IPC$
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: cifs_put_tc=
+on: tc_count=3D1
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: in cif=
+s_put_tcon as Xid: 17 with uid: 0
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2pdu.c: Tree Discon=
+nect
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/fscache.c: cifs_fscach=
+e_release_super_cookie: (0x0000000000000000)
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_=
+smb_ses: ses_count=3D1
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_=
+smb_ses: ses ipc: \\DC.test.local\IPC$
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: in __c=
+ifs_put_smb_ses as Xid: 18 with uid: 0
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2pdu.c: disconnect =
+session 00000000360c6881
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_=
+smb_ses: ses_count=3D1
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_=
+smb_ses: ses ipc: \\test.local\IPC$
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: in __c=
+ifs_put_smb_ses as Xid: 19 with uid: 0
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2pdu.c: disconnect =
+session 00000000db1ddbb6
+> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: leavin=
+g cifs_mount_put_conns (xid =3D 13) rc =3D 0
+> > > [Mon Jul 22 11:00:24 2024] CIFS: VFS: cifs_mount failed w/return code=
+ =3D -2
+> >
+> > And
+> >
+> > >  Gleb Korobeynikov 2024-07-30 11:03:01 UTC
+> > >
+> > > (In reply to Gleb Korobeynikov from comment #5)
+> > >> (In reply to The Linux kernel's regression tracker (Thorsten Leemhui=
+s) from
+> > >> comment #4)
+> > >> > Please check if 6.10 (or 6.11-rc1 once it's out on Monday) is stil=
+l
+> > >> affected
+> > >>
+> > >> Alright, I will definitely check
+> > >
+> > > Checked on 6.11-rc1. The reproduction issue happens identically.
+> >
+> > See the ticket for more details.
+> >
+> > Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat=
+)
+> > --
+> > Everything you wanna know about Linux kernel regression tracking:
+> > https://linux-regtracking.leemhuis.info/about/#tldr
+> > If I did something stupid, please tell me, as explained on that page.
+> >
+> > [1] because bugzilla.kernel.org tells users upon registration their
+> > "email address will never be displayed to logged out users"
+> >
+> > P.S.: let me use this mail to also add the report to the list of tracke=
+d
+> > regressions to ensure it's doesn't fall through the cracks:
+> >
+> > #regzbot introduced: 3ae872de410751fe5e629e04da491a632d95201c
+> > #regzbot title: smb: client: failure to mount DFS namespaces without
+> > ASCII symbols
+> > #regzbot from: Gleb Korobeynikov <gkorobeynikov@astralinux.ru>
+> > #regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=3D21908=
+3
+> > #regzbot ignore-activity
+> >
+> Thanks,
+> Nandaa
+>
 
-static inline void arch_exit_work(unsigned long ti_work)
-{
-	if (ti_work & _TIF_USER_RETURN_NOTIFY)
-		fire_user_return_notifiers();
 
-	if (unlikely(ti_work & _TIF_IO_BITMAP))
-		tss_update_io_bitmap();
-
-	fpregs_assert_state_consistent();
-	if (unlikely(ti_work & _TIF_NEED_FPU_LOAD))
-		switch_fpu_return();
-}
-
-static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
-						  unsigned long ti_work)
-{
-	if (IS_ENABLED(CONFIG_X86_DEBUG_FPU) || unlikely(ti_work))
-		arch_exit_work(ti_work);
-        ...
-
-Thanks,
-
-        tglx
-
+--=20
+___
+Nandaa Anthony
 
