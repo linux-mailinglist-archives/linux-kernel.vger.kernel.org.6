@@ -1,106 +1,345 @@
-Return-Path: <linux-kernel+bounces-277920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFAAC94A827
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:58:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5440194A829
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FFA1B23AC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:58:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 047AB281F64
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7F51E6757;
-	Wed,  7 Aug 2024 12:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LBRvgArY"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3648F1E6746
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 12:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898CA1E674A;
+	Wed,  7 Aug 2024 12:59:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4F31E6743
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 12:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723035474; cv=none; b=YKyKwqFZDdWPHQum8u/IqODOnG6PTPEcyyGegpzLZ5AmhY4zRa48eLdtq11Tz8nZP8G/JeHopxwh0IDVcJoF14AU7VARdr3ftor+HDRLw5uiztEteLQ5nJrhOtRqQBYumUy0qeA2L30pj07OVXSPL04fNf3Gn9h1xddekJ7MO8c=
+	t=1723035556; cv=none; b=L39hb7Kuwk54/Yta4W+2MzCqJnN8aRBGZCz5Aar+3sPvInojKq77BGKPkbECUVP9TkSnwPUlidh/RTHhV9Gsrp6JYQvtrV0h5fcUCOHAQ4TJQXk9DXSfw+WvCX6DL9r1XFWLRdRecCHVc6iBfpLoHVdnUsayJWTvnrwo6HL53UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723035474; c=relaxed/simple;
-	bh=/P12avlELoAnmeKYyR7lb8YFhV1itf6ofxKiFjh29iE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gb56q0xzpuaTRSTWZ7j/rFCeAwlMK25iKxZXmT2oAol65/TbtM3PeRkDWs4eCZ41YLvvtQKM8afQ5PHyVi6KhYm5f4gLjyEPs/M03rAJEQi7jsu97L+3mktSA3MIRgJiYv6svseTyZaU0dGUgNIl+zpcbAD0DOAbzrtQtrsmNVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LBRvgArY; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3685b9c8998so1000713f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 05:57:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723035470; x=1723640270; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=upBTovYLTSLt9PmBzvvo1SLOl10UeXbfEGJHZrAuBGk=;
-        b=LBRvgArY1LcT/818gMwkkzgIA6A/CmeSJwVc5c3JgFa/oaHXTQAvxr/R1AYRszCvZ3
-         EREPGDR51f6IWbgthBTafuc0DYAw5WrDZomFES3l9NSfG8GMwzDw3/P/J+Z5jsvYwYQX
-         El30mK0wo3qzrbetUyq3EDZQcqvhnai3I5qUwcWK4EzeWQ0K1Avylown/XodS09kE8I3
-         tBDQHLEmehNU26fGvte8lu+FNHrfMSrc8HAv12XM4sBMh6ztT1wzWWEx4Z7xenV9UV6b
-         Z3YtkVy/7Qscp3UqrzBgzOoPCx9laczovqOvwXD1qwG7LOdFm6rYTgeMHgjlGJOmDxJU
-         zykg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723035470; x=1723640270;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=upBTovYLTSLt9PmBzvvo1SLOl10UeXbfEGJHZrAuBGk=;
-        b=RhbuiU/M2gzv3XsX9j7TZt2M1CUzFsLEXfjGP84YPJLTVFadF30kGSFVgnnYoZRz87
-         mRYpxjNuxapqDCxCaLaXkGTJ3b+RrfZI+yOzy9h9QmBxzyAyzyUM1G9gvmMgdm+jdcZQ
-         Rl4Fw3jF4xoShWbJDWeBZoCXdolTckQUp3c9i2+/z9/PQ1hWUmNEiCCrqFwIPNzSfnQl
-         kMs5PnpVwMEVpspq/RzHu/IR84BWgbMG5pF4r9PmSsEK169I0RVpsYm0fDLBLLpyDPBO
-         wIOYIT4NsEtLrRR0ik4ojD7KUdIepGdgrTeZ8heHR7/Rbno+4XUhaPiA9XfTwWlqDHzp
-         0h1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWtCcybi3dGRx2z4S1e5eK47ptou05FiSF/jevXYTtvIPnMdOEtPn+gPpmmlBOhh5d7qIk3K+HaYaLRqy0grmI4Av4+GjxVvIc/UlFa
-X-Gm-Message-State: AOJu0YwndAxpuCN/QxKDVLxSZoyweX7KRyA2siBW+G5tHMrtz+EfoOgk
-	NmROo3oRNCAfN0rQKflJAqZdFHWeDU3jPBylAVmf3YsDhtv/Iv092/oX9D1EhQ4=
-X-Google-Smtp-Source: AGHT+IEXCPBxskdc7xhLEWtu0Cahqx5SyI1yo58U8XJgoPCwXbriMJ41jBv68bBujcy87mECBIFxog==
-X-Received: by 2002:a5d:5f85:0:b0:367:998a:87b3 with SMTP id ffacd0b85a97d-36bbc11bb33mr15758703f8f.28.1723035470377;
-        Wed, 07 Aug 2024 05:57:50 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbcf0cc8esm15818874f8f.19.2024.08.07.05.57.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 05:57:49 -0700 (PDT)
-Date: Wed, 7 Aug 2024 07:57:45 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: willy@infradead.org, srinivas.kandagatla@linaro.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] ida: Remove the ida_simple_xxx() API
-Message-ID: <01487902-4dcf-455e-9530-c04157aa8090@suswa.mountain>
-References: <cover.1722853349.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1723035556; c=relaxed/simple;
+	bh=TQRlFAD598VCe2i8znK8gaW/ldxNHgzbZJWfF1D5cQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i37PYdkhCSI/I2DqBXPugC1BBeJ/LR5R6VNoF11ijTyzbDX5ascEtuAzZCt8DD31R5Ta2/l373XaX/WN2VwapFhOF12ktEsPUoixIbHEk54f4NcMz7WFYejDijApmqwl+rFYYKYdYFdK31335p/pyow4TdDEzkmlLkBelvPt5vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27116FEC;
+	Wed,  7 Aug 2024 05:59:39 -0700 (PDT)
+Received: from [10.162.40.30] (e116581.arm.com [10.162.40.30])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DDCE3F5A1;
+	Wed,  7 Aug 2024 05:59:04 -0700 (PDT)
+Message-ID: <8158c9d6-cbfe-4767-be8e-dc227b29200c@arm.com>
+Date: Wed, 7 Aug 2024 18:28:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1722853349.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Race condition observed between page migration and page fault
+ handling on arm64 machines
+To: David Hildenbrand <david@redhat.com>, Will Deacon <will@kernel.org>
+Cc: akpm@linux-foundation.org, willy@infradead.org, ryan.roberts@arm.com,
+ anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
+ vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com, osalvador@suse.de,
+ baolin.wang@linux.alibaba.com, dave.hansen@linux.intel.com,
+ baohua@kernel.org, ioworker0@gmail.com, gshan@redhat.com,
+ mark.rutland@arm.com, kirill.shutemov@linux.intel.com, hughd@google.com,
+ aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
+ broonie@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, mgorman@techsingularity.net
+References: <20240801081657.1386743-1-dev.jain@arm.com>
+ <3b82e195-5871-4880-9ce5-d01bb751f471@redhat.com>
+ <bbe411f2-4c68-4f92-af8c-da184669dca8@arm.com>
+ <a6a38ad5-c754-44ad-a64b-f9ea5b764291@redhat.com>
+ <92df0ee1-d3c9-41e2-834c-284127ae2c4c@arm.com>
+ <19902a48-c59b-4e3b-afc5-e792506c2fd6@redhat.com>
+ <6486a2b1-45ef-44b6-bd84-d402fc121373@redhat.com>
+ <20240801134358.GB4794@willie-the-truck>
+ <9359caf7-81a8-45d9-9787-9009b3b2eed3@redhat.com>
+ <f8d21caa-7a82-4761-8a78-d928ae8d0f24@arm.com>
+ <418e818a-f385-459e-a84d-e3880ac08ad5@redhat.com>
+ <cf8dc1c6-948a-42e7-8aef-c6183ca6cac0@arm.com>
+ <a8c813b5-abce-48cf-9d14-2f969d6c8180@redhat.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <a8c813b5-abce-48cf-9d14-2f969d6c8180@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 05, 2024 at 12:29:46PM +0200, Christophe JAILLET wrote:
-> This is the final steps to remove the ida_simple_xxx() API.
-> 
-> Patch 1 updates the test suite. This is the last users of the API.
-> 
-> Patch 2 removes the old API.
-> 
-> Patch 3 is just a minor clean-up that still speak about the old API.
-> 
-> Christophe JAILLET (3):
->   idr test suite: Remove usage of the deprecated ida_simple_xx() API
->   ida: Remove the ida_simple_xxx() API
->   nvmem: Update a comment related to struct nvmem_config
 
-Congrats.  :)
+On 8/7/24 17:09, David Hildenbrand wrote:
+> On 05.08.24 16:14, Dev Jain wrote:
+>>
+>> On 8/5/24 16:16, David Hildenbrand wrote:
+>>> On 05.08.24 11:51, Dev Jain wrote:
+>>>>
+>>>> On 8/1/24 19:18, David Hildenbrand wrote:
+>>>>> On 01.08.24 15:43, Will Deacon wrote:
+>>>>>> On Thu, Aug 01, 2024 at 03:26:57PM +0200, David Hildenbrand wrote:
+>>>>>>> On 01.08.24 15:13, David Hildenbrand wrote:
+>>>>>>>>>>> To dampen the tradeoff, we could do this in shmem_fault()
+>>>>>>>>>>> instead? But
+>>>>>>>>>>> then, this would mean that we do this in all
+>>>>>>>>>>>
+>>>>>>>>>>> kinds of vma->vm_ops->fault, only when we discover another
+>>>>>>>>>>> reference
+>>>>>>>>>>> count race condition :) Doing this in do_fault()
+>>>>>>>>>>>
+>>>>>>>>>>> should solve this once and for all. In fact, do_pte_missing()
+>>>>>>>>>>> may call
+>>>>>>>>>>> do_anonymous_page() or do_fault(), and I just
+>>>>>>>>>>>
+>>>>>>>>>>> noticed that the former already checks this using
+>>>>>>>>>>> vmf_pte_changed().
+>>>>>>>>>>
+>>>>>>>>>> What I am still missing is why this is (a) arm64 only; and 
+>>>>>>>>>> (b) if
+>>>>>>>>>> this
+>>>>>>>>>> is something we should really worry about. There are other 
+>>>>>>>>>> reasons
+>>>>>>>>>> (e.g., speculative references) why migration could temporarily
+>>>>>>>>>> fail,
+>>>>>>>>>> does it happen that often that it is really something we have to
+>>>>>>>>>> worry
+>>>>>>>>>> about?
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> (a) See discussion at [1]; I guess it passes on x86, which is 
+>>>>>>>>> quite
+>>>>>>>>> strange since the race is clearly arch-independent.
+>>>>>>>>
+>>>>>>>> Yes, I think this is what we have to understand. Is the race 
+>>>>>>>> simply
+>>>>>>>> less
+>>>>>>>> likely to trigger on x86?
+>>>>>>>>
+>>>>>>>> I would assume that it would trigger on any arch.
+>>>>>>>>
+>>>>>>>> I just ran it on a x86 VM with 2 NUMA nodes and it also seems to
+>>>>>>>> work here.
+>>>>>>>>
+>>>>>>>> Is this maybe related to deferred flushing? Such that the other 
+>>>>>>>> CPU
+>>>>>>>> will
+>>>>>>>> by accident just observe the !pte_none a little less likely?
+>>>>>>>>
+>>>>>>>> But arm64 also usually defers flushes, right? At least unless
+>>>>>>>> ARM64_WORKAROUND_REPEAT_TLBI is around. With that we never do
+>>>>>>>> deferred
+>>>>>>>> flushes.
+>>>>>>>
+>>>>>>> Bingo!
+>>>>>>>
+>>>>>>> diff --git a/mm/rmap.c b/mm/rmap.c
+>>>>>>> index e51ed44f8b53..ce94b810586b 100644
+>>>>>>> --- a/mm/rmap.c
+>>>>>>> +++ b/mm/rmap.c
+>>>>>>> @@ -718,10 +718,7 @@ static void set_tlb_ubc_flush_pending(struct
+>>>>>>> mm_struct
+>>>>>>> *mm, pte_t pteval,
+>>>>>>>      */
+>>>>>>>     static bool should_defer_flush(struct mm_struct *mm, enum
+>>>>>>> ttu_flags flags)
+>>>>>>>     {
+>>>>>>> -       if (!(flags & TTU_BATCH_FLUSH))
+>>>>>>> -               return false;
+>>>>>>> -
+>>>>>>> -       return arch_tlbbatch_should_defer(mm);
+>>>>>>> +       return false;
+>>>>>>>     }
+>>>>>>>
+>>>>>>>
+>>>>>>> On x86:
+>>>>>>>
+>>>>>>> # ./migration
+>>>>>>> TAP version 13
+>>>>>>> 1..1
+>>>>>>> # Starting 1 tests from 1 test cases.
+>>>>>>> #  RUN           migration.shared_anon ...
+>>>>>>> Didn't migrate 1 pages
+>>>>>>> # migration.c:170:shared_anon:Expected migrate(ptr, self->n1,
+>>>>>>> self->n2) (-2)
+>>>>>>> == 0 (0)
+>>>>>>> # shared_anon: Test terminated by assertion
+>>>>>>> #          FAIL  migration.shared_anon
+>>>>>>> not ok 1 migration.shared_anon
+>>>>>>>
+>>>>>>>
+>>>>>>> It fails all of the time!
+>>>>>>
+>>>>>> Nice work! I suppose that makes sense as, with the eager TLB
+>>>>>> invalidation, the window between the other CPU faulting and the
+>>>>>> migration entry being written is fairly wide.
+>>>>>>
+>>>>>> Not sure about a fix though :/ It feels a bit overkill to add a new
+>>>>>> invalid pte encoding just for this.
+>>>>>
+>>>>> Something like that might make the test happy in most cases:
+>>>>>
+>>>>> diff --git a/tools/testing/selftests/mm/migration.c
+>>>>> b/tools/testing/selftests/mm/migration.c
+>>>>> index 6908569ef406..4c18bfc13b94 100644
+>>>>> --- a/tools/testing/selftests/mm/migration.c
+>>>>> +++ b/tools/testing/selftests/mm/migration.c
+>>>>> @@ -65,6 +65,7 @@ int migrate(uint64_t *ptr, int n1, int n2)
+>>>>>           int ret, tmp;
+>>>>>           int status = 0;
+>>>>>           struct timespec ts1, ts2;
+>>>>> +       int errors = 0;
+>>>>>
+>>>>>           if (clock_gettime(CLOCK_MONOTONIC, &ts1))
+>>>>>                   return -1;
+>>>>> @@ -79,12 +80,17 @@ int migrate(uint64_t *ptr, int n1, int n2)
+>>>>>                   ret = move_pages(0, 1, (void **) &ptr, &n2, 
+>>>>> &status,
+>>>>>                                   MPOL_MF_MOVE_ALL);
+>>>>>                   if (ret) {
+>>>>> -                       if (ret > 0)
+>>>>> +                       if (ret > 0) {
+>>>>> +                               if (++errors < 100)
+>>>>> +                                       continue;
+>>>>>                                   printf("Didn't migrate %d pages\n",
+>>>>> ret);
+>>>>> -                       else
+>>>>> +                       } else {
+>>>>>                                   perror("Couldn't migrate pages");
+>>>>> +                       }
+>>>>>                           return -2;
+>>>>>                   }
+>>>>> +               /* Progress! */
+>>>>> +               errors = 0;
+>>>>>
+>>>>>                   tmp = n2;
+>>>>>                   n2 = n1;
+>>>>>
+>>>>>
+>>>>> [root@localhost mm]# ./migration
+>>>>> TAP version 13
+>>>>> 1..1
+>>>>> # Starting 1 tests from 1 test cases.
+>>>>> #  RUN           migration.shared_anon ...
+>>>>> #            OK  migration.shared_anon
+>>>>> ok 1 migration.shared_anon
+>>>>> # PASSED: 1 / 1 tests passed.
+>>>>> # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
+>>>>
+>>>>
+>>>> This does make the test pass, to my surprise, since what you are doing
+>>>> from userspace
+>>>>
+>>>> should have been done by the kernel, because it retries folio 
+>>>> unmapping
+>>>> and moving
+>>>>
+>>>> NR_MAX_MIGRATE_(A)SYNC_RETRY times; I had already tested pumping up
+>>>> these
+>>>>
+>>>> macros and the original test was still failing. Now, I digged in more,
+>>>> and, if the
+>>>>
+>>>> following assertion is correct:
+>>>>
+>>>>
+>>>> Any thread having a reference on a folio will end up calling
+>>>> folio_lock()
+>>>>
+>>>
+>>> Good point. I suspect concurrent things like read/write would also be
+>>> able to trigger this (did not check, though).
+>>>
+>>>>
+>>>> then it seems to me that the retry for loop wrapped around
+>>>> migrate_folio_move(), inside
+>>>>
+>>>> migrate_pages_batch(), is useless; if migrate_folio_move() fails on 
+>>>> the
+>>>> first iteration, it is
+>>>>
+>>>> going to fail for all iterations since, if I am reading the code path
+>>>> correctly, the only way it
+>>>>
+>>>> fails is when the actual refcount is not equal to expected refcount 
+>>>> (in
+>>>> folio_migrate_mapping()),
+>>>>
+>>>> and there is no way that the extra refcount is going to get released
+>>>> since the migration path
+>>>>
+>>>> has the folio lock.
+>>>>
+>>>> And therefore, this begs the question: isn't it logical to assert the
+>>>> actual refcount against the
+>>>>
+>>>> expected refcount, just after we have changed the PTEs, so that if 
+>>>> this
+>>>> assertion fails, we can
+>>>>
+>>>> go to the next iteration of the for loop for migrate_folio_unmap()
+>>>> inside migrate_pages_batch()
+>>>>
+>>>> by calling migrate_folio_undo_src()/dst() to restore the old state? 
+>>>> I am
+>>>> trying to implement
+>>>>
+>>>> this but is not as straightforward as it seemed to me this morning.
+>>>
+>>> I agree with your assessment that migration code currently doesn't
+>>> handle the case well when some other thread does an unconditional
+>>> folio_lock(). folio_trylock() users would be handled, but that's not
+>>> what we want with FGP_LOCK I assume.
+>>>
+>>> So IIUC, your idea would be to unlock the folio in migration code and
+>>> try again their. Sounds reasonable, without looking into the details :)
+>>
+>>
+>
+> BTW, I was trying to find the spot that would do the folio_lock(), but 
+> filemap_fault() does the lock_folio_maybe_drop_mmap() where we do a 
+> folio_trylock().
+>
+> Where exactly is the folio_lock() on the fault path that would 
+> prohibit us from making progress?
 
-regards,
-dan carpenter
+Not filemap_fault(); it enters shmem_fault() which eventually calls 
+shmem_get_folio_gfp(), retrieving the folio from the pagecache, and 
+calling folio_lock().
 
+>
+>> (Adding Mel if at all he has any comments for a compaction use-case)
+>>
+>> What I was trying to say is this (forgive me for the hard-coded value):
+>
+> The hard-coded 2 is wrong indeed :)
+>
+>>
+>> diff --git a/mm/migrate.c b/mm/migrate.c
+>> index a8c6f466e33a..404af46dd661 100644
+>> --- a/mm/migrate.c
+>> +++ b/mm/migrate.c
+>> @@ -1262,6 +1262,8 @@ static int migrate_folio_unmap(new_folio_t
+>> get_new_folio,
+>> }
+>> if (!folio_mapped(src)) {
+>> + if (folio_ref_count(src) != 2)
+>> + goto out;
+>> __migrate_folio_record(dst, old_page_state, anon_vma);
+>> return MIGRATEPAGE_UNMAP;
+>> }
+>> This will give us more chances to win the race. On an average, now
+>> the test fails on 100 iterations of move_pages(). If you multiply
+>> the NR_MAX_PAGES_(A)SYNC_RETRY macros by 3, the average goes above
+>> to 2000.
+>> But if the consensus is that this is just pleasing the test without
+>> any real use-case (compaction?) then I guess I am alright with making
+>> the change in the test.
+>
+> I'd be curious if other activity (besides fault, like concurrent 
+> read()/write()/...) can similarly make migration fail. I suspect it can.
+>
 
