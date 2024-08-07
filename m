@@ -1,417 +1,283 @@
-Return-Path: <linux-kernel+bounces-277831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8DA794A716
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:40:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75DC294A71F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B15FB23E00
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:40:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2FAAB2375B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59E51E2129;
-	Wed,  7 Aug 2024 11:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D6D1E485D;
+	Wed,  7 Aug 2024 11:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EePmsrKU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Dl7VB/3X";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Tz3NN71D"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B991E4851
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 11:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723030786; cv=none; b=Rnh/6RUFbiF7G4/jNAEf+8eYc/TDvbYfa8m5M/3Stv6kifcDDVWyR2mOzN/kdnfgf5kXGEYyuyDxmmAHG7fAFXY0RqOEajBJzxJ3wqhKMijdehgmRbKAFXhQ/1seo8FvEFxIx3oYovV5ujMS0jMuC9OpW4vx1u7BDGXn6EqbXM8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723030786; c=relaxed/simple;
-	bh=+JaRwfUSDKJdrnU0w4Ugmwlnc34Eg2WlRaqac8+yAB8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A8yqB4Y09VfA47FiNcu0Ac5eriokLCLWH2vj8ccHU33LtM0MESsaZ6PJ8w0U+Y43mwlX2joTKPeowsFhyEoRg9UR6FBPsfvv0HME77wEpnUbDpdx1/ZjuQ6q+6ZS9+NtZWcjUKRG1tz5kQIhDX/bRWYT0zewPvgE2jh4B+l0CHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EePmsrKU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723030783;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RIQLd+3N+swCJsaD2XUhaZjgfvR/HcyggoFyBnsDkSk=;
-	b=EePmsrKUX4yHiHM/zbkGs/kSatfdyDPjr2Sx9PlUq79S8y8xbfi2K0h7mQR72Y3Ds2XRUL
-	COi9KoCTbZLcRxqqfYZI2xgRmqwYenqF/B/BxLh2BvcYv6UvnsWNFzJxnWAIxSvkuQboTL
-	d22qSD2Qfd6C+yOd1VB5BX37YWf8gOg=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-1-6A0D4oo2MhuB5R8fCdb9_A-1; Wed, 07 Aug 2024 07:39:42 -0400
-X-MC-Unique: 6A0D4oo2MhuB5R8fCdb9_A-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-36878581685so973090f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 04:39:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723030781; x=1723635581;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RIQLd+3N+swCJsaD2XUhaZjgfvR/HcyggoFyBnsDkSk=;
-        b=XYEDbSqMrMAVFQmFMi9GrSfj1Qw4r5uH/K4bMbhDfINbOeOiZ+yNIxuYYRrv8Fv4s/
-         Lr1ECgWoKgO3aiuAYNhhKnIC3XzdD4dGONjydXBl6QRaxvT+Sn3Hbi/bbkbGxex2fHz2
-         CxKpVmf0qY2oLd6na0vTLoWYMohZ2+cZ0U7yxQKYcMRCBlFUc73hzt4DZJmAPR4ixJ6m
-         c5+pEBsJAxAL3RvF1orjQSIj3z+MhaLliKjr45EmqZ5PCFMlE12utogb6Dq7rkcEJ/c/
-         AiHK6umM7UJvkZGg7OoJkcLK/hroAxicXWv63tK7TodBqWUtbJRDQyvmmeiFed/+1n6b
-         9eog==
-X-Forwarded-Encrypted: i=1; AJvYcCXlKDjwbGNcftGDkPFrSb1wQbkodj6916zg6D61yTBhkxzJwXH2S7DeboyvHiOQatqqeGwivuhCW/sT9OUIXntvloKCFg/uVexOVkj0
-X-Gm-Message-State: AOJu0YygNQpRiJ7DGN1HV1P1CT5xUFQpkkk7iBSiZbLYOntS7CLg69X/
-	lbZwd9yH6HAnbdU3Cu1Am+SrHFBjk40qKiyNQswZax0aa/iEjpUPclALkrxX8PZXwiporRbsHw1
-	EWniz0I1e7Zv7PC02XE48g6yBWK5TJH3pKlB84jQiWOzib+vojVEn8t6IABcY3w==
-X-Received: by 2002:a5d:4e91:0:b0:367:958e:9821 with SMTP id ffacd0b85a97d-36bbc12d79emr12162296f8f.29.1723030781206;
-        Wed, 07 Aug 2024 04:39:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE+5nXMf9RMndC1b+ktQv0Y0qar361a5a9rrpHRh9xPwJBnkPs6RLZcnWEDpIQrMs2BllBOuw==
-X-Received: by 2002:a5d:4e91:0:b0:367:958e:9821 with SMTP id ffacd0b85a97d-36bbc12d79emr12162246f8f.29.1723030780562;
-        Wed, 07 Aug 2024 04:39:40 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c708:1a00:df86:93fe:6505:d096? (p200300cbc7081a00df8693fe6505d096.dip0.t-ipconnect.de. [2003:cb:c708:1a00:df86:93fe:6505:d096])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd01efe5sm15754160f8f.46.2024.08.07.04.39.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 04:39:40 -0700 (PDT)
-Message-ID: <a8c813b5-abce-48cf-9d14-2f969d6c8180@redhat.com>
-Date: Wed, 7 Aug 2024 13:39:38 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054221741C9;
+	Wed,  7 Aug 2024 11:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723030974; cv=fail; b=e127vNASivJ+woNPHHgdxnaOHllZayk+qEgrhDQLIJwNZN73tA/qTWMZkS4e4RSrWV8ieLMNldOPj7csIL5JGmUAefDpAgjDIxsdlqRzN2tMSFUIOnO3PZCuX5qA/2V3O24IONXgMPqFdDvINyxxBTpLv13kNdPwcpr1/ZcktSM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723030974; c=relaxed/simple;
+	bh=iZ5CWEMpM+QOMaJIbnlAv0J6BSSGMZ+znj/EETAZFtU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=iFJY8dSexFO1ei2UiuYlXsL3of9xR1yfaweQ3NsRGHB/S8aN2OwPm4TqJX4sniBQtDxkZLFe7FQShvIkd2VqJirhAw+Ddisl1olyduXIR7yfSdhNpDUx28S0eseyN+Fx6fQFl9N2EgoZxQQiStBNyspg6HoqvTRJbvuYOjN3XZo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Dl7VB/3X; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Tz3NN71D; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477ASU2M009976;
+	Wed, 7 Aug 2024 11:42:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=E/SlJWc2JLcisTNPMdLz39aDf+FiF89hgp3jUYTvTI8=; b=
+	Dl7VB/3XRzsMbM6WcJoTAABs3xQoHabIucgIx8kQ9HZGVMgzJHx6xnDAYUY+Pg/R
+	7tz0ksa70/BrctCkKT1OKdiycz3bKAagU27FAQvfYupcYyuKF9b0LRezRs9HDVGB
+	nhIkPNzF+vpus8At6/eEKgf7RRFtqUSjMBDQt9X5gX2gh7fuERNl8caSJ0f9F4qy
+	FvOyFjbT1hFOWdBRzQwoCa1XJkDOTpALbvvU/79moK5Mqn4fNIlET2CVunTAHv+X
+	v/d9hrgdewtCQMknXpjPvCR7nt2Z5HQedrnW6Sl2/8wWvMu38iMwcnbNApKNaKK5
+	jlpteThJ+sMYa2bv6Klz2w==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40sckcfd0p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 07 Aug 2024 11:42:41 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 477BG8Pb027465;
+	Wed, 7 Aug 2024 11:42:41 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2169.outbound.protection.outlook.com [104.47.57.169])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40sb0g6gv5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 07 Aug 2024 11:42:41 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r19h5RIxk9turkkp4wEA1+mlYfnikDpLmMoh5gvA9H43FKeh/Meo4h2TJTz+U9xDqoGQZC/Cp5J/tmPnurvxKupDKkFXPhfgOgWGavua3q2RFGgE6PS/OjjrCoqRFzmdH8xuQG9jIRzlVLtSU41GoHlH7SYy0obPPm+Ae9L50v2AxUkg+T8/4FSBXxTSCXDrj8XXHkksgekvqseVsLT14MpMB4Awna+LGaq2v0E3TzVlLNB7cureEPF0/7HItdqNFOlAQGq3qYPzDHS1z5d+Mboelb3c9OmBx7jngZgRaRFWm0Apjiu6FSHt55yw+5XIHcwgC4g7XqUPCxSESo5I8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E/SlJWc2JLcisTNPMdLz39aDf+FiF89hgp3jUYTvTI8=;
+ b=NBdWIRKTDEoNF1dNnBVKdCZmWM5wU8X8ejVET4zODY2SBhPfCyn9dpjp11QCW2/t56SvteS9xWC4qABxRgZ3DmbtQx7g3wPSwiQnKJWCjBdbfp3UBdBgMLfJI325WEb1JQU5G97poiMwI55HdVBQLeX1BEpP9z3/HA7xy0aMV7Oys4Pp9pxImDVumF+B4Bq+KnN4ecqeAj2E2osJKlEnARkRvmblu9u7TvxRdCLngFjsPQNXebt7gLO+HhEpR6yGXcMyU2DHY9smD404DnHkKyf7+6lr1F2jQFQCyaDFf7Yp5oOtEpW6wqtzO6oQSI6InsteqKbXCRvRA/VbfXbCtQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E/SlJWc2JLcisTNPMdLz39aDf+FiF89hgp3jUYTvTI8=;
+ b=Tz3NN71DeF7TkmbpKNa7HowyhH39u4YV9Z3f/0asfnxDMlYbdbCYfFaxlNfFDXT9EHJXiVFYOAfsT7x8WOxgkUsI2+wkpWb503PvZxfKNQH4SVqjzz3urWNPdVQ00Q1SrlH4ZfnrEye+WS5xz77BJR+BIpgcqy9p4R+QoXF6QAE=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by CH3PR10MB7985.namprd10.prod.outlook.com (2603:10b6:610:1bf::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27; Wed, 7 Aug
+ 2024 11:42:38 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%7]) with mapi id 15.20.7828.023; Wed, 7 Aug 2024
+ 11:42:38 +0000
+Message-ID: <5e5d1cfa-e003-4a9a-9bd3-516616e1edbf@oracle.com>
+Date: Wed, 7 Aug 2024 12:42:32 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/14] xfs: Introduce FORCEALIGN inode flag
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
+        viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+        martin.petersen@oracle.com
+References: <20240801163057.3981192-1-john.g.garry@oracle.com>
+ <20240801163057.3981192-8-john.g.garry@oracle.com>
+ <20240806190206.GJ623936@frogsfrogsfrogs>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20240806190206.GJ623936@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM0PR02CA0171.eurprd02.prod.outlook.com
+ (2603:10a6:20b:28e::8) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Race condition observed between page migration and page fault
- handling on arm64 machines
-To: Dev Jain <dev.jain@arm.com>, Will Deacon <will@kernel.org>
-Cc: akpm@linux-foundation.org, willy@infradead.org, ryan.roberts@arm.com,
- anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
- vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com, osalvador@suse.de,
- baolin.wang@linux.alibaba.com, dave.hansen@linux.intel.com,
- baohua@kernel.org, ioworker0@gmail.com, gshan@redhat.com,
- mark.rutland@arm.com, kirill.shutemov@linux.intel.com, hughd@google.com,
- aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
- broonie@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, mgorman@techsingularity.net
-References: <20240801081657.1386743-1-dev.jain@arm.com>
- <3b82e195-5871-4880-9ce5-d01bb751f471@redhat.com>
- <bbe411f2-4c68-4f92-af8c-da184669dca8@arm.com>
- <a6a38ad5-c754-44ad-a64b-f9ea5b764291@redhat.com>
- <92df0ee1-d3c9-41e2-834c-284127ae2c4c@arm.com>
- <19902a48-c59b-4e3b-afc5-e792506c2fd6@redhat.com>
- <6486a2b1-45ef-44b6-bd84-d402fc121373@redhat.com>
- <20240801134358.GB4794@willie-the-truck>
- <9359caf7-81a8-45d9-9787-9009b3b2eed3@redhat.com>
- <f8d21caa-7a82-4761-8a78-d928ae8d0f24@arm.com>
- <418e818a-f385-459e-a84d-e3880ac08ad5@redhat.com>
- <cf8dc1c6-948a-42e7-8aef-c6183ca6cac0@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <cf8dc1c6-948a-42e7-8aef-c6183ca6cac0@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CH3PR10MB7985:EE_
+X-MS-Office365-Filtering-Correlation-Id: dca50e50-c51b-4a8e-9bf0-08dcb6d609ae
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OUpNYU1rbVdDU3VzcFBPODZXVXNXWmtlb3BRN2pOVjlDanJWNHRBUkc5WHNU?=
+ =?utf-8?B?NmlnaUM2SFZubWZBKzdmS2I2cjZES0o4enhSWWtXYW1Ya29FY2tXNUxPcU4y?=
+ =?utf-8?B?QytSN1E4VnJqK0x5YlNxNml1Wnhtazd2RzV1dlNFOFh6amo4WVovd2Yyc2dn?=
+ =?utf-8?B?ZFlqQk4vWWFPcnpKaWNjTVE0OUtXdnFuT3hDaE80NVMrTlpmQVRwUjk3V2ts?=
+ =?utf-8?B?WEVJc3pCTWtYdjJieDBmVXVnT0xpWURQQ0RYVnJTOGd3N0FEYmlTMWR4QVRJ?=
+ =?utf-8?B?VXQwQXphRENYZUpXM0VXYmRORXpUTXVSYjRSZTlEVlEwL0V2UW1OZXkzeXdH?=
+ =?utf-8?B?NUxySjN3TXlPMTA3RStrdUR3aGUrbU1wejljVzZQQzdYVk5ubStyU3N0OGhP?=
+ =?utf-8?B?MkgyTXA5OEl0NWp5bStRQzBReTBYRHpsVHBzTEIvUVpFSmFBd0ZjZmtEeDd3?=
+ =?utf-8?B?UXFrcnpEQXdLc2RxbW9HaVhKNVdHNnJOVldlZW05elhNdWxuSGZ1OGNEdnBV?=
+ =?utf-8?B?UHE5blJEQjJEbWtYazZhb1FRbXg4SG0za2d2VmZuWHAzOWx4OU80bGMvSUV4?=
+ =?utf-8?B?aFdSaFQ2ckFNdnQzTlc0cmhCR0V5azZMSE5RcDd0eGVmSHhQd1krVDBlUWg3?=
+ =?utf-8?B?Vk9xR242ajNZSXZvenkrU2V0bWtMaERkbWIvNGs2cHV0cXpPeGtpRkRDcGUv?=
+ =?utf-8?B?WmExTzBDa0JoKytEY09DenBITCs5c1VuV0J0YjdRU2tSUFg4WUtqbW5YblJU?=
+ =?utf-8?B?YUFEU01uQTNaNlY5Zi9QdnMvWWc5dC9hM3VCdXA4UnpwclhQQzNkQ3VDNXht?=
+ =?utf-8?B?ejkrcjlZSFNvK1hrdTNKa0VXNHh0R0F6ZVA5RWFlTWJoV3gwNlB4bklRaHhY?=
+ =?utf-8?B?NWdWRzVUcXhwWG1lTzJsTjBHVS9MNUlvVS9KdFA2TUJmUDd0NVIrcW9CckY1?=
+ =?utf-8?B?WU5NMzhjdEJZRStCemhBeGVST2pPNFZsYW1QNVF1TnVscTN0M3JBZ2N1SzdL?=
+ =?utf-8?B?Q0xBRFlFeCtjcmZpdFozRVR3MTRXSStqbHVaRFo5UnRkZkdVd3cwbkVxNU5t?=
+ =?utf-8?B?RnlpcnRYWmFGVSs5ZStVRG1EbGJmL2lyZVhQaUMwUkhlVW1sTFhrdW8xY2NH?=
+ =?utf-8?B?Z0VKemQwY0JiZWp2RjBRb1ZFLzZybnJGaTN3NVRId2FZY1o0SHU0KzlwQ0xN?=
+ =?utf-8?B?TkVqUkJiWWZ2QmpCYUEzMmxuRkhOYk5ZQ01uaHo0aU1iSkd0bU0vN3RlRGNs?=
+ =?utf-8?B?bmhTUGVDVGR6eTBWT0FtWFZlbnV5TUNxOVhZeTlaRHFzSGRYS1ZVRjVHMHJV?=
+ =?utf-8?B?d3BHUVJZZ0FnQ0tqVzNuaFZuZGdnN0xtaW45dzV4STJ2ZnltdmJ5bi9FN2R6?=
+ =?utf-8?B?WDRpMS93dWtwT09oOUxheVdwLzFrTUdQU1g2cHRtbktaM3BnSkpTOFI5YllW?=
+ =?utf-8?B?WUxlWjJ1blBtQnIzQ25EZmcxZHFSeHJhTUwyY2FQc3pRZFJDdXRvbDFhSDlZ?=
+ =?utf-8?B?WTlHZ3BlcWthaTNCNnhSSUxNMmdrL2owREJ6c1E0cUU2bnV1ZlNSajJ5V3NI?=
+ =?utf-8?B?cC9Sa3hUdmdoVjNYK1kvRlB0RTU3MGMrNXpqbWpLN21KSHlEWCt2azlRRmNF?=
+ =?utf-8?B?eXh6MzduZjhmYWZyZGtka24zYmJ4N3F3a0xMRU56Q1A1MGU1eWtiSDdjRnh6?=
+ =?utf-8?B?WmhDZmltcE1tMENhNWlseEdMSktTbnl6UUszOTErOGY1TzRnc0VoUnNjSGZi?=
+ =?utf-8?B?d1B5bWNDVEFIaVZIV25qYWRmWStqSlJzdUdwZ242MFN6bUNMRTJoVnR3Wmpu?=
+ =?utf-8?B?emVhWGVRZDg1Zmg0eGdCQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UENndUpFYUhoUEt4aXJ0c1FDc0J6VkRWT1lZeHBBaXUzM1JRUUkzZzE3UDNL?=
+ =?utf-8?B?ek91eS9HRE5NQlF1WENZZGRsZ3IxT0pkWkhJQ3JOWmtaNkFyTjg3TVExRjdQ?=
+ =?utf-8?B?MjJaVEtPTTV2dlNOZDkxQUtZdDJWaERGMllZYTNvbW1CYVBxTTQ1eEZGcktm?=
+ =?utf-8?B?dU1QOU4ybzhuTTZmb3N2RS9NZUhMMk9Nd1VtWW5obm15SzFlbFdjNTVOT0xH?=
+ =?utf-8?B?OFNBZzR5QzNSNk1WQ05wdXBxQ2hncFZNV1YydGZqZ2lLRGtoWnBTbGhVQlNC?=
+ =?utf-8?B?K3BZOFlOZFRtc05jSWFOY3JZV1l4TzBNMjBWcnRIenJnR2xVVm9JTExVeGx2?=
+ =?utf-8?B?K1F3NFNaaDlVWTlKSlREUTJtNzE3Z3hVQ0hCTDJ4TElNS0F5V1o5MjVpZXRl?=
+ =?utf-8?B?WGkzdHNtV2V1NWExb1plYjdKMXNvbnN6Sk1oRTMwcjBNb1M1a2F6dXBTNXNt?=
+ =?utf-8?B?VVczcVkvY20xOEZGNkxpREExZG9ITnpaZHZkYmlNTk1xdmRUL28vUjA5RmFN?=
+ =?utf-8?B?Mzg2RTdGc0ZEZEkyUWlxaWQzNnVhUEw4R0F1bWluMzVKdm9WOGdXWTA5OHFG?=
+ =?utf-8?B?N0o4b2RwdWpvRC9iNmM3UmhLV28xTTM0RzF6T0VwdnRLWmtBSlFJV2RnMVZw?=
+ =?utf-8?B?Uzl3V0pWN1FmbmJUcDFhU3RLVWJVUEdpU1YxYmh5VjN6MmJaU2N0UmFKcklH?=
+ =?utf-8?B?aVJ2akthRXBrRUZlVFl4Z1JSYThRY2VCVXpyaDMrMFNZM2txUlBFSjFOOTR0?=
+ =?utf-8?B?S3pycXVMUWJjWEVTUkM2aVJnV0piWlNpaDRML1o4MTBvdXlRb00zSHdPZzl2?=
+ =?utf-8?B?MXRyZmhPNFVpK0VFaWpuUHNnQ1hKMHhtQ1dWdzZXTkVYKy81ZXArVHI1M2g4?=
+ =?utf-8?B?VU9KMDJnb2srVG5FcUZHbVVFcGdYVXh1U2lmV3YycG9NVlExdXlnUkx3NVVG?=
+ =?utf-8?B?SU5JSEVMVXB3RFpvS2VGLyszbDVZcGU2YU9jNWJtUTkzT0hEdzNLVFRPcXBH?=
+ =?utf-8?B?UldXRUxTQzkzUGo5SzBrSUhaYzc5WFQ4M2dETy9tQmVXc3lHVHExUmxhUmg1?=
+ =?utf-8?B?QmRzd051aUNiNldsME1pRFNPVGRFaGlwbm9jUnBvRjRCYTcwOGszT0N2SkEx?=
+ =?utf-8?B?R1JoaHhkbDI5ZGdtU202aEZzVWJpRVNWY29OSjVmR3Q4ZEt2S2VVVEFRZWR3?=
+ =?utf-8?B?a0wzR2o0U2dMa3MrNTY0NklYQTRPUE5XRVI2ZDBQaElPd3ZnczM3VUlIY25j?=
+ =?utf-8?B?cldPZGhyTXVtQ3BZeVpEaVk0OVk3YmJ3WkE5dHhlVnpNVE1va2VQR0VYdDkw?=
+ =?utf-8?B?T3BZbEZoM2hjSlF5ZHRIQ1RjdlRhZjVPYlZGclJJU3I1c0YwblVrNkxERUI0?=
+ =?utf-8?B?ZXV0dFFaQlIyYkd1dGlzMFdMa2ZScDBWL3BCL1ltZ2NqdHg3RnYzcHJmNjNR?=
+ =?utf-8?B?N3FaaUZGdmg3UGc5Z1YrQVZwM1lEZGtVT0ZUdllacU9KUEJqME9QS0tkVFRP?=
+ =?utf-8?B?a1h0bVh4VU1oaXY5R3BLTTRrQVlWNlMydStYMzRySkRLem1NcDhsei80dzFP?=
+ =?utf-8?B?SHBRa1g4alRlQ2NseUlESG1ZWkFTYTNJQUFTYVJJSzBmZkN3SEIrT0RlMVQr?=
+ =?utf-8?B?SmY4cDhxWHgwN3VNRmxJYkpVSTNqeWxYVDRGRVQ5K0VzcXJrT1dSMU1ONDZw?=
+ =?utf-8?B?U0wzRnFnYVk3dnBDYU5mRlR0VzhrZ1N0NDhxUmY2aElyZnkyRm1vMHdlOCt6?=
+ =?utf-8?B?V2xyNHQzeFA2STlWaDZBWEMzczduRS9zVDhTSWdQQ3owSkt1cVhzRHUrQVFC?=
+ =?utf-8?B?TnlQRENvN2NobkpVZVllcWNxbGtwbHhIZlhkNURKeFFuOEZ0YlZyMHJXK2Zw?=
+ =?utf-8?B?OVZycmdndU1SWSttNkczS01lV3g4Z0pNdDhKMStiVHFWSENPc083cXo5YnN3?=
+ =?utf-8?B?c0lRVTgwZWNNTGJ5dkZZdFlzYVlwQ2UwZXdiZHVvNEJDMms5T0VCL3loQVdJ?=
+ =?utf-8?B?allWMDlqUDhqb0pvQVFqazhnV0FsNEpJdzZyRDFPYTVHV2hhVG5XMmo0WVhO?=
+ =?utf-8?B?WU90S1lmdWI4YmxNMitGQS90TFFGNlV6dnVuZVV4aDkzKzZISXc4MDJubjk3?=
+ =?utf-8?Q?PoMWkiYe8FA/IiB6Mc9wZjEnf?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Xa0rFJMhDhP1q8guIBYCWifdGnuwn5E/HoudDeCBTwrA20nYYA2vWiXwG7sRqiOXp2ZxL7E+b+9+oO+0LJD8pdQK89RWu1DTY8rmrhY925ntvzVuJ14tFOryNcxe5sItg2AOBTSLVWIuK4orc7jdGljuQgbaG3aOz7eDFfflusHIj8Jeie+Q0YG5Qs9x8XNEh6t37pF6evOQdp/4DStbRmzXMbQAG2FS0iBUMMj9tBtlSicg1sGnWVPCtNJZ0VnCjIzpmgBOBxcHqnUfgA/bBAIS3op58QKNMLHw0VZMqRRUXAV0c9tSNjLEkTV2JflnNYzrayklSTsKmoAQoW5VrmcB3IKYVyR0UyM7QeqlUxu134iw/cI4CYbd88qThTmgBsvd84XqceJ/aiLwgUrMw2bZc0MCKgqTsZddmzyTmMfd+/ZaWMsGgsaHdS3xhX7bw6eGtDWpHQLlcTE012Ih4V5iFi1CJgOfYdariAm+MdDut3a/lKEhqZqrVs++0XSmPPFaEwrRdMLZwRyAlsuLivDDyWsbqSXUpTHRej6FUUzYob6A3IPnEQrTnpkj45UrEniZ4ykWfPD7S/FIj1TbIR3KM2d9YW4fH4n7HegUZWo=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dca50e50-c51b-4a8e-9bf0-08dcb6d609ae
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 11:42:38.3811
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: r+ZLff4ngO6eApY6CcUHzgkazyOgzVBzZ1nk3eCinDIOZbVSPb47G13bBeUX5REBP82c4iufhfoYciMgFJS84A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7985
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_08,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 adultscore=0
+ phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408070082
+X-Proofpoint-GUID: q0kmonRd19vuMA3cIuwtxPQifgYG8LY-
+X-Proofpoint-ORIG-GUID: q0kmonRd19vuMA3cIuwtxPQifgYG8LY-
 
-On 05.08.24 16:14, Dev Jain wrote:
-> 
-> On 8/5/24 16:16, David Hildenbrand wrote:
->> On 05.08.24 11:51, Dev Jain wrote:
->>>
->>> On 8/1/24 19:18, David Hildenbrand wrote:
->>>> On 01.08.24 15:43, Will Deacon wrote:
->>>>> On Thu, Aug 01, 2024 at 03:26:57PM +0200, David Hildenbrand wrote:
->>>>>> On 01.08.24 15:13, David Hildenbrand wrote:
->>>>>>>>>> To dampen the tradeoff, we could do this in shmem_fault()
->>>>>>>>>> instead? But
->>>>>>>>>> then, this would mean that we do this in all
->>>>>>>>>>
->>>>>>>>>> kinds of vma->vm_ops->fault, only when we discover another
->>>>>>>>>> reference
->>>>>>>>>> count race condition :) Doing this in do_fault()
->>>>>>>>>>
->>>>>>>>>> should solve this once and for all. In fact, do_pte_missing()
->>>>>>>>>> may call
->>>>>>>>>> do_anonymous_page() or do_fault(), and I just
->>>>>>>>>>
->>>>>>>>>> noticed that the former already checks this using
->>>>>>>>>> vmf_pte_changed().
->>>>>>>>>
->>>>>>>>> What I am still missing is why this is (a) arm64 only; and (b) if
->>>>>>>>> this
->>>>>>>>> is something we should really worry about. There are other reasons
->>>>>>>>> (e.g., speculative references) why migration could temporarily
->>>>>>>>> fail,
->>>>>>>>> does it happen that often that it is really something we have to
->>>>>>>>> worry
->>>>>>>>> about?
->>>>>>>>
->>>>>>>>
->>>>>>>> (a) See discussion at [1]; I guess it passes on x86, which is quite
->>>>>>>> strange since the race is clearly arch-independent.
->>>>>>>
->>>>>>> Yes, I think this is what we have to understand. Is the race simply
->>>>>>> less
->>>>>>> likely to trigger on x86?
->>>>>>>
->>>>>>> I would assume that it would trigger on any arch.
->>>>>>>
->>>>>>> I just ran it on a x86 VM with 2 NUMA nodes and it also seems to
->>>>>>> work here.
->>>>>>>
->>>>>>> Is this maybe related to deferred flushing? Such that the other CPU
->>>>>>> will
->>>>>>> by accident just observe the !pte_none a little less likely?
->>>>>>>
->>>>>>> But arm64 also usually defers flushes, right? At least unless
->>>>>>> ARM64_WORKAROUND_REPEAT_TLBI is around. With that we never do
->>>>>>> deferred
->>>>>>> flushes.
->>>>>>
->>>>>> Bingo!
->>>>>>
->>>>>> diff --git a/mm/rmap.c b/mm/rmap.c
->>>>>> index e51ed44f8b53..ce94b810586b 100644
->>>>>> --- a/mm/rmap.c
->>>>>> +++ b/mm/rmap.c
->>>>>> @@ -718,10 +718,7 @@ static void set_tlb_ubc_flush_pending(struct
->>>>>> mm_struct
->>>>>> *mm, pte_t pteval,
->>>>>>      */
->>>>>>     static bool should_defer_flush(struct mm_struct *mm, enum
->>>>>> ttu_flags flags)
->>>>>>     {
->>>>>> -       if (!(flags & TTU_BATCH_FLUSH))
->>>>>> -               return false;
->>>>>> -
->>>>>> -       return arch_tlbbatch_should_defer(mm);
->>>>>> +       return false;
->>>>>>     }
->>>>>>
->>>>>>
->>>>>> On x86:
->>>>>>
->>>>>> # ./migration
->>>>>> TAP version 13
->>>>>> 1..1
->>>>>> # Starting 1 tests from 1 test cases.
->>>>>> #  RUN           migration.shared_anon ...
->>>>>> Didn't migrate 1 pages
->>>>>> # migration.c:170:shared_anon:Expected migrate(ptr, self->n1,
->>>>>> self->n2) (-2)
->>>>>> == 0 (0)
->>>>>> # shared_anon: Test terminated by assertion
->>>>>> #          FAIL  migration.shared_anon
->>>>>> not ok 1 migration.shared_anon
->>>>>>
->>>>>>
->>>>>> It fails all of the time!
->>>>>
->>>>> Nice work! I suppose that makes sense as, with the eager TLB
->>>>> invalidation, the window between the other CPU faulting and the
->>>>> migration entry being written is fairly wide.
->>>>>
->>>>> Not sure about a fix though :/ It feels a bit overkill to add a new
->>>>> invalid pte encoding just for this.
->>>>
->>>> Something like that might make the test happy in most cases:
->>>>
->>>> diff --git a/tools/testing/selftests/mm/migration.c
->>>> b/tools/testing/selftests/mm/migration.c
->>>> index 6908569ef406..4c18bfc13b94 100644
->>>> --- a/tools/testing/selftests/mm/migration.c
->>>> +++ b/tools/testing/selftests/mm/migration.c
->>>> @@ -65,6 +65,7 @@ int migrate(uint64_t *ptr, int n1, int n2)
->>>>           int ret, tmp;
->>>>           int status = 0;
->>>>           struct timespec ts1, ts2;
->>>> +       int errors = 0;
->>>>
->>>>           if (clock_gettime(CLOCK_MONOTONIC, &ts1))
->>>>                   return -1;
->>>> @@ -79,12 +80,17 @@ int migrate(uint64_t *ptr, int n1, int n2)
->>>>                   ret = move_pages(0, 1, (void **) &ptr, &n2, &status,
->>>>                                   MPOL_MF_MOVE_ALL);
->>>>                   if (ret) {
->>>> -                       if (ret > 0)
->>>> +                       if (ret > 0) {
->>>> +                               if (++errors < 100)
->>>> +                                       continue;
->>>>                                   printf("Didn't migrate %d pages\n",
->>>> ret);
->>>> -                       else
->>>> +                       } else {
->>>>                                   perror("Couldn't migrate pages");
->>>> +                       }
->>>>                           return -2;
->>>>                   }
->>>> +               /* Progress! */
->>>> +               errors = 0;
->>>>
->>>>                   tmp = n2;
->>>>                   n2 = n1;
->>>>
->>>>
->>>> [root@localhost mm]# ./migration
->>>> TAP version 13
->>>> 1..1
->>>> # Starting 1 tests from 1 test cases.
->>>> #  RUN           migration.shared_anon ...
->>>> #            OK  migration.shared_anon
->>>> ok 1 migration.shared_anon
->>>> # PASSED: 1 / 1 tests passed.
->>>> # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
->>>
->>>
->>> This does make the test pass, to my surprise, since what you are doing
->>> from userspace
->>>
->>> should have been done by the kernel, because it retries folio unmapping
->>> and moving
->>>
->>> NR_MAX_MIGRATE_(A)SYNC_RETRY times; I had already tested pumping up
->>> these
->>>
->>> macros and the original test was still failing. Now, I digged in more,
->>> and, if the
->>>
->>> following assertion is correct:
->>>
->>>
->>> Any thread having a reference on a folio will end up calling
->>> folio_lock()
->>>
+On 06/08/2024 20:02, Darrick J. Wong wrote:
+> On Thu, Aug 01, 2024 at 04:30:50PM +0000, John Garry wrote:
+>> From: "Darrick J. Wong" <djwong@kernel.org>
 >>
->> Good point. I suspect concurrent things like read/write would also be
->> able to trigger this (did not check, though).
+>> Add a new inode flag to require that all file data extent mappings must
+>> be aligned (both the file offset range and the allocated space itself)
+>> to the extent size hint.  Having a separate COW extent size hint is no
+>> longer allowed.
 >>
->>>
->>> then it seems to me that the retry for loop wrapped around
->>> migrate_folio_move(), inside
->>>
->>> migrate_pages_batch(), is useless; if migrate_folio_move() fails on the
->>> first iteration, it is
->>>
->>> going to fail for all iterations since, if I am reading the code path
->>> correctly, the only way it
->>>
->>> fails is when the actual refcount is not equal to expected refcount (in
->>> folio_migrate_mapping()),
->>>
->>> and there is no way that the extra refcount is going to get released
->>> since the migration path
->>>
->>> has the folio lock.
->>>
->>> And therefore, this begs the question: isn't it logical to assert the
->>> actual refcount against the
->>>
->>> expected refcount, just after we have changed the PTEs, so that if this
->>> assertion fails, we can
->>>
->>> go to the next iteration of the for loop for migrate_folio_unmap()
->>> inside migrate_pages_batch()
->>>
->>> by calling migrate_folio_undo_src()/dst() to restore the old state? I am
->>> trying to implement
->>>
->>> this but is not as straightforward as it seemed to me this morning.
+>> The goal here is to enable sysadmins and users to mandate that all space
+>> mappings in a file must have a startoff/blockcount that are aligned to
+>> (say) a 2MB alignment and that the startblock/blockcount will follow the
+>> same alignment.
 >>
->> I agree with your assessment that migration code currently doesn't
->> handle the case well when some other thread does an unconditional
->> folio_lock(). folio_trylock() users would be handled, but that's not
->> what we want with FGP_LOCK I assume.
+>> Allocated space will be aligned to start of the AG, and not necessarily
+>> aligned with disk blocks. The upcoming atomic writes feature will rely and
+>> forcealign and will also require allocated space will also be aligned to
+>> disk blocks.
 >>
->> So IIUC, your idea would be to unlock the folio in migration code and
->> try again their. Sounds reasonable, without looking into the details :)
+>> reflink will not be supported for forcealign yet, so disallow a mount under
+>> this condition. This is because we have the limitation of pageache
+>> writeback not knowing how to writeback an entire allocation unut, so
+>> reject a mount with relink.
+>>
+>> RT vol will not be supported for forcealign yet, so disallow a mount under
+>> this condition. It will be possible to support RT vol and forcealign in
+>> future. For this, the inode extsize must be a multiple of rtextsize - this
+>> is enforced already in xfs_ioctl_setattr_check_extsize() and
+>> xfs_inode_validate_extsize().
+>>
+>> Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+>> Co-developed-by: John Garry <john.g.garry@oracle.com>
+>> [jpg: many changes from orig, including forcealign inode verification
+>>   rework, ioctl setattr rework disallow reflink a forcealign inode,
+>>   disallow mount for forcealign + reflink or rt]
+>> Signed-off-by: John Garry <john.g.garry@oracle.com>
 > 
-> 
+> This patch looks ready to me but as I'm the original author I cannot add
+> a RVB tag.  Someone else needs to add that -- frankly, John is the best
+> candidate because he grabbed my patch into his tree and actually
+> modified it to do what he wants, which means he's the most familiar with
+> it.
 
-BTW, I was trying to find the spot that would do the folio_lock(), but 
-filemap_fault() does the lock_folio_maybe_drop_mmap() where we do a 
-folio_trylock().
+I thought my review would be implied since I noted how I appended it, above.
 
-Where exactly is the folio_lock() on the fault path that would prohibit 
-us from making progress?
+Anyway,
 
-> (Adding Mel if at all he has any comments for a compaction use-case)
-> 
-> What I was trying to say is this (forgive me for the hard-coded value):
+Reviewed-by: John Garry <john.g.garry@oracle.com>
 
-The hard-coded 2 is wrong indeed :)
+I am hoping that Dave and Christoph will give some formal ack/review 
+when they get a chance.
 
-> 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index a8c6f466e33a..404af46dd661 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -1262,6 +1262,8 @@ static int migrate_folio_unmap(new_folio_t
-> get_new_folio,
-> }
-> if (!folio_mapped(src)) {
-> + if (folio_ref_count(src) != 2)
-> + goto out;
-> __migrate_folio_record(dst, old_page_state, anon_vma);
-> return MIGRATEPAGE_UNMAP;
-> }
-> This will give us more chances to win the race. On an average, now
-> the test fails on 100 iterations of move_pages(). If you multiply
-> the NR_MAX_PAGES_(A)SYNC_RETRY macros by 3, the average goes above
-> to 2000.
-> But if the consensus is that this is just pleasing the test without
-> any real use-case (compaction?) then I guess I am alright with making
-> the change in the test.
+BTW, at what stage do we give XFS_SB_FEAT_RO_COMPAT_FORCEALIGN a more 
+proper value? So far it has the experimental dev value of 1 << 30, below.
 
-I'd be curious if other activity (besides fault, like concurrent 
-read()/write()/...) can similarly make migration fail. I suspect it can.
+Thanks!
 
--- 
-Cheers,
 
-David / dhildenb
-
+>>
+>> diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
+>> index e1bfee0c3b1a..95f5259c4255 100644
+>> --- a/fs/xfs/libxfs/xfs_format.h
+>> +++ b/fs/xfs/libxfs/xfs_format.h
+>> @@ -352,6 +352,7 @@ xfs_sb_has_compat_feature(
+>>   #define XFS_SB_FEAT_RO_COMPAT_RMAPBT   (1 << 1)		/* reverse map btree */
+>>   #define XFS_SB_FEAT_RO_COMPAT_REFLINK  (1 << 2)		/* reflinked files */
+>>   #define XFS_SB_FEAT_RO_COMPAT_INOBTCNT (1 << 3)		/* inobt block counts */
+>> +#define XFS_SB_FEAT_RO_COMPAT_FORCEALIGN (1 << 30)	/* aligned file data extents */
+>>   #define XFS_SB_FEAT_RO_COMPAT_ALL \
+>>   		(XFS_SB_FEAT_RO_COMPAT_FINOBT | \
+>>   		 XFS_SB_FEAT_RO_COMPAT_RMAPBT | \
 
