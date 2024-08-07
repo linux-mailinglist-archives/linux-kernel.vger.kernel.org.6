@@ -1,372 +1,213 @@
-Return-Path: <linux-kernel+bounces-277282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B49E949ED9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:33:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E184949EE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7226DB2397D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E26D828312A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536E1801;
-	Wed,  7 Aug 2024 04:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A523191495;
+	Wed,  7 Aug 2024 04:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CWr/+l6J"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AMEZ00mq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F016A957
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 04:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0E415B561
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 04:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723005209; cv=none; b=H9I8Dwk1O//ldiR607scENrj5PynW7HceLNwc2pxlJj8cIB2OyugPh6UXjTv09w55iaXib9b+QBdRZ3ELHPPbr4Ou4d7dV/5i1bzXQtnLoGHFfxjaFGzUf0nVJJw7Ql5j8IgMvYAA1jZZ4YJDoPNEl6kVu+qj9Ad4r45lDOzAAI=
+	t=1723005488; cv=none; b=HRJUACqKkLvANPEgEGxk1vJ1NbHQ7kGT2HaumI6Ll0SeTQqWy9TKxuwookOMJeM720WBO/qqowPotp+TVLajgQchNQnrCN8DqZ0n+PPsCzF0KWxLkXExvIBqBfTjV9zV8KPGhS+fgxPLgNcQ3L8nGdw73fwViy6dRtA62owjoDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723005209; c=relaxed/simple;
-	bh=2aMk1wCg0XtUavuN5wtGtXS3GBcoTm6iQL2je9pQ8uM=;
+	s=arc-20240116; t=1723005488; c=relaxed/simple;
+	bh=KTk7jZ7lYTXpfJXcUgVHfVoqgBIg4K0nO71lHrPFslQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UA+ilkqUI7TJhmK9dn0pet1TqaSrqlqIhLmWcqDH60xkrBCtBEXsxbdGbl52c/7rBemAWlHUgwwr2LUE5qazxyO6rxy9neN7BFsiUaMbo9arn0DghRqeP6mjKYfSDEkO6HPk+G4cSuqNVAzw6JjAhGf87TD6/mgvZhuhh5bArR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CWr/+l6J; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so26239a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 21:33:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723005205; x=1723610005; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PchbWzNoWQ3x0Bdyu00GRTjqAVg+Qi0U7ExdbFMkY4k=;
-        b=CWr/+l6JGl1EOlSxOXl5RpfwUR+UpBjFgJdPYiDoM77i9RFbSfn9+S08mhAraJT9pF
-         j6MBIcvC7mtvDGnBqzqRE1McV9gPaWpPXktjOjscgct/+DW31V6YtBiU4TX8IwDGZhp/
-         IKw2CkDgkOZSQVYj0B+1khb+Hrwfyy72mYDRCH4lkfSCrJnWCDoGUrG7hu06ueFHYGjg
-         B+ugVK8Eb1D30Gpwq5DHdVb8PxrEnsH1FVHpupumLEicMrw36wyaESNGTCpV5pRGa9E1
-         BEImmU9xd85yI7aTrWDAD8elGZ7PXGMaHNR02Os+WOOTjLF/wTqSYY+T5jtfI8SICJkA
-         9XeA==
+	 To:Cc:Content-Type; b=LWtcyfJRZE6lETVnBltA+eSsgro6AKUD52e1Wrq3odjnNkw30hTlAEaTdWzSw1rSpuuSieW973gD9ACUmOydV8qL459HMoHV3eKlkeZxCGCHIfGlbnF2VrfadpwUTNq/z/a56jnNf1L9ZjtMLrL9+RqI3QtgqwxCqUYB5k56e+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AMEZ00mq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723005485;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KTk7jZ7lYTXpfJXcUgVHfVoqgBIg4K0nO71lHrPFslQ=;
+	b=AMEZ00mqvIQMe+eOPzdzc3C+6EKhFvhB8gDzsMo8ESqfJUCpHol0MDwDqkxm6pAIQKK/HI
+	Wy31DKzDsRw1h0eCi0cFL0FrVTskAg4fxptZSq7C8eRFykyAfvSEaFPpYQ8VNP8gmRw2Tj
+	3jV9HuiCFj7zYR6nDfftRRgcwFvaBmQ=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-527-xcC-uy6_MaSe4x9yJdBMEQ-1; Wed, 07 Aug 2024 00:38:03 -0400
+X-MC-Unique: xcC-uy6_MaSe4x9yJdBMEQ-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2cb6c5f9810so1701758a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 21:38:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723005205; x=1723610005;
+        d=1e100.net; s=20230601; t=1723005483; x=1723610283;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PchbWzNoWQ3x0Bdyu00GRTjqAVg+Qi0U7ExdbFMkY4k=;
-        b=paKIX4BQc6ve0hSSRk1LUemlAV1gRRi6UH1ge4e7oS9MFfu98PJ3efCIr+5Vyw9yhp
-         qqPwdlLKtJQqqXM0wssJRCLA8hMfCQ3s1vKjd0TeU46irfBrxcHu6/XwDJGPD92yJ9WR
-         ow1PEUYufINljoc+y4IUpM2ynfZ/4p2hL8xTJn9+3lX3InQHu8o6onKzxTQgFfacJNGA
-         lZzOl9XnaehxbYqVP+HCMwygvrdTaXfT6FNcM025P1QbfajRF/d0n3OMBMRBY3YRv5Hb
-         qcrnwFrBVcqjMZJlYPVn6Og2cx3NeU/vUaZ0hlhVHHHMxXSMKeZ8OlqtcbJZ0OsgwI5p
-         fBxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUi+Oj932n4hadaFytnz3sPbdHX8g3JTQ0c2OorjFSexXwto9R3hUpSsRgl7B3nqmuIfnBdSHzQGSYryLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWsTKKPEYgwLLqIDpW2YEkJVL0sw2bfcpBtRk2hpzTL7jX62o3
-	tmNyRkM8902hMwX+gfEK0r+i4VLZXbUKLNWGynzzrI8Z4WfHW/Y5c5GtVq5GBQj4H7GW/s2lLki
-	UXK5Vh2UZchonxalFNCFtLTJi+ruyqJfak73o
-X-Google-Smtp-Source: AGHT+IERqcKVmfgf12AYaclzjRwXVBCyQhVDHFDvFf4sHaR9upjrrxmbdLsqhdnHKPsK7lj9VRQjWgYV6v490ma/ZVA=
-X-Received: by 2002:a05:6402:35d4:b0:5aa:19b1:ffc7 with SMTP id
- 4fb4d7f45d1cf-5bba2837dccmr114205a12.2.1723005205095; Tue, 06 Aug 2024
- 21:33:25 -0700 (PDT)
+        bh=KTk7jZ7lYTXpfJXcUgVHfVoqgBIg4K0nO71lHrPFslQ=;
+        b=QeVjE7e1XpnuongIlWAfVugu9BOvl6BTb9ppAgz2WNTbSoSDRZJOZNdBH3O3n1m2v6
+         CO9HrMmlDVujnx8PkRH/2rUCJMT9JVQkJkUNLvuDuhiAtx8cK87mEWrr3f24haHCINHM
+         tauaXSSSpSZ2OMT2+YZUPxjdYL/TIDpf+TdumuGBHwe03xk/DWcbdFHoxDkhkU5ob0zg
+         T6ClSXnUwV1UBVm5Gqnp5CrLU0pt6bAg6e/1KTN4TocmltNhwhqHb//id9EnIEEf3nyW
+         nCEG/QOiQI1P7vpyInZUpr2WC5cc2Mmd1XYeYg/q4qALIQO6CTfQe/4Rihg2AxU9aQDM
+         qqeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRYIPiRjLh2iG7LKqpOe3zW8yI34roWataIsFErbzDp+QEiEb1k0VhV2L9XZjOgkp4qb/9Z3OAAa+PONmTzi028ZKrmypbZLnZKdyZ
+X-Gm-Message-State: AOJu0YxdLGadf1wmGqxovk4KRKokkumUxPtA2e0Jv1IOUvlnDcTaujPl
+	mRFOjiav0VwewNOS9OBbNZPM53wIaRuN6Oz0nGztucUTohuHmqCVVeYNGbJoIKHhf2ZKKnbBcAd
+	4V4MuR/7v/N4WlZ6AWTZyMAF81ZEBcE/2m+TL2EqmudOu2ualRoou8D2XnN+7nJa71+NdgKRYio
+	B3VyTGB0K/sN03GAi0Q2pBX9hHIyWypec6sV6+
+X-Received: by 2002:a17:90b:194c:b0:2c9:6f03:6fd6 with SMTP id 98e67ed59e1d1-2cff941b383mr16837661a91.17.1723005482661;
+        Tue, 06 Aug 2024 21:38:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJWh0FV7XdQ58365EjWwj3Cvcl8CaSImWJu6gpWLZusJ2hCGX1Lyg8ktnpH9LNewdRCOQGEpYnQKc+Z6NQWBw=
+X-Received: by 2002:a17:90b:194c:b0:2c9:6f03:6fd6 with SMTP id
+ 98e67ed59e1d1-2cff941b383mr16837642a91.17.1723005482207; Tue, 06 Aug 2024
+ 21:38:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240804084612.2561230-1-kyletso@google.com> <20240806232836.52rkn7u3g5uiotn3@synopsys.com>
-In-Reply-To: <20240806232836.52rkn7u3g5uiotn3@synopsys.com>
-From: Kyle Tso <kyletso@google.com>
-Date: Wed, 7 Aug 2024 12:33:08 +0800
-Message-ID: <CAGZ6i=1v6+Jt3Jecd3euNnumVK781U9DQvRz7cHWnxi8Ga6W=g@mail.gmail.com>
-Subject: Re: [PATCH v3] usb: dwc3: Runtime get and put usb power_supply handle
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "raychi@google.com" <raychi@google.com>, 
-	"badhri@google.com" <badhri@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "royluo@google.com" <royluo@google.com>, 
-	"bvanassche@acm.org" <bvanassche@acm.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20240805082106.65847-1-jasowang@redhat.com> <CACGkMEvNyB_+fHV5aAeCQhebA8aF8+9hnjkjeEzt5bgrVgqw5Q@mail.gmail.com>
+ <CACycT3sz-OOKKcmH=FgD7gp_Bhi9=nwnkTn0VgRhQBxS2Dp4qw@mail.gmail.com>
+ <CACGkMEs4YWr5zu0_nVCvqLSFBG9U_A_mw+7AdkMwrPo_6X-gOA@mail.gmail.com>
+ <CACycT3vYF3nwZ3k5_8G=Zok9c4qRjCcGLVQ7+RfSpK=5PToMuA@mail.gmail.com>
+ <CACGkMEue9RU+MMgOC0t4Yuk5wRHfTdnJeZZs38g2h+gyZv+3VQ@mail.gmail.com> <CACycT3sHT-izwAKzxAWPbqGFgyf82WxkHHOrp1SjWa+HE01mCg@mail.gmail.com>
+In-Reply-To: <CACycT3sHT-izwAKzxAWPbqGFgyf82WxkHHOrp1SjWa+HE01mCg@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 7 Aug 2024 12:37:50 +0800
+Message-ID: <CACGkMEvsMQS-5Oy7rTyA5a2u1xYRf0beBHbZ16geHJCZTE0jLw@mail.gmail.com>
+Subject: Re: [PATCH] vduse: avoid using __GFP_NOFAIL
+To: Yongji Xie <xieyongji@bytedance.com>
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Eugenio Perez Martin <eperezma@redhat.com>, virtualization@lists.linux.dev, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 21cnbao@gmail.com, 
+	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 7, 2024 at 7:29=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@synopsys.=
-com> wrote:
+On Wed, Aug 7, 2024 at 11:13=E2=80=AFAM Yongji Xie <xieyongji@bytedance.com=
+> wrote:
 >
-> On Sun, Aug 04, 2024, Kyle Tso wrote:
-> > It is possible that the usb power_supply is registered after the probe
+> On Wed, Aug 7, 2024 at 10:39=E2=80=AFAM Jason Wang <jasowang@redhat.com> =
+wrote:
+> >
+> > On Tue, Aug 6, 2024 at 11:10=E2=80=AFAM Yongji Xie <xieyongji@bytedance=
+.com> wrote:
+> > >
+> > > On Tue, Aug 6, 2024 at 10:28=E2=80=AFAM Jason Wang <jasowang@redhat.c=
+om> wrote:
+> > > >
+> > > > On Mon, Aug 5, 2024 at 6:42=E2=80=AFPM Yongji Xie <xieyongji@byteda=
+nce.com> wrote:
+> > > > >
+> > > > > On Mon, Aug 5, 2024 at 4:24=E2=80=AFPM Jason Wang <jasowang@redha=
+t.com> wrote:
+> > > > > >
+> > > > > > On Mon, Aug 5, 2024 at 4:21=E2=80=AFPM Jason Wang <jasowang@red=
+hat.com> wrote:
+> > > > > > >
+> > > > > > > Barry said [1]:
+> > > > > > >
+> > > > > > > """
+> > > > > > > mm doesn't support non-blockable __GFP_NOFAIL allocation. Bec=
+ause
+> > > > > > > __GFP_NOFAIL without direct reclamation may just result in a =
+busy
+> > > > > > > loop within non-sleepable contexts.
+> > > > > > > ""=E2=80=9C
+> > > > > > >
+> > > > > > > Unfortuantely, we do that under read lock. A possible way to =
+fix that
+> > > > > > > is to move the pages allocation out of the lock into the call=
+er, but
+> > > > > > > having to allocate a huge number of pages and auxiliary page =
+array
+> > > > > > > seems to be problematic as well per Tetsuon [2]:
+> > > > > > >
+> > > > > > > """
+> > > > > > > You should implement proper error handling instead of using
+> > > > > > > __GFP_NOFAIL if count can become large.
+> > > > > > > """
+> > > > > > >
+> > > > >
+> > > > > I think the problem is it's hard to do the error handling in
+> > > > > fops->release() currently.
+> > > >
+> > > > vduse_dev_dereg_umem() should be the same, it's very hard to allow =
+it to fail.
+> > > >
+> > > > >
+> > > > > So can we temporarily hold the user page refcount, and release it=
+ when
+> > > > > vduse_dev_open()/vduse_domain_release() is executed. The kernel p=
+age
+> > > > > allocation and memcpy can be done in vduse_dev_open() which allow=
+s
+> > > > > some error handling.
+> > > >
+> > > > Just to make sure I understand this, the free is probably not the b=
+ig
+> > > > issue but the allocation itself.
+> > > >
+> > >
+> > > Yes, so defer the allocation might be a solution.
+> >
+> > Would you mind posting a patch for this?
+> >
+> > >
+> > > > And if we do the memcpy() in open(), it seems to be a subtle usersp=
+ace
+> > > > noticeable change? (Or I don't get how copying in vduse_dev_open() =
+can
+> > > > help here).
+> > > >
+> > >
+> > > Maybe we don't need to do the copy in open(). We can hold the user
+> > > page refcount until the inflight I/O is completed. That means the
+> > > allocation of new kernel pages can be done in
+> > > vduse_domain_map_bounce_page() and the release of old user pages can
+> > > be done in vduse_domain_unmap_bounce_page().
+> >
+> > This seems to be a subtle userspace noticeable behaviour?
+> >
 >
-> Should we defer the dwc3 probe until the power_supply is registered
-> then?
+> Yes, userspace needs to ensure that it does not reuse the old user
+> pages for other purposes before vduse_dev_dereg_umem() returns
+> successfully. The vduse_dev_dereg_umem() will only return successfully
+> when there is no inflight I/O which means we don't need to allocate
+> extra kernel pages to store data. If we can't accept this, then your
+> current patch might be the most suitable.
+
+It might be better to not break.
+
+Actually during my testing, the read_lock in the do_bounce path slows
+down the performance. Remove read_lock or use rcu_read_lock() to give
+20% improvement of PPS.
+
+I do want to get rid of it (e.g moving the copying some other where)
+seems it meets the exact "issue" here which introduces some behaviour
+change...
+
+> I will test this patch
+> first.
 >
 
-We can do that, but getting the power_supply reference just before
-using the power_supply APIs is safer because we don't risk waiting for
-the registration of the usb power_supply. If vbus_draw is being called
-but the usb power_supply is still not ready, just let it fail without
-doing anything (only print the error logs). The usb gadget function
-still works. And once the usb power_supply is ready, the vbus_draw
-will be fine in following usb state changes.
+Great.
 
-Moreover, all drivers using power_supply_get_by_name in the source
-tree adopt this way. IMO it should be okay.
+Thanks
 
-> > of dwc3. In this case, trying to get the usb power_supply during the
-> > probe will fail and there is no chance to try again. Also the usb
-> > power_supply might be unregistered at anytime so that the handle of it
->
-> This is problematic... If the power_supply is unregistered, the device
-> is no longer usable.
->
-> > in dwc3 would become invalid. To fix this, get the handle right before
-> > calling to power_supply functions and put it afterward.
->
-> Shouldn't the life-cycle of the dwc3 match with the power_supply? How
-> can we maintain function without the proper power_supply?
->
-> BR,
-> Thinh
+> Thanks,
+> Yongji
 >
 
-usb power_supply is controlled by "another" driver which can be
-unloaded without notifying other drivers using it (such as dwc3).
-Unless there is a notification mechanism for the (un)registration of
-the power_supply class, getting/putting the reference right
-before/after calling the power_supply api is the best we can do for
-now.
-
-Kyle
-
-
-
-
-> >
-> > dwc3_gadet_vbus_draw might be in interrupt context. Create a kthread
-> > worker beforehand and use it to process the "might-sleep"
-> > power_supply_put ASAP after the property set.
-> >
-> > Fixes: 6f0764b5adea ("usb: dwc3: add a power supply for current control=
-")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Kyle Tso <kyletso@google.com>
-> > ---
-> > v2 -> v3:
-> > - Only move power_supply_put to a work. Still call _get_by_name and
-> >   _set_property in dwc3_gadget_vbus_draw.
-> > - Create a kthread_worker to handle the work
-> >
-> > v1 -> v2:
-> > - move power_supply_put out of interrupt context
-> >
-> >  drivers/usb/dwc3/core.c   | 29 ++++++++++++----------------
-> >  drivers/usb/dwc3/core.h   |  6 ++++--
-> >  drivers/usb/dwc3/gadget.c | 40 +++++++++++++++++++++++++++++++++++----
-> >  3 files changed, 52 insertions(+), 23 deletions(-)
-> >
-> > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> > index 734de2a8bd21..82c8376330d7 100644
-> > --- a/drivers/usb/dwc3/core.c
-> > +++ b/drivers/usb/dwc3/core.c
-> > @@ -1631,8 +1631,6 @@ static void dwc3_get_properties(struct dwc3 *dwc)
-> >       u8                      tx_thr_num_pkt_prd =3D 0;
-> >       u8                      tx_max_burst_prd =3D 0;
-> >       u8                      tx_fifo_resize_max_num;
-> > -     const char              *usb_psy_name;
-> > -     int                     ret;
-> >
-> >       /* default to highest possible threshold */
-> >       lpm_nyet_threshold =3D 0xf;
-> > @@ -1667,12 +1665,7 @@ static void dwc3_get_properties(struct dwc3 *dwc=
-)
-> >
-> >       dwc->sys_wakeup =3D device_may_wakeup(dwc->sysdev);
-> >
-> > -     ret =3D device_property_read_string(dev, "usb-psy-name", &usb_psy=
-_name);
-> > -     if (ret >=3D 0) {
-> > -             dwc->usb_psy =3D power_supply_get_by_name(usb_psy_name);
-> > -             if (!dwc->usb_psy)
-> > -                     dev_err(dev, "couldn't get usb power supply\n");
-> > -     }
-> > +     device_property_read_string(dev, "usb-psy-name", &dwc->usb_psy_na=
-me);
-> >
-> >       dwc->has_lpm_erratum =3D device_property_read_bool(dev,
-> >                               "snps,has-lpm-erratum");
-> > @@ -2132,19 +2125,24 @@ static int dwc3_probe(struct platform_device *p=
-dev)
-> >
-> >       dwc3_get_software_properties(dwc);
-> >
-> > +     dwc->worker =3D kthread_create_worker(0, "dwc3-worker");
-> > +     if (IS_ERR(dwc->worker))
-> > +             return PTR_ERR(dwc->worker);
-> > +     sched_set_fifo(dwc->worker->task);
-> > +
-> >       dwc->reset =3D devm_reset_control_array_get_optional_shared(dev);
-> >       if (IS_ERR(dwc->reset)) {
-> >               ret =3D PTR_ERR(dwc->reset);
-> > -             goto err_put_psy;
-> > +             goto err_destroy_worker;
-> >       }
-> >
-> >       ret =3D dwc3_get_clocks(dwc);
-> >       if (ret)
-> > -             goto err_put_psy;
-> > +             goto err_destroy_worker;
-> >
-> >       ret =3D reset_control_deassert(dwc->reset);
-> >       if (ret)
-> > -             goto err_put_psy;
-> > +             goto err_destroy_worker;
-> >
-> >       ret =3D dwc3_clk_enable(dwc);
-> >       if (ret)
-> > @@ -2245,9 +2243,8 @@ static int dwc3_probe(struct platform_device *pde=
-v)
-> >       dwc3_clk_disable(dwc);
-> >  err_assert_reset:
-> >       reset_control_assert(dwc->reset);
-> > -err_put_psy:
-> > -     if (dwc->usb_psy)
-> > -             power_supply_put(dwc->usb_psy);
-> > +err_destroy_worker:
-> > +     kthread_destroy_worker(dwc->worker);
-> >
-> >       return ret;
-> >  }
-> > @@ -2258,6 +2255,7 @@ static void dwc3_remove(struct platform_device *p=
-dev)
-> >
-> >       pm_runtime_get_sync(&pdev->dev);
-> >
-> > +     kthread_destroy_worker(dwc->worker);
-> >       dwc3_core_exit_mode(dwc);
-> >       dwc3_debugfs_exit(dwc);
-> >
-> > @@ -2276,9 +2274,6 @@ static void dwc3_remove(struct platform_device *p=
-dev)
-> >       pm_runtime_set_suspended(&pdev->dev);
-> >
-> >       dwc3_free_event_buffers(dwc);
-> > -
-> > -     if (dwc->usb_psy)
-> > -             power_supply_put(dwc->usb_psy);
-> >  }
-> >
-> >  #ifdef CONFIG_PM
-> > diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-> > index 1e561fd8b86e..3fc58204db6e 100644
-> > --- a/drivers/usb/dwc3/core.h
-> > +++ b/drivers/usb/dwc3/core.h
-> > @@ -993,6 +993,7 @@ struct dwc3_scratchpad_array {
-> >  /**
-> >   * struct dwc3 - representation of our controller
-> >   * @drd_work: workqueue used for role swapping
-> > + * @worker: dedicated kthread worker
-> >   * @ep0_trb: trb which is used for the ctrl_req
-> >   * @bounce: address of bounce buffer
-> >   * @setup_buf: used while precessing STD USB requests
-> > @@ -1045,7 +1046,7 @@ struct dwc3_scratchpad_array {
-> >   * @role_sw: usb_role_switch handle
-> >   * @role_switch_default_mode: default operation mode of controller whi=
-le
-> >   *                   usb role is USB_ROLE_NONE.
-> > - * @usb_psy: pointer to power supply interface.
-> > + * @usb_psy_name: name of the usb power supply interface
-> >   * @usb2_phy: pointer to USB2 PHY
-> >   * @usb3_phy: pointer to USB3 PHY
-> >   * @usb2_generic_phy: pointer to array of USB2 PHYs
-> > @@ -1163,6 +1164,7 @@ struct dwc3_scratchpad_array {
-> >   */
-> >  struct dwc3 {
-> >       struct work_struct      drd_work;
-> > +     struct kthread_worker   *worker;
-> >       struct dwc3_trb         *ep0_trb;
-> >       void                    *bounce;
-> >       u8                      *setup_buf;
-> > @@ -1223,7 +1225,7 @@ struct dwc3 {
-> >       struct usb_role_switch  *role_sw;
-> >       enum usb_dr_mode        role_switch_default_mode;
-> >
-> > -     struct power_supply     *usb_psy;
-> > +     const char              *usb_psy_name;
-> >
-> >       u32                     fladj;
-> >       u32                     ref_clk_per;
-> > diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-> > index 89fc690fdf34..1ff583281eff 100644
-> > --- a/drivers/usb/dwc3/gadget.c
-> > +++ b/drivers/usb/dwc3/gadget.c
-> > @@ -30,6 +30,11 @@
-> >  #define DWC3_ALIGN_FRAME(d, n)       (((d)->frame_number + ((d)->inter=
-val * (n))) \
-> >                                       & ~((d)->interval - 1))
-> >
-> > +struct dwc3_psy_put {
-> > +     struct kthread_work work;
-> > +     struct power_supply *psy;
-> > +};
-> > +
-> >  /**
-> >   * dwc3_gadget_set_test_mode - enables usb2 test modes
-> >   * @dwc: pointer to our context structure
-> > @@ -3047,22 +3052,49 @@ static void dwc3_gadget_set_ssp_rate(struct usb=
-_gadget *g,
-> >       spin_unlock_irqrestore(&dwc->lock, flags);
-> >  }
-> >
-> > +static void dwc3_gadget_psy_put(struct kthread_work *work)
-> > +{
-> > +     struct dwc3_psy_put     *psy_put =3D container_of(work, struct dw=
-c3_psy_put, work);
-> > +
-> > +     power_supply_put(psy_put->psy);
-> > +     kfree(psy_put);
-> > +}
-> > +
-> >  static int dwc3_gadget_vbus_draw(struct usb_gadget *g, unsigned int mA=
-)
-> >  {
-> > -     struct dwc3             *dwc =3D gadget_to_dwc(g);
-> > +     struct dwc3                     *dwc =3D gadget_to_dwc(g);
-> > +     struct power_supply             *usb_psy;
-> >       union power_supply_propval      val =3D {0};
-> > +     struct dwc3_psy_put             *psy_put;
-> >       int                             ret;
-> >
-> >       if (dwc->usb2_phy)
-> >               return usb_phy_set_power(dwc->usb2_phy, mA);
-> >
-> > -     if (!dwc->usb_psy)
-> > +     if (!dwc->usb_psy_name)
-> >               return -EOPNOTSUPP;
-> >
-> > +     usb_psy =3D power_supply_get_by_name(dwc->usb_psy_name);
-> > +     if (!usb_psy) {
-> > +             dev_err(dwc->dev, "couldn't get usb power supply\n");
-> > +             return -ENODEV;
-> > +     }
-> > +
-> >       val.intval =3D 1000 * mA;
-> > -     ret =3D power_supply_set_property(dwc->usb_psy, POWER_SUPPLY_PROP=
-_INPUT_CURRENT_LIMIT, &val);
-> > +     ret =3D power_supply_set_property(usb_psy, POWER_SUPPLY_PROP_INPU=
-T_CURRENT_LIMIT, &val);
-> > +     if (ret < 0) {
-> > +             dev_err(dwc->dev, "failed to set power supply property\n"=
-);
-> > +             return ret;
-> > +     }
-> >
-> > -     return ret;
-> > +     psy_put =3D kzalloc(sizeof(*psy_put), GFP_ATOMIC);
-> > +     if (!psy_put)
-> > +             return -ENOMEM;
-> > +     kthread_init_work(&psy_put->work, dwc3_gadget_psy_put);
-> > +     psy_put->psy =3D usb_psy;
-> > +     kthread_queue_work(dwc->worker, &psy_put->work);
-> > +
-> > +     return 0;
-> >  }
-> >
-> >  /**
-> > --
-> > 2.46.0.rc2.264.g509ed76dc8-goog
-> >
 
