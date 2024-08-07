@@ -1,109 +1,185 @@
-Return-Path: <linux-kernel+bounces-278693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A823E94B39A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:22:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE30794B39D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF86282A13
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:22:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87C5B2815BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED92156872;
-	Wed,  7 Aug 2024 23:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABC3155C81;
+	Wed,  7 Aug 2024 23:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWaHE+9F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OoabwbnZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB06155301;
-	Wed,  7 Aug 2024 23:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F71E145FF5;
+	Wed,  7 Aug 2024 23:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723072950; cv=none; b=e5TMos2Gb882qG7+IO5PCzpxMzYAOZQVLwT13fw5xk7vT90EfK9b6THIFtdBTj/PkgGI9hh5vPXN1yW5Ai0CkdrhMhUWHIc9uC2FCIO2hNC7elPeHDb4jtyavzCDbC1IG45RFVsv14RbL2FRa0ekanjaNDS1qjEJ/Dy6JrpJTcY=
+	t=1723073151; cv=none; b=XYJ/VhYYZP9nt7Aj4vjVMqyUib477m2aVEyaXbS1SPBILG4CkvOdGH+tersv7Hs8ppGyqKFhdHtXbddwP4+KgSNaOLoJKhYdlUWYspNCV9bbYNNndOWciQ9fW20A/5FhsjEMMwPJgx2Btwu3m974TrZoqDLNCHYNQvNhZGgw1xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723072950; c=relaxed/simple;
-	bh=RaFIQnhHCVfXZhfLSnx0U32F4IlncSulUcGskYU6UtY=;
+	s=arc-20240116; t=1723073151; c=relaxed/simple;
+	bh=fHY76M/H9pGxgX2OPWiXt01007xTeEUbz2O/iNpJrLY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aCCbtHK0VKY6UN4EJ0LGzvYRatGLKozQOuODFJVKlybdzL6oBR/MIvBceNin+RKi5Z6+opahhBt8Cyhq5a53gDiUWKohoDQKRAiHbvQnt1bTDzRLGQWiOA+fniE763AmOV1xIXIVNnTj2vJCaoXTDVJTPBqr6ZSgGKETrBSWF68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWaHE+9F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A977C4AF10;
-	Wed,  7 Aug 2024 23:22:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tAZCW0rPco3MFDqrf4R3kIusAQFFl1MLj6zLCs+Z7/VB+B7iOyHgCYleuRZq8LxOaFdtmiQzggmvPHm1Y8cVw4Pl4Pa4fbFZC8Vzxis5srNwzD2B0gcDAVhMsoFNYOy/JiKTiexF0p76TjWOZqHPpf0fKZK0cC85QZV5HiG6s34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OoabwbnZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2CA1C32781;
+	Wed,  7 Aug 2024 23:25:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723072950;
-	bh=RaFIQnhHCVfXZhfLSnx0U32F4IlncSulUcGskYU6UtY=;
+	s=k20201202; t=1723073151;
+	bh=fHY76M/H9pGxgX2OPWiXt01007xTeEUbz2O/iNpJrLY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mWaHE+9F9oZolq2zd7j9sugiqdHgYVE+JJo9M4TUOONrL18B5kBtXLv2vx2JBkIqe
-	 U4w/2JUN2xoBkY5RyAtLvrPGPeNiZkm0176mjAaHcaBrboYYS93xLnCEvHBWBjKUqi
-	 xdfW/qsEEPs6QGa70quFuBvJHNsz7/TBT0iJVGFoVpyN9TQzknhbkTdAuDLUIBi4Yr
-	 7kUgn7GAzgwJRzSOF0YvBHhR4aQZD+tFO2T8zE63mH5Nccleot+f+MSFTB9MGDqYMe
-	 yMZG+n9LnWqayTQiTtbk3mXoaT1w8DPFsyvH9RgOHfLNqoQVmAJV8QJBpcnMXCfQf7
-	 0w8mWFhHN1Stg==
-Date: Wed, 7 Aug 2024 16:22:29 -0700
-From: Kees Cook <kees@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, jannh@google.com,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH RFT v7 9/9] selftests/clone3: Test shadow stack support
-Message-ID: <202408071620.57E9BBE5D@keescook>
-References: <20240731-clone3-shadow-stack-v7-0-a9532eebfb1d@kernel.org>
- <20240731-clone3-shadow-stack-v7-9-a9532eebfb1d@kernel.org>
- <202408052046.00BC7CBC@keescook>
- <19ee6fc9-94d7-4420-abd3-7cfdf612df0c@sirena.org.uk>
- <202408062022.34F3558@keescook>
- <e5e5c0fc-3425-4020-ae7c-4b7fd0f1f263@sirena.org.uk>
- <202408071221.92B6E385C@keescook>
- <ZrPvLIjW0p8j5C1x@finisterre.sirena.org.uk>
+	b=OoabwbnZ0rnouuqReNKKoPsfbdHQi0Izea3hLk+l30DOVO3YrH1PVTWLNb1dtcLV8
+	 ILD2q9iJf+IsgzYk+XEWPlN7X5Caisjspd/Fgu/uT9GLHm+ZLgfd8WpQ+34fc64WGm
+	 STUtBQNRCMadv1avtK8VFfe0GMr7DJx68hfDCWZnEmhg0rXMj3lDO/iERbGkiQsFZc
+	 sphBpmqZg6oW1lnRlpDOTygmL6h0SHwFeFdYYgYv8UkEN28uXOJdBk22FyxSmPoXdp
+	 P+bGPEfNeOEeaA851o9XaakGpQBGumL4TmHneLjwq15Y6FlpTIOEFOR0A5K+2jO+r/
+	 F9GkB1C2l1frA==
+Date: Wed, 7 Aug 2024 16:25:49 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: irogers@google.com, acme@kernel.org, adrian.hunter@intel.com,
+	jolsa@kernel.org, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/9] perf record --off-cpu: Parse offcpu-time event
+Message-ID: <ZrQCfQOzWpfr6SNT@google.com>
+References: <20240807153843.3231451-1-howardchu95@gmail.com>
+ <20240807153843.3231451-4-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZrPvLIjW0p8j5C1x@finisterre.sirena.org.uk>
+In-Reply-To: <20240807153843.3231451-4-howardchu95@gmail.com>
 
-On Wed, Aug 07, 2024 at 11:03:24PM +0100, Mark Brown wrote:
-> On Wed, Aug 07, 2024 at 12:23:01PM -0700, Kees Cook wrote:
-> > On Wed, Aug 07, 2024 at 01:39:27PM +0100, Mark Brown wrote:
+On Wed, Aug 07, 2024 at 11:38:37PM +0800, Howard Chu wrote:
+> Parse offcpu-time event using parse_event, in off_cpu_start(), write
+> evlist fds got from evlist__open() to perf_event_array BPF map.
 > 
-> > >  		size = args->shadow_stack_size;
-> > > +		shstk->base = 0;
-> > > +		shstk->size = 0;
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> ---
+>  tools/perf/util/bpf_off_cpu.c | 55 ++++++++++++++++++++---------------
+>  tools/perf/util/evsel.c       |  2 +-
+>  2 files changed, 32 insertions(+), 25 deletions(-)
 > 
-> > Yup, that fixes it!
-> 
-> >   # Totals: pass:23 fail:0 xfail:0 xpass:0 skip:1 error:0
-> 
-> > (The skip is "Shadow stack on system without shadow stack")
-> 
-> Excellent, thanks!  It's amazing how many dumb mistakes you can find if
-> you actually try running the code :/ .
+> diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cpu.c
+> index 1e0e454bfb5e..fae0bb8aaa13 100644
+> --- a/tools/perf/util/bpf_off_cpu.c
+> +++ b/tools/perf/util/bpf_off_cpu.c
+> @@ -13,6 +13,7 @@
+>  #include "util/cgroup.h"
+>  #include "util/strlist.h"
+>  #include <bpf/bpf.h>
+> +#include <internal/xyarray.h>
+>  
+>  #include "bpf_skel/off_cpu.skel.h"
+>  
+> @@ -38,39 +39,24 @@ union off_cpu_data {
+>  
+>  static int off_cpu_config(struct evlist *evlist)
+>  {
+> -	struct evsel *evsel;
+> -	struct perf_event_attr attr = {
+> -		.type	= PERF_TYPE_SOFTWARE,
+> -		.config = PERF_COUNT_SW_BPF_OUTPUT,
+> -		.size	= sizeof(attr), /* to capture ABI version */
+> -	};
+> -	char *evname = strdup(OFFCPU_EVENT);
+> +	char off_cpu_event[64];
+>  
+> -	if (evname == NULL)
+> -		return -ENOMEM;
+> -
+> -	evsel = evsel__new(&attr);
+> -	if (!evsel) {
+> -		free(evname);
+> -		return -ENOMEM;
+> +	/* after parsing off-cpu event, we'll specify its sample_type in evsel__config() */
+> +	scnprintf(off_cpu_event, sizeof(off_cpu_event), "bpf-output/no-inherit=1,name=%s/", OFFCPU_EVENT);
+> +	if (parse_event(evlist, off_cpu_event)) {
+> +		pr_err("Failed to open off-cpu event\n");
+> +		return -1;
+>  	}
+>  
+> -	evsel->core.attr.freq = 1;
+> -	evsel->core.attr.sample_period = 1;
+> -	/* off-cpu analysis depends on stack trace */
+> -	evsel->core.attr.sample_type = PERF_SAMPLE_CALLCHAIN;
+> -
+> -	evlist__add(evlist, evsel);
+> -
+> -	free(evsel->name);
+> -	evsel->name = evname;
+> -
+>  	return 0;
+>  }
+>  
+>  static void off_cpu_start(void *arg)
+>  {
+>  	struct evlist *evlist = arg;
+> +	struct evsel *evsel;
+> +	struct perf_cpu pcpu;
+> +	int i, err;
+>  
+>  	/* update task filter for the given workload */
+>  	if (!skel->bss->has_cpu && !skel->bss->has_task &&
+> @@ -86,6 +72,27 @@ static void off_cpu_start(void *arg)
+>  		bpf_map_update_elem(fd, &pid, &val, BPF_ANY);
+>  	}
+>  
+> +	/* sample id and fds in BPF's perf_event_array can only be set after record__open() */
+> +	evsel = evlist__find_evsel_by_str(evlist, OFFCPU_EVENT);
+> +	if (evsel == NULL) {
+> +		pr_err("%s evsel not found\n", OFFCPU_EVENT);
+> +		return;
+> +	}
+> +
+> +	if (evsel->core.id)
+> +		skel->bss->sample_id = evsel->core.id[0];
+> +
+> +	perf_cpu_map__for_each_cpu(pcpu, i, evsel->core.cpus) {
+> +		err = bpf_map__update_elem(skel->maps.offcpu_output,
+> +					   &pcpu.cpu, sizeof(__u32),
+> +					   xyarray__entry(evsel->core.fd, pcpu.cpu, 0),
+> +					   sizeof(__u32), BPF_ANY);
+> +		if (err) {
+> +			pr_err("Failed to update perf event map for direct off-cpu dumping\n");
+> +			return;
+> +		}
+> +	}
+> +
+>  	skel->bss->enabled = 1;
+>  }
+>  
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index b961467133cf..ccd3bda02b5d 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -1379,7 +1379,7 @@ void evsel__config(struct evsel *evsel, struct record_opts *opts,
+>  		evsel__reset_sample_bit(evsel, BRANCH_STACK);
+>  
+>  	if (evsel__is_offcpu_event(evsel))
+> -		evsel->core.attr.sample_type &= OFFCPU_SAMPLE_TYPES;
+> +		evsel->core.attr.sample_type = OFFCPU_SAMPLE_TYPES;
 
-Heh, well, it's tricky work writing it without reference hardware. :) I
-just wish there was CET emulation in QEmu...
+I don't think we need this.  It should check what you requested.
+IOW you don't need to put cgroup info when user didn't ask.
 
--- 
-Kees Cook
+Thanks,
+Namhyung
+
+>  
+>  	arch__post_evsel_config(evsel, attr);
+>  }
+> -- 
+> 2.45.2
+> 
 
