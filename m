@@ -1,126 +1,126 @@
-Return-Path: <linux-kernel+bounces-278423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3FF094B019
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:55:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4490994B01B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37CC4B232A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:55:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F12282846AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6656C1422C5;
-	Wed,  7 Aug 2024 18:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C64B1422C5;
+	Wed,  7 Aug 2024 18:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="K4ybcO5w"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gDyoeSt3"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BF513AD3F
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0358485654;
+	Wed,  7 Aug 2024 18:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723056936; cv=none; b=EO/ttsMBt053LbLOIIy2gRyBTUfI5wH1NJcsJ/WgMfIMC71alvWW0vDIeUMi27khsN6ZUMyG/N0BhjJ3Jle0t1+uzouZ56fXvbQHNO46Wv2/59ZTymx500hUmQzvCmKgGrZc6bWZVs7laGwFIXZVYMD4LYTmq5FG7vTLemDVCeE=
+	t=1723056994; cv=none; b=q0iQu4ecE850RWp2VgxOhGiAgTt/jjVT+DHJR3HM4CebHLLhWfL6RgyYgvAlAxnnsIcq+0T/fGX3DtfCRV+8aPATFv7giqAXyigBAbtkJR8TzIfDJnVGwqS4pOI8vreWbK/GZGkLBhDeNciNn5/Ekq+btTsQC0uJ+t+exZPfxvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723056936; c=relaxed/simple;
-	bh=QzhlHFhB1FlhGEk8gZPrNnM4az2SdvOjtcQi634hGIg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZAadvCTfKMbOhLReDmOU4mSZtGmAi8Wv6qW7kBFbm1C0EiUHw3j8Me1mJ+AFscC/+NoeKhZsLPiMOuyizql6Ff3RVh6g69n59JNkdfZsfBcY681vlsbRitTv1cM0Wetpjw6RJdlCV5Fpb+ZyQjR3f0Lj9L3M3yWMuQg1u8Eu4A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=K4ybcO5w; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-710afd56c99so140684b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 11:55:34 -0700 (PDT)
+	s=arc-20240116; t=1723056994; c=relaxed/simple;
+	bh=lsuc/lshZOg+DuqIVnQSssFUNUA+HZLxp3IIAp18gFw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PxUI45cjymvLQokRNepNKsrGUVEtktTBM/SAqkJ4+IkDnxBiMpO++ZvXl9irTfZGGgki9V9qSRVr2oE2dP/4Hfl+Ak+7qhe4RHQ1QlE730Y2c6wvlmD2vEdYkOjrHoysLfUNda6bV++Xbt5/JAFoTWY0BOq21qK5Nhk58/9AvaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gDyoeSt3; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5b3fff87e6bso134110a12.0;
+        Wed, 07 Aug 2024 11:56:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723056934; x=1723661734; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZFMK304Cg4PQj4mJQ9LEOTK8TkHQhLXzoojwOreQ/Ok=;
-        b=K4ybcO5wEPjvJSXg2hs3VvuZiX6MvQowzIXetYqdlb1poo3K6RH9nAsVOajDuQwHgX
-         epKi1wdjKD0DG5vpiaxzQ06eqUfJfeSgyC1quEbnSWe6zweSR8z+tdO5KPPe+y9QYbpi
-         0adWKjOaNgagHUivC7i+ujbZ7r0A/c0TFzxAbARARwkj9t9G04DVC94+fPrAdI6GPt7J
-         8gqramJqlZ6R4scpq+rk9+8WWFptzm3fDDF3vGpQzsQ7VB8CVZgQqiuMu7H1nsQvR7gY
-         DJu/1zZwCU+xCN2Rc5eYtyJuUZFAPBWYXb7+kMTWl9LAb+hPVSLBFNpR/wobcZXLYJ3b
-         89zA==
+        d=gmail.com; s=20230601; t=1723056991; x=1723661791; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xxxFMGONyiY5lwMQEz9ipuTf1/gIzS+3OZW/D/IQ/z0=;
+        b=gDyoeSt3XmH3D7+Nw3dZOP9sAuYoVuhGgmY9cyfYlrmIomGQWiO7v6HbIEPfBW3cfq
+         q/kI8T3jIyYAgwLPonTgqJWa5Oj528+01tew0pjOudq0VOq+Ipr9QuB4IpafnBDlkfHa
+         qPaYUmj03MnRSVrvUdyGG2+VrBHi/wWVVuVggHunCQhe43akEVgZzvEq53po6Fy5AHTk
+         BXKmgX69qFMCeOC5qtlo9KLVHhmNugtnP/SsH2fcTrWfB4vUJFeHnbbDAWvWxpruI1eP
+         1Shew1tMOcOWInyaa0gzbk1cwmY4BOZdO8JLN8I88++1VdWzmPUdy5RpGgOQuaXFsBc+
+         goVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723056934; x=1723661734;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZFMK304Cg4PQj4mJQ9LEOTK8TkHQhLXzoojwOreQ/Ok=;
-        b=d4673CFynI6q17cUpVeU06oAOEPGrqQ8MzrcDU5kHIHH5XQQ+rMZc4B0HeF2MQ4Yg6
-         LG84UT6kzZMqfV6r4tujxiCF9rLDlba45OXZZJl7Vle2e5AeIi/YbQI7BVRIAIIoFaOV
-         RDcU0GOfapDmF/73mQSWvqc4m0VPN+ebm99AndWLMG2FzRlo1CW/ZD2NyAE5Mv1KYln6
-         edvH/j2ZxmAG/eUHr1tGwe66GZtC9/aFKWOifZX5OY1FzizHl4DeHKr/bmttBhaNTBuG
-         6P5oOG4NbLGVXQLNcdcFHGVbGbcskmyFFYgfRjlH3Mwonjpqi2gHsLLNfqVZ73iSm3pr
-         8Esw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5ZncY+G78G4ucaLUz5qTrxu93/3BOaTmRPzie0+dIrwKqj1hVuI6ZSbbgVV6Poo4JYe+nJMCQTf5fy3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3z+XxcliNKTxJ8oY/vUw+RzSMY951+5UVVAumiQ5zMCNy5OoR
-	Iu6BpSMhx8sPmPSaq7Yw3cvga8Mb1y8y2d+FT6hmsjOjuK01aZMGsVBAZ3jVpdU=
-X-Google-Smtp-Source: AGHT+IEYK846WIyyA851lwFO0Thrl84W8t0gbyPKmjyyprzOtO6+L8KKdMUAaabzXjldmTOqaK+sQQ==
-X-Received: by 2002:a05:6a00:6f5b:b0:704:2516:8d17 with SMTP id d2e1a72fcca58-710bc85f5e3mr5133969b3a.8.1723056934390;
-        Wed, 07 Aug 2024 11:55:34 -0700 (PDT)
-Received: from localhost ([71.212.170.185])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ece4967sm8678435b3a.138.2024.08.07.11.55.33
+        d=1e100.net; s=20230601; t=1723056991; x=1723661791;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xxxFMGONyiY5lwMQEz9ipuTf1/gIzS+3OZW/D/IQ/z0=;
+        b=bjc3/XAiIaUCIm7Wf8h8jhQJbF7mKQopw1IkUR6iMqH7smpLYZeXD61CVZC2VdWDjC
+         Elcjp2jqB3okhemj1o1rg4D5/UaJACKssvrN4QulMSIncy55vr10mqwGFBcqgMk/g5U1
+         uZ/ijBk5+s6ikR2mRU9w8tgfRZ+s3uSoF9Bcq9Bk7uYTid//9RTTzquC65vpRpB77IRr
+         zqyQtVnmEpROXLomrOstdapmHES2xR4prgx8dW61q52DGtaka2S9YYrkMjR2bgLiDhei
+         dd8hF+UNKhhArSeDRtkxTv+wua0kxmUjEy9OTn0KhiLBVwGS0KhTAfFVuR5U9aNUpo4f
+         vVZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAQDOKdINuXdJFp1rEDzkHAMz5lEHZ+Ya459677vZvheEUMI3M64zY/w7s4wv8t55WT7tdDOS2xVvO6lhFQAPoOsFr4twu+L/BqUfR83+l5mLnyYaezSC17b0KvIL0ecC7BhsLwlWx
+X-Gm-Message-State: AOJu0YzFWkpjhuenXM78vsA7YuL51KQM3LQS2kdbsvEDOcrLsUU5Q6u+
+	ycekNsFdKY3CrSiQOxmF1o4vqERnny3ooD7cRUX02bhUfUjESOc8+a8L1XPH
+X-Google-Smtp-Source: AGHT+IH+Zv5ByLmXrFLeRoWJ54QRqBaPdE+dpeb7ewU++CROsHLBRoMPYFuimEgJkdFqV54K/P+gRA==
+X-Received: by 2002:a50:ff0e:0:b0:5a2:3b8c:b4e with SMTP id 4fb4d7f45d1cf-5b7f59e04c3mr12466376a12.31.1723056990768;
+        Wed, 07 Aug 2024 11:56:30 -0700 (PDT)
+Received: from localhost.localdomain ([151.49.208.23])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ba51da9c41sm5482270a12.36.2024.08.07.11.56.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 11:55:33 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Markus Schneider-Pargmann <msp@baylibre.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Markus Schneider-Pargmann
- <msp@baylibre.com>, Tony Lindgren <tony@atomide.com>, Vignesh Raghavendra
- <vigneshr@ti.com>, Ronald Wahl <ronald.wahl@raritan.com>, Uwe =?utf-8?Q?K?=
- =?utf-8?Q?leine-K=C3=B6nig?=
- <u.kleine-koenig@pengutronix.de>, Thomas Richard
- <thomas.richard@bootlin.com>, Thomas Gleixner <tglx@linutronix.de>, Udit
- Kumar <u-kumar1@ti.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>
-Cc: Vibhore Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] serial: 8250: omap: Add am62 wakeup support
-In-Reply-To: <20240807141227.1093006-1-msp@baylibre.com>
-References: <20240807141227.1093006-1-msp@baylibre.com>
-Date: Wed, 07 Aug 2024 11:55:33 -0700
-Message-ID: <7hed70kvru.fsf@baylibre.com>
+        Wed, 07 Aug 2024 11:56:30 -0700 (PDT)
+From: Denis Benato <benato.denis96@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Jagath Jog J <jagathjog1996@gmail.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Denis Benato <benato.denis96@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Jonathan LoBue <jlobue10@gmail.com>
+Subject: [PATCH v3 0/2] iio: fix bug with triggers not resuming after sleep
+Date: Wed,  7 Aug 2024 20:56:17 +0200
+Message-ID: <20240807185619.7261-1-benato.denis96@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Markus Schneider-Pargmann <msp@baylibre.com> writes:
+When a device enters an idle state (for example ASUS RC71L with s2idle)
+and an iio driver has a trigger attached such as iio-trig-hrtimer,
+after resuming the device the trigger is not triggering data acquisition.
 
-> v2
-> --
->
-> In Version 2 I removed the Partial-IO specific patches as these can't be
-> tested due to power issues in Partial-IO on am62-lp-sk and similar
-> boards.
->
-> I added a patch to add DT 'wakeup-source' support.
->
-> Series
-> ------
->
-> To support wakeup from several low power modes on am62, don't always
-> enable device wakeup. Instead only set it to wakeup capable. A
-> devicetree property 'wakeup-source' can be used to enable wakeup. The
-> user is also able to control if wakeup is enabled through sysfs.
+This patch series solves the problem reliably and is well tested after
+many cycles and many reboots.
 
-For my low-power constraints series[1], it's also important to not have
-the UART wakeups unconditionally enabled, so I like the defaults
-proposed in this series.  Thanks!
+Closes: https://lore.kernel.org/all/31d7f7aa-e834-4fd0-a66a-e0ff528425dc@gmail.com/
 
-I tested on k3-am62a7-sk along with my constraints changes and all is well.
+Changelog:
+- V2: patch 2:
+        + Simplify code
+        + Remove unneeded code protections around SET_RUNTIME_PM_OPS()
+        + pm_ptr() to let the compiler drop bmi323_core_pm_ops if !CONFIG_PM
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
+- V3: patch 1:
+	+ Add pf->irq=0 that was accidentally left out
 
-Kevin
+Previous patches obsoleted:
+https://lore.kernel.org/all/20240727123034.5541-1-benato.denis96@gmail.com/
+https://lore.kernel.org/all/20240725002641.191509-3-benato.denis96@gmail.com/
 
-[1] https://lore.kernel.org/all/20240805-lpm-v6-10-constraints-pmdomain-v1-0-d186b68ded4c@baylibre.com/
+Denis Benato (2):
+  iio: trigger: allow devices to suspend/resume theirs associated
+    trigger
+  iio: bmi323: suspend and resume triggering on relevant pm operations
+
+ drivers/iio/imu/bmi323/bmi323.h      |  1 +
+ drivers/iio/imu/bmi323/bmi323_core.c | 23 +++++++++++++++++++++++
+ drivers/iio/imu/bmi323/bmi323_i2c.c  |  1 +
+ drivers/iio/imu/bmi323/bmi323_spi.c  |  1 +
+ drivers/iio/industrialio-trigger.c   | 27 +++++++++++++++++++++++++++
+ include/linux/iio/iio.h              | 17 +++++++++++++++++
+ 6 files changed, 70 insertions(+)
+
+-- 
+2.46.0
+
 
