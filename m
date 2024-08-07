@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-277308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1290E949F1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:25:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E111949F23
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 360DB1C23293
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:25:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44BC52884C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F98F19149B;
-	Wed,  7 Aug 2024 05:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BAEB18FDAC;
+	Wed,  7 Aug 2024 05:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oGzarOld"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2051.outbound.protection.outlook.com [40.107.244.51])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VGgmofdx"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2076.outbound.protection.outlook.com [40.107.92.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C562725622
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 05:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA9919645D
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 05:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.76
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723008309; cv=fail; b=M49+5+PIeCGW6eQfzBarffAtDeoiA2Jnvz8ZaJClTwldOLvEaTxq3HMMkPGPSWj/yM+0+k5UPekaJu0JbDsc+PuZWnByQxBS5ocapdBgnZPyTHQAGxMwuvKFQ500dfLsayZOfM+Zvri59ab36s9J9i86NAX0xFxyzU4ldWKwg8E=
+	t=1723008314; cv=fail; b=KidGSMIEBCM87D/5c370O1SIYJmH+7n9LOohJmN0EmspOmpw9A9lY1dw4nssMtaH2tBNi1Fx34OCnDDK38ClNuYxcqpCZA5VEKPWPDbGoVNiKtcp+PrV3EHZVu3sGSUv42UI4z00WYx1QwAyFClfGcz+3lBVKko/wWL0CiW6Ugs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723008309; c=relaxed/simple;
-	bh=fH143adLj3rQlLiahd4Rzm1yqOI3sNn/HLeR3HY9xMM=;
+	s=arc-20240116; t=1723008314; c=relaxed/simple;
+	bh=QBMh9an0fCLXBuou/znW/QF2RUyflTvMYJe9JSFGAdQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dEbMeYMy7jHxvSE39KDXJBOm/f4xUiyhwSYftU8E1q5pDs+dMNuOiwOLCAH5ly+kUmq9r/rt/iCyS46v7hBKC+M9tu7zlKX3Uax/nP958gnChCtiMHhhm0ZlTtOPfQ+K6xkaqrqY18kjlOFtWaGcXas9iy7Jc0CBHA7n0snrTc0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oGzarOld; arc=fail smtp.client-ip=40.107.244.51
+	 MIME-Version:Content-Type; b=WBwpyBjnHcchJrZvuMDxMau/S0bawEoKzmNrTz8QTd2UDpu5GcJcsmywPqTpQJQoOcjLq8AKs9VcusD7hII2PyAF2swPNwQNtfWqJWdGdBz8zxH26cCx/dHMilRD393dsGveS172B7lFRE7zbGipQQmF2d7bzTd4gvIQFiJC0R0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VGgmofdx; arc=fail smtp.client-ip=40.107.92.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aYbp8UGUowJckJnfi5yuDU1NkqZwX+YMhO4mmMijLkQaYBlLMQ1q4SutL++C9mbekrnC4i6beqrgfqtDQj8a3Ik4TYdnKxzSvLhnpbLZDJD+yPLOPPzqVW9ONHuRCcZJLq5vXcapSNQAQJAdEmEZgy+5j91nA3C58330TuJV0HNQw9FTqR9gvc2f5T5A4EY3Ay2naqMGRNgEiq6T0hP8ydizwmSA4TfX2aEejbtoVFq6+/JPh96aZq9xUyTAUj8erB9yo4DxmMddoh9Rz+i+MMKq7USYfGrGxiXrcz+bF8Hbmxn2c2lfbGjGNrcTPkXrrZAfAL6sQQjOcRnVYGIrmg==
+ b=gSmM+/vdgRtDc05QlncWFgHEeYBZu1jySL/Gv8fGRzwJ1JAQvbUYyEEaMzqfIzeI6rE+hMWDXmHRQarF1wzmfv8rS8rzgKXtjbM2csTGuP5a8V9cNQ36yxvTezwVh2Qj5OeN5CCCyd3SjlNgJ7LGZSxenuzxO1Ar5KMk+EvNHmocAVPF0ziC+BEz3qDCq8mx4QpZkOKXOJPPkZN8mdNkmVBsdHN8osvLrE6XZXdwfF4Kt+R9c/9DfsncCFRo2nxMVRbfcWHGKnHUMas7FqI/nc78+E/YM28Dn6WnAAbyqLEI7PaXUc7zm7pEsPc5RVPYzboqy2SwJPC0UeVx2JhZWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zvzbnoS4IqnMS3jMOr8EVpyDh2YGtwmr5hmnktC+l20=;
- b=pAbnxg0LqzjANp9dymc65arXI8PLEWdq7U24KLaz0QVgVYKdaJPC0ECLg2SF+AR4BDelFJZeYVVSy0fr9RF6Uof+EBMbZpHEsB7Ifpu4w4e6yz8DFBTm8po8B6EDF3bAIkihNE4jN9z6GIQZ4siaqToqZh1cckhrQpNyQ9GorlOruW6kihRatrH1eMn0ae2V9ZTUvFf8UYwD6OKYlgGoLsKDk1us1dlX2a/PDWVqVTshwbaihAw/lqlpA+s6YifdO7WeVMvMT2jnHoi5PBYWexzdH9f50yapUTFCyU8GuyBi+xm7gYCo1nDRDwriAk4zk9OgPz7a0bOOjTG4qAayvA==
+ bh=OOpki+0hB0pDem5UKHVYya5yl2YgcYYMn8pPtyj23yg=;
+ b=tl1UscPcVjwnKXCILVuznYKMkOTVRGFtjPhxJlase0KdzLWD92YWVQaOYHt49XGw2KR/u2lxq28JZ5AvJ6i2eevuR0wRs398wVPlkjzSGulqdsxJCO06BgMGo8oBuLGWn1ldmXs++VJfi2C31YCRLg4eoEp+87CpZEETYA1xZLTk5JkW0rTd2la346sTTonp1x2TROMnI5vE/dZbudp8d7C5LGicQZT6cBT8wvHa7Pv0Y4eUDtogQi5lXHaOGGAqh94fCCijX95BcFLmrNiko7YSBGALFnDRM8Bq1oPEc7k8JaaLAaxe9Buv6nEWskbCR+sEBF+A6+lQ752MQvVkrA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=bootlin.com smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zvzbnoS4IqnMS3jMOr8EVpyDh2YGtwmr5hmnktC+l20=;
- b=oGzarOldrsqOwIxFBOw/SvPyJ4cIhhauFdtYyBB9xlQ1B2wEOppAx28Er8dEAOE63dO74j8aSCi0h1P+d/mXw5p5g5hZ6iT0Kunmoh8sxGZQX+LR5YQCsMs5aU+de37R9yS5dF1iZKxeuuJonLFW3K6f0uMxeB7WqjYWnp21fyE=
-Received: from SA0PR12CA0022.namprd12.prod.outlook.com (2603:10b6:806:6f::27)
- by PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13) with
+ bh=OOpki+0hB0pDem5UKHVYya5yl2YgcYYMn8pPtyj23yg=;
+ b=VGgmofdxokwekMLRjLMexRSEJ1buoafFkdNZh8ORv0gUtKUpCY8TNt2QVzrnYYRlDB7s32gXXd8GCxdhHsYIzSzNBEv6gGadmsAjtZv3L+/j4CfKQX82Qlm5GlNFaoCj7B8RR/4odaBTHfyfBQ9kWyM0VDu5iDK/72VcQxvMi+4=
+Received: from SA0PR12CA0016.namprd12.prod.outlook.com (2603:10b6:806:6f::21)
+ by IA1PR12MB6481.namprd12.prod.outlook.com (2603:10b6:208:3aa::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Wed, 7 Aug
- 2024 05:25:05 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Wed, 7 Aug
+ 2024 05:25:06 +0000
 Received: from SN1PEPF000397B0.namprd05.prod.outlook.com
- (2603:10b6:806:6f:cafe::2b) by SA0PR12CA0022.outlook.office365.com
- (2603:10b6:806:6f::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.24 via Frontend
+ (2603:10b6:806:6f:cafe::68) by SA0PR12CA0016.outlook.office365.com
+ (2603:10b6:806:6f::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23 via Frontend
  Transport; Wed, 7 Aug 2024 05:25:05 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
@@ -68,16 +68,16 @@ Received: from SATLEXMB04.amd.com (165.204.84.17) by
 Received: from jatayu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 7 Aug
- 2024 00:24:58 -0500
+ 2024 00:25:01 -0500
 From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
 To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jarkko Nikula
 	<jarkko.nikula@linux.intel.com>
 CC: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>, Krishnamoorthi M
 	<krishnamoorthi.m@amd.com>, <linux-i3c@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Subject: [PATCH RESEND v3 3/6] i3c: mipi-i3c-hci: Add a quirk to set PIO mode
-Date: Wed, 7 Aug 2024 10:53:56 +0530
-Message-ID: <20240807052359.290046-4-Shyam-sundar.S-k@amd.com>
+Subject: [PATCH RESEND v3 4/6] i3c: mipi-i3c-hci: Relocate helper macros to HCI header file
+Date: Wed, 7 Aug 2024 10:53:57 +0530
+Message-ID: <20240807052359.290046-5-Shyam-sundar.S-k@amd.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240807052359.290046-1-Shyam-sundar.S-k@amd.com>
 References: <20240807052359.290046-1-Shyam-sundar.S-k@amd.com>
@@ -93,146 +93,111 @@ X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397B0:EE_|PH8PR12MB7446:EE_
-X-MS-Office365-Filtering-Correlation-Id: e619b7c5-e09a-43f3-6492-08dcb6a14b8e
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B0:EE_|IA1PR12MB6481:EE_
+X-MS-Office365-Filtering-Correlation-Id: a1c66945-16fa-41be-393e-08dcb6a14be4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5B2wb2bdWvBU3hT3lVLHGuKxQDcwSFU6phXvkVBUenrWPkFo3ZE8foC04jyS?=
- =?us-ascii?Q?yDb8AJR4gJPIaPuVLL+Iv5FBkd3DxadhOmGGBD6k+Pj1zewneabACo7BOvm4?=
- =?us-ascii?Q?LFJ3qxoBN04qnGWJ4N3F4sm1nal/vcJ9mzH1cMTW9ZOy7Ss7Rl49zxqOpIKc?=
- =?us-ascii?Q?VnVe/2OO6VEXJdMRyrWP67bXjG7NHrzT8/X1eqXgGipxT4qLe59I8TrWiri3?=
- =?us-ascii?Q?RGiUuXpvVymxI1EZWBtuceC5lj8ZRVmByWhEfSVJuC9KGaN86NTdlvPKJZ43?=
- =?us-ascii?Q?QAAaitvuh5cWLSWCQzjasuFBYcQwAMDZC8y8zqhyq3hGKe44dXQr3KuKgGZ7?=
- =?us-ascii?Q?f1WEL1WCJhcX1t4XWHA72FsLNJw8bqZZFny6zkdova79VpvRD9buO/dv/WYz?=
- =?us-ascii?Q?iiSmi/ZQlXrV+bEdD9zB7GdGZJbw4s6LLq1i7Cwa8xQlSxBhz+zuYrOHyz4j?=
- =?us-ascii?Q?rKil3MRep9AqjS4Mj3AECRzM9uJpqRTVWw50r2yugsXemZZuH/xvQrclP1l4?=
- =?us-ascii?Q?LHCEx5C9SrDIfLWddYNJrA4heSKuWIXfK2w94AskczKMwJnar2s5rmJ3IN0A?=
- =?us-ascii?Q?HuPRarcEZMQAf3GkQI+Imcx7lacCEBS0iWWS++cEoGOVMLWEmU/frQP5vyUw?=
- =?us-ascii?Q?ymk8SuQ6n86lTd+reBlP0bbrAa0e1JpWSk/0ZG8wgulQl9ubR84zIW4aWWuO?=
- =?us-ascii?Q?+l8hUDMJUnV5MZ9IAWr2F8IRiB3dfj+1k74pPH4qcaqYqVhuZZIScwaPim2p?=
- =?us-ascii?Q?OjeExpbk7581IwN9KFNwBtqdDHBNcrDCouC6LivcrT3DEVDeY6EzjTccxKW0?=
- =?us-ascii?Q?ZmFS7/f9Qh3dn2X0EpWFZ6O9Xbyji1OCoOdqfdAC2lRrbYGk7JCRrDxAcF18?=
- =?us-ascii?Q?2W8g9aAZG1tNIUSoDdurO0y0jVMW07XVzdW3OjBFi2xpTxLz0CkieaC2T+6B?=
- =?us-ascii?Q?HdbCqQSpr6SN9ETa8E6LpHHfkgA0FgpI8w/JfjQxiG1hDLS86EbI0IRhFC+m?=
- =?us-ascii?Q?W+cdLg4rldZq8leYGaQhpyT2jtfdj4ILW6GN6XZoFkK5EZ5qN4Va96QAsa2D?=
- =?us-ascii?Q?Lb6+3GpazlZxNWjeMhK2II1DacULseEEfh7k83cPftyAgDG6TvUjUfx7AnFN?=
- =?us-ascii?Q?IE+a35lPi6z9cJ3MR9FY7vJvlhy7Tk4ueyS9z8GA/Fv94vEQCaFrHtQcx0gl?=
- =?us-ascii?Q?6TLUFSbrSmZMiMrhHHYZWBXyQdHAPJ/C3fbJaUGAjkL+zSAQ9TOQCeGoY16c?=
- =?us-ascii?Q?CsqbKCBvCKd/jDJiORAzm60K9YzkEMWdLqfKk27+aPgJcam6blaHTyzL3Hxw?=
- =?us-ascii?Q?jkFfDeawZCeG5IsmcaSb+1BreyyLL3Z8n/+heET67PrzRdR3RYoGdMjx8za2?=
- =?us-ascii?Q?FYfMjzxpnLv0oq1CGXpTlzm7h3HKBODIYznSEYshcFcPVncX/K8Z+VECNbEH?=
- =?us-ascii?Q?kLf0n4AiSumtrh3p0hSpRjXT/XSdqfsr?=
+	=?us-ascii?Q?RKM8DQhkGIB0Mul2SpnjMe9vbxv0s1oWSY3hGgd6iGFYV9srrFojH+Xb0n7D?=
+ =?us-ascii?Q?Tg77VIXdvEkRybYDItcANQshvLzQDmIFV+qSQMOoRi0wYUV7GVO8vsyKeO6R?=
+ =?us-ascii?Q?uJmY808M6Tg36UqdqBQ4XUg1UJKswq4pVtebg7hszDew7O30r2U0rK7DgzOr?=
+ =?us-ascii?Q?h8fznKlFe/icNkHd39f0k5PGw7YjnOSrY1muZ4r3w+uzxZNw99eE0O3+//Sq?=
+ =?us-ascii?Q?UiSrPhPqyMsLL6j2+Cn/sUZPOz8xjmdwTOB+lBTTt8L9lR+m4bn58NeswanN?=
+ =?us-ascii?Q?KGnFhiFbh6i2GyhStHiLO9jnwUDo/m7EeeOdwlw9xT2WF0wureQ/Yp77/OKG?=
+ =?us-ascii?Q?dR8SHV2twcSwssUYPHxheTTf4UqNNKCUtm23VeSe8H3wCI8gj+wxxfSalBCM?=
+ =?us-ascii?Q?f8iKqIeWxQK7cKLNIdcRLyOpw8RJLC+n7VN3JHmU/AouLNJ9k2rA1xOj1uJ/?=
+ =?us-ascii?Q?rgiWuNgthKaRvNEfwYlvPl9ytSJM1hYtgs76LxAVeAUGjSYUZOjEWGlLWJpW?=
+ =?us-ascii?Q?Qw0jZiYkpzrvOrnlUOLExDxvQr3HRDxYmgK0orGvdRJyOirfNXq6zZfF0VhA?=
+ =?us-ascii?Q?UgoRzAxao7OxAEaPQbLf2yMuGvaOg/LE9GCakS9sv2RHACXa5WvLbhsiQyZU?=
+ =?us-ascii?Q?ER5nl6N6+W6dw7ax6npxVtvdPeDhjeDXlGuEUanv/19D85fjZyxuRZoQwkcV?=
+ =?us-ascii?Q?wzS8/ABtzOLzNbhd3vny1ouCoweAXgtq6L9gVFxvDan7bu2Mobn9rYaox6Ay?=
+ =?us-ascii?Q?BCrW5KrjDCibaRSxWgQam1+oVPK2zymrfeT3hfHVlHmUQH4DsnCzrq/Gpc+A?=
+ =?us-ascii?Q?MO80ZiL2wKUuHB1znJPn4McHbFYY+ebqf06OkdAJLPMrcW/mVNLi7OztunR9?=
+ =?us-ascii?Q?llATmvCI1mY0is4IpoPzt9WfwbKCTa74zbErDAuSIKjxZJ5/BkJzZ0ryalRt?=
+ =?us-ascii?Q?6yhtCowltUOlOmJ8zrpVVxnlgVzboiKirHRyni9E7FAv57t7o2SASggbzS/2?=
+ =?us-ascii?Q?MJTgs/QlW3Vwfiu4ouWUtOx4d0XFbj272ZduteY9nTOKam4ipPmeqED3uMsx?=
+ =?us-ascii?Q?TruzqDt6g2zcTHnuK3Nt4ZTJV8Bc2ku3sFkHOWMKnsFw8sFFTHmc/sSJoJow?=
+ =?us-ascii?Q?kjjGKXKN6RQrgNY8BxN9yWRLfeuGQ86Yi4mPtYlowaGgv+LXcU6ECKST3xvW?=
+ =?us-ascii?Q?ulF1z3IyNiWjYvJDBhrzP3MeyAdAVMx3G4Clt81zbeN+/lefu+WPFEFjti4j?=
+ =?us-ascii?Q?zk8/6PhDRrMFzdhOTfJMJ5v65JwZTtWkzOFTPxT45aMifGl0FxTYrfc473Dc?=
+ =?us-ascii?Q?jCvhM+HPIdQ80wgIv+i49EUBinQx1YiwE4ZJL2tMLtGOL2faw7Oxx/vmNTPD?=
+ =?us-ascii?Q?cnoHKhxBVGrF7d4g8NlFFIu9curCY6vAe7A5mZtlyKDiTjHUGI5Okz/GU78D?=
+ =?us-ascii?Q?IopztZlkEKAZJs3D6uAYb3k+BXH/3UFD?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 05:25:05.2599
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 05:25:05.8068
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e619b7c5-e09a-43f3-6492-08dcb6a14b8e
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1c66945-16fa-41be-393e-08dcb6a14be4
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	SN1PEPF000397B0.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7446
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6481
 
-The AMD HCI controller currently only supports PIO mode but exposes DMA
-rings to the OS, which leads to the controller being configured in DMA
-mode. To address this, add a quirk to avoid configuring the controller in
-DMA mode and default to PIO mode.
+The reg_* helper macros are currently limited to core.c. Moving them to
+hci.h will allow their functionality to be utilized in other files outside
+of core.c.
 
-Additionally, introduce a generic quirk infrastructure to the mipi-i3c-hci
-driver to facilitate seamless future quirk additions.
-
-Co-developed-by: Krishnamoorthi M <krishnamoorthi.m@amd.com>
-Signed-off-by: Krishnamoorthi M <krishnamoorthi.m@amd.com>
 Co-developed-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
 Signed-off-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
 Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
 ---
- drivers/i3c/master/mipi-i3c-hci/Makefile     |  3 ++-
- drivers/i3c/master/mipi-i3c-hci/core.c       |  7 +++++++
- drivers/i3c/master/mipi-i3c-hci/hci.h        |  2 ++
- drivers/i3c/master/mipi-i3c-hci/hci_quirks.c | 20 ++++++++++++++++++++
- 4 files changed, 31 insertions(+), 1 deletion(-)
- create mode 100644 drivers/i3c/master/mipi-i3c-hci/hci_quirks.c
+ drivers/i3c/master/mipi-i3c-hci/core.c | 6 ------
+ drivers/i3c/master/mipi-i3c-hci/hci.h  | 5 +++++
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/i3c/master/mipi-i3c-hci/Makefile b/drivers/i3c/master/mipi-i3c-hci/Makefile
-index a658e7b8262c..1f8cd5c48fde 100644
---- a/drivers/i3c/master/mipi-i3c-hci/Makefile
-+++ b/drivers/i3c/master/mipi-i3c-hci/Makefile
-@@ -3,4 +3,5 @@
- obj-$(CONFIG_MIPI_I3C_HCI)		+= mipi-i3c-hci.o
- mipi-i3c-hci-y				:= core.o ext_caps.o pio.o dma.o \
- 					   cmd_v1.o cmd_v2.o \
--					   dat_v1.o dct_v1.o
-+					   dat_v1.o dct_v1.o \
-+					   hci_quirks.o
 diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
-index a16da70bdfe1..4926fde6087d 100644
+index 4926fde6087d..0dbaa1333a0c 100644
 --- a/drivers/i3c/master/mipi-i3c-hci/core.c
 +++ b/drivers/i3c/master/mipi-i3c-hci/core.c
-@@ -754,6 +754,13 @@ static int i3c_hci_init(struct i3c_hci *hci)
- 		return -EINVAL;
- 	}
+@@ -12,7 +12,6 @@
+ #include <linux/errno.h>
+ #include <linux/i3c/master.h>
+ #include <linux/interrupt.h>
+-#include <linux/io.h>
+ #include <linux/iopoll.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+@@ -27,11 +26,6 @@
+  * Host Controller Capabilities and Operation Registers
+  */
  
-+	/* Initialize quirks for AMD platforms */
-+	amd_i3c_hci_quirks_init(hci);
-+
-+	regval = reg_read(HCI_VERSION);
-+	if (hci->quirks & HCI_QUIRK_PIO_MODE)
-+		hci->RHS_regs = NULL;
-+
- 	/* Try activating DMA operations first */
- 	if (hci->RHS_regs) {
- 		reg_clear(HC_CONTROL, HC_CONTROL_PIO_MODE);
+-#define reg_read(r)		readl(hci->base_regs + (r))
+-#define reg_write(r, v)		writel(v, hci->base_regs + (r))
+-#define reg_set(r, v)		reg_write(r, reg_read(r) | (v))
+-#define reg_clear(r, v)		reg_write(r, reg_read(r) & ~(v))
+-
+ #define HCI_VERSION			0x00	/* HCI Version (in BCD) */
+ #define HCI_VERSION_V1			0x100   /* MIPI HCI Version number V1.0 */
+ 
 diff --git a/drivers/i3c/master/mipi-i3c-hci/hci.h b/drivers/i3c/master/mipi-i3c-hci/hci.h
-index f94d95e024be..a7ea37f8f8e0 100644
+index a7ea37f8f8e0..d94e49be3091 100644
 --- a/drivers/i3c/master/mipi-i3c-hci/hci.h
 +++ b/drivers/i3c/master/mipi-i3c-hci/hci.h
-@@ -135,11 +135,13 @@ struct i3c_hci_dev_data {
+@@ -10,6 +10,7 @@
+ #ifndef HCI_H
+ #define HCI_H
  
- /* list of quirks */
- #define HCI_QUIRK_RAW_CCC	BIT(1)	/* CCC framing must be explicit */
-+#define HCI_QUIRK_PIO_MODE	BIT(2)  /* Set PIO mode for AMD platforms */
++#include <linux/io.h>
  
+ /* Handy logging macro to save on line length */
+ #define DBG(x, ...) pr_devel("%s: " x "\n", __func__, ##__VA_ARGS__)
+@@ -26,6 +27,10 @@
+ #define W2_BIT_(x)  BIT((x) - 64)
+ #define W3_BIT_(x)  BIT((x) - 96)
  
- /* global functions */
- void mipi_i3c_hci_resume(struct i3c_hci *hci);
- void mipi_i3c_hci_pio_reset(struct i3c_hci *hci);
- void mipi_i3c_hci_dct_index_reset(struct i3c_hci *hci);
-+void amd_i3c_hci_quirks_init(struct i3c_hci *hci);
++#define reg_read(r)		readl(hci->base_regs + (r))
++#define reg_write(r, v)		writel(v, hci->base_regs + (r))
++#define reg_set(r, v)		reg_write(r, reg_read(r) | (v))
++#define reg_clear(r, v)		reg_write(r, reg_read(r) & ~(v))
  
- #endif
-diff --git a/drivers/i3c/master/mipi-i3c-hci/hci_quirks.c b/drivers/i3c/master/mipi-i3c-hci/hci_quirks.c
-new file mode 100644
-index 000000000000..897c0231f585
---- /dev/null
-+++ b/drivers/i3c/master/mipi-i3c-hci/hci_quirks.c
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * I3C HCI Quirks
-+ *
-+ * Copyright 2024 Advanced Micro Devices, Inc.
-+ *
-+ * Authors: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-+ *	    Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
-+ */
-+
-+#include <linux/i3c/master.h>
-+#include "hci.h"
-+
-+void amd_i3c_hci_quirks_init(struct i3c_hci *hci)
-+{
-+#if defined(CONFIG_X86)
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+		hci->quirks |= HCI_QUIRK_PIO_MODE;
-+#endif
-+}
+ struct hci_cmd_ops;
+ 
 -- 
 2.25.1
 
