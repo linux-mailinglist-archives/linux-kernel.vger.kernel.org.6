@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-278621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE34D94B283
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:58:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D0E94B284
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26315B21F41
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:58:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A3D281202
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CC61552ED;
-	Wed,  7 Aug 2024 21:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F551534EC;
+	Wed,  7 Aug 2024 21:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1h9QXAV1"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GOo8tj1A"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E3D14901B
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 21:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38ABF146596
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 21:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723067919; cv=none; b=ibVDIH6siW2NDDRwYB9RFoFtgpQ9JIblxWkUxq/fWvlUYLbY3xJUy7+kEcYiPVUDH3zVX1hxvk8JXjFmZvmN3kBNtZvS/smlLKSYSd/GkSbqVqDO2pnnYM6tsUX8RwbqUHzfnLTXH8BIvB3s0EwGqcjYS7TWFzVmoGDNCAwW044=
+	t=1723067956; cv=none; b=esZ+cYYisfwx4xZyP2w8yEFaD5C4ThQvAwRPPm7JVbE4HQ9NtvChptiuFf7Dj3tTdACwWBcr1EMcfgyfGpIS/SW2vmgSeJVyLfbDjA1SbORI+uNyhBLK9SexHzTvXzA0VIA4xEHlUpOUuen22q/qHSlf/2qVLqwedARES/gd1GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723067919; c=relaxed/simple;
-	bh=c08WaZBC8OmswkebMYegQBqCu6JB2zC4KsS+DBX2LfE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EMQggiramdnS9ALxm6Ii22Rwo/bg6e/fJcwNFqVeGJdc9zRWP98MFrZgtmq/dJ4D5buiQRdj0tIiNe5N5KxGVe7WVR+0TBu5+FeVaJ/H6eaQE0kuHqTig4etycvT4NN2QZKhKQ28uaUekJC48c4Nul1jWDH5weOEYhHUrkj8uts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1h9QXAV1; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-778702b9f8fso155583a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 14:58:37 -0700 (PDT)
+	s=arc-20240116; t=1723067956; c=relaxed/simple;
+	bh=LXFTv0BK9Iffajc2/i1PtjtI69HQGOGoDpwrOPWu0vM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UcYaIfXpgbGHkAzciESOW6apJVgiKSV05hQd0ALPL4+Tb/5576HI5rO00E06OvYGbxmwYtr6zOxwuRfyIjuIAGfHwqtexuOEQenY89lMjkYCbODSHaAGihfB9fiyRUb1Wd1gKa3jaInwko5XKciyKUx2pa2W6uXEKU9r6K3ss8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GOo8tj1A; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d2d7e692eso336340b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 14:59:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723067917; x=1723672717; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Geo7mE7Px+nMYERQfpI51YnWlkJ5yKR6d+PPNKtIfZQ=;
-        b=1h9QXAV1Irw1QSzpeqV+TQWks+Rhmd9eCuMy5Gqs+dcyUZ4AdC4qiR5Tz/G+iriDCo
-         0n5VMiVYP6DcuPSolS5eQwJwrCs6mrA6tgt3DnIYj8IcMqyYSiHhT2ceZ60LQ5seFCFJ
-         0Qi3868ODZ8oR+IAFMeY1ACsgFydz0B5qXTLkCJZ5YLJzdsBkK8nTJ5kOmB9SeDgdTS7
-         5MI06yNZ53EO/y8XzBIswEk70DiMw9bq+yovnVf2Ty+X2+C7XcSObZgL/WJ1uLC3LRp5
-         aw3FgjMm3vE3V7pk6lgek+dfLStFHLnSkWxkifq7iOkCDWGncdBAmIcAvW4ngsSvgMFL
-         qwgQ==
+        d=gmail.com; s=20230601; t=1723067954; x=1723672754; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AxDzmKdqcUtJZTcycGOXStgdnD7iuQY3wxJVwQ+aWpw=;
+        b=GOo8tj1A17kuHxnVV1Zg0g1uJ7B1+UFdGB9rqjSRT0gPra+MFKTnfB5STPN7pFdxWU
+         +PzhAtdv6iLuoJ1I75o4e7ZqHHcTRuz0meayCbyfpKhm9dI2XPNOL4s4/SRhF9pr9jhF
+         XHC14lBIDLbwLu7w250B0ZKXCfnsTRW8s2O2s9TVAJJEuuf3eWKju225ONJ1sp4iwIh7
+         2R09EYD8G8p899RcYjyS0SnKkLW75ZklP+Wa5XGniy6BpiB6fRuGBbEYWyCvu7w/ppjh
+         mg4hVin0I2CwH8mmx8K94mXSe2TOUJAHY0EqgSw7h42DWu17/uIqzeTtXiFCpqkJ8oQ5
+         Ngmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723067917; x=1723672717;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Geo7mE7Px+nMYERQfpI51YnWlkJ5yKR6d+PPNKtIfZQ=;
-        b=g+1a218OwcFuhoZhMHlncuk+AJiJqSAclKRRAg5TyFenQVNzbhMK+LeG27/yDJ6h45
-         yc55JCrV5oMmq78gruzxCQgY+SmW9+w8j68QvskWlcEqwwcNdZk5fs+EdI4DDgdvtFU4
-         Y59ULQxp1bEVFHm0xsyjpFyQrNbpPpfMVGkbkEv3DgFqMf4UzypIiv3cGicUkQUI2OOe
-         L+AW7Omnx3Mk2B32NL8QeStOo6VeHxZo4xSuwQyXgopjh8V31K6uvhbPnjEMsp3qRlLi
-         cFJenZxZV6JiC4RAAxa1/oLdyKmzYsY4wKBfWExE040c87bVglmjMxhRNNEU5uppe6mt
-         XsXg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5aigREKcfZ/ZPDe8tlAUqbq9//dCvRGrh58NMU8M2gX2iSqfvt3K6lK95Z1KZpQ+U2Qhf3Vs6K+4L7pY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQoUfEieAv2rDepDVY1I9Qfk9uVU+TvD9FTxbGp0wsFnDFzNcl
-	cdjXuHcPOtpKE0amUK0CQoZyjBvqWdbua/1215r899HEyTszDUi+tu5rvWCyKu2XP+nGMFFG5dh
-	4pw==
-X-Google-Smtp-Source: AGHT+IGT4yfaQtCszwo3v/BQf+VsEDoi91mBnnPGweFALLFNPlxrCzIoFqDGdSNEdxfNC5erws8GJco3fog=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:935a:0:b0:702:4fb6:8724 with SMTP id
- 41be03b00d2f7-7c11124f056mr7890a12.1.1723067917038; Wed, 07 Aug 2024 14:58:37
- -0700 (PDT)
-Date: Wed, 7 Aug 2024 14:58:35 -0700
-In-Reply-To: <b0c3552b-1efd-4c48-8d86-91ee16e7222a@rbox.co>
+        d=1e100.net; s=20230601; t=1723067954; x=1723672754;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AxDzmKdqcUtJZTcycGOXStgdnD7iuQY3wxJVwQ+aWpw=;
+        b=NMq5nCBG52ddx0Ei2wILwVT2R1TBlPTf8LPXEKe6Bl6yxWR9edpwd1YpsHKoFdMZIG
+         5NP6+8w9LFODHrK27suu05O0zYvHTB/rdqDCERtce/mjL7IXGZXZ6+V4MC3RJnyXyn9G
+         F/DO6xG/5tHZ9Zlb217xwXaa73pL//VrwqApcxWTl0b1HkfFqY92bhKIDEVVdu1/Voai
+         ROTN8KO0pkBIsn9oAkxfMTXTqAby/jSvHLnGaEhut/j8Kb47NE2Yq85R4kAjZIJp4SeJ
+         muhfaA7V6u3k9XG20/xKja9iv74tQmMgb4OaU1+vrnyrp56JWBnxcWeVeyngY5Btja2l
+         ODkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkc/TLgjC7JIof7EbXzLCuCCecYcRBu4LYE6Umfv2U2J+t5MPenAQEWVQuFmBXvUtYgQgaNlCL/srBE8DVYxpODh8u6JMrsJo2S1Yn
+X-Gm-Message-State: AOJu0YwDgL/7N0vxGlshBpZ1lBU5gvDH8ji6MZ7TJbu8eGuW+ojRoa2K
+	KG234G7saqnuoI/eQq7/hDoW55LtmOn27BkBUITx0AI79NoLNR9u
+X-Google-Smtp-Source: AGHT+IFYGqVS/K51ggCR3u26GIQcG9UZvTeioqf0950X98wqlmAMKhuS+DQUIzv6+k8/rjlQITQSlQ==
+X-Received: by 2002:a05:6a00:2e1b:b0:70e:9213:f321 with SMTP id d2e1a72fcca58-710cada71f7mr44542b3a.14.1723067954434;
+        Wed, 07 Aug 2024 14:59:14 -0700 (PDT)
+Received: from barry-desktop.hub ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ed2d544sm8842695b3a.187.2024.08.07.14.59.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 14:59:14 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: chrisl@kernel.org,
+	david@redhat.com,
+	hughd@google.com,
+	justinjiang@vivo.com,
+	kaleshsingh@google.com,
+	kasong@tencent.com,
+	linux-kernel@vger.kernel.org,
+	ryan.roberts@arm.com,
+	v-songbaohua@oppo.com,
+	ying.huang@intel.com
+Subject: [PATCH v3 0/2] mm: batch free swaps for zap_pte_range()
+Date: Thu,  8 Aug 2024 09:58:57 +1200
+Message-Id: <20240807215859.57491-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240730155646.1687-1-will@kernel.org> <ccd40ae1-14aa-454e-9620-b34154f03e53@rbox.co>
- <Zql3vMnR86mMvX2w@google.com> <20240731133118.GA2946@willie-the-truck>
- <3e5f7422-43ce-44d4-bff7-cc02165f08c0@rbox.co> <Zqpj8M3xhPwSVYHY@google.com>
- <20240801124131.GA4730@willie-the-truck> <07987fc3-5c47-4e77-956c-dae4bdf4bc2b@rbox.co>
- <ZrFYsSPaDWUHOl0N@google.com> <b0c3552b-1efd-4c48-8d86-91ee16e7222a@rbox.co>
-Message-ID: <ZrPuC59gatPJ4UzQ@google.com>
-Subject: Re: [PATCH] KVM: Fix error path in kvm_vm_ioctl_create_vcpu() on
- xa_store() failure
-From: Sean Christopherson <seanjc@google.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: Will Deacon <will@kernel.org>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Alexander Potapenko <glider@google.com>, Marc Zyngier <maz@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 06, 2024, Michal Luczaj wrote:
-> On 8/6/24 00:56, Sean Christopherson wrote:
-> > [...]
-> > +	/*
-> > +	 * xa_store() should never fail, see xa_reserve() above.  Leak the vCPU
-> > +	 * if the impossible happens, as userspace already has access to the
-> > +	 * vCPU, i.e. freeing the vCPU before userspace puts its file reference
-> > +	 * would trigger a use-after-free.
-> > +	 */
-> >  	if (KVM_BUG_ON(xa_store(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, 0), kvm)) {
-> > -		r = -EINVAL;
-> > -		goto kvm_put_xa_release;
-> > +		mutex_unlock(&vcpu->mutex);
-> > +		return -EINVAL;
-> >  	}
-> >  
-> >  	/*
-> > @@ -4302,6 +4310,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
-> >  	 */
-> >  	smp_wmb();
-> >  	atomic_inc(&kvm->online_vcpus);
-> > +	mutex_unlock(&vcpu->mutex);
-> >  
-> >  	mutex_unlock(&kvm->lock);
-> >  	kvm_arch_vcpu_postcreate(vcpu);
-> > @@ -4309,6 +4318,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
-> >  	return r;
-> >  
-> >  kvm_put_xa_release:
-> > +	mutex_unlock(&vcpu->mutex);
-> >  	kvm_put_kvm_no_destroy(kvm);
-> >  	xa_release(&kvm->vcpu_array, vcpu->vcpu_idx);
-> 
-> Since we're handling the impossible, isn't the BUG_ON part missing
-> mutex_unlock(&kvm->lock)?
+From: Barry Song <v-songbaohua@oppo.com>
 
-Doh, yes.
+Batch free swap slots for zap_pte_range(), making munmap three times
+faster when the page table entries are filled with swap entries to
+be freed. This is likely another advantage of using mTHP.
+
+-v3:
+  * collect David's acked-by for patch1/2
+  * further refine the code per David;
+  * fix a corner case which might leak swap slots, thanks for Kairui's
+    comment.
+-v2:
+  https://lore.kernel.org/all/20240807082508.358322-1-21cnbao@gmail.com/
+  * cleanup the name of the instances of swap_info_struct, per
+    Andrew, David;
+  * refine the code to add fallback in the batch free function,
+    Thanks for David's suggestion.
+-v1:
+  https://lore.kernel.org/all/20240806012409.61962-1-21cnbao@gmail.com/
+
+Barry Song (2):
+  mm: rename instances of swap_info_struct to meaningful 'si'
+  mm: attempt to batch free swap entries for zap_pte_range()
+
+ mm/swapfile.c | 410 ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 232 insertions(+), 178 deletions(-)
+
+-- 
+2.34.1
+
 
