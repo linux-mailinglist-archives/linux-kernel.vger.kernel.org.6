@@ -1,167 +1,154 @@
-Return-Path: <linux-kernel+bounces-277218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 018CF949DFE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:04:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3DAC949DFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C7C51F22B27
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A8001F22E72
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF3E17ADF3;
-	Wed,  7 Aug 2024 03:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128F815D5C4;
+	Wed,  7 Aug 2024 03:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BIn7DQXc"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eipDai9x"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801003209
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 03:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5901E495;
+	Wed,  7 Aug 2024 03:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722999834; cv=none; b=XNwtP+yBeNPT0950hmTEmxKBwQmN/sue6LI+c17ycPkewZxRtwOyD5vQXuQ1+HhL1b8OoLEVTFXF8uB0tvRzuSlSFHdt039FFa/yso7N35dt9LcOa40wM4HbcmAphLJkvu/fXjFpjNtrInPK9VeWMWSPsg0lHS+61f0w4/z9RKM=
+	t=1722999888; cv=none; b=ZaLlFTIaVETXwMrJJgblJoA6mkkvWaeEbuNfTPXCBaMj1Nh5priqk4ghXNloyEdDl63vuqsxKhwYS9LKX4ODTkTpnylaZF+iSyqCDSoUIGXS9sJ4XqwH1Oat8i4mjd1/8i8RsqTY6JNIk+pF5i3zrlfAMky4Qlp4e4X0urDnNsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722999834; c=relaxed/simple;
-	bh=19zQ/CDmCArapw7Qvr+6KVZO2V9X/3YhzLrF500JI0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JFtGEUEt+DLMS5ojBcwHU74Qf77dxxL5HRg8lGz5XDCWGg60fNOf2yL+CsgjbHwsfIvfhQEn5vtqKKJmvSJ8T6KBOItl9xUs+QJhxTwU6MCRxRT1ujsL1ZoPaZOodQDkR984oyyZp29qvZPlRN9M2p+5V6ZPoA+U5+EKmizdqCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BIn7DQXc; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d162eef54so1037524b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 20:03:52 -0700 (PDT)
+	s=arc-20240116; t=1722999888; c=relaxed/simple;
+	bh=P/Ogoc9mfokfR33KwO+zNgH4b6ZwTbSg/UDQ4EHBWu4=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=SZxy41fIrbYYEYr2xCs9jeWJIpsa7j39B9st0ZQjuB/E0PXRtJ+6TkDk/nY9+Sc7GrgqNA2RN8yJbUb8Xawyt1/5Bv9hRsYSCtHNVeY2vrQPDIHqRwBBlj0VBnV+005EGbvl8T+O+uc8UXAZ/WEyQ0JHlg2dAF76fjYzLyBthL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eipDai9x; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5d5e97b84fbso669918eaf.1;
+        Tue, 06 Aug 2024 20:04:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722999832; x=1723604632; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zuSFHpUoL2YYlkuYSjJEF2bIpqbWqy7BnB6SEFzqJNw=;
-        b=BIn7DQXcWf2CI451oadZ+DqnTfDuNcRsU72QY4u0Vo/98yO1J/LEXqUiohsGciFVZH
-         YC4Q6bb2FIc92acgdG4ZTffu333cFkIDwH/DdzlzfwNI7Xvt0OABWHCv0dZxiFxex9b/
-         1Wb0SIxASZ2FxR7nujYz4EviQVuEUJb2PtTFNmBJ9b2ClTYqI8/wVxrDOyfKkUJGj3SM
-         gvbGx+8hZ2MlbZnyamRIwK8smdr0axrN9+ZMc0pexiVRWCtc9LioI7d+1YpqkrXKt9yq
-         SGRV4wr+NIZpxeM33qSwvi5jMkvgJLXBo0iB6NRItemDW9vO43YlYsrWt4TIRVQ0f4OJ
-         6bDA==
+        d=gmail.com; s=20230601; t=1722999886; x=1723604686; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qgj9IyuUsHvnQokc+OT1y0kANHSJMZKkxAO6bdOH0M8=;
+        b=eipDai9xn+yBLWJ8456oPtCpifge0oaspQctL+ZfGupkGX1PMyvevBTc3i9z4eGRgf
+         g34MfLehHvHGs1uyxd5smhJ28jDKkDvIzsC5GzbgLeyR96o+FKDEjxI7oETctHguD2FP
+         uUe6wFlUXaUvDQ2nTaA1nzlwPmsmPlEgaR3jWr1lT+MtxVG/zKvTHZ1eZpszeEKS2RFq
+         YH39QwfLZStAEGPjeVhfWDw29FTf9YxPmWqqFSLSSAohXe58XdtAADAvAwp+AeyXXS6E
+         e6TL1VF2NU+lu+OvQCr69adcIDDo2tfxp+hSaqEu6D5zTHYEcTJj9cAQOZMDSs8/wxkw
+         Ch6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722999832; x=1723604632;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zuSFHpUoL2YYlkuYSjJEF2bIpqbWqy7BnB6SEFzqJNw=;
-        b=Ckor1oAQI7v4dOc0juaRHKBhkw/qlq9abwZEbbX7kfH/ykOxdKMcJ4r0nqnBzPvbET
-         iGdt5tMeEt+s4o0ex36Io1S5Tmqi1wfJu9CB8a4P27EWQNaDQaubocq6UwyV8TOPxywk
-         PIe1BJnK/ngaBQrl/E+eIfmEwLMNQEHYhXQguxd61R3H3PQNPqU+psdMuAbrpbFJw6KE
-         EYxzD+tmzHjfvrjitkIxmgNGKyXgdCZ3cC7iHbeC8UrsfOLrrqe6rhaIhodRHj1tZnj6
-         W5Klq8SP1kVhOIRiKGZH3dtsteXCIv+sjLOJFucHlvN4ZyX58i0z0x2VRJirA1xMiC06
-         9e6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWix1hgqbGE+3ubSk/hE+rf07Polsvg6O4hCUoJMgsoiVPaWCp9OKveFL9AiBV3b9m/tZQS1mZq7PmlGkaI20HdPkG9JnTRtt4Fb5sK
-X-Gm-Message-State: AOJu0YxiibHBJblDybV8ZddYjvS5lSBcfecM8WGf/8QxPySGYzlJvK/g
-	iZFYlpcsL+O+9pMs6OrOXV8Cuyvkbc4jCZuHuF+W7zPrJX9CyMDfdriqeYm+XQ==
-X-Google-Smtp-Source: AGHT+IEz28V+pQaJpXndCtgDVpWOs2o4+wkjG3HQ2R3vI8fbqY0Bv2xxm5JeBQo3gbEpFnyg4+fZWw==
-X-Received: by 2002:a05:6a21:a4c1:b0:1c4:dae8:c72f with SMTP id adf61e73a8af0-1c699559d86mr17649446637.19.1722999831794;
-        Tue, 06 Aug 2024 20:03:51 -0700 (PDT)
-Received: from thinkpad ([120.60.72.69])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ece4967sm7533616b3a.138.2024.08.06.20.03.45
+        d=1e100.net; s=20230601; t=1722999886; x=1723604686;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qgj9IyuUsHvnQokc+OT1y0kANHSJMZKkxAO6bdOH0M8=;
+        b=r//xlvhnCziIs/4YVIBSohbAOyLsKbN6GY7SYA1vSKRtnPgpU02RpI+Uq8SZQWtGHh
+         T48MS/eJe6IPyaDDQTX4tgLj2U12UXmMWmeGM2zHYEGrcH1oGvxN0LRYKc73fiLfKlNU
+         VsT6OrW6WzYdgA5MLV6zXIaDhoMCsddzeT357fzUDk4y1ngRPS+rq9MNwgsUJwABfzr5
+         RQ6UT59jR6wboQ+RkQXEWHc2Er6662ZcjyfGU4fi6+A8Qbm3jyiFPdoqSohvyKN8g3hS
+         MlWlwDFl4VmFf7ltEgeGZOKKknM50BYyTbgWRIkP34eVweG8q0iFFjRlxcdvp3VrmsH+
+         MFlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUisjNKOEgaUcFAV7rAmLsMpovrIepT29Z+makr4LWtrrv2OVDG2gfIFwNobGoRruRTSd7hcEZKWF6HiDAt8BMdaBO7xGl04H8UpxHOWxLdi54nBei+5upSE8nbEEMJtzNLdUqk2BZOQBilN4I=
+X-Gm-Message-State: AOJu0YyadqTr1IvQzHXDDPDyk7SHowmVZF+77rGLl6IQQjoXaBgD+Xyc
+	h7SuHdNGuvbZbQegPaHACzTSATehzoOp/aJhq48so6RNUvVizmrI
+X-Google-Smtp-Source: AGHT+IEpl+WQJAIpFxSbG+4QbALxx98N/LKP+YzSaDW9urNDJHTZ9uPJQG5rCXvBPK5tW/tuUDMFOQ==
+X-Received: by 2002:a05:6870:9a20:b0:25d:f8fa:b535 with SMTP id 586e51a60fabf-26891aa8695mr22417266fac.6.1722999885761;
+        Tue, 06 Aug 2024 20:04:45 -0700 (PDT)
+Received: from [192.168.7.110] ([190.196.138.8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ecfd057sm7539849b3a.160.2024.08.06.20.04.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 20:03:51 -0700 (PDT)
-Date: Wed, 7 Aug 2024 08:33:42 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 05/12] PCI: brcmstb: Use swinit reset if available
-Message-ID: <20240807030342.GH3412@thinkpad>
-References: <20240731222831.14895-1-james.quinlan@broadcom.com>
- <20240731222831.14895-6-james.quinlan@broadcom.com>
+        Tue, 06 Aug 2024 20:04:45 -0700 (PDT)
+From: Camila Alvarez Inostroza <cam.alvarez.i@gmail.com>
+X-Google-Original-From: Camila Alvarez Inostroza <calvarez@macbook-pro-de-camila.local>
+Date: Tue, 6 Aug 2024 23:04:39 -0400 (-04)
+To: Kent Overstreet <kent.overstreet@linux.dev>
+cc: Camila Alvarez <cam.alvarez.i@gmail.com>, 
+    Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, 
+    syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com
+Subject: Re: [PATCH] bcachefs: WARNING in bch2_trans_srcu_unlock
+In-Reply-To: <brefgiw6mbvnpg5dmxhuwmoxfrh6upw3zslzn6qa6lfvbvhgi4@7vzwd55illrn>
+Message-ID: <e3ef2cea-4c39-b28f-d349-04e0ce8bb16f@macbook-pro-de-camila.local>
+References: <20240724010759.1631178-1-cam.alvarez.i@gmail.com> <brefgiw6mbvnpg5dmxhuwmoxfrh6upw3zslzn6qa6lfvbvhgi4@7vzwd55illrn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240731222831.14895-6-james.quinlan@broadcom.com>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-On Wed, Jul 31, 2024 at 06:28:19PM -0400, Jim Quinlan wrote:
-> The 7712 SOC adds a software init reset device for the PCIe HW.
-> If found in the DT node, use it.
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> ---
->  drivers/pci/controller/pcie-brcmstb.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index 4d68fe318178..948fd4d176bc 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -266,6 +266,7 @@ struct brcm_pcie {
->  	struct reset_control	*rescal;
->  	struct reset_control	*perst_reset;
->  	struct reset_control	*bridge_reset;
-> +	struct reset_control	*swinit_reset;
->  	int			num_memc;
->  	u64			memc_size[PCIE_BRCM_MAX_MEMC];
->  	u32			hw_rev;
-> @@ -1633,12 +1634,30 @@ static int brcm_pcie_probe(struct platform_device *pdev)
->  	if (IS_ERR(pcie->bridge_reset))
->  		return PTR_ERR(pcie->bridge_reset);
->  
-> +	pcie->swinit_reset = devm_reset_control_get_optional_exclusive(&pdev->dev, "swinit");
-> +	if (IS_ERR(pcie->swinit_reset))
-> +		return PTR_ERR(pcie->swinit_reset);
-> +
->  	ret = clk_prepare_enable(pcie->clk);
->  	if (ret)
->  		return dev_err_probe(&pdev->dev, ret, "could not enable clock\n");
->  
->  	pcie->bridge_sw_init_set(pcie, 0);
->  
-> +	if (pcie->swinit_reset) {
 
-You already have a callback called 'bridge_sw_init_set', so this 'swinit_reset'
-is different from 'bridge_sw_init'? If so, does it make sense to move this into
-the callback itself to have all reset sequence in one place?
 
-- Mani
+On Fri, 2 Aug 2024, Kent Overstreet wrote:
 
-> +		ret = reset_control_assert(pcie->swinit_reset);
-> +		if (dev_err_probe(&pdev->dev, ret, "could not assert reset 'swinit'\n"))
-> +			goto clk_disable_unprepare;
-> +
-> +		/* HW team recommends 1us for proper sync and propagation of reset */
-> +		udelay(1);
-> +
-> +		ret = reset_control_deassert(pcie->swinit_reset);
-> +		if (dev_err_probe(&pdev->dev, ret,
-> +				  "could not de-assert reset 'swinit' after asserting\n"))
-> +			goto clk_disable_unprepare;
-> +	}
-> +
->  	ret = reset_control_reset(pcie->rescal);
->  	if (dev_err_probe(&pdev->dev, ret, "failed to deassert 'rescal'\n"))
->  		goto clk_disable_unprepare;
-> -- 
-> 2.17.1
-> 
+> On Tue, Jul 23, 2024 at 09:08:00PM GMT, Camila Alvarez wrote:
+>> bch2_extent_fallocate should not return -BCH_ERR_transaction_restart_nested when there are no buckets available.
+>> Returning -BCH_ERR_transaction_restart_nested causes the sector allocation to retry even if there's no space available.
+>
+> It seems like you're saying this fixes a livelock, but I don't see that:
+> if we return operation_blocked, the closure_sync we do before we return
+> will still wait.
+>
+> More explanation?
+>
+Yes, sorry for the delay. The closure_sync will still wait, but even after 
+waiting there's no space left.
+I think the issue is that we're trying to allocate a bucket when none are 
+available:
+closure_wait(&c->freelist_wait, cl);
 
--- 
-மணிவண்ணன் சதாசிவம்
+journal_write_done is called at some point:
+bch2_do_discard(c)
+closure_wake_up(&c->freelist_wait)
+...
+
+That apparently doesn't free any buckets (should we add some sort of 
+assertion to notify us when this happens?), so there is still no space 
+left, so bch2_bucket_alloc_trans keeps returning -BCH_ERR_freelist_empty.
+With this bch2_alloc_sectors_start_trans return 
+-BCH_err_bucket_alloc_blocked, which bch2_extent_fallocate turns into 
+-BCH_ERR_transaction_restart_nested.
+
+Finally __bchfs_fallocate sees the error as BCH_ERR_transaction_restart, 
+so it tries again.
+The issue is that the journal never discards any buckets so it just keeps 
+retrying indefinitely.
+
+I've been thinking, and maybe we don't want to just keep __bchfs_fallocate 
+from retrying, but would prefer to control how many times it does.
+
+Does all of this make any sense to you?
+
+
+>>
+>> Reported-by: syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com
+>> Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
+>> ---
+>>  fs/bcachefs/io_misc.c | 2 --
+>>  1 file changed, 2 deletions(-)
+>>
+>> diff --git a/fs/bcachefs/io_misc.c b/fs/bcachefs/io_misc.c
+>> index 82f9170dab3f..b5b92ef030df 100644
+>> --- a/fs/bcachefs/io_misc.c
+>> +++ b/fs/bcachefs/io_misc.c
+>> @@ -90,8 +90,6 @@ int bch2_extent_fallocate(struct btree_trans *trans,
+>>  				opts.data_replicas,
+>>  				opts.data_replicas,
+>>  				BCH_WATERMARK_normal, 0, &cl, &wp);
+>> -		if (bch2_err_matches(ret, BCH_ERR_operation_blocked))
+>> -			ret = -BCH_ERR_transaction_restart_nested;
+>>  		if (ret)
+>>  			goto err;
+>>
+>> --
+>> 2.34.1
+>>
+>
 
