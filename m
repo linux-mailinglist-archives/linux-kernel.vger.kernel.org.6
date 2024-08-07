@@ -1,62 +1,83 @@
-Return-Path: <linux-kernel+bounces-277893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F0B94A7CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:36:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B201994A7E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67BA21F23E38
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:36:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66D4F1F223A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32E01E674D;
-	Wed,  7 Aug 2024 12:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDE21E6738;
+	Wed,  7 Aug 2024 12:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LlP1KoaO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="NYcehtKO"
+Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123871E2101;
-	Wed,  7 Aug 2024 12:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9CC1E6723;
+	Wed,  7 Aug 2024 12:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723034159; cv=none; b=jKj+FpjTG/MBvMMG5pGvRRYqQnoWrGRKlmtMQ9S+U9ldPKFEruQeyDB88NWB5pZzBnqXs2K2V/VjvGK7+fZHHqPlqhxEB3tpThtbf179on1Co4ei5DrnMic8leUnf20808n3pdrkaiEwr1tAuwbGgzXfJMzaPAGvJ0x8c+SJLbY=
+	t=1723034457; cv=none; b=iqUPc4dkGJ9oUUMhyXprbBICi3uZy8LlHgPM5q1AkKo4B4oP4MfUzuw986gNdOQntvRlVQtOkJ1gdp/plyB6HisYgBOA0XoMI2XkuOi/F6a6kabg3CQR7PUuRBQnMO54dhNvtJkIM1re1klgzOsT7FveQlyQhG6+fju2yY/aMLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723034159; c=relaxed/simple;
-	bh=WN0fJI4solTC3GkSCUWyRjtzYFNVoGLFPZqwbfMcIq4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PS8c1vRodN+SiR01RLxge6Vk04fMwWZBLdyNxsX3dnyiFFJ4ABxcnNPLhTXGXGRCrMrV4HXBXSu/jSq1YnBgmycKOKsIFJ9vh/ykPYasRB007Nfd9Uirr+FRRc3IQzkFMdACD/RfcuJShuJ3kUT5yzWzabdEmYtHTwCAqyPIHEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LlP1KoaO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD1B6C4AF0B;
-	Wed,  7 Aug 2024 12:35:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723034158;
-	bh=WN0fJI4solTC3GkSCUWyRjtzYFNVoGLFPZqwbfMcIq4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LlP1KoaOSK3IbWtES4IBLMWzgF/B1pnZ5zmm/rn/3Vrke8YeiQEH89GtHzv1DUlhH
-	 fFNPfcsjiWLc8n7/HFpyBB8XRZUIpsVlGLwz9Ybw2x2ThYlcGulz7H/oN+ZapQO0xb
-	 T5kdmmRLQv/bO9tn7sZ+9DQYHh1Hf3I9szpdusSpYmK+ZSbVIvhFy2MCkWMbvWeAoe
-	 f8lpZkY0aD8pbKXF61K8jo22BGaDci3FNazZNO2+r9LBOlT8RhmruuDNgOYSB2cjsY
-	 ueL/Q3mqtEwXlH4UwdG/CkQx6+e/dOjhfXDQIzptsDndAZplZcZlyZm2cVfnF/CHUF
-	 eBoRPhMzBeKxw==
-From: Amit Shah <amit@kernel.org>
-To: seanjc@google.com,
-	pbonzini@redhat.com,
-	x86@kernel.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: amit.shah@amd.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	kim.phillips@amd.com,
-	david.kaplan@amd.com
-Subject: [PATCH v4] KVM: SVM: let alternatives handle the cases when RSB filling is required
-Date: Wed,  7 Aug 2024 14:35:31 +0200
-Message-ID: <20240807123531.69677-1-amit@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1723034457; c=relaxed/simple;
+	bh=YehjdJhVQfE1SmMkcg6Vh92i4QqpLbWygY3qyRqS24M=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=GC42cO7majJ8Bf712GFIb3dpU0OkXsUWfEvrS0vCQ0+Nm1MhuEPPHhqSMs3WWgmsG+Mmn+AS+y4akPJRZyw9yU/4ocf9LskT7FCcalMUyK5go2C9pSMpxrEkuKdOUIk29TgUUEaXwIlAhOGtkTuxEp2csGAKeflYI+x8IZoLfRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=NYcehtKO; arc=none smtp.client-ip=203.205.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1723034151; bh=O8EFHvhwR3zwhlu6IVyc3fhL292dVDPjyYhLVFCwx/U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=NYcehtKOF5ngNu+W+izX80ZjT6s4vNFNY316+dqjPH/hWOTyrGPHcuPl3QtW0CFFZ
+	 UARTf8oW298PRDgjePGIR2IYe92O2JBFM8yYxnfvf5T1X1k9EUFmLrSSdhgzus8fig
+	 PKq7Tcv2oBSOHcdwDPOy2D0ZNk5rTguFfMdUrzu8=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
+	id 8EF23485; Wed, 07 Aug 2024 20:35:47 +0800
+X-QQ-mid: xmsmtpt1723034147tl0ll2659
+Message-ID: <tencent_BB8B66363CC7375A97D436964A80745F7709@qq.com>
+X-QQ-XMAILINFO: M/NR0wiIuy70Tm+qlsdo2pf6f8nFpD+KrPBYeIwgja1uUH6yN6aCauzhpeBrNS
+	 /bvbDYlXxThybRPDEIo+E8MEER5lBoWsY5uF1tmy9Gm0+4BZql9jxcPM67GqsJbtziDFg8goENk5
+	 INYeTNB2tNc07Fx8I23cQ39bJ3xGkjJ6pCaFjkzNhpS/leH1q0DW65VDdGH6UEjhGq+uwFIqpaD3
+	 Crik8uYze2DfCfArnPZWHeTmG9QoDZytieWydhd7ulLPzxPrnZkhppD+Nk7mODMAPqrFVkg9IDpq
+	 rWwmxjntkuPXk0m9eSMu+T6S02gQ/QQ3+eJMkXfLwjCtdN19K9Rmyui0p8a3YL4jb8fJ3uPD6IHI
+	 sYZuKW8mlkKWeZ/RmRSbtccHfp3iWlXZT5fRbL9xUSxXb7QmxBLDfaktWIF7HhJhd+eJaSgYs6kM
+	 aRRKzPGWBMow5MRCPxsWZnHw4GEp4tl4/Y1c9nRA1hhS8kQuxZO9LG9u2Nd1PsRGyqAaJAfiPaoX
+	 YJBMEsOG9JQ657PKqs/ADl92szjk8gIgz0ATMy9CHbYri2+PrBbDUOlMuXZOpk0df8mbqNXkzRET
+	 II3HYVhbHraY2e/+wKQfy6KLYKfb85zhwnnY4/h4S8aqRrl37nlmY8B50u2qJNnN4RCBtUYx5WPS
+	 8mWC/5NyG4dwHKYfeigYhRRVXfaHDmVGzmp4ZShQFYnZngZDkSNVwhQrpPvE2isKbuWIfcIBRLGa
+	 oBlXvTv+P1M258CwHAvnBzRqiME+ajR3TX7ePO1Wryw/q2PisSks6Yjs5imZIAzONM+whnBkHgmj
+	 EoqyHtFFcQuhQ8L57+dhUUJ0ctknxSsrbuS3jpZWPiHCxpJ45arVnTi8Chz5Zyv3o35B7JO+5rGx
+	 hqJ8HMmzcyFwfftKfwSFTQShKjxIc0zOoIIjt7qKQQy2iwCpWl7MA5ITR5AEZRFPTkj3K3OU4v3x
+	 a5mgk5ABM=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kernel@pengutronix.de,
+	kuba@kernel.org,
+	leitao@debian.org,
+	linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mkl@pengutronix.de,
+	netdev@vger.kernel.org,
+	o.rempel@pengutronix.de,
+	pabeni@redhat.com,
+	robin@protonic.nl,
+	socketcan@hartkopp.net,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH net-next] can: j1939: fix uaf in j1939_session_destroy
+Date: Wed,  7 Aug 2024 20:35:47 +0800
+X-OQ-MSGID: <20240807123546.460919-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000af9991061ef63774@google.com>
+References: <000000000000af9991061ef63774@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,87 +86,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Amit Shah <amit.shah@amd.com>
+The root cause of this problem is when both of the following conditions
+are met simultaneously:
+[1] Introduced commit c9c0ee5f20c5, There are following rules:
+In debug builds (CONFIG_DEBUG_NET set), the reference count is always
+decremented, even when it's 1.
 
-Remove superfluous RSB filling after a VMEXIT when the CPU already has
-flushed the RSB after a VMEXIT when AutoIBRS is enabled.
+[2] When executing sendmsg, the newly created session did not increase the
+skb reference count, only added skb to the session's skb_queue.
 
-The initial implementation for adding RETPOLINES added an ALTERNATIVES
-implementation for filling the RSB after a VMEXIT in
+The solution is:
+When creating a new session, do not add the skb to the skb_queue.
+Instead, when using skb, uniformly use j1939_session_skb_queue to add
+the skb to the queue and increase the skb reference count through it.
 
-commit 117cc7a908c836 ("x86/retpoline: Fill return stack buffer on vmexit")
-
-Later, X86_FEATURE_RSB_VMEXIT was added in
-
-commit 2b129932201673 ("x86/speculation: Add RSB VM Exit protections")
-
-The AutoIBRS (on AMD CPUs) feature implementation added in
-
-commit e7862eda309ecf ("x86/cpu: Support AMD Automatic IBRS")
-
-used the already-implemented logic for EIBRS in
-spectre_v2_determine_rsb_fill_type_on_vmexit() -- but did not update the
-code at VMEXIT to act on the mode selected in that function -- resulting
-in VMEXITs continuing to clear the RSB when RETPOLINES are enabled,
-despite the presence of AutoIBRS.
-
-Signed-off-by: Amit Shah <amit.shah@amd.com>
-
+Fixes: c9c0ee5f20c5 ("net: skbuff: Skip early return in skb_unref when debugging")
+Reported-and-tested-by: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ad601904231505ad6617
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 ---
-v4: resend of v3 with subject-prefix fixed
+ net/can/j1939/socket.c    | 7 ++++---
+ net/can/j1939/transport.c | 2 +-
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-v3:
- - Add a comment mentioning SVM does not need RSB_VMEXIT_LITE unlike
-   VMX.
-v2:
- - tweak commit message re: Boris's comments.
-
- arch/x86/kvm/svm/vmenter.S | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/kvm/svm/vmenter.S b/arch/x86/kvm/svm/vmenter.S
-index a0c8eb37d3e1..69d9825ebdd9 100644
---- a/arch/x86/kvm/svm/vmenter.S
-+++ b/arch/x86/kvm/svm/vmenter.S
-@@ -209,10 +209,14 @@ SYM_FUNC_START(__svm_vcpu_run)
- 7:	vmload %_ASM_AX
- 8:
+diff --git a/net/can/j1939/socket.c b/net/can/j1939/socket.c
+index 305dd72c844c..ec78bee1bfa6 100644
+--- a/net/can/j1939/socket.c
++++ b/net/can/j1939/socket.c
+@@ -1170,10 +1170,11 @@ static int j1939_sk_send_loop(struct j1939_priv *priv,  struct sock *sk,
+ 					break;
+ 				}
+ 			}
+-		} else {
+-			skcb->offset = session->total_queued_size;
+-			j1939_session_skb_queue(session, skb);
+ 		}
++		/* Session is ready, add it to skb queue and increase ref count.
++		 */
++		skcb->offset = session->total_queued_size;
++		j1939_session_skb_queue(session, skb);
  
--#ifdef CONFIG_MITIGATION_RETPOLINE
--	/* IMPORTANT: Stuff the RSB immediately after VM-Exit, before RET! */
--	FILL_RETURN_BUFFER %_ASM_AX, RSB_CLEAR_LOOPS, X86_FEATURE_RETPOLINE
--#endif
-+	/*
-+	 * IMPORTANT: Stuff the RSB immediately after VM-Exit, before RET!
-+	 *
-+	 * Unlike VMX, AMD does not have the hardware bug that necessitates
-+	 * RSB_VMEXIT_LITE
-+	 */
-+
-+	FILL_RETURN_BUFFER %_ASM_AX, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_VMEXIT
+ 		todo_size -= segment_size;
+ 		session->total_queued_size += segment_size;
+diff --git a/net/can/j1939/transport.c b/net/can/j1939/transport.c
+index 4be73de5033c..dd503bc3adb5 100644
+--- a/net/can/j1939/transport.c
++++ b/net/can/j1939/transport.c
+@@ -1505,7 +1505,6 @@ static struct j1939_session *j1939_session_new(struct j1939_priv *priv,
+ 	session->state = J1939_SESSION_NEW;
  
- 	/* Clobbers RAX, RCX, RDX.  */
- 	RESTORE_HOST_SPEC_CTRL
-@@ -348,10 +352,14 @@ SYM_FUNC_START(__svm_sev_es_vcpu_run)
+ 	skb_queue_head_init(&session->skb_queue);
+-	skb_queue_tail(&session->skb_queue, skb);
  
- 2:	cli
+ 	skcb = j1939_skb_to_cb(skb);
+ 	memcpy(&session->skcb, skcb, sizeof(session->skcb));
+@@ -1548,6 +1547,7 @@ j1939_session *j1939_session_fresh_new(struct j1939_priv *priv,
+ 		kfree_skb(skb);
+ 		return NULL;
+ 	}
++	j1939_session_skb_queue(session, skb);
  
--#ifdef CONFIG_MITIGATION_RETPOLINE
--	/* IMPORTANT: Stuff the RSB immediately after VM-Exit, before RET! */
--	FILL_RETURN_BUFFER %rax, RSB_CLEAR_LOOPS, X86_FEATURE_RETPOLINE
--#endif
-+	/*
-+	 * IMPORTANT: Stuff the RSB immediately after VM-Exit, before RET!
-+	 *
-+	 * Unlike VMX, AMD does not have the hardware bug that necessitates
-+	 * RSB_VMEXIT_LITE
-+	 */
-+
-+	FILL_RETURN_BUFFER %rax, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_VMEXIT
- 
- 	/* Clobbers RAX, RCX, RDX, consumes RDI (@svm) and RSI (@spec_ctrl_intercepted). */
- 	RESTORE_HOST_SPEC_CTRL
+ 	/* alloc data area */
+ 	skb_put(skb, size);
 -- 
-2.45.2
+2.43.0
 
 
