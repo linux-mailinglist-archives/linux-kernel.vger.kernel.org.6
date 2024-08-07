@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-278395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9800494AFAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:27:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A473494AFAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAA821C213F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:26:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6921F22E7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62101411DF;
-	Wed,  7 Aug 2024 18:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB3013E02E;
+	Wed,  7 Aug 2024 18:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNpUT1HT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mQuI+vzl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAA313F012;
-	Wed,  7 Aug 2024 18:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03C263CB
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723055208; cv=none; b=QppFfPORdAANrg5I4fiC+5cFasblKJwbzPghubuYH+Y+ffNRFmb6ggPkWo3xQzBDgtmVXteyoWDgDQ82At2c6K1XVGnwXHYFXuNAE/9vX/U6ruA2hoVe/S/ysnsjjxeCuIN+dg/d4nH7nSUsweezn0mgokypy44UtTefzP4kd40=
+	t=1723055329; cv=none; b=WduymHw3i64oHcyP9thMscemLv4ZzRZHLzW9unnNeHsUIAM7i+PbnYVn9gr1W4PAcuhTjkqbJfmd06BnrwAM/fs5i66lfoOn+MC6ps5oYEfleV7XUAmL2TPFzCKj5Iis9+kGZZ/3coQcI6VsIrOr1D7TdpWFFGFKwTmEln8yqCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723055208; c=relaxed/simple;
-	bh=qiQ964hV5kDZS/RItHahPQgdcg5kxk6+8N4yNvf/Trg=;
+	s=arc-20240116; t=1723055329; c=relaxed/simple;
+	bh=fjI/gs2azgUibYueaXrvSCZ2MSif5xm+KK8XD9aWQq8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ceH+Otq0Sn8EDdMKSDBpVdEvmVOB1MOZXolwPo1dW/xwQ7DL31cOmoOgY8/VZ4aubxVGnKfmIuzvc1UvK396PbfItMEDqf1i+P90u9nL1qY7MEnY0RzrR6uYdus4CcBssyhpRdBD0a3BaGZvdB1pGtMUhUCVLOWY1f6qAB4EtpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNpUT1HT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36309C32781;
-	Wed,  7 Aug 2024 18:26:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723055207;
-	bh=qiQ964hV5kDZS/RItHahPQgdcg5kxk6+8N4yNvf/Trg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UNpUT1HTP3iOXlZ2uIs6pmVjUc0GPwhCg5jRbvrSz/cv0bQ2yn3Oem6Bfd4HGrCRs
-	 0lXM8ecAkMOGThEgPNj3i2ZaoBvFUo2X94KRawQC+bHpYdN7AZDJs2iWBRfqbqHCr3
-	 nR7h/ssu7CI0L1Ml/WxcPPNGtTE5p6cvFOw2i+toEnUTp0ZxJ/O4wdn8BFotivq63X
-	 tvjtZ2ahT4hGZZzCPyVes3hxvoIwiN4zfQQZFrNW6Zp5sUV3iU2IQllGOSGAPzne8R
-	 HKa6xL2cmInpcJGkwJR9H1KFfKhSDSXu/tL/iUzHgaBANbpVGcZ3GAav44O6mTBKPq
-	 f0NUN9eGtyvyA==
-Message-ID: <45cdf1c2-9056-4ac2-8e4d-4f07996a9267@kernel.org>
-Date: Wed, 7 Aug 2024 11:26:46 -0700
+	 In-Reply-To:Content-Type; b=HilcFlsUcqUf+DOicnyQN97NTp3WCAjoGjfU7KenlMivqCcjyBTQb97UgGad8QtyS51WexMU7/D0ZOcfTLSoSAGGZDRdSKsUoUIb+1HKlORnklgrEL415Zq6jDzU/6aw4xoAQQA7T/a5Qh0+4wu4VHboL3ajF907hRB430S6ZBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mQuI+vzl; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723055327; x=1754591327;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=fjI/gs2azgUibYueaXrvSCZ2MSif5xm+KK8XD9aWQq8=;
+  b=mQuI+vzlPrnwykQtAgDkgww92qrxdGKFxNWCHqBZKSmpD8u9PsXz2NUR
+   dG2NvygwOAMjzcCt1JYgDI/AL3bYiD/YNZUwPSLPR7oJZRp31KeuKW9Tt
+   NfxqzUF9xEwGh+yuKAEnCTrn761eJAp3J9hIOnPUpsN4vkDvsumd8D4Mg
+   5OZX2XGjRoF4ubScgssRw8Gw6QiEuBND4w8yLE04wY0Q5V8HbQ52NG+Ko
+   5e2YEzJYc4Bh/+UWTC6XzfE1UyM3J95XJxcrmVk8q+RgpnwOUE3qNWbJE
+   0WaTTOAE7XUEAnk3nbiHoyDum71+NBqfb2kHmTPaPMJTNBumswazU49rL
+   w==;
+X-CSE-ConnectionGUID: yTpEFW3ZRMi+1MT/4LRe7g==
+X-CSE-MsgGUID: bY1ABuEfTs2LBZFMiOYb9Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="12906885"
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="12906885"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 11:28:47 -0700
+X-CSE-ConnectionGUID: V0jK5j45RwC/oUH+NMR8YA==
+X-CSE-MsgGUID: 1m4DjI9xQOOO/HZkwVY0BA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="94513854"
+Received: from eamartin-mobl1.amr.corp.intel.com (HELO [10.125.111.208]) ([10.125.111.208])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 11:28:46 -0700
+Message-ID: <1b045ed5-b661-4d59-b43e-8d25cb1235ec@intel.com>
+Date: Wed, 7 Aug 2024 11:28:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,188 +66,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION][BISECTED][STABLE] hdparm errors since 28ab9769117c
-To: Christian Heusel <christian@heusel.eu>, Igor Pylypiv
- <ipylypiv@google.com>, Niklas Cassel <cassel@kernel.org>,
- linux-ide@vger.kernel.org
-Cc: Hannes Reinecke <hare@suse.de>, regressions@lists.linux.dev,
- stable@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <0bf3f2f0-0fc6-4ba5-a420-c0874ef82d64@heusel.eu>
+Subject: Re: [PATCH] nvdimm: Use of_property_present() and
+ of_property_read_bool()
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Oliver O'Halloran <oohall@gmail.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240731191312.1710417-26-robh@kernel.org>
 Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <0bf3f2f0-0fc6-4ba5-a420-c0874ef82d64@heusel.eu>
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20240731191312.1710417-26-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2024/08/07 10:23, Christian Heusel wrote:
-> Hello Igor, hello Niklas,
-> 
-> on my NAS I am encountering the following issue since v6.6.44 (LTS),
-> when executing the hdparm command for my WD-WCC7K4NLX884 drives to get
-> the active or standby state:
-> 
->     $ hdparm -C /dev/sda
->     /dev/sda:
->     SG_IO: bad/missing sense data, sb[]:  f0 00 01 00 50 40 ff 0a 00 00 78 00 00 1d 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->      drive state is:  unknown
-> 
-> 
-> While the expected output is the following:
-> 
->     $ hdparm -C /dev/sda
->     /dev/sda:
->      drive state is:  active/idle
-> 
-> I did a bisection within the stable series and found the following
-> commit to be the first bad one:
-> 
->     28ab9769117c ("ata: libata-scsi: Honor the D_SENSE bit for CK_COND=1 and no error")
-> 
-> According to kernel.dance the same commit was also backported to the
-> v6.10.3 and v6.1.103 stable kernels and I could not find any commit or
-> pending patch with a "Fixes:" tag for the offending commit.
-> 
-> So far I have not been able to test with the mainline kernel as this is
-> a remote device which I couldn't rescue in case of a boot failure. Also
-> just for transparency it does have the out of tree ZFS module loaded,
-> but AFAIU this shouldn't be an issue here, as the commit seems clearly
-> related to the error. If needed I can test with an untainted mainline
-> kernel on Friday when I'm near the device.
-> 
-> I have attached the output of hdparm -I below and would be happy to
-> provide further debug information or test patches.
 
-I confirm this, using 6.11-rc2. The problem is actually hdparm code which
-assumes that the sense data is in descriptor format without ever looking at the
-D_SENSE bit to verify that. So commit 28ab9769117c reveals this issue because as
-its title explains, it (correctly) honors D_SENSE instead of always generating
-sense data in descriptor format.
 
-Hmm... This is annoying. The kernel is fixed to be spec compliant but that
-breaks old/non-compliant applications... We definitely should fix hdparm code,
-but I think we still need to revert 28ab9769117c...
-
-Niklas, Igor, thoughts ?
-
+On 7/31/24 12:13 PM, Rob Herring (Arm) wrote:
+> Use of_property_present() and of_property_read_bool() to test
+> property presence and read boolean properties rather than
+> of_(find|get)_property(). This is part of a larger effort to remove
+> callers of of_find_property() and similar functions.
+> of_(find|get)_property() leak the DT struct property and data pointers
+> which is a problem for dynamically allocated nodes which may be freed.
 > 
-> Cheers,
-> Christian
-> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 > ---
+>  drivers/nvdimm/of_pmem.c | 2 +-
+>  drivers/nvmem/layouts.c  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> #regzbot introduced: 28ab9769117c
-> #regzbot title: ata: libata-scsi: Sense data errors breaking hdparm with WD drives
-> 
-> ---
-> 
-> $ pacman -Q hdparm
-> hdparm 9.65-2
-> 
-> $ hdparm -I /dev/sda
-> 
-> /dev/sda:
-> 
-> ATA device, with non-removable media
-> 	Model Number:       WDC WD40EFRX-68N32N0
-> 	Serial Number:      WD-WCC7K4NLX884
-> 	Firmware Revision:  82.00A82
-> 	Transport:          Serial, SATA 1.0a, SATA II Extensions, SATA Rev 2.5, SATA Rev 2.6, SATA Rev 3.0
-> Standards:
-> 	Used: unknown (minor revision code 0x006d) 
-> 	Supported: 10 9 8 7 6 5 
-> 	Likely used: 10
-> Configuration:
-> 	Logical		max	current
-> 	cylinders	16383	0
-> 	heads		16	0
-> 	sectors/track	63	0
-> 	--
-> 	LBA    user addressable sectors:   268435455
-> 	LBA48  user addressable sectors:  7814037168
-> 	Logical  Sector size:                   512 bytes
-> 	Physical Sector size:                  4096 bytes
-> 	Logical Sector-0 offset:                  0 bytes
-> 	device size with M = 1024*1024:     3815447 MBytes
-> 	device size with M = 1000*1000:     4000787 MBytes (4000 GB)
-> 	cache/buffer size  = unknown
-> 	Form Factor: 3.5 inch
-> 	Nominal Media Rotation Rate: 5400
-> Capabilities:
-> 	LBA, IORDY(can be disabled)
-> 	Queue depth: 32
-> 	Standby timer values: spec'd by Standard, with device specific minimum
-> 	R/W multiple sector transfer: Max = 16	Current = 16
-> 	DMA: mdma0 mdma1 mdma2 udma0 udma1 udma2 udma3 udma4 udma5 *udma6 
-> 	     Cycle time: min=120ns recommended=120ns
-> 	PIO: pio0 pio1 pio2 pio3 pio4 
-> 	     Cycle time: no flow control=120ns  IORDY flow control=120ns
-> Commands/features:
-> 	Enabled	Supported:
-> 	   *	SMART feature set
-> 	    	Security Mode feature set
-> 	   *	Power Management feature set
-> 	   *	Write cache
-> 	   *	Look-ahead
-> 	   *	Host Protected Area feature set
-> 	   *	WRITE_BUFFER command
-> 	   *	READ_BUFFER command
-> 	   *	NOP cmd
-> 	   *	DOWNLOAD_MICROCODE
-> 	    	Power-Up In Standby feature set
-> 	   *	SET_FEATURES required to spinup after power up
-> 	    	SET_MAX security extension
-> 	   *	48-bit Address feature set
-> 	   *	Device Configuration Overlay feature set
-> 	   *	Mandatory FLUSH_CACHE
-> 	   *	FLUSH_CACHE_EXT
-> 	   *	SMART error logging
-> 	   *	SMART self-test
-> 	   *	General Purpose Logging feature set
-> 	   *	64-bit World wide name
-> 	   *	IDLE_IMMEDIATE with UNLOAD
-> 	   *	WRITE_UNCORRECTABLE_EXT command
-> 	   *	{READ,WRITE}_DMA_EXT_GPL commands
-> 	   *	Segmented DOWNLOAD_MICROCODE
-> 	   *	Gen1 signaling speed (1.5Gb/s)
-> 	   *	Gen2 signaling speed (3.0Gb/s)
-> 	   *	Gen3 signaling speed (6.0Gb/s)
-> 	   *	Native Command Queueing (NCQ)
-> 	   *	Host-initiated interface power management
-> 	   *	Phy event counters
-> 	   *	Idle-Unload when NCQ is active
-> 	   *	NCQ priority information
-> 	   *	READ_LOG_DMA_EXT equivalent to READ_LOG_EXT
-> 	   *	DMA Setup Auto-Activate optimization
-> 	   *	Device-initiated interface power management
-> 	   *	Software settings preservation
-> 	   *	SMART Command Transport (SCT) feature set
-> 	   *	SCT Write Same (AC2)
-> 	   *	SCT Error Recovery Control (AC3)
-> 	   *	SCT Features Control (AC4)
-> 	   *	SCT Data Tables (AC5)
-> 	    	unknown 206[12] (vendor specific)
-> 	    	unknown 206[13] (vendor specific)
-> 	   *	DOWNLOAD MICROCODE DMA command
-> 	   *	WRITE BUFFER DMA command
-> 	   *	READ BUFFER DMA command
-> Security: 
-> 	Master password revision code = 65534
-> 		supported
-> 	not	enabled
-> 	not	locked
-> 		frozen
-> 	not	expired: security count
-> 		supported: enhanced erase
-> 	504min for SECURITY ERASE UNIT. 504min for ENHANCED SECURITY ERASE UNIT.
-> Logical Unit WWN Device Identifier: 50014ee2647735a1
-> 	NAA		: 5
-> 	IEEE OUI	: 0014ee
-> 	Unique ID	: 2647735a1
-> Checksum: correct
-
--- 
-Damien Le Moal
-Western Digital Research
-
+> diff --git a/drivers/nvdimm/of_pmem.c b/drivers/nvdimm/of_pmem.c
+> index 403384f25ce3..b4a1cf70e8b7 100644
+> --- a/drivers/nvdimm/of_pmem.c
+> +++ b/drivers/nvdimm/of_pmem.c
+> @@ -47,7 +47,7 @@ static int of_pmem_region_probe(struct platform_device *pdev)
+>  	}
+>  	platform_set_drvdata(pdev, priv);
+>  
+> -	is_volatile = !!of_find_property(np, "volatile", NULL);
+> +	is_volatile = of_property_read_bool(np, "volatile");
+>  	dev_dbg(&pdev->dev, "Registering %s regions from %pOF\n",
+>  			is_volatile ? "volatile" : "non-volatile",  np);
+>  
+> diff --git a/drivers/nvmem/layouts.c b/drivers/nvmem/layouts.c
+> index 77a4119efea8..65d39e19f6ec 100644
+> --- a/drivers/nvmem/layouts.c
+> +++ b/drivers/nvmem/layouts.c
+> @@ -123,7 +123,7 @@ static int nvmem_layout_bus_populate(struct nvmem_device *nvmem,
+>  	int ret;
+>  
+>  	/* Make sure it has a compatible property */
+> -	if (!of_get_property(layout_dn, "compatible", NULL)) {
+> +	if (!of_property_present(layout_dn, "compatible")) {
+>  		pr_debug("%s() - skipping %pOF, no compatible prop\n",
+>  			 __func__, layout_dn);
+>  		return 0;
 
