@@ -1,177 +1,143 @@
-Return-Path: <linux-kernel+bounces-278195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E2A794AD2A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:44:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC2D94AD2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC3A1283318
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:44:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FD771F22539
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C6312C522;
-	Wed,  7 Aug 2024 15:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719B912D1F1;
+	Wed,  7 Aug 2024 15:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lGaMxw2T"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZSCK7VKG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3F984D29
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9D012C470;
+	Wed,  7 Aug 2024 15:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723045478; cv=none; b=XiD9m20ODf8D+Zsatp2XyZYBKjC/vsnHQhUOfotMkq4FzHzftaPF72wspN0/vz5E75ygg5MUYXvJnv0bk501/lmdHtHUQBgDt4sAK6Mo1as0DlJKnRRWbxwiYdN91p+o/Q3xdd8JaQMQBc/sfXkhWwNT31kQl8Uzqwk056EDGzA=
+	t=1723045500; cv=none; b=hC2VHNNm0uHT33xjgMyca/IsHO6AI2v9fEGG8RWG/DUm7S1+xDS4sbqPGUBVbbc3qiur0q4EXFTDl6ZF4C2NZnGQcPjw97OXjRi43/qspfJ+rMYhCAJ0tBUpC/FUJzn+d7Vn5jpvlLxnjHilnuYeR8uh5f2yXvcdiwgU0L+8oHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723045478; c=relaxed/simple;
-	bh=d9IYZNLUv9jZ+J25pSNTy8o356pmUdcxeo/Rc6iGoz0=;
+	s=arc-20240116; t=1723045500; c=relaxed/simple;
+	bh=62DRcqqeC5v6AnH2Jdg1gao0bSakZspPdgIljEIRA+8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QSVQ5IMnlKQchnVqdXcAU44eRqR9DRL5bS3R0klCcALJBubNCKfTC4NuiiKxgIwK4YHqTpBmshighUyOVkDKZAGLlv7Gl2hvJTvRNTcNSsZFQ90SAmnZjYw7G0hz4VOvihezt4uhRZn0byC6vpV7YCCUQCZRhuXqJ8I50PoO6cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lGaMxw2T; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so33189a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 08:44:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723045475; x=1723650275; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QgojAL76gtXcG5WMdxnB/FzxmrNqVGWIbcYNJ79HH/I=;
-        b=lGaMxw2TReB/VenEKVimzJ4fp1p9IlqvQ9XsStts9ggyUBwOEAhMeEtRcVLxg5arvi
-         2DGcRutkwcXCipfowaqZSzDYb0c1CMd8TWUjYjCjdm3XvkXJsnP6bCewbUP6vxn0K8is
-         IXQCsKHHNieg3SW+mpx8QNLabh+c6MJH0tKzWkSz8RnHILTJtfzNnnIkwyYbHrG1yWFB
-         18OXovt8tfeHBtaQaXpHiVgaSsudYl/nKG+OC9Z3uqywxnH0vsMBFTcrVJ8DkPG4CtwN
-         0IrJmjBrrxAB8u8o/5wX4pTva27Yr1gkpPiJe2App1JemHTmzCxcGPzn55N6nkq1H+Ao
-         O9yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723045475; x=1723650275;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QgojAL76gtXcG5WMdxnB/FzxmrNqVGWIbcYNJ79HH/I=;
-        b=COMj1rSlxPnT0i+oEwESRIjpWqv1P0yzBw/2+BD8wr7wtNtbcqyhkz6wGyL3KRcMCf
-         pBtyM6aAwdspghr+BLs8whdBbiarRVzClOIzMyxFwDolNsrxgamiqNtGe2Efil/s9RQ8
-         4/l6TU/7krjscylcfXaEsZqJaryjj7URVRHUluuJaf9M8CO5VKNkByXSCVHy+zcARHsM
-         pvY0M4Y0vpvHeZq+1UXc7cl8QosWni2wyJJlYua8sRcj+2ag0ypjwjQbQmnJu7/q2iuY
-         ZuLTYdDUkr3qjoQ9AiaBvTF58g7FP7/AHdASIKCvMAb3kYzZXmIWKbKaKh7MaiwApQrs
-         pQFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2f+zVVw6u3Jo8hVJlvLtAVsp0880lWQfDC9BxujlqQvuyRVSF7lN3On+KT7mqsHRygq6uOJS47jhYiGQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEq1F0cy6qaSVJUa5yIvt/leLP8mTnQro68iajsZhraN9jDuYu
-	uLs47rHctCOl7HFiUB5WHBNWp5OeLfB45Q6WiDASCQ1WgGomHvO2xpQac9BVtWUTZF8V/iaYctI
-	s8w4TzTLAmb6jmQ9+gqzv9NSYie9Qm05GGhmp
-X-Google-Smtp-Source: AGHT+IFAd+Y2q73KAR99q5jxhm5yDjlmQ2pPZj6irk4D1k87HYzP34Wk4BrB5n4Gw2L328GhKntkCHZgbPn3JLSGDmI=
-X-Received: by 2002:a05:6402:84c:b0:59f:9f59:9b07 with SMTP id
- 4fb4d7f45d1cf-5bba28bb22amr213813a12.4.1723045474408; Wed, 07 Aug 2024
- 08:44:34 -0700 (PDT)
+	 To:Cc:Content-Type; b=Wv7e0T6uF02uVmPHOUSkNVtnDVmVdkwG0MiSocA9yy3CkwAIgZDiPJufYsmdtuObNLa9DseB3HgL2MMB1/IsczEcLV1Yb5Wj49eewPJMQ/opajq5/d2D/H47xj6oheEPJ2RBC/YDerKigmDdJTNCcA0ByvaZvY9sm8s0oMTK0jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZSCK7VKG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37093C4AF5F;
+	Wed,  7 Aug 2024 15:45:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723045500;
+	bh=62DRcqqeC5v6AnH2Jdg1gao0bSakZspPdgIljEIRA+8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZSCK7VKGfrUUYWa85qY72U563KSZ7oAWK9C1SmiKZTS4h5x/6E+ew0qyMMpdk0yRF
+	 DSqC6UEiFpc1jg5j0fuU8saCQs9kAViz9G2Unej4kLqNynQmW11z2S+AY47JGjFs+n
+	 7jIuFifNc4j4X9JmQQr+BCSh1JKh2wM46HqL9F/ruVsehCMwvQt/LMof/yq/W2znap
+	 03pzS1oK0CBWdcohdlosPgDPUF1aT15QwrDYa+r+DDKdBxtm1Rl7xuFGNFkC+uK6e/
+	 p5VarmwbzVjNmwq3yV+sPnQtCf/hhzyAcPNHztwXh5KpYrJG9E3YiskeZLPQsZ3nY8
+	 gLgSmBZ4cCJpg==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-530ae4ef29dso3800609e87.3;
+        Wed, 07 Aug 2024 08:45:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW/ObzzNbJk6L1fEhQyUVA8ybyIkhuHdeqXY3qj6+1j+X533LGMfhcL9ack6j83jGew/XGefk3n/yUPRouO8tFGBj0GoDg30oVgNgfa6IWOHhcFZPWhX6ug//GseMVlqnaSxk//WPzziVFWJ7g8v3cW9Hv+8jCEqww5BpNRaYnIfxySKzrC/ntwImDqvzRZ4dL0jxmQTzagxuASPdlBSE8KGQ==
+X-Gm-Message-State: AOJu0YzjoKqr/HhaXZaWbRtXPIR00ayYCTOs08nYFvEwrA7YZWSZsTTS
+	fCXkkfxa/Kz6jyzn5Ay2Gq7l7bAyy1VSowg1w8fQoLn131vINCfO2wOY64RBFaEn09CddQmZkcP
+	FRy/U5gIfUnJ4fnV9Bw3IwgXdDBk=
+X-Google-Smtp-Source: AGHT+IEkoeCcq7YGXm+baiHlwfmxdsFq0ZRVrTrB1cw7IHXDs0yss2GR/vUuBkAzPzYypMT+IeV+DjGwfXLBANG7Jew=
+X-Received: by 2002:a05:6512:b8d:b0:52e:8071:e89d with SMTP id
+ 2adb3069b0e04-530bb3b45f5mr17596549e87.40.1723045498671; Wed, 07 Aug 2024
+ 08:44:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807124103.85644-1-mpe@ellerman.id.au> <20240807124103.85644-2-mpe@ellerman.id.au>
-In-Reply-To: <20240807124103.85644-2-mpe@ellerman.id.au>
-From: Jeff Xu <jeffxu@google.com>
-Date: Wed, 7 Aug 2024 08:43:57 -0700
-Message-ID: <CALmYWFsCrMxkA1v58fJxtyGR15ZGxmSP8x7QC=oeKwzcwGL76A@mail.gmail.com>
-Subject: Re: [PATCH 2/4] powerpc/mm: Handle VDSO unmapping via close() rather
- than arch_unmap()
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, 
-	torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	christophe.leroy@csgroup.eu, jeffxu@chromium.org, Liam.Howlett@oracle.com, 
-	linux-kernel@vger.kernel.org, npiggin@gmail.com, oliver.sang@intel.com, 
-	pedro.falcato@gmail.com, Kees Cook <keescook@chromium.org>
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
+ <20240807-macos-build-support-v1-6-4cd1ded85694@samsung.com> <20240807-outgoing-charcoal-collie-0ee37e@lindesnes>
+In-Reply-To: <20240807-outgoing-charcoal-collie-0ee37e@lindesnes>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 8 Aug 2024 00:44:22 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ21o+cQQaLD1xkwSX0ma8hvB29DMDquy5VjHcBWwhGPw@mail.gmail.com>
+Message-ID: <CAK7LNAQ21o+cQQaLD1xkwSX0ma8hvB29DMDquy5VjHcBWwhGPw@mail.gmail.com>
+Subject: Re: [PATCH 06/12] selinux/genheaders: include bitsperlong and
+ posix_types headers
+To: Nicolas Schier <nicolas@fjasle.eu>
+Cc: da.gomez@samsung.com, Nathan Chancellor <nathan@kernel.org>, 
+	Lucas De Marchi <lucas.demarchi@intel.com>, 
+	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
+	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
+	Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org, 
+	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
+	Finn Behrens <me@kloenk.dev>, "Daniel Gomez (Samsung)" <d+samsung@kruces.com>, gost.dev@samsung.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 7, 2024 at 5:41=E2=80=AFAM Michael Ellerman <mpe@ellerman.id.au=
-> wrote:
+On Thu, Aug 8, 2024 at 12:39=E2=80=AFAM Nicolas Schier <nicolas@fjasle.eu> =
+wrote:
 >
-> Add a close() callback to the VDSO special mapping to handle unmapping
-> of the VDSO. That will make it possible to remove the arch_unmap() hook
-> entirely in a subsequent patch.
+> On Wed, Aug 07, 2024 at 01:09:20AM +0200, Daniel Gomez via B4 Relay wrote=
+:
+> > From: Daniel Gomez <da.gomez@samsung.com>
+> >
+> > The genheaders requires the bitsperlong.h and posix_types.h headers.
+> > To ensure these headers are found during compilation on macOS hosts,
+> > add usr/include to HOST_EXTRACFLAGS in the genheaders Makefile. This
+> > adjustment allows the compiler to locate all necessary headers when the=
+y
+> > are not available by default on macOS.
+> >
+> > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> > ---
+> >  scripts/selinux/genheaders/Makefile | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/scripts/selinux/genheaders/Makefile b/scripts/selinux/genh=
+eaders/Makefile
+> > index 1faf7f07e8db..017149c90f8e 100644
+> > --- a/scripts/selinux/genheaders/Makefile
+> > +++ b/scripts/selinux/genheaders/Makefile
+> > @@ -2,4 +2,5 @@
+> >  hostprogs-always-y +=3D genheaders
+> >  HOST_EXTRACFLAGS +=3D \
+> >       -I$(srctree)/include/uapi -I$(srctree)/include \
+> > -     -I$(srctree)/security/selinux/include
+> > +     -I$(srctree)/security/selinux/include \
+> > +     -I$(srctree)/usr/include
 >
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> ---
->  arch/powerpc/include/asm/mmu_context.h |  4 ----
->  arch/powerpc/kernel/vdso.c             | 17 +++++++++++++++++
->  2 files changed, 17 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/powerpc/include/asm/mmu_context.h b/arch/powerpc/includ=
-e/asm/mmu_context.h
-> index 37bffa0f7918..9b8c1555744e 100644
-> --- a/arch/powerpc/include/asm/mmu_context.h
-> +++ b/arch/powerpc/include/asm/mmu_context.h
-> @@ -263,10 +263,6 @@ extern void arch_exit_mmap(struct mm_struct *mm);
->  static inline void arch_unmap(struct mm_struct *mm,
->                               unsigned long start, unsigned long end)
->  {
-> -       unsigned long vdso_base =3D (unsigned long)mm->context.vdso;
-> -
-> -       if (start <=3D vdso_base && vdso_base < end)
-> -               mm->context.vdso =3D NULL;
->  }
->
->  #ifdef CONFIG_PPC_MEM_KEYS
-> diff --git a/arch/powerpc/kernel/vdso.c b/arch/powerpc/kernel/vdso.c
-> index 7a2ff9010f17..220a76cae7c1 100644
-> --- a/arch/powerpc/kernel/vdso.c
-> +++ b/arch/powerpc/kernel/vdso.c
-> @@ -81,6 +81,21 @@ static int vdso64_mremap(const struct vm_special_mappi=
-ng *sm, struct vm_area_str
->         return vdso_mremap(sm, new_vma, &vdso64_end - &vdso64_start);
->  }
->
-> +static void vdso_close(const struct vm_special_mapping *sm, struct vm_ar=
-ea_struct *vma)
-> +{
-> +       struct mm_struct *mm =3D vma->vm_mm;
-> +
-> +       /*
-> +        * close() is called for munmap() but also for mremap(). In the m=
-remap()
-> +        * case the vdso pointer has already been updated by the mremap()=
- hook
-> +        * above, so it must not be set to NULL here.
-> +        */
-> +       if (vma->vm_start !=3D (unsigned long)mm->context.vdso)
-> +               return;
-> +
-> +       mm->context.vdso =3D NULL;
-> +}
-> +
->  static vm_fault_t vvar_fault(const struct vm_special_mapping *sm,
->                              struct vm_area_struct *vma, struct vm_fault =
-*vmf);
->
-> @@ -92,11 +107,13 @@ static struct vm_special_mapping vvar_spec __ro_afte=
-r_init =3D {
->  static struct vm_special_mapping vdso32_spec __ro_after_init =3D {
->         .name =3D "[vdso]",
->         .mremap =3D vdso32_mremap,
-> +       .close =3D vdso_close,
-IIUC, only CHECKPOINT_RESTORE requires this, and
-CHECKPOINT_RESTORE is in init/Kconfig, with default N
+> 'make headers' composes the UAPI header tree in $(objtree)/usr/include.
+> So, if you build out-of-source, -I$(srctree)/usr/include will not match.
+> Just remove the '$(srctree)/' prefix as '$(objtree)/' is always '.'.
 
-Can we add #ifdef CONFIG_CHECKPOINT_RESTORE here ?
 
-Thanks
-Best regards,
--Jeff
+Right.
 
->  };
->
->  static struct vm_special_mapping vdso64_spec __ro_after_init =3D {
->         .name =3D "[vdso]",
->         .mremap =3D vdso64_mremap,
-> +       .close =3D vdso_close,
->  };
->
->  #ifdef CONFIG_TIME_NS
-> --
-> 2.45.2
->
+
+> But I am suspecting that this break cross-building.
+
+
+Right.
+
+We cannot do this.
+
+
+--
+Best Regards
+Masahiro Yamada
 
