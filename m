@@ -1,114 +1,168 @@
-Return-Path: <linux-kernel+bounces-278672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F9394B35C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:04:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B1894B35B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 263712842DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496B41F2261B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EC4155352;
-	Wed,  7 Aug 2024 23:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756621553A7;
+	Wed,  7 Aug 2024 23:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Hfl7BBb6"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y+P4ivrD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9B213B59E
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 23:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D63364A0;
+	Wed,  7 Aug 2024 23:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723071840; cv=none; b=BmaXPZGYfeUY9Cr6Cn2DbBtfu/BcuEDmifjZhHfscDIqPlgUMfn324GnXIE3NFSFOBdQCumoKXVbJq6QMP2bsJRj8sog5eoDU9OLzVvzN0CV/ZkMDM2jYUY3v6eF1d5GZxo3awBajH4rO/7/8e7okX5N1PFf2qG9ikoTOUMrx+M=
+	t=1723071820; cv=none; b=iUz9tUiHT0BYrR7xSx9LWKOxA+UqV6S3kEO0lcKC8PALtMcYUITCsWaZIDiNV5nU5aHylt9oOR4LrvnthJez1JW3mn6BKL8aYV06XuTm1NAxPEzJ23VxRzCrYnvoUEUiB2jI1AtH24UHELbUklYa/2majxxH84ugnZvq/vmtwLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723071840; c=relaxed/simple;
-	bh=UdSQmDx8maSr+/eYEdptnJ9imLOTTvkh3g1mrwFhLZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L+wgxYA0FqGRakRRZweN4yTBxtlZmn9RdIVk1qR55sfbPnSefw8+qth0/Uxxt1rWl2AXQs6HeLH1dJx/RfQRMlQmGrhyIEZW0SPTnIbuD4kldSXZYatHjffUd7SPENRIzScTgqM7qJt2GBnOV57+8Fa7p/vrKnYB4kn4uQ9YSHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Hfl7BBb6; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 477N3V1Q1031105
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 7 Aug 2024 16:03:32 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 477N3V1Q1031105
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024071601; t=1723071813;
-	bh=EX6d1CiGu8if9kgJgq4kQXdqNMUEdF5RhzLk+09IciE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Hfl7BBb6Uxvl/o0R0UiCWULuzOY2fc8yj290z/Trj5tWWRCrIbawgkNZES2RqrYqu
-	 bfSNUGVHSMccqIZ2Vj+/3UvOS6d65uzJZPLUEB48xIKssytOAsAuc9Nv+RQgO5nWmd
-	 2Y9I89WCcEEIsjeT7gnyfH7WGBvI1fbyCjqKJ5zdPdw95qBYE9WOn1UIg76oYGAVno
-	 o112RWUupJTRV6hCy/QZi3jGo0sDNIfRFWUVh+Vy0AMuhIb2DWXLc281w9pQrhPSBw
-	 rwmEF36Av2n+AeufhMreOYgcZpRX4nb4VIThzX8tDqdEc9JEc0e6uDRC46rXL3EPhs
-	 sdNEQp1sxwKew==
-Message-ID: <f3b75c38-169f-43a2-bced-d9d6153b8d55@zytor.com>
-Date: Wed, 7 Aug 2024 16:03:31 -0700
+	s=arc-20240116; t=1723071820; c=relaxed/simple;
+	bh=P3OD7e9Qje8qnMS5j94aG1CfmYSlIKmYRVHNf+kg/vk=;
+	h=Date:From:To:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=JInuNyIg0R/n2H5Mvps7hP2eZ/bOd21j+YRaRCI2lok9MDXU8wTQpQXRncZ0homv2BD8U+pXMMb6aUiB2crHTWBmT+UkjJDtQ6caghyqRt00PiLw2bw4laLHapGxnAp7Zww5J5Nn4bsY59AzpMLhct3m5YNX6DLB3heUUa9awYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y+P4ivrD; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723071819; x=1754607819;
+  h=date:from:to:subject:in-reply-to:message-id:references:
+   mime-version;
+  bh=P3OD7e9Qje8qnMS5j94aG1CfmYSlIKmYRVHNf+kg/vk=;
+  b=Y+P4ivrDbmMCxTc7IkLJv1kpTGiLRB2QYZEpQKLdCppBsBVXvMmqchMD
+   7t1QhTDO9vSTL/U3azoyJa+UG7D3HkBd1INgMV/ben89ZEm1XsimpwUQF
+   YoAl42QI9lmBvo7O/TeU5j2epbnjwB6z9WRt0UVYdrvPp2C+D0eZK786S
+   xS0o8Q+U+0wF4k/9/KMjba1plFsma3d/5rDyt+3EGbWC8bJvrM5xbUjL3
+   bXTPN0l7qv5ZGgXAHqu3GeGKfYQmjGg4WQseVKFle3BIE6XDvvurPA7Js
+   MB+ByoyMEaQv2SCidJkvsKRBqiFJui+cO/7PJ+4oCAhc2DcDKA8eIwDWO
+   A==;
+X-CSE-ConnectionGUID: gt96VjVWSaqEyt+iV/wHdw==
+X-CSE-MsgGUID: jNgubI7dR/CMMPsfCbTSvg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="32315609"
+X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
+   d="scan'208";a="32315609"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 16:03:38 -0700
+X-CSE-ConnectionGUID: PYiX59MsRRW4SIzy5XDkbw==
+X-CSE-MsgGUID: 3gJ80cnjRhuX7fnOZEz0Ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
+   d="scan'208";a="56938865"
+Received: from sj-2308-osc3.sj.altera.com ([10.244.138.69])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 16:03:38 -0700
+Date: Wed, 7 Aug 2024 16:03:36 -0700 (PDT)
+From: matthew.gerlach@linux.intel.com
+To: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com, 
+    krzk+dt@kernel.org, conor+dt@kernel.org, dinguyen@kernel.org, 
+    joyce.ooi@intel.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] arm64: dts: agilex: add dtsi for PCIe Root Port
+In-Reply-To: <20240731143946.3478057-6-matthew.gerlach@linux.intel.com>
+Message-ID: <f792d181-4fa2-cbab-5d2d-2e219b137651@linux.intel.com>
+References: <20240731143946.3478057-1-matthew.gerlach@linux.intel.com> <20240731143946.3478057-6-matthew.gerlach@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] x86/entry: Test ti_work for zero before processing
- individual bits
-To: Brian Gerst <brgerst@gmail.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-        hpa@zytor.com, peterz@infradead.org, andrew.cooper3@citrix.com,
-        seanjc@google.com
-References: <20240807054722.682375-1-xin@zytor.com>
- <20240807054722.682375-2-xin@zytor.com>
- <CAMzpN2iS076ysZ37gjrz6MGWc62sD9uw0ODTJtzOO1U4kp309A@mail.gmail.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <CAMzpN2iS076ysZ37gjrz6MGWc62sD9uw0ODTJtzOO1U4kp309A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-On 8/7/2024 9:21 AM, Brian Gerst wrote:
->> +               fpregs_assert_state_consistent();
-> This call was originally unconditional, and does nothing if
-> TIF_NEED_FPU_LOAD is set.
 
-lost my mind! Thanks!
+
+On Wed, 31 Jul 2024, matthew.gerlach@linux.intel.com wrote:
+
+> From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+>
+> Add the base device tree for support of the PCIe Root Port
+> for the Agilex family of chips.
+>
+> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+> ---
+> .../intel/socfpga_agilex_pcie_root_port.dtsi  | 55 +++++++++++++++++++
+> 1 file changed, 55 insertions(+)
+> create mode 100644 arch/arm64/boot/dts/intel/socfpga_agilex_pcie_root_port.dtsi
+>
+> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex_pcie_root_port.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex_pcie_root_port.dtsi
+> new file mode 100644
+> index 000000000000..510dcd1c2913
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex_pcie_root_port.dtsi
+> @@ -0,0 +1,55 @@
+> +// SPDX-License-Identifier:     GPL-2.0
+> +/*
+> + * Copyright (C) 2024, Intel Corporation
+> + */
+> +&soc0 {
+> +	aglx_hps_bridges: bridge@80000000 {
+The node name, bridge@80000000, causing the following CHECK_DTBS error:
+
+nodename:0: 'bridge@80000000' does not match 
+'^([a-z][a-z0-9\\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
+ 	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+
+I will change the node name to fpga-bus@80000000 in v2.
+
+Matthew Gerlach
+
+> +		compatible = "simple-bus";
+> +		reg = <0x80000000 0x20200000>,
+> +		      <0xf9000000 0x00100000>;
+> +		reg-names = "axi_h2f", "axi_h2f_lw";
+> +		#address-cells = <0x2>;
+> +		#size-cells = <0x1>;
+> +		ranges = <0x00000000 0x00000000 0x80000000 0x00040000>,
+> +			 <0x00000000 0x10000000 0x90100000 0x0ff00000>,
+> +			 <0x00000000 0x20000000 0xa0000000 0x00200000>,
+> +			 <0x00000001 0x00010000 0xf9010000 0x00008000>,
+> +			 <0x00000001 0x00018000 0xf9018000 0x00000080>,
+> +			 <0x00000001 0x00018080 0xf9018080 0x00000010>;
+> +
+> +		pcie_0_pcie_aglx: pcie@200000000 {
+> +			reg = <0x00000000 0x10000000 0x10000000>,
+> +			      <0x00000001 0x00010000 0x00008000>,
+> +			      <0x00000000 0x20000000 0x00200000>;
+> +			reg-names = "Txs", "Cra", "Hip";
+> +			interrupt-parent = <&intc>;
+> +			interrupts = <GIC_SPI 0x14 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <0x1>;
+> +			device_type = "pci";
+> +			bus-range = <0x0000000 0x000000ff>;
+> +			ranges = <0x82000000 0x00000000 0x00100000 0x00000000 0x10000000 0x00000000 0x0ff00000>;
+> +			msi-parent = <&pcie_0_msi_irq>;
+> +			#address-cells = <0x3>;
+> +			#size-cells = <0x2>;
+> +			interrupt-map-mask = <0x0 0x0 0x0 0x7>;
+> +			interrupt-map = <0x0 0x0 0x0 0x1 &pcie_0_pcie_aglx 0 0 0 0x1>,
+> +					<0x0 0x0 0x0 0x2 &pcie_0_pcie_aglx 0 0 0 0x2>,
+> +					<0x0 0x0 0x0 0x3 &pcie_0_pcie_aglx 0 0 0 0x3>,
+> +					<0x0 0x0 0x0 0x4 &pcie_0_pcie_aglx 0 0 0 0x4>;
+> +			status = "disabled";
+> +		};
+> +
+> +		pcie_0_msi_irq: msi@10008080 {
+> +			compatible = "altr,msi-1.0";
+> +			reg = <0x00000001 0x00018080 0x00000010>,
+> +			      <0x00000001 0x00018000 0x00000080>;
+> +			reg-names = "csr", "vector_slave";
+> +			interrupt-parent = <&intc>;
+> +			interrupts = <GIC_SPI 0x13 IRQ_TYPE_LEVEL_HIGH>;
+> +			msi-controller;
+> +			num-vectors = <0x20>;
+> +			status = "disabled";
+> +		};
+> +	};
+> +};
+> -- 
+> 2.34.1
+>
+>
 
