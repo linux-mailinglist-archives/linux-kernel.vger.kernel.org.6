@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-277252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E58C949E6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:41:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4839949E65
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 360EF1C22934
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:41:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 322091F25241
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8954B197A6C;
-	Wed,  7 Aug 2024 03:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45CD1922ED;
+	Wed,  7 Aug 2024 03:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JNx7JjrX"
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jv+ShLZA"
 Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF5E16D33A;
-	Wed,  7 Aug 2024 03:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18194191F78;
+	Wed,  7 Aug 2024 03:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723002034; cv=none; b=P4/paYlGcsoutt5vWztpQ7wlIlkmpVIxNfJgKFlS98wOgRDYZVY6JSeBIQMsFQiLMv1UMRgrZsvxPMH07t8n+CNcCuHFYaIo/7GlcbV96soyo50T1ain7SnIfwzCLqs719t14c7Y9bIdKR2Z50B5/u+HM36LHySVsaZlqI8vp4U=
+	t=1723002018; cv=none; b=VYrljX98iaThs2fU/tuxeKKHR1G0vwHQ4D5v3wPQdrTv598AuTJYUIbvhZX0FcoEEOtjLlPDN7uhC+j6vm5xTSbCACbajxOlz8iNHoIbylcTPYE1rz1JQsbLTzki9dNvAhU5X7VzRWEnMFzDPjLQ3ZbIEd9eKKhak4Z1/b81NOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723002034; c=relaxed/simple;
-	bh=kMhox047Tp/K8qC0/o44RL4wbc/V4x4pI9dtcTHlDuA=;
-	h=To:Cc:Message-Id:In-Reply-To:References:From:Subject:Date; b=Vn0bwMopS8W3gnD+WDRZuHYW6Pptby5rXkNeItjDbvNqKCBT1cjqYSD+EsIV+E0NvwwxEUZZk5QkiV4gZ8IJr3iiA/NgDJ7wVyc5fslV1EzNBiRzUjalb/Hq/nslTBv+cinr2ORhKmBBv6SqcWWrxiOomScMDadKsrELkJK9naY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JNx7JjrX; arc=none smtp.client-ip=103.168.172.145
+	s=arc-20240116; t=1723002018; c=relaxed/simple;
+	bh=WHQKju5TB0Z+Ao/hCxLffpzCct+Fv2WmGoeZEBqS5OU=;
+	h=To:Cc:Message-Id:In-Reply-To:References:From:Subject:Date; b=Lzy3iQ9xNUJUE1Gbwu6mGOPkzOFUi5TG/eTzZ7X95iuDRDzMhH9P++rsPe70NSP5yRwVx59oewNC1iUbLgv6JEX5yPCHctwJW12x1v42tyOfNrKE2ZGiy4eLJtmTVBUKVaTI79kq78qZXw2PcRHlhYrUk0n2XN7OrLpTGeP+xtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jv+ShLZA; arc=none smtp.client-ip=103.168.172.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 8A1CD138FD05;
-	Tue,  6 Aug 2024 23:40:32 -0400 (EDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 24B33138FD02;
+	Tue,  6 Aug 2024 23:40:15 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Tue, 06 Aug 2024 23:40:32 -0400
+  by compute5.internal (MEProxy); Tue, 06 Aug 2024 23:40:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
 	:feedback-id:from:from:in-reply-to:in-reply-to:message-id
 	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723002032; x=
-	1723088432; bh=jmQ2zlmZiZC69dubowebACwe5xiaU3F+36b99mtz3HU=; b=J
-	Nx7JjrXtf9dDfe9M+cFd+pa76/ZXT9SreW8c+9gILC6mFwc5Np3oWd7XDC747jc8
-	bftwUGJaJBZsLHiBg9XUcvwXj/DgeDkolB93Y+2Oi5vyNFT61954x3lnmAK34PRa
-	WmLQYMaHg0B0oZgIJcgNfYvkLAhPsN+/Eo6yZg4K+DJt+xB2sFZpWLH7FPrxok6O
-	gjxuDzduFgRDRpL1RrbF4olQgF/xRuLzmlDKUdMK+nBU508PbcQ0ZFEHqq5aTlNd
-	WuX2CV9/atxSdNnMVY1oS5212uJjPauyX0V4a6NBC8Isp14ROfGEtDPh5I0MRlea
-	szwuzyCPI+JwnXNNGUzHQ==
-X-ME-Sender: <xms:sOyyZhq_qU5r4Bxbqovz3lkvEXyG4uNI9JyCl7lZH7YM5tD9oHlNSg>
-    <xme:sOyyZjrW5f_FEYUOyjnzoGES8e-rEQE9sC0bmRQg8IYw5yf--I9GB25pxCJA_gJ3Y
-    hn274Ww9gSG28qXTzc>
-X-ME-Received: <xmr:sOyyZuOqLDS69zq0kYRHmXP8OyGHiD7T17RN2g-F4hk4Y0ExGIrineJbEkRU4Yji91G6gZ2ZsscNH0dZfB0cEIrAmjFqubM44JM>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723002015; x=
+	1723088415; bh=nLSp3vSDZw5Ig7kj8JHbE+ZnAS/f759svuZnaVcejT0=; b=j
+	v+ShLZAGmsA6wubSOIcmLJYnNt7yic8/uDrQ6b+DClCHQKPDhuQguJlpi5CirOvk
+	32I6rPHkP9Pgwa5Jn0Hlam0/QkdlKn8d4y4R2Gav8LWxdlJ5ZhIF0Z4tI8G0Z0S3
+	VTxWl1nKvR1vHvD9TCHgGxhvzSpJ8gJ1PDZdzztn9SSs4pXx9I97rld1xWyCTuze
+	WLO74iCrz/+vroJcgE3rD7Hu49lNBLJOvjR84v9/3Rs/qiLvggYbGD9jabdOg+Me
+	/xHQKCSVk1ITEV6UqueXdt0vpV8cZhxV1v/pZwZr1b/yF2AQpGHZXnRsENApmtm5
+	v28CruvZKEJzEahQFsS4w==
+X-ME-Sender: <xms:n-yyZh5VyckGMsMXspRzjROumqFD7G_ZCAcnuz7W4kPXCyC0xvl1tw>
+    <xme:n-yyZu5N0JDfWLUOpz388dyxFP704HqSj5eXckWZHWkxnr1GPRb0Ji4S9eMp-3f0L
+    QisUYj09FkPhaSDS70>
+X-ME-Received: <xmr:n-yyZodafQEvWD-1T-yoinP3z29bveh208Mo9_qk-CzeZ0Sqr-VSaqDFmqJmceUWZgJMvYVk4mLN0LzZp9yZGQs1HTAziU9Bwrs>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeelgdejiecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
@@ -58,14 +58,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeelgdejiecutefuodetggdote
     hrnhepvefggfdthffhfeevuedugfdtuefgfeettdevkeeigefgudelteeggeeuheegffff
     necuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepfhhthh
     grihhnsehlihhnuhigqdhmieekkhdrohhrghdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:sOyyZs4gtABfdhxXegOhvRxSkFS_boJPBCV5jdB7nBE7JRIePUW1_Q>
-    <xmx:sOyyZg7QVkARMXgZgWKhUDn7cjYazIWPmalZo6lUGlX9z5aJ5ukWTA>
-    <xmx:sOyyZkjGsdX_6nb0rds-37b1EUUDRbdkOn96-8IafmxtLP8pKb6LJQ>
-    <xmx:sOyyZi6u02EkQuPhLLGmpaEyhMy-r8wG6lKVLrMSsFuz-xe-DSJZ0Q>
-    <xmx:sOyyZvZiuYnNIsHI25wN18bbnPScPntP8B2BH0pGinLiULCrnd8YOt5X>
+X-ME-Proxy: <xmx:n-yyZqJBDA2G4Gk7AV_YjpEpJzy3Eo7TeeG3l-YkF7ecwBYrRUcsVA>
+    <xmx:n-yyZlJCy8qgBphTLwzUE46dLOeogH1ZzS1ZMbYwT3PWocDjFAge1w>
+    <xmx:n-yyZjyFn7bKxDmnWiW5kU4qQV13zqqqxB0DeItyx3YOGXs4r_Qg0g>
+    <xmx:n-yyZhI0jWFcWXCG0874hKsiysq31_ypIjxcqJOdXxH1iaJELbIL9Q>
+    <xmx:n-yyZqovwedCNBFVUZwyFVsl6dSl8ZuI_PnRs9jgmUcwrJzPtIc1ZwL3>
 Feedback-ID: i58a146ae:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 6 Aug 2024 23:40:30 -0400 (EDT)
+ 6 Aug 2024 23:40:12 -0400 (EDT)
 To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
     "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc: Hannes Reinecke <hare@suse.com>,
@@ -74,12 +74,11 @@ Cc: Hannes Reinecke <hare@suse.com>,
     Stan Johnson <userm57@yahoo.com>,
     linux-scsi@vger.kernel.org,
     linux-kernel@vger.kernel.org
-Message-Id: <52e02a8812ae1a2d810d7f9f7fd800c3ccc320c4.1723001788.git.fthain@linux-m68k.org>
+Message-Id: <99dc7d1f4c825621b5b120963a69f6cd3e9ca659.1723001788.git.fthain@linux-m68k.org>
 In-Reply-To: <cover.1723001788.git.fthain@linux-m68k.org>
 References: <cover.1723001788.git.fthain@linux-m68k.org>
 From: Finn Thain <fthain@linux-m68k.org>
-Subject: [PATCH 06/11] scsi: NCR5380: Initialize buffer for MSG IN and STATUS
- transfers
+Subject: [PATCH 04/11] scsi: NCR5380: Check for phase match during PDMA fixup
 Date: Wed, 07 Aug 2024 13:36:28 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -87,41 +86,127 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-Following an incomplete transfer in MSG IN phase, the driver would not
-notice the problem and would make use of invalid data. Initialize 'tmp'
-appropriately and bail out if no message was received. For STATUS phase,
-preserve the existing status code unless a new value was transferred.
+It's not an error for a target to change the bus phase during a transfer.
+Unfortunately, the FLAG_DMA_FIXUP workaround does not allow for that --
+a phase change produces a DRQ timeout error and the device borken flag
+will be set.
+
+Check the phase match bit during FLAG_DMA_FIXUP processing. Don't forget
+to decrement the command residual. While we are here, change
+shost_printk() into scmd_printk() for better consistency with other DMA
+error messages.
 
 Tested-by: Stan Johnson <userm57@yahoo.com>
+Fixes: 55181be8ced1 ("ncr5380: Replace redundant flags with FLAG_NO_DMA_FIXUP")
 Signed-off-by: Finn Thain <fthain@linux-m68k.org>
 ---
- drivers/scsi/NCR5380.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/scsi/NCR5380.c | 78 +++++++++++++++++++++---------------------
+ 1 file changed, 39 insertions(+), 39 deletions(-)
 
 diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
-index 00e245173320..4fcb73b727aa 100644
+index cea3a79d538e..00e245173320 100644
 --- a/drivers/scsi/NCR5380.c
 +++ b/drivers/scsi/NCR5380.c
-@@ -1807,8 +1807,11 @@ static void NCR5380_information_transfer(struct Scsi_Host *instance)
- 				return;
- 			case PHASE_MSGIN:
- 				len = 1;
-+				tmp = 0xff;
- 				data = &tmp;
- 				NCR5380_transfer_pio(instance, &phase, &len, &data, 0);
-+				if (tmp == 0xff)
-+					break;
- 				ncmd->message = tmp;
+@@ -1485,6 +1485,7 @@ static int NCR5380_transfer_dma(struct Scsi_Host *instance,
+ 				unsigned char **data)
+ {
+ 	struct NCR5380_hostdata *hostdata = shost_priv(instance);
++	struct NCR5380_cmd *ncmd = NCR5380_to_ncmd(hostdata->connected);
+ 	int c = *count;
+ 	unsigned char p = *phase;
+ 	unsigned char *d = *data;
+@@ -1496,7 +1497,7 @@ static int NCR5380_transfer_dma(struct Scsi_Host *instance,
+ 		return -1;
+ 	}
  
- 				switch (tmp) {
-@@ -1996,6 +1999,7 @@ static void NCR5380_information_transfer(struct Scsi_Host *instance)
- 				break;
- 			case PHASE_STATIN:
- 				len = 1;
-+				tmp = ncmd->status;
- 				data = &tmp;
- 				NCR5380_transfer_pio(instance, &phase, &len, &data, 0);
- 				ncmd->status = tmp;
+-	NCR5380_to_ncmd(hostdata->connected)->phase = p;
++	ncmd->phase = p;
+ 
+ 	if (p & SR_IO) {
+ 		if (hostdata->read_overruns)
+@@ -1608,45 +1609,44 @@ static int NCR5380_transfer_dma(struct Scsi_Host *instance,
+  * request.
+  */
+ 
+-	if (hostdata->flags & FLAG_DMA_FIXUP) {
+-		if (p & SR_IO) {
+-			/*
+-			 * The workaround was to transfer fewer bytes than we
+-			 * intended to with the pseudo-DMA read function, wait for
+-			 * the chip to latch the last byte, read it, and then disable
+-			 * pseudo-DMA mode.
+-			 *
+-			 * After REQ is asserted, the NCR5380 asserts DRQ and ACK.
+-			 * REQ is deasserted when ACK is asserted, and not reasserted
+-			 * until ACK goes false.  Since the NCR5380 won't lower ACK
+-			 * until DACK is asserted, which won't happen unless we twiddle
+-			 * the DMA port or we take the NCR5380 out of DMA mode, we
+-			 * can guarantee that we won't handshake another extra
+-			 * byte.
+-			 */
+-
+-			if (NCR5380_poll_politely(hostdata, BUS_AND_STATUS_REG,
+-			                          BASR_DRQ, BASR_DRQ, 0) < 0) {
+-				result = -1;
+-				shost_printk(KERN_ERR, instance, "PDMA read: DRQ timeout\n");
+-			}
+-			if (NCR5380_poll_politely(hostdata, STATUS_REG,
+-			                          SR_REQ, 0, 0) < 0) {
+-				result = -1;
+-				shost_printk(KERN_ERR, instance, "PDMA read: !REQ timeout\n");
+-			}
+-			d[*count - 1] = NCR5380_read(INPUT_DATA_REG);
+-		} else {
+-			/*
+-			 * Wait for the last byte to be sent.  If REQ is being asserted for
+-			 * the byte we're interested, we'll ACK it and it will go false.
+-			 */
+-			if (NCR5380_poll_politely2(hostdata,
+-			     BUS_AND_STATUS_REG, BASR_DRQ, BASR_DRQ,
+-			     BUS_AND_STATUS_REG, BASR_PHASE_MATCH, 0, 0) < 0) {
+-				result = -1;
+-				shost_printk(KERN_ERR, instance, "PDMA write: DRQ and phase timeout\n");
++	if ((hostdata->flags & FLAG_DMA_FIXUP) &&
++	    (NCR5380_read(BUS_AND_STATUS_REG) & BASR_PHASE_MATCH)) {
++		/*
++		 * The workaround was to transfer fewer bytes than we
++		 * intended to with the pseudo-DMA receive function, wait for
++		 * the chip to latch the last byte, read it, and then disable
++		 * DMA mode.
++		 *
++		 * After REQ is asserted, the NCR5380 asserts DRQ and ACK.
++		 * REQ is deasserted when ACK is asserted, and not reasserted
++		 * until ACK goes false. Since the NCR5380 won't lower ACK
++		 * until DACK is asserted, which won't happen unless we twiddle
++		 * the DMA port or we take the NCR5380 out of DMA mode, we
++		 * can guarantee that we won't handshake another extra
++		 * byte.
++		 *
++		 * If sending, wait for the last byte to be sent. If REQ is
++		 * being asserted for the byte we're interested, we'll ACK it
++		 * and it will go false.
++		 */
++		if (!NCR5380_poll_politely(hostdata, BUS_AND_STATUS_REG,
++					   BASR_DRQ, BASR_DRQ, 0)) {
++			if ((p & SR_IO) &&
++			    (NCR5380_read(BUS_AND_STATUS_REG) & BASR_PHASE_MATCH)) {
++				if (!NCR5380_poll_politely(hostdata, STATUS_REG,
++							   SR_REQ, 0, 0)) {
++					d[c] = NCR5380_read(INPUT_DATA_REG);
++					--ncmd->this_residual;
++				} else {
++					result = -1;
++					scmd_printk(KERN_ERR, hostdata->connected,
++						    "PDMA fixup: !REQ timeout\n");
++				}
+ 			}
++		} else if (NCR5380_read(BUS_AND_STATUS_REG) & BASR_PHASE_MATCH) {
++			result = -1;
++			scmd_printk(KERN_ERR, hostdata->connected,
++				    "PDMA fixup: DRQ timeout\n");
+ 		}
+ 	}
+ 
 -- 
 2.39.5
 
