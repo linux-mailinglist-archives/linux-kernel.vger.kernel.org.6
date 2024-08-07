@@ -1,123 +1,197 @@
-Return-Path: <linux-kernel+bounces-277995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471ED94A926
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:56:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36BF294A92A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0764E282216
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5FDD1F295BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6894720124F;
-	Wed,  7 Aug 2024 13:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C471201243;
+	Wed,  7 Aug 2024 13:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="lc2oidqi"
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="INxzaSiC"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D65200108
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 13:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3755200108;
+	Wed,  7 Aug 2024 13:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723039000; cv=none; b=OPtPrDuBXUYKDBA7LUSKh5C6TOR8A/wy6oCiOgW7p0CdUGAN4CIek2Vee1QC1VY5cyJKziMY0vOnF98Q3t+rhsN2ni5kPsZ+n+8ZuBhvLB3JkkcrS62dVJupnPzfehkztGA+KJOPlGDnC7hAOyn4DbnIv8bsNUeXlDOlhlZMqD8=
+	t=1723039011; cv=none; b=rV9GDhDZkJDllBbfFrXFi2DnoOKjfU8VziPu6claDF15Vlc7idj0razRaGyjJgU9ZpnkWQqxLz+Js7DBMA1d6owXjzaHkfam36q/6T9DSan5IKfWX4IW5J/emBfX69U/mx3Y1FAuMZ/pBAaDUrtRTvZi9uQCRpOuPqoXbET8UCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723039000; c=relaxed/simple;
-	bh=oyMT0FbvyEUEWDumW0O7TOVW/E8QkS8/DViHTmTG7n8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QtdPNI3JBYcwaAvh1eEtCLbMnopYp2QwEqqu53bVTR4xa5sOlV0OsuEKADhxZIHW6EhUwbAw7EAvjB2ZwTC/BF4c09TXPa7nNEZkSNaWnFtM3vWTjpVi3qxroeu45s6a/vGRW79OGKSSWj2w4W7V1taIaLPP5gIlaBY6JA2FFJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=lc2oidqi; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-82e2eee5f5cso539299241.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 06:56:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1723038997; x=1723643797; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JuS59JADbTnnYXSWbhEozGqiA0xSa9BLnZ7t90LFaxE=;
-        b=lc2oidqiHK/PZd850fOIITaMn2RGUlKb3BVv7MpS8fFZ9dNtTcJZuKMqQFSg089EE4
-         Bns4dZxXHwAZY/CrtRqmIXTfryJxNj4Z6sp5udPe7C2X5SwMy3Ytixf24rK1ROPMHQ2Y
-         Um9oo8nOQzmV1QHz2Fj6TEV7pAUfKGJnCzJ2ZDL7HJMbFAMMut4lPwPQZhmV6gDXM4kT
-         2Ar14wycSF/0XZavqs4Y+ebs/yXryX8E5UCqq6VBVSM2eYFBKr/Rj3gtru7jUmHoY1XC
-         mtKF7pFQMRnZgbU8b5uLtxHO3NEV+Pali+XanCikuJFbyZcgbAZ9TYIYSdqi0WBr2uEd
-         yg4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723038997; x=1723643797;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JuS59JADbTnnYXSWbhEozGqiA0xSa9BLnZ7t90LFaxE=;
-        b=A0G4uh+6xsA8hDeROS5jBNJtgA6VhVk12cMHZqWJ8jnr+dx0v/LJanUGmQALCShkjv
-         U0b7KrdvatJHnztvSxvyaOUYiJWfLBCPwjtlyIvFXFHQUwhiJqTOPGHnGzmMydIuhivl
-         B1oFZlqHN6Pow97nY8SbnGdcR90VRhVVWYKM0Zu7YY9s10LF187XpTraWPuDLb01LCmd
-         WvT8Tnll9ewz81B5AU4hvIwLBc/YjV0fRN/SSGpBMpvxyfLwE0d5crCqRBV7BzWVRaB/
-         PXNMpCwXgASVAD9xBETx0lwt4gVZML93T9gd5Ugi7gT/ulNQTv6Z9CgKCMcfsnAXurfk
-         6l1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVK+1exK6ua0OuPtXyEOnd8b5whO0fd8gyHCJuKlJvl7e8lBRzzDT5je3K5XQS3s25EqfqdQh+6GhfacLQO9/ZuttZzuYRcVGacHdww
-X-Gm-Message-State: AOJu0YzIkp7Wf+5hIZr8ItHePqdcbnmZ/e+Bj1kUoov99gq/8eGMXKWh
-	O9QLv7fcx+mX32oCU0YMdcTApJC4HswIm14y6746caGPlSpfqkiTXvsPFTLTNSz9raF2g3PvJ4H
-	N
-X-Google-Smtp-Source: AGHT+IEOWFTdrwiZrbHViifiqbdv+xNaB1znBNizFfr4dGmtnW/qOKfBByKDT2UtyQKnBsMQ2WkouQ==
-X-Received: by 2002:a05:622a:4cc4:b0:446:5c58:805d with SMTP id d75a77b69052e-451c79d46dfmr52220451cf.19.1723038986722;
-        Wed, 07 Aug 2024 06:56:26 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-451c870066csm5157471cf.4.2024.08.07.06.56.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 06:56:26 -0700 (PDT)
-Date: Wed, 7 Aug 2024 09:56:25 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Wouter Verhelst <w@uter.be>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	nbd@other.debian.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] nbd: correct the maximum value for discard sectors
-Message-ID: <20240807135625.GA242945@perftesting>
-References: <20240803130432.5952-1-w@uter.be>
- <20240806133058.268058-1-w@uter.be>
- <20240806133058.268058-3-w@uter.be>
+	s=arc-20240116; t=1723039011; c=relaxed/simple;
+	bh=accmoAdNzaDWZXx9M0Eeyh9wIUkdDuhSxMXSiQ+RpYg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
+	 MIME-Version:References; b=Hg3isK/SYKWAdHKhzTG1Ca5aPAtHLL36IQhTzs9ILMw260sjPbfCsjvfHq/be+NKKNJM8tW+68+QMs+29jSDRKE/CuG1RberpvI01M+NxIsxu39U9vXARmpLg8kK/o4xnQmNC5i5nl0IzdfdIjyPQbGlFrc26iFaF0QCAsekfB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=INxzaSiC; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240807135640euoutp0286ea7eef83e03aad6a6e04a6315089c5~pdtd0h6d11803118031euoutp02B;
+	Wed,  7 Aug 2024 13:56:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240807135640euoutp0286ea7eef83e03aad6a6e04a6315089c5~pdtd0h6d11803118031euoutp02B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1723039000;
+	bh=RD4VCR8zcAhpzCYoVdHahIWyW9KGCB3RFPi11K81luc=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+	b=INxzaSiC9Ycwbv2GeiH7lCELe5ljbafikAZ0+PPTR+7EcplhZqubD2H69a5+/xfq9
+	 pD5YZoX8NfqTrpFw4oYeUNKUdRgTTk2qaO+cm+qPVVkSyvuiC3M3TK/pE3O9kLqP9R
+	 k5pmPh3ih1oDv6e09n1Y5MJ6V6IorNlnVv6VzuYs=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240807135639eucas1p18cf775d2f2cbfdbf5b7bf2a57b7f73c9~pdtdYaf-32629426294eucas1p1f;
+	Wed,  7 Aug 2024 13:56:39 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 30.CE.09875.71D73B66; Wed,  7
+	Aug 2024 14:56:39 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240807135639eucas1p19f1d9712d29bdbfcc447308db0353327~pdtc6WloT2647726477eucas1p1l;
+	Wed,  7 Aug 2024 13:56:39 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240807135639eusmtrp1b67e1514abe665307a794aba282fcbd9~pdtc4_DFi2631226312eusmtrp1z;
+	Wed,  7 Aug 2024 13:56:39 +0000 (GMT)
+X-AuditID: cbfec7f4-11bff70000002693-ca-66b37d178b2b
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 30.62.08810.71D73B66; Wed,  7
+	Aug 2024 14:56:39 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240807135638eusmtip2ef9530a5bc066906498e2d25e05ce525~pdtcnQ5_c0435104351eusmtip2O;
+	Wed,  7 Aug 2024 13:56:38 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) with Microsoft SMTP
+	Server (TLS) id 15.0.1497.2; Wed, 7 Aug 2024 14:56:38 +0100
+Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
+	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Wed, 7 Aug
+	2024 14:56:38 +0100
+From: Daniel Gomez <da.gomez@samsung.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
+	<nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, =?iso-8859-1?Q?Thomas_Hellstr=F6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, William Hubbs
+	<w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser
+	<kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, Paul
+	Moore <paul@paul-moore.com>, Stephen Smalley
+	<stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, James
+	Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>, Jiri Slaby <jirislaby@kernel.org>, Nick
+	Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-kbuild@vger.kernel.org"
+	<linux-kbuild@vger.kernel.org>, "intel-xe@lists.freedesktop.org"
+	<intel-xe@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "speakup@linux-speakup.org"
+	<speakup@linux-speakup.org>, "selinux@vger.kernel.org"
+	<selinux@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, "linux-serial@vger.kernel.org"
+	<linux-serial@vger.kernel.org>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>, Finn Behrens <me@kloenk.dev>, "Daniel Gomez
+ (Samsung)" <d+samsung@kruces.com>, "gost.dev@samsung.com"
+	<gost.dev@samsung.com>, Nick Desaulniers <nick.desaulniers@gmail.com>
+Subject: Re: [PATCH 00/12] Enable build system on macOS hosts
+Thread-Topic: [PATCH 00/12] Enable build system on macOS hosts
+Thread-Index: AQHa6FXa2qO1hDUbAkeBhFl865k4bbIbkMYAgAAxCIA=
+Date: Wed, 7 Aug 2024 13:56:38 +0000
+Message-ID: <3jnp6tnkjpvnisefomxagazu2u3uzzt7rcon3r5jssraxzwegb@gsxc7c5sfh7v>
+In-Reply-To: <2024080753-debug-roulette-8cb1@gregkh>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <D2FE3BDA1F1CEC4DBF273ECDE479024B@scsc.local>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806133058.268058-3-w@uter.be>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Ta0yTVxzGPe+1EDpfEeFMXdwYfhggujn0jE0zEp3vl+ncwpaYqHTjBRvu
+	LaBzWUDAKhcHKIitXFspF1nAcglUroUVKnbIZSggK2iZDGGFAAoT6SjtDN9+5zz/8zzP/8Ph
+	4Y5Z9FaeMCyKE4UJQlwpe6JWu/T7LpefqwL31PS5oc6HcgyZlKkAacsmcHTXPIIjc20GjvoX
+	TBRKUFRQaLFqAkOGpmIM/ZO7HV2/raBQXo+OQJPVbQRSPR0g0bK6DkN96hwK3VdcoZExs5lC
+	40+VFCqcrSHQ2OgjEtXn6EjUWNFHIVXfHIkkSUoSXSodp9BMuhlD6uYlAv3V2EmirKUpCk2n
+	/0aj4avZBGqWDdCoZDEboO4OLY1q6/QAPeu+BpB0eBig53WrztVTGSSSS/ajxMfeaLCokv7c
+	gy3PKwdsg1ZPsY0vCghWrami2HrZCM0WqKLZxPZpklU0/I2xqrIkis1LysNY85VRkm03y2m2
+	MC4LZ/N0x9nm3HKaNaR0YF/BE/afBXAhwhhOtPugv/2ZrlePqQgFea6isBSPA9lEMuDxIPMx
+	TMw+lgzseY5MCYCJxiIqGditHuYBHFd7WoU5ACX6l4RFsDwwTM1jVqEYwF7pLezNVPuNCcp6
+	6AKwuV0O3hinplxcM6aYD2CTTkVb2InZC9P0MtoyhDMPNkJDjha3CJuZA3CiuIGyDh2EPWaN
+	jX2g9OIyaWGCcYOX+yvXjPjMl7Ak6eravd1qwTsTGszCgHkHPin9d20GZ1zgkDEfsy6xCcpv
+	NuBWdoYr6jHKyp5Q/9AIrLwH1hQ12ZZ+D17WDlJWHy/4KCvTxp/Am89GbP4eUFn4HLf22QR1
+	UiNhWQwyEgeo7fnFFnAIKluKbSU2w8mOajodeMrW9ZOty5Cty5Cty5CtyygAZBlw4aLFoUGc
+	+KMw7qyXWBAqjg4L8vohPFQFVn9O10rHfB0onpz10gCMBzQA8nBXJ37Cd6pAR36A4MfznCj8
+	tCg6hBNrwDYe4erC3xmwg3NkggRRXDDHRXCi/1WMZ7c1DtuXKzzetTB2KP7skQv5MYp7kcEO
+	U10d5Mn507t9Q6VkLz3q98WW6Nqoyvrgolu8vD6nJ2HuL6f9NgyZvk478WnOr9sz4etMX9HO
+	Pz3294i9DwsrNk6ld294rRe3NCx27go/PJOR4jh0yuOG/21XTUar/UDbgV7/VCpCki8MVbqt
+	8Fqb+QvyfZ3c4ivp2/J7pjHjthjDN8HuR4diIvyS0qTO4w8KL5QWLasMe3dIXqSH3z2ypcBn
+	LqEtMrLS+aRD2Uhs/x8rg54e46g6+dt47wTfenhde2rEFKg6JpyVv+vS872PPvbScmuBU/xR
+	n4E7sUMz597v1N0Xnmf4ppafKOeBt2hXQnxG8KE7LhIL/gNsQvf1qAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0yTVxjO+a6FpNk3LnJGWDY7zIJKodw8ZYozi8tnIlEz54xMWSMFjEBZ
+	W9hwLGGBAUXB4kDWDsqlcpWBlEu4s1UpMERgRS4DBhOYRWBCwAUGowPKEv49b85zOc+bvBzc
+	Jpd25FyLkIulEaIwHmVNdG92/O7q8HV1sPvKKoE6hwow9LLoFkCGMhOOmszjODLXpeNo4NVL
+	CsVrKym0Wm3C0ERrMYb+ynFCd+9rKaTp7yLQi5qHBNJNDZJoo7EeQ8bGbAo91qbSaDqjjUIz
+	U0UUyl+qJdAfk8MkasjuIlFLpZFCOuMyiRIVRSRKKp2h0KLSjKHGtjUC/dnSSaLMtXkKLSjb
+	aTR6J4tAbepBGpWsZgHU22GgUV19D0DPe78DSDU6CtBc/ZZzzXw6iQoSj6CEMW80UviAfv8Q
+	W64pB2yzoYdiW/7OI9hGfTXFNqjHaTZPF8UmPFogWW3zLMbqyhQUq1FoMNacOkmyj8wFNJsf
+	l4mzmq5zbFtOOc1O3OzAzsJL/KNSSZRc/HaoRCY/xgsQIA++QIj4Hl5CvsDzyGVfD2+em9/R
+	IHHYtWix1M3vM35o9/oYFaklv6zML8XjQBaRAqw4kPGCE/MrWAqw5tgwhQA+HUoDlgcnWLXy
+	lLRgW7gxmEJZSEsA9vdVAMvQDWBFajdhGUoAzDYrqG0JxbjA1i4dvY3tGE94u0dNb5Nwpu81
+	uDw4vpNhyxyDpuJmykLyg/1m/S72hapvN3ayCcYZJg882DHiMv6wRHGHtKQZAJz9uWnHyGqr
+	RZVJj21jwLwJn5X+syPAGQf423QuZinBwHvNvbgF28PZqc3dcodhz9D0bml3WFvYuruZ/TDZ
+	MEJZfPhwODNjFwvhD8/Hd/0PwaL8Odzyuddhl2qaUAIn9Z5o9R65eo9cvUeu3iPPA2QZsBNH
+	ycJDwmUCvkwULouKCOFflYTrwNal1BnWquuB5sUSXw8wDtADyMF5dtz4T3TBNtwgUcwNsVQS
+	KI0KE8v0wHtreem4o/1VydapRcgDBT7u3gIvH6G7t9DHk+fAPRWZLLJhQkRy8XWxOFIs/V+H
+	cawc47C2D/+tuh65dkMX/XA9OmkjueLUoqGs3jTmmHog8dzGbIbtV1B9RvIBrnOJqEkNdRVZ
+	n77y45x85Hy8dbtNeoJKl7VwOy0hgCMs6ryf9mvzcIje9XM89iRT2XPe5WbDwZJB00/KyxHx
+	HrX640EnL8QY+xoPq0xXnsXdU16q+0gVO7Phceb42jv7ueGrvcaPvyjZ1Dz5dOzEKyXXPVeh
+	9VkM7r87kipyzAzmD+E5xY+dRB302cwyX+KE6OK66pt+qaQl5pb/AaVU8ktSlfNbdYFF3dDR
+	fXT9+2XbnoA3QpwbJt+LbaqlB4z78nP8RYtdF+vs9/kuGC6UNr3bnvkkSKNwKynmEbJQkeAg
+	LpWJ/gO+4EoXsgQAAA==
+X-CMS-MailID: 20240807135639eucas1p19f1d9712d29bdbfcc447308db0353327
+X-Msg-Generator: CA
+X-RootMTR: 20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
+	<CGME20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4@eucas1p2.samsung.com>
+	<2024080753-debug-roulette-8cb1@gregkh>
 
-On Tue, Aug 06, 2024 at 03:30:56PM +0200, Wouter Verhelst wrote:
-> The version of the NBD protocol implemented by the kernel driver
-> currently has a 32 bit field for length values. As the NBD protocol uses
-> bytes as a unit of length, length values larger than 2^32 bytes cannot
-> be expressed.
-> 
-> Update the max_hw_discard_sectors field to match that.
-> 
-> Signed-off-by: Wouter Verhelst <w@uter.be>
-> Fixes: 268283244c0f018dec8bf4a9c69ce50684561f46
-> ---
->  drivers/block/nbd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-> index 20e9f9fdeaae..1457f0c8a4a4 100644
-> --- a/drivers/block/nbd.c
-> +++ b/drivers/block/nbd.c
-> @@ -339,7 +339,7 @@ static int __nbd_set_size(struct nbd_device *nbd, loff_t bytesize,
->  
->  	lim = queue_limits_start_update(nbd->disk->queue);
->  	if (nbd->config->flags & NBD_FLAG_SEND_TRIM)
-> -		lim.max_hw_discard_sectors = UINT_MAX;
-> +		lim.max_hw_discard_sectors = UINT_MAX / blksize;
+On Wed, Aug 07, 2024 at 01:01:08PM GMT, Greg Kroah-Hartman wrote:
+> On Wed, Aug 07, 2024 at 01:09:14AM +0200, Daniel Gomez via B4 Relay wrote=
+:
+> > This patch set allows for building the Linux kernel for arm64 in macOS =
+with
+> > LLVM.
+>=20
+> Is this a requirement somewhere that this must work?  It seems like an
+> odd request, what workflows require cross-operating-system builds like
+> this?
 
-We use 512 as the "sectors" measurement throughout the block layer, so our limit
-is actually
+This isn't a requirement, but it would, for example, support workflows for =
+QEMU
+users and developers on macOS. They could build/compile the kernel natively=
+ and
+use it to launch QEMU instances, simplifying their process.
 
-UINT32_MAX >> 9
-
-since we can only send at most UINT32_MAX as our length.  Fix it to be that for
-both patches and you should be good.  Thanks,
-
-Josef
+>=20
+> thanks,
+>=20
+> greg k-h=
 
