@@ -1,156 +1,100 @@
-Return-Path: <linux-kernel+bounces-278530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6439C94B181
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:38:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CAEA94B17F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 875BC1C22620
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:38:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBFBF2826BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67DEA146A7B;
-	Wed,  7 Aug 2024 20:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55EE0145FF5;
+	Wed,  7 Aug 2024 20:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="E+eKG3g1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="b96naOm6"
-Received: from flow8-smtp.messagingengine.com (flow8-smtp.messagingengine.com [103.168.172.143])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Hw9Trf38"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7053B63CB;
-	Wed,  7 Aug 2024 20:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C3B63CB;
+	Wed,  7 Aug 2024 20:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723063107; cv=none; b=kCX8YP7bBLLAtG15np1YTFmTi+ELHMFklQXs19Bi1PWjns/ehdn+IcxhLnXMIZQRtbAXiso+zIC/cNaW6FxSEGFYXkh/bMnTE7ChYMNURbvbAu7Bod71DBtu+N8lL1D5xhwbpwOe5oBj0t5e8Mi2P0N06igxLlrSnM3ke4VMY8w=
+	t=1723063099; cv=none; b=doOKiVmkWr8QsPSeaLJQuu5mVJysREi/+mTB/yWZw2a19fktyYgg4PwP1XmdSKd+9W5Y9tzx/22OhiZIdrGn7GT5JqtfvyTZWhhF9S2CAqyjwG//bpIKBGXLlCrThm4oezYK2VdbBlnj7HkrrldQjpIM+8ybfKzk8wnAEXW9jAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723063107; c=relaxed/simple;
-	bh=uKf+fXnSqFS/bfmB6/2soazJM9laLMq3cqYVbv0cfa4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=okuajIQ20zp8obPLAMl3eXvoRV20L8nC4G8tttPk2vIyfFO6rFHeD3LiqgzeYPpkQEklWAmrF5kYJY5JdXkV8j9Q45is9bDpDReH9mLFJbDP45gRS0WE6VJnwwKt6w35tbcPkuTdPh3X2rOvRccPY99FNxWRm8G0H5TGvvhTuQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=E+eKG3g1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=b96naOm6; arc=none smtp.client-ip=103.168.172.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 6FC3B200CD6;
-	Wed,  7 Aug 2024 16:38:24 -0400 (EDT)
-Received: from wimap24 ([10.202.2.84])
-  by compute3.internal (MEProxy); Wed, 07 Aug 2024 16:38:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1723063104;
-	 x=1723070304; bh=jyuTeJGDcuQF3lzGu4CM7mjVX08aa1yYpmFdb0KuMkg=; b=
-	E+eKG3g18OxvHvRzsf6ur2aTpQZ9AzI8YfWphmPd0cP/woMQ4Y3QVK1CWtwyfC0y
-	cHTeaFxhMH1uSN585hjjDqb87LprAEz9VK+9wE/aaFBd7xWr105XIJW2HiO3CCBT
-	YUhe5sKACQ2+4qxt6XjnpRHJuImN2bklW8zmfcEAFP7Lou43NRM5qKq7IDAugdai
-	IYwG14dKzFFps6YPHSCr8q3rMVjgC39MnFUcYuPCpyq6euXGEsVrw9WBPuceev/e
-	X1NgaLyTbyhKd84J12Ahg8rIJO1jqyZ0gWDxM/DU4rzl1Ec33URQG7nXdRjdZ8vH
-	rYKBskImd2bUqczPtF0xdQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723063104; x=
-	1723070304; bh=jyuTeJGDcuQF3lzGu4CM7mjVX08aa1yYpmFdb0KuMkg=; b=b
-	96naOm6Tmp/fSG/qTnRg0+F8M1bkR3E6CbDhH/DghMASO9cQQZXdb+LxscNKRR+9
-	7Fk34G4TL+jkTV6cjuk1odFzQ1NlafI85IkaEBBVXbJELeIamzWo5vQoPavmZTfY
-	EGzqi+M7c6MwPerN2+6XDk2A51wIsc06LLhESfT3n6f9myyWLNa39joOmjaiSdLt
-	SzS10PV4vNew1tgyh0/ihr7Ntoyai8cLMI1B3uhwDG/7G0ganJJiQD826YGpf2KG
-	2ihMc9VIedRkjSJ8h41pV7ucNf0knq9CR0h2UorMPi98cUM3wsY95XiAAvnhtdyQ
-	Yxn+V/lEX1dz2j6fa+wjQ==
-X-ME-Sender: <xms:P9uzZoVoJoJIjaEe5XEiV6Vz5awp6yXK3aNbyHjzzdb688Le77cVyg>
-    <xme:P9uzZska1OThlfuL529FWZ7jFVAvlL_-1R36To_6GXNnKTB-FP2Sqy5ZaGcAdLlLS
-    9zEmspZ_yWq253PvA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledtgdduheduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    gfrhhlucfvnfffucdlfeehmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredt
-    redttdenucfhrhhomhepfdffrghnihgvlhcuighufdcuoegugihusegugihuuhhurdighi
-    iiqeenucggtffrrghtthgvrhhnpeegleeifffhudduueekhfeifefgffegudelveejfeff
-    ueekgfdtledvvdeffeeiudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegugihusegugihuuhhurdighiiipdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:P9uzZsZVDPXINqpCub6toZIfUIDIuTh3l6jzddHJgnwx2_r89u3NLg>
-    <xmx:P9uzZnXVu3YW6dwEw3EnpmWxOTpqjh1vEfBYofPdY4Wfly-3pdODuA>
-    <xmx:P9uzZinF4Mlz89xrmdz6CAXUdJY2qvYf7M_Iu_78yJQ_n0TQTC1o9Q>
-    <xmx:P9uzZsdkibaV9xNpNuXB04-0ANSmk58v-xCPvUz-06Pb_akK4WqliA>
-    <xmx:QNuzZgtMODcHgERAtcl3T8Em_VIMuS7bsgnj1q6tBLy5D_CdPIoIaSjn>
-Feedback-ID: i6a694271:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 9567E25E006A; Wed,  7 Aug 2024 16:38:23 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1723063099; c=relaxed/simple;
+	bh=Sqv9IslJXf3BXh9DGwBPDfLSLTLxUsGj+rW5Q4G5K24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kzRHSWaho01bCvkXs5yfotPBKQQgDco40LiPLewg94En0zFBWzmIgiDPSX2sGchWKKnOZhwMscN/FN1zlpcVYl47vfgVcaM1KED0fV9r02dt8671DiJWNlPCo71PN9RpqpnDgslrECWQWPmmwo3XItCbyD5dMXF0vaRtrb1FY6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Hw9Trf38; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=VFZuFbaSc2pDLf+LYEkVfpRBk/dDolZHk0SlAngvhRI=; b=Hw9Trf38u1+i71260Bg0qyVtip
+	pOzhC9bxd7eyGAhloPTfoBez3t36jPdFyLMjidUf2+YYm+ULmXxn1qoCSSdEX/xaounIYW+ADyWKx
+	zf1bIf1gmxkOrMiKmSZJP+1vD7SLGn/7CWm4gH46B2o+sCNTwuuM3ADgKRZH0BnoP+iz6MdQA0bmL
+	LedhsVM8MBGaUDe8Mt7qdyRbCjOhidgwh60rebBtZpG4SAMlArj2ZRGNX2lXpiasQyKTyWTqFtIHA
+	SzxKzqLnrvkoIjtA3L5FvNV3fB+CtqwLlDiX+gz2McG6Zfay/u4EUT70rW7OXxAF4PlCj4m/0ci06
+	8+p72icQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sbnQE-00000002Tl3-1IHa;
+	Wed, 07 Aug 2024 20:38:14 +0000
+Date: Wed, 7 Aug 2024 21:38:14 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
+Message-ID: <20240807203814.GA5334@ZenIV>
+References: <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
+ <20240807062300.GU5334@ZenIV>
+ <20240807063350.GV5334@ZenIV>
+ <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
+ <20240807070552.GW5334@ZenIV>
+ <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
+ <20240807075218.GX5334@ZenIV>
+ <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
+ <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
+ <20240807124348.GY5334@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 07 Aug 2024 13:38:03 -0700
-From: "Daniel Xu" <dxu@dxuuu.xyz>
-To: "Alexander Lobakin" <alexandr.lobakin@intel.com>,
- "Alexei Starovoitov" <ast@kernel.org>,
- "Daniel Borkmann" <daniel@iogearbox.net>,
- "Andrii Nakryiko" <andrii@kernel.org>
-Cc: "Larysa Zaremba" <larysa.zaremba@intel.com>,
- "Michal Swiatkowski" <michal.swiatkowski@linux.intel.com>,
- "Jesper Dangaard Brouer" <hawk@kernel.org>,
- =?UTF-8?Q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>,
- "Magnus Karlsson" <magnus.karlsson@intel.com>,
- "Maciej Fijalkowski" <maciej.fijalkowski@intel.com>,
- "Jonathan Lemon" <jonathan.lemon@gmail.com>,
- "toke@redhat.com" <toke@redhat.com>, "Lorenzo Bianconi" <lorenzo@kernel.org>,
- "David Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>,
- "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
- "Jesse Brandeburg" <jesse.brandeburg@intel.com>,
- "John Fastabend" <john.fastabend@gmail.com>,
- "Yajun Deng" <yajun.deng@linux.dev>, "Willem de Bruijn" <willemb@google.com>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, xdp-hints@xdp-project.net
-Message-Id: <cadda351-6e93-4568-ba26-21a760bf9a57@app.fastmail.com>
-In-Reply-To: <20220628194812.1453059-33-alexandr.lobakin@intel.com>
-References: <20220628194812.1453059-1-alexandr.lobakin@intel.com>
- <20220628194812.1453059-33-alexandr.lobakin@intel.com>
-Subject: Re: [PATCH RFC bpf-next 32/52] bpf, cpumap: switch to GRO from
- netif_receive_skb_list()
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807124348.GY5334@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi Alexander,
+On Wed, Aug 07, 2024 at 01:43:48PM +0100, Al Viro wrote:
+> On Wed, Aug 07, 2024 at 11:50:50AM +0200, Mateusz Guzik wrote:
+> 
+> > tripping ip:
+> > vfs_tmpfile+0x162/0x230:
+> > fsnotify_parent at include/linux/fsnotify.h:81
+> > (inlined by) fsnotify_file at include/linux/fsnotify.h:131
+> > (inlined by) fsnotify_open at include/linux/fsnotify.h:401
+> > (inlined by) vfs_tmpfile at fs/namei.c:3781
+> 
+> Try this for incremental; missed the fact that finish_open() is
+> used by ->tmpfile() instances, not just ->atomic_open().
+> 
+> Al, crawling back to sleep...
 
-On Tue, Jun 28, 2022, at 12:47 PM, Alexander Lobakin wrote:
-> cpumap has its own BH context based on kthread. It has a sane batch
-> size of 8 frames per one cycle.
-> GRO can be used on its own, adjust cpumap calls to the
-> upper stack to use GRO API instead of netif_receive_skb_list() which
-> processes skbs by batches, but doesn't involve GRO layer at all.
-> It is most beneficial when a NIC which frame come from is XDP
-> generic metadata-enabled, but in plenty of tests GRO performs better
-> than listed receiving even given that it has to calculate full frame
-> checksums on CPU.
-> As GRO passes the skbs to the upper stack in the batches of
-> @gro_normal_batch, i.e. 8 by default, and @skb->dev point to the
-> device where the frame comes from, it is enough to disable GRO
-> netdev feature on it to completely restore the original behaviour:
-> untouched frames will be being bulked and passed to the upper stack
-> by 8, as it was with netif_receive_skb_list().
->
-> Signed-off-by: Alexander Lobakin <alexandr.lobakin@intel.com>
-> ---
->  kernel/bpf/cpumap.c | 43 ++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 38 insertions(+), 5 deletions(-)
->
+I _really_ hate ->atomic_open() calling conventions; FWIW, I suspect
+that in the current form this series is OK, but only because none
+of the existing instances call finish_open() on a preexisting
+aliases found by d_splice_alias().  And control flow in the
+instances (especially the cleanup paths) is bloody awful...
 
-AFAICT the cpumap + GRO is a good standalone improvement. I think
-cpumap is still missing this.
+We never got it quite right, and while the previous iterations of
+the calling conventions for that methods had been worse, it's still
+nasty in the current form ;-/
 
-I have a production use case for this now. We want to do some intelligent
-RX steering and I think GRO would help over list-ified receive in some cases.
-We would prefer steer in HW (and thus get existing GRO support) but not all
-our NICs support it. So we need a software fallback.
-
-Are you still interested in merging the cpumap + GRO patches?
-
-Thanks,
-Daniel
+Oh, well - review of those has been long overdue.
 
