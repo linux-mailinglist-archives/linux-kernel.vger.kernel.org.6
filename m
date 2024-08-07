@@ -1,172 +1,205 @@
-Return-Path: <linux-kernel+bounces-278129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5474E94AC83
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:16:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2FF794ACA5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 781EF1C2154E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:16:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA45BB25D50
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD9384E04;
-	Wed,  7 Aug 2024 15:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8369E12C465;
+	Wed,  7 Aug 2024 15:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="WVUZ1oEw"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GZzd3jQO"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2079.outbound.protection.outlook.com [40.107.243.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2D233CD2;
-	Wed,  7 Aug 2024 15:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723043756; cv=none; b=NdB2wS7pHeYR4KWrTQFy/Vbt63xnxNiMe8UgvclG9BsBPBPGgnDVkL4ga3TT7JrtTqhBIdlwv4/Ac46bnucI4tuvgsTcPjCbb/4a9RMN8FpS+aHsbrDR8syzCRTzvczYhaj/qVUtqU9jYGi6Bzkorop9BVT58H3zPz/p2wkueBc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723043756; c=relaxed/simple;
-	bh=fGBCywsutW3NjgrC9Ve6Qzx0bwXdOQ99qyoNgGNCcTI=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=PYdv89qTPQZC0+vj0IAJ8A1BB5o/FekoKhGK628esuzzmB954v+gxklRBarQQaSRdB+WLxx23WBMhBSNIAo0bksg+l00fh0XBpRi4dXgbrBo0Qx2HBw58PfBThGfoGUas+bA/Q90jxZFD8P2Vx8bnpAQDO0N3y1qqBjk2zrrNLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=WVUZ1oEw; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 5A57CE450D;
-	Wed,  7 Aug 2024 15:15:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1723043746;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dK78BrKy6mLK/z1CVSmRJ+MbobVrp0HlEUG5n8TM4L4=;
-	b=WVUZ1oEwijeOty0DYuoRaSliKdYkd12+mmrEwx0GkRWgDPdrIqcDri69unLrul5a9SauP4
-	FOXH++okSgfma1ufH5ztSLh4iMFEqHR2n19e+sgCds4h4RbAAJBK2ptRTP79yyJhTF5rRC
-	qRB71Roy2W7psJBzOhbAGpXSERxAUSkzVrjxIHXU573H5ANmwWIieyhwhBs6DJgEvJkAYY
-	v9r/ct7LvsqP5zfek5KlNBZ6mQ9UT74EGoKR0kn2bKHdocXibQx2XxE9Frbi7cyrOPwpQE
-	lFaMGTZJM2ARFPQLMKIaWaJUECq9nrVVckihnw2nwR0vmPUSW4xw3vkqRwAEHQ==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A416933CD2;
+	Wed,  7 Aug 2024 15:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723043853; cv=fail; b=lmo23cXbCtt8f4/mkq/9F6pUErwoG8NjlxIMCiyy75xsCQ16TpiOY9FaHBuckL/q75tMlGOGRvCaTlIhU9mvwyJzVGeYcDGSEP7Air3LGjbIothF6UxtfikH6mNh3FQYbriq41m84z1wNGo10ldVIt62tYJxdXIQP8UM+B/MXt8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723043853; c=relaxed/simple;
+	bh=QS1HVlrY+mmm95BvSOoSINjDLUZheU+fGOGmD7TwGCQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XzJ0K/9Q1r8NmzkmwLkGdDZxbOPuBQvZO/hL8c3lFDP7nFIIvFjDOClf4pSrjwA+NVAbWuBExZCeSELuEygk56m1ZDvWNV9Woy8mFRfnwKj6h0PdjeCkxWRIYb/BvJkheljAp/2eDMbpeqe3UqNW2Z70mHE1Qovs72Tmtk2mo7o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GZzd3jQO; arc=fail smtp.client-ip=40.107.243.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=glEDpMLVARs6ReRh8NaR1ph1C2y70ahgyJT9Ll3FMla8QHeot/g+N0TNPObZkEAvDeIbYODBpz3XpPqNlpzb05N3HKeAlGcXyvWWar5N9/4uCXLZebgZZjbaybuX/LN4Vn8gkhGl8tie8sgUzSQmWtXN/r7cd+WFO3YcI9A8Mz97cCWWxtSVpUn0LKuIWoBhlH5X1JN5L1xvEgInNpn8Jt2/nIqjuV3eTRxnuojaLWlfmzgqBB2PZpl78LPpFZFGIhC+ny4xHEaMgcyJ76qdBGuVXJzP2tnh1qX2lpVsPwNoEf4ZWxNdZi39z0fm/E1gyfL1RAnGIrLgX1vR8KqxBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mqD0UQKzYaC/AbvBnKgM1Q9wq6jLCtY55rqZEdKt6ZI=;
+ b=BfKQM566tON56SPmCBBw1FS8MlJu7zy1YKPhbgPPOsS1yRqfSxkFqa1Q2QId71cbmB3KhDSf+vv8S9nSY7skyCbKTxRnlJr95H+3OazzJU07uGTj5eXdKnPgZUOoM3A2QgsnRrTnmVw5wgg4LsNJvbVFCi9lm7ARRZy7OKWJAOzEZp7GbNe5l3TwF+ayVnpYY2NAOVch93qzxXBA5keNQin2qpZBW6I9EEOLJG3LukecXS3shLtN42Lk0PFqiqO+2XIusSOP24sa71oSoWWnihIc3J2VyjtusDrXm4BMKShMGJbZyeaGocKnUZk3l9KFOF8ejVb9AQZtYcfElEtsmw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mqD0UQKzYaC/AbvBnKgM1Q9wq6jLCtY55rqZEdKt6ZI=;
+ b=GZzd3jQO011Lxc9J1udRQuLJD/Bc4SU7MUMihNkRd0UFT4zkXRMdkNfkO9+2B8YdoQa9dTW2gHn1vIalVlvS1pop9j9xMk/hUPW0yoMBOoQAIiHuhH0ubMy5wncSb5GLePv3ltDOe+eILqKkxnr+T/xPXJJ8K8AUgX2paC3gs/4=
+Received: from BN0PR02CA0046.namprd02.prod.outlook.com (2603:10b6:408:e5::21)
+ by DM4PR12MB8523.namprd12.prod.outlook.com (2603:10b6:8:18e::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Wed, 7 Aug
+ 2024 15:17:27 +0000
+Received: from BL6PEPF00020E65.namprd04.prod.outlook.com
+ (2603:10b6:408:e5:cafe::a9) by BN0PR02CA0046.outlook.office365.com
+ (2603:10b6:408:e5::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.28 via Frontend
+ Transport; Wed, 7 Aug 2024 15:17:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL6PEPF00020E65.mail.protection.outlook.com (10.167.249.26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Wed, 7 Aug 2024 15:17:27 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 7 Aug
+ 2024 10:17:26 -0500
+Received: from ubuntu.mshome.net (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 7 Aug 2024 10:17:24 -0500
+From: Stewart Hildebrand <stewart.hildebrand@amd.com>
+To: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, "Michael
+ Ellerman" <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao"
+	<naveen.n.rao@linux.ibm.com>, Thomas Zimmermann <tzimmermann@suse.de>, "Arnd
+ Bergmann" <arnd@arndb.de>, Sam Ravnborg <sam@ravnborg.org>, Yongji Xie
+	<elohimes@gmail.com>, =?UTF-8?q?Ilpo=20J=C3=A4rvinen?=
+	<ilpo.jarvinen@linux.intel.com>, Philipp Stanner <pstanner@redhat.com>
+CC: Stewart Hildebrand <stewart.hildebrand@amd.com>, <x86@kernel.org>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>
+Subject: [PATCH v3 0/8] PCI: Align small BARs
+Date: Wed, 7 Aug 2024 11:17:09 -0400
+Message-ID: <20240807151723.613742-1-stewart.hildebrand@amd.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 07 Aug 2024 17:15:46 +0200
-From: barnabas.czeman@mainlining.org
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Albrieux <jonathan.albrieux@gmail.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux@mainlining.org
-Subject: Re: [PATCH v2 1/3] iio: magnetometer: ak8975: Fix reading for ak099xx
- sensors
-In-Reply-To: <20240806171925.7c512c63@jic23-huawei>
-References: <20240806-ak09918-v2-0-c300da66c198@mainlining.org>
- <20240806-ak09918-v2-1-c300da66c198@mainlining.org>
- <20240806171925.7c512c63@jic23-huawei>
-Message-ID: <96c2bcfbebc9e6d97d97f32aec9249db@mainlining.org>
-X-Sender: barnabas.czeman@mainlining.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: stewart.hildebrand@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00020E65:EE_|DM4PR12MB8523:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2586882c-a4fe-4973-d731-08dcb6f40c58
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MvetW+L7jH8+Spr+g6axWt3hPcykMqFaCb8vhnp5ZLZ/f8IIB0dvZG8belKy?=
+ =?us-ascii?Q?NiMyjgZProDYeeuuqzedI3JTo9Dt+nCvty0zkPE9s3c0lEk6s90nArwf0H8d?=
+ =?us-ascii?Q?6b8WZJNZpQPv0598pXN3RvuwFSMQMxkMFIDX8fs+JeWBUAD/hDL+juol50Bz?=
+ =?us-ascii?Q?06GLGH3HsVfh7g4Jg8/wTHg++Y5wSl8Y7ybcS6F3zDhw+60hdMFHDlXZ3QOt?=
+ =?us-ascii?Q?bXpuKz+d/u6szgW6zt2bKALzHlytZqncwUZh+0blFzbEEgsAR+F4cQBKoQuZ?=
+ =?us-ascii?Q?AMaeDqvOH8NmeF+II2jUHWl9jqQ5fzwkpW/WzhtddrJwJE1fp8m7uS/BJRPv?=
+ =?us-ascii?Q?E+HViipOySxRMb2W7kvkuqdaSCUNkWh64u31mwuNl17pmJcpZb9gYNcu2inN?=
+ =?us-ascii?Q?gNWe7LC01tUgu5X5Sq8ohRY4+E02WylgmSAPMF+KfgEPlV8i+BL4Cv9a1QN1?=
+ =?us-ascii?Q?vm4mbrEKBMRWcLXA6uaeAJEsqotznr9+f3XdJnOQcL5EUb8aKjDr2w/rkxqz?=
+ =?us-ascii?Q?pIHo4OIGr3i6oNp+XoNtpKrBEGcXOi2tPbSp2PAzexV3xsOpR6PZZO932p+o?=
+ =?us-ascii?Q?BP7+pXy/yoL9EqxLnFCfttck+fAxiRD8/ARDUUOUIYQgrFl/BR44Bs457A8J?=
+ =?us-ascii?Q?s2xzk+OsjSY/mGtCuJF5ZBgjq5UG4cZGQrBqNt6tyUPo3vvausnpsifOG86y?=
+ =?us-ascii?Q?9eohuwggyJG70szfMbPoZ+zJBw9Ml167RT9GNkIT5grihoKNnlQJnDxCVW2Y?=
+ =?us-ascii?Q?g0FG4uAySB0SWncueRPJjgi5FwN7+bPauLFOVY6uKXj2arEFTlUal1qSFZTy?=
+ =?us-ascii?Q?5Qd5ElNItXl/X6MKwMb9cwGy0kbzeIHuyuVYgcMbHY1p0OQd3ZvvJDxVbqpm?=
+ =?us-ascii?Q?Bt0y3r62SFn6Ek5zhv35HJHymoNKR9jSdyy2GV03XedISUboGiPfS6kw5iJf?=
+ =?us-ascii?Q?YlBUQIPTnxBE1zZ6/LsB88bl/V15HEzcT0vsglBYJ/pyivXIRh/JWZg5xMEE?=
+ =?us-ascii?Q?IEnX9mLGyDrFV2lCZh0/rXhsXo+xds6HIcvacT8sscsU9cOMEEyPYf/PkK4I?=
+ =?us-ascii?Q?kxIOSjjuXESzaAsb6OVD4N8yydPkS2vcwsZ6bke8Q+FhcJxEsgLpT1K/qsGY?=
+ =?us-ascii?Q?qEz9hZLe6xdgZTJjfSx76ylgp1YO6ctNLLdE/nMlcC0/COVyA5WhVg9DWVV3?=
+ =?us-ascii?Q?lhEBbFJc65RRwivLRJjrgR8O1x+Haq0Ydbk1PI6i+VnSwNo98jndROpIz6Uz?=
+ =?us-ascii?Q?n4Mc1PTtZMFLyegJLkrbXbNtbwN91oX88tI9icUldQIzFS94+9NOgpK+aLaY?=
+ =?us-ascii?Q?Y4G9OvY4+57sanHghZ+ELafvnZlaaf+/qqPonD14T2H1Blum/XImGZLn5hYS?=
+ =?us-ascii?Q?Wvjqg2tnCyfdpcjdBIgG0HvNxdnKplLfX2GzQ1kUyLPPIuGulA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 15:17:27.4567
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2586882c-a4fe-4973-d731-08dcb6f40c58
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00020E65.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8523
 
-On 2024-08-06 18:19, Jonathan Cameron wrote:
-> On Tue, 06 Aug 2024 08:10:18 +0200
-> Barnabás Czémán <barnabas.czeman@mainlining.org> wrote:
-> 
-> Hi Barnabás,
-> 
-> Welcome to IIO.
-> 
->> ST2 register read should be placed after read measurment data,
->> because it will get correct values after it.
-> 
-> What is the user visible result of this? Do we detect errors when none
-> are there?  Do we have a datasheet reference for the status being
-> update on the read command, not after the trigger?
->> 
-> Needs a Fixes tag to let us know how far to backport the fix.
-> 
-> A few comments inline.
-> 
->> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->> ---
->>  drivers/iio/magnetometer/ak8975.c | 31 
->> +++++++++++++++----------------
->>  1 file changed, 15 insertions(+), 16 deletions(-)
->> 
->> diff --git a/drivers/iio/magnetometer/ak8975.c 
->> b/drivers/iio/magnetometer/ak8975.c
->> index dd466c5fa621..925d76062b3e 100644
->> --- a/drivers/iio/magnetometer/ak8975.c
->> +++ b/drivers/iio/magnetometer/ak8975.c
->> @@ -692,22 +692,7 @@ static int ak8975_start_read_axis(struct 
->> ak8975_data *data,
->>  	if (ret < 0)
->>  		return ret;
->> 
->> -	/* This will be executed only for non-interrupt based waiting case 
->> */
->> -	if (ret & data->def->ctrl_masks[ST1_DRDY]) {
->> -		ret = i2c_smbus_read_byte_data(client,
->> -					       data->def->ctrl_regs[ST2]);
->> -		if (ret < 0) {
->> -			dev_err(&client->dev, "Error in reading ST2\n");
->> -			return ret;
->> -		}
->> -		if (ret & (data->def->ctrl_masks[ST2_DERR] |
->> -			   data->def->ctrl_masks[ST2_HOFL])) {
->> -			dev_err(&client->dev, "ST2 status error 0x%x\n", ret);
->> -			return -EINVAL;
->> -		}
->> -	}
->> -
-> This completely removes the check from the _fill_buffer() path
-> 
->> -	return 0;
->> +	return !(ret & data->def->ctrl_masks[ST1_DRDY]);
-> returning a positive value here is unusual enough you should add a 
-> comment for
-> the function + use that return value.
-> 
->>  }
->> 
->>  /* Retrieve raw flux value for one of the x, y, or z axis.  */
->> @@ -731,6 +716,20 @@ static int ak8975_read_axis(struct iio_dev 
->> *indio_dev, int index, int *val)
->>  	ret = i2c_smbus_read_i2c_block_data_or_emulated(
->>  			client, def->data_regs[index],
->>  			sizeof(rval), (u8*)&rval);
-> No longer gated on ret & data->def->ctrl_masks[ST1_DRDY] which seems 
-> unintentional.
-It is checked exactly before the measurement data read, it is the return 
-value of ak8975_start_read_axis.
-The read section should be ST1 -> measurement -> ST2, exactly the same 
-can be found in the datasheets.
-> 
-> Still need a check on ret here.
-> 
->> +	ret = i2c_smbus_read_byte_data(client,
->> +				       data->def->ctrl_regs[ST2]);
->> +	if (ret < 0) {
->> +		dev_err(&client->dev, "Error in reading ST2\n");
->> +		goto exit;
->> +	}
->> +
->> +	if (ret & (data->def->ctrl_masks[ST2_DERR] |
->> +		   data->def->ctrl_masks[ST2_HOFL])) {
->> +		dev_err(&client->dev, "ST2 status error 0x%x\n", ret);
->> +		ret = -EINVAL;
->> +		goto exit;
->> +	}
->> +
->>  	if (ret < 0)
->>  		goto exit;
-> 
-> And this one ends up redundant I think which suggests to me the
-> code is inserted a few lines early.
-> 
->> 
->> 
+In this context, "small" is defined as max(SZ_4K, PAGE_SIZE).
+
+This series sets the default minimum resource alignment to
+max(SZ_4K, PAGE_SIZE) for memory BARs. In preparation, it makes an
+optimization and addresses some corner cases observed when reallocating
+BARs. I consider the prepapatory patches to be prerequisites to changing
+the default BAR alignment.
+
+I considered introducing checks for the specific scenarios described,
+but chose not to pursue this. A check such as "if (xen_domain())" may be
+pretty simple, but that doesn't account for other hypervisors. If other
+hypervisors are to be considered, or if we try to dynamically reallocate
+BARs for devices being marked for passthrough, such a check may quickly
+grow unwieldy. Further, checking for the MSI-X tables residing in a
+small (<4k) BAR is unlikely to be a one-liner. Making 4k alignment the
+default seems more robust. Lastly, when using IORESOURCE_STARTALIGN, all
+resources in the system need to be aligned.
+
+I considered alternatively adding new functionality to the
+pci=resource_alignment= option, but that approach was already attempted
+and decided against [1].
+
+[1] https://lore.kernel.org/linux-pci/1473757234-5284-4-git-send-email-xyjxie@linux.vnet.ibm.com/
+
+v2->v3:
+* clarify 4k vs PAGE_SIZE
+* rename ("x86/PCI: Move some logic to new function") to
+  ("x86/PCI: Improve code readability")
+* rename ("PCI: Align small (<4k) BARs") to
+  ("PCI: Align small BARs")
+
+v1->v2:
+* rename ("PCI: don't clear already cleared bit") to
+  ("PCI: Don't unnecessarily disable memory decoding")
+* new patch: ("x86/PCI: Move some logic to new function")
+* new patch: ("powerpc/pci: Preserve IORESOURCE_STARTALIGN alignment")
+
+Stewart Hildebrand (8):
+  x86/PCI: Improve code readability
+  PCI: Don't unnecessarily disable memory decoding
+  PCI: Restore resource alignment
+  PCI: Restore memory decoding after reallocation
+  x86/PCI: Preserve IORESOURCE_STARTALIGN alignment
+  powerpc/pci: Preserve IORESOURCE_STARTALIGN alignment
+  PCI: Don't reassign resources that are already aligned
+  PCI: Align small BARs
+
+ arch/powerpc/kernel/pci-common.c |  6 +++--
+ arch/x86/pci/i386.c              | 38 +++++++++++++++------------
+ drivers/pci/pci.c                | 43 +++++++++++++++++++++++--------
+ drivers/pci/setup-bus.c          | 44 ++++++++++++++++++++++++++++++++
+ include/linux/pci.h              |  2 ++
+ 5 files changed, 103 insertions(+), 30 deletions(-)
+
+-- 
+2.46.0
+
 
