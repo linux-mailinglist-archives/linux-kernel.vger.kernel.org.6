@@ -1,108 +1,124 @@
-Return-Path: <linux-kernel+bounces-277507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8EF594A253
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:02:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1DD94A259
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68DF7283408
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:02:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FF331C22645
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA611C8237;
-	Wed,  7 Aug 2024 08:02:35 +0000 (UTC)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AFA1C462C;
+	Wed,  7 Aug 2024 08:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BAaSd8VK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4499C1917FE;
-	Wed,  7 Aug 2024 08:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51E118FC9B;
+	Wed,  7 Aug 2024 08:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723017754; cv=none; b=VIdg/vkQJ0ABf6gep4uDQAscXtSbThHnetml+If8YH1SvxuFOxF9JrgewzcyAwjdHjVKgxljcArmhJcksTK62PU9YvcnG+d2PqNblw6Ddwow92UslgBxGhwMdFMKL/tCTMe11PzZ199aX1BeZBSMAJVkL4ASIzUTL3iwSyan4mU=
+	t=1723017829; cv=none; b=aQXkrqQPA7NJnEBObgEwe1oALbffafmaHNoM2h0W1BNuL+58ITUJTzlWVf5GlvQNrr9wxsYPQd3eGUKsOzr0kx/W98PMqh6JvqxMtLwDI+ypcA+jWAW+csSEq0e4U14OOgvWNaN39lCbilOeVH8WJ52A5vhZvR8LKipBWNQXQHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723017754; c=relaxed/simple;
-	bh=RnXps038cqMUBSYUKNHarGm7JUWChcI8wAu4YRKIVpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Er/b0UaUyS/V3KG8kCiWzbOcq9PT5K7a20TUrsmBEqYrvdK8Mtn3Z2t0b7lIFr4qyGM+GwpDzekQkUJep5kn4qo28UqyQEH6MBb3hYkKYVkN9vXWieqKrpZUAeHGpUiuDq7Vzv3rX8k/6Kpeac/qGVVTLyDsmGIrelBG8yeh2Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a6135dso2164727a12.1;
-        Wed, 07 Aug 2024 01:02:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723017751; x=1723622551;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JhOUX7lFr4TBM0dnZ/4tpzOwJP7lJ5v+5a9Ieroj11Y=;
-        b=F7xGwKjJpXJuH4aWRV8mCt88zBy5bO0P6CnsE9LP/z53ha9D76yIUbNho1OQkrI+VL
-         kbN/NKXj6dohx8c/FoqQydUE3JC0xGslZ74xZQJmBVX6o0BGm9RaUNdgq5C5eiMeNxH3
-         LIW563FuNO7XOISLGvTFODu4RwfXTMf/BaJ5Zpmzb5wEFtX8aepXqh0clKfK1KOIp7AL
-         P8tRiCPNCxX6x5DrkaGz30rlfVy4uOwhRlPj7hDEFSfKV0H/GTFtK8Laqnl9P7obQdpz
-         H11TBYjoWqY8O+ARyJ9u7bplPlV+Hu+avSruS0JgFGrf+j1EYNkAp18qpWWnTEXoveqS
-         7jTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbWa1tcogDWOfGprHnyC8PZ+Vln9+vKRsHhDhmeIp0sq5Bxj6mCy0+9RuNPYDMDcF/stBuJpfvLzXOFY+5u0RC3h5lGS11kF019h1RR2h0MvPMHmZAT6J2h9CW6euynHOrrFRqr+d77Sb3IOD/vvlwHOnryC9iYoxh6iSnzzDY
-X-Gm-Message-State: AOJu0Yz7Bjon0+xKmTqtpV/BXTTupzKz7iLL0s0iASIpaGsX6B1jrPxI
-	qMPzrdAvrG3cD48yrgKmg8tTX70+emhZjRjdERbMNLC3B6Qg4MHw
-X-Google-Smtp-Source: AGHT+IGAVAq79xPJf5aKbKvbiZvrrimSm0HPo3Za8H/ky/m/krm8l//jgWINqK5Z742ER1LG6eg2cw==
-X-Received: by 2002:aa7:cad6:0:b0:5b4:40e3:b12f with SMTP id 4fb4d7f45d1cf-5b7f3ad6bc7mr11913253a12.13.1723017751246;
-        Wed, 07 Aug 2024 01:02:31 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83a140f13sm6828634a12.43.2024.08.07.01.02.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 01:02:30 -0700 (PDT)
-Date: Wed, 7 Aug 2024 01:02:28 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com,
-	davem@davemloft.net, edumazet@google.com, kernel@pengutronix.de,
-	kuba@kernel.org, linux-can@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mkl@pengutronix.de,
-	netdev@vger.kernel.org, o.rempel@pengutronix.de, pabeni@redhat.com,
-	robin@protonic.nl, socketcan@hartkopp.net,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [can?] WARNING: refcount bug in j1939_session_put
-Message-ID: <ZrMqFN4vE7WHRBjE@gmail.com>
-References: <000000000000af9991061ef63774@google.com>
- <tencent_2878E872ED62CC507B1A6F702C096FD8960A@qq.com>
+	s=arc-20240116; t=1723017829; c=relaxed/simple;
+	bh=b4C+teTlX4VXiQEQ6YAO9R4P6kuTihJ71+3zw2R4QKo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=RFCuuQhxqTEOkt4Oe/MdXH/3M0WzblVYMxADLvgtXftcatSpgf6LvoYJRBb7mdkO0nsNF5+VdFpCTdj7UdHlKhcL1RiNJ93Sq3dnXe21CgoobHkalFBmBgGtgoNINTtNDG30v8BmFyuFarjpBSlpWX8Okn2z+bhztY5thrik2cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BAaSd8VK; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723017828; x=1754553828;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=b4C+teTlX4VXiQEQ6YAO9R4P6kuTihJ71+3zw2R4QKo=;
+  b=BAaSd8VKrQ3BUNk4/YVZnt785upJK5Zl06Sfp9SYrEpT4E6bdvWI+nw/
+   6eCl/6tM15xEv35sulUacI5n4ev53SBe/pU6OMRIu9vHLhu69m5WbOV6g
+   +fDbtz4o0OnZUUHBSW/UQzgaUEgcDXnFQWxcoFX99tQpHBsm3TChefd/3
+   nVh8VQRXDk3KDbWcApRjIu15qEt01kTXmMWtV5L76oN64FYwd+WGUqWJ+
+   GNKfUOzLYU6n+fhu6yqYU4P/0tCAWUhjaP27WG/LUDGfUyIzJSnOpZdss
+   MNCCA6ViR3IMT/ADU6D5E1ypdem9EXpbsH/m+ml89SzS5mq1ViE0as66S
+   g==;
+X-CSE-ConnectionGUID: ExbEeEQUSvO59Naw4Pwpmg==
+X-CSE-MsgGUID: 7LUgySv5S12gqsXR+/yoWQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="38530421"
+X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
+   d="scan'208";a="38530421"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 01:03:47 -0700
+X-CSE-ConnectionGUID: R3ls7Dy/S9Gjll9jCGPCiA==
+X-CSE-MsgGUID: UM7PQNqnSLenO9oUI4OI2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
+   d="scan'208";a="56722533"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.202])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 01:03:42 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 7 Aug 2024 11:03:38 +0300 (EEST)
+To: Alistair Francis <alistair23@gmail.com>
+cc: bhelgaas@google.com, linux-pci@vger.kernel.org, 
+    Jonathan.Cameron@huawei.com, Lukas Wunner <lukas@wunner.de>, 
+    alex.williamson@redhat.com, christian.koenig@amd.com, kch@nvidia.com, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, logang@deltatee.com, 
+    LKML <linux-kernel@vger.kernel.org>, chaitanyak@nvidia.com, 
+    rdunlap@infradead.org, Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [PATCH v15 2/4] PCI/DOE: Rename Discovery Response Data Object
+ Contents to type
+In-Reply-To: <20240806230118.1332763-2-alistair.francis@wdc.com>
+Message-ID: <cbc54dfb-6699-ae15-f40e-d3b5969fc806@linux.intel.com>
+References: <20240806230118.1332763-1-alistair.francis@wdc.com> <20240806230118.1332763-2-alistair.francis@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_2878E872ED62CC507B1A6F702C096FD8960A@qq.com>
+Content-Type: text/plain; charset=US-ASCII
 
-Hello Edward,
+On Wed, 7 Aug 2024, Alistair Francis wrote:
 
-On Wed, Aug 07, 2024 at 09:42:40AM +0800, Edward Adam Davis wrote:
-> Fixes: c9c0ee5f20c5 ("net: skbuff: Skip early return in skb_unref when debugging")
+> PCIe r6.1 (which was published July 24) describes a "Vendor ID", a
+> "Data Object Type" and "Next Index" as the fields in the DOE
+> Discovery Response Data Object. The DOE driver currently uses
+> both the terms type and prot for the second element.
 > 
-> Root cause: In commit c9c0ee5f20c5, There are following rules:
-> In debug builds (CONFIG_DEBUG_NET set), the reference count is always  decremented, even when it's 1
-
-That is the goal, to pick problems like the one reported here. I.e, the
-reference shouldn't be negative. If that is the case, it means that
-there is a bug, and the skb is being unreferenced more than what it
-needs to.
-
-> This rule will cause the reference count to be 0 after calling skc_unref,
-> which will affect the release of skb.
+> This patch renames all uses of the DOE Discovery Response Data Object
+> to use type as the second element of the object header, instead of
+> type/prot as it currently is.
 > 
-> The solution I have proposed is:
-> Before releasing the SKB during session destroy, check the CONFIG_DEBUG_NET
-> and skb_unref return values to avoid reference count errors caused by a 
-> reference count of 0 when releasing the SKB.
+> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> ---
 
-I am not sure this is the best approach. I would sugest finding where
-the skb is being unreferenced first, so, it doesn't need to be
-unreferenced again.
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index 94c00996e633..795e49304ae4 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -1146,9 +1146,12 @@
+>  #define PCI_DOE_DATA_OBJECT_DISC_REQ_3_INDEX		0x000000ff
+>  #define PCI_DOE_DATA_OBJECT_DISC_REQ_3_VER		0x0000ff00
+>  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_VID		0x0000ffff
+> -#define PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL		0x00ff0000
+> +#define PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE		0x00ff0000
 
-This suggestion is basically working around the findings.
+This change (removal of the old define) is inside UAPI header, so it does 
+seem something that is not allowed.
 
-Thanks for looking at this problem.
---breno
+>  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_NEXT_INDEX	0xff000000
+>  
+> +/* Deprecated old name, replaced with PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE */
+> +#define PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL		PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE
+> +
+>  /* Compute Express Link (CXL r3.1, sec 8.1.5) */
+>  #define PCI_DVSEC_CXL_PORT				3
+>  #define PCI_DVSEC_CXL_PORT_CTL				0x0c
+> 
+
+-- 
+ i.
+
 
