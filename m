@@ -1,259 +1,172 @@
-Return-Path: <linux-kernel+bounces-277956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C21994A8A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:32:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B007E94A8A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 602531C22C21
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:32:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D48FE1C22C08
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EC41E7A52;
-	Wed,  7 Aug 2024 13:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813B71B9B46;
+	Wed,  7 Aug 2024 13:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="R8+qSQ4O"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="L9pd7MSz"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACFF1D0DC5
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 13:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B411BC08C
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 13:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723037520; cv=none; b=TpCtcUKH1sv8wFOXmkSlOtAx8MbDTgRQZZi2Zjdhz802vJiw0R9fGdKy8nPiFPolxPxxQqWK9PFJ/KJdivmGkGa0pd8IEmINz9rd/+DBmOPog+8RSVS/gfYlsL4rSuWWZMnV84azBYQN3SSZ9F29JK1wvOJbQE0HwQNThfvb+2A=
+	t=1723037586; cv=none; b=OnqQJH3VPK7ra1LRv3H6h4EcYdXa7CKMtMplLpqGebPUL1HXCHgBkZiZwdn9wYjL8b1PjJK9zStM/mRo5AIzmV9zSlvlWEM8v6Wvm4D+qZKWIFPwzG2zXSJaxwstuSG1ktMyxVlWW3Rv4DV1QCLSxYlPHgUHgsKhw7Dqp0hB9WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723037520; c=relaxed/simple;
-	bh=I0YOAeMMQ/RBgnuOGksJ5QaMn2vrXWE6rlYOy6/JtqE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OKpNlb9VYUbnMi25C1P11hvkw1SwRY/rTRWwghAXnXIDhkHXeLjEaqA2h2q1AySzLyiM49PJ2mTjeSHdnkZe55lJYZ76Fxni27+Pl7Ra2C0VJzpwuaq+tSw7anlXCslciIV5FY2Da0Nvtp+/Jm4QspLOR6pMfuFa2ygblhQsn8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=R8+qSQ4O; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-428178fc07eso12316795e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 06:31:57 -0700 (PDT)
+	s=arc-20240116; t=1723037586; c=relaxed/simple;
+	bh=uTE2j/MDaHnN57JGWh3Wx6tZO0vxTSBFt1dcGvofWHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uYG8TxmyZ9K30DKp0LsLhLczrDKFWbGKAVMbv/TSHN/9CSnRP3iRw7Acpxfd6nu9G2OQufbEiKfH6AwLBmEHhwxsVbSZJieJ977ejBIirM9Dy4Fxxfak5sGUut6x7mmeoH/Q5ge+2IiZQM5sv1STygVe2TKvJjYPr1tm8CwitYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=L9pd7MSz; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f189a2a7f8so20915491fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 06:33:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723037516; x=1723642316; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=164tr0yz7inawChH82oVEAaUXNqCqs8bMXCcFphhnjM=;
-        b=R8+qSQ4OviuAr6tkU1BYBmhxX8t5vFRzXrPXt4yj+6fDzyE1TYzyHA0jlzW388Q7BJ
-         AEercpD2riORcuUi4LNjoy50+4u+FgcZLvKoMk4O5xklCRl5K8cd+UhX6ToJrgR/sZgY
-         l29T8ewhmFX/7l8KdoEUddgY0xLej0WvmoNjUCjl6P+OFJebhGzEWk5BfyUw0Zhomvic
-         aJSQO4udYVdYieZgZPjjtYYhFdz4i+2N7gLgHKOYSLwGeaBXVVYIFx7bqhvz/tdRC6Jc
-         cosiuM02hwWhkV0MFSgrzsyjA2OSdRDwCQKlXTN+nlfmCcz46Z0hBZ7Qhj1a0XmKHfTd
-         zufQ==
+        d=suse.com; s=google; t=1723037583; x=1723642383; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zoVvV2xOoCXu/RR2NJeonReacx/neR8WigegY62LXok=;
+        b=L9pd7MSz88b3N84h0DsGzpoV5bf+AYgsE2y8VpxJo9L7bGtgXlMo+SHFq38TOXbgKh
+         olVoS6WkA2K5Y5gZBaXIPO6OVD9hPXtawzgC94NdTgPAUPq/c4hF6vNTHsXbFxtB3Jhv
+         5cxnB8BR0O+A4Izgnv+yEnI3gcy0UVi08IbfqWoIE3PMOb1+7G5TYVbLO9BQRQkizpNa
+         jkTUglCcrvf8Ec64+1rraDvXKZl0YvDXYcY1f9p0tqEnNbkFeLXT9sOyShzy8Q9B2pkm
+         fiQ+bDM0TciaqlLaiKR7vs0UKtBxO05gDriz8R0mzFpiZgf/zQkqwHBRokN5gZhk8FdH
+         SeKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723037516; x=1723642316;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=164tr0yz7inawChH82oVEAaUXNqCqs8bMXCcFphhnjM=;
-        b=fNHLlAA2NEQLgKCJiMe135ekqksdR8nLYZt9kuLayBUXxWRFe2nx165h118JiGinVe
-         9hHKUrTwP0RVuXtzANZk74W2i4ApStQUBLxe7qPrel0xVrhTI/SLwTNMv682u2j3f+Ot
-         fk1iy1jEznxfYmMNsZkSKfrfWJbGJKV0IXXpNw/D8H3xpd55Ra0tfF+u3ByRtGaYWB3D
-         xwikXUEA9gNiCCWSq1jIRL4BJjTLizwHfpsvPvdFgP3wu8IvQryYCUUyfMcNAQLLNbj5
-         ScFcWfuRC2gTyxc4vh1p6htGSTe9Er7bA2ebgCdlq54nX1N0tWBy8VrjGRkg83uqBSvl
-         rTKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2fRhR62OeZ/wJcd1H5zUZplme2NboazButs/dVC+Ml89soFZTpdcFWUR6sXdV3AKWhmj/m+wpuYesP32/l9APGfUzeVnQUWqTmHFv
-X-Gm-Message-State: AOJu0Yy/egzaTzfqEGp1E5QrphJzwqU/0dv2kB8/aaCWvFDFmiD2LeVB
-	AdD90zN/z+flyjqbnWZ7pUzpQsfD9PTsrdI8JaLUk06bXYFWOB/P7tDgvK5zb6s=
-X-Google-Smtp-Source: AGHT+IHZ6j7eB4eff+ZU6Ljgi316Ng/lSjNPepGxFzSz5LPlCb6rjcJjFdNp87kEzPvobstUNi9b0g==
-X-Received: by 2002:a05:600c:358b:b0:427:d8f7:b718 with SMTP id 5b1f17b1804b1-428e6b7f0abmr127289625e9.24.1723037516192;
-        Wed, 07 Aug 2024 06:31:56 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:a3e7:be71:fe4f:c360])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429059cd2b3sm29360505e9.44.2024.08.07.06.31.55
+        d=1e100.net; s=20230601; t=1723037583; x=1723642383;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zoVvV2xOoCXu/RR2NJeonReacx/neR8WigegY62LXok=;
+        b=Pg/ga/tESpwsIsz0ssQ4NlBhMjS8bc8f0JwFhiZtlIQhpZ6yVsLDgES2RSKN5r5uAa
+         2WMB+m2uZpxEKRoPWV9B6X3dC4dFiimskUtdTnp5OrPm+zqbIwOLLozqGPyVCXwTvGLH
+         fFLa5ZmeBG+hqRwPh1KPlOmCu96L8rbr2HUraqYvEu8JWIRuRGFYoD58Y7iRONm6mHEG
+         cI7GIqR8pTbU3diQ3yfEh3obySgdszICGYCK8FT31n/T3myqWsdkprRBHEAdArZuDk6D
+         p5W1kiTKRkkafzV5mk6M5/Zzvd6cbbE/CZkqcjuRSZnYV+Htv9BjI914WxYPAm8pVtZa
+         7N1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVeaAwR29UeQg7BHy+F1CcZlQdNpvWtiN/B5/0mQdicnIsy7XtczZrKuQjI+ZW/l60aO8Jf+M93BDBNO95aXoIpQinN//uF1ICjxP+f
+X-Gm-Message-State: AOJu0YztrJ7RYiyMrI/UmkegTDvY7618AuhobKmjfCdKrRH+gxreZAbB
+	+0M7K1zl6nqbryH1/56eIFGScrhnBVuApWMcM6dItKM8eyYYNOaBIp1uU+fUze0=
+X-Google-Smtp-Source: AGHT+IFxkiPUrEtdYeOd3jzt9BaP4DW4fxVd0ulmgS/b7yl6AxB1T10qLc5q9Pao4dCx8B1rRkolTA==
+X-Received: by 2002:a2e:7e10:0:b0:2ef:2bb4:2ea1 with SMTP id 38308e7fff4ca-2f15aa84f28mr122563931fa.4.1723037582387;
+        Wed, 07 Aug 2024 06:33:02 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bba48b7310sm694937a12.92.2024.08.07.06.33.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 06:31:55 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 07 Aug 2024 15:31:43 +0200
-Subject: [PATCH] arm64: dts: qcom: sa8775p: add CPU idle states
+        Wed, 07 Aug 2024 06:33:01 -0700 (PDT)
+Date: Wed, 7 Aug 2024 15:32:59 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: chenridong <chenridong@huawei.com>
+Cc: Hillf Danton <hdanton@sina.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, tj@kernel.org, bpf@vger.kernel.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -v2] cgroup: fix deadlock caused by cgroup_mutex and
+ cpu_hotplug_lock
+Message-ID: <mxyismki3ln2pvrbhd36japfffpfcwgyvgmy5him3n746w6wd6@24zlflalef6x>
+References: <20240724110834.2010-1-hdanton@sina.com>
+ <53ed023b-c86c-498a-b1fc-2b442059f6af@huawei.com>
+ <ohqau62jzer57mypyoiic4zwhz2zxwk5rsni4softabxyybgke@nnsqdj2dbvkl>
+ <e7d4e1ce-7c12-4a06-ad03-1291dc6f22b5@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240807-sa8775p-idle-states-v1-1-f2b5fcdfa0b0@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAD53s2YC/x2MQQqAIBAAvxJ7TjBL0r4SHcTWWogSNyIQ/550n
- IGZDIyJkGFqMiR8iOk6K3RtA35354aC1sqgpBqk7qVgZ8ZRx6oPFHy7G1kYZXyQ3lgbEGoZEwZ
- 6/+u8lPIBvl3dzmUAAAA=
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4120;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=EKlSo1FtkBt4LmDA1XAsl6pXZ1ICErv1hWvRoyPvAQk=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBms3dIxeBiVUpzBwdqkeLTAo2bBFKAJWFoDrocu
- GEmOqxQfwKJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZrN3SAAKCRARpy6gFHHX
- cjvpD/9HQSDQMSUE8M5EvCrys8L34H2quxpDiOKMwodwroCf2fNgjM60xBRanLfCcSXXnfJDMJU
- jxJAtZVrz3flcf/TTBJgpId6hipemMZTPasYjuVvdMCR4+HkUcf0gA7Xy3mMdEzxG8Zo4y9b+Fl
- sjj5n0zj3M53WdpSvUI7bRo6FWo23yl6NSxWuspMcAkE69tPVLa2WUfysBiPtIPcetcLJet6p3J
- lF+wPcyB2i/myEVOdUYIKGlC8hxcFkOzwONdzsINZ8l4pARgZt+cP4ioiQUNeqeU0uPalVNqMNU
- xkhll52MvKIs0cH0J867CKk/l2CPERCirvQ0g8pfNDfO48fmO8zwPP4gc8RPrvuoUYwpMBhFXtv
- xXT6ckanim+pr5mRH2XL3U/tIfByxVqMLbZcyJ2xYBg28gyBpfXmHDNLd5j2kbptiHdQnzl6VSA
- BanBZwwuGMyalbxgfMg61k6WUUWXbnddv0zT7oTJRoYRsnH7W/tBWm/fDYhPG+AGpT88jebFsKh
- uQWh6GNvYtYakm9OJ2DLrX0F6dhEl/zmkuIkU7rheAM34RVZNS77B6ig0z2IjunpXeOq3Xa4Je4
- AteYA5/jaaQUnJ6rfim1Uq6/PaEh3zQIasf4QIbs18PrfKPdaGLWnnNwwPkODQB/idc6BKEiPqf
- tc3hMd8CYTuPXMA==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uymw6r4jmmktmozg"
+Content-Disposition: inline
+In-Reply-To: <e7d4e1ce-7c12-4a06-ad03-1291dc6f22b5@huawei.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add CPU idle-state nodes and power-domains to the .dtsi for SA8775P.
+--uymw6r4jmmktmozg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 115 ++++++++++++++++++++++++++++++++++
- 1 file changed, 115 insertions(+)
+Hello.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 602e20d5f1f7..6e50ee5f3578 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -219,6 +219,48 @@ core3 {
- 				};
- 			};
- 		};
-+
-+		idle-states {
-+			entry-method = "psci";
-+
-+			GOLD_CPU_SLEEP_0: cpu-sleep-0 {
-+				compatible = "arm,idle-state";
-+				idle-state-name = "gold-power-collapse";
-+				arm,psci-suspend-param = <0x40000003>;
-+				entry-latency-us = <549>;
-+				exit-latency-us = <901>;
-+				min-residency-us = <1774>;
-+				local-timer-stop;
-+			};
-+
-+			GOLD_RAIL_CPU_SLEEP_0: cpu-sleep-1 {
-+				compatible = "arm,idle-state";
-+				idle-state-name = "gold-rail-power-collapse";
-+				arm,psci-suspend-param = <0x40000004>;
-+				entry-latency-us = <702>;
-+				exit-latency-us = <1061>;
-+				min-residency-us = <4488>;
-+				local-timer-stop;
-+			};
-+		};
-+
-+		domain-idle-states {
-+			CLUSTER_SLEEP_GOLD: cluster-sleep-0 {
-+				compatible = "domain-idle-state";
-+				arm,psci-suspend-param = <0x41000044>;
-+				entry-latency-us = <2752>;
-+				exit-latency-us = <3048>;
-+				min-residency-us = <6118>;
-+			};
-+
-+			CLUSTER_SLEEP_APSS_RSC_PC: cluster-sleep-1 {
-+				compatible = "domain-idle-state";
-+				arm,psci-suspend-param = <0x42000144>;
-+				entry-latency-us = <3263>;
-+				exit-latency-us = <6562>;
-+				min-residency-us = <9987>;
-+			};
-+		};
- 	};
- 
- 	dummy-sink {
-@@ -348,6 +390,79 @@ pmu {
- 	psci {
- 		compatible = "arm,psci-1.0";
- 		method = "smc";
-+
-+		CPU_PD0: power-domain-cpu0 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_0_PD>;
-+			domain-idle-states = <&GOLD_CPU_SLEEP_0>,
-+					     <&GOLD_RAIL_CPU_SLEEP_0>;
-+		};
-+
-+		CPU_PD1: power-domain-cpu1 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_0_PD>;
-+			domain-idle-states = <&GOLD_CPU_SLEEP_0>,
-+					     <&GOLD_RAIL_CPU_SLEEP_0>;
-+		};
-+
-+		CPU_PD2: power-domain-cpu2 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_0_PD>;
-+			domain-idle-states = <&GOLD_CPU_SLEEP_0>,
-+					     <&GOLD_RAIL_CPU_SLEEP_0>;
-+		};
-+
-+		CPU_PD3: power-domain-cpu3 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_0_PD>;
-+			domain-idle-states = <&GOLD_CPU_SLEEP_0>,
-+					     <&GOLD_RAIL_CPU_SLEEP_0>;
-+		};
-+
-+		CPU_PD4: power-domain-cpu4 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_1_PD>;
-+			domain-idle-states = <&GOLD_CPU_SLEEP_0>,
-+					     <&GOLD_RAIL_CPU_SLEEP_0>;
-+		};
-+
-+		CPU_PD5: power-domain-cpu5 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_1_PD>;
-+			domain-idle-states = <&GOLD_CPU_SLEEP_0>,
-+					     <&GOLD_RAIL_CPU_SLEEP_0>;
-+		};
-+
-+		CPU_PD6: power-domain-cpu6 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_1_PD>;
-+			domain-idle-states = <&GOLD_CPU_SLEEP_0>,
-+					     <&GOLD_RAIL_CPU_SLEEP_0>;
-+		};
-+
-+		CPU_PD7: power-domain-cpu7 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_1_PD>;
-+			domain-idle-states = <&GOLD_CPU_SLEEP_0>,
-+					     <&GOLD_RAIL_CPU_SLEEP_0>;
-+		};
-+
-+		CLUSTER_0_PD: power-domain-cluster0 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_2_PD>;
-+			domain-idle-states = <&CLUSTER_SLEEP_GOLD>;
-+		};
-+
-+		CLUSTER_1_PD: power-domain-cluster1 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_2_PD>;
-+			domain-idle-states = <&CLUSTER_SLEEP_GOLD>;
-+		};
-+
-+		CLUSTER_2_PD: power-domain-cluster2 {
-+			#power-domain-cells = <0>;
-+			domain-idle-states = <&CLUSTER_SLEEP_APSS_RSC_PC>;
-+		};
- 	};
- 
- 	reserved-memory {
+On Sat, Jul 27, 2024 at 06:21:55PM GMT, chenridong <chenridong@huawei.com> =
+wrote:
+> Yes, I have offered the scripts in Link(V1).
+
+Thanks (and thanks for patience).
+There is no lockdep complain about a deadlock (i.e. some circular
+locking dependencies). (I admit the multiple holders of cgroup_mutex
+reported there confuse me, I guess that's an artifact of this lockdep
+report and they could be also waiters.)
+
+> > Who'd be the holder of cgroup_mutex preventing cgroup_bpf_release from
+> > progress? (That's not clear to me from your diagram.)
+> >=20
+> This is a cumulative process. The stress testing deletes a large member of
+> cgroups, and cgroup_bpf_release is asynchronous, competing with cgroup
+> release works.
+
+Those are different situations:
+- waiting for one holder that's stuck for some reason (that's what we're
+  after),
+- waiting because the mutex is contended (that's slow but progresses
+  eventually).
+
+> You know, cgroup_mutex is used in many places. Finally, the number of
+> `cgroup_bpf_release` instances in system_wq accumulates up to 256, and
+> it leads to this issue.
+
+Reaching max_active doesn't mean that queue_work() would block or the
+items were lost. They are only queued onto inactive_works list.
+(Remark: cgroup_destroy_wq has only max_active=3D1 but it apparently
+doesn't stop progress should there be more items queued (when
+when cgroup_mutex is not guarding losing references.))
 
 ---
-base-commit: eec5d86d5bac6b3e972eb9c1898af3c08303c52d
-change-id: 20240530-sa8775p-idle-states-828cf0c899fe
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The change on its own (deferred cgroup bpf progs removal via
+cgroup_destroy_wq instead of system_wq) is sensible by collecting
+related objects removal together (at the same time it shouldn't cause
+problems by sharing one cgroup_destroy_wq).
 
+But the reasoning in the commit message doesn't add up to me. There
+isn't obvious deadlock, I'd say that system is overloaded with repeated
+calls of __lockup_detector_reconfigure() and it is not in deadlock
+state -- i.e. when you stop the test, it should eventually recover.
+Given that, I'd neither put Fixes: 4bfc0bb2c60e there.
+
+(One could symetrically argue to move smp_call_on_cpu() away from
+system_wq instead of cgroup_bpf_release_fn().)
+
+Honestly, I'm not sure it's worth the effort if there's no deadlock.
+
+It's possible that I'm misunderstanding or I've missed a substantial
+detail for why this could lead to a deadlock. It'd be best visible in a
+sequence diagram with tasks/CPUs left-to-right and time top-down (in the
+original scheme it looks like time goes right-to-left and there's the
+unclear situation of the initial cgroup_mutex holder).
+
+Thanks,
+Michal
+
+--uymw6r4jmmktmozg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZrN3iQAKCRAt3Wney77B
+SUGZAP9Y5qficVAEpKZ0n5YgNOwLfulVjcudCztVl+mKxiFf5AEAtzECB/1Mp9dH
+/zzEdSAo+FNWF+1B1IXuJhVgAO0+sQ0=
+=nCuG
+-----END PGP SIGNATURE-----
+
+--uymw6r4jmmktmozg--
 
