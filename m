@@ -1,126 +1,328 @@
-Return-Path: <linux-kernel+bounces-277939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4313D94A876
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:21:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BAEE94A877
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1FF5285AEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:20:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F9321C2364E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07881E7A3B;
-	Wed,  7 Aug 2024 13:20:54 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B7D1EA0B8;
+	Wed,  7 Aug 2024 13:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L8WTwaQY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="26SUTiGQ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pduOcCl/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xn+y4WG6"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4359813A3F0;
-	Wed,  7 Aug 2024 13:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B172213A3F0;
+	Wed,  7 Aug 2024 13:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723036854; cv=none; b=e4yka9Ane5wkvSxnbLFOSBlYz6ueIkivVlo5Eh4jTZy9tZoJ2KknTTCoiTjRHodiSYpRXi6p2XaHK+8CT4xCMPUcvMziFCPZEAub+/vgaZ0arNXQcpXzR2AzGEZqofslb7UcGTDnH3xj0WOWSxC7oV/18nO+sIBr73PjMGhMh3w=
+	t=1723036858; cv=none; b=mDtX2BFJ2CI2MEVQSi3rjwWZ8O2s9Z70nwkngDMOsCENz5dN9opII839Xq761oqLBvFQdQwuwvRWiRn/mERQX5ts/QFG4fmy3/hQjcdW+0SSVVj8sO7z9WD78DF29U5vzE04ane/qpmEKdRmIsnswRj8729602inYWg0C5fUd7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723036854; c=relaxed/simple;
-	bh=ZSgSy8dFYIshQOupesyvcm8CHOFuw1V9C05ltd3/cQI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=EOWhKCs6pbd++azaId6WVwGhSR5G3lkdvjVU+OA2q32GiEcxjhnxCDTmZtT+PrtkJrbOGFIR38bGgMLjSksePkBgfLuXrLhuIBEuNtv6BIY6ltuZpPTbLee4GsE3zbIf1PyXz2F3bxbwRW7sS3QjzQLR7QaB+fZIq/U5rE6n6bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wf9lp0y6Nz4f3k6C;
-	Wed,  7 Aug 2024 21:20:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 24A261A06D7;
-	Wed,  7 Aug 2024 21:20:47 +0800 (CST)
-Received: from [10.174.178.55] (unknown [10.174.178.55])
-	by APP4 (Coremail) with SMTP id gCh0CgCXv4WpdLNmjCMdBA--.28525S3;
-	Wed, 07 Aug 2024 21:20:43 +0800 (CST)
-Subject: Re: [PATCH] selinux: Fix potential counting error in
- avc_add_xperms_decision()
-To: Markus Elfring <Markus.Elfring@web.de>,
- Zhen Lei <thunder.leizhen@huawei.com>, selinux@vger.kernel.org,
- Ondrej Mosnacek <omosnace@redhat.com>, Paul Moore <paul@paul-moore.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jeff Vander Stoep
- <jeffv@google.com>, Nick Kralevich <nnk@google.com>
-References: <20240806065113.1317-1-thunder.leizhen@huaweicloud.com>
- <600318b9-928c-4466-a8d1-334fab8c512f@web.de>
- <8e9f8931-0fd8-5808-8898-761e31e55208@huaweicloud.com>
- <d3f95ed9-a8f2-aedb-9097-0ac420d5bfa1@huaweicloud.com>
- <ed7f98e2-596b-4e4a-bc8a-d88543eeaa6d@web.de>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huaweicloud.com>
-Message-ID: <069f3a84-eb29-5f6c-7343-f837d9e96fff@huaweicloud.com>
-Date: Wed, 7 Aug 2024 21:20:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+	s=arc-20240116; t=1723036858; c=relaxed/simple;
+	bh=JnwX2AVonipUuZlR4Cdl1XgrlCBGqZew1tMD7T1N8+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RP6Kl886mRYP18MCe+ofLoEanvnCeuWFYw1KIVO/c8KVTZBWks3bV9OwneyW6pNYnVnxIo20uj1Eb7kCJPmsSJghONnjkk4cabwKJEnBowhm6NaB/ZVC+p5cYABy8LHlWjZ8Ly62Rg7lMlPfWck0Lnvkj05a3qktsKfYE3Kz1kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L8WTwaQY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=26SUTiGQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pduOcCl/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xn+y4WG6; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DD10E21AC9;
+	Wed,  7 Aug 2024 13:20:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723036854; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oi7JmAOIAm400fxQ5TjTYdvdJqzdVHJz7YRcmveWM48=;
+	b=L8WTwaQYKuoKTBqkDOFBDhIpfiZduhB652NI9ygMOeG3Ot2Xreo8wTb9zkMakY9U+LLCxd
+	C0baaQbjwynC5kbSjxsmEIUSca2FkWqhpQqH0uolzZ9D4u8nor8t6dxOtkY3i2JMYlhsSE
+	8gw662PXCHPlijb5my2MSqfGsnaSlns=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723036854;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oi7JmAOIAm400fxQ5TjTYdvdJqzdVHJz7YRcmveWM48=;
+	b=26SUTiGQZN7sg1gSt8w4eVYUXVOp4drLmHP8zcURuOOTg4HmyWCETqEIts4KVCm3cVtgXH
+	zFu7FxnPWJddxRCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="pduOcCl/";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Xn+y4WG6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723036853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oi7JmAOIAm400fxQ5TjTYdvdJqzdVHJz7YRcmveWM48=;
+	b=pduOcCl/5YXJMxyfLl0gjquvmX+cn2WG+t6zDs18FHPb7PU/KGauXQZ0Pah4qFft7BmxXx
+	WOFo8iXAW8DmQSuG1vypFsV1fhL9MiefsSaY2p9VQlgAPBbGJkSHZa6d8HhCutgK+CCTNF
+	UFrpxlyB/7JybE6Xw+mLodBEBu7crpc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723036853;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oi7JmAOIAm400fxQ5TjTYdvdJqzdVHJz7YRcmveWM48=;
+	b=Xn+y4WG6S5glz0Ea7OxFYdtN/nLCFrW4Fw7MFzmHrPbXX7KksNoIX3y4MLYrSKio6LtFrH
+	7OGxTmR1p5iUvRAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B5F9513297;
+	Wed,  7 Aug 2024 13:20:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SThqLLV0s2aNUgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 07 Aug 2024 13:20:53 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 57C22A0762; Wed,  7 Aug 2024 15:20:53 +0200 (CEST)
+Date: Wed, 7 Aug 2024 15:20:53 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andi Kleen <ak@linux.intel.com>, Mateusz Guzik <mjguzik@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] fs: try an opportunistic lookup for O_CREAT opens too
+Message-ID: <20240807132053.juvychehe4zfqj5w@quack3>
+References: <20240807-openfast-v3-1-040d132d2559@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ed7f98e2-596b-4e4a-bc8a-d88543eeaa6d@web.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXv4WpdLNmjCMdBA--.28525S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7JFy3Zry7Wr4rKFykZFWkWFg_yoWkurg_ur
-	10kw4kuw4kJa1DtFn5AanxJr9ruwnxWa4rZ3yrJFW7G34UAayDZanxGr93Zw1fJrn2krnx
-	uFyFqr1rXw12vjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4AYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v2
-	6r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsU
-	UUUUU==
-X-CM-SenderInfo: hwkx0vthuozvpl2kv046kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807-openfast-v3-1-040d132d2559@kernel.org>
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-1.01 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,linux-foundation.org,linux.intel.com,gmail.com,toxicpanda.com,vger.kernel.org];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -1.01
+X-Rspamd-Queue-Id: DD10E21AC9
 
+On Wed 07-08-24 08:10:27, Jeff Layton wrote:
+> Today, when opening a file we'll typically do a fast lookup, but if
+> O_CREAT is set, the kernel always takes the exclusive inode lock. I
+> assume this was done with the expectation that O_CREAT means that we
+> always expect to do the create, but that's often not the case. Many
+> programs set O_CREAT even in scenarios where the file already exists.
+> 
+> This patch rearranges the pathwalk-for-open code to also attempt a
+> fast_lookup in certain O_CREAT cases. If a positive dentry is found, the
+> inode_lock can be avoided altogether, and if auditing isn't enabled, it
+> can stay in rcuwalk mode for the last step_into.
+> 
+> One notable exception that is hopefully temporary: if we're doing an
+> rcuwalk and auditing is enabled, skip the lookup_fast. Legitimizing the
+> dentry in that case is more expensive than taking the i_rwsem for now.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
+I'm not very familiar with the path lookup code but the patch looks correct
+to me and the win is nice. Feel free to add:
 
-On 2024/8/7 20:06, Markus Elfring wrote:
->>>>> The count increases only when a node is successfully added to
->>>>> the linked list.
->>>>
->>>> 1. Please improve such a change description with an imperative wording.
->>>>    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.11-rc2#n94
->>> Ok, I'll try to improve it.
->> I see this patch has been merged into selinux/stable-6.11.
-> 
-> Interesting …
-It's not surprising. Because maintainers deal with programmers in many countries,
-they will find over time that some programmers write descriptions that are not
-pleasing to the eye, not his intention, but poor English. So step back, as long
-as the patch is correct and clearly describes why it's done, it's enough. It's
-not a bad thing to be more inclusive of others.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-> 
-> 
->> So I decided not to change it, and I re-examined it,
-> 
-> Further collateral evolution can become more helpful,
-> can't it?
-> 
-> 
->> and it seems that there is no problem you mentioned.
-> 
-> There are obviously different preferences involved for patch review processes.
-> 
-> Regards,
-> Markus
-> .
-> 
+								Honza
 
+> ---
+> Here's a revised patch that does a fast_lookup in the O_CREAT codepath
+> too. The main difference here is that if a positive dentry is found and
+> audit_dummy_context is true, then we keep the walk lazy for the last
+> component, which avoids having to take any locks on the parent (just
+> like with non-O_CREAT opens).
+> 
+> Mateusz wrote a will-it-scale test that does an O_CREAT open and close in
+> the same directory repeatedly. Running that in 70 different processes:
+> 
+>     v6.10:		  754565
+>     v6.10+patch:	25747851
+> 
+> ...which is roughly a 34x speedup. I also ran the unlink1 test in single
+> process mode to try and gauge how bad the performance impact would be in
+> the case where we always have to search, not find anything and do the
+> create:
+> 
+>     v6.10:		200106
+>     v6.10+patch:	199188
+> 
+> ~0.4% performance hit in that test. I'm not sure that's statistically
+> significant, but we should keep an eye out for slowdowns in these sorts
+> of workloads if we decide to take this.
+> ---
+> Changes in v3:
+> - Check for IS_ERR in lookup_fast result
+> - Future-proof open_last_lookups to handle case where lookup_fast_for_open
+>   returns a positive dentry while auditing is enabled
+> - Link to v2: https://lore.kernel.org/r/20240806-openfast-v2-1-42da45981811@kernel.org
+> 
+> Changes in v2:
+> - drop the lockref patch since Mateusz is working on a better approach
+> - add trailing_slashes helper function
+> - add a lookup_fast_for_open helper function
+> - make lookup_fast_for_open skip the lookup if auditing is enabled
+> - if we find a positive dentry and auditing is disabled, don't unlazy
+> - Link to v1: https://lore.kernel.org/r/20240802-openfast-v1-0-a1cff2a33063@kernel.org
+> ---
+>  fs/namei.c | 74 +++++++++++++++++++++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 64 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 1e05a0f3f04d..7894fafa8e71 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3518,6 +3518,49 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+>  	return ERR_PTR(error);
+>  }
+>  
+> +static inline bool trailing_slashes(struct nameidata *nd)
+> +{
+> +	return (bool)nd->last.name[nd->last.len];
+> +}
+> +
+> +static struct dentry *lookup_fast_for_open(struct nameidata *nd, int open_flag)
+> +{
+> +	struct dentry *dentry;
+> +
+> +	if (open_flag & O_CREAT) {
+> +		/* Don't bother on an O_EXCL create */
+> +		if (open_flag & O_EXCL)
+> +			return NULL;
+> +
+> +		/*
+> +		 * FIXME: If auditing is enabled, then we'll have to unlazy to
+> +		 * use the dentry. For now, don't do this, since it shifts
+> +		 * contention from parent's i_rwsem to its d_lockref spinlock.
+> +		 * Reconsider this once dentry refcounting handles heavy
+> +		 * contention better.
+> +		 */
+> +		if ((nd->flags & LOOKUP_RCU) && !audit_dummy_context())
+> +			return NULL;
+> +	}
+> +
+> +	if (trailing_slashes(nd))
+> +		nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
+> +
+> +	dentry = lookup_fast(nd);
+> +	if (IS_ERR_OR_NULL(dentry))
+> +		return dentry;
+> +
+> +	if (open_flag & O_CREAT) {
+> +		/* Discard negative dentries. Need inode_lock to do the create */
+> +		if (!dentry->d_inode) {
+> +			if (!(nd->flags & LOOKUP_RCU))
+> +				dput(dentry);
+> +			dentry = NULL;
+> +		}
+> +	}
+> +	return dentry;
+> +}
+> +
+>  static const char *open_last_lookups(struct nameidata *nd,
+>  		   struct file *file, const struct open_flags *op)
+>  {
+> @@ -3535,28 +3578,39 @@ static const char *open_last_lookups(struct nameidata *nd,
+>  		return handle_dots(nd, nd->last_type);
+>  	}
+>  
+> +	/* We _can_ be in RCU mode here */
+> +	dentry = lookup_fast_for_open(nd, open_flag);
+> +	if (IS_ERR(dentry))
+> +		return ERR_CAST(dentry);
+> +
+>  	if (!(open_flag & O_CREAT)) {
+> -		if (nd->last.name[nd->last.len])
+> -			nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
+> -		/* we _can_ be in RCU mode here */
+> -		dentry = lookup_fast(nd);
+> -		if (IS_ERR(dentry))
+> -			return ERR_CAST(dentry);
+>  		if (likely(dentry))
+>  			goto finish_lookup;
+>  
+>  		if (WARN_ON_ONCE(nd->flags & LOOKUP_RCU))
+>  			return ERR_PTR(-ECHILD);
+>  	} else {
+> -		/* create side of things */
+>  		if (nd->flags & LOOKUP_RCU) {
+> -			if (!try_to_unlazy(nd))
+> +			bool unlazied;
+> +
+> +			/* can stay in rcuwalk if not auditing */
+> +			if (dentry && audit_dummy_context()) {
+> +				if (trailing_slashes(nd))
+> +					return ERR_PTR(-EISDIR);
+> +				goto finish_lookup;
+> +			}
+> +			unlazied = dentry ? try_to_unlazy_next(nd, dentry) :
+> +					    try_to_unlazy(nd);
+> +			if (!unlazied)
+>  				return ERR_PTR(-ECHILD);
+>  		}
+>  		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
+> -		/* trailing slashes? */
+> -		if (unlikely(nd->last.name[nd->last.len]))
+> +		if (trailing_slashes(nd)) {
+> +			dput(dentry);
+>  			return ERR_PTR(-EISDIR);
+> +		}
+> +		if (dentry)
+> +			goto finish_lookup;
+>  	}
+>  
+>  	if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
+> 
+> ---
+> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+> change-id: 20240723-openfast-ac49a7b6ade2
+> 
+> Best regards,
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
 -- 
-Regards,
-  Zhen Lei
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
