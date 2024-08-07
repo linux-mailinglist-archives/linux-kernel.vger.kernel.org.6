@@ -1,108 +1,162 @@
-Return-Path: <linux-kernel+bounces-278339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F6E94AEEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:31:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8CEE94AEF1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04C401F2268D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:31:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D93D71C21A7E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFBB13C689;
-	Wed,  7 Aug 2024 17:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DCD13D29A;
+	Wed,  7 Aug 2024 17:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="WZgWc2/t"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ujdgo5zX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B978C7D3F5;
-	Wed,  7 Aug 2024 17:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFC113C9A2
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 17:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723051896; cv=none; b=bZmUbdgcvOAcyu9EzEt6XNgbotMeh8qxeBiXtlTnJ3IsQT3LTiMaJRDV7Zb/exR12VDfIZ8fg2JSu0/Dets7TrivMH1EyeNxpOg7w/YgtIhhFvxsNErtmzpSJnFwu8Iv4aJRyKoEWLJzM9f+lWo2/bhrrQMQ44hB+tUarlEwRLU=
+	t=1723051946; cv=none; b=llI8bwwAInBVXUFJ/WolOTYBs9U/hy90I3hSKwCHOkOG+8rJtROFffGkm3TuMbdZrzhiCnePGGixD5+gokviAgcRdbIBUb/NjmUR3dmTpy+HvSI2XrvexyjzbvPdQj1TqVNupTY3O17eQaBRv58wNgXnRNvBRhk84urI9Maviog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723051896; c=relaxed/simple;
-	bh=X5B2jUJXBjR1r8eby7VTQUB3d+SVvMRzoIBMrgb0aaE=;
+	s=arc-20240116; t=1723051946; c=relaxed/simple;
+	bh=1sYHixPrcIYTFR1PPKPLG9fQCGuPqk/uaaGBNPfk0QQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DKZTpKtoabVcSZ/c/AFkvZzkqUU3xy4gY2+9ajSR++6JybcEFLqc7q3s2PhbeNiSH0oxu19MWpEtK0h6Chf2cPXS9A5zHQ0yxe0HuejqrZkwZ9gCLizsbNTeCNvTBLICHd8lx5jXzf6zeuuJ7VI6ZBipCsJmeeDaXtF8g2vy6kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=WZgWc2/t; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1723051889;
-	bh=X5B2jUJXBjR1r8eby7VTQUB3d+SVvMRzoIBMrgb0aaE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WZgWc2/twgOFxWoDTtJAn5ivfZ4jD0uk3vKKpXh/zn4i/67ZLVvUIGifGxYY/3XA8
-	 I+RZt+D/eQtDbozYktjM2IHV9LEfzorcpdvFfiCbXUhNEQL+QNF6vlyvGi0QkzUD8g
-	 AcUfsVyoQonFkn8eeJkpQgR+XRC7iomP0i6/SJHU=
-Date: Wed, 7 Aug 2024 19:31:29 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Jose Fernandez <jose.fernandez@linux.dev>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Christian Heusel <christian@heusel.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kbuild: control extra pacman packages with
- PACMAN_EXTRAPACKAGES
-Message-ID: <66ef2ce9-5e7d-48fd-abeb-96e463d575ad@t-8ch.de>
-References: <20240807022718.24838-2-jose.fernandez@linux.dev>
- <CAK7LNAS4t_naRxdxFTaj9zrdf2Hjjoaq+cBO4Gx7=PhCJk9+4w@mail.gmail.com>
- <f65f1d49-8c6f-45e9-a4b2-30d4cfff10b1@t-8ch.de>
- <CAK7LNATuA4O3xVLcp5Lywr4njaUneKOJwPHZa11YQe63KXQpMA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ibwnqDZxLwjhJtLTZkF79SFqBTrkE3zhGvXMAL/fAUWuZUnpUs5Di4jir8WZi9V9ALOWkLZN8CTUuLkhhvzApKMUdldjmQg4fA2mvCzf461xhqIJdcvaCsmHmJaFs2Q+/FuaKINb47ACvmrUaTuYq0VaSKMmXdMvPg0AuoA+K8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ujdgo5zX; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723051944; x=1754587944;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1sYHixPrcIYTFR1PPKPLG9fQCGuPqk/uaaGBNPfk0QQ=;
+  b=Ujdgo5zXlpkN2HTb+1PB7AppgqEWfUg8X3iFbsVgYC8kvTzx0P77yFX+
+   kJBtkZQaLzjwgwXiXMlU0Dj8NiMQ6urf/1DzK8x15Dhaq79ZhCrcHEgJ6
+   IjTtj5lNECSgcqWZDjgRNRjPk2SFpSdFPf0TzcSqQVj4JqGXuuiwJG8kC
+   TFv5eEzQj7qUJ6v6HaPe7b7CU9YeDNfQeoRaBekcap09FJE6OMJM3+T0K
+   5U79rwNGmx5iPbusvRqA1GgitUe/tRoMLMuhcLlezcoklguRm71XWL0uy
+   +yo476X4ysA+MhpmYqaIvqCCVXo9w5+Rq8x84X+hO5WY6VuyyTTDkFW7+
+   A==;
+X-CSE-ConnectionGUID: T2Q6OzA0QeaG4FAsjYi4jA==
+X-CSE-MsgGUID: 5PeEN110RYOSk3yVfgzkvA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="12905614"
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="12905614"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 10:32:23 -0700
+X-CSE-ConnectionGUID: tPmdtRHERJuo17M6CtE6Ag==
+X-CSE-MsgGUID: hVo4n/qdRL2sVKCQf+RyLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="94500080"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 07 Aug 2024 10:32:19 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sbkWH-0005bQ-0H;
+	Wed, 07 Aug 2024 17:32:17 +0000
+Date: Thu, 8 Aug 2024 01:31:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Menglong Dong <menglong8.dong@gmail.com>, peterz@infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	Menglong Dong <dongml2@chinatelecom.cn>,
+	Bin Lai <laib2@chinatelecom.cn>
+Subject: Re: [PATCH next] sched: make printk safe when rq lock is held
+Message-ID: <202408080114.hpttUZjC-lkp@intel.com>
+References: <20240806074131.36007-1-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNATuA4O3xVLcp5Lywr4njaUneKOJwPHZa11YQe63KXQpMA@mail.gmail.com>
+In-Reply-To: <20240806074131.36007-1-dongml2@chinatelecom.cn>
 
-On 2024-08-08 02:02:59+0000, Masahiro Yamada wrote:
-> On Thu, Aug 8, 2024 at 1:41 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > On 2024-08-07 22:37:47+0000, Masahiro Yamada wrote:
-> > > On Wed, Aug 7, 2024 at 11:28 AM Jose Fernandez <jose.fernandez@linux.dev> wrote:
+Hi Menglong,
 
-<snip>
+kernel test robot noticed the following build errors:
 
-> > > Lastly, I will never accept new error messages
-> > > with CONFIG_MODULES=n.
-> >
-> > Could you elaborate?
-> > For me this works fine with CONFIG_MODULES=n.
-> > (After having fixed the above issues so all subpackages are built)
-> 
-> $ make  allnoconfig pacman-pkg
-> 
-> Check the linux-headers log closely.
- 
-I see now, previously I was not on kbuild/for-next and had an old
-Module.symvers sitting around, hiding the issue.
+[auto build test ERROR on next-20240806]
 
-==> Starting package_linux-upstream-headers()...
-Installing build files...
-tar: Module.symvers: Cannot stat: No such file or directory
-tar: Exiting with failure status due to previous errors
-Installing System.map and config...
-Adding symlink...
-==> Tidying install...
+url:    https://github.com/intel-lab-lkp/linux/commits/Menglong-Dong/sched-make-printk-safe-when-rq-lock-is-held/20240806-155153
+base:   next-20240806
+patch link:    https://lore.kernel.org/r/20240806074131.36007-1-dongml2%40chinatelecom.cn
+patch subject: [PATCH next] sched: make printk safe when rq lock is held
+config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240808/202408080114.hpttUZjC-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240808/202408080114.hpttUZjC-lkp@intel.com/reproduce)
 
-(coming from scripts/package/install-extmod-build)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408080114.hpttUZjC-lkp@intel.com/
 
-linux-upstream-headers also contains .config and System.map which are
-useful without modules.
-So either we completely disable linux-upstream-headers or skip
-install-extmod-build when CONFIG_MODULES=n.
-And maybe move System.map and .config to some other package,
-which would then deviate from the original PKGBUILD.
+All errors (new ones prefixed by >>):
 
-Neither option feels great, but it probably won't make a big difference.
-If you have a preference, let's go with that.
+   In file included from kernel/sched/core.c:88:
+   kernel/sched/sched.h: In function 'rq_pin_lock':
+>> kernel/sched/sched.h:1705:9: error: implicit declaration of function '__printk_safe_enter'; did you mean '__printk_deferred_enter'? [-Wimplicit-function-declaration]
+    1705 |         __printk_safe_enter();
+         |         ^~~~~~~~~~~~~~~~~~~
+         |         __printk_deferred_enter
+   kernel/sched/sched.h: In function 'rq_unpin_lock':
+>> kernel/sched/sched.h:1722:9: error: implicit declaration of function '__printk_safe_exit'; did you mean '__printk_ratelimit'? [-Wimplicit-function-declaration]
+    1722 |         __printk_safe_exit();
+         |         ^~~~~~~~~~~~~~~~~~
+         |         __printk_ratelimit
 
 
-Thomas
+vim +1705 kernel/sched/sched.h
+
+  1690	
+  1691	/*
+  1692	 * Lockdep annotation that avoids accidental unlocks; it's like a
+  1693	 * sticky/continuous lockdep_assert_held().
+  1694	 *
+  1695	 * This avoids code that has access to 'struct rq *rq' (basically everything in
+  1696	 * the scheduler) from accidentally unlocking the rq if they do not also have a
+  1697	 * copy of the (on-stack) 'struct rq_flags rf'.
+  1698	 *
+  1699	 * Also see Documentation/locking/lockdep-design.rst.
+  1700	 */
+  1701	static inline void rq_pin_lock(struct rq *rq, struct rq_flags *rf)
+  1702	{
+  1703		rf->cookie = lockdep_pin_lock(__rq_lockp(rq));
+  1704	
+> 1705		__printk_safe_enter();
+  1706	#ifdef CONFIG_SCHED_DEBUG
+  1707		rq->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
+  1708		rf->clock_update_flags = 0;
+  1709	# ifdef CONFIG_SMP
+  1710		SCHED_WARN_ON(rq->balance_callback && rq->balance_callback != &balance_push_callback);
+  1711	# endif
+  1712	#endif
+  1713	}
+  1714	
+  1715	static inline void rq_unpin_lock(struct rq *rq, struct rq_flags *rf)
+  1716	{
+  1717	#ifdef CONFIG_SCHED_DEBUG
+  1718		if (rq->clock_update_flags > RQCF_ACT_SKIP)
+  1719			rf->clock_update_flags = RQCF_UPDATED;
+  1720	#endif
+  1721	
+> 1722		__printk_safe_exit();
+  1723		lockdep_unpin_lock(__rq_lockp(rq), rf->cookie);
+  1724	}
+  1725	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
