@@ -1,220 +1,106 @@
-Return-Path: <linux-kernel+bounces-277919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E3094A824
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:57:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFAAC94A827
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 598C41F22579
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:57:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FFA1B23AC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006651E6730;
-	Wed,  7 Aug 2024 12:57:41 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7F51E6757;
+	Wed,  7 Aug 2024 12:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LBRvgArY"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005D11E3CBE;
-	Wed,  7 Aug 2024 12:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3648F1E6746
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 12:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723035460; cv=none; b=OwqR6uaErj3g3MSTntUglbMWiJ5rD926WBpHZGfSZCSQSocuA/dlXlJCPdY+ZEoMKKqkBXPDQFXTJqdSqRukKrmU3KMi8VvPYsHWg3EfWgJfEtQD1W+AaqsIr5CdHMNY9oxUUKgP/tRUwL9fLjAFfxIDIcSROucY5ragxfImKpc=
+	t=1723035474; cv=none; b=YKyKwqFZDdWPHQum8u/IqODOnG6PTPEcyyGegpzLZ5AmhY4zRa48eLdtq11Tz8nZP8G/JeHopxwh0IDVcJoF14AU7VARdr3ftor+HDRLw5uiztEteLQ5nJrhOtRqQBYumUy0qeA2L30pj07OVXSPL04fNf3Gn9h1xddekJ7MO8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723035460; c=relaxed/simple;
-	bh=Rxq0DBkB+xoXm/qVxDT5AhEtVPkMEZuS6YL0SxnWQBg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HXocguiGpmujrFxQwORNXrgNFdulVMXYOWlc3IKRf/MBegvoidS7Bpd18Xm5Bm/SzjFsuHwgZonrgqORFIKpbh8C/evYlU/2Ou5HT9zbXJOoLDdjRRMtdhj8xsQt6mblIWwGWhiTNzu2Y/HrSG/G6AntUz+KCul22gho2OcZo4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wf99q2dX9z6K7Cp;
-	Wed,  7 Aug 2024 20:54:39 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 41B9A1402C6;
-	Wed,  7 Aug 2024 20:57:33 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 7 Aug
- 2024 13:57:32 +0100
-Date: Wed, 7 Aug 2024 13:57:31 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Denis Benato <benato.denis96@gmail.com>
-CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-	Jagath Jog J <jagathjog1996@gmail.com>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, "Luke D . Jones" <luke@ljones.dev>, Jonathan
- LoBue <jlobue10@gmail.com>
-Subject: Re: [PATCH v2 2/2] iio: bmi323: suspend and resume triggering on
- relevant pm operations
-Message-ID: <20240807135731.0000320f@Huawei.com>
-In-Reply-To: <b7e91e68-9f5f-4dd0-aa96-e57983e4a56d@gmail.com>
-References: <20240727123034.5541-1-benato.denis96@gmail.com>
-	<20240727123034.5541-3-benato.denis96@gmail.com>
-	<20240803164428.50fdd15c@jic23-huawei>
-	<b7e91e68-9f5f-4dd0-aa96-e57983e4a56d@gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1723035474; c=relaxed/simple;
+	bh=/P12avlELoAnmeKYyR7lb8YFhV1itf6ofxKiFjh29iE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gb56q0xzpuaTRSTWZ7j/rFCeAwlMK25iKxZXmT2oAol65/TbtM3PeRkDWs4eCZ41YLvvtQKM8afQ5PHyVi6KhYm5f4gLjyEPs/M03rAJEQi7jsu97L+3mktSA3MIRgJiYv6svseTyZaU0dGUgNIl+zpcbAD0DOAbzrtQtrsmNVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LBRvgArY; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3685b9c8998so1000713f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 05:57:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723035470; x=1723640270; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=upBTovYLTSLt9PmBzvvo1SLOl10UeXbfEGJHZrAuBGk=;
+        b=LBRvgArY1LcT/818gMwkkzgIA6A/CmeSJwVc5c3JgFa/oaHXTQAvxr/R1AYRszCvZ3
+         EREPGDR51f6IWbgthBTafuc0DYAw5WrDZomFES3l9NSfG8GMwzDw3/P/J+Z5jsvYwYQX
+         El30mK0wo3qzrbetUyq3EDZQcqvhnai3I5qUwcWK4EzeWQ0K1Avylown/XodS09kE8I3
+         tBDQHLEmehNU26fGvte8lu+FNHrfMSrc8HAv12XM4sBMh6ztT1wzWWEx4Z7xenV9UV6b
+         Z3YtkVy/7Qscp3UqrzBgzOoPCx9laczovqOvwXD1qwG7LOdFm6rYTgeMHgjlGJOmDxJU
+         zykg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723035470; x=1723640270;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=upBTovYLTSLt9PmBzvvo1SLOl10UeXbfEGJHZrAuBGk=;
+        b=RhbuiU/M2gzv3XsX9j7TZt2M1CUzFsLEXfjGP84YPJLTVFadF30kGSFVgnnYoZRz87
+         mRYpxjNuxapqDCxCaLaXkGTJ3b+RrfZI+yOzy9h9QmBxzyAyzyUM1G9gvmMgdm+jdcZQ
+         Rl4Fw3jF4xoShWbJDWeBZoCXdolTckQUp3c9i2+/z9/PQ1hWUmNEiCCrqFwIPNzSfnQl
+         kMs5PnpVwMEVpspq/RzHu/IR84BWgbMG5pF4r9PmSsEK169I0RVpsYm0fDLBLLpyDPBO
+         wIOYIT4NsEtLrRR0ik4ojD7KUdIepGdgrTeZ8heHR7/Rbno+4XUhaPiA9XfTwWlqDHzp
+         0h1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWtCcybi3dGRx2z4S1e5eK47ptou05FiSF/jevXYTtvIPnMdOEtPn+gPpmmlBOhh5d7qIk3K+HaYaLRqy0grmI4Av4+GjxVvIc/UlFa
+X-Gm-Message-State: AOJu0YwndAxpuCN/QxKDVLxSZoyweX7KRyA2siBW+G5tHMrtz+EfoOgk
+	NmROo3oRNCAfN0rQKflJAqZdFHWeDU3jPBylAVmf3YsDhtv/Iv092/oX9D1EhQ4=
+X-Google-Smtp-Source: AGHT+IEXCPBxskdc7xhLEWtu0Cahqx5SyI1yo58U8XJgoPCwXbriMJ41jBv68bBujcy87mECBIFxog==
+X-Received: by 2002:a5d:5f85:0:b0:367:998a:87b3 with SMTP id ffacd0b85a97d-36bbc11bb33mr15758703f8f.28.1723035470377;
+        Wed, 07 Aug 2024 05:57:50 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbcf0cc8esm15818874f8f.19.2024.08.07.05.57.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 05:57:49 -0700 (PDT)
+Date: Wed, 7 Aug 2024 07:57:45 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: willy@infradead.org, srinivas.kandagatla@linaro.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] ida: Remove the ida_simple_xxx() API
+Message-ID: <01487902-4dcf-455e-9530-c04157aa8090@suswa.mountain>
+References: <cover.1722853349.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1722853349.git.christophe.jaillet@wanadoo.fr>
 
-On Sun, 4 Aug 2024 17:40:49 +0200
-Denis Benato <benato.denis96@gmail.com> wrote:
-
-> On 03/08/24 17:44, Jonathan Cameron wrote:
-> > On Sat, 27 Jul 2024 14:30:34 +0200
-> > Denis Benato <benato.denis96@gmail.com> wrote:
-> >   
-> >> Prevent triggers from stop working after the device has entered sleep:
-> >> use iio_device_suspend_triggering and iio_device_resume_triggering helpers.  
-> > 
-> > Hi Denis,
-> >   
-> Hello Jonathan,
-> > I'd got it into my head this was about main suspend / resume, but
-> > it's runtime PM. I assume the s2idle uses only that level which is
-> > interesting.
-> >   
-> I have catched the problem with s2idle, but I don-t fully understand
-> it will manifest outside of said scenario, nor if it will at all and
-> only s2idle is affected.
+On Mon, Aug 05, 2024 at 12:29:46PM +0200, Christophe JAILLET wrote:
+> This is the final steps to remove the ida_simple_xxx() API.
 > 
-> > Anyhow, solution seems safe. We might be able to do something nicer
-> > in the long run as potentially we could have the trigger driver
-> > notified when all consumers have entered this state at which point it
-> > could stop generating triggers at all.
-> > Totally agree.
-> > Anyhow, that's a job for when we actually care about it.
-> > 
-> > Applied to the togreg branch of iio.git and pushed out as testing
-> > for 0-day to poke at it.
-> >   
-> I have made a mistake while cleaning up patch 1/2 for submission and lost a piece:
-> the pollfunc->irq=0 you suggested in your first mail.
+> Patch 1 updates the test suite. This is the last users of the API.
 > 
-> I would be more than happy to provide a v3, but if you prefer I can also send
-> a separate patch.
-Send a v3. I'll try and remember to drop the v2 before sending a pull request
-upstream.
-
+> Patch 2 removes the old API.
 > 
-> I am sorry about that and I would like guidance on what to do in cases like this.
-
-Not a problem, we all do stuff like this from time to time!
-
-> > For now I'm not keen to see this pushed into drivers where we don't
-> > know if anyone is running into this particular situation.  We can
-> > reevaluate that if we start getting lots of reports of this.
-> >   
-> I catched the issue while developing an application for a handheld PC.
+> Patch 3 is just a minor clean-up that still speak about the old API.
 > 
-> As the application will target these kind of devices we can apply the fix
-> to every relevant driver (bmi260 comes to mind) and have that well-tested
-> on multiple drivers.
+> Christophe JAILLET (3):
+>   idr test suite: Remove usage of the deprecated ida_simple_xx() API
+>   ida: Remove the ida_simple_xxx() API
+>   nvmem: Update a comment related to struct nvmem_config
 
-Ok. Let's see how it goes with a few drivers.
+Congrats.  :)
 
-Jonathan
-
-> > I'm also not going to rush this in as a fix. We can consider backporting
-> > it once it's been in mainline for a bit and no side effects have
-> > shown up.
-> > 
-> > Thanks,
-> > 
-> > Jonathan
-> >   
-> Thanks,
-> 
-> Denis
-> >>
-> >> Signed-off-by: Denis Benato <benato.denis96@gmail.com>
-> >> ---
-> >>  drivers/iio/imu/bmi323/bmi323.h      |  1 +
-> >>  drivers/iio/imu/bmi323/bmi323_core.c | 23 +++++++++++++++++++++++
-> >>  drivers/iio/imu/bmi323/bmi323_i2c.c  |  1 +
-> >>  drivers/iio/imu/bmi323/bmi323_spi.c  |  1 +
-> >>  4 files changed, 26 insertions(+)
-> >>
-> >> diff --git a/drivers/iio/imu/bmi323/bmi323.h b/drivers/iio/imu/bmi323/bmi323.h
-> >> index dff126d41658..209bccb1f335 100644
-> >> --- a/drivers/iio/imu/bmi323/bmi323.h
-> >> +++ b/drivers/iio/imu/bmi323/bmi323.h
-> >> @@ -205,5 +205,6 @@
-> >>  struct device;
-> >>  int bmi323_core_probe(struct device *dev);
-> >>  extern const struct regmap_config bmi323_regmap_config;
-> >> +extern const struct dev_pm_ops bmi323_core_pm_ops;
-> >>  
-> >>  #endif
-> >> diff --git a/drivers/iio/imu/bmi323/bmi323_core.c b/drivers/iio/imu/bmi323/bmi323_core.c
-> >> index d708d1fe3e42..4b2b211a3e88 100644
-> >> --- a/drivers/iio/imu/bmi323/bmi323_core.c
-> >> +++ b/drivers/iio/imu/bmi323/bmi323_core.c
-> >> @@ -2121,6 +2121,29 @@ int bmi323_core_probe(struct device *dev)
-> >>  }
-> >>  EXPORT_SYMBOL_NS_GPL(bmi323_core_probe, IIO_BMI323);
-> >>  
-> >> +#if defined(CONFIG_PM)
-> >> +static int bmi323_core_runtime_suspend(struct device *dev)
-> >> +{
-> >> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> >> +
-> >> +	return iio_device_suspend_triggering(indio_dev);
-> >> +}
-> >> +
-> >> +static int bmi323_core_runtime_resume(struct device *dev)
-> >> +{
-> >> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> >> +
-> >> +	return iio_device_resume_triggering(indio_dev);
-> >> +}
-> >> +
-> >> +#endif
-> >> +
-> >> +const struct dev_pm_ops bmi323_core_pm_ops = {
-> >> +	SET_RUNTIME_PM_OPS(bmi323_core_runtime_suspend,
-> >> +			   bmi323_core_runtime_resume, NULL)
-> >> +};
-> >> +EXPORT_SYMBOL_NS_GPL(bmi323_core_pm_ops, IIO_BMI323);
-> >> +
-> >>  MODULE_DESCRIPTION("Bosch BMI323 IMU driver");
-> >>  MODULE_AUTHOR("Jagath Jog J <jagathjog1996@gmail.com>");
-> >>  MODULE_LICENSE("GPL");
-> >> diff --git a/drivers/iio/imu/bmi323/bmi323_i2c.c b/drivers/iio/imu/bmi323/bmi323_i2c.c
-> >> index 52140bf05765..057342f4f816 100644
-> >> --- a/drivers/iio/imu/bmi323/bmi323_i2c.c
-> >> +++ b/drivers/iio/imu/bmi323/bmi323_i2c.c
-> >> @@ -128,6 +128,7 @@ MODULE_DEVICE_TABLE(of, bmi323_of_i2c_match);
-> >>  static struct i2c_driver bmi323_i2c_driver = {
-> >>  	.driver = {
-> >>  		.name = "bmi323",
-> >> +		.pm = pm_ptr(&bmi323_core_pm_ops),
-> >>  		.of_match_table = bmi323_of_i2c_match,
-> >>  		.acpi_match_table = bmi323_acpi_match,
-> >>  	},
-> >> diff --git a/drivers/iio/imu/bmi323/bmi323_spi.c b/drivers/iio/imu/bmi323/bmi323_spi.c
-> >> index 7b1e8127d0dd..487d4ee05246 100644
-> >> --- a/drivers/iio/imu/bmi323/bmi323_spi.c
-> >> +++ b/drivers/iio/imu/bmi323/bmi323_spi.c
-> >> @@ -79,6 +79,7 @@ MODULE_DEVICE_TABLE(of, bmi323_of_spi_match);
-> >>  static struct spi_driver bmi323_spi_driver = {
-> >>  	.driver = {
-> >>  		.name = "bmi323",
-> >> +		.pm = pm_ptr(&bmi323_core_pm_ops),
-> >>  		.of_match_table = bmi323_of_spi_match,
-> >>  	},
-> >>  	.probe = bmi323_spi_probe,  
-> >   
-> 
-> 
+regards,
+dan carpenter
 
 
