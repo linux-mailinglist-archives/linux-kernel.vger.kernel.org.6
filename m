@@ -1,257 +1,203 @@
-Return-Path: <linux-kernel+bounces-278033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB54B94A9C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:16:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E31994A9C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90305287294
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:16:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 909C21C22DF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA126F30E;
-	Wed,  7 Aug 2024 14:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C882774429;
+	Wed,  7 Aug 2024 14:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G6I8OVsM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MmvVK08r"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B245914C
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2F86A8DB
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723040146; cv=none; b=ATHZPLol4TLv1GoZkWH1i9OfTR2vWXVaPuTDR9/QkDqce5ji542enZ4ta4bkvGO2v23Fy8ReFGmL/LqgkLe1qc0upq3SkyYJfjT+kEpvyX0ApQahDPWOgU0WAfnL1xjF5U1LRQ9WqiwyfzJJTxWxuq/3msvHmGd4u0M+2texEDY=
+	t=1723040156; cv=none; b=oWXT/SnGvrWKBjZbxW0QcMz3k55cc/oBR0pG70FKFviavFSn8E5TGfnx43wTcC6Xk62ToWDBBTdMRs3thY+6p61SSU8ITTjSg1zqKICcFpw01ziD/PlUmgN+sxd2Yglb1VMd4feHFJyjLnlUgacc2WZy0gQ+EXaAFZTzQsSzOwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723040146; c=relaxed/simple;
-	bh=Y119Zw7CfM+Jhwm2HRhsivRhO0B3gCDeh660Fa0xanQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Gq1LPtNkkQV43srOSi2Rv+ap5iB3jiuc2vz5c/mAumzPuVmLx6wTIqBsqg0apvpaIrUe4Qa7y41bzJy0+kPqEntJFCjQ02dDq5tcxvRPItd7LCI9oHg28iNYHxjVmB+mAj0e07AncqNpswwd8akmBlRNjqx1Oj1paehhpsilPA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G6I8OVsM; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723040144; x=1754576144;
-  h=date:from:to:cc:subject:message-id;
-  bh=Y119Zw7CfM+Jhwm2HRhsivRhO0B3gCDeh660Fa0xanQ=;
-  b=G6I8OVsMf4S6rmu/DaEithYqVbt5x5G2MysljlKys9xrQ9jxyN6/D7nC
-   JCMq+sSEEVydnon+pIGG5zITq9DqK031lTIzCGCkxF3cweOA6gAA2NOiO
-   KrNJGaiYlGM3Mhg+W8jglTezRRjI3aPPdHIJwLqJZ+Dpg+Gyw1HjGYR79
-   B8O1GmdJX/OGXe8TrY2aOAf4d55hy88VaD/3nceXD3m31TvWCtSHXvBV7
-   krIQHq8sD9qSoRQxalBMvyQQYSiWLyNKjbqJGQY5ozX9tNCyHzAXGEONg
-   hLCYWYdzTCFtqh+UORdCh5R8YMWWPKjZjoXqLpVFFePDgVuYOGHVOxNwN
-   A==;
-X-CSE-ConnectionGUID: 3Tt2zR0AT2Wvu50usYxSzQ==
-X-CSE-MsgGUID: wCfWEfzFSiSreo5FVu0+fw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="43633916"
-X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
-   d="scan'208";a="43633916"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 07:15:43 -0700
-X-CSE-ConnectionGUID: jewG/+A4TGC7jMrlJzUPow==
-X-CSE-MsgGUID: Ic1pyOeMRwCjnew024BH9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
-   d="scan'208";a="57084590"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 07 Aug 2024 07:15:41 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sbhRm-0005RT-1J;
-	Wed, 07 Aug 2024 14:15:27 +0000
-Date: Wed, 07 Aug 2024 22:14:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:dev.2024.08.05a] BUILD SUCCESS
- a8d56c8698d39983ac6c92a15549d1abe94ac520
-Message-ID: <202408072233.l4Zlx079-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1723040156; c=relaxed/simple;
+	bh=6ddTzYAj9rsPHx1C292ov1Tuj2jOdzex9L9hVeTedyg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VZGxS/aG9SyT3YXx9o84BcGChSRNzpFLFdD78xP36Wovx6e+KBYiRjCDxgxIeJqEoiFVYNr3fCUfyMEWnsM6gLZrxXWKamma+ysY18KmOWWBYkCINSXGm57PeEBKm9Oxa6bXoza+sTBcgvPnQowGrAnnbGarKzpRe3HdndAFqaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MmvVK08r; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5b9fe5ea355so33213a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 07:15:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723040152; x=1723644952; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6ddTzYAj9rsPHx1C292ov1Tuj2jOdzex9L9hVeTedyg=;
+        b=MmvVK08rKDQDjTfxCdVxppKUnRpMpGglIwApkhs9i4+e21tVfvvMSXV3pbEejQsm5v
+         KnmVxTW4TCzC/D/Ih8Vvyt5hFXXQBAgDCiBoS/QFy5XYv1OuE0aWR/J2iGO4MGhu6OEU
+         kFMlHUL0DWI50DHcgnrxrWN1UmNOfYHOXhhQz4P4mnrfTiMiuB8DwauEKlooy7K6VELQ
+         kWNXSPp3jCM1HGvK2igEAe5vAjxNst9FrHj2CEqXb6eduT4vvb5cWQMWET3+SEnXLqKQ
+         FDg6cd83hiwGWnHE8V5wQmJ7yrP/e3Q3wJK1P726UoB+PXQvpJ7pKjAm2QQ0ne8CI2ZH
+         G3Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723040152; x=1723644952;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6ddTzYAj9rsPHx1C292ov1Tuj2jOdzex9L9hVeTedyg=;
+        b=TqkzinTddqCBHekniikDQEDI7gi0hLLLAlsBQhDhGvNso1W+l6Tq4jCv//wahbUdvC
+         M7NKFMI713cV97A5pwwy22zp06iHIFFJpFUIpRa6ZQ5MYL80+Aa2uFn9ugdGIdjov+7Y
+         E0LGzg2A8LOPthNba0Xo6HjjqljzmhozOhIh6NEDQib39oLbKByCBIIL/eekToPnRazU
+         8UMDz8AAflrvwYRPhncBJzGH+zqOtJw8MdqCjklnAE7bgwNV/IIFNFVcWSc3PtBxUjkt
+         con9OciFTrH0IkL7GNWLA9XQ7vxmVvbv3IcLt+fyAnSaGvSNgCNKKqC0TusviNnhIOLL
+         DYUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXZgoEFOU8/9JeUFpM33i2QWK9IL0rgiv57cxIHs0MP+Y2dbaV8XPQsrgarrbISRZkE9OtpJYihz9Ff66YB/VSaVYnBe5wDRDKY/dh
+X-Gm-Message-State: AOJu0Yx7ngVM7s8teEhgk/ykVz11VtWvuBwikFJfPCu2K6n+cLg3Z9kF
+	GJwgQdOnom0RXW/6s+9D4etcKncDuZrUZJwBnO+RpZONLvndKfF3SM0cK/kNiBhWcef1HUImk8A
+	PiZh+maaRUtUs87WnBTjv+QImfHfuKjvL61gd
+X-Google-Smtp-Source: AGHT+IFZEI+BQjciQFiwSscSHRSoqwvmbsc3l1lva3qfpczM4gs08GmAUgqx0PNk8BMs04bD3Or5J7uxxQe4NEClYSk=
+X-Received: by 2002:a05:6402:27c7:b0:5b4:df4a:48bb with SMTP id
+ 4fb4d7f45d1cf-5bba25bf4fdmr195347a12.0.1723040152143; Wed, 07 Aug 2024
+ 07:15:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240806212808.1885309-1-pedro.falcato@gmail.com>
+ <CALmYWFuN5SxCrkFfgeP_uFThz-a=+VExjy2eqn5tQZSyaCjswg@mail.gmail.com>
+ <CAKbZUD1BGV5PMwtGwN1kLHTa6=bfEztrcBW7onzSgxwAAgTjXQ@mail.gmail.com>
+ <CALmYWFvyOCbn=ug77ma95ypjXnkV0tzStHWTz1mjpS+iKqK8ww@mail.gmail.com> <CAKbZUD0ABKRuKUcBM+LWUwcDBc1eo61hHuP1xTk5Z8bUL8=qzQ@mail.gmail.com>
+In-Reply-To: <CAKbZUD0ABKRuKUcBM+LWUwcDBc1eo61hHuP1xTk5Z8bUL8=qzQ@mail.gmail.com>
+From: Jeff Xu <jeffxu@google.com>
+Date: Wed, 7 Aug 2024 07:15:14 -0700
+Message-ID: <CALmYWFub6CZ45N_u=X91czq7fGkSK_5dtK3bgjUfQsGopSCqSg@mail.gmail.com>
+Subject: Re: [PATCH 0/7] mm: Optimize mseal checks
+To: Pedro Falcato <pedro.falcato@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, oliver.sang@intel.com, 
+	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://github.com/paulmckrcu/linux dev.2024.08.05a
-branch HEAD: a8d56c8698d39983ac6c92a15549d1abe94ac520  refscale: Constify struct ref_scale_ops
+On Wed, Aug 7, 2024 at 5:57=E2=80=AFAM Pedro Falcato <pedro.falcato@gmail.c=
+om> wrote:
+>
+> On Wed, Aug 7, 2024 at 2:40=E2=80=AFAM Jeff Xu <jeffxu@google.com> wrote:
+> >
+> > On Tue, Aug 6, 2024 at 5:49=E2=80=AFPM Pedro Falcato <pedro.falcato@gma=
+il.com> wrote:
+> > >
+> > > On Tue, Aug 6, 2024 at 11:25=E2=80=AFPM Jeff Xu <jeffxu@google.com> w=
+rote:
+> > > >
+> > > > On Tue, Aug 6, 2024 at 2:28=E2=80=AFPM Pedro Falcato <pedro.falcato=
+@gmail.com> wrote:
+> > > > >
+> > > > > Optimize mseal checks by removing the separate can_modify_mm() st=
+ep, and
+> > > > > just doing checks on the individual vmas, when various operations=
+ are
+> > > > > themselves iterating through the tree. This provides a nice speed=
+up.
+> > > > >
+> > > > > While I was at it, I found that is_madv_discard() was completely =
+bogus.
+> > > > >
+> > > > Thanks for catching this!
+> > > > Is it possible to separate this fix out from this series and send i=
+t
+> > > > separately and merge first ?
+> > >
+> > > Sure. This series is definitely too risky to catch this release, so
+> > > sending it out as a fix (tomorrow, it's late here) sounds ok.
+> > >
+> > Do you mind if I send out a fix ? (I will also include a test case to
+> > cover that )
+>
+> No need, I'll handle it before the end of the day.
+>
+> >
+> > > >
+> > > > > Note that my series ignores arch_unmap(), which seems to generall=
+y be what we're trending towards[2]. It should
+> > > > > be applied on top of any powerpc vdso ->close patch to avoid regr=
+essions on the PPC architecture. No other
+> > > > > architecture seems to use arch_unmap.
+> > > > >
+> > > > > Note2: This series does not pass all mseal_tests on my end (test_=
+seal_mremap_move_dontunmap_anyaddr fails twice). But the
+> > > > > top of Linus's tree does not pass these for me either (neither do=
+es my Arch Linux 6.10.2 kernel),
+> > > > > for some reason (mremap regression?).
+> > > > >
+> > > > I just sync to Linus's main and I was able to run the test (except =
+two
+> > > > pkeys related test are skipped because I m on VM)
+> > >
+> > > Okay. Fun bug.
+> > >
+> > > I was really confused as to why no one could repro this except me :)
+> > >
+> > > It looks like recently[1] glibc started consuming the new_address
+> > > variadic argument when MREMAP_DONTUNMAP. As to the why,
+> > > MREMAP_DONTUNMAP also seems to take new_address as a hint (this is no=
+t
+> > > documented in the man page, and strace also doesn't know this).
+> > > However, this trips up some checks that were always fine before
+> > > (because glibc always passed NULL, and musl still does):
+> > >
+> > > if (offset_in_page(new_addr))
+> > > if (new_len > TASK_SIZE || new_addr > TASK_SIZE - new_len)
+> > > if (addr + old_len > new_addr && new_addr + new_len > addr)
+> > >
+> > > ^^ These all look at the address without looking at MREMAP_FIXED, and
+> > > return -EINVAL if they fail.
+> > >
+> > > So, test_seal_mremap_move_dontunmap_anyaddr passes 0xdeadbeef For Som=
+e
+> > > Reason (why are you testing mremap in mseal_test.c??), it trips up
+> > > offset_in_page(new_addr) in mremap_to, and we crash and burn.
+> > >
+> > > As to why no one else could repro this: I guess you're not running a
+> > > glibc new enough ;)
+> > >
+> > That makes sense, mystery resolved.
+> >
+> > I added sys_ functions for mmap/munmap/mprotect, etc, so that the test
+> > does not depend on libc, but I didn't do that for mremap, I think the
+> > fix will be to add sys_mremap as well.
+>
+> I disagree, I don't understand why you're doing this test.
+The test is for testing the return error code should be EPERM in case
+of sealing.
 
-elapsed time: 756m
+> And even if
+> you are rightfully doing the test, the test is wrong (and
+> mremap_dontunmap.c tests agree, and always pass 0 as new_address).
+the new_address don't need to be 0.
+E.g.
+mremap(ptr, size, size, MREMAP_MAYMOVE | MREMAP_DONTUNMAP, 0xdead0000);
+Will success and relocate memory to 0xdead0000
 
-configs tested: 165
-configs skipped: 7
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> The manpage needs to be updated to reflect this, and this test either
+> needs the 0xdeadbeef removed, or the whole thing.
+>
+> Adding a sys_mremap wrapper is inconsequential here, because you'll
+> need to decide whether to pick up new_address from the flags argument
+> and, if you do, it'll fail with the same error, but for everyone.
+>
+I will send a patch and you can try on your sys (since I don't have
+the new glibc installed)
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                         haps_hs_defconfig   gcc-13.2.0
-arc                        nsim_700_defconfig   gcc-13.2.0
-arc                   randconfig-001-20240807   gcc-13.2.0
-arc                   randconfig-002-20240807   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   clang-20
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-14.1.0
-arm                                 defconfig   gcc-13.2.0
-arm                           h3600_defconfig   gcc-13.2.0
-arm                         lpc18xx_defconfig   gcc-13.2.0
-arm                          pxa910_defconfig   gcc-13.2.0
-arm                   randconfig-001-20240807   gcc-13.2.0
-arm                   randconfig-002-20240807   gcc-13.2.0
-arm                   randconfig-003-20240807   gcc-13.2.0
-arm                   randconfig-004-20240807   gcc-13.2.0
-arm                           sama7_defconfig   gcc-13.2.0
-arm                           sunxi_defconfig   gcc-13.2.0
-arm64                            allmodconfig   clang-20
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240807   gcc-13.2.0
-arm64                 randconfig-002-20240807   gcc-13.2.0
-arm64                 randconfig-003-20240807   gcc-13.2.0
-arm64                 randconfig-004-20240807   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240807   gcc-13.2.0
-csky                  randconfig-002-20240807   gcc-13.2.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   clang-20
-hexagon                          allyesconfig   clang-20
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-12
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-12
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-12
-i386         buildonly-randconfig-001-20240807   clang-18
-i386         buildonly-randconfig-002-20240807   clang-18
-i386         buildonly-randconfig-003-20240807   clang-18
-i386         buildonly-randconfig-003-20240807   gcc-12
-i386         buildonly-randconfig-004-20240807   clang-18
-i386         buildonly-randconfig-005-20240807   clang-18
-i386         buildonly-randconfig-006-20240807   clang-18
-i386         buildonly-randconfig-006-20240807   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240807   clang-18
-i386                  randconfig-001-20240807   gcc-12
-i386                  randconfig-002-20240807   clang-18
-i386                  randconfig-003-20240807   clang-18
-i386                  randconfig-004-20240807   clang-18
-i386                  randconfig-005-20240807   clang-18
-i386                  randconfig-006-20240807   clang-18
-i386                  randconfig-011-20240807   clang-18
-i386                  randconfig-012-20240807   clang-18
-i386                  randconfig-013-20240807   clang-18
-i386                  randconfig-014-20240807   clang-18
-i386                  randconfig-015-20240807   clang-18
-i386                  randconfig-016-20240807   clang-18
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240807   gcc-13.2.0
-loongarch             randconfig-002-20240807   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                          amiga_defconfig   gcc-13.2.0
-m68k                                defconfig   gcc-13.2.0
-m68k                        m5307c3_defconfig   gcc-13.2.0
-m68k                            mac_defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-14.1.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240807   gcc-13.2.0
-nios2                 randconfig-002-20240807   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240807   gcc-13.2.0
-parisc                randconfig-002-20240807   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                   currituck_defconfig   gcc-13.2.0
-powerpc                         ps3_defconfig   gcc-13.2.0
-powerpc               randconfig-001-20240807   gcc-13.2.0
-powerpc               randconfig-003-20240807   gcc-13.2.0
-powerpc64             randconfig-001-20240807   gcc-13.2.0
-powerpc64             randconfig-002-20240807   gcc-13.2.0
-powerpc64             randconfig-003-20240807   gcc-13.2.0
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-riscv                 randconfig-001-20240807   gcc-13.2.0
-riscv                 randconfig-002-20240807   gcc-13.2.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240807   gcc-13.2.0
-s390                  randconfig-002-20240807   gcc-13.2.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                    randconfig-001-20240807   gcc-13.2.0
-sh                    randconfig-002-20240807   gcc-13.2.0
-sh                           se7750_defconfig   gcc-13.2.0
-sh                          urquell_defconfig   gcc-13.2.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240807   gcc-13.2.0
-sparc64               randconfig-002-20240807   gcc-13.2.0
-um                               allmodconfig   clang-20
-um                               allmodconfig   gcc-13.3.0
-um                                allnoconfig   clang-17
-um                               allyesconfig   gcc-12
-um                               allyesconfig   gcc-13.3.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-13.2.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240807   gcc-13.2.0
-um                    randconfig-002-20240807   gcc-13.2.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-11
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                randconfig-001-20240807   gcc-13.2.0
-xtensa                randconfig-002-20240807   gcc-13.2.0
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> --
+> Pedro
 
