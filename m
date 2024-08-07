@@ -1,373 +1,132 @@
-Return-Path: <linux-kernel+bounces-277985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3385D94A910
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:53:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4DA94A914
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563731C2260D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:53:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CDCF1C225E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9193B200110;
-	Wed,  7 Aug 2024 13:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA121E4AF;
+	Wed,  7 Aug 2024 13:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="I333yx/J"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2081.outbound.protection.outlook.com [40.107.93.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="acwjPtsv"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A2D1E4AF
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 13:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723038778; cv=fail; b=XldghzuyPt7Hp6ktCMAwPtSH9roOGBADhgZh1v99h2zZIKsSPvhlEWe1ByJkqmfTJ9Ql6uREYKdbUoFfwQ2BOUSyVIIRecVrqbafyFbCy17WjmK+SRCjy8KI5GOkPV4NFdcApo9j7LGL47er4vupQrUfssw5LsG+U3bnsAo0TOA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723038778; c=relaxed/simple;
-	bh=U/aoHUxi7Z5TRMzbj2/JZXgfDwKhehXw3r+bBocvO2g=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=JJrFW0S1Du3SKbvQjHg1wTLt2g+vKOQH3RO2Ap1u/fF4d054wp3RjS+Y+kM+fH8SL3EsxbLSdTgp0C/94Wqgx+ruEDqYJ4n9G6pY4YqL6cB0gna2BiDyOXl6tQf7IRH+IjN015W1WJzB/nbIWLJ3+zPN9pC1gwf66JsphrW3If8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=I333yx/J; arc=fail smtp.client-ip=40.107.93.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ig5wfp8A57r+LZRs6s3wOrOaBqzGCncBDhJD8Kh1GnR+KPxhhl/rZX+2b/Y2MVq4dMEmG+2SANv+56GmTIS2xMzjWePgfFvykcpLqmjhYuwe8QiyX+Xe0jF13WXyxcFkAJUvvdClvmYevRBU7VAo6qbkDMoLE0hCtNaWk/lW/BmIMi5vyi1Je2CujB84xuQ5cQc8Uk/ynDfdFmbIixKNyKlY0bQgHhuEFhXBRj/FgXVG++JSeTNHFXCV8//DmDRMcUnFm44hJYXyqiIFfuMphngsbonHO2pMr4zmBkzTq21pxGlNvI6Ob7uTnAro9FXGEKpTJUmGjbPdO9n+hDYBEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YWWQFfZ3wEsrp5gqm2XGfXrjz8wMzTfIfE7fEFuJViQ=;
- b=ElQeksDrWVY+O9nrIPqfK2tCMJxD1+3dg08HguVIYQbyWAVT6nu9pFcSSXYCvSXLSVVoJBsoIv8o5zERUbFtpB8j0rXeFQsIrnCHzK2i8jhW2qzXqDqVmF1nagTFnCOVid7R4VhyOKfzp5q7/b4dpO5VntkKp0pVbbqvxfMEWdOYxL3t4Z/HEHoqsTTdRBES3VYJdG88MNHK3I5LCaO6QZaHtGfTgIxFTVZHSRuJTAD61lkEJmMqkf2+97up+JpuYC0K9A4mbvPWpzUdIPJT959UgmUTCmVyXdo8UndWJn7I+AsJZxPDsHbJ+3fcu/KwHMvLIGSf4G68fYanj6QM4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YWWQFfZ3wEsrp5gqm2XGfXrjz8wMzTfIfE7fEFuJViQ=;
- b=I333yx/JgBH1s3FpmNoHbnFFrVtYkAcnzfSIuP4XJ9V0z7b1Va9GhkdPSn8idFySGXxNwkTGphu2+JjUkA41OCJR4L+aczEzxSVPnOKP9KJvA2gEP7QDzTBHj7bTyIkW+ro5HT8CiNYZrOEPk8AYAxVCcUvZRQscfyHvCvRO+zQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5311.namprd12.prod.outlook.com (2603:10b6:5:39f::7) by
- SN7PR12MB7154.namprd12.prod.outlook.com (2603:10b6:806:2a5::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Wed, 7 Aug
- 2024 13:52:53 +0000
-Received: from DM4PR12MB5311.namprd12.prod.outlook.com
- ([fe80::a846:49eb:e660:1b5b]) by DM4PR12MB5311.namprd12.prod.outlook.com
- ([fe80::a846:49eb:e660:1b5b%3]) with mapi id 15.20.7849.008; Wed, 7 Aug 2024
- 13:52:53 +0000
-Message-ID: <dde7f328-3e38-48fb-83b6-f7daacf04b79@amd.com>
-Date: Wed, 7 Aug 2024 09:52:49 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] Revert "drm/amd/display: add panel_power_savings
- sysfs entry to eDP connectors"
-To: Mario Limonciello <superm1@kernel.org>,
- Sebastian Wick <sebastian.wick@redhat.com>, dri-devel@lists.freedesktop.org
-Cc: Sebastian Wick <sebastian@sebastianwick.net>,
- Xaver Hugl <xaver.hugl@gmail.com>, Simon Ser <contact@emersion.fr>,
- Pekka Paalanen <pekka.paalanen@collabora.com>,
- Harry Wentland <harry.wentland@amd.com>,
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Alex Hung <alex.hung@amd.com>,
- Hamza Mahfooz <hamza.mahfooz@amd.com>, Roman Li <roman.li@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>, Wayne Lin
- <Wayne.Lin@amd.com>, amd-gfx@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240806184214.224672-1-sebastian.wick@redhat.com>
- <20240806184214.224672-2-sebastian.wick@redhat.com>
- <0141fd24-ee8e-4d19-a93c-11e8d54b093a@kernel.org>
-Content-Language: en-US
-From: Leo Li <sunpeng.li@amd.com>
-In-Reply-To: <0141fd24-ee8e-4d19-a93c-11e8d54b093a@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: YT4PR01CA0322.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:10a::11) To DM4PR12MB5311.namprd12.prod.outlook.com
- (2603:10b6:5:39f::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED05B1EB4B4
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 13:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723038802; cv=none; b=JK3XUbZ1FJd4fzJJMYBspF4u3D7PsV5y4LdAK5mwZbGLPXobBJOiJ9bnS6vNofzbmbR1KNQGzSTY2gJGPUfNwgkXXX9fBpDrxYRmmRayhQoFoaln+AncV8SulZh2BFlIpqJwKMejDKX5vYtBQ0baw4Q0Ffpmr4U5hOraew7ilY8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723038802; c=relaxed/simple;
+	bh=NRqiEnBiimHoingme0qVJPrkh4WXTxTwsQB1Q7Y4gKE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MyFiIFD+KFxc/shTYdGkfGvarLel9FHUMjeW+bZLAzHSN8dCbKZWuHxDSvDIwOdSb5IaZtqcNjOcAHQ+wGYGFSfSm0xLQ4a37iIFfyYQJELKWK7GOIfqsZVCDHJmOd7MkTHWi0LwC57vwv04FJGViMVXnlWqpGNz3KKqU1R5A3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=acwjPtsv; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5b01af9b0c9so2009957a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 06:53:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723038799; x=1723643599; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AIu6O+iMzaxlTo7+/E6XE3a2FAHks2o/pMfGehr4SyQ=;
+        b=acwjPtsvpKCewGLDC+c1KH/QucmcvkdNXNWH/p8B4s5FQWSXFfErMgPn/OwUTfqmsK
+         j0gjjodWYrWgX8dtk/7fVbWZVdmCLnIfIsmoBFeJF1tVlgtGr9FkP2b9bHKD9ED6AWN8
+         +WsO5dTojhZtWNiJgyAohXysRdaaPANBip6HNrZMEoCv1Z/EZP9Q6JICGeyy5c9mqqh/
+         Las+pzMRD8iR/LCfG/x0/C0jxd0Cpeu0DtTxswrVe3CHnUZ2DGsqRtp/tOXgP9w7Zpby
+         j7HBf2IbXpKex74vfpOmx0Il3mNu0vMUvH9RtnYwOIj46U9k6g3wO4RByTkxLHuVJ47L
+         yu/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723038799; x=1723643599;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AIu6O+iMzaxlTo7+/E6XE3a2FAHks2o/pMfGehr4SyQ=;
+        b=kdJO9ongbJAOj8NMtbuAjJobzFycrA7Jt5/50WHn7Q1XXIV5ADnC1cTLW1Arjo379I
+         h7THyjm5GXN+5jxq47IxDLcNTc/t3RnQlF/bhlA1zj7qii6qvAo3nmHX/BiEIyMioYsm
+         PH+EErcvJCaVtRl3BXKnaRJl0/EnpttSRd57AqMNA3duvePaq/fQ/tYFt9YDByakdZKe
+         4y+05fO8+m6DE5KS2S4A02y9geyB2nAQjtHkKVNYhidLFHz3UanaohtiTfYEaUxARfTX
+         N29iR3LtcJYJaxukEwuVe+LBX60t2mIwVv7WygEv4hIIwuZZqEmAOViEJm/crrWZeY6H
+         mFfA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRJZCurOe2dJM4FnB7LNI+shIlzb1a1PHaGSIS0I4BpjvBCo620B7qiYF8GaQ5qgLawIg8PcT14YLAbAPV44xSJ200jVOnR6T9TbwS
+X-Gm-Message-State: AOJu0YwPTiH+c8l0MSPcC+VHj89DLhVmzuHJD34EvzhMRB8xrkM/0kjZ
+	QqoBZbLBwtgdmZkPJ01zADpSMce+nqdr0QROobCsVb2MbJ+d+a0S9FVqK/MNeF8=
+X-Google-Smtp-Source: AGHT+IHR+S+EBDdfTlDpuRP9UXE7ZPm7Fw3uAAffraz5Q9GDxJ8ZoP7KdHbWzr+B8x/S7xiFhH8MmQ==
+X-Received: by 2002:a17:907:7204:b0:a7a:b070:92d1 with SMTP id a640c23a62f3a-a7dc517b48dmr1376018166b.46.1723038799127;
+        Wed, 07 Aug 2024 06:53:19 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.215])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c67a43sm639660866b.96.2024.08.07.06.53.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 06:53:18 -0700 (PDT)
+Message-ID: <cef7b260-7f47-4acd-9d6c-d26b7f8cc7bf@linaro.org>
+Date: Wed, 7 Aug 2024 14:53:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5311:EE_|SN7PR12MB7154:EE_
-X-MS-Office365-Filtering-Correlation-Id: 01166446-51aa-4950-a871-08dcb6e83b86
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TTIyVDhuYlpKNWlIMFdTNmJkbG5pbUhXRVl1OWRqWUZkZUVHVUJNTmxSSnVC?=
- =?utf-8?B?YlluYmYvYzl3YVFlbnFLdE0za1VxYXJLRHA3NHhXOTdYNExIQ2NUYXhEYnZy?=
- =?utf-8?B?RzJYS01xQkJYa0g2Y2dNclhRMmlmbFFxTHl4YmFYNnowVStBNmx6bnk2VFY4?=
- =?utf-8?B?b0N6cTVSOWIvNTZTU1JaZ1JWTzltN1ZibEV4ZG4xclZ0R0kxODNJSG83WVZV?=
- =?utf-8?B?bU9qY0NpcG1lT2g1MkpRTWcrbTQxTjFpSnhwdEhXRUlJTmV0T2tIaS9Nb25x?=
- =?utf-8?B?REhyaHdISTRrQjluZlF2MnJNYlNVL21zWUhGS2JNVGJ1NSt5OWkzSHBKbWZ1?=
- =?utf-8?B?Y2lPalB2WXhnL2laMXdZYzVSRU9zLzRkTXFRb3o3SnBoTnh2K05OVFZXOFRz?=
- =?utf-8?B?Zmc2Qkx3Zm9DeVk0WGlBY1RWai93MDFQbFlPSWhXbXVwZ0t0cDB5TURoMEM2?=
- =?utf-8?B?SExsQkRxdlgrOWdmbTBhUUtENGhiV2ZscXpGalBCWDBGaTEwMUN5U2VRK3lk?=
- =?utf-8?B?dFJZdkVza2FYeVlHTkJsNGpNWFE2R1RQbkovNWF4MG1JOUs1dVVCb0s0eGcz?=
- =?utf-8?B?bnI2QW9FSXorajFRZms2NnNEMjBGdEZIOEwxVko4ZWwwM3BpdkVFcklYMUdP?=
- =?utf-8?B?RWJLbWxDdWlmUnhoWUQ5RlNCRTVWbmhJck40M085Mk5KMHkycUF3eU90U3NW?=
- =?utf-8?B?VkcwY3FKQ09vRTRQTlZyUnhYZTJISXN2UXpIQXZpTWJwYjBiUWZOa0VpcXlM?=
- =?utf-8?B?OEZTU1NmVTZGOCtJVHdpcnpVbUJRcVBqSDdRUms1Qmt4SXVTaUU0ZkR5UE01?=
- =?utf-8?B?NkUwTm1VeXA4TmNjaEVUa05sbTBCd1FCMjdhd1FvYVJiYzdnRlllN09EVjJ3?=
- =?utf-8?B?UStSdDY1RHZKaDVoODB5TGFlWUlyOTFkaG1VdWVHeWV5SkpiNmdHSEoyM3J6?=
- =?utf-8?B?RTZ1a3RGbUp1UStpYS9xQ05SRllBUXJLSEV5bzFmbENscFFrMDJNamVmNnVU?=
- =?utf-8?B?Wmd2OGlTdnNCVmFZWnZCWWtmWTZ0SlI2aitoNTExSjFLd2hwVXZ5NGU3T1Fm?=
- =?utf-8?B?NTZYOWIzZ3J0cmNDTWE1dy96ZzZlN2sxdlcvVkxCcEJpT2I3V1lYMHZSUHYv?=
- =?utf-8?B?MEtFbjhpVlJhZDFnNVVFV1RQdUppTlhFSGNob3k0TGdYS2VxREJFRmZHTVlQ?=
- =?utf-8?B?aXBZbDIrUTBJeFhFVEVkK1o1Zk44Z003WW1aS1FSYktzWVA5dzZ6bHgxZ0o5?=
- =?utf-8?B?OTlSZ3dDbmlXb0xQOGt4Qlk1eEVCMFZoWUs4dGNvbnVnM1hiUDgxV2Nrd05q?=
- =?utf-8?B?Y1Vlc0ZFSVJLRWRxMnJuTHQ2c1Y5dWpwR25CdThsYXVvQ2N3L2dvQ3JxRmNp?=
- =?utf-8?B?c0Fvdy9WazYzb3FJTzNYbi9rZTNDODdxa3l3RnZOdGtGR01vSXFwbEdZNmNr?=
- =?utf-8?B?LzVOUWk0QmhKbG5yd3ViTS9HTTdQL25laU4rWDlaTFptMTh1WkVPbXZjL0RQ?=
- =?utf-8?B?V3F3VHdzZDRjQ28yNVR4YTJIM3pJUU13UnREb0UyZkxVdWpnN09sT2xxaHFG?=
- =?utf-8?B?dlRPK0phZitUWW5JWS9ITk9SOGZjT3owV2tMMzNFMFpJandYSXdCYlB3a0U0?=
- =?utf-8?B?MVNqeE9CM0luMWJUbXZOeUczOXZzR2FCd0ZVbGhyMWppemUzbDU5dS9kQjNw?=
- =?utf-8?B?N0RoYWQ0MUt4YXhzOW9acytXUHd4UkdWbncySlN1Z1hIVWRsT29JZlVGNis4?=
- =?utf-8?Q?3SNvSikqltnPg2O8aY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5311.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UHRkQVZFWlRzS0huVTIyaFd0SFZCQ0NkazJrUldCTEFUVGp0cVF4VEtWOXJn?=
- =?utf-8?B?SmpIMFBoekNocll1YkVRc3lza2dsSkR0eU1LYjB5NFE3cmUvVkQ5aGVtejkz?=
- =?utf-8?B?UEJBM3pUZFdlRHBZZnBOeDYzYUYrbkNYVi9PbFZnOWoybytRUSsrRE9KdkRT?=
- =?utf-8?B?dDBFSXovS3g1eU9HKzQrU1hmMEREcVRWTU9PbFRtcTZwa0MwczRJM3JpbENY?=
- =?utf-8?B?NHdaTmJxREpzekpwRVMxVVFudUdwK0dzblVSVUo5UVA5a3hDQnE4Z3hZMUFt?=
- =?utf-8?B?NG9ZUi96THU3MTlmOHUvWWloenREbDNWbFNJTFFmN0tLUURhZ2ZTODJmR3Fz?=
- =?utf-8?B?NlQ3RGFLMEFkUjFMR2w0Rm9BbUx5VitWaGNTZnZMMTZOQ2RZZnQ0eUV3S1Er?=
- =?utf-8?B?T2QxckNQa0NlZnRVaVdNbWQ5QUYvL3E1Q3B4T2taVmplU3JVSFAvcWJzOUd3?=
- =?utf-8?B?Z2J6ZVFOd1REUnJNSzFQcHRCc3NuU0paS0phYzdhYlMvZVNWaWJVdzc3djcy?=
- =?utf-8?B?eUUvcnpwN2FqTk5rTVl6VVlUVHFWTk8vV2hhRTRGSi9ZZ3EzN2xRamJ1Y3Rt?=
- =?utf-8?B?NlRRUEdmSW5tbXhxOGNNRUxHMEc2Y0JLejlkWmMwUUxXUzFaUXBzMEZaQzNq?=
- =?utf-8?B?K0hSVkFrN3FNTjR6S1VWZ0o5SkJkQzF1WGRhdEpoeVNOTmJWaGQ4bnFIYzR4?=
- =?utf-8?B?am1zdFQxdGxjSmttbzdSQ0ZJRytDdmk0ODB3SEpVQ2FuamxhV1V4c00vTjV0?=
- =?utf-8?B?Wnh5Y1ZVdkxueSsvQUJDOU44Z1FGVXBxVU1MMWd3RndCNkxudytFNFRMSWVV?=
- =?utf-8?B?YUJxTndBL2pxQVZ0aDk5U3FMb1c2UFhCbHpUY3pSUlhnN2tpcUE4eHlnbHJM?=
- =?utf-8?B?RkxXa3pxeGJuQkJjdVhmcFVJTklYUWpoVFllV3pjOEpyY0tPaGR2WXE1b25Z?=
- =?utf-8?B?Yld1NHMyQmI2NHZNbS9rOUJ6TVRtS3ZhZ3dGYUxmTENBZUhjMENHOGtVSGZo?=
- =?utf-8?B?Mi9Jd0xPRWZYSjVSRXlTQXhWQ0Ezc0YycnpPdDN0ZWlhMUsvNk5ORkVFQ3p1?=
- =?utf-8?B?alAvWHNXbjRmeTg4Nmw2K00rU0FKMDUvSnREZlVTUjZuc1RjNHdwWFJSbGls?=
- =?utf-8?B?MGY1bEpkRDBQb2ZGdmFENDR5M2VsemQ4b21nT0paOUVoOVdGSEVQeW1WMDE3?=
- =?utf-8?B?MTJaZytmaXZvY2RwT29KRTdiWnRyMW81bUhpc1dKT0dheGQ4V2RKMXhEeEZY?=
- =?utf-8?B?c0pvcmZqMll0ejVjVXllOS9XM3NyQndhVlJsdXRqRldINkNNTTAzRmpJTkRB?=
- =?utf-8?B?aHNhVGFDWUhDZGpIdzZZRm82MElJaHlubUNlQnUyTk9xSmpGbmJKNWs5d1B1?=
- =?utf-8?B?VFpodmhpNXdnekF4WUxxREdPZGtVWGxWYUh6SjhXWGhOZ2dJYnZ5V0pqZElR?=
- =?utf-8?B?d3BnYUxzOWVVZ01qbWFYVnRwTFVncSs1WWlQb05wWkptNVIzZnQ1aEd3bjJR?=
- =?utf-8?B?eHV1N00xSVdxbVVQend4WjA3SiszTVdYTGt5dFcvTTFQa2pjOWVuMUNTb2Zy?=
- =?utf-8?B?b3FtL3h3dkFIMXdoazdyZ3JPbVJrVGJYSmJXLzR5dzJCY3kzSmc1anFXNDRF?=
- =?utf-8?B?eDJkRjF2SnhzRU43YWl3RXhOdXFsbll4T2NqVGdHOWtnRk85YU52NjE4S01Y?=
- =?utf-8?B?TUZiTHlwb3lPSTEwenpoaHpWL3FqQXAzK2hoRWdCSzY0TzdJd2dKNXNjbm9a?=
- =?utf-8?B?R29acElMaXJDU09HR3dpWjZhQVlMNmVvaHZMNTVPQ2Y0K0w5QTEyZnVKQ1FU?=
- =?utf-8?B?TUVMSm8xaEdueUVkTjdGa0hEQ3dQck1kQXkwWVFMdWYvSEh1YzdldkdIRlZL?=
- =?utf-8?B?eHRnam1rSW8vOEkrMXFCeFJ2d0tYMDVPSHQ3NUhwT1BrbHZCUE9mSjFjajRa?=
- =?utf-8?B?eE56dWdmTjRCUTRJeVB1T2RKUENzbmFhUm5rTFlZZjRRakg4YnhUR3FlOUdp?=
- =?utf-8?B?VXVFeCtnQ0U3bFZCclU1TEV1YXdZZ0hjVEt6RmF6NUVpNEROOHlXSnBkd2Jx?=
- =?utf-8?B?by9LZmhSdWZGWG9ZVkJzUHpHc2JiU3ZPMCthb1o1QkxDR0hGSUZqbEhXc0Zw?=
- =?utf-8?Q?gc+c=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01166446-51aa-4950-a871-08dcb6e83b86
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5311.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 13:52:52.8871
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ukx56Ds/z8/5u971olObt7bEiIP7hKodAAapTn3adzXNuJkr7JOGE3RF7wK4Xocv
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7154
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] tty: serial: samsung_tty: simple cleanups
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Jiri Slaby <jirislaby@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20240806-samsung-tty-cleanup-v1-0-a68d3abf31fe@linaro.org>
+ <2024080714-spongy-wannabe-7a9e@gregkh>
+ <5e73f1b405e06f9ee796d3b7002933f75613728a.camel@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <5e73f1b405e06f9ee796d3b7002933f75613728a.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
 
-On 2024-08-07 01:13, Mario Limonciello wrote:
-> On 8/6/24 13:42, Sebastian Wick wrote:
->> From: Sebastian Wick <sebastian@sebastianwick.net>
+On 8/7/24 1:00 PM, André Draszik wrote:
+> On Wed, 2024-08-07 at 13:09 +0200, Greg Kroah-Hartman wrote:
+>> On Tue, Aug 06, 2024 at 04:29:44PM +0100, André Draszik wrote:
+>>> While looking through the samsung tty driver, I've spotted a few things that
+>>> can be simplified by removing unused function arguments and by avoiding some
+>>> duplicated variables and casting.
+>>>
+>>> There are no functional changes here.
+>>>
+>>> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+>>> ---
+>>> André Draszik (2):
+>>>       tty: serial: samsung_tty: drop unused argument to irq handlers
+>>>       tty: serial: samsung_tty: cast the interrupt's void *id just once
 >>
->> This reverts commit 63d0b87213a0ba241b3fcfba3fe7b0aed0cd1cc5.
+>> This series blows up the build for me, are you sure you tested it?
 >>
->> The panel_power_savings sysfs entry can be used to change the displayed
->> colorimetry which breaks color managed setups.
+>> drivers/tty/serial/samsung_tty.c: In function ‘s3c64xx_serial_handle_irq’:
+>> drivers/tty/serial/samsung_tty.c:948:45: error: passing argument 1 of ‘s3c24xx_serial_rx_irq’ discards ‘const’ qualifier from pointer
+>> target type [-Werror=discarded-qualifiers]
+>>   948 |                 ret = s3c24xx_serial_rx_irq(ourport);
+>>       |                                             ^~~~~~~
+>> drivers/tty/serial/samsung_tty.c:856:68: note: expected ‘struct s3c24xx_uart_port *’ but argument is of type ‘const struct
+>> s3c24xx_uart_port *’
 >>
->> The "do not break userspace" rule which was violated here is enough
->> reason to revert this commit.
-
-Hi Sebastian,
-
-The default pane_power_savings sysfs value is 0, which is ABM disabled, so it
-wouldn't break colorimetry *by default*. It would break colorimetry only if set
-to a non-zero value by the user, or something in userspace.
-
-That said, this sysfs opens a door to "break" colorimetry. But if we make it
-such that it can only be set in a user-aware way, then the user can decide
-whether they want color accuracy, or power. I don't think that's anything new.
-User already decide between setting max backlight for better color, or lower
-backlight for better battery. Setting max cpu freq, or capping it. Either can be
-seen as breaking.
-
-So I think the issue is really in ppd (power profiles daemon), which afaik is
-the only user of this sysfs. It sets a non-zero value by default without the
-user being aware.
-
->>
->> The bigger problem is that this feature is part of the display chain
->> which is supposed to be controlled by KMS. This sysfs entry bypasses the
->> DRM master process and splits control to two independent processes which
->> do not know about each other. This is what caused the broken user space.
->> It also causes modesets which can be extremely confusing for the DRM
->> master process, causing unexpected timings.
->>
->> We should in general not allow anything other than KMS to control the
->> display path. If we make an exception to this rule, this must be first
->> discussed on dri-devel with all the stakeholders approving the
->> exception.
->>
->> This has not happened which is the second reason to revert this commit.
-
-I also agree that ABM/backlight related things that affect colorimetry should be
-under KMS control. However, from the way things are going, getting there will
-take a while, and an interim solution is desired.
-
-We (mostly Mario) proposed a KMS connector property to limit control to KMS as a
-way to improve on the sysfs, but that needs more work with compositor folks.
-After that, each compositor will need to pipe it through to users. So I think
-having something like ppd provide generic support is beneficial in the interim.
-It just needs to be 100% opt in.
-
-If we decide to revert this, I think it's worth noting that ABM will be out of
-reach for users for a very long while.
-
-On the modeset thing, it's not clear to me why ABM needs a modeset, and I wonder
-if it's really necessary. I'll go and find out.
-
-Thanks,
-Leo
-
->>
->> Signed-off-by: Sebastian Wick <sebastian.wick@redhat.com>
+>> And so on...
 > 
-> For anyone who hasn't seen it, there has been a bunch of discussions that have 
-> transpired on this topic and what to do about it on [1] as well as some other 
-> linked places on that bug.
+> Looks like I had Werror disabled and therefore just missed them. Sorry for that.
 > 
-> Also FWIW there was a discussion on the merits of the sysfs file on dri-devel 
-> during the initial patch submission [2].
-> 
-> If this revert ends up going through, please also revert 
-> 0887054d14ae23061e28e28747cdea7e40be9224 in the same series so the feature can 
-> "at least" be accessed by the compositor and changed at runtime like the sysfs 
-> file had allowed.
-> 
-> [1] https://gitlab.freedesktop.org/upower/power-profiles-daemon/-/issues/159
-> [2] https://lore.kernel.org/dri-devel/20240202152837.7388-1-hamza.mahfooz@amd.com/
-> 
->> ---
->>   .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 80 -------------------
->>   1 file changed, 80 deletions(-)
->>
->> diff --git ./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c 
->> ../drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> index 4d4c75173fc3..16c9051d9ccf 100644
->> --- ./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> +++ ../drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
->> @@ -6772,82 +6772,10 @@ int amdgpu_dm_connector_atomic_get_property(struct 
->> drm_connector *connector,
->>       return ret;
->>   }
->> -/**
->> - * DOC: panel power savings
->> - *
->> - * The display manager allows you to set your desired **panel power savings**
->> - * level (between 0-4, with 0 representing off), e.g. using the following::
->> - *
->> - *   # echo 3 > /sys/class/drm/card0-eDP-1/amdgpu/panel_power_savings
->> - *
->> - * Modifying this value can have implications on color accuracy, so tread
->> - * carefully.
->> - */
->> -
->> -static ssize_t panel_power_savings_show(struct device *device,
->> -                    struct device_attribute *attr,
->> -                    char *buf)
->> -{
->> -    struct drm_connector *connector = dev_get_drvdata(device);
->> -    struct drm_device *dev = connector->dev;
->> -    u8 val;
->> -
->> -    drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
->> -    val = to_dm_connector_state(connector->state)->abm_level ==
->> -        ABM_LEVEL_IMMEDIATE_DISABLE ? 0 :
->> -        to_dm_connector_state(connector->state)->abm_level;
->> -    drm_modeset_unlock(&dev->mode_config.connection_mutex);
->> -
->> -    return sysfs_emit(buf, "%u\n", val);
->> -}
->> -
->> -static ssize_t panel_power_savings_store(struct device *device,
->> -                     struct device_attribute *attr,
->> -                     const char *buf, size_t count)
->> -{
->> -    struct drm_connector *connector = dev_get_drvdata(device);
->> -    struct drm_device *dev = connector->dev;
->> -    long val;
->> -    int ret;
->> -
->> -    ret = kstrtol(buf, 0, &val);
->> -
->> -    if (ret)
->> -        return ret;
->> -
->> -    if (val < 0 || val > 4)
->> -        return -EINVAL;
->> -
->> -    drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
->> -    to_dm_connector_state(connector->state)->abm_level = val ?:
->> -        ABM_LEVEL_IMMEDIATE_DISABLE;
->> -    drm_modeset_unlock(&dev->mode_config.connection_mutex);
->> -
->> -    drm_kms_helper_hotplug_event(dev);
->> -
->> -    return count;
->> -}
->> -
->> -static DEVICE_ATTR_RW(panel_power_savings);
->> -
->> -static struct attribute *amdgpu_attrs[] = {
->> -    &dev_attr_panel_power_savings.attr,
->> -    NULL
->> -};
->> -
->> -static const struct attribute_group amdgpu_group = {
->> -    .name = "amdgpu",
->> -    .attrs = amdgpu_attrs
->> -};
->> -
->>   static void amdgpu_dm_connector_unregister(struct drm_connector *connector)
->>   {
->>       struct amdgpu_dm_connector *amdgpu_dm_connector = 
->> to_amdgpu_dm_connector(connector);
->> -    if (connector->connector_type == DRM_MODE_CONNECTOR_eDP &&
->> -        amdgpu_dm_abm_level < 0)
->> -        sysfs_remove_group(&connector->kdev->kobj, &amdgpu_group);
->> -
->>       drm_dp_aux_unregister(&amdgpu_dm_connector->dm_dp_aux.aux);
->>   }
->> @@ -6952,14 +6880,6 @@ amdgpu_dm_connector_late_register(struct drm_connector 
->> *connector)
->>           to_amdgpu_dm_connector(connector);
->>       int r;
->> -    if (connector->connector_type == DRM_MODE_CONNECTOR_eDP &&
->> -        amdgpu_dm_abm_level < 0) {
->> -        r = sysfs_create_group(&connector->kdev->kobj,
->> -                       &amdgpu_group);
->> -        if (r)
->> -            return r;
->> -    }
->> -
->>       amdgpu_dm_register_backlight_device(amdgpu_dm_connector);
->>       if ((connector->connector_type == DRM_MODE_CONNECTOR_DisplayPort) ||
-> 
+
+Same on my side. Any idea why CONFIG_WERROR is not enabled by more
+archs? I see just the two:
+arch/x86/configs/i386_defconfig:CONFIG_WERROR=y
+arch/x86/configs/x86_64_defconfig:CONFIG_WERROR=y
 
