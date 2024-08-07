@@ -1,99 +1,130 @@
-Return-Path: <linux-kernel+bounces-278165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B0994ACF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:32:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD2E94AD82
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA0961C20A67
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:32:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3290BB2DF28
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55C985931;
-	Wed,  7 Aug 2024 15:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903DB12C53B;
+	Wed,  7 Aug 2024 15:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mZt78lUn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MJSRFqAv"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N2KgxLJi";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kOk8Qt28"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2FA5811A
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A0082499;
+	Wed,  7 Aug 2024 15:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723044755; cv=none; b=QqK2XsG5ikTbj9qyPYQ5VGFvh2C2dOQ7TA3Hg+9SldndekCSR8lW/5DH8BLjaN16WctU+Aqif2dCEhpiiLbl0Miw99Y38QmvnQo6OfqlToTqX4cN7fK/6SXEThF7SGYSNnQQI+zx9VftaR7Ng0E12fddzqpgO0fU6QKvWh42cMY=
+	t=1723044769; cv=none; b=MF5027OdcX7+gv/PiXAeCuV+Omc36IILlA+FdRpy5iAvUBGfs0P4ni8KzRMe223nogXQULqQ4RfXOsrvFGuWBVXLRQdgWUQ8Jr5xWIcuQxsAzQPm5cVdOYV3cYgJUcBNwQ/M3uX5fbrpttJ3FRhA2Upad1/y5HqhQRXCrjBpA4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723044755; c=relaxed/simple;
-	bh=fuVOuUa4Ml+VjQZSzBWdr2ADPtpoNcU+lqN8KJkSgr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a8q/DEvorxmHfqVGagKFqlhyUAP+jDpQGDKiP5PaE/jEYasjgKFSNPkMS9FnL0KKdDwcgh0KSNgkGl93cO68JV7jYGAH10K8ye7sMy/F5+c3EPWWZiK8A+LnWdjuEoPasy+VBL0Q1djEErHFbEHeAlQOQS4+2Vhc8UKglYpSttA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mZt78lUn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MJSRFqAv; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1723044769; c=relaxed/simple;
+	bh=5Mj8SXHMcEKQVrYr8pZWaXF311MX5ewWkbhfV5N07nE=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=LC7dvoFhEkt/2Bs97h+1JRN+TDA4dK6T7XdV5xiu6zrMbQyiH+0oHlBp0GeJkbudGjY/A9hkMnDRGtOm38AzeTIN0O/xYoudVwUYaZX6J2N2f0exDbRBl4tnilSuu3pu4MN8UmgxTKZyY50INCkH0pLyi5DgHRRBn08aPTXnNQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N2KgxLJi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kOk8Qt28; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 7 Aug 2024 17:32:30 +0200
+Date: Wed, 07 Aug 2024 15:32:46 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723044751;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=2020; t=1723044766;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=D8zIUiMT2pUs/Jjsabusuu6Dail7VCPc204Mw9DO+N4=;
-	b=mZt78lUnu634OvoSPmOF4HTMeMm7bdWJG9mn+pvDCUpvXkvm300kF4UUKOqFW81Qg1e9in
-	t5AmMT26K9CxBxR5oMqyoYY/r9ArryNUQqp4oipcZAPwn4dV8Uh0jppT3WcuciBD5leuAc
-	t853ezr0+VTvFLCDRsXBBp7kmna6/OgJjFvMoxYY22G9cC+u8PIPr63YxRxWBS6vEn/o8+
-	RezqlNBnlAbm9c5bfyXzsVj9q9eAqtonC3SNdTGf3r9hIs1J7qJbM01CEcIRNKyRuQUbiT
-	OAImQ0Msnm+gUPsbYddOj4MgAEb5ibMAXCwBAkivj61nsK3Wu3javbiN3G+uoQ==
+	bh=vGlL1b2Cl+k2Fq0XtZmXv+Zg2zYI+3nb3hAswDvKywM=;
+	b=N2KgxLJiqXPW/qwJg85PKx7j0giggXEBM2b5wl08TlAHAAx2GNeXjsDXHXi3mDHAHIVWmI
+	5OrLrg2IPDaFSApmi9Smz/+AzHlHdEU+tFHv28pC8EkIm5eK1OqwiczHezSEOU9mJppfkc
+	G/IQlzuq9IX2ykHsD2WtQ80et6ed076ZdgfEh+kog0zrd7EUBLZmokFrA00NdzGUCKPdGV
+	39jee13aclGl4+mnQeEiPP6LJvkiEvU1WdJIDwWwFsc5PE7+k3nXiCaU8uk6tTtxkNZNqN
+	l2xJge2r1Zt/LjjeImPb3XUZbgfQ04BA+9pSJFgJ8S1jPYV48AxeSWmaQqm+Cg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723044751;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=2020e; t=1723044766;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=D8zIUiMT2pUs/Jjsabusuu6Dail7VCPc204Mw9DO+N4=;
-	b=MJSRFqAvzWtrabAbY6VnHoj4NXrSv0SYbG6QQduNw9j39xEr2bGLR4cTfRwZfTW2+1/iEF
-	4xB4eyvyfnzGPZCg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Petr Malat <oss@malat.biz>
-Cc: linux-kernel@vger.kernel.org, paulmck@kernel.org, tglx@linutronix.de,
-	nsaenzju@redhat.com, frederic@kernel.org
-Subject: Re: [PATCH] softirq: Do not loop if running under a real-time task
-Message-ID: <20240807153230.rDSKGnY9@linutronix.de>
-References: <20230306154548.655799-1-oss@malat.biz>
- <20230308091458.Q42uCjR2@linutronix.de>
- <ZAnZKoH38Telq1qG@ntb.petris.klfree.czf>
- <CANMuvJk95Ui09wZ89OrjJeOF5ySx5xO4+sS5Nd8af2wgaXgt=w@mail.gmail.com>
+	bh=vGlL1b2Cl+k2Fq0XtZmXv+Zg2zYI+3nb3hAswDvKywM=;
+	b=kOk8Qt286kOomsoFhUmTEI1QiF+sA5KQEE67GVmv0PQbo2UXXiazbSL24SUZWmURxPR/6u
+	ovAGVUuchFQtWgCQ==
+From: "tip-bot2 for Shay Drory" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] genirq/irqdesc: Honor caller provided affinity in
+ alloc_desc()
+Cc: Shay Drory <shayd@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>,
+  <stable@vger.kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org,
+ maz@kernel.org
+In-Reply-To: <20240806072044.837827-1-shayd@nvidia.com>
+References: <20240806072044.837827-1-shayd@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANMuvJk95Ui09wZ89OrjJeOF5ySx5xO4+sS5Nd8af2wgaXgt=w@mail.gmail.com>
+Message-ID: <172304476610.2215.2042942398040144931.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 2024-07-25 08:44:02 [+0000], Petr Malat wrote:
-> Hi Sebastian,
-Hi Petr,
+The following commit has been merged into the irq/urgent branch of tip:
 
-> what is the status of this softirq issue? By looking on the current
-> upstream code, I think the problem is still there. I can resend my
-> patch or rework it to use independent task struct flag to decide if
-> softirq processing should be skipped in the current thread.
+Commit-ID:     edbbaae42a56f9a2b39c52ef2504dfb3fb0a7858
+Gitweb:        https://git.kernel.org/tip/edbbaae42a56f9a2b39c52ef2504dfb3fb0a7858
+Author:        Shay Drory <shayd@nvidia.com>
+AuthorDate:    Tue, 06 Aug 2024 10:20:44 +03:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 07 Aug 2024 17:27:00 +02:00
 
-I was re-reading the thread. I don't see how the migration thread should
-run softirqs. This should not happen or please show how if so.
+genirq/irqdesc: Honor caller provided affinity in alloc_desc()
 
-Your example has a long running timer callback which probably gets
-PI-boosted by a threaded-IRQ. The longterm plan is that long running
-timer callbacks don't affect threaded interrupts as they do now.
-The worked started with
-	c5bcab7558220 ("locking/local_lock: Add local nested BH locking infrastructure.")
-	https://git.kernel.org/torvalds/c/c5bcab7558220
+Currently, whenever a caller is providing an affinity hint for an
+interrupt, the allocation code uses it to calculate the node and copies the
+cpumask into irq_desc::affinity.
 
-and needs to continue.
+If the affinity for the interrupt is not marked 'managed' then the startup
+of the interrupt ignores irq_desc::affinity and uses the system default
+affinity mask.
 
-> BR,
->   Petr
+Prevent this by setting the IRQD_AFFINITY_SET flag for the interrupt in the
+allocator, which causes irq_setup_affinity() to use irq_desc::affinity on
+interrupt startup if the mask contains an online CPU.
 
-Sebastian
+[ tglx: Massaged changelog ]
+
+Fixes: 45ddcecbfa94 ("genirq: Use affinity hint in irqdesc allocation")
+Signed-off-by: Shay Drory <shayd@nvidia.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/all/20240806072044.837827-1-shayd@nvidia.com
+
+---
+ kernel/irq/irqdesc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index 07e99c9..1dee88b 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -530,6 +530,7 @@ static int alloc_descs(unsigned int start, unsigned int cnt, int node,
+ 				flags = IRQD_AFFINITY_MANAGED |
+ 					IRQD_MANAGED_SHUTDOWN;
+ 			}
++			flags |= IRQD_AFFINITY_SET;
+ 			mask = &affinity->mask;
+ 			node = cpu_to_node(cpumask_first(mask));
+ 			affinity++;
 
