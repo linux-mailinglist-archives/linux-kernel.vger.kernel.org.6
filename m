@@ -1,134 +1,132 @@
-Return-Path: <linux-kernel+bounces-277826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD4494A709
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:35:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 120A294A70C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F8D2B2118E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:35:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5265FB22004
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366B81E4851;
-	Wed,  7 Aug 2024 11:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC6C1E3CD3;
+	Wed,  7 Aug 2024 11:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dZ6GJ7cX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5BQyklx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2451C7B7F
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 11:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96ACF1B86DB;
+	Wed,  7 Aug 2024 11:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723030534; cv=none; b=FaiDLut5oIpdBbvmbN1KuDCucFEV9QtVSMC6pEKA+y7cOPccpoqIVbCIeexIK9qqYbdK1lN8rZimZL9x4/qjrzTtbpUePI2Wt2AZjUVYG2JQA/h1LkDEkbpukWT6DlgwCMBmY0gcgJ/iHGloDvvljii/R19BP3I0mMCSafMjx1A=
+	t=1723030643; cv=none; b=TlYiBAV2kCHnVgwZJvs6ZDVtlTDSiPIP2KHVIa2kGPtLjVaDlLewuK4FJF/2Q0ITxXJT+G5zfG93B8zzoXs9gKXwwwxrxwdqNh+YaYqBuTwdV8d5zTpc8D44jJLaJP8rzNrWpw37wYQ0D9ZbDKFtMycQY6ZNRTfjB5wz0CyRoIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723030534; c=relaxed/simple;
-	bh=lHPDC25jghZhCKrwT8ViNX9ORfgOdHuHsedcGDBbTAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T8DsEjf9iDBTs9WNfnMhubW6UgQjhitV9xmBJQNLzYeBdxdM5Scvd1zWKgSFpzuaoch0+0nPHfOhjOmLYJxsNEIW1CftfUqtr0Axo8hY6x8/HBV6eiX64Vf2MRivRQvTPcKsiumqD8avPFNThF71pw5kOKxS0pttuCuyK7/ueGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dZ6GJ7cX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723030532;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0il9oSJyGAZ+C9csZ4ni4torbJ/NsnGzP7AJupcpQIM=;
-	b=dZ6GJ7cXMHGv8H9eFgPqJVnCl6xPyDaAL9zyv9rPahxZI+CiMWRm8PgRW8PCijVp3Kpfnz
-	mmVT3mapfBltGQ23iI/TVOEvgVnIi+Rl5Q5+H+4WNFG3pZ8ru8/HFBcbVpNw0ID7VgFeaq
-	EoXgf9PKKMuM7LFWhOFsh8+hWwhUa+E=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-313-yVGZTb9sM2epuGFXjjaeEw-1; Wed, 07 Aug 2024 07:35:30 -0400
-X-MC-Unique: yVGZTb9sM2epuGFXjjaeEw-1
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-44fe92025d8so19126561cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 04:35:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723030530; x=1723635330;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0il9oSJyGAZ+C9csZ4ni4torbJ/NsnGzP7AJupcpQIM=;
-        b=kuyuzMTrhrpPsAO9m1Bf49mQLIvc1Dtla+ELm4zfA/LO93sRz+QOx/rNee4P3wk3IB
-         qn09SplB+FNSUl96KRv/TsYWW/FAnTKYD5jpn42XaQ4lNn88FmCkXjSK8TyMBmh3AjNt
-         TdsZvbSQypzW2ob5MRODfsUtOnkehLvwtJ3RNLeBmuLerv3VP+WxN494eTf3KipCNczS
-         jWeqEepDGJAJQoL8l0GJHE/CyodTZk2YMMAnf3HzjYd/E3hzicCFDxcAkhpckBIVTBPi
-         9wTtc3e2TkXPhjy//wy+1UJxz0A8AkiwM5STCyTTC1D6KT/iWePxNVrP7p1B803U9wm0
-         iK8w==
-X-Forwarded-Encrypted: i=1; AJvYcCW1PslBhzhcPCN0t3EjSzIJp/YR/jhImC+u7JV+h5j7XNBU+QBMTMEpXKeHVbKPYGRk2H172tdmtLI4y3B1rDNuzdfbwn2hH8ufT8TC
-X-Gm-Message-State: AOJu0YzfZwBUvmWnPbDz/LZMHlrSH4NtgXGtfQ4v+s+vBdOzCRxKY/d/
-	r1TGenn7IHFdDPhCN31zDhBA5XiA1lUDfPZT+ynHO5iS+yIfIZNcWtBlM0WDpt9tXN4I6Yq64Rf
-	5SmjlXwUfVxpvNFspNrqnMiWrNdXU9tWPqmhNMuyVjnIdMEfJ6VywuKdOu+8C0w==
-X-Received: by 2002:a05:622a:2d2:b0:445:2e9:330e with SMTP id d75a77b69052e-451892a8fabmr174819131cf.37.1723030530251;
-        Wed, 07 Aug 2024 04:35:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHQldDPCbezXKy6XTDGMyMJ4k78IFbZjvkY4tr+TtV0lv80CwndDivLxMRaVvCFRbPjWXffsw==
-X-Received: by 2002:a05:622a:2d2:b0:445:2e9:330e with SMTP id d75a77b69052e-451892a8fabmr174818841cf.37.1723030529776;
-        Wed, 07 Aug 2024 04:35:29 -0700 (PDT)
-Received: from debian ([92.62.32.42])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-451c87d934asm4026961cf.65.2024.08.07.04.35.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 04:35:29 -0700 (PDT)
-Date: Wed, 7 Aug 2024 13:35:23 +0200
-From: Guillaume Nault <gnault@redhat.com>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Simon Horman <horms@kernel.org>, hhorace <hhoracehsu@gmail.com>,
-	johannes@sipsolutions.net, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-	Ido Schimmel <idosch@nvidia.com>
-Subject: Re: [PATCH] wifi: cfg80211: fix bug of mapping AF3x to incorrect
- User Priority
-Message-ID: <ZrNb+3YJsuRV9GLl@debian>
-References: <20240805071743.2112-1-hhoracehsu@gmail.com>
- <20240806090844.GR2636630@kernel.org>
- <ZrIDQq1g6w/zO25l@debian>
- <87ttfwiyn6.fsf@kernel.org>
+	s=arc-20240116; t=1723030643; c=relaxed/simple;
+	bh=f36Eut4cpuTeN/nHR83eH313AyJ5JQ3s2RGRYRnZE2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F9zV/s5GB/DvK8J96EayTFDpPqrMAzMm4HJa0/dnCCpoZJCwtpaWwDh8pUf9qvekAqsxpQaFFPSJwDVDqUtH5UoEBYjyuW3H9tslJ1MpvTnZ+XlEhPCS/7Zn6Za60u+J9QUtHZAU6RlwBev8Wr6V1CwdyA7GgUuvxdrS3CuwkBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5BQyklx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FBAAC32782;
+	Wed,  7 Aug 2024 11:37:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723030643;
+	bh=f36Eut4cpuTeN/nHR83eH313AyJ5JQ3s2RGRYRnZE2U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U5BQyklxnmNN5PAXzuPelTAWieKNWfAsDmMIfL6P1mZ1nq+oy7hBxwu7BgG6CW0Cf
+	 MANwNVDDKlb+/RtVlrjpxcyVAWb8UCkDS17WsJwjB2JFDb7gsmFpSu5zEeABoAk+uh
+	 LY5lkJfGKMIYcBixGENYZT9XAqoNlArnLzpOEv4xfF5s0RE9Z1o87t/AqT/J8OKPbr
+	 7faYb3lVH4mef0qPvRQvjDjru+nbiAYdM2UuGR+qerm1kgcB1U9eTx0HDDto0dcu7/
+	 9Tgx5fzaAc+nRxG23Tn9Bf8QSWiFCRvRNda7pD9chEFE22oPcTk+lsTOwHs73W9auG
+	 ybhnGmm9Y2Lxw==
+Message-ID: <0892524d-e9c1-4b27-8622-11cd697451ea@kernel.org>
+Date: Wed, 7 Aug 2024 19:37:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ttfwiyn6.fsf@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] f2fs: Require FMODE_WRITE for atomic write ioctls
+To: Jann Horn <jannh@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20240806-f2fs-atomic-write-v1-1-8a586e194fd7@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+Autocrypt: addr=chao@kernel.org; keydata=
+ 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
+In-Reply-To: <20240806-f2fs-atomic-write-v1-1-8a586e194fd7@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 07, 2024 at 10:24:13AM +0300, Kalle Valo wrote:
-> Guillaume Nault <gnault@redhat.com> writes:
+On 2024/8/6 22:07, Jann Horn wrote:
+> The F2FS ioctls for starting and committing atomic writes check for
+> inode_owner_or_capable(), but this does not give LSMs like SELinux or
+> Landlock an opportunity to deny the write access - if the caller's FSUID
+> matches the inode's UID, inode_owner_or_capable() immediately returns true.
 > 
-> > On Tue, Aug 06, 2024 at 10:08:44AM +0100, Simon Horman wrote:
-> >> + Guillaume and Ido
-> >> 
-> >> On Mon, Aug 05, 2024 at 03:17:42PM +0800, hhorace wrote:
-> >> > According to RFC8325 4.3, Multimedia Streaming: AF31(011010, 26), 
-> >> > AF32(011100, 28), AF33(011110, 30) maps to User Priority = 4 
-> >> > and AC_VI (Video).
-> >> > 
-> >> > However, the original code remain the default three Most Significant
-> >> > Bits (MSBs) of the DSCP, which makes AF3x map to User Priority = 3
-> >> > and AC_BE (Best Effort).
-> >> > 
-> >> > Signed-off-by: hhorace <hhoracehsu@gmail.com>
-> >> 
-> >> Adding Guillaume and Ido as this relates to DSCP.
-> >
-> > Thanks. The patch looks good to me (only missing a Fixes tag).
-> >
-> > Just a note to hhorace: the entry for CS5 (case 40) is useless as CS5
-> > is 101000. So the value of the 3 high order bits already is 5 (in case
-> > you want to make a followup patch for net-next).
+> There are scenarios where LSMs want to deny a process the ability to write
+> particular files, even files that the FSUID of the process owns; but this
+> can currently partially be bypassed using atomic write ioctls in two ways:
 > 
-> Minor clarification: cfg80211 patches go to wireless-next, not net-next.
+>   - F2FS_IOC_START_ATOMIC_REPLACE + F2FS_IOC_COMMIT_ATOMIC_WRITE can
+>     truncate an inode to size 0
+>   - F2FS_IOC_START_ATOMIC_WRITE + F2FS_IOC_ABORT_ATOMIC_WRITE can revert
+>     changes another process concurrently made to a file
+> 
+> Fix it by requiring FMODE_WRITE for these operations, just like for
+> F2FS_IOC_MOVE_RANGE. Since any legitimate caller should only be using these
+> ioctls when intending to write into the file, that seems unlikely to break
+> anything.
+> 
+> Fixes: 88b88a667971 ("f2fs: support atomic writes")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jann Horn <jannh@google.com>
 
-Yes, sorry for the confusion :-/.
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-> -- 
-> https://patchwork.kernel.org/project/linux-wireless/list/
-> 
-> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-> 
-
+Thanks,
 
