@@ -1,142 +1,138 @@
-Return-Path: <linux-kernel+bounces-278251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7603F94ADF1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:21:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D6894AE1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5EB51C21599
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:21:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B5BD1F22BBF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B38E136E0E;
-	Wed,  7 Aug 2024 16:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89856137776;
+	Wed,  7 Aug 2024 16:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OpiFuHDu"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PajLKMfh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74EA78C9E
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFC67829C;
+	Wed,  7 Aug 2024 16:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723047703; cv=none; b=oJws0tS8jvx+sg9VD3OtvQ8rVOzI3vQn293/4Uj3QveCWwfyk4uhUQOwL6976rXadJ/J5XwaWTvLJSsv1AVrwS+NsyLfLGRoXoBAhqGUT/N5fFHVthdZQjUMJGqr9AQPlS2sxN0EzZGRaqg2pvcjr+1Iw1HWED3eSwdKObsdkL0=
+	t=1723047725; cv=none; b=oayMhQW/dtUKCfXFayTA6AY5Kiby+Q8BANM4NwWgOyEygBAriFK+i75ZGv+9/8tPNixPBVpLPQ2o3+393R0p36Wo/FfTIOiMzGhwf/4BOB0Ygj0AVw2ZN5VN92D6bCZAiUNxvHai93Yc3M/5e674AWeuzQjd+wQzJvenR1O/grs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723047703; c=relaxed/simple;
-	bh=e2BMUCP22nzpip6gGAFjR0ReLzujdgZiwSNIB994pVs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u2pxFx9FqpRcbwOxuU1l9q8P1sUlCNlZr+AN+F468Cqg1UuDc1nxsLWOOBuNvQ10MUZktLmouMvOfqUw+GobY1nb/HUBavF/+Lfld6i19zsBvnonZYos1RFz1ayQ2JEOwqgDF6Oawq2h58y2+GiPW20Q43gpgvwqTGeaMbzdGcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OpiFuHDu; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ef23d04541so21859311fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 09:21:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723047700; x=1723652500; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lFVsH6L0jMNTWXXKT1BLSqXh6RkHJccF6iCiCH3zZKA=;
-        b=OpiFuHDuY/cjnDFzFJPELc/cjeLHDC/YyXd2MzYO3QCGdvEWp+8WcEbUFxzow98XL+
-         5FeUeqxgGKB3+AaflRRaFgZMzMLnjFNSXvIqmTgtaUeU+N/iT+wvXSdhrS+3GtzrwVP7
-         GqCBnit5dKZeq6XFuqXujnC6kjMNnuoTN7H+jYPH/TAnXoxy2tJQcYQZWEYH7TUpOd/1
-         SLFupiQAem5PJdNn8BApz+alatfcTP/gMdzwopw6q2H0jOpW2cv3pQwwEJ8UGPdvFHE7
-         kSnidN5wyOTt/biVqlJV4Hhzkq/0szD0SuftZhFJuVgf02gPB34pAmMAk5U9CtEhJy0U
-         Jqyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723047700; x=1723652500;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lFVsH6L0jMNTWXXKT1BLSqXh6RkHJccF6iCiCH3zZKA=;
-        b=a9RzuNhWRFE+/dutdM6ib8B8UqYySMM8rrneYQtRKYwhJx91EFXmzSifVoSX0eU7/N
-         VHToFyVIE+xfRtAkNfpkzlY21RMl0GkRWZPuUpbSfohnc9gMBmxR0k9cqLikjpD6FIQT
-         nlP6AfnikV8G2NEylUxLFKQiiN22MCeNwAn3/BwG9x1grgTJwB3aZ7esveRbbSMkhD5C
-         1foY2OpetlRJLpWVU6X//u68O0ecDVyD9qHRNsNwkDvjlHFnThxSV+PO2mCErRjTr0AT
-         0X39lqSw3m+2k+LMD4PGj6sunedRLu82nyyOiLYRW0fHGeA731rAG5Fvb7s73BjD3njW
-         mx8Q==
-X-Gm-Message-State: AOJu0YxPYs5v6iMGrANkg/XXI7Wgg+a6+UIMrAL9dCzqoOzqEQ009tF4
-	Vz/EdLDfHEopcCOX0SBxfvdl+IOTqxEykEsZN+YUS/chJ5wz3ySeUXGx33wBFBOQHcl5+leLqjQ
-	y4IzLMMz8oaL+Y/lTnf7+5/0flA==
-X-Google-Smtp-Source: AGHT+IE9Nndbm2L5fAg3mjcHsRaZ8ESNyO3nwZiAlnvvyqIXRXQojBsEamQqNY1BEVTfMpFm1hEbRQHzrl1g8A43yP8=
-X-Received: by 2002:a2e:8718:0:b0:2ef:2f17:9ede with SMTP id
- 38308e7fff4ca-2f15ab6a35fmr125248961fa.49.1723047699395; Wed, 07 Aug 2024
- 09:21:39 -0700 (PDT)
+	s=arc-20240116; t=1723047725; c=relaxed/simple;
+	bh=csoxM504M/IKkeAwQJU4vJ16AtPpU2Ww21JXNHIvTgo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gbXYciCaJKiBc79WuenjUE/7DU0YHmzK674jaNnNufDPo2COU+SFhgOrvL0yrX4aBltTJokzDmvAS9sBzR/ZZD7YqlGCagAhM1SsXXUt/levD8Hl1K5S1hGmcjo/9Y9Bw29sXQzxRabltH4BZjJQWqpNkGYk/Hdg0CJ7mbvZQRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PajLKMfh; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723047724; x=1754583724;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=csoxM504M/IKkeAwQJU4vJ16AtPpU2Ww21JXNHIvTgo=;
+  b=PajLKMfh/WOtJ9WiwEeC0wLMwkLlcJfZjPmcncs/ZCaiibhmiYY7+mcx
+   XGbHAGqRK0VfEQjQW8vbk15vwU0bLUzEE0vK7dtTuZwBpXyzMLXIJZoVu
+   ILiNp41yJncnlgJz3BCUFJQWZLxGieTRRELfcscuvhfiTaBPmWhpypvxy
+   +FghqhUHatWFluX03KNRH0C67a2tF7CFrV/+JL1T4H+/8j78Nw7WvMBQh
+   pK7HIpsHxAuN84F8DDJgcO2vxJzOay744SWisBJSJTETSu2s/Pv8fCkpj
+   mnvZVGpGXXC+KSaUNFjk4/BoVLnZHd6QayMt098HYkIvfX63wVY0LBit+
+   w==;
+X-CSE-ConnectionGUID: rgFOp8S9S82QzEZZFAeO5Q==
+X-CSE-MsgGUID: 3MPUVaRZSYyZiH+VkIt6yw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21251596"
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="21251596"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 09:22:03 -0700
+X-CSE-ConnectionGUID: lcWSrhGmRom/U+ItrnaNKA==
+X-CSE-MsgGUID: HiDpRUBGSwSm3VMuqQ/oXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="57602771"
+Received: from opintica-mobl1 (HELO [10.245.245.20]) ([10.245.245.20])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 09:21:56 -0700
+Message-ID: <a91373cef3d55ba7f13f347e2b10b2398c347c35.camel@linux.intel.com>
+Subject: Re: [PATCH] sound: sof: ioc4-topology: avoid extra dai_params copy
+From: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Arnd
+ Bergmann <arnd@kernel.org>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Liam
+ Girdwood <lgirdwood@gmail.com>, Peter Ujfalusi
+ <peter.ujfalusi@linux.intel.com>, Bard Liao
+ <yung-chuan.liao@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+ Seppo Ingalsuo <seppo.ingalsuo@linux.intel.com>, Kai Vehmanen
+ <kai.vehmanen@linux.intel.com>, Jaroslav Kysela <perex@perex.cz>, Takashi
+ Iwai <tiwai@suse.com>, Nathan Chancellor <nathan@kernel.org>, Nick
+ Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Brent Lu <brent.lu@intel.com>,
+ sound-open-firmware@alsa-project.org,  linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Date: Wed, 07 Aug 2024 09:21:46 -0700
+In-Reply-To: <d988fe89-104e-46ce-94b7-6754f2c7a455@app.fastmail.com>
+References: <20240807080302.2372297-1-arnd@kernel.org>
+	 <731fa66a-bed7-45fb-9187-a9263612eac4@sirena.org.uk>
+	 <d988fe89-104e-46ce-94b7-6754f2c7a455@app.fastmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.0-1build2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807054722.682375-1-xin@zytor.com> <20240807054722.682375-2-xin@zytor.com>
-In-Reply-To: <20240807054722.682375-2-xin@zytor.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Wed, 7 Aug 2024 12:21:27 -0400
-Message-ID: <CAMzpN2iS076ysZ37gjrz6MGWc62sD9uw0ODTJtzOO1U4kp309A@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] x86/entry: Test ti_work for zero before processing
- individual bits
-To: "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	peterz@infradead.org, andrew.cooper3@citrix.com, seanjc@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 7, 2024 at 1:51=E2=80=AFAM Xin Li (Intel) <xin@zytor.com> wrote=
-:
->
-> In most cases, ti_work values passed to arch_exit_to_user_mode_prepare()
-> are zeros, e.g., 99% in kernel build tests.  So an obvious optimization
-> is to test ti_work for zero before processing individual bits in it.
->
-> In addition, Intel 0day tests find no perf regression with this change.
->
-> Suggested-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-> ---
->  arch/x86/include/asm/entry-common.h | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/x86/include/asm/entry-common.h b/arch/x86/include/asm/e=
-ntry-common.h
-> index fb2809b20b0a..4c78b99060b5 100644
-> --- a/arch/x86/include/asm/entry-common.h
-> +++ b/arch/x86/include/asm/entry-common.h
-> @@ -47,15 +47,17 @@ static __always_inline void arch_enter_from_user_mode=
-(struct pt_regs *regs)
->  static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
->                                                   unsigned long ti_work)
->  {
-> -       if (ti_work & _TIF_USER_RETURN_NOTIFY)
-> -               fire_user_return_notifiers();
-> +       if (unlikely(ti_work)) {
-> +               if (ti_work & _TIF_USER_RETURN_NOTIFY)
-> +                       fire_user_return_notifiers();
->
-> -       if (unlikely(ti_work & _TIF_IO_BITMAP))
-> -               tss_update_io_bitmap();
-> +               if (unlikely(ti_work & _TIF_IO_BITMAP))
-> +                       tss_update_io_bitmap();
->
-> -       fpregs_assert_state_consistent();
-> -       if (unlikely(ti_work & _TIF_NEED_FPU_LOAD))
-> -               switch_fpu_return();
-> +               fpregs_assert_state_consistent();
+On Wed, 2024-08-07 at 17:18 +0200, Arnd Bergmann wrote:
+> On Wed, Aug 7, 2024, at 17:09, Mark Brown wrote:
+> > On Wed, Aug 07, 2024 at 10:02:27AM +0200, Arnd Bergmann wrote:
+> >=20
+> > > From what I can tell, this was unintentional, as both
+> > > sof_ipc4_prepare_dai_copier() and
+> > > sof_ipc4_prepare_copier_module() make a
+> > > copy for the same purpose, but copying it once has the exact same
+> > > effect.
+> >=20
+> > > Remove the extra copy and change the direct struct assignment to
+> > > an explicit memcpy() call to make it clearer to the reader that
+> > > this
+> > > is what happens. Note that gcc treats struct assignment as a
+> > > memcpy()
+> > > that may be inlined anyway, so the resulting object code is the
+> > > same.
+> >=20
+> > The effect of the copy is to ensure that if the function fails the
+> > argument is unmodified - did you do the analysis to check that it's
+> > OK
+> > to modify on error?=C2=A0 Your commit log says "the same purpose" but
+> > never
+> > specifies what that purpose is.
+>=20
+> There is always a chance that I misunderstood the code, but
+> yes, I did understand that the idea is to not modify the
+> parameters inside of sof_ipc4_prepare_dai_copier.
+Hi Arnd,
 
-This call was originally unconditional, and does nothing if
-TIF_NEED_FPU_LOAD is set.
+The idea behind the local copy is that the DAI widget needs to handle
+its audio formats in topology differently from the other widgets in the
+pipeline. So, locally the sof_ipc4_prepare_dai_copier() modifies the
+params to make sure the right NHLT blobs are chosen based on what's
+available in topology and the information passed in the params. But
+when the params variable is passed on to the next widget in the
+pipeline, any local modifications done by the DAI widget should be
+carried forward.
 
-> +               if (unlikely(ti_work & _TIF_NEED_FPU_LOAD))
-> +                       switch_fpu_return();
-> +       }
->
->  #ifdef CONFIG_COMPAT
->         /*
-> --
-> 2.45.2
->
->
+For your reference, this is code that does the propagation of the
+prepare callback for each widget in the playback/capture path in the
+pipeline.
+https://github.com/thesofproject/linux/blob/bc47b82db6e03d540061964d4540a37=
+1e7d344c8/sound/soc/sof/sof-audio.c#L442
 
-Brian Gerst
+Thanks,
+Ranjani
 
