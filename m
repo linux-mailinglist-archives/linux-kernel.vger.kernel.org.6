@@ -1,106 +1,144 @@
-Return-Path: <linux-kernel+bounces-277486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 935CE94A206
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:52:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B44394A207
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96A431C236D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:52:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8F561F22505
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A69C1C8236;
-	Wed,  7 Aug 2024 07:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="d9Ap6mpt"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDB21C9DD1;
+	Wed,  7 Aug 2024 07:52:25 +0000 (UTC)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415E17C6D4;
-	Wed,  7 Aug 2024 07:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C173C1B86DC;
+	Wed,  7 Aug 2024 07:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723017143; cv=none; b=G+Qq6Tw8KggqcdydaM70PNIGe4QvkanrUr1PHGteXYeMAdgK0+cSOHZmnMu9K/wxRldgCAxFocnn50CFS9Yw5hMSOQfAWT3NsTDOuMJ5rUqbbimJSCdDUO6E4VYZYVFTiASUyQnSLjYOxIWIL/n3cf4qM1yq2CbkoVFqybdT5/c=
+	t=1723017144; cv=none; b=kDn3LJCF75RozRBr4nvgJgxju5+Dp0ztiwfdLEp9DY8jXh4pfOad7vzRb+/jBL1nMzPQNPyc447TedVYlZnmRGvw3C+Npnezwyst7IRpwFA9CSCO2WEcJxPkbHk3T1lxK18Z4W8aaAtvMiVH+1mTJYW+DdPWHXMk76cs2A6Guxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723017143; c=relaxed/simple;
-	bh=1wAhjX2DPr9/lVfPAalcSwLvoZc4JgfP3/j9qMFUUrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IAFqGlcexVMGTJ4i1yYWAREUaXWjZoe0J3K4msrIDy5EQMxONKwfa8nBWd0AivZOEoZrOkj3Xtkp7VFxARhciv/yF/WOR4/DuTvqlHymPJU23EMLg1977kk+yXC2l4Ng6LBKbm1LO1bCzpW5kp8zCLprZYlEl1OyGIQbBROyY2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=d9Ap6mpt; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BObMkshv/1ZlUvzNmrwwqT325S36O8qv+ooCnwJwmHg=; b=d9Ap6mptPEo0WzYc27vE63neRu
-	u73kQ6QLcVnInCj1A8IesRMAoEYA2nHwR1O6AdXwcK1T+AGHefo3qcERKVWkjTQOEVOwz8vshRTKq
-	DWcQXwx+cN/uTyH2w7NAZ7GrhVXTK5zi557/FkEB5b6MVmgaK7qbJu2jrIpcxKARhWeWfiAmkjxAK
-	1kRAbBvYe6tO4vtqkFV7Q0eBrW00T1rJQMm5eD7FprnDLPLOl/EiqcVm7YIpmseepYYfVe9h3HUMg
-	1eaEez6gabRLV2kcqA9Gq0WG3ftsB4d8x8eJDdGH53+EfXpa/8XFH9xKpkKz6NRkAtyqDxM3jFOBz
-	b8lTf1Cw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sbbT0-00000002GZV-49f8;
-	Wed, 07 Aug 2024 07:52:19 +0000
-Date: Wed, 7 Aug 2024 08:52:18 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
-Message-ID: <20240807075218.GX5334@ZenIV>
-References: <20240806144628.874350-1-mjguzik@gmail.com>
- <20240806155319.GP5334@ZenIV>
- <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
- <20240807033820.GS5334@ZenIV>
- <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
- <20240807062300.GU5334@ZenIV>
- <20240807063350.GV5334@ZenIV>
- <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
- <20240807070552.GW5334@ZenIV>
- <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
+	s=arc-20240116; t=1723017144; c=relaxed/simple;
+	bh=P029QhQ2IpIBwTacFgAJzLKzDEjmjM1NRKAZUDdvcVs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gb2wD9i32bgu3Vy91XdpmeOUrih6R8Jkdf1YFak7qIL6IIfenFSR5E9iE705+geTf2UHIpdmBcqFLJZ8rpt9hjt3YruKtjZ3fjlO8gPij45gzYvlLjgdzf5MjcmW2BPivRcAcS3tZfacynmo9E5od2XnGN+8LBbXwwPV5eBN5v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4f51c1f9372so507493e0c.2;
+        Wed, 07 Aug 2024 00:52:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723017142; x=1723621942;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W3xrNS8iZyZhkOmyAcGNIqP3+/HlN9P6GP8Q91kZLyY=;
+        b=BmeX/GTk61n0nSolPXdWoWQXPtrZ4s14CB143uadFrsX3WD9g8+A12TqE/mhdddQ6a
+         jbLF/4TkiF7MgV1D6dj0gmZyggCBOTcKcSOJqA8vuzbwYrqjb8Yg2xiKfuTmKT7NH1gX
+         XoQ+r+80VL7dC2Ure1GSIK0B0aDkNXj8G1nI9PZYj5FjcmXpif13xEszuNItvMFl8yBc
+         MXHN3K9wnNVJ+5NocMbb1ykKFp9ss8OaWUZ1oilOcOT4GgGRyJJG34ehWUL6YhQE3ptZ
+         ZD/Pxbuf3xnrtH6T5dgofUf6OR/fHfFIX0fcQ2DlXJotIVWp5RlWsw8xW/nd86eWMsyi
+         /eqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUo+bbl1d300F4OccSnk8T3fPdPf9BYBkIfu+LUeHn+wR5zLAjpTFU++8xqcOFbqAadYsZ77U8neVbCTngda7T7IAj7H6i8LtckD0RzJOXVwnrRQf5wZBBysvw6BXECnPLRL33n6CUwUrd42TU=
+X-Gm-Message-State: AOJu0YwN7y7TkHvt8HzJNBi9zZi6RdeojVN3aKA7yGLL4QEJyqdpqLPD
+	btEdSJX9ykW9fymsaQmbXEaqmipEBYcjx/vC5FFWkbMFST4znkG9
+X-Google-Smtp-Source: AGHT+IE33uVgVa+VXy9gIqtrgXxspqlIEekyIkajG8XB5P3gG8JKv9KHLMssfYHzag8pRj248sYXPw==
+X-Received: by 2002:a05:6122:1699:b0:4f6:b610:61bf with SMTP id 71dfb90a1353d-4f89ff88eafmr19464410e0c.8.1723017141625;
+        Wed, 07 Aug 2024 00:52:21 -0700 (PDT)
+Received: from skuld-framework.localnet ([32.221.37.233])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3785e0798sm36500385a.44.2024.08.07.00.52.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 00:52:21 -0700 (PDT)
+From: Neal Gompa <neal@gompa.dev>
+To: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+ Zehui Xu <zehuixu@whu.edu.cn>
+Cc: boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ zehuixu@whu.edu.cn
+Subject:
+ Re: [PATCH v3] rust: Kbuild: Skip -fmin-function-alignment in bindgen flags
+Date: Wed, 07 Aug 2024 03:52:20 -0400
+Message-ID: <3695674.9o76ZdvQCi@skuld-framework>
+In-Reply-To: <20240731134346.10630-1-zehuixu@whu.edu.cn>
+References: <20240731134346.10630-1-zehuixu@whu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Aug 07, 2024 at 09:22:59AM +0200, Mateusz Guzik wrote:
+On Wednesday, July 31, 2024 9:43:46=E2=80=AFAM EDT Zehui Xu wrote:
+> GCC 14 recently added -fmin-function-alignment option and the
+> root Makefile uses it to replace -falign-functions when available.
+> However, this flag can cause issues when passed to the Rust
+> Makefile and affect the bindgen process. Bindgen relies on
+> libclang to parse C code, and currently does not support the
+> -fmin-function-alignment flag, leading to compilation failures
+> when GCC 14 is used.
+>=20
+> This patch addresses the issue by adding -fmin-function-alignment
+> to the bindgen_skip_c_flags in rust/Makefile. This prevents the
+> flag from causing compilation issues.
+>=20
+> Link:
+> https://lore.kernel.org/linux-kbuild/20240222133500.16991-1-petr.pavlu@su=
+se
+> .com/ Signed-off-by: Zehui Xu <zehuixu@whu.edu.cn>
+> ---
+> Since -falign-functions does not affect bindgen output, we do not
+> need logic to add it back to the flags. Thanks to the community's
+> help, especially Miguel Ojeda. Hope this patch is free of problems
+> and can be submitted smoothly : )
+>=20
+> v1:
+> * https://lore.kernel.org/all/20240730222053.37066-1-zehuixu@whu.edu.cn/
+>=20
+> v2:
+> * Added -falign-functions to bindgen_extra_c_flags when skipping
+>   -fmin-function-alignment to maintain function alignment settings in GCC=
+ 14
+> * Used reasonable length and moved email content out of the commit message
+> * Used "Link" tag instead of "Reference:" and removed empty lines between
+> tags * Specified the base commit
+> * https://lore.kernel.org/all/20240731034112.6060-1-zehuixu@whu.edu.cn/
+>=20
+> v3:
+> * Removed logic from patch v2 which adds -falign-functions
+>=20
+>  rust/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/rust/Makefile b/rust/Makefile
+> index 1f10f92737f2..0c8736cce64f 100644
+> --- a/rust/Makefile
+> +++ b/rust/Makefile
+> @@ -227,7 +227,7 @@ bindgen_skip_c_flags :=3D -mno-fp-ret-in-387
+> -mpreferred-stack-boundary=3D% \ -fno-reorder-blocks
+> -fno-allow-store-data-races -fasan-shadow-offset=3D% \
+> -fzero-call-used-regs=3D% -fno-stack-clash-protection \
+>  	-fno-inline-functions-called-once -fsanitize=3Dbounds-strict \
+> -	-fstrict-flex-arrays=3D% \
+> +	-fstrict-flex-arrays=3D% -fmin-function-alignment=3D% \
+>  	--param=3D% --param asan-%
+>=20
+>  # Derived from `scripts/Makefile.clang`.
+>=20
+> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
 
-> Well it's your call, you wrote the thing and I need the problem out of
-> the way, so I'm not going to argue about the patchset.
-> 
-> I verified it boots and provides the expected perf win [I have to
-> repeat it is highly variable between re-runs because of ever-changing
-> offsets between different inode allocations resulting in different
-> false-sharing problems; i'm going to separately mail about that]
-> 
-> I think it will be fine to copy the result from my commit message and
-> denote it's from a different variant achieving the same goal.
-> 
-> That said feel free to use my commit message in whatever capacity,
-> there is no need to mention me.
+Looks good to me.
 
-Original analysis had been yours, same for "let's change the calling
-conventions for do_dentry_open() wrt path refcounting", same for
-the version I'd transformed into that...  FWIW, my approach to
-that had been along the lines of "how do we get it consistently,
-whether we go through vfs_open() or finish_open()", which pretty
-much required keeping hold on the path until just before
-terminate_walk().  This "transfer from nd->path to whatever borrowed
-it" was copied from path_openat() (BTW, might be worth an inlined helper
-next to terminate_walk(), just to document that it's not an accidental
-property of terminate_walk()) and that was pretty much it.
+Reviewed-by: Neal Gompa <neal@gompa.dev>
 
-Co-developed-by: seems to be the usual notation these days for
-such situations - that really had been incremental changes.
+=2D-=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
-Anyway, I really need to get some sleep before writing something
-usable as commit messages...
+
 
