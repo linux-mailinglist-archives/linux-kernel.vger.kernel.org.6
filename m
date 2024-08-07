@@ -1,127 +1,99 @@
-Return-Path: <linux-kernel+bounces-278411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A53F94AFED
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:39:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AFB94AFF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACB32B2180F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFE981F2227F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051F513F012;
-	Wed,  7 Aug 2024 18:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792791422A8;
+	Wed,  7 Aug 2024 18:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0nTXkSS5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="swe+683R"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C35JX/tl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0424653A
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD304653A;
+	Wed,  7 Aug 2024 18:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723055989; cv=none; b=MFp6NU9eA0vcwH1pxUed4cd3aezcouURe9xLudSPGNilBu7pEojB4EZ/H2slImI4o6/dMyvQI76eo8OGrqdeoQqet0OECaWdBlPh8VAJ74ARRu1uQ2NBysxqAFwwntCDvub+v2khZKAJoMyhwqOL1L7HhSQLl2Li1JcTyUPFfaA=
+	t=1723056031; cv=none; b=al30nEAEQpPXxWiaNan0da71/Jvo6s6NCAdW4MkLjiGyClSGuAf3X+AmK4CO7k9slJ9PG2hTmL9ZoE7DWQe2WYYCnCt0b/xkkh/hjryWxpU8494JiPnkUFM1r0n085mqqkRi6yngCiSBpvQoBtfTYL8eLlWIm6FHQ1yjd8MmR/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723055989; c=relaxed/simple;
-	bh=mzZ8eB9DM7DM2woamiaRVomM1QkAFWCz32qPuT0Pbr0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OXaV9amYH5mHOROr2osqKFSLkkpPkWMco4Qfv5f25KQdOxoQjr08gLo8OvYjrVFwMdo6nOj7af7wp0q1bxafgsqiKnZRnfJr0w6cXXBpkFLgB0kcwcnxjv0CgXczkwPqfe3H38bBTcKdo40p2HZBLL4F3ax7Yv8rfp4iTgpaqgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0nTXkSS5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=swe+683R; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723055985;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5qEv5fSZ6dMpM7M/nalrplojfsS0XUIrpv8BCSarjvQ=;
-	b=0nTXkSS5ISUTQDCYSG/zTH3vPUFlWQctHY1i7fPWFGxNAGvy4X3gSce+FZ+FTRo/NocQG6
-	c/5ZI4hqGmbB6KnoAFUBkH/ON3e0mZQZX80eGBf11iGJyW8mX1xIw3qjR042yUGQw6er5J
-	KswCA+R8Hnd+desj+MNK/e0dsjlDhtUGD1803H4H5v/2UlMk1GgOBkg8XMDPI5NEUYu6Am
-	An+fuVtY1c5fktRweYIzlRJJ2FEUkuhgrRNZIq3FnSNBDhlqtIork3dkPAph0Da6GrsJTz
-	lu26IuT3JVNtgHDAUAQ6Q+dMWD9dh5eaFDxPQOPMV5lw7Q/B6PYNrkzl8EGYLg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723055985;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5qEv5fSZ6dMpM7M/nalrplojfsS0XUIrpv8BCSarjvQ=;
-	b=swe+683RtNxZKQI8GPfAVkot+r0dVao9BYOVQDCr+HzQ+rdj/ssuIrxGYVfrYeDKR8BxZC
-	otWJDUA4w5G++VAQ==
-To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org
-Cc: mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- x86@kernel.org, hpa@zytor.com, peterz@infradead.org,
- andrew.cooper3@citrix.com, seanjc@google.com
-Subject: Re: [PATCH v1 3/3] x86/entry: Set FRED RSP0 on return to userspace
- instead of context switch
-In-Reply-To: <20240807054722.682375-4-xin@zytor.com>
-References: <20240807054722.682375-1-xin@zytor.com>
- <20240807054722.682375-4-xin@zytor.com>
-Date: Wed, 07 Aug 2024 20:39:45 +0200
-Message-ID: <87ttfw18jy.ffs@tglx>
+	s=arc-20240116; t=1723056031; c=relaxed/simple;
+	bh=xKSP+Nl0MCi2j4+W3yaUvR8ZnvGtlHqTUIF0XcSiQz8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=I5YFDJ5AkviAUPSutedtQoiT5c1gDfyeLSZLAOpl25HBwJbkm4RjwVsrXtJL58yjfLyVnzPTnsY0u95FaPRZsdepy2E2BwNrvK087ChSEzsZ9CFeblFPOzmbEDlTaM4xMAlIAFmQq9bd5reYPAKkMIwWQKAERPx/0hWJrpdn/Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C35JX/tl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8326C32781;
+	Wed,  7 Aug 2024 18:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723056029;
+	bh=xKSP+Nl0MCi2j4+W3yaUvR8ZnvGtlHqTUIF0XcSiQz8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=C35JX/tlqJmu0CsH8ZvEsoOE8oSi95eNqjURkgvP8zXqEQik5g5h7OLPX//S7E/mK
+	 VuMOLj/ClRJNisI2GP86N9qTSmcrYprmA0nxLnh5SrXD/1QY0abT0N+5cXFK2UHKrL
+	 aMr5B1Kf9W4X5JCh3zfPwsBz5XwY6x0E3EUELQ0SZ6Kv1IeX2mryglQVkQ9+mxwjZp
+	 TdK7G4+Zhx1+fh0MQjYfZXmr7d1CW1dnkCIWinhnhtZaBg8hmNi+G69iCgJ2an5A9L
+	 iJOzGShGSTncAm5MZIwO0fzqsVQBVp/QsZXc3Drrvb02QyczEZYIcPpyEUrrLIdQHP
+	 wc2GGoLnqfdhQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE0CF3822D3B;
+	Wed,  7 Aug 2024 18:40:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v4 bpf-next 0/3] Add bpf_get_dentry_xattr
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172305602851.2655981.17752310916593091167.git-patchwork-notify@kernel.org>
+Date: Wed, 07 Aug 2024 18:40:28 +0000
+References: <20240806230904.71194-1-song@kernel.org>
+In-Reply-To: <20240806230904.71194-1-song@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org,
+ eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net,
+ martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, kpsingh@kernel.org, liamwisehart@meta.com, lltang@meta.com,
+ shankaran@meta.com
 
-On Tue, Aug 06 2024 at 22:47, Xin Li wrote:
-> --- a/arch/x86/include/asm/entry-common.h
-> +++ b/arch/x86/include/asm/entry-common.h
-> @@ -51,6 +51,11 @@ static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
->  		if (ti_work & _TIF_USER_RETURN_NOTIFY)
->  			fire_user_return_notifiers();
->  
-> +		if (cpu_feature_enabled(X86_FEATURE_FRED) &&
-> +		    (ti_work & _TIF_LOAD_USER_STATES))
-> +			wrmsrns(MSR_IA32_FRED_RSP0,
-> +				(unsigned long)task_stack_page(current) + THREAD_SIZE);
+Hello:
 
-Eyes are bleeding. If you do the inline in patch 1 then this becomes
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
 
-	if (cpu_feature_enabled(X86_FEATURE_FRED) && (ti_work & _TIF_LOAD_USER_STATES))
-		wrmsrns(MSR_IA32_FRED_RSP0, (unsigned long)task_stack_page(current) + THREAD_SIZE);
+On Tue,  6 Aug 2024 16:09:01 -0700 you wrote:
+> Add a kfunc to read xattr from dentry. Also add selftest for the new
+> kfunc.
+> 
+> Changes v3 => v4:
+> 1. Fix selftest build.
+> 
+> V3: https://lore.kernel.org/bpf/20240806203340.3503805-1-song@kernel.org/T/#u
+> 
+> [...]
 
-which is in the 100 character limit and readable.
+Here is the summary with links:
+  - [v4,bpf-next,1/3] bpf: Move bpf_get_file_xattr to fs/bpf_fs_kfuncs.c
+    https://git.kernel.org/bpf/bpf-next/c/fa4e5afa9758
+  - [v4,bpf-next,2/3] bpf: Add kfunc bpf_get_dentry_xattr() to read xattr from dentry
+    https://git.kernel.org/bpf/bpf-next/c/ac13a4261afe
+  - [v4,bpf-next,3/3] selftests/bpf: Add tests for bpf_get_dentry_xattr
+    https://git.kernel.org/bpf/bpf-next/c/8681156c0939
 
-Though I wonder if this should not have a per CPU cache for that.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-        if (cpu_feature_enabled(X86_FEATURE_FRED) {
-        	unsigned long rsp0 = (unsigned long) task_stack_page(current) + THREAD_SIZE;
 
-		if (__this_cpu_read(cpu_fred_rsp0) != rsp0) {
-			wrmsrns(MSR_IA32_FRED_RSP0, fred_rsp0);
-                        this_cpu_write(cpu_fred_rsp0, rsp0);
-                }
-        }	
-
-Hmm?
-
->  		if (unlikely(ti_work & _TIF_IO_BITMAP))
->  			tss_update_io_bitmap();
->  
-> diff --git a/arch/x86/include/asm/switch_to.h b/arch/x86/include/asm/switch_to.h
-> index c3bd0c0758c9..a31ea544cc0e 100644
-> --- a/arch/x86/include/asm/switch_to.h
-> +++ b/arch/x86/include/asm/switch_to.h
-> @@ -71,8 +71,7 @@ static inline void update_task_stack(struct task_struct *task)
->  	this_cpu_write(cpu_tss_rw.x86_tss.sp1, task->thread.sp0);
->  #else
->  	if (cpu_feature_enabled(X86_FEATURE_FRED)) {
-> -		/* WRMSRNS is a baseline feature for FRED. */
-
-This comment is wrong when using the alternative WRMSR fallback and
-should be remove by the alternatives patch.
-
-> -		wrmsrns(MSR_IA32_FRED_RSP0, (unsigned long)task_stack_page(task) + THREAD_SIZE);
-> +		set_thread_flag(TIF_LOAD_USER_STATES);
-
-Thanks,
-
-        tglx
 
