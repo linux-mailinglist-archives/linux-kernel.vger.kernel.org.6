@@ -1,86 +1,150 @@
-Return-Path: <linux-kernel+bounces-277571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F7694A316
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:42:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE7A94A2FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27814285632
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:42:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A430D1F24D9E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE211C9DDB;
-	Wed,  7 Aug 2024 08:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9221C9DC9;
+	Wed,  7 Aug 2024 08:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="JN/4y98n"
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="UTEfrSwJ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="fLBOQRCe"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8B37C6D4
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 08:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE1A18D640;
+	Wed,  7 Aug 2024 08:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723020168; cv=none; b=nVoxVaMhRHE1ptjS8YAQJhZY51wLjntut8QdBVw/W6TJS+je8WJzCbf153//198PvUFN4OEUv5IVadwd2lJ+4KYKywa3oPTw9HpRdHMz1GVpeM+jwRp0Ey26nxT/BnPwHmPx21VtC7JaEn610Y6O35MZSHEbPdRNiuPK4AYk6LQ=
+	t=1723019642; cv=none; b=q3jkmpHvC2eBkFYx7N4VWzjNTvvu08B7IZRlswlojcFw2c3ajXs5wtm2EOLi9gKSRo9YvxitAwtCXbheIF+v5BY1cm9BFDvmFasnmcX21LTH3BwW10sH3c18neAzqJo9pTYYbufvNW4ZC6kRS6KaqV4D+a1aXK1p03oOP/NoxSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723020168; c=relaxed/simple;
-	bh=AC5FXQbLkPBwVkZs3Bs3InP+z88Ns1CWbwSUFdRYQ5M=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=YqqumOdP+FWSySJOcLVK9zaLHE8rex1+rHmVzd4hXK+C+m0isouPlG2ujVEd8ZCZvHhvyOcNF3J9DHyx9q6s7mZjBe+DsRzBxXlEVgnBex7PGLoKXHVyQHmSp8cBE7R5sdDocHgngme4sCeOlg4FI1fPfNyy7eH7fkpV4TAFhMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=JN/4y98n; arc=none smtp.client-ip=203.205.221.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1723020164; bh=MIhj4S5GZcVrVx8Cfz000B/AeSXrx3jD2uJw0FOJvtM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=JN/4y98nlodw6ZeWViksonSyKWwVJ40VY23yNUNceLkPuEHB90Tky/M37fPHP6Un7
-	 2QWXOX/PiTpcwNf9kpXn8SbFTmQwkThCLEAxR1hsDQNf7TU22e85jZxdCAkyowvVso
-	 04FBaMYxhZ2YnnRHT9gHIfwbaVn6hxDfd2kBI9ZU=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
-	id 79B250C8; Wed, 07 Aug 2024 16:30:27 +0800
-X-QQ-mid: xmsmtpt1723019427twu66f5xy
-Message-ID: <tencent_EF9E7E1BB84BDC1B3825FFBA27BBE0333908@qq.com>
-X-QQ-XMAILINFO: Mdc3TkmnJyI/wsuTk5GiXDIMJ7Xh72cQ6TTLdvEHy5G9ep/rF9HfhrrVhAtE61
-	 cp2ZJKnIff7wQunR/ow9EwPcclPKdsVOcHra9vWl0ivoh+VyPdyfGhm5Sg9GvDsb6vbFGykLZT+o
-	 cX80/3q5r5Zj3vMTDY1RYz37QLdCdyF8fjmogIKz6Hq6BaweY7FXPlrJzn4/x1CH2fsPRXinE82J
-	 Bz6dUQaw4DkdEyQex0b5eoSzGEJfXuyYnnUAMDhQnM3yVYrwnwvWQ7fFdL/WlmuSfNIXV/FSsunO
-	 toIK1h7NhkWYfEYcDq+QACykAGNFuv9OHNY+U0ZzusvMBHhNskYwyJXUcX88gTUNoQY+6cJokWw9
-	 iK4MtRVm/DlKc7KA/4UVhP1X+XXBYbwMRpTq+1Nau7eEj4AD2Oj/ZGFO2vqAFMYMKHmsETd6QISm
-	 Rbkx3a1vfsVLxw1Mvo07AJ/3/SHMnKr8zT3MDYqUbYRmfLEaXDXG9jWD50BfgB7n/QzvOADuoyU8
-	 XisH6LwYhwTSH38GI/SJ8CO4fGfrfBreSdsmCX3K+nUT7L5IbZThuTU3Gnh/J/It5Je3fBxw5ini
-	 q2DRfvyQXv3qtBoBNEdIBZpnsidyfRg8mLyy1R4k3Qj961tUbZr07ITtU3Q8Pxf9650z/DpI6x5F
-	 rFhLv5Cnk9pYbgZcR5CKtdOvL0EVIx4wrvUhcK8p/KmDkj7AIGbpoet5elZYOX0A71gYJ7qHvwwi
-	 gnSVQ3sC6tiNUBepWwU0aAFB7praQEKQBb3MwQbY0r3naxkuZn7Ldf79/IDciZJhN6W/Dg3djhNT
-	 13ncwajP48kM24taTWWyOjD3qEJX59piRT75eFp7Yq73jh1MX/JHpRQ7mgoXQsnr+yEICAb+aoOA
-	 QFMQBVfUunmkBvFxKcv/rf4Gk7DeNzLub85ZdCkpPuWT3AVGoTJpvAjEke5mIY9ZLaAfX3Q4/Y
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [can?] WARNING: refcount bug in j1939_session_put
-Date: Wed,  7 Aug 2024 16:30:28 +0800
-X-OQ-MSGID: <20240807083027.213665-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000af9991061ef63774@google.com>
-References: <000000000000af9991061ef63774@google.com>
+	s=arc-20240116; t=1723019642; c=relaxed/simple;
+	bh=CyEdy/D8wLW62xg2UpD0AnksCoz3Dydi2H1Ce8GexL0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OOMgDnErGt9MbeIOZVQqpcNFF52Pw2a9PlSraOzsAw1y1U5iAa5yjQCZEFOduKPlJ95f6lrBAuZwiWRgngCycm3RtWjZBGAtJJioYYgi+Jh2KTaIX3HTacw5tPC7+fGTDJO1IrsTYRuP1SfqW5fU05EOCsa03fe+XDgnHTjkGW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=UTEfrSwJ; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=fLBOQRCe reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1723019639; x=1754555639;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=AWMANJXlVBC6SZWwPU3j9N768G6b40b4oCRoEMMg4kY=;
+  b=UTEfrSwJ1a+Fm9sB76VkEBJcr++XldjNk/arJCYpJyJwIDQbLoOv6vMf
+   yFwSXBXhzSpyLMWTsqS2alEPZJ57+e/HMrYWE+shNjDTqozVhzZFZxNMY
+   YweFP7EIzy+MqqX6wtRUrS9fpq0/gEoFUkcd3jrxXXPfHqSA4NS5a4ddl
+   18K9ixrRyCNiRcI6Igx2fgChHoA1CuM0BCX2xCymrpli6Z4szvMHpPO69
+   EhZDPT4D7+LwsyLGqSSTmgMjlabS8OlVVaEPuNODigWsM5mWON3yGd/w+
+   1hJTYmF449unYW95C3wtsAxqjcKCorWs34WcI+BzFt2wN4UjhR1ZzGllV
+   w==;
+X-CSE-ConnectionGUID: 5YMZHyCpQLiuVbp7SuNiHQ==
+X-CSE-MsgGUID: Da8oU9f0Ss6BzC/5L83LWw==
+X-IronPort-AV: E=Sophos;i="6.09,269,1716242400"; 
+   d="scan'208";a="38286390"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 07 Aug 2024 10:33:56 +0200
+X-CheckPoint: {66B33174-E-DD19D171-FBE73682}
+X-MAIL-CPID: 072D5C03455D78AFD06BCE2F4A8C33C4_5
+X-Control-Analysis: str=0001.0A782F26.66B33174.00C6,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D1E041668C7;
+	Wed,  7 Aug 2024 10:33:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1723019632;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=AWMANJXlVBC6SZWwPU3j9N768G6b40b4oCRoEMMg4kY=;
+	b=fLBOQRCewq3ME/o3JnDhq5xGh5j8T+1LP8tPT3m+Ws59HZuUxINRd4mFaHp0hF81RlQpgG
+	1IFecUF663vvNKuu3zX2in5dqLcduOcI68CAhkyGso4UZG5ry6Tjzq5DkgjZsIGJeDCjbw
+	K/wnoHx3VPvqVYm/r/1wUHNo74WBNVqB4ZHpprMG5vX2PL+sHZpY7wfMNOtFwUDLeCNozl
+	bCDRFCWtNKuy+WBCAVZgwdv+XWhb3G7Eazl6dooME45kXU7Wpzq0LYTbsAFz1xXNvOCr+o
+	UEapu/tD2X8/zPM3Ax8GXoEuyeySGG3XoD1+O9HW5+rtDPtH31HYTv/hkkwQAg==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Benjamin Bara <bbara93@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>
+Subject: Re: [PATCH 2/2] media: i2c: imx290: Check for availability in probe()
+Date: Wed, 07 Aug 2024 10:33:51 +0200
+Message-ID: <6072611.lOV4Wx5bFT@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240807-imx290-avail-v1-2-666c130c7601@skidata.com>
+References: <20240807-imx290-avail-v1-0-666c130c7601@skidata.com> <20240807-imx290-avail-v1-2-666c130c7601@skidata.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-Fixes: c9c0ee5f20c5 ("net: skbuff: Skip early return in skb_unref when debugging")
+Hi Benjamin,
 
-Root cause: In commit c9c0ee5f20c5, There are following rules:
-In debug builds (CONFIG_DEBUG_NET set), the reference count is always  decremented, even when it's 1
+Am Mittwoch, 7. August 2024, 10:10:28 CEST schrieb Benjamin Bara:
+> Currently, the V4L2 subdevice is also created when the device is not
+> available/connected. In this case, dmesg shows the following:
+>=20
+> [   10.419510] imx290 7-001a: Error writing reg 0x301c: -6
+> [   10.428981] imx290 7-001a: Error writing reg 0x3020: -6
+> [   10.442712] imx290 7-001a: Error writing reg 0x3018: -6
+> [   10.454018] imx290 7-001a: Error writing reg 0x3020: -6
+>=20
+> which seems to come from imx290_ctrl_update() after the subdev init is
+> finished. However, as the errors are ignored, the subdev is initialized
+> but simply does not work. From userspace perspective, there is no
+> visible difference between a working and not-working subdevice (except
+> when trying it out or watching for the error message).
+>=20
+> This commit adds a simple availability check before starting with the
+> subdev initialization to error out instead.
 
-This rule will cause the reference count to be 0 after calling skc_unref,
-which will affect the release of skb.
+There is already a patch reading the ID register at [1]. This also reads the
+ID register. But I don't have any documentation regarding that register,
+neither address nor values definitions. If there is known information about
+that I would prefer reading the ID and compare it to expected values.
 
-#syz test: upstream master
+Best regards,
+Alexander
+
+[1] https://gitlab.com/ideasonboard/nxp/linux/-/commit/85ce725f1de7c16133bf=
+b92b2ab0d3d84efcdb47
+
+> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+> ---
+>  drivers/media/i2c/imx290.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
+> index 4150e6e4b9a6..a86076e42a36 100644
+> --- a/drivers/media/i2c/imx290.c
+> +++ b/drivers/media/i2c/imx290.c
+> @@ -1580,6 +1580,11 @@ static int imx290_probe(struct i2c_client *client)
+>  	pm_runtime_set_autosuspend_delay(dev, 1000);
+>  	pm_runtime_use_autosuspend(dev);
+> =20
+> +	/* Make sure the sensor is available before V4L2 subdev init. */
+> +	ret =3D cci_read(imx290->regmap, IMX290_STANDBY, NULL, NULL);
+> +	if (ret)
+> +		goto err_pm;
+> +
+>  	/* Initialize the V4L2 subdev. */
+>  	ret =3D imx290_subdev_init(imx290);
+>  	if (ret)
+>=20
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
