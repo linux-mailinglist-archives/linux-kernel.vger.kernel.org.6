@@ -1,224 +1,106 @@
-Return-Path: <linux-kernel+bounces-277485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D6894A204
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:52:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 935CE94A206
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA15C1F221E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:52:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96A431C236D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5581C8227;
-	Wed,  7 Aug 2024 07:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A69C1C8236;
+	Wed,  7 Aug 2024 07:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="L4I6pX1V"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="d9Ap6mpt"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821F33EA64;
-	Wed,  7 Aug 2024 07:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415E17C6D4;
+	Wed,  7 Aug 2024 07:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723017129; cv=none; b=aEgap/SJ4kfLlgvTAoMrjC5x5UMuDGhP0Kq1UU/NE6CNqhHgMCPKWyYEd+xy432WkqGChERXzzPUc/OIMlTiDyBksh1hErU09pIqwle07ycXKw06HOTR+8GfRtt1tFMTJr0oNIFNVCAox2AgI43TPzTidI6uJBTFnsbAYGu/UB0=
+	t=1723017143; cv=none; b=G+Qq6Tw8KggqcdydaM70PNIGe4QvkanrUr1PHGteXYeMAdgK0+cSOHZmnMu9K/wxRldgCAxFocnn50CFS9Yw5hMSOQfAWT3NsTDOuMJ5rUqbbimJSCdDUO6E4VYZYVFTiASUyQnSLjYOxIWIL/n3cf4qM1yq2CbkoVFqybdT5/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723017129; c=relaxed/simple;
-	bh=TAPJZ5h6w1a5FTmmrZGOJISmzpiUh7fEzcCqu0Q+X+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ivrExbboXUM40yk4Xzlpls5D2UUkhGdTxdhnC5Y9JA2WoJWErhEebX7gPCgAgMxKDVxyb5LVqt0I/O2SzRm3e/9F+EGbu7UEobFpRj8j92F5Y0g48WvNS9Ie1K12qRMbCOFrwBDKsR9IBjWeTrvs8vzPw15GvVEDBc7jX81/zzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=L4I6pX1V; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4777q2Ib020021;
-	Wed, 7 Aug 2024 02:52:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723017122;
-	bh=fzjlbS714oZt+FwiYECCZl2QZkWAjpcYeuFj5G8nowg=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=L4I6pX1VlWfRmk3GuimLtMHEuRufFacRVWoTjsEDVoNwOIyGW4saei17hPHvT4jGH
-	 NmJC2K85iZgOLHt30qmCyoVptnhcFpiKMAzK/FOwbpVUIuCMc9cOucx8RYxuHYC6or
-	 OwoYr1SeL2+Z3hd+kM+XIaqelbFfRydRdkr6t3wo=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4777q2gv072886
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 7 Aug 2024 02:52:02 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
- Aug 2024 02:52:01 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 7 Aug 2024 02:52:01 -0500
-Received: from [172.24.30.93] (lt5cd2489kgj.dhcp.ti.com [172.24.30.93])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4777pv2J116667;
-	Wed, 7 Aug 2024 02:51:58 -0500
-Message-ID: <1d5252d5-ead1-4551-8723-2eb46d91faf0@ti.com>
-Date: Wed, 7 Aug 2024 13:21:57 +0530
+	s=arc-20240116; t=1723017143; c=relaxed/simple;
+	bh=1wAhjX2DPr9/lVfPAalcSwLvoZc4JgfP3/j9qMFUUrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IAFqGlcexVMGTJ4i1yYWAREUaXWjZoe0J3K4msrIDy5EQMxONKwfa8nBWd0AivZOEoZrOkj3Xtkp7VFxARhciv/yF/WOR4/DuTvqlHymPJU23EMLg1977kk+yXC2l4Ng6LBKbm1LO1bCzpW5kp8zCLprZYlEl1OyGIQbBROyY2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=d9Ap6mpt; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BObMkshv/1ZlUvzNmrwwqT325S36O8qv+ooCnwJwmHg=; b=d9Ap6mptPEo0WzYc27vE63neRu
+	u73kQ6QLcVnInCj1A8IesRMAoEYA2nHwR1O6AdXwcK1T+AGHefo3qcERKVWkjTQOEVOwz8vshRTKq
+	DWcQXwx+cN/uTyH2w7NAZ7GrhVXTK5zi557/FkEB5b6MVmgaK7qbJu2jrIpcxKARhWeWfiAmkjxAK
+	1kRAbBvYe6tO4vtqkFV7Q0eBrW00T1rJQMm5eD7FprnDLPLOl/EiqcVm7YIpmseepYYfVe9h3HUMg
+	1eaEez6gabRLV2kcqA9Gq0WG3ftsB4d8x8eJDdGH53+EfXpa/8XFH9xKpkKz6NRkAtyqDxM3jFOBz
+	b8lTf1Cw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sbbT0-00000002GZV-49f8;
+	Wed, 07 Aug 2024 07:52:19 +0000
+Date: Wed, 7 Aug 2024 08:52:18 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
+Message-ID: <20240807075218.GX5334@ZenIV>
+References: <20240806144628.874350-1-mjguzik@gmail.com>
+ <20240806155319.GP5334@ZenIV>
+ <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
+ <20240807033820.GS5334@ZenIV>
+ <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
+ <20240807062300.GU5334@ZenIV>
+ <20240807063350.GV5334@ZenIV>
+ <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
+ <20240807070552.GW5334@ZenIV>
+ <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] arm64: dts: ti: k3-j784s4*: Remove bootph
- properties from parent nodes
-To: Manorit Chawdhry <m-chawdhry@ti.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Neha Malcom Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi <b-padhi@ti.com>,
-        Siddharth
- Vadapalli <s-vadapalli@ti.com>, <u-kumar1@ti.com>
-References: <20240730-b4-upstream-bootph-all-v3-0-9bc2eccb6952@ti.com>
- <20240730-b4-upstream-bootph-all-v3-2-9bc2eccb6952@ti.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20240730-b4-upstream-bootph-all-v3-2-9bc2eccb6952@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
+On Wed, Aug 07, 2024 at 09:22:59AM +0200, Mateusz Guzik wrote:
 
-On 7/30/2024 3:23 PM, Manorit Chawdhry wrote:
-> Removes bootph-* properties from parent nodes and aligns the bootph-* to
-> other u-boot.dtsi
->
-> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
-> ---
->   arch/arm64/boot/dts/ti/k3-j784s4-evm.dts         | 9 +--------
->   arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi | 8 ++++----
->   2 files changed, 5 insertions(+), 12 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-> index ffa38f41679d..311844490027 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-> @@ -461,7 +461,6 @@ J784S4_IOPAD(0x078, PIN_OUTPUT, 1) /* (AH37) MCAN2_RX.AUDIO_EXT_REFCLK1 */
->   };
->   
+> Well it's your call, you wrote the thing and I need the problem out of
+> the way, so I'm not going to argue about the patchset.
+> 
+> I verified it boots and provides the expected perf win [I have to
+> repeat it is highly variable between re-runs because of ever-changing
+> offsets between different inode allocations resulting in different
+> false-sharing problems; i'm going to separately mail about that]
+> 
+> I think it will be fine to copy the result from my commit message and
+> denote it's from a different variant achieving the same goal.
+> 
+> That said feel free to use my commit message in whatever capacity,
+> there is no need to mention me.
 
-main_pmx0 has bootph-all in parent node, please consider to clean that 
-as well
+Original analysis had been yours, same for "let's change the calling
+conventions for do_dentry_open() wrt path refcounting", same for
+the version I'd transformed into that...  FWIW, my approach to
+that had been along the lines of "how do we get it consistently,
+whether we go through vfs_open() or finish_open()", which pretty
+much required keeping hold on the path until just before
+terminate_walk().  This "transfer from nd->path to whatever borrowed
+it" was copied from path_openat() (BTW, might be worth an inlined helper
+next to terminate_walk(), just to document that it's not an accidental
+property of terminate_walk()) and that was pretty much it.
 
+Co-developed-by: seems to be the usual notation these days for
+such situations - that really had been incremental changes.
 
->   &wkup_pmx2 {
-> -	bootph-all;
->   	wkup_uart0_pins_default: wkup-uart0-default-pins {
->   		bootph-all;
->   		pinctrl-single,pins = <
-> @@ -577,7 +576,6 @@ J784S4_WKUP_IOPAD(0x028, PIN_INPUT, 7)
->   };
->   
->   &wkup_pmx0 {
-> -	bootph-all;
->   	mcu_fss0_ospi0_pins_default: mcu-fss0-ospi0-default-pins {
->   		bootph-all;
->   		pinctrl-single,pins = <
-> @@ -597,7 +595,6 @@ J784S4_WKUP_IOPAD(0x008, PIN_INPUT, 0) /* (C34) MCU_OSPI0_DQS */
->   };
->   
->   &wkup_pmx1 {
-> -	bootph-all;
->   	mcu_fss0_ospi0_1_pins_default: mcu-fss0-ospi0-1-default-pins {
->   		bootph-all;
->   		pinctrl-single,pins = <
-> @@ -668,6 +665,7 @@ bucka12: buck12 {
->   				regulator-max-microvolt = <1100000>;
->   				regulator-boot-on;
->   				regulator-always-on;
-> +				bootph-pre-ram;
->   			};
->   
->   			bucka3: buck3 {
-> @@ -769,18 +767,15 @@ &ufs_wrapper {
->   };
->   
->   &fss {
-> -	bootph-all;
->   	status = "okay";
->   };
->   
->   &ospi0 {
-> -	bootph-all;
->   	status = "okay";
->   	pinctrl-names = "default";
->   	pinctrl-0 = <&mcu_fss0_ospi0_pins_default>, <&mcu_fss0_ospi0_1_pins_default>;
->   
->   	flash@0 {
-> -		bootph-all;
->   		compatible = "jedec,spi-nor";
->   		reg = <0x0>;
->   		spi-tx-bus-width = <8>;
-> @@ -837,13 +832,11 @@ partition@3fc0000 {
->   };
->   
->   &ospi1 {
-> -	bootph-all;
->   	status = "okay";
->   	pinctrl-names = "default";
->   	pinctrl-0 = <&mcu_fss0_ospi1_pins_default>;
->   
->   	flash@0 {
-> -		bootph-all;
->   		compatible = "jedec,spi-nor";
->   		reg = <0x0>;
->   		spi-tx-bus-width = <1>;
-> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
-> index f3a6ed1c979d..3f89277e3c2c 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
-> @@ -7,7 +7,6 @@
->   
->   &cbass_mcu_wakeup {
->   	sms: system-controller@44083000 {
-> -		bootph-all;
->   		compatible = "ti,k2g-sci";
->   		ti,host-id = <12>;
->   
-> @@ -39,7 +38,6 @@ k3_reset: reset-controller {
->   	};
->   
->   	wkup_conf: bus@43000000 {
-> -		bootph-all;
->   		compatible = "simple-bus";
->   		#address-cells = <1>;
->   		#size-cells = <1>;
-> @@ -65,6 +63,7 @@ secure_proxy_sa3: mailbox@43600000 {
->   		 * firmware on non-MPU processors
->   		 */
->   		status = "disabled";
-> +		bootph-pre-ram;
->   	};
->   
->   	mcu_ram: sram@41c00000 {
-> @@ -175,10 +174,10 @@ mcu_timer0: timer@40400000 {
->   		ti,timer-pwm;
->   		/* Non-MPU Firmware usage */
->   		status = "reserved";
-> +		bootph-all;
-
-both nodes mcu_timer0 and mcu_timer1 as marked as
-
-/* Non-MPU Firmware usage */, Please provide some message added bootph in first and removed from second
-
->   	};
->   
->   	mcu_timer1: timer@40410000 {
-> -		bootph-all;
->   		compatible = "ti,am654-timer";
->   		reg = <0x00 0x40410000 0x00 0x400>;
->   		interrupts = <GIC_SPI 817 IRQ_TYPE_LEVEL_HIGH>;
-> @@ -458,7 +457,6 @@ mcu_spi2: spi@40320000 {
->   	};
-> [..]
+Anyway, I really need to get some sleep before writing something
+usable as commit messages...
 
