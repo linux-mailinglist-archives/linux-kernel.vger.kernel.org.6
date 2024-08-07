@@ -1,81 +1,102 @@
-Return-Path: <linux-kernel+bounces-277152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 493D9949D44
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:10:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D09CF949D45
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04E222846E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:10:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0686E1C211D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A188D266A7;
-	Wed,  7 Aug 2024 01:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9642A2207A;
+	Wed,  7 Aug 2024 01:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwmqY3xg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rto8fesf"
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70E5848E;
-	Wed,  7 Aug 2024 01:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E71818EBF;
+	Wed,  7 Aug 2024 01:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722993029; cv=none; b=k0DSkdl3pzlpSLUxJUURNtM0Rk348uzKeFapXNmLNlukmyK9wXA0Pe3rwGwEZP07JxpE3BqxGa85ZdZL4Tj3mY7hBiWJLVpFv9Pnm7bEtB7BYsawjaUC7q86tdlHoMsnVgePDOk9/4AyGTsKcwb+U5NE0ANsn7KLtvcQsLPoFVs=
+	t=1722993063; cv=none; b=Jv/OYNM9ONSYu7b7SYS0QlDtIarWLio/pmNpUWlIkpA8DPgtLpycinF2b7kwiKMkDeeZd7HU0RTtqZx48TzAQ1T1aT/VQzRJkQOrb9GXNUsRBYNHhXrddz2BQkF+1pHc1x6seo1HdHZokWY88ute+DKLrVmd00nVVA2XP98UiJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722993029; c=relaxed/simple;
-	bh=VEAeKiK6hlF02EdznumwnpyEAnhaUk/4dKPHAU8S8w0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dItxlh6CAL6iPalz72ZuN9vX+Nbjyg54huvAG9BeLht8cnj9vw/xdCiTWqkchlJ4XofDTqL7Q5N84GtpWJfeAaQfil2/AHRkKbnQGakxTyZckYl9Y2aw3vAsXVrTmIlenXwQ0kncAUCsveNIpkrHJO8f2O9flUtao0zdGQwhCCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwmqY3xg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41FB2C32786;
-	Wed,  7 Aug 2024 01:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722993028;
-	bh=VEAeKiK6hlF02EdznumwnpyEAnhaUk/4dKPHAU8S8w0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TwmqY3xgc+0TjXESQoAlont+KKERKMwpynWBjE/jIDSYtYIs31wbYVPKNhcBVFz/1
-	 Xp3ZJaLaz2VbGVdmis57ZWqTjW/OhSo1CvQ6/hdTFQh6JTtBz4ryzzUSv8f3Wt9e0e
-	 tkmNqCl+zIBSYk190xykWWhZhW7VWD1u/0gSupTbUC00+nvbzD0Ny3bXwpD13ksVpL
-	 /1+lYzln/v8uyeif/Msgzr8HOh6PAHWjQ/LQcnaP4Bvy+ymhYDDoJcFcb1zduuaURS
-	 wcdbbpJJMmzXAvevUghkijm0VccIrlIuQwZ4bvvqkf1bwZ4T1c9Z6Dkd9AhMs/7imo
-	 dg8vuiScGTVJw==
-Date: Tue, 6 Aug 2024 18:10:26 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Daniel
- Scally <djrscally@gmail.com>, Heikki Krogerus
- <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Jean Delvare <jdelvare@suse.com>, Guenter
- Roeck <linux@roeck-us.net>, Pavel Machek <pavel@ucw.cz>, Lee Jones
- <lee@kernel.org>, Marcin Wojtas <marcin.s.wojtas@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Andreas
- Kemnade <andreas@kemnade.info>, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-leds@vger.kernel.org, netdev@vger.kernel.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v3 0/4] use device_for_each_child_node() to access
- device child nodes
-Message-ID: <20240806181026.5fe7f777@kernel.org>
-In-Reply-To: <20240805-device_for_each_child_node-available-v3-0-48243a4aa5c0@gmail.com>
-References: <20240805-device_for_each_child_node-available-v3-0-48243a4aa5c0@gmail.com>
+	s=arc-20240116; t=1722993063; c=relaxed/simple;
+	bh=9IpgKyEBlO61F/leSfjOrBSRUu9FJivf4kC8bqcMMTQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PKZY3xgFOgfLXAD6t7kkH8qRzobesu3khA2A72bs/TyCwij1YetUVpS56K5xz2CvWshdUotuLN1rzZI+8p65XzaXhCdGJH+YHMNLed6IBZjW3IiBU72cVmlJaydsliyiLhpEagrOUNqgvNBJHOtMeDFYoeOY59rXKQw8odWJ7CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rto8fesf; arc=none smtp.client-ip=209.85.217.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4929fd67c7bso349931137.0;
+        Tue, 06 Aug 2024 18:11:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722993061; x=1723597861; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9IpgKyEBlO61F/leSfjOrBSRUu9FJivf4kC8bqcMMTQ=;
+        b=Rto8fesf52SU3B6oXhCsexUfxxV8zesqM5NqM50Arr1KqieSIyPat2LH0A6DuMtxb6
+         FXIASRwn2cv+MJw7u0YoqM0uIq3SgkipkuhasS0k+jkWidTahNlylcXY519PKk1qD/lv
+         fBOvVlxbVgRdWx1koB8jSp+RWomOIke3uP8KDd3V0gwnpkcCU5XyRIzPec+Qhwnc9AWP
+         tB+jFWtz85ISrIkyGWor1TVnF+GIslUSQD8dSgz8ss1Ywy3X6TigQhy0gF8UEvBYaO81
+         USXep5q26j7SJmoSWOmIKPnQDHypBRWZSl4JKm4JVKKdaUly4OMexVVQJPbETGj3BC38
+         CVpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722993061; x=1723597861;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9IpgKyEBlO61F/leSfjOrBSRUu9FJivf4kC8bqcMMTQ=;
+        b=FJE0oH+32osung8P9gSalsQNwVmEeX3MVO6O/1cjj/RygXASPUst1QalbZjcMx/oQ1
+         lIjTcQ2DDW2AN8nkph3rlunq6ujkQFogfKr5/WzNUPq+xeKTBnLrqK6Gwv/eu5BX9yXS
+         hnB0WYssWPUwmpbC7VUcr0veXBiSVS5/pNW+h7aCMhn86Zrq4frIDmceUzqYeqXeRql4
+         9RohihwOMJteqPL74LUCv/uaxaC4p+V6N79JJdYvX90SOVfKlggns7kXqlu8PHJolKHD
+         6jMzWa7BJi0oSPzcBGhiPzVRXwoi1OWU+ny34QlaOB1LNxD5ve/0yqz19ZNiMQOqPMR2
+         fIYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXP9pPIjQLeTTzhOpesM7b+SLLzEg+Qk4d+nQoOkPW0wqothFKJXo+jR6/BczEZ89hYkELaW1MwuSuZ+zo+3PlC1jFfC1Tgk7KgYuwp6G0TLV8WM+oBrUmJXDu9dHHUpihD0Eff96me0LWWaA==
+X-Gm-Message-State: AOJu0YyjnoO92+Qgb3rJYbk80qB19hTLli6JusqB2UkiN6eRhRW+GwJY
+	XXXuwCRRZ2yVB92seEG1OX4veaRvikik0I2KDQKNEcZjsqze3NpKDt66AsPVrDq4q03DsgR8IdT
+	Dv0N5KLSSbl9R8j80MM/ELJghL5AdI8vj
+X-Google-Smtp-Source: AGHT+IGXLTgSWfFw9XCYVXEZz+oLd2KJ++MOve/yUtf5+Nk352XREPSsMKL/zBTwhp+GsMHhFQrguEHsZJHS8y2L2DQ=
+X-Received: by 2002:a05:6102:c8c:b0:48f:4898:f2a9 with SMTP id
+ ada2fe7eead31-4945bf14ca1mr20606061137.25.1722993061343; Tue, 06 Aug 2024
+ 18:11:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240805100109.14367-1-rgbi3307@gmail.com> <2024080635-neglector-isotope-ea98@gregkh>
+ <CAHOvCC4-298oO9qmBCyrCdD_NZYK5e+gh+SSLQWuMRFiJxYetA@mail.gmail.com>
+ <2024080615-ointment-undertone-9a8e@gregkh> <CAHOvCC7OLfXSN-dExxSFrPACj3sd09TAgrjT1eC96idKirrVJw@mail.gmail.com>
+In-Reply-To: <CAHOvCC7OLfXSN-dExxSFrPACj3sd09TAgrjT1eC96idKirrVJw@mail.gmail.com>
+From: Pedro Falcato <pedro.falcato@gmail.com>
+Date: Wed, 7 Aug 2024 02:10:49 +0100
+Message-ID: <CAKbZUD08vPU8iv0s-t5_Jigoybq9DMvZtTvFc7LfDkoBCziiMg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] lib/htree: Add locking interface to new Hash Tree
+To: JaeJoon Jung <rgbi3307@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Sasha Levin <levinsasha928@gmail.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	maple-tree@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 05 Aug 2024 16:49:43 +0200 Javier Carrasco wrote:
->       net: mvpp2: use port_count to remove ports
->       net: mvpp2: use device_for_each_child_node() to access device child nodes
+On Wed, Aug 7, 2024 at 1:21=E2=80=AFAM JaeJoon Jung <rgbi3307@gmail.com> wr=
+ote:
+>
+> Please check again considering the above.
 
-Please repost these two separately so we can take the whole series 
-via networking. As is the series doesn't apply so it's too much
-manual twiddling to fit into our tree.
+That's not the point, your hash tree has no users. Please find a user
+and show those big performance wins you're talking about.
+XArray had the IDR and the page cache, maple came with the mmap tree
+conversion :)
+
+--=20
+Pedro
 
