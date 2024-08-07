@@ -1,121 +1,190 @@
-Return-Path: <linux-kernel+bounces-277506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39B7C94A250
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:02:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1615F94A254
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A1AF1C2257F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:02:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C33CB285502
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD5C1C462C;
-	Wed,  7 Aug 2024 08:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33C71C9DE0;
+	Wed,  7 Aug 2024 08:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="l8rcU5Bv"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQ7XTtpg"
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1646F2E3
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 08:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847AB1C9DD9
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 08:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723017715; cv=none; b=SJfTSVlFTSZyzE4BWPbaXzqwQHX91RrfuVOyRm6E1x7wf1OyJODHpofpWh9E14uRdVTOLvDoYnCXdQRfA91oifF5WGHyaGHFQaBD6/nyTmtWuIA0Gx17hoPo9x/iLFCjqcweb9IVb17KTP1XWT08GAfcmG3k+iJS3WmFiQNide4=
+	t=1723017758; cv=none; b=Umhcf8A80Sf06de0bmIM5Sl20y9A3Q1ANFU/55Ql5VW3jDTNvxG+sXN/UE77F3CyooDTC8mepjBhmmbCUGfM9ADNZopK4dYOQGt3R/vrNjjtpaLrgJWIdtEPXmKd3QELXg0VGpJkg9FkuXTw42ybOOs6I0MWW12BBjKOds2NIPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723017715; c=relaxed/simple;
-	bh=uNRTxLMAMpcbQn5DCRpAhvTpZAl9kCTly36CTOVae9Y=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ITUuVozH/QkX2dmYIQ/nSSWMYCRRuHyFKa8YKYj8hqmPZAdfrEKWDp3uQM8ni4QpmbsbCRNdpxgdcWSPVOK68jy7nAzoWPasj2P91MAW4SnNVAvI6lTqsZhUkTyUlkpATFCg5NOCAkah18c06SPMP5kyP715kquCAJWbn17JhIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=l8rcU5Bv; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723017710; x=1723276910;
-	bh=RWY8n2kwMXBw5zg65jaQElb79dGDUP5Ex7AXip/oERA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=l8rcU5BvXbczBsQdlGiFBhu8cJLjhgult7+F8YRsB+mLN7KS9etyd76yw12rwQWRP
-	 WkJ5TLzFT12bFC38v9QINztgQABrLkPVZMy9FnRyxRxgv9NEgn/7J+xN71ciGt+gFH
-	 Xvv0i5DopHNmb4LGRIjj10NVew/q/cbi1h0U4Bivvsl2M6/HPS/dY+CwxZFq7vjXRK
-	 73aUdYTFlzoyiOibjcmTI2BDUDR/SJscWdYXp7owOffV3Nl2RPecyMdwLpxeVgyVkK
-	 FEIpbnsB3acccPGsSazAG9xRczo3De1vjnzYFsk/InMH3BUpieB7fJxxhGENLBCwgB
-	 izZk6TjmLfUkw==
-Date: Wed, 07 Aug 2024 08:01:00 +0000
-To: Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 09/28] rust: alloc: implement kernel `Box`
-Message-ID: <7f3a4ea5-79c6-4068-9a5f-0aa3a55e38cb@proton.me>
-In-Reply-To: <CAH5fLggiSU9Ossy5gc+S_rSiX8v-JCDKPL_tRDYdjMYGfOt-0w@mail.gmail.com>
-References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-10-dakr@kernel.org> <a1c1e273-2d40-4114-b3b9-f27c73e3d122@proton.me> <ZrKrMrg5E85y7jkj@pollux> <012f5a12-2408-4658-8318-55fa8d4285e1@proton.me> <CAH5fLggiSU9Ossy5gc+S_rSiX8v-JCDKPL_tRDYdjMYGfOt-0w@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 5e675f3e5db637a98548d3886b70d1e75fe812f2
+	s=arc-20240116; t=1723017758; c=relaxed/simple;
+	bh=aIMiyZiVaHy10m8mxq1vpUxxSsxkODEwGQFmQgbwAUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N4FT1aITHJC7LCCcG6/J9lpNZuEVQIpH/+HVuoeSoD/4drimv8yg5WcbpBSPVvfJHm6Pj676GNVfH4E1NwHnMzV96I2W7Ot6TpQEnbIv5kQThe8AwTtYfhp4SkUL/VU52tdPGfsdTexjQUptWlmYGqs9OgSeI4xbDlz/B2xuvpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SQ7XTtpg; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-492a76c0cfbso439801137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 01:02:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723017755; x=1723622555; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OrC1zyhgI13/nLN4qEM/vJhW0qbHo7qD5kYtXY0vUn4=;
+        b=SQ7XTtpgm7O00z1HurkVthnGhy2SRuwUkBHw7rL2ctmM0DtrqoGw5c3BqL9kivGX6Y
+         PDhaMQkJH+Ol/oxdHBlLjhOd1wUauNytxRedOwhkznosPnXrypoN79NWw+4RF0GOmO7D
+         wyk4P4vAyfbGp4PrLriMn12XlpjM9W9T6oucPdubnecjvLqcNbCGqDXkVgs0OdrdStqP
+         dNZLmXzFd0+ys1O+/6JKByA1VWrfR0n78JcWmuK6hJRS3Wa1F2O4guSHBF+WfP8KnMQ1
+         A25FTAuek7g99Y8EZlYcauoth+hstAZljBUNbhxk7pUDF/5YSA6ilj3a+QRzWpL2N7vg
+         HseA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723017755; x=1723622555;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OrC1zyhgI13/nLN4qEM/vJhW0qbHo7qD5kYtXY0vUn4=;
+        b=aMUMNYBO61TPMnoIewQNWk2im6nG17Sz1Y8OW002bcDzirJRQiALODZZkK02xNe+vn
+         hTWDs7IYRs9jhtJ/I0C/feWaRnkAQgwJINrkTBdb4iJLv3nr2jHgDSzepvqgoFMRYyQ8
+         jQtqNLcQdQXiKpUbsqX4weKsyD6981k8x4LdarfrGZbjGwGij2LddlZiLfXlqmXZPrkQ
+         OXzGBPLdLJBl1HFz166qaaVMfkVzoxSQWixdC8bBWMSVVgVuLhulIejkivw4U5tHpj8q
+         uoJ4UgNUzncbwsvaRUmcgrI4LcDbyhoW3DO2B3QhLQb1fXWF67/2fb3T0iOMfU7T/Z2b
+         15mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnXNJ6O6Kf+8slX580pnMtbgzcpjfZCMwVAFxvhRe7Bp3MmviP52kP0fdmTsd9eRteGv+GsNYhyo2T6IRo73Mjf2cnA1Oqzs8i+12t
+X-Gm-Message-State: AOJu0YxD3Xcq9r/RNq55F5xu2AHG/vFaDYYoG8vLnw5FVf5qMybTsM4+
+	zZBKZ0QfwDTb2dYnCI0+1NXDBm1ra/SFI/k7oAlmFMV2B1A/Mt+t4Ctas1pEVQOw3bwpIqoKe8q
+	aGTUAf5M/ohet9KLZyHRgcelzTAk=
+X-Google-Smtp-Source: AGHT+IGDeVEkcFRK2EhFGcYSbbGbZ0gsGUWaUdS6Ykzr5I4kI8nBtwdDG6GYt/r1raX/X/atHihbdcuNWrW3pR7Vshc=
+X-Received: by 2002:a05:6102:f0f:b0:492:aa42:e0cd with SMTP id
+ ada2fe7eead31-4945bf24f3amr22339260137.29.1723017755163; Wed, 07 Aug 2024
+ 01:02:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <cover.1723012159.git.baolin.wang@linux.alibaba.com> <af23b3bdee8ade5bb44706c7c3058d07d6d369ac.1723012159.git.baolin.wang@linux.alibaba.com>
+In-Reply-To: <af23b3bdee8ade5bb44706c7c3058d07d6d369ac.1723012159.git.baolin.wang@linux.alibaba.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 7 Aug 2024 20:02:24 +1200
+Message-ID: <CAGsJ_4wFNDQ8vJDjt70kG+pShi13_BDa7P2=DtoNZ8Ypy+Gd0w@mail.gmail.com>
+Subject: Re: [PATCH v4 02/10] mm: swap: extend swap_shmem_alloc() to support
+ batch SWAP_MAP_SHMEM flag setting
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org, 
+	david@redhat.com, wangkefeng.wang@huawei.com, chrisl@kernel.org, 
+	ying.huang@intel.com, ryan.roberts@arm.com, shy828301@gmail.com, 
+	ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com, 
+	p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 07.08.24 09:51, Alice Ryhl wrote:
-> On Wed, Aug 7, 2024 at 9:49=E2=80=AFAM Benno Lossin <benno.lossin@proton.=
-me> wrote:
->> On 07.08.24 01:01, Danilo Krummrich wrote:
->>> On Tue, Aug 06, 2024 at 07:47:17PM +0000, Benno Lossin wrote:
->>>> On 05.08.24 17:19, Danilo Krummrich wrote:
->>>>> +impl<T, A> Box<T, A>
->>>>> +where
->>>>> +    T: ?Sized,
->>>>> +    A: Allocator,
->>>>> +{
->>>>> +    /// Constructs a `Box<T, A>` from a raw pointer.
->>>>> +    ///
->>>>> +    /// # Safety
->>>>> +    ///
->>>>> +    /// `raw` must point to valid memory, previously allocated with =
-`A`, and at least the size of
->>>>> +    /// type `T`.
->>>>
->>>> With this requirement and the invariant on `Box`, I am lead to believe
->>>> that you can't use this for ZSTs, since they are not allocated with `A=
-`.
->>>> One solution would be to adjust this requirement. But I would rather u=
-se
->>>> a different solution: we move the dangling pointer stuff into the
->>>> allocator and also call it when `T` is a ZST (ie don't special case th=
-em
->>>> in `Box` but in the impls of `Allocator`). That way this can stay as-i=
-s
->>>> and the part about ZSTs in the invariant can be removed.
->>>
->>> Actually, we already got that. Every zero sized allocation will return =
-a
->>> dangling pointer. However, we can't call `Allocator::free` with (any) d=
-angling
->>> pointer though.
->>
->> The last part is rather problematic in my opinion, since the safety
->> requirements of the functions in `Allocator` don't ensure that you're
->> not allowed to do it. We should make it possible to free dangling
->> pointers that were previously "allocated" by the allocator (ie returned
->> by `realloc`).
->> Maybe we do need an `old_layout` parameter for that (that way we can
->> also `debug_assert_eq!(old_layout.align(), new_layout.align())`).
->=20
-> The std allocators generally prohibit zero sized allocations, so it
-> seems sensible for us to do the same?
+On Wed, Aug 7, 2024 at 7:31=E2=80=AFPM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+> To support shmem large folio swap operations, add a new parameter to
+> swap_shmem_alloc() that allows batch SWAP_MAP_SHMEM flag setting for
+> shmem swap entries.
+>
+> While we are at it, using folio_nr_pages() to get the number of pages
+> of the folio as a preparation.
+>
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-I never understood why they do that, the stdlib `Allocator` trait has
-all the information it needs to detect zero-sized allocations, so it
-could just return dangling pointers. I don't see the point of
-duplicating the zero-sized logic in `Box` and `Vec`...
+Reviewed-by: Barry Song <baohua@kernel.org>
 
----
-Cheers,
-Benno
-
+> ---
+>  include/linux/swap.h | 4 ++--
+>  mm/shmem.c           | 6 ++++--
+>  mm/swapfile.c        | 4 ++--
+>  3 files changed, 8 insertions(+), 6 deletions(-)
+>
+> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> index 1c8f844a9f0f..248db1dd7812 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -481,7 +481,7 @@ void put_swap_folio(struct folio *folio, swp_entry_t =
+entry);
+>  extern swp_entry_t get_swap_page_of_type(int);
+>  extern int get_swap_pages(int n, swp_entry_t swp_entries[], int order);
+>  extern int add_swap_count_continuation(swp_entry_t, gfp_t);
+> -extern void swap_shmem_alloc(swp_entry_t);
+> +extern void swap_shmem_alloc(swp_entry_t, int);
+>  extern int swap_duplicate(swp_entry_t);
+>  extern int swapcache_prepare(swp_entry_t entry, int nr);
+>  extern void swap_free_nr(swp_entry_t entry, int nr_pages);
+> @@ -548,7 +548,7 @@ static inline int add_swap_count_continuation(swp_ent=
+ry_t swp, gfp_t gfp_mask)
+>         return 0;
+>  }
+>
+> -static inline void swap_shmem_alloc(swp_entry_t swp)
+> +static inline void swap_shmem_alloc(swp_entry_t swp, int nr)
+>  {
+>  }
+>
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 4a5254bfd610..22cdc10f27ea 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1452,6 +1452,7 @@ static int shmem_writepage(struct page *page, struc=
+t writeback_control *wbc)
+>         struct shmem_sb_info *sbinfo =3D SHMEM_SB(inode->i_sb);
+>         swp_entry_t swap;
+>         pgoff_t index;
+> +       int nr_pages;
+>
+>         /*
+>          * Our capabilities prevent regular writeback or sync from ever c=
+alling
+> @@ -1484,6 +1485,7 @@ static int shmem_writepage(struct page *page, struc=
+t writeback_control *wbc)
+>         }
+>
+>         index =3D folio->index;
+> +       nr_pages =3D folio_nr_pages(folio);
+>
+>         /*
+>          * This is somewhat ridiculous, but without plumbing a SWAP_MAP_F=
+ALLOC
+> @@ -1536,8 +1538,8 @@ static int shmem_writepage(struct page *page, struc=
+t writeback_control *wbc)
+>         if (add_to_swap_cache(folio, swap,
+>                         __GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN,
+>                         NULL) =3D=3D 0) {
+> -               shmem_recalc_inode(inode, 0, 1);
+> -               swap_shmem_alloc(swap);
+> +               shmem_recalc_inode(inode, 0, nr_pages);
+> +               swap_shmem_alloc(swap, nr_pages);
+>                 shmem_delete_from_page_cache(folio, swp_to_radix_entry(sw=
+ap));
+>
+>                 mutex_unlock(&shmem_swaplist_mutex);
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index ea023fc25d08..88d73880aada 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -3604,9 +3604,9 @@ static int __swap_duplicate(swp_entry_t entry, unsi=
+gned char usage, int nr)
+>   * Help swapoff by noting that swap entry belongs to shmem/tmpfs
+>   * (in which case its reference count is never incremented).
+>   */
+> -void swap_shmem_alloc(swp_entry_t entry)
+> +void swap_shmem_alloc(swp_entry_t entry, int nr)
+>  {
+> -       __swap_duplicate(entry, SWAP_MAP_SHMEM, 1);
+> +       __swap_duplicate(entry, SWAP_MAP_SHMEM, nr);
+>  }
+>
+>  /*
+> --
+> 2.39.3
+>
 
