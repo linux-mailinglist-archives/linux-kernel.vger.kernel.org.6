@@ -1,172 +1,154 @@
-Return-Path: <linux-kernel+bounces-277575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA5A94A33F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:46:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 875A294A345
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 758731F2618F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:46:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B905289600
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5140B1C9ECD;
-	Wed,  7 Aug 2024 08:46:25 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0591CB329;
+	Wed,  7 Aug 2024 08:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="mt1ISLtg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MWKyLLBt"
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D373B3A267;
-	Wed,  7 Aug 2024 08:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EEA1C9ED8;
+	Wed,  7 Aug 2024 08:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723020384; cv=none; b=chuRMttWyAbnpNVhPARxBm3nwtnmrE7nMCXiKPEYGxrb9Uu8kqzaa4t89fc+MuWwxLpCi+owH1XHDAw2axSxODhcT98OHutFifUP5xTwiPwILrh1TZOA7+3PJ7n8cyvglcfrsMsuPZVJkEf4pPoi6kT6oyoNGjFyPg50HEPrGCg=
+	t=1723020477; cv=none; b=k8769VljREpr2HPI9OAxDqBMt/LKgiUqYKwmeVRottNbkgJo6mFUPcLJxPUWtq49ws5oMXE744petkLy2bb23Ma29pLx+xmZ+Eabbqj459Hg11t81gYcvb4rtjnnggcCMOAOx/AaSGswhnqyfLOumevGYJOxuWZpAdAdAGlSUJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723020384; c=relaxed/simple;
-	bh=GRn1lhuBv7dWgVDIIISU2pr5nJJB5Nl3fhgqXkXs6Po=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eTHjcMnFCGbBFkURckcTeeTyiXUvAf86vTTDT3P+WrQvdVQEb4c0Mz7ovM7xMvMBt65N0kmtLOJ4gFkrh+E0oW2iX09GUrOJ1V1ySfqzZ5ZM8OpjGrF58F1lNL9n27cPgOxpsVJJUOR62EnInT6shVgFGhpVB7xzHwZRpLLv84o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C3E4C32782;
-	Wed,  7 Aug 2024 08:46:23 +0000 (UTC)
-Message-ID: <9281e270-01a9-434d-b19a-92978cdbdcc5@xs4all.nl>
-Date: Wed, 7 Aug 2024 10:46:21 +0200
+	s=arc-20240116; t=1723020477; c=relaxed/simple;
+	bh=D/4g9iSpdCu9/6X1854okWB4SvxpMW9c9SdjmIf3uLo=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=gmoMKz9qra41NqF17LKuk7L+2rHTxHbyillIV4fX/hV9O2XsxVa9GnCW5aD3DixIat9TbmVaFMuNnPfHkn9p1vnQo7D9iEnxDah3paeLrEd9ZFQr92f83mXRaR48x2gP2eTgLebnnNRIAUrUJRC+mwo/Btgm0ScRXuQ5SCnUoYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=mt1ISLtg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MWKyLLBt; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id BB9F5138FCCB;
+	Wed,  7 Aug 2024 04:47:54 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Wed, 07 Aug 2024 04:47:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1723020474;
+	 x=1723106874; bh=8cdJSPVUAdCYHD4i9n6JllUQ32KC29sx+ZdNKg4EM2Q=; b=
+	mt1ISLtgJ4wPrVpN8XOSY6V2fc7T6NL6YDE28T+dgv6vXmLuLOJcU5pz4woOUb3e
+	ReAGYhEeIVSshGhHWA8im6UczAR20Yy0qsW396qqDYQ1iEq887CcCjf2h2nUqhNh
+	fI6WzUvbA3RTvKZhpeQVIuYn/rjW8dicjN6F2MSpIphADJRDpv1qI64P5rUt42dj
+	WBpdiL+jiQrS8f65MKmhcxCjld4NfGxCwp9RrMhzRkrPv4ChWQH2kRiqR9Il9IxW
+	Nn5BxJhaJuSe9PbDTu4zLZI17axf+uSxYClqL9OgD8bQ2uhEM4mOjY4lA8m7P5Fy
+	P34cR+Q6iPmQUY2ndccOJA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723020474; x=
+	1723106874; bh=8cdJSPVUAdCYHD4i9n6JllUQ32KC29sx+ZdNKg4EM2Q=; b=M
+	WKyLLBtl8lMsgJgcxKinlxOEhOA/emue/bwI8nkTo4b6++1Zsj+oBAzZAj6ghV6Q
+	+Cq4UyDgJyz3m99EwTF+TAga2FlY0XJqG75hZ8AYwR2meRV2S3D0FtEs9nL3aNbz
+	RS2JWWnxhHHyPTPaRlu1Y8MONGmFM3mh+1tCKWM8+hFZRmKx5pJmkug3Ap00hhpr
+	FXwZmmTstnOnGdiJInx79jS33NBXp1hWUq60loFHrkWTHKHU9W9RiliHMNkXzum8
+	ea40B36uDsS7CYUZQoIXcxVOHDoydNQ/2bP9vH4uqij3sO0kR6c1AQ8pM61BhpbC
+	662+4+Lkj92YFArgGMEJw==
+X-ME-Sender: <xms:ujSzZkbyLShVvafvELKLrQJ8LU_Il43rjUcyQ13XW2yH1i1xFYSRqw>
+    <xme:ujSzZvYnubeJ9o-xkvo0uhyxKJjcZ98jAwjzHsUSKFlNCCFJ5FEAl-5_dkkL81CJ9
+    d-grAHgLTjVYzTAhBk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledtgddtkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdv
+    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:ujSzZu9f5bXwwafSDSWl3osS70qcTCiNjITSjd91_Nf3Ljy0vS4hEA>
+    <xmx:ujSzZur-EX7Rkrt8W-SjNq_hXfdncDFDBoARU450Dgwqwl4egT2n1g>
+    <xmx:ujSzZvqJqwBhjuDoGEr1U3QeEf9P8ccTsFNl8vEkZw-N9GxZPXd4cQ>
+    <xmx:ujSzZsT3XubuL_13vJq_7MV2WtO1wisvJieE0MkuvI2pEHbk1dCEug>
+    <xmx:ujSzZrowJb6m6X8hk1pnkU-pyGTzSCwheNommCjWwymBfNHN60yugiKS>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 17D47B6008D; Wed,  7 Aug 2024 04:47:53 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/3] media: videodev2: Add flag to unconditionally
- enumerate pixel formats
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, mchehab@kernel.org,
- ezequiel@vanguardiasur.com.ar
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-References: <20240731093457.29095-1-benjamin.gaignard@collabora.com>
- <20240731093457.29095-2-benjamin.gaignard@collabora.com>
- <c9e6ed97-bb42-465a-9bce-797adb44906f@xs4all.nl>
-Content-Language: en-US, nl
-In-Reply-To: <c9e6ed97-bb42-465a-9bce-797adb44906f@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8
+Date: Wed, 07 Aug 2024 10:47:28 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Pierre-Louis Bossart" <pierre-louis.bossart@linux.intel.com>,
+ "Arnd Bergmann" <arnd@kernel.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
+ "Peter Ujfalusi" <peter.ujfalusi@linux.intel.com>,
+ "Bard Liao" <yung-chuan.liao@linux.intel.com>,
+ "Ranjani Sridharan" <ranjani.sridharan@linux.intel.com>,
+ "Daniel Baluta" <daniel.baluta@nxp.com>,
+ "Seppo Ingalsuo" <seppo.ingalsuo@linux.intel.com>
+Cc: "Kai Vehmanen" <kai.vehmanen@linux.intel.com>,
+ "Mark Brown" <broonie@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>,
+ "Takashi Iwai" <tiwai@suse.com>, "Nathan Chancellor" <nathan@kernel.org>,
+ "Nick Desaulniers" <ndesaulniers@google.com>,
+ "Bill Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
+ "Brent Lu" <brent.lu@intel.com>, sound-open-firmware@alsa-project.org,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
+Message-Id: <b821f357-8a11-4814-8ae0-e0e8d8cd4afb@app.fastmail.com>
+In-Reply-To: <250c63d7-d81e-49ea-ac8f-2e3496075f20@linux.intel.com>
+References: <20240807080302.2372297-1-arnd@kernel.org>
+ <250c63d7-d81e-49ea-ac8f-2e3496075f20@linux.intel.com>
+Subject: Re: [PATCH] sound: sof: ioc4-topology: avoid extra dai_params copy
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 07/08/2024 10:39, Hans Verkuil wrote:
-> On 31/07/2024 11:34, Benjamin Gaignard wrote:
->> When the index is ORed with V4L2_FMTDESC_FLAG_ENUM_ALL the
->> driver clears the flag and enumerate all the possible formats,
->> ignoring any limitations from the current configuration.
->> Drivers which do not support this flag yet always return an EINVAL.
->>
->> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
->> ---
->> change in version 6:
->> - Change flag name.
->> - Improve documentation.
->>
->>  .../userspace-api/media/v4l/vidioc-enum-fmt.rst  | 16 +++++++++++++++-
->>  .../media/videodev2.h.rst.exceptions             |  1 +
->>  include/uapi/linux/videodev2.h                   |  3 +++
->>  3 files changed, 19 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->> index 3adb3d205531..1112dc9044b2 100644
->> --- a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->> +++ b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->> @@ -85,7 +85,15 @@ the ``mbus_code`` field is handled differently:
->>      * - __u32
->>        - ``index``
->>        - Number of the format in the enumeration, set by the application.
->> -	This is in no way related to the ``pixelformat`` field.
->> +        This is in no way related to the ``pixelformat`` field.
->> +        When the index is ORed with ``V4L2_FMTDESC_FLAG_ENUM_ALL`` the
->> +        driver clears the flag and enumerate all the possible formats,
-> 
-> enumerate -> enumerates
-> 
->> +        ignoring any limitations from the current configuration. Drivers
->> +        which do not support this flag yet always return an ``EINVAL``
-> 
-> Drop the 'yet'.
-> 
-> But this raises a question: should this flag only be supported by drivers
-> that can actually return different format lists depending on this flag?
-> 
-> Or can it be supported as well by a driver where this makes no difference?
-> 
-> I'm inclined to limit it to drivers that actually can return different
-> results. If nothing else, that will indicate to the application that this
-> is actually possible.
-> 
-> If we agree on that, then that should be documented as well.
+On Wed, Aug 7, 2024, at 10:37, Pierre-Louis Bossart wrote:
+> On 8/7/24 10:02, Arnd Bergmann wrote:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>> 
+>> The snd_pcm_hw_params structure is really too large to fit on the
+>> stack. Because of the way that clang inlines functions, it ends up
+>> twice in one function, which exceeds the 1024 byte limit for 32-bit
+>> architecutes:
+>> 
+>> sound/soc/sof/ipc4-topology.c:1700:1: error: stack frame size (1304) exceeds limit (1024) in 'sof_ipc4_prepare_copier_module' [-Werror,-Wframe-larger-than]
+>> sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
+>> 
+>>>From what I can tell, this was unintentional, as both
+>> sof_ipc4_prepare_dai_copier() and sof_ipc4_prepare_copier_module() make a
+>> copy for the same purpose, but copying it once has the exact same effect.
+>
+> Humm, not sure. I think the copy was intentional so that if one of the
+> fixups fails, then the initial hw_params structure is not modified.
 
-I also think that this flag makes no sense for drivers that have
-V4L2_CAP_IO_MC set, since in that case the list of returned formats shall
-not depend on the active configuration (see
-https://hverkuil.home.xs4all.nl/spec/userspace-api/v4l/vidioc-enum-fmt.html ).
+It's clear that one of the two copies was intentional, however
+the same logic exists in the caller, which passes the copied
+ref_params into sof_ipc4_prepare_dai_copier() instead of the live
+'fe_params'. If sof_ipc4_prepare_dai_copier() fails, the copy
+is discarded by returning the error, and otherwise it gets
+passed on to sof_ipc4_init_input_audio_fmt().
 
-I think this should be mentioned in the documentation and tested for in the
-compliance test.
+> Also not sure why a compiler would think inlining such a large function
+> is a good idea?
 
-Regards,
+I think clang prefers to inline large functions in order to better
+do larger scale optimizations. gcc starts by inlining small leaf
+functions and doesn't get to this one.
 
-	Hans
+Note that the actual problem of having two giant structures on the
+stack does not change through inlining, the risk of overflowing
+the 8kb thread stack and the cost of maintaining these variables
+is the same. The only difference is that clang triggers the warning
+because it sees the total stack size where gcc doesn't see it.
 
-> 
->> +        error code.
->> +        Formats enumerated when using ``V4L2_FMTDESC_FLAG_ENUM_ALL`` flag
->> +        shouldn't be used when calling :c:func:`VIDIOC_ENUM_FRAMESIZES`
->> +        or :c:func:`VIDIOC_ENUM_FRAMEINTERVALS`.
->>      * - __u32
->>        - ``type``
->>        - Type of the data stream, set by the application. Only these types
->> @@ -234,6 +242,12 @@ the ``mbus_code`` field is handled differently:
->>  	valid. The buffer consists of ``height`` lines, each having ``width``
->>  	Data Units of data and the offset (in bytes) between the beginning of
->>  	each two consecutive lines is ``bytesperline``.
->> +    * - ``V4L2_FMTDESC_FLAG_ENUM_ALL``
->> +      - 0x80000000
->> +      - When the applications ORs ``index`` with ``V4L2_FMTDESC_FLAG_ENUM_ALL`` flag
->> +        the driver enumerates all the possible pixel formats without taking care
->> +        of any already set configuration. Drivers which do not support this flag
->> +        yet, always return ``EINVAL``.
-> 
-> Drop 'yet'
-> 
->>  
->>  Return Value
->>  ============
->> diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->> index bdc628e8c1d6..0a9ea9686c24 100644
->> --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->> +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->> @@ -216,6 +216,7 @@ replace define V4L2_FMT_FLAG_CSC_YCBCR_ENC fmtdesc-flags
->>  replace define V4L2_FMT_FLAG_CSC_HSV_ENC fmtdesc-flags
->>  replace define V4L2_FMT_FLAG_CSC_QUANTIZATION fmtdesc-flags
->>  replace define V4L2_FMT_FLAG_META_LINE_BASED fmtdesc-flags
->> +replace define V4L2_FMTDESC_FLAG_ENUM_ALL fmtdesc-flags
->>  
->>  # V4L2 timecode types
->>  replace define V4L2_TC_TYPE_24FPS timecode-type
->> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
->> index 4e91362da6da..421a30cb0c51 100644
->> --- a/include/uapi/linux/videodev2.h
->> +++ b/include/uapi/linux/videodev2.h
->> @@ -904,6 +904,9 @@ struct v4l2_fmtdesc {
->>  #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
->>  #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
->>  
->> +/*  Format description flag, to be ORed with the index */
->> +#define V4L2_FMTDESC_FLAG_ENUM_ALL		0x80000000
->> +
->>  	/* Frame Size and frame rate enumeration */
->>  /*
->>   *	F R A M E   S I Z E   E N U M E R A T I O N
-> 
-> Regards,
-> 
-> 	Hans
-> 
-
+    Arnd
 
