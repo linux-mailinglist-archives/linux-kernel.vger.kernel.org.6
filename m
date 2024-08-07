@@ -1,201 +1,235 @@
-Return-Path: <linux-kernel+bounces-277483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F44994A201
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:51:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E78E94A202
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AA711C230C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:51:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D2C1C247E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210881C8220;
-	Wed,  7 Aug 2024 07:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08621C823B;
+	Wed,  7 Aug 2024 07:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BqKmT5RW"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QMLMAr6w"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A33919A28F;
-	Wed,  7 Aug 2024 07:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7631B86F6
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 07:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723017053; cv=none; b=Uf0hSvuaccZMzsbKh9izYuCm/OEwAsf8hdE73G3VSfvUHhr3z+JV1KEydoM5YnpymHPDzdQj8GTdCcPofYTHOyDFuzRyK1qb3Y5KpsdgTW2Uj3wShmrQ64GYQoCSZRY+NN74NY8JBUPWOkIyZl0oS5zabOCsJNKCgoZMdTFrF4A=
+	t=1723017100; cv=none; b=HLZWVVmBiITT5HVHsJGzD46u1gPTAsts2rx+Xez76uZYRVIG6hDNCGB4Y1IaHZPldFB59PQAp7IqGEni4GAwGxMHtALPtEh6KA4Mr0afpCGILrRf5WM5oPyCX/jYRJvvq1Do0l4LZgqPHh+9WQsGtZ1nBfEs4Jhzsy6Gm2v9kk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723017053; c=relaxed/simple;
-	bh=lgLKZc0GBq3W7pR0815eFTru0022sCuHCIqC3oVPyTM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IYjsQ0wYTwwzLwbAWjZm3Nkbd5YWE6DkKws4q+SJrqjKSrEtccDfETZXXKPeopDPdKhuXgtXKM9yJW4/TgrK62C+TD+NdvKmnH8I57gGg5SF19beN++Rkl1yXceMbmgXReeJas4R2IqTxbeIBl5QokLlkYgwef/b+LvpKf40y3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BqKmT5RW; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4777ofjj019788;
-	Wed, 7 Aug 2024 02:50:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723017041;
-	bh=hGB25P44iUebr0eKJQ+nwleNjhJmNmEeQsDF97OMdjc=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=BqKmT5RWMpAYvRGkZdj165R8ftp9iabXenNuxPW/cd+9iFHH5Y68XnvNFLhs4j+5I
-	 lw42MgELkgK0sFhIL6/IjDpbnGYD5Hn8q+x6b+6ipwq7slupa1sgmrG+CjcANWWst2
-	 39EhOCf14hwsXvZbE5Vx/UAjtp+J/TZayTPjRZxw=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4777ofMi049546
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 7 Aug 2024 02:50:41 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
- Aug 2024 02:50:40 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 7 Aug 2024 02:50:40 -0500
-Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4777oexN107391;
-	Wed, 7 Aug 2024 02:50:40 -0500
-Date: Wed, 7 Aug 2024 13:20:39 +0530
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-To: "Kumar, Udit" <u-kumar1@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Neha Malcom Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi <b-padhi@ti.com>,
-        Siddharth
- Vadapalli <s-vadapalli@ti.com>
-Subject: Re: [PATCH v3 5/5] arm64: dts: ti: k3-j7200*: Add bootph-* properties
-Message-ID: <20240807075039.w56deberpo4rfhjc@uda0497581>
-References: <20240730-b4-upstream-bootph-all-v3-0-9bc2eccb6952@ti.com>
- <20240730-b4-upstream-bootph-all-v3-5-9bc2eccb6952@ti.com>
- <f80996c2-c3ee-430a-9ae6-2a9c524b5d60@ti.com>
+	s=arc-20240116; t=1723017100; c=relaxed/simple;
+	bh=XAiRAs/m/7wsxVRJZL+4qAmUiSib8RmKUr91/3HFBjA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SjMDjK2AcI9wXDmF0TABIaBH0ZS99+FJNp0/DpxticYiBA2NvSWCxsc2xrOrK2ib/hXAFxrHwUtxAnZ5WDkAliTYLg7fX/Wbf2nmEsf85ZTouRfRpjNdcFxZv4RRWerZ9jxi4CCPnH7zbdqSmbRUWs84oaIohTEAFYz/up39vLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QMLMAr6w; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52f01993090so1915547e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 00:51:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723017095; x=1723621895; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8kgkxSJJtX+i0uwxp2Vuf2sl/Eh4EdSC4VZ41Tx19D8=;
+        b=QMLMAr6wO+ZFmMPLoFib/C6hoIMUV03OCEV2DY9WwfVFCD6HcGQttrwE1z2eJQXkAi
+         zQUkr3sfgdkcQadQjPDhlT8N4G+hl13tSL/RFwpq9MO8sNHDNfgDmB85xthDxUG+oO1A
+         xImDG46GV/NPcFBDQvrWYHiUNw35sEm4boR2HSYzuytzzAKTdYUyjBNY15WnuULhWTqP
+         hoDl1HEDtL14uSZTLYzZ4qfuLgliBb4z7yaf3Gnsm3VQEznKYicZ+tsGPnSPpVHHyGRe
+         RBvGjBJbyOI7o1a2bMx0gqDcw5eLLrTzJGglaxZZvdOR/7sHEPD+Qn0PlmJNOTaqfVkx
+         2vRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723017095; x=1723621895;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8kgkxSJJtX+i0uwxp2Vuf2sl/Eh4EdSC4VZ41Tx19D8=;
+        b=MzIFDD2QsqVvgtEfuM7RhPov4H4B2Ni5I2xRGRrXQvkKs7F7Mdkd6sMPg1ZYQ33gI+
+         ySfMmqyOUFz4bc0rL1H2OeDyFGdUlB7JKSx7MeuvB0JXzVs7979LNSXQ2c+q1k8lxCmC
+         koo5Kha3S0NxGeI5Bva+45qkL0jd3aU8rVRiToDkCaoCEWV2+n6fhZ7YwxS6nCNZz/eS
+         nEqzMS5YL5IFcMH9IYnz7/IQkrSrLOrmb/XgWJyswdQlMtigxYZ68rP/buoXUfAYAOJZ
+         rmI1MbbM7jcfKNhNUVg5k5sHtZ3J+B8vGJ0U6ClNazueVIQNp2FDVFXwXEtXBwl/ZM1F
+         yLcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJlD+q93ZyP9+vDeBF1XgAJD6M1zoqJzB9+0nQ7m9FZ5h7LHLA5EPOUpdnN1NjZPFcRqQ5E/4tsFC3twzx5Xuw2CqLXkbnpCMqfLfE
+X-Gm-Message-State: AOJu0YxItG2JfSB1AOXFqL8svPn1rDygXbJ/OPsszm/AOmmLNvuVCIb1
+	pDFHzhRzAaFvbG2EtroqhKRmmpXQH7rAcr3k2Mz7VNsURUrviZ0AZTJ9wnS14wIX2p79V7pDggP
+	DqjsyVV0QK4ZEwHjLdWb8UAkRK+NMlRjFFkLJ
+X-Google-Smtp-Source: AGHT+IHruncHePIupo9yq1u4fta3n5iewGgTM8VzbemIepCFSh1BTVHxUXDU0upst6N3POcqPWdxcfUo0H+qYtXZImU=
+X-Received: by 2002:a05:6512:ad1:b0:52d:8356:f6b9 with SMTP id
+ 2adb3069b0e04-530bb39d25bmr13124754e87.38.1723017094463; Wed, 07 Aug 2024
+ 00:51:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <f80996c2-c3ee-430a-9ae6-2a9c524b5d60@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-10-dakr@kernel.org>
+ <a1c1e273-2d40-4114-b3b9-f27c73e3d122@proton.me> <ZrKrMrg5E85y7jkj@pollux> <012f5a12-2408-4658-8318-55fa8d4285e1@proton.me>
+In-Reply-To: <012f5a12-2408-4658-8318-55fa8d4285e1@proton.me>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 7 Aug 2024 09:51:21 +0200
+Message-ID: <CAH5fLggiSU9Ossy5gc+S_rSiX8v-JCDKPL_tRDYdjMYGfOt-0w@mail.gmail.com>
+Subject: Re: [PATCH v4 09/28] rust: alloc: implement kernel `Box`
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, a.hindborg@samsung.com, akpm@linux-foundation.org, 
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
+	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
+	zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, 
+	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Udit,
+On Wed, Aug 7, 2024 at 9:49=E2=80=AFAM Benno Lossin <benno.lossin@proton.me=
+> wrote:
+>
+> On 07.08.24 01:01, Danilo Krummrich wrote:
+> > On Tue, Aug 06, 2024 at 07:47:17PM +0000, Benno Lossin wrote:
+> >> On 05.08.24 17:19, Danilo Krummrich wrote:
+> >>> `Box` provides the simplest way to allocate memory for a generic type
+> >>> with one of the kernel's allocators, e.g. `Kmalloc`, `Vmalloc` or
+> >>> `KVmalloc`.
+> >>>
+> >>> In contrast to Rust's `Box` type, the kernel `Box` type considers the
+> >>> kernel's GFP flags for all appropriate functions, always reports
+> >>> allocation failures through `Result<_, AllocError>` and remains
+> >>> independent from unstable features.
+> >>>
+> >>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> >>> ---
+> >>>  rust/kernel/alloc.rs      |   6 +
+> >>>  rust/kernel/alloc/kbox.rs | 330 ++++++++++++++++++++++++++++++++++++=
+++
+> >>>  rust/kernel/init.rs       |  35 +++-
+> >>>  rust/kernel/prelude.rs    |   2 +-
+> >>>  rust/kernel/types.rs      |  56 +++++++
+> >>>  5 files changed, 427 insertions(+), 2 deletions(-)
+> >>>  create mode 100644 rust/kernel/alloc/kbox.rs
+> >>>
+> >>> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+> >>> index 942e2755f217..d7beaf0372af 100644
+> >>> --- a/rust/kernel/alloc.rs
+> >>> +++ b/rust/kernel/alloc.rs
+> >>> @@ -5,6 +5,7 @@
+> >>>  #[cfg(not(any(test, testlib)))]
+> >>>  pub mod allocator;
+> >>>  pub mod box_ext;
+> >>> +pub mod kbox;
+> >>>  pub mod vec_ext;
+> >>>
+> >>>  #[cfg(any(test, testlib))]
+> >>> @@ -13,6 +14,11 @@
+> >>>  #[cfg(any(test, testlib))]
+> >>>  pub use self::allocator_test as allocator;
+> >>>
+> >>> +pub use self::kbox::Box;
+> >>> +pub use self::kbox::KBox;
+> >>> +pub use self::kbox::KVBox;
+> >>> +pub use self::kbox::VBox;
+> >>> +
+> >>>  /// Indicates an allocation error.
+> >>>  #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+> >>>  pub struct AllocError;
+> >>> diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
+> >>> new file mode 100644
+> >>> index 000000000000..4a4379980745
+> >>> --- /dev/null
+> >>> +++ b/rust/kernel/alloc/kbox.rs
+> >>> @@ -0,0 +1,330 @@
+> >>> +// SPDX-License-Identifier: GPL-2.0
+> >>> +
+> >>> +//! Implementation of [`Box`].
+> >>> +
+> >>> +use super::{AllocError, Allocator, Flags};
+> >>> +use core::fmt;
+> >>> +use core::marker::PhantomData;
+> >>> +use core::mem::ManuallyDrop;
+> >>> +use core::mem::MaybeUninit;
+> >>> +use core::ops::{Deref, DerefMut};
+> >>> +use core::pin::Pin;
+> >>> +use core::result::Result;
+> >>> +
+> >>> +use crate::types::Unique;
+> >>> +
+> >>> +/// The kernel's [`Box`] type.
+> >>> +///
+> >>> +/// `Box` provides the simplest way to allocate memory for a generic=
+ type with one of the kernel's
+> >>> +/// allocators, e.g. `Kmalloc`, `Vmalloc` or `KVmalloc`.
+> >>> +///
+> >>> +/// For non-zero-sized values, a [`Box`] will use the given allocato=
+r `A` for its allocation. For
+> >>> +/// the most common allocators the type aliases `KBox`, `VBox` and `=
+KVBox` exist.
+> >>> +///
+> >>> +/// It is valid to convert both ways between a [`Box`] and a raw poi=
+nter allocated with any
+> >>> +/// `Allocator`, given that the `Layout` used with the allocator is =
+correct for the type.
+> >>> +///
+> >>> +/// For zero-sized values the [`Box`]' pointer must be `dangling_mut=
+::<T>`; no memory is allocated.
+> >>
+> >> Why do we need this to be in the docs?
+> >
+> > Probably not - do you suggest to remove it entirely? Otherwise, where d=
+o you
+> > think we should move it?
+>
+> I would remove it, since it's just implementation detail and
+> allocator-dependent.
+>
+> >>> +impl<T, A> Box<T, A>
+> >>> +where
+> >>> +    T: ?Sized,
+> >>> +    A: Allocator,
+> >>> +{
+> >>> +    /// Constructs a `Box<T, A>` from a raw pointer.
+> >>> +    ///
+> >>> +    /// # Safety
+> >>> +    ///
+> >>> +    /// `raw` must point to valid memory, previously allocated with =
+`A`, and at least the size of
+> >>> +    /// type `T`.
+> >>
+> >> With this requirement and the invariant on `Box`, I am lead to believe
+> >> that you can't use this for ZSTs, since they are not allocated with `A=
+`.
+> >> One solution would be to adjust this requirement. But I would rather u=
+se
+> >> a different solution: we move the dangling pointer stuff into the
+> >> allocator and also call it when `T` is a ZST (ie don't special case th=
+em
+> >> in `Box` but in the impls of `Allocator`). That way this can stay as-i=
+s
+> >> and the part about ZSTs in the invariant can be removed.
+> >
+> > Actually, we already got that. Every zero sized allocation will return =
+a
+> > dangling pointer. However, we can't call `Allocator::free` with (any) d=
+angling
+> > pointer though.
+>
+> The last part is rather problematic in my opinion, since the safety
+> requirements of the functions in `Allocator` don't ensure that you're
+> not allowed to do it. We should make it possible to free dangling
+> pointers that were previously "allocated" by the allocator (ie returned
+> by `realloc`).
+> Maybe we do need an `old_layout` parameter for that (that way we can
+> also `debug_assert_eq!(old_layout.align(), new_layout.align())`).
 
-On 12:58-20240807, Kumar, Udit wrote:
-> 
-> On 7/30/2024 3:23 PM, Manorit Chawdhry wrote:
-> > Adds bootph-* properties to the leaf nodes to enable U-boot to
-> > utilise them.
-> > 
-> > Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
-> > ---
-> >   .../arm64/boot/dts/ti/k3-j7200-common-proc-board.dts | 20 ++++++++++++++++++++
-> >   arch/arm64/boot/dts/ti/k3-j7200-main.dtsi            |  2 ++
-> >   arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi      | 10 ++++++++++
-> >   arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi          |  7 +++++++
-> >   4 files changed, 39 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-> > index 6593c5da82c0..ec522595fc83 100644
-> > --- a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-> > +++ b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-> > [..]
-> > 
-> > diff --git a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-> > index 9386bf3ef9f6..b95656942412 100644
-> > --- a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-> > +++ b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-> > @@ -136,6 +136,7 @@ secure_proxy_main: mailbox@32c00000 {
-> >   			      <0x00 0x32800000 0x00 0x100000>;
-> >   			interrupt-names = "rx_011";
-> >   			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-> > +			bootph-all;
-> >   		};
-> >   		hwspinlock: spinlock@30e00000 {
-> > @@ -1528,5 +1529,6 @@ main_esm: esm@700000 {
-> >   		compatible = "ti,j721e-esm";
-> >   		reg = <0x0 0x700000 0x0 0x1000>;
-> >   		ti,esm-pins = <656>, <657>;
-> > +		bootph-all;
-> 
-> Should be bootph-pre-ram
-> 
-> if you think otherwise then please update mcu_esm
+The std allocators generally prohibit zero sized allocations, so it
+seems sensible for us to do the same?
 
-Will update to bootph-pre-ram;
-
-> 
-[..]
-> > @@ -45,6 +48,7 @@ mcu_timer0: timer@40400000 {
-> >   		assigned-clock-parents = <&k3_clks 35 2>;
-> >   		power-domains = <&k3_pds 35 TI_SCI_PD_EXCLUSIVE>;
-> >   		ti,timer-pwm;
-> > +		bootph-pre-ram;
-> 
-> I see this node is marked as reserved
-> 
-> Do we plan to use in bootloader ?
-
-mcu_timer0 is used in R5 stage [0].
-
-[0]: https://github.com/u-boot/u-boot/blob/master/arch/arm/dts/k3-j7200-r5-common-proc-board.dts#L56
-
-> 
-> >   	};
-[..]
-> >   		hbmc: hyperbus@47034000 {
-> 
-> I think you should consider to mark hbmc node for boot phase as well
-> 
-
-It's already marked in k3-j7200-som-p0.dtsi file with bootph-all inside
-the flash node that describe it, is that okay?
-
-> 
-> > @@ -652,6 +661,7 @@ wkup_vtm0: temperature-sensor@42040000 {
-> >   		      <0x00 0x42050000 0x00 0x350>;
-> >   		power-domains = <&k3_pds 154 TI_SCI_PD_EXCLUSIVE>;
-> >   		#thermal-sensor-cells = <1>;
-> > +		bootph-pre-ram;
-> >   	};
-> >   	mcu_esm: esm@40800000 {
-> > diff --git a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
-> > index 21fe194a5766..d78f86889bf9 100644
-> > --- a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
-> > +++ b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
-> > @@ -121,6 +121,7 @@ J721E_WKUP_IOPAD(0x20, PIN_INPUT, 1) /* (B8) MCU_OSPI0_D5.MCU_HYPERBUS0_DQ5 */
-> >   			J721E_WKUP_IOPAD(0x24, PIN_INPUT, 1) /* (A8) MCU_OSPI0_D6.MCU_HYPERBUS0_DQ6 */
-> >   			J721E_WKUP_IOPAD(0x28, PIN_INPUT, 1) /* (A7) MCU_OSPI0_D7.MCU_HYPERBUS0_DQ7 */
-> >   		>;
-> > [..]
-> >   			bucka2: buck2 {
-> > @@ -464,6 +470,7 @@ flash@0 {
-> >   		cdns,tchsh-ns = <60>;
-> >   		cdns,tslch-ns = <60>;
-> >   		cdns,read-delay = <4>;
-> > +		bootph-all;
-> >   		partitions {
-> >   			compatible = "fixed-partitions";
-> 
-> 
-> Please consider, adding bootph in ospi0 node as well around
-> "ospi.phypattern"
-> 
-
-Okay sure, will move the bootph-all from flash@0 node to under
-ospi.phypattern node as putting it in the child node should propagate
-it.
-
-Thanks for reviewing Udit!
-
-Regards,
-Manorit
-> 
-> > 
+Alice
 
