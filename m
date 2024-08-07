@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-277217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BA2B949DFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:59:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018CF949DFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA2F0B2330A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:59:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C7C51F22B27
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DD418FDAE;
-	Wed,  7 Aug 2024 02:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF3E17ADF3;
+	Wed,  7 Aug 2024 03:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rifdrsnQ"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BIn7DQXc"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E85D1E495
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 02:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801003209
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 03:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722999568; cv=none; b=b5DNbc7kwQEsveuvT9rdsCs3NCHJgmRdX3krTP30A3ys/Saz7pG666PPROWWsc1fLDDRzsVPuvyfmU2rdjqrOrl4k6w99k+RjFNIRm+iByh5FkCTPcoHURu1H0iTeRKjvXgLLNUFfqP7L+UQqMyFZepoSRRMhMzZmJBurS2lV2M=
+	t=1722999834; cv=none; b=XNwtP+yBeNPT0950hmTEmxKBwQmN/sue6LI+c17ycPkewZxRtwOyD5vQXuQ1+HhL1b8OoLEVTFXF8uB0tvRzuSlSFHdt039FFa/yso7N35dt9LcOa40wM4HbcmAphLJkvu/fXjFpjNtrInPK9VeWMWSPsg0lHS+61f0w4/z9RKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722999568; c=relaxed/simple;
-	bh=s6gtBRTcGW8IZIqoY2rd7fWLYDZCueKhRnGLw0igTkY=;
+	s=arc-20240116; t=1722999834; c=relaxed/simple;
+	bh=19zQ/CDmCArapw7Qvr+6KVZO2V9X/3YhzLrF500JI0Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LaS/7fNuWQ7KXxokAA+oGyN1nhUtONFaZ6AjFs9nVkANh329a0N3GAEWeqoChxtyTFKtD+n4uSef5d7sb18iJTtBYp5E4cTxQX6W1S4lchhRbVR8fMuCyuk5pJhTOBrHbIHaZHzX9XHzWml60TBIJQJ6wsFLIqK9WKNJgNnvL0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rifdrsnQ; arc=none smtp.client-ip=209.85.210.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=JFtGEUEt+DLMS5ojBcwHU74Qf77dxxL5HRg8lGz5XDCWGg60fNOf2yL+CsgjbHwsfIvfhQEn5vtqKKJmvSJ8T6KBOItl9xUs+QJhxTwU6MCRxRT1ujsL1ZoPaZOodQDkR984oyyZp29qvZPlRN9M2p+5V6ZPoA+U5+EKmizdqCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BIn7DQXc; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70d18112b60so345407b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 19:59:26 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d162eef54so1037524b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 20:03:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722999566; x=1723604366; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1722999832; x=1723604632; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=U1m00D/eRsR3sTtSAbUOk6Hp4zyD2ST919kFJY6iP6U=;
-        b=rifdrsnQp1J/AhmkXEap/CdlUpbUQDNbdhxHwLQbKD+DgFET9ZMHX9PdB4uz16X6v8
-         lHqSqrrKjbJ1YV1gwD+p4xZtG8tkuizOLIvEp62dwtiy+ksBgaKcW1hmFTuuBqrkPGeO
-         pHiY7rOim5dv/ms/sVnK8KTKOPH2ykuxREANj6jmgbZJz0CxDsT43p2lMEp5nxLDVobD
-         UOR/Mqd3muQ8WgAMq2wFyWmVcw1s3JD7SLaUp1QQU8t2QrseB4GNw5WlDMv5iaZdSPWS
-         PkbZdZVW8mpIPstGZylWObjY0iGrHGesf4y1wfQvWg02+AEvcXQ9dNlzfGAW2pt5T28z
-         l+9Q==
+        bh=zuSFHpUoL2YYlkuYSjJEF2bIpqbWqy7BnB6SEFzqJNw=;
+        b=BIn7DQXcWf2CI451oadZ+DqnTfDuNcRsU72QY4u0Vo/98yO1J/LEXqUiohsGciFVZH
+         YC4Q6bb2FIc92acgdG4ZTffu333cFkIDwH/DdzlzfwNI7Xvt0OABWHCv0dZxiFxex9b/
+         1Wb0SIxASZ2FxR7nujYz4EviQVuEUJb2PtTFNmBJ9b2ClTYqI8/wVxrDOyfKkUJGj3SM
+         gvbGx+8hZ2MlbZnyamRIwK8smdr0axrN9+ZMc0pexiVRWCtc9LioI7d+1YpqkrXKt9yq
+         SGRV4wr+NIZpxeM33qSwvi5jMkvgJLXBo0iB6NRItemDW9vO43YlYsrWt4TIRVQ0f4OJ
+         6bDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722999566; x=1723604366;
+        d=1e100.net; s=20230601; t=1722999832; x=1723604632;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U1m00D/eRsR3sTtSAbUOk6Hp4zyD2ST919kFJY6iP6U=;
-        b=kXZR+gaK3XWqnmH1M0beEY9tieVwDwdsgnNxz7hMD2MZCxVfloyJqmjV/g+JgkvNBl
-         dpZYJ88H14Po+CMX6Rv3oDFc6NvbDSg///EVXcQeZ9a9kLUm6H7zgt/iT3L71u1XDNVo
-         MGz9I+L2aoSjieM7IfTXg2wTKaSeZkEkbab2FbPjPfN5mSs1LkB2NdSnNggGEItIzJgh
-         MZOFG24DpwiqmmVSEb6GTkO5MX1XdnwvuDwz6fPDmV6ULLxlvYEiTKg6D9Kf73MmrAIm
-         fdZWqwKn0t/WySx60+mP9/vgQEH3cHn6seV8upxd6PO5xZGr24p1NDgo4LrtKjFKRNwi
-         ZmSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOx517WuCEG5OmOVU+iKFUPZHL/5r1rb02iRYq790sIlDANme3Tfa8rgasEqqXd95lZbFB00qo0SIiJYU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5UPa53O7DyqzcSwtEP5Lq29RwHIb8faetwQdyLl77jEbLfJ/j
-	jfmyM0LTLHH8uMG4Ac2P7r/69QwHxucB72w6Lqjvr9u8UGA6D07UY/zmMvXXbw==
-X-Google-Smtp-Source: AGHT+IFT/iYT7B/31my5hbcrkTJerIDiFHN9YWyJe4xOGN7mYzxSxl23V8TqbGRxeAzEquMvFM8eRQ==
-X-Received: by 2002:a05:6a00:2184:b0:707:fa61:1c6a with SMTP id d2e1a72fcca58-710bc89d6bfmr1262074b3a.10.1722999565598;
-        Tue, 06 Aug 2024 19:59:25 -0700 (PDT)
+        bh=zuSFHpUoL2YYlkuYSjJEF2bIpqbWqy7BnB6SEFzqJNw=;
+        b=Ckor1oAQI7v4dOc0juaRHKBhkw/qlq9abwZEbbX7kfH/ykOxdKMcJ4r0nqnBzPvbET
+         iGdt5tMeEt+s4o0ex36Io1S5Tmqi1wfJu9CB8a4P27EWQNaDQaubocq6UwyV8TOPxywk
+         PIe1BJnK/ngaBQrl/E+eIfmEwLMNQEHYhXQguxd61R3H3PQNPqU+psdMuAbrpbFJw6KE
+         EYxzD+tmzHjfvrjitkIxmgNGKyXgdCZ3cC7iHbeC8UrsfOLrrqe6rhaIhodRHj1tZnj6
+         W5Klq8SP1kVhOIRiKGZH3dtsteXCIv+sjLOJFucHlvN4ZyX58i0z0x2VRJirA1xMiC06
+         9e6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWix1hgqbGE+3ubSk/hE+rf07Polsvg6O4hCUoJMgsoiVPaWCp9OKveFL9AiBV3b9m/tZQS1mZq7PmlGkaI20HdPkG9JnTRtt4Fb5sK
+X-Gm-Message-State: AOJu0YxiibHBJblDybV8ZddYjvS5lSBcfecM8WGf/8QxPySGYzlJvK/g
+	iZFYlpcsL+O+9pMs6OrOXV8Cuyvkbc4jCZuHuF+W7zPrJX9CyMDfdriqeYm+XQ==
+X-Google-Smtp-Source: AGHT+IEz28V+pQaJpXndCtgDVpWOs2o4+wkjG3HQ2R3vI8fbqY0Bv2xxm5JeBQo3gbEpFnyg4+fZWw==
+X-Received: by 2002:a05:6a21:a4c1:b0:1c4:dae8:c72f with SMTP id adf61e73a8af0-1c699559d86mr17649446637.19.1722999831794;
+        Tue, 06 Aug 2024 20:03:51 -0700 (PDT)
 Received: from thinkpad ([120.60.72.69])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ecdfe2dsm7580256b3a.114.2024.08.06.19.59.20
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ece4967sm7533616b3a.138.2024.08.06.20.03.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 19:59:25 -0700 (PDT)
-Date: Wed, 7 Aug 2024 08:29:18 +0530
+        Tue, 06 Aug 2024 20:03:51 -0700 (PDT)
+Date: Wed, 7 Aug 2024 08:33:42 +0530
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: Jim Quinlan <james.quinlan@broadcom.com>
 Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
@@ -84,10 +84,10 @@ Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
 	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
 	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
 	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 04/12] PCI: brcmstb: Use bridge reset if available
-Message-ID: <20240807025918.GG3412@thinkpad>
+Subject: Re: [PATCH v5 05/12] PCI: brcmstb: Use swinit reset if available
+Message-ID: <20240807030342.GH3412@thinkpad>
 References: <20240731222831.14895-1-james.quinlan@broadcom.com>
- <20240731222831.14895-5-james.quinlan@broadcom.com>
+ <20240731222831.14895-6-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,73 +97,63 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240731222831.14895-5-james.quinlan@broadcom.com>
+In-Reply-To: <20240731222831.14895-6-james.quinlan@broadcom.com>
 
-On Wed, Jul 31, 2024 at 06:28:18PM -0400, Jim Quinlan wrote:
-> The 7712 SOC has a bridge reset which can be described in the device tree.
-> Use it if present.  Otherwise, continue to use the legacy method to reset
-> the bridge.
+On Wed, Jul 31, 2024 at 06:28:19PM -0400, Jim Quinlan wrote:
+> The 7712 SOC adds a software init reset device for the PCIe HW.
+> If found in the DT node, use it.
 > 
 > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
 > ---
->  drivers/pci/controller/pcie-brcmstb.c | 24 +++++++++++++++++++-----
->  1 file changed, 19 insertions(+), 5 deletions(-)
+>  drivers/pci/controller/pcie-brcmstb.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
 > 
 > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index 7595e7009192..4d68fe318178 100644
+> index 4d68fe318178..948fd4d176bc 100644
 > --- a/drivers/pci/controller/pcie-brcmstb.c
 > +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -265,6 +265,7 @@ struct brcm_pcie {
->  	enum pcie_type		type;
+> @@ -266,6 +266,7 @@ struct brcm_pcie {
 >  	struct reset_control	*rescal;
 >  	struct reset_control	*perst_reset;
-> +	struct reset_control	*bridge_reset;
+>  	struct reset_control	*bridge_reset;
+> +	struct reset_control	*swinit_reset;
 >  	int			num_memc;
 >  	u64			memc_size[PCIE_BRCM_MAX_MEMC];
 >  	u32			hw_rev;
-> @@ -732,12 +733,19 @@ static void __iomem *brcm7425_pcie_map_bus(struct pci_bus *bus,
+> @@ -1633,12 +1634,30 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  	if (IS_ERR(pcie->bridge_reset))
+>  		return PTR_ERR(pcie->bridge_reset);
 >  
->  static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
->  {
-> -	u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
-> -	u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
-> +	if (val)
-> +		reset_control_assert(pcie->bridge_reset);
-> +	else
-> +		reset_control_deassert(pcie->bridge_reset);
->  
-> -	tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> -	tmp = (tmp & ~mask) | ((val << shift) & mask);
-> -	writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> +	if (!pcie->bridge_reset) {
-> +		u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
-> +		u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
-> +
-> +		tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> +		tmp = (tmp & ~mask) | ((val << shift) & mask);
-> +		writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> +	}
->  }
->  
->  static void brcm_pcie_bridge_sw_init_set_7278(struct brcm_pcie *pcie, u32 val)
-> @@ -1621,10 +1629,16 @@ static int brcm_pcie_probe(struct platform_device *pdev)
->  	if (IS_ERR(pcie->perst_reset))
->  		return PTR_ERR(pcie->perst_reset);
->  
-> +	pcie->bridge_reset = devm_reset_control_get_optional_exclusive(&pdev->dev, "bridge");
-> +	if (IS_ERR(pcie->bridge_reset))
-> +		return PTR_ERR(pcie->bridge_reset);
+> +	pcie->swinit_reset = devm_reset_control_get_optional_exclusive(&pdev->dev, "swinit");
+> +	if (IS_ERR(pcie->swinit_reset))
+> +		return PTR_ERR(pcie->swinit_reset);
 > +
 >  	ret = clk_prepare_enable(pcie->clk);
 >  	if (ret)
 >  		return dev_err_probe(&pdev->dev, ret, "could not enable clock\n");
 >  
-> +	pcie->bridge_sw_init_set(pcie, 0);
+>  	pcie->bridge_sw_init_set(pcie, 0);
+>  
+> +	if (pcie->swinit_reset) {
+
+You already have a callback called 'bridge_sw_init_set', so this 'swinit_reset'
+is different from 'bridge_sw_init'? If so, does it make sense to move this into
+the callback itself to have all reset sequence in one place?
+
+- Mani
+
+> +		ret = reset_control_assert(pcie->swinit_reset);
+> +		if (dev_err_probe(&pdev->dev, ret, "could not assert reset 'swinit'\n"))
+> +			goto clk_disable_unprepare;
+> +
+> +		/* HW team recommends 1us for proper sync and propagation of reset */
+> +		udelay(1);
+> +
+> +		ret = reset_control_deassert(pcie->swinit_reset);
+> +		if (dev_err_probe(&pdev->dev, ret,
+> +				  "could not de-assert reset 'swinit' after asserting\n"))
+> +			goto clk_disable_unprepare;
+> +	}
 > +
 >  	ret = reset_control_reset(pcie->rescal);
 >  	if (dev_err_probe(&pdev->dev, ret, "failed to deassert 'rescal'\n"))
