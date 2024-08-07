@@ -1,167 +1,87 @@
-Return-Path: <linux-kernel+bounces-278551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E7294B1BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:06:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AEF194B1BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE29282554
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:06:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DEB6282409
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2C71494AB;
-	Wed,  7 Aug 2024 21:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C468D149C4D;
+	Wed,  7 Aug 2024 21:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="A2V2zjzg"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1Ob/gV3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A444B640
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 21:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11017148857;
+	Wed,  7 Aug 2024 21:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723064759; cv=none; b=rdHl5VhJQU8xx8eZoIRgIsxcEzfT8Dfv7NS9mvNHTd5gH+gXAeOkp+Jox2/sJYVot4Fld6gtNrER17WWGPEEmPu05UtbErMWTEhN7WyOjvVOTc/aVG1vZSsRYylE3c1tmFFRq9AYFePJTZ8vtSreaot0pYD8OVmfOnqxC4Uqv70=
+	t=1723064773; cv=none; b=dLDUH1MCnWOlAR3JS381ihpZ+my0Qw9lBhhAD8bw6v4HJ8vXn+KyJqRqNash0dw+4nKZ89N8x+jZazvJj2gtWEJJzQPh4UBP55jNndP9kbXuLqO5p0B4bsn3vG+LtJmDRvtQ8/B1+EeyboQqNY/gWGghQ3/A62bDKh+LqdjI56A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723064759; c=relaxed/simple;
-	bh=PLt1dqddQDBoCtJXzvJlGMS983d7hsEzCSQWgOd3+yo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QTMQWBxr6ex6tAGQtkhRHWxrvTyRC7PLneis5dsmNQpNMYUnG3JN/MzsDO6yWbumQdv061aO4XVd5QjJJZQhNdSSA9NCefPD8wsm6PQpqbWksGYHgvAxRrx9Q8e+MeMCa3NdpEDsQ9gtfu7YbgrgWoU1PWM8KwzU4R4FCbCaS1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=A2V2zjzg; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so2117116a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 14:05:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1723064756; x=1723669556; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PLt1dqddQDBoCtJXzvJlGMS983d7hsEzCSQWgOd3+yo=;
-        b=A2V2zjzgmlp6CvK3kjJiriUBGKGnvvd2gNcsnySllLaeriv3gi6+tCtm7plWO+voZM
-         XhRzNBOfGpzymBFrk5EVeL+uu82XJ6ZuL63mM8bTEzuhTf0L3nVPUBsRtZBfm1wi2phI
-         dofoewJlbq6FNBQENFaZdttV2KH7vqdFVHjE4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723064756; x=1723669556;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PLt1dqddQDBoCtJXzvJlGMS983d7hsEzCSQWgOd3+yo=;
-        b=GyjUmXAhUszhx+1VHQfZdHLWoHdJXBc/VOwGCmOIaxQ4KLgVUtw4X89mY1E9YI3Mmz
-         LS7oq8CXXiVAs76GFaySgrbB2bkR/Yqs+5AMTK749IH5DNX4V71QeOntbbEhv6L3g+lm
-         gzDwzf5yA6wCA41XsuIoPnLdNjfJsohPESGdTGmAJ2ObQrvBAoXS7kUI2tzaidDwdO85
-         YM7U+OXNqsImuw+wg/GBCP/ffEgfxx6lghm2pVeEl+JvEQMXMLwwz7n3/lvuyEl+IYM7
-         qvt2atCILgLDqoTtAaIGQqQWhOPTxhyItJF8+PRCgVH8vZsDnGrlphzCR4+MO47UXrPl
-         jHag==
-X-Forwarded-Encrypted: i=1; AJvYcCXVs40KkfHNy3d7Tou6pQkd/xxdxakz8banKH7Jv8arIrvpApNjkIJw8cwhyk3S2wptT64+FwJFEr39jlvddRADzdgCFbRe8I08jVJJ
-X-Gm-Message-State: AOJu0YzE5n9NOJcLyfjloz3+7ckcU7r6NKcT0PsfSt4l+y4u914ROohE
-	f3pK5YEyc1pWIa+HqbQOIpRin3O8UMZOCVEBUWf0asSMTvlX/VEsoxBa6Q0yB5e8oh+B4qaRvMf
-	XJbHuM2IYYFq4UCpNbBsE7YZSBFT5496ulyY9HQ==
-X-Google-Smtp-Source: AGHT+IEVha/qZgi+k4Bh3HWayIPLXCtKLmeWiTv5Psq4K6YKu4pFvkNmbbQ2nEjM7A4vXgDM+ek6l629TptgUUKlLAc=
-X-Received: by 2002:a17:907:1c29:b0:a7d:8912:6697 with SMTP id
- a640c23a62f3a-a8078fef477mr300907766b.3.1723064755831; Wed, 07 Aug 2024
- 14:05:55 -0700 (PDT)
+	s=arc-20240116; t=1723064773; c=relaxed/simple;
+	bh=1ePz3DLStgqHL7yUL425MmkW+cQHQdIV9etyzi9jYG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IxNMcLc5Se3oJbAOB3i0MFjURfRRPPDWybqILzTuSkbVZAdcVFD14L2vhPN7FDrOTMTZCMa1CMxhDBaKRqU0xXBtOKI3IQewKq+/dL0GR81rvH18cW2bl5kmEje2AXwzQBv9/4ZhydiPoX4/zIYH0EHDIsBXSgOJ2GGv4eo0msU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1Ob/gV3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87874C32781;
+	Wed,  7 Aug 2024 21:06:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723064772;
+	bh=1ePz3DLStgqHL7yUL425MmkW+cQHQdIV9etyzi9jYG4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o1Ob/gV3WcAT5BcFUJ0/QTTW5Stk8UX8Qt5RCTHuv/KSm2dxXQ6Qa3JkCttK78x0d
+	 7uuUA1fadpfDiittlU3mMuMGOQnF+r55hMdaze5RYNu1w1grczqLVqjTebtXlD8CnC
+	 Rd8WVLYVoeAh+d6fb+vN1tBJjdojAKv0PgphQ72lxcQeMmZmNM6kiNgLCRuNKwTFRr
+	 hGVl3ekCpWMwwIEwRUvhys900G47rwDhyGzhE1+tdXfjbI8N0ZnVOztDVkcAj/KSL7
+	 yTGA8YvRA+G2VHectvoWI9OchWD+N+7DQ14zcrY4JvoNOMdpEHe01RTBJEsLBLmEzU
+	 hcrLHcLURQNkg==
+Date: Wed, 7 Aug 2024 14:06:12 -0700
+From: Kees Cook <kees@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk,
+	jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
+	wojciech.gladysz@infogain.com, ebiederm@xmission.com,
+	linux-mm@kvack.org
+Subject: Re: [PATCH] exec: drop a racy path_noexec check
+Message-ID: <202408071404.4A44CFFF@keescook>
+References: <20240805-fehlbesetzung-nilpferd-1ed58783ad4d@brauner>
+ <20240805131721.765484-1-mjguzik@gmail.com>
+ <20240806-atmen-planen-f0eb6e830d8e@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624185345.11113-1-michael@amarulasolutions.com>
- <CAOf5uwkhThmTEuhYAxAgLqg86PEHJ49wWp67RahVhio=O2OfQw@mail.gmail.com> <CAD=FV=W9=Ynhgi3nrfuM47rz053iWTvsEhhQFkZ5xp_bmwzmLA@mail.gmail.com>
-In-Reply-To: <CAD=FV=W9=Ynhgi3nrfuM47rz053iWTvsEhhQFkZ5xp_bmwzmLA@mail.gmail.com>
-From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date: Wed, 7 Aug 2024 23:05:44 +0200
-Message-ID: <CAOf5uwkkggf9ooNWuNxmN2Xn_KKPW_XRVsYy4eUo91WU0M0rWw@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm/panel: synaptics-r63353: Fix regulator unbalance
-To: Doug Anderson <dianders@chromium.org>
-Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, sam@ravnborg.org, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806-atmen-planen-f0eb6e830d8e@brauner>
 
-Hi Doug
+On Tue, Aug 06, 2024 at 09:06:17AM +0200, Christian Brauner wrote:
+> On Mon, 05 Aug 2024 15:17:21 +0200, Mateusz Guzik wrote:
+> > Both i_mode and noexec checks wrapped in WARN_ON stem from an artifact
+> > of the previous implementation. They used to legitimately check for the
+> > condition, but that got moved up in two commits:
+> > 633fb6ac3980 ("exec: move S_ISREG() check earlier")
+> > 0fd338b2d2cd ("exec: move path_noexec() check earlier")
+> > 
+> > Instead of being removed said checks are WARN_ON'ed instead, which
+> > has some debug value
+> > 
+> > [...]
+> 
+> Applied to the vfs.misc branch of the vfs/vfs.git tree.
 
-On Wed, Aug 7, 2024 at 11:02=E2=80=AFPM Doug Anderson <dianders@chromium.or=
-g> wrote:
->
-> Hi,
->
-> On Wed, Aug 7, 2024 at 5:39=E2=80=AFAM Michael Nazzareno Trimarchi
-> <michael@amarulasolutions.com> wrote:
-> >
-> > Hi Doug
-> >
-> > +cc Doug
-> >
-> > I have seen that you have done some re-working and investigation on
-> > drm stack, do you have some
-> > suggestion on this case?
-> >
-> > On Mon, Jun 24, 2024 at 8:53=E2=80=AFPM Michael Trimarchi
-> > <michael@amarulasolutions.com> wrote:
-> > >
-> > > The shutdown function can be called when the display is already
-> > > unprepared. For example during reboot this trigger a kernel
-> > > backlog. Calling the drm_panel_unprepare, allow us to avoid
-> > > to trigger the kernel warning
-> > >
-> > > Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-> > > ---
-> > >
-> > > It's not obviovus if shutdown can be dropped or this problem depends
-> > > on the display stack as it is implmented. More feedback is required
-> > > here
->
-> In general the shutdown should be dropped and it should be up to the
-> display driver to do the shutdown. If your panel needs to be used with
-> a DRM Modeset driver that doesn't properly call shutdown then the
-> ideal solution would be to fix the DRM Modeset driver. If this is
-> somehow impossible, I suspect folks would (begrudgingly) accept some
-> other solution.
->
-> From a super quick look, I see:
->
-> * This panel seems to be used upstream by "imx8mn-bsh-smm-s2-display.dtsi=
-"
->
-> * In "imx8mn.dtsi" I see "lcdif" is "fsl,imx6sx-lcdif".
->
-> * "fsl,imx6sx-lcdif" seems to be handled by "drivers/gpu/drm/mxsfb/mxsfb_=
-drv.c"
->
-> * Previously I determined that "mxsfb-drm" was indeed calling
-> drm_atomic_helper_shutdown() properly [1]
->
-> ...so it seems like just dropping the shutdown handler in this panel is c=
-orrect.
->
->
-> [1] https://lore.kernel.org/r/20240611074846.1.Ieb287c2c3ee3f6d3b0d5f49b2=
-9f746b93621749c@changeid
->
+NAK, please drop this patch. I want to keep the "redundant"
+path_noexec(), since it still provides meaningful signal. We can remove
+it from the WARN_ON_ONCE(), but I don't want to drop it.
 
-Good, that is the information I need to know, I have read some of your
-threads and it's ok for me to just drop it.
-I will resend a proper patch for it
-
-Michael
-
-> -Doug
-
-
-
---=20
-Michael Nazzareno Trimarchi
-Co-Founder & Chief Executive Officer
-M. +39 347 913 2170
-michael@amarulasolutions.com
-__________________________________
-
-Amarula Solutions BV
-Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
-T. +31 (0)85 111 9172
-info@amarulasolutions.com
-www.amarulasolutions.com
+-- 
+Kees Cook
 
