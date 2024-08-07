@@ -1,139 +1,117 @@
-Return-Path: <linux-kernel+bounces-278197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 115A494AD69
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:53:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA5094AD54
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CD1AB31D40
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:47:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09D951C218C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56C112E1EE;
-	Wed,  7 Aug 2024 15:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="o1McUFKd"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5309512AAC6;
+	Wed,  7 Aug 2024 15:47:55 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DB2328B6;
-	Wed,  7 Aug 2024 15:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC0884D0F
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723045593; cv=none; b=DbGz1Xof+6OcXJG8o/hEkjZeBGwcHA/ATmJuVsBNiqbk7Hjs9SGPh1IzzBI4WZrwJvUNs7WkQTohkILsPlFKSMJWT41hpwVKLVn8j9ULrqX6YgsQuoMMUOj5mOUMfRK7WlZa1iwRr1FcUZaMupVqn2QQ8XlybFAXEp9ddSqPTwM=
+	t=1723045674; cv=none; b=bZsedtc+YXFR2LsWewpMmZbJZAi6Q5yu+V6/0GYBdk3YoYBWLWtcXDPG4BA74H/TlVvMHr47R0BRQeuFMRFhiLid6DUVOlNFN+9uYuoljuU9Zzajp0+7yray1w1K3VaaOribfFrbOMOcM2bzzYtUzwndJxB8E0Penay51ZB6ar4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723045593; c=relaxed/simple;
-	bh=WkjDwC4CFCv0LVS9cZM3iibbxyO2Ccq1c0HnYlPk47E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KBi1+pByu/BqUGWLvjSOhdPLeu92nN5O0r4eguGdNo36euBILRoUbiDGzZX1LoR13tLEqPaLrGLt/5idBzsj4UPtXbQ3Yw12FQUOaYc7zUSoNJUxQoxDL4QaByoZqtRbThbIV0sknsqSNilvpskxpndm0crBVMeKTFKOUdUWWJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=o1McUFKd; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=tRmMETb/7MTV1QXR0Clr7A+ZjYv8xAw5xIefPC+Km8g=; b=o1McUFKdqARZXK+LGc9Xon/OZZ
-	24j/7x3GXKWGNfkEijI/F8U6fj8xMFo4kzPtc02UVpxP/9N5m+G28WExZpe40/56wiEHmKryaosKu
-	EI8vksXXSuHrdEdJyavO66yj+Q+iq5X61CAX+NpaFRz5Yctg1tZzEhLE8yVCiRGjvJCUEPvRw/kn2
-	krVT44JnJFYYLntaxgYdTdB8i96vi4blU1il/nO9xT0wcZmtYUfGNu5xWr/iOqDbQcAwnPhvYcR0f
-	V/mhK4W4QCFjIHOd/mU0855K6DFdc3PhyEI0xpV34am+jwnN3OV7rNwUtJ8vK7AWp3bf/aB+4CqZ+
-	Pax12xQQ==;
-Received: from [2001:9e8:9f8:5201:3235:adff:fed0:37e6] (port=37118 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1sbirg-009hPI-OI;
-	Wed, 07 Aug 2024 17:46:16 +0200
-Date: Wed, 7 Aug 2024 17:46:03 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Daniel Gomez <da.gomez@samsung.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	William Hubbs <w.d.hubbs@gmail.com>,
-	Chris Brannon <chris@the-brannons.com>,
-	Kirk Reiser <kirk@reisers.ca>,
-	Samuel Thibault <samuel.thibault@ens-lyon.org>,
-	Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"speakup@linux-speakup.org" <speakup@linux-speakup.org>,
-	"selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-	Finn Behrens <me@kloenk.dev>,
-	"Daniel Gomez (Samsung)" <d+samsung@kruces.com>,
-	"gost.dev@samsung.com" <gost.dev@samsung.com>
-Subject: Re: [PATCH 08/12] include: add elf.h support
-Message-ID: <20240807-mottled-stoic-degu-d1e4cb@lindesnes>
-References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
- <20240807-macos-build-support-v1-8-4cd1ded85694@samsung.com>
- <CGME20240807110435eucas1p2eca071b0a0122b8686d43c57bd94dc8c@eucas1p2.samsung.com>
- <2024080717-cross-retiree-862e@gregkh>
- <dxkmmrlhlhsrjulnyabfgcr37ojway2dxaypelf3uchkmhw4jn@z54e33jdpxmr>
- <2024080720-skyline-recapture-d80d@gregkh>
+	s=arc-20240116; t=1723045674; c=relaxed/simple;
+	bh=meeucUYBGF8itIkHjnDP0LDYCuH5M/KgzmcxkjaG12o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Sbd45lx78dwJb/1SCklzwA6XdFZEu52yb+xxEgM6xEKFFmxh9q+iO/ZnjXf6CvfM7e9VznWqSdZSnwyVo0Kc2EqSQG4aC52BmstybVRVRyaHVv1r3R4THTkZQSqNtOWvcQQMXErTJQI3KywlwEC4RcoJlXwV9PP+h72EypTMsc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WfF0D5J6RzpT3r;
+	Wed,  7 Aug 2024 23:46:36 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 296D8180AE3;
+	Wed,  7 Aug 2024 23:47:47 +0800 (CST)
+Received: from [10.67.109.211] (10.67.109.211) by
+ kwepemg500010.china.huawei.com (7.202.181.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 7 Aug 2024 23:47:46 +0800
+Message-ID: <53d8c725-7854-4cbc-b2b4-0dcded328617@huawei.com>
+Date: Wed, 7 Aug 2024 23:47:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024080720-skyline-recapture-d80d@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [build fail] v6.11-rc2 from "ARM: 9404/1: arm32: enable
+ HAVE_LD_DEAD_CODE_DATA_ELIMINATION"
+Content-Language: en-US
+To: Arnd Bergmann <arnd@arndb.de>, Harith George <mail2hgg@gmail.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Russell King
+	<rmk+kernel@armlinux.org.uk>, Ard Biesheuvel <ardb@kernel.org>,
+	<harith.g@alifsemi.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <14e9aefb-88d1-4eee-8288-ef15d4a9b059@gmail.com>
+ <c11ba413-89f6-46b4-8d59-96306c9f1f14@huawei.com>
+ <52518ac5-53bb-4c70-ba99-4314593129dc@gmail.com>
+ <2812367a-49ad-4c88-8844-8f8493b15bbd@huawei.com>
+ <a65d0b09-466d-415f-9bd0-cbc5ff3539e7@gmail.com>
+ <2083af75-e2d8-42b9-8fa6-f5b7496671bd@app.fastmail.com>
+From: "liuyuntao (F)" <liuyuntao12@huawei.com>
+In-Reply-To: <2083af75-e2d8-42b9-8fa6-f5b7496671bd@app.fastmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-On Wed, Aug 07, 2024 at 04:18:54PM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Aug 07, 2024 at 02:13:57PM +0000, Daniel Gomez wrote:
-> > > Also, as this is not internal for the kernel, but rather for userspace
-> > > builds, shouldn't the include/ path be different?
-> > 
-> > Can you suggest an alternative path or provide documentation that could help
-> > identify the correct location? Perhaps usr/include?
+OK, i will test these version soon.
+
+On 2024/8/7 23:41, Arnd Bergmann wrote:
+> On Wed, Aug 7, 2024, at 17:36, Harith George wrote:
+>> On 07-08-2024 20:52, liuyuntao (F) wrote:
+>>> Thanks, I reproduce the link error with toolchain
+>>> gcc version 9.3.0
+>>> GNU ld (GNU Binutils) 2.33.1
+>>>
+>>> with same gcc version, just upgrading ld version to 2.36.1, it does not
+>>> segfault and build completes. there should be bugs in low version of ld,
+>>> and the ".reloc  .text, R_ARM_NONE, ." triggers that.
+>>>
+>> Thanks for confirming.
+>>
+>> I guess we need to add something like
+>> #if !CONFIG_CC_IS_GCC || CONFIG_LD_VERSION >= 23600
+>> around the entry-armv.S changes and maybe select
+>> HAVE_LD_DEAD_CODE_DATA_ELIMINATION in arch/arm/Kconfig only if the same
+>> conditions are met ??
 > 
-> That is better than the generic include path as you are attempting to
-> mix userspace and kernel headers in the same directory :(
-
-Please keep in mind, that usr/include/ currently does not hold a single
-header file but is used for dynamically composing the UAPI header tree.
-
-In general, I do not like the idea of keeping a elf.h file here that
-possibly is out-of-sync with the actual system's version (even though
-elf.h should not see that much changes).  Might it be more helpful to
-provide a "development kit" for Linux devs that need to build on MacOS
-that provides necessary missing system header files, instead of merging
-those into upstream?
-
-Kind regards,
-Nicolas
-
--- 
-Nicolas
+> I think it makes most sense to have a minimum LD
+> version as a dependency for HAVE_LD_DEAD_CODE_DATA_ELIMINATION.
+> Are you sure that 2.36 is the first one that works, and it's
+> not just 2.33 specifically that is broken?
+> 
+> If so, we could use
+> 
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -117,7 +117,7 @@ config ARM
+>          select HAVE_KERNEL_XZ
+>          select HAVE_KPROBES if !XIP_KERNEL && !CPU_ENDIAN_BE32 && !CPU_V7M && !CPU_32v3
+>          select HAVE_KRETPROBES if HAVE_KPROBES
+> -       select HAVE_LD_DEAD_CODE_DATA_ELIMINATION
+> +       select HAVE_LD_DEAD_CODE_DATA_ELIMINATION if (LD_VERSION >= 23600 || LD_IS_LLD)
+>          select HAVE_MOD_ARCH_SPECIFIC
+>          select HAVE_NMI
+>          select HAVE_OPTPROBES if !THUMB2_KERNEL
+> 
+> 
+> binutils only takes a few seconds to build from source, so
+> you could just try all version from 2.25 (the oldest supported)
+> to 2.36) to see which ones work.
+> 
+>         Arnd
 
