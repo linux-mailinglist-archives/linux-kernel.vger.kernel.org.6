@@ -1,179 +1,213 @@
-Return-Path: <linux-kernel+bounces-277416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA4494A118
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:53:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02F094A119
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75DC91C23391
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:53:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 646CC28C075
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCBD41B86D5;
-	Wed,  7 Aug 2024 06:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748AB1B86E5;
+	Wed,  7 Aug 2024 06:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oE1DXGnZ"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="X6B4o0wC"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864271B32C0
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 06:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29191B86DC
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 06:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723013509; cv=none; b=eEYJH+ADNxkdJE/brEH6Ef8mktFJeCSmBp1/v9ixLnuDG1C3G+yIplZdEbCTjPG429R6kqcdv+Q9nkAU+yPeB/qEMFRX6JWF1gVXfbYIvi7YJynPS9OR07ptqh2uvU5yLRJeiIZCBSAQVwiN4t6s/KjcRlVVcBcqYNua6u3FNNo=
+	t=1723013553; cv=none; b=a49+6JOVWQNDSF61xwXTGDxmbA/YX5nZ7P8S6xMvLzS4KmtPbjcvrEjzmVfaUev7UcVmM0B7F9bYax62rlVeS3qwIiD2qrUhm/cwo6/uyff6hWjrtIrMGziDxHiuEAUIqeSeAD3Y4+2qRNYEaSrkAcYrNOqWltKDPmI/THaBxJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723013509; c=relaxed/simple;
-	bh=gTOAqZp5+RCZOOzD26/kBMue4AHQwpYyelIeBnhzOtM=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=g8xulq6/D/Rh7DLi4ZXm9MKfUFwcyDnbhMlcke0wykUQKcnIhaXMffVn4mf4djKw4b/jwcSKavj7qEQP1m0bIDGbhJJ4iFjhZe4HcY4bCfqOyrvL6hLndZWGvYv/MAwv05x7er9qx0Uw3di1ezGuu7Linl9Yf7lYZbXjPa7K/LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oE1DXGnZ; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-64b70c4a269so32591827b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 23:51:47 -0700 (PDT)
+	s=arc-20240116; t=1723013553; c=relaxed/simple;
+	bh=w2k/1GAk/8e3BZcu7LRZq57LRIyFylfLKs6FQXVsiYY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PBv09og+kj1k5X9XUcXg8PwGdhN56e+bXDAYeBcIVPPzV1MLSjMHJRPvbncZ4cPIupnAjKfbD+iHdnETzsawNsx2kIeDYUhh/QOFNbZ/B/risNsb5GdPyVrcHlFZLRjsXEd/PWRO+DxQtImpk/dIPcoBHDRz29dN8sMiKPWLuFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=X6B4o0wC; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70f5ef740b7so1169403b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 23:52:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723013506; x=1723618306; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HjmYdkWfQIowxx0w0AYxN2hHrndKDApWqMTg9jBZXEY=;
-        b=oE1DXGnZxK87u7P/L/2xZfXHlfYwceodN+Fo7rMD6V+I191dLAAoR453dHhriV1vLf
-         DeOaOQFc7GwDbqib3j83QWAzro2Vl/tzSaILB/GFnvaD5iZkRuu8Ujg/m2luhrYe9F1W
-         vjIyOdfWbclni4QtNzaJNuQhTdokV3yx133d4tj0ZMUL33kogKKzCfVMlpU/uEX10jp/
-         y2OtFod3Vup1G4CsjanKMnFBurvVsxlpIw3BrnE8Ewvjj+BhkS95mSIFyKRdZANepnlF
-         cPpoOXCnk1tkudBtQh9pVvQBAGjp3o2QHGNnazxEXArIHaSot75hsNmDY8Tg+4FvA9OS
-         lhgg==
+        d=bytedance.com; s=google; t=1723013551; x=1723618351; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ojZPHCizjT8+8LuseW1+ElDUzxljEVvHbFiBE43a/C8=;
+        b=X6B4o0wCpw8G4JHmq/FLyCoVkTQqFVECcbobmuP7h18MvdaAfNc15OD/4mUZeCK3xk
+         bmIWnUG2SgG0LOdmqC3qy2kiX6Vm533Yqg+4+yAZQP2qaDZbxpQQXmnqZ6j9PXovwQZU
+         FfXn1YdbK3g2qf8k7lJgV1dkpaa1PqdhrrwXOXK6995VTPDI1Kkvvzgm1MlCmRcvOHk/
+         IMuiR2cmWtDe0qxJ0Gv2YKClXgJyilV9zg5Ui8ZDDcay1kC49UWCLCJbi0Vrh0xWPtLS
+         bXNdhj7xCawHNwjGfV84M+GjJMwn1W8D7rLQdCGodf6dZjOENOgNY7LGgBR4MxFXEu42
+         s7YQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723013506; x=1723618306;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HjmYdkWfQIowxx0w0AYxN2hHrndKDApWqMTg9jBZXEY=;
-        b=Euc6lNs7M6lO76WJAE+Kb0ksrpV16MVR0QeH5yDzSzZ462+MYl9POgs+mDX2iSNuGl
-         Y933WHv7JByqF4xbtD8dSM482bNc2QwuWi7+1hOMzYSjb7zD61ZEEl7+WdjZb857Vr5v
-         kCQfZ81d6Kos3QgVOWb36iDn3W7gpbAvSTMijK2rsbvOnkZA5H4z1vSJAHS2MA4fmKqQ
-         tSdYepgdN6NqPL2CDWM2iclMM22xrX+gp02tZ8S3LoqZEPCgQkdLAT/extEc0fSPkaYN
-         QKyy8jdcKdIIeMoSR4r2UbIto5CiCPoaXuiH4n9jdh1i6lcipeTZAWU6RaOiFePmONy1
-         uUyA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0CxnQkdHXz0ktQOtOd6hu+2jgfaj9LYBCtTsCVoMxq4nFe2SCFY1S27rc+pzxGK9qEGvKlQ5Pm8penR8jYTRXtJBzRHknL+grs/hB
-X-Gm-Message-State: AOJu0YzoyNj2kwuKj2VpfB0KbBlMEuLWUD2TlCDQ5zYwPezTjWUMskVP
-	QTxh6CkkDDxNaCYA0NzVQJg6sFrBo+ySt7bBmGX54qAjjBrmdyvDtIPL8KbRkvsnXgCmhFOFH6/
-	8XYF4Wg==
-X-Google-Smtp-Source: AGHT+IGcn1HOgBgSZkUpCZbcE/TbyQezcf+ZGodx1D+51ukk7eDDKya8x6COgzWgq9jmcueW2BMp1k3u6BVd
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:dd5:8e3d:1f0:1ddc])
- (user=irogers job=sendgmr) by 2002:a05:690c:39a:b0:65c:1db1:9235 with SMTP id
- 00721157ae682-6895a1e4babmr5641287b3.0.1723013506514; Tue, 06 Aug 2024
- 23:51:46 -0700 (PDT)
-Date: Tue,  6 Aug 2024 23:51:36 -0700
-Message-Id: <20240807065136.1039977-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1723013551; x=1723618351;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ojZPHCizjT8+8LuseW1+ElDUzxljEVvHbFiBE43a/C8=;
+        b=uwvYHgw2Y7TZBg1lzZrwiEBjkJhsVS0SsIt/O06itfScU5EkErUF/P9C7YDBeNwU6V
+         xXs8LsaEK6hiqhj8FLh31HlldxsA4VYXQaxqPpYzWECeB5TUW5FC24e0sU2HyXsqCVSa
+         ScLTxcln1l8KA8EVZtxPTcXpLN11N2a9m0LT5HsgQI9ofbkZGYZBaWvAMzvh/vMXiXpC
+         IeiKlsFPSel8ZwgLFtIu6iTeoBo+YQl2Uy/LkHHa4EUM3aTqFEbJ9GC7khmro5PdK6zL
+         eoRPjxMBFtUBhqaB0jaQaBid/WhLi6+73yCPBTEtUU9trJSVSTJ22yLbjTk0nNyiwR0P
+         ZQtw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUbsh0Pc0jzQK7kauqUP+YdMe9e+inG5qcmtR2d4q/xz+LmszEfXy43FNnP0WCL9M3gbNQSVyBiGhvmgi89X70Hn9cSCTBFTAgT2Pi
+X-Gm-Message-State: AOJu0YwEPUvXqCycuLVeV02SPLmxbYrZSr9h0sYtNvPf+tsJh9fpXmqt
+	tSHptJ11lQ4kYJBdyz/80J6FpqjTUfvV6YPOnGaso/r6RVD2U8Ycj4FfxCAaz6k4l0gZaR7vfhh
+	SHGDNMoFCjgsMrYdZioctUB/Ulc2Hkyj5moUn
+X-Google-Smtp-Source: AGHT+IETt1KM8mTnwNBX/+Qs7S9wNiln513XQSwOOCU5mmeBIz6oHmWu32ViLfcmLt4UwTl+aQsEffppahddkuy8SIg=
+X-Received: by 2002:a05:6a21:38b:b0:1c0:f77e:2521 with SMTP id
+ adf61e73a8af0-1c69958230emr22419273637.19.1723013550618; Tue, 06 Aug 2024
+ 23:52:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Subject: [PATCH v1] perf hist: Fix reference counting of branch_info
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Sun Haiyong <sunhaiyong@loongson.cn>, 
-	Yanteng Si <siyanteng@loongson.cn>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+References: <20240805082106.65847-1-jasowang@redhat.com>
+In-Reply-To: <20240805082106.65847-1-jasowang@redhat.com>
+From: Yongji Xie <xieyongji@bytedance.com>
+Date: Wed, 7 Aug 2024 14:52:19 +0800
+Message-ID: <CACycT3uM1jSdqFT0LGqy1zXZkWF8BNQN=8EMKYMoyP_wjRtsng@mail.gmail.com>
+Subject: Re: [PATCH] vduse: avoid using __GFP_NOFAIL
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio Perez Martin <eperezma@redhat.com>, Maxime Coquelin <maxime.coquelin@redhat.com>, 
+	virtualization@lists.linux.dev, linux-kernel <linux-kernel@vger.kernel.org>, 
+	21cnbao@gmail.com, penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-iter_finish_branch_entry doesn't put the branch_info from/to map
-elements creating memory leaks. This can be seen with:
+On Mon, Aug 5, 2024 at 4:21=E2=80=AFPM Jason Wang <jasowang@redhat.com> wro=
+te:
+>
+> Barry said [1]:
+>
+> """
+> mm doesn't support non-blockable __GFP_NOFAIL allocation. Because
+> __GFP_NOFAIL without direct reclamation may just result in a busy
+> loop within non-sleepable contexts.
+> ""=E2=80=9C
+>
+> Unfortuantely, we do that under read lock. A possible way to fix that
+> is to move the pages allocation out of the lock into the caller, but
+> having to allocate a huge number of pages and auxiliary page array
+> seems to be problematic as well per Tetsuon [2]:
+>
+> """
+> You should implement proper error handling instead of using
+> __GFP_NOFAIL if count can become large.
+> """
+>
+> So I choose another way, which does not release kernel bounce pages
+> when user tries to register usersapce bounce pages. Then we don't need
+> to do allocation in the path which is not expected to be fail (e.g in
+> the release). We pay this for more memory usage but further
+> optimizations could be done on top.
+>
+> [1] https://lore.kernel.org/all/CACGkMEtcOJAA96SF9B8m-nZ1X04-XZr+nq8ZQ2sa=
+LnUdfOGOLg@mail.gmail.com/T/#m3caef86a66ea6318ef94f9976ddb3a0ccfe6fcf8
+> [2] https://lore.kernel.org/all/CACGkMEtcOJAA96SF9B8m-nZ1X04-XZr+nq8ZQ2sa=
+LnUdfOGOLg@mail.gmail.com/T/#m7ad10eaba48ade5abf2d572f24e185d9fb146480
+>
+> Fixes: 6c77ed22880d ("vduse: Support using userspace pages as bounce buff=
+er")
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
 
-```
-$ perf record -e cycles -b perf test -w noploop
-$ perf report -D
-...
-Direct leak of 984344 byte(s) in 123043 object(s) allocated from:
-    #0 0x7fb2654f3bd7 in malloc libsanitizer/asan/asan_malloc_linux.cpp:69
-    #1 0x564d3400d10b in map__get util/map.h:186
-    #2 0x564d3400d10b in ip__resolve_ams util/machine.c:1981
-    #3 0x564d34014d81 in sample__resolve_bstack util/machine.c:2151
-    #4 0x564d34094790 in iter_prepare_branch_entry util/hist.c:898
-    #5 0x564d34098fa4 in hist_entry_iter__add util/hist.c:1238
-    #6 0x564d33d1f0c7 in process_sample_event tools/perf/builtin-report.c:334
-    #7 0x564d34031eb7 in perf_session__deliver_event util/session.c:1655
-    #8 0x564d3403ba52 in do_flush util/ordered-events.c:245
-    #9 0x564d3403ba52 in __ordered_events__flush util/ordered-events.c:324
-    #10 0x564d3402d32e in perf_session__process_user_event util/session.c:1708
-    #11 0x564d34032480 in perf_session__process_event util/session.c:1877
-    #12 0x564d340336ad in reader__read_event util/session.c:2399
-    #13 0x564d34033fdc in reader__process_events util/session.c:2448
-    #14 0x564d34033fdc in __perf_session__process_events util/session.c:2495
-    #15 0x564d34033fdc in perf_session__process_events util/session.c:2661
-    #16 0x564d33d27113 in __cmd_report tools/perf/builtin-report.c:1065
-    #17 0x564d33d27113 in cmd_report tools/perf/builtin-report.c:1805
-    #18 0x564d33e0ccb7 in run_builtin tools/perf/perf.c:350
-    #19 0x564d33e0d45e in handle_internal_command tools/perf/perf.c:403
-    #20 0x564d33cdd827 in run_argv tools/perf/perf.c:447
-    #21 0x564d33cdd827 in main tools/perf/perf.c:561
-...
-```
+Reviewed-by: Xie Yongji <xieyongji@bytedance.com>
+Tested-by: Xie Yongji <xieyongji@bytedance.com>
 
-Clearing up the map_symbols properly creates maps reference count
-issues so resolve those. Resolving this issue doesn't improve peak
-heap consumption for the test above.
+Have tested it with qemu-storage-daemon [1]:
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/hist.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+$ qemu-storage-daemon \
+    --chardev socket,id=3Dcharmonitor,path=3D/tmp/qmp.sock,server=3Don,wait=
+=3Doff \
+    --monitor chardev=3Dcharmonitor \
+    --blockdev driver=3Dhost_device,cache.direct=3Don,aio=3Dnative,filename=
+=3D/dev/nullb0,node-name=3Ddisk0
+\
+    --export type=3Dvduse-blk,id=3Dvduse-test,name=3Dvduse-test,node-name=
+=3Ddisk0,writable=3Don
 
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index f8ee1cd6929d..c8c1b511f8a7 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -472,7 +472,9 @@ static int hist_entry__init(struct hist_entry *he,
- 		memcpy(he->branch_info, template->branch_info,
- 		       sizeof(*he->branch_info));
- 
-+		he->branch_info->from.ms.maps = maps__get(he->branch_info->from.ms.maps);
- 		he->branch_info->from.ms.map = map__get(he->branch_info->from.ms.map);
-+		he->branch_info->to.ms.maps = maps__get(he->branch_info->to.ms.maps);
- 		he->branch_info->to.ms.map = map__get(he->branch_info->to.ms.map);
- 	}
- 
-@@ -970,10 +972,21 @@ iter_add_next_branch_entry(struct hist_entry_iter *iter, struct addr_location *a
- 	return err;
- }
- 
-+static void branch_info__exit(struct branch_info *bi)
-+{
-+	map_symbol__exit(&bi->from.ms);
-+	map_symbol__exit(&bi->to.ms);
-+	zfree_srcline(&bi->srcline_from);
-+	zfree_srcline(&bi->srcline_to);
-+}
-+
- static int
- iter_finish_branch_entry(struct hist_entry_iter *iter,
- 			 struct addr_location *al __maybe_unused)
- {
-+	for (int i = 0; i < iter->total; i++)
-+		branch_info__exit(&iter->bi[i]);
-+
- 	zfree(&iter->bi);
- 	iter->he = NULL;
- 
-@@ -1319,10 +1332,7 @@ void hist_entry__delete(struct hist_entry *he)
- 	map_symbol__exit(&he->ms);
- 
- 	if (he->branch_info) {
--		map_symbol__exit(&he->branch_info->from.ms);
--		map_symbol__exit(&he->branch_info->to.ms);
--		zfree_srcline(&he->branch_info->srcline_from);
--		zfree_srcline(&he->branch_info->srcline_to);
-+		branch_info__exit(he->branch_info);
- 		zfree(&he->branch_info);
- 	}
- 
--- 
-2.46.0.rc2.264.g509ed76dc8-goog
+[1] https://github.com/bytedance/qemu/tree/vduse-umem
 
+>  drivers/vdpa/vdpa_user/iova_domain.c | 18 ++++++++++--------
+>  drivers/vdpa/vdpa_user/iova_domain.h |  1 +
+>  2 files changed, 11 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vdpa_use=
+r/iova_domain.c
+> index 791d38d6284c..933d2f7cd49a 100644
+> --- a/drivers/vdpa/vdpa_user/iova_domain.c
+> +++ b/drivers/vdpa/vdpa_user/iova_domain.c
+> @@ -162,6 +162,7 @@ static void vduse_domain_bounce(struct vduse_iova_dom=
+ain *domain,
+>                                 enum dma_data_direction dir)
+>  {
+>         struct vduse_bounce_map *map;
+> +       struct page *page;
+>         unsigned int offset;
+>         void *addr;
+>         size_t sz;
+> @@ -178,7 +179,10 @@ static void vduse_domain_bounce(struct vduse_iova_do=
+main *domain,
+>                             map->orig_phys =3D=3D INVALID_PHYS_ADDR))
+>                         return;
+>
+> -               addr =3D kmap_local_page(map->bounce_page);
+> +               page =3D domain->user_bounce_pages ?
+> +                      map->user_bounce_page : map->bounce_page;
+> +
+> +               addr =3D kmap_local_page(page);
+>                 do_bounce(map->orig_phys + offset, addr + offset, sz, dir=
+);
+>                 kunmap_local(addr);
+>                 size -=3D sz;
+> @@ -270,9 +274,8 @@ int vduse_domain_add_user_bounce_pages(struct vduse_i=
+ova_domain *domain,
+>                                 memcpy_to_page(pages[i], 0,
+>                                                page_address(map->bounce_p=
+age),
+>                                                PAGE_SIZE);
+> -                       __free_page(map->bounce_page);
+>                 }
+> -               map->bounce_page =3D pages[i];
+> +               map->user_bounce_page =3D pages[i];
+>                 get_page(pages[i]);
+>         }
+>         domain->user_bounce_pages =3D true;
+> @@ -297,17 +300,16 @@ void vduse_domain_remove_user_bounce_pages(struct v=
+duse_iova_domain *domain)
+>                 struct page *page =3D NULL;
+>
+>                 map =3D &domain->bounce_maps[i];
+> -               if (WARN_ON(!map->bounce_page))
+> +               if (WARN_ON(!map->user_bounce_page))
+>                         continue;
+>
+>                 /* Copy user page to kernel page if it's in use */
+>                 if (map->orig_phys !=3D INVALID_PHYS_ADDR) {
+> -                       page =3D alloc_page(GFP_ATOMIC | __GFP_NOFAIL);
+> +                       page =3D map->bounce_page;
+>                         memcpy_from_page(page_address(page),
+> -                                        map->bounce_page, 0, PAGE_SIZE);
+> +                                        map->user_bounce_page, 0, PAGE_S=
+IZE);
+>                 }
+> -               put_page(map->bounce_page);
+> -               map->bounce_page =3D page;
+> +               put_page(map->user_bounce_page);
+
+map->user_bounce_page =3D NULL?
+
+Thanks,
+Yongji
 
