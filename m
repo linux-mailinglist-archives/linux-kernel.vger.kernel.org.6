@@ -1,99 +1,90 @@
-Return-Path: <linux-kernel+bounces-278690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA98994B394
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:21:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 401B094B396
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8ACC28700D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:21:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC1DA287572
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE72156872;
-	Wed,  7 Aug 2024 23:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C04158D92;
+	Wed,  7 Aug 2024 23:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FwDbrVKo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7sPAhbY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADC1155A59;
-	Wed,  7 Aug 2024 23:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18718146A60;
+	Wed,  7 Aug 2024 23:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723072880; cv=none; b=XwgM12DVK2nt7xPX6TE/H/BOkwCW1VSzoHCd8TPyXXaSLuAUzThawdqVBReY9MYRPc8zlp9mbgnmsdgNPcLQWf7SxPGOpl2eAYstGw3h4ByzyQraoJ9xdZmQqLaswRR2wlFj1qTiIss4IGFhYunzU2hCAySbBRSQfZcBPOAIKc0=
+	t=1723072890; cv=none; b=EIA5LfTpm0mySS2ke5jnT9z/MM47dEEPuZffjFGfLVXXq0J7354HzfdRhI5z32NZfeNtL5CCx1wqWg7ohjrRzJoVRLc8TBL6Q72OKbaulUaVakR0uGoi6nS2qWfiQD6UhGx9p6qXW1Yhf9HcSqliPgpX+a16OUvtW78aNqnDjGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723072880; c=relaxed/simple;
-	bh=+vDjH0P71IA02qOSeYSwgyQaKNjAymPtQXbVQQoitt8=;
+	s=arc-20240116; t=1723072890; c=relaxed/simple;
+	bh=sL6nt31vEY8NGpejZHT5zEO11srx1m6LapA9AXQqFts=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mMJRy/7Uj/fIk3rxG9CQcdReD9W4JAVXhf/2v1lSW0O3+9QkxIZPF3+VRAsHiblovaLPp2JyKoRAMrRa/7LejZny2xltM0FLCBMrogFhk6UqfQSaF2dQRUbLzRNSEtebsdflZvun4PVtBNjiKshkTL5ZT16iMbbFANtCnlIGLi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FwDbrVKo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA309C32781;
-	Wed,  7 Aug 2024 23:21:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=g6heYyY5Wa8EUoyyRkLDXvHqv8LTivTSS1SUJ8P9b55auavwTjUf8FE4hH30B4gYBnTR+zmXiH4Jl9wpz7g5XhYjDN4CmCoSuXCR01fiN011WDg7kAfJN1PTVKlQSBjSBQR6HDvWuOSmPLyEpoWr5Kg1aTF5iuJuub2w6cftrRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7sPAhbY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4324AC32781;
+	Wed,  7 Aug 2024 23:21:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723072879;
-	bh=+vDjH0P71IA02qOSeYSwgyQaKNjAymPtQXbVQQoitt8=;
+	s=k20201202; t=1723072889;
+	bh=sL6nt31vEY8NGpejZHT5zEO11srx1m6LapA9AXQqFts=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FwDbrVKoy9u1C7ur2Xpk4gF4sv6NA3mb870kT2qrlG+RTysUO1H+5D5QLSPaHIjmW
-	 bnvIufd/FD1r+NrFgaILCkzUVOXgXUtc9Z24fGoMg1HjfE/ZDK8jVNutsQRI6iHIgA
-	 MOEvCdilz+dc4EFjHaedAxNgzXZ+Zy48RRuUj49C6dKppg4z39FzaKAl9cfrhPL+sI
-	 T9uolSi5Ym9sn4g9Fsh8JYkdcEpx41KlpNJSvaGvkj6Gffp9C0KnlVhYn2N5DnO/aA
-	 MPmBgQU/152rQVBc28Xce5P3bdYkjjIiurcDlCNEGjm4ouU6lDHjIjwyXYzyouL+5n
-	 /Eltn7jgb/lpQ==
-Date: Wed, 7 Aug 2024 16:21:16 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: irogers@google.com, acme@kernel.org, adrian.hunter@intel.com,
-	jolsa@kernel.org, kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/9] perf evsel: Set BPF output to system-wide
-Message-ID: <ZrQBbMiIt1NCvxbY@google.com>
-References: <20240807153843.3231451-1-howardchu95@gmail.com>
- <20240807153843.3231451-2-howardchu95@gmail.com>
+	b=M7sPAhbY/94UVLGwl0I7dBDTs/5s6hYdfDQQ5IniD1vIZtzwbifD3IKjZrYkkRuhI
+	 4PLRIY8Ic6iFKJTSohS8oNjRSoKVlqZ2t0q3yaeJwuFqtYjMu0mCrMIJKk2ZsZc4Pq
+	 jO9xBkw5xGkm0zbomY80o4E4psy76RGKXQxy3lVlJG8J39dBkNF33u8KYBrLnEWTZl
+	 ehbee3g7E44z9sfA2JBQ1t65u9Zr4Phl6SIABbhR3tpZJQEf9XPCc4GVJ93Qfq9Ofg
+	 fnV1MPafSAsUZFDALgoB3NnH0mEL/HbSOvsF1J2kpf8/QTp6qg0kBR1cUNd1N5Ukl8
+	 r5Par9Ws+HHjw==
+Date: Thu, 8 Aug 2024 00:21:24 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Mary Strodl <mstrodl@csh.rit.edu>
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
+	urezki@gmail.com, hch@infradead.org, linux-mm@kvack.org, lee@kernel.org, 
+	linux-i2c@vger.kernel.org, s.hauer@pengutronix.de, christian.gmeiner@gmail.com
+Subject: Re: [PATCH v2 2/2] i2c: Add Congatec CGEB I2C driver
+Message-ID: <p3g2ikhn54roye5t7moatrqbaudl65jarpimhoguojz5f7gnz2@2i4npjg3jdrv>
+References: <20240801160610.101859-1-mstrodl@csh.rit.edu>
+ <20240801160610.101859-3-mstrodl@csh.rit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240807153843.3231451-2-howardchu95@gmail.com>
+In-Reply-To: <20240801160610.101859-3-mstrodl@csh.rit.edu>
 
-On Wed, Aug 07, 2024 at 11:38:35PM +0800, Howard Chu wrote:
-> pid = -1 for bpf-output event.
+Hi Mary,
+
+On Thu, Aug 01, 2024 at 12:06:10PM GMT, Mary Strodl wrote:
+> From: Sascha Hauer <s.hauer@pengutronix.de>
 > 
-> This makes perf record -p <PID> --off-cpu work. Otherwise bpf-output
-> cannot be collected.
+> This driver provides a I2C bus driver for the CGEB interface
+> found on some Congatec x86 modules. No devices are registered
+> on the bus, the user has to do this via the i2c device /sys
+> interface.
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
+> Signed-off-by: Mary Strodl <mstrodl@csh.rit.edu>
+> ---
+>  drivers/i2c/busses/Kconfig             |   7 +
+>  drivers/i2c/busses/Makefile            |   1 +
+>  drivers/i2c/busses/i2c-congatec-cgeb.c | 189 +++++++++++++++++++++++++
+>  3 files changed, 197 insertions(+)
+>  create mode 100644 drivers/i2c/busses/i2c-congatec-cgeb.c
 
-I don't understand why it's necessary.  Why isn't it collected?
-Is it the kernel to reject the BPF output event to open?
+Thanks for your patch, doesn't look bad.
+
+However, I'm going to ask to please run checkpatch.pl fix the
+suggested output and resend it.
 
 Thanks,
-Namhyung
-
-> 
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> ---
->  tools/perf/util/evsel.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index bc603193c477..b961467133cf 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -2282,6 +2282,10 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
->  
->  			test_attr__ready();
->  
-> +			/* BPF output event can only be system-wide */
-> +			if (evsel__is_bpf_output(evsel))
-> +				pid = -1;
-> +
->  			/* Debug message used by test scripts */
->  			pr_debug2_peo("sys_perf_event_open: pid %d  cpu %d  group_fd %d  flags %#lx",
->  				pid, perf_cpu_map__cpu(cpus, idx).cpu, group_fd, evsel->open_flags);
-> -- 
-> 2.45.2
-> 
+Andi
 
