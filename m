@@ -1,193 +1,209 @@
-Return-Path: <linux-kernel+bounces-278315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D51B094AEB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:14:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A258494AE9B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FAEBB27957
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:03:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498311F241F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FE913B7BE;
-	Wed,  7 Aug 2024 17:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A9B13BACC;
+	Wed,  7 Aug 2024 17:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1RtyR6wJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hUpjeDry";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1RtyR6wJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hUpjeDry"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ql03aaoV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C02126F02
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 17:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8313307B;
+	Wed,  7 Aug 2024 17:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723050162; cv=none; b=YAb5dTwzlhZSmtyY2E+vQbRwe4U10AkoUT/8zXZtlDRPIe/OoKd7Tc+vnQqGJJ2RuNZT4QtFoYJG6csa37/vxCDD/wdMvwdpE4mWyJ1zBaQmCb1Oe+5dt0IBLF81mJIViyK1vGvZaHzpDU/990znTwn+lP2eUcdfktTpv27ia4I=
+	t=1723050218; cv=none; b=tGRPtlHaPSsxOriDGpJM8ukDg059DsrTlQaK8GdQq+y2yNtgMRiLf8jH6FMtwiCaPzjpINomj7PPL9c8lxyU6NEdPltQa4GZzuCaK8uS5bQKbbEOQ2+j1+wSc9NVmEhCiz/vAcsTbMZuHw+dGfx3HR9amlt/J/Ft8l4fh+7bU4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723050162; c=relaxed/simple;
-	bh=hDx/EGYyTEm9Cq7nn3rbCSSwljz712TD/l0JP2jUblA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jnVDR6EUA1M3CzSQn4xOTxK0IVLYFgNyzj+c3IU2xLL/yLdeb589iXvgOaK22DU8TeNj/gacd6b6GPMmMKfhilTocZBEcSrSTDxMiMIBnTuDhqSK4hAvtwI4QW+UCAR1ovCPcboofDSuzU7i0QFOeX3ja9m+f08haF8mpEV4HUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1RtyR6wJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hUpjeDry; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1RtyR6wJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hUpjeDry; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1CA3721A4A;
-	Wed,  7 Aug 2024 17:02:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723050159; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hNS9u0j9MNZXeNXOlhWnKrjKsdc6nGqfDA7R1v7bpF4=;
-	b=1RtyR6wJpYNKKc8O2LiMaCjjz9hnYRI1Ga+FEoGGs0p3CY9FqEfSmIR4DNUNQF9lZBa1G6
-	Bo1kT3toHfWYss586uDratz9hAclZkxFTRHgPUHm8OHLasYXmFuyyn+znw6hVi3Por2WvN
-	4c3yHJLp/k5hsXjFnHLZ2SfX96wQZQk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723050159;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hNS9u0j9MNZXeNXOlhWnKrjKsdc6nGqfDA7R1v7bpF4=;
-	b=hUpjeDryD9pLVzTFr92eC+SxIf4SXYKIQSLP9fLZd0/FH0h2X1ML4rOcDR3SS5vUudvpzB
-	RKqGX1Sq+HS1s1DA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=1RtyR6wJ;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=hUpjeDry
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723050159; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hNS9u0j9MNZXeNXOlhWnKrjKsdc6nGqfDA7R1v7bpF4=;
-	b=1RtyR6wJpYNKKc8O2LiMaCjjz9hnYRI1Ga+FEoGGs0p3CY9FqEfSmIR4DNUNQF9lZBa1G6
-	Bo1kT3toHfWYss586uDratz9hAclZkxFTRHgPUHm8OHLasYXmFuyyn+znw6hVi3Por2WvN
-	4c3yHJLp/k5hsXjFnHLZ2SfX96wQZQk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723050159;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hNS9u0j9MNZXeNXOlhWnKrjKsdc6nGqfDA7R1v7bpF4=;
-	b=hUpjeDryD9pLVzTFr92eC+SxIf4SXYKIQSLP9fLZd0/FH0h2X1ML4rOcDR3SS5vUudvpzB
-	RKqGX1Sq+HS1s1DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 088DB13297;
-	Wed,  7 Aug 2024 17:02:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dA2oAa+os2Z2GgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 07 Aug 2024 17:02:39 +0000
-Message-ID: <351f217b-1aec-4394-8ad1-46f68ee9eebe@suse.cz>
-Date: Wed, 7 Aug 2024 19:02:38 +0200
+	s=arc-20240116; t=1723050218; c=relaxed/simple;
+	bh=29Op1y/ig47K7J8uJlH2X4F5/WmxoJFIXx0QeTBHGNo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P465Anw181qvlyJb7sd1ONuKcAXC8/S3dAVCVl5+azyNAT05wzHMr3Ps6K0IXyyP4ntiKB2qvu00uRvUsPCmhuCs1YsK0o0ZfTllPY3c1RPC+CyNpnPL0WWS6lK+c8kD2WUAbBIEG2ZLWbUyJqRMaMdIFP+ebrvTaVUrO6LonLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ql03aaoV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1440FC4AF10;
+	Wed,  7 Aug 2024 17:03:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723050218;
+	bh=29Op1y/ig47K7J8uJlH2X4F5/WmxoJFIXx0QeTBHGNo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Ql03aaoVMLZFyQnodYf+hE5WZBevQSf7uSCG5iWFM4N58KNOk5kcQ1BIAjGfCac/s
+	 lnCslhE5gUHDgY8HGsqFDL1J2qQP1YwONfvYAbuPbku/ybfbBT8xmEIKYSJpA5Lx4Z
+	 xwkU+z+TtEFBBqh2HOCRDSZEejhmDIQ1aR3anaHveNCelwPild6hTsiLQR77TMhwnl
+	 izBYKayDkT/PpGBziH/+N4N0xupOT2cbQRF6s1Xk+ol2dDmRmBnh6QOf6ABgjh/37K
+	 MLzbb7TlPFR+cHwD9BEH3bQlJFQ+nxdz68cQoaOllEaZtMCP+OcY7kUMhRsvht1qZ0
+	 8epnBQhh+6Y8Q==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52efa16aad9so52344e87.0;
+        Wed, 07 Aug 2024 10:03:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUCD/1HCgipY5Za8dKqEaKz1t6TS1kGXeLrQxa1I6sD0ouIjohGjkfI0/JaL8+J55KWJeQAucPtgZ8b4kHJHQAWLpAaeQ7AI8pC4WU3NHJDtddaHN7kP6Dnu3YTK45tdX0vKSUeTCN92m5C
+X-Gm-Message-State: AOJu0Ywd8zra1/HJ3y3JFRSIRh2m53Y2g3IdSIbQ6A3+GXvX9p8aPxE4
+	PNUowu7ypn3tfVKYVH+9n8oXvqjy7g1e5DGZgPRohDBetiAZiF7WX6/T8xdFqF4iYxfGe1ZHUlk
+	jTrwJRmCcPZ28OOVZAngSwC3wupM=
+X-Google-Smtp-Source: AGHT+IEJpQw1eQ5bPZfJqwbCAtS80FtybHbn39Xj+8LaRJEv3/5vxGQ+uvrQrBov4rxwwHmSAnNhHBrDxNyGCfv4uhM=
+X-Received: by 2002:a05:6512:b21:b0:52c:d76a:867f with SMTP id
+ 2adb3069b0e04-530bb3041acmr12138586e87.0.1723050216641; Wed, 07 Aug 2024
+ 10:03:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/19] mm: Create/affine kcompactd to its preferred node
-Content-Language: en-US
-To: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: Michal Hocko <mhocko@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
-References: <20240807160228.26206-1-frederic@kernel.org>
- <20240807160228.26206-14-frederic@kernel.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
- ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
- Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
- AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
- V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
- PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
- KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
- Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
- ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
- h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
- De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
- 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
- EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
- tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
- eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
- PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
- HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
- 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
- w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
- 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240807160228.26206-14-frederic@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Spam-Score: -4.50
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 1CA3721A4A
-X-Spamd-Result: default: False [-4.50 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+References: <20240807022718.24838-2-jose.fernandez@linux.dev>
+ <CAK7LNAS4t_naRxdxFTaj9zrdf2Hjjoaq+cBO4Gx7=PhCJk9+4w@mail.gmail.com> <f65f1d49-8c6f-45e9-a4b2-30d4cfff10b1@t-8ch.de>
+In-Reply-To: <f65f1d49-8c6f-45e9-a4b2-30d4cfff10b1@t-8ch.de>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 8 Aug 2024 02:02:59 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATuA4O3xVLcp5Lywr4njaUneKOJwPHZa11YQe63KXQpMA@mail.gmail.com>
+Message-ID: <CAK7LNATuA4O3xVLcp5Lywr4njaUneKOJwPHZa11YQe63KXQpMA@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: control extra pacman packages with PACMAN_EXTRAPACKAGES
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Jose Fernandez <jose.fernandez@linux.dev>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Christian Heusel <christian@heusel.eu>, 
+	Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/7/24 18:02, Frederic Weisbecker wrote:
-> Kcompactd is dedicated to a specific node. As such it wants to be
-> preferrably affine to it, memory and CPUs-wise.
-> 
-> Use the proper kthread API to achieve that. As a bonus it takes care of
-> CPU-hotplug events and CPU-isolation on its behalf.
-> 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+On Thu, Aug 8, 2024 at 1:41=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisssc=
+huh.net> wrote:
+>
+> On 2024-08-07 22:37:47+0000, Masahiro Yamada wrote:
+> > On Wed, Aug 7, 2024 at 11:28=E2=80=AFAM Jose Fernandez <jose.fernandez@=
+linux.dev> wrote:
+> > >
+> > > Introduce a new variable, PACMAN_EXTRAPACKAGES, in the Makefile.packa=
+ge
+> > > to control the creation of additional packages by the pacman-pkg targ=
+et.
+> > >
+> > > The headers and api-headers packages will be included by default if
+> > > PACMAN_EXTRAPACKAGES is not set. This changes the previous behavior
+> > > where api-headers was always included, and headers was conditionally
+> > > included if CONFIG_MODULES=3Dy. Now, this decision is delegated to th=
+e
+> > > user.
+> > >
+> > > To disable extra packages, set PACMAN_EXTRAPACKAGES to an empty value=
+:
+> > >
+> > > make pacman-pkg PACMAN_EXTRAPACKAGES=3D
+> > >
+> > > or
+> > >
+> > > make pacman-pkg PACMAN_EXTRAPACKAGES=3D""
+> > >
+> > > Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
+> > > Reviewed-by: Peter Jung <ptr1337@cachyos.org>
+> > > ---
+> > > v1 -> v2: Build all extra packages by default. Remove unnecessary lin=
+es.
+> >
+> >
+> > I see only the main package built by default.
+>
+> Same.
+>
+> Do we even need PACMAN_EXTRAPACKAGES in the Makefile?
+> IMO having it in the PKGBUILD would be enough.
+> It can still be overriden from the commandline.
+>
+> > >
+> > > In a previous patch, there was concern that adding a new debug packag=
+e
+> > > would increase the package time. To address this concern and provide
+> > > more flexibility, this change has been added to allow users to decide
+> > > which extra packages to include before introducing an optional debug
+> > > package [1].
+> > >
+> > > [1] https://lore.kernel.org/lkml/20240801192008.GA3923315@thelio-3990=
+X/T/
+> > >
+> > >  scripts/Makefile.package |  2 ++
+> > >  scripts/package/PKGBUILD | 11 +++++++----
+> > >  2 files changed, 9 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> > > index 4a80584ec771..ccdf8ba41f0b 100644
+> > > --- a/scripts/Makefile.package
+> > > +++ b/scripts/Makefile.package
+> > > @@ -144,6 +144,8 @@ snap-pkg:
+> > >  # pacman-pkg
+> > >  # ------------------------------------------------------------------=
+---------
+> > >
+> > > +PACMAN_EXTRAPACKAGES ?=3D headers api-headers
+> >
+> > Meaningless line.
+> >
+> >
+> > Since 'export' is missing,
+> > this default line is not propagated to PKGBUILD.
+> >
+> >
+> > Nathan also mentioned 'export' would be needed if you wanted to
+> > describe this here.
+> >
+> > https://lore.kernel.org/linux-kbuild/20240806025853.GB1570554@thelio-39=
+90X/
+>
+> Same as above.
+>
+> > > +
+> > >  PHONY +=3D pacman-pkg
+> > >  pacman-pkg:
+> > >         @ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBU=
+ILD
+> > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > > index 663ce300dd06..8de869f9b1d4 100644
+> > > --- a/scripts/package/PKGBUILD
+> > > +++ b/scripts/package/PKGBUILD
+> > > @@ -3,10 +3,13 @@
+> > >  # Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org=
+>
+> > >
+> > >  pkgbase=3D${PACMAN_PKGBASE:-linux-upstream}
+> > > -pkgname=3D("${pkgbase}" "${pkgbase}-api-headers")
+> > > -if grep -q CONFIG_MODULES=3Dy include/config/auto.conf; then
+> > > -       pkgname+=3D("${pkgbase}-headers")
+> > > -fi
+> > > +pkgname=3D("${pkgbase}")
+> > > +
+> > > +_extrapackages=3D${PACMAN_EXTRAPACKAGES:-}
+> >
+> >
+> > Instead of adding inconsistent defaults in two places,
+> > I would write like this:
+> >
+> > _extrapackages=3D${PACMAN_EXTRAPACKAGES-headers api-headers}
+>
+> Agreed.
+>
+> > Lastly, I will never accept new error messages
+> > with CONFIG_MODULES=3Dn.
+>
+> Could you elaborate?
+> For me this works fine with CONFIG_MODULES=3Dn.
+> (After having fixed the above issues so all subpackages are built)
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
+
+$ make  allnoconfig pacman-pkg
+
+
+Check the linux-headers log closely.
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
