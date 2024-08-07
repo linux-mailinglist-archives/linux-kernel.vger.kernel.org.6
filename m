@@ -1,163 +1,447 @@
-Return-Path: <linux-kernel+bounces-278272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1D194AE22
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:29:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E9E94AE26
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:30:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BD411C219B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:29:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C65281C21AE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F58513D297;
-	Wed,  7 Aug 2024 16:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="O161Virp"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315B413664E
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D239B13DBB7;
+	Wed,  7 Aug 2024 16:28:23 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [207.46.229.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D86313DB99;
+	Wed,  7 Aug 2024 16:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.46.229.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723048041; cv=none; b=L4dWygbTh6BDf9Fx/62Vd/9XB3/LWPBJLZKu3j06vJn2jAvjJl96aT8aKI6fN/EEHPL3/rSvJM80ghK2dUKQH0RPkP4OYcUL/k/24kQvMN6n8h+u2XIGaPPXkM8QZNYjSXaaEw8sBVfdTfqnUbP2EAXqEHHBpn5Ws4EVg57x8Lw=
+	t=1723048102; cv=none; b=K2WW+hetlryvc8qyDLGoX+Yk8tPyzM9cptsuDyXRChe5Ce/vkOsGTrfqctRSDk0PdynahEa24mCf+ZwPBsBfcy3PB3V5OKqdYfdGJIaUIPUgp28XFlbG/YADY9B4GgviZyRD7ADa1UkRR49umf/LGTBRKF8aRhNyAHnjQtW7iTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723048041; c=relaxed/simple;
-	bh=Ng+/JCc1gUQ4aifD/rVtKKq53bnVZwaYRNuOqvikte8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nFqY5AU5tF0dE266m0tWbjiaL+OVCoLoGeKyECdZZHojsG48Ybl22p67bibDrAXFk3qEMYQYcLJsOTS16KKpv4cl93C9i6Ckd1xOZ43/H8a78GlpnZK2mEZVCFN1kEY/6+xnRVNpg6eKtFdO3AvI2uM3y9SaLVeI15q/SglVzOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=O161Virp; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-368712acb8dso11576f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 09:27:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723048036; x=1723652836; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=x+dBIqzE9uz4423Miwg6qL/QPsaguESKxdu18p0e9Wk=;
-        b=O161VirpEQIjSvDctRl8aAPs8k4Vk0vH3/cyB3mqqiQ6R3+IBWJlfDQFOa53yf+IUl
-         nL491rnWSlx3OHWzmBYAM1eJJujchG5S3STwdCV/5RdxoPDToJ2IHISHLYoZBTP1fH5o
-         qzidJLeFjoICK44EVQjKpe5/3tgMOy2jxwxxthOA5S3zPuizcyAMbWZeuX34F8xnty5D
-         Zf7mkpAEBUNzeuuVDLX+dXsvWYUklPNkhXSdJn3MglzAXwjnuaMFIkUucEuS219LAXUr
-         UnJbNo/OXxoWRzsoY13AHNW3x+AdKnWz0YhgsNhFReKsCiVZwORHb93pmlPmqgHHRFre
-         VHuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723048036; x=1723652836;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x+dBIqzE9uz4423Miwg6qL/QPsaguESKxdu18p0e9Wk=;
-        b=gC3HEPXouMeK16nxYTizsu9lSPSV+DUO3E0A90czcAd4kUmK7Bz1EoRjXBquGHQMAA
-         doAzQa+14Itvh8x4ihiRUIigGDDlMeMSNKM2xMqefeo6hG8jjUGxYlBeJq5lg7FcyXu1
-         I1Md/fPfw/X0yxUE6ckhJVKvqdm3yhdSvv6jwqAT157pxo4u3pW757cVQxb346HLHpvG
-         2e7RU5sRVgM7HLj7FnLZ22HWUXp6qClzczkWEx26N7z3XXRHiD0Fmu3MVixJ3W3OT9CG
-         zJspEcoMZz7KYLvsYvZAG/kfD6jJjegPiszCoXlbFyNYnU4uAfHq/Es2j1pB2V9HYqpJ
-         4ZiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxl/D7rqcAigODNEaAAP2KZIksFO+mwFVd2MluiOyc+Z2EbCNSV5PeykW2i8HSaMOJxEBuQ9ZlaG1uqoeP2y7aQhpxEl6A9/wH2q7a
-X-Gm-Message-State: AOJu0YzSiBG+lqcojJ6Zte/so7iyVDr3oTZiXqj7Kd8NK+zZOzWva7eV
-	BJuk4tbrAxODwYrBkAZwxXp73/eO0b4wCebR7sm3RpeM4hgUWpZ/LSw6Oxmi0fw=
-X-Google-Smtp-Source: AGHT+IFwKsKtdGBREmHTq2kOs7k4+/3e+X9EV8QnAXRSEkHZm0dwuN3Fu+VfeXznpGNYYLj47KdTtw==
-X-Received: by 2002:a5d:5c87:0:b0:36b:bd75:ed73 with SMTP id ffacd0b85a97d-36bbd75ef23mr13891573f8f.23.1723048036168;
-        Wed, 07 Aug 2024 09:27:16 -0700 (PDT)
-Received: from toaster.lan ([2a01:e0a:3c5:5fb1:90f1:3c4c:261c:b0f5])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-36bbd169697sm16494184f8f.107.2024.08.07.09.27.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 09:27:15 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-amlogic@lists.infradead.org,
-	alsa-devel@alsa-project.org,
+	s=arc-20240116; t=1723048102; c=relaxed/simple;
+	bh=sKwQ4u9tMNubqWXTCuy5hWzJcTIREeHEoMSO6hsgKR4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XhfJj8yKzG0OFfF6uAm1dF//vUUWOS5EURvULBJBH4ckVVpiqjiicQo8Q3qLuTVxDtiaQp69hUtsPZG1OQeOTpSzcNoI7VpZtuQM+VKxwXFJarlcnh5hkkyXtBoMuAcDlOhq7geqYuczcigSvsC9w83D8eE1qV9qcuHKxFwCvFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=207.46.229.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.50])
+	by app2 (Coremail) with SMTP id HwEQrADn7896oLNmMVZuAA--.60746S2;
+	Thu, 08 Aug 2024 00:27:38 +0800 (CST)
+Received: from russ.tail3da2e.ts.net (unknown [58.19.99.130])
+	by gateway (Coremail) with SMTP id _____wB3fyNsoLNmZADlAA--.3394S2;
+	Thu, 08 Aug 2024 00:27:34 +0800 (CST)
+From: Haoyang Liu <tttturtleruss@hust.edu.cn>
+To: Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Cc: hust-os-kernel-patches@googlegroups.com,
+	Haoyang Liu <tttturtleruss@hust.edu.cn>,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Arseniy Krasnov <avkrasnov@salutedevices.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v2] ASoC: meson: axg-fifo: fix irq scheduling issue with PREEMPT_RT
-Date: Wed,  7 Aug 2024 18:27:03 +0200
-Message-ID: <20240807162705.4024136-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.43.0
+	llvm@lists.linux.dev
+Subject: [PATCH v5] docs/zh_CN: Add dev-tools/kcsan Chinese translation
+Date: Thu,  8 Aug 2024 00:27:19 +0800
+Message-Id: <20240807162720.46588-1-tttturtleruss@hust.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HwEQrADn7896oLNmMVZuAA--.60746S2
+Authentication-Results: app2; spf=neutral smtp.mail=tttturtleruss@hust
+	.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvAXoWftryUZF1Dtw17JFWUAF1DZFb_yoW8ZFy3uo
+	WYkFs8Crs5Cw15JF15G3yDJa43Gw4vkFnxAanrKrnru34UKwnYy3WxAw43Jr43C3y5K3W3
+	tw17XFW7G3WDXa4Dn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUOV7k0a2IF6w4kM7kC6x804xWl1xkIjI8I6I8E6xAIw20EY4v2
+	0xvaj40_Wr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7
+	IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xv
+	wVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAaw2
+	AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I2
+	7wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26F4UJVW0owAv7VCjz4
+	8v1sIEY20_GFW3Jr1UJwAv7VCY1x0262k0Y48FwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_
+	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr4
+	1l42xK82IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI
+	1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
+	Wlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I
+	6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr
+	0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIY
+	CTnIWIevJa73UjIFyTuYvjxU60edUUUUU
+X-CM-SenderInfo: rxsqjiqrssiko6kx23oohg3hdfq/1tbiAQsBAmaxmbIwEAAOsb
 
-With PREEMPT_RT enabled a spinlock_t becomes a sleeping lock.
+Translate dev-tools/kcsan commit 31f605a308e6
+("kcsan, compiler_types: Introduce __data_racy type qualifier")
+into Chinese and add it in dev-tools/zh_CN/index.rst
 
-This is usually not a problem with spinlocks used in IRQ context since
-IRQ handlers get threaded. However, if IRQF_ONESHOT is set, the primary
-handler won't be force-threaded and runs always in hardirq context. This is
-a problem because spinlock_t requires a preemptible context on PREEMPT_RT.
-
-In this particular instance, regmap mmio uses spinlock_t to protect the
-register access and IRQF_ONESHOT is set on the IRQ. In this case, it is
-actually better to do everything in threaded handler and it solves the
-problem with PREEMPT_RT.
-
-Reported-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
-Closes: https://lore.kernel.org/linux-amlogic/20240729131652.3012327-1-avkrasnov@salutedevices.com
-Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Fixes: b11d26660dff ("ASoC: meson: axg-fifo: use threaded irq to check periods")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
 ---
- sound/soc/meson/axg-fifo.c | 26 ++++++++++----------------
- 1 file changed, 10 insertions(+), 16 deletions(-)
+v4 -> v5: Translate link into Chinese as well according to reviewer's advice.
+v3 -> v4: Added original English text for proper nouns and modified some unclear experessions. 
+v2 -> v3: Revised some sentences based on reviewer's suggestions and updated the KTSAN url.
+v1 -> v2: Added commit tag and fixed style problems according to reviewer's suggestions.
 
-diff --git a/sound/soc/meson/axg-fifo.c b/sound/soc/meson/axg-fifo.c
-index 7e6090af720b..75909196b769 100644
---- a/sound/soc/meson/axg-fifo.c
-+++ b/sound/soc/meson/axg-fifo.c
-@@ -207,25 +207,18 @@ static irqreturn_t axg_fifo_pcm_irq_block(int irq, void *dev_id)
- 	status = FIELD_GET(STATUS1_INT_STS, status);
- 	axg_fifo_ack_irq(fifo, status);
- 
--	/* Use the thread to call period elapsed on nonatomic links */
--	if (status & FIFO_INT_COUNT_REPEAT)
--		return IRQ_WAKE_THREAD;
-+	if (status & ~FIFO_INT_COUNT_REPEAT)
-+		dev_dbg(axg_fifo_dev(ss), "unexpected irq - STS 0x%02x\n",
-+			status);
- 
--	dev_dbg(axg_fifo_dev(ss), "unexpected irq - STS 0x%02x\n",
--		status);
-+	if (status & FIFO_INT_COUNT_REPEAT) {
-+		snd_pcm_period_elapsed(ss);
-+		return IRQ_HANDLED;
-+	}
- 
- 	return IRQ_NONE;
- }
- 
--static irqreturn_t axg_fifo_pcm_irq_block_thread(int irq, void *dev_id)
--{
--	struct snd_pcm_substream *ss = dev_id;
--
--	snd_pcm_period_elapsed(ss);
--
--	return IRQ_HANDLED;
--}
--
- int axg_fifo_pcm_open(struct snd_soc_component *component,
- 		      struct snd_pcm_substream *ss)
- {
-@@ -251,8 +244,9 @@ int axg_fifo_pcm_open(struct snd_soc_component *component,
- 	if (ret)
- 		return ret;
- 
--	ret = request_threaded_irq(fifo->irq, axg_fifo_pcm_irq_block,
--				   axg_fifo_pcm_irq_block_thread,
-+	/* Use the threaded irq handler only with non-atomic links */
-+	ret = request_threaded_irq(fifo->irq, NULL,
-+				   axg_fifo_pcm_irq_block,
- 				   IRQF_ONESHOT, dev_name(dev), ss);
- 	if (ret)
- 		return ret;
+ .../translations/zh_CN/dev-tools/index.rst    |   2 +-
+ .../translations/zh_CN/dev-tools/kcsan.rst    | 321 ++++++++++++++++++
+ 2 files changed, 322 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/translations/zh_CN/dev-tools/kcsan.rst
+
+diff --git a/Documentation/translations/zh_CN/dev-tools/index.rst b/Documentation/translations/zh_CN/dev-tools/index.rst
+index c540e4a7d5db..6a8c637c0be1 100644
+--- a/Documentation/translations/zh_CN/dev-tools/index.rst
++++ b/Documentation/translations/zh_CN/dev-tools/index.rst
+@@ -21,6 +21,7 @@ Documentation/translations/zh_CN/dev-tools/testing-overview.rst
+    testing-overview
+    sparse
+    kcov
++   kcsan
+    gcov
+    kasan
+    ubsan
+@@ -32,7 +33,6 @@ Todolist:
+  - checkpatch
+  - coccinelle
+  - kmsan
+- - kcsan
+  - kfence
+  - kgdb
+  - kselftest
+diff --git a/Documentation/translations/zh_CN/dev-tools/kcsan.rst b/Documentation/translations/zh_CN/dev-tools/kcsan.rst
+new file mode 100644
+index 000000000000..59be1bab1ef2
+--- /dev/null
++++ b/Documentation/translations/zh_CN/dev-tools/kcsan.rst
+@@ -0,0 +1,321 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/dev-tools/kcsan.rst
++:Translator: 刘浩阳 Haoyang Liu <tttturtleruss@hust.edu.cn>
++
++内核并发消毒剂(KCSAN)
++=====================
++
++内核并发消毒剂（KCSAN）是一个动态竞争检测器，依赖编译时插桩，并且使用基于观察
++点的采样方法来检测竞争。KCSAN 的主要目的是检测 `数据竞争`_。
++
++使用
++----
++
++KCSAN 受 GCC 和 Clang 支持。使用 GCC 需要版本 11 或更高，使用 Clang 也需要
++版本 11 或更高。
++
++为了启用 KCSAN，用如下参数配置内核::
++
++    CONFIG_KCSAN = y
++
++KCSAN 提供了几个其他的配置选项来自定义行为（见 ``lib/Kconfig.kcsan`` 中的各自的
++帮助文档以获取更多信息）。
++
++错误报告
++~~~~~~~~
++
++一个典型数据竞争的报告如下所示::
++
++    ==================================================================
++    BUG: KCSAN: data-race in test_kernel_read / test_kernel_write
++
++    write to 0xffffffffc009a628 of 8 bytes by task 487 on cpu 0:
++     test_kernel_write+0x1d/0x30
++     access_thread+0x89/0xd0
++     kthread+0x23e/0x260
++     ret_from_fork+0x22/0x30
++
++    read to 0xffffffffc009a628 of 8 bytes by task 488 on cpu 6:
++     test_kernel_read+0x10/0x20
++     access_thread+0x89/0xd0
++     kthread+0x23e/0x260
++     ret_from_fork+0x22/0x30
++
++    value changed: 0x00000000000009a6 -> 0x00000000000009b2
++
++    Reported by Kernel Concurrency Sanitizer on:
++    CPU: 6 PID: 488 Comm: access_thread Not tainted 5.12.0-rc2+ #1
++    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
++    ==================================================================
++
++报告的头部提供了一个关于竞争中涉及到的函数的简短总结。随后是竞争中的两个线程的
++访问类型和堆栈信息。如果 KCSAN 发现了一个值的变化，那么那个值的旧值和新值会在
++“value changed”这一行单独显示。
++
++另一个不太常见的数据竞争类型的报告如下所示::
++
++    ==================================================================
++    BUG: KCSAN: data-race in test_kernel_rmw_array+0x71/0xd0
++
++    race at unknown origin, with read to 0xffffffffc009bdb0 of 8 bytes by task 515 on cpu 2:
++     test_kernel_rmw_array+0x71/0xd0
++     access_thread+0x89/0xd0
++     kthread+0x23e/0x260
++     ret_from_fork+0x22/0x30
++
++    value changed: 0x0000000000002328 -> 0x0000000000002329
++
++    Reported by Kernel Concurrency Sanitizer on:
++    CPU: 2 PID: 515 Comm: access_thread Not tainted 5.12.0-rc2+ #1
++    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
++    ==================================================================
++
++这个报告是当另一个竞争线程不可能被发现，但是可以从观测的内存地址的值改变而推断
++出来的时候生成的。这类报告总是会带有“value changed”行。这类报告的出现通常是因
++为在竞争线程中缺少插桩，也可能是因为其他原因，比如 DMA 访问。这类报告只会在
++设置了内核参数 ``CONFIG_KCSAN_REPORT_RACE_UNKNOWN_ORIGIN=y`` 时才会出现，而这
++个参数是默认启用的。
++
++选择性分析
++~~~~~~~~~~
++
++对于一些特定的访问，函数，编译单元或者整个子系统，可能需要禁用数据竞争检测。
++对于静态黑名单，有如下可用的参数：
++
++* KCSAN 支持使用 ``data_race(expr)`` 注解，这个注解告诉 KCSAN 任何由访问
++  ``expr`` 所引起的数据竞争都应该被忽略，其产生的行为后果被认为是安全的。请查阅
++  `在 LKMM 中 "标记共享内存访问"`_ 获得更多信息。·
++
++* 与 ``data_race(...)`` 相似，可以使用类型限定符 ``__data_racy`` 来标记一个变量
++  ，所有访问该变量而导致的数据竞争都是故意为之并且应该被 KCSAN 忽略::
++
++    struct foo {
++        ...
++        int __data_racy stats_counter;
++        ...
++    };
++
++* 使用函数属性 ``__no_kcsan`` 可以对整个函数禁用数据竞争检测::
++
++    __no_kcsan
++    void foo(void) {
++        ...
++
++  为了动态限制该为哪些函数生成报告，查阅 `Debug 文件系统接口`_ 黑名单/白名单特性。
++
++* 为特定的编译单元禁用数据竞争检测，将下列参数加入到 ``Makefile`` 中::
++
++    KCSAN_SANITIZE_file.o := n
++
++* 为 ``Makefile`` 中的所有编译单元禁用数据竞争检测，将下列参数添加到相应的
++  ``Makefile`` 中::
++
++    KCSAN_SANITIZE := n
++
++.. _在 LKMM 中 "标记共享内存访问": https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/access-marking.txt
++
++此外，KCSAN 可以根据偏好设置显示或隐藏整个类别的数据竞争。可以使用如下
++Kconfig 参数进行更改:
++
++* ``CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY``: 如果启用了该参数并且通过观测点
++  (watchpoint) 观测到一个有冲突的写操作，但是对应的内存地址中存储的值没有改变，
++  则不会报告这起数据竞争。
++
++* ``CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC``: 假设默认情况下，不超过字大小的简
++  单对齐写入操作是原子的。假设这些写入操作不会受到不安全的编译器优化影响，从而导
++  致数据竞争。该选项使 KCSAN 不报告仅由不超过字大小的简单对齐写入操作引起
++  的冲突所导致的数据竞争。
++
++* ``CONFIG_KCSAN_PERMISSIVE``: 启用额外的宽松规则来忽略某些常见类型的数据竞争。
++  与上面的规则不同，这条规则更加复杂，涉及到值改变模式，访问类型和地址。这个
++  选项依赖编译选项 ``CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=y``。请查看
++  ``kernel/kcsan/permissive.h`` 获取更多细节。对于只侧重于特定子系统而不是整个
++  内核报告的测试者和维护者，建议禁用该选项。
++
++要使用尽可能严格的规则，选择 ``CONFIG_KCSAN_STRICT=y``，这将配置 KCSAN 尽可
++能紧密地遵循 Linux 内核内存一致性模型（LKMM）。
++
++Debug 文件系统接口
++~~~~~~~~~~~~~~~~~~
++
++文件 ``/sys/kernel/debug/kcsan`` 提供了如下接口：
++
++* 读 ``/sys/kernel/debug/kcsan`` 返回不同的运行时统计数据。
++
++* 将 ``on`` 或 ``off`` 写入 ``/sys/kernel/debug/kcsan`` 允许打开或关闭 KCSAN。
++
++* 将 ``!some_func_name`` 写入 ``/sys/kernel/debug/kcsan`` 会将
++  ``some_func_name`` 添加到报告过滤列表中，该列表（默认）会将数据竞争报告中的顶
++  层堆栈帧是列表中函数的情况列入黑名单。
++
++* 将 ``blacklist`` 或 ``whitelist`` 写入 ``/sys/kernel/debug/kcsan`` 会改变报告
++  过滤行为。例如，黑名单的特性可以用来过滤掉经常发生的数据竞争。白名单特性可以帮
++  助复现和修复测试。
++
++性能调优
++~~~~~~~~
++
++影响 KCSAN 整体的性能和 bug 检测能力的核心参数是作为内核命令行参数公开的，其默认
++值也可以通过相应的 Kconfig 选项更改。
++
++* ``kcsan.skip_watch`` (``CONFIG_KCSAN_SKIP_WATCH``): 在另一个观测点设置之前每
++  个 CPU 要跳过的内存操作次数。更加频繁的设置观测点将增加观察到竞争情况的可能性
++  。这个参数对系统整体的性能和竞争检测能力影响最显著。
++
++* ``kcsan.udelay_task`` (``CONFIG_KCSAN_UDELAY_TASK``): 对于任务，观测点设置之
++  后暂停执行的微秒延迟。值越大，检测到竞争情况的可能性越高。
++
++* ``kcsan.udelay_interrupt`` (``CONFIG_KCSAN_UDELAY_INTERRUPT``): 对于中断，
++  观测点设置之后暂停执行的微秒延迟。中断对于延迟的要求更加严格，其延迟通常应该小
++  于为任务选择的延迟。
++
++它们可以通过 ``/sys/module/kcsan/parameters/`` 在运行时进行调整。
++
++数据竞争
++--------
++
++在一次执行中，如果两个内存访问存在 *冲突*，在不同的线程中并发执行，并且至少
++有一个访问是 *简单访问*，则它们就形成了 *数据竞争*。如果它们访问了同一个内存地址并且
++至少有一个是写操作，则称它们存在 *冲突*。有关更详细的讨论和定义，见
++`LKMM 中的 "简单访问和数据竞争"`_。
++
++.. _LKMM 中的 "简单访问和数据竞争": https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/explanation.txt#n1922
++
++与 Linux 内核内存一致性模型(LKMM)的关系
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++LKMM 定义了各种内存操作的传播和排序规则，让开发者可以推理并发代码。最终这允许确
++定并发代码可能的执行情况并判断这些代码是否存在数据竞争。
++
++KCSAN 可以识别 *被标记的原子操作* （ ``READ_ONCE``, ``WRITE_ONCE`` , ``atomic_*``
++等），以及内存屏障所隐含的一部分顺序保证。启用 ``CONFIG_KCSAN_WEAK_MEMORY=y``
++配置，KCSAN 会对加载或存储缓冲区进行建模，并可以检测遗漏的
++``smp_mb()``, ``smp_wmb()``, ``smp_rmb()``, ``smp_store_release()``，以及所有的
++具有等效隐含内存屏障的 ``atomic_*`` 操作。
++
++请注意，KCSAN 不会报告所有由于缺失内存顺序而导致的数据竞争，特别是在需要内存屏障
++来禁止后续内存操作在屏障之前重新排序的情况下。因此，开发人员应该仔细考虑那些未
++被检查的内存顺序要求。
++
++数据竞争以外的竞争检测
++---------------------------
++
++对于有着复杂并发设计的代码，竞争状况不总是表现为数据竞争。如果并发操作引起了意
++料之外的系统行为，则认为发生了竞争状况。另一方面，数据竞争是在 C 语言层面定义
++的。下面的宏定义可以用来检测非数据竞争的漏洞并发代码的属性。
++
++.. kernel-doc:: include/linux/kcsan-checks.h
++    :functions: ASSERT_EXCLUSIVE_WRITER ASSERT_EXCLUSIVE_WRITER_SCOPED
++                ASSERT_EXCLUSIVE_ACCESS ASSERT_EXCLUSIVE_ACCESS_SCOPED
++                ASSERT_EXCLUSIVE_BITS
++
++实现细节
++--------
++
++KCSAN 需要观测两个并发访问。特别重要的是，我们想要（a）增加观测到竞争的机会（尤
++其是很少发生的竞争），以及（b）能够实际观测到这些竞争。我们可以通过（a）注入
++不同的延迟，以及（b）使用地址观测点（或断点）来实现。
++
++如果我们在设置了地址观察点的情况下故意延迟一个内存访问，然后观察到观察点被触发
++，那么两个对同一地址的访问就发生了竞争。使用硬件观察点，这是 `DataCollider
++<http://usenix.org/legacy/events/osdi10/tech/full_papers/Erickson.pdf>`_ 中采用
++的方法。与 DataCollider 不同，KCSAN 不使用硬件观察点，而是依赖于编译器插桩和“软
++观测点”。
++
++在 KCSAN 中，观察点是通过一种高效的编码实现的，该编码将访问类型、大小和地址存储
++在一个长整型变量中；使用“软观察点”的好处是具有可移植性和更大的灵活性。然后，
++KCSAN依赖于编译器对普通访问的插桩。对于每个插桩的普通访问：
++
++1. 检测是否存在一个符合的观测点，如果存在，并且至少有一个操作是写操作，则我们发
++   现了一个竞争访问。
++
++2. 如果不存在匹配的观察点，则定期的设置一个观测点并随机延迟一小段时间。
++
++3. 在延迟前检查数据值，并在延迟后重新检查数据值；如果值不匹配，我们推测存在一个
++   未知来源的竞争状况。
++
++为了检测普通访问和标记访问之间的数据竞争，KCSAN 也对标记访问进行标记，但仅用于
++检查是否存在观察点；即 KCSAN 不会在标记访问上设置观察点。通过不在标记操作上设
++置观察点，如果对一个变量的所有并发访问都被正确标记，KCSAN 将永远不会触发观察点
++，因此也不会报告这些访问。
++
++弱内存建模
++~~~~~~~~~~
++
++KCSAN 通过建模访问重新排序（使用 ``CONFIG_KCSAN_WEAK_MEMORY=y``）来检测由于缺少
++内存屏障而导致的数据竞争。每个设置了观察点的普通内存访问也会被选择在其函数范围
++内进行模拟重新排序（最多一个正在进行的访问）。
++
++一旦某个访问被选择用于重新排序，它将在函数范围内与每个其他访问进行检查。如果遇
++到适当的内存屏障，该访问将不再被考虑进行模拟重新排序。
++
++当内存操作的结果应该由屏障排序时，KCSAN 可以检测到仅由于缺失屏障而导致的冲突的
++数据竞争。考虑下面的例子::
++
++    int x, flag;
++    void T1(void)
++    {
++        x = 1;                  // data race!
++        WRITE_ONCE(flag, 1);    // correct: smp_store_release(&flag, 1)
++    }
++    void T2(void)
++    {
++        while (!READ_ONCE(flag));   // correct: smp_load_acquire(&flag)
++        ... = x;                    // data race!
++    }
++
++当启用了弱内存建模，KCSAN 将考虑对 ``T1`` 中的 ``x`` 进行模拟重新排序。在写入
++``flag`` 之后，x再次被检查是否有并发访问：因为 ``T2`` 可以在写入
++``flag`` 之后继续进行，因此检测到数据竞争。如果遇到了正确的屏障， ``x`` 在正确
++释放 ``flag`` 后将不会被考虑重新排序，因此不会检测到数据竞争。
++
++在复杂性上的权衡以及实际的限制意味着只能检测到一部分由于缺失内存屏障而导致的数
++据竞争。由于当前可用的编译器支持，KCSAN 的实现仅限于建模“缓冲”（延迟访问）的
++效果，因为运行时不能“预取”访问。同时要注意，观测点只设置在普通访问上，这是唯
++一一个 KCSAN 会模拟重新排序的访问类型。这意味着标记访问的重新排序不会被建模。
++
++上述情况的一个后果是获取 (acquire) 操作不需要屏障插桩（不需要预取）。此外，引
++入地址或控制依赖的标记访问不需要特殊处理（标记访问不能重新排序，后续依赖的访问
++不能被预取）。
++
++关键属性
++~~~~~~~~
++
++1. **内存开销**：整体的内存开销只有几 MiB，取决于配置。当前的实现是使用一个小长
++   整型数组来编码观测点信息，几乎可以忽略不计。
++
++2. **性能开销**：KCSAN 的运行时旨在性能开销最小化，使用一个高效的观测点编码，在
++   快速路径中不需要获取任何锁。在拥有 8 个 CPU 的系统上的内核启动来说：
++
++   - 使用默认 KCSAN 配置时，性能下降 5 倍；
++   - 仅因运行时快速路径开销导致性能下降 2.8 倍（设置非常大的
++     ``KCSAN_SKIP_WATCH`` 并取消设置 ``KCSAN_SKIP_WATCH_RANDOMIZE``）。
++
++3. **注解开销**：KCSAN 运行时之外需要的注释很少。因此，随着内核的发展维护的开
++   销也很小。
++
++4. **检测设备的竞争写入**：由于设置观测点时会检查数据值，设备的竞争写入也可以
++   被检测到。
++
++5. **内存排序**：KCSAN 只了解一部分 LKMM 排序规则；这可能会导致漏报数据竞争（
++   假阴性）。
++
++6. **分析准确率**： 对于观察到的执行，由于使用采样策略，分析是 * 不健全 * 的
++   （可能有假阴性），但期望得到完整的分析（没有假阳性）。
++
++考虑的替代方案
++--------------
++
++一个内核数据竞争检测的替代方法是 `Kernel Thread Sanitizer (KTSAN)
++<https://github.com/google/kernel-sanitizers/blob/master/KTSAN.md>`_。KTSAN 是一
++个基于先行发生关系（happens-before）的数据竞争检测器，它显式建立内存操作之间的先
++后发生顺序，这可以用来确定 `数据竞争`_ 中定义的数据竞争。
++
++为了建立正确的先行发生关系，KTSAN 必须了解 LKMM 的所有排序规则和同步原语。不幸
++的是，任何遗漏都会导致大量的假阳性，这在包含众多自定义同步机制的内核上下文中特
++别有害。为了跟踪前因后果关系，KTSAN 的实现需要为每个内存位置提供元数据（影子内
++存），这意味着每页内存对应 4 页影子内存，在大型系统上可能会带来数十 GiB 的开销
++。
 -- 
-2.43.0
+2.25.1
 
 
