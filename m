@@ -1,119 +1,110 @@
-Return-Path: <linux-kernel+bounces-278282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A423594AE3A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:35:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F8A894AE3D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE87C2830D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:35:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC6831F25A9E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3B913B7AF;
-	Wed,  7 Aug 2024 16:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BABF139579;
+	Wed,  7 Aug 2024 16:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PwHhhQzm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OZmSZ7ms"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709CF13B295;
-	Wed,  7 Aug 2024 16:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5110978C90
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723048527; cv=none; b=FQsS4gx3MgvHX6qDIkvM0/6+8ApRQbJtyII/HLzjsEfXgGY6F+WC+PFpsYFdfLLMFhAmxsZWRE7PdcIr9mBZRQeAmJyPCjHWsE2uG4oNDcTQX+uDStNb9x2EbRQvfdHwJyprgcuklynSYL1oBUN7S3xad8obtEq7pUZ4DFMQ9Mk=
+	t=1723048571; cv=none; b=uMniPO2G4fghVEUIcUQgFUVEiYil5TVW+/CIz90jhPbYvnJkjcu+IHYMf+z9AQJx9pps2VEKWQjyf786B0P4MRwuf6uF+SD0pQlr5ppT5wrBMNzkDYZDlxbDJG58Yeqs1Yq3H/YZVyMKMiUTT7Ls5V8O+Yy8seaWm7yerh5Firg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723048527; c=relaxed/simple;
-	bh=yr3aOHt+uLB+h1sTltMDqgVWCOdkzLLN+vvWT2fjGgI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=D6Nj73jEPxh9BSWzcu27qiMahi/q1TC8+0gqCWriJXNj0IYTiwg9BvW8wiqt0EYFpCtLVMLNphXwTTKQJtilmO6cu6awbKc3Ct7N+/EHjxPzWeo6nw1nXDtWeu9Hv707HLJ8lvnfiOWWQeVKeUqspeBrkcf5KrJlsC9mBElfdpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PwHhhQzm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 452CEC32781;
-	Wed,  7 Aug 2024 16:35:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723048527;
-	bh=yr3aOHt+uLB+h1sTltMDqgVWCOdkzLLN+vvWT2fjGgI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PwHhhQzmMKo2ImYm5LAaZ/pZqaRuKGstAg6Jm6u4BZurz+rHsz8XEwA/4zlXY9hXw
-	 B7kOOC2NE6q616b7EHl+gSXLzMb2FBxvsUyhbR+NoO/lqQcbow0Zqt60YGb6EXkQI1
-	 5Tk+jt6v2Zzl2x9ki1qRjwv0zGQu3ozfUFYLLq7CLCdt/tV2pX38jAiLdK9agQxrr8
-	 PfEysBMwNenuA33FXwbtjTF2qmSMP7sIqZAtdLCsvwFbpG4JFrPfph637uxI6aGbmp
-	 yrmHS1Uc1HnwsIC7GrYxenGbGGKvFgSnxmqc1nnZjEgq/A3b8HeMi4MknvUz3HdanN
-	 2xBola/OlsnPA==
-From: neeraj.upadhyay@kernel.org
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	paulmck@kernel.org,
-	joel@joelfernandes.org,
-	frederic@kernel.org,
-	boqun.feng@gmail.com,
-	urezki@gmail.com,
-	rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com,
-	qiang.zhang1211@gmail.com,
-	neeraj.iitr10@gmail.com,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
-Subject: [PATCH 2/2] context_tracking: Invoke Tasks-RCU enter/exit for NMI context
-Date: Wed,  7 Aug 2024 22:05:06 +0530
-Message-Id: <20240807163506.434885-3-neeraj.upadhyay@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240807163506.434885-1-neeraj.upadhyay@kernel.org>
-References: <20240807163506.434885-1-neeraj.upadhyay@kernel.org>
+	s=arc-20240116; t=1723048571; c=relaxed/simple;
+	bh=/UUFPXwduSwOc2ctYJXT9XVb3pkCQoON/rgnDJ8c5JM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mP6PyB7sQgsuRckZ07SXA0PUqyOGJ/E0T2FWpJwVFmd/b+EwAvpPWR4JYXpfTaK3ExtSe6K8h7GBBTl6xKWm0ti7SiC3w4s0Q25AY8I29imcguHNpi2fQ8Vl0V4D9lIlJBrKOtdF7p/WcBOKGaYDGzJdxXOJ1fLKG+5ch+bbiW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OZmSZ7ms; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-39b3a9f9f4fso42765ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 09:36:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1723048569; x=1723653369; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=49l+wVm5TMHoomacz0eHsSWfYb1l2BtYnXda9lBCRRw=;
+        b=OZmSZ7msSjm9CYdHNP8uY2K0lAVPtx2e9mMzRAxkVYqVtJ0HuM/TgoHoRsCAfrF2AU
+         LsmJBahD6fhNf8t6OFnuDd/+PQuknm+KSoIr4vqDKyJddSQTV8kSNa9hkqIY2eN7vRHv
+         hSYuKPpRgYEp71s9kfdyj3hxpe3xHs4+MJyio=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723048569; x=1723653369;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=49l+wVm5TMHoomacz0eHsSWfYb1l2BtYnXda9lBCRRw=;
+        b=BAmZRpIDytczq5wqtYolS9akVrMcyeulq2s5wjsNCCGPF5eyPxGX5GiRppg3JD4Ljj
+         HQV6iwzmSszwJbQCHwsrOoniVXOGCoLE63sOMBMazO7kFtodO86/jBGaEsMbGOT728Uw
+         kRTFRV4i/MEGMQbF58Xwyw2H+aSo/nG2PX6hyyMWSfQC6DeEgpB5pNoHcHxdHceXOVMY
+         N7tgwbcMA0WOPXl6UXmsb91OrggfsOXAvuy0BBHYs3KPvxAkFCve9yRlE2v2dWlK4OWZ
+         u7RUNkp6MLnEFUZO1C75jwjE37BhhGyxW+gDFLx8mpotLDbP9PCjYV1Vr89itrwEOBds
+         PLmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5ruSKyEPNy0CoxEmxL+IT1t9CixvUkzO+4Kw91DTLIX3aStPRZMkVzB7ZaTa+Z4aTChAuIAfjYIMJ25M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZdrm78NMk9lwPlJld62J4tWonCXlUSHUYiB/A0T8LYpQ5v6Qt
+	heuSu++YVNeM1Hv4U0+b4zybJpyA36uKXvrLfKBg7lOJGUG9vMK+DOyH0C52JfU=
+X-Google-Smtp-Source: AGHT+IGmjuKcPN/Nvy++qhdeQDPhh3wVg0WvCfy0F9oBE+EJcQpcvJ/N2Pphu2v/nHTGSA4TNiY5xA==
+X-Received: by 2002:a05:6602:4613:b0:81f:86e1:5a84 with SMTP id ca18e2360f4ac-81fd43981demr1306498339f.2.1723048569367;
+        Wed, 07 Aug 2024 09:36:09 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d69a8294sm2882174173.45.2024.08.07.09.36.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 09:36:09 -0700 (PDT)
+Message-ID: <a4ad0239-b296-4204-85f4-a3e8cdbd9c9d@linuxfoundation.org>
+Date: Wed, 7 Aug 2024 10:36:08 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Fix a spelling error in a doc of bcachefs
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Xiaxi Shen <shenxiaxi26@gmail.com>, corbet@lwn.net,
+ javier.carrasco.cruz@gmail.com,
+ "open list:BCACHEFS" <linux-bcachefs@vger.kernel.org>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240807071005.16329-1-shenxiaxi26@gmail.com>
+ <2dfa76a7-eeae-4b05-bfcd-684ae7ade963@linuxfoundation.org>
+ <bdws7d7askhlctcwfgwieml56dr4vqjuvi7bavwkldjdcuzk3u@cbneggmx2w2b>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <bdws7d7askhlctcwfgwieml56dr4vqjuvi7bavwkldjdcuzk3u@cbneggmx2w2b>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+On 8/7/24 10:06, Kent Overstreet wrote:
+> On Wed, Aug 07, 2024 at 09:42:12AM GMT, Shuah Khan wrote:
+>> On 8/7/24 01:10, Xiaxi Shen wrote:
+>>
+>> Missing commit message --
+> 
+> I wasn't going to commit this, because I don't like taking patches that
+> do nothing more than fix spelling, but since it in fact does not need a
+> commit message for something so trivial I am applying it.
 
-rcu_task_enter() and rcu_task_exit() are not called on NMI
-entry and exit. So, Tasks-RCU-Rude grace period wait is required to
-ensure that NMI handlers have entered/exited into Tasks-RCU eqs.
-For architectures which do not require Tasks-RCU-Rude (as the code
-sections where RCU is not watching are marked as noinstr), when
-those architectures switch to not using Tasks-RCU-Rude, NMI handlers
-task exit to eqs will need to be handled correctly for Tasks-RCU holdout
-tasks running on nohz_full CPUs. As it is safe to call these two
-functions from NMI context, remove the in_nmi() check to ensure that
-Tasks-RCU entry/exit is marked correctly for NMI handlers.
+Sure. Your preference.
 
-Reported-by: Frederic Weisbecker <frederic@kernel.org>
-Suggested-by: Frederic Weisbecker <frederic@kernel.org>
-Suggested-by: "Paul E. McKenney" <paulmck@kernel.org>
-Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
----
- kernel/context_tracking.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+I don't accept patches without commit message even if it is trivial.
 
-diff --git a/kernel/context_tracking.c b/kernel/context_tracking.c
-index 152b485a62db..626dd7a173a5 100644
---- a/kernel/context_tracking.c
-+++ b/kernel/context_tracking.c
-@@ -239,8 +239,7 @@ void noinstr ct_nmi_exit(void)
- 	ct_kernel_exit_state(CT_RCU_WATCHING);
- 	// ... but is no longer watching here.
- 
--	if (!in_nmi())
--		rcu_task_exit();
-+	rcu_task_exit();
- }
- 
- /**
-@@ -273,8 +272,7 @@ void noinstr ct_nmi_enter(void)
- 	 */
- 	if (!rcu_is_watching_curr_cpu()) {
- 
--		if (!in_nmi())
--			rcu_task_enter();
-+		rcu_task_enter();
- 
- 		// RCU is not watching here ...
- 		ct_kernel_enter_state(CT_RCU_WATCHING);
--- 
-2.40.1
+thanks,
+-- Shuah
+
+
 
 
