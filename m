@@ -1,197 +1,116 @@
-Return-Path: <linux-kernel+bounces-278657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8FC94B33E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:51:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBC5994B343
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B420283C20
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:51:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2C4528264F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3B4155C96;
-	Wed,  7 Aug 2024 22:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936D41553A7;
+	Wed,  7 Aug 2024 22:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T730Czqg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VrSZYn+i"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F6B148FFF;
-	Wed,  7 Aug 2024 22:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318B94653A
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 22:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723071066; cv=none; b=hbKs64LGDPXB0C/YtCynxtwWVp06Vvg9K8NCcCpLhhMhlEMsYM9scaWDd2ImkEMAiW/WfogxhmuxLiAy7QcC012gqd1wkG1i4QCyhXO2gCpPBw+vQzqQHui6tbQ6cGQT7eEYnFT1bs+Rco7K/S30tkiRzOxevlxA8XGzOky96Ko=
+	t=1723071246; cv=none; b=cavibTEty6TEvMtADr1bYn39HRjitqqw9mDfLxN9XMjtFpyRf6mCJHIB9mETbHgOtL4XBKzCnihLi2EhSEP2TLXJ6rxb6jerAMbdggzqMEXlrw3CbwI0O7Ucq5nO4tIpQyjeF46YNk1YdjSH5woTezokJKP1kWLwVUpm3X1JiQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723071066; c=relaxed/simple;
-	bh=CxYlX3VUGo8QOENfa1E0JSJYFSv6wAo1b1J4jmI3448=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ajh19lt8DtG+BKfiGZPwdNppUTI4VtDwSNt9nLg/3ritJz3KfE86R8UZQVt9KJD4vRtqoK3KlO2ieBktU1cdJlhXktTjcRUdvVXhtaAbzzMzzBwTLyyv4fMXDYxmKIxYEJuUB9uotiVWTtiePheSTJ7y22zDUVytt2bahEx1OUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T730Czqg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C01EC32781;
-	Wed,  7 Aug 2024 22:51:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723071066;
-	bh=CxYlX3VUGo8QOENfa1E0JSJYFSv6wAo1b1J4jmI3448=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T730CzqgzI3cweZ/coawbyGyByQnEjCSOHORlwh/Xnk8PquRny9qHKLMt0Edghe8j
-	 c8hYxXNwrVb1DVAIAQ1SwJLVQDKVLPbwHUMJuVX/PMZ9VaCC9eU9FbL2gxj+H/YxEg
-	 F915QiWqSoz5QhuEqQ6gIAAosssovNbRysey21VpsEBUmnMZyRu92onMfFlVlONMvP
-	 91bC6vnCgkH/u17Sf+tVs28jfe1jsjHIDffl5hyK7pYYUowbyEeXB6dRqpSeEAJ+Tu
-	 Mq/SqVMc2jvUNnEf4AnsF0xnkNc0oCcZOnFJfAPLd3LfTD8AYW1S63GV9G2RDk15al
-	 38t5+TTkePG0A==
-Date: Wed, 7 Aug 2024 15:51:06 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Chandan Babu R <chandanbabu@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	xfs <linux-xfs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org
-Subject: Re: Are jump labels broken on 6.11-rc1?
-Message-ID: <20240807225106.GM6051@frogsfrogsfrogs>
-References: <20240731031033.GP6352@frogsfrogsfrogs>
- <20240731053341.GQ6352@frogsfrogsfrogs>
- <20240731105557.GY33588@noisy.programming.kicks-ass.net>
- <20240805143522.GA623936@frogsfrogsfrogs>
- <20240806094413.GS37996@noisy.programming.kicks-ass.net>
- <20240806103808.GT37996@noisy.programming.kicks-ass.net>
- <875xsc4ehr.ffs@tglx>
- <20240807143407.GC31338@noisy.programming.kicks-ass.net>
- <87wmks2xhi.ffs@tglx>
- <20240807150503.GF6051@frogsfrogsfrogs>
+	s=arc-20240116; t=1723071246; c=relaxed/simple;
+	bh=5tmPSPCRnxVg29p1f1upnHy4D5hR9Iee8d1TUGOrTcU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=prZANuduuN7uh7dh16g8vJeoUc7yidPUzAF0/xbSLHGAbqcSfl4wSmtQlGBN1O88LK3C8jkmwhdtneIEBGWWuFZQA8nc8lKkjFo6+BzDVyeUG9qPhSvIXs7Vlv8j7rFQ9W7rVtpMGXiottOij4i8qo8Bue2pN8VCuYhg8C79pmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VrSZYn+i; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7aa4bf4d1eso49830166b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 15:54:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723071243; x=1723676043; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hK3hwGrnj/zKkxZtckbcBC2CUlwS0OkjbgptQLHblIw=;
+        b=VrSZYn+im0y35jXpnZI0Bz9+MnmlTTMrSVlxhhbNtJPFu1HRkrFy1Ie+vp4rZ0NMCT
+         Hx4s/gKQHTg41D+tOXnhFAzdSgRNu08AUDkZTrsgq/4gdPwzflZNIC67uIgT6i3P40Rd
+         8wEAxPYntuDdJh9gEkP77oPOTdI/AALM2JyPs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723071243; x=1723676043;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hK3hwGrnj/zKkxZtckbcBC2CUlwS0OkjbgptQLHblIw=;
+        b=PATHPuwjeGztUJlWXb0GxsCsnejDv8NzVz+F4KdXDUNtKuYNetBIK6MlZZhTdbE4ua
+         UoaMI7WtxtSs1x4TmihlPwPqWphqu1VfQduW1oWvesY49iy/wUTAVL6l1E6tkY1qv6J9
+         00Ji0UCKo1EIPPrquyEOKe0nReUxk1CWcw51go1IGbz5wjhJQh4xyhHUweUKf28Qu2RQ
+         tCWUNe3GJR9yt7fMCZxf/5shq2yWaJV5hNWBisbwVCTcNeDlDYRUhDvsN8jVlS+rrx40
+         5BUxApCDnIkFWk92JkxSx8VwOb569KgMQ8n1NzZiWD2o41L3MpJiAJGEvHOYix7buTrU
+         BNEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/X/IEVfiNz7ZHzP/n6Gs04RlRjvOFFDDfV6ua29xb0MfXHYpfQeBGUkoifvZqb2Mz2BJCp85/e5X5dGkW+Pnd1qv02+d5PFhL8KMN
+X-Gm-Message-State: AOJu0YzcGU+nncjxX7/7dUxhRm4K1PQrpltQmekYVgzlh2ozoWenkUxn
+	4OYZCdM1B3jg1/kcfuwGVuLZqQFq7fr9No7tO+V02irqb4drWDX4y7pPxRi8BxP7a8N+hNNm3aS
+	pMw==
+X-Google-Smtp-Source: AGHT+IH4HPeEs1ztjiG4bHhm8QQmnBUWNR25poXGKb3i/CQuGK4Zf/lph2jQQ1h4BQ6PLZ/eQVvfVQ==
+X-Received: by 2002:a17:907:1b1c:b0:a7d:e84c:a9ed with SMTP id a640c23a62f3a-a8090f038acmr684166b.65.1723071242893;
+        Wed, 07 Aug 2024 15:54:02 -0700 (PDT)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com. [209.85.128.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8067efcf0fsm189684066b.145.2024.08.07.15.54.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 15:54:02 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-428063f4d71so14645e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 15:54:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVIYIMymsMxiJyFMyQn4s/sAPeaz0/i+QASwI7UumYMpAwbsc3vJtbaGxwSvQZ3Sa8rXaeIgXJmdXOUGiJpIR46Exr/JCCOCkSKWqrq
+X-Received: by 2002:a05:600c:3d09:b0:424:898b:522b with SMTP id
+ 5b1f17b1804b1-4290aa7b8f8mr276815e9.1.1723071241590; Wed, 07 Aug 2024
+ 15:54:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807150503.GF6051@frogsfrogsfrogs>
+References: <20240806135949.468636-1-tejasvipin76@gmail.com> <20240806135949.468636-2-tejasvipin76@gmail.com>
+In-Reply-To: <20240806135949.468636-2-tejasvipin76@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 7 Aug 2024 15:53:45 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Vh6J9nHFpvy8Tj0OWj9fYWuuRSy=P-t+SzvyAN21Agmg@mail.gmail.com>
+Message-ID: <CAD=FV=Vh6J9nHFpvy8Tj0OWj9fYWuuRSy=P-t+SzvyAN21Agmg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] drm/mipi-dsi: add more multi functions for better
+ error handling
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, airlied@gmail.com, 
+	daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 07, 2024 at 08:05:03AM -0700, Darrick J. Wong wrote:
-> On Wed, Aug 07, 2024 at 04:55:53PM +0200, Thomas Gleixner wrote:
-> > On Wed, Aug 07 2024 at 16:34, Peter Zijlstra wrote:
-> > > On Wed, Aug 07, 2024 at 04:03:12PM +0200, Thomas Gleixner wrote:
-> > >
-> > >> > +	if (static_key_dec(key, true)) // dec-not-one
-> > >> 
-> > >> Eeew.
-> > >
-> > > :-) I knew you'd hate on that
-> > 
-> > So you added it just to make me grumpy enough to fix it for you, right?
-> 
-> FWIW with peter's 'ugly' patch applied, fstests didn't cough up any
-> static key complaints overnight.
+Hi,
 
-But with Thomas' patch and the "if (v < 0) return false;" change
-applied, the kernel crashes on boot:
+On Tue, Aug 6, 2024 at 7:00=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.com>=
+ wrote:
+>
+> Add more functions that can benefit from being multi style and mark
+> older variants as deprecated to eventually convert all mipi_dsi functions
+> to multi style.
+>
+> Acked-by: Maxime Ripard <mripard@kernel.org>
+> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_mipi_dsi.c | 194 +++++++++++++++++++++++++++++++++
+>  include/drm/drm_mipi_dsi.h     |  10 ++
+>  2 files changed, 204 insertions(+)
 
-[   11.563329] jump_label: Fatal kernel bug, unexpected op at mem_cgroup_sk_alloc+0x5/0xc0 [ffffffff81377af5] (eb 01 c3 53 48 != 66 90 0f 1f 00)) size:2 type:1
-[   11.566166] ------------[ cut here ]------------
-[   11.567150] kernel BUG at arch/x86/kernel/jump_label.c:73!
-[   11.568416] Oops: invalid opcode: 0000 [#1] PREEMPT SMP
-[   11.569586] CPU: 1 UID: 0 PID: 58 Comm: 1:1 Not tainted 6.11.0-rc2-djwx #rc2 d917e89fa198c1bdec418be517dc3e49f564823f
-[   11.571790] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[   11.573738] Workqueue: cgroup_destroy css_free_rwork_fn
-[   11.574898] RIP: 0010:__jump_label_patch+0x10a/0x110
-[   11.576122] Code: eb a0 0f 0b 0f 0b 48 c7 c3 a4 7a 7b 82 41 56 45 89 e1 49 89 d8 4c 89 e9 4c 89 ea 4c 89 ee 48 c7 c7 60 8a e7 81 e8 66 dd 0d 00 <0f> 0b 0f 1f 40 00 0f 1f 44 00 00 e9 36 0
-[   11.579843] RSP: 0018:ffffc90000527d70 EFLAGS: 00010246
-[   11.580986] RAX: 0000000000000090 RBX: ffffffff81c088c1 RCX: 0000000000000000
-[   11.582470] RDX: 0000000000000000 RSI: ffffffff81eacf61 RDI: 00000000ffffffff
-[   11.583962] RBP: ffffc90000527da0 R08: 0000000000000000 R09: 205d393233333635
-[   11.585449] R10: 0000000000000731 R11: 62616c5f706d756a R12: 0000000000000002
-[   11.589526] R13: ffffffff81377af5 R14: 0000000000000001 R15: 0000000000000000
-[   11.591030] FS:  0000000000000000(0000) GS:ffff88803ed00000(0000) knlGS:0000000000000000
-[   11.592776] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   11.594018] CR2: 00007fec0a3f5d90 CR3: 0000000002033004 CR4: 00000000001706f0
-[   11.595506] Call Trace:
-[   11.596174]  <TASK>
-[   11.605028]  arch_jump_label_transform_queue+0x33/0x70
-[   11.606170]  __jump_label_update+0x6e/0x130
-[   11.607131]  __static_key_slow_dec_cpuslocked+0x50/0x60
-[   11.608280]  static_key_slow_dec+0x2d/0x50
-[   11.609230]  mem_cgroup_css_free+0xc2/0xd0
-[   11.610183]  css_free_rwork_fn+0x40/0x3f0
-[   11.612094]  process_one_work+0x17a/0x3b0
-[   11.613045]  worker_thread+0x252/0x360
-[   11.615974]  kthread+0xe5/0x120
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
---D
-
-> > >> +/*
-> > >> + * Fastpath: Decrement if the reference count is greater than one
-> > >> + *
-> > >> + * Returns false, if the reference count is 1 or -1 to force the caller
-> > >> + * into the slowpath.
-> > >> + *
-> > >> + * The -1 case is to handle a decrement during a concurrent first enable,
-> > >> + * which sets the count to -1 in static_key_slow_inc_cpuslocked(). As the
-> > >> + * slow path is serialized the caller will observe 1 once it acquired the
-> > >> + * jump_label_mutex, so the slow path can succeed.
-> > >> + */
-> > >> +static bool static_key_dec_not_one(struct static_key *key)
-> > >> +{
-> > >> +	int v = static_key_dec(key, true);
-> > >> +
-> > >> +	return v != 1 && v != -1;
-> > >
-> > > 	if (v < 0)
-> > > 		return false;
-> > 
-> > Hmm. I think we should do:
-> > 
-> > #define KEY_ENABLE_IN_PROGRESS		-1
-> > 
-> > or even a more distinct value like (INT_MIN / 2)
-> > 
-> > and replace all the magic -1 numbers with it. Then the check becomes
-> > explicit:
-> > 
-> >         if (v == KEY_ENABLE_IN_PROGRESS)
-> >         	return false;
-> > 
-> > > 	/*
-> > > 	 * Notably, 0 (underflow) returns true such that it bails out
-> > > 	 * without doing anything.
-> > > 	 */
-> > > 	return v != 1;
-> > >
-> > > Perhaps?
-> > 
-> > Sure.
-> > 
-> > >> +}
-> > >> +
-> > >> +/*
-> > >> + * Slowpath: Decrement and test whether the refcount hit 0.
-> > >> + *
-> > >> + * Returns true if the refcount hit zero, i.e. the previous value was one.
-> > >> + */
-> > >> +static bool static_key_dec_and_test(struct static_key *key)
-> > >> +{
-> > >> +	int v = static_key_dec(key, false);
-> > >> +
-> > >> +	lockdep_assert_held(&jump_label_mutex);
-> > >> +	return v == 1;
-> > >>  }
-> > >
-> > > But yeah, this is nicer!
-> > 
-> > :)
-> 
-> It probably goes without saying that if either of you send a cleaned up
-> patch with all these changes baked in, I will test it for you all. :)
-> 
-> --D
-> 
-> > 
-> > Thanks,
-> > 
-> >         tglx
-> > 
-> 
+If nobody else has any comments, I'll plan to apply this midway
+through next week.
 
