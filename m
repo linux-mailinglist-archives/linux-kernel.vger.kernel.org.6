@@ -1,86 +1,125 @@
-Return-Path: <linux-kernel+bounces-277583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C5FC94A35A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:50:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BA394A320
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7D61C241BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:50:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 154C0B21CB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F85E1D0DF1;
-	Wed,  7 Aug 2024 08:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2811C9DE6;
+	Wed,  7 Aug 2024 08:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="VeOTFGLY"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="LA5DFCsr";
+	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="LA5DFCsr"
+Received: from mail.mleia.com (mleia.com [178.79.152.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6523B1C9ED1;
-	Wed,  7 Aug 2024 08:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2961C823E;
+	Wed,  7 Aug 2024 08:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.79.152.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723020557; cv=none; b=grVHCBv9kqDgzn0DkkCRV1X2jcniHL339KBNSuT1dX80DhwjkUFTW7dBPjqMnNOYsUsoKZ7jdw9muRrIIO7gooCIp6FlGJsEx/Mf5ZNEQ87Y+gCRWmoh5D/b9VerABIBVzViloawQEbjyhDxl6oCI3srSjD2y1Hd0dTHqVJkAEQ=
+	t=1723020105; cv=none; b=uk2zutltZaQC4frSafnQu7meHdPGx6zJyNAfwrs7BRsSeT+U6/SqAfwmlV4Kx2P/9CPjDDbH1lNJVitD8Bumcx+xIQY87V8GDZi8vKtHFsf3CKIuAjCNpfhYFuB5C3rJB7gJoD4vGZ1t+3/NmxBJtoa70O1mMuXodB11l+GVWk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723020557; c=relaxed/simple;
-	bh=rCHPPbTWaPBj3q4qgNv6Q4boFMkM2mOM5k75QEyACsg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UJyaveSXc8xGPE4rv0yeyWxoXrtK9FXo8TeOeZRf5152RGMFkjH9o5JMvXWukCNlJDjuCrbeuHYkKZUUl4mYMEcmnddeXE2NQ0eAkBd7kGFXQd+jVMfN0n60dov3+7AI/liP47L3dS2HeUFrX4mPEH493qbSMRCs10uO6BHvjTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=VeOTFGLY; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1723020005;
-	bh=rCHPPbTWaPBj3q4qgNv6Q4boFMkM2mOM5k75QEyACsg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=VeOTFGLYwvm/ckObBN2Y+5f4cHxrZx64RCbPSkM5WdpMN3WXUR2bXeRjsECmknLaq
-	 jc785ECVLrdshK20tO5vGTspi6NJD6EVeeqzmRHCeX/13qd4zgWo0Ji4cRr79GL+rp
-	 JxzJAvP9C5ewrIkvmYV6M3r9mLwkdKExufXxhQ5M=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 7CB2366F24;
-	Wed,  7 Aug 2024 04:40:00 -0400 (EDT)
-Message-ID: <6c7ec8196fe01aa651f8b59b445b70de79137181.camel@xry111.site>
-Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART controller
-From: Xi Ruoyao <xry111@xry111.site>
-To: =?gb2312?Q?=D6=A3=BA=C0=CD=FE?= <zhenghaowei@loongson.cn>, Krzysztof
- Kozlowski <krzk@kernel.org>, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, robh@kernel.org,  krzk+dt@kernel.org,
- conor+dt@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name, 
- p.zabel@pengutronix.de
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, loongarch@lists.linux.dev
-Date: Wed, 07 Aug 2024 16:39:58 +0800
-In-Reply-To: <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
-References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
-	 <4d1f2426-b43c-4727-8387-f18edf937163@kernel.org>
-	 <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1723020105; c=relaxed/simple;
+	bh=K09HiZS7I0UslB7a5LuIle3oyJ7XG+v8URc4Dr4wmyQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QzPVu+vjOll+R9yjq5ezm0XVIJH07XrC4bBX2IeLiiE7ZYY+CycF6An3riIXMmJS90dpvejEnJXFCT41Oa0JlUFrzeUk53ss6UjvPmDVoLWsraiG7+CSe4HSNNDwIVJg7YONzni6025owYZl6N+JQPdqn28MT2C0Zjs3lnGyF2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com; spf=none smtp.mailfrom=mleia.com; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=LA5DFCsr; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=LA5DFCsr; arc=none smtp.client-ip=178.79.152.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mleia.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
+	t=1723020101; bh=K09HiZS7I0UslB7a5LuIle3oyJ7XG+v8URc4Dr4wmyQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LA5DFCsrvbesxP+CM/oxMGJVo8YfrJfZFGThMui+De7YS9IqTf+HCew7y5MYCLmYi
+	 huZJKJRIHVyb5ZZPvhytPLgv+DNG5cxYMyPaTUGjtZFeEstwGPH/nzrgNxEGUtnFBs
+	 Jv78ySKWp7lIpZ9iYZQQN8MmZSKxZ5NHIRx6UqvlsBtRcTZyBKJi83scHaZOCkzMId
+	 OUnUzA+qDIkDGaqa0mjpTOl+Qq+sKaxeXyBE2E5JJC4+MSdw6AQY2osDsivrri9ARV
+	 oNajCzt+BcMENm7qDR3al3CmQYMXPN4YpMAd22U6hSpaaxLCY8MIsPrRQdhDEJhSBr
+	 HjeTRYngHXz+w==
+Received: from mail.mleia.com (localhost [127.0.0.1])
+	by mail.mleia.com (Postfix) with ESMTP id 4CE4B4794CA;
+	Wed,  7 Aug 2024 08:41:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
+	t=1723020101; bh=K09HiZS7I0UslB7a5LuIle3oyJ7XG+v8URc4Dr4wmyQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LA5DFCsrvbesxP+CM/oxMGJVo8YfrJfZFGThMui+De7YS9IqTf+HCew7y5MYCLmYi
+	 huZJKJRIHVyb5ZZPvhytPLgv+DNG5cxYMyPaTUGjtZFeEstwGPH/nzrgNxEGUtnFBs
+	 Jv78ySKWp7lIpZ9iYZQQN8MmZSKxZ5NHIRx6UqvlsBtRcTZyBKJi83scHaZOCkzMId
+	 OUnUzA+qDIkDGaqa0mjpTOl+Qq+sKaxeXyBE2E5JJC4+MSdw6AQY2osDsivrri9ARV
+	 oNajCzt+BcMENm7qDR3al3CmQYMXPN4YpMAd22U6hSpaaxLCY8MIsPrRQdhDEJhSBr
+	 HjeTRYngHXz+w==
+Message-ID: <605b5ecc-a808-40b5-a532-9f373032c9c4@mleia.com>
+Date: Wed, 7 Aug 2024 11:41:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: timer: nxp,lpc3220-timer: Convert to
+ dtschema
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240731074544.208411-1-animeshagarwal28@gmail.com>
+ <d1ac7446-143b-40d3-9f12-f734ab7cc31f@mleia.com>
+ <4210df09-1625-4865-a80c-8b38056ce172@kernel.org>
+From: Vladimir Zapolskiy <vz@mleia.com>
+In-Reply-To: <4210df09-1625-4865-a80c-8b38056ce172@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
+X-CRM114-CacheID: sfid-20240807_084141_348939_8BD894E0 
+X-CRM114-Status: UNSURE (   7.94  )
+X-CRM114-Notice: Please train this message. 
 
-On Wed, 2024-08-07 at 16:23 +0800, =E9=83=91=E8=B1=AA=E5=A8=81 wrote:
-> The file "drivers/tty/serial/8250/8250_loongson.c" will be created in=20
-> the patch
->=20
-> "tty: serial: 8250: Add loongson uart driver support". Is it=20
-> inappropriate to reference it here?
+On 8/7/24 09:01, Krzysztof Kozlowski wrote:
+> On 06/08/2024 22:13, Vladimir Zapolskiy wrote:
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  interrupts:
+>>> +    maxItems: 1
+>>> +
+>>> +  clocks:
+>>> +    maxItems: 1
+>>> +
+>>> +  clock-names:
+>>> +    const: timerclk
+>>> +
+>>> +  resets:
+>>> +    maxItems: 1
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - interrupts
+>>> +  - clocks
+>>> +  - clock-names
+>>
+>> Since there is always just a single supply clock, there is no need to
+>> specify "clock-names" as a required one, please change it.
+> 
+> ??? That's a conversion. Why do you expect changing several DTS files
+> and maybe also driver? That's not needed for conversion. No.
 
-You should add this line in the second patch then.  Separating a large
-change into multiple patches in a series is not for formalities' sake.=20
-Each patch should be logically intact on its own.
+I do not expect changing any DTS files, why? But I would be glad to see that
+the clock-names property becomes optional in the first place and therefore
+before the conversion.
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+--
+Best wishes,
+Vladimir
 
