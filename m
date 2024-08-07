@@ -1,131 +1,104 @@
-Return-Path: <linux-kernel+bounces-277716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0575594A537
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:14:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9488294A53A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6FE528304C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:14:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EA59283520
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B464F1D4152;
-	Wed,  7 Aug 2024 10:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B731DD39A;
+	Wed,  7 Aug 2024 10:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qt1qAxU/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hkHQz2bR"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0320F1C7B92;
-	Wed,  7 Aug 2024 10:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB53D1C9DC9;
+	Wed,  7 Aug 2024 10:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723025643; cv=none; b=fK3Va8EaB73Lmy2cy3KTRW3Ww1wswqhYBslRGp2jYSWuyvvaz5ZnFa00Ir3fOVxLnOUcczqz7EN6gRkLUxTKnhud8MVX4vZj2Z4BJZPhl/RxjhQhdo69tVu0Cql0FpnM053sWMiKSnF+hIqXZpI8JqobCS9bYScMXZQEN/30CM4=
+	t=1723025795; cv=none; b=ULar2xLJfCQZbu077mhADqZ4+UnMDTpMmGTsvvJYhILV4UDO5blNHT4hVS+pvDMOd36q2zVFdbefyVHFDvX2dfEUGDIN3UD8rPORSMMhXDORuO2eTH2WusIJOkxvPgE6ubij5TNWzhywr2/wGivMHLM2QzbMh53c4VIXzQ9df7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723025643; c=relaxed/simple;
-	bh=cXFScknOCcXsw5mApjuf4qGj6WwS+8PmUpSIsPwrrSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JfaWjXTnfmsgvxegDFFbuJuLztaGjkyN50z1hQUncpl3Owz5kz0CoYWUJu3gF9pOwWXovIsPQM9InnWJsdacLUIHCDohEZCQTPj1fqGzhI2yglAHZyz1mzjdBDuRRno+ovIGRXqFlj7L6PXm1mbp30zk7d1wIsL8N7E/kMn5s5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qt1qAxU/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CF8EC32782;
-	Wed,  7 Aug 2024 10:13:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723025642;
-	bh=cXFScknOCcXsw5mApjuf4qGj6WwS+8PmUpSIsPwrrSw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qt1qAxU/np729XtXNzr44kscc53wJNUCcU3++RzVyVEeBKAF3t2UCEQwV2aNP69+n
-	 LeODvE0EDy2vV63n5wx2XGwcGK2L5o6Mww2vih+J5lvy1fAh1vqhsIplkkZJ4uWg/0
-	 5pJUoMZXu0lkyKF3AwFAUeWqDfUxSjCcham2wvKoitSb28GHF1owMMLNYkIU3TB5JL
-	 GjrjSHU1XEVH/Dy5JRa3xOcCQg1xeJ0A1T12xSGH62YQGh4Aht+7nl0TCePdX64ilW
-	 YaIbTvZ/mzcaKLqYjRGevWxIcXngVQy8tezWScfENM5JUMU0STh8gzIEdn4Wv6OVqr
-	 5lYxYj37LhJrw==
-Date: Wed, 7 Aug 2024 12:13:55 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
-	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v4 08/28] rust: types: implement `Unique<T>`
-Message-ID: <ZrNI4_z4v4pKroaR@pollux>
-References: <20240805152004.5039-1-dakr@kernel.org>
- <20240805152004.5039-9-dakr@kernel.org>
- <ff0826af-9430-4653-abe8-25fb80cd0e97@proton.me>
- <ZrKt7K68W1Jh6nhr@pollux>
- <f3457432-dc83-4a19-b75a-88b914430733@proton.me>
+	s=arc-20240116; t=1723025795; c=relaxed/simple;
+	bh=YfR2jY2qscMa1IgoTaT68V9oQ6uc3HWH7CZnaqqVT6w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aGMmj4ShqMd1hOVnNgIDgvrtiPzuQKS3ZZ3caIO4GvPBGIRmqJzCOMXXYri/o0NBqn8AgdEhSxa3uIYiQ8tXymVSICqG19igqMMlEjaUueuPUvn7xfcVWz7AHHvB+Mk1YSP8z6tM0QSERa8m13R6/YfdFjRGUUjER0It0vsVz28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hkHQz2bR; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 477AGQtc098345;
+	Wed, 7 Aug 2024 05:16:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723025786;
+	bh=jMbWo6iNh4Mauc1hFr13WYbvGFFAdwjRNSu0cDvnsf4=;
+	h=From:To:CC:Subject:Date;
+	b=hkHQz2bRJQnauPuejTgYs5mARGzPurx4cIm+dBjOQJ8Y0JJmCSQQe8oqu/NvVSw0O
+	 4+GzxoYHsl7P86BOZTVK06VaHLb7bwyNA1dRWcXXv8Ti4OrBHEVdiQ0BzXajql50f5
+	 /MCX99rvOxM9dbhxBY3boIonc7ZKzHDAKXqeeKw0=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 477AGQgW005714
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 7 Aug 2024 05:16:26 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
+ Aug 2024 05:16:25 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 7 Aug 2024 05:16:25 -0500
+Received: from localhost (a0498981-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.216])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 477AGPH0096649;
+	Wed, 7 Aug 2024 05:16:25 -0500
+From: Bhavya Kapoor <b-kapoor@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
+        <b-kapoor@ti.com>, <m-chawdhry@ti.com>, <vigneshr@ti.com>, <nm@ti.com>,
+        <sinthu.raja@ti.com>, <n-francis@ti.com>
+Subject: [PATCH] arm64: dts: ti: k3-am68-sk-base-board: Add clklb pin mux for mmc1
+Date: Wed, 7 Aug 2024 15:46:24 +0530
+Message-ID: <20240807101624.2713490-1-b-kapoor@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f3457432-dc83-4a19-b75a-88b914430733@proton.me>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Aug 07, 2024 at 07:27:43AM +0000, Benno Lossin wrote:
-> On 07.08.24 01:12, Danilo Krummrich wrote:
-> > On Tue, Aug 06, 2024 at 05:22:21PM +0000, Benno Lossin wrote:
-> >> On 05.08.24 17:19, Danilo Krummrich wrote:
-> >>> +impl<T: Sized> Unique<T> {
-> >>> +    /// Creates a new `Unique` that is dangling, but well-aligned.
-> >>> +    ///
-> >>> +    /// This is useful for initializing types which lazily allocate, like
-> >>> +    /// `Vec::new` does.
-> >>> +    ///
-> >>> +    /// Note that the pointer value may potentially represent a valid pointer to
-> >>> +    /// a `T`, which means this must not be used as a "not yet initialized"
-> >>> +    /// sentinel value. Types that lazily allocate must track initialization by
-> >>> +    /// some other means.
-> >>> +    #[must_use]
-> >>> +    #[inline]
-> >>> +    pub const fn dangling() -> Self {
-> >>> +        Unique {
-> >>> +            pointer: NonNull::dangling(),
-> >>> +            _marker: PhantomData,
-> >>> +        }
-> >>> +    }
-> >>
-> >> I think I already asked this, but the code until this point is copied
-> >> from the rust stdlib and nowhere cited, does that work with the
-> >> licensing?
-> >>
-> >> I also think that the code above could use some improvements:
-> >> - add an `# Invariants` section with appropriate invariants (what are
-> >>   they supposed to be?)
-> >> - Do we really want this type to be public and exported from the kernel
-> >>   crate? I think it would be better if it were crate-private.
-> >> - What do we gain from having this type? As I learned recently, the
-> >>   `Unique` type from `core` doesn't actually put the `noalias` onto
-> >>   `Box` and `Vec`. The functions are mostly delegations to `NonNull`, so
-> >>   if the only advantages are that `Send` and `Sync` are already
-> >>   implemented, then I think we should drop this.
-> > 
-> > I originally introduced it for the reasons described in [1], but mainly to make
-> > clear that the owner of this thing also owns the memory behind the pointer and
-> > the `Send` and `Sync` stuff you already mentioned.
-> 
-> I would prefer if we make that explicit, since it is rather error-prone
-> when creating new pointer types (and one should have to think about
-> thread safety).
+mmc1 was not functional since pin mux for clklb was not present.
+Thus, add clklb pin mux to get MMC working.
 
-Again, fine for me. If no one else has objections I'll just drop `Unique`.
+Fixes: a266c180b398 ("arm64: dts: ti: k3-am68-sk: Add support for AM68 SK base board")
+Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
+---
 
-> 
-> ---
-> Cheers,
-> Benno
-> 
-> > If no one else has objections we can also just drop it. Personally, I'm fine
-> > either way.
-> > 
-> > [1] https://docs.rs/rust-libcore/latest/core/ptr/struct.Unique.html
-> 
+rebased to next-20240807
+
+ arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
+index 90dbe31c5b81..d5ceab79536c 100644
+--- a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
++++ b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
+@@ -204,6 +204,7 @@ main_mmc1_pins_default: main-mmc1-default-pins {
+ 		pinctrl-single,pins = <
+ 			J721S2_IOPAD(0x104, PIN_INPUT, 0) /* (P23) MMC1_CLK */
+ 			J721S2_IOPAD(0x108, PIN_INPUT, 0) /* (N24) MMC1_CMD */
++			J721S2_IOPAD(0x100, PIN_INPUT, 0) /* (###) MMC1_CLKLB */
+ 			J721S2_IOPAD(0x0fc, PIN_INPUT, 0) /* (M23) MMC1_DAT0 */
+ 			J721S2_IOPAD(0x0f8, PIN_INPUT, 0) /* (P24) MMC1_DAT1 */
+ 			J721S2_IOPAD(0x0f4, PIN_INPUT, 0) /* (R24) MMC1_DAT2 */
+-- 
+2.34.1
+
 
