@@ -1,392 +1,337 @@
-Return-Path: <linux-kernel+bounces-277811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB3CF94A6C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:18:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F2D94A6D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BB67B256B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:18:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C344F283BC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A3B1E2896;
-	Wed,  7 Aug 2024 11:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077FC1BD01D;
+	Wed,  7 Aug 2024 11:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="dre6zxsn"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gZSM7oWV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2BA1B86DB
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 11:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01351E3CA2;
+	Wed,  7 Aug 2024 11:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723029473; cv=none; b=fNmVk8fpNfWrEfKqW/5vMSkr16A1VeNorc3daVFXENvqKRr74tI8nKczMG2PmYbOzaGUQTXtvXn15akmt61EFScW5YVqvemV4oOroYRiq0SqNedCtbSLrKB5xNpKCwISzfMnUJXESQ0aCrCUtGVI/4N6NdCvpPl2PUdZ5ABJ98U=
+	t=1723029657; cv=none; b=Hl5PObGijv6mcwh7jDmq1wfwug9Fgj3Hcia/XP6Kg0cchiNzMzM1xHQ5HrS53nvflVD+wTJfS3gzwNlW97uGyBmKxQYm7UEaJFR/bL+oxV3ZIC79p3VetpCoZ3l89jVtvkoZe2d08A3Vpeg3GsrHlRVoocUnC4ql91GwcIomX70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723029473; c=relaxed/simple;
-	bh=8iU/+U9M+gWXkRXjeKe+OIgB/LU4uPnMtIt0B8v/VXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j/kHCbsS72J+9OAWZj4Shj5E+XETRX9L7Y7qSe+N3m6AK5QDkBwlSOGfJIEwyR6ruC+/PGzb/6V34AB0qcQxOE1A2AuUFEI+PzB6mWr17dtJy/+Ce1uSLAjVMyugJhaG1oAc6ZChsfVgN/NhR2zi/oeWjjoaA2U+N8Csem6rdsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=dre6zxsn; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7093472356dso971982a34.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 04:17:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1723029469; x=1723634269; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=g8T58TMUroLjjn23XCwrJps87DMjljqz/cFcV/xQzLE=;
-        b=dre6zxsnXFbZRaPrsKme2aIU1KamFGzJHjO7AVnWBnbMZsuYTWUwy4CyOz7rr2L9ju
-         YTOQPQV6Zg+ZX21mOGPKSaLtnsmVWx8ur9Nvc6gF2iZy1CsXpF/DAHSR7ECiqL5DEdB0
-         wONYxooJ9173LDCua2bKmaxg7cZ9U9F97/nqs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723029469; x=1723634269;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g8T58TMUroLjjn23XCwrJps87DMjljqz/cFcV/xQzLE=;
-        b=ToHJCaKgnrpeU+UOV8OpOH8SrV0ccD4yIRK9OfW95ooPAHpNOsTdBxnHYguCMrvtTb
-         JUPyPu9J1jXH1h/aIHXvwbx509luBu8lY1Z8ZI8LHRU3KlO5z3vYsA1IU7t+JG5YXZTg
-         kWJQU9Tg8Zzg40su4TspWnB0VB9Y8GefJnHp5W8y+iRrTcGdYyERSqO4rpJs3essK4bc
-         AkrNJlFwe+RvEA3RtBZFeqL9oRXJwrFKlWm4KMPMdZMAiosJa1c189yDVWzmX/CifLK6
-         d868A2zU2SL4EhzPf67AJnISzuIznn/7roFVTTFFn5FnPNaA6NbdX+fegdY486bX5VYU
-         hScw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIkXfEZhWe8M2GOYkifJYP7r1hkTx+8sCIirnWntcDySyAAu37rb+6DHefCVTpDUxK4AW1tgx/PyfgbNzx3eLBNmYeKSZ9dju2yR3Z
-X-Gm-Message-State: AOJu0YyOjaqprW4CJcBVOmxwqhdNEC1i6Pu/Ss/2S6/w7IENhvU+Xmvx
-	o1lN7B2D7a4TpWiZDTPYxMtICsml541W+v/Etb2jjYgLrV91yTEuwgy+jCi0+uJH3x20JrPrX5m
-	mDXSp
-X-Google-Smtp-Source: AGHT+IF57MpjgiXGHcNN6VTpzeW23YTSDW+7bPvQ8c8TcM/qbxMruA/tL2if1MrdIwPIvEwz72O7hA==
-X-Received: by 2002:a05:6830:2654:b0:704:2dd4:362a with SMTP id 46e09a7af769-7099ea40342mr26878825a34.0.1723029469333;
-        Wed, 07 Aug 2024 04:17:49 -0700 (PDT)
-Received: from [10.176.68.61] ([192.19.176.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c7a7a53sm55589406d6.58.2024.08.07.04.17.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 04:17:48 -0700 (PDT)
-Message-ID: <b6551bf0-2ee9-4b79-af68-0677e3f0f915@broadcom.com>
-Date: Wed, 7 Aug 2024 13:17:44 +0200
+	s=arc-20240116; t=1723029657; c=relaxed/simple;
+	bh=IgSNN/sCJu3ISYNhHA9lUgEWt2hNzGyi0aYfmAPu5iU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=HGdDmv2KNEn2v0CjFqRp0eOvd0BUgtelZKaZAVQEO5ZWtYHZRVW990jfL+6309XQ/8fYVIRiDmTlUbOSWIwrPCZct5SWAyBHAayQIOtVbOfq7xDiUaiNUJk9HHiyBTpK/aZ0cTXqw+Jy4W7AHCIW9P1Dr0cEGPibe6zctcJEEu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gZSM7oWV; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723029655; x=1754565655;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=IgSNN/sCJu3ISYNhHA9lUgEWt2hNzGyi0aYfmAPu5iU=;
+  b=gZSM7oWVK8FgL6NWadfkhM6VQEKQQnevXjIkhFAOmGWgZE2nWkHYj8Ra
+   FhO+GOVH7TMHfk2EQJiY+Humur/gxdnNRtfJn2e3ANK3iRNO6qf255IqS
+   4QN0l59Wc2aF7j17PzZIUEF23A4y+qHZbQ94Y/EVxpZlrnqAThFGhzI2S
+   ISNXxqGqhSaZV5vATRRFdn4SmfUZY0sHD3aeMUj9SjZY8ZSqi3GH4s32o
+   QTxbLNl+KsnB/virVTIDh6CwNCWaBYpwgxIzA0Y8+7baOE3rf94V73rMK
+   UZobvj7b6MOw3P3weunN6wgam1+4CPQT0DhuT+xTtgjwKCPiK847P2mJF
+   g==;
+X-CSE-ConnectionGUID: 79DMSpyxSjaE70qhnSpLFQ==
+X-CSE-MsgGUID: O5ZQhDXmQRCnq/dyuMqpxg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="31722592"
+X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
+   d="scan'208";a="31722592"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 04:20:53 -0700
+X-CSE-ConnectionGUID: 98N6okx5R+u24jFbxz3orQ==
+X-CSE-MsgGUID: E3RK+MBXTJezhyXhRcjbkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
+   d="scan'208";a="61703544"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.202])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 04:18:58 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 7 Aug 2024 14:18:54 +0300 (EEST)
+To: Jian-Hong Pan <jhp@endlessos.org>
+cc: david.e.box@linux.intel.com, Bjorn Helgaas <helgaas@kernel.org>, 
+    Johan Hovold <johan@kernel.org>, 
+    Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
+    Mika Westerberg <mika.westerberg@linux.intel.com>, 
+    Damien Le Moal <dlemoal@kernel.org>, 
+    Nirmal Patel <nirmal.patel@linux.intel.com>, 
+    Jonathan Derrick <jonathan.derrick@linux.dev>, 
+    Paul M Stillwell Jr <paul.m.stillwell.jr@intel.com>, 
+    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux@endlessos.org
+Subject: Re: [PATCH v8 4/4] PCI/ASPM: Fix L1.2 parameters when enable link
+ state
+In-Reply-To: <CAPpJ_eeATLdcnH9CWpvJM_9juV5ok+OEYysTit_HparqBpQ3CQ@mail.gmail.com>
+Message-ID: <eb900245-5e13-bc6c-994a-43f2db8322ea@linux.intel.com>
+References: <20240719075200.10717-2-jhp@endlessos.org> <20240719080255.10998-2-jhp@endlessos.org> <CAPpJ_edybLMtrN_gxP2h9Z-BuYH+RG-qRqMqgZM1oSVoW1sP5A@mail.gmail.com> <e37536a435630583398307682e1a9aadbabfb497.camel@linux.intel.com>
+ <CAPpJ_eeATLdcnH9CWpvJM_9juV5ok+OEYysTit_HparqBpQ3CQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/5] wifi: brcmfmac: Add optional lpo clock enable
- support
-To: Alexey Charkov <alchark@gmail.com>, Jacobe Zang <jacobe.zang@wesion.com>,
- robh@kernel.org, krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, conor+dt@kernel.org
-Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
- minipli@grsecurity.net, brcm80211@lists.linux.dev,
- brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
-References: <20240805073425.3492078-1-jacobe.zang@wesion.com>
- <20240805073425.3492078-5-jacobe.zang@wesion.com>
- <2e38c2bd-2cb2-4104-97ad-0355069606c0@gmail.com>
-Content-Language: en-US
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- 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
-In-Reply-To: <2e38c2bd-2cb2-4104-97ad-0355069606c0@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-402323662-1723029534=:1138"
 
-On 8/7/2024 1:10 AM, Alexey Charkov wrote:
-> Hi Jacobe,
-> 
-> On 05/08/2024 10:34 am, Jacobe Zang wrote:
->> WiFi modules often require 32kHz clock to function. Add support to
->> enable the clock to PCIe driver and move "brcm,bcm4329-fmac" check
->> to the top of brcmf_of_probe. Change function prototypes from void
->> to int and add appropriate errno's for return values that will be
->> send to bus when error occurred.
->>
->> Co-developed-by: Ondrej Jirman <megi@xff.cz>
->> Signed-off-by: Ondrej Jirman <megi@xff.cz>
->> Co-developed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
->> Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
->> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
->> ---
->>   .../broadcom/brcm80211/brcmfmac/bcmsdh.c      |  4 +++
->>   .../broadcom/brcm80211/brcmfmac/common.c      |  6 +++-
->>   .../wireless/broadcom/brcm80211/brcmfmac/of.c | 28 +++++++++++++------
->>   .../wireless/broadcom/brcm80211/brcmfmac/of.h |  9 +++---
->>   .../broadcom/brcm80211/brcmfmac/pcie.c        |  3 ++
->>   .../broadcom/brcm80211/brcmfmac/sdio.c        | 18 ++++++++----
->>   .../broadcom/brcm80211/brcmfmac/usb.c         |  3 ++
->>   7 files changed, 52 insertions(+), 19 deletions(-)
->>
->> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c 
->> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
->> index 13391c2d82aae..ee3ca85c4a47b 100644
->> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
->> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
->> @@ -951,6 +951,10 @@ int brcmf_sdiod_probe(struct brcmf_sdio_dev 
->> *sdiodev)
->>           ret = -ENODEV;
->>           goto out;
->>       }
->> +    if (IS_ERR(sdiodev->bus)) {
->> +        ret = PTR_ERR(sdiodev->bus);
->> +        goto out;
->> +    }
-> 
-> Maybe return -ENODEV error pointer instead of NULL from brcmf_sdio_probe 
-> as the default for the fail path? Then you can condense these two checks 
-> into one
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Sound reasonable.
+--8323328-402323662-1723029534=:1138
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
->>       brcmf_sdiod_host_fixup(sdiodev->func2->card->host);
->>   out:
->>       if (ret)
->> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c 
->> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
->> index b24faae35873d..6c5d26f9b7661 100644
->> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
->> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
->> @@ -561,8 +561,12 @@ struct brcmf_mp_device 
->> *brcmf_get_module_param(struct device *dev,
->>       if (!found) {
->>           /* No platform data for this device, try OF and DMI data */
->>           brcmf_dmi_probe(settings, chip, chiprev);
->> -        brcmf_of_probe(dev, bus_type, settings);
->>           brcmf_acpi_probe(dev, bus_type, settings);
->> +        i = brcmf_of_probe(dev, bus_type, settings);
->> +        if (i < 0) {
->> +            kfree(settings);
->> +            settings = ERR_PTR(i);
->> +        }
-> 
-> This looks wrong. First, you're calling brcmf_of_probe twice. Second, if 
-> either DMI or ACPI probe successfully but OF doesn't, then you return an 
-> error code instead of success, and also overwrite settings with an error 
-> pointer thus rendering both brcmf_dmi_probe and brcmf_acpi_probe useless
+On Wed, 7 Aug 2024, Jian-Hong Pan wrote:
 
-Twice? it is removed and added few lines below. It does change the order 
-so that may not be best thing to do here. We actually only want to 
-handle the scenario where the clock resources are not yet available, ie. 
-when -EPROBE_DEFER is returned because that error value is taken into 
-account by the bus driver and tries to bind the driver again later.
+> David E. Box <david.e.box@linux.intel.com> =E6=96=BC 2024=E5=B9=B48=E6=9C=
+=886=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=884:26=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+> >
+> > Hi Jian-Hong,
+> >
+> > On Fri, 2024-08-02 at 16:24 +0800, Jian-Hong Pan wrote:
+> > > Jian-Hong Pan <jhp@endlessos.org> =E6=96=BC 2024=E5=B9=B47=E6=9C=8819=
+=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=884:04=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+> > > >
+> > > > Currently, when enable link's L1.2 features with __pci_enable_link_=
+state(),
+> > > > it configs the link directly without ensuring related L1.2 paramete=
+rs, such
+> > > > as T_POWER_ON, Common_Mode_Restore_Time, and LTR_L1.2_THRESHOLD hav=
+e been
+> > > > programmed.
+> > > >
+> > > > This leads the link's L1.2 between PCIe Root Port and child device =
+gets
+> > > > wrong configs when a caller tries to enabled it.
+> > > >
+> > > > Here is a failed example on ASUS B1400CEAE with enabled VMD:
+> > > >
+> > > > 10000:e0:06.0 PCI bridge: Intel Corporation 11th Gen Core Processor=
+ PCIe
+> > > > Controller (rev 01) (prog-if 00 [Normal decode])
+> > > >     ...
+> > > >     Capabilities: [200 v1] L1 PM Substates
+> > > >         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+
+> > > > L1_PM_Substates+
+> > > >                   PortCommonModeRestoreTime=3D45us PortTPowerOnTime=
+=3D50us
+> > > >         L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+> > > >                    T_CommonMode=3D45us LTR1.2_Threshold=3D101376ns
+> > > >         L1SubCtl2: T_PwrOn=3D50us
+> > > >
+> > > > 10000:e1:00.0 Non-Volatile memory controller: Sandisk Corp WD Blue =
+SN550
+> > > > NVMe SSD (rev 01) (prog-if 02 [NVM Express])
+> > > >     ...
+> > > >     Capabilities: [900 v1] L1 PM Substates
+> > > >         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+> > > > L1_PM_Substates+
+> > > >                   PortCommonModeRestoreTime=3D32us PortTPowerOnTime=
+=3D10us
+> > > >         L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+> > > >                    T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
+> > > >         L1SubCtl2: T_PwrOn=3D10us
+> > > >
+> > > > According to "PCIe r6.0, sec 5.5.4", before enabling ASPM L1.2 on t=
+he PCIe
+> > > > Root Port and the child NVMe, they should be programmed with the sa=
+me
+> > > > LTR1.2_Threshold value. However, they have different values in this=
+ case.
+> > > >
+> > > > Invoke aspm_calc_l12_info() to program the L1.2 parameters properly=
+ before
+> > > > enable L1.2 bits of L1 PM Substates Control Register in
+> > > > __pci_enable_link_state().
+> > > >
+> > > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D218394
+> > > > Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
+> > > > ---
+> > > > v2:
+> > > > - Prepare the PCIe LTR parameters before enable L1 Substates
+> > > >
+> > > > v3:
+> > > > - Only enable supported features for the L1 Substates part
+> > > >
+> > > > v4:
+> > > > - Focus on fixing L1.2 parameters, instead of re-initializing whole=
+ L1SS
+> > > >
+> > > > v5:
+> > > > - Fix typo and commit message
+> > > > - Split introducing aspm_get_l1ss_cap() to "PCI/ASPM: Introduce
+> > > >   aspm_get_l1ss_cap()"
+> > > >
+> > > > v6:
+> > > > - Skipped
+> > > >
+> > > > v7:
+> > > > - Pick back and rebase on the new version kernel
+> > > > - Drop the link state flag check. And, always config link state's t=
+iming
+> > > >   parameters
+> > > >
+> > > > v8:
+> > > > - Because pcie_aspm_get_link() might return the link as NULL, move
+> > > >   getting the link's parent and child devices after check the link =
+is
+> > > >   not NULL. This avoids NULL memory access.
+> > > >
+> > > >  drivers/pci/pcie/aspm.c | 15 +++++++++++++++
+> > > >  1 file changed, 15 insertions(+)
+> > > >
+> > > > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> > > > index 5db1044c9895..55ff1d26fcea 100644
+> > > > --- a/drivers/pci/pcie/aspm.c
+> > > > +++ b/drivers/pci/pcie/aspm.c
+> > > > @@ -1411,9 +1411,15 @@ EXPORT_SYMBOL(pci_disable_link_state);
+> > > >  static int __pci_enable_link_state(struct pci_dev *pdev, int state=
+, bool
+> > > > locked)
+> > > >  {
+> > > >         struct pcie_link_state *link =3D pcie_aspm_get_link(pdev);
+> > > > +       u32 parent_l1ss_cap, child_l1ss_cap;
+> > > > +       struct pci_dev *parent, *child;
+> > > >
+> > > >         if (!link)
+> > > >                 return -EINVAL;
+> > > > +
+> > > > +       parent =3D link->pdev;
+> > > > +       child =3D link->downstream;
+> > > > +
+> > > >         /*
+> > > >          * A driver requested that ASPM be enabled on this device, =
+but
+> > > >          * if we don't have permission to manage ASPM (e.g., on ACP=
+I
+> > > > @@ -1428,6 +1434,15 @@ static int __pci_enable_link_state(struct pc=
+i_dev
+> > > > *pdev, int state, bool locked)
+> > > >         if (!locked)
+> > > >                 down_read(&pci_bus_sem);
+> > > >         mutex_lock(&aspm_lock);
+> > > > +       /*
+> > > > +        * Ensure L1.2 parameters: Common_Mode_Restore_Times, T_POW=
+ER_ON and
+> > > > +        * LTR_L1.2_THRESHOLD are programmed properly before enable=
+ bits for
+> > > > +        * L1.2, per PCIe r6.0, sec 5.5.4.
+> > > > +        */
+> > > > +       parent_l1ss_cap =3D aspm_get_l1ss_cap(parent);
+> > > > +       child_l1ss_cap =3D aspm_get_l1ss_cap(child);
+> > > > +       aspm_calc_l12_info(link, parent_l1ss_cap, child_l1ss_cap);
+> >
+> > I still don't think this is the place to recalculate the L1.2 parameter=
+s
+> > especially when know the calculation was done but was cleared by
+> > pci_bus_reset(). Can't we just do a pci_save/restore_state() before/aft=
+er
+> > pci_bus_reset() in vmd.c?
+>=20
+> I have not thought pci_save/restore_state() around pci_bus_reset()
+> before.  It is an interesting direction.
+>=20
+> So, I prepare modification below for test.  Include "[PATCH v8 1/4]
+> PCI: vmd: Set PCI devices to D0 before enable PCI PM's L1 substates",
+> too.  Then, both the PCIe bridge and the PCIe device have the same
+> LTR_L1.2_THRESHOLD 101376ns as expected.
+>=20
+> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+> index bbf4a47e7b31..6b8dd4f30127 100644
+> --- a/drivers/pci/controller/vmd.c
+> +++ b/drivers/pci/controller/vmd.c
+> @@ -727,6 +727,18 @@ static void vmd_copy_host_bridge_flags(struct
+> pci_host_bridge *root_bridge,
+>         vmd_bridge->native_dpc =3D root_bridge->native_dpc;
+>  }
+>=20
+> +static int vmd_pci_save_state(struct pci_dev *pdev, void *userdata)
+> +{
+> +       pci_save_state(pdev);
+> +       return 0;
+> +}
+> +
+> +static int vmd_pci_restore_state(struct pci_dev *pdev, void *userdata)
+> +{
+> +       pci_restore_state(pdev);
+> +       return 0;
+> +}
+> +
+>  /*
+>   * Enable ASPM and LTR settings on devices that aren't configured by BIO=
+S.
+>   */
+> @@ -927,6 +939,7 @@ static int vmd_enable_domain(struct vmd_dev *vmd,
+> unsigned long features)
+>         pci_scan_child_bus(vmd->bus);
+>         vmd_domain_reset(vmd);
+>=20
+> +       pci_walk_bus(vmd->bus, vmd_pci_save_state, NULL);
+>         /* When Intel VMD is enabled, the OS does not discover the Root P=
+orts
+>          * owned by Intel VMD within the MMCFG space. pci_reset_bus() app=
+lies
+>          * a reset to the parent of the PCI device supplied as argument. =
+This
+> @@ -945,6 +958,7 @@ static int vmd_enable_domain(struct vmd_dev *vmd,
+> unsigned long features)
+>                         break;
+>                 }
+>         }
+> +       pci_walk_bus(vmd->bus, vmd_pci_restore_state, NULL);
 
->>       }
->>       return settings;
->>   }
->> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c 
->> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
->> index e406e11481a62..5f61363fb5d0e 100644
->> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
->> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
->> @@ -6,6 +6,7 @@
->>   #include <linux/of.h>
->>   #include <linux/of_irq.h>
->>   #include <linux/of_net.h>
->> +#include <linux/clk.h>
->>   #include <defs.h>
->>   #include "debug.h"
->> @@ -65,17 +66,21 @@ static int brcmf_of_get_country_codes(struct 
->> device *dev,
->>       return 0;
->>   }
->> -void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
->> -            struct brcmf_mp_device *settings)
->> +int brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
->> +           struct brcmf_mp_device *settings)
->>   {
->>       struct brcmfmac_sdio_pd *sdio = &settings->bus.sdio;
->>       struct device_node *root, *np = dev->of_node;
->> +    struct clk *clk;
->>       const char *prop;
->>       int irq;
->>       int err;
->>       u32 irqf;
->>       u32 val;
->> +    if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
->> +        return 0;
->> +
-> 
-> return 0 implies this function has completed successfully, while in this 
-> case it's obviously returned early due to not finding the correct device 
-> in DT. -ENODEV perhaps?
+Why not call pci_reset_bus() (or __pci_reset_bus()) then in=20
+vmd_enable_domain() which preserves state unlike pci_reset_bus()?
 
-This was a void function so returning 0 retains the behavior as before, 
-which is important to keep in mind here.
+(Don't tell me naming of these functions is a horrible mess. :-/)
 
-This function will be called if the platform has CONFIG_OF enabled. 
-However, that does not mean that on every platform there is a node 
-defined for the struct device being probed. That is fine if it does not 
-require any DT properties to be functional. Hence we bail out here 
-without an error.
+--=20
+ i.
 
->>       /* Apple ARM64 platforms have their own idea of board type, 
->> passed in
->>        * via the device tree. They also have an antenna SKU parameter
->>        */
->> @@ -105,7 +110,7 @@ void brcmf_of_probe(struct device *dev, enum 
->> brcmf_bus_type bus_type,
->>           board_type = devm_kstrdup(dev, tmp, GFP_KERNEL);
->>           if (!board_type) {
->>               of_node_put(root);
->> -            return;
->> +            return 0;
-> 
-> -ENOMEM?
 
-Retain behavior.
-
->>           }
->>           strreplace(board_type, '/', '-');
->>           settings->board_type = board_type;
->> @@ -113,8 +118,13 @@ void brcmf_of_probe(struct device *dev, enum 
->> brcmf_bus_type bus_type,
->>           of_node_put(root);
->>       }
->> -    if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
->> -        return;
->> +    clk = devm_clk_get_optional_enabled(dev, "lpo");
->> +    if (!IS_ERR_OR_NULL(clk)) {
->> +        brcmf_dbg(INFO, "enabling 32kHz clock\n");
->> +        clk_set_rate(clk, 32768);
->> +    } else if (PTR_ERR_OR_ZERO(clk) == -EPROBE_DEFER) {
-> 
-> PTR_ERR should be enough, no? Or better yet move this to the bottom of 
-> the function as was discussed on your previous submission, then you can 
-> return PTR_ERR_OR_ZERO(clk) right away, which would be a bit neater.
-> 
->> +        return -EPROBE_DEFER;
->> +    }
->>       err = brcmf_of_get_country_codes(dev, settings);
->>       if (err)
->> @@ -123,23 +133,25 @@ void brcmf_of_probe(struct device *dev, enum 
->> brcmf_bus_type bus_type,
->>       of_get_mac_address(np, settings->mac);
->>       if (bus_type != BRCMF_BUSTYPE_SDIO)
->> -        return;
->> +        return 0;
->>       if (of_property_read_u32(np, "brcm,drive-strength", &val) == 0)
->>           sdio->drive_strength = val;
->>       /* make sure there are interrupts defined in the node */
->>       if (!of_property_present(np, "interrupts"))
->> -        return;
->> +        return 0;
-> 
-> -ENOENT?
-
-That property is option in the binding so we return silently here as well.
-
->>       irq = irq_of_parse_and_map(np, 0);
->>       if (!irq) {
->>           brcmf_err("interrupt could not be mapped\n");
->> -        return;
->> +        return 0;
-> 
-> -ENXIO?
-
-This is a bit more gray area. The interrupt is optional, but if it is in 
-the device tree this is clearly intended to succeed. When it does the 
-question is whether the error print is sufficient or should we use 
-WARN() instead or fail the probe entirely. This interrupt is optional 
-because it is only needed in some sleep scenarios where it can wake the 
-host.
-
->>       }
->>       irqf = irqd_get_trigger_type(irq_get_irq_data(irq));
->>       sdio->oob_irq_supported = true;
->>       sdio->oob_irq_nr = irq;
->>       sdio->oob_irq_flags = irqf;
->> +
->> +    return 0;
->>   }
-
-[...]
-
->> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c 
->> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
->> index 6b38d9de71af6..7d79e2db201b5 100644
->> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
->> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-
-[...]
-
->> @@ -4446,6 +4448,7 @@ struct brcmf_sdio *brcmf_sdio_probe(struct 
->> brcmf_sdio_dev *sdiodev)
->>       struct brcmf_sdio *bus;
->>       struct workqueue_struct *wq;
->>       struct brcmf_fw_request *fwreq;
->> +    int probe_attach_result;
->>       brcmf_dbg(TRACE, "Enter\n");
->> @@ -4474,7 +4477,8 @@ struct brcmf_sdio *brcmf_sdio_probe(struct 
->> brcmf_sdio_dev *sdiodev)
->>       bus->brcmf_wq = wq;
->>       /* attempt to attach to the dongle */
->> -    if (!(brcmf_sdio_probe_attach(bus))) {
->> +    probe_attach_result = brcmf_sdio_probe_attach(bus);
->> +    if (probe_attach_result < 0) {
->>           brcmf_err("brcmf_sdio_probe_attach failed\n");
->>           goto fail;
->>       }
->> @@ -4546,6 +4550,8 @@ struct brcmf_sdio *brcmf_sdio_probe(struct 
->> brcmf_sdio_dev *sdiodev)
->>   fail:
->>       brcmf_sdio_remove(bus);
->> +    if (probe_attach_result < 0)
->> +        return ERR_PTR(probe_attach_result);
->>       return NULL;
-> 
-> See my comment on the bcmsdh.c part above - perhaps initialize 
-> probe_attach_result to -ENODEV by default and just return 
-> ERR_PTR(probe_attach_result) here instead
-
-Yup. Let's do that.
-
-Thanks,
-Arend
+>=20
+>         pci_assign_unassigned_bus_resources(vmd->bus);
+>=20
+>=20
+> Jian-Hong Pan
+>=20
+> > > > +
+> > > >         link->aspm_default =3D pci_calc_aspm_enable_mask(state);
+> > > >         pcie_config_aspm_link(link, policy_to_aspm_state(link));
+> > > >
+> > > > --
+> > > > 2.45.2
+> > > >
+> > >
+> > > Hi Nirmal and Paul,
+> > >
+> > > It will be great to have your review here.
+> > >
+> > > I had tried to "set the threshold value in vmd_pm_enable_quirk()"
+> > > directly as Paul said [1].  However, it still needs to get the PCIe
+> > > link from the PCIe device to set the threshold value.
+> > > And, pci_enable_link_state_locked() gets the link. Then, it will be
+> > > great to calculate and programm L1 sub-states' parameters properly
+> > > before configuring the link's ASPM there.
+> > >
+> > > [1]:
+> > > https://lore.kernel.org/linux-kernel/20240624081108.10143-2-jhp@endle=
+ssos.org/T/#mc467498213fe1a6116985c04d714dae378976124
+> > >
+> > > Jian-Hong Pan
+> >
+>=20
+--8323328-402323662-1723029534=:1138--
 
