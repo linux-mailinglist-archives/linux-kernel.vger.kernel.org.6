@@ -1,163 +1,119 @@
-Return-Path: <linux-kernel+bounces-278479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1765694B0CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:00:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8DF494B0D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D42928407E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:00:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 867E81F22D90
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83701459E4;
-	Wed,  7 Aug 2024 20:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA4784A51;
+	Wed,  7 Aug 2024 20:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="OnvOAytZ"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Ckl2slCP"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A535A2B9C6
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 20:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8F829408
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 20:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723060845; cv=none; b=W5ybGY0ixAf/49lfjDabxzLioJBZIAMOIDbey2qgTt+5drX+ONJJWcOsOLv4b4mNSsL7Mw30jxd3EsKZ46CeIj38Lp9cXhaU6Mmz42kDG1D3tSggnoWK+OHBnegLRaT4yxiEdSIN4xp5J7Od4SFou7lA3tZOD0oQFHfF230LRr0=
+	t=1723060939; cv=none; b=pfKDQuaiOKYvWpebeEQryFRbSIsvn6gP5yKMpcUkXJNuPX23JoKTFBOitzyufZymwauEYynD7VxiGaUhZdHVtDmq6knX9nXXrz2HbYwgzwXN4mLEw/xuDACr4NfpsVGyqnMwfaXfr3WFm92npHVGfd7Z8RAEit0VptMCxPC73YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723060845; c=relaxed/simple;
-	bh=DWQDHFpuKWvvnZPeDcxg7ENQalKiALDNIxmVJjcXELk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OT+8Ypdst+jgC/QMz+TDi5c4jJALNrjWcPRuWYvlp6WnFcH2amTScz2b7J3KAbhBqFggljdgKIZbKXKNDN1ZYa+Zix1x48FrbqJKhjmNCBjKJ+sTQkbnQY4pOcqqflsDx0301cHrk4CCydxXvv/xiZzIWNby9F23ZEfCVMgc4oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=OnvOAytZ; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723060835; x=1723320035;
-	bh=zu1rORrbF+TIF/UNStDvHRPRM8s1Kkx0uX6CdAA1WS0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=OnvOAytZgfXahQ+PpHJUBITKr6ZaZYH/bTJcyoOSyt3wIb6CBwn/kTomPz4sQQXpH
-	 Iw8KND+Fx5L925IdyjvCJxwguPz3HHvG3CVBZ28/xy3Qe/y6UCk7V9vMuXpQr+NE04
-	 vzMVZErU4I8UqeVHhlGRcI4mH4+qEDjEOAg9WvAIOL+/D+n5+TNRvJXDAGfd2F8cDm
-	 y1iKoeLYi8AB9/HlFmpa8KgvYzaHmRJ8UiFiY1DgyzgqZZR0lWgoT2Pm/FE0+zG+/H
-	 IH909AfSE/UQLRqM1G9/S5Je6aB7eAZ8OXOVoJU7/dc72WYqzsI73v5VOhnOyTvV/v
-	 iScNsXW/1Gaag==
-Date: Wed, 07 Aug 2024 20:00:31 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 01/28] rust: alloc: add `Allocator` trait
-Message-ID: <ab0a6cb7-037e-43af-a885-f848ca8e3add@proton.me>
-In-Reply-To: <ZrNADDlM-RPS0Sze@pollux>
-References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-2-dakr@kernel.org> <470b5f70-b592-43a7-81ba-c7f1c852b9f3@proton.me> <ZrJrzYXM9RffF4kf@pollux.localdomain> <52b1a806-48c7-4ae2-b78c-ca0e8bf5e1d7@proton.me> <ZrNADDlM-RPS0Sze@pollux>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 9f1bd98ad2f020acae0ce2537b94d9087f911ed9
+	s=arc-20240116; t=1723060939; c=relaxed/simple;
+	bh=JqI/7JY0uwHO8jeHmfDAkuQSCd4muvWmJPLKHs/4J70=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U0xJdAvk8jSe4d31yypi/ILugn7BqfERdBfViTHD5I+GcC32MYGo98SX58sG/NJeBkdOMKKx8emjz37dsHd9UH/b9Ts7SeSISvcPWqwtbp/Ji2YXwiRFfET5RaoqnM3PETvTtdKkQ4BXL+xKvSYvgitsjXOHCPHRnTJJIuHBSZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Ckl2slCP; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-70944d76a04so135635a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 13:02:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723060936; x=1723665736; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LsITnJxqyk3GLU8VoWLUSQ1dx7O5PrUBJFkjcQc8Yi0=;
+        b=Ckl2slCPnKSgr8UNq8Ph9sqxOeN6LcIvmi7Tp9jhlNe4dANMmudJk0IaChD1LwdvQ7
+         CsEjf+RfubYyGNybetFxV/Lm/q4fTBHowZqcqySCKOWAF9r+wb2Ltlx9eAWrlMJ3FOUe
+         MgHEYqT0pZ7AwbxDTOrHhaR1XoNjjiYuYp06sLHVmgZhJ57cuV7Zfcg1c2rlEHWC2jJH
+         npGrNJ/zHP4u3H4UoeC54TKjISYDqN28+jzFZhllOaJP258MOBl985yhwCyWqU1QugSA
+         oww7/QMDKw5/OKVJhjKVPzijvhHQxTqKCE0j3JxG+RMO0hyFPfKuph0GW9jkBADUYQYE
+         hOmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723060936; x=1723665736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LsITnJxqyk3GLU8VoWLUSQ1dx7O5PrUBJFkjcQc8Yi0=;
+        b=QWAuzrmm0yj8C/TRD9Wjkl9iUqgStoXjdgT7NCVs/UGRsEAhGkpSI9MNzlmwG/F5qd
+         pEcPM2wjYUT+w3UXMhKsLzPMH9BfihcRWcfmB1egEfGUEcLA8Bjpk7VoPIj6hC6Y1sTn
+         BzrqC+2thWUjorVhBqlE9QYAsF4dCmC/FUeVTCMsHkVQKwmR1dN4DfVT7xpFMafv5DYN
+         sCek32lA9WFg6BPNpd114fr2nGi6pA8m2HGe/PZjsQ0QAundwjVGqnG4zXwwJwkx/9U5
+         azHkJovOplPQoYDkqp7/yUSa6OoaAxcrhYE2UHkBAF9ZHzkgEiDjqIzOLvKXKlnA8Tgb
+         hiNA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcCPYj8vhhbaBjupDWZ+GpKv0jFf/7rMT3xJn04eB8Fem3+O+Glc8CLuSIeqFbv1UqecJDP5GItgIj80w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydbyuULmzqQ+dsRfjSZOZPRbdVf1J/R+PxeXkPCwRUdzCSG5F4
+	Z472MLoInishKypWfOFDlQ+V0m8WODBWIpFvVJpUdR3/JU5Jyetr0jg28IwI7jk=
+X-Google-Smtp-Source: AGHT+IHXba0L9xz2feaAjHZF5HL6FfrLqc1XVJbv+ptCNbxlgacOca0GRhf/jsOysJCJOOgMtHOHpQ==
+X-Received: by 2002:a05:6830:2a86:b0:703:6f95:98e9 with SMTP id 46e09a7af769-70b4641c8f2mr1430507a34.10.1723060935925;
+        Wed, 07 Aug 2024 13:02:15 -0700 (PDT)
+Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70a31eaf7b6sm4951003a34.24.2024.08.07.13.02.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 13:02:15 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH 0/2] iio: adc: ad4695: implement triggered buffer
+Date: Wed,  7 Aug 2024 15:02:09 -0500
+Message-ID: <20240807-iio-adc-ad4695-buffered-read-v1-0-bdafc39b2283@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.14.0
+Content-Transfer-Encoding: 8bit
 
-On 07.08.24 11:36, Danilo Krummrich wrote:
-> On Tue, Aug 06, 2024 at 08:04:30PM +0000, Benno Lossin wrote:
->>>>> +    /// instance. The alignment encoded in `layout` must be smaller =
-than or equal to the alignment
->>>>> +    /// requested in the previous `alloc` or `realloc` call of the s=
-ame allocation.
->>>>> +    ///
->>>>> +    /// Additionally, `ptr` is allowed to be `None`; in this case a =
-new memory allocation is
->>>>> +    /// created.
->>>>> +    ///
->>>>> +    unsafe fn realloc(
->>>>> +        ptr: Option<NonNull<u8>>,
->>>>> +        layout: Layout,
->>>>> +        flags: Flags,
->>>>> +    ) -> Result<NonNull<[u8]>, AllocError>;
->>>>> +
->>>>> +    /// Free an existing memory allocation.
->>>>> +    ///
->>>>> +    /// # Safety
->>>>> +    ///
->>>>> +    /// `ptr` must point to an existing and valid memory allocation =
-created by this `Allocator`
->>>>> +    /// instance.
->>>>
->>>> Additionally, you need "The memory allocation at `ptr` must never agai=
-n
->>>> be read from or written to.".
->>>
->>> I'm fine adding it, but I wonder if technically this is really required=
-? The
->>> condition whether the pointer is ever accessed again in any way is not =
-relevant
->>> in terms of being a precondition for `free` not causing UB, right?
->>
->> I don't see how else we would find the mistake in the following code:
->>
->>     let ptr =3D Box::into_raw(Box::<i32, Kmalloc>::new(42));
->>     // SAFETY: `ptr` came from `Box::into_raw` and thus is pointing to a
->>     // valid and existing memory allocation allocated by `Kmalloc`.
->>     unsafe { Kmalloc::free(ptr) };
->>     // SAFETY: `ptr` came from `Box::into_raw` and thus is pointing at a
->>     // valid `i32`.
->>     let v =3D unsafe { ptr.read() };
->=20
-> Sure, but what I mean is that my understanding is that the "Safety" secti=
-on in a
-> comment describes the requirements of the function it documents. I.e. `fr=
-ee`
-> itself doesn't care whether the pointer is read or writted ever again.
+This is a fairly simple series that adds support for triggered buffers
+to the ad4695 driver.
 
-So if you have an `unsafe` function, the safety requirements are not
-limited to ensuring that that function does not exhibit UB. But in
-general any correct usage of that function must not exhibit UB in
-combination with any other correct usage of any other `unsafe`
-functions.
+Not directly related to this patch, but as a side discussion about
+future possibilities with this chip while we are here...
 
-> Or in other words, what are the rules where this belongs to? E.g. why not
-> document this exact aspect in the safety section of `Allocator`?
+The advanced sequencer on this chip can repeat the same channel multiple
+times which, when combined with the autocycle feature, can be used to
+create different effective sampling rates for individual channels.
 
-That doesn't work, since the Safety section of `Allocator` is meant for
-safety requirements for implementing `Allocator`. They should not be
-relevant for using it.
+For example if we set up the sequence [IN1, IN2, IN1, IN3] and the time
+between each individual sample in the sequence is the same, then IN1 has
+an effective sampling rate of 2x the other channels.
 
->> Also see the `from_raw` for our `Arc`:
->>
->>     /// Recreates an [`Arc`] instance previously deconstructed via [`Arc=
-::into_raw`].
->>     ///
->>     /// # Safety
->>     ///
->>     /// `ptr` must have been returned by a previous call to [`Arc::into_=
-raw`]. Additionally, it
->>     /// must not be called more than once for each previous call to [`Ar=
-c::into_raw`].
->>     pub unsafe fn from_raw(ptr: *const T) -> Self {
->>
->> That also requires that the function must not be called more than once.
->> This reminds me, I forgot to say that about `Box::from_raw`.
->=20
-> Indeed, I also wonder if we ever have cases where C code gives us ownersh=
-ip of a
-> memory allocation of a certain type that fulfills the requirements we hav=
-e for
-> a `Box`, such that Rust code is tempted to pass it to `Box::from_raw`.
->=20
-> It sounds a bit scary design wise, but in theory it's possible.
-
-I don't think it's scary, in fact we are already doing it and have a
-trait for that: `ForeignOwnable`. But that means that the pointer
-originates from Rust, so it might not exactly be what you meant ie C
-allocates the memory. But that case also doesn't seem too scary for me.
-C just needs to respect alignment and then it should be equivalent to
-Rust calling the allocator.
+Have there ever been discussions before about implementing something
+like this in the IIO subsystem? I didn't see anything that looked like
+this already implemented in the kernel.
 
 ---
-Cheers,
-Benno
+David Lechner (2):
+      iio: adc: ad4695: implement triggered buffer
+      doc: iio: ad4695: document buffered read
 
+ Documentation/iio/ad4695.rst |  12 ++-
+ drivers/iio/adc/ad4695.c     | 233 ++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 241 insertions(+), 4 deletions(-)
+---
+base-commit: 7cad163c39cb642ed587d3eeb37a5637ee02740f
+change-id: 20240807-iio-adc-ad4695-buffered-read-f49eb511e300
 
