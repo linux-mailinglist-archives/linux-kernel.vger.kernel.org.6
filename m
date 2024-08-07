@@ -1,251 +1,144 @@
-Return-Path: <linux-kernel+bounces-278292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE8494AE61
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:48:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F031A94AE64
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D26291C212F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:48:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A539728389B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF7B13C66F;
-	Wed,  7 Aug 2024 16:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TXNvizFR"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB87C12C530;
-	Wed,  7 Aug 2024 16:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D441813C3C2;
+	Wed,  7 Aug 2024 16:48:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521782D05D
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723049312; cv=none; b=CggUPXBORTbzBmEU1K9VFGdTEfMEVzLpNWPvEt8hx/jMYTs/pOAR2k96UDR0CXaHSxvb9on/kTnyFvGmoX+4q/i3+E0CbUh/ptjyMMM3ufuBXC5lqDDN3xAYag1Jdb9PmIhBU5a4X3bVyPRHxW7kUdOzcNijr2wghU2mnb6MtVY=
+	t=1723049331; cv=none; b=Erj+esyh998HDex0b3OwdFclHws0aNQvOrh22WhPbwqjToe0nS9d8AEe1/Atx/C76yC+9TP9x1f2a/od9Zzcpqy9yuk+Kga29I+FEw/Td5gYgsFnh4WyptrcvOJEFPvDfivH6h/67zL3HyEgXQtZy+H0mpiOaocP10inkIS9VvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723049312; c=relaxed/simple;
-	bh=MyGpS8A8yCOgOMFPJGm3nQghuITkLQxuSG1wKxyoEAY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kniCSvvnppnto8yWxAbWvFU2MLO/m80Xv+UOnpjkdvTrUDokYFmJj9aP12gYd7lSiH/V5ARtRwn1GEWAGkfAtUGKsW/53MIsuBgOc9z/1PmbnPKS515XUS+IYpOn9iUye3/G+HJ+qyAQJ4QW+cf6UpwNGohdshkRSd4Qmwxukeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TXNvizFR; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a1d6f4714bso4064985a.1;
-        Wed, 07 Aug 2024 09:48:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723049309; x=1723654109; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ppEzbuljpxEqS9CSU1lR4GhsTWn9NP9h9n5p+ezkHKg=;
-        b=TXNvizFRa8KHc3gIvhAR9tAAZSQtCQfNcXw2ooVVeB7cCunnhpRwdggUTp6+3LXmGc
-         Nn6yvp3uAytRuK/FDJXAUnXo2TMLgxs9C13yZzzJBtHnb/nfLfyU9uSrSCzGlsmqJSXH
-         +DNWYGCnEUeLRlNC0cUlRQpdNrCpV0PKqr/sATGSuut4LYs4Pc9/x1UrCCKF7+lHrE74
-         EQ9Mnmu8v2j0IsEDiUZvyN597HVsYtiT8K7ScjRH4HyDPL1Trqkl0THe+ZxjAjIMXg1s
-         J+YxfF7h39v4vSzyv3HdYjeQTpQMAtkJP0crIgOkOTPxuPdUbD+CMJ5cVLOpycQbBwhG
-         yjeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723049309; x=1723654109;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ppEzbuljpxEqS9CSU1lR4GhsTWn9NP9h9n5p+ezkHKg=;
-        b=pjFNkonJttY1Rk+4gMWs3fF8192sJmV5l7pparzVbQ5r6Ps5Su5NvbemLxot/Da4BN
-         KIe62fEhwx7WnxbSo0LRN/Y3QAf4kYJRgRTSUyIJoD2ckl17i6r8clx9Td7HQO+LRZNu
-         dtb/q+wOCZB3Vgwv93z1sA2T7XxvqnAhuYSYY07QVzsC4+vr7dhehPEpn2I5Ua4ITJcK
-         XgqAkXTk9sJZramYknxEyVTAsk4oZMu8g+Al29LmRTzB35aGlf/ilFhAep6DxK+HsTY4
-         8mhnWDOKbft8Kw01CSTQGtIuBUFjAbdPwSegMlMZxynLHEVKzaizCC9bfFvCgoA8p6WT
-         QMQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlvYrqp+D7qSfLmolrsSfSLE6/lRZgjjsnD1xuIkyUFDjuwEimAVLgHXSsJyBTu3k5W/kFAcGR1x9XTcKDlen364xAujJzuwstAoJ3nNkwzpocZoJB5Tt7+5o4ZFnn6k3ssQneMxt8Y+Y1Wigyk6N7ha67RoW4Bp4PU9GfSFfU/JkM3O+hUtdLtLaQwsHIm8Si4WoH/l+iPZUxOSE16ABA
-X-Gm-Message-State: AOJu0YxfG6lWPvg+JdugWh4tkyfSmJOML739JgMDrLj2PqXPbxs86r6l
-	kToJ1efyQyzhAvF4YfsjuXZxHnPtLsa3g2GM4gpbVb+SJRlWLd3sS+PnzgD0kk0VYX9DcS6NiKZ
-	cszw0wRIwbisIzJ99JYTsY3Gt8L0=
-X-Google-Smtp-Source: AGHT+IGrz1woRCdFcf3AU1cz6WnokARNZ8npr64xqniUVjK159lEQjZ0EsGdSQw2I8QF6WpZIMde7xJ4DnI207ISe+Y=
-X-Received: by 2002:a05:620a:2484:b0:7a1:dc64:59db with SMTP id
- af79cd13be357-7a377ba35c1mr531954785a.8.1723049308726; Wed, 07 Aug 2024
- 09:48:28 -0700 (PDT)
+	s=arc-20240116; t=1723049331; c=relaxed/simple;
+	bh=Cg4idp8Y8dHiIfUeaJPMIoEe6gjWTzhVsYXnt4MWgH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NBOQ4dsa+aDQU9tn3tnoI/XtHHnMh+swnbH2XUgjkGN2HywSkAHbRnznfhJh/QFs5uxK+PmGs+mFts6BEnmZ0rvHy9HQp7brUIzJoSZbZaacR7tkBgBSlkVmUm/LhAF9qWfI5hPZQp/9ujxvzAnpuXgoKeJfRlLQKNf6VoT1KW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EAC63FEC;
+	Wed,  7 Aug 2024 09:49:12 -0700 (PDT)
+Received: from [10.1.27.29] (PF4Q20KV.arm.com [10.1.27.29])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 50AF03F766;
+	Wed,  7 Aug 2024 09:48:45 -0700 (PDT)
+Message-ID: <4dd7f210-c03e-4203-b8e9-1c26a7f8fe79@arm.com>
+Date: Wed, 7 Aug 2024 17:48:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805073425.3492078-1-jacobe.zang@wesion.com>
- <20240805073425.3492078-5-jacobe.zang@wesion.com> <2e38c2bd-2cb2-4104-97ad-0355069606c0@gmail.com>
- <b6551bf0-2ee9-4b79-af68-0677e3f0f915@broadcom.com>
-In-Reply-To: <b6551bf0-2ee9-4b79-af68-0677e3f0f915@broadcom.com>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Wed, 7 Aug 2024 19:48:17 +0300
-Message-ID: <CABjd4YzEzDW6KhTJ1ZBU1PptHotgDqg8i03Z7VAfdzAgQo8BDw@mail.gmail.com>
-Subject: Re: [PATCH v8 4/5] wifi: brcmfmac: Add optional lpo clock enable support
-To: Arend van Spriel <arend.vanspriel@broadcom.com>, Jacobe Zang <jacobe.zang@wesion.com>, 
-	robh@kernel.org, krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	conor+dt@kernel.org
-Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com, minipli@grsecurity.net, 
-	brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com, 
-	nick@khadas.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf scripts python arm-cs-trace-disasm.py: Skip disasm
+ if address continuity is broken
+To: James Clark <james.clark@linaro.org>,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ scclevenger@os.amperecomputing.com
+Cc: acme@redhat.com, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ darren@os.amperecomputing.com, james.clark@arm.com, suzuki.poulose@arm.com,
+ Al.Grant@arm.com, Mike Leach <mike.leach@linaro.org>
+References: <20240719092619.274730-1-gankulkarni@os.amperecomputing.com>
+ <6920de94-a9c8-47f4-840f-391d1ec85c0c@os.amperecomputing.com>
+ <8f6f221b-4c9a-42e1-b8ce-1f492caee184@linaro.org>
+ <0a697a54-5dd8-4351-a651-991724690db2@os.amperecomputing.com>
+ <ce4af204-874f-404c-a7aa-42dc6693d072@linaro.org>
+ <a197123a-be59-4052-9615-cac79ffa357a@os.amperecomputing.com>
+ <543813f6-cb1f-4759-b26f-75246750814d@linaro.org>
+ <f72038a0-c6b5-4245-8515-3b735ca38cbb@linaro.org>
+ <ae1b2d8c-588a-4f0a-b3c9-c869f8dd0f25@os.amperecomputing.com>
+ <00fac24c-d664-4ebb-8c60-f4697b7f76c1@linaro.org>
+ <8b53a424-19f7-4042-a2db-e1c5d051f9cc@os.amperecomputing.com>
+ <6adf84fa-b755-4d7a-957a-9bf01e442238@linaro.org>
+ <d71dff17-6f1e-4a67-89c6-7ecc86af0f3a@linaro.org>
+ <6f535bb6-2cee-48e6-93f1-ea19887bae74@os.amperecomputing.com>
+ <027c76a9-9bd4-43e9-a170-8391a0037291@linaro.org>
+ <3d7a6f93-0555-48fa-99cb-bf26b53c2da5@os.amperecomputing.com>
+ <d6170beb-754e-4be3-8ff7-18acddccf077@linaro.org>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <d6170beb-754e-4be3-8ff7-18acddccf077@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 07/08/2024 2:17 pm, Arend van Spriel wrote:
-> On 8/7/2024 1:10 AM, Alexey Charkov wrote:
->> Hi Jacobe,
+Hi all,
+
+On 8/7/2024 3:53 PM, James Clark wrote:
+
+A minor suggestion: if the discussion is too long, please delete the
+irrelevant message ;)
+
+[...]
+
+>> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>> @@ -257,6 +257,11 @@ def process_event(param_dict):
+>>                  print("Stop address 0x%x is out of range [ 0x%x .. 0x%x
+>> ] for dso %s" % (stop_addr, int(dso_start), int(dso_end), dso))
+>>                  return
 >>
->> On 05/08/2024 10:34 am, Jacobe Zang wrote:
->>> WiFi modules often require 32kHz clock to function. Add support to
->>> enable the clock to PCIe driver and move "brcm,bcm4329-fmac" check
->>> to the top of brcmf_of_probe. Change function prototypes from void
->>> to int and add appropriate errno's for return values that will be
->>> send to bus when error occurred.
->>>
->>> Co-developed-by: Ondrej Jirman <megi@xff.cz>
->>> Signed-off-by: Ondrej Jirman <megi@xff.cz>
->>> Co-developed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
->>> Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
->>> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
->>> ---
->>>   .../broadcom/brcm80211/brcmfmac/bcmsdh.c      |  4 +++
->>>   .../broadcom/brcm80211/brcmfmac/common.c      |  6 +++-
->>>   .../wireless/broadcom/brcm80211/brcmfmac/of.c | 28 +++++++++++++------
->>>   .../wireless/broadcom/brcm80211/brcmfmac/of.h |  9 +++---
->>>   .../broadcom/brcm80211/brcmfmac/pcie.c        |  3 ++
->>>   .../broadcom/brcm80211/brcmfmac/sdio.c        | 18 ++++++++----
->>>   .../broadcom/brcm80211/brcmfmac/usb.c         |  3 ++
->>>   7 files changed, 52 insertions(+), 19 deletions(-)
->>>
->>> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/
->>> bcmsdh.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
->>> index 13391c2d82aae..ee3ca85c4a47b 100644
->>> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
->>> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
->>> @@ -951,6 +951,10 @@ int brcmf_sdiod_probe(struct brcmf_sdio_dev
->>> *sdiodev)
->>>           ret = -ENODEV;
->>>           goto out;
->>>       }
->>> +    if (IS_ERR(sdiodev->bus)) {
->>> +        ret = PTR_ERR(sdiodev->bus);
->>> +        goto out;
->>> +    }
->>
->> Maybe return -ENODEV error pointer instead of NULL from
->> brcmf_sdio_probe as the default for the fail path? Then you can
->> condense these two checks into one
->
-> Sound reasonable.
->
->>>       brcmf_sdiod_host_fixup(sdiodev->func2->card->host);
->>>   out:
->>>       if (ret)
->>> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/
->>> common.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
->>> index b24faae35873d..6c5d26f9b7661 100644
->>> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
->>> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
->>> @@ -561,8 +561,12 @@ struct brcmf_mp_device
->>> *brcmf_get_module_param(struct device *dev,
->>>       if (!found) {
->>>           /* No platform data for this device, try OF and DMI data */
->>>           brcmf_dmi_probe(settings, chip, chiprev);
->>> -        brcmf_of_probe(dev, bus_type, settings);
->>>           brcmf_acpi_probe(dev, bus_type, settings);
->>> +        i = brcmf_of_probe(dev, bus_type, settings);
->>> +        if (i < 0) {
->>> +            kfree(settings);
->>> +            settings = ERR_PTR(i);
->>> +        }
->>
->> This looks wrong. First, you're calling brcmf_of_probe twice. Second,
->> if either DMI or ACPI probe successfully but OF doesn't, then you
->> return an error code instead of success, and also overwrite settings
->> with an error pointer thus rendering both brcmf_dmi_probe and
->> brcmf_acpi_probe useless
->
-> Twice? it is removed and added few lines below.
+>> +       if (stop_addr < start_addr):
+>> +               if (options.verbose == True):
+>> +                       print("Packet Dropped, Discontinuity detected
+>> [stop_add:0x%x start_addr:0x%x ] for dso %s" % (stop_addr, start_addr,
+>> dso))
+>> +               return
+>> +
+> 
+> I suppose my only concern with this is that it hides real errors and
+> Perf shouldn't be outputting samples that go backwards. Considering that
+> fixing this in OpenCSD and Perf has a much wider benefit I think that
+> should be the ultimate goal. I'm putting this on my todo list for now
+> (including Steve's merging idea).
 
-Indeed, time to change glasses :) Didn't see the minus sign
+In the perf's util/cs-etm.c file, it handles DISCONTINUITY with:
 
-> It does change the order
-> so that may not be best thing to do here. We actually only want to
-> handle the scenario where the clock resources are not yet available, ie.
-> when -EPROBE_DEFER is returned because that error value is taken into
-> account by the bus driver and tries to bind the driver again later.
+   case CS_ETM_DISCONTINUITY:
+        /*
+         * The trace is discontinuous, if the previous packet is
+         * instruction packet, set flag PERF_IP_FLAG_TRACE_END
+         * for previous packet.
+         */
+        if (prev_packet->sample_type == CS_ETM_RANGE)
+                prev_packet->flags |= PERF_IP_FLAG_BRANCH |
+                                      PERF_IP_FLAG_TRACE_END;
 
-Maybe we then do something like the following, which would retain the
-old behavior but pass -EPROBE_DEFER on to the bus:
+I am wandering if OpenCSD has passed the correct info so Perf decoder can
+detect the discontinuity. If yes, then the flag 'PERF_IP_FLAG_TRACE_END' will
+be set (it is a general flag in branch sample), then we can consider use it in
+the python script to handle discontinuous data.
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
-b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
-index b24faae35873d..6c5d26f9b7661 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
-@@ -561,8 +561,12 @@ struct brcmf_mp_device
-*brcmf_get_module_param(struct device *dev,
-        if (!found) {
-                /* No platform data for this device, try OF and DMI data */
-                brcmf_dmi_probe(settings, chip, chiprev);
--               brcmf_of_probe(dev, bus_type, settings);
-+               if (brcmf_of_probe(dev, bus_type, settings) == -EPROBE_DEFER)
-+                       return ERR_PTR(-EPROBE_DEFER);
-                brcmf_acpi_probe(dev, bus_type, settings);
-        }
-        return settings;
- }
+> 
+> But in the mean time what about having a force option?
+> 
+>> +       if (stop_addr < start_addr):
+>> +               if (options.verbose == True or not options.force):
+>> +                       print("Packet Dropped, Discontinuity detected
+>> [stop_add:0x%x start_addr:0x%x ] for dso %s" % (stop_addr, start_addr,
+>> dso))
+>> +               if (not options.force):
+>> +                       return
 
->>>       }
->>>       return settings;
->>>   }
->>> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c b/
->>> drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
->>> index e406e11481a62..5f61363fb5d0e 100644
->>> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
->>> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
->>> @@ -6,6 +6,7 @@
->>>   #include <linux/of.h>
->>>   #include <linux/of_irq.h>
->>>   #include <linux/of_net.h>
->>> +#include <linux/clk.h>
->>>   #include <defs.h>
->>>   #include "debug.h"
->>> @@ -65,17 +66,21 @@ static int brcmf_of_get_country_codes(struct
->>> device *dev,
->>>       return 0;
->>>   }
->>> -void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
->>> -            struct brcmf_mp_device *settings)
->>> +int brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
->>> +           struct brcmf_mp_device *settings)
->>>   {
->>>       struct brcmfmac_sdio_pd *sdio = &settings->bus.sdio;
->>>       struct device_node *root, *np = dev->of_node;
->>> +    struct clk *clk;
->>>       const char *prop;
->>>       int irq;
->>>       int err;
->>>       u32 irqf;
->>>       u32 val;
->>> +    if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
->>> +        return 0;
->>> +
->>
->> return 0 implies this function has completed successfully, while in
->> this case it's obviously returned early due to not finding the correct
->> device in DT. -ENODEV perhaps?
->
-> This was a void function so returning 0 retains the behavior as before,
-> which is important to keep in mind here.
->
-> This function will be called if the platform has CONFIG_OF enabled.
-> However, that does not mean that on every platform there is a node
-> defined for the struct device being probed. That is fine if it does not
-> require any DT properties to be functional. Hence we bail out here
-> without an error.
+If the stop address is less than the start address, it must be something
+wrong. In this case, we can report a warning for discontinuity and directly
+return (also need to save the `addr` into global variable for next parsing).
 
-Fair enough, thanks for the explanation!
+I prefer to not add force option for this case - eventually, this will consume
+much time for reporting this kind of failure and need to root causing it. A
+better way is we just print out the reasoning in the log and continue to dump.
 
-Best regards,
-Alexey
+Thanks,
+Leo
 
