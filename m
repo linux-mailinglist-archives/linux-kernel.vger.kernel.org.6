@@ -1,96 +1,138 @@
-Return-Path: <linux-kernel+bounces-277692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0956194A4DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:00:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E08994A52D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7E822816C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:00:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12943B232D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EDFB175D2C;
-	Wed,  7 Aug 2024 10:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038A71803A;
+	Wed,  7 Aug 2024 10:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J9kj3NBk"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E0eyPeDv"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F87156222
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033013A267;
+	Wed,  7 Aug 2024 10:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723024816; cv=none; b=Hz1XC1chi61Zj3TDKqvHFRY+ZpRvr/aDVkn2ZvPygUy4mlJgsmRbLDHTZJtLf3A24OcRcYbxPJNqm/ari+yS68+AjQcIVVXvLX2xy6OfTtBTCl0HBXnUT44x4R5hX6kvIMXOyA5K4zrK0SLfsERnlbzcHlO1TwIpQM1Q7KZgyhk=
+	t=1723025503; cv=none; b=blqTRfJV+bKZsM/hRBkbQTm7LNRT+w41KSdK6ntXE4sOpcLBqs2SV3VPw/tv5ets7Hk6fR9P+cORaTP6cZBnvhFFTGSqH2QF9AwFfxkfXn/S+vniPXzxkNe8hW32RODnAkH5iOEZxwMWCPprmuDhsjkhNYcrq+0ys5Wa651QAxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723024816; c=relaxed/simple;
-	bh=GqvsbHVEaAB9Mf7/CvfjwhNaqZb/jsQ0OdiRt74ABkA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=M7/uMYzwAeQ7LkMw6/GpuC2CEWn7AFY3hG86JY9425j6MYJANuxqgAS8lPNqV+7USaY04vMTsi37HTWCW+Rweldzspzq0NH2zipWBMtZSFxkcN4d4o7Qd9ufn0q/Dcr64lSkVNGSsnJGUSPnH1nVIV2Bex4NwerTqzpv/Kn0mws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J9kj3NBk; arc=none smtp.client-ip=209.85.128.173
+	s=arc-20240116; t=1723025503; c=relaxed/simple;
+	bh=veUbiv8qCal4E3RokmCcyjVyL8LTrG+dgLC5DGzo4VA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iQ79RSQrjyfBtBHKabXoy+nxlnecKIJCUzdhuwNRGp4/dNuyiKdVUQw+NzZK01KhxpoTIoSXxVBLQtvr84VKORNtqBfkqDqzc6XdLklS5sb96EsfNLwmnrOr5LLzhI7nbbhHsns6q5uVyIW1nWtIqotSPqX/XscKyF+y4SxNwd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E0eyPeDv; arc=none smtp.client-ip=209.85.215.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-65fe1239f12so14489447b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 03:00:14 -0700 (PDT)
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7a18ba4143bso1136650a12.2;
+        Wed, 07 Aug 2024 03:11:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723024814; x=1723629614; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GqvsbHVEaAB9Mf7/CvfjwhNaqZb/jsQ0OdiRt74ABkA=;
-        b=J9kj3NBkNCayNLQfPHx7a9ehFOaCNXx7jnG0LOb180KF/aga9CzR3HTgPkLkPHeQ3L
-         nsFv3j4npgBr+CDTaPhE58rzpQl+c7Ql0lt2k8GnAglOrcxX4nrc+VP0kzk7drRzJkKd
-         jxB6xaXRfV3wMrsekYeZTAzbVTBAkO0VrdV13glFT0wLlYpAcaYI3eSyM/kB+jQVMvT0
-         sWNRRBVzV8ozF0fmGlXT2JLGmuWbjUMFSzwIzu2DdR++JXZgtl6BwA8SgAzxRRBwANJ2
-         CH/vVcy/sImfl0R8KrAZnYLhGJRtvULAnnAmvnmmT98F1C+LqdLununAYH7XYdMTJppO
-         kxiw==
+        d=gmail.com; s=20230601; t=1723025501; x=1723630301; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=s0dwJOC2ZWNngEJesupegftfLNs6Uf6v6IZl3J0jAqg=;
+        b=E0eyPeDv8YwXP8lFVe4nmgzHzRNlMub9Z4KXvL1y5feRM90YSH8PkGrDylfTyzER/V
+         etlFL8Q5oxRWY4k8ZYD/9jGtft0TSgz9FG1gkqpWbXMDQo/5ZoO8Ovmw4SzCbRK0nXB6
+         qn3qrS6v9aLUsqNsEBrlQbgoMZPRrmLnCIkf6f1efj+83FYDiNlMG6WqH52v4tAwHObJ
+         T1jJnrK4nd1xuoPcOD+JSZRt6ghDUWwIue/wM/4iqnfDXcWBJ/PVYvpFLivJvPfF4xrb
+         WjQxrE41JQcHg9kUCCJzICa4MPdEMShZgrwEZQgxVYFZuokRSHtGFIxNY9d2u6P96EPJ
+         O9qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723024814; x=1723629614;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GqvsbHVEaAB9Mf7/CvfjwhNaqZb/jsQ0OdiRt74ABkA=;
-        b=as6tswe+YVN1MgDAUDuMnwwL0FYUAFaZBkIVBWizu/yo33rxRZhnOGYEwDJYYmtEnz
-         8N6v+X+V3/wOQVtUD7lTFwhMWTDjf7C/jvcIwlVvqus7qSfbMnLD6e0KNvFvOR1tGZHi
-         h9RpWRMwsMMtBjbKsoVMMBLTJ9M4tULF6a5FRxVcEio9PAzfGZDz/rZIelgsl1noHvly
-         X9sHRsEhpYI0Y+DVJOAm+e+ii3Wpd1+cxTf8sjTGu8mfTYEPYyPwcXBsEdKncU3TIlC5
-         1qVtW7J23Zr2Uak4B+VK9+udK5bwQxY8PgJ8+b9K7ECxqR7RXNVhT80oTxUx6iWlrR1w
-         12Ew==
-X-Gm-Message-State: AOJu0Ywmxh3kQTqlPbrtT0QKTXDoNGn84wEkqZipwv8QNUgRB5vOnpFZ
-	ThB3cIZ2LgXMn+NQwF6ib5ypdVGGARDDystWleIQEr/ROQFgzvZmXX7OkdTYUjz3RGBtZTHCgpZ
-	XeO1M2psiuxk4FBAORH7bn82jzCO+za+rnAs=
-X-Google-Smtp-Source: AGHT+IFGhGWkz7og2AY4zDC9aAdvurcqZu/CuMr/x0iYxvBURSpPHz3XYxYCZb56UM2miT0Tjr+Ibwv/Id06JuI4Ftg=
-X-Received: by 2002:a0d:c9c6:0:b0:627:de5d:cf36 with SMTP id
- 00721157ae682-689645923ebmr173542237b3.39.1723024813745; Wed, 07 Aug 2024
- 03:00:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723025501; x=1723630301;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s0dwJOC2ZWNngEJesupegftfLNs6Uf6v6IZl3J0jAqg=;
+        b=D/nr/qFztdkzI0EJV9vGvudUR0mkaimthvqbA5VOIW0WpfWhMYSxgCPuYh/noVSLmB
+         7b484EauiJtxAzuoL3B7PpC+3yaZK6//Pz6OR3q7BtLOCjJPh2pzkbF+enn/y3nJcyOM
+         iOBnAxHt6QX1WItc/2CKszg7zA+FsHAV0NQ3sjO+XeiMDcNSAI8I87IA5MFz3yIOSHZ8
+         oXaR2xcOpf+GWxwW6HP6LsLZTL7cOwgTfVqc7HPygUtkAaJ/Aq4bUeprzjIfgYErHl/F
+         RldaDGN27SF32h+L51NRxA/Hfki4IbKAvtOh96wy/bpKTAKS/9pvQmINYG4basX8d5It
+         VgfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjc4lfjsiu24VI5n4ov9AeXWbfzjAe039fp5AMgCthOpOOc1knCUyWypbPF6F5Pbbzo4Qb6N0N3JsbSdCd+8clTli60+AkxkANpKaJ
+X-Gm-Message-State: AOJu0Yw9Rq0gK/kOEMSXivLOOWnbF1ZWGfyRvVcE5LUQWKkvu0rREfSY
+	R7Uke41dAcL/i5cXtUYhKjPZfnfvYFrgJiOw7773R0mwRWNZrM3FnMWXm4rJQBE=
+X-Google-Smtp-Source: AGHT+IEGUFhUEV3Rj5VIDIAC+w7BtmGng4ZDZ+GC+6FOtAVZQXJdnt7pCzK280DlwW6gCAZDp8cXKQ==
+X-Received: by 2002:a17:90a:8a12:b0:2c9:e24d:bbaa with SMTP id 98e67ed59e1d1-2cff9526da4mr18320765a91.27.1723025501174;
+        Wed, 07 Aug 2024 03:11:41 -0700 (PDT)
+Received: from localhost.localdomain ([218.150.196.174])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b3b34c1bsm1141175a91.39.2024.08.07.03.11.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 03:11:40 -0700 (PDT)
+From: Moon Yeounsu <yyyynoom@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Moon Yeounsu <yyyynoom@gmail.com>
+Subject: [PATCH v3] net: ethernet: use ip_hdrlen() instead of bit shift
+Date: Wed,  7 Aug 2024 19:07:21 +0900
+Message-ID: <20240807100721.101498-1-yyyynoom@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Dileep Sankhla <dileepsankhla.ds@gmail.com>
-Date: Wed, 7 Aug 2024 21:04:39 +0530
-Message-ID: <CAHxc4bv79yDMbMo+nUYWK+QwGgoQhRGJTsV_fzqRfrbd4moBbg@mail.gmail.com>
-Subject: new Contributors in the Raam Computer Software System Core are welcome
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Raam Raam sa everyone (greeting with God's name :) ),
+`ip_hdr(skb)->ihl << 2` is the same as `ip_hdrlen(skb)`
+Therefore, we should use a well-defined function not a bit shift
+to find the header length.
 
-I am Dileep Sankhla from Bhilwara, Rajasthan, India. I am a software
-engineer and I've been creating Raam Computer Software System and its
-Core since February. Both the Computer Software System and its Core
-are different from the (Unix) operating system and its kernel.
+It also compresses two lines to a single line.
 
-You can find the project repository at [1].
+Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
+---
+v1: use ip_hdrlen() instead of bit shift
+Reference: https://lore.kernel.org/all/20240802054421.5428-1-yyyynoom@gmail.com/
 
-There are many errors in the drivers that need to be corrected and new
-concepts are needed to be discussed before being implemented. You can
-solve the issue(s) and make Raam Core work on your laptop/desktop PCs.
-It will be the best hack for you and thus your contributions will help
-others too.
+v2: remove unnecessary parentheses
+- Remove extra () [Christophe Jaillet, Simon Horman]
+- Break long lines [Simon Horman]
+Reference: https://lore.kernel.org/all/20240803022949.28229-1-yyyynoom@gmail.com/
 
+v3: create a standalone patch
+- Start with a new thread
+- Include the change logs,
+- Create a standalone patch [Christophe Jaillet]
 
-Regards,
-Dileep
+ drivers/net/ethernet/jme.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-[1]: https://github.com/robstat7/Raam
+diff --git a/drivers/net/ethernet/jme.c b/drivers/net/ethernet/jme.c
+index b06e24562973..d8be0e4dcb07 100644
+--- a/drivers/net/ethernet/jme.c
++++ b/drivers/net/ethernet/jme.c
+@@ -946,15 +946,13 @@ jme_udpsum(struct sk_buff *skb)
+ 	if (skb->protocol != htons(ETH_P_IP))
+ 		return csum;
+ 	skb_set_network_header(skb, ETH_HLEN);
+-	if ((ip_hdr(skb)->protocol != IPPROTO_UDP) ||
+-	    (skb->len < (ETH_HLEN +
+-			(ip_hdr(skb)->ihl << 2) +
+-			sizeof(struct udphdr)))) {
++
++	if (ip_hdr(skb)->protocol != IPPROTO_UDP ||
++	    skb->len < (ETH_HLEN + ip_hdrlen(skb) + sizeof(struct udphdr))) {
+ 		skb_reset_network_header(skb);
+ 		return csum;
+ 	}
+-	skb_set_transport_header(skb,
+-			ETH_HLEN + (ip_hdr(skb)->ihl << 2));
++	skb_set_transport_header(skb, ETH_HLEN + ip_hdrlen(skb));
+ 	csum = udp_hdr(skb)->check;
+ 	skb_reset_transport_header(skb);
+ 	skb_reset_network_header(skb);
+-- 
+2.45.2
+
 
