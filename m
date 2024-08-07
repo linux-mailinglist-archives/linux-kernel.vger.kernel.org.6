@@ -1,90 +1,95 @@
-Return-Path: <linux-kernel+bounces-277807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33E294A6BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:14:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E2C694A6C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C95C282705
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:14:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86D46B24660
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9171E2887;
-	Wed,  7 Aug 2024 11:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236211E3CDC;
+	Wed,  7 Aug 2024 11:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cmkx/22q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pNJQ5F0u"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D314F1B8EAA;
-	Wed,  7 Aug 2024 11:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD3719006D;
+	Wed,  7 Aug 2024 11:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723029257; cv=none; b=MN38R2yItb7lKW+jLqyGaAMKIYZ7uarVEAqA4HBTPqybnYcA7n+VoKWnHMZNmK8Fu3xpPnyxZutpagEVOQB3GkLbfuPyCGRkDeyKBKN1f3fVH9NwyvyfA6s9W0b+tl8BARlA9nlz/44rGJcEhgL1Ptsd6VY+F27M23nip7QMyX8=
+	t=1723029336; cv=none; b=eS4CEClIxHLTy6NGMVeprjsC6sZSvfUOS65qaNKz65/iv0laa8FYU70chlto+24H7F1T2pTajxyOZunEL9fyvfhMgQJLFIkY52P5aRxLJF3TnTaaoYwlX2USncVHKaWxCgXdjcJ/bVep8vpEdpPUy/N/9kxPSriuCx8Rll9CqnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723029257; c=relaxed/simple;
-	bh=zqpqUonVOPKz1vwkSnNtCE4Cyy7xTfZIEwVrxcqnQuU=;
+	s=arc-20240116; t=1723029336; c=relaxed/simple;
+	bh=/KDjT6PpO7fvydgqtsOxXwtX3zLju3Z5GPtIrzYUU8g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GK2DpKNeeTdt/fE+heHAqMkO2vOeeFtkFuMZUF1+UaB2qkF/U30iM2TMg4LyNJbWsFBYGCrHHnXvtl/N9JLEtsTujbQRU07oddno2bpcncyvx/ngNpwJo4AHPY1gKShXfpYWRMaGyePSmrUcvVlpRaKSN1eDhmNERsic8r9Hx88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cmkx/22q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3710C32782;
-	Wed,  7 Aug 2024 11:14:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723029256;
-	bh=zqpqUonVOPKz1vwkSnNtCE4Cyy7xTfZIEwVrxcqnQuU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cmkx/22q6Yu5iUxqv41dONrmrFFRKEthaWSHnzAx+uJpTFOfy4RBBa3+PwSDXCns6
-	 fTFqgd0F16MHA8hEvMjH//BFp1Rq881m2N0pHW+WiyCFPkPFRq/J63L1YKMUN6uHe3
-	 OQ5XknIG78HfjJifkI/U32Cl7FLeFNkxd+WWfBPE=
-Date: Wed, 7 Aug 2024 13:14:13 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andreas Koensgen <ajk@comnets.uni-bremen.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Douglas Anderson <dianders@chromium.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jeremy Kerr <jk@codeconstruct.com.au>, linux-hams@vger.kernel.org,
-	Matt Johnston <matt@codeconstruct.com.au>, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>,
-	Peter Hurley <peter@hurleysoftware.com>
-Subject: Re: [PATCH 00/13] tty: random fixes and cleanups
-Message-ID: <2024080750-percent-tuesday-9dff@gregkh>
-References: <20240805102046.307511-1-jirislaby@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sTuI73y15QM1lHgaRcWMkvCjoB4LBJxxTCIIJFKBLm2gjbIspwlVapMzhODCNKeOTVPwTfFGZaG/ogRg9P2MViyYcxWeO7RVNgcBjae0fBwT+yCkJc2o2fFda86Ft7NAyZqaj1PoRlCgi6fiPa9qlIP6lWD/hY3Evnf/KA6AB+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pNJQ5F0u; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=RcsOscq7FlE9juKVWICtqz4JEEQHCeU2rLy1+T4JN7s=; b=pNJQ5F0usSxJDE6W+x8sfaYZNh
+	Lprmo2uy0aughBESa3X9d/urQjiNrfv0mIFDUk5InGZmdBtxk7zxZ/x6B9tbooDkqwDRY9HHIELi6
+	OuNNDCje7t4Sn74H2QXU1XTPQWlhUDf9ndZSSAU7ODi39ceAeRbj4vJwx4zj/mT9wVjnqv4JMg19r
+	fa/r8OYcyby75ggJxf5otJbFHwUPhGu/tl3QAITcqA6HQ+5NimeMUT+s3bapEm27yUIpbq+GPATvi
+	MQx1f5BHEevJyKzxiVDIEB66pTanKIHipzthR5DDl2Ii1U6uj6IFkCCt0K/V9RigSfhn8TfPSqXPq
+	n057ylvA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sbedU-00000006byi-3r3f;
+	Wed, 07 Aug 2024 11:15:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2FB7B30033D; Wed,  7 Aug 2024 13:15:20 +0200 (CEST)
+Date: Wed, 7 Aug 2024 13:15:20 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: James Clark <james.clark@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Al Grant <al.grant@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] drivers/perf: arm_spe: Use perf_allow_kernel() for
+ permissions
+Message-ID: <20240807111520.GC37996@noisy.programming.kicks-ass.net>
+References: <20240807105441.2156738-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240805102046.307511-1-jirislaby@kernel.org>
+In-Reply-To: <20240807105441.2156738-1-james.clark@linaro.org>
 
-On Mon, Aug 05, 2024 at 12:20:33PM +0200, Jiri Slaby (SUSE) wrote:
-> Hi,
-> 
-> this is a series of locally accumulated patches over past months.
-> 
-> The series:
-> * makes mctp and 6pack use u8s,
-> * cleans up 6pack a bit,
-> * fixes two coverity reports,
-> * uses guard() to make some of the tty function easier to follow.
+On Wed, Aug 07, 2024 at 11:54:41AM +0100, James Clark wrote:
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index aa3450bdc227..4a69583e329a 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -417,6 +417,7 @@ static struct kmem_cache *perf_event_cache;
+>   *   2 - disallow kernel profiling for unpriv
+>   */
+>  int sysctl_perf_event_paranoid __read_mostly = 2;
+> +EXPORT_SYMBOL_GPL(sysctl_perf_event_paranoid);
 
-This series breaks the build for me:
+I'm never a fan of exporting variables. Perhaps create a helper function
+that returns the value and use that where required?
 
-drivers/tty/serial/serial_core.c: In function ‘uart_suspend_port’:
-drivers/tty/serial/serial_core.c:2400:17: error: label ‘unlock’ used but not defined
- 2400 |                 goto unlock;
-      |                 ^~~~
-make[5]: *** [scripts/Makefile.build:244: drivers/tty/serial/serial_core.o] Error 1
-make[5]: *** Waiting for unfinished jobs....
-
-
+That avoids modules getting the idea it would be okay to change this
+valie themselves.
 
