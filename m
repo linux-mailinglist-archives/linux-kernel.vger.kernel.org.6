@@ -1,88 +1,82 @@
-Return-Path: <linux-kernel+bounces-278286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711FD94AE44
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:39:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A7D94AE49
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9951E1C216CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:39:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D87D22831B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F2C13774B;
-	Wed,  7 Aug 2024 16:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B270137776;
+	Wed,  7 Aug 2024 16:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LiUE3Qso"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FZ4aW0fT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32152F3E
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01F379DC7;
+	Wed,  7 Aug 2024 16:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723048780; cv=none; b=LOssPEHBNyLAkf2KKTwUdkA6KTFYYZ5g21XjS72TvGwSTaCLY0SCvjXIgmzc7tkT8uo/iXJdjHFvIFzOGR23rRvLIRA/ETj8z9VA0J7M13vn5/AwrRnmjF+YRgXX3LoejLSYtIE/IT7/rVyIyUOLW6HfjDaSW5/aVLpXx5jW4F4=
+	t=1723048869; cv=none; b=u1kJQgeyaA2jZ48orHDvHkEhwm3+ZCWwUu/w2ERL2ffBaGZ1PNVJeYYnegWQ6CXv9sWHrgCy5RBaEBq7ClK4qbSUZilJ1b8Fxu+ABEg5JUsU2r/C/eaJuv5XGajlVo3DHuc7/Qyu8AfaHktPOn5tbx+YNE7Llm0bMjFgFM65FnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723048780; c=relaxed/simple;
-	bh=7jUDM+xLtypuR3LWObie88czTNQttanVUl62e9mzloI=;
+	s=arc-20240116; t=1723048869; c=relaxed/simple;
+	bh=4h5RvzUHfWFOedWWLMmqE+khKK848X9NVyUEjTPnYMo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jE5nzfE/qXfVrGIg0XGRe9jugU5MLCgm/hG/INoFmNTZieS1GQKBmoxdqRvI431oCfzcPaLMKgYo/wMtAZHd8t34tDluK3kw0z47OCgf930fTkVRAvELQDz0LedsK39V7GjFgi3mmJsED4T1rfMzmEVhh3DANMAv5a7Iod6Vn1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LiUE3Qso; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc65329979so1253055ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 09:39:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723048778; x=1723653578; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SCzZ2NG+7iTC4t2x8SaeAedg7WRJblJNbmhLrG4zTO0=;
-        b=LiUE3Qso1wSsbPPgqCYJLaXBLO/9ag3GowUWNoiHVaMYXKQ9NSajXUZUA6Hbdkygvv
-         xnI6DI+I4F+34ZpPPe4q1jTuNFpxRIKrwJS56oCL1oifldrnvAKDUlF+b98l4gsATU+Q
-         3NhyWkLXdvfbKMsQFt0IbRE8xaqhzy2k7LSUKq/6XJO0wNO3g6Div/4IZZtrGEycNXzP
-         ginWNwMBoip8G26wm3QH2VB4kNbJao6aPsT0yirmOsfjNfMSJVp0MqoQ0v9Daq9xwds/
-         nf/dd4PVvmfyl0wdgTlcmVQizoZM5EjvabqCxuCYoP1m6zgdrlKMPhiVw5828+WTUlwI
-         khYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723048778; x=1723653578;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SCzZ2NG+7iTC4t2x8SaeAedg7WRJblJNbmhLrG4zTO0=;
-        b=tLqMIRZxDPQyT3c2Zr3mBtBfDq25W2ncJSl+pj09/Icqb1koxKtkFmT9xK/vQ1cpcW
-         q92d8qS7JV3w3oFGtAiEpf7NwcKKiMTNOmRmLyZpfQqI1lY1/BzcrKcEVmk5TgHGA9ke
-         02VMHBmvXqcfezDigMDjCZWN6wzqYFRvnA5gw00+5gjaaahRREwLBRtgGpFBtOpbWjf3
-         YDa7eVNjEQFUCHNOsQLrFg1WeTy22Q9goGzqnst6IHDf79X5HOK672occFD+/LLAwq4k
-         1MCCxj1oGHwAJK2EoUdGGMX06FvyQKCKLlbzfqWWEEgbhmM3eeISx2Fbq5YPXttzHl9n
-         alRw==
-X-Gm-Message-State: AOJu0YzjWniWvyV5pq8czMkblTwLSowZcB9YiN9IbSVQ2zkXgzCM73yX
-	Vl4kGaakmx6VL8sR+00f/19ANeeoUNvWEMKEI50wf0EZIe4pjvcQ
-X-Google-Smtp-Source: AGHT+IEfg0P/zq5fbIeplhyr9GmYwmn9uUCIRSBW2duRXm7pFZpUMxC4ayytohYsd7+LmJC7gsIpnQ==
-X-Received: by 2002:a17:902:ecc5:b0:1fd:8f66:b070 with SMTP id d9443c01a7336-1ff57464d40mr264528465ad.57.1723048777926;
-        Wed, 07 Aug 2024 09:39:37 -0700 (PDT)
-Received: from localhost ([216.228.127.130])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5905e58fsm108734075ad.177.2024.08.07.09.39.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 09:39:37 -0700 (PDT)
-Date: Wed, 7 Aug 2024 09:39:34 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Leonardo Bras <leobras@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
-Subject: Re: [PATCH 2/2] sched/topology: optimize topology_span_sane()
-Message-ID: <ZrOjRqdita_dOjk9@yury-ThinkPad>
-References: <20240802175750.1152788-1-yury.norov@gmail.com>
- <20240802175750.1152788-3-yury.norov@gmail.com>
- <xhsmhy159mz0g.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <ZrJk00cmVaUIAr4G@yury-ThinkPad>
- <xhsmhv80cmoc1.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXNkfGsM1eY9rrKPrlInTsdrzhcyf1BPiJ4WUEpdEcCt1g+guPGj7f3TWMHLgNlAOgzMuyLdgpXFg7mazcsx8ZqHE8kwUf4D7CgJaSUgnRxf14t+xOeBhAv8hp943uYjBX3A+It8BcCCiDruUrkIPApL0TaueAxyaUT0xSwIlzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FZ4aW0fT; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723048868; x=1754584868;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4h5RvzUHfWFOedWWLMmqE+khKK848X9NVyUEjTPnYMo=;
+  b=FZ4aW0fTVqZn3KANUghB1WV+jGFOC3CodFczOHdapt6+UrRr6O+eK3fv
+   RRxukjaqaS5b8+AEX9EVCLvBYwahFJQCAVy6GCRgtNAvVanCx55rI2jDe
+   2PjklpOnzfA0wMGo858Cc2k9vjkvFjFZUcPyldxyOKRtJSs3KGpmzjoRI
+   aj+wQuy7UWfMuYtI8ep0oQBhFn5gj1KDUb/7tOkCZ/YxiLEtemrJwZ8jq
+   G4hjcdGX3omM4/EACoMu/iEbXP48q/0e+lhMN6KB84weCFTlq6rznhgLM
+   DcZY3Xzf5Z8jEAJgyuxnSZfW9u97kIZ+uwYdtE/rKasNMIYeOIwuQg1aa
+   Q==;
+X-CSE-ConnectionGUID: +oESe4bnSwq8zWlWtVwMRQ==
+X-CSE-MsgGUID: rLv41HnsSkCAhw9Y3e482Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="32534692"
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="32534692"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 09:41:07 -0700
+X-CSE-ConnectionGUID: oje+9h1LQQ6ES8HD5dwD4g==
+X-CSE-MsgGUID: 8xgeh91mSDq9bHZDnaf5+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="56581731"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 07 Aug 2024 09:41:04 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sbjif-0005Ye-2d;
+	Wed, 07 Aug 2024 16:41:01 +0000
+Date: Thu, 8 Aug 2024 00:40:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Baruch Siach <baruch@tkos.co.il>, Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Baruch Siach <baruch@tkos.co.il>,
+	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>,
+	Ramon Fried <ramon@neureality.ai>,
+	Elad Nachman <enachman@marvell.com>
+Subject: Re: [PATCH v5 1/3] dma: improve DMA zone selection
+Message-ID: <202408080035.rXXbb5Yc-lkp@intel.com>
+References: <5200f289af1a9b80dfd329b6ed3d54e1d4a02876.1722578375.git.baruch@tkos.co.il>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,55 +85,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <xhsmhv80cmoc1.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+In-Reply-To: <5200f289af1a9b80dfd329b6ed3d54e1d4a02876.1722578375.git.baruch@tkos.co.il>
 
-On Wed, Aug 07, 2024 at 03:53:18PM +0200, Valentin Schneider wrote:
-> On 06/08/24 11:00, Yury Norov wrote:
-> > On Tue, Aug 06, 2024 at 05:50:23PM +0200, Valentin Schneider wrote:
-> >> On 02/08/24 10:57, Yury Norov wrote:
-> >> > The function may call cpumask_equal with tl->mask(cpu) == tl->mask(i),
-> >> > even when cpu != i.
-> >>
-> >> For which architecture have you observed this? AFAIA all implementations of
-> >> tl->sched_domain_mask_f are built on a per-CPU cpumask.
-> >
-> > x86_64, qemu emulating 16 CPUs in 4 nodes, Linux 6.10, approximately
-> > defconfig.
-> 
-> For the default_topology:
-> cpu_smt_mask() # SMT
->   (per_cpu(cpu_sibling_map, cpu))
-> 
-> cpu_clustergroup_mask() # CLS
->   per_cpu(cpu_l2c_shared_map, cpu);
-> 
-> cpu_coregroup_mask() # MC
->   per_cpu(cpu_llc_shared_map, cpu);
-> 
-> cpu_cpu_mask() # PKG
->   cpumask_of_node(cpu_to_node(cpu));
-> 
-> Ok so PKG can potentially hit that condition, and so can any
-> sched_domain_mask_f that relies on the node masks...
-> 
-> I'm thinking ideally we should have checks in place to ensure all
-> node_to_cpumask_map[] masks are disjoint, then we could entirely skip the levels
-> that use these masks in topology_span_sane(), but there's unfortunately no
-> nice way to flag them... Also there would cases where there's no real
-> difference between PKG and NODE other than NODE is still based on a per-cpu
-> cpumask and PKG isn't, so I don't see a nicer way to go about this.
-> 
-> Please add something like the following to the changelog, and with that:
-> Reviewed-by: Valentin Schneider <vschneid@redhat.com>
+Hi Baruch,
 
-Sure, will do.
+kernel test robot noticed the following build warnings:
 
-> """
-> Some topology levels (e.g. PKG in default_topology[]) have a
-> sched_domain_mask_f implementation that reuses the same mask for several
-> CPUs (in PKG's case, one mask for all CPUs in the same NUMA node).
-> 
-> For such topology levels, repeating cpumask_equal() checks is wasteful -
-> check that the tl->mask(i) pointers aren't the same first.
-> """
+[auto build test WARNING on 8400291e289ee6b2bf9779ff1c83a291501f017b]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Baruch-Siach/dma-improve-DMA-zone-selection/20240803-074651
+base:   8400291e289ee6b2bf9779ff1c83a291501f017b
+patch link:    https://lore.kernel.org/r/5200f289af1a9b80dfd329b6ed3d54e1d4a02876.1722578375.git.baruch%40tkos.co.il
+patch subject: [PATCH v5 1/3] dma: improve DMA zone selection
+config: csky-randconfig-001-20240807 (https://download.01.org/0day-ci/archive/20240808/202408080035.rXXbb5Yc-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240808/202408080035.rXXbb5Yc-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408080035.rXXbb5Yc-lkp@intel.com/
+
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: vmlinux: section mismatch in reference: dma_direct_optimal_gfp_mask+0x46 (section: .text) -> memblock_end_of_DRAM (section: .init.text)
+>> WARNING: modpost: vmlinux: section mismatch in reference: sg_page.isra.0+0x1c (section: .text) -> memblock_end_of_DRAM (section: .init.text)
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/imx/clk-imxrt1050.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_performance.o
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
