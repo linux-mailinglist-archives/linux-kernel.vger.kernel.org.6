@@ -1,104 +1,117 @@
-Return-Path: <linux-kernel+bounces-277909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F70394A7FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:44:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570F994A809
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DD201F27F87
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:44:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DBD31F28668
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CC21E6741;
-	Wed,  7 Aug 2024 12:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2041E673C;
+	Wed,  7 Aug 2024 12:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="pqYLpOza"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rlUj9Rvo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SD8JApTd"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65FF1E6724;
-	Wed,  7 Aug 2024 12:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C844F1C824B;
+	Wed,  7 Aug 2024 12:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723034633; cv=none; b=adwQI17ne07aXHWOV1izX48FSABKAkJWhQF3A0+ZVw+ehfkJOGhGfm1905geWw9KUm1oRFrvsE3zGxx6n6dHAY/8DSZnMypf8ThkPluV4lCB/W0qBgFRj4p/dnW4mpSQ3P3a3+zTxULyJwDAYNG8E6cIVBlp+nMiGCgODMmtOjo=
+	t=1723034757; cv=none; b=O2nPNAow0SGF3mG+WdGeUpCmzl1DdxoOPU3QzMwKNLLF++AQ2KMytAL+wGTczaz0Lu7XyMnfJMfdbVJpR14uQLibvbTrjAAz4Yuo2szXWs513vopGASjzCVLmh7YSUw0p0QN7zkSAtJA83mMVzGP9x3Hs6Yo56YpzOtx/jDBcJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723034633; c=relaxed/simple;
-	bh=NjfGtYZkMXlH9Gz7R4iidvpDE+z4KApgy4w5b85nfM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aa2OeCNthsJoDy0EcppU+sEhujitJN0SYvKNZWIIzktZm9/pCcGJUTk0l2CW9YrendIC/YsOwRhIeHlEqkgHQoTpgajKL99g3RZOrdI9agYyyoAmd4USNjqA9Ui5X2XIl7NXeJ4CPk7pvfyoEZ2Hm+KWC2pbZ9NvZ7xgoNYzkMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=pqYLpOza; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=oK96ZzN0iZ1z8fgqxqt+xECg0zUxgIwr02cf2v1SLS0=; b=pqYLpOzasO/KKSbPIB0od2vqI2
-	mxW/G+v3mMS4FNnAODKc0oboeqLY3R23x16M3hVcIXlwtG2ljYCZNJ4sf8PRwSJDYIc+AiMApydat
-	2HVSGK+IpdXWWHxLTU7xN2okELQCn4wRA9nCu5pEprjFgc+YJV8Pan2ANATcSbsgY9K01BXwYNwSA
-	WZWMbO65W9gd6bE2rCVgg0eNkcjeDz6LTYLuaBsWzjDjzPvWVkxr8T96mJv03lIlKgfPseKkzcHvb
-	TKekNva3QByh7GHxJHLdy+Zt4PjXE71jElAVeiip95Bt3b3Q8+Lb9lqr8BsF8+9tpwsg8LS45ajXV
-	Op6L3bAQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sbg16-00000002LEo-3bQY;
-	Wed, 07 Aug 2024 12:43:48 +0000
-Date: Wed, 7 Aug 2024 13:43:48 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
-Message-ID: <20240807124348.GY5334@ZenIV>
-References: <20240807033820.GS5334@ZenIV>
- <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
- <20240807062300.GU5334@ZenIV>
- <20240807063350.GV5334@ZenIV>
- <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
- <20240807070552.GW5334@ZenIV>
- <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
- <20240807075218.GX5334@ZenIV>
- <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
- <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
+	s=arc-20240116; t=1723034757; c=relaxed/simple;
+	bh=K2pE7XVDCV05hANZTsq6bdehkgcW6vUq7VIAzyBkfyc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KJr5NTxKp0hOY6LvJvAR/6YRpBdlmiv1iRVqMbWn/N/5vRsGqXfONdbhe/tdh5zHxF/WC9KDAR/PYmxztOMz8/dc537Asu23WvQYUVweLKEXPi9sYD9O2FkyktZ9FC0JioHSZPLoyuisss8ZNa5q9XayKtEOV9WLJ2T6SW4Dqf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rlUj9Rvo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SD8JApTd; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723034753;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K2pE7XVDCV05hANZTsq6bdehkgcW6vUq7VIAzyBkfyc=;
+	b=rlUj9Rvo6RtJwB53IMU6b9rR6Po0XXtDwrvyvrnpOReHmjsrx48Tbvqnbuezdc/sjwBa10
+	HgFp8kwPvHYhsNEKdlrL5MZiwpRFJbeLCkz/+HOoG57SsuLkt9SQ4inLAGvpwHFXghmx3u
+	36aulfnxiC+KTxn384zE4L8mlZsXqRMfWIroGZAlZuDfDIm1NrkK6REAtqPAcc6x3QHKg0
+	Z5cTXEbvuASRN/94I0gRUKTkynLJQBpbpTjBA/rjBym3MywCHzdo9SCjXMJcbHnVThG1NN
+	jMeYcm8hTUuc5AuBOWdcZKdkgUfEtAeZf6yd6hnRAlSZrCahsi830e2FdWDz2w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723034753;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K2pE7XVDCV05hANZTsq6bdehkgcW6vUq7VIAzyBkfyc=;
+	b=SD8JApTdTudxK9Gag8bnKB3gh2vZiV4+Jll0esZhKRO/lWSvHSsggJnvA6YMQhMXHvVwi8
+	S7svFMX0IJGxj7Dg==
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Linus Torvalds <torvalds@linux-foundation.org>, Guenter
+ Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>, Helge
+ Deller <deller@gmx.de>, linux-parisc@vger.kernel.org
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+In-Reply-To: <c54ab27ff0f0bb3e9e681eec9a62549e5e245a6b.camel@HansenPartnership.com>
+References: <20240731095022.970699670@linuxfoundation.org>
+ <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
+ <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
+ <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <87le194kuq.ffs@tglx>
+ <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz> <87frrh44mf.ffs@tglx>
+ <c54ab27ff0f0bb3e9e681eec9a62549e5e245a6b.camel@HansenPartnership.com>
+Date: Wed, 07 Aug 2024 14:45:53 +0200
+Message-ID: <87cymk4i2m.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 
-On Wed, Aug 07, 2024 at 11:50:50AM +0200, Mateusz Guzik wrote:
-
-> tripping ip:
-> vfs_tmpfile+0x162/0x230:
-> fsnotify_parent at include/linux/fsnotify.h:81
-> (inlined by) fsnotify_file at include/linux/fsnotify.h:131
-> (inlined by) fsnotify_open at include/linux/fsnotify.h:401
-> (inlined by) vfs_tmpfile at fs/namei.c:3781
-
-Try this for incremental; missed the fact that finish_open() is
-used by ->tmpfile() instances, not just ->atomic_open().
-
-Al, crawling back to sleep...
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 95345a5beb3a..0536907e8e79 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3776,7 +3776,10 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
- 	file->f_path.dentry = child;
- 	mode = vfs_prepare_mode(idmap, dir, mode, mode, mode);
- 	error = dir->i_op->tmpfile(idmap, dir, file, mode);
--	dput(child);
-+	if (file->f_mode & FMODE_OPENED)
-+		mntget(parentpath->mnt);
-+	else
-+		dput(child);
- 	if (file->f_mode & FMODE_OPENED)
- 		fsnotify_open(file);
- 	if (error)
+T24gVHVlLCBBdWcgMDYgMjAyNCBhdCAyMDo0OSwgSmFtZXMgQm90dG9tbGV5IHdyb3RlOg0KPiBP
+biBXZWQsIDIwMjQtMDgtMDcgYXQgMDE6MjQgKzAyMDAsIFRob21hcyBHbGVpeG5lciB3cm90ZToN
+Cj4+IMKgc3RhdGljIGludCBjaGVja19zbGFiKHN0cnVjdCBrbWVtX2NhY2hlICpzLCBzdHJ1Y3Qg
+c2xhYiAqc2xhYikNCj4+IMKgew0KPj4gwqDCoMKgwqDCoMKgwqDCoGludCBtYXhvYmo7DQo+PiBA
+QCAtMTM4Niw4ICsxMzg4LDEwIEBAIHN0YXRpYyBpbnQgY2hlY2tfc2xhYihzdHJ1Y3Qga21lbV9j
+YWNoZQ0KPj4gwqANCj4+IMKgwqDCoMKgwqDCoMKgwqBtYXhvYmogPSBvcmRlcl9vYmplY3RzKHNs
+YWJfb3JkZXIoc2xhYiksIHMtPnNpemUpOw0KPj4gwqDCoMKgwqDCoMKgwqDCoGlmIChzbGFiLT5v
+YmplY3RzID4gbWF4b2JqKSB7DQo+PiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc2xh
+Yl9lcnIocywgc2xhYiwgIm9iamVjdHMgJXUgPiBtYXggJXUiLA0KPj4gLcKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBzbGFiLT5vYmplY3RzLCBtYXhvYmopOw0K
+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHRlc3RtZSgpOw0KPj4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoHNsYWJfZXJyKHMsIHNsYWIsICJvYmplY3RzICV1ID4gbWF4
+ICV1IHNpemUgJXUgc29yZGVyDQo+PiAldSAldSIsDQo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzbGFiLT5vYmplY3RzLCBtYXhvYmosIHMtPnNpemUs
+DQo+PiBzbGFiX29yZGVyKHNsYWIpLA0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgb3JkZXJfb2JqZWN0cyhzbGFiX29yZGVyKHNsYWIpLCBzLT5zaXpl
+KSk7DQo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAwOw0KPj4gwqDC
+oMKgwqDCoMKgwqDCoH0NCj4+IMKgwqDCoMKgwqDCoMKgwqBpZiAoc2xhYi0+aW51c2UgPiBzbGFi
+LT5vYmplY3RzKSB7DQo+PiANCj4+IEkgZG9uJ3Qga25vdyBhbmQgSSBkb24ndCB3YW50IHRvIGtu
+b3cgVEJILi4uDQo+DQo+IE9LLCBzbyB5b3UncmUgdGVsbGluZyB1cyB3ZSBoYXZlIGEgcHJvYmxl
+bSB3aXRoIHNsYWJfb3JkZXIgb24gcGFyaXNjDQo+IC4uLiB0aGF0J3MgZm9saW9fb3JkZXIsIHNv
+IGl0IHNtZWxscyBsaWtlIGEgcGFyaXNjIGJ1ZyB3aXRoDQo+IGZvbGlvX3Rlc3RfbGFyZ2U/ICBV
+bmZvcnR1bnRlbHkgSSdtIGEgYml0IHBpc3NlZCBpbiBhbiBhaXJwb3J0IGxvdW5nZQ0KPiBvbiBt
+eSB3YXkgdG8gdGhlIFVLLCBzbyBJJ3ZlIGxvc3QgYWNjZXNzIHRvIG15IHBhIHRlc3QgcmlnIGFu
+ZCBjYW4ndA0KPiB0ZXN0IGZ1cnRoZXIgZm9yIGEgd2hpbGUuDQoNClRoZSBwb2ludCBpcyB0aGF0
+IHRoZXJlIGFyZSB0d28gaW52b2NhdGlvbnMgZm9yIG9yZGVyX29iamVjdHMoLi4uKSBpbg0KdGhh
+dCBjb2RlLg0KDQoJbWF4b2JqID0gb3JkZXJfb2JqZWN0cyhzbGFiX29yZGVyKHNsYWIpLCBzLT5z
+aXplKTsNCg0KYW5kIHRoZSBleHRyYSBvbmUgaW4gdGhlIHNsYWJfZXJyKCkgb3V0cHV0Og0KDQog
+ICAgICAgIHNsYWJfZXJyKHMsIHNsYWIsICJvYmplY3RzICV1ID4gbWF4ICV1IHNpemUgJXUgc29y
+ZGVyICV1ICV1IiwNCgkJIHNsYWItPm9iamVjdHMsIG1heG9iaiwgcy0+c2l6ZSxzbGFiX29yZGVy
+KHNsYWIpLA0KICAgICAgICAgICAgICAgICBvcmRlcl9vYmplY3RzKHNsYWJfb3JkZXIoc2xhYiks
+IHMtPnNpemUpKTsNCg0KPj4gW8KgwqDCoCAwLjAwMDAwMF0gQlVHIGttZW1fY2FjaGVfbm9kZSAo
+Tm90IHRhaW50ZWQpOiBvYmplY3RzIDIxID4gbWF4IDE2DQo+PiBzaXplIDE5MiBzb3JkZXIgMCAy
+MQ0KDQpTbyBtYXhvYmogPSAxNiBhbmQgdGhlIHNlY29uZCBpbnZvY2F0aW9uIGNvcnJlY3RseSBy
+ZXR1cm5zIDIxLCBpZiBhbmQNCm9ubHkgaWYgdGhlICQkZGl2b0kgcGxhY2VtZW50IGlzIGluIHRo
+YXQgd2VpcmQgcmFuZ2UuDQoNCldoZW4gSSBtb3ZlIGl0IG91dCBvZiB0aGF0IHJhbmdlIHRoZW4g
+Ym90aCByZXR1cm4gMjEgYXMgZXhwZWN0ZWQuDQoNClRoYW5rcywNCg0KICAgICAgICB0Z2x4DQo=
 
