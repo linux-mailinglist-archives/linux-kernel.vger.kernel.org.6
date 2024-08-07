@@ -1,143 +1,180 @@
-Return-Path: <linux-kernel+bounces-277792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 745AB94A68F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:04:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E0A94A694
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F60F1F22145
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:04:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 050FF1F21DDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D891E2133;
-	Wed,  7 Aug 2024 11:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D08B1E2132;
+	Wed,  7 Aug 2024 11:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z6xVnjFL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mD4IY8MA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5130D1C9DC9;
-	Wed,  7 Aug 2024 11:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E31F1C9DC9;
+	Wed,  7 Aug 2024 11:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723028658; cv=none; b=PvoTgYVFtbSshjKKlPjbHEwngCo3aMrFL1ApBSfztJJOuf36IqQTrPiSX0JqvcLEqXLreVI94ln3BNqBfG9itOWlYQ3+3qO4Dilhq8MpKxUWYPGDyE14lKyUGwqCoz8Az87/B2P6s20rVVY7uJZtyqQX9PzNX+zXRlJBvndoObc=
+	t=1723028672; cv=none; b=aOIdiWstDOHnmUTo66hUtpqSbiKxFvx4VWxJqKXrOWTCOBHUdmj2CkQEYTTLbaVNAEuq5gLOwQm3OpV/pwT6IWRfNDHut5zg3owOKe7K+ADHcLr6Vs9nCWHd7oX8zEZAeSzB88CclD4m47LDM8DRO9x5dqFkng+lwIhiFjyAgQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723028658; c=relaxed/simple;
-	bh=tZE9A7D7Qc4ABjafw02Q7U4Ejv1hoeHBVy7EEIcPMgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iRq2Jz+A6reXvi9RLz2nBdnar0ncR+n7PFNjEeH70g9K8MSSPXwYomI6lqjUL/o5LP5ztI/yr1wneni3I11maBO/B7h3HoshE8VA+mMrySQkAQgqhNcggaZTYdqyJ8An+vPmx+ikDmMLyOuhEFNJSWftjNO3gpOoO7wtFE0PUeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z6xVnjFL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47789J2J019008;
-	Wed, 7 Aug 2024 11:04:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5M2BR5QCUJ11BZbRjroJPti0NNlzXAvb/0+of+zkg58=; b=Z6xVnjFLZQK8AbyJ
-	nc9iA87fgjkxxfAzsr2BqNYQmNogyFPW78h2mXL6i5tLuIIkOY4u+UdvEJ/ziG+B
-	hqD30k2jF4Prh5mX7NZdYY0rSP3H4UuH0UpwpSBH0+n5fAUp/yKhKFMfjuE9YMZB
-	jfmmbzWUILJ3Cq4MiiAUPJ5F9qT8c30YeFyqT+Q1NZzT6SQTvZMqIUD4ZDEkSz7d
-	kn7rBZY2RxV682fBAk/1Tu2AL/hoFdjT+3GfvYXx6BGQ7HQ7veoloQrzbpUjrIBX
-	xoqPZKklgVZ+wSFuUZQP9v3AuakKxQs+wwVkLOawxf0zTCGjyxhbPuH2yk9YF5ys
-	sEy70A==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40u4cpne4h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 Aug 2024 11:04:13 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 477B4CF8016792
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 7 Aug 2024 11:04:12 GMT
-Received: from [10.233.17.145] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
- 04:04:07 -0700
-Message-ID: <ace5b3e1-f4a2-4c04-821a-e797d0f55cae@quicinc.com>
-Date: Wed, 7 Aug 2024 19:04:04 +0800
+	s=arc-20240116; t=1723028672; c=relaxed/simple;
+	bh=WryCtfDTwpLJfLb+h3LF6Ld+vO8Q+1flRpuRIuiXoQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a8VhpG6fMzjmWKth3+Ug8/ujzrMPYFzpiWV69F5HA4ElV7/bkoGbMT78bnFxx3q4szw4rcpcbv8nOiubX227lq/Dmey8Y0AZyfHmchVVKlVnsoJfG2uM0F6L7RP9mA5lc96Oauf8MLg7phgNPsRYqdk856FPhc0hUPUkyAzRN4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mD4IY8MA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CF93C32782;
+	Wed,  7 Aug 2024 11:04:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723028671;
+	bh=WryCtfDTwpLJfLb+h3LF6Ld+vO8Q+1flRpuRIuiXoQ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mD4IY8MA6rHtHW+8SFkOiPXEVM1OG+kbWiATP4mCHzpSliZVHWFUHkwf2C4FP1e/c
+	 JWNqR5yBj28gofIcY9qiRpWGc2Ju4g5fxjCu+M1agwK/FvJw8aa/A6IAlmA1x9ZGik
+	 0vHZFUuhtW7pClhzlx+gUGhjxnEtqrg8XDUQPyjA=
+Date: Wed, 7 Aug 2024 13:04:29 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: da.gomez@samsung.com
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	William Hubbs <w.d.hubbs@gmail.com>,
+	Chris Brannon <chris@the-brannons.com>,
+	Kirk Reiser <kirk@reisers.ca>,
+	Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org,
+	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org,
+	llvm@lists.linux.dev, Finn Behrens <me@kloenk.dev>,
+	"Daniel Gomez (Samsung)" <d+samsung@kruces.com>,
+	gost.dev@samsung.com
+Subject: Re: [PATCH 08/12] include: add elf.h support
+Message-ID: <2024080717-cross-retiree-862e@gregkh>
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
+ <20240807-macos-build-support-v1-8-4cd1ded85694@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: qcom: sa8775p-ride: Add QCS9100
- compatible
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Tengfei Fan
-	<quic_tengfan@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad
- Dybcio" <konrad.dybcio@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240806-add_qcs9100_soc_id-v1-0-04d14081f304@quicinc.com>
- <20240806-add_qcs9100_soc_id-v1-4-04d14081f304@quicinc.com>
- <90eae361-7d5d-440f-a85d-dfd81b384fe7@kernel.org>
- <4a350e94-3c95-48e1-9ea8-ced483c1aa45@quicinc.com>
- <14ec06bd-0c27-4930-8bce-d3f5b68067ed@kernel.org>
-From: Tingwei Zhang <quic_tingweiz@quicinc.com>
-In-Reply-To: <14ec06bd-0c27-4930-8bce-d3f5b68067ed@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Vh9F86zSzFUruli9oGhjnINPSZ6NccLQ
-X-Proofpoint-GUID: Vh9F86zSzFUruli9oGhjnINPSZ6NccLQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-07_08,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 phishscore=0 malwarescore=0 bulkscore=0 spamscore=0
- lowpriorityscore=0 mlxscore=0 clxscore=1011 adultscore=0
- priorityscore=1501 mlxlogscore=619 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408070077
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807-macos-build-support-v1-8-4cd1ded85694@samsung.com>
 
-On 8/7/2024 5:35 PM, Krzysztof Kozlowski wrote:
-> On 07/08/2024 11:17, Tengfei Fan wrote:
->>
->>
->> On 8/7/2024 3:28 PM, Krzysztof Kozlowski wrote:
->>> On 06/08/2024 06:19, Tengfei Fan wrote:
->>>> Add QCS9100 compatible in sa8775p ride and sa8775p ride r3 board DTS.
->>>> QCS9100 references SA8775p, they share the same SoC DTSI and board DTS.
->>>>
->>>
->>> I don't understand this. You claim here that QCS9100 references SA8775p
->>> but your diff says other way: SA8775p references QCS9100.
->>>
->>> Sorry, that's confusing.
->>>
->>> Best regards,
->>> Krzysztof
->>>
->>
->> I will update the compatible as follows to indicate that QCS9100
->> references SA8775p.
->>
->> compatible = "qcom,sa8775p-ride", "qcom,qcs9100", "qcom,sa8775p";
+On Wed, Aug 07, 2024 at 01:09:22AM +0200, Daniel Gomez via B4 Relay wrote:
+> From: Daniel Gomez <da.gomez@samsung.com>
 > 
-> Is this still correct, though? sa8775p won't come with qcs9100 SoC.
-We have a new board. Hardware is same as sa877p-ride except sa8775p is 
-replaced with qcs9100. We add qcs9100 SoC compatible to sa8775p-ride 
-device tree to indicate this board can support both sa8775p SoC and 
-qcs9100 SoC.
+> Add a copy of elf/elf.h header from the GNU C Library (glibc), version
+> glibc-2.40 into include/elf. Update Makefiles where elf.h header is used
+> to ensure the compiler can find all necessary headers, for macOS host
+> where these headers are not provided by the system.
 > 
-> Best regards,
-> Krzysztof
+> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> ---
+>  arch/arm64/kernel/pi/Makefile     |    1 +
+>  arch/arm64/kernel/vdso32/Makefile |    1 +
+>  arch/arm64/kvm/hyp/nvhe/Makefile  |    2 +-
+>  include/elf/elf.h                 | 4491 +++++++++++++++++++++++++++++++++++++
+>  scripts/Makefile                  |    3 +-
+>  scripts/mod/Makefile              |    6 +
+>  6 files changed, 4502 insertions(+), 2 deletions(-)
 > 
+> diff --git a/arch/arm64/kernel/pi/Makefile b/arch/arm64/kernel/pi/Makefile
+> index 4d11a8c29181..eb782aaa6585 100644
+> --- a/arch/arm64/kernel/pi/Makefile
+> +++ b/arch/arm64/kernel/pi/Makefile
+> @@ -20,6 +20,7 @@ KBUILD_CFLAGS	:= $(filter-out $(CC_FLAGS_SCS), $(KBUILD_CFLAGS))
+>  KBUILD_CFLAGS	:= $(filter-out $(CC_FLAGS_LTO), $(KBUILD_CFLAGS))
+>  
+>  hostprogs	:= relacheck
+> +HOSTCFLAGS_relacheck.o = -I$(srctree)/include/elf
+>  
+>  quiet_cmd_piobjcopy = $(quiet_cmd_objcopy)
+>        cmd_piobjcopy = $(cmd_objcopy) && $(obj)/relacheck $(@) $(<)
+> diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32/Makefile
+> index 25a2cb6317f3..e1ac384e6332 100644
+> --- a/arch/arm64/kernel/vdso32/Makefile
+> +++ b/arch/arm64/kernel/vdso32/Makefile
+> @@ -107,6 +107,7 @@ VDSO_LDFLAGS += --orphan-handling=$(CONFIG_LD_ORPHAN_WARN_LEVEL)
+>  # $(hostprogs) with $(obj)
+>  munge := ../../../arm/vdso/vdsomunge
+>  hostprogs := $(munge)
+> +HOSTCFLAGS_$(munge).o = -I$(objtree)/include/elf
+>  
+>  c-obj-vdso := note.o
+>  c-obj-vdso-gettimeofday := vgettimeofday.o
+> diff --git a/arch/arm64/kvm/hyp/nvhe/Makefile b/arch/arm64/kvm/hyp/nvhe/Makefile
+> index 782b34b004be..40541c0812bf 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/Makefile
+> +++ b/arch/arm64/kvm/hyp/nvhe/Makefile
+> @@ -15,7 +15,7 @@ ccflags-y += -fno-stack-protector	\
+>  	     $(DISABLE_STACKLEAK_PLUGIN)
+>  
+>  hostprogs := gen-hyprel
+> -HOST_EXTRACFLAGS += -I$(objtree)/include
+> +HOST_EXTRACFLAGS += -I$(objtree)/include -I$(srctree)/include/elf
+>  
+>  lib-objs := clear_page.o copy_page.o memcpy.o memset.o
+>  lib-objs := $(addprefix ../../../lib/, $(lib-objs))
+> diff --git a/include/elf/elf.h b/include/elf/elf.h
+> new file mode 100644
+> index 000000000000..33aea7f743b8
+> --- /dev/null
+> +++ b/include/elf/elf.h
+> @@ -0,0 +1,4491 @@
+> +/* This file defines standard ELF types, structures, and macros.
+> +   Copyright (C) 1995-2024 Free Software Foundation, Inc.
+> +   This file is part of the GNU C Library.
+> +
+> +   The GNU C Library is free software; you can redistribute it and/or
+> +   modify it under the terms of the GNU Lesser General Public
+> +   License as published by the Free Software Foundation; either
+> +   version 2.1 of the License, or (at your option) any later version.
+> +
+> +   The GNU C Library is distributed in the hope that it will be useful,
+> +   but WITHOUT ANY WARRANTY; without even the implied warranty of
+> +   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+> +   Lesser General Public License for more details.
+> +
+> +   You should have received a copy of the GNU Lesser General Public
+> +   License along with the GNU C Library; if not, see
+> +   <https://www.gnu.org/licenses/>.  */
 
--- 
-Thanks,
-Tingwei
+I understand your want/need for this, but new files need a SPDX license
+header instead of this type of license boilerplate.  Didn't glibc
+already convert to SPDX?
 
+Also, as this is not internal for the kernel, but rather for userspace
+builds, shouldn't the include/ path be different?
+
+thanks,
+
+greg k-h
 
