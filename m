@@ -1,87 +1,129 @@
-Return-Path: <linux-kernel+bounces-278319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA76B94AEAC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:10:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BCD494AEAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04B5D1C2168A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:10:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABF591F22BA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEEA13C66F;
-	Wed,  7 Aug 2024 17:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E4313B7BE;
+	Wed,  7 Aug 2024 17:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T51O0akm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HmlzQQRV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1315579F;
-	Wed,  7 Aug 2024 17:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CD03307B
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 17:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723050649; cv=none; b=pU01QrnfirupxxJ2Ymnqb8S9jjwCV/JLyH1ttPtKiUEeKtUdspHnvwRtnPMJ1lz2Pr8txpLEz8cgpq7n2XFej5jUkTZbMbb94TtXqMEamJd25mkBMDTMALFzNNwdnQYJwYIlDEz0f01laI3LD+rJzYOrS2yfJy1p43iU7jl569Y=
+	t=1723050687; cv=none; b=C28I/cp/Lr5tapWpyLjdBH+9pX20+LOkuhX0oKSXuo0IrUO9kMFBKWxX6F/6nGf1zJJKJLp9rfvWMAWY55a5Gehrh39UxQNMBbUT4T4KKjerd1kxEog+0Ai1Efn7MtdkesGowHJCttyV+cGvVFltzoiIzBMmmJOmub5AOt3axGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723050649; c=relaxed/simple;
-	bh=xk2Tv4V0cPzqzOGcfe6GJ/EbeEuKg6080Cpv25FzTos=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=uWA2f/JGxoBvtHpvTsANNkEfRCve8ChfXqWHmagJYy8G0Bcv4On5HACcb45AsbDcJuPbaFdBhX3QL2wVQ2G80PIOyjEeoHLblRWkXACeWVod18bQqzBvKNUTj4+bW/JV5JRztrqQ3gvVHsUmaDyqOBAj/IopsRpCi6DZ+rfGZ3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T51O0akm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71323C32781;
-	Wed,  7 Aug 2024 17:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723050648;
-	bh=xk2Tv4V0cPzqzOGcfe6GJ/EbeEuKg6080Cpv25FzTos=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=T51O0akmdb6M7WZ7BV+YdPR9k5Apl/8AsS086gZt8VWEPiOtc9+dIO7xCHUvZOktK
-	 bB/jvmmX9RvubmvZJeBlEoWP13eNP/HWFcaGBvuADWU3yaGf0cozsofQsxyNTXrzQ5
-	 u6hKzwpuQXDezevJOt9PcwiiJO7AMO3XkSD/J17jjf0FaUSGd2/QlBhkn75+lFTOsV
-	 uGpnUKAXLVVNPLAw3US3TjuvNiyWCnxj0BSaBngHJZfBEmce948xON3mw5LwmQAUhM
-	 4ZbGvic0TqRddzHwH8qryBHL5f5yfrQ49uixmKYr3V0RxbczkmeKeb3oMPSUJVxJm+
-	 psE3awbUQl05g==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723050687; c=relaxed/simple;
+	bh=KvEjb23X87A6JzXK9BKvxQ/d0z1ZHIL3IyVVU+EyAMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G1bpcRF2ZxBhTmEk7eZrDqEU17ds5d0tqtUghBmx9nfOqoTYtf1M5nxQAFbRH74lsRkH/BAwJZBblQ7NSzB/423wEmxYYbuVHyM7Pa5ukY0j4l9LyjQvDo4W0okh4UMyYnW8bPjvSoEqi/0A2IVVYG5eBs0PUaDHh6MzPUUvjIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HmlzQQRV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723050684;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KvEjb23X87A6JzXK9BKvxQ/d0z1ZHIL3IyVVU+EyAMA=;
+	b=HmlzQQRV1gBIHkXKlV74hWoc0CGIXRwLcliveWA4DinBqN2elW19tOrQN6IKyHNohB8xkQ
+	nfJlE3RMut4VUzPszKWgl5wu3Cr3y0B8CNiABReP0uFojcZu6dKBezRupTxy/72UwCxy2z
+	OCsa/uxYILuJMq1e4FLqrU8bmAVZh1c=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-ZUSnP5WfM2GTQj0wfKTwXw-1; Wed,
+ 07 Aug 2024 13:11:21 -0400
+X-MC-Unique: ZUSnP5WfM2GTQj0wfKTwXw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 168071944B25;
+	Wed,  7 Aug 2024 17:11:20 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.97])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 47D2B19560A3;
+	Wed,  7 Aug 2024 17:11:15 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  7 Aug 2024 19:11:18 +0200 (CEST)
+Date: Wed, 7 Aug 2024 19:11:13 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+	paulmck@kernel.org
+Subject: Re: [PATCH 0/8] uprobes: RCU-protected hot path optimizations
+Message-ID: <20240807171113.GD27715@redhat.com>
+References: <20240731214256.3588718-1-andrii@kernel.org>
+ <20240807132922.GC27715@redhat.com>
+ <CAEf4BzZSyuFexZfwZs1bA9S=O0FHejw_tE6PXm5h8ftMsuSROw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: wifi: brcmfmac: cfg80211: Handle SSID based pmksa deletion
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240803-brcmfmac_pmksa_del_ssid-v1-1-4e85f19135e1@jannau.net>
-References: <20240803-brcmfmac_pmksa_del_ssid-v1-1-4e85f19135e1@jannau.net>
-To: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
- Hector Martin <marcan@marcan.st>, Linus Walleij <linus.walleij@linaro.org>,
- linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
- brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org,
- asahi@lists.linux.dev, stable@vger.kernel.org, Janne Grunau <j@jannau.net>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172305064456.3967444.13744761761168806442.kvalo@kernel.org>
-Date: Wed,  7 Aug 2024 17:10:46 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzZSyuFexZfwZs1bA9S=O0FHejw_tE6PXm5h8ftMsuSROw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org> wrote:
+On 08/07, Andrii Nakryiko wrote:
+>
+> Yes, I was waiting for more of Peter's comments, but I guess I'll just
+> send a v2 today.
 
-> From: Janne Grunau <j@jannau.net>
-> 
-> wpa_supplicant 2.11 sends since 1efdba5fdc2c ("Handle PMKSA flush in the
-> driver for SAE/OWE offload cases") SSID based PMKSA del commands.
-> brcmfmac is not prepared and tries to dereference the NULL bssid and
-> pmkid pointers in cfg80211_pmksa. PMKID_V3 operations support SSID based
-> updates so copy the SSID.
-> 
-> Fixes: a96202acaea4 ("wifi: brcmfmac: cfg80211: Add support for PMKID_V3 operations")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> Reviewed-by: Neal Gompa <neal@gompa.dev>
+OK,
 
-Arend, what do you think? And as this is a regression I guess this should go to wireless tree?
+> I'll probably include the SRCU+timeout logic for
+> return_instances, and maybe lockless VMA parts as well.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240803-brcmfmac_pmksa_del_ssid-v1-1-4e85f19135e1@jannau.net/
+Well, feel free to do what you think right, but perhaps it would be
+better to push this series first? at least 1-4.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+As for lockless VMA. To me this needs more discussions. I didn't read
+your conversation with Peter and Suren carefully, but I too have some
+concerns. Most probably I am wrong, and until I saw this thread I didn't
+even know that vm_area_free() uses call_rcu() if CONFIG_PER_VMA_LOCK,
+but still.
+
+> > As for 8/8 - I leave it to you and Peter. I'd prefer SRCU though ;)
+>
+> Honestly curious, why the preference?
+
+Well, you can safely ignore me, but since you have asked ;)
+
+I understand what SRCU does, and years ago I even understood (I hope)
+the implementation. More or less the same for rcu_tasks. But as for
+the _trace flavour, I simply fail to understand its semantics.
+
+> BTW, while you are here :) What can you say about
+> current->sighand->siglock use in handle_singlestep()?
+
+It should die, and this looks simple. I disagree with the patches
+from Liao, see the
+https://lore.kernel.org/all/20240801082407.1618451-1-liaochang1@huawei.com/
+thread, but I agree with the intent.
+
+IMO, we need a simple "bool restore_sigpending" in uprobe_task, it will make the
+necessary changes really simple.
+
+(To clarify. In fact I think that a new TIF_ or even PF_ flag makes more sense,
+ afaics it can have more users. But I don't think that uprobes can provide enough
+ justification for that right now)
+
+Oleg.
 
 
