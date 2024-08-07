@@ -1,224 +1,189 @@
-Return-Path: <linux-kernel+bounces-277446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E147694A195
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:23:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC2794A196
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B5881F21684
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:23:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49970285119
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C8D1C7B8C;
-	Wed,  7 Aug 2024 07:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECD01C7B8A;
+	Wed,  7 Aug 2024 07:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FFEL3Mgx"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="UiREsEBy"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8865D2868D;
-	Wed,  7 Aug 2024 07:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E201C6890
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 07:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723015395; cv=none; b=V3N1WXLOu8cplJt34Gt/TXottQk+N/zhxyvguip5xEDeBWKP7V89bi1J6A7uvZqrWVXp/iT/H9dXTrshuQI41L4qhznaT1zaoMt3FE/s5qKe9ErvCg4jCBdcxr5/na9AnGsVWco7jsVa1CedQrL73y4/S/hVadUo9+d5LQke7/A=
+	t=1723015435; cv=none; b=cn2VLhBzXCB/p5NFOd+sbmfJHmri4Db7g0aCBrphp+dwAS36/EG8aDn47U/pbVlbVllqwjRNAYbEa34iCaobbJDtGpAMByNCwIuIxesYX/cfIRPibzxosQ2CL5LcJR6T63o6Iz8E2/jl8R6j/CwO5uEqjeOTkBgVF92SE5j+HRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723015395; c=relaxed/simple;
-	bh=UzA5DKQG+Nw/YH0+Q4tUQBRkKenGjEhF8bEWkAWMiLs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PlP+ZQBkzO/zfXWLJLrodpyORfa6HG86r2NM0k1Q3BwSaEJ7Jb9rShFCuevm/pTtjwXxueC06qTxs+eBiIHppc15E/48pAxeB59Nl7SaAt+mTjRkY+FUQuQw7TPrs3pvJ7dZy2AP8Ayvwojo6rAJ5RPlj9z71Nbrsuc3RLjPdts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FFEL3Mgx; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bba25c1e15so841085a12.2;
-        Wed, 07 Aug 2024 00:23:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723015392; x=1723620192; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IBaGLVE74qXEKngc0svhqubDQrT8z2ECLY/dDfQleuo=;
-        b=FFEL3MgxzTbAER9LbLoY3DeauM7B9JF5Sf5EFjgHWu6Fv9KaQTzNeUSvg1FQrr7K3b
-         HBJ0GsRCuT/DjKd8/99W63jVcxtIdc8/AbGidWmxVV7dE/xLkdnHQp01hgubpksZMbaE
-         3LzJZvNpXmCF9cVpmX/O/8GpEJLDDtIpuXwSJ+v6h0IaoV1bZzPv2TjJcue1GRTnjCAX
-         wPbllu/rkK1fIWOeNrNTdtC+Yyp35dTzLn2ELtIhrOy7ngudwg6kVSOmdQqsbM4EY+oL
-         0/tm1DPalg6uD10acjnCni552WQUdyP4+3DAqxlSXQjy6vqFaLNIKuKEk150XSUDw9xT
-         qqyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723015392; x=1723620192;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IBaGLVE74qXEKngc0svhqubDQrT8z2ECLY/dDfQleuo=;
-        b=UtVNwRBqdb9s1vVJW/JyqsDm6eewp8PHXRokszSyXGCt0gXbyFSWDr+Gwqyxuf+Z6f
-         epOzHLzNOTF4ape0rpaxb7q04aAAGHIGmhjHCjfp0tfU60VyCX7gJI4BPuix2Rmo3Lo2
-         jSrQgfYPGdlvm1Ui9rdRJ4stUGBI9RyXT38DXFBrCZqwV+/JSk3nLW9TsJulchjU04El
-         6+s4fw80icoD0qsVPw3cpvTAbmSUyvfoeXStKPBml+jdxJMUdkwfe1c+HqOmiZFvig90
-         5AHAPE0LuUkG7U8mTSs1CZTARkxcgjHACcFx0uupCvCGxAy7nhyBR9VJhSL7GrZIGR8E
-         p5EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWB12jG9jZb8m/aRXvFiE15ZxF0uv7AXr3xwlb5tZ53U00UPTtCusp0sXAOjE7vdHcTsg5YuGCfgfFfLIG3AXqi2DBCVMy5YfNc2BEy9pEw+KkKbFeAGE52d0NdVaqni1KdigbKPRtkvQGvRg==
-X-Gm-Message-State: AOJu0YzYYlo7VhgaIc5TGytGispeLIu+yqoqJswRohwsL+6pklKLvJ8U
-	8ech/NnSdtzMH065S1xwoCkTWwkITupU/Iv8yhB1+SztFSVQitIbUZ/rhKszsEmL9tAWagvVTuq
-	olrEztI/Cd54CNwkYrken20El6WI=
-X-Google-Smtp-Source: AGHT+IE26TekbEoibYDRyirpSQF7bdV0ZZ+UMh+SiZg0xVIrCBSW4yftDsUgMa4J4DLkcvY46iofkHLo4um26rmdd30=
-X-Received: by 2002:a17:906:c156:b0:a77:d1ea:ab26 with SMTP id
- a640c23a62f3a-a7dc5105151mr1261977266b.65.1723015391544; Wed, 07 Aug 2024
- 00:23:11 -0700 (PDT)
+	s=arc-20240116; t=1723015435; c=relaxed/simple;
+	bh=xdGo4xSoahzawkf/UMWpDpfNeuykWh4zVfbIV78aXr4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b6PRXy5cSJ2czIzn8LwfWRw8GOF2GN4SHwm6vXGkyHDJ1EDelOLb3jNeMwUEXakDWwE4uTLw5a6D/caWv0/eM9wHzkpbGKev8ZVHaRKRoRD+ZvPs7gdhDblZbpEF6p5MpPUd2iCLpuinYKaUty0oWdItIQdLs9XLDsPGusj6ThA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=UiREsEBy; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1723015431; x=1723274631;
+	bh=xxaFpg0Ze3aE/zz773LrPtPLPWXfOgXdS9SauyJpIPY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=UiREsEByLc3Xkbi86UfWyGqYHWtGWlWuGPEoKO/FEImNOI4LXISIq8TJ7C10IfSLK
+	 Hx2e/NwfHQkSsN81/mPngQKx6QHZ+Ljw0xcvTDcjI0i8G295Yzt3tMfcM/nLToIVkT
+	 6+S3y+exEc4ee4IbR0aFPIdM6fYFuY2mkcAtWZutvk8VdhCmWGveaFP1LlMfGwQ8b8
+	 vGR/jDi40MxOPhC2li6hKwllQjP0GgEM6RK9ncMaQA9FJ+i82PhZFJie8wb8LtliZB
+	 1hQ28VaKnAB0lKED1vfq4qSo2k0xWABixZ11g7DZLRL++tVVNimrxtptR6w3Mav8ey
+	 ZlSR0PK7Xl9Dg==
+Date: Wed, 07 Aug 2024 07:23:48 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4 06/28] rust: alloc: implement `Vmalloc` allocator
+Message-ID: <64498fd9-b3f1-46f4-aebe-e5ff65634a86@proton.me>
+In-Reply-To: <ZrJzJyj7kej0hA0p@pollux.localdomain>
+References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-7-dakr@kernel.org> <9c144953-819d-44fa-9bb5-af6fa93a5042@proton.me> <ZrJzJyj7kej0hA0p@pollux.localdomain>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 1280b02a83101c11cf2e540fcb2f068fe473cd92
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806144628.874350-1-mjguzik@gmail.com> <20240806155319.GP5334@ZenIV>
- <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
- <20240807033820.GS5334@ZenIV> <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
- <20240807062300.GU5334@ZenIV> <20240807063350.GV5334@ZenIV>
- <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com> <20240807070552.GW5334@ZenIV>
-In-Reply-To: <20240807070552.GW5334@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 7 Aug 2024 09:22:59 +0200
-Message-ID: <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
-Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 7, 2024 at 9:05=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
->
-> On Wed, Aug 07, 2024 at 08:40:28AM +0200, Mateusz Guzik wrote:
-> > On Wed, Aug 7, 2024 at 8:33=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk=
-> wrote:
-> > >
-> > > On Wed, Aug 07, 2024 at 07:23:00AM +0100, Al Viro wrote:
-> > > >       After having looked at the problem, how about the following
-> > > > series:
-> > > >
-> > > > 1/5) lift path_get() *AND* path_put() out of do_dentry_open()
-> > > > into the callers.  The latter - conditional upon "do_dentry_open()
-> > > > has not set FMODE_OPENED".  Equivalent transformation.
-> > > >
-> > > > 2/5) move path_get() we'd lifted into the callers past the
-> > > > call of do_dentry_open(), conditionally collapse it with path_put()=
-.
-> > > > You'd get e.g.
-> > > > int vfs_open(const struct path *path, struct file *file)
-> > > > {
-> > > >         int ret;
-> > > >
-> > > >         file->f_path =3D *path;
-> > > >         ret =3D do_dentry_open(file, NULL);
-> > > >         if (!ret) {
-> > > >                 /*
-> > > >                  * Once we return a file with FMODE_OPENED, __fput(=
-) will call
-> > > >                  * fsnotify_close(), so we need fsnotify_open() her=
-e for
-> > > >                  * symmetry.
-> > > >                  */
-> > > >                 fsnotify_open(file);
-> > > >         }
-> > > >       if (file->f_mode & FMODE_OPENED)
-> > > >               path_get(path);
-> > > >         return ret;
-> > > > }
-> > > >
-> > > > Equivalent transformation, provided that nobody is playing silly
-> > > > buggers with reassigning ->f_path in their ->open() instances.
-> > > > They *really* should not - if anyone does, we'd better catch them
-> > > > and fix them^Wtheir code.  Incidentally, if we find any such,
-> > > > we have a damn good reason to add asserts in the callers.  As
-> > > > in, "if do_dentry_open() has set FMODE_OPENED, it would bloody
-> > > > better *not* modify ->f_path".  <greps> Nope, nobody is that
-> > > > insane.
-> > > >
-> > > > 3/5) split vfs_open_consume() out of vfs_open() (possibly
-> > > > named vfs_open_borrow()), replace the call in do_open() with
-> > > > calling the new function.
-> > > >
-> > > > Trivially equivalent transformation.
-> > > >
-> > > > 4/5) Remove conditional path_get() from vfs_open_consume()
-> > > > and finish_open().  Add
-> > > >               if (file->f_mode & FMODE_OPENED)
-> > > >                       path_get(&nd->path);
-> > > > before terminate_walk(nd); in path_openat().
-> > > >
-> > > > Equivalent transformation - see
-> > > >         if (file->f_mode & (FMODE_OPENED | FMODE_CREATED)) {
-> > > >                 dput(nd->path.dentry);
-> > > >                 nd->path.dentry =3D dentry;
-> > > >                 return NULL;
-> > > >         }
-> > > > in lookup_open() (which is where nd->path gets in sync with what
-> > > > had been given to do_dentry_open() in finish_open()); in case
-> > > > of vfs_open_consume() in do_open() it's in sync from the very
-> > > > beginning.  And we never modify nd->path after those points.
-> > > > So we can move grabbing it downstream, keeping it under the
-> > > > same condition (which also happens to be true only if we'd
-> > > > called do_dentry_open(), so for all other paths through the
-> > > > whole thing it's a no-op.
-> > > >
-> > > > 5/5) replace
-> > > >               if (file->f_mode & FMODE_OPENED)
-> > > >                       path_get(&nd->path);
-> > > >               terminate_walk(nd);
-> > > > with
-> > > >               if (file->f_mode & FMODE_OPENED) {
-> > > >                       nd->path.mnt =3D NULL;
-> > > >                       nd->path.dentry =3D NULL;
-> > > >               }
-> > > >               terminate_walk(nd);
-> > > > Again, an obvious equivalent transformation.
-> > >
-> > > BTW, similar to that, with that we could turn do_o_path()
-> > > into
-> > >
-> > >         struct path path;
-> > >         int error =3D path_lookupat(nd, flags, &path);
-> > >         if (!error) {
-> > >                 audit_inode(nd->name, path.dentry, 0);
-> > >                 error =3D vfs_open_borrow(&path, file);
-> > >                 if (!(file->f_mode & FMODE_OPENED))
-> > >                         path_put(&path);
-> > >         }
-> > >         return error;
-> > > }
-> > >
-> > > and perhaps do something similar in the vicinity of
-> > > vfs_tmpfile() / do_o_tmpfile().
-> >
-> > That's quite a bit of churn, but if you insist I can take a stab.
->
-> What I have in mind is something along the lines of COMPLETELY UNTESTED
-> git.kernel.org:/pub/scm/linux/kernel/git/viro/vfs.git #experimental-for-m=
-ateusz
->
-> It needs saner commit messages, references to your analysis of the
-> overhead, quite possibly a finer carve-up, etc.  And it's really
-> completely untested - it builds, but I hadn't even tried to boot
-> the sucker, let alone give it any kind of beating, so consider that
-> as a quick illustration (slapped together at 3am, on top of 5 hours of
-> sleep yesterday) to what I'd been talking about and no more than that.
+On 06.08.24 21:01, Danilo Krummrich wrote:
+> On Tue, Aug 06, 2024 at 05:00:24PM +0000, Benno Lossin wrote:
+>> On 05.08.24 17:19, Danilo Krummrich wrote:
+>>> Implement `Allocator` for `Vmalloc`, the kernel's virtually contiguous
+>>> allocator, typically used for larger objects, (much) larger than page
+>>> size.
+>>>
+>>> All memory allocations made with `Vmalloc` end up in `vrealloc()`.
+>>>
+>>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>>> ---
+>>>  rust/helpers.c                      |  7 +++++++
+>>>  rust/kernel/alloc/allocator.rs      | 32 +++++++++++++++++++++++++++++
+>>>  rust/kernel/alloc/allocator_test.rs |  1 +
+>>>  3 files changed, 40 insertions(+)
+>>>
+>>> diff --git a/rust/helpers.c b/rust/helpers.c
+>>> index 9f7275493365..7406943f887d 100644
+>>> --- a/rust/helpers.c
+>>> +++ b/rust/helpers.c
+>>> @@ -33,6 +33,7 @@
+>>>  #include <linux/sched/signal.h>
+>>>  #include <linux/slab.h>
+>>>  #include <linux/spinlock.h>
+>>> +#include <linux/vmalloc.h>
+>>>  #include <linux/wait.h>
+>>>  #include <linux/workqueue.h>
+>>>
+>>> @@ -199,6 +200,12 @@ void *rust_helper_krealloc(const void *objp, size_=
+t new_size, gfp_t flags)
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(rust_helper_krealloc);
+>>>
+>>> +void *rust_helper_vrealloc(const void *p, size_t size, gfp_t flags)
+>>> +{
+>>> +=09return vrealloc(p, size, flags);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(rust_helper_vrealloc);
+>>> +
+>>>  /*
+>>>   * `bindgen` binds the C `size_t` type as the Rust `usize` type, so we=
+ can
+>>>   * use it in contexts where Rust expects a `usize` like slice (array) =
+indices.
+>>> diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocat=
+or.rs
+>>> index c6ad1dd59dd0..bb55895cbd03 100644
+>>> --- a/rust/kernel/alloc/allocator.rs
+>>> +++ b/rust/kernel/alloc/allocator.rs
+>>> @@ -9,6 +9,7 @@
+>>>
+>>>  use crate::alloc::{AllocError, Allocator};
+>>>  use crate::bindings;
+>>> +use crate::pr_warn;
+>>>
+>>>  /// The contiguous kernel allocator.
+>>>  ///
+>>> @@ -16,6 +17,12 @@
+>>>  /// `bindings::krealloc`.
+>>>  pub struct Kmalloc;
+>>>
+>>> +/// The virtually contiguous kernel allocator.
+>>> +///
+>>> +/// The vmalloc allocator allocates pages from the page level allocato=
+r and maps them into the
+>>> +/// contiguous kernel virtual space.
+>>> +pub struct Vmalloc;
+>>
+>> One thing that I should also have mentioned for `Kmalloc`, do we want
+>> these types to also have values? I don't think that we need them to be,
+>> so we could declare them as `pub enum Vmalloc {}`.
+>=20
+> What the difference? Would `pub enum Vmalloc {}` be better for some reaso=
+n?
 
-Well it's your call, you wrote the thing and I need the problem out of
-the way, so I'm not going to argue about the patchset.
+It doesn't make a huge difference, it doesn't allow you to create a
+value of type `Vmalloc` (as there are no values of that type). So
+you can't accidentally use the type where it shouldn't be used.
+If we use `pub struct Vmalloc;`, then you can do this:
 
-I verified it boots and provides the expected perf win [I have to
-repeat it is highly variable between re-runs because of ever-changing
-offsets between different inode allocations resulting in different
-false-sharing problems; i'm going to separately mail about that]
+    let a =3D Vmalloc;
 
-I think it will be fine to copy the result from my commit message and
-denote it's from a different variant achieving the same goal.
+you can't really do anything with it (as there are no methods on that
+type), but it might be confusing for people.
 
-That said feel free to use my commit message in whatever capacity,
-there is no need to mention me.
+>>> @@ -141,6 +153,26 @@ unsafe fn alloc_zeroed(&self, layout: Layout) -> *=
+mut u8 {
+>>>      }
+>>>  }
+>>>
+>>> +unsafe impl Allocator for Vmalloc {
+>>> +    unsafe fn realloc(
+>>> +        ptr: Option<NonNull<u8>>,
+>>> +        layout: Layout,
+>>> +        flags: Flags,
+>>> +    ) -> Result<NonNull<[u8]>, AllocError> {
+>>> +        let realloc =3D ReallocFunc::vrealloc();
+>>> +
+>>> +        // TODO: Support alignments larger than PAGE_SIZE.
+>>> +        if layout.align() > bindings::PAGE_SIZE {
+>>> +            pr_warn!("Vmalloc does not support alignments larger than =
+PAGE_SIZE yet.\n");
+>>> +            return Err(AllocError);
+>>> +        }
+>>> +
+>>> +        // SAFETY: If not `None`, `ptr` is guaranteed to point to vali=
+d memory, which was previously
+>>> +        // allocated with this `Allocator`.
+>>> +        unsafe { realloc.call(ptr, layout, flags) }
+>>
+>> I am a bit confused, for `Kmalloc`, you manually returned
+>> `NonNull::dangling` when allocating a zero-sized allocation, but here
+>> you don't?
+>>
+>=20
+> I do, it's the exact same implementation for krealloc(), vrealloc() and
+> kvrealloc(). That why I added the `ReallocFunc` abstraction.
 
-Thanks for sorting this out.
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Oh yeah, my bad.
+
+---
+Cheers
+Benno
+
 
