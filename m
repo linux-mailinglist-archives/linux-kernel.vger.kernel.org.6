@@ -1,163 +1,142 @@
-Return-Path: <linux-kernel+bounces-278200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6541994ADC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:11:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B65394ADF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B28EFB215AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:50:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 140FAB25BA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE96D12F38B;
-	Wed,  7 Aug 2024 15:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB5913AA4C;
+	Wed,  7 Aug 2024 16:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O4yCzTMD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639D312CDBF;
-	Wed,  7 Aug 2024 15:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3013E13A896
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723045791; cv=none; b=RiH1eH/7/3Xit2TlUUbTawh+ElkDeb//3qrhvnbpbIDxWsWp16eueWwtbQcVj+ZKidoafhA3OW1APTXBa9S2Gp3s/306q6PR1cZH0k75mlYOyU3ka2ArmHIeS9pmOW5XFNch1Sr1E25E0IBAxds4apHed1VNDe8niBG+dv5vwik=
+	t=1723046565; cv=none; b=hqBw9B4OydrEQAxvKAlqqp20Nh8+olke3Wy529s6tZztJIIEQabji0tCEXJ3yQZK7Y2ALG2HUIOCL4F6WABfzfLlS9R6/kvo1yPG+1xnLdjuF3IDkKKZWZBy5TS8Vao8Q8WtnmDIFEgixIn9razvqd+UBL6231WU2aW4MBVeuyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723045791; c=relaxed/simple;
-	bh=zSjQCmlr2o7LzRlv1gR6+tsqoni0n9y0ZEa8DcvWYsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=knTOuanliThB7sPafTfKW/BbiAlVYBoz1GhBB6k17FdgOBL7r0yb1yXMgyBBnWF+WdxRy4LFoqDJrCroPKYDF5czGb+gqDZqXlu+10LTduCS6XoAdNgg/qI5AsG+iGO7ogunIX7UU1L0CpdtT/h3rfLYC1Zrmzpt9ft6+zMDhKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0E7FC32781;
-	Wed,  7 Aug 2024 15:49:49 +0000 (UTC)
-Date: Wed, 7 Aug 2024 11:49:48 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Mathias Krause <minipli@grsecurity.net>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Ajay Kaher <ajay.kaher@broadcom.com>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?=
- <digirigawa@gmail.com>, Brad Spengler <spender@grsecurity.net>
-Subject: Re: [PATCH 2/2] tracefs: Don't overlay 'struct inode'
-Message-ID: <20240807114948.6d57af23@gandalf.local.home>
-In-Reply-To: <20240807134453.GZ5334@ZenIV>
-References: <20240807115143.45927-1-minipli@grsecurity.net>
-	<20240807115143.45927-3-minipli@grsecurity.net>
-	<20240807093545.4ec51d61@gandalf.local.home>
-	<20240807134453.GZ5334@ZenIV>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723046565; c=relaxed/simple;
+	bh=RrD86gQdUXwYV0YUjUZqjd7jwjhQYkYNATDY7ibM1KY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FTGlwxD10VK86JnvWddNGZ1/Bf+yt7V3ZrF5YCTda+aCcDMFmN8HzYHizISIP9VdWaJ4lOjF4yBUiLtEbXm2dmUmYXC0cAPGjNDCPFOz87QcxLL3Zo23B2MyXhX3TCBc5qVVjKjq4TKPesQ6Z3ofszPaDnr0bgJdRTWRrZO5FcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O4yCzTMD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51394C4AF0F;
+	Wed,  7 Aug 2024 16:02:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723046564;
+	bh=RrD86gQdUXwYV0YUjUZqjd7jwjhQYkYNATDY7ibM1KY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=O4yCzTMDMtHBLSyrrfHZksAjtaLKJ9oTDpNJGEoj8q7bqvht8Xl9QTOW1FM60J0yG
+	 mr89WmGeWi1Wxyd9SkbZh1kVR6fwlG51LF1IPUWNcPDVkHe64XXoC65aDoOET2LC2E
+	 5akWNaNCvve4jJeJopA8h6ZBPqyZSdIZi5DSvpVgx/jZebbR96dIPuu7wRx140EI0R
+	 9wDw+NO9wJhmPLxeZy6O9M8L0AJWkLwblrs2pw/srgVKKwAyhaZST+PeB4kUSn2qtN
+	 ZdMZIJWOWLkCxK/OW/tblLtEvOGwudAspHYxlj13vVPYcgd/Yk23WbBppnViQN9Fqz
+	 O3RYbOb4ajxyw==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 02/19] x86/resctrl: Use kthread_run_on_cpu()
+Date: Wed,  7 Aug 2024 18:02:08 +0200
+Message-ID: <20240807160228.26206-3-frederic@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240807160228.26206-1-frederic@kernel.org>
+References: <20240807160228.26206-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 7 Aug 2024 14:44:53 +0100
-Al Viro <viro@zeniv.linux.org.uk> wrote:
+Use the proper API instead of open coding it.
 
-> On Wed, Aug 07, 2024 at 09:35:45AM -0400, Steven Rostedt wrote:
-> 
-> > Perhaps:
-> > 
-> > diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
-> > index f704d8348357..ab6d6c3d835d 100644
-> > --- a/fs/tracefs/internal.h
-> > +++ b/fs/tracefs/internal.h
-> > @@ -10,12 +10,12 @@ enum {
-> >  };
-> >  
-> >  struct tracefs_inode {
-> > +	struct inode            vfs_inode;
-> > +	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
-> >  	union {
-> > -		struct inode            vfs_inode;
-> > +		struct list_head	list;
-> >  		struct rcu_head		rcu;
-> >  	};
-> > -	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
-> > -	struct list_head	list;
-> >  	unsigned long           flags;
-> >  	void                    *private;
-> >  };  
-> 
-> 	Your current variant gives you an RCU-delayed call of
-> tracefs_free_inode(), which schedules an RCU-delayed call of
-> tracefs_free_inode_rcu().
-> 
-> 	Do you really need that double RCU delay to start with?
-> Because if you do not, just do that list_del_rcu() in ->destroy_inode()
-> (which is called without an RCU delay) and have kmem_cache_free()
-> in ->free_inode() (which is called *with* RCU delay started after
-> the call of ->destroy_inode()).
+Acked-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 28 +++++++----------------
+ 1 file changed, 8 insertions(+), 20 deletions(-)
 
-Thanks, I didn't know about these.
-
-So I could use destroy_inode() for the removing of the link list, and then
-free_inode to free it. Something like:
-
-diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-index 1028ab6d9a74..ae2cb2221acd 100644
---- a/fs/tracefs/inode.c
-+++ b/fs/tracefs/inode.c
-@@ -53,15 +53,14 @@ static struct inode *tracefs_alloc_inode(struct super_block *sb)
- 	return &ti->vfs_inode;
- }
+diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+index e69489d48625..ae1f0c28eee6 100644
+--- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
++++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+@@ -1205,20 +1205,14 @@ static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp, int sel)
+ 	plr->cpu = cpu;
  
--static void tracefs_free_inode_rcu(struct rcu_head *rcu)
-+static void tracefs_free_inode(struct inode *inode)
- {
--	struct tracefs_inode *ti;
-+	struct tracefs_inode *ti = get_tracefs(inode);
+ 	if (sel == 1)
+-		thread = kthread_create_on_node(measure_cycles_lat_fn, plr,
+-						cpu_to_node(cpu),
+-						"pseudo_lock_measure/%u",
+-						cpu);
++		thread = kthread_run_on_cpu(measure_cycles_lat_fn, plr,
++					    cpu, "pseudo_lock_measure/%u");
+ 	else if (sel == 2)
+-		thread = kthread_create_on_node(measure_l2_residency, plr,
+-						cpu_to_node(cpu),
+-						"pseudo_lock_measure/%u",
+-						cpu);
++		thread = kthread_run_on_cpu(measure_l2_residency, plr,
++					    cpu, "pseudo_lock_measure/%u");
+ 	else if (sel == 3)
+-		thread = kthread_create_on_node(measure_l3_residency, plr,
+-						cpu_to_node(cpu),
+-						"pseudo_lock_measure/%u",
+-						cpu);
++		thread = kthread_run_on_cpu(measure_l3_residency, plr,
++					    cpu, "pseudo_lock_measure/%u");
+ 	else
+ 		goto out;
  
--	ti = container_of(rcu, struct tracefs_inode, rcu);
- 	kmem_cache_free(tracefs_inode_cachep, ti);
- }
+@@ -1226,8 +1220,6 @@ static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp, int sel)
+ 		ret = PTR_ERR(thread);
+ 		goto out;
+ 	}
+-	kthread_bind(thread, cpu);
+-	wake_up_process(thread);
  
--static void tracefs_free_inode(struct inode *inode)
-+static void tracefs_destroy_inode(struct inode *inode)
- {
- 	struct tracefs_inode *ti = get_tracefs(inode);
- 	unsigned long flags;
-@@ -69,8 +68,6 @@ static void tracefs_free_inode(struct inode *inode)
- 	spin_lock_irqsave(&tracefs_inode_lock, flags);
- 	list_del_rcu(&ti->list);
- 	spin_unlock_irqrestore(&tracefs_inode_lock, flags);
+ 	ret = wait_event_interruptible(plr->lock_thread_wq,
+ 				       plr->thread_done == 1);
+@@ -1315,18 +1307,14 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 
+ 	plr->thread_done = 0;
+ 
+-	thread = kthread_create_on_node(pseudo_lock_fn, rdtgrp,
+-					cpu_to_node(plr->cpu),
+-					"pseudo_lock/%u", plr->cpu);
++	thread = kthread_run_on_cpu(pseudo_lock_fn, rdtgrp,
++				    plr->cpu, "pseudo_lock/%u");
+ 	if (IS_ERR(thread)) {
+ 		ret = PTR_ERR(thread);
+ 		rdt_last_cmd_printf("Locking thread returned error %d\n", ret);
+ 		goto out_cstates;
+ 	}
+ 
+-	kthread_bind(thread, plr->cpu);
+-	wake_up_process(thread);
 -
--	call_rcu(&ti->rcu, tracefs_free_inode_rcu);
- }
- 
- static ssize_t default_read_file(struct file *file, char __user *buf,
-@@ -437,6 +434,7 @@ static int tracefs_drop_inode(struct inode *inode)
- static const struct super_operations tracefs_super_operations = {
- 	.alloc_inode    = tracefs_alloc_inode,
- 	.free_inode     = tracefs_free_inode,
-+	.destroy_inode  = tracefs_destroy_inode,
- 	.drop_inode     = tracefs_drop_inode,
- 	.statfs		= simple_statfs,
- 	.show_options	= tracefs_show_options,
-diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
-index f704d8348357..d83c2a25f288 100644
---- a/fs/tracefs/internal.h
-+++ b/fs/tracefs/internal.h
-@@ -10,10 +10,7 @@ enum {
- };
- 
- struct tracefs_inode {
--	union {
--		struct inode            vfs_inode;
--		struct rcu_head		rcu;
--	};
-+	struct inode            vfs_inode;
- 	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
- 	struct list_head	list;
- 	unsigned long           flags;
+ 	ret = wait_event_interruptible(plr->lock_thread_wq,
+ 				       plr->thread_done == 1);
+ 	if (ret < 0) {
+-- 
+2.45.2
 
-
-I'll run this under some more tests and see if it doesn't crash.
-
-I'll apply the first patch of this series too, and then probably use this
-one.
-
--- Steve
 
