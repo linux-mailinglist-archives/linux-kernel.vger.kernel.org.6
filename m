@@ -1,49 +1,68 @@
-Return-Path: <linux-kernel+bounces-277596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E54A594A37D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:59:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDAC294A37F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D07DB22391
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:59:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8C77B23392
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34EA1CCB57;
-	Wed,  7 Aug 2024 08:59:14 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723A01C9ED8
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 08:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B771CB309;
+	Wed,  7 Aug 2024 08:59:24 +0000 (UTC)
+Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519471CB303
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 08:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723021154; cv=none; b=VbG9Qb2HY5qkyDWyoZ6Wy/kUREk1t4fBnRyNASuA8QUBSNH5xxEaNjjAGISJ9eZHqV6P5x2gUTf42S2STb29Bo9Ee2mc2SDQUJRLqlGCRKp5GF3RlInZrQa3xM5wHnZNtni9pUGl38F7u7mQEn540rCOmoXvNVNPC7QApTIng3s=
+	t=1723021164; cv=none; b=cb+EHbC0wGGrzIDJyKscbcCG5TWNb51rkLdTAUZQ/tjuCW11h0clOoTzBRGbqAQNwJJpSG+6p+eosAmKLb5Jm4vI8+LhFtukiB0Fp1DUGHxvC8koVxHmijgvFx49ydAUi1cDz91MST3/ANsOKV4mnq8zzGhhIu3WtQg7J+OHgyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723021154; c=relaxed/simple;
-	bh=4UqoD2C8ejEzeLdGcdsKe4S3vgLCd94uWhSCWSnLiTg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b3JvaRH71K8cCRiL9lL6PNGbDbPPiXcfpVSLuRvm4CzFXEqp0C6C2rRPBNetJkKgFUA0ocRo2iQavTSlYDSDwwaUCnvojIVxQejz6ZhvO4UDtGMWStIFD5DUPMsIRdOuHpRmafdEaSplmyPIJsZhS2m3EWvZ7hT7Pti8oGwIrTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8AxjptfN7Nm2y8KAA--.5490S3;
-	Wed, 07 Aug 2024 16:59:11 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMDxvmdaN7NmO8EHAA--.24061S6;
-	Wed, 07 Aug 2024 16:59:10 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/4] LoongArch: Enable objtool for Clang
-Date: Wed,  7 Aug 2024 16:59:06 +0800
-Message-ID: <20240807085906.27397-5-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20240807085906.27397-1-yangtiezhu@loongson.cn>
-References: <20240807085906.27397-1-yangtiezhu@loongson.cn>
+	s=arc-20240116; t=1723021164; c=relaxed/simple;
+	bh=7LPQSm+yG94Ez2Qfwia3iyqvf19g6sm5ehW/W/NqBvc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FiXokJ90c/yN9xg5nlBklDlwVAir5SHfuOAtkMdkGXqOzKiCp50DNl59FZK325ttfHj6AbV0QGekDi/wvX/Man1p4NJYsHZsCuRnfnFCfww2VAUoysKP9OzzPB0ujQq9ZCNTHRUyIZqTVERlcn9OUSq40tqEzo8zEzr++hRvlCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+Received: from localhost (localhost [127.0.0.1])
+	by mail.valinux.co.jp (Postfix) with ESMTP id 3DBDBA9D00;
+	Wed,  7 Aug 2024 17:59:20 +0900 (JST)
+X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
+Received: from mail.valinux.co.jp ([127.0.0.1])
+	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id f-IzNs6CvPnp; Wed,  7 Aug 2024 17:59:20 +0900 (JST)
+Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp [210.128.90.14])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail.valinux.co.jp (Postfix) with ESMTPSA id 0CCE7A9B77;
+	Wed,  7 Aug 2024 17:59:20 +0900 (JST)
+From: takakura@valinux.co.jp
+To: pmladek@suse.com,
+	john.ogness@linutronix.de
+Cc: akpm@linux-foundation.org,
+	bhe@redhat.com,
+	feng.tang@intel.com,
+	j.granados@samsung.com,
+	linux-kernel@vger.kernel.org,
+	lukas@wunner.de,
+	nishimura@valinux.co.jp,
+	rostedt@goodmis.org,
+	senozhatsky@chromium.org,
+	stephen.s.brennan@oracle.com,
+	taka@valinux.co.jp,
+	takakura@valinux.co.jp,
+	ubizjak@gmail.com,
+	wangkefeng.wang@huawei.com
+Subject: Re: [PATCH v2 1/2] Handle flushing of CPU backtraces during panic
+Date: Wed,  7 Aug 2024 17:59:19 +0900
+Message-Id: <20240807085919.92798-1-takakura@valinux.co.jp>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <87v80f2hii.fsf@jogness.linutronix.de>
+References: <87v80f2hii.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,48 +70,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxvmdaN7NmO8EHAA--.24061S6
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj9xXoWruFyrtw47AFyUuF48tr48Zrc_yoW3Zwb_W3
-	W2v3WkWF1rA3y2v34qvr4FgF13Za1vkF45CFZ2vr4rWr90vwn8Jr4UJw18Zrn2gw4jgFWr
-	GrW8tr9Ykr10kosvyTuYvTs0mTUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUb3AYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
-	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q
-	6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
-	vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_
-	Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-	AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAI
-	cVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
-	IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIev
-	Ja73UjIFyTuYvjxU4AhLUUUUU
 
-For now, it can enable objtool for Clang, just remove !CC_IS_CLANG
-for HAVE_OBJTOOL in arch/loongarch/Kconfig.
+Hi John and Petr,
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/loongarch/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2024-08-05, John Ogness wrote:
+>On 2024-08-03, takakura@valinux.co.jp wrote:
+>> From: Ryo Takakura <takakura@valinux.co.jp>
+>>
+>> After panic, non-panicked CPU's has been unable to flush ringbuffer 
+>> while they can still write into it. This can affect CPU backtrace 
+>> triggered in panic only able to write into ringbuffer incapable of 
+>> flushing them.
+>
+>Right now, they cannot write to it. If you apply your second patch
+>before this one, then the above statement is true.
+>
+>Perhaps the ordering of the two patches should be reversed?
 
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index e1b6cb306d4d..c53f8953d46c 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -146,7 +146,7 @@ config LOONGARCH
- 	select HAVE_LIVEPATCH
- 	select HAVE_MOD_ARCH_SPECIFIC
- 	select HAVE_NMI
--	select HAVE_OBJTOOL if AS_HAS_EXPLICIT_RELOCS && AS_HAS_THIN_ADD_SUB && !CC_IS_CLANG
-+	select HAVE_OBJTOOL if AS_HAS_EXPLICIT_RELOCS && AS_HAS_THIN_ADD_SUB
- 	select HAVE_PCI
- 	select HAVE_PERF_EVENTS
- 	select HAVE_PERF_REGS
--- 
-2.42.0
+Yes, that is true. Thanks!
+I'll send the patches in the reverse order for next version. 
 
+>Either way, for the series:
+>
+>Reviewed-by: John Ogness <john.ogness@linutronix.de>
+
+Sincerely,
+Ryo Takakura
 
