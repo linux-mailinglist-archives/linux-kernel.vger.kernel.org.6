@@ -1,117 +1,119 @@
-Return-Path: <linux-kernel+bounces-277910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570F994A809
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:46:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9554094A80B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DBD31F28668
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:46:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54BDF287469
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2041E673C;
-	Wed,  7 Aug 2024 12:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A821E6742;
+	Wed,  7 Aug 2024 12:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rlUj9Rvo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SD8JApTd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="V0IoLeHx";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L5TBL6Et"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C844F1C824B;
-	Wed,  7 Aug 2024 12:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8BC1C824B;
+	Wed,  7 Aug 2024 12:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723034757; cv=none; b=O2nPNAow0SGF3mG+WdGeUpCmzl1DdxoOPU3QzMwKNLLF++AQ2KMytAL+wGTczaz0Lu7XyMnfJMfdbVJpR14uQLibvbTrjAAz4Yuo2szXWs513vopGASjzCVLmh7YSUw0p0QN7zkSAtJA83mMVzGP9x3Hs6Yo56YpzOtx/jDBcJ0=
+	t=1723034830; cv=none; b=FWQ1j5F6Y0YD3/1M0ElIhX/Bvlo8KEphLK5hnz5pR7bvXsPwJfb7CAseaitVzCb4gsmJaFZFe+keKTEWubhw2XakH6vrBzDIURwntUWPjN/mAjs4ep4tgc4zRtSDrOaIVRZ1SNHOb+2fET4uYL+iiuK1oKDXd9YKHY3q2WV/WZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723034757; c=relaxed/simple;
-	bh=K2pE7XVDCV05hANZTsq6bdehkgcW6vUq7VIAzyBkfyc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KJr5NTxKp0hOY6LvJvAR/6YRpBdlmiv1iRVqMbWn/N/5vRsGqXfONdbhe/tdh5zHxF/WC9KDAR/PYmxztOMz8/dc537Asu23WvQYUVweLKEXPi9sYD9O2FkyktZ9FC0JioHSZPLoyuisss8ZNa5q9XayKtEOV9WLJ2T6SW4Dqf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rlUj9Rvo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SD8JApTd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723034753;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K2pE7XVDCV05hANZTsq6bdehkgcW6vUq7VIAzyBkfyc=;
-	b=rlUj9Rvo6RtJwB53IMU6b9rR6Po0XXtDwrvyvrnpOReHmjsrx48Tbvqnbuezdc/sjwBa10
-	HgFp8kwPvHYhsNEKdlrL5MZiwpRFJbeLCkz/+HOoG57SsuLkt9SQ4inLAGvpwHFXghmx3u
-	36aulfnxiC+KTxn384zE4L8mlZsXqRMfWIroGZAlZuDfDIm1NrkK6REAtqPAcc6x3QHKg0
-	Z5cTXEbvuASRN/94I0gRUKTkynLJQBpbpTjBA/rjBym3MywCHzdo9SCjXMJcbHnVThG1NN
-	jMeYcm8hTUuc5AuBOWdcZKdkgUfEtAeZf6yd6hnRAlSZrCahsi830e2FdWDz2w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723034753;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K2pE7XVDCV05hANZTsq6bdehkgcW6vUq7VIAzyBkfyc=;
-	b=SD8JApTdTudxK9Gag8bnKB3gh2vZiV4+Jll0esZhKRO/lWSvHSsggJnvA6YMQhMXHvVwi8
-	S7svFMX0IJGxj7Dg==
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, Vlastimil Babka
- <vbabka@suse.cz>, Linus Torvalds <torvalds@linux-foundation.org>, Guenter
- Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>, Helge
- Deller <deller@gmx.de>, linux-parisc@vger.kernel.org
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
-In-Reply-To: <c54ab27ff0f0bb3e9e681eec9a62549e5e245a6b.camel@HansenPartnership.com>
-References: <20240731095022.970699670@linuxfoundation.org>
- <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
- <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
- <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <87le194kuq.ffs@tglx>
- <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz> <87frrh44mf.ffs@tglx>
- <c54ab27ff0f0bb3e9e681eec9a62549e5e245a6b.camel@HansenPartnership.com>
-Date: Wed, 07 Aug 2024 14:45:53 +0200
-Message-ID: <87cymk4i2m.ffs@tglx>
+	s=arc-20240116; t=1723034830; c=relaxed/simple;
+	bh=4X3P3sXiJ/UDqE4t8m0xdFpp8RiQAdBwVFw6oBqf7S8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=foCiyOfbPSM62z3LIaP3hCE19FHG1svLr2u7nzW2+k28Tx8HQDbBXfZs7fuONnIKB9d161gq9JOcvJYm4LlqjHjLyBLz+kUO7qpdbflV80ZHHoZMp+0ctczyf0f8UAfc94DjU9WwkEvVdvlCB+j1XGckHlh3+94xllLlG5rlCQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=V0IoLeHx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L5TBL6Et; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id C9064138FC1F;
+	Wed,  7 Aug 2024 08:47:07 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Wed, 07 Aug 2024 08:47:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1723034827;
+	 x=1723121227; bh=o2sOgG7rz3jM/pZWq6JqSq3X/mFPwfPo4FnOzh1Nn58=; b=
+	V0IoLeHxVaHOLPv7lqK3T2HszVZgJHKfnlZhz3KDYxdH8gsptXLeskH3e5k0qvJM
+	sOlW4wYyAfhZHq31611V4KJL/uzhZtZGfpMj+NJ/0Ct1tYMpGOUKhlDcbT4zNmjH
+	2k7mnWFdjmOnuL+RVasE36A009gMvdHXr0KPgipKSostycsMiN/t9cckLPOCRac8
+	jJ2mNLcGvNouo97hXbkdLEZDrVFqeANhN9W/WV6qjAlqJBjPDZf5t+3qGcKw6jfr
+	PFwhEd5VbUdNIru/X5qWIWyCF35B2mzzKFU3Mm/wZQtMzECpCat+D/5zCqZI00HA
+	mLW4cVWN2XG8QNQbXvaB1w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723034827; x=
+	1723121227; bh=o2sOgG7rz3jM/pZWq6JqSq3X/mFPwfPo4FnOzh1Nn58=; b=L
+	5TBL6EtZP2UGvJvnYLt005tnNYYmgrw8+MuV6+QGYiaKQl2I38jmCm/LQOhT8XqW
+	lN3uUtRt0sHc5e7NIhk60eHh//Fg7VutN075/aGOzt0A1LiRJQWoPG1RgwAOjiSn
+	wzzly3pEzmTEtK/UdDEDN1G9DScVE0/1tc4uh57VegprO5SvpfKZ9mqKIU6pnOkT
+	ZUdpMRdbclBiIxe137CK9gXloKCdWPCX1nkuMblfTToQy3hoBG9dE658s8486VVj
+	H1uJ71+Taey7GNH2CzyVYLgaXbfK/crz+5CiMvLg5J1KvCg7O9okXrKAZrw59oSl
+	9t3Q1ZpUEu0pm9urzuOVQ==
+X-ME-Sender: <xms:y2yzZnl0ZvSFem-3mORaV_ZuLenhsIJfiexvDZ9_CAuLM6xAYuWQfw>
+    <xme:y2yzZq1pxrHKkz4SE1NB8X9csUI8QyB9Uh5U8IUlKb76S-flrX6sjZgpz8xJvT3Uf
+    Ckjgr4TpHbTLZ0t8UE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledtgdehiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdv
+    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:y2yzZtrESF2aXMyM9nx9Mg44EdG_l13O7wdBWisn5ojF1y9dhHXVYg>
+    <xmx:y2yzZvkYs-JcBL4TqYBtw4_FA5m5oQ-LAMNv1oWjALL7ERJW9ESp_g>
+    <xmx:y2yzZl0cgZ62nPFkCVmAsOF-GXAS9buLXxPVv0vPY3ZtTzvjG11APQ>
+    <xmx:y2yzZus9F8kwZx1K9ek9uN82_Nu-nptnYVoc5nb62Tzlqjp2hNHmPA>
+    <xmx:y2yzZgQ9kZLVZPPzm5hU01LbFPZSRuZf2FVe06RjasewHWkjf-WxxAOY>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 18AE0B6008D; Wed,  7 Aug 2024 08:47:06 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+Date: Wed, 07 Aug 2024 14:46:45 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Stephen Rothwell" <sfr@canb.auug.org.au>,
+ "Olof Johansson" <olof@lixom.net>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ linux-next <linux-next@vger.kernel.org>
+Message-Id: <e7daf12f-482e-416d-beb5-8ceb8bbfda51@app.fastmail.com>
+In-Reply-To: <20240807081751.7149e22c@canb.auug.org.au>
+References: <20240807081751.7149e22c@canb.auug.org.au>
+Subject: Re: linux-next: duplicate patch in the arm-soc-fixes tree
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-T24gVHVlLCBBdWcgMDYgMjAyNCBhdCAyMDo0OSwgSmFtZXMgQm90dG9tbGV5IHdyb3RlOg0KPiBP
-biBXZWQsIDIwMjQtMDgtMDcgYXQgMDE6MjQgKzAyMDAsIFRob21hcyBHbGVpeG5lciB3cm90ZToN
-Cj4+IMKgc3RhdGljIGludCBjaGVja19zbGFiKHN0cnVjdCBrbWVtX2NhY2hlICpzLCBzdHJ1Y3Qg
-c2xhYiAqc2xhYikNCj4+IMKgew0KPj4gwqDCoMKgwqDCoMKgwqDCoGludCBtYXhvYmo7DQo+PiBA
-QCAtMTM4Niw4ICsxMzg4LDEwIEBAIHN0YXRpYyBpbnQgY2hlY2tfc2xhYihzdHJ1Y3Qga21lbV9j
-YWNoZQ0KPj4gwqANCj4+IMKgwqDCoMKgwqDCoMKgwqBtYXhvYmogPSBvcmRlcl9vYmplY3RzKHNs
-YWJfb3JkZXIoc2xhYiksIHMtPnNpemUpOw0KPj4gwqDCoMKgwqDCoMKgwqDCoGlmIChzbGFiLT5v
-YmplY3RzID4gbWF4b2JqKSB7DQo+PiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc2xh
-Yl9lcnIocywgc2xhYiwgIm9iamVjdHMgJXUgPiBtYXggJXUiLA0KPj4gLcKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBzbGFiLT5vYmplY3RzLCBtYXhvYmopOw0K
-Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHRlc3RtZSgpOw0KPj4gK8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoHNsYWJfZXJyKHMsIHNsYWIsICJvYmplY3RzICV1ID4gbWF4
-ICV1IHNpemUgJXUgc29yZGVyDQo+PiAldSAldSIsDQo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzbGFiLT5vYmplY3RzLCBtYXhvYmosIHMtPnNpemUs
-DQo+PiBzbGFiX29yZGVyKHNsYWIpLA0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgb3JkZXJfb2JqZWN0cyhzbGFiX29yZGVyKHNsYWIpLCBzLT5zaXpl
-KSk7DQo+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAwOw0KPj4gwqDC
-oMKgwqDCoMKgwqDCoH0NCj4+IMKgwqDCoMKgwqDCoMKgwqBpZiAoc2xhYi0+aW51c2UgPiBzbGFi
-LT5vYmplY3RzKSB7DQo+PiANCj4+IEkgZG9uJ3Qga25vdyBhbmQgSSBkb24ndCB3YW50IHRvIGtu
-b3cgVEJILi4uDQo+DQo+IE9LLCBzbyB5b3UncmUgdGVsbGluZyB1cyB3ZSBoYXZlIGEgcHJvYmxl
-bSB3aXRoIHNsYWJfb3JkZXIgb24gcGFyaXNjDQo+IC4uLiB0aGF0J3MgZm9saW9fb3JkZXIsIHNv
-IGl0IHNtZWxscyBsaWtlIGEgcGFyaXNjIGJ1ZyB3aXRoDQo+IGZvbGlvX3Rlc3RfbGFyZ2U/ICBV
-bmZvcnR1bnRlbHkgSSdtIGEgYml0IHBpc3NlZCBpbiBhbiBhaXJwb3J0IGxvdW5nZQ0KPiBvbiBt
-eSB3YXkgdG8gdGhlIFVLLCBzbyBJJ3ZlIGxvc3QgYWNjZXNzIHRvIG15IHBhIHRlc3QgcmlnIGFu
-ZCBjYW4ndA0KPiB0ZXN0IGZ1cnRoZXIgZm9yIGEgd2hpbGUuDQoNClRoZSBwb2ludCBpcyB0aGF0
-IHRoZXJlIGFyZSB0d28gaW52b2NhdGlvbnMgZm9yIG9yZGVyX29iamVjdHMoLi4uKSBpbg0KdGhh
-dCBjb2RlLg0KDQoJbWF4b2JqID0gb3JkZXJfb2JqZWN0cyhzbGFiX29yZGVyKHNsYWIpLCBzLT5z
-aXplKTsNCg0KYW5kIHRoZSBleHRyYSBvbmUgaW4gdGhlIHNsYWJfZXJyKCkgb3V0cHV0Og0KDQog
-ICAgICAgIHNsYWJfZXJyKHMsIHNsYWIsICJvYmplY3RzICV1ID4gbWF4ICV1IHNpemUgJXUgc29y
-ZGVyICV1ICV1IiwNCgkJIHNsYWItPm9iamVjdHMsIG1heG9iaiwgcy0+c2l6ZSxzbGFiX29yZGVy
-KHNsYWIpLA0KICAgICAgICAgICAgICAgICBvcmRlcl9vYmplY3RzKHNsYWJfb3JkZXIoc2xhYiks
-IHMtPnNpemUpKTsNCg0KPj4gW8KgwqDCoCAwLjAwMDAwMF0gQlVHIGttZW1fY2FjaGVfbm9kZSAo
-Tm90IHRhaW50ZWQpOiBvYmplY3RzIDIxID4gbWF4IDE2DQo+PiBzaXplIDE5MiBzb3JkZXIgMCAy
-MQ0KDQpTbyBtYXhvYmogPSAxNiBhbmQgdGhlIHNlY29uZCBpbnZvY2F0aW9uIGNvcnJlY3RseSBy
-ZXR1cm5zIDIxLCBpZiBhbmQNCm9ubHkgaWYgdGhlICQkZGl2b0kgcGxhY2VtZW50IGlzIGluIHRo
-YXQgd2VpcmQgcmFuZ2UuDQoNCldoZW4gSSBtb3ZlIGl0IG91dCBvZiB0aGF0IHJhbmdlIHRoZW4g
-Ym90aCByZXR1cm4gMjEgYXMgZXhwZWN0ZWQuDQoNClRoYW5rcywNCg0KICAgICAgICB0Z2x4DQo=
+On Wed, Aug 7, 2024, at 00:17, Stephen Rothwell wrote:
+> Hi all,
+>
+> The following commit is also in Linus Torvalds' tree as a different commit
+> (but the same patch):
+>
+>   5b92ca4b2368 ("arm: dts: arm: versatile-ab: Fix duplicate clock node name")
+>
+> This is commit
+>
+>   ff58838015c1 ("arm: dts: arm: versatile-ab: Fix duplicate clock node name")
+>
+> in Linus' tree.
+
+Thanks, I removed the duplicate copy now.
+
+     Arnd
 
