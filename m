@@ -1,117 +1,91 @@
-Return-Path: <linux-kernel+bounces-277271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14996949EA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:48:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64341949EA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4C7728BB8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:48:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE91CB249EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C52315D5AB;
-	Wed,  7 Aug 2024 03:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463B718FDAA;
+	Wed,  7 Aug 2024 03:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iGxB4yIa"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dImRH9zK"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D204118D63E;
-	Wed,  7 Aug 2024 03:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB7F364A0;
+	Wed,  7 Aug 2024 03:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723002480; cv=none; b=YC8HJCq8/vnGaEZWIB232nbekbbhcSGq7ruYDvxBsW2STLLEV6SuqBZDZQAmVv4qeiiP+qEP/oEOJLwlYrBKgBbNiugLvTYL+NXIJMGrAI0Rd9fH4FS9qGCD/0G0Nd+pyqIBK3tH/QvNweYeOsHDNZg35Rrt+HkzTxheCGnjr1k=
+	t=1723002497; cv=none; b=lCmT4a9GVmyCw3K/RC/dNjJzK4/YuvFU0hVXcVyrw9qLx1ua4MAnApMIKoVegjAPG0LK3HeOobWUoJfq1i4noFrPRq2O6bIfjCPS+1JOnm8/N1Bo8flI+EFYkgSX44x93bCGa/6eOdVCysguDrw0cl8OVSJLxyY07kgZf2h8qOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723002480; c=relaxed/simple;
-	bh=JbzbilaTSgNsQ5Fef54aFQ6JBT/eCsGG3nXHmjCFTF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZpmQ6cLgFlExABNVq0AHskSfxTr1WUuIT9ybfNuUd1zI/ojzBFq7+o32TDCTNQh8Sr2QE5v4hqFF/aAF+rrPg0E4Z4wCF1D8RKq7DcH2fz4PfvSJzAiPRYmi47x7uxUa9hVWa+FVIuXiPkuF/v5xEUqOUPQEbPJQfWzltIYfLrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=iGxB4yIa; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723002475;
-	bh=ecPrlAOTt/SuEzNvaB9lidrUkbWOXZuX3A0HkMCqorg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iGxB4yIaVCIQLWECOV+bncrAXf+rnbZ102CLOwtnrA5JVHD8nRyO2hl8R7hvzX5sV
-	 zRLiejR+5OMGbcuLePIQ8D2TntkYhdJ00a8x1YonyFj4VzYbw/+2EGWUG3u6CUQNUA
-	 hNtwkReQdpsgtfhrFLrfbEndjP2wT3fKs5oA2vKGHLnKyXtipz5t/SI3/9Aup5Y16H
-	 JimLUmuWRDNPRb7s5tZW8axdMyfUWywrWOETy/SMWyy0Ez+GnB7aFKznOlntNgW5tD
-	 kTnt1n021doyJkorHEBrrNHG9m6+WUh8+oUSCWWFxt6s4o13vax6iCTpGa/ofpKfGK
-	 D4wHc657J9WEA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wdx2z5GjQz4w2J;
-	Wed,  7 Aug 2024 13:47:55 +1000 (AEST)
-Date: Wed, 7 Aug 2024 13:47:55 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Daniel Bristot de Oliveira <bristot@kernel.org>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Message-ID: <20240807134755.13ee4d45@canb.auug.org.au>
-In-Reply-To: <20240801121744.2756e2d5@canb.auug.org.au>
-References: <20240801121744.2756e2d5@canb.auug.org.au>
+	s=arc-20240116; t=1723002497; c=relaxed/simple;
+	bh=qmy3ovyhsYEjjnM3VF2SvTiTc1OzpoV8aQjzohxQrj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SvDVVbzGWgppsWRCDDGcGm5S3oQGnBdpqDAboWyja/uH48R+77hNbMCRZjKnDMGH7iv+1VhwrhiRXSWdl6J0MR+NJucjTl2RAFju5tSZW4qkNjaWcds8pTG67TVZUtaxa1kkkGYnmutiGfx7PPkEX+q0KCJSTPJXKBw7+vxdEyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dImRH9zK; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NgREx1DsWcBDVSTQLM/yM/zhKOhKelHZuFklDwx+PBQ=; b=dImRH9zK7aK5cUsti9r8ItOylY
+	FhScaADiUSrHYUtDK/KHEcwwjkgAaCNJlFCLSWKd5WCliTTWYQCdMk26FXiWWoZUvP6qdENvdxedZ
+	5p7Zx4OxwfT2/jnhCOM4oUgfbnaCFA8nCjKnY5Mrd6qRdJ9nRvBRuYyfhN8GE/CKEPrWLCUV0Koon
+	nYwqMyFaOjX52ujhLLTbKQ2kzPPJxzVBsIoGdQ9eJwMmIMk880Fvo43rJeM/CoURfyWnJaA8GSNsm
+	BngtrrVsL3Y2/I8ff5LwsdhLecCGQ+91Q0nLWUwFP9eMdcroDqHzP0vkbifC05lhq7dnj1DeVv2la
+	+IhSm55Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sbXek-00000006gXH-1gn4;
+	Wed, 07 Aug 2024 03:48:10 +0000
+Date: Wed, 7 Aug 2024 04:48:10 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: JaeJoon Jung <rgbi3307@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Sasha Levin <levinsasha928@gmail.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	maple-tree@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] lib/htree: Add locking interface to new Hash Tree
+Message-ID: <ZrLuelS7yx92SKk7@casper.infradead.org>
+References: <20240805100109.14367-1-rgbi3307@gmail.com>
+ <2024080635-neglector-isotope-ea98@gregkh>
+ <CAHOvCC4-298oO9qmBCyrCdD_NZYK5e+gh+SSLQWuMRFiJxYetA@mail.gmail.com>
+ <2024080615-ointment-undertone-9a8e@gregkh>
+ <CAHOvCC7OLfXSN-dExxSFrPACj3sd09TAgrjT1eC96idKirrVJw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/TdzGVNAOCfRXZZ9SophP1Ul";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHOvCC7OLfXSN-dExxSFrPACj3sd09TAgrjT1eC96idKirrVJw@mail.gmail.com>
 
---Sig_/TdzGVNAOCfRXZZ9SophP1Ul
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 07, 2024 at 09:21:12AM +0900, JaeJoon Jung wrote:
+> Performance comparison when the number of indexes(nr) is 1M stored:
+> The numeric unit is cycles as calculated by get_cycles().
+> 
+> Performance  store    find    erase
+> ---------------------------------------------
+> XArray            4          6        14
+> 
+> Maple Tree     7          8        23
+> 
+> Hash Tree      5          3        12
+> ---------------------------------------------
+> 
+> Please check again considering the above.
 
-Hi all,
-
-On Thu, 1 Aug 2024 12:17:44 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the tip tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
->=20
-> In file included from kernel/sched/build_utility.c:72:
-> kernel/sched/debug.c:341:57: warning: integer overflow in expression of t=
-ype 'long int' results in '-100663296' [-Woverflow]
->   341 | static unsigned long fair_server_period_max =3D (1 << 22) * NSEC_=
-PER_USEC; /* ~4 seconds */
->       |                                                         ^
->=20
-> Introduced by commit
->=20
->   d741f297bcea ("sched/fair: Fair server interface")
->=20
-> This is a 32 bit build.
-
-I am still seeing this warning.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/TdzGVNAOCfRXZZ9SophP1Ul
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmay7msACgkQAVBC80lX
-0GzOnQf+LE2GE7lPefCktWjNs9xeFT5Ov9mH4niowJ99tzNgAIi5dqatDNWlTdAV
-iZw1YdbjjV2HnGB0bhlgDdZssSpa6JMrNMe10xQjd9voGAtlz0uDu3xzhf3JRCRs
-OmTE8GkGVkCx2IiTNl8/8O2CWxi0cHC7gQ/MN1ZgSdYcGdwJH6I9tHwpiOarHuVK
-p1cBNtTwhkrRnoAgjcbKtHjmyAEx8b322Hx75oo4pb8wBjALqzE50uk3E5ck74GY
-cxMjXvuYr9mabvaftqHVwXjxADmhLRqpogmLMYfsMvAA6tafoYlwMjI0B01dcot1
-UCs+pGsEi5skuA/W0Q7hcL5Y3UqBdA==
-=UTuk
------END PGP SIGNATURE-----
-
---Sig_/TdzGVNAOCfRXZZ9SophP1Ul--
+I would suggest that you find something to apply your new data structure
+to.  My suggestion would be the dcache, as I did with rosebush.  That let
+us find out that rosebush was not good for that application, and so I
+abandoned work on it.
 
