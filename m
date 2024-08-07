@@ -1,125 +1,198 @@
-Return-Path: <linux-kernel+bounces-278161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A5ED94ACE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:29:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6791094ACE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E17D51C22A9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAB2F1F2209E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7F612C470;
-	Wed,  7 Aug 2024 15:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304C412BF24;
+	Wed,  7 Aug 2024 15:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OPLHmfDe"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iJqmGS+9"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA5712C473
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F722364BC;
+	Wed,  7 Aug 2024 15:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723044565; cv=none; b=MEIg02abpuYMCBpHE25fq5lPR5VzMrmHFxyiKWDRTFsBnJ6aivozjyo1xOs9Jb8pboDDLT0brtVP4WfRzf7mGmzhLU4LZldBYGSzHmu1Ey57oyJnLgMRnS29F9tH7uB/nz1z4JBFMBiJMiup3qvid0GWXqsffp4W/HLQtTsO6Fw=
+	t=1723044644; cv=none; b=q3LQ1Waj/EqkPTBVAqDju9RBx3OpJrgAMfUeV7e5lEFZdtJTXMxHNS9EICbUxOInxdwzZMKI9hcd9BovezAMFdUx8kpTWnAtwzMBQGLzhdRhgvkqWZShP3kvp9FRCkX5fbEqRr1QiYmX2+AcEOZfS3AkiX38gGDrCN+K+5GogDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723044565; c=relaxed/simple;
-	bh=B3qUjQUBKSoj6DiE5izmtCoNi2oQX3kGXMYImbc+tBs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nv/wflrqM8iYDy65zyJzash4HMmQrCqhfiAB+vODPSoIdwFeEDTaOlrfnz1WG361tH4eFGm4j4LzNb6IJ6tBmCj70+n/iSt1h+UdfEOumAqccOEqfv3hoi/WJmNNpkNBLxzeneiyYGOELZb48nz//QaSXcTclx9vSsTSXlIG88A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OPLHmfDe; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-690b6cbce11so19418217b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 08:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723044563; x=1723649363; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XKQ9M/o3NVnkKygQpCqhb1IVgEtJMwyJqqnPTlCGvnU=;
-        b=OPLHmfDeHvharH0vkYihAnB/ZGgtqUKLbKoW+CEPsh4Dx3rKc/CHDdcllju+l3ra31
-         7ox3oLQL4Hnym4ajlIc8z/paMK6mA/AG1PRZlfVmVal3DU7w1Q1V+1EYrIt8ui7GEhqv
-         10OWiuL5PDl+CYHGjhwg0zTG8tokh0CEPogjz7jvykwVXXBeThjwABHD7UOpkhKRxcKC
-         sMIUUjkYs+VWqpB9/skIUnmT8TK80z18eyNqaNruxkzaLq87N5N++oQ+F9EnTkegS07k
-         pugRWXKAv61wUzYeLvIHpr+bKaYdJqICSCzHXXORB2mooUp7QSYmwafYYzY2YtY+dIaO
-         F/OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723044563; x=1723649363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XKQ9M/o3NVnkKygQpCqhb1IVgEtJMwyJqqnPTlCGvnU=;
-        b=LNiHltfkgBeILW77M2RGzuoFiI8EO0bmntCR0gdEStCm9qr+mprnMo+VydztuiYpMn
-         GUoSB0D49HXklSVXhmgbS6J/wytcPbbHki74JLTvgHgGFOukLCNukPNdkO7k33+Jherd
-         uLNJbrvOlILH56m4pA/aLfrBSFVKHiigyhlERtU4R9CV1i01PUZ1uYmRkyH2D5n//2Fb
-         IovRM0hyqSTo0oCBYISEz/Lk3wx9zzzlxTz1nN3vfpx2UlPt7ebm/t0LPPvc3Ktr8C4k
-         Cl3aWCVXfVWbEu+PV5pr/zMu9PVrmahGCD3eGJAb/bXxW//jSfB9DuI7boDzA/8cWM+V
-         xTTA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1FDvr/DbSJatcRtFVshNnBPwMnWIaCe0pGwKbYNcx7XonjryDr66UIstiLhCg882yO8fyHzbGY1XPcXZSZWU/NcUl5zxINjdKf03U
-X-Gm-Message-State: AOJu0Yz8w2fR+iS//L5OPt8siEe9HdiROHMmmkaFBTuZSI7657esRNFA
-	Lx7fQyNre6VKlEvQtp11GkvhqoEj3USlt9JueF6LuKrGdSV2SO7znJO+mN1V0AV7SbUsuXs+EU1
-	WQ0TNuf8dVPbaj/8ir5V0dkZhrFwIasU27xBA
-X-Google-Smtp-Source: AGHT+IFxKYsOrG4ilAXTKiWlIY9sugsT5cdso9SZyJ4+TO3rkpTxQeSesfajzSgpUnqosNMbojqCvWGpQGpS+lQXelM=
-X-Received: by 2002:a25:c341:0:b0:e06:fe1a:ffd8 with SMTP id
- 3f1490d57ef6-e0bde3ee72cmr18086030276.31.1723044562667; Wed, 07 Aug 2024
- 08:29:22 -0700 (PDT)
+	s=arc-20240116; t=1723044644; c=relaxed/simple;
+	bh=Ybbpm3l0VgcY8irLKiG7R3KeEt6Y5ckns0lgVAzSTOA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kbdRwqZ84l+zxRcG6sfheKKHJJd85WnfLfNvDpZISOP8GCqSMp+dHFhdSOv045D3Yecb1enEzj4RSFkQ4S4mgKGgHMEznNA84b3ESrvU0wck2neyrPEOrWX5GOHvvnAES/i84bZyKXAZhw21/5ZtGsA0jgqxY5HLG4IW1VezCCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iJqmGS+9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4778CcNN017145;
+	Wed, 7 Aug 2024 15:30:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rGK5FhqeP9Ns8MopLkGkiE5QSZITi9c8Z7h7WJQs1pc=; b=iJqmGS+9Bjwj2bvd
+	X7qcEBE5XRrnx44NNVr5zfqJ6DIlXtEyrqPT1hnUQ3BeKWM4aT1fG0cAvUpe4A9L
+	E3s6i6JtOuIwc7nWGFrdMQRfGpUEo/0jQM6nZe9lTsRyPCSBbPjl4fDeRrCaSVHH
+	CoIRr7zxZHS2SX8X75I8VMAYNcJTAC4JgspnNMqX2ReKTgcOW/9YR1XDE9kDjytw
+	LHDofJrJ5Q7DM7x3Po9aCyBWANhMuhvLAXOxsLhH5yDF/SpRCAV8dWPbQX1lhfQP
+	DuOSUdPwOO4rV/VurXSpUwOVIEFuHnHtSAMlkWhPX06DgywoxlASQkBqA80LLR/N
+	/+G4Kw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sdaeb1pn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 15:30:39 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 477FUcrD029076
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 7 Aug 2024 15:30:38 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
+ 08:30:33 -0700
+Message-ID: <13190683-1d69-401d-8c32-adb42e4386ed@quicinc.com>
+Date: Wed, 7 Aug 2024 23:30:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com> <20240807-macos-build-support-v1-6-4cd1ded85694@samsung.com>
-In-Reply-To: <20240807-macos-build-support-v1-6-4cd1ded85694@samsung.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 7 Aug 2024 11:29:11 -0400
-Message-ID: <CAHC9VhS=KGRCbk-zy4aMiNfi2aMRX6YBP8H3VNAw7pY85TxDRA@mail.gmail.com>
-Subject: Re: [PATCH 06/12] selinux/genheaders: include bitsperlong and
- posix_types headers
-To: da.gomez@samsung.com
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Lucas De Marchi <lucas.demarchi@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
-	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org, 
-	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
-	Finn Behrens <me@kloenk.dev>, "Daniel Gomez (Samsung)" <d+samsung@kruces.com>, gost.dev@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: sm8550: camss: Add CAMSS block
+ definition
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>, <andersson@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        Yongsheng Li
+	<quic_yon@quicinc.com>
+References: <20240807123333.2056518-1-quic_depengs@quicinc.com>
+ <1c0ff0fa-73d3-400f-a58d-15fb9b0574d1@kernel.org>
+ <c2a3e578-b098-450f-96f6-a3ae321f2b4c@kernel.org>
+ <85cc52aa-4593-49f5-9438-1ee3f09d2d71@quicinc.com>
+ <336e5679-f04e-47aa-9655-df88fde9de21@linaro.org>
+ <0fb55319-0bae-4bb0-bce6-ebdbdd68f765@kernel.org>
+ <c3ed2b0a-3f59-4cd1-98e1-96494d15d172@linaro.org>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <c3ed2b0a-3f59-4cd1-98e1-96494d15d172@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: -AAtNakMsy82IIPvKglaep_BnvFfkEGH
+X-Proofpoint-GUID: -AAtNakMsy82IIPvKglaep_BnvFfkEGH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_11,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
+ spamscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
+ priorityscore=1501 suspectscore=0 lowpriorityscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408070108
 
-On Tue, Aug 6, 2024 at 7:10=E2=80=AFPM Daniel Gomez via B4 Relay
-<devnull+da.gomez.samsung.com@kernel.org> wrote:
->
-> From: Daniel Gomez <da.gomez@samsung.com>
->
-> The genheaders requires the bitsperlong.h and posix_types.h headers.
-> To ensure these headers are found during compilation on macOS hosts,
-> add usr/include to HOST_EXTRACFLAGS in the genheaders Makefile. This
-> adjustment allows the compiler to locate all necessary headers when they
-> are not available by default on macOS.
->
-> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-> ---
->  scripts/selinux/genheaders/Makefile | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+Hi Kryysztof, Bryan,
 
-This patch, and 7/12, look fine to me.  I can pull them into the
-SELinux tree now, or would you prefer them to go via a different tree?
+On 8/7/2024 10:58 PM, Bryan O'Donoghue wrote:
+> On 07/08/2024 15:51, Krzysztof Kozlowski wrote:
+>> On 07/08/2024 16:17, Bryan O'Donoghue wrote:
+>>> On 07/08/2024 13:53, Depeng Shao wrote:
+>>>> Hi Krzysztof,
+>>>>
+>>>> On 8/7/2024 8:43 PM, Krzysztof Kozlowski wrote:
+>>>>> On 07/08/2024 14:39, Krzysztof Kozlowski wrote:
+>>>>>> On 07/08/2024 14:33, Depeng Shao wrote:
+>>>>>>> Add CAMSS block definition for sm8550.
+>>>>>>>
+>>>>>>> This drop contains definitions for the following components on 
+>>>>>>> sm8550:
+>>>>>>
+>>>>>> 1. Subject: there is no prefix camss. There is no such file, 
+>>>>>> directory
+>>>>>> or module.
+>>>>>>
+>>>>
+>>>> Thanks for the comment, will remove this.
+>>>>
+>>>>>> 2. You already sent this, so this should be v2 or v3 or vX. Provide
+>>>>>> changelog under ---.
+>>>>>>
+>>>>>> If there is going to be resend, please fix above.
+>>>>>>
+>>>>
+>>>> Sure, I thought it might be a new series, so I didn't add v*, will add
+>>>> v1, and v2 change log in new version series.
+>>>>
+>>>>>> 3. If this was tested on aim300, I am surprised this being not 
+>>>>>> enabled
+>>>>>> on aim300.
+>>>>>
+>>>>
+>>>> It was tested long times ago, but the patches wasn't sent out for
+>>>> reviewing early due to the team's internal schedule.
+>>>>
+>>>>> One more thing, bindings were not accepted, thus this patch should not
+>>>>> go in. There were no new bindings, so I assume patchset is using
+>>>>> rejected ones.
+>>>>>
+>>>>> It's fine to send it to get some comments, although would be nice to
+>>>>> mention to maintainer that this cannot be picked up as is. :(
+>>>>>
+>>>>
+>>>> Sure, I will resend the dtsi patch until the bindings are accepted, 
+>>>> send
+>>>> this patches because you posted the comments in other series.
+>>>>
+>>>> https://lore.kernel.org/ 
+>>>> all/0324e8e8-2ad4-4ce6-9616-3038b8e02ff9@quicinc.com/
+>>>>
+>>>> Thanks,
+>>>> Depeng
+>>>>
+>>>>
+>>>
+>>> Recommend
+>>>
+>>> 1. Send out your yaml and dts in one series
+>>>
+>>> 2. Driver series can be posted in parallel
+>>
+>> The binding should go with the driver. Also usually discussion about
+>> driver brings comments, thus changes, to the bindings.
+>>
+>> Sorry, DTSI and DTS should wait till bindings got accepted to media
+>> subsystem.
+> 
+> Yes you're right
+> 
+> 1. Yaml - bindings
+> 2. dts + driver
+> 3. dtsi
+> 
+> In this case @Depeng remember to
+> 
+> 1. Link back to the older series in your cover letters
+> 2. Suggested by recommended - publish a complete tree somewhere and
+>     link to that tree in your cover letters
+> 
+> Its fine IMO to restart the version number of your series when breaking 
+> up into smaller series, so long as you remember to link to the previous 
+> series and explain in the cover letter whats going on.
+> 
 
---=20
-paul-moore.com
+Thanks for the guidance, I will follow them, and resend the DTS patch 
+wait till bindings got accepted.
+
+Thanks,
+Depeng
 
