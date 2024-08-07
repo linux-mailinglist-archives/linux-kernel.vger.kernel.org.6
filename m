@@ -1,121 +1,143 @@
-Return-Path: <linux-kernel+bounces-277625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C2B94A3F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:15:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6F194A3F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D929280CFE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:15:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53E4E1F231C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBB61CCB57;
-	Wed,  7 Aug 2024 09:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E631CCB26;
+	Wed,  7 Aug 2024 09:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QsP4a6VV"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KWEITntP"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A22F1CB32D;
-	Wed,  7 Aug 2024 09:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C37F1C9DCE;
+	Wed,  7 Aug 2024 09:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723022119; cv=none; b=gv5DaPV23sW/Rt9XQh6ycvAbRdZsmQLZrP0miXCuYMgMO+ki6aCNB2yq5LhcGMjlAWaNXsQpOiMciq1dMqpBQ0onSHTM+7MZrkNrmZGrhzf12u8yNNbKe9asBTrmqMS4TdWPx6W1BNjRsDQYaHDm2F7/OhLQd+s0iwX2cWJsd8g=
+	t=1723022138; cv=none; b=h/vSRlyKmZ+zSR7DTs4B90ICj6SzNRWjkyRpVJhoZLlV0jIcWRlH20OZHBa27ZEOHuM5f2ZkrpsNDPBTcJXkPLTeBHwUiyHB0cTNIMGf0tq+aWrB7kh+qDtG+CFftAh/+PUsEkEAkMf73Q8WK6L7RFRpZAM6bucPTPMo5Z+8CCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723022119; c=relaxed/simple;
-	bh=WAW4WAbZjj7ozQQ//z99AVwDz5MUPaFuGqSugyGLIHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hBsKXxP6UK3O9mLzsj7ZW8p+l7P7O9Vyld52h0twsTm7H0y8+E6LxhcWPiTYOLMialHYkbQlRW5HIAH2OiOv4f3TD556aFInEIOflN7EB4d3fJoKa9P1jI0W0ojlMECFe/nU7hgoxZfCvUlsfjcWGNu2KW0QyubFjcvGu01OFz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QsP4a6VV; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so10405665e9.2;
-        Wed, 07 Aug 2024 02:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723022116; x=1723626916; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WAW4WAbZjj7ozQQ//z99AVwDz5MUPaFuGqSugyGLIHE=;
-        b=QsP4a6VVHVuZJQenqtlZbhVbSmsGh6nI2Broa2X7i0Zldr4fySMmkqqrJcxFAfxKKe
-         xla9gioj9GKNinrk9SBt3dzEwnIrzXL2c7USwJzlAESHNRQSJ2Cl9dkUA+i29Xe3UUCU
-         Eo/mjeM7g7nZNPbkCraPDu3wkKqlC4l/0jkJNg4LlrbEvlYBloE7wE/E7pWxUmD5ucmr
-         VvytPqTaxi7zDfitG3CgfydIZJjv7TIgv0MwxlQjdAZLzqQGFVJaYPuhXS2wve3TApfv
-         2uy+Tx4vu6pk8mXroiOe2I8OorLmPCPfP/nU2D4tX4wsevt9Goa0YWJsJxMrOk/ra5y4
-         umqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723022116; x=1723626916;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WAW4WAbZjj7ozQQ//z99AVwDz5MUPaFuGqSugyGLIHE=;
-        b=n9Y2+YQmdbkZDeFKMo6VruDQz2/OgaJ4t9JJNMpL/567vRye9UHAJuxrG6cpCV98X/
-         nlRGf6lS4QunWPp4Akf7FjQde/lTb4qnXA+X3v9UItIIYCmX7MmqHAWguiOQX1WtxVRw
-         jy3CEeZBd8upL4WtmntwPwlQbtTz2nc6p5k9z4PPHB+UvXwvCG4CNjQ2AI9TgvCA9Uma
-         zalWht+SU4Ya++wcO6AMUqIKOpNYREulV9d9jYzggLWh3niFD4qnYqhZPIhVBgXvC7MV
-         5K2NaCc+RJGqYLmbQnGhYexrJLmtcXSEhBJ969GDYXiOTp45ZZ9XDxRp9Oh6ZJ8rkJns
-         C1zA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIrSU51XFXkgY3BsVnANw/UqQmC6fpOxHH9VMrSK7VzEzieukSDHwu2mzHZLAfL8KCRzLPzndZNy7CkptqIZHIc+dDEQO/ifP+cB2zHNc/F9969OxQBQnqwTEcW5lOkLMQw5TxNgRxtQE05wIKnY438mUilk9pgPhEFV08LWzea/Bf2Ks=
-X-Gm-Message-State: AOJu0YxypeYeolRH5pHTIkxFE7QDGc7tzGwbYgcYDGvjLKO57PD7dzYo
-	uQKtQr+6gTxmvvgklv4rE+NDbIANka23OqIToHJFE8cojcZOGHiOTsZ+lAff
-X-Google-Smtp-Source: AGHT+IEctfEJTlJWJclkwAwP1qPj01sRRAwqzgxnUWqm8NUgw9LRmDGW/K/imyM4MujFwSU32871aA==
-X-Received: by 2002:a05:600c:1987:b0:426:641f:25e2 with SMTP id 5b1f17b1804b1-428e6b7e80bmr110889905e9.25.1723022116273;
-        Wed, 07 Aug 2024 02:15:16 -0700 (PDT)
-Received: from [192.168.1.106] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290580cb80sm20162845e9.45.2024.08.07.02.15.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 02:15:15 -0700 (PDT)
-Message-ID: <a1086e31-4738-76b4-38e9-b494aa39f1a3@gmail.com>
-Date: Wed, 7 Aug 2024 12:15:14 +0300
+	s=arc-20240116; t=1723022138; c=relaxed/simple;
+	bh=0xcat+ZB1/z+noNB1MyQNw1Ug+KRj2cj4BUOnaCjSwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CJ8Y7CGu9DSDDRaYgYT6dFnZYfPn52f1RRPv6WNxiKJuMtf8vZAhbw1Rsd/uQ7q/cqZ1XkL9ZWBwXj5nBf49vuewHMADRPheS+CsJvdXDfE7YqJvqC3jVTMouHCU8oSkFunXyjasLDKtFauFbnsSEo0HrI1FsxL0cuM+kq7rkWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KWEITntP; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4779FT8I037044;
+	Wed, 7 Aug 2024 04:15:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723022129;
+	bh=b5VMR16aniBfsI7j924JKMOqEqUwZMtEN2oOPi/9UjY=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=KWEITntP7yZSjmMnOZfnacEZ2LTp1V6paluGc/W/vDV14a+hztw2QTmaNC3LQLLMH
+	 vPVHEqfCSVqoXGIKhgLAnlh9nUljTcWmZ3QxDEgUcZ3Ewgb2IhbDJj7mZ7hHnQIxbj
+	 tom5fRnYiLwg2dUAsXg8Yyuy5nWcGvcgzVP89xvU=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4779FT1x107389
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 7 Aug 2024 04:15:29 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
+ Aug 2024 04:15:29 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 7 Aug 2024 04:15:28 -0500
+Received: from [172.24.30.93] (lt5cd2489kgj.dhcp.ti.com [172.24.30.93])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4779FOFj009192;
+	Wed, 7 Aug 2024 04:15:25 -0500
+Message-ID: <e61d817b-8043-4c77-92fe-6faa27881d41@ti.com>
+Date: Wed, 7 Aug 2024 14:45:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v1 00/10] Add minimal Exynos8895 SoC and SM-G950F support
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] arm64: dts: ti: k3-j7200*: Add bootph-* properties
+To: Manorit Chawdhry <m-chawdhry@ti.com>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Neha Malcom Francis <n-francis@ti.com>,
+        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi <b-padhi@ti.com>,
+        Siddharth
+ Vadapalli <s-vadapalli@ti.com>
+References: <20240730-b4-upstream-bootph-all-v3-0-9bc2eccb6952@ti.com>
+ <20240730-b4-upstream-bootph-all-v3-5-9bc2eccb6952@ti.com>
+ <f80996c2-c3ee-430a-9ae6-2a9c524b5d60@ti.com>
+ <20240807075039.w56deberpo4rfhjc@uda0497581>
 Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240807082843.352937-1-ivo.ivanov.ivanov1@gmail.com>
- <f217cd23-88a3-e8d5-641b-482734c8f2e0@gmail.com>
- <84283d1a-fe69-4adf-a93f-8d31a7a18c63@kernel.org>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <84283d1a-fe69-4adf-a93f-8d31a7a18c63@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20240807075039.w56deberpo4rfhjc@uda0497581>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-
-Well, thanks, I meant the "From" header. Although right as
-
-you replied, I sent the v2 :P. I'll just wait out for the review
-
-notes and send a following v3. My bad.
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
-Best regards, and thanks again,
-
-Ivaylo
-
-On 8/7/24 12:09, Krzysztof Kozlowski wrote:
-> On 07/08/2024 11:06, Ivaylo Ivanov wrote:
->> Unfortunately, it turned out that I have an issue with my git
->>
->> configuration. I'm sorry for the inconvenience, I'll resend a V2
->>
->> without the sendemail.from.
->>
-> "From" header is not a problem. It's ok. Did you mean something else?
+On 8/7/2024 1:20 PM, Manorit Chawdhry wrote:
+> Hi Udit,
 >
-> Best regards,
-> Krzysztof
+> On 12:58-20240807, Kumar, Udit wrote:
+>> On 7/30/2024 3:23 PM, Manorit Chawdhry wrote:
+>>> [..]
+>>> I think you should consider to mark hbmc node for boot phase as well
+>>>
+> It's already marked in k3-j7200-som-p0.dtsi file with bootph-all inside
+> the flash node that describe it, is that okay?
+
+
+yes
+
 >
+>>> @@ -652,6 +661,7 @@ wkup_vtm0: temperature-sensor@42040000 {
+>>>    		      <0x00 0x42050000 0x00 0x350>;
+>>>    		power-domains = <&k3_pds 154 TI_SCI_PD_EXCLUSIVE>;
+>>>    		#thermal-sensor-cells = <1>;
+>>> +		bootph-pre-ram;
+>>>    	};
+>>>    	mcu_esm: esm@40800000 {
+>>> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
+>>> index 21fe194a5766..d78f86889bf9 100644
+>>> --- a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
+>>> +++ b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
+>>> @@ -121,6 +121,7 @@ J721E_WKUP_IOPAD(0x20, PIN_INPUT, 1) /* (B8) MCU_OSPI0_D5.MCU_HYPERBUS0_DQ5 */
+>>>    			J721E_WKUP_IOPAD(0x24, PIN_INPUT, 1) /* (A8) MCU_OSPI0_D6.MCU_HYPERBUS0_DQ6 */
+>>>    			J721E_WKUP_IOPAD(0x28, PIN_INPUT, 1) /* (A7) MCU_OSPI0_D7.MCU_HYPERBUS0_DQ7 */
+>>>    		>;
+>>> [..]
+>>>    			bucka2: buck2 {
+>>> @@ -464,6 +470,7 @@ flash@0 {
+>>>    		cdns,tchsh-ns = <60>;
+>>>    		cdns,tslch-ns = <60>;
+>>>    		cdns,read-delay = <4>;
+>>> +		bootph-all;
+>>>    		partitions {
+>>>    			compatible = "fixed-partitions";
+>>
+>> Please consider, adding bootph in ospi0 node as well around
+>> "ospi.phypattern"
+>>
+> Okay sure, will move the bootph-all from flash@0 node to under
+> ospi.phypattern node as putting it in the child node should propagate
+> it.
+>
+> Thanks for reviewing Udit!
+>
+> Regards,
+> Manorit
 
