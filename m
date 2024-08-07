@@ -1,133 +1,147 @@
-Return-Path: <linux-kernel+bounces-278308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA06D94AE8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:00:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ADCF94AE92
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0C8285FC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:00:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACE1B1F22F46
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399C313C8EA;
-	Wed,  7 Aug 2024 16:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDDB13E025;
+	Wed,  7 Aug 2024 17:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="odad3vo+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lRkUIkz4"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WhJY6mYI"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFFA13B7A3;
-	Wed,  7 Aug 2024 16:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3CF7829C
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 17:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723049974; cv=none; b=MuWRhcePi/ZirprAB67HqvKPZIt7ZwzPWmjoGuoKgbllSIbeOZHY2/G+v8jZ/Ic3+ofv9cqe+5VZ5MaUfRPnRlh78HrFvivX25MO8IeUkQiTCKsCsHIZvQMbmRm/YPrTfBh8VvpQKT2GAaj+NH5igkHQNI7tfxS01QM+CevCT7o=
+	t=1723050024; cv=none; b=HsCuxGO3IjCKJm3d/wWmLPLba8Rgyk34Ph5uenLjlAgXF6WiT8PwnmhhnXFuXDqnadzBRisRgFQYNjRhSksguqfOxS+sskjWIo3NEuEBrL342Cz5oBTNSkoS793/wm9XLhlDxUS1SFGoFc0A2CcgNDr98J6gF8aFVwfv9ppQhaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723049974; c=relaxed/simple;
-	bh=byyLyYIES1ujG0m93DaLgMws/0hwctl4+3xQEzXVUr8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=icQk4t8D4S2EWFgpKBeEg2WWIVJmdSdjb9jInCnK45L8BjQIHR+pOSxwgjNWGBnXaKUcE+YpHBw9nInZqNAJDr9/Ig+HJKzS/XBaB5CiSQwZ9V59ygTPd3/juDkihXjMLExRu+J1/7a9/FjhDS/gPFhD3NAMeFuoldIPisUmAnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=odad3vo+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lRkUIkz4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723049969;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=otPONBhSjDgKNxkH5EJTvsINrlb7+i62Ck70fxMf50E=;
-	b=odad3vo+qUtZ9DlO1uiwY0uN7nkJOcCa0MdCPoKRZzxQeQ4a1iHLV5n+8crXQpXbQLKDjZ
-	8wiqZLRyJ8U4stKdY5gqUejQc4YdRItobgRlMcK7F4F1AgZDNOufBlIo+e+KjVv3oJAqaq
-	KNhj1npGtgwDFaw48kW7265b70J83JfSzoYzLIzlt03MmHPgzve5Fb998in/RU/UbEMwE0
-	cwwikcPMJvGY0JFYg/ZbsVXd/l92ShIaG7SaLzvXojecG2gLYsP6/58EQ9/OnYNtm+TZ0z
-	y02Sk+Gl+mC+XvUP8RDgVPdmM2baRDyJGglxhN1oP6wMP4SQLIxildrIw3agGw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723049969;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=otPONBhSjDgKNxkH5EJTvsINrlb7+i62Ck70fxMf50E=;
-	b=lRkUIkz4Q837ijx3A+o6+lW3kLfalmRxfy2GgdVe9Mrvk0Z5uCAjd/mAyqHLWRbNJydqgk
-	0Dt+bTYYxsuMh4Dw==
-To: Yunhong Jiang <yunhong.jiang@linux.intel.com>, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, rafael@kernel.org, lenb@kernel.org,
- kirill.shutemov@linux.intel.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
- yunhong.jiang@linux.intel.com
-Subject: Re: [PATCH 5/7] x86/hyperv: Mark ACPI wakeup mailbox page as private
-In-Reply-To: <20240806221237.1634126-6-yunhong.jiang@linux.intel.com>
-References: <20240806221237.1634126-1-yunhong.jiang@linux.intel.com>
- <20240806221237.1634126-6-yunhong.jiang@linux.intel.com>
-Date: Wed, 07 Aug 2024 18:59:28 +0200
-Message-ID: <87cymk2rrj.ffs@tglx>
+	s=arc-20240116; t=1723050024; c=relaxed/simple;
+	bh=jL7S3d8oy5zxfp5mRfu6SUwGyJ1m2Qne4UZtkrwTc3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MAiwgv3KJTWaG5CxMaFpBcuZDKNSXy5ruJiFW30f+WEQPRbutr6bR2XjlWpdDqfXdRBMgx0bhZHCXGDFK0uba1oHgNI8AlHGp09WyIhkVJm5b7wXWG5ZzJgmLRI7DRkLuaRDL8jmxb0s8/Y1Hpca/vImbkh916JeKix8GAgFyOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WhJY6mYI; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc587361b6so1255405ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 10:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723050023; x=1723654823; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WWwBbhcDkvNaxUygLQVH/xx2sd0hR+vnAl1kEVRw/lA=;
+        b=WhJY6mYIQSo4DpYmxhDH62aeGfPX0/t/txUNvLKaDcfwiPnfrZsEDKX3ydYFpH99oi
+         khzQXaBS9t2X00QRdEiuJy62WLl9xnNTmZyVeuDmGxV6y5HIkqUPgm0/MXzupp0b1zWX
+         SdcRonBDMuFMVRUQfBlcL/6+dHqr6jfFxOVNN03AdTCaTtE3DnxBzR6jNLjqxJGuKxs8
+         G0bYIiFKlIzF3U1qDgNF5nKk90spfQXpTvgFzmaIz2yVE+o8VeAaDxr+Gri4Aj7IukXx
+         40DvvxFKKfnQDdnVEq2pulPOog1WfRpFahsuCR9FHmCQrYyyG1wZFFAwFS47+HaAv50A
+         77Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723050023; x=1723654823;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WWwBbhcDkvNaxUygLQVH/xx2sd0hR+vnAl1kEVRw/lA=;
+        b=LMiVHCINanPI9rDfuU4yYJogA9w75nu0kZZ4ZiCCuJ06ptWbJglPHUc71d8rVU7fYn
+         W8e6uVyzSolXVt4LX1dYvQd43c+b7IqUJjiMYvucu1htdSQMQ5tZ7t4K9d/LvaN3c3bj
+         d8KaM1ARRXjsE0I28vhAvbVoPS9DW8TAx4mdkhwvzwO44vV8QbAT28hOKPQEnOJ4h8xV
+         zL333+ANKVyN40LIuQmr7TNybgDdDBfijFyP7o4dMcpWCaysXzLhQxkiL3nuw7GtejrZ
+         IuvWy1+vI8yzGEXaKJLRTX7oEw7KiyfjkBPvFzXHedM3udwhcrQzP4rYBIfYKWiisS+p
+         VlVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUB6UmtUZ4oaUFWyTsZWeBMJfZ2WfN6zVUBznRlVgI3UI+mumIAGEti49uaFEXf8kQBKq9jYi9xGVuG5jVVTgG2gTXN6FKN4FEp2p58
+X-Gm-Message-State: AOJu0YwOqJUlEH2jW7yLnSOyIxBEvXcYDN7SSc0V4fXT1eCin5cSHx7g
+	HS2/Ng4DigiRV9nrG7IX2vZU4/zcdBHORENmJmjau1YenSGvZiiuAZf7ZFU9tg==
+X-Google-Smtp-Source: AGHT+IGQ8DPd+Wqtq+Spl5EDiAuVhLzByGSc7Am4v9rp+zU/4CqC8Aerp7AGU/R+/C2yss5AVMTF5w==
+X-Received: by 2002:a17:903:1108:b0:1fd:9044:13d8 with SMTP id d9443c01a7336-1ff57257f52mr197895405ad.9.1723050022643;
+        Wed, 07 Aug 2024 10:00:22 -0700 (PDT)
+Received: from thinkpad ([120.60.60.211])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592ad9e4sm108304425ad.283.2024.08.07.10.00.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 10:00:21 -0700 (PDT)
+Date: Wed, 7 Aug 2024 22:30:11 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH linu-next v1] PCI: dw-rockchip: Enable async probe by
+ default
+Message-ID: <20240807170011.GC5664@thinkpad>
+References: <20240625155759.132878-1-linux.amoon@gmail.com>
+ <20240807163106.GA101420@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240807163106.GA101420@bhelgaas>
 
-On Tue, Aug 06 2024 at 15:12, Yunhong Jiang wrote:
-> The ACPI wakeup mailbox is accessed by the OS and the firmware, both are
-> in the guest's context, instead of the hypervisor/VMM context. Mark the
-> address private explicitly.
+On Wed, Aug 07, 2024 at 11:31:06AM -0500, Bjorn Helgaas wrote:
+> On Tue, Jun 25, 2024 at 09:27:57PM +0530, Anand Moon wrote:
+> > Rockchip PCIe driver lets waits for the combo PHY link like PCIe 3.0,
+> > PCIe 2.0 and SATA 3.0 controller to be up during the probe this
+> > consumes several milliseconds during boot.
+> 
+> This needs some wordsmithing.  "driver lets waits" ... I guess "lets"
+> is not supposed to be there?  I'm not sure what the relevance of "PCIe
+> 3.0, PCIe 2.0, SATA 3.0" is.  I assume the host controller driver
+> doesn't know what downstream devices might be present, and the async
+> probing is desirable no matter what they might be?
+> 
 
-This lacks information why the realmode area must be reserved and
-initialized, which is what the change is doing implicitely.
+Since the DWC driver is enabling link training during boot, it also waits for
+the link to be 'up'. But if the device is 'up', then the wait time would be
+usually negligible (few ms). But if there is no device, then the wait time of 1s
+would be evident.
 
-> Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
->  
-> +/*
-> + * The ACPI wakeup mailbox are accessed by the OS and the BIOS, both are in the
-> + * guest's context, instead of the hypervisor/VMM context.
-> + */
-> +static bool hv_is_private_mmio_tdx(u64 addr)
-> +{
-> +	if (wakeup_mailbox_addr && (addr >= wakeup_mailbox_addr &&
-> +	    addr < (wakeup_mailbox_addr + PAGE_SIZE)))
-> +		return true;
-> +	return false;
-> +}
+But here the patch is trying to avoid the few ms delay itself (which is fine).
+The type of endpoint might have some impact on the link training also. But async
+probe is always preferred.
 
-static inline bool within_page(u64 addr, u64 start)
-{
-	return addr >= start && addr < (start + PAGE_SIZE);
-}
+- Mani
 
-static bool hv_is_private_mmio_tdx(u64 addr)
-{
-        return wakeup_mailbox_addr && within_page(addr, wakeup_mailbox_addr)
-}
+> > Establishing a PCIe link can take a while; allow asynchronous probing so
+> > that link establishment can happen in the background while other devices
+> > are being probed.
+> > 
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > index 61b1acba7182..74a3e9d172a0 100644
+> > --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > @@ -367,6 +367,7 @@ static struct platform_driver rockchip_pcie_driver = {
+> >  		.name	= "rockchip-dw-pcie",
+> >  		.of_match_table = rockchip_pcie_of_match,
+> >  		.suppress_bind_attrs = true,
+> > +		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+> >  	},
+> >  	.probe = rockchip_pcie_probe,
+> >  };
+> > -- 
+> > 2.44.0
+> > 
+> 
 
-Hmm?
-
-> +
->  void __init hv_vtl_init_platform(void)
->  {
->  	pr_info("Linux runs in Hyper-V Virtual Trust Level\n");
->  
-> -	x86_platform.realmode_reserve = x86_init_noop;
-> -	x86_platform.realmode_init = x86_init_noop;
-> +	if (wakeup_mailbox_addr) {
-
-Wants a comment vs. realmode here.
-
-> +		x86_platform.hyper.is_private_mmio = hv_is_private_mmio_tdx;
-> +	} else {
-> +		x86_platform.realmode_reserve = x86_init_noop;
-> +		x86_platform.realmode_init = x86_init_noop;
-> +	}
->  	x86_init.irqs.pre_vector_init = x86_init_noop;
->  	x86_init.timers.timer_init = x86_init_noop;
-
-Thanks,
-
-        tglx
+-- 
+மணிவண்ணன் சதாசிவம்
 
