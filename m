@@ -1,153 +1,236 @@
-Return-Path: <linux-kernel+bounces-278394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7210194AFA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:26:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9800494AFAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A306A1C2130D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:26:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAA821C213F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8320F63CB;
-	Wed,  7 Aug 2024 18:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62101411DF;
+	Wed,  7 Aug 2024 18:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="U25YeUgr"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNpUT1HT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF656F30B
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAA313F012;
+	Wed,  7 Aug 2024 18:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723055177; cv=none; b=tdnDBW0hzAtrnjasao9TKhcTxZ8wk0sQCPJXkewBbP1vPpv3ScvxDc3brquyabzLNnPwcYWMsAzx+EH/U2yoFul634pzhjTcLN/CAt756tK+Y0wG/MfP3Vl+4j5ZAB4ZBvPTwNUc/NQ+lznQGk2fkwaB4Dsq2VO+gKrqWDen+5w=
+	t=1723055208; cv=none; b=QppFfPORdAANrg5I4fiC+5cFasblKJwbzPghubuYH+Y+ffNRFmb6ggPkWo3xQzBDgtmVXteyoWDgDQ82At2c6K1XVGnwXHYFXuNAE/9vX/U6ruA2hoVe/S/ysnsjjxeCuIN+dg/d4nH7nSUsweezn0mgokypy44UtTefzP4kd40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723055177; c=relaxed/simple;
-	bh=LLEn5MDBQHmrgyVACBfMnS4xxjGfc9LgvIlsA65/wbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ldT4LkrONyAH3rlO6S0//T7zWkv24KUAWnppuVwk8QpBN9VxdWi7a8+BSze9hagJDWfPhuT5XBfki5jXw59cgpveY/ywHE8JGW1VQwA4v84V14at7cQyoqM1F0JScCpasmH0oIPCPMCW8TFT2ukX4pi+FtTPQ66MKs6V0DbbJO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=U25YeUgr; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-267b7ef154aso151195fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 11:26:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1723055174; x=1723659974; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qIRgOrphujOZNK9+4f2LlAnWUepvShfv1Q6TgIqEiJY=;
-        b=U25YeUgrVPQWiF6HNsyfeZr/rCPFqUJ7IKPJII7YfwojnUDQWwJGvEtmoAV8EED88P
-         q7N0sf7Eukm+5ZnhcifkiVtCU8R3MkL1huBoD/Bv5dVwBnNIaEausahv1d83yrv13EyM
-         ALiLyllcGQpc53rY5KFwGVv+/nBUC1XuRTJYUz3yjYtedvVmpgtcmU6Lokj5Fb/DpgtS
-         HYDPwsjITnGYFmnIwlbJvGWRBnUyRDO++CxN7pgt2/y/LeBfTjph9Nc+t6o7P5dinyJz
-         foo9dfdQvFqum8wQn+QtKGcRgQ45+JBFBuiXhcTH6lAsbldgcY9+w8X2wGvnnFKCzlBH
-         w+qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723055174; x=1723659974;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qIRgOrphujOZNK9+4f2LlAnWUepvShfv1Q6TgIqEiJY=;
-        b=I9AdtxtXucNxI3cCUhiIHbRsQcYMaSUJK9IupbL9ioxqBH7ROMmuMpfuBHHAjCxFJr
-         2vbg7csBJIcuZMk6foOeOtVLdhaMQVrHES3WtajU5VfY/RTMBUjfhgf4fZAwYsIr5+aD
-         4C8mgOzw1sc8ab3j30zpbwqDBVUUYG33IQhPGJCSSpd2/6i+dZDXZv15OU1RUdhctY9X
-         2JO3z/9XUUduigk1v8wnNRS6Dvvjo7Pg3FLu+xy2/ovaXF1zZf+5FqegErAHbt4uL11C
-         UvPPKQKK3Y7scmwsO/c5KX2SRF1I5j0eheLOHbGCqDNLrF69DgRSvTitGvttLgfbZFVq
-         svdg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6+b1W8Hp/wAaACgj/Sg8eCKt2sWam9z2kFW4DVuTuJTxdZAm98vdlyN7YBuJK9JGAQiPHbdaqFo9tSLKR2q24ZiztcZ9NV3kkwC6o
-X-Gm-Message-State: AOJu0Yx1RhU5HQ5fiHRDBZ+BQ5zI0tsKuTVGEl4skZHzOFZk/t5Nfp6Z
-	eMs4e3me6J0lStTIevhUosJf5OYhj9+yKdJafbLkQHGqpY3uo7hCFaxW2WYhNn4=
-X-Google-Smtp-Source: AGHT+IF4dmL7QQFh54XoTTYzluGtiIHPWtm1r4ZnSMjpESeur6JHnnxQaalp3hZhfOljJo1uPFxdYA==
-X-Received: by 2002:a05:6870:4693:b0:260:e6a6:396c with SMTP id 586e51a60fabf-26891d5aebfmr23740831fac.30.1723055173896;
-        Wed, 07 Aug 2024 11:26:13 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.90])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3786bbcffsm82167785a.99.2024.08.07.11.26.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 11:26:13 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sblMR-003SUs-9y;
-	Wed, 07 Aug 2024 15:26:11 -0300
-Date: Wed, 7 Aug 2024 15:26:11 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: James Houghton <jthoughton@google.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Matlack <dmatlack@google.com>,
-	David Rientjes <rientjes@google.com>,
-	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Shaoqin Huang <shahuang@redhat.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>,
-	Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>,
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 05/11] mm: Add fast_only bool to test_young and
- clear_young MMU notifiers
-Message-ID: <20240807182611.GH8473@ziepe.ca>
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-6-jthoughton@google.com>
- <37ae59f2-777a-4a58-ae58-4a20066364dd@redhat.com>
- <CADrL8HUmQWDc-75p=Z2KZzHkyWCCh8xnX=+ZXm5MZ-drALjKTA@mail.gmail.com>
- <20240806172349.GQ676757@ziepe.ca>
- <CADrL8HXFK=1cUS+0Z5k048U4rzpTNL634f57VtJ7TD_umrbNiA@mail.gmail.com>
+	s=arc-20240116; t=1723055208; c=relaxed/simple;
+	bh=qiQ964hV5kDZS/RItHahPQgdcg5kxk6+8N4yNvf/Trg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ceH+Otq0Sn8EDdMKSDBpVdEvmVOB1MOZXolwPo1dW/xwQ7DL31cOmoOgY8/VZ4aubxVGnKfmIuzvc1UvK396PbfItMEDqf1i+P90u9nL1qY7MEnY0RzrR6uYdus4CcBssyhpRdBD0a3BaGZvdB1pGtMUhUCVLOWY1f6qAB4EtpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNpUT1HT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36309C32781;
+	Wed,  7 Aug 2024 18:26:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723055207;
+	bh=qiQ964hV5kDZS/RItHahPQgdcg5kxk6+8N4yNvf/Trg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UNpUT1HTP3iOXlZ2uIs6pmVjUc0GPwhCg5jRbvrSz/cv0bQ2yn3Oem6Bfd4HGrCRs
+	 0lXM8ecAkMOGThEgPNj3i2ZaoBvFUo2X94KRawQC+bHpYdN7AZDJs2iWBRfqbqHCr3
+	 nR7h/ssu7CI0L1Ml/WxcPPNGtTE5p6cvFOw2i+toEnUTp0ZxJ/O4wdn8BFotivq63X
+	 tvjtZ2ahT4hGZZzCPyVes3hxvoIwiN4zfQQZFrNW6Zp5sUV3iU2IQllGOSGAPzne8R
+	 HKa6xL2cmInpcJGkwJR9H1KFfKhSDSXu/tL/iUzHgaBANbpVGcZ3GAav44O6mTBKPq
+	 f0NUN9eGtyvyA==
+Message-ID: <45cdf1c2-9056-4ac2-8e4d-4f07996a9267@kernel.org>
+Date: Wed, 7 Aug 2024 11:26:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADrL8HXFK=1cUS+0Z5k048U4rzpTNL634f57VtJ7TD_umrbNiA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION][BISECTED][STABLE] hdparm errors since 28ab9769117c
+To: Christian Heusel <christian@heusel.eu>, Igor Pylypiv
+ <ipylypiv@google.com>, Niklas Cassel <cassel@kernel.org>,
+ linux-ide@vger.kernel.org
+Cc: Hannes Reinecke <hare@suse.de>, regressions@lists.linux.dev,
+ stable@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <0bf3f2f0-0fc6-4ba5-a420-c0874ef82d64@heusel.eu>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <0bf3f2f0-0fc6-4ba5-a420-c0874ef82d64@heusel.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 07, 2024 at 08:02:26AM -0700, James Houghton wrote:
-> On Tue, Aug 6, 2024 at 10:23 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > On Thu, Aug 01, 2024 at 04:13:40PM -0700, James Houghton wrote:
-> > > --- a/include/linux/mmu_notifier.h
-> > > +++ b/include/linux/mmu_notifier.h
-> > > @@ -106,6 +106,18 @@ struct mmu_notifier_ops {
-> > >          * clear_young is a lightweight version of clear_flush_young. Like the
-> > >          * latter, it is supposed to test-and-clear the young/accessed bitflag
-> > >          * in the secondary pte, but it may omit flushing the secondary tlb.
-> > > +        *
-> > > +        * The fast_only parameter indicates that this call should not block,
-> > > +        * and this function should not cause other MMU notifier calls to
-> > > +        * block. Usually this means that the implementation should be
-> > > +        * lockless.
-> > > +        *
-> > > +        * When called with fast_only, this notifier will be a no-op unless
-> > > +        * has_fast_aging is set on the struct mmu_notifier.
-> >
-> > If you add a has_fast_aging I wonder if it is better to introduce new
-> > ops instead? The semantics are a bit easier to explain that way
+On 2024/08/07 10:23, Christian Heusel wrote:
+> Hello Igor, hello Niklas,
 > 
-> v5 implemented these with a new op[1]. *Just* having the new op is
-> kind of problematic -- we have yet another op to do something very
-> similar to what already exists. We are left with two options:
-> consolidate everything into a single notifier[2] or add a new
-> parameter to test/clear_young()[3]. The latter, implemented in this
-> v6, is somewhat simpler to implement (fewer LoC, reduces some
-> duplication in KVM), though it does indeed make the explanation for
-> test/clear_young() slightly more complex. I don't feel very strongly,
-> but unless you do, I think I just ought to stick with how the v6 does
-> it. :)
+> on my NAS I am encountering the following issue since v6.6.44 (LTS),
+> when executing the hdparm command for my WD-WCC7K4NLX884 drives to get
+> the active or standby state:
+> 
+>     $ hdparm -C /dev/sda
+>     /dev/sda:
+>     SG_IO: bad/missing sense data, sb[]:  f0 00 01 00 50 40 ff 0a 00 00 78 00 00 1d 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>      drive state is:  unknown
+> 
+> 
+> While the expected output is the following:
+> 
+>     $ hdparm -C /dev/sda
+>     /dev/sda:
+>      drive state is:  active/idle
+> 
+> I did a bisection within the stable series and found the following
+> commit to be the first bad one:
+> 
+>     28ab9769117c ("ata: libata-scsi: Honor the D_SENSE bit for CK_COND=1 and no error")
+> 
+> According to kernel.dance the same commit was also backported to the
+> v6.10.3 and v6.1.103 stable kernels and I could not find any commit or
+> pending patch with a "Fixes:" tag for the offending commit.
+> 
+> So far I have not been able to test with the mainline kernel as this is
+> a remote device which I couldn't rescue in case of a boot failure. Also
+> just for transparency it does have the out of tree ZFS module loaded,
+> but AFAIU this shouldn't be an issue here, as the commit seems clearly
+> related to the error. If needed I can test with an untainted mainline
+> kernel on Friday when I'm near the device.
+> 
+> I have attached the output of hdparm -I below and would be happy to
+> provide further debug information or test patches.
 
-If it does makes the code simpler then it is probably the better choice
+I confirm this, using 6.11-rc2. The problem is actually hdparm code which
+assumes that the sense data is in descriptor format without ever looking at the
+D_SENSE bit to verify that. So commit 28ab9769117c reveals this issue because as
+its title explains, it (correctly) honors D_SENSE instead of always generating
+sense data in descriptor format.
 
-Jason
+Hmm... This is annoying. The kernel is fixed to be spec compliant but that
+breaks old/non-compliant applications... We definitely should fix hdparm code,
+but I think we still need to revert 28ab9769117c...
+
+Niklas, Igor, thoughts ?
+
+> 
+> Cheers,
+> Christian
+> 
+> ---
+> 
+> #regzbot introduced: 28ab9769117c
+> #regzbot title: ata: libata-scsi: Sense data errors breaking hdparm with WD drives
+> 
+> ---
+> 
+> $ pacman -Q hdparm
+> hdparm 9.65-2
+> 
+> $ hdparm -I /dev/sda
+> 
+> /dev/sda:
+> 
+> ATA device, with non-removable media
+> 	Model Number:       WDC WD40EFRX-68N32N0
+> 	Serial Number:      WD-WCC7K4NLX884
+> 	Firmware Revision:  82.00A82
+> 	Transport:          Serial, SATA 1.0a, SATA II Extensions, SATA Rev 2.5, SATA Rev 2.6, SATA Rev 3.0
+> Standards:
+> 	Used: unknown (minor revision code 0x006d) 
+> 	Supported: 10 9 8 7 6 5 
+> 	Likely used: 10
+> Configuration:
+> 	Logical		max	current
+> 	cylinders	16383	0
+> 	heads		16	0
+> 	sectors/track	63	0
+> 	--
+> 	LBA    user addressable sectors:   268435455
+> 	LBA48  user addressable sectors:  7814037168
+> 	Logical  Sector size:                   512 bytes
+> 	Physical Sector size:                  4096 bytes
+> 	Logical Sector-0 offset:                  0 bytes
+> 	device size with M = 1024*1024:     3815447 MBytes
+> 	device size with M = 1000*1000:     4000787 MBytes (4000 GB)
+> 	cache/buffer size  = unknown
+> 	Form Factor: 3.5 inch
+> 	Nominal Media Rotation Rate: 5400
+> Capabilities:
+> 	LBA, IORDY(can be disabled)
+> 	Queue depth: 32
+> 	Standby timer values: spec'd by Standard, with device specific minimum
+> 	R/W multiple sector transfer: Max = 16	Current = 16
+> 	DMA: mdma0 mdma1 mdma2 udma0 udma1 udma2 udma3 udma4 udma5 *udma6 
+> 	     Cycle time: min=120ns recommended=120ns
+> 	PIO: pio0 pio1 pio2 pio3 pio4 
+> 	     Cycle time: no flow control=120ns  IORDY flow control=120ns
+> Commands/features:
+> 	Enabled	Supported:
+> 	   *	SMART feature set
+> 	    	Security Mode feature set
+> 	   *	Power Management feature set
+> 	   *	Write cache
+> 	   *	Look-ahead
+> 	   *	Host Protected Area feature set
+> 	   *	WRITE_BUFFER command
+> 	   *	READ_BUFFER command
+> 	   *	NOP cmd
+> 	   *	DOWNLOAD_MICROCODE
+> 	    	Power-Up In Standby feature set
+> 	   *	SET_FEATURES required to spinup after power up
+> 	    	SET_MAX security extension
+> 	   *	48-bit Address feature set
+> 	   *	Device Configuration Overlay feature set
+> 	   *	Mandatory FLUSH_CACHE
+> 	   *	FLUSH_CACHE_EXT
+> 	   *	SMART error logging
+> 	   *	SMART self-test
+> 	   *	General Purpose Logging feature set
+> 	   *	64-bit World wide name
+> 	   *	IDLE_IMMEDIATE with UNLOAD
+> 	   *	WRITE_UNCORRECTABLE_EXT command
+> 	   *	{READ,WRITE}_DMA_EXT_GPL commands
+> 	   *	Segmented DOWNLOAD_MICROCODE
+> 	   *	Gen1 signaling speed (1.5Gb/s)
+> 	   *	Gen2 signaling speed (3.0Gb/s)
+> 	   *	Gen3 signaling speed (6.0Gb/s)
+> 	   *	Native Command Queueing (NCQ)
+> 	   *	Host-initiated interface power management
+> 	   *	Phy event counters
+> 	   *	Idle-Unload when NCQ is active
+> 	   *	NCQ priority information
+> 	   *	READ_LOG_DMA_EXT equivalent to READ_LOG_EXT
+> 	   *	DMA Setup Auto-Activate optimization
+> 	   *	Device-initiated interface power management
+> 	   *	Software settings preservation
+> 	   *	SMART Command Transport (SCT) feature set
+> 	   *	SCT Write Same (AC2)
+> 	   *	SCT Error Recovery Control (AC3)
+> 	   *	SCT Features Control (AC4)
+> 	   *	SCT Data Tables (AC5)
+> 	    	unknown 206[12] (vendor specific)
+> 	    	unknown 206[13] (vendor specific)
+> 	   *	DOWNLOAD MICROCODE DMA command
+> 	   *	WRITE BUFFER DMA command
+> 	   *	READ BUFFER DMA command
+> Security: 
+> 	Master password revision code = 65534
+> 		supported
+> 	not	enabled
+> 	not	locked
+> 		frozen
+> 	not	expired: security count
+> 		supported: enhanced erase
+> 	504min for SECURITY ERASE UNIT. 504min for ENHANCED SECURITY ERASE UNIT.
+> Logical Unit WWN Device Identifier: 50014ee2647735a1
+> 	NAA		: 5
+> 	IEEE OUI	: 0014ee
+> 	Unique ID	: 2647735a1
+> Checksum: correct
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
