@@ -1,207 +1,144 @@
-Return-Path: <linux-kernel+bounces-277685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D60D94A4B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:50:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D24894A4BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C86CC1F211B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:50:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 913C71C21069
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802A61D174E;
-	Wed,  7 Aug 2024 09:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0D11D174F;
+	Wed,  7 Aug 2024 09:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ACCoSYt6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M0ZdMHXs"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F671D1F5E;
-	Wed,  7 Aug 2024 09:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC0E1AE87B;
+	Wed,  7 Aug 2024 09:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723024238; cv=none; b=s47zIwY9TaZnluMea6vEPPDhDcpTtHuKiq0ulN9JdDctWgmgwL+uqgvfhZgVe6oxEji6ivtjnWWl1VVGYpBSbDfjN9Dusnuv4JCzc8AEz68c1R5nwh78n/KkP/BfrisqidD9zaPtLOllhV/7WAHx/TYzQvG0WXRLRT4mpe4pkaI=
+	t=1723024267; cv=none; b=kk0JFv07oZiahElpm1fdqGKy7ji2TziFdLH55hPyDBuTHhZph/eScxE3FgHp6T5+1SjNmCxxq7eTIIpq+QGCOMsBEzF6RMP4JyolUFNmWP0abFGJwoUGszXxSH3eAcCGNwk6gBs6SNTAsrVR1W0FMwigsJimqiM7WTfGgOs6Czo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723024238; c=relaxed/simple;
-	bh=mUjY9ixgfxwjEEIW3FiijfuqlQl0p2VLrfkkATvsJqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r5487cXtAr+UcKIfyxvvv9CBMfLr0+tceguVcO8ccKApxLltW/gVyGL8Lfymjlq8+XsyM38X8hrDvVf4o0jN/FVfZ8mtm+xwRQNtuh63PxnL2wdU4iMLpaoer1xWvCn6SYa+WHSm91q/Rot7tBs5bQT/81IWC5bKPkWFEVMQOKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ACCoSYt6; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723024234; x=1754560234;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mUjY9ixgfxwjEEIW3FiijfuqlQl0p2VLrfkkATvsJqo=;
-  b=ACCoSYt6w/U8e4ayQ1Pk7KvLlvgZ+/wXr527BjXIJNT+Raul5X2jmAHR
-   qs3v3zUGXX/vSfqfGv1/15YNTsWd+HpZtpHBfWLbK4mWtMZ0gJYASEahv
-   EQjwg9aKVtBUkD/HXhRqYcBJq0UboDaKXRx0dYJjco0Vz5w+CsDfH41Du
-   0Y9ArcxSou+R4GuNoxzANpalei/g4jZnnYh2x3Z1ky4bbWja7uSCzE/Y6
-   O3IZAEHnJa9VrRtxh1tVkr/RW5zgeORc6Y/MmcvqIdmrCbL6fayYQe9cm
-   oykYOWau0B8QSPEzxMaUPYUtVzvQXDgPtLpkup5YxfrTACpm7lMEkbfGD
-   Q==;
-X-CSE-ConnectionGUID: rPKunieGRZu/cmwWfD3C3g==
-X-CSE-MsgGUID: j9R2+oZPTkeoow8MVXFUUQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="32486933"
-X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
-   d="scan'208";a="32486933"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 02:50:33 -0700
-X-CSE-ConnectionGUID: 3q4OSmWKT5qdhAokF2/pug==
-X-CSE-MsgGUID: nu2YmeCkTdSqN4w4aObU2A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
-   d="scan'208";a="56469436"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 07 Aug 2024 02:50:32 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sbdJN-0005HI-1t;
-	Wed, 07 Aug 2024 09:50:29 +0000
-Date: Wed, 7 Aug 2024 17:50:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Luke D. Jones" <luke@ljones.dev>, linux-input@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	bentiss@kernel.org, jikos@kernel.org,
-	"Luke D. Jones" <luke@ljones.dev>
-Subject: Re: [PATCH] hid-asus-ally: Add full gamepad support
-Message-ID: <202408071743.00IxSKrf-lkp@intel.com>
-References: <20240806081212.56860-1-luke@ljones.dev>
+	s=arc-20240116; t=1723024267; c=relaxed/simple;
+	bh=bujS5tNHpPQZuSVa4aVCvUXPM+htXR7bDrzdJ/qKEAk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UcrZ3c0Zt7rOQhk7Ik2/B339PCI/7Ge0DmoAcfRP9Xxwpn/boKgFJ6FDr4x6Gul2BSpMX1OunykKLMSwiM1cZA034CLeTKK+6FD6LDh17ZhUnVvluZmoVrq1uMG5gAVCX69cPlf+6mz0oaLDc5N8b/3FdbeI8pI1zNfOYxm9sN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M0ZdMHXs; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7d89bb07e7so201715766b.3;
+        Wed, 07 Aug 2024 02:51:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723024264; x=1723629064; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hXnNRuyOF/eWPZMzqKvL4vKAqfDFwvUatk3tLmfpuAc=;
+        b=M0ZdMHXsi2PleYfnnERcrKEhIsrA5fX/x+xNQNSWXrN3+LqDb2PuZkPINy3/bCEYJh
+         7rFGk7LlOAmrD9/4yf+c50YjG7X2yovzEoYuZQk9JN0vEmH+QjuwszC2VJsYBOl+++Ng
+         9GJBnY0F2wm0n7ZcFbYR6VWufR5ua/td4J47jqxcVIOgVRoOU82uKRjLqHSxSVijuF34
+         CXUbKRg/K0zpBEyE2w2l00l9hgo/yCattMYNklXsxZyJXuaqMGfXYQzRtvH7/DimUY39
+         J2zboDzJB90Z8HuTioP+t2STINfMqi8z0oFJI0OXQbVkNIKoiLpwr0+gHkjtTS9PksMb
+         dPDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723024264; x=1723629064;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hXnNRuyOF/eWPZMzqKvL4vKAqfDFwvUatk3tLmfpuAc=;
+        b=W7N4nlZdahiEdjCDvzWdwXa2w55T1pAdEJr4Z3Lfr8VtgPF6UUatkIPZOFRwfHEWp9
+         ILx6gFRMZtHPJSU/bQ62/gN9lRpmgC8LDO+8EFDCSV7fBRZ3CdqbN4vse63HkmrcTwBD
+         +QG/NkXSKhBJYegMQiStVvAYbM+jCuQ1ArMwcXiYB+iQmfgV+SjMSZVzCsmg6qSgC3ov
+         mPV1M6QxUI43Kir3yph1gR5EJnXoo7GV7BFEWtUXZmFIpL0eogSJIex0U7qCm8oz0hOJ
+         tzTVm1KMPnNLieUGn1mrEpes6Q8S+1BWior8R99W8v8Oii3hyiHQp5mNgBHilt2NUI43
+         YZ3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXGtTfHmwcTYDDzmjllSKiWBjPgQNuyFyeNmvQSk1IEz9jvVB+LWSP7TMRBLf/GLJAEBcB+8rMv0prGtFQc8FcP2Toyy6Tb5NEOfXSxBsL3X3iyJFbJMLVAZ6Pb2LqwNdsY2223znhOgadjvA==
+X-Gm-Message-State: AOJu0YwfGOxLgrsnFT8+PsCYwRklOveCMhSckuSCGTJL32HVaJ1IizO7
+	sLgx17xtNekYJ2wk6/b9w/8HcAdMTtefNUNu4YUwFjQhvdLd/3Pnqfy6cE0s/kP/m/AjpOnJd/O
+	+VeL0aaM08n7DvRAgbY2BedmqY6I=
+X-Google-Smtp-Source: AGHT+IFuJJSAfymoexc0xceu8yZeIOR19MjOxo/KrMwNuaFAvLrwDjZiBvHSS4OvimC9+1oqlh885P3WoOUlevBROHo=
+X-Received: by 2002:a17:907:3d8c:b0:a7a:b643:654b with SMTP id
+ a640c23a62f3a-a7dc507105dmr1388891266b.50.1723024263619; Wed, 07 Aug 2024
+ 02:51:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806081212.56860-1-luke@ljones.dev>
+References: <20240806144628.874350-1-mjguzik@gmail.com> <20240806155319.GP5334@ZenIV>
+ <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
+ <20240807033820.GS5334@ZenIV> <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
+ <20240807062300.GU5334@ZenIV> <20240807063350.GV5334@ZenIV>
+ <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
+ <20240807070552.GW5334@ZenIV> <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
+ <20240807075218.GX5334@ZenIV> <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
+In-Reply-To: <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 7 Aug 2024 11:50:50 +0200
+Message-ID: <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
+Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Luke,
+This eventually broke:
 
-kernel test robot noticed the following build warnings:
+[ 1297.949437] BUG: kernel NULL pointer dereference, address: 0000000000000028
+[ 1297.951840] #PF: supervisor read access in kernel mode
+[ 1297.953548] #PF: error_code(0x0000) - not-present page
+[ 1297.954984] PGD 109590067 P4D 0
+[ 1297.955533] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+[ 1297.956340] CPU: 18 UID: 0 PID: 1113 Comm: cron Not tainted
+6.11.0-rc1-00003-g80efb96e5cd4 #291
+[ 1297.958090] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+BIOS rel-1.16.1-0-g3208b098f51a-prebuilt.qemu.org 04/01/2014
+[ 1297.959926] RIP: 0010:vfs_tmpfile+0x162/0x230
+[ 1297.960666] Code: b2 8b 55 48 83 e2 20 83 fa 01 19 ff 81 e7 00 f0
+ff ff 81 c7 20 10 00 00 a9 00 40 00
+04 75 90 48 8b 85 a0 00 00 00 4c 8b 48 30 <49> 8b 51 28 48 8b 92 b8 03
+00 00 48 85 d2 0f 84 71 ff ff ff 48 8b
+[ 1297.963682] RSP: 0018:ff38d126c19c3cc0 EFLAGS: 00010246
+[ 1297.964549] RAX: ff2c2c8c89a3b980 RBX: 0000000000000000 RCX: 0000000000000002
+[ 1297.965714] RDX: 0000000000000000 RSI: ff2c2c8c89a3ba30 RDI: 0000000000000020
+[ 1297.966872] RBP: ff2c2c8c91917b00 R08: 0000000000000000 R09: 0000000000000000
+[ 1297.968046] R10: 0000000000000000 R11: ff2c2c8c91cd23f0 R12: ffffffffb7b91e20
+[ 1297.969202] R13: ff38d126c19c3d48 R14: ff2c2c8c89a3b980 R15: ff2c2c8c89a00a58
+[ 1297.970364] FS:  00007ff81cb63840(0000) GS:ff2c2c91e7a80000(0000)
+knlGS:0000000000000000
+[ 1297.971694] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 1297.972645] CR2: 0000000000000028 CR3: 000000010cf58001 CR4: 0000000000371ef0
+[ 1297.973825] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 1297.974996] DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
+[ 1297.976175] Call Trace:
+[ 1297.976609]  <TASK>
+[ 1297.976978]  ? __die+0x23/0x70
+[ 1297.977501]  ? page_fault_oops+0x15c/0x480
+[ 1297.978191]  ? jbd2_journal_stop+0x13c/0x2d0
+[ 1297.978903]  ? exc_page_fault+0x78/0x170
+[ 1297.979564]  ? asm_exc_page_fault+0x26/0x30
+[ 1297.980262]  ? vfs_tmpfile+0x162/0x230
+[ 1297.980891]  path_openat+0xc70/0x12b0
+[ 1297.981507]  ? __count_memcg_events+0x58/0xf0
+[ 1297.982233]  ? handle_mm_fault+0xb9/0x260
+[ 1297.982903]  ? do_user_addr_fault+0x2ed/0x6e0
+[ 1297.983636]  do_filp_open+0xb0/0x150
+[ 1297.984241]  do_sys_openat2+0x91/0xc0
+[ 1297.984855]  __x64_sys_openat+0x57/0xa0
+[ 1297.985504]  do_syscall_64+0x52/0x150
+[ 1297.986128]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-[auto build test WARNING on hid/for-next]
-[also build test WARNING on next-20240807]
-[cannot apply to linus/master v6.11-rc2]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Luke-D-Jones/hid-asus-ally-Add-full-gamepad-support/20240806-170850
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
-patch link:    https://lore.kernel.org/r/20240806081212.56860-1-luke%40ljones.dev
-patch subject: [PATCH] hid-asus-ally: Add full gamepad support
-config: parisc-allmodconfig (https://download.01.org/0day-ci/archive/20240807/202408071743.00IxSKrf-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240807/202408071743.00IxSKrf-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408071743.00IxSKrf-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/hid/hid-asus-ally.c: In function 'ally_x_create':
->> drivers/hid/hid-asus-ally.c:565:17: warning: variable 'max_output_report_size' set but not used [-Wunused-but-set-variable]
-     565 |         uint8_t max_output_report_size;
-         |                 ^~~~~~~~~~~~~~~~~~~~~~
-   drivers/hid/hid-asus-ally.c: In function '__gamepad_store_deadzones':
->> drivers/hid/hid-asus-ally.c:1177:13: warning: variable 'cmd' set but not used [-Wunused-but-set-variable]
-    1177 |         int cmd, side, is_tr;
-         |             ^~~
-   In file included from drivers/hid/hid-asus-ally.c:24:
-   drivers/hid/hid-asus-ally.c: At top level:
->> drivers/hid/hid-asus-ally.h:321:44: warning: 'btn_mapping_rt_attr_group' defined but not used [-Wunused-const-variable=]
-     321 |         ALLY_BTN_ATTRS_GROUP(btn_##_fname, btn_mapping_##_fname)
-         |                                            ^~~~~~~~~~~~
-   drivers/hid/hid-asus-ally.h:306:45: note: in definition of macro 'ALLY_BTN_ATTRS_GROUP'
-     306 |         static const struct attribute_group _fname##_attr_group = {       \
-         |                                             ^~~~~~
-   drivers/hid/hid-asus-ally.c:895:1: note: in expansion of macro 'ALLY_BTN_MAPPING'
-     895 | ALLY_BTN_MAPPING(rt, btn_pair_lt_rt, btn_pair_side_right);
-         | ^~~~~~~~~~~~~~~~
->> drivers/hid/hid-asus-ally.h:321:44: warning: 'btn_mapping_lt_attr_group' defined but not used [-Wunused-const-variable=]
-     321 |         ALLY_BTN_ATTRS_GROUP(btn_##_fname, btn_mapping_##_fname)
-         |                                            ^~~~~~~~~~~~
-   drivers/hid/hid-asus-ally.h:306:45: note: in definition of macro 'ALLY_BTN_ATTRS_GROUP'
-     306 |         static const struct attribute_group _fname##_attr_group = {       \
-         |                                             ^~~~~~
-   drivers/hid/hid-asus-ally.c:894:1: note: in expansion of macro 'ALLY_BTN_MAPPING'
-     894 | ALLY_BTN_MAPPING(lt, btn_pair_lt_rt, btn_pair_side_left);
-         | ^~~~~~~~~~~~~~~~
-
-
-vim +/max_output_report_size +565 drivers/hid/hid-asus-ally.c
-
-   562	
-   563	static struct ally_x_device *ally_x_create(struct hid_device *hdev)
-   564	{
- > 565		uint8_t max_output_report_size;
-   566		struct ally_x_device *ally_x;
-   567		struct ff_report *report;
-   568		int ret;
-   569	
-   570		ally_x = devm_kzalloc(&hdev->dev, sizeof(*ally_x), GFP_KERNEL);
-   571		if (!ally_x)
-   572			return ERR_PTR(-ENOMEM);
-   573	
-   574		ally_x->hdev = hdev;
-   575		INIT_WORK(&ally_x->output_worker, ally_x_work);
-   576		spin_lock_init(&ally_x->lock);
-   577		ally_x->output_worker_initialized = true;
-   578		ally_x->qam_btns_steam_mode =
-   579			true; /* Always default to steam mode, it can be changed by userspace attr */
-   580	
-   581		max_output_report_size = sizeof(struct ally_x_input_report);
-   582		report = devm_kzalloc(&hdev->dev, sizeof(*report), GFP_KERNEL);
-   583		if (!report) {
-   584			ret = -ENOMEM;
-   585			goto free_ally_x;
-   586		}
-   587	
-   588		/* None of these bytes will change for the FF command for now */
-   589		report->report_id = 0x0D;
-   590		report->ff.enable = 0x0F; /* Enable all by default */
-   591		report->ff.pulse_sustain_10ms = 0xFF; /* Duration */
-   592		report->ff.pulse_release_10ms = 0x00; /* Start Delay */
-   593		report->ff.loop_count = 0xEB; /* Loop Count */
-   594		ally_x->ff_packet = report;
-   595	
-   596		ally_x->input = ally_x_setup_input(hdev);
-   597		if (IS_ERR(ally_x->input)) {
-   598			ret = PTR_ERR(ally_x->input);
-   599			goto free_ff_packet;
-   600		}
-   601	
-   602		if (sysfs_create_file(&hdev->dev.kobj, &dev_attr_ally_x_qam_mode.attr)) {
-   603			ret = -ENODEV;
-   604			goto unregister_input;
-   605		}
-   606	
-   607		ally_x->update_ff = true;
-   608		if (ally_x->output_worker_initialized)
-   609			schedule_work(&ally_x->output_worker);
-   610	
-   611		hid_info(hdev, "Registered Ally X controller using %s\n",
-   612			 dev_name(&ally_x->input->dev));
-   613		return ally_x;
-   614	
-   615	unregister_input:
-   616		input_unregister_device(ally_x->input);
-   617	free_ff_packet:
-   618		kfree(ally_x->ff_packet);
-   619	free_ally_x:
-   620		kfree(ally_x);
-   621		return ERR_PTR(ret);
-   622	}
-   623	
+tripping ip:
+vfs_tmpfile+0x162/0x230:
+fsnotify_parent at include/linux/fsnotify.h:81
+(inlined by) fsnotify_file at include/linux/fsnotify.h:131
+(inlined by) fsnotify_open at include/linux/fsnotify.h:401
+(inlined by) vfs_tmpfile at fs/namei.c:3781
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Mateusz Guzik <mjguzik gmail.com>
 
