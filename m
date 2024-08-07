@@ -1,144 +1,69 @@
-Return-Path: <linux-kernel+bounces-277767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC4094A634
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:48:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2072394A63B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07C451C2296F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:48:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA6DE1F2105A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4911E2876;
-	Wed,  7 Aug 2024 10:47:56 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD6F1DF681;
+	Wed,  7 Aug 2024 10:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bFSKkPmJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1461DF667;
-	Wed,  7 Aug 2024 10:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2E21B8EA8;
+	Wed,  7 Aug 2024 10:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723027676; cv=none; b=EXCzHFkTOJhTNjKvxHCjVJmpM6utiQIZSg3yeAFaa423qGERSW/1rgyWY6ohlWxK1oNjN1yy7RgAqmfYGtKo6jikPZuWtsoOwNKzUkIo1yEO4MpYC3WEgzRVfTYK/AHoi8gT0uLBeA8m53Y9zluPbDSVkH/MyAitEpbPUImohEQ=
+	t=1723027739; cv=none; b=TwegzNE++BEjVZssRH3HVATefFLwkx2zSVAnBW/d+K9M7uAEVKqDDI3uuaIw4ui5nEEglXpyOKGNoRmE1S/StNFE5lBrphJwzGcUpujU+3GSTzxNbcSt9rdgYRK7SsGuvOHggu/oBAWkDxDU4A1/FnczAEYsrQfIQdbZYhevM5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723027676; c=relaxed/simple;
-	bh=aKT1TNGY7N1VZKhJM3yrUJlvHm+MMYiI29thE1FOuK0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A24BLZP32gUVBa9QXYofk/D1Vzmo/Bf6UyxPYTnretYJHtlzEZJWnPOe7svnahUOjp9/LPdUH6Tg9YQ0Vmbiq4VsnMgx5G3/0tyWjQB5JikLtGEubtxAPmoaHzILojAy0BuKti33DIyCbpG+q1Iuh2SfPysPlQMaxMeX5L9Fajg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wf6J73CH2z6K5kM;
-	Wed,  7 Aug 2024 18:44:55 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 115FC1400D9;
-	Wed,  7 Aug 2024 18:47:49 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 7 Aug
- 2024 11:47:48 +0100
-Date: Wed, 7 Aug 2024 11:47:47 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: David Hunter <david.hunter.linux@gmail.com>, <bhelgaas@google.com>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<julia.lawall@inria.fr>, <skhan@linuxfoundation.org>,
-	<javier.carrasco.cruz@gmail.com>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] of.c: replace of_node_put with __free improves cleanup
-Message-ID: <20240807114747.00002fc2@Huawei.com>
-In-Reply-To: <20240801235526.GA129068@bhelgaas>
-References: <20240719223805.102929-1-david.hunter.linux@gmail.com>
-	<20240801235526.GA129068@bhelgaas>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1723027739; c=relaxed/simple;
+	bh=0nJiNsMtRqtiZBkFoOne0DiY/XfVAZ4pWQwMn8S5eCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VxjMnC1OIvU8NEFd9DfKVj3Y8ALvBry8vy1hFkAsyRVEu5UcJViz//aDKMkoAsks54YtA9tmJeg3MnCCfmD66q48wxFEsZ1bJZLCx6rksvfxI9m+HaPK0wGjmv3iICcth3YBUOZJYo6DuTczZDH1amHVs7jUnuhS/AMCPMboO64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bFSKkPmJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C05CC32782;
+	Wed,  7 Aug 2024 10:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723027738;
+	bh=0nJiNsMtRqtiZBkFoOne0DiY/XfVAZ4pWQwMn8S5eCw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bFSKkPmJJ/qURXcxgl6DLV6isriSh8HL/ESfL+M3Nmh7ZqnLI8ECAotUeA5TuIyq9
+	 g30E5eptVOqvfhq3Evxjh917Ihr9ocZ8mQzpZwpHNPtM6Wk+ZLI1xUih4xSbZDjRQO
+	 kI7UmHG1/8EQTFmcXJ8vowsTJAmfHR2hx8OG2hNY=
+Date: Wed, 7 Aug 2024 12:48:56 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] USB-serial fix for 6.11-rc2
+Message-ID: <2024080749-corrode-displace-d9bd@gregkh>
+References: <Zqzlq_8Cg8KnUwL_@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zqzlq_8Cg8KnUwL_@hovoldconsulting.com>
 
-On Thu, 1 Aug 2024 18:55:26 -0500
-Bjorn Helgaas <helgaas@kernel.org> wrote:
-
-> [+cc Rob, Jonathan]
+On Fri, Aug 02, 2024 at 03:56:59PM +0200, Johan Hovold wrote:
+> The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 > 
-> On Fri, Jul 19, 2024 at 06:38:05PM -0400, David Hunter wrote:
-> > The use of the __free function allows the cleanup to be based on scope
-> > instead of on another function called later. This makes the cleanup
-> > automatic and less susceptible to errors later.
-> > 
-> > This code was compiled without errors or warnings.  
+>   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 > 
-> I *think* this looks OK, but I'm not comfy with all this scope magic
-> yet, so would like Jonathan and/or Rob to take a peek too.
-
-I'm suspicious of usecases where there isn't a constructor / destructor pair.
-
-This is more of a 'steal' the pointer and destroy it pattern.
-
-Also, bug in this case.... see below.
-
+> are available in the Git repository at:
 > 
-> And is there some way to include a hint here about how to find the
-> implicit of_node_put()?  I think it's this from 9448e55d032d ("of: Add
-> cleanup.h based auto release via __free(device_node) markings"):
-> 
->   +DEFINE_FREE(device_node, struct device_node *, if (_T) of_node_put(_T))
+>   https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git tags/usb-serial-6.11-rc2
 
-Yes, it's that one.  Makes sense to add a reference to that in the
-patch description for these.
-> 
-> but it did take some looking to find it.
-> 
-> If it looks good, I'll tweak the commit log to use imperative mood:
-> https://chris.beams.io/posts/git-commit/
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=v6.9#n94
-> 
-> since this technically says what *could* happen but not what the patch
-> *does*.
-> 
-> > Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
-> > ---
-> >  drivers/pci/of.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> > index b908fe1ae951..8b150982f5cd 100644
-> > --- a/drivers/pci/of.c
-> > +++ b/drivers/pci/of.c
-> > @@ -616,16 +616,14 @@ int devm_of_pci_bridge_init(struct device *dev, struct pci_host_bridge *bridge)
-> >  
-> >  void of_pci_remove_node(struct pci_dev *pdev)
-> >  {
-> > -	struct device_node *np;
-> > +	struct device_node *np __free(device_node) = pci_device_to_OF_node(pdev);
-> >  
-> > -	np = pci_device_to_OF_node(pdev);
-> >  	if (!np || !of_node_check_flag(np, OF_DYNAMIC))
+Pulled and pushed out, thanks.
 
-Wil now put the node if that second check fails. Didn't do that before
-and I'm guessing we shouldn't?  Technically it calls the cleanup
-in the !np case but that is fine as we check for NULL pointer.
-
-So I'd leave this particular one alone.
-
-> >  		return;
-> >  	pdev->dev.of_node = NULL;
-> >  
-> >  	of_changeset_revert(np->data);
-> >  	of_changeset_destroy(np->data);
-> > -	of_node_put(np);
-> >  }
-> >  
-> >  void of_pci_make_dev_node(struct pci_dev *pdev)
-> > -- 
-> > 2.34.1
-> >   
-
+greg k-h
 
