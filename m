@@ -1,133 +1,179 @@
-Return-Path: <linux-kernel+bounces-277421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5E794A133
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:56:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E14FA94A143
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 470331F23BA8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:56:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2983EB23E6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E86A1B86C9;
-	Wed,  7 Aug 2024 06:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3201B8E98;
+	Wed,  7 Aug 2024 06:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RxJUMTbC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="kPhH75tf";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DJX1D3Qs"
+Received: from flow8-smtp.messagingengine.com (flow8-smtp.messagingengine.com [103.168.172.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5C018FC9B;
-	Wed,  7 Aug 2024 06:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC311B1428;
+	Wed,  7 Aug 2024 06:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723013800; cv=none; b=BBC0w5GS9iNnn1NzkefujP4CIZt2351B2xrh/FyO26F4Fd9NBjNpcvRqQvVj0m0Dxzm3SgirBQWPFLM1c7bv/Zd9+cW15wowzu5lg7FTSxTmCeTgQdMeAFMVjEy86KSp2t2DpunRhb0Ytqi9gn5TMmhJI9tEnHMVql+j7f75v+Q=
+	t=1723013966; cv=none; b=Djwwn5ID35CIECNpUEBLHlIg/F+awIPJcLokkrPze4fCY8ziIvZETyYqYUwtaAI/1gSWvEoknux5BQwTbzn1rKgcgxgWHtGHVjE6fUawToKWH73j6XGhs37EEyR1irjJI3GOPNE60hzxhnz1waIe5m5zNVz5GfxQantv55CpJhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723013800; c=relaxed/simple;
-	bh=/po+MddZ8FuEEl3M+jBbRCwteNi78BYA5nu6cGjx2VY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RDDqjpt2kJrKHdPtILptSaov/dxVi23TqHaiYM7YH1JZendmK7TrTt3/AUzr0F+RU4QPCUl6GSrxeiGLmrGk+vNhTfowNHnGZVPiRKisGrL8Ktk0ajXxx0vwI69/sjQp+Ik5t7YWXYlYvkI/XsTDAfiR84jJJxmxNBNmjAidogs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RxJUMTbC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1B82C32782;
-	Wed,  7 Aug 2024 06:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723013800;
-	bh=/po+MddZ8FuEEl3M+jBbRCwteNi78BYA5nu6cGjx2VY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RxJUMTbC1ubEa2ORv1BFPR9CH5Uks5e8Bqy4iR6ws+Rpc46GWeFbivuhK9ohC+Q3s
-	 xe2Wc5ABWJ2CMaoJC/Wpae34/VquBHXMNQ+dbaHYqZeKLn3wKM0aITozFDpdhmLPoq
-	 uF9RzbuMPuQNRQLf0/kbqIOTR7SwEdJDE/0o0ANUDb0S/qqzoDF+RWgyFNohmEPdlI
-	 W1VNrmmv5xTJYeA7A3Fcd9pGrfyMjmLdEb5jhgrQlQsaRvq2UMstOI9rC0qlltcJJ/
-	 9uenXmKFRJmQ9vBCeGYPaC+fb+EXJcY49W55hlhEwvmM4J7xrtSIYdiH0jnWkAe3b0
-	 NNM5MPyvNi0CQ==
-Message-ID: <c177faaf-b66b-4f3d-a7d5-dc07b5332331@kernel.org>
-Date: Wed, 7 Aug 2024 08:56:31 +0200
+	s=arc-20240116; t=1723013966; c=relaxed/simple;
+	bh=Fl9m4Ozj+CcNQwpmEsdVmp/IsQZeCxwz9aNRBuKAPk8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ddeDM9gzmaGsvmTz0WxFzbp/kujBz8HqHAHq0igOUSmHwGZE7x2g8AkRiqMdhBu0dvCoBr331ecwIe39BTPdsrMDG/YtONXlo0KcB770RMLpx9C+iAz2x5VYHvtHdjGFG4MyQaZ6b8iW2ZPgOrEL3QDzsQXwzItrWGlk+O1/Yfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=kPhH75tf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DJX1D3Qs; arc=none smtp.client-ip=103.168.172.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailflow.nyi.internal (Postfix) with ESMTP id 52279201084;
+	Wed,  7 Aug 2024 02:59:23 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Wed, 07 Aug 2024 02:59:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1723013963;
+	 x=1723021163; bh=FeNTTWWA5ehqGUK/ykoVQRn5aOHJYvmKcULV7Bb3w+o=; b=
+	kPhH75tfZYNQZZn5b4ZTyTUJkEwDswZvtVxsA4I1kYYHJT9hm6Y1VWq1tWoRdBr2
+	5gcBvejk5u6w6xKKbpBKwnhLRlsLhO9eQUqJWCA+btbwX9ngh+x0EMbsvrrTdurE
+	xpzX7LS9Lhl1ZeTCcGI88lLtBUG3WdAQOw0MkNqzmyryl38Rfs0Hxm5tgzSKr4jP
+	FndM/8x4bIHcTFdnwjdTaScHkNMTMQT6UWqmZgTXDn+FulQ3eTrzHm2J2m2zT0hd
+	lWadi0s/oUZYjUbYUYH3dBNHYNH5Hgd9tJnC9YxtPeG49Jb50z1u1bvmjUjO5Rw1
+	0pmH62zjtpVTK4nq8eJMFA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723013963; x=
+	1723021163; bh=FeNTTWWA5ehqGUK/ykoVQRn5aOHJYvmKcULV7Bb3w+o=; b=D
+	JX1D3Qss3Ge1TnNidK/zkvKY/8JNrKtEIApToVgGiC42kGtqI8ow6AGVUOAMbazW
+	itBUjWk7aqA8yzNfj892AZR3IHGTb9zwLEgUzS+hIBK5Li2OvlE3ONpYl/0zE/5z
+	h3soTk1czdmBNxcV5RI4Do6avSG2cQvjSpC45gT6FmO3Qj+xS+dn/cKTfw+I2rct
+	z4jv6Eo5QqHEbksHHHuWMRpE/t4bFAn3fb2+Ygv0oUrdld/RpBq9urHfN3Vqc9tJ
+	gfZUDZDJt0uvrtjpGSdhW8XAeAu6OeyUi0Jj4EJz55jsk1Of/gddMR0clliKyyiD
+	Dz/tJMxY0o+kqe5Jqh2CQ==
+X-ME-Sender: <xms:SRuzZpFLEGrL01CvOzZ7NicPwEvIcv3ZOSAEwfT0KIc13xEWibFx_g>
+    <xme:SRuzZuWOdnwVN62CY7TMMAVOQnMMo0UnpkJQhkqGvrgUGWhp1vAWaBOYOG7_0rIRv
+    GBMBRlfs0GZCyqUvYc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeelgdduudekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefh
+    vdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtoheptd
+X-ME-Proxy: <xmx:SRuzZrLtWMsNgz7w87FJP8TbwXCRbvNB3tiVt8c9qWjaR5ujVwWSEg>
+    <xmx:SRuzZvGMZjtlTl2iioVuNelCvksPQt_NUQQ8oxahwjUInjv5odRUjA>
+    <xmx:SRuzZvVMupVgHTmvlEfTDZFTFuqoKesigKTc9co5c2CZoJ90OcfE1g>
+    <xmx:SRuzZqN-OQqNrinlJf78x4O8VL12d16J4HsptuQe5s0rO9OiA3XUXg>
+    <xmx:SxuzZpwYl7eOyL1UyDIm9UU-ZJT7YdfL_32mlOGPjpZKCsOuYKvqpDmx>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 97D26B6008D; Wed,  7 Aug 2024 02:59:21 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: net: Add rk3576 dwmac bindings
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- David Wu <david.wu@rock-chips.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com,
- "David S . Miller" <davem@davemloft.net>
-References: <20240802173918.301668-1-detlev.casanova@collabora.com>
- <20240802173918.301668-3-detlev.casanova@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240802173918.301668-3-detlev.casanova@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+Date: Wed, 07 Aug 2024 08:58:37 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Mike Rapoport" <rppt@kernel.org>, linux-kernel@vger.kernel.org
+Cc: "Alexander Gordeev" <agordeev@linux.ibm.com>,
+ "Andreas Larsson" <andreas@gaisler.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Dan Williams" <dan.j.williams@intel.com>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "David Hildenbrand" <david@redhat.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Davidlohr Bueso" <dave@stgolabs.net>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Heiko Carstens" <hca@linux.ibm.com>,
+ "Huacai Chen" <chenhuacai@kernel.org>, "Ingo Molnar" <mingo@redhat.com>,
+ "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "Jonathan Cameron" <jonathan.cameron@huawei.com>,
+ "Jonathan Corbet" <corbet@lwn.net>,
+ "Michael Ellerman" <mpe@ellerman.id.au>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Rob Herring" <robh@kernel.org>,
+ "Samuel Holland" <samuel.holland@sifive.com>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Vasily Gorbik" <gor@linux.ibm.com>, "Will Deacon" <will@kernel.org>,
+ "Zi Yan" <ziy@nvidia.com>, devicetree@vger.kernel.org,
+ linux-acpi@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-cxl@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+ nvdimm@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
+Message-Id: <1befc540-8904-4c23-b0e6-e2c556fe22b9@app.fastmail.com>
+In-Reply-To: <20240807064110.1003856-25-rppt@kernel.org>
+References: <20240807064110.1003856-1-rppt@kernel.org>
+ <20240807064110.1003856-25-rppt@kernel.org>
+Subject: Re: [PATCH v4 24/26] arch_numa: switch over to numa_memblks
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 02/08/2024 19:38, Detlev Casanova wrote:
-> Add a rockchip,rk3576-gmac compatible for supporting the 2 gmac
-> devices on the rk3576.
+On Wed, Aug 7, 2024, at 08:41, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>
+> Until now arch_numa was directly translating firmware NUMA information
+> to memblock.
+
+I get a link time warning from this:
+
+    WARNING: modpost: vmlinux: section mismatch in reference: numa_set_cpumask+0x24 (section: .text.unlikely) -> early_cpu_to_node (section: .init.text)
+
+> @@ -142,7 +144,7 @@ void __init early_map_cpu_to_node(unsigned int cpu, int nid)
+>  unsigned long __per_cpu_offset[NR_CPUS] __read_mostly;
+>  EXPORT_SYMBOL(__per_cpu_offset);
 > 
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> ---
->  Documentation/devicetree/bindings/net/rockchip-dwmac.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+> -int __init early_cpu_to_node(int cpu)
+> +int early_cpu_to_node(int cpu)
+>  {
+>  	return cpu_to_node_map[cpu];
+>  }
 
-As Johan Jonker pointed out, this is incomplete. Just git grep for
-rockchip compatibles...
+early_cpu_to_node() can no longer be __init here
 
-Best regards,
-Krzysztof
+> +#endif /* CONFIG_NUMA_EMU */
+> diff --git a/include/asm-generic/numa.h b/include/asm-generic/numa.h
+> index c32e0cf23c90..c2b046d1fd82 100644
+> --- a/include/asm-generic/numa.h
+> +++ b/include/asm-generic/numa.h
+> @@ -32,8 +32,6 @@ static inline const struct cpumask *cpumask_of_node(int node)
+> 
+>  void __init arch_numa_init(void);
+>  int __init numa_add_memblk(int nodeid, u64 start, u64 end);
+> -void __init numa_set_distance(int from, int to, int distance);
+> -void __init numa_free_distance(void);
+>  void __init early_map_cpu_to_node(unsigned int cpu, int nid);
+>  int __init early_cpu_to_node(int cpu);
+>  void numa_store_cpu_info(unsigned int cpu);
 
+but is still declared as __init in the header, so it is
+still put in that section and discarded after boot.
+
+I was confused by this at first, since the 'early' name
+seems to imply that you shouldn't call it once the system
+is up, but now you do.
+
+     Arnd
 
