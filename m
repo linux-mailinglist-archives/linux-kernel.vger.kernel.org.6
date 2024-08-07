@@ -1,70 +1,91 @@
-Return-Path: <linux-kernel+bounces-277528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E5994A291
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:21:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 425B494A2A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C7C6288C48
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:21:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D179B22816
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7021C823D;
-	Wed,  7 Aug 2024 08:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECB81B86E4;
+	Wed,  7 Aug 2024 08:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=vignesh.raman@collabora.com header.b="ir9NddUu"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ezh/Cygf"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2F18F77
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 08:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723018874; cv=pass; b=Tn4DLfU3/GjA5XY7n8zxNQoeCnPkc4JwkzqOQmy/xSfjIYHmHYBDjy1xoeI/aR5eYV/ILSyVSVvD52Q62hOCJptE+gFeNocH5Ekjn57SISh3I1RIouC6JO0sRGUQoUPv6tKVAi0/cBbeDfYwSeIQo5SH7UaAsZJhB0LTFEX3sqU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723018874; c=relaxed/simple;
-	bh=67xNNOQ5BgYkdq3FmJjkhkHbyY4Wv65WG9XmHisqFBk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oitWaBuW8O0c8gnoFdT6disbD4++zkOZ7iaue+LZFCqrHJ3IzW8SxkZ9Ufi1BiJWNbECPND7YRMhY+H0eAYrNgJ+tFZAvNU6pNZwdF3GLwWJMHfDZotcn2cDuwEXFugf0qd303MIXhuxq0R4a1lSecvYryB8DAm1VWVtgUX+HbU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=vignesh.raman@collabora.com header.b=ir9NddUu; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: daniels@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723018867; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ZJElaatvcYXBycHHxoc8eo38AnN55mSSRS6EmA0oITnPEyF4ElJvKEi48h62kahLV66OxVWeh5sOElLbr1/qjU3uwcaZjtTMKAIuNPQH+ebVSEl5C52tUzQPxMRk2/XZOHBtjSDIaASffeoFNCBLt6Svi42uOBACo2Vq+MUfdnk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723018867; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=9HH5J5pheMHQbYtu6UKFxGxCRC6ubAR8RRggZLYoxYE=; 
-	b=CADT9bK8zL/AdnqpQnROp39dWq1es6hVB2O3INgmXoQcrn+CWwz0Rp2cQWeUpBv385OnzuDEWA7n9gwB5ClTiaT0wKcIBZ7Raci85t6p62XbSPKh8x3JrgVElFXbzaQmXe7uTSXCw0Ilz2cXLqUh+P+SLnaC2cBCmNdw/+hqfyk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=vignesh.raman@collabora.com;
-	dmarc=pass header.from=<vignesh.raman@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723018867;
-	s=zohomail; d=collabora.com; i=vignesh.raman@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=9HH5J5pheMHQbYtu6UKFxGxCRC6ubAR8RRggZLYoxYE=;
-	b=ir9NddUuvhMNoqJPg+jCXws4YBQz+6H5rStAtBFN0dpmqJbeqhhh/AgdQZRTjTFn
-	H1vZA0xDvoKEnh3O4tWuIAg2ChnDlJig/QyauuMcd2JPE4AhW8AxgLTXTD6SGov2wFN
-	7ssDQhN6QTUH9ric3prOFZumROvZKujfpz0dz/jI=
-Received: by mx.zohomail.com with SMTPS id 1723018865189439.50743036529866;
-	Wed, 7 Aug 2024 01:21:05 -0700 (PDT)
-From: Vignesh Raman <vignesh.raman@collabora.com>
-To: dri-devel@lists.freedesktop.org
-Cc: daniels@collabora.com,
-	helen.koike@collabora.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	robdclark@gmail.com,
-	guilherme.gallo@collabora.com,
-	sergi.blanch.torne@collabora.com,
-	deborah.brouwer@collabora.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] drm/ci: uprev mesa
-Date: Wed,  7 Aug 2024 13:50:18 +0530
-Message-ID: <20240807082020.429434-1-vignesh.raman@collabora.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901211B4C53;
+	Wed,  7 Aug 2024 08:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723018953; cv=none; b=rNOoBBo9AZprnkKKvFBl1cs/rgJZLsdY9TYH2AddcVOQw6s3rRYp343e6OzaQohwXEWHadnLRqSOQO+xZC8aUw3/k6UxLNE3yLAKvZ4ZjH+Y4AR8+7OXldCC3lMr9hW4NpzcdpWvrblMlo6v5YiCNFOeEiiAbe6eeqdObm6tSg4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723018953; c=relaxed/simple;
+	bh=JJqbdizmVcDm0J0CZ+kzknxS4PV2Ix4wp1sOK95CXTw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=G+1RPS5vv9ahilo5sSAAx7362gu3o9asdo8pU9Ap1O02aUuvlG37NIeiRB+kINZcwLvz8IadxW5bhJzp91+E3qIvDQQiitgymLgTiawh7WdYVsDf7xWZuq7Aeo0bkhATxnHnMZtl7RVOEbFIS7jNujFVMxtvW+tuY6vzhyQtXiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ezh/Cygf; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70d1fb6c108so1195497b3a.3;
+        Wed, 07 Aug 2024 01:22:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723018952; x=1723623752; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YN+ZFWFpopazqDFBLc+sZfMSaFtv3e+QTIYu0Wtch8Q=;
+        b=ezh/CygfpTeWcujnGgHPYfGtJ8UJ5bxowjUNgO22hnKgQDY+rMmMY59ipAFiCB97vs
+         /R+thPheGO5MIirjyxeaguGTyhm3yqae6EMRtbzyGV91aP2NAVwPIdqix5cDgo5Xxwxh
+         1NemxrfR4EunaZiAAjigWkEaRGDBNXcKMQ6bOqVoUkU+FaHomn7kEYwyu6fX1rT2DRxc
+         ydve5WoExJBxBHOwCwqjPLuCIUTmhva4qtDVmFQhTTVFGOCbVJO1hiJvuLIEP6Ji9O+u
+         Am2vuC2kg7gGaEL9WE8DfKt7DR2ep1kDDXIAjLaZvMpLP6W//S2NCfkmM8d6MleQUPWu
+         9xpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723018952; x=1723623752;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YN+ZFWFpopazqDFBLc+sZfMSaFtv3e+QTIYu0Wtch8Q=;
+        b=i2/7Rq06eZBe03tj8iJaSmQDAN/drb1WvXaEahQZvpTqan+3Fz+A+pePLNoJy/Y8QN
+         rcfSdOAYrlVKhYAq1oipR8DxVwTDpwX6xNLiFkuOnM4YcsW55Y0NEgQOt17v6JGqUNph
+         vTdzLqOF1JjWcVw48PgggIOO/9d8qbpnkbfSvv8JxvH46iZgl1xqaXMW22EDMTjJEr0Q
+         Ss8E9s4cP0d/PgWabTFX/U3TLgS1NUaL/vlSf5uWuHi5+l14qlLTlrAAzvVp+85LIQYI
+         TeUwuWdAIHbr4PqLUvXE7IpUotpIOGQbtq/MoPb3gvM/lTg7eFzIc1O88W/UsHf1vqsX
+         Ds1g==
+X-Forwarded-Encrypted: i=1; AJvYcCW8fkI8YRNu5WLTtIeIYKSpCc77cmLXAu5tq6d/5xhm9LcKMdQZ5dO/Mmaj1hIYhQzYROwFhb/GaypVP0p4A1TmL7LDkxtkoezbZuSsqWWCXElOBB4d/41TokK1U0Tnj/BykDTnfcVygfSJXf+12ulTgg0j3nxTp+4+CVvbToTsXYgqh0Q=
+X-Gm-Message-State: AOJu0Yx5A4nk3Z/ISDPkhxn+2CeWc3IrZUjn8gKR3yebEM5wRAhmWPGq
+	DoyCnurxbC9FojlD/tPVOwrNcdx58lXem5OIx0I6kFQYt3nkU1Hh
+X-Google-Smtp-Source: AGHT+IHL88krJvGfLfkWm5wh0nG3Zip/FgszODUmeof2pjR4V8t4VTnvtlBT8d6EXqRKXsC0//AhGA==
+X-Received: by 2002:a05:6a20:2445:b0:1c2:8b26:1bb6 with SMTP id adf61e73a8af0-1c69956d38cmr20140442637.17.1723018951547;
+        Wed, 07 Aug 2024 01:22:31 -0700 (PDT)
+Received: from 904-569.realtek.com.tw (59-124-166-19.hinet-ip.hinet.net. [59.124.166.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20077401e79sm28725005ad.100.2024.08.07.01.22.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 01:22:31 -0700 (PDT)
+From: hhorace <hhoracehsu@gmail.com>
+To: gnault@redhat.com
+Cc: johannes@sipsolutions.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kvalo@kernel.org,
+	horms@kernel.org,
+	idosch@nvidia.com,
+	hhorace <hhoracehsu@gmail.com>
+Subject: [PATCH wireless-next v2] wifi: cfg80211: fix bug of mapping AF3x to  incorrect User Priority
+Date: Wed,  7 Aug 2024 16:22:05 +0800
+Message-ID: <20240807082205.1369-1-hhoracehsu@gmail.com>
+X-Mailer: git-send-email 2.42.0.windows.2
+In-Reply-To: <20240805071743.2112-1-hhoracehsu@gmail.com>
+References: <20240805071743.2112-1-hhoracehsu@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,159 +93,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-Uprev mesa to adapt to the latest changes in mesa ci.
-Project 'anholt/deqp-runner' was moved to 'mesa/deqp-runner'.
-So update the link.
+According to RFC8325 4.3, Multimedia Streaming: AF31(011010, 26),
+AF32(011100, 28), AF33(011110, 30) maps to User Priority = 4
+and AC_VI (Video).
 
-Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+However, the original code remain the default three Most Significant
+Bits (MSBs) of the DSCP, which makes AF3x map to User Priority = 3
+and AC_BE (Best Effort).
+
+Fixes: 6fdb8b8781d5 ("wifi: cfg80211: Update the default DSCP-to-UP mapping")
+Signed-off-by: hhorace <hhoracehsu@gmail.com>
 ---
+Changes in v2:
+- Remove the useless entry for CS5 (case 40) since the value of the 3
+ high order bits is already 5.
 
-v1:
-  - Working pipeline link,
-    https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1242911
+ net/wireless/util.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
----
- drivers/gpu/drm/ci/container.yml  |  8 ++++++++
- drivers/gpu/drm/ci/gitlab-ci.yml  | 22 ++++++++++++----------
- drivers/gpu/drm/ci/image-tags.yml |  8 ++++----
- drivers/gpu/drm/ci/lava-submit.sh |  1 +
- drivers/gpu/drm/ci/test.yml       |  4 ++--
- 5 files changed, 27 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/gpu/drm/ci/container.yml b/drivers/gpu/drm/ci/container.yml
-index d6edf3635b23..2a94f54ce4cf 100644
---- a/drivers/gpu/drm/ci/container.yml
-+++ b/drivers/gpu/drm/ci/container.yml
-@@ -28,6 +28,14 @@ debian/x86_64_test-vk:
-   rules:
-     - when: never
- 
-+debian/arm64_test-vk:
-+  rules:
-+    - when: never
-+
-+debian/arm64_test-gl:
-+  rules:
-+    - when: never
-+
- fedora/x86_64_build:
-   rules:
-     - when: never
-diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
-index 6d2cefa7f15e..eca47d4f816f 100644
---- a/drivers/gpu/drm/ci/gitlab-ci.yml
-+++ b/drivers/gpu/drm/ci/gitlab-ci.yml
-@@ -1,13 +1,13 @@
- variables:
-   DRM_CI_PROJECT_PATH: &drm-ci-project-path mesa/mesa
--  DRM_CI_COMMIT_SHA: &drm-ci-commit-sha e2b9c5a9e3e4f9b532067af8022eaef8d6fc6c00
-+  DRM_CI_COMMIT_SHA: &drm-ci-commit-sha d9849ac46623797a9f56fb9d46dc52460ac477de
- 
-   UPSTREAM_REPO: https://gitlab.freedesktop.org/drm/kernel.git
-   TARGET_BRANCH: drm-next
- 
-   IGT_VERSION: f13702b8e4e847c56da3ef6f0969065d686049c5
- 
--  DEQP_RUNNER_GIT_URL: https://gitlab.freedesktop.org/anholt/deqp-runner.git
-+  DEQP_RUNNER_GIT_URL: https://gitlab.freedesktop.org/mesa/deqp-runner.git
-   DEQP_RUNNER_GIT_TAG: v0.15.0
- 
-   FDO_UPSTREAM_REPO: helen.fornazier/linux   # The repo where the git-archive daily runs
-@@ -85,22 +85,24 @@ include:
-   - project: *drm-ci-project-path
-     ref: *drm-ci-commit-sha
-     file:
-+      - '/.gitlab-ci/container/gitlab-ci.yml'
-       - '/.gitlab-ci/farm-rules.yml'
-+      - '/.gitlab-ci/lava/lava-gitlab-ci.yml'
-       - '/.gitlab-ci/test-source-dep.yml'
--      - '/.gitlab-ci/container/gitlab-ci.yml'
-       - '/.gitlab-ci/test/gitlab-ci.yml'
--      - '/.gitlab-ci/lava/lava-gitlab-ci.yml'
--      - '/src/microsoft/ci/gitlab-ci-inc.yml'
--      - '/src/gallium/drivers/zink/ci/gitlab-ci-inc.yml'
-+      - '/src/amd/ci/gitlab-ci-inc.yml'
-+      - '/src/freedreno/ci/gitlab-ci-inc.yml'
-       - '/src/gallium/drivers/crocus/ci/gitlab-ci-inc.yml'
--      - '/src/gallium/drivers/softpipe/ci/gitlab-ci-inc.yml'
-       - '/src/gallium/drivers/llvmpipe/ci/gitlab-ci-inc.yml'
--      - '/src/gallium/drivers/virgl/ci/gitlab-ci-inc.yml'
-       - '/src/gallium/drivers/nouveau/ci/gitlab-ci-inc.yml'
-+      - '/src/gallium/drivers/softpipe/ci/gitlab-ci-inc.yml'
-+      - '/src/gallium/drivers/virgl/ci/gitlab-ci-inc.yml'
-+      - '/src/gallium/drivers/zink/ci/gitlab-ci-inc.yml'
-       - '/src/gallium/frontends/lavapipe/ci/gitlab-ci-inc.yml'
-+      - '/src/gallium/frontends/rusticl/ci/gitlab-ci.yml'
-       - '/src/intel/ci/gitlab-ci-inc.yml'
--      - '/src/freedreno/ci/gitlab-ci-inc.yml'
--      - '/src/amd/ci/gitlab-ci-inc.yml'
-+      - '/src/microsoft/ci/gitlab-ci-inc.yml'
-+      - '/src/nouveau/ci/gitlab-ci-inc.yml'
-       - '/src/virtio/ci/gitlab-ci-inc.yml'
-   - drivers/gpu/drm/ci/image-tags.yml
-   - drivers/gpu/drm/ci/container.yml
-diff --git a/drivers/gpu/drm/ci/image-tags.yml b/drivers/gpu/drm/ci/image-tags.yml
-index 13eda37bdf05..2c340d063a96 100644
---- a/drivers/gpu/drm/ci/image-tags.yml
-+++ b/drivers/gpu/drm/ci/image-tags.yml
-@@ -1,15 +1,15 @@
- variables:
--   CONTAINER_TAG: "2024-05-09-mesa-uprev"
-+   CONTAINER_TAG: "2024-08-07-mesa-uprev"
-    DEBIAN_X86_64_BUILD_BASE_IMAGE: "debian/x86_64_build-base"
-    DEBIAN_BASE_TAG: "${CONTAINER_TAG}"
- 
-    DEBIAN_X86_64_BUILD_IMAGE_PATH: "debian/x86_64_build"
--   DEBIAN_BUILD_TAG: "2024-06-10-vkms"
-+   DEBIAN_BUILD_TAG: "${CONTAINER_TAG}"
- 
--   KERNEL_ROOTFS_TAG: "2023-10-06-amd"
-+   KERNEL_ROOTFS_TAG: "${CONTAINER_TAG}"
- 
-    DEBIAN_X86_64_TEST_BASE_IMAGE: "debian/x86_64_test-base"
-    DEBIAN_X86_64_TEST_IMAGE_GL_PATH: "debian/x86_64_test-gl"
--   DEBIAN_X86_64_TEST_GL_TAG: "${CONTAINER_TAG}"
-+   DEBIAN_TEST_GL_TAG: "${CONTAINER_TAG}"
- 
-    ALPINE_X86_64_LAVA_SSH_TAG: "${CONTAINER_TAG}"
-\ No newline at end of file
-diff --git a/drivers/gpu/drm/ci/lava-submit.sh b/drivers/gpu/drm/ci/lava-submit.sh
-index 0707fa706a48..6add15083c78 100755
---- a/drivers/gpu/drm/ci/lava-submit.sh
-+++ b/drivers/gpu/drm/ci/lava-submit.sh
-@@ -44,6 +44,7 @@ PYTHONPATH=artifacts/ artifacts/lava/lava_job_submitter.py \
- 	--first-stage-init artifacts/ci-common/init-stage1.sh \
- 	--ci-project-dir "${CI_PROJECT_DIR}" \
- 	--device-type "${DEVICE_TYPE}" \
-+	--farm "${FARM}" \
- 	--dtb-filename "${DTB}" \
- 	--jwt-file "${S3_JWT_FILE}" \
- 	--kernel-image-name "${KERNEL_IMAGE_NAME}" \
-diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml
-index b22b2cf8f06f..b6f428cdaf94 100644
---- a/drivers/gpu/drm/ci/test.yml
-+++ b/drivers/gpu/drm/ci/test.yml
-@@ -69,7 +69,7 @@
- .baremetal-igt-arm64:
-   extends:
-     - .baremetal-test-arm64
--    - .use-debian/arm64_test
-+    - .use-debian/baremetal_arm64_test
-     - .test-rules
-   variables:
-     FDO_CI_CONCURRENT: 10
-@@ -79,7 +79,7 @@
-     BM_CMDLINE: "ip=dhcp console=ttyMSM0,115200n8 $BM_KERNEL_EXTRA_ARGS root=/dev/nfs rw nfsrootdebug nfsroot=,tcp,nfsvers=4.2 init=/init $BM_KERNELARGS"
-     FARM: google
-   needs:
--    - debian/arm64_test
-+    - debian/baremetal_arm64_test
-     - job: testing:arm64
-       artifacts: false
-     - igt:arm64
+diff --git a/net/wireless/util.c b/net/wireless/util.c
+index 082c6f9..c6d0397 100644
+--- a/net/wireless/util.c
++++ b/net/wireless/util.c
+@@ -998,10 +998,10 @@ unsigned int cfg80211_classify8021d(struct sk_buff *skb,
+ 	 * Diffserv Service Classes no update is needed:
+ 	 * - Standard: DF
+ 	 * - Low Priority Data: CS1
+-	 * - Multimedia Streaming: AF31, AF32, AF33
+ 	 * - Multimedia Conferencing: AF41, AF42, AF43
+ 	 * - Network Control Traffic: CS7
+ 	 * - Real-Time Interactive: CS4
++	 * - Signaling: CS5
+ 	 */
+ 	switch (dscp >> 2) {
+ 	case 10:
+@@ -1026,9 +1026,11 @@ unsigned int cfg80211_classify8021d(struct sk_buff *skb,
+ 		/* Broadcasting video: CS3 */
+ 		ret = 4;
+ 		break;
+-	case 40:
+-		/* Signaling: CS5 */
+-		ret = 5;
++	case 26:
++	case 28:
++	case 30:
++		/* Multimedia Streaming: AF31, AF32, AF33 */
++		ret = 4;
+ 		break;
+ 	case 44:
+ 		/* Voice Admit: VA */
 -- 
-2.43.0
+2.42.0.windows.2
 
 
