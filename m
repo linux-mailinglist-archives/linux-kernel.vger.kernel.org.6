@@ -1,110 +1,97 @@
-Return-Path: <linux-kernel+bounces-277602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2117394A38D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:03:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 233A794A387
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD06F282D23
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:03:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD1C1F262C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6061C9DF7;
-	Wed,  7 Aug 2024 09:02:56 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224A414830D;
-	Wed,  7 Aug 2024 09:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387DF1C9ECD;
+	Wed,  7 Aug 2024 09:01:18 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53011A288;
+	Wed,  7 Aug 2024 09:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723021375; cv=none; b=A95Tt8qBa6efPcyOBCsRxtL5RTCEOlh/O3se5Z3YTgJUfCu857/JUVuXmxLSgN+5GN7H7reD3Z+OmoAhOYYdR5AeNVgfk1fgT2yR3tV4azHqLInq6paW3Q5jT+vEnNTRHAERhIkJ/1PrjTwWuEIlKBfyMIb5MMUR+OmmExblsAM=
+	t=1723021277; cv=none; b=kzj5NhoSM0tlHARm5cZy4x/wNckAOuHXfeCR2+kDZKgXX0XfuKrQmwoyhnWrEAqrbFz2idfFbuqynAgXAxX3TARG0K78zUcYzf2xvlEeDefIzM/DP2KN8LwJPilHOGWCjQt5MUlLfWOTeYYuUQXt0qOiKTzXuSenVPQ+kgLfLlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723021375; c=relaxed/simple;
-	bh=xzhHFHcb7UuLRyfh0UFzP1f/dPS1wijKca0bb5EF7Wg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ny/rWXXH1H7SJWo9X553aZSpjc1pMHeHAnX9TFrrk9ekcoZxUzjwiUiOz3YvCbx+SWszREZpFIBAbN6AjeWDzAC2qo6o4ek2cg8TzRdM0DM69f98qLGZgLFQRh0a1RJeQkLsRkqXbGWYn+ZPgVYc8iGJBRKF90N6JnVHt8boDmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wf41y0B2Xz4f3jXS;
-	Wed,  7 Aug 2024 17:02:30 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 5AD531A0568;
-	Wed,  7 Aug 2024 17:02:43 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.174.178.55])
-	by APP4 (Coremail) with SMTP id gCh0CgCHr4UwOLNmv1QMBA--.20288S4;
-	Wed, 07 Aug 2024 17:02:43 +0800 (CST)
-From: thunder.leizhen@huaweicloud.com
-To: Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	selinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Zhen Lei <thunder.leizhen@huawei.com>,
-	Nick Kralevich <nnk@google.com>,
-	Jeff Vander Stoep <jeffv@google.com>
-Subject: [PATCH 1/1] selinux: add the processing of the failure of avc_add_xperms_decision()
-Date: Wed,  7 Aug 2024 17:00:56 +0800
-Message-Id: <20240807090057.1334-1-thunder.leizhen@huaweicloud.com>
-X-Mailer: git-send-email 2.37.3.windows.1
+	s=arc-20240116; t=1723021277; c=relaxed/simple;
+	bh=VrxUh8bJKgrlvtMlVbgyzBh6rB37ARtcuOLChGDiwds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RP9jjus+PcBkQFxTDKXMItDvLbHvOuIBcyln3GvBrUB83RJKaZGHq2wD5AkF5YvdEB/lYuGo2ZjoKhWjIPDXQbhtpbdoLuQDqwtX1KS2/7DkObciNI+SVTXApMvjpdDkXsrkEKWBgrCDkZP4QVWYe7Ln7sfTOSGUHWYarLBf9pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.4.132])
+	by gateway (Coremail) with SMTP id _____8DxfZvaN7Nm5jAKAA--.5744S3;
+	Wed, 07 Aug 2024 17:01:14 +0800 (CST)
+Received: from [10.20.4.132] (unknown [10.20.4.132])
+	by front1 (Coremail) with SMTP id qMiowMCxM+DZN7Nm+MEHAA--.10739S2;
+	Wed, 07 Aug 2024 17:01:13 +0800 (CST)
+Message-ID: <f14e56dc-8bbf-43f0-871c-f556abb563d9@loongson.cn>
+Date: Wed, 7 Aug 2024 17:01:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART controller
+To: Xi Ruoyao <xry111@xry111.site>, Krzysztof Kozlowski <krzk@kernel.org>,
+ gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org,
+ kernel@xen0n.name, p.zabel@pengutronix.de
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, loongarch@lists.linux.dev
+References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+ <4d1f2426-b43c-4727-8387-f18edf937163@kernel.org>
+ <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
+ <6c7ec8196fe01aa651f8b59b445b70de79137181.camel@xry111.site>
+Content-Language: en-US
+From: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>
+In-Reply-To: <6c7ec8196fe01aa651f8b59b445b70de79137181.camel@xry111.site>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHr4UwOLNmv1QMBA--.20288S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7JFy8Zr15JFy5Ww15WryDWrg_yoWkJrX_Ca
-	4kuw1ktr18ZF4ftwsrAF4fZr1Sgr48Grn5C340yw1fA3W7Jws5Jrnaywn5XryUW3yrCrZx
-	KFsxW3s2vwn7XjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbckYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267
-	AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80
-	ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4
-	AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUAVWU
-	twCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07U_HUDUUUUU=
-X-CM-SenderInfo: hwkx0vthuozvpl2kv046kxt4xhlfz01xgou0bp/
+X-CM-TRANSID:qMiowMCxM+DZN7Nm+MEHAA--.10739S2
+X-CM-SenderInfo: x2kh0w5kdr4v3l6o00pqjv00gofq/1tbiAQECBGayEXMQlAABs1
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
+	BjDU0xBIdaVrnRJUUU9ab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
+	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
+	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x02
+	67AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6x
+	ACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E
+	87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2
+	Ij64vIr41l4c8EcI0En4kS14v26r1Y6r17MxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI
+	1I0E14v26r1q6r43MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
+	Wlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j
+	6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr
+	0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUv
+	cSsGvfC2KfnxnUUI43ZEXa7IU8vApUUUUUU==
 
-From: Zhen Lei <thunder.leizhen@huawei.com>
 
-When avc_add_xperms_decision() fails, the information recorded by the new
-avc node is incomplete. In this case, the new avc node should be released
-instead of replacing the old avc node.
+在 2024/8/7 16:39, Xi Ruoyao 写道:
+> On Wed, 2024-08-07 at 16:23 +0800, 郑豪威 wrote:
+>> The file "drivers/tty/serial/8250/8250_loongson.c" will be created in
+>> the patch
+>>
+>> "tty: serial: 8250: Add loongson uart driver support". Is it
+>> inappropriate to reference it here?
+> You should add this line in the second patch then.  Separating a large
+> change into multiple patches in a series is not for formalities' sake.
+> Each patch should be logically intact on its own.
+>
+Thank you, I got it.
 
-Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
-Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
----
- security/selinux/avc.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-index 7087cd2b802d8d8..b49c44869dc4627 100644
---- a/security/selinux/avc.c
-+++ b/security/selinux/avc.c
-@@ -907,7 +907,11 @@ static int avc_update_node(u32 event, u32 perms, u8 driver, u8 xperm, u32 ssid,
- 		node->ae.avd.auditdeny &= ~perms;
- 		break;
- 	case AVC_CALLBACK_ADD_XPERMS:
--		avc_add_xperms_decision(node, xpd);
-+		rc = avc_add_xperms_decision(node, xpd);
-+		if (rc) {
-+			avc_node_kill(node);
-+			goto out_unlock;
-+		}
- 		break;
- 	}
- 	avc_node_replace(node, orig);
--- 
-2.34.1
+Best regards,
+
+Haowei Zheng
 
 
