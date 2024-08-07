@@ -1,98 +1,119 @@
-Return-Path: <linux-kernel+bounces-277175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99FB5949D78
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:49:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D69E949D6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 541A3284B2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:49:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3842B2853A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE6918FC8C;
-	Wed,  7 Aug 2024 01:48:59 +0000 (UTC)
-Received: from hmailfwd02.mailplug.co.kr (mailfwd.mailplug.co.kr [223.26.214.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155F915CD77;
+	Wed,  7 Aug 2024 01:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="NYO4au5E"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C48517B512
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 01:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=223.26.214.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D7510E6;
+	Wed,  7 Aug 2024 01:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722995338; cv=none; b=GaLwJ4adAdpN17KY4F4yyHg1AUVcLaq9Qx6b/8c3z223EyZwmf98o/3Tgmt2hRTI3y2OyYk2lidxexTqpJSBbYxXn9GvXaGM1EwNqvZ0Od59qfCy7BwDOyvaBxexrjtNjNibgWFetDTrOdwYKqvAhPzwcXYQVKjPgHiLq+P0fAo=
+	t=1722994972; cv=none; b=Oz3S2emWMPHLIamset5044EcUk/E6inBXi0No4CJXJIhHh6rBBAXuEoGEuvfbq4KL8xNjv/e4wEoFBWAzfGlCztXcvQeWQoQye9/rbLFxufWbRLiG5Ii9z/xH74R7v9tZbYHnAj7G0azpF7WRuUSYJ63vmi1bxrmaupXUvu/kiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722995338; c=relaxed/simple;
-	bh=TmUw666J5S/m+V/Ac5f/mihn5TuuCsPHRhTtZFFty0w=;
-	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cdEyGaNayUzRV8LkBWJYoURN7iHKjv5WupSMqJnZUdm3HLHYXCL5/ABlSHODH1fI3PV1U3lj1OlAGa0Qskq2BhdYvUfHsQc7P+IOsVK3L/iL9AkBQ1O6oYYESgYVwKQBUDlSPCMgk4Y2j63rjBPXMpDL+To+b3hXWiF14xwi+xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wewakecorp.com; spf=pass smtp.mailfrom=wewakecorp.com; arc=none smtp.client-ip=223.26.214.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wewakecorp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wewakecorp.com
-Received: (qmail 2703666 invoked from network); 7 Aug 2024 10:42:13 +0900
-X-Spam-Level: 
-X-Spam-Virus: No
-X-Spam-Pyzor: 
-X-Spam-DCC:  : 
-X-MSP-Return-Path: <lsahn@wewakecorp.com>
-X-MSP-Delivered-To: linux-kernel@vger.kernel.org
-Received: from unknown (HELO m41.mailplug.com) (121.156.118.41)
-	by hmailfwd02 (qmail 1.03 + mailplug 2.0) with ESMTPS (TLS_AES_256_GCM_SHA384 encrypted);
-	7 Aug 2024 10:42:09 +0900
-Received: (qmail 2954097 invoked from network); 7 Aug 2024 10:42:09 +0900
-Received: from unknown (HELO mailpx07) (lsahn@wewakecorp.com@121.156.118.145)
-	by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
-	7 Aug 2024 10:42:09 +0900
-Reply-To: <lsahn@wewakecorp.com>
-From: <lsahn@wewakecorp.com>
-To: "'JaeJoon Jung'" <rgbi3307@gmail.com>
-Cc: "'Linus Torvalds'" <torvalds@linux-foundation.org>,
-	"'Sasha Levin'" <levinsasha928@gmail.com>,
-	"'Liam R . Howlett'" <Liam.Howlett@oracle.com>,
-	"'Matthew Wilcox'" <willy@infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>,
-	<maple-tree@lists.infradead.org>,
-	<linux-fsdevel@vger.kernel.org>
-References: <20240805100109.14367-1-rgbi3307@gmail.com> <2024080635-neglector-isotope-ea98@gregkh> <CAHOvCC4-298oO9qmBCyrCdD_NZYK5e+gh+SSLQWuMRFiJxYetA@mail.gmail.com> <2024080615-ointment-undertone-9a8e@gregkh> <CAHOvCC7OLfXSN-dExxSFrPACj3sd09TAgrjT1eC96idKirrVJw@mail.gmail.com>
-In-Reply-To: <CAHOvCC7OLfXSN-dExxSFrPACj3sd09TAgrjT1eC96idKirrVJw@mail.gmail.com>
-Subject: RE: [PATCH v2 1/2] lib/htree: Add locking interface to new Hash Tree
-Date: Wed, 7 Aug 2024 10:42:09 +0900
-Message-ID: <000001dae86b$04955090$0dbff1b0$@wewakecorp.com>
+	s=arc-20240116; t=1722994972; c=relaxed/simple;
+	bh=nJc/EA5aX6HYio1FRcTvW+nGYVDvgNrrwuK9u2kXc74=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Zc5CkBZraaBQU0sVii+FRPh+qRLbsWD1p+xub6C3ROLku9oVcu1kkR/5Z/H7evxjJdrvOD8TSEBYcX48ZQiw5C1DXto7xuWBouO11gTfNe6t32EqKRLXPWpDuVD2j1JTHAN6XxanBLmTLrBjACGu6qYmuxHNLFrBfUQXPOW6p2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=NYO4au5E; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1722994964; bh=oEjPWbgLYa2owMiTzsj3wTp8GPNjpwQfhs8OU5kPAe4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=NYO4au5ECSgeNojeTuCBXKVf5FeaPqixvh85Hi9jxgwnVqoDqDibRKM2+KYDIywCZ
+	 hiPQ6JS5t6vqIWRbhbJQ2nco2YU/ffJA463V1u9B7lyceMOr3hdV3n+TS0qj9x8wuj
+	 4vGjMlD4BmmBdQo5h5/l56x9nPcQC8bon84hR8HI=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
+	id AA802823; Wed, 07 Aug 2024 09:42:40 +0800
+X-QQ-mid: xmsmtpt1722994960toihf7mun
+Message-ID: <tencent_2878E872ED62CC507B1A6F702C096FD8960A@qq.com>
+X-QQ-XMAILINFO: MmuCfgcSBfHxKKwxo/p8YL1xiGHNfKFtuBEW8I4yF+aKQOuLCtiS0xtdslArfI
+	 h54xGnl3oJuktD7cSc1A3sGEw3GzfMcokw9AKTMN/Zn6ZPvOs5QKcp3uH8MvuTJQ5SdV6R5kUIU1
+	 jQaEi5L6x7ytl+qRKXEnfG2IVFupe5JpZ4DqI24sR6Xrz9YQplc4C9cYTPIiR1czLO4FWC7C1ErX
+	 jcQVp5jJkeFhXF8RsQcrrkMPdOrCNMa0lFES6x+XinI2dGefhoYfSEAhzoXrn8G/wb/NOnyEbyyh
+	 eEdfP96Ncq++SW/9ZrwTXSWVsBoqORXbbM+GMTo1cB9uJ2+sClGKz2oDiXXypyhndyUKYi1SxyZu
+	 1M49MTNMj1lAioJ8NdAAW6OwWwPlcii4KIMyx9K6K9Bsec1lgLC+9cYHgHrWldT4jjlf3lGU6ksb
+	 2/r862Vh1YhOrQjvRAp2Y6U0g3IrngiRihqPFPqCRhOtptJv43SBYLx85Fcqp6uqo3w/7Dxh5SNy
+	 apsUDQxebk7uwrBeBJxQPslVbt2r01Dk8Dk8CKSV2nP1LFRio8guIU9XCKkPHxQktmKJbab+tY73
+	 XTxWZHxWbbnf4F2pkpr3Z3eWrHEu9+4SSHxxYlAfNf8yBgHfEqTFoPmNIaFw1j4FD9F8i+GxUYua
+	 1j8TckjqaVkMOYOWnqhTsqIx/MIUS1jXb9PMvsiX1+22e/AWk98ayN5OX1SzJt2qDheDpgs0uW6+
+	 VQhnbpqTu835+RsxSoR6WIptoIkmvCMaJVhzYaZLS+i0O++CEqMTca9f6JPrUDHQ4Wj8YZLPDv1g
+	 FvX67ju/4cme5IE2+P6pheshN+kng4L31m+X1Wou60/tP0zx/0scTkhqsHMcqxIJHTtcsjH2VWPF
+	 9aOAhpreyE38MeafAJ6a31OYKFmxzVi0ZGUtGw8ZdGQkGVFH7w956AdnIOGo3bmpEVGft5RfH8LP
+	 tdqVi1dtmCXs/WPytsawuE3/I9/AaNhwkoT+/thb8=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kernel@pengutronix.de,
+	kuba@kernel.org,
+	leitao@debian.org,
+	linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mkl@pengutronix.de,
+	netdev@vger.kernel.org,
+	o.rempel@pengutronix.de,
+	pabeni@redhat.com,
+	robin@protonic.nl,
+	socketcan@hartkopp.net,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [can?] WARNING: refcount bug in j1939_session_put
+Date: Wed,  7 Aug 2024 09:42:40 +0800
+X-OQ-MSGID: <20240807014239.3997268-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000af9991061ef63774@google.com>
+References: <000000000000af9991061ef63774@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: ko
-Thread-Index: AQJ06aVWbbSXk45p8AU+nBVbHOMZvAGDsRYJAd3jy0EBYnpY+wGtW8D5sLN25fA=
+Content-Transfer-Encoding: 8bit
 
+Fixes: c9c0ee5f20c5 ("net: skbuff: Skip early return in skb_unref when debugging")
 
+Root cause: In commit c9c0ee5f20c5, There are following rules:
+In debug builds (CONFIG_DEBUG_NET set), the reference count is always  decremented, even when it's 1
 
-> -----Original Message-----
-> From: owner-linux-mm@kvack.org <owner-linux-mm@kvack.org> On Behalf Of
-> JaeJoon Jung
-> Sent: Wednesday, August 7, 2024 9:22 AM
-> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>; Sasha Levin
-> <levinsasha928@gmail.com>; Liam R . Howlett <Liam.Howlett@oracle.com>;
-> Matthew Wilcox <willy@infradead.org>; linux-kernel@vger.kernel.org; linux-
-> mm@kvack.org; maple-tree@lists.infradead.org; linux-
-> fsdevel@vger.kernel.org
-> Subject: Re: [PATCH v2 1/2] lib/htree: Add locking interface to new Hash
-> Tree
+This rule will cause the reference count to be 0 after calling skc_unref,
+which will affect the release of skb.
 
-...
+The solution I have proposed is:
+Before releasing the SKB during session destroy, check the CONFIG_DEBUG_NET
+and skb_unref return values to avoid reference count errors caused by a 
+reference count of 0 when releasing the SKB.
+
+#syz test: net-next 743ff02152bc
+
+diff --git a/net/can/j1939/transport.c b/net/can/j1939/transport.c
+index 4be73de5033c..50d96015c125 100644
+--- a/net/can/j1939/transport.c
++++ b/net/can/j1939/transport.c
+@@ -278,7 +278,8 @@ static void j1939_session_destroy(struct j1939_session *session)
  
-> The Hash Tree I implemented manages the Tree with the characteristic
-> of a hash that is accessed in O(1).
-> Even if the tree gets deeper, the search time does not increase.
-> There is no rotation cost because the tree is kept balanced by hash key.
-
-How does it keep balancing?
+ 	while ((skb = skb_dequeue(&session->skb_queue)) != NULL) {
+ 		/* drop ref taken in j1939_session_skb_queue() */
+-		skb_unref(skb);
++		if (skb_unref(skb) && IS_ENABLED(CONFIG_DEBUG_NET))
++			skb_get(skb);
+ 		kfree_skb(skb);
+ 	}
+ 	__j1939_session_drop(session);
 
 
