@@ -1,154 +1,182 @@
-Return-Path: <linux-kernel+bounces-277823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5601E94A701
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:33:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AEF794A703
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC055B21DE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:33:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B8051C21808
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F241C37B0;
-	Wed,  7 Aug 2024 11:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E991E4841;
+	Wed,  7 Aug 2024 11:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RtnxBuOw"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="O9U9f/7I";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MVdA/Qiz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VtM2AQEs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lNdQrip1"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32A51DF669
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 11:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF291B86DB;
+	Wed,  7 Aug 2024 11:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723030418; cv=none; b=XmBMj1zk4GCz82yaY7Rmrb5V9xi7Lp96VpW7DwIjBIJ1Vkxs0koCX4OPjEorBFV99+snCgWlCpkmDpGabZEemAtN/LuNvCwE+Pu1Nd3dKIHGhHKL86EWjTkUdCjwGfYEwtfURujoyVTS9eBNyNbDkxbg5ISE2ZuIClINfwDRj9M=
+	t=1723030434; cv=none; b=qu1GLfORD3AjP7iS4XzKBZLlCRqvXMBgk/lVlFao4DhXhLoWwMSqwyZc7GiiltlXpD+VHskX9escYJ5J9PY0ePR0eG1ifTr5hNyuzuNWyYE2qv445D3oTO6Acbf/1k6pye5IJJ71jO3vkI2DBXJF7uSjNE4AgiHqDevhVrwwJYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723030418; c=relaxed/simple;
-	bh=6pVRo0NUIjztrkGDxcisHgjwv+iwRhqOaOeG8t2h/1Y=;
+	s=arc-20240116; t=1723030434; c=relaxed/simple;
+	bh=qHdq8uK7CaYm+5UIrukOAby1PbNwNDBkOZUeKLTQ+jA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQPq1xQqNa2kt7rrcgk3kR9vX0wC0q52KFFFNNc5f91JQxXnAZRkFZnwsMCM1U2znGK8uoD9S5AsgxqTL1/jYJzn22qJemeF1z13dgE9WjZWOXQDkBV4lx05Bz0K74GoMDErtFypSjPEkC/4IyI55To9RXo5VfbcUaYrAI94Qkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RtnxBuOw; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-81fd520fe0dso64170339f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 04:33:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723030415; x=1723635215; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TO3M4/b2w+N5GFX+bWSuliwBhXhBbHQ7fK/88QYJzvU=;
-        b=RtnxBuOwKSQ8QJa+7RwRm8/mRI/irYbrAoi3Xed4p+bOXPKDiwFcyFh0st8cedG7UM
-         XiZpbyIdUNMSkG7QpMOY+Nb3XrKnz/ZeNljA2iUMdLUriofX/kuFXfkWTZcbhXQFyObR
-         ijVKov8BVYY9sWX9sWOUxXdy0GDk90xgugkGF3tjIB9qTA1uYVq3D/y87O+Bpd93qQeL
-         LuRd1B19CJuyScU1J7GHejQ02hqEg8oQ6MwG+INlTn4Z6tBONqSlB2zJ+Uz3xuxQoJns
-         fj5ymwfhdmgZcMYCN5n6JRCmHMc8vq2Nql9qB0zncymqLmp6wAnnxCr0fiGFCFYvdw7r
-         kWzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723030415; x=1723635215;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TO3M4/b2w+N5GFX+bWSuliwBhXhBbHQ7fK/88QYJzvU=;
-        b=QeFh4UZgOSJvxb1Cs/r9VHsBqsi1x/so7Fcqqo08V4G1KaMnFJ0V6U0eBzpLUzH8XE
-         1ViMeWggpLHN8ovtnzMTVAg81GLBaTtKFQ48R4SmVIc0pWKWPYMrB6YCqwYM/XeGA4gd
-         EllTXtFnEccFdNP7IlPSczlPan79+cSX2c4KjmHonAmvvAJZER6AE5YXeeIAy7o57zlJ
-         ySQh4iaAmYU6+bP5N+S1JQZ7ZBOINoNa3VoJvxoHFp6mm1ZGR4+ozbx0X11Zqef29zMB
-         Rd1+ozeP+1zBI+iPc3WRvDlp2F8atMo5pSY4DZORObqeA+XO1c6g8GN1BIG4KBEvBvTD
-         HmZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4OMvnU0NeAe0U80VIWzU49c0Xq+GKsmpfhKF7NPTmt+F8I2L7v0dn+Jin4EOLCQc89n/VjnOXswLMujlXCZR5OjVjhdsQUK3y1IZG
-X-Gm-Message-State: AOJu0Yw1+CfvYG/XINTvAFI+OV4lH5SIHjFf9kDiIHD+U+AAVX/36Ems
-	494z7oSpWH3vg9DO/P5/4Cc8G3jnNW2NllabTnks3L6/toI54jiK3yUK4t0A8Ks=
-X-Google-Smtp-Source: AGHT+IHGPYq6U63wYkXW5Ao1UYJo9K2LfIkWxE28uBk35YalI9BIp4WaXcnBvcyG5BZbzaCfz3g7fQ==
-X-Received: by 2002:a05:6602:641f:b0:7f7:e273:a97d with SMTP id ca18e2360f4ac-81fd437a1d5mr2224546739f.9.1723030414710;
-        Wed, 07 Aug 2024 04:33:34 -0700 (PDT)
-Received: from blmsp ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d69878b1sm2690261173.2.2024.08.07.04.33.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 04:33:34 -0700 (PDT)
-Date: Wed, 7 Aug 2024 13:33:30 +0200
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Linux regression tracking <regressions@leemhuis.info>, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Marc Kleine-Budde <mkl@pengutronix.de>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S.Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>, 
-	Judith Mendez <jm@ti.com>, Tony Lindgren <tony@atomide.com>, 
-	Simon Horman <horms@kernel.org>, linux@ew.tq-group.com
-Subject: Re: [PATCH v2 0/7] can: m_can: Fix polling and other issues
-Message-ID: <a3inpbruecwescx4imfzy4s5oaqywvzblhk75chkyyrhujflxr@vdbbf6jtxwso>
-References: <20240805183047.305630-1-msp@baylibre.com>
- <ab4b649b32ca9a1287e5d1dc3629557975b7152f.camel@ew.tq-group.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nfgByPMXF/HAGbVKZjp7LehRFdLMb8QLRH4rADIvxmwFvDC5YyYU8TrI+PqHpT/I/eqm3Pk+ia2ie0CYPChMPy8xDeAjoS5kkETlUAuPxlrhGjqWtUG5P4eMKc0zHTe/yfAaDcl8GQ2er/S3kXsaOS7mBJZ9caQelm+64CHO8f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=O9U9f/7I; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MVdA/Qiz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VtM2AQEs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lNdQrip1; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6480E1F8BD;
+	Wed,  7 Aug 2024 11:33:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723030430;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=auzbwY05oqqgWgJJLy1IMQr25def4tJKwP5Bjp3x8a0=;
+	b=O9U9f/7ITXXqs2jv71IkT2ys4u5sTWhQegG5WX6T78wSD8apTGg+zAF1B6FbDmVJVq+Wye
+	Dq4Sx//Lq4rmkJSdKIWCUYmjGSfSi+lKUKYA0Py/2VL08NyogL/M5bATsmjNmKDHlWGGT0
+	S8MuzzeSos/1EkU7Ezg/4PKophfoE74=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723030430;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=auzbwY05oqqgWgJJLy1IMQr25def4tJKwP5Bjp3x8a0=;
+	b=MVdA/QizJBf8aYIY1SboJnc4+OvKi2qYmb98H60Ip4MZd5yJKRS3qFYCrkM3W7F5Meh6tm
+	IdnZd7BFT1hLXbCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723030429;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=auzbwY05oqqgWgJJLy1IMQr25def4tJKwP5Bjp3x8a0=;
+	b=VtM2AQEsv+Kol9bCm67xTmXNH51FzdIgPTrR7aYTt1/e4L8eEQtqNlvCe7mSvme8ab1/6F
+	y1kwjJTLpv1OSAerHkXGW6hFN/zBqrzdQqbQ4gnspkgFBMB4UlhQt6TYkY1QF3cHuU+k2L
+	9xGb2mnQpKcrB7FnIGDjHvJELuuvZeA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723030429;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=auzbwY05oqqgWgJJLy1IMQr25def4tJKwP5Bjp3x8a0=;
+	b=lNdQrip1ttUDkywhDDywwOIxn75g4jQXSQO6H0umECwrdpdqkIxit75vianv3HVPG0Y0kY
+	J5FTXYFHZDpg4rDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 410CD13A7D;
+	Wed,  7 Aug 2024 11:33:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KiiuD51bs2ZXMQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 07 Aug 2024 11:33:49 +0000
+Date: Wed, 7 Aug 2024 13:33:48 +0200
+From: David Sterba <dsterba@suse.cz>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: syzbot <syzbot+b9d2e54d2301324657ed@syzkaller.appspotmail.com>,
+	boris@bur.io, clm@fb.com, dsterba@suse.com, fdmanana@suse.com,
+	josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	wqu@suse.com
+Subject: Re: [syzbot] [btrfs?] kernel BUG in set_state_bits
+Message-ID: <20240807113348.GC17473@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <0000000000000e082305eec34072@google.com>
+ <0000000000001e43de061f08c0d4@google.com>
+ <20240806221845.GA623904@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ab4b649b32ca9a1287e5d1dc3629557975b7152f.camel@ew.tq-group.com>
+In-Reply-To: <20240806221845.GA623904@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: *
+X-Spamd-Result: default: False [1.50 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=9681c105d52b0a72];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	REDIRECTOR_URL(0.00)[goo.gl];
+	ARC_NA(0.00)[];
+	TAGGED_RCPT(0.00)[b9d2e54d2301324657ed];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[bur.io:email,syzkaller.appspot.com:url,goo.gl:url,imap1.dmz-prg2.suse.org:helo,suse.cz:replyto];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: 1.50
 
-On Wed, Aug 07, 2024 at 10:10:56AM GMT, Matthias Schiffer wrote:
-> On Mon, 2024-08-05 at 20:30 +0200, Markus Schneider-Pargmann wrote:
-> > Hi everyone,
+On Tue, Aug 06, 2024 at 03:18:45PM -0700, Darrick J. Wong wrote:
+> On Tue, Aug 06, 2024 at 12:25:03PM -0700, syzbot wrote:
+> > syzbot suspects this issue was fixed by commit:
 > > 
-> > these are a number of fixes for m_can that fix polling mode and some
-> > other issues that I saw while working on the code.
+> > commit 33336c1805d3a03240afda0bfb8c8d20395fb1d3
+> > Author: Boris Burkov <boris@bur.io>
+> > Date:   Thu Jun 20 17:33:10 2024 +0000
 > > 
-> > Any testing and review is appreciated.
+> >     btrfs: preallocate ulist memory for qgroup rsv
+> > 
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=165cd373980000
+> > start commit:   9fdfb15a3dbf Merge tag 'net-6.6-rc2' of git://git.kernel.o..
+> > git tree:       upstream
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=9681c105d52b0a72
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=b9d2e54d2301324657ed
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=148ba274680000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ff46c2680000
+> > 
+> > If the result looks correct, please mark the issue as fixed by replying with:
+> > 
+> > #syz fix: btrfs: preallocate ulist memory for qgroup rsv
+> > 
+> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 > 
-> Hi Markus,
-> 
-> thanks for the series. I gave it a quick spin on the interrupt-less AM62x CAN, and found that it
-> fixes the deadlock I reported and makes CAN usable again.
-> 
-> For the whole series:
-> 
-> Tested-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> 
+> I don't get it, why am I being cc'd on some random btrfs bug?
 
-Great, thanks for testing!
+Because for some reason bisection blames your patch
 
-> 
-> 
-> 
-> > 
-> > Base
-> > ----
-> > v6.11-rc1
-> > 
-> > Changes in v2
-> > -------------
-> >  - Fixed one multiline comment
-> >  - Rebased to v6.11-rc1
-> > 
-> > Previous versions
-> > -----------------
-> >  v1: https://lore.kernel.org/lkml/20240726195944.2414812-1-msp@baylibre.com/
-> > 
-> > Best,
-> > Markus
-> > 
-> > Markus Schneider-Pargmann (7):
-> >   can: m_can: Reset coalescing during suspend/resume
-> >   can: m_can: Remove coalesing disable in isr during suspend
-> >   can: m_can: Remove m_can_rx_peripheral indirection
-> >   can: m_can: Do not cancel timer from within timer
-> >   can: m_can: disable_all_interrupts, not clear active_interrupts
-> >   can: m_can: Reset cached active_interrupts on start
-> >   can: m_can: Limit coalescing to peripheral instances
-> > 
-> >  drivers/net/can/m_can/m_can.c | 111 ++++++++++++++++++++--------------
-> >  1 file changed, 66 insertions(+), 45 deletions(-)
-> > 
-> 
-> -- 
-> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-> Amtsgericht München, HRB 105018
-> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-> https://www.tq-group.com/
+  Cause bisection: introduced by (bisect log) :
+  commit 05fd9564e9faf0f23b4676385e27d9405cef6637
+  Author: Darrick J. Wong <djwong@kernel.org>
+  Date: Mon Mar 14 17:55:32 2022 +0000
+
+    btrfs: fix fallocate to use file_modified to update permissions consistently
+
+
+but this is wrong, the issue syzbot hits is an injected ENOMEM in a path
+that does not handle it. This is known and we count on memory allocator
+not to fail such cases. The subsystem for the syzbot issue is set
+correctly, you got CCed because another automatic bisection round was
+started after a year.
 
