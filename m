@@ -1,72 +1,89 @@
-Return-Path: <linux-kernel+bounces-278546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17CA294B1AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:57:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 517A294B1AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAFF9281C14
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:57:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1E6AB20DBC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B19146A62;
-	Wed,  7 Aug 2024 20:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE6B147C74;
+	Wed,  7 Aug 2024 20:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lB+tF3Ba"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="NQMueTKy"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137162575F;
-	Wed,  7 Aug 2024 20:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F50146585;
+	Wed,  7 Aug 2024 20:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723064246; cv=none; b=pPMlGsu5cOa7V/Jl/+Glyrm60MUToNneAO557QLvFE8En4oPSNgCstzVOKffH+LSohMgyAhw0giiv6kUB/ul4xCmueHeWkpBES69b4r7DWqTgm0+HAI2szV36+GYdznu+6C9tAchS2b+YsudOX2a7oKplHS2vUj01n3SfGAFYYc=
+	t=1723064255; cv=none; b=Y1KnpiXfmsx4hR47sAxaLa12T8x4CJHx2ioWOHBdC3MCk3/K/UaQ52om0q1woNhppHANZmxQpbGuAYel3uHc/S65llLDBwh0vJQK7K+1w4x3U8vE5HE2bAUnxc2iipnYHbC83UIG4gQX20qRhePBRXKL7SEiv+4m4IiABtfI0jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723064246; c=relaxed/simple;
-	bh=CoT9kc9SyDZefE7l/baC5uJQkkoclRK2DyCLVA/Cmps=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=S9+vIanQ7vs1a/t/ZUDKJVQxqvGZtuuoR1QEd2HBHLVXV3ZIoXboU31XBbMySS38z4IzS2+iE7jNmk17LcE9FD8iCO09VfoPnuZcrAN+d+LElKCG2X6tFAVGs1RkoF3MGGOxgCYXyWAzqVg1e9xO18R5oRDrfaHiHBuzXJN8OGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lB+tF3Ba; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CEA7C32781;
-	Wed,  7 Aug 2024 20:57:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723064243;
-	bh=CoT9kc9SyDZefE7l/baC5uJQkkoclRK2DyCLVA/Cmps=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=lB+tF3BamOf4tSVH8rciCBPjpGks/O6PHAQc+nBS+W4H6TkuoxmEWZihwEgkEK1DL
-	 540CZ04Y5xBw1PaLD0XIAzlZdlhTKuZsETaxHrG7iEvGXXYIj/aw8or/Wez5rTh6Ls
-	 7mZ2h3gF3XoHJs4rNMgx4Za+pFBYpx59uHqsF8NSNgkcZvO3wjCmRmBKC12b7RbZ+E
-	 iKvTRWaM1UUWGANRF3HwsAVxgzQNucTwzgAQ5Q8iKydLiYcHGjZo7dEoJuKYktfrfe
-	 m17IYBl7iWtpvRs+3JywWtQ/AID4Ki5100jo96DNc9qRx1YhHzYv6+SXe6OxTeeVBo
-	 A/7K10EaBcsBQ==
-Message-ID: <d673b1539ad5d4abfff29900461f9209.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723064255; c=relaxed/simple;
+	bh=lJX0D4OyVWWr9tCe87V41NDjVu4MfrrbvpiyYTYcK7Y=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H5KNH9R2KbKAPD1tZYO1Vh0dLLvNbO1hgik7kfUPle0zLBQ7oN4VjNLWmZRAefWqBtEcgD2Q5heejdV2mV4H3vgj+gQsLZUhl2r+J/p31EgyfqJrg/gBqV1DlVGtKzIjNlbjAPdeH4ym+Q3dFcsMez10uJOUDTBR8Yy4Z8vvDhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=NQMueTKy; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1723064249; x=1723323449;
+	bh=6KUh5dMzqW/isG1WMZVBXDAqaCMl8AmRgKwdpJgumNI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=NQMueTKyMITuDxThP5MPcBvLQe3anwegBPA3rhCxjZXbF2wmeR+CIDzJqmR/7a4LX
+	 X9Csp9v8qeEDiY8Km7SmP1FwxLQZYQOMwcgaQPspGZFTHCgSiukRPX9DhpOsUapMtW
+	 9XQwwef1fDcFP21ysk/t2cJ1W3dsl0diDtfwDtKneOsWRwY6K43TXJDD8TBPiR/ftd
+	 MrdLABLNM1e76774UzVFomWHkOsOuGKwe4V8SG4Hk9UF11rrK5nMc4mPtVeVIQamm1
+	 /4bEUwNsb4wuR92Tf3jhJ+VCrAILMBbcd3aHEgoQgjmHTA7xw9MxdUBnz7BuskbNZ7
+	 oKIer2m0p6G5Q==
+Date: Wed, 07 Aug 2024 20:57:22 +0000
+To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4 10/28] rust: treewide: switch to our kernel `Box` type
+Message-ID: <1b17b4b3-69b4-4af1-a816-b401a1bb6ef2@proton.me>
+In-Reply-To: <20240805152004.5039-11-dakr@kernel.org>
+References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-11-dakr@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: df1d5307bc7aea13047904479f23ee45b5fc73f1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2024080709283455745026@rock-chips.com>
-References: <20240806073832.13568-1-zhangqing@rock-chips.com>, <cca491b4b4f5716e634f7c0ce0c574af.sboyd@kernel.org> <2024080709283455745026@rock-chips.com>
-Subject: Re: Re: [PATCH v1] clk: gate: export clk_gate_endisable
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>, linux-rockchip <linux-rockchip@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, huangtao <huangtao@rock-chips.com>, =?utf-8?b?5byg5a2m5bm/?= <sugar.zhang@rock-chips.com>
-To: heiko <heiko@sntech.de>, mturquette <mturquette@baylibre.com>, zhangqing@rock-chips.com <zhangqing@rock-chips.com>, =?utf-8?b?5p2o5Yev?= <kever.yang@rock-chips.com>
-Date: Wed, 07 Aug 2024 13:57:21 -0700
-User-Agent: alot/0.10
 
-Quoting zhangqing@rock-chips.com (2024-08-06 18:28:34)
-> Hi=EF=BC=8C
->=20
-> Some modules, which need to do workaround, need to disabled the clock dir=
-ectly,
-> independent of the reference count.
+On 05.08.24 17:19, Danilo Krummrich wrote:
+> Now that we got the kernel `Box` type in place, convert all existing
+> `Box` users to make use of it.
 
-We don't want clk consumers going behind the clk provider and turning it
-off and on. You'll need to figure out some other way to do this. Are
-there really other consumers besides the one changing the pin to a gpio?
-If there's only one user then it seems like clk_disable() should work?
+You missed a couple usages of `Box`:
+- `rust/macros/lib.rs:{242,251,281}`
+- `drivers/block/rnull.rs:{35,50}`
+
+or is that intentional? (for me rnull doesn't compile after this patch)
+
+---
+Cheers,
+Benno
+
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  rust/kernel/init.rs               | 41 ++++++++++++++++---------------
+>  rust/kernel/init/__internal.rs    |  2 +-
+>  rust/kernel/sync/arc.rs           | 17 ++++++-------
+>  rust/kernel/sync/condvar.rs       |  4 +--
+>  rust/kernel/sync/lock/mutex.rs    |  2 +-
+>  rust/kernel/sync/lock/spinlock.rs |  2 +-
+>  rust/kernel/workqueue.rs          | 20 +++++++--------
+>  7 files changed, 44 insertions(+), 44 deletions(-)
+
 
