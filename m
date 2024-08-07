@@ -1,154 +1,192 @@
-Return-Path: <linux-kernel+bounces-278681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DEB094B37D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:15:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BB0994B369
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09CCA1F2307A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:15:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC1F11F21643
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883E2155A59;
-	Wed,  7 Aug 2024 23:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BE915574C;
+	Wed,  7 Aug 2024 23:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="pDX7mK7a"
-Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldPGJCN3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB34250EC;
-	Wed,  7 Aug 2024 23:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C943A364A0;
+	Wed,  7 Aug 2024 23:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723072513; cv=none; b=sAgYZVHfcVeMc1cyjz6KjR245Ibv4aOdHhE5gEVwNUQ3/b8VznHAUFIaUHFtSiuzTwlapnRPq4Ge5Wn8dZIgYmLKKqJNDwMgVF7zgHFSNapUDgm81gzg/3qinhaWXM8lb5nCAkyJwZ6rucFtcljyXmBu5qcluScQLP696jwyTig=
+	t=1723072251; cv=none; b=adou6n3UW0KBVAdtYA+aSEZradNRXP/jdEEhi0j8IbCEiZ1hZ+pK3yOeG656wQfLcLTpaKJZP/yqYSlmH3wTJvEVaFefxVenXO3NJnoJ/P6/1CxZbOSzDJlCT3W7CnSHMv907i+l62aG1EbtFCs3/MdUNVtEoupqvvUMDz5pIFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723072513; c=relaxed/simple;
-	bh=sHhvml+mYSmDdgcMWP6jiNbju26OB7L8+gCQGhqWQvM=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Jum7QnRUd3Nl1XWAELa5x6iVoS7oo3ZL0iHF+JbTqZ299xvNraif9AHrq0ORuoNZhQvxLv6Y+5J+OB34BIN5eDEK2JZXmn4n3uyZZ23hAuLMM9T+Sffo3V5ziwtmuWLDqrekQbnlxxnVCwxOVX0PWWMkv/jeyVSd1kIp6AI8p5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=pDX7mK7a; arc=none smtp.client-ip=203.205.221.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1723072508; bh=ld/aFBFO32VUAPp/57mNfqYKOGvt7MOQE+FG0HbCxC0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=pDX7mK7aO9uhDzvwcEJMuq5c3QpLUQj9kjZc9dta2Grmh/WmPiACxHiZ8f4SDKZIu
-	 z2VGD55acHzj+YQc502Bo99eel44anwDm0y9zcqp3cpcUGmmiJx++cd6QoFxZkiEhw
-	 kvz1FyfoOLUl48ukWbDgpforjnzHOTrMXtpwK89M=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
-	id 2312EEAA; Thu, 08 Aug 2024 07:08:49 +0800
-X-QQ-mid: xmsmtpt1723072129t5xidoyw0
-Message-ID: <tencent_1F473700968236B84AEA74ED76FF67023C09@qq.com>
-X-QQ-XMAILINFO: NMGzQWUSIfvTPOzuldNXnGeJ7s36h2U6hmp3yD4Ek7o1PE6XcYfGd+vnsxex9Q
-	 n3r13Pr88qwieI7NVZ1HudXOvKJEnpIFUicyKUOi5tbvz4PiwZHkJGnWQreHJIxPg65isn0ceO78
-	 lxku6wsjZZ6hMAvAf2MIC4xNYumSIubWYMJnlulXkJXEtx7X3HtkyGE4KPVtI3PC9/knpugv3Dy/
-	 sNo5WJ6hEmsHk7KSKVSVpBxK7eT4KXC2z4FIoFFyJs/WxOVftmYVZzfCfwGVfNJOqOtyBIh3vLhW
-	 S59vz0WSqdp5jc3avP+qfBz2jwAXwPOYpwYtYka3Owbvun6ax8uuh5JLPbLez433BT4RheechQRn
-	 PTjC6MrFLZv06LxoZBpse2Lm818ORfeJXk9Th5D0pbtWB0L44NPASsg7hO5DQwg6U/LVwRjBl9n8
-	 jx4q2HzCaQD8XLkHzRMb8ne7E8+YfYLLvWWti80+QA2Fs63Lptcd+BF3rF5TAj3WkTbHgDUO/a6d
-	 1Bbovs/mykw1uVNIypV529y4F445C5BTChCS0ZcHBP6kDNooZti2pQ0U29shZLVKJNV5WqIpnnzj
-	 a33hPlPRgVURReUFVammnPAzptiJN87tHrdcTireTFJ7L2Rx77x+ojGfuGklWg6r8GxAxb3eEiTd
-	 Q8McnoGFJdTW1vtvB0Vvs8+jb9dKcCiO9t3DKJR4ZGcc+QSVEqXsQ/e6w90+pJ9iFA8og+K7m58A
-	 R6jt4XxpK57mdX/ZA8FJzHGj/C927SvWHUdUeqGqUxa7rskXuf38PPKbB2bO3pjByvyBieCl8zP7
-	 IdKwWIUTFwJxwSe8JYI5mqdRKImByCxdGJVpvlrcRMMFVc+WSDBcKux+P0ErL1S1U/gCfIEQ3MAW
-	 MBrMEJkCm21bJpMkaB356/5Jh/LjfIGlyihAGKKC+zyG26DBHc0mtmflAqDQWx3Y2i5yGDuRBA8g
-	 sSH99ARedaeVFJuQqkhT9bTT/AStzH
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: kuba@kernel.org
-Cc: davem@davemloft.net,
-	eadavis@qq.com,
-	edumazet@google.com,
-	kernel@pengutronix.de,
-	leitao@debian.org,
-	linux-can@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mkl@pengutronix.de,
-	netdev@vger.kernel.org,
-	o.rempel@pengutronix.de,
-	pabeni@redhat.com,
-	robin@protonic.nl,
-	socketcan@hartkopp.net,
-	syzbot+ad601904231505ad6617@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH net-next V2] can: j1939: fix uaf warning in j1939_session_destroy
-Date: Thu,  8 Aug 2024 07:08:49 +0800
-X-OQ-MSGID: <20240807230848.594339-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240807071655.5b230108@kernel.org>
-References: <20240807071655.5b230108@kernel.org>
+	s=arc-20240116; t=1723072251; c=relaxed/simple;
+	bh=2Arp6skp4lsIU7gY1P9i7DjssGu8XkY+Mw3cDuEayR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qk06qg60/a+kOObOk0rRo9zSoolcbsonm6Ym15LmNazEZzwqA7VNFqyRdLeUcZIyoRQKpPHoMh6dJplLj6H6mzcsg1w1qdoJbUOgNMr6qvT32+I06XnCteLRC0jHZZPd7bE+7nhp/NEGM/PsgcwveBePe4l2SFPpdVYLt8TycrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldPGJCN3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 981DAC32781;
+	Wed,  7 Aug 2024 23:10:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723072250;
+	bh=2Arp6skp4lsIU7gY1P9i7DjssGu8XkY+Mw3cDuEayR4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ldPGJCN3ZIDgEu+JqjWfyq8SgqSslLPbqwCyfHIbYErRgOIehLhNY8ykRxM5cqxN9
+	 8zLt6qFaoEsTxmdXQlNeR0GOWyyv/7LlHYqTjDpl4km+Lh47gWxn+QwWAJaeeqkxcz
+	 uey7J7Tw+gewcUdJBkGWJ82NhjTlRwlecbrGKGlxaayUVXo1f76DhrTcwNCN3CiL93
+	 ultdDjdKSdDB7QJyUD/EV35Yp/s59ljLUg+KSXR6aZZe4Ahby+4ueC364F2qE305Qx
+	 0/p7XcxLIbWOKxEwma0XAlfBY5zIca/keWPAYZ//Kqxe8p3Kfr1BpQ5agkDMyXC0M2
+	 CHZ/DousmFKBQ==
+Date: Thu, 8 Aug 2024 00:10:46 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 38/40] kselftest/arm64: Add a GCS stress test
+Message-ID: <ZrP-9gHsvVHr2Y5B@finisterre.sirena.org.uk>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-38-699e2bd2190b@kernel.org>
+ <877ccsdkjp.fsf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+DPYyleG5oZF9XZc"
+Content-Disposition: inline
+In-Reply-To: <877ccsdkjp.fsf@linaro.org>
+X-Cookie: Your love life will be... interesting.
 
-The root cause of this problem is when both of the following conditions
-are met simultaneously:
-[1] Introduced commit c9c0ee5f20c5, There are following rules:
-In debug builds (CONFIG_DEBUG_NET set), the reference count is always
-decremented, even when it's 1.
 
-[2] When executing sendmsg, the newly created session did not increase the
-skb reference count, only added skb to the session's skb_queue.
+--+DPYyleG5oZF9XZc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The solution is:
-When creating a new session, do not add the skb to the skb_queue.
-Instead, when using skb, uniformly use j1939_session_skb_queue to add
-the skb to the queue and increase the skb reference count through it.
+On Wed, Aug 07, 2024 at 07:39:54PM -0300, Thiago Jung Bauermann wrote:
+> Mark Brown <broonie@kernel.org> writes:
 
-Reported-and-tested-by: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=ad601904231505ad6617
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- net/can/j1939/socket.c    | 7 ++++---
- net/can/j1939/transport.c | 2 +-
- 2 files changed, 5 insertions(+), 4 deletions(-)
+> > Add a stress test which runs one more process than we have CPUs spinning
+> > through a very recursive function with frequent syscalls immediately prior
 
-diff --git a/net/can/j1939/socket.c b/net/can/j1939/socket.c
-index 305dd72c844c..ec78bee1bfa6 100644
---- a/net/can/j1939/socket.c
-+++ b/net/can/j1939/socket.c
-@@ -1170,10 +1170,11 @@ static int j1939_sk_send_loop(struct j1939_priv *priv,  struct sock *sk,
- 					break;
- 				}
- 			}
--		} else {
--			skcb->offset = session->total_queued_size;
--			j1939_session_skb_queue(session, skb);
- 		}
-+		/* Session is ready, add it to skb queue and increase ref count.
-+		 */
-+		skcb->offset = session->total_queued_size;
-+		j1939_session_skb_queue(session, skb);
- 
- 		todo_size -= segment_size;
- 		session->total_queued_size += segment_size;
-diff --git a/net/can/j1939/transport.c b/net/can/j1939/transport.c
-index 4be73de5033c..dd503bc3adb5 100644
---- a/net/can/j1939/transport.c
-+++ b/net/can/j1939/transport.c
-@@ -1505,7 +1505,6 @@ static struct j1939_session *j1939_session_new(struct j1939_priv *priv,
- 	session->state = J1939_SESSION_NEW;
- 
- 	skb_queue_head_init(&session->skb_queue);
--	skb_queue_tail(&session->skb_queue, skb);
- 
- 	skcb = j1939_skb_to_cb(skb);
- 	memcpy(&session->skcb, skcb, sizeof(session->skcb));
-@@ -1548,6 +1547,7 @@ j1939_session *j1939_session_fresh_new(struct j1939_priv *priv,
- 		kfree_skb(skb);
- 		return NULL;
- 	}
-+	j1939_session_skb_queue(session, skb);
- 
- 	/* alloc data area */
- 	skb_put(skb, size);
--- 
-2.43.0
+> Unfortunately, gcs-stress still fails on my FVP setup. I tested on an
+> arm64 defconfig with and without THP enabled with, the same results:
 
+Can you please try to investigate why this is happening on your system?
+I am unable to reproduce this, for example the actual branch that was
+posted gave this:
+
+# selftests: arm64: gcs-stress
+# TAP version 13
+# 1..9
+# # 8 CPUs, 9 GCS threads
+# # Will run for 10s
+# # Started Thread-8350
+# # Started Thread-8351
+# # Started Thread-8352
+# # Started Thread-8353
+# # Started Thread-8354
+# # Started Thread-8355
+# # Started Thread-8356
+# # Started Thread-8357
+# # Started Thread-8358
+# # Thread-8350: Running
+
+...
+
+# # Sending signals, timeout remaining: 100ms
+# # Finishing up...
+# # Thread-8351: Terminated by signal 15, no error
+# # Thread-8352: Terminated by signal 15, no error
+# # Thread-8353: Terminated by signal 15, no error
+# # Thread-8354: Terminated by signal 15, no error
+# # Thread-8355: Terminated by signal 15, no error
+# # Thread-8357: Terminated by signal 15, no error
+# # Thread-8358: Terminated by signal 15, no error
+# ok 1 Thread-8350
+# ok 2 Thread-8351
+# ok 3 Thread-8352
+# ok 4 Thread-8353
+# ok 5 Thread-8354
+# ok 6 Thread-8355
+# ok 7 Thread-8356
+# ok 8 Thread-8357
+# ok 9 Thread-8358
+# # Thread-8356: Terminated by signal 15, no error
+# # Thread-8350: Terminated by signal 15, no error
+# # Totals: pass:9 fail:0 xfail:0 xpass:0 skip:0 error:0
+
+and Anders also ran the selftests successfully, including with THP
+enabled (as noted in the changelog those issues should now be resolved).
+THP issues should not have been relevant for this test as it doesn't
+fork with GCS enabled.
+
+> # # Thread-4870: Failed to enable GCS
+
+which is printed if a basic PR_SET_SHADOW_STACK_STATUS fails immediately
+the program starts executing:
+
+function _start
+        // Run with GCS
+        mov     x0, PR_SET_SHADOW_STACK_STATUS
+        mov     x1, PR_SHADOW_STACK_ENABLE
+        mov     x2, xzr
+        mov     x3, xzr
+        mov     x4, xzr
+        mov     x5, xzr
+        mov     x8, #__NR_prctl
+        svc     #0
+        cbz     x0, 1f
+        puts    "Failed to enable GCS\n"
+        b       abort
+
+the defines for which all seem up to date (and unlikely to fail in
+system or config specific fashions).  What happens if you try to execute
+the gcs-stress-thread binary directly, does strace show anything
+interesting?  If you instrument arch_set_shadow_stack_status() in the
+kernel does it show anything?
+
+--+DPYyleG5oZF9XZc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaz/vUACgkQJNaLcl1U
+h9D82gf+KEl5xAmYb9cWom+7gcXMomlPJMrkA7dYPaZDmS1e+GV/mZGvgZoHdWQD
+5vVHwhl1MUOzyDonNieLL2Oa07SBlqSmg8D6TvELS/I2CllFObqIVtNWO2d7DYW2
+/fOtJrFUTKWlteufFlt34Q9f9zp0AMkeEWhKVhLL00MKm0/6eKrZsDPRN/4gbtbt
+yY6VNkJCYivlodKM8zBXd/dkWKo3kMcl5gSYlVExD7tbMhwpdg1VLVn/Nwnmlb1O
+/yOj8phnDdEZt6AbpagWi78WSdXp9K2KE5JohOtw+CQlaaK2ekeaswe6qwV8Ijn/
+i2dbu6EJf382fN3bB+lB+CrVXX0UsQ==
+=kdke
+-----END PGP SIGNATURE-----
+
+--+DPYyleG5oZF9XZc--
 
