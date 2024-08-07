@@ -1,62 +1,53 @@
-Return-Path: <linux-kernel+bounces-278235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F1794ADC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:11:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE9D894ADDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59C94B2DEF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:10:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFE51B295A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B8E13B2A4;
-	Wed,  7 Aug 2024 16:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFDE13B588;
+	Wed,  7 Aug 2024 16:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a2boA3KY"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="eq1G66Yf"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE6D126F1E;
-	Wed,  7 Aug 2024 16:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E0D135A79;
+	Wed,  7 Aug 2024 16:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723046955; cv=none; b=KjEGIEnxu97y91W0lZMdLbL9hr3pqcFj9SMHbmusHho5wD79dhRv0hu/XvVIzvpCsC/S5hPMOizuKqn/uyYFvr2n+35mO5BxGAD/gYXD5UbZ0Y1IYGeS0/SnAJpMUEzF3Bs3cmbw5cPFDiy72U8saqv380+unjK16q31LGP02L8=
+	t=1723046984; cv=none; b=REwlDPy8yaiQM+nVDOGqX5F8uI2Xj4pAJYByDhlU/Pz0j6qMDrZbtHSg+pcCRFPiUeUJFbi0CMyie2eQFkfi6nWOPEEi2upaMjTHKjrocBYRLK8dNxgr+qn0U1TcphdZxECJLlXgFO3+a+6oBxihQMBLOvkKAhhR7YSJXHKAzKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723046955; c=relaxed/simple;
-	bh=YA2ZuyFNRNxqyBRIOQWI6/ABTXBLPVPilssOyCvAofk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dfnBByU34cyojtmFdbLOIs4oXPgrB+tg+wT1/41VRoEjR5erFLfFHhg57PI7oEbUibRDdF/xM+Q5PHB9G1bkj821sQmje30bi3c9Pu9TaiQkI8TGEzKJEK8E4LE+qKryanv1wc24My8MBr77HQIIySJrEfKX5JmgUzRHbjQZLKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=a2boA3KY; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 477G95JY071948;
-	Wed, 7 Aug 2024 11:09:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723046945;
-	bh=jzPSemYePbBHFr/+nsxFkMDC+tdgXWS4uZbaeSlS+mQ=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=a2boA3KY/mGKS5/ZM3OendLtaEOet8Nx/703NuGD7QWvF3XD8R1XjdfBXq5m1JopM
-	 dhh9O4e8gX5GU5360YSum2yzRaYDuwaQrYYHTKV9bi2ExDyIxum9UXn+FylkBjY/v/
-	 j004mCliaSmt2+weLv9WRm9bqoXPOZ0lzxumRTTA=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 477G95NQ106351
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 7 Aug 2024 11:09:05 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
- Aug 2024 11:09:05 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 7 Aug 2024 11:09:05 -0500
-Received: from [137.167.6.133] (lt5cg1094w5k.dhcp.ti.com [137.167.6.133])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 477G92jj042671;
-	Wed, 7 Aug 2024 11:09:02 -0500
-Message-ID: <e91645a1-aa5e-49bc-915b-f1bf9805ef51@ti.com>
-Date: Wed, 7 Aug 2024 19:09:01 +0300
+	s=arc-20240116; t=1723046984; c=relaxed/simple;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=ExNeIncm23I6Yeidbftvi6m6TGIL3ia1Uka7670yBMOlfEqlIWwvN6cDZ2CSUbpiKKgJgZAN11z7R3860+VtyziuSwSfnPaV9Am4lRTgl9MDAre1y93PiV6oM2V+MrM1ouH6ADSBLoB2vPIoBH+i2miW0QcPfF+pkIGT4AHqkZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=eq1G66Yf; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1723046978; x=1723651778; i=rwarsow@gmx.de;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=eq1G66Yf9rx8UEnZZ4vnI1aAPlpfvBHsqe2y403UtJEqh7+0JqXNNbSDsuicpo2d
+	 VHPgNx1I8pcD4CWTx29zH2orAjWXo/tvOtwsPCGezp09hHB7dnXQyxY6oWwebjrzv
+	 +VsvB1ZVjpVzfD/pmE6LWYNapruvq42bqiOcXDXJ8k9uFAmCx42Vs8PRxIhfAFbHn
+	 zHYpe1Ui+S056091eG5oTRMGIBxwk+M21pil1BnZ260HqgX0AIx7Ve6pC8HQ0UGoJ
+	 ssYgufLCIJeZCgTzX9MTQWO7oSdP3OsiXv2Ci26J4kTz/JUUSD7Vcw0cBNxM26FRI
+	 Q9G20HfJ5d9iw6MzLg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.100.20] ([46.142.35.118]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mo6qv-1rqa7d3PMR-00bKtN; Wed, 07
+ Aug 2024 18:09:38 +0200
+Message-ID: <fecde35a-fe75-4e98-87e9-e9da0f959924@gmx.de>
+Date: Wed, 7 Aug 2024 18:09:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,78 +55,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/17] wifi: cc33xx: Add acx.c, acx.h
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Sabeeh Khan <sabeeh-khan@ti.com>
-References: <20240806170018.638585-1-michael.nemanov@ti.com>
- <20240806170018.638585-6-michael.nemanov@ti.com>
- <813f5d6b-eda8-46d6-b152-9e7cdf737729@kernel.org>
-Content-Language: en-US
-From: "Nemanov, Michael" <michael.nemanov@ti.com>
-In-Reply-To: <813f5d6b-eda8-46d6-b152-9e7cdf737729@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Ronald Warsow <rwarsow@gmx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Language: de-DE, en-US
+Subject: Re: [PATCH 6.10 000/123] 6.10.4-rc1 review
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Provags-ID: V03:K1:PO1vJhdbewxo9sCb5CnicpsXevP9PvtVbroX2ZKNcXL7THZ5OkC
+ cV/YGAvkVnmMX+RvPFqcNU3Ropi0ga562FMKtvDVpTUOAnKhuiOH+JGUFkUizil78iKBp9W
+ ZSCwfOWOrFpR7S3c7vzU4jg21sRR6F3yhgexF4ZIijgpCQ04gNPdqVY6a0m6zgDpTMpt6oz
+ ZhksNTqj2v9asng0t7SUQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:MRmqLaK4zmw=;/t0VchD8at4atUD+l6h1dG3eXzX
+ oa3iDggUlXzBGPVAXqGTJFwtQf0fNp2eVgeEBzjHUQzLQ3P611TK4vg0Cy3SEYHUHj5FhILtv
+ t3QOvTZdvBjjeLf3xjNfPbHafKsu9lO0EzbB1pyFWpqmT6nxxH3scIlO/Z1v/eBlDFN9QLExs
+ dythDAD4CtNQ9RhxIIRRLlLryESnqouBEbdGulKCBSdd65gbjJnTsfUnVjXnGvr4+ShCcdzMx
+ 7z0PU3bdRHGCoPjnrL7qroxdjUZVPCXWDtlzEIPJ99+x2nyil1B+ysJRlNE8pBSkdfs4fx2Q0
+ MOL1uN/7XkLKUXT4MsELWZ+D/sIJSpJGOkB6V2ohTagDggiFLwBXIh4uZ3ZlVIRO3eBY4mQc3
+ tChXUMvTWyWiZjHMv9jngBN4EsT/WcVrtlSP6u8ayNXuF/eX7J94ELyyw6jD24Hhevf3k5VWv
+ 2mmsXegYiE7bDYtXwK93Eh9KZtRW/GZ26bvlcO7/xt3q6lRYwwjhA0ehNeL42WDnK/LuQp8U+
+ WzQU5oBgNBT5iKywXMO6baX0pvh8DUbfOWsP5+2sVFLVC2hwVsSe2hLVj5JbdIz6MLuqWkhKb
+ CTyEOvFmmRfEYfaDH7JoNEY1Km4vYOIjPg96r7j4Agn90f1+hhQattG/BQhC/9GIEmQaOs8Zj
+ fElPEXGIXfRLOYOf9oHRu/nUFUNg5Y74GntHWHmopK8a43wUCxsCOeeKeyBTeWp7ZHywMMkZp
+ NfCsi0ptN9OQ1tPmOKKudalB/dkfz+nAKnyzWBrfQz19LKe3Zy9x4BI6bNIbiK4KPnvBp0ADR
+ H5+peo4eKa4+Y/P/wJLycxHw==
 
-On 8/7/2024 10:15 AM, Krzysztof Kozlowski wrote:
-> On 06/08/2024 19:00, Michael Nemanov wrote:
->> These file contain various WLAN-oriented APIs
->>
->> Signed-off-by: Michael Nemanov <michael.nemanov@ti.com>
->> ---
->>   drivers/net/wireless/ti/cc33xx/acx.c | 1011 ++++++++++++++++++++++++++
->>   drivers/net/wireless/ti/cc33xx/acx.h |  835 +++++++++++++++++++++
->>   2 files changed, 1846 insertions(+)
->>   create mode 100644 drivers/net/wireless/ti/cc33xx/acx.c
->>   create mode 100644 drivers/net/wireless/ti/cc33xx/acx.h
->>
->> diff --git a/drivers/net/wireless/ti/cc33xx/acx.c b/drivers/net/wireless/ti/cc33xx/acx.c
->> new file mode 100644
->> index 000000000000..3c9b590e69b1
->> --- /dev/null
->> +++ b/drivers/net/wireless/ti/cc33xx/acx.c
->> @@ -0,0 +1,1011 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
->> + */
->> +
->> +#include "acx.h"
->> +
->> +int cc33xx_acx_clear_statistics(struct cc33xx *cc)
->> +{
->> +	struct acx_header *acx;
->> +	int ret = 0;
->> +
->> +	cc33xx_debug(DEBUG_ACX, "acx clear statistics");
-> 
-> So you just re-implemented tracing.
-> 
-> No, I asked to drop such silly entry/exit messages because you duplicate
-> existing mechanisms in the kernel.
-> 
-> That's a no everywhere. Do not write such code. You can have useful
-> debug statements when tracing or kprobes or whatever you want is not
-> sufficient.
-> 
-> Best regards,
-> Krzysztof
-> 
+Hi Greg
 
-OK, I misunderstood the previous exchange with you and Kalle Valo. I'll 
-remove all entry / exit cc33xx_debug traces. Non-trivial ones are OK 
-tough, right?
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-Thanks and regards,
-Michael.
+Thanks
 
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
