@@ -1,132 +1,177 @@
-Return-Path: <linux-kernel+bounces-277764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2722594A616
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:46:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA4394A619
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C66631F24CB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:46:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 736251C22960
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A9E1E286A;
-	Wed,  7 Aug 2024 10:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3CF1C8233;
+	Wed,  7 Aug 2024 10:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YezfYi3V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eQEG66Vw"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BE61B9B2F;
-	Wed,  7 Aug 2024 10:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4194C1E287F
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723027453; cv=none; b=qc/8a4AQkdZb/WJdbqni8BQa9GmzqQhIwq/XMXT3ylMYfUd/pTl8LQCK/F5ZMlSPtDDZVCZvItF3tdtPHW0UySytwJwP/dC1/s4VDyiiGuIFtS6r4ThJMUXIYdydm/Od1w2hMJQ8KzpncvyBBIt/LQdRhFB1G8VtwTJVYDcZPx8=
+	t=1723027459; cv=none; b=EGj7lS/zSpwuFpNnB4YnO48GwnnlYw3kevew4fjFw5O9hmf/Mql/FweaMJuhjQ2deHLZtw6okLGEdHq4CMA9zsdxTmfDUi8bnfLjXa8E0+3c+Lq8rJtBGXRstHb3PHozwVcK/WtXHHiChe36JsiticIPRF39DNRglIxxwnzy2ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723027453; c=relaxed/simple;
-	bh=JOxiEarUvo73HuG9/MeZiik0i/gR0KHBA5ZXH7M+o5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZDSHAIsJiMou38YEzQNRqyrBvIu6ff/LgecWdhQPHvjNscpY1owRBevfdUaqEzLm0qWTxQ0uDeNRgj5n/aihPHiEEMYS7rkFVK8qQDQRganWQAUEiokIV/IW0gGju9h/QhKdiPoB/OiBPM9PDzUhDA8RD/LJpf9GTz9FZy8q4FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YezfYi3V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B168BC32782;
-	Wed,  7 Aug 2024 10:44:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723027452;
-	bh=JOxiEarUvo73HuG9/MeZiik0i/gR0KHBA5ZXH7M+o5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YezfYi3VwAeOVs3hFM+qZjdVwu4ELBBZC19dpyT2GsyplWss5iaQ1MXtIWlYz9sdz
-	 bmphj3s6/5dWGU3nCNaoKglJeyn179JvGERuwK5hs/gtUBxSfHRQ+TIXbJ1hWfXMyZ
-	 BeOX6OAlzlSy0T9fAb7dYgsYVhKZJGvjTy/KdlzrH6x2wFSVHdDRbdt9snNfkg+Pju
-	 uwhkCrlFw7MRScfiZ9jKkklMhv13dYpalO3Dv6a1kyWtHDr1M3dcJ2d6IMbSlL5scZ
-	 10xCWWReHP7H7ncq9BuFP13KunCo4ieKe6/sZoSqRx591z9GKpREyg9UlzGTr1LFrO
-	 RxGnCZZkOblOg==
-Date: Wed, 7 Aug 2024 12:44:04 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Alice Ryhl <aliceryhl@google.com>, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
-	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v4 09/28] rust: alloc: implement kernel `Box`
-Message-ID: <ZrNP9Lx-sTupwqG1@pollux>
-References: <20240805152004.5039-1-dakr@kernel.org>
- <20240805152004.5039-10-dakr@kernel.org>
- <a1c1e273-2d40-4114-b3b9-f27c73e3d122@proton.me>
- <ZrKrMrg5E85y7jkj@pollux>
- <012f5a12-2408-4658-8318-55fa8d4285e1@proton.me>
- <CAH5fLggiSU9Ossy5gc+S_rSiX8v-JCDKPL_tRDYdjMYGfOt-0w@mail.gmail.com>
- <7f3a4ea5-79c6-4068-9a5f-0aa3a55e38cb@proton.me>
+	s=arc-20240116; t=1723027459; c=relaxed/simple;
+	bh=7F2dgW4FuJsClw6RwBczzLtLul8AUYM2EWM8QMsAPjU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=MI4XLQtEHWtIwFh8sqiYTPOyIBkoemCzI53ekCtfqgQTy9CwnMKyvFx+93LvJZJIEo+HXDG5z+YbwE9W9L2FLwJiJjbetp2EB9BDKYoQTs0njmaCb5lc27T6McE9y1Bijd4DSSWXjpxlu7DWh12U/4AQl5eA4Zk7+xp2m9v19QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eQEG66Vw; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1fd69e44596so5845945ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 03:44:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723027457; x=1723632257; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=F3o02Xw7ezzA14Pd+Lgc2BLB9SvalP82R9YVWF/sDxk=;
+        b=eQEG66Vwf4gwAYtdaF9HPk1L4L+dBqzCKMONQnz8rR1WzM1b8ZZ85xLIh1QuEwRU+l
+         uQ8U+SsAsydm3JgxcPZIshMx1mJa02gO4eZ2GMzHDhHS0ksZxIyDQO7QDWirGi3dGhHb
+         7mTgICeuaHy75sqEGS35/Xa3yQYIyvR8I+cyjSMmDsPJM2OV1aL7wIbzf78RzMevTyls
+         uqOaNNAJBQquMIg0zr1plyUb5UxseIjUeebIsUtEM76TTQ3Fvc37sgWuMEnyIPy+HhDI
+         /YL216wDGRsn6zoIs+XBY2Aq6/EwzJ7wD1zf9c+vGcTEi+eqGa256Dk7QAtpR15WxXkx
+         Ifxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723027457; x=1723632257;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=F3o02Xw7ezzA14Pd+Lgc2BLB9SvalP82R9YVWF/sDxk=;
+        b=iVdK/8Gn+VupL69khV8J8YncUxbZNaCQX9eWMrPWplttS9woDHtQec562zNsWqAGfq
+         jezmV5sA0t24HlQje6cQhdBEljSnv3G4IGe9T2aCg3OcuDgAHP9B2pHWRwHM+tkHNkeg
+         LXIM2jzYI4wK/Rec8h3ZRWf8fIU8iMztkmHhMTlS9FvBvaiO//zYdKRVWuIKzynbtS9X
+         66PgAgs3N7cHpZQS6hDGhHhksRGQgl5kDkCUj5sNGLJwCBfq+1YiVF4NfwIl7yMQimHG
+         LTswmzkGRqY/gQnymsPAuxFmqi8vpDH/Vnaty/EH34RDHHLDnnlkoU+x5CGZfMOf+W2q
+         EXzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzOyhimJufIaPquM0Fb6bixgob5oBLZAsUoyHYOApx1K81lb3rViuXi/CjYhsaOyQPNp8QJvIWVuw6kwcqij2gy9UuWOWgTZ8vulgv
+X-Gm-Message-State: AOJu0Ywi8C8c95tWGQVCHKWq2FL6DkwrPj7MU/NHBK8RLJSUB82Wj64H
+	maV668dBIQbqhlEN1WB0PrD8EQ80UhGy/kmCLD+4hj8Atmw3uQbx84RWINHCxXM=
+X-Google-Smtp-Source: AGHT+IFoNLrt1GaF+yeaFvmCHadWYdmm/RDr/6D/Md5qSi81mcUQk94i8uHGUfoK6lIe9cztu7TiAg==
+X-Received: by 2002:a17:903:a88:b0:1f9:ad91:f8d0 with SMTP id d9443c01a7336-200853de85cmr23075065ad.8.1723027457532;
+        Wed, 07 Aug 2024 03:44:17 -0700 (PDT)
+Received: from [127.0.0.1] ([182.232.168.81])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5905e58fsm103268695ad.177.2024.08.07.03.44.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 03:44:17 -0700 (PDT)
+Date: Wed, 07 Aug 2024 17:44:12 +0700
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Leonard Lausen <leonard@lausen.nl>, Rob Clark <robdclark@gmail.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+CC: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Jeykumar Sankaran <jsanka@codeaurora.org>, stable@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_1/2=5D_drm/msm/dpu1=3A_don=27t_c?=
+ =?US-ASCII?Q?hoke_on_disabling_the_writeback_connector?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <57cdac1a-1c4d-4299-8fde-92ae054fc6c0@lausen.nl>
+References: <20240802-dpu-fix-wb-v2-0-7eac9eb8e895@linaro.org> <20240802-dpu-fix-wb-v2-1-7eac9eb8e895@linaro.org> <57cdac1a-1c4d-4299-8fde-92ae054fc6c0@lausen.nl>
+Message-ID: <61D52432-DD30-4C43-BD5E-1CC9F84DF5B9@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7f3a4ea5-79c6-4068-9a5f-0aa3a55e38cb@proton.me>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 07, 2024 at 08:01:00AM +0000, Benno Lossin wrote:
-> On 07.08.24 09:51, Alice Ryhl wrote:
-> > On Wed, Aug 7, 2024 at 9:49 AM Benno Lossin <benno.lossin@proton.me> wrote:
-> >> On 07.08.24 01:01, Danilo Krummrich wrote:
-> >>> On Tue, Aug 06, 2024 at 07:47:17PM +0000, Benno Lossin wrote:
-> >>>> On 05.08.24 17:19, Danilo Krummrich wrote:
-> >>>>> +impl<T, A> Box<T, A>
-> >>>>> +where
-> >>>>> +    T: ?Sized,
-> >>>>> +    A: Allocator,
-> >>>>> +{
-> >>>>> +    /// Constructs a `Box<T, A>` from a raw pointer.
-> >>>>> +    ///
-> >>>>> +    /// # Safety
-> >>>>> +    ///
-> >>>>> +    /// `raw` must point to valid memory, previously allocated with `A`, and at least the size of
-> >>>>> +    /// type `T`.
-> >>>>
-> >>>> With this requirement and the invariant on `Box`, I am lead to believe
-> >>>> that you can't use this for ZSTs, since they are not allocated with `A`.
-> >>>> One solution would be to adjust this requirement. But I would rather use
-> >>>> a different solution: we move the dangling pointer stuff into the
-> >>>> allocator and also call it when `T` is a ZST (ie don't special case them
-> >>>> in `Box` but in the impls of `Allocator`). That way this can stay as-is
-> >>>> and the part about ZSTs in the invariant can be removed.
-> >>>
-> >>> Actually, we already got that. Every zero sized allocation will return a
-> >>> dangling pointer. However, we can't call `Allocator::free` with (any) dangling
-> >>> pointer though.
-> >>
-> >> The last part is rather problematic in my opinion, since the safety
-> >> requirements of the functions in `Allocator` don't ensure that you're
-> >> not allowed to do it. We should make it possible to free dangling
-> >> pointers that were previously "allocated" by the allocator (ie returned
-> >> by `realloc`).
-> >> Maybe we do need an `old_layout` parameter for that (that way we can
-> >> also `debug_assert_eq!(old_layout.align(), new_layout.align())`).
-> > 
-> > The std allocators generally prohibit zero sized allocations, so it
-> > seems sensible for us to do the same?
-> 
-> I never understood why they do that, the stdlib `Allocator` trait has
-> all the information it needs to detect zero-sized allocations, so it
-> could just return dangling pointers. I don't see the point of
-> duplicating the zero-sized logic in `Box` and `Vec`...
+On August 5, 2024 9:27:39 AM GMT+07:00, Leonard Lausen <leonard@lausen=2Enl=
+> wrote:
+>Dear Dmitry,
+>
+>Thank you for the patch=2E Unfortunately, the patch triggers a regression=
+ with
+>respect to DRM CRTC state handling=2E With the patch applied, suspending =
+and
+>resuming a lazor sc7180 with external display connected, looses CRTC stat=
+e on
+>resume and prevents applying a new CRTC state=2E Without the patch, CRTC =
+state is
+>preserved across suspend and resume and it remains possible to change CRT=
+C
+>settings after resume=2E This means the patch regresses the user experien=
+ce,
+>preventing "Night Light" mode to work as expected=2E I've validated this =
+on
+>v6=2E10=2E2 vs=2E v6=2E10=2E2 with this patch applied=2E
+>
 
-I think it's simpler and less error prone.
+Could you please clarify, I was under the impression that currently whole =
+suspend/resume is broken, so it's more than a dmesg message=2E
 
-Besides that, I think the stdlib `Box` allows to call `from_raw` with any random
-pointer for ZST, which the allocator API can't catch.
+>While the cause for the bug uncovered by this change is likely separate, =
+given
+>it's impact, would it be prudent to delay the application of this patch u=
+ntil
+>the related bug is identified and fixed? Otherwise we would be fixing a d=
+mesg
+>error message "[dpu error]connector not connected 3" that appears to do n=
+o harm
+>but thereby break more critical user visible behavior=2E
+>
+>Best regards
+>Leonard
+>
+>On 8/2/24 15:47, Dmitry Baryshkov wrote:
+>> During suspend/resume process all connectors are explicitly disabled an=
+d
+>> then reenabled=2E However resume fails because of the connector_status =
+check:
+>>=20
+>> [ 1185=2E831970] [dpu error]connector not connected 3
+>>=20
+>> It doesn't make sense to check for the Writeback connected status (and
+>> other drivers don't perform such check), so drop the check=2E
+>>=20
+>> Fixes: 71174f362d67 ("drm/msm/dpu: move writeback's atomic_check to dpu=
+_writeback=2Ec")
+>> Cc: stable@vger=2Ekernel=2Eorg
+>> Reported-by: Leonard Lausen <leonard@lausen=2Enl>
+>> Closes: https://gitlab=2Efreedesktop=2Eorg/drm/msm/-/issues/57
+>> Signed-off-by: Dmitry Baryshkov <dmitry=2Ebaryshkov@linaro=2Eorg>
+>> ---
+>>  drivers/gpu/drm/msm/disp/dpu1/dpu_writeback=2Ec | 3 ---
+>>  1 file changed, 3 deletions(-)
+>>=20
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback=2Ec b/drivers/=
+gpu/drm/msm/disp/dpu1/dpu_writeback=2Ec
+>> index 16f144cbc0c9=2E=2E8ff496082902 100644
+>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback=2Ec
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback=2Ec
+>> @@ -42,9 +42,6 @@ static int dpu_wb_conn_atomic_check(struct drm_connec=
+tor *connector,
+>>  	if (!conn_state || !conn_state->connector) {
+>>  		DPU_ERROR("invalid connector state\n");
+>>  		return -EINVAL;
+>> -	} else if (conn_state->connector->status !=3D connector_status_connec=
+ted) {
+>> -		DPU_ERROR("connector not connected %d\n", conn_state->connector->sta=
+tus);
+>> -		return -EINVAL;
+>>  	}
+>> =20
+>>  	crtc =3D conn_state->crtc;
+>>=20
+>
 
-> 
-> ---
-> Cheers,
-> Benno
-> 
+
+--=20
+With best wishes
+Dmitry
 
