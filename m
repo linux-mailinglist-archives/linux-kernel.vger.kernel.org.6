@@ -1,165 +1,231 @@
-Return-Path: <linux-kernel+bounces-277328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59605949F4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:45:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2D7949F55
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6B21C22B40
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:45:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5249282F07
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F71196C6C;
-	Wed,  7 Aug 2024 05:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6BB1917E8;
+	Wed,  7 Aug 2024 05:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kqJKIweK"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gMnGbHYG"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0465E1957FD
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 05:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7788C6BFA3;
+	Wed,  7 Aug 2024 05:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723009493; cv=none; b=SnTYtREdujw34L0PWAgxq18bLnIOUvWEzjU+QLgqDaDzkHrJwGeIsno6EQNH8jjfVAtWPXqvle0msTS2+7Pn9y/Ak7MyVmz0Kf6XBKzc3LAtCEhl5JnFG299I2yRyPGcglE/7k6Hj8OcMqFMC4J4jHU1tTKgI/6unk0Exl1s82o=
+	t=1723009579; cv=none; b=f8aqG0j2WHcMmLoZf7slSQCWYbCOlxsrAIzpez3DCER7SdVJlgRGL64xcfkuEJGi1q/UlHG/Ao+U2ux+eYHoRCvGiXfItJHTtN9o72rJtVb2wLDJwcDS2kVdR1yWIKFbkJoKBmE/xBBTe4NIvPEViTyrRbuOlloa8n5TE7aoBz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723009493; c=relaxed/simple;
-	bh=JE/r6oRaW9pWCNR+Vxh7Jmv7Eddt6ZRPoHulVg+7nwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bvpJWrcQMYzdDAYqUC0RDNrFyvESUsiCVPxvCU9JIXRA80nHDEPtU4twUJ6IIVwLmX6/BjY/kiCzCF4oQkyXq24ThUSvnTI9SOrwk2aveC6FH2he1q4qiLrLC9hh9pAUw7vPjXSQ2fcohOjXvBpZm5UvIZ8LyUmjX7JzkcCFtjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kqJKIweK; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3687fd09251so744510f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 22:44:51 -0700 (PDT)
+	s=arc-20240116; t=1723009579; c=relaxed/simple;
+	bh=ofyRRKO2zYH+BtgiGOTFOSJdLoIl8A/bu4ICuzb3+sI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d5IIHFwZhcNv+2SIw+vdr7FNf78prkXZXPag11L3AKLyiso91HbioFCmL9LPlivGAL5wLu/VR5VmjtVNqfCNpDUFEd4E2BKfkKhLdQSXK9RSi2OUl15WzwUzaupgSW2lqRnwblEN7Ikf5GWDH0KWrzp6XwDkLyKyLn3Ay9yYaE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gMnGbHYG; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f029e9c9cfso20900611fa.2;
+        Tue, 06 Aug 2024 22:46:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723009490; x=1723614290; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=G0OWf6ez8Gxgf5JPBmv/oBu1hvtNwPXnbUW+1HDzI78=;
-        b=kqJKIweKmt4hkelJubP0mCtDJqX+FY1dzAIfRDO1XxCdPQpc7J+GyR2ko8XsQNazfo
-         GadUeFLPItLCwRQVaM0W8W3Tk0pVZnCygHSGGMVXd7OkS2yHQCn3yeXdIwUYgn4QopVt
-         BfSnTKlT75+YNLly+W4aGz3V0jSlePAmxBAhv2iFSlZDCBiEObJufwPzgLae+jR6W8NQ
-         CHg2zm7aL35Wsgy6T2fYCG8tNjsPln3e5jpxsgiHkI4PkbyCzomhVpYLZrtAK6pzuCfn
-         hdPZEg5FJMcWZF5LIkLh8g3m4n6SPrKRfTpOweC5Bp4Xq3oLRImb9KhpJzFw5qP/qOUZ
-         Vdyw==
+        d=gmail.com; s=20230601; t=1723009575; x=1723614375; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gcb8I7w4XJr73TE9YkB2Oy7AxbXGoDVjQzJSI+C8LeQ=;
+        b=gMnGbHYGVpp7zew5l4LTRPeHtph3aWVbVqxD8m5Qim+HK75aB6JDfTre8OWSuNIWG4
+         41xItFmjR9ksu3ncYKS8x5m3SMfWNwZlPfAJlKqqRvk6W71t077U+pttHQMsKNnMqtL6
+         2BbSUjm8KFkmIo1xLhBHIMks8C16zEz5EHPBJdiJ0lLpOe0B5E3DC4qS5hUQLp6URry/
+         Y7bmg+GuLwI0vG4PKdA9Lcay5ej7gTt4liMho8A6vPLiK4e+Stk9nzwaOZZ4oW5xuh2S
+         gBygBqaIpt2TA/5opB1iXAfwy/EgzxGdEz45jlqadOzSDhx/SnSEmiqaHmcGvRU7CQO2
+         ahvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723009490; x=1723614290;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G0OWf6ez8Gxgf5JPBmv/oBu1hvtNwPXnbUW+1HDzI78=;
-        b=vYpeUc0LLWKAyh1d8Y1VT60vNzC3wtwfP+J5WTQpx5S/Be4zxj3uM2EuDQWk0cHyuY
-         bdqIwUohJf956Ulsz28ZF+bpNyRf3BRmRU5y+BLG+k4RkBrcm+4qGKhcdMwFisrU3E3d
-         bdtl1+IcoGHTps0g74hDaRXdlAzhw4+hdtVa8SC0ErqakUcUR7+82vVcbnvk8UUlRtC9
-         n4id5AWZA/yG9XqvG4QABR6iXjOYcZEj69Nwy+EOqHAiQ5dmnM1AZOy5NRPLmY6b5C9c
-         8M9Z1lNozkG03yQUotVE7ZVHPGgjxrI8aweYkdWGlzGoB2+wLuIVESySQpfFICsrJZDl
-         FhYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXP1s4vdVrm1QwT+jGH+aSKtYqiiIbmS9gElos5N9WcziEaGQheeJnAcO+FR5RdoyhO8ObQb6LI8DstZWYb2aY3AmLpVAC8ltVU2G3b
-X-Gm-Message-State: AOJu0YznU8yqiklDp7mug8lb3tHwkXYJKXnCdM7zsEb8x9aNkSa7v+nH
-	86kJ9+8mQFHp3WK13Y3ISwafN8MvT9tPLk1qBdjkHFQA/L3jS1pWPLM6v9zrA/4=
-X-Google-Smtp-Source: AGHT+IHc5vuzTBW4h6d1QGoBakXdzthyZ6QBCEOqs6EeG+t7ZawahJ0UefaucaaNo9LxA4PEzcg4DA==
-X-Received: by 2002:a5d:64a1:0:b0:367:43ce:9c91 with SMTP id ffacd0b85a97d-36bbc0f9fb6mr13352499f8f.27.1723009490152;
-        Tue, 06 Aug 2024 22:44:50 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd06d7dasm14685983f8f.97.2024.08.06.22.44.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 22:44:49 -0700 (PDT)
-Message-ID: <6ff63eb7-81f4-4d3e-b96f-890432ec184a@linaro.org>
-Date: Wed, 7 Aug 2024 07:44:47 +0200
+        d=1e100.net; s=20230601; t=1723009575; x=1723614375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gcb8I7w4XJr73TE9YkB2Oy7AxbXGoDVjQzJSI+C8LeQ=;
+        b=Xi6T5U2ZlqvJxJ+7Vj5nhCZ+YJgi9HnunrCMk4/PGSRazAINegZBwEhEmfmghk3+h9
+         7IzYNjb8dBreWT3IXLYOOLn0hmwpMiCg0vVQssiZS+YEzZ/pSRqESU6D3B0WxxvAR2TD
+         UOaD6Gae+qZQ2T2/2ZE7wgKgIB1cqq9Xu+odB7aAvdVtxGQ6cAk7o51rI3/x0KQR7TQu
+         MBeupIvi6gp1y/SL588uHQALW/r3LxjJaOC+uGEDHxdU/gVZvusMloYTdwBppAJcn4+p
+         5JYBp3km4OhIXG9xbB9XT5wn54TtTrWtzAh5TOSg8DiRTCEG651OUvh1TREKmR/rECJQ
+         uUcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4M8pcerAbX7qNmxsupw3c7P48beUH6h6OfCWtXXMYdnzxOb5o6XAU4AXqjeTNxnHteI98OisqS1q+IS3mWXu2+MuTW0n0wgRv9AM3eIH0nYvOMBsNqy4RS3gG0A/dhoFDVyx9wTAMnPzzug==
+X-Gm-Message-State: AOJu0YyOQ8TjGPd6n5/06yNFqTX9oZrU06UsDEn/a5Apm16SRkjr3LlW
+	jr+TNFJwE4TZJ3CuAvPA0+dhK2UuNDgYWWKq7NE2IuH12qoeIEmmYlqYu3aD8VgObkoiQRqkrvB
+	yVMXO2Q+S0IOmwCpVDBFFuduRE5NawKj5htk=
+X-Google-Smtp-Source: AGHT+IH7v6xbC2zRXNuxMJ3RK08Eyos2aCCVQ6JCrQHyfYwIV1lQxxVyJwGdDzEFXgbSns5aJw4ItoP1KpZbiXviwls=
+X-Received: by 2002:a2e:9cc9:0:b0:2ef:1c0f:a0f3 with SMTP id
+ 38308e7fff4ca-2f15aa88b76mr136938201fa.6.1723009574993; Tue, 06 Aug 2024
+ 22:46:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: amlogic: add C3 AW419 board
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240806-c3_add_node-v1-0-c0de41341632@amlogic.com>
- <20240806-c3_add_node-v1-3-c0de41341632@amlogic.com>
- <c82b6e70-8f2f-4b37-9186-7c49aea019bd@kernel.org>
- <59f37c77-d57b-4568-ad9e-6d50791ae5f7@amlogic.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <59f37c77-d57b-4568-ad9e-6d50791ae5f7@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240806144628.874350-1-mjguzik@gmail.com> <20240806155319.GP5334@ZenIV>
+ <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
+ <20240807033820.GS5334@ZenIV> <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
+ <20240807053232.GT5334@ZenIV>
+In-Reply-To: <20240807053232.GT5334@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 7 Aug 2024 07:46:02 +0200
+Message-ID: <CAGudoHFoVHk1ZZOa=Bbb1MyGgSxeAK1bMvLPFKnagzuLz7PBGw@mail.gmail.com>
+Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/08/2024 04:37, Xianwei Zhao wrote:
->>> +#include "amlogic-c3.dtsi"
->>> +
->>> +/ {
->>> +     model = "Amlogic C308l aw419 Development Board";
->>> +     compatible = "amlogic,aw419", "amlogic,c3";
->>
->> Where are the bindings? Why do you add bindings without boards? Or
->> boards without bindings?
->>
-> The bindings of board aw419 was submitted with board aw409.
-> The commit number is cb3f4e8cacfa7b32ed8b9dff1282c0d4aaf42e88.
+On Wed, Aug 7, 2024 at 7:32=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+>
+> On Wed, Aug 07, 2024 at 05:57:07AM +0200, Mateusz Guzik wrote:
+>
+> [there'll be a separate reply with what I hope might be a usable
+> approach]
+>
 
-Why are you adding bindings separate from DTS?
+At the moment I'm trying to get the spurious lockref cycle out of the
+way because it is interfering with the actual thing I'm trying to do.
 
-Best regards,
-Krzysztof
+This entire pointer poisoning business is optional and the v2 I posted
+does not do any of it.
 
+With this in mind can you review v2? Here is the link for reference:
+https://lore.kernel.org/linux-fsdevel/20240806163256.882140-1-mjguzik@gmail=
+.com/T/#u
+
+As for the feedback below, I'm going to circle back to it when I take
+a stab at adding debug macros, but no ETA.
+
+> > Yes, this is my understanding of the code and part of my compliant. :)
+> >
+> > Things just work(tm) as is with NULLified pointers, but this is error-p=
+rone.
+>
+> And carrying the arseloads of information (which ones do and which do not
+> need to be dropped) is *less* error-prone?  Are you serious?
+>
+> > As a hypothetical suppose there is code executing some time after
+> > vfs_open which looks at nd->path.dentry and by finding the pointer is
+> > NULL it concludes the lookup did not work out.
+> >
+> > If such code exists *and* the pointer is poisoned in the above sense
+> > (notably merely branching on it with kasan already traps), then the
+> > consumer will be caught immediately during coverage testing by
+> > syzkaller.
+>
+> You are much too optimistic about the quality of test coverage in this
+> particular area.
+>
+> > If such code exists but the pointer is only nullified, one is only
+> > going to find out the hard way when some functionality weirdly breaks.
+>
+> To do _useful_ asserts, one needs invariants to check.  And "we got
+> to this check after having passed through that assignment at some
+> earlier point" is not it.  That's why I'm asking questions about
+> the state.
+>
+> The thing is, suppose I (or you, or somebody else) is trying to modify
+> the whole thing.  There's a magical mystery assert in the way; what
+> should be done with it?  Move it/split it/remove it/do something
+> random and hope syzkaller won't catch anything?  If I can reason
+> about the predicate being checked, I can at least start figuring out
+> what should be done.  If not, it's bloody guaranteed to rot.
+>
+> This particular area (pathwalk machinery) has a nasty history of
+> growing complexity once in a while, with following cleanups and
+> massage to get it back into more or less tolerable shape.
+> And refactoring that had been _painful_ - I'd done more than
+> a few there.
+>
+> As far as I can tell, at the moment this flag (and yes, I've seen its
+> removal in the next version) is "we'd called vfs_open_consume() at
+> some point, then found ourselves still in RCU mode or we'd called
+> vfs_open_consume() more than once".
+>
+> This is *NOT* a property of state; it's a property of execution
+> history.  The first part is checked in the wrong place - one of
+> the invariants (trivially verified by code examination) is that
+> LOOKUP_RCU is never regained after it had been dropped.  The
+> only place where it can be set is path_init() and calling _that_
+> between path_init() and terminate_walk() would be
+>         a) a hard and very visible bug
+>         b) would've wiped your flag anyway.
+> So that part of the check is basically "we are not calling
+> vfs_open_consume() under rcu_read_lock()".  Which is definitely
+> a desirable property, since ->open() can block.  So can
+> mnt_want_write() several lines prior.  Invariant here is
+> "the places where we set FMODE_OPENED or FMODE_CREATED may
+> not have LOOKUP_RCU".  Having
+>         if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
+>                 error =3D complete_walk(nd);
+>                 if (error)
+>                         return error;
+>         }
+> in the beginning of do_open() guarantees that for vfs_open()
+> call there.  All other places where that can happen are in
+> lookup_open() or called from it (via ->atomic_open() to
+> finish_open()).  And *that* definitely should not be done
+> in RCU mode, due to
+>         if (open_flag & O_CREAT)
+>                 inode_lock(dir->d_inode);
+>         else
+>                 inode_lock_shared(dir->d_inode);
+>         dentry =3D lookup_open(nd, file, op, got_write);
+> in the sole caller of that thing.  Again, can't grab a blocking
+> lock under rcu_read_lock().  Which is why we have this
+>                 if (WARN_ON_ONCE(nd->flags & LOOKUP_RCU))
+>                         return ERR_PTR(-ECHILD);
+>         } else {
+>                 /* create side of things */
+>                 if (nd->flags & LOOKUP_RCU) {
+>                         if (!try_to_unlazy(nd))
+>                                 return ERR_PTR(-ECHILD);
+>                 }
+> slightly prior to that call.  WARN_ON_ONCE is basically "lookup_fast()
+> has returned NULL and stayed in RCU mode", which should never happen.
+> try_to_unlazy() is straight "either switch to non-RCU mode or return an
+> error" - that's what this function is for.  No WARN_ON after that - it
+> would only obfuscate things.
+>
+> *IF* you want to add debugging checks for that kind of stuff, just call
+> that assert_nonrcu(nd), make it check and whine and feel free to slap
+> them in reasonable amount of places (anything that makes a reader go
+> "for fuck sake, hadn't we (a) done that on the entry to this function
+> and (b) done IO since then, anyway?" is obviously not reasonable, etc. -
+> no more than common sense limitations).
+>
+> Another common sense thing: extra asserts won't confuse syzkaller, but
+> they very much can confuse a human reader.  And any rewrites are done
+> by humans...
+>
+> As for the double call of vfs_open_consume()...  You do realize that
+> the damn thing wouldn't have reached that check if it would ever have
+> cause to be triggered, right?  Seeing that we call
+> static inline struct mnt_idmap *mnt_idmap(const struct vfsmount *mnt)
+> {
+>         /* Pairs with smp_store_release() in do_idmap_mount(). */
+>         return smp_load_acquire(&mnt->mnt_idmap);
+> }
+> near the beginning of do_open(), ~20 lines before the place where
+> you added that check...
+>
+> I'm not sure it makes sense to defend against a weird loop appearing
+> out of nowhere near the top of call chain, but if you want to do that,
+> this is not the right place for that.
+
+
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
