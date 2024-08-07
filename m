@@ -1,296 +1,108 @@
-Return-Path: <linux-kernel+bounces-277358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358D4949FAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:14:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B543A949FAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A68481F225FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:14:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A5F81F246E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3F01A0716;
-	Wed,  7 Aug 2024 06:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306A21A01DB;
+	Wed,  7 Aug 2024 06:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Pw4ql3ha"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z5KxDYju"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056DA1A01D3
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 06:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59A816CD11
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 06:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723011234; cv=none; b=RRoQpvnoSBqgP8vnFQS/VG3byRJxti8HSKJ6+3KrYE1mXV6/hK1Q2pRiI7KyV/rFqYRUWxmfi0bKl8qLg1+nI4exprL69gqvncLAamE9jj60BOWxF2YQIFQJt/6TewstWrWwW+kV4YKnFy4pLoVQ3b6aY7Tcq9OCTBxwQEeWV1A=
+	t=1723011257; cv=none; b=T+rVf8VzlfxqYdsfve1gAa5orotfwkfgQoF2miRZbQKQhPxQ5ZRRT1kFVrQrjsgfwmlX0pxBpU8twdkG4SK2DXHYafbxTe5m932J+K/GUkWGZybxVRaMLCR+lrP7m9dNFxSCE+Ss92mM8c3+56IyzGkNj/nSCwWmrc3G911teZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723011234; c=relaxed/simple;
-	bh=/hLqGS4RW2osi+CzojnzpTJ6bT5GHLG9+f9CaN9pkJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=satef2NyAUoCLIL4BiImrxrD4w4ewzAxE29/Ysc2vJInNIXd9ABUcPzp1MwNvpLXQ9IK1KIeOpsZ4msYeWgluMvFhtGwZnBlKI7i9ewxksG/23AeXCnrZIJt2Dv1sesn6gvFHjEeM4B5mZQ+kD7JBXOSQsz7T5znoKvaysQZVqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Pw4ql3ha; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-39b40ab3210so4990995ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 23:13:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723011229; x=1723616029; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uaXX3Ti8LVh0QhYtjiN/Ek6p9//RV33r09bqNQCaVew=;
-        b=Pw4ql3hamFvWTM9WHZwp5daT8zLIh/4gBR4MefU+E+hRgK+vEC8fm3OttvfiwWF3+f
-         nY33334TwuXTweFqsnThReKPafJDwcE5rUXrdsnDClY/MHsMohYfrcclSbDFcdUvqTuR
-         PgAlg6YR9tZa9QDe8qdDKWIVLaucsVi6cYf0OIlZqSHY3oHJWcwF2bqN/LD+wcH1zXdL
-         ZTr4MXkQQpWGvZSaRml4uUgsp508z4JsXRj1epnmTxvVrZuIGJTesNsdKQJkRhJ3G7u5
-         RVqrzhULH6KvqT2QcAQ8W5u+alp0rujTGWY6VvKpIUM8ajk34gYgZmQAUr1i5mwXgque
-         1sFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723011229; x=1723616029;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uaXX3Ti8LVh0QhYtjiN/Ek6p9//RV33r09bqNQCaVew=;
-        b=fpPKZOOKs63a5gg2G0VSCsiAAKA4D5US8XCmtb7qlhmUslvl4Jc3OR62u8gqKsmDb5
-         7rp9kBJQbQFUuu6PxwYLuVs84rlbI8izxFZNXbxfKn/an6eExsLUVWPxFzVxASOEUW5k
-         hLjWgzgmkMT1cyqM6UjNSKbcoOTevkeqdV8BwrzMbZD8j+dW6NV8xhU/lOoX6bCMpzd0
-         L4yh8exjAfgsz8mXLa60ZZ5ynGtwMe+YNIOQ38nJobL32fYDbcfqbIcE8qlbYCIJEFZg
-         OHquK3NKzZdWGXFUXB74ZQxk8ycEyFmCRYNn34aFpefq8TWsVy3PtNJbJ4mtKFlt4MWl
-         gpdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCPx0H1DIhts0ZOOx2emnPJgEpcexeE7VDINo2gdx9RIdKJC99GbBy5SlGJf1J+Fvm5I+KyF/4yTPa1qPgZ+JQIy/ttCNjhpCkyOMa
-X-Gm-Message-State: AOJu0YywnMUs0dDStgRSPVG+JZwECjoZ0KInvO9/9zxNShvo3A4RquJI
-	kxLCSN7DE9khmOqitHLL3f1NzHbZn5PrD4FQFJtxovUueqp7cpk1UlxsSZovgFQ=
-X-Google-Smtp-Source: AGHT+IFW+itKDG6bDxyKNHaXE//lu8p5lKnqqUhHeRkU86Qqj0k7amjbZcNDsezUANK4CQwdMSkAsw==
-X-Received: by 2002:a05:6e02:218d:b0:39b:2daf:1b82 with SMTP id e9e14a558f8ab-39b2daf1e07mr192657625ab.16.1723011228835;
-        Tue, 06 Aug 2024 23:13:48 -0700 (PDT)
-Received: from blmsp ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6987db1sm2626534173.24.2024.08.06.23.13.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 23:13:48 -0700 (PDT)
-Date: Wed, 7 Aug 2024 08:13:44 +0200
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Nishanth Menon <nm@ti.com>, 
-	Vibhore Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
-	Sebin Francis <sebin.francis@ti.com>, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] pmdomain: ti_sci: add per-device latency constraint
- management
-Message-ID: <phvhe4ojhohgmcvfpgrizi2gmd4kdb6ragywqypzmivujl4ufa@ejwkycojwhw7>
-References: <20240805-lpm-v6-10-constraints-pmdomain-v1-0-d186b68ded4c@baylibre.com>
- <20240805-lpm-v6-10-constraints-pmdomain-v1-1-d186b68ded4c@baylibre.com>
- <hhgcy6kkggxkvveftkk2dqzxskyyp542zwonocg7puouzuu4n2@bkccm5wbe2hj>
- <7hbk25w9du.fsf@baylibre.com>
+	s=arc-20240116; t=1723011257; c=relaxed/simple;
+	bh=kzB24mEuUPTDSRo+OopxR81otdeY8W2AbnIwcZW9Mqc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cOOrSp2635q3dz+fjUzEC5xbj/jx5McuaCeHrm882KCMPEvydV6yx798cwm5At18kJRAh9ZAyyJRvX3HKWE4+yDu/YIcE0PbfPM5TntrI8qRvhsz2jqnr8evfIwpbgEK2NXW5Y/DtsDlVPWKynw4td0XATkPuPCmQiA3bsBzTd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z5KxDYju; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723011256; x=1754547256;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=kzB24mEuUPTDSRo+OopxR81otdeY8W2AbnIwcZW9Mqc=;
+  b=Z5KxDYjuudQ3kCYCpMl4N4I8gVvIG4nXX0dmh8PCiuNIkgQk6Fe14D7i
+   UmINCAogYeJygONPph0IrOG7AIHNgM8gKFiWlMypKmT1iHZObDVX8/nVQ
+   EL13pFYhHP1xYPGfcgrfoLVywKeWojgKDK0dX93OUA6bfYU+A63dxzpVg
+   HgJY+ia4d/Wf6YRdgWdvW3aHYpY2R+qr1EaIiNt6/l9vDurhdqK3gXvbE
+   PBFFmhEwT22cgBRnX08eW0A3xAdZa87j33EBGBpLSQ6P6kfvuRPyDzvSy
+   soJGUyMzw8WjfJyCdeSR8T3cJDOSLJsOguwmXTTeodR4MvE5ThYR3+lw0
+   g==;
+X-CSE-ConnectionGUID: PSUYq9/2QJeGQ6JRlL9wFg==
+X-CSE-MsgGUID: 3Q0EGU6GRaGC0Q587Hoqmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="32466269"
+X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
+   d="scan'208";a="32466269"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 23:14:15 -0700
+X-CSE-ConnectionGUID: sNYYDmbIT0qVr8bRycs+/w==
+X-CSE-MsgGUID: 4EMsCG5lTXaS7EWz/bb0Mw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
+   d="scan'208";a="56409205"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.248.220]) ([10.125.248.220])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 23:14:14 -0700
+Message-ID: <3af0ac5a-ec1b-464b-bacc-29d2aa491a79@linux.intel.com>
+Date: Wed, 7 Aug 2024 14:14:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7hbk25w9du.fsf@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/7] iommu/vt-d: Remove identity mappings from
+ si_domain
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <20240806023941.93454-1-baolu.lu@linux.intel.com>
+ <20240806023941.93454-3-baolu.lu@linux.intel.com>
+ <20240806170529.GK676757@ziepe.ca>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240806170529.GK676757@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 06, 2024 at 03:53:49PM GMT, Kevin Hilman wrote:
-> Markus Schneider-Pargmann <msp@baylibre.com> writes:
+On 2024/8/7 1:05, Jason Gunthorpe wrote:
+> On Tue, Aug 06, 2024 at 10:39:36AM +0800, Lu Baolu wrote:
+>> As the driver has enforced DMA domains for devices managed by an IOMMU
+>> hardware that doesn't support passthrough translation mode, there is no
+>> need for static identity mappings in the si_domain. Remove the identity
+>> mapping code to avoid dead code.
+>>
+>> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
+>> ---
+>>   drivers/iommu/intel/iommu.c | 122 ++----------------------------------
+>>   1 file changed, 4 insertions(+), 118 deletions(-)
+> Reviewed-by: Jason Gunthorpe<jgg@nvidia.com>
 > 
-> > Hi Kevin,
-> >
-> > On Mon, Aug 05, 2024 at 04:38:39PM GMT, Kevin Hilman wrote:
-> >> For each device in a TI SCI PM domain, check whether the device has
-> >> any resume latency constraints set via per-device PM QoS.  If
-> >> constraints are set, send them to DM via the new SCI constraints API.
-> >> 
-> >> Checking for constraints happen:
-> >> 
-> >> 1) before SCI PM domain power off (->power_off() hook)
-> >> 2) before system-wide suspend (via ->suspend() hook)
-> >> 
-> >> For TI SCI devices that are runtime PM enabled, check (1) will be the
-> >> primary method, and will happen when the TI SCI PM domain is powered
-> >> off (e.g. when the runtime PM usecount of the last device in that
-> >> domain goes to zero.)
-> >> 
-> >> For devices that are either not runtime PM enabled, or are not yet
-> >> runtime suspended (e.g. due to being used during the suspend path),
-> >> the constraints check will happen by check(2).
-> >> 
-> >> Since constraints can be sent by either (1) or (2), driver keeps track
-> >> of whether a valid constraint has been sent already.
-> >> 
-> >> An important detail here is that the PM domain driver inserts itself
-> >> into the path of both the ->suspend() and ->resume() hook path
-> >> of *all* devices in the PM domain.  This allows generic PM domain code
-> >> to handle the constraint management and communication with TI SCI.
-> >> 
-> >> Further, this allows device drivers to use existing PM QoS APIs to
-> >> add/update constraints.
-> >> 
-> >> DM firmware clears constraints during its resume, so Linux has
-> >> to check/update/send constraints each time system suspends.
-> >> 
-> >> Co-developed-by: Vibhore Vardhan <vibhore@ti.com>
-> >> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
-> >> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-> >> Signed-off-by: Dhruva Gole <d-gole@ti.com>
-> >
-> > Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
-> >
-> > In general this looks good, two small things below.
-> >
-> >> ---
-> >>  drivers/pmdomain/ti/ti_sci_pm_domains.c | 92 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
-> >>  1 file changed, 91 insertions(+), 1 deletion(-)
-> >> 
-> >> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> >> index 1510d5ddae3d..4dc48a97f9b8 100644
-> >> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> >> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-> >> @@ -13,6 +13,8 @@
-> >>  #include <linux/platform_device.h>
-> >>  #include <linux/pm_domain.h>
-> >>  #include <linux/slab.h>
-> >> +#include <linux/pm_qos.h>
-> >> +#include <linux/pm_runtime.h>
-> >>  #include <linux/soc/ti/ti_sci_protocol.h>
-> >>  #include <dt-bindings/soc/ti,sci_pm_domain.h>
-> >>  
-> >> @@ -47,10 +49,46 @@ struct ti_sci_pm_domain {
-> >>  	struct generic_pm_domain pd;
-> >>  	struct list_head node;
-> >>  	struct ti_sci_genpd_provider *parent;
-> >> +	s32 lat_constraint;
-> >> +	bool constraint_sent;
-> >>  };
-> >>  
-> >>  #define genpd_to_ti_sci_pd(gpd) container_of(gpd, struct ti_sci_pm_domain, pd)
-> >>  
-> >> +static inline bool ti_sci_pd_is_valid_constraint(s32 val)
-> >> +{
-> >> +	return val != PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
-> >> +}
-> >> +
-> >> +static int ti_sci_pd_send_constraint(struct device *dev, s32 val)
-> >> +{
-> >> +	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-> >> +	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
-> >> +	const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
-> >> +	int ret;
-> >> +
-> >> +	ret = ti_sci->ops.pm_ops.set_latency_constraint(ti_sci, val, TISCI_MSG_CONSTRAINT_SET);
-> >> +	if (!ret) {
-> >> +		pd->constraint_sent = true;
-> >> +		dev_dbg(dev, "ti_sci_pd: ID:%d set latency constraint %d\n",
-> >> +			pd->idx, val);
-> >> +	} else {
-> >> +		dev_err(dev, "ti_sci_pd: set latency constraint failed: ret=%d\n",
-> >> +			ret);
-> >> +	}
-> >> +
-> >> +	return ret;
-> >> +}
-> >> +
-> >> +static inline void ti_sci_pd_clear_constraints(struct device *dev)
-> >> +{
-> >> +	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-> >> +	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
-> >> +
-> >> +	pd->lat_constraint = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
-> >> +	pd->constraint_sent = false;
-> >> +}
-> >> +
-> >>  /*
-> >>   * ti_sci_pd_power_off(): genpd power down hook
-> >>   * @domain: pointer to the powerdomain to power off
-> >> @@ -59,6 +97,18 @@ static int ti_sci_pd_power_off(struct generic_pm_domain *domain)
-> >>  {
-> >>  	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(domain);
-> >>  	const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
-> >> +	struct pm_domain_data *pdd;
-> >> +
-> >> +	list_for_each_entry(pdd, &domain->dev_list, list_node) {
-> >> +		struct device *dev = pdd->dev;
-> >> +		s32 val;
-> >> +
-> >> +		/* If device has any resume latency constraints, send 'em */
-> >> +		val = dev_pm_qos_read_value(dev, DEV_PM_QOS_RESUME_LATENCY);
-> >> +		if (ti_sci_pd_is_valid_constraint(val) && !pd->constraint_sent)
-> >> +			ti_sci_pd_send_constraint(dev, val);
-> >> +		pd->lat_constraint = val;
-> >> +	}
-> >>  
-> >>  	return ti_sci->ops.dev_ops.put_device(ti_sci, pd->idx);
-> >>  }
-> >> @@ -79,6 +129,38 @@ static int ti_sci_pd_power_on(struct generic_pm_domain *domain)
-> >>  		return ti_sci->ops.dev_ops.get_device(ti_sci, pd->idx);
-> >>  }
-> >>  
-> >> +static int ti_sci_pd_resume(struct device *dev)
-> >> +{
-> >> +	ti_sci_pd_clear_constraints(dev);
-> >> +	return pm_generic_resume(dev);
-> >> +}
-> >> +
-> >> +static int ti_sci_pd_suspend(struct device *dev)
-> >> +{
-> >> +	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-> >> +	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
-> >> +	s32 val;
-> >> +	int ret;
-> >> +
-> >> +	ret = pm_generic_suspend(dev);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	/* Check if device has any resume latency constraints */
-> >> +	val = dev_pm_qos_read_value(dev, DEV_PM_QOS_RESUME_LATENCY);
-> >> +	if (ti_sci_pd_is_valid_constraint(val) && !pd->constraint_sent) {
-> >> +		if (genpd && genpd->status == GENPD_STATE_OFF)
-> >> +			dev_warn(dev, "%s: %s: already off.\n", genpd->name, __func__);
-> >> +		else if (pm_runtime_suspended(dev))
-> >> +			dev_warn(dev, "%s: %s: already RPM suspended.\n", genpd->name, __func__);
-> >> +		else
-> >> +			ti_sci_pd_send_constraint(dev, val);
-> >> +	}
-> >> +	pd->lat_constraint = val;
-> >
-> > Could you get rid of pd->constraint_sent? I don't really see a situation
-> > where it would be necessary.
-> 
-> It is necessary for runtime PM enabled devices that also use
-> constraints.  For a device like that, if a constraint is present it will
-> be sent when the PM domain is powered off (right after the runtime PM
-> usecount goes to zero.)  Later, during system-wide suspend, the suspend
-> hook for that same device might try to send the constraint again if we
-> don't keep track of whether the constraint was already sent.
+> I always wondered why this was so fine grained, I would have expected
+> it to work on blocks of 512 x 1G, once you allocate a memory for the
+> 1G table level you may as well fill it with identity IOPTEs. The only
+> optimization point is how many blocks of 512x1G are needed..
 
-But wouldn't in that case pd->lat_constraint also be valid as you set it
-only after sending the constraint? So if you check for that instead of
-pd->constraint_sent, could you remove constraint_sent? On resume it is
-always reset as well.
+I am not sure whether or not those early hardware support super pages.
+  :-).
 
-It just looked to me like if it is valid then it would have also been
-sent, which is the same semantic as the bool.
-
-Best
-Markus
-
-> 
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >>  /*
-> >>   * ti_sci_pd_xlate(): translation service for TI SCI genpds
-> >>   * @genpdspec: DT identification data for the genpd
-> >> @@ -188,7 +270,15 @@ static int ti_sci_pm_domain_probe(struct platform_device *pdev)
-> >>  				pd->pd.power_on = ti_sci_pd_power_on;
-> >>  				pd->idx = args.args[0];
-> >>  				pd->parent = pd_provider;
-> >> -
-> >> +				pd->lat_constraint = PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
-> >
-> > Optionally you could use ti_sci_pd_clear_constraints() here instead.
-> 
-> hmm, yes.  Good catch.
-> 
-> Kevin
+Thanks,
+baolu
 
