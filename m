@@ -1,123 +1,143 @@
-Return-Path: <linux-kernel+bounces-278274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 340DB94AE27
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:30:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7AA94AE2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFEE21F270E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:30:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90ADD2832A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69B513E043;
-	Wed,  7 Aug 2024 16:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FDE139CE9;
+	Wed,  7 Aug 2024 16:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e1VhqleM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="roUETvn0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C37C13E021
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6A82209B;
+	Wed,  7 Aug 2024 16:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723048143; cv=none; b=LQeDH+WV0eNBZIS5bRynLLK1N+EazLbDddV9nOy4IV4McPeSIKBK8HSe93+aP6KI5aLrLqHUZtyvoiw59UwPkiDLgD+wCJ08rh46faFB4Lx8dF61AeVCgo8dV9Geo5kOcJgjg4kTty8bdV1RHhYiT26bODSRX5Gfa3bp+bbJ+Jw=
+	t=1723048266; cv=none; b=srwT1Hzie1SndiFNSEKYEhubllXXZbjJ83PPiYafhCipQJjktM9wsJAanSrrnsrq/NLWGLZMQlxBApuUyutOsbzE7BeGWbQGbsjLKStKm5K0Nt4kx7qZwZNp9oaATgMJkGs+45/n/8mbd2KTOBwDAQ74riwcOjxU15nwLHp8Occ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723048143; c=relaxed/simple;
-	bh=/coQMA7ggJEUL7+TaTT35wfbLG0bd9m9ZsDwrUEupoo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oL8H/V5vtUDtxdrmSXderhStr60Q1llqN91AVCp2RR7rYHWO28P1P+nZn/CC9iNTFxwTMpHOlzY62cqHGy+rgs002mi5g8rz/sI7sVxCbkmrUqw+DpX4Y1SW9skYIqgeWgb5NVVsI4FTQMCa8G3DNwF97IzPJck8w2lCJExPzks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e1VhqleM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723048140;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t8qeCgkTXPnoyMwT6NB/HY3bNOSPK3Im4qaWKdjX50M=;
-	b=e1VhqleME4V1YA8LJdn40UCLgnYG1B8UV5ABHFoVTNnjc/gpx171S0iCojsnwywN4R0GSU
-	LbSgycG5Ha9Rfj2LsvnYdEJM0NtkbRml2Veh+yfrDPRaBDKZ+YfNMeI6AcmVAYyvwdspi0
-	4mORL3rcgtFwNrGepabtdxfTKq6sHFY=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-137-HGtyom85Moq4ktEB0W6F0w-1; Wed,
- 07 Aug 2024 12:28:57 -0400
-X-MC-Unique: HGtyom85Moq4ktEB0W6F0w-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 80A221944CCC;
-	Wed,  7 Aug 2024 16:28:55 +0000 (UTC)
-Received: from [10.2.16.123] (unknown [10.2.16.123])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8477319560A3;
-	Wed,  7 Aug 2024 16:28:53 +0000 (UTC)
-Message-ID: <cfef6a18-4428-4568-8d16-5ac68ddbe7a4@redhat.com>
-Date: Wed, 7 Aug 2024 12:28:52 -0400
+	s=arc-20240116; t=1723048266; c=relaxed/simple;
+	bh=xpY5vvCuu+qLHbq5z8UGWcEKnBhb+gnD0MYieQx7bCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I4NpCP/7HJPNyuz62RtjPGkssFMICW7zdWvprdEC6mwmw8rhSo7ldfBQLFQptiUgTT2Mcb8GKasxsl9fzwaKN6bh2a0zEfU1mFvckB5/m2lDo6ANDButXiQzQBX0cHgLtLugVk0UQIGfyPeqmPg/IDFmgJVF4q1c6BXbMpdKQd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=roUETvn0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB311C32781;
+	Wed,  7 Aug 2024 16:31:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723048266;
+	bh=xpY5vvCuu+qLHbq5z8UGWcEKnBhb+gnD0MYieQx7bCE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=roUETvn0NR/ps9fkVEd9ofFY9QdUbVr7O54be0AJW0r48LjzfJg2xflkXT/1/+CQo
+	 PnK2D49iSdewAmj7GPQyIN4ujHhbmR6+LrkfZgvdW+0PSEZGwVgcrZFc8t9OTH+qBD
+	 2R4QoT3G829AqiKMPVrva1tYaKchgIqrf+aOtZMmryhctyfl4kvfYwgfFjPqzK3RGL
+	 5PcJaaoyZ+hikcVz4QF+ExcLRds2LhMAgyIbh9dcNZiVrQJRwS10FSQhpjIgV2+GkR
+	 sXzt7eykRciwl40F8sCVTXe+9XHjkJ7Xehsfz48G68aLTvvDhkIV/PsHDEcbwCOoe6
+	 MhnASxeo4BIXw==
+Date: Wed, 7 Aug 2024 17:31:01 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Dumitru Ceclan <mitrutzceclan@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, mitrutz_ceclan@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dumitru Ceclan <dumitru.ceclan@analog.com>
+Subject: Re: [PATCH 1/2] dt-bindings: adc: ad7173: add support for ad4113
+Message-ID: <20240807-crystal-fructose-7893ab4d8771@spud>
+References: <20240807-ad4113-v1-0-2d338f702c7b@analog.com>
+ <20240807-ad4113-v1-1-2d338f702c7b@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] lockdep: document MAX_LOCKDEP_CHAIN_HLOCKS
- calculation
-To: Carlos Llamas <cmllamas@google.com>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
- Andrew Morton <akpm@linux-foundation.org>, Huang Ying
- <ying.huang@intel.com>, "J. R. Okajima" <hooanon05g@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>
-References: <20240807143922.919604-1-cmllamas@google.com>
- <20240807143922.919604-4-cmllamas@google.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240807143922.919604-4-cmllamas@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="htDToTwmXcfMf35/"
+Content-Disposition: inline
+In-Reply-To: <20240807-ad4113-v1-1-2d338f702c7b@analog.com>
 
-On 8/7/24 10:39, Carlos Llamas wrote:
-> Define a macro AVG_LOCKDEP_CHAIN_DEPTH to document the magic number '5'
-> used in the calculation of MAX_LOCKDEP_CHAIN_HLOCKS. The number
-> represents the estimated average depth (number of locks held) of a lock
-> chain. The calculation of MAX_LOCKDEP_CHAIN_HLOCKS was first added in
-> commit 443cd507ce7f ("lockdep: add lock_class information to lock_chain
-> and output it").
->
-> Suggested-by: Waiman Long <longman@redhat.com>
-> Cc: Huang Ying <ying.huang@intel.com>
-> Cc: J. R. Okajima <hooanon05g@gmail.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Will Deacon <will@kernel.org>
-> Signed-off-by: Carlos Llamas <cmllamas@google.com>
+
+--htDToTwmXcfMf35/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Aug 07, 2024 at 05:58:04PM +0300, Dumitru Ceclan wrote:
+> This commit adds bindings support for AD4113.
+>=20
+> The AD4113 is a low power, low noise, 16-bit, =CE=A3-=CE=94 analog-to-dig=
+ital
+> converter (ADC) that integrates an analog front end (AFE) for four
+> fully differential or eight single-ended inputs.
+
+You should highlight why it is incompatible from existing devices, it's
+not clear from the description/diff.
+
+>=20
+> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
 > ---
-> v2: switched the comment for a macro as suggested by Waiman Long.
->
->   kernel/locking/lockdep_internals.h | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-> index bbe9000260d0..20f9ef58d3d0 100644
-> --- a/kernel/locking/lockdep_internals.h
-> +++ b/kernel/locking/lockdep_internals.h
-> @@ -119,7 +119,8 @@ static const unsigned long LOCKF_USED_IN_IRQ_READ =
->   
->   #define MAX_LOCKDEP_CHAINS	(1UL << MAX_LOCKDEP_CHAINS_BITS)
->   
-> -#define MAX_LOCKDEP_CHAIN_HLOCKS (MAX_LOCKDEP_CHAINS*5)
-> +#define AVG_LOCKDEP_CHAIN_DEPTH		5
-> +#define MAX_LOCKDEP_CHAIN_HLOCKS (MAX_LOCKDEP_CHAINS * AVG_LOCKDEP_CHAIN_DEPTH)
->   
->   extern struct lock_chain lock_chains[];
->   
-Acked-by: Waiman Long <longman@redhat.com>
+>  Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> index 17c5d39cc2c1..ad15cf9bc2ff 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> @@ -28,6 +28,7 @@ description: |
+>    Datasheets for supported chips:
+>      https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD4111.pdf
+>      https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD4112.pdf
+> +    <AD4113: not released yet>
+>      https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD4114.pdf
+>      https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD4115.pdf
+>      https://www.analog.com/media/en/technical-documentation/data-sheets/=
+AD4116.pdf
+> @@ -44,6 +45,7 @@ properties:
+>      enum:
+>        - adi,ad4111
+>        - adi,ad4112
+> +      - adi,ad4113
+>        - adi,ad4114
+>        - adi,ad4115
+>        - adi,ad4116
+> @@ -331,6 +333,7 @@ allOf:
+>              enum:
+>                - adi,ad4111
+>                - adi,ad4112
+> +              - adi,ad4113
+>                - adi,ad4114
+>                - adi,ad4115
+>                - adi,ad4116
+>=20
+> --=20
+> 2.43.0
+>=20
 
+--htDToTwmXcfMf35/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrOhRQAKCRB4tDGHoIJi
+0l5iAQDqQhWk64z9hZCUGYoQfNRbN5NJQDLXUDfQGLlhGAdXagEA5L9JOs6r6aU8
+wg9X0av/Kl3QNDjlTiVy52w1mVTkjAE=
+=r+wF
+-----END PGP SIGNATURE-----
+
+--htDToTwmXcfMf35/--
 
