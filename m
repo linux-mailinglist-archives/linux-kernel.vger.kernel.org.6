@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-278304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FA894AE83
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:59:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF59F94AE89
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 119271F222B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:59:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 539B3B24277
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB50213B783;
-	Wed,  7 Aug 2024 16:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4AD913CA9C;
+	Wed,  7 Aug 2024 16:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CspDVK3w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f35MBkpF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0862C13A3F6;
-	Wed,  7 Aug 2024 16:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F241213C669;
+	Wed,  7 Aug 2024 16:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723049946; cv=none; b=QxR4oPKCeGR8KWPD/VlOv5YDzKZlAw+gJPz5lsqOAq+VTfLnM7SNAK9VudNdxUTfrh/MgXJ6rY24JEBXoPJQ4ZAG8NUIxY8EQTAyh/eWyhD86uMpcN/qJBaUMyb+2WzeJsyTOz/Y+Jyb8FQUVJ87tazNQCd0doNtr/ObNXjMKHY=
+	t=1723049948; cv=none; b=P97lOoGaUB3EAC6waCVwQJRfHo0cORpweHGUafnYS1JGMITUzMq5m3tvTaTAgCQT8pU7yHJSh/Pz+aGvz2j7QfNnRnBxnVqTnBbiMG1eB3wRUiF5XLosy6mLb7sr13rdp6Ha46RuKyirDGhDV3dRN2WhMYCD4nFFzzeMMcua1gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723049946; c=relaxed/simple;
-	bh=dPEdhycVTOguP7QecWh2DLLxhHRJ4mnqR6lRY3q91o8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oTjNWdSiCEt97R7Uh0yziv54LgHHNcb472XF29T8+7Z/TbnZskx4YtezFQbHNcSg8iH6VD80fgEKdO8mz9oCaLkKt52qmhi/EBmSMFbOhErcPiPTwX3lOmwVbsK8A0e2YPRBReSWpYSaI9pidZileKA+hCXkPibKlU1MlFVwylQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CspDVK3w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 905B9C32781;
-	Wed,  7 Aug 2024 16:59:05 +0000 (UTC)
+	s=arc-20240116; t=1723049948; c=relaxed/simple;
+	bh=UaXsUImr4cKQLdcaF51ndcRhHmrNsgo83nIbIG1E5Ig=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hIXx/q2ywcKbqmlFzqp2yamQqQOAVtcRZ6VXIGWv36UjCuck89L4yqsnNdmGSxTtskTxgdmhaTznO5bmfAdG1AqvWJZUh6ckeoxtl83BDQPLPr7ACYlYCl92lv53tSupyZ2hq4lSdgwzn4llF1W5+CYIInGMELEOGkVSr71PR/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f35MBkpF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C0FDC4AF14;
+	Wed,  7 Aug 2024 16:59:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723049945;
-	bh=dPEdhycVTOguP7QecWh2DLLxhHRJ4mnqR6lRY3q91o8=;
-	h=From:Subject:Date:To:Cc:From;
-	b=CspDVK3wd+jRFcuLGCeShKTTd8tY+e04zAx8Y9cxjm7jKJMSUg44wQnhtjROu6/Y6
-	 /D7lNY6r1PqQoRzZhLG6nWmSmy/Pqu4rZhF6WRn3ODgnQ0QRxg+QKPfDQUrfugKl7u
-	 K9Tlb8IFGi/MtHxGpaGUEf+YXaq55OCAKF3y2pKTNyhNwZwwSi+xgmwZ8yCTjOXAJX
-	 la1s0001V4ghioc4GvSuw5l+apgiVWv05qwX5vTvSI/SN1ltea01Uk6UsY8wl5kfML
-	 /RMzhwCRCPBb5pTesnTLCey0BLJNLuNQXNWbsu2nIMEgm05+vj5rE2TRxGuqCNxrWn
-	 7/rBQq/sct6aQ==
+	s=k20201202; t=1723049947;
+	bh=UaXsUImr4cKQLdcaF51ndcRhHmrNsgo83nIbIG1E5Ig=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=f35MBkpFG927SCO+m+m07w+y/dAnVYMbbqE+rpwkgutGoyWHqJefehCHaZgA6NiTM
+	 OyGQp3qbjLEq3MBE1E7mEWJS0vtGTdzei9dnDybUB7imgenusB/AWpHoqV215qLRFE
+	 Q3VJgRKRk3vbvl2dag2NAC9gbhIhDGyqkaAEePG3QlRQCDc7/6BjYpnW4EjV6AqYvO
+	 kUCwqf7nba468TMpEyElqMO1Xf/r89YLcuARm6TrkdTwV6mzG33DDL/a6zOQT1cZG0
+	 kZpWBieQs9SFn9/pbeD9enjFP//dIU/nwKro+9xfdXHpaWl4ZT2IGf96MASyL1V87h
+	 10EgUhONazO+w==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Subject: [PATCH 0/3] dt-bindings: Convert and move Mediatek clock syscons
-Date: Wed, 07 Aug 2024 10:58:52 -0600
-Message-Id: <20240807-dt-mediatek-clk-v1-0-e8d568abfd48@kernel.org>
+Date: Wed, 07 Aug 2024 10:58:53 -0600
+Subject: [PATCH 1/3] dt-bindings: clock: mediatek,apmixedsys: Fix
+ "mediatek,mt6779-apmixed" compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,9 +52,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMyns2YC/x3MQQqAIBBA0avIrBtQiYquEi0GHWuoLDQiiO6et
- HyL/x/InIQz9OqBxJdk2WOBqRS4meLEKL4YrLa17nSL/sSNvdDJC7p1wc4EarhtApGDUh2Jg9z
- /cRjf9wNnlYZBYQAAAA==
+Message-Id: <20240807-dt-mediatek-clk-v1-1-e8d568abfd48@kernel.org>
+References: <20240807-dt-mediatek-clk-v1-0-e8d568abfd48@kernel.org>
+In-Reply-To: <20240807-dt-mediatek-clk-v1-0-e8d568abfd48@kernel.org>
 To: Stephen Boyd <sboyd@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -66,48 +67,29 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-mediatek@lists.infradead.org
 X-Mailer: b4 0.15-dev
 
-This series converts all the Mediatek syscon bindings which are clock 
-controllers to DT schema format moving them to 'clock' directory. The 
-existing schemas in arm/mediatek/ which are clock and reset controllers 
-are also moved to 'clock' directory.
+"mediatek,mt6779-apmixed" is the compatible string in use already, not
+"mediatek,mt6779-apmixedsys".
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
-Rob Herring (Arm) (3):
-      dt-bindings: clock: mediatek,apmixedsys: Fix "mediatek,mt6779-apmixed" compatible
-      dt-bindings: Move Mediatek clock controllers to "clock" directory
-      dt-bindings: clock: mediatek: Convert MediaTek clock syscons to schema
+ Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- .../bindings/arm/mediatek/mediatek,bdpsys.txt      | 24 ------
- .../bindings/arm/mediatek/mediatek,camsys.txt      | 24 ------
- .../bindings/arm/mediatek/mediatek,imgsys.txt      | 30 -------
- .../bindings/arm/mediatek/mediatek,ipesys.txt      | 22 -----
- .../bindings/arm/mediatek/mediatek,ipu.txt         | 43 ----------
- .../bindings/arm/mediatek/mediatek,jpgdecsys.txt   | 22 -----
- .../bindings/arm/mediatek/mediatek,mcucfg.txt      | 23 ------
- .../bindings/arm/mediatek/mediatek,mfgcfg.txt      | 25 ------
- .../bindings/arm/mediatek/mediatek,mipi0a.txt      | 28 -------
- .../bindings/arm/mediatek/mediatek,vcodecsys.txt   | 27 -------
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     | 29 -------
- .../bindings/arm/mediatek/mediatek,vencltsys.txt   | 22 -----
- .../bindings/arm/mediatek/mediatek,vencsys.txt     | 26 ------
- .../bindings/clock/mediatek,apmixedsys.yaml        |  2 +-
- .../{arm/mediatek => clock}/mediatek,infracfg.yaml |  2 +-
- .../mediatek => clock}/mediatek,mt8186-clock.yaml  |  2 +-
- .../mediatek,mt8186-sys-clock.yaml                 |  2 +-
- .../mediatek => clock}/mediatek,mt8192-clock.yaml  |  2 +-
- .../mediatek,mt8192-sys-clock.yaml                 |  2 +-
- .../mediatek => clock}/mediatek,mt8195-clock.yaml  |  2 +-
- .../mediatek,mt8195-sys-clock.yaml                 |  2 +-
- .../{arm/mediatek => clock}/mediatek,pericfg.yaml  |  2 +-
- .../devicetree/bindings/clock/mediatek,syscon.yaml | 93 ++++++++++++++++++++++
- 23 files changed, 102 insertions(+), 354 deletions(-)
----
-base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-change-id: 20240807-dt-mediatek-clk-81fa6e76faac
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml b/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
+index 685535846cbb..db5f48e4dd15 100644
+--- a/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
++++ b/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
+@@ -35,7 +35,7 @@ properties:
+               - mediatek,mt2701-apmixedsys
+               - mediatek,mt2712-apmixedsys
+               - mediatek,mt6765-apmixedsys
+-              - mediatek,mt6779-apmixedsys
++              - mediatek,mt6779-apmixed
+               - mediatek,mt6795-apmixedsys
+               - mediatek,mt7629-apmixedsys
+               - mediatek,mt8167-apmixedsys
 
-Best regards,
 -- 
-Rob Herring (Arm) <robh@kernel.org>
+2.43.0
 
 
