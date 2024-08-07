@@ -1,138 +1,111 @@
-Return-Path: <linux-kernel+bounces-278644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 545F094B305
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:28:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC0594B30A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B4831F22F25
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:28:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDC2FB20D8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FB6153808;
-	Wed,  7 Aug 2024 22:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B15315380A;
+	Wed,  7 Aug 2024 22:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3ZxdDYBh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VmoamQMO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OmUdrDor"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42597250EC
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 22:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38308364A0;
+	Wed,  7 Aug 2024 22:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723069730; cv=none; b=lmdPLSYuuzpq4ZFFB93hSuLvyKAz68fYjcfjKvdllsAxSrHv+PC3SmsazNrUGtvLs58Z2PAnW0KcYVmh8AZRAx/w1QUcMRh0wlVzyJcImfBquwAdMF0OOaZvzSzYqpYenwIjHn7fqQWZ8JIPvshARhbdMEvkeop0tCyTvKTkalo=
+	t=1723069856; cv=none; b=exyWo9oWHMS4aL+J4l+rNR6v8QyB4U1LPj9Sd/qSXAQYu8uhpQm/G/4jOaiNUFEnHxU8QtgIEqfdx0ONynwRzqRlHVpuc8lOpBWZYzB1DAHubFzMFHPHEPo6qVUeW1f/NQFazaJhF46XMyWmY9i3O+vm0q0p+GhZGDpVezIC2Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723069730; c=relaxed/simple;
-	bh=ap8/4l66WfD6kWFUFQ3DMvm3L4NlYEyaierJKDHIPL8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NbzLy0TF+5AV3wrs6h08bLwCcx/OObIiGQZ97mFmKxvU9ivMbv2mgwqU0eF6Xjkgxc0Z69WKntZzLxYYsFosaDTBwe4OkLsTm1OzbyLopGYdN6nsFNq2DKqW8hEfbldXOkrDZvKwwr4qMOEY66Zqgf+Th/RXUYalv4eN5uRTVJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3ZxdDYBh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VmoamQMO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723069727;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l6W13aUL7iArB1u1SHKLVFvFvnvLUQ1pwZnVA+aBUsE=;
-	b=3ZxdDYBh9dkkHBe2taR3ntGjkle6rDPMBLXo4UhxX0U5hvgCD7ElxlpVVKzebM7m55YoYg
-	6IKzzdSsW1TDc9pIvZYbtMq17EoFTuLcw1atQsU7Bsl9Yw+lnCggeHfiMfyuVHDLhinNCV
-	GkL4xmuAy8lmfTKAidBHshnaxOnMmkK7vcvn/I5wTIvG/bMAOekzFsjwDQtCOo5gjYb9Mh
-	3KjeJhRTZmnhVGLmBNpWTdiMxBXZNjdkdyW9PbyWAh2qSub1H21tOY/VlFOBZky3I79b+M
-	kKAWkAEexeyKsLLvMcde8oZ+cKCdvPGfvph2jGxkNDnZ9tv62FmQT5a2EO1IWw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723069727;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l6W13aUL7iArB1u1SHKLVFvFvnvLUQ1pwZnVA+aBUsE=;
-	b=VmoamQMOr4JMUHfQGwGo1xKYxHHMAQiHW/JDSB/7JHvkAeXPux0Xok96bTkMYXb7wubsH8
-	cukq0GYxhuQaqOAQ==
-To: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Oscar Salvador <osalvador@suse.de>, Dan Williams
- <dan.j.williams@intel.com>, James Houghton <jthoughton@google.com>,
- Matthew Wilcox <willy@infradead.org>, Nicholas Piggin <npiggin@gmail.com>,
- Rik van Riel <riel@surriel.com>, Dave Jiang <dave.jiang@intel.com>, Andrew
- Morton <akpm@linux-foundation.org>, x86@kernel.org, Ingo Molnar
- <mingo@redhat.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, "Kirill
- A . Shutemov" <kirill@shutemov.name>, peterx@redhat.com,
- linuxppc-dev@lists.ozlabs.org, Mel Gorman <mgorman@techsingularity.net>,
- Hugh Dickins <hughd@google.com>, Borislav Petkov <bp@alien8.de>, David
- Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, Dave
- Hansen <dave.hansen@linux.intel.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Huang Ying <ying.huang@intel.com>
-Subject: Re: [PATCH v4 5/7] mm/x86: arch_check_zapped_pud()
-In-Reply-To: <20240807194812.819412-6-peterx@redhat.com>
-References: <20240807194812.819412-1-peterx@redhat.com>
- <20240807194812.819412-6-peterx@redhat.com>
-Date: Thu, 08 Aug 2024 00:28:47 +0200
-Message-ID: <878qx80xy8.ffs@tglx>
+	s=arc-20240116; t=1723069856; c=relaxed/simple;
+	bh=rIoH3r3/EvdJogO/lteX7W0WNAxAB9gDhvgJ+TSSs4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IiF7qvqzIjB51IJc3Ml+b17BlPGx1geTqsOVCy3aE83MaewG7OF+N/Vwg+37u4T9qz4EvfttJVZpVoT5rCy6m9DPfbmoWs8BRKfEIe+KWYXAUayCj1vaFMIMFjoruX4eTb++QFOZxskjoD7zXeo7OEA+c1hMzDQnhx44ZtRVUTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OmUdrDor; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723069851;
+	bh=P55Gboe0gMOsK/8axlDqV+WlXd/yhxHFfxsQtCZIUEU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=OmUdrDorPxxCtllzjPxC7/hu8xXMqor3bhx0V9GKzK2/risyxXtTwMCJtGdj7qdW2
+	 i869lWMo7lMcZYrTSqwtbfvVNSP4WtPaAbsfAyVS3Jz1JoM7YOSXkArXAx7Rtem9cN
+	 Qh+6CHhE4FMRy1jEiMLu+I3Ssr3sda5RyvSvXi+I7q0wudXgRFWcfSr6A24TqVWZdw
+	 6ck3H7Jwer4DIJ+Ua9OQzmLXUfcnK345BwVB77Meal7isWmRoxUbq4HeNW0ohoJ9AQ
+	 OFk3MYRQVccC3xQPGAjGpSFu93tmQf2GUgwuXNKzQO0Du+rq3GET+dJl743KE4Hjk/
+	 UOd8f8GCwwkxw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WfPyg25rjz4wd6;
+	Thu,  8 Aug 2024 08:30:51 +1000 (AEST)
+Date: Thu, 8 Aug 2024 08:30:50 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Michal Simek <michal.simek@amd.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the nvmem tree
+Message-ID: <20240808083050.6ac578f9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="Sig_/21K7G9=.+/G9F3/e9+R7o/2";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Aug 07 2024 at 15:48, Peter Xu wrote:
+--Sig_/21K7G9=.+/G9F3/e9+R7o/2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Subject: mm/x86: arch_check_zapped_pud()
+Hi all,
 
-Is not a proper subject line. It clearly lacks a verb.
+In commit
 
-  Subject: mm/x86: Implement arch_check_zapped_pud()
+  c258adca4fb4 ("dt-bindings: nvmem: Use soc-nvmem node name instead of nvm=
+em")
 
+Fixes tag
 
-> Introduce arch_check_zapped_pud() to sanity check shadow stack on PUD zaps.
-> It has the same logic of the PMD helper.
+  Fixes: a0cfd5e99782 ("dt-bindings: nvmem: Convert xlnx,zynqmp-nvmem.txt t=
+o yaml")
 
-s/of/as/
+has these problem(s):
 
-> +
-> +void arch_check_zapped_pud(struct vm_area_struct *vma, pud_t pud)
-> +{
-> +	/* See note in arch_check_zapped_pte() */
-> +	VM_WARN_ON_ONCE(!(vma->vm_flags & VM_SHADOW_STACK) &&
-> +			pud_shstk(pud));
+  - Target SHA1 does not exist
 
-Please get rid of the line break. You have 100 characters.
+Maybe you meant
 
-> +}
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 2a6a3cccfc36..2289e9f7aa1b 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -447,6 +447,13 @@ static inline void arch_check_zapped_pmd(struct vm_area_struct *vma,
->  }
->  #endif
->  
-> +#ifndef arch_check_zapped_pud
-> +static inline void arch_check_zapped_pud(struct vm_area_struct *vma,
-> +					 pud_t pud)
-> +{
+Fixes: c7f99cd8fb6b ("dt-bindings: nvmem: Convert xlnx,zynqmp-nvmem.txt to =
+yaml")
 
-Ditto..
+--=20
+Cheers,
+Stephen Rothwell
 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 0024266dea0a..81c5da0708ed 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
+--Sig_/21K7G9=.+/G9F3/e9+R7o/2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Why is a mm change burried in a patch which is named mm/x86?
+-----BEGIN PGP SIGNATURE-----
 
-It's clearly documented that core changes with the generic fallback come
-in one patch and the architecture override in a separate one afterwards.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaz9ZoACgkQAVBC80lX
+0GzBDwf/ROw1lA/cpCGmRbLJDwJaAxpsBcy9qC4TnYKeup05L2H7QrER2JwYXAT7
+sUNGLi0v4T+c2WIjuBR8mXF+aT/cNEY+XU6EyKAwuK0c9C8jvGOQusfOo0yX/Vet
+tmfhjuuAU52eOkDCwayiayCYtu4Q3mqqOIeY3cQV/uMhKxAwQs2v7kqTBhEElPJF
+3USPsKdyESg9IU7rldJF5/P3a0lhdaqI5RZ4xis/mhWZH7FHpDuZcc7K4al/V2k2
+lUf1Py521v7780gLJAEJOHxfYxMq4bUXFTRvU0PRlNNEgJJjOK8eQSU812twyQ5E
+Ifs0jkMTN7GFELpE7qDq0cSeXgvU8w==
+=R/pk
+-----END PGP SIGNATURE-----
 
-Do we write documentation just for the sake of writing it?
-
-Thanks,
-
-        tglx
-
+--Sig_/21K7G9=.+/G9F3/e9+R7o/2--
 
