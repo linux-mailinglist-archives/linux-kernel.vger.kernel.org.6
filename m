@@ -1,130 +1,144 @@
-Return-Path: <linux-kernel+bounces-278166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD2E94AD82
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:02:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B71794AD84
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3290BB2DF28
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:33:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D21E7B2E4A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903DB12C53B;
-	Wed,  7 Aug 2024 15:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7471F84DE4;
+	Wed,  7 Aug 2024 15:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N2KgxLJi";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kOk8Qt28"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TeuRPo18"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A0082499;
-	Wed,  7 Aug 2024 15:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3228212C522
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723044769; cv=none; b=MF5027OdcX7+gv/PiXAeCuV+Omc36IILlA+FdRpy5iAvUBGfs0P4ni8KzRMe223nogXQULqQ4RfXOsrvFGuWBVXLRQdgWUQ8Jr5xWIcuQxsAzQPm5cVdOYV3cYgJUcBNwQ/M3uX5fbrpttJ3FRhA2Upad1/y5HqhQRXCrjBpA4I=
+	t=1723044829; cv=none; b=Rn1nKpl/gqcJsvo04lxKOltuhhkENkPrW6KI7BsyAfJRK5dNk/6dyQ1Nhw5ZO/cdrw+j8bmT6gABOdGPHF+qpK1p0y5JFbdbjsRFm4bK0RYkMm852MAzEGHleTu7vo+NzRi2ARrsQ6q/LCU2ymc5MmdBBCRxwZkH4T57+V+I7Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723044769; c=relaxed/simple;
-	bh=5Mj8SXHMcEKQVrYr8pZWaXF311MX5ewWkbhfV5N07nE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LC7dvoFhEkt/2Bs97h+1JRN+TDA4dK6T7XdV5xiu6zrMbQyiH+0oHlBp0GeJkbudGjY/A9hkMnDRGtOm38AzeTIN0O/xYoudVwUYaZX6J2N2f0exDbRBl4tnilSuu3pu4MN8UmgxTKZyY50INCkH0pLyi5DgHRRBn08aPTXnNQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N2KgxLJi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kOk8Qt28; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 07 Aug 2024 15:32:46 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723044766;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vGlL1b2Cl+k2Fq0XtZmXv+Zg2zYI+3nb3hAswDvKywM=;
-	b=N2KgxLJiqXPW/qwJg85PKx7j0giggXEBM2b5wl08TlAHAAx2GNeXjsDXHXi3mDHAHIVWmI
-	5OrLrg2IPDaFSApmi9Smz/+AzHlHdEU+tFHv28pC8EkIm5eK1OqwiczHezSEOU9mJppfkc
-	G/IQlzuq9IX2ykHsD2WtQ80et6ed076ZdgfEh+kog0zrd7EUBLZmokFrA00NdzGUCKPdGV
-	39jee13aclGl4+mnQeEiPP6LJvkiEvU1WdJIDwWwFsc5PE7+k3nXiCaU8uk6tTtxkNZNqN
-	l2xJge2r1Zt/LjjeImPb3XUZbgfQ04BA+9pSJFgJ8S1jPYV48AxeSWmaQqm+Cg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723044766;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vGlL1b2Cl+k2Fq0XtZmXv+Zg2zYI+3nb3hAswDvKywM=;
-	b=kOk8Qt286kOomsoFhUmTEI1QiF+sA5KQEE67GVmv0PQbo2UXXiazbSL24SUZWmURxPR/6u
-	ovAGVUuchFQtWgCQ==
-From: "tip-bot2 for Shay Drory" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] genirq/irqdesc: Honor caller provided affinity in
- alloc_desc()
-Cc: Shay Drory <shayd@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>,
-  <stable@vger.kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org,
- maz@kernel.org
-In-Reply-To: <20240806072044.837827-1-shayd@nvidia.com>
-References: <20240806072044.837827-1-shayd@nvidia.com>
+	s=arc-20240116; t=1723044829; c=relaxed/simple;
+	bh=GJJ6/4J63aPzip8F3qmZkagOt3HQBmrPhv3cmrweDFo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=At6RVLpF6/C+79InoyeW6YIE0VH4FF3ckuYE1UEvoz1iaGj3m5Ff2qxiaSTjKTVapk+NuiwgMqkYA4+1JxTw8b46sYOn5VLRD1OVjBFX1wzsaxAwIiRh2ecKS9JDacf4nN8prfHUbZ+inwkfpohyKD55UiQe+EgDA7bmYjaBQQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TeuRPo18; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6bbbd25d216so5462946d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 08:33:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723044827; x=1723649627; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GJJ6/4J63aPzip8F3qmZkagOt3HQBmrPhv3cmrweDFo=;
+        b=TeuRPo189UPeBJcfUFNEcChlYCN/U3x9Wp+dAlIMF2vbwR8JngjWPMCd+W7Ui9o16D
+         brhjmBY3QqHIwc56WqnrsajMLAwhTj3FaRp4HaKZ5bbCcU5o0cUP5QBHRoXRV0zM+btU
+         KMtC/H0SBlYn5y7nD5ejio1X5vezxuJYHamlz0UTQq9HZW8B7F4kAWpZGUu+JC1fgT30
+         nlK6ilQTU1Us0W32pqXtdgEN1l+pgKf3O/1KXeAdPvQ7+wlPVYM0P5eKYYPila/QHZ2B
+         nce9O30z0Bnh7UQgKRMFNAsW9Frgu4IYt2a/yZsh2KulBMYFWsX3o2oKEEQwR8iBi8dR
+         NeVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723044827; x=1723649627;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GJJ6/4J63aPzip8F3qmZkagOt3HQBmrPhv3cmrweDFo=;
+        b=HileJzBN7OG2rXbcj2KhbzpygmJmufpypg0/50eYA+1bBwrR1oYSvIIlURtHWCdeGv
+         eS2yTw/gECowpfp5UnAP1pbYIqXEXE58Gb6jD7wp73z27sx1+BB4sXDfH0oLYybRvuU0
+         QEbNt/CDnxNnG48/HGP3KXvPxsr/K68wgqZ3LGnyDyf5BgC3tbhGGHS8JSw0v9W1okSW
+         ecLQf0BY4uNJ82isffZTnagiRsQGpExSJF/b/Qk/6lDsBmuZH/qq9ymms1SU+Nl3VCVZ
+         YWOl14/rnjcnfCFfwM/8b0vM7vbwPV1MoNP10aJKrDTcY82CaB9L/zxTXSiL0aqumZ68
+         sZ9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVtbPyQMlf3lJIOcLCRLWV3DixmIa5bmUEN9Bb3h5vZF135vtKJYm6jM/7k9Ex8cNP4IKPbey/7cFhdmC8Zr/tNLTCSOiRi6oaQufGO
+X-Gm-Message-State: AOJu0YywS1tfFtwZyyLBcwymRC/dHuv3kwXr3JCnumqc7pwZ/McCSF6L
+	J5Uvkki7xagdlqWrmkKkLiSzDoJhcAmXdL3zhIrdN6f/aOiZDwZ4P3D9lip38GitD6DGy92NgqB
+	XWzPdVM98rXqiAAIiSo6waDtiZa7kQ/9Xmydt
+X-Google-Smtp-Source: AGHT+IHvWa/Ytvp6xlpQo9w1vpfSyPNJKRWxay0t5bOW4D+l2HThaPS/mn8FuAJ+0xTb3yWOKivyVOA2NWpU5uN6aX8=
+X-Received: by 2002:a0c:e6e3:0:b0:6b5:33c6:9caf with SMTP id
+ 6a1803df08f44-6bbbbdf4ae6mr44862646d6.16.1723044826883; Wed, 07 Aug 2024
+ 08:33:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172304476610.2215.2042942398040144931.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20240802210836.2210140-1-song@kernel.org> <20240802210836.2210140-4-song@kernel.org>
+ <20240806144426.00ed349f@gandalf.local.home> <B53E6C7F-7FC4-4B4B-9F06-8D7F37B8E0EB@fb.com>
+ <20240806160049.617500de@gandalf.local.home> <20240806160149.48606a0b@gandalf.local.home>
+ <6F6AC75C-89F9-45C3-98FF-07AD73C38078@fb.com> <20240807090146.88b38c2fbd1cd8db683be22c@kernel.org>
+ <BEEE3F89-717B-44A4-8571-68DA69408DA4@fb.com> <20240807190809.cd316e7f813400a209aae72a@kernel.org>
+In-Reply-To: <20240807190809.cd316e7f813400a209aae72a@kernel.org>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Wed, 7 Aug 2024 08:33:07 -0700
+Message-ID: <CABCJKucdMS1hkWjHWty8JyACjZy2R9juusABcbsMYzNej=pB2Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] tracing/kprobes: Use APIs that matches symbols
+ without .XXX suffix
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Song Liu <songliubraving@meta.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Song Liu <song@kernel.org>, 
+	"live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, 
+	Joe Lawrence <joe.lawrence@redhat.com>, Nathan Chancellor <nathan@kernel.org>, 
+	"morbo@google.com" <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Leizhen <thunder.leizhen@huawei.com>, 
+	"kees@kernel.org" <kees@kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Matthew Maurer <mmaurer@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the irq/urgent branch of tip:
+Hi,
 
-Commit-ID:     edbbaae42a56f9a2b39c52ef2504dfb3fb0a7858
-Gitweb:        https://git.kernel.org/tip/edbbaae42a56f9a2b39c52ef2504dfb3fb0a7858
-Author:        Shay Drory <shayd@nvidia.com>
-AuthorDate:    Tue, 06 Aug 2024 10:20:44 +03:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 07 Aug 2024 17:27:00 +02:00
+On Wed, Aug 7, 2024 at 3:08=E2=80=AFAM Masami Hiramatsu <mhiramat@kernel.or=
+g> wrote:
+>
+> On Wed, 7 Aug 2024 00:19:20 +0000
+> Song Liu <songliubraving@meta.com> wrote:
+>
+> > Do you mean we do not want patch 3/3, but would like to keep 1/3 and pa=
+rt
+> > of 2/3 (remove the _without_suffix APIs)? If this is the case, we are
+> > undoing the change by Sami in [1], and thus may break some tracing tool=
+s.
+>
+> What tracing tools may be broke and why?
 
-genirq/irqdesc: Honor caller provided affinity in alloc_desc()
+This was a few years ago when we were first adding LTO support, but
+the unexpected suffixes in tracing output broke systrace in Android,
+presumably because the tools expected to find specific function names
+without suffixes. I'm not sure if systrace would still be a problem
+today, but other tools might still make assumptions about the function
+name format. At the time, we decided to filter out the suffixes in all
+user space visible output to avoid these issues.
 
-Currently, whenever a caller is providing an affinity hint for an
-interrupt, the allocation code uses it to calculate the node and copies the
-cpumask into irq_desc::affinity.
+> For this suffix problem, I would like to add another patch to allow probi=
+ng on
+> suffixed symbols. (It seems suffixed symbols are not available at this po=
+int)
+>
+> The problem is that the suffixed symbols maybe a "part" of the original f=
+unction,
+> thus user has to carefully use it.
+>
+> >
+> > Sami, could you please share your thoughts on this?
+>
+> Sami, I would like to know what problem you have on kprobes.
 
-If the affinity for the interrupt is not marked 'managed' then the startup
-of the interrupt ignores irq_desc::affinity and uses the system default
-affinity mask.
+The reports we received back then were about registering kprobes for
+static functions, which obviously failed if the compiler added a
+suffix to the function name. This was more of a problem with ThinLTO
+and Clang CFI at the time because the compiler used to rename _all_
+static functions, but one can obviously run into the same issue with
+just LTO.
 
-Prevent this by setting the IRQD_AFFINITY_SET flag for the interrupt in the
-allocator, which causes irq_setup_affinity() to use irq_desc::affinity on
-interrupt startup if the mask contains an online CPU.
-
-[ tglx: Massaged changelog ]
-
-Fixes: 45ddcecbfa94 ("genirq: Use affinity hint in irqdesc allocation")
-Signed-off-by: Shay Drory <shayd@nvidia.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/all/20240806072044.837827-1-shayd@nvidia.com
-
----
- kernel/irq/irqdesc.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index 07e99c9..1dee88b 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -530,6 +530,7 @@ static int alloc_descs(unsigned int start, unsigned int cnt, int node,
- 				flags = IRQD_AFFINITY_MANAGED |
- 					IRQD_MANAGED_SHUTDOWN;
- 			}
-+			flags |= IRQD_AFFINITY_SET;
- 			mask = &affinity->mask;
- 			node = cpu_to_node(cpumask_first(mask));
- 			affinity++;
+Sami
 
