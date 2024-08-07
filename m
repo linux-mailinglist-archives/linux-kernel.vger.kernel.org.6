@@ -1,105 +1,149 @@
-Return-Path: <linux-kernel+bounces-278074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9948094AA8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:44:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6087B94AA93
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B3DA1F216AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:44:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9109C1C219D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89D68248C;
-	Wed,  7 Aug 2024 14:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D158C82C60;
+	Wed,  7 Aug 2024 14:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="OhRQgjLi"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="kGILZwEA"
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E64181720;
-	Wed,  7 Aug 2024 14:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE3181ACB
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723041854; cv=none; b=CfCNyCbTBLxSmhxtdt8lSOQqj04p+fvqSTnj44VoeNvz13TSvk5qsr71LRVv/D+JUqvpldJq3BBDnjSd8HG8l/ddURiUdQy5r2N+n1Oj8jpcdzZf0gkggi2YA1UaBpPdSNflkx24jk6GL/OV63yZqMGPo2v3GtdmLz4ex0red28=
+	t=1723041895; cv=none; b=ScBhp87WgxhqDYS2//lT+FkTbKtQWI0bi5eZ8nZR2qBJnsHV0hjjar2h4/kwUYF1AyVeKXCXeKU40CA9eJOnS32BlybQN1MDPXs9fQcBYvTNP0eXzGhT3TbtYZbpsaiKpJSlMCGwJT3eaXUhMN0D2L2bjnbr3Ri86HcAnQ5XzZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723041854; c=relaxed/simple;
-	bh=wmIyn56BZpdpmjgY4kNRO+10jMJjnSkzPVP/MHdF038=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DcN2Eb3JmYXqL6ZcuCZ8WAMOB2uyWJ9gSlzM7MD6ejboOHPpxM/aRfWIGtDNsiNCU+ZkuWrF3n2NrrEKfi12gP4omEukyxAwk3coXjG2VXOfjXnrZerFUS8y9HuZgYU5S6nw76nehHVm7hEtIpnPBTgRgqAeoHESIEOFIh8OoFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=OhRQgjLi; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 1F1C121B1A;
-	Wed,  7 Aug 2024 16:44:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1723041844;
-	bh=QXpRHSt5W22TldwCVm/7sHpUgKzH5tFrdkovYAxdjkw=; h=From:To:Subject;
-	b=OhRQgjLiRlK4TQ+9BDkIUYBD6CvZl9P/dCqvJ8oW/MIvpFXFSpbCfqflKBr/gTgMG
-	 tbPWmJAoXA+c8DAbBZm6mhcl9jEuDRwURUO9/TrXbARBeS+h4zwnFVuXTNLXHBD+Kz
-	 GJU80q/LXqocLv4QdMcsxn77nkGjaGZgQhULvbOfA+5R8LaSEsptujy6qZ9SjSSTHg
-	 +De+jqMBfOMlgdMmJ22M6yWdqYRH+3ZZRf03hvfetljmHX/VgxoHXQdsHxxTgB9Ro4
-	 3KVoul7zckPwn8LEyQBO5A4CxtAR8Iis+/x/BZ5qe/P8eReEL6oXzwmlEGZgYzydo/
-	 YeIuIEX6zNjDw==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 4/4] arm64: dts: imx8-ss-conn: add PPS channel to the FEC nodes
-Date: Wed,  7 Aug 2024 16:43:49 +0200
-Message-Id: <20240807144349.297342-5-francesco@dolcini.it>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240807144349.297342-1-francesco@dolcini.it>
-References: <20240807144349.297342-1-francesco@dolcini.it>
+	s=arc-20240116; t=1723041895; c=relaxed/simple;
+	bh=ip3ka/E3cxhxALxb2EfsYxzvi+saL9E01qAxyxt60jI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QucMkWJZ8d5HUQA/yD0RehnR4hrzG2UIR/kokC+9H5WA32xFx261ROKKsI1vu3W0y0fUQZ0W0F9GmaVvEORuuCWmXF9N3Vt47k56YGFUtWfirBJm/Wp7tpPoczDdl/m5YhLAb4DCyMRZk2RoCDc5UcjayNMQSnEl8/MyxSpCf7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=kGILZwEA; arc=none smtp.client-ip=83.166.143.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WfCcp3ZLyzrtM;
+	Wed,  7 Aug 2024 16:44:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1723041882;
+	bh=/KAAV1vnbhEgpC8ceOtXuLi1kCt4M+X9NbsJcgjWRak=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kGILZwEAKTm2GbuB5K86gyna7WzvjTLlL2XPA7UFU+8CNgOkkjIJf/PFFRXH1byrU
+	 Y/sQGY8sQurL+2/qlVjwC3oUYOSw8ZbZPNe1L73cKWhHRmWYdA+jFZHR6JK6P9JHq8
+	 60bF77Nxd0keo9EEHYUXS3ajzEtzPl6Z7NcfAh9Q=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WfCcm6YKnzh9s;
+	Wed,  7 Aug 2024 16:44:40 +0200 (CEST)
+Date: Wed, 7 Aug 2024 16:44:36 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jann Horn <jannh@google.com>
+Cc: Tahera Fahimi <fahimitahera@gmail.com>, outreachy@lists.linux.dev, 
+	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v8 1/4] Landlock: Add abstract unix socket connect
+ restriction
+Message-ID: <20240807.Be5aiChaf8ie@digikod.net>
+References: <cover.1722570749.git.fahimitahera@gmail.com>
+ <e8da4d5311be78806515626a6bd4a16fe17ded04.1722570749.git.fahimitahera@gmail.com>
+ <20240803.iefooCha4gae@digikod.net>
+ <20240806.nookoChoh2Oh@digikod.net>
+ <CAG48ez2ZYzB+GyDLAx7y2TobE=MLXWucQx0qjitfhPSDaaqjiA@mail.gmail.com>
+ <20240807.mieloh8bi8Ae@digikod.net>
+ <CAG48ez3_u5ZkVY31h4J6Shap9kEsgDiLxF+s10Aea52EkrDMJg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez3_u5ZkVY31h4J6Shap9kEsgDiLxF+s10Aea52EkrDMJg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-From: Francesco Dolcini <francesco.dolcini@toradex.com>
+On Wed, Aug 07, 2024 at 03:45:18PM +0200, Jann Horn wrote:
+> On Wed, Aug 7, 2024 at 9:21 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Tue, Aug 06, 2024 at 10:46:43PM +0200, Jann Horn wrote:
+> > > I think adding something like this change on top of your code would
+> > > make it more concise (though this is entirely untested):
+> > >
+> > > --- /tmp/a      2024-08-06 22:37:33.800158308 +0200
+> > > +++ /tmp/b      2024-08-06 22:44:49.539314039 +0200
+> > > @@ -15,25 +15,12 @@
+> > >           * client_layer must be a signed integer with greater capacity than
+> > >           * client->num_layers to ensure the following loop stops.
+> > >           */
+> > >          BUILD_BUG_ON(sizeof(client_layer) > sizeof(client->num_layers));
+> > >
+> > > -        if (!server) {
+> > > -                /*
+> > > -                 * Walks client's parent domains and checks that none of these
+> > > -                 * domains are scoped.
+> > > -                 */
+> > > -                for (; client_layer >= 0; client_layer--) {
+> > > -                        if (landlock_get_scope_mask(client, client_layer) &
+> > > -                            scope)
+> > > -                                return true;
+> > > -                }
+> > > -                return false;
+> > > -        }
+> >
+> > This loop is redundant with the following one, but it makes sure there
+> > is no issue nor inconsistencies with the server or server_walker
+> > pointers.  That's the only approach I found to make sure we don't go
+> > through a path that could use an incorrect pointer, and makes the code
+> > easy to review.
+> 
+> My view is that this is a duplication of logic for one particular
+> special case - after all, you can also end up walking up to the same
+> state (client_layer==-1, server_layer==-1, client_walker==NULL,
+> server_walker==NULL) with the loop at the bottom.
 
-On i.MX8 the FEC PPS channel is routed to the instance 1, not to the
-default 0.
+Indeed
 
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
- arch/arm64/boot/dts/freescale/imx8-ss-conn.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+> 
+> But I guess my preference for more concise code is kinda subjective -
+> if you prefer the more verbose version, I'm fine with that too.
+> 
+> > > -
+> > > -        server_layer = server->num_layers - 1;
+> > > -        server_walker = server->hierarchy;
+> > > +        server_layer = server ? (server->num_layers - 1) : -1;
+> > > +        server_walker = server ? server->hierarchy : NULL;
+> >
+> > We would need to change the last loop to avoid a null pointer deref.
+> 
+> Why? The first loop would either exit or walk the client_walker up
+> until client_layer is -1 and client_walker is NULL; the second loop
+> wouldn't do anything because the walkers are at the same layer; the
+> third loop's body wouldn't be executed because client_layer is -1.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8-ss-conn.dtsi b/arch/arm64/boot/dts/freescale/imx8-ss-conn.dtsi
-index a4a10ce03bfe..a9fd47041e3a 100644
---- a/arch/arm64/boot/dts/freescale/imx8-ss-conn.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8-ss-conn.dtsi
-@@ -121,6 +121,7 @@ fec1: ethernet@5b040000 {
- 		assigned-clock-rates = <250000000>, <125000000>;
- 		fsl,num-tx-queues = <3>;
- 		fsl,num-rx-queues = <3>;
-+		fsl,pps-channel = <1>;
- 		power-domains = <&pd IMX_SC_R_ENET_0>;
- 		status = "disabled";
- 	};
-@@ -141,6 +142,7 @@ fec2: ethernet@5b050000 {
- 		assigned-clock-rates = <250000000>, <125000000>;
- 		fsl,num-tx-queues = <3>;
- 		fsl,num-rx-queues = <3>;
-+		fsl,pps-channel = <1>;
- 		power-domains = <&pd IMX_SC_R_ENET_1>;
- 		status = "disabled";
- 	};
--- 
-2.39.2
+Correct, I missed that client_layer would always be greater than
+server_layer (-1).
 
+Tahera, could you please take Jann's proposal?
+
+
+> 
+> The case where the server is not in any Landlock domain is just one
+> subcase of the more general case "client and server do not have a
+> common ancestor domain".
+> 
+> > >
+> > >          /*
+> > >           * Walks client's parent domains down to the same hierarchy level as
+> > >           * the server's domain, and checks that none of these client's parent
+> > >           * domains are scoped.
+> > >
+> 
 
