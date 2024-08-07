@@ -1,99 +1,235 @@
-Return-Path: <linux-kernel+bounces-277597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDAC294A37F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:00:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0021294A380
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8C77B23392
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:00:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7720B1F25A15
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B771CB309;
-	Wed,  7 Aug 2024 08:59:24 +0000 (UTC)
-Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779651D174C;
+	Wed,  7 Aug 2024 08:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="I2ZRMmUU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YoymDsDx";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xu+PnEpF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YYPY+HhL"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519471CB303
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 08:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2341CB323;
+	Wed,  7 Aug 2024 08:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723021164; cv=none; b=cb+EHbC0wGGrzIDJyKscbcCG5TWNb51rkLdTAUZQ/tjuCW11h0clOoTzBRGbqAQNwJJpSG+6p+eosAmKLb5Jm4vI8+LhFtukiB0Fp1DUGHxvC8koVxHmijgvFx49ydAUi1cDz91MST3/ANsOKV4mnq8zzGhhIu3WtQg7J+OHgyA=
+	t=1723021170; cv=none; b=PNfM0PgAiXqRV06frclt8ZeSKp3ciF0Dvw1zc3nmQBhGOhDudYcQuvNv+5cObTotVwC1VZ8uuIrDkCKQMG2aQCcRbrUjfQ3k8kR8siVYS86yNYEL8DS541rNIUZihVOuSqRbvU43bc/DtMxNMb0qzNspGzxdkGTOeCJAPhIdLGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723021164; c=relaxed/simple;
-	bh=7LPQSm+yG94Ez2Qfwia3iyqvf19g6sm5ehW/W/NqBvc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FiXokJ90c/yN9xg5nlBklDlwVAir5SHfuOAtkMdkGXqOzKiCp50DNl59FZK325ttfHj6AbV0QGekDi/wvX/Man1p4NJYsHZsCuRnfnFCfww2VAUoysKP9OzzPB0ujQq9ZCNTHRUyIZqTVERlcn9OUSq40tqEzo8zEzr++hRvlCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
-Received: from localhost (localhost [127.0.0.1])
-	by mail.valinux.co.jp (Postfix) with ESMTP id 3DBDBA9D00;
-	Wed,  7 Aug 2024 17:59:20 +0900 (JST)
-X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
-Received: from mail.valinux.co.jp ([127.0.0.1])
-	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id f-IzNs6CvPnp; Wed,  7 Aug 2024 17:59:20 +0900 (JST)
-Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp [210.128.90.14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	s=arc-20240116; t=1723021170; c=relaxed/simple;
+	bh=6AV/diuPiqIR6+i3otrNsOuiCh/ietYkh63gohM56OM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EOyF51kZ+FXYTmimGLm37OwPfGkSS6y1VBH0Bdu1mpt0fmQn3BrX+4JHG0ktwZr/Q6wj9VKKtWyNfbZPqzpf18f5I875hZLGQgrytYHbPDdDAt+ngzH79FoFPCgRDtc6ZDbN9D1/Ur4w9/Gzn3t90Ilun7PnIGI6/orJoNiEmJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=I2ZRMmUU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YoymDsDx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xu+PnEpF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YYPY+HhL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.valinux.co.jp (Postfix) with ESMTPSA id 0CCE7A9B77;
-	Wed,  7 Aug 2024 17:59:20 +0900 (JST)
-From: takakura@valinux.co.jp
-To: pmladek@suse.com,
-	john.ogness@linutronix.de
-Cc: akpm@linux-foundation.org,
-	bhe@redhat.com,
-	feng.tang@intel.com,
-	j.granados@samsung.com,
-	linux-kernel@vger.kernel.org,
-	lukas@wunner.de,
-	nishimura@valinux.co.jp,
-	rostedt@goodmis.org,
-	senozhatsky@chromium.org,
-	stephen.s.brennan@oracle.com,
-	taka@valinux.co.jp,
-	takakura@valinux.co.jp,
-	ubizjak@gmail.com,
-	wangkefeng.wang@huawei.com
-Subject: Re: [PATCH v2 1/2] Handle flushing of CPU backtraces during panic
-Date: Wed,  7 Aug 2024 17:59:19 +0900
-Message-Id: <20240807085919.92798-1-takakura@valinux.co.jp>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <87v80f2hii.fsf@jogness.linutronix.de>
-References: <87v80f2hii.fsf@jogness.linutronix.de>
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EBD3D21C0B;
+	Wed,  7 Aug 2024 08:59:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723021167; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=egcnL+OjEgIfVD+ZzmHj3+5ro0ueUWWs23oY+r7Ncjk=;
+	b=I2ZRMmUUpJ8uH6sEpJn8OWl/v2ZZQ8a0DKaqxcqn+9zZ4f7xpFhXjIyXbRXhPt4Ffk3+gv
+	uxKwFa+3OrcVtdMfN0HT3gSfUSKm+GAovmy8oBrlPsl6z/yGIwu284eKcTpboxK63ouXLP
+	zsw2tNfAfROfECLTz/Nm/s+OHwobJ8A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723021167;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=egcnL+OjEgIfVD+ZzmHj3+5ro0ueUWWs23oY+r7Ncjk=;
+	b=YoymDsDxUPX4wLhwm+voPe8kD7GsoPhlyv7/aY/uXNhG8ZLfWNvggHEhejFNC5cPpW3xYc
+	us8pQkeb+xPdupBg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=xu+PnEpF;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=YYPY+HhL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723021166; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=egcnL+OjEgIfVD+ZzmHj3+5ro0ueUWWs23oY+r7Ncjk=;
+	b=xu+PnEpFQVK4WK7Lu0mAqhviAUvedztLU0VzlHlShNWw3ZUGghuSzRpl7LKf9CHG6zKm0w
+	LqBMuiu+J/N8JyKXzfQ5lvxnOnSftIbuvNkbaigUY5euxU2JDXM1+kvDhlLPoQr/lG7z5l
+	acEUZDzQbjwzVhZmpQgSlC6V4C1H+1U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723021166;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=egcnL+OjEgIfVD+ZzmHj3+5ro0ueUWWs23oY+r7Ncjk=;
+	b=YYPY+HhLUNLsA1BolUtDVcjUbBtL6l3nv0m+YYL4cPa2o+Hmpq/lsJO4aMgslLtJ/ls43W
+	MhqxyMAtzvzfjZDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A0D613297;
+	Wed,  7 Aug 2024 08:59:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PCS/I243s2btAgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 07 Aug 2024 08:59:26 +0000
+Message-ID: <edb8cf4f-a82c-41be-8316-dd316050d975@suse.de>
+Date: Wed, 7 Aug 2024 10:59:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] drm/ast: Request PCI BAR with devres
+To: Philipp Stanner <pstanner@redhat.com>, Dave Airlie <airlied@redhat.com>,
+ Jocelyn Falempe <jfalempe@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org
+References: <20240807083018.8734-2-pstanner@redhat.com>
+ <20240807083018.8734-4-pstanner@redhat.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20240807083018.8734-4-pstanner@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,google.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.50
+X-Rspamd-Queue-Id: EBD3D21C0B
 
-Hi John and Petr,
 
-On 2024-08-05, John Ogness wrote:
->On 2024-08-03, takakura@valinux.co.jp wrote:
->> From: Ryo Takakura <takakura@valinux.co.jp>
->>
->> After panic, non-panicked CPU's has been unable to flush ringbuffer 
->> while they can still write into it. This can affect CPU backtrace 
->> triggered in panic only able to write into ringbuffer incapable of 
->> flushing them.
+
+Am 07.08.24 um 10:30 schrieb Philipp Stanner:
+> ast currently ioremaps two PCI BARs using pcim_iomap(). It does not
+> perform a request on the regions, however, which would make the driver a
+> bit more robust.
 >
->Right now, they cannot write to it. If you apply your second patch
->before this one, then the above statement is true.
+> PCI now offers pcim_iomap_region(), a managed function which both
+> requests and ioremaps a BAR.
 >
->Perhaps the ordering of the two patches should be reversed?
-
-Yes, that is true. Thanks!
-I'll send the patches in the reverse order for next version. 
-
->Either way, for the series:
+> Replace pcim_iomap() with pcim_iomap_region().
 >
->Reviewed-by: John Ogness <john.ogness@linutronix.de>
+> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 
-Sincerely,
-Ryo Takakura
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+> ---
+>   drivers/gpu/drm/ast/ast_drv.c | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/ast/ast_drv.c b/drivers/gpu/drm/ast/ast_drv.c
+> index aae019e79bda..1fadaadfbe39 100644
+> --- a/drivers/gpu/drm/ast/ast_drv.c
+> +++ b/drivers/gpu/drm/ast/ast_drv.c
+> @@ -287,9 +287,9 @@ static int ast_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>   	if (ret)
+>   		return ret;
+>   
+> -	regs = pcim_iomap(pdev, 1, 0);
+> -	if (!regs)
+> -		return -EIO;
+> +	regs = pcim_iomap_region(pdev, 1, "ast");
+> +	if (IS_ERR(regs))
+> +		return PTR_ERR(regs);
+>   
+>   	if (pdev->revision >= 0x40) {
+>   		/*
+> @@ -311,9 +311,9 @@ static int ast_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>   
+>   		if (len < AST_IO_MM_LENGTH)
+>   			return -EIO;
+> -		ioregs = pcim_iomap(pdev, 2, 0);
+> -		if (!ioregs)
+> -			return -EIO;
+> +		ioregs = pcim_iomap_region(pdev, 2, "ast");
+> +		if (IS_ERR(ioregs))
+> +			return PTR_ERR(ioregs);
+>   	} else {
+>   		/*
+>   		 * Anything else is best effort.
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
