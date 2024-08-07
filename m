@@ -1,191 +1,130 @@
-Return-Path: <linux-kernel+bounces-278284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5513194AE3E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:37:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D672594AE41
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1CB2B232C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:37:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13A2F1C21750
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42C9136664;
-	Wed,  7 Aug 2024 16:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1FC139CE9;
+	Wed,  7 Aug 2024 16:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hmgTOUC1"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kiKz9yac"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCA32209B
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CFF2209B;
+	Wed,  7 Aug 2024 16:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723048619; cv=none; b=SMKwUCyPiphIJ7KtTaMsSiML7nCvCKf+rZUKq3IXZ2atfQ6asr4lLcnhj95eLZ7WWcOhUjUv6+YXRuP7+I1U+L7mZCL7b+0gfzZnCehEqHvnFD68wFzEriLrTk9QOYD+fnHuLW6I3Y32sjmRbZOeo6LkXUxeje/zqU1KwgWZySA=
+	t=1723048710; cv=none; b=cEYvbpczp3VsFJZCRh0Q1ysfe2HNC7H4o3bMgyVyly+LnObMrxn+N9Rs8uHrJdvGtJvUU/T3qjeVHb/e3S+7tfe+pUtB+myst/H1G8wPf5QPb5vYxBGaCENWBBjblrr7+rZvqvTxggru8XNLBq9wkoDRUIAEhPNEApVm+1nfnBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723048619; c=relaxed/simple;
-	bh=L3zxrGp9pzinSpMN0okqzlxh8UOlc3docHoGdrr0uoc=;
+	s=arc-20240116; t=1723048710; c=relaxed/simple;
+	bh=7UoBEwKBvrQT2AMxf80k+ltND63+oKRLomyxe7Y1++A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=gdBo+Iytjb98ne2vEgUdfOuZiEqjPl/THFM7W23XOBuVoXHFsA6D0cmb3yYPOZC4BqCQqYCQ3RQM+UFuTSNzZuUrnPyMQvoojzmIRajuCBCTI7GoAcyAVJ20nKL8r1eZm7RmI2xLWIYy/mZ3DRg9y3/BuWBcUo/5Owo/7dLa/KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hmgTOUC1; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso195a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 09:36:56 -0700 (PDT)
+	 To:Cc:Content-Type; b=tif4CgMWzKNibvrmHeQtUuoPMaLsgdB6KnpQlIczLCF8/Iy/3rSdMTbZoTDc/arrC7tw+917vVAQjBxSB9B+QJx6Hjx2qgdndiBJSEafXYx3XKVen2MbARkWgP66K/6KzjeBWqLThr3UDFoErFuvsfecfAiVEPZ6mQA44rqTzwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kiKz9yac; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4f527c0c959so17793e0c.1;
+        Wed, 07 Aug 2024 09:38:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723048615; x=1723653415; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1723048707; x=1723653507; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=riQD75FfkBgpWAyyMoow6+qKy3h+tMgO/92cdmCWWQI=;
-        b=hmgTOUC1ChQVmWnO+MytxO+WO4sHv8Db7EJo9Qcfi8KbZ0WQ/RryOkipLk5ioAcvpJ
-         m/Y4MY7yPYuz/nAF+AKZgmJ/9fwiELE7etiI/gUX6Y2+S1A5hxrdTa9j3n2z/UQkPcU+
-         rd5SxCtlF/8ZWYanPZaKu/NxwHzeWgT/GsqW4zJoRCZ+OdhtHAHgE1cTaSfSXpD8F8c7
-         52wCSHXWLz7zQDjgaFXIHFrtPe9tFgkSDDR/Ba5C1kZDtmCYcS46dCRzgfjPfeEhhm+n
-         6o9ttynvxVxMTFpfAwR7JcfN9+4nQtfjeV0Y92ca40LW4SjbEkZZrJfWJVHSF641uDIs
-         J+sg==
+        bh=8mgCmD2KAcrYzQNy1uvrHNBnFb3EiB9zFOmW/TFGDZ8=;
+        b=kiKz9yacHSeNozVU3nKAoo/EazPIftDagpxFYFzQle4Ow3OHr59Fnw6oOZ+ZFUe2j3
+         AfBqzag2EFHTLiC/pQhhwEipEcQbgblwrRijpa2X6acnNYQVW1ck0zFWGJKXyLWSjVJF
+         lGt5WDsUDuGiVmI/VYZHHEwjc5HhJl0heZ4Ln13NZ0pIIpDOOqdvAcw8D1yV/fpiZ8QK
+         tQ3Q+MP7ouSBI8kmq6A/Jc4gOt4kVheE2ld/Wblht5j2MRqNl4r9MFEXkuWVK0R4vQar
+         bJrbjS4wOSa3ysAYevwZGxIhQf+AkGGrg7ut3muAUzBi0UPGP4QvCdVhUmyJNj9zoVId
+         xTeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723048615; x=1723653415;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1723048707; x=1723653507;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=riQD75FfkBgpWAyyMoow6+qKy3h+tMgO/92cdmCWWQI=;
-        b=mWJesd/p3fbUPumobGIH9SOsUiUCGuH0J864BASNUAi6tp8eKmw3YkgYhFt5A2QKEi
-         8vlo91qKw6ugfgG0cGa6Js/hp3028aC/hOM8ejzFmBgqgYjgFAfwtOWxkWkhICQTpEFO
-         JAZucL3iwNKuVM9hvgrFvUPHztUM4fMIVwE05dpfPo10NqpKzYHkVdITdgM8wn8zKctW
-         UXcSsX1xARxkGY+ZZjXI3I1vTG6nsre8wlZASHPEJ685cffHfWwfjBZB3tJ8aqw3m0mg
-         Bknvd4lxu0M9EjYFhp2ufuSA9TovhnwPsonu34tn+4+ENtah9zPLzjp8fzXdXU3g2HEY
-         rGlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEKEXrl03JX3a2rp9Mi8+4YFbHuj4eY0Pu9KtjscQ8usTXpk185eNLqUcMUfmaq3jQQLTAtxg7Oq14w1r5z0Cysd0+k3LihM+Z7rte
-X-Gm-Message-State: AOJu0YxrtuqMsB2jxqvwrvJi3fqRLFJKObIcsesCMqMRc/j0SkvdeIRn
-	m+ic/lp5jA/Z+KPhpIPkcikO8QRgU/9xYoIeuV6KLdSlGLwTELQ0c1gBOmRFzOVkJNirO2Wgvib
-	Exe8dwWspkBPE6Sx1NhLOwLdfdA5sKhauBXrb
-X-Google-Smtp-Source: AGHT+IEMT0D00wZxgbaS7ZlbUaOKZqS0NKAbIqfEmp+OaUjtXLa3vZXToggQQb/YiJn08GHRZeA2XEFihcr0CJ0C2WY=
-X-Received: by 2002:a05:6402:27c7:b0:5a7:7f0f:b70b with SMTP id
- 4fb4d7f45d1cf-5bba25bee88mr279090a12.0.1723048614852; Wed, 07 Aug 2024
- 09:36:54 -0700 (PDT)
+        bh=8mgCmD2KAcrYzQNy1uvrHNBnFb3EiB9zFOmW/TFGDZ8=;
+        b=HBe23N8gPVMREHCd75i0ZzhY3mUjch1DO++hrSktCGopZX4wwjS7smsCo8k+F8Y9ZT
+         ifgIVmEW1wzLuIazeJPRaSp/S33gtJfSXmqsfSN5qszDXgxcq1fGN4b5Q+HX/njF+4ac
+         IKCtSOv8G6gUwixjt84qVa6DH3kMSoi8uVfNd5ebNE8Yc36/TTgGbQKifPIGCE4hTF41
+         yiLy8sAfnvae+cQJWbpypGGyEIA888F2RAx7oXI3t2o9lFueYN6zhYb2rsYd/0/k1Mdx
+         c9G1m2sNKlx/tJEQgc/HJkTevLye+v+UKypcTJ2ZEPSV+F+YMzHi/7N6knj6+Vf2ln2L
+         UGFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3jMJiPsdQHtf1GDAdPY7d1PeDeSQyi478MohMQO6T7gfA1Yg1q7py5R71hYlwngncAXd8owdI7sY2rO+KqAedenixlahWyjxwdJl2ym8rcObhMdmu+EdqEC6d8q8HiP/HHv9iM/g+klK+rqSpVbeBCJH1DV8fpW8P2H2xBSSMtV0EppeRJ5exMLbcGSKY
+X-Gm-Message-State: AOJu0YwAutz9oQAi0h9VN1na83hUAhPVOH41b2CaMDGBIKaXTHLNKAE2
+	bsKBvfr1htGlcEv6g7CCSJ46zAWN41yebI2hxngJTGtjn8nOVObosXXUu6RRKPrWnQUeif6APl0
+	KskLz4y2SJRCYjKsKZEVZtX3I2+k=
+X-Google-Smtp-Source: AGHT+IEaPdM7pIWYj7gKtQjNufq1NVzXdVjvhAsj0E+4bsWTLCUCwCLraq7BAD6I5PzYhwVL6S2vmNZdAhIlxFNafD8=
+X-Received: by 2002:a05:6122:1d16:b0:4f2:f1f1:a9f2 with SMTP id
+ 71dfb90a1353d-4f89ff6c61dmr22140799e0c.4.1723048707355; Wed, 07 Aug 2024
+ 09:38:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807124103.85644-1-mpe@ellerman.id.au> <20240807124103.85644-2-mpe@ellerman.id.au>
- <CALmYWFsCrMxkA1v58fJxtyGR15ZGxmSP8x7QC=oeKwzcwGL76A@mail.gmail.com> <gtz7s4eyzydaomh2msvfhpemhiruexy53nutd3fwumqfpos7v5@4fnqun2olore>
-In-Reply-To: <gtz7s4eyzydaomh2msvfhpemhiruexy53nutd3fwumqfpos7v5@4fnqun2olore>
-From: Jeff Xu <jeffxu@google.com>
-Date: Wed, 7 Aug 2024 09:36:15 -0700
-Message-ID: <CALmYWFvqoxyBf4iP7WPTU_Oxq_zpRzvaBOWoHc4n4EwQTYhyBA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] powerpc/mm: Handle VDSO unmapping via close() rather
- than arch_unmap()
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jeff Xu <jeffxu@google.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, 
-	torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	christophe.leroy@csgroup.eu, jeffxu@chromium.org, 
-	linux-kernel@vger.kernel.org, npiggin@gmail.com, oliver.sang@intel.com, 
-	pedro.falcato@gmail.com, Kees Cook <keescook@chromium.org>
+References: <20240807153544.2754247-1-jeffxu@chromium.org>
+In-Reply-To: <20240807153544.2754247-1-jeffxu@chromium.org>
+From: Pedro Falcato <pedro.falcato@gmail.com>
+Date: Wed, 7 Aug 2024 17:38:16 +0100
+Message-ID: <CAKbZUD2xDdbxOTvR3-P=636jvhG_JPO3h79tgB59dfPmv046hg@mail.gmail.com>
+Subject: Re: [PATCH v1] selftest mm/mseal: fix test_seal_mremap_move_dontunmap_anyaddr
+To: jeffxu@chromium.org
+Cc: akpm@linux-foundation.org, willy@infradead.org, 
+	torvalds@linux-foundation.org, Liam.Howlett@oracle.com, jeffxu@google.com, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, dave.hansen@intel.com, linux-hardening@vger.kernel.org, 
+	lorenzo.stoakes@oracle.com, mpe@ellerman.id.au, oliver.sang@intel.com, 
+	vbabka@suse.cz
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 7, 2024 at 8:56=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracle=
-.com> wrote:
+On Wed, Aug 7, 2024 at 4:35=E2=80=AFPM <jeffxu@chromium.org> wrote:
+<snip>
+>         /* shrink from 4 pages to 2 pages. */
+> -       ret2 =3D mremap(ptr, size, 2 * page_size, 0, 0);
+> +       ret2 =3D sys_mremap(ptr, size, 2 * page_size, 0, 0);
+>         if (seal) {
+> -               FAIL_TEST_IF_FALSE(ret2 =3D=3D MAP_FAILED);
+> +               FAIL_TEST_IF_FALSE(ret2 =3D=3D (void *) MAP_FAILED);
+
+MAP_FAILED is already void *
+
+<snip>
+> @@ -1449,18 +1457,16 @@ static void test_seal_mremap_move_dontunmap_anyad=
+dr(bool seal)
+>         }
 >
-> * Jeff Xu <jeffxu@google.com> [240807 11:44]:
-> > On Wed, Aug 7, 2024 at 5:41=E2=80=AFAM Michael Ellerman <mpe@ellerman.i=
-d.au> wrote:
-> > >
-> > > Add a close() callback to the VDSO special mapping to handle unmappin=
-g
-> > > of the VDSO. That will make it possible to remove the arch_unmap() ho=
-ok
-> > > entirely in a subsequent patch.
-> > >
-> > > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > > Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> > > ---
-> > >  arch/powerpc/include/asm/mmu_context.h |  4 ----
-> > >  arch/powerpc/kernel/vdso.c             | 17 +++++++++++++++++
-> > >  2 files changed, 17 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/arch/powerpc/include/asm/mmu_context.h b/arch/powerpc/in=
-clude/asm/mmu_context.h
-> > > index 37bffa0f7918..9b8c1555744e 100644
-> > > --- a/arch/powerpc/include/asm/mmu_context.h
-> > > +++ b/arch/powerpc/include/asm/mmu_context.h
-> > > @@ -263,10 +263,6 @@ extern void arch_exit_mmap(struct mm_struct *mm)=
-;
-> > >  static inline void arch_unmap(struct mm_struct *mm,
-> > >                               unsigned long start, unsigned long end)
-> > >  {
-> > > -       unsigned long vdso_base =3D (unsigned long)mm->context.vdso;
-> > > -
-> > > -       if (start <=3D vdso_base && vdso_base < end)
-> > > -               mm->context.vdso =3D NULL;
-> > >  }
-> > >
-> > >  #ifdef CONFIG_PPC_MEM_KEYS
-> > > diff --git a/arch/powerpc/kernel/vdso.c b/arch/powerpc/kernel/vdso.c
-> > > index 7a2ff9010f17..220a76cae7c1 100644
-> > > --- a/arch/powerpc/kernel/vdso.c
-> > > +++ b/arch/powerpc/kernel/vdso.c
-> > > @@ -81,6 +81,21 @@ static int vdso64_mremap(const struct vm_special_m=
-apping *sm, struct vm_area_str
-> > >         return vdso_mremap(sm, new_vma, &vdso64_end - &vdso64_start);
-> > >  }
-> > >
-> > > +static void vdso_close(const struct vm_special_mapping *sm, struct v=
-m_area_struct *vma)
-> > > +{
-> > > +       struct mm_struct *mm =3D vma->vm_mm;
-> > > +
-> > > +       /*
-> > > +        * close() is called for munmap() but also for mremap(). In t=
-he mremap()
-> > > +        * case the vdso pointer has already been updated by the mrem=
-ap() hook
-> > > +        * above, so it must not be set to NULL here.
-> > > +        */
-> > > +       if (vma->vm_start !=3D (unsigned long)mm->context.vdso)
-> > > +               return;
-> > > +
-> > > +       mm->context.vdso =3D NULL;
-> > > +}
-> > > +
-> > >  static vm_fault_t vvar_fault(const struct vm_special_mapping *sm,
-> > >                              struct vm_area_struct *vma, struct vm_fa=
-ult *vmf);
-> > >
-> > > @@ -92,11 +107,13 @@ static struct vm_special_mapping vvar_spec __ro_=
-after_init =3D {
-> > >  static struct vm_special_mapping vdso32_spec __ro_after_init =3D {
-> > >         .name =3D "[vdso]",
-> > >         .mremap =3D vdso32_mremap,
-> > > +       .close =3D vdso_close,
-> > IIUC, only CHECKPOINT_RESTORE requires this, and
-> > CHECKPOINT_RESTORE is in init/Kconfig, with default N
-> >
-> > Can we add #ifdef CONFIG_CHECKPOINT_RESTORE here ?
-> >
->
-> No, these can be unmapped and it needs to be cleaned up.  Valgrind is
-> one application that is known to unmap the vdso and runs into issues on
-> platforms that do not handle the removal correctly.
->
-Maybe Valgrind needs that exactly for checkpoint restore ? [1]
+>         /*
+> -        * The 0xdeaddead should not have effect on dest addr
+> +        * The 0xdead0000 should not have effect on dest addr
+>          * when MREMAP_DONTUNMAP is set.
+>          */
+> -       ret2 =3D mremap(ptr, size, size, MREMAP_MAYMOVE | MREMAP_DONTUNMA=
+P,
+> -                       0xdeaddead);
+> +       ret2 =3D sys_mremap(ptr, size, size, MREMAP_MAYMOVE | MREMAP_DONT=
+UNMAP,
+> +                       (void *) 0xdead0000);
 
-"CRIU fails to restore applications that have unmapped the vDSO
-segment. One such
-application is Valgrind."
+You still didn't explain why this test is actually needed. Why are you
+testing MREMAP_DONTUNMAP's hint system?
+This has nothing to do with mseal, you already test the
+MREMAP_DONTUNMAP and MREMAP_FIXED paths in other tests.
+You also don't know if 0xdead0000 is a valid page (hexagon for
+instance seems to support 256KiB and 1MiB pages, so does ppc32, and
+this is not something that should be hardcoded).
 
-Usually when the kernel accepts new functionality, the patch needs to
-state the user case.
-The only user case I found for .mremap and .close so far is the CRIU case.
+I'm not a fan of just throwing random flags for tests, it should be
+somewhat logical.
 
-[1] https://github.com/checkpoint-restore/criu/issues/488
-
-Thanks
--Jeff
-
-> Thanks,
-> Liam
+--=20
+Pedro
 
