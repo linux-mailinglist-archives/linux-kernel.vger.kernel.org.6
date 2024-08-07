@@ -1,149 +1,108 @@
-Return-Path: <linux-kernel+bounces-277530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 425B494A2A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:24:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D2BC94A29B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D179B22816
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:22:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC87C2851BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECB81B86E4;
-	Wed,  7 Aug 2024 08:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ezh/Cygf"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901211B4C53;
-	Wed,  7 Aug 2024 08:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF791C9DD5;
+	Wed,  7 Aug 2024 08:23:31 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3EE1917E6;
+	Wed,  7 Aug 2024 08:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723018953; cv=none; b=rNOoBBo9AZprnkKKvFBl1cs/rgJZLsdY9TYH2AddcVOQw6s3rRYp343e6OzaQohwXEWHadnLRqSOQO+xZC8aUw3/k6UxLNE3yLAKvZ4ZjH+Y4AR8+7OXldCC3lMr9hW4NpzcdpWvrblMlo6v5YiCNFOeEiiAbe6eeqdObm6tSg4=
+	t=1723019011; cv=none; b=Ytgj0IzZtUr/2+ddfGsasVL2XxpV+DJFf/xP5dUlg7lKGDvg8LhNnrtRXjm8GxB246F7+6hmlZ94SynXoDz1mfjuHJPoSPjkpqRZweYpoDPFNj4x2YzJ69fXGiqoS6G+AJO4LSoDlmFvi5hA0BYL1yGl+9NJQACo1zq0fy3QcXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723018953; c=relaxed/simple;
-	bh=JJqbdizmVcDm0J0CZ+kzknxS4PV2Ix4wp1sOK95CXTw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G+1RPS5vv9ahilo5sSAAx7362gu3o9asdo8pU9Ap1O02aUuvlG37NIeiRB+kINZcwLvz8IadxW5bhJzp91+E3qIvDQQiitgymLgTiawh7WdYVsDf7xWZuq7Aeo0bkhATxnHnMZtl7RVOEbFIS7jNujFVMxtvW+tuY6vzhyQtXiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ezh/Cygf; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70d1fb6c108so1195497b3a.3;
-        Wed, 07 Aug 2024 01:22:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723018952; x=1723623752; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YN+ZFWFpopazqDFBLc+sZfMSaFtv3e+QTIYu0Wtch8Q=;
-        b=ezh/CygfpTeWcujnGgHPYfGtJ8UJ5bxowjUNgO22hnKgQDY+rMmMY59ipAFiCB97vs
-         /R+thPheGO5MIirjyxeaguGTyhm3yqae6EMRtbzyGV91aP2NAVwPIdqix5cDgo5Xxwxh
-         1NemxrfR4EunaZiAAjigWkEaRGDBNXcKMQ6bOqVoUkU+FaHomn7kEYwyu6fX1rT2DRxc
-         ydve5WoExJBxBHOwCwqjPLuCIUTmhva4qtDVmFQhTTVFGOCbVJO1hiJvuLIEP6Ji9O+u
-         Am2vuC2kg7gGaEL9WE8DfKt7DR2ep1kDDXIAjLaZvMpLP6W//S2NCfkmM8d6MleQUPWu
-         9xpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723018952; x=1723623752;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YN+ZFWFpopazqDFBLc+sZfMSaFtv3e+QTIYu0Wtch8Q=;
-        b=i2/7Rq06eZBe03tj8iJaSmQDAN/drb1WvXaEahQZvpTqan+3Fz+A+pePLNoJy/Y8QN
-         rcfSdOAYrlVKhYAq1oipR8DxVwTDpwX6xNLiFkuOnM4YcsW55Y0NEgQOt17v6JGqUNph
-         vTdzLqOF1JjWcVw48PgggIOO/9d8qbpnkbfSvv8JxvH46iZgl1xqaXMW22EDMTjJEr0Q
-         Ss8E9s4cP0d/PgWabTFX/U3TLgS1NUaL/vlSf5uWuHi5+l14qlLTlrAAzvVp+85LIQYI
-         TeUwuWdAIHbr4PqLUvXE7IpUotpIOGQbtq/MoPb3gvM/lTg7eFzIc1O88W/UsHf1vqsX
-         Ds1g==
-X-Forwarded-Encrypted: i=1; AJvYcCW8fkI8YRNu5WLTtIeIYKSpCc77cmLXAu5tq6d/5xhm9LcKMdQZ5dO/Mmaj1hIYhQzYROwFhb/GaypVP0p4A1TmL7LDkxtkoezbZuSsqWWCXElOBB4d/41TokK1U0Tnj/BykDTnfcVygfSJXf+12ulTgg0j3nxTp+4+CVvbToTsXYgqh0Q=
-X-Gm-Message-State: AOJu0Yx5A4nk3Z/ISDPkhxn+2CeWc3IrZUjn8gKR3yebEM5wRAhmWPGq
-	DoyCnurxbC9FojlD/tPVOwrNcdx58lXem5OIx0I6kFQYt3nkU1Hh
-X-Google-Smtp-Source: AGHT+IHL88krJvGfLfkWm5wh0nG3Zip/FgszODUmeof2pjR4V8t4VTnvtlBT8d6EXqRKXsC0//AhGA==
-X-Received: by 2002:a05:6a20:2445:b0:1c2:8b26:1bb6 with SMTP id adf61e73a8af0-1c69956d38cmr20140442637.17.1723018951547;
-        Wed, 07 Aug 2024 01:22:31 -0700 (PDT)
-Received: from 904-569.realtek.com.tw (59-124-166-19.hinet-ip.hinet.net. [59.124.166.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20077401e79sm28725005ad.100.2024.08.07.01.22.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 01:22:31 -0700 (PDT)
-From: hhorace <hhoracehsu@gmail.com>
-To: gnault@redhat.com
-Cc: johannes@sipsolutions.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kvalo@kernel.org,
-	horms@kernel.org,
-	idosch@nvidia.com,
-	hhorace <hhoracehsu@gmail.com>
-Subject: [PATCH wireless-next v2] wifi: cfg80211: fix bug of mapping AF3x to  incorrect User Priority
-Date: Wed,  7 Aug 2024 16:22:05 +0800
-Message-ID: <20240807082205.1369-1-hhoracehsu@gmail.com>
-X-Mailer: git-send-email 2.42.0.windows.2
-In-Reply-To: <20240805071743.2112-1-hhoracehsu@gmail.com>
-References: <20240805071743.2112-1-hhoracehsu@gmail.com>
+	s=arc-20240116; t=1723019011; c=relaxed/simple;
+	bh=bVpeD1TPk0eLXfpcVNkzHFDlsmDXfNiXac3DR+ChgkU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UCY1qDctRbxnveADFyOF5GRGTzJeLBVnyEV96akkLG/QKTcFsE9qdmNMtLKpiTMpC6pxGNqZm0r9mpn22YN4K2Q3xUmnaqYs8CpCwc9yj3GUrk/HavfSzD/P8OzbBj8xIP9JNR2FYyE7scyGhVpsXKzkc9GdNDw7+EziPRW5JP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.4.132])
+	by gateway (Coremail) with SMTP id _____8Dxi+r_LrNmoyYKAA--.32028S3;
+	Wed, 07 Aug 2024 16:23:27 +0800 (CST)
+Received: from [10.20.4.132] (unknown [10.20.4.132])
+	by front1 (Coremail) with SMTP id qMiowMBxsuH+LrNmGrUHAA--.10863S2;
+	Wed, 07 Aug 2024 16:23:26 +0800 (CST)
+Message-ID: <3b4f94d4-51f6-45ad-be22-52be0f5e39d6@loongson.cn>
+Date: Wed, 7 Aug 2024 16:23:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>
+Subject: Re: [PATCH v2 3/3] LoongArch: dts: Update UART driver to
+ Loongson-2K0500, Loongson-2K1000 and Loongson-2K2000.
+To: Krzysztof Kozlowski <krzk@kernel.org>, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name,
+ p.zabel@pengutronix.de
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, loongarch@lists.linux.dev
+References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+ <20240804063834.70022-3-zhenghaowei@loongson.cn>
+ <bf6fbb80-95f5-4c9c-b7d4-dd7f432056c7@kernel.org>
+Content-Language: en-US
+In-Reply-To: <bf6fbb80-95f5-4c9c-b7d4-dd7f432056c7@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxsuH+LrNmGrUHAA--.10863S2
+X-CM-SenderInfo: x2kh0w5kdr4v3l6o00pqjv00gofq/1tbiAQECBGayEXMQJQABsE
+X-Coremail-Antispam: 1Uk129KBj9xXoWrWF17tF4xXF13Zr18Ww1rAFc_yoWxGFg_XF
+	9Fyws293WkJrWrWwnIqFnrZr1avw1UXwnrCrs5Kr17Zw1UKFW5CFyDAryrGrW3uFWDKryr
+	Gr4kWF18AF43ZosvyTuYvTs0mTUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbfkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q
+	6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
+	1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
+	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
+	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
+	cVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI
+	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v2
+	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4ZqXDUUUU
 
-According to RFC8325 4.3, Multimedia Streaming: AF31(011010, 26),
-AF32(011100, 28), AF33(011110, 30) maps to User Priority = 4
-and AC_VI (Video).
 
-However, the original code remain the default three Most Significant
-Bits (MSBs) of the DSCP, which makes AF3x map to User Priority = 3
-and AC_BE (Best Effort).
+在 2024/8/4 16:40, Krzysztof Kozlowski 写道:
+> On 04/08/2024 08:38,zhenghaowei@loongson.cn wrote:
+>> From: Haowei Zheng<zhenghaowei@loongson.cn>
+>>
+>> Change to use the Loongson UART driver by default.
+>>
+>> Signed-off-by: Haowei Zheng<zhenghaowei@loongson.cn>
+> No changelog? Nothing improved?
+>
+> Best regards,
+> Krzysztof
 
-Fixes: 6fdb8b8781d5 ("wifi: cfg80211: Update the default DSCP-to-UP mapping")
-Signed-off-by: hhorace <hhoracehsu@gmail.com>
----
-Changes in v2:
-- Remove the useless entry for CS5 (case 40) since the value of the 3
- high order bits is already 5.
+Sorry , I will include the update from V1 to V2 in the next patch update.
 
- net/wireless/util.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Here is the content of the update from V1 to V2:
 
-diff --git a/net/wireless/util.c b/net/wireless/util.c
-index 082c6f9..c6d0397 100644
---- a/net/wireless/util.c
-+++ b/net/wireless/util.c
-@@ -998,10 +998,10 @@ unsigned int cfg80211_classify8021d(struct sk_buff *skb,
- 	 * Diffserv Service Classes no update is needed:
- 	 * - Standard: DF
- 	 * - Low Priority Data: CS1
--	 * - Multimedia Streaming: AF31, AF32, AF33
- 	 * - Multimedia Conferencing: AF41, AF42, AF43
- 	 * - Network Control Traffic: CS7
- 	 * - Real-Time Interactive: CS4
-+	 * - Signaling: CS5
- 	 */
- 	switch (dscp >> 2) {
- 	case 10:
-@@ -1026,9 +1026,11 @@ unsigned int cfg80211_classify8021d(struct sk_buff *skb,
- 		/* Broadcasting video: CS3 */
- 		ret = 4;
- 		break;
--	case 40:
--		/* Signaling: CS5 */
--		ret = 5;
-+	case 26:
-+	case 28:
-+	case 30:
-+		/* Multimedia Streaming: AF31, AF32, AF33 */
-+		ret = 4;
- 		break;
- 	case 44:
- 		/* Voice Admit: VA */
--- 
-2.42.0.windows.2
+Changes in V2:
+
+- The compatible property for the UART is changed from "ns16650,loongson"
+
+    to "loongson,ls7a-uart".
+
+
+Best regards,
+
+Haowei Zheng
 
 
