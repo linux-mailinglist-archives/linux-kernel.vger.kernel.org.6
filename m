@@ -1,125 +1,288 @@
-Return-Path: <linux-kernel+bounces-277522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A5394A288
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:16:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C7C94A299
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF96FB21E6C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:14:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6C07B2AB3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBFE1C9DD3;
-	Wed,  7 Aug 2024 08:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233F71C9DC7;
+	Wed,  7 Aug 2024 08:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qz5p3paD"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PJaOcnyV"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E090A18D63A;
-	Wed,  7 Aug 2024 08:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35A28F77;
+	Wed,  7 Aug 2024 08:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723018456; cv=none; b=BOq7f8RKU4Vqz8R7RvNgb7LHdGMMiul8Wvhd4oISHz8jQcaW00vqBJNzr3giNK7K+CKwLcW9WtLS7ta1JnlMqah4WlOb+4pkflkO97Qs3+V++XS3ihjLuEwnU7bidKOL74VF2E7V/R0ceahSZxz/1jWS1JMWaVzpuagtAGog8nU=
+	t=1723018924; cv=none; b=lpFeTueGKawLzo/hMosgcIfyHKI2QEvORG6NZ1f/elmJYrXzFB9qxDEWNRC7/GmjxFh9J9rrS6SuzzXoJ3Fm5VUYf4rQcXifB9uie6juZJHz59T3RerzeJdYUU8S3Vo/FPGPsjV3XQiP0jAc1OoWV72dmQaLWuRY88u6aj+eOI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723018456; c=relaxed/simple;
-	bh=xGOE/Rqpe5wqGr2Rw7Tt55WVZ0LS6kGCawP4TtAXfYU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IxzHR5395MnD9cKLk3t/fWMngt3n4YirBAh1lrHXkYF5AP8p6+lkqbN8m5XX0kEHwHFVpg8bhpTic2+tC75j+waQG4RV9cOEkuZCmWIwv1OzUbjoxEAxlpiZ+YqjsoJq/BSnKFxawiusge5nuQlne0B9J5NWc2Utos1UlbIWov0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qz5p3paD; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7a1be7b7bb5so960970a12.0;
-        Wed, 07 Aug 2024 01:14:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723018454; x=1723623254; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xGOE/Rqpe5wqGr2Rw7Tt55WVZ0LS6kGCawP4TtAXfYU=;
-        b=Qz5p3paDCeUTjppgfdjCNXHftc5OHXMeMI2GMutfkc2RHXINVou58p9l00aaX1VuDY
-         VkZxb9K8iAHRjpD0WanaXB2QGOzYMUxSgKz95CEr5k5ApcVn+ZGx9UTXk/N61+WklVwy
-         kIavKJPNBUApYF89fU8qsmzuY2vIANfUWHC/qVPHdb7WKvZvU5N56SDyAJVwzKaiEQki
-         ypVby23SA3Se1Mtde3N+xvSma2defPji7X3PRFDytyivAIT29uqJ0jURoqxGLiVfqL3n
-         dYbfzx8o6UlFxLJYvhJnMwdHSUEL76lEQ0dL61//qrhdz4C/MDSAStLgRfRGgdG/lhZe
-         g6pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723018454; x=1723623254;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xGOE/Rqpe5wqGr2Rw7Tt55WVZ0LS6kGCawP4TtAXfYU=;
-        b=slAiVOvVhQD823Veq3mGlXBinXB7+rZV6VCzLiI7XHJJKM8O7wV2A8bIGLRS60ed8g
-         Sh9yZQ92f5Lp6rwIUBNvQZyFR9a08TTL3j96O4jr1AUWnA3Lg3iHHzcmtcWjaTedj+BJ
-         17ct+pmD5iU7lJvV+ybqgJtM05uYRa9A/r/5rx9QYcZC3Br+kA4G5fpcePacmhdhQSPe
-         yuOoz34fdQJgWmpwoLT9O3fqh74pKFZsx9KYERUh4i4GSyRSWKZB4B0QPOAlmExLMKmv
-         OSInMVf23MNrJFkuQdvmCGhSLFCBxMNdlUwbtIpIo4YJy54s6XFf86TVSnl/fAqrQLu0
-         5Ftg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyKBg5h1EbkKRhdgoAO2EvMCEMU/r56aWbFQJx0dAEvCgWfi/1hoc5CqbsPzAgKXf+BWFE/Gck4bz8DHibO3iixCoKg6Yv1gtXSiaYMTlwDx2AzVisysO+vQs8HiS4CWsmFIvHXihPlLRJpiPLkrkuwFhTScq/ZI7qZIS+8TOfr6UV/f0=
-X-Gm-Message-State: AOJu0YyXhfx8lVSprYmGZv9Az92vceigdgve7rEHg4oA92YGqbsSYMVr
-	fuG7OoeVEraSErm4CjR/elBsk/I6ECgp/rnW+H7U5Zg4yY5q2rzek5omFwUflHTdM//h9Eg9cgG
-	P2SYesTHB3HaQHVpro/y2FEwHvmY=
-X-Google-Smtp-Source: AGHT+IF9aJeXLSs92hnq+Z/eOQQVXBSK2NbgKbVKiZoV3tzpx2GqtTdjbOj37bUfTuogxl0r/63bkHy9IwoKRMRJGbo=
-X-Received: by 2002:a17:90a:62c8:b0:2c8:3f5:37d2 with SMTP id
- 98e67ed59e1d1-2cff9447498mr20746657a91.20.1723018454172; Wed, 07 Aug 2024
- 01:14:14 -0700 (PDT)
+	s=arc-20240116; t=1723018924; c=relaxed/simple;
+	bh=GyhHa6ad3n3aoeuBPXbI8Y2yKlsKfERayuRlts9uSUQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
+	 MIME-Version:References; b=p9RuRcpr6lphYGMPxo7cHujhrfM93e7HHaLT1ckVafyOBBprHpj3yo7cBL2lpoauigM7muaek6m/1NQ1cc+MWgZ59L1ZQSuwzoWcLwqHF2yzp0IQ7OO+p4JXeg1rxQ+aUk8kITtUke7lKzvKhgjh5WdYtdXBzKvlMBjltQ1bzwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PJaOcnyV; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240807081355euoutp0246daebd629ca2d671dfec80d6afd0ebe~pZCNRNIiO2254122541euoutp02w;
+	Wed,  7 Aug 2024 08:13:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240807081355euoutp0246daebd629ca2d671dfec80d6afd0ebe~pZCNRNIiO2254122541euoutp02w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1723018435;
+	bh=n9u13BLc1/Av6vacu5XOn99roQyFwYtJJqhaCiMmdoc=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+	b=PJaOcnyV+4yJ/to0LVbznuSw5dhddOhL6L4/n6sSOf3fwG7DLXMyQqSauzTvgkp54
+	 K1V5wNK1VLrUXpm3o53az2ZBvWL6eu3lL/qM9ndeHs5lDjVYc0twciZa4Yf0TBj4uM
+	 Zsf1ivcXr+aFXkVJD5ENOO60XHi6YWhnwp+qs+6Q=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240807081355eucas1p192b35d483bbc7c0f5fd8f98537b5d916~pZCNAwd7D2938229382eucas1p1q;
+	Wed,  7 Aug 2024 08:13:55 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id E2.24.09620.2CC23B66; Wed,  7
+	Aug 2024 09:13:54 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240807081354eucas1p175713174856919970a701a2b8738b9c7~pZCMU_e8-2943329433eucas1p1e;
+	Wed,  7 Aug 2024 08:13:54 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240807081354eusmtrp23393ddf9d4e20be6fcc4c78e46cb51ae~pZCMSOqwl0317503175eusmtrp2p;
+	Wed,  7 Aug 2024 08:13:54 +0000 (GMT)
+X-AuditID: cbfec7f5-d1bff70000002594-2b-66b32cc2be5f
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id DC.39.08810.1CC23B66; Wed,  7
+	Aug 2024 09:13:54 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240807081353eusmtip154691cfcb25d38d126937c3750e07f54~pZCL9A4av2830328303eusmtip1U;
+	Wed,  7 Aug 2024 08:13:53 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
+	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
+	Server (TLS) id 15.0.1497.2; Wed, 7 Aug 2024 09:13:52 +0100
+Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
+	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Wed, 7 Aug
+	2024 09:13:52 +0100
+From: Daniel Gomez <da.gomez@samsung.com>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+CC: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
+	<nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
+	=?iso-8859-1?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>, William Hubbs <w.d.hubbs@gmail.com>, "Chris
+ Brannon" <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>, "Samuel
+ Thibault" <samuel.thibault@ens-lyon.org>, Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek
+	<omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
+	Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
+	<oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, Suzuki K
+	Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, Jiri Slaby
+	<jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, "Bill
+ Wendling" <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"speakup@linux-speakup.org" <speakup@linux-speakup.org>,
+	"selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, "linux-serial@vger.kernel.org"
+	<linux-serial@vger.kernel.org>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>, Finn Behrens <me@kloenk.dev>, "Daniel Gomez
+ (Samsung)" <d+samsung@kruces.com>, "gost.dev@samsung.com"
+	<gost.dev@samsung.com>
+Subject: Re: [PATCH 04/12] drm/xe: xe_gen_wa_oob: fix
+ program_invocation_short_name for macos
+Thread-Topic: [PATCH 04/12] drm/xe: xe_gen_wa_oob: fix
+	program_invocation_short_name for macos
+Thread-Index: AQHa6FXbw2zXqVW9ckie+aU8ZAXkwrIa9tWAgABrNIA=
+Date: Wed, 7 Aug 2024 08:13:51 +0000
+Message-ID: <mhrznemgfocotpgkyze7l73e6237wygja6lrvmodeka6ehbkgc@h6fzyrcsmci2>
+In-Reply-To: <67ahzgfa63gs7ybbunthdiwodlaihzqerb5xmkrgfgrbmghjmw@d57hhuwaf53i>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <6061A4101764934EA47CBCA8181EF747@scsc.local>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805071743.2112-1-hhoracehsu@gmail.com> <20240806090844.GR2636630@kernel.org>
- <ZrIDQq1g6w/zO25l@debian> <87ttfwiyn6.fsf@kernel.org>
-In-Reply-To: <87ttfwiyn6.fsf@kernel.org>
-From: =?UTF-8?B?5b6Q6YOB6ZaO?= <hhoracehsu@gmail.com>
-Date: Wed, 7 Aug 2024 16:13:37 +0800
-Message-ID: <CAG_MuouHwMqHDsTw=7j9dYd4Ow_HvgyjuU1MK6aVb2Vb+uz4sw@mail.gmail.com>
-Subject: Re: [PATCH] wifi: cfg80211: fix bug of mapping AF3x to incorrect User Priority
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Guillaume Nault <gnault@redhat.com>, Simon Horman <horms@kernel.org>, johannes@sipsolutions.net, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, Ido Schimmel <idosch@nvidia.com>, 
-	=?UTF-8?B?5b6Q6YOB6ZaO?= <hhoracehsu@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUxTVxjGPff23lsQ3F0hcmAYYodzOuhwzu04jRhm4s0yNsxIHMwFO7h8
+	bFBICxNZokQYWBApCkMqMCjjGwMp0EH5ks9SPjQMKSgyC8LEohQCGiSOjlJc+O/35nnO87zv
+	H4eL89IpJ26YKJoVi4ThfNKao+p5dce9w6022GOgyR31jiowZCy5AlBPxSyOmkwTODKpMnB0
+	74WRRAlF1SRaqZ3F0KPWUgzN5zmj3yqLSJQ/pOUgQ10nBykf6wj0Wt2AoWF1LokGitIoNJ3Z
+	RqKZxyUkKlys56BJ/RiBGnO1BGqpHiaRcniJQEnSEgIll8+QaEFmwtA/Lb0Eynr1jETPZd0U
+	Gr+WzUFtch2FylayAbqr6aGQqmEQoCd3rwOUMz4O0FzDemjdswwCKZI+RYkPD6H7xTXU8f1M
+	VX4VYJp7Bkmm5WUBh1F31JJMo3yCYgqUMUxi13OCKWp+ijHKCinJ5EvzMcaUpieYLpOCYgrj
+	s3AmX3uKacurophHqRrMB/pbHw1iw8N+ZsUfHjtrHXqjUUVGGRxj1ww5nHiwZp8CrLiQ/hjm
+	ypKxFGDN5dFlAP75tIG0DMsALi6qN4clAEvnjfibJx163aZQCmB3UxpmFjZc+iSRRehfzzLK
+	qP+D9avDhNlF0vtgq1ZJmdmeFkB11+hGO07XvAUX2keBWbCjA2B/0QhpMZ2FtxRS3MKfwUrD
+	2IaHQ7vCxobU9SAu15b2hjOXD5jRiv4KXjJdNDsAvQtOla9uVOG0A3ww/TtmueBtqLjZvHnN
+	TrimniQt7AYHR6eBhT1gfXErx8K74eWe+6QlRwDHsjI3+TDMudGIW/gDWFI4t8G26/nanGmO
+	+SxIp9jAl73JhCXoBJy63bJZbAcNmjpKBtzkW/aTb+mQb+mQb+mQb+koAEQFcGBjJBEhrOSg
+	iD0nkAgjJDGiEEFgZIQSrP+Z/jXNiwZQZlgUdACMCzoA5OJ8e9uE08pgnm2Q8HwcK44MEMeE
+	s5IO8A6Xw3ew3RPkwvLoEGE0+xPLRrHiNyrGtXKKx+wU5JGB7vIRf7T35B+ykazevMrjzt+v
+	6FHcX++W3zScmtfEkts1d3a8f+GYlyzbD+0+YrNd7Oosb0/5ljf6d9c2L897cbcop2075247
+	f+ey4p+Q3jdu8rwYtHqm+AtV5LUl4RAYeu2cahN+9UKJLES2Y/mXc6HSWKeiuLT3PvKtOezT
+	y17N9PHomvYjJhXBKkF1y2hn4J7P+5y0dmk/1p9eMMIUR88zwL30k4C9fdUhet2v/qGHRhyv
+	RzXH42TG8vz5fSKdd6bgG5crT9IdHyaZLk0lSpUPond5l0xE+waC8R9mXRN4Xw/pgm18+9rV
+	EUav7i+DDkrCTvKP/tvs59LE7+RzJKHCA/txsUT4Hzj2n2iiBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1CUZRTGe7/bLjZMX4jyRjTVxthEtLLcfBcUHVP7sJSwBicZgk1WoIBl
+	dlmQnGoHxLg2gHJbEYEV4jaByyVArgstMoS0cRcQEDDkEqHExWHYdv1shv9+57zPc54578zh
+	4maZHEtuUGi4WBoqCuZRu4ju7c7xDzS2VRfssrNxdHeoAEPLRUkAaUvncHRHP44jfW0qjvr/
+	XaZQjKqCQhtVcxiaaP4ZQ3/fsEIZZSoK5eq6CDRf3U4g9fQgibYa6jDU15BDod9VyRw0c62F
+	QrPTRRTKX6kh0NTkMInqc7pI1FTRRyF131MSXYkvItGPJbMU+idFj6FHTXdJlL65SKGllN84
+	aDQtk0AtykEOKt7IBKi3U8tBtXU9AP3VexWg7NFRgBbqDEOrF1NJVHDlALo85oRGCis5R2yY
+	8txywDRqeyimaS2PYBo0VRRTrxznMHlqOXO5Y4lkVI2PMUZdGk8xufG5GKNPniSZDn0Bh8lX
+	pONMbpcn03KjnMNMJHZin8Jz/INSiTxc/FagRBZ+iOctQPZ8gRDx7R2FfIHDAR8XeyfefreD
+	/uLgoAixdL+bHz8wq76WCpt/7eL2fDahANvmCcCEC2lHqJkcpIxsRhcC2F71Ltu3grdXB0iW
+	d8OtwQSDZpdBswLgQnE7yRbdAG4VRnPYohjA1pw5zGih6Pdgc5eaY2Rzmg8bOoYwowinK1+B
+	bZox3Piwm/aF3aoBihX5weuKGYJlF1g2PwyMTNDWsL4u0TCIyzWlT8HZOAEbdhODG0+qMWPf
+	hD4No/U/GOWAfgM+LHn2PBenLeD9mZsYuwINbzX24izvgY+nt1+sZgt7hmYAy3awprCZYPlt
+	GKcdodg5fDicfu0FC2F2Vj3O8vuwKH/hOZvSr8Ku7BkiBVgpd0Qrd9iVO+zKHXblDnseIEuB
+	uVguCwkIkQn4MlGITB4awD8vCVEDw4XUajer6kDu/ApfAzAu0ADIxXnmpjFn1RfMTP1FUd+K
+	pRJfqTxYLNMAJ8PXpeKWe85LDCcWGu4rcLZzEjg6C+2chM4OPAtT97A4kRkdIAoXfyMWh4ml
+	//swromlAou795LWNi0pbu+A8pOVlKt/8KzjVWuHLfwrpta92idg4rGlE6AMj6xN+9xGqw4q
+	ifHYnI6N+uo6WTEamOVSxPjfCvduuyiJ+H6vU5JOcSx+zRTbOu2Q+LFOEn242cVV+YVrYY2X
+	25k3v7wUFWluWeMjVmzZ3LuELxwaf+J1fMtj1XnfUH+5Z9O5PnmCjfejpDIu/GzEY8kz7FQO
+	ZS1sTWiP904+4vPRTyd4JplH+7+LyOjHYqVEU9/J6NWpwQdSHal7MPrnYmxL6PqHsl+jUtZv
+	Ry133OG6O559+Po+9+m2jmc9TyeSo+xcvU7aHH0nMvN+q0o1NjB25uuXf/HTFY9XZoTU8AhZ
+	oEhgg0tlov8AOGy1gaoEAAA=
+X-CMS-MailID: 20240807081354eucas1p175713174856919970a701a2b8738b9c7
+X-Msg-Generator: CA
+X-RootMTR: 20240807015044eucas1p1998fac358d6afafce6c58478c2834d26
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240807015044eucas1p1998fac358d6afafce6c58478c2834d26
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
+	<20240807-macos-build-support-v1-4-4cd1ded85694@samsung.com>
+	<CGME20240807015044eucas1p1998fac358d6afafce6c58478c2834d26@eucas1p1.samsung.com>
+	<67ahzgfa63gs7ybbunthdiwodlaihzqerb5xmkrgfgrbmghjmw@d57hhuwaf53i>
 
-Kalle Valo <kvalo@kernel.org> writes:
->
-> Guillaume Nault <gnault@redhat.com> writes:
->
-> > On Tue, Aug 06, 2024 at 10:08:44AM +0100, Simon Horman wrote:
-> >> + Guillaume and Ido
-> >>
-> >> On Mon, Aug 05, 2024 at 03:17:42PM +0800, hhorace wrote:
-> >> > According to RFC8325 4.3, Multimedia Streaming: AF31(011010, 26),
-> >> > AF32(011100, 28), AF33(011110, 30) maps to User Priority = 4
-> >> > and AC_VI (Video).
-> >> >
-> >> > However, the original code remain the default three Most Significant
-> >> > Bits (MSBs) of the DSCP, which makes AF3x map to User Priority = 3
-> >> > and AC_BE (Best Effort).
-> >> >
-> >> > Signed-off-by: hhorace <hhoracehsu@gmail.com>
-> >>
-> >> Adding Guillaume and Ido as this relates to DSCP.
-> >
-> > Thanks. The patch looks good to me (only missing a Fixes tag).
-> >
-> > Just a note to hhorace: the entry for CS5 (case 40) is useless as CS5
-> > is 101000. So the value of the 3 high order bits already is 5 (in case
-> > you want to make a followup patch for net-next).
+On Tue, Aug 06, 2024 at 08:50:09PM GMT, Lucas De Marchi wrote:
+> On Wed, Aug 07, 2024 at 01:09:18AM GMT, Daniel Gomez via B4 Relay wrote:
+> > From: Daniel Gomez <da.gomez@samsung.com>
+> >=20
+> > Use getprogname() [1] instead of program_invocation_short_name() [2]
+> > for macOS hosts.
+> >=20
+> > [1]:
+> > https://www.gnu.org/software/gnulib/manual/html_node/
+> > program_005finvocation_005fshort_005fname.html
+> >=20
+> > [2]:
+> > https://developer.apple.com/library/archive/documentation/System/
+> > Conceptual/ManPages_iPhoneOS/man3/getprogname.3.html
+> >=20
+> > Fixes build error for macOS hosts:
+> >=20
+> > drivers/gpu/drm/xe/xe_gen_wa_oob.c:34:3: error: use of
+> > undeclared identifier 'program_invocation_short_name'    34 |
+> > program_invocation_short_name);       |                 ^ 1 error
+> > generated.
+> >=20
+> > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> > ---
+> > drivers/gpu/drm/xe/xe_gen_wa_oob.c | 8 +++++++-
+> > 1 file changed, 7 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c b/drivers/gpu/drm/xe/xe=
+_gen_wa_oob.c
+> > index 904cf47925aa..079b8870c461 100644
+> > --- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> > +++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> > @@ -9,6 +9,12 @@
+> > #include <stdbool.h>
+> > #include <stdio.h>
+> > #include <string.h>
+> > +#define PROG_INV_NAME program_invocation_short_name
+> > +
+> > +#ifdef __APPLE__
+> > +#include <stdlib.h>
+> > +#define PROG_INV_NAME getprogname()
+> > +#endif
+> >=20
+> > #define HEADER \
+> > 	"// SPDX-License-Identifier: MIT\n" \
+> > @@ -31,7 +37,7 @@
+> > static void print_usage(FILE *f)
+> > {
+> > 	fprintf(f, "usage: %s <input-rule-file> <generated-c-source-file> <gen=
+erated-c-header-file>\n",
+> > -		program_invocation_short_name);
+> > +		PROG_INV_NAME);
+>=20
+> instead of doing that, can we a) include stdlib.h unconditionally and b)
+> add here a
+> `static const char *program_invocation_short_name =3D getprogname()` so w=
+e
+> don't need to change the common case and just handle the "build on
+> macos" as a compat layer?
 
-Sure. I will add it in next version.
+Does this align with your suggestion (v1 diff)?
 
->
-> Minor clarification: cfg80211 patches go to wireless-next, not net-next.
+Note that static cannot be use here.
 
-Thanks for your clarification.
+diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c b/drivers/gpu/drm/xe/xe_gen=
+_wa_oob.c
+index 079b8870c461..b3add20ccb01 100644
+--- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
++++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+@@ -9,12 +9,7 @@
+ #include <stdbool.h>
+ #include <stdio.h>
+ #include <string.h>
+-#define PROG_INV_NAME program_invocation_short_name
+-
+-#ifdef __APPLE__
+ #include <stdlib.h>
+-#define PROG_INV_NAME getprogname()
+-#endif
 
->
-> --
-> https://patchwork.kernel.org/project/linux-wireless/list/
->
-> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+ #define HEADER \
+        "// SPDX-License-Identifier: MIT\n" \
+@@ -36,8 +31,11 @@
+
+ static void print_usage(FILE *f)
+ {
++#ifdef __APPLE__
++       const char *program_invocation_short_name =3D getprogname();
++#endif
+        fprintf(f, "usage: %s <input-rule-file> <generated-c-source-file> <=
+generated-c-header-file>\n",
+-               PROG_INV_NAME);
++               program_invocation_short_name);
+ }
+
+ static void print_parse_error(const char *err_msg, const char *line,
+
+>=20
+> Lucas De Marchi
+>=20
+> > }
+> >=20
+> > static void print_parse_error(const char *err_msg, const char *line,
+> >=20
+> > --=20
+> > Git-146)
+> >=20
+> > =
 
