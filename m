@@ -1,166 +1,111 @@
-Return-Path: <linux-kernel+bounces-278485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446D594B0E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:06:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B688D94B0EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6E811F22FD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:06:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41D73B21F92
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF966145B0B;
-	Wed,  7 Aug 2024 20:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gl8WZrpf"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D5E145A1C;
+	Wed,  7 Aug 2024 20:08:32 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6072E82499;
-	Wed,  7 Aug 2024 20:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505BA364BC;
+	Wed,  7 Aug 2024 20:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723061167; cv=none; b=NV7EWT9RmnrDL7T3rhUI99mmEM3Nyc/9pzlU3zXSfgwZPKrgbQAGZZeqWQr04Bl27bb0C7yNU94McgxlssWF98+t8YWOKXpDXrUJ53nFRrByhATLxKXIQbDEG89HWb5f7WKMQU0k9S2IhGD2/Ds83xYFNlzOfgVIzBDA5dzs4mE=
+	t=1723061312; cv=none; b=E2RTvzq1hPsporr6oSmjEJpjNSC7FRz7BOLSs6JhhEKyp2G3QAilCxhG+uEibQbYoBt6cobHON6yXaNewQowJ+1Upgk8pDe6aXHIASQhR01G8ki4kpbrWxef7Yh02x1udfx+0b6F32LQiTJ21MerQ+dEwtCw5uDKdl6YrRC/Sjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723061167; c=relaxed/simple;
-	bh=tP5PZPiSOfnHtE2NF+/nff/1qVnyTM8U4pN2u4dY22w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=a7ClPsAsJ9oGRm6mS1kW2SzmhgS8rJiJPz3NhSy9Ow15ETrJcFOvhURTvwmSPN64fzFvEFBkWglDz/bEOuNU/vu16Q0ZXhXstXEOIGoQCnncP5MXj5EnnndQfhNgw4HKUrIbRmWe3Msjl8Dy4qIcSYEr0qTj+o8Xy7waawHZOdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gl8WZrpf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477I2CCO016435;
-	Wed, 7 Aug 2024 20:05:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BBQkqFMaehnNVf00RomtVqmkJg9WcgOkBeKwzL5TMP8=; b=Gl8WZrpfsq2WndmI
-	vq8ltohYyFRNsQAOOipCQh8AY3CKAU9orOFIjFKQy0/IwVK7qM++/1CFtBXWhRkI
-	+v8nzim8SsXu4MoDcH9kmgQ54yZ5v3ZrEibnkVVkI/+dehSKb/M98CvR18kk/0c5
-	HAj4B3v//ASNN1SES+XeGFR8sCMlhTu/fnsA2f5gHf5rAlgyl7cicSCOuqwA7sT9
-	oQ6yhVzdNyuAvwwlkLhqIQQC30k3WTXxL7nDr1OGyLaRs2Gxf3uqCx74qk3bqV6E
-	WbRtyPWvTvpZVUiBLhiBpS7XlswmpzGCJYPeVPdb9SKtenkhVelHRA6OpbxJ55bQ
-	DmgG7g==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vdupg851-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 Aug 2024 20:05:37 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 477K5akV014973
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 7 Aug 2024 20:05:36 GMT
-Received: from [10.71.113.127] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
- 13:05:35 -0700
-Message-ID: <09aa3611-42bb-413a-b5a6-6d08045e5c00@quicinc.com>
-Date: Wed, 7 Aug 2024 13:05:35 -0700
+	s=arc-20240116; t=1723061312; c=relaxed/simple;
+	bh=VlF0Eedmz7/4NAV+JIdWlb1hHgZwCVfOaxXUkFTCDCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GLNQ6kF0uX5o7MniYdRQMU7QiEBgvCjn/S5zwqu8dDPlMWuMpG2RD8wgug1B1vJcBuOEc7ASWQjmMwreKFHZl8CeFkhIZYvMigk+kK+iUUniTMKY0vJ39tpWmL8INfgzjNzaa8o3kEBiFhnbt4Ugbc2oOiYfMxi6O5omo50pp6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA0ACC32781;
+	Wed,  7 Aug 2024 20:08:27 +0000 (UTC)
+Date: Wed, 7 Aug 2024 16:08:26 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Song Liu <songliubraving@meta.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Song Liu <song@kernel.org>,
+ "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
+ <linux-trace-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>, Petr
+ Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, Nathan
+ Chancellor <nathan@kernel.org>, "morbo@google.com" <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Luis Chamberlain
+ <mcgrof@kernel.org>, Leizhen <thunder.leizhen@huawei.com>,
+ "kees@kernel.org" <kees@kernel.org>, Kernel Team <kernel-team@meta.com>,
+ Matthew Maurer <mmaurer@google.com>, Sami Tolvanen
+ <samitolvanen@google.com>
+Subject: Re: [PATCH v2 3/3] tracing/kprobes: Use APIs that matches symbols
+ without .XXX suffix
+Message-ID: <20240807160826.269f27f8@gandalf.local.home>
+In-Reply-To: <2622EED3-19EF-4F3B-8681-B4EB19370436@fb.com>
+References: <20240802210836.2210140-1-song@kernel.org>
+	<20240802210836.2210140-4-song@kernel.org>
+	<20240806144426.00ed349f@gandalf.local.home>
+	<B53E6C7F-7FC4-4B4B-9F06-8D7F37B8E0EB@fb.com>
+	<20240806160049.617500de@gandalf.local.home>
+	<20240806160149.48606a0b@gandalf.local.home>
+	<6F6AC75C-89F9-45C3-98FF-07AD73C38078@fb.com>
+	<20240807090146.88b38c2fbd1cd8db683be22c@kernel.org>
+	<BEEE3F89-717B-44A4-8571-68DA69408DA4@fb.com>
+	<20240807190809.cd316e7f813400a209aae72a@kernel.org>
+	<2622EED3-19EF-4F3B-8681-B4EB19370436@fb.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 17/34] ASoC: qcom: qdsp6: Add USB backend ASoC driver
- for Q6
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <gregkh@linuxfoundation.org>, <robh@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-18-quic_wcheng@quicinc.com>
- <5f37c04d-f564-40b9-a9f3-d071ea0a6f19@linux.intel.com>
- <1a284449-204a-4d01-90c9-ec6b1ed56e30@quicinc.com>
- <1a2d0962-405d-4ccf-a0da-00a624c0f3e8@linux.intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <1a2d0962-405d-4ccf-a0da-00a624c0f3e8@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: mjrcji4RzpWV_B4Ua1x-VexTrXY01KX0
-X-Proofpoint-GUID: mjrcji4RzpWV_B4Ua1x-VexTrXY01KX0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-07_11,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 impostorscore=0 mlxscore=0
- clxscore=1015 mlxlogscore=999 spamscore=0 bulkscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408070141
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Pierre,
+On Wed, 7 Aug 2024 19:41:11 +0000
+Song Liu <songliubraving@meta.com> wrote:
 
-On 8/1/2024 11:32 PM, Pierre-Louis Bossart wrote:
->
-> On 8/2/24 01:10, Wesley Cheng wrote:
->> Hi Pierre,
->>
->> On 8/1/2024 1:40 AM, Pierre-Louis Bossart wrote:
->>>
->>>> +static int q6usb_hw_params(struct snd_pcm_substream *substream,
->>>> +			   struct snd_pcm_hw_params *params,
->>>> +			   struct snd_soc_dai *dai)
->>>> +{
->>>> +	struct q6usb_port_data *data = dev_get_drvdata(dai->dev);
->>>> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
->>>> +	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
->>>> +	struct q6afe_port *q6usb_afe;
->>>> +	struct snd_soc_usb_device *sdev;
->>>> +	int ret;
->>>> +
->>>> +	/* No active chip index */
->>>> +	if (list_empty(&data->devices))
->>>> +		return -EINVAL;
->>>> +
->>>> +	mutex_lock(&data->mutex);
->>>> +	sdev = list_last_entry(&data->devices, struct snd_soc_usb_device, list);
->>>> +
->>>> +	q6usb_afe = q6afe_port_get_from_id(cpu_dai->dev, USB_RX);
->>>> +	if (IS_ERR(q6usb_afe))
->>>> +		goto out;
->>>> +
->>>> +	/* Notify audio DSP about the devices being offloaded */
->>>> +	ret = afe_port_send_usb_dev_param(q6usb_afe, sdev->card_idx,
->>>> +						sdev->pcm_idx);
->>>> +
->>>> +out:
->>>> +	mutex_unlock(&data->mutex);
->>>> +
->>>> +	return ret;
->>>> +}
->>> Humm, multiple questions here
->>>
->>> a) is this intentional that the params are not used in a hw_params routine?
->> Think this was answered in patch#34.
-> yes, but that really begs the question if the format check shouldn't be
-> added here.
 
-Sure, I'm not against squashing the format check to this patch.
+> It appears there are multiple APIs that may need change. For example, on gcc
+> built kernel, /sys/kernel/tracing/available_filter_functions does not show 
+> the suffix: 
+> 
+>   [root@(none)]# grep cmos_irq_enable /proc/kallsyms
+>   ffffffff81db5470 t __pfx_cmos_irq_enable.constprop.0
+>   ffffffff81db5480 t cmos_irq_enable.constprop.0
+>   ffffffff822dec6e t cmos_irq_enable.constprop.0.cold
+> 
+>   [root@(none)]# grep cmos_irq_enable /sys/kernel/tracing/available_filter_functions
+>   cmos_irq_enable
 
-Thanks
+Strange, I don't see that:
 
-Wesley Cheng
+  ~# grep cmos_irq_enable /proc/kallsyms 
+  ffffffff8f4b2500 t __pfx_cmos_irq_enable.constprop.0
+  ffffffff8f4b2510 t cmos_irq_enable.constprop.0
 
->>> b) if yes, could this be replaced by a .prepare callback
->>>
->>> c) along the same lines as b), is suspend-resume during playback
->>> supported? Usually this is handled with a .prepare callback to restore
->>> connections.
->> I don't see us supporting that throughout any of the QC based DAI drivers, so this probably isn't implemented yet.  In terms of supporting system PM suspend for this USB offload path, we're going to explicitly stop the audio stream from the USB offload driver (qc_audio_offload) before we suspend the usb device. (refer to qc_usb_audio_offload_suspend()
-> The system suspend-resume during playback is not enabled in all
-> platforms indeed, it mostly depends on what userspace does. IIRC this is
-> required for Chrome/CRAS and it's supported by aplay.
+  ~# grep cmos_irq_enable /sys/kernel/tracing/available_filter_functions
+  cmos_irq_enable.constprop.0
+
+-- Steve
+
+> 
+> perf-probe uses _text+<offset> for such cases:
+> 
+>   [root@(none)]# cat /sys/kernel/tracing/kprobe_events
+>   p:probe/cmos_irq_enable _text+14374016 
+> 
+> I am not sure which APIs do we need to change here. 
+> 
+> Thanks,
+> Song
+> 
+> 
+
 
