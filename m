@@ -1,177 +1,107 @@
-Return-Path: <linux-kernel+bounces-277235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 944D2949E3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:21:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C184949E41
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC48283253
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:21:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8691F211A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 03:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1411917F6;
-	Wed,  7 Aug 2024 03:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="aY1KOsyh"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1115F17ADE2;
+	Wed,  7 Aug 2024 03:21:54 +0000 (UTC)
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6A618D63E
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 03:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC66F1DFEB
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 03:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723000843; cv=none; b=FmkCVb6V7GIa2dDFKyTtWPBmcJZT5KM+sX+UWzV8KIrNujdNmRv70LD0nBh/Qiszh73tmYshUnlKaspVu/OHuBRUxDRPfWLF3x2Gw/Yj8OJCU3h+ey3DgKiwT6ZQXM9hoQ7YfBcIF0v+jxUXNAT7kkxoA61fdVer125Er9R5phs=
+	t=1723000913; cv=none; b=BNK2w5P3BNVNoj+qcZtZr33jwaDIvejLvj+Tx/xQo7J9ttuFU4b7fZEgVnRtkheUAPCyUYaIeq4+GpIcz7VE8L0I3x7FhhXemN9AdH+MIiGOHyxvSKb6CqdVku8E8kylmd3mAVHuiJheaFwlC2OI7ZcMI5BzB4/YmT/9shEXckk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723000843; c=relaxed/simple;
-	bh=rINF0/w2RXu3LgEvP3KLdZjJJFVokCexX4VhnWu47v0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Lp/R2p206FAz0770tCj7jsUDBeka8SOvtIIKNKcjp/mYskchiqgjUfa09+pbLlbduNqtOPGxPiGfqZwc4ztwCLMvT0GcO/FYe0JntninTCXp8Spl/i0UE5m7NGs11uDszshafgUO2vtm/12orzEkrzF2Hbi9mQVLJDPF9xTv3bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=aY1KOsyh; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fda7fa60a9so11597645ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 20:20:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1723000842; x=1723605642; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nsStSsh4YnwHHUY0AwViJ/lLTrst77QUsVxz4gNzJ10=;
-        b=aY1KOsyhamv11j/mEyRKbD95Edpn35TY3oQxtUejPa4R0RPcfC5xCxRvpgvC6wQIn4
-         Cvtosp7mcTcufau0Pswwg8qCvdtSBjV92uj/MM3/P0kQo2iNBIBuDUm7TrKDiCrrX9lC
-         8Py+r7gR6Vd9so7TUUKsc84PvwCvLJKoJS1O1VoBLL0wNnWeKFkVOy18rgkegfCGgoEu
-         B4qLKEXgWScZnaz46DoQoTSHaAd//YrTTJVkDF54JfxbzW0Wd7PJWJkAXgtI5WytUDZ3
-         ozPBw47zDPvksovUIHTfMtkO5FPGQ1Y8cCXEjIbWggfZEq77CbLS/jSiXSctrlck7PAe
-         0FDw==
+	s=arc-20240116; t=1723000913; c=relaxed/simple;
+	bh=tE/y/HgqR5u3o/+rxlc2mI5vLOsYOlePoBjYyS7h7MU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=neTm+ppXcdvpCs+iLp4+bXBMMLm4X+NoroBfNCzBF4U2kyKQR6ACBLnWdxuVS2EajIwrx7t7pkDZDT0JuAtJTjcNDwrQ8z7JTGYlc0G+1xMJtFq5b6XmJ68nXwXqIhU5D7hdBb3/E17UUT5GzJQKG6GnyDWeXkpCqSWLYt9MnsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-81fda7d7a48so50937339f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 20:21:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723000842; x=1723605642;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723000911; x=1723605711;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nsStSsh4YnwHHUY0AwViJ/lLTrst77QUsVxz4gNzJ10=;
-        b=c1gR5AIoUEvMj87gDhLAoarobkhwwlzgCfuq4lmtVa1lO1FEC9em9x0XdW2cMetd0K
-         2ErrgiKJNrrN7eKh9epWOZH7wcsfzeYJM+KjT3TJdIilmzPBPRNEVgd+uF8WiP+3PAzb
-         LIFRphLK0EIOD/wgRXq1mTeGKrgubtTkG9UrZf8aVcPlEYkjZ5Bt4Zw2Is2ZXHVywkSF
-         wjoQZKDUuvzrgsV20sfEq51tz9y+QUQc91Ff4BTE4DYOdNNuyZOkrTOy1WQAVaSv6rPi
-         4/HsjJsNMJTKfFJEqdKUpOpR2o+eQ0rY/7NTderhDJgjEldeUIu9XRUkpX9UX53RRn8Z
-         cZ4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVBuHfUm/xRz5zJC23Axyi4PG+FUV0omrn2yxN0+g5cwLjDe0gFA+O+IZRGOQaOUouccamLUY3zqWdoLkU8UUkIMgyHSrbbcO374/es
-X-Gm-Message-State: AOJu0YwLQ+9lpMxKfOBb5+Ulm+3QMpLMYNysXqGfX14NF4LNMfVwDO1U
-	/mUZoGb5A2TamhzCPOIeCACAy3AxQVw1daQeWbxaQ2p3+2bokbQ2qD0dAiGifgs=
-X-Google-Smtp-Source: AGHT+IHBqzFOE4mX1tmXArkN6Z2508Y+TjWmx9lFGGyEhPZzEOt6Yb5xJ6MkSbfEAn31BUtta/3b4g==
-X-Received: by 2002:a17:902:ceca:b0:1fd:abd4:ed5b with SMTP id d9443c01a7336-1ff5735bcf9mr233515825ad.39.1723000841848;
-        Tue, 06 Aug 2024 20:20:41 -0700 (PDT)
-Received: from ubuntu20.04 ([203.208.189.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f19ebasm95116175ad.23.2024.08.06.20.20.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 20:20:41 -0700 (PDT)
-From: Yang Jihong <yangjihong@bytedance.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	leo.yan@arm.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: yangjihong@bytedance.com
-Subject: [PATCH v3 2/3] perf: build: Fix build feature-dwarf_getlocations fail for old libdw
-Date: Wed,  7 Aug 2024 11:20:18 +0800
-Message-Id: <20240807032019.1828674-3-yangjihong@bytedance.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240807032019.1828674-1-yangjihong@bytedance.com>
-References: <20240807032019.1828674-1-yangjihong@bytedance.com>
+        bh=tE/y/HgqR5u3o/+rxlc2mI5vLOsYOlePoBjYyS7h7MU=;
+        b=lRjRgHaV6b/RAUdrlmu/xKpDvQ9IERJr+oh+DtCMl4tKnfUVNju03CxLQbEV6GzT9V
+         scZD0szo5nm/y10W1sVaNiWA+/2TXQZlSxUI0CPvceReuEt/ahOr6BrXwV39j+BlJRYW
+         jlo5dvzk6x84t3kITcW8zAYdgZfD4aAmXyiEXWG4utNyDJMQUmnmGtcefU1QdPkn6/Fj
+         c3y4PAOHhEZdm2v6VE8H6ijGjEU5rOZZ9uTmYANDPQc2NcOVqaie8HOKlCN9wBY0EAwu
+         3Ns7vmymkLEuq34yO2bAqFMkKMs4abI7j8aULqeOAVGpY8PC8BwnbkQz+Fptg95gz7ja
+         scKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHHGNHoRX+ePl5ZOln6N2vCYaMil2O0EdYyXczU0d7uLlno5LMSLqyOjdOZXfuDgnid55hsdZgB6YgQnq9adY93pFPzq0MO3bYhrFm
+X-Gm-Message-State: AOJu0Yy2MEmsPPRUvmg1glcZDbW2qpkUwx0cBWfNWlEWCUO8t0uc8j8z
+	e8UmvGYZp6dxZhF+oVwKWVD6DI0VGmgywOr5EbTZzJ16McaU38bHtBK1dzMu
+X-Google-Smtp-Source: AGHT+IH1e74czTT0tfNT2VrcgjToWEnoJUnxoIJhRxIQ347jPH4Mi9/t/0067L+0BBrcA+6It0YfJg==
+X-Received: by 2002:a05:6602:27cf:b0:812:9c27:357c with SMTP id ca18e2360f4ac-81fd43652b4mr2874275139f.8.1723000910577;
+        Tue, 06 Aug 2024 20:21:50 -0700 (PDT)
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com. [209.85.166.47])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6a5c489sm2564597173.172.2024.08.06.20.21.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 20:21:50 -0700 (PDT)
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-81f8f0197abso60942839f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 20:21:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUcUFIV4eeVL+pZhMvv2kcBwX2W0JO8mpga7agjefg7z777wS62VNgr3F6tQw1c940pY3q9qKaROkqgNZxvKuhmLplPMdKdb4Fawl57
+X-Received: by 2002:a92:d591:0:b0:39a:ea6a:9a82 with SMTP id
+ e9e14a558f8ab-39b1fba1674mr197718075ab.13.1723000910171; Tue, 06 Aug 2024
+ 20:21:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240726071023.4078055-1-lsahn@wewakecorp.com> <ZqY81pf9dvl6mvg9@kernel.org>
+In-Reply-To: <ZqY81pf9dvl6mvg9@kernel.org>
+From: Leesoo Ahn <lsahn@ooseel.net>
+Date: Wed, 7 Aug 2024 12:21:39 +0900
+X-Gmail-Original-Message-ID: <CANTT7qg7JRZR0DpaUg_YFVTrbBDE9hrb_6bv4XDQ_3QXcgY_vw@mail.gmail.com>
+Message-ID: <CANTT7qg7JRZR0DpaUg_YFVTrbBDE9hrb_6bv4XDQ_3QXcgY_vw@mail.gmail.com>
+Subject: Re: [PATCH] mm/sparse: return right away if sparsemap_buf is null
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Leesoo Ahn <lsahn@wewakecorp.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For libdw versions below 0.177, need to link libdl.a in addition to
-libbebl.a during static compilation, otherwise feature-dwarf_getlocations
-compilation will fail.
+2024=EB=85=84 7=EC=9B=94 28=EC=9D=BC (=EC=9D=BC) =EC=98=A4=ED=9B=84 9:43, M=
+ike Rapoport <rppt@kernel.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> On Fri, Jul 26, 2024 at 04:10:23PM +0900, Leesoo Ahn wrote:
+> > sparse_buffer_fini(..) takes the following actions even though the valu=
+e of
+> > sparsemap_buf is NULL,
+> > 1. calculate size of sparsemap buffer (which is meaningless).
+> > 2. set sparsemap_buf variable to NULL (although it is already NULL).
+> >
+> > These steps are unnecessary if the variable, sparsemap_buf is NULL.
+> >
+> > Refactor the function to return right away if the variable is NULL.
+> > Hence, it doesn't need to take further actions.
+>
+> sparse_buffer_fini() is called a few times on init so saving a jump (if a=
+t
+> all) does not worth the churn.
 
-Before:
+Fair enough.
 
-  $ make LDFLAGS=-static
-    BUILD:   Doing 'make -j20' parallel build
-  <SNIP>
-  Makefile.config:483: Old libdw.h, finding variables at given 'perf probe' point will not work, install elfutils-devel/libdw-dev >= 0.157
-  <SNIP>
+Any related to refactoring codebase will be unlikely to be taken into upstr=
+eam??
 
-  $ cat ../build/feature/test-dwarf_getlocations.make.output
-  /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/libebl.a(eblclosebackend.o): in function `ebl_closebackend':
-  (.text+0x20): undefined reference to `dlclose'
-  collect2: error: ld returned 1 exit status
-
-After:
-
-  $ make LDFLAGS=-static
-  <SNIP>
-    Auto-detecting system features:
-  ...                                   dwarf: [ on  ]
-  <SNIP>
-
-    $ ./perf probe
-   Usage: perf probe [<options>] 'PROBEDEF' ['PROBEDEF' ...]
-      or: perf probe [<options>] --add 'PROBEDEF' [--add 'PROBEDEF' ...]
-      or: perf probe [<options>] --del '[GROUP:]EVENT' ...
-      or: perf probe --list [GROUP:]EVENT ...
-  <SNIP>
-
-Fixes: 536661da6ea1 ("perf: build: Only link libebl.a for old libdw")
-Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
----
- tools/build/feature/Makefile | 3 +++
- tools/perf/Makefile.config   | 5 ++++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-index a0167244b2f7..ead476b373f6 100644
---- a/tools/build/feature/Makefile
-+++ b/tools/build/feature/Makefile
-@@ -181,6 +181,9 @@ ifeq ($(findstring -static,${LDFLAGS}),-static)
-   ifeq ($(shell test $(LIBDW_VERSION_2) -lt 177; echo $$?),0)
-     DWARFLIBS += -lebl
-   endif
-+
-+  # Must put -ldl after -lebl for dependency
-+  DWARFLIBS += -ldl
- endif
- 
- $(OUTPUT)test-dwarf.bin:
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index b452794c763a..9fccdff682af 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -152,7 +152,7 @@ ifdef LIBDW_DIR
- endif
- DWARFLIBS := -ldw
- ifeq ($(findstring -static,${LDFLAGS}),-static)
--  DWARFLIBS += -lelf -ldl -lz -llzma -lbz2 -lzstd
-+  DWARFLIBS += -lelf -lz -llzma -lbz2 -lzstd
- 
-   LIBDW_VERSION := $(shell $(PKG_CONFIG) --modversion libdw).0.0
-   LIBDW_VERSION_1 := $(word 1, $(subst ., ,$(LIBDW_VERSION)))
-@@ -163,6 +163,9 @@ ifeq ($(findstring -static,${LDFLAGS}),-static)
-   ifeq ($(shell test $(LIBDW_VERSION_2) -lt 177; echo $$?),0)
-     DWARFLIBS += -lebl
-   endif
-+
-+  # Must put -ldl after -lebl for dependency
-+  DWARFLIBS += -ldl
- endif
- FEATURE_CHECK_CFLAGS-libdw-dwarf-unwind := $(LIBDW_CFLAGS)
- FEATURE_CHECK_LDFLAGS-libdw-dwarf-unwind := $(LIBDW_LDFLAGS) $(DWARFLIBS)
--- 
-2.25.1
-
+BR,
+Leesoo
 
