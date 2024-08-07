@@ -1,95 +1,212 @@
-Return-Path: <linux-kernel+bounces-277211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 480BA949DE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:41:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBFA949DF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA438B22674
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:41:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31BE51C20DC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339A9192B69;
-	Wed,  7 Aug 2024 02:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE9415DBDD;
+	Wed,  7 Aug 2024 02:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjggGnNk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TCqXbPeT"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CBD191F7B;
-	Wed,  7 Aug 2024 02:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F471E495
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 02:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722998434; cv=none; b=k8majh+GOo93l1Kcs+XXq37xvQijIbkQNXMia6TU8vUodZDf64G/Sz92qvqdwFdaO+98pPr1oLlbrrbF6XdRkEFEkeXdC7Pj0EBNaLpUH5Hb4y22LBzubfxqAg1jh/NRQev7cUSPNLWIqf9pZwGKpjzQ3BqDgS9IHm7mvlVYw7k=
+	t=1722999188; cv=none; b=qQAgzUWPTEePOwwls7xyHTC2e4frKbvIWwfLc3tsrDcz4TZjvQrWV6OpyGQJl4NMmm26CHzzkJs0AJeQ5L0afVd8SoJLbAj3TVGDh+rzStjV7ct/tu9vjfvmhG6xguDAttyv4SptBySiV3SFPxBaR2SjnLeubbDBqKG5b4BHBno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722998434; c=relaxed/simple;
-	bh=f3Z+wCihOK5J94SSpt+IiGHbdcx/LcE1HqKkYCKaA00=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=mrZsFGegknrdYKSqADfq6lHyV+eSfWNmP7Grt4EZESpz7rLqYl0EdymvsWezfSK11a2TzNR0FFrRKROn2KCJJYmSyN3fg/4MpyyTqpXRbHZXiUoeWXNC/xuxrh+rRkKHLtSLay+JwUGqy8omGzX8wKnbvu2oOcAJZd4YR1ooNwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NjggGnNk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E70E9C32786;
-	Wed,  7 Aug 2024 02:40:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722998434;
-	bh=f3Z+wCihOK5J94SSpt+IiGHbdcx/LcE1HqKkYCKaA00=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=NjggGnNkRqRBCYYrXeyuHzTmLkMeFg9rdEJmjg1vsgZeMuzQWMH6gmbDHH0lGUQrd
-	 cHoxOEXL4EW4WKE0ql2LCmOy94JR+s6guo302tVQ4kPhWLY5zAp+JavVIG1YHIAs4z
-	 urU1TVvQq7CepG9Pa3EmWkLKryaKpVphChGbDmTs5Z4fNoG4QYsaKmeuRcIaDq8jdH
-	 PZhntz6wKVz+CErMCfuWZksN1jnR1fxNCgOA1Ov48NbK7Dabi9g7zwIse6i0Ds+ban
-	 LQ+Ohancwxd76RxkNB0BL+dQc5h0egusLTyPemlqpevtoAApZzdZ9VT5vNcqoUGjba
-	 zVxCZhJH5DH1w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0BF39EFA73;
-	Wed,  7 Aug 2024 02:40:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1722999188; c=relaxed/simple;
+	bh=Vs+yRqnsnTYiBhgxijbw0m5004WaG/JwP8yyfpt0My4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rhbKvVDUOsoqmm3u6aCkpHtmQ/tqPc++985ESZWXFJgE4dedwzL/n5caXYpOz9K8I/5oWmPsOT9aQut45soUETuXwc7aqi8LKQ4f/mVeEc7Fie1fdlgunMSVl2qYoRFLrVfmBakjyxi7Kn7WZTxzyMFG+IrYo8wYe4xAkIjtxTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TCqXbPeT; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fc692abba4so13442445ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 19:53:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722999186; x=1723603986; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rxNTPURWQk7/dc/jj+R3PwdiQ6MWMSIu7JR1EjXWtLw=;
+        b=TCqXbPeTj9OLeJ6lF25Fzk4nAwCiIntKF+KYUaS0fvUKJjzFVzDFu02e5sXLfR1Att
+         MUHLt235TFs8kZSpu0cVNqy4OrYoDJVESvr4zfQ2sqvuhxIAuV/caDgnet0GbwHcQBmt
+         aoAZd0pV3w0VikEiznvXlnl0jRh+guvcf4rD+nXsqWznlJA1950TGPcNErIuk3AV3NuI
+         IgLxJ0nGRhb+vyXcBqE7UtBC7sytWG2lwputkKBSwxW5EY08nCZ/pcUQSkuicoygkNCQ
+         w1VCmAVFDNGEqqBLEEZNJkVh9LgOQI12P/ULph/Hrm+aX/B2vgid5ovPeQ3l8jLB9rcY
+         IHeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722999186; x=1723603986;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rxNTPURWQk7/dc/jj+R3PwdiQ6MWMSIu7JR1EjXWtLw=;
+        b=eBVjsDVyHXHGo60W4bFUNcxSkqNhhKERScC7a3Zt3j5MSNwKpATv3F7JSY1Ln9mk9f
+         IKdTbPurQw5UbXeVFrpvamMp5tMpFXgTwKkbLar1jEXQftuMUlucMOG8fGeotJ4ZJQOL
+         4q9AI/fQWrjL2vjU2gCHxWNFhrCLewgPUXAF8TNDILKeVliUX7sPt6usoeYnd/1wx1Lc
+         j7049G9SFFRJ/PkwcSXDrU6YrePPnxxtALM9YPVhYhOWvhmX7v6PZ7CoGJ1NP0ENCjtt
+         P0jux/7CN4PhZnPZkCX9v//j8obS43fPDaQ1K/1cbnyi4GgsdwMd1nP8L3yF98kt+znU
+         GFmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgQMlainPnh264OE1dRICiCtztAhYr0AMyYBFprbncGc3Zhzg2IfaZy4ZzR58woCpybo9WH8mvbLtgBVqea0XlLgEI09PshAJ9/g3k
+X-Gm-Message-State: AOJu0Yw4Kr/wFhVufHvFC9scnfK8Djv/1Z+3YVTI/N5wXUmQlOKST4jV
+	zGb/Lahmh6eiHxAQSHV9dOVUINJ5mf/48m0jojoWylg3LLDWWpNO92b41ELkVA==
+X-Google-Smtp-Source: AGHT+IExm1nyHNpY2Df0ueTbO0F5rX3vC1NzqDjMXBn0ObX2Q18HN9I7GSRRDFbcDAWCC26CjfW4JQ==
+X-Received: by 2002:a17:902:e802:b0:1fb:5c3d:b8c3 with SMTP id d9443c01a7336-1ff57262fa6mr180863515ad.4.1722999185616;
+        Tue, 06 Aug 2024 19:53:05 -0700 (PDT)
+Received: from thinkpad ([120.60.72.69])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5929abd1sm94465395ad.271.2024.08.06.19.53.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 19:53:05 -0700 (PDT)
+Date: Wed, 7 Aug 2024 08:22:52 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 03/12] PCI: brcmstb: Use common error handling code in
+ brcm_pcie_probe()
+Message-ID: <20240807025252.GE3412@thinkpad>
+References: <20240731222831.14895-1-james.quinlan@broadcom.com>
+ <20240731222831.14895-4-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [net-next,v4] net: phy: phy_device: fix PHY WOL enabled,
- PM failed to suspend
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172299843250.1823320.17872095401858701544.git-patchwork-notify@kernel.org>
-Date: Wed, 07 Aug 2024 02:40:32 +0000
-References: <20240731091537.771391-1-youwan@nfschina.com>
-In-Reply-To: <20240731091537.771391-1-youwan@nfschina.com>
-To: Youwan Wang <youwan@nfschina.com>
-Cc: linux@armlinux.org.uk, andrew@lunn.ch, davem@davemloft.net,
- edumazet@google.com, hkallweit1@gmail.com, kuba@kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- rmk+kernel@armlinux.org.uk, wojciech.drewek@intel.com
+In-Reply-To: <20240731222831.14895-4-james.quinlan@broadcom.com>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 31 Jul 2024 17:15:37 +0800 you wrote:
-> If the PHY of the mido bus is enabled with Wake-on-LAN (WOL),
-> we cannot suspend the PHY. Although the WOL status has been
-> checked in phy_suspend(), returning -EBUSY(-16) would cause
-> the Power Management (PM) to fail to suspend. Since
-> phy_suspend() is an exported symbol (EXPORT_SYMBOL),
-> timely error reporting is needed. Therefore, an additional
-> check is performed here. If the PHY of the mido bus is enabled
-> with WOL, we skip calling phy_suspend() to avoid PM failure.
+On Wed, Jul 31, 2024 at 06:28:17PM -0400, Jim Quinlan wrote:
+> o Move the clk_prepare_enable() below the resource allocations.
+> o Move the clk_prepare_enable() out of __brcm_pcie_remove() but
+>   add it to the end of brcm_pcie_remove().
+> o Add a jump target (clk_disable_unprepare) so that a bit of exception
+>   handling can be better reused at the end of this function implementation.
+> o Use dev_err_probe() where it makes sense.
 > 
-> [...]
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 34 ++++++++++++---------------
+>  1 file changed, 15 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index c08683febdd4..7595e7009192 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -1473,7 +1473,6 @@ static void __brcm_pcie_remove(struct brcm_pcie *pcie)
+>  		dev_err(pcie->dev, "Could not stop phy\n");
+>  	if (reset_control_rearm(pcie->rescal))
+>  		dev_err(pcie->dev, "Could not rearm rescal reset\n");
+> -	clk_disable_unprepare(pcie->clk);
+>  }
+>  
+>  static void brcm_pcie_remove(struct platform_device *pdev)
+> @@ -1484,6 +1483,7 @@ static void brcm_pcie_remove(struct platform_device *pdev)
+>  	pci_stop_root_bus(bridge->bus);
+>  	pci_remove_root_bus(bridge->bus);
+>  	__brcm_pcie_remove(pcie);
+> +	clk_disable_unprepare(pcie->clk);
+>  }
+>  
+>  static const int pcie_offsets[] = {
+> @@ -1613,31 +1613,26 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  
+>  	pcie->ssc = of_property_read_bool(np, "brcm,enable-ssc");
+>  
+> -	ret = clk_prepare_enable(pcie->clk);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "could not enable clock\n");
+> -		return ret;
+> -	}
+>  	pcie->rescal = devm_reset_control_get_optional_shared(&pdev->dev, "rescal");
+> -	if (IS_ERR(pcie->rescal)) {
+> -		clk_disable_unprepare(pcie->clk);
+> +	if (IS_ERR(pcie->rescal))
+>  		return PTR_ERR(pcie->rescal);
+> -	}
+> +
+>  	pcie->perst_reset = devm_reset_control_get_optional_exclusive(&pdev->dev, "perst");
+> -	if (IS_ERR(pcie->perst_reset)) {
+> -		clk_disable_unprepare(pcie->clk);
+> +	if (IS_ERR(pcie->perst_reset))
+>  		return PTR_ERR(pcie->perst_reset);
+> -	}
+>  
+> -	ret = reset_control_reset(pcie->rescal);
+> +	ret = clk_prepare_enable(pcie->clk);
+>  	if (ret)
+> -		dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
+> +		return dev_err_probe(&pdev->dev, ret, "could not enable clock\n");
+> +
+> +	ret = reset_control_reset(pcie->rescal);
+> +	if (dev_err_probe(&pdev->dev, ret, "failed to deassert 'rescal'\n"))
+> +		goto clk_disable_unprepare;
+>  
+>  	ret = brcm_phy_start(pcie);
+>  	if (ret) {
+>  		reset_control_rearm(pcie->rescal);
+> -		clk_disable_unprepare(pcie->clk);
+> -		return ret;
+> +		goto clk_disable_unprepare;
+>  	}
+>  
+>  	ret = brcm_pcie_setup(pcie);
+> @@ -1654,10 +1649,8 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  	msi_np = of_parse_phandle(pcie->np, "msi-parent", 0);
+>  	if (pci_msi_enabled() && msi_np == pcie->np) {
+>  		ret = brcm_pcie_enable_msi(pcie);
+> -		if (ret) {
+> -			dev_err(pcie->dev, "probe of internal MSI failed");
+> +		if (dev_err_probe(pcie->dev, ret, "probe of internal MSI failed"))
+>  			goto fail;
+> -		}
+>  	}
+>  
+>  	bridge->ops = pcie->type == BCM7425 ? &brcm7425_pcie_ops : &brcm_pcie_ops;
+> @@ -1678,6 +1671,9 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  
+>  fail:
+>  	__brcm_pcie_remove(pcie);
+> +clk_disable_unprepare:
+> +	clk_disable_unprepare(pcie->clk);
+> +
 
-Here is the summary with links:
-  - [net-next,v4] net: phy: phy_device: fix PHY WOL enabled, PM failed to suspend
-    https://git.kernel.org/netdev/net-next/c/4f534b7f0c8d
+TBH, this is not improving the code readability. __brcm_pcie_remove() used to
+free all the resources and now you just moved clk_disable_unprepare() out of it
+to save 2 lines in probe(). And you ended up calling clk_disable_unprepare()
+separately in brcm_pcie_remove().
 
-You are awesome, thank you!
+So please remove the label and call clk_disable_unprepare() in the error path
+(just 2 instances) and continue to use __brcm_pcie_remove() to free all
+resources (I would've preferred to have separate error labels instead of calling
+__brcm_pcie_remove() though, but not this).
+
+- Mani
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+மணிவண்ணன் சதாசிவம்
 
