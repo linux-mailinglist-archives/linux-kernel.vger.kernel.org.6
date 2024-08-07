@@ -1,144 +1,123 @@
-Return-Path: <linux-kernel+bounces-277487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B44394A207
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:52:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42AEE94A20B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8F561F22505
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:52:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB14D1F23B56
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDB21C9DD1;
-	Wed,  7 Aug 2024 07:52:25 +0000 (UTC)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE32F3EA64;
+	Wed,  7 Aug 2024 07:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="h9uWMD6g"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C173C1B86DC;
-	Wed,  7 Aug 2024 07:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597FC8F77
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 07:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723017144; cv=none; b=kDn3LJCF75RozRBr4nvgJgxju5+Dp0ztiwfdLEp9DY8jXh4pfOad7vzRb+/jBL1nMzPQNPyc447TedVYlZnmRGvw3C+Npnezwyst7IRpwFA9CSCO2WEcJxPkbHk3T1lxK18Z4W8aaAtvMiVH+1mTJYW+DdPWHXMk76cs2A6Guxo=
+	t=1723017229; cv=none; b=SE+hHqGoxT8ozAsi3co7iK3nc9EQhdWrsoT/T2ETW4xVEPzNu0Uz6XOqfHw0Ugek2dV4ZbvkPUlUg2Bm7Un05UxCehsHedsrWJq4D+oyyiG2Y+f6Ve6yWFRNbhmnGgjuFnmPmHBCMZE5PLBSgrv8rfs2ljzSAdpK75/QscdxOyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723017144; c=relaxed/simple;
-	bh=P029QhQ2IpIBwTacFgAJzLKzDEjmjM1NRKAZUDdvcVs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gb2wD9i32bgu3Vy91XdpmeOUrih6R8Jkdf1YFak7qIL6IIfenFSR5E9iE705+geTf2UHIpdmBcqFLJZ8rpt9hjt3YruKtjZ3fjlO8gPij45gzYvlLjgdzf5MjcmW2BPivRcAcS3tZfacynmo9E5od2XnGN+8LBbXwwPV5eBN5v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4f51c1f9372so507493e0c.2;
-        Wed, 07 Aug 2024 00:52:22 -0700 (PDT)
+	s=arc-20240116; t=1723017229; c=relaxed/simple;
+	bh=KqnPxyjijqgj7Dabl0pL8UK9VNQba/K8dgna1uY/+o8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZeuAlvm2E3eFQDnrsDmRZ0AqZGUc4JNAmb3rH06JSmIwSyn3Qjlva9EpjfFsTxrSWKgfAqJdTAdWyAE6EflTZ3vKW9xTPQBi78dt902jD7+k9wHbwL/wuyYkAhDU7Q0U7KAmmf1j/Xu9pTmd3LC0QAsXXvNautZfT1zBFhyQ1ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=h9uWMD6g; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52f01ec08d6so1895382e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 00:53:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723017223; x=1723622023; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KqnPxyjijqgj7Dabl0pL8UK9VNQba/K8dgna1uY/+o8=;
+        b=h9uWMD6gEvL9VFBHXMTgT30wHAi724kV+7WcdiKDv0XwwtFMT/srTumwwpg9JufOfF
+         neRV7C1NqFQU6B08MLOmZjpdeHBq9fP6jAQSlyt2pX2h8lfp+81wGw3svjiNNrTUfrW3
+         8BtX8RXM5EHiGT0JyCsYK5Ms5JYRo3d0VKvBsDBlCXY6dedtj6AM4QttVlqF+gj7AVVa
+         ZR1bPuhvPOPPe+7isMbTYuEZlv8EZjUlGvLfS1qDQlRzs/XiUq/pY53lpRw5ZW3K0+bn
+         ed51U4ualsuW1NVLBVaMlvIJtnrjsITMCi8+PvdlAOZFxBy0Nkd+H/KNsfClt84gkkR1
+         +K3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723017142; x=1723621942;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723017223; x=1723622023;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=W3xrNS8iZyZhkOmyAcGNIqP3+/HlN9P6GP8Q91kZLyY=;
-        b=BmeX/GTk61n0nSolPXdWoWQXPtrZ4s14CB143uadFrsX3WD9g8+A12TqE/mhdddQ6a
-         jbLF/4TkiF7MgV1D6dj0gmZyggCBOTcKcSOJqA8vuzbwYrqjb8Yg2xiKfuTmKT7NH1gX
-         XoQ+r+80VL7dC2Ure1GSIK0B0aDkNXj8G1nI9PZYj5FjcmXpif13xEszuNItvMFl8yBc
-         MXHN3K9wnNVJ+5NocMbb1ykKFp9ss8OaWUZ1oilOcOT4GgGRyJJG34ehWUL6YhQE3ptZ
-         ZD/Pxbuf3xnrtH6T5dgofUf6OR/fHfFIX0fcQ2DlXJotIVWp5RlWsw8xW/nd86eWMsyi
-         /eqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUo+bbl1d300F4OccSnk8T3fPdPf9BYBkIfu+LUeHn+wR5zLAjpTFU++8xqcOFbqAadYsZ77U8neVbCTngda7T7IAj7H6i8LtckD0RzJOXVwnrRQf5wZBBysvw6BXECnPLRL33n6CUwUrd42TU=
-X-Gm-Message-State: AOJu0YwN7y7TkHvt8HzJNBi9zZi6RdeojVN3aKA7yGLL4QEJyqdpqLPD
-	btEdSJX9ykW9fymsaQmbXEaqmipEBYcjx/vC5FFWkbMFST4znkG9
-X-Google-Smtp-Source: AGHT+IE33uVgVa+VXy9gIqtrgXxspqlIEekyIkajG8XB5P3gG8JKv9KHLMssfYHzag8pRj248sYXPw==
-X-Received: by 2002:a05:6122:1699:b0:4f6:b610:61bf with SMTP id 71dfb90a1353d-4f89ff88eafmr19464410e0c.8.1723017141625;
-        Wed, 07 Aug 2024 00:52:21 -0700 (PDT)
-Received: from skuld-framework.localnet ([32.221.37.233])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3785e0798sm36500385a.44.2024.08.07.00.52.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 00:52:21 -0700 (PDT)
-From: Neal Gompa <neal@gompa.dev>
-To: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
- Zehui Xu <zehuixu@whu.edu.cn>
-Cc: boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
- benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- zehuixu@whu.edu.cn
-Subject:
- Re: [PATCH v3] rust: Kbuild: Skip -fmin-function-alignment in bindgen flags
-Date: Wed, 07 Aug 2024 03:52:20 -0400
-Message-ID: <3695674.9o76ZdvQCi@skuld-framework>
-In-Reply-To: <20240731134346.10630-1-zehuixu@whu.edu.cn>
-References: <20240731134346.10630-1-zehuixu@whu.edu.cn>
+        bh=KqnPxyjijqgj7Dabl0pL8UK9VNQba/K8dgna1uY/+o8=;
+        b=HqfWesIOCF+ME7aWnIXPrmK9Gx9DNRFuY7nMDLV2ajP7zt1uhbPCrpxsgI42J+8bF4
+         6UbwAk7e/hNlkw48+6mq9sNMzc1JTliYxd0jXIHnZgzXoJ013RTX1biKIfCMhYjyAUvl
+         7h5ZtHravw45l/oBBllGcIFwkTQ/Z2A90Qb4TzNscnJY5dN6diBfOCTVo8cId8oDVukT
+         82F3dUK3nlb8CkGCEyoyXPeisylM5CJFy308+R+4NRWTYQ+SZWPCxk16XbLsh+O6Q2cG
+         YXMjRyZxWl+wDQuSYqpa7qzD0e6u42Ge6IYF0J3ZOPqEYt11UtWDTTmPZSW6KUnFIBwH
+         11DA==
+X-Forwarded-Encrypted: i=1; AJvYcCX26PDUIP8IlQqiEIWS9zVO0rKZvHWxvqAkJr8x/h1x8rvfrY9pWoEZOJs88cGmaHykpRF0VVKAVp/Arhp84DWhCD0Vu1vudPMsUwV9
+X-Gm-Message-State: AOJu0YzO3ylTym/FQ+AAID47GE8c9E27u41lsi7UPYRpn4jizh74/MNk
+	4YUpfT4IRVcJOFZ6tr+91mYapC3hOjEaTBfgECQE9x7kGgGJNZ3mgL5WLmlnVuJe7m3HQITvFo6
+	awW6fNvKeQ+hmDRufbN+sMgDU6dgnH5m375FQ/xjn8k0OgP58ztY=
+X-Google-Smtp-Source: AGHT+IEMHPUoCGAziZXFqLRYhcE89Hu0RXOGMn5qoswWzoIi01nwD/49Dvb2oq880JBBAmn6aIs0b95/3o35im4sNu4=
+X-Received: by 2002:a05:6512:2302:b0:52f:d69e:bb58 with SMTP id
+ 2adb3069b0e04-530bb39b7d5mr13670284e87.44.1723017223061; Wed, 07 Aug 2024
+ 00:53:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240731-hci_qca_fixes-v1-0-59dad830b243@linaro.org>
+ <20240731-hci_qca_fixes-v1-3-59dad830b243@linaro.org> <1723fdc3-33b9-4518-8f25-161ab59ecf21@notapiano>
+In-Reply-To: <1723fdc3-33b9-4518-8f25-161ab59ecf21@notapiano>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 7 Aug 2024 09:53:31 +0200
+Message-ID: <CAMRc=MdSH6n=QKwWnT9zNaBito34t+BpCufQDjnAOaeC5iuD+Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] Bluetooth: hci_qca: fix a NULL-pointer derefence at shutdown
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, 
+	Marcel Holtmann <marcel@holtmann.org>
+Cc: Wren Turkal <wt@penguintechs.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-On Wednesday, July 31, 2024 9:43:46=E2=80=AFAM EDT Zehui Xu wrote:
-> GCC 14 recently added -fmin-function-alignment option and the
-> root Makefile uses it to replace -falign-functions when available.
-> However, this flag can cause issues when passed to the Rust
-> Makefile and affect the bindgen process. Bindgen relies on
-> libclang to parse C code, and currently does not support the
-> -fmin-function-alignment flag, leading to compilation failures
-> when GCC 14 is used.
->=20
-> This patch addresses the issue by adding -fmin-function-alignment
-> to the bindgen_skip_c_flags in rust/Makefile. This prevents the
-> flag from causing compilation issues.
->=20
-> Link:
-> https://lore.kernel.org/linux-kbuild/20240222133500.16991-1-petr.pavlu@su=
-se
-> .com/ Signed-off-by: Zehui Xu <zehuixu@whu.edu.cn>
-> ---
-> Since -falign-functions does not affect bindgen output, we do not
-> need logic to add it back to the flags. Thanks to the community's
-> help, especially Miguel Ojeda. Hope this patch is free of problems
-> and can be submitted smoothly : )
->=20
-> v1:
-> * https://lore.kernel.org/all/20240730222053.37066-1-zehuixu@whu.edu.cn/
->=20
-> v2:
-> * Added -falign-functions to bindgen_extra_c_flags when skipping
->   -fmin-function-alignment to maintain function alignment settings in GCC=
- 14
-> * Used reasonable length and moved email content out of the commit message
-> * Used "Link" tag instead of "Reference:" and removed empty lines between
-> tags * Specified the base commit
-> * https://lore.kernel.org/all/20240731034112.6060-1-zehuixu@whu.edu.cn/
->=20
-> v3:
-> * Removed logic from patch v2 which adds -falign-functions
->=20
->  rust/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/rust/Makefile b/rust/Makefile
-> index 1f10f92737f2..0c8736cce64f 100644
-> --- a/rust/Makefile
-> +++ b/rust/Makefile
-> @@ -227,7 +227,7 @@ bindgen_skip_c_flags :=3D -mno-fp-ret-in-387
-> -mpreferred-stack-boundary=3D% \ -fno-reorder-blocks
-> -fno-allow-store-data-races -fasan-shadow-offset=3D% \
-> -fzero-call-used-regs=3D% -fno-stack-clash-protection \
->  	-fno-inline-functions-called-once -fsanitize=3Dbounds-strict \
-> -	-fstrict-flex-arrays=3D% \
-> +	-fstrict-flex-arrays=3D% -fmin-function-alignment=3D% \
->  	--param=3D% --param asan-%
->=20
->  # Derived from `scripts/Makefile.clang`.
->=20
-> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+On Wed, Aug 7, 2024 at 12:44=E2=80=AFAM N=C3=ADcolas F. R. A. Prado
+<nfraprado@collabora.com> wrote:
+>
+> On Wed, Jul 31, 2024 at 05:20:50PM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Unlike qca_regulator_init(), qca_power_shutdown() may be called for
+> > QCA_ROME which does not have qcadev->bt_power assigned. Add a
+> > NULL-pointer check before dereferencing the struct qca_power pointer.
+> >
+> > Fixes: eba1718717b0 ("Bluetooth: hci_qca: make pwrseq calls the default=
+ if available")
+> > Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Closes: https://lore.kernel.org/linux-bluetooth/su3wp6s44hrxf4ijvsdfzbv=
+v4unu4ycb7kkvwbx6ltdafkldir@4g7ydqm2ap5j/
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Hi,
+>
+> I just noticed we're still hitting this issue in mainline (saw it on the
+> mt8183-juniper platform in KernelCI). I see this commit was merged 6 days=
+ ago to
+> bluetooth-next, but it seems there wasn't a pull request with this fix ye=
+t to
+> include it in 6.11. I'm wondering if it's still going to be sent.
+>
+> Thanks,
+> N=C3=ADcolas
 
-Looks good to me.
+The patches are in next so I don't see why they wouldn't be sent upstream.
 
-Reviewed-by: Neal Gompa <neal@gompa.dev>
+Moving Luiz and Marcel to To: to make sure they see this message.
 
-=2D-=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
-
-
+Bart
 
