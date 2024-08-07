@@ -1,165 +1,143 @@
-Return-Path: <linux-kernel+bounces-277791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BDD594A68C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:03:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 745AB94A68F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD8392824EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F60F1F22145
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C471DF699;
-	Wed,  7 Aug 2024 11:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D891E2133;
+	Wed,  7 Aug 2024 11:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="koepf3Vo"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z6xVnjFL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0D91C9DC9
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 11:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5130D1C9DC9;
+	Wed,  7 Aug 2024 11:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723028627; cv=none; b=e8H/98/Ew6WAZ8emrue6lNJUUWEykdelWYcTDQPmTID+aVEFppr7rhY5mOleBk26BHG46q1NRX1tn7QiMgDq9ucfC50AeZryCn8T3snRxZ+AaSpc5wyPy6DXEx/VxeisKfZwgfDn5YTrPddlRYZR+UNiphRHVcvbGeoCvVLRiGc=
+	t=1723028658; cv=none; b=PvoTgYVFtbSshjKKlPjbHEwngCo3aMrFL1ApBSfztJJOuf36IqQTrPiSX0JqvcLEqXLreVI94ln3BNqBfG9itOWlYQ3+3qO4Dilhq8MpKxUWYPGDyE14lKyUGwqCoz8Az87/B2P6s20rVVY7uJZtyqQX9PzNX+zXRlJBvndoObc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723028627; c=relaxed/simple;
-	bh=cuUrR157zpyMmPBZH/u917m24UqzzDOS+LC5Nw8qcFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oUSR3Mf8LTGjLjmYcz3VN76Thwt0mqrkARv2N6u/caruIGd7s+eevQLsd/FDo6uk3AyypkkcaqFuJ5211/0bbg6q4ESMcI/Hpy+7xYig9jVs937pg9fxgTtbOTiryDu5wxbe7Q0PaP+9LPc72d9N7wnwIM1/rLNQakt8457KVAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=koepf3Vo; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6bb5a4668faso8589266d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 04:03:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1723028623; x=1723633423; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gN5cEn529JPwU3lFLqshcVWf854tpVZo4bfi6+q2Cm8=;
-        b=koepf3Vo6pjY2r9sFq9tj6XOS/Wy1AWAQkK3GF4sz5typo/KZIlndaZP57jLHhOy19
-         dB6vWb5X16Ygg8/7qKniYGXbfOQ2CBs9AFsQKujCn8bU7wu0eOXL7a0jD6/1ztwFrCUF
-         7Xp0Wg6n/zs1+fqexVUzgaFEweHb2xNMDHGHJn1vPE8x/a1kkN5nkOORmy+Y3+Tqb/VN
-         LKm7iuoUpIKQyS1fVLDAl5fmaru1AXE61Id67HOd37Xjzu1yTGFQOriaHbNlN45HAbl4
-         HzwHbQY92RePMkPAA9ITD7qiBAmpwC6h+Ug6Ue+Jj1t19jmA67Ni3YZjXyPKvbrLZADA
-         1N/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723028623; x=1723633423;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gN5cEn529JPwU3lFLqshcVWf854tpVZo4bfi6+q2Cm8=;
-        b=KuvbbH7jx+RBpeey2KSi2ZbaLOENJItvwm9XLb7TfnCw4wM8tvJaZSc9Pi7UuPeyTN
-         e3CZ9VD5w/MFaA/zwVxQbLaLOSGk9rdRMsTLMHwP96UooQuQhVhtael15cqJ5eF+36q9
-         xoEXGtEDN+B82xaNCQJ28P5uB0sJGbKLvyB2V+oP05lIY1xJMtmcDSsFEAOpcBBxQfC/
-         zoiZyyOvGUr2kSnGjso5GhvQnHDw3Qd8iRgpS1mlLduNkas39+ot3WrOD/4B2d3wJsoZ
-         5rl72RQvYO72O7arqXgSMRZoXLVv8xmqYX6Dk3MrL8hwMmY/FCJRM1G8M2+mzOLCBvfS
-         yAUw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3iVyWcptVxkqIOUv1JhvxFWeqhrXU7IHKQ2YDLdFIdi1Tlie/UGHmjLfzdJZuYJAzAW9HfqQsJuS7fWmoLfbXtW0l4+4SCZBg4UcF
-X-Gm-Message-State: AOJu0Yy2wHxiO8FDzYSIUWMChzJQeWZO8F9dDpuzP9to0OD6XKBG5v//
-	5hA9u5DrzFl4EN7amLDHWoG1eKGTTv2qr5RsYDp6clzxb2TV4UJ9N7Bk0e45id0=
-X-Google-Smtp-Source: AGHT+IHYthDgCqzBoNmQ6FJxrW7oAkL2AAZ4AwPIlpdqz27iAkWQZavNy28ABx0q/yK19HGUsv+b7Q==
-X-Received: by 2002:a05:6214:4989:b0:6b5:434:cc86 with SMTP id 6a1803df08f44-6bb9833d83amr261545796d6.10.1723028622728;
-        Wed, 07 Aug 2024 04:03:42 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c797dbdsm55177716d6.52.2024.08.07.04.03.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 04:03:42 -0700 (PDT)
-Date: Wed, 7 Aug 2024 07:03:41 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: akpm@linux-foundation.org, yosryahmed@google.com,
-	shakeel.butt@linux.dev, linux-mm@kvack.org, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org, flintglass@gmail.com,
-	chengming.zhou@linux.dev
-Subject: Re: [PATCH v3 1/2] zswap: implement a second chance algorithm for
- dynamic zswap shrinker
-Message-ID: <20240807110341.GA1726375@cmpxchg.org>
-References: <20240805232243.2896283-1-nphamcs@gmail.com>
- <20240805232243.2896283-2-nphamcs@gmail.com>
+	s=arc-20240116; t=1723028658; c=relaxed/simple;
+	bh=tZE9A7D7Qc4ABjafw02Q7U4Ejv1hoeHBVy7EEIcPMgY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iRq2Jz+A6reXvi9RLz2nBdnar0ncR+n7PFNjEeH70g9K8MSSPXwYomI6lqjUL/o5LP5ztI/yr1wneni3I11maBO/B7h3HoshE8VA+mMrySQkAQgqhNcggaZTYdqyJ8An+vPmx+ikDmMLyOuhEFNJSWftjNO3gpOoO7wtFE0PUeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z6xVnjFL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47789J2J019008;
+	Wed, 7 Aug 2024 11:04:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5M2BR5QCUJ11BZbRjroJPti0NNlzXAvb/0+of+zkg58=; b=Z6xVnjFLZQK8AbyJ
+	nc9iA87fgjkxxfAzsr2BqNYQmNogyFPW78h2mXL6i5tLuIIkOY4u+UdvEJ/ziG+B
+	hqD30k2jF4Prh5mX7NZdYY0rSP3H4UuH0UpwpSBH0+n5fAUp/yKhKFMfjuE9YMZB
+	jfmmbzWUILJ3Cq4MiiAUPJ5F9qT8c30YeFyqT+Q1NZzT6SQTvZMqIUD4ZDEkSz7d
+	kn7rBZY2RxV682fBAk/1Tu2AL/hoFdjT+3GfvYXx6BGQ7HQ7veoloQrzbpUjrIBX
+	xoqPZKklgVZ+wSFuUZQP9v3AuakKxQs+wwVkLOawxf0zTCGjyxhbPuH2yk9YF5ys
+	sEy70A==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40u4cpne4h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 11:04:13 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 477B4CF8016792
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 7 Aug 2024 11:04:12 GMT
+Received: from [10.233.17.145] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
+ 04:04:07 -0700
+Message-ID: <ace5b3e1-f4a2-4c04-821a-e797d0f55cae@quicinc.com>
+Date: Wed, 7 Aug 2024 19:04:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240805232243.2896283-2-nphamcs@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] arm64: dts: qcom: sa8775p-ride: Add QCS9100
+ compatible
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Tengfei Fan
+	<quic_tengfan@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad
+ Dybcio" <konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240806-add_qcs9100_soc_id-v1-0-04d14081f304@quicinc.com>
+ <20240806-add_qcs9100_soc_id-v1-4-04d14081f304@quicinc.com>
+ <90eae361-7d5d-440f-a85d-dfd81b384fe7@kernel.org>
+ <4a350e94-3c95-48e1-9ea8-ced483c1aa45@quicinc.com>
+ <14ec06bd-0c27-4930-8bce-d3f5b68067ed@kernel.org>
+From: Tingwei Zhang <quic_tingweiz@quicinc.com>
+In-Reply-To: <14ec06bd-0c27-4930-8bce-d3f5b68067ed@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Vh9F86zSzFUruli9oGhjnINPSZ6NccLQ
+X-Proofpoint-GUID: Vh9F86zSzFUruli9oGhjnINPSZ6NccLQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_08,2024-08-06_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 phishscore=0 malwarescore=0 bulkscore=0 spamscore=0
+ lowpriorityscore=0 mlxscore=0 clxscore=1011 adultscore=0
+ priorityscore=1501 mlxlogscore=619 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408070077
 
-On Mon, Aug 05, 2024 at 04:22:42PM -0700, Nhat Pham wrote:
-> Current zswap shrinker's heuristics to prevent overshrinking is brittle
-> and inaccurate, specifically in the way we decay the protection size
-> (i.e making pages in the zswap LRU eligible for reclaim).
+On 8/7/2024 5:35 PM, Krzysztof Kozlowski wrote:
+> On 07/08/2024 11:17, Tengfei Fan wrote:
+>>
+>>
+>> On 8/7/2024 3:28 PM, Krzysztof Kozlowski wrote:
+>>> On 06/08/2024 06:19, Tengfei Fan wrote:
+>>>> Add QCS9100 compatible in sa8775p ride and sa8775p ride r3 board DTS.
+>>>> QCS9100 references SA8775p, they share the same SoC DTSI and board DTS.
+>>>>
+>>>
+>>> I don't understand this. You claim here that QCS9100 references SA8775p
+>>> but your diff says other way: SA8775p references QCS9100.
+>>>
+>>> Sorry, that's confusing.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>
+>> I will update the compatible as follows to indicate that QCS9100
+>> references SA8775p.
+>>
+>> compatible = "qcom,sa8775p-ride", "qcom,qcs9100", "qcom,sa8775p";
 > 
-> We currently decay protection aggressively in zswap_lru_add() calls.
-> This leads to the following unfortunate effect: when a new batch of
-> pages enter zswap, the protection size rapidly decays to below 25% of
-> the zswap LRU size, which is way too low.
+> Is this still correct, though? sa8775p won't come with qcs9100 SoC.
+We have a new board. Hardware is same as sa877p-ride except sa8775p is 
+replaced with qcs9100. We add qcs9100 SoC compatible to sa8775p-ride 
+device tree to indicate this board can support both sa8775p SoC and 
+qcs9100 SoC.
 > 
-> We have observed this effect in production, when experimenting with the
-> zswap shrinker: the rate of shrinking shoots up massively right after a
-> new batch of zswap stores. This is somewhat the opposite of what we want
-> originally - when new pages enter zswap, we want to protect both these
-> new pages AND the pages that are already protected in the zswap LRU.
+> Best regards,
+> Krzysztof
 > 
-> Replace existing heuristics with a second chance algorithm
-> 
-> 1. When a new zswap entry is stored in the zswap pool, its referenced
->    bit is set.
-> 2. When the zswap shrinker encounters a zswap entry with the referenced
->    bit set, give it a second chance - only flips the referenced bit and
->    rotate it in the LRU.
-> 3. If the shrinker encounters the entry again, this time with its
->    referenced bit unset, then it can reclaim the entry.
-> 
-> In this manner, the aging of the pages in the zswap LRUs are decoupled
-> from zswap stores, and picks up the pace with increasing memory pressure
-> (which is what we want).
-> 
-> The second chance scheme allows us to modulate the writeback rate based
-> on recent pool activities. Entries that recently entered the pool will
-> be protected, so if the pool is dominated by such entries the writeback
-> rate will reduce proportionally, protecting the workload's workingset.On
-> the other hand, stale entries will be written back quickly, which
-> increases the effective writeback rate.
-> 
-> The referenced bit is added at the hole after the `length` field of
-> struct zswap_entry, so there is no extra space overhead for this
-> algorithm.
-> 
-> We will still maintain the count of swapins, which is consumed and
-> subtracted from the lru size in zswap_shrinker_count(), to further
-> penalize past overshrinking that led to disk swapins. The idea is that
-> had we considered this many more pages in the LRU active/protected, they
-> would not have been written back and we would not have had to swapped
-> them in.
-> 
-> To test this new heuristics, I built the kernel under a cgroup with
-> memory.max set to 2G, on a host with 36 cores:
-> 
-> With the old shrinker:
-> 
-> real: 263.89s
-> user: 4318.11s
-> sys: 673.29s
-> swapins: 227300.5
-> 
-> With the second chance algorithm:
-> 
-> real: 244.85s
-> user: 4327.22s
-> sys: 664.39s
-> swapins: 94663
-> 
-> (average over 5 runs)
-> 
-> We observe an 1.3% reduction in kernel CPU usage, and around 7.2%
-> reduction in real time. Note that the number of swapped in pages
-> dropped by 58%.
-> 
-> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Nhat Pham <nphamcs@gmail.com>
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+-- 
+Thanks,
+Tingwei
+
 
