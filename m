@@ -1,78 +1,94 @@
-Return-Path: <linux-kernel+bounces-278342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 436F894AEF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:32:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD7094AF03
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E52821F22874
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:32:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CA201C21A6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C72013D63D;
-	Wed,  7 Aug 2024 17:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="F21abGob"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BF913D52E;
+	Wed,  7 Aug 2024 17:38:50 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEDD13D61D
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 17:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C1013BACC;
+	Wed,  7 Aug 2024 17:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723051936; cv=none; b=kUgEmI6bB0FwRP9a61tfnoT2UC7AvJvocVAAI9UNrHNBaFfiaXdJYRACWaQr4nJFqkZk4xcDxeuqtuBwBeGDk9q5zvvj6ZP5WTLcJcFy799YjId5uQmWCbQdNwEyMaW6eqoPUdU8xzFWHFnpdqJH81Vd9Mq7w1Oc9G86Rkdvgn8=
+	t=1723052329; cv=none; b=jui5YjiXb0LVyeGGEgrfSAQz+XOz2grLeAWPaIMQNTY7PLHoTYDjAFvI74SVepi/GCnQG28rr4A59DVSSZ/MKLn3A67O1WMcTW6OGN8F55bV3nOJPaCsX6TTNtoMEHIgfkxvgaCn7qWgKb6ksGmI4VbKjvEOiLNDw7sHYyxYUT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723051936; c=relaxed/simple;
-	bh=/0tdQ4GyIKRolLxENjc86mazApy5VDmkfI69GjhJWtk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=PRJtYobboBGhb5/u09mFb93VdlfFG4E6iWmsZj4SfLIy6Uyx+qXEXStjWGUlJXIwu4dy9x2zkxTvkwvP0YfpK7FyMrneL5zJ6kjAd69qH0GKerpUGpbZAWfDGM7IVgkN3d+wMl9Q3W9Sj6rfeJ7bLW/KeN9P4ZqOXs0V0zf8v8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=F21abGob; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1723051928;
-	bh=/0tdQ4GyIKRolLxENjc86mazApy5VDmkfI69GjhJWtk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=F21abGobAW3vSUd+WHfIdmf77o8gwRGgx+lQeZ5b1xWtQ5Iv6k3fMNZzroX4+fgbE
-	 NH9mOGrcViisNaETr2ZlXaQQ1LF/lKnJVnewSMLxJpTd1NvXtP00CqxIRSzVvu7d5I
-	 BUSbb3O5JqmXWYl8kbqHBYs0hD7zd9zEYy0RKA24=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 9391440254; Wed,  7 Aug 2024 10:32:08 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 928D540253;
-	Wed,  7 Aug 2024 10:32:08 -0700 (PDT)
-Date: Wed, 7 Aug 2024 10:32:08 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Pedro Falcato <pedro.falcato@gmail.com>
-cc: Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-    Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Vlastimil Babka <vbabka@suse.cz>, 
-    Roman Gushchin <roman.gushchin@linux.dev>, 
-    Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] slab: Warn on duplicate cache names when DEBUG_VM=y
-In-Reply-To: <20240807090746.2146479-1-pedro.falcato@gmail.com>
-Message-ID: <ad85f6ee-28a9-b558-2219-5a6e49e17b75@gentwo.org>
-References: <20240807090746.2146479-1-pedro.falcato@gmail.com>
+	s=arc-20240116; t=1723052329; c=relaxed/simple;
+	bh=G34MLcZek6ZJZmuPIY647FHUQkHgp9qvo38MQTEokPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ADQENME5QZ4UE6cqJ46dctCm2pLbt+vwrKK6uXdazIMS1Unn8lYNAl2UtfHOFoIqeSZiKohRh03eBaD0jVowlg4WFsr6H3uwTejq08QYAEwSbcR2lW2Lz0w5X7u0ywe3IWXQ2W5oh8MzuCYlFtD1wz2DqfCimGX6eUlIwxToba4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 4F6161C0082; Wed,  7 Aug 2024 19:33:29 +0200 (CEST)
+Date: Wed, 7 Aug 2024 19:32:50 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 00/86] 6.1.104-rc1 review
+Message-ID: <ZrOvwlaMUY7+KvZs@duo.ucw.cz>
+References: <20240807150039.247123516@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YO9CkmFFup0qxjMs"
+Content-Disposition: inline
+In-Reply-To: <20240807150039.247123516@linuxfoundation.org>
 
-On Wed, 7 Aug 2024, Pedro Falcato wrote:
 
-> Duplicate slab cache names can create havoc for userspace tooling that
-> expects slab cache names to be unique. This is a reasonable expectation.
+--YO9CkmFFup0qxjMs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes that is reasonable. This is done during slab creation and so is not a 
-performance sensitive operation. The sanity check could be done even 
-without CONFIG_DEBUG_VM
+Hi!
 
-Acked-by: Christoph Lameter <cl@linux.com>
+> This is the start of the stable review cycle for the 6.1.104 release.
+> There are 86 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
+CIP testing did not find any problems here:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.1.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--YO9CkmFFup0qxjMs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iFwEABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZrOvwgAKCRAw5/Bqldv6
+8iUSAJinslmJCrfhZq6IulbXHydHv7rAAKCEL1OeNkbaE1dkP0bI1v3fRuWcYA==
+=sThu
+-----END PGP SIGNATURE-----
+
+--YO9CkmFFup0qxjMs--
 
