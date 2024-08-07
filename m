@@ -1,565 +1,194 @@
-Return-Path: <linux-kernel+bounces-277434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63DEC94A168
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:12:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 858B994A162
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E61E11F2943A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:12:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E31CBB260A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF751C68BB;
-	Wed,  7 Aug 2024 07:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F9877F1B;
+	Wed,  7 Aug 2024 07:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OQepLXE0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="it1nFqAB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mVYRJZ6i"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BE11C6889;
-	Wed,  7 Aug 2024 07:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B823B1C461B;
+	Wed,  7 Aug 2024 07:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723014690; cv=none; b=TkU4wGvTnUmQ7jSG/pvbarzzEOEVPhxD3GbvLPstb7fMAIrbTTxyCNML54j8Jh2ncV10GJzVBi1Z995voCLBkXhiu64K2icP7jj8VMrGdW4npIm+2BQ68yr8klX3Y40th9I1qmcHGLTLrB6wVfcFLq01YebJa9N4GlEQvZh8nQA=
+	t=1723014684; cv=none; b=eCJSTUuqeuMWd4ujphrzKbqB81+6yAZB244qpa/GFKJYXSRPOOR3rqX+WR8QlqVhblKki/vyAAVzOz/cTylW8a4qhWIfk1U0WbpjUAut4vUykSQH1knOdEIrfvOZWACR0zuN1UFV62N30qbqPj3RdhRUDiSzK2aMfssc4L9smho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723014690; c=relaxed/simple;
-	bh=7EMOOrA9juqBJsmmX7EgZgS51vxu0hwBZoO35aZmg/c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q/cVzEpabBOdbd+/W0IWPYujPp+D3zPuR3NxtiaxA0rSo7UAoSbWUn5ZirIzBZI5zugzO+dEQ7EBuSXZV/oQPCHs0IXLc2DpVDI5yHpADOa3/W6NHk6EVsuzurd5PgtCsJQWJNKv0ijHfRD8HRyRFlFRzmrcFtybeoYjsJAEYgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OQepLXE0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 476H6TT9000442;
-	Wed, 7 Aug 2024 07:11:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	195XW6lCZsrJFNtgk+K2OS/XxBNx8T4UUpevNrQHK5w=; b=OQepLXE09JJhOv+E
-	ej/GDBwYTCmlLjALciIxVpWOt9z6ZCFmytGpYyIBuExAgF01ukZMycGUIQI8EXnw
-	wB465aI1G5+nuO0mLT7CPmGInHAE8gTF37BjX8nswBbjIaIffdJXR2GHBcbVMpEW
-	5OSaSmy5v9YhNJMTAS7Dd0POv6vH47Eu6oC6GndPnJ/6ShPdOqID/fXsM4Ol3hmU
-	N7e02euddEfhc3GJupTIyY0HHeqI8GXm3LWZdIVAHdfxp1ZsbX1hHYkAIgL/mU9r
-	PXpJsjXuC66PlB6e2uKZLQ1/jhzXWVxiWVSK1OTlEvZS0e10bufPqMuu4mA7577a
-	n8fqyg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40scs31nqd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 Aug 2024 07:11:06 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4777B5W4023221
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 7 Aug 2024 07:11:05 GMT
-Received: from hu-jinlmao-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 7 Aug 2024 00:11:05 -0700
-From: Mao Jinlong <quic_jinlmao@quicinc.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>,
-        Andy Gross
-	<agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: Mao Jinlong <quic_jinlmao@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 2/2] coresight: Add remote etm support
-Date: Wed, 7 Aug 2024 00:10:51 -0700
-Message-ID: <20240807071054.12742-3-quic_jinlmao@quicinc.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20240807071054.12742-1-quic_jinlmao@quicinc.com>
-References: <20240807071054.12742-1-quic_jinlmao@quicinc.com>
+	s=arc-20240116; t=1723014684; c=relaxed/simple;
+	bh=F862vX5qpUUBsn/1LPZYBnpMJbnc8WAT8B8S0EloY3I=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=MTWUryIavJ3W4rHy6Bkv5fs9ZwlKjsuzATrTGgne7In45SJSp76oJawtWXSXIlWC1wBXZRlOowO1lyCeutusTxuoFj5VX8mMUf3tlJQL9QO8buTK+Z+n1DKu84cfEnavL4HnTJViI8aODApp08i1kbyMBk4GzRz4v7vnLSCjBhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=it1nFqAB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mVYRJZ6i; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id DFB8A1151B3F;
+	Wed,  7 Aug 2024 03:11:21 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Wed, 07 Aug 2024 03:11:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1723014681;
+	 x=1723101081; bh=NQ27EvoTcQ5YltamaUJRabj60y3nedLTPu/Abkp62H0=; b=
+	it1nFqABeTOcFXrQUyjzky+30FkIudmtY5PKvHZozq75eI9hhOxhTKE6zavrYJre
+	wsdJPK4sFjxCxozyxrypZ57h6N+Nqe10c2k0qiYFUDp511iXVHhqYmalK5DPDfcC
+	Zht8NPj1eUZG2c1nHrDpRVFD1H2mpm14lIA6F8SWxyRJNSpZxDr+Lp6ND4aqeFlN
+	iZ+2uUGggbS5nii9PTGc6nCaF2mc0sjOZYIOgVGCr6b9jVN6aXB9M8sgYpxsxuul
+	ZtKRcoO/kN2DQE+iBHtBGdJuinx1cPHmYmUthlRjGMTEWMD12OJ06EM+FKxvrxdt
+	oPVecP/YsebbZ7hybFg/tg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723014681; x=
+	1723101081; bh=NQ27EvoTcQ5YltamaUJRabj60y3nedLTPu/Abkp62H0=; b=m
+	VYRJZ6iD0M/JhJMAeJ4vu/R7Xx3GFkFrr0KPh9r9u2vZ5+Sj9AHNqgMZrPy75NVz
+	LlCq3BlhM+D0BzKYv+RPGCAJuyt8nLb3Eqwc12nP07OgxljalkiiR3XbfXq7Yy6Y
+	oQX5gJ2g6LY0EPN2OYdF7bb6kq9UcnsZYkVZ4oOKx9MlZOBWPfQcJWOlZsKyxNiI
+	MReK2xv4g+bVF2u1o71C1VhtIDbcesxhtFG50xXuOSO2oG916M+sAfZ4zBevj7Fo
+	MPh9wir1f4Yz5YpB7gYPgbwU8TTf8ALoYnphvmEA4mZFXyZUP0yo/W22JG942dhG
+	G/jAiVUalQvG6sQhlVMHw==
+X-ME-Sender: <xms:GR6zZkyRm_YK3jHBm9XKVrtPEB7AGXL5pL-uZOpr1vJ7Lc0SM_eKMQ>
+    <xme:GR6zZoRBzeZYbFYXEIVtN3pxg-onLg_fvsaAFeD6fOQTJi_qxAyzgtagg64JHlcEF
+    WOmT-kQX5Keg-UrZlo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeelgdduvddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefh
+    vdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtoheptd
+X-ME-Proxy: <xmx:GR6zZmXVUYM7gaYMvxD0rdGaTwWNw4ykCZtWvSbs4MOJ80xOcAq5xg>
+    <xmx:GR6zZigGkAPsM-FvMCcuB02_Ap0CYxkCJdQOD0hHdN4XwRUTSfnwFA>
+    <xmx:GR6zZmBT_oJKWD01D5WbIGKuQns9ilqFNAAPajTXZHmH1XD9Asw_1Q>
+    <xmx:GR6zZjJcmOLkQYZxmV9fnCAGAT3qmjCsZJhfzenwWpgq3BFdfjOBuw>
+    <xmx:GR6zZq59IJfuUu0tPvoQGA3c0YYPkQuadY1w1g_MzJBudxlrOPZMb6UO>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 93552B6008D; Wed,  7 Aug 2024 03:11:21 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Wed, 07 Aug 2024 09:11:01 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Namhyung Kim" <namhyung@kernel.org>,
+ "Arnaldo Carvalho de Melo" <acme@kernel.org>
+Cc: "Ian Rogers" <irogers@google.com>, "Jiri Olsa" <jolsa@kernel.org>,
+ "Adrian Hunter" <adrian.hunter@intel.com>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Ingo Molnar" <mingo@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ Linux-Arch <linux-arch@vger.kernel.org>
+Message-Id: <10a643ba-cafe-411e-855e-d93d8144f470@app.fastmail.com>
+In-Reply-To: <20240806225013.126130-7-namhyung@kernel.org>
+References: <20240806225013.126130-1-namhyung@kernel.org>
+ <20240806225013.126130-7-namhyung@kernel.org>
+Subject: Re: [PATCH 06/10] tools/include: Sync uapi/asm-generic/unistd.h with the
+ kernel sources
 Content-Type: text/plain
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: nvxKuH7uF0hMhqrWINjM_9LDOUl27dQX
-X-Proofpoint-GUID: nvxKuH7uF0hMhqrWINjM_9LDOUl27dQX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-07_04,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- suspectscore=0 adultscore=0 spamscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408070048
+Content-Transfer-Encoding: 7bit
 
-The system on chip (SoC) consists of main APSS(Applications
-processor subsytem) and additional processors like modem, lpass.
-Coresight remote etm(Embedded Trace Macrocell) driver is for
-enabling and disabling the etm trace of remote processors. It
-uses QMI interface to communicate with remote processors' software
-and uses coresight framework to configure the connection from
-remote etm source to TMC sinks.
+On Wed, Aug 7, 2024, at 00:50, Namhyung Kim wrote:
+> And arch syscall tables to pick up changes from:
+>
+>   b1e31c134a8a powerpc: restore some missing spu syscalls
+>   d3882564a77c syscalls: fix compat_sys_io_pgetevents_time64 usage
+>   54233a425403 uretprobe: change syscall number, again
+>   63ded110979b uprobe: Change uretprobe syscall scope and number
+>   9142be9e6443 x86/syscall: Mark exit[_group] syscall handlers __noreturn
+>   9aae1baa1c5d x86, arm: Add missing license tag to syscall tables files
+>   5c28424e9a34 syscalls: Fix to add sys_uretprobe to syscall.tbl
+>   190fec72df4a uprobe: Wire up uretprobe system call
+>
+> This should be used to beautify syscall arguments and it addresses
+> these tools/perf build warnings:
+>
+>   Warning: Kernel ABI header differences:
+>   diff -u tools/arch/arm64/include/uapi/asm/unistd.h 
+> arch/arm64/include/uapi/asm/unistd.h
+>   diff -u tools/include/uapi/asm-generic/unistd.h 
+> include/uapi/asm-generic/unistd.h
+>   diff -u tools/perf/arch/x86/entry/syscalls/syscall_64.tbl 
+> arch/x86/entry/syscalls/syscall_64.tbl
+>   diff -u tools/perf/arch/powerpc/entry/syscalls/syscall.tbl 
+> arch/powerpc/kernel/syscalls/syscall.tbl
+>   diff -u tools/perf/arch/s390/entry/syscalls/syscall.tbl 
+> arch/s390/kernel/syscalls/syscall.tbl
+>
+> Please see tools/include/uapi/README for details (it's in the first patch
+> of this series).
+>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: linux-arch@vger.kernel.org
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/arch/arm64/include/uapi/asm/unistd.h    | 24 +------------------
+>  tools/include/uapi/asm-generic/unistd.h       |  2 +-
+>  .../arch/powerpc/entry/syscalls/syscall.tbl   |  6 ++++-
+>  .../perf/arch/s390/entry/syscalls/syscall.tbl |  2 +-
+>  .../arch/x86/entry/syscalls/syscall_64.tbl    |  8 ++++---
+>  5 files changed, 13 insertions(+), 29 deletions(-)
+>
+> diff --git a/tools/arch/arm64/include/uapi/asm/unistd.h 
+> b/tools/arch/arm64/include/uapi/asm/unistd.h
+> index 9306726337fe..df36f23876e8 100644
+> --- a/tools/arch/arm64/include/uapi/asm/unistd.h
+> +++ b/tools/arch/arm64/include/uapi/asm/unistd.h
+> -
+> -#define __ARCH_WANT_RENAMEAT
+> -#define __ARCH_WANT_NEW_STAT
+> -#define __ARCH_WANT_SET_GET_RLIMIT
+> -#define __ARCH_WANT_TIME32_SYSCALLS
+> -#define __ARCH_WANT_MEMFD_SECRET
+> -
+> -#include <asm-generic/unistd.h>
+> +#include <asm/unistd_64.h>
 
-Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
----
- drivers/hwtracing/coresight/Kconfig           |  13 +
- drivers/hwtracing/coresight/Makefile          |   1 +
- drivers/hwtracing/coresight/coresight-qmi.h   |  89 +++++
- .../coresight/coresight-remote-etm.c          | 308 ++++++++++++++++++
- 4 files changed, 411 insertions(+)
- create mode 100644 drivers/hwtracing/coresight/coresight-qmi.h
- create mode 100644 drivers/hwtracing/coresight/coresight-remote-etm.c
+This part won't work by itself, since you don't pick up
+the generated asm/unistd_64.h header but keep the old
+asm-generic/unistd.h header. Both have the same contents,
+so the easy way to do this is to just keep the existing
+version of the arm64 header for 6.11 and add a script to
+generate it in 6.12 the way we do for x86, using an
+architecture-independent script.
 
-diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-index 06f0a7594169..27a1c61613c7 100644
---- a/drivers/hwtracing/coresight/Kconfig
-+++ b/drivers/hwtracing/coresight/Kconfig
-@@ -247,4 +247,17 @@ config CORESIGHT_DUMMY
- 
- 	  To compile this driver as a module, choose M here: the module will be
- 	  called coresight-dummy.
-+
-+config CORESIGHT_REMOTE_ETM
-+	tristate "Remote processor ETM trace support"
-+	select QCOM_QMI_HELPERS
-+	help
-+	  Enables support for ETM trace collection on remote processor using
-+	  CoreSight framework. Enabling this will allow turning on ETM
-+	  tracing on remote processor via sysfs by configuring the required
-+	  CoreSight components.
-+
-+	  To compile this driver as a module, choose M here: the module will be
-+	  called coresight-remote-etm.
-+
- endif
-diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
-index 4ba478211b31..e0781d729eb3 100644
---- a/drivers/hwtracing/coresight/Makefile
-+++ b/drivers/hwtracing/coresight/Makefile
-@@ -51,3 +51,4 @@ coresight-cti-y := coresight-cti-core.o	coresight-cti-platform.o \
- 		   coresight-cti-sysfs.o
- obj-$(CONFIG_ULTRASOC_SMB) += ultrasoc-smb.o
- obj-$(CONFIG_CORESIGHT_DUMMY) += coresight-dummy.o
-+obj-$(CONFIG_CORESIGHT_REMOTE_ETM) += coresight-remote-etm.o
-diff --git a/drivers/hwtracing/coresight/coresight-qmi.h b/drivers/hwtracing/coresight/coresight-qmi.h
-new file mode 100644
-index 000000000000..76ce9b7fdf0a
---- /dev/null
-+++ b/drivers/hwtracing/coresight/coresight-qmi.h
-@@ -0,0 +1,89 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#ifndef _CORESIGHT_QMI_H
-+#define _CORESIGHT_QMI_H
-+
-+#include <linux/soc/qcom/qmi.h>
-+
-+#define CORESIGHT_QMI_SVC_ID			(0x33)
-+#define CORESIGHT_QMI_VERSION			(1)
-+
-+#define CORESIGHT_QMI_GET_ETM_REQ_V01		(0x002B)
-+#define CORESIGHT_QMI_GET_ETM_RESP_V01		(0x002B)
-+#define CORESIGHT_QMI_SET_ETM_REQ_V01		(0x002C)
-+#define CORESIGHT_QMI_SET_ETM_RESP_V01		(0x002C)
-+
-+#define CORESIGHT_QMI_GET_ETM_REQ_MAX_LEN	(0)
-+#define CORESIGHT_QMI_GET_ETM_RESP_MAX_LEN	(14)
-+#define CORESIGHT_QMI_SET_ETM_REQ_MAX_LEN	(7)
-+#define CORESIGHT_QMI_SET_ETM_RESP_MAX_LEN	(7)
-+
-+#define TIMEOUT_MS				(10000)
-+
-+enum coresight_etm_state_enum_type_v01 {
-+	/* To force a 32 bit signed enum. Do not change or use */
-+	CORESIGHT_ETM_STATE_ENUM_TYPE_MIN_ENUM_VAL_V01 = INT_MIN,
-+	CORESIGHT_ETM_STATE_DISABLED_V01 = 0,
-+	CORESIGHT_ETM_STATE_ENABLED_V01 = 1,
-+	CORESIGHT_ETM_STATE_ENUM_TYPE_MAX_ENUM_VAL_01 = INT_MAX,
-+};
-+
-+struct coresight_set_etm_req_msg_v01 {
-+	/* Mandatory */
-+	/* ETM output state */
-+	enum coresight_etm_state_enum_type_v01 state;
-+};
-+
-+struct coresight_set_etm_resp_msg_v01 {
-+	/* Mandatory */
-+	struct qmi_response_type_v01 resp;
-+};
-+
-+static struct qmi_elem_info coresight_set_etm_req_msg_v01_ei[] = {
-+	{
-+		.data_type = QMI_UNSIGNED_4_BYTE,
-+		.elem_len  = 1,
-+		.elem_size = sizeof(enum coresight_etm_state_enum_type_v01),
-+		.array_type  = NO_ARRAY,
-+		.tlv_type  = 0x01,
-+		.offset    = offsetof(struct coresight_set_etm_req_msg_v01,
-+				      state),
-+		.ei_array  = NULL,
-+	},
-+	{
-+		.data_type = QMI_EOTI,
-+		.elem_len  = 0,
-+		.elem_size = 0,
-+		.array_type  = NO_ARRAY,
-+		.tlv_type  = 0,
-+		.offset    = 0,
-+		.ei_array  = NULL,
-+	},
-+};
-+
-+static struct qmi_elem_info coresight_set_etm_resp_msg_v01_ei[] = {
-+	{
-+		.data_type = QMI_STRUCT,
-+		.elem_len  = 1,
-+		.elem_size = sizeof(struct qmi_response_type_v01),
-+		.array_type  = NO_ARRAY,
-+		.tlv_type  = 0x02,
-+		.offset    = offsetof(struct coresight_set_etm_resp_msg_v01,
-+				      resp),
-+		.ei_array  = qmi_response_type_v01_ei,
-+	},
-+	{
-+		.data_type = QMI_EOTI,
-+		.elem_len  = 0,
-+		.elem_size = 0,
-+		.array_type  = NO_ARRAY,
-+		.tlv_type  = 0,
-+		.offset    = 0,
-+		.ei_array  = NULL,
-+	},
-+};
-+
-+#endif
-diff --git a/drivers/hwtracing/coresight/coresight-remote-etm.c b/drivers/hwtracing/coresight/coresight-remote-etm.c
-new file mode 100644
-index 000000000000..7d01e17b9210
---- /dev/null
-+++ b/drivers/hwtracing/coresight/coresight-remote-etm.c
-@@ -0,0 +1,308 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/types.h>
-+#include <linux/device.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/io.h>
-+#include <linux/err.h>
-+#include <linux/sysfs.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/coresight.h>
-+#include "coresight-qmi.h"
-+#include "coresight-priv.h"
-+
-+DEFINE_CORESIGHT_DEVLIST(remote_etm_devs, "remote-etm");
-+
-+#define MAX_INSTANCE_ID		0xFF
-+
-+struct remote_etm_drvdata {
-+	struct device			*dev;
-+	struct coresight_device		*csdev;
-+	struct mutex			mutex;
-+	struct qmi_handle		handle;
-+	u32				inst_id;
-+	bool				enabled;
-+	bool				service_connected;
-+	struct sockaddr_qrtr		s_addr;
-+};
-+
-+static int service_remote_etm_new_server(struct qmi_handle *qmi,
-+		struct qmi_service *svc)
-+{
-+	struct remote_etm_drvdata *drvdata = container_of(qmi,
-+					struct remote_etm_drvdata, handle);
-+
-+	drvdata->s_addr.sq_family = AF_QIPCRTR;
-+	drvdata->s_addr.sq_node = svc->node;
-+	drvdata->s_addr.sq_port = svc->port;
-+	drvdata->service_connected = true;
-+	dev_info(drvdata->dev,
-+		"Connection established between QMI handle and %d service\n",
-+		drvdata->inst_id);
-+
-+	return 0;
-+}
-+
-+static void service_remote_etm_del_server(struct qmi_handle *qmi,
-+		struct qmi_service *svc)
-+{
-+	struct remote_etm_drvdata *drvdata = container_of(qmi,
-+					struct remote_etm_drvdata, handle);
-+	drvdata->service_connected = false;
-+	dev_info(drvdata->dev,
-+		"Connection disconnected between QMI handle and %d service\n",
-+		drvdata->inst_id);
-+}
-+
-+static struct qmi_ops server_ops = {
-+	.new_server = service_remote_etm_new_server,
-+	.del_server = service_remote_etm_del_server,
-+};
-+
-+static int remote_etm_enable(struct coresight_device *csdev,
-+			     struct perf_event *event, u32 mode)
-+{
-+	struct remote_etm_drvdata *drvdata =
-+		dev_get_drvdata(csdev->dev.parent);
-+	struct coresight_set_etm_req_msg_v01 req;
-+	struct coresight_set_etm_resp_msg_v01 resp = { { 0, 0 } };
-+	struct qmi_txn txn;
-+	int ret;
-+
-+	mutex_lock(&drvdata->mutex);
-+
-+	if (!drvdata->service_connected) {
-+		dev_err(drvdata->dev, "QMI service not connected!\n");
-+		ret = -EINVAL;
-+		goto err;
-+	}
-+	/*
-+	 * The QMI handle may be NULL in the following scenarios:
-+	 * 1. QMI service is not present
-+	 * 2. QMI service is present but attempt to enable remote ETM is earlier
-+	 *    than service is ready to handle request
-+	 * 3. Connection between QMI client and QMI service failed
-+	 *
-+	 * Enable CoreSight without processing further QMI commands which
-+	 * provides the option to enable remote ETM by other means.
-+	 */
-+	req.state = CORESIGHT_ETM_STATE_ENABLED_V01;
-+
-+	ret = qmi_txn_init(&drvdata->handle, &txn,
-+			coresight_set_etm_resp_msg_v01_ei,
-+			&resp);
-+
-+	if (ret < 0) {
-+		dev_err(drvdata->dev, "QMI tx init failed , ret:%d\n",
-+				ret);
-+		goto err;
-+	}
-+
-+	ret = qmi_send_request(&drvdata->handle, &drvdata->s_addr,
-+			&txn, CORESIGHT_QMI_SET_ETM_REQ_V01,
-+			CORESIGHT_QMI_SET_ETM_REQ_MAX_LEN,
-+			coresight_set_etm_req_msg_v01_ei,
-+			&req);
-+	if (ret < 0) {
-+		dev_err(drvdata->dev, "QMI send ACK failed, ret:%d\n",
-+				ret);
-+		qmi_txn_cancel(&txn);
-+		goto err;
-+	}
-+
-+	ret = qmi_txn_wait(&txn, msecs_to_jiffies(TIMEOUT_MS));
-+	if (ret < 0) {
-+		dev_err(drvdata->dev, "QMI qmi txn wait failed, ret:%d\n",
-+				ret);
-+		goto err;
-+	}
-+
-+	/* Check the response */
-+	if (resp.resp.result != QMI_RESULT_SUCCESS_V01)
-+		dev_err(drvdata->dev, "QMI request failed 0x%x\n",
-+				resp.resp.error);
-+
-+	drvdata->enabled = true;
-+	mutex_unlock(&drvdata->mutex);
-+
-+	dev_dbg(drvdata->dev, "Remote ETM tracing enabled for instance %d\n",
-+				drvdata->inst_id);
-+	return 0;
-+err:
-+	mutex_unlock(&drvdata->mutex);
-+	return ret;
-+}
-+
-+static void remote_etm_disable(struct coresight_device *csdev,
-+			       struct perf_event *event)
-+{
-+	struct remote_etm_drvdata *drvdata =
-+		 dev_get_drvdata(csdev->dev.parent);
-+	struct coresight_set_etm_req_msg_v01 req;
-+	struct coresight_set_etm_resp_msg_v01 resp = { { 0, 0 } };
-+	struct qmi_txn txn;
-+	int ret;
-+
-+	mutex_lock(&drvdata->mutex);
-+	if (!drvdata->service_connected) {
-+		dev_err(drvdata->dev, "QMI service not connected!\n");
-+		goto err;
-+	}
-+
-+	req.state = CORESIGHT_ETM_STATE_DISABLED_V01;
-+
-+	ret = qmi_txn_init(&drvdata->handle, &txn,
-+			coresight_set_etm_resp_msg_v01_ei,
-+			&resp);
-+
-+	if (ret < 0) {
-+		dev_err(drvdata->dev, "QMI tx init failed , ret:%d\n",
-+				ret);
-+		goto err;
-+	}
-+
-+	ret = qmi_send_request(&drvdata->handle, &drvdata->s_addr,
-+			&txn, CORESIGHT_QMI_SET_ETM_REQ_V01,
-+			CORESIGHT_QMI_SET_ETM_REQ_MAX_LEN,
-+			coresight_set_etm_req_msg_v01_ei,
-+			&req);
-+	if (ret < 0) {
-+		dev_err(drvdata->dev, "QMI send req failed, ret:%d\n",
-+				 ret);
-+		qmi_txn_cancel(&txn);
-+		goto err;
-+	}
-+
-+	ret = qmi_txn_wait(&txn, msecs_to_jiffies(TIMEOUT_MS));
-+	if (ret < 0) {
-+		dev_err(drvdata->dev, "QMI qmi txn wait failed, ret:%d\n",
-+				ret);
-+		goto err;
-+	}
-+
-+	/* Check the response */
-+	if (resp.resp.result != QMI_RESULT_SUCCESS_V01) {
-+		dev_err(drvdata->dev, "QMI request failed 0x%x\n",
-+				resp.resp.error);
-+		goto err;
-+	}
-+
-+	drvdata->enabled = false;
-+	dev_info(drvdata->dev, "Remote ETM tracing disabled for instance %d\n",
-+				drvdata->inst_id);
-+err:
-+	mutex_unlock(&drvdata->mutex);
-+}
-+
-+static const struct coresight_ops_source remote_etm_source_ops = {
-+	.enable		= remote_etm_enable,
-+	.disable	= remote_etm_disable,
-+};
-+
-+static const struct coresight_ops remote_cs_ops = {
-+	.source_ops	= &remote_etm_source_ops,
-+};
-+
-+static int remote_etm_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct coresight_platform_data *pdata;
-+	struct remote_etm_drvdata *drvdata;
-+	struct coresight_desc desc = {0 };
-+	int ret;
-+
-+	desc.name = coresight_alloc_device_name(&remote_etm_devs, dev);
-+	if (!desc.name)
-+		return -ENOMEM;
-+	pdata = coresight_get_platform_data(dev);
-+	if (IS_ERR(pdata))
-+		return PTR_ERR(pdata);
-+	pdev->dev.platform_data = pdata;
-+
-+	pm_runtime_enable(dev);
-+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-+	if (!drvdata)
-+		return -ENOMEM;
-+
-+	drvdata->dev = &pdev->dev;
-+	platform_set_drvdata(pdev, drvdata);
-+
-+	ret = of_property_read_u32(pdev->dev.of_node, "qcom,inst-id",
-+			&drvdata->inst_id);
-+	if (ret)
-+		return ret;
-+
-+	if (drvdata->inst_id >= MAX_INSTANCE_ID) {
-+		dev_err(dev, "inst_id is invalid.\n");
-+		return -EINVAL;
-+	}
-+
-+	mutex_init(&drvdata->mutex);
-+
-+	ret = qmi_handle_init(&drvdata->handle,
-+			CORESIGHT_QMI_SET_ETM_REQ_MAX_LEN,
-+			&server_ops, NULL);
-+	if (ret < 0) {
-+		dev_err_probe(dev, ret, "Remote ETM client init failed.\n");
-+		return ret;
-+	}
-+
-+	qmi_add_lookup(&drvdata->handle,
-+			CORESIGHT_QMI_SVC_ID,
-+			CORESIGHT_QMI_VERSION,
-+			drvdata->inst_id);
-+
-+	desc.type = CORESIGHT_DEV_TYPE_SOURCE;
-+	desc.subtype.source_subtype = CORESIGHT_DEV_SUBTYPE_SOURCE_OTHERS;
-+	desc.ops = &remote_cs_ops;
-+	desc.pdata = pdev->dev.platform_data;
-+	desc.dev = &pdev->dev;
-+	drvdata->csdev = coresight_register(&desc);
-+	if (IS_ERR(drvdata->csdev)) {
-+		ret = PTR_ERR(drvdata->csdev);
-+		goto err;
-+	}
-+
-+	return 0;
-+err:
-+	qmi_handle_release(&drvdata->handle);
-+	return ret;
-+}
-+
-+static int remote_etm_remove(struct platform_device *pdev)
-+{
-+	struct remote_etm_drvdata *drvdata = platform_get_drvdata(pdev);
-+	struct device *dev = &pdev->dev;
-+
-+	pm_runtime_disable(dev);
-+	qmi_handle_release(&drvdata->handle);
-+	coresight_unregister(drvdata->csdev);
-+	return 0;
-+}
-+
-+static const struct of_device_id remote_etm_match[] = {
-+	{.compatible = "qcom,coresight-remote-etm"},
-+	{}
-+};
-+
-+static struct platform_driver remote_etm_driver = {
-+	.probe          = remote_etm_probe,
-+	.remove         = remote_etm_remove,
-+	.driver         = {
-+		.name   = "coresight-remote-etm",
-+		.of_match_table = remote_etm_match,
-+	},
-+};
-+
-+module_platform_driver(remote_etm_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("CoreSight Remote ETM driver");
--- 
-2.41.0
+> @@ -68,7 +69,7 @@
+>  57	common	fork			sys_fork
+>  58	common	vfork			sys_vfork
+>  59	64	execve			sys_execve
+> -60	common	exit			sys_exit
+> +60	common	exit			sys_exit			-			noreturn
+>  61	common	wait4			sys_wait4
+>  62	common	kill			sys_kill
+>  63	common	uname			sys_newuname
 
+Have you checked if this works correctly with the
+existing tools/perf/arch/x86/entry/syscalls/syscalltbl.sh?
+
+Since not just table file contents but also the file format
+changed here, there is a good chance that the output
+is no longer what we need.
+
+Unfortunately, the format on x86 is now incompatible with
+the one on s390. I have a patch to change s390 in the future
+so we can use a single script for all of them.
+
+      Arnd
 
