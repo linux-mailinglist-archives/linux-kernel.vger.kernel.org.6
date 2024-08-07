@@ -1,207 +1,126 @@
-Return-Path: <linux-kernel+bounces-278059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3830A94AA45
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:37:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 380EE94AA5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B3DC1C2112B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:37:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2171C2112B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B9E80026;
-	Wed,  7 Aug 2024 14:37:04 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7802283CC8;
+	Wed,  7 Aug 2024 14:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLfFGb3k"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBF47E0F0
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE5782D83;
+	Wed,  7 Aug 2024 14:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723041424; cv=none; b=a+9XBgJwiOdlzhRgMSnOyIMgb+ZRG4ZNrno+gm+l5/n0SfYoOnL7x0+f2matomtmgtcH04UOlXNY5z6Y3OvgFaCmBynY6qOrt1lPm0jRBtcdZGhKaUm5NtbEgYluPb1+3MRDoiwd8Be8RgeBQlTXZibcwkgL/3mIQkcIo/trivs=
+	t=1723041429; cv=none; b=OXVUIxtEmN5eT8tCVXvYair0WTK2hdnWuabSp7PTmhUUIJGlM8TC3MaxW6IH/5kOc3ty6kxCSHp/VXaiZnz9kgCGCRKhRRyEUdeLisLiMoUC0Fajk92Zvr10V5tRua4koEnBwFj8vhU6LwiHDGSgzEqHZA+tNWS2DY2JV4+FjYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723041424; c=relaxed/simple;
-	bh=6Ex9JBBQeeumu+5bfMADPiTKVhDkyAOukkLhCDuwNR8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZJqQRjLKxBE04fJD8rMYvdfErf9iK4mkqHnBgvnXf4IE/mGwuyBInGLDD7osE10JKDGnSLxEh5q+WRLkrdobC2jN1pG5rObKb5dGUiAw3Z3p7Qzv2pIxbpBHNvrsAeTxmB7EespRhS3QbgnRg/cFg5X+n8B7yyGj5BF05E6HSDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <m.felsch@pengutronix.de>)
-	id 1sbhme-0004Iv-Nh; Wed, 07 Aug 2024 16:37:00 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-Date: Wed, 07 Aug 2024 16:36:53 +0200
-Subject: [PATCH 3/3] usb: misc: onboard_dev: add ext-vbus-supply handling
+	s=arc-20240116; t=1723041429; c=relaxed/simple;
+	bh=OvsePmij4+qC4W0XpuSnvTsV4TtAWofQcxSiTpAA81U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Iazg0Qo9WcXwW5gyhQaMWW9lxc4Q8kScsIgae9wyKBzvZzd+uqfLjZKWwICvIM0S00YjQTYMi7j5nWzaE4RjoT7AcyqTH0xw4/lKdDGdhl/Fg1aJ7m51xT7uwNV3qsK1kos9/KZ94lCwzMKH24na2h6ZZlZtOmh25j/RTOXnijo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLfFGb3k; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2cb63ceff6dso1473002a91.1;
+        Wed, 07 Aug 2024 07:37:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723041427; x=1723646227; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tuLdRBZiE9n4+MHp5PGhajsyIvVYgnsZblL4IXj+RGc=;
+        b=YLfFGb3kWldgzaEtH9CIodOR9pCFGlBBYSQg+y/UsHsCt+Ozjwtlrevl7Ae0xAoxxF
+         llC8cbWb6IafSI7wInNbjbEubmbQVizN8IKKSuxoRgCD6x3gWrE0nfF+h8iAxNi61ShV
+         TQbeSHnvRsApgbsPWIiaM0YcET1W7eJE+Z1KrKjqxh5hpeyXsBaE3QjqfJW5l2i7aOML
+         OvqA85Oo3fjP4vsStFICtf1WpU2gvFoECg0LmM22uaTd46kQWCrE3TwRqR6nDN6T+iJM
+         8vEW3xV/m2BpgK/zfXjvqc6bXD/2hFbyqtxPMw3t9j2vhQ+/z0+yaoe83haCeJggNCr8
+         HpoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723041427; x=1723646227;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tuLdRBZiE9n4+MHp5PGhajsyIvVYgnsZblL4IXj+RGc=;
+        b=vi7LHHWe2YM6SAwHMzCFFwSt1a3BQU1rT4y9muuzAQcXNYh+oasuAqS9U6BcKwdTgX
+         rZyoRLHHj98llg1X8aHqsGUKPUHkdAPv3mJ4EDREp44bYgu7KNMFVCZkiEChXATR+ZME
+         Xe6PR/1t002i1Hxwiyj7/KPKXixt+zoUijDlaSZYbYLvqFaIB0081PHA6B770iag3tCe
+         6JQrV094l4wE6Usz1v1+XfWBjYUrifvuOKFJIoYdsz791DXMuFcony71EHceb9slMIKK
+         nkbRbhtM7f+EsrhWDlev8nYN2ZhBjYy0I915vBn+Tcvah26j1o0OZpPOZRLvfKIQmmhW
+         8BWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVb+Mvzc4hDFd7P7I1kLGtbw3kgNlJvrOnENMTVlBDwQdfyYUbUyH2pHhIteUAj6mNABCFVNw/iCTFEPYzXoym2xdcj06YDBpfWvu6ytmEBl8dfn91UOfdyEUPVkoRhAQvH1vaqvA==
+X-Gm-Message-State: AOJu0YwhJPso5mlxiLXuZ/9eek4AixO2QsqMwlf2ymiqHsAZXzSgaqvY
+	BhuHI52HsEl0IoZ3y9jn7r9iBz1LOWfl67X/XhUqRF9cC86DqHj7Fn3f1VxD4oHZyI3Vv5szBZi
+	Z85YSMDzJ34e1DRku+RinYJ07I8A=
+X-Google-Smtp-Source: AGHT+IFlLvDiv/HFD9TrRoW6wsN4VyG2V9kNVMnuTY2clV+LzI2BSWPAt4ZzooRHLhiaelzqc9i1X9y7/GL61gSRECE=
+X-Received: by 2002:a17:90a:5586:b0:2d0:d82:60ae with SMTP id
+ 98e67ed59e1d1-2d00d827ab8mr12757085a91.37.1723041427326; Wed, 07 Aug 2024
+ 07:37:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240807-b4-v6-10-topic-usb-onboard-dev-v1-3-f33ce21353c9@pengutronix.de>
-References: <20240807-b4-v6-10-topic-usb-onboard-dev-v1-0-f33ce21353c9@pengutronix.de>
-In-Reply-To: <20240807-b4-v6-10-topic-usb-onboard-dev-v1-0-f33ce21353c9@pengutronix.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Matthias Kaehlcke <mka@chromium.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: kernel@pengutronix.de, linux-usb@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Marco Felsch <m.felsch@pengutronix.de>
-X-Mailer: b4 0.14.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::28
-X-SA-Exim-Mail-From: m.felsch@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240807090057.1334-1-thunder.leizhen@huaweicloud.com>
+In-Reply-To: <20240807090057.1334-1-thunder.leizhen@huaweicloud.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Wed, 7 Aug 2024 10:36:56 -0400
+Message-ID: <CAEjxPJ5jKHVqCD7dZUK-UYq=op6D_rC6FmnRvQ=sk9uwuQ6sUw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] selinux: add the processing of the failure of avc_add_xperms_decision()
+To: thunder.leizhen@huaweicloud.com
+Cc: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Zhen Lei <thunder.leizhen@huawei.com>, 
+	Nick Kralevich <nnk@google.com>, Jeff Vander Stoep <jeffv@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support to power the port VBUS via host controlled regulators since
-some embedded hub PCB designs don't connect the dedicated USB hub port
-power GPIO accordingly.
+On Wed, Aug 7, 2024 at 5:02=E2=80=AFAM <thunder.leizhen@huaweicloud.com> wr=
+ote:
+>
+> From: Zhen Lei <thunder.leizhen@huawei.com>
+>
+> When avc_add_xperms_decision() fails, the information recorded by the new
+> avc node is incomplete. In this case, the new avc node should be released
+> instead of replacing the old avc node.
+>
+> Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
+> Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 
-To support the above use-case the USB_PORT_FEAT_POWER port feature
-handling must be added. At the moment this feature is limited to the
-following hubs:
-  - usb424,2412
-  - usb424,2414
-  - usb424,2417.
+Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
 
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
----
- drivers/usb/misc/onboard_usb_dev.c | 63 ++++++++++++++++++++++++++++++++++++++
- drivers/usb/misc/onboard_usb_dev.h |  2 ++
- 2 files changed, 65 insertions(+)
-
-diff --git a/drivers/usb/misc/onboard_usb_dev.c b/drivers/usb/misc/onboard_usb_dev.c
-index f61de2c353d0..f8ca6ef9956b 100644
---- a/drivers/usb/misc/onboard_usb_dev.c
-+++ b/drivers/usb/misc/onboard_usb_dev.c
-@@ -36,6 +36,8 @@ static DECLARE_WORK(attach_usb_driver_work, onboard_dev_attach_usb_driver);
- 
- /************************** Platform driver **************************/
- 
-+#define MAX_DOWNSTREAM_PORTS	7
-+
- struct usbdev_node {
- 	struct usb_device *udev;
- 	struct list_head list;
-@@ -52,6 +54,7 @@ struct onboard_dev {
- 	struct list_head udev_list;
- 	struct mutex lock;
- 	struct clk *clk;
-+	struct regulator *ext_vbus_supplies[MAX_DOWNSTREAM_PORTS];
- };
- 
- static int onboard_dev_get_regulators(struct onboard_dev *onboard_dev)
-@@ -212,6 +215,48 @@ static int onboard_dev_add_usbdev(struct onboard_dev *onboard_dev,
- 	return err;
- }
- 
-+static int onboard_dev_port_power(struct onboard_dev *onboard_dev, int port1,
-+				  bool enable)
-+{
-+	struct regulator *vbus_supply;
-+
-+	vbus_supply = onboard_dev->ext_vbus_supplies[port1 - 1];
-+
-+	/* External supplies are optional */
-+	if (!vbus_supply)
-+		return 0;
-+
-+	if (enable)
-+		return regulator_enable(vbus_supply);
-+
-+	return regulator_disable(vbus_supply);
-+}
-+
-+static int onboard_dev_add_ext_vbus_supplies(struct onboard_dev *onboard_dev)
-+{
-+	struct device *dev = onboard_dev->dev;
-+	unsigned int i;
-+
-+	if (!onboard_dev->pdata->support_ext_vbus_supplies)
-+		return 0;
-+
-+	for (i = 0; i < MAX_DOWNSTREAM_PORTS; i++) {
-+		char *supply_name = "portX-vbus";
-+		struct regulator *reg;
-+
-+		sprintf(supply_name, "port%u-vbus", i + 1);
-+		reg = devm_regulator_get_optional(dev, supply_name);
-+		if (!IS_ERR(reg)) {
-+			onboard_dev->ext_vbus_supplies[i] = reg;
-+		} else {
-+			if (PTR_ERR(reg) != -ENODEV)
-+				return PTR_ERR(reg);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static void onboard_dev_remove_usbdev(struct onboard_dev *onboard_dev,
- 				      const struct usb_device *udev)
- {
-@@ -339,6 +384,10 @@ static int onboard_dev_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
- 
-+	err = onboard_dev_add_ext_vbus_supplies(onboard_dev);
-+	if (err)
-+		return err;
-+
- 	/*
- 	 * The USB driver might have been detached from the USB devices by
- 	 * onboard_dev_remove() (e.g. through an 'unbind' by userspace),
-@@ -525,7 +574,21 @@ static struct usb_device_driver onboard_dev_usbdev_driver = {
- int onboard_dev_port_feature(struct usb_device *udev, bool set,
- 			     int feature, int port1)
- {
-+	struct device *dev = &udev->dev;
-+	struct onboard_dev *onboard_dev;
-+
-+	if (!dev->of_node)
-+		return 0;
-+
-+	onboard_dev = _find_onboard_dev(dev);
-+	if (IS_ERR(onboard_dev))
-+		return 0;
-+
- 	switch (feature) {
-+	case USB_PORT_FEAT_POWER:
-+		if (!onboard_dev->pdata->is_hub)
-+			return -EINVAL;
-+		return onboard_dev_port_power(onboard_dev, port1, set);
- 	default:
- 		return 0;
- 	}
-diff --git a/drivers/usb/misc/onboard_usb_dev.h b/drivers/usb/misc/onboard_usb_dev.h
-index fbba549c0f47..e828bfe006ba 100644
---- a/drivers/usb/misc/onboard_usb_dev.h
-+++ b/drivers/usb/misc/onboard_usb_dev.h
-@@ -13,6 +13,7 @@ struct onboard_dev_pdata {
- 	unsigned int num_supplies;	/* number of supplies */
- 	const char * const supply_names[MAX_SUPPLIES];
- 	bool is_hub;
-+	bool support_ext_vbus_supplies;
- };
- 
- static const struct onboard_dev_pdata microchip_usb424_data = {
-@@ -20,6 +21,7 @@ static const struct onboard_dev_pdata microchip_usb424_data = {
- 	.num_supplies = 1,
- 	.supply_names = { "vdd" },
- 	.is_hub = true,
-+	.support_ext_vbus_supplies = true,
- };
- 
- static const struct onboard_dev_pdata microchip_usb5744_data = {
-
--- 
-2.39.2
-
+> ---
+>  security/selinux/avc.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/security/selinux/avc.c b/security/selinux/avc.c
+> index 7087cd2b802d8d8..b49c44869dc4627 100644
+> --- a/security/selinux/avc.c
+> +++ b/security/selinux/avc.c
+> @@ -907,7 +907,11 @@ static int avc_update_node(u32 event, u32 perms, u8 =
+driver, u8 xperm, u32 ssid,
+>                 node->ae.avd.auditdeny &=3D ~perms;
+>                 break;
+>         case AVC_CALLBACK_ADD_XPERMS:
+> -               avc_add_xperms_decision(node, xpd);
+> +               rc =3D avc_add_xperms_decision(node, xpd);
+> +               if (rc) {
+> +                       avc_node_kill(node);
+> +                       goto out_unlock;
+> +               }
+>                 break;
+>         }
+>         avc_node_replace(node, orig);
+> --
+> 2.34.1
+>
 
