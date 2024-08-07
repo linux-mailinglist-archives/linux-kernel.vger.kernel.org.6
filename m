@@ -1,117 +1,109 @@
-Return-Path: <linux-kernel+bounces-278398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDFF94AFB4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:29:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70EAD94AFC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F51C1C219F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:29:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1F251C21A34
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8683E13D262;
-	Wed,  7 Aug 2024 18:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DE113FD86;
+	Wed,  7 Aug 2024 18:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZfBypa4c"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EVqixrMR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3F963CB
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E241411EB
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723055383; cv=none; b=RnVjdbJS56INdw1LkNCAEYiX6HCqXNtKvUILccmKr2bDY8Llb6GKMnTAnKQd8cc+KD37nu2UpzSR9Kn/66TxzclJkZ/Twd/sTqQcsnjhOa/zxMRQ+Wk8x20k/zvp9OLJPDzGGYXpGObC8zMNb9b5SKnQG7IGB5ZS5fl63Apn1AM=
+	t=1723055411; cv=none; b=mxNI1vG6IDZIRLeImdc5kTE0eeDqFqlYvKLo4wWnzlAWTtRZhxqh3/HJjTSJAAgUwSSxM7Xl3NJEBZ6+CL9IKHmDhz7+GYfELXApcXnX+V72yDNaFPJWo7XlCViUqoro4gGlcaX1gO/uT/FrL+dw5OQ18H+0SAeJjGq/BOXa1EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723055383; c=relaxed/simple;
-	bh=x0Gh5dUsX+OKIN85uHpwP2suPY7Lk0xxfxy9XFiU05A=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=i7vHIfBZpwPUf+Lt3DvMhi1FDHnYWgmGz+HSZ/K641SVRRx/v35jFDvy1vqztwwOHgS+jiuuk00faquz0zMO8cPNsssDMMUA47tJOzsEVABNjVaSUg/LHpK0o2ubVE+E8qWLkCC2H7OSLoS6wR9gH3ij/sA21wpH/PyUdC4hZw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZfBypa4c; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723055381;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=iuEaMCr3ZjxEalj9opHIoSUEzllr1XxNMoFfZ/TmzCw=;
-	b=ZfBypa4cwhlRiFE08QqxmAbK+N7F1+PB7s0cy52b5iEXJr8Y1SQWwi6L44KxCVTxH4J2P0
-	IUNvRvyC11m4kjW9rhhKN6i4e8iFRELHXIn5oKgSIwHzUvxBmrenQkg5svOskLIehj8W/L
-	ipjcOqz9E2Z7fQXi2mrYNEE4h8QbX5g=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-398-QkwZ5qnCORuhPJNyCio-rg-1; Wed,
- 07 Aug 2024 14:29:39 -0400
-X-MC-Unique: QkwZ5qnCORuhPJNyCio-rg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D77B51955F0D;
-	Wed,  7 Aug 2024 18:29:36 +0000 (UTC)
-Received: from localhost (unknown [10.22.32.137])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 75B9A19560A3;
-	Wed,  7 Aug 2024 18:29:35 +0000 (UTC)
-Date: Wed, 7 Aug 2024 15:29:34 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: LKML <linux-kernel@vger.kernel.org>,
-	linux-rt-users <linux-rt-users@vger.kernel.org>,
-	stable-rt <stable-rt@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Carsten Emde <C.Emde@osadl.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Daniel Wagner <daniel.wagner@suse.com>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
-	Jeff Brady <jeffreyjbrady@gmail.com>,
-	Luis Goncalves <lgoncalv@redhat.com>
-Subject: [ANNOUNCE] 5.10.223-rt115
-Message-ID: <ZrO9DhtFiajWqT5w@uudg.org>
+	s=arc-20240116; t=1723055411; c=relaxed/simple;
+	bh=UaQkeTO6wPD8EaFGm6lBWsF7HeTN5QeBzb3IAPZdNQ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mPN4sV8K3tHFr2qOLHwsUe2UpfDEqb8XHfCQloJ0P/ETbu1dgmX3KifJqRow8X/JKVZw6OzLOHZTv18a9oH/Svmmul90u6cPf31m+1qkm2tFm+arLNTtY2rWmKNdwQTFmhfNUK2TppSYUiFqV3wzJe86tLvpRRO33HgPyH8rDsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EVqixrMR; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723055409; x=1754591409;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=UaQkeTO6wPD8EaFGm6lBWsF7HeTN5QeBzb3IAPZdNQ8=;
+  b=EVqixrMRsF0RtV8+4OlFVgEZQm1NTBZRLA2HRE54OdG2ZtZiCBC43P36
+   Bunabp2hga7rMNTnYcC7/sQis/ge+TkQ4UtpA8r0u/mhWaTQ2bQbsiz9t
+   e+eGimAUA8vNWCjCmsLTujwb1CGFmL5uGtSX1VugMbCZRLsHVKpZY1YeH
+   /i1mPkU2IZg3bNQ+yDhtFGjPJ2aa9/kkJSgcIKR8SdCHqG+y3xWIWnANH
+   LwCmoKUCxVOYYOHc1Y+Xuw7lxHFEYcPt2QrCq2zV5hbzdC05RkxXK/VS1
+   6YlD6D5G56rqfIg/xVl+SzoKEmcmr0rJwbkp1pQ/WGWl3yF6GpCzHmo2E
+   Q==;
+X-CSE-ConnectionGUID: uhrli8a/RLSrwkwuVitevQ==
+X-CSE-MsgGUID: yBu9X3lMQhal5O+J4a6DYw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="12906940"
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="12906940"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 11:30:08 -0700
+X-CSE-ConnectionGUID: iGCQZM3qQsGnMi7fEvLquw==
+X-CSE-MsgGUID: 0VG0siAcTS+dUdaKenQJCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="94514292"
+Received: from eamartin-mobl1.amr.corp.intel.com (HELO [10.125.111.208]) ([10.125.111.208])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 11:30:07 -0700
+Message-ID: <cc8e898d-b0d2-4e18-a516-864ec6b9145d@intel.com>
+Date: Wed, 7 Aug 2024 11:30:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvdimm/pmem: Set dax flag for all 'PFN_MAP' cases
+To: Zhihao Cheng <chengzhihao1@huawei.com>, dan.j.williams@intel.com,
+ vishal.l.verma@intel.com, hch@lst.de, ira.weiny@intel.com,
+ dlemoal@kernel.org, hare@suse.de, axboe@kernel.dk
+Cc: nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240731122530.3334451-1-chengzhihao1@huawei.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20240731122530.3334451-1-chengzhihao1@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello RT-list!
 
-I'm pleased to announce the 5.10.223-rt115 stable release.
 
-This release is just an update to the new stable 5.10.223
-version and no RT specific changes have been made.
+On 7/31/24 5:25 AM, Zhihao Cheng wrote:
+> The dax is only supportted on pfn type pmem devices since commit
+> f467fee48da4 ("block: move the dax flag to queue_limits"), fix it
+> by adding dax flag setting for the missed case.
+> 
+> Fixes: f467fee48da4 ("block: move the dax flag to queue_limits")
+> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
 
-You can get this release via the git tree at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
-
-  branch: v5.10-rt
-  Head SHA1: 8f0c430ef27fe8f996d85ae3ddfc71f643fd5a8a
-
-Or to build 5.10.223-rt115 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.223.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.223-rt115.patch.xz
-
-Signing key fingerprint:
-
-  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
-
-All keys used for the above files and repositories can be found on the
-following git repository:
-
-   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
-
-Enjoy!
-Luis
-
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/nvdimm/pmem.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index 1ae8b2351654..210fb77f51ba 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -498,7 +498,7 @@ static int pmem_attach_disk(struct device *dev,
+>  	}
+>  	if (fua)
+>  		lim.features |= BLK_FEAT_FUA;
+> -	if (is_nd_pfn(dev))
+> +	if (is_nd_pfn(dev) || pmem_should_map_pages(dev))
+>  		lim.features |= BLK_FEAT_DAX;
+>  
+>  	if (!devm_request_mem_region(dev, res->start, resource_size(res),
 
