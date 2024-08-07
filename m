@@ -1,300 +1,387 @@
-Return-Path: <linux-kernel+bounces-277640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA6194A41E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:20:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA31294A42F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 921AA28454E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:20:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A07A1F25397
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1241D2F42;
-	Wed,  7 Aug 2024 09:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B113F1D0DC3;
+	Wed,  7 Aug 2024 09:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jKh1Fz+F"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BrU+LAnu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7B41CB32D;
-	Wed,  7 Aug 2024 09:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C6B811E2;
+	Wed,  7 Aug 2024 09:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723022318; cv=none; b=dSNrF3w23mig2v1c2wKNN+uYaoI3ujpY6zvoJg7D8v7vvqFr8AL8pHK1Myt/DGbjII05Z9xPtxXcRjmZEKBYsXwbLKJD0qXHcty/Q4S5gQhs527FmsYHebC7InvLr2xBzDMHew0PDxxzjocJRCpi4pJVy0zg59HyJC5gY5fuU+c=
+	t=1723022424; cv=none; b=h2m0IF8PY83x7GXETpRHOQD+bMBM7RiCzg/W9aeznMyH4QD56FZO4G44IY/SD78cZU7gNCPn2e0wiqmldFa5Ryk2kAT2CInsoiKtlE2tyRzrdfsYBQJVFT9G/PFqS3ZI2WW2S2NxdAPhEjQhoM25DI50GCh5RcIHWtG2cLlGhC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723022318; c=relaxed/simple;
-	bh=5cQDfC5Igy+dOMaINi4faL+vMKFD/gr0baG/OSkyspE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CHNg6Jpht97wYoIIHS6ChXAX1IZ5h401HcXysgHqMMpvnUhT20msAtavaIiJnPR7dQsasfUDUVKuHk4PfLbcfE4FF3ZaAZvdFYsfGgkMdrp06f900bVwjX7yM6eajMWsmvoRbfIwHnVDviuJFbfIXKD9CpM65mLVgKyPbQsNnLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jKh1Fz+F; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4772Mg4V004360;
-	Wed, 7 Aug 2024 09:18:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
-	uNsMZGr2oVWjL++x60ijGM9WGe6WYWv/kbq2yJwXg+M=; b=jKh1Fz+FBFi0mwqO
-	MV3ItSrRBe5scKiJTwWW1PHeaa9Ev790KK5d2nJzivCLdClu+POXpTChtz/qFybu
-	zriBWKLessToKX7ns9HjHiAuCkviaZ6BTvL3hpvEcbrPyoIZ3RHcVM9ZQnJRUQWI
-	bFJUXA219PmVG6jyKIJWKZje/Vx3qci2v4UDIoFUn6M9YtLlRzgWFKe4U4ArHDvM
-	h8J5zCbNm8gf0l58iQ/RLaMii68ylpcLtx5CiLp09nN8mRxb+CYUKNTmonj7+rJ/
-	j6P2eDeq+Sf3aT6dVPqb3HfFe+6E8UlrBUxcPJQQFHpWn2KZzIwA2F1m9Qk5ZWl/
-	eVhx8Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40uqcmsuqg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 Aug 2024 09:18:28 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4779ISxt022027;
-	Wed, 7 Aug 2024 09:18:28 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40uqcmsuqe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 Aug 2024 09:18:28 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4776jchf024334;
-	Wed, 7 Aug 2024 09:18:26 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40sy90re6a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 Aug 2024 09:18:26 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4779ILBw44499382
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 7 Aug 2024 09:18:23 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E777D2004D;
-	Wed,  7 Aug 2024 09:18:20 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 915442005A;
-	Wed,  7 Aug 2024 09:18:20 +0000 (GMT)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  7 Aug 2024 09:18:20 +0000 (GMT)
-Date: Wed, 7 Aug 2024 11:17:54 +0200
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Jonathan Corbet
- <corbet@lwn.net>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Gerald
- Schaefer <gerald.schaefer@linux.ibm.com>
-Subject: Re: [PATCH v1 02/11] mm/pagewalk: introduce folio_walk_start() +
- folio_walk_end()
-Message-ID: <20240807111754.2148d27e@p-imbrenda.boeblingen.de.ibm.com>
-In-Reply-To: <20240802155524.517137-3-david@redhat.com>
-References: <20240802155524.517137-1-david@redhat.com>
-	<20240802155524.517137-3-david@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1723022424; c=relaxed/simple;
+	bh=gD+BO8KCPo5FlDSkmYt3b0GRFkK77JUKqOMdtZw1Tmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=azmCgVh6iEj2ba4YYCt6w71TfwJkv4JUpXqTZB4jE/FbtzTGB2HukHAh8hL8siPMvnneZ4U4yG+flwkEPKaSynnvL+sr/NtLeSm0F4AqH4+VFlBxLgRIZqshewuGHOygOQDqLd8hvwxvK522PI2PWlienZGmVvQ5+/TCyl8TSfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BrU+LAnu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3462AC4AF0B;
+	Wed,  7 Aug 2024 09:20:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723022424;
+	bh=gD+BO8KCPo5FlDSkmYt3b0GRFkK77JUKqOMdtZw1Tmo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BrU+LAnuq3IOtevecR/MWHV/YXBKF6+8tqfmtn/ieL+jdVvmEihaxzgYX4JB4E8Cp
+	 LbFJfk2KVuDPAWChibfQpVZJdJWt2qYFq8TG7ntJEZB36aVvWeyKgTptciNwCvvHE+
+	 90L3kqpbXsxWvLAtDKgRAXPJc6yCwwtexcZZYKIxdy/n9Y+5tCt0MwiCN3RDYsc1Ye
+	 TQ3tnldpv5iYrhuoH4kTJF8fMA/Z/86ds64qLrfFbrIhlkWRZtrBim+qgrPD3XTNhj
+	 oObNScA0mciiDFnF2toL4tmFJHU+8bOPjTQRAcMtsLlxP1kLAE8KhTIh1PvUYnZix8
+	 3963bZDt2gkjg==
+Message-ID: <e6b4e0d8-7183-4ff4-a373-cb1c0c98d993@kernel.org>
+Date: Wed, 7 Aug 2024 11:20:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 08/10] arm64: dts: exynos: Add initial support for
+ exynos8895 SoC
+To: ivo.ivanov.ivanov1@gmail.com, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240807082843.352937-1-ivo.ivanov.ivanov1@gmail.com>
+ <20240807082843.352937-9-ivo.ivanov.ivanov1@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240807082843.352937-9-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: QZDnbRCTrHzGHPwcFsTSM6OgIGkWYGg-
-X-Proofpoint-ORIG-GUID: ExZxiMrxkJBcLr00SNuG5SU2WVyrL9U6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-07_06,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 mlxscore=0 malwarescore=0 spamscore=0
- suspectscore=0 mlxlogscore=258 bulkscore=0 adultscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408070061
 
-On Fri,  2 Aug 2024 17:55:15 +0200
-David Hildenbrand <david@redhat.com> wrote:
-
-> We want to get rid of follow_page(), and have a more reasonable way to
-> just lookup a folio mapped at a certain address, perform some checks while
-> still under PTL, and then only conditionally grab a folio reference if
-> really required.
+On 07/08/2024 10:28, ivo.ivanov.ivanov1@gmail.com wrote:
+> From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 > 
-> Further, we might want to get rid of some walk_page_range*() users that
-> really only want to temporarily lookup a single folio at a single address.
+> Exynos 8895 SoC is an ARMv8 mobile SoC found in the Samsung Galaxy
+> S8 (dreamlte), S8 Plus (dream2lte), Note 8 (greatlte) and the Meizu
+> 15 Plus (m1891). Add minimal support for that SoC, including:
 > 
-> So let's add a new page table walker that does exactly that, similarly
-> to GUP also being able to walk hugetlb VMAs.
+> - All 8 cores via PSCI
+> - ChipID
+> - Generic ARMV8 Timer
+> - Enumarate all pinctrl nodes
 > 
-> Add folio_walk_end() as a macro for now: the compiler is not easy to
-> please with the pte_unmap()->kunmap_local().
+> Further platform support will be added over time.
 > 
-> Note that one difference between follow_page() and get_user_pages(1) is
-> that follow_page() will not trigger faults to get something mapped. So
-> folio_walk is at least currently not a replacement for get_user_pages(1),
-> but could likely be extended/reused to achieve something similar in the
-> future.
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
+>  .../boot/dts/exynos/exynos8895-pinctrl.dtsi   | 1378 +++++++++++++++++
+>  arch/arm64/boot/dts/exynos/exynos8895.dtsi    |  253 +++
+>  2 files changed, 1631 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895-pinctrl.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos8895-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos8895-pinctrl.dtsi
+> new file mode 100644
+> index 000000000..1dcb61e2e
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos8895-pinctrl.dtsi
+> @@ -0,0 +1,1378 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Samsung's Exynos 8895 SoC pin-mux and pin-config device tree source
+> + *
+> + * Copyright (c) 2024, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include "exynos-pinctrl.h"
+> +
+> +&pinctrl_alive {
+> +	gpa0: gpa0 {
 
-[...]
+I do not believe this was tested. See maintainer SoC profile for Samsung
+Exynos.
 
-> +struct folio *folio_walk_start(struct folio_walk *fw,
-> +		struct vm_area_struct *vma, unsigned long addr,
-> +		folio_walk_flags_t flags)
-> +{
-> +	unsigned long entry_size;
-> +	bool expose_page = true;
-> +	struct page *page;
-> +	pud_t *pudp, pud;
-> +	pmd_t *pmdp, pmd;
-> +	pte_t *ptep, pte;
-> +	spinlock_t *ptl;
-> +	pgd_t *pgdp;
-> +	p4d_t *p4dp;
-> +
-> +	mmap_assert_locked(vma->vm_mm);
-> +	vma_pgtable_walk_begin(vma);
-> +
-> +	if (WARN_ON_ONCE(addr < vma->vm_start || addr >= vma->vm_end))
-> +		goto not_found;
-> +
-> +	pgdp = pgd_offset(vma->vm_mm, addr);
-> +	if (pgd_none_or_clear_bad(pgdp))
-> +		goto not_found;
-> +
-> +	p4dp = p4d_offset(pgdp, addr);
-> +	if (p4d_none_or_clear_bad(p4dp))
-> +		goto not_found;
-> +
-> +	pudp = pud_offset(p4dp, addr);
-> +	pud = pudp_get(pudp);
-> +	if (pud_none(pud))
-> +		goto not_found;
-> +	if (IS_ENABLED(CONFIG_PGTABLE_HAS_HUGE_LEAVES) && pud_leaf(pud)) {
-> +		ptl = pud_lock(vma->vm_mm, pudp);
-> +		pud = pudp_get(pudp);
-> +
-> +		entry_size = PUD_SIZE;
-> +		fw->level = FW_LEVEL_PUD;
-> +		fw->pudp = pudp;
-> +		fw->pud = pud;
-> +
-> +		if (!pud_present(pud) || pud_devmap(pud)) {
-> +			spin_unlock(ptl);
-> +			goto not_found;
-> +		} else if (!pud_leaf(pud)) {
-> +			spin_unlock(ptl);
-> +			goto pmd_table;
-> +		}
-> +		/*
-> +		 * TODO: vm_normal_page_pud() will be handy once we want to
-> +		 * support PUD mappings in VM_PFNMAP|VM_MIXEDMAP VMAs.
-> +		 */
-> +		page = pud_page(pud);
-> +		goto found;
-> +	}
-> +
-> +pmd_table:
-> +	VM_WARN_ON_ONCE(pud_leaf(*pudp));
+Limited review follows due to lack of testing.
 
-is this warning necessary? can this actually happen?
-and if it can happen, wouldn't it be more reasonable to return NULL?
 
-> +	pmdp = pmd_offset(pudp, addr);
-> +	pmd = pmdp_get_lockless(pmdp);
-> +	if (pmd_none(pmd))
-> +		goto not_found;
-> +	if (IS_ENABLED(CONFIG_PGTABLE_HAS_HUGE_LEAVES) && pmd_leaf(pmd)) {
-> +		ptl = pmd_lock(vma->vm_mm, pmdp);
-> +		pmd = pmdp_get(pmdp);
+> +};
+> diff --git a/arch/arm64/boot/dts/exynos/exynos8895.dtsi b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
+> new file mode 100644
+> index 000000000..3ed381ee5
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
+> @@ -0,0 +1,253 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Samsung's Exynos 8895 SoC device tree source
+> + *
+> + * Copyright (c) 2024, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> + */
 > +
-> +		entry_size = PMD_SIZE;
-> +		fw->level = FW_LEVEL_PMD;
-> +		fw->pmdp = pmdp;
-> +		fw->pmd = pmd;
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
 > +
-> +		if (pmd_none(pmd)) {
-> +			spin_unlock(ptl);
-> +			goto not_found;
-> +		} else if (!pmd_leaf(pmd)) {
-> +			spin_unlock(ptl);
-> +			goto pte_table;
-> +		} else if (pmd_present(pmd)) {
-> +			page = vm_normal_page_pmd(vma, addr, pmd);
-> +			if (page) {
-> +				goto found;
-> +			} else if ((flags & FW_ZEROPAGE) &&
-> +				    is_huge_zero_pmd(pmd)) {
-> +				page = pfn_to_page(pmd_pfn(pmd));
-> +				expose_page = false;
-> +				goto found;
-> +			}
-> +		} else if ((flags & FW_MIGRATION) &&
-> +			   is_pmd_migration_entry(pmd)) {
-> +			swp_entry_t entry = pmd_to_swp_entry(pmd);
+> +/ {
+> +	compatible = "samsung,exynos8895";
+> +	#address-cells = <2>;
+> +	#size-cells = <1>;
 > +
-> +			page = pfn_swap_entry_to_page(entry);
-> +			expose_page = false;
-> +			goto found;
-> +		}
-> +		spin_unlock(ptl);
-> +		goto not_found;
-> +	}
+> +	interrupt-parent = <&gic>;
 > +
-> +pte_table:
-> +	VM_WARN_ON_ONCE(pmd_leaf(pmdp_get_lockless(pmdp)));
+> +	aliases {
+> +		pinctrl0 = &pinctrl_alive;
+> +		pinctrl1 = &pinctrl_abox;
+> +		pinctrl2 = &pinctrl_vts;
+> +		pinctrl3 = &pinctrl_fsys0;
+> +		pinctrl4 = &pinctrl_fsys1;
+> +		pinctrl5 = &pinctrl_busc;
+> +		pinctrl6 = &pinctrl_peric0;
+> +		pinctrl7 = &pinctrl_peric1;
+> +	};
+> +
+> +	arm-a53-pmu {
 
-same here
+Are there two pmus?
 
-> +	ptep = pte_offset_map_lock(vma->vm_mm, pmdp, addr, &ptl);
-> +	if (!ptep)
-> +		goto not_found;
-> +	pte = ptep_get(ptep);
+> +		compatible = "arm,cortex-a53-pmu";
+> +		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-affinity = <&cpu0>,
+> +				     <&cpu1>,
+> +				     <&cpu2>,
+> +				     <&cpu3>,
+> +				     <&cpu4>,
+> +				     <&cpu5>,
+> +				     <&cpu6>,
+> +				     <&cpu7>;
+> +	};
 > +
-> +	entry_size = PAGE_SIZE;
-> +	fw->level = FW_LEVEL_PTE;
-> +	fw->ptep = ptep;
-> +	fw->pte = pte;
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
 > +
-> +	if (pte_present(pte)) {
-> +		page = vm_normal_page(vma, addr, pte);
-> +		if (page)
-> +			goto found;
-> +		if ((flags & FW_ZEROPAGE) &&
-> +		    is_zero_pfn(pte_pfn(pte))) {
-> +			page = pfn_to_page(pte_pfn(pte));
-> +			expose_page = false;
-> +			goto found;
-> +		}
-> +	} else if (!pte_none(pte)) {
-> +		swp_entry_t entry = pte_to_swp_entry(pte);
+> +		cpu-map {
+> +			cluster0 {
+> +				core0 {
+> +					cpu = <&cpu0>;
+> +				};
+> +				core1 {
+> +					cpu = <&cpu1>;
+> +				};
+> +				core2 {
+> +					cpu = <&cpu2>;
+> +				};
+> +				core3 {
+> +					cpu = <&cpu3>;
+> +				};
+> +			};
 > +
-> +		if ((flags & FW_MIGRATION) &&
-> +		    is_migration_entry(entry)) {
-> +			page = pfn_swap_entry_to_page(entry);
-> +			expose_page = false;
-> +			goto found;
-> +		}
-> +	}
-> +	pte_unmap_unlock(ptep, ptl);
-> +not_found:
-> +	vma_pgtable_walk_end(vma);
-> +	return NULL;
-> +found:
-> +	if (expose_page)
-> +		/* Note: Offset from the mapped page, not the folio start. */
-> +		fw->page = nth_page(page, (addr & (entry_size - 1)) >> PAGE_SHIFT);
-> +	else
-> +		fw->page = NULL;
-> +	fw->ptl = ptl;
-> +	return page_folio(page);
-> +}
+> +			cluster1 {
+> +				core0 {
+> +					cpu = <&cpu4>;
+> +				};
+> +				core1 {
+> +					cpu = <&cpu5>;
+> +				};
+> +				core2 {
+> +					cpu = <&cpu6>;
+> +				};
+> +				core3 {
+> +					cpu = <&cpu7>;
+> +				};
+> +			};
+> +		};
+> +
+> +		cpu0: cpu@100 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x100>;
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu1: cpu@101 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x101>;
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu2: cpu@102 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x102>;
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu3: cpu@103 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x103>;
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu4: cpu@0 {
+> +			device_type = "cpu";
+> +			compatible = "samsung,mongoose-m2";
+> +			reg = <0x0>;
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu5: cpu@1 {
+> +			device_type = "cpu";
+> +			compatible = "samsung,mongoose-m2";
+> +			reg = <0x1>;
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu6: cpu@2 {
+> +			device_type = "cpu";
+> +			compatible = "samsung,mongoose-m2";
+> +			reg = <0x2>;
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu7: cpu@3 {
+> +			device_type = "cpu";
+> +			compatible = "samsung,mongoose-m2";
+> +			reg = <0x3>;
+> +			enable-method = "psci";
+> +		};
+> +	};
+> +
+> +	psci {
+> +		compatible = "arm,psci";
+> +		method = "smc";
+> +		cpu_suspend = <0xc4000001>;
+> +		cpu_off = <0x84000002>;
+> +		cpu_on = <0xc4000003>;
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		/* Hypervisor Virtual Timer interrupt is not wired to GIC */
+> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
+> +		clock-frequency = <26000000>;
+
+Hm? I think this was explicitly disallowed.
+
+> +	};
+> +
+> +	fixed-rate-clocks {
+
+Keep order of properties, just like DTS coding style asks.
+
+Anyway, fixed-rate-clocks wrapper is not needed, drop.
+
+> +		oscclk: osc-clock {
+> +			compatible = "fixed-clock";
+> +			#clock-cells = <0>;
+> +			clock-output-names = "oscclk";
+> +		};
+> +	};
+> +
+> +	soc: soc@0 {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x0 0x0 0x20000000>;
+> +
+> +		chipid@10000000 {
+> +			compatible = "samsung,exynos8895-chipid",
+> +				     "samsung,exynos850-chipid";
+> +			reg = <0x10000000 0x24>;
+> +		};
+> +
+> +		gic: interrupt-controller@10200000 {
+> +			compatible = "arm,gic-400";
+> +			#interrupt-cells = <3>;
+> +			#address-cells = <0>;
+> +			interrupt-controller;
+> +			reg = <0x10201000 0x1000>,
+> +			      <0x10202000 0x1000>,
+> +			      <0x10204000 0x2000>,
+> +			      <0x10206000 0x2000>;
+> +			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) |
+> +						 IRQ_TYPE_LEVEL_HIGH)>;
+> +		};
+> +
+> +		pinctrl_alive: pinctrl@164b0000 {
+> +			compatible = "samsung,exynos8895-pinctrl";
+> +			reg = <0x164b0000 0x1000>;
+> +
+> +			wakeup-interrupt-controller {
+> +				compatible = "samsung,exynos8895-wakeup-eint",
+> +					     "samsung,exynos7-wakeup-eint";
+> +				interrupt-parent = <&gic>;
+> +				interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+> +			};
+> +		};
+> +
+> +		pinctrl_abox: pinctrl@13e60000 {
+
+This does not look ordered. See DTS coding style.
+
+Best regards,
+Krzysztof
 
 
