@@ -1,198 +1,131 @@
-Return-Path: <linux-kernel+bounces-277966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C51794A8BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:38:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC8D94A8BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8016E1C22CC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:38:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DF501C21C47
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DD51EA0B1;
-	Wed,  7 Aug 2024 13:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719ED1EA0BD;
+	Wed,  7 Aug 2024 13:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GhdpiMko"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NXo/A0Lb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209581E7A47;
-	Wed,  7 Aug 2024 13:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99F61E7A4A
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 13:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723037906; cv=none; b=hVO9NLF3tEHvqIK8ynDu/px1xi0Qz4Fv0llC0vgItKytySMoZEUxhiYajbYvKDiupC0PybnZaZs5nQ0LzjlyvQ2abAhRtubORnEf+U4kYq8GcZW1+Szjz0Y/2ugd9VXIwGEWDhh3DxXCRQxYQhagntKsXa17owr5clHtu6Xgqys=
+	t=1723037890; cv=none; b=jQLgOVJbLUqjhdmOu2wzmwS2xcU8EuOSNbJiKxznCVkMj07tRl/gCSs8E1GoT5HNgCr7tCHsOTHx4hDMeyMsB4MFhr5h5GiSDlUVb89+1BThThFInEDEKggokqKuK6xJvmaLmlTuhhaWVHVK6JsAgGyUrgAyURniJgnBA/wj/Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723037906; c=relaxed/simple;
-	bh=4pyVVLxfN/8PtB80M3gqmUAWqj5LYHDPi+1QR88V/+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tFSEh80JNazMTidV8Gv6i/w+IeNLaQxyMIrG/oMQ037O/vcx4bjttqem/GEC/Mnt8TbMqrX5hRrK+WLu/JYuuBPYO7R1DyYq0aXqBRUTCUCj3on1F5cJ1bOpZX9iZW8n1exoH550GumVZrKTvpDJ1nFFrmJywZr57zjZQqFNQnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GhdpiMko; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF2E5C4AF0F;
-	Wed,  7 Aug 2024 13:38:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723037905;
-	bh=4pyVVLxfN/8PtB80M3gqmUAWqj5LYHDPi+1QR88V/+o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GhdpiMkoBi/mrlzAXDy67cAx5zTY2LzGWr4jH1DDZh/jEyraVQnPW/lAwQNAdlkeV
-	 iQV6OZO+iI7Pp45QxOqtGBHK0Mn945DaAkLZeRGTHK1AcsfJVK+wpfVqqwR8NsdoYO
-	 0kfvRDgyT1dO+L5MgBYXztWSQGcxcNHqTNLtDKB/okXomT0dzqVsDvyOW+U0wfDiu2
-	 E780rqJQm7j+9/jq81IBVbCLDqg50S4SE5ngT9e8QRGYPKVhrlMpKvIN+/23z5z7P6
-	 xWi0IwohCEb4ctppMoJkBuzhjgMeoOeAQqb/6iwn8Gu8x/PIWpGmuwv5xC7y4ila90
-	 xHf2nPEz7OdSg==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f189a2a841so17991011fa.3;
-        Wed, 07 Aug 2024 06:38:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXmR7RS2jn64M5EK7+oWus6i8ZZKtADyOCRyvrZZZtFUJzEIxQyyL2g4vYbV9JB9/7nrhh1tAheWumC48kniVBKm1e0gCfzcZWYSMugTjSjH5L+lUUebffDisrG+08r4DzuKGGifnmalLNs
-X-Gm-Message-State: AOJu0YzwObJ8GqYOJio6t7e1hPEgDt1zJ7pi+vcanaTw7STOi4fMrx2P
-	egAsnlZLWQ2eboEq8zES4lsiRTLyxyQeZUuSSTLPtxJxw7yZ0o3nvmz0qNxlY8SN9Rmic746Qiz
-	FonR9m2zEn25B2MnX1AUK2nGMYHc=
-X-Google-Smtp-Source: AGHT+IFfRS8iHkHEnjdTgVCLxy/62DBz547RyyKG6hV9bq+sI6QhIraGhAmZqssi8MWywW9zEWzf2phjvBB1QDLcx9E=
-X-Received: by 2002:a05:6512:3b81:b0:52c:d8e9:5d8b with SMTP id
- 2adb3069b0e04-530bb3b6dcfmr10401335e87.25.1723037904313; Wed, 07 Aug 2024
- 06:38:24 -0700 (PDT)
+	s=arc-20240116; t=1723037890; c=relaxed/simple;
+	bh=8E+5rwum8fVy4BEAqRKNZbtya7ZImyQ0RcqP3Uspdew=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AcyytIlPHy9mMxbkDRi3smncAP2H0xMxPWuxANmzC5bwTqKKc8ld9TKOQ69GVmS31f+lCj+k+SlEgoUHbFxarHtvl4AWmNatvdiEu8dYJJ+jVWa8/RoMP7i2eoSO3fRFE+DGUIdMrE60mmFUSoeCgeuLAbL/IEri9enpTBnZO3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NXo/A0Lb; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723037888; x=1754573888;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8E+5rwum8fVy4BEAqRKNZbtya7ZImyQ0RcqP3Uspdew=;
+  b=NXo/A0LbOfQDx+S+WwfYj6HDWiWex25+OBB9mpdi7IZTXt55yt5wMbLV
+   AqPiCTv9p6dOPVMDkvSvQ7DfJ1ef0yMfPt6WvjIF15ai2mY60i/XO7S20
+   zXqYNEg0RMaTA7FN1Ousb0PBVT2UN/px/d1Yi8vD06tuOF3zGzq/zKZy7
+   9jnV+FDqO/SoJ5sx22TBkjtTXZgo+YldUW1QL9NP8inbJyH4w0KkppHkn
+   av+1jECRrU9xZIBHVZfZVN5xpkYn3wmjGWA1NzU6EOkO0iurTWD4DLHrq
+   8DB4wvYz53tbqNOHs4ssoZs++HE2xtvbWaqm3zaGcmfhWRs7GsPTgLqCH
+   g==;
+X-CSE-ConnectionGUID: W4jsmiNOQnSVw5Cn6vlbUw==
+X-CSE-MsgGUID: eGdCG2UpSgWUQoIyHKkD2Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="20920638"
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="20920638"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 06:38:07 -0700
+X-CSE-ConnectionGUID: 5PWdJycfQFWPmloguS5tDg==
+X-CSE-MsgGUID: tnL82JK3RZS+CCuKL+HC0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="80103515"
+Received: from menghaix-mobl.ccr.corp.intel.com (HELO [10.124.229.145]) ([10.124.229.145])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 06:38:05 -0700
+Message-ID: <d70c2de2-c0c9-49cb-bbc7-773fd615067f@linux.intel.com>
+Date: Wed, 7 Aug 2024 21:38:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807022718.24838-2-jose.fernandez@linux.dev>
-In-Reply-To: <20240807022718.24838-2-jose.fernandez@linux.dev>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 7 Aug 2024 22:37:47 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS4t_naRxdxFTaj9zrdf2Hjjoaq+cBO4Gx7=PhCJk9+4w@mail.gmail.com>
-Message-ID: <CAK7LNAS4t_naRxdxFTaj9zrdf2Hjjoaq+cBO4Gx7=PhCJk9+4w@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: control extra pacman packages with PACMAN_EXTRAPACKAGES
-To: Jose Fernandez <jose.fernandez@linux.dev>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Christian Heusel <christian@heusel.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/7] iommu/vt-d: Always reserve a domain ID for
+ identity setup
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <20240806023941.93454-1-baolu.lu@linux.intel.com>
+ <20240806023941.93454-4-baolu.lu@linux.intel.com>
+ <20240806170653.GL676757@ziepe.ca>
+ <59eb2544-1c85-4fde-87be-4d97e1f0a246@linux.intel.com>
+ <20240807120913.GC8473@ziepe.ca>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240807120913.GC8473@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 7, 2024 at 11:28=E2=80=AFAM Jose Fernandez <jose.fernandez@linu=
-x.dev> wrote:
->
-> Introduce a new variable, PACMAN_EXTRAPACKAGES, in the Makefile.package
-> to control the creation of additional packages by the pacman-pkg target.
->
-> The headers and api-headers packages will be included by default if
-> PACMAN_EXTRAPACKAGES is not set. This changes the previous behavior
-> where api-headers was always included, and headers was conditionally
-> included if CONFIG_MODULES=3Dy. Now, this decision is delegated to the
-> user.
->
-> To disable extra packages, set PACMAN_EXTRAPACKAGES to an empty value:
->
-> make pacman-pkg PACMAN_EXTRAPACKAGES=3D
->
-> or
->
-> make pacman-pkg PACMAN_EXTRAPACKAGES=3D""
->
-> Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
-> Reviewed-by: Peter Jung <ptr1337@cachyos.org>
-> ---
-> v1 -> v2: Build all extra packages by default. Remove unnecessary lines.
+On 2024/8/7 20:09, Jason Gunthorpe wrote:
+> On Wed, Aug 07, 2024 at 02:19:57PM +0800, Baolu Lu wrote:
+>> On 2024/8/7 1:06, Jason Gunthorpe wrote:
+>>> On Tue, Aug 06, 2024 at 10:39:37AM +0800, Lu Baolu wrote:
+>>>> We will use a global static identity domain. Reserve a static domain ID
+>>>> for it.
+>>>>
+>>>> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
+>>>> ---
+>>>>    drivers/iommu/intel/iommu.c | 6 +++---
+>>>>    1 file changed, 3 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+>>>> index 723ea9f3f501..c019fb3b3e78 100644
+>>>> --- a/drivers/iommu/intel/iommu.c
+>>>> +++ b/drivers/iommu/intel/iommu.c
+>>>> @@ -1440,10 +1440,10 @@ static int iommu_init_domains(struct intel_iommu *iommu)
+>>>>    	 * entry for first-level or pass-through translation modes should
+>>>>    	 * be programmed with a domain id different from those used for
+>>>>    	 * second-level or nested translation. We reserve a domain id for
+>>>> -	 * this purpose.
+>>>> +	 * this purpose. This domain id is also used for identity domain
+>>>> +	 * in legacy mode.
+>>>>    	 */
+>>>> -	if (sm_supported(iommu))
+>>>> -		set_bit(FLPT_DEFAULT_DID, iommu->domain_ids);
+>>>> +	set_bit(FLPT_DEFAULT_DID, iommu->domain_ids);
+>>> That should probablyturn into an IDA someday, it would likely be more
+>>> memory efficient than bitmap_zalloc()
+>> I have tried to. But I failed to find a suitable ida interface to
+>> calculate the count of allocated domain IDs to replace bitmap_weight()
+>> in below code.
+> For something debugging like that just use
+>    idr_for_each_entry()
+>       count++;
 
+Yeah! It works.
 
-I see only the main package built by default.
+> It is a weird thing to put in sysfs in the first place...
 
+Agreed. But it has been there for years. :-)
 
-
-
->
-> In a previous patch, there was concern that adding a new debug package
-> would increase the package time. To address this concern and provide
-> more flexibility, this change has been added to allow users to decide
-> which extra packages to include before introducing an optional debug
-> package [1].
->
-> [1] https://lore.kernel.org/lkml/20240801192008.GA3923315@thelio-3990X/T/
->
->  scripts/Makefile.package |  2 ++
->  scripts/package/PKGBUILD | 11 +++++++----
->  2 files changed, 9 insertions(+), 4 deletions(-)
->
-> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-> index 4a80584ec771..ccdf8ba41f0b 100644
-> --- a/scripts/Makefile.package
-> +++ b/scripts/Makefile.package
-> @@ -144,6 +144,8 @@ snap-pkg:
->  # pacman-pkg
->  # ----------------------------------------------------------------------=
------
->
-> +PACMAN_EXTRAPACKAGES ?=3D headers api-headers
-
-Meaningless line.
-
-
-Since 'export' is missing,
-this default line is not propagated to PKGBUILD.
-
-
-Nathan also mentioned 'export' would be needed if you wanted to
-describe this here.
-
-https://lore.kernel.org/linux-kbuild/20240806025853.GB1570554@thelio-3990X/
-
-
-
-
-> +
->  PHONY +=3D pacman-pkg
->  pacman-pkg:
->         @ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
-> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> index 663ce300dd06..8de869f9b1d4 100644
-> --- a/scripts/package/PKGBUILD
-> +++ b/scripts/package/PKGBUILD
-> @@ -3,10 +3,13 @@
->  # Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
->
->  pkgbase=3D${PACMAN_PKGBASE:-linux-upstream}
-> -pkgname=3D("${pkgbase}" "${pkgbase}-api-headers")
-> -if grep -q CONFIG_MODULES=3Dy include/config/auto.conf; then
-> -       pkgname+=3D("${pkgbase}-headers")
-> -fi
-> +pkgname=3D("${pkgbase}")
-> +
-> +_extrapackages=3D${PACMAN_EXTRAPACKAGES:-}
-
-
-Instead of adding inconsistent defaults in two places,
-I would write like this:
-
-_extrapackages=3D${PACMAN_EXTRAPACKAGES-headers api-headers}
-
-
-
-
-Lastly, I will never accept new error messages
-with CONFIG_MODULES=3Dn.
-
-
-
-
-
-
-
-> +for pkg in $_extrapackages; do
-> +       pkgname+=3D("${pkgbase}-${pkg}")
-> +done
-> +
->  pkgver=3D"${KERNELRELEASE//-/_}"
->  # The PKGBUILD is evaluated multiple times.
->  # Running scripts/build-version from here would introduce inconsistencie=
-s.
-> --
-> 2.46.0
->
-
-
---
-Best Regards
-Masahiro Yamada
+Thanks,
+baolu
 
