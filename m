@@ -1,149 +1,112 @@
-Return-Path: <linux-kernel+bounces-277515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A107194A26B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:10:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF53D94A274
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30525B26B64
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:10:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05C1A28455A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A121C9DD1;
-	Wed,  7 Aug 2024 08:10:23 +0000 (UTC)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBF81C9DE9;
+	Wed,  7 Aug 2024 08:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="F4Tprxxe"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3215119A28F;
-	Wed,  7 Aug 2024 08:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5AF13F435;
+	Wed,  7 Aug 2024 08:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723018223; cv=none; b=XkUh0bVhl/WPjApvObF0v3Gb/zvk8PMsfeUuXcEcmd2Som4WL8UZC1X8bpFI0ZuyN0wf6KMfmxNhIEfFhEtwkgafqM2MxSCobY1q5M3SmK+zE+V5U5/8/hfJ/LukuStBNfHANDzD4RZB/GjAFXUkI8oWA5WbhUs6t0tvXImXmQc=
+	t=1723018284; cv=none; b=q0VG2aOMtDfsn12KarPjSeVRCFRJ5PdhokWpWPamof6Ik9F6Y5f0A1ImJkk0ZzTeUzRQYbTHKyhTwOTEkXxIW9WKNA6E3WVMoJcKYMnCOPlvnXWnK/R7vJ+HkgwH1dnDBgUH53/7EByioao3LDSrRQw15tnWB/XTTxtYpRS2UPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723018223; c=relaxed/simple;
-	bh=O65A7S4dv9JLxTrEg15BToKE6ghwYaIYY4QohPP/UKw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZTLZi8dYZJLvo7+90LvlxxFXOBOehJr+D4tzSB6dWnaauvIZkA+r+DRKVY/C2D8NRlZVgUbNQeAiGir+7pO9OvXm056dnFYCGuzI5pcn/dIZ0jm1CME7UfGReP8rDz9oKhqPFlc9MknmQq6Ow/69IEz7iKwxd8hRsCQ57CeXoPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a156556fb4so1763465a12.3;
-        Wed, 07 Aug 2024 01:10:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723018219; x=1723623019;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jjhz96xjWuk/ukU30r31lEvLok4NM+gNuypmgKKc5GQ=;
-        b=ehQo1WJkreptcNveEjzjh07sv5itCU5Fr3AZFxLVIXD1EB5GU72maVpzlqBEkdMQKg
-         W+Na2XhuVy5G9hFWgjgMzIcXvEc0ut+5/9MPmKygQ0yyu5C3IbxrQQ0+pVMtZMbRy88y
-         SdzHylwo05Z1DuKmfUHl3SEU+YbeeXCaTHVdmd2+0n/xi3wvx1wuZiWwsMf+Ri0FQuAV
-         airE/7XzUg0ObnQSQX2KRmorK5CSawUrVuxLYZQXUurhWEK5GZqC0CQbkkrbKvjdL/tM
-         U1lT56XyK19JxOHm6avSH9LExg9LnynSF3V01Yfvk2RYX3Uy7acCrNUdxJRFZ8mPbbve
-         16hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKgUYtcCX8WCNs9kZ9st1H8Y4ocD41bVtMR8ss5pcFZt2CS6Bve/UiVnFPTRhqkHJtKaqlTy5q6zWwXY9zFtacZQ6AqS9gLlie3InaXPAN0wNcN9pJjJbBgwMGo/rBPJMeUdNSIrq8lAfkkgf7kC+k1trnsAJV0VOvomM9BTSiUrgA8PM=
-X-Gm-Message-State: AOJu0YzP3dmXfvd7T07pHlhKuYj//Qi2gHptJpqBeyAd1U9WI/K3UY5Z
-	GdSUu/JXDxeWqmtTLwpaizAXy04es/eERYONGIyeMmrHwhb0LF5Hq7GNAdfoLwo=
-X-Google-Smtp-Source: AGHT+IG8ei4XumhqVfz5AwE+qOvR7fuUjzbuVfdN6DNsemhnSwJdst1izJ9WkeyipEOatn9SLzzYgg==
-X-Received: by 2002:aa7:dac1:0:b0:58b:12bd:69c8 with SMTP id 4fb4d7f45d1cf-5b7f56fc0ecmr11215798a12.36.1723018218541;
-        Wed, 07 Aug 2024 01:10:18 -0700 (PDT)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83960f348sm6760479a12.18.2024.08.07.01.10.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 01:10:18 -0700 (PDT)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5ba482282d3so1970647a12.2;
-        Wed, 07 Aug 2024 01:10:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUjiveBSIe/m3sJnoPgK5HiM6a6hY22jKaGIh7Igfv0jT0ETbTPDL5IbdYxZreMG3BO9YDHeUapsjd2EY1VDOCFM789C44cVtNvZHEtbJg7qnhR+hLdC3quYYyR+xzl1P20woV7TWLqqIturYLfM3UGmBOeOnexgZ28eKhg6qbsadZwbEE=
-X-Received: by 2002:aa7:d15a:0:b0:5a7:464a:ab9 with SMTP id
- 4fb4d7f45d1cf-5b7f40a4cd3mr10589275a12.21.1723018218098; Wed, 07 Aug 2024
- 01:10:18 -0700 (PDT)
+	s=arc-20240116; t=1723018284; c=relaxed/simple;
+	bh=O7WCjeIvWkbZgBS6vM4vQIgl4u3loiquJKhsttv30Po=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FfJCYBR5I6Bk5wJxmr9G/gydn9vMG5dR12NvH8yLlpinQQKsa46F67Mk6zV6ob2nZObQJEkCfFlIisIUgkjg0QWjAc1wmNQaItt3j0Ir7yOMRBSnDdHWVekjHUfLA2D5oKp2IPf7GXqKClcgAYkTiRgU/pxOWXcBL6M0tL4lUNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=F4Tprxxe; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 0EB16A05B2;
+	Wed,  7 Aug 2024 10:11:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=KEun1WLwGlElpIBwl7qA
+	hygYiEvU6poeyl+GGcKm/bA=; b=F4TprxxeNJ+M6GhE6PQniqBPwzBMc+icwTzv
+	1BIsuzc2IezHaUkTzzuaZLcrvQwHj3yP92v4f8oKOabIhQCZkI5kUyaiir2vQEoM
+	15RwQPKIuaC2zhXaO2iLINuGGtd7+4j1c0l/wEK9VbZSwFrpkXUiqslxlbxzVsjZ
+	J1n73dXoH9jLgU2qnaURR3/otgTfqd5XPDk68AeLpKDP2NtMzOCsoJ0N0EDjMGhj
+	/xqsCQ+9oJplBg1/3t3AlwIGRBhATFg7z99983wmrme/8KpoMdB3nL3MyophbCXH
+	MbR3Eb1Ey2D8O1vA+4GSsOWnxybyG6yZfxsdca+8l3cBMTmAuY9ThL6wVPcvuCen
+	yp/zJLHZFNSKAEs6GCAYHRdPJRo83L0iAMWtHI9NCZxJlfvT4Yu6uXgiwHKZGgVq
+	gEDFV6CwniZaR+RkDRl7dSfoa9Elxhv67f7bzzuIYnonewjVehgFv5h8PPHaSXfw
+	lwMk23fJWLzzyW1ZV0OaaPscbnKPegqlg/ciBrz5j9KHUdDLqNkGZdFAKl2WR0Ky
+	S8W4FykvWAl7U+ICYzy4v6o39GHNMnaKeHArD6Z2xPXIKakuqDuiBU+WyBBQMtYr
+	zOOYaCpNYIBBkI9gbhuOOQIkvdGU9wYBlJfBsnfkeqA1UAwojDLdhWOlcB/9hgXI
+	i4AOvXk=
+From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
+To: Fugang Duan <B38611@freescale.com>, "David S. Miller"
+	<davem@davemloft.net>, Lucas Stach <l.stach@pengutronix.de>,
+	<imx@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Fabio
+ Estevam" <festevam@gmail.com>, Wei Fang <wei.fang@nxp.com>, Shenwei Wang
+	<shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>
+Subject: [PATCH resubmit net] net: fec: Stop PPS on driver remove
+Date: Wed, 7 Aug 2024 10:09:56 +0200
+Message-ID: <20240807080956.2556602-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240805145735.2385752-1-csokas.bence@prolan.hu>
+References: <20240805145735.2385752-1-csokas.bence@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240803-brcmfmac_pmksa_del_ssid-v1-1-4e85f19135e1@jannau.net>
-In-Reply-To: <20240803-brcmfmac_pmksa_del_ssid-v1-1-4e85f19135e1@jannau.net>
-From: Neal Gompa <neal@gompa.dev>
-Date: Wed, 7 Aug 2024 04:09:41 -0400
-X-Gmail-Original-Message-ID: <CAEg-Je_=R_SXXsu6PGT=fBpAO33Usw4YDLEW4EyyyFtsFzdszQ@mail.gmail.com>
-Message-ID: <CAEg-Je_=R_SXXsu6PGT=fBpAO33Usw4YDLEW4EyyyFtsFzdszQ@mail.gmail.com>
-Subject: Re: [PATCH] wifi: brcmfmac: cfg80211: Handle SSID based pmksa deletion
-To: Janne Grunau <j@jannau.net>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>, Kalle Valo <kvalo@kernel.org>, 
-	Hector Martin <marcan@marcan.st>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev, 
-	brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org, 
-	asahi@lists.linux.dev, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1723018272;VERSION=7975;MC=1504705215;ID=810479;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94854617461
 
-On Sat, Aug 3, 2024 at 3:53=E2=80=AFPM Janne Grunau via B4 Relay
-<devnull+j.jannau.net@kernel.org> wrote:
->
-> From: Janne Grunau <j@jannau.net>
->
-> wpa_supplicant 2.11 sends since 1efdba5fdc2c ("Handle PMKSA flush in the
-> driver for SAE/OWE offload cases") SSID based PMKSA del commands.
-> brcmfmac is not prepared and tries to dereference the NULL bssid and
-> pmkid pointers in cfg80211_pmksa. PMKID_V3 operations support SSID based
-> updates so copy the SSID.
->
-> Fixes: a96202acaea4 ("wifi: brcmfmac: cfg80211: Add support for PMKID_V3 =
-operations")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> ---
->  drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 13 +++++++=
-+++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c =
-b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-> index 5fe0e671ecb3..826b768196e2 100644
-> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-> @@ -4320,9 +4320,16 @@ brcmf_pmksa_v3_op(struct brcmf_if *ifp, struct cfg=
-80211_pmksa *pmksa,
->                 /* Single PMK operation */
->                 pmk_op->count =3D cpu_to_le16(1);
->                 length +=3D sizeof(struct brcmf_pmksa_v3);
-> -               memcpy(pmk_op->pmk[0].bssid, pmksa->bssid, ETH_ALEN);
-> -               memcpy(pmk_op->pmk[0].pmkid, pmksa->pmkid, WLAN_PMKID_LEN=
-);
-> -               pmk_op->pmk[0].pmkid_len =3D WLAN_PMKID_LEN;
-> +               if (pmksa->bssid)
-> +                       memcpy(pmk_op->pmk[0].bssid, pmksa->bssid, ETH_AL=
-EN);
-> +               if (pmksa->pmkid) {
-> +                       memcpy(pmk_op->pmk[0].pmkid, pmksa->pmkid, WLAN_P=
-MKID_LEN);
-> +                       pmk_op->pmk[0].pmkid_len =3D WLAN_PMKID_LEN;
-> +               }
-> +               if (pmksa->ssid && pmksa->ssid_len) {
-> +                       memcpy(pmk_op->pmk[0].ssid.SSID, pmksa->ssid, pmk=
-sa->ssid_len);
-> +                       pmk_op->pmk[0].ssid.SSID_len =3D pmksa->ssid_len;
-> +               }
->                 pmk_op->pmk[0].time_left =3D cpu_to_le32(alive ? BRCMF_PM=
-KSA_NO_EXPIRY : 0);
->         }
->
->
-> ---
-> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-> change-id: 20240803-brcmfmac_pmksa_del_ssid-3c35efe35330
->
+PPS was not stopped in `fec_ptp_stop()`, called when
+the adapter was removed. Consequentially, you couldn't
+safely reload the driver with the PPS signal on.
 
-This looks reasonable to me and works on my Macs.
+Fixes: 32cba57ba74b ("net: fec: introduce fec_ptp_stop and use in probe fail path")
 
-Reviewed-by: Neal Gompa <neal@gompa.dev>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Link: https://lore.kernel.org/netdev/CAOMZO5BzcZR8PwKKwBssQq_wAGzVgf1ffwe_nhpQJjviTdxy-w@mail.gmail.com/T/#m01dcb810bfc451a492140f6797ca77443d0cb79f
+Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+---
+ drivers/net/ethernet/freescale/fec_ptp.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
+index e32f6724f568..2e4f3e1782a2 100644
+--- a/drivers/net/ethernet/freescale/fec_ptp.c
++++ b/drivers/net/ethernet/freescale/fec_ptp.c
+@@ -775,6 +775,9 @@ void fec_ptp_stop(struct platform_device *pdev)
+ 	struct net_device *ndev = platform_get_drvdata(pdev);
+ 	struct fec_enet_private *fep = netdev_priv(ndev);
+ 
++	if (fep->pps_enable)
++		fec_ptp_enable_pps(fep, 0);
++
+ 	cancel_delayed_work_sync(&fep->time_keep);
+ 	hrtimer_cancel(&fep->perout_timer);
+ 	if (fep->ptp_clock)
+-- 
+2.34.1
 
 
-
---
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
 
