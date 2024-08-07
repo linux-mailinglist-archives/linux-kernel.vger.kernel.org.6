@@ -1,328 +1,177 @@
-Return-Path: <linux-kernel+bounces-277940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BAEE94A877
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:21:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F108694A87C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F9321C2364E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:21:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DE3CB269B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B7D1EA0B8;
-	Wed,  7 Aug 2024 13:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B824A1EA0C3;
+	Wed,  7 Aug 2024 13:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L8WTwaQY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="26SUTiGQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pduOcCl/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Xn+y4WG6"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GBkyUEjM"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B172213A3F0;
-	Wed,  7 Aug 2024 13:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF291E7A52;
+	Wed,  7 Aug 2024 13:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723036858; cv=none; b=mDtX2BFJ2CI2MEVQSi3rjwWZ8O2s9Z70nwkngDMOsCENz5dN9opII839Xq761oqLBvFQdQwuwvRWiRn/mERQX5ts/QFG4fmy3/hQjcdW+0SSVVj8sO7z9WD78DF29U5vzE04ane/qpmEKdRmIsnswRj8729602inYWg0C5fUd7Y=
+	t=1723036875; cv=none; b=S8tkZZVGSpNDV2np9KX1eZ7a6o24RztHcdSqBbzwVkH9QDySyofm+jMPGAnjMmatkcwzW+Ibl4cwXodRzoi+S6uEdGFRA4i9QILtKqe+p8JVfwKaIiqW81sq/TT7S+omMtpBhfwaPK4LyVvU2PBWEZNivmdnL723umbaDWenhjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723036858; c=relaxed/simple;
-	bh=JnwX2AVonipUuZlR4Cdl1XgrlCBGqZew1tMD7T1N8+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RP6Kl886mRYP18MCe+ofLoEanvnCeuWFYw1KIVO/c8KVTZBWks3bV9OwneyW6pNYnVnxIo20uj1Eb7kCJPmsSJghONnjkk4cabwKJEnBowhm6NaB/ZVC+p5cYABy8LHlWjZ8Ly62Rg7lMlPfWck0Lnvkj05a3qktsKfYE3Kz1kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L8WTwaQY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=26SUTiGQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pduOcCl/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Xn+y4WG6; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DD10E21AC9;
-	Wed,  7 Aug 2024 13:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723036854; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oi7JmAOIAm400fxQ5TjTYdvdJqzdVHJz7YRcmveWM48=;
-	b=L8WTwaQYKuoKTBqkDOFBDhIpfiZduhB652NI9ygMOeG3Ot2Xreo8wTb9zkMakY9U+LLCxd
-	C0baaQbjwynC5kbSjxsmEIUSca2FkWqhpQqH0uolzZ9D4u8nor8t6dxOtkY3i2JMYlhsSE
-	8gw662PXCHPlijb5my2MSqfGsnaSlns=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723036854;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oi7JmAOIAm400fxQ5TjTYdvdJqzdVHJz7YRcmveWM48=;
-	b=26SUTiGQZN7sg1gSt8w4eVYUXVOp4drLmHP8zcURuOOTg4HmyWCETqEIts4KVCm3cVtgXH
-	zFu7FxnPWJddxRCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="pduOcCl/";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Xn+y4WG6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723036853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oi7JmAOIAm400fxQ5TjTYdvdJqzdVHJz7YRcmveWM48=;
-	b=pduOcCl/5YXJMxyfLl0gjquvmX+cn2WG+t6zDs18FHPb7PU/KGauXQZ0Pah4qFft7BmxXx
-	WOFo8iXAW8DmQSuG1vypFsV1fhL9MiefsSaY2p9VQlgAPBbGJkSHZa6d8HhCutgK+CCTNF
-	UFrpxlyB/7JybE6Xw+mLodBEBu7crpc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723036853;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oi7JmAOIAm400fxQ5TjTYdvdJqzdVHJz7YRcmveWM48=;
-	b=Xn+y4WG6S5glz0Ea7OxFYdtN/nLCFrW4Fw7MFzmHrPbXX7KksNoIX3y4MLYrSKio6LtFrH
-	7OGxTmR1p5iUvRAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B5F9513297;
-	Wed,  7 Aug 2024 13:20:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SThqLLV0s2aNUgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 07 Aug 2024 13:20:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 57C22A0762; Wed,  7 Aug 2024 15:20:53 +0200 (CEST)
-Date: Wed, 7 Aug 2024 15:20:53 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andi Kleen <ak@linux.intel.com>, Mateusz Guzik <mjguzik@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] fs: try an opportunistic lookup for O_CREAT opens too
-Message-ID: <20240807132053.juvychehe4zfqj5w@quack3>
-References: <20240807-openfast-v3-1-040d132d2559@kernel.org>
+	s=arc-20240116; t=1723036875; c=relaxed/simple;
+	bh=XCTFGHgapMh5jd5eDcay27eRnGXiyocL05vCYSo9sko=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GhpSD4a+RyscWNQWZQoSYnw/YPV7AfuBMLlsi4DXvwbKLhdGrOyj+FBhCIqUsrwzOeyK2cPuM1Gm+R+0prv3P8s1U9PAsRpzpM5eIZjTo50MjSTU3w/VX2i2+f2T/v4S3CSR+wnXaT3X6kyfAVqpwaek6id2y+QOkZCJmnokBIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GBkyUEjM; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 477DKsDq130105;
+	Wed, 7 Aug 2024 08:20:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723036854;
+	bh=DeALqGHx0wajWlx4yd7By8JyvapwIo0wIDwjJD7Lorg=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=GBkyUEjMdbREe3CFdyUt9wBLNVBkb4saekleA8fn8rgZUlngMfoxt9yoJWZjMV81n
+	 VKRhstnk1U9ysnZGWHz7p1YnFUKBq+wT65L65WUuEzw87yyg2ZZw6sshOxaDJXxEuE
+	 0TU1hRUsujMmX/bNUOZs7a+JEsHnAG/LqoFjs10w=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 477DKsql002179
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 7 Aug 2024 08:20:54 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
+ Aug 2024 08:20:54 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 7 Aug 2024 08:20:54 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 477DKsrE119250;
+	Wed, 7 Aug 2024 08:20:54 -0500
+Date: Wed, 7 Aug 2024 08:20:54 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Manorit Chawdhry <m-chawdhry@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Udit Kumar
+	<u-kumar1@ti.com>,
+        Neha Malcom Francis <n-francis@ti.com>,
+        Aniket Limaye
+	<a-limaye@ti.com>
+Subject: Re: [PATCH v3 4/9] arm64: dts: ti: Split
+ k3-j784s4-j742s2-main-common.dtsi
+Message-ID: <20240807132054.jcz5fdokc5yk3mbo@entrust>
+References: <20240731-b4-upstream-j742s2-v3-0-da7fe3aa9e90@ti.com>
+ <20240731-b4-upstream-j742s2-v3-4-da7fe3aa9e90@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240807-openfast-v3-1-040d132d2559@kernel.org>
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.01 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,linux-foundation.org,linux.intel.com,gmail.com,toxicpanda.com,vger.kernel.org];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -1.01
-X-Rspamd-Queue-Id: DD10E21AC9
+In-Reply-To: <20240731-b4-upstream-j742s2-v3-4-da7fe3aa9e90@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed 07-08-24 08:10:27, Jeff Layton wrote:
-> Today, when opening a file we'll typically do a fast lookup, but if
-> O_CREAT is set, the kernel always takes the exclusive inode lock. I
-> assume this was done with the expectation that O_CREAT means that we
-> always expect to do the create, but that's often not the case. Many
-> programs set O_CREAT even in scenarios where the file already exists.
+On 22:40-20240731, Manorit Chawdhry wrote:
+> k3-j784s4-j742s2-main-common.dtsi will be included in k3-j742s2-main.dtsi at a
+> later point so move j784s4 related stuff to k3-j784s4-main.dtsi
 > 
-> This patch rearranges the pathwalk-for-open code to also attempt a
-> fast_lookup in certain O_CREAT cases. If a positive dentry is found, the
-> inode_lock can be avoided altogether, and if auditing isn't enabled, it
-> can stay in rcuwalk mode for the last step_into.
-> 
-> One notable exception that is hopefully temporary: if we're doing an
-> rcuwalk and auditing is enabled, skip the lookup_fast. Legitimizing the
-> dentry in that case is more expensive than taking the i_rwsem for now.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-
-I'm not very familiar with the path lookup code but the patch looks correct
-to me and the win is nice. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
 > ---
-> Here's a revised patch that does a fast_lookup in the O_CREAT codepath
-> too. The main difference here is that if a positive dentry is found and
-> audit_dummy_context is true, then we keep the walk lazy for the last
-> component, which avoids having to take any locks on the parent (just
-> like with non-O_CREAT opens).
+>  .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi   | 13 -------------
+>  arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi          | 21 +++++++++++++++++++++
+>  arch/arm64/boot/dts/ti/k3-j784s4.dtsi               |  2 ++
+>  3 files changed, 23 insertions(+), 13 deletions(-)
 > 
-> Mateusz wrote a will-it-scale test that does an O_CREAT open and close in
-> the same directory repeatedly. Running that in 70 different processes:
-> 
->     v6.10:		  754565
->     v6.10+patch:	25747851
-> 
-> ...which is roughly a 34x speedup. I also ran the unlink1 test in single
-> process mode to try and gauge how bad the performance impact would be in
-> the case where we always have to search, not find anything and do the
-> create:
-> 
->     v6.10:		200106
->     v6.10+patch:	199188
-> 
-> ~0.4% performance hit in that test. I'm not sure that's statistically
-> significant, but we should keep an eye out for slowdowns in these sorts
-> of workloads if we decide to take this.
-> ---
-> Changes in v3:
-> - Check for IS_ERR in lookup_fast result
-> - Future-proof open_last_lookups to handle case where lookup_fast_for_open
->   returns a positive dentry while auditing is enabled
-> - Link to v2: https://lore.kernel.org/r/20240806-openfast-v2-1-42da45981811@kernel.org
-> 
-> Changes in v2:
-> - drop the lockref patch since Mateusz is working on a better approach
-> - add trailing_slashes helper function
-> - add a lookup_fast_for_open helper function
-> - make lookup_fast_for_open skip the lookup if auditing is enabled
-> - if we find a positive dentry and auditing is disabled, don't unlazy
-> - Link to v1: https://lore.kernel.org/r/20240802-openfast-v1-0-a1cff2a33063@kernel.org
-> ---
->  fs/namei.c | 74 +++++++++++++++++++++++++++++++++++++++++++++++++++++---------
->  1 file changed, 64 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 1e05a0f3f04d..7894fafa8e71 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3518,6 +3518,49 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
->  	return ERR_PTR(error);
->  }
+> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> index 17abd0f1560a..91352b1f63d2 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> @@ -2405,19 +2405,6 @@ c71_2: dsp@66800000 {
+>  		status = "disabled";
+>  	};
 >  
-> +static inline bool trailing_slashes(struct nameidata *nd)
-> +{
-> +	return (bool)nd->last.name[nd->last.len];
-> +}
+> -	c71_3: dsp@67800000 {
+> -		compatible = "ti,j721s2-c71-dsp";
+> -		reg = <0x00 0x67800000 0x00 0x00080000>,
+> -		      <0x00 0x67e00000 0x00 0x0000c000>;
+> -		reg-names = "l2sram", "l1dram";
+> -		ti,sci = <&sms>;
+> -		ti,sci-dev-id = <40>;
+> -		ti,sci-proc-ids = <0x33 0xff>;
+> -		resets = <&k3_reset 40 1>;
+> -		firmware-name = "j784s4-c71_3-fw";
+> -		status = "disabled";
+> -	};
+> -
+
+This patch can be squashed in.
+
+>  	main_esm: esm@700000 {
+>  		compatible = "ti,j721e-esm";
+>  		reg = <0x00 0x700000 0x00 0x1000>;
+> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> new file mode 100644
+> index 000000000000..2ea470d1206d
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> @@ -0,0 +1,21 @@
+> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+> +/*
+> + * Device Tree Source for J784S4 SoC Family Main Domain peripherals
+> + *
+> + * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
+> + */
 > +
-> +static struct dentry *lookup_fast_for_open(struct nameidata *nd, int open_flag)
-> +{
-> +	struct dentry *dentry;
+> +&cbass_main {
+> +	c71_3: dsp@67800000 {
+> +		compatible = "ti,j721s2-c71-dsp";
+> +		reg = <0x00 0x67800000 0x00 0x00080000>,
+> +		      <0x00 0x67e00000 0x00 0x0000c000>;
+> +		reg-names = "l2sram", "l1dram";
+> +		ti,sci = <&sms>;
+> +		ti,sci-dev-id = <40>;
+> +		ti,sci-proc-ids = <0x33 0xff>;
+> +		resets = <&k3_reset 40 1>;
+> +		firmware-name = "j784s4-c71_3-fw";
+> +		status = "disabled";
+> +	};
+> +};
+
+I am looking at https://www.ti.com/lit/ug/spruje3/spruje3.pdf (page 26),
+Device Comparison:
+
+CPSW/Serdes, PCIE is also different? Was that missed?
+
+> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4.dtsi
+> index 16ade4fd9cbd..f5afa32157cb 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j784s4.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j784s4.dtsi
+> @@ -168,3 +168,5 @@ cpu7: cpu@103 {
+>  		};
+>  	};
+>  };
 > +
-> +	if (open_flag & O_CREAT) {
-> +		/* Don't bother on an O_EXCL create */
-> +		if (open_flag & O_EXCL)
-> +			return NULL;
-> +
-> +		/*
-> +		 * FIXME: If auditing is enabled, then we'll have to unlazy to
-> +		 * use the dentry. For now, don't do this, since it shifts
-> +		 * contention from parent's i_rwsem to its d_lockref spinlock.
-> +		 * Reconsider this once dentry refcounting handles heavy
-> +		 * contention better.
-> +		 */
-> +		if ((nd->flags & LOOKUP_RCU) && !audit_dummy_context())
-> +			return NULL;
-> +	}
-> +
-> +	if (trailing_slashes(nd))
-> +		nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
-> +
-> +	dentry = lookup_fast(nd);
-> +	if (IS_ERR_OR_NULL(dentry))
-> +		return dentry;
-> +
-> +	if (open_flag & O_CREAT) {
-> +		/* Discard negative dentries. Need inode_lock to do the create */
-> +		if (!dentry->d_inode) {
-> +			if (!(nd->flags & LOOKUP_RCU))
-> +				dput(dentry);
-> +			dentry = NULL;
-> +		}
-> +	}
-> +	return dentry;
-> +}
-> +
->  static const char *open_last_lookups(struct nameidata *nd,
->  		   struct file *file, const struct open_flags *op)
->  {
-> @@ -3535,28 +3578,39 @@ static const char *open_last_lookups(struct nameidata *nd,
->  		return handle_dots(nd, nd->last_type);
->  	}
->  
-> +	/* We _can_ be in RCU mode here */
-> +	dentry = lookup_fast_for_open(nd, open_flag);
-> +	if (IS_ERR(dentry))
-> +		return ERR_CAST(dentry);
-> +
->  	if (!(open_flag & O_CREAT)) {
-> -		if (nd->last.name[nd->last.len])
-> -			nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
-> -		/* we _can_ be in RCU mode here */
-> -		dentry = lookup_fast(nd);
-> -		if (IS_ERR(dentry))
-> -			return ERR_CAST(dentry);
->  		if (likely(dentry))
->  			goto finish_lookup;
->  
->  		if (WARN_ON_ONCE(nd->flags & LOOKUP_RCU))
->  			return ERR_PTR(-ECHILD);
->  	} else {
-> -		/* create side of things */
->  		if (nd->flags & LOOKUP_RCU) {
-> -			if (!try_to_unlazy(nd))
-> +			bool unlazied;
-> +
-> +			/* can stay in rcuwalk if not auditing */
-> +			if (dentry && audit_dummy_context()) {
-> +				if (trailing_slashes(nd))
-> +					return ERR_PTR(-EISDIR);
-> +				goto finish_lookup;
-> +			}
-> +			unlazied = dentry ? try_to_unlazy_next(nd, dentry) :
-> +					    try_to_unlazy(nd);
-> +			if (!unlazied)
->  				return ERR_PTR(-ECHILD);
->  		}
->  		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
-> -		/* trailing slashes? */
-> -		if (unlikely(nd->last.name[nd->last.len]))
-> +		if (trailing_slashes(nd)) {
-> +			dput(dentry);
->  			return ERR_PTR(-EISDIR);
-> +		}
-> +		if (dentry)
-> +			goto finish_lookup;
->  	}
->  
->  	if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
+> +#include "k3-j784s4-main.dtsi"
 > 
-> ---
-> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-> change-id: 20240723-openfast-ac49a7b6ade2
-> 
-> Best regards,
 > -- 
-> Jeff Layton <jlayton@kernel.org>
+> 2.45.1
 > 
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
