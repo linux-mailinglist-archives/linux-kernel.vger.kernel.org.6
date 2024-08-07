@@ -1,135 +1,258 @@
-Return-Path: <linux-kernel+bounces-277679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B5C94A4B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:50:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D3694A4AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12356B25611
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:48:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D0121C2122A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8180A1D1753;
-	Wed,  7 Aug 2024 09:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214081D1755;
+	Wed,  7 Aug 2024 09:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="anSb2QOn"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PszgX3jk"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCA31C6899;
-	Wed,  7 Aug 2024 09:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93FB1D1738
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 09:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723024084; cv=none; b=DXTpeIlawW9IedIH8OLyIc0dNYbTsw1pihNozG5PTcRWRv5Ri6qgUrQotP8YCe3VOYlrhNryfZoJV0zW1sVdLNSS+dg+LO8spVuuoFzFBsv6xD/Gcs5WZEUWzn2M0Pc7AkorvY9LgfGVbqJZCMPztK62qWVxRkVdBkh/kMSg6qo=
+	t=1723024120; cv=none; b=NMPsdE1u9Wu+wYvLSZDTMEaJvL3lku4ZrUvncvI0MQrEdAD01K+7cZ2kKEMtyhZCwBbFyWVZB7OoZcJSr7En8WjeYcsl00x5fwu9igbr5oPMGXBYQ4UO1nayTXntOI+B2nbFDFhSnUeWElN9tWMvfMV+PcQhXvUdEKsZ2p3Z1Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723024084; c=relaxed/simple;
-	bh=UoFTPkKTSOCKq8g9bA4LwsqiNPZVmB33G4kIY9zxgX8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YnIh3MgaOpGGmZYUvzYSvgcQgZX70hyY64A4QCxg6RbE6NN+bGLjacdlMl0cafIrPkRCfzIhc99wXbelQetDvWEp2TY1ZIxq52f0rlEVRgKjlGxlQabwJU/xI/vQHs6fE0g09RFpI89KDjZYkm4u36OK/Tk3yEg/APVbpYm1nVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=anSb2QOn; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4779lpZg092058;
-	Wed, 7 Aug 2024 04:47:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723024071;
-	bh=vvwK4OT4Sp643RTDXo69Y1qShjPxCrk6ghZjjrAeEP0=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=anSb2QOniTJnYkhAngYdYoZsRSKHN1vs6YO/LQ0VQUpWxEM4nn+JIvP8kkCCzyjJZ
-	 ZRgQrvfIJ9OQJQV69cmuc18UHEPN0uSIwrFSFz+dIATh1ATP3KGEkqjvomQnMPJudJ
-	 LcbiGrau7pE+cKpaHSbdF0vwmcLnz+LcuTEzducA=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4779lp9F014664
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 7 Aug 2024 04:47:51 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
- Aug 2024 04:47:50 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 7 Aug 2024 04:47:50 -0500
-Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4779loDO048866;
-	Wed, 7 Aug 2024 04:47:50 -0500
-Date: Wed, 7 Aug 2024 15:17:49 +0530
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-To: Neha Malcom Francis <n-francis@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Aniket Limaye <a-limaye@ti.com>,
-        Udit Kumar
-	<u-kumar1@ti.com>, Beleswar Padhi <b-padhi@ti.com>,
-        Siddharth Vadapalli
-	<s-vadapalli@ti.com>
-Subject: Re: [PATCH v3 4/5] arm64: dts: ti: k3-j721e*: Add bootph-* properties
-Message-ID: <20240807094749.3fmaxjdptw43adem@uda0497581>
-References: <20240730-b4-upstream-bootph-all-v3-0-9bc2eccb6952@ti.com>
- <20240730-b4-upstream-bootph-all-v3-4-9bc2eccb6952@ti.com>
- <81c14a3e-cdea-4367-8955-df7f2dbd2dce@ti.com>
+	s=arc-20240116; t=1723024120; c=relaxed/simple;
+	bh=oS9PlaTG2KJJXcpNsxPJAEIHjUqMGdeFoGGoR1XQEoo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C7kEGpsoJwEACHInxEW6u31pCYmC9MtBk4T4utgnIRn4MriPCIOV1dvy5DF12LtFxxsGLOalkwWppA3QWT4ho5TA61la3tKxrhq4SZnUCAAtrsMcw0YN8vLi4ud21aSoQRcRs11ZwJ7F12G5OmRHzgEEdX2FB3kwABa+Tw4LD/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PszgX3jk; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4f8b5e4c631so655860e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 02:48:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723024117; x=1723628917; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kQZMOSwX7KEJDubp4fDjRX7jlDArEA2WNg5TRM2M4RY=;
+        b=PszgX3jk4BQmsoyNbOKhjd2kucq6TVptnhKz9dyW4+0NY7QweSUvsMWD1UhBX1pIZ3
+         MThqjQDsnneLXEqsSyfm3FpXJof8Q8M2mdkE0l4qEYaFPmZZGUzfiqmdj1Mc6/C4diWP
+         Flz/79MKdDbeNXFwFs+rZYI6Nn5hohWeCLDN86H5p2JDMmIf4vmylz8PNPo0OA2q/o6h
+         +gJhJfPQA8e6Kq7VgsjwEq1VxyeZ4e69D+bnR2/e2kn4Z6hyAz2FlU7ZjVbvwWTa+BuM
+         yRt2BJmmYLKZ/euyoBGjQ+rmOqmy2ZpkOSTt4ZbQO5hfNNGS+8psO7bElBl48j9Q0sWh
+         GiCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723024117; x=1723628917;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kQZMOSwX7KEJDubp4fDjRX7jlDArEA2WNg5TRM2M4RY=;
+        b=mZKEbdCqtwkBjVe/XQvRJPkG3VeyDrhTObH3Pm8uo3aHsCOi3Jzyh/4dFe8oxUfmfz
+         6+ywVaEtD80UO2WiMXiJ5QR25+PtyJrbdQ5cgjeZ+EWLSsvpz3KAHaizG8vDOnXRgilG
+         Gqx2aGegXEL/EFKUvAZin69GRKALOMMoHslg4svQlTiemKT6vApyZZf43xv5a8Cbs4Bn
+         yQg3NZrpbdJ0ipXS4ECDiZJS1a9HN81CW7OLZfoJZx8Z/L5/c4bO7saoIId69jyb0mD/
+         T/Afh5yPJ6qx+fvRh+ogvzTU4cx77U1YxqZFiKN4IdIZzlAjV5bTtmnxI9A48rr/dpKS
+         4tHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIySOv+9mp/ibxZhzf9hzZEw+y33LhEFgTmw2/JXjP1I5INQ0A5iZ/u1bVYLhDDKceC76Nz+mSSifNJpOfDtYZm9C8Ok9Ilg+QZ/dR
+X-Gm-Message-State: AOJu0YzCpiDildtDa3lh9+eSm9ZxZGW02vu9BJDpHQACwZ9Vht01e5Hg
+	PJ9rEQ0rDN+hyeMaMBaGMGFGxILgSl3xLH3mRcsb2Zbg3CcGXqc/yMrTl5K6HHcpHZhT1yM1LH4
+	d0AHFd/lSywtucnnzJQPK0LKtCWI=
+X-Google-Smtp-Source: AGHT+IEQCV41iJa5cSGW16p8f8MY33Y3k5hKMIGhD7WtuSdaGah+PLqXFDZZGOzLQs4a9PIdgkhtv/tSIROcvabHC8A=
+X-Received: by 2002:a05:6122:2090:b0:4f6:ae65:1e10 with SMTP id
+ 71dfb90a1353d-4f89ff60bb5mr22999801e0c.4.1723024117528; Wed, 07 Aug 2024
+ 02:48:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <81c14a3e-cdea-4367-8955-df7f2dbd2dce@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240807082508.358322-1-21cnbao@gmail.com> <20240807082508.358322-3-21cnbao@gmail.com>
+ <e50abade-c44e-41d4-b7bf-b9d54920e2a4@redhat.com>
+In-Reply-To: <e50abade-c44e-41d4-b7bf-b9d54920e2a4@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 7 Aug 2024 21:48:24 +1200
+Message-ID: <CAGsJ_4zFfnwc1kstNO53gdeUzzon5_tamDcC-mTUUS_PQEjF0A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] mm: attempt to batch free swap entries for zap_pte_range()
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, justinjiang@vivo.com, 
+	chrisl@kernel.org, hughd@google.com, kaleshsingh@google.com, 
+	kasong@tencent.com, linux-kernel@vger.kernel.org, ryan.roberts@arm.com, 
+	v-songbaohua@oppo.com, ying.huang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Neha,
+On Wed, Aug 7, 2024 at 9:29=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> >   mm/swapfile.c | 78 +++++++++++++++++++++++++++++++++++++++++++-------=
+-
+> >   1 file changed, 67 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > index 35cb58373493..25c3f98fa8d5 100644
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -156,6 +156,25 @@ static bool swap_is_has_cache(struct swap_info_str=
+uct *si,
+> >       return true;
+> >   }
+> >
+> > +static bool swap_is_last_map(struct swap_info_struct *si,
+> > +                           unsigned long offset, int nr_pages,
+> > +                           bool *has_cache)
+>
+> Please use double tabs for indenting parameters on 2nd line on
+> new/changed code:
+>
+>                 unsigned long offset, int nr_pages, bool *has_cache)
+>
+> Results in less churn when renaming functions and we can frequently
+> avoid some lines.
 
-On 14:54-20240807, Neha Malcom Francis wrote:
-> Hi Manorit,
-> 
-> On 30/07/24 15:23, Manorit Chawdhry wrote:
-> > Adds bootph-* properties to the leaf nodes to enable U-boot to
-> > utilise them.
-> > 
-> > Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
-> > ---
-> >   .../arm64/boot/dts/ti/k3-j721e-common-proc-board.dts | 20 ++++++++++++++++++++
-> >   arch/arm64/boot/dts/ti/k3-j721e-main.dtsi            |  2 ++
-> >   arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi      |  9 +++++++++
-> >   arch/arm64/boot/dts/ti/k3-j721e-sk.dts               | 18 ++++++++++++++++++
-> >   arch/arm64/boot/dts/ti/k3-j721e-som-p0.dtsi          |  5 +++++
-> >   5 files changed, 54 insertions(+)
-> > 
-[..]
-> > @@ -440,6 +444,7 @@ &hbmc {
-> >   	flash@0,0 {
-> >   		compatible = "cypress,hyperflash", "cfi-flash";
-> >   		reg = <0x00 0x00 0x4000000>;
-> > +		bootph-all;
-> >   		partitions {
-> >   			compatible = "fixed-partitions";
-> > 
-> 
-> Sanity boot tested on J721E-SK after porting to U-Boot. Thanks for the
-> patch, along with the reviews made by Udit (although one additional mention:
-> IIRC, OSPI partitions are cosmetic for the U-Boot driver, but better to add
-> bootph even if it's cosmetic in case the driver changes the next day), with
-> those addressed:
-> 
-> Reviewed-by: Neha Malcom Francis <n-francis@ti.com>
+ack.
 
-Would be following up on those comments. Thanks for reviewing and
-testing!
+>
+> > +{
+> > +     unsigned char *map =3D si->swap_map + offset;
+> > +     unsigned char *map_end =3D map + nr_pages;
+> > +     bool cached =3D false;
+> > +
+> > +     do {
+> > +             if ((*map & ~SWAP_HAS_CACHE) !=3D 1)
+> > +                     return false;
+> > +             if (*map & SWAP_HAS_CACHE)
+> > +                     cached =3D true;
+> > +     } while (++map < map_end);
+> > +
+> > +     *has_cache =3D cached;
+> > +     return true;
+> > +}
+> > +
+> >   /*
+> >    * returns number of pages in the folio that backs the swap entry. If=
+ positive,
+> >    * the folio was reclaimed. If negative, the folio was not reclaimed.=
+ If 0, no
+> > @@ -1469,6 +1488,53 @@ static unsigned char __swap_entry_free(struct sw=
+ap_info_struct *si,
+> >       return usage;
+> >   }
+> >
+> > +static bool __swap_entries_free(struct swap_info_struct *si,
+> > +                             swp_entry_t entry, int nr)
+>
+> Dito.
 
-Regards,
-Manorit
+ack.
 
-> 
-> -- 
-> Thanking You
-> Neha Malcom Francis
+>
+> > +{
+> > +     unsigned long offset =3D swp_offset(entry);
+> > +     unsigned int type =3D swp_type(entry);
+> > +     struct swap_cluster_info *ci;
+> > +     bool has_cache =3D false;
+> > +     unsigned char count;
+> > +     bool can_batch;
+> > +     int i;
+> > +
+> > +     if (nr <=3D 1 || swap_count(data_race(si->swap_map[offset])) !=3D=
+ 1)
+> > +             goto fallback;
+> > +     /* cross into another cluster */
+> > +     if (nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER)
+> > +             goto fallback;
+> > +
+> > +     ci =3D lock_cluster_or_swap_info(si, offset);
+> > +     can_batch =3D swap_is_last_map(si, offset, nr, &has_cache);
+> > +     if (can_batch) {
+> > +             for (i =3D 0; i < nr; i++)
+> > +                     WRITE_ONCE(si->swap_map[offset + i], SWAP_HAS_CAC=
+HE);
+> > +     }
+> > +     unlock_cluster_or_swap_info(si, ci);
+> > +
+> > +     if (!can_batch)
+> > +             goto fallback;
+>
+> I'd avoid "can_batch" and just do:
+>
+> ci =3D lock_cluster_or_swap_info(si, offset);
+> if (!swap_is_last_map(si, offset, nr, &has_cache)) {
+>         unlock_cluster_or_swap_info(si, ci);
+>         goto fallback;
+> }
+> for (i =3D 0; i < nr; i++)
+>         WRITE_ONCE(si->swap_map[offset + i], SWAP_HAS_CACHE);
+> unlock_cluster_or_swap_info(si, ci);
+
+ack.
+
+>
+> > +     if (!has_cache) {
+> > +             spin_lock(&si->lock);
+>
+> I'm no expert on that code, but we might drop the cluster lock the take
+> the swap_info lock and then retake the cluster lock. I assume there are
+> no races we are worrying about here, right?
+
+I suppose so. Even the original single-entry code follows the same pattern:
+
+static unsigned char __swap_entry_free(struct swap_info_struct *p,
+       swp_entry_t entry)
+{
+         struct swap_cluster_info *ci;
+         unsigned long offset =3D swp_offset(entry);
+         unsigned char usage;
+
+         ci =3D lock_cluster_or_swap_info(p, offset);
+         usage =3D __swap_entry_free_locked(p, offset, 1);
+         unlock_cluster_or_swap_info(p, ci);
+         if (!usage)
+                  free_swap_slot(entry);
+
+         return usage;
+}
+
+I assume that once we mark them as SWAP_HAS_CACHE, no one else
+will touch them except ourselves.
+
+>
+> > +             swap_entry_range_free(si, entry, nr);
+> > +             spin_unlock(&si->lock);
+> > +     }
+> > +     return has_cache;
+> > +
+> > +fallback:
+> > +     for (i =3D 0; i  < nr; i++) {
+>
+> One space too much before the "<".
+
+ack.
+
+>
+> > +             if (data_race(si->swap_map[offset + i])) {
+> > +                     count =3D __swap_entry_free(si, swp_entry(type, o=
+ffset + i));
+> > +                     if (count =3D=3D SWAP_HAS_CACHE)
+> > +                             has_cache =3D true;
+> > +             } else {
+> > +                     WARN_ON_ONCE(1);
+> > +             }
+> > +     }
+> > +     return has_cache;
+> > +}
+> > +
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
+
+Thanks
+Barry
 
