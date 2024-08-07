@@ -1,128 +1,221 @@
-Return-Path: <linux-kernel+bounces-278583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9048E94B22B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:29:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB4694B23E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1C471C21174
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:29:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0837B28412C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0471D153835;
-	Wed,  7 Aug 2024 21:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YtgaXFTb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C159E14D2BD;
-	Wed,  7 Aug 2024 21:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FA214EC4E;
+	Wed,  7 Aug 2024 21:35:42 +0000 (UTC)
+Received: from spindle.queued.net (spindle.queued.net [45.33.49.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCB412C53B;
+	Wed,  7 Aug 2024 21:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.33.49.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723066169; cv=none; b=q/0nIBQgRBWvXYT3oTgdPBQ55R97/rhTxwb/SucJVJKmL4r/Whk5OmlSxirdmmw/A4k8p7RzBpAJu8V1sAExBdvNW4wxbg7SwRmKL9cd1nOPhuePJB54gXWFNixcRW4LFeNCX04ER+q/3LpQd9WxqUeuaRjcjMBsrr1xjWAdFrs=
+	t=1723066541; cv=none; b=jIWjo/+AIIqlJaHREFTQXM9j4iYgOiLQ7R4aqLofhIT4FE9soeC/hNXMW8eqfDN2Eb63hg9suoS+mpGe8sD0aSOF6D5jR9W74yt3IkLC/wi9fDehUvKqimJWkCgONPn542CqqcRbCDQgk7rvxcGZbTm/n2ENklGElXYG0ux50gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723066169; c=relaxed/simple;
-	bh=UMW8ZjWFYWzUMZlPzvOnD8SvOFmznM3WZ+q+ybh9Mtc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jcszDn5JeSZcSJQzdML2NaytVxoYMEh8FOLW1g25mraowkjLvwMn0kkwFx2JgKGNuAcNQVn0eCJA6SADjnZgJZRdlaO0J01z+7d7V48XIMrI5DHExdLlJ0qs14dCr8V70UIGpW+D3lexxbBNIqeMxaMKrw5+P9rl+UGkJOUZF1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YtgaXFTb; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723066167; x=1754602167;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UMW8ZjWFYWzUMZlPzvOnD8SvOFmznM3WZ+q+ybh9Mtc=;
-  b=YtgaXFTbl2WKlZb85WFjKF7dCXqNxcqcD1YmuPoD9lnAAW25r2RKsKrF
-   TiudTXAsANPKJmneyo5NNqXvmlFUXUvNPdNBB/9cRbVfL6ehlpSYd4Dz4
-   yZoqhtvY3yooV+kQZBw9t8HkdNbAfq6fJ5rkRuNt6SwWPvTpJx/8gwsqk
-   k9NlIlJejVO08XcAz5G95RbYwRm7J+EkYQfGieRgo0295Q8lwzyYA8icN
-   iPUpdYtTrBsXX5i90iHyd7ZzkbYzkUjN3I1Jmsf33f7y2EtKTlwjAlLwG
-   B3ScCezU8UcaXpSlQwFpH8aBHkDGNqBSxNGJp/ywR6Yn9ThWrjg6TC9F3
-   g==;
-X-CSE-ConnectionGUID: dTAUbYRHTLa579q6pvozWg==
-X-CSE-MsgGUID: 6aLuHtLwR3WYBt1HdLsumw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21021117"
-X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
-   d="scan'208";a="21021117"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 14:29:26 -0700
-X-CSE-ConnectionGUID: atX5bEDeRKy13kZkUkgljQ==
-X-CSE-MsgGUID: yWU5z7LdRnifhCVpkR0W5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
-   d="scan'208";a="56844713"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 07 Aug 2024 14:29:22 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sboDY-0005jd-0B;
-	Wed, 07 Aug 2024 21:29:14 +0000
-Date: Thu, 8 Aug 2024 05:27:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mao Jinlong <quic_jinlmao@quicinc.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev,
-	Mao Jinlong <quic_jinlmao@quicinc.com>,
-	linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] coresight: Add remote etm support
-Message-ID: <202408080511.RIKNKoHh-lkp@intel.com>
-References: <20240807071054.12742-3-quic_jinlmao@quicinc.com>
+	s=arc-20240116; t=1723066541; c=relaxed/simple;
+	bh=UJC9323VtPxuiRvjZrtK5nomYm2uVs4GWA1F7lVLzhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FBtBFWYXFEgxLalu9KwP9E8NO2oT0+uzUZiD7lcssozEwK0Xo7+MEaL+vIL3FNPUN0nF2NcB/6WsEWidwjb/EF31+671D4n5Q3DdA3wlLQn2KmcNmgv814LwzD9DJJczgwIc1XnI6UyfXI0HpqIgNYEgFpUFG2+3RGqfPM8obLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net; spf=pass smtp.mailfrom=queued.net; arc=none smtp.client-ip=45.33.49.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queued.net
+Received: by spindle.queued.net (Postfix, from userid 1001)
+	id 682DC115D13; Wed,  7 Aug 2024 17:28:37 -0400 (EDT)
+Received: from 5400 (unknown [172.56.34.244])
+	by spindle.queued.net (Postfix) with ESMTPSA id 7AE4E115D0E;
+	Wed,  7 Aug 2024 17:28:34 -0400 (EDT)
+Date: Wed, 7 Aug 2024 17:28:32 -0400
+From: Andres Salomon <dilinger@queued.net>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, Matthew
+ Garrett <mjg59@srcf.ucam.org>, Sebastian Reichel <sre@kernel.org>, Hans de
+ Goede <hdegoede@redhat.com>, Ilpo =?UTF-8?B?SsOkcnZpbmVu?=
+ <ilpo.jarvinen@linux.intel.com>, linux-pm@vger.kernel.org,
+ Dell.Client.Kernel@dell.com
+Subject: Re: [PATCH v2 1/2] platform/x86:dell-laptop: Add knobs to change
+ battery charge settings
+Message-ID: <20240807172832.09040123@5400>
+In-Reply-To: <5cfe4c42-a003-4668-8c3a-f18fb6b7fba6@gmx.de>
+References: <20240723220502.77cb0401@5400>
+	<20240724203403.zcrx2lshbla3o2gp@pali>
+	<20240724204523.xb6rp7ba6yqi5klt@pali>
+	<20240724182318.66578a48@5400>
+	<20240724230158.nsmxdgagfpanjtzi@pali>
+	<20240725162457.34b480e1@5400>
+	<20240725221511.mqb4tlam2r7yheoi@pali>
+	<45c7c4c3-2f99-4ca0-9c85-a96a03ccfae8@gmx.de>
+	<20240726000409.ejnvqkzco664q3zb@pali>
+	<20240726002538.558a4a97@5400>
+	<8fde7bae-b4e3-458e-8edc-22199f8bc7e2@gmx.de>
+	<5cfe4c42-a003-4668-8c3a-f18fb6b7fba6@gmx.de>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807071054.12742-3-quic_jinlmao@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bogosity: Ham, tests=bogofilter, spamicity=0.000000, version=1.2.5
 
-Hi Mao,
+On Fri, 26 Jul 2024 20:46:22 +0200
+Armin Wolf <W_Armin@gmx.de> wrote:
 
-kernel test robot noticed the following build warnings:
+> Am 26.07.24 um 20:42 schrieb Armin Wolf:
+>=20
+> > Am 26.07.24 um 06:25 schrieb Andres Salomon:
+> > =20
+> >> On Fri, 26 Jul 2024 02:04:09 +0200
+> >> Pali Roh=C3=A1r <pali@kernel.org> wrote:
+> >> =20
+> >>> On Friday 26 July 2024 01:48:50 Armin Wolf wrote: =20
+> >>>> Am 26.07.24 um 00:15 schrieb Pali Roh=C3=A1r:
+> >>>> =20
+> >>>>> On Thursday 25 July 2024 16:24:57 Andres Salomon wrote: =20
+> >>>>>> On Thu, 25 Jul 2024 01:01:58 +0200
+> >>>>>> Pali Roh=C3=A1r <pali@kernel.org> wrote:
+> >>>>>> =20
+> >>>>>>> On Wednesday 24 July 2024 18:23:18 Andres Salomon wrote: =20
+> >> [...] =20
+> >>>>>>> The issue here is: how to tell kernel that the particular
+> >>>>>>> dell_battery_hook has to be bound with the primary battery?
+> >>>>>>> =20
+> >>>>>> So from userspace, we've got the expectation that multiple batteri=
+es
+> >>>>>> would show up as /sys/class/power_supply/BAT0,
+> >>>>>> /sys/class/power_supply/BAT1,
+> >>>>>> and so on. =20
+> >>>>> Yes, I hope so.
+> >>>>> =20
+> >>>>>> The current BAT0 entry shows things like 'capacity' even without
+> >>>>>> this
+> >>>>>> patch, and we're just piggybacking off of that to add charge_type
+> >>>>>> and
+> >>>>>> other entries. So there shouldn't be any confusion there, agreed? =
+=20
+> >>>>> I have not looked at the battery_hook_register() code yet (seems
+> >>>>> that I
+> >>>>> would have to properly read it and understand it). But does it
+> >>>>> mean that
+> >>>>> battery_hook_register() is adding hook just for "BAT0"?
+> >>>>>
+> >>>>> What I mean: cannot that hook be registered to "BAT1" too? Because =
+if
+> >>>>> yes then we should prevent it. Otherwise this hook which is for "De=
+ll
+> >>>>> Primary Battery" could be registered also for secondary battery
+> >>>>> "BAT1".
+> >>>>> (I hope that now it is more clear what I mean). =20
+> >>>> Hi,
+> >>>>
+> >>>> the battery hook is being registered to all ACPI batteries present
+> >>>> on a given system,
+> >>>> so you need to do some manual filtering when .add_battery() is calle=
+d. =20
+> >>> Ok. So it means that the filtering based on the primary battery in
+> >>> add_battery callback is needed.
+> >>> =20
+> >> Thanks for the explanations. Seems simple enough to fix that, as some =
+of
+> >> the other drivers are checking battery->desc->name for "BAT0".
+> >>
+> >>
+> >> One thing that I keep coming back to, and was reinforced as I looked at
+> >> include/linux/power_supply.h; the generic power supply charge_type has
+> >> values that are very close to Dells, but with different names. I could
+> >> shoehorn them in, though, with the following mappings:
+> >>
+> >> POWER_SUPPLY_CHARGE_TYPE_FAST,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 =3D> "express" (aka ExpressCharge)
+> >> POWER_SUPPLY_CHARGE_TYPE_STANDARD,=C2=A0=C2=A0=C2=A0=C2=A0 =3D> "stand=
+ard"
+> >> POWER_SUPPLY_CHARGE_TYPE_ADAPTIVE,=C2=A0=C2=A0=C2=A0=C2=A0 =3D> "adapt=
+ive"
+> >> POWER_SUPPLY_CHARGE_TYPE_CUSTOM,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+=3D> "custom"
+> >> POWER_SUPPLY_CHARGE_TYPE_LONGLIFE,=C2=A0=C2=A0=C2=A0=C2=A0 =3D> "prima=
+rily_ac"
+> >>
+> >> The main difference is that Primarily AC is described and documented as
+> >> slightly different than Long Life, but I suspect the result is roughly
+> >> the same thing. And the naming "Fast" and "Long Life" wouldn't match t=
+he
+> >> BIOS naming of "ExpressCharge" and "Primarily AC".
+> >>
+> >> Until now I've opted to match the BIOS naming, but I'm curious what
+> >> others
+> >> think before I send V3 of the patches. =20
+> >
+> > I agree that POWER_SUPPLY_CHARGE_TYPE_FAST should be mapped the
+> > ExpressCharge,
+> > but i think that "primarily_ac" should become a official power supply
+> > charging mode.
+> >
+> > The reason is that for example the wilco-charger driver also supports
+> > such a charging mode
+> > (currently reported as POWER_SUPPLY_CHARGE_TYPE_TRICKLE) and the
+> > charging mode seems to be
+> > both sufficiently different from
+> > POWER_SUPPLY_CHARGE_TYPE_LONGLIFE/POWER_SUPPLY_CHARGE_TYPE_TRICKLE
+> > and sufficiently generic to be supported by a wide array of devices.
+> >
+> > Thanks,
+> > Armin Wolf
+> > =20
+> I just read the documentation regarding the charge_type sysfs attribute a=
+nd it states that:
+>=20
+> Trickle:
+> 	Extends battery lifespan, intended for users who
+> 	primarily use their Chromebook while connected to AC.
+>=20
+> So i think that "primarily_ac" should be mapped to POWER_SUPPLY_CHARGE_TY=
+PE_TRICKLE.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on linus/master v6.11-rc2 next-20240807]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Do you think it's worth keeping around the sysfs-class-power-dell
+file? At this point it's basically just documenting the slight naming
+differences:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mao-Jinlong/dt-bindings-arm-Add-qcom-inst-id-for-remote-etm/20240807-151315
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240807071054.12742-3-quic_jinlmao%40quicinc.com
-patch subject: [PATCH v2 2/2] coresight: Add remote etm support
-config: arm-kismet-CONFIG_QCOM_QMI_HELPERS-CONFIG_CORESIGHT_REMOTE_ETM-0-0 (https://download.01.org/0day-ci/archive/20240808/202408080511.RIKNKoHh-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20240808/202408080511.RIKNKoHh-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408080511.RIKNKoHh-lkp@intel.com/
+                Standard:
+                        Fully charge the battery at a moderate rate.
+                Fast:
+                        Quickly charge the battery using fast-charge
+                        technology. This is harder on the battery than
+                        standard charging and may lower its lifespan.
+                        The Dell BIOS calls this ExpressCharge=E2=84=A2.
+                Trickle:
+                        Users who primarily operate the system while
+                        plugged into an external power source can extend
+                        battery life with this mode. The Dell BIOS calls
+                        this "Primarily AC Use".
+                Adaptive:
+                        Automatically optimize battery charge rate based
+                        on typical usage pattern.
+                Custom:
+                        Use the charge_control_* properties to determine
+                        when to start and stop charging. Advanced users
+                        can use this to drastically extend battery life.
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for QCOM_QMI_HELPERS when selected by CORESIGHT_REMOTE_ETM
-   WARNING: unmet direct dependencies detected for QCOM_QMI_HELPERS
-     Depends on [n]: NET [=n]
-     Selected by [y]:
-     - CORESIGHT_REMOTE_ETM [=y] && CORESIGHT [=y]
+                Access: Read, Write
+                Valid values:
+                              "Standard", "Fast", "Trickle",
+                              "Adaptive", "Custom"
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+
+
+
+--=20
+I'm available for contract & employment work, please contact me if
+interested.
 
