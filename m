@@ -1,127 +1,113 @@
-Return-Path: <linux-kernel+bounces-277303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27334949F0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:18:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9D4949F11
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0376284216
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:18:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A944E283EC9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D210C19066E;
-	Wed,  7 Aug 2024 05:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MNo/lHaC"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F9E191478;
+	Wed,  7 Aug 2024 05:20:43 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C377AB647
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 05:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124CC36AF2
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 05:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723007881; cv=none; b=tpHhWUnmEHqZmdWPyhzHDlT8V10eQmCVrjIrgaFBJAFoDNjDwqm3CCf9S/Wr2SUeQzBFi5e8mZqj/4vixoK9fbq6VGzhLwy1SfxsphI8JZBwJUakLizqBJK6zr/AnU1Mjw6uq3MgRg4fre0e2sPSmLK/qGpKGq81FR/COugMZjs=
+	t=1723008043; cv=none; b=UnX9jfuT+4QHxhyPyCZ8QAitdGK/EpcSAVJarDXXfEE+Dlm9XqtnB8fuwJXZGGGPToqX8pHztgfgs4gxe/v0hvfZMcn6VdzBcSyAz8FCrRCQCDUXOUrtsqOsKAQmcwlsiZGVIdWn5g21+CLKure7+htqo76ADdNgKJUNS5Vj0u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723007881; c=relaxed/simple;
-	bh=Gub2kw+LS2F8XLbGJYCNm5TLkpJB/1AGqEHS95VAiBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t0bALUibhqyIwh1Hjr2dHErMOeY7+1lc48rwuuoIlj1B+zqs1uMxxm3Q/A4DT+GJRfVHfC7FoktgDUAMf9jVB8liaJ6keJyymwpGrMe0Fhe4T9jU15kLx30iO08R+i+CvlPO4OtIkx15W0w6B7Kl1Ep0n2Vx9ZIR0nAubYqIRgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MNo/lHaC; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fc491f9b55so11551105ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 22:17:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723007879; x=1723612679; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=moP0eby16V5Q/F0Gmx/wT7OwDvwPCvzY+Edv2BxmnB8=;
-        b=MNo/lHaCLwQGNo0/0maT4d6YZcAK+3nQBRnC6OU3rsI5K89d3TxkY5RQYfQQMFLQOf
-         7g4d4jmyCrwyLncjBJdTInW0eE2KAG6eyhgnSNfgSNjFW7whT+HhdYhbq8pNjjubxyxL
-         js80JhhQmDltrWDiRLE4R03m9VizqYqcuSjh4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723007879; x=1723612679;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=moP0eby16V5Q/F0Gmx/wT7OwDvwPCvzY+Edv2BxmnB8=;
-        b=PxO5q0t2n6CIWuiguHs5Ti3nB23YOsfYij57txOImYip5ncKEU4UQQm6vHZ8sEv+wv
-         REzN9HMVkbV6p0FHQGsprRB0PxfIswLIDd+wkVyFSoWI5t3V6KEZPXbRLqE9Odzxipz1
-         9yQaQL7Jfj2d+NbxahhaMPn43FMyA0xLMr+nAsQnCOJEORPcofhaZgA/G/m1SDS8Iqdf
-         NrYobBFw2IK7iAB07RDepFsbnoPWOeVtaa/jClW76uv4Y0FhuM50v2nQe43jW+sZa5nu
-         iiqcWxAt3z6lDwF8k3AJ14K9fD5EXuQKve/qOQ+bis9mXwYQNFE2in4U3gfm1G+InXCT
-         Xkxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWnh8DxGAj8IBfDcl5i7ev8qAsc3wz4xtXtCRsWL2mQZkLDZ+i9kvtBokHMvEyB2Uo0AXoIFXcCehk4AU4odA+I2cQM5IFyeGFseAO6
-X-Gm-Message-State: AOJu0YyoJFWjUwH5/5mZfACnkbXcY9OGzZlI94sw9T2+CiX5AkKV5aeL
-	N5HVoFfGB9ndns9K9A8Ec8tVyYG2UCCsK8Ot6BDdB1HvdymeM2WmaYH+STeCU6DuC2cnZxoksVx
-	qDw==
-X-Google-Smtp-Source: AGHT+IG7fnuePmRkmUJKTskUgLsDluay6BMheiuE3wvZNhLZcCk5AdmXcRwn112OGxvkwYU4xofbsw==
-X-Received: by 2002:a17:902:e88b:b0:1fb:4701:be6a with SMTP id d9443c01a7336-1ff5728c7e0mr167241985ad.20.1723007879075;
-        Tue, 06 Aug 2024 22:17:59 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:cfc2:ede9:52cd:5b67])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f2734dsm97150485ad.41.2024.08.06.22.17.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 22:17:58 -0700 (PDT)
-Date: Wed, 7 Aug 2024 14:17:54 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Yosry Ahmed <yosryahmed@google.com>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, alexs@kernel.org,
-	Vitaly Wool <vitaly.wool@konsulko.com>,
-	Miaohe Lin <linmiaohe@huawei.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, minchan@kernel.org, senozhatsky@chromium.org,
-	david@redhat.com, 42.hyeyoo@gmail.com, nphamcs@gmail.com
-Subject: Re: [PATCH v5 00/21] mm/zsmalloc: add zpdesc memory descriptor for
- zswap.zpool
-Message-ID: <20240807051754.GA428000@google.com>
-References: <20240806022143.3924396-1-alexs@kernel.org>
- <20240806022311.3924442-1-alexs@kernel.org>
- <20240806123213.2a747a8321bdf452b3307fa9@linux-foundation.org>
- <CAJD7tkakcaLVWi0viUqaW0K81VoCuGmkCHN4KQXp5+SSJLMB9g@mail.gmail.com>
+	s=arc-20240116; t=1723008043; c=relaxed/simple;
+	bh=eAjnjLN2kEwwn1ed4YJtCh+QGXISOV0u10dHbHXDnBc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NkgOqUa6kVWr+pKTb8f++XWuzmbc/Xl1DuUstihu5/Xg5/pyh0gOtu2+z8thLfd/Lqk/mqClsfYxsuVj347HcNu1XlirA1ye50g/gGOmpz8i1wvwi9IA1KqDKiaIb3Xk5k7K94XqfycZDXU1+eRyaL2xQ58Nrm9Oxtgp8lgqqX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wdz0p6BZ3zQp8P;
+	Wed,  7 Aug 2024 13:16:10 +0800 (CST)
+Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
+	by mail.maildlp.com (Postfix) with ESMTPS id 50915180102;
+	Wed,  7 Aug 2024 13:20:37 +0800 (CST)
+Received: from DESKTOP-8RFUVS3.china.huawei.com (10.174.178.219) by
+ kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 7 Aug 2024 13:20:36 +0800
+From: Zenghui Yu <yuzenghui@huawei.com>
+To: <kvmarm@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <maz@kernel.org>, <oliver.upton@linux.dev>, <james.morse@arm.com>,
+	<suzuki.poulose@arm.com>, <wanghaibin.wang@huawei.com>, Zenghui Yu
+	<yuzenghui@huawei.com>
+Subject: [PATCH] KVM: arm64: vgic-debug: Exit the iterator properly w/o LPI
+Date: Wed, 7 Aug 2024 13:20:24 +0800
+Message-ID: <20240807052024.2084-1-yuzenghui@huawei.com>
+X-Mailer: git-send-email 2.23.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJD7tkakcaLVWi0viUqaW0K81VoCuGmkCHN4KQXp5+SSJLMB9g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600007.china.huawei.com (7.193.23.208)
 
-On (24/08/06 12:34), Yosry Ahmed wrote:
-[..]
-> > So the sole reason for this work is as a part of the mem_desc
-> > conversion.  I'd like to hear from others who are to be involved in
-> > that conversion, please - it this patchset something we should be
-> > merging?
-> >
-> 
-> Matthew asked an important question here that needs to be answered by
-> zsmalloc experts:
-> https://lore.kernel.org/lkml/Zq0zucMFsOwATsAC@casper.infradead.org/
+In case the guest doesn't have any LPI, we previously relied on the
+iterator setting
 
-Iff "zsmalloc experts" include me: I was under impression that there was
-a zsmalloc conversion plan otherwise this zpdesc effort is a little
-confusing, and, frankly, it hasn't appeared to me that this is "my problem"
-now.
+	'intid = nr_spis + VGIC_NR_PRIVATE_IRQS' && 'lpi_idx = 1'
 
-> Do you allocate a per-page struct zpdesc, and have each one pointing
-> to a zspage?
+to exit the iterator. But it was broken with commit 85d3ccc8b75b ("KVM:
+arm64: vgic-debug: Use an xarray mark for debug iterator") -- the intid
+remains at 'nr_spis + VGIC_NR_PRIVATE_IRQS - 1', and we end up endlessly
+printing the last SPI's state.
 
-I'm not very knowledgeable when it comes to memdesc, excuse my
-ignorance, and please feel free to educate me.
+Consider that it's meaningless to search the LPI xarray and populate
+lpi_idx when there is no LPI, let's just skip the process for that case.
 
-So I guess if we have something
+The result is that
 
-struct zspage {
-	..
-	struct zpdesc *first_desc;
-	..
-}
+* If there's no LPI, we focus on the intid and exit the iterator when it
+  runs out of the valid SPI range.
+* Otherwise we keep the current logic and let the xarray drive the
+  iterator.
 
-and we "chain" zpdesc-s to form a zspage, and make each of them point to
-a corresponding struct page (memdesc -> *page), then it'll resemble current
-zsmalloc and should work for everyone? I also assume for zspdesc-s zsmalloc
-will need to maintain a dedicated kmem_cache?
+Fixes: 85d3ccc8b75b ("KVM: arm64: vgic-debug: Use an xarray mark for debug iterator")
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+---
+ arch/arm64/kvm/vgic/vgic-debug.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/kvm/vgic/vgic-debug.c b/arch/arm64/kvm/vgic/vgic-debug.c
+index bcbc8c986b1d..bc74d06398ef 100644
+--- a/arch/arm64/kvm/vgic/vgic-debug.c
++++ b/arch/arm64/kvm/vgic/vgic-debug.c
+@@ -45,7 +45,8 @@ static void iter_next(struct kvm *kvm, struct vgic_state_iter *iter)
+ 	 * Let the xarray drive the iterator after the last SPI, as the iterator
+ 	 * has exhausted the sequentially-allocated INTID space.
+ 	 */
+-	if (iter->intid >= (iter->nr_spis + VGIC_NR_PRIVATE_IRQS - 1)) {
++	if (iter->intid >= (iter->nr_spis + VGIC_NR_PRIVATE_IRQS - 1) &&
++	    iter->nr_lpis) {
+ 		if (iter->lpi_idx < iter->nr_lpis)
+ 			xa_find_after(&dist->lpi_xa, &iter->intid,
+ 				      VGIC_LPI_MAX_INTID,
+@@ -112,7 +113,7 @@ static bool end_of_vgic(struct vgic_state_iter *iter)
+ 	return iter->dist_id > 0 &&
+ 		iter->vcpu_id == iter->nr_cpus &&
+ 		iter->intid >= (iter->nr_spis + VGIC_NR_PRIVATE_IRQS) &&
+-		iter->lpi_idx > iter->nr_lpis;
++		(!iter->nr_lpis || iter->lpi_idx > iter->nr_lpis);
+ }
+ 
+ static void *vgic_debug_start(struct seq_file *s, loff_t *pos)
+-- 
+2.33.0
+
 
