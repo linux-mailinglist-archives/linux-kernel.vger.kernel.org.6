@@ -1,229 +1,170 @@
-Return-Path: <linux-kernel+bounces-278594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9D894B24B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:44:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C8694B24D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF9D41F21750
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:44:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A47A5B2184D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA35414F9FD;
-	Wed,  7 Aug 2024 21:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3511552ED;
+	Wed,  7 Aug 2024 21:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LSPEPToA"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVKkwnSq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4330484D25;
-	Wed,  7 Aug 2024 21:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C77153BE4;
+	Wed,  7 Aug 2024 21:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723067035; cv=none; b=YWLJBGf2WDlwdGa2qHhDSwsgJUGEQcHDDUILA4mnzULjNDpBULb/Ux1z/XYASX1xsJLDRLKLBN6DObAF0mguKfe5GIL3KcSG9t2aAtyA9J0H0q3+OhsEJYdrwiA/JK3X40pKiwCSTo2OOH+JGt5CGnry4SNnSlOyzZdkDwdH9eA=
+	t=1723067039; cv=none; b=IGApIfhIh7APBBRFuR+BgMUs49OH3HxIfwXdG0OYOcGpzUtJ6mNFNcHkKFnFEBQkGOeyeupBhARw3sNf/lW/KLjxmLg7eEEDuCbyFi4fhpNCMv7wzoV3OgzChAxtGst2+hvnTXamjAA5hRRPKX1xcN3iYDUi++A0S3+Iozwt7D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723067035; c=relaxed/simple;
-	bh=lkGBHmKx8utfBumhDKHFBqKXIafzXpT/uwm6N8Wpdx8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kMdVrpVageDJ0rHeMn80IFt1pU2xiqs4vdk+LZuciwllN5qmNETevfKw71DAxpYQlJTORDx8BhWtlEIB9d1TNLnP15Z3Ilhx9sgLpSfwkm3uLLaG+VJ4U9CHJlbyogUFTaIoOrgprrWLwGFJOJQzXtRECWARuXJzjqCMSTTWCtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LSPEPToA; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef27bfd15bso2630721fa.2;
-        Wed, 07 Aug 2024 14:43:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723067031; x=1723671831; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jll19MbGKA1ExOhPJwMcVT0BjOA2+xszLa20Qb3/6ts=;
-        b=LSPEPToARVot12Eiqr1ie0bnutF3FnWWBOvh2F/N2K9ptgEBP0X4Vau6xF+ngdztkw
-         nKeSuW7MdYUMyTKpGPCWQHTDnFz1Ie9vAmPOBneJgmiSStg8YeeUWwKJ/KkKQQaQ6wYp
-         tsTN8OCdNvub0JIsMMeHQriAYZtk9skcK4e+36iypOLeV63uZmlrkNpbK6riyX1NSBRo
-         /s1tGikRxWNz6Yd+sg/AWmxeuV/BpBoeZaJwt+ctH/13OWcZIkrqvpWrzFhfmJOVd5VA
-         5g4IHNQ2n8w17OqDT+Y5qKHAfTgVcFEhNji0Oykeq6m+2Mc0yxuHCVSypYkaYxne7IYg
-         d0RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723067031; x=1723671831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jll19MbGKA1ExOhPJwMcVT0BjOA2+xszLa20Qb3/6ts=;
-        b=vqRstsUvtxKYGJuUBuytDdVahc0mW0L3W2Vh3GITSK2i0OaDh9A9uvclEFrbtU3uUW
-         cJPVvEHuIZVnsGUlJxcNF1IfJsv349PR80kkQoa3C0dBZPk7lEsBd40noJJTbX0BwtO0
-         SFoL9K5FhGn9pCxLcP/9WnlL27jMKRGqWxLhUZKOhPiElHtnZOzL27TC61qC50UBIUtb
-         wdNj/MAVIj1vLGn03vZUMevCjGQ+RXYrTyxdZzgLBEpGpGlxclh1mBDI5DwEH6q57Zdh
-         c0ivgJbJa/mSuZtlnjUUSWAcF6xjmsm3nMnO1y3y1voSZ5vid1VIkn7l+Eszh/nTthyp
-         JH2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXq6QnGpeVk33a8noweZCVDcPRHC0fp2hJDcaVWisfCPNSLAwwa9OpTNQv1Fo/WHARM/hDxpeCzAafgE/CfOS85gTO4RXrv22iF3POF8Bo/v6gwxURKnXBMZWEyX/qzfJQPKrvZV4G5rQ==
-X-Gm-Message-State: AOJu0YwXV50dcbyzpvJtYr2oh00+gqxLLNGM+eYAWnSbl6qFI+aC1eyj
-	YsC1Az3iD4OFxep0JnFQRdEmgjtfc86Ir00ktsLfcF8DxqyWs5JUCw5AdV+ETOVhxh3OPKNdWoN
-	ocD2jft4mtVjFVkx809m3BeE/X9Q=
-X-Google-Smtp-Source: AGHT+IFVIyLTqdb8azfpb133JgIONeq3ywsb/Aea06oSsz8r2rgOsh6GqvlrMVg47Bz/l18QM1G0RB+ZwFoW1rvyyzI=
-X-Received: by 2002:a2e:9110:0:b0:2ef:2c20:e061 with SMTP id
- 38308e7fff4ca-2f15aab0a5emr132863931fa.22.1723067030885; Wed, 07 Aug 2024
- 14:43:50 -0700 (PDT)
+	s=arc-20240116; t=1723067039; c=relaxed/simple;
+	bh=6RYRCXp3tJXW+jHyCgJ5i8XLYq6reLmVdAIigIAsnpQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=JFRgg8JNFGB3dKZ7Qdbt8KrdCnhvwHFWv/9bLaE+tiL4E8ENdm5L574YbNYGTS2fGELQR680L94RzRrj2WuMHUt85pLY6NA6rtnKz5hSQvCNFm3Iqt9Js0/5y77Q6WDVRWWYQqFwgJF3OnE7WxQPHMkpbHq1XeVeWHcQSP4wN7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVKkwnSq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C697EC32781;
+	Wed,  7 Aug 2024 21:43:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723067038;
+	bh=6RYRCXp3tJXW+jHyCgJ5i8XLYq6reLmVdAIigIAsnpQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TVKkwnSqhiL/ZC4W7Lv5btmc7UDVlTEAJn+PaJOB+eJiGPyhploOr4XVUKcblWpQP
+	 DEG+OuIw39QXYKCLrls/pCuCytSOGdgl5/Jwhn504mOhYWI+R418MtbTrwgx3RZ0UM
+	 bS04EGHhNXOZl6tByOnbkhBvk7p54E8bAuHbXq0GHBGHFJyGS1eB39+mzvoQhZGb6Q
+	 EX7rT/EXbuxGdE0Iq9AQ1aEOyaCdiUpOtsZEW7FBm+k8XjP9WgMtAAriDm5ef+rqDh
+	 AxQLjV9ak817yT4rxPjXPM74l5orkBRohNE84CipC5ZlzmtLMgPqCU5IBe+C3Tzzbg
+	 nnv+iL3LAt73g==
+Date: Thu, 8 Aug 2024 06:43:53 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Andrii Nakryiko <andrii@kernel.org>,
+ linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
+ mhiramat@kernel.org, peterz@infradead.org, oleg@redhat.com,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] uprobes: get rid of bogus trace_uprobe hit counter
+Message-Id: <20240808064353.7470f6bfab89bd28dbcdebe0@kernel.org>
+In-Reply-To: <CAEf4Bzaq86fPVGWtXqvxLtbsk06coGBebnAO5YiuvuUF2v7++w@mail.gmail.com>
+References: <20240805202803.1813090-1-andrii@kernel.org>
+	<ZrHSts7eySxHs4wh@krava>
+	<CAEf4Bzaq86fPVGWtXqvxLtbsk06coGBebnAO5YiuvuUF2v7++w@mail.gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240807165320.56450-1-shenxiaxi26@gmail.com>
-In-Reply-To: <20240807165320.56450-1-shenxiaxi26@gmail.com>
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 7 Aug 2024 16:43:39 -0500
-Message-ID: <CAH2r5mu_hvBnbzbRnpzjAULubsTf5o4TsD3Piqjwn6HsF7BC8A@mail.gmail.com>
-Subject: Re: [PATCH] Fix spelling errors in Server Message Block
-To: Xiaxi Shen <shenxiaxi26@gmail.com>
-Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com, 
-	sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com, 
-	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-merged into cifs-2.6.git for-next
+On Tue, 6 Aug 2024 10:26:25 -0700
+Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
 
+> On Tue, Aug 6, 2024 at 12:37 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > On Mon, Aug 05, 2024 at 01:28:03PM -0700, Andrii Nakryiko wrote:
+> > > trace_uprobe->nhit counter is not incremented atomically, so its value
+> > > is bogus in practice. On the other hand, it's actually a pretty big
+> > > uprobe scalability problem due to heavy cache line bouncing between CPUs
+> > > triggering the same uprobe.
+> >
+> > so you're seeing that in the benchmark, right? I'm curious how bad
+> > the numbers are
+> >
+> 
+> Yes. So, once we get rid of all the uprobe/uretprobe/mm locks (ongoing
+> work), this one was the last limiter to linear scalability.
+> 
+> With this counter, I was topping out at about 12 mln/s uprobe
+> triggering (I think it was 32 CPUs, but I don't remember exactly now).
+> About 30% of CPU cycles were spent in this increment.
+> 
+> But those 30% don't paint the full picture. Once the counter is
+> removed, the same uprobe throughput jumps to 62 mln/s or so. So we
+> definitely have to do something about it.
+> 
+> > >
+> > > Drop it and emit obviously unrealistic value in its stead in
+> > > uporbe_profiler seq file.
+> > >
+> > > The alternative would be allocating per-CPU counter, but I'm not sure
+> > > it's justified.
+> > >
+> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > ---
+> > >  kernel/trace/trace_uprobe.c | 4 +---
+> > >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > >
+> > > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> > > index 52e76a73fa7c..5d38207db479 100644
+> > > --- a/kernel/trace/trace_uprobe.c
+> > > +++ b/kernel/trace/trace_uprobe.c
+> > > @@ -62,7 +62,6 @@ struct trace_uprobe {
+> > >       struct uprobe                   *uprobe;
+> > >       unsigned long                   offset;
+> > >       unsigned long                   ref_ctr_offset;
+> > > -     unsigned long                   nhit;
+> > >       struct trace_probe              tp;
+> > >  };
+> > >
+> > > @@ -821,7 +820,7 @@ static int probes_profile_seq_show(struct seq_file *m, void *v)
+> > >
+> > >       tu = to_trace_uprobe(ev);
+> > >       seq_printf(m, "  %s %-44s %15lu\n", tu->filename,
+> > > -                     trace_probe_name(&tu->tp), tu->nhit);
+> > > +                trace_probe_name(&tu->tp), ULONG_MAX);
+> >
+> > seems harsh.. would it be that bad to create per cpu counter for that?
+> 
+> Well, consider this patch a conversation starter. There are two
+> reasons why I'm removing the counter instead of doing per-CPU one:
+> 
+>   - it's less work to send out a patch pointing out the problem (but
+> the solution might change)
+>   - this counter was never correct in the presence of multiple
+> threads, so I'm not sure how useful it is.
+> 
+> Yes, I think we can do per-CPU counters, but do we want to pay the
+> memory price? That's what I want to get from Masami, Steven, or Peter
+> (whoever cares enough).
 
-On Wed, Aug 7, 2024 at 11:53=E2=80=AFAM Xiaxi Shen <shenxiaxi26@gmail.com> =
-wrote:
->
-> Fixed typos in various files under fs/smb/client/
->
-> Signed-off-by: Xiaxi Shen <shenxiaxi26@gmail.com>
-> ---
->  fs/smb/client/cifsglob.h  | 4 ++--
->  fs/smb/client/misc.c      | 2 +-
->  fs/smb/client/smbdirect.c | 8 ++++----
->  fs/smb/client/transport.c | 2 +-
->  4 files changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-> index f6d1f075987f..66677b8fc9be 100644
-> --- a/fs/smb/client/cifsglob.h
-> +++ b/fs/smb/client/cifsglob.h
-> @@ -345,7 +345,7 @@ struct smb_version_operations {
->         /* connect to a server share */
->         int (*tree_connect)(const unsigned int, struct cifs_ses *, const =
-char *,
->                             struct cifs_tcon *, const struct nls_table *)=
-;
-> -       /* close tree connecion */
-> +       /* close tree connection */
->         int (*tree_disconnect)(const unsigned int, struct cifs_tcon *);
->         /* get DFS referrals */
->         int (*get_dfs_refer)(const unsigned int, struct cifs_ses *,
-> @@ -816,7 +816,7 @@ struct TCP_Server_Info {
->          * Protected by @refpath_lock and @srv_lock.  The @refpath_lock i=
-s
->          * mostly used for not requiring a copy of @leaf_fullpath when ge=
-tting
->          * cached or new DFS referrals (which might also sleep during I/O=
-).
-> -        * While @srv_lock is held for making string and NULL comparions =
-against
-> +        * While @srv_lock is held for making string and NULL comparisons=
- against
->          * both fields as in mount(2) and cache refresh.
->          *
->          * format: \\HOST\SHARE[\OPTIONAL PATH]
-> diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
-> index b28ff62f1f15..3fe5bfc389d0 100644
-> --- a/fs/smb/client/misc.c
-> +++ b/fs/smb/client/misc.c
-> @@ -352,7 +352,7 @@ checkSMB(char *buf, unsigned int total_read, struct T=
-CP_Server_Info *server)
->                                  * on simple responses (wct, bcc both zer=
-o)
->                                  * in particular have seen this on
->                                  * ulogoffX and FindClose. This leaves
-> -                                * one byte of bcc potentially unitialize=
-d
-> +                                * one byte of bcc potentially uninitiali=
-zed
->                                  */
->                                 /* zero rest of bcc */
->                                 tmp[sizeof(struct smb_hdr)+1] =3D 0;
-> diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
-> index d74e829de51c..7bcc379014ca 100644
-> --- a/fs/smb/client/smbdirect.c
-> +++ b/fs/smb/client/smbdirect.c
-> @@ -406,7 +406,7 @@ static void smbd_post_send_credits(struct work_struct=
- *work)
->                         else
->                                 response =3D get_empty_queue_buffer(info)=
-;
->                         if (!response) {
-> -                               /* now switch to emtpy packet queue */
-> +                               /* now switch to empty packet queue */
->                                 if (use_receive_queue) {
->                                         use_receive_queue =3D 0;
->                                         continue;
-> @@ -618,7 +618,7 @@ static struct rdma_cm_id *smbd_create_id(
->
->  /*
->   * Test if FRWR (Fast Registration Work Requests) is supported on the de=
-vice
-> - * This implementation requries FRWR on RDMA read/write
-> + * This implementation requires FRWR on RDMA read/write
->   * return value: true if it is supported
->   */
->  static bool frwr_is_supported(struct ib_device_attr *attrs)
-> @@ -2177,7 +2177,7 @@ static int allocate_mr_list(struct smbd_connection =
-*info)
->   * MR available in the list. It may access the list while the
->   * smbd_mr_recovery_work is recovering the MR list. This doesn't need a =
-lock
->   * as they never modify the same places. However, there may be several C=
-PUs
-> - * issueing I/O trying to get MR at the same time, mr_list_lock is used =
-to
-> + * issuing I/O trying to get MR at the same time, mr_list_lock is used t=
-o
->   * protect this situation.
->   */
->  static struct smbd_mr *get_mr(struct smbd_connection *info)
-> @@ -2311,7 +2311,7 @@ struct smbd_mr *smbd_register_mr(struct smbd_connec=
-tion *info,
->         /*
->          * There is no need for waiting for complemtion on ib_post_send
->          * on IB_WR_REG_MR. Hardware enforces a barrier and order of exec=
-ution
-> -        * on the next ib_post_send when we actaully send I/O to remote p=
-eer
-> +        * on the next ib_post_send when we actually send I/O to remote p=
-eer
->          */
->         rc =3D ib_post_send(info->id->qp, &reg_wr->wr, NULL);
->         if (!rc)
-> diff --git a/fs/smb/client/transport.c b/fs/smb/client/transport.c
-> index adfe0d058701..6e68aaf5bd20 100644
-> --- a/fs/smb/client/transport.c
-> +++ b/fs/smb/client/transport.c
-> @@ -1289,7 +1289,7 @@ compound_send_recv(const unsigned int xid, struct c=
-ifs_ses *ses,
->  out:
->         /*
->          * This will dequeue all mids. After this it is important that th=
-e
-> -        * demultiplex_thread will not process any of these mids any futh=
-er.
-> +        * demultiplex_thread will not process any of these mids any furt=
-her.
->          * This is prevented above by using a noop callback that will not
->          * wake this thread except for the very last PDU.
->          */
-> --
-> 2.34.1
->
->
+I would like to make it per-cpu counter *and* make it kconfig optional.
+Or just remove with the file (but it changes the user interface without
+option).
+
+For the kprobes, the profile file is useful because it shows "missed"
+counter. This tells user whether your trace data drops some events or not.
+But if uprobes profile only shows the number of hit, we can use the
+histogram trigger if needed.
+
+Thank you,
+
+> 
+> >
+> > jirka
+> >
+> > >       return 0;
+> > >  }
+> > >
+> > > @@ -1507,7 +1506,6 @@ static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs)
+> > >       int ret = 0;
+> > >
+> > >       tu = container_of(con, struct trace_uprobe, consumer);
+> > > -     tu->nhit++;
+> > >
+> > >       udd.tu = tu;
+> > >       udd.bp_addr = instruction_pointer(regs);
+> > > --
+> > > 2.43.5
+> > >
 
 
---=20
-Thanks,
-
-Steve
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
