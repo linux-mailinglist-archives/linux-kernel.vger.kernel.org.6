@@ -1,106 +1,144 @@
-Return-Path: <linux-kernel+bounces-278144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C67094ACB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:21:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB42594ACBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1621F23A7A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:21:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E634B23D97
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE85C132117;
-	Wed,  7 Aug 2024 15:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6417512BF02;
+	Wed,  7 Aug 2024 15:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ECB15rtQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAsphRfe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFE079945;
-	Wed,  7 Aug 2024 15:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB4984E04;
+	Wed,  7 Aug 2024 15:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723043968; cv=none; b=Rwl7xV3wfsrrIqmzJPpiEdEt2kuMmjIK3VTacOqDuPv7KFSHglEEXntsq5gE7HWxKCys/ARIf/jiUmhP58aq8Hy5XJzWn9+m/YwlOUCPYjaueya736VXnwcUkiGTKQKvnb92RQ4KBP8NEBVvnxNTpRDZDbvJ9L2bAFNO7zafCBk=
+	t=1723044027; cv=none; b=kV9Wj87SFDohqh+1t848y7nI/vkTm6AIVjs6+kMqP9lqEqdcpm2hob+xArHu8Nx70IkY5WZuQd14YOey5W0L4rxAX6uGOQnjpziWVtIzOqiMQntMGb3L66JCBmDPrZy61047bodoM8RCnb+HGnisL3p8RzuICGTZfdjVq12byW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723043968; c=relaxed/simple;
-	bh=H9uirerAjlrbXHWwHjRISmeI1bhKgb+jLbNxkCJr9cY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I+dzJPGJWOuWr8RdhQJa8IvCXbMm5XQKhWIEL/EpnQXsmXtXTnLMR6p0Jaz8gELrAxrRkKNkbGDCkxg+l/L+ay9xLkf/dZyfl0oebkovs6GdQfUsRlyFAI31kxPmMu3xvbMO/J0bkj6YM7p5JU7oMYmviqcpQaDpktgYF9I5M0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ECB15rtQ; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723043967; x=1754579967;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=H9uirerAjlrbXHWwHjRISmeI1bhKgb+jLbNxkCJr9cY=;
-  b=ECB15rtQrHr/Pj8P0eAAXq7iWHGoLY6aN0oKzOwK8VWzpCkMfR4mbgpL
-   m/Ps5MHrQXg8HHFPJ3AKAkkABdZQhvplblcVpnShZjHlsTOn/3GM02KZT
-   AOQu8Xj/6S+zbGhaKBjh+o6JXRmlHXGdBIbhwD0N0Ixz7be0d/hnP/viz
-   8yuyuHNa6Y1DbTjcO7pqtoUsCkIX01wzcrD1tutn0uD2UDdgjB/Gx9QrS
-   Y3SFrmx9iwlj3ulDM4ZyT2mAsUiY+nxhOf6G/rEhswk9l/ad1BgyBJod+
-   QfVGm3nJM2c77t7cewRrgUewb/IX0b+PjeP6RAfhzlSoMBZZBdYCrF98G
-   Q==;
-X-CSE-ConnectionGUID: rd4RENwsSQqheq7TVyd/Xw==
-X-CSE-MsgGUID: /AMX3bhlScawU5ibN3riyg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21092142"
-X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
-   d="scan'208";a="21092142"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 08:19:26 -0700
-X-CSE-ConnectionGUID: mHINKmwnRsOskRxFjzYdDA==
-X-CSE-MsgGUID: JmY74sp/S0KbvBBhovh8Iw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
-   d="scan'208";a="61537980"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 08:19:25 -0700
-Received: from [10.212.63.105] (kliang2-mobl1.ccr.corp.intel.com [10.212.63.105])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 972C620CFED6;
-	Wed,  7 Aug 2024 08:19:23 -0700 (PDT)
-Message-ID: <2a32a538-b86c-40ec-8b85-17f793c0bfac@linux.intel.com>
-Date: Wed, 7 Aug 2024 11:19:22 -0400
+	s=arc-20240116; t=1723044027; c=relaxed/simple;
+	bh=xERSTfQqUvdd2k3tAtUqyYEs/LVRZsmS4yVoWayUT+E=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=ljtqXhMy1CiUv/fv1nm7ckYmeE3C9+iw7i6mcIyff1gjHo72e/n6fHyiG9NQx3+9a+YAZraIR+h8pVHVD3ctRH7ZZ3OnjDXu4VfLoXN1J/hpXxvn81jdwfs8p+2kUkXxZNWHLiyW5q+Gb9uMGc5fWVuascaTK7pSATDRryC8/HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAsphRfe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE2BCC32781;
+	Wed,  7 Aug 2024 15:20:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723044027;
+	bh=xERSTfQqUvdd2k3tAtUqyYEs/LVRZsmS4yVoWayUT+E=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=GAsphRfeDUfnMH1Vai3L+59Pwz/5hOlhZEhnZy+82Suaphx0tjjim+AGlEAmMYCPd
+	 Y3X2HhARfVMOiaCGSNUbBGPn9+xxpJbiUhPx9/ENpXhS5XAI4DwQYIFQu1OFpvV3aP
+	 IKtlwiR2xXYrj6+pX6aJjJFYCCaF+smjFYI3M6EoE8Ov/w1HzlvfJsZPUomkJtmnnW
+	 jvFCjYz5BPtoRVAb9a+lZjpNrKp55P6oxsN5dZgGmEw7rbUUZPmb7sSn6U1IzfsKse
+	 YHho8C49xpNHhT3yZBexGxnwtfdWptmblEY1ST+dRHAQ+r/vELsBXhMovmXw+/C7BV
+	 VHzNOJNBio1Rg==
+Date: Wed, 07 Aug 2024 09:20:25 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] perf: Per PMU context reschedule and misc
-To: Peter Zijlstra <peterz@infradead.org>, mingo@kernel.org
-Cc: acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240807112924.448091402@infradead.org>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240807112924.448091402@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Richard Acayan <mailingradian@gmail.com>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Daniel Vetter <daniel@ffwll.ch>, devicetree@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Maxime Ripard <mripard@kernel.org>, Rob Clark <robdclark@gmail.com>, 
+ freedreno@lists.freedesktop.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org, 
+ Sean Paul <sean@poorly.run>
+In-Reply-To: <20240806214452.16406-7-mailingradian@gmail.com>
+References: <20240806214452.16406-7-mailingradian@gmail.com>
+Message-Id: <172304385687.2508167.11953351079557363254.robh@kernel.org>
+Subject: Re: [PATCH v2 0/4] drm/msm/adreno: Add A615 GPU for SDM670 and
+ Pixel 3a
 
 
-
-On 2024-08-07 7:29 a.m., Peter Zijlstra wrote:
-> Hi,
+On Tue, 06 Aug 2024 17:44:54 -0400, Richard Acayan wrote:
+> This adds support for the speed-binned A615 GPU on SDM670.
 > 
-> This is 'fallout' from Namhyung posting his per-pmu ctx_resched() patches. It
-> started with me trying to clean up and get rid of corner cases, and then got
-> involved when Kan noted the time keeping issue.
+> Changes since v1 (20240730013844.41951-6-mailingradian@gmail.com):
+> - add Acked-by tag (1/4)
+> - add OPPs exclusive to some speed bins (3/4)
+> - enable GMU by default (3/4)
 > 
-> Anyway, please review / test.
+> Richard Acayan (4):
+>   dt-bindings: display/msm/gmu: Add SDM670 compatible
+>   drm/msm/adreno: add a615 support
+>   arm64: dts: qcom: sdm670: add gpu
+>   arm64: dts: qcom: sdm670-google-sargo: enable gpu
+> 
+>  .../devicetree/bindings/display/msm/gmu.yaml  |   1 +
+>  .../boot/dts/qcom/sdm670-google-sargo.dts     |   9 +
+>  arch/arm64/boot/dts/qcom/sdm670.dtsi          | 180 ++++++++++++++++++
+>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c     |  27 +++
+>  4 files changed, 217 insertions(+)
+> 
+> --
+> 2.46.0
+> 
+> 
 > 
 
-Except for the tiny nit, the patch series looks good to me.
 
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-Thanks,
-Kan
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y qcom/sdm670-google-sargo.dtb' for 20240806214452.16406-7-mailingradian@gmail.com:
+
+arch/arm64/boot/dts/qcom/sdm670-google-sargo.dtb: iommu@5040000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,sdm670-smmu-v2', 'qcom,adreno-smmu', 'qcom,smmu-v2'] is too long
+	['qcom,sdm670-smmu-v2', 'qcom,adreno-smmu', 'qcom,smmu-v2'] is too short
+	'qcom,sdm670-smmu-v2' is not one of ['qcom,msm8996-smmu-v2', 'qcom,msm8998-smmu-v2', 'qcom,sdm630-smmu-v2', 'qcom,sm6375-smmu-v2']
+	'qcom,sdm670-smmu-v2' is not one of ['qcom,qcm2290-smmu-500', 'qcom,qdu1000-smmu-500', 'qcom,sa8775p-smmu-500', 'qcom,sc7180-smmu-500', 'qcom,sc7280-smmu-500', 'qcom,sc8180x-smmu-500', 'qcom,sc8280xp-smmu-500', 'qcom,sdm670-smmu-500', 'qcom,sdm845-smmu-500', 'qcom,sdx55-smmu-500', 'qcom,sdx65-smmu-500', 'qcom,sdx75-smmu-500', 'qcom,sm6115-smmu-500', 'qcom,sm6125-smmu-500', 'qcom,sm6350-smmu-500', 'qcom,sm6375-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250-smmu-500', 'qcom,sm8350-smmu-500', 'qcom,sm8450-smmu-500', 'qcom,sm8550-smmu-500', 'qcom,sm8650-smmu-500', 'qcom,x1e80100-smmu-500']
+	'qcom,sdm670-smmu-v2' is not one of ['qcom,qcm2290-smmu-500', 'qcom,sc7180-smmu-500', 'qcom,sc7280-smmu-500', 'qcom,sc8180x-smmu-500', 'qcom,sc8280xp-smmu-500', 'qcom,sdm845-smmu-500', 'qcom,sm6115-smmu-500', 'qcom,sm6350-smmu-500', 'qcom,sm6375-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250-smmu-500', 'qcom,sm8350-smmu-500', 'qcom,sm8450-smmu-500']
+	'qcom,sdm670-smmu-v2' is not one of ['qcom,qcm2290-smmu-500', 'qcom,sa8775p-smmu-500', 'qcom,sc7280-smmu-500', 'qcom,sc8180x-smmu-500', 'qcom,sc8280xp-smmu-500', 'qcom,sm6115-smmu-500', 'qcom,sm6125-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250-smmu-500', 'qcom,sm8350-smmu-500', 'qcom,sm8450-smmu-500', 'qcom,sm8550-smmu-500', 'qcom,sm8650-smmu-500', 'qcom,x1e80100-smmu-500']
+	'qcom,sdm670-smmu-v2' is not one of ['qcom,sc7280-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250-smmu-500']
+	'qcom,sdm670-smmu-v2' is not one of ['qcom,msm8996-smmu-v2', 'qcom,sc7180-smmu-v2', 'qcom,sdm630-smmu-v2', 'qcom,sdm845-smmu-v2', 'qcom,sm6350-smmu-v2', 'qcom,sm7150-smmu-v2']
+	'qcom,sdm845-smmu-v2' was expected
+	'marvell,ap806-smmu-500' was expected
+	'qcom,sdm670-smmu-v2' is not one of ['nvidia,tegra186-smmu', 'nvidia,tegra194-smmu', 'nvidia,tegra234-smmu']
+	'arm,mmu-500' was expected
+	'qcom,sdm670-smmu-v2' is not one of ['arm,mmu-400', 'arm,mmu-401']
+	'qcom,sdm670-smmu-v2' is not one of ['arm,smmu-v1', 'arm,smmu-v2', 'arm,mmu-400', 'arm,mmu-401', 'arm,mmu-500', 'cavium,smmu-v2']
+	'qcom,smmu-v2' was expected
+	'qcom,smmu-500' was expected
+	'nvidia,smmu-500' was expected
+	'arm,smmu-v2' was expected
+	'arm,smmu-v1' was expected
+	from schema $id: http://devicetree.org/schemas/iommu/arm,smmu.yaml#
+arch/arm64/boot/dts/qcom/sdm670-google-sargo.dtb: /soc@0/iommu@5040000: failed to match any schema with compatible: ['qcom,sdm670-smmu-v2', 'qcom,adreno-smmu', 'qcom,smmu-v2']
+
+
+
+
+
 
