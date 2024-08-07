@@ -1,119 +1,129 @@
-Return-Path: <linux-kernel+bounces-278599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE3C94B256
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:48:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3756594B25C
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5762E282EF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:48:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 679D21C214E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A9F1527B1;
-	Wed,  7 Aug 2024 21:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F22154BEB;
+	Wed,  7 Aug 2024 21:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bzhcIcXA"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="sbKN5d3R"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C1212C460;
-	Wed,  7 Aug 2024 21:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED5012C460;
+	Wed,  7 Aug 2024 21:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723067294; cv=none; b=qRlRedQJq782d9Jjdv+bEDdMrVATtSZV0jLmVTKdTbyLZA/+MXnVsh2hx5a5tQoiGjGPPRPsGQK4ANxkh7n6JITBzAJ0SKKpB8mFNWZ9Ov6cWwmT/0Kq1sCfp3YCsPsMw1FtdgrSZ5AwhxeUYWjqgwNi77WQTMsLY+f+oet59GU=
+	t=1723067521; cv=none; b=QP3fFM0QUVCtA80IwNmjnBz6QP4AdUU0HE8TDLT8RuuPM4ijZfoFyjzjTMfJ0yYx1ojiQGJbbB41/KWvKpzqlZAwlOrozc6fw6Jm6mnVKRKzeyiGDouja2tJjJX3VxkR5Nm0OsT1MF30CDC44aEVPV9p1azzz1CqcOpc4IQY5kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723067294; c=relaxed/simple;
-	bh=ikHrDHxrIlxO7Av4gQzjNSiQgY/ZMnBK+K+bWKNpGEM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HCcXamgkRWiygEnmgs2k4nrFn8tD5cy6+e5xDfUHOP2jD/1j2CZo6Epk6wasaaGsq8IWuRZ1LsehoR0wMK6dlQMHfTvcwILBMZPPw/BMU/AQcGDh3q8rmeIGYPJwN0SakPYvzFfky7aNRMMwkxCz0W7eeZk3Rzywj2ZWkLob0wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bzhcIcXA; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-6e7e23b42c3so271866a12.1;
-        Wed, 07 Aug 2024 14:48:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723067292; x=1723672092; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zwnAvupY4s0tGUxoV29OC1pw14aRUUNlkJE3yq1W4l4=;
-        b=bzhcIcXAn8Fb0YfNz3rYrPolG1j9L0muAOINtTUXN9EnrjFS7+oxpjuAsVnXTH96Kr
-         BEFp4EeQrY3vLK7+aT5v59zZTYsANBpoSLizTXTy5H5FcrUNRhWCugWcZsl5bnvWSMvG
-         ix6vSceGGATAU0DIqKe6GcE1vNUgjFcyf98AEY84FNwACdYnFxx3DOYCp+Uhigrjjk9o
-         rbrcYdi9Nfv6E48QkbF+fEZhP1ycbcrkEkGUk4TemuysiSKs21y81jk+5nN0H5M6Twqy
-         Ra5TwfCv9Sld6X0ZnnluAh6sNY74rn6gmYzNQxW/ABM1WG2tCkw6IKhMUoR0o86/o8FW
-         JGfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723067292; x=1723672092;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zwnAvupY4s0tGUxoV29OC1pw14aRUUNlkJE3yq1W4l4=;
-        b=UVNkPMgBjF6P0gVkxj9fbvRErRhNthS3Q1Ej6g3FTBzKhEIRCvFgVSqSGJNwf+uMUC
-         Z3BvXcXwtsWd2T9vEXUyJNh1UlLbSQ5KmGO/3MCKDY3fSAl3VcEj/9317bH+k7y34MFJ
-         h6H6zE4y12mGozjdkPbxa5fzVmd5ITpwbszr+PCXYVgflDzA55413zExQVVx/ACJY7IC
-         j+riAiZ99+FapgyXrOtQ47HcHpicD0yZDg6Yk07WkyOTU+coSueXpRGUPViQ5KSofhXA
-         9a5W37yOir63TVQ/gW5LvGGpZ1jRGJgqa09vSD5LMMGCATs1okKPqhnpQnyKyv9tF+D9
-         HLYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEMbu7V3xEPSojqoFsBHYFoOWE92do3Gkid0iAgrZEwZHchX4+cEI4gP04hCo/BzO8xcg/5gdSXVK5lZEuEOFWQHScqwXmVsHHoWMPeQsN7CGVltHpQ+wnOw+PhOF4c3EzabP4
-X-Gm-Message-State: AOJu0Yz5mTZWzxdHWpMA00WViX0xT7mgVF4EWh0dxjPNyiN3R8y+NB/K
-	jm1SJQvUQs60F05xQukOlVzJ6V02gJZ0HlkhiLwOK/OVd6KB0Fq1
-X-Google-Smtp-Source: AGHT+IGw6duZP0Dlz2YBvISY62DQJZX6EzKf/9DR6v+6hasCmSzLdLX1MaagaF6MVIhiK1G/LlhQYQ==
-X-Received: by 2002:a17:90a:16c2:b0:2c9:67f5:3fae with SMTP id 98e67ed59e1d1-2cff952cffemr18586049a91.28.1723067291659;
-        Wed, 07 Aug 2024 14:48:11 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2d1b3ab3baesm2096565a91.15.2024.08.07.14.48.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 14:48:11 -0700 (PDT)
-Message-ID: <fd6a7f02-7ef7-4b91-bacb-1129049b0343@gmail.com>
-Date: Wed, 7 Aug 2024 14:48:09 -0700
+	s=arc-20240116; t=1723067521; c=relaxed/simple;
+	bh=DWk4QStzvwvvileYzPNCMjzVKAi3JRwYlluajezX9sc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GE54oPW5G87rOsYg4YUJYW3VGfQ3kv2e4kEA+XgYam3VWkVp1KsEjHkj31+i/MQQ1fWKTasCw2p0hOHv8qRfF5iMwW5nVFEtgx9prowymOlUFLvph6YgnOUgehtmReKiRLgZFYh9i2TnWWDJB0lGcOnD89AvgHLXxJnOgWo4zUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=sbKN5d3R; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1723067510;
+	bh=DWk4QStzvwvvileYzPNCMjzVKAi3JRwYlluajezX9sc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=sbKN5d3Rdu1lXZVMwYRs1EQVQcDbYj/BJLLy7ggJ0+lofbpxyCA6/9NVOzwvRMbPM
+	 BTvg8J61rCLah63wxaffPGdLB+8TZs/rxb44vusFvntO5BlwZ70R8XX8pyG+WARsxN
+	 P06LIJfeVSKMczMJLLu0iaJhu21343u0c8kz5I6Q=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH v2 00/15] tools/nolibc: improve LLVM/clang support
+Date: Wed, 07 Aug 2024 23:51:36 +0200
+Message-Id: <20240807-nolibc-llvm-v2-0-c20f2f5fc7c2@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 000/123] 6.10.4-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240807150020.790615758@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240807150020.790615758@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAGjss2YC/1XMTQ6CMBCG4auQWVtTSvlz5T0MC2gHOwkW08GqI
+ dzdSuLC1eSd5HtWYAyEDKdshYCRmGafQh0yMK73VxRkU4OSSsta1cLPEw1GTFO8iWLsbdWUrbT
+ aQFrcA4702rVLl9oRL3N473jMv9+f0/w5MRdSDKZotKradMvzE4mZjXu4o8cFum3bPj0mj7urA
+ AAA
+To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Shuah Khan <skhan@linuxfoundation.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723067509; l=2813;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=DWk4QStzvwvvileYzPNCMjzVKAi3JRwYlluajezX9sc=;
+ b=VSenKD0tOgBuQwPO/yE6gA79UStMMZd2MMyW9gIJSY3FYoGgEznQTbOHXRAOiaaJ8OGpJeSkO
+ CT0WpTaC3wvCU0bYF1K0+y3d+ymlCZmcc92EzC4zLw5eVeDOR1s+lN6
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On 8/7/24 07:58, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.4 release.
-> There are 123 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 09 Aug 2024 14:59:54 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.4-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+The current support for LLVM and clang in nolibc and its testsuite is
+very limited.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENEIRC:
+* Various architectures plain do not compile
+* The user *has* to specify "-Os" otherwise the program crashes
+* Cross-compilation of the tests does not work
+* Using clang is not wired up in run-tests.sh
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+This series extends this support.
+
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v2:
+- Add support for all architectures
+  - powerpc: "selftests/nolibc: don't use libgcc when building with clang"
+  - mips: "tools/nolibc: mips: load current function to $t9"
+  - s390: "selftests/nolibc: use correct clang target for s390/powerz"
+- Expand commit messages
+- Use __nolibc_ prefix for custom macros
+- Link to v1: https://lore.kernel.org/r/20240728-nolibc-llvm-v1-0-bc384269bc35@weissschuh.net
+
+---
+Thomas Weißschuh (15):
+      tools/nolibc: arm: use clang-compatible asm syntax
+      tools/nolibc: mips: load current function to $t9
+      tools/nolibc: powerpc: limit stack-protector workaround to GCC
+      tools/nolibc: compiler: introduce __nolibc_has_attribute()
+      tools/nolibc: move entrypoint specifics to compiler.h
+      tools/nolibc: compiler: use attribute((naked)) if available
+      selftests/nolibc: report failure if no testcase passed
+      selftests/nolibc: avoid passing NULL to printf("%s")
+      selftests/nolibc: determine $(srctree) first
+      selftests/nolibc: add support for LLVM= parameter
+      selftests/nolibc: add cc-option compatible with clang cross builds
+      selftests/nolibc: run-tests.sh: avoid overwriting CFLAGS_EXTRA
+      selftests/nolibc: don't use libgcc when building with clang
+      selftests/nolibc: use correct clang target for s390/powerz
+      selftests/nolibc: run-tests.sh: allow building through LLVM
+
+ tools/include/nolibc/arch-aarch64.h          |  4 +--
+ tools/include/nolibc/arch-arm.h              |  8 +++---
+ tools/include/nolibc/arch-i386.h             |  4 +--
+ tools/include/nolibc/arch-loongarch.h        |  4 +--
+ tools/include/nolibc/arch-mips.h             |  8 ++++--
+ tools/include/nolibc/arch-powerpc.h          |  6 ++--
+ tools/include/nolibc/arch-riscv.h            |  4 +--
+ tools/include/nolibc/arch-s390.h             |  4 +--
+ tools/include/nolibc/arch-x86_64.h           |  4 +--
+ tools/include/nolibc/compiler.h              | 24 +++++++++++-----
+ tools/testing/selftests/nolibc/Makefile      | 41 +++++++++++++++++++---------
+ tools/testing/selftests/nolibc/nolibc-test.c |  4 +--
+ tools/testing/selftests/nolibc/run-tests.sh  | 16 ++++++++---
+ 13 files changed, 83 insertions(+), 48 deletions(-)
+---
+base-commit: ae1f550efc11eaf1496c431d9c6e784cb49124c5
+change-id: 20240727-nolibc-llvm-3fad68590d4c
+
+Best regards,
 -- 
-Florian
+Thomas Weißschuh <linux@weissschuh.net>
 
 
