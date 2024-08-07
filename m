@@ -1,97 +1,123 @@
-Return-Path: <linux-kernel+bounces-277600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 233A794A387
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:01:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6042994A38A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD1C1F262C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:01:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FCEB1C22EB8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387DF1C9ECD;
-	Wed,  7 Aug 2024 09:01:18 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53011A288;
-	Wed,  7 Aug 2024 09:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1E41C9ECF;
+	Wed,  7 Aug 2024 09:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DFPXhE37"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9621C9DDE;
+	Wed,  7 Aug 2024 09:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723021277; cv=none; b=kzj5NhoSM0tlHARm5cZy4x/wNckAOuHXfeCR2+kDZKgXX0XfuKrQmwoyhnWrEAqrbFz2idfFbuqynAgXAxX3TARG0K78zUcYzf2xvlEeDefIzM/DP2KN8LwJPilHOGWCjQt5MUlLfWOTeYYuUQXt0qOiKTzXuSenVPQ+kgLfLlk=
+	t=1723021289; cv=none; b=WLxBnwI+Go3hjWKzIuRZV1Bl/4z6zh2k8YpGgJGLjqlqDeohDdnMw8hKTxYVX3QgilL9fX/Cc/LD/2WpiTyfFx0/Pe6Z8zWBwd33BvRuWBeEW0bmuOi3Px0WKjl8eTr6DuvEiladSdEKFRJSnfUOpdQnXrmk7yzbt5/16ihg3Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723021277; c=relaxed/simple;
-	bh=VrxUh8bJKgrlvtMlVbgyzBh6rB37ARtcuOLChGDiwds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RP9jjus+PcBkQFxTDKXMItDvLbHvOuIBcyln3GvBrUB83RJKaZGHq2wD5AkF5YvdEB/lYuGo2ZjoKhWjIPDXQbhtpbdoLuQDqwtX1KS2/7DkObciNI+SVTXApMvjpdDkXsrkEKWBgrCDkZP4QVWYe7Ln7sfTOSGUHWYarLBf9pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.4.132])
-	by gateway (Coremail) with SMTP id _____8DxfZvaN7Nm5jAKAA--.5744S3;
-	Wed, 07 Aug 2024 17:01:14 +0800 (CST)
-Received: from [10.20.4.132] (unknown [10.20.4.132])
-	by front1 (Coremail) with SMTP id qMiowMCxM+DZN7Nm+MEHAA--.10739S2;
-	Wed, 07 Aug 2024 17:01:13 +0800 (CST)
-Message-ID: <f14e56dc-8bbf-43f0-871c-f556abb563d9@loongson.cn>
-Date: Wed, 7 Aug 2024 17:01:13 +0800
+	s=arc-20240116; t=1723021289; c=relaxed/simple;
+	bh=SlX8DXsZ+LVAASbH3Cqud1npEMh02BJvpmBSpjguCLs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n4dVj9rvW0D0OwQ0mOMxDG30kCTTO7SDIbh90178eCBNM9p5pyTKAAMyGesCzefAsKKeRPM3Sit9YKEPv2BUyIn2V3fvD9Em1bkNhYtt4yFPXyKeYNMCZUgK8B+sNQZheoIa3ZdjqECR3PQHhq8Mz19CaW+Y5a+KhGD9SW1ijVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DFPXhE37; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fd66cddd4dso16660945ad.2;
+        Wed, 07 Aug 2024 02:01:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723021287; x=1723626087; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vZyYZcWScXx3hCzshTooGI4mg6we9/4Iww+0qQQ3pQ0=;
+        b=DFPXhE37DXE06k+MbhfnqTf/3KEnNc61tIZAON/IZitYeZCNFL+SrYqFCpX49Pla7m
+         Iju2FKOwYN5EXGcbrX7QVU2Xz4Ss4ggzNLn/9WvmgeCvNXCSCG8HmzYNoUo5Fb0rVi3J
+         kd1y9Z/OrUrXI/EjZ+0xJv4MHoaYolmhSDgtyjFKvqWX4ZUH80AULwNO4pHG2AEts08J
+         sul7XolCTaQqAvIF4JK/1cKfVpKasuDI5UNsItXW7ZUFvX5O4RH9NeXGcjZKkjaix5Cr
+         zj8x52qo0Uqy5T3MRYtRuAA+8rE2pXWdwIZr5W3yCW77Ltmy7tVropOkE8vffrqvXU34
+         LXPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723021287; x=1723626087;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vZyYZcWScXx3hCzshTooGI4mg6we9/4Iww+0qQQ3pQ0=;
+        b=GKK581+zsjFZ+jg3IQPf33QAo5YbgcElaMGg0JW8xWkKwgGgTFekZIrH/Zu3VJS/S4
+         YcbVqLtuuWLAzbmssaIWDj5oUBlqBc1wNnM5KQx33jLfc/lgPXEMy7PKOYJ5erRmU+mp
+         YEzUK8x4N5Y3z1QzI4TUfLmJ9iJkpvm7OfiM4E7SR/w/PcSJnUJeBNRtk/iR1Y3hq2yA
+         VDomr4MMfljC4g07PXCu0Pw01pst6dnuAlEiLSzQsJ5vKGIib6IPAvqNGU6uwxYjvKdv
+         lIXQH+NsWxa3TUXPuuoZP+b7Rw6m/0FA7cX0H1HvhZY/x5hQu7VI2Ni3W2Tq0SarO4H2
+         c1WA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQIo3YuikvDM227R5UvzDzFH1doUOk/YrEmv/4d9+zLzLZWOCVVSW9R9rlQ6Xi9lLypWjNUYJSEf79FMIGXJesKpq0fDpeoOpGU8y1EGhisd/ZIYytsxj+8Cz3BehmbTYfqUbd3B4Z
+X-Gm-Message-State: AOJu0Yzq6TeG8kNzJI4/vzPMYKXVtfUi5Euk6Ox+r4TzJ89VuEYCqfLw
+	+iccX+PQEDLY5/Hd9ZMSW2haLaox6lnf1JG9AVNBynvk+90BiTWR
+X-Google-Smtp-Source: AGHT+IGS0K1I+nQ+fdK7tmFOM7XFjxcXffIfoQoZ1ulc1qDVT/0KTpNDWEz9eunY8iwx/PemP6mjFQ==
+X-Received: by 2002:a17:903:1251:b0:1fb:9b91:d7c9 with SMTP id d9443c01a7336-1ff5722d9aemr255334385ad.4.1723021286963;
+        Wed, 07 Aug 2024 02:01:26 -0700 (PDT)
+Received: from localhost.localdomain (c-76-133-147-99.hsd1.ca.comcast.net. [76.133.147.99])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20077167703sm29747145ad.86.2024.08.07.02.01.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 02:01:26 -0700 (PDT)
+From: Daniel Yang <danielyangkang@gmail.com>
+To: skhan@linuxfoundation.org
+Cc: danielyangkang@gmail.com,
+	Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	dm-devel@lists.linux.dev,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Documentation: dm-crypt.rst warning + error fix
+Date: Wed,  7 Aug 2024 02:01:21 -0700
+Message-Id: <20240807090121.61064-1-danielyangkang@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART controller
-To: Xi Ruoyao <xry111@xry111.site>, Krzysztof Kozlowski <krzk@kernel.org>,
- gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org,
- kernel@xen0n.name, p.zabel@pengutronix.de
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, loongarch@lists.linux.dev
-References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
- <4d1f2426-b43c-4727-8387-f18edf937163@kernel.org>
- <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
- <6c7ec8196fe01aa651f8b59b445b70de79137181.camel@xry111.site>
-Content-Language: en-US
-From: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>
-In-Reply-To: <6c7ec8196fe01aa651f8b59b445b70de79137181.camel@xry111.site>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxM+DZN7Nm+MEHAA--.10739S2
-X-CM-SenderInfo: x2kh0w5kdr4v3l6o00pqjv00gofq/1tbiAQECBGayEXMQlAABs1
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
-	BjDU0xBIdaVrnRJUUU9ab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
-	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
-	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x02
-	67AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6x
-	ACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E
-	87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2
-	Ij64vIr41l4c8EcI0En4kS14v26r1Y6r17MxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI
-	1I0E14v26r1q6r43MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_Jr
-	Wlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j
-	6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr
-	0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUv
-	cSsGvfC2KfnxnUUI43ZEXa7IU8vApUUUUUU==
 
+Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+---
+ .../admin-guide/device-mapper/dm-crypt.rst        | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-在 2024/8/7 16:39, Xi Ruoyao 写道:
-> On Wed, 2024-08-07 at 16:23 +0800, 郑豪威 wrote:
->> The file "drivers/tty/serial/8250/8250_loongson.c" will be created in
->> the patch
->>
->> "tty: serial: 8250: Add loongson uart driver support". Is it
->> inappropriate to reference it here?
-> You should add this line in the second patch then.  Separating a large
-> change into multiple patches in a series is not for formalities' sake.
-> Each patch should be logically intact on its own.
->
-Thank you, I got it.
-
-
-Best regards,
-
-Haowei Zheng
+diff --git a/Documentation/admin-guide/device-mapper/dm-crypt.rst b/Documentation/admin-guide/device-mapper/dm-crypt.rst
+index e625830d335..552c9155165 100644
+--- a/Documentation/admin-guide/device-mapper/dm-crypt.rst
++++ b/Documentation/admin-guide/device-mapper/dm-crypt.rst
+@@ -162,13 +162,14 @@ iv_large_sectors
+ 
+ 
+ Module parameters::
+-max_read_size
+-max_write_size
+-   Maximum size of read or write requests. When a request larger than this size
+-   is received, dm-crypt will split the request. The splitting improves
+-   concurrency (the split requests could be encrypted in parallel by multiple
+-   cores), but it also causes overhead. The user should tune these parameters to
+-   fit the actual workload.
++
++   max_read_size
++   max_write_size
++      Maximum size of read or write requests. When a request larger than this size
++      is received, dm-crypt will split the request. The splitting improves
++      concurrency (the split requests could be encrypted in parallel by multiple
++      cores), but it also causes overhead. The user should tune these parameters to
++      fit the actual workload.
+ 
+ 
+ Example scripts
+-- 
+2.39.2
 
 
