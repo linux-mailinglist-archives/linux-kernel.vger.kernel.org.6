@@ -1,108 +1,117 @@
-Return-Path: <linux-kernel+bounces-277681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A53594A4B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:50:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A439694A4B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6E50B24914
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:49:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FE4A281D88
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211151D1737;
-	Wed,  7 Aug 2024 09:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U/JRDVL9"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D121D175C;
+	Wed,  7 Aug 2024 09:49:59 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C847B1C6899
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 09:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E81801
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 09:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723024177; cv=none; b=XPqLJdEJ9csqT54NlJcln7G4UffdCN7LJvtmsgAcrzfa7MeGD2MrnU9XmMXzWbYbp6WFcup3HVXo+jyupv4FiiVviDzCmTu7dPiJLFLruq3TUXn8He8n1/xKHXjNR2o0Wk5o4gpKtgjgNPu9gLIz/3YzZ9ZC4R1jUMTTAjrbv0c=
+	t=1723024198; cv=none; b=FRwZOviCU8t6vjiIISg10yCBl58zdkkwwHk39cLYUEasiF2SB3a36p9f+GhnYIX12ZXoiuy4+nh4p5OlC1caz4HJIDvQBoyoq3tD1PnvrPuLAmfQdjdJQdsLbvdIOQ8qVLiy9pCGIq0eAbXXNW/0CqTPjCjeb+X4bv/g+rs1Ftk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723024177; c=relaxed/simple;
-	bh=p8oOle8j0YyFB8aei5q+8ZxQH0nnNcOH9u81uVEH3kQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tAPiqN2pwadE3qF+Y/VD5t0BfH2bEa/ApJk53meEcugurcVlXjaxk4IygOrFTK+W220OLkObDLh9pmqD8/6CLwJZwLeXIugJ0HyJUQOJjVjZSSgXqlln2NVU49JryTZTZg3StwZ/Yj03Z63W9Gj+Xd1XKmQIhH46V+unvviii+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U/JRDVL9; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3686b285969so810086f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 02:49:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723024174; x=1723628974; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pc/1iktJr3p9PLDHAKJFkcEhANCClecq2itvdxpvggU=;
-        b=U/JRDVL9/aejtlmKGZiVJc2g2hJLNssl+dieRDEFJ4fJJmj8eA7wZ8X+GhFwz7Laf9
-         1p/65uTxuyKkmCgM2UOw0dBEhx/aPLouPj4p+yt6hnruAu8i9W9NTymWEg007t5EQfvj
-         bCD9ncZBrncK2lY/ysBDOspCH7m8t7Cjvgev3CbEXEALMCK+kV9En1Si8IXoX493bYqL
-         RzUho7anmN+6xZ9hAJoZv6fWZsM48fDvHYx8yrQTlFcpvZZxL1RSQ1+zZfL/enEw72bO
-         IIEp0QQspvGv+6/rGISowKiQs79ltoO6MwynxsOIWG7rssY3ojvBLue9HKFmcnad7uPN
-         aXaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723024174; x=1723628974;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pc/1iktJr3p9PLDHAKJFkcEhANCClecq2itvdxpvggU=;
-        b=NEzk+BGe8PFET90j/54WWCiK/WhvzGRfbIYeqCc98xp0BIMm+Zz7P/w4mCXa4wouev
-         oUZlmc1Go907MCuwuElUTwDV19ULplwwwLcaAv5HJUPO92QHchn0H4CxESet2DD4uqC6
-         HBjGqDF3gRyg4q8LlEHXoU2hneyohV0nmZN90gwNAUfWn9qNYfxY1udrmLNhs7PzzFgA
-         NDdBjbDLGWMB+y5IHHuhfhakcHn/kgVxIX/qFz9R0Rm6qIvcay7oMs7O6UwRAVQYHkQs
-         7XtS5w6pvG5j/DTZQV6PVGAkyWr1AP+FDaPYYedb4RHxC6udTjPVm7VI0Azz4HR6dinO
-         dW0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVm9j1AkxchbKgV/YRdZkz9G3lG0QUleeBryin8/fjbg/q5OZfqX9ZzjQiLh+HtuQpkwZyy9j40sXlCrrtDQSqnNRNFmwJmwNYDJcCG
-X-Gm-Message-State: AOJu0YyQN/GPQlttwt+ENBBJjSFzGVoi4JX8sxt/A6pDyZeJ7hHAw+nN
-	dk5DbHfFi+t4zoK8yanLA7IIjIkg0L1wPJPlIpbvVAXFcX7jLFL5bA698K5V010=
-X-Google-Smtp-Source: AGHT+IG7C+gyfAmIU5emdVImNYDBwmPpefND5NNGBZ5h26Nijfjr5hlnMITUlNJ6c7ynyH03xWfJyA==
-X-Received: by 2002:a5d:4ac7:0:b0:367:9237:611d with SMTP id ffacd0b85a97d-36bbc17bfebmr11861794f8f.60.1723024174050;
-        Wed, 07 Aug 2024 02:49:34 -0700 (PDT)
-Received: from [192.168.68.116] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd05982bsm15530967f8f.86.2024.08.07.02.49.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 02:49:33 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
- "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
- festevam@gmail.com, imx@lists.linux.dev, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Peng Fan <peng.fan@nxp.com>
-In-Reply-To: <20240228081355.1627744-1-peng.fan@oss.nxp.com>
-References: <20240228081355.1627744-1-peng.fan@oss.nxp.com>
-Subject: Re: [PATCH 1/2] dt-bindings: nvmem: imx-ocotp: support i.MX95
-Message-Id: <172302417240.381927.16775224846160228092.b4-ty@linaro.org>
-Date: Wed, 07 Aug 2024 10:49:32 +0100
+	s=arc-20240116; t=1723024198; c=relaxed/simple;
+	bh=+1d5dJpSZQVDjU2G/4MWLmye/ccW4fBcrrHX88dVaeU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ki+RP7tRhHKD7akMLXdud1/6wAFphd6C3otArg7Np4EOwSKqE8fpfvMulQant+EYP8FOGppKmUcIr5+3WKBuct1giHdzNtccYPF7O6J25lIv6Oncd2hyCYqG0RJJpxcSpAAp5HliFS0BGXj4RErywHCXv2N/lSW1TVWQmUz8DWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wf54V0Mxqzcd2k;
+	Wed,  7 Aug 2024 17:49:46 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4027F18006C;
+	Wed,  7 Aug 2024 17:49:53 +0800 (CST)
+Received: from [10.67.109.211] (10.67.109.211) by
+ kwepemg500010.china.huawei.com (7.202.181.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 7 Aug 2024 17:49:52 +0800
+Message-ID: <c11ba413-89f6-46b4-8d59-96306c9f1f14@huawei.com>
+Date: Wed, 7 Aug 2024 17:49:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [build fail] v6.11-rc2 from "ARM: 9404/1: arm32: enable
+ HAVE_LD_DEAD_CODE_DATA_ELIMINATION"
+Content-Language: en-US
+To: Harith George <mail2hgg@gmail.com>, <arnd@arndb.de>,
+	<linus.walleij@linaro.org>, <rmk+kernel@armlinux.org.uk>, <ardb@kernel.org>,
+	<harith.g@alifsemi.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <14e9aefb-88d1-4eee-8288-ef15d4a9b059@gmail.com>
+From: "liuyuntao (F)" <liuyuntao12@huawei.com>
+In-Reply-To: <14e9aefb-88d1-4eee-8288-ef15d4a9b059@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
+It seems to be ok with vexpress_defconfig in mainline tree v6.11-rc2,
+I may need your .config/code file for further testing.
 
-On Wed, 28 Feb 2024 16:13:54 +0800, Peng Fan (OSS) wrote:
-> Add i.MX95 ocotp compatible string
+On 2024/8/7 13:12, Harith George wrote:
+> Hi,
+> 
+> I am seeing a regression in "make xipImage" builds in mainline tree 
+> v6.11-rc2  with LD segmentation fault.
+> 
+> $ make V=1 xipImage
+> ...
+> + arm-poky-linux-musleabi-ld -EL -z noexecstack --no-undefined -X 
+> --pic-veneer -z norelro --build-id=sha1 --orphan-handling=warn 
+> --script=./arch/arm/kernel/vmlinux.lds -o vmlinux --whole-archive 
+> vmlinux.a init/version-timestamp.o --no-whole-archive --start-group 
+> arch/arm/lib/lib.a lib/lib.a --end-group
+> scripts/link-vmlinux.sh: line 49: 3371164 Segmentation fault      (core 
+> dumped) ${ld} ${ldflags} -o ${output} ${wl}--whole-archive ${objs} 
+> ${wl}--no-whole-archive ${wl}--start-group ${libs} ${wl}--end-group 
+> ${kallsymso} ${btf_vmlinux_bin_o} ${ldlibs}
+> make[2]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 139
+> make[2]: *** Deleting file 'vmlinux'
+> make[1]: *** [/home/amol/hgg/mainline/linux/Makefile:1156: vmlinux] Error 2
+> make: *** [Makefile:224: __sub-make] Error 2
+> 
+> git bisect pointed to ed0f941022515ff40473("ARM: 9404/1: arm32: enable 
+> HAVE_LD_DEAD_CODE_DATA_ELIMINATION")
+> 
+> "CONFIG_HAVE_LD_DEAD_CODE_DATA_ELIMINATION=y" is getting set with the 
+> commit in my .config.
+> But, my .config is _not_ enabling the "LD_DEAD_CODE_DATA_ELIMINATION" flag.
+> 
+> Reverting commit ed0f94102251, resolves the linking fail.
+> Infact, reverting just the ".reloc  .text, R_ARM_NONE, ." additions in 
+> arch/arm/kernel/entry-armv.S resolves the linking fail.
+> 
+> My toolchain is
+> arm-poky-linux-musleabi-gcc (GCC) 9.2.0
+> GNU ld (GNU Binutils) 2.32.0.20190204
+> 
+> I am working on a new platform. Hence my .config/code has other platform 
+> related additions which would not make sense on current mainline, which 
+> is why I have not added it here. Do let me know if you would still like 
+> to have the .config file.
 > 
 > 
-
-Applied, thanks!
-
-[1/2] dt-bindings: nvmem: imx-ocotp: support i.MX95
-      commit: 62e39987d3d5f27e2c074398805d101d7b9abaf4
-[2/2] nvmem: imx-ocotp-ele: support i.MX95
-      commit: 04d372dd5562ed8aed4cdbb1004fe33a3bc4fa24
-
-Best regards,
--- 
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
+> Thanks,
+> Warm Regards,
+> Harith
+> 
+> 
+> 
 
