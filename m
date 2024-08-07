@@ -1,356 +1,138 @@
-Return-Path: <linux-kernel+bounces-278177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92BFB94AD0B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:37:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F92994AD53
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1684C1F246D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:37:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70030B2FA60
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C41A12FB34;
-	Wed,  7 Aug 2024 15:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFB212F5B1;
+	Wed,  7 Aug 2024 15:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIKUrHkZ"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="htepBJlS"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F25C83A09;
-	Wed,  7 Aug 2024 15:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AD882D70;
+	Wed,  7 Aug 2024 15:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723045041; cv=none; b=Xnn8znJAesLcW4k6iAAVUqxVM0v9TQWcEgnwpq0Z6m/QlaEp10AvGRjgDYAFfoMof+3KTcExP4aaa+zWB32iBEvZVK5mAX5fQ8bP3NhXEaXt+xwO5vKunrd5Edkemv5hZd+jq5bPbKdDW5n1/z+YWH1yoHA6+aS0jxQTzMGxfHs=
+	t=1723045142; cv=none; b=c5fFrTrM6yxIa0qYE1c472zMGJH2FZqixKm4f3AauuaPDaGnYMujljSIaIMxIvudTjJGFX0Dk7XMGK5eLK2vFzZm/HR8A4NYa/hTEEZEpPb2yJyen/QZkXo6YYg6p3TMU5cdFk9G7xZ/VQgY5TNrtNlKe0K4YxZTdaUCKgD9N/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723045041; c=relaxed/simple;
-	bh=cME/CNuivEIRgMbaWVvqx7cTV4kbXmD+L1ME+tCD4So=;
+	s=arc-20240116; t=1723045142; c=relaxed/simple;
+	bh=XXrVvazBPCVSRU5/OT0GJvBZ8iw+n2FkA749zr9ireI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VH+7E6rPoo3tinF7+qG36dOgQd5JN0DNA9xKrJ9rAJMBSLnQ5idnWDJH/Ovslug3nsLDrfEdNgyCblazbrGAZRDb+J4hsh5dPXxhCTt2LoUrjqe97haxTdgtjazD5EwT1ginKF4YQ215wQMDswdzIwtDyoRELmqhqE1kXbQD9aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIKUrHkZ; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fc587361b6so344355ad.2;
-        Wed, 07 Aug 2024 08:37:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723045039; x=1723649839; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=M9faQjhj9HyRE5tjfr7yyMpjIH/ArqZ0OMI2C1S+AgE=;
-        b=YIKUrHkZsByH2GXHdrT5CNyJcbQSnV88bODzxqjcjmnfFjHfoqoujOONeddY9Rcpu7
-         pivQ9v6RSiH44+gxBzCVy4Iox0SpHWSRellblZxRz5a1ajA517gEQvR+d3sIHWeKZY5D
-         w/At/MyOVTDFDDSpuC49pXtFvnk6B14o5JSWqQbTddiee3XvayPlYQFZCxtpTqNeZpCL
-         9Ghw6Q/mjpgXqhOuUG7f7/88TWGiF0mO4DTepw5VbLQtxru4CnFTCnNTRwRL3zwwikI4
-         XQAGsGXm/gu4Uinuw7AvUa9EqUXQ8Hq1P3EbS77xqs2z4XvefeSPlS6uGxdM/yyGMRkw
-         szzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723045039; x=1723649839;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M9faQjhj9HyRE5tjfr7yyMpjIH/ArqZ0OMI2C1S+AgE=;
-        b=Nw87PJ3Kk/oTYVDPr4qGhRn0aIn2qtztNNP1WkYzjwuAYpfXPbEQOmO/ch79tTtZtn
-         X7LRe/P/AAGhcBZtqRu1OtXlkbu6uzuhlZlYvhKsm8VUxFC5yfGmKnMsKJL2GHG7diz/
-         qakbC3Tse4CJI0GW6kvroOkgjW0wG0DiDDaPSGXg/VNz7ITlZyAYBz7MgkPFcUSJMVbD
-         fzk5Cic8Gz5Tl0Sy5pe4sXaFOnoloLvSdZD/NWjYxyt8eSQHhZdPG5gxTwnRhKaOxsdO
-         Ot3jqzDLRY6xCnmGPDNdn+M40fNJWui6oMhVZ4tSVe30cl8qwMAf2bPmpp8+B/VkkJU3
-         bOlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFWsKSe7knaVSaFAP1BKDCVm6re/lwj6C5VIoDrQ5vtMC61t3glgXAMFN6dbzCjFS6sz8MNciac0+8jaGOfg5DX+enTQyLJOhuKbbQm8++w2xE60gRc0PGDLkk8i7egqM0JaXU2Z5Yo9gFh01dwy51w9CBXmaF+sMpbJmVm2/9HXMq+n3Qku7Yql5m
-X-Gm-Message-State: AOJu0YzmWf9U3bZIxbcOMEJoA84l6pCa3oytC7O5fyosidhs18nU+lqV
-	5GMYhMMR0k8pKugJ+2qVIx3SY2iC7wf6i74+MDJeyC1CIwrI3xRn
-X-Google-Smtp-Source: AGHT+IEJP6bPphORnmL1DEGjHxND2u8bwkJQkHc/B34mzyPi05b83ek3vdKEHZeSrhjG9VvazzmOog==
-X-Received: by 2002:a17:902:d4c3:b0:1fd:73e6:83ce with SMTP id d9443c01a7336-1ff57113f17mr220203365ad.0.1723045038413;
-        Wed, 07 Aug 2024 08:37:18 -0700 (PDT)
-Received: from tahera-OptiPlex-5000 ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f29de7sm107844355ad.26.2024.08.07.08.37.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 08:37:17 -0700 (PDT)
-Date: Wed, 7 Aug 2024 09:37:15 -0600
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bjorn3_gh@protonmail.com, jannh@google.com, netdev@vger.kernel.org
-Subject: Re: [PATCH v8 1/4] Landlock: Add abstract unix socket connect
- restriction
-Message-ID: <ZrOUq6rBRS1Fch42@tahera-OptiPlex-5000>
-References: <cover.1722570749.git.fahimitahera@gmail.com>
- <e8da4d5311be78806515626a6bd4a16fe17ded04.1722570749.git.fahimitahera@gmail.com>
- <20240803.iefooCha4gae@digikod.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r9ZWOSHnBpRicYs309v/sdRrcNgHOH44Njpo8302auEOHs6pnajz+P7IMWF2U/h/gMXoUNppFDmQaKPezisxCHs3ZLCPFbc8WUSyrV0MqgdNR8UZ0MPzxdXPZ8Lt7AeZQNfaEsji9/fyFAiracW1bk9HeDb4FugtXivqykmEnpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=htepBJlS; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=fGlMApxeReVSP5e96DejXHnM7BqtFE0t1NLvKtj+CC8=; b=htepBJlSv3TXweGvYd1e/IcXP9
+	4aO+giJbJx58b60SZVRn3eji+s+y9amraDXY4LVEUteLM7SR02UOpc8vukAhiNM3hLIxKcJPAkmbJ
+	zRZlFecOIxqHiPW1wPgHUTJDyiPHiqz5F+w354386gFDlGa0PApMHGWAbO/XXxmhZbNDLTC8xy/yx
+	0Ptc+QPZL+VInnSrxKunCnIMQAB3N2fmTMC1GL0Rr7F4qPUyMPZl0hEXNUHrg640wDwe3YPXBkLV0
+	bQ8Bs3liwACPMSV89v3xmItYRDrloNNvcxplq9DgWCFQGIciJiObO9xXxkqPzeBNIbBB+VjiDh915
+	vni9YOpQ==;
+Received: from [2001:9e8:9f8:5201:3235:adff:fed0:37e6] (port=41026 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1sbikQ-009fVq-7r;
+	Wed, 07 Aug 2024 17:38:46 +0200
+Date: Wed, 7 Aug 2024 17:38:28 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: da.gomez@samsung.com
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	William Hubbs <w.d.hubbs@gmail.com>,
+	Chris Brannon <chris@the-brannons.com>,
+	Kirk Reiser <kirk@reisers.ca>,
+	Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org,
+	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org,
+	llvm@lists.linux.dev, Finn Behrens <me@kloenk.dev>,
+	"Daniel Gomez (Samsung)" <d+samsung@kruces.com>,
+	gost.dev@samsung.com
+Subject: Re: [PATCH 06/12] selinux/genheaders: include bitsperlong and
+ posix_types headers
+Message-ID: <20240807-outgoing-charcoal-collie-0ee37e@lindesnes>
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
+ <20240807-macos-build-support-v1-6-4cd1ded85694@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240803.iefooCha4gae@digikod.net>
+In-Reply-To: <20240807-macos-build-support-v1-6-4cd1ded85694@samsung.com>
 
-On Sat, Aug 03, 2024 at 01:29:04PM +0200, Mickaël Salaün wrote:
-> On Thu, Aug 01, 2024 at 10:02:33PM -0600, Tahera Fahimi wrote:
-> > This patch introduces a new "scoped" attribute to the landlock_ruleset_attr
-> > that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope
-> > abstract Unix sockets from connecting to a process outside of
-> > the same landlock domain. It implements two hooks, unix_stream_connect
-> > and unix_may_send to enforce this restriction.
-> > 
-> > Closes: https://github.com/landlock-lsm/linux/issues/7
-> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> > 
-> > ---
-> > v8:
-> > - Code refactoring (improve code readability, renaming variable, etc.) based
-> >   on reviews by Mickaël Salaün on version 7.
-> > - Adding warn_on_once to check (impossible) inconsistencies.
-> > - Adding inline comments.
-> > - Adding check_unix_address_format to check if the scoping socket is an abstract
-> >   unix sockets.
-> > v7:
-> >  - Using socket's file credentials for both connected(STREAM) and
-> >    non-connected(DGRAM) sockets.
-> >  - Adding "domain_sock_scope" instead of the domain scoping mechanism used in
-> >    ptrace ensures that if a server's domain is accessible from the client's
-> >    domain (where the client is more privileged than the server), the client
-> >    can connect to the server in all edge cases.
-> >  - Removing debug codes.
-> > v6:
-> >  - Removing curr_ruleset from landlock_hierarchy, and switching back to use
-> >    the same domain scoping as ptrace.
-> >  - code clean up.
-> > v5:
-> >  - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
-> >  - Adding curr_ruleset to hierarachy_ruleset structure to have access from
-> >    landlock_hierarchy to its respective landlock_ruleset.
-> >  - Using curr_ruleset to check if a domain is scoped while walking in the
-> >    hierarchy of domains.
-> >  - Modifying inline comments.
-> > V4:
-> >  - Rebased on Günther's Patch:
-> >    https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
-> >    so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is removed.
-> >  - Adding get_scope_accesses function to check all scoped access masks in a ruleset.
-> >  - Using socket's file credentials instead of credentials stored in peer_cred
-> >    for datagram sockets. (see discussion in [1])
-> >  - Modifying inline comments.
-> > V3:
-> >  - Improving commit description.
-> >  - Introducing "scoped" attribute to landlock_ruleset_attr for IPC scoping
-> >    purpose, and adding related functions.
-> >  - Changing structure of ruleset based on "scoped".
-> >  - Removing rcu lock and using unix_sk lock instead.
-> >  - Introducing scoping for datagram sockets in unix_may_send.
-> > V2:
-> >  - Removing wrapper functions
-> > 
-> > [1]https://lore.kernel.org/all/20240610.Aifee5ingugh@digikod.net/
-> > ----
-> > ---
-> >  include/uapi/linux/landlock.h |  30 +++++++
-> >  security/landlock/limits.h    |   3 +
-> >  security/landlock/ruleset.c   |   7 +-
-> >  security/landlock/ruleset.h   |  23 ++++-
-> >  security/landlock/syscalls.c  |  14 ++-
-> >  security/landlock/task.c      | 155 ++++++++++++++++++++++++++++++++++
-> >  6 files changed, 225 insertions(+), 7 deletions(-)
+On Wed, Aug 07, 2024 at 01:09:20AM +0200, Daniel Gomez via B4 Relay wrote:
+> From: Daniel Gomez <da.gomez@samsung.com>
 > 
-> > diff --git a/security/landlock/task.c b/security/landlock/task.c
-> > index 849f5123610b..7e8579ebae83 100644
-> > --- a/security/landlock/task.c
-> > +++ b/security/landlock/task.c
-> > @@ -13,6 +13,8 @@
-> >  #include <linux/lsm_hooks.h>
-> >  #include <linux/rcupdate.h>
-> >  #include <linux/sched.h>
-> > +#include <net/sock.h>
-> > +#include <net/af_unix.h>
-> >  
-> >  #include "common.h"
-> >  #include "cred.h"
-> > @@ -108,9 +110,162 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
-> >  	return task_ptrace(parent, current);
-> >  }
-> >  
-> > +static bool walk_and_check(const struct landlock_ruleset *const child,
-> > +			   struct landlock_hierarchy **walker,
-> > +			   size_t base_layer, size_t deep_layer,
-> > +			   access_mask_t check_scoping)
+> The genheaders requires the bitsperlong.h and posix_types.h headers.
+> To ensure these headers are found during compilation on macOS hosts,
+> add usr/include to HOST_EXTRACFLAGS in the genheaders Makefile. This
+> adjustment allows the compiler to locate all necessary headers when they
+> are not available by default on macOS.
 > 
-> s/check_scoping/scope/
+> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> ---
+>  scripts/selinux/genheaders/Makefile | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> > +{
-> > +	if (!child || base_layer < 0 || !(*walker))
-> 
-> I guess it should be:
-> WARN_ON_ONCE(!child || base_layer < 0 || !(*walker))
-> 
-> > +		return false;
-> > +
-> > +	for (deep_layer; base_layer < deep_layer; deep_layer--) {
-> 
-> No need to pass deep_layer as argument:
-> deep_layer = child->num_layers - 1
-> 
-> > +		if (check_scoping & landlock_get_scope_mask(child, deep_layer))
-> > +			return false;
-> > +		*walker = (*walker)->parent;
-> > +		if (WARN_ON_ONCE(!*walker))
-> > +			/* there is an inconsistency between num_layers
-> 
-> Please use full sentences starting with a capital letter and ending with
-> a dot, and in this case start with "/*"
-> 
-> > +			 * and landlock_hierarchy in the ruleset
-> > +			 */
-> > +			return false;
-> > +	}
-> > +	return true;
-> > +}
-> > +
-> > +/**
-> > + * domain_IPC_scope - Checks if the client domain is scoped in the same
-> > + *		      domain as the server.
-> 
-> Actually, you can remove IPC from the function name.
-> 
-> > + *
-> > + * @client: IPC sender domain.
-> > + * @server: IPC receiver domain.
-> > + *
-> > + * Check if the @client domain is scoped to access the @server; the @server
-> > + * must be scoped in the same domain.
-> 
-> Returns true if...
-> 
-> > + */
-> > +static bool domain_IPC_scope(const struct landlock_ruleset *const client,
-> > +			     const struct landlock_ruleset *const server,
-> > +			     access_mask_t ipc_type)
-> > +{
-> > +	size_t client_layer, server_layer = 0;
-> > +	int base_layer;
-> > +	struct landlock_hierarchy *client_walker, *server_walker;
-> > +	bool is_scoped;
-> > +
-> > +	/* Quick return if client has no domain */
-> > +	if (!client)
-> > +		return true;
-> > +
-> > +	client_layer = client->num_layers - 1;
-> > +	client_walker = client->hierarchy;
-> > +	if (server) {
-> > +		server_layer = server->num_layers - 1;
-> > +		server_walker = server->hierarchy;
-> > +	}
-> 
-> } else {
-> 	server_layer = 0;
-> 	server_walker = NULL;
-> }
-> 
-> > +	base_layer = (client_layer > server_layer) ? server_layer :
-> > +						     client_layer;
-> > +
-> > +	/* For client domain, walk_and_check ensures the client domain is
-> > +	 * not scoped until gets to base_layer.
-> 
-> until gets?
-> 
-> > +	 * For server_domain, it only ensures that the server domain exist.
-> > +	 */
-> > +	if (client_layer != server_layer) {
-> 
-> bool is_scoped;
-It is defined above. 
-> > +		if (client_layer > server_layer)
-> > +			is_scoped = walk_and_check(client, &client_walker,
-> > +						   server_layer, client_layer,
-> > +						   ipc_type);
-> > +		else
-> 
-> server_walker may be uninitialized and still read here, and maybe later
-> in the for loop.  The whole code should maks sure this cannot happen,
-> and a test case should check this.
-I think this case never happens, since the server_walker can be read
-here if there are more than one layers in server domain which means that
-the server_walker is not unintialized.
+> diff --git a/scripts/selinux/genheaders/Makefile b/scripts/selinux/genheaders/Makefile
+> index 1faf7f07e8db..017149c90f8e 100644
+> --- a/scripts/selinux/genheaders/Makefile
+> +++ b/scripts/selinux/genheaders/Makefile
+> @@ -2,4 +2,5 @@
+>  hostprogs-always-y += genheaders
+>  HOST_EXTRACFLAGS += \
+>  	-I$(srctree)/include/uapi -I$(srctree)/include \
+> -	-I$(srctree)/security/selinux/include
+> +	-I$(srctree)/security/selinux/include \
+> +	-I$(srctree)/usr/include
 
-> > +			is_scoped = walk_and_check(server, &server_walker,
-> > +						   client_layer, server_layer,
-> > +						   ipc_type & 0);
-> 
-> "ipc_type & 0" is the same as "0"
-> 
-> > +		if (!is_scoped)
-> 
-> The name doesn't reflect the semantic. walk_and_check() should return
-> the inverse.
-> 
-> > +			return false;
-> > +	}
-> 
-> This code would be simpler:
-> 
-> if (client_layer > server_layer) {
-> 	base_layer = server_layer;
-> 	// TODO: inverse boolean logic
-> 	if (!walk_and_check(client, &client_walker,
-> 				   base_layer, ipc_type))
-> 		return false;
-> } else (client_layer < server_layer) {
-> 	base_layer = client_layer;
-> 	// TODO: inverse boolean logic
-> 	if (!walk_and_check(server, &server_walker,
-> 				   base_layer, 0))
-> 		return false;
-> } else {
-> 	base_layer = client_layer;
-> }
-> 
-> 
-> I think we can improve more to make sure there is no path/risk of
-> inconsistent pointers.
-> 
-> 
-> > +	/* client and server are at the same level in hierarchy. If client is
-> > +	 * scoped, the server must be scoped in the same domain
-> > +	 */
-> > +	for (base_layer; base_layer >= 0; base_layer--) {
-> > +		if (landlock_get_scope_mask(client, base_layer) & ipc_type) {
-> 
-> With each multi-line comment, the first line should be empty:
-> /*
->  * This check must be here since access would be denied only if
-> 
-> > +			/* This check must be here since access would be denied only if
-> > +			 * the client is scoped and the server has no domain, so
-> > +			 * if the client has a domain but is not scoped and the server
-> > +			 * has no domain, access is guaranteed.
-> > +			 */
-> > +			if (!server)
-> > +				return false;
-> > +
-> > +			if (server_walker == client_walker)
-> > +				return true;
-> > +
-> > +			return false;
-> > +		}
-> > +		client_walker = client_walker->parent;
-> > +		server_walker = server_walker->parent;
-> > +		/* Warn if there is an incosistenncy between num_layers and
-> 
-> Makes sure there is no inconsistency between num_layers and
-> 
-> 
-> > +		 * landlock_hierarchy in each of rulesets
-> > +		 */
-> > +		if (WARN_ON_ONCE(base_layer > 0 &&
-> > +				 (!server_walker || !client_walker)))
-> > +			return false;
-> > +	}
-> > +	return true;
-> > +}
+'make headers' composes the UAPI header tree in $(objtree)/usr/include.
+So, if you build out-of-source, -I$(srctree)/usr/include will not match.
+Just remove the '$(srctree)/' prefix as '$(objtree)/' is always '.'.
+
+But I am suspecting that this break cross-building.
+
+Kind regards,
+Nicolas
 
