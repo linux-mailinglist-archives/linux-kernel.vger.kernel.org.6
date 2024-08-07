@@ -1,111 +1,82 @@
-Return-Path: <linux-kernel+bounces-277913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FC5C94A812
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E062094A816
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 944F21C22E43
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:50:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DD4C1C22E66
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C781E675E;
-	Wed,  7 Aug 2024 12:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350191E673C;
+	Wed,  7 Aug 2024 12:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xXFyDK4f";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qX5SzNUJ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xXFyDK4f";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qX5SzNUJ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="T/WYc4Ks"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E8C1E6748;
-	Wed,  7 Aug 2024 12:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9C01C7B84
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 12:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723035002; cv=none; b=c7QlYoqTad6zgotN48b2un0cWNbHrSpLB/eYNEONiSNP1AWXTEiJq7HYNeHWxk+OH1y/GivCjNWAjbuswk8AikhIV1Tek7q0V3026nUnCcfuYf2DTAyfTdcxYC6F2g0i56b3Xvf/h/jmRigUl0kAPzr3OIIBxGLB1jiHc8Yqvqg=
+	t=1723035154; cv=none; b=ahUA3EboX3I9ZUzq9gldhLUoTjZrS5rsn23gmqPrj3ZCb6reggzIa3Et62zzG3W33C/W7rsplmp47heYPRWGRbTc8c3Hj4FwQKWqIjdM42qlZByvEXFR/YjEaHLE9n6rDYOaSh8ynFpQWlB+fAGQjpb+ObmFlHG19gpKq/k+VeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723035002; c=relaxed/simple;
-	bh=TmRBTZawowUbCmLEiK4lPCX13rGRnyKjFv7HXndQl00=;
+	s=arc-20240116; t=1723035154; c=relaxed/simple;
+	bh=LcvzdZGqvLUxPLQy/Emc/rVY2KjEO+lXOYpXerzIsJY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KoZRPuLbrYVOY5ABRODgjryxutymeb1aB8jhyV4KhxuODV6cdgaTLX/YVvC0NnMmuc5ZAP1sMzUCd26X5j/G6dQhghXjIczeH3wcg0L7IosWwDUFODq1EFsmVE8U0qotC+FfANYvQby5Z0HezaJATBtXbPVAwsxO2zCW77ng31o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xXFyDK4f; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qX5SzNUJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xXFyDK4f; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qX5SzNUJ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D71AF21A4D;
-	Wed,  7 Aug 2024 12:49:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723034998; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LgSgRKbajCjZ0BozhcNSEcCwMqodRgUv22hvhr2PfDE=;
-	b=xXFyDK4fRusQ+KLvxjr2WhuadFvP2nIrlfDrNHwMciaCiZvF0iVCXE5H097uiLhZqVo4V2
-	GhrCRkrGhZ1skP5Pc90tgjo9I8I59em/4F+FZsmIarvjy9hQtA0J1DHxRedqPIomrfNN/f
-	2aK8LQ1V7S19duRmWF57TfiLl95RY/I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723034998;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LgSgRKbajCjZ0BozhcNSEcCwMqodRgUv22hvhr2PfDE=;
-	b=qX5SzNUJ7nZ/6SSmTX0jHCnKrBEkKo+awdWpPoAQw8tXA8PUwDoEwDId7xmkcLqAapowPA
-	9VOD93t/iInKK0AQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723034998; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LgSgRKbajCjZ0BozhcNSEcCwMqodRgUv22hvhr2PfDE=;
-	b=xXFyDK4fRusQ+KLvxjr2WhuadFvP2nIrlfDrNHwMciaCiZvF0iVCXE5H097uiLhZqVo4V2
-	GhrCRkrGhZ1skP5Pc90tgjo9I8I59em/4F+FZsmIarvjy9hQtA0J1DHxRedqPIomrfNN/f
-	2aK8LQ1V7S19duRmWF57TfiLl95RY/I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723034998;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LgSgRKbajCjZ0BozhcNSEcCwMqodRgUv22hvhr2PfDE=;
-	b=qX5SzNUJ7nZ/6SSmTX0jHCnKrBEkKo+awdWpPoAQw8tXA8PUwDoEwDId7xmkcLqAapowPA
-	9VOD93t/iInKK0AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BE04F13297;
-	Wed,  7 Aug 2024 12:49:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id H8RhLnZts2bKSAAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Wed, 07 Aug 2024 12:49:58 +0000
-Date: Wed, 7 Aug 2024 14:49:58 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
-	Sagi Grimberg <sagi@grimberg.me>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, John Garry <john.g.garry@oracle.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Kashyap Desai <kashyap.desai@broadcom.com>, Sumit Saxena <sumit.saxena@broadcom.com>, 
-	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>, Chandrakanth patil <chandrakanth.patil@broadcom.com>, 
-	Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>, Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, 
-	Nilesh Javali <njavali@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com, 
-	Jonathan Corbet <corbet@lwn.net>, Frederic Weisbecker <frederic@kernel.org>, 
-	Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>, 
-	Sridhar Balaraman <sbalaraman@parallelwireless.com>, "brookxu.cn" <brookxu.cn@gmail.com>, 
-	Ming Lei <ming.lei@redhat.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org, virtualization@lists.linux.dev, 
-	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com, 
-	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 03/15] blk-mq: introduce blk_mq_dev_map_queues
-Message-ID: <8468546d-adae-4477-9306-ca08f32b19ca@flourine.local>
-References: <20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de>
- <20240806-isolcpus-io-queues-v3-3-da0eecfeaf8b@suse.de>
- <20240806132645.GC13883@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HymQ/A1YKHpd1TUfslIZqPJvsVVKKGEBWfEj2YKAc5qg+UxvzZkjkRBKjNajxBDImCXBBQ9fpQDZckNv++G8f5hUHxh/IBmZbK8VGvi52GYq6z9iBK1FxrJPW4iX/Y7cpvh8lkK/RwjesnlS+U0Pt0M4vKhwBJvlElfueW+/SNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=T/WYc4Ks; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5ba43b433beso2022626a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 05:52:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723035151; x=1723639951; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iwXz6OLsOsYCk8qCnBsBaDWnPwQwa6ssBiygLxwZuhc=;
+        b=T/WYc4KsoG+9XSXq9Rksnk8IvtDAsffH8OZDpy6/ijXm0UEUZ8aTFwb4xWwUtxKtwR
+         8xx7bPResjSJmJXIaUN15rVkTRtlS0pXgh8AZnByqh53wnFG8956Tsl9UZUMcSge/9Vk
+         syib6IpYC+eYIgJCX4IoFb/PGqi0jzTvy6SaV/cY/966kfSlL+COdx0DEPFGAbZaOvXB
+         wyyT08PkhOUin4QzZvTQLGRaT/JTSWGP5bYHMBMs1ohQR+JJ4qoOTmYxvRvgfUOhMTl/
+         +jOwmgOeGZ5E5uRrGWmj9oZu26N76xKLkoiuDKpI35dNdNxpYiH2pTSA+BDfKm49MYlR
+         hihg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723035151; x=1723639951;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iwXz6OLsOsYCk8qCnBsBaDWnPwQwa6ssBiygLxwZuhc=;
+        b=jARyS81cEwTg/egwWc2bm22+2bdTGs3ECSmAvB4TBV1aZO7JwFhGuIqN6FM69mahgJ
+         Zkcp7gmYSw5ZvAkfjK35HAOgyGWwEWvmeE8yfWAMhMmgq5cKNvCQ/+RPt/duXJaQzC4f
+         HfW6acAe8pQmuyRrVxJc1g67qwMkF4bwOcRa9MblhaTOXiheeXYDRQNW0aTOQvjjwlna
+         1/iOdTjpy8urKWIQcy90K54TgvELrY7uyUwxRLss2ETQ62K5juQQ9ajFyVshtiSG0FUh
+         rxuj7mp8jsHdBJrLQW8/D5GTi2isguT3/5R+TK1vytt3LiHYA/t5WZvYUaw9wVPuFcwQ
+         2n+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWswvsfL8Pzm/87rb8LxgnmfdEUx3kUgN1yOvZx9k25VABWzZWSImlilNo7OnOUBANc9U7nQK37T5wHBYIi/Ah25/Bs/s4zaSenXLOX
+X-Gm-Message-State: AOJu0YwMnfeWKFH6jDgGtY4LySWW2BmZYcOnKGqg7tivxsL1zDy3v7mo
+	xz7fVFOR1WYaJYU387Fu4e0Wdk9vN/IiMavn27tDubacrc1dnO4eEYAYZEXuq2M=
+X-Google-Smtp-Source: AGHT+IHxGBKcxT2pFij5aIQagRjSqrhABO8Q4KwkwxnQZ3ngWMjKf3ZZvnAQu6W6xkWHxtP1QeDZpQ==
+X-Received: by 2002:a17:907:6ea3:b0:a7a:a4be:2f95 with SMTP id a640c23a62f3a-a7dc4fdf818mr1325468966b.5.1723035150607;
+        Wed, 07 Aug 2024 05:52:30 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d437c6sm636111866b.129.2024.08.07.05.52.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 05:52:30 -0700 (PDT)
+Date: Wed, 7 Aug 2024 14:52:28 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v7 31/35] printk: nbcon: Implement emergency
+ sections
+Message-ID: <ZrNuDAqRZsjvnjsT@pathway.suse.cz>
+References: <20240804005138.3722656-1-john.ogness@linutronix.de>
+ <20240804005138.3722656-32-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -114,44 +85,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240806132645.GC13883@lst.de>
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.990];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[34];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.dk,kernel.org,grimberg.me,linutronix.de,oracle.com,redhat.com,broadcom.com,marvell.com,lwn.net,suse.de,parallelwireless.com,gmail.com,vger.kernel.org,lists.infradead.org,lists.linux.dev,microchip.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLqmh8xjmb7g5apbd4gmjneg9b)];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20240804005138.3722656-32-john.ogness@linutronix.de>
 
-On Tue, Aug 06, 2024 at 03:26:45PM GMT, Christoph Hellwig wrote:
-> > +
-> > +/**
-> > + * blk_mq_virtio_get_queue_affinity - get affinity mask queue mapping for virtio device
+On Sun 2024-08-04 02:57:34, John Ogness wrote:
+> From: Thomas Gleixner <tglx@linutronix.de>
 > 
-> Please avoid the overly long line here.
+> In emergency situations (something has gone wrong but the
+> system continues to operate), usually important information
+> (such as a backtrace) is generated via printk(). This
+> information should be pushed out to the consoles ASAP.
+> 
+> Add per-CPU emergency nesting tracking because an emergency
+> can arise while in an emergency situation.
+> 
+> Add functions to mark the beginning and end of emergency
+> sections where the urgent messages are generated.
+> 
+> Perform direct console flushing at the emergency priority if
+> the current CPU is in an emergency state and it is safe to do
+> so.
+> 
+> Note that the emergency state is not system-wide. While one CPU
+> is in an emergency state, another CPU may attempt to print
+> console messages at normal priority.
+> 
+> Also note that printk() already attempts to flush consoles in
+> the caller context for normal priority. However, follow-up
+> changes will introduce printing kthreads, in which case the
+> normal priority printk() calls will offload to the kthreads.
+> 
+> Co-developed-by: John Ogness <john.ogness@linutronix.de>
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+> Signed-off-by: Thomas Gleixner (Intel) <tglx@linutronix.de>
 
-I thought for some reason the brief description needs to be on one
-line. It can be multiple lines:
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-https://www.kernel.org/doc/html/v6.10/doc-guide/kernel-doc.html#structure-union-and-enumeration-documentation
+Best Regards,
+Petr
 
