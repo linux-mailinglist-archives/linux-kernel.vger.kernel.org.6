@@ -1,192 +1,131 @@
-Return-Path: <linux-kernel+bounces-278373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB35A94AF6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:11:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A2F94AF6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:12:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D32B283DFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:11:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C321B1F22F04
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB74E13E05C;
-	Wed,  7 Aug 2024 18:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D72E13E409;
+	Wed,  7 Aug 2024 18:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VDE5JEC0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NDkeZhMv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D05142E60
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440A413D61A;
+	Wed,  7 Aug 2024 18:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723054312; cv=none; b=HEaqKp+O5SG0qTEUDvs1AY3Cx4fezaDuQjlgTYflRnKJZYLEL+6ZBp6x0JeaHIxUyZEq9Vi9fTRON8dEkWLOtTuK6DDkHTfdunJzHmip4JeY0LmzGX6ztecbQQUey0jwGIxn/fu7YZOx36FQwMYcA7b2TAMd3jMZbC1+vhIIx0E=
+	t=1723054368; cv=none; b=fre8DKbr6WzETtYMvoLwnpluuWN2ayVe9IpLxwqJ/6SUyVpO5/t8aA8QtwynfO0NT69v3wFi6TzwoElgVr0x7pDca60jqAYqZ35Ku1J4qZ1kIu28rFF9gzqvQX3iBOTwRNKT65HcLiEVkTL4Ph/RjC221hnxZ9kzDWx7Rh/GkDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723054312; c=relaxed/simple;
-	bh=YbApoTCHRMaTR0Nfn83ztRb+TZumLYdFAdhVO5chjKc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AQeHwFDMhjT+iC4njYKcI0AOq4nx5ryJnLbQxSKQtNWYjQq4AtX1GqA9KReF+szD0n884jCY0d60qXLYoU1qYjh6op7sefhhmq2LOcCvZDa7IKMhqXXu/HgCqLKDgAsfqYvUthTIvgnNTbRNlGI39bv46/yks2VJ+RFY7K/VamY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VDE5JEC0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723054310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=S+DENUaT8b0dOkp0Uegqgn4/lkz4yuNE6BbYlSiQYOs=;
-	b=VDE5JEC0qbWJewGRatuvqdZZs8cBqY5MHfl4E0g9xQkWfq+Yol/IiVgwTVXrhnuUk8ZtYZ
-	MviRCgz7pYLSZpqavkw8rgbEx9CIEXG4gPKW18rm7wHmKorUt9IKSg0+Q5/6+xfv7jL745
-	eOTC+Y6HFOnE/LG8twtnE3WU+sc72rc=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-564-wESnHhOiOmaDSWL7EgPwpw-1; Wed,
- 07 Aug 2024 14:11:46 -0400
-X-MC-Unique: wESnHhOiOmaDSWL7EgPwpw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B694E1955D5B;
-	Wed,  7 Aug 2024 18:11:44 +0000 (UTC)
-Received: from llong.com (unknown [10.2.16.123])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4DE7319560A3;
-	Wed,  7 Aug 2024 18:11:42 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Naoya Horiguchi <nao.horiguchi@gmail.com>
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Huang Ying <ying.huang@intel.com>,
-	Len Brown <len.brown@intel.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH v3] mm/memory-failure: Use raw_spinlock_t in struct memory_failure_cpu
-Date: Wed,  7 Aug 2024 14:11:30 -0400
-Message-ID: <20240807181130.1122660-1-longman@redhat.com>
+	s=arc-20240116; t=1723054368; c=relaxed/simple;
+	bh=ISPP/Y0DYUabn/g+gm+IohCoQEotWJ5A5dTGdvhtvq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k23aZSJjYM5kTF2yvMGz79X+UX2m45OvtmqxqZwRll568gVyC0F3lJdtjcWAKud1u/eouxePolhneVAHUSeHSlWIeIDVJ6fBoFQrtSrzcRXSAod1HeAjOrNonqc677+pAXaVt5gnMOcyUHvZVvcsczWuA8z5a7J36cDW+jmIz0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NDkeZhMv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36EB6C32781;
+	Wed,  7 Aug 2024 18:12:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723054367;
+	bh=ISPP/Y0DYUabn/g+gm+IohCoQEotWJ5A5dTGdvhtvq0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NDkeZhMv+5Y731BeDVZK+3kSkdceaAQQrABiNMuSDB66BV//Tu/PyPXIvABMEopRg
+	 Km8QsvqIvMXW7+CxiJ0BaCoZJQm+LZguhuXnn6D6jov2XTl5R6MZGgewoI0LBfAD11
+	 PsyLl5/hHvoIN/LBQtukUUE6PJn85TLRAukcDy9rH4XoHcQkqQ+KVzPuHAUJqOOjMR
+	 XNUkBK8IDAk5Ba5hW6WwaI8S3RrwGAQ0EOCeA7i8XCHaaV2gRNXd5afSll7ARSTw7H
+	 kl3dC35FojRLr4ZeezVZc1iXtoaJeCGmL3ADxwag4IpUTDjpwLG4MgxIoQm2pXCDzG
+	 eC+6EjBpsCUuQ==
+Date: Wed, 7 Aug 2024 11:12:45 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@arm.com>,
+	James Clark <james.clark@linaro.org>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>
+Cc: Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCHSET 00/10] perf tools: Sync tools and kernel headers for
+ v6.11
+Message-ID: <ZrO5HR9x2xyPKttx@google.com>
+References: <20240806225013.126130-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240806225013.126130-1-namhyung@kernel.org>
 
-The memory_failure_cpu structure is a per-cpu structure. Access to its
-content requires the use of get_cpu_var() to lock in the current CPU
-and disable preemption. The use of a regular spinlock_t for locking
-purpose is fine for a non-RT kernel.
+Hello folks,
 
-Since the integration of RT spinlock support into the v5.15 kernel,
-a spinlock_t in a RT kernel becomes a sleeping lock and taking a
-sleeping lock in a preemption disabled context is illegal resulting in
-the following kind of warning.
-
-  [12135.732244] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-  [12135.732248] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 270076, name: kworker/0:0
-  [12135.732252] preempt_count: 1, expected: 0
-  [12135.732255] RCU nest depth: 2, expected: 2
-    :
-  [12135.732420] Hardware name: Dell Inc. PowerEdge R640/0HG0J8, BIOS 2.10.2 02/24/2021
-  [12135.732423] Workqueue: kacpi_notify acpi_os_execute_deferred
-  [12135.732433] Call Trace:
-  [12135.732436]  <TASK>
-  [12135.732450]  dump_stack_lvl+0x57/0x81
-  [12135.732461]  __might_resched.cold+0xf4/0x12f
-  [12135.732479]  rt_spin_lock+0x4c/0x100
-  [12135.732491]  memory_failure_queue+0x40/0xe0
-  [12135.732503]  ghes_do_memory_failure+0x53/0x390
-  [12135.732516]  ghes_do_proc.constprop.0+0x229/0x3e0
-  [12135.732575]  ghes_proc+0xf9/0x1a0
-  [12135.732591]  ghes_notify_hed+0x6a/0x150
-  [12135.732602]  notifier_call_chain+0x43/0xb0
-  [12135.732626]  blocking_notifier_call_chain+0x43/0x60
-  [12135.732637]  acpi_ev_notify_dispatch+0x47/0x70
-  [12135.732648]  acpi_os_execute_deferred+0x13/0x20
-  [12135.732654]  process_one_work+0x41f/0x500
-  [12135.732695]  worker_thread+0x192/0x360
-  [12135.732715]  kthread+0x111/0x140
-  [12135.732733]  ret_from_fork+0x29/0x50
-  [12135.732779]  </TASK>
-
-Fix it by using a raw_spinlock_t for locking instead.
-
-Also move the pr_err() out of the lock critical section and after
-put_cpu_ptr() to avoid indeterminate latency and the possibility of
-sleep with this call.
-
-Fixes: 0f383b6dc96e ("locking/spinlock: Provide RT variant")
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- mm/memory-failure.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
-
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 581d3e5c9117..7066fc84f351 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -2417,7 +2417,7 @@ struct memory_failure_entry {
- struct memory_failure_cpu {
- 	DECLARE_KFIFO(fifo, struct memory_failure_entry,
- 		      MEMORY_FAILURE_FIFO_SIZE);
--	spinlock_t lock;
-+	raw_spinlock_t lock;
- 	struct work_struct work;
- };
+On Tue, Aug 06, 2024 at 03:50:03PM -0700, Namhyung Kim wrote:
+> Hello,
+> 
+> This is the usual sync up in header files we keep in tools directory.
+> I put a file to give the reason of this work and not to repeat it in
+> every commit message.  The changes will be carried in the perf-tools
+> tree.
  
-@@ -2443,20 +2443,22 @@ void memory_failure_queue(unsigned long pfn, int flags)
- {
- 	struct memory_failure_cpu *mf_cpu;
- 	unsigned long proc_flags;
-+	bool buffer_overflow;
- 	struct memory_failure_entry entry = {
- 		.pfn =		pfn,
- 		.flags =	flags,
- 	};
- 
- 	mf_cpu = &get_cpu_var(memory_failure_cpu);
--	spin_lock_irqsave(&mf_cpu->lock, proc_flags);
--	if (kfifo_put(&mf_cpu->fifo, entry))
-+	raw_spin_lock_irqsave(&mf_cpu->lock, proc_flags);
-+	buffer_overflow = !kfifo_put(&mf_cpu->fifo, entry);
-+	if (!buffer_overflow)
- 		schedule_work_on(smp_processor_id(), &mf_cpu->work);
--	else
-+	raw_spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
-+	put_cpu_var(memory_failure_cpu);
-+	if (buffer_overflow)
- 		pr_err("buffer overflow when queuing memory failure at %#lx\n",
- 		       pfn);
--	spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
--	put_cpu_var(memory_failure_cpu);
- }
- EXPORT_SYMBOL_GPL(memory_failure_queue);
- 
-@@ -2469,9 +2471,9 @@ static void memory_failure_work_func(struct work_struct *work)
- 
- 	mf_cpu = container_of(work, struct memory_failure_cpu, work);
- 	for (;;) {
--		spin_lock_irqsave(&mf_cpu->lock, proc_flags);
-+		raw_spin_lock_irqsave(&mf_cpu->lock, proc_flags);
- 		gotten = kfifo_get(&mf_cpu->fifo, &entry);
--		spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
-+		raw_spin_unlock_irqrestore(&mf_cpu->lock, proc_flags);
- 		if (!gotten)
- 			break;
- 		if (entry.flags & MF_SOFT_OFFLINE)
-@@ -2501,7 +2503,7 @@ static int __init memory_failure_init(void)
- 
- 	for_each_possible_cpu(cpu) {
- 		mf_cpu = &per_cpu(memory_failure_cpu, cpu);
--		spin_lock_init(&mf_cpu->lock);
-+		raw_spin_lock_init(&mf_cpu->lock);
- 		INIT_KFIFO(mf_cpu->fifo);
- 		INIT_WORK(&mf_cpu->work, memory_failure_work_func);
- 	}
--- 
-2.43.5
+Could you please double check what's in the tmp.perf-tools branch at the
+perf-tools tree so I don't break build and perf trace for arm64, powerpc
+and s390?  It has this patchset + arm64 unistd header revert (according
+to the discussion on patch 6/10) on top of v6.11-rc2.
 
+Thanks,
+Namhyung
+
+> 
+> Namhyung Kim (10):
+>   perf tools: Add tools/include/uapi/README
+>   tools/include: Sync uapi/drm/i915_drm.h with the kernel sources
+>   tools/include: Sync uapi/linux/kvm.h with the kernel sources
+>   tools/include: Sync uapi/linux/perf.h with the kernel sources
+>   tools/include: Sync uapi/sound/asound.h with the kernel sources
+>   tools/include: Sync uapi/asm-generic/unistd.h with the kernel sources
+>   tools/include: Sync network socket headers with the kernel sources
+>   tools/include: Sync filesystem headers with the kernel sources
+>   tools/include: Sync x86 headers with the kernel sources
+>   tools/include: Sync arm64 headers with the kernel sources
+> 
+>  tools/arch/arm64/include/asm/cputype.h        |  10 +
+>  tools/arch/arm64/include/uapi/asm/unistd.h    |  24 +-
+>  tools/arch/powerpc/include/uapi/asm/kvm.h     |   3 +
+>  tools/arch/x86/include/asm/cpufeatures.h      | 803 +++++++++---------
+>  tools/arch/x86/include/asm/msr-index.h        |  11 +
+>  tools/arch/x86/include/uapi/asm/kvm.h         |  49 ++
+>  tools/arch/x86/include/uapi/asm/svm.h         |   1 +
+>  tools/include/uapi/README                     |  73 ++
+>  tools/include/uapi/asm-generic/unistd.h       |   2 +-
+>  tools/include/uapi/drm/i915_drm.h             |  27 +
+>  tools/include/uapi/linux/in.h                 |   2 +
+>  tools/include/uapi/linux/kvm.h                |  17 +-
+>  tools/include/uapi/linux/perf_event.h         |   6 +-
+>  tools/include/uapi/linux/stat.h               |  12 +-
+>  .../arch/powerpc/entry/syscalls/syscall.tbl   |   6 +-
+>  .../perf/arch/s390/entry/syscalls/syscall.tbl |   2 +-
+>  .../arch/x86/entry/syscalls/syscall_64.tbl    |   8 +-
+>  .../perf/trace/beauty/include/linux/socket.h  |   5 +-
+>  .../perf/trace/beauty/include/uapi/linux/fs.h | 163 +++-
+>  .../trace/beauty/include/uapi/linux/mount.h   |  10 +-
+>  .../trace/beauty/include/uapi/linux/stat.h    |  12 +-
+>  .../trace/beauty/include/uapi/sound/asound.h  |   9 +-
+>  22 files changed, 810 insertions(+), 445 deletions(-)
+>  create mode 100644 tools/include/uapi/README
+> 
+> -- 
+> 2.46.0.rc2.264.g509ed76dc8-goog
+> 
 
