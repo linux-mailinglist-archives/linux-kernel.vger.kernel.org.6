@@ -1,316 +1,185 @@
-Return-Path: <linux-kernel+bounces-277743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA58794A5A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:34:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D6B694A5BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592B01F24A08
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:34:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EA09B29444
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925E81E2125;
-	Wed,  7 Aug 2024 10:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9801E3CA9;
+	Wed,  7 Aug 2024 10:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="NKh1xKP/";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="NKh1xKP/"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="WEYDx+jQ"
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E941DE862
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2421E2872
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723026853; cv=none; b=sQ6EB1ZGT9ypDyGpbwv+DjfzoNw4g76gRqWRkxsL7UHO6ZCrdOOqEvdj6eYP5t/H90d35BHtxRTpMyPhwQ8tO+8BmcrePCzPm/20KMrUEX97tG9nMahf7EIIQqqLczMFyW0CQlts/Fv8BncR4kO7eG512DTr7NAg2AeJ2hm97PI=
+	t=1723026859; cv=none; b=sNWxpPYg5tqO7zwssZVhJyUP6qvwX3XfFCILnNtz0pL3ky71sKxcw05aWB7CtPHNUHz1ZKA4wlASrAmpeFq52sE/nfraSrIdwI0KElv7jaqREcU3sYQ1a+zG+CMShKcJrUgfSzDcrZ0ENTNnvRU5l0ROYo2BAxJCbpAII9vL00M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723026853; c=relaxed/simple;
-	bh=FnACIWVNEbOtDw2VwL+qAwEkn2a4942rtB09VYY43JU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RwZgWP16I0TiaWWsOuf0xlfLnoS7YaoDnBTJj7sX8nCzEoWJ60hpDKkKUCJT9cItBPyirP4vL9Jrte+EPYRDMdUs1xqtfmna9VRQ6HEJl3B/30HpekXivmnOPfNFDx2O//zbSWG66t8MoVgjYzWAfD5As0njoOLQQIMDDAPficI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=NKh1xKP/; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=NKh1xKP/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2F4BA1F38C;
-	Wed,  7 Aug 2024 10:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1723026850; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Al7zo/qSAtfnUKorMrepmOjOtINp14/ntSQIbzHttSY=;
-	b=NKh1xKP/gOKUmwWnYF9YDX+wJwcqXgQ3O7FZbLvVlFG3czRAHXbVs5h7cfKnoaRLkmr5FS
-	N25TFBudfavnJe933nNpl8WSjGu5gLcXXsdFjjR1fKpN28xHSk9K6eqz20FY5jz2wO0fjJ
-	m+gXac26xudWhKMlv6PhcTQDXFYxp8Q=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1723026850; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Al7zo/qSAtfnUKorMrepmOjOtINp14/ntSQIbzHttSY=;
-	b=NKh1xKP/gOKUmwWnYF9YDX+wJwcqXgQ3O7FZbLvVlFG3czRAHXbVs5h7cfKnoaRLkmr5FS
-	N25TFBudfavnJe933nNpl8WSjGu5gLcXXsdFjjR1fKpN28xHSk9K6eqz20FY5jz2wO0fjJ
-	m+gXac26xudWhKMlv6PhcTQDXFYxp8Q=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D3D6313297;
-	Wed,  7 Aug 2024 10:34:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EtNGMqFNs2YHIAAAD6G6ig
-	(envelope-from <jgross@suse.com>); Wed, 07 Aug 2024 10:34:09 +0000
-From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	xen-devel@lists.xenproject.org
-Subject: [PATCH 5/5] xen: tolerate ACPI NVS memory overlapping with Xen allocated memory
-Date: Wed,  7 Aug 2024 12:33:36 +0200
-Message-ID: <20240807103338.22007-6-jgross@suse.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240807103338.22007-1-jgross@suse.com>
-References: <20240807103338.22007-1-jgross@suse.com>
+	s=arc-20240116; t=1723026859; c=relaxed/simple;
+	bh=FblmGdf66eN+rJv+O3kISJs4VFmghorqhErApFpjvdE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iUXdRJ2tg8x3eXZ1YaD0QF34vne/d9jD6jR5rgodDQREYEUg/zKtSfHM7E1JQnnm/nKXrmBnE90kQ4BhKiZNzP6E6Wms+RQJ2m6q8y7KtBs9XlNQRLhDtZ91fN5XUyxXhjpuj8X70XNXUA/cq/3BtM2cHGFRG0nEix+DtydmbJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=WEYDx+jQ; arc=none smtp.client-ip=91.26.50.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+	q=dns/txt; i=@phytec.de; t=1723026849; x=1725618849;
+	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=FblmGdf66eN+rJv+O3kISJs4VFmghorqhErApFpjvdE=;
+	b=WEYDx+jQzTrLDcYrIXbGhj6msUaLbjGSOqkKzL92CjVc67M6LB78LBVpXHK9qzdK
+	Iugyn+0LI/GaJ+6Rf1UhsMv9m9fiGSvSRj0ixuALCjW0y/4zEY44s0QwK8SojgjN
+	370dnkT5+wCBM2mKm1cJZRu2LCF0O8JC4k12iIeLKYU=;
+X-AuditID: ac14000a-03e52700000021bc-2e-66b34da00672
+Received: from florix.phytec.de (Unknown_Domain [172.25.0.13])
+	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id D7.E4.08636.0AD43B66; Wed,  7 Aug 2024 12:34:08 +0200 (CEST)
+Received: from Florix.phytec.de (172.25.0.13) by Florix.phytec.de
+ (172.25.0.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Wed, 7 Aug 2024
+ 12:34:08 +0200
+Received: from Florix.phytec.de ([fe80::a802:84f9:c56c:4c6d]) by
+ florix.phytec.de ([fe80::a802:84f9:c56c:4c6d%5]) with mapi id 15.01.2507.006;
+ Wed, 7 Aug 2024 12:34:08 +0200
+From: Yashwanth Varakala <Y.Varakala@phytec.de>
+To: "kernel@pengutronix.de" <kernel@pengutronix.de>, "s.hauer@pengutronix.de"
+	<s.hauer@pengutronix.de>, "peng.fan@nxp.com" <peng.fan@nxp.com>,
+	"robh@kernel.org" <robh@kernel.org>, "shawnguo@kernel.org"
+	<shawnguo@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"festevam@gmail.com" <festevam@gmail.com>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>
+CC: "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, PHYTEC Upstream <upstream@lists.phytec.de>
+Subject: Re: [PATCH 3/3] arm64: dts: Add phyBOARD-Pollux dts for rpmsg
+Thread-Topic: [PATCH 3/3] arm64: dts: Add phyBOARD-Pollux dts for rpmsg
+Thread-Index: AQHa3nd2t62c2rb+I0yYD8HVBQhz47IRlkoAgAn16gA=
+Date: Wed, 7 Aug 2024 10:34:08 +0000
+Message-ID: <da0363d65457c1f1de26b9bc03117d667d6a578e.camel@phytec.de>
+References: <20240725094457.37739-1-y.varakala@phytec.de>
+	 <20240725094457.37739-4-y.varakala@phytec.de>
+	 <PAXPR04MB84593B109878D86B72DEB4AD88B22@PAXPR04MB8459.eurprd04.prod.outlook.com>
+In-Reply-To: <PAXPR04MB84593B109878D86B72DEB4AD88B22@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6DB096743C16584EBE7C6329E744B239@phytec.de>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIIsWRmVeSWpSXmKPExsWyRpKBV3eB7+Y0g+tTLC3W7D3HZDH/yDlW
+	i4dX/S1m3mtls1g1dSeLxctZ99gsNj2+xmpxedccNosfq76wWvzfs4Pd4u/2TSwWL7aIW3S/
+	U3fg9dg56y67x6ZVnWwem5fUe7zYPJPRo7+7hdVj47sdTB79fw08Pm+SC+CI4rJJSc3JLEst
+	0rdL4MqYtGA/S8EWw4qp+y8xNzBOMOhi5OSQEDCRuL/gH2sXIxeHkMASJokP2/dAOfcYJZ7P
+	3cQC4WxklNj75xI7SAubgL5E68TnbCAJEYE3TBLn17QzgjjMAmuYJNZN6WUBqRIWcJOYun8y
+	M4gtIuAu8aZ9DjuEbSXR1f2WEcRmEVCRONm7hA3E5gWqn9Z4GWrdPkaJY9vawYo4BWIlGu9c
+	ARvEKCAr0dnwjgnEZhYQl9j07DsrxBcCEkv2nGeGsEUlXj7+BxWXlzhxaxpQPQdQvabE+l36
+	EK0WEoce32eDsBUlpnQ/ZIe4QVDi5MwnLBMYxWch2TALoXsWku5ZSLpnIelewMi6ilEoNzM5
+	O7UoM1uvIKOyJDVZLyV1EyMoGYgwcO1g7JvjcYiRiYPxEKMEB7OSCG9z+KY0Id6UxMqq1KL8
+	+KLSnNTiQ4zSHCxK4ryrO4JThQTSE0tSs1NTC1KLYLJMHJxSDYzbuOa28cR9m/5iio4we6Y3
+	24JpM0NDvu8Vq0nX/LblVl77W0erlYmbQ4Nsiq1Z2L8zOvAvtly/uvNC+pSZRh+jsyo4imeb
+	sTLPuemhO/nznPs3leYt2zzL+mVQqN/iroMHnjoFl+xl2LJ2/9UVLB+/WddkN6xZ/VhqgrbA
+	2ZQISU5er4Z+JVclluKMREMt5qLiRAC2mQBv9AIAAA==
 
-In order to minimize required special handling for running as Xen PV
-dom0, the memory layout is modified to match that of the host. This
-requires to have only RAM at the locations where Xen allocated memory
-is living. Unfortunately there seem to be some machines, where ACPI
-NVS is located at 64 MB, resulting in a conflict with the loaded
-kernel or the initial page tables built by Xen.
-
-As ACPI NVS needs to be accessed by the kernel only for saving and
-restoring it across suspend operations, it can be relocated in the
-dom0's memory map by swapping it with unused RAM (this is possible
-via modification of the dom0 P2M map).
-
-While the E820 map can (and should) be modified right away, the P2M
-map can be updated only after memory allocation is working, as the P2M
-map might need to be extended.
-
-Fixes: 808fdb71936c ("xen: check for kernel memory conflicting with memory layout")
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
----
- arch/x86/xen/setup.c | 133 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 132 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/xen/setup.c b/arch/x86/xen/setup.c
-index d678c0330971..dbb5d13ca61a 100644
---- a/arch/x86/xen/setup.c
-+++ b/arch/x86/xen/setup.c
-@@ -49,6 +49,15 @@ static struct e820_table xen_e820_table __initdata;
- /* Number of initially usable memory pages. */
- static unsigned long ini_nr_pages __initdata;
- 
-+/* Remapped non-RAM areas */
-+#define NR_NONRAM_REMAP 4
-+static struct nonram_remap {
-+	unsigned long maddr;
-+	unsigned long size;
-+	unsigned long paddr;
-+} xen_nonram_remap[NR_NONRAM_REMAP] __initdata;
-+static unsigned int nr_nonram_remap __initdata;
-+
- /*
-  * Buffer used to remap identity mapped pages. We only need the virtual space.
-  * The physical page behind this address is remapped as needed to different
-@@ -452,6 +461,8 @@ static unsigned long __init xen_foreach_remap_area(
-  * to be remapped memory itself in a linked list anchored at xen_remap_mfn.
-  * This scheme allows to remap the different chunks in arbitrary order while
-  * the resulting mapping will be independent from the order.
-+ * In case xen_e820_resolve_conflicts() did relocate some non-RAM E820
-+ * entries, set the correct P2M information for the affected pages.
-  */
- void __init xen_remap_memory(void)
- {
-@@ -495,6 +506,29 @@ void __init xen_remap_memory(void)
- 	set_pte_mfn(buf, mfn_save, PAGE_KERNEL);
- 
- 	pr_info("Remapped %ld page(s)\n", remapped);
-+
-+	if (nr_nonram_remap == 0)
-+		return;
-+
-+	remapped = 0;
-+	for (i = 0; i < nr_nonram_remap; i++) {
-+		struct nonram_remap *remap = xen_nonram_remap + i;
-+
-+		pfn = PFN_DOWN(remap->paddr);
-+		mfn_save = PFN_DOWN(remap->maddr);
-+		for (len = 0; len < remap->size; len += PAGE_SIZE) {
-+			if (!set_phys_to_machine(pfn, mfn_save)) {
-+				WARN(1, "Failed to set p2m mapping for pfn=%ld mfn=%ld\n",
-+				     pfn, mfn_save);
-+				BUG();
-+			}
-+			pfn++;
-+			mfn_save++;
-+			remapped++;
-+		}
-+	}
-+
-+	pr_info("Remapped %ld non-RAM page(s)\n", remapped);
- }
- 
- static unsigned long __init xen_get_pages_limit(void)
-@@ -625,14 +659,111 @@ phys_addr_t __init xen_find_free_area(phys_addr_t size)
- 	return 0;
- }
- 
-+/*
-+ * Swap a non-RAM E820 map entry with RAM above ini_nr_pages.
-+ * Note that the E820 map is modified accordingly, but the P2M map isn't yet.
-+ * The adaption of the P2M must be deferred until page allocation is possible.
-+ */
-+static void __init xen_e820_swap_entry_with_ram(struct e820_entry *swap_entry)
-+{
-+	struct e820_entry *entry;
-+	unsigned int mapcnt;
-+	phys_addr_t mem_end = PFN_PHYS(ini_nr_pages);
-+	struct nonram_remap *remap;
-+	phys_addr_t swap_addr, swap_size, entry_end;
-+
-+	if (nr_nonram_remap == NR_NONRAM_REMAP) {
-+		xen_raw_console_write("Number of required E820 entry remapping actions exceed maximum value\n");
-+		BUG();
-+	}
-+
-+	swap_addr = PAGE_ALIGN_DOWN(swap_entry->addr);
-+	swap_size = PAGE_ALIGN(swap_entry->addr - swap_addr + swap_entry->size);
-+	remap = xen_nonram_remap + nr_nonram_remap;
-+	entry = xen_e820_table.entries;
-+
-+	for (mapcnt = 0; mapcnt < xen_e820_table.nr_entries; mapcnt++) {
-+		entry_end = entry->addr + entry->size;
-+		if (entry->type == E820_TYPE_RAM && entry->size >= swap_size &&
-+		    entry_end - swap_size >= mem_end) {
-+			/* Reduce RAM entry by needed space (whole pages). */
-+			entry->size -= swap_size;
-+
-+			/* Add new entry at the end of E820 map. */
-+			entry = xen_e820_table.entries +
-+				xen_e820_table.nr_entries;
-+			xen_e820_table.nr_entries++;
-+
-+			/* Fill new entry (keep size and page offset). */
-+			entry->type = swap_entry->type;
-+			entry->addr = entry_end - swap_size +
-+				      swap_addr - swap_entry->addr;
-+			entry->size = swap_entry->size;
-+
-+			/* Convert old entry to RAM, align to pages. */
-+			swap_entry->type = E820_TYPE_RAM;
-+			swap_entry->addr = swap_addr;
-+			swap_entry->size = swap_size;
-+
-+			/* Remember PFN<->MFN relation for P2M update. */
-+			remap->maddr = swap_addr;
-+			remap->size = swap_size;
-+			remap->paddr = entry_end - swap_size;
-+			nr_nonram_remap++;
-+
-+			/* Order E820 table and merge entries. */
-+			e820__update_table(&xen_e820_table);
-+
-+			return;
-+		}
-+
-+		entry++;
-+	}
-+
-+	xen_raw_console_write("No suitable area found for required E820 entry remapping action\n");
-+	BUG();
-+}
-+
-+/*
-+ * Look for non-RAM memory types in a specific guest physical area and move
-+ * those away if possible (ACPI NVS only for now).
-+ */
-+static void __init xen_e820_resolve_conflicts(phys_addr_t start,
-+					      phys_addr_t size)
-+{
-+	struct e820_entry *entry;
-+	unsigned int mapcnt;
-+	phys_addr_t end;
-+
-+	if (!size)
-+		return;
-+
-+	end = start + size;
-+	entry = xen_e820_table.entries;
-+
-+	for (mapcnt = 0; mapcnt < xen_e820_table.nr_entries; mapcnt++) {
-+		if (entry->addr >= end)
-+			return;
-+
-+		if (entry->addr + entry->size > start &&
-+		    entry->type == E820_TYPE_NVS)
-+			xen_e820_swap_entry_with_ram(entry);
-+
-+		entry++;
-+	}
-+}
-+
- /*
-  * Check for an area in physical memory to be usable for non-movable purposes.
-- * An area is considered to usable if the used E820 map lists it to be RAM.
-+ * An area is considered to usable if the used E820 map lists it to be RAM or
-+ * some other type which can be moved to higher PFNs while keeping the MFNs.
-  * In case the area is not usable, crash the system with an error message.
-  */
- void __init xen_chk_is_e820_usable(phys_addr_t start, phys_addr_t size,
- 				   const char *component)
- {
-+	xen_e820_resolve_conflicts(start, size);
-+
- 	if (!xen_is_e820_reserved(start, size))
- 		return;
- 
--- 
-2.43.0
-
+SGVsbG8gUGVuZywKCk9uIFRodSwgMjAyNC0wOC0wMSBhdCAwMjoyNyArMDAwMCwgUGVuZyBGYW4g
+d3JvdGU6Cj4gPiBTdWJqZWN0OiBbUEFUQ0ggMy8zXSBhcm02NDogZHRzOiBBZGQgcGh5Qk9BUkQt
+UG9sbHV4IGR0cyBmb3IgcnBtc2cKPiA+IAo+ID4gQWRkcyBhIGRldmljZXRyZWUgY29udGFpbmlu
+ZyByZXNlcnZlZCBtZW1vcnkgcmVnaW9ucyB1c2VkIGZvcgo+ID4gaW50ZXJjb3JlIGNvbW11bmlj
+YXRpb24gYmV0d2VlbiBBNTMgYW5kIE03IGNvcmVzLgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBZ
+YXNod2FudGggVmFyYWthbGEgPHkudmFyYWthbGFAcGh5dGVjLmRlPgo+ID4gLS0tCj4gPiDCoGFy
+Y2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL01ha2VmaWxlwqDCoMKgwqDCoMKgwqAgfMKgIDIg
+Kwo+ID4gwqAuLi4vZHRzL2ZyZWVzY2FsZS9pbXg4bXAtcGh5Y29yZS1ycG1zZy5kdHNvwqDCoCB8
+IDU3Cj4gPiArKysrKysrKysrKysrKysrKysrCj4gPiDCoDIgZmlsZXMgY2hhbmdlZCwgNTkgaW5z
+ZXJ0aW9ucygrKQo+ID4gwqBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9hcm02NC9ib290L2R0cy9m
+cmVlc2NhbGUvaW14OG1wLQo+ID4gcGh5Y29yZS1ycG1zZy5kdHNvCj4gPiAKPiA+IGRpZmYgLS1n
+aXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9NYWtlZmlsZQo+ID4gYi9hcmNoL2Fy
+bTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9NYWtlZmlsZQo+ID4gaW5kZXggZGVkZWE0YjVjMzE5Li44
+MGNjODdkNTAzMDEgMTAwNjQ0Cj4gPiAtLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2Fs
+ZS9NYWtlZmlsZQo+ID4gKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvTWFrZWZp
+bGUKPiA+IEBAIC0xNzcsOSArMTc3LDExIEBAIGR0Yi0kKENPTkZJR19BUkNIX01YQykgKz0gaW14
+OG1wLQo+ID4gcGh5Ym9hcmQtcG9sbHV4LXJkay5kdGLCoCBpbXg4bXAtcGh5Ym9hcmQtcG9sbHV4
+LXJkay1uby1ldGgtZHRicyArPQo+ID4gaW14OG1wLXBoeWJvYXJkLXBvbGx1eC1yZGsuZHRiIGlt
+eDhtcC1waHljb3JlLW5vLWV0aC5kdGJvCj4gPiBpbXg4bXAtcGh5Ym9hcmQtcG9sbHV4LXJkay1u
+by1ydGMtZHRicyArPSBpbXg4bXAtcGh5Ym9hcmQtcG9sbHV4LQo+ID4gcmRrLmR0YiBpbXg4bXAt
+cGh5Y29yZS1uby1ydGMuZHRib8KgIGlteDhtcC1waHlib2FyZC1wb2xsdXgtcmRrLW5vLQo+ID4g
+c3BpZmxhc2gtZHRicyArPSBpbXg4bXAtcGh5Ym9hcmQtcG9sbHV4LXJkay5kdGIgaW14OG1wLXBo
+eWNvcmUtbm8tCj4gPiBzcGlmbGFzaC5kdGJvCj4gPiAraW14OG1wLXBoeWJvYXJkLXBvbGx1eC1y
+ZGstcnBtc2ctZHRicyArPSBpbXg4bXAtcGh5Ym9hcmQtCj4gPiBwb2xsdXgtcmRrLmR0Ygo+ID4g
+K2lteDhtcC1waHljb3JlLXJwbXNnLmR0Ym8KPiA+IMKgZHRiLSQoQ09ORklHX0FSQ0hfTVhDKSAr
+PSBpbXg4bXAtcGh5Ym9hcmQtcG9sbHV4LXJkay1uby0KPiA+IGV0aC5kdGIKPiA+IMKgZHRiLSQo
+Q09ORklHX0FSQ0hfTVhDKSArPSBpbXg4bXAtcGh5Ym9hcmQtcG9sbHV4LXJkay1uby1ydGMuZHRi
+Cj4gPiDCoGR0Yi0kKENPTkZJR19BUkNIX01YQykgKz0gaW14OG1wLXBoeWJvYXJkLXBvbGx1eC1y
+ZGstbm8tCj4gPiBzcGlmbGFzaC5kdGIKPiA+ICtkdGItJChDT05GSUdfQVJDSF9NWEMpICs9IGlt
+eDhtcC1waHlib2FyZC1wb2xsdXgtcmRrLQo+ID4gcnBtc2cuZHRiCj4gPiDCoGR0Yi0kKENPTkZJ
+R19BUkNIX01YQykgKz0gaW14OG1wLXNrb3YtcmV2Yi1oZG1pLmR0Ygo+ID4gwqBkdGItJChDT05G
+SUdfQVJDSF9NWEMpICs9IGlteDhtcC1za292LXJldmItbHQ2LmR0Ygo+ID4gwqBkdGItJChDT05G
+SUdfQVJDSF9NWEMpICs9IGlteDhtcC1za292LXJldmItbWkxMDEwYWl0LTFjcDEuZHRiCj4gPiBk
+aWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1wLXBoeWNvcmUt
+Cj4gPiBycG1zZy5kdHNvIGIvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OG1wLXBo
+eWNvcmUtCj4gPiBycG1zZy5kdHNvCj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+ID4gaW5kZXgg
+MDAwMDAwMDAwMDAwLi5hNTY5NGYzYWVjYWEKPiA+IC0tLSAvZGV2L251bGwKPiA+ICsrKyBiL2Fy
+Y2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDhtcC1waHljb3JlLXJwbXNnLmR0c28KPiA+
+IEBAIC0wLDAgKzEsNTcgQEAKPiA+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIu
+MAo+IAo+IER1YWwgbGljZW5zZSBpcyBiZXR0ZXIgZGV2aWNlIHRyZWUuCj4gCj4gPiArLyoKPiA+
+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMjQgUEhZVEVDIE1lc3N0ZWNobmlrIEdtYkgKPiA+ICsgKiBB
+dXRob3I6IERvbWluaWsgSGFsbGVyIDxkLmhhbGxlckBwaHl0ZWMuZGU+Cj4gPiArICrCoMKgwqDC
+oMKgwqDCoCBDZW0gVGVucnVoIDxjLnRlbnJ1aEBwaHl0ZWMuZGU+Cj4gPiArICovCj4gPiArCj4g
+PiArL2R0cy12MS87Cj4gPiArL3BsdWdpbi87Cj4gPiArCj4gPiArI2luY2x1ZGUgPGR0LWJpbmRp
+bmdzL2Nsb2NrL2lteDhtcC1jbG9jay5oPgo+ID4gKwo+ID4gKyZ7L30gewo+ID4gK8KgwqDCoMKg
+wqDCoMKgaW14OG1wLWNtNyB7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgY29t
+cGF0aWJsZSA9ICJmc2wsaW14OG1uLWNtNyI7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgY2xvY2tzID0gPCZjbGsgSU1YOE1QX0NMS19NN19ESVY+Owo+ID4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoG1ib3hlcyA9IDwmbXUgMCAxCj4gPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCZtdSAxIDEKPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgJm11IDMgMT47Cj4gCj4gwqDCoMKgwqDC
+oMKgwqAgbWJveGVzID0gPCZtdTEgMAo+IDE+LMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+IMKgwqDCoMKg
+wqAgCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+PCZtdTEgMQo+IDE+LMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+IMKgwqDCoMKgwqAgCj4gwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgPCZtdTEgMyAxPjsKVGhh
+bmsgeW91IGZvciB0aGUgZmVlZGJhY2suIEkgY2hlY2tlZCBhbmQgZm91bmQgb25seSBtdSBhbmQg
+bXUyIGxhYmVscwpvZiBtYWlsYm94ZXMgYXJlIHByZXNlbnQuIG11MSBpcyBub3QgdXNlZCBpbiBp
+bXg4bXAuZHRzaS4gQ2FuIHlvdQpwbGVhc2UgdGVsbCBtZSB3aHkgSSBoYXZlIHRvIHVzZSBtdTEg
+aGVyZT8KCj4gCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgbWJveC1uYW1lcyA9
+ICJ0eCIsICJyeCIsICJyeGRiIjsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBt
+ZW1vcnktcmVnaW9uID0gPCZ2ZGV2YnVmZmVyPiwgPCZ2ZGV2MHZyaW5nMD4sCj4gPiA8JnZkZXYw
+dnJpbmcxPiwgPCZyc2NfdGFibGU+Owo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oHJzYy1kYSA9IDwweDU1MDAwMDAwPjsKPiAKPiBEcm9wIHRoaXMgInJzYy1kYSIuCj4gCj4gPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc3RhdHVzID0gIm9rYXkiOwo+IAo+IERyb3Ag
+aXQsIGRlZmF1bHQgaXMgIm9rYXkiLgo+IAo+ID4gK8KgwqDCoMKgwqDCoMKgfTsKPiA+ICsKPiA+
+ICvCoMKgwqDCoMKgwqDCoHJlc2VydmVkLW1lbW9yeSB7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgcmFuZ2VzOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCNh
+ZGRyZXNzLWNlbGxzID0gPDI+Owo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCNz
+aXplLWNlbGxzID0gPDI+Owo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oG03X3Jlc2VydmVkOiBtN0AweDgwMDAwMDAwIHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgbm8tbWFwOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZWcgPSA8MCAweDgwMDAwMDAwIDAgMHgxMDAwMDAw
+PjsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Owo+ID4gKwo+ID4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJzY190YWJsZTogcnNjX3RhYmxlQDU1MGZmMDAwIHsK
+PiAKPiAicnNjLXRhYmxlQDU1MGZmMDAwIi4gU2VlbXMgeW91IG5vdCB0ZXN0IHRoaXMgcGF0Y2gg
+d2l0aCBsaW51eAo+IHJlbW90ZXByb2MsIG90aGVyd2lzZSB5b3Ugd2lsbCBzZWUgdnJpbmcgbm90
+IHNldCB1cC4KPiAKPiBSZWdhcmRzLAo+IFBlbmcuCgotLSAKLQpSZWdhcmRzLApZYXNod2FudGgK
+Cgo=
 
