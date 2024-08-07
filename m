@@ -1,87 +1,230 @@
-Return-Path: <linux-kernel+bounces-277527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8146094A28F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:20:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E5994A291
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C69D288B4D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C7C6288C48
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69791C8242;
-	Wed,  7 Aug 2024 08:20:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7021C823D;
+	Wed,  7 Aug 2024 08:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=vignesh.raman@collabora.com header.b="ir9NddUu"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07062801
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 08:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723018805; cv=none; b=jam8xA4nmTJzaPNBl4GuTTbwEu4t6qrW9WYT2pDWdVW7PbCSmTXPzBy3SEq6u2sEhHGQrBaeTkxJXyOVHR9uflKio1d4PCMu+4Fk5VzoHkpUzxKVMJUJSEKH5C/ZsKqlag4Oqlruf0QCqwEQABvorUKY106XUFkAjJJeZV713qs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723018805; c=relaxed/simple;
-	bh=y0nLgbP6+lsqtOkDvKriTr5VZDQ01ZqKxNskY6l8tj4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Jrc0xTEC8ca4xH1B1H1JHl95OPdwYUPzwuUZCFQCp4xIKu3emTy02k/oJnzyFXSnaknn6xHYPtJ06sBBivYW1geQt0gUetRFDSyGcFmzVvwPkgUv+d4lzRX2pAJG1cqknVwspdVfDsRw7b0MemvAvYGOgjvRhRjCOk7zZFAxBSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f9504974dso202933539f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 01:20:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723018803; x=1723623603;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L5T2A+UUesVETh06KL/V4sZRuvYzRGIN6q6zMcN/thU=;
-        b=uyhgYusLrD6QfdZTzONbkoh0+Mmn/JD5WXu2mDpzu18xgw18O2qKZ2z07GKNwYcNZg
-         Tr7ukJen0ZlQxw/YgNNxQBZoc4VtqmG0yah24LLcOZ0QUYrfh8GisQ7+cnWLseda1FEi
-         TowVLqI/DlMxoJJZ5S5DLcNTIp+q0BhKj3mTKhTKqbbOXkAtCuVXBIXGhfHf/zAf0GQs
-         9/HlfIviyaWvazr3VG4hX36u/fIopg75j8GSp3E7+9blLUJy5rYOEAl0hCSIzpvjREw3
-         pwd6AxzJXecw+QeHYA/+/qpStaSAR4QnvHNTh6xJtLybFXzqG0WvL26YN593AvsCvHHa
-         zDzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXm/L8ELL9UPk3E1CxZ1P7OiKNJ8gwCy8OTRkYJDYW0zdkbafE3/qYZBisDITEDJwdjnitzCAWTdWF/r3hnLnk+YguXAu7hW1dzaZLA
-X-Gm-Message-State: AOJu0Yw5/Gs9E1K85sdwGPBfSBijM4e3AxGMlZT6g707t3mm/OtJscw2
-	vaDedbuof8+LJDt5kvYZDY+3vgyIgfAJDq1pHCdfRecfEIV3gq4RErcfcgeySUj/Cr/xPL4wHq0
-	mcyuNC3ZWbxqpGjEQ6ipGWKZDm1wiMuSexdMeKSDDQ54N9eqahIIu2t4=
-X-Google-Smtp-Source: AGHT+IFaBFRGjjeniLeFbQYX1ffjHbY46uP5mBRmyYpenpnr48unkI/v/vNXBFTBvMvWagmHD8vwPP734rqwHGTrVBX0OYHssDC5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2F18F77
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 08:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723018874; cv=pass; b=Tn4DLfU3/GjA5XY7n8zxNQoeCnPkc4JwkzqOQmy/xSfjIYHmHYBDjy1xoeI/aR5eYV/ILSyVSVvD52Q62hOCJptE+gFeNocH5Ekjn57SISh3I1RIouC6JO0sRGUQoUPv6tKVAi0/cBbeDfYwSeIQo5SH7UaAsZJhB0LTFEX3sqU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723018874; c=relaxed/simple;
+	bh=67xNNOQ5BgYkdq3FmJjkhkHbyY4Wv65WG9XmHisqFBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oitWaBuW8O0c8gnoFdT6disbD4++zkOZ7iaue+LZFCqrHJ3IzW8SxkZ9Ufi1BiJWNbECPND7YRMhY+H0eAYrNgJ+tFZAvNU6pNZwdF3GLwWJMHfDZotcn2cDuwEXFugf0qd303MIXhuxq0R4a1lSecvYryB8DAm1VWVtgUX+HbU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=vignesh.raman@collabora.com header.b=ir9NddUu; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: daniels@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723018867; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZJElaatvcYXBycHHxoc8eo38AnN55mSSRS6EmA0oITnPEyF4ElJvKEi48h62kahLV66OxVWeh5sOElLbr1/qjU3uwcaZjtTMKAIuNPQH+ebVSEl5C52tUzQPxMRk2/XZOHBtjSDIaASffeoFNCBLt6Svi42uOBACo2Vq+MUfdnk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723018867; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=9HH5J5pheMHQbYtu6UKFxGxCRC6ubAR8RRggZLYoxYE=; 
+	b=CADT9bK8zL/AdnqpQnROp39dWq1es6hVB2O3INgmXoQcrn+CWwz0Rp2cQWeUpBv385OnzuDEWA7n9gwB5ClTiaT0wKcIBZ7Raci85t6p62XbSPKh8x3JrgVElFXbzaQmXe7uTSXCw0Ilz2cXLqUh+P+SLnaC2cBCmNdw/+hqfyk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=vignesh.raman@collabora.com;
+	dmarc=pass header.from=<vignesh.raman@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723018867;
+	s=zohomail; d=collabora.com; i=vignesh.raman@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=9HH5J5pheMHQbYtu6UKFxGxCRC6ubAR8RRggZLYoxYE=;
+	b=ir9NddUuvhMNoqJPg+jCXws4YBQz+6H5rStAtBFN0dpmqJbeqhhh/AgdQZRTjTFn
+	H1vZA0xDvoKEnh3O4tWuIAg2ChnDlJig/QyauuMcd2JPE4AhW8AxgLTXTD6SGov2wFN
+	7ssDQhN6QTUH9ric3prOFZumROvZKujfpz0dz/jI=
+Received: by mx.zohomail.com with SMTPS id 1723018865189439.50743036529866;
+	Wed, 7 Aug 2024 01:21:05 -0700 (PDT)
+From: Vignesh Raman <vignesh.raman@collabora.com>
+To: dri-devel@lists.freedesktop.org
+Cc: daniels@collabora.com,
+	helen.koike@collabora.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	robdclark@gmail.com,
+	guilherme.gallo@collabora.com,
+	sergi.blanch.torne@collabora.com,
+	deborah.brouwer@collabora.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] drm/ci: uprev mesa
+Date: Wed,  7 Aug 2024 13:50:18 +0530
+Message-ID: <20240807082020.429434-1-vignesh.raman@collabora.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1e06:b0:397:9426:e7fc with SMTP id
- e9e14a558f8ab-39b1f79cfa0mr11525425ab.0.1723018803107; Wed, 07 Aug 2024
- 01:20:03 -0700 (PDT)
-Date: Wed, 07 Aug 2024 01:20:03 -0700
-In-Reply-To: <tencent_6F9E3F1BBF4B3A1B5E25B6BA7BBB14331108@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b36953061f1393da@google.com>
-Subject: Re: [syzbot] [can?] WARNING: refcount bug in j1939_session_put
-From: syzbot <syzbot+ad601904231505ad6617@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-Hello,
+Uprev mesa to adapt to the latest changes in mesa ci.
+Project 'anholt/deqp-runner' was moved to 'mesa/deqp-runner'.
+So update the link.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+---
 
-Reported-by: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
-Tested-by: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
+v1:
+  - Working pipeline link,
+    https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1242911
 
-Tested on:
+---
+ drivers/gpu/drm/ci/container.yml  |  8 ++++++++
+ drivers/gpu/drm/ci/gitlab-ci.yml  | 22 ++++++++++++----------
+ drivers/gpu/drm/ci/image-tags.yml |  8 ++++----
+ drivers/gpu/drm/ci/lava-submit.sh |  1 +
+ drivers/gpu/drm/ci/test.yml       |  4 ++--
+ 5 files changed, 27 insertions(+), 16 deletions(-)
 
-commit:         743ff021 ethtool: Don't check for NULL info in prepare..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1255b2bd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5efb917b1462a973
-dashboard link: https://syzkaller.appspot.com/bug?extid=ad601904231505ad6617
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14f2a005980000
+diff --git a/drivers/gpu/drm/ci/container.yml b/drivers/gpu/drm/ci/container.yml
+index d6edf3635b23..2a94f54ce4cf 100644
+--- a/drivers/gpu/drm/ci/container.yml
++++ b/drivers/gpu/drm/ci/container.yml
+@@ -28,6 +28,14 @@ debian/x86_64_test-vk:
+   rules:
+     - when: never
+ 
++debian/arm64_test-vk:
++  rules:
++    - when: never
++
++debian/arm64_test-gl:
++  rules:
++    - when: never
++
+ fedora/x86_64_build:
+   rules:
+     - when: never
+diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
+index 6d2cefa7f15e..eca47d4f816f 100644
+--- a/drivers/gpu/drm/ci/gitlab-ci.yml
++++ b/drivers/gpu/drm/ci/gitlab-ci.yml
+@@ -1,13 +1,13 @@
+ variables:
+   DRM_CI_PROJECT_PATH: &drm-ci-project-path mesa/mesa
+-  DRM_CI_COMMIT_SHA: &drm-ci-commit-sha e2b9c5a9e3e4f9b532067af8022eaef8d6fc6c00
++  DRM_CI_COMMIT_SHA: &drm-ci-commit-sha d9849ac46623797a9f56fb9d46dc52460ac477de
+ 
+   UPSTREAM_REPO: https://gitlab.freedesktop.org/drm/kernel.git
+   TARGET_BRANCH: drm-next
+ 
+   IGT_VERSION: f13702b8e4e847c56da3ef6f0969065d686049c5
+ 
+-  DEQP_RUNNER_GIT_URL: https://gitlab.freedesktop.org/anholt/deqp-runner.git
++  DEQP_RUNNER_GIT_URL: https://gitlab.freedesktop.org/mesa/deqp-runner.git
+   DEQP_RUNNER_GIT_TAG: v0.15.0
+ 
+   FDO_UPSTREAM_REPO: helen.fornazier/linux   # The repo where the git-archive daily runs
+@@ -85,22 +85,24 @@ include:
+   - project: *drm-ci-project-path
+     ref: *drm-ci-commit-sha
+     file:
++      - '/.gitlab-ci/container/gitlab-ci.yml'
+       - '/.gitlab-ci/farm-rules.yml'
++      - '/.gitlab-ci/lava/lava-gitlab-ci.yml'
+       - '/.gitlab-ci/test-source-dep.yml'
+-      - '/.gitlab-ci/container/gitlab-ci.yml'
+       - '/.gitlab-ci/test/gitlab-ci.yml'
+-      - '/.gitlab-ci/lava/lava-gitlab-ci.yml'
+-      - '/src/microsoft/ci/gitlab-ci-inc.yml'
+-      - '/src/gallium/drivers/zink/ci/gitlab-ci-inc.yml'
++      - '/src/amd/ci/gitlab-ci-inc.yml'
++      - '/src/freedreno/ci/gitlab-ci-inc.yml'
+       - '/src/gallium/drivers/crocus/ci/gitlab-ci-inc.yml'
+-      - '/src/gallium/drivers/softpipe/ci/gitlab-ci-inc.yml'
+       - '/src/gallium/drivers/llvmpipe/ci/gitlab-ci-inc.yml'
+-      - '/src/gallium/drivers/virgl/ci/gitlab-ci-inc.yml'
+       - '/src/gallium/drivers/nouveau/ci/gitlab-ci-inc.yml'
++      - '/src/gallium/drivers/softpipe/ci/gitlab-ci-inc.yml'
++      - '/src/gallium/drivers/virgl/ci/gitlab-ci-inc.yml'
++      - '/src/gallium/drivers/zink/ci/gitlab-ci-inc.yml'
+       - '/src/gallium/frontends/lavapipe/ci/gitlab-ci-inc.yml'
++      - '/src/gallium/frontends/rusticl/ci/gitlab-ci.yml'
+       - '/src/intel/ci/gitlab-ci-inc.yml'
+-      - '/src/freedreno/ci/gitlab-ci-inc.yml'
+-      - '/src/amd/ci/gitlab-ci-inc.yml'
++      - '/src/microsoft/ci/gitlab-ci-inc.yml'
++      - '/src/nouveau/ci/gitlab-ci-inc.yml'
+       - '/src/virtio/ci/gitlab-ci-inc.yml'
+   - drivers/gpu/drm/ci/image-tags.yml
+   - drivers/gpu/drm/ci/container.yml
+diff --git a/drivers/gpu/drm/ci/image-tags.yml b/drivers/gpu/drm/ci/image-tags.yml
+index 13eda37bdf05..2c340d063a96 100644
+--- a/drivers/gpu/drm/ci/image-tags.yml
++++ b/drivers/gpu/drm/ci/image-tags.yml
+@@ -1,15 +1,15 @@
+ variables:
+-   CONTAINER_TAG: "2024-05-09-mesa-uprev"
++   CONTAINER_TAG: "2024-08-07-mesa-uprev"
+    DEBIAN_X86_64_BUILD_BASE_IMAGE: "debian/x86_64_build-base"
+    DEBIAN_BASE_TAG: "${CONTAINER_TAG}"
+ 
+    DEBIAN_X86_64_BUILD_IMAGE_PATH: "debian/x86_64_build"
+-   DEBIAN_BUILD_TAG: "2024-06-10-vkms"
++   DEBIAN_BUILD_TAG: "${CONTAINER_TAG}"
+ 
+-   KERNEL_ROOTFS_TAG: "2023-10-06-amd"
++   KERNEL_ROOTFS_TAG: "${CONTAINER_TAG}"
+ 
+    DEBIAN_X86_64_TEST_BASE_IMAGE: "debian/x86_64_test-base"
+    DEBIAN_X86_64_TEST_IMAGE_GL_PATH: "debian/x86_64_test-gl"
+-   DEBIAN_X86_64_TEST_GL_TAG: "${CONTAINER_TAG}"
++   DEBIAN_TEST_GL_TAG: "${CONTAINER_TAG}"
+ 
+    ALPINE_X86_64_LAVA_SSH_TAG: "${CONTAINER_TAG}"
+\ No newline at end of file
+diff --git a/drivers/gpu/drm/ci/lava-submit.sh b/drivers/gpu/drm/ci/lava-submit.sh
+index 0707fa706a48..6add15083c78 100755
+--- a/drivers/gpu/drm/ci/lava-submit.sh
++++ b/drivers/gpu/drm/ci/lava-submit.sh
+@@ -44,6 +44,7 @@ PYTHONPATH=artifacts/ artifacts/lava/lava_job_submitter.py \
+ 	--first-stage-init artifacts/ci-common/init-stage1.sh \
+ 	--ci-project-dir "${CI_PROJECT_DIR}" \
+ 	--device-type "${DEVICE_TYPE}" \
++	--farm "${FARM}" \
+ 	--dtb-filename "${DTB}" \
+ 	--jwt-file "${S3_JWT_FILE}" \
+ 	--kernel-image-name "${KERNEL_IMAGE_NAME}" \
+diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml
+index b22b2cf8f06f..b6f428cdaf94 100644
+--- a/drivers/gpu/drm/ci/test.yml
++++ b/drivers/gpu/drm/ci/test.yml
+@@ -69,7 +69,7 @@
+ .baremetal-igt-arm64:
+   extends:
+     - .baremetal-test-arm64
+-    - .use-debian/arm64_test
++    - .use-debian/baremetal_arm64_test
+     - .test-rules
+   variables:
+     FDO_CI_CONCURRENT: 10
+@@ -79,7 +79,7 @@
+     BM_CMDLINE: "ip=dhcp console=ttyMSM0,115200n8 $BM_KERNEL_EXTRA_ARGS root=/dev/nfs rw nfsrootdebug nfsroot=,tcp,nfsvers=4.2 init=/init $BM_KERNELARGS"
+     FARM: google
+   needs:
+-    - debian/arm64_test
++    - debian/baremetal_arm64_test
+     - job: testing:arm64
+       artifacts: false
+     - igt:arm64
+-- 
+2.43.0
 
-Note: testing is done by a robot and is best-effort only.
 
