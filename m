@@ -1,120 +1,160 @@
-Return-Path: <linux-kernel+bounces-277816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C0394A6D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:21:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 059B894A6D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD5F6283967
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:21:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2830C1C22C7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D67E1E484A;
-	Wed,  7 Aug 2024 11:21:36 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E67F1E3CC1;
+	Wed,  7 Aug 2024 11:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="FD6+mn5Z"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A768E1BD01D;
-	Wed,  7 Aug 2024 11:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683631E2104
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 11:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723029695; cv=none; b=MYH9/raxJLA1C06dPIbkn1oAn2BLg3xrRXpREiQcRBwNb05zbYxdf7NVPItJsKc8V1iMffb+Q2DSNpRxChNFBv76e59BGbLyJRAzt3YRqb3uFD5tm702/Mc97TAYLwzNzCGuVPTZBL5KmoNIP8bnLr/td4S6X1qroYgdwiD0YKA=
+	t=1723029694; cv=none; b=pLQtpCrnXCf2PtpcbftBsz5BQ/iMUHon8fEpllPUx0m0o37UoHgVcykLa8RMv13zpYD+gSNmiIsmD7JGiYvTwGWBWuiP+BrYF8vAgVblNx4EYyHokxI+FI9Tcej4xK3tPgdMYZ2IedSSw0TZSIzIe/MCIJq2ds/OFo+c2Yv7aLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723029695; c=relaxed/simple;
-	bh=7kUihphe2zNIaO+acMvQ8uuv0hZ4WpqvWcV0Y4YQrG4=;
-	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=oQi2bLFWkHKoKGzQ8WIOLeBOks7xoLoJsGgWH6L2G0VOUMnMqX/ZLaxwCs2P8sN0oZHmlWOeBhjw5JkbIccTSrbeUQvTeeJHF5yHee5dNsIOXx9Ay9ZYlYKRn0lrfITbog13pvCX7865VfQf06QwfiIrpt2nnuRxYJ1FFaSeZ3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wf7676FTqz4f3jqw;
-	Wed,  7 Aug 2024 19:21:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id D97D71A0568;
-	Wed,  7 Aug 2024 19:21:28 +0800 (CST)
-Received: from [10.174.178.55] (unknown [10.174.178.55])
-	by APP4 (Coremail) with SMTP id gCh0CgBXzIK1WLNmWlgVBA--.57192S3;
-	Wed, 07 Aug 2024 19:21:27 +0800 (CST)
-Subject: Re: [PATCH] selinux: Fix potential counting error in
- avc_add_xperms_decision()
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huaweicloud.com>
-To: Markus Elfring <Markus.Elfring@web.de>,
- Zhen Lei <thunder.leizhen@huawei.com>, selinux@vger.kernel.org,
- Ondrej Mosnacek <omosnace@redhat.com>, Paul Moore <paul@paul-moore.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jeff Vander Stoep
- <jeffv@google.com>, Nick Kralevich <nnk@google.com>
-References: <20240806065113.1317-1-thunder.leizhen@huaweicloud.com>
- <600318b9-928c-4466-a8d1-334fab8c512f@web.de>
- <8e9f8931-0fd8-5808-8898-761e31e55208@huaweicloud.com>
-Message-ID: <d3f95ed9-a8f2-aedb-9097-0ac420d5bfa1@huaweicloud.com>
-Date: Wed, 7 Aug 2024 19:21:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+	s=arc-20240116; t=1723029694; c=relaxed/simple;
+	bh=LDuVR8Q8SBltlZ0Y7R0bvpdndZWmNaepum4NflH3uEs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RzHyOOMVZ1s7+5Qx/jaS2pwMnQsJIOP1auCuV8pW2Y8zGbbnq9wiWSXuZrh5/be026VE3+WkEXvsmqYGzzfRBsQMcP7CN4tmsfLvUe50xm7VRMTN0mWMQ1qJphR/pUvTNQ8Hebr/hmJ7fPyTkEvvMkqr7+uTjvTgXytyYIcE4yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=FD6+mn5Z; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso2661813a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 04:21:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1723029690; x=1723634490; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=O63kDKJnx9fmZjMbiNZsuL2wJTTHJuwzpsSd5JTI0e0=;
+        b=FD6+mn5ZHCrD3MxYmmtC0VaBk3LNHgpKvrKG5BG3p7OaFGG7h9rG8czOmjZX4nQImD
+         y5ee6jjh5mbznkAxusuMXeZBaBZwGdBSbi90RAx756W3xWr2Tps20+RC416Ig9BMDolB
+         AZLU7VeCBkhpciT+ZgCXq7YK7axvCZ0IObzUNM5T2fBIsh3pP6O8GIcfNUdRCmUQvV1s
+         KXPMcISCImcynppr/bYpfaysZDx08IXPZnXVMIDkSanxVmvRKgYuoXIrfQlbDYSSIOpV
+         uowFo+3ggvY+8kzhhpGbNZnhfxNB7K8Wq/ciJnod3aoPoeXZ6LnEki3cSHhMLFO563zq
+         /kxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723029690; x=1723634490;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O63kDKJnx9fmZjMbiNZsuL2wJTTHJuwzpsSd5JTI0e0=;
+        b=jn0HwxgVLK+yGbDe79CezU0B35tJUNQqR53HSU4AhwQ4n7dUwb7VJ2lfAI+1Bvgxie
+         nBh6wlM44X2b/42ZoUpr/gSvs68O02ULHErk4G998QeGIld/FqmaeVcWvDtLURoNE8Wk
+         u3ceTuvOA4img++1DFaJR/b7SP/KOPhyRjS/nahhmJ0Yv5Vo32Pzw9oDxkDhLc5UsQtj
+         LwzbFZYVPYax19/JK1iNGtwITDsPovoMu8NTvdCTEPbWmxW7A6PsNet/bCCK8b5o64Q1
+         Ssavf4SxiBe4XzuXHfgnWW3NTy09DLxZ3NSLM41w43lpWsyNE7Kyj+IA3X38goXsByAW
+         chzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXS838+pNRzqw0K8dCCQHpknyAwuyrU6yp61p+zrAIQAF0VMOux4KvVO8P/EbmQZ2vR2vq1ZbTHF6dWsgIZ4DgZyhxpHZB1OavKMYjR
+X-Gm-Message-State: AOJu0YxMNBm27QIZC8yPrYzkhn0Cp10f5RIUNnib38SNnT49iQwZwsZ/
+	U/tSv0cUggk23VqKsPZUOEaZkyO6f6UdccmSxY0EgiG0XHWQZRUyeODzL3zL/kw=
+X-Google-Smtp-Source: AGHT+IHM3r2bAdSLrg/pmt0OrZB5Bhj5Th6878fNVzaGx5MeOuvAuO1T3w9OQvFHUVXk+68bCP5iCA==
+X-Received: by 2002:a17:906:fe41:b0:a7a:a46e:dc3f with SMTP id a640c23a62f3a-a7dc50a345bmr1206383166b.45.1723029689288;
+        Wed, 07 Aug 2024 04:21:29 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0cc95sm624246766b.85.2024.08.07.04.21.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 04:21:28 -0700 (PDT)
+Message-ID: <201cbbe6-99eb-4622-bc5f-3d298f9e30b4@tuxon.dev>
+Date: Wed, 7 Aug 2024 14:21:25 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <8e9f8931-0fd8-5808-8898-761e31e55208@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/3] watchdog: rzg2l_wdt: Enable properly the watchdog
+ clocks and power domain
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXzIK1WLNmWlgVBA--.57192S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrKrWkKF4rXF4kJrW3Zr4rGrg_yoWfXFb_CF
-	1SkF4DW395GFWDAFs5Kw47ArnxurnxJas5A3W8XrZrCwnxJanxAF13GF9ay3WrZrWfCFnr
-	uFyavayUZw12vjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4kYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267
-	AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80
-	ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4
-	AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_
-	Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1v3UU
-	UUU
-X-CM-SenderInfo: hwkx0vthuozvpl2kv046kxt4xhlfz01xgou0bp/
+To: ulf.hansson@linaro.org, wim@linux-watchdog.org, linux@roeck-us.net,
+ rafael@kernel.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, geert+renesas@glider.be,
+ linux-renesas-soc@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi, Ulf,
 
+Please, do you have any input/suggestions on this?
 
-On 2024/8/7 17:16, Leizhen (ThunderTown) wrote:
-> 
-> 
-> On 2024/8/7 0:30, Markus Elfring wrote:
->>> The count increases only when a node is successfully added to
->>> the linked list.
->>
->> 1. Please improve such a change description with an imperative wording.
->>    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.11-rc2#n94
-> Ok, I'll try to improve it.
-I see this patch has been merged into selinux/stable-6.11. So I decided not to
-change it, and I re-examined it, and it seems that there is no problem you
-mentioned.
+Thank you,
+Claudiu Beznea
 
+On 19.06.2024 15:09, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
->>
->> 2. How do you think about to omit the word “potential” from the summary phrase?
-> I added "potential" because it's unlikely that the memory request will fail. Maybe "possible" would
-> be better.
+> Hi,
 > 
+> Watchdog device available on RZ/G3S SoC is part of a software-controlled
+> power domain. The watchdog driver implements struct
+> watchdog_ops::restart() handler which is called in atomic context via
+> this call chain:
 > 
->>
->>
->> Regards,
->> Markus
->> .
->>
+> kernel_restart() ->
+>   machine_restart() ->
+>     do_kernel_restart() ->
+>       atomic_notifier_call_chain() ->
+>         watchdog_restart_notifier()
+> 	  rzg2l_wdt_restart()
 > 
-
--- 
-Regards,
-  Zhen Lei
-
+> When the rzg2l_wdt_restart() is called it may happen that the watchdog
+> clocks to be disabled and the associated power domain to be off.
+> Accessing watchdog registers in this state leads to aborts and system
+> blocks.
+> 
+> To solve this issue the series proposes a new API called
+> dev_pm_genpd_resume_restart_dev() that is intended to be called in
+> scenarios like this. In this RFC series the
+> dev_pm_genpd_resume_restart_dev() checks if the system is in
+> SYSTEM_RESTART context and call dev_pm_genpd_resume(). I also wanted to
+> mark the device as a restart device with a new member in struct dev_pm_info
+> (similar to struct dev_pm_info::syscore) and check it in the newly
+> introduced API but then I told myself maybe it would be better to keep it
+> simpler for the moment.
+> 
+> Please let me know how do you consider this.
+> 
+> Along with it, series addresses the usage of clk_prepare_enable() in
+> rzg2l_wdt_restart() reported by Ulf Hansson at [1] and use the
+> dev_pm_genpd_resume_restart_dev() in rzg2l_wdt driver.
+> 
+> Please note that series is built on top of [1].
+> 
+> A similar approach (using directly the dev_pm_genpd_resume() function in
+> rzg2l_wdt was proposed at [2]). This series was posted separatelly to
+> avoid blocking the initial support for the RZ/G3S SoC.
+> 
+> Thank you,
+> Claudiu Beznea
+> 
+> [1] https://lore.kernel.org/all/20240531065723.1085423-1-claudiu.beznea.uj@bp.renesas.com/
+> [2] https://lore.kernel.org/all/20240410134044.2138310-10-claudiu.beznea.uj@bp.renesas.com/
+> 
+> Claudiu Beznea (3):
+>   pmdomain: core: Add a helper to power on the restart devices
+>   watchdog: rzg2l_wdt: Keep the clocks prepared
+>   watchdog: rzg2l_wdt: Power on the PM domain in rzg2l_wdt_restart()
+> 
+>  drivers/pmdomain/core.c      | 18 +++++++++++++++
+>  drivers/watchdog/rzg2l_wdt.c | 43 +++++++++++++++++++++++++++++++-----
+>  include/linux/pm_domain.h    |  2 ++
+>  3 files changed, 58 insertions(+), 5 deletions(-)
+> 
 
