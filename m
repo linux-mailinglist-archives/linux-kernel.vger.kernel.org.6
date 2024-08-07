@@ -1,174 +1,121 @@
-Return-Path: <linux-kernel+bounces-277861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362B594A76C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:04:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E16994A772
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A82BB26B8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:04:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA72286478
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14F91E4EEB;
-	Wed,  7 Aug 2024 12:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF971E4EFD;
+	Wed,  7 Aug 2024 12:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IJfKLEGZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aMC5hu6k"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFF3376E6
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 12:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8BE1E287F;
+	Wed,  7 Aug 2024 12:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723032241; cv=none; b=X8BSKUzbsHn0KstL0xgbRy08/M1oERN4QyiBgJDz82grdWjeiQJal+4laOnjxKBOnXuXsf/wcLnWjnbjkry7Z/m/FHzpf8x2JSJs+di8PriR0vL6oLBQrxEK6I+MZGOTnJAIThxsii7pO/EnDEGz6YM2fuaEE/MkO5urrA1OTzU=
+	t=1723032285; cv=none; b=QruYn/TdwulgOTEYEgblILhd0e5jfGaL378GtN3ZbETF/ybqUeZw/8lx0QXGruLnKnvX/JdfCA4J979Jw1rrfEQ8OThM8CSuCak9qDpvxvCDT0nUHlXCSXG5R4ddCv69XZsLRSlbHgsgxEjGzt6BJJDGMNZUqFsGniWXkxUut7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723032241; c=relaxed/simple;
-	bh=ACWINonOV7jXMI5qO4yAb5gUW9lEvSCz7Jx5tZ2ZrXk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e+2CjRzkhmxp615NjsxXsmtlJJAkL3Q9SiuGlEOXI5vkNgxDz063Tq5GzlzEVPbJ9msvWFhZMDLqLCpql8fzDKoS8z8Y59QrjANa9COo8lRBLsEHVMDZYxOdsX9JOE73XlHMIwxABIBK6m6Cd2VVCpzk8MC0U1YKMw4VYLZluHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IJfKLEGZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723032238;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3yKjh7cHIqTwQc0esXiUaqFIXadhVQzrS8A1fogarFo=;
-	b=IJfKLEGZhJw6wWat01SMA9ZmOTvH/0upNY+J1gXK+cVUNYBrMJIU1gVulOStfof8HVuVhv
-	28UflVDsDxzH/TXDUngz94KesD7+M76k8J9i4GU+2SMWeoD2ZOf7tNGMXrBVD6hc4R2SHE
-	TYKbswJCrpT/zvcTKLSa0DcA5ayUELU=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-500-4AnZoyGYP_iYUw801KNX_w-1; Wed, 07 Aug 2024 08:03:57 -0400
-X-MC-Unique: 4AnZoyGYP_iYUw801KNX_w-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2f03d84f79bso19313691fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 05:03:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723032235; x=1723637035;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3yKjh7cHIqTwQc0esXiUaqFIXadhVQzrS8A1fogarFo=;
-        b=KyGWKLvARpRY1h11Un2YmqH5D3cppFjv7kOUTdVFJgMxvUuGIwxs/oap1r5VtQF5JI
-         xTAUvdChZV14hVsYr3N0kGkHTatmAAKrjc3zWzWmzAzOYay5V6nBkGA+Ypy5zGpNQjKT
-         df4FBTFjraEOtXeStnoH5kx7n5sT2+wxL/MfPuYbqUzbW0cp9L4HYiJY48ZVSCKfa3WO
-         gJyjT29G3YS3uQ8elbJOEU8jCEa93NU9pL0g3IsZPepkCj/HzrXJ/UdA5r/W6jHsORLq
-         9vEVKWhK2uIPAWP4Bq+WOlzcy32Oi5ovZV78v/hflzL6LZMe2SZ0Z1ZycK7FTuDRCX3W
-         A2/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUxZtkd45NtHq/Mr5CfLwWfMnfnJoF5dWCboyU5ZRgJjBm6on27w/e5gZtD85TUvooDNTB2xLj+w+X1Gq8ftgK8gXJwB76SXkWSzZof
-X-Gm-Message-State: AOJu0Yx1l0zPSCMKXRB/dLaOYNDBz9RQWZ1SCNXvSlNO/pzUUGclBHH0
-	Old1eHZ9K8B2+eSf8pmZ63vTsoz6J6mmkUNNfvXSXs6Z5U/9pRcG2H0CwOIEPpOqQLBVFjCLV1n
-	8sXItKuKI+g10CNhXUFvnwVYRODugi63j5RFDtFSkSk2SuZlnSAUeSjqwIBXGxchb4GUaRQ==
-X-Received: by 2002:a2e:91d5:0:b0:2ef:26ec:44ea with SMTP id 38308e7fff4ca-2f15ab3507emr118990441fa.39.1723032235444;
-        Wed, 07 Aug 2024 05:03:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWuRa3qy7iQNpS/NzL7zESnDWOHWFrxO98N86VEQIKq7YJ+/oAAgCct9NJeyygYfi/xup4IA==
-X-Received: by 2002:a2e:91d5:0:b0:2ef:26ec:44ea with SMTP id 38308e7fff4ca-2f15ab3507emr118990231fa.39.1723032234872;
-        Wed, 07 Aug 2024 05:03:54 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c708:1a00:df86:93fe:6505:d096? (p200300cbc7081a00df8693fe6505d096.dip0.t-ipconnect.de. [2003:cb:c708:1a00:df86:93fe:6505:d096])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42905796a4csm26589385e9.1.2024.08.07.05.03.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 05:03:54 -0700 (PDT)
-Message-ID: <96439797-355e-493f-b652-1d933c4739b8@redhat.com>
-Date: Wed, 7 Aug 2024 14:03:52 +0200
+	s=arc-20240116; t=1723032285; c=relaxed/simple;
+	bh=GLRNF2HuoLjUQ6w4jpeRIInoZ8CgfoqNgjV1++re138=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lAQ+xVtPLrGI9SSDmWRhVJEFVRhrrpwqLTYUm+Ctv5I/oUnw0XkcP4XlUzlBEnNJ7SNYZV463v1T0mD/UQHI/aWESsgDlXhxOUZWMHGiGZwIwuFoOGbzc4Onp5B9q1tq8g/6N1oRndi8Rq1A6gp718TDVJ5ImBAbxYHh6G8Mz+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aMC5hu6k; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723032282; x=1754568282;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GLRNF2HuoLjUQ6w4jpeRIInoZ8CgfoqNgjV1++re138=;
+  b=aMC5hu6kArj+1mIr5DPcuBwE9wICSfVekUgAHOxBVihgdLnNme5H6t7h
+   NBO9u7ajz4Gr8sg482NWbBNK3Mu+evH88Gi9//72Dr6kgfp5e+VrQqHj1
+   483m2bQIxzKwratTqUJa+Jr64QtRWmr08z9Qhy0EOYqZaRHYHjvse50EH
+   F/LRHMTT9n5giFb7NPf2QXwaARrmN60S1Ynwh/l5Cotu/E2pZ0eK69Qlo
+   DiyM4IZ19V4YPBwuzqRWr3TC9KNEdTRcPdeZnDcDrNrkBYD6EBt+FJ/Ls
+   i7jr1qc9+KLjDckHP4uJxPqVt5iI6ecyWRQ/eisHphXMmqP7OtPAwMKiI
+   g==;
+X-CSE-ConnectionGUID: XoJR10mQQfOb9uuaZuilCg==
+X-CSE-MsgGUID: Yirz4XL0T+ekW8tCp8oY5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="46501028"
+X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
+   d="scan'208";a="46501028"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 05:04:41 -0700
+X-CSE-ConnectionGUID: C1Hv3b0wQkGnZhuTvKV2xg==
+X-CSE-MsgGUID: WCCbT51kQy6D3mvYnNd/Dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
+   d="scan'208";a="60956213"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 07 Aug 2024 05:04:39 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sbfOm-0005Lo-1T;
+	Wed, 07 Aug 2024 12:04:18 +0000
+Date: Wed, 7 Aug 2024 20:04:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Baruch Siach <baruch@tkos.co.il>, Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Baruch Siach <baruch@tkos.co.il>,
+	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>,
+	Ramon Fried <ramon@neureality.ai>,
+	Elad Nachman <enachman@marvell.com>
+Subject: Re: [PATCH v5 1/3] dma: improve DMA zone selection
+Message-ID: <202408071931.W1GA8Ee2-lkp@intel.com>
+References: <5200f289af1a9b80dfd329b6ed3d54e1d4a02876.1722578375.git.baruch@tkos.co.il>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/sparse: return right away if sparsemap_buf is null
-To: Leesoo Ahn <lsahn@ooseel.net>, Mike Rapoport <rppt@kernel.org>
-Cc: Leesoo Ahn <lsahn@wewakecorp.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240726071023.4078055-1-lsahn@wewakecorp.com>
- <ZqY81pf9dvl6mvg9@kernel.org>
- <CANTT7qg7JRZR0DpaUg_YFVTrbBDE9hrb_6bv4XDQ_3QXcgY_vw@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CANTT7qg7JRZR0DpaUg_YFVTrbBDE9hrb_6bv4XDQ_3QXcgY_vw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5200f289af1a9b80dfd329b6ed3d54e1d4a02876.1722578375.git.baruch@tkos.co.il>
 
-On 07.08.24 05:21, Leesoo Ahn wrote:
-> 2024년 7월 28일 (일) 오후 9:43, Mike Rapoport <rppt@kernel.org>님이 작성:
->>
->> On Fri, Jul 26, 2024 at 04:10:23PM +0900, Leesoo Ahn wrote:
->>> sparse_buffer_fini(..) takes the following actions even though the value of
->>> sparsemap_buf is NULL,
->>> 1. calculate size of sparsemap buffer (which is meaningless).
->>> 2. set sparsemap_buf variable to NULL (although it is already NULL).
->>>
->>> These steps are unnecessary if the variable, sparsemap_buf is NULL.
->>>
->>> Refactor the function to return right away if the variable is NULL.
->>> Hence, it doesn't need to take further actions.
->>
->> sparse_buffer_fini() is called a few times on init so saving a jump (if at
->> all) does not worth the churn.
-> 
-> Fair enough.
-> 
-> Any related to refactoring codebase will be unlikely to be taken into upstream??
+Hi Baruch,
 
-Any reasonable cleanups or reasonable optimizations are welcome.
+kernel test robot noticed the following build warnings:
 
-Micro-optimizations that effectively add code/LOC, not so much :)
+[auto build test WARNING on 8400291e289ee6b2bf9779ff1c83a291501f017b]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Baruch-Siach/dma-improve-DMA-zone-selection/20240803-074651
+base:   8400291e289ee6b2bf9779ff1c83a291501f017b
+patch link:    https://lore.kernel.org/r/5200f289af1a9b80dfd329b6ed3d54e1d4a02876.1722578375.git.baruch%40tkos.co.il
+patch subject: [PATCH v5 1/3] dma: improve DMA zone selection
+config: i386-randconfig-063-20240807 (https://download.01.org/0day-ci/archive/20240807/202408071931.W1GA8Ee2-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240807/202408071931.W1GA8Ee2-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408071931.W1GA8Ee2-lkp@intel.com/
+
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
+
+>> WARNING: modpost: vmlinux: section mismatch in reference: __dma_direct_alloc_pages+0xcc (section: .text.__dma_direct_alloc_pages) -> memblock (section: .init.data)
+WARNING: modpost: vmlinux: section mismatch in reference: __dma_direct_alloc_pages+0xd2 (section: .text.__dma_direct_alloc_pages) -> memblock (section: .init.data)
+WARNING: modpost: vmlinux: section mismatch in reference: swiotlb_alloc_pool+0xa0 (section: .text.swiotlb_alloc_pool) -> memblock (section: .init.data)
+WARNING: modpost: vmlinux: section mismatch in reference: swiotlb_alloc_pool+0xa6 (section: .text.swiotlb_alloc_pool) -> memblock (section: .init.data)
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/bpf/preload/bpf_preload.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
 
 -- 
-Cheers,
-
-David / dhildenb
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
