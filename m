@@ -1,168 +1,108 @@
-Return-Path: <linux-kernel+bounces-277682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E973394A4B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:50:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A53594A4B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97EBF1F210B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:50:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6E50B24914
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6341D1F52;
-	Wed,  7 Aug 2024 09:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211151D1737;
+	Wed,  7 Aug 2024 09:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="V2MnRUJ0"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U/JRDVL9"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136A8801;
-	Wed,  7 Aug 2024 09:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C847B1C6899
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 09:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723024188; cv=none; b=eFmHbxriHlK4wNaX1QEY6LkGk34zhZYbv/ZL1dCNlOdhaTMgXSgBfFeDmX4YqS7wt0XT0QtkmhjWmbnW53ylX9j15tbVYVdaMhOFuMvo44hQBUJr21oeBbVRYF9j5BZiCfvmC+ElpoDVNOLhrgmh4YIF1NdwZ4mWeoDsgYP23W0=
+	t=1723024177; cv=none; b=XPqLJdEJ9csqT54NlJcln7G4UffdCN7LJvtmsgAcrzfa7MeGD2MrnU9XmMXzWbYbp6WFcup3HVXo+jyupv4FiiVviDzCmTu7dPiJLFLruq3TUXn8He8n1/xKHXjNR2o0Wk5o4gpKtgjgNPu9gLIz/3YzZ9ZC4R1jUMTTAjrbv0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723024188; c=relaxed/simple;
-	bh=p5E9zKddV2feWg3wZzHXjmOXnbNEA6sewjjyQImkQDw=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ncTjm88tEZMPTZBvmbUuzypyv4Tf9XfaMz55Yn8/qOdcU66Tym9o4dn60XuX/lHJcalwWXPOYxmk90q10QqSoSMc8NmTIxT1Uo1hvX+Syc4F3Th5NqGxxdnUiEgCo6fhDG9hmbDQS3IhKLFd+W0YpcZRf8xm12B8WiwGX0TPESw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=V2MnRUJ0; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1723024186; x=1754560186;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=p5E9zKddV2feWg3wZzHXjmOXnbNEA6sewjjyQImkQDw=;
-  b=V2MnRUJ0DxvB7WERxDMXSYZrFkPLDsvIMFu3ccF8wpepfRLmu/tDbZeC
-   WkZWbiAaNZBzpAYJMGDW2vYCWpC2bDUrWCMZio1DCkSMjmKkqRQ1cUQRh
-   EnOHzmV8OAcxfqXDDsRY0P5coBcn0HKFk3C0bcU4Rj+usXGWLjvhFZPk7
-   16lxAdzARkk543VUZHmhJnPBcj3ap0egNF6TvmknVARKR30rtSSg7v/5u
-   J+vFt1J0tl9yK91o0aR0XMJatb/fYc2BADpOqa9OW+74nRY+eIuarJ4sW
-   w3xP9jlk/6C4DrHc9Gtm0ZaH+5NLnfm5xWJj1ReT8xERCFlWwaSZNCT6A
-   Q==;
-X-CSE-ConnectionGUID: 84YL2YxrTjaVTxV9Ds3KIA==
-X-CSE-MsgGUID: dX1L9EdXR1qffcjUQ4NgVQ==
-X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
-   d="scan'208";a="30861844"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Aug 2024 02:49:39 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 7 Aug 2024 02:49:01 -0700
-Received: from DEN-DL-M31857.microsemi.net (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 7 Aug 2024 02:48:56 -0700
-Message-ID: <33d1dabf26457f0a43c78a35ac1d8bcf35f15bc5.camel@microchip.com>
-Subject: Re: [PATCH v4 6/8] reset: mchp: sparx5: Release syscon when not use
- anymore
-From: Steen Hegelund <steen.hegelund@microchip.com>
-To: Herve Codina <herve.codina@bootlin.com>, Geert Uytterhoeven
-	<geert@linux-m68k.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, "Simon
- Horman" <horms@kernel.org>, Lee Jones <lee@kernel.org>, Arnd Bergmann
-	<arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
-	<dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>, Daniel Machon
-	<daniel.machon@microchip.com>, <UNGLinuxDriver@microchip.com>, Rob Herring
-	<robh@kernel.org>, Saravana Kannan <saravanak@google.com>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, "Andrew
- Lunn" <andrew@lunn.ch>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>, "Allan
- Nielsen" <allan.nielsen@microchip.com>, Luca Ceresoli
-	<luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?ISO-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>
-Date: Wed, 7 Aug 2024 11:48:56 +0200
-In-Reply-To: <20240805101725.93947-7-herve.codina@bootlin.com>
-References: <20240805101725.93947-1-herve.codina@bootlin.com>
-	 <20240805101725.93947-7-herve.codina@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1723024177; c=relaxed/simple;
+	bh=p8oOle8j0YyFB8aei5q+8ZxQH0nnNcOH9u81uVEH3kQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tAPiqN2pwadE3qF+Y/VD5t0BfH2bEa/ApJk53meEcugurcVlXjaxk4IygOrFTK+W220OLkObDLh9pmqD8/6CLwJZwLeXIugJ0HyJUQOJjVjZSSgXqlln2NVU49JryTZTZg3StwZ/Yj03Z63W9Gj+Xd1XKmQIhH46V+unvviii+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U/JRDVL9; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3686b285969so810086f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 02:49:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723024174; x=1723628974; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pc/1iktJr3p9PLDHAKJFkcEhANCClecq2itvdxpvggU=;
+        b=U/JRDVL9/aejtlmKGZiVJc2g2hJLNssl+dieRDEFJ4fJJmj8eA7wZ8X+GhFwz7Laf9
+         1p/65uTxuyKkmCgM2UOw0dBEhx/aPLouPj4p+yt6hnruAu8i9W9NTymWEg007t5EQfvj
+         bCD9ncZBrncK2lY/ysBDOspCH7m8t7Cjvgev3CbEXEALMCK+kV9En1Si8IXoX493bYqL
+         RzUho7anmN+6xZ9hAJoZv6fWZsM48fDvHYx8yrQTlFcpvZZxL1RSQ1+zZfL/enEw72bO
+         IIEp0QQspvGv+6/rGISowKiQs79ltoO6MwynxsOIWG7rssY3ojvBLue9HKFmcnad7uPN
+         aXaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723024174; x=1723628974;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pc/1iktJr3p9PLDHAKJFkcEhANCClecq2itvdxpvggU=;
+        b=NEzk+BGe8PFET90j/54WWCiK/WhvzGRfbIYeqCc98xp0BIMm+Zz7P/w4mCXa4wouev
+         oUZlmc1Go907MCuwuElUTwDV19ULplwwwLcaAv5HJUPO92QHchn0H4CxESet2DD4uqC6
+         HBjGqDF3gRyg4q8LlEHXoU2hneyohV0nmZN90gwNAUfWn9qNYfxY1udrmLNhs7PzzFgA
+         NDdBjbDLGWMB+y5IHHuhfhakcHn/kgVxIX/qFz9R0Rm6qIvcay7oMs7O6UwRAVQYHkQs
+         7XtS5w6pvG5j/DTZQV6PVGAkyWr1AP+FDaPYYedb4RHxC6udTjPVm7VI0Azz4HR6dinO
+         dW0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVm9j1AkxchbKgV/YRdZkz9G3lG0QUleeBryin8/fjbg/q5OZfqX9ZzjQiLh+HtuQpkwZyy9j40sXlCrrtDQSqnNRNFmwJmwNYDJcCG
+X-Gm-Message-State: AOJu0YyQN/GPQlttwt+ENBBJjSFzGVoi4JX8sxt/A6pDyZeJ7hHAw+nN
+	dk5DbHfFi+t4zoK8yanLA7IIjIkg0L1wPJPlIpbvVAXFcX7jLFL5bA698K5V010=
+X-Google-Smtp-Source: AGHT+IG7C+gyfAmIU5emdVImNYDBwmPpefND5NNGBZ5h26Nijfjr5hlnMITUlNJ6c7ynyH03xWfJyA==
+X-Received: by 2002:a5d:4ac7:0:b0:367:9237:611d with SMTP id ffacd0b85a97d-36bbc17bfebmr11861794f8f.60.1723024174050;
+        Wed, 07 Aug 2024 02:49:34 -0700 (PDT)
+Received: from [192.168.68.116] ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd05982bsm15530967f8f.86.2024.08.07.02.49.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 02:49:33 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+ "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+ festevam@gmail.com, imx@lists.linux.dev, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Peng Fan <peng.fan@nxp.com>
+In-Reply-To: <20240228081355.1627744-1-peng.fan@oss.nxp.com>
+References: <20240228081355.1627744-1-peng.fan@oss.nxp.com>
+Subject: Re: [PATCH 1/2] dt-bindings: nvmem: imx-ocotp: support i.MX95
+Message-Id: <172302417240.381927.16775224846160228092.b4-ty@linaro.org>
+Date: Wed, 07 Aug 2024 10:49:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.2
 
-Hi Herve,
 
-On Mon, 2024-08-05 at 12:17 +0200, Herve Codina wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you
-> know the content is safe
->=20
-> From: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
->=20
-> The sparx5 reset controller does not release syscon when it is not
-> used
-> anymore.
->=20
-> This reset controller is used by the LAN966x PCI device driver.
-> It can be removed from the system at runtime and needs to release its
-> consumed syscon on removal.
->=20
-> Use the newly introduced devm_syscon_regmap_lookup_by_phandle() in
-> order
-> to get the syscon and automatically release it on removal.
->=20
-> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
-> =C2=A0drivers/reset/reset-microchip-sparx5.c | 8 ++------
-> =C2=A01 file changed, 2 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/reset/reset-microchip-sparx5.c
-> b/drivers/reset/reset-microchip-sparx5.c
-> index 69915c7b4941..c4fe65291a43 100644
-> --- a/drivers/reset/reset-microchip-sparx5.c
-> +++ b/drivers/reset/reset-microchip-sparx5.c
-> @@ -65,15 +65,11 @@ static const struct reset_control_ops
-> sparx5_reset_ops =3D {
-> =C2=A0static int mchp_sparx5_map_syscon(struct platform_device *pdev, cha=
-r
-> *name,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct regmap **target)
-> =C2=A0{
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device_node *syscon_np;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device *dev =3D &pdev->dev;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct regmap *regmap;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int err;
->=20
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 syscon_np =3D of_parse_phandle(pdev=
-->dev.of_node, name, 0);
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!syscon_np)
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 return -ENODEV;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regmap =3D syscon_node_to_regmap(sy=
-scon_np);
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 of_node_put(syscon_np);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regmap =3D devm_syscon_regmap_looku=
-p_by_phandle(dev, dev-
-> >of_node, name);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(regmap)) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 err =3D PTR_ERR(regmap);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 dev_err(&pdev->dev, "No '%s' map: %d\n", name, err);
-> --
-> 2.45.0
->=20
+On Wed, 28 Feb 2024 16:13:54 +0800, Peng Fan (OSS) wrote:
+> Add i.MX95 ocotp compatible string
+> 
+> 
 
-Looks good to me.
+Applied, thanks!
 
-Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+[1/2] dt-bindings: nvmem: imx-ocotp: support i.MX95
+      commit: 62e39987d3d5f27e2c074398805d101d7b9abaf4
+[2/2] nvmem: imx-ocotp-ele: support i.MX95
+      commit: 04d372dd5562ed8aed4cdbb1004fe33a3bc4fa24
 
-BR
-Steen
+Best regards,
+-- 
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
 
