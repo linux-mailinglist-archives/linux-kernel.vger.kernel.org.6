@@ -1,112 +1,229 @@
-Return-Path: <linux-kernel+bounces-277651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318AA94A449
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:29:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228DB94A44A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F42E1C20C36
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:29:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 964481F2331B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5FD1CCB55;
-	Wed,  7 Aug 2024 09:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0497D1CCB30;
+	Wed,  7 Aug 2024 09:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="T2Hv067v"
-Received: from out203-205-221-233.mail.qq.com (out203-205-221-233.mail.qq.com [203.205.221.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KEH94C0V";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="stZfgEGd";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KEH94C0V";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="stZfgEGd"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9F61CCB37
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 09:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A518413F435
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 09:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723022982; cv=none; b=ek5/nQSbWkkMMFAQOiLuVTSCe9P5RKGR+1KtS+4uLqTTCmDj1o+41Dv/e8704ZHtbqJTfQZLN97vVHd9W8mcMnIGw00BVwKeQLa9U3H+Hgn8WTTSpYLlhSodBf2hcunHduOkZLZOyNpbd/vnr6qIrd/gDdocPG1GD7NjUqFhsDo=
+	t=1723023018; cv=none; b=ECU0QQOwrauxPGemAyEGECa/iGqBCd/WU4sPYLBVV13sh8j5Ta6/SXkBfyOI1xGm+JXTt96UUzhlgurfSYq+hI/tHJteds+F9vgDIoLdPqCIHD0JM1EsskLrdqG/392sRwgNZFaC1l995nYT2WrHUrvi7GUpu5iDl23O6xSn+uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723022982; c=relaxed/simple;
-	bh=WMZwBA2xHi3cemQvytOl2A4YbsPr4FiWzHQCs3el7xc=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=MsIoK5tqUsB8q2DmnwYX24CycURkf4k8/Zootrpl2QIRteYELwYKzpNOhdHSLmFG3ro7Z521WcDcy/1THG0Iw808LzayBiInP7bJ5lkcdvzJzG3lDKw+HtOhITHJmqHeNvFx2ZHUSIID/nn/Jt6EDGs8xqs1Npmylr+LLG/AGds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=T2Hv067v; arc=none smtp.client-ip=203.205.221.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1723022977; bh=ZA3m6a1a29m1al31x/co6/4+v7AchZ7tnHP8dqD6U3s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=T2Hv067v8YT39ClP8rhOCzgB0SH9rDLLeRMV+/MJDT2H24IL3LSNUGozqEvfWhxqZ
-	 3oCq2mTDfZZeANFAyjlP8xI1jJV5Y9XImHDWX6yY/NLbD/Hoga70sbIXfKElcR0zTK
-	 Em3SI6LOs2BKyR/nWznkbRbMJe3pm7+7mNz2IO54=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
-	id 7630BC1D; Wed, 07 Aug 2024 17:29:35 +0800
-X-QQ-mid: xmsmtpt1723022975tbhy6af75
-Message-ID: <tencent_F81769376726C61363E365A966E3A3044405@qq.com>
-X-QQ-XMAILINFO: MyirvGjpKb1jm0eXw+cn6PXgS1ya6mU5x+q6Wk7+NGGwO9hERihVU0yZlJcT7z
-	 WDdIKUiPAL5cKlNnD9pJjKNomW4cbSxo4EcMCHF2MbLgRwQeRmBIvd0gC9Xwqx08wsNZvyHaoyfV
-	 ygdH9Ri2MtlF9rJp1EvOxh2MQRr1Qw1oN2d8C7Xw7zN0eqTRcxCY/PLtBmZT9g3NR8Ye4/cuci+A
-	 ALVc5flok3mf79hlWXGCczJ2RLo0SZUFb/WGpU21Z762qgiDRZyfraFrKwTDsvjpu565Pz+R6ecP
-	 ehG+ITgjwGi1mCCV+BZxFfRenzoUkSEjIl2aBCO7TTpq2BE/HOi3jT4v52G/lr0Q8y1xB2PFecxd
-	 EqomC0S+bSScIzYpM+8vXRkVNK7IdX1YS75mX0PDsz6Sh/plbvdLdkmABO2JpsKrVtKs+WC1UTm7
-	 AVG61sHy+A0pcOx229U8dmJjD+2FaeFy8XCX6Ad0BLGrtBRGCAJl0n8NAOfJKXxm7MKokP1xI0xd
-	 PiUp3LgHip3yfbs0pYPZDF0A8+o/SA1qvWX81vPoOEZM2AvWXPY4A3aak5R6E/0wGbSpx3uequtu
-	 zNDlPY399+QRmLqzN4I/bgCQLQMOimFZpHYk6wEm3ZdHSd5lk0RHYmvM21UjKBi+gcIDJXvrqQSv
-	 4OfuMtNcdKImwvvcDG1muKUe8AaaNM+lW+bXResNtUV/o/MTTcMgetOt10SXgmn5eFr0LSmn99tD
-	 RDGhjPWbAPZH7r57EErnM8tZcQn+MHfJ8nLRKtfzAiRbxvDTOdZSHKO+geSV7zolKQQl93fAqjMM
-	 irErWW6m960Zxj2Y/D8J0AbckAbjUxqCfQHmVNhwCtGX7RQoi+fKESeCOnhFHnQi5iEwDDjH3bzQ
-	 9493RQTRPse3hTtuwDRILnuC3aUqgkT3Ps72zQOyg/Pgoe+pP75NtyQ6TnFcWsfrAPm0sKqzl4
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [can?] WARNING: refcount bug in j1939_session_put
-Date: Wed,  7 Aug 2024 17:29:36 +0800
-X-OQ-MSGID: <20240807092935.273955-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000af9991061ef63774@google.com>
-References: <000000000000af9991061ef63774@google.com>
+	s=arc-20240116; t=1723023018; c=relaxed/simple;
+	bh=iBwSElW7/bGjjlIgMt5MwMhqoVEnZ1qEhtTJ2Xsjuw4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KtclvOuAdtIp7SHohZlXLI0UShofieJ703MvZ4aMvi98M5gb1KhkmX+jKbHszckxgYIfxvE87A/iUJwhb1j/zCzLimDd999Uv8RqEd0EaSoU8K04lST2lnscAqGj0A0Tx8ocFxNAMp9BfofTsE8tpADeBqpEo5atlMTDVzt+hto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KEH94C0V; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=stZfgEGd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KEH94C0V; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=stZfgEGd; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B52BF21B79;
+	Wed,  7 Aug 2024 09:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723023014; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LhM+tJw0ZvhBM0ppB6xSr68FJ9X0AGS0EoEn7WLfbTQ=;
+	b=KEH94C0VSSClbVs+IHMgmtLdflfj40u4QaOwdTKjxwIX8b9Y+H1C41ERZqcmLGEE8D+Tm+
+	5IZGyIHnHS0ZbPvQ5ZPsQX2RG44B85VE43Z3a39ZLnHbsx1DQONpCMOJ15JOcup6rzx9WM
+	zcGqgVq9khWDLi2iAaUpTmefYtqpI4k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723023014;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LhM+tJw0ZvhBM0ppB6xSr68FJ9X0AGS0EoEn7WLfbTQ=;
+	b=stZfgEGdVYSAY/V+mgzPtBobLhQgY2M1f34/sEE17IhnUJfI+iESJeI2EW0XsrOYjLaeJh
+	c1S3STgA052vfzAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=KEH94C0V;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=stZfgEGd
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723023014; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LhM+tJw0ZvhBM0ppB6xSr68FJ9X0AGS0EoEn7WLfbTQ=;
+	b=KEH94C0VSSClbVs+IHMgmtLdflfj40u4QaOwdTKjxwIX8b9Y+H1C41ERZqcmLGEE8D+Tm+
+	5IZGyIHnHS0ZbPvQ5ZPsQX2RG44B85VE43Z3a39ZLnHbsx1DQONpCMOJ15JOcup6rzx9WM
+	zcGqgVq9khWDLi2iAaUpTmefYtqpI4k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723023014;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LhM+tJw0ZvhBM0ppB6xSr68FJ9X0AGS0EoEn7WLfbTQ=;
+	b=stZfgEGdVYSAY/V+mgzPtBobLhQgY2M1f34/sEE17IhnUJfI+iESJeI2EW0XsrOYjLaeJh
+	c1S3STgA052vfzAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5714913A7D;
+	Wed,  7 Aug 2024 09:30:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0QfmE6Y+s2bGDAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 07 Aug 2024 09:30:14 +0000
+Date: Wed, 07 Aug 2024 11:30:53 +0200
+Message-ID: <87r0b07k8i.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Shenghao Ding <shenghao-ding@ti.com>
+Cc: <broonie@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>,
+	<lgirdwood@gmail.com>,
+	<perex@perex.cz>,
+	<pierre-louis.bossart@linux.intel.com>,
+	<13564923607@139.com>,
+	<alsa-devel@alsa-project.org>,
+	<linux-kernel@vger.kernel.org>,
+	<liam.r.girdwood@intel.com>,
+	<cameron.berkenpas@gmail.com>,
+	<baojun.xu@ti.com>,
+	<soyer@irl.hu>,
+	<Baojun.Xu@fpt.com>,
+	<robinchen@ti.com>
+Subject: Re: [PATCH v1] ALSA: ASoC/tas2781: fix wrong calibrated data order
+In-Reply-To: <20240807075541.1458-1-shenghao-ding@ti.com>
+References: <20240807075541.1458-1-shenghao-ding@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[139.com,gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,gmail.com,perex.cz,139.com,alsa-project.org,vger.kernel.org,intel.com,ti.com,irl.hu,fpt.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,ti.com:email]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -2.01
+X-Rspamd-Queue-Id: B52BF21B79
 
-Fixes: c9c0ee5f20c5 ("net: skbuff: Skip early return in skb_unref when debugging")
+On Wed, 07 Aug 2024 09:55:40 +0200,
+Shenghao Ding wrote:
+> 
+> From: Baojun Xu <baojun.xu@ti.com>
+> 
+> Wrong calibration data order cause sound too low in some device.
+> Fix wrong calibrated data order, add calibration data converssion
+> by get_unaligned_be32() after reading from UEFI.
+> 
+> Fixes: 5be27f1e3ec9 ("ALSA: hda/tas2781: Add tas2781 HDA driver")
+> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+> 
+> ---
+> v1:
+>  - Change copyright date, and add new maintainer.
+>  - Add unaligned.h included for get_unaligned_be32().
+>  - In tas2781_apply_calib(), change data address transfer directly to
+>    get data by get_unaligned_be32(), and send address to device.
+> ---
+>  sound/pci/hda/tas2781_hda_i2c.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
+> index 49bd7097d..4dc3350d5 100644
+> --- a/sound/pci/hda/tas2781_hda_i2c.c
+> +++ b/sound/pci/hda/tas2781_hda_i2c.c
+> @@ -2,10 +2,12 @@
+>  //
+>  // TAS2781 HDA I2C driver
+>  //
+> -// Copyright 2023 Texas Instruments, Inc.
+> +// Copyright 2023 - 2024 Texas Instruments, Inc.
+>  //
+>  // Author: Shenghao Ding <shenghao-ding@ti.com>
+> +// Current maintainer: Baojun Xu <baojun.xu@ti.com>
+>  
+> +#include <asm/unaligned.h>
+>  #include <linux/acpi.h>
+>  #include <linux/crc8.h>
+>  #include <linux/crc32.h>
+> @@ -519,20 +521,21 @@ static void tas2781_apply_calib(struct tasdevice_priv *tas_priv)
+>  	static const unsigned char rgno_array[CALIB_MAX] = {
+>  		0x74, 0x0c, 0x14, 0x70, 0x7c,
+>  	};
+> -	unsigned char *data;
+> -	int i, j, rc;
+> +	int i, j, rc, data;
+> +	int offset = 0;
 
-#syz test: net-next 743ff02152bc
+data should be __be32 type, to be more explicit.
 
-diff --git a/net/can/j1939/socket.c b/net/can/j1939/socket.c
-index 305dd72c844c..d3caed131973 100644
---- a/net/can/j1939/socket.c
-+++ b/net/can/j1939/socket.c
-@@ -1170,10 +1170,9 @@ static int j1939_sk_send_loop(struct j1939_priv *priv,  struct sock *sk,
- 					break;
- 				}
- 			}
--		} else {
--			skcb->offset = session->total_queued_size;
--			j1939_session_skb_queue(session, skb);
- 		}
-+		skcb->offset = session->total_queued_size;
-+		j1939_session_skb_queue(session, skb);
- 
- 		todo_size -= segment_size;
- 		session->total_queued_size += segment_size;
-diff --git a/net/can/j1939/transport.c b/net/can/j1939/transport.c
-index 4be73de5033c..4676585766db 100644
---- a/net/can/j1939/transport.c
-+++ b/net/can/j1939/transport.c
-@@ -1505,7 +1505,6 @@ static struct j1939_session *j1939_session_new(struct j1939_priv *priv,
- 	session->state = J1939_SESSION_NEW;
- 
- 	skb_queue_head_init(&session->skb_queue);
--	skb_queue_tail(&session->skb_queue, skb);
- 
- 	skcb = j1939_skb_to_cb(skb);
- 	memcpy(&session->skcb, skcb, sizeof(session->skcb));
--- 
-2.43.0
 
+Takashi
+
+>  
+>  	for (i = 0; i < tas_priv->ndev; i++) {
+> -		data = tas_priv->cali_data.data +
+> -			i * TASDEVICE_SPEAKER_CALIBRATION_SIZE;
+>  		for (j = 0; j < CALIB_MAX; j++) {
+> +			data = get_unaligned_be32(
+> +				&tas_priv->cali_data.data[offset]);
+>  			rc = tasdevice_dev_bulk_write(tas_priv, i,
+>  				TASDEVICE_REG(0, page_array[j], rgno_array[j]),
+> -				&(data[4 * j]), 4);
+> +				(unsigned char *)&data, 4);
+>  			if (rc < 0)
+>  				dev_err(tas_priv->dev,
+>  					"chn %d calib %d bulk_wr err = %d\n",
+>  					i, j, rc);
+> +			offset += 4;
+>  		}
+>  	}
+>  }
+> -- 
+> 2.40.1
+> 
 
