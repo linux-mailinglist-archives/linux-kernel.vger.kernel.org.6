@@ -1,187 +1,119 @@
-Return-Path: <linux-kernel+bounces-277182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9709949D8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:00:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA2B949D92
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 04:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23DF4B23BF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:00:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01520B23A59
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 02:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2209B27448;
-	Wed,  7 Aug 2024 02:00:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFCA433C8;
+	Wed,  7 Aug 2024 02:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JRXJYRl1"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF56818FDDE
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 02:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6500B3207
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 02:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722996005; cv=none; b=KFD8ZETW0E/YYvnh1DBip48TB0Bxmfj9Qj7aKca/C7WNypZ42zSUwGmNeqm0G1dSnCvtPxKvSb8/by9v+l8MNizDR/4+v/zMJKb0s24iLu5MdO5eWBZCWu278nWzhWYYTlL2OD3JVvHqwIeMqWdpv2vISDSMey6zhlW724hmn7Q=
+	t=1722996258; cv=none; b=TlknCkmQA/nCSjnoaLPne7yzi78wUDykWq2mvjsY29hRMb1CqnsDlgYDrMk+re9oxLg70drLT4wHGgjHJD8Nl8zxlvzYDdYrIbqb/H+8FjEB72cWXbZKkds7Wkd3vj+LhCMzdlAEVCSVgDR4937WXVrD0VW2UHzSQZtNCyvhFvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722996005; c=relaxed/simple;
-	bh=J7rRMouWrePqOervRgih/+EQJ5PJrooW7iamK8b9FGg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bx9qxWoy66NeEbgNvCFOTft3zLma0GfIolHT/sW1HukYhi6oGuRm17MGOHHi2KDbVr2lunuVa4DSS4tFVx4Z54DcYyabjQri39FbNi2o6/AIxumHmaK2Gc+ghj024fuskE1OTJnMk87Jywk8mrrgBor/l0QfD8X00pGjOhaUEFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f968e53b0so169240739f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 19:00:02 -0700 (PDT)
+	s=arc-20240116; t=1722996258; c=relaxed/simple;
+	bh=j1+KDmwhDT0ovp2KNt67b9uDMMYSONC26ydNlsJtJ9Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oF20Uq2GpBt+8W5o6YzDswD7lExvhjsmKVWsPMTE+BZbL9rbaqMfxiVdV2pdNyQjpXL5VUXYbTJptn2eQH1KiTxVoFhPS7uFD2IsbbvcqFQvNKP178lontsfOi/Z1KAixM7cNHyMJADAsA9Ghzqs1es8WQC5XaZj8rsayyc4fUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JRXJYRl1; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7a130ae7126so935027a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 19:04:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722996256; x=1723601056; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mnwtsWgIWOm7bbmjcR5dE7C77RAX1hPWkwnS8bzzLUs=;
+        b=JRXJYRl1MuXQK5J8XOWKrVSVZp4D/wAogGu6kzJP3j2C0M8cFZyWC6z1LoQeipwUFR
+         yNd0MLPWJRQhD+r3rb/hdOg/if8jBdbuz64ZD/sMfrr6YEeoXUQ6wu6coVPD2ZyvvmQO
+         AjsMgle4kcuBtl5rxYBP/45fjfXM1MzVK9WoYPxngHQipQ7QXPoQfui2XCbKU5CN95kc
+         m3kUe3kMLNIn8IF5vcSeEu/JTN9VcSa7bmQEIQC9DOrqyCZNjCa2UmY+8mmC/F5ldeOK
+         /lViUO0qxG4tSgme4ksjcminXihWR7cSECEqnQIvK1UYT3Zn6yROcdAyaKiJpVRjl+HP
+         c+zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722996002; x=1723600802;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1722996256; x=1723601056;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RrOZg764SdtsMGIvD+ue+9XnkvrN64rtR0LcLi4DmOE=;
-        b=nruRxlQIUI80l0flen3CWyjf/8LDou0671wQx+zeopJ0Us1fj9J7vEdl7nHmRMgSuO
-         N4ucYaoRw877LqMzr1Oy+LnGuYqtLSfW0MZZzVbEoW2n6GOQFkDDwvfSD/AuZlCPkPPZ
-         SkTOqeAs+9jwg95YyJUZieriEgLR4NnGoEtVV4UqbyM3BQnsIISOBWnz13YGTliPEoxd
-         ovkZuUiBUvCPwNEI8rD6wMI8B6XZmtYRIxa63OMAeyc2dSfHkcJbhjh6egncxGOWGD0F
-         L6G3OADhaU3Y39YFnWPNnrYzmmbu76EVV2uHOuSq8RNN3S4+SYDcHKWjdI0S3ML9rmHv
-         aphw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5Zurc6fhPViLDL0wW6kp5jHC5oN+bxcKyuwcGKnMjNS7fiBKb1eLVDEkbP2TS8WegcaYuONKnf4YCcTsaHCePFPgF9/LaYabo8w5G
-X-Gm-Message-State: AOJu0YzWVa70ts28Pnts3VMT5KrhdZ+mtScV8szAV/br7CtGZBH5GiAc
-	KMJseI/L44FUzmfDtIgLrSQpy9/ylzxsVK+6IGFoLSoWIqyQ2uNlfWmv8J6fivdf1athoO1qo3U
-	++gdpNdtHHC4/JPuZ5bnKtmeiKr8VvBvU1cc+oeOAZj8Nvpe57faZWFU=
-X-Google-Smtp-Source: AGHT+IGR9AJoTC3hDzs/J5/ik0pqUmAST469llb7BOqf8/Xeywz4QPB5gPhwmInUTsorLAamKdLv5v37M99gXP0e+l7HSdcfoJKe
+        bh=mnwtsWgIWOm7bbmjcR5dE7C77RAX1hPWkwnS8bzzLUs=;
+        b=HhNNOin1e+TU+37O22SacJeUUegG9i/+/Zp8Zaf4jc0MYEP0sIddEaLaFr/t7AVYOd
+         irxpxgTAcx3n0+GjhEVWtlVkuuzp1IjE03Ye/zllQuq6N/gbcQnJAnWYlBAou7Ybp6Et
+         q/EAPpxTOIMqB9doyG3219A5eXq/atPPrbn1BeyXmtMbUmNosYj5A/bYfTIOnbwxkiR0
+         +yzpJcEqknbzTgAtNIjpqsG7j1VbApIoOMTykvWx+cSSX4UaqrIli/Ui/fOzyl9Lfso/
+         s557Ud4/HQku/s3YgNAn18u68l4X2HFNbetQcEuRr4WIwaec7ibuSZAw7qlVfQPjJY3Q
+         ukjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVP82BmVuXhX5SMO7um8YqikiAS645ciFZ6vLfppSZM8h3/BIBnLih9kBm/7SB/6WZAG0K9ReA0bI1vc58GFQn+o4RRIFefXBR3lTFP
+X-Gm-Message-State: AOJu0YyzyWAkjmsJdcVwj+iVUjWkRoX3Ae3tsa6vX1h9Z9tmOzcQvl9R
+	2Nrpyu7vwVy0pEu/gGKQO9Hle5JbWc07RQlJeH8nng/70hYDrZVc
+X-Google-Smtp-Source: AGHT+IExTU/Y3iyG5wPqxtTVmb4msLWD/tFRZXKZfkmX6+bNDjepUK3eO1+uwd2V4JjZDtcm4VUKGQ==
+X-Received: by 2002:a05:6a21:e89:b0:1b6:d9fa:8be with SMTP id adf61e73a8af0-1c699628475mr19344795637.40.1722996256461;
+        Tue, 06 Aug 2024 19:04:16 -0700 (PDT)
+Received: from [192.168.255.10] ([43.132.141.25])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b764fb52dasm7502510a12.60.2024.08.06.19.04.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 19:04:16 -0700 (PDT)
+Message-ID: <c1793a38-b8d3-46f2-8f21-85e691af3275@gmail.com>
+Date: Wed, 7 Aug 2024 10:04:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8306:b0:4b7:ca39:5869 with SMTP id
- 8926c6da1cb9f-4c8d5731b71mr600065173.6.1722996001886; Tue, 06 Aug 2024
- 19:00:01 -0700 (PDT)
-Date: Tue, 06 Aug 2024 19:00:01 -0700
-In-Reply-To: <tencent_2878E872ED62CC507B1A6F702C096FD8960A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a46235061f0e4485@google.com>
-Subject: Re: [syzbot] [can?] WARNING: refcount bug in j1939_session_put
-From: syzbot <syzbot+ad601904231505ad6617@syzkaller.appspotmail.com>
-To: davem@davemloft.net, eadavis@qq.com, edumazet@google.com, 
-	kernel@pengutronix.de, kuba@kernel.org, leitao@debian.org, 
-	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, mkl@pengutronix.de, 
-	netdev@vger.kernel.org, o.rempel@pengutronix.de, pabeni@redhat.com, 
-	robin@protonic.nl, socketcan@hartkopp.net, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING: refcount bug in j1939_session_put
-
-------------[ cut here ]------------
-refcount_t: addition on 0; use-after-free.
-WARNING: CPU: 0 PID: 6069 at lib/refcount.c:25 refcount_warn_saturate+0x13a/0x1d0 lib/refcount.c:25
-Modules linked in:
-CPU: 0 UID: 0 PID: 6069 Comm: syz.0.15 Not tainted 6.10.0-syzkaller-12610-g743ff02152bc-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:refcount_warn_saturate+0x13a/0x1d0 lib/refcount.c:25
-Code: a0 16 40 8c e8 87 97 a5 fc 90 0f 0b 90 90 eb b9 e8 3b 89 e3 fc c6 05 95 7d 31 0b 01 90 48 c7 c7 00 17 40 8c e8 67 97 a5 fc 90 <0f> 0b 90 90 eb 99 e8 1b 89 e3 fc c6 05 76 7d 31 0b 01 90 48 c7 c7
-RSP: 0018:ffffc90000007698 EFLAGS: 00010246
-RAX: f96573282d1dbd00 RBX: ffff88801d361864 RCX: ffff88802c26bc00
-RDX: 0000000000000101 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000002 R08: ffffffff81559432 R09: fffffbfff1cb9f88
-R10: dffffc0000000000 R11: fffffbfff1cb9f88 R12: ffff88802afb7468
-R13: ffff88801d361864 R14: ffff888066d74000 R15: ffff88802afb7400
-FS:  00007fa08b7526c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c0010e6000 CR3: 000000006730e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- __j1939_session_release net/can/j1939/transport.c:295 [inline]
- kref_put include/linux/kref.h:65 [inline]
- j1939_session_put+0x26f/0x4a0 net/can/j1939/transport.c:300
- j1939_tp_cmd_recv net/can/j1939/transport.c:2114 [inline]
- j1939_tp_recv+0x7fe/0x1050 net/can/j1939/transport.c:2162
- j1939_can_recv+0x732/0xb20 net/can/j1939/main.c:108
- deliver net/can/af_can.c:572 [inline]
- can_rcv_filter+0x359/0x7f0 net/can/af_can.c:606
- can_receive+0x31c/0x470 net/can/af_can.c:663
- can_rcv+0x144/0x260 net/can/af_can.c:687
- __netif_receive_skb_one_core net/core/dev.c:5660 [inline]
- __netif_receive_skb+0x2e0/0x650 net/core/dev.c:5774
- process_backlog+0x662/0x15b0 net/core/dev.c:6107
- __napi_poll+0xcb/0x490 net/core/dev.c:6771
- napi_poll net/core/dev.c:6840 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6962
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0xd8/0x140 kernel/locking/spinlock.c:194
-Code: 9c 8f 44 24 20 42 80 3c 23 00 74 08 4c 89 f7 e8 0e 9c 3b f6 f6 44 24 21 02 75 52 41 f7 c7 00 02 00 00 74 01 fb bf 01 00 00 00 <e8> 63 c1 a3 f5 65 8b 05 64 b7 44 74 85 c0 74 43 48 c7 04 24 0e 36
-RSP: 0018:ffffc900033cf8c0 EFLAGS: 00000206
-RAX: f96573282d1dbd00 RBX: 1ffff92000679f1c RCX: ffffffff81701f3a
-RDX: dffffc0000000000 RSI: ffffffff8bead5a0 RDI: 0000000000000001
-RBP: ffffc900033cf950 R08: ffffffff9351e917 R09: 1ffffffff26a3d22
-R10: dffffc0000000000 R11: fffffbfff26a3d23 R12: dffffc0000000000
-R13: 1ffff92000679f18 R14: ffffc900033cf8e0 R15: 0000000000000246
- j1939_sk_send_loop net/can/j1939/socket.c:1164 [inline]
- j1939_sk_sendmsg+0xe01/0x14c0 net/can/j1939/socket.c:1277
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
- ___sys_sendmsg net/socket.c:2651 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa08a9773b9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa08b752048 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fa08ab05f80 RCX: 00007fa08a9773b9
-RDX: 0000000000000000 RSI: 0000000020000280 RDI: 0000000000000003
-RBP: 00007fa08a9e48e6 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fa08ab05f80 R15: 00007fff3eaa0cf8
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	9c                   	pushf
-   1:	8f 44 24 20          	pop    0x20(%rsp)
-   5:	42 80 3c 23 00       	cmpb   $0x0,(%rbx,%r12,1)
-   a:	74 08                	je     0x14
-   c:	4c 89 f7             	mov    %r14,%rdi
-   f:	e8 0e 9c 3b f6       	call   0xf63b9c22
-  14:	f6 44 24 21 02       	testb  $0x2,0x21(%rsp)
-  19:	75 52                	jne    0x6d
-  1b:	41 f7 c7 00 02 00 00 	test   $0x200,%r15d
-  22:	74 01                	je     0x25
-  24:	fb                   	sti
-  25:	bf 01 00 00 00       	mov    $0x1,%edi
-* 2a:	e8 63 c1 a3 f5       	call   0xf5a3c192 <-- trapping instruction
-  2f:	65 8b 05 64 b7 44 74 	mov    %gs:0x7444b764(%rip),%eax        # 0x7444b79a
-  36:	85 c0                	test   %eax,%eax
-  38:	74 43                	je     0x7d
-  3a:	48                   	rex.W
-  3b:	c7                   	.byte 0xc7
-  3c:	04 24                	add    $0x24,%al
-  3e:	0e                   	(bad)
-  3f:	36                   	ss
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/21] mm/zsmalloc: add zpdesc memory descriptor for
+ zswap.zpool
+To: Matthew Wilcox <willy@infradead.org>, Yosry Ahmed <yosryahmed@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, alexs@kernel.org,
+ Vitaly Wool <vitaly.wool@konsulko.com>, Miaohe Lin <linmiaohe@huawei.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, minchan@kernel.org,
+ senozhatsky@chromium.org, david@redhat.com, 42.hyeyoo@gmail.com,
+ nphamcs@gmail.com
+References: <20240806022143.3924396-1-alexs@kernel.org>
+ <20240806022311.3924442-1-alexs@kernel.org>
+ <20240806123213.2a747a8321bdf452b3307fa9@linux-foundation.org>
+ <CAJD7tkakcaLVWi0viUqaW0K81VoCuGmkCHN4KQXp5+SSJLMB9g@mail.gmail.com>
+ <ZrJ8hzC9z4NMYffr@casper.infradead.org>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <ZrJ8hzC9z4NMYffr@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-Tested on:
 
-commit:         743ff021 ethtool: Don't check for NULL info in prepare..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=11568613980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5efb917b1462a973
-dashboard link: https://syzkaller.appspot.com/bug?extid=ad601904231505ad6617
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1386c28d980000
+On 8/7/24 3:41 AM, Matthew Wilcox wrote:
+> On Tue, Aug 06, 2024 at 12:34:25PM -0700, Yosry Ahmed wrote:
+>> Matthew asked an important question here that needs to be answered by
+>> zsmalloc experts:
+>> https://lore.kernel.org/lkml/Zq0zucMFsOwATsAC@casper.infradead.org/
+> 
+> Yes, and I said it needed to be answered before we had a v5.  So I'm
+> very disappointed that not 24 hours later we're seeing a v5.
 
+Hi Willy,
+
+Sorry, I don't know the reply time meaning a lot here.
+I tried to reply you:
+https://lore.kernel.org/lkml/86e97328-a784-4320-b634-c582d5a10aff@gmail.com/
+And hope for more discussion on v5.
+
+Sorry, I will hold my horse, and slow down for version updates.
+
+Thanks a lot!
+Alex 
 
