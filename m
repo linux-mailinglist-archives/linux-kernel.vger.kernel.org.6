@@ -1,131 +1,95 @@
-Return-Path: <linux-kernel+bounces-278375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A2F94AF6F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:12:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E98A294AF72
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C321B1F22F04
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:12:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 916161F22A98
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D72E13E409;
-	Wed,  7 Aug 2024 18:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B316513F012;
+	Wed,  7 Aug 2024 18:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NDkeZhMv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=flokli.de header.i=@flokli.de header.b="ihtZZKD4"
+Received: from mail.flokli.de (mail.flokli.de [116.203.226.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440A413D61A;
-	Wed,  7 Aug 2024 18:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56858558B6;
+	Wed,  7 Aug 2024 18:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.226.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723054368; cv=none; b=fre8DKbr6WzETtYMvoLwnpluuWN2ayVe9IpLxwqJ/6SUyVpO5/t8aA8QtwynfO0NT69v3wFi6TzwoElgVr0x7pDca60jqAYqZ35Ku1J4qZ1kIu28rFF9gzqvQX3iBOTwRNKT65HcLiEVkTL4Ph/RjC221hnxZ9kzDWx7Rh/GkDk=
+	t=1723054478; cv=none; b=UZ4GTb81G7W3lghoMU1swiIeuIcA0VPEvVaFLKdazCcYvNf7xgPoJP4PeBu6vYfKhSkFlFzWFv/6x+Duv22qvLyUWnjniVcR5rXr54gFmP3oNG68QmT2H3aUaFodpRiW5J4YuJ95Qle1j7bLx5KDdhUTuPUgkN9Mta/ugCTHrDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723054368; c=relaxed/simple;
-	bh=ISPP/Y0DYUabn/g+gm+IohCoQEotWJ5A5dTGdvhtvq0=;
+	s=arc-20240116; t=1723054478; c=relaxed/simple;
+	bh=xYd/yJ46aF0NP74DrO2K7LXccRJQjOKUym6o/ViLWJ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k23aZSJjYM5kTF2yvMGz79X+UX2m45OvtmqxqZwRll568gVyC0F3lJdtjcWAKud1u/eouxePolhneVAHUSeHSlWIeIDVJ6fBoFQrtSrzcRXSAod1HeAjOrNonqc677+pAXaVt5gnMOcyUHvZVvcsczWuA8z5a7J36cDW+jmIz0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NDkeZhMv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36EB6C32781;
-	Wed,  7 Aug 2024 18:12:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723054367;
-	bh=ISPP/Y0DYUabn/g+gm+IohCoQEotWJ5A5dTGdvhtvq0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NDkeZhMv+5Y731BeDVZK+3kSkdceaAQQrABiNMuSDB66BV//Tu/PyPXIvABMEopRg
-	 Km8QsvqIvMXW7+CxiJ0BaCoZJQm+LZguhuXnn6D6jov2XTl5R6MZGgewoI0LBfAD11
-	 PsyLl5/hHvoIN/LBQtukUUE6PJn85TLRAukcDy9rH4XoHcQkqQ+KVzPuHAUJqOOjMR
-	 XNUkBK8IDAk5Ba5hW6WwaI8S3RrwGAQ0EOCeA7i8XCHaaV2gRNXd5afSll7ARSTw7H
-	 kl3dC35FojRLr4ZeezVZc1iXtoaJeCGmL3ADxwag4IpUTDjpwLG4MgxIoQm2pXCDzG
-	 eC+6EjBpsCUuQ==
-Date: Wed, 7 Aug 2024 11:12:45 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@arm.com>,
-	James Clark <james.clark@linaro.org>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>
-Cc: Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCHSET 00/10] perf tools: Sync tools and kernel headers for
- v6.11
-Message-ID: <ZrO5HR9x2xyPKttx@google.com>
-References: <20240806225013.126130-1-namhyung@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHYRWSuSjdGwr7tnehLc4wV5oQGSA5wC547WHrdWOGoM25MibFY2WHuZMbAF4gqVvvpyuy4IrdCQn+Zfu4jqvRbmzLLJFi7+FXSvLHn3Is0ecX1Ow6Rsk4pGt647oZFxeBl/zKqNEsx+OxYdCD4H/ZZEwSfcw4scxLaYO5Et+Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=flokli.de; spf=pass smtp.mailfrom=flokli.de; dkim=pass (1024-bit key) header.d=flokli.de header.i=@flokli.de header.b=ihtZZKD4; arc=none smtp.client-ip=116.203.226.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=flokli.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flokli.de
+Date: Wed, 7 Aug 2024 21:14:24 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flokli.de; s=mail;
+	t=1723054466; bh=xYd/yJ46aF0NP74DrO2K7LXccRJQjOKUym6o/ViLWJ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ihtZZKD4Cuq6t9k8LK9hQLx5XJHBmIRsHUeOjrehazwZyjJ1MEiCC294wG9Gfaouy
+	 2qJFXPAw5Ye3H39W9mf+87MmaQASbzTjci9EjxGzxhewP34/TVuwk8Dehr1x32846H
+	 q10h4xM3Pq+PEaJzbUhI7N7qHQNfKFEVhacvDPgY=
+From: Florian Klink <flokli@flokli.de>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Sebastian Reichel <sebastian.reichel@collabora.com>, 
+	Kever Yang <kever.yang@rock-chips.com>, Muhammed Efe Cetin <efectn@protonmail.com>, 
+	FUKAUMI Naoki <naoki@radxa.com>, =?utf-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@protonmail.ch>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: rockchip: add rfkill node for M.2 E wifi
+ on orangepi-5-plus
+Message-ID: <krvprzy3iz5b7n37eo2mb6sol6pcjkxsjdbdi6sxeebwveqtnr@e52cvrlkdjsa>
+References: <20240807162001.1737829-1-flokli@flokli.de>
+ <20240807170030.1747381-1-flokli@flokli.de>
+ <a10e70e2d67b9d63f2296b36b4cb3719@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20240806225013.126130-1-namhyung@kernel.org>
+In-Reply-To: <a10e70e2d67b9d63f2296b36b4cb3719@manjaro.org>
 
-Hello folks,
+On Wed, Aug 07, 2024 at 07:24:27PM GMT, Dragan Simic wrote:
+>On 2024-08-07 19:00, Florian Klink wrote:
+>>This follows the same logic as 82d40b141a4c ("arm64: dts: rockchip: add
+>>rfkill node for M.2 Key E WiFi on rock-5b").
+>>
+>>On the orangepi-5-plus, there's also a GPIO pin connecting the WiFi
+>>enable signal inside the M.2 Key E slot.
+>>
+>>The exact GPIO PIN can be validated in the Armbian rk-5.10-rkr4 kernel
+>>rk3588-orangepi-5-plus.dtsi file [1], which contains a `wifi_disable`
+>>node referencing RK_PC4 on &gpio0.
+>>
+>>Signed-off-by: Florian Klink <flokli@flokli.de>
+>>Tested-by: Florian Klink <flokli@flokli.de>
+>
+>I forgot to mention that providing a Tested-by tag is redundant when
+>there's already a Signed-off-by tag, because the latter already implies
+>the former.
 
-On Tue, Aug 06, 2024 at 03:50:03PM -0700, Namhyung Kim wrote:
-> Hello,
-> 
-> This is the usual sync up in header files we keep in tools directory.
-> I put a file to give the reason of this work and not to repeat it in
-> every commit message.  The changes will be carried in the perf-tools
-> tree.
- 
-Could you please double check what's in the tmp.perf-tools branch at the
-perf-tools tree so I don't break build and perf trace for arm64, powerpc
-and s390?  It has this patchset + arm64 unistd header revert (according
-to the discussion on patch 6/10) on top of v6.11-rc2.
+This came after I sent the v3. Generally I wish people would test things
+- though too often it's not. I explicitly tested this to work (with a
+wifi module added to that slot being unblock-able afterwards), and
+wanted to point that out, thus adding the Tested-by.
 
-Thanks,
-Namhyung
+DCO 1.1 doesn't say anything about Tested-by, it's mostly legalese about
+being allowed to send out the patch, and understanding the consequences
+regarding licensing. It doesn't require the person adding their
+Signed-Off-By to have tested it.
 
-> 
-> Namhyung Kim (10):
->   perf tools: Add tools/include/uapi/README
->   tools/include: Sync uapi/drm/i915_drm.h with the kernel sources
->   tools/include: Sync uapi/linux/kvm.h with the kernel sources
->   tools/include: Sync uapi/linux/perf.h with the kernel sources
->   tools/include: Sync uapi/sound/asound.h with the kernel sources
->   tools/include: Sync uapi/asm-generic/unistd.h with the kernel sources
->   tools/include: Sync network socket headers with the kernel sources
->   tools/include: Sync filesystem headers with the kernel sources
->   tools/include: Sync x86 headers with the kernel sources
->   tools/include: Sync arm64 headers with the kernel sources
-> 
->  tools/arch/arm64/include/asm/cputype.h        |  10 +
->  tools/arch/arm64/include/uapi/asm/unistd.h    |  24 +-
->  tools/arch/powerpc/include/uapi/asm/kvm.h     |   3 +
->  tools/arch/x86/include/asm/cpufeatures.h      | 803 +++++++++---------
->  tools/arch/x86/include/asm/msr-index.h        |  11 +
->  tools/arch/x86/include/uapi/asm/kvm.h         |  49 ++
->  tools/arch/x86/include/uapi/asm/svm.h         |   1 +
->  tools/include/uapi/README                     |  73 ++
->  tools/include/uapi/asm-generic/unistd.h       |   2 +-
->  tools/include/uapi/drm/i915_drm.h             |  27 +
->  tools/include/uapi/linux/in.h                 |   2 +
->  tools/include/uapi/linux/kvm.h                |  17 +-
->  tools/include/uapi/linux/perf_event.h         |   6 +-
->  tools/include/uapi/linux/stat.h               |  12 +-
->  .../arch/powerpc/entry/syscalls/syscall.tbl   |   6 +-
->  .../perf/arch/s390/entry/syscalls/syscall.tbl |   2 +-
->  .../arch/x86/entry/syscalls/syscall_64.tbl    |   8 +-
->  .../perf/trace/beauty/include/linux/socket.h  |   5 +-
->  .../perf/trace/beauty/include/uapi/linux/fs.h | 163 +++-
->  .../trace/beauty/include/uapi/linux/mount.h   |  10 +-
->  .../trace/beauty/include/uapi/linux/stat.h    |  12 +-
->  .../trace/beauty/include/uapi/sound/asound.h  |   9 +-
->  22 files changed, 810 insertions(+), 445 deletions(-)
->  create mode 100644 tools/include/uapi/README
-> 
-> -- 
-> 2.46.0.rc2.264.g509ed76dc8-goog
-> 
+Florian
 
