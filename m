@@ -1,115 +1,211 @@
-Return-Path: <linux-kernel+bounces-278192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA0D694AD22
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:42:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA4B394AD23
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612E51F2986C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:42:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48911284071
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F83613A250;
-	Wed,  7 Aug 2024 15:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F17212F38B;
+	Wed,  7 Aug 2024 15:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Lhy9+T+I"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lAaiifIx"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D97F12C54D
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA6812CDBF
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723045337; cv=none; b=CAXDuuzKHZKgPG2r5I3l48XcVX+JWXrHj547V0TC9pd5OLXpAX4k1rq4xaYpZ1OlkVlQKs2YWlIqZ96wxhzhq3cQofamMPVcsihimvxvwTlJe2wqM2SckTyYN0O4fdkFkfiozlFhm12N1xRDDoWC42m+FKbqOF7iVD0rZ1RntQ4=
+	t=1723045358; cv=none; b=XODyP2+Z/w20KkAXsPPce+v7ctZnxkQ/iwebysVMDVtmEmJIsMd9xfy9ycCW02+LQgfllEJKIs5ltzlCSIVeW3SjAbiwHKznWosu5zA2q5cXGlz6nHyUiVotno6zdCyRoWMPDGNA6jRkj+zf5l9d6Md0qOUzOB3Z2sb/7SStteg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723045337; c=relaxed/simple;
-	bh=p7PVqR202pLZcsTbDjLFYNgJzn0bloqG+abqcVgvaJU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fIqAyFiYJGD+dmCE8ipwFSkog6O2UEMVgnpEt0VvxO+YqJ79czkHHxtzf09WvcY4uVu4gxSlh5oprpmi4nIu3vrEHQiqNeJdab0NKKw27itIWiXRvx9tZYXbzVpdKaBdwsIVwKLL+UC4a3QynECGySWKXKGUMTVWuKzIdN10/9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Lhy9+T+I; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-39aecad3ea7so1372355ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 08:42:14 -0700 (PDT)
+	s=arc-20240116; t=1723045358; c=relaxed/simple;
+	bh=FIuCwcGB6yWytPpKZDSV7rxGdFAn2LjbZ6Pn5fgdESQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rR58yMsWldU/fx/qzhFCo/5QR9d2mR72CEQsYc4Nbc+AqacedQYlb0rywEtPBjIMJ8SXwFYB9TEH7fLQ60NoGZR+Dqv29f/60pt2DPgsd6XLXSChL5SBVa82sRTBjtBW9BPx/LFWcoZdv8lJGqWzZDjP/Sc7Xqi0FByZ3NXyZbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lAaiifIx; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc4aff530dso556785ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 08:42:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1723045334; x=1723650134; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DuwHjHFvIH5yzRbowDpjPZeGCKe893MON8qjCHt6NA8=;
-        b=Lhy9+T+I9SlgQZCWx24/UGQHRvTeLwvMIeRMfwswfx5SfSSA3ytbsYDKCEyGTdLHOv
-         WorBAKpn+AFeEMMni3W6jXM+vSCA9v1f5gUrWZ/me/iGSDGAwRJw/BWSleH/ZOhVlCMd
-         YFWmO8cMjBgCh/ZZv51O7qVoSyNoSdohO0CUE=
+        d=google.com; s=20230601; t=1723045356; x=1723650156; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xvU0ExuYojcXA0XRZ5/zdrNnONP8813olpspTlDaQd8=;
+        b=lAaiifIxL5SgkYiK8b3J2oRPQppByjlG5Nosqarx77AH4PzXnI04ccS3J0XVSdlJMt
+         PcIdO8vlhfEmB+wn+Ih+AKIBgpXp+CtqFkHM9snFVJALY/AH2sxenPo3PiZupnqw3KNE
+         wkACHuQ+L5j4XsaajxGCHC3zPmjC0zHj0yl02dDSqsqTZdVTQrKecM37fumEGqooSJBn
+         2Aov7BwE5AvzK7mzktWNsyq9IUhwEPOPSJ2QWJfIn7+Fej9zCIARoBXf4k8lj4QUemXR
+         GEDiE+T1gcJ2BNTkzVd8B7Ck+IKY2Ojvm1jQVxyLERX8w7tJFQLM/6brW32iKg0VQVXM
+         +F/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723045334; x=1723650134;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DuwHjHFvIH5yzRbowDpjPZeGCKe893MON8qjCHt6NA8=;
-        b=I/CmCiqCqtAZ9jJFL4SU0bNpIDzIeFaE8pzTVA/23HOGIuDiXWW47qj4zowdhsL31J
-         0Wvm4Dk3ODLxztMPQ6LZIJSBZpnmGbCGDIHmE5lpxSyrrxQtEn4K8zrXmI2JSfMybNyY
-         gE7QXJu7gDww0bnJZMc0WuTom+OPHVyuanVJLCUc8hUY/8r0C0Fr82qY/Nna2+Ty0FCr
-         WS95qnyXnGb8ZN5o/eJQNXl9eifLiK5Ml/arsLTWxpVvtKinDV6Y3HdFjNZ+u0dKBqVu
-         n5bmsyYlah47Susa2d8MzOnOJJouRSa1lGKZ1fWhH4JKbSmXZDRzZPWlWkCG+dZzTHeA
-         qYvw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/iHU9CZS7pO2FlbUKbAOyqTOU/PSRprP2pV57PxgetJSJPnoMKoT3rb5iiLm/lx9fVc9/Nb4RU0NJQBizswgQ6qmC1h/K0aXEbCNr
-X-Gm-Message-State: AOJu0YwZ5naxMq6Wrz5eFQ8grZP0ocWX62IZF27Sil6r0t8gILzeBEab
-	6Zm1hq5TMwDv13I0qXyMBRbp4KgWiywos8uyeaTnMPwhvEi8qZHjvKGKNseSBL4=
-X-Google-Smtp-Source: AGHT+IENm7ilj2AMmEwQJYpawRWrkgTZs3Cq1oL1+5AjSJCsF6nenoG7T6ZS8wtXFNT1iOwrbP88qQ==
-X-Received: by 2002:a05:6e02:1b0f:b0:38e:cdf9:8878 with SMTP id e9e14a558f8ab-39b1fc6194bmr121613445ab.5.1723045333621;
-        Wed, 07 Aug 2024 08:42:13 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39b20ab4f73sm45805565ab.39.2024.08.07.08.42.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 08:42:13 -0700 (PDT)
-Message-ID: <2dfa76a7-eeae-4b05-bfcd-684ae7ade963@linuxfoundation.org>
-Date: Wed, 7 Aug 2024 09:42:12 -0600
+        d=1e100.net; s=20230601; t=1723045356; x=1723650156;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xvU0ExuYojcXA0XRZ5/zdrNnONP8813olpspTlDaQd8=;
+        b=WulCB1jmugE0ukuntAnNL0Knos/+CH1XBTCbLIpk3OSITwtm1CSUMNSK0NJ3cvWpN5
+         Zyxh3UXy68kUPRN8GoC4yinFipa82d2DxnFaXKfkKK+pABUUXrBaDXXyOL7Vz0f9V+58
+         nLk0zkDogocD9OftHmiU+S5jdrPxhNi7wPT3OqCnLv6rDApJHoNLRIo7NyQevqa6TNU8
+         s1Vd7QoEJKabLJyXAwbSDqZVOxQrY945nfAmAPnneqT6cY2db3SGwALLjJgY+8SmmSLB
+         7xp3WrPXGP86g7HZ3Tt1l7EaZZrqxF7pdWgKX3GuTCK6qgHb4D4sT4heBAd2anvJWSbo
+         FqaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXltj97119tp6m1C40PDuZH0Xr6wnxHJm6wb0VF0nvTHxH6aMPQLH6GBVqkOxELVbNlXLyR9RCIFeZ2aUuaUC5qlpOV8qqFCcirjvLA
+X-Gm-Message-State: AOJu0YxH/jEe3Wfb0WdCiUbyxIu7PBsj11dhVrJvGD23k4xDrVYOZBFr
+	0BnyqVaX2M95GdwjpkBYjJjYDMoW+YWdf0kE4oNde1wmvgThGwUjIpQK2a2MBE0yzURD7zz62Ys
+	H+focK/zh/W5ZZp8WQGdxaePuybVz2SBj/aME
+X-Google-Smtp-Source: AGHT+IGWOCCAyEkog4aU/nUnFwQjg5mNCx4lubB/HSeOtQlZ3If8Rr/e2RojHur+C35xWxqqnMr1EDQ0y/rt+u6mQsM=
+X-Received: by 2002:a17:902:ecc4:b0:1fb:3e93:79cf with SMTP id
+ d9443c01a7336-200851d3e92mr2917165ad.13.1723045355452; Wed, 07 Aug 2024
+ 08:42:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Fix a spelling error in a doc of bcachefs
-To: Xiaxi Shen <shenxiaxi26@gmail.com>, kent.overstreet@linux.dev,
- corbet@lwn.net
-Cc: javier.carrasco.cruz@gmail.com,
- "open list:BCACHEFS" <linux-bcachefs@vger.kernel.org>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240807071005.16329-1-shenxiaxi26@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240807071005.16329-1-shenxiaxi26@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240807065136.1039977-1-irogers@google.com> <277a02a5-9355-4f06-9158-026cf4b330f7@linux.intel.com>
+ <ZrONok4ZhoA6FhNi@x1>
+In-Reply-To: <ZrONok4ZhoA6FhNi@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 7 Aug 2024 08:42:23 -0700
+Message-ID: <CAP-5=fWge5+AunVPoy-jxk=5xJeCD8gwFAd0vWk8K8Jif3DB-Q@mail.gmail.com>
+Subject: Re: [PATCH v1] perf hist: Fix reference counting of branch_info
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: "Liang, Kan" <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Sun Haiyong <sunhaiyong@loongson.cn>, 
+	Yanteng Si <siyanteng@loongson.cn>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/7/24 01:10, Xiaxi Shen wrote:
+On Wed, Aug 7, 2024 at 8:07=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
+l.org> wrote:
+>
+> On Wed, Aug 07, 2024 at 09:27:02AM -0400, Liang, Kan wrote:
+> >
+> >
+> > On 2024-08-07 2:51 a.m., Ian Rogers wrote:
+> > > iter_finish_branch_entry doesn't put the branch_info from/to map
+> > > elements creating memory leaks. This can be seen with:
+> > >
+> > > ```
+> > > $ perf record -e cycles -b perf test -w noploop
+> > > $ perf report -D
+> > > ...
+> > > Direct leak of 984344 byte(s) in 123043 object(s) allocated from:
+> > >     #0 0x7fb2654f3bd7 in malloc libsanitizer/asan/asan_malloc_linux.c=
+pp:69
+> > >     #1 0x564d3400d10b in map__get util/map.h:186
+> > >     #2 0x564d3400d10b in ip__resolve_ams util/machine.c:1981
+> > >     #3 0x564d34014d81 in sample__resolve_bstack util/machine.c:2151
+> > >     #4 0x564d34094790 in iter_prepare_branch_entry util/hist.c:898
+> > >     #5 0x564d34098fa4 in hist_entry_iter__add util/hist.c:1238
+> > >     #6 0x564d33d1f0c7 in process_sample_event tools/perf/builtin-repo=
+rt.c:334
+> > >     #7 0x564d34031eb7 in perf_session__deliver_event util/session.c:1=
+655
+> > >     #8 0x564d3403ba52 in do_flush util/ordered-events.c:245
+> > >     #9 0x564d3403ba52 in __ordered_events__flush util/ordered-events.=
+c:324
+> > >     #10 0x564d3402d32e in perf_session__process_user_event util/sessi=
+on.c:1708
+> > >     #11 0x564d34032480 in perf_session__process_event util/session.c:=
+1877
+> > >     #12 0x564d340336ad in reader__read_event util/session.c:2399
+> > >     #13 0x564d34033fdc in reader__process_events util/session.c:2448
+> > >     #14 0x564d34033fdc in __perf_session__process_events util/session=
+.c:2495
+> > >     #15 0x564d34033fdc in perf_session__process_events util/session.c=
+:2661
+> > >     #16 0x564d33d27113 in __cmd_report tools/perf/builtin-report.c:10=
+65
+> > >     #17 0x564d33d27113 in cmd_report tools/perf/builtin-report.c:1805
+> > >     #18 0x564d33e0ccb7 in run_builtin tools/perf/perf.c:350
+> > >     #19 0x564d33e0d45e in handle_internal_command tools/perf/perf.c:4=
+03
+> > >     #20 0x564d33cdd827 in run_argv tools/perf/perf.c:447
+> > >     #21 0x564d33cdd827 in main tools/perf/perf.c:561
+> > > ...
+> > > ```
+> > >
+> > > Clearing up the map_symbols properly creates maps reference count
+> > > issues so resolve those. Resolving this issue doesn't improve peak
+> > > heap consumption for the test above.
+> > >
+> > > Signed-off-by: Ian Rogers <irogers@google.com>
+> >
+> >
+> > Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+>
+> Thanks, applying.
+>
+> While trying to test it:
+>
+> make -k CORESIGHT=3D1 EXTRA_CFLAGS=3D"-fsanitize=3Dmemory" CC=3Dclang HOS=
+TCC=3Dclang NO_LIBTRACEEVENT=3D1 NO_LIBELF=3D1 BUILD_BPF_SKEL=3D0 NO_LIBPFM=
+=3D1 O=3D/tmp/build/$(basename $PWD)/ -C tools/perf install-bin
+>
+> Used that from a previous patch description from Ian to get rid of some
+> other problems with those other libraries:
+>
+> =E2=AC=A2[acme@toolbox perf-tools-next]$  perf record -e cycles -b perf t=
+est -w noploop
+> Uninitialized bytes in fopen64 at offset 46 inside [0x7fff1077e890, 52)
+> =3D=3D1948231=3D=3DWARNING: MemorySanitizer: use-of-uninitialized-value
+>     #0 0x7921df in perf_pmu_format__load pmu.c
+>     #1 0x791f3e in perf_pmu__warn_invalid_formats (/home/acme/bin/perf+0x=
+791f3e) (BuildId: d7742e31f05abb200493b431a6191afda9ed77c8)
+>     #2 0x6f62d0 in __add_event parse-events.c
+>     #3 0x6fa681 in __parse_events_add_numeric parse-events.c
+>     #4 0x6fa3e4 in parse_events_add_numeric (/home/acme/bin/perf+0x6fa3e4=
+) (BuildId: d7742e31f05abb200493b431a6191afda9ed77c8)
+>     #5 0x78c6ca in parse_events_parse (/home/acme/bin/perf+0x78c6ca) (Bui=
+ldId: d7742e31f05abb200493b431a6191afda9ed77c8)
+>     #6 0x6fd8eb in __parse_events (/home/acme/bin/perf+0x6fd8eb) (BuildId=
+: d7742e31f05abb200493b431a6191afda9ed77c8)
+>     #7 0x6ff232 in parse_events_option (/home/acme/bin/perf+0x6ff232) (Bu=
+ildId: d7742e31f05abb200493b431a6191afda9ed77c8)
+>     #8 0x5be82f in get_value /home/acme/git/perf-tools-next/tools/lib/sub=
+cmd/parse-options.c
+>     #9 0x5ba474 in parse_short_opt /home/acme/git/perf-tools-next/tools/l=
+ib/subcmd/parse-options.c:351:11
+>     #10 0x5ba474 in parse_options_step /home/acme/git/perf-tools-next/too=
+ls/lib/subcmd/parse-options.c:539:12
+>     #11 0x5ba474 in parse_options_subcommand /home/acme/git/perf-tools-ne=
+xt/tools/lib/subcmd/parse-options.c:653:10
+>     #12 0x4f089f in cmd_record (/home/acme/bin/perf+0x4f089f) (BuildId: d=
+7742e31f05abb200493b431a6191afda9ed77c8)
+>     #13 0x56fda9 in run_builtin perf.c
+>     #14 0x56e9ea in main (/home/acme/bin/perf+0x56e9ea) (BuildId: d7742e3=
+1f05abb200493b431a6191afda9ed77c8)
+>     #15 0x7fbf387ea087 in __libc_start_call_main (/lib64/libc.so.6+0x2a08=
+7) (BuildId: 8f53abaad945a669f2bdcd25f471d80e077568ef)
+>     #16 0x7fbf387ea14a in __libc_start_main@GLIBC_2.2.5 (/lib64/libc.so.6=
++0x2a14a) (BuildId: 8f53abaad945a669f2bdcd25f471d80e077568ef)
+>     #17 0x4364e4 in _start (/home/acme/bin/perf+0x4364e4) (BuildId: d7742=
+e31f05abb200493b431a6191afda9ed77c8)
+>
+> SUMMARY: MemorySanitizer: use-of-uninitialized-value pmu.c in perf_pmu_fo=
+rmat__load
+> Exiting
+> =E2=AC=A2[acme@toolbox perf-tools-next]$
+>
+> So I think there is something else nor merged or is this something new?
 
-Missing commit message --
+Taking a look. You are setting HOSTCC here presumably to work past a
+libbpf build error I see. Why are we building libbpf with HOSTCC and
+not CC?
 
-> Signed-off-by: Xiaxi Shen <shenxiaxi26@gmail.com>
-> ---
->   Documentation/filesystems/bcachefs/CodingStyle.rst | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/filesystems/bcachefs/CodingStyle.rst b/Documentation/filesystems/bcachefs/CodingStyle.rst
-> index 0c45829a4899..01de555e21d8 100644
-> --- a/Documentation/filesystems/bcachefs/CodingStyle.rst
-> +++ b/Documentation/filesystems/bcachefs/CodingStyle.rst
-> @@ -175,7 +175,7 @@ errors in our thinking by running our code and seeing what happens. If your
->   time is being wasted because your tools are bad or too slow - don't accept it,
->   fix it.
->   
-> -Put effort into your documentation, commmit messages, and code comments - but
-> +Put effort into your documentation, commit messages, and code comments - but
->   don't go overboard. A good commit message is wonderful - but if the information
->   was important enough to go in a commit message, ask yourself if it would be
->   even better as a code comment.
-
-thanks,
--- Shuah
+Thanks,
+Ian
 
