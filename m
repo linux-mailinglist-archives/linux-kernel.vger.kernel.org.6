@@ -1,121 +1,288 @@
-Return-Path: <linux-kernel+bounces-278029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C679994A99F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:14:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E76DD94A9AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 748891F298F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:14:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DD032885F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA08B7F47F;
-	Wed,  7 Aug 2024 14:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E1277101;
+	Wed,  7 Aug 2024 14:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="EhwlHvbT"
-Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MOSbhYoZ"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E268E7E58D;
-	Wed,  7 Aug 2024 14:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305565811A;
+	Wed,  7 Aug 2024 14:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723039985; cv=none; b=tzfObsosqbnghzGdGGohDcVYT0jwsKjPMODzAu7ogYoGJpNV9VYz8/2HamNYkEgRsLjuarMLbPWmJbZmBADfkVN2ssEOcDoT2AtByYuJmgfeUSk4b/n2F4hvzLI9utUhwTdNIl7VU9FyWzZg9Z9EywvjbF+pE/3gbuUHvFcY2nM=
+	t=1723040050; cv=none; b=EHpYhIpS68a9kxoRgxhMN5468b/UGKo+yP/TrsZtCQqaC/REx6EK7toXWH8ymDnuu2l1uNveKTlOx+7vh0G9V6g82OplAboccQPjDO5731yryvpgR+k8D2XbeNHALXvYtv947pBbKQx9gzuGNqRxXq//t3mFtyXipwsSwlukJaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723039985; c=relaxed/simple;
-	bh=yHTo7ae4Y2KUSWICl1rsVbC17Jj0VNMnmBcR54CKcSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Iflviq5KDXzf+URo5MqnBwioWWsKDNH/hj+B9wuIp5fHRXBTjsZrMvthqAbFrTk8Ae6hz4InM7TLS4riNlUesA6E3zQfPomdn2EhKaFUOVE6adKCCmkcUuKKQlQqZiWV2m9HeEmkFLF39OxK2fxCiZA/uAKaaGJYiIJAeGuWHQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=EhwlHvbT; arc=none smtp.client-ip=37.205.15.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by bee.tesarici.cz (Postfix) with ESMTPSA id 1BDDE1D28CB;
-	Wed,  7 Aug 2024 16:12:54 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
-	t=1723039974; bh=2S1kScCclltNXckE/Lkx2qPVy9xVi/sU3tCNDVWrwmg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EhwlHvbTz35VhAI2Qpj0xb9g7XfyNlUdLT2PhofPUJObSVEfk1Rz+kAynf4vRyIUu
-	 ZSmLQQDu+kYFQY76651Xk1pzwK49hhn0qV9lrrdrvfzk44MTygPvccjXpYKlYgqZ6P
-	 fKSG+xtWjx1PGAmqW+Ru9Jxrm8kTocZVHIf7Ct5F5dwAfJVorHfTti2Yn2AG1RZl+T
-	 QfwOcSNtu+xhAwEW6hotsHWoZOw4ky06J8J7F0GfieIZRu2xjf2bq8Qg8MdyK+vrq0
-	 HFqN+Nk021WWKDV+ToPaSKGAIAOKhQgKGN14gbNUSk1Zi/5ISVMtunOHWaVwbBfnX8
-	 tCEJa3xWKB5yg==
-Date: Wed, 7 Aug 2024 16:12:48 +0200
-From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, Baruch Siach <baruch@tkos.co.il>,
- Christoph Hellwig <hch@lst.de>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Will Deacon <will@kernel.org>,
- iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, Ramon Fried <ramon@neureality.ai>, Elad Nachman
- <enachman@marvell.com>
-Subject: Re: [PATCH v5 1/3] dma: improve DMA zone selection
-Message-ID: <20240807161248.37a618f2@mordecai.tesarici.cz>
-In-Reply-To: <ZrN9mRoQj2lTo6L5@arm.com>
-References: <cover.1722578375.git.baruch@tkos.co.il>
-	<5200f289af1a9b80dfd329b6ed3d54e1d4a02876.1722578375.git.baruch@tkos.co.il>
-	<8230985e-1581-411f-895c-b49065234520@arm.com>
-	<ZrN9mRoQj2lTo6L5@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1723040050; c=relaxed/simple;
+	bh=g9f2smO8ChMXk8JS0LK/pkNR0k5+CdMIUjFawOdXs5Y=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
+	 MIME-Version:References; b=aVnctr1dawzOw7/q8t98M6i7go9XQPhFQdbZA6ZcvaalHcjchzqZNlWymxFR0DMmjDfnykEFZMZ5jVg2tfodv4WwS/17kcSy+nVdzQghOK0J4ZNKlW/csSt0zivX+HMaBcznekUL0LgIjTVEXLL4IvyEwSBgSvFb9ZqgcysoKIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=MOSbhYoZ; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240807141400euoutp01cd1c4bad1586ae81de4118e754f88435~pd8mS23ie2296422964euoutp01S;
+	Wed,  7 Aug 2024 14:14:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240807141400euoutp01cd1c4bad1586ae81de4118e754f88435~pd8mS23ie2296422964euoutp01S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1723040040;
+	bh=faAY5+pwQOX2l8/iVIHLwz0WYOtMMXWn6lu1UB+tpaU=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+	b=MOSbhYoZABvgtH55ykf1+xwecfQ6Hr3K49FiCYjv6M4cx2VG4DR2Xcx02LGg37t4/
+	 aHtKSqBEtSS871chB7ZcUOnQqvlYgdt0vMTiFnKZ4vbJKjlEHSwGDm4c4KebLErUf0
+	 4kiaGu6qBusMwWGpB4pD8XU67lZShMEztnRQNAZU=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240807141359eucas1p1b74b6e89b491c49e0b9a5dd05694dfea~pd8l7a3mv2160121601eucas1p1I;
+	Wed,  7 Aug 2024 14:13:59 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 62.D2.09620.72183B66; Wed,  7
+	Aug 2024 15:13:59 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240807141359eucas1p2c07121390ff2ca9877113eb10d8d5454~pd8lWW04i2189021890eucas1p2C;
+	Wed,  7 Aug 2024 14:13:59 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240807141358eusmtrp1c84d84dc6bca38050a03a3a2e2a54c0a~pd8lM8GRX0561705617eusmtrp1_;
+	Wed,  7 Aug 2024 14:13:58 +0000 (GMT)
+X-AuditID: cbfec7f5-d31ff70000002594-f8-66b38127c431
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 05.D1.09010.62183B66; Wed,  7
+	Aug 2024 15:13:58 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240807141358eusmtip1044ec5848df956a10e250dfb9fa77c19~pd8k15j1l1402214022eusmtip15;
+	Wed,  7 Aug 2024 14:13:58 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
+	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
+	Server (TLS) id 15.0.1497.2; Wed, 7 Aug 2024 15:13:58 +0100
+Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
+	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Wed, 7 Aug
+	2024 15:13:57 +0100
+From: Daniel Gomez <da.gomez@samsung.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
+	<nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, =?iso-8859-1?Q?Thomas_Hellstr=F6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, William Hubbs
+	<w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser
+	<kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, Paul
+	Moore <paul@paul-moore.com>, Stephen Smalley
+	<stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, James
+	Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>, Jiri Slaby <jirislaby@kernel.org>, Nick
+	Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-kbuild@vger.kernel.org"
+	<linux-kbuild@vger.kernel.org>, "intel-xe@lists.freedesktop.org"
+	<intel-xe@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "speakup@linux-speakup.org"
+	<speakup@linux-speakup.org>, "selinux@vger.kernel.org"
+	<selinux@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, "linux-serial@vger.kernel.org"
+	<linux-serial@vger.kernel.org>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>, Finn Behrens <me@kloenk.dev>, "Daniel Gomez
+ (Samsung)" <d+samsung@kruces.com>, "gost.dev@samsung.com"
+	<gost.dev@samsung.com>
+Subject: Re: [PATCH 08/12] include: add elf.h support
+Thread-Topic: [PATCH 08/12] include: add elf.h support
+Thread-Index: AQHa6FXbwJqdyqi0MEugpUJUhAmSv7IbkbaAgAA07gA=
+Date: Wed, 7 Aug 2024 14:13:57 +0000
+Message-ID: <dxkmmrlhlhsrjulnyabfgcr37ojway2dxaypelf3uchkmhw4jn@z54e33jdpxmr>
+In-Reply-To: <2024080717-cross-retiree-862e@gregkh>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <A8302F3D0EFD6A4A8B5DE787ED2EDA0D@scsc.local>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1CUZRTGe7/rQkEf4MQbl5pWHSagDQeNVytTJuubiKRpJqcczE0+wOEi
+	7UKiwzS7YSSEggYJC6wsOy7XBJdLXBcC3GWjbSvksiCh3FIuLoKAMsbGsujw3++85znPc84f
+	Lw93zqDdeMdj4zlRrDCaT9kTddpHxte8pNXhfqNad9TVX4QhsyodIG3ZHRw1WYZxZKm7gKMb
+	i2YKJSsrKfSw+g6GRjTFGLpX4IF+KldSSP6XnkBTNR0EUo/1kehxYz2GehrzKfS78hyNxrNa
+	KTQxpqKQ4n4tgW7fGiBRQ76eRC2VPRRS9yyQKCVVRaLvSycoNJdpwdBkSxeJsh/NUGg28zqN
+	hi5eIlCrrI9GJQ8vAWTUaWlUV28A6F/jjwDlDg0BNF2/Zlozc4FERSkB6MzNXch0pYre581W
+	yCsA26w1UGzLUiHBNrZXU2yDbJhmC9UJ7JnOWZJVNt/FWHVZKsXKU+UYazl3i2Q7LUU0q5Bk
+	46xc/zHbWlBBsyM/6LAQ+Ln9W2Fc9PGvOdHre4/aR+p6ysi4pa2Jq3I5LgEmjzRgx4PMTpg1
+	l06lAXueM1MC4NQ9HW4rHgD4q2QVsxULAHZXaPAnIyPJOcDWKAawIyeTeqqS5FzdKLoBtEh1
+	xFNnY1susM5TzKtQo1fTVt7C+MMMg4y2inBG8TycN/633nBhdsG7sge4TfQGNJt715i3xntg
+	lSnS+kww26BJriCs7MAEQ3NFJWaV2K15js8esj4DxhOOlq6sO+KMKxwcv4zZTnCCRXnNG+e8
+	AFcbb1M29oWG/nFgYz9Ye0VD2PgVeFZromw+AjiQnbXBu+HSnxnAxj5QpZjGbes4QX3u+Prt
+	kEl7Dt6qbSatu0HmXTjd52nzdIFTuho6E/jKNq0n2xQh2xQh2xQh2xRRCMgy4MoliGMiOLF/
+	LHdSIBbGiBNiIwTHTsSowdqf6V7VLdaDkqn7gnaA8UA7gDycv8Uh+ZA63NkhTHjqNCc68YUo
+	IZoTtwN3HsF3ddge9jLnzEQI47kojovjRE+6GM/OTYJxjLArJ1B6UpweYCBvyt5rOvKzVBH0
+	pYS3NVTjpw7usXsm8bwm7Pr7fvu/mvIyL4TscZmn/xZqAhbjEso9j2RfG4g9rDLkO5qKPfIW
+	/tmt7zIQb5N1ScM+jr7ly4+z31lWnYLFUZ8GVeesyNz79j/bFtiQN7AanSrA9/psc4r55Y8B
+	f5PXZW9fF8GHSna+tzZ8LmmypS1K4jQfGJLudTXRcTtM/m1hLOXFfZ2jWWX9obK0oMnasyXl
+	hE56bNDSQ39W4M3nn764I5d/baW8qWOxNHhnYX79N5ZBI+/GS6HLb54vNbtNVPUqk/UfiMfk
+	Uo+DizWHvztanPTtzCcH4w985KDgE+JI4Q5vXCQW/g/JtsWJogQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTVxzHd+69vS11nXeVxwnBbJbFCJuV8vJgkJG4sbuYEeYySeYWLHrL
+	Q6CspW5sk+BgDBDCYwKzk473ayhYoCCDoh2vytOAPCWwAQqiFMQxcQhrKUv473PO+X6/v9/v
+	JD8Ozs9m23JCIqIYWYQ4TEByia6NjomD+y/WSJyqSw6izuECDBlKUgBqr5jD0e+bEzja1GTg
+	aPBvA4niCqtI9LxmDkOT2lIMLebaoezfCkmkuqsn0KPaPwiknh5iofXGBgwNNF4lUXdhKhvN
+	XG4h0ex0CYnyl+sI9OfUCAvdvKpnoeaqARKpB1ZYKCGphIV+LJ8l0VL6JoYeNHeyUNbaYxI9
+	SW9jo/HMHAK1KIfYqOx5DkB9He1spGnoAehh308AXRkfB2ihwRha+ziDhQoSDqP4+25otLia
+	7e1IV6oqAd3U3kPSzat5BN2oqyHpm8oJNp2nVtDxrU9YdGHTPEarK5JIWpWkwujN1CkW3bpZ
+	wKbzY7NwWqX/mG7JrWTTk5c6MD/4mdBTJlVEMW8GS+VRRwWnRMhZKPJAQmdXD6HI5fAXR5zd
+	BIe8PM8yYSHnGdkhr9PC4I6BClbkqv3XGyoVHgtG7ZKBBQdSrnAy7meQDLgcPlUMYP2teNz8
+	YAdvPLvHMvMeuD6UTJqYTy0DqKqnzIYuAH+4ns42H8oA7B7tBCYVSTlArV7NNrEl5QLTepRb
+	IpzK3w3Lequ3YvdQbnBe+Qw3i9yhwXDPyBwjH4HVo8Gma4J6C46q8gkT86iPoKGyCjN3EY/B
+	xLtHTXILY/7ME3/TNaD2wr/KX2yVxSkbODbzK2YegIJFTX3bg1nB+emN7cHegT3DM8DMTrCu
+	WEuYeR9MbB8lzTlCOJJ1eZs94Gp/GjDz27AkfwE3t/Y61F+ZIdKBnXJHaeUOu3KHXbnDrtxh
+	zwOsCmDJKOThQeFyZ6FcHC5XRAQJz0jD1cC4IJr2tdoGUP5oWagDGAfoAOTgAktenL9awued
+	FUd/w8ikATJFGCPXATfj12XgtlZnpMYNi4gKELk7uYlc3T2c3DzcXQQ2vA8jE8V8KkgcxZxj
+	mEhG9r8P41jYxmKZ3p5oscNlLNS67gEeZneNey3HSwHrn/peLFray43+fMJi1S5Q4VXqEKPO
+	ya4PeMnMnTtJpI3dzhi0cXG8Pn2s0PDGv6qB0Ohbuvd81ta5X7W9uJMZmblS0xWY0j9vfyGh
+	1xOvsd316g1bTU/CqTsjeqFj7LTWR3vpdpve19dw/wT2UHpac6zDn/du2u5wOqS3Fufkvi/8
+	ZVwgSZG4no+dO3EhJ3DRPrNvNnGZyVvqWtn33Vi56JXSegm32zpoUMfpj2n93tpHMqjpfnnc
+	G518zapYO3Bggf+U6Pl2ZV3Gn/L75LjDAYvB/aHpMV8OlykCeX6+TqlrUvCPp6xo16cfOAoI
+	ebBY5IjL5OL/AOmSXZ2pBAAA
+X-CMS-MailID: 20240807141359eucas1p2c07121390ff2ca9877113eb10d8d5454
+X-Msg-Generator: CA
+X-RootMTR: 20240807110435eucas1p2eca071b0a0122b8686d43c57bd94dc8c
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240807110435eucas1p2eca071b0a0122b8686d43c57bd94dc8c
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
+	<20240807-macos-build-support-v1-8-4cd1ded85694@samsung.com>
+	<CGME20240807110435eucas1p2eca071b0a0122b8686d43c57bd94dc8c@eucas1p2.samsung.com>
+	<2024080717-cross-retiree-862e@gregkh>
 
-On Wed, 7 Aug 2024 14:58:49 +0100
-Catalin Marinas <catalin.marinas@arm.com> wrote:
+On Wed, Aug 07, 2024 at 01:04:29PM GMT, Greg Kroah-Hartman wrote:
+> On Wed, Aug 07, 2024 at 01:09:22AM +0200, Daniel Gomez via B4 Relay wrote=
+:
+> > From: Daniel Gomez <da.gomez@samsung.com>
+> >=20
+> > Add a copy of elf/elf.h header from the GNU C Library (glibc), version
+> > glibc-2.40 into include/elf. Update Makefiles where elf.h header is use=
+d
+> > to ensure the compiler can find all necessary headers, for macOS host
+> > where these headers are not provided by the system.
+> >=20
+> > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> > ---
+> >  arch/arm64/kernel/pi/Makefile     |    1 +
+> >  arch/arm64/kernel/vdso32/Makefile |    1 +
+> >  arch/arm64/kvm/hyp/nvhe/Makefile  |    2 +-
+> >  include/elf/elf.h                 | 4491 +++++++++++++++++++++++++++++=
+++++++++
+> >  scripts/Makefile                  |    3 +-
+> >  scripts/mod/Makefile              |    6 +
+> >  6 files changed, 4502 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/arch/arm64/kernel/pi/Makefile b/arch/arm64/kernel/pi/Makef=
+ile
+> > index 4d11a8c29181..eb782aaa6585 100644
+> > --- a/arch/arm64/kernel/pi/Makefile
+> > +++ b/arch/arm64/kernel/pi/Makefile
+> > @@ -20,6 +20,7 @@ KBUILD_CFLAGS	:=3D $(filter-out $(CC_FLAGS_SCS), $(KB=
+UILD_CFLAGS))
+> >  KBUILD_CFLAGS	:=3D $(filter-out $(CC_FLAGS_LTO), $(KBUILD_CFLAGS))
+> > =20
+> >  hostprogs	:=3D relacheck
+> > +HOSTCFLAGS_relacheck.o =3D -I$(srctree)/include/elf
+> > =20
+> >  quiet_cmd_piobjcopy =3D $(quiet_cmd_objcopy)
+> >        cmd_piobjcopy =3D $(cmd_objcopy) && $(obj)/relacheck $(@) $(<)
+> > diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso=
+32/Makefile
+> > index 25a2cb6317f3..e1ac384e6332 100644
+> > --- a/arch/arm64/kernel/vdso32/Makefile
+> > +++ b/arch/arm64/kernel/vdso32/Makefile
+> > @@ -107,6 +107,7 @@ VDSO_LDFLAGS +=3D --orphan-handling=3D$(CONFIG_LD_O=
+RPHAN_WARN_LEVEL)
+> >  # $(hostprogs) with $(obj)
+> >  munge :=3D ../../../arm/vdso/vdsomunge
+> >  hostprogs :=3D $(munge)
+> > +HOSTCFLAGS_$(munge).o =3D -I$(objtree)/include/elf
+> > =20
+> >  c-obj-vdso :=3D note.o
+> >  c-obj-vdso-gettimeofday :=3D vgettimeofday.o
+> > diff --git a/arch/arm64/kvm/hyp/nvhe/Makefile b/arch/arm64/kvm/hyp/nvhe=
+/Makefile
+> > index 782b34b004be..40541c0812bf 100644
+> > --- a/arch/arm64/kvm/hyp/nvhe/Makefile
+> > +++ b/arch/arm64/kvm/hyp/nvhe/Makefile
+> > @@ -15,7 +15,7 @@ ccflags-y +=3D -fno-stack-protector	\
+> >  	     $(DISABLE_STACKLEAK_PLUGIN)
+> > =20
+> >  hostprogs :=3D gen-hyprel
+> > -HOST_EXTRACFLAGS +=3D -I$(objtree)/include
+> > +HOST_EXTRACFLAGS +=3D -I$(objtree)/include -I$(srctree)/include/elf
+> > =20
+> >  lib-objs :=3D clear_page.o copy_page.o memcpy.o memset.o
+> >  lib-objs :=3D $(addprefix ../../../lib/, $(lib-objs))
+> > diff --git a/include/elf/elf.h b/include/elf/elf.h
+> > new file mode 100644
+> > index 000000000000..33aea7f743b8
+> > --- /dev/null
+> > +++ b/include/elf/elf.h
+> > @@ -0,0 +1,4491 @@
+> > +/* This file defines standard ELF types, structures, and macros.
+> > +   Copyright (C) 1995-2024 Free Software Foundation, Inc.
+> > +   This file is part of the GNU C Library.
+> > +
+> > +   The GNU C Library is free software; you can redistribute it and/or
+> > +   modify it under the terms of the GNU Lesser General Public
+> > +   License as published by the Free Software Foundation; either
+> > +   version 2.1 of the License, or (at your option) any later version.
+> > +
+> > +   The GNU C Library is distributed in the hope that it will be useful=
+,
+> > +   but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > +   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+> > +   Lesser General Public License for more details.
+> > +
+> > +   You should have received a copy of the GNU Lesser General Public
+> > +   License along with the GNU C Library; if not, see
+> > +   <https://www.gnu.org/licenses/>.  */
+>=20
+> I understand your want/need for this, but new files need a SPDX license
+> header instead of this type of license boilerplate.  Didn't glibc
+> already convert to SPDX?
 
-> Thanks Robin for having a look.
-> 
-> On Wed, Aug 07, 2024 at 02:13:06PM +0100, Robin Murphy wrote:
-> > On 2024-08-02 7:03 am, Baruch Siach wrote:  
-> > > When device DMA limit does not fit in DMA32 zone it should use DMA zone,
-> > > even when DMA zone is stricter than needed.
-> > > 
-> > > Same goes for devices that can't allocate from the entire normal zone.
-> > > Limit to DMA32 in that case.  
-> > 
-> > Per the bot report this only works for CONFIG_ARCH_KEEP_MEMBLOCK,  
-> 
-> Yeah, I just noticed.
-> 
-> > however
-> > the whole concept looks wrong anyway. The logic here is that we're only
-> > forcing a particular zone if there's *no* chance of the higher zone being
-> > usable. For example, ignoring offsets for simplicity, if we have a 40-bit
-> > DMA mask then we *do* want to initially try allocating from ZONE_NORMAL even
-> > if max_pfn is above 40 bits, since we still might get a usable allocation
-> > from between 32 and 40 bits, and if we don't, then we'll fall back to
-> > retrying from the DMA zone(s) anyway.  
-> 
-> Ah, I did not read the code further down in __dma_direct_alloc_pages(),
-> it does fall back to a GFP_DMA allocation if !dma_coherent_ok().
-> Similarly with swiotlb_alloc_tlb(), it keeps retrying until the
-> allocation fails.
+I don't think they've done the conversion. But I can add the SPDX header if=
+ we
+move forward with the patch series, and ask them if they have any plan to a=
+dopt
+the SPDX standard.
 
-Er, you certainly mean it keeps retrying as long as the allocation
-fails.
+>=20
+> Also, as this is not internal for the kernel, but rather for userspace
+> builds, shouldn't the include/ path be different?
 
-Yes, that's true. The initial GFP zone flags are a best-effort guess,
-and a stricter zone can be chosen in the end. This whole logic tries to
-select the highest zone that satisfies the limit, because allocating
-some pages and freeing them immediately is wasteful, especially for
-high-order allocations.
+Can you suggest an alternative path or provide documentation that could hel=
+p
+identify the correct location? Perhaps usr/include?
 
-> So yes, this patch can be dropped.
-
-+1
-
-Petr T
+>=20
+> thanks,
+>=20
+> greg k-h=
 
