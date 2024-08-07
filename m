@@ -1,75 +1,104 @@
-Return-Path: <linux-kernel+bounces-277960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6283994A8AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:35:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3452394A8AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D3C31C23445
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:35:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66AF91C23484
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCAF1EA0BF;
-	Wed,  7 Aug 2024 13:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RvWZTelu"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1D820011D;
+	Wed,  7 Aug 2024 13:34:56 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F60B44366;
-	Wed,  7 Aug 2024 13:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835EA1EA0B4;
+	Wed,  7 Aug 2024 13:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723037740; cv=none; b=qCpcF4ci6FLXRiICA3fPjqa9rIkdZKIbRzDhme5rhoIDR+d/5WDqacVDyfSno1uG5inNUFhi+t/jowZ2QRNAJifHSvu+KNIXYIUwZHgHAfpi+2cCAmRKA0ev5wtJYd7+KMa6AIc1BPma72b/ij8iQoXDSn7yoyoe+hbDLMWArhQ=
+	t=1723037696; cv=none; b=P0Iu/uwp+RQFyerQom6vP/2Hto5ojLc4rCKewge9yto/CrDz2r8aijwNaKRVGEM7XnaTrXRPjdVIgMNRk8dzCS+F686p+j46obFD1NAU0m2em4vDbWVcaDK4+F5fb5HZdKYnSHUT+pGh8BM/gY8vUHwrf9YppLKzs0FN5PYPIzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723037740; c=relaxed/simple;
-	bh=ALaWjI0nfFErCuZGtSRO0LIzfSJwcgNgqemRT5KuC2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qReqfZAhEW/Vo3inm09W3X+JWt677IFjtL2yt7SMwj2VqF08NyuZEXI38dHOzR84OEfxvwUotlQ9HtrVpNpw2OYGNr20CMwgxBh0/kqo2reo5J3O7ObYgh+CQo8pGnsGdUbD561fkqthn/mgA9jmxrBMaT9ka3My+YSXBbIcn6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RvWZTelu; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=3HUbB0K1F8mlWSOWbVpQk/JV4CdvrPNZEVZ4zbL0scI=; b=RvWZTeluUOfbIaD2x40Mz5k2mZ
-	k0Xy0H+oDssYfwGk+nPCRKj3b9+VVcBEUMLCY9ya8BmcsAer7HyMIwLuv8UlYSM+DQOi8T/wnPTwm
-	wrkSPnyfVHL7OasyimyLEfPVBZ2O89blbs0WTQi0q2OJrzdOR26FLKIYGk4B6Fak9dXM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sbgp7-004CgV-ML; Wed, 07 Aug 2024 15:35:29 +0200
-Date: Wed, 7 Aug 2024 15:35:29 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: MD Danish Anwar <danishanwar@ti.com>, Roger Quadros <rogerq@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux@ew.tq-group.com
-Subject: Re: [PATCH net-next] net: ti: icssg_prueth: populate netdev of_node
-Message-ID: <27362b48-c185-4ef4-b1fd-550ee3a7cd70@lunn.ch>
-References: <20240807121215.3178964-1-matthias.schiffer@ew.tq-group.com>
+	s=arc-20240116; t=1723037696; c=relaxed/simple;
+	bh=CTrdCerDujY+vsVqTwoflpjSLcluhDUvQV948FIeU3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KtFGyJ2L11FU/IKBbMIXYjcla/vo1GPNL9dtfI39j5T2Yfws7ikqQOdB5NFF0+0az8RsSPJGWhU8yRc3SQ9GcDmAyibuPhd5/70wii/F4VOa5pY1hczCFmlmeIrgGxRZRwo6yyJDloOY7z6HrPDwN+oWvNVqZ5Kfxl16Q+XOvAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10869C32782;
+	Wed,  7 Aug 2024 13:34:54 +0000 (UTC)
+Date: Wed, 7 Aug 2024 09:35:45 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathias Krause <minipli@grsecurity.net>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Ajay Kaher <ajay.kaher@broadcom.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, Ilkka
+ =?UTF-8?B?TmF1bGFww6TDpA==?= <digirigawa@gmail.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Brad Spengler <spender@grsecurity.net>
+Subject: Re: [PATCH 2/2] tracefs: Don't overlay 'struct inode'
+Message-ID: <20240807093545.4ec51d61@gandalf.local.home>
+In-Reply-To: <20240807115143.45927-3-minipli@grsecurity.net>
+References: <20240807115143.45927-1-minipli@grsecurity.net>
+	<20240807115143.45927-3-minipli@grsecurity.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807121215.3178964-1-matthias.schiffer@ew.tq-group.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 07, 2024 at 02:12:15PM +0200, Matthias Schiffer wrote:
-> Allow of_find_net_device_by_node() to find icssg_prueth ports and make
-> the individual ports' of_nodes available in sysfs.
-> 
-> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+On Wed,  7 Aug 2024 13:51:39 +0200
+Mathias Krause <minipli@grsecurity.net> wrote:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
+> index f704d8348357..a7769857962a 100644
+> --- a/fs/tracefs/internal.h
+> +++ b/fs/tracefs/internal.h
+> @@ -10,10 +10,8 @@ enum {
+>  };
+>  
+>  struct tracefs_inode {
+> -	union {
+> -		struct inode            vfs_inode;
+> -		struct rcu_head		rcu;
+> -	};
+> +	struct inode		vfs_inode;
+> +	struct rcu_head		rcu;
 
-    Andrew
+I rather not make this structure any bigger for the rcu element that is not
+used until freed.
+
+>  	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
+>  	struct list_head	list;
+>  	unsigned long           flags;
+
+Perhaps:
+
+diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
+index f704d8348357..ab6d6c3d835d 100644
+--- a/fs/tracefs/internal.h
++++ b/fs/tracefs/internal.h
+@@ -10,12 +10,12 @@ enum {
+ };
+ 
+ struct tracefs_inode {
++	struct inode            vfs_inode;
++	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
+ 	union {
+-		struct inode            vfs_inode;
++		struct list_head	list;
+ 		struct rcu_head		rcu;
+ 	};
+-	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
+-	struct list_head	list;
+ 	unsigned long           flags;
+ 	void                    *private;
+ };
+
+
+-- Steve
 
