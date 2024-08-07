@@ -1,84 +1,172 @@
-Return-Path: <linux-kernel+bounces-278543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D00E394B19F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:52:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D021194B1A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE081F227EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:52:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77C3D1F22D72
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A7F1465BF;
-	Wed,  7 Aug 2024 20:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD99146A76;
+	Wed,  7 Aug 2024 20:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSqNjpDl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPtmR41C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D138144D39;
-	Wed,  7 Aug 2024 20:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112D62575F;
+	Wed,  7 Aug 2024 20:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723063947; cv=none; b=qmZn4RwqtzdweJs6/dhYw8nzs+qzdSgUNC9MK7GfgKrdeuOENR02vdvOeYNTGQmJ0jHddyF97fbwCiYNSG218BLiZamxd6zOdYvDiAQREtNAzbA+zQmW9iuROixfipr7jNh4JJ5Rt3L8HC47USbwDC1j4Tt01t91nFEeJN9am3A=
+	t=1723064154; cv=none; b=YjEX/+jELMQluf/LsLwjxZabetIrcKostuEvUdotqLtkoc7wK3ZTliioZXa5lEyDSN/ZMQigMFjhcpFrI0D7OgQh3pQjGKotxw6m8VRv7krxk0rTncOikhPgnYlhHJSiu3x5mW/U2H//zsW74coF2N8RSc0QDM8hxE7Kym2Bcqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723063947; c=relaxed/simple;
-	bh=oj70GTHHWvPsRBx5GczXvZFla0MTvPyt6ASgDnA5YR4=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Uff0Vz8pxxMH4FsN8c5MKBBGd/1DGRyD+ge/2YmCf8H6M9fU1xugCY34nQANRcJ39rrJTwh+d+HVCPbKhyJJDTywftY8hA5O9/MQnc22JU5TKvpSR9ln3S538pr4XznkJnnd6TvjPdHj2vHbudhGirdHLPAurgLrLM1Ss4dlJ0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSqNjpDl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A930C32781;
-	Wed,  7 Aug 2024 20:52:24 +0000 (UTC)
+	s=arc-20240116; t=1723064154; c=relaxed/simple;
+	bh=EaZgcA3NtRAmtxQ7KZE96Vk2UBjW9UO69pLCY10zeOU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Ib9Fbx2Yiin7hmxrLsXAJiDyEpsfcN36t4hHCn4n3Y6wDOxJnMC4wM6OoVq/9aae5ghqaU3Bpjw4P6A4uuoBi55qvttFBfGXgnhnkGJvfMutnToQVtb2tkZeLZYzAYeGMSv0DaxRKR1XnAA53AzpYhG2bDl0aDte5aiW0ZciCA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lPtmR41C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A3EFC32781;
+	Wed,  7 Aug 2024 20:55:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723063944;
-	bh=oj70GTHHWvPsRBx5GczXvZFla0MTvPyt6ASgDnA5YR4=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=dSqNjpDlDZBAyB5EyI+LYsy7nnQHn/jUtw+F7FvPM7rvlnD3UXSqGabVUw5efHwVH
-	 k5vH0uEo8Y2W8dkme7QQfWmt0paR8bSNMcHB8tOD/H3X9HJsJeauh8hX3cJq3BptqX
-	 pFESMPq7witMNuohNEbAfOreIk+LxPd+cQJvJk1yIYhpYNje1tSs2JxueA3vhikZfU
-	 JvnLr2m9W4CK7P6N8PUcc6g6FY74fnJF8jYqI/ZG8JnOW6bCXcD0cHbgT0PAGU0O4Z
-	 DT6Z0lUu7o6rae9S7SAwj4PZTLlyS8Cvde6DxzwFWVm6zHtY24YP5HZd73lHrwxZ/V
-	 h/AGuKTz41S2g==
-Message-ID: <a0c8bb91f1645d1769e4cd2945bf36f8.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1723064153;
+	bh=EaZgcA3NtRAmtxQ7KZE96Vk2UBjW9UO69pLCY10zeOU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lPtmR41C4gg3atA2WrJ4WPsI4+3VjEXnkpMl/2QBNAD9rzgCm805CjQUYQIrVG4oI
+	 myMKNdhyxoMIRaiZep7hSjD1qYN598NiOe9vWsWZ5StkTgod1PQ3rYNHDgmYdgim1p
+	 CQabP3YQaQfw4qR1adoDmX/+2R0mZbWQiiuyiYtvbJg7O5XxGva++AMnYJQnrSdKtC
+	 3aiFa7aO4yQhiK7VFAy0o87UPWGKpo+2DOdF50i/pHVJrIg+FWKKXuUtRTl/B4Gfc4
+	 5h7WOXXs5H1cw7lMYniX81Vsa1GD24Uf/S8AVma0JmwOWo52fY0fm2g1e6HsW9MYg/
+	 i77DTdIrALRgQ==
+Date: Thu, 8 Aug 2024 05:55:46 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Song Liu <songliubraving@meta.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Song Liu <song@kernel.org>,
+ "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
+ <linux-trace-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>, Petr
+ Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, Nathan
+ Chancellor <nathan@kernel.org>, "morbo@google.com" <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Luis Chamberlain
+ <mcgrof@kernel.org>, Leizhen <thunder.leizhen@huawei.com>,
+ "kees@kernel.org" <kees@kernel.org>, Kernel Team <kernel-team@meta.com>,
+ Matthew Maurer <mmaurer@google.com>, Sami Tolvanen
+ <samitolvanen@google.com>
+Subject: Re: [PATCH v2 3/3] tracing/kprobes: Use APIs that matches symbols
+ without .XXX suffix
+Message-Id: <20240808055546.9b7f8089a10713d83ba29a75@kernel.org>
+In-Reply-To: <BEEE3F89-717B-44A4-8571-68DA69408DA4@fb.com>
+References: <20240802210836.2210140-1-song@kernel.org>
+	<20240802210836.2210140-4-song@kernel.org>
+	<20240806144426.00ed349f@gandalf.local.home>
+	<B53E6C7F-7FC4-4B4B-9F06-8D7F37B8E0EB@fb.com>
+	<20240806160049.617500de@gandalf.local.home>
+	<20240806160149.48606a0b@gandalf.local.home>
+	<6F6AC75C-89F9-45C3-98FF-07AD73C38078@fb.com>
+	<20240807090146.88b38c2fbd1cd8db683be22c@kernel.org>
+	<BEEE3F89-717B-44A4-8571-68DA69408DA4@fb.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240807075714.2156445-1-arnd@kernel.org>
-References: <20240807075714.2156445-1-arnd@kernel.org>
-Subject: Re: [PATCH] clk: renesas: fix r9a09g057_cpg_info link error
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Michael Turquette <mturquette@baylibre.com>, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Arnd Bergmann <arnd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Date: Wed, 07 Aug 2024 13:52:22 -0700
-User-Agent: alot/0.10
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Quoting Arnd Bergmann (2024-08-07 00:56:58)
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> The rzv2g-cpg.c driver unconditionally links into the r9a09g057
-> one, but that may be disabled:
->=20
-> aarch64-linux-ld: drivers/clk/renesas/rzv2h-cpg.o:(.rodata+0x440): undefi=
-ned reference to `r9a09g057_cpg_info'
->=20
-> Use the same approach here as with the rzg2l variant, using an #ifdef
-> around tha data.
->=20
-> I think both drivers would be better off doing the abstraction the other
-> way round, with the platform_driver structure defined in the most specific
-> file and the common bits as a library that exports common functions.
-> Changing it that way would require a larger rework of course.
->=20
-> Fixes: 42b54d52ecb7 ("clk: renesas: Add RZ/V2H(P) CPG driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+On Wed, 7 Aug 2024 00:19:20 +0000
+Song Liu <songliubraving@meta.com> wrote:
 
-This is https://lore.kernel.org/r/20240805095842.277792-1-prabhakar.mahadev=
--lad.rj@bp.renesas.com
+> 
+> 
+> > On Aug 6, 2024, at 5:01 PM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > 
+> > On Tue, 6 Aug 2024 20:12:55 +0000
+> > Song Liu <songliubraving@meta.com> wrote:
+> > 
+> >> 
+> >> 
+> >>> On Aug 6, 2024, at 1:01 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >>> 
+> >>> On Tue, 6 Aug 2024 16:00:49 -0400
+> >>> Steven Rostedt <rostedt@goodmis.org> wrote:
+> >>> 
+> >>>>>>> + if (IS_ENABLED(CONFIG_LTO_CLANG) && !addr)
+> >>>>>>> + addr = kallsyms_lookup_name_without_suffix(trace_kprobe_symbol(tk));
+> >>>>>>> +    
+> >>>>>> 
+> >>>>>> So you do the lookup twice if this is enabled?
+> >>>>>> 
+> >>>>>> Why not just use "kallsyms_lookup_name_without_suffix()" the entire time,
+> >>>>>> and it should work just the same as "kallsyms_lookup_name()" if it's not
+> >>>>>> needed?    
+> >>>>> 
+> >>>>> We still want to give priority to full match. For example, we have:
+> >>>>> 
+> >>>>> [root@~]# grep c_next /proc/kallsyms
+> >>>>> ffffffff81419dc0 t c_next.llvm.7567888411731313343
+> >>>>> ffffffff81680600 t c_next
+> >>>>> ffffffff81854380 t c_next.llvm.14337844803752139461
+> >>>>> 
+> >>>>> If the goal is to explicitly trace c_next.llvm.7567888411731313343, the
+> >>>>> user can provide the full name. If we always match _without_suffix, all
+> >>>>> of the 3 will match to the first one. 
+> >>>>> 
+> >>>>> Does this make sense?  
+> >>>> 
+> >>>> Yes. Sorry, I missed the "&& !addr)" after the "IS_ENABLED()", which looked
+> >>>> like you did the command twice.
+> >>> 
+> >>> But that said, does this only have to be for llvm? Or should we do this for
+> >>> even gcc? As I believe gcc can give strange symbols too.
+> >> 
+> >> I think most of the issue comes with LTO, as LTO promotes local static
+> >> functions to global functions. IIUC, we don't have GCC built, LTO enabled
+> >> kernel yet.
+> >> 
+> >> In my GCC built, we have suffixes like ".constprop.0", ".part.0", ".isra.0", 
+> >> and ".isra.0.cold". We didn't do anything about these before this set. So I 
+> >> think we are OK not handling them now. We sure can enable it for GCC built
+> >> kernel in the future.
+> > 
+> > Hmm, I think it should be handled as it is. This means it should do as
+> > livepatch does. Since I expected user will check kallsyms if gets error,
+> > we should keep this as it is. (if a symbol has suffix, it should accept
+> > symbol with suffix, or user will get confused because they can not find
+> > which symbol is kprobed.)
+> > 
+> > Sorry about the conclusion (so I NAK this), but this is a good discussion. 
+> 
+> Do you mean we do not want patch 3/3, but would like to keep 1/3 and part 
+> of 2/3 (remove the _without_suffix APIs)? If this is the case, we are 
+> undoing the change by Sami in [1], and thus may break some tracing tools. 
+
+BTW, I confirmed that the PATCH 1/3 and 2/3 fixes kprobes to probe on suffixed
+symbols correctly. (because 1/3 allows to search suffixed symbols) 
+
+/sys/kernel/tracing # cat dynamic_events 
+p:kprobes/p_c_stop_llvm_17132674095431275852_0 c_stop.llvm.17132674095431275852
+p:kprobes/p_c_stop_llvm_8011538628216713357_0 c_stop.llvm.8011538628216713357
+p:kprobes/p_c_stop_0 c_stop
+
+Thank you,
+
+> 
+> Sami, could you please share your thoughts on this? 
+> 
+> If this works, I will send next version with 1/3 and part of 2/3. 
+> 
+> Thanks,
+> Song
+> 
+> [1] https://lore.kernel.org/all/20210408182843.1754385-8-samitolvanen@google.com/
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
