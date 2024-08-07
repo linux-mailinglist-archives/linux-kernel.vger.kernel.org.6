@@ -1,99 +1,133 @@
-Return-Path: <linux-kernel+bounces-278355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA9CC94AF12
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:46:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 094B494AF17
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 082561C218F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:46:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15C11F22B22
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761F113DBB3;
-	Wed,  7 Aug 2024 17:46:07 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0479813DDAA;
+	Wed,  7 Aug 2024 17:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NMrKKNaC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFF912C7F9;
-	Wed,  7 Aug 2024 17:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCE580BEC;
+	Wed,  7 Aug 2024 17:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723052767; cv=none; b=naRa7MeX2BHixyHsovmjSrOJaEsJwlaougEA1xcF7fBkDVQtTL6JkiQgJn/4T45IjGzA2Cf0M39m6Wj0B+0JvqsvT5wQWULqCHlb2xQZM82iluyv9RRpMKF6jOjwozzzwphUkowjr69nXcff5iP1awqBJTBBmCKj6oYs72whwDE=
+	t=1723052857; cv=none; b=giRYJ1VCXow2KiBJd49DUHbePBxo30iKDU7AQfMACwLP5qHvHYfduLOvuUN/DmO/g39cEXCANAg0w44Ns1F/Zos18ZSnaT4mPy7DoxubtK0Rsq6zrYw3QMNl7TSy3EjM6ca803IvoAtNzuuaATQt+fnGjVZ9XLjzxR+YD34ZKrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723052767; c=relaxed/simple;
-	bh=gF081KCfJ5B+lAgNuy87qr5XocQ6S3L9ZKRS3HBuzeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RM5VhLNzXNzUy6TZj/ru7vvhvn6MeaqsYoIE5sVipFB6Vsr2qhVRDSVolR90HL8YKIQ8pNjcVhgqmcGPyIfUzocAqr7xlTOGMJR9u2ynFmG0NS9ljP6FDe6iMDmQptu6DIgPVqmloJ1UTgWvr56GRXUNXmyO+ARpIwVMlbSM32Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 8AD631C0082; Wed,  7 Aug 2024 19:46:03 +0200 (CEST)
-Date: Wed, 7 Aug 2024 19:46:02 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.10 000/123] 6.10.4-rc1 review
-Message-ID: <ZrOy2l/ukmsvOVUF@duo.ucw.cz>
-References: <20240807150020.790615758@linuxfoundation.org>
+	s=arc-20240116; t=1723052857; c=relaxed/simple;
+	bh=I3dBEl7gZ6UF2jKD+4y9OTtPsx5fbU5DIZcAjt0Q+pQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l/kGY7ouDfxvp/Fnx2t8l9mFJWsUoECShwf+XEG+/8AGPG6Lau8jkYdOOYODuPp9b2q8lfN4b6S6/KrmI1zAZBtiT2u+1wZRmwnGYrdKqixU4St60Sk3K02PBRrOjHkCmXYKsrJgHf8gAwLB/T544p2T56MJrP1dAcHNC+gqpbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NMrKKNaC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3D31C32781;
+	Wed,  7 Aug 2024 17:47:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723052856;
+	bh=I3dBEl7gZ6UF2jKD+4y9OTtPsx5fbU5DIZcAjt0Q+pQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NMrKKNaCEVK5Djs3ir/G5ibpZK0WbOdn1per0Oh5BOgUbbnYqKwVdmAAE5C+xVABt
+	 DyOrXtgIsofwNagQRXVGrohu6Jpd2rtx4iDeVaZKnK9V6Lu/K8uuZG/EXO4csgr2Zr
+	 1abhw+XabvcyInDzB9EiNdIc6O0ROkGf2sh2KhB2vwi/nI0qbIFaRPlybvtDjmLiTi
+	 E/2r/n0B/IIJO5nf7zwi1NfQ33MrS34xTWoZUIf7szCsONd8e9yE53a+aOYLZVsMMI
+	 0uIdQ6hfa+X5nJ1+DEr2/ZxM75HWeE8tXlwTMYulEmkzCg5Lzk8hPxOJhdeAU+oFZV
+	 StIzh/E0+m88w==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH] treewide: remove unnecessary <linux/version.h> inclusion
+Date: Thu,  8 Aug 2024 02:47:28 +0900
+Message-ID: <20240807174730.658429-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="atc206epg6yZT1AI"
-Content-Disposition: inline
-In-Reply-To: <20240807150020.790615758@linuxfoundation.org>
+Content-Transfer-Encoding: 8bit
 
+These files do not use any macros defined in <linux/version.h>.
 
---atc206epg6yZT1AI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-Hi!
+ drivers/accessibility/speakup/genmap.c                | 1 -
+ drivers/accessibility/speakup/makemapdata.c           | 1 -
+ drivers/staging/media/atomisp/include/linux/atomisp.h | 1 -
+ samples/trace_events/trace_custom_sched.c             | 1 -
+ sound/soc/codecs/cs42l42.c                            | 1 -
+ 5 files changed, 5 deletions(-)
 
-> This is the start of the stable review cycle for the 6.10.4 release.
-> There are 123 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+diff --git a/drivers/accessibility/speakup/genmap.c b/drivers/accessibility/speakup/genmap.c
+index 0125000e00d9..0882bab10fb8 100644
+--- a/drivers/accessibility/speakup/genmap.c
++++ b/drivers/accessibility/speakup/genmap.c
+@@ -10,7 +10,6 @@
+ #include <stdio.h>
+ #include <libgen.h>
+ #include <string.h>
+-#include <linux/version.h>
+ #include <ctype.h>
+ #include "utils.h"
+ 
+diff --git a/drivers/accessibility/speakup/makemapdata.c b/drivers/accessibility/speakup/makemapdata.c
+index d7d41bb9b05f..55e4ef8a93dc 100644
+--- a/drivers/accessibility/speakup/makemapdata.c
++++ b/drivers/accessibility/speakup/makemapdata.c
+@@ -10,7 +10,6 @@
+ #include <stdio.h>
+ #include <libgen.h>
+ #include <string.h>
+-#include <linux/version.h>
+ #include <ctype.h>
+ #include "utils.h"
+ 
+diff --git a/drivers/staging/media/atomisp/include/linux/atomisp.h b/drivers/staging/media/atomisp/include/linux/atomisp.h
+index 16c9da172c03..fefbe3cd08f3 100644
+--- a/drivers/staging/media/atomisp/include/linux/atomisp.h
++++ b/drivers/staging/media/atomisp/include/linux/atomisp.h
+@@ -20,7 +20,6 @@
+ #define _ATOM_ISP_H
+ 
+ #include <linux/types.h>
+-#include <linux/version.h>
+ 
+ /* struct media_device_info.hw_revision */
+ #define ATOMISP_HW_REVISION_MASK	0x0000ff00
+diff --git a/samples/trace_events/trace_custom_sched.c b/samples/trace_events/trace_custom_sched.c
+index b99d9ab7db85..dd409b704b35 100644
+--- a/samples/trace_events/trace_custom_sched.c
++++ b/samples/trace_events/trace_custom_sched.c
+@@ -8,7 +8,6 @@
+ #define pr_fmt(fmt) fmt
+ 
+ #include <linux/trace_events.h>
+-#include <linux/version.h>
+ #include <linux/module.h>
+ #include <linux/sched.h>
+ 
+diff --git a/sound/soc/codecs/cs42l42.c b/sound/soc/codecs/cs42l42.c
+index 60d366e53526..6400ac875e6f 100644
+--- a/sound/soc/codecs/cs42l42.c
++++ b/sound/soc/codecs/cs42l42.c
+@@ -11,7 +11,6 @@
+ 
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+-#include <linux/version.h>
+ #include <linux/types.h>
+ #include <linux/init.h>
+ #include <linux/delay.h>
+-- 
+2.43.0
 
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.10.y
-
-6.6 passes our testing, too:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.6.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---atc206epg6yZT1AI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZrOy2gAKCRAw5/Bqldv6
-8uU8AJ0TieuE9Zgi/fKbxidFQE/jx/EVYACaAyt+L1zKdNy9ZQOdDbPEegiJaNg=
-=kpy0
------END PGP SIGNATURE-----
-
---atc206epg6yZT1AI--
 
