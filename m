@@ -1,135 +1,262 @@
-Return-Path: <linux-kernel+bounces-277291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F606949EF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:13:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 832B3949F02
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:14:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3400E1F25A8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:13:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AB861F22F79
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB161917D9;
-	Wed,  7 Aug 2024 05:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07121191495;
+	Wed,  7 Aug 2024 05:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KjuSWvGE"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qhkW4dFJ"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2056.outbound.protection.outlook.com [40.107.223.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3273915CD46
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 05:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723007576; cv=none; b=QW4le49M0ghPvSNt6RE50+wJ1q+UoBzNiyfMawP7oQjoI7vQ13SEFvNT66Mo8bjbEYFhy/aSEuMetXiZGaSvJoBOaxnWxR247gsZxqkPntp2VhdQTE/afUV/xPcV2XQCBHotn+ukUshs7W4iIbOQv/nj//g+6vEKBCIXiWHFDOY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723007576; c=relaxed/simple;
-	bh=47M41ZpgKe74fHVVAqsjqnphhy3WW8MdGWVa4z+f9kU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=GJm/Sdt5JqgvHs+ghjrAB/EJawVFHuC6ixyi/IBO7ITm6MqfAvwXcARM3m3i0O2IcPoIRVxmxmeUVx3ZbDMqPwW/7qY1E2JDFqJ4eOULKIjrtzM9H+gc+k7YAW/+v4+0u2h39flLRzp4P1kDo4fx8GnLEV96N4+bc6C+5MgdTlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KjuSWvGE; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3db1270da60so866344b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 22:12:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723007574; x=1723612374; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=254hNr+AlmH4fbC99LCC9/G5WWPfXEbuSKUu4ia96tw=;
-        b=KjuSWvGErhx/l+r/09sMXMcZDktqUGOvWMdL4y8sTKjIUbQq1eRUZoHlMPO0R9P3x2
-         FQ6GMDoZGCEegSGsVqEd48ofBAQHoflJre6msP/Gv0/ab31D58M3UUiliLOsOKNfE23T
-         ilx8vhO9wIimJAAgKgT3xH94eeSAVLfZmzY1PTZh2dCFO8ANEhuzCvXO7UtC4wS2Ll62
-         rbImXUrGKOrsADmhFmLYSjQ8S3FdeiE39pzzjMeCBQdDM0ba29G7EC/DHgsYLXxjGt6u
-         jnQvNUiyFoSjS0tIGmFMKOvgIjJ6LbHgxjgzlKyljKIW15uxdH40KdfzQOk9nE3bIngy
-         rxlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723007574; x=1723612374;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=254hNr+AlmH4fbC99LCC9/G5WWPfXEbuSKUu4ia96tw=;
-        b=Gni++pNAj2l4SJ+XGKNBAPVHoRrxMT3PUoq5vYvwYUv4vSRMtOzFUQql/tDHB2fGZf
-         FAtXaMcAp1xBgc+odp0SKxnGsHv7BfgmSyVaXChnUQ+r8joBCHeUy6ghRaTsyRpp+PSC
-         Rv2enGVbzJPUPVHdEz3CcYoCM9oo5649sJyppCAibVDZAfpA68kOUSHCxV0RpK8yUnYE
-         jTcMB6cnBla2rhY4kLk5v+Zckf1s6c7Ga9bAl0lsY5mqq+FZhTXtMTc9R9q2o3O7MJ7k
-         zTd+WJweJ6sO56UsxsdnZflWIL/phm//tHySArSi1EkNdlxwPyZuNOh3+woWw2n+kkU9
-         uBog==
-X-Forwarded-Encrypted: i=1; AJvYcCUzmaGpDdhC87Yt3YcxhIT1Xm/aRf/KV/aW6PFQebGyRPTiloiaQ02wr9r/69C0ZMNXgsfVFs6iINptppXbgOJGPTTGGR8sdGc5Ugb6
-X-Gm-Message-State: AOJu0Yw967VJOkDXBfQJsKjvClWAfZYssslCnmsXS/ZgcZtEwI7mcvsn
-	bTdJ7Ms+5WuDAbIiZ26Sq67ogiO1gWYNd6F7KlSJI06MNKDEerHk
-X-Google-Smtp-Source: AGHT+IHsGE2Gqqynq+6RB9KgLdBUb3AeqpLjWYxTUHEg4xrx7XPUiigIdk4xS+85INI0KofIJvznXQ==
-X-Received: by 2002:a05:6870:b025:b0:25e:24b:e65b with SMTP id 586e51a60fabf-26891f23fc9mr22074023fac.42.1723007574242;
-        Tue, 06 Aug 2024 22:12:54 -0700 (PDT)
-Received: from [192.168.10.4] ([43.224.156.13])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b764fb5671sm7644493a12.64.2024.08.06.22.12.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 22:12:53 -0700 (PDT)
-Message-ID: <14e9aefb-88d1-4eee-8288-ef15d4a9b059@gmail.com>
-Date: Wed, 7 Aug 2024 10:42:49 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F741917D9;
+	Wed,  7 Aug 2024 05:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723007648; cv=fail; b=dfnrJRmuK22kD4z1HjK1CGBu8qb1NCmOQ8XaZHOd6ZEylXuUEZthx82LA0XGroWkKvMRreMUORoOnBKRxjueA1hsHBD9ZEWgPxfI5PfpFulLX4rb4B/om/BIk3gPf/VVh5s9BHsiM43RKUGU/Wrq+wFYKIoUrSWaNviZnDwskbI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723007648; c=relaxed/simple;
+	bh=utFnCjXXq3dUZomEwbJIe/F8SDIZtbTlgz1KvAdmlz4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EKEQXU1rnudztcF08TRJh/MZP0w3+pO8vDZwF32IkgyeDxLF2cugQU5qqUSf94HwCZ1vFEC1ZgqcaNdPYGoidT5oyud8haQpWHAMqikczcfRo54kyKd+pV0zdtY39NK181ioFy8fBwEfkhMTv3lz3f/FiC3kfwXlCryHTvQqQkA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qhkW4dFJ; arc=fail smtp.client-ip=40.107.223.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qHbxmjk1Es2zhalCFntx11oLPCDOThArEE9/EHNvv4emkWKwPSL9QUBH5HQECcpvE/O7YRYDbMhVIFR2wDTghfk6GZ1QVrMhEBjrFCdhqJHojbKNJ7m2NYHcDfgEimCId9kv+2O5M8IXl364TK+hQOAIDUU5Rtwk6pdgZYEUrn8MZzLbFWiSMzAb7C9sWfoIOH9WEqQEyqzj+XIyUuWjhbWvRONVzIVHpNYDtL++cNiLRlE2D8wrhowSDKoFTbUflEKdq0+y7c52trhG0bFeGFVERtzd6YQCSSD8J6A+Q7WIv4FWuOxPaJrFWaFQLrAcGx7zYrIlSQBPC7wruvUjUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aoOn35PB7tB6CN6MRHOsqsIBZ7eeJhHJe6rpmwRrJWE=;
+ b=romCbfaOOsaeEy5bJj1U9JusLkH0WcHRtFTYHWKL1iQOrM3xrP2rNdn4rUg4Qf5JNEBXn7wdq+mYtTy9wySeou+h2iSeTmtyEFWdPSttXEUD1eXiT3dys0XHXrFUNScKS6Ce2yk6/iPPCKTjr3ZxpQMBnJjrdq1j4aOFSkqnF1svgr6N3aOGMLvFE04mxuvdB87M6rNMRB7Xu9JheXP6FaQgRNBaoEEIHjjVRCIwEPMWMv2jbozGHYi6uCB92+gGNPS+OVgSqKzn0WUW7BD9GA0g/iI7KS9rD15qU6+cwnC2nJn1BPF/aFa3HfzQPY0dqxnAwPOwgXOKLBJwJ/NMJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aoOn35PB7tB6CN6MRHOsqsIBZ7eeJhHJe6rpmwRrJWE=;
+ b=qhkW4dFJP8FU/kkKSvY3k9l0pG3kJCBBz1q70BY3xxL8udby0dRLd1fW2WfkFUvdcZ3xuM5NNygwmdp+rQw1c9qUxQ42Jw4oVJnce1JkjGUbczn+fV0o2oujeoqHNn8C7AX3xVb9/p8MEkLGaVBoFl4z6lVMunaQSK1YxhnnFnI=
+Received: from BY5PR04CA0003.namprd04.prod.outlook.com (2603:10b6:a03:1d0::13)
+ by LV2PR12MB5800.namprd12.prod.outlook.com (2603:10b6:408:178::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Wed, 7 Aug
+ 2024 05:14:02 +0000
+Received: from SJ5PEPF000001E9.namprd05.prod.outlook.com
+ (2603:10b6:a03:1d0:cafe::77) by BY5PR04CA0003.outlook.office365.com
+ (2603:10b6:a03:1d0::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27 via Frontend
+ Transport; Wed, 7 Aug 2024 05:14:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001E9.mail.protection.outlook.com (10.167.242.197) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Wed, 7 Aug 2024 05:14:01 +0000
+Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 7 Aug 2024 00:13:54 -0500
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: <broonie@kernel.org>
+CC: <alsa-devel@alsa-project.org>, <Basavaraj.Hiregoudar@amd.com>,
+	<Sunil-kumar.Dommati@amd.com>, <venkataprasad.potturu@amd.com>, "Vijendar
+ Mukunda" <Vijendar.Mukunda@amd.com>, Ranjani Sridharan
+	<ranjani.sridharan@linux.intel.com>, Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, Bard Liao
+	<yung-chuan.liao@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+	"Kai Vehmanen" <kai.vehmanen@linux.intel.com>, Jaroslav Kysela
+	<perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Cristian Ciocaltea
+	<cristian.ciocaltea@collabora.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+	Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>, "moderated list:SOUND - SOUND
+ OPEN FIRMWARE (SOF) DRIVERS" <sound-open-firmware@alsa-project.org>, "open
+ list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
+	<linux-sound@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/8] ASoC: SOF: amd: Fix for incorrect acp error satus register offset
+Date: Wed, 7 Aug 2024 10:43:13 +0530
+Message-ID: <20240807051341.1616925-1-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-From: Harith George <mail2hgg@gmail.com>
-Subject: [build fail] v6.11-rc2 from "ARM: 9404/1: arm32: enable
- HAVE_LD_DEAD_CODE_DATA_ELIMINATION"
-To: liuyuntao12@huawei.com, arnd@arndb.de, linus.walleij@linaro.org,
- rmk+kernel@armlinux.org.uk, ardb@kernel.org, harith.g@alifsemi.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001E9:EE_|LV2PR12MB5800:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54ae472b-2dcf-4be8-abfc-08dcb69fbfbf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FNhd1ZfIPGc68HYFXSmV/F+H3H2jjNuepiKU/Bwh18HJnviFD6sMzZ5kuiiK?=
+ =?us-ascii?Q?CknJg57e+CbfmpYS+Pa3s0J81ZIm0O3FOhYBF7rjb2KJJxqmOvP3q4lF3PaJ?=
+ =?us-ascii?Q?zuXrALJ+Tsv7Ra/XPmEPwQiNgpbtbfKCITbx84hWmACJJua9zcH/3XUVAQhh?=
+ =?us-ascii?Q?i2WxB432cY9Mriww082luUcZUD1lw3mVnCRmEfktKpoLeHvrZdlmX5J0Uj6w?=
+ =?us-ascii?Q?wI0FlFM8fydnfiPmVgKCnANKuidyELbvsUrCAHgwV/jqiZT48YABWXx3IzSC?=
+ =?us-ascii?Q?nYUeSaGVSJEjEKGs2D8otMiZmLpjJQ2gtIwI6MC+g0emmKY9OmIGpQfy5+CE?=
+ =?us-ascii?Q?p0fhYUWF2uS4UQry9W7vBPxbgvayYeapCOqn5bP6aRAfmC2Pyqs80ad0wMhC?=
+ =?us-ascii?Q?wt276unZWphI7l8Q5n/8+a5BCfc+Sc4DaxzVzLeLs1Tj5Uqo3fTWCMXqztgG?=
+ =?us-ascii?Q?0bCVlIjblzz41VFaabntbPWtJkTj5de18/UvyS2bXxIhDSnDQRJE731ek/cy?=
+ =?us-ascii?Q?TmEriLTxOowkzhDxPlM7zPZYxQsQq8zlfuUmGR5s9R+mG4x2utJ1PucrHK1b?=
+ =?us-ascii?Q?a8LOnxjNDaF11+90WE+7OsT2ELHcWyAGM1mvQwsxruG4lS35ng5qLPHGy9+3?=
+ =?us-ascii?Q?VNJ4ETXn/mcZg1jZv0FwQgTBUDxLYTMPEH2ZV9zqk+QTk4sYXbMQH0JSXVe0?=
+ =?us-ascii?Q?K0nELwyyK7Oio71CEqoxm1Gr/Eu7NoTPOI5EG4ZmWAIefeIHDqlrmV9oth05?=
+ =?us-ascii?Q?M8KbSGwZjT+woG0YGWoOrMJl4ErrFKvXy6ppgaR6ydhiZsh4jO2/US/JIT2D?=
+ =?us-ascii?Q?KRmjryU0MBuXuRTaVYORwBoKccbLRuC0F4GvgRIf/0/NuGTl6bU2CXF3J3tp?=
+ =?us-ascii?Q?spfGqcJUTveIYtwkjDj15Vw1H0Dp6qnMUCBbe71D/PC+zLCtM5I8Br6HQiVw?=
+ =?us-ascii?Q?Vwoj0NeYyW79Ra7F6wjMXFHwcokSpGFq+1BGlZdZrvulA+PQVb5mDF4AiDYD?=
+ =?us-ascii?Q?Z/svLcMRBAkTA24h+y2PSdleRQBM4epOZNSrhxlErX2tz+8SEvRvk2H1VWd3?=
+ =?us-ascii?Q?HCBj+6wMyaIT8oQPi6wtvXaxQmYbAwY6KnSaDwcRJo71WdEmNPCQWGooOTvh?=
+ =?us-ascii?Q?FcVuNbAjHH2gCDaBar9yBPMINMUKuk/1AbWO3o+HC2aJ7bvf/Ts6dSR9qcaf?=
+ =?us-ascii?Q?n16rg657kOtQtp/xr5tBgTieqGiTTl0quSmE/6OrQwLxhjpEcSPh7ba5gTPJ?=
+ =?us-ascii?Q?PSEn4XadrdRw4OEZ+WgJgwtE9eUAo6GTC2SpiK9H1f8voC4Yn+la2TkW3U3D?=
+ =?us-ascii?Q?c2xnkri7qtw9VtED5gq2wMNtOny1+/QAjpJ0ydyNEVcMTvv4vv7Q4EpoQANS?=
+ =?us-ascii?Q?u6ut2QYIfH4Rzmzcsl1sVfj/CnaB7buuhCf1Ljrt+D3TkGbPUQh++Oz1naiq?=
+ =?us-ascii?Q?8B5YLOFcqgU1fCrmrCGFg2h7pkvagsRx?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 05:14:01.1426
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54ae472b-2dcf-4be8-abfc-08dcb69fbfbf
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001E9.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5800
 
-Hi,
+Adding 'dsp_intr_base' to ACP error status register offset in irq handler
+points to wrong register offset. ACP error status register offset got
+changed from ACP 6.0 onwards. Add 'acp_error_stat' descriptor field and
+update the value based on the ACP variant.
 
-I am seeing a regression in "make xipImage" builds in mainline tree 
-v6.11-rc2  with LD segmentation fault.
+Fixes: 0e44572a28a4 ("ASoC: SOF: amd: Add helper callbacks for ACP's DMA configuration")
+Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+---
+ sound/soc/sof/amd/acp-dsp-offset.h | 3 ++-
+ sound/soc/sof/amd/acp.c            | 5 +++--
+ sound/soc/sof/amd/acp.h            | 1 +
+ sound/soc/sof/amd/pci-acp63.c      | 1 +
+ sound/soc/sof/amd/pci-rmb.c        | 1 +
+ sound/soc/sof/amd/pci-rn.c         | 1 +
+ 6 files changed, 9 insertions(+), 3 deletions(-)
 
-$ make V=1 xipImage
-...
-+ arm-poky-linux-musleabi-ld -EL -z noexecstack --no-undefined -X 
---pic-veneer -z norelro --build-id=sha1 --orphan-handling=warn 
---script=./arch/arm/kernel/vmlinux.lds -o vmlinux --whole-archive 
-vmlinux.a init/version-timestamp.o --no-whole-archive --start-group 
-arch/arm/lib/lib.a lib/lib.a --end-group
-scripts/link-vmlinux.sh: line 49: 3371164 Segmentation fault      (core 
-dumped) ${ld} ${ldflags} -o ${output} ${wl}--whole-archive ${objs} 
-${wl}--no-whole-archive ${wl}--start-group ${libs} ${wl}--end-group 
-${kallsymso} ${btf_vmlinux_bin_o} ${ldlibs}
-make[2]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 139
-make[2]: *** Deleting file 'vmlinux'
-make[1]: *** [/home/amol/hgg/mainline/linux/Makefile:1156: vmlinux] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
-
-git bisect pointed to ed0f941022515ff40473("ARM: 9404/1: arm32: enable 
-HAVE_LD_DEAD_CODE_DATA_ELIMINATION")
-
-"CONFIG_HAVE_LD_DEAD_CODE_DATA_ELIMINATION=y" is getting set with the 
-commit in my .config.
-But, my .config is _not_ enabling the "LD_DEAD_CODE_DATA_ELIMINATION" flag.
-
-Reverting commit ed0f94102251, resolves the linking fail.
-Infact, reverting just the ".reloc  .text, R_ARM_NONE, ." additions in 
-arch/arm/kernel/entry-armv.S resolves the linking fail.
-
-My toolchain is
-arm-poky-linux-musleabi-gcc (GCC) 9.2.0
-GNU ld (GNU Binutils) 2.32.0.20190204
-
-I am working on a new platform. Hence my .config/code has other platform 
-related additions which would not make sense on current mainline, which 
-is why I have not added it here. Do let me know if you would still like 
-to have the .config file.
-
-
-Thanks,
-Warm Regards,
-Harith
-
-
+diff --git a/sound/soc/sof/amd/acp-dsp-offset.h b/sound/soc/sof/amd/acp-dsp-offset.h
+index 59afbe2e0f42..66968efda869 100644
+--- a/sound/soc/sof/amd/acp-dsp-offset.h
++++ b/sound/soc/sof/amd/acp-dsp-offset.h
+@@ -76,7 +76,8 @@
+ #define DSP_SW_INTR_CNTL_OFFSET			0x0
+ #define DSP_SW_INTR_STAT_OFFSET			0x4
+ #define DSP_SW_INTR_TRIG_OFFSET			0x8
+-#define ACP_ERROR_STATUS			0x18C4
++#define ACP3X_ERROR_STATUS			0x18C4
++#define ACP6X_ERROR_STATUS			0x1A4C
+ #define ACP3X_AXI2DAGB_SEM_0			0x1880
+ #define ACP5X_AXI2DAGB_SEM_0			0x1884
+ #define ACP6X_AXI2DAGB_SEM_0			0x1874
+diff --git a/sound/soc/sof/amd/acp.c b/sound/soc/sof/amd/acp.c
+index 7b122656efd1..d0b7d1c54248 100644
+--- a/sound/soc/sof/amd/acp.c
++++ b/sound/soc/sof/amd/acp.c
+@@ -92,6 +92,7 @@ static int config_dma_channel(struct acp_dev_data *adata, unsigned int ch,
+ 			      unsigned int idx, unsigned int dscr_count)
+ {
+ 	struct snd_sof_dev *sdev = adata->dev;
++	const struct sof_amd_acp_desc *desc = get_chip_info(sdev->pdata);
+ 	unsigned int val, status;
+ 	int ret;
+ 
+@@ -102,7 +103,7 @@ static int config_dma_channel(struct acp_dev_data *adata, unsigned int ch,
+ 					    val & (1 << ch), ACP_REG_POLL_INTERVAL,
+ 					    ACP_REG_POLL_TIMEOUT_US);
+ 	if (ret < 0) {
+-		status = snd_sof_dsp_read(sdev, ACP_DSP_BAR, ACP_ERROR_STATUS);
++		status = snd_sof_dsp_read(sdev, ACP_DSP_BAR, desc->acp_error_stat);
+ 		val = snd_sof_dsp_read(sdev, ACP_DSP_BAR, ACP_DMA_ERR_STS_0 + ch * sizeof(u32));
+ 
+ 		dev_err(sdev->dev, "ACP_DMA_ERR_STS :0x%x ACP_ERROR_STATUS :0x%x\n", val, status);
+@@ -404,7 +405,7 @@ static irqreturn_t acp_irq_handler(int irq, void *dev_id)
+ 		snd_sof_dsp_write(sdev, ACP_DSP_BAR, desc->ext_intr_stat, ACP_ERROR_IRQ_MASK);
+ 		snd_sof_dsp_write(sdev, ACP_DSP_BAR, base + ACP_SW0_I2S_ERROR_REASON, 0);
+ 		snd_sof_dsp_write(sdev, ACP_DSP_BAR, base + ACP_SW1_I2S_ERROR_REASON, 0);
+-		snd_sof_dsp_write(sdev, ACP_DSP_BAR, base + ACP_ERROR_STATUS, 0);
++		snd_sof_dsp_write(sdev, ACP_DSP_BAR, desc->acp_error_stat, 0);
+ 		irq_flag = 1;
+ 	}
+ 
+diff --git a/sound/soc/sof/amd/acp.h b/sound/soc/sof/amd/acp.h
+index ec9170b3f068..6ac853ff6093 100644
+--- a/sound/soc/sof/amd/acp.h
++++ b/sound/soc/sof/amd/acp.h
+@@ -203,6 +203,7 @@ struct sof_amd_acp_desc {
+ 	u32 probe_reg_offset;
+ 	u32 reg_start_addr;
+ 	u32 reg_end_addr;
++	u32 acp_error_stat;
+ 	u32 sdw_max_link_count;
+ 	u64 sdw_acpi_dev_addr;
+ };
+diff --git a/sound/soc/sof/amd/pci-acp63.c b/sound/soc/sof/amd/pci-acp63.c
+index 54d42f83ce9e..c3da70549995 100644
+--- a/sound/soc/sof/amd/pci-acp63.c
++++ b/sound/soc/sof/amd/pci-acp63.c
+@@ -35,6 +35,7 @@ static const struct sof_amd_acp_desc acp63_chip_info = {
+ 	.ext_intr_cntl = ACP6X_EXTERNAL_INTR_CNTL,
+ 	.ext_intr_stat	= ACP6X_EXT_INTR_STAT,
+ 	.ext_intr_stat1	= ACP6X_EXT_INTR_STAT1,
++	.acp_error_stat = ACP6X_ERROR_STATUS,
+ 	.dsp_intr_base	= ACP6X_DSP_SW_INTR_BASE,
+ 	.sram_pte_offset = ACP6X_SRAM_PTE_OFFSET,
+ 	.hw_semaphore_offset = ACP6X_AXI2DAGB_SEM_0,
+diff --git a/sound/soc/sof/amd/pci-rmb.c b/sound/soc/sof/amd/pci-rmb.c
+index 4bc30951f8b0..194b7ff37e9e 100644
+--- a/sound/soc/sof/amd/pci-rmb.c
++++ b/sound/soc/sof/amd/pci-rmb.c
+@@ -33,6 +33,7 @@ static const struct sof_amd_acp_desc rembrandt_chip_info = {
+ 	.pgfsm_base	= ACP6X_PGFSM_BASE,
+ 	.ext_intr_stat	= ACP6X_EXT_INTR_STAT,
+ 	.dsp_intr_base	= ACP6X_DSP_SW_INTR_BASE,
++	.acp_error_stat = ACP6X_ERROR_STATUS,
+ 	.sram_pte_offset = ACP6X_SRAM_PTE_OFFSET,
+ 	.hw_semaphore_offset = ACP6X_AXI2DAGB_SEM_0,
+ 	.fusion_dsp_offset = ACP6X_DSP_FUSION_RUNSTALL,
+diff --git a/sound/soc/sof/amd/pci-rn.c b/sound/soc/sof/amd/pci-rn.c
+index e08875bdfa8b..bff2d979ea6a 100644
+--- a/sound/soc/sof/amd/pci-rn.c
++++ b/sound/soc/sof/amd/pci-rn.c
+@@ -33,6 +33,7 @@ static const struct sof_amd_acp_desc renoir_chip_info = {
+ 	.pgfsm_base	= ACP3X_PGFSM_BASE,
+ 	.ext_intr_stat	= ACP3X_EXT_INTR_STAT,
+ 	.dsp_intr_base	= ACP3X_DSP_SW_INTR_BASE,
++	.acp_error_stat = ACP3X_ERROR_STATUS,
+ 	.sram_pte_offset = ACP3X_SRAM_PTE_OFFSET,
+ 	.hw_semaphore_offset = ACP3X_AXI2DAGB_SEM_0,
+ 	.acp_clkmux_sel	= ACP3X_CLKMUX_SEL,
+-- 
+2.34.1
 
 
