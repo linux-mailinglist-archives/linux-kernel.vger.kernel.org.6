@@ -1,112 +1,155 @@
-Return-Path: <linux-kernel+bounces-278391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DFF94AF9E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:24:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2FA594AF74
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AEFA1F21EF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:24:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 802631F2280F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A4F13D262;
-	Wed,  7 Aug 2024 18:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="VlkB8rQb"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B966918EBF;
+	Wed,  7 Aug 2024 18:15:03 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF966F30B;
-	Wed,  7 Aug 2024 18:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3907740C03;
+	Wed,  7 Aug 2024 18:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723055044; cv=none; b=G5WSSzkff+NaMWiZZESD3I7GNgGdG9PSKaeJ2EYpAU+QackjvuRme9AVg6Fve3m0ny5TMNPi+F9FwJuYryGopX53AcZ6LvdBhg/JeklafDy1TKM4r5b7Oq5VPpBdJGyeq/zXy3y1+rGuBErPaq81mxtKQ/p/EbAL86a7nwkOmaA=
+	t=1723054503; cv=none; b=hW9L6NFVarkEE98lhtYKvY7j/8y6GVx8lI5AjjOuDyR3bWPIDWrUIetPBmmzNu3gC3O1T56CeGzRuqklAPAWlmaSMnMP7aMszaKTqrRhD8h5+1pD3zB36sTFkjlf+8FbLp/BYhbDCXe4PEjSMLDHxlt19YVJl3Zuvzyen+V9984=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723055044; c=relaxed/simple;
-	bh=Jk9pxI/6HuOUteaoSMwb9uGlyFSlPinlGUcnnyRuWzQ=;
+	s=arc-20240116; t=1723054503; c=relaxed/simple;
+	bh=S9+3aXk/90xN7zHpUlBdinuML+LWZSnp6QRU/eb+WW8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NdDUuVZ8BrfCgAQ8s0WzHZDc6ASVU56DYjMQ2Mei7Daa3YwURppyyx6twTKrV16VMEFXV+K1QohnQfaUtRgdArlDFs3H/UBx93efw+r+m0PTHt9rCyE6uSe3PiARFUFcxDtH154eyRNh5T7c6Ta6yJDqgzH/KPHTh3GC4DIwT5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=VlkB8rQb; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4WfJH440Kpz9sys;
-	Wed,  7 Aug 2024 20:14:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1723054480;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7mSsGllVs5ehpw0hucYxsiuO4/Qnn03cmHd4Fnmz4Zg=;
-	b=VlkB8rQbY2O0fevsBNB6nKHk7JGMpMoBz8TswzLzck88xfbnsak2zHlzt+0zeEv3mz5ozw
-	smNAewB+QD+dsOuuvNGWAMES3GZCwJU5gz+yBV2hoDefXBJ0s9Dv/HUnM9MGXUFhUkcrRx
-	OJwKC6qJrSw1BXzJTyuH3bXdWWiwLDne4bpnVorQs9lfXG0OjTp5JNznDvpaw1rd071UqR
-	RXt6tXq74cRWape4xd53PALDIOrHHgC/44YVRJiMbt50dJKjZJYTlSqwvUQcH/iSXVP5DY
-	/Ll3EbiKnux+JOycTcv9WQ3b8Wys/EItvedJZxHvKuqhADU3UW5CzNXcyO++5g==
-Date: Wed, 7 Aug 2024 13:14:34 -0500
-From: Joseph Strauss <jstrauss@mailbox.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: pavel@ucw.cz, lee@kernel.org, andriy.shevchenko@linux.intel.com,
-	jernej.skrabec@gmail.com, duje.mihanovic@skole.hr,
-	linux@weissschuh.net, ansuelsmth@gmail.com,
-	patrick.rudolph@9elements.com, gnstark@salutedevices.com,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: blinkm: fix CONFIG_LEDS_CLASS_MULTICOLOR dependency
-Message-ID: <20240807181434.qzzydzc4xkckw4vf@libretux>
-References: <20240807075614.2118068-1-arnd@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=El5Oc1FyapJ+qen6wnyklUMRdfYdyLbdoNlkz+k8cvI2nooNcvcUWxlx3VD8c+Aw/bU9m05I4CKF/n8kq9lj8Yii4rvshde23HKShbMfKrlBA1RrHNOhELdQPas2AdpFaKVguFujg34NbgQJHo1pIcHTw4NKZDPUb8k24IfclL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C87EC32781;
+	Wed,  7 Aug 2024 18:15:00 +0000 (UTC)
+Date: Wed, 7 Aug 2024 19:14:58 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+Cc: Baruch Siach <baruch@tkos.co.il>, Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, Ramon Fried <ramon@neureality.ai>,
+	Elad Nachman <enachman@marvell.com>
+Subject: Re: [PATCH v5 2/3] dma: replace zone_dma_bits by zone_dma_limit
+Message-ID: <ZrO5okGUljTc9E7N@arm.com>
+References: <cover.1722578375.git.baruch@tkos.co.il>
+ <5821a1b2eb82847ccbac0945da040518d6f6f16b.1722578375.git.baruch@tkos.co.il>
+ <Zqyo4qjPRHUeUfS5@arm.com>
+ <20240807161938.5729b656@mordecai.tesarici.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240807075614.2118068-1-arnd@kernel.org>
-X-MBO-RS-META: cuwt6xgwg467diggpm9q4duyxbeqx3qu
-X-MBO-RS-ID: cd8ec5e281628e23590
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240807161938.5729b656@mordecai.tesarici.cz>
 
-On 24/08/07 09:55AM, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Wed, Aug 07, 2024 at 04:19:38PM +0200, Petr Tesařík wrote:
+> On Fri, 2 Aug 2024 10:37:38 +0100
+> Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > On Fri, Aug 02, 2024 at 09:03:47AM +0300, Baruch Siach wrote:
+> > > diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> > > index 3b4be4ca3b08..62b36fda44c9 100644
+> > > --- a/kernel/dma/direct.c
+> > > +++ b/kernel/dma/direct.c
+> > > @@ -20,7 +20,7 @@
+> > >   * it for entirely different regions. In that case the arch code needs to
+> > >   * override the variable below for dma-direct to work properly.
+> > >   */
+> > > -unsigned int zone_dma_bits __ro_after_init = 24;
+> > > +u64 zone_dma_limit __ro_after_init = DMA_BIT_MASK(24);  
+> > 
+> > u64 here makes sense even if it may be larger than phys_addr_t. It
+> > matches the phys_limit type in the swiotlb code. The compilers should no
+> > longer complain.
 > 
-> With CONFIG_LEDS_CLASS_MULTICOLOR=m, a builtin leds-blinkm driver causes
-> a link failure:
+> FTR I have never quite understood why phys_limit is u64, but u64 was
+> already used all around the place when I first looked into swiotlb.
 > 
-> arm-linux-gnueabi-ld: drivers/leds/leds-blinkm.o: in function `blinkm_set_mc_brightness':
-> leds-blinkm.c:(.text.blinkm_set_mc_brightness+0xc): undefined reference to `led_mc_calc_color_components'
+> > > diff --git a/kernel/dma/pool.c b/kernel/dma/pool.c
+> > > index d10613eb0f63..7b04f7575796 100644
+> > > --- a/kernel/dma/pool.c
+> > > +++ b/kernel/dma/pool.c
+> > > @@ -70,9 +70,9 @@ static bool cma_in_zone(gfp_t gfp)
+> > >  	/* CMA can't cross zone boundaries, see cma_activate_area() */
+> > >  	end = cma_get_base(cma) + size - 1;
+> > >  	if (IS_ENABLED(CONFIG_ZONE_DMA) && (gfp & GFP_DMA))
+> > > -		return end <= DMA_BIT_MASK(zone_dma_bits);
+> > > +		return end <= zone_dma_limit;
+> > >  	if (IS_ENABLED(CONFIG_ZONE_DMA32) && (gfp & GFP_DMA32))
+> > > -		return end <= DMA_BIT_MASK(32);
+> > > +		return end <= max(DMA_BIT_MASK(32), zone_dma_limit);
+> > >  	return true;
+> > >  }
+> > >  
+> > > diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+> > > index 043b0ecd3e8d..bb51bd5335ad 100644
+> > > --- a/kernel/dma/swiotlb.c
+> > > +++ b/kernel/dma/swiotlb.c
+> > > @@ -450,9 +450,9 @@ int swiotlb_init_late(size_t size, gfp_t gfp_mask,
+> > >  	if (!remap)
+> > >  		io_tlb_default_mem.can_grow = true;
+> > >  	if (IS_ENABLED(CONFIG_ZONE_DMA) && (gfp_mask & __GFP_DMA))
+> > > -		io_tlb_default_mem.phys_limit = DMA_BIT_MASK(zone_dma_bits);
+> > > +		io_tlb_default_mem.phys_limit = zone_dma_limit;
+> > >  	else if (IS_ENABLED(CONFIG_ZONE_DMA32) && (gfp_mask & __GFP_DMA32))
+> > > -		io_tlb_default_mem.phys_limit = DMA_BIT_MASK(32);
+> > > +		io_tlb_default_mem.phys_limit = max(DMA_BIT_MASK(32), zone_dma_limit);
+> > >  	else
+> > >  		io_tlb_default_mem.phys_limit = virt_to_phys(high_memory - 1);
+> > >  #endif  
+> > 
+> > These two look correct to me now and it's the least intrusive (the
+> > alternative would have been a zone_dma32_limit). The arch code, however,
+> > needs to ensure that zone_dma_limit can always support 32-bit devices
+> > even if it is above 4GB (with the relevant dma offsets in place for such
+> > devices).
 > 
-> Add a more specific dependency that only allows multicoler mode to
-> be enabled for blinkm if it can build and link.
-> 
-> Fixes: 56e8c56c9af0 ("leds: Add multicolor support to BlinkM LED driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/leds/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 41214c9b93ba..818c8bdd047e 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -838,7 +838,7 @@ config LEDS_BLINKM
->  config LEDS_BLINKM_MULTICOLOR
->  	bool "Enable multicolor support for BlinkM I2C RGB LED"
->  	depends on LEDS_BLINKM
-> -	depends on LEDS_CLASS_MULTICOLOR
-> +	depends on LEDS_CLASS_MULTICOLOR=y || LEDS_CLASS_MULTICOLOR=LEDS_BLINKM
->  	help
->  	  This option enables multicolor sysfs class support for BlinkM LED and
->  	  disables the older, separated sysfs interface
-> -- 
-> 2.39.2
-> 
-Hi,
+> Just to make sure, the DMA zone (if present) must map to at most 32-bit
+> bus address space (possibly behind a bridge). Is that what you're
+> saying?
 
-I was able to reproduce the issue and the fix works. Thank you!
+No exactly. What I'm trying to say is that on arm64 zone_dma_limit can
+go beyond DMA_BIT_MASK(32) when the latter is treated as a CPU address.
+In such cases, ZONE_DMA32 is empty.
 
-Acked-by: Joseph Strauss <jstrauss@mailbox.org>
+TBH, this code is confusing and not entirely suitable for a system where
+the CPU address offsets are not 0. The device::dma_coherent_mask is
+about the bus address range and phys_limit is calculated correctly in
+functions like dma_direct_optimal_gfp_mask(). But that's about it w.r.t.
+DMA bit masks because zone_dma_bits and DMA_BIT_MASK(32) are assumed to
+be about the CPU address ranges in some cases (in other cases
+DMA_BIT_MASK() is used to initialise dma_coherent_mask, so more of a bus
+address).
+
+On the platform Baruch is trying to fix, RAM starts at 32GB and ZONE_DMA
+should end at 33GB. That's 30-bit mask in bus address terms but
+something not a power of two for the CPU address, hence the
+zone_dma_limit introduced here.
+
+With ZONE_DMA32, since all the DMA code assumes that ZONE_DMA32 ends at
+4GB CPU address, it doesn't really work for such platforms. If there are
+32-bit devices with a corresponding CPU address offset, ZONE_DMA32
+should end at 36GB on Baruch's platform. But to simplify things, we just
+ignore this on arm64 and make ZONE_DMA32 empty.
+
+In some cases where we have the device structure we could instead do a
+dma_to_phys(DMA_BIT_MASK(32)) but not in the two cases above. I guess if
+we really want to address this properly, we'd need to introduce a
+zone_dma32_limit that's initialised by the arch code. For arm64, I'm
+happy with just having an empty ZONE_DMA32 on such platforms.
+
+-- 
+Catalin
 
