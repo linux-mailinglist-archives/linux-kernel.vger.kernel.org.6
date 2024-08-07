@@ -1,35 +1,62 @@
-Return-Path: <linux-kernel+bounces-278699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1CB94B3B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:39:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC85594B3CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B7331C20F70
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:39:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 695251C20A98
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53746156228;
-	Wed,  7 Aug 2024 23:39:44 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D646156238;
+	Wed,  7 Aug 2024 23:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AYrj7uNR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F1F154BEB;
-	Wed,  7 Aug 2024 23:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EA9148FFF;
+	Wed,  7 Aug 2024 23:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723073983; cv=none; b=PLkluGALbNPcFLSUafhHg3EPYAvsPyWJBJ1T/0x4/lJ5IOgdp58uZfFMSBB0DcMdd6M2RxFzjVVgpqmGtyYv5CFcMMy6Q4g26JQXFU+vRcAor1JOKogCxnf0Y6AimsK9s4RHCu9ILjQE2l3BWgZWz2elhQo7JCzqw9u6p1+XaUA=
+	t=1723074144; cv=none; b=leIlLy8PsBn4mBTG+T1m1jtLz776kx1E7RLr+0zpRuFnY86EGE80MyElW9xh2mGIYC/XI7S/fG5nwNUoc7BjntxJRazcbunRELtd5508XljZZyVUf1Zvz2/BZnSXItYNiZRSqA8XkhOAOjowJLE44m82uM61fXNMtFpyfJPfarQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723073983; c=relaxed/simple;
-	bh=f+HJqX1/WmL3ocpq3A8cUrCzlOyC16bwZa4gA+mJ6Hg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YqMzELWOw0pN+Nlrq93RNVeXLt9GBhrb4nX7otpNsNYDQeT5kcl3YNOcjuogYs6/4u1Dd5pgqteHB1XcikmhLjPec+0McH6JaQY4JHUVSchFEIe4wjSyBeBVjOpmh3jwENofL2A35G+79fmHAtexxtA9RG9afvgIaNi8ytebaYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40981C32781;
-	Wed,  7 Aug 2024 23:39:40 +0000 (UTC)
-Message-ID: <aa67f1df-f2c4-4427-9e06-5f659fc7ec24@linux-m68k.org>
-Date: Thu, 8 Aug 2024 09:39:37 +1000
+	s=arc-20240116; t=1723074144; c=relaxed/simple;
+	bh=SDnooXiMPjveErWtDF5D96JovIXPHI2wmHlDI8V+H4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QukFqri1KpAVH9K1BuajuJqrpj1eJTuqk4JMNBmOog6zQZyyB9c5TM2UkDicsoBU1/rNWxoqdcO1ftlEMvGhkIv5NN9ZScslaMSISAcqQwVkcRPep98t4VTmlINZGhCBY0DhLa6hMO7emO1jSmx/N2nz2CQlke05oIUfbumqflY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AYrj7uNR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477KQ7ab008155;
+	Wed, 7 Aug 2024 23:42:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jmYhQoRmvdrHL78PtexV6fn9tkT+h6zQBs5+EBNa7+U=; b=AYrj7uNRb91waKLb
+	7soD/rcmPy4ll1iQlYt1u5T1jBwwaM+IqgLK9c7FOlSBvgRlbxvn13h1FV7rWe3t
+	cKEyL4zJKdSTd94IDPdpY2CKDISJ3minxEDiVnfEYf2ENLglHJFV+J3FmeywOmLA
+	Epx3WQu0KmMOBAH8oZw4oyRVr3eYaFtCHLgAMRaQSBoVD6u2Y6NyNQ8AZi+MbjVf
+	MNvZO5j2hSywInKiz7ZNajRm5BYz/yeFdHjLxfMkqEv5L50JrymJDxsKPiWq1Gqw
+	wsoKHBtGTF7t/eKyah9qCCM+DYVG+pwDoXUi1V/ZzfzxEQroqWXC4Gj+RBuz69DM
+	DohRxg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vfy58a9y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 23:42:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 477NgIqP014023
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 7 Aug 2024 23:42:18 GMT
+Received: from [10.71.112.173] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
+ 16:42:18 -0700
+Message-ID: <3088a9cf-aad4-4495-8fb1-bc9cad1e0386@quicinc.com>
+Date: Wed, 7 Aug 2024 16:42:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -37,90 +64,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] binfmt_flat: Fix corruption when not offsetting data
- start
-To: Kees Cook <kees@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Stefan O'Rear <sorear@fastmail.com>, Alexandre Ghiti <alex@ghiti.fr>,
- Damien Le Moal <dlemoal@kernel.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Eric Biederman <ebiederm@xmission.com>,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- Damien Le Moal <damien.lemoal@wdc.com>, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20240807195119.it.782-kees@kernel.org>
+Subject: Re: [PATCH 1/3] rpmsg: glink: Tidy up RX advance handling
+To: Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240805-glink-tracepoints-v1-0-a5f3293fb09e@quicinc.com>
+ <20240805-glink-tracepoints-v1-1-a5f3293fb09e@quicinc.com>
 Content-Language: en-US
-From: Greg Ungerer <gerg@linux-m68k.org>
-In-Reply-To: <20240807195119.it.782-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20240805-glink-tracepoints-v1-1-a5f3293fb09e@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: XvRszvJ1CT5JDCj1xYRIjo1RbnU4oZ8M
+X-Proofpoint-ORIG-GUID: XvRszvJ1CT5JDCj1xYRIjo1RbnU4oZ8M
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_14,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ adultscore=0 clxscore=1011 priorityscore=1501 lowpriorityscore=0
+ impostorscore=0 spamscore=0 phishscore=0 bulkscore=0 mlxlogscore=647
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408070166
 
-Hi Kees,
 
-On 8/8/24 05:51, Kees Cook wrote:
-> Commit 04d82a6d0881 ("binfmt_flat: allow not offsetting data start")
-> introduced a RISC-V specific variant of the FLAT format which does
-> not allocate any space for the (obsolete) array of shared library
-> pointers. However, it did not disable the code which initializes the
-> array, resulting in the corruption of sizeof(long) bytes before the DATA
-> segment, generally the end of the TEXT segment.
+
+On 8/5/2024 8:56 PM, Bjorn Andersson wrote:
+> The operation of advancing the FIFO receive pointer is sprinkled between
+> the interrupt handler itself, and functions being called from this.
 > 
-> Introduce MAX_SHARED_LIBS_UPDATE which depends on the state of
-> CONFIG_BINFMT_FLAT_NO_DATA_START_OFFSET to guard the initialization of
-> the shared library pointer region so that it will only be initialized
-> if space is reserved for it.
+> Push all the RX advancement operations to the individual handlers, to
+> unify the style across the handling of the various messages.
 > 
-> Fixes: 04d82a6d0881 ("binfmt_flat: allow not offsetting data start")
-> Co-developed-by: Stefan O'Rear <sorear@fastmail.com>
-> Signed-off-by: Stefan O'Rear <sorear@fastmail.com>
-> Signed-off-by: Kees Cook <kees@kernel.org>
-
-Looks good.
-
-Acked-by: Greg Ungerer <gerg@linux-m68k.org>
-
-Regards
-Greg
-
-
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
 > ---
->   v2: update based on v1 feedback
->   v1: https://lore.kernel.org/linux-mm/20240326032037.2478816-1-sorear@fastmail.com/
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Alexandre Ghiti <alex@ghiti.fr>
-> Cc: Greg Ungerer <gerg@linux-m68k.org>
-> Cc: Damien Le Moal <dlemoal@kernel.org>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> ---
->   fs/binfmt_flat.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
+>   drivers/rpmsg/qcom_glink_native.c | 22 +++++++++++++++-------
+>   1 file changed, 15 insertions(+), 7 deletions(-)
 > 
-> diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-> index c26545d71d39..cd6d5bbb4b9d 100644
-> --- a/fs/binfmt_flat.c
-> +++ b/fs/binfmt_flat.c
-> @@ -72,8 +72,10 @@
->   
->   #ifdef CONFIG_BINFMT_FLAT_NO_DATA_START_OFFSET
->   #define DATA_START_OFFSET_WORDS		(0)
-> +#define MAX_SHARED_LIBS_UPDATE		(0)
->   #else
->   #define DATA_START_OFFSET_WORDS		(MAX_SHARED_LIBS)
-> +#define MAX_SHARED_LIBS_UPDATE		(MAX_SHARED_LIBS)
->   #endif
->   
->   struct lib_info {
-> @@ -880,7 +882,7 @@ static int load_flat_binary(struct linux_binprm *bprm)
->   		return res;
->   
->   	/* Update data segment pointers for all libraries */
-> -	for (i = 0; i < MAX_SHARED_LIBS; i++) {
-> +	for (i = 0; i < MAX_SHARED_LIBS_UPDATE; i++) {
->   		if (!libinfo.lib_list[i].loaded)
->   			continue;
->   		for (j = 0; j < MAX_SHARED_LIBS; j++) {
+
+Reviewed-by: Chris Lew <quic_clew@quicinc.com>
+
 
