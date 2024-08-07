@@ -1,132 +1,121 @@
-Return-Path: <linux-kernel+bounces-277371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B58949FCA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:26:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECBCF949FCD
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 849D11F2293C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:26:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A52A1284233
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6C81B32B1;
-	Wed,  7 Aug 2024 06:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gfXnjQD4"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5C91B32BF;
+	Wed,  7 Aug 2024 06:28:00 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F7A1B29C5
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 06:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBF31B29C5;
+	Wed,  7 Aug 2024 06:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723011999; cv=none; b=na0zlet36xg5ISgJ2suSeOHEkT833swLqbJJyhceCUrpGzhE+b6iAwUFstWZWj6CIFAS3txpWTu//rs8flumy8xogtP3r5RqJHUnIdBnvVzLuffE411QkQUCloYemOsUuoUzmPEHh8RW5c6MtDxSQ608iphrJuzfaKiqhZzw840=
+	t=1723012080; cv=none; b=ZRj7t11D+nwheGu8i6hz39z69qMiVzoi9365xvtalU6fxTvZpmbiaZIoCfA8mwwklX5Cj9R578vWYpaOrf55sgwN/vhhbMgoAkgKU6eoTJ67Vy/o+6dDFF27RK7BR5n7bRM2Rs/cXHSWUfvYKOhrY8JpLx4ASF8HapEbvqsiB1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723011999; c=relaxed/simple;
-	bh=SmflkcuMDJIW8naPbm/v9DBM5XF4zog+gRlw/8dQf7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hVvvUiQXoaQmuOK7jCe8nbA0Oe9kMD2ORSKtrLxotRTYSIjP5P+KZwM++J0DgBDlNGe7rvFD+FX4v79MMY6w6DgPsrN9yBklzTSOOXHtnKUXhOnolhVYKjYkYFP18pwSWkW09XHU0QyHxZMoafxQIgWWJTspOELcEYgB7myVASA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gfXnjQD4; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d18d4b94cso1094348b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 23:26:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723011997; x=1723616797; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Xgv4Lz4y4hdpusu1y11h6gCcVe+Xzav2jc2y5Yt+/PU=;
-        b=gfXnjQD4z4OArTgSnqqw8Q//IOPBlbqHd4t4YP6Xo61Vp41dB6I3n+2gql3bIgxAJe
-         cyVFQmfppiUlgMHSZUKiXM6PTvT6xAugt5vz0/mBlC0hl5raaahaJCq/wLkN8kn09pDe
-         m5tpETqd64r/QwVOo4+YrQCUpsJeoOPnfys6bhs0XrwFTzVcCwXyVZCdC716yG3GoJRS
-         J78ZiNTHRFg+S/GtGEbcqMo02EVaditHmTDAbLLIUN6Rm5C8pQXNPT6cuoJBB3oosQm4
-         g4vQxLzmImOLP+oHDFiZNAVivpc5hDLFuIk62/7z9Zyq5RjIglW7IhnZDemU50vHVY30
-         AiIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723011997; x=1723616797;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xgv4Lz4y4hdpusu1y11h6gCcVe+Xzav2jc2y5Yt+/PU=;
-        b=vQ1sZPoO8ogfm8tC1gg5eSDJMCM7U3kWosN7f6RkLhaoTI2dKPPTlQiTl/FqlYMiWo
-         XDPgKKny2APIrieusdbFc0GEFpjah9mE2hn/JnMDDu7+jn1S00w+BOspQKQVRGf/XEo4
-         SkU9+RitnPZUhI/yzyA3KnowN2O8RhlrBfwHITLfNvJ55GttRb6roMFD9a8lJLKXp5Jq
-         EdcotNo9ySQHL3VhKneDvkk6dUnB7Z8WYN/MOX7Y1bkKiIIMBpOuYnyK8jdmcNTScEmG
-         Ippg8l2QPrI3DggUGPoqGm3ywswNWEtzG19S2jyyInrX8IlPesJ7xNLhjRaT1yEEbw7v
-         xCLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsWD4LNRfF0B9K1UGUB/fijoYavLU+TWlupFioLBfMUigIqT9x91MhBEGOjAtDIXpkYQuC0I0FaTQvT9WEu34S15I4sb1RXltDToN8
-X-Gm-Message-State: AOJu0Yzsc6ynvB78mU+a4TT45ZwFbh6iaLpW0NEVeUHOClHXwGn6Wfif
-	cSaaZJucvEgsuH/qoEcTG16S85/R17TyiBou+b8S4WPxMC7/Ao1orV0rGcQKGpg=
-X-Google-Smtp-Source: AGHT+IG20fXp71pe3D6UGQgRh1rVmAZGcmBn1yO/PMuCn4PndSdnVchYjgLooIp6izXKPApmK0kzPg==
-X-Received: by 2002:a05:6a20:4323:b0:1c4:8492:88a8 with SMTP id adf61e73a8af0-1c699580a57mr19116232637.19.1723011997207;
-        Tue, 06 Aug 2024 23:26:37 -0700 (PDT)
-Received: from localhost ([122.172.84.129])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b372e028sm640455a91.45.2024.08.06.23.26.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 23:26:36 -0700 (PDT)
-Date: Wed, 7 Aug 2024 11:56:34 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	kernel test robot <lkp@intel.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] cpufreq: spear: Fix uninitialized variable "i"
-Message-ID: <20240807062634.egqwyeqwjpvwjwsb@vireshk-i7>
-References: <20240805202042.3229190-1-robh@kernel.org>
- <20240806044928.2j6z2ucnzk6lg5y3@vireshk-i7>
- <CAL_JsqLVj2sCuQFYFwR8QnB9jHq_9z4axeNzid1d7+ZrWzmgYA@mail.gmail.com>
+	s=arc-20240116; t=1723012080; c=relaxed/simple;
+	bh=5M+DIdusGSA7JOx3wGFaBqWCLkpdzKxkFnMf2utQf6A=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=nTNXEuLX9XWMWEIevrF0pjZYRhEaKzOnnUrLk0Fprp5Q+3Kx5M2/rX73smWn/PbLee5dXpjNJdDkPnFRxG7FExOe+D39CBb5w1/Y2bWGJPX3EdMI8XUX7AIt+E3QJShs6n41wc3EzXGZEPuvL8fWb0wxT0IFPYMyph+6nLf+9Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wf0bH5gnLz4f3js9;
+	Wed,  7 Aug 2024 14:27:39 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 249D11A06D7;
+	Wed,  7 Aug 2024 14:27:53 +0800 (CST)
+Received: from [10.174.178.55] (unknown [10.174.178.55])
+	by APP4 (Coremail) with SMTP id gCh0CgBXfoTnE7NmEy8CBA--.15279S3;
+	Wed, 07 Aug 2024 14:27:53 +0800 (CST)
+Subject: Re: [PATCH 1/1] selinux: Fix potential counting error in
+ avc_add_xperms_decision()
+To: Paul Moore <paul@paul-moore.com>, Zhen Lei <thunder.leizhen@huawei.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Nick Kralevich <nnk@google.com>,
+ Jeff Vander Stoep <jeffv@google.com>
+References: <20240806065113.1317-1-thunder.leizhen@huaweicloud.com>
+ <CAEjxPJ59=rHFovk3scmkhLuiAdu2uinGiua60y0naJ0e95GLmg@mail.gmail.com>
+ <CAHC9VhTWye8Pm3EUr-Fy-mxq+6H1ThtAekqZd0nXX70f8xP5rw@mail.gmail.com>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huaweicloud.com>
+Message-ID: <eb0d43b5-dc2a-6aec-da5b-493c86b3ae8b@huaweicloud.com>
+Date: Wed, 7 Aug 2024 14:27:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <CAHC9VhTWye8Pm3EUr-Fy-mxq+6H1ThtAekqZd0nXX70f8xP5rw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqLVj2sCuQFYFwR8QnB9jHq_9z4axeNzid1d7+ZrWzmgYA@mail.gmail.com>
+X-CM-TRANSID:gCh0CgBXfoTnE7NmEy8CBA--.15279S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrtF4UAr1rGFWrKFW5Zr1UWrg_yoWDCrg_ZF
+	yvyw1qv3ykXFsrJanrCry3XF13GF1rCas8Z34kuF9rZFyUJFWkXFy0yF1kZw43Can7XF9x
+	KFn5AFZ29w12vjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4AYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHD
+	UUUUU==
+X-CM-SenderInfo: hwkx0vthuozvpl2kv046kxt4xhlfz01xgou0bp/
 
-On 06-08-24, 10:08, Rob Herring wrote:
-> On Mon, Aug 5, 2024 at 10:49 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > We don't increment 'i' anymore, don't we need an i++ in:
-> >
-> >         freq_tbl[i].frequency = val;
-> >
-> > ?
+
+
+On 2024/8/7 5:55, Paul Moore wrote:
+> On Tue, Aug 6, 2024 at 9:26 AM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+>> On Tue, Aug 6, 2024 at 2:51 AM <thunder.leizhen@huaweicloud.com> wrote:
+>>> From: Zhen Lei <thunder.leizhen@huawei.com>
+>>>
+>>> The count increases only when a node is successfully added to
+>>> the linked list.
+>>>
+>>> Fixes: fa1aa143ac4a ("selinux: extended permissions for ioctls")
+>>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>>
+>> This looks correct to me ...
 > 
-> Sigh. Yes.
+> It looks good to me too, unless I hear any objections I'm going to
+> merge this into selinux/stable-6.11 and send it up to Linux during the
+> v6.11-rcX cycle.
+> 
+>> ... but I also notice that the caller is not
+>> checking or handling the return code for the -ENOMEM situation.
+> 
+> Good catch.  We should also fix this, ideally in the same PR where we
+> send the count/len fix.
+> 
+> Zhen Lei, would you mind working on a separate fix for checking the
+> error code in the caller?
 
-Fixed the original commit with this, hope this doesn't add any new
-bugs:
+Yeah, I'd love to.
 
-diff --git a/drivers/cpufreq/spear-cpufreq.c b/drivers/cpufreq/spear-cpufreq.c
-index 777f7f5b3671..d8ab5b01d46d 100644
---- a/drivers/cpufreq/spear-cpufreq.c
-+++ b/drivers/cpufreq/spear-cpufreq.c
-@@ -173,7 +173,7 @@ static int spear_cpufreq_probe(struct platform_device *pdev)
-        struct device_node *np;
-        struct cpufreq_frequency_table *freq_tbl;
-        u32 val;
--       int cnt, i, ret;
-+       int cnt, ret, i = 0;
-
-        np = of_cpu_device_node_get(0);
-        if (!np) {
-@@ -199,7 +199,7 @@ static int spear_cpufreq_probe(struct platform_device *pdev)
-        }
-
-        of_property_for_each_u32(np, "cpufreq_tbl", val)
--               freq_tbl[i].frequency = val;
-+               freq_tbl[i++].frequency = val;
-
-        freq_tbl[cnt].frequency = CPUFREQ_TABLE_END;
+> 
 
 -- 
-viresh
+Regards,
+  Zhen Lei
+
 
