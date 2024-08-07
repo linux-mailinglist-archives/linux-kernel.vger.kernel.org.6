@@ -1,243 +1,252 @@
-Return-Path: <linux-kernel+bounces-278386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F6D94AF95
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:22:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0148A94AF97
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80DB11F2292A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:22:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73F951F22665
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5308762DF;
-	Wed,  7 Aug 2024 18:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007481422A8;
+	Wed,  7 Aug 2024 18:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U40SNU4Z"
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FEZXMK+H"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229772C6BB;
-	Wed,  7 Aug 2024 18:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439052C6BB
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723054927; cv=none; b=df96uIvZbABgHPYwnYT+IqaqsVLG8Sno5yB+TqJiADfRHbDbTyIcy47kwgMrGtWHem/J3QI0oZN+frqfAiXF1R9hDHk6CJahMnw9q6Du+AkEX/g0QrmxUxvMExxvH0HbWyqSUe790/57VupZXa85aAC40gPV6NmYmbS+SmObww8=
+	t=1723054955; cv=none; b=ZlGO6SL9W7gC5SjmxVdu+Jw99uxLfxHHXZ9bWwpbD/qwylzO3DIBWqIzja6PIbisJ1cAaZoUSqVE+yzgWi2utlVSDo7g3fjymRBcS1prs5eO1H83+OkF5UNGTJ4bRefGNt9wuRXzpoSLzjJEAC9ajvOfAbGEWLG71Nv0dH2cFc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723054927; c=relaxed/simple;
-	bh=fDfcFdmakI++BkXYuEP/btbJ62BTnOOKW0jQ+rr4vxo=;
+	s=arc-20240116; t=1723054955; c=relaxed/simple;
+	bh=DYdsVlyg7drIWq2ZvwnPQj6pYo01O2qmVRaRyE4nV9s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t7dovMEJqFRA3fnAwl61fRJoVdtWZ6S0C8HNWx2xwAbA1WziBPo/kf3kCHTBoo3xbKJO6Wyyg9Tebg8M0dNBpWSqvhc4Ffs2C8efiqU3EhvoTMzwbYu4pTMkOSlH91OM3ROyL7q9yBkjYBjcCjVn1KO1E8qYOaMSzclSS+PG8Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U40SNU4Z; arc=none smtp.client-ip=209.85.217.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-492959b906eso57284137.0;
-        Wed, 07 Aug 2024 11:22:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=jqK+jH9gfmty+4FWzfmIGVjexDNQANPk1gYrsU52R++FZcVWFgkKc+u5WwoWZ43G4bIBgiObAbTOQF4LF5YCPbh+0cCFp9YJ49IHJN4OF8tzkL4yLR8H8EyxtAU1dLmHQjQna0f0H+BtyZCiuET7FkVTpxHfv13v9s6Pfd2z+rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FEZXMK+H; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7094468d392so77768a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 11:22:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723054925; x=1723659725; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YiD65ALE8vSuJ/TYiGjXSUpB/Z9nRB8hNQrAdGVuTNM=;
-        b=U40SNU4ZNy6fs6pxRMcWZS3ZcoKvlG/bLE9Cc8yPPRH96oIZ3GCnSxGc20r9+chZgr
-         DoZhUnKETNM2Nx4WVLbQwvondbkabhdOSv0U7vVEM09JDoN856WsoNpSvm30yOBBQaqZ
-         P5Yw5ifv07IqabsVk0QiQrzkIDjhoJHp3gquyrnY4SBKybyPKekQA8L3DNtAEuX++b0I
-         tI/h9hdzdi4I7uLzBn8iba/BQnwzCGPchHqYFI+wDV5rTaMbL21SXtRMuwgtP4Fc2+bL
-         GMcEv77paQLdh5VYe839Jdo2LKbd1Zq7DHQ532kqiGw0s2/BYRNfXpfZRyjMp8fgrr3R
-         kA1w==
+        d=linaro.org; s=google; t=1723054951; x=1723659751; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z2a5gwKJnS3ln2m/beFUHLu530BIgX8IlloupPMeXcM=;
+        b=FEZXMK+HV/l0JjYcwofEtAK5d3EqszNs7IWB09NPN//fQs6mJJDFQ6vaxP4FYhNk0f
+         7gpXvJnombcaOM2gVeRl0xD1jsx5bhRNZhmgs8Wnz1Za88DlN1pRH6s+XD36j5RX4YA3
+         H582By+iIwEX6UNJZqC3I6XlecR8qJAZTpBa5bKf5FOzWOHgIK+7fHiC8Q+FgTbZRe+h
+         663T0unqddfLo01mIzYFHmNg00MsMvRGSrjRGXi0Dn8WA1Uwj+jhe2d/T6nClNNBMtjm
+         wZIt9zl0PocJmjFeWxglfRCGucPzjRwBXG1lBCdN5wvedXWh6CTqGrO1UowqKgqdwSld
+         e+IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723054925; x=1723659725;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YiD65ALE8vSuJ/TYiGjXSUpB/Z9nRB8hNQrAdGVuTNM=;
-        b=kZi826eQrI8M4JxFoP0/hSSYZU3vwNkc6uDrG7zfJwISMAHWM/0ZedUh1h3ySs+vEf
-         9QUOD4DgIlnDjs6vl6l19FZ4FV4+urQ1VTZKZ0OgIluIo2ZCL+NwRK3EioDZL4+kZDrg
-         c5CFmboiFvPCD0rO5sJDldh984IffLNpQx9Zj5BDhTvqyVoO9AWCkHnRTDuhFRdzetDE
-         tlhXBz0yNchveJqkYp8/oPzEgkIv+5EBsbJsgPZv3xNFSjshRKXUCI9K69iS+Ns2yj+I
-         a6EHFJxFGQHfWWfU/4X+RwJriIfeQrnmyegaEahD4Fu7jbDqIlAkND7UUYdn+6oOwmaQ
-         X2eA==
-X-Forwarded-Encrypted: i=1; AJvYcCVerB5AupnAv9lPozowuDlkpk3kS+ZBIns1xpmLTqz451K5gXVAw8wttGS+bMuiQJIAogFWMrmFZGd0Y7KFv0jwJDeZuewU5jZXZs2s
-X-Gm-Message-State: AOJu0YzTOhfA2cUD/kE6LFh8BIpfvqA9ub1u9zKcQKXgdMGGj8yFrRDQ
-	CbUNaHYhb1Fh0vHMAShIIMGqzRY+mtL3eaWGEWwCqGOtntOweNt/XiB79EW7F/Vgey09wpIHS0x
-	jnSQCGv1MghAg4NLsgLr/MOvlPexisKNSq58=
-X-Google-Smtp-Source: AGHT+IF+J5Zq7SgYt7XYbQ2oOHbhfYqZksxMQWoCSQ7rhmm9huPiKHpPgRelTV3bZdIXPOJzmMs2DkgqaKhPVbX6vTU=
-X-Received: by 2002:a05:6102:6d1:b0:492:a11f:a87a with SMTP id
- ada2fe7eead31-4945bf055d5mr23227164137.25.1723054924882; Wed, 07 Aug 2024
- 11:22:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723054951; x=1723659751;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z2a5gwKJnS3ln2m/beFUHLu530BIgX8IlloupPMeXcM=;
+        b=RHQk+Nzcz7MUVwub67DqVWyd0XE++qP4RIVZ6Ua4AngvP8wr0519Z/7SqkuCEmDuB3
+         eGTVByZZjXVn0pV+SXmVn58ieRYPwXjfZmwHxJ2Wx6cHIiCC02WFjaqoE/KZ3fdG7NNM
+         wtodWQ+AtQI+/TnbFQbKhPkql2cK06z+ArniA6C48X9+UwxNwRhKVgnxfChdHa+G7klL
+         LE6A8+uadZHoyni2D5wv8cENvzSOOHNQRzlC05rg92NzJA5RAghaSmUt/vYyRewkzh7g
+         PaGKABjCdM3CelHHfRk+8yBGTtienF6bWp4r9tyJIEB8g2g+qiwf1EFbpz6T/SGKijak
+         XfQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0NujcmIAf50Z9M+/DfvcDuG3K87L1OKbHUaFnXuVZrWINHxbHtxLXyfIRdc5k59ls55zgwzmIge74TfTlcl4ho90Noy/B6E5TyEXJ
+X-Gm-Message-State: AOJu0YzNC0lJvHJigoh5jaP0U9AzweSAOroQ2/EKtdVoZohVzTFZi2bB
+	I9vbuH7B88Xl6zIUxRt1iiJG3EMkzaOj6g3eCb+xzb/7ls5VPaOrl7d7RAQ10/m7FjekD6d8M6o
+	lhUlpix/ZT6NmXmPNwcC7BRhSgPQQz8U8jFpJ2g==
+X-Google-Smtp-Source: AGHT+IFZ1nAFr030oa9R5aIs6OoTYFYue3ihojrDjSX2FR8yDRlkkM18UrBwPRgt2PB0EDlQJykjHoClLour8qFtiNg=
+X-Received: by 2002:a05:6830:6318:b0:709:41c2:5104 with SMTP id
+ 46e09a7af769-709b3218e10mr26258465a34.8.1723054951256; Wed, 07 Aug 2024
+ 11:22:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c0967665-343d-4ca9-90a0-a072159c1056@leemhuis.info> <ZrOwPx+jhEM+sJFM@nandaa-linux-dev.lp3xo4ddmz1ulowbk5mwlke0vc.bx.internal.cloudapp.net>
-In-Reply-To: <ZrOwPx+jhEM+sJFM@nandaa-linux-dev.lp3xo4ddmz1ulowbk5mwlke0vc.bx.internal.cloudapp.net>
-From: Anthony Nandaa <profnandaa@gmail.com>
-Date: Wed, 7 Aug 2024 21:21:53 +0300
-Message-ID: <CAACuyFWCsnYQvqsz9ZuCCkxZ9hPC_BjSLF_mDj_0aPwmXqj3_g@mail.gmail.com>
-Subject: Re: [regression] smb: client: - Failure to mount DFS namespaces
- without ASCII symbols
-To: Linux regressions mailing list <regressions@lists.linux.dev>, smfrench@gmail.com, 
-	Paulo Alcantara <pc@manguebit.com>
-Cc: linux-cifs@vger.kernel.org, gkorobeynikov@astralinux.ru, 
-	linux-kernel@vger.kernel.org, annandaa@linux.microsoft.com
+References: <20240807150039.247123516@linuxfoundation.org>
+In-Reply-To: <20240807150039.247123516@linuxfoundation.org>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Wed, 7 Aug 2024 20:22:20 +0200
+Message-ID: <CADYN=9Jbqec210z5wZXVJV0vsi2QJK4TBJ6DULObW+bZRd4Q-g@mail.gmail.com>
+Subject: Re: [PATCH 6.1 00/86] 6.1.104-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, 7 Aug 2024 at 20:34, Anthony Nandaa <profnandaa@gmail.com> wrote:
+On Wed, 7 Aug 2024 at 17:13, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> On Fri, Aug 02, 2024 at 11:44:18AM +0200, Linux regression tracking (Thor=
-sten Leemhuis) wrote:
-> > Hi, Thorsten here, the Linux kernel's regression tracker.
-> >
-> > Paulo, I noticed a report about a regression in bugzilla.kernel.org tha=
-t
-> > appears to be caused by this change of yours:
-> >
-> > 3ae872de410751 ("smb: client: fix shared DFS root mounts with different
-> > prefixes") [v6.5-rc1]
-> >
-> > As many (most?) kernel developers don't keep an eye on the bug tracker,
-> > I decided to write this mail. To quote from
-> > https://bugzilla.kernel.org/show_bug.cgi?id=3D219083 :
-> >
-> > >  Gleb Korobeynikov 2024-07-22 10:59:46 UTC
-> > >
-> > > Windows version of SMB host: Windows Server 2022 Standard x64
-> > > Kernel: 6.3.13(upstream)
-> ~~~~~~~~~~~~^~~~ Testing with same WS2022 host with 6.11.0-rc1+
+> This is the start of the stable review cycle for the 6.1.104 release.
+> There are 86 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> > > CONFIG_CIFS_DFS_UPCALL
-> > >
-> > > In the function cifs_inval_name_dfs_link_error(), a check was added f=
-or tcon->origin_fullpath (3ae872de410751fe5e629e04da491a632d95201c). I beli=
-eve it's unnecessary because when mounting a dfs name without ASCII charact=
-ers, we always fail at this check and exit the function, leading to dfs nam=
-espaces not being mounted
-> > >
-> > > Steps to reproduce:
-> > >
-> > > 1. At Windows, create DFS namespace with name containing non-ASCII sy=
-mbols (for example =D0=B4=D1=84=D1=81)
-> > >
-> > > 2. mount -t cifs \\\\<smb_server>\\=D0=B4=D1=84=D1=81  /tmp/dfs -o do=
-main=3D...,user=3D...,password=3D...
-> > >
-> > > result:
-> > > mount error(2): No such file or directory
-> > > Refer to the mount.cifs(8) manual page (e.g. man mount.cifs) and kern=
-el log messages (dmesg)
-> > >
-> I couldn't repro this issue.
-> I rebuilt the cifs modules both on master and in the recent
-> for-next@cecb49e3594c2a69163865c214b71fff26d5761d sources:
+> Responses should be made by Fri, 09 Aug 2024 15:00:24 +0000.
+> Anything received after that time might be too late.
 >
->         $ sudo mount -t cifs //WIN-31GSG2M9E6N/=D0=B4=D1=84=D1=81 /mnt/ut=
-f_repro -o `
->                 username=3Dadministrator,password=3Dxxx
->         $ ls -l /mnt/utf_repro
->         total 0
->         -rwxr-xr-x 1 root root 0 Aug  7 15:54 hello_cifs.txt
->         drwxr-xr-x 2 root root 0 Aug  7 15:54 test_utf8_=D0=B4=D1=84=D1=
-=81
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.104-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 >
->         // nothing outstanding in dmesg
->         [430885.246220] CIFS: Attempting to mount //WIN-31GSG2M9E6N/=D0=
-=B4=D1=84=D1=81
+> thanks,
 >
-> Is there anything I might be missing?
-My bad, I wasn't creating a DFS namespace, it was just a share.
+> greg k-h
 
-I have also seen the recent updates on
-https://bugzilla.kernel.org/show_bug.cgi?id=3D219083
-I had missed that.
->
-> > > CIFS debug log:
-> > > [Mon Jul 22 11:00:24 2024] CIFS: Status code returned 0xc0000033 STAT=
-US_OBJECT_NAME_INVALID
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2maperror.c: Mappin=
-g SMB2 status code 0xc0000033 to POSIX err -2
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/dfs_cache.c: dfs_cache=
-_noreq_update_tgthint: path: \test.local\=D0=B4=D1=84=D1=81
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_=
-smb_ses: ses_count=3D2
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_=
-smb_ses: ses ipc: \\test.local\IPC$
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: cifs_put_tc=
-on: tc_count=3D1
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: in cif=
-s_put_tcon as Xid: 17 with uid: 0
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2pdu.c: Tree Discon=
-nect
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/fscache.c: cifs_fscach=
-e_release_super_cookie: (0x0000000000000000)
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_=
-smb_ses: ses_count=3D1
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_=
-smb_ses: ses ipc: \\DC.test.local\IPC$
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: in __c=
-ifs_put_smb_ses as Xid: 18 with uid: 0
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2pdu.c: disconnect =
-session 00000000360c6881
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_=
-smb_ses: ses_count=3D1
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_=
-smb_ses: ses ipc: \\test.local\IPC$
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: in __c=
-ifs_put_smb_ses as Xid: 19 with uid: 0
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2pdu.c: disconnect =
-session 00000000db1ddbb6
-> > > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: leavin=
-g cifs_mount_put_conns (xid =3D 13) rc =3D 0
-> > > [Mon Jul 22 11:00:24 2024] CIFS: VFS: cifs_mount failed w/return code=
- =3D -2
-> >
-> > And
-> >
-> > >  Gleb Korobeynikov 2024-07-30 11:03:01 UTC
-> > >
-> > > (In reply to Gleb Korobeynikov from comment #5)
-> > >> (In reply to The Linux kernel's regression tracker (Thorsten Leemhui=
-s) from
-> > >> comment #4)
-> > >> > Please check if 6.10 (or 6.11-rc1 once it's out on Monday) is stil=
-l
-> > >> affected
-> > >>
-> > >> Alright, I will definitely check
-> > >
-> > > Checked on 6.11-rc1. The reproduction issue happens identically.
-> >
-> > See the ticket for more details.
-> >
-> > Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat=
-)
-> > --
-> > Everything you wanna know about Linux kernel regression tracking:
-> > https://linux-regtracking.leemhuis.info/about/#tldr
-> > If I did something stupid, please tell me, as explained on that page.
-> >
-> > [1] because bugzilla.kernel.org tells users upon registration their
-> > "email address will never be displayed to logged out users"
-> >
-> > P.S.: let me use this mail to also add the report to the list of tracke=
-d
-> > regressions to ensure it's doesn't fall through the cracks:
-> >
-> > #regzbot introduced: 3ae872de410751fe5e629e04da491a632d95201c
-> > #regzbot title: smb: client: failure to mount DFS namespaces without
-> > ASCII symbols
-> > #regzbot from: Gleb Korobeynikov <gkorobeynikov@astralinux.ru>
-> > #regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=3D21908=
-3
-> > #regzbot ignore-activity
-> >
-> Thanks,
-> Nandaa
->
+The following kernel panic noticed on stable-rc linux-6.1.y on while booting
+qemu-arm64 and qemu-arm.
+
+  GOOD: v6.1.102-441-gdbbffaaee188
+  BAD:  v6.1.103-87-gb22fe5fc2a45
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+The git bisect results pointing to,
+
+    irqdomain: Use return value of strreplace()
+
+    [ Upstream commit 67a4e1a3bf7c68ed3fbefc4213648165d912cabb ]
+
+Kernel panic:
+--------
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x000f0510]
+[    0.000000] Linux version 6.1.104-rc1 (tuxmake@tuxmake)
+(aarch64-linux-gnu-gcc (Debian 13.2.0-12) 13.2.0, GNU ld (GNU Binutils
+for Debian) 2.42) #1 SMP PREEMPT @1723045420
+[    0.000000] random: crng init done
+[    0.000000] Machine model: linux,dummy-virt
+...
+<6>[    0.000000] GICv3: GICv3 features: 16 PPIs
+<6>[    0.000000] GICv3: CPU0: found redistributor 0 region 0:0x00000000080a0000
+<1>[    0.000000] Unable to handle kernel paging request at virtual
+address ffff0000c003150d
+<1>[    0.000000] Mem abort info:
+<1>[    0.000000]   ESR = 0x0000000096000061
+<1>[    0.000000]   EC = 0x25: DABT (current EL), IL = 32 bits
+<1>[    0.000000]   SET = 0, FnV = 0
+<1>[    0.000000]   EA = 0, S1PTW = 0
+<1>[    0.000000]   FSC = 0x21: alignment fault
+<1>[    0.000000] Data abort info:
+<1>[    0.000000]   ISV = 0, ISS = 0x00000061
+<1>[    0.000000]   CM = 0, WnR = 1
+<1>[    0.000000] swapper pgtable: 64k pages, 48-bit VAs, pgdp=0000000042120000
+<1>[    0.000000] [ffff0000c003150d] pgd=180000013dfd0003,
+p4d=180000013dfd0003, pud=180000013dfd0003, pmd=180000013df60003,
+pte=0068000100030707
+<0>[    0.000000] Internal error: Oops: 0000000096000061 [#1] PREEMPT SMP
+<4>[    0.000000] Modules linked in:
+<4>[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.1.104-rc1 #1
+<4>[    0.000000] Hardware name: linux,dummy-virt (DT)
+<4>[    0.000000] pstate: 600000c9 (nZCv daIF -PAN -UAO -TCO -DIT
+-SSBS BTYPE=--)
+<4>[ 0.000000] pc : irq_percpu_enable
+(arch/arm64/include/asm/atomic_ll_sc.h:203 (discriminator 2)
+arch/arm64/include/asm/atomic.h:65 (discriminator 2)
+include/linux/atomic/atomic-long.h:329 (discriminator 2)
+include/asm-generic/bitops/atomic.h:18 (discriminator 2)
+include/asm-generic/bitops/instrumented-atomic.h:29 (discriminator 2)
+include/linux/cpumask.h:411 (discriminator 2) kernel/irq/chip.c:396
+(discriminator 2))
+<4>[ 0.000000] lr : irq_percpu_enable
+(include/asm-generic/bitops/atomic.h:17
+include/asm-generic/bitops/instrumented-atomic.h:29
+include/linux/cpumask.h:411 kernel/irq/chip.c:396)
+<4>[    0.000000] sp : ffffc6d51bd6fb00
+<4>[    0.000000] x29: ffffc6d51bd6fb00 x28: 0000000000000018 x27:
+0000000000000001
+<4>[    0.000000] x26: ffffc6d519227000 x25: ffffc6d51bd98000 x24:
+0000000000000008
+<4>[    0.000000] x23: ffffc6d51b3c0008 x22: 0000000000000000 x21:
+0000000000000001
+<4>[    0.000000] x20: 0000000000000000 x19: ffff0000c0061800 x18:
+0000000000000006
+<4>[    0.000000] x17: 000000000000003f x16: 00000000ffffffff x15:
+ffffc6d51bd6f5f0
+<4>[    0.000000] x14: 0000000000003f9f x13: 0000000000004000 x12:
+0000000000000000
+<4>[    0.000000] x11: 0000000000000040 x10: ffffc6d51be2db60 x9 :
+ffffc6d51989695c
+<4>[    0.000000] x8 : ffff000020000270 x7 : 0000000000000000 x6 :
+0000000000000000
+<4>[    0.000000] x5 : ffff000020000248 x4 : ffff392be25e0000 x3 :
+ffff0000c003150d
+<4>[    0.000000] x2 : 0000000000000001 x1 : 0000000000000001 x0 :
+ffff0000c003150d
+<4>[    0.000000] Call trace:
+<4>[ 0.000000] irq_percpu_enable
+(arch/arm64/include/asm/atomic_ll_sc.h:203 (discriminator 2)
+arch/arm64/include/asm/atomic.h:65 (discriminator 2)
+include/linux/atomic/atomic-long.h:329 (discriminator 2)
+include/asm-generic/bitops/atomic.h:18 (discriminator 2)
+include/asm-generic/bitops/instrumented-atomic.h:29 (discriminator 2)
+include/linux/cpumask.h:411 (discriminator 2) kernel/irq/chip.c:396
+(discriminator 2))
+<4>[ 0.000000] enable_percpu_irq (kernel/irq/internals.h:194
+kernel/irq/manage.c:2396)
+<4>[ 0.000000] ipi_setup.isra.0 (arch/arm64/kernel/smp.c:939
+(discriminator 3) arch/arm64/kernel/smp.c:932 (discriminator 3))
+<4>[ 0.000000] set_smp_ipi_range (arch/arm64/kernel/smp.c:978)
+<4>[ 0.000000] gic_init_bases (drivers/irqchip/irq-gic.c:568)
+<4>[ 0.000000] gic_of_init (drivers/irqchip/irq-gic-v3.c:2227)
+<4>[ 0.000000] of_irq_init (drivers/of/irq.c:607)
+<4>[ 0.000000] irqchip_init (drivers/irqchip/irqchip.c:32)
+<4>[ 0.000000] init_IRQ (arch/arm64/kernel/irq.c:136)
+<4>[ 0.000000] start_kernel (init/main.c:1045)
+<4>[ 0.000000] __primary_switched (arch/arm64/kernel/head.S:469)
+<0>[ 0.000000] Code: a8c27bfd d50323bf d65f03c0 f9800011 (c85f7c02)
+All code
+========
+   0: a8c27bfd ldp x29, x30, [sp], #32
+   4: d50323bf autiasp
+   8: d65f03c0 ret
+   c: f9800011 prfm pstl1strm, [x0]
+  10:* c85f7c02 ldxr x2, [x0] <-- trapping instruction
+
+Code starting with the faulting instruction
+===========================================
+   0: c85f7c02 ldxr x2, [x0]
+<4>[    0.000000] ---[ end trace 0000000000000000 ]---
+<0>[    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
+<0>[    0.000000] ---[ end Kernel panic - not syncing: Attempted to
+kill the idle task! ]---
 
 
---=20
-___
-Nandaa Anthony
+boot log:
+-------
+   - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.103-87-gb22fe5fc2a45/testrun/24787696/suite/boot/test/gcc-13-lkftconfig-rcutorture/log
+
+details log:
+-----------
+   - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.103-87-gb22fe5fc2a45/testrun/24787696/suite/boot/test/gcc-13-lkftconfig-rcutorture/details/
+
+Build log links:
+-----
+  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2kKvVPIRvZ26DxUefAqM4a0PwOs/
+  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2kKvVPIRvZ26DxUefAqM4a0PwOs/config
+
+metadata:
+----
+  git_describe: v6.1.103-87-gb22fe5fc2a45
+  git_repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+  git_sha: b22fe5fc2a455ab65a78fe39d86ef3a300d87243
+  git_short_log: b22fe5fc2a45 ("Linux 6.1.104-rc1")
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
