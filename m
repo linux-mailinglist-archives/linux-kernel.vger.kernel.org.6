@@ -1,140 +1,120 @@
-Return-Path: <linux-kernel+bounces-278041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550D194A9F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:20:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E03C94A9F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9855A287CF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:19:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC661C21AC9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0577605E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1756D1C1;
 	Wed,  7 Aug 2024 14:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="i65GwrEa"
-Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YAczGrJM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3EF2209B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323AC2E419;
 	Wed,  7 Aug 2024 14:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723040387; cv=none; b=Hy4mW9abWpV4YYBV+MdvOypqFCrApDRUg7hWzsuSJNDpdv3DpMlWPeFzitru9+fX8DtkaPiEG26IxgqA3f8gdaRMtZ6a9BPPQH8HnFIkdBEaxtsl5hgGHtW19AYsO0ydcAWvVXsuC4CLnmMDylYgSCmp8BewZ7sG0nB8wmdOkaw=
+	t=1723040386; cv=none; b=EsnkOOnTXfi7LuBS6odCPt1b/TFOMnH7fHu4piCQbeZG081kH0KNJdo5w7rqJ/IIEO5s4AZUnNG5fzvX9l1cQRk3j15sLqKdxdPpNOhTB1ZGxB4Pk42lI4lsQevieTAnA/NwKCRgswKngOkZqrkLo5OcnsvozcqEquL/mpg9WYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723040387; c=relaxed/simple;
-	bh=V2XcldorF5mZxWgoV6rXHIZvLXFu/Cfe7abbKfSvCBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HG8QYkRj297y+xocV1sJ8WKfknz/mgHzekLDdk3gkIQ5ir3QUK1hLkn9mzD0l1J0bwKSU4sry1gaCl+AU8VMKTXtuH4RO5kNJh4SottUCfFKjz/0G8N5W4H1iEsH5L7vSGr6UTq06DeEDy7gq6AJdLR6iymNQPfUDtU8rAfgMdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=i65GwrEa; arc=none smtp.client-ip=37.205.15.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by bee.tesarici.cz (Postfix) with ESMTPSA id 581DA1D4827;
-	Wed,  7 Aug 2024 16:19:43 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
-	t=1723040383; bh=XLWRMbtGcTsuduq8sYIgOj2Fv5+dhfpUSVkhtNTwEKs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=i65GwrEaWJJSMm99frEtR7SuRGEX3gN1vzFXh2M8PBIgW+RsOaMIeqQVp9+tWaGD8
-	 /YNoeYcOzMnMmVYXGfa4/im2fp+jFdGFBjLaB6/wg4YlBgNs87dbzwtqDoB3iboUMQ
-	 uknhZZbif8Mx36WsiJPi/ciX025KxDJDtfHQvCaScDK7UjvtnQ+wcvWLFasyNPbiXx
-	 4nf7jgzre9eFkJWXAo3rcRvI2k6Pdic8/+K6elXZgoJ8rXB6Zykhp5b9yMcQvENf/9
-	 rr/4NtWBGu7ADNh76DtVGevak4OOLyst1aitj0NfgEMtoYlN8XmKbm7/MrBkRa1vW4
-	 1fOsAT735pwMQ==
-Date: Wed, 7 Aug 2024 16:19:38 +0200
-From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Baruch Siach <baruch@tkos.co.il>, Christoph Hellwig <hch@lst.de>, Marek
- Szyprowski <m.szyprowski@samsung.com>, Will Deacon <will@kernel.org>, Robin
- Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, Ramon Fried
- <ramon@neureality.ai>, Elad Nachman <enachman@marvell.com>
-Subject: Re: [PATCH v5 2/3] dma: replace zone_dma_bits by zone_dma_limit
-Message-ID: <20240807161938.5729b656@mordecai.tesarici.cz>
-In-Reply-To: <Zqyo4qjPRHUeUfS5@arm.com>
-References: <cover.1722578375.git.baruch@tkos.co.il>
-	<5821a1b2eb82847ccbac0945da040518d6f6f16b.1722578375.git.baruch@tkos.co.il>
-	<Zqyo4qjPRHUeUfS5@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1723040386; c=relaxed/simple;
+	bh=wkgLS15kdTLvliT36oyzsisWKqBnPHwCzUiy0yCqFCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j4gAvATApv8w445duLTWWsiYyH6raQWnDO3owcZ/+yuHr5JFLlnEhNBxlijlajgKg74ZekGfAg6kFo+lQTM9cI8m53Kva4lXyTY96ayo+E0Tb5aHHG01lEbLjbNIMEsVR/oLOwSFtLYPDLWY6rGsYJOl75uWJbITxFx8W/u8yzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YAczGrJM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E804C4AF0E;
+	Wed,  7 Aug 2024 14:19:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723040385;
+	bh=wkgLS15kdTLvliT36oyzsisWKqBnPHwCzUiy0yCqFCQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YAczGrJMpAyxr/f9jMPRPSOGy5+QP2UgLWDtprDt4SHUXFWtjm6k8ab/4XyffRL93
+	 TJzwQEOdv0lfhHsHhkcsxfTj8RJ9vQwhIHPQ1sRIBFbnZ05b0+alKHuwjos4btuiel
+	 zsvVDu9TZrQn9IB5ZxXT8uzfgAEIcnHyoGBXl5Hw=
+Date: Wed, 7 Aug 2024 16:19:42 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Daniel Gomez <da.gomez@samsung.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	William Hubbs <w.d.hubbs@gmail.com>,
+	Chris Brannon <chris@the-brannons.com>,
+	Kirk Reiser <kirk@reisers.ca>,
+	Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"speakup@linux-speakup.org" <speakup@linux-speakup.org>,
+	"selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+	Finn Behrens <me@kloenk.dev>,
+	"Daniel Gomez (Samsung)" <d+samsung@kruces.com>,
+	"gost.dev@samsung.com" <gost.dev@samsung.com>,
+	Nick Desaulniers <nick.desaulniers@gmail.com>
+Subject: Re: [PATCH 00/12] Enable build system on macOS hosts
+Message-ID: <2024080758-dedicator-smoky-44be@gregkh>
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
+ <CGME20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4@eucas1p2.samsung.com>
+ <2024080753-debug-roulette-8cb1@gregkh>
+ <3jnp6tnkjpvnisefomxagazu2u3uzzt7rcon3r5jssraxzwegb@gsxc7c5sfh7v>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3jnp6tnkjpvnisefomxagazu2u3uzzt7rcon3r5jssraxzwegb@gsxc7c5sfh7v>
 
-On Fri, 2 Aug 2024 10:37:38 +0100
-Catalin Marinas <catalin.marinas@arm.com> wrote:
-
-> On Fri, Aug 02, 2024 at 09:03:47AM +0300, Baruch Siach wrote:
-> > diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-> > index 3b4be4ca3b08..62b36fda44c9 100644
-> > --- a/kernel/dma/direct.c
-> > +++ b/kernel/dma/direct.c
-> > @@ -20,7 +20,7 @@
-> >   * it for entirely different regions. In that case the arch code needs to
-> >   * override the variable below for dma-direct to work properly.
-> >   */
-> > -unsigned int zone_dma_bits __ro_after_init = 24;
-> > +u64 zone_dma_limit __ro_after_init = DMA_BIT_MASK(24);  
+On Wed, Aug 07, 2024 at 01:56:38PM +0000, Daniel Gomez wrote:
+> On Wed, Aug 07, 2024 at 01:01:08PM GMT, Greg Kroah-Hartman wrote:
+> > On Wed, Aug 07, 2024 at 01:09:14AM +0200, Daniel Gomez via B4 Relay wrote:
+> > > This patch set allows for building the Linux kernel for arm64 in macOS with
+> > > LLVM.
+> > 
+> > Is this a requirement somewhere that this must work?  It seems like an
+> > odd request, what workflows require cross-operating-system builds like
+> > this?
 > 
-> u64 here makes sense even if it may be larger than phys_addr_t. It
-> matches the phys_limit type in the swiotlb code. The compilers should no
-> longer complain.
+> This isn't a requirement, but it would, for example, support workflows for QEMU
+> users and developers on macOS. They could build/compile the kernel natively and
+> use it to launch QEMU instances, simplifying their process.
 
-FTR I have never quite understood why phys_limit is u64, but u64 was
-already used all around the place when I first looked into swiotlb.
+But that's not a real workload of anyone?  How often does this ever come
+up?  Who is going to maintain this cross-build functionality over time?
 
-> > diff --git a/kernel/dma/pool.c b/kernel/dma/pool.c
-> > index d10613eb0f63..7b04f7575796 100644
-> > --- a/kernel/dma/pool.c
-> > +++ b/kernel/dma/pool.c
-> > @@ -70,9 +70,9 @@ static bool cma_in_zone(gfp_t gfp)
-> >  	/* CMA can't cross zone boundaries, see cma_activate_area() */
-> >  	end = cma_get_base(cma) + size - 1;
-> >  	if (IS_ENABLED(CONFIG_ZONE_DMA) && (gfp & GFP_DMA))
-> > -		return end <= DMA_BIT_MASK(zone_dma_bits);
-> > +		return end <= zone_dma_limit;
-> >  	if (IS_ENABLED(CONFIG_ZONE_DMA32) && (gfp & GFP_DMA32))
-> > -		return end <= DMA_BIT_MASK(32);
-> > +		return end <= max(DMA_BIT_MASK(32), zone_dma_limit);
-> >  	return true;
-> >  }
-> >  
-> > diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> > index 043b0ecd3e8d..bb51bd5335ad 100644
-> > --- a/kernel/dma/swiotlb.c
-> > +++ b/kernel/dma/swiotlb.c
-> > @@ -450,9 +450,9 @@ int swiotlb_init_late(size_t size, gfp_t gfp_mask,
-> >  	if (!remap)
-> >  		io_tlb_default_mem.can_grow = true;
-> >  	if (IS_ENABLED(CONFIG_ZONE_DMA) && (gfp_mask & __GFP_DMA))
-> > -		io_tlb_default_mem.phys_limit = DMA_BIT_MASK(zone_dma_bits);
-> > +		io_tlb_default_mem.phys_limit = zone_dma_limit;
-> >  	else if (IS_ENABLED(CONFIG_ZONE_DMA32) && (gfp_mask & __GFP_DMA32))
-> > -		io_tlb_default_mem.phys_limit = DMA_BIT_MASK(32);
-> > +		io_tlb_default_mem.phys_limit = max(DMA_BIT_MASK(32), zone_dma_limit);
-> >  	else
-> >  		io_tlb_default_mem.phys_limit = virt_to_phys(high_memory - 1);
-> >  #endif  
-> 
-> These two look correct to me now and it's the least intrusive (the
-> alternative would have been a zone_dma32_limit). The arch code, however,
-> needs to ensure that zone_dma_limit can always support 32-bit devices
-> even if it is above 4GB (with the relevant dma offsets in place for such
-> devices).
+thanks,
 
-Just to make sure, the DMA zone (if present) must map to at most 32-bit
-bus address space (possibly behind a bridge). Is that what you're
-saying?
-
-Petr T
+greg k-h
 
