@@ -1,192 +1,193 @@
-Return-Path: <linux-kernel+bounces-278353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8976094AF0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:43:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2174E94AF0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCBD4B24336
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:43:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98B211F22A89
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ACE813DBBE;
-	Wed,  7 Aug 2024 17:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC9013D630;
+	Wed,  7 Aug 2024 17:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxn/TRBs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S66iPBG7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CD1c8Uor";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y6frZRCC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BM72KGD6"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C13F13DB9B;
-	Wed,  7 Aug 2024 17:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24B05473E;
+	Wed,  7 Aug 2024 17:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723052571; cv=none; b=svT18Plc2gKaA1oJ7PzLiZyI5DVCh1j/3n3FvlcmjrK/zsYBJGPr9Uk8XAwxMxh5hhd2uIfEUPyOvhsAZlQbItfEkxlhMiaswlzimft6oz47fsoREG9jPMFbJmqoy5VS2hDEtgVcVWXTPcF/VmDTTykDOuS3u96152HyUKS9pwk=
+	t=1723052631; cv=none; b=SrH22XD9IQ6jVMd7hxxVSbjLlhovvKPOBVzASMPQz5q1uamCmg779pN9GwcmJzQnVfTrfm+SMqAvUcbar2r0lJnGffmWn5Gfui+Y/wU7VubGUysyXNl0fTT/M/QCZO8Uj3TOzSRm15tbUvvK97WHX9bt498Px8lKstViDDvPRWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723052571; c=relaxed/simple;
-	bh=aQC/ycRBP4LA6jOd4l/ZKmSMmEaADeLl3V1gHA4xY0Q=;
+	s=arc-20240116; t=1723052631; c=relaxed/simple;
+	bh=b2Ld5JXoX3oZXS7hW/qdf1IUKj2/e483MbH7MAS78p0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dEFExebgic28eY4H0NMFeNXp0U8taR8F51kHfl4xxeBZRK+sEMrmnXqToZ1wASScgB1NPENqqxFRDCGUz50M2JX6BCN2rwedKdjQ1ix3VyBzyLAbZKJqKVBDkVVxoRUpIeo6MLrs18FKdldHlweDvlyxD0o775vC7WYYaQOVzeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxn/TRBs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43900C32781;
-	Wed,  7 Aug 2024 17:42:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723052570;
-	bh=aQC/ycRBP4LA6jOd4l/ZKmSMmEaADeLl3V1gHA4xY0Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nxn/TRBsteNbqFpMAapwDE5W0jMS2NSKYy/9Sl0ynEVHe1c/w1slTVkTMfD5ei06J
-	 0xwKxheWp4SJdr78mTATMdEKRYEAUcael1fcMYA5YDl/VW5eJsAhxkvahYy4d95E09
-	 XTEsuTWI2/RNYN1sNhmw26MTNdthehKsyD/Pi6Yrvh6Z21eHNbhxyv1zARmKQ6xbHc
-	 8wqABA+3BLSByGaIIm6UEHv5zfUFcEtXB9cvR9UmHE01XwqBUyX1sf3gW9t/W0aSE0
-	 SlXgnagIsGZe9LRyu0mJQelVmV6L711yZONcx12+9WDJojXjpDgBh5Bw5EF+lF8xyK
-	 1PPEwMXmYy5VA==
-Date: Wed, 7 Aug 2024 18:42:44 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 6.1 00/86] 6.1.104-rc1 review
-Message-ID: <3f2a3f15-5a77-415a-b491-5e33ad3b351c@sirena.org.uk>
-References: <20240807150039.247123516@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TS1Ci2R0bI5kIVesDazoJMpr92sYj7E5w98s0ff5G1BjR3h9wQ9cm6oagHNIkCy/UGsCQOEtLplQVAGg+wafEEXz5x7g3yhEf6kknUIfn7FDrYMzBdohMGRTxrUd8LUy4wHBLWiY8NcnwOPKRxVXqxoLY3G8ixHqV1M6a2btAzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S66iPBG7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CD1c8Uor; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y6frZRCC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BM72KGD6; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EBE3F1FB95;
+	Wed,  7 Aug 2024 17:43:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723052627; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qQkeBanqg60GtpUfZlBS62zpYbgL/ISaKUGWSGg0h8M=;
+	b=S66iPBG76regzsytaPH0hslThluhJvpedFpTAAa25PD0/LD9pacOz43g11G+pwaviKZ5qx
+	HPl968H7g5FhsV+03wsG9jL/8Ulov4B4tMsLZJG4OkUqbfvQgOPxkQK+Zxceg3Xg1InAMu
+	jFOMMS/dTeJ/ABzfJYwg8zeMdl6NlDM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723052627;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qQkeBanqg60GtpUfZlBS62zpYbgL/ISaKUGWSGg0h8M=;
+	b=CD1c8Uor16oz/EEnyIuq6OTxEaDr3QyxzJXiGHJ8/UGRzhvY0hhDX7EhmJ85yr3iNQlHqV
+	EQchp5taOcfPt4BQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723052626; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qQkeBanqg60GtpUfZlBS62zpYbgL/ISaKUGWSGg0h8M=;
+	b=Y6frZRCCgvvgUqqGA7mBRST7f+vMIVk7MNrBZU3WT9CFNEXlovwVsVApH5id865erHj8l7
+	j43rujq6r9/Qb3biPGYtmotK+yJquc/TwuHyQ8LOhrhHr5xT6TfxSnfl0TnjBoca046iae
+	F3UmWBucH4ifh0wWl1/rU9OKs7xx05g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723052626;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qQkeBanqg60GtpUfZlBS62zpYbgL/ISaKUGWSGg0h8M=;
+	b=BM72KGD6+TLfBHaJZ3IGn7TLaCilmVDJRz8/w2CIR0D5wOpBl5eBfAJnwyjTyuSRYDIyqI
+	pKFmzg5f7wonVqBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E0BD313A7D;
+	Wed,  7 Aug 2024 17:43:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id uKnbNlKys2YaJwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 07 Aug 2024 17:43:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 8BD1DA0762; Wed,  7 Aug 2024 19:43:46 +0200 (CEST)
+Date: Wed, 7 Aug 2024 19:43:46 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 08/10] ext4: use ext4_map_query_blocks() in
+ ext4_map_blocks()
+Message-ID: <20240807174346.2wxfqu3hjrvihwai@quack3>
+References: <20240802115120.362902-1-yi.zhang@huaweicloud.com>
+ <20240802115120.362902-9-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OPFcUyCl/KO/fYT5"
-Content-Disposition: inline
-In-Reply-To: <20240807150039.247123516@linuxfoundation.org>
-X-Cookie: Offer may end without notice.
-
-
---OPFcUyCl/KO/fYT5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240802115120.362902-9-yi.zhang@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [0.70 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,huawei.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: 0.70
 
-On Wed, Aug 07, 2024 at 04:59:39PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.104 release.
-> There are 86 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri 02-08-24 19:51:18, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> The blocks map querying logic in ext4_map_blocks() are the same as
+> ext4_map_query_blocks(), so switch to directly use it.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-This breaks boot for an arm multi_v7_defconfig on qemu
-virt-2.11,gic-version=3D3 with the oops below.  Full log including the
-qemu parameters at:
+Sure. Feel free to add:
 
-   https://lava.sirena.org.uk/scheduler/job/617206
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Bisect running but I'm not sure when I'll have time to pull the results
-out.
+								Honza
 
-<6>[    0.000000] GICv3: 224 SPIs implemented
-<6>[    0.000000] GICv3: 0 Extended SPIs implemented
-<6>[    0.000000] GICv3: GICv3 features: 16 PPIs
-<6>[    0.000000] GICv3: CPU0: found redistributor 0 region 0:0x080a0000
-<1>[    0.000000] 8<--- cut here ---
-<1>[    0.000000] Unable to handle kernel NULL pointer dereference at virtu=
-al address 00000001
-<1>[    0.000000] [00000001] *pgd=3D00000000
-<0>[    0.000000] Internal error: Oops: 805 [#1] SMP ARM
-<4>[    0.000000] Modules linked in:
-<4>[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.1.104-rc1-000=
-87-gb22fe5fc2a45 #1
-<4>[    0.000000] Hardware name: Generic DT based system
-<4>[    0.000000] PC is at _set_bit+0x4/0x40
-<4>[    0.000000] LR is at enable_percpu_irq+0x64/0xcc
-<4>[    0.000000] pc : [<c10c58e4>]    lr : [<c03a6f90>]    psr: 000000d3
-<4>[    0.000000] sp : c1b01df8  ip : 00000001  fp : 00000001
-<4>[    0.000000] r10: 08000000  r9 : c1da9624  r8 : c1b0adb8
-<4>[    0.000000] r7 : 00000000  r6 : 00000010  r5 : c208b800  r4 : 00000000
-<4>[    0.000000] r3 : c1b09780  r2 : 00000000  r1 : c200574d  r0 : 00000000
-<4>[    0.000000] Flags: nzcv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Se=
-gment none
-<4>[    0.000000] Control: 10c5387d  Table: 4020406a  DAC: 00000051
-<1>[    0.000000] Register r0 information: NULL pointer
-<1>[    0.000000] Register r1 information: slab kmalloc-64 start c2005740 p=
-ointer offset 13 size 64
-<1>[    0.000000] Register r2 information: NULL pointer
-<1>[    0.000000] Register r3 information: non-slab/vmalloc memory
-<1>[    0.000000] Register r4 information: NULL pointer
-<1>[    0.000000] Register r5 information: slab kmalloc-256 start c208b800 =
-pointer offset 0 size 256
-<1>[    0.000000] Register r6 information: zero-size pointer
-<1>[    0.000000] Register r7 information: NULL pointer
-<1>[    0.000000] Register r8 information: non-slab/vmalloc memory
-<1>[    0.000000] Register r9 information: non-slab/vmalloc memory
-<1>[    0.000000] Register r10 information: non-paged memory
-<1>[    0.000000] Register r11 information: non-paged memory
-<1>[    0.000000] Register r12 information: non-paged memory
-<0>[    0.000000] Process swapper/0 (pid: 0, stack limit =3D 0x(ptrval))
-<0>[    0.000000] Stack: (0xc1b01df8 to 0xc1b02000)
-<0>[    0.000000] 1de0:                                                    =
-   00000008 c1905bdc
-<0>[    0.000000] 1e00: 600000d3 00000000 c1b01e44 00000000 c1b04cdc 000000=
-00 c1b09780 c030ee40
-<0>[    0.000000] 1e20: c1b05a38 dbbd8514 00000000 c1932778 c1b01e44 000000=
-00 00000000 00f60000
-<0>[    0.000000] 1e40: 00000000 dbbd8514 00000001 00000000 00000000 000000=
-00 00000000 00000000
-<0>[    0.000000] 1e60: 00000000 00000000 00000000 00000000 00000000 000000=
-00 00000000 00000000
-<0>[    0.000000] 1e80: 00000000 00000000 00000000 00000000 dbbd8508 080000=
-00 e0810000 c2005680
-<0>[    0.000000] 1ea0: 00000001 c2005690 c1675080 c19329fc 00000000 000000=
-00 dbbd8514 c177f004
-<0>[    0.000000] 1ec0: 00000001 c1a4bc20 00000000 00000000 00000000 080a00=
-00 08ffffff dbbd8574
-<0>[    0.000000] 1ee0: 00000200 00000000 00000000 00000000 00000000 c0ea29=
-44 c1a4f89c 00000000
-<0>[    0.000000] 1f00: 00000000 c1a4f960 00000000 00000000 00000000 000000=
-00 c1b01f4c c20055c0
-<0>[    0.000000] 1f20: 00000000 c1b01f4c c1b01f54 c1b01f4c 00000122 000001=
-00 c162c61c c19a3cbc
-<0>[    0.000000] 1f40: 00000000 00000000 00000000 c1b01f4c c1b01f4c c1b01f=
-54 c1b01f54 00000000
-<0>[    0.000000] 1f60: c1b09268 c19cda5c c1a54000 c1b04e48 c1900fe0 dbfff0=
-80 00000000 c178fa04
-<0>[    0.000000] 1f80: c1b09268 c1903c50 c1900fe0 c1d6a000 c1d998b0 c1d6a0=
-00 c1d998b0 c1b04cc0
-<0>[    0.000000] 1fa0: dbfff088 c1900fe0 ffffffff ffffffff 00000000 c19006=
-ec c1b09780 c178fa04
-<0>[    0.000000] 1fc0: 00000000 c19cda6c 00000000 00000000 00000000 c19004=
-20 00000051 10c0387d
-<0>[    0.000000] 1fe0: ffffffff 48786000 414fc0f0 10c5387d 00000000 000000=
-00 00000000 00000000
-<0>[    0.000000]  _set_bit from enable_percpu_irq+0x64/0xcc
-<0>[    0.000000]  enable_percpu_irq from ipi_setup+0x34/0x80
-<0>[    0.000000]  ipi_setup from gic_init_bases+0x5cc/0x68c
-<0>[    0.000000]  gic_init_bases from gic_of_init+0x1c4/0x2cc
-<0>[    0.000000]  gic_of_init from of_irq_init+0x1d4/0x324
-<0>[    0.000000]  of_irq_init from init_IRQ+0xb0/0x110
-<0>[    0.000000]  init_IRQ from start_kernel+0x528/0x6e4
-<0>[    0.000000]  start_kernel from 0x0
-<0>[    0.000000] Code: e12fff1e e3e0000d e12fff1e e211c003 (15cc1000)=20
-<4>[    0.000000] ---[ end trace 0000000000000000 ]---
-<0>[    0.000000] Kernel panic - not syncing: Attempted to kill the idle ta=
-sk!
-
---OPFcUyCl/KO/fYT5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmazshMACgkQJNaLcl1U
-h9AOaQf7Bkl3Xk+AlTUkSwAhQQ8+TCAKu3zvb2dsQfFh7GehxzwkNrhq8NhTtG2i
-dszTTX7CzPL7PeWGv4xZz7TWuBvKPB2wAk6NT1WecaOIYn3dXs9RntsgQjB7lqFM
-wCMbbTx2xkSednbySqLZhgs83yi72EKFzZAB3+NrXW8kr7j9X/AlY9TkVnyVYYZn
-dobvsWLH2p11aSCJe9V1CIOTMb0cHiH07JXmg/8KTri4xAsoZv2n6s8TNA7RHhH3
-jxkj51W0OzADwTIWNOv43J/QOCZrVMWSapuu0l+zZ5NCER/QwikKN1WH89lp7nVW
-tGpgtyeZ2+mJyPUb2f4gcubXTETOcg==
-=n79s
------END PGP SIGNATURE-----
-
---OPFcUyCl/KO/fYT5--
+> ---
+>  fs/ext4/inode.c | 22 +---------------------
+>  1 file changed, 1 insertion(+), 21 deletions(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index e9ce1e4e6acb..8bd65a45a26a 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -658,27 +658,7 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
+>  	 * file system block.
+>  	 */
+>  	down_read(&EXT4_I(inode)->i_data_sem);
+> -	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
+> -		retval = ext4_ext_map_blocks(handle, inode, map, 0);
+> -	} else {
+> -		retval = ext4_ind_map_blocks(handle, inode, map, 0);
+> -	}
+> -	if (retval > 0) {
+> -		unsigned int status;
+> -
+> -		if (unlikely(retval != map->m_len)) {
+> -			ext4_warning(inode->i_sb,
+> -				     "ES len assertion failed for inode "
+> -				     "%lu: retval %d != map->m_len %d",
+> -				     inode->i_ino, retval, map->m_len);
+> -			WARN_ON(1);
+> -		}
+> -
+> -		status = map->m_flags & EXT4_MAP_UNWRITTEN ?
+> -				EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
+> -		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
+> -				      map->m_pblk, status);
+> -	}
+> +	retval = ext4_map_query_blocks(handle, inode, map);
+>  	up_read((&EXT4_I(inode)->i_data_sem));
+>  
+>  found:
+> -- 
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
