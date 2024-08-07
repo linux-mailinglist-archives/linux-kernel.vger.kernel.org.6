@@ -1,140 +1,125 @@
-Return-Path: <linux-kernel+bounces-278651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8245494B320
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:35:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 210C594B325
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31AD41F23701
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:35:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A266DB20AAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBBD15530B;
-	Wed,  7 Aug 2024 22:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9B8155337;
+	Wed,  7 Aug 2024 22:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gEGa2nht"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="juMPo6WK"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97FF84037;
-	Wed,  7 Aug 2024 22:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A893D12BF02
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 22:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723070108; cv=none; b=XCnzPEfbbKSmE0FYqOCQHyXwbMCn28AsvM0J3px/m8XWLSt0kWYb/I2detg3cRCrE34Vs/BcM25TUONSj0JqcbczJh+3MkF8UngQZEKzqBLRF3bAbV2d5e66uQeob9wCuujiXedgv1Sbd6uGp2+n1dabASveplxG02D1FtgRM2k=
+	t=1723070198; cv=none; b=P3TKuYYuKI/RYWPu3UqnkGL9bYN0GtdxxDREeGiA0NuSVHTRJA5zZZZCrS/NQ+GHCCQSfvcO+DDpVOEbSBnKqQk7NCVwrwmwK3e2lp/BvzOtPMkY5eliz/3rntpEmT8W6EZjJwFJr5ePWJ9cz6uh/hPaJzPpbA+SXO3YyQUMp/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723070108; c=relaxed/simple;
-	bh=4SW2koNLSR3UGJDCQ4tfaSCI1PPYQl+YNGBqJggCxkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ilraU9e/cz3fYtA6PfXDaJc3wMJnj3TIe90njjQU1nbiPyxhezSoc+LrrJ+4EdTuKKOwD3sE8arkZxHwf3To27iRdbbXMoIUTvHQhUjJHk1ETTfohBMOdmZ/gx2F11VyVBjYXrfS8HHU2WZngxcM+EdpbPMs5RzGTHHPlpsVB/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gEGa2nht; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2001FC4AF0D;
-	Wed,  7 Aug 2024 22:35:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723070108;
-	bh=4SW2koNLSR3UGJDCQ4tfaSCI1PPYQl+YNGBqJggCxkI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gEGa2nhtWx0OmR2n5WPnJGF7lXEYDWPQbd9goc340or6vClcv7BK8g+LXX5K7zMbm
-	 7gTaJJ8GueY/qPpqV3LI6rPdh1sb9V818kNypu3NDb1MlunXw+/i98worzpGRUUy4O
-	 jhpHTyuOR3zUiKUoKU+DTQyGfnVKaLlWHXaKl8V2bNClU9NDY/s89LdDt0qOZo8oNF
-	 BLTgshL4skQl6QHFdslAxXtOFGYUfB0DpczeDbwAn5ciEjMXyfNDVhMO9DMFeQWF4e
-	 eRlSqLrTFOFFnwckjRICPqfoFNnUC744CAYuS2wtbHhxTCynLgeVJSLPWTvdHVWZLF
-	 RdiqgOdEPYXCA==
-Date: Thu, 8 Aug 2024 00:35:01 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Hongxing Zhu <hongxing.zhu@nxp.com>
-Cc: "tj@kernel.org" <tj@kernel.org>,
-	"dlemoal@kernel.org" <dlemoal@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH v4 4/6] ata: ahci_imx: Add 32bits DMA limit for i.MX8QM
- AHCI SATA
-Message-ID: <ZrP2lUjTAazBlUVO@x1-carbon.lan>
-References: <1721367736-30156-1-git-send-email-hongxing.zhu@nxp.com>
- <1721367736-30156-5-git-send-email-hongxing.zhu@nxp.com>
- <Zp/Uh/mavwo+755Q@x1-carbon.lan>
- <AS8PR04MB867612E75A6C08983F7031528CB32@AS8PR04MB8676.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1723070198; c=relaxed/simple;
+	bh=a82BazRTsLV8O545SUtLHexI80RAcukz/terjjLKadM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=quABa19DZnKExu250W/B6jN8KIv2gOYCK7EoGp7+mx+BiLCx8sfh70eCIBgzEhbvx4RUvIG2tfdB7iVgLhCR1VVbVCPfMB30zZ6MZEn1MdKj6nFEqtApjUFvj4JZPlYCgl4pEtvlCHcwRrutQOa/i4+klGWsaAVX8O9n0rYI78s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=juMPo6WK; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7093c94435bso157083a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 15:36:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723070195; x=1723674995; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q5xqVBE75uTakMohQNNM+Ob3mwTWILCE117tt64StnA=;
+        b=juMPo6WK1oMZfx3SBHcJlSj3c0OAieioPg67K4fwY3TboNmdDxI6OxvWHaSwPXE0jH
+         eK2kcYczUnXPkSp9r2nd3ZcPC0eO1UFirsKHaAQhfs4B3XsmiO2rgpN16/xRYst+zXch
+         v1QZuNA2KHlX2wVjEfqlVlphsB12PFmbxgwSDRxJhxWO2YLxmhYaOUuRlWk7PcCjbk+y
+         Fa1343O5HYV8WiUbUAj+4J+E3lqhYfnWQwuqjB8xYEROLCu+ASmt8BRrQ9DlieyXSFqw
+         90DAPW35AVjyBWWyq9AGUFdftONiop8Zvy8vQgTvqIjRNXOYmRUtbEdFnGY13khRg5G+
+         mnIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723070195; x=1723674995;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q5xqVBE75uTakMohQNNM+Ob3mwTWILCE117tt64StnA=;
+        b=AWQ6KBKdAcE3Wm0c5DrQOLG9C+QZaKukV2kzQsfC3Y3lJAXSbLreCo/LzxajQGm1Nq
+         Sbaps/sRoydTX8Wnvj54gfDGpqzsg+mqwX3UYVJqoTzmmNxsPkqs04MEmKEB2a6te5P8
+         1a6Jk7q/3c3EjyRbWehoTi4Kl1kfnDjXiPoTj0MhQKZWhwVNh3I/LiC1xOOFPnHgqE48
+         y09xjOF0eZFfXDeDJF8Ez1F5r09vG3zl+dizyX6fPT5QqBS/0uHxb5qJ3W5wLdVJTV87
+         RqYuYo97GAbK5CPerVOha3I51SD6ZFxNBaud4xkrKw38sQh6tfy27pPKMcKcGPh8rXov
+         O+4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVX311ALzpV+QEz4AYyZpMq0lrJws1EJND7Y1ilMcz58AgpALz4ZElpqysWlZlEOq9KfURwlau7wdVy2E6G08njKlQ2L9/6Xp5Rk47l
+X-Gm-Message-State: AOJu0YxTBXHIuWEfClfKPlZSwsI2zqpCQT5+ShhVFFFI14e+bZqlJBVr
+	DB+hVELFhXL6jFSS/Pv1dhqH6ZOgASkKCSAzfTo85jqDNN6q3IG2C9DpQgRcR7k=
+X-Google-Smtp-Source: AGHT+IGTBDVQAm3GArH3otwegCgx4BHN1ZL2N8yxYA8F/kedHOZ4Afd+CPHaShh6RvNkbAtiESu5bQ==
+X-Received: by 2002:a05:6358:70c1:b0:1aa:b860:f10e with SMTP id e5c5f4694b2df-1b15cf91432mr25702255d.15.1723070194758;
+        Wed, 07 Aug 2024 15:36:34 -0700 (PDT)
+Received: from localhost ([2804:14c:87d5:5261:6c30:472f:18a6:cae1])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b7654be293sm7403332a12.91.2024.08.07.15.36.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 15:36:34 -0700 (PDT)
+From: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
+ <will@kernel.org>,  Jonathan Corbet <corbet@lwn.net>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Marc Zyngier <maz@kernel.org>,  Oliver Upton
+ <oliver.upton@linux.dev>,  James Morse <james.morse@arm.com>,  Suzuki K
+ Poulose <suzuki.poulose@arm.com>,  Arnd Bergmann <arnd@arndb.de>,  Oleg
+ Nesterov <oleg@redhat.com>,  Eric Biederman <ebiederm@xmission.com>,
+  Shuah Khan <shuah@kernel.org>,  "Rick P. Edgecombe"
+ <rick.p.edgecombe@intel.com>,  Deepak Gupta <debug@rivosinc.com>,  Ard
+ Biesheuvel <ardb@kernel.org>,  Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+  Kees Cook <kees@kernel.org>,  "H.J. Lu" <hjl.tools@gmail.com>,  Paul
+ Walmsley <paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>,
+  Albert Ou <aou@eecs.berkeley.edu>,  Florian Weimer <fweimer@redhat.com>,
+  Christian Brauner <brauner@kernel.org>,  Ross Burton
+ <ross.burton@arm.com>,  linux-arm-kernel@lists.infradead.org,
+  linux-doc@vger.kernel.org,  kvmarm@lists.linux.dev,
+  linux-fsdevel@vger.kernel.org,  linux-arch@vger.kernel.org,
+  linux-mm@kvack.org,  linux-kselftest@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 37/40] kselftest/arm64: Add GCS signal tests
+In-Reply-To: <20240801-arm64-gcs-v10-37-699e2bd2190b@kernel.org> (Mark Brown's
+	message of "Thu, 01 Aug 2024 13:07:04 +0100")
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+	<20240801-arm64-gcs-v10-37-699e2bd2190b@kernel.org>
+Date: Wed, 07 Aug 2024 19:36:31 -0300
+Message-ID: <87bk24dkpc.fsf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AS8PR04MB867612E75A6C08983F7031528CB32@AS8PR04MB8676.eurprd04.prod.outlook.com>
+Content-Type: text/plain
 
-On Fri, Aug 02, 2024 at 02:30:45AM +0000, Hongxing Zhu wrote:
-> >
-> > Does this solve your problem:
-> > diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
-> > index 581704e61f28..fc86e2c8c42b 100644
-> > --- a/drivers/ata/libahci_platform.c
-> > +++ b/drivers/ata/libahci_platform.c
-> > @@ -747,12 +747,11 @@ int ahci_platform_init_host(struct platform_device
-> > *pdev,
-> >                         ap->ops = &ata_dummy_port_ops;
-> >         }
-> >
-> > -       if (hpriv->cap & HOST_CAP_64) {
-> > -               rc = dma_coerce_mask_and_coherent(dev,
-> > DMA_BIT_MASK(64));
-> > -               if (rc) {
-> > -                       dev_err(dev, "Failed to enable 64-bit DMA.\n");
-> > -                       return rc;
-> > -               }
-> > +       rc = dma_coerce_mask_and_coherent(dev,
-> > +                       DMA_BIT_MASK((hpriv->cap & HOST_CAP_64) ? 64 :
-> > 32));
-> > +       if (rc) {
-> > +               dev_err(dev, "DMA enable failed\n");
-> > +               return rc;
-> >         }
-> >
-> >         rc = ahci_reset_controller(host);
-> >
-> Hi Niklas:
-> I'm so sorry to reply late.
-> About the 32bit DMA limitation of i.MX8QM AHCI SATA.
-> It's seems that one "dma-ranges" property in the DT can let i.MX8QM SATA
->  works fine in my past days tests without this commit.
-> How about drop these driver changes, and add "dma-ranges" for i.MX8QM SATA?
-> Thanks a lot for your kindly help.
+Mark Brown <broonie@kernel.org> writes:
 
-Hello Richard,
+> Do some testing of the signal handling for GCS, checking that a GCS
+> frame has the expected information in it and that the expected signals
+> are delivered with invalid operations.
+>
+> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  tools/testing/selftests/arm64/signal/.gitignore    |  1 +
+>  .../selftests/arm64/signal/test_signals_utils.h    | 10 +++
+>  .../arm64/signal/testcases/gcs_exception_fault.c   | 62 +++++++++++++++
+>  .../selftests/arm64/signal/testcases/gcs_frame.c   | 88 ++++++++++++++++++++++
+>  .../arm64/signal/testcases/gcs_write_fault.c       | 67 ++++++++++++++++
+>  5 files changed, 228 insertions(+)
 
-did you try my suggested patch above?
+The gcs_exception_fault, gcs_frame and gcs_write_fault tests pass on my
+FVP setup:
 
+Tested-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 
-If you look at dma-ranges:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#dma-ranges
-
-"dma-ranges" property should be used on a bus device node
-(such as PCI host bridges).
-
-It does not seem correct to add this property (describing the DMA limit
-of the AHCI controller, a PCI endpoint) on the PCI host bridge/controller.
-
-This property belongs to the AHCI controller, not the upstream PCI
-host bridge/controller.
-
-AHCI has a specific register to describe if the hardware can support
-64-bit DMA addresses or not, so if my suggested patch works for you,
-it seems like a more elegant solution (which also avoids having to
-abuse device tree properties).
-
-
-Kind regards,
-Niklas
+-- 
+Thiago
 
