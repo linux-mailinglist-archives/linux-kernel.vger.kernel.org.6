@@ -1,99 +1,90 @@
-Return-Path: <linux-kernel+bounces-278567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 976D894B1EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:16:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381D794B1F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2510C282C2A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:16:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3A8283C9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3699C14F115;
-	Wed,  7 Aug 2024 21:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA4F149C6C;
+	Wed,  7 Aug 2024 21:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="RsUIVpWU"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="0TFKINsp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE38146000;
-	Wed,  7 Aug 2024 21:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B6F145333
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 21:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723065385; cv=none; b=Y7AoaBnSTL5EYlJCYpA5inzlx/Q65pNWsLY4pwPTWYIXuSoDVIsK9moNGrHwdf+4VqzDhKE++XcY6PPyJOodb6FaoXiS1+kSTPf+gJv2bi8axJ7xUU1NLoRrDMSQu78oPv8H8Km5DhAHANB/7vW3H4nTrAtOd2qaLkbYNueuEhQ=
+	t=1723065425; cv=none; b=ZFqx7LRZY2I3lJ6gAQxMOz8DTqdqLx/T4lqwLh8yM2bwEytKyKf2ONUHGZZjFVOX7dP71AmcYMXsEUXfSPFtqehcwveDpsZfb4tdWKA20NSFVzuvW7gbVLs9KrB2XTulPKMLvA5WDnsveRof17V6agfRrj1mQW8jOv1+ZUX0X4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723065385; c=relaxed/simple;
-	bh=dLOmdfVgvOwOfZUsPQ52Hp/9+a/kWmgAfB1AFx7yfa4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DiZ+IZG65mexI/f2skqk0k89+egAs07AGfibYwwH0QqKRFevI3Azt2LdwjdIcF6ZkoSDAPIvOBHsqGfkvztyOpAtxQrG1w1s7QtR75z5A25SprqRJxsF5oFnQKRO6WgiYrxuDilEBg7WAJTARB8Zq2tNpk9bVDrHv0zu2OSASQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=RsUIVpWU; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723065380; x=1723324580;
-	bh=998UXmzv/ptANrr7bqsCiWLbRf3e/azzoZjmN8b+fjs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=RsUIVpWUc46mDvo7Daj0WNeDsiWe1O+UyyginEoteSITvRdCgR/FJ6QXvwN+9Gqo1
-	 TuXzwypE9e+9LBd90Y8KPrhK69IPAcg4fRSH89/1LDZZeCmqVVsyzzTTdPlz8Nm5C0
-	 /syb956gYvzdy/+3vvkZJWHeWwlSkONTXQKikueUQvgE0+s01dYyILVYObqFQWZ6M0
-	 LQhvYsHt0u6YMUBWKOaseZpTyjDaoK+RxRIEhap76ohe928wHllw/+Ptahh2tAFB4V
-	 Kwm4qQI6Bjch6nKFxTWS6F+VESgWnS3hIVRM9jLiEDfP116qAgyvNrWXX/nfGM1zlE
-	 OTov+hqGrwnKQ==
-Date: Wed, 07 Aug 2024 21:16:14 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 10/28] rust: treewide: switch to our kernel `Box` type
-Message-ID: <76087268-f557-4920-9798-9969d283dfac@proton.me>
-In-Reply-To: <1b17b4b3-69b4-4af1-a816-b401a1bb6ef2@proton.me>
-References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-11-dakr@kernel.org> <1b17b4b3-69b4-4af1-a816-b401a1bb6ef2@proton.me>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 6d96158f694295894b9122ccaff382035247a0ea
+	s=arc-20240116; t=1723065425; c=relaxed/simple;
+	bh=+gUpbSegd1rP99qLghMnsgBErS9zrHF45NWkbO3C0pc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=BvkyPddqCLri2UXleL64qDJqijDfYceVw5QAmE7Kt7Zfm6B1y3Okde3+ahDgFpQ2sB0w5r2OvmTMcuaxQAeV18xh00jMfUXCvDqWhcm0Y6J0wCTiLqs6Wt9k5/W5Hm3tTfL7Iomjawn4eDdAs9SH81SSWI5S6WFeNjVfaUqerSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=0TFKINsp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43CC7C32781;
+	Wed,  7 Aug 2024 21:17:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1723065425;
+	bh=+gUpbSegd1rP99qLghMnsgBErS9zrHF45NWkbO3C0pc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=0TFKINspgpAlLabxd/er+hxRd2vgR0Zs5pOwaZjJoMxyXSkODwI2oFe2cXYsgU71q
+	 Run8TO4CZCIZS1bbMHvyICsWBdEqyNihC5Nqewyg+REZ3YSGiX6Jk1u9Z9eJt6Ocsv
+	 Ud42JWI0sqQqmHgCa6cvnF/vmd5PDgkW2tmTDDQA=
+Date: Wed, 7 Aug 2024 14:17:03 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, "Aneesh Kumar K . V"
+ <aneesh.kumar@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Oscar
+ Salvador <osalvador@suse.de>, Dan Williams <dan.j.williams@intel.com>,
+ James Houghton <jthoughton@google.com>, Matthew Wilcox
+ <willy@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, Rik van Riel
+ <riel@surriel.com>, Dave Jiang <dave.jiang@intel.com>, x86@kernel.org, Ingo
+ Molnar <mingo@redhat.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>,
+ "Kirill A . Shutemov" <kirill@shutemov.name>,
+ linuxppc-dev@lists.ozlabs.org, Mel Gorman <mgorman@techsingularity.net>,
+ Hugh Dickins <hughd@google.com>, Borislav Petkov <bp@alien8.de>, David
+ Hildenbrand <david@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Huang Ying <ying.huang@intel.com>
+Subject: Re: [PATCH v4 0/7] mm/mprotect: Fix dax puds
+Message-Id: <20240807141703.d641001ee14177ccf80a31d8@linux-foundation.org>
+In-Reply-To: <20240807194812.819412-1-peterx@redhat.com>
+References: <20240807194812.819412-1-peterx@redhat.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 07.08.24 22:57, Benno Lossin wrote:
-> On 05.08.24 17:19, Danilo Krummrich wrote:
->> Now that we got the kernel `Box` type in place, convert all existing
->> `Box` users to make use of it.
->=20
-> You missed a couple usages of `Box`:
-> - `rust/macros/lib.rs:{242,251,281}`
-> - `drivers/block/rnull.rs:{35,50}`
+On Wed,  7 Aug 2024 15:48:04 -0400 Peter Xu <peterx@redhat.com> wrote:
 
-I also missed some rustdoc links: `rust/kernel/init.rs:{16,746,852}`
-(though these should probably link to `Box`)
+> 
+> Dax supports pud pages for a while, but mprotect on puds was missing since
+> the start.  This series tries to fix that by providing pud handling in
+> mprotect().  The goal is to add more types of pud mappings like hugetlb or
+> pfnmaps.  This series paves way for it by fixing known pud entries.
+> 
+> Considering nobody reported this until when I looked at those other types
+> of pud mappings, I am thinking maybe it doesn't need to be a fix for stable
+> and this may not need to be backported.  I would guess whoever cares about
+> mprotect() won't care 1G dax puds yet, vice versa.  I hope fixing that in
+> new kernels would be fine, but I'm open to suggestions.
 
----
-Cheers,
-Benno
+Yes, I'm not sure this is a "fix" at all.  We're implementing something
+which previously wasn't there.  Perhaps the entire series should be
+called "mm: implement mprotect() for DAX PUDs"?
 
-> or is that intentional? (for me rnull doesn't compile after this patch)
->=20
-> ---
-> Cheers,
-> Benno
->=20
->> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
->> ---
->>  rust/kernel/init.rs               | 41 ++++++++++++++++---------------
->>  rust/kernel/init/__internal.rs    |  2 +-
->>  rust/kernel/sync/arc.rs           | 17 ++++++-------
->>  rust/kernel/sync/condvar.rs       |  4 +--
->>  rust/kernel/sync/lock/mutex.rs    |  2 +-
->>  rust/kernel/sync/lock/spinlock.rs |  2 +-
->>  rust/kernel/workqueue.rs          | 20 +++++++--------
->>  7 files changed, 44 insertions(+), 44 deletions(-)
->=20
->=20
 
 
