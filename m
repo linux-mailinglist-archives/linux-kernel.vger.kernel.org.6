@@ -1,131 +1,191 @@
-Return-Path: <linux-kernel+bounces-277964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CABD994A8B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:37:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D4894A8B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0829D1C217EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:37:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AE771F22801
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E21201245;
-	Wed,  7 Aug 2024 13:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719FE20012F;
+	Wed,  7 Aug 2024 13:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mAVE9M53"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vy8wRb85";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MaYrq7CE";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vy8wRb85";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MaYrq7CE"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B552720124F;
-	Wed,  7 Aug 2024 13:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96A21E7A3B;
+	Wed,  7 Aug 2024 13:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723037849; cv=none; b=P/c9ej8tdgYzJj745Lx7Sq4017ilgeQevEYhyyK5f93Fm7wty8FShsl/aVeghHYU1/WlAH+n36tgvsVTvU+DeDCUH2PowImEOtQL8Tu+jE1KwXJNkTQguUm5ZJ+JHCqPThQnKtLnio2QB7u157Wj0I61G6pnex9lxKTcau/AO6U=
+	t=1723037843; cv=none; b=G2URhDejZdBEhisTNVEyAACS0/muQEOZ4z1ev2TF0dO3sjmutwo3rBMEL5KSarHpm5JR8wAnP8dBIzdl+Uf6J6rrvvzxqL5DpUxyvRNmyz/7Tx+0o8nKkxNaNXXTLZPpfIR15N2P3zxmZiXT/FRueV4a8lV/MUUPopR0qYlvpfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723037849; c=relaxed/simple;
-	bh=hoVHH9tXVwNx1c0Mrluc8/Ih6kYDnnPcFjhU2PF0f+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AAbVWhPqwiy28KtaHuJ9bAAR0gsI0UE29mmJHhUTdbkhTKmf3S9IGJgf0If3WAeIFF92WACobKgLO95IiP0w/6oaC5B21bTJ1exFKfXh5LF/MyEtePyicWNXQ5DmLOhdNi/3iwJbuDegs7m4N7sc9PfsG0NVdZok7lllxD3Jehg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mAVE9M53; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 477DbIrv018406;
-	Wed, 7 Aug 2024 08:37:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723037838;
-	bh=wy/GKsqdSLQpkYwAbqILwGPIejQ6R6eelIMeGNVONzw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=mAVE9M53Ow/UC555su+V2fodDRrs5qIMc5mN6EzlDeDFihK1LGKPMgQ/tz/Zq7Wrn
-	 i8XhaS/qVW9lyKf1iOaWQLHgWE7uWkYOyypnHFDgiX55BBuYNrPorCV8YEOuUmfn5f
-	 25bJrTI5zkFQAxV2rSg/hlm3MDSbebgk0bU+PmaQ=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 477DbIBY012933
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 7 Aug 2024 08:37:18 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
- Aug 2024 08:37:18 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 7 Aug 2024 08:37:18 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 477DbHAn029301;
-	Wed, 7 Aug 2024 08:37:17 -0500
-Message-ID: <0bba5293-a55d-4f13-887c-272a54d6e1ca@ti.com>
-Date: Wed, 7 Aug 2024 08:37:17 -0500
+	s=arc-20240116; t=1723037843; c=relaxed/simple;
+	bh=mm8pAHOnAkFqGyxp5I/86KmQPZ8qC0Sfat11ek1RkW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=akafhF/SE/Ma+0GKFhAqeJrW9v3hqLMzLVBBAX8hy65PPCYjWM3XKg+1xUOBfwrlbUq81WlI+1zDoEUt6uPn0ptIfe2qXm/Ocm7xVLKmoyca0417zzKLE4i0dAZESRd2hv2Ifh3pvGG4ml2de9vDFaf9TTeX2oGumABxb6tv+Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vy8wRb85; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MaYrq7CE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vy8wRb85; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MaYrq7CE; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 161AB1F396;
+	Wed,  7 Aug 2024 13:37:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723037840; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jZFoKp6ZkbMc6/3zlTwksVl8/pkkbCAfc22o+fX9lRw=;
+	b=vy8wRb85CqOEQSv5d5ynVnKxIHQQKYr9dQV48CQVaC8FrqBrP94yNeygfSNzopfdxYCOs1
+	MTYBUmaHTR1CfvTFfwBj11TGnGbSSXiEXqdWrdRGLk9Z9u77JCOMaRoVqbpP9+ZnlPyQ4Q
+	PGz9wSX/wUjPOQ85cuVTNw2yrrY0FB8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723037840;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jZFoKp6ZkbMc6/3zlTwksVl8/pkkbCAfc22o+fX9lRw=;
+	b=MaYrq7CEAnnMe74p8TpM32mknJ+mhTTOZCFNocbK0Ic1syrR0KTi81lpl/1jNF91Yg1AYH
+	NFXXViTNHDm0iTCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723037840; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jZFoKp6ZkbMc6/3zlTwksVl8/pkkbCAfc22o+fX9lRw=;
+	b=vy8wRb85CqOEQSv5d5ynVnKxIHQQKYr9dQV48CQVaC8FrqBrP94yNeygfSNzopfdxYCOs1
+	MTYBUmaHTR1CfvTFfwBj11TGnGbSSXiEXqdWrdRGLk9Z9u77JCOMaRoVqbpP9+ZnlPyQ4Q
+	PGz9wSX/wUjPOQ85cuVTNw2yrrY0FB8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723037840;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jZFoKp6ZkbMc6/3zlTwksVl8/pkkbCAfc22o+fX9lRw=;
+	b=MaYrq7CEAnnMe74p8TpM32mknJ+mhTTOZCFNocbK0Ic1syrR0KTi81lpl/1jNF91Yg1AYH
+	NFXXViTNHDm0iTCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0939C13A7D;
+	Wed,  7 Aug 2024 13:37:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id M2pXApB4s2ZeVwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 07 Aug 2024 13:37:20 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A619CA0762; Wed,  7 Aug 2024 15:37:19 +0200 (CEST)
+Date: Wed, 7 Aug 2024 15:37:19 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tytso@mit.edu, adilger.kernel@dilger.ca, ritesh.list@gmail.com,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 03/10] ext4: don't set EXTENT_STATUS_DELAYED on
+ allocated blocks
+Message-ID: <20240807133719.pjxlhfx25rfqiuul@quack3>
+References: <20240802115120.362902-1-yi.zhang@huaweicloud.com>
+ <20240802115120.362902-4-yi.zhang@huaweicloud.com>
+ <20240806152327.td572f7elpel4aeo@quack3>
+ <685055bc-0d56-6cf3-7716-f27e448c8c38@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] remoteproc: k3-r5: Use devm_rproc_alloc() helper
-To: Beleswar Padhi <b-padhi@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-anna@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240807062256.1721682-1-b-padhi@ti.com>
- <20240807062256.1721682-2-b-padhi@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240807062256.1721682-2-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <685055bc-0d56-6cf3-7716-f27e448c8c38@huaweicloud.com>
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_LAST(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,gmail.com,huawei.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -2.30
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 8/7/24 1:22 AM, Beleswar Padhi wrote:
-> Use the device lifecycle managed allocation function. This helps prevent
-> mistakes like freeing out of order in cleanup functions and forgetting
-> to free on error paths.
+On Wed 07-08-24 20:18:18, Zhang Yi wrote:
+> On 2024/8/6 23:23, Jan Kara wrote:
+> > On Fri 02-08-24 19:51:13, Zhang Yi wrote:
+> >> From: Zhang Yi <yi.zhang@huawei.com>
+> >>
+> >> Since we always set EXT4_GET_BLOCKS_DELALLOC_RESERVE when allocating
+> >> delalloc blocks, there is no need to keep delayed flag on the unwritten
+> >> extent status entry, so just drop it after allocation.
+> >>
+> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> > 
+> > Let me improve the changelog because I was confused for some time before I
+> > understood:
+> > 
+> > Currently, we release delayed allocation reservation when removing delayed
+> > extent from extent status tree (which also happens when overwriting one
+> > extent with another one). When we allocated unwritten extent under
+> > some delayed allocated extent, we don't need the reservation anymore and
+> > hence we don't need to preserve the EXT4_MAP_DELAYED status bit. Inserting
+> > the new extent into extent status tree will properly release the
+> > reservation.
+> > 
 > 
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
->   drivers/remoteproc/ti_k3_r5_remoteproc.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
+> Thanks for your review and change log improvement. My original idea was very
+> simple, after patch 2, we always set EXT4_GET_BLOCKS_DELALLOC_RESERVE when
+> allocating blocks for delalloc extent, these two conditions in the 'if'
+> branch can never be true at the same time, so they become dead code and I
+> dropped them.
 > 
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 39a47540c590..dbcd8840ae8d 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -1259,8 +1259,8 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->   			goto out;
->   		}
->   
-> -		rproc = rproc_alloc(cdev, dev_name(cdev), &k3_r5_rproc_ops,
-> -				    fw_name, sizeof(*kproc));
-> +		rproc = devm_rproc_alloc(cdev, dev_name(cdev), &k3_r5_rproc_ops,
-> +					 fw_name, sizeof(*kproc));
->   		if (!rproc) {
->   			ret = -ENOMEM;
->   			goto out;
-> @@ -1352,7 +1352,6 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->   err_add:
->   	k3_r5_reserved_mem_exit(kproc);
->   err_config:
-> -	rproc_free(rproc);
->   	core->rproc = NULL;
+> 	if (!(flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE) &&
+> 	    ext4_es_scan_range(inode, &ext4_es_is_delayed, ...)
+> 
+> But after thinking your change log, I agree with you that we have already
+> properly update the reservation by searching delayed blocks through
+> ext4_es_delayed_clu() in ext4_ext_map_blocks() when we allocated unwritten
+> extent under some delayed allocated extent even it's not from the write
+> back path, so I think we can also drop them even without patch 2. But just
+> one point, I think the last last sentence isn't exactly true before path 6,
+> should it be "Allocating the new extent blocks will properly release the
+> reservation." now ?
 
-I'd remove this line too, we don't check for NULL later, we check
-core->rproc->status, which will cause a nullptr dereference error
-instead of correctly detecting that the core is "offline".
+Now you've got me confused again ;) Why I wrote the changelog that way is
+because ext4_es_remove_extent() is calling ext4_da_release_space(). But now
+I've realized I've confused ext4_es_remove_extent() with
+__es_remove_extent() which is what gets called when inserting another
+extent. So I was wrong and indeed your version of the last sentense is
+correct. Thanks for catching this!
 
-Same below.
-
-Andrew
-
->   out:
->   	/* undo core0 upon any failures on core1 in split-mode */
-> @@ -1399,7 +1398,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
->   
->   		k3_r5_reserved_mem_exit(kproc);
->   
-> -		rproc_free(rproc);
->   		core->rproc = NULL;
->   	}
->   }
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
