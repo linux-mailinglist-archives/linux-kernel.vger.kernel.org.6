@@ -1,345 +1,159 @@
-Return-Path: <linux-kernel+bounces-277921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5440194A829
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:59:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A26A94A82E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:02:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 047AB281F64
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:59:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10466281D3F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898CA1E674A;
-	Wed,  7 Aug 2024 12:59:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4F31E6743
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 12:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC49B1E672C;
+	Wed,  7 Aug 2024 13:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WoyJbLvH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k3od5DN7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA2C1E4F1E
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 13:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723035556; cv=none; b=L39hb7Kuwk54/Yta4W+2MzCqJnN8aRBGZCz5Aar+3sPvInojKq77BGKPkbECUVP9TkSnwPUlidh/RTHhV9Gsrp6JYQvtrV0h5fcUCOHAQ4TJQXk9DXSfw+WvCX6DL9r1XFWLRdRecCHVc6iBfpLoHVdnUsayJWTvnrwo6HL53UM=
+	t=1723035745; cv=none; b=UPn0GEPC+sXkijv33YIMAvEpoyej8rWhSBLf0YlZGcXm4nY5tslM4uE0jzanR55HKzIZvafCXLTLUSScu+zU7pBfP9l0TcXv09aa3q6R2IyANM/Runp0Dd2TAe3uXHPYTAN1aIkx3T4O0t/WyYmQft3Oxkq8bjGs/oU0Wq40KJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723035556; c=relaxed/simple;
-	bh=TQRlFAD598VCe2i8znK8gaW/ldxNHgzbZJWfF1D5cQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i37PYdkhCSI/I2DqBXPugC1BBeJ/LR5R6VNoF11ijTyzbDX5ascEtuAzZCt8DD31R5Ta2/l373XaX/WN2VwapFhOF12ktEsPUoixIbHEk54f4NcMz7WFYejDijApmqwl+rFYYKYdYFdK31335p/pyow4TdDEzkmlLkBelvPt5vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27116FEC;
-	Wed,  7 Aug 2024 05:59:39 -0700 (PDT)
-Received: from [10.162.40.30] (e116581.arm.com [10.162.40.30])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DDCE3F5A1;
-	Wed,  7 Aug 2024 05:59:04 -0700 (PDT)
-Message-ID: <8158c9d6-cbfe-4767-be8e-dc227b29200c@arm.com>
-Date: Wed, 7 Aug 2024 18:28:57 +0530
+	s=arc-20240116; t=1723035745; c=relaxed/simple;
+	bh=VMKs0W3aFXqQvo+s0guW8ju+FJho/m/3IDY1dr+XnDU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DssKuurv4SylIvNLFFxB2aN1pislGrFAwh5Ee9S08AxlBoo36ljqohf24dN1vNrvF2r6VDSEyp/KJKc0UBg1pg+47p5vkyDWInNVaboAvxUOEclO0K3E+/xcXTc/iJjaj8XvFr1f0av5kjzoP5A08XOp1tohCXaKvrCPiWe2af8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WoyJbLvH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k3od5DN7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723035742;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dOeP0Rpu30sOw/qKZXcDCvvmHYo6FbnwjZSzgR87wwc=;
+	b=WoyJbLvHTV1VM2HWuL7LGZnJH5824ao8C8tLfHFvG98LXd01LQ3Q+Wea8l8xDACH2gDpho
+	2xvnk9nUM1e38D/AV8+ov4VDSQUcihg6lOW5gt4jkc0JAt9Sr3oCZuPBhidCWMHn1i3/2f
+	e2C1qoJzf8mI+3JO1s+iWqWDPrNKIY06LEKydrzmErE6Hqyn1EbVA/Lc0ZntMWp8vLSMeq
+	fgs87OTHejN76kWI33OdVnk43wIy4fipmrHfiNRilwA6F0nsfamiXW4FzZRjOJFhGumwVM
+	o3qkL8gy88nwlNbrkjv66yiJMk/aTcKF/LK8uEM/8ycW6ZVLpWvHcBRVjU+ZTA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723035742;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dOeP0Rpu30sOw/qKZXcDCvvmHYo6FbnwjZSzgR87wwc=;
+	b=k3od5DN7tSMSrmDU0Sx4sgpRrI673/hBMhWSx2oDtWQjz1Rb3WVwZPs/XT7wLeMAlSdBo3
+	qGSfupaBe3U4E5BA==
+To: Matti Vaittinen <mazziesaccount@gmail.com>, Matti Vaittinen
+ <matti.vaittinen@fi.rohmeurope.com>
+Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] regmap: Allow setting IRQ domain name suffix
+In-Reply-To: <2eb39a8f-cc58-4774-836c-e6293300a4d9@gmail.com>
+References: <cover.1719830185.git.mazziesaccount@gmail.com>
+ <fd13fcc9dd785d69b8450c8e9c26d860fcab7da8.1719830185.git.mazziesaccount@gmail.com>
+ <87plrpvzmg.ffs@tglx> <12228ec5-cf2f-47b2-842d-ce336d921260@gmail.com>
+ <87jzhpscql.ffs@tglx> <2eb39a8f-cc58-4774-836c-e6293300a4d9@gmail.com>
+Date: Wed, 07 Aug 2024 15:02:21 +0200
+Message-ID: <87a5ho4hb6.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Race condition observed between page migration and page fault
- handling on arm64 machines
-To: David Hildenbrand <david@redhat.com>, Will Deacon <will@kernel.org>
-Cc: akpm@linux-foundation.org, willy@infradead.org, ryan.roberts@arm.com,
- anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
- vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com, osalvador@suse.de,
- baolin.wang@linux.alibaba.com, dave.hansen@linux.intel.com,
- baohua@kernel.org, ioworker0@gmail.com, gshan@redhat.com,
- mark.rutland@arm.com, kirill.shutemov@linux.intel.com, hughd@google.com,
- aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
- broonie@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, mgorman@techsingularity.net
-References: <20240801081657.1386743-1-dev.jain@arm.com>
- <3b82e195-5871-4880-9ce5-d01bb751f471@redhat.com>
- <bbe411f2-4c68-4f92-af8c-da184669dca8@arm.com>
- <a6a38ad5-c754-44ad-a64b-f9ea5b764291@redhat.com>
- <92df0ee1-d3c9-41e2-834c-284127ae2c4c@arm.com>
- <19902a48-c59b-4e3b-afc5-e792506c2fd6@redhat.com>
- <6486a2b1-45ef-44b6-bd84-d402fc121373@redhat.com>
- <20240801134358.GB4794@willie-the-truck>
- <9359caf7-81a8-45d9-9787-9009b3b2eed3@redhat.com>
- <f8d21caa-7a82-4761-8a78-d928ae8d0f24@arm.com>
- <418e818a-f385-459e-a84d-e3880ac08ad5@redhat.com>
- <cf8dc1c6-948a-42e7-8aef-c6183ca6cac0@arm.com>
- <a8c813b5-abce-48cf-9d14-2f969d6c8180@redhat.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <a8c813b5-abce-48cf-9d14-2f969d6c8180@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+Matti!
 
-On 8/7/24 17:09, David Hildenbrand wrote:
-> On 05.08.24 16:14, Dev Jain wrote:
->>
->> On 8/5/24 16:16, David Hildenbrand wrote:
->>> On 05.08.24 11:51, Dev Jain wrote:
->>>>
->>>> On 8/1/24 19:18, David Hildenbrand wrote:
->>>>> On 01.08.24 15:43, Will Deacon wrote:
->>>>>> On Thu, Aug 01, 2024 at 03:26:57PM +0200, David Hildenbrand wrote:
->>>>>>> On 01.08.24 15:13, David Hildenbrand wrote:
->>>>>>>>>>> To dampen the tradeoff, we could do this in shmem_fault()
->>>>>>>>>>> instead? But
->>>>>>>>>>> then, this would mean that we do this in all
->>>>>>>>>>>
->>>>>>>>>>> kinds of vma->vm_ops->fault, only when we discover another
->>>>>>>>>>> reference
->>>>>>>>>>> count race condition :) Doing this in do_fault()
->>>>>>>>>>>
->>>>>>>>>>> should solve this once and for all. In fact, do_pte_missing()
->>>>>>>>>>> may call
->>>>>>>>>>> do_anonymous_page() or do_fault(), and I just
->>>>>>>>>>>
->>>>>>>>>>> noticed that the former already checks this using
->>>>>>>>>>> vmf_pte_changed().
->>>>>>>>>>
->>>>>>>>>> What I am still missing is why this is (a) arm64 only; and 
->>>>>>>>>> (b) if
->>>>>>>>>> this
->>>>>>>>>> is something we should really worry about. There are other 
->>>>>>>>>> reasons
->>>>>>>>>> (e.g., speculative references) why migration could temporarily
->>>>>>>>>> fail,
->>>>>>>>>> does it happen that often that it is really something we have to
->>>>>>>>>> worry
->>>>>>>>>> about?
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> (a) See discussion at [1]; I guess it passes on x86, which is 
->>>>>>>>> quite
->>>>>>>>> strange since the race is clearly arch-independent.
->>>>>>>>
->>>>>>>> Yes, I think this is what we have to understand. Is the race 
->>>>>>>> simply
->>>>>>>> less
->>>>>>>> likely to trigger on x86?
->>>>>>>>
->>>>>>>> I would assume that it would trigger on any arch.
->>>>>>>>
->>>>>>>> I just ran it on a x86 VM with 2 NUMA nodes and it also seems to
->>>>>>>> work here.
->>>>>>>>
->>>>>>>> Is this maybe related to deferred flushing? Such that the other 
->>>>>>>> CPU
->>>>>>>> will
->>>>>>>> by accident just observe the !pte_none a little less likely?
->>>>>>>>
->>>>>>>> But arm64 also usually defers flushes, right? At least unless
->>>>>>>> ARM64_WORKAROUND_REPEAT_TLBI is around. With that we never do
->>>>>>>> deferred
->>>>>>>> flushes.
->>>>>>>
->>>>>>> Bingo!
->>>>>>>
->>>>>>> diff --git a/mm/rmap.c b/mm/rmap.c
->>>>>>> index e51ed44f8b53..ce94b810586b 100644
->>>>>>> --- a/mm/rmap.c
->>>>>>> +++ b/mm/rmap.c
->>>>>>> @@ -718,10 +718,7 @@ static void set_tlb_ubc_flush_pending(struct
->>>>>>> mm_struct
->>>>>>> *mm, pte_t pteval,
->>>>>>>      */
->>>>>>>     static bool should_defer_flush(struct mm_struct *mm, enum
->>>>>>> ttu_flags flags)
->>>>>>>     {
->>>>>>> -       if (!(flags & TTU_BATCH_FLUSH))
->>>>>>> -               return false;
->>>>>>> -
->>>>>>> -       return arch_tlbbatch_should_defer(mm);
->>>>>>> +       return false;
->>>>>>>     }
->>>>>>>
->>>>>>>
->>>>>>> On x86:
->>>>>>>
->>>>>>> # ./migration
->>>>>>> TAP version 13
->>>>>>> 1..1
->>>>>>> # Starting 1 tests from 1 test cases.
->>>>>>> #  RUN           migration.shared_anon ...
->>>>>>> Didn't migrate 1 pages
->>>>>>> # migration.c:170:shared_anon:Expected migrate(ptr, self->n1,
->>>>>>> self->n2) (-2)
->>>>>>> == 0 (0)
->>>>>>> # shared_anon: Test terminated by assertion
->>>>>>> #          FAIL  migration.shared_anon
->>>>>>> not ok 1 migration.shared_anon
->>>>>>>
->>>>>>>
->>>>>>> It fails all of the time!
->>>>>>
->>>>>> Nice work! I suppose that makes sense as, with the eager TLB
->>>>>> invalidation, the window between the other CPU faulting and the
->>>>>> migration entry being written is fairly wide.
->>>>>>
->>>>>> Not sure about a fix though :/ It feels a bit overkill to add a new
->>>>>> invalid pte encoding just for this.
->>>>>
->>>>> Something like that might make the test happy in most cases:
->>>>>
->>>>> diff --git a/tools/testing/selftests/mm/migration.c
->>>>> b/tools/testing/selftests/mm/migration.c
->>>>> index 6908569ef406..4c18bfc13b94 100644
->>>>> --- a/tools/testing/selftests/mm/migration.c
->>>>> +++ b/tools/testing/selftests/mm/migration.c
->>>>> @@ -65,6 +65,7 @@ int migrate(uint64_t *ptr, int n1, int n2)
->>>>>           int ret, tmp;
->>>>>           int status = 0;
->>>>>           struct timespec ts1, ts2;
->>>>> +       int errors = 0;
->>>>>
->>>>>           if (clock_gettime(CLOCK_MONOTONIC, &ts1))
->>>>>                   return -1;
->>>>> @@ -79,12 +80,17 @@ int migrate(uint64_t *ptr, int n1, int n2)
->>>>>                   ret = move_pages(0, 1, (void **) &ptr, &n2, 
->>>>> &status,
->>>>>                                   MPOL_MF_MOVE_ALL);
->>>>>                   if (ret) {
->>>>> -                       if (ret > 0)
->>>>> +                       if (ret > 0) {
->>>>> +                               if (++errors < 100)
->>>>> +                                       continue;
->>>>>                                   printf("Didn't migrate %d pages\n",
->>>>> ret);
->>>>> -                       else
->>>>> +                       } else {
->>>>>                                   perror("Couldn't migrate pages");
->>>>> +                       }
->>>>>                           return -2;
->>>>>                   }
->>>>> +               /* Progress! */
->>>>> +               errors = 0;
->>>>>
->>>>>                   tmp = n2;
->>>>>                   n2 = n1;
->>>>>
->>>>>
->>>>> [root@localhost mm]# ./migration
->>>>> TAP version 13
->>>>> 1..1
->>>>> # Starting 1 tests from 1 test cases.
->>>>> #  RUN           migration.shared_anon ...
->>>>> #            OK  migration.shared_anon
->>>>> ok 1 migration.shared_anon
->>>>> # PASSED: 1 / 1 tests passed.
->>>>> # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
->>>>
->>>>
->>>> This does make the test pass, to my surprise, since what you are doing
->>>> from userspace
->>>>
->>>> should have been done by the kernel, because it retries folio 
->>>> unmapping
->>>> and moving
->>>>
->>>> NR_MAX_MIGRATE_(A)SYNC_RETRY times; I had already tested pumping up
->>>> these
->>>>
->>>> macros and the original test was still failing. Now, I digged in more,
->>>> and, if the
->>>>
->>>> following assertion is correct:
->>>>
->>>>
->>>> Any thread having a reference on a folio will end up calling
->>>> folio_lock()
->>>>
->>>
->>> Good point. I suspect concurrent things like read/write would also be
->>> able to trigger this (did not check, though).
->>>
->>>>
->>>> then it seems to me that the retry for loop wrapped around
->>>> migrate_folio_move(), inside
->>>>
->>>> migrate_pages_batch(), is useless; if migrate_folio_move() fails on 
->>>> the
->>>> first iteration, it is
->>>>
->>>> going to fail for all iterations since, if I am reading the code path
->>>> correctly, the only way it
->>>>
->>>> fails is when the actual refcount is not equal to expected refcount 
->>>> (in
->>>> folio_migrate_mapping()),
->>>>
->>>> and there is no way that the extra refcount is going to get released
->>>> since the migration path
->>>>
->>>> has the folio lock.
->>>>
->>>> And therefore, this begs the question: isn't it logical to assert the
->>>> actual refcount against the
->>>>
->>>> expected refcount, just after we have changed the PTEs, so that if 
->>>> this
->>>> assertion fails, we can
->>>>
->>>> go to the next iteration of the for loop for migrate_folio_unmap()
->>>> inside migrate_pages_batch()
->>>>
->>>> by calling migrate_folio_undo_src()/dst() to restore the old state? 
->>>> I am
->>>> trying to implement
->>>>
->>>> this but is not as straightforward as it seemed to me this morning.
->>>
->>> I agree with your assessment that migration code currently doesn't
->>> handle the case well when some other thread does an unconditional
->>> folio_lock(). folio_trylock() users would be handled, but that's not
->>> what we want with FGP_LOCK I assume.
->>>
->>> So IIUC, your idea would be to unlock the folio in migration code and
->>> try again their. Sounds reasonable, without looking into the details :)
->>
->>
+On Tue, Aug 06 2024 at 14:51, Matti Vaittinen wrote:
+> On 7/13/24 15:22, Thomas Gleixner wrote:
+>> Something like the untested below should work. That would make your
+>> info:
+>> 
+>> 	struct irq_domain_info info = {
+>> 		.fwnode		= fwnode,
+>> 		.size		= chip->num_irqs,
 >
-> BTW, I was trying to find the spot that would do the folio_lock(), but 
-> filemap_fault() does the lock_folio_maybe_drop_mmap() where we do a 
-> folio_trylock().
+> Based on my code reading, the .size is used for allocating the "revmap". 
+> Looking at the info struct for existing implementation of the 
+> irq_domain_create_legacy(), the .size is set as:
 >
-> Where exactly is the folio_lock() on the fault path that would 
-> prohibit us from making progress?
+> .size		= first_hwirq + size,
+>
+>> 		.hwirq_max	= chip->num_irqs,
+>
+> Also, the irq_domain_create_legacy() sets hwirq_max as:
+>
+> .hwirq_max	= first_hwirq + size.
+>
+> see:
+>
+>  > @@ -476,18 +486,14 @@ struct irq_domain *irq_domain_create_leg
+>  >   		.fwnode		= fwnode,
+>  >   		.size		= first_hwirq + size,
+>  >   		.hwirq_max	= first_hwirq + size,
+>  > +		.hwirq_base	= first_hwirq,
+>  > +		.virq_base	= first_irq,
+>  >   		.ops		= ops,
+>  >   		.host_data	= host_data,
+>  >   	};
+>  > -	struct irq_domain *domain;
+>  > +	struct irq_domain *domain = irq_domain_instantiate(&info);
+>  >
+>  > -	domain = irq_domain_instantiate(&info);
+>  > -	if (IS_ERR(domain))
+>  > -		return NULL;
+>  > -
+>  > -	irq_domain_associate_many(domain, first_irq, first_hwirq, size);
+>
+> Lookin at this, the existing code calls irq_domain_associate_many() with 
+> the given size parameter (without the + first_hwirq which is assigned to 
+> .size).
 
-Not filemap_fault(); it enters shmem_fault() which eventually calls 
-shmem_get_folio_gfp(), retrieving the folio from the pagecache, and 
-calling folio_lock().
+Indeed.
 
->
->> (Adding Mel if at all he has any comments for a compaction use-case)
->>
->> What I was trying to say is this (forgive me for the hard-coded value):
->
-> The hard-coded 2 is wrong indeed :)
->
->>
->> diff --git a/mm/migrate.c b/mm/migrate.c
->> index a8c6f466e33a..404af46dd661 100644
->> --- a/mm/migrate.c
->> +++ b/mm/migrate.c
->> @@ -1262,6 +1262,8 @@ static int migrate_folio_unmap(new_folio_t
->> get_new_folio,
->> }
->> if (!folio_mapped(src)) {
->> + if (folio_ref_count(src) != 2)
->> + goto out;
->> __migrate_folio_record(dst, old_page_state, anon_vma);
->> return MIGRATEPAGE_UNMAP;
->> }
->> This will give us more chances to win the race. On an average, now
->> the test fails on 100 iterations of move_pages(). If you multiply
->> the NR_MAX_PAGES_(A)SYNC_RETRY macros by 3, the average goes above
->> to 2000.
->> But if the consensus is that this is just pleasing the test without
->> any real use-case (compaction?) then I guess I am alright with making
->> the change in the test.
->
-> I'd be curious if other activity (besides fault, like concurrent 
-> read()/write()/...) can similarly make migration fail. I suspect it can.
->
+> I think this is not aligned with what the patch below results (and yes, 
+> I know Thomas told it's untested).
+
+:)
+
+> I'd better admit I am not 100% sure how the legacy domains work and that 
+> I don't (any more) fully trust on my ability to flawlessly interpret the 
+> code ;)
+
+You definitely did better than me :)
+
+> Hence I'd rather learn from a small explanation (what is the 
+> expected .size) than by fixing this after I see regression reports from 
+> real users of the irq_domain_create_legacy() :)
+
+So the size of the domain is sum of the parameters @size and
+@first_hwirq. That's so that the hardware interrupt is zero indexed for
+an array based lookup.
+
+The association obviously wants only the @size parameter because that's
+what the caller wants interrupts for as it obviously can't provide
+interrupts below @first_hwirq.
+
+> So, any guidance as to what the revmap allocation size should be (the 
+> info->size), and what should be the size for the 
+> irq_domain_associate_many()?
+
+So that associate should be:
+
+   irq_domain_associate_many(domain, info->virq_base, info->hwirq_base,
+   			     info->size - info->hwirq_base);
+
+Thanks,
+
+        tglx
 
