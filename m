@@ -1,154 +1,207 @@
-Return-Path: <linux-kernel+bounces-277684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309E394A4B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:50:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D60D94A4B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4E86281C6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C86CC1F211B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D6A1D1755;
-	Wed,  7 Aug 2024 09:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802A61D174E;
+	Wed,  7 Aug 2024 09:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ehCw4/Za"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ACCoSYt6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37ED8801;
-	Wed,  7 Aug 2024 09:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F671D1F5E;
+	Wed,  7 Aug 2024 09:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723024224; cv=none; b=Fm21UifoukF8lXxqkvdhdIH3JUQv+jt3U072KKEJz7HLucojJQWp3WbbckvawfOQkc51WdptESn2VVOTfrcvXJ3952bISz4L8/JA65iTzjYQenigSf/Ai0iGBbWPVzeKHR+E9x4sl4Q0XNIKXrF5176bcBTNiO5iMyCe3qT+Stk=
+	t=1723024238; cv=none; b=s47zIwY9TaZnluMea6vEPPDhDcpTtHuKiq0ulN9JdDctWgmgwL+uqgvfhZgVe6oxEji6ivtjnWWl1VVGYpBSbDfjN9Dusnuv4JCzc8AEz68c1R5nwh78n/KkP/BfrisqidD9zaPtLOllhV/7WAHx/TYzQvG0WXRLRT4mpe4pkaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723024224; c=relaxed/simple;
-	bh=HuIZyHPyk7fTmLZ6cL63vU1jEIFH1qLYxZabYGDDCDk=;
+	s=arc-20240116; t=1723024238; c=relaxed/simple;
+	bh=mUjY9ixgfxwjEEIW3FiijfuqlQl0p2VLrfkkATvsJqo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rSD2dqRRXuobKOFM5kYK0sJy5IKqeUZO8P9gLpdw5cn71ZncIV2RQoe+G7oUcdgxmwjfbqv10o/8iyShJPxNrvAXnaHsp7trXXWnHFYLisKCS4yO6R9IdG+eFrUPvNRhK/de9pGJlwFnbTD3vB0uO9Jeueck84hfLCKEQ8j/7sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ehCw4/Za; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9619E2EC;
-	Wed,  7 Aug 2024 11:49:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1723024167;
-	bh=HuIZyHPyk7fTmLZ6cL63vU1jEIFH1qLYxZabYGDDCDk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ehCw4/Za29LW/1ddUQ4CWwIQtn00hNk80dKw7mnoD+y0scxbq9hAc6alFx5dkb8ne
-	 oc7wEukvdLlGT4rQY6bmOLv2gRErbaonaYTmKrJR72ZXNPPw1Ltraxy3kr1+tBtuQR
-	 yzBgRWQ9/Uma5GrJ012GS0FdYAYRjk4vCNBM5kD0=
-Date: Wed, 7 Aug 2024 12:49:57 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Benjamin Bara <bbara93@gmail.com>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Benjamin Bara <benjamin.bara@skidata.com>
-Subject: Re: [PATCH 2/2] media: i2c: imx290: Check for availability in probe()
-Message-ID: <20240807094957.GE21319@pendragon.ideasonboard.com>
-References: <20240807-imx290-avail-v1-0-666c130c7601@skidata.com>
- <20240807-imx290-avail-v1-2-666c130c7601@skidata.com>
- <6072611.lOV4Wx5bFT@steina-w>
- <CAJpcXm6Bv37GUsttdGDDgX1Do+KC_xVSwHV7M5_aEuvhuv6u3A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r5487cXtAr+UcKIfyxvvv9CBMfLr0+tceguVcO8ccKApxLltW/gVyGL8Lfymjlq8+XsyM38X8hrDvVf4o0jN/FVfZ8mtm+xwRQNtuh63PxnL2wdU4iMLpaoer1xWvCn6SYa+WHSm91q/Rot7tBs5bQT/81IWC5bKPkWFEVMQOKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ACCoSYt6; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723024234; x=1754560234;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mUjY9ixgfxwjEEIW3FiijfuqlQl0p2VLrfkkATvsJqo=;
+  b=ACCoSYt6w/U8e4ayQ1Pk7KvLlvgZ+/wXr527BjXIJNT+Raul5X2jmAHR
+   qs3v3zUGXX/vSfqfGv1/15YNTsWd+HpZtpHBfWLbK4mWtMZ0gJYASEahv
+   EQjwg9aKVtBUkD/HXhRqYcBJq0UboDaKXRx0dYJjco0Vz5w+CsDfH41Du
+   0Y9ArcxSou+R4GuNoxzANpalei/g4jZnnYh2x3Z1ky4bbWja7uSCzE/Y6
+   O3IZAEHnJa9VrRtxh1tVkr/RW5zgeORc6Y/MmcvqIdmrCbL6fayYQe9cm
+   oykYOWau0B8QSPEzxMaUPYUtVzvQXDgPtLpkup5YxfrTACpm7lMEkbfGD
+   Q==;
+X-CSE-ConnectionGUID: rPKunieGRZu/cmwWfD3C3g==
+X-CSE-MsgGUID: j9R2+oZPTkeoow8MVXFUUQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="32486933"
+X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
+   d="scan'208";a="32486933"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 02:50:33 -0700
+X-CSE-ConnectionGUID: 3q4OSmWKT5qdhAokF2/pug==
+X-CSE-MsgGUID: nu2YmeCkTdSqN4w4aObU2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,269,1716274800"; 
+   d="scan'208";a="56469436"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 07 Aug 2024 02:50:32 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sbdJN-0005HI-1t;
+	Wed, 07 Aug 2024 09:50:29 +0000
+Date: Wed, 7 Aug 2024 17:50:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Luke D. Jones" <luke@ljones.dev>, linux-input@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	bentiss@kernel.org, jikos@kernel.org,
+	"Luke D. Jones" <luke@ljones.dev>
+Subject: Re: [PATCH] hid-asus-ally: Add full gamepad support
+Message-ID: <202408071743.00IxSKrf-lkp@intel.com>
+References: <20240806081212.56860-1-luke@ljones.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJpcXm6Bv37GUsttdGDDgX1Do+KC_xVSwHV7M5_aEuvhuv6u3A@mail.gmail.com>
+In-Reply-To: <20240806081212.56860-1-luke@ljones.dev>
 
-Hi Benjamin,
+Hi Luke,
 
-On Wed, Aug 07, 2024 at 10:47:39AM +0200, Benjamin Bara wrote:
-> On Wed, 7 Aug 2024 at 10:33, Alexander Stein wrote:
-> > Am Mittwoch, 7. August 2024, 10:10:28 CEST schrieb Benjamin Bara:
-> > > Currently, the V4L2 subdevice is also created when the device is not
-> > > available/connected. In this case, dmesg shows the following:
-> > >
-> > > [   10.419510] imx290 7-001a: Error writing reg 0x301c: -6
-> > > [   10.428981] imx290 7-001a: Error writing reg 0x3020: -6
-> > > [   10.442712] imx290 7-001a: Error writing reg 0x3018: -6
-> > > [   10.454018] imx290 7-001a: Error writing reg 0x3020: -6
-> > >
-> > > which seems to come from imx290_ctrl_update() after the subdev init is
-> > > finished. However, as the errors are ignored, the subdev is initialized
-> > > but simply does not work. From userspace perspective, there is no
-> > > visible difference between a working and not-working subdevice (except
-> > > when trying it out or watching for the error message).
-> > >
-> > > This commit adds a simple availability check before starting with the
-> > > subdev initialization to error out instead.
-> >
-> > There is already a patch reading the ID register at [1]. This also reads the
-> > ID register. But I don't have any documentation regarding that register,
-> > neither address nor values definitions. If there is known information about
-> > that I would prefer reading the ID and compare it to expected values.
-> 
-> Thanks for the link - it seems like Laurent has dropped the patch for
-> the more recent kernel versions on their GitLab.
+kernel test robot noticed the following build warnings:
 
-It was a patch that I wrote as a test, and I decided not to upstream it
-as it had limited value to me. The downside with reading registers at
-probe time is that you have to power up the sensor. This can have
-undesired side effects, such as flashing a privacy LED on at boot time
-in devices that have one. There's also the increase in boot time due to
-the power up sequence, which one may want to avoid.
+[auto build test WARNING on hid/for-next]
+[also build test WARNING on next-20240807]
+[cannot apply to linus/master v6.11-rc2]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The imx290 driver already powers up the device unconditionally at probe
-time, so reading the version register wouldn't be much of an issue I
-suppose. I would be fine merging that patch.
+url:    https://github.com/intel-lab-lkp/linux/commits/Luke-D-Jones/hid-asus-ally-Add-full-gamepad-support/20240806-170850
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
+patch link:    https://lore.kernel.org/r/20240806081212.56860-1-luke%40ljones.dev
+patch subject: [PATCH] hid-asus-ally: Add full gamepad support
+config: parisc-allmodconfig (https://download.01.org/0day-ci/archive/20240807/202408071743.00IxSKrf-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240807/202408071743.00IxSKrf-lkp@intel.com/reproduce)
 
-> This was also my initial intention, but similar to you, I don't have a
-> docu describing this register, so I am not sure where the info is coming
-> from and if it really contains the identification/type info. Probably
-> Laurent has more infos on that.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408071743.00IxSKrf-lkp@intel.com/
 
-That's a good question. I don't see a mention of that register in the
-IMX290 datasheet I've found online
-(https://static6.arrow.com/aropdfconversion/c0c7efde6571c768020a72f59b226308b9669e45/sony_imx290lqr-c_datasheet.pdf).
-Looking at the git history, the IMX290_CHIP_ID register macro was
-introduced in an unrelated commit, without an explanation. I don't
-recall where it comes from, but I don't think I've added it randomly. It
-may have come from an out-of-tree driver.
+All warnings (new ones prefixed by >>):
 
-I don't have an IMX290 plugged in at the moment, what's the value of the
-register ?
+   drivers/hid/hid-asus-ally.c: In function 'ally_x_create':
+>> drivers/hid/hid-asus-ally.c:565:17: warning: variable 'max_output_report_size' set but not used [-Wunused-but-set-variable]
+     565 |         uint8_t max_output_report_size;
+         |                 ^~~~~~~~~~~~~~~~~~~~~~
+   drivers/hid/hid-asus-ally.c: In function '__gamepad_store_deadzones':
+>> drivers/hid/hid-asus-ally.c:1177:13: warning: variable 'cmd' set but not used [-Wunused-but-set-variable]
+    1177 |         int cmd, side, is_tr;
+         |             ^~~
+   In file included from drivers/hid/hid-asus-ally.c:24:
+   drivers/hid/hid-asus-ally.c: At top level:
+>> drivers/hid/hid-asus-ally.h:321:44: warning: 'btn_mapping_rt_attr_group' defined but not used [-Wunused-const-variable=]
+     321 |         ALLY_BTN_ATTRS_GROUP(btn_##_fname, btn_mapping_##_fname)
+         |                                            ^~~~~~~~~~~~
+   drivers/hid/hid-asus-ally.h:306:45: note: in definition of macro 'ALLY_BTN_ATTRS_GROUP'
+     306 |         static const struct attribute_group _fname##_attr_group = {       \
+         |                                             ^~~~~~
+   drivers/hid/hid-asus-ally.c:895:1: note: in expansion of macro 'ALLY_BTN_MAPPING'
+     895 | ALLY_BTN_MAPPING(rt, btn_pair_lt_rt, btn_pair_side_right);
+         | ^~~~~~~~~~~~~~~~
+>> drivers/hid/hid-asus-ally.h:321:44: warning: 'btn_mapping_lt_attr_group' defined but not used [-Wunused-const-variable=]
+     321 |         ALLY_BTN_ATTRS_GROUP(btn_##_fname, btn_mapping_##_fname)
+         |                                            ^~~~~~~~~~~~
+   drivers/hid/hid-asus-ally.h:306:45: note: in definition of macro 'ALLY_BTN_ATTRS_GROUP'
+     306 |         static const struct attribute_group _fname##_attr_group = {       \
+         |                                             ^~~~~~
+   drivers/hid/hid-asus-ally.c:894:1: note: in expansion of macro 'ALLY_BTN_MAPPING'
+     894 | ALLY_BTN_MAPPING(lt, btn_pair_lt_rt, btn_pair_side_left);
+         | ^~~~~~~~~~~~~~~~
 
-> > [1] https://gitlab.com/ideasonboard/nxp/linux/-/commit/85ce725f1de7c16133bfb92b2ab0d3d84efcdb47
-> >
-> > > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
-> > > ---
-> > >  drivers/media/i2c/imx290.c | 5 +++++
-> > >  1 file changed, 5 insertions(+)
-> > >
-> > > diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
-> > > index 4150e6e4b9a6..a86076e42a36 100644
-> > > --- a/drivers/media/i2c/imx290.c
-> > > +++ b/drivers/media/i2c/imx290.c
-> > > @@ -1580,6 +1580,11 @@ static int imx290_probe(struct i2c_client *client)
-> > >       pm_runtime_set_autosuspend_delay(dev, 1000);
-> > >       pm_runtime_use_autosuspend(dev);
-> > >
-> > > +     /* Make sure the sensor is available before V4L2 subdev init. */
-> > > +     ret = cci_read(imx290->regmap, IMX290_STANDBY, NULL, NULL);
-> > > +     if (ret)
-> > > +             goto err_pm;
-> > > +
-> > >       /* Initialize the V4L2 subdev. */
-> > >       ret = imx290_subdev_init(imx290);
-> > >       if (ret)
+
+vim +/max_output_report_size +565 drivers/hid/hid-asus-ally.c
+
+   562	
+   563	static struct ally_x_device *ally_x_create(struct hid_device *hdev)
+   564	{
+ > 565		uint8_t max_output_report_size;
+   566		struct ally_x_device *ally_x;
+   567		struct ff_report *report;
+   568		int ret;
+   569	
+   570		ally_x = devm_kzalloc(&hdev->dev, sizeof(*ally_x), GFP_KERNEL);
+   571		if (!ally_x)
+   572			return ERR_PTR(-ENOMEM);
+   573	
+   574		ally_x->hdev = hdev;
+   575		INIT_WORK(&ally_x->output_worker, ally_x_work);
+   576		spin_lock_init(&ally_x->lock);
+   577		ally_x->output_worker_initialized = true;
+   578		ally_x->qam_btns_steam_mode =
+   579			true; /* Always default to steam mode, it can be changed by userspace attr */
+   580	
+   581		max_output_report_size = sizeof(struct ally_x_input_report);
+   582		report = devm_kzalloc(&hdev->dev, sizeof(*report), GFP_KERNEL);
+   583		if (!report) {
+   584			ret = -ENOMEM;
+   585			goto free_ally_x;
+   586		}
+   587	
+   588		/* None of these bytes will change for the FF command for now */
+   589		report->report_id = 0x0D;
+   590		report->ff.enable = 0x0F; /* Enable all by default */
+   591		report->ff.pulse_sustain_10ms = 0xFF; /* Duration */
+   592		report->ff.pulse_release_10ms = 0x00; /* Start Delay */
+   593		report->ff.loop_count = 0xEB; /* Loop Count */
+   594		ally_x->ff_packet = report;
+   595	
+   596		ally_x->input = ally_x_setup_input(hdev);
+   597		if (IS_ERR(ally_x->input)) {
+   598			ret = PTR_ERR(ally_x->input);
+   599			goto free_ff_packet;
+   600		}
+   601	
+   602		if (sysfs_create_file(&hdev->dev.kobj, &dev_attr_ally_x_qam_mode.attr)) {
+   603			ret = -ENODEV;
+   604			goto unregister_input;
+   605		}
+   606	
+   607		ally_x->update_ff = true;
+   608		if (ally_x->output_worker_initialized)
+   609			schedule_work(&ally_x->output_worker);
+   610	
+   611		hid_info(hdev, "Registered Ally X controller using %s\n",
+   612			 dev_name(&ally_x->input->dev));
+   613		return ally_x;
+   614	
+   615	unregister_input:
+   616		input_unregister_device(ally_x->input);
+   617	free_ff_packet:
+   618		kfree(ally_x->ff_packet);
+   619	free_ally_x:
+   620		kfree(ally_x);
+   621		return ERR_PTR(ret);
+   622	}
+   623	
 
 -- 
-Regards,
-
-Laurent Pinchart
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
