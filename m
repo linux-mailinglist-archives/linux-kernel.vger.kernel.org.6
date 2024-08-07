@@ -1,100 +1,103 @@
-Return-Path: <linux-kernel+bounces-278276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F406194AE2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:31:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FABA94AE30
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F1081C2141E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:31:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 807F51C2122A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFD213B295;
-	Wed,  7 Aug 2024 16:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80C5139D07;
+	Wed,  7 Aug 2024 16:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="keIhy56N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wnr1K6FK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7D213A899;
-	Wed,  7 Aug 2024 16:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207132209B;
+	Wed,  7 Aug 2024 16:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723048269; cv=none; b=pTTsq3bITK7fXyefAXKQosOU2IfiktGw8+LTjB7eZZxeRkOnP6XMcQ1bYEeFHAtZRyybtUczI+iYNCrLCryAOu3WQfswmcTI8teP5MJMdywtp6wL7kEwOaWHiwPWxnVx0rFlLXFIMn453R0IiVHvEpG8qD2t4nqhnYsOztogkE0=
+	t=1723048323; cv=none; b=nBfBj345nK3cxFT8N7cuWZUJeadfVbS4IClt2fpmVAisTIpN5WlB8Az2Gu9KFUxKUNlvZ0/Xkar8VCeQGBtP6gq4VmP6kVRsG3utTwAlV71u55+Plrj5bE9sKzyibe2kwFTAL1otoy9EyjJw+DhCQssHDUNmYtT3Gtit+fyqhWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723048269; c=relaxed/simple;
-	bh=2e+tvdvnlJd7UATAhp/GJlLecWbDRVPYL2/x3pyVJ0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ZVSstUApcrrUN+6whO+AfN56Zvv4Auj1h0lvyM/uZb0VhcXZXvlYEYsqorTR6hehpXnOsrremln3OezWsG+wPGNBGzwBUp2uGKPaL/RZiml7IlarQYFkiJbAlEACbxll60yVAtmTduVWyzwY2okR/vI00ldLmsVfpstdcm2je44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=keIhy56N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEEEBC32781;
-	Wed,  7 Aug 2024 16:31:08 +0000 (UTC)
+	s=arc-20240116; t=1723048323; c=relaxed/simple;
+	bh=Pz9LIqA2w9Dm+SFN1If7OeyusUM67h2aCExgxiL84hc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G5jx+ryszXXx9w2Fbq5OuS6k6Ss9AQ/jH72DDeSoah03K4TUlXKLjTo4pOldYZDRuvszFtIvjExdM01RjbP4PhQgeqkBCo8zwWZ/VyCiCUoUARJYS6KZyoNdKf2V+kE7/SZMF9EcQSV+mwehxiRJAZ60w1j7WQ9j5vZbBiVf4Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wnr1K6FK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7234C4AF13;
+	Wed,  7 Aug 2024 16:31:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723048269;
-	bh=2e+tvdvnlJd7UATAhp/GJlLecWbDRVPYL2/x3pyVJ0I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=keIhy56NccKd3cSYOWoIYBMx0wp5cSwr+5tt3fGWDAvug1H2LN7tiOrQIN0E/3V2w
-	 OS/DOKg0R03XxmD7+96PKgCTJdOxCK+k2zSYEpMwb12kSRItPmKS/UQuwT+3W2TUTJ
-	 yMi798279uizDzmJPqMJRQgiYOf4Hzk5l62Uo6fR7CD6d+eOspzUZtuW8evLoON/07
-	 L9i6IVbJp4jwod2jXyJ7ONwuJYqJrDNDPllpUym44mVN9rGMBmCp0zRadv2v6gO1Hs
-	 NNaXB2lQN7LlD2VGkREoAtORj4kF40HPXZ63BqLM7w/3hcVlVy32gTUd5EpXR/imLl
-	 2gSWO113S2OnA==
-Date: Wed, 7 Aug 2024 11:31:06 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH linu-next v1] PCI: dw-rockchip: Enable async probe by
- default
-Message-ID: <20240807163106.GA101420@bhelgaas>
+	s=k20201202; t=1723048322;
+	bh=Pz9LIqA2w9Dm+SFN1If7OeyusUM67h2aCExgxiL84hc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wnr1K6FKtacUSftwUOvIq95lXyXwV4hFiem9fd92XELhHsZMnvJxk66f9x1D0jLj/
+	 jiCV8bBaEMZgblHCbAWGTJg4RXDHBHq/2SDdfTpaYvv4OXLdlNtX5s8+0e7XHbNdp1
+	 xvzSeagEBZI5LgitUpJU803NiQRpO2cPRjaYkOfPLUknSImTGgmLJkMg4JMnKp4aic
+	 x0gCeNnwNwc8KPhbLyxQZ07Fv1U42x2/wWFu0x3dkzr+2Si6ipwgEAH13eo/3kXt1B
+	 GnStFWYHb7qByrd9erKfTPlkMSzDIC9xPKbMPGoyd4YrYZsZ3KOyspVcDbSi6Y0DGm
+	 10BPq+18B34Ow==
+Date: Wed, 7 Aug 2024 17:31:56 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Ronald Wahl <ronald.wahl@raritan.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Udit Kumar <u-kumar1@ti.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Vibhore Vardhan <vibhore@ti.com>,
+	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: serial: 8250_omap: Add wakeup-source
+ property
+Message-ID: <20240807-daybed-unlocking-6a03de657e2a@spud>
+References: <20240807141227.1093006-1-msp@baylibre.com>
+ <20240807141227.1093006-2-msp@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="52z39HG9VPnBf+y4"
+Content-Disposition: inline
+In-Reply-To: <20240807141227.1093006-2-msp@baylibre.com>
+
+
+--52z39HG9VPnBf+y4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240625155759.132878-1-linux.amoon@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2024 at 09:27:57PM +0530, Anand Moon wrote:
-> Rockchip PCIe driver lets waits for the combo PHY link like PCIe 3.0,
-> PCIe 2.0 and SATA 3.0 controller to be up during the probe this
-> consumes several milliseconds during boot.
+On Wed, Aug 07, 2024 at 04:12:23PM +0200, Markus Schneider-Pargmann wrote:
+> Add the wakeup-source to enable this device as a wakeup source if
+> defined in DT.
+>=20
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
 
-This needs some wordsmithing.  "driver lets waits" ... I guess "lets"
-is not supposed to be there?  I'm not sure what the relevance of "PCIe
-3.0, PCIe 2.0, SATA 3.0" is.  I assume the host controller driver
-doesn't know what downstream devices might be present, and the async
-probing is desirable no matter what they might be?
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-> Establishing a PCIe link can take a while; allow asynchronous probing so
-> that link establishment can happen in the background while other devices
-> are being probed.
-> 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> index 61b1acba7182..74a3e9d172a0 100644
-> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> @@ -367,6 +367,7 @@ static struct platform_driver rockchip_pcie_driver = {
->  		.name	= "rockchip-dw-pcie",
->  		.of_match_table = rockchip_pcie_of_match,
->  		.suppress_bind_attrs = true,
-> +		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
->  	},
->  	.probe = rockchip_pcie_probe,
->  };
-> -- 
-> 2.44.0
-> 
+--52z39HG9VPnBf+y4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrOhfAAKCRB4tDGHoIJi
+0rlZAQDjLr9nRoERRFl43TvDTHa7ITQSV3Jl2NxS22zdRneStwD/QIvMmlXa+WTJ
+TrIE/mOWXsBHMksg48dvcnnyPFx6VgY=
+=Z5nu
+-----END PGP SIGNATURE-----
+
+--52z39HG9VPnBf+y4--
 
