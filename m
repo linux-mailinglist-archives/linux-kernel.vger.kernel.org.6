@@ -1,160 +1,158 @@
-Return-Path: <linux-kernel+bounces-278417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51FCC94AFFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:52:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D26F994B00D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF79C282DE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D88C1F23BC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124A913D52E;
-	Wed,  7 Aug 2024 18:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1416142E79;
+	Wed,  7 Aug 2024 18:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="USSz9Ogw"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="M+AgFKcn";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Cbd0u4JX"
+Received: from flow7-smtp.messagingengine.com (flow7-smtp.messagingengine.com [103.168.172.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC5D2770E
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C224113D61D;
+	Wed,  7 Aug 2024 18:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723056727; cv=none; b=P38VdgQFWC1gkXlFpc+QZBWrbkozGcXtAp3WBD08xqlM8AN1iVJYtosEsLKEARG0oaLijCLB7iWQohFB2BikV0Jup93yXjGxG17pMGacv1s/3p08rWbvP/sbhHtiaDCnUp5RrS5eI0170RwMatzDjy1WqTWx4esNkWs0d1eu354=
+	t=1723056809; cv=none; b=FAO6fv0IPE57hxrufn3OI3Le+HJcjRUPkZVcfc/JI8pChZ86NI4Xck8A9OTYxwhDv9av5177SPJPwN5GuV6iGS6c0S6jLugvpZddGh5inWieJi/ETVC5UYx2tF2LRwUZGABwImEp0cYW92cFS4++XcupEk/jSAf08J2TQawWkCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723056727; c=relaxed/simple;
-	bh=uqnEFoTEUK/4p+qjGedIlfsJVMEBWzdRLsRdD6mLOWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GahJMDnGkt8VFrxd/UACL9sSHTOeksKe5m1y5fE2DIwhM4Qb++BCMVNqdFIDry1bEEQCgdOtNpcGqA5aMqocwGQYO0qfAExxnS3Q2evKCELGD6QuJ3OHMKoDTOLF4UKQLHn8n8zVPkkXJiRJhY+4waXYKwvNDfPPo6brbZWBszQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=USSz9Ogw; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4779lNn6006676;
-	Wed, 7 Aug 2024 18:51:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=myjIk1jplhDKGHKUR6onVW7OzlU
-	VF9vD9ubGmB2w2zg=; b=USSz9OgwE4k6gwTLCHczD3YvSKcVE26XvNLggL7Vp5V
-	nuud1qXotOidh0+DI4RNEITo4cZrW1LH9E9n8lkKgAYjTxKsil2k74dBk/ZTFISY
-	olkH7dbIIUkmhW3PMi07UEJa1sF3MJjVb7LiLjgJ0FrIT6IkAMSqH4KYBCYZRWTr
-	bF4+cC9mGP3TAtygGMjQD8YqyJadIqooDKLYACk0YS8AK46K4pKJFbkDVRNNP4eX
-	gUATY7sZYPwsV1TR3vl5AGJUO9nDqK2ifojDtS7sIqd/zqiQ4uLlSz5M6UUXoPxL
-	pjfba4CQ4qFuRmGirlBTcJuKgk7nMFk53Sr3axN3b8g==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40uqcmu4sk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 Aug 2024 18:51:34 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 477I9bEo024386;
-	Wed, 7 Aug 2024 18:51:33 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40sy90tmwq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 Aug 2024 18:51:33 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 477IpRXA10682840
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 7 Aug 2024 18:51:29 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A32DB20043;
-	Wed,  7 Aug 2024 18:51:27 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A10BA20040;
-	Wed,  7 Aug 2024 18:51:26 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.171.4.225])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed,  7 Aug 2024 18:51:26 +0000 (GMT)
-Date: Wed, 7 Aug 2024 20:51:24 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
-Message-ID: <ZrPCLM7saGqOc0YU@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <20240731095022.970699670@linuxfoundation.org>
- <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
- <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
- <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz>
- <f63c6789-b01a-4d76-b7c9-74c04867bc13@roeck-us.net>
- <CAHk-=wjmumbT73xLkSAnnxDwaFE__Ny=QCp6B_LE2aG1SUqiTg@mail.gmail.com>
- <CAHk-=wiss_E41A1uH0-1MXF-GjxzW_Rbz+Xbs+fbr-vyQFpo4g@mail.gmail.com>
+	s=arc-20240116; t=1723056809; c=relaxed/simple;
+	bh=Ae/yFOnscB0LM68KscBwrE7D7vNdMDnnAeb+RIaDy6M=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=O7YNGngTs98rc4ibxaV3sKGFYUo3oqXix71OvHenG7ylTIXx0BYb8BiAy8RzsZ5nt4f8sHXB3xxtbayOBGdhCmd29mIpaqNlEf9GPJcvn37z8/8egsMM3wQzhWOkk+4US3MkrDndwKQWs19btoqT4rMIwhasK/HwdTMhULPIiQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=M+AgFKcn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Cbd0u4JX; arc=none smtp.client-ip=103.168.172.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailflow.nyi.internal (Postfix) with ESMTP id B9FE8200F9C;
+	Wed,  7 Aug 2024 14:53:26 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Wed, 07 Aug 2024 14:53:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1723056806;
+	 x=1723064006; bh=dN92Yy3XFjXTxBQ/NKAZMCYVQAegkihc+8DVkcaUGXw=; b=
+	M+AgFKcnD/Nuugw9QWMdK0TNIorx7c9kz4u4kWeEtoBkeDVxq1i8AfEINi28F8pD
+	mqxXrgNc0hd7DLIVn8ZdgKKw1WixvvvthvoPlB32dikpdRyZeayfzxol4TWH5zV/
+	sctoPTqK+Gpjs6mQSC5g5LuM5+hqde8Awr3BiE9VBetstqH9G+Y73dGI251beJG0
+	KD/S9aRYjMWru5ducc9JFCJqHqrV4tG/Fb2biX0pP/55/wPz4yqBj2Cwo3Jic+yq
+	Ts4ZD1s3I/J9I7pooC8Z3JaExlDJaha/uLa/IoywBt1Fj2dxnikSyGwL/537oKvz
+	3Ga11kSBaDC1us7TovA9WQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723056806; x=
+	1723064006; bh=dN92Yy3XFjXTxBQ/NKAZMCYVQAegkihc+8DVkcaUGXw=; b=C
+	bd0u4JXHiwM85jQmCceR5thBnLlVROGCSHq6uqUQH7EES4yd9w+rGDAsQiWGz/KE
+	Tx9ieCb+syV32NMwTs+deNuAAbSSJe2g2WC6Q1eWWQa6JXLDL+jX7+woQX4AVmls
+	7LKrhVy6yJsezqFhMNl/XzM0DJIJdjB2cO6q+5fT/oDBlh0O4crlMEUa9nDaj5+w
+	8Li1kDK8ZNJzdI09O84Vv3hC186LsTWkCUiEZ2/yFGg3ilPlXUGqR2TZ+rh7pN7b
+	zrQN9qvczGLLR6LFQdfP+t0gWYdb1IFiN8QXdil4RtN7+rEubC/YANNF+1Cs12kw
+	Bcw5FrUO4Qwt7abMjpS7w==
+X-ME-Sender: <xms:pcKzZnopk042s10_adxzzpGQqjjj1zN1aqGfzwY9vdXxA-HcaMU7yw>
+    <xme:pcKzZhphWvwWMwSmYbDYPH1KAUK7_qukQL58dPLkKZwJ6qZO-PD0mTILf37wC-VkJ
+    yuGeXAZyjmZouRsKac>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledtgddufedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefh
+    vdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtoheptd
+X-ME-Proxy: <xmx:pcKzZkMMEa1QCyx9DYya--xGnOf_SSr3_VdEDtu9hV8xSe9yXZqVCw>
+    <xmx:pcKzZq7W7a2W3QiuibYT4n87PxFgIhVytpph5nF0kYnO4gUYERaGxQ>
+    <xmx:pcKzZm6A0MWzdmDLhHIywLO77HSPGI_SIwlTXUWpWoknLUo6ctrjwg>
+    <xmx:pcKzZigfeNcP1X2tQ3rm8J0r0mNkRKSh21gYx64IauzFFFTIOJUQRw>
+    <xmx:psKzZuEqNacnXDRDYO1s0FZVTS1ct0wiplIuRye5vQU_o20dyn1ygN6I>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id ED628B6008D; Wed,  7 Aug 2024 14:53:24 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiss_E41A1uH0-1MXF-GjxzW_Rbz+Xbs+fbr-vyQFpo4g@mail.gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 75wiWQMFail5IVE_49tyL7VLokPFOhMB
-X-Proofpoint-ORIG-GUID: 75wiWQMFail5IVE_49tyL7VLokPFOhMB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-07_11,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- priorityscore=1501 impostorscore=0 mlxscore=0 malwarescore=0 spamscore=0
- suspectscore=0 mlxlogscore=342 bulkscore=0 adultscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408070128
+Date: Wed, 07 Aug 2024 20:53:04 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Mike Rapoport" <rppt@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+ "Alexander Gordeev" <agordeev@linux.ibm.com>,
+ "Andreas Larsson" <andreas@gaisler.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Dan Williams" <dan.j.williams@intel.com>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "David Hildenbrand" <david@redhat.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Davidlohr Bueso" <dave@stgolabs.net>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Heiko Carstens" <hca@linux.ibm.com>,
+ "Huacai Chen" <chenhuacai@kernel.org>, "Ingo Molnar" <mingo@redhat.com>,
+ "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "Jonathan Cameron" <jonathan.cameron@huawei.com>,
+ "Jonathan Corbet" <corbet@lwn.net>,
+ "Michael Ellerman" <mpe@ellerman.id.au>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Rob Herring" <robh@kernel.org>,
+ "Samuel Holland" <samuel.holland@sifive.com>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Vasily Gorbik" <gor@linux.ibm.com>, "Will Deacon" <will@kernel.org>,
+ "Zi Yan" <ziy@nvidia.com>, devicetree@vger.kernel.org,
+ linux-acpi@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-cxl@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+ nvdimm@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
+Message-Id: <19f7ccec-db2a-4176-b6d9-12abe0586d07@app.fastmail.com>
+In-Reply-To: <ZrO6cExVz1He_yPn@kernel.org>
+References: <20240807064110.1003856-1-rppt@kernel.org>
+ <20240807064110.1003856-25-rppt@kernel.org>
+ <1befc540-8904-4c23-b0e6-e2c556fe22b9@app.fastmail.com>
+ <ZrO6cExVz1He_yPn@kernel.org>
+Subject: Re: [PATCH v4 24/26] arch_numa: switch over to numa_memblks
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 06, 2024 at 10:49:58AM -0700, Linus Torvalds wrote:
+On Wed, Aug 7, 2024, at 20:18, Mike Rapoport wrote:
+> On Wed, Aug 07, 2024 at 08:58:37AM +0200, Arnd Bergmann wrote:
+>> On Wed, Aug 7, 2024, at 08:41, Mike Rapoport wrote:
+>> > 
+>> >  void __init arch_numa_init(void);
+>> >  int __init numa_add_memblk(int nodeid, u64 start, u64 end);
+>> > -void __init numa_set_distance(int from, int to, int distance);
+>> > -void __init numa_free_distance(void);
+>> >  void __init early_map_cpu_to_node(unsigned int cpu, int nid);
+>> >  int __init early_cpu_to_node(int cpu);
+>> >  void numa_store_cpu_info(unsigned int cpu);
+>> 
+>> but is still declared as __init in the header, so it is
+>> still put in that section and discarded after boot.
+>
+> I believe this should fix it
 
-Hi Linus,
+Yes, sorry I should have posted the patch as well, this is
+what I tested with locally.
 
-Though this turned out to be a parisc issue, I'll still answer in
-case you are interested.
-
-...
-> Or maybe it's the s390 ffs().
-> 
-> It looks like
-> 
->   static inline int ffs(int word)
->   {
->         unsigned long mask = 2 * BITS_PER_LONG - 1;
->         unsigned int val = (unsigned int)word;
-> 
->         return (1 + (__flogr(-val & val) ^ (BITS_PER_LONG - 1))) & mask;
->   }
-> 
-> where s390 has this very odd "flogr" instruction ("find last one G
-> register"?) for the non-constant case.
-> 
-> That uses a "union register_pair" but only ever uses the "even"
-> register without ever using the full 128-bit part or the odd register.
-> So the other register in the register pair is uninitialized.
-
-In case of "flogr" instruction the odd register contains output data only.
-There is no need to initialize it.
-
-> Does that cause random compiler issues based on register allocation?
-
-Using the register_pair guarantees that an even+odd register pair
-is "reserved". As result, the register allocation prevents "flogr"
-instruction from corrupting otherwise random odd register.
-
-> Just for fun, does something like this make any difference?
-> 
->   --- a/arch/s390/include/asm/bitops.h
->   +++ b/arch/s390/include/asm/bitops.h
->   @@ -305,6 +305,7 @@ static inline unsigned char __flogr(unsigned long word)
->                 union register_pair rp;
-> 
->                 rp.even = word;
->   +             rp.odd = 0;
->                 asm volatile(
->                         "       flogr   %[rp],%[rp]\n"
->                         : [rp] "+d" (rp.pair) : : "cc");
-...
-
->               Linus
-
-Thanks!
+     Arnd
 
