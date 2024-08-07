@@ -1,322 +1,225 @@
-Return-Path: <linux-kernel+bounces-278409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B13294AFEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:37:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC2A94AFEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0991F267A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:37:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD218B21419
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EEB140360;
-	Wed,  7 Aug 2024 18:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C948A140360;
+	Wed,  7 Aug 2024 18:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="B206mSKX"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfdIJB4m"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFBD4653A;
-	Wed,  7 Aug 2024 18:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FE64653A;
+	Wed,  7 Aug 2024 18:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723055864; cv=none; b=WGSeE7f7tYKoFOyCWsJPjxqgIKZ+AElfq+aNgTEexGazyvZm7+7gGIQZfmARjmXNxD/ystDN1S0GDdzWfZTdUGhuOC+/jwtHJbV2jf7n46g0IEL2+uQjO14S2tuPNAO+aQoU/DALrjX/rethHIqvLPiLTbNC9SSkAU7g8E0PzJY=
+	t=1723055919; cv=none; b=PHj+mQ60Hwc4hGOzWUF4PxAzi+hwqQ0j20KGxtsivKlBWGJDg27deUrfwGR2hGA+mz+/Cht0Ri4HvaFSzz+TjfQvsHDa8oLKXjTBPcd843yHS/NJDu4xYTTYALjlOinNcHp2ioqMO6COEULepmwFzxbJGvund6n/MDz2W4++XNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723055864; c=relaxed/simple;
-	bh=CI38NBqvpLgEio8pnShmGbgJ4EtQ22pvUjsmaMuyq64=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CqJmb1saFeAx7SPGVlBFHnReDSjiMCZ2jQaK3m9XLkgCj1a0JtpyrBzLZp4ryrbv0OUrL4WBfN8M8iTF1bociLw62Pv2CzUDH2I+NFK9aeEu38EUTlDxkGYoCiSfMJK1qF0w/CYLRoCo4NxuP3LD0ysLEU9jdPImcBbRswAWF+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=B206mSKX; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 40314418B1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1723055857; bh=j5tAlNX+pQUFnmYMm1+XGm4T1zHfXV5AsYeIWLqsfhk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=B206mSKX1ap3GEhkyNPF/td7lR907oObEkliyxa37AQRSt16MSPApNHFnqkaCSQwU
-	 Wqm1DWFay3XZ6wkIpFiG7Dgiixq/vp16Opvj3xrHU00EcIEKJi1XYYe3RCGY6YbgqO
-	 yyCPAComXzcjiDDVsA1j8JvCct67Wdsw49d6+EsyKFcw230sjPcTmmNTI7YK9F/FNN
-	 neCN+HDCv33dn0KMznLpsvU9131i3KDj5IX7MA5MVEKRpEKWJdmW9JapxDurcRdwPX
-	 RiYmXKyOxpfeHJZhxMqbwY9FtSF/UImJEwtKj10ZxWxAqWNLpcmB/bGmCirsy8CygI
-	 4z7XhdHcaHtjw==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 40314418B1;
-	Wed,  7 Aug 2024 18:37:37 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: regressions@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Bagas Sanjaya <bagasdotme@gmail.com>, Petr
- =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-Subject: Re: [PATCH v1] docs: bug-bisect: rewrite to better match the other
- bisecting text
-In-Reply-To: <10a565e4ebca5e03a2e7abb7ffe1893136471bf9.1722846343.git.linux@leemhuis.info>
-References: <10a565e4ebca5e03a2e7abb7ffe1893136471bf9.1722846343.git.linux@leemhuis.info>
-Date: Wed, 07 Aug 2024 12:37:36 -0600
-Message-ID: <87ttfwrxfz.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1723055919; c=relaxed/simple;
+	bh=Ma5knbmN34MSI03mkT7FloKBYCg2Csz7tEsOg/INh4M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S+LDguRkAi17u+QDzXsHUnAG6mn7WMEEDLpl/f/pz7KE488EBdX4CRfisGVcom4nZMMMBtcMk6r9VLZInogO2hlyK/Vcr0FDOv6jrZiClj8gzM9DdJhEyJMucXYooXO1HHUAJuyqEfMfgWiRgEIN3Ymc1UOWcRIru9ULHTwgGT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfdIJB4m; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d2b921cdfso193896b3a.0;
+        Wed, 07 Aug 2024 11:38:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723055917; x=1723660717; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=MHZu6Ag/9qKzgb4ZqxJhiR7NIGjVSmJ1XSyPMQ5cI10=;
+        b=XfdIJB4mARtta+1PO8a2K09AZyIKonajQudNBxyTj7R1ERg//dOAV+VYppWWwkrY91
+         ZWrY0yOeaxhAeCkDKtkhAtJMDg4nRU5qEIXCfOGRjEDtIG8pQchYv7cqN9dTZHZkXPex
+         k515SuMkagSaDbdQJrkDbbA+wXLbbILrOs0AaKCq9Uo7Z0aypSEFEtrHDCtfl9khoPU3
+         AfZTrDohGMYQ9/gn2Spi0UAPmNbg8Of9KNEgU4dbN5J3txKLypgxO/LNec6RmFiGJbT0
+         flsDPDXsnS3Hazwv8QHuWNlgtboHjHHie4eCvBvPqaXS5las6y38nSLCUxnVJYx8QV4J
+         +ZSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723055917; x=1723660717;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MHZu6Ag/9qKzgb4ZqxJhiR7NIGjVSmJ1XSyPMQ5cI10=;
+        b=AFFZS+ZLmfWT2y0i0aqdr83povFO01j+oNqeyQUUaYMPosUhSZ82rYcEU2xZRhKIVY
+         FstapXyVOTiMfiq/l32H3TCQ2R6E33r8+tar1nL0y/XLwNvwo0SfO42DEUMv9tudaa0b
+         nP0ehsuJsJamxlQrNIqkea5Xnhrfr72JtU6Nhz6Seus8HNTJaTk5OJIEE7oyHpAV72qN
+         zVYPVe6144kbAQNTXkbATp27c4tNvLkqlJ80dNlcpVJqTh71jX62OO1o36I8I5utNa+P
+         OX2gySfNPVahkKLA1Xy4Pigvr/7BTGypdd/Sj342n9V/XxXEpgxegL4vOioPdMpenGuY
+         ISAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUebVlJYMuS9M2GGERRYQlHUgdT8uxr3ombQm50xYtZ28zmTPMUHSZsiSqG8ci4Ic6kZtv27Dcb9L2Mi/N+uYwOtteyk3PMSLQUZrJPyR7gyQEjiOXvVR8YQg287YoHPtncF5SmsukGohw=
+X-Gm-Message-State: AOJu0YwgMBb07vdUEaAvr5hA8rNPDQs+IxrCo4Trf4fo/MtuYcio6EJ+
+	kK+jfDPO2Z35+ZDUB4xwG5oLhmAn+15bow+3HzhYg6f36DkmUkQU
+X-Google-Smtp-Source: AGHT+IE29lXDJY0DJgZzjwEH7h/3o7kLHX3laqmrwpTO+ckQzdByOSlQCUSu2Nellw3JaiKg102baA==
+X-Received: by 2002:a05:6a20:d510:b0:1c0:bce5:c19c with SMTP id adf61e73a8af0-1c699579612mr23682342637.12.1723055917340;
+        Wed, 07 Aug 2024 11:38:37 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec4292fsm8695485b3a.73.2024.08.07.11.38.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 11:38:36 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <bdca4f35-ec3e-4fac-bbcf-ed5326feb6f4@roeck-us.net>
+Date: Wed, 7 Aug 2024 11:38:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hwmon: (lm93) Return error values on read failure
+To: Abhishek Tamboli <abhishektamboli9@gmail.com>, jdelvare@suse.com
+Cc: skhan@linuxfoundation.org, rbmarliere@gmail.com,
+ linux-kernel-mentees@lists.linuxfoundation.org, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240807181746.508972-1-abhishektamboli9@gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240807181746.508972-1-abhishektamboli9@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thorsten Leemhuis <linux@leemhuis.info> writes:
-
-> Rewrite the short document on bisecting kernel bugs. The new text
-> improves .config handling, brings a mention of 'git skip', and explains
-> what to do after the bisection finished -- including trying a revert to
-> verify the result. The rewrite at the same time removes the unrelated
-> and outdated section on 'Devices not appearing' and replaces some
-> sentences about bug reporting with a pointer to the document covering
-> that topic in detail.
->
-> This overall brings the approach close to the one in the recently added
-> text Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst.
-> As those two texts serve a similar purpose for different audiences,
-> mention that document in the head of this one and outline when the
-> other might be the better one to follow.
->
-> Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
+On 8/7/24 11:17, Abhishek Tamboli wrote:
+> Fix the issue of lm93_read_byte() and lm93_read_word() return 0 on
+> read failure after retries, which could be confused with valid data.
+> 
+> Address the TODO: what to return in case of error?
+> 
+> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
 > ---
->  Documentation/admin-guide/bug-bisect.rst | 205 +++++++++++++++--------
->  MAINTAINERS                              |   1 +
->  2 files changed, 135 insertions(+), 71 deletions(-)
+>   drivers/hwmon/lm93.c | 10 ++++++----
+>   1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/hwmon/lm93.c b/drivers/hwmon/lm93.c
+> index be4853fad80f..b76f3c1c6297 100644
+> --- a/drivers/hwmon/lm93.c
+> +++ b/drivers/hwmon/lm93.c
+> @@ -798,6 +798,7 @@ static unsigned LM93_ALARMS_FROM_REG(struct block1_t b1)
+>   static u8 lm93_read_byte(struct i2c_client *client, u8 reg)
 
-So overall this seems like a good thing to do.  I wouldn't be me if I
-didn't have some comments though...:)
+This is still returning an u8.
 
-> diff --git a/Documentation/admin-guide/bug-bisect.rst b/Documentation/admin-guide/bug-bisect.rst
-> index 325c5d0ed34a0a..f4a9acab65d0f5 100644
-> --- a/Documentation/admin-guide/bug-bisect.rst
-> +++ b/Documentation/admin-guide/bug-bisect.rst
-> @@ -1,76 +1,139 @@
-> -Bisecting a bug
-> -+++++++++++++++
-> -
-> -Last updated: 28 October 2016
-> -
-> -Introduction
-> -============
-> -
-> -Always try the latest kernel from kernel.org and build from source. If you are
-> -not confident in doing that please report the bug to your distribution vendor
-> -instead of to a kernel developer.
-> -
-> -Finding bugs is not always easy. Have a go though. If you can't find it don't
-> -give up. Report as much as you have found to the relevant maintainer. See
-> -MAINTAINERS for who that is for the subsystem you have worked on.
-> -
-> -Before you submit a bug report read
-> -'Documentation/admin-guide/reporting-issues.rst'.
-> -
-> -Devices not appearing
-> -=====================
-> -
-> -Often this is caused by udev/systemd. Check that first before blaming it
-> -on the kernel.
-> -
-> -Finding patch that caused a bug
-> -===============================
-> -
-> -Using the provided tools with ``git`` makes finding bugs easy provided the bug
-> -is reproducible.
-> -
-> -Steps to do it:
-> -
-> -- build the Kernel from its git source
-> -- start bisect with [#f1]_::
-> +.. SPDX-License-Identifier: (GPL-2.0+ OR CC-BY-4.0)
-> +.. [see the bottom of this file for redistribution information]
->  
-> -	$ git bisect start
-> -
-> -- mark the broken changeset with::
-> -
-> -	$ git bisect bad [commit]
-> -
-> -- mark a changeset where the code is known to work with::
-> -
-> -	$ git bisect good [commit]
-> -
-> -- rebuild the Kernel and test
-> -- interact with git bisect by using either::
-> -
-> -	$ git bisect good
-> -
-> -  or::
-> -
-> -	$ git bisect bad
-> -
-> -  depending if the bug happened on the changeset you're testing
-> -- After some interactions, git bisect will give you the changeset that
-> -  likely caused the bug.
-> -
-> -- For example, if you know that the current version is bad, and version
-> -  4.8 is good, you could do::
-> -
-> -           $ git bisect start
-> -           $ git bisect bad                 # Current version is bad
-> -           $ git bisect good v4.8
-> +===============
-> +Bisecting a bug
-> +===============
->  
-> +This document describes how to find a change causing a kernel regression using
-> +``git bisect``.
+>   {
+>   	int value, i;
+> +	int ret;
+>   
+>   	/* retry in case of read errors */
+>   	for (i = 1; i <= MAX_RETRIES; i++) {
+> @@ -808,14 +809,14 @@ static u8 lm93_read_byte(struct i2c_client *client, u8 reg)
+>   			dev_warn(&client->dev,
+>   				 "lm93: read byte data failed, address 0x%02x.\n",
+>   				 reg);
+> +			ret = value;
+>   			mdelay(i + 3);
+>   		}
+>   
+>   	}
+>   
+> -	/* <TODO> what to return in case of error? */
+>   	dev_err(&client->dev, "lm93: All read byte retries failed!!\n");
 
-This seems a bit terse.  A bit of information on when doing a bisection
-makes sense would not go amiss - when somebody has observed that a
-previously working feature broke with an update.
+Those messages only make sense if there is no error return.
 
-> -.. [#f1] You can, optionally, provide both good and bad arguments at git
-> -	 start with ``git bisect start [BAD] [GOOD]``
-> +The text focuses on the gist of the process. If you are new to bisecting the
-> +kernel, better follow Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst
-> +instead: it depicts everything from start to finish while covering multiple
-> +aspects even kernel developers occasionally forget. This includes:
->  
-> -For further references, please read:
-> +- Detecting situations where a bisections would be a waste of time, as nobody
-> +  would care about the result -- for example, because the problem is triggered
-> +  by a .config change, was already fixed, is caused by something your Linux
-> +  distributor changed, occurs in an abandoned version, or happens after the
-> +  kernel marked itself as 'tainted'.
-> +- Preparing the .config file using an appropriate kernel while enabling or
-> +  disabling debug symbols depending on the situation's needs -- while optionally
-> +  trimming the .config to tremendously reduce the build time per bisection step.
-> +- For regressions in stable or longterm kernels: checking mainline as well, as
-> +  the result determines to whom the regression must be reported to.
+> -	return 0;
+> +	return ret;
 
-This instead seems a bit verbose; I'd be tempted to take out the
-itemized list and leave just the paragraph above.
+This is pointless and actually dangerous unless the calling code actually checks
+the return value and aborts on error.
 
-> -- The man page for ``git-bisect``
-> -- `Fighting regressions with git bisect <https://www.kernel.org/pub/software/scm/git/docs/git-bisect-lk2009.html>`_
-> -- `Fully automated bisecting with "git bisect run" <https://lwn.net/Articles/317154>`_
-> -- `Using Git bisect to figure out when brokenness was introduced <http://webchick.net/node/99>`_
-> +Neither document describes how to report a regression, as that is covered by
-> +Documentation/admin-guide/reporting-issues.rst.
 
-This could maybe go at the end - "once you've found the regression, see
-this document on how to report it" ?
 
-> +Finding the change causing a kernel issue using a bisection
-> +===========================================================
-> +
-> +*Note: the following process assumes you prepared everything for a bisection;
-> +this includes having a Git clone with the appropriate sources, installing the
-> +software required to build and install kernels, as well as a .config file stored
-> +in a safe place (the following example assumes '~/prepared_kernel_.config') to
-> +use as pristine base at each bisection step.*
-> +
-> +* Preparation: start the bisection and tell Git about the points in the history
-> +  you consider to be working and broken, which Git calls 'good' and 'bad'::
-> +
-> +    git bisect start
-> +    git bisect good v6.0
-> +    git bisect bad v6.1
-> +
-> +  Instead of Git tags like 'v6.0' and 'v6.1' you can specify commit-ids, too.
-> +
-> +1. Copy your prepared .config into the build directory and adjust it to the
-> +   needs of the codebase Git checked out for testing::
-> +
-> +     cp ~/prepared_kernel_.config .config
-> +     make olddefconfig
-> +
-> +2. Now build, install, and boot a kernel; if any of this fails for unrelated
-> +   reasons, run ``git bisect skip`` and go back to step 1.
+>   }
+>   
+>   static int lm93_write_byte(struct i2c_client *client, u8 reg, u8 value)
+> @@ -836,6 +837,7 @@ static int lm93_write_byte(struct i2c_client *client, u8 reg, u8 value)
+>   static u16 lm93_read_word(struct i2c_client *client, u8 reg)
+>   {
+>   	int value, i;
+> +	int ret;
+>   
+>   	/* retry in case of read errors */
+>   	for (i = 1; i <= MAX_RETRIES; i++) {
+> @@ -846,14 +848,14 @@ static u16 lm93_read_word(struct i2c_client *client, u8 reg)
+>   			dev_warn(&client->dev,
+>   				 "lm93: read word data failed, address 0x%02x.\n",
+>   				 reg);
+> +			ret = value;
+>   			mdelay(i + 3);
+>   		}
+>   
+>   	}
+>   
+> -	/* <TODO> what to return in case of error? */
+>   	dev_err(&client->dev, "lm93: All read word retries failed!!\n");
+> -	return 0;
+> +	return ret;
 
-Spell out "unrelated reasons" a bit more thoroughly?  I'd mention that
-things can go wrong (despite our best efforts) when bisect lands in the
-middle of a patch series, and to recognize a failure that is not the bug
-in question.
+Same as above.
 
-> +3. Check if the feature that regressed works in the kernel you just built.
-> +
-> +   If it does, execute::
-> +
-> +     git bisect good
-> +
-> +   If it does not, run::
-> +
-> +     git bisect bad
-> +
-> +   Be sure what you tell Git is correct, as getting this wrong just once will
-> +   send the rest of the bisection totally off course.
+Actually, your patch makes the problem worse because the errors are still ignored
+and at the same time report more or less random values to the user (the error code
+truncated to an unsigned 8 or 16 bit value).
 
-Something about hard-to-trigger bugs and putting in the effort to be
-sure that a good kernel is really good?  Along those lines, maybe
-something at the top about having a well-defined reproducer for the
-problem would be good.
+Is this just a blind patch, submitted as kind of an exercise, or do you have an
+actual use case for this driver ? The driver is in such bad shape that it should
+be left alone unless someone actually needs it and is able to test any changes.
+Otherwise changes like this just increase risk (or, rather, make it even worse)
+without real benefit.
 
-> +   Go back to back to step 1, if Git after issuing one of those commands checks
-> +   out another bisection point while printing something like 'Bisecting:
-> +   675 revisions left to test after this (roughly 10 steps)'.
-> +
-> +   You finished the bisection and move to the next point below, if Git instead
-> +   prints something like 'cafecaca0c0dacafecaca0c0dacafecaca0c0da is the first
-> +   bad commit'; right afterwards it will show some details about the culprit
-> +   including its patch description.
+Thanks,
+Guenter
 
-That's a big and hard-to-parse sentence.  I'd start with the "if"
-condition - this isn't perl :)
-
->     The latter can easily fill your terminal,
-> +   so you might need to scroll up to see the message mentioning the culprit's
-> +   commit-id; alternatively, run ``git bisect log`` to show the result.
-> +
-> +* Recommended complementary task: put the bisection log and the current
-> +  .config file aside for the bug report; furthermore tell Git to reset the
-> +  sources to the state before the bisection::
-> +
-> +     git bisect log > ~/bisection-log
-> +     cp .config ~/bisection-config-culprit
-> +     git bisect reset
-> +
-> +* Recommended optional task: try reverting the culprit on top of the latest
-> +  codebase; if successful, this will validate your bisection and enable
-> +  developers to resolve the regression through a revert.
-
-"successful" could be misinterpreted as referring to the revert itself
-here.  An explicit "if that fixes the bug..." would be more clear.
-
-> +  To try this, update your clone and check out latest mainline. Then tell Git to
-> +  revert the change::
-> +
-> +     git revert --no-edit cafec0cacaca0
-> +
-> +  This might be impossible, for example when the bisection landed on a merge
-> +  commit. In that case, abandon the attempt. Do the same, if Git fails to revert
-> +  the culprit because later changes depend on it -- unless you bisected using a
-> +  stable or longterm kernel series, in which case you want to retry using the
-> +  latest code from that series.
-> +
-> +  If a revert succeeds, build and test another kernel to validate the result of
-> +  the bisection. Mention the outcome in your bug report.
-> +
-> +Additional reading material
-> +---------------------------
-> +
-> +* The `man page for 'git bisect' <https://git-scm.com/docs/git-bisect>`_ and
-> +  `fighting regressions with 'git bisect' <https://git-scm.com/docs/git-bisect-lk2009.html>`_
-> +  in the Git documentation.
-> +* `Working with git bisect <https://nathanchance.dev/posts/working-with-git-bisect/>`_
-> +  from kernel developer Nathan Chancellor.
-> +* `Using Git bisect to figure out when brokenness was introduced <http://webchick.net/node/99>`_.
-> +* `Fully automated bisecting with 'git bisect run' <https://lwn.net/Articles/317154>`_.
-> +
-> +..
-> +   end-of-content
-
-end-of-comments
-
-Thanks for doing this.
-
-jon
 
