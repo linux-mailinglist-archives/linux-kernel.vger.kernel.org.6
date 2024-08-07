@@ -1,195 +1,188 @@
-Return-Path: <linux-kernel+bounces-277589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F151594A36D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:52:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2336594A374
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 737C21F23E9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:52:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8A86B21D22
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A6F1CB30E;
-	Wed,  7 Aug 2024 08:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3885E1CB305;
+	Wed,  7 Aug 2024 08:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GHdE1z7W"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2060.outbound.protection.outlook.com [40.107.236.60])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="c4i49En8"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A05D22334;
-	Wed,  7 Aug 2024 08:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723020739; cv=fail; b=g7aXNvluLZoabfFA6gpav38ZvvH896ONvp1ngbUlw1YuLQQiP8xPw8+ZmsqR01vI7iLRYqq1NTGjRStQZ9zd9xIPvNbWTVITcCu4yYcjVhX1+UP0aVuW/73Ei4H0UqMPinFM3QbCI+j7ETDe+50y/eWUTOEWS0ll6ygujL5Ctno=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723020739; c=relaxed/simple;
-	bh=8nXWNviDyf9XOYe5n7yDx33vkYVLw0mSCy5pXLvIedY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F2MOBnk/rZ/Gv4b9vAWNiw1W3EI7+alRIJUCXjQHA+Kf6L7ndahYetDaV5cg7jfM7u8EOMQEVLDLNbG86ueK4o/j+hoZD2o3IHIFbs7GXsWaNnq/QaYjxT//Pf05W8JIYWlZdiKLwZb2w9I0/8uzOVb0IS097TKDEPaodLFbtVo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GHdE1z7W; arc=fail smtp.client-ip=40.107.236.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TwzM9+F3XGrb610hWVUdOB1OEgF3eyC1JsOVRa22OsVFDlrlNGY02tyK/yZVFnrSoZ+/jpCgNBuu4Zmha6QuWmdwVsvDOEcZfoIWJDfQKzT54i4rPME66sy63d5prrrF5/8s73QPjG0q+jIlY/Xjrs+z2qc1DQ44OFZvojvbX15ST92jVaccxctVFHmPgeuKz7trdiTnLbyUBVG3MKGs5shf5w7OSU6Ty6vkqBXBk7ZvqxyGNYdzIjj5WWjfm6n2bbhJvpDdfj2pmXyfX1kzgdIKgaGKeAz6fKqCj57ATaws5aOpmtLObZxmIJmq3xrc/GCtJvGVI8I3aTZP1l6Ldg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PsvA8deCsHoDrrkYgodlqtuNzHusZC/0ypIGu8ltK+U=;
- b=YuYh5X8dMVe62jWn+lHRhTFMcIYaRbLPET5Fy5S7hQxSsVLNYdgtX4LryyPN17mrxWpnKNMbsIUn3VgqcgzNiP1lP+5E6ONxIHx4kytt6yFdJ2GLckOFPsUGrFZmzn+EI698Nc3r9G6apXlWNP7gHM/HZlHfUOsz/htKvd8LO7fjbbZ+wqbAhqYyki8SYgPIdXozzhQQp+xEUs/rptlQxO9v8OfpwuTCoq6QalpwDh1IlAZcamjZPuqD+xrlXeDr34bBICNTUwezde9fkwBads3Yqd+xJjDfmKO1YBCPMoXfX38TfoJ4hpUXHqucVIjUdMnuI0M5tjDncJM/hk2sng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PsvA8deCsHoDrrkYgodlqtuNzHusZC/0ypIGu8ltK+U=;
- b=GHdE1z7W7qz1U8Xm4rlz+hOAsu8IVxp3kXdCLnqz8eNIwQSTVOwRqp7B79KrFyXR9wW8nShBxwL0Ix/AoRiaXNvXXWnHh+ktWbYYSFilvAK3Z8Ym+44NTznbhVXDCutBaZ3Nic/EIL4FeVGfrXojt4le5HpoB47VZ/JzKiDT5PE=
-Received: from CH0PR13CA0007.namprd13.prod.outlook.com (2603:10b6:610:b1::12)
- by PH8PR12MB8605.namprd12.prod.outlook.com (2603:10b6:510:1cc::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21; Wed, 7 Aug
- 2024 08:52:14 +0000
-Received: from CH2PEPF0000013D.namprd02.prod.outlook.com
- (2603:10b6:610:b1:cafe::e1) by CH0PR13CA0007.outlook.office365.com
- (2603:10b6:610:b1::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.11 via Frontend
- Transport; Wed, 7 Aug 2024 08:52:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH2PEPF0000013D.mail.protection.outlook.com (10.167.244.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7849.8 via Frontend Transport; Wed, 7 Aug 2024 08:52:13 +0000
-Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 7 Aug 2024 03:52:08 -0500
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: <broonie@kernel.org>
-CC: <alsa-devel@alsa-project.org>, <Basavaraj.Hiregoudar@amd.com>,
-	<Sunil-kumar.Dommati@amd.com>, <venkataprasad.potturu@amd.com>,
-	<sunpeng.li@amd.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, "Liam
- Girdwood" <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, "Takashi
- Iwai" <tiwai@suse.com>, Syed Saba Kareem <Syed.SabaKareem@amd.com>, "Kuninori
- Morimoto" <kuninori.morimoto.gx@renesas.com>, Jeff Johnson
-	<quic_jjohnson@quicinc.com>, "open list:SOUND - SOC LAYER / DYNAMIC AUDIO
- POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] ASoC: amd: acp: add ZSC control register programming sequence
-Date: Wed, 7 Aug 2024 14:21:48 +0530
-Message-ID: <20240807085154.1987681-1-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D78F22334;
+	Wed,  7 Aug 2024 08:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723020875; cv=none; b=kgU7D4094/jxbJE+s+a5I4uXynqlzA18mAYPH4BktK5xBAoBHMhvzo4ic+ze6x/lFzYGnpp762aEp0cQJjIJj/d0LYnZM8ZllMbmrACAPZG6RuANx6+wrNYf4Iz+QlQI3/sNfn365o0I8DZe/wy8ZqaBnrbfF5l6DDKfyY6udyU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723020875; c=relaxed/simple;
+	bh=Jp1FFPAcPVLqB1cNeZutNl6ygB/KT74rhDRU/Q1H3Kc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N30uq1PzeDNDNAEi7WYcpUyXPTF+ZBUEBh+PKXAZyE4y4DU3T/Mp9BOe2pHrtYKryjX/0Ydk5P915JKJtUJk2ujvguoAl5vKHAsCG3Ug8ngaB9a1xQn+D3vIiBSiD3mYZvW5K41VL7gDW49uYG+eGfNoihvguRiNhl3tkAG65pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=c4i49En8; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=miQ8a2DrdymNd/XsjzaRvOeIV5C9+9V6PuYpgF8FIFA=; t=1723020873;
+	x=1723452873; b=c4i49En8a0Y4N52OKAdrvHFeoTNw9miLawj1IC+esitG1lreBn4lgholBVFYS
+	qwifK6PsM8OYVeDgbkalnFs/0APMtt9ogVO7j45ls4IsMWgDwZUK4b4jPJGjLltBdiV6Ivzywbp4a
+	hSxM3P6Ryn5rKSu/R3ap2Oq90u6JzwEzrYIIqri/aKwCXEDPlF8cRHekBf6zL32Hs4C+s8UcoHTjS
+	P0wlISYNEe11PPY6ncTdVIL2TbnHr4H8FKIhhoijLUBJOd2tPKCIUObkY8ictWzmII/Tl5lheSHex
+	l8+1N4jv96qa0+jLbQ+MG0pXMVDeN9XuERec9UGKH47bgHzU6A==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sbcRC-0006Qc-1L; Wed, 07 Aug 2024 10:54:30 +0200
+Message-ID: <714ed350-0e6c-4922-bf65-36de48f62879@leemhuis.info>
+Date: Wed, 7 Aug 2024 10:54:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] Perf (userspace) broken on big.LITTLE systems since
+ v6.5
+To: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Linux perf Profiling <linux-perf-users@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ James Clark <james.clark@arm.com>, "cc: Marc Zyngier" <maz@kernel.org>,
+ Hector Martin <marcan@marcan.st>, Asahi Linux <asahi@lists.linux.dev>,
+ Ian Rogers <irogers@google.com>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ "to: Mark Rutland" <mark.rutland@arm.com>
+References: <08f1f185-e259-4014-9ca4-6411d5c1bc65@marcan.st>
+ <ZV1AnNB2CSbAUFVg@archie.me>
+ <a9c14dfd-3269-4758-9174-4710bef07088@leemhuis.info>
+ <CAP-5=fXqx_k1miPTkcAmS3z2GBPt2KeDtP5fknmdDghZqxXPew@mail.gmail.com>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <CAP-5=fXqx_k1miPTkcAmS3z2GBPt2KeDtP5fknmdDghZqxXPew@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000013D:EE_|PH8PR12MB8605:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7ba44dd9-29b2-4370-e612-08dcb6be3b1c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kNqPra0qK8ZpsMEXQdcFqTqp78s4nXNITc45b8sDBkA2RwR4E/Lrx03ab9B0?=
- =?us-ascii?Q?vioNumb/FKGb96JrhirmwXR5NYoRjUsdDk8F8InQ7ymu+JG1gpttAVmqukQY?=
- =?us-ascii?Q?xKY0eFBVe+EtIIclENy3lu9nLscJSQ67T2jrIlVEUEHaUSIqrOtSdNscOv3m?=
- =?us-ascii?Q?bVkPhoEpuZkCqV9CddurBn9GHU7zMUYsrhLO718Pzfvs6amqTey0o3/X7OUb?=
- =?us-ascii?Q?V85b/BLBhIR2LtnM7EN6XXCO0KSPiWC8aRchO6ZthAviaWr2WqKQCagTjJ47?=
- =?us-ascii?Q?qlPPmEJNW83uhQR2572wv9l4JX5rdcnFJxseQl0CNTHio4/6VpOn9P8INWq1?=
- =?us-ascii?Q?aUHUumvC1hUxUtanjIVL9VaTvLQzjg0piExuWp30cjJQQ1MInu7IB4jj+bOd?=
- =?us-ascii?Q?Lmaqbc3BNx968/01xtiFjI0VoUh9Gyp+2WH90JegoblcT0hH7REnMIR9gkVC?=
- =?us-ascii?Q?VMDQO2ph+NToG0a/ZPM9xodYPJlmWr7KQAmC51LaK1jaAO0JJssvrhIb3ekp?=
- =?us-ascii?Q?eIDiR2V5xU1NT9u1odvRPybbbNnhCFmXJq2VFpbdO7PvoGkx1ZoJqCHG5KYY?=
- =?us-ascii?Q?YWhD7847Yf0qfml9PwsydBKWrGKETvJgCIeJHqO6bsaILaP2Uy9ALFULCQjj?=
- =?us-ascii?Q?sK73dtSG50lltxObq0/binQVEkT7OGC+07kW9lahSWadcQ68bSfqxaiwm7P9?=
- =?us-ascii?Q?cXiETKvQjQJluv1djEy2jNC3vimKMfsd05hGO88fZpUKTGfStroOSP1ntCXH?=
- =?us-ascii?Q?uLFdZKBS07R54Ss8EswT8IGWSvzLO1ghWgIOiT/qL2t3hg0jJCKKjssSEqHN?=
- =?us-ascii?Q?BdKyjL8ihIwWLbLbD/9bTH3GCWbh6ABJnG82grTFN4KU5RwpG9FgPp1ygDYl?=
- =?us-ascii?Q?CSMclyBCvuZSh3LGxLj2gJ/HycvpGO8b6qyIa81wPteMDUbcM4n8E1yL9/bq?=
- =?us-ascii?Q?qoX7u3gCs9THZLmmkr10gWcR1TtWRUe3fljy3gtWwqoqk5+z83dECOjbehjk?=
- =?us-ascii?Q?libv+rBkqAjGsIT17aU+cxS3RNkIENUo1J99CpQJIJp4npjmWGNKlZbs2nbh?=
- =?us-ascii?Q?TwkYuVO+lFO9Hu2cWBYrzsA9XtBEHOkgzo63jmIzXFWmaDmvsBK0eB3ttmsm?=
- =?us-ascii?Q?PnysqNJJvVJ020tEGxptLSfX0Eu8ZyNLhi9i/e84PFYMyBa12mzgLVzJNLNO?=
- =?us-ascii?Q?rawlXtbNBJ+1qCP0Ii4IRv3lERB8byZ++c9MYxmy+S4CdHegg7jFUn6NIISf?=
- =?us-ascii?Q?AaM//ZAXe9dJdkZ1VX5pHDeH3aiDn+8upjMoGjhTTF5xBYfGTfqsP8hwnwA8?=
- =?us-ascii?Q?Fy5fOUzI0ibX5dbig410YMyofMqNer484EPW8zV4k0wDDVsPyJY/TxiLfjDQ?=
- =?us-ascii?Q?y4ZAWVZyGNDHMp54EWwEsx+WIYofpL5e8Nu5ApKtyZWNVZ/Xe6eJ5fyRmTTP?=
- =?us-ascii?Q?eqQC6Ts23SHthiGqil0c7keijPzCA5k0?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 08:52:13.0777
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ba44dd9-29b2-4370-e612-08dcb6be3b1c
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000013D.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB8605
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1723020873;ea42c35e;
+X-HE-SMSGID: 1sbcRC-0006Qc-1L
 
-Add ZSC Control register programming sequence for ACP D0 and D3 state
-transitions for ACP7.0 onwards. This will allow ACP to enter low power
-state when ACP enters D3 state. When ACP enters D0 State, ZSC control
-should be disabled.
+On 01.08.24 21:05, Ian Rogers wrote:
+> On Wed, Dec 6, 2023 at 4:09 AM Linux regression tracking #update
+> (Thorsten Leemhuis) <regressions@leemhuis.info> wrote:
+>>
+>> [TLDR: This mail in primarily relevant for Linux kernel regression
+>> tracking. See link in footer if these mails annoy you.]
+>>
+>> On 22.11.23 00:43, Bagas Sanjaya wrote:
+>>> On Tue, Nov 21, 2023 at 09:08:48PM +0900, Hector Martin wrote:
+>>>> Perf broke on all Apple ARM64 systems (tested almost everything), and
+>>>> according to maz also on Juno (so, probably all big.LITTLE) since v6.5.
+>>
+>> #regzbot fix: perf parse-events: Make legacy events lower priority than
+>> sysfs/JSON
+>> #regzbot ignore-activity
+> 
+> Note, this is still broken.
 
-Tested-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
----
- sound/soc/amd/acp/acp-legacy-common.c | 5 +++++
- sound/soc/amd/acp/amd.h               | 2 ++
- 2 files changed, 7 insertions(+)
+Hmmm, so all that became somewhat messy. Arnaldo, what's the way out of
+this? Or is this a "we are screwed one way or another and someone has to
+bite the bullet" situation?
 
-diff --git a/sound/soc/amd/acp/acp-legacy-common.c b/sound/soc/amd/acp/acp-legacy-common.c
-index 4422cec81e3c..04bd605fdce3 100644
---- a/sound/soc/amd/acp/acp-legacy-common.c
-+++ b/sound/soc/amd/acp/acp-legacy-common.c
-@@ -321,6 +321,8 @@ int acp_init(struct acp_chip_info *chip)
- 		pr_err("ACP reset failed\n");
- 		return ret;
- 	}
-+	if (chip->acp_rev >= ACP70_DEV)
-+		writel(0, chip->base + ACP_ZSC_DSP_CTRL);
- 	return 0;
- }
- EXPORT_SYMBOL_NS_GPL(acp_init, SND_SOC_ACP_COMMON);
-@@ -336,6 +338,9 @@ int acp_deinit(struct acp_chip_info *chip)
- 
- 	if (chip->acp_rev != ACP70_DEV)
- 		writel(0, chip->base + ACP_CONTROL);
-+
-+	if (chip->acp_rev >= ACP70_DEV)
-+		writel(0x01, chip->base + ACP_ZSC_DSP_CTRL);
- 	return 0;
- }
- EXPORT_SYMBOL_NS_GPL(acp_deinit, SND_SOC_ACP_COMMON);
-diff --git a/sound/soc/amd/acp/amd.h b/sound/soc/amd/acp/amd.h
-index 87a4813783f9..c095a34a7229 100644
---- a/sound/soc/amd/acp/amd.h
-+++ b/sound/soc/amd/acp/amd.h
-@@ -103,6 +103,8 @@
- #define ACP70_PGFSM_CONTROL			ACP6X_PGFSM_CONTROL
- #define ACP70_PGFSM_STATUS			ACP6X_PGFSM_STATUS
- 
-+#define ACP_ZSC_DSP_CTRL			0x0001014
-+#define ACP_ZSC_STS				0x0001018
- #define ACP_SOFT_RST_DONE_MASK	0x00010001
- 
- #define ACP_PGFSM_CNTL_POWER_ON_MASK            0xffffffff
--- 
-2.34.1
+Ciao, Thorsten
 
+> The patch changed the priority in the case
+> that you do something like:
+> 
+> $ perf stat -e 'armv8_pmuv3_0/cycles/' benchmark
+> 
+> but if you do:
+> 
+> $ perf stat -e 'cycles' benchmark
+> 
+> then the broken behavior will happen as legacy events have priority
+> over sysfs/json events in that case. To fix this you need to revert:
+> 4f1b067359ac Revert "perf parse-events: Prefer sysfs/JSON hardware
+> events over legacy"
+> 
+> This causes some testing issues resolved in this unmerged patch series:
+> https://lore.kernel.org/lkml/20240510053705.2462258-1-irogers@google.com/
+> 
+> There is a bug as the arm_dsu PMU advertises an event called "cycles"
+> and this PMU is present on Ampere systems. Reverting the commit above
+> will cause an issue as the commit 7b100989b4f6 ("perf evlist: Remove
+> __evlist__add_default") to fix ARM's BIG.little systems (opening a
+> cycles event on all PMUs not just 1) will cause the arm_dsu event to
+> be opened by perf record and fail as the event won't support sampling.
+> 
+> The patch https://lore.kernel.org/lkml/20240525152927.665498-1-irogers@google.com/
+> fixes this by only opening the cycles event on core PMUs when choosing
+> default events.
+> 
+> Rather than take this patch the revert happened as Linus runs the
+> command "perf record -e cycles:pp" (ie using a specified event and not
+> defaults) and considers it a regression in the perf tool that on an
+> Ampere system to need to do "perf record -e
+> 'armv8_pmuv3_0/cycles/pp'". It was pointed out that not specifying -e
+> will choose the cycles event correctly and with better precision the
+> pp for systems that support it, but it was still considered a
+> regression in the perf tool so the revert was made to happen. There is
+> a lack of perf testing coverage for ARM, in particular as they choose
+> to do everything in a different way to x86. The patch in question was
+> in the linux-next tree for weeks without issues.
+> 
+> ARM/Ampere could fix this by renaming the event from cycles to
+> cpu_cycles, or by following Intel's convention that anything uncore
+> uses the name clockticks rather than cycles. This could break people
+> who rely on an event called arm_dsu/cycles/ but I imagine such people
+> are rare. There has been no progress I'm aware of on renaming the
+> event.
+> 
+> Making perf not terminate on opening an event for perf record seems
+> like the most likely workaround as that is at least something under
+> the tool maintainers control. ARM have discussed doing this on the
+> lists:
+> https://lore.kernel.org/lkml/f30f676e-a1d7-4d6b-94c1-3bdbd1448887@arm.com/
+> but since the revert in v6.10 no patches have appeared for the v6.11
+> merge window. Feature work like coresight improvements and ARMv9 are
+> being actively pursued by ARM, but feature work won't resolve this
+> regression.
+> 
+> I'm keen to see such patches as there are perf stat fixes reliant on
+> the stacked parse event fixes that are consequently not merged
+> affecting more than just ARM.
+> 
+> There is a related discussion that events specified without PMUs
+> should inherently only mean core PMUs. Unfortunately such a change
+> would break uncore events specified without a PMU, for example `perf
+> stat -e data_read -a sleep 1` gathers read memory bandwidth on uncore
+> memory controllers on recent Intel devices. Not specifying a PMU for
+> uncore events is also assumed by perf metrics, so a large number of
+> metrics would need updating to make such a change work. Many existing
+> JSON uncore events specify a PMU in their name like
+> UNC_M2HBM_CMS_CLOCKTICKS and it feels somewhat redundant to have to
+> make that h2hbm/UNC_M2HBM_CMS_CLOCKTICKS/. It is unclear who would
+> pursue fixing all of this, and so it seems not specifying a PMU with
+> an event for perf will keep meaning trying to open the event on all
+> PMUs that advertise such an event.
+> 
+> Thanks,
+> Ian
+> 
+>> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+>> --
+>> Everything you wanna know about Linux kernel regression tracking:
+>> https://linux-regtracking.leemhuis.info/about/#tldr
+>> That page also explains what to do if mails like this annoy you.
+>>
+> 
+> 
 
