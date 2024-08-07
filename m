@@ -1,132 +1,127 @@
-Return-Path: <linux-kernel+bounces-277693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7E494A4DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:00:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5990394A4E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85CCD1C21864
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:00:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C87B1C2223D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6D51D1759;
-	Wed,  7 Aug 2024 10:00:29 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F201D1756;
+	Wed,  7 Aug 2024 10:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wm3DFLYB"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE5B1C7B92;
-	Wed,  7 Aug 2024 10:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274AD19066E
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723024829; cv=none; b=TYy72EOEaCeIbtNvUIYzO5x2d75+iVZjIrAuYZLes+Px1MJY9cOahePptUnbPoCDLWf5mroeqt6t9gr8O7fWHMdOLlJiUui7QTo2RYEijqsvcx6fpGMeaPReBXQbcRMOVlatEXNEh6ZIpX42ZBNocdYv/xKgHLLUBbz1aSxIVuc=
+	t=1723024849; cv=none; b=PzbzPhyyL1bG6x2qBvX7GtmzZjWVQg6YvSyJ7A7yWLQeXTLvXZMszfm3GMDNUE4usaYolxdZy7HOxe+7uq5hqzwmy0aTfvc74rpvUQKKRPLIhRvEWpvvZ22uvVIe7KikNdtaTpsAMN/rti5kpFi9/N5WNPp2lPCQgaHVh22+UHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723024829; c=relaxed/simple;
-	bh=4tbBVT8m2HTBfYF4JwJ/kVTXbHkxnXmYFcbxNByUpc0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Isoka6FHh1dUZhPV8sTynW96BjvPFiaN8E6NI7bjskZOTTsB3DSIJVnoEgeJTVaAbdxA0aYXx1NLexKMFBX74jroj6GTr0PY+xv5gD7WWZ52jkVUadDYeKLKiTjDhNpyTZoYbr8n+3pYHbLZI3swAdGq6ME/zhwod0SyDyStTH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0F68C4AF09;
-	Wed,  7 Aug 2024 10:00:27 +0000 (UTC)
-Message-ID: <8971804c-ea5f-4678-b874-2d41950aa448@xs4all.nl>
-Date: Wed, 7 Aug 2024 12:00:26 +0200
+	s=arc-20240116; t=1723024849; c=relaxed/simple;
+	bh=DN4Tn1xE2M0WcZ5JI7GtUQ4qLZ1GznAtL3tNk5n7WtQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QHMSynbEqypLClWCSfi8eUucwY2O/s2EpSNVsbmSAz+QIcCeUVVTaKA9bb425eDfFZK6GikGm/ut5srHFTiqYv+glLtiSa8mOv9hSnp/Yn+i2A0Ze5ibgoI3mmLrZ/Sr1W82ngmEunyGg+eRQYcuk2CVKNC1ge3+Vu+d5Na1Ehc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wm3DFLYB; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cfcbdfa572so1132663a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 03:00:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723024847; x=1723629647; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pvk8+58D7bYAu3LaZCoq7oPShkNrCdHz8ijBCfnKnzk=;
+        b=wm3DFLYBQCJ5v0b3CW7hmTGlV9TeLtKJsNKTdJu+IxC8bdJe6glx3XreiVICNPndOB
+         J4r+L/1Ep2kdOiLrI8umyC5IKnDF8PJPrrwA5r2esqFqLNO/6O4kncgjTRKDohRUuOgR
+         e6TbJPsST3iPUnSWly5BLAC7ehThj2I9iVKoAJX2Ez58ysD0eGyJO0EQw+CwelsSfvFa
+         wcrNnWnGDgXro4IjJDgBUmRox2QIqcCUStDVAw8LBVFPO900v2w05XSga+XPMXCe+cq1
+         Wq1ERqVN/A78EZWbIm/Ehjzkkcf3WZnQNMFOxani5DD7iy1y4Q0AMyo86rSDaspBu15d
+         louQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723024847; x=1723629647;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pvk8+58D7bYAu3LaZCoq7oPShkNrCdHz8ijBCfnKnzk=;
+        b=NeBxMMqNpIm/mM6d23HMZIR6swIY7dqMfOzaOWMxQg5hMwFRvmBsa/hPCfSxu/os/i
+         Jt9J5yWIY975+9zsis1jvkKfb46186O94JNNzObG2koPECJ0aUMHs6d5nxZR4hjFbTun
+         QsbPrKGFoYRFY2YSySrq/L7XPsN0sQupLC4vZAuS552GQ3yu7D1vR/aUPIMJeyqN6ycv
+         u+m4VRjNHlHGMdJBpy+MhZ6MgDT3Vx0Tuu7NFIQNkS9MDdkkjgyR/4RLK0FWUfkwE8ZN
+         34+WYbFmz43U6wjYQfu9CQK5hD/lrW9xzv/bWJTqgqmcnZ9/tuddQGZ/6r4FEcdGA0bc
+         5qGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHJQ2NrleuWhLDWl3VGk5BkPIQ0DNsEoD+HruNw7aqzwyGsghIThQHQWYXGX18joGh/iOnlN3dnt29TtmxxMZDGo9aV0Q1sWw5gdS1
+X-Gm-Message-State: AOJu0YzgftcSKrn3tEic4KKFYclr3HvQXwTlpgsBFg5ykOODRjEOb1lu
+	LKoslqJV40aUb34hDAWhxsgh0m4FzOVrP5aQ7naiWtzrtXJO6sW85MHvrrWjwHyrnyEIphOUvGY
+	kem8L5jJmBqxitLXSd6H1q6lS174Lxw6awVQvyg==
+X-Google-Smtp-Source: AGHT+IHDq3sOBU5R4QSRS3RcA8ctymQNZrz5UFsyxHt2fKFrrLOWBFYd8+BksUjO5UiRzMm/WG6Z9QWSrXaTnVUQrz8=
+X-Received: by 2002:a17:90b:4f45:b0:2cf:5e34:f1e4 with SMTP id
+ 98e67ed59e1d1-2cff943dd1amr18357938a91.13.1723024847417; Wed, 07 Aug 2024
+ 03:00:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] media: i2c: tvp5150: Constify struct regmap_config
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Michael Tretter <m.tretter@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240705-media-const-regmap_config-v1-0-56881442bb30@gmail.com>
- <20240705-media-const-regmap_config-v1-1-56881442bb30@gmail.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <20240705-media-const-regmap_config-v1-1-56881442bb30@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240807080032.2302853-1-arnd@kernel.org>
+In-Reply-To: <20240807080032.2302853-1-arnd@kernel.org>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 7 Aug 2024 12:00:35 +0200
+Message-ID: <CAKfTPtDs-Y5_puGU2QYd_NatB7RQzgGQPuwfaCWXrq_8Vqw2dw@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: avoid integer overflow warning for fair_server_period_max;
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 05/07/2024 12:53, Javier Carrasco wrote:
-> `tvp5150_config` is not modified and can be declared as const to
-> move its data to a read-only section.
+Hi Arnd
 
-This is a duplicate of:
+On Wed, 7 Aug 2024 at 10:00, Arnd Bergmann <arnd@kernel.org> wrote:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The clalculation of fair_server_period_max includes an integer overflow:
+>
+> In file included from kernel/sched/build_utility.c:72:
+> kernel/sched/debug.c:341:57: error: integer overflow in expression of type 'long int' results in '-100663296' [-Werror=overflow]
+>   341 | static unsigned long fair_server_period_max = (1 << 22) * NSEC_PER_USEC; /* ~4 seconds */
+>
+> Avoids this by using an unsigned constant to start with.
 
-https://patchwork.linuxtv.org/project/linux-media/patch/119b3ec62e6305c83ffadc7f40cbda9fc3d5be11.1714893773.git.christophe.jaillet@wanadoo.fr/
+Dan sent something similar
+https://lore.kernel.org/lkml/a936b991-e464-4bdf-94ab-08e25d364986@stanley.mountain/
 
-I'll take that one since that also constifies i2c_vbi_ram_value.
-
-Regards,
-
-	Hans
-
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>
+> Fixes: d741f297bcea ("sched/fair: Fair server interface")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/media/i2c/tvp5150.c | 2 +-
+>  kernel/sched/debug.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
-> index 64b91aa3c82a..3205ecd60281 100644
-> --- a/drivers/media/i2c/tvp5150.c
-> +++ b/drivers/media/i2c/tvp5150.c
-> @@ -1812,7 +1812,7 @@ static const struct regmap_access_table tvp5150_readable_table = {
->  	.n_yes_ranges = ARRAY_SIZE(tvp5150_readable_ranges),
+>
+> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+> index 0148bc65d39c..242e7f264a0b 100644
+> --- a/kernel/sched/debug.c
+> +++ b/kernel/sched/debug.c
+> @@ -338,7 +338,7 @@ enum dl_param {
+>         DL_PERIOD,
 >  };
->  
-> -static struct regmap_config tvp5150_config = {
-> +static const struct regmap_config tvp5150_config = {
->  	.reg_bits = 8,
->  	.val_bits = 8,
->  	.max_register = 0xff,
-> 
-
+>
+> -static unsigned long fair_server_period_max = (1 << 22) * NSEC_PER_USEC; /* ~4 seconds */
+> +static unsigned long fair_server_period_max = (1u << 22) * NSEC_PER_USEC; /* ~4 seconds */
+>  static unsigned long fair_server_period_min = (100) * NSEC_PER_USEC;     /* 100 us */
+>
+>  static ssize_t sched_fair_server_write(struct file *filp, const char __user *ubuf,
+> --
+> 2.39.2
+>
 
