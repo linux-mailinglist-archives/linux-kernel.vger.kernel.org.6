@@ -1,170 +1,154 @@
-Return-Path: <linux-kernel+bounces-278516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D66794B134
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:24:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4388C94B138
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A46A2845B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:24:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 049112846A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF480145A14;
-	Wed,  7 Aug 2024 20:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A998145A15;
+	Wed,  7 Aug 2024 20:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b="XuGTXLIR"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPTA7ShV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CA76F315
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 20:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F8913DDC0;
+	Wed,  7 Aug 2024 20:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723062254; cv=none; b=lxi3gi2N3HaHdmMfh6XEL50Jses4/6u9zpfPDsr4GRE9QYqgZFys+oJUuQiBm6ayHGOvSut2l1Gvfx/hXT2MLD4WtglAoXEavmE8q1vwIIgF+oef6NykTzVquXOP0a2YpJkcdT/ftcBys2L7qwwlkJJqvOJ7jvCpQVnRV6h22UE=
+	t=1723062273; cv=none; b=tMz7QZKTNVEsho3F64xmFMLKSlQfyuz9YlCIVlZYHnuFX2kacGt3gz8PCqZnjA273lU3820MnbQaZpRJpM76KNuaoZN3WQsz/GBhNE/bhzEXDgcTr1Fi28nimwjhTBU6J6yB4R410+JSirPJs/dzVfDngho7iWjnI0/aGK8PPtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723062254; c=relaxed/simple;
-	bh=TYgIdAzq3lDBI2YyReVQ2cAg1vqcDOqFH3Ci+NG71Ko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gPMedXVAwLC6m8+0LG387CCwgnlEeVRqI8CD2nRj6RQf4g8IxvPUfqyi8Os3j+P3b1SvLXlVJNzTab2GLtUe/hYMf1cFbBpZpEf86iKUCxExajkErHPsJxGmdWKHxmyAZSFPkOJE0OeXzH7ITwhIIAeW6JzZAndhdyRZiBOYE/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net; spf=pass smtp.mailfrom=opensrcsec.com; dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b=XuGTXLIR; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensrcsec.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52efbb55d24so426758e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 13:24:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=grsecurity.net; s=grsec; t=1723062251; x=1723667051; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=iNk4Cu9oSx8itq3xzUHxSImZEvn1IJh/znmJ08m2Xck=;
-        b=XuGTXLIRBwX8lairgqmwAeBkQakbNmE8OyCHyN5NeWpIBPJePqIk3sXgLB4m6dWULO
-         8hshUXiRjZZa4uHWdBn29fpvOG4ZiMrg1CffwgYN6+fmQ42XPR20KG3aqjYIflpIAMkE
-         +Dv/p0Ro5x2lIi1k9iM5c8o39wBPPULiCM1OrPqUczTBgf++tFq+BD9vKQHyl+ERoa0w
-         GzIY0bRVO4LjWNj3/mHs0cTgtZPsdXhEruRkIjDapvPLfLXm82hH16YIY2ev+rT2AELH
-         xiiNoEavsICqDkD62+hNgI0TqKRcTcqI/y0G7HLVa6AgSw2bBMjFjzRy8aw+9SFNHOHY
-         w1ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723062251; x=1723667051;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iNk4Cu9oSx8itq3xzUHxSImZEvn1IJh/znmJ08m2Xck=;
-        b=WfFvkoxU8PHYtxUcGzebT6oM8TndGY/g1g4/YuzhHMQbyVx4+19Vl67fZ28/Eo73y/
-         S2oPeo1UfQbbubRT3fppsFToTCXCCtZjigh/3Vf9NVPPT+lZzsyOqm+WXebB2FjFR8CY
-         undRozjnwf4ByvaZ2hMhNYeQmdkQGqwhNy2w1jv9Rl5sGRiiUHm6i5EmhyBC2y6QMzGm
-         yLc1+3MNSkMEfFWKqkcsSlk0pETr2V5obC8/JLaeEpfHDcsoxGrRbnGtGud4GoESv10Q
-         t/jNVYzndZgQ3Sczs1s30QwHElgQFSJtuH5/iDWoH1HUDgRYdD8m0A6RR/Qef87FxoqO
-         t4RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5rf0QtKdMKrs2kKOjmfx9xCBGfjUtvBIpF9xvUmTCXKNV2l3lJ8R/FnfDiFqHzllnlNR+VagqvpiuGkv3YDkUWOss7VJ+uRns40c0
-X-Gm-Message-State: AOJu0Yx53S402I3ztEOab0WDebZ3vr3qTQftMoBRy1NsfLg0vSyXnr+O
-	Yv0fGQD0vHr707K4BBeDiBmo0kxEDNToNnUwDyq4oRL3JMdToxDyIhAFtrjGafE=
-X-Google-Smtp-Source: AGHT+IECYnNuieGTAlEZH7ObyQIZpLVSySYzDhc1oG6OjCO52lqln+B+MkyK/wrWRz68pgqQqwJwRQ==
-X-Received: by 2002:a05:6512:ad4:b0:52c:8342:6699 with SMTP id 2adb3069b0e04-530bb3bc058mr17852673e87.55.1723062251039;
-        Wed, 07 Aug 2024 13:24:11 -0700 (PDT)
-Received: from ?IPV6:2003:f6:af11:9b00:1236:f9a6:4d0d:776? (p200300f6af119b001236f9a64d0d0776.dip0.t-ipconnect.de. [2003:f6:af11:9b00:1236:f9a6:4d0d:776])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8067efcf0fsm179933166b.145.2024.08.07.13.24.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 13:24:10 -0700 (PDT)
-Message-ID: <e10e465e-98d9-430f-bb71-cf4b8e046a71@grsecurity.net>
-Date: Wed, 7 Aug 2024 22:24:09 +0200
+	s=arc-20240116; t=1723062273; c=relaxed/simple;
+	bh=WhdvMlgdDlpl6/yYw+oeDJrQrSgrjDN8HpP89wMcaVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=lxX6rMPLfDHo+22X9D2klOj0LkBUN2MI8z9naB10c9a/9asxWlr8UYlxB3L72mtc3JPZf9a/gCoFGOOrlgsc6sk3oAJ2j+HH8Qc15XDJ93xxplqLcIVVMJdNJpWM3NIrV5uB+nohmhuWyCT7v727UF9XJvef5m0sGAYKJezWxXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPTA7ShV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E743AC32781;
+	Wed,  7 Aug 2024 20:24:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723062273;
+	bh=WhdvMlgdDlpl6/yYw+oeDJrQrSgrjDN8HpP89wMcaVc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=sPTA7ShVYhR8gI8KdprRkeCzVxvZunB+J3GmAVos+F3Wgqa/v1hTNCZd3GlhLfSV6
+	 LKKceC4Au/0ZT6pdBMd2h+FgGGX7zkaO5hp5tDtAaH2lYU6hwu22GgIOG03JGngml6
+	 6602kCvN01yVUa23o/x0F2SnuZ9TMl37WThbF8zwv4BeYbkENHjyNaiVHKZnWk2t06
+	 hvqbFogbMvkJlztxXmZNSdmJkFn/DRR02HYXuQRVYd9BcBgbMvP32VwYCcppD0XFtm
+	 FXEv4QvRSEp4sLDfRQ8KXrb4ODoJAPerX/jkrxcaz2Oo8N8O/0YWYrhDOw/GMqtcPY
+	 mGjyNFWR+L0hQ==
+Date: Wed, 7 Aug 2024 15:24:31 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>, Dave Airlie <airlied@redhat.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>,
+	Jocelyn Falempe <jfalempe@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: Deprecate pcim_iomap_regions() in favor of
+ pcim_iomap_region()
+Message-ID: <20240807202431.GA110503@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] tracefs: Don't overlay 'struct inode'
-To: Al Viro <viro@zeniv.linux.org.uk>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Ajay Kaher <ajay.kaher@broadcom.com>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, =?UTF-8?Q?Ilkka_Naulap=C3=A4=C3=A4?=
- <digirigawa@gmail.com>, Brad Spengler <spender@grsecurity.net>
-References: <20240807115143.45927-1-minipli@grsecurity.net>
- <20240807115143.45927-3-minipli@grsecurity.net>
- <20240807093545.4ec51d61@gandalf.local.home> <20240807134453.GZ5334@ZenIV>
-Content-Language: en-US, de-DE
-From: Mathias Krause <minipli@grsecurity.net>
-Autocrypt: addr=minipli@grsecurity.net; keydata=
- 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
- RzDVkdgPJkL/NFTKZHo5foFXNi89kA==
-In-Reply-To: <20240807134453.GZ5334@ZenIV>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807083018.8734-2-pstanner@redhat.com>
 
-On 07.08.24 15:44, Al Viro wrote:
-> On Wed, Aug 07, 2024 at 09:35:45AM -0400, Steven Rostedt wrote:
+On Wed, Aug 07, 2024 at 10:30:18AM +0200, Philipp Stanner wrote:
+> pcim_iomap_regions() is a complicated function that uses a bit mask to
+> determine the BARs the user wishes to request and ioremap. Almost all
+> users only ever set a single bit in that mask, making that mechanism
+> questionable.
 > 
->> Perhaps:
->>
->> diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
->> index f704d8348357..ab6d6c3d835d 100644
->> --- a/fs/tracefs/internal.h
->> +++ b/fs/tracefs/internal.h
->> @@ -10,12 +10,12 @@ enum {
->>  };
->>  
->>  struct tracefs_inode {
->> +	struct inode            vfs_inode;
->> +	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
->>  	union {
->> -		struct inode            vfs_inode;
->> +		struct list_head	list;
->>  		struct rcu_head		rcu;
->>  	};
->> -	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
->> -	struct list_head	list;
->>  	unsigned long           flags;
->>  	void                    *private;
->>  };
+> pcim_iomap_region() is now available as a more simple replacement.
 > 
-> 	Your current variant gives you an RCU-delayed call of
-> tracefs_free_inode(), which schedules an RCU-delayed call of
-> tracefs_free_inode_rcu().
+> Make pcim_iomap_region() a public function.
 > 
-> 	Do you really need that double RCU delay to start with?
-> Because if you do not, just do that list_del_rcu() in ->destroy_inode()
-> (which is called without an RCU delay) and have kmem_cache_free()
-> in ->free_inode() (which is called *with* RCU delay started after
-> the call of ->destroy_inode()).
+> Mark pcim_iomap_regions() as deprecated.
+> 
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 
-Jepp, sounds much better indeed and doesn't require 'struct
-tracefs_inode' to have its own 'struct rcu_head' member.
+The interesting part of this little series is in ast_drv.c, but there
+may be similar conversions for other drivers coming as well.
 
-Thanks,
-Mathias
+To avoid races during the merge window, I propose merging this via the
+PCI tree so I can ensure that any other conversions happen after
+pcim_iomap_region() becomes public.
+
+That would require an ack from Dave.  But if you'd rather take this
+yourself, Dave, here's my ack for the PCI piece:
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+> ---
+>  drivers/pci/devres.c | 8 ++++++--
+>  include/linux/pci.h  | 2 ++
+>  2 files changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
+> index 3780a9f9ec00..89ec26ea1501 100644
+> --- a/drivers/pci/devres.c
+> +++ b/drivers/pci/devres.c
+> @@ -728,7 +728,7 @@ EXPORT_SYMBOL(pcim_iounmap);
+>   * Mapping and region will get automatically released on driver detach. If
+>   * desired, release manually only with pcim_iounmap_region().
+>   */
+> -static void __iomem *pcim_iomap_region(struct pci_dev *pdev, int bar,
+> +void __iomem *pcim_iomap_region(struct pci_dev *pdev, int bar,
+>  				       const char *name)
+>  {
+>  	int ret;
+> @@ -761,6 +761,7 @@ static void __iomem *pcim_iomap_region(struct pci_dev *pdev, int bar,
+>  
+>  	return IOMEM_ERR_PTR(ret);
+>  }
+> +EXPORT_SYMBOL(pcim_iomap_region);
+>  
+>  /**
+>   * pcim_iounmap_region - Unmap and release a PCI BAR
+> @@ -783,7 +784,7 @@ static void pcim_iounmap_region(struct pci_dev *pdev, int bar)
+>  }
+>  
+>  /**
+> - * pcim_iomap_regions - Request and iomap PCI BARs
+> + * pcim_iomap_regions - Request and iomap PCI BARs (DEPRECATED)
+>   * @pdev: PCI device to map IO resources for
+>   * @mask: Mask of BARs to request and iomap
+>   * @name: Name associated with the requests
+> @@ -791,6 +792,9 @@ static void pcim_iounmap_region(struct pci_dev *pdev, int bar)
+>   * Returns: 0 on success, negative error code on failure.
+>   *
+>   * Request and iomap regions specified by @mask.
+> + *
+> + * This function is DEPRECATED. Do not use it in new code.
+> + * Use pcim_iomap_region() instead.
+>   */
+>  int pcim_iomap_regions(struct pci_dev *pdev, int mask, const char *name)
+>  {
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 4cf89a4b4cbc..fc30176d28ca 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -2292,6 +2292,8 @@ static inline void pci_fixup_device(enum pci_fixup_pass pass,
+>  void __iomem *pcim_iomap(struct pci_dev *pdev, int bar, unsigned long maxlen);
+>  void pcim_iounmap(struct pci_dev *pdev, void __iomem *addr);
+>  void __iomem * const *pcim_iomap_table(struct pci_dev *pdev);
+> +void __iomem *pcim_iomap_region(struct pci_dev *pdev, int bar,
+> +				       const char *name);
+>  int pcim_iomap_regions(struct pci_dev *pdev, int mask, const char *name);
+>  int pcim_iomap_regions_request_all(struct pci_dev *pdev, int mask,
+>  				   const char *name);
+> -- 
+> 2.45.2
+> 
 
