@@ -1,191 +1,198 @@
-Return-Path: <linux-kernel+bounces-277963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D4894A8B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:37:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C51794A8BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AE771F22801
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:37:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8016E1C22CC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719FE20012F;
-	Wed,  7 Aug 2024 13:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DD51EA0B1;
+	Wed,  7 Aug 2024 13:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vy8wRb85";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MaYrq7CE";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vy8wRb85";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MaYrq7CE"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GhdpiMko"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96A21E7A3B;
-	Wed,  7 Aug 2024 13:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209581E7A47;
+	Wed,  7 Aug 2024 13:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723037843; cv=none; b=G2URhDejZdBEhisTNVEyAACS0/muQEOZ4z1ev2TF0dO3sjmutwo3rBMEL5KSarHpm5JR8wAnP8dBIzdl+Uf6J6rrvvzxqL5DpUxyvRNmyz/7Tx+0o8nKkxNaNXXTLZPpfIR15N2P3zxmZiXT/FRueV4a8lV/MUUPopR0qYlvpfs=
+	t=1723037906; cv=none; b=hVO9NLF3tEHvqIK8ynDu/px1xi0Qz4Fv0llC0vgItKytySMoZEUxhiYajbYvKDiupC0PybnZaZs5nQ0LzjlyvQ2abAhRtubORnEf+U4kYq8GcZW1+Szjz0Y/2ugd9VXIwGEWDhh3DxXCRQxYQhagntKsXa17owr5clHtu6Xgqys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723037843; c=relaxed/simple;
-	bh=mm8pAHOnAkFqGyxp5I/86KmQPZ8qC0Sfat11ek1RkW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=akafhF/SE/Ma+0GKFhAqeJrW9v3hqLMzLVBBAX8hy65PPCYjWM3XKg+1xUOBfwrlbUq81WlI+1zDoEUt6uPn0ptIfe2qXm/Ocm7xVLKmoyca0417zzKLE4i0dAZESRd2hv2Ifh3pvGG4ml2de9vDFaf9TTeX2oGumABxb6tv+Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vy8wRb85; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MaYrq7CE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vy8wRb85; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MaYrq7CE; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 161AB1F396;
-	Wed,  7 Aug 2024 13:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723037840; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jZFoKp6ZkbMc6/3zlTwksVl8/pkkbCAfc22o+fX9lRw=;
-	b=vy8wRb85CqOEQSv5d5ynVnKxIHQQKYr9dQV48CQVaC8FrqBrP94yNeygfSNzopfdxYCOs1
-	MTYBUmaHTR1CfvTFfwBj11TGnGbSSXiEXqdWrdRGLk9Z9u77JCOMaRoVqbpP9+ZnlPyQ4Q
-	PGz9wSX/wUjPOQ85cuVTNw2yrrY0FB8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723037840;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jZFoKp6ZkbMc6/3zlTwksVl8/pkkbCAfc22o+fX9lRw=;
-	b=MaYrq7CEAnnMe74p8TpM32mknJ+mhTTOZCFNocbK0Ic1syrR0KTi81lpl/1jNF91Yg1AYH
-	NFXXViTNHDm0iTCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723037840; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jZFoKp6ZkbMc6/3zlTwksVl8/pkkbCAfc22o+fX9lRw=;
-	b=vy8wRb85CqOEQSv5d5ynVnKxIHQQKYr9dQV48CQVaC8FrqBrP94yNeygfSNzopfdxYCOs1
-	MTYBUmaHTR1CfvTFfwBj11TGnGbSSXiEXqdWrdRGLk9Z9u77JCOMaRoVqbpP9+ZnlPyQ4Q
-	PGz9wSX/wUjPOQ85cuVTNw2yrrY0FB8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723037840;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jZFoKp6ZkbMc6/3zlTwksVl8/pkkbCAfc22o+fX9lRw=;
-	b=MaYrq7CEAnnMe74p8TpM32mknJ+mhTTOZCFNocbK0Ic1syrR0KTi81lpl/1jNF91Yg1AYH
-	NFXXViTNHDm0iTCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0939C13A7D;
-	Wed,  7 Aug 2024 13:37:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id M2pXApB4s2ZeVwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 07 Aug 2024 13:37:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A619CA0762; Wed,  7 Aug 2024 15:37:19 +0200 (CEST)
-Date: Wed, 7 Aug 2024 15:37:19 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tytso@mit.edu, adilger.kernel@dilger.ca, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 03/10] ext4: don't set EXTENT_STATUS_DELAYED on
- allocated blocks
-Message-ID: <20240807133719.pjxlhfx25rfqiuul@quack3>
-References: <20240802115120.362902-1-yi.zhang@huaweicloud.com>
- <20240802115120.362902-4-yi.zhang@huaweicloud.com>
- <20240806152327.td572f7elpel4aeo@quack3>
- <685055bc-0d56-6cf3-7716-f27e448c8c38@huaweicloud.com>
+	s=arc-20240116; t=1723037906; c=relaxed/simple;
+	bh=4pyVVLxfN/8PtB80M3gqmUAWqj5LYHDPi+1QR88V/+o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tFSEh80JNazMTidV8Gv6i/w+IeNLaQxyMIrG/oMQ037O/vcx4bjttqem/GEC/Mnt8TbMqrX5hRrK+WLu/JYuuBPYO7R1DyYq0aXqBRUTCUCj3on1F5cJ1bOpZX9iZW8n1exoH550GumVZrKTvpDJ1nFFrmJywZr57zjZQqFNQnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GhdpiMko; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF2E5C4AF0F;
+	Wed,  7 Aug 2024 13:38:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723037905;
+	bh=4pyVVLxfN/8PtB80M3gqmUAWqj5LYHDPi+1QR88V/+o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GhdpiMkoBi/mrlzAXDy67cAx5zTY2LzGWr4jH1DDZh/jEyraVQnPW/lAwQNAdlkeV
+	 iQV6OZO+iI7Pp45QxOqtGBHK0Mn945DaAkLZeRGTHK1AcsfJVK+wpfVqqwR8NsdoYO
+	 0kfvRDgyT1dO+L5MgBYXztWSQGcxcNHqTNLtDKB/okXomT0dzqVsDvyOW+U0wfDiu2
+	 E780rqJQm7j+9/jq81IBVbCLDqg50S4SE5ngT9e8QRGYPKVhrlMpKvIN+/23z5z7P6
+	 xWi0IwohCEb4ctppMoJkBuzhjgMeoOeAQqb/6iwn8Gu8x/PIWpGmuwv5xC7y4ila90
+	 xHf2nPEz7OdSg==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f189a2a841so17991011fa.3;
+        Wed, 07 Aug 2024 06:38:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXmR7RS2jn64M5EK7+oWus6i8ZZKtADyOCRyvrZZZtFUJzEIxQyyL2g4vYbV9JB9/7nrhh1tAheWumC48kniVBKm1e0gCfzcZWYSMugTjSjH5L+lUUebffDisrG+08r4DzuKGGifnmalLNs
+X-Gm-Message-State: AOJu0YzwObJ8GqYOJio6t7e1hPEgDt1zJ7pi+vcanaTw7STOi4fMrx2P
+	egAsnlZLWQ2eboEq8zES4lsiRTLyxyQeZUuSSTLPtxJxw7yZ0o3nvmz0qNxlY8SN9Rmic746Qiz
+	FonR9m2zEn25B2MnX1AUK2nGMYHc=
+X-Google-Smtp-Source: AGHT+IFfRS8iHkHEnjdTgVCLxy/62DBz547RyyKG6hV9bq+sI6QhIraGhAmZqssi8MWywW9zEWzf2phjvBB1QDLcx9E=
+X-Received: by 2002:a05:6512:3b81:b0:52c:d8e9:5d8b with SMTP id
+ 2adb3069b0e04-530bb3b6dcfmr10401335e87.25.1723037904313; Wed, 07 Aug 2024
+ 06:38:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <685055bc-0d56-6cf3-7716-f27e448c8c38@huaweicloud.com>
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_LAST(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,gmail.com,huawei.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20240807022718.24838-2-jose.fernandez@linux.dev>
+In-Reply-To: <20240807022718.24838-2-jose.fernandez@linux.dev>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 7 Aug 2024 22:37:47 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS4t_naRxdxFTaj9zrdf2Hjjoaq+cBO4Gx7=PhCJk9+4w@mail.gmail.com>
+Message-ID: <CAK7LNAS4t_naRxdxFTaj9zrdf2Hjjoaq+cBO4Gx7=PhCJk9+4w@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: control extra pacman packages with PACMAN_EXTRAPACKAGES
+To: Jose Fernandez <jose.fernandez@linux.dev>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Christian Heusel <christian@heusel.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 07-08-24 20:18:18, Zhang Yi wrote:
-> On 2024/8/6 23:23, Jan Kara wrote:
-> > On Fri 02-08-24 19:51:13, Zhang Yi wrote:
-> >> From: Zhang Yi <yi.zhang@huawei.com>
-> >>
-> >> Since we always set EXT4_GET_BLOCKS_DELALLOC_RESERVE when allocating
-> >> delalloc blocks, there is no need to keep delayed flag on the unwritten
-> >> extent status entry, so just drop it after allocation.
-> >>
-> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> > 
-> > Let me improve the changelog because I was confused for some time before I
-> > understood:
-> > 
-> > Currently, we release delayed allocation reservation when removing delayed
-> > extent from extent status tree (which also happens when overwriting one
-> > extent with another one). When we allocated unwritten extent under
-> > some delayed allocated extent, we don't need the reservation anymore and
-> > hence we don't need to preserve the EXT4_MAP_DELAYED status bit. Inserting
-> > the new extent into extent status tree will properly release the
-> > reservation.
-> > 
-> 
-> Thanks for your review and change log improvement. My original idea was very
-> simple, after patch 2, we always set EXT4_GET_BLOCKS_DELALLOC_RESERVE when
-> allocating blocks for delalloc extent, these two conditions in the 'if'
-> branch can never be true at the same time, so they become dead code and I
-> dropped them.
-> 
-> 	if (!(flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE) &&
-> 	    ext4_es_scan_range(inode, &ext4_es_is_delayed, ...)
-> 
-> But after thinking your change log, I agree with you that we have already
-> properly update the reservation by searching delayed blocks through
-> ext4_es_delayed_clu() in ext4_ext_map_blocks() when we allocated unwritten
-> extent under some delayed allocated extent even it's not from the write
-> back path, so I think we can also drop them even without patch 2. But just
-> one point, I think the last last sentence isn't exactly true before path 6,
-> should it be "Allocating the new extent blocks will properly release the
-> reservation." now ?
+On Wed, Aug 7, 2024 at 11:28=E2=80=AFAM Jose Fernandez <jose.fernandez@linu=
+x.dev> wrote:
+>
+> Introduce a new variable, PACMAN_EXTRAPACKAGES, in the Makefile.package
+> to control the creation of additional packages by the pacman-pkg target.
+>
+> The headers and api-headers packages will be included by default if
+> PACMAN_EXTRAPACKAGES is not set. This changes the previous behavior
+> where api-headers was always included, and headers was conditionally
+> included if CONFIG_MODULES=3Dy. Now, this decision is delegated to the
+> user.
+>
+> To disable extra packages, set PACMAN_EXTRAPACKAGES to an empty value:
+>
+> make pacman-pkg PACMAN_EXTRAPACKAGES=3D
+>
+> or
+>
+> make pacman-pkg PACMAN_EXTRAPACKAGES=3D""
+>
+> Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
+> Reviewed-by: Peter Jung <ptr1337@cachyos.org>
+> ---
+> v1 -> v2: Build all extra packages by default. Remove unnecessary lines.
 
-Now you've got me confused again ;) Why I wrote the changelog that way is
-because ext4_es_remove_extent() is calling ext4_da_release_space(). But now
-I've realized I've confused ext4_es_remove_extent() with
-__es_remove_extent() which is what gets called when inserting another
-extent. So I was wrong and indeed your version of the last sentense is
-correct. Thanks for catching this!
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I see only the main package built by default.
+
+
+
+
+>
+> In a previous patch, there was concern that adding a new debug package
+> would increase the package time. To address this concern and provide
+> more flexibility, this change has been added to allow users to decide
+> which extra packages to include before introducing an optional debug
+> package [1].
+>
+> [1] https://lore.kernel.org/lkml/20240801192008.GA3923315@thelio-3990X/T/
+>
+>  scripts/Makefile.package |  2 ++
+>  scripts/package/PKGBUILD | 11 +++++++----
+>  2 files changed, 9 insertions(+), 4 deletions(-)
+>
+> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> index 4a80584ec771..ccdf8ba41f0b 100644
+> --- a/scripts/Makefile.package
+> +++ b/scripts/Makefile.package
+> @@ -144,6 +144,8 @@ snap-pkg:
+>  # pacman-pkg
+>  # ----------------------------------------------------------------------=
+-----
+>
+> +PACMAN_EXTRAPACKAGES ?=3D headers api-headers
+
+Meaningless line.
+
+
+Since 'export' is missing,
+this default line is not propagated to PKGBUILD.
+
+
+Nathan also mentioned 'export' would be needed if you wanted to
+describe this here.
+
+https://lore.kernel.org/linux-kbuild/20240806025853.GB1570554@thelio-3990X/
+
+
+
+
+> +
+>  PHONY +=3D pacman-pkg
+>  pacman-pkg:
+>         @ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
+> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> index 663ce300dd06..8de869f9b1d4 100644
+> --- a/scripts/package/PKGBUILD
+> +++ b/scripts/package/PKGBUILD
+> @@ -3,10 +3,13 @@
+>  # Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+>
+>  pkgbase=3D${PACMAN_PKGBASE:-linux-upstream}
+> -pkgname=3D("${pkgbase}" "${pkgbase}-api-headers")
+> -if grep -q CONFIG_MODULES=3Dy include/config/auto.conf; then
+> -       pkgname+=3D("${pkgbase}-headers")
+> -fi
+> +pkgname=3D("${pkgbase}")
+> +
+> +_extrapackages=3D${PACMAN_EXTRAPACKAGES:-}
+
+
+Instead of adding inconsistent defaults in two places,
+I would write like this:
+
+_extrapackages=3D${PACMAN_EXTRAPACKAGES-headers api-headers}
+
+
+
+
+Lastly, I will never accept new error messages
+with CONFIG_MODULES=3Dn.
+
+
+
+
+
+
+
+> +for pkg in $_extrapackages; do
+> +       pkgname+=3D("${pkgbase}-${pkg}")
+> +done
+> +
+>  pkgver=3D"${KERNELRELEASE//-/_}"
+>  # The PKGBUILD is evaluated multiple times.
+>  # Running scripts/build-version from here would introduce inconsistencie=
+s.
+> --
+> 2.46.0
+>
+
+
+--
+Best Regards
+Masahiro Yamada
 
