@@ -1,198 +1,223 @@
-Return-Path: <linux-kernel+bounces-278348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFEF894AF00
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:35:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2E194AF06
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A27851C21AB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:35:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BC93B254A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B634B13D62E;
-	Wed,  7 Aug 2024 17:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A8413D63D;
+	Wed,  7 Aug 2024 17:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQgpgXOb"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y3g4WFyC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xgxkXLTZ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HlkjxqrP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iVhA26L6"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3634913BACE;
-	Wed,  7 Aug 2024 17:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57AD8286A;
+	Wed,  7 Aug 2024 17:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723052099; cv=none; b=NTbw1Afoa/TXHSf51BHO9N5NJcwat3NnLk95fbz2F60GE10UUAT1uj866JpsUvOnyFVr+4JFyXMIO4+jxwVKU0Np/l+aVziXztOHeJWWERXosjxzx0/2wAfAFyovU7zW/5W8aG6kdIsG96RjwCggQrNt+AYzm8noNb7+qIBw2Cc=
+	t=1723052474; cv=none; b=bwBWOkuhbBa3Aj4Xp17isqyNGYxnrWMozG8MmsbapoDUh94ZyzLMUYq2sdDsWHoKEOL3Xwb1IMplgdCDh/gQEl4tTJHAIy08BgmY7OIyrdB7Inb+ng9BRBbBIaH+sVU/J3vInSHnZv+7iKYp0cfP1hS9wIKaYjYeOCxAFfNT+rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723052099; c=relaxed/simple;
-	bh=ltPpByyDG4lbIVSNFqUspG0YQ+VcetI5FnIT2s9392Q=;
+	s=arc-20240116; t=1723052474; c=relaxed/simple;
+	bh=Rq4GKEjVRYzNeNaspEUvwi/V1zw0jvP8g0nu4QQVLh8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i6SRXzENBlqvzu0tK5o581VTBZO2+z+9dcm6r6YtdLQLyld8pUI9xfeqvsKSQjI4ur9+3TZs+81xt3WiRKuwJjOh0G3iLRY6d3u+ljKS0sI24IrzYCw0m0DjV0asnD6p6a9wjQznltbZlqUBeyVF3z4Evx3ws1YBcRXK9n6UHhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQgpgXOb; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-45019dccc3aso753381cf.1;
-        Wed, 07 Aug 2024 10:34:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723052097; x=1723656897; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=l/Bi5E2ofh7mXD0UatHWFQLqSTihcAGldUhDFV3L1+o=;
-        b=YQgpgXObJCYkD8F+Yt+PZMp925Swwuke+tCcIjKVpXy21/5eaGOoOtrI8Z2FDEK2xn
-         eiw5XfuosGT5IAKjNreDS//L8RGyhMNzhFxJis/AQs2vyxebp6ZhiRqTNCYh4f4ucUG+
-         JHb3hOSGkuIENKiRnENGQw6MyJbM2ly6ImB/YVfOgyHiUVMTvVkmjwGdhBeJ+IRcmkos
-         jbAc2X/fgEWX20VZZeCDwLrYCZqFiX0N279AnL9zr3w2iqWyYa82ti8P1+NHNLoOaH4e
-         eLH3PX/28ammiXIfXIdNy3Z8qpPvD+dwLN+sUmmd4p0J4P/V8tmz7/L2ZsRUK95jV3F0
-         3GRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723052097; x=1723656897;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l/Bi5E2ofh7mXD0UatHWFQLqSTihcAGldUhDFV3L1+o=;
-        b=BLy/Yx6GJu9MXrfVhJ9w5U1gJtN77j6rWw4Wb2H5/fZEqYBJ4PUahduiJqkyuMP1ZK
-         /i7mofOoP9QoV0JbLIQjyrLO7fRDwDyRLGFGtlBSanyXr0FtHlEr3G/dkrjCOJrZkuFt
-         ylloWoFJyr6gcoyxpViWRo/JqLD8B5am9wQpMwFhFOMEVMBdgBGWDhHgRC+EcfTOS2Lb
-         Sc0cF5X5XDaYWU8D/X+xGZDt99IbcvJI0VS/x3RmtBiM/I2DjhWEjnK6vq8tkvQu1YZv
-         wYsEZyRHiMFB1eyTyI+X416tnRhF4WPpouJxmNAjpg6tuc9qJWTKG+DmMgKL74AWpUrp
-         wbBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrds0h1o6kfYG4Eejz/3JvH8GMv+qo2am59hXS0duoWRLOoLIvKSlAKUFR+9mYRwboWwFWJqVhm3Qx7w5c5q3hJoM7pMxs2hAZTcrB
-X-Gm-Message-State: AOJu0YwmnWP7g4VGj6cVLWKYsftpy8du0t2wlhAlYv8seMxrsNGbnjM+
-	pkN3brrbhc3Hhb8EAf54e4PU6EA9rDKI+wVaGBpfL22kDZ5UOd7S
-X-Google-Smtp-Source: AGHT+IG4REbO+g++rxr1kDFTByvVVNIX1KSXzHakhJaQK3kI6Bh+2X//hZVZ/0h11ao+NGu9CwDUPw==
-X-Received: by 2002:a05:622a:13c6:b0:447:f259:2956 with SMTP id d75a77b69052e-451892c2f83mr217341841cf.59.1723052096895;
-        Wed, 07 Aug 2024 10:34:56 -0700 (PDT)
-Received: from nandaa-linux-dev.lp3xo4ddmz1ulowbk5mwlke0vc.bx.internal.cloudapp.net ([135.237.123.86])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-451c87da6d9sm6448661cf.78.2024.08.07.10.34.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 10:34:56 -0700 (PDT)
-Date: Wed, 7 Aug 2024 17:34:55 +0000
-From: Anthony Nandaa <profnandaa@gmail.com>
-To: Linux regressions mailing list <regressions@lists.linux.dev>,
-	smfrench@gmail.com, Paulo Alcantara <pc@manguebit.com>
-Cc: linux-cifs@vger.kernel.org, gkorobeynikov@astralinux.ru,
-	linux-kernel@vger.kernel.org, annandaa@linux.microsoft.com
-Subject: Re: [regression] smb: client: - Failure to mount DFS namespaces
- without ASCII symbols
-Message-ID: <ZrOwPx+jhEM+sJFM@nandaa-linux-dev.lp3xo4ddmz1ulowbk5mwlke0vc.bx.internal.cloudapp.net>
-References: <c0967665-343d-4ca9-90a0-a072159c1056@leemhuis.info>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OmXRW/epPBAIh4zi90WDgFh/QbmYSuXUU1/aHeHvUoLgNU4cHjRkxtsQ6CoUi8/UBu6Ta5euRGzNfNBKE3cu7cIpuTlIk1IlfJdEMfCTR5UbBHvMWapMnldieAVRCFMd9ZuyuyT59snXi1wLzW/QJOLUj8NBDx8xe9bnC4upl5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y3g4WFyC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xgxkXLTZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HlkjxqrP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iVhA26L6; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E13841FB95;
+	Wed,  7 Aug 2024 17:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723052470; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s/GtgqVmUziMUsWkZ8W64gEKilUHrvGZFRWvP/oTBUM=;
+	b=Y3g4WFyCJxbW0zWQHw5nHgEF6tD4w1cThYmE8jdkFnwpi2c3iLZt2mb71sFjIObr6Zqku4
+	ia+z8Y4wkYeV/opb6PnxtkfcunWo7cqv9tg6PbxnNKTLI56NYFiiMKnA1osnW6faHY21az
+	e9J0x7B4d13C7giQVLZCb13GH/VJKjM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723052470;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s/GtgqVmUziMUsWkZ8W64gEKilUHrvGZFRWvP/oTBUM=;
+	b=xgxkXLTZ35jeJE4KMkuDvfo77W2P0ghTr9GAioVu49P2HqoMf6I3WQjHebSGHn4oxDa0KF
+	QquWCb5Sw37ikQAg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=HlkjxqrP;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=iVhA26L6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723052468; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s/GtgqVmUziMUsWkZ8W64gEKilUHrvGZFRWvP/oTBUM=;
+	b=HlkjxqrPYUYLApG6KaK/a+oqpE5Kg7ycpR8XuaDCDfW2jesvhzBy+b99D53z5WLJ1oWXU4
+	rFo1gN0ssEJUtRTgHVV+Q3VFXI5oJoFbE9XCSBxKMG1s7JaaVDmRAUHe8QWeVKvOQbuDwV
+	vbccHYCC7BN3jKjJcFVFJHMCk6uL7Hw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723052468;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s/GtgqVmUziMUsWkZ8W64gEKilUHrvGZFRWvP/oTBUM=;
+	b=iVhA26L6dnPTetdpirt2k1YYRn0z5K9EJsqxzWpGnUpVFHbAwNyG5pOxGd9Ndbdsy5sboe
+	7vBGfVNYUqM8dBCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D054813A7D;
+	Wed,  7 Aug 2024 17:41:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TkibMrSxs2Y+JgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 07 Aug 2024 17:41:08 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 7117AA0762; Wed,  7 Aug 2024 19:41:08 +0200 (CEST)
+Date: Wed, 7 Aug 2024 19:41:08 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 06/10] ext4: update delalloc data reserve spcae in
+ ext4_es_insert_extent()
+Message-ID: <20240807174108.l2bbbhlnpznztp34@quack3>
+References: <20240802115120.362902-1-yi.zhang@huaweicloud.com>
+ <20240802115120.362902-7-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c0967665-343d-4ca9-90a0-a072159c1056@leemhuis.info>
+In-Reply-To: <20240802115120.362902-7-yi.zhang@huaweicloud.com>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [0.49 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim]
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: E13841FB95
+X-Spam-Level: 
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: 0.49
 
-On Fri, Aug 02, 2024 at 11:44:18AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> Hi, Thorsten here, the Linux kernel's regression tracker.
+On Fri 02-08-24 19:51:16, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> Paulo, I noticed a report about a regression in bugzilla.kernel.org that
-> appears to be caused by this change of yours:
+> Now that we update data reserved space for delalloc after allocating
+> new blocks in ext4_{ind|ext}_map_blocks(), and if bigalloc feature is
+> enabled, we also need to query the extents_status tree to calculate the
+> exact reserved clusters. This is complicated now and it appears that
+> it's better to do this job in ext4_es_insert_extent(), because
+> __es_remove_extent() have already count delalloc blocks when removing
+> delalloc extents and __revise_pending() return new adding pending count,
+> we could update the reserved blocks easily in ext4_es_insert_extent().
 > 
-> 3ae872de410751 ("smb: client: fix shared DFS root mounts with different
-> prefixes") [v6.5-rc1]
+> Thers is one special case needs to concern is the quota claiming, when
+> bigalloc is enabled, if the delayed cluster allocation has been raced
+> by another no-delayed allocation(e.g. from fallocate) which doesn't
+> cover the delayed blocks:
 > 
-> As many (most?) kernel developers don't keep an eye on the bug tracker,
-> I decided to write this mail. To quote from
-> https://bugzilla.kernel.org/show_bug.cgi?id=219083 :
+>   |<       one cluster       >|
+>   hhhhhhhhhhhhhhhhhhhdddddddddd
+>   ^            ^
+>   |<          >| < fallocate this range, don't claim quota again
 > 
-> >  Gleb Korobeynikov 2024-07-22 10:59:46 UTC
-> > 
-> > Windows version of SMB host: Windows Server 2022 Standard x64
-> > Kernel: 6.3.13(upstream)
-~~~~~~~~~~~~^~~~ Testing with same WS2022 host with 6.11.0-rc1+
+> We can't claim quota as usual because the fallocate has already claimed
+> it in ext4_mb_new_blocks(), we could notice this case through the
+> removed delalloc blocks count.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+...
+> @@ -926,9 +928,27 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
+>  			__free_pending(pr);
+>  			pr = NULL;
+>  		}
+> +		pending = err3;
+>  	}
+>  error:
+>  	write_unlock(&EXT4_I(inode)->i_es_lock);
+> +	/*
+> +	 * Reduce the reserved cluster count to reflect successful deferred
+> +	 * allocation of delayed allocated clusters or direct allocation of
+> +	 * clusters discovered to be delayed allocated.  Once allocated, a
+> +	 * cluster is not included in the reserved count.
+> +	 *
+> +	 * When bigalloc is enabled, allocating non-delayed allocated blocks
+> +	 * which belong to delayed allocated clusters (from fallocate, filemap,
+> +	 * DIO, or clusters allocated when delalloc has been disabled by
+> +	 * ext4_nonda_switch()). Quota has been claimed by ext4_mb_new_blocks(),
+> +	 * so release the quota reservations made for any previously delayed
+> +	 * allocated clusters.
+> +	 */
+> +	resv_used = rinfo.delonly_cluster + pending;
+> +	if (resv_used)
+> +		ext4_da_update_reserve_space(inode, resv_used,
+> +					     rinfo.delonly_block);
 
-> > CONFIG_CIFS_DFS_UPCALL
-> > 
-> > In the function cifs_inval_name_dfs_link_error(), a check was added for tcon->origin_fullpath (3ae872de410751fe5e629e04da491a632d95201c). I believe it's unnecessary because when mounting a dfs name without ASCII characters, we always fail at this check and exit the function, leading to dfs namespaces not being mounted
-> > 
-> > Steps to reproduce:
-> > 
-> > 1. At Windows, create DFS namespace with name containing non-ASCII symbols (for example дфс)
-> > 
-> > 2. mount -t cifs \\\\<smb_server>\\дфс  /tmp/dfs -o domain=...,user=...,password=...
-> > 
-> > result:
-> > mount error(2): No such file or directory
-> > Refer to the mount.cifs(8) manual page (e.g. man mount.cifs) and kernel log messages (dmesg)
-> > 
-I couldn't repro this issue.
-I rebuilt the cifs modules both on master and in the recent 
-for-next@cecb49e3594c2a69163865c214b71fff26d5761d sources:
+I'm not sure I understand here. We are inserting extent into extent status
+tree. We are replacing resv_used clusters worth of space with delayed
+allocation reservation with normally allocated clusters so we need to
+release the reservation (mballoc already reduced freeclusters counter).
+That I understand. In normal case we should also claim quota because we are
+converting from reserved into allocated state. Now if we allocated blocks
+under this range (e.g. from fallocate()) without
+EXT4_GET_BLOCKS_DELALLOC_RESERVE, we need to release quota reservation here
+instead of claiming it. But I fail to see how rinfo.delonly_block > 0 is
+related to whether EXT4_GET_BLOCKS_DELALLOC_RESERVE was set when allocating
+blocks for this extent or not.
 
-	$ sudo mount -t cifs //WIN-31GSG2M9E6N/дфс /mnt/utf_repro -o `
-		username=administrator,password=xxx
-	$ ls -l /mnt/utf_repro
-	total 0
-	-rwxr-xr-x 1 root root 0 Aug  7 15:54 hello_cifs.txt
-	drwxr-xr-x 2 root root 0 Aug  7 15:54 test_utf8_дфс
+At this point it would seem much clearer if we passed flag to
+ext4_es_insert_extent() whether EXT4_GET_BLOCKS_DELALLOC_RESERVE was set
+when allocating extent or not instead of computing delonly_block and
+somehow infering from that. But maybe I miss some obvious reason why that
+is correct.
 
-	// nothing outstanding in dmesg
-	[430885.246220] CIFS: Attempting to mount //WIN-31GSG2M9E6N/дфс
-
-Is there anything I might be missing?
-
-> > CIFS debug log:
-> > [Mon Jul 22 11:00:24 2024] CIFS: Status code returned 0xc0000033 STATUS_OBJECT_NAME_INVALID
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2maperror.c: Mapping SMB2 status code 0xc0000033 to POSIX err -2
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/dfs_cache.c: dfs_cache_noreq_update_tgthint: path: \test.local\дфс
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_smb_ses: ses_count=2
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_smb_ses: ses ipc: \\test.local\IPC$
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: cifs_put_tcon: tc_count=1
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: in cifs_put_tcon as Xid: 17 with uid: 0
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2pdu.c: Tree Disconnect
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/fscache.c: cifs_fscache_release_super_cookie: (0x0000000000000000)
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_smb_ses: ses_count=1
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_smb_ses: ses ipc: \\DC.test.local\IPC$
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: in __cifs_put_smb_ses as Xid: 18 with uid: 0
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2pdu.c: disconnect session 00000000360c6881
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_smb_ses: ses_count=1
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_smb_ses: ses ipc: \\test.local\IPC$
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: in __cifs_put_smb_ses as Xid: 19 with uid: 0
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2pdu.c: disconnect session 00000000db1ddbb6
-> > [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: leaving cifs_mount_put_conns (xid = 13) rc = 0
-> > [Mon Jul 22 11:00:24 2024] CIFS: VFS: cifs_mount failed w/return code = -2
-> 
-> And
-> 
-> >  Gleb Korobeynikov 2024-07-30 11:03:01 UTC
-> > 
-> > (In reply to Gleb Korobeynikov from comment #5)
-> >> (In reply to The Linux kernel's regression tracker (Thorsten Leemhuis) from
-> >> comment #4)
-> >> > Please check if 6.10 (or 6.11-rc1 once it's out on Monday) is still
-> >> affected
-> >> 
-> >> Alright, I will definitely check
-> > 
-> > Checked on 6.11-rc1. The reproduction issue happens identically.
-> 
-> See the ticket for more details.
-> 
-> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
-> --
-> Everything you wanna know about Linux kernel regression tracking:
-> https://linux-regtracking.leemhuis.info/about/#tldr
-> If I did something stupid, please tell me, as explained on that page.
-> 
-> [1] because bugzilla.kernel.org tells users upon registration their
-> "email address will never be displayed to logged out users"
-> 
-> P.S.: let me use this mail to also add the report to the list of tracked
-> regressions to ensure it's doesn't fall through the cracks:
-> 
-> #regzbot introduced: 3ae872de410751fe5e629e04da491a632d95201c
-> #regzbot title: smb: client: failure to mount DFS namespaces without
-> ASCII symbols
-> #regzbot from: Gleb Korobeynikov <gkorobeynikov@astralinux.ru>
-> #regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219083
-> #regzbot ignore-activity
->
-Thanks,
-Nandaa
- 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
