@@ -1,137 +1,171 @@
-Return-Path: <linux-kernel+bounces-277619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E86B94A3DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:13:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A4194A3E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:13:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72181F22672
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:13:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 337E01C20BE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22B31CCB26;
-	Wed,  7 Aug 2024 09:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D901CB317;
+	Wed,  7 Aug 2024 09:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="F0ws4b/L"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pYmgXlIz"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D761CB327;
-	Wed,  7 Aug 2024 09:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D92942AAA
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 09:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723021945; cv=none; b=HsH6n/mL7u6p62QSydzS+yMgcCXRa4fZA6XGzXGcQkQlSh0cXx4BHd2siX5AZmeg1Wjlr6/C+S9F28iBu0/dD7TmimWzak3z/TAlOGirMhfFf4GH/rERClDGJtD4EuxDK7lK0AbpNHf8Wr8x4oZyrGwOFvuiqSbaqPJ3rxWHVvI=
+	t=1723021978; cv=none; b=N54CTsyMltfGx3LnnUju3GTf1+p9Wl/NvCjfZbzh7x1SMHIdizAvd8sFZIMQLVkj/yPSZ4C+ie0GbEpibmTDlfiI2fReqDBSc3BeA4Bv127QPttQUuysKO1nFsInV0qCGOtYWhUlNmy/WDAwCgn6kyVSjjihB/i3AQ1IDQZy8qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723021945; c=relaxed/simple;
-	bh=CJNm1GubiAX2fLXyxwYfBDtfMO8OYXU9LaZ1zSUcUFA=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=H0A5/f2flD6/uHL7Bm+nAo7es/VuwUDNiVXwbnYOIyxCG51ux7dpTlvJSQby+pjQ5JyXPlcfYOzkvOidwVZV5/AI3oTpC805uRa7ZQi5l5oZrLmV6SkqEH69oAzxSQlHQK7/kvULIV57pXnhqfz8+Z7ANed5wkHS0KlqkcozJO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=F0ws4b/L; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	Reply-To:Subject:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To
-	:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=NC29QY+AFTQHnrlEBxtLkRVzp5/68wW+9kEMyNjfTz4=; t=1723021943;
-	x=1723453943; b=F0ws4b/LSn2FUme5Hu43gUKuEITHUWEm0xJsUjhC44enxh6TF2vBarh2KkNps
-	CvmihNPPzSva0I/iu0VJLVS0oOXIUwEGNOq10A+DDNyQwLw0+I+auYPl/PenEzFNe36LiF+VHmdfe
-	vf3LPWZI/HIq5/jeXe7sh4RcX7ParCs+I1jTMps911Xvr0jUnQhaiyVxR2MsHsePfkEpz2SzQr6+/
-	pHaKZpo7ldm3yRMetJLkinyh8rMMjnN0xg5oA0EU7e6fPzohABLEk2mstI1Ou+Ivvk/1B77RPcxi/
-	bYEaEEcHplDSH1FCvvUOsfomrJtwLGXLYmFo4VrWPBPiH43nOw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sbciS-0001H5-Ab; Wed, 07 Aug 2024 11:12:20 +0200
-Message-ID: <7a43d26e-95eb-49d4-bc02-434c239909ff@leemhuis.info>
-Date: Wed, 7 Aug 2024 11:12:19 +0200
+	s=arc-20240116; t=1723021978; c=relaxed/simple;
+	bh=EmrHe7JMNgEBRN8Yu0a1cUXBhUbIcysYmrm5Bl1aLY0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tjUVejVXKziQuOu5wKUF2txKykoEknANWIOwa1IxG+5se7N4AQF4/SQBc/DrhHUi2Sow1uVVfNyDBHdWlTPOpFxj4DhYiPUyyVBXrriQcgzELKGMBWCt+pmkkNGdcebEJVXvFRXn2pPzOlMoiN6BRUzPNWtJYXWygcgqWf3+Qok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pYmgXlIz; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f15e48f35bso15186251fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 02:12:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723021973; x=1723626773; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AXJcefWBGwCjqo+n8nUM/WZjz4KUu6Dr7gpS34TWtOM=;
+        b=pYmgXlIzAxLDqM6nWB6+uY1+TV2MZNzPsYSFVeni78UgaY6itI/I38XHnKubmpd+/e
+         6+nTaQbKy1dkBXGHne8tkYu/2smaKHVMgETwb1qJBw0lOZSn7y2Ii4xSqU3kN6h5RJEk
+         kDO5tb6uR4RxvBizyANB48Xhz950CiJLIkZMlRTRuYYUDkxrgmlrdfhR6WynjcBaPXzP
+         IAuchnJJHrQByHf/Z5PKuJZRObkwbIywMnZ9XL6uX/1+mXsT6rHg8dwDz5Ne+aDXSusW
+         ovULKq91AhKD+rHXb+O50ZVtPDFtZ0o2I+A8jR6EoTmYYuqM4xTnWX+muVIiZLBZnsCt
+         lduw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723021973; x=1723626773;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AXJcefWBGwCjqo+n8nUM/WZjz4KUu6Dr7gpS34TWtOM=;
+        b=wik8aRdcZvfhgx0urbTLDozD24RY5ksMha823OrlBHg/9VJLE0IDC2rDare8kgnl1R
+         AEnIpQAnvuw77vY7z4nRqmP3wMhrRhwl+8dsZRAeKd2XIaGBLyvsOCgOfr+LxgYTJdeR
+         /aQN30ykwo18HVp9r3ngBEaCg8FEPl8srpsemBWi9G70aVmU1f1bhCM0oePttOYOqV8R
+         6kO/jvHTOBh4qC5whIUXb5nubBwtFh8LDG/0DCOLnsvGP+Ojvgk7FQx+06V7o+NerGMj
+         ue90FTetCxjD8Fb9PObJ3A1gArcDofLwHwr9AWPhrhc/Z2RMZt9P4qioo0rUhV6gfJTh
+         JMAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwCI9twQoiQw2SGAakaheEOLFBK9YCHv0EiU6FUzMOkQstiM61oedxWUFm2EaDK27OcfLGCbGtdQ6PzWuXYChMpx+wCxDNpWRgmX17
+X-Gm-Message-State: AOJu0Yxayt3IvTBHMFzIOBsJPHZOtWwR9hdpw6y1d38uuQS+YbRuy+qe
+	4MXd5wgyGUd9oxV9PTfotgq6v8IT87OnWpLa7EcT0nNb7RKofcXWHKUuyz4MPqw=
+X-Google-Smtp-Source: AGHT+IFQOHCltwKQCBXQPLStP2Dg6b510B5NipglQzmC2gXIAhpoliwnnvlnRgikWAIyVrNs5a43UQ==
+X-Received: by 2002:a2e:91d0:0:b0:2ef:1c0f:d490 with SMTP id 38308e7fff4ca-2f15ab0c2a1mr126633751fa.39.1723021973213;
+        Wed, 07 Aug 2024 02:12:53 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:90f1:3c4c:261c:b0f5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429059cbfaesm17923005e9.42.2024.08.07.02.12.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 02:12:52 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
+  Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
+ <airlied@gmail.com>,  Daniel Vetter <daniel@ffwll.ch>,  Kevin Hilman
+ <khilman@baylibre.com>,  dri-devel@lists.freedesktop.org,
+  linux-amlogic@lists.infradead.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/9] drm/meson: dw-hdmi: use matched data
+In-Reply-To: <CAFBinCAaZumGU6dOq0RrHRTQV=MejTJ=RW0P_6tQFOG9vybY6g@mail.gmail.com>
+	(Martin Blumenstingl's message of "Tue, 6 Aug 2024 23:03:25 +0200")
+References: <20240730125023.710237-1-jbrunet@baylibre.com>
+	<20240730125023.710237-8-jbrunet@baylibre.com>
+	<CAFBinCAaZumGU6dOq0RrHRTQV=MejTJ=RW0P_6tQFOG9vybY6g@mail.gmail.com>
+Date: Wed, 07 Aug 2024 11:12:52 +0200
+Message-ID: <1j5xsczoff.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-To: Mukesh Sisodiya <mukesh.sisodiya@intel.com>
-Cc: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
- Johannes Berg <johannes.berg@intel.com>,
- "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>
-Subject: [regression] Significant WiFi Speed Reduction with Kernel Versions >
- 6.8.12 on Intel Wi-Fi 6 AX203
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1723021943;9525817b;
-X-HE-SMSGID: 1sbciS-0001H5-Ab
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Thorsten here, the Linux kernel's regression tracker.
+On Tue 06 Aug 2024 at 23:03, Martin Blumenstingl <martin.blumenstingl@googl=
+email.com> wrote:
 
-Mukesh Sisodiya, I noticed a report about a regression in
-bugzilla.kernel.org that appears to be caused by a change of yours:
+> Hi Jerome,
+>
+> On Tue, Jul 30, 2024 at 2:50=E2=80=AFPM Jerome Brunet <jbrunet@baylibre.c=
+om> wrote:
+> [...]
+>> +       }, {
+>> +               .limit =3D 297000,
+>> +               .regs =3D gxbb_3g_regs,
+>> +               .reg_num =3D ARRAY_SIZE(gxbb_3g_regs)
+> Just as a side-note: this looked odd when reading for the first time
+> as I thought that it's a typo (and it should be gxbb_2g97_regs - but
+> that name is not used).
 
-099a47dbe71b75 ("wifi: iwlwifi: Add support for new 802.11be device")
-[v6.9-rc1]
+I know it looks odd but there is a (perhaps silly) reason for it.
 
-As many (most?) kernel developers don't keep an eye on the bug tracker,
-I decided to write this mail. To quote from
-https://bugzilla.kernel.org/show_bug.cgi?id=219114 :
+The names are derived from PHY modes used in the Amlogic vendor tree.
+Those are magic pokes and we don't really know anything about it. The
+vendor tree often update and mainline does not always follow. I know
+that we are not 100% aligned right now. No one knows what branch is the
+reference to follow anyway.
 
-> I am experiencing a significant reduction in WiFi download speeds when
-> using any Linux kernel version greater than 6.8.12. The issue does not
-> occur with kernel versions 6.8.12 or lower. The only change is the
-> firmware version loaded by the kernel (I have attached the full output
-> of "dmesg | grep iwlwifi" for both kernel versions as text files). I
-> have also tried downgrading the firmware, but it did not resolve the
-> issue. The problem occurs across different Linux distributions,
-> indicating that it is related to the default kernel.
-> 
-> Hardware Details:
-> 
-> Laptop Model: Acer Nitro 5 AN-515-58
-> Network Card: Intel® Wi-Fi 6 AX203, REV=0x370
-> CPU: Intel i7-12700H
-> Bluetooth: Intel Corp. AX201 Bluetooth
-> 
-> Additional Information:
-> 
-> lspci -nnkv | sed -n ‘/Network/,/^$/p’:
-> 0000:00:14.3 Network controller [0280]: Intel Corporation Alder Lake-P PCH CNVi WiFi [8086:51f0] (rev 01)
->         Subsystem: Rivet Networks Dual Band Wi-Fi 6(802.11ax) Killer AX1650i 160MHz 2x2 [Cyclone Peak] [1a56:1652]
->         Flags: bus master, fast devsel, latency 0, IRQ 16, IOMMU group 10
->         Memory at 6105274000 (64-bit, non-prefetchable) [size=16K]
->         Capabilities: <access denied>
->         Kernel driver in use: iwlwifi
->         Kernel modules: iwlwifi
-> 
-> lsusb | grep Bluetooth:
-> Bus 003 Device 003: ID 8087:0026 Intel Corp. AX201 Bluetooth
-> 
-> Thank you for your assistance.
+Using the same names is way to leave breadcrumbs that may help people
+linking this to vendor code later on (if necessary)
 
-See the ticket for more details and the bisection. Note, you have to use
-bugzilla to reach the reporter, as I sadly[1] can not CCed them in mails
-like this.
+I think the modes are named after the (rounded) bandwidth they provide,
+not necessarily the limit we are using to pick it ... except for def,
+which might just mean 'default' I guess.
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+https://github.com/khadas/linux/blob/khadas-vims-5.4.y/drivers/amlogic/medi=
+a/vout/hdmitx/hdmi_tx_20/hw/hw_g12a.c#L589
 
-[1] because bugzilla.kernel.org tells users upon registration their
-"email address will never be displayed to logged out users"
+I focused on keeping mainline as it was for the value poked, retaining
+as much information as possible to find our way back.
 
-P.S.: let me use this mail to also add the report to the list of tracked
-regressions to ensure it's doesn't fall through the cracks:
+Your proposed naming convention is fine by me as well.
 
-#regzbot introduced: 099a47dbe71b75
-#regzbot title: wifi: iwlwifi: WiFi Speed Reduction on Intel Wi-Fi 6 AX203
-#regzbot from: siero.o.p.33
-#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219114
-#regzbot ignore-activity
+>
+> [...]
+>> +static const struct meson_dw_hdmi_speed gxl_speeds[] =3D {
+>> +       {
+>> +               .limit =3D 371250,
+>> +               .regs =3D gxl_3g7_regs,
+>> +               .reg_num =3D ARRAY_SIZE(gxl_3g7_regs)
+>> +       }, {
+>> +               .limit =3D 297000,
+>> +               .regs =3D gxl_3g_regs,
+>> +               .reg_num =3D ARRAY_SIZE(gxl_3g_regs)
+>> +       }, {
+>> +               .limit =3D 148500,
+>> +               .regs =3D gxl_def_regs,
+>> +               .reg_num =3D ARRAY_SIZE(gxl_def_regs)
+> this is not consistent with what we have above or below so it either
+> needs to be updated or a comment.
+> I think this should be called gxl_1g48_regs
+>
+>> +       }, {
+>> +               .regs =3D gxl_270m_regs,
+>> +               .reg_num =3D ARRAY_SIZE(gxl_270m_regs)
+> and this should be called gxl_def_regs
+
+def in not the last one, it is another name used by AML
+
+It so happens that on mainline with we have only put the SD/270M for
+gxl. In the AML tree, it does exist for G12 too. Maybe it will be needed so=
+meday.
+
+>
+>
+>
+> Best regards,
+> Martin
+
+--=20
+Jerome
 
