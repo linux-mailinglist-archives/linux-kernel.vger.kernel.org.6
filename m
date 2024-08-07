@@ -1,103 +1,126 @@
-Return-Path: <linux-kernel+bounces-278422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD7D94B016
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:54:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FF094B019
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 20:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9976A284827
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:54:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37CC4B232A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705C1142E90;
-	Wed,  7 Aug 2024 18:54:49 +0000 (UTC)
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6656C1422C5;
+	Wed,  7 Aug 2024 18:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="K4ybcO5w"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67771428F3;
-	Wed,  7 Aug 2024 18:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BF513AD3F
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 18:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723056889; cv=none; b=jH2ttVU1OBd8/r2UVLN+vL2umLjdzm/AkvXVQfSIFVXJe2XQ5DzfDkbID07DD3MJA8PttKLoh2+dFsRfEErIHvoW/KRcVmhX4le8QtH1j88yXSLX8LhXKVFobZybTUnuavBzHcYf1kjBgQwa5F9ms1CA0h4QU+jvsGGo6hvYBrI=
+	t=1723056936; cv=none; b=EO/ttsMBt053LbLOIIy2gRyBTUfI5wH1NJcsJ/WgMfIMC71alvWW0vDIeUMi27khsN6ZUMyG/N0BhjJ3Jle0t1+uzouZ56fXvbQHNO46Wv2/59ZTymx500hUmQzvCmKgGrZc6bWZVs7laGwFIXZVYMD4LYTmq5FG7vTLemDVCeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723056889; c=relaxed/simple;
-	bh=76yvAM+UpEbVXx7GXsbI2Zqu+E3evoZtbABWa3EDE0U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e59pbqMEHD3fTmIRVOtb+xXylJnS1W9+BXosiyx54BWzosKdE13BTEPQ4DQcVEl1sAmzxLKd+HgM2A4wwgvuP1TqO/6O7EubHQTMR6ZBZYeKuubKctfeEJ8/TVAwyWEymDjePfsjBtFFLaeTxq9zUZ0J2tIxPgjJ33y637Tb+DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7a130ae7126so126559a12.0;
-        Wed, 07 Aug 2024 11:54:47 -0700 (PDT)
+	s=arc-20240116; t=1723056936; c=relaxed/simple;
+	bh=QzhlHFhB1FlhGEk8gZPrNnM4az2SdvOjtcQi634hGIg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZAadvCTfKMbOhLReDmOU4mSZtGmAi8Wv6qW7kBFbm1C0EiUHw3j8Me1mJ+AFscC/+NoeKhZsLPiMOuyizql6Ff3RVh6g69n59JNkdfZsfBcY681vlsbRitTv1cM0Wetpjw6RJdlCV5Fpb+ZyQjR3f0Lj9L3M3yWMuQg1u8Eu4A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=K4ybcO5w; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-710afd56c99so140684b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 11:55:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723056934; x=1723661734; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZFMK304Cg4PQj4mJQ9LEOTK8TkHQhLXzoojwOreQ/Ok=;
+        b=K4ybcO5wEPjvJSXg2hs3VvuZiX6MvQowzIXetYqdlb1poo3K6RH9nAsVOajDuQwHgX
+         epKi1wdjKD0DG5vpiaxzQ06eqUfJfeSgyC1quEbnSWe6zweSR8z+tdO5KPPe+y9QYbpi
+         0adWKjOaNgagHUivC7i+ujbZ7r0A/c0TFzxAbARARwkj9t9G04DVC94+fPrAdI6GPt7J
+         8gqramJqlZ6R4scpq+rk9+8WWFptzm3fDDF3vGpQzsQ7VB8CVZgQqiuMu7H1nsQvR7gY
+         DJu/1zZwCU+xCN2Rc5eYtyJuUZFAPBWYXb7+kMTWl9LAb+hPVSLBFNpR/wobcZXLYJ3b
+         89zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723056887; x=1723661687;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1imuq1Y5pnXOMpobYE2ECgyePeKad/viC/fTIre5Uss=;
-        b=fq4LOUSMGjAHAzZcd2ldeiond1XAKWmrrH67AlE7oXOVG1WegT82/Hd5l4nBdjASq4
-         oUYU54tmgQlxdjxxsf8zfvv+OLsQssP5E/6TWLUDgWlQJjmvgylJtr9j0vVATX/eJJrU
-         x/ySRKNN+tkVcpIQwIt2PWSRz/KSE+k6KhrXiHRICGpkeYiZ562Q5k5eQMNWCLI+GvPI
-         dVGyGTxUfmQqjRYrLuPdRbp1h9/sCcX65ghzvTSJs523oMs/pj7hjk/qxtQAJm83X9c0
-         2lZgXfliS6fb/wVsQxxXaAHfqnqeAstQ2x45YCXiUrMSyBB70Lv/dmEiASUUhEUqSUW4
-         UZzA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7zD3+I+U2iFiSN82daJ0wLutQ7RmuL0xc0fQTZABMpqjf4mKe80omspWuScXlLOWnXR8C5H0RXh2lyIOcpC7sq095NdHe4y3ukIsMggCK7ChzhE8EiWoyFDGkRZiFpIaVzR9iyQo70VB/8ppsbQ==
-X-Gm-Message-State: AOJu0YwfCd/s/P+QmFrh14pFj3V2YwoP2RmtFF8XMri42rIUET0r3Gsx
-	qMWecT1bSc0g+VFda/wLmC8PfyJXzpW1Nn5+W91rz+vMh2H2fEfpXAfMWw2YawwCwR9V3pH0i0U
-	OTSjXJQ+kl4OaYfXt5IVqIsJdBZw=
-X-Google-Smtp-Source: AGHT+IFd65zGATKjgDD0j0s8JJCpUaylkMJtTo43/IfuQ2vBHNtcKq6DjWD2rDvMABtm8DHr0qojowLr6/VLFX6bp7g=
-X-Received: by 2002:a05:6a20:7495:b0:1c0:e329:5c51 with SMTP id
- adf61e73a8af0-1c699581ce7mr27301807637.13.1723056886636; Wed, 07 Aug 2024
- 11:54:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723056934; x=1723661734;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZFMK304Cg4PQj4mJQ9LEOTK8TkHQhLXzoojwOreQ/Ok=;
+        b=d4673CFynI6q17cUpVeU06oAOEPGrqQ8MzrcDU5kHIHH5XQQ+rMZc4B0HeF2MQ4Yg6
+         LG84UT6kzZMqfV6r4tujxiCF9rLDlba45OXZZJl7Vle2e5AeIi/YbQI7BVRIAIIoFaOV
+         RDcU0GOfapDmF/73mQSWvqc4m0VPN+ebm99AndWLMG2FzRlo1CW/ZD2NyAE5Mv1KYln6
+         edvH/j2ZxmAG/eUHr1tGwe66GZtC9/aFKWOifZX5OY1FzizHl4DeHKr/bmttBhaNTBuG
+         6P5oOG4NbLGVXQLNcdcFHGVbGbcskmyFFYgfRjlH3Mwonjpqi2gHsLLNfqVZ73iSm3pr
+         8Esw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5ZncY+G78G4ucaLUz5qTrxu93/3BOaTmRPzie0+dIrwKqj1hVuI6ZSbbgVV6Poo4JYe+nJMCQTf5fy3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3z+XxcliNKTxJ8oY/vUw+RzSMY951+5UVVAumiQ5zMCNy5OoR
+	Iu6BpSMhx8sPmPSaq7Yw3cvga8Mb1y8y2d+FT6hmsjOjuK01aZMGsVBAZ3jVpdU=
+X-Google-Smtp-Source: AGHT+IEYK846WIyyA851lwFO0Thrl84W8t0gbyPKmjyyprzOtO6+L8KKdMUAaabzXjldmTOqaK+sQQ==
+X-Received: by 2002:a05:6a00:6f5b:b0:704:2516:8d17 with SMTP id d2e1a72fcca58-710bc85f5e3mr5133969b3a.8.1723056934390;
+        Wed, 07 Aug 2024 11:55:34 -0700 (PDT)
+Received: from localhost ([71.212.170.185])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ece4967sm8678435b3a.138.2024.08.07.11.55.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 11:55:33 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Markus Schneider-Pargmann <msp@baylibre.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Markus Schneider-Pargmann
+ <msp@baylibre.com>, Tony Lindgren <tony@atomide.com>, Vignesh Raghavendra
+ <vigneshr@ti.com>, Ronald Wahl <ronald.wahl@raritan.com>, Uwe =?utf-8?Q?K?=
+ =?utf-8?Q?leine-K=C3=B6nig?=
+ <u.kleine-koenig@pengutronix.de>, Thomas Richard
+ <thomas.richard@bootlin.com>, Thomas Gleixner <tglx@linutronix.de>, Udit
+ Kumar <u-kumar1@ti.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>
+Cc: Vibhore Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] serial: 8250: omap: Add am62 wakeup support
+In-Reply-To: <20240807141227.1093006-1-msp@baylibre.com>
+References: <20240807141227.1093006-1-msp@baylibre.com>
+Date: Wed, 07 Aug 2024 11:55:33 -0700
+Message-ID: <7hed70kvru.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807112924.448091402@infradead.org>
-In-Reply-To: <20240807112924.448091402@infradead.org>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 7 Aug 2024 11:54:34 -0700
-Message-ID: <CAM9d7ci7zEQUPTLLUdNci49fJHiM_6iiCn_Gpp05aEPyrJBmAg@mail.gmail.com>
-Subject: Re: [PATCH 0/5] perf: Per PMU context reschedule and misc
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, acme@kernel.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, 
-	adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Peter,
+Markus Schneider-Pargmann <msp@baylibre.com> writes:
 
-On Wed, Aug 7, 2024 at 4:56=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
-> wrote:
+> v2
+> --
 >
-> Hi,
+> In Version 2 I removed the Partial-IO specific patches as these can't be
+> tested due to power issues in Partial-IO on am62-lp-sk and similar
+> boards.
 >
-> This is 'fallout' from Namhyung posting his per-pmu ctx_resched() patches=
-. It
-> started with me trying to clean up and get rid of corner cases, and then =
-got
-> involved when Kan noted the time keeping issue.
+> I added a patch to add DT 'wakeup-source' support.
 >
-> Anyway, please review / test.
+> Series
+> ------
+>
+> To support wakeup from several low power modes on am62, don't always
+> enable device wakeup. Instead only set it to wakeup capable. A
+> devicetree property 'wakeup-source' can be used to enable wakeup. The
+> user is also able to control if wakeup is enabled through sysfs.
 
-It works blazingly fast!
+For my low-power constraints series[1], it's also important to not have
+the UART wakeups unconditionally enabled, so I like the defaults
+proposed in this series.  Thanks!
 
-  # ./stress-pmu
-  delta: 0.000307 sec (3 usec/op)
+I tested on k3-am62a7-sk along with my constraints changes and all is well.
 
-I found a problem with my patch that it called __pmu_ctx_sched_out() for
-nothing (I guess is_active only has EVENT_TIME).  I thought ctx_sched_out()
-would stop if it doesn't change EVENT_ALL but it iterated all PMUs anyway.
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
 
-But with this change we don't need ctx_sched_out(EVENT_TIME) anymore.
+Kevin
 
-Reviewed-by: Namhyung Kim <namhyung@kernel.org>
-
-Thanks,
-Namhyung
+[1] https://lore.kernel.org/all/20240805-lpm-v6-10-constraints-pmdomain-v1-0-d186b68ded4c@baylibre.com/
 
