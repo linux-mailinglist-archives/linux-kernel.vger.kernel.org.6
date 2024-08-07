@@ -1,192 +1,246 @@
-Return-Path: <linux-kernel+bounces-278703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E3C94B3D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:45:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8661494B3E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22A791F249EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:45:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1428A1F24E0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E282B15687C;
-	Wed,  7 Aug 2024 23:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DE715697A;
+	Wed,  7 Aug 2024 23:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="upK82fJx"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QJ48A+MN"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611DB146596
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 23:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1FD84037;
+	Wed,  7 Aug 2024 23:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723074340; cv=none; b=D24I8bMw0k3XnwTCUIhG7h8QCpuGqZD6cyq5fM+Sw9Lrbf1M3pNhgWCDo4hVYDMQgE8Hyw4qnsGBDYvd3OUX3G2QZ+tfPeV/fJZLYNOQsAM2l60qd+7pCtQh4d7y5NVknQNWkmp0B1VvFSEkpLHEhEZGk6zfZIzR8jYHf3LWJEY=
+	t=1723074449; cv=none; b=i/5Geac+p/cSqhwRaeXLZyWoHiHmV00J/eDF2qRAxDfHHW+ZMArcsmsfneH/LmNJok89iEPA8KbE2Oy8QClA/f6s3fEwFVQ06ABGZEnTWN1BAz1BbbsqWvK9aPwEcTgb6187NRzpi0yyn01Pq8F9kf6rbUjzMKtzzgpK5XiNkAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723074340; c=relaxed/simple;
-	bh=zaOh2SrN78k13gIAB523hKMDCQwuksmMWM6kmyL4JCE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r6LVpn6qg7vgKMpMz0MdfCtBSZ2u9QQrg0eMTrj4aMcLNWn1OF4J+6KVupWzt9370e+IE2LhfJV+H0fWJogBmxO5UtI9cXFyaKN0JTWveWp7HJiPsp60TgVTYtSIhhvz3lqaOJEmMdrqCbnTEj5XatxpqfrevXWLooTnE00DwPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=upK82fJx; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4281d812d3eso4294075e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 16:45:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723074337; x=1723679137; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zaOh2SrN78k13gIAB523hKMDCQwuksmMWM6kmyL4JCE=;
-        b=upK82fJx3fOM49m0lroBGccsssYkfAuK3nkq4Pe4Rjo+LwOMpGQROxuhVzR4FIs7p4
-         Bcp3CmojFkxh4/2/2jeUUziD2z4IxIt90SXPVkT6ZqIF6+rYQ8b0i/zLy3z2vgbVsb4g
-         xHM+fMLOnLOxy7XoCJ+d5wqNeb+MkGSijwai8BovIhOI+0lCUBXcVunIBtjWP3YK7yQi
-         WqO8T4m/beh8Un54qnRXWfLRK3TMS2Kn04OV/UYbPVdJyttphglR5gQo2TrZGBJCaXc1
-         ivvET1JqcgkAT8T7FGQ4VmiAwGyFAhvnYciNpnVkyiBGCZEIZdhuMvvFKVtYRPcDdpin
-         qANQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723074337; x=1723679137;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zaOh2SrN78k13gIAB523hKMDCQwuksmMWM6kmyL4JCE=;
-        b=IhlkDZI4tvcb/88WAHN7dnS/QUUn1eZrczJprN5sIfKPKOy2ymX+CwAPoRcsq2pggh
-         d3z3ckLVa8iIVtbdtEGMmf04Vtbqm90FE1QShWFPjqaNLC+Ps6hFrU8kbBX7oUhwhv4X
-         MwthANu/2/PudyY6jl/T5ltB6KUu5f/YhFe06lNYRIYaJkTNX4tl4G5XSMONNb/QjAtE
-         Xdj+Or0fvjTuNDKSFJt4l3mJkZTJx9pFBT3Ma4dGHg1sUTUKJF+ilpPUXq8wtPlyvFm0
-         4XZGNFSgergk0ikGnhAzoIdttnOBOh/3Q+reD68GJPGe0mH4tYlwPPjHadiOStp3UQGz
-         0R2w==
-X-Gm-Message-State: AOJu0YxA15v/pzPlJqQvfs5pBL1HE1So94CXmAoxilxwCJs03NNcJ8Mz
-	4qER/hbvpMRwGczQK+v8EgT57tOSidj6PX7Rz+R806dS+BnKXOcUjdgyr1zgnX9fp/z3zn5jLhT
-	5hgZ9w6oVKX6R6IzkN23Xkxop51C7CHbt4WDE
-X-Google-Smtp-Source: AGHT+IEMy5+rvA8Xz5XXMZ4V8cfK+CB3M8rXAjQ//+EAwYb7kYKY/NsJjZngCQzHzQMhpt1v7lVc4+xra3gtXcLRy7U=
-X-Received: by 2002:adf:f842:0:b0:366:f04d:676f with SMTP id
- ffacd0b85a97d-36d274dc2e5mr83350f8f.12.1723074336434; Wed, 07 Aug 2024
- 16:45:36 -0700 (PDT)
+	s=arc-20240116; t=1723074449; c=relaxed/simple;
+	bh=/qm83qDVxnY3QrhFxh2kmo0YUOGlFKEd9jGuhFx0DZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=snE3qgMZOiVO5yZF1jPMrpo1+XL3ROZEwHg9WF4qDRkKCRxp3aOB84/6cWkoS8vPnrih4Q9KwsJdZo5iXMp3iDOMmaMk+WFHjktnKmKf9OV4Ch8peq/fkh30nIqoRSbrwMnCu7QUy6ZBzemeWcfPanqA7ZKJx+marXSm3WLzd9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QJ48A+MN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477Jh3f5000990;
+	Wed, 7 Aug 2024 23:46:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mgbchAj6xcR2jFXLYmMGd4v6aq2N9KiFTX1IIgdca7w=; b=QJ48A+MNaGvSmfTw
+	YQsIzjqomBiC8XLpiFuqSs3SHBajHCFzPHVyP5kIx2J6TdDZShIXypzTg2Fx7jYJ
+	FonydqI34elfCglK12A2Bxg106DWGqK7EvkFHRYOcwH1KCPetx6jciOA3TVnxGEf
+	yQZUZq+FsAUGRvu8syhd2MEfQz+tFmCXav99tF6CNP52mSyRce1NoC+J7OrgQvpo
+	mVMco+jIbXv9DWyYRMfIfJQTudvENmyBtIaC0Rxkzt3PwdjgFLUXSc2sV6rEKsIt
+	QMTEDUZQKyITDr4zYb67LGLNIfaqmssRnrMZXnT/l6+OzM+s1RUykjl+630qfFSW
+	OkJ9xw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vfav0df2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 07 Aug 2024 23:46:55 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 477NksMn011658
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 7 Aug 2024 23:46:54 GMT
+Received: from [10.110.61.128] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
+ 16:46:51 -0700
+Message-ID: <eddef7d0-9e3d-4c3f-8457-54b2eb8a3947@quicinc.com>
+Date: Wed, 7 Aug 2024 16:46:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805093245.889357-1-jgowans@amazon.com>
-In-Reply-To: <20240805093245.889357-1-jgowans@amazon.com>
-From: David Matlack <dmatlack@google.com>
-Date: Wed, 7 Aug 2024 16:45:07 -0700
-Message-ID: <CALzav=ddnKykNSH1WVM5i74MFHSj7BO+bZWkfQpRO0fc0g8_mQ@mail.gmail.com>
-Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
-To: James Gowans <jgowans@amazon.com>
-Cc: linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Steve Sistare <steven.sistare@oracle.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Anthony Yznaga <anthony.yznaga@oracle.com>, Mike Rapoport <rppt@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-fsdevel@vger.kernel.org, 
-	Usama Arif <usama.arif@bytedance.com>, kvm@vger.kernel.org, 
-	Alexander Graf <graf@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>, 
-	Paul Durrant <pdurrant@amazon.co.uk>, Nicolas Saenz Julienne <nsaenz@amazon.es>, 
-	James Houghton <jthoughton@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] net: stmmac: Add interconnect support
+To: Serge Semin <fancer.lancer@gmail.com>
+CC: Vinod Koul <vkoul@kernel.org>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S.
+ Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Russell King <linux@armlinux.org.uk>, "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>, <kernel@quicinc.com>,
+        Andrew Halaney <ahalaney@redhat.com>, Andrew Lunn
+	<andrew@lunn.ch>,
+        <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20240708-icc_bw_voting_from_ethqos-v4-0-c6bc3db86071@quicinc.com>
+ <20240708-icc_bw_voting_from_ethqos-v4-2-c6bc3db86071@quicinc.com>
+ <zsdjc53fxh44bpra5cfishtvmyok2rprbtnbthimnu6quxkxyj@kvtijkxylwb3>
+Content-Language: en-US
+From: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+In-Reply-To: <zsdjc53fxh44bpra5cfishtvmyok2rprbtnbthimnu6quxkxyj@kvtijkxylwb3>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9hjmxXrOpSYZifNt35BEWYmSC-EDuTnJ
+X-Proofpoint-GUID: 9hjmxXrOpSYZifNt35BEWYmSC-EDuTnJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_14,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
+ lowpriorityscore=0 mlxscore=0 bulkscore=0 phishscore=0 suspectscore=0
+ impostorscore=0 clxscore=1011 spamscore=0 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408070166
 
-Hi James,
 
-On Mon, Aug 5, 2024 at 2:33=E2=80=AFAM James Gowans <jgowans@amazon.com> wr=
-ote:
->
-> In this patch series a new in-memory filesystem designed specifically
-> for live update is implemented. Live update is a mechanism to support
-> updating a hypervisor in a way that has limited impact to running
-> virtual machines. This is done by pausing/serialising running VMs,
-> kexec-ing into a new kernel, starting new VMM processes and then
-> deserialising/resuming the VMs so that they continue running from where
-> they were. To support this, guest memory needs to be preserved.
 
-How do you envision VM state (or other userspace state) being
-preserved? I guess it could just be regular files on this filesystem
-but I wonder if that would become inefficient if the files are
-(eventually) backed with PUD-sized allocations.
+On 8/1/2024 11:32 AM, Serge Semin wrote:
+> Hi Sagar
+> 
+> On Mon, Jul 08, 2024 at 02:30:01PM -0700, Sagar Cheluvegowda wrote:
+>> Add interconnect support to vote for bus bandwidth based
+>> on the current speed of the driver.
+>> Adds support for two different paths - one from ethernet to
+>> DDR and the other from CPU to ethernet, Vote from each
+>> interconnect client is aggregated and the on-chip interconnect
+>> hardware is configured to the most appropriate bandwidth profile.
+>>
+>> Suggested-by: Andrew Halaney <ahalaney@redhat.com>
+>> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+>> ---
+>>  drivers/net/ethernet/stmicro/stmmac/stmmac.h          |  1 +
+>>  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c     |  8 ++++++++
+>>  drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 12 ++++++++++++
+>>  include/linux/stmmac.h                                |  2 ++
+>>  4 files changed, 23 insertions(+)
+>>
+>> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+>> index b23b920eedb1..56a282d2b8cd 100644
+>> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+>> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+>> @@ -21,6 +21,7 @@
+>>  #include <linux/ptp_clock_kernel.h>
+>>  #include <linux/net_tstamp.h>
+>>  #include <linux/reset.h>
+>> +#include <linux/interconnect.h>
+>>  #include <net/page_pool/types.h>
+>>  #include <net/xdp.h>
+>>  #include <uapi/linux/bpf.h>
+>> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+>> index b3afc7cb7d72..ec7c61ee44d4 100644
+>> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+>> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+>> @@ -985,6 +985,12 @@ static void stmmac_fpe_link_state_handle(struct stmmac_priv *priv, bool is_up)
+>>  	}
+>>  }
+>>  
+>> +static void stmmac_set_icc_bw(struct stmmac_priv *priv, unsigned int speed)
+>> +{
+> 
+>> +	icc_set_bw(priv->plat->axi_icc_path, Mbps_to_icc(speed), Mbps_to_icc(speed));
+>> +	icc_set_bw(priv->plat->ahb_icc_path, Mbps_to_icc(speed), Mbps_to_icc(speed));
+> 
+> I've got two questions in this regard:
+> 
+> 1. Don't we need to call icc_enable()/icc_disable() in someplace in
+> the driver? For instance the CPU-MEM path must be enabled before even
+> the stmmac_dvr_probe() is called, otherwise the CSR won't be
+> accessible. Right? For the same reason the CPU-MEM bandwidth should be
+> set in sync with that.
+> 
+> 2. Why is the CPU-MAC speed is specified to match the Ethernet link
+> speed? It doesn't seem reasonable. It's the CSR's access speed and
+> should be done as fast as possible. Shouldn't it?
+> 
+>> +}
 
->
-> Guestmemfs implements preservation acrosss kexec by carving out a large
-> contiguous block of host system RAM early in boot which is then used as
-> the data for the guestmemfs files. As well as preserving that large
-> block of data memory across kexec, the filesystem metadata is preserved
-> via the Kexec Hand Over (KHO) framework (still under review):
-> https://lore.kernel.org/all/20240117144704.602-1-graf@amazon.com/
->
-> Filesystem metadata is structured to make preservation across kexec
-> easy: inodes are one large contiguous array, and each inode has a
-> "mappings" block which defines which block from the filesystem data
-> memory corresponds to which offset in the file.
->
-> There are additional constraints/requirements which guestmemfs aims to
-> meet:
->
-> 1. Secret hiding: all filesystem data is removed from the kernel direct
-> map so immune from speculative access. read()/write() are not supported;
-> the only way to get at the data is via mmap.
->
-> 2. Struct page overhead elimination: the memory is not managed by the
-> buddy allocator and hence has no struct pages.
-
-I'm curious if there any downsides of eliminating struct pages? e.g.
-Certain operations/features in the kernel relevant for running VMs
-that do not work?
-
->
-> 3. PMD and PUD level allocations for TLB performance: guestmemfs
-> allocates PMD-sized pages to back files which improves TLB perf (caveat
-> below!). PUD size allocations are a next step.
->
-> 4. Device assignment: being able to use guestmemfs memory for
-> VFIO/iommufd mappings, and allow those mappings to survive and continue
-> to be used across kexec.
->
->
-> Next steps
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> The idea is that this patch series implements a minimal filesystem to
-> provide the foundations for in-memory persistent across kexec files.
-> One this foundation is in place it will be extended:
->
-> 1. Improve the filesystem to be more comprehensive - currently it's just
-> functional enough to demonstrate the main objective of reserved memory
-> and persistence via KHO.
->
-> 2. Build support for iommufd IOAS and HWPT persistence, and integrate
-> that with guestmemfs. The idea is that if VMs have DMA devices assigned
-> to them, DMA should continue running across kexec. A future patch series
-> will add support for this in iommufd and connect iommufd to guestmemfs
-> so that guestmemfs files can remain mapped into the IOMMU during kexec.
->
-> 3. Support a guest_memfd interface to files so that they can be used for
-> confidential computing without needing to mmap into userspace.
->
-> 3. Gigantic PUD level mappings for even better TLB perf.
->
-> Caveats
-> =3D=3D=3D=3D=3D=3D=3D
->
-> There are a issues with the current implementation which should be
-> solved either in this patch series or soon in follow-on work:
->
-> 1. Although PMD-size allocations are done, PTE-level page tables are
-> still created. This is because guestmemfs uses remap_pfn_range() to set
-> up userspace pgtables. Currently remap_pfn_range() only creates
-> PTE-level mappings. I suggest enhancing remap_pfn_range() to support
-> creating higher level mappings where possible, by adding pmd_special
-> and pud_special flags.
-
-This might actually be beneficial.
-
-Creating PTEs for userspace mappings would make it for UserfaultFD to
-intercept at PAGE_SIZE granularity. A big pain point for Google with
-using HugeTLB is the inability to use UsefaultFD to intercept at
-PAGE_SIZE for the post-copy phase of VM Live Migration.
-
-As long as the memory is physically contiguous it should be possible
-for KVM to still map it into the guest with PMD or PUD mappings.
-KVM/arm64 already even has support for that for VM_PFNMAP VMAs.
+I am having internal discussions with clocks team, I will revert back soon with answers.
+>> +
+>>  static void stmmac_mac_link_down(struct phylink_config *config,
+>>  				 unsigned int mode, phy_interface_t interface)
+>>  {
+>> @@ -1080,6 +1086,8 @@ static void stmmac_mac_link_up(struct phylink_config *config,
+>>  	if (priv->plat->fix_mac_speed)
+>>  		priv->plat->fix_mac_speed(priv->plat->bsp_priv, speed, mode);
+>>  
+>> +	stmmac_set_icc_bw(priv, speed);
+>> +
+>>  	if (!duplex)
+>>  		ctrl &= ~priv->hw->link.duplex;
+>>  	else
+>> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+>> index 54797edc9b38..201f9dea6da9 100644
+>> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+>> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+>> @@ -642,6 +642,18 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+>>  		dev_dbg(&pdev->dev, "PTP rate %d\n", plat->clk_ptp_rate);
+>>  	}
+>>  
+>> +	plat->axi_icc_path = devm_of_icc_get(&pdev->dev, "mac-mem");
+>> +	if (IS_ERR(plat->axi_icc_path)) {
+>> +		ret = ERR_CAST(plat->axi_icc_path);
+>> +		goto error_hw_init;
+>> +	}
+>> +
+>> +	plat->ahb_icc_path = devm_of_icc_get(&pdev->dev, "cpu-mac");
+>> +	if (IS_ERR(plat->ahb_icc_path)) {
+>> +		ret = ERR_CAST(plat->ahb_icc_path);
+>> +		goto error_hw_init;
+>> +	}
+>> +
+>>  	plat->stmmac_rst = devm_reset_control_get_optional(&pdev->dev,
+>>  							   STMMAC_RESOURCE_NAME);
+>>  	if (IS_ERR(plat->stmmac_rst)) {
+>> diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
+>> index f92c195c76ed..385f352a0c23 100644
+>> --- a/include/linux/stmmac.h
+>> +++ b/include/linux/stmmac.h
+>> @@ -283,6 +283,8 @@ struct plat_stmmacenet_data {
+>>  	struct reset_control *stmmac_rst;
+>>  	struct reset_control *stmmac_ahb_rst;
+>>  	struct stmmac_axi *axi;
+> 
+>> +	struct icc_path *axi_icc_path;
+> 
+> The MAC<->MEM interface isn't always AXI (it can be AHB or custom) and
+> 
+>> +	struct icc_path *ahb_icc_path;
+> 
+> the CPU<->MAC isn't always AHB (it can also be APB, AXI, custom). So
+> the more generic naming would be:
+> 
+> axi_icc_path -> dma_icc_path
+> and
+> ahb_icc_path -> csr_icc_path
+> 
+> -Serge(y)
+> 
+>>  	int has_gmac4;
+>>  	int rss_en;
+>>  	int mac_port_sel_speed;
+>>
+>> -- 
+>> 2.34.1
+>>
+>>
 
