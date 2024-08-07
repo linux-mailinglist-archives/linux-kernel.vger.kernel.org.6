@@ -1,518 +1,207 @@
-Return-Path: <linux-kernel+bounces-277293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62688949EFE
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:13:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB32949F04
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 07:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D43C28566A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:13:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D125B1C22A19
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 05:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A63A1917F9;
-	Wed,  7 Aug 2024 05:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B2F191F7C;
+	Wed,  7 Aug 2024 05:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mPOe7SYk"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iun5F19I"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2063.outbound.protection.outlook.com [40.107.92.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC4823CE
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 05:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723007611; cv=none; b=X40Wde3IY9P80xaSZCmGrLD/RPza0iONXyYiLgkQEVP/7jq+LVB5i37FMlwR1vulQ2Q7FY3yI9r+6sdUHZ2tAsmoBE1mb8XyJ8/6g38Vs/IkP+2WZVKwipe7K4qe0QUMxrtZCeWyNwT+cXWe3ycBV5k0JhhvIEQX4FQl1OGuYhM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723007611; c=relaxed/simple;
-	bh=LTJB8FXpjxxm6ULMv+1PrNrpxAcs/X441d54qS6KXXM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JGONO192i/clhSgQurw1PsSVxdh+ntSjIewuCWiTo6+/RdosK3afTbfTkeJpbOpobs+0wtJI+A2YAldSFqcI15TLD0hIOIzpIQ2H5GS6cdaicLZZtXHK6+HuGkFG9378D6Eyij/76cH2rM/SVwUN7t1D0cvAJ68FwA83XkLIlBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mPOe7SYk; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6659e81bc68so14315047b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 22:13:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723007608; x=1723612408; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JUh6pf1WORbUDdR7L2yD9/oaoUsv42ASDJoBo4CErDs=;
-        b=mPOe7SYkTO0b2Lea5/zuuU8srwlLl08zr0ghjfN9LNxNg84jcN248h3BohO9c4GOAX
-         tTi+VA6U5O3+UKCQD9dxH6rfYplPbB+8DFBQfq0GPT4OIiTeJqDT6tKOQ7Hh2NjyrQJZ
-         S9pCSj4RuSiqg0r21Gsqos6C7EFvS6Y01yF57lLnztZscX+p2WI3qVt0lE+54k8QH3CI
-         UCcgpTxxMjtBXOvLMJOCSIm+lcjBYb5s1/yRjlCu442DtPw+F0IQK2CFKnldMDPV6har
-         qJQxlpwZALHZy4MiPkAQVe/ckZVPo3Q8X/KDLSzeE2jVcc9SfOOamirx6Q7jMNpy50/G
-         7S2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723007608; x=1723612408;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JUh6pf1WORbUDdR7L2yD9/oaoUsv42ASDJoBo4CErDs=;
-        b=DPPH380+mfY6tlTmgfGl1hN+wVO/xIUz5VY4KrvOYpf8UdtKHpzhXz/9QyhK5favj8
-         6zjtM4BWCvlxGo4vDSrDujbVfqLTRvS7P/y+xcEFSwPu+BrHThijIwbyXn0hoWiZ9qT2
-         S38KmsgITTy5pVXRC8raHUjp8yHrbzgofWjpmapZgagkqCbS5cLtSKce1WOt3UT206nf
-         X22nl87pIqGpYorX3ye+J3kxWm+Q6s6zBHZ1JGD6+bfHNiABPjlT0nzmawRgtfu/6Scq
-         KaKSxFdGKG3xq8EHrwR3wIvTWf6fpYo+YmtoIz3tBcLDEXHnwSmCx2w/gtcebFJNW1t7
-         Inkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwn6GgX/XnBJcrhTIOOfBvZp/GvB4LssXg8VD3sN9pFlsARJwrk2pbfKUjjyMfTRAB3vYgi2J4pbJvNcZ2bhx1gGnlvPGHfLWZOGgE
-X-Gm-Message-State: AOJu0Yx2Ia2CoWYJ73D2JSVK5K4DfSyOKDY/v/ZJFgXGR6l+GV4RQXw/
-	0lnVlm0VShJ8kKYJH1uO7oHjY2csi9obBaHMd1hlWaqfgMh9oOzYhRclYGf11d+pnlFDyd9y0QC
-	hr9G5Ir4HmDms2YfPMPQd6N8ZtkzLjxQN1LH8
-X-Google-Smtp-Source: AGHT+IEdZon87l9zGFeyM6xoSt8GN3EBm5MxiOJRQ9DnkqkXnEYp3Xi9o+GT6rBVz1mCoNL3GKogc1ExwNsCkrIfSf0=
-X-Received: by 2002:a81:9e02:0:b0:650:a5cf:ef5b with SMTP id
- 00721157ae682-68963dcc3admr202398997b3.43.1723007608157; Tue, 06 Aug 2024
- 22:13:28 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5A7191495;
+	Wed,  7 Aug 2024 05:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723007683; cv=fail; b=Ehh6cB+u55T2OKo78GZCL66J6s6HNrdS9pP3AJXMGB6XYl/VTfsXtFKQadfT7pA7/umB9WyGWmTlqyYjmdeBWMF8CSI1zbcsvBedc/8OwBM+hDl77OysUZOTjTEOYZzH3QCIrdiwp0jwTMI9tYBr4sGCtf42YcQFNdyffbKEsqw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723007683; c=relaxed/simple;
+	bh=3Dcu6aJU8X/aJgTk736SCzyefoHjdCUG7aL9wcxERrk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nK9g7uRfS46YGQYhT1kM7VWCtAc/M3MRjmqDZVR+2FnNf8ToDNvfQorFrPScBewBk/y8t7LS65I1Xb0z9AgiHqkUzmZc5GA8Z5JnDIwdgqeDPUAL5UHLHCdcTtIagI6Rao/p3tf0VefmmNvnMjCmdKJ/aTFAX3UJ94SWFT1wzok=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iun5F19I; arc=fail smtp.client-ip=40.107.92.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dmI+WRKu4JH6uZ7+c5aRR5bbbhRZ6H+sFyQ7FcpzvLWp21XQjhxRxS7uVbaDs8DY4TLHkMvOwiqYp/7kR9/JhgvlPbq+ZIkXWqvAGwSdPmLSGn3St8bQALF2LZzCmCJAisvoD7NTWDOCOQzhrV4MlS5IS3KuqVfqTW13XtqXHYRup+L+IUeAGfzTrK0bAPYL5rU5vTdkisf/h2X3JMr9/QsysKJRhfRqryyLprJCgun1tWcY/aBZpH8Hd4W/SzYEJphl/pmgRRDWrfGeG7FBBHRO1kreE+SV/SZpZhv/Prk8flqRs9YEV9uMVv1nvv1gP43C0XuCkf/yDMw7N37u9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=I2KCJG/+YUEu+WHixSrZZlPKZxJ6pb4opybJ0tKtTd4=;
+ b=RhNkzm7xiNrD/JjBtForyZzyCEzeR7+vZq4OZ+i4YhX4FQRcpkgZIF/6o1kt2jL9ZwDkG5iibc/n4i0DWnKc4WrjbEWjKcad3WHKUeZzbcxgzp4RQHX+SGp60PvyoIO3ha5nVOU5K6UWmm0exxk2ggSiwRvrhVVctZWjVNrH///das5wpF0fuaAnefJWL8LTKSEiEKvGvr/zSFXMu+SVQRI1WN2zPAbACGR2Jzv9j85MOskHDSMMfhKKAPnvMrQkzysm5yIcVggLzYqQvN+IxXU3PZl/gslSmiKImUGrKRHWAk9g/ZEG1cINGm4/SAPhMCRwOcDIt+doSYuzL2/BOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I2KCJG/+YUEu+WHixSrZZlPKZxJ6pb4opybJ0tKtTd4=;
+ b=iun5F19I2IpPZ2H7vaHHem3gZullLn/6uDH94BJl+HBwzcJsWufLBqN8o680nhwgy6lSk2VhnnjuHbJT3oJIbCW8uFYuL5RYnwdanWcrq+/rNdYWHXR1yHJARVHIoyugOAQUt/OmKuvDQ9Q6r1rNbuBcBnGREV/xlhdIaWvpFLM=
+Received: from MW4PR04CA0243.namprd04.prod.outlook.com (2603:10b6:303:88::8)
+ by MN0PR12MB6173.namprd12.prod.outlook.com (2603:10b6:208:3c6::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Wed, 7 Aug
+ 2024 05:14:37 +0000
+Received: from SJ5PEPF000001EC.namprd05.prod.outlook.com
+ (2603:10b6:303:88:cafe::bd) by MW4PR04CA0243.outlook.office365.com
+ (2603:10b6:303:88::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13 via Frontend
+ Transport; Wed, 7 Aug 2024 05:14:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001EC.mail.protection.outlook.com (10.167.242.200) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Wed, 7 Aug 2024 05:14:35 +0000
+Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 7 Aug 2024 00:14:29 -0500
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: <broonie@kernel.org>
+CC: <alsa-devel@alsa-project.org>, <Basavaraj.Hiregoudar@amd.com>,
+	<Sunil-kumar.Dommati@amd.com>, <venkataprasad.potturu@amd.com>, "Vijendar
+ Mukunda" <Vijendar.Mukunda@amd.com>, Ranjani Sridharan
+	<ranjani.sridharan@linux.intel.com>, Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, Bard Liao
+	<yung-chuan.liao@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+	"Kai Vehmanen" <kai.vehmanen@linux.intel.com>, Jaroslav Kysela
+	<perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Cristian Ciocaltea
+	<cristian.ciocaltea@collabora.com>, Emil Velikov
+	<emil.velikov@collabora.com>, "moderated list:SOUND - SOUND OPEN FIRMWARE
+ (SOF) DRIVERS" <sound-open-firmware@alsa-project.org>, "open list:SOUND - SOC
+ LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, "open
+ list" <linux-kernel@vger.kernel.org>
+Subject: [PATCH 3/8] ASoC: SOF: amd: move iram-dram fence register programming sequence
+Date: Wed, 7 Aug 2024 10:43:15 +0530
+Message-ID: <20240807051341.1616925-3-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240807051341.1616925-1-Vijendar.Mukunda@amd.com>
+References: <20240807051341.1616925-1-Vijendar.Mukunda@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zo1hBFS7c_J-Yx-7@casper.infradead.org> <20240710091631.GT27299@noisy.programming.kicks-ass.net>
- <20240710094013.GF28838@noisy.programming.kicks-ass.net> <CAJuCfpF3eSwW_Z48e0bykCh=8eohAuACxjXBbUV_sjrVwezxdw@mail.gmail.com>
- <CAEf4BzZPGG9_P9EWosREOw8owT6+qawmzYr0EJhOZn8khNn9NQ@mail.gmail.com>
- <CAJuCfpELNoDrVyyNV+fuB7ju77pqyj0rD0gOkLVX+RHKTxXGCA@mail.gmail.com>
- <ZqRtcZHWFfUf6dfi@casper.infradead.org> <20240730131058.GN33588@noisy.programming.kicks-ass.net>
- <CAJuCfpFUQFfgx0BWdkNTAiOhBpqmd02zarC0y38gyB5OPc0wRA@mail.gmail.com>
- <CAEf4BzavWOgCLQoNdmPyyqHcm7gY5USKU5f1JWfyaCbuc_zVAA@mail.gmail.com>
- <20240803085312.GP39708@noisy.programming.kicks-ass.net> <CAEf4BzYPpkhKtuaT-EbyKeB13-uBeYf8LjR9CB=xaXYHnwsyAQ@mail.gmail.com>
- <CAEf4BzZ26FNTguRh_X9_5eQZvOeKb+c-o3mxSzoM2+TF3NqaWA@mail.gmail.com> <CAJuCfpFqEjG7HCx1F=Q3fScYAhaAou0Un2SFpibimkxZr7Jsbw@mail.gmail.com>
-In-Reply-To: <CAJuCfpFqEjG7HCx1F=Q3fScYAhaAou0Un2SFpibimkxZr7Jsbw@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 6 Aug 2024 22:13:14 -0700
-Message-ID: <CAJuCfpGsDbcDy9s7NwZuaf2S+v9RMGjoC9NUVszDG3kwCMHCXg@mail.gmail.com>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, rostedt@goodmis.org, 
-	Matthew Wilcox <willy@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org, andrii@kernel.org, 
-	linux-kernel@vger.kernel.org, oleg@redhat.com, jolsa@kernel.org, clm@meta.com, 
-	bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001EC:EE_|MN0PR12MB6173:EE_
+X-MS-Office365-Filtering-Correlation-Id: 935c2783-930f-418e-7260-08dcb69fd462
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?htsKZ1Sjff1rPqE6lW7FAiLnrXXEaK8tFND+h7t0pqK/UFZJt0Lf8JkaVZeu?=
+ =?us-ascii?Q?xaAbXE7xPxGhPvPmhd913Mtg5UmqESbupQWte0RjquM/ZYqbNRxl3k0O1iZA?=
+ =?us-ascii?Q?O5ikRTdM7s8MzXK0dH4mW+lQEfFD3Dayekn1o570tWtBfZW2s55XMdNBE2NT?=
+ =?us-ascii?Q?YdmMKnb4TRHjYxYcX403hRxx3t0yfbXQiiCQPS1L/S7+OXwtGLI9BTj8gUFn?=
+ =?us-ascii?Q?DVwtflaSwTikj2D+xdt8xohXeg6vG8K9Q8FLPVmdIMxXWh4Od5dgWXNU3m80?=
+ =?us-ascii?Q?9YBb20S9SNbBGe22i7wUWxbTKPs8EZGSqT1+/lvUWUtXT2dN/fhqG0OeVF43?=
+ =?us-ascii?Q?nHDsqedhFo3nM+9ZCNZJdfcj5jCs6E2F0JbAQ3HhleWbj/6Y6wtMVg/59pSN?=
+ =?us-ascii?Q?NRPc01EkgjrTftcJ3HP2iATAPBfhOrGdfVpcZ+KXrQcDAjpnl4ry1eGz0z+c?=
+ =?us-ascii?Q?4syUS52wyqL98s9IYd7USqP5p4U/NMdDWLcTwfde/pCKc7eRJ5EHmc/FWlGS?=
+ =?us-ascii?Q?4+gzHposI0OiuCgY4WmgHp99eseqaprTPugSgC0PwNgfksECpDbGUV+ZusKw?=
+ =?us-ascii?Q?Dnddr2ibsN2dFgRcKgaMrPJH5BqoeQXcfRGtN2Fu4njrBWnlRphemm7yjgkT?=
+ =?us-ascii?Q?DcY+lzQ4+O0+yQC4PMvt8nre/HoC5jl/ZJ6KMHKyKtkUeQD4v3WswCzeXcAz?=
+ =?us-ascii?Q?GOW63oV93GzRuz0U1/38qYgvEdqQN6rBXEW0HgdYwjG4Ai5qQKh7Kc8FYZyP?=
+ =?us-ascii?Q?yF6kOwpIYAMjICJfrit3bcwAZJWeUwRlkEXKTSbcUb6K3CvUKRwB5i3ZRtEX?=
+ =?us-ascii?Q?gAEJRElrNTEmONlITz5cQs7NzTNkpGy65byzQYU2xxY2UXDmOLWlY6qIvG9n?=
+ =?us-ascii?Q?2MVbOM2X90YXZm1O9bx1JUXQVqBUWHxBXhH06WhpgL9B1UagbASqRMsoN68n?=
+ =?us-ascii?Q?3I2WlBD7U/zLGavlFdOTgqkc52rTJEuqtcAcErCvMwXCIZlUgePvovPW3gaj?=
+ =?us-ascii?Q?MRnkpyYErVZw31goaizoEo9Oqe4XXHAckWhxp5gffkTW2TQKEd3vJrvKvJlA?=
+ =?us-ascii?Q?ahFYZuxVwmok2UQv6huXaD2bGT1d5+o24r5dptGmc2DKu6LbWCgTElqyj5dA?=
+ =?us-ascii?Q?bo/XotRq5UtciUKVX99MHRqqUrf//N5Ob9t/RTp+sKidSW7IxEbAgzmynHA6?=
+ =?us-ascii?Q?GMx/kD7/fQKtKVY+Etap6H2zymGUkSk4wZpG9A6Le9hIm+4sq8kDZIJmCk+D?=
+ =?us-ascii?Q?P1p9SN5+pnZmlbWnnpnhnwkv8dRwDCQNeHGAkkxH1MTlKRc9dqXEU+m4ey19?=
+ =?us-ascii?Q?EJGhzcif1ssJkAsthls6ENnXUqKcCFycXs3zwOBUe627RRnlTYyDjQP0vQNW?=
+ =?us-ascii?Q?+xbSt60AsYJfQ5LGK3g2npiU3zskOsQ7IH+OcQv52RVve27vMTL58PGfITe8?=
+ =?us-ascii?Q?x/HTpX6ZU/zoBrxrgzhIP6OHT+lDHvV1?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 05:14:35.7638
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 935c2783-930f-418e-7260-08dcb69fd462
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001EC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6173
 
-On Tue, Aug 6, 2024 at 6:36=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
-m> wrote:
->
-> On Mon, Aug 5, 2024 at 9:08=E2=80=AFPM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Sun, Aug 4, 2024 at 4:22=E2=80=AFPM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > >
-> > > On Sat, Aug 3, 2024 at 1:53=E2=80=AFAM Peter Zijlstra <peterz@infrade=
-ad.org> wrote:
-> > > >
-> > > > On Fri, Aug 02, 2024 at 10:47:15PM -0700, Andrii Nakryiko wrote:
-> > > >
-> > > > > Is there any reason why the approach below won't work?
-> > > >
-> > > > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > > > > index 8be9e34e786a..e21b68a39f13 100644
-> > > > > --- a/kernel/events/uprobes.c
-> > > > > +++ b/kernel/events/uprobes.c
-> > > > > @@ -2251,6 +2251,52 @@ static struct uprobe
-> > > > > *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
-> > > > >         struct uprobe *uprobe =3D NULL;
-> > > > >         struct vm_area_struct *vma;
-> > > > >
-> > > > > +#ifdef CONFIG_PER_VMA_LOCK
-> > > > > +       vm_flags_t flags =3D VM_HUGETLB | VM_MAYEXEC | VM_MAYSHAR=
-E, vm_flags;
-> > > > > +       struct file *vm_file;
-> > > > > +       struct inode *vm_inode;
-> > > > > +       unsigned long vm_pgoff, vm_start, vm_end;
-> > > > > +       int vm_lock_seq;
-> > > > > +       loff_t offset;
-> > > > > +
-> > > > > +       rcu_read_lock();
-> > > > > +
-> > > > > +       vma =3D vma_lookup(mm, bp_vaddr);
-> > > > > +       if (!vma)
-> > > > > +               goto retry_with_lock;
-> > > > > +
-> > > > > +       vm_lock_seq =3D READ_ONCE(vma->vm_lock_seq);
-> > > >
-> > > > So vma->vm_lock_seq is only updated on vma_start_write()
-> > >
-> > > yep, I've looked a bit more at the implementation now
-> > >
-> > > >
-> > > > > +
-> > > > > +       vm_file =3D READ_ONCE(vma->vm_file);
-> > > > > +       vm_flags =3D READ_ONCE(vma->vm_flags);
-> > > > > +       if (!vm_file || (vm_flags & flags) !=3D VM_MAYEXEC)
-> > > > > +               goto retry_with_lock;
-> > > > > +
-> > > > > +       vm_inode =3D READ_ONCE(vm_file->f_inode);
-> > > > > +       vm_pgoff =3D READ_ONCE(vma->vm_pgoff);
-> > > > > +       vm_start =3D READ_ONCE(vma->vm_start);
-> > > > > +       vm_end =3D READ_ONCE(vma->vm_end);
-> > > >
-> > > > None of those are written with WRITE_ONCE(), so this buys you nothi=
-ng.
-> > > > Compiler could be updating them one byte at a time while you load s=
-ome
-> > > > franken-update.
-> > > >
-> > > > Also, if you're in the middle of split_vma() you might not get a
-> > > > consistent set.
-> > >
-> > > I used READ_ONCE() only to prevent the compiler from re-reading those
-> > > values. We assume those values are garbage anyways and double-check
-> > > everything, so lack of WRITE_ONCE doesn't matter. Same for
-> > > inconsistency if we are in the middle of split_vma().
-> > >
-> > > We use the result of all this speculative calculation only if we find
-> > > a valid uprobe (which could be a false positive) *and* if we detect
-> > > that nothing about VMA changed (which is what I got wrong, but
-> > > honestly I was actually betting on others to help me get this right
-> > > anyways).
-> > >
-> > > >
-> > > > > +       if (bp_vaddr < vm_start || bp_vaddr >=3D vm_end)
-> > > > > +               goto retry_with_lock;
-> > > > > +
-> > > > > +       offset =3D (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr -=
- vm_start);
-> > > > > +       uprobe =3D find_uprobe_rcu(vm_inode, offset);
-> > > > > +       if (!uprobe)
-> > > > > +               goto retry_with_lock;
-> > > > > +
-> > > > > +       /* now double check that nothing about VMA changed */
-> > > > > +       if (vm_lock_seq !=3D READ_ONCE(vma->vm_lock_seq))
-> > > > > +               goto retry_with_lock;
-> > > >
-> > > > Since vma->vma_lock_seq is only ever updated at vma_start_write() y=
-ou're
-> > > > checking you're in or after the same modification cycle.
-> > > >
-> > > > The point of sequence locks is to check you *IN* a modification cyc=
-le
-> > > > and retry if you are. You're now explicitly continuing if you're in=
- a
-> > > > modification.
-> > > >
-> > > > You really need:
-> > > >
-> > > >    seq++;
-> > > >    wmb();
-> > > >
-> > > >    ... do modification
-> > > >
-> > > >    wmb();
-> > > >    seq++;
-> > > >
-> > > > vs
-> > > >
-> > > >   do {
-> > > >           s =3D READ_ONCE(seq) & ~1;
-> > > >           rmb();
-> > > >
-> > > >           ... read stuff
-> > > >
-> > > >   } while (rmb(), seq !=3D s);
-> > > >
-> > > >
-> > > > The thing to note is that seq will be odd while inside a modificati=
-on
-> > > > and even outside, further if the pre and post seq are both even but=
- not
-> > > > identical, you've crossed a modification and also need to retry.
-> > > >
-> > >
-> > > Ok, I don't think I got everything you have written above, sorry. But
-> > > let me explain what I think I need to do and please correct what I
-> > > (still) got wrong.
-> > >
-> > > a) before starting speculation,
-> > >   a.1) read and remember current->mm->mm_lock_seq (using
-> > > smp_load_acquire(), right?)
-> > >   a.2) read vma->vm_lock_seq (using smp_load_acquire() I presume)
-> > >   a.3) if vm_lock_seq is odd, we are already modifying VMA, so bail
-> > > out, try with proper mmap_lock
-> > > b) proceed with the inode pointer fetch and offset calculation as I'v=
-e coded it
-> > > c) lookup uprobe by inode+offset, if failed -- bail out (if succeeded=
-,
-> > > this could still be wrong)
-> > > d) re-read vma->vm_lock_seq, if it changed, we started modifying/have
-> > > already modified VMA, bail out
-> > > e) re-read mm->mm_lock_seq, if that changed -- presume VMA got
-> > > modified, bail out
-> > >
-> > > At this point we should have a guarantee that nothing about mm
-> > > changed, nor that VMA started being modified during our speculative
-> > > calculation+uprobe lookup. So if we found a valid uprobe, it must be =
-a
-> > > correct one that we need.
-> > >
-> > > Is that enough? Any holes in the approach? And thanks for thoroughly
-> > > thinking about this, btw!
-> >
-> > Ok, with slight modifications to the details of the above (e.g., there
-> > is actually no "odd means VMA is being modified" thing with
-> > vm_lock_seq),
->
-> Correct. Instead of that (vm_lock_seq->vm_lock_seq =3D=3D mm->mm_lock_seq=
-)
-> means your VMA is write-locked and is being modified.
->
-> > I ended up with the implementation below. Basically we
-> > validate that mm->mm_lock_seq didn't change and that vm_lock_seq !=3D
-> > mm_lock_seq (which otherwise would mean "VMA is being modified").
->
-> Validating that mm->mm_lock_seq did not change does not provide you
-> with useful information. It only means that between the point where
-> you recorded mm->mm_lock_seq and where you are checking it, there was
-> an mmap_write_unlock() or mmap_write_downgrade() call. Your VMA might
-> not have even been part of that modification for which mmap_lock was
-> taken.
->
-> In theory what you need is simpler (simplified code for explanation only)=
-:
->
-> int vm_lock_seq =3D vma->vm_lock_seq;
-> if (vm_lock_seq =3D=3D mm->mm_lock_seq)
->         goto bail_out; /* VMA is write-locked */
->
-> /* copy required VMA attributes */
->
-> if (vm_lock_seq !=3D vma->vm_lock_seq)
->         goto bail_out; /* VMA got write-locked */
->
-> But this would require proper ACQUIRE/RELEASE semantics for
-> vma->vm_lock_seq which is currently not there because all reads/writes
-> to vma->vm_lock_seq that matter are done under vma->vm_lock->lock
-> protection, so additional ordering is not required. If you decide to
-> add that semantics for vma->vm_lock_seq, please make sure that
-> pagefault path performance does not regress.
->
-> > There is a possibility that vm_lock_seq =3D=3D mm_lock_seq just by
-> > accident, which is not a correctness problem, we'll just fallback to
-> > locked implementation until something about VMA or mm_struct itself
-> > changes. Which is fine, and if mm folks ever change this locking
-> > schema, this might go away.
-> >
-> > If this seems on the right track, I think we can just move
-> > mm_start_vma_specuation()/mm_end_vma_speculation() into
-> > include/linux/mm.h.
-> >
-> > And after thinking a bit more about READ_ONCE() usage, I changed them
-> > to data_race() to not trigger KCSAN warnings. Initially I kept
-> > READ_ONCE() only around vma->vm_file access, but given we never change
-> > it until vma is freed and reused (which would be prevented by
-> > guard(rcu)), I dropped READ_ONCE() and only added data_race(). And
-> > even data_race() is probably not necessary.
-> >
-> > Anyways, please see the patch below. Would be nice if mm folks
-> > (Suren?) could confirm that this is not broken.
-> >
-> >
-> >
-> > Author: Andrii Nakryiko <andrii@kernel.org>
-> > Date:   Fri Aug 2 22:16:40 2024 -0700
-> >
-> >     uprobes: add speculative lockless VMA to inode resolution
-> >
-> >     Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> >
-> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > index 3de311c56d47..bee7a929ff02 100644
-> > --- a/kernel/events/uprobes.c
-> > +++ b/kernel/events/uprobes.c
-> > @@ -2244,6 +2244,70 @@ static int is_trap_at_addr(struct mm_struct
-> > *mm, unsigned long vaddr)
-> >         return is_trap_insn(&opcode);
-> >  }
-> >
-> > +#ifdef CONFIG_PER_VMA_LOCK
-> > +static inline void mm_start_vma_speculation(struct mm_struct *mm, int
-> > *mm_lock_seq)
-> > +{
-> > +       *mm_lock_seq =3D smp_load_acquire(&mm->mm_lock_seq);
-> > +}
-> > +
-> > +/* returns true if speculation was safe (no mm and vma modification
-> > happened) */
-> > +static inline bool mm_end_vma_speculation(struct vm_area_struct *vma,
-> > int mm_lock_seq)
-> > +{
-> > +       int mm_seq, vma_seq;
-> > +
-> > +       mm_seq =3D smp_load_acquire(&vma->vm_mm->mm_lock_seq);
-> > +       vma_seq =3D READ_ONCE(vma->vm_lock_seq);
-> > +
-> > +       return mm_seq =3D=3D mm_lock_seq && vma_seq !=3D mm_seq;
->
-> After spending some time on this I think what you do here is
-> semantically correct but sub-optimal.
+As per design, ACP iram-dram fence register sequence should be initiated
+before triggering SHA dma. This ensures that IRAM size will programmed
+correctly before initiaing SHA dma.
 
-Actually, after staring at this code some more I think
-vma->vm_lock_seq not having proper ACQUIRE/RELEASE semantics would
-bite us here as well. The entire find_active_uprobe_speculative()
-might be executing while mmap_lock is write-locked (so, mm_seq =3D=3D
-mm_lock_seq is satisfied) and we might miss that the VMA is locked due
-to vma->vm_lock_seq read/write reordering. Though it's late and I
-might have missed some memory barriers which would prevent this
-scenario...
+Fixes: 094d11768f74 ("ASoC: SOF: amd: Skip IRAM/DRAM size modification for Steam Deck OLED")
+Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+---
+ sound/soc/sof/amd/acp.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-> This check means that there was no call to
-> mmap_write_unlock()/mmap_write_downgrade() since
-> mm_start_vma_speculation() and the vma is not currently locked. To
-> unlock a write-locked VMA you do need to call
-> map_write_unlock()/mmap_write_downgrade(), so I think this check would
-> guarantee that your vma was not locked and modified from under us.
-> However this will also trigger false positives if
-> mmap_write_unlock()/mmap_write_downgrade() was called but the vma you
-> are using was never locked. So, it will bail out more than necessary.
-> Maybe it's ok?
->
-> > +}
-> > +
-> > +static struct uprobe *find_active_uprobe_speculative(unsigned long bp_=
-vaddr)
-> > +{
-> > +       const vm_flags_t flags =3D VM_HUGETLB | VM_MAYEXEC | VM_MAYSHAR=
-E;
-> > +       struct mm_struct *mm =3D current->mm;
-> > +       struct uprobe *uprobe;
-> > +       struct vm_area_struct *vma;
-> > +       struct file *vm_file;
-> > +       struct inode *vm_inode;
-> > +       unsigned long vm_pgoff, vm_start;
-> > +       int mm_lock_seq;
-> > +       loff_t offset;
-> > +
-> > +       guard(rcu)();
-> > +
-> > +       mm_start_vma_speculation(mm, &mm_lock_seq);
-> > +
-> > +       vma =3D vma_lookup(mm, bp_vaddr);
-> > +       if (!vma)
-> > +               return NULL;
-> > +
-> > +       vm_file =3D data_race(vma->vm_file);
-> > +       if (!vm_file || (vma->vm_flags & flags) !=3D VM_MAYEXEC)
-> > +               return NULL;
-> > +
-> > +       vm_inode =3D data_race(vm_file->f_inode);
-> > +       vm_pgoff =3D data_race(vma->vm_pgoff);
-> > +       vm_start =3D data_race(vma->vm_start);
-> > +
-> > +       offset =3D (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vm_st=
-art);
-> > +       uprobe =3D find_uprobe_rcu(vm_inode, offset);
-> > +       if (!uprobe)
-> > +               return NULL;
-> > +
-> > +       /* now double check that nothing about MM and VMA changed */
-> > +       if (!mm_end_vma_speculation(vma, mm_lock_seq))
-> > +               return NULL;
-> > +
-> > +       /* happy case, we speculated successfully */
-> > +       return uprobe;
-> > +}
-> > +#else /* !CONFIG_PER_VMA_LOCK */
-> > +static struct uprobe *find_active_uprobe_speculative(unsigned long bp_=
-vaddr)
-> > +{
-> > +       return NULL;
-> > +}
-> > +#endif /* CONFIG_PER_VMA_LOCK */
-> > +
-> >  /* assumes being inside RCU protected region */
-> >  static struct uprobe *find_active_uprobe_rcu(unsigned long bp_vaddr,
-> > int *is_swbp)
-> >  {
-> > @@ -2251,6 +2315,10 @@ static struct uprobe
-> > *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
-> >         struct uprobe *uprobe =3D NULL;
-> >         struct vm_area_struct *vma;
-> >
-> > +       uprobe =3D find_active_uprobe_speculative(bp_vaddr);
-> > +       if (uprobe)
-> > +               return uprobe;
-> > +
-> >         mmap_read_lock(mm);
-> >         vma =3D vma_lookup(mm, bp_vaddr);
-> >         if (vma) {
-> > diff --git a/kernel/fork.c b/kernel/fork.c
-> > index cc760491f201..211a84ee92b4 100644
-> > --- a/kernel/fork.c
-> > +++ b/kernel/fork.c
-> > @@ -3160,7 +3160,7 @@ void __init proc_caches_init(void)
-> >                         NULL);
-> >         files_cachep =3D kmem_cache_create("files_cache",
-> >                         sizeof(struct files_struct), 0,
-> > -                       SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
-> > +
-> > SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT|SLAB_TYPESAFE_BY_RCU,
-> >                         NULL);
-> >         fs_cachep =3D kmem_cache_create("fs_cache",
-> >                         sizeof(struct fs_struct), 0,
-> >
-> >
-> > >
-> > > P.S. This is basically the last big blocker towards linear uprobes
-> > > scalability with the number of active CPUs. I have
-> > > uretprobe+SRCU+timeout implemented and it seems to work fine, will
-> > > post soon-ish.
-> > >
-> > > P.P.S Also, funny enough, below was another big scalability limiter
-> > > (and the last one) :) I'm not sure if we can just drop it, or I shoul=
-d
-> > > use per-CPU counter, but with the below change and speculative VMA
-> > > lookup (however buggy, works ok for benchmarking), I finally get
-> > > linear scaling of uprobe triggering throughput with number of CPUs. W=
-e
-> > > are very close.
-> > >
-> > > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.=
-c
-> > > index f7443e996b1b..64c2bc316a08 100644
-> > > --- a/kernel/trace/trace_uprobe.c
-> > > +++ b/kernel/trace/trace_uprobe.c
-> > > @@ -1508,7 +1508,7 @@ static int uprobe_dispatcher(struct
-> > > uprobe_consumer *con, struct pt_regs *regs)
-> > >         int ret =3D 0;
-> > >
-> > >         tu =3D container_of(con, struct trace_uprobe, consumer);
-> > > -       tu->nhit++;
-> > > +       //tu->nhit++;
-> > >
-> > >         udd.tu =3D tu;
-> > >         udd.bp_addr =3D instruction_pointer(regs);
-> > >
-> > >
-> > > > > +
-> > > > > +       /* happy case, we speculated successfully */
-> > > > > +       rcu_read_unlock();
-> > > > > +       return uprobe;
-> > > > > +
-> > > > > +retry_with_lock:
-> > > > > +       rcu_read_unlock();
-> > > > > +       uprobe =3D NULL;
-> > > > > +#endif
-> > > > > +
-> > > > >         mmap_read_lock(mm);
-> > > > >         vma =3D vma_lookup(mm, bp_vaddr);
-> > > > >         if (vma) {
-> > > > > diff --git a/kernel/fork.c b/kernel/fork.c
-> > > > > index cc760491f201..211a84ee92b4 100644
-> > > > > --- a/kernel/fork.c
-> > > > > +++ b/kernel/fork.c
-> > > > > @@ -3160,7 +3160,7 @@ void __init proc_caches_init(void)
-> > > > >                         NULL);
-> > > > >         files_cachep =3D kmem_cache_create("files_cache",
-> > > > >                         sizeof(struct files_struct), 0,
-> > > > > -                       SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUN=
-T,
-> > > > > + SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT|SLAB_TYPESAFE_BY_RCU=
-,
-> > > > >                         NULL);
-> > > > >         fs_cachep =3D kmem_cache_create("fs_cache",
-> > > > >                         sizeof(struct fs_struct), 0,
+diff --git a/sound/soc/sof/amd/acp.c b/sound/soc/sof/amd/acp.c
+index 9ce8b5ccb3d7..d0ba641ba28c 100644
+--- a/sound/soc/sof/amd/acp.c
++++ b/sound/soc/sof/amd/acp.c
+@@ -264,6 +264,17 @@ int configure_and_run_sha_dma(struct acp_dev_data *adata, void *image_addr,
+ 	snd_sof_dsp_write(sdev, ACP_DSP_BAR, ACP_SHA_DMA_STRT_ADDR, start_addr);
+ 	snd_sof_dsp_write(sdev, ACP_DSP_BAR, ACP_SHA_DMA_DESTINATION_ADDR, dest_addr);
+ 	snd_sof_dsp_write(sdev, ACP_DSP_BAR, ACP_SHA_MSG_LENGTH, image_length);
++
++	/* psp_send_cmd only required for vangogh platform (rev - 5) */
++	if (desc->rev == 5 && !(adata->quirks && adata->quirks->skip_iram_dram_size_mod)) {
++		/* Modify IRAM and DRAM size */
++		ret = psp_send_cmd(adata, MBOX_ACP_IRAM_DRAM_FENCE_COMMAND | IRAM_DRAM_FENCE_2);
++		if (ret)
++			return ret;
++		ret = psp_send_cmd(adata, MBOX_ACP_IRAM_DRAM_FENCE_COMMAND | MBOX_ISREADY_FLAG);
++		if (ret)
++			return ret;
++	}
+ 	snd_sof_dsp_write(sdev, ACP_DSP_BAR, ACP_SHA_DMA_CMD, ACP_SHA_RUN);
+ 
+ 	ret = snd_sof_dsp_read_poll_timeout(sdev, ACP_DSP_BAR, ACP_SHA_TRANSFER_BYTE_CNT,
+@@ -281,17 +292,6 @@ int configure_and_run_sha_dma(struct acp_dev_data *adata, void *image_addr,
+ 			return ret;
+ 	}
+ 
+-	/* psp_send_cmd only required for vangogh platform (rev - 5) */
+-	if (desc->rev == 5 && !(adata->quirks && adata->quirks->skip_iram_dram_size_mod)) {
+-		/* Modify IRAM and DRAM size */
+-		ret = psp_send_cmd(adata, MBOX_ACP_IRAM_DRAM_FENCE_COMMAND | IRAM_DRAM_FENCE_2);
+-		if (ret)
+-			return ret;
+-		ret = psp_send_cmd(adata, MBOX_ACP_IRAM_DRAM_FENCE_COMMAND | MBOX_ISREADY_FLAG);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	ret = snd_sof_dsp_read_poll_timeout(sdev, ACP_DSP_BAR, ACP_SHA_DSP_FW_QUALIFIER,
+ 					    fw_qualifier, fw_qualifier & DSP_FW_RUN_ENABLE,
+ 					    ACP_REG_POLL_INTERVAL, ACP_DMA_COMPLETE_TIMEOUT_US);
+-- 
+2.34.1
+
 
