@@ -1,160 +1,328 @@
-Return-Path: <linux-kernel+bounces-277356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E9E949FAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:10:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2201949FAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 847291C21488
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:10:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 141491C222A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEFD19DF8B;
-	Wed,  7 Aug 2024 06:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="AljFx5ES";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="L5baFq61"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B1619F48D;
+	Wed,  7 Aug 2024 06:13:07 +0000 (UTC)
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B7E19D8A3;
-	Wed,  7 Aug 2024 06:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F97319DF86;
+	Wed,  7 Aug 2024 06:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723011008; cv=none; b=EpLCGIlJH9N+juW40oeigOA2NYktyxMxB/cQz92D1FD4bFapvcnMWQF6sLYgtCZeWp4ClHtZxFPlGfmDrUiDMxHR38OV90iW9aJfN9ofZ4890r0DYW3RqkwBKmhvKvqE+3oScq/ksJm6eTsbmUdUOQ4fSsyJsAN6XoJgrfby+8I=
+	t=1723011186; cv=none; b=WhS7Hn/gTryBudZYs6eRw9Y94cPP8eEg9yvKht7cuYhyKxc0sJxjWIPftkghoeFgm+sT1bzuG5RqtZbJ0t1cthe6wCzCQ2UeCQ4yHtlM1o/4XaLtB6GUa35I7iJLflaVvsxFcCumvUOqmDjGthxEbq1mf40A46poY98tkZCNewU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723011008; c=relaxed/simple;
-	bh=xYUq4mJv1M0iJFlQw49Ia19hd83rz3/8znS2az1pk+w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iOHrS0MmmK7qXhTvqF1uxa3EYp6tQNj2DIS76WTm3VpYVM3Jci9OKXkUtJaMexYp7WOgrs64uOIdyxnwXwo4rk8dQ+njO9vhoayzCvXFnTlGfWMRc+ma1holnDe1cHVVa8YIeORr45lypbHbqubiH1SXSfTEWjzNeF7iUVma2ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=AljFx5ES; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=L5baFq61 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1723011004; x=1754547004;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Ri6YVzAWj9lpW/HRkVGmES5Sunj5DDspxGsXPucqkdk=;
-  b=AljFx5ESmIa5BoAoV4V6/7wsIFDhezNO4gKJrXoXvwRxmpoSSkGuefms
-   SwXTOrrK23mMiFO4ReHGmESSnDpV1jevbA38dWvVbGpHlB+TefBC4U/bA
-   Km9rSQkJ5C+hTjrGdkNm28BBVQO0AV7/lGizTYuILN+D01vS9ziv2O726
-   ATua6PN9HhtYCv+1ytpYrRIYfvB+Bt5kGk43Mu96L+VXowKMe2eDzBq/x
-   33K1hUtvbiY+QL9gPDZHueUi1n6bTaO5FFlnUPLTEQuN+kYVNOIlfl01G
-   fo8T9eLFNAueS+IfALEXB0vvPIUb8cwfcU5oim+QXRFTwZXGN1Bbnp+YE
-   Q==;
-X-CSE-ConnectionGUID: GJUOMnAjTXGOzXlPkvTTJg==
-X-CSE-MsgGUID: j8ctx7BhTm+2MgvhlHS0ig==
-X-IronPort-AV: E=Sophos;i="6.09,269,1716242400"; 
-   d="scan'208";a="38281790"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 07 Aug 2024 08:09:55 +0200
-X-CheckPoint: {66B30FB3-32-CFE9415D-C7159436}
-X-MAIL-CPID: A584B594B3F10A6F26740B41B93F4F54_1
-X-Control-Analysis: str=0001.0A782F1F.66B30FB4.0021,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5692A16362E;
-	Wed,  7 Aug 2024 08:09:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1723010991;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Ri6YVzAWj9lpW/HRkVGmES5Sunj5DDspxGsXPucqkdk=;
-	b=L5baFq617Qqdkkg5X0otVD1ulhjOxU3qcTcCuCMrXrnvCzoytJvsL0qyGyCSYVvHpm74cG
-	zzLVisQRyJ4dGMx8o9Dne0hjr02x7itvXVuqLMsmMe0qGoe/U0rptYNkkjdYLSQWXDOvNQ
-	oH/W3Y7KIE408X+wqxq5tHSb6jAYQFfDoKRXSnCtfZw2dqU2KqHRvLE5MY83Rl/hJUT/f2
-	OvWfhElj8WiOhYdAJMCY+Th1UyxDuVqG5hslH1cJ5mvnx6dGfpl6ufmQrdAyFLpNj1JkHF
-	HLWsQFkYK/Pn8CzMhqHvN6PS3ATjP6hSiKXVmgacH16BMKupURA/6c6VK65lwg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH 9/9] arm64: dts: imx8mm-phygate: fix typo pinctrcl-0
-Date: Wed, 07 Aug 2024 08:09:52 +0200
-Message-ID: <2744927.mvXUDI8C0e@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20240805-fsl_dts_warning-v1-9-055653dd5c96@nxp.com>
-References: <20240805-fsl_dts_warning-v1-0-055653dd5c96@nxp.com> <20240805-fsl_dts_warning-v1-9-055653dd5c96@nxp.com>
+	s=arc-20240116; t=1723011186; c=relaxed/simple;
+	bh=K+qxP4WWcgJDXI8X+yE8XSc+XD0JqKDQrr0AfKdv2PE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KDQILYM3+vf7Apn7O+uVo2XSLoSF3Dotq4Em0kYFEP1Usrn9Y6Wxn1cByegxq3BexHpFJYuqW6heyNF7siZrE3/NuE6RnsCaXymeEp6lolRAigPUlfALHT+lE07yXSZl/TNBNZm+hLkQnn/yg0ChaU+BDFFTJpUXIUAKKpqji0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70d18d4b94cso1088669b3a.2;
+        Tue, 06 Aug 2024 23:13:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723011184; x=1723615984;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8n2OlsDXMc5wTadk3lzNRjAKDrY2Lrbi1VmKcvwH5VI=;
+        b=rsWKYSX2dSnnJj+K+PIR3p6Uz7n/uGVgbR2QJaYrrRqx9TiYOIa942uC7gtZDD+GJ8
+         TnhNr9xqvmRiDP+M+iGXqdgwSwcMqYqiRllr2yU2V8oNSR79ZD8XZNKMGEXz/nKrVQv/
+         KPykqeuiRl/IQdrcyQk/jYAC3j1b/i+GoOnXmvpFdzYsHDxjp345ezF4uqmceu/iSFci
+         JIGQ3uuiWgpPf6vBFXBpUk7WQ2YexnNMtDCJcsyLxgB4auZyLptrCCFyNNNJPLOeLulE
+         ZcWmBl2vT4hZYYUH+uKZmr4FAGFJ5Lo9WOcEa+oPGN187PNC2nL4V+6fthrcGQJfSGTZ
+         J73w==
+X-Forwarded-Encrypted: i=1; AJvYcCV6ImzyJ3Xo0nnMJfAtK8kHJ6zELE9u2C6bKplX5D60j5JWarjAFKKq4GDajG667cKODkCa0dy/p6pVPe51l83r14sMrMmFh3jLgdR4SgYzftP8/bjPHOOSNwK9N5CFd023Y1UlaIXy/zCEZiEGtw==
+X-Gm-Message-State: AOJu0YwNhwh6/moy0mY3/W1Kc4sEzIDmRzm/ns/mDb12Fo6oVxFVhJWb
+	JyxILAsaDsSNkt1BM5YWp0ssFbvv5p3ALX+rJwJeA5TnBRcIb5c5Dor5/9tKd8/p1q9sXBE5DS6
+	/lRO9KDDmblQXT7uUE/qT5aM8nJZ/weH2
+X-Google-Smtp-Source: AGHT+IFRoyDWY1SSLyws+WoffESWAAm6uUnvONlx2YSA4nwdKDAwR3b0mkU1JbpJ1lxcuKyqBn4TebX3/xillaaVm4A=
+X-Received: by 2002:a05:6a20:4d95:b0:1c6:ba8b:1e2e with SMTP id
+ adf61e73a8af0-1c6ba8b1f23mr8369448637.1.1723011184117; Tue, 06 Aug 2024
+ 23:13:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240803211332.1107222-1-namhyung@kernel.org> <20240803211332.1107222-6-namhyung@kernel.org>
+ <ZrEmZLV0vgU6GUcN@x1> <ZrEyo4CSm6nKU20s@google.com> <ZrE011BLww0LQQha@x1>
+ <ZrE7EWyFJ3hThopM@google.com> <ZrIhPuFee8R9ZvVi@x1>
+In-Reply-To: <ZrIhPuFee8R9ZvVi@x1>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Tue, 6 Aug 2024 23:12:51 -0700
+Message-ID: <CAM9d7cjXmaMuidQR10PXrp9khZ4LhDZbLno1rN2JcCncaYyp7Q@mail.gmail.com>
+Subject: Re: [PATCH 5/5] perf annotate: Add --skip-empty option
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi,
+On Tue, Aug 6, 2024 at 6:12=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
+l.org> wrote:
+>
+> On Mon, Aug 05, 2024 at 01:50:25PM -0700, Namhyung Kim wrote:
+> > On Mon, Aug 05, 2024 at 05:23:51PM -0300, Arnaldo Carvalho de Melo wrot=
+e:
+> > > On Mon, Aug 05, 2024 at 01:14:27PM -0700, Namhyung Kim wrote:
+> > > > On Mon, Aug 05, 2024 at 04:22:12PM -0300, Arnaldo Carvalho de Melo =
+wrote:
+> > > > > On Sat, Aug 03, 2024 at 02:13:32PM -0700, Namhyung Kim wrote:
+> > > > > > Like in perf report, we want to hide empty events in the perf a=
+nnotate
+> > > > > > output.  This is consistent when the option is set in perf repo=
+rt.
+> > > > > >
+> > > > > > For example, the following command would use 3 events including=
+ dummy.
+> > > > > >
+> > > > > >   $ perf mem record -a -- perf test -w noploop
+> > > > > >
+> > > > > >   $ perf evlist
+> > > > > >   cpu/mem-loads,ldlat=3D30/P
+> > > > > >   cpu/mem-stores/P
+> > > > > >   dummy:u
+> > > > > >
+> > > > > > Just using perf annotate with --group will show the all 3 event=
+s.
+> > > > >
+> > > > > Seems unrelated, just before compiling with this patch:
+> > > > >
+> > > > > root@x1:~# perf mem record -a -- perf test -w noploop
+> > > > > Memory events are enabled on a subset of CPUs: 4-11
+> > > > > [ perf record: Woken up 1 times to write data ]
+> > > > > [ perf record: Captured and wrote 10.506 MB perf.data (2775 sampl=
+es) ]
+> > > > > root@x1:~#
+> > > > >
+> > > > > root@x1:~# perf annotate --group --stdio2 sched_clock
+> > > > > root@x1:~# perf annotate --stdio2 sched_clock
+> > > > > Samples: 178  of event 'cpu_atom/mem-stores/P', 4000 Hz, Event co=
+unt (approx.): 565268, [percent: local period]
+> > > > > sched_clock() /usr/lib/debug/lib/modules/6.8.11-200.fc39.x86_64/v=
+mlinux
+> > > > > Percent      0xffffffff810511e0 <sched_clock>:
+> > > > >                endbr64
+> > > > >    5.76        incl    pcpu_hot+0x8
+> > > > >    5.47      =E2=86=92 callq   sched_clock_noinstr
+> > > > >   88.78        decl    pcpu_hot+0x8
+> > > > >              =E2=86=93 je      1e
+> > > > >              =E2=86=92 jmp     __x86_return_thunk
+> > > > >          1e: =E2=86=92 callq   __SCT__preempt_schedule_notrace
+> > > > >              =E2=86=92 jmp     __x86_return_thunk
+> > > > > root@x1:~# perf annotate --group --stdio2 sched_clock
+> > > > > root@x1:~# perf annotate --group --stdio sched_clock
+> > > > > root@x1:~# perf annotate --group sched_clock
+> > > > > root@x1:~#
+> > > > >
+> > > > > root@x1:~# perf evlist
+> > > > > cpu_atom/mem-loads,ldlat=3D30/P
+> > > > > cpu_atom/mem-stores/P
+> > > > > dummy:u
+> > > > > root@x1:~#
+> > > > >
+> > > > > root@x1:~# perf report --header-only | grep cmdline
+> > > > > # cmdline : /home/acme/bin/perf mem record -a -- perf test -w nop=
+loop
+> > > > > root@x1:~#
+> > > > >
+> > > > > I thought it would be some hybrid oddity but seems to be just --g=
+roup
+> > > > > related, seems like it stops if the first event has no samples? B=
+ecause
+> > > > > it works with another symbol:
+> > > >
+> > > > Good catch.  Yeah I found it only checked the first event.  Somethi=
+ng
+> > > > like below should fix the issue.
+> > >
+> > > Nope, with the patch applied:
+> > >
+> > > root@x1:~# perf annotate --group --stdio sched_clock
+> > > root@x1:~# perf annotate --stdio sched_clock
+> > >  Percent |      Source code & Disassembly of vmlinux for cpu_atom/mem=
+-stores/P (147 samples, percent: local period)
+> > > ---------------------------------------------------------------------=
+----------------------------------------------
+> > >          : 0                0xffffffff810511e0 <sched_clock>:
+> > >     0.00 :   ffffffff810511e0:       endbr64
+> > >     5.11 :   ffffffff810511e4:       incl    %gs:0x7efe2d5d(%rip)    =
+   # 33f48 <pcpu_hot+0x8>
+> > >     0.13 :   ffffffff810511eb:       callq   0xffffffff821350d0
+> > >    94.76 :   ffffffff810511f0:       decl    %gs:0x7efe2d51(%rip)    =
+   # 33f48 <pcpu_hot+0x8>
+> > >     0.00 :   ffffffff810511f7:       je      0xffffffff810511fe
+> > >     0.00 :   ffffffff810511f9:       jmp     0xffffffff82153320
+> > >     0.00 :   ffffffff810511fe:       callq   0xffffffff82153990
+> > >     0.00 :   ffffffff81051203:       jmp     0xffffffff82153320
+> > > root@x1:~# perf annotate --group --stdio sched_clock
+> > > root@x1:~# perf annotate --group --stdio2 sched_clock
+> > > root@x1:~# perf annotate --group sched_clock
+> > > root@x1:~#
+> >
+> > Oh ok, it was not enough.  It should call evsel__output_resort() after
+> > hists__match() and hists__link().  Use this instead.
+>
+> Ok, this works:
+>
+> Before this patch:
+>
+> root@x1:~# perf annotate --stdio sched_clock
+>  Percent |      Source code & Disassembly of vmlinux for cpu_atom/mem-sto=
+res/P (147 samples, percent: local period)
+> -------------------------------------------------------------------------=
+------------------------------------------
+>          : 0                0xffffffff810511e0 <sched_clock>:
+>     0.00 :   ffffffff810511e0:       endbr64
+>     5.11 :   ffffffff810511e4:       incl    %gs:0x7efe2d5d(%rip)       #=
+ 33f48 <pcpu_hot+0x8>
+>     0.13 :   ffffffff810511eb:       callq   0xffffffff821350d0
+>    94.76 :   ffffffff810511f0:       decl    %gs:0x7efe2d51(%rip)       #=
+ 33f48 <pcpu_hot+0x8>
+>     0.00 :   ffffffff810511f7:       je      0xffffffff810511fe
+>     0.00 :   ffffffff810511f9:       jmp     0xffffffff82153320
+>     0.00 :   ffffffff810511fe:       callq   0xffffffff82153990
+>     0.00 :   ffffffff81051203:       jmp     0xffffffff82153320
+> root@x1:~# perf annotate --group --stdio sched_clock
+> root@x1:~#
+>
+> After:
+>
+> root@x1:~# perf annotate --group --stdio sched_clock
+>  Percent                 |      Source code & Disassembly of vmlinux for =
+cpu_atom/mem-loads,ldlat=3D30/P, cpu_atom/mem-stores/P, dummy:u (0 samples,=
+ percent: local period)
+> -------------------------------------------------------------------------=
+---------------------------------------------------------------------------=
+---------------------
+>                          : 0                0xffffffff810511e0 <sched_clo=
+ck>:
+>     0.00    0.00    0.00 :   ffffffff810511e0:       endbr64
+>     0.00    5.11    0.00 :   ffffffff810511e4:       incl    %gs:0x7efe2d=
+5d(%rip)       # 33f48 <pcpu_hot+0x8>
+>     0.00    0.13    0.00 :   ffffffff810511eb:       callq   0xffffffff82=
+1350d0
+>     0.00   94.76    0.00 :   ffffffff810511f0:       decl    %gs:0x7efe2d=
+51(%rip)       # 33f48 <pcpu_hot+0x8>
+>     0.00    0.00    0.00 :   ffffffff810511f7:       je      0xffffffff81=
+0511fe
+>     0.00    0.00    0.00 :   ffffffff810511f9:       jmp     0xffffffff82=
+153320
+>     0.00    0.00    0.00 :   ffffffff810511fe:       callq   0xffffffff82=
+153990
+>     0.00    0.00    0.00 :   ffffffff81051203:       jmp     0xffffffff82=
+153320
+> root@x1:~#
+>
+> One example with samples for the first two events:
+>
+> root@x1:~# perf annotate --group --stdio2
+> Samples: 2K of events 'cpu_atom/mem-loads,ldlat=3D30/P, cpu_atom/mem-stor=
+es/P, dummy:u', 4000 Hz, Event count (approx.): 22892183, [percent: local p=
+eriod]
+> cgroup_rstat_updated() /usr/lib/debug/lib/modules/6.8.11-200.fc39.x86_64/=
+vmlinux
+> Percent                       0xffffffff8124e080 <cgroup_rstat_updated>:
+>    0.00    0.24    0.00         endbr64
+>                               =E2=86=92 callq   __fentry__
+>    0.00   99.76    0.00         pushq   %r15
+>                                 movq    $0x251d4,%rcx
+>                                 pushq   %r14
+>                                 movq    %rdi,%r14
+>                                 pushq   %r13
+>                                 movslq  %esi,%r13
+>                                 pushq   %r12
+>                                 pushq   %rbp
+>                                 pushq   %rbx
+>                                 subq    $0x10,%rsp
+>                                 cmpq    $0x2000,%r13
+>                               =E2=86=93 jae     17f
+>                           31:   movq    0x3d0(%r14),%rbx
+>                                 movq    -0x7d3fb360(, %r13, 8),%r12
+>                                 cmpq    $0x2000,%r13
+>                               =E2=86=93 jae     19b
+>   25.00    0.00    0.00   4d:   cmpq    $0,0x88(%r12, %rbx)
+>                               =E2=86=93 je      6b
+>                                 addq    $0x10,%rsp
+>                                 popq    %rbx
+>                                 popq    %rbp
+>                                 popq    %r12
+>   75.00    0.00    0.00         popq    %r13
+>                                 popq    %r14
+>                                 popq    %r15
+>                               =E2=86=92 jmp     __x86_return_thunk
+> <SNIP>
+>
+> And then skipping "empty" events:
+>
+> root@x1:~# perf annotate --group --skip-empty --stdio2 cgroup_rstat_updat=
+ed | head -35
+> Samples: 4  of events 'cpu_atom/mem-loads,ldlat=3D30/P, cpu_atom/mem-stor=
+es/P', 4000 Hz, Event count (approx.): 31851, [percent: local period]
+> cgroup_rstat_updated() /usr/lib/debug/lib/modules/6.8.11-200.fc39.x86_64/=
+vmlinux
+> Percent               0xffffffff8124e080 <cgroup_rstat_updated>:
+>    0.00    0.24         endbr64
+>                       =E2=86=92 callq   __fentry__
+>    0.00   99.76         pushq   %r15
+>                         movq    $0x251d4,%rcx
+>                         pushq   %r14
+>                         movq    %rdi,%r14
+>                         pushq   %r13
+>                         movslq  %esi,%r13
+>                         pushq   %r12
+>                         pushq   %rbp
+>                         pushq   %rbx
+>                         subq    $0x10,%rsp
+>                         cmpq    $0x2000,%r13
+>                       =E2=86=93 jae     17f
+>                   31:   movq    0x3d0(%r14),%rbx
+>                         movq    -0x7d3fb360(, %r13, 8),%r12
+>                         cmpq    $0x2000,%r13
+>                       =E2=86=93 jae     19b
+>   25.00    0.00   4d:   cmpq    $0,0x88(%r12, %rbx)
+>                       =E2=86=93 je      6b
+>                         addq    $0x10,%rsp
+>                         popq    %rbx
+>                         popq    %rbp
+>                         popq    %r12
+>   75.00    0.00         popq    %r13
+>                         popq    %r14
+>                         popq    %r15
+>                       =E2=86=92 jmp     __x86_return_thunk
+>                   6b:   addq    %r12,%rcx
+>                         movq    %rcx,%rdi
+>                         movq    %rcx,(%rsp)
+>                       =E2=86=92 callq   *ffffffff82151500
+> root@x1:~#
+>
+> So, I haven't done further analysis but I think this is a separate
+> issue, right?
 
-Am Montag, 5. August 2024, 17:49:51 CEST schrieb Frank Li:
-> Fix typo pinctrcl-0 with pinctrl-0.
-> Fix below warning:
->=20
-> arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l-rs232-rs485.dtb: gpi=
-o@30220000: 'pinctrl-0' is a dependency of 'pinctrl-names'
->         from schema $id: http://devicetree.org/schemas/pinctrl/pinctrl-co=
-nsumer.yaml#
-> arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l-rs232-rs485.dtb: uar=
-t4_rs485_en: $nodename:0: 'uart4_rs485_en' does not match '^(hog-[0-9]+|.+-=
-hog(-[0-9]+)?)$
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l-rs232-rs232.dtso | =
-2 +-
->  arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l-rs232-rs485.dtso | =
-2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l-rs232-r=
-s232.dtso b/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l-rs232-rs23=
-2.dtso
-> index f246b0ba6af29..ce197266262a5 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l-rs232-rs232.dt=
-so
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l-rs232-rs232.dt=
-so
-> @@ -22,7 +22,7 @@
-> =20
->  &gpio3 {
->  	pinctrl-names =3D "default";
-> -	pinctrcl-0 =3D <&pinctrl_gpio3_hog>;
-> +	pinctrl-0 =3D <&pinctrl_gpio3_hog>;
-> =20
+Yep, it's not related to --skip-empty.
 
-I think this commit should contain a Fixes tag.
+>
+> Thanks for the fix!
+>
+> Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-best regards,
-Alexander
+Will send a fix with your tags.
 
->  	uart4_rs485_en {
->  		gpio-hog;
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l-rs232-r=
-s485.dtso b/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l-rs232-rs48=
-5.dtso
-> index 67508ca14276f..f2a7811f1b9f2 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l-rs232-rs485.dt=
-so
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm-phygate-tauri-l-rs232-rs485.dt=
-so
-> @@ -23,7 +23,7 @@
-> =20
->  &gpio3 {
->  	pinctrl-names =3D "default";
-> -	pinctrcl-0 =3D <&pinctrl_gpio3_hog>;
-> +	pinctrl-0 =3D <&pinctrl_gpio3_hog>;
-> =20
->  	uart4_rs485_en {
->  		gpio-hog;
->=20
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+Thanks,
+Namhyung
 
