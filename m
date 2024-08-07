@@ -1,187 +1,154 @@
-Return-Path: <linux-kernel+bounces-278021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83C494A984
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:11:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45CDF94A98D
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DEE1280D9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:11:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69C8A1C20F20
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A051039FFE;
-	Wed,  7 Aug 2024 14:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3CB5914C;
+	Wed,  7 Aug 2024 14:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oheWyQBM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xSaLPbez"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="L5phjNjl"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3374528399
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70935282FB
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 14:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723039914; cv=none; b=rjfuwXA19Bk3cwdBli3AScku8+WM2Eu8/xaeYmZKkRtnrKuNucHflsmYYS9KRPydA9y+thMpKuFwjDAE9sI2RukKsA7g9UYGY6jgGJtCJejKAlzcfdLtmCupj+LLKNCkVzk/xK4r2S7s9dFIB7YI6YxpukMbIlmaS6agNmk22I0=
+	t=1723039973; cv=none; b=AQI2ia4y97zqqjsR0418VcWec46MunNXEdTSwn5nLLo0sjCmXS6KPtyNUJryAaqyYLxrCwEhpL43b9ZHJrnu9lqZbrZAYVMMaUSJibHuarS4AJLb9LbeFyCEvNqGvJ1ny1O82wkVrwHE5eUPRygmklazkKBpDVeXLKB92MdaHPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723039914; c=relaxed/simple;
-	bh=vRRU7EOYazizOoY3qdicbHX7zveXmxX8FSHnVkmj9gc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jA62qZNsRAQSEi90F/G9FuUB41/jYunEuU0RU07b1FRoIHGNjtMkdOPqHn9GYwSvL/Rmuf5TEurB9WeEdi8eoa2iJG99nlcnU9pN4wdenWEmjs8lwrNcFUKrCFXYUEdJw8bq2FLGltxfqd+aoYthk3gAyDQms7iAxOdB2OAyiuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oheWyQBM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xSaLPbez; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723039911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HUYAMeejBq+6dWwULzKkxmmdiZjAXsl6Rcbo+GWpq/g=;
-	b=oheWyQBMIGZ8fgW2TrheSvdEKVvH4heica9j6j6dYMVVwdYiFK5eAlSzWRz/b1E8mH6Gnw
-	zhKzFQ48deHdsnbLQuaSUS9IYIXOW5T7I/yNiW9JFOLRrwTv/eK1KLyGXaHFk6w3h/P/jD
-	X/HzwH7MIBbaz5yBp7bNPviuD/Kx3ZF7mrIhSY4PM2M8iIbbfYsSdlwEBiNlzn+RckR51R
-	OO1B1AbewtKrvUUGmR7XOoTgDAXG4Fo9y2znZtyTSQRG8VVABh8u2p1WiVy6TdIiIiJa0q
-	3Z16wOrdeXrHCZRkSc8sNDp41wvo7gRXIx8xrcPpHG9lRFD5RJn5MgMgw4wrjA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723039911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HUYAMeejBq+6dWwULzKkxmmdiZjAXsl6Rcbo+GWpq/g=;
-	b=xSaLPbezn9i9PTGio2/ZCJyD5ZI5E/8qZ100L0IVXzByZ1hHCwv4Zv+IxU2PZgt6wfP/YP
-	8zjGKOKnxKi6FtCg==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
- <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH printk v7 30/35] printk: Add helper for flush type logic
-In-Reply-To: <ZrNcr5-uZoQnSHii@pathway.suse.cz>
-References: <20240804005138.3722656-1-john.ogness@linutronix.de>
- <20240804005138.3722656-31-john.ogness@linutronix.de>
- <ZrNcr5-uZoQnSHii@pathway.suse.cz>
-Date: Wed, 07 Aug 2024 16:17:51 +0206
-Message-ID: <87zfpozal4.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1723039973; c=relaxed/simple;
+	bh=MwwwlILPBrJubGFy6q/y6XZ7ELEBOo3CsDbrxodDZtQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o3rCwvZ+hOi/O62JglWiA/dSOq7BxnsJ8JKhoZpmiyZsRc4fOi/xwj5G3HszS4EdK+GgiMSMlG7UiRF8cyWi89GNN7LTW/E8p1E+mSDXkqGMQXvg5fRfgJSTQ+AIH+UX+O3xHPYRBT1GGt0+Q3YLFCyb6J3axH8w+Kr6DOqliUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=L5phjNjl; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52f024f468bso2237501e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 07:12:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723039968; x=1723644768; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rhnBrsrtx8JhjXSaZo5MeZvYsFC+QghJ1OF9fPH+ytE=;
+        b=L5phjNjluLI/du9LQX4NRL8zcDidFj1bjJsF67/W7epwNpES3X1/P1oyqBZ8SfcDKB
+         sHQBbIUFybOsPsqRsRXtrUH8H6T+TMcOOO8qn6FzMX1s0KrJaiR3hnzyZvQJ6EHR+N9i
+         ZEPPL4bU9yG0R4igzB8g5sTciptxLkMzVFGiv2EAIDCoVJe2ldAQbdlIEZKe33HbXQid
+         PpkS9J5zrEv8Aq/HwsWjeiUBNTOXxP2rsxXljPoenGO2d0KXiETVVAQBQOoMUSSO5Nd8
+         RBzdZ2iUrRuUbZYZJ0d+FBKTiaD8lLNKz239xjhfcyNDqbaC03rEICcaVevCGX0LxwTP
+         S63w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723039968; x=1723644768;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rhnBrsrtx8JhjXSaZo5MeZvYsFC+QghJ1OF9fPH+ytE=;
+        b=TH5Zox2KmOpnSq2R9ItByW4qfgpQirG9maE7a1Ta7pWuAvsRn1bYtZWJ2FKVXA5IEQ
+         z2k2ycjjf5oN1bMDosKKg2YagrGu6/jwMvok9CLH3H8U5AjJ7pVc2jn29Mqb9FXE6bP8
+         UvyELX/et6YMSup1Epvz3wGdI1mj4XOaYCGsOPvGsoIBHj97HXwkYOSNtkWUeV4qLuCR
+         T4ukz8Zrt0kKgqPjT28GdH2laKvyU02phE9dYVoyor7eOn3I6SP/IK09jZeziTKtyGGk
+         QZkSb21MzEH8Rg2bjXY/Y9b5AWOH9MeybFsfjoBSYXEgc4b2ZnKhgnV2Op6TWR+LV6g/
+         /+kw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyVehS+gNh9Q0M5/zN3VgYfYJZ9kMGxiH/vB8s0dpkCOIruxyDcg4hcqAt5jduOtxPtCFOiziKMhkDtIqHoOByllw5q7QPtAMyU7r/
+X-Gm-Message-State: AOJu0YyBP2RhaorKmLujPSX69gChSLVT8aH4/QTriBwar8IlGNgcij6G
+	OFJ3J8+6e2iWKdqjXDGiFILqX1wLGhzRZBoGyz9w7gkX798rM5tMtjkSd5K8n3I=
+X-Google-Smtp-Source: AGHT+IEJyt0WGEXWzqRXsX8JTktfdH+4TvqQykj+Gjwr32tHfWEz80uMq7FNr1g7QseHu2DJb76PiQ==
+X-Received: by 2002:a05:6512:3d11:b0:52c:d750:bd19 with SMTP id 2adb3069b0e04-530bb39d200mr10835746e87.8.1723039968086;
+        Wed, 07 Aug 2024 07:12:48 -0700 (PDT)
+Received: from blmsp.fritz.box ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83b92cbccsm7057525a12.68.2024.08.07.07.12.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 07:12:47 -0700 (PDT)
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Markus Schneider-Pargmann <msp@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Ronald Wahl <ronald.wahl@raritan.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Udit Kumar <u-kumar1@ti.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Vibhore Vardhan <vibhore@ti.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Dhruva Gole <d-gole@ti.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/5] serial: 8250: omap: Add am62 wakeup support
+Date: Wed,  7 Aug 2024 16:12:22 +0200
+Message-ID: <20240807141227.1093006-1-msp@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On 2024-08-07, Petr Mladek <pmladek@suse.com> wrote:
-> I would suggest to change the semantic and set the _preferred_
-> flush method instead of an _available_ one.
+Hi,
 
-I will need to evaluate this closely. I worry that the caller needs to
-understands how the helper function is choosing the preference. For
-example, at the end you make a suggestion that is broken with this
-suggested change.
+v2
+--
 
->> +		if (ft.nbcon_atomic) {
->> +			stop_seq = prb_next_reserve_seq(prb);
->> +			goto again;
->> +		}
->
-> BTW: I wonder how this code would look like after adding the printk
->      threads. We should do "goto again" only when ft.nbcon_atomic
->      is the preferred (only available) flush type for nbcon consoles.
+In Version 2 I removed the Partial-IO specific patches as these can't be
+tested due to power issues in Partial-IO on am62-lp-sk and similar
+boards.
 
-	if (ft.nbcon_offload) {
-		...
-	} else if (ft.nbcon_atomic) {
-		...
-	}
+I added a patch to add DT 'wakeup-source' support.
 
->      IMHO, it is another reason to change the semantic.
+Series
+------
 
-The caller does not need to rely on the helper "choosing" the right
-one. I understand your point that: It is easier for the caller when we
-can blindly rely on the helper to choose for us. But I worry that if we
-ever adjust the helper, we might break various call sites that blindly
-rely on the helper making a certain choice. If the helper's job is only
-to say what is possible, then I would worry less for the future when we
-may need to adjust the helper.
+To support wakeup from several low power modes on am62, don't always
+enable device wakeup. Instead only set it to wakeup capable. A
+devicetree property 'wakeup-source' can be used to enable wakeup. The
+user is also able to control if wakeup is enabled through sysfs.
 
->> +	printk_get_console_flush_type(&ft);
->
-> It is a nice trick to call printk_get_console_flush_type() this early.
-> I allows to hack the result when processing the hacky LOGLEVEL_SCHED ;-)
->
->> +
->>  	/* If called from the scheduler, we can not call up(). */
->>  	if (level == LOGLEVEL_SCHED) {
->>  		level = LOGLEVEL_DEFAULT;
->>  		do_trylock_unlock = false;
->> -		defer_legacy = true;
->> +	} else {
->> +		do_trylock_unlock = ft.legacy_direct;
->>  	}
->
-> We could hack the @ft structure directly here:
->
-> 	if (level == LOGLEVEL_SCHED) {
-> 		level = LOGLEVEL_DEFAULT;
-> 		ft.legacy_offload |= ft.legacy_direct;
-> 		ft.legacy_direct = false;
-> 	}
+Base
+----
+v6.11-rc1
 
-The hack seems a bit complicated to me. Especially when the helper is
-choosing preferred methods. I will think about it.
+Tests
+-----
+I tested these patches on am62-lp-sk.
 
->> +	if (!cpuhp_tasks_frozen) {
->> +		printk_get_console_flush_type(&ft);
->> +		if (ft.legacy_direct) {
->> +			if (console_trylock())
->> +				console_unlock();
->
-> Why do we actually call only the legacy loop here?
-> IMHO, we should also do
->
-> 	if (ft.nbcon_atomic)
->  		nbcon_atomic_flush_pending();
+Previous versions
+-----------------
+v1: https://lore.kernel.org/lkml/20240523075819.1285554-1-msp@baylibre.com/
 
-Atomic consoles do not care if a CPU was online or not. I can add this,
-but I expect there is nothing for the atomic console to flush. And when
-threading is added, we would need the extra code to avoid atomic
-flushing:
+Changes in v2
+-------------
+ - Remove Partial-IO patches
+ - Replace device_init_wakeup with device_set_wakeup_capable in
+   omap8250_remove as well
 
-	if (!ft.nbcon_offload && ft.nbcon_atomic)                
-		nbcon_atomic_flush_pending();
+Best,
+Markus
 
->> @@ -3327,7 +3316,8 @@ void console_flush_on_panic(enum con_flush_mode mode)
->>  	if (mode == CONSOLE_REPLAY_ALL)
->>  		__console_rewind_all();
->>  
->> -	if (!have_boot_console)
->> +	printk_get_console_flush_type(&ft);
->> +	if (ft.nbcon_atomic)
->>  		nbcon_atomic_flush_pending();
->
-> I would use "ft.legacy_direct" also below for the decision about
-> the legacy loop:
->
-> -	if (legacy_allow_panic_sync)
-> +	if (ft.legacy_direct)
-> 		console_flush_all(false, &next_seq, &handover);
+Markus Schneider-Pargmann (5):
+  dt-bindings: serial: 8250_omap: Add wakeup-source property
+  serial: 8250: omap: Remove unused wakeups_enabled
+  serial: 8250: omap: Cleanup on error in request_irq
+  serial: 8250: omap: Set wakeup capable, do not enable
+  serial: 8250: omap: Parse DT wakeup-source proerty
 
-No, because it would mean the console is not flushed if the CPU is in
-the deferred state. That is why I added an extra comment in the helper
-saying that console_flush_on_panic() will _always_ flush directly.
+ .../devicetree/bindings/serial/8250_omap.yaml          |  1 +
+ drivers/tty/serial/8250/8250_omap.c                    | 10 ++++++----
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-I thought about adding that extra logic into the helper, but it really
-isn't possible. @legacy_allow_panic_sync does not matter if there are no
-nbcon consoles. So somehow the helper would need to know that CPU is in
-the deferred state, but now it is allowed to do direct printing.
+-- 
+2.45.2
 
-So it seemed more straight forward to have console_flush_on_panic() not
-care about what is allowed (for legacy). It is going to flush directly
-no matter what.
-
-I will reconsider your suggestions about the helper and also compare the
-end result at the call sites (also with threading changes applied) to
-see what looks simpler to maintain.
-
-John
 
