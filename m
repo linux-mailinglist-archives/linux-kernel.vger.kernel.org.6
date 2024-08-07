@@ -1,188 +1,261 @@
-Return-Path: <linux-kernel+bounces-277380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F49949FE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:40:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C30949FE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3D0E284350
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:40:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 393521C22F88
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 06:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E040E1B582D;
-	Wed,  7 Aug 2024 06:40:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5E11B86C2;
+	Wed,  7 Aug 2024 06:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="S+EwSplO"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2096.outbound.protection.outlook.com [40.107.117.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8001B5821
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 06:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723012805; cv=none; b=fZhzl8h7RmEFQ8r2KodCFBbitMNI/Gn1lATnKkx8/laU2dcpJzHnBNK1k7s+yY7ouSpHkXST6MHf9+W4RhEDCzrlp8nOEjyFoOXWeQat3gYSZIaYeRJ4OlZydwQrxhrTUpOLucrM0VcYRAeWpMgsHV9AvpKj8xNcRCu84WJ77Ko=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723012805; c=relaxed/simple;
-	bh=PYUyd9eoh7hpjQ8vmwGaLT8W31umY6Uze3HtshEpYYE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dxaMyhpM1yDCg52GPjE5pfHocl/1lL/RIy97kUKDDe4rOjFC/0MZ2CeS2cIRmVmlP93xcWhksCUyRpA06ykokvhSNj2FN2dAbhiRsJxsiAbRiBK2RYkadrx4tP1x0xbhS+WTX27M0i4W8eyPS4IywzvW88HRGjAMUK9WyekLUBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81fa44764bbso202651339f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 23:40:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723012803; x=1723617603;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E6mwzduIlQ49xWKn8irq3A58X+FLKdR3tIdimX3RWF8=;
-        b=Q6XoTsk1fQgGH2foVd2YPMnNdeyf15XAfAfhaG7ewgN46nd7P4CC5iShixEoDra3rM
-         0ozUGuAvrH9Enc4Ll4xbEH/KirEqw82s6uVQQd58sHNlbqyt7PirEiqJUUOxSS1LkWCb
-         99LatvV4DEW7/3FxsQfO/xiecoNK1FQ1BdNsoGlZV0NDwFCMwEMo+3kQ5Y1fBmNy9fuO
-         VSv/7FdeFP6aCPlNVZqxqhzNcLss5+0fJfhWXIZK83sNpjlJK+HaHpeCivwmvQcwKr+p
-         jqY10lV6+IeZSdziz3WfcuidUkf5HxBzooyFTLOsKyyqTd7Ruh7Lo7wGvKLP+pXkL7Us
-         sRyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWt99CyyKeMIC4axH8RzQxgPOArijYa2GlxxLsAA89sSGp37M012Psdavkig1yyM/GB2wxZO+Pe5Fy97TgqVMln6XjE95wqsqxw/I+R
-X-Gm-Message-State: AOJu0Yxz+WeUanjrxpQWQuTk3h3K02inqr7xYIuWhlpNjrf+c+EeNghc
-	MV23/H/urb9q6+e7fs1hZvBZiO1xQtjOfxJsxt6caN1b8/Vk4vDDkALf7NcNvWAhp82yn0KHU4w
-	+8wUbBYY2mJNPod6oz67BWawuPEifr3oxgwHkT14TBgH//winOG3v9kM=
-X-Google-Smtp-Source: AGHT+IEJ5vkjnBbRsjzlevl+zXLWP1tsxwU3gMoY156T5p/WzRjgKhsPO8d3jkwcdaVD69VfxjjehsOVNY1+bYKP0iB6LZuAv2gp
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15F11B5821;
+	Wed,  7 Aug 2024 06:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.96
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723012831; cv=fail; b=BGtx1lCsGBeURtAFZuseTpabc7yjkKBUKVH+jCkO+HA1GOXjG7djXYO9bFZXyH99eL6XUOtdEYALqoI/EDwyYk7qr857v7E5GCaUBVNam8PuexuRAFAfAC62ChreNs/OHxpHRvwT4Z9fUHRDbeY/vZwonhj93j2KPb/MAIOSAvA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723012831; c=relaxed/simple;
+	bh=MK5vhO0k5zpLHcLxH4ZieNM++Kj53R+jyFLeeaqPFrY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=u/ZC+aJmffIXAXsDuaI2OUW5uZoeWoJp28uv9Ijqs+9ugYOURgwV8++686YUyZwr+WozffxQ2lJHXnUNgOJX0ube/bL3/mBbtFc05apEOv+TFkPW/09Gn5HCIX6g4WR+TaGIMCkAs5U1kn8usYY5ZSe2rCvdXKbc2xaM5zNvrvo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=S+EwSplO; arc=fail smtp.client-ip=40.107.117.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QJE6Kzh3tOvB44bN8rg7Ag5MgAePZzEnKDeuiaKQwXV+DLlR+xeo2aSxzWKrQ6OnZ3buhRzqWuVKURLM6Z8S1aAbRVlvm2roCeY0hxXSamZ0wSq65LtwRLKk43HbMW0wnDkqsRdh3RVT4XUtu2ICjAfLgEda5DBrcgzcX92xIp09ZPgGIQy5XoOMSuiwArFCzSj2VLO3eRSpQMKGI+Z9BzC9jh5DhN1vutdwQBz+zBsxrYT58ZAaTPCghnQcB4kytR1oDLLHrOihIrl1M9bFNg//NiJ3JhjsJNCMuyoa0FrW7DR3hiI7YuIvgkqPShjXNLuwQdOFUtSwMtzuBj+3Jg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lML18Q0tJGcrI4euRUZ+IFfPsiarkApEkafW0wQDiB0=;
+ b=YpvnXxTaefUZu4nAj1CEOiPPybtu5GVtvu0voDcYi4U+2FaqIIjuzobUiDzGZI27AMzZUJbEiOrkR700Hf79VsZrPR8+hghyIeek4ixS8qWTTTrruMcXko1VVUOt1eNaYHaAz+z7BrHT2UTB2voCMOPDAjsT3P8ZofrIT4WfK71Vxe3dErOdLLxAtgVdB9z0+POkeSL0XVHt4Y5ZnsZvnkU8UuhsrY4QOcKJS97aUXJzOa/uCveZAhOHpdr1vZ6xFCKucEViopqSgE2xJtMFEvDqLUoN0U1OPaB/inKdL92V8WgdkcAvFE+4g62L+FDpQ3p21o/VsewOONrMwLNt/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lML18Q0tJGcrI4euRUZ+IFfPsiarkApEkafW0wQDiB0=;
+ b=S+EwSplOiGuc7SDasFj9tvc7teAuVrGjDiwqQmsIsnizL1sSkBG8phIx905vDTgie5imzvgqcQB+sSbFemiZFy4v4TFif+r78+Kim4MWW5D2eo5/cSV+Gzen71/oIcYVvFOHN0NiOFk8cvCC8kTBJrZSNxKyUyPS6H1II2VzO9uZWGght4uo5bLbv1FEABefUxo6BhPw19SFVbkRoSe+hAJCNlGs6Vii4U0yJEK5lQ2ahNXkaUE89QneTXCE1wHq50xpWtKoo+r8tk9yKvRGdWR6J2h0j3B5lwLny7RzbnqRiPzhQIDNkJDIPKtU/LDZPt90ES43uzJtLCZ9eaRc8A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
+ by KL1PR03MB7920.apcprd03.prod.outlook.com (2603:1096:820:f3::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Wed, 7 Aug
+ 2024 06:40:25 +0000
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::ac4e:718:3b03:3123]) by TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::ac4e:718:3b03:3123%4]) with mapi id 15.20.7828.023; Wed, 7 Aug 2024
+ 06:40:23 +0000
+Message-ID: <43a600fb-8094-414d-8a3c-0573286a11f7@amlogic.com>
+Date: Wed, 7 Aug 2024 14:40:18 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: clock: fix C3 PLL input parameter
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240806-c3_add_node-v1-0-c0de41341632@amlogic.com>
+ <20240806-c3_add_node-v1-1-c0de41341632@amlogic.com>
+ <b63fe216-ee29-489e-a175-e1525ac12722@kernel.org>
+ <86b01ecb-6ca8-496e-b3a8-0b21bb951a60@amlogic.com>
+ <2da06dac-7a1a-461c-956d-13b74320723e@linaro.org>
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+In-Reply-To: <2da06dac-7a1a-461c-956d-13b74320723e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0015.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::18) To TYZPR03MB6896.apcprd03.prod.outlook.com
+ (2603:1096:400:289::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1491:b0:81f:e047:191e with SMTP id
- ca18e2360f4ac-81fe04719bemr41277139f.0.1723012802882; Tue, 06 Aug 2024
- 23:40:02 -0700 (PDT)
-Date: Tue, 06 Aug 2024 23:40:02 -0700
-In-Reply-To: <tencent_FD6E4F9F8DDFA5970D8A921DDDB65D851907@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000f3ced061f122e80@google.com>
-Subject: Re: [syzbot] [can?] WARNING: refcount bug in j1939_session_put
-From: syzbot <syzbot+ad601904231505ad6617@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|KL1PR03MB7920:EE_
+X-MS-Office365-Filtering-Correlation-Id: ba394248-2473-4d38-3a2a-08dcb6abd05e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TUxxSWpSOEYvOS95SWI3Y3dMenhtb2JqZGxXTjJ1czNDb3pkNlRkSTJuUmxR?=
+ =?utf-8?B?em1HQnljTmtqWWJ5TkVENVpqeWZ3MnFZdFM4aDFMV1QvcTdFK0psQnlHeDhB?=
+ =?utf-8?B?KzVnRmhveWUyZGduOVhhc3pSVHM2M1VxK3d2eUdJdUcwVE5MMXlsVjROcHJ2?=
+ =?utf-8?B?TUViWnE3Z0l5NGNWbWpRby8xeHVRTkhZN0dGY3lPNktaZG5INjN6d29Ic3Mv?=
+ =?utf-8?B?WHF5N201Zk9RRXE0NDN0Nnk0RmxYUng0eXBaUVhqY0ZzaHVTK3Z6NzdXZitV?=
+ =?utf-8?B?NDRBL3pmM2g5NUpHejFyTlhRdXF0Y0dBdjRLeDcvVDNYNmhFd0hsVEhJME9j?=
+ =?utf-8?B?Um51RUxoOE5vOTBocEpCVVFlUjAyQmRsY2thRWlNUjMxT3BHOThiY1dnWDd1?=
+ =?utf-8?B?Wnh6ZEYwSGp0QlRlTjdMdXYxNUduM3EyM2krNHFkTWZYWkxvNDdGV2hhaFNx?=
+ =?utf-8?B?bkF4d0NIbEd6UytBOWpUTlFwOHZUV2M1WFpOelBYbnZvMElrUjVsK2tSelpI?=
+ =?utf-8?B?WDRXaE1tUEV5NlVyR29PUy9FajFjUWNHNk1qZVVxTG5YeHdKdUJvaWtNV3Ra?=
+ =?utf-8?B?akVObkd0N2l3YUJQaHFLeTNLUG5TMFFwSWVKSUM1N3BMQ1JRdk9tbWZWdG42?=
+ =?utf-8?B?bkw2b0xvandBVzVablRjZDVldHVETTZBU1I5Mlp4WXJid0NEcEkxOTdML3pn?=
+ =?utf-8?B?VkxaSjM3R2piY2dDdzJTZUNuODJWSnV1QllPQ1NNenAyZFlxZ1hxbk9WajRE?=
+ =?utf-8?B?QTB5QlZKR0xDd3doM0VoRmdZQ28vb0RHK3V3Z1R2bS94U1MxNklCeXpaeFk4?=
+ =?utf-8?B?U3RKbWJrTXdzc3ZpTlRuQ3ZxaVFQRm0rc1J4b25telNpRk9pTHJGVURwSENk?=
+ =?utf-8?B?RzF3dDR3cFREV0JVYXZLbGo0ZWVKTWpIamE1Mk1CUTJDdnplRDNncndPTDNV?=
+ =?utf-8?B?TEQxWTJYb0xhWWkwQzVweEUzdTlTWTBjZXkxZ3hPRlFpZEZIOWRBT2xnYW5n?=
+ =?utf-8?B?N0dVRWVDc3BvU3p3UFF0MTExNmZjL1I2dDdEMUJuU1dGN3NqZVoyNFNuTGd6?=
+ =?utf-8?B?TXFJTVo2aGovTEpzaDllV1NqRDhVclB3NmR3VVl5cytaKzJQaUo5TllHeEJw?=
+ =?utf-8?B?QkZ5cVRId0NDWWlWLytEdE5LblJ2cDMxeUcxbjV0bTRVMEllQ0EzbUM4aHd2?=
+ =?utf-8?B?Q1NkbzVnNkxDbjdJbVE4cTNqaVplTVhnV1B4dXV2OFpsVXNDbTdMRVc1MW9M?=
+ =?utf-8?B?Nzk2a1VSbkZsOFZtelU5ditRQ3JQL1Z4anlGQzZqNVdROVRlMDNtaGZYaGpa?=
+ =?utf-8?B?YjRYU1N5RS9IY0dmUElZdXlYWFlLbmoxbzVHY1hMZUJuSHZWUHZUT3RMR3pR?=
+ =?utf-8?B?MjZtOGlzSThXZ0pBbkgxMjduMG52cFBHdzJSeExlVWdkSlRINXp1QXdoaEx4?=
+ =?utf-8?B?SWxsdDZRa2dFL0s4Rk9TRnBGb01Zd0p4L1dzVXR1Y1BYazQ0U3Y2aElkQUJZ?=
+ =?utf-8?B?YThwSFNka1Ftc2p6Z0tTbzRzMUsvQXZ4b1VKMzBWOUxpUWZOazJQbjV0THhZ?=
+ =?utf-8?B?SkRpWFhabFBMRXdkSjlVdGZFcVNwNDRDcnJmeTVRSDJsdHRwVCtDbmJzYm9O?=
+ =?utf-8?B?KzdsR2N6RkQvUmhBS1pETE9zQWJwSjMxYWRkYXh5U2ZZWVUveGJpcWd4ODNs?=
+ =?utf-8?B?S3p3Mmw4TlBKZXJPajJhS2d4d1hLaGIwZGQ4WG53V0tHTjRsQzliU1A0Q2I2?=
+ =?utf-8?B?UCtFN0U0eFRkM2hwZUl6aURqSWh6QTNBMGdHWE5rcjBNYXVIUGxhS2Z4bjRz?=
+ =?utf-8?B?bkd0TGxBa1ZZemh5RHlnUmJzZ1RiVlBTdnFRNGlCZTVmZmVodjE4SE5aOUFn?=
+ =?utf-8?Q?VzUhoFoXN3+85?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OTloWEZFNDg5TzhwM1RNaEdTQ3BSOW03SkFsTk1pOGFtOUZGZ0hGa1ZYNVdJ?=
+ =?utf-8?B?VnMxWk83MFlYcDdvRlkvbnBJOFlrWTAxamUrdm1peW5nOTJEU0RaYkR6Q1I0?=
+ =?utf-8?B?TVNOTm9tRFMzaGd2eGo2Yi9uWlN3TG5nWGF6a3MzYnNXRmY2Y2lTWW4zUEx2?=
+ =?utf-8?B?L3VVL3dHa2xRTnVWSkVKSEV5cGtsVDlldUhwdjk4SFFhQUluMHdrbnd6dXE1?=
+ =?utf-8?B?MUNrOHZpVGU4K1NBa3BmTFlEYjQwQWVRWVpXWkZaNjI4b25KQnhTVEo0WWpy?=
+ =?utf-8?B?Y1R2bG9iMC9mSVljRUVRVGE1cjJvZkJCTFFrUmhUMmNjdEpNUDE3RmpuMkVt?=
+ =?utf-8?B?K2lBTjdPRkhkekZJWmVxOG1vblk1OTAwV2lmQVZFZThaeXE3Tm5TRHVzblhZ?=
+ =?utf-8?B?YVRUdFV4aVNRSWQ4cmtUZzNKeCtTMzhaN1NqWGxJbGhUbjdBZVhxL1hHUUVn?=
+ =?utf-8?B?SjZVYTVkRUFlWHFCN2h1dlg3Tjlhb1JZVnpDenZua0M3RFBjSTBBZUlzUjJp?=
+ =?utf-8?B?QlpGMzBSOHUyQzdJa0tiWXYxR1crWlJlL0hFU2lMZU1JWXdEalZsKzNlWVkx?=
+ =?utf-8?B?ditzRWVZMDNxZVlqME95clZ6bnpiZHFNRThOWUovQXcrbmlza3BwZWQyeThv?=
+ =?utf-8?B?Ly9FaDljWm5VZ0VjWWhMYkMxSUExQmNYeXJVaml2N0hxendlUm5hc3R5RGxY?=
+ =?utf-8?B?R1MrM2RzaHdnZEpRNXB0R291aWlNeTBtVDlCL0hkbi9laEJWaFNVVy82dFpx?=
+ =?utf-8?B?NnF4Q3E0VXdmMlVwczdlV3JRR1hpRm1kcFNWR2NZY3FVNTQ4TmZnNUl1MzQ3?=
+ =?utf-8?B?bU5ua1g0OWQvQXRKVXNiNS9GdEtmSkVGREM1aHFKZnJMRC9mUWxFMVZwdEIy?=
+ =?utf-8?B?dm1tTHh3SXRYYktrZ3EvTXVDQWNZYzhZNExvRER4QnVBZGc3VVFkN0hBL2ts?=
+ =?utf-8?B?dVE1SVRTU015bEt3dmZqT08rQWJhRFRDeW4xaWpDS2FnS0NSZXozbWczYlJN?=
+ =?utf-8?B?MkN2ajA1b0pMdW9EWnZZTkhiSDdsZys1Z0x5QzFOL3lja3FXSldqYzFBNkZU?=
+ =?utf-8?B?K1BwSzgzemJTTm9ma0hCZCsvejVHdkZlUjhDbU1NNHh0RmJpN0FoR05wTGtr?=
+ =?utf-8?B?bWMxMURMN3JkTmQ1cXJkYmdqeDJ5ZXNzTUQxSys4RkI2VWw4c3hXeW1kbGth?=
+ =?utf-8?B?TndndUtWaC9HanArMGpxOEQ0dzNiTXRuRHdOVTZsU2c2bFAwWFpOMnlkQUNs?=
+ =?utf-8?B?bWloKzhPcjAyd3BWY3lSRWRCUkswVVZkczlrYWkvZWdiNFZJeDRhaHNoMVVP?=
+ =?utf-8?B?Y3crekFUZk5QMkJraktIMElFNzZoYzI5aWtCRFdTeHFKVE9POUFKMVhWSzh0?=
+ =?utf-8?B?a1FWcGNVaTY4bTFDazFjbFI0aGdFRnN6am8rcmlFVmd1THBQNFIxd09IOE9S?=
+ =?utf-8?B?dExOV2taQ0pMMENocG1rek52Skl2WjR2bnY5T2V1WFZkMlV6aFFCUnlYM3FH?=
+ =?utf-8?B?eWJzcy9NR1c5Qk0zejVtZG1jc0hRWGRhOFdHeHZaRHNzSWZ3TzhvSE5FV3BC?=
+ =?utf-8?B?SFVBbEMrOHJaZ0NieWhzNUcraCt0Q044bmhacnNydVlzQVl1aGY2Um1vc1BC?=
+ =?utf-8?B?YkJpcVMvaENIWkZmZXNuQ2VyWjVaSGwxYldhTlRtT0xXdFl3Y1YrZU56b3I0?=
+ =?utf-8?B?N2NVdWEyeSsxWVNTUDgvMDF3b1c0TDU5MTAvNS92bTRuV3gwVmNuWEJWdmU1?=
+ =?utf-8?B?bG94czhRMmVNU3AzQzdSdlFVOExUYmFWc3kvb1ZDeXdhQlE1c3ZRNThFTjFq?=
+ =?utf-8?B?akRDNlVzTjI3amJBR3NZODh3Z3puZkZGL0plZVQ2RWxMbGlEVkE0R0pIeUZ0?=
+ =?utf-8?B?cnNLMkVpUnAxRmdQc0tDa1lzY0lJa3EzTXRmZCt3UVRRNEEzSnRYUWZISm9V?=
+ =?utf-8?B?SnJjRW9VWTRKVStaK1NCM3hKVWhkY24yTmxEWG9vQ0pQVDA3SDh4UkJuZGM5?=
+ =?utf-8?B?d3FPc3phb2pQME1BU01ZbHRYRkNnL3RCS2t0WU5sZ1N4VEdOYWRyQTM5NWlW?=
+ =?utf-8?B?NENqOGtONVZ0OEIxb1d2emFacEd1K0pNaGJLT2g0dWcxLzJyZmlZSUR1c3Zw?=
+ =?utf-8?B?eWhLY0dVZWFhSldFU3ppRmFOZ3JLQmQvWlJaNDVXM2U3a2VqRjRCeUhZQ2U4?=
+ =?utf-8?B?V3c9PQ==?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba394248-2473-4d38-3a2a-08dcb6abd05e
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 06:40:23.2832
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QCXjVFMSu22/U9yskphmn7JXvzg5MyUW+Hi6nkILmTV0XrQm55/VghkZPCKsC+hkbhpYj1BcXxbv/PbCnoAlt/kjdIcSGdkjeSV1Ixop8TA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB7920
 
-Hello,
+Hi Krzysztof,
+    Thank you for your reply.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING: refcount bug in j1939_session_put
-
-refcnt: 0, skb: ffff88801a744280, j1939_session_destroy
-------------[ cut here ]------------
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 1 PID: 6124 at lib/refcount.c:28 refcount_warn_saturate+0x15a/0x1d0 lib/refcount.c:28
-Modules linked in:
-CPU: 1 UID: 0 PID: 6124 Comm: syz.0.15 Not tainted 6.10.0-syzkaller-12610-g743ff02152bc-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:refcount_warn_saturate+0x15a/0x1d0 lib/refcount.c:28
-Code: 00 17 40 8c e8 67 97 a5 fc 90 0f 0b 90 90 eb 99 e8 1b 89 e3 fc c6 05 b6 7d 31 0b 01 90 48 c7 c7 60 17 40 8c e8 47 97 a5 fc 90 <0f> 0b 90 90 e9 76 ff ff ff e8 f8 88 e3 fc c6 05 90 7d 31 0b 01 90
-RSP: 0018:ffffc90000a186a0 EFLAGS: 00010246
-RAX: 4271a822807dea00 RBX: ffff88801a744364 RCX: ffff888021305a00
-RDX: 0000000000000101 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000003 R08: ffffffff81559432 R09: fffffbfff1cb9f88
-R10: dffffc0000000000 R11: fffffbfff1cb9f88 R12: ffff888020046400
-R13: ffff88801a744364 R14: 1ffff11004008c98 R15: ffff888020046468
-FS:  00007f9772aba6c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9772ab9fa8 CR3: 0000000077160000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- kfree_skb_reason include/linux/skbuff.h:1260 [inline]
- kfree_skb include/linux/skbuff.h:1269 [inline]
- j1939_session_destroy net/can/j1939/transport.c:287 [inline]
- __j1939_session_release net/can/j1939/transport.c:299 [inline]
- kref_put include/linux/kref.h:65 [inline]
- j1939_session_put+0x25e/0x500 net/can/j1939/transport.c:304
- j1939_tp_cmd_recv net/can/j1939/transport.c:2120 [inline]
- j1939_tp_recv+0x7fe/0x1050 net/can/j1939/transport.c:2168
- j1939_can_recv+0x732/0xb20 net/can/j1939/main.c:108
- deliver net/can/af_can.c:572 [inline]
- can_rcv_filter+0x359/0x7f0 net/can/af_can.c:606
- can_receive+0x31c/0x470 net/can/af_can.c:663
- can_rcv+0x144/0x260 net/can/af_can.c:687
- __netif_receive_skb_one_core net/core/dev.c:5660 [inline]
- __netif_receive_skb+0x2e0/0x650 net/core/dev.c:5774
- process_backlog+0x662/0x15b0 net/core/dev.c:6107
- __napi_poll+0xcb/0x490 net/core/dev.c:6771
- napi_poll net/core/dev.c:6840 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6962
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0xd8/0x140 kernel/locking/spinlock.c:194
-Code: 9c 8f 44 24 20 42 80 3c 23 00 74 08 4c 89 f7 e8 0e 9c 3b f6 f6 44 24 21 02 75 52 41 f7 c7 00 02 00 00 74 01 fb bf 01 00 00 00 <e8> 63 c1 a3 f5 65 8b 05 64 b7 44 74 85 c0 74 43 48 c7 04 24 0e 36
-RSP: 0018:ffffc9000337f8c0 EFLAGS: 00000206
-RAX: 4271a822807dea00 RBX: 1ffff9200066ff1c RCX: ffffffff81701f3a
-RDX: dffffc0000000000 RSI: ffffffff8bead5a0 RDI: 0000000000000001
-RBP: ffffc9000337f950 R08: ffffffff9351e8f7 R09: 1ffffffff26a3d1e
-R10: dffffc0000000000 R11: fffffbfff26a3d1f R12: dffffc0000000000
-R13: 1ffff9200066ff18 R14: ffffc9000337f8e0 R15: 0000000000000246
- j1939_sk_send_loop net/can/j1939/socket.c:1164 [inline]
- j1939_sk_sendmsg+0xe01/0x14c0 net/can/j1939/socket.c:1277
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
- ___sys_sendmsg net/socket.c:2651 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9771d773b9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f9772aba048 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f9771f05f80 RCX: 00007f9771d773b9
-RDX: 0000000000000000 RSI: 0000000020000280 RDI: 0000000000000003
-RBP: 00007f9771de48e6 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007f9771f05f80 R15: 00007ffc749f4938
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	9c                   	pushf
-   1:	8f 44 24 20          	pop    0x20(%rsp)
-   5:	42 80 3c 23 00       	cmpb   $0x0,(%rbx,%r12,1)
-   a:	74 08                	je     0x14
-   c:	4c 89 f7             	mov    %r14,%rdi
-   f:	e8 0e 9c 3b f6       	call   0xf63b9c22
-  14:	f6 44 24 21 02       	testb  $0x2,0x21(%rsp)
-  19:	75 52                	jne    0x6d
-  1b:	41 f7 c7 00 02 00 00 	test   $0x200,%r15d
-  22:	74 01                	je     0x25
-  24:	fb                   	sti
-  25:	bf 01 00 00 00       	mov    $0x1,%edi
-* 2a:	e8 63 c1 a3 f5       	call   0xf5a3c192 <-- trapping instruction
-  2f:	65 8b 05 64 b7 44 74 	mov    %gs:0x7444b764(%rip),%eax        # 0x7444b79a
-  36:	85 c0                	test   %eax,%eax
-  38:	74 43                	je     0x7d
-  3a:	48                   	rex.W
-  3b:	c7                   	.byte 0xc7
-  3c:	04 24                	add    $0x24,%al
-  3e:	0e                   	(bad)
-  3f:	36                   	ss
-
-
-Tested on:
-
-commit:         743ff021 ethtool: Don't check for NULL info in prepare..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1230dce5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5efb917b1462a973
-dashboard link: https://syzkaller.appspot.com/bug?extid=ad601904231505ad6617
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=140f6ac5980000
-
+On 2024/8/7 13:44, Krzysztof Kozlowski wrote:
+> [ EXTERNAL EMAIL ]
+> 
+> On 07/08/2024 03:55, Xianwei Zhao wrote:
+>> Hi Krzysztof,
+>>       Thanks for your review.
+>>
+>> On 2024/8/6 21:10, Krzysztof Kozlowski wrote:
+>>> [ EXTERNAL EMAIL ]
+>>>
+>>> On 06/08/2024 12:27, Xianwei Zhao via B4 Relay wrote:
+>>>> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>>>>
+>>>> Add C3 PLL controller input clock parameters "fix".
+>>>
+>>> What is "parameters" here? Why you are adding it? Is it missing?
+>>> Something is not working?
+>>>
+>> Yes. The previous submission was lost.
+> 
+> What submission is lost?
+> 
+>>
+>>>>
+>>>> Fixes: 0e6be855a96d ("dt-bindings: clock: add Amlogic C3 PLL clock controller")
+>>>
+>>> Why? What bug are you fixing?
+>>
+>> The input clock of PLL clock controller need the clock whose fw_name is
+>> called "fix".
+> 
+> Then explain this in commit msg.
+> 
+Will add this in commit msg.
+>>>
+>>>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>>>> ---
+>>>>    Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml | 7 +++++--
+>>>>    1 file changed, 5 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+>>>> index 43de3c6fc1cf..700865cc9792 100644
+>>>> --- a/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+>>>> +++ b/Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+>>>> @@ -24,11 +24,13 @@ properties:
+>>>>        items:
+>>>>          - description: input top pll
+>>>>          - description: input mclk pll
+>>>> +      - description: input fix pll
+>>>>
+>>>>      clock-names:
+>>>>        items:
+>>>>          - const: top
+>>>>          - const: mclk
+>>>> +      - const: fix
+>>>
+>>> and that's not an ABI break because?
+>> This is "fixed" clock.
+>> I will modify "fix" to "fixed",in next version.
+> 
+> With "fixed" it is still ABI break, right?
+> No. The clock named "fixed" was initially implemented in the PLL clock 
+controller driver, but some registers needed secure zone access,
+so we put it in secure zone(BL31) implemented and access it through the 
+SCMI. but the PLL clock driver need uses this clock, so the "fixed" 
+clock is input as an input source,
+We changed the driver and forgot to change the binding, so we added it here.
+> Best regards,
+> Krzysztof
+> 
 
