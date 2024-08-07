@@ -1,110 +1,130 @@
-Return-Path: <linux-kernel+bounces-278302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A49594AE79
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:56:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D52D994AE7E
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D52D31F21793
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:56:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86D87285DEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A404813B295;
-	Wed,  7 Aug 2024 16:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D30513B59E;
+	Wed,  7 Aug 2024 16:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ngG8zCyR"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iLACsGuJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4772E13774B
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 16:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A4D84D02;
+	Wed,  7 Aug 2024 16:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723049774; cv=none; b=HPYs46o5qQjD8ba7lKXe2aUkX17b50ql8XDy8XRDjsZcQK0mTMo7BjY9DYYKSOQI7PkIB8RzZftGLAY3X81WLQ/9r4bnUO+UIybV0MYhvG1Pe47gkjQNzvmsoyfSSNJBDOO/xMUMROSHZ04RonYg6TXade27mDmOzP65NWc0dlQ=
+	t=1723049825; cv=none; b=fZbJzokAI3151olyE62L88q6j+DOrpA84WWyPbgfR0AytY10hEMwFivGQ8cmo+IuYZJgnlVg2gyFFvFD29rJdafAyzI3SRZniVL4w47kbHCTewSvLVEqLKArHhouOhkLoX7s1VfXHfo+BKy2UCLGOzfGRt0E/gHE3JQMQJQdtLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723049774; c=relaxed/simple;
-	bh=QZymBs+eKZ3wGkqZLs62iD/WC+luTl2cLwV7VzziwP8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=REnmlnHt0+zC27mkXhSj83N2IlgwzoGTCLdvID/osdB+YhGnWduW8VWcAMp0jbtuGZWZPEnHIAhk8oTfUETEncFhGKREZcLIFSjE/CTMUJ3Qxo44JPxsz27e7PhWnnYgTDIuIXQwySFZKgFExCbLQaPUA/l3xOwVWY72FNUF8lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ngG8zCyR; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-530e2548dfdso23387e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 09:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723049770; x=1723654570; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QZymBs+eKZ3wGkqZLs62iD/WC+luTl2cLwV7VzziwP8=;
-        b=ngG8zCyROV5X2cXsvYhDdWn/Q+z4U8V4ogdScI348PYskAw7UYP26mTHOuoU0/nUAg
-         Quyba+e4SeFSoN4woDGtiYRIQMIGOgVADFkIk3F6SxBr2mGGjguQJu1xOa8VfngouCeG
-         mdDP3Ym+2UsnrRct0tkDgRhXEeiYSl1Ng01bzQYi2Q4eVGGw//Zjh6Nzkc4DBtIn8g20
-         /XeHg99p42Jnmpwmofj3ws6QqGn9LTNXcCohM4tGhBM8o90MCny6XjpqBRNFVYKKJ5nK
-         xLHmKY0O5D+Ob64vZUL3edyVULbpivy1jO5FOhRURhJFuBeMwjtwVnM/58Qi1n4kfnIj
-         07yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723049770; x=1723654570;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QZymBs+eKZ3wGkqZLs62iD/WC+luTl2cLwV7VzziwP8=;
-        b=f3DkTEI/hCkbMFP7uM6Mp2BVby1Ij9km5To+icflaokdCxDzIC4R4h0v0RP6qAzKmZ
-         nK+e7SqisGDiUgzccy4WQQK/gK0MmAZOc4NSozaG2Mdremko7Dot/5Ohow1a+kzRAoJV
-         ZAnge0Vr0cXJdPi1vwLZ1vjT7kMNHid1fIkggHNahneo93NqSaKlhj/37coqqVfvRgyu
-         xRZrDHdQzzC35V6kiq3Z7tZPVNWAyLH8n1pGVTQ9EMtGZZ42pA45hPPZuAAYCbOogb2Q
-         fFGPoXsDo9TDlLIIvzbmW4WhC8GeavOVEZGzaDSKgH6jPFB8WCSef8Y9lpSygCVq8EUc
-         8Yjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVtU7OVFFFQAamCRK/mUU4cloF7aUU4s6pEc8OUiCqMV19F5mtmjTnx2ed2nUmzR+KZHGvIAfeDZPZEM/wMQU/y/H4Dz8A1L/F8ma7
-X-Gm-Message-State: AOJu0Ywcd515XNseNxrQUvWhQDV/QgKZoJ8yqDRl0AQViF3er52gKthc
-	5AMqawTim0arNA9oShX+PsI2pe5K3AhsHjoi9NFSRdqcKNdw9kBE9xJkvhyFQwnYLEmGNtwD0ez
-	V6GwCE8qwQd8oJe1/qA14gmHzJdrkoXro9rDRJQMzKJHTvNNT
-X-Google-Smtp-Source: AGHT+IF9pFh79hDfWpFT5gb/WrtkGcdEBNFXxPxoVpwAm5XZb1BzyG10CU2vBHyWrPgMN/JUxH+J7VLto5fpWiF3CS4=
-X-Received: by 2002:a05:6512:1045:b0:52f:cc06:c483 with SMTP id
- 2adb3069b0e04-530bb396ca8mr13337439e87.24.1723049770240; Wed, 07 Aug 2024
- 09:56:10 -0700 (PDT)
+	s=arc-20240116; t=1723049825; c=relaxed/simple;
+	bh=xDm+ivfSN/HC2ca9CTYeLvWnqKmqIYVJSNyWdx/9SYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TLrMqGdhVLQeFndOebkOgEkjotd7FMdxtQyq8Z9AEms5ipD7X4UBrf+8vz9NFhSJY12qk8XbCiu3pDNww9tVbKBUDIgLVRU9COxotdkLne3PjV3EN/OuNjlJIVMBVM3+yFXfJral6Jw8C0BYndiMlP/qnuY5bMeyMiV+MIkSpNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iLACsGuJ; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723049824; x=1754585824;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xDm+ivfSN/HC2ca9CTYeLvWnqKmqIYVJSNyWdx/9SYM=;
+  b=iLACsGuJIaIjC0FK5qQa47qG7Zj8VmE7MwDTr//YwZtbaDJi6IUDLeVS
+   jpiickJJCo8aqvI6fO3ur4+i+TAvKgDOAAMb4mdZFyMyrIEcPsmFUVhXA
+   2VCDkFq0HMB7tT0b/loK65AvZAnFBrK59l7OyHYXrNrhWaWmHbM0gGLer
+   BGxKQBipG+4opppeTZ/JUVqoUl5TBIDY82pLtdiMt2dO+7GSgzDXrc74a
+   JlBKAWB71iuWfUR7XYj86UfFUm+R8pxVtxE76V5L27MgtvsitDPbJl1Ik
+   6AxiwcSDgO6Dz3x7zQ2S7AjhgqRLk+jC8ALdPqvGccKsOdDf1xV6laSTq
+   w==;
+X-CSE-ConnectionGUID: Gr5CoyC2Q1yfTJyrT/WBSg==
+X-CSE-MsgGUID: PZ+S5ZinT+K9IDT24kKG0A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="32277178"
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="32277178"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 09:57:03 -0700
+X-CSE-ConnectionGUID: FLWJikZ0TZyuhtQlQSPiog==
+X-CSE-MsgGUID: jT9W66pUT3qz+yOP4pslIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="56598375"
+Received: from yjiang5-mobl.amr.corp.intel.com (HELO localhost) ([10.124.166.194])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 09:56:59 -0700
+Date: Wed, 7 Aug 2024 09:56:58 -0700
+From: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, rafael@kernel.org, lenb@kernel.org,
+	kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH 2/7] dt-bindings: x86: Add ACPI wakeup mailbox
+Message-ID: <20240807165658.GA17382@yjiang5-mobl.amr.corp.intel.com>
+References: <20240806221237.1634126-1-yunhong.jiang@linux.intel.com>
+ <20240806221237.1634126-3-yunhong.jiang@linux.intel.com>
+ <ce4903f2-2a9d-45c4-bd4d-ac5165211a83@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723-supervise-drown-d5d3b303e7fd@wendy> <20240723-underage-wheat-7dd65c2158e7@wendy>
- <CACRpkdbRE695f-+do1HYpOZ6e4qxgUBWJzEPO2hTCuZ3xxYHQg@mail.gmail.com> <20240806-breeze-crazily-84d4e4af8f4e@spud>
-In-Reply-To: <20240806-breeze-crazily-84d4e4af8f4e@spud>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 7 Aug 2024 18:55:58 +0200
-Message-ID: <CACRpkdbMxuhe2HQZ-Av1R7JW94rS0FosPO-utYNsFO8avR3TbQ@mail.gmail.com>
-Subject: Re: [RFC v7 4/6] gpio: mpfs: add polarfire soc gpio support
-To: Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org, 
-	Marc Zyngier <maz@kernel.org>, Daire McNamara <daire.mcnamara@microchip.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, Lewis Hanly <lewis.hanly@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce4903f2-2a9d-45c4-bd4d-ac5165211a83@kernel.org>
 
-On Tue, Aug 6, 2024 at 7:18=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
-e:
-> On Mon, Aug 05, 2024 at 10:04:53AM +0200, Linus Walleij wrote:
+On Wed, Aug 07, 2024 at 07:57:43AM +0200, Krzysztof Kozlowski wrote:
+> On 07/08/2024 00:12, Yunhong Jiang wrote:
+> > Add the binding to use the ACPI wakeup mailbox mechanism to bringup APs.
+> 
+> We do not have bindings for ACPI. I think in the past it was mentioned
+> pretty clear - we do not care what ACPI has in the wild.
 
-> > Is it possible to use augmented generic MMIO, i.e just override these
-> > two functions that
-> > need special handling?
->
-> I'll look into it - as I mentioned under the --- line, I really didn't
-> touch most of the driver and there's comments from Lewis' submission
-> that still apply.
+Thank you for review.
+Can you please give a bit more information on "do not have bindings for ACPI"?
+We don't put the ACPI table into the device tree, but reuse some existing ACPI
+mailbox mechanism. Is this acceptable for you?
 
-Thanks Conor, thanks for taking this over, too many patch sets fall
-on the floor. I'm mostly fine merging it like this and then improving
-it in-tree as well, I'm not as insistent on things being perfect before
-merging as long as they are maintained.
+> 
+> > 
+> > Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+> > ---
+> >  .../devicetree/bindings/x86/wakeup.yaml       | 41 +++++++++++++++++++
+> >  1 file changed, 41 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/x86/wakeup.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/x86/wakeup.yaml b/Documentation/devicetree/bindings/x86/wakeup.yaml
+> > new file mode 100644
+> > index 000000000000..8af40dcdb592
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/x86/wakeup.yaml
+> > @@ -0,0 +1,41 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +
+> > +$id: http://devicetree.org/schemas/x86/wakeup.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> 
+> This was absolutely never tested and does not look like proper bindings
+> file. This just does not work. Go to example-schema and use it as template.
+> 
+> NAK
+> 
+> Best regards,
+> Krzysztof
+Oops, I used the example-schema but apparently did something wrong. Will have a
+check.
 
-Yours,
-Linus Walleij
+--jyh
+> 
 
