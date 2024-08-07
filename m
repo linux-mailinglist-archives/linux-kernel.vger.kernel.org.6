@@ -1,162 +1,144 @@
-Return-Path: <linux-kernel+bounces-277766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0833F94A622
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:47:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC4094A634
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B153F28529D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:47:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07C451C2296F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94F91D174E;
-	Wed,  7 Aug 2024 10:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j5Sb08Lg"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4911E2876;
+	Wed,  7 Aug 2024 10:47:56 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239B519066E
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 10:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1461DF667;
+	Wed,  7 Aug 2024 10:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723027573; cv=none; b=FEeNREmZhO4BpoIJVZPAskffVIKg7zqjcou0PuMA5tGUiJiJbkVZGtjjK1XTcmeTw4Z6VKEmu9CVkgFR5kxIZJoR5oqyV9ak1Mv8TGuhJAAAoXFyJmy645zOVLYi8fP/YFV9UGITSvKLXFaCnfu19DlNpA+QSqHe3P29zNvnFh8=
+	t=1723027676; cv=none; b=EXCzHFkTOJhTNjKvxHCjVJmpM6utiQIZSg3yeAFaa423qGERSW/1rgyWY6ohlWxK1oNjN1yy7RgAqmfYGtKo6jikPZuWtsoOwNKzUkIo1yEO4MpYC3WEgzRVfTYK/AHoi8gT0uLBeA8m53Y9zluPbDSVkH/MyAitEpbPUImohEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723027573; c=relaxed/simple;
-	bh=l1HgOodX/TVtOD0wCtcn/qd6n8AkKBtuNLop/rtKpnY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=aEWTPw5jdo8wu3CHf02KLBYs+hL6n+xXWZwwF8/IMOtYX0jWAvTEZ1I3VT3vzhuXYwodVEAEq0PDBlupTT5716Cwh3nvbNmb6a07rJ6zbEQlfnGUpkmKTXBaKGDKCR/jJkdo6j5OzuErhG9n/MRrUo9TGTiZNt+ZGw2eKcfRw0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j5Sb08Lg; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-1fc66fc35f2so5794845ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 03:46:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723027570; x=1723632370; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DcfdKUXeiI0RflsU03nEHJTFXU6hNWDJiSM79+Zbsjk=;
-        b=j5Sb08LgqeyeAF2epoDsHyW7uLdUZDjl94bOkIaQhjynMTNHoxfkCgSdBnAUc+fRKy
-         IrTtXaa4Szz4DzELImCxRf54sEZK49aRVdgNRz8yX5kBaSqdX+IDSSURSt+OpppPJXCI
-         1FmfQU36vhgyTSB0ABwslU3d1JpMTkAET6qiaQg7JT/nuSC08zqv1CgmManKw0hR7eMV
-         BlxMDoNgFMi3FHsPuItjozFC29z0y3GsaYbApVhRn4VjI76PjJG/tUawkFAvWxk8uKfw
-         MAZP7ly3cCSaOgVExFrGI1opjkX4rQViOzYSNejCeMTmZPNh7UcIExZAd2jdB2x8UK1I
-         786A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723027570; x=1723632370;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DcfdKUXeiI0RflsU03nEHJTFXU6hNWDJiSM79+Zbsjk=;
-        b=HVpHFfD53pBwg7axkTtpS74FrozGjc3pifx+SY2Ltm9rgvx7skNZ8siH6lyxBQcH1H
-         DhH+fVibH4nD6WofXXV0ScN16FTuz674xB5eSpvJ3QxpyhnyPz9rha/URSYl8O9N2LPu
-         abUUnAeNF/B2Nw2qGn2ZZ/PohBLQGgYKDCaRxWhCSaczNQpf2g9K+sPzJPifwpWIoY23
-         RRnEi5KjeY9L2RHgyFq+zznONpDOT/B1WyhOvLN4QhOqY/suOX0hNZ4n3kCo/GVqjRar
-         q+kkgNHQjSeRdfXy4fhcpeMU/zQDeOe0clbRSAAeq0UNEDaXBczLsuIKFnmHYfBX2rU0
-         R2+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVG1P+fvReO6wm3TcXRYUIXZ8kXkc/NnUyt75saWzxgJVLfMujOwwr5RysQEzy2uIw+ZVqa4Oxoeondo5GDCXglheN6fbTzpPgcNlJO
-X-Gm-Message-State: AOJu0YxXMX2mRhod8p5SHnRsxS5qU6I5gB88lMIGQTlph/hCY6dtepnP
-	GVjiguGej6GcYw3Is06Q7u8rojOJpfJjWCEafuyRCt0ml2iQkvc3XKUBPqa1iC4=
-X-Google-Smtp-Source: AGHT+IHj1q9mnqROH1Frx3vYDFQ/RJEPn1e6A0NiqFVGzeKu1qvj297UTqh1jOAY4F0eH5Xa+lNJlg==
-X-Received: by 2002:a17:902:e5c6:b0:1fa:1be4:1e48 with SMTP id d9443c01a7336-20085418b8cmr23058915ad.11.1723027570477;
-        Wed, 07 Aug 2024 03:46:10 -0700 (PDT)
-Received: from [127.0.0.1] ([182.232.168.81])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592b3fa6sm102793885ad.304.2024.08.07.03.46.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 03:46:10 -0700 (PDT)
-Date: Wed, 07 Aug 2024 17:46:03 +0700
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Rob Clark <robdclark@gmail.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-CC: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Jeykumar Sankaran <jsanka@codeaurora.org>, stable@vger.kernel.org,
- Leonard Lausen <leonard@lausen.nl>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_1/2=5D_drm/msm/dpu1=3A_don=27t_c?=
- =?US-ASCII?Q?hoke_on_disabling_the_writeback_connector?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <800e03d2-01b0-4bde-816a-e45e1acdd039@quicinc.com>
-References: <20240802-dpu-fix-wb-v2-0-7eac9eb8e895@linaro.org> <20240802-dpu-fix-wb-v2-1-7eac9eb8e895@linaro.org> <800e03d2-01b0-4bde-816a-e45e1acdd039@quicinc.com>
-Message-ID: <42B219B7-01DE-47CC-9D31-E27E40C04428@linaro.org>
+	s=arc-20240116; t=1723027676; c=relaxed/simple;
+	bh=aKT1TNGY7N1VZKhJM3yrUJlvHm+MMYiI29thE1FOuK0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A24BLZP32gUVBa9QXYofk/D1Vzmo/Bf6UyxPYTnretYJHtlzEZJWnPOe7svnahUOjp9/LPdUH6Tg9YQ0Vmbiq4VsnMgx5G3/0tyWjQB5JikLtGEubtxAPmoaHzILojAy0BuKti33DIyCbpG+q1Iuh2SfPysPlQMaxMeX5L9Fajg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wf6J73CH2z6K5kM;
+	Wed,  7 Aug 2024 18:44:55 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 115FC1400D9;
+	Wed,  7 Aug 2024 18:47:49 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 7 Aug
+ 2024 11:47:48 +0100
+Date: Wed, 7 Aug 2024 11:47:47 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: David Hunter <david.hunter.linux@gmail.com>, <bhelgaas@google.com>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<julia.lawall@inria.fr>, <skhan@linuxfoundation.org>,
+	<javier.carrasco.cruz@gmail.com>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] of.c: replace of_node_put with __free improves cleanup
+Message-ID: <20240807114747.00002fc2@Huawei.com>
+In-Reply-To: <20240801235526.GA129068@bhelgaas>
+References: <20240719223805.102929-1-david.hunter.linux@gmail.com>
+	<20240801235526.GA129068@bhelgaas>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On August 6, 2024 2:19:46 AM GMT+07:00, Abhinav Kumar <quic_abhinavk@quicin=
-c=2Ecom> wrote:
->
->
->On 8/2/2024 12:47 PM, Dmitry Baryshkov wrote:
->> During suspend/resume process all connectors are explicitly disabled an=
-d
->> then reenabled=2E However resume fails because of the connector_status =
-check:
->>=20
->> [ 1185=2E831970] [dpu error]connector not connected 3
->>=20
->> It doesn't make sense to check for the Writeback connected status (and
->> other drivers don't perform such check), so drop the check=2E
->>=20
->> Fixes: 71174f362d67 ("drm/msm/dpu: move writeback's atomic_check to dpu=
-_writeback=2Ec")
->> Cc: stable@vger=2Ekernel=2Eorg
->> Reported-by: Leonard Lausen <leonard@lausen=2Enl>
->> Closes: https://gitlab=2Efreedesktop=2Eorg/drm/msm/-/issues/57
->> Signed-off-by: Dmitry Baryshkov <dmitry=2Ebaryshkov@linaro=2Eorg>
->> ---
->>   drivers/gpu/drm/msm/disp/dpu1/dpu_writeback=2Ec | 3 ---
->>   1 file changed, 3 deletions(-)
->>=20
->> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback=2Ec b/drivers/=
-gpu/drm/msm/disp/dpu1/dpu_writeback=2Ec
->> index 16f144cbc0c9=2E=2E8ff496082902 100644
->> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback=2Ec
->> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback=2Ec
->> @@ -42,9 +42,6 @@ static int dpu_wb_conn_atomic_check(struct drm_connec=
-tor *connector,
->>   	if (!conn_state || !conn_state->connector) {
->>   		DPU_ERROR("invalid connector state\n");
->>   		return -EINVAL;
->> -	} else if (conn_state->connector->status !=3D connector_status_connec=
-ted) {
->> -		DPU_ERROR("connector not connected %d\n", conn_state->connector->sta=
-tus);
->> -		return -EINVAL;
->>   	}
->
->For this issue, do we hit the connector->force =3D DRM_FORCE_OFF path?
+On Thu, 1 Aug 2024 18:55:26 -0500
+Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-It was hit during the suspend/resume, so yes, it is a forced off, but by t=
-he different means=2E
+> [+cc Rob, Jonathan]
+> 
+> On Fri, Jul 19, 2024 at 06:38:05PM -0400, David Hunter wrote:
+> > The use of the __free function allows the cleanup to be based on scope
+> > instead of on another function called later. This makes the cleanup
+> > automatic and less susceptible to errors later.
+> > 
+> > This code was compiled without errors or warnings.  
+> 
+> I *think* this looks OK, but I'm not comfy with all this scope magic
+> yet, so would like Jonathan and/or Rob to take a peek too.
 
->
->Because otherwise, writeback does not implement =2Edetect() callback toda=
-y so its always connected=2E
+I'm suspicious of usecases where there isn't a constructor / destructor pair.
 
-It is undefined/unkown (3), not connected (1)
+This is more of a 'steal' the pointer and destroy it pattern.
 
->
->But if that was the case how come this error is only for writeback=2E Eve=
-n DP has the same connected check in atomic_check()
->
->Change seems fine with me because ideally this seems like a no-op to me b=
-ecause writeback connector is assumed to be always connected but the issue =
-is missing some details here=2E
->
->>     	crtc =3D conn_state->crtc;
->>=20
+Also, bug in this case.... see below.
 
+> 
+> And is there some way to include a hint here about how to find the
+> implicit of_node_put()?  I think it's this from 9448e55d032d ("of: Add
+> cleanup.h based auto release via __free(device_node) markings"):
+> 
+>   +DEFINE_FREE(device_node, struct device_node *, if (_T) of_node_put(_T))
 
---=20
-With best wishes
-Dmitry
+Yes, it's that one.  Makes sense to add a reference to that in the
+patch description for these.
+> 
+> but it did take some looking to find it.
+> 
+> If it looks good, I'll tweak the commit log to use imperative mood:
+> https://chris.beams.io/posts/git-commit/
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=v6.9#n94
+> 
+> since this technically says what *could* happen but not what the patch
+> *does*.
+> 
+> > Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+> > ---
+> >  drivers/pci/of.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+> > index b908fe1ae951..8b150982f5cd 100644
+> > --- a/drivers/pci/of.c
+> > +++ b/drivers/pci/of.c
+> > @@ -616,16 +616,14 @@ int devm_of_pci_bridge_init(struct device *dev, struct pci_host_bridge *bridge)
+> >  
+> >  void of_pci_remove_node(struct pci_dev *pdev)
+> >  {
+> > -	struct device_node *np;
+> > +	struct device_node *np __free(device_node) = pci_device_to_OF_node(pdev);
+> >  
+> > -	np = pci_device_to_OF_node(pdev);
+> >  	if (!np || !of_node_check_flag(np, OF_DYNAMIC))
+
+Wil now put the node if that second check fails. Didn't do that before
+and I'm guessing we shouldn't?  Technically it calls the cleanup
+in the !np case but that is fine as we check for NULL pointer.
+
+So I'd leave this particular one alone.
+
+> >  		return;
+> >  	pdev->dev.of_node = NULL;
+> >  
+> >  	of_changeset_revert(np->data);
+> >  	of_changeset_destroy(np->data);
+> > -	of_node_put(np);
+> >  }
+> >  
+> >  void of_pci_make_dev_node(struct pci_dev *pdev)
+> > -- 
+> > 2.34.1
+> >   
+
 
