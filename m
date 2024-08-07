@@ -1,90 +1,84 @@
-Return-Path: <linux-kernel+bounces-278290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F4794AE54
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:44:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8781B94AE70
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 18:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE967283AF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:44:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6DAA1C20917
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 16:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D79E13A896;
-	Wed,  7 Aug 2024 16:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EBD13BAE3;
+	Wed,  7 Aug 2024 16:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0Mb6IVZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="l6H67RLe"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C670678C9A;
-	Wed,  7 Aug 2024 16:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4B313A276;
+	Wed,  7 Aug 2024 16:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723049083; cv=none; b=rw09ij1nDq/xZ7TE8vVvqZb/GEBnoHh40pEvTTOVEKiJTDNRrD6fEJt+JZ+loi1rSCZzPWOJzZjG9wcsCFanvlaREot/YjSK3jkcQ3y+OmcpftuttEDCSQAKOQwlIDXRG5kAZ74PTyGc6McNT71lvtqGPWONZzKBU3aZlqoB7hc=
+	t=1723049526; cv=none; b=YhRyllWmTdTZTZP4zw7ZbayQcrD2nXZMGD7XQIl3tYDo73S6+xrt+HdE6MC+H8VdDsP9iyWuph1Vg9sgDAdbdw2X2hSHedpHYYJO9WtlMnEbtit1BesH2Ln4WgKMYZhnChj7QaHwfuDFDXMH5SXA45/AtgbJSewuitUFhd2PSM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723049083; c=relaxed/simple;
-	bh=cC44WqnolE5AwP6XHBememnp0c8vgWkKs0T5Id9Z+nw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CrkP0umnPEwCJFFJrR4DhX16HiICiOdooWR9q8LARhO+kyCVMRyHUti83UYMOX1epa30fTPPwd7raAy9ji8Wo29UdlU5KFqzXGKW2coozl5jETC2Gbg3BbELXCIsviIkZlQ4+KsNkdQMhys+f+6Q7jES/Uz+rnIWMtMCe11N4HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0Mb6IVZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 938FBC32781;
-	Wed,  7 Aug 2024 16:44:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723049083;
-	bh=cC44WqnolE5AwP6XHBememnp0c8vgWkKs0T5Id9Z+nw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V0Mb6IVZ2WtcRUpXYb5Nb4sGxE2TPIiKzp469wnfbTVFDLSDOxwsW126yCBGZyAh1
-	 OmufOVI4GzY03QiY2nmhfHApv4ZCuMoAt97ZpRo/2wVA2VlgP288fkVnLlw82R/qf9
-	 tifY6+qGvXyo8Uh5kcnYj3kbizxS6z//Pl5beBUKIXocBV1T9iNP+HrGWou/UzwXu2
-	 Agl1rzvCTaaHt3aegxP0nrcvuzwPWtBmmaHuH/8HjCvyZm6UfMAI7U/SbNdTOpkCfU
-	 AABUGdhhOZ/qSs/vB0fx+5g5dwk44HFV6zPvVYKTJnugRAKQB9g20FQNAPHCpVJNxP
-	 fp33vU0mnasyw==
-Date: Wed, 7 Aug 2024 17:44:39 +0100
-From: Simon Horman <horms@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Potnuri Bharat Teja <bharat@chelsio.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] ethtool: Avoid -Wflex-array-member-not-at-end
- warning
-Message-ID: <20240807164439.GC3006561@kernel.org>
-References: <ZrDx4Jii7XfuOPfC@cute>
- <20240807162602.GB3006561@kernel.org>
+	s=arc-20240116; t=1723049526; c=relaxed/simple;
+	bh=UxpYNmysupzBoIQQBBUTvSFug8fRS32+rHyuUIu6XkA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=t3JLKpPsnLrSotVKvrq8RohHl57o8REKVzarrs5NI4O6fmXdcjhvbwe52s2vda3lAeYO1elWk4xrygUNvMzWnu4ArdQnqTVlCDboO7Zx0XP/mYtdM3O9cfDj2KnfsQroFnm10GTA2oH+zG0OOrndfEGlxw5udETfSg92gppXWVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=l6H67RLe; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 55B12418B1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1723049119; bh=UxpYNmysupzBoIQQBBUTvSFug8fRS32+rHyuUIu6XkA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=l6H67RLermtz1uMEwU3DCUQvKyDLYR9Xomjro+hO7nmMVGmqd1XzRN2cW+gqq9qaA
+	 18mbkCswq7gzXYC0vxe3x5P2XchHGuRoHKRt4CW8Uo/n4EahGkzbPPLThJLK3JV8o4
+	 QXqZPdqfxvCaT0aa+65gddtNOds32JHYJnMLWyDB4KaP7bQKyzrbF7FYGJKdvGvvPD
+	 Pp9UgDmgR0ieY1ZaeTVojHYiktiwFWEZdZbzDNylQRgt3KlZRcQUUtnanzyTehoIDN
+	 2Wg74K4wzY18iMif680DbUmrEaHoTDuIRx2v2eu/FwDi8T5zgrRkVTXdFfszNQwlhS
+	 pu3PisCiAuApg==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 55B12418B1;
+	Wed,  7 Aug 2024 16:45:19 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Haoyang Liu <tttturtleruss@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
+ Yanteng Si <siyanteng@loongson.cn>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v5] docs/zh_CN: Add dev-tools/kcsan Chinese translation
+In-Reply-To: <d6eec1da-0e79-432f-a5cf-7dc8c59f28c1@hust.edu.cn>
+References: <20240807162720.46588-1-tttturtleruss@hust.edu.cn>
+ <d6eec1da-0e79-432f-a5cf-7dc8c59f28c1@hust.edu.cn>
+Date: Wed, 07 Aug 2024 10:45:18 -0600
+Message-ID: <87r0b0th7l.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807162602.GB3006561@kernel.org>
+Content-Type: text/plain
 
-On Wed, Aug 07, 2024 at 05:26:02PM +0100, Simon Horman wrote:
-> On Mon, Aug 05, 2024 at 09:38:08AM -0600, Gustavo A. R. Silva wrote:
-> > -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> > getting ready to enable it, globally.
-> > 
-> > Move the conflicting declaration to the end of the structure. Notice
-> > that `struct ethtool_dump` is a flexible structure --a structure that
-> > contains a flexible-array member.
-> > 
-> > Fix the following warning:
-> > ./drivers/net/ethernet/chelsio/cxgb4/cxgb4.h:1215:29: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> > 
-> > Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> 
-> Reviewed-by: Simon Horman <horms@kernel.org>
+Haoyang Liu <tttturtleruss@hust.edu.cn> writes:
 
-Sorry, one minor nit, after the fact.
+> This is a mistake but I missed it before sending this patch.
+>
+> What should I do to revert or correct this patch?
+>
+> Thanks for your help and patience.
 
-cxgb4 would probably be a better prefix than ethtool for this patch.
-But then it would conflict, by name, with
+Send a v6 with the correction made - but wait a while for other reviews
+first.
 
-- [PATCH] cxgb4: Avoid -Wflex-array-member-not-at-end warning
-  https://lore.kernel.org/all/ZrD8vpfiYugd0cPQ@cute/
+Thanks,
+
+jon
 
