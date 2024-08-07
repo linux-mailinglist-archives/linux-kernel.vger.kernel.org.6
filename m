@@ -1,90 +1,141 @@
-Return-Path: <linux-kernel+bounces-278150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9BC94ACC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:23:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 492B894ACCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 17:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDBDB1C2294C
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:23:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F89283C00
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A8812C460;
-	Wed,  7 Aug 2024 15:23:04 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1F612BF24;
+	Wed,  7 Aug 2024 15:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="Hgcni6Ox"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E350B12BEBE
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 15:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2253B79949;
+	Wed,  7 Aug 2024 15:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723044183; cv=none; b=AOIN/EF5zrz26VNMmH/6WJnTPzTLYGwR/GoipmqhS/H2mni8sMjNlH6Q/Gyqc9el6ey4s0ot3khD7s8vT0WBm51klkAsHdghngL0gyuH+TsadxbFDZspV3xWtxKOldvdcmFlf9ltn/rVS1vJYY9RD7whh+8ANm4dfisl+YcfoMI=
+	t=1723044263; cv=none; b=kBbNTrHRChWZynoRtcG61s4PNpS2G8vV2QcbNw88XJlflMsX5CFZ+ArSOCz1a/hx+4faUoAFC2Fn+5qY6S5se9Mk8TBJKCleHfdUBVaRpnQdUcosDOL/0hYZIaPLij6JjTgol40zP7u1Qma8H80/pXd2K5Ts/3l//ZNRjpi7oBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723044183; c=relaxed/simple;
-	bh=kACrunjvDB/DSQMdxOVsjAqK3jNN66NyvYykrJSHotM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=o/0dvtK+GtNECINe6yorZEsPnTFlYfGIHCPUO6aR4z5GRgC/CZpvXocFoLQTBjWqj2Klw6KbaHpHfHealyRIB5FQJQXUFTbByuoMyYc8Xc9CnvVovzihvOn280q5YSg81BqCDeYbGYmy9S9sruNpO2Vj7syqHpCCADpysXTnQNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WfDMn43JBz20l6g;
-	Wed,  7 Aug 2024 23:18:29 +0800 (CST)
-Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0D801140113;
-	Wed,  7 Aug 2024 23:22:56 +0800 (CST)
-Received: from [10.67.109.211] (10.67.109.211) by
- kwepemg500010.china.huawei.com (7.202.181.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 7 Aug 2024 23:22:55 +0800
-Message-ID: <2812367a-49ad-4c88-8844-8f8493b15bbd@huawei.com>
-Date: Wed, 7 Aug 2024 23:22:54 +0800
+	s=arc-20240116; t=1723044263; c=relaxed/simple;
+	bh=ymFPhwGI8e7n9dghkO5/gX8tfO8C7fo9qKHbVYc2iV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a39JZFSsLO7AY8o2Ckc3G668/2Hhf9lzy2OqDp94+ubYshDmJ+XY6jRkuiXYzucLLjlsdv9fMeX6AEw5QJaa5nPiDj3I5a1aaxPyvJz5WXOPCwJIaiXxfHgAsihxzJ0CzE4pm5EtGu6X3lcU4aTwgJ0wL43um56dajj3Ncvp0No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=Hgcni6Ox; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=8p+8xkYytY0kAtRIiarGiLqc+3CeFPeAk9BYp1+Be+o=; b=Hgcni6Ox2D8FDaPA4MfcZbKN6U
+	9lLSq3Q7GUU3+GllOyhCeZHbJA0tL14j23d4QDpMTl4w/aXYprIt1HdcW/FwqeS04X0pozycGo8im
+	ZG7XpFmgej1m1/Wx1k4TniZ4dzo4Zke7LDpuRIaTpB7yIjPjLjTnZHh5hvzoqvtxxNPxlV14qvR9h
+	6JOTX9FjdEiSNbs9g4oD/BRv04kpaHEALD2ttmeHLVEVftdyLZ6JtwnavADmeYTL2jzkNEuhkuB7A
+	aHsxYe0qWQ1MMw1F3+LCEHGCE8aeFHNlPAHElLODPwPnr9hrxMTSLQUbpM7aq1d8KhP01oubv1FeU
+	03Wqun1A==;
+Received: from [2001:9e8:9f8:5201:3235:adff:fed0:37e6] (port=36192 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1sbiW1-009bha-HL;
+	Wed, 07 Aug 2024 17:23:53 +0200
+Date: Wed, 7 Aug 2024 17:23:27 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: da.gomez@samsung.com
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	William Hubbs <w.d.hubbs@gmail.com>,
+	Chris Brannon <chris@the-brannons.com>,
+	Kirk Reiser <kirk@reisers.ca>,
+	Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org,
+	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org,
+	llvm@lists.linux.dev, Finn Behrens <me@kloenk.dev>,
+	"Daniel Gomez (Samsung)" <d+samsung@kruces.com>,
+	gost.dev@samsung.com
+Subject: Re: [PATCH 02/12] kbuild: add header_install dependency to scripts
+Message-ID: <20240807-witty-warm-hummingbird-20c9a7@lindesnes>
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
+ <20240807-macos-build-support-v1-2-4cd1ded85694@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [build fail] v6.11-rc2 from "ARM: 9404/1: arm32: enable
- HAVE_LD_DEAD_CODE_DATA_ELIMINATION"
-Content-Language: en-US
-To: Harith George <mail2hgg@gmail.com>, <arnd@arndb.de>,
-	<linus.walleij@linaro.org>, <rmk+kernel@armlinux.org.uk>, <ardb@kernel.org>,
-	<harith.g@alifsemi.com>
-CC: <linux-arm-kernel-join@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <14e9aefb-88d1-4eee-8288-ef15d4a9b059@gmail.com>
- <c11ba413-89f6-46b4-8d59-96306c9f1f14@huawei.com>
- <52518ac5-53bb-4c70-ba99-4314593129dc@gmail.com>
-From: "liuyuntao (F)" <liuyuntao12@huawei.com>
-In-Reply-To: <52518ac5-53bb-4c70-ba99-4314593129dc@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg500010.china.huawei.com (7.202.181.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807-macos-build-support-v1-2-4cd1ded85694@samsung.com>
 
-Thanks, I reproduce the link error with toolchain
-gcc version 9.3.0
-GNU ld (GNU Binutils) 2.33.1
-
-with same gcc version, just upgrading ld version to 2.36.1, it does not 
-segfault and build completes. there should be bugs in low version of ld,
-and the ".reloc  .text, R_ARM_NONE, ." triggers that.
-
-
-On 2024/8/7 19:51, Harith George wrote:
+On Wed, Aug 07, 2024 at 01:09:16AM +0200, Daniel Gomez via B4 Relay wrote:
+> From: Daniel Gomez <da.gomez@samsung.com>
 > 
+> Export kernel headers necessary for the tools located in scripts/. This
+> ensures kernel headers are generated before building scripts/selinux.
 > 
-> On 07-08-2024 15:19, liuyuntao (F) wrote:
->> It seems to be ok with vexpress_defconfig in mainline tree v6.11-rc2,
->> I may need your .config/code file for further testing.
->>
-> Please find attached minimal patches just for your testing. "make 
-> ARCH=arm e7_defconfig; make ARCH=arm xipImage"
+> Kernel headers required for building are: asm/types.h, asm/bitsperlong.h
+> and asm/poix_types.h.
 > 
-> Thanks,
-> Warm Regards,
-> Harith
+> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> ---
+>  Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index 44c02a6f60a1..7ac079955a94 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1173,7 +1173,7 @@ include/config/kernel.release: FORCE
+>  # Carefully list dependencies so we do not try to build scripts twice
+>  # in parallel
+>  PHONY += scripts
+> -scripts: scripts_basic scripts_dtc
+> +scripts: headers_install scripts_basic scripts_dtc
+>  	$(Q)$(MAKE) $(build)=$(@)
+
+Since commit 59b2bd05f5f4 ("kbuild: add 'headers' target to build up
+uapi headers in usr/include", 2019-06-04), composing the user-space
+header tree is separated from the actual installation to
+$(INSTALL_HDR_PATH)/include.  Thus, you do not want to depend in
+'headers_install' but on 'headers' instead.
+
+Nevertheless, I am suspecting that this leads to trouble.  E.g.: if
+scripts/* include $(objtree)/usr/include/asm/*.h this will probably
+break cross-arch-building.
+
+Kind regards,
+Nicolas
 
