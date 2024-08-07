@@ -1,101 +1,123 @@
-Return-Path: <linux-kernel+bounces-277994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 432CB94A923
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:56:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 471ED94A926
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 15:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0363D282290
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:56:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0764E282216
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 13:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D331E4AF;
-	Wed,  7 Aug 2024 13:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6894720124F;
+	Wed,  7 Aug 2024 13:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="taCjc+yT"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="lc2oidqi"
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CB11EA0D6
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 13:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D65200108
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 13:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723038958; cv=none; b=N3ZjBQOau2GHomjw8ai/BN1f2ETKxJ4lgoIRdKJcUcPmCiyGifWCymw2qf/pt6Rzr2/+A2pR9tUolAywK+I1GpDZmHX8mjGm5tl+aDvlfBTGTBJ2zLrDzyuf2eNwljv1oWJk7g71kHL+vBAfZkdgiHj3mZ+g84ln8qdACFicElo=
+	t=1723039000; cv=none; b=OPtPrDuBXUYKDBA7LUSKh5C6TOR8A/wy6oCiOgW7p0CdUGAN4CIek2Vee1QC1VY5cyJKziMY0vOnF98Q3t+rhsN2ni5kPsZ+n+8ZuBhvLB3JkkcrS62dVJupnPzfehkztGA+KJOPlGDnC7hAOyn4DbnIv8bsNUeXlDOlhlZMqD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723038958; c=relaxed/simple;
-	bh=MZ44TK7vjwRuyQ9dOgihBCa9p07QgTcgR8nV2B374bI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mhRSYXxlqHoxj+KCz8gMRiDP23Wa4b9o11IxGRxuV3nt5IazheDgu9ZGuf+WnIvy3N4CPEQU1YwoufbU2Z8i2ffDmA0nyqx0p8xZXn6GbqotspDfefNQWR1DC50FkOgsK49oFIydueDARlk9pXXJSbEgbDUWcafvhIBTeOcrpQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=taCjc+yT; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42812945633so13532015e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 06:55:56 -0700 (PDT)
+	s=arc-20240116; t=1723039000; c=relaxed/simple;
+	bh=oyMT0FbvyEUEWDumW0O7TOVW/E8QkS8/DViHTmTG7n8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QtdPNI3JBYcwaAvh1eEtCLbMnopYp2QwEqqu53bVTR4xa5sOlV0OsuEKADhxZIHW6EhUwbAw7EAvjB2ZwTC/BF4c09TXPa7nNEZkSNaWnFtM3vWTjpVi3qxroeu45s6a/vGRW79OGKSSWj2w4W7V1taIaLPP5gIlaBY6JA2FFJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=lc2oidqi; arc=none smtp.client-ip=209.85.222.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-82e2eee5f5cso539299241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 06:56:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723038955; x=1723643755; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MZ44TK7vjwRuyQ9dOgihBCa9p07QgTcgR8nV2B374bI=;
-        b=taCjc+yTK/tVA2MCIzt958rRMoxuU43JjQANWGwz9Aoya++yYgIA2sQ5dgqfzuCkpw
-         MI5TnB7Xp4WY/xBGlpvDT8cWWHU5u6SLXI4so9eNjCFLLeUAdozJ4uL0vdVih0KaNtQq
-         4qygSz/ksGT3AtxOgLBFCWOlkEddBYhbvGLDw/OFYcK0+D5V5mLBR15mAdF5xAJQ5pMO
-         HhYDDU1omdpTAi3uxZiAF4uHQDjIuprt0Y1/i9bsUiDYUVcrCh23V+xLT/BLV5h0JAnV
-         cpbSOpGBesrDSkcZjOe/3XwxfLYobQQsrdnBPoRwnjMhGT8UT2Q4gG6EWIJEHrosxQZb
-         aKnQ==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1723038997; x=1723643797; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JuS59JADbTnnYXSWbhEozGqiA0xSa9BLnZ7t90LFaxE=;
+        b=lc2oidqiHK/PZd850fOIITaMn2RGUlKb3BVv7MpS8fFZ9dNtTcJZuKMqQFSg089EE4
+         Bns4dZxXHwAZY/CrtRqmIXTfryJxNj4Z6sp5udPe7C2X5SwMy3Ytixf24rK1ROPMHQ2Y
+         Um9oo8nOQzmV1QHz2Fj6TEV7pAUfKGJnCzJ2ZDL7HJMbFAMMut4lPwPQZhmV6gDXM4kT
+         2Ar14wycSF/0XZavqs4Y+ebs/yXryX8E5UCqq6VBVSM2eYFBKr/Rj3gtru7jUmHoY1XC
+         mtKF7pFQMRnZgbU8b5uLtxHO3NEV+Pali+XanCikuJFbyZcgbAZ9TYIYSdqi0WBr2uEd
+         yg4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723038955; x=1723643755;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MZ44TK7vjwRuyQ9dOgihBCa9p07QgTcgR8nV2B374bI=;
-        b=Zf8FQHrJS+fSmJEKRqrFT6MumsRszRYZGEtRJSM6CeAyJqsujz9n67aFZgnuD1nLHT
-         +FyvohbtJH9deb/sknsU2v/HBwfwgvKmpdu7sTZvRcTHVhO/dIpGevEHPG9InT4rbxGp
-         VKtUkSPNMX3Nn0ksi14jdMe5bdKIpe6mR05Tip5mvA8tiJNXel9KvSudPaBLhJSdZhtf
-         MBg7PROzGaWRztxVKfkTFWfjG6Jx/gx0F9/jCSQURfOH/2oE2assNHZ8Em6uRndejtdr
-         LDy2rqI5Lv3S+Hxa/7ISXGzZHJRiRl33JJs7lDBoz/mUX693Ez2BWrcsmBJd9ie2POAA
-         kFXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNy4Pod+Z8O0pJVTQv83Py4Npi9jTxp5aVBswcKsuSvkHTdMG+Ys+ZMHTEOAvo+JeCzNA2YoIuzii4ztNM45d77hdyCtvNEHrZplHh
-X-Gm-Message-State: AOJu0YxW2IqN5utl0XxQm5agIpu9RCQuhh3mCBCbbp3J2XDGLbQNDOd1
-	XpzKEOEse/X7iEKk5st79sdJOv/9ZqUaJthTinOS6/qqViWVH+YyocuqsDaRVbbYEWuZ9+7IkKg
-	+k3EzqSXno5C/HTDiOqWcf50xWW9FPqJwOGKQ
-X-Google-Smtp-Source: AGHT+IExEsaJLzPgD2P/oGXhuQDQgbdYIxzQYwD+vDeT9oGNd/3KIYbpFaaqnO+fryzi59+HwlZXrERAE+cYU3j/hw0=
-X-Received: by 2002:a5d:5d81:0:b0:36b:d3bc:af03 with SMTP id
- ffacd0b85a97d-36bd3bcb085mr7521727f8f.15.1723038954536; Wed, 07 Aug 2024
- 06:55:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723038997; x=1723643797;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JuS59JADbTnnYXSWbhEozGqiA0xSa9BLnZ7t90LFaxE=;
+        b=A0G4uh+6xsA8hDeROS5jBNJtgA6VhVk12cMHZqWJ8jnr+dx0v/LJanUGmQALCShkjv
+         U0b7KrdvatJHnztvSxvyaOUYiJWfLBCPwjtlyIvFXFHQUwhiJqTOPGHnGzmMydIuhivl
+         B1oFZlqHN6Pow97nY8SbnGdcR90VRhVVWYKM0Zu7YY9s10LF187XpTraWPuDLb01LCmd
+         WvT8Tnll9ewz81B5AU4hvIwLBc/YjV0fRN/SSGpBMpvxyfLwE0d5crCqRBV7BzWVRaB/
+         PXNMpCwXgASVAD9xBETx0lwt4gVZML93T9gd5Ugi7gT/ulNQTv6Z9CgKCMcfsnAXurfk
+         6l1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVK+1exK6ua0OuPtXyEOnd8b5whO0fd8gyHCJuKlJvl7e8lBRzzDT5je3K5XQS3s25EqfqdQh+6GhfacLQO9/ZuttZzuYRcVGacHdww
+X-Gm-Message-State: AOJu0YzIkp7Wf+5hIZr8ItHePqdcbnmZ/e+Bj1kUoov99gq/8eGMXKWh
+	O9QLv7fcx+mX32oCU0YMdcTApJC4HswIm14y6746caGPlSpfqkiTXvsPFTLTNSz9raF2g3PvJ4H
+	N
+X-Google-Smtp-Source: AGHT+IEOWFTdrwiZrbHViifiqbdv+xNaB1znBNizFfr4dGmtnW/qOKfBByKDT2UtyQKnBsMQ2WkouQ==
+X-Received: by 2002:a05:622a:4cc4:b0:446:5c58:805d with SMTP id d75a77b69052e-451c79d46dfmr52220451cf.19.1723038986722;
+        Wed, 07 Aug 2024 06:56:26 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-451c870066csm5157471cf.4.2024.08.07.06.56.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 06:56:26 -0700 (PDT)
+Date: Wed, 7 Aug 2024 09:56:25 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Wouter Verhelst <w@uter.be>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	nbd@other.debian.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] nbd: correct the maximum value for discard sectors
+Message-ID: <20240807135625.GA242945@perftesting>
+References: <20240803130432.5952-1-w@uter.be>
+ <20240806133058.268058-1-w@uter.be>
+ <20240806133058.268058-3-w@uter.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-21-dakr@kernel.org>
-In-Reply-To: <20240805152004.5039-21-dakr@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 7 Aug 2024 15:55:42 +0200
-Message-ID: <CAH5fLgjVHrBNgyQSnBU_rg71M4EnOpt8Sz5ad1okwME9uXwOMQ@mail.gmail.com>
-Subject: Re: [PATCH v4 20/28] rust: alloc: add `Vec` to prelude
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
-	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
-	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
-	zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, 
-	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806133058.268058-3-w@uter.be>
 
-On Mon, Aug 5, 2024 at 5:22=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
-rote:
->
-> Now that we removed `VecExt` and the corresponding includes in
-> prelude.rs, add the new kernel `Vec` type instead.
->
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+On Tue, Aug 06, 2024 at 03:30:56PM +0200, Wouter Verhelst wrote:
+> The version of the NBD protocol implemented by the kernel driver
+> currently has a 32 bit field for length values. As the NBD protocol uses
+> bytes as a unit of length, length values larger than 2^32 bytes cannot
+> be expressed.
+> 
+> Update the max_hw_discard_sectors field to match that.
+> 
+> Signed-off-by: Wouter Verhelst <w@uter.be>
+> Fixes: 268283244c0f018dec8bf4a9c69ce50684561f46
+> ---
+>  drivers/block/nbd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+> index 20e9f9fdeaae..1457f0c8a4a4 100644
+> --- a/drivers/block/nbd.c
+> +++ b/drivers/block/nbd.c
+> @@ -339,7 +339,7 @@ static int __nbd_set_size(struct nbd_device *nbd, loff_t bytesize,
+>  
+>  	lim = queue_limits_start_update(nbd->disk->queue);
+>  	if (nbd->config->flags & NBD_FLAG_SEND_TRIM)
+> -		lim.max_hw_discard_sectors = UINT_MAX;
+> +		lim.max_hw_discard_sectors = UINT_MAX / blksize;
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+We use 512 as the "sectors" measurement throughout the block layer, so our limit
+is actually
+
+UINT32_MAX >> 9
+
+since we can only send at most UINT32_MAX as our length.  Fix it to be that for
+both patches and you should be good.  Thanks,
+
+Josef
 
