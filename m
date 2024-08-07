@@ -1,94 +1,307 @@
-Return-Path: <linux-kernel+bounces-278705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F3B94B3E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:49:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D4694B3E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 939591F22AFA
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:49:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 451B41F22DF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598F515665C;
-	Wed,  7 Aug 2024 23:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA4B156237;
+	Wed,  7 Aug 2024 23:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mwRjgUQO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yrr2Fp44"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nnOpG7jm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413E384037;
-	Wed,  7 Aug 2024 23:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0EE15665C;
+	Wed,  7 Aug 2024 23:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723074554; cv=none; b=msFcSrawcT4HdG+ZMUDQFCF9BW2Dh0HqcWSIWqgPO/gCrvHGfvENWwm81FPnkHyfR+k6ZMuM/8wNZSrmoZrPZUm3aClJ63HuIMYf/nh9rwoW5GDDX4kY7rfN3W8wl8lecuVnSvZuA84k0BMv8/yfEmzY6LUWh/NASldUm+Jzmp0=
+	t=1723074602; cv=none; b=aiYkxm5UEJL6eHv6CBeZq2CHppcldgdoKUEFl0mtn4ye7OaXRnK2fZ/GyoyrIZTuZc4WuvHK94X7qkQlgqx8C5m9CmqWdvAHvcRicix//OhLH2dOXV+Mq4o9XeTAH6MBShZ78CwW+beD4+6/sU7PiYxO60/pIAns/acfepCq3l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723074554; c=relaxed/simple;
-	bh=Nwsz6GxfhCzQJBsLDjoZ5NvjHXq9GtdzHQAIhOWUQTU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PHiX5gul3EFaNdFKqOp9JXxb0CIapMWj9MsKBXobyV8Yzrnt5ESMeEJn8pqipYPKqT5tv+u4XPHRCSY3aPlM5WnZ1sleA78r6EMZG8dfL7n9Z2vYyG0I6oOahMFnYE4ZtwEdLji7x0DYBi35gY4bqO80rc6BNLTcQnXEp0mJ1iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mwRjgUQO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yrr2Fp44; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723074551;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XZRorm74nHrSp8aUrFxSrWt6O0dZkbi/2sfeYCcIX/4=;
-	b=mwRjgUQOwBTpo9ycF9ySiJjIpNHINT99aPQxpZAjcbGRFahrx7v1Nr+nslcilZ0BYSvGrw
-	w2omUVMNyaKJ26tkzYQqwbO6c94FQfiPaO5I8VlDkEx9LgW6bXpOAmPCkq1XnEllVTR7Eu
-	h/JI443aurQ9g51C3fgAcgRCGtRRSXK67lMKdCd/AfYGo8pOCihz01eGqvLJLYBsJwQGhM
-	O7BeS6/mLMjOBKnB4yk7HdFmqfCqWESeR/V2lwkwkLkif+r0Ef5G7PwAvKT/0E+jD21bVy
-	6mcKjtQJW2z89wSKDcbkCE8opuALDVe2AhWdS/aa8SpJPyHUBU4CR7O9xOGabQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723074551;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XZRorm74nHrSp8aUrFxSrWt6O0dZkbi/2sfeYCcIX/4=;
-	b=yrr2Fp44pGNX5majUfSm0gFgYFyG7EGun+xPce5YxfbT397eZbugQcPm0Go+ZRX5mFFxo9
-	Apuv8Q+nvQ3IFgDg==
-To: Melody Wang <huibo.wang@amd.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, x86@kernel.org
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Tom Lendacky
- <thomas.lendacky@amd.com>, Ashish Kalra <ashish.kalra@amd.com>, Michael
- Roth <michael.roth@amd.com>, Melody Wang <huibo.wang@amd.com>
-Subject: Re: [PATCH 6/6] KVM: SVM: Enable restricted injection for an
- SEV-SNP guest
-In-Reply-To: <a3bab644689202150df01442bed43dad45b6852e.1722989996.git.huibo.wang@amd.com>
-References: <cover.1722989996.git.huibo.wang@amd.com>
- <a3bab644689202150df01442bed43dad45b6852e.1722989996.git.huibo.wang@amd.com>
-Date: Thu, 08 Aug 2024 01:49:10 +0200
-Message-ID: <87zfpnzyfd.ffs@tglx>
+	s=arc-20240116; t=1723074602; c=relaxed/simple;
+	bh=1Y39yPQtkTDnnt4FA/xzwuldlGxg7krS0BUCu83Fk+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rUIwmFrWW74OlmpDdNr6BlacHnPCeIc7T1U5PSBzoMqfwCVWaMDqe0IXWJ+tr6w2Ft9H6jWwVlNcBpnL9ibTlQzzHyhb/flzkrXf4Cs2x+Ou8f69IrnJIT9dHqgqOq52eCChIVWbCv+QaSRgesBYWcWrVpzr9dg2syt/jWuFLzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nnOpG7jm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48114C32781;
+	Wed,  7 Aug 2024 23:50:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723074601;
+	bh=1Y39yPQtkTDnnt4FA/xzwuldlGxg7krS0BUCu83Fk+I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nnOpG7jm/HLrXv/Ii1iJFHLAlp4tYYBXuDwfnk8+kNK1eJuwP66OXL/p2rqqIt09v
+	 aST3ekLNuDL0k8bw+GGX0iVQv/w3kHSmrY+7rbqbBq33NRpTx/al2wJsPIxbOi9Pze
+	 HqFVpfH4/YAE3w66tPg89DxNdUsP0vk+HIAQW4JY1BWxyyUuq86B9zh46AqYj2y/Ny
+	 mMPpK9dKXQ552FJPnYVyuBnhjKlWgek3FHm8jscAuoqjvpkTSnTsQ+EVtwnvFsivUB
+	 /dJh5EAXdWm3xL1F5BCljsXZEBXPCbiLvOHR2HE42NeGjNzmLzBEabOoeJUMi/1jO7
+	 04+M2s7fqTYhg==
+Date: Wed, 7 Aug 2024 16:49:59 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: irogers@google.com, acme@kernel.org, adrian.hunter@intel.com,
+	jolsa@kernel.org, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/9] perf record off-cpu: Dump direct off-cpu samples
+ in BPF
+Message-ID: <ZrQIJ9xRg22qALoQ@google.com>
+References: <20240807153843.3231451-1-howardchu95@gmail.com>
+ <20240807153843.3231451-5-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240807153843.3231451-5-howardchu95@gmail.com>
 
-On Wed, Aug 07 2024 at 01:00, Melody Wang wrote:
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index dd4682857c12..ff8466405409 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -446,6 +446,7 @@
->  #define X86_FEATURE_SEV_SNP		(19*32+ 4) /* "sev_snp" AMD Secure Encrypted Virtualization - Secure Nested Paging */
->  #define X86_FEATURE_V_TSC_AUX		(19*32+ 9) /* Virtual TSC_AUX */
->  #define X86_FEATURE_SME_COHERENT	(19*32+10) /* AMD hardware-enforced cache coherency */
-> +#define X86_FEATURE_RESTRICTED_INJECTION	(19*32+12) /* AMD SEV Restricted Injection */
+On Wed, Aug 07, 2024 at 11:38:38PM +0800, Howard Chu wrote:
+> Output PERF_SAMPLE_TID, PERF_SAMPLE_PERIOD, PERF_SAMPLE_CALLCHAIN, and
+> PERF_SAMPLE_CGROUP in BPF. Ideally, we should only output
+> PERF_SAMPLE_PERIOD (off-cpu time) and PERF_SAMPLE_CALLCHAIN (sched_in
+> process's callchain). One only needs to set PERF_SAMPLE_TID and
+> PERF_SAMPLE_CGROUP, and perf_event will do everything for us.
+> 
+> But in reality, that's not the case. Setting PERF_SAMPLE_TID will mostly
+> give us TID of 0. We might get the correct TID for offcpu-time event
+> from time to time, but it is really rare.
+>          swapper       0 [000] offcpu-time:  /
+>         :1321819 1321819 [002] offcpu-time:  /user.slice/user-1000.slice/session-2.scope
+>          swapper       0 [001] offcpu-time:  /
+>          swapper       0 [003] offcpu-time:  /
+> 
+> And setting PERF_SAMPLE_CGROUP doesn't work properly either.
+>     tmux: server    3701 [003] offcpu-time:  /
+>     blueman-tray    1064 [001] offcpu-time:  /
+>             bash 1350867 [001] offcpu-time:  /
+>             bash 1350844 [000] offcpu-time:  /
 
-Please update the XML for this CPUID leaf at:
+Isn't it just because your system was idle?
 
-       https://gitlab.com/x86-cpuid.org/x86-cpuid-db
+> 
+> We need to retrieve PERF_SAMPLE_TID, PERF_SAMPLE_PERIOD,
+> PERF_SAMPLE_CALLCHAIN, and PERF_SAMPLE_CGROUP using BPF and output these
+> four fields.
+> 
+> Add perf_event_array map for dumping direct off-cpu samples, but keep
+> the at-the-end approach.
+> 
+> Tons of checking before access, to pass the BPF verifier.
+> 
+> If off-cpu time (represented as delta) exceeds the off-cpu threshold, do
+> output.
+> 
+> Suggested-by: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> ---
+>  tools/perf/util/bpf_skel/off_cpu.bpf.c | 133 +++++++++++++++++++++++++
+>  1 file changed, 133 insertions(+)
+> 
+> diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> index cca1b6990a57..95cc130bb67e 100644
+> --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> @@ -18,6 +18,9 @@
+>  #define MAX_STACKS   32
+>  #define MAX_ENTRIES  102400
+>  
+> +#define MAX_CPUS  4096
+> +#define MAX_OFFCPU_LEN 128
+> +
+>  struct tstamp_data {
+>  	__u32 stack_id;
+>  	__u32 state;
+> @@ -32,6 +35,7 @@ struct offcpu_key {
+>  	__u64 cgroup_id;
+>  };
+>  
+> +/* for dumping at the end */
+>  struct {
+>  	__uint(type, BPF_MAP_TYPE_STACK_TRACE);
+>  	__uint(key_size, sizeof(__u32));
+> @@ -39,6 +43,45 @@ struct {
+>  	__uint(max_entries, MAX_ENTRIES);
+>  } stacks SEC(".maps");
+>  
+> +struct offcpu_data {
+> +	u64 array[MAX_OFFCPU_LEN];
+> +};
+> +
+> +struct stack_data {
+> +	u64 array[MAX_STACKS];
+> +};
+> +
+> +struct {
+> +	__uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
+> +	__uint(key_size, sizeof(__u32));
+> +	__uint(value_size, sizeof(__u32));
+> +	__uint(max_entries, MAX_CPUS);
+> +} offcpu_output SEC(".maps");
+> +
+> +/* temporary offcpu sample */
+> +struct {
+> +	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+> +	__uint(key_size, sizeof(__u32));
+> +	__uint(value_size, sizeof(struct offcpu_data));
+> +	__uint(max_entries, 1);
+> +} offcpu_payload SEC(".maps");
+> +
+> +/* temporary stack data */
+> +struct {
+> +	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+> +	__uint(key_size, sizeof(__u32));
+> +	__uint(value_size, sizeof(struct stack_data));
+> +	__uint(max_entries, 1);
+> +} stack_tmp SEC(".maps");
+> +
+> +/* cached stack per task storage */
+> +struct {
+> +	__uint(type, BPF_MAP_TYPE_TASK_STORAGE);
+> +	__uint(map_flags, BPF_F_NO_PREALLOC);
+> +	__type(key, int);
+> +	__type(value, struct stack_data);
+> +} stack_cache SEC(".maps");
+> +
+>  struct {
+>  	__uint(type, BPF_MAP_TYPE_TASK_STORAGE);
+>  	__uint(map_flags, BPF_F_NO_PREALLOC);
+> @@ -184,12 +227,75 @@ static inline int can_record(struct task_struct *t, int state)
+>  	return 1;
+>  }
+>  
+> +static inline bool check_bounds(int index)
+> +{
+> +	if (index >= 0 && index < MAX_OFFCPU_LEN)
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+> +static inline int copy_stack(struct stack_data *from,
+> +			     struct offcpu_data *to, int n)
+> +{
+> +	int max_stacks = MAX_STACKS, len = 0;
+> +
+> +	if (!from)
+> +		return len;
+> +
+> +	for (int i = 0; i < max_stacks && from->array[i]; ++i) {
+> +		if (check_bounds(n + 2 + i)) {
+> +			to->array[n + 2 + i] = from->array[i];
+> +			++len;
+> +		}
+> +	}
+> +	return len;
+> +}
+> +
+> +static int off_cpu_dump(void *ctx, struct offcpu_data *data, struct offcpu_key *key,
+> +			struct stack_data *stack_p, __u64 delta, __u64 timestamp)
+> +{
+> +	int size, n = 0, ip_pos = -1, len = 0;
+> +
+> +	if (sample_type & PERF_SAMPLE_TID && check_bounds(n))
+> +		data->array[n++] = (u64)key->tgid << 32 | key->pid;
+> +	if (sample_type & PERF_SAMPLE_PERIOD && check_bounds(n))
+> +		data->array[n++] = delta;
+> +	if (sample_type & PERF_SAMPLE_CALLCHAIN && check_bounds(n + 2)) {
+> +		/* data->array[n] is callchain->nr (updated later) */
+> +		data->array[n + 1] = PERF_CONTEXT_USER;
+> +		data->array[n + 2] = 0;
+> +
+> +		len = copy_stack(stack_p, data, n);
+> +
+> +		/* update length of callchain */
+> +		data->array[n] = len + 1;
+> +
+> +		/* update sample ip with the first callchain entry */
+> +		if (ip_pos >= 0)
+> +			data->array[ip_pos] = data->array[n + 2];
+
+Where is ip_pos set?  I guess we don't need this as we don't update the
+SAMPLE_IP here.
+
+> +
+> +		/* calculate sample callchain data->array length */
+> +		n += len + 2;
+> +	}
+> +	if (sample_type & PERF_SAMPLE_CGROUP && check_bounds(n))
+> +		data->array[n++] = key->cgroup_id;
+> +
+> +	size = n * sizeof(u64);
+> +	if (size >= 0 && size <= MAX_OFFCPU_LEN * sizeof(u64))
+> +		bpf_perf_event_output(ctx, &offcpu_output, BPF_F_CURRENT_CPU, data, size);
+> +
+> +	return 0;
+> +}
+> +
+>  static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
+>  			struct task_struct *next, int state)
+>  {
+>  	__u64 ts;
+>  	__u32 stack_id;
+>  	struct tstamp_data *pelem;
+> +	struct stack_data *stack_tmp_p, *stack_p;
+> +	int zero = 0, len = 0;
+>  
+>  	ts = bpf_ktime_get_ns();
+>  
+> @@ -199,6 +305,25 @@ static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
+>  	stack_id = bpf_get_stackid(ctx, &stacks,
+>  				   BPF_F_FAST_STACK_CMP | BPF_F_USER_STACK);
+>  
+> +	/* cache stacks */
+> +	stack_tmp_p = bpf_map_lookup_elem(&stack_tmp, &zero);
+> +	if (stack_tmp_p)
+> +		len = bpf_get_stack(ctx, stack_tmp_p->array, MAX_STACKS * sizeof(u64),
+> +				    BPF_F_USER_STACK) / sizeof(u64);
+
+Looks redundant, but not sure if we share the stackid..
+
+> +
+> +	/*
+> +	 * if stacks are successfully collected, cache them to task_storage, they are then
+> +	 * dumped if the off-cpu time hits the threshold.
+> +	 */
+> +	if (len > 0) {
+> +		stack_p = bpf_task_storage_get(&stack_cache, prev, NULL,
+> +					       BPF_LOCAL_STORAGE_GET_F_CREATE);
+> +		if (stack_p) {
+> +			for (int i = 0; i < len && i < MAX_STACKS; ++i)
+> +				stack_p->array[i] = stack_tmp_p->array[i];
+> +		}
+> +	}
+
+Why not use the task storage to get the stacktrace directly?
 
 Thanks,
+Namhyung
 
-        tglx
+> +
+>  	pelem = bpf_task_storage_get(&tstamp, prev, NULL,
+>  				     BPF_LOCAL_STORAGE_GET_F_CREATE);
+>  	if (!pelem)
+> @@ -228,6 +353,14 @@ static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
+>  		else
+>  			bpf_map_update_elem(&off_cpu, &key, &delta, BPF_ANY);
+>  
+> +		if (delta >= offcpu_thresh) {
+> +			struct offcpu_data *data = bpf_map_lookup_elem(&offcpu_payload, &zero);
+> +
+> +			stack_p = bpf_task_storage_get(&stack_cache, next, NULL, 0);
+> +			if (data && stack_p)
+> +				off_cpu_dump(ctx, data, &key, stack_p, delta, pelem->timestamp);
+> +		}
+> +
+>  		/* prevent to reuse the timestamp later */
+>  		pelem->timestamp = 0;
+>  	}
+> -- 
+> 2.45.2
+> 
 
