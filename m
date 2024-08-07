@@ -1,87 +1,154 @@
-Return-Path: <linux-kernel+bounces-278552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AEF194B1BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:06:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3E694B1C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 23:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DEB6282409
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:06:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27CC6B215CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C468D149C4D;
-	Wed,  7 Aug 2024 21:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C401494CE;
+	Wed,  7 Aug 2024 21:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1Ob/gV3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jxx1b7hA"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11017148857;
-	Wed,  7 Aug 2024 21:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999A7148857
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 21:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723064773; cv=none; b=dLDUH1MCnWOlAR3JS381ihpZ+my0Qw9lBhhAD8bw6v4HJ8vXn+KyJqRqNash0dw+4nKZ89N8x+jZazvJj2gtWEJJzQPh4UBP55jNndP9kbXuLqO5p0B4bsn3vG+LtJmDRvtQ8/B1+EeyboQqNY/gWGghQ3/A62bDKh+LqdjI56A=
+	t=1723064809; cv=none; b=iwUs4hMzqa1vrBBJ1RzXW8eAVq7L8f61N1wrK2LWag8titvlbNhpVwbltbXZ5MGjDwKWHCC6TcYudWEBUUNYK+PEp/I3b2N0sP18GwtnTkcz0LGZLY2s1F+akAUwzWaWmn27r5tB+GzA5Pfd6zHUTm6u9zJmQcILCE05TFQj+6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723064773; c=relaxed/simple;
-	bh=1ePz3DLStgqHL7yUL425MmkW+cQHQdIV9etyzi9jYG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IxNMcLc5Se3oJbAOB3i0MFjURfRRPPDWybqILzTuSkbVZAdcVFD14L2vhPN7FDrOTMTZCMa1CMxhDBaKRqU0xXBtOKI3IQewKq+/dL0GR81rvH18cW2bl5kmEje2AXwzQBv9/4ZhydiPoX4/zIYH0EHDIsBXSgOJ2GGv4eo0msU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1Ob/gV3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87874C32781;
-	Wed,  7 Aug 2024 21:06:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723064772;
-	bh=1ePz3DLStgqHL7yUL425MmkW+cQHQdIV9etyzi9jYG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o1Ob/gV3WcAT5BcFUJ0/QTTW5Stk8UX8Qt5RCTHuv/KSm2dxXQ6Qa3JkCttK78x0d
-	 7uuUA1fadpfDiittlU3mMuMGOQnF+r55hMdaze5RYNu1w1grczqLVqjTebtXlD8CnC
-	 Rd8WVLYVoeAh+d6fb+vN1tBJjdojAKv0PgphQ72lxcQeMmZmNM6kiNgLCRuNKwTFRr
-	 hGVl3ekCpWMwwIEwRUvhys900G47rwDhyGzhE1+tdXfjbI8N0ZnVOztDVkcAj/KSL7
-	 yTGA8YvRA+G2VHectvoWI9OchWD+N+7DQ14zcrY4JvoNOMdpEHe01RTBJEsLBLmEzU
-	 hcrLHcLURQNkg==
-Date: Wed, 7 Aug 2024 14:06:12 -0700
-From: Kees Cook <kees@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk,
-	jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
-	wojciech.gladysz@infogain.com, ebiederm@xmission.com,
-	linux-mm@kvack.org
-Subject: Re: [PATCH] exec: drop a racy path_noexec check
-Message-ID: <202408071404.4A44CFFF@keescook>
-References: <20240805-fehlbesetzung-nilpferd-1ed58783ad4d@brauner>
- <20240805131721.765484-1-mjguzik@gmail.com>
- <20240806-atmen-planen-f0eb6e830d8e@brauner>
+	s=arc-20240116; t=1723064809; c=relaxed/simple;
+	bh=h0pLEmC0vqblEBDym0nLWJfsKVNCB2L9NrZSGq+mOqA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MSsQ6b6P1Ghu6cr/WKF2IYydJNx5hFgQR4/Au/tZt6hEJutJX9TxDc8lJK5zY7HuCgLabbJL1hQ2KgmfKbOI1Yc+ujpqhmte/+mHZa4xYDOtxDlA0PfKOhVGMX1YHm+3e6n7kxcEGTOXL+jlu4qRc2osPX6QezQ4tiYUtE4k1EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jxx1b7hA; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-26927819823so110139fac.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 14:06:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723064807; x=1723669607; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X63NZr8tY7pC/KfADa6aqK9Rl2elszIm+RXAiFKpebY=;
+        b=jxx1b7hAT0O2kZr0N6aEVwG41XXoYWMdY0v/PV2Qo5GRlRcgZcEU9Sj5EEqbK/JcAH
+         wtCzaSic9gGZR2hNPgP/qwqn9Cv995D3ERNYu9Kfj47ko3aNPOldVWUX1Quf9E2PFBPF
+         YS8dIepaqANhmXWfIx9cFez5+WBWbxAEYdKuI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723064807; x=1723669607;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X63NZr8tY7pC/KfADa6aqK9Rl2elszIm+RXAiFKpebY=;
+        b=RRHkZ6pI2d8SoibWSTVea1JgtKTBL3s+5Foi2l6LaeBsY34YrMOmmVNhq3RFh+Ytw7
+         lK+l4i5AHeeY+spP9O21cRJKODX2g4gC3qjMEUlRvVcZelPDQHiKPtyLzuWQ/YQxAyq5
+         iONc11UWciYFxT1sz4sgXqMDhvgUePZJQoFHE7qTP8huHx1sCUMo/pKiLU4B4b+N8XoT
+         IIEPXR/Q66wm40bUrIalg1o8fy988XCyn4joM8cRcJmJ2yivO5THgkxZWlnSBo+79YtK
+         P1KQD8fGfkHJqM3I/GvUBp80VvSkFvj32pzdMalEQSgNdwy0W1w8C3JHzGEtacOpdd14
+         GLvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHirpQz0Z0Gp+BTET+Rhq0s68bX5sRhDY4wc8KeXxTehGcWwGpmPLRuBjgWRasevuiK8uEnqXatWIRAibvB1h9/R7dLSIoDnTplMuN
+X-Gm-Message-State: AOJu0YwuTWB1jRtV2ytMRRw9ra8B+WScfrmL6soAdHrKqT9qOfjgyE9G
+	FX2YvREXEbas0sPjjRrhFBeXkKCdRnEMe2RFO88VCqqBNaS6M8nTxkdr/12I1ku0UnX6xIE+3N3
+	nqIu/BfnKxsEBzKSfM40X9T3PtC8/cnzWE65X
+X-Google-Smtp-Source: AGHT+IGBGNkb9KnSiqgvIibYqrq7+bCTy1aTQ+U1KTdmGgWttvXCNoBoHtJYqyT8fz5rNzTVxhgPlSPvKC6ALDYnjOg=
+X-Received: by 2002:a05:6870:214:b0:25e:7a1:ea8f with SMTP id
+ 586e51a60fabf-26891ee21d2mr23203133fac.47.1723064806694; Wed, 07 Aug 2024
+ 14:06:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806-atmen-planen-f0eb6e830d8e@brauner>
+References: <20240807153544.2754247-1-jeffxu@chromium.org> <CAKbZUD2xDdbxOTvR3-P=636jvhG_JPO3h79tgB59dfPmv046hg@mail.gmail.com>
+ <CALmYWFvDH=8U8wsaSjMrfCg1__S66SS-9Zo0f826XJDJT7hOSQ@mail.gmail.com>
+In-Reply-To: <CALmYWFvDH=8U8wsaSjMrfCg1__S66SS-9Zo0f826XJDJT7hOSQ@mail.gmail.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Wed, 7 Aug 2024 14:06:34 -0700
+Message-ID: <CABi2SkWxMqjWQWe-ZsyKVkMAr8ZwysQnkVZz55hYz-DXV0L9aw@mail.gmail.com>
+Subject: Re: [PATCH v1] selftest mm/mseal: fix test_seal_mremap_move_dontunmap_anyaddr
+To: Jeff Xu <jeffxu@google.com>
+Cc: Pedro Falcato <pedro.falcato@gmail.com>, akpm@linux-foundation.org, willy@infradead.org, 
+	torvalds@linux-foundation.org, Liam.Howlett@oracle.com, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, dave.hansen@intel.com, linux-hardening@vger.kernel.org, 
+	lorenzo.stoakes@oracle.com, mpe@ellerman.id.au, oliver.sang@intel.com, 
+	vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 06, 2024 at 09:06:17AM +0200, Christian Brauner wrote:
-> On Mon, 05 Aug 2024 15:17:21 +0200, Mateusz Guzik wrote:
-> > Both i_mode and noexec checks wrapped in WARN_ON stem from an artifact
-> > of the previous implementation. They used to legitimately check for the
-> > condition, but that got moved up in two commits:
-> > 633fb6ac3980 ("exec: move S_ISREG() check earlier")
-> > 0fd338b2d2cd ("exec: move path_noexec() check earlier")
-> > 
-> > Instead of being removed said checks are WARN_ON'ed instead, which
-> > has some debug value
-> > 
-> > [...]
-> 
-> Applied to the vfs.misc branch of the vfs/vfs.git tree.
-
-NAK, please drop this patch. I want to keep the "redundant"
-path_noexec(), since it still provides meaningful signal. We can remove
-it from the WARN_ON_ONCE(), but I don't want to drop it.
-
--- 
-Kees Cook
+On Wed, Aug 7, 2024 at 11:03=E2=80=AFAM Jeff Xu <jeffxu@google.com> wrote:
+>
+> On Wed, Aug 7, 2024 at 9:38=E2=80=AFAM Pedro Falcato <pedro.falcato@gmail=
+.com> wrote:
+> >
+> > On Wed, Aug 7, 2024 at 4:35=E2=80=AFPM <jeffxu@chromium.org> wrote:
+> > <snip>
+> > >         /* shrink from 4 pages to 2 pages. */
+> > > -       ret2 =3D mremap(ptr, size, 2 * page_size, 0, 0);
+> > > +       ret2 =3D sys_mremap(ptr, size, 2 * page_size, 0, 0);
+> > >         if (seal) {
+> > > -               FAIL_TEST_IF_FALSE(ret2 =3D=3D MAP_FAILED);
+> > > +               FAIL_TEST_IF_FALSE(ret2 =3D=3D (void *) MAP_FAILED);
+> >
+> > MAP_FAILED is already void *
+> >
+> > <snip>
+> > > @@ -1449,18 +1457,16 @@ static void test_seal_mremap_move_dontunmap_a=
+nyaddr(bool seal)
+> > >         }
+> > >
+> > >         /*
+> > > -        * The 0xdeaddead should not have effect on dest addr
+> > > +        * The 0xdead0000 should not have effect on dest addr
+> > >          * when MREMAP_DONTUNMAP is set.
+> > >          */
+> > > -       ret2 =3D mremap(ptr, size, size, MREMAP_MAYMOVE | MREMAP_DONT=
+UNMAP,
+> > > -                       0xdeaddead);
+> > > +       ret2 =3D sys_mremap(ptr, size, size, MREMAP_MAYMOVE | MREMAP_=
+DONTUNMAP,
+> > > +                       (void *) 0xdead0000);
+> >
+> > You still didn't explain why this test is actually needed. Why are you
+> > testing MREMAP_DONTUNMAP's hint system?
+>
+> I responded in my previous email. The test is to make sure when
+> sealing is applied, the call fails with correct error code. I will
+> update the comment in v2 to clarify that.
+>
+> > This has nothing to do with mseal, you already test the
+> > MREMAP_DONTUNMAP and MREMAP_FIXED paths in other tests.
+> The remap code path is quite tricky, with many flags directing the call f=
+low.
+> The difference might not be that obvious:
+>
+> test_seal_mremap_move_dontunmap use 0 as new_addr, 0 indicates
+> allocating a new memory.
+> test_seal_mremap_move_dontunmap_anyaddr uses any arbitrary address as
+> a new address.
+>
+> > You also don't know if 0xdead0000 is a valid page (hexagon for
+> > instance seems to support 256KiB and 1MiB pages, so does ppc32, and
+> > this is not something that should be hardcoded).
+> >
+> usually hardcode value is not good practice, but the point of this
+> test is to show
+> mremap can really relocate the mapping to an arbitrary address.
+>
+> Do you have any suggestions here ? I can think of two options to choose f=
+rom:
+>
+> 1> use 0xd0000000
+> 2> allocate a memory then free it, reuse the ptr.
+>
+I will send out V2 that addresses those comments above.
+Thanks
 
