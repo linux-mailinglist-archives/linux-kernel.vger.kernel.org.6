@@ -1,170 +1,190 @@
-Return-Path: <linux-kernel+bounces-277672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94A8494A49E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:44:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5910994A498
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 11:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8054B255B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:41:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAA4D1F22328
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 09:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494111D1730;
-	Wed,  7 Aug 2024 09:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A841D0DE9;
+	Wed,  7 Aug 2024 09:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PAwZRDXD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="C/C4fUa8"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6D81AE87B;
-	Wed,  7 Aug 2024 09:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB7A811E2;
+	Wed,  7 Aug 2024 09:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723023685; cv=none; b=Xq5GSUVDeyVqhwbBlyc5BhvhLkKaLWJmJkF6575TnZ+lyUrMCIxdna8g3NzJIrBmp7ZrVpO4NtYwUGHqjGdjocdBDpWa02Zn1U3aPiSAx8mmt+7RYXdIMtdnCSkoUZhuY9RYDraiqlgw30EPDCL3VzUe43Kv5D035WYTMk+P/tA=
+	t=1723023703; cv=none; b=ueYSJulptumkhWTZWuLyAd6/m9v9b7Y44gUGcWfMUcAG8NBtnZo0UVixF4X9ig8L6rDGDgAx/OS48/cg51mVAp1TXuVRw1yS+ZhveWWDRsGkBpWkvXtlWRAzlM8Uu10dloriXG1tDvAkxREOekZ6F9XbFy678RF5ZO9mSjNUnEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723023685; c=relaxed/simple;
-	bh=13PfPwaqWfV0SZIb5VZIEOqUcw2cc8yCIcW5grujzAM=;
+	s=arc-20240116; t=1723023703; c=relaxed/simple;
+	bh=vOdbbYqJjIlX1z7AQRTRNcyslPCdx+GgY/OyY+E+usY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bHS0uBIZMhtf/Xv4Dnb/8QJ4Epp6i03HcbMTepaKed469WdHaQXF5plwRS5PzYKeTwAkCu4NehU1yPEdcZZWfebJAjHNGAWtJjIvvp+7kl9K5TYG4rcafUN9uJwKuO3Z8w+w+ukYrP5Hf/9JN/sSP2Cd/pPTAU+Ic7Chkuc4mj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PAwZRDXD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477873DK002852;
-	Wed, 7 Aug 2024 09:41:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	w4f2akm3PLX0q66J2hNtvC4aFfjKnQkbdbfkY2Cic3c=; b=PAwZRDXDOHCNFTqL
-	n4O/eJeVuo+T9X9kpuNsgYokm6eHqHESzKBJs8Wum4wRHjbKz3qzLVmPmA4kkC/V
-	W/5hfaOQJiZI83hBmdDCIGue0YPBAUZzplWzVrqR8kEH4vkUoZO0xjbqeE+5sLxc
-	/DY3rS6YTd8rnngym1cvkmVxp2p4HMndyF7fNTSdvjy598vS42+XQhqcHN9DZ7pL
-	uRAY5wsqduTmR6QhN46DqAPhMHxNucGEiPhX1Tx8BhJimVqixeyzFNZg5S6RqEUM
-	Ssom/ODBrSRTfO4cwSacAbSWJw4AINFElWP33D8CGqoOo2dzrFTT4G8c0AHDu7d1
-	QXrK0g==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sdu9a4cq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 Aug 2024 09:41:19 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4779fI28008697
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 7 Aug 2024 09:41:18 GMT
-Received: from [10.218.35.239] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
- 02:41:16 -0700
-Message-ID: <ec99fcdc-9404-8cd9-6a30-95e4f5c1edcd@quicinc.com>
-Date: Wed, 7 Aug 2024 15:11:13 +0530
+	 In-Reply-To:Content-Type; b=L/7eI17Z95TmotXShDmzeOqWCDVQsef736wKN8K1E8xAq7U7RQu90m3DY/FJwLYYdrH+j8gxnbtpvJqnGm5DkH1ecToP5BM9t1TG1DUXWQ2hlhyH1VQ6Vi+fuGbNwkD6OY5dCXX1QfAximiqGwWJ/rfWWsypCh/Rrf/OKDxDfwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=C/C4fUa8; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4779fYYL070264;
+	Wed, 7 Aug 2024 04:41:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723023694;
+	bh=J7C1bnDUwzXCr6cdigNI7HQc0LqSmsEEZKhpcHQnXFk=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=C/C4fUa8c+0WL31dbIR8UIBRY1hv4FYaF4baY9YHexamNWT9KsLgVyc8A4L/cq3af
+	 Twat4jCXexMRj2I4FLviQS+hVIz4HtMQYBJIHVQxabiHXts25++S88HVL3S9fsv/K0
+	 ST8Xj0ldwYN8AFkB+6koBAbTniaaEdZMZfrNB0Nk=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4779fYbE121762
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 7 Aug 2024 04:41:34 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 7
+ Aug 2024 04:41:33 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 7 Aug 2024 04:41:33 -0500
+Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4779fT5T049762;
+	Wed, 7 Aug 2024 04:41:30 -0500
+Message-ID: <489a9116-0e13-456f-992f-3e265acd9253@ti.com>
+Date: Wed, 7 Aug 2024 15:11:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] usb: dwc3: Fix latency of DSTS while receiving wakeup
- event
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 9/9] arm64: dts: ti: Add support for J742S2 EVM board
+To: Manorit Chawdhry <m-chawdhry@ti.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
+        Neha Malcom
+ Francis <n-francis@ti.com>,
+        Aniket Limaye <a-limaye@ti.com>
+References: <20240731-b4-upstream-j742s2-v3-0-da7fe3aa9e90@ti.com>
+ <20240731-b4-upstream-j742s2-v3-9-da7fe3aa9e90@ti.com>
 Content-Language: en-US
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20240730124742.561408-1-quic_prashk@quicinc.com>
- <20240806235142.cem5f635wmds4bt4@synopsys.com>
-From: Prashanth K <quic_prashk@quicinc.com>
-In-Reply-To: <20240806235142.cem5f635wmds4bt4@synopsys.com>
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <20240731-b4-upstream-j742s2-v3-9-da7fe3aa9e90@ti.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jcU0xN1rCS7mNrX7N5CpaDDZyLpmtpsw
-X-Proofpoint-GUID: jcU0xN1rCS7mNrX7N5CpaDDZyLpmtpsw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-07_06,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
- clxscore=1015 phishscore=0 spamscore=0 bulkscore=0 mlxscore=0
- impostorscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408070067
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+
+Hi Manorit,
+
+On 31/07/24 22:40, Manorit Chawdhry wrote:
+> J742S2 EVM board is designed for TI J742S2 SoC. It supports the following
+> interfaces:
+> * 16 GB DDR4 RAM
+> * x2 Gigabit Ethernet interfaces capable of working in Switch and MAC mode
+> * x1 Input Audio Jack, x1 Output Audio Jack
+> * x1 USB2.0 Hub with two Type A host and x1 USB 3.1 Type-C Port
+> * x1 4L PCIe connector
+> * x1 UHS-1 capable micro-SD card slot
+> * 512 Mbit OSPI flash, 1 Gbit Octal NAND flash, 512 Mbit QSPI flash,
+>    UFS flash.
+> * x6 UART through UART-USB bridge
+> * XDS110 for onboard JTAG debug using USB
+> * Temperature sensors, user push buttons and LEDs
+> * x1 GESI expander, x2 Display connector
+> * x1 15-pin CSI header
+> * x6 MCAN instances
+>
+> Link: https://www.ti.com/lit/ug/sprujd8/sprujd8.pdf (EVM user guide)
+> Link: https://www.ti.com/lit/zip/SPAC001 (Schematics)
+> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
 
 
+For series,
+Reviewed-By: Beleswar Padhi <b-padhi@ti.com>
 
-On 07-08-24 05:21 am, Thinh Nguyen wrote:
-> Hi,
-> 
-> On Tue, Jul 30, 2024, Prashanth K wrote:
->> When operating in High-Speed, it is observed that DSTS[USBLNKST] doesn't
->> update link state immediately after receiving the wakeup interrupt. Since
->> wakeup event handler calls the resume callbacks, there is a chance that
->> function drivers can perform an ep queue. Which in turn tries to perform
->> remote wakeup from send_gadget_ep_cmd(), this happens because DSTS[[21:18]
->> wasn't updated to U0 yet. It is observed that the latency of DSTS can be
->> in order of milli-seconds. Hence update the dwc->link_state from evtinfo,
->> and use this variable to prevent calling remote wakup unnecessarily.
->>
->> Fixes: ecba9bc9946b ("usb: dwc3: gadget: Check for L1/L2/U3 for Start Transfer")
-> 
-> This commit ID is corrupted. Please check.
-> 
-Will fix it, was supposed to be 63c4c320ccf7, thanks for pointing out.
-
-> While operating in usb2 speed, if the device is in low power link state
-> (L1/L2), CMDACT may not complete and time out. The programming guide
-> suggested to initiate remote wakeup to bring the device to ON state,
-> allowing the command to go through. However, clearing the
-
-Yea true, we need ensure that the linkstate is not in L1/L2/U3 for 
-HS/SS. But since we are relying on DSTS for this, we may issue 
-remote-wakeup to host even when not needed. During host initiated wakeup 
-scenario, we get a wakeup interrupt which calls function driver resume 
-calls. If function driver queues something, then startxfer has to be 
-issued, but DSTS was still showing U3 instead of U0. When checked with 
-our design team, they mentioned the latency in DSTS is expected since 
-and latency would be in msec order from Resume to U0. Can you please 
-confirm this once, I simply added a polling mechanism in wakeup handler.
-
-@@ -4175,6 +4177,14 @@ static void dwc3_gadget_wakeup_interrupt(struct 
-dwc3 *dwc, unsigned int evtinfo)
-          * TODO take core out of low power mode when that's
-          * implemented.
-          */
-+       while (retries++ < 20000) {
-+               reg = dwc3_readl(dwc->regs, DWC3_DSTS);
-+               /* in HS, means ON */
-+               if (DWC3_DSTS_USBLNKST(reg) == DWC3_LINK_STATE_U0)
-+                       break;
-+               udelay(2);
-+       }
-+       pr_info("DWC3 Wakeup: %d", retries);
-
-And turns out, retries 1500 to 15000 (worst case), which can range from 
-3ms to 30ms. By this time, control can reach startXfer, where it tries 
-to perform remote-wakeup even if host just resumed the gadget.
-
-For SS case, this retries count was consistently 1, it was passing in 
-first try itself. But unfortunately doesn't behave the same way in HS.
-
-> GUSB2PHYCFG.suspendusb2 turns on the signal required to complete a
-> command within 50us. This happens within the timeout required for an
-> endpoint command. As a result, there's no need to perform remote wakeup.
-> 
-> For usb3 speed, if it's in U3, the gadget is in suspend anyway. There
-> will be no ep_queue to trigger the Start Transfer command.
-> 
-> You can just remove the whole Start Transfer check for remote wakeup
-> completely.
-> 
-Sorry, i didnt understand your suggestion. The startxfer check is needed 
-as per databook, but we also need to handle the latency seen in DSTS 
-when operating in HS.
-
-Thanks,
-Prashanth K
+> ---
+>   arch/arm64/boot/dts/ti/Makefile                    |  4 ++++
+>   arch/arm64/boot/dts/ti/k3-j742s2-evm.dts           | 26 ++++++++++++++++++++++
+>   .../boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi   |  3 ++-
+>   3 files changed, 32 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
+> index e20b27ddf901..1bf645726a10 100644
+> --- a/arch/arm64/boot/dts/ti/Makefile
+> +++ b/arch/arm64/boot/dts/ti/Makefile
+> @@ -119,6 +119,9 @@ dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-pcie0-pcie1-ep.dtbo
+>   dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-quad-port-eth-exp1.dtbo
+>   dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-usxgmii-exp1-exp2.dtbo
+>   
+> +# Boards with J742S2 SoC
+> +dtb-$(CONFIG_ARCH_K3) += k3-j742s2-evm.dtb
+> +
+>   # Build time test only, enabled by CONFIG_OF_ALL_DTBS
+>   k3-am625-beagleplay-csi2-ov5640-dtbs := k3-am625-beagleplay.dtb \
+>   	k3-am625-beagleplay-csi2-ov5640.dtbo
+> @@ -240,3 +243,4 @@ DTC_FLAGS_k3-j721e-common-proc-board += -@
+>   DTC_FLAGS_k3-j721e-sk += -@
+>   DTC_FLAGS_k3-j721s2-common-proc-board += -@
+>   DTC_FLAGS_k3-j784s4-evm += -@
+> +DTC_FLAGS_k3-j742s2-evm += -@
+> diff --git a/arch/arm64/boot/dts/ti/k3-j742s2-evm.dts b/arch/arm64/boot/dts/ti/k3-j742s2-evm.dts
+> new file mode 100644
+> index 000000000000..ac683bcbfe97
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/ti/k3-j742s2-evm.dts
+> @@ -0,0 +1,26 @@
+> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+> +/*
+> + * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
+> + *
+> + * EVM Board Schematics: https://www.ti.com/lit/zip/SPAC001
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/net/ti-dp83867.h>
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include "k3-j742s2.dtsi"
+> +#include "k3-j784s4-j742s2-evm-common.dtsi"
+> +
+> +/ {
+> +	model = "Texas Instruments J742S2 EVM";
+> +	compatible = "ti,j742s2-evm", "ti,j742s2";
+> +
+> +	memory@80000000 {
+> +		device_type = "memory";
+> +		bootph-all;
+> +		/* 16G RAM */
+> +		reg = <0x00000000 0x80000000 0x00000000 0x80000000>,
+> +		      <0x00000008 0x80000000 0x00000003 0x80000000>;
+> +	};
+> +};
+> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
+> index 068ceed4ea15..a7bb1857b4e8 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
+> @@ -2,7 +2,8 @@
+>   /*
+>    * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
+>    *
+> - * EVM Board Schematics: https://www.ti.com/lit/zip/sprr458
+> + * EVM Board Schematics(j784s4): https://www.ti.com/lit/zip/sprr458
+> + * EVM Board Schematics(j742s2): https://www.ti.com/lit/zip/SPAC001
+>    */
+>   / {
+>   	chosen {
+>
 
