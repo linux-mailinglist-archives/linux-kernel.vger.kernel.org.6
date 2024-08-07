@@ -1,288 +1,240 @@
-Return-Path: <linux-kernel+bounces-277529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C7C94A299
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:22:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC8494A280
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 10:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6C07B2AB3E
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:22:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F78281147
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 08:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233F71C9DC7;
-	Wed,  7 Aug 2024 08:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32011C8252;
+	Wed,  7 Aug 2024 08:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PJaOcnyV"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="nBZZfm1l"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35A28F77;
-	Wed,  7 Aug 2024 08:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE2D1C462C;
+	Wed,  7 Aug 2024 08:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723018924; cv=none; b=lpFeTueGKawLzo/hMosgcIfyHKI2QEvORG6NZ1f/elmJYrXzFB9qxDEWNRC7/GmjxFh9J9rrS6SuzzXoJ3Fm5VUYf4rQcXifB9uie6juZJHz59T3RerzeJdYUU8S3Vo/FPGPsjV3XQiP0jAc1OoWV72dmQaLWuRY88u6aj+eOI4=
+	t=1723018531; cv=none; b=udqYITkh2U87bC1zEIgjKIe7Xdf2cXYsLl4OdRcwrm3CCW6u3PGLQgHnoyAdyupc6IDn61xWDjr53J9WIn0P8arX37DPfOoxy6aWTSROy9w0We7YzBblzf4uibfWe4hNp1KnmwuYk8GvtpgOTzvOS4Ln5Z7tjkhw0xVkpHEUaWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723018924; c=relaxed/simple;
-	bh=GyhHa6ad3n3aoeuBPXbI8Y2yKlsKfERayuRlts9uSUQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
-	 MIME-Version:References; b=p9RuRcpr6lphYGMPxo7cHujhrfM93e7HHaLT1ckVafyOBBprHpj3yo7cBL2lpoauigM7muaek6m/1NQ1cc+MWgZ59L1ZQSuwzoWcLwqHF2yzp0IQ7OO+p4JXeg1rxQ+aUk8kITtUke7lKzvKhgjh5WdYtdXBzKvlMBjltQ1bzwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PJaOcnyV; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240807081355euoutp0246daebd629ca2d671dfec80d6afd0ebe~pZCNRNIiO2254122541euoutp02w;
-	Wed,  7 Aug 2024 08:13:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240807081355euoutp0246daebd629ca2d671dfec80d6afd0ebe~pZCNRNIiO2254122541euoutp02w
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1723018435;
-	bh=n9u13BLc1/Av6vacu5XOn99roQyFwYtJJqhaCiMmdoc=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=PJaOcnyV+4yJ/to0LVbznuSw5dhddOhL6L4/n6sSOf3fwG7DLXMyQqSauzTvgkp54
-	 K1V5wNK1VLrUXpm3o53az2ZBvWL6eu3lL/qM9ndeHs5lDjVYc0twciZa4Yf0TBj4uM
-	 Zsf1ivcXr+aFXkVJD5ENOO60XHi6YWhnwp+qs+6Q=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240807081355eucas1p192b35d483bbc7c0f5fd8f98537b5d916~pZCNAwd7D2938229382eucas1p1q;
-	Wed,  7 Aug 2024 08:13:55 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id E2.24.09620.2CC23B66; Wed,  7
-	Aug 2024 09:13:54 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240807081354eucas1p175713174856919970a701a2b8738b9c7~pZCMU_e8-2943329433eucas1p1e;
-	Wed,  7 Aug 2024 08:13:54 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240807081354eusmtrp23393ddf9d4e20be6fcc4c78e46cb51ae~pZCMSOqwl0317503175eusmtrp2p;
-	Wed,  7 Aug 2024 08:13:54 +0000 (GMT)
-X-AuditID: cbfec7f5-d1bff70000002594-2b-66b32cc2be5f
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id DC.39.08810.1CC23B66; Wed,  7
-	Aug 2024 09:13:54 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240807081353eusmtip154691cfcb25d38d126937c3750e07f54~pZCL9A4av2830328303eusmtip1U;
-	Wed,  7 Aug 2024 08:13:53 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
-	Server (TLS) id 15.0.1497.2; Wed, 7 Aug 2024 09:13:52 +0100
-Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
-	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Wed, 7 Aug
-	2024 09:13:52 +0100
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-CC: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
-	<nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
-	=?iso-8859-1?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>, William Hubbs <w.d.hubbs@gmail.com>, "Chris
- Brannon" <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>, "Samuel
- Thibault" <samuel.thibault@ens-lyon.org>, Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek
-	<omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
-	Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
-	<oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, Suzuki K
-	Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, Jiri Slaby
-	<jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, "Bill
- Wendling" <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"speakup@linux-speakup.org" <speakup@linux-speakup.org>,
-	"selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-serial@vger.kernel.org"
-	<linux-serial@vger.kernel.org>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>, Finn Behrens <me@kloenk.dev>, "Daniel Gomez
- (Samsung)" <d+samsung@kruces.com>, "gost.dev@samsung.com"
-	<gost.dev@samsung.com>
-Subject: Re: [PATCH 04/12] drm/xe: xe_gen_wa_oob: fix
- program_invocation_short_name for macos
-Thread-Topic: [PATCH 04/12] drm/xe: xe_gen_wa_oob: fix
-	program_invocation_short_name for macos
-Thread-Index: AQHa6FXbw2zXqVW9ckie+aU8ZAXkwrIa9tWAgABrNIA=
-Date: Wed, 7 Aug 2024 08:13:51 +0000
-Message-ID: <mhrznemgfocotpgkyze7l73e6237wygja6lrvmodeka6ehbkgc@h6fzyrcsmci2>
-In-Reply-To: <67ahzgfa63gs7ybbunthdiwodlaihzqerb5xmkrgfgrbmghjmw@d57hhuwaf53i>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <6061A4101764934EA47CBCA8181EF747@scsc.local>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1723018531; c=relaxed/simple;
+	bh=3HLdx6Qq52bAig9I2YiswJ7XZVgwdbcq5D3gxl27GIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZIljhEHtyAtrGVNPU/6iU+koFzeeqXKKZCXefPIfid4UkagrZdewLYqoh8nLPE9kYjvbuLhPOysLyutmNWCMYBbH2N+QOMQKMCWXuuFfUXI6ByhlTM7l0cJQTyLppGa9sxTywMlqBriV2YxoEFu5iCoPGnnytSa3gIGVGf91oKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=nBZZfm1l; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=zWyab3dKHon1ao5B2EKivYVWOxCs/6+X0YTUXB+UsrA=; t=1723018529;
+	x=1723450529; b=nBZZfm1l/ZWt3KUXY7a0v+hT9UvIyJ8iY1f+RTMY3ABiV6UEWvejYLkywKY1r
+	+a9eDDCtgeN4UFWi0pM/n7lOp8gKZR2Q7vPGCZB6hXAuyDE4p00995Tzn0T5+H/eKrsWp5kwamRI0
+	CcPmCsRnMOJCn7/DtWS3oMVtN3upeQ77njKxeU/B09A89EcwB/jN0BDkpuH0M9VYb4HAqoPZ6rluk
+	M8dlKQeXJ54C1SgVb+yy7pPliJAgOUefiuCrCqMgO5h31pbtlJHQj6jiTwCyrlG+k5KMu+HQ3Easw
+	2Ga1r7P4fcF9E+JAooejvUoT72xR8ASkgXGkCBIneacBUChpRg==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sbbpN-000766-Ja; Wed, 07 Aug 2024 10:15:25 +0200
+Message-ID: <a79fa3cc-73ef-4546-b110-1f448480e3e6@leemhuis.info>
+Date: Wed, 7 Aug 2024 10:15:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUxTVxjGPff23lsQ3F0hcmAYYodzOuhwzu04jRhm4s0yNsxIHMwFO7h8
-	bFBICxNZokQYWBApCkMqMCjjGwMp0EH5ks9SPjQMKSgyC8LEohQCGiSOjlJc+O/35nnO87zv
-	H4eL89IpJ26YKJoVi4ThfNKao+p5dce9w6022GOgyR31jiowZCy5AlBPxSyOmkwTODKpMnB0
-	74WRRAlF1SRaqZ3F0KPWUgzN5zmj3yqLSJQ/pOUgQ10nBykf6wj0Wt2AoWF1LokGitIoNJ3Z
-	RqKZxyUkKlys56BJ/RiBGnO1BGqpHiaRcniJQEnSEgIll8+QaEFmwtA/Lb0Eynr1jETPZd0U
-	Gr+WzUFtch2FylayAbqr6aGQqmEQoCd3rwOUMz4O0FzDemjdswwCKZI+RYkPD6H7xTXU8f1M
-	VX4VYJp7Bkmm5WUBh1F31JJMo3yCYgqUMUxi13OCKWp+ijHKCinJ5EvzMcaUpieYLpOCYgrj
-	s3AmX3uKacurophHqRrMB/pbHw1iw8N+ZsUfHjtrHXqjUUVGGRxj1ww5nHiwZp8CrLiQ/hjm
-	ypKxFGDN5dFlAP75tIG0DMsALi6qN4clAEvnjfibJx163aZQCmB3UxpmFjZc+iSRRehfzzLK
-	qP+D9avDhNlF0vtgq1ZJmdmeFkB11+hGO07XvAUX2keBWbCjA2B/0QhpMZ2FtxRS3MKfwUrD
-	2IaHQ7vCxobU9SAu15b2hjOXD5jRiv4KXjJdNDsAvQtOla9uVOG0A3ww/TtmueBtqLjZvHnN
-	TrimniQt7AYHR6eBhT1gfXErx8K74eWe+6QlRwDHsjI3+TDMudGIW/gDWFI4t8G26/nanGmO
-	+SxIp9jAl73JhCXoBJy63bJZbAcNmjpKBtzkW/aTb+mQb+mQb+mQb+koAEQFcGBjJBEhrOSg
-	iD0nkAgjJDGiEEFgZIQSrP+Z/jXNiwZQZlgUdACMCzoA5OJ8e9uE08pgnm2Q8HwcK44MEMeE
-	s5IO8A6Xw3ew3RPkwvLoEGE0+xPLRrHiNyrGtXKKx+wU5JGB7vIRf7T35B+ykazevMrjzt+v
-	6FHcX++W3zScmtfEkts1d3a8f+GYlyzbD+0+YrNd7Oosb0/5ljf6d9c2L897cbcop2075247
-	f+ey4p+Q3jdu8rwYtHqm+AtV5LUl4RAYeu2cahN+9UKJLES2Y/mXc6HSWKeiuLT3PvKtOezT
-	y17N9PHomvYjJhXBKkF1y2hn4J7P+5y0dmk/1p9eMMIUR88zwL30k4C9fdUhet2v/qGHRhyv
-	RzXH42TG8vz5fSKdd6bgG5crT9IdHyaZLk0lSpUPond5l0xE+waC8R9mXRN4Xw/pgm18+9rV
-	EUav7i+DDkrCTvKP/tvs59LE7+RzJKHCA/txsUT4Hzj2n2iiBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1CUZRTGe7/bLjZMX4jyRjTVxthEtLLcfBcUHVP7sJSwBicZgk1WoIBl
-	dlmQnGoHxLg2gHJbEYEV4jaByyVArgstMoS0cRcQEDDkEqHExWHYdv1shv9+57zPc54578zh
-	4maZHEtuUGi4WBoqCuZRu4ju7c7xDzS2VRfssrNxdHeoAEPLRUkAaUvncHRHP44jfW0qjvr/
-	XaZQjKqCQhtVcxiaaP4ZQ3/fsEIZZSoK5eq6CDRf3U4g9fQgibYa6jDU15BDod9VyRw0c62F
-	QrPTRRTKX6kh0NTkMInqc7pI1FTRRyF131MSXYkvItGPJbMU+idFj6FHTXdJlL65SKGllN84
-	aDQtk0AtykEOKt7IBKi3U8tBtXU9AP3VexWg7NFRgBbqDEOrF1NJVHDlALo85oRGCis5R2yY
-	8txywDRqeyimaS2PYBo0VRRTrxznMHlqOXO5Y4lkVI2PMUZdGk8xufG5GKNPniSZDn0Bh8lX
-	pONMbpcn03KjnMNMJHZin8Jz/INSiTxc/FagRBZ+iOctQPZ8gRDx7R2FfIHDAR8XeyfefreD
-	/uLgoAixdL+bHz8wq76WCpt/7eL2fDahANvmCcCEC2lHqJkcpIxsRhcC2F71Ltu3grdXB0iW
-	d8OtwQSDZpdBswLgQnE7yRbdAG4VRnPYohjA1pw5zGih6Pdgc5eaY2Rzmg8bOoYwowinK1+B
-	bZox3Piwm/aF3aoBihX5weuKGYJlF1g2PwyMTNDWsL4u0TCIyzWlT8HZOAEbdhODG0+qMWPf
-	hD4No/U/GOWAfgM+LHn2PBenLeD9mZsYuwINbzX24izvgY+nt1+sZgt7hmYAy3awprCZYPlt
-	GKcdodg5fDicfu0FC2F2Vj3O8vuwKH/hOZvSr8Ku7BkiBVgpd0Qrd9iVO+zKHXblDnseIEuB
-	uVguCwkIkQn4MlGITB4awD8vCVEDw4XUajer6kDu/ApfAzAu0ADIxXnmpjFn1RfMTP1FUd+K
-	pRJfqTxYLNMAJ8PXpeKWe85LDCcWGu4rcLZzEjg6C+2chM4OPAtT97A4kRkdIAoXfyMWh4ml
-	//swromlAou795LWNi0pbu+A8pOVlKt/8KzjVWuHLfwrpta92idg4rGlE6AMj6xN+9xGqw4q
-	ifHYnI6N+uo6WTEamOVSxPjfCvduuyiJ+H6vU5JOcSx+zRTbOu2Q+LFOEn242cVV+YVrYY2X
-	25k3v7wUFWluWeMjVmzZ3LuELxwaf+J1fMtj1XnfUH+5Z9O5PnmCjfejpDIu/GzEY8kz7FQO
-	ZS1sTWiP904+4vPRTyd4JplH+7+LyOjHYqVEU9/J6NWpwQdSHal7MPrnYmxL6PqHsl+jUtZv
-	Ry133OG6O559+Po+9+m2jmc9TyeSo+xcvU7aHH0nMvN+q0o1NjB25uuXf/HTFY9XZoTU8AhZ
-	oEhgg0tlov8AOGy1gaoEAAA=
-X-CMS-MailID: 20240807081354eucas1p175713174856919970a701a2b8738b9c7
-X-Msg-Generator: CA
-X-RootMTR: 20240807015044eucas1p1998fac358d6afafce6c58478c2834d26
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240807015044eucas1p1998fac358d6afafce6c58478c2834d26
-References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
-	<20240807-macos-build-support-v1-4-4cd1ded85694@samsung.com>
-	<CGME20240807015044eucas1p1998fac358d6afafce6c58478c2834d26@eucas1p1.samsung.com>
-	<67ahzgfa63gs7ybbunthdiwodlaihzqerb5xmkrgfgrbmghjmw@d57hhuwaf53i>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [STABLE REGRESSION] Possible missing backport of x86_match_cpu()
+ change in v6.1.96
+To: Thomas Lindroth <thomas.lindroth@gmail.com>
+Cc: stable@vger.kernel.org, tony.luck@intel.com,
+ Greg KH <gregkh@linuxfoundation.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, LKML <linux-kernel@vger.kernel.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <eb709d67-2a8d-412f-905d-f3777d897bfa@gmail.com>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <eb709d67-2a8d-412f-905d-f3777d897bfa@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1723018529;aa70abe7;
+X-HE-SMSGID: 1sbbpN-000766-Ja
 
-On Tue, Aug 06, 2024 at 08:50:09PM GMT, Lucas De Marchi wrote:
-> On Wed, Aug 07, 2024 at 01:09:18AM GMT, Daniel Gomez via B4 Relay wrote:
-> > From: Daniel Gomez <da.gomez@samsung.com>
-> >=20
-> > Use getprogname() [1] instead of program_invocation_short_name() [2]
-> > for macOS hosts.
-> >=20
-> > [1]:
-> > https://www.gnu.org/software/gnulib/manual/html_node/
-> > program_005finvocation_005fshort_005fname.html
-> >=20
-> > [2]:
-> > https://developer.apple.com/library/archive/documentation/System/
-> > Conceptual/ManPages_iPhoneOS/man3/getprogname.3.html
-> >=20
-> > Fixes build error for macOS hosts:
-> >=20
-> > drivers/gpu/drm/xe/xe_gen_wa_oob.c:34:3: error: use of
-> > undeclared identifier 'program_invocation_short_name'    34 |
-> > program_invocation_short_name);       |                 ^ 1 error
-> > generated.
-> >=20
-> > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-> > ---
-> > drivers/gpu/drm/xe/xe_gen_wa_oob.c | 8 +++++++-
-> > 1 file changed, 7 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c b/drivers/gpu/drm/xe/xe=
-_gen_wa_oob.c
-> > index 904cf47925aa..079b8870c461 100644
-> > --- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-> > +++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-> > @@ -9,6 +9,12 @@
-> > #include <stdbool.h>
-> > #include <stdio.h>
-> > #include <string.h>
-> > +#define PROG_INV_NAME program_invocation_short_name
-> > +
-> > +#ifdef __APPLE__
-> > +#include <stdlib.h>
-> > +#define PROG_INV_NAME getprogname()
-> > +#endif
-> >=20
-> > #define HEADER \
-> > 	"// SPDX-License-Identifier: MIT\n" \
-> > @@ -31,7 +37,7 @@
-> > static void print_usage(FILE *f)
-> > {
-> > 	fprintf(f, "usage: %s <input-rule-file> <generated-c-source-file> <gen=
-erated-c-header-file>\n",
-> > -		program_invocation_short_name);
-> > +		PROG_INV_NAME);
->=20
-> instead of doing that, can we a) include stdlib.h unconditionally and b)
-> add here a
-> `static const char *program_invocation_short_name =3D getprogname()` so w=
-e
-> don't need to change the common case and just handle the "build on
-> macos" as a compat layer?
+[CCing the x86 folks, Greg, and the regressions list]
 
-Does this align with your suggestion (v1 diff)?
+Hi, Thorsten here, the Linux kernel's regression tracker.
 
-Note that static cannot be use here.
+On 30.07.24 18:41, Thomas Lindroth wrote:
+> I upgraded from kernel 6.1.94 to 6.1.99 on one of my machines and
+> noticed that
+> the dmesg line "Incomplete global flushes, disabling PCID" had
+> disappeared from
+> the log.
 
-diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c b/drivers/gpu/drm/xe/xe_gen=
-_wa_oob.c
-index 079b8870c461..b3add20ccb01 100644
---- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-+++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
-@@ -9,12 +9,7 @@
- #include <stdbool.h>
- #include <stdio.h>
- #include <string.h>
--#define PROG_INV_NAME program_invocation_short_name
--
--#ifdef __APPLE__
- #include <stdlib.h>
--#define PROG_INV_NAME getprogname()
--#endif
+Thomas, thx for the report. FWIW, mainline developers like the x86 folks
+or Tony are free to focus on mainline and leave stable/longterm series
+to other people -- some nevertheless help out regularly or occasionally.
+So with a bit of luck this mail will make one of them care enough to
+provide a 6.1 version of what you afaics called the "existing fix" in
+mainline (2eda374e883ad2 ("x86/mm: Switch to new Intel CPU model
+defines") [v6.10-rc1]) that seems to be missing in 6.1.y. But if not I
+suspect it might be up to you to prepare and submit a 6.1.y variant of
+that fix, as you seem to care and are able to test the patch.
 
- #define HEADER \
-        "// SPDX-License-Identifier: MIT\n" \
-@@ -36,8 +31,11 @@
+Ciao, Thorsten
 
- static void print_usage(FILE *f)
- {
-+#ifdef __APPLE__
-+       const char *program_invocation_short_name =3D getprogname();
-+#endif
-        fprintf(f, "usage: %s <input-rule-file> <generated-c-source-file> <=
-generated-c-header-file>\n",
--               PROG_INV_NAME);
-+               program_invocation_short_name);
- }
+> That message comes from commit c26b9e193172f48cd0ccc64285337106fb8aa804,
+> which
+> disables PCID support on some broken hardware in arch/x86/mm/init.c:
+> 
+> #define INTEL_MATCH(_model) { .vendor  = X86_VENDOR_INTEL,     \
+>                              .family  = 6,                     \
+>                              .model = _model,                  \
+>                            }
+> /*
+>  * INVLPG may not properly flush Global entries
+>  * on these CPUs when PCIDs are enabled.
+>  */
+> static const struct x86_cpu_id invlpg_miss_ids[] = {
+>        INTEL_MATCH(INTEL_FAM6_ALDERLAKE   ),
+>        INTEL_MATCH(INTEL_FAM6_ALDERLAKE_L ),
+>        INTEL_MATCH(INTEL_FAM6_ALDERLAKE_N ),
+>        INTEL_MATCH(INTEL_FAM6_RAPTORLAKE  ),
+>        INTEL_MATCH(INTEL_FAM6_RAPTORLAKE_P),
+>        INTEL_MATCH(INTEL_FAM6_RAPTORLAKE_S),
+>        {}
+> 
+> ...
+> 
+> if (x86_match_cpu(invlpg_miss_ids)) {
+>         pr_info("Incomplete global flushes, disabling PCID");
+>         setup_clear_cpu_cap(X86_FEATURE_PCID);
+>         return;
+> }
+> 
+> arch/x86/mm/init.c, which has that code, hasn't changed in 6.1.94 ->
+> 6.1.99.
+> However I found a commit changing how x86_match_cpu() behaves in 6.1.96:
+> 
+> commit 8ab1361b2eae44077fef4adea16228d44ffb860c
+> Author: Tony Luck <tony.luck@intel.com>
+> Date:   Mon May 20 15:45:33 2024 -0700
+> 
+>     x86/cpu: Fix x86_match_cpu() to match just X86_VENDOR_INTEL
+> 
+> I suspect this broke the PCID disabling code in arch/x86/mm/init.c.
+> The commit message says:
+> 
+> "Add a new flags field to struct x86_cpu_id that has a bit set to
+> indicate that
+> this entry in the array is valid. Update X86_MATCH*() macros to set that
+> bit.
+> Change the end-marker check in x86_match_cpu() to just check the flags
+> field
+> for this bit."
+> 
+> But the PCID disabling code in 6.1.99 does not make use of the
+> X86_MATCH*() macros; instead, it defines a new INTEL_MATCH() macro
+> without the
+> X86_CPU_ID_FLAG_ENTRY_VALID flag.
+> 
+> I looked in upstream git and found an existing fix:
+> commit 2eda374e883ad297bd9fe575a16c1dc850346075
+> Author: Tony Luck <tony.luck@intel.com>
+> Date:   Wed Apr 24 11:15:18 2024 -0700
+> 
+>     x86/mm: Switch to new Intel CPU model defines
+> 
+>     New CPU #defines encode vendor and family as well as model.
+> 
+>     [ dhansen: vertically align 0's in invlpg_miss_ids[] ]
+> 
+>     Signed-off-by: Tony Luck <tony.luck@intel.com>
+>     Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+>     Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+>     Link:
+> https://lore.kernel.org/all/20240424181518.41946-1-tony.luck%40intel.com
+> 
+> diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+> index 679893ea5e68..6b43b6480354 100644
+> --- a/arch/x86/mm/init.c
+> +++ b/arch/x86/mm/init.c
+> @@ -261,21 +261,17 @@ static void __init probe_page_size_mask(void)
+>         }
+>  }
+>  
+> -#define INTEL_MATCH(_model) { .vendor  = X86_VENDOR_INTEL,     \
+> -                             .family  = 6,                     \
+> -                             .model = _model,                  \
+> -                           }
+>  /*
+>   * INVLPG may not properly flush Global entries
+>   * on these CPUs when PCIDs are enabled.
+>   */
+>  static const struct x86_cpu_id invlpg_miss_ids[] = {
+> -       INTEL_MATCH(INTEL_FAM6_ALDERLAKE   ),
+> -       INTEL_MATCH(INTEL_FAM6_ALDERLAKE_L ),
+> -       INTEL_MATCH(INTEL_FAM6_ATOM_GRACEMONT ),
+> -       INTEL_MATCH(INTEL_FAM6_RAPTORLAKE  ),
+> -       INTEL_MATCH(INTEL_FAM6_RAPTORLAKE_P),
+> -       INTEL_MATCH(INTEL_FAM6_RAPTORLAKE_S),
+> +       X86_MATCH_VFM(INTEL_ALDERLAKE,      0),
+> +       X86_MATCH_VFM(INTEL_ALDERLAKE_L,    0),
+> +       X86_MATCH_VFM(INTEL_ATOM_GRACEMONT, 0),
+> +       X86_MATCH_VFM(INTEL_RAPTORLAKE,     0),
+> +       X86_MATCH_VFM(INTEL_RAPTORLAKE_P,   0),
+> +       X86_MATCH_VFM(INTEL_RAPTORLAKE_S,   0),
+>         {}
+>  };
+> 
+> The fix removed the custom INTEL_MATCH macro and uses the X86_MATCH*()
+> macros
+> with X86_CPU_ID_FLAG_ENTRY_VALID. This fixed commit was never backported
+> to 6.1,
+> so it looks like a stable series regression due to a missing backport.
+> 
+> If I apply the fix patch on 6.1.99, the PCID disabling code activates
+> again.
+> I had to change all the INTEL_* definitions to the old definitions to
+> make it
+> build:
+> 
+>  static const struct x86_cpu_id invlpg_miss_ids[] = {
+> -       INTEL_MATCH(INTEL_FAM6_ALDERLAKE   ),
+> -       INTEL_MATCH(INTEL_FAM6_ALDERLAKE_L ),
+> -       INTEL_MATCH(INTEL_FAM6_ALDERLAKE_N ),
+> -       INTEL_MATCH(INTEL_FAM6_RAPTORLAKE  ),
+> -       INTEL_MATCH(INTEL_FAM6_RAPTORLAKE_P),
+> -       INTEL_MATCH(INTEL_FAM6_RAPTORLAKE_S),
+> +       X86_MATCH_VFM(INTEL_FAM6_ALDERLAKE,    0),
+> +       X86_MATCH_VFM(INTEL_FAM6_ALDERLAKE_L,  0),
+> +       X86_MATCH_VFM(INTEL_FAM6_ALDERLAKE_N,  0),
+> +       X86_MATCH_VFM(INTEL_FAM6_RAPTORLAKE,   0),
+> +       X86_MATCH_VFM(INTEL_FAM6_RAPTORLAKE_P, 0),
+> +       X86_MATCH_VFM(INTEL_FAM6_RAPTORLAKE_S, 0),
+>         {}
+>  };
+> 
+> I only looked at the code in arch/x86/mm/init.c, so there may be other
+> uses of
+> x86_match_cpu() in the kernel that are also broken in 6.1.99.
+> This email is meant as a bug report, not a pull request. Someone else
+> should
+> confirm the problem and submit the appropriate fix.
 
- static void print_parse_error(const char *err_msg, const char *line,
+P.S.:
 
->=20
-> Lucas De Marchi
->=20
-> > }
-> >=20
-> > static void print_parse_error(const char *err_msg, const char *line,
-> >=20
-> > --=20
-> > Git-146)
-> >=20
-> > =
+#regzbot ^introduced 8ab1361b2eae44
+#regzbot title x86:  Possible missing backport of x86_match_cpu() change
+#regzbot ignore-activity
 
