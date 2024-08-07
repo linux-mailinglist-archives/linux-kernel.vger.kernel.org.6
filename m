@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-278467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9A994B09D
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:49:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1420A94B09F
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 21:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 341B9283E86
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:49:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 973BC1F217FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 19:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEFC145B37;
-	Wed,  7 Aug 2024 19:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2AB146018;
+	Wed,  7 Aug 2024 19:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q2ucMBhz"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CS138z7p"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24320145354
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 19:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E53145B39
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 19:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723060104; cv=none; b=URqcacpimxHr4nSthZnn3gQSPMIjheSBpSZ0V74D/VfS2Bnc5mvg0yz7rrZHtu/U8V8DzgSjeJRePEmwymYEbqFo3kQb1+ASz7lD/Z4QW3c5FbhlZDNrMSyQu0ppEuJg+ZcFTbtLqYqX+Ix+Sd7sUyEFGInS7GFPpuDXsgGNrV0=
+	t=1723060107; cv=none; b=eDaGNFHClKzQrwZyR3Ohr71uQRVETgK5MTs+KXi637yyVdhaIprZwT81covEhkt4J2m7yR0qDaugpPqLsMM7oz8QSr1pw0+z1sa1bH8W6Rcmq4/88k9mzI445y1upKMLZ0c1A6zgJrflhsX9jYCit+d7MkSKKh+zwCo7gyrg5JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723060104; c=relaxed/simple;
-	bh=7RUkptmdOEoTaWI5G/XfwfT/YiV+5T3HhVmyBbiSmpw=;
+	s=arc-20240116; t=1723060107; c=relaxed/simple;
+	bh=lGBhFBkbaz7EzTpAgSm8PUxosOm03SfTjgCaLHkY1V8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Vv6+N6rEfAyJRj36Hn9S+ZgsdQTfMX0mIPzZrVnwyRUmjorZ19sWEHFwYEj9kyNEAUcIukYnz6p0++gIQlsPXllJgVhuX8FVlWBQQdD4VRFUWDtZvk/8vtSaNMsBlXdiVMhz5ptmCW99EnrkM+s7K5VPli6djMbbTj7nQa6vWf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q2ucMBhz; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=E/G7TRGKKlVnatbw0KO0pJqCeyAgK1BPwwXqrFOE/5/dHwsEne0PPUugTWG9EbURNirlFqc6RS5WwYJIPBG7KKCSN5+X3zxsgF5IoWcD9NfSXFZGEiI783ZZCFbcunOvBmFlYl6t1/W0cwGoyeyg9lO4luTM2FGG9QGeMmoxJZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CS138z7p; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723060102;
+	s=mimecast20190719; t=1723060104;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6aC2RF+//p0GJfjgH/iZrlW9ATLJl4mVfe8Rdc4jHgk=;
-	b=Q2ucMBhz/XgfvpP6HrkE37VzE11I5NvndIEIUubfXNm9HWgjGEbnItvvaM/gQxtt9pnhdI
-	tp4bikG7BkGUOHvPehBXpEDFnrwgiv/fYv6O6fJEV4oTFCnqzDwejIOrlXYxzTAu8J3ko9
-	1uywXexZN6uOEi39FGwc9ugxhb0BQXI=
-Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com
- [209.85.222.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=DPSgdrK+/9txvlBVeWURx0wHDXuvLt3nB8aMlUhEkV8=;
+	b=CS138z7pYDjFBV+cBxOm3z4S8IBLvToYUprABE4Nel8vyYv3gqaETSs4W63Elf5kqhTu7e
+	t2t+mkcrSNYRpXUKrNBXDeivsEFnq7cS7FTd3jqxFFKk2k+h5a2f/0ENe+9xkYWNEpHnM3
+	dAaTtZRFOkaCm2oqoIroq1iTmdGEVKc=
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
+ [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-501-JeHkmjBuMOyURhaG7k-nOQ-1; Wed, 07 Aug 2024 15:48:20 -0400
-X-MC-Unique: JeHkmjBuMOyURhaG7k-nOQ-1
-Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-81fb65857e0so15699241.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 12:48:20 -0700 (PDT)
+ us-mta-457-oO-GHluyOs2CxcVt_IntPg-1; Wed, 07 Aug 2024 15:48:23 -0400
+X-MC-Unique: oO-GHluyOs2CxcVt_IntPg-1
+Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-70b29ad14e5so26970a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 12:48:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723060099; x=1723664899;
+        d=1e100.net; s=20230601; t=1723060102; x=1723664902;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6aC2RF+//p0GJfjgH/iZrlW9ATLJl4mVfe8Rdc4jHgk=;
-        b=lWLwBfIlzGbfAgEW588xVGGxB9dYMG3k8mkc1aZwQ4bDumV4VzqZYFiz7YgVrW7iat
-         XqGvqp2HGu07S+lQ20jolG2YFwHj4xZtEokoa+AkXfQGSQuxxTj/dRQ2vjWPAYvkocZF
-         av6OAeSf6xbXpUx6h8+/QbmZ+8Yeo+QoIwGinlFTOlDC7Czi4U8ttQrcEQQorQRNtVmR
-         38JQqMAkM1xUN5XYNxcmKDSrL+zHzASWuPNcxJWRNXxFtuN0M/tlRsfBs4YGhnngkigq
-         zh7k8Nk7R5s8Aqn88h4P5jhH/jGpc4F4FiuwPFbOZtKuBZC+RwhoU/QyGmha69h+jt1q
-         9kPg==
-X-Gm-Message-State: AOJu0YzX3f0iHIkozl9gmCtXIrB53ZwV6urLcS0cLoYKND9iVEhs9MRq
-	jSephpZSc2WTGQq4tVmVpBKMnhRFc7UAh+gvT4j4jmSB0N+kKeXWcW9tbT3HAxDvkOWMFlUZ/Kb
-	7rs3sb/zvO+Ppjq+/DMTG4TxBjXumhP4gexhoGGbzvZ2wzcFCXWx+vUwYqUi1ZWYMWUorweOjsK
-	usJF3o54GEKzzsAs0wEJmcNG6Yw3jJbVGMl/oydX8yEh8=
-X-Received: by 2002:a67:f445:0:b0:493:c75f:4c71 with SMTP id ada2fe7eead31-4945bf7f9bemr10182711137.4.1723060099598;
-        Wed, 07 Aug 2024 12:48:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IExnSrOtwcHXkdqrS3UwyseZPMUb/72Vd4NIKyn9I98RgoSLE2TM2KVGSHUSlSxMHs5MS4l7Q==
-X-Received: by 2002:a67:f445:0:b0:493:c75f:4c71 with SMTP id ada2fe7eead31-4945bf7f9bemr10182670137.4.1723060099151;
-        Wed, 07 Aug 2024 12:48:19 -0700 (PDT)
+        bh=DPSgdrK+/9txvlBVeWURx0wHDXuvLt3nB8aMlUhEkV8=;
+        b=O0c+FzV6NuzGBIWztDHYPanGJQTHW44csppRWuAfj6sqyXWNvQLTbdPsq8GyU5GPxR
+         bYjYvSfUbIH9qrjK/3yQA0IE9UHa7GOjEvh9Fz3SHdIdGwMy/0xQrlIG82wjzn5nwXGY
+         4Qfh4C+yyxQDzcVwAOoh8cYtWMngDYnmIvF1PNbTiuhWXwbotUZKPfsRaLaf+/pBN07V
+         F1BYYkg/DLVGiW4STBQI/9jISczHZdMMTbzU82UulQZ1DYHUtkp3ARd+3EOQr25nRJqT
+         NODugM57Q7/A7FXbZK0Po1Ni0CYSHUGebvx/JnFjXmrTA1dTAcLh+QrIAnXF64jriXnr
+         eXzw==
+X-Gm-Message-State: AOJu0YxWPpsKReBD619kdFOw7ZstvzmOuymXR/Pvcm3VEqS84j0/SbtT
+	O9j5X6+RwwN+dv73TbHWxrbyG79uuZlA/osCER+t7fh2umb0ZkNrivd21W7fzLqppbEER1JGnzB
+	xirdv5t6I92MOD86A1Y3nSBo2XZNFE6nzVN6igig9QEzHZJq0Rw7ZT2Gp7S5vxxGnAAfFEBywrq
+	A4GTObLlVPN6IdqTI/l2A31+orn6nYk5FRyZcEMFsCjmo=
+X-Received: by 2002:a05:6358:a096:b0:1aa:c73d:5a95 with SMTP id e5c5f4694b2df-1af3b89cddemr1270645155d.0.1723060101746;
+        Wed, 07 Aug 2024 12:48:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH//9GjXWmqzA+Y0OZdeiBZvOf2mh0xJt9rLdJnCDcBWQbkH3n97H6Shuw3uIhtGYCg2pjapA==
+X-Received: by 2002:a05:6358:a096:b0:1aa:c73d:5a95 with SMTP id e5c5f4694b2df-1af3b89cddemr1270641255d.0.1723060101168;
+        Wed, 07 Aug 2024 12:48:21 -0700 (PDT)
 Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c78ae4asm59853256d6.33.2024.08.07.12.48.17
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c78ae4asm59853256d6.33.2024.08.07.12.48.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 12:48:18 -0700 (PDT)
+        Wed, 07 Aug 2024 12:48:20 -0700 (PDT)
 From: Peter Xu <peterx@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
@@ -99,14 +99,10 @@ Cc: "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
 	Vlastimil Babka <vbabka@suse.cz>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Huang Ying <ying.huang@intel.com>,
-	kvm@vger.kernel.org,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	David Rientjes <rientjes@google.com>
-Subject: [PATCH v4 2/7] mm/mprotect: Push mmu notifier to PUDs
-Date: Wed,  7 Aug 2024 15:48:06 -0400
-Message-ID: <20240807194812.819412-3-peterx@redhat.com>
+	Huang Ying <ying.huang@intel.com>
+Subject: [PATCH v4 3/7] mm/powerpc: Add missing pud helpers
+Date: Wed,  7 Aug 2024 15:48:07 -0400
+Message-ID: <20240807194812.819412-4-peterx@redhat.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240807194812.819412-1-peterx@redhat.com>
 References: <20240807194812.819412-1-peterx@redhat.com>
@@ -118,137 +114,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-mprotect() does mmu notifiers in PMD levels.  It's there since 2014 of
-commit a5338093bfb4 ("mm: move mmu notifier call from change_protection to
-change_pmd_range").
+These new helpers will be needed for pud entry updates soon.  Introduce
+them by referencing the pmd ones.  Namely:
 
-At that time, the issue was that NUMA balancing can be applied on a huge
-range of VM memory, even if nothing was populated.  The notification can be
-avoided in this case if no valid pmd detected, which includes either THP or
-a PTE pgtable page.
+- pudp_invalidate()
+- pud_modify()
 
-Now to pave way for PUD handling, this isn't enough.  We need to generate
-mmu notifications even on PUD entries properly.  mprotect() is currently
-broken on PUD (e.g., one can easily trigger kernel error with dax 1G
-mappings already), this is the start to fix it.
-
-To fix that, this patch proposes to push such notifications to the PUD
-layers.
-
-There is risk on regressing the problem Rik wanted to resolve before, but I
-think it shouldn't really happen, and I still chose this solution because
-of a few reasons:
-
-  1) Consider a large VM that should definitely contain more than GBs of
-  memory, it's highly likely that PUDs are also none.  In this case there
-  will have no regression.
-
-  2) KVM has evolved a lot over the years to get rid of rmap walks, which
-  might be the major cause of the previous soft-lockup.  At least TDP MMU
-  already got rid of rmap as long as not nested (which should be the major
-  use case, IIUC), then the TDP MMU pgtable walker will simply see empty VM
-  pgtable (e.g. EPT on x86), the invalidation of a full empty region in
-  most cases could be pretty fast now, comparing to 2014.
-
-  3) KVM has explicit code paths now to even give way for mmu notifiers
-  just like this one, e.g. in commit d02c357e5bfa ("KVM: x86/mmu: Retry
-  fault before acquiring mmu_lock if mapping is changing").  It'll also
-  avoid contentions that may also contribute to a soft-lockup.
-
-  4) Stick with PMD layer simply don't work when PUD is there...  We need
-  one way or another to fix PUD mappings on mprotect().
-
-Pushing it to PUD should be the safest approach as of now, e.g. there's yet
-no sign of huge P4D coming on any known archs.
-
-Cc: kvm@vger.kernel.org
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Rik van Riel <riel@surriel.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- mm/mprotect.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ arch/powerpc/include/asm/book3s/64/pgtable.h |  3 +++
+ arch/powerpc/mm/book3s64/pgtable.c           | 20 ++++++++++++++++++++
+ 2 files changed, 23 insertions(+)
 
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 37cf8d249405..d423080e6509 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -363,9 +363,6 @@ static inline long change_pmd_range(struct mmu_gather *tlb,
- 	unsigned long next;
- 	long pages = 0;
- 	unsigned long nr_huge_updates = 0;
--	struct mmu_notifier_range range;
--
--	range.start = 0;
+diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
+index 519b1743a0f4..5da92ba68a45 100644
+--- a/arch/powerpc/include/asm/book3s/64/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+@@ -1124,6 +1124,7 @@ extern pmd_t pfn_pmd(unsigned long pfn, pgprot_t pgprot);
+ extern pud_t pfn_pud(unsigned long pfn, pgprot_t pgprot);
+ extern pmd_t mk_pmd(struct page *page, pgprot_t pgprot);
+ extern pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot);
++extern pud_t pud_modify(pud_t pud, pgprot_t newprot);
+ extern void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+ 		       pmd_t *pmdp, pmd_t pmd);
+ extern void set_pud_at(struct mm_struct *mm, unsigned long addr,
+@@ -1384,6 +1385,8 @@ static inline pgtable_t pgtable_trans_huge_withdraw(struct mm_struct *mm,
+ #define __HAVE_ARCH_PMDP_INVALIDATE
+ extern pmd_t pmdp_invalidate(struct vm_area_struct *vma, unsigned long address,
+ 			     pmd_t *pmdp);
++extern pud_t pudp_invalidate(struct vm_area_struct *vma, unsigned long address,
++			     pud_t *pudp);
  
- 	pmd = pmd_offset(pud, addr);
- 	do {
-@@ -383,14 +380,6 @@ static inline long change_pmd_range(struct mmu_gather *tlb,
- 		if (pmd_none(*pmd))
- 			goto next;
- 
--		/* invoke the mmu notifier if the pmd is populated */
--		if (!range.start) {
--			mmu_notifier_range_init(&range,
--				MMU_NOTIFY_PROTECTION_VMA, 0,
--				vma->vm_mm, addr, end);
--			mmu_notifier_invalidate_range_start(&range);
--		}
--
- 		_pmd = pmdp_get_lockless(pmd);
- 		if (is_swap_pmd(_pmd) || pmd_trans_huge(_pmd) || pmd_devmap(_pmd)) {
- 			if ((next - addr != HPAGE_PMD_SIZE) ||
-@@ -431,9 +420,6 @@ static inline long change_pmd_range(struct mmu_gather *tlb,
- 		cond_resched();
- 	} while (pmd++, addr = next, addr != end);
- 
--	if (range.start)
--		mmu_notifier_invalidate_range_end(&range);
--
- 	if (nr_huge_updates)
- 		count_vm_numa_events(NUMA_HUGE_PTE_UPDATES, nr_huge_updates);
- 	return pages;
-@@ -443,22 +429,36 @@ static inline long change_pud_range(struct mmu_gather *tlb,
- 		struct vm_area_struct *vma, p4d_t *p4d, unsigned long addr,
- 		unsigned long end, pgprot_t newprot, unsigned long cp_flags)
- {
-+	struct mmu_notifier_range range;
- 	pud_t *pud;
- 	unsigned long next;
- 	long pages = 0, ret;
- 
-+	range.start = 0;
-+
- 	pud = pud_offset(p4d, addr);
- 	do {
- 		next = pud_addr_end(addr, end);
- 		ret = change_prepare(vma, pud, pmd, addr, cp_flags);
--		if (ret)
--			return ret;
-+		if (ret) {
-+			pages = ret;
-+			break;
-+		}
- 		if (pud_none_or_clear_bad(pud))
- 			continue;
-+		if (!range.start) {
-+			mmu_notifier_range_init(&range,
-+						MMU_NOTIFY_PROTECTION_VMA, 0,
-+						vma->vm_mm, addr, end);
-+			mmu_notifier_invalidate_range_start(&range);
-+		}
- 		pages += change_pmd_range(tlb, vma, pud, addr, next, newprot,
- 					  cp_flags);
- 	} while (pud++, addr = next, addr != end);
- 
-+	if (range.start)
-+		mmu_notifier_invalidate_range_end(&range);
-+
- 	return pages;
+ #define pmd_move_must_withdraw pmd_move_must_withdraw
+ struct spinlock;
+diff --git a/arch/powerpc/mm/book3s64/pgtable.c b/arch/powerpc/mm/book3s64/pgtable.c
+index f4d8d3c40e5c..5a4a75369043 100644
+--- a/arch/powerpc/mm/book3s64/pgtable.c
++++ b/arch/powerpc/mm/book3s64/pgtable.c
+@@ -176,6 +176,17 @@ pmd_t pmdp_invalidate(struct vm_area_struct *vma, unsigned long address,
+ 	return __pmd(old_pmd);
  }
  
++pud_t pudp_invalidate(struct vm_area_struct *vma, unsigned long address,
++		      pud_t *pudp)
++{
++	unsigned long old_pud;
++
++	VM_WARN_ON_ONCE(!pud_present(*pudp));
++	old_pud = pud_hugepage_update(vma->vm_mm, address, pudp, _PAGE_PRESENT, _PAGE_INVALID);
++	flush_pud_tlb_range(vma, address, address + HPAGE_PUD_SIZE);
++	return __pud(old_pud);
++}
++
+ pmd_t pmdp_huge_get_and_clear_full(struct vm_area_struct *vma,
+ 				   unsigned long addr, pmd_t *pmdp, int full)
+ {
+@@ -259,6 +270,15 @@ pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
+ 	pmdv &= _HPAGE_CHG_MASK;
+ 	return pmd_set_protbits(__pmd(pmdv), newprot);
+ }
++
++pud_t pud_modify(pud_t pud, pgprot_t newprot)
++{
++	unsigned long pudv;
++
++	pudv = pud_val(pud);
++	pudv &= _HPAGE_CHG_MASK;
++	return pud_set_protbits(__pud(pudv), newprot);
++}
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 
+ /* For use by kexec, called with MMU off */
 -- 
 2.45.0
 
