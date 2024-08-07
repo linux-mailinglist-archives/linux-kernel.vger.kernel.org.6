@@ -1,142 +1,232 @@
-Return-Path: <linux-kernel+bounces-277894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE36D94A7D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:39:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D3994A7D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 14:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FCB21F22349
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:39:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D7751F225C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 12:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960041E6723;
-	Wed,  7 Aug 2024 12:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A4B1E6725;
+	Wed,  7 Aug 2024 12:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="lYIHgvXD"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ZAPFHHys";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="h94tFw22"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6241C4638
-	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 12:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CA71E673F;
+	Wed,  7 Aug 2024 12:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723034345; cv=none; b=YcouH0T63V1n47Dh1jkjykwcceKUMreulj09XgrkLFaV6zmU9m1p08C9f48sqvCUK8ja0RuYzhCIgbIWYdodZ2sfVHa13PBLGqIko514KhIEdbZAAq4NbAP7+2gla0N+lYZn6KDJ1mNFYpn5RFtetLco6Ljzqbs5VoMuvtLg7oY=
+	t=1723034353; cv=none; b=NG93Xlg+S0Ab4hnkXbf48z9TjCvoRsNSjszqwrXmiPOFXmHL2s31YarH9KP6vgO3xiIx0OTMbBN7gl8ZT0b2qyfarQZ1fAeeQ/yR2JjA0Te3fQTiuhMB0lG0lOIgByYcvt+yshyAgWDZG1r8Ysb0oEAUbgqtdAbhhA0g2YYzj2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723034345; c=relaxed/simple;
-	bh=Mw6wKc2ti6LY5idHC/sVr+2dbNzF+B634uVPlEp2LKQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YlDj8O24e5aBZMlt/PevdAr3TEtMnhRhEduQ+LOLkAzik4p9U+ct/zjblALe1BNNr8sRgPI2Ytc/aaSwnK6O9PpyoYeKJz48Dq9FKTCUIpoTNvgNyysnz5e+R2Fpu/oZ4Vek2TcX4oN7efL1s8PBEd0CWpqkhRQ5bp7CYI3jMBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=lYIHgvXD; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso1895595a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 05:39:03 -0700 (PDT)
+	s=arc-20240116; t=1723034353; c=relaxed/simple;
+	bh=oeYaFXKlapO8ygfh0JSq77rp6rW1KZ7DCTVykw4h2Uw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YJjSONzZQ7C4dm+DuoFh/Zl7vD5ntj9QkZVf6znIP77X8pyv2UoeKNnRo7TVJl1ZAA3osY3dDIRGnBMRik7viX6Tc8XbmSHMcJxTH/gapAmawFEEn76sdSAhocWaDrMx2HU8U/Wf9F5yviQVXxuDGkQ2bSr9QNg2z2KwTnv6zoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ZAPFHHys; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=h94tFw22 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1723034342; x=1723639142; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OnUFp98oxeUnctnSDs6TX1a8Wvygl0TqIj4jMlE8iGk=;
-        b=lYIHgvXDRgOquolVGTVoQjBv4o29CzUrksbsJPFOF/B6nKhk/iKbBTdqjaBauIjg2e
-         cKxlUXHQI7jN+/SUjGFJidOeUtU+a/Lrm595Y9v03c/qmZe3ebYUzVacPQiNsspAvgn+
-         /Oskp1K6d9sZQDKS6kLsahgpyCpMTlkqWyXFY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723034342; x=1723639142;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OnUFp98oxeUnctnSDs6TX1a8Wvygl0TqIj4jMlE8iGk=;
-        b=Uup+XJ3wSgIo9/46vS1M7S91hTOtlf292MkNC8MP2anQbE62j8cHoc4KOQcUfzRL/v
-         Zq4f22QpPiF5xGXLFknh2PN1lH7+LZr+96qiO6fxT66scF8SSjXwo2f/+KtLFNub+Wrb
-         tHHg1Qhn9HttA5nS7ALwJYCOX4ybRTAF+fNS4FcG2+7ZRao61NXBInLPEwjLBYs/epRd
-         5ZPAONOOe0vqqGAMGpbRoE1OW0kXbqStWsSL2KAavH3Z/9WVL2E3leCZ4si6l+xHIIaK
-         gyy0F76XH+kK6+lAoAb4RsreUhhPxHofRMppkxheWOlmrYgkALJpSQDPIOUzLOfBaxjR
-         z63A==
-X-Forwarded-Encrypted: i=1; AJvYcCWzSNcrqygialL0uzxuinErQLp18D/JraVxNrlOHCRta3Nvx3KSCFH9CMjSGpQ9dkyk6IW503P2UM1FjSketL5DG7tSb6xrmDvGQsr7
-X-Gm-Message-State: AOJu0Yw/fvAQx4J2+BPnZ1V7AYCPyWZyV390HX5Dwr9qDhKqgfPvRStO
-	hGNeGrdww7XM6JR2mJu2Q7F0SI6mwod0ThHbM8P/K/KsjUuyXUVxpq3eqsTHBu6pzn7JF/SFUA/
-	fCRqQTPF3/w4KDtKiV+yK2y1mX4z+hy02qp32fg==
-X-Google-Smtp-Source: AGHT+IHFwDCBsgcnW5WchVhEPgcMtyfiG3UZcQkJplOkeEuntHKc8WivmqlczosZUlA4ogqE5T7gtqDWLirva45IL8c=
-X-Received: by 2002:a17:906:7303:b0:a7a:b4bd:d0eb with SMTP id
- a640c23a62f3a-a7dc4e8764cmr1344622766b.24.1723034342168; Wed, 07 Aug 2024
- 05:39:02 -0700 (PDT)
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1723034349; x=1754570349;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=YQ3YUqkpwK5U0SyvLqvXM55I7yw9TX23AIALEa+MDvM=;
+  b=ZAPFHHysRzd0T0Bs7d8SsAXsqhpMwINTye5weBa64HGEloou9awKirWG
+   0xv2iheBQGjX44jOFBGnYtZpL17/LHmOHoj3leVw3Vms2Dfc9LsN8dm81
+   2yWboy/xGEjTdvXSu3TUvkdkDxPtbGrWj2YM32WGEcnUq58IvV7E8zxU1
+   sK/+TmA/cdqqsYwL0aHGvauniBXUVwyx1qygqe5x7yIu80Gb1Bv1EBp82
+   br8ysaTgCqqtVGBAxUU0kX55s4uOwsFUVT7JLTI2ECxrsd8E0UwrvSpus
+   BmvPEB/u2zJQVhBIgFkkZnlEqEyUpXpHH7TMWcEtdnFA5v4QENfG+B+HY
+   Q==;
+X-CSE-ConnectionGUID: XnTgZGzjQLqiIwtE8ET2jw==
+X-CSE-MsgGUID: GwrbUDtOSBOhrftv3TnowQ==
+X-IronPort-AV: E=Sophos;i="6.09,269,1716242400"; 
+   d="scan'208";a="38293262"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 07 Aug 2024 14:39:06 +0200
+X-CheckPoint: {66B36AEA-7-CFE9415D-C7159436}
+X-MAIL-CPID: A524EC2C33611979AD910978938D5D39_1
+X-Control-Analysis: str=0001.0A782F1E.66B36AEA.00D2,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D8ECF1674EB;
+	Wed,  7 Aug 2024 14:38:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1723034342;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=YQ3YUqkpwK5U0SyvLqvXM55I7yw9TX23AIALEa+MDvM=;
+	b=h94tFw22dVLav1klb+jWwUlpPfMTevTVRLQj3jP04BtfHiBHmITtdEVUt6Xj5ZfHT5ylwc
+	GNhJ1R1trcNPezTXhqjMVRlJxTPrceo10qSbvLSBiwh55GKGLolVqeRtkJA0quTPhSslOR
+	TdvRjKdy0/eeHWflPHQoBjz864idb1ZKBaxc2rYfTqCQJ2FxPgf8wmYt0630gvUzfWxbIJ
+	woq7/sWyRsEe4XCDFiXZRuv0AXqvv0UHv/klZJjXEH3VnDWDo2DID2b9mFz/j9xUns8c6x
+	NzPuvLtCGas/ejASTmTn1KrdbNTlLOuA98vOBSwxqfzpVhh1ob85NbvbJYcoQw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Benjamin Bara <bbara93@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>, arne.caspari@theimagingsource.com
+Subject: Re: [PATCH 2/2] media: i2c: imx290: Check for availability in probe()
+Date: Wed, 07 Aug 2024 14:39:01 +0200
+Message-ID: <1897006.tdWV9SEqCh@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240807121648.GC8166@pendragon.ideasonboard.com>
+References: <20240807-imx290-avail-v1-0-666c130c7601@skidata.com> <4588174.LvFx2qVVIh@steina-w> <20240807121648.GC8166@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624185345.11113-1-michael@amarulasolutions.com>
-In-Reply-To: <20240624185345.11113-1-michael@amarulasolutions.com>
-From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date: Wed, 7 Aug 2024 14:38:51 +0200
-Message-ID: <CAOf5uwkhThmTEuhYAxAgLqg86PEHJ49wWp67RahVhio=O2OfQw@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm/panel: synaptics-r63353: Fix regulator unbalance
-To: neil.armstrong@linaro.org, Doug Anderson <dianders@chromium.org>
-Cc: quic_jesszhan@quicinc.com, sam@ravnborg.org, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Doug
+Am Mittwoch, 7. August 2024, 14:16:48 CEST schrieb Laurent Pinchart:
+> ********************
+> Achtung externe E-Mail: =D6ffnen Sie Anh=E4nge und Links nur, wenn Sie wi=
+ssen, dass diese aus einer sicheren Quelle stammen und sicher sind. Leiten =
+Sie die E-Mail im Zweifelsfall zur Pr=FCfung an den IT-Helpdesk weiter.
+> Attention external email: Open attachments and links only if you know tha=
+t they are from a secure source and are safe. In doubt forward the email to=
+ the IT-Helpdesk to check it.
+> ********************
+>=20
+> On Wed, Aug 07, 2024 at 02:12:04PM +0200, Alexander Stein wrote:
+> > Am Mittwoch, 7. August 2024, 13:07:24 CEST schrieb Benjamin Bara:
+> > > On Wed, 7 Aug 2024 at 11:50, Laurent Pinchart wrote:
+> > > > On Wed, Aug 07, 2024 at 10:47:39AM +0200, Benjamin Bara wrote:
+> > > > > On Wed, 7 Aug 2024 at 10:33, Alexander Stein wrote:
+> > > > > > Am Mittwoch, 7. August 2024, 10:10:28 CEST schrieb Benjamin Bar=
+a:
+> > > > > > > Currently, the V4L2 subdevice is also created when the device=
+ is not
+> > > > > > > available/connected. In this case, dmesg shows the following:
+> > > > > > >
+> > > > > > > [   10.419510] imx290 7-001a: Error writing reg 0x301c: -6
+> > > > > > > [   10.428981] imx290 7-001a: Error writing reg 0x3020: -6
+> > > > > > > [   10.442712] imx290 7-001a: Error writing reg 0x3018: -6
+> > > > > > > [   10.454018] imx290 7-001a: Error writing reg 0x3020: -6
+> > > > > > >
+> > > > > > > which seems to come from imx290_ctrl_update() after the subde=
+v init is
+> > > > > > > finished. However, as the errors are ignored, the subdev is i=
+nitialized
+> > > > > > > but simply does not work. From userspace perspective, there i=
+s no
+> > > > > > > visible difference between a working and not-working subdevic=
+e (except
+> > > > > > > when trying it out or watching for the error message).
+> > > > > > >
+> > > > > > > This commit adds a simple availability check before starting =
+with the
+> > > > > > > subdev initialization to error out instead.
+> > > > > >
+> > > > > > There is already a patch reading the ID register at [1]. This a=
+lso reads the
+> > > > > > ID register. But I don't have any documentation regarding that =
+register,
+> > > > > > neither address nor values definitions. If there is known infor=
+mation about
+> > > > > > that I would prefer reading the ID and compare it to expected v=
+alues.
+> > > > >
+> > > > > Thanks for the link - it seems like Laurent has dropped the patch=
+ for
+> > > > > the more recent kernel versions on their GitLab.
+> > > >
+> > > > It was a patch that I wrote as a test, and I decided not to upstrea=
+m it
+> > > > as it had limited value to me. The downside with reading registers =
+at
+> > > > probe time is that you have to power up the sensor. This can have
+> > > > undesired side effects, such as flashing a privacy LED on at boot t=
+ime
+> > > > in devices that have one. There's also the increase in boot time du=
+e to
+> > > > the power up sequence, which one may want to avoid.
+> > > >
+> > > > The imx290 driver already powers up the device unconditionally at p=
+robe
+> > > > time, so reading the version register wouldn't be much of an issue I
+> > > > suppose. I would be fine merging that patch.
+> > > >
+> > > > > This was also my initial intention, but similar to you, I don't h=
+ave a
+> > > > > docu describing this register, so I am not sure where the info is=
+ coming
+> > > > > from and if it really contains the identification/type info. Prob=
+ably
+> > > > > Laurent has more infos on that.
+> > > >
+> > > > That's a good question. I don't see a mention of that register in t=
+he
+> > > > IMX290 datasheet I've found online
+> > > > (https://static6.arrow.com/aropdfconversion/c0c7efde6571c768020a72f=
+59b226308b9669e45/sony_imx290lqr-c_datasheet.pdf).
+> > > > Looking at the git history, the IMX290_CHIP_ID register macro was
+> > > > introduced in an unrelated commit, without an explanation. I don't
+> > > > recall where it comes from, but I don't think I've added it randoml=
+y. It
+> > > > may have come from an out-of-tree driver.
+> > >=20
+> > > Thanks for the info!
+> > >=20
+> > > > I don't have an IMX290 plugged in at the moment, what's the value o=
+f the
+> > > > register ?
+> > >=20
+> > > I currently have an imx462 available, which is not "officially suppor=
+ted" yet,
+> > > but basically an imx290 derivative. With your patch applied:
+> > >=20
+> > > [   10.424187] imx290 7-001a: chip ID 0x07d0
+> >=20
+> > Okay, this is from a imx327lqr:
+> >=20
+> > [   15.265086] imx290 3-001a: chip ID 0x07d0
+> >=20
+> > Doesn't look like an ID register to me.
+>=20
+> Indeed, it's quite suspicious.
+>=20
+> I wonder if we could find a more applicable register. Chip ID registers
+> are usually located at the beginning or end of the register space, we
+> could have a look there.
 
-+cc Doug
+Dumping all registers (8-Bit reads) from 0x3001 till 0x3480 only has a few
+non-zero registers:
+> # cat /sys/kernel/debug/regmap/3-001a/range
+> 3000-3480
+> # cat /sys/kernel/debug/regmap/3-001a/registers  | grep -v ": 00"
+> 3000: 01
+> 3020: 01
+> 303c: 08
+> 303e: 38
+> 303f: 04
+> 3040: 08
+> 3042: 80
+> 3043: 07
+> 319a: d0
+> 319b: 07
+> 3418: 38
+> 3419: 04
+> 3472: 80
+> 3473: 07
 
-I have seen that you have done some re-working and investigation on
-drm stack, do you have some
-suggestion on this case?
+Note I am on a Vision Components imx327, which might block some reads.
+Laurent is also aware of that behaviour. But maybe this list gives an
+indicator.
 
-On Mon, Jun 24, 2024 at 8:53=E2=80=AFPM Michael Trimarchi
-<michael@amarulasolutions.com> wrote:
->
-> The shutdown function can be called when the display is already
-> unprepared. For example during reboot this trigger a kernel
-> backlog. Calling the drm_panel_unprepare, allow us to avoid
-> to trigger the kernel warning
->
-> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-> ---
->
-> It's not obviovus if shutdown can be dropped or this problem depends
-> on the display stack as it is implmented. More feedback is required
-> here
->
-> ---
->  drivers/gpu/drm/panel/panel-synaptics-r63353.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/panel/panel-synaptics-r63353.c b/drivers/gpu=
-/drm/panel/panel-synaptics-r63353.c
-> index 169c629746c7..17349825543f 100644
-> --- a/drivers/gpu/drm/panel/panel-synaptics-r63353.c
-> +++ b/drivers/gpu/drm/panel/panel-synaptics-r63353.c
-> @@ -325,7 +325,7 @@ static void r63353_panel_shutdown(struct mipi_dsi_dev=
-ice *dsi)
->  {
->         struct r63353_panel *rpanel =3D mipi_dsi_get_drvdata(dsi);
->
-> -       r63353_panel_unprepare(&rpanel->base);
-> +       drm_panel_unprepare(&rpanel->base);
->  }
->
->  static const struct r63353_desc sharp_ls068b3sx02_data =3D {
-> --
-> 2.43.0
->
+Best regards,
+Alexander
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
 
---=20
-Michael Nazzareno Trimarchi
-Co-Founder & Chief Executive Officer
-M. +39 347 913 2170
-michael@amarulasolutions.com
-__________________________________
-
-Amarula Solutions BV
-Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
-T. +31 (0)85 111 9172
-info@amarulasolutions.com
-www.amarulasolutions.com
 
