@@ -1,68 +1,70 @@
-Return-Path: <linux-kernel+bounces-279097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1916A94B8EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:21:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B24594B8E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C01A728A4BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:21:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D43791F21356
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62F6189511;
-	Thu,  8 Aug 2024 08:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81371898E6;
+	Thu,  8 Aug 2024 08:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qZjuODV4"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z8Cu4pjM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEA2145336;
-	Thu,  8 Aug 2024 08:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46579225A2
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723105281; cv=none; b=aevliKjfuxhUhBCOZVPv+lSlr7hIXIaMJDYiFDnaeJG70/CBN+6xBLi88DCQwskoioB3kcDS3dIY7SLZs+dvLOYKhvJU497oltHdGJwiMRXrSEKOev7ySNDIutJWNnBtFFTe8XSyZlWp/iVV/v/SdZJOzIpEiWrHwdVVP9/g4Og=
+	t=1723105260; cv=none; b=PoCmkte9KP/MogX8K1+QGFMWYs/ufHq88gzOW0RBN6CSMOheOk9SyznZwCDPbJ+IXBoZkUxwvH5+haShMlpQBXXKvEvgTyxANzdw981rXYACqt5xJ4NKTYsD1wzqdcnQHBaPtyFH2PU/tjZyf8aWnrKgMk1SxbAzHdEBqaauNPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723105281; c=relaxed/simple;
-	bh=zW4gXRl9j7t4LD6ZiJAERuv8KT7u29VEcU2dhh5LRqY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NbTZu3HnCysoJAqq3+1gFNW/gkeW9TBaZYLycxji/s2LxHwyPNeC4xo0xLjVghBfTBALe01S2frK/nKUm06OpVAYUKhGP7TjMQHG+MAwuafpb1VvG5h6aXCenM4IDEhMuEsI/VAVJXrncRl+u9ycX2XqPWWwnDHbk21d7BfAyJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qZjuODV4; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4788KWe7060032;
-	Thu, 8 Aug 2024 03:20:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723105232;
-	bh=/1xyuDyfSwA12wuJAyb3Q+WDU/YmPBcJ/cd3RNWmHg8=;
-	h=From:To:CC:Subject:Date;
-	b=qZjuODV4MrPzS2PPjJ0bt++qQ4bBm5GcvnSEf28fwnJemnl2FLCXfXKrRJUNjZH8G
-	 z0hRlPUT70KVk0fkQjO/d05z3+aUIzfcKNDffQEYDklLgyrZWyDJZ5Y1khXL65eqP2
-	 xxw4jalbayABc0XlcugfKj9yaPVl8dZ9ifXZdomI=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4788KWqS113373
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 8 Aug 2024 03:20:32 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
- Aug 2024 03:20:31 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 8 Aug 2024 03:20:31 -0500
-Received: from localhost (a0498981-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.216])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4788KVeP092084;
-	Thu, 8 Aug 2024 03:20:31 -0500
-From: Bhavya Kapoor <b-kapoor@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
-        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
-        <b-kapoor@ti.com>, <jm@ti.com>, <vigneshr@ti.com>, <nm@ti.com>
-Subject: [RESEND PATCH] arm64: dts: ti: k3-j722s-evm: Add support for multiple CAN instances
-Date: Thu, 8 Aug 2024 13:50:30 +0530
-Message-ID: <20240808082030.2812216-1-b-kapoor@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723105260; c=relaxed/simple;
+	bh=L4QVc0wP7198xEmpO0X7efWPkh+oSVw5VC1I4eAC4Ao=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W27O+V5Xdm5p47Rnst/Ht0WmuiUCEOezhN6x+K8dvOJJgj1jr93zHJFopuarH5Mja2ojc/22cI9cgDXM9btptvxNekaat2k6203Vq6w3WrA55kuOlXDMMYlGfFJah2+yOGj6/N9iEFUCillWnCd7AwNEqZXZ9bdd0RJxDt3YYEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z8Cu4pjM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723105256;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gG94da4yH+PQWtMlfckLeFlS4xJDYul1j2UMjM7QZ6w=;
+	b=Z8Cu4pjM5aktWlq+ddwyFrtKF1KbZBExSALq4dZAelwJQ5thoz4wdB77cAppMdOzA4+Bps
+	f9OUOizdz23rUKIFIu7puMbf+g4SOtNsZ4Ceil2N86jf/Qnre/AqSk1K2q0KppTypGOHhn
+	M+UsE3pLHzi+WCVXqrGMOm13jRIesJ4=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-201-L2LIPp_9N2-E-uRSXdAEgg-1; Thu,
+ 08 Aug 2024 04:20:53 -0400
+X-MC-Unique: L2LIPp_9N2-E-uRSXdAEgg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1749F1955F43;
+	Thu,  8 Aug 2024 08:20:52 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.113.0])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7BD3519560A3;
+	Thu,  8 Aug 2024 08:20:46 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	dtatulea@nvidia.com
+Cc: lingshan.zhu@intel.com,
+	kvm@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] vhost_vdpa: assign irq bypass producer token correctly
+Date: Thu,  8 Aug 2024 16:20:44 +0800
+Message-ID: <20240808082044.11356-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,126 +72,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-CAN instances 0 and 1 in the mcu domain and 0 in the main domain are
-brought on the evm through headers J5, J8 and J10 respectively. Thus,
-add their respective transceiver's 0, 1 and 2 dt nodes as well as
-add the required pinmux to add support for these CAN instances.
+We used to call irq_bypass_unregister_producer() in
+vhost_vdpa_setup_vq_irq() which is problematic as we don't know if the
+token pointer is still valid or not.
 
-Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
-Reviewed-by: Judith Mendez <jm@ti.com>
+Actually, we use the eventfd_ctx as the token so the life cycle of the
+token should be bound to the VHOST_SET_VRING_CALL instead of
+vhost_vdpa_setup_vq_irq() which could be called by set_status().
+
+Fixing this by setting up  irq bypass producer's token when handling
+VHOST_SET_VRING_CALL and un-registering the producer before calling
+vhost_vring_ioctl() to prevent a possible use after free as eventfd
+could have been released in vhost_vring_ioctl().
+
+Fixes: 2cf1ba9a4d15 ("vhost_vdpa: implement IRQ offloading in vhost_vdpa")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
+Note for Dragos: Please check whether this fixes your issue. I
+slightly test it with vp_vdpa in L2.
+---
+ drivers/vhost/vdpa.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-Rebased to next-20240808
-
-Resend of - https://lore.kernel.org/all/d1d7f693-1dd6-4aea-bdbd-4385dc35d462@ti.com/
-
- arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 74 +++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-index dd3b5f7039d7..24e9f2ea509b 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-@@ -162,10 +162,39 @@ sound_master: simple-audio-card,codec {
- 			clocks = <&audio_refclk1>;
- 		};
- 	};
-+
-+	transceiver0: can-phy0 {
-+		compatible = "ti,tcan1042";
-+		#phy-cells = <0>;
-+		max-bitrate = <5000000>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&mcu_mcan0_gpio_pins_default>;
-+		standby-gpios = <&mcu_gpio0 12 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	transceiver1: can-phy1 {
-+		compatible = "ti,tcan1042";
-+		#phy-cells = <0>;
-+		max-bitrate = <5000000>;
-+	};
-+
-+	transceiver2: can-phy2 {
-+		compatible = "ti,tcan1042";
-+		#phy-cells = <0>;
-+		max-bitrate = <5000000>;
-+		standby-gpios = <&exp1 17 GPIO_ACTIVE_HIGH>;
-+	};
- };
+diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+index e31ec9ebc4ce..388226a48bcc 100644
+--- a/drivers/vhost/vdpa.c
++++ b/drivers/vhost/vdpa.c
+@@ -209,11 +209,9 @@ static void vhost_vdpa_setup_vq_irq(struct vhost_vdpa *v, u16 qid)
+ 	if (irq < 0)
+ 		return;
  
- &main_pmx0 {
+-	irq_bypass_unregister_producer(&vq->call_ctx.producer);
+ 	if (!vq->call_ctx.ctx)
+ 		return;
  
-+	main_mcan0_pins_default: main-mcan0-default-pins {
-+		pinctrl-single,pins = <
-+			J722S_IOPAD(0x1dc, PIN_INPUT, 0) /* (C22) MCAN0_RX */
-+			J722S_IOPAD(0x1d8, PIN_OUTPUT, 0) /*(D22) MCAN0_TX */
-+		>;
-+	};
-+
- 	main_i2c0_pins_default: main-i2c0-default-pins {
- 		pinctrl-single,pins = <
- 			J722S_IOPAD(0x01e0, PIN_INPUT_PULLUP, 0) /* (D23) I2C0_SCL */
-@@ -303,6 +332,26 @@ &main_uart0 {
+-	vq->call_ctx.producer.token = vq->call_ctx.ctx;
+ 	vq->call_ctx.producer.irq = irq;
+ 	ret = irq_bypass_register_producer(&vq->call_ctx.producer);
+ 	if (unlikely(ret))
+@@ -709,6 +707,12 @@ static long vhost_vdpa_vring_ioctl(struct vhost_vdpa *v, unsigned int cmd,
+ 			vq->last_avail_idx = vq_state.split.avail_index;
+ 		}
+ 		break;
++	case VHOST_SET_VRING_CALL:
++		if (vq->call_ctx.ctx) {
++			vhost_vdpa_unsetup_vq_irq(v, idx);
++			vq->call_ctx.producer.token = NULL;
++		}
++		break;
+ 	}
  
- &mcu_pmx0 {
+ 	r = vhost_vring_ioctl(&v->vdev, cmd, argp);
+@@ -747,13 +751,14 @@ static long vhost_vdpa_vring_ioctl(struct vhost_vdpa *v, unsigned int cmd,
+ 			cb.callback = vhost_vdpa_virtqueue_cb;
+ 			cb.private = vq;
+ 			cb.trigger = vq->call_ctx.ctx;
++			vq->call_ctx.producer.token = vq->call_ctx.ctx;
++			vhost_vdpa_setup_vq_irq(v, idx);
+ 		} else {
+ 			cb.callback = NULL;
+ 			cb.private = NULL;
+ 			cb.trigger = NULL;
+ 		}
+ 		ops->set_vq_cb(vdpa, idx, &cb);
+-		vhost_vdpa_setup_vq_irq(v, idx);
+ 		break;
  
-+	mcu_mcan0_pins_default: mcu-mcan0-default-pins {
-+		pinctrl-single,pins = <
-+			J722S_MCU_IOPAD(0x038, PIN_INPUT, 0) /* (D8) MCU_MCAN0_RX */
-+			J722S_MCU_IOPAD(0x034, PIN_OUTPUT, 0) /* (B2) MCU_MCAN0_TX */
-+		>;
-+	};
-+
-+	mcu_mcan1_pins_default: mcu-mcan1-default-pins {
-+		pinctrl-single,pins = <
-+			J722S_MCU_IOPAD(0x040, PIN_INPUT, 0) /* (B1) MCU_MCAN1_RX */
-+			J722S_MCU_IOPAD(0x03C, PIN_OUTPUT, 0) /*(C1) MCU_MCAN1_TX */
-+		>;
-+	};
-+
-+	mcu_mcan0_gpio_pins_default: mcu-mcan0-gpio-default-pins {
-+		pinctrl-single,pins = <
-+			J722S_MCU_IOPAD(0x0030, PIN_OUTPUT, 7) /* (C3) MCU_GPIO0_12 */
-+		>;
-+	};
-+
- 	wkup_uart0_pins_default: wkup-uart0-default-pins {
- 		pinctrl-single,pins = <
- 			J722S_MCU_IOPAD(0x02c, PIN_INPUT, 0)	/* (C7) WKUP_UART0_CTSn */
-@@ -566,3 +615,28 @@ &mcasp1 {
- 	       0 0 0 0
- 	>;
- };
-+
-+&mcu_mcan0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mcu_mcan0_pins_default>;
-+	phys = <&transceiver0>;
-+};
-+
-+&mcu_mcan1 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mcu_mcan1_pins_default>;
-+	phys = <&transceiver1>;
-+};
-+
-+&main_mcan0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_mcan0_pins_default>;
-+	phys = <&transceiver2>;
-+};
-+
-+&mcu_gpio0 {
-+	status = "okay";
-+};
+ 	case VHOST_SET_VRING_NUM:
+@@ -1419,6 +1424,7 @@ static int vhost_vdpa_open(struct inode *inode, struct file *filep)
+ 	for (i = 0; i < nvqs; i++) {
+ 		vqs[i] = &v->vqs[i];
+ 		vqs[i]->handle_kick = handle_vq_kick;
++		vqs[i]->call_ctx.ctx = NULL;
+ 	}
+ 	vhost_dev_init(dev, vqs, nvqs, 0, 0, 0, false,
+ 		       vhost_vdpa_process_iotlb_msg);
 -- 
-2.34.1
+2.31.1
 
 
