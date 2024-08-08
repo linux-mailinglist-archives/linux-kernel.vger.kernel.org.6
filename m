@@ -1,206 +1,198 @@
-Return-Path: <linux-kernel+bounces-280109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC68894C5EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:44:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C82194C5EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B74E1F25FD5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:44:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22CE21F25F08
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D9515A86B;
-	Thu,  8 Aug 2024 20:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2A61465AE;
+	Thu,  8 Aug 2024 20:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="kPZYYpC+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="n2TbSaWU"
-Received: from flow7-smtp.messagingengine.com (flow7-smtp.messagingengine.com [103.168.172.142])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CBeOAPSU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58F52AD14;
-	Thu,  8 Aug 2024 20:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0E48827
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 20:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723149875; cv=none; b=VCPsNmNYFRCbnWm23a+xSgDFQT+ilrmz+iOM7ez69hmkhOk687I0H9zrD5knO2m1WIdl2vp1AJSIfMlYRodhr0W1OSSYDpzo7ss39ArKjFJl2bujV2+C6ktpFA3OqaG+fjc/Kq33XJgLd8ZI36QsorfM5Ev8x80pKcQo7699UL4=
+	t=1723149920; cv=none; b=TaINN3bgMOUX6/+3ghfeUkYMLz6C8RzVTqW8CbwSBtbjjYBTcEkjD/bfqv7wYa/ipTPjKQptu57QAgtNNpL5TsdIRqqBYwiuWaIVOfCGHikdaSHFnA/A/1EEHK7SevhjnYtkuIyF0RUp1DRRWfMCXRuGPaSqxZxXd/xK6ZNZVwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723149875; c=relaxed/simple;
-	bh=mGOulp7vpnr4rSEgyKpXiVSVw3NrYYYwsCcK+pPUj1w=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=K/h6tvCUWCDR4rGEf666RzGjIyr2wGypsRoeUMfwpwGHXmnHCGABTm7wUqRHEs2gRQbUoXi5dyPY6ItH1ysx2tmvuNWltRSbcBbbFialJQ6tDcKTtwagjeAxs4zekRB5VFWEfiTZIPzI2zGiTXta4iG8NAYAJynWrmxkhVDh3ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=kPZYYpC+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=n2TbSaWU; arc=none smtp.client-ip=103.168.172.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 9CA7F200CE1;
-	Thu,  8 Aug 2024 16:44:31 -0400 (EDT)
-Received: from wimap24 ([10.202.2.84])
-  by compute3.internal (MEProxy); Thu, 08 Aug 2024 16:44:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1723149871;
-	 x=1723157071; bh=v+W3a7SXw8EMXoGeWpGy5gfB1VuUlziJvetZYk3mEQA=; b=
-	kPZYYpC+iJ7h6Ov2ysI0xNU0NyCRpPo1i6/bsOJw7R4KKe7U26YrDA9IFaTWPgqM
-	qWWN7j6TnZkhTJKoNqNQVkdW5+OpXQKjNGBs4DnoOwU8Z/tQwDpHNTu75muNN4ci
-	J5o3/7sP0yWfqOChFt+IiX3tpFhYyPqHCV0Jm2ioHXJPPcrMUXYh4/G+qcsvfPq9
-	ypTM0vsfJybRXZejLvr/TZ77Wy/DWXUqqY8y8K1CqhyZc3rrJ4plja80KSJ/kvSj
-	98Tq6m3lZ+g6ar72VDabOXdMHk5Cu3xl++toIJ4im4Rc3PdB+iOwJpZ4MNyeyxB3
-	o8VXqzO6XDF2jbi8w4YPeg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723149871; x=
-	1723157071; bh=v+W3a7SXw8EMXoGeWpGy5gfB1VuUlziJvetZYk3mEQA=; b=n
-	2TbSaWU61Gw1f3Rq7b2gW8ppq2Fwd5ZGhEKU6O38kbm0xoDY5i1k5VUq6apgfkLq
-	c+1id2J7txtfC2mUIB2V5IXfsOKB4rrcmYw5r4G+J31k2OKgHR83czNPVviLjBBY
-	4iwzUY++fc9hDkgCbKRtN3Shdk4A6durovSZTK5zYXfwymlP8wvW2/Nmzr9HuHZg
-	RAGXVva177d5xLI2VTRVsVg4bPK911Ekj+3hcSlOj97x0zWPt2kP5z5f67HyAlax
-	XUodSmzY8ml9jSoZqRFx1lFpDwYf5EbgxJsOMWJSkgFezK0Nzt6jlbaGPWtksSfT
-	VzIuEaU4Oo0Md+AIMrMOg==
-X-ME-Sender: <xms:Ly61ZvUeTapafB7trSBtpLwrSf56cIl_sVUXKz9vmTr6KYn9OINKng>
-    <xme:Ly61ZnloeBQK3j778FFpRfFmD9gwkr5g13NuTOdNaSNyUndBGBjqsF2VCQnAlviCa
-    jZqul_LGkb8nRbqWg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledvgdduheefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegfrhhlucfvnfffucdlfeehmdenucfjughrpefoggffhffvvefk
-    jghfufgtgfesthhqredtredtjeenucfhrhhomhepfdffrghnihgvlhcuighufdcuoegugi
-    husegugihuuhhurdighiiiqeenucggtffrrghtthgvrhhnpeeikeduveeiffekveffieeh
-    hfdtffdtveetjeefieevveffveevudetkeffffelleenucffohhmrghinhepghhithhhuh
-    gsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhho
-    mhepugiguhesugiguhhuuhdrgiihiidpnhgspghrtghpthhtohepvdeipdhmohguvgepsh
-    hmthhpohhuthdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhr
-    tghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpth
-    htohepjhhonhgrthhhrghnrdhlvghmohhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
-    vgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopeifihhllhgvmhgsse
-    hgohhoghhlvgdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhdrlhhosggrkhhinhes
-    ihhnthgvlhdrtghomhdprhgtphhtthhopehjvghsshgvrdgsrhgrnhguvggsuhhrghesih
-    hnthgvlhdrtghomhdprhgtphhtthhopehlrghrhihsrgdriigrrhgvmhgsrgesihhnthgv
-    lhdrtghomhdprhgtphhtthhopehmrggtihgvjhdrfhhijhgrlhhkohifshhkihesihhnth
-    gvlhdrtghomh
-X-ME-Proxy: <xmx:Ly61ZraJDRqTj-7ZX-LR_5V8__wJm2PKKfKLvi23mRD8IB_Uw2mivA>
-    <xmx:Ly61ZqWSKE6TQWSeN6Q1jsOUV5gdL1PSS9D-pThgyuPvpnBzi8VGLg>
-    <xmx:Ly61ZplyZj0WNPV6Ys1STlyu8yzojTJkYw0h625yFdYNgfoPSLnAiA>
-    <xmx:Ly61ZnfdhgMJNPf5lJ3qmLJFW2FYaOXb--WXdvzFgq7t9tBR5_Mv9g>
-    <xmx:Ly61ZrXXDV4JQdflZEz3gidigHiwjEjsRUOa21eTliNro41iGOYSQIF->
-Feedback-ID: i6a694271:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 4088825E0064; Thu,  8 Aug 2024 16:44:31 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1723149920; c=relaxed/simple;
+	bh=M1QDpSlOxRliBliupZF5vI/lAcRaVIg3yMzLuTIzBTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MuMkZFYFuqQwaUTAL8xb2niIsoc6FnLf7jNJcyU2T3sIuHDf6XfQ6OoPJ+nmml9xhprEVpwqXz1GjXu+KUMCTtUoJohNoJBzxEJfuFF+P5QfswFn4DoXP+iIJOqnWZc/vMyfDxHNoN815GKT7in7G+B47hpbX2WDC6J6RD7mKzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CBeOAPSU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723149917;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=18Rl4NkZJ/Sn5IqfxlHmzBxDnMO4mtO2wKlwMeZkH2Q=;
+	b=CBeOAPSUBsW8WqErbY+KIJKqKvgE+yXfrp4PWjoHW4jHS4seZBs5c16X+PfqbnwRdMdShh
+	OIZQwW3sBE4Vwa9/YjVcWN1BpfrhQmioav+UW8UIDZOkJADRV4QrhEugd1h/RYNeFOanyR
+	18C3qrPAIxk0zB8l7YZg6A2Kty40aGY=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-617-YB3vp8aFMWKba5Ch-DJwGg-1; Thu, 08 Aug 2024 16:45:15 -0400
+X-MC-Unique: YB3vp8aFMWKba5Ch-DJwGg-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3687529b63fso748105f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 13:45:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723149915; x=1723754715;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=18Rl4NkZJ/Sn5IqfxlHmzBxDnMO4mtO2wKlwMeZkH2Q=;
+        b=hySQoRiJcmwbgmiHYPpUIt5SC5WnoqTVHWsvjYYRQYScZj0ywVkz7HKVcg+pAi4Gg3
+         6bb6qHswgXIbhB7H+UB4O1Uzv7Cmuhzvzh76j+GiRTVpQM3f2A9+s4uHy4ikZwvJVsnV
+         Gw3i+Mx/gaaOz5a8lwHQCkZ2c776X8v+wRrE0Ks7I1QKrVn0rZFcKzQ6ic2ggjqQ25K4
+         wRCn+OdMRhhro/HHW/PPEtyA7iLxt8KzK7H+nOOk+pWxbpaPYr25Z6ReAobu7t9eTEsS
+         orDel5xfudSyyO3RS3OwAUMiavTk+mSBgJspk8qjo2bwoxOf0JmkhucRQ7Ac0Dl7E7oO
+         Tu2g==
+X-Gm-Message-State: AOJu0Yz4uMaAOTs7eofKkIrQRDIATzjwX3lU5LfOVHFr9u+iXXpXra9S
+	ny7JEvCxxyX0NBGbyxQ/sVR5iHYtPOyhsiaJCi+hUsa6QmKjK4EAMOatX1c/HSbcrqMFlQdKGqu
+	RsOJfXBtgOQPszdeA86XMAdkWoFoy3QIG5mDANAoX2KAXnb+ovrscsbChx7mO0w==
+X-Received: by 2002:a05:6000:1843:b0:360:791c:aff2 with SMTP id ffacd0b85a97d-36d275663acmr2629356f8f.47.1723149914611;
+        Thu, 08 Aug 2024 13:45:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSNcY6csiIyW/jq0jTa3ofS8OTkmMsPtIX7Q3oQh+KW6006/qHEu9nQT+rhEGN3BsWo3C6pQ==
+X-Received: by 2002:a05:6000:1843:b0:360:791c:aff2 with SMTP id ffacd0b85a97d-36d275663acmr2629345f8f.47.1723149914075;
+        Thu, 08 Aug 2024 13:45:14 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c713:2a00:f151:50f1:7164:32e6? (p200300cbc7132a00f15150f1716432e6.dip0.t-ipconnect.de. [2003:cb:c713:2a00:f151:50f1:7164:32e6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d2716cb01sm3050623f8f.36.2024.08.08.13.45.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 13:45:13 -0700 (PDT)
+Message-ID: <93cbdc09-8c21-483f-a6a0-f70ed676ec2a@redhat.com>
+Date: Thu, 8 Aug 2024 22:45:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 08 Aug 2024 16:44:08 -0400
-From: "Daniel Xu" <dxu@dxuuu.xyz>
-To: "Lorenzo Bianconi" <lorenzo.bianconi@redhat.com>
-Cc: "Alexander Lobakin" <alexandr.lobakin@intel.com>,
- "Alexei Starovoitov" <ast@kernel.org>,
- "Daniel Borkmann" <daniel@iogearbox.net>,
- "Andrii Nakryiko" <andrii@kernel.org>,
- "Larysa Zaremba" <larysa.zaremba@intel.com>,
- "Michal Swiatkowski" <michal.swiatkowski@linux.intel.com>,
- "Jesper Dangaard Brouer" <hawk@kernel.org>,
- =?UTF-8?Q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>,
- "Magnus Karlsson" <magnus.karlsson@intel.com>,
- "Maciej Fijalkowski" <maciej.fijalkowski@intel.com>,
- "Jonathan Lemon" <jonathan.lemon@gmail.com>,
- "toke@redhat.com" <toke@redhat.com>,
- "Lorenzo Bianconi" <lorenzo@kernel.org>,
- "David Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>,
- "Jesse Brandeburg" <jesse.brandeburg@intel.com>,
- "John Fastabend" <john.fastabend@gmail.com>,
- "Yajun Deng" <yajun.deng@linux.dev>,
- "Willem de Bruijn" <willemb@google.com>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, xdp-hints@xdp-project.net
-Message-Id: <7e6c0c0d-886e-4144-a0f4-d0d6f0faa1e6@app.fastmail.com>
-In-Reply-To: <ZrRPbtKk7RMXHfhH@lore-rh-laptop>
-References: <20220628194812.1453059-1-alexandr.lobakin@intel.com>
- <20220628194812.1453059-33-alexandr.lobakin@intel.com>
- <cadda351-6e93-4568-ba26-21a760bf9a57@app.fastmail.com>
- <ZrRPbtKk7RMXHfhH@lore-rh-laptop>
-Subject: Re: [PATCH RFC bpf-next 32/52] bpf, cpumap: switch to GRO from
- netif_receive_skb_list()
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/7] mm/x86: arch_check_zapped_pud()
+To: Peter Xu <peterx@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Oscar Salvador <osalvador@suse.de>,
+ Dan Williams <dan.j.williams@intel.com>,
+ James Houghton <jthoughton@google.com>, Matthew Wilcox
+ <willy@infradead.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Rik van Riel <riel@surriel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+ Ingo Molnar <mingo@redhat.com>, Rick P Edgecombe
+ <rick.p.edgecombe@intel.com>, "Kirill A . Shutemov" <kirill@shutemov.name>,
+ linuxppc-dev@lists.ozlabs.org, Mel Gorman <mgorman@techsingularity.net>,
+ Hugh Dickins <hughd@google.com>, Borislav Petkov <bp@alien8.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Huang Ying <ying.huang@intel.com>
+References: <20240807194812.819412-1-peterx@redhat.com>
+ <20240807194812.819412-6-peterx@redhat.com> <878qx80xy8.ffs@tglx>
+ <ZrTpD0XOUsNMM9tP@x1n>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZrTpD0XOUsNMM9tP@x1n>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Lorenzo,
+>>> +void arch_check_zapped_pud(struct vm_area_struct *vma, pud_t pud)
+>>> +{
+>>> +	/* See note in arch_check_zapped_pte() */
+>>> +	VM_WARN_ON_ONCE(!(vma->vm_flags & VM_SHADOW_STACK) &&
+>>> +			pud_shstk(pud));
+>>
+>> Please get rid of the line break. You have 100 characters.
+> 
+> Coding-style.rst still tells me 80 here:
+> 
+>          The preferred limit on the length of a single line is 80 columns.
+> 
+>          Statements longer than 80 columns should be broken into sensible chunks,
+>          unless exceeding 80 columns significantly increases readability and does
+>          not hide information.
+> 
+> Maybe this just changed very recently so even not in mm-unstable?
+> 
+> I'll fix the two line-wrap in this patch anyway, as I figured these two
+> cases even didn't hit 80..  probably because I used fill-column=75 locally..
+> 
+> But still I'll probably need to figure it out for other spots.  Please help
+> me to justify.
 
-On Thu, Aug 8, 2024, at 12:54 AM, Lorenzo Bianconi wrote:
->> Hi Alexander,
->>=20
->> On Tue, Jun 28, 2022, at 12:47 PM, Alexander Lobakin wrote:
->> > cpumap has its own BH context based on kthread. It has a sane batch
->> > size of 8 frames per one cycle.
->> > GRO can be used on its own, adjust cpumap calls to the
->> > upper stack to use GRO API instead of netif_receive_skb_list() which
->> > processes skbs by batches, but doesn't involve GRO layer at all.
->> > It is most beneficial when a NIC which frame come from is XDP
->> > generic metadata-enabled, but in plenty of tests GRO performs better
->> > than listed receiving even given that it has to calculate full frame
->> > checksums on CPU.
->> > As GRO passes the skbs to the upper stack in the batches of
->> > @gro_normal_batch, i.e. 8 by default, and @skb->dev point to the
->> > device where the frame comes from, it is enough to disable GRO
->> > netdev feature on it to completely restore the original behaviour:
->> > untouched frames will be being bulked and passed to the upper stack
->> > by 8, as it was with netif_receive_skb_list().
->> >
->> > Signed-off-by: Alexander Lobakin <alexandr.lobakin@intel.com>
->> > ---
->> >  kernel/bpf/cpumap.c | 43 ++++++++++++++++++++++++++++++++++++++---=
---
->> >  1 file changed, 38 insertions(+), 5 deletions(-)
->> >
->>=20
->> AFAICT the cpumap + GRO is a good standalone improvement. I think
->> cpumap is still missing this.
->>=20
->> I have a production use case for this now. We want to do some intelli=
-gent
->> RX steering and I think GRO would help over list-ified receive in som=
-e cases.
->> We would prefer steer in HW (and thus get existing GRO support) but n=
-ot all
->> our NICs support it. So we need a software fallback.
->>=20
->> Are you still interested in merging the cpumap + GRO patches?
->
-> Hi Daniel and Alex,
->
-> Recently I worked on a PoC to add GRO support to cpumap codebase:
-> -=20
-> https://github.com/LorenzoBianconi/bpf-next/commit/a4b8264d5000ecf016d=
-a5a2dd9ac302deaf38b3e
->   Here I added GRO support to cpumap through gro-cells.
-> -=20
-> https://github.com/LorenzoBianconi/bpf-next/commit/da6cb32a4674aa72401=
-c7414c9a8a0775ef41a55
->   Here I added GRO support to cpumap trough napi-threaded APIs (with a=20
-> some
->   changes to them).
+My interpretation is (the doc is not completely clear to me as well, but 
+checkpatch.pl hardcodes the max_line_length=100) that we can happily use 
+up to 100 chars.
 
-Cool!=20
+I also tend to stay within 80 chars, unless really reasonable. Years of 
+Linux kernel hacking really taught my inner self to not do it.
 
->
-> Please note I have not run any performance tests so far, just verified=
- it does
-> not crash (I was planning to resume this work soon). Please let me kno=
-w if it
-> works for you.
+Here I would agree that having the VM_WARN_ON_ONCE in a single would aid 
+readability.
 
-I=E2=80=99ll try to run an A/B test on your two approaches as well as Al=
-ex=E2=80=99s. I=E2=80=99ve still
-got some testbeds with production traffic going thru them.
+An example where 100 chars are likely a bad idea would be when nesting 
+that deeply such that most lines start exceeding 80 chars. We should 
+rather fix the code then -- like the coding style spells out :)
 
-Thanks,
-Daniel
+-- 
+Cheers,
+
+David / dhildenb
+
 
