@@ -1,132 +1,166 @@
-Return-Path: <linux-kernel+bounces-279436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D71894BD54
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:25:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB2E94BD57
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1B13B23056
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:25:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EF13B2318E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D1718C912;
-	Thu,  8 Aug 2024 12:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051A118C917;
+	Thu,  8 Aug 2024 12:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="LNtf2SjJ"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VnxJa4P9"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F9B18C348
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C399963D;
+	Thu,  8 Aug 2024 12:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723119898; cv=none; b=fIGXbXGk4Z7dFOlMOA3hosHqHDaCPXT2TbIr3LiJnu07OmBeKZj9PAwm3Ec9wcIERq0x3FdQPdLt0cL8S8nzDQmHlfEvYkru8+3xAer2j0StaYE3bEA0zJEydUXv+p5znzlZhOy8KSaO3qveaTLbfUMIJTLUMOLA3rrCyZpHikk=
+	t=1723119910; cv=none; b=atFrUtuln7zGbEaLi17bTuGBGTEE1PSwLZZu9SzNEAZ0YC7PO3TVbNDEQiaUprv+DyXaTwg0U10TC42q3SU13aHe9rqcnKMevMOyhaeeEDXrGHnXG29rCGKWTqkrtw9r/VC7bfClEKaWQGQyqdDfNS4kn6PIKAzelAHDrPKE904=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723119898; c=relaxed/simple;
-	bh=oEuWZae036GQ7jXBrMcJ89tlNiHxMOCogZ5ebECNtmQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QMhsbLwxIYkbIK+0ruANgWlLlL9jeNGb1iACDZ3QYcRn8UdgO7MEMW0xHwyR2Kfm4uX+zR2HUojbWrGCbXgRQEadNZxpFXjuvbDNOi0cHaaGFeLO0GmiuE5H98pQ1+9B3b5OFH2AkzpR4ePAdg9ak3LIsPWmcmgpbDkcEtZOkl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=LNtf2SjJ; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d1c176635bso461569a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 05:24:56 -0700 (PDT)
+	s=arc-20240116; t=1723119910; c=relaxed/simple;
+	bh=83O01skhPNEyX6b1nkJXchmdN8vo3orVhlU0WqlHJxQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A7yzaQmgJ6pScHc/Q5npVxcCjQ6AkUUFlfiRj1AXF7QbMRME/3eF9pE88xNO9Lu6XIMt+u+VSjH4BAc5EIzvReT+lHP1dP8VpRulTSB4+ZRhUxdsq01ytdybMPRepIhxOXUSDu5Xf7kmkzhfUd2apd08ZCS7o3r3jYySos8kizM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VnxJa4P9; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3dab336717fso633332b6e.0;
+        Thu, 08 Aug 2024 05:25:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1723119896; x=1723724696; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rfAfcdXAF2CMiBj/87aqcHqpCcyX1shZ8yk7dz5R1uE=;
-        b=LNtf2SjJLYdsaPx7VLojoda/3Kbcgx30u7UpKXvxgE+C1MBnheUJp4JzpeU3titslf
-         JZLkLG5RoItHjrDc8RP6dEr232gerQ+x2nT1fogmcFr/w0KvX/6sFFBABHqc95noJUQZ
-         6b7zlRrQLJ6Knw/O097tLkRDZtfbD+96DEQtqVCS0IzAultCFexgIxGCHvSJ9xVvqGZ1
-         on+O0gK/iVEFkJOWf8MOTEj9B3BMjiDKJG5WVCNnovGd8pCufa/tGlYhU+/wGPrjuiWK
-         JLb8QMa7y+QYzbGCqSqxNCaFUwzHX0U6WL10PW2Hg5SECiKlBUccv672YDyHr5EPNAmr
-         lDgw==
+        d=gmail.com; s=20230601; t=1723119908; x=1723724708; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V11qWEGhEyP7hThEnp51V2Dz5DUj4qW2UBjRZILqErI=;
+        b=VnxJa4P9qdzPz48ss/P8H8G6I9+Mgmi5RUMTd/r63dCQhd1QRKb+4GjU5L7SNVWpno
+         /zo4DUyfxfEiN79NBxAQjeoySSiBKuVsfukLbDylo03iA2GqVo225V9wbgq92kWmoq9a
+         cg08xQ4Fkxq2/zhESlO/buHoI3PvutFbQf4GzBizdpv8/rFsZu/hY1rs3IBiG4PEHXJo
+         TKAueMSGG8C7dp/Hm+hiJ1r7AXm3oRO3I7kxmqnq7v9/g8X35cS3fFsLWt5aRKYdZXWj
+         2+Cch3VSgXRrxwAEb8cRlTAzWeIThRLnK36iK9AfwdkhqIaTXTXYdKGzV8W1WOeV3hJV
+         VnfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723119896; x=1723724696;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rfAfcdXAF2CMiBj/87aqcHqpCcyX1shZ8yk7dz5R1uE=;
-        b=SuQmSxHBlefz+mpxvrTS4TA99OaCQiS5hdwGXnMdBHqJf3aTdMVqJ7NzU4jXIK4Sw0
-         +ehSb5xFUpvEcncArNfqGpi3x0OUu5GsqYyo2ZVQl2RHfHQvo/zPbC8eWlX2JqBYf1gj
-         KX3ghyo7gix2NUDoCh0VC9AK3dFXWuFiCSNgoK5buWlwDcRMGj18l7FmJdGOHsadZTlf
-         JTQOzFcHRX2Hel8vMk4KYKdkCsqyHzg4zkSTpHkqJbxAZjj9AN9go4EXaHTrEn6Q+uyj
-         73XccxKgNl/sf4286oSSpfrzBuEOJdUn72KLFify+Tq9ur13nq5enVOw1NQycYj4136d
-         /1vA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGdoWkcFKkJt6LsA3/sYrR88oi2NcxOUKe37FXvq3OtFSOqhDHa2prRl3YasciXa/S92HyIB3WXXvMEHyghhJqcnDw4Rjm5sbU517r
-X-Gm-Message-State: AOJu0Yycnlovr/wi/wKBBDOhNxt59TREuhwkKgbnVwfwoiFfDu33c3v+
-	d5dD2xx2SwU2aTKPEnmEKFD5M/CHe0ksKh03fRLiWhKAADcpWx/kFL+CpTm1tUiXzgNTbOZA4EW
-	nPlzYTaFzFSt03x9vwCmIV05hnd/RDPcKzoi/NA==
-X-Google-Smtp-Source: AGHT+IGZfCQrsBQaBp8v+W2s/fAHN32pPPoANaguDaxiXXrdG2KlTFuQjIkgMbIJzL0P5hzPmIHrN+c6QDv66p+Xf3Y=
-X-Received: by 2002:a17:90b:4aca:b0:2c9:96fc:ac54 with SMTP id
- 98e67ed59e1d1-2d1c336efb2mr1862632a91.2.1723119896355; Thu, 08 Aug 2024
- 05:24:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723119908; x=1723724708;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V11qWEGhEyP7hThEnp51V2Dz5DUj4qW2UBjRZILqErI=;
+        b=ddvgkQaifg8JTaNFkKh2mveR5tIfmHgz2mIuUL7pEDqwLPi2q03uTTkHfxo4wJHU2W
+         9Bss7an6j7ASRvF1wM07memTuUHAMHWhIwLvoBzcXSZUuPaLJwxYvhV4t3AgU7zHgbym
+         8Xqlq1VBHCUrj7wMl1tO0WHAKjJdCCsizy1IPdNMU/1Rqn6LQRcFLdRAqElm6O1XTIfc
+         xSxhSlhx2gKSpeaB2+fRMQLi6ZmHZ3HWeCo2c6vsH4COyElHImG2mdSeBi6S7BwA5sa+
+         Nsbry7Mb5o4Q1hK7v5qOF31qxcsZXMti71c5e4yII6EFixiDxC92YqcMgomxc6qnTyIW
+         Inng==
+X-Forwarded-Encrypted: i=1; AJvYcCWnwpTa5onKz/INM/6gDTE250e2JtiiDIIkHUQ62EP31SrgMzTg6TGXDzNyGDJc/vLNqXcbv5Z+V5fshPOUzWi6sX9y6uLqn8wutR0sbv3qjm/BpFv0LY8/s3EfQcLAQSPVa3vXzLfKUKVcV8PU32tbyo9K04kQh5eGtv0Odi5/s2k/CXe0
+X-Gm-Message-State: AOJu0YzWuvs75iim6MFxZmQ/+VmHp5yfO0uAGa/eKHpge5CQ0xr9o+6i
+	lJWaHz7qEtKXrCOABXMQ4CC41ZkdZLZLmGHgm+uIotl3r3tyhKTb
+X-Google-Smtp-Source: AGHT+IFNF4/TI/RiZzBmCojYf0q0UhYhR9ISOwG+XMI5KF4KMxeYzVN7hNhuuscPM8M7bTDbGfqRKg==
+X-Received: by 2002:a05:6808:1a05:b0:3d9:30a2:f8f9 with SMTP id 5614622812f47-3dc3b1bf4camr2122895b6e.0.1723119907581;
+        Thu, 08 Aug 2024 05:25:07 -0700 (PDT)
+Received: from dev0.. ([49.43.168.245])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7bb819e782csm5530478a12.48.2024.08.08.05.25.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 05:25:07 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	shuah@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.org,
+	javier.carrasco.cruz@gmail.com,
+	Abhinav Jain <jain.abhinav177@gmail.com>
+Subject: [PATCH v5 0/2] Enhance network interface feature testing
+Date: Thu,  8 Aug 2024 12:24:50 +0000
+Message-Id: <20240808122452.25683-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807150019.412911622@linuxfoundation.org>
-In-Reply-To: <20240807150019.412911622@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Thu, 8 Aug 2024 21:24:45 +0900
-Message-ID: <CAKL4bV4CXPtyD9Jj5wmUjMnmNgre5UVtmVj-hGAWA7VjRJrzsA@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/121] 6.6.45-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Greg
+This small series includes fixes for creation of veth pairs for
+networkless kernels & adds tests for turning the different network
+interface features on and off in selftests/net/netdevice.sh script.
 
-On Thu, Aug 8, 2024 at 12:07=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.45 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 09 Aug 2024 14:59:53 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.45-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Changes in v5:
+Rectify the syntax for ip add link.
+Fix the veth_created condition check.
 
-6.6.45-rc1 tested.
+Changes in v4:
+https://lore.kernel.org/all/20240807175717.7775-1-jain.abhinav177@gmail.com/
 
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
+Move veth creation/removal to the main shell script.
+Tested using vng on a networkless kernel and the script works, sample
+output below the changes.
 
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+Changes in v3:
+https://lore.kernel.org/all/20240614113240.41550-1-jain.abhinav177@gmail.com/
 
-[    0.000000] Linux version 6.6.45-rc1rv
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20240805, GNU ld (GNU
-Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Thu Aug  8 20:02:46 JST 2024
+Add a check for netdev, create veth pair for testing.
+Restore feature to its initial state.
 
-Thanks
+Changes in v2:
+https://lore.kernel.org/all/20240609132124.51683-1-jain.abhinav177@gmail.com/
 
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Remove tail usage; use read to parse the features from temp file.
+
+v1:
+https://lore.kernel.org/all/20240606212714.27472-1-jain.abhinav177@gmail.com/
+
+```
+# selftests: net: netdevice.sh
+# No valid network device found, creating veth pair
+# PASS: veth0: set interface up
+# PASS: veth0: set MAC address
+# SKIP: veth0: set IP address
+# PASS: veth0: ethtool list features
+# PASS: veth0: Turned off feature: rx-checksumming
+# PASS: veth0: Turned on feature: rx-checksumming
+# PASS: veth0: Restore feature rx-checksumming to initial state on
+# Actual changes:
+# tx-checksum-ip-generic: off
+# tx-tcp-segmentation: off [not requested]
+....
+....
+....
+# PASS: veth1: Restore feature tx-nocache-copy to initial state off
+# PASS: veth1: Turned off feature: tx-vlan-stag-hw-insert
+# PASS: veth1: Turned on feature: tx-vlan-stag-hw-insert
+# PASS: veth1: Restore feature tx-vlan-stag-hw-insert to initial state on
+# PASS: veth1: Turned off feature: rx-vlan-stag-hw-parse
+# PASS: veth1: Turned on feature: rx-vlan-stag-hw-parse
+# PASS: veth1: Restore feature rx-vlan-stag-hw-parse to initial state on
+# PASS: veth1: Turned off feature: rx-gro-list
+# PASS: veth1: Turned on feature: rx-gro-list
+# PASS: veth1: Restore feature rx-gro-list to initial state off
+# PASS: veth1: Turned off feature: rx-udp-gro-forwarding
+# PASS: veth1: Turned on feature: rx-udp-gro-forwarding
+# PASS: veth1: Restore feature rx-udp-gro-forwarding to initial state off
+# Cannot get register dump: Operation not supported
+# SKIP: veth1: ethtool dump not supported
+# PASS: veth1: ethtool stats
+# PASS: veth1: stop interface
+# Removed veth pair
+ok 12 selftests: net: netdevice.sh
+```
+
+Abhinav Jain (2):
+  selftests: net: Create veth pair for testing in networkless kernel
+  selftests: net: Add on/off checks for non-fixed features of interface
+
+ tools/testing/selftests/net/netdevice.sh | 53 +++++++++++++++++++++++-
+ 1 file changed, 52 insertions(+), 1 deletion(-)
+
+--
+2.34.1
 
