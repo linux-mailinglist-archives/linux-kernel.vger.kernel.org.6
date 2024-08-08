@@ -1,174 +1,137 @@
-Return-Path: <linux-kernel+bounces-279831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CC294C25C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:12:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D76494C25B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1E7B1C21D48
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:12:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A225B24087
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D15018FC8C;
-	Thu,  8 Aug 2024 16:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999B318FC8C;
+	Thu,  8 Aug 2024 16:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dy/eunAM"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QBah4X24";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bKgKnf0X"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E6A8003F;
-	Thu,  8 Aug 2024 16:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DD28003F;
+	Thu,  8 Aug 2024 16:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723133544; cv=none; b=Pc/jmjt1YAFoqvs72OBBIabzN0P4QaKXKQBY+IhXXLjIomBpib11BRW/2DTDFq2YN3F4FoGjoCqR1OST5MLi2pd8dtseo1PqeESz03bYx4rUwTxclOSMQ35Xtms+gTBg5o4PBo+sjnjZbhS3xvduG+ztUZc52UcZg9h7XCSjSVs=
+	t=1723133529; cv=none; b=j/pPNDz1pszfDJHfkmdNi3a5FPmIU87fUz32AWoh4aj977glbfZcYs7T1BMMJD+LVZ7emENNKoPgcoxrNLUIsMfGcTKiOY3auX995c4SGIag9AaVKTHPCoIEeRqrQgrPORYMrmlgM4do70qylZHNi9Tm5dJELPepTC39xw4L4wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723133544; c=relaxed/simple;
-	bh=NPcCWE9JDf1UNWxBSJvokap4mHWY+/gUsMv0AVn6jrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mkycZOw9B5fMqe1tcmF2l8WDaGH9MEAbZ2OGFP+3jzsC1x+r/pn0Cu39L5qoLeFUuXhGEWDWoQ5fia6CGfHbYQSyco0fR2AVAzZXg7M3r/2ER4/KVqLd+dd1H8f/Sfo39X0xivnhFA+t7tI3ifXUXcSZt5HZ7IoiuSwtk8tq+pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dy/eunAM; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-26106ec9336so546435fac.2;
-        Thu, 08 Aug 2024 09:12:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723133542; x=1723738342; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CwjAxdVOY0pC/qoBsDNK4asfEsMb6nFG73VzDaJ5Xes=;
-        b=dy/eunAMiQh7CP8p2nIVnQQ9g7QN7CsaLztW4Buad1bbD9VGe2tEXsZN09LpxyA/Ci
-         BawCXjd0it+9fsMWUaYWe7elJrfiy0KkNesnEwMQHZCXKuLbEXTL4p93ERVa37+DIfVz
-         dTg5ibPVPvfmLcG9GmDTGDY/rsJfYnF7qBORg8DfOJKEwFaLF7V+BvpDs4GdXjQtu13U
-         dqCUWdzzdqIBAd6G0NzCECrYjQZ3OTemNHhn0qx/5RMxoCFcMee1VQk8viP/AUEW0CND
-         qkoRT11RG7HwgRhtJM+N9wHIONOzfANKzv62cUVOeczX+JIpwgzo3uWX7yK/1WknW18u
-         KLEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723133542; x=1723738342;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CwjAxdVOY0pC/qoBsDNK4asfEsMb6nFG73VzDaJ5Xes=;
-        b=gtMI5GQs4ZMoez5gilc1fsrPqgocouCmb0N1dBP3JywtEpCj78nqEjtmdsUAGsK0O8
-         dkWr2XUD8ZL+OIgQfjYOLPvPvtbdQpmjKJAWoe1kcXhfiOjxJO5HllQZ1/z4CWrSAtyV
-         AEE7QTdvuFUl0W7Czk+j1IQjbO5Qp7z0PsovL29Qv4JK0p3LrYV0bsWGVPpKlmKSn7LK
-         CeTWL0v+YvgFBZrGANqJGRc+sSIbggjKy4jS098wRh8N1oGp7A7wMrbeN+IjtboAznHW
-         ClNMxMt7opojvWjV85uMIisuZTowuHSi/SE79WthrSJVx56O077TK+gmqnd7VcQrSkkE
-         Kx2g==
-X-Forwarded-Encrypted: i=1; AJvYcCV1ks31KWhIb92NHWWx/izGzfPewrKo06o9GCbEvk1SseFdfnvgIzPd0PJX1muHJUQDsI2qmHIIWdtPHjMym6f8otbON1I7SZEGykNiFMHLCsILjhIA7lHwX72YA+mwTMkA
-X-Gm-Message-State: AOJu0YzrkR0tUy0RjqdvMpbUUcth+ObJAeJ6K1JJw1YkskSA5wt/TPzq
-	wJiAbzpX/GGNw3g4wlAg7rW6PSNax8YSWSBk8KcR9Ryka4xcGY6+vwPx3A==
-X-Google-Smtp-Source: AGHT+IGrBMRECOobD5lzJn86Kl6mqTTovGDMo+mfEWyVCm52JzFNgCvXhD/7xWC0tENc9UzLDdGEoA==
-X-Received: by 2002:a05:6870:2105:b0:260:f244:a0ce with SMTP id 586e51a60fabf-2692b218157mr3032944fac.0.1723133542326;
-        Thu, 08 Aug 2024 09:12:22 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3785d2a8dsm173956385a.10.2024.08.08.09.12.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 09:12:21 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 79251120006A;
-	Thu,  8 Aug 2024 12:12:21 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 08 Aug 2024 12:12:21 -0400
-X-ME-Sender: <xms:Ze60ZjBnModWA-A8GcPnlapQCNIO_2rYkFbs479ZbcoGZN37SozOzA>
-    <xme:Ze60ZpgrYeFgPRBNDAJmTkJhywye432W0bQdc2UCWGjw2RZ8emVboPk5Z9NYrJ61c
-    0MK5el91YtXUMUEtg>
-X-ME-Received: <xmr:Ze60Zul3CjswJ2Ts5na5CYeDb5BEIxeOMOnOPPGQceGXAq78Z5Kimc-n8as>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledvgdeljecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecu
-    hfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtg
-    homheqnecuggftrfgrthhtvghrnhephfetvdfgtdeukedvkeeiteeiteejieehvdethedu
-    udejvdektdekfeegvddvhedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhm
-    vghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekhe
-    ehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghm
-    vgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
-    hpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmihhnghhosehr
-    vgguhhgrthdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhonhhgmhgrnhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhu
-    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglh
-    igsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepphgruhhlmhgtkheskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohepfhhrvgguvghrihgtsehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhg
-X-ME-Proxy: <xmx:Ze60ZlzQ32i2OOocdnvCyM8b2MTDtB0qOEMB2-gttMI22qapQogG8Q>
-    <xmx:Ze60ZoQjktV9IjL4dU4bp_Ib2yg0y7VnX7FiKagPa4BJi2YdDHw6og>
-    <xmx:Ze60ZoZTuPHkdvs9BKwYpbo3vshEFvyFErEFu28-oXNZhSTXq1zt9g>
-    <xmx:Ze60ZpSFqyx6hoTIW4MhYKE-J4Vso77gqLYZljnxBy-KaOSfnPPTtQ>
-    <xmx:Ze60ZuCkK6QpEtJR7m4SbMlfcWSMofU_Nlvxq8O_yjacexDp0U9BxLfK>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 8 Aug 2024 12:12:21 -0400 (EDT)
-Date: Thu, 8 Aug 2024 09:11:12 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, will@kernel.org, longman@redhat.com,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de,
-	paulmck@kernel.org, frederic@kernel.org, josh@joshtriplett.org,
-	neeraj.iitr10@gmail.com, urezki@gmail.com, rcu@vger.kernel.org
-Subject: Re: [GIT PULL] LOCKDEP changes for v6.12
-Message-ID: <ZrTuINZIQhWuB7s7@boqun-archlinux>
-References: <ZrQ97Zz27Tzmr0Zi@tardis>
- <20240808101939.GG31338@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1723133529; c=relaxed/simple;
+	bh=NBOphetkuK1QDK/ZU1SMUqcKu9vqXMvp2ldGj9c2lno=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uAwJKnWYIWR//xe4p0FxxerFzN63ZqvGFFZCOD3EuN0QOJQRZ2RT8h7magLGSlGwW1ogvm3yBzQMG3c/pO0tXbXYWbEmBJ1KN7wAXGFzuSBQtsCJ7qkE6tjf7PMa45SwMBTed+gqR03gJiQj3aZFupoHNEs7/oRSI2qHTgVTvVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QBah4X24; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bKgKnf0X; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723133525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rbK1kwOMlzSlhFlVjG+CRVMzNiTCxjOS9hUbnipGmdo=;
+	b=QBah4X243vmf/D1560ypXArNinqDTFJcnqMuKQQxQLAtNK0yQh3WrNjRNe84QFqLu4iW25
+	bOVgqcleOOWm9RPUcFfXhO3JuOR7YMR2Ydq+mBm+AlVceevQpQ16NBr0btw09FCyCMK2P7
+	QOgfwpxqLgBrEuvBDVeAV7b0nJJ+cGDzVcUISm7NqVW1DDRJmwNAuk9340KlRcPFdrPBUd
+	aKTtcvUdWo+wS91hlqnCroVOaQ/spdxusG0GY567a3WPMN0gM6vYpJl2M4vakW7TUF60Hs
+	TJd5onynjl2X7pelfBjY1I62qz5ynp7rqZ7UMwZxCmBXqvrcxReI3kB8WSb/rA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723133525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rbK1kwOMlzSlhFlVjG+CRVMzNiTCxjOS9hUbnipGmdo=;
+	b=bKgKnf0XUFwW6ZAvvBYIPk8zC6dvtPVqkOyOoVKmXPtDHmwoGA38WJqwoqqzqwQ0Ba+/ni
+	zFY84uSmrFVwHkDQ==
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Vlastimil Babka <vbabka@suse.cz>,
+ linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>, Helge Deller
+ <deller@gmx.de>, linux-parisc@vger.kernel.org
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+In-Reply-To: <CAHk-=wi_YCS9y=0VJ+Rs9dcY-hbt_qFdiV_6AJnnHN4QaXsbLg@mail.gmail.com>
+References: <20240731095022.970699670@linuxfoundation.org>
+ <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
+ <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
+ <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <87le194kuq.ffs@tglx>
+ <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz> <87frrh44mf.ffs@tglx>
+ <76c643ee-17d6-463b-8ee1-4e30b0133671@roeck-us.net> <87plqjz6aa.ffs@tglx>
+ <CAHk-=wi_YCS9y=0VJ+Rs9dcY-hbt_qFdiV_6AJnnHN4QaXsbLg@mail.gmail.com>
+Date: Thu, 08 Aug 2024 18:12:05 +0200
+Message-ID: <87a5hnyox6.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808101939.GG31338@noisy.programming.kicks-ass.net>
+Content-Type: text/plain
 
-On Thu, Aug 08, 2024 at 12:19:39PM +0200, Peter Zijlstra wrote:
-> On Wed, Aug 07, 2024 at 08:39:25PM -0700, Boqun Feng wrote:
-> > Hi Peter & Ingo,
-> > 
-> > Per discussion:
-> > 
-> > 	https://lore.kernel.org/lkml/20240802151619.GN39708@noisy.programming.kicks-ass.net/
-> > 
-> > I'm sending a PR with some lockdep changes to tip.
-> > 
-> > 
-> > The following changes since commit d5934e76316e84eced836b6b2bafae1837d1cd58:
-> > 
-> >   cleanup: Add usage and style documentation (2024-08-05 16:54:41 +0200)
-> > 
-> > are available in the Git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux tags/lockdep-for-tip.20240806
-> > 
-> 
-> Right, so a few things for next time, could you read
-> Documentation/process/maintainer-tip.rst and make sure patches more or
-> less adhere to the things outlined there.
-> 
+On Thu, Aug 08 2024 at 08:53, Linus Torvalds wrote:
+> On Thu, 8 Aug 2024 at 02:57, Thomas Gleixner <tglx@linutronix.de> wrote:
+> Hmm. There's a few patterns there:
+>
+>  - the incorrect Maxobj is always 16, with wildly different sizes.
 
-My bad! I will definitely do a better job next time.
+Which means that the size value is rounded up to the next power of 2
 
-> Things I noticed in the few seconds I looked at things:
-> 
-> Subjects don't start with a capital letter after the ':'
-> 
-> The Changelog for the lockdep-vs-rcu thing can be much condensed by not
-> including full stack dumps but only the relevant information.
-> 
-> If you don't want to edit patches by hand, you're free to push back and
-> get the submitter to do things before applying them.
-> 
+>> [    0.000000] Order: 1 Size:  384 Nobj: 21 Maxobj: 16 21 Inuse: 14
 
-Got it.
+   8192/16 = 512
 
-> Anyway, since I'm about to head out to the beach, I'm pulling this. Also
-> I need to figure out how git works with remotes and tags... stupid
-> things :-)
->   
+>> [    0.000000] Order: 0 Size:  168 Nobj: 24 Maxobj: 16 24 Inuse:  1
 
-Enjoy the beach ;-)
+   4096/16 = 256
 
-Regards,
-Boqun
+>> [    0.000000] Order: 3 Size: 1536 Nobj: 21 Maxobj: 16 21 Inuse:  1
+
+  32768/16 = 2048
+
+>> The maxobj column shows the failed result and the result from the second
+>> invocation inside of the printk().
+
+> I actually went into the gcc sources to look at the libgcc routines
+> for the hppa $$divU routine, but apart from checking for trivial
+> powers-of-two and for divisions with small divisor values (<=17), all
+> it is ends up being a series of "ds" (divide step) and "addc"
+> instructions. I don't see how that could possibly mess up. It does end
+> up with the final addc in the delay slot of the return, but that's
+> normal parisc behavior (and here by "normal" I mean "it's a really
+> messed up instruction set that did everything wrong, including branch
+> delay slots")
+>
+> I do note that the $$divU function (which is what this all should use)
+> oddly doesn't show up as defined in 'nm' for me when I look at
+> Guenter's vmlinux file. So there's some odd linker thing going on, and
+> it *only* affects the $$div* functions.
+>
+> Thomas' System.map shows some of the same effects, ie it shows $$divoI
+> (signed integer divide with overflow checking), but doesn't show
+> $$divU that is right after it. The reason I was looking was exactly
+> because this should be using $$divU, and clearly code alignment is
+> implicated somehow, but the exact alignment of $$divU wasn't obvious.
+>
+> But it looks like "$$divU" should be somewhere between $$divoI and
+> $$divl_2, and in Guenter's bad case that's
+>
+>   0000000041218c70 T $$divoI
+>   00000000412190d0 T $$divI_2
+>
+> so *maybe* $$divU is around a page boundary? 0000000041218xxx turning
+> into 0000000041219000?
+
+It uses $$divU which is at $$divoI + 0x250. I validated that in the
+disassembly.
+
+Thanks,
+
+        tglx
+
 
