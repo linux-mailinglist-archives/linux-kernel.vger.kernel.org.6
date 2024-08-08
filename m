@@ -1,122 +1,104 @@
-Return-Path: <linux-kernel+bounces-279521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52BD494BE6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:18:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE64394BE6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FBA2289B5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:17:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8104D2827D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FA218E024;
-	Thu,  8 Aug 2024 13:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F02318CBF5;
+	Thu,  8 Aug 2024 13:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N/L8YIQC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="qi2pkW44"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F3218DF94
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 13:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297E5188012;
+	Thu,  8 Aug 2024 13:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723123063; cv=none; b=FlB3hm64108RFk7AE1wfn0uhI3qloAWxcFdWgZf5DCE20edhxKaguTdA3hO8VoRunHhooJjVlZcGd6Q04HX0zF7+no+8jrshnJ09bm4RRICr7vZrvgs19JOXJf2qzkMoYuDR1PCJxZ27banKe+aQwaMBefsvupMXRkJkuAUuI20=
+	t=1723123058; cv=none; b=pXKVaRfG2muKT8/F2dQIb+oS1ao/5k9Ih6Mw33HsAekKF52lW7LArZicuA9rmBREda37qHZ21arq+pBAHefocYa+fY8D+GpZfi2va1cwkyN0p+kqjHBxWwjyoJqKNi1BzaBszWDFIaJvlnfYE9hX4Yt2y3C6FCzxfHYUwsxPZeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723123063; c=relaxed/simple;
-	bh=t+LPtWnKwFmta+rcn4kHZtopq4a0rOzX4dLqMmte6o8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CNpyDImMUrpUnHiESflohN/vwpj7K3XFsg1FgEOfimzA2Rf1GVrvfsFWqyvoUTyU/3LiB1gNeeWqUoYAfKboGiz9kk6vfVWlufnKOyHtW2iQ76sPvL1EcORa6NZUnsyduiRMDcrXx6Gu+RvBrEyUN5sZO7/Q1wyinmVxl5+OZfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N/L8YIQC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723123061;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XD7FvdIckarUhrXzB2SzlPRAVb193xDecLuQI6dSDYI=;
-	b=N/L8YIQClWvNmIrTPkoPo/3lSWH8BBGCusBHrKHYQmF8dN0B4BNUstFB1tbzU0rjPA2oNF
-	FwWeuqSbK2ytngpW2rpmZKm1mjPvVDqp5DPkgYdneUZTP9OYzwujRGu8MygPIHQBqovFtE
-	snI6dd07jL/t/A/GkUVEvQLIZf+bm4s=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-435-2rSh06GzOoKOsVWkOzbomQ-1; Thu,
- 08 Aug 2024 09:17:34 -0400
-X-MC-Unique: 2rSh06GzOoKOsVWkOzbomQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	s=arc-20240116; t=1723123058; c=relaxed/simple;
+	bh=tAkUM349MBB9ygWpP0YmVSM14pjf3ShEmbYr/yOgm4I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oqD8CuhB6LJtjL3iHP7G/xuRhIS+YnfiJObCniYwKoVz5D2uoC4hOun0qJy7BDJx/UlUZkcFP3T0eROgrJyhXeMXbE/lW6eo180bvgRogqM839av2GC8HY9sqQvs/KDB58j5rT6gbvy2OLHCkOXY7yfhnuSkT6qE8YwENEnR/wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=qi2pkW44; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3A0F2418AF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1723123056; bh=C+/tNLsG2YZ2hXnH2YATaWHxkruINKGFqJVnuP6i+Js=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=qi2pkW44noL9wwPrgrbLQoiXjSRg1BFOzIJt0h8L+3w9U+mXItfuTknhA2riWxtjL
+	 L3JQkmlcDX197hL0QrRjvH7+pGAeJrTnsQDACqrpCjRwPdrLU8TrrkSMv0X/OwLk6U
+	 ZtYjfpmtll+DCZ8Ws/WZ5hWrY+kF6CYVHCSUkVY3ycYXZMF4kHBlY+1i/KoW23Sryl
+	 x+TcplP13rYr9HKtNBOFWONmS55oY1/VQm0ylSv2hkiFiIdlit8FPy+QqAwzKiu9Ji
+	 IgPv7DBU8fDk4nFc/GIGeOtekhMZlss3zTbK2rELVf69W1n6UiGGnry9OBr+HYpfWu
+	 wn7QfXVbncyWw==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DF5811955D59;
-	Thu,  8 Aug 2024 13:17:31 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.189])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 182F319560AA;
-	Thu,  8 Aug 2024 13:17:24 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu,  8 Aug 2024 15:17:30 +0200 (CEST)
-Date: Thu, 8 Aug 2024 15:17:22 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Liao, Chang" <liaochang1@huawei.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, paulmck@kernel.org
-Subject: Re: [PATCH] uprobes: Improve scalability by reducing the contention
- on siglock
-Message-ID: <20240808131722.GD8020@redhat.com>
-References: <20240801082407.1618451-1-liaochang1@huawei.com>
- <20240801140639.GE4038@redhat.com>
- <51a756b7-3c2f-9aeb-1418-b38b74108ee6@huawei.com>
- <20240802092406.GC12343@redhat.com>
- <0c69ef28-26d8-4b6e-fa78-2211a7b84eca@huawei.com>
- <20240806172529.GC20881@redhat.com>
- <20240807101746.GA27715@redhat.com>
- <3bb87fb4-c32e-0a35-0e93-5e1971fe8268@huawei.com>
- <20240808102837.GC8020@redhat.com>
- <ef7b6889-7e15-1ff3-c7a5-b3c6dabb13d4@huawei.com>
+	by ms.lwn.net (Postfix) with ESMTPSA id 3A0F2418AF;
+	Thu,  8 Aug 2024 13:17:36 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Guo Xuenan <guoxuenan@huawei.com>, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, guoxuenan@huawei.com,
+ guoxuenan@huaweicloud.com, jack.qiu@huawei.com, ganjie5@huawei.com
+Subject: Re: [PATCH] Documentation: dontdiff: remove 'utf8data.h'
+In-Reply-To: <20240808085707.3235019-1-guoxuenan@huawei.com>
+References: <20240808085707.3235019-1-guoxuenan@huawei.com>
+Date: Thu, 08 Aug 2024 07:17:35 -0600
+Message-ID: <87sevfp30w.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef7b6889-7e15-1ff3-c7a5-b3c6dabb13d4@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain
 
-On 08/08, Liao, Chang wrote:
+Guo Xuenan <guoxuenan@huawei.com> writes:
+
+> From: ganjie <ganjie5@huawei.com>
 >
+> Commit 2b3d04787012 ("unicode: Add utf8-data module") changed the
+> database file from 'utf8data.h' to 'utf8data.c' to build separate
+> module, but it seems forgot to update Documentation/dontdiff. Remove
+> 'utf8data.h' and add 'utf8data.c'.
 >
-> 在 2024/8/8 18:28, Oleg Nesterov 写道:
-> > --- x/kernel/events/uprobes.c
-> > +++ x/kernel/events/uprobes.c
-> > @@ -2308,9 +2308,10 @@ static void handle_singlestep(struct upr
-> >  	utask->state = UTASK_RUNNING;
-> >  	xol_free_insn_slot(current);
-> >
-> > -	spin_lock_irq(&current->sighand->siglock);
-> > -	recalc_sigpending(); /* see uprobe_deny_signal() */
-> > -	spin_unlock_irq(&current->sighand->siglock);
-> > +	if (utask->xxx) {
-> > +		set_thread_flag(TIF_SIGPENDING);
-> > +		utask->xxx = 0;
-> > +	}
+> Signed-off-by: ganjie <ganjie5@huawei.com>
+> ---
+>  Documentation/dontdiff | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Agree, if no more discussion about this flag, I will just send v2 today.
+> diff --git a/Documentation/dontdiff b/Documentation/dontdiff
+> index 3c399f132e2d..94b3492dc301 100644
+> --- a/Documentation/dontdiff
+> +++ b/Documentation/dontdiff
+> @@ -262,7 +262,7 @@ vsyscall_32.lds
+>  wanxlfw.inc
+>  uImage
+>  unifdef
+> -utf8data.h
+> +utf8data.c
+>  wakeup.bin
+>  wakeup.elf
+>  wakeup.lds
 
-Please also resend the previous patch a 1/2, this one as 2/2.
+I'll apply this, but does anybody actually use the dontdiff file
+anymore?  I think it's old and, if being used, actively harmful; for
+example, it masks changes to "parse.c", an instance of which was added
+to git in January.
 
-Oleg.
+Is there a reason to not just remove this file?
 
+Thanks,
+
+jon
 
