@@ -1,350 +1,178 @@
-Return-Path: <linux-kernel+bounces-279983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9091B94C426
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:19:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6132594C427
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 823F8B22322
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:19:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12B9F287337
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16AD113C814;
-	Thu,  8 Aug 2024 18:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfKeYEaX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBF4146A7A;
+	Thu,  8 Aug 2024 18:19:34 +0000 (UTC)
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE3DC8C0
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF0F78281
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723141149; cv=none; b=S1/1Xm/FiAAqDmc3mvvsjeE/515YNTtqiixLBXcsfHg07FZqrQWl2c6NwYr+UuD+s3dedDzfnBJr9+RvnYne2AI7dKTzE8uIjK9QySiNOpcTxuasNlTYfDhyncJhouEKeh3XUcXcO4alZVvNKfv/FCUCir1Fi5VsKr06WvXFLiw=
+	t=1723141173; cv=none; b=GKTZWAn/AvTrrYPe2UVqhursiGkYjWHtgvBZvX6i4qdksqoRQjqGEzpUbW1mztTVXV4arrYVOm5rc2M3ClS8UIj0Y53YqLIAqnRGVObTK5sfpjcBJay7fnZJicqQ7e7m0zIOnvPBO7mqg4tJcgOFMxTEdhwtf06vjCa0KM5UUdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723141149; c=relaxed/simple;
-	bh=lNtv5zBgXCvx+K+5RYRjAeXGbTDns12ucj1yqMgqPeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZPul96EfIwa7Q5Afki7A4z2RArKpPFfMZcLU0A05u7CNHAP9V2UFBpzxfyyd8YBZzS9O8oA4lAZpwzpAhVLnja8iZKCqbq8ICZN4wJK+wDIuLnJ/6oGmiaZ4BiH4WvDcopHQN8nGDAUNmDKQf/NbU4JUeRIS6vYU2iR7cDTKFqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfKeYEaX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E51BC32782;
-	Thu,  8 Aug 2024 18:19:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723141148;
-	bh=lNtv5zBgXCvx+K+5RYRjAeXGbTDns12ucj1yqMgqPeU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TfKeYEaX1uiiBliJJdsFgDl8rhjC7angIR1yD0eu+3JQo5MAPVvTbJhslw0Fl+N2d
-	 L/Hf2yLg2PUUw1i7MKYDDxVws8Dq5pZYjfwgWcZ0t/JdmdG+tMO6PlWu7ygDFSlsv8
-	 Q+giDNG0cqsBsFNjqMafKe9Uivfl/jYddlwqgSmQwy+++HcOp+Jw/CngY+NT0C/kL+
-	 jTQkJ4cmMWovGV5rJdhZoss+bB1SOGLNlOx9V03zhK5ne1vwh06hFY4zblPvke8HDq
-	 tKTd0Dzpht+mzjx7ktA6WC0HI2FUrjqoXha9jSoSfl/EGM+IGJ6BtZtRkNry5ZTV6A
-	 Y/K22nDvbmFpw==
-Date: Thu, 8 Aug 2024 20:19:03 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- <linux-kernel@vger.kernel.org>, <qemu-arm@nongnu.org>,
- <qemu-devel@nongnu.org>
-Subject: Re: [PATCH v5 6/7] acpi/ghes: add support for generic error
- injection via QAPI
-Message-ID: <20240808201903.077093ca@foz.lan>
-In-Reply-To: <20240808101107.105a124f@imammedo.users.ipa.redhat.com>
-References: <cover.1722634602.git.mchehab+huawei@kernel.org>
-	<20c491e357340e0062b6ff09867c1661ed4d2479.1722634602.git.mchehab+huawei@kernel.org>
-	<20240806163113.3bdc260a@imammedo.users.ipa.redhat.com>
-	<20240807152547.000058fd@Huawei.com>
-	<20240808101107.105a124f@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1723141173; c=relaxed/simple;
+	bh=eX0NccdwTCvkYRYBoX+cyAF2+5W8RRBZrb3Zm72W86o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VHH2nFTQl9E+1CG9SSUW9kdMt6Jqs26MnlVd2Gib3Gi96JWLdJwTqiLcxEoLMtmN9SQWiPVIcWsuBzDYVk/YzYGLxQscKQ3sYTTfDP7MfCZ8j7vLSlcDp2IEmcSDBvP7XE3giWKBppIkCeZWfM1MI7b6ke+gDqozRVVT5peL7G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-44ff9281e93so6604561cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 11:19:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723141170; x=1723745970;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=56gEFcQ+7FsmWGX5zf5waZqtpTKHFwpGyqer14r3mAA=;
+        b=F1mrr/b3nxUCnhlZfyoQP/4PIKxRLQlaA6Bzhgw3gZBbxxfH4XwBnowC5Ytx+9F200
+         lXKaxu6OROuKNHUnYp8ZeRUtX1r4rnAEoEJ+KLxzsv8a/3Os3PIq2h8wknvbXgy4ZiWr
+         3yFpEat7KthDWEUtEtlLJD4Ds8rrpxfDT34reBp7AYuDHYxtmX5+2+7qQJD7JFa05ewK
+         fQPzq8PO6dl00Q91Zi49Ju59KH2/D07p5cA7e+zE2AsTn/J8OvBHSAERNNEKcKurg75X
+         a+k7ZuTLxqH23ZBRVY2PfBoaWQySbytpo6EOPvhOA1z5WBZHPR0OO1PrllVbbPR26qk2
+         XDew==
+X-Gm-Message-State: AOJu0Yz8VS7NwS/msjLUXaDNpdvHyHriXxrhrkflf0/VhQBCi2uOTb0C
+	zUW0deByoMiKMracMImK+edjKY5AXAtObVTOQgKJRoNr9/zhYWg6DopUzQ==
+X-Google-Smtp-Source: AGHT+IFu1hdnCuQzXZNpgIn8h/1FGOX+w9Q/sGtwD429aPynBVaGjK3wkHxw2feTVbhULUXw1VM1BA==
+X-Received: by 2002:ad4:5490:0:b0:6bd:7389:2bb3 with SMTP id 6a1803df08f44-6bd73892ccbmr7609396d6.33.1723141169886;
+        Thu, 08 Aug 2024 11:19:29 -0700 (PDT)
+Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c8a9379sm68327806d6.145.2024.08.08.11.19.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 11:19:29 -0700 (PDT)
+Date: Thu, 8 Aug 2024 13:19:27 -0500
+From: David Vernet <void@manifault.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH RESEND sched_ext/for-6.12] sched_ext: Don't use double
+ locking to migrate tasks across CPUs
+Message-ID: <20240808181927.GE6223@maniforge>
+References: <ZrP_zUjrTcrfdHDe@slm.duckdns.org>
+ <ZrQAB_d1WSqgYQmB@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xOWZwxtfQAqOkla0"
+Content-Disposition: inline
+In-Reply-To: <ZrQAB_d1WSqgYQmB@slm.duckdns.org>
+User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
 
-Em Thu, 8 Aug 2024 10:11:07 +0200
-Igor Mammedov <imammedo@redhat.com> escreveu:
 
-> On Wed, 7 Aug 2024 15:25:47 +0100
-> Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
-> 
-> > On Tue, 6 Aug 2024 16:31:13 +0200
-> > Igor Mammedov <imammedo@redhat.com> wrote:
-> >   
-> > > On Fri,  2 Aug 2024 23:44:01 +0200
-> > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > >     
-> > > > Provide a generic interface for error injection via GHESv2.
-> > > > 
-> > > > This patch is co-authored:
-> > > >     - original ghes logic to inject a simple ARM record by Shiju Jose;
-> > > >     - generic logic to handle block addresses by Jonathan Cameron;
-> > > >     - generic GHESv2 error inject by Mauro Carvalho Chehab;
-> > > > 
-> > > > Co-authored-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > > Co-authored-by: Shiju Jose <shiju.jose@huawei.com>
-> > > > Co-authored-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > > > Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > > Cc: Shiju Jose <shiju.jose@huawei.com>
-> > > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > > > ---
-> > > >  hw/acpi/ghes.c         | 159 ++++++++++++++++++++++++++++++++++++++---
-> > > >  hw/acpi/ghes_cper.c    |   2 +-
-> > > >  include/hw/acpi/ghes.h |   3 +
-> > > >  3 files changed, 152 insertions(+), 12 deletions(-)
-> > > > 
-> > > > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> > > > index a745dcc7be5e..e125c9475773 100644
-> > > > --- a/hw/acpi/ghes.c
-> > > > +++ b/hw/acpi/ghes.c
-> > > > @@ -395,23 +395,22 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
-> > > >      ags->present = true;
-> > > >  }
-> > > >  
-> > > > +static uint64_t ghes_get_state_start_address(void)      
-> > > 
-> > > ghes_get_hardware_errors_address() might better reflect what address it will return
-> > >     
-> > > > +{
-> > > > +    AcpiGedState *acpi_ged_state =
-> > > > +        ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED, NULL));
-> > > > +    AcpiGhesState *ags = &acpi_ged_state->ghes_state;
-> > > > +
-> > > > +    return le64_to_cpu(ags->ghes_addr_le);
-> > > > +}
-> > > > +
-> > > >  int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
-> > > >  {
-> > > >      uint64_t error_block_addr, read_ack_register_addr, read_ack_register = 0;
-> > > > -    uint64_t start_addr;
-> > > > +    uint64_t start_addr = ghes_get_state_start_address();
-> > > >      bool ret = -1;
-> > > > -    AcpiGedState *acpi_ged_state;
-> > > > -    AcpiGhesState *ags;
-> > > > -
-> > > >      assert(source_id < ACPI_HEST_SRC_ID_RESERVED);
-> > > >  
-> > > > -    acpi_ged_state = ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED,
-> > > > -                                                       NULL));
-> > > > -    g_assert(acpi_ged_state);
-> > > > -    ags = &acpi_ged_state->ghes_state;
-> > > > -
-> > > > -    start_addr = le64_to_cpu(ags->ghes_addr_le);
-> > > > -
-> > > >      if (physical_address) {
-> > > >          start_addr += source_id * sizeof(uint64_t);      
-> > > 
-> > > above should be a separate patch
-> > >     
-> > > >  
-> > > > @@ -448,9 +447,147 @@ int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
-> > > >      return ret;
-> > > >  }
-> > > >  
-> > > > +/*
-> > > > + * Error register block data layout
-> > > > + *
-> > > > + * | +---------------------+ ges.ghes_addr_le
-> > > > + * | |error_block_address0 |
-> > > > + * | +---------------------+
-> > > > + * | |error_block_address1 |
-> > > > + * | +---------------------+ --+--
-> > > > + * | |    .............    | GHES_ADDRESS_SIZE
-> > > > + * | +---------------------+ --+--
-> > > > + * | |error_block_addressN |
-> > > > + * | +---------------------+
-> > > > + * | | read_ack0           |
-> > > > + * | +---------------------+ --+--
-> > > > + * | | read_ack1           | GHES_ADDRESS_SIZE
-> > > > + * | +---------------------+ --+--
-> > > > + * | |   .............     |
-> > > > + * | +---------------------+
-> > > > + * | | read_ackN           |
-> > > > + * | +---------------------+ --+--
-> > > > + * | |      CPER           |   |
-> > > > + * | |      ....           | GHES_MAX_RAW_DATA_LENGT
-> > > > + * | |      CPER           |   |
-> > > > + * | +---------------------+ --+--
-> > > > + * | |    ..........       |
-> > > > + * | +---------------------+
-> > > > + * | |      CPER           |
-> > > > + * | |      ....           |
-> > > > + * | |      CPER           |
-> > > > + * | +---------------------+
-> > > > + */      
-> > > 
-> > > no need to duplicate docs/specs/acpi_hest_ghes.rst,
-> > > I'd just reffer to it and maybe add short comment as to why it's mentioned.
-> > >     
-> > > > +/* Map from uint32_t notify to entry offset in GHES */
-> > > > +static const uint8_t error_source_to_index[] = { 0xff, 0xff, 0xff, 0xff,
-> > > > +                                                 0xff, 0xff, 0xff, 1, 0};
-> > > > +
-> > > > +static bool ghes_get_addr(uint32_t notify, uint64_t *error_block_addr,
-> > > > +                          uint64_t *read_ack_addr)
-> > > > +{
-> > > > +    uint64_t base;
-> > > > +
-> > > > +    if (notify >= ACPI_GHES_NOTIFY_RESERVED) {
-> > > > +        return false;
-> > > > +    }
-> > > > +
-> > > > +    /* Find and check the source id for this new CPER */
-> > > > +    if (error_source_to_index[notify] == 0xff) {
-> > > > +        return false;
-> > > > +    }
-> > > > +
-> > > > +    base = ghes_get_state_start_address();
-> > > > +
-> > > > +    *read_ack_addr = base +
-> > > > +        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t) +
-> > > > +        error_source_to_index[notify] * sizeof(uint64_t);
-> > > > +
-> > > > +    /* Could also be read back from the error_block_address register */
-> > > > +    *error_block_addr = base +
-> > > > +        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t) +
-> > > > +        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t) +
-> > > > +        error_source_to_index[notify] * ACPI_GHES_MAX_RAW_DATA_LENGTH;
-> > > > +
-> > > > +    return true;
-> > > > +}      
-> > > 
-> > > I don't like all this pointer math, which is basically a reverse engineered
-> > > QEMU actions on startup + guest provided etc/hardware_errors address.
-> > > 
-> > > For once, it assumes error_source_to_index[] matches order in which HEST
-> > > error sources were described, which is fragile.
-> > > 
-> > > 2nd: migration-wive it's disaster, since old/new HEST/hardware_errors tables
-> > > in RAM migrated from older version might not match above assumptions
-> > > of target QEMU. 
-> > > 
-> > > I see 2 ways to rectify it:
-> > >   1st: preferred/cleanest would be to tell QEMU (via fw_cfg) address of HEST table
-> > >        in guest RAM, like we do with etc/hardware_errors, see
-> > >             build_ghes_error_table()
-> > >                ...
-> > >                tell firmware to write hardware_errors GPA into
-> > >        and then fetch from HEST table in RAM, the guest patched error/ack addresses
-> > >        for given source_id
-> > > 
-> > >        code-wise: relatively simple once one wraps their own head over
-> > >                  how this whole APEI thing works in QEMU
-> > >                  workflow  is described in docs/specs/acpi_hest_ghes.rst
-> > >                  look to me as sufficient to grasp it.
-> > >                  (but my view is very biased given my prior knowledge,
-> > >                   aka: docs/comments/examples wrt acpi patching are good enough)
-> > >                  (if it's not clear how to do it, ask me for pointers)    
-> > 
-> > Hi Igor, I think I follow what you mean but maybe this question will reveal
-> > otherwise.  HEST is currently in ACPI_BUILD_TABLE_FILE.
-> > Would you suggest splitting it to it's own file, or using table_offsets
-> > to get the offset in ACPI_BUILD_TABLE_FILE GPA?  
-> yep, offset taken right before HEST is to be created
-> doc comment for bios_linker_loader_write_pointer() explains how it works
-> 
-> we need something like:
->        bios_linker_loader_write_pointer(linker,
->            ACPI_HEST_TABLE_ADDR_FW_CFG_FILE, 0, sizeof(uint64_t),
->            ACPI_BUILD_TABLE_FILE, hest_offset_within_ACPI_BUILD_TABLE_FILE); 
-> 
-> to register new file see:
->    a08a64627 ACPI: Record the Generic Error Status Block address
->    and to avoid copy past error maybe
->    136fc6aa2 ACPI: Avoid infinite recursion when dump-vmstat
-> for this needs to be limited to new machine types and keep
-> old ones without this new feature. (I'd use hw_compat_ machinery for that)
+--xOWZwxtfQAqOkla0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Not sure if I got it. The code, after this patch from my v6:
+On Wed, Aug 07, 2024 at 01:15:19PM -1000, Tejun Heo wrote:
 
-	https://lore.kernel.org/qemu-devel/5710c364d7ef6cdab6b2f1e127ef191bdf84e8c2.1723119423.git.mchehab+huawei@kernel.org/T/#u
+Hi Tejun,
 
-Already stores two of the three address offsets via 
-bios_linker_loader_add_pointer(), e. g. it is similar to the
-code below (I simplified the code to make the example clearer):
+[...]
 
-<snip>
-/* From hw/arm/virt-acpi-build.c */
-static
-void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
-{
-    ...
-    if (vms->ras) {
-        build_ghes_error_table(tables->hardware_errors, tables->linker);
-        acpi_add_table(table_offsets, tables_blob);
-	/* internally, call build_ghes_v2() for SEA and GED notification sources */
-        acpi_build_hest(tables_blob, tables->linker, vms->oem_id,
-                        vms->oem_table_id);
-    }
-    ...
-}
+> -static bool move_task_to_local_dsq(struct rq *rq, struct task_struct *p,
+> -				   u64 enq_flags)
+> +static bool move_task_to_local_dsq(struct task_struct *p, u64 enq_flags,
+> +				   struct rq *src_rq, struct rq *dst_rq)
+>  {
+> -	struct rq *task_rq;
+> -
+> -	lockdep_assert_rq_held(rq);
+> +	lockdep_assert_rq_held(src_rq);
+> =20
+>  	/*
+> -	 * If dequeue got to @p while we were trying to lock both rq's, it'd
+> -	 * have cleared @p->scx.holding_cpu to -1. While other cpus may have
+> -	 * updated it to different values afterwards, as this operation can't be
+> +	 * If dequeue got to @p while we were trying to lock @src_rq, it'd have
+> +	 * cleared @p->scx.holding_cpu to -1. While other cpus may have updated
+> +	 * it to different values afterwards, as this operation can't be
+>  	 * preempted or recurse, @p->scx.holding_cpu can never become
+>  	 * raw_smp_processor_id() again before we're done. Thus, we can tell
+>  	 * whether we lost to dequeue by testing whether @p->scx.holding_cpu is
+>  	 * still raw_smp_processor_id().
+>  	 *
+> +	 * @p->rq couldn't have changed if we're still the holding cpu.
+> +	 *
+>  	 * See dispatch_dequeue() for the counterpart.
+>  	 */
+> -	if (unlikely(p->scx.holding_cpu !=3D raw_smp_processor_id()))
+> +	if (unlikely(p->scx.holding_cpu !=3D raw_smp_processor_id()) ||
+> +	    WARN_ON_ONCE(src_rq !=3D task_rq(p))) {
+> +		raw_spin_rq_unlock(src_rq);
+> +		raw_spin_rq_lock(dst_rq);
+>  		return false;
+> +	}
+> =20
+> -	/* @p->rq couldn't have changed if we're still the holding cpu */
+> -	task_rq =3D task_rq(p);
+> -	lockdep_assert_rq_held(task_rq);
+> -
+> -	WARN_ON_ONCE(!cpumask_test_cpu(cpu_of(rq), p->cpus_ptr));
+> -	deactivate_task(task_rq, p, 0);
+> -	set_task_cpu(p, cpu_of(rq));
+> -	p->scx.sticky_cpu =3D cpu_of(rq);
+> +	/* the following marks @p MIGRATING which excludes dequeue */
+> +	deactivate_task(src_rq, p, 0);
+> +	set_task_cpu(p, cpu_of(dst_rq));
+> +	p->scx.sticky_cpu =3D cpu_of(dst_rq);
+> +
+> +	raw_spin_rq_unlock(src_rq);
+> +	raw_spin_rq_lock(dst_rq);
+> =20
+>  	/*
+>  	 * We want to pass scx-specific enq_flags but activate_task() will
+>  	 * truncate the upper 32 bit. As we own @rq, we can pass them through
+>  	 * @rq->scx.extra_enq_flags instead.
+>  	 */
+> -	WARN_ON_ONCE(rq->scx.extra_enq_flags);
+> -	rq->scx.extra_enq_flags =3D enq_flags;
+> -	activate_task(rq, p, 0);
+> -	rq->scx.extra_enq_flags =3D 0;
+> +	WARN_ON_ONCE(!cpumask_test_cpu(cpu_of(dst_rq), p->cpus_ptr));
 
-/* From hw/acpi/ghes.c */
-static void build_ghes_v2(GArray *table_data,
-                          enum AcpiGhesNotifyType notify,
-                          BIOSLinker *linker)
-{
-    uint64_t address_offset, ack_offset, block_addr_offset, cper_offset;
-    enum AcpiHestSourceId source_id;
+Hmmm, what's to stop someone from issuing a call to
+set_cpus_allowed_ptr() after we drop the src_rq lock above?  Before we
+held any relevant rq lock so everything should have been protected, but
+I'm not following how we prevent racing with the cpus_allowed logic in
+core.c here.
 
-    /* 
-     * Get offsets for either SEA or GED notification - easy to extend
-     * to all mechanisms like MCE and SCI to better support x86
-     */
-    assert(!acpi_hest_address_offset(notify, &block_addr_offset, &ack_offset,
-                                     &cper_offset, &source_id));
-
-    bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,
-                                   address_offset + GAS_ADDR_OFFSET,
-                                   sizeof(uint64_t),
-                                   ACPI_GHES_ERRORS_FW_CFG_FILE,
-                                   block_addr_offset);
-
-    bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,
-                                   address_offset + GAS_ADDR_OFFSET,
-                                   sizeof(uint64_t),
-                                   ACPI_GHES_ERRORS_FW_CFG_FILE,
-                                   ack_offset);
-
-    /* Current code ignores &cper_offset when creating HEST */
-}
-
-void ghes_record_cper_errors(AcpiGhesCper *cper, Error **errp,
-                             enum AcpiGhesNotifyType notify)
-{
-    uint64_t cper_addr, read_ack_start_addr;
-
-    assert(!ghes_get_hardware_errors_address(notify, NULL, &read_ack_start_addr,
-                                         &cper_addr, NULL));
-
-    /*
-     * Use cpu_physical_memory_read/write() to
-     *  - read/store at read_ack_start_addr 
-     *  - Write cper block GArray at cper_addr
-     */
-}
-</snip>
-
-We may also store cper_offset there via bios_linker_loader_add_pointer()
-and/or use bios_linker_loader_write_pointer(), but I can't see how the
-data stored there can be retrieved, nor any advantage of using it instead
-of the current code, as, in the end, we'll have 3 addresses that will be
-used:
-
-	- an address where a pointer to CPER record will be stored;
-	- an address where the ack will be stored;
-	- an address where the actual CPER record will be stored.
-
-And those are calculated on a single function and are all stored at the
-ACPI table files.
-
-What am I missing?
+> +	WARN_ON_ONCE(dst_rq->scx.extra_enq_flags);
+> +	dst_rq->scx.extra_enq_flags =3D enq_flags;
+> +	activate_task(dst_rq, p, 0);
+> +	dst_rq->scx.extra_enq_flags =3D 0;
+> =20
+>  	return true;
+>  }
 
 Thanks,
-Mauro
+David
+
+--xOWZwxtfQAqOkla0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZrUMLwAKCRBZ5LhpZcTz
+ZPWpAP99+7Zi6xS14yOfXnji0FSCQn7FZRtIdXAoF3cvBo4JfgEAq2Hj//6Ne9MD
+QyZeGtwgJomOg9PxWiM6GQFIHvniqQM=
+=r18G
+-----END PGP SIGNATURE-----
+
+--xOWZwxtfQAqOkla0--
 
