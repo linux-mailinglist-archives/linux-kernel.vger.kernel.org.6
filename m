@@ -1,209 +1,386 @@
-Return-Path: <linux-kernel+bounces-279404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7888E94BCE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D41EE94BCE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB086B22CD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:05:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31EB4B228B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4CD18C344;
-	Thu,  8 Aug 2024 12:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1936718C344;
+	Thu,  8 Aug 2024 12:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="O4oD9/cR"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2068.outbound.protection.outlook.com [40.107.215.68])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUhch7z6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C7A156220;
-	Thu,  8 Aug 2024 12:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723118701; cv=fail; b=It9jxisSNZn2lcnIHVg54SLJlSANJxdM6nMqZ2Ytm8u9EViODS4tvfMg44knid0mziOohsE7TeXbf8rYzh1rCMnTa1gylHea8mq9CQY8LgqoMYBOwjW0RfYhTvlZr38oj62VXxYPP+8BlU1lMzrBAWm3DR0pylhulEX/Q9DgOLM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723118701; c=relaxed/simple;
-	bh=UVw4J33lgHRWfH/j6TiiuwtuhK6HTPyQ85MphdVrlXU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=il1KwDcc/a9+DqUdZN6GrHfJ/ZxVCx0aRQ/FdgovNLba0UWVGNCEAteznHmwXmAIeCxoMTffbK2437eXzi396h4cBWT8x/Eo3sIMLYOZZqsfz8q51tFzqiO1bk+ugL47SGlgrPO4RZQfhAz32Jj20qE/LGvhyzmpJnP9BIGs2+k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=O4oD9/cR; arc=fail smtp.client-ip=40.107.215.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C24e1jiAga1DTslTp+sOwT4233wUObY3Ek4MnL4jmWOrZVlUKXVnqWS5+NrLcWz+HqNczb06OYHlkePMXTqkOWxFJl6iswHZBwczXhrXZF9LRrQsYQsP5NIxJWkLShRHD5Ji9J2GEsjqzmMUkp9Mgy3uMBYK+LdNRupyo0sYnUIj4k0UBXNWkA4YCJPQ0kch4+Y+HXB6uPBM1oUsJUVCSOXd03FurAQPe8fljZyT/rVCzHNJ3lmmjUcmUj/lA1VMyW2PnlXGszwacybVHEjL7H32b15RxCxcWJ3/3/2uyz1h22OJ786mKgW50DzsN7P1QT2wH+6RaEJDHE9wD4J6dQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pB04DcauAbecGVy8g53NxBIg84tdNR6Q/9aYmUVv9cU=;
- b=reqJXf6G8zNH27vM10ilUQ5BOPqsyHugRBlvVoIMegtjf83NkkecIIq1wV4MPLnjwJaEq5+Lb/cQMJTWgtnfYflVMZmVf4pPuBQAJTLZF/uKhDoNricsgJVfDp900kIlR32k5c8waYUMDvgSG+PsxB4EPJTtR7LLAxiUH5fxv0Um1InLVWg9yveGdtttPFyGvequXnZR5PRZ400Yle/kse4sYaOhCfUA4jesjxw/iP8hHnKIss95suXE5GhAwWm+cEWLOgwh4X8H+uqTDtRuQ4XAO0NP44WhYmxb9mA3d8YlWOXAOXspAvDBUA9smb4xrA5p3IXORDsONa8BOlG0zA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=oppo.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=oppo.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pB04DcauAbecGVy8g53NxBIg84tdNR6Q/9aYmUVv9cU=;
- b=O4oD9/cRpOGinO/obKTQXtFuk0BxsOzgehJNAdvGAI5hHyg94qRKzskxnSu7C6juUGLBhWZoIT8fLw8M2ZIP9ENU1Xizuwm0MLOilIuUi81zAfpwWIhxLnoSYo/+PMDuALlcJ8hFwQq5I/zizxc0d56Q9InG5AmSCXELvf+pXCA=
-Received: from SG2P153CA0051.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::20) by
- KL1PR02MB6610.apcprd02.prod.outlook.com (2603:1096:820:115::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.25; Thu, 8 Aug
- 2024 12:04:56 +0000
-Received: from SG2PEPF000B66CF.apcprd03.prod.outlook.com
- (2603:1096:4:c6:cafe::ac) by SG2P153CA0051.outlook.office365.com
- (2603:1096:4:c6::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.8 via Frontend
- Transport; Thu, 8 Aug 2024 12:04:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- SG2PEPF000B66CF.mail.protection.outlook.com (10.167.240.23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7849.8 via Frontend Transport; Thu, 8 Aug 2024 12:04:55 +0000
-Received: from PH80250894.adc.com (172.16.40.118) by mailappw31.adc.com
- (172.16.56.198) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 8 Aug
- 2024 20:04:55 +0800
-From: Hailong Liu <hailong.liu@oppo.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki
-	<urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>, Michal Hocko
-	<mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>
-CC: Hailong Liu <hailong.liu@oppo.com>, "Tangquan . Zheng"
-	<zhengtangquan@oppo.com>, <stable@vger.kernel.org>, Barry Song
-	<21cnbao@gmail.com>, Baoquan He <bhe@redhat.com>, Matthew Wilcox
-	<willy@infradead.org>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-Subject: [RESEND PATCH v1] mm/vmalloc: fix page mapping if vm_area_alloc_pages() with high order fallback to order 0
-Date: Thu, 8 Aug 2024 20:04:23 +0800
-Message-ID: <20240808120445.3150-1-hailong.liu@oppo.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D89F126F1E;
+	Thu,  8 Aug 2024 12:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723118681; cv=none; b=NHUhK8JATzsbTnYYtb+nHKTwtDAvkytThSQNJz8l03IKYxuPMNfHcW6KMeY/9NaBuefp4lMb8FsQ3G3uVSspRDGjkBASnFNyA/0ClJCoGEhXYcQyxjA7jcAS4loVMf21Kxgjos+ZY3WZz7E+p3jCwCeOAbkEV6TpkHVxrXWGriU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723118681; c=relaxed/simple;
+	bh=CuuuqrCpe3lD6WoXCd4Ve65BdO8B/nlv4zg4EVOsj2E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QCcmnQdqDgYbUjlI22OaN08bGBxLvljtIzdS6isKziiMKb9ZwtKNSwXBU69n/MdYVpmJ/K4orun44oRMZQYyKfx7Be/VobC7LwWq0WOvFeOPEH6UU4H2pug8bSikpqY2i6vVLN4bciKIcLMwr8zj0SqkYF3au9Pc0whuFk20pcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUhch7z6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87AC2C32782;
+	Thu,  8 Aug 2024 12:04:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723118680;
+	bh=CuuuqrCpe3lD6WoXCd4Ve65BdO8B/nlv4zg4EVOsj2E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XUhch7z637LfBfCSYLIrMwJfOURvB9rzd/X9a/6/qRtX0BFkGcl9KkzgelzeYmcEw
+	 m0xRTZMdJYA+CKbHQBE+gSaOEodBoNQ+Q3WrTOeaTyhH+4GQQUAlA58mznv9RMY+14
+	 oJ5y7AxA+0sM03KSROCQ8crXwEs5q8fknuB2jJuxrbY78w4GEbMqUlTfiGdvrLtlGo
+	 GanQf8vtg5THk5jHR5TQEgzz035Temq9/sG+qIJd2w2HN4WhSccTzYfs5eBl/j4OKf
+	 1HHXXzshBgOkVGcsx3UeNCR8yQEg05tvrR1vIJOipcRg68/Va9OgNe8GGiiBDqdVGR
+	 6zQhYAvDOiYLw==
+Message-ID: <2d89c86b-28b4-439f-824b-1d0560ff36bd@kernel.org>
+Date: Thu, 8 Aug 2024 14:04:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw31.adc.com
- (172.16.56.198)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CF:EE_|KL1PR02MB6610:EE_
-X-MS-Office365-Filtering-Correlation-Id: 51fc52aa-790c-48f8-a0a8-08dcb7a2517c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|36860700013|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6JvTVSpJxpUE/IDmeoGjvwA3odecFmym1YE0UMh1XCYNfWxJrNinUsZ2EXvd?=
- =?us-ascii?Q?uXOwCkPrJnugfL8xihma748O9nrh4tzqRJgz4X8OFsWuYq5CfY0fyJAkVMb3?=
- =?us-ascii?Q?0NcqdQCb6rXemMuqoQr3NopYrxvuOZyMa6pZxMjYWNmVpZKxh55VSmq0bSBo?=
- =?us-ascii?Q?m1IfnQb6HXgXHdUkhhg6QXLLQl9AOcfB8eVfD9vP/oXeztSqyuksWSDgvHCe?=
- =?us-ascii?Q?KJcmyTvFXOoy5XhKEz3ynxkvd7kAtHAj9T9E4NmLIcqs7hVBfg4A5ORcllmj?=
- =?us-ascii?Q?E2SY5irZG5lmdDEF0cXoDEqlTz94vMKaThhwpp/UeuCa/AKKabqtzNV6L5OM?=
- =?us-ascii?Q?FY5WD0kfePISCZwQX6AuqxX9heGwsQe1RYqbzZM6m5ibVWeqcdJw4EW0tkJW?=
- =?us-ascii?Q?le6xKOZNJMEZ9c/SNA2ANkN8LyJE5BMghU2jA9cEwtrviSvU8orpzG7A63Cn?=
- =?us-ascii?Q?qfrIEiPV7H6PC2SHLwaPBxhIWNjsjIYxSSHvO8kWWEH7Vgx1Be+RhuDzl2Of?=
- =?us-ascii?Q?C/DwrV8pOJr1Psc9Zv1QR8heU9P1Ap0a+bFEwk/jX1KFknsqbkPAMLFTGjp9?=
- =?us-ascii?Q?qGDUBNeM9pnhSjCpGEgrrqDV33BXpX/for15dON/+vTikXPQ1THQOtlpZBSu?=
- =?us-ascii?Q?9QLgj4g39pMtezAhh58wrbczSck3mNzr8YMNcxywGu8fNe78s/Nm1mdm6+oa?=
- =?us-ascii?Q?0hqFGsgwZ3yoqueiJ7JY1OEEcrOsCSZq3xCbwwh0drFg2cKcGQQvNdO7ETV5?=
- =?us-ascii?Q?jIvJA7l9O292Kg37bbW+/247fSGw02pexfwwtLDEip7HbSXYKddp9aBLFRNB?=
- =?us-ascii?Q?Ncf/F/wQoBAYb+3N/HJ2Aksy4dgCRjLUqxuC3r2CnZQIT2y6j54uOapj+7k1?=
- =?us-ascii?Q?qZj24fWO49A/AcM2i5Feb0x4ASTLM2xz/U17+xJEheToSAseoqhk5bWfnRVc?=
- =?us-ascii?Q?aGcyeKtsUHnMmNto2dOQSwuE4KFX+XN5zaiVUVFp1+yD/FBhjuAH1U4weizT?=
- =?us-ascii?Q?kr0BIfwViLEKYvowPsuqAms3jEklvmcbqzMztgBlTzaELXyBO3LDwjlSw5J3?=
- =?us-ascii?Q?cN2GjsMitDWVxh9YMvDH1pdDK0v0NUuyTN4gN3/d/ZfpagCV1T0Gn9cgQ/Gh?=
- =?us-ascii?Q?Z/jsGOsjFlbIpSYWZfVjzzAo0o/tsztzWTxbFm4Ci4qeqbanlhLnyUiwxtZR?=
- =?us-ascii?Q?/qIYANuiCs6bsol78C84zDSsm/qhWvUF/UgaIFQodnWxh9CjBlfTMHq9KGzO?=
- =?us-ascii?Q?Eo5pea4vj2VcdBprM9brbZ0j7luMQOmy6gwT0c/Slmgri4gmPw+Q+DD8Jc/S?=
- =?us-ascii?Q?Rn0wioSZG0yBV1CRyVDf7yE9h8CB4s0IavzOVF8aJZPZ8jcvVwu89nuZg4tu?=
- =?us-ascii?Q?cMrGO/2CKcZBUzMBu8N1iQWC4wKNtJf7PzRPPOobm6t+TsCIRQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 12:04:55.8537
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51fc52aa-790c-48f8-a0a8-08dcb7a2517c
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG2PEPF000B66CF.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR02MB6610
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: mfd: mediatek: mt6397: Convert to DT schema
+ format
+To: Macpaul Lin <macpaul.lin@mediatek.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+ Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>,
+ Jason-ch Chen <Jason-ch.Chen@mediatek.com>,
+ Chris-qj chen <chris-qj.chen@mediatek.com>,
+ MediaTek Chromebook Upstream
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ Alexandre Mergnat <amergnat@baylibre.com>, Chen-Yu Tsai <wenst@chromium.org>
+References: <20240808105722.7222-1-macpaul.lin@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240808105722.7222-1-macpaul.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The __vmap_pages_range_noflush() assumes its argument pages** contains
-pages with the same page shift. However, since commit e9c3cda4d86e
-(mm, vmalloc: fix high order __GFP_NOFAIL allocations), if gfp_flags
-includes __GFP_NOFAIL with high order in vm_area_alloc_pages()
-and page allocation failed for high order, the pages** may contain
-two different page shifts (high order and order-0). This could
-lead __vmap_pages_range_noflush() to perform incorrect mappings,
-potentially resulting in memory corruption.
+On 08/08/2024 12:57, Macpaul Lin wrote:
+> Convert the mfd: mediatek: mt6397 binding to DT schema format.
+> 
+> New updates in this conversion:
+>  - Align generic names of DT schema "audio-codec" and "regulators".
+>  - mt6397-regulators: Replace the "txt" reference with newly added DT
+>    schema.
+> 
+> Signed-off-by: Sen Chu <sen.chu@mediatek.com>
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> ---
+>  .../bindings/mfd/mediatek,mt6397.yaml         | 202 ++++++++++++++++++
+>  .../devicetree/bindings/mfd/mt6397.txt        | 110 ----------
 
-Users might encounter this as follows (vmap_allow_huge = true, 2M is for PMD_SIZE):
-kvmalloc(2M, __GFP_NOFAIL|GFP_X)
-    __vmalloc_node_range_noprof(vm_flags=VM_ALLOW_HUGE_VMAP)
-        vm_area_alloc_pages(order=9) ---> order-9 allocation failed and fallback to order-0
-            vmap_pages_range()
-                vmap_pages_range_noflush()
-                    __vmap_pages_range_noflush(page_shift = 21) ----> wrong mapping happens
+You are doing conversions in odd order... and ignore my comments. The
+example from your regulator binding is supposed to be here - I wrote it
+last time.
 
-We can remove the fallback code because if a high-order
-allocation fails, __vmalloc_node_range_noprof() will retry with
-order-0. Therefore, it is unnecessary to fallback to order-0
-here. Therefore, fix this by removing the fallback code.
+Due to doing changes totally unsynchronized, this CANNOT be merged
+without unnecessary maintainer coordination, because of dependency.
 
-Fixes: e9c3cda4d86e ("mm, vmalloc: fix high order __GFP_NOFAIL allocations")
-Signed-off-by: Hailong Liu <hailong.liu@oppo.com>
-Reported-by: Tangquan.Zheng <zhengtangquan@oppo.com>
-Cc: <stable@vger.kernel.org>
-CC: Barry Song <21cnbao@gmail.com>
-CC: Baoquan He <bhe@redhat.com>
-CC: Matthew Wilcox <willy@infradead.org>
----
- mm/vmalloc.c     | 11 ++---------
- mm/vmalloc.c.rej | 10 ++++++++++
- 2 files changed, 12 insertions(+), 9 deletions(-)
- create mode 100644 mm/vmalloc.c.rej
+Sorry, that's not how it works for MFD devices.
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 6b783baf12a1..af2de36549d6 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -3584,15 +3584,8 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
- 			page = alloc_pages_noprof(alloc_gfp, order);
- 		else
- 			page = alloc_pages_node_noprof(nid, alloc_gfp, order);
--		if (unlikely(!page)) {
--			if (!nofail)
--				break;
--
--			/* fall back to the zero order allocations */
--			alloc_gfp |= __GFP_NOFAIL;
--			order = 0;
--			continue;
--		}
-+		if (unlikely(!page))
-+			break;
+Perform conversion of entire device in ONE patchset.
 
- 		/*
- 		 * Higher order allocations must be able to be treated as
----
-sorry for fat fingers. with .rej file. resend this.
+>  2 files changed, 202 insertions(+), 110 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/mfd/mt6397.txt
+> 
+> Changes for v1:
+>  - This patch depends on conversion of mediatek,mt6397-regulator.yaml
+>    [1] https://lore.kernel.org/lkml/20240807091738.18387-1-macpaul.lin@mediatek.com/T/
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+> new file mode 100644
+> index 0000000..cfbf2215
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+> @@ -0,0 +1,202 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek MT6397/MT6323 Multifunction Device
+> +
+> +maintainers:
+> +  - Sen Chu <sen.chu@mediatek.com>
+> +  - Macpaul Lin <macpaul.lin@mediatek.com>
+> +
+> +description: |
+> +  MT6397/MT6323 is a multifunction device with the following sub modules:
 
-Baoquan suggests set page_shift to 0 if fallback in (2 and concern about
-performance of retry with order-0. But IMO with retry,
-- Save memory usage if high order allocation failed.
-- Keep consistancy with align and page-shift.
-- make use of bulk allocator with order-0
+MFD is Linuxism, avoid it.
 
-[2] https://lore.kernel.org/lkml/20240725035318.471-1-hailong.liu@oppo.com/
---
-2.34.1
+> +  - Regulator
+> +  - RTC
+> +  - Audio codec
+> +  - GPIO
+> +  - Clock
+> +  - LED
+> +  - Keys
+> +  - Power controller
+> +
+> +  It is interfaced to host controller using SPI interface by a proprietary hardware
+> +  called PMIC wrapper or pwrap. MT6397/MT6323 MFD is a child device of pwrap.
+> +  See the following for pwarp node definitions:
+> +  ../soc/mediatek/mediatek,pwrap.yaml
+
+Drop, instead add proper ref or compatible in parent node.
+
+> +
+> +  This document describes the binding for MFD device and its sub module.
+
+Drop
+
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - mediatek,mt6323
+> +          - mediatek,mt6331 # "mediatek,mt6331" for PMIC MT6331 and MT6332.
+> +          - mediatek,mt6357
+> +          - mediatek,mt6358
+> +          - mediatek,mt6359
+> +          - mediatek,mt6397
+> +      - items:
+> +          - enum:
+> +              - mediatek,mt6366 # "mediatek,mt6366", "mediatek,mt6358" for PMIC MT6366
+
+Drop comment, it is obvious. Don't repeat constraints in free form text.
+
+> +          - const: mediatek,mt6358
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  interrupt-controller: true
+> +
+> +  "#interrupt-cells":
+> +    const: 2
+> +
+> +  rtc:
+> +    type: object
+> +    unevaluatedProperties: false
+> +    description:
+> +      Real Time Clock (RTC)
+> +      See ../rtc/rtc-mt6397.txt
+
+No, convert the binding.
+
+> +    properties:
+> +      compatible:
+> +        oneOf:
+> +          - enum:
+> +              - mediatek,mt6323-rtc
+> +              - mediatek,mt6331-rtc
+> +              - mediatek,mt6358-rtc
+> +              - mediatek,mt6397-rtc
+> +          - items:
+> +              - enum:
+> +                  - mediatek,mt6366-rtc # RTC MT6366
+
+Drop all such comments.
+
+> +              - const: mediatek,mt6358-rtc
+> +
+> +  regulators:
+> +    type: object
+> +    oneOf:
+> +      - $ref: /schemas/regulator/mediatek,mt6358-regulator.yaml
+> +      - $ref: /schemas/regulator/mediatek,mt6397-regulator.yaml
+
+And how is it supposed to be tested?
+
+
+
+> +    unevaluatedProperties: false
+> +    description:
+> +      Regulators
+> +      For mt6323, see ../regulator/mt6323-regulator.txt
+
+Drop, useless.
+
+> +    properties:
+> +      compatible:
+> +        oneOf:
+> +          - enum:
+> +              - mediatek,mt6323-regulator
+> +              - mediatek,mt6358-regulator
+> +              - mediatek,mt6397-regulator
+> +          - items:
+> +              - enum:
+> +                  - mediatek,mt6366-regulator # Regulator MT6366
+> +              - const: mediatek,mt6358-regulator
+> +
+> +  audio-codec:
+> +    type: object
+> +    unevaluatedProperties: false
+
+This does not make sense. You do not have any ref here.
+
+> +    description:
+> +      Audio codec
+> +    properties:
+> +      compatible:
+> +        oneOf:
+> +          - enum:
+> +              - mediatek,mt6397-codec
+> +              - mediatek,mt6358-sound
+> +          - items:
+> +              - enum:
+> +                  - mediatek,mt6366-sound # Codec MT6366
+> +              - const: mediatek,mt6358-sound
+
+This wasn't in the old binding. Commit msg also does not explain why you
+are doing changes from conversion.
+
+> +
+> +  clk:
+> +    type: object
+> +    unevaluatedProperties: false
+
+Again, no, it does not work like this. See example schema for
+explanation of this.
+
+Convert all children - entire device. Then either use ref or
+additionalProperties: true. See Qualcomm mdss bindings for example.
+
+> +    description:
+> +      Clock
+
+Your descriptions are useless. You just said "clk" node is "clock". Really?
+
+> +    properties:
+> +      compatible:
+> +        const: mediatek,mt6397-clk
+> +
+> +  led:
+> +    type: object
+> +    unevaluatedProperties: false
+> +    description:
+> +      LED
+> +      See ../leds/leds-mt6323.txt for more information
+
+No
+
+> +    properties:
+> +      compatible:
+> +        const: mediatek,mt6323-led
+> +
+> +  keys:
+> +    type: object
+> +    $ref: /schemas/input/mediatek,pmic-keys.yaml
+> +    unevaluatedProperties: false
+> +    description: Keys
+
+Keys are keys? Could keys be anything else?
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    pwrap {
+
+Drop
+
+> +        pmic {
+> +            compatible = "mediatek,mt6397";
+> +            interrupts-extended = <&pio 222 IRQ_TYPE_LEVEL_HIGH>;
+> +            interrupt-controller;
+> +            #interrupt-cells = <2>;
+> +
+> +            mt6397_codec: audio-codec {
+> +                compatible = "mediatek,mt6397-codec";
+> +            };
+> +
+> +            mt6397_regulators: regulators {
+> +                compatible = "mediatek,mt6397-regulator";
+> +
+> +                mt6397_vpca15_reg: buck_vpca15 {
+> +                    regulator-name = "vpca15";
+> +                    regulator-min-microvolt = <850000>;
+> +                    regulator-max-microvolt = <1400000>;
+> +                    regulator-ramp-delay = <12500>;
+> +                    regulator-always-on;
+> +                };
+> +
+> +                mt6397_vgp4_reg: ldo_vgp4 {
+> +                    regulator-name = "vgp4";
+> +                    regulator-min-microvolt = <1200000>;
+> +                    regulator-max-microvolt = <3300000>;
+> +                    regulator-enable-ramp-delay = <218>;
+> +                };
+> +            };
+
+Incomplete.
+
+The parent device example is supposed to be 100% complete.
+
+Best regards,
+Krzysztof
+
 
