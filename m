@@ -1,139 +1,153 @@
-Return-Path: <linux-kernel+bounces-280021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E721294C4AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:43:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 153DC94C4C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:45:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C89C288C45
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:43:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44E2F1C260B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C193515ECD0;
-	Thu,  8 Aug 2024 18:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9070155725;
+	Thu,  8 Aug 2024 18:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ZH4kkf7I"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Tn9KEsLy"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F66155CBD
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4477E153801;
+	Thu,  8 Aug 2024 18:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723142506; cv=none; b=ogy2ZQ3r9RBFjS1fwYl4S2x9z5Vh+toluOKB/ulnJx1sf36aXBi1tRK9uU2b8+Q/W7qn/ZY84NkRLsG1k7Z2uBKqgnqXzYGzjOu8CxaVOLc0Ly5XcMg2/b+5ujC2jG0nSs0IfTaeKGmVELB476zW7Iqtn38XJAU0yHNw5zD0JQ4=
+	t=1723142595; cv=none; b=ky1282Wf0vzaCszqaN9YWuZs7snQYYwYdlUbDtj2EOy0B8aQ074/uSHL4Z6PUWihf/j6vajG22grAEYDTDiEXdYyKPky2zrsoKDO56S7g0Y61SyF/GNQYcjt2/E6IO/NyR9lP5CfOoAtJ01oqTpjlzRin/YzVedXkRPfsLPXtUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723142506; c=relaxed/simple;
-	bh=oKVmgxAvtU08k7fXc2KY7/+qmgzTvGzLzIGlMP6cVUk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QoO2AziHmqGIbF8S+GLDRYnAi2ozmsLD5QZa5P5BeHf0XiR2wAPyIY9kvJGHZRUi47BYLe5VwsPujs3jTSf0LF7kNSbpJzglnQDpzWOZXFj43mWBwoQLkrV53h9Aqb9Qr+O/CBbI/ZdNdeKhDoYrLaYBstf0rdNSq98Dalv5qLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ZH4kkf7I; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fc569440e1so12250675ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 11:41:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1723142503; x=1723747303; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AG7o4n/MhCzESj2P+tLcsOrZ/Z0Rt0fnlAPDLYPYB3U=;
-        b=ZH4kkf7I+JOgbKiBVIbC1fJwaNYxsglakqEGdMnXOnVFD22tlzgReiAUFT5P9NKU2E
-         Zr7X9eZNiIojQvYFAD8b+H6h6324dRvYD6KeHYUZwGNtdM1fWHG2Ee+cxGcU4vVpSxqf
-         f9FXGnzV1J8xqW8SejbY9omem+NYekV81Eym4URtMOdY+dHZmiVsMPCyONA+rhB0PSlA
-         +QEUMRA67w0ElUhLcEe1A8iDP6VBiWkCFkQ4/rIfqKAPy8wybJ4QRP3R7lTShkyem6vQ
-         JafbhILHYD2TDWFCKx14gdg9yvEWwVRgMHmomYY9pE6cTKgSLx6nrswD6YKXoPEJ+NpK
-         b4pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723142503; x=1723747303;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AG7o4n/MhCzESj2P+tLcsOrZ/Z0Rt0fnlAPDLYPYB3U=;
-        b=mvXzTO0lUfYbraVqsde9dkisCqAl2cd3+bQO+CAVRjZT7DogINEiXrhCyHNmND1zJq
-         XeE9e7RQUu5aUSAwVERzJemUG423Xj8kdSiFG1ExiaR0mblgf5ji6E3zQL5hj6+gleTW
-         SMW09G4DaroP6gTI85R8wwoIhrPTPi6a8yFxMEtyf8JohH9Xgb6gnHGd7gkat/67fekv
-         uvhlIyPgrpTuk1QIg0HXbbIK7InzpfVvQ7RgmB3Ns4C7m7SOCFPRD9g7BKswZqM+Efce
-         d/OUmtiv9pMl17CpsB3ucXucdDVzH85Gp311PVWAOTVBbM4b+dWXDTE4WsMredIZaHDo
-         9vYg==
-X-Forwarded-Encrypted: i=1; AJvYcCX94/zAjZLRhIb9Nn2xXPIRFmJ3UWRYFu+M0/lsutHOXhY9wcnlNYG+bfRucy5LhGRSJQO/9cAPy44vsTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQWZ4hjZj22/ZcmqEKC0zYGOnnP5Jo7MGUhUdEOTsDu0sIs+nx
-	fAgB8n8VPnSZGzzdy9CBwoCcowSMpuGWTakxo5r9UKbW0WbQoAN4qdI92e99SGA=
-X-Google-Smtp-Source: AGHT+IHFYMrAf47hOMo+LBIFpOsA7X9Xf8/oax6Ra582HTcJd8AWpBMyQAjoYdlXCRtGRDVUHetLpw==
-X-Received: by 2002:a17:902:d2c9:b0:1ff:39d4:1663 with SMTP id d9443c01a7336-200952ee879mr29883515ad.47.1723142502941;
-        Thu, 08 Aug 2024 11:41:42 -0700 (PDT)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5917a5f4sm127727315ad.211.2024.08.08.11.41.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 11:41:42 -0700 (PDT)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Thu, 08 Aug 2024 11:41:40 -0700
-Subject: [PATCH] selftests: riscv: Allow mmap test to compile on 32-bit
+	s=arc-20240116; t=1723142595; c=relaxed/simple;
+	bh=E6Djr46GF6cVfafEHE5SLoRKFMU6caCDTSU1c4Z7bZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=Cu8yoUB16e4sdiN94GJpfI8VdW7JYe3+bLUzOkPPmeLlcCFZN1bxnPm5Q/Wbd8IYxkGn3cvKqD02LAWJKn8Epz20JKNzcOc57q/8xZxSox7qe/DSs6bCtkBarDxzHf5spLpyBORfecWc9638L+CfOwVBBuIzcV4QZCVcrjwyW94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Tn9KEsLy; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 478Calw5013384;
+	Thu, 8 Aug 2024 18:42:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:references:cc:reply-to
+	:from:in-reply-to:content-type:content-transfer-encoding; s=pp1;
+	 bh=z9l3LKla3wlPReP8nb5ggl/k0yC+mQ+dFrNHuzrH9PA=; b=Tn9KEsLyY+eT
+	TSvfXb2OhiTGlDDDzCH6eSNXsSFh9M1nIKfZGGIf22+I53DQYddtsQuppZpto9d9
+	e/gESDXNYecTMtYH0AAl2fKhNnubqQCFqo3lCaBmUUjycr0YdcTg0wKQvQWIi/EW
+	n9/ZHQqxjNantXL3h8rwE8BlXqn/niZcYybUlb2Hfonpr6kzRAcfRGajm6PvhuOU
+	/bD/QcU4YiHgi0UHkNuTMm9uhiUMg8JD3nDz/Ix63IQ5O6Rxl77pt3fHcyhXhq9M
+	BtHXr7KqtkXOKsEbW3p/rVovMCRUyHW8wNCz7xaijd4tdspywZTTlxnx5ePu8DpF
+	ddvABAvn8w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40vwkcgxr4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 18:42:44 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 478IghiC005697;
+	Thu, 8 Aug 2024 18:42:43 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40vwkcgxr1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 18:42:43 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 478IECL2024361;
+	Thu, 8 Aug 2024 18:42:42 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40sy90yycq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 18:42:42 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 478IgeUX38077170
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 8 Aug 2024 18:42:42 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7FF115805F;
+	Thu,  8 Aug 2024 18:42:40 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2323E58045;
+	Thu,  8 Aug 2024 18:42:32 +0000 (GMT)
+Received: from [9.43.58.141] (unknown [9.43.58.141])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  8 Aug 2024 18:42:31 +0000 (GMT)
+Message-ID: <3f4a68aa-8a74-4698-bf90-d69c315d5ffd@linux.ibm.com>
+Date: Fri, 9 Aug 2024 00:12:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] perf sched timehist: Add --show-prio option
+To: Yang Jihong <yangjihong@bytedance.com>
+References: <20240806015701.1309833-1-yangjihong@bytedance.com>
+ <20240806015701.1309833-2-yangjihong@bytedance.com>
+Content-Language: en-US
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, acme@kernel.org,
+        namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Reply-To: 20240806015701.1309833-2-yangjihong@bytedance.com
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <20240806015701.1309833-2-yangjihong@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240808-mmap_tests__fixes-v1-1-b1344b642a84@rivosinc.com>
-X-B4-Tracking: v=1; b=H4sIAGMRtWYC/x3LTQqAIBBA4avIrBNU+qOrRIjZVLPIxJEIorsnL
- T8e7wHGRMgwiAcSXsR0hgJdCfC7CxtKWorBKFOrXnXyOFy0GTmztSvdyLJttPdmblZ0C5QvJvx
- D2cbpfT9q1ny8YwAAAA==
-To: Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723142501; l=1481;
- i=charlie@rivosinc.com; s=20231120; h=from:subject:message-id;
- bh=oKVmgxAvtU08k7fXc2KY7/+qmgzTvGzLzIGlMP6cVUk=;
- b=FmFtK2qNAbnd0xcmjgZmgnNzTYYku7+c+IaE3mPTuKuwXBke5hIVWtsIfv89fURYD0pWwYHZC
- C/MJNLRhjn3CFJCPGLgLbHPFhh+EX7+3lgdYy2PP4qGzMKpoA+Hhwvl
-X-Developer-Key: i=charlie@rivosinc.com; a=ed25519;
- pk=t4RSWpMV1q5lf/NWIeR9z58bcje60/dbtxxmoSfBEcs=
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ACXG_cngKuc1EmumUnhToJQSSCZvgll1
+X-Proofpoint-GUID: BoGMd55NVsSjms1xHTEgqJ8BZ65xtK1J
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-08_18,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ bulkscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
+ lowpriorityscore=0 adultscore=0 clxscore=1011 malwarescore=0
+ impostorscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408080133
 
-Macros needed for 32-bit compilations were hidden behind 64-bit riscv
-ifdefs. Fix the 32-bit compilations by moving macros to allow the
-memory_layout test to run on 32-bit.
+Hi Yang Jihong,
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-Fixes: 73d05262a2ca ("selftests: riscv: Generalize mm selftests")
----
- tools/testing/selftests/riscv/mm/mmap_test.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On 06/08/24 07:27, Yang Jihong wrote:
+> The --show-prio option is used to display the priority of task.
+> It is disabled by default, which is consistent with original behavior.
+> 
+> The display format is xxx (priority does not change during task running)
+> or xxx->yyy (priority changes during task running)
+> 
 
-diff --git a/tools/testing/selftests/riscv/mm/mmap_test.h b/tools/testing/selftests/riscv/mm/mmap_test.h
-index 3b29ca3bb3d4..1c3313c201d5 100644
---- a/tools/testing/selftests/riscv/mm/mmap_test.h
-+++ b/tools/testing/selftests/riscv/mm/mmap_test.h
-@@ -48,11 +48,11 @@ uint32_t random_addresses[] = {
- };
- #endif
- 
--// Only works on 64 bit
--#if __riscv_xlen == 64
- #define PROT (PROT_READ | PROT_WRITE)
- #define FLAGS (MAP_PRIVATE | MAP_ANONYMOUS)
- 
-+// Only works on 64 bit
-+#if __riscv_xlen == 64
- /* mmap must return a value that doesn't use more bits than the hint address. */
- static inline unsigned long get_max_value(unsigned long input)
- {
-@@ -80,6 +80,8 @@ static inline unsigned long get_max_value(unsigned long input)
- 	})
- #endif /* __riscv_xlen == 64 */
- 
-+#define TEST_MMAPS do { } while (0)
-+
- static inline int memory_layout(void)
- {
- 	void *value1 = mmap(NULL, sizeof(int), PROT, FLAGS, 0, 0);
+I had done the following steps.
+1) Ran 'perf sched record stress-ng --cpu 32 -l 50 --timeout 40s'
+2) Changed the nice value of stress-ng while the record was going on.
+ps -C stress-ng -o pid=
+64195
 
----
-base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-change-id: 20240807-mmap_tests__fixes-651cc2b5fead
--- 
-- Charlie
+renice -n 10 -p 64195
+
+3) Then ran 'perf sched timehist --show-prio'
+
+343918.720052 [0015]  stress-ng[64195]    120  0.013      0.013   21.719
+.
+.
+343958.797257 [0009]  stress-ng[64195]    130  40076.812  0.007   0.393
+
+The output shows the final priority change of stress-ng from 120 to 130,
+but the transition format xxx->yyy is not displayed.
+
+Am I missing something?
+
+Thanks and Regards
+Madadi Vineeth Reddy
+
+> Testcase:
+> 
+>   # perf sched record nice -n 9 true
+>   [ perf record: Woken up 0 times to write data ]
+>   [ perf record: Captured and wrote 0.497 MB perf.data ]
 
 
