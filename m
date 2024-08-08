@@ -1,167 +1,114 @@
-Return-Path: <linux-kernel+bounces-279417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45EC94BD10
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:11:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF3894BD0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25F911F2316B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:11:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3554BB218D8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8C118CBF0;
-	Thu,  8 Aug 2024 12:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D4F18C357;
+	Thu,  8 Aug 2024 12:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jU/Y+lvJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nSgoy2Fa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E73318C900;
-	Thu,  8 Aug 2024 12:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F6318C901
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723119078; cv=none; b=BIwX0qz3PrXkYgCWgaybGU8qu5noB86+bIwtaIEOwqY5lSzQRz6Do+Nw9hU7io6oufIjyyIpYqW81Yx1UEN67Xnnc4Q8TEYuIXkAFQFLu6ntDiJuYHeUi9nV1+1QJt7lj+gBkfEeCf73KzfYg2x+svPHQIGcnoC3HBDPGybdz34=
+	t=1723119077; cv=none; b=A0T4fR6PHCuSmkg4kjaJDLABX7NDwfvf7KUk8sPeZoRBlNETRkNOIScKn5dLT3wEGF2My2BSjKe9crAAlDBhZmLGb4oBUmOc5PObkJ5nPsjM4DwN7D6ymvYs5koMGyOuKACpTdQnNYq1YLjPI1J384nGke7Li7DwQyM9dkI7Wt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723119078; c=relaxed/simple;
-	bh=ypoxP7jDf7LjMLCC24x01FzK9fJ/WozB7SR4D4u7jHA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NqSP0hQOywUMaWE+rJWHAM2qrmbUGcqUr3C52uysxin+lm7fWX6JH56p+fhusvaYKg9/wg0zf/t8XKH+OU2h7q2MAFry1V5ywjpOqx4NlbC9mfl/Q/1I4onqtEDW9N/ZZoDe2HUwldRttSwK+T/vRtELSe4fhGX+t1rLgwDX9oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jU/Y+lvJ; arc=none smtp.client-ip=192.198.163.19
+	s=arc-20240116; t=1723119077; c=relaxed/simple;
+	bh=uBbGQMddf7yPjAGm8/+2FG7H+rzLcr5LybqGlSJ0B+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3zgP8bNDa/LjSB2mw2POtGzVCB6/fp79dKijyNlptXjRiA90TWMpkrMo7wybmJg6uOEWUnCf4mE2gw3sBsl+/ur7BFUvDshU6fXjTSncy/dtOfJUjjdrhej7zo5qokC47nash2IV7pQa6ISKcagsb9Ghvgda7Jx+joPpndGMsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nSgoy2Fa; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723119076; x=1754655076;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ypoxP7jDf7LjMLCC24x01FzK9fJ/WozB7SR4D4u7jHA=;
-  b=jU/Y+lvJ2YhlE6TvidaFUp/2r7EBbkDMFTi1wZXzK/qWiK2wmH8ihnd2
-   QSMUXWZo9uWoyrwhQS0Bn8ijADHkFXE+IeWl4AW4n+UqGobMkGu4FVZz6
-   Fp1H64bEZwr5IjArdwNeoAJaoCXzLbkGSzY2QgckA2sobGTKMBfBGHZ9n
-   Irha+KBsw+cR8nxwnmQdg+fT8aL4lm1x/p6j+uM9YLZ9StGFEYAcrcLzw
-   lr29H5ZWp1E2ExZqaIBc/IkIqYt7aq9L86OuQw4UquKfU/WlqMj76m7uR
-   Qd1hfIR+Ux+T1k3KsjR9IYFpRmfJXEMr7KngOiLcuUkSLi6XB1wGEAgfd
-   g==;
-X-CSE-ConnectionGUID: ly/b8TY3TR2xxEe9YpgxEA==
-X-CSE-MsgGUID: /aaj+ctIQEukYHStwkuzuA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="20901289"
+  t=1723119074; x=1754655074;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uBbGQMddf7yPjAGm8/+2FG7H+rzLcr5LybqGlSJ0B+I=;
+  b=nSgoy2FasVxBVSefhN5XMEhoJpWdpIRh3PR3WEoiHd+9vvLZtDKvrjZM
+   TTgx3sLJAmAjH8QO/DT7vuPI3IaA4oNz4kCQVsfqe925CnMWI1P+N3xjA
+   wqCq8V/CErMfqHDZpv/3n8ZnYho7a66HYSFrbjS9MWvZ+/5Jp0xg6JP6b
+   YtN52qTTL0/1p+eigRPqPJn4ZkV757nr3w05HivR0FH9ag1qahgwNcWOU
+   LQZXgLpNe/DGhfnRV9LKwJpeOFqx4T8Pf1HQXZEXxqBi/cVym6EG86XjL
+   Es+oojHaZr/ZIMFLGRUdno8Plom3geuQzI5E+g6jAhdY/Jvcp9J8huxDi
+   w==;
+X-CSE-ConnectionGUID: 3tjeGyzySOiNQj3cX0Lb7g==
+X-CSE-MsgGUID: 0BPsfejwScCY1l4wgqnQ2g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="25031693"
 X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="20901289"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 05:11:15 -0700
-X-CSE-ConnectionGUID: TmdFroz0QU6FXsOr/pvTEg==
-X-CSE-MsgGUID: D7BmpyGfTAuI8ysmCatVhQ==
+   d="scan'208";a="25031693"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 05:11:13 -0700
+X-CSE-ConnectionGUID: QW06WbOUTSWyvFyEGw1uKA==
+X-CSE-MsgGUID: y4r8n4hSQe+uN/lCHBEWVg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="62149825"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.8.107]) ([10.94.8.107])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 05:11:11 -0700
-Message-ID: <c3b6ac24-6359-4809-83d9-ac62ec64b396@linux.intel.com>
-Date: Thu, 8 Aug 2024 14:11:07 +0200
+   d="scan'208";a="57159705"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 08 Aug 2024 05:11:11 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 073CA4C7; Thu, 08 Aug 2024 15:11:09 +0300 (EEST)
+Date: Thu, 8 Aug 2024 15:11:09 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Jiri Pirko <jiri@resnulli.us>, 
+	Hongyu Ning <hongyu.ning@linux.intel.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] virtio: Remove virtio devices on device_shutdown()
+Message-ID: <o7duejn6zoua2zu6ff5x4nn43bdbqllsmhqtc2i3dkqme5pmig@4nsfqi6wsjsd>
+References: <20240808075141.3433253-1-kirill.shutemov@linux.intel.com>
+ <ZrSuBlWkE-USicQw@nanopsycho.orion>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 23/34] ALSA: usb-audio: Prevent starting of audio
- stream if in use
-Content-Language: en-US
-To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
- Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
- gregkh@linuxfoundation.org, robh@kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-24-quic_wcheng@quicinc.com>
- <186ae30f-678c-423a-a56f-74510a184f99@linux.intel.com>
- <43e9850c-3e34-4582-aadd-4a6dcbd3ce8d@quicinc.com>
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <43e9850c-3e34-4582-aadd-4a6dcbd3ce8d@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrSuBlWkE-USicQw@nanopsycho.orion>
 
-On 8/8/2024 3:19 AM, Wesley Cheng wrote:
-> Hi Amadeusz,
+On Thu, Aug 08, 2024 at 01:37:42PM +0200, Jiri Pirko wrote:
+> Thu, Aug 08, 2024 at 09:51:41AM CEST, kirill.shutemov@linux.intel.com wrote:
+> >Hongyu reported a hang on kexec in a VM. QEMU reported invalid memory
+> >accesses during the hang.
+> >
+> >	Invalid read at addr 0x102877002, size 2, region '(null)', reason: rejected
+> >	Invalid write at addr 0x102877A44, size 2, region '(null)', reason: rejected
+> >	...
+> >
+> >It was traced down to virtio-console. Kexec works fine if virtio-console
+> >is not in use.
+> >
+> >Looks like virtio-console continues to write to the MMIO even after
+> >underlying virtio-pci device is removed.
+> >
+> >The problem can be mitigated by removing all virtio devices on virtio
+> >bus shutdown.
+> >
+> >Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> >Reported-by: Hongyu Ning <hongyu.ning@linux.intel.com>
 > 
-> On 8/6/2024 7:51 AM, Amadeusz Sławiński wrote:
->> On 8/1/2024 3:17 AM, Wesley Cheng wrote:
->>> With USB audio offloading, an audio session is started from the ASoC
->>> platform sound card and PCM devices.  Likewise, the USB SND path is still
->>> readily available for use, in case the non-offload path is desired.  In
->>> order to prevent the two entities from attempting to use the USB bus,
->>> introduce a flag that determines when either paths are in use.
->>>
->>
->> How can this happen? Can you provide some example with list of devices and which one should block the other? If I recall correctly devices are already exclusive unless you support substreams which ASoC does not at the moment.
->>
->  From past discussions, I think so far everyone is on board with the idea of having both the USB sound card and PCM devices exist in conjunction w/ the USB offload path, which is going to be done over the ASoC platform card.  So for example,
-> 
+> Could you provide a "Fixes:" tag pointing to the commit that introduced
+> the bug?
 
-Sorry, I must have missed that and examples in documentation could 
-probably be a bit better, it is bit late at patchset 24 that I 
-understood about this now. And is part of a reason why I was confused 
-about kcontrol implementation.
+I am not sure if it is a regression. Maybe it was there forever.
 
-> / # cat /proc/asound/cards
->   0 [SM8250MTPWCD938]: sm8250 - SM8250-MTP-WCD9380-WSA8810-VA-D
->                        SM8250-MTP-WCD9380-WSA8810-VA-DMIC
->   1 [C320M          ]: USB-Audio - Plantronics C320-M
->                        Plantronics Plantronics C320-M at usb-xhci-hcd.1.auto-1.2, full speed
-> 
-> This device currently has the following sound cards within the system:
-> 
-> - card#0 - ASoC platform card: handles USB offload, speaker, etc...
-> 
-> - card#1 - USB SND card: card created for interacting with the connected USB device.
-> 
-> So now, with USB offloading in the picture, there are basically two paths that can start attempting to utilize the same USB device endpoints.  Let's keep it simple and assume the device only has one playback substream (which means only one PCM device)
-> 
-> /proc/asound/card1 # cat stream0
-> Plantronics Plantronics C320-M at usb-xhci-hcd.1.auto-1.2, full speed : USB Audio
-> 
-> Playback:
->    Status: Stop
->    Interface 2
->      Altset 1
->      Format: S16_LE
->      Channels: 2
->      Endpoint: 0x01 (1 OUT) (ADAPTIVE)
->      Rates: 8000, 16000, 24000, 32000, 44100, 48000
->      Bits: 16
->      Channel map: FL FR
-> 
-> So the patch here will prevent transfers from happening from both the offload path and directly over the USB SND PCM device, which correlates to the following paths:
-> 
-> - offload: card#0 pcm#0
-> 
-> - USB SND: card#1 pcm#0
+Hongyu, could you please check with bisect if it is possible to point to a
+specific commit?
 
-Well, it's one way to do that.
-
-Personally I would just reuse USB FEs and when opening one check if it 
-can be offloaded:
-* check if someone disabled Offload on FE
-* check if it is connected to HW that can do Offload at all
-* check if Offload streams are available on backing HW
-* check if audio formats are supported by above HW
-* do any other checks that may be needed
-and then just redirect FE setup to relevant driver doing offload if 
-able, otherwise just go standard path.
-
-
-As I've wrote I must have missed the discussion where it was agreed on 
-and if maintainers agree that it can be done this way, I won't fight it. 
-Even though I would consider my way a lot simpler and user friendly from 
-end user point of view.
-
-Thanks,
-Amadeusz
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
