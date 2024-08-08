@@ -1,153 +1,288 @@
-Return-Path: <linux-kernel+bounces-279626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD12D94BFB5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:34:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE7594BFB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 450CEB21CF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:34:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D14A1B21E43
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C740418EFD6;
-	Thu,  8 Aug 2024 14:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5160E42C0B;
+	Thu,  8 Aug 2024 14:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OAEjrfh5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6K0SroPc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NANa96po"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7972418EFDB
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CE318E056;
+	Thu,  8 Aug 2024 14:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723127668; cv=none; b=DsmCBhBfUQXfirwU78OMazSp4ckBdjcyYJGuH5WhkCrjpJNXu0+eKzBZeIy5iEDRNL9FahlnS7n1FnBCN/0QnYutARYnj2D4Ul5Eh+FM3RCGxYZSBoMxFZ30sAerLzXaXhoOEbAO4cac1t5ZwWjEbytGquSL7HHnZH8pHxqFnEE=
+	t=1723127688; cv=none; b=KqMufeFri6F7k7VL8tJFhPjMqP9QzevZZvXhRCJYAy2RXRzIdWbeLUHPMSU4QWA+i0QS/gxwtaY3xMWrtNmpqyZYg9I2Lha7rTBGUkxAQU5mCD6gZBxTz9JlP55Yuw/tNw4yDYxbRm/1oM3GR58rMk15/SLg5pjwaKTsf/r10FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723127668; c=relaxed/simple;
-	bh=+2NQOIddLJ+p9eIa9ZugMq+/O7MnsshVW7/13nhEenM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GLXAVUFvXXIgiZqhHeBCzEIlyYBvM5OaPW5ZdJZPClOjrx0cDLMpHYzd8ffqm9R1ZGHqoypca2lwr4RAyB1zdmdkCl1Y922QgBAbPceZBvHt0YyMfIMxtc1VuDbVVmQM+d2MEM9wl12thajxZYkNu9rjuSBVLxyEO3fGPf0qsOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OAEjrfh5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6K0SroPc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723127664;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=56JIhtAX+5tOSqzvAGOcw58QIyjuchVrNY7VzC2OwUU=;
-	b=OAEjrfh5LabLUYOHhJ2S67zWlr9ttNgdeoLVLiFenlhcLvgNZyMuryw76CijFPbsmhffyv
-	NHAEnSaW/P0o3JpUR+TzJTTLrLt6nUIyX03lFTtJcRkc5S0B1WN4htJo72ZS0GHbKBTJzI
-	k9bE82poRhKhz19gbeJNN4aZTH8AFD8ArUz24FfxL0Krvy+WxQhYW5aclTwjssauSc/w0Y
-	JPq1JgqbK/If813g5nIBIXQxjGQ4Gqbtbj6OG7YN73XC9Q9dZzWYnWCyhtuDqzbkfmvLJW
-	461mUo8rXrjX3adnVI5hKaOf7Gko3vAlSurdOaNDaaYmcyQU9zhbYZqEFOvu3Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723127664;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=56JIhtAX+5tOSqzvAGOcw58QIyjuchVrNY7VzC2OwUU=;
-	b=6K0SroPcULZwFmvxD9M+p6+xaa98sN6d20R2AmtFksXTKVfmEUmwP1L4BN3vntSbLbFfch
-	HtXG1bIMnM41rGAw==
-To: Anup Patel <anup@brainfault.org>, Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- greentime.hu@sifive.com, vincent.chen@sifive.com, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>
-Subject: Re: [PATCH 1/1] riscv-aplic: manually set pending for the
- pre-existing interrupts
-In-Reply-To: <CAAhSdy3VKMngwHxOg5+z6pK3QgZnLv=3+hpZBeUm87L_e62aUQ@mail.gmail.com>
-References: <20240808081412.24553-1-yongxuan.wang@sifive.com>
- <CAAhSdy3VKMngwHxOg5+z6pK3QgZnLv=3+hpZBeUm87L_e62aUQ@mail.gmail.com>
-Date: Thu, 08 Aug 2024 16:34:24 +0200
-Message-ID: <87ikwbytfz.ffs@tglx>
+	s=arc-20240116; t=1723127688; c=relaxed/simple;
+	bh=3bmBR8LGeH2dYpdGK2nOw0cjjBNumXI44Uzp2DOECW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=audKK6apmzCmEQV3BebRHuTB/y/5AuDgki2IVMi+RN/rTEdtoQj5iJotyhZ/JdbGe8Oqmiy9+n6W6pjOtrpSvdpbcwLB63x+CrxBiL9FoGpj8uWEeyS7cKlL4K+qKatlJQfT9pgJsPklL8bCzBZYuyAFtvZpY+qicNfMIIyGyAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NANa96po; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 144F4C4AF0D;
+	Thu,  8 Aug 2024 14:34:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723127687;
+	bh=3bmBR8LGeH2dYpdGK2nOw0cjjBNumXI44Uzp2DOECW4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NANa96po9l7Bb3N5HpsY2lCmRDc2A+ZGed6ONmFrm/k7HwrU1QR3omNOdTNdNQVce
+	 vMflAztH8OPhr+3XFuH6KyRMdFSwD/1QFJl/sJg0XhgZHeQJCLsR58vbxKt1CO8Wnf
+	 qYRBTb34L5HLeRiWkozOoL/ZaqH7O4dA4OiHotud/qon3KS8zMlL1LJPPh/Y6j5Ev7
+	 6cePMitTNePp61/g9tQO5jVPVXbcA4nD+fBU3fRM8ZDIgslvF6xa8kFK0CLfE6Kgg3
+	 JmO8Jbg7ksMKp6E7qZwF8GCv/UA9WB1AikioBEVjNeX/LvAyfyaI68GavwZHi2SdAB
+	 /Nx/nReQ03wwg==
+Date: Thu, 8 Aug 2024 11:34:38 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Anne Macedo <retpolanne@posteo.net>,
+	Changbin Du <changbin.du@huawei.com>,
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] perf test: Add set of perf record LBR tests
+Message-ID: <ZrTXftup0H46R8WK@x1>
+References: <20240808054644.1286065-1-irogers@google.com>
+ <20240808054644.1286065-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808054644.1286065-2-irogers@google.com>
 
-On Thu, Aug 08 2024 at 18:56, Anup Patel wrote:
-> More appropriate patch subject should be:
->
-> irqchip: riscv-aplic: retrigger interrupt in MSI mode upon write to
-> sourcecfg register
+On Wed, Aug 07, 2024 at 10:46:44PM -0700, Ian Rogers wrote:
+> Adds coverage for LBR operations and LBR callgraph.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/tests/shell/record_lbr.sh | 161 +++++++++++++++++++++++++++
+>  1 file changed, 161 insertions(+)
+>  create mode 100755 tools/perf/tests/shell/record_lbr.sh
+> 
+> diff --git a/tools/perf/tests/shell/record_lbr.sh b/tools/perf/tests/shell/record_lbr.sh
+> new file mode 100755
+> index 000000000000..baf168d0ddbb
+> --- /dev/null
+> +++ b/tools/perf/tests/shell/record_lbr.sh
+> @@ -0,0 +1,161 @@
+> +#!/bin/bash
+> +# perf record LBR tests
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +set -e
+> +
+> +if [ ! -f /sys/devices/cpu/caps/branches ]
+> +then
+> +  echo "Skip: only x86 CPUs support LBR"
+> +  exit 2
+> +fi
 
-And the correct one would be:
+root@x1:~# ls -la /sys/devices/cpu*/caps/branches 
+-r--r--r--. 1 root root 4096 Jun  4 16:07 /sys/devices/cpu_atom/caps/branches
+-r--r--r--. 1 root root 4096 Aug  8 11:21 /sys/devices/cpu_core/caps/branches
+root@x1:~#
 
-    irqchip/riscv-aplic: Retrigger MSI interrupt on source configuration
+I'm getting:
 
-1) The prefix is correct
+root@x1:~# perf test -vvvv LBR
+ 97: perf record LBR tests:
+--- start ---
+test child forked, pid 2033388
+Skip: only x86 CPUs support LBR
+---- end(-2) ----
+ 97: perf record LBR tests                                           : Skip
+root@x1:~#
 
-2) Sentence starts with a uppercase letter
+So I added the following follow-up patch, ack?
 
-3) It uses understandable words. sourcecfg is a implementation detail
-   which is irrelevant for the high level overview of a changelog
-   subject, which is visible in the short log.
+- Arnaldo
 
-> On Thu, Aug 8, 2024 at 1:44=E2=80=AFPM Yong-Xuan Wang <yongxuan.wang@sifi=
-ve.com> wrote:
->>
->> The section 4.5.2 of the RISC-V AIA specification says that any write
->> to a sourcecfg register of an APLIC might (or might not) cause the
->> corresponding interrupt-pending bit to be set to one if the rectified
->> input value is high (=3D 1) under the new source mode.
->
-> Add quotes around the text from RISC-V AIA specification.
->
->>
->> If an interrupt is asserted before the driver configs its interrupt
->> type to APLIC, it's pending bit will not be set except a relevant
->> write to a setip or setipnum register. When we write the interrupt
->> type to sourcecfg register, if the APLIC device doesn't check and
->> update the pending bit, the interrupt might never becomes pending.
->
-> The second sentence above can be re-written as follows:
->
-> When interrupt type is changed in sourcecfg register, the APLIC
+From f6ea332dd25cc62b9493b2d40040c2fb35253d9e Mon Sep 17 00:00:00 2001
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+Date: Thu, 8 Aug 2024 11:26:13 -0300
+Subject: [PATCH 1/1] perf test shell lbr: Support hybrid x86 systems too
 
-the interrupt type ... in the source....
+Running on a:
 
-> device might not set the corresponding pending bit, the interrupt
+  root@x1:~# grep 'model name' -m1 /proc/cpuinfo
+  model name	: 13th Gen Intel(R) Core(TM) i7-1365U
+  root@x1:~#
 
-bit , so the ...
+It skips all the tests with:
 
-> might never become pending.
+  root@x1:~# perf test -vvvv LBR
+   97: perf record LBR tests:
+  --- start ---
+  test child forked, pid 2033388
+  Skip: only x86 CPUs support LBR
+  ---- end(-2) ----
+   97: perf record LBR tests                                           : Skip
+  root@x1:~#
 
->
-> Define APLIC MSI mode specific irq_set_type() like below:
->
-> int aplic_msi_irq_set_type(struct irq_data *d, unsigned int type)
+Because the test checks for the /sys/devices/cpu/caps/branches file,
+that isn't present as we have instead:
 
-static :)
+  root@x1:~# ls -la /sys/devices/cpu*/caps/branches
+  -r--r--r--. 1 root root 4096 Aug  8 11:22 /sys/devices/cpu_atom/caps/branches
+  -r--r--r--. 1 root root 4096 Aug  8 11:21 /sys/devices/cpu_core/caps/branches
+  root@x1:~#
 
-> {
->        int rc;
->
->        rc =3D aplic_irq_set_type(d, type);
+If we check as well for one of those,
+/sys/devices/cpu_core/caps/branches, then we don't skip the tests and
+all are run on these x86 Intel Hybrid systems as well, passing all of
+them:
 
-         int rc =3D aplic...
+  root@x1:~# perf test -vvvv LBR
+   97: perf record LBR tests:
+  --- start ---
+  test child forked, pid 2034956
+  LBR callgraph
+  [ perf record: Woken up 5 times to write data ]
+  [ perf record: Captured and wrote 1.812 MB /tmp/__perf_test.perf.data.B2HvQ (8114 samples) ]
+  LBR callgraph [Success]
+  LBR any branch test
+  [ perf record: Woken up 25 times to write data ]
+  [ perf record: Captured and wrote 6.382 MB /tmp/__perf_test.perf.data.B2HvQ (8071 samples) ]
+  LBR any branch test: 8071 samples
+  LBR any branch test [Success]
+  LBR any call test
+  [ perf record: Woken up 23 times to write data ]
+  [ perf record: Captured and wrote 6.208 MB /tmp/__perf_test.perf.data.B2HvQ (8092 samples) ]
+  LBR any call test: 8092 samples
+  LBR any call test [Success]
+  LBR any ret test
+  [ perf record: Woken up 24 times to write data ]
+  [ perf record: Captured and wrote 6.396 MB /tmp/__perf_test.perf.data.B2HvQ (8093 samples) ]
+  LBR any ret test: 8093 samples
+  LBR any ret test [Success]
+  LBR any indirect call test
+  [ perf record: Woken up 25 times to write data ]
+  [ perf record: Captured and wrote 6.344 MB /tmp/__perf_test.perf.data.B2HvQ (8067 samples) ]
+  LBR any indirect call test: 8067 samples
+  LBR any indirect call test [Success]
+  LBR any indirect jump test
+  [ perf record: Woken up 12 times to write data ]
+  [ perf record: Captured and wrote 3.073 MB /tmp/__perf_test.perf.data.B2HvQ (8061 samples) ]
+  LBR any indirect jump test: 8061 samples
+  LBR any indirect jump test [Success]
+  LBR direct calls test
+  [ perf record: Woken up 25 times to write data ]
+  [ perf record: Captured and wrote 6.380 MB /tmp/__perf_test.perf.data.B2HvQ (8076 samples) ]
+  LBR direct calls test: 8076 samples
+  LBR direct calls test [Success]
+  LBR any indirect user call test
+  [ perf record: Woken up 5 times to write data ]
+  [ perf record: Captured and wrote 1.597 MB /tmp/__perf_test.perf.data.B2HvQ (8079 samples) ]
+  LBR any indirect user call test: 8079 samples
+  LBR any indirect user call test [Success]
+  LBR system wide any branch test
+  [ perf record: Woken up 26 times to write data ]
+  [ perf record: Captured and wrote 9.088 MB /tmp/__perf_test.perf.data.B2HvQ (9209 samples) ]
+  LBR system wide any branch test: 9209 samples
+  LBR system wide any branch test [Success]
+  LBR system wide any call test
+  [ perf record: Woken up 25 times to write data ]
+  [ perf record: Captured and wrote 8.945 MB /tmp/__perf_test.perf.data.B2HvQ (9333 samples) ]
+  LBR system wide any call test: 9333 samples
+  LBR system wide any call test [Success]
+  LBR parallel any branch test
+  LBR parallel any call test
+  LBR parallel any ret test
+  LBR parallel any indirect call test
+  LBR parallel any indirect jump test
+  LBR parallel direct calls test
+  LBR parallel system wide any branch test
+  LBR parallel any indirect user call test
+  LBR parallel system wide any call test
+  [ perf record: Woken up 9 times to write data ]
+  [ perf record: Woken up 51 times to write data ]
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Woken up 5 times to write data ]
+  [ perf record: Woken up 559 times to write data ]
+  [ perf record: Woken up 14 times to write data ]
+  [ perf record: Woken up 17 times to write data ]
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Woken up 11 times to write data ]
+  [ perf record: Captured and wrote 0.150 MB /tmp/__perf_test.perf.data.lANpR (1909 samples) ]
+  [ perf record: Captured and wrote 2.371 MB /tmp/__perf_test.perf.data.Olum8 (3033 samples) ]
+  [ perf record: Captured and wrote 1.230 MB /tmp/__perf_test.perf.data.njfJ8 (1742 samples) ]
+  [ perf record: Captured and wrote 5.554 MB /tmp/__perf_test.perf.data.4ZTrj (29662 samples) ]
+  [ perf record: Captured and wrote 19.906 MB /tmp/__perf_test.perf.data.dlGQt (29576 samples) ]
+  [ perf record: Captured and wrote 0.289 MB /tmp/__perf_test.perf.data.CAT7y (4311 samples) ]
+  [ perf record: Captured and wrote 3.129 MB /tmp/__perf_test.perf.data.diuKG (3971 samples) ]
+  LBR parallel any indirect user call test: 1909 samples
+  [ perf record: Captured and wrote 4.858 MB /tmp/__perf_test.perf.data.sVjtN (6130 samples) ]
+  LBR parallel any indirect user call test [Success]
+  [ perf record: Captured and wrote 3.669 MB /tmp/__perf_test.perf.data.AJtNI (4827 samples) ]
+  LBR parallel any indirect jump test: 4311 samples
+  LBR parallel any indirect jump test [Success]
+  LBR parallel direct calls test: 3033 samples
+  LBR parallel direct calls test [Success]
+  LBR parallel any indirect call test: 1742 samples
+  LBR parallel any indirect call test [Success]
+  LBR parallel any call test: 4827 samples
+  LBR parallel any call test [Success]
+  LBR parallel any branch test: 6130 samples
+  LBR parallel any branch test [Success]
+  LBR parallel system wide any branch test: 29662 samples
+  LBR parallel any ret test: 3971 samples
+  LBR parallel any ret test [Success]
+  LBR parallel system wide any branch test [Success]
+  LBR parallel system wide any call test: 29576 samples
+  LBR parallel system wide any call test [Success]
+  ---- end(0) ----
+   97: perf record LBR tests                                           : Ok
+  root@x1:~#
 
->        if (rc)
->               return rc;
->
->        /*
->         * Updating sourcecfg register for level-triggered interrupts
->         * requires interrupt retriggering when APLIC in MSI mode.
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Anne Macedo <retpolanne@posteo.net>,
+Cc: Changbin Du <changbin.du@huawei.com>,
+Cc: Ian Rogers <irogers@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+Cc: Jiri Olsa <jolsa@kernel.org>,
+Cc: Kan Liang <kan.liang@linux.intel.com>,
+Cc: Mark Rutland <mark.rutland@arm.com>,
+Cc: Namhyung Kim <namhyung@kernel.org>,
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/tests/shell/record_lbr.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-APLIC is in ....
+diff --git a/tools/perf/tests/shell/record_lbr.sh b/tools/perf/tests/shell/record_lbr.sh
+index baf168d0ddbbf447..ead87b731898d70b 100755
+--- a/tools/perf/tests/shell/record_lbr.sh
++++ b/tools/perf/tests/shell/record_lbr.sh
+@@ -4,7 +4,7 @@
+ 
+ set -e
+ 
+-if [ ! -f /sys/devices/cpu/caps/branches ]
++if [ ! -f /sys/devices/cpu/caps/branches -a ! -f /sys/devices/cpu_core/caps/branches ]
+ then
+   echo "Skip: only x86 CPUs support LBR"
+   exit 2
+-- 
+2.44.0
 
->         */
->        aplic_msi_irq_retrigger_level(d);
-
-Thanks,
-
-        tglx
 
