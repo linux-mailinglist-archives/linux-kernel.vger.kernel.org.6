@@ -1,232 +1,330 @@
-Return-Path: <linux-kernel+bounces-279113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9409F94B91C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:35:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D13194B91E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADB421C20B51
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:35:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D27D61F23CA4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B8C18953B;
-	Thu,  8 Aug 2024 08:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FFlGJReH"
-Received: from msa.smtpout.orange.fr (msa-212.smtpout.orange.fr [193.252.23.212])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52DA1465B3;
-	Thu,  8 Aug 2024 08:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7211898E2;
+	Thu,  8 Aug 2024 08:36:46 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2551465B3;
+	Thu,  8 Aug 2024 08:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723106149; cv=none; b=CMSNp6Nn1k2VURzQ9PBPpkUOx8gSYFFW9kw/bCVZVqj9Df18hjaa29KkQ1VYt+QTEcpCbMNe83YkFMGhMB1RvxeBhShZeR1kz3/kazqzOhnEX9T3O5IPmKTiL6r2PZxxqnyxrH/il4kyVJ7hM5+IuvUqpetwWOYKDRGzfWTAzKs=
+	t=1723106205; cv=none; b=EhekOB9MzcqdvoGuDxnGbFoEgBpoVI8CgwUnfwhJDjwYh4fqf08vKW/3aurmbyc9d4PR4SsF3crQuIubMxsI/KRrRS9Eowetw0SSbcm6oLgTO6jqN9wRCqGVuQ1XxTE593VrBEWmn8mMtPJROoOG+OL7RTRFHyDnEHL2nMv9HvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723106149; c=relaxed/simple;
-	bh=N1qrktCO+PnnJLGH/JzHZB2CZag+z4/xUv4WppOomdQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rQ5MIm/sVfFgcEgBTJH1j51MvbHmniZZBQbY8fT/evAHhTEQTUqlZlnw8Z0BqjVaSnrLBRziimdhRcbQH978eelG88qlDy79Ah6vrk/g6zuySm8S1VAeiX0QHOxE/OV0U3/i1m4PDzsbK6K7meXjIPEzNhq/ArqV96rGJwabQAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FFlGJReH; arc=none smtp.client-ip=193.252.23.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id bycMs4ANs6NRTbycMshqWM; Thu, 08 Aug 2024 10:35:39 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1723106139;
-	bh=EjZqCORS57HDZjbd4db9mB4VKAis0rKj0Ik5Pz95TOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=FFlGJReH+xdtjt4bd3YXAhR6QkakNjz5a/+1Bg7g1InkfmNA8igskSUTBKI5I3hI+
-	 2k2HfjjMfRb7cS952A8iEkwYfWBr13xPpwY2FiggVxQhFVCNz+zACjscWpVIGJnLV1
-	 hmQq5T/Jm1stTFE7606bH48YgcfiQchiWxRu3OdCpKZj2d6I/WpuPPzFsqK+Oq/pJi
-	 5DUPFaglEqFBicjY+LJF47eckY+Pcz64de/4aJ9b3DqhsqKA4mq2ZVMhPXIFgFebcZ
-	 AtRA+mrTQCJfH9y9ffI7GJeDfjOlrfg4rsOt9vjD+sQzR6EbKpA132ctW/y/b9S5B6
-	 l3e9Dwlg2n7fA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 08 Aug 2024 10:35:39 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <0f227033-4818-4ff5-9140-851c6d802fb2@wanadoo.fr>
-Date: Thu, 8 Aug 2024 10:35:29 +0200
+	s=arc-20240116; t=1723106205; c=relaxed/simple;
+	bh=5zQkurv4VdW0h3BdhXp17zysHzZ2zWbjCvbCFY+zLBM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IROozYbXVPe8oyJ/Rnsu7NNUlGvgsGvazLgFKWjH6m3gQNXY5qoK8Ix6wvLfVFqQtZULztpsb24Z/eEh2vDAVoPESu6cwyoE18kjjMUZLegWHxZZbyR5G+eZV/crbmt4NC2RTzsW5wYzQmWyI/FR8gv2cW3su5SgtDAMGs7EuSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8AxHuuYg7RmP5gLAA--.35108S3;
+	Thu, 08 Aug 2024 16:36:40 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowMDx0uGWg7RmUXkJAA--.47562S2;
+	Thu, 08 Aug 2024 16:36:39 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>,
+	kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] LoongArch: KVM: Add haltpoll control feature in kvm side
+Date: Thu,  8 Aug 2024 16:36:38 +0800
+Message-Id: <20240808083638.205659-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] dt-bindings: reset Add AST2700 reset bindings
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
- <20240808075937.2756733-3-ryan_chen@aspeedtech.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240808075937.2756733-3-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMDx0uGWg7RmUXkJAA--.47562S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-Le 08/08/2024 à 09:59, Ryan Chen a écrit :
-> Add dt bindings for AST2700 reset driver.
-> 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> ---
->   .../dt-bindings/reset/aspeed,ast2700-reset.h  | 132 ++++++++++++++++++
->   1 file changed, 132 insertions(+)
->   create mode 100644 include/dt-bindings/reset/aspeed,ast2700-reset.h
-> 
-> diff --git a/include/dt-bindings/reset/aspeed,ast2700-reset.h b/include/dt-bindings/reset/aspeed,ast2700-reset.h
-> new file mode 100644
-> index 000000000000..ea261108abfb
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/aspeed,ast2700-reset.h
-> @@ -0,0 +1,132 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Device Tree binding constants for AST2700 reset controller.
-> + *
-> + * Copyright (c) 2024 Aspeed Technology Inc.
-> + */
-> +
-> +#ifndef _MACH_ASPEED_AST2700_RESET_H_
-> +#define _MACH_ASPEED_AST2700_RESET_H_
-> +
-> +/* SOC0 */
-> +#define SCU0_RESET_SDRAM		(0)
-> +#define SCU0_RESET_DDRPHY		(1)
-> +#define SCU0_RESET_RSA			(2)
-> +#define SCU0_RESET_SHA3			(3)
-> +#define SCU0_RESET_HACE			(4)
-> +#define SCU0_RESET_SOC			(5)
-> +#define SCU0_RESET_VIDEO		(6)
-> +#define SCU0_RESET_2D			(7)
-> +#define SCU0_RESET_PCIS			(8)
-> +#define SCU0_RESET_RVAS0		(9)
-> +#define SCU0_RESET_RVAS1		(10)
-> +#define SCU0_RESET_SM3			(11)
-> +#define SCU0_RESET_SM4			(12)
-> +#define SCU0_RESET_CRT0			(13)
-> +#define SCU0_RESET_ECC			(14)
-> +#define SCU0_RESET_DP_PCI		(15)
-> +#define SCU0_RESET_UFS			(16)
-> +#define SCU0_RESET_EMMC			(17)
-> +#define SCU0_RESET_PCIE1RST		(18)
-> +#define SCU0_RESET_PCIE1RSTOE		(19)
-> +#define SCU0_RESET_PCIE0RST		(20)
-> +#define SCU0_RESET_PCIE0RSTOE		(21)
-> +#define SCU0_RESET_JTAG			(22)
-> +#define SCU0_RESET_MCTP0		(23)
-> +#define SCU0_RESET_MCTP1		(24)
-> +#define SCU0_RESET_XDMA0		(25)
-> +#define SCU0_RESET_XDMA1		(26)
-> +#define SCU0_RESET_H2X1			(27)
-> +#define SCU0_RESET_DP			(28)
-> +#define SCU0_RESET_DP_MCU		(29)
-> +#define SCU0_RESET_SSP			(30)
-> +#define SCU0_RESET_H2X0			(31)
-> +#define SCU0_RESET_PORTA_VHUB1		(32)
-> +#define SCU0_RESET_PORTA_PHY3		(33)
-> +#define SCU0_RESET_PORTA_XHCI		(34)
-> +#define SCU0_RESET_PORTB_VHUB1		(35)
-> +#define SCU0_RESET_PORTB_PHY3		(36)
-> +#define SCU0_RESET_PORTB_XHCI		(37)
-> +#define SCU0_RESET_PORTA_EHCI		(38)
-> +#define SCU0_RESET_PORTA_VHUB0		(38)
+The cpuidle-haltpoll driver with haltpoll governor allows the guest
+vcpus to poll for a specified amount of time before halting. This
+provides some benefits such as avoid sending IPI to perform a wakeup
+and avoid VM-exit cost.
 
-Is having 38 twice expected?
-If not, why not use an enum, BTW?
+When guest VM uses cpuidle-halt poll method, haltpoll need be disabled
+at host hypervisor side to avoid double haltpoll in both guest VM and
+host hypervisor. Here KVM_FEATURE_POLL_CONTROL feature is added in KVM
+and guest can detect this feature and disable haltpoll in host side.
 
-> +#define SCU0_RESET_PORTB_EHCI		(39)
-> +#define SCU0_RESET_PORTB_VHUB0		(39)
-> +#define SCU0_RESET_UHCI			(40)
-> +#define SCU0_RESET_TSP			(41)
-> +#define SCU0_RESET_E2M0			(42)
-> +#define SCU0_RESET_E2M1			(43)
-> +#define SCU0_RESET_VLINK		(44)
-> +
-> +#define SCU0_RESET_NUMS		(SCU0_RESET_VLINK + 1)
-> +
-> +/* SOC1 */
-> +#define SCU1_RESET_LPC0			(0)
-> +#define SCU1_RESET_LPC1			(1)
-> +#define SCU1_RESET_MII			(2)
-> +#define SCU1_RESET_PECI			(3)
-> +#define SCU1_RESET_PWM			(4)
-> +#define SCU1_RESET_MAC0			(5)
-> +#define SCU1_RESET_MAC1			(6)
-> +#define SCU1_RESET_MAC2			(7)
-> +#define SCU1_RESET_ADC			(8)
-> +#define SCU1_RESET_SD			(9)
-> +#define SCU1_RESET_ESPI0		(10)
-> +#define SCU1_RESET_ESPI1		(11)
-> +#define SCU1_RESET_JTAG1		(12)
-> +#define SCU1_RESET_SPI0			(13)
-> +#define SCU1_RESET_SPI1			(14)
-> +#define SCU1_RESET_SPI2			(15)
-> +#define SCU1_RESET_I3C0			(16)
-> +#define SCU1_RESET_I3C1			(17)
-> +#define SCU1_RESET_I3C2			(18)
-> +#define SCU1_RESET_I3C3			(19)
-> +#define SCU1_RESET_I3C4			(20)
-> +#define SCU1_RESET_I3C5			(21)
-> +#define SCU1_RESET_I3C6			(22)
-> +#define SCU1_RESET_I3C7			(23)
-> +#define SCU1_RESET_I3C8			(24)
-> +#define SCU1_RESET_I3C9			(25)
-> +#define SCU1_RESET_I3C10		(26)
-> +#define SCU1_RESET_I3C11		(27)
-> +#define SCU1_RESET_I3C12		(28)
-> +#define SCU1_RESET_I3C13		(29)
-> +#define SCU1_RESET_I3C14		(30)
-> +#define SCU1_RESET_I3C15		(31)
-> +#define SCU1_RESET_I3C15		(31)
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+---
+ arch/loongarch/include/asm/kvm_host.h  |  1 +
+ arch/loongarch/include/asm/loongarch.h |  1 +
+ arch/loongarch/include/uapi/asm/kvm.h  |  3 +
+ arch/loongarch/kvm/Kconfig             |  1 +
+ arch/loongarch/kvm/exit.c              |  9 ++-
+ arch/loongarch/kvm/vcpu.c              | 85 ++++++++++++++++++++------
+ 6 files changed, 81 insertions(+), 19 deletions(-)
 
-SCU1_RESET_I3C15 is defined twice.
+diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
+index 44b54965f5b4..a972f70ccdfc 100644
+--- a/arch/loongarch/include/asm/kvm_host.h
++++ b/arch/loongarch/include/asm/kvm_host.h
+@@ -214,6 +214,7 @@ struct kvm_vcpu_arch {
+ 		u64 last_steal;
+ 		struct gfn_to_hva_cache cache;
+ 	} st;
++	unsigned long kvm_poll_control;
+ };
+ 
+ static inline unsigned long readl_sw_gcsr(struct loongarch_csrs *csr, int reg)
+diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/include/asm/loongarch.h
+index 04a78010fc72..e4fc30cf3572 100644
+--- a/arch/loongarch/include/asm/loongarch.h
++++ b/arch/loongarch/include/asm/loongarch.h
+@@ -170,6 +170,7 @@
+ #define CPUCFG_KVM_FEATURE		(CPUCFG_KVM_BASE + 4)
+ #define  KVM_FEATURE_IPI		BIT(1)
+ #define  KVM_FEATURE_STEAL_TIME		BIT(2)
++#define  KVM_FEATURE_POLL_CONTROL	BIT(3)
+ 
+ #ifndef __ASSEMBLY__
+ 
+diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
+index ddc5cab0ffd0..191f10c2b6c2 100644
+--- a/arch/loongarch/include/uapi/asm/kvm.h
++++ b/arch/loongarch/include/uapi/asm/kvm.h
+@@ -85,7 +85,10 @@ struct kvm_fpu {
+ /* Device Control API on vcpu fd */
+ #define KVM_LOONGARCH_VCPU_CPUCFG	0
+ #define KVM_LOONGARCH_VCPU_PVTIME_CTRL	1
++/* Alias of KVM_LOONGARCH_VCPU_PVTIME_CTRL for wider use */
++#define KVM_LOONGARCH_VCPU_PV_CTRL	1
+ #define  KVM_LOONGARCH_VCPU_PVTIME_GPA	0
++#define  KVM_LOONGARCH_VCPU_POLL_CTRL	1
+ 
+ struct kvm_debug_exit_arch {
+ };
+diff --git a/arch/loongarch/kvm/Kconfig b/arch/loongarch/kvm/Kconfig
+index 248744b4d086..c5cc4dd2fb90 100644
+--- a/arch/loongarch/kvm/Kconfig
++++ b/arch/loongarch/kvm/Kconfig
+@@ -21,6 +21,7 @@ config KVM
+ 	tristate "Kernel-based Virtual Machine (KVM) support"
+ 	depends on AS_HAS_LVZ_EXTENSION
+ 	select HAVE_KVM_DIRTY_RING_ACQ_REL
++	select HAVE_KVM_NO_POLL
+ 	select HAVE_KVM_VCPU_ASYNC_IOCTL
+ 	select KVM_COMMON
+ 	select KVM_GENERIC_DIRTYLOG_READ_PROTECT
+diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
+index ea73f9dc2cc6..ebd578251388 100644
+--- a/arch/loongarch/kvm/exit.c
++++ b/arch/loongarch/kvm/exit.c
+@@ -50,7 +50,7 @@ static int kvm_emu_cpucfg(struct kvm_vcpu *vcpu, larch_inst inst)
+ 		vcpu->arch.gprs[rd] = *(unsigned int *)KVM_SIGNATURE;
+ 		break;
+ 	case CPUCFG_KVM_FEATURE:
+-		ret = KVM_FEATURE_IPI;
++		ret = KVM_FEATURE_IPI | KVM_FEATURE_POLL_CONTROL;
+ 		if (kvm_pvtime_supported())
+ 			ret |= KVM_FEATURE_STEAL_TIME;
+ 		vcpu->arch.gprs[rd] = ret;
+@@ -711,6 +711,13 @@ static long kvm_save_notify(struct kvm_vcpu *vcpu)
+ 		vcpu->arch.st.last_steal = current->sched_info.run_delay;
+ 		kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
+ 		break;
++	case KVM_FEATURE_POLL_CONTROL:
++		/* Only enable bit supported */
++		if (data & (-1ULL << 1))
++			return KVM_HCALL_INVALID_PARAMETER;
++
++		vcpu->arch.kvm_poll_control = data;
++		break;
+ 	default:
+ 		break;
+ 	};
+diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+index 16756ffb55e8..6e5c58cef90f 100644
+--- a/arch/loongarch/kvm/vcpu.c
++++ b/arch/loongarch/kvm/vcpu.c
+@@ -233,6 +233,11 @@ int kvm_arch_vcpu_should_kick(struct kvm_vcpu *vcpu)
+ 	return kvm_vcpu_exiting_guest_mode(vcpu) == IN_GUEST_MODE;
+ }
+ 
++bool kvm_arch_no_poll(struct kvm_vcpu *vcpu)
++{
++	return (vcpu->arch.kvm_poll_control & 1) == 0;
++}
++
+ bool kvm_arch_vcpu_in_kernel(struct kvm_vcpu *vcpu)
+ {
+ 	return false;
+@@ -650,6 +655,7 @@ static int kvm_set_one_reg(struct kvm_vcpu *vcpu,
+ 			kvm_reset_timer(vcpu);
+ 			memset(&vcpu->arch.irq_pending, 0, sizeof(vcpu->arch.irq_pending));
+ 			memset(&vcpu->arch.irq_clear, 0, sizeof(vcpu->arch.irq_clear));
++			vcpu->arch.kvm_poll_control = 1;
+ 			break;
+ 		default:
+ 			ret = -EINVAL;
+@@ -737,14 +743,21 @@ static int kvm_loongarch_cpucfg_has_attr(struct kvm_vcpu *vcpu,
+ 	return -ENXIO;
+ }
+ 
+-static int kvm_loongarch_pvtime_has_attr(struct kvm_vcpu *vcpu,
++static int kvm_loongarch_pv_has_attr(struct kvm_vcpu *vcpu,
+ 					 struct kvm_device_attr *attr)
+ {
+-	if (!kvm_pvtime_supported() ||
+-			attr->attr != KVM_LOONGARCH_VCPU_PVTIME_GPA)
++	switch (attr->attr) {
++	case KVM_LOONGARCH_VCPU_PVTIME_GPA:
++		if (!kvm_pvtime_supported())
++			return -ENXIO;
++		return 0;
++	case KVM_LOONGARCH_VCPU_POLL_CTRL:
++		return 0;
++	default:
+ 		return -ENXIO;
++	}
+ 
+-	return 0;
++	return -ENXIO;
+ }
+ 
+ static int kvm_loongarch_vcpu_has_attr(struct kvm_vcpu *vcpu,
+@@ -756,8 +769,8 @@ static int kvm_loongarch_vcpu_has_attr(struct kvm_vcpu *vcpu,
+ 	case KVM_LOONGARCH_VCPU_CPUCFG:
+ 		ret = kvm_loongarch_cpucfg_has_attr(vcpu, attr);
+ 		break;
+-	case KVM_LOONGARCH_VCPU_PVTIME_CTRL:
+-		ret = kvm_loongarch_pvtime_has_attr(vcpu, attr);
++	case KVM_LOONGARCH_VCPU_PV_CTRL:
++		ret = kvm_loongarch_pv_has_attr(vcpu, attr);
+ 		break;
+ 	default:
+ 		break;
+@@ -782,18 +795,26 @@ static int kvm_loongarch_cpucfg_get_attr(struct kvm_vcpu *vcpu,
+ 	return ret;
+ }
+ 
+-static int kvm_loongarch_pvtime_get_attr(struct kvm_vcpu *vcpu,
++static int kvm_loongarch_pv_get_attr(struct kvm_vcpu *vcpu,
+ 					 struct kvm_device_attr *attr)
+ {
+-	u64 gpa;
++	u64 val;
+ 	u64 __user *user = (u64 __user *)attr->addr;
+ 
+-	if (!kvm_pvtime_supported() ||
+-			attr->attr != KVM_LOONGARCH_VCPU_PVTIME_GPA)
++	switch (attr->attr) {
++	case KVM_LOONGARCH_VCPU_PVTIME_GPA:
++		if (!kvm_pvtime_supported())
++			return -ENXIO;
++		val = vcpu->arch.st.guest_addr;
++		break;
++	case KVM_LOONGARCH_VCPU_POLL_CTRL:
++		val = vcpu->arch.kvm_poll_control;
++		break;
++	default:
+ 		return -ENXIO;
++	}
+ 
+-	gpa = vcpu->arch.st.guest_addr;
+-	if (put_user(gpa, user))
++	if (put_user(val, user))
+ 		return -EFAULT;
+ 
+ 	return 0;
+@@ -808,8 +829,8 @@ static int kvm_loongarch_vcpu_get_attr(struct kvm_vcpu *vcpu,
+ 	case KVM_LOONGARCH_VCPU_CPUCFG:
+ 		ret = kvm_loongarch_cpucfg_get_attr(vcpu, attr);
+ 		break;
+-	case KVM_LOONGARCH_VCPU_PVTIME_CTRL:
+-		ret = kvm_loongarch_pvtime_get_attr(vcpu, attr);
++	case KVM_LOONGARCH_VCPU_PV_CTRL:
++		ret = kvm_loongarch_pv_get_attr(vcpu, attr);
+ 		break;
+ 	default:
+ 		break;
+@@ -831,8 +852,7 @@ static int kvm_loongarch_pvtime_set_attr(struct kvm_vcpu *vcpu,
+ 	u64 gpa, __user *user = (u64 __user *)attr->addr;
+ 	struct kvm *kvm = vcpu->kvm;
+ 
+-	if (!kvm_pvtime_supported() ||
+-			attr->attr != KVM_LOONGARCH_VCPU_PVTIME_GPA)
++	if (!kvm_pvtime_supported())
+ 		return -ENXIO;
+ 
+ 	if (get_user(gpa, user))
+@@ -861,6 +881,33 @@ static int kvm_loongarch_pvtime_set_attr(struct kvm_vcpu *vcpu,
+ 	return ret;
+ }
+ 
++static int kvm_loongarch_pv_set_attr(struct kvm_vcpu *vcpu,
++					struct kvm_device_attr *attr)
++{
++	u64 val,  __user *user = (u64 __user *)attr->addr;
++
++	switch (attr->attr) {
++	case KVM_LOONGARCH_VCPU_PVTIME_GPA:
++		return kvm_loongarch_pvtime_set_attr(vcpu, attr);
++
++	case KVM_LOONGARCH_VCPU_POLL_CTRL:
++		if (get_user(val, user))
++			return -EFAULT;
++
++		/* Only enable bit supported */
++		if (val & (-1ULL << 1))
++			return -EINVAL;
++
++		vcpu->arch.kvm_poll_control = val;
++		break;
++
++	default:
++		return -ENXIO;
++	}
++
++	return -ENXIO;
++}
++
+ static int kvm_loongarch_vcpu_set_attr(struct kvm_vcpu *vcpu,
+ 				       struct kvm_device_attr *attr)
+ {
+@@ -870,8 +917,8 @@ static int kvm_loongarch_vcpu_set_attr(struct kvm_vcpu *vcpu,
+ 	case KVM_LOONGARCH_VCPU_CPUCFG:
+ 		ret = kvm_loongarch_cpucfg_set_attr(vcpu, attr);
+ 		break;
+-	case KVM_LOONGARCH_VCPU_PVTIME_CTRL:
+-		ret = kvm_loongarch_pvtime_set_attr(vcpu, attr);
++	case KVM_LOONGARCH_VCPU_PV_CTRL:
++		ret = kvm_loongarch_pv_set_attr(vcpu, attr);
+ 		break;
+ 	default:
+ 		break;
+@@ -1179,6 +1226,8 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
+ 	/* Start with no pending virtual guest interrupts */
+ 	csr->csrs[LOONGARCH_CSR_GINTC] = 0;
+ 
++	/* poll control enabled by default */
++	vcpu->arch.kvm_poll_control = 1;
+ 	return 0;
+ }
+ 
 
-> +#define SCU1_RESET_MCU0			(32)
-> +#define SCU1_RESET_MCU1			(33)
-> +#define SCU1_RESET_H2A_SPI1		(34)
-> +#define SCU1_RESET_H2A_SPI2		(35)
-> +#define SCU1_RESET_UART0		(36)
-> +#define SCU1_RESET_UART1		(37)
-> +#define SCU1_RESET_UART2		(38)
-> +#define SCU1_RESET_UART3		(39)
-> +#define SCU1_RESET_I2C_FILTER		(40)
-> +#define SCU1_RESET_CALIPTRA		(41)
-> +#define SCU1_RESET_XDMA			(42)
-> +/* reserved 43 */
-> +#define SCU1_RESET_FSI			(44)
-> +#define SCU1_RESET_CAN			(45)
-> +#define SCU1_RESET_MCTP			(46)
-> +#define SCU1_RESET_I2C			(47)
-> +#define SCU1_RESET_UART6		(48)
-> +#define SCU1_RESET_UART7		(49)
-> +#define SCU1_RESET_UART8		(50)
-> +#define SCU1_RESET_UART9		(51)
-> +#define SCU1_RESET_LTPI			(52)
-> +#define SCU1_RESET_VGAL			(53)
-> +#define SCU1_RESET_LTPI1		(54)
-> +#define SCU1_RESET_ACE			(55)
-> +#define SCU1_RESET_E2M			(56)
-> +#define SCU1_RESET_UHCI			(57)
-> +#define SCU1_RESET_PORTC_EHCI		(58)
-> +#define SCU1_RESET_PORTC_VHUB		(59)
-> +#define SCU1_RESET_PORTD_EHCI		(60)
-> +#define SCU1_RESET_PORTD_VHUB		(61)
-> +#define SCU1_RESET_H2X			(62)
-> +#define SCU1_RESET_I3CDMA		(63)
-> +#define SCU1_RESET_PCIE2RST		(64)
-> +
-> +#define SCU1_RESET_NUMS		(SCU1_RESET_PCIE2RST + 1)
-> +
-> +#endif  /* _MACH_ASPEED_AST2700_RESET_H_ */
+base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
+-- 
+2.39.3
 
 
