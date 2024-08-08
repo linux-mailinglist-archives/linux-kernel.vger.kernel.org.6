@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-279133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07E8C94B967
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:56:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2367994B969
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0E771F21C4C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:56:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B12FAB20E9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9940D189BA4;
-	Thu,  8 Aug 2024 08:56:33 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF85189BA3;
+	Thu,  8 Aug 2024 08:57:14 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E34D146019;
-	Thu,  8 Aug 2024 08:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4115A188CC8;
+	Thu,  8 Aug 2024 08:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723107393; cv=none; b=hfC1U5WmrHnRm9/u/wHsPf0iTHGSin4rBot+v5i1zp+xpCv2Qx6i53qcJvHADnH9eeTmIMBuKP0imfibfh/UWkfOvffsT1jVmcIymyzRJbc7YJcf+h3GhYQPQWqW5RTxv2Mej6hHuoZajQcWWzBNdGrkY/BBNi2CKK3v3BITJHU=
+	t=1723107434; cv=none; b=KBDTWXgENLA6kfm+HaUHV5JNGpre4+50fUKIPxuETd+6XUY1nlSIA5afnS0/vj61bqcZ8zCOZS/qF98JHVccbJoFt+G2QiTuKD39j/4EbxdOraW5dulStj4zkBldmphrKsbV53izcdxKfvq/pu5Q+yeIC9shE/LZjuBxBWW6GYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723107393; c=relaxed/simple;
-	bh=X484/zw2wte9ISNoB4Kl62bgvYodOt1gYiyakp9v7K8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fkn6gMGrcF5ikzTL8VFeII/VCwfanSJLeCcYkWtU6ZKDynYjaGwpctNwgMu8OcNWvfRAeI8JopDiyf/OeFeZRHqj/xe8ut0YdLTJYqOy5sAy0u/KVulUuvgFjVyEBi+eyoKmhdMqFKKnI1NTqs0QW1kb5UqUomIcYVtFTuYl28E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	s=arc-20240116; t=1723107434; c=relaxed/simple;
+	bh=VYBBPZ7lM3ShgYEXJ3xnjAE/HlqU0FLWWd8odj3TVRQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=joj4F2xLLD/8BeF/lqMqjRFJw8rpWvrsaPuMR2KY2dcQFEsAGzJRM4iYPYuwO4gmDK1giatN1Qab+eO2falpu6ruD+dbHgIXYJwMUxbQ4N8p0AfDD89Xf1DMCVmQuxrWTAHu0WomdKEa3MfZDl7PjVmT0JTModz1+6ES1AmNmH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wfgr55WCjzyP0H;
-	Thu,  8 Aug 2024 16:56:05 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wfgqx265LzpTCZ;
+	Thu,  8 Aug 2024 16:55:57 +0800 (CST)
 Received: from kwepemf500010.china.huawei.com (unknown [7.202.181.248])
-	by mail.maildlp.com (Postfix) with ESMTPS id C250F1401E0;
-	Thu,  8 Aug 2024 16:56:27 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id C7879140604;
+	Thu,  8 Aug 2024 16:57:08 +0800 (CST)
 Received: from huawei.com (10.175.101.6) by kwepemf500010.china.huawei.com
  (7.202.181.248) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 8 Aug
- 2024 16:56:26 +0800
+ 2024 16:57:08 +0800
 From: Guo Xuenan <guoxuenan@huawei.com>
-To: <krisman@kernel.org>, <linux-fsdevel@vger.kernel.org>, <hch@lst.de>
+To: <corbet@lwn.net>, <linux-doc@vger.kernel.org>
 CC: <linux-kernel@vger.kernel.org>, <guoxuenan@huawei.com>,
 	<guoxuenan@huaweicloud.com>, <jack.qiu@huawei.com>, <ganjie5@huawei.com>
-Subject: [PATCH] unicode: get rid of obsolete 'utf8data.h'
-Date: Thu, 8 Aug 2024 16:56:19 +0800
-Message-ID: <20240808085619.3234977-1-guoxuenan@huawei.com>
+Subject: [PATCH] Documentation: dontdiff: remove 'utf8data.h'
+Date: Thu, 8 Aug 2024 16:57:07 +0800
+Message-ID: <20240808085707.3235019-1-guoxuenan@huawei.com>
 X-Mailer: git-send-email 2.34.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -53,64 +53,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  kwepemf500010.china.huawei.com (7.202.181.248)
 
 From: ganjie <ganjie5@huawei.com>
 
-Commit 2b3d04787012 ("unicode: Add utf8-data module") changed
-the database file from 'utf8data.h' to 'utf8data.c' to build
-separate module, but it seems forgot to update README.utf8data
-, which may causes confusion. Update the README.utf8data and
-the default 'UTF8_NAME' in 'mkutf8data.c'
+Commit 2b3d04787012 ("unicode: Add utf8-data module") changed the
+database file from 'utf8data.h' to 'utf8data.c' to build separate
+module, but it seems forgot to update Documentation/dontdiff. Remove
+'utf8data.h' and add 'utf8data.c'.
 
 Signed-off-by: ganjie <ganjie5@huawei.com>
-Signed-off-by: Guo Xuenan <guoxuenan@huawei.com>
 ---
- fs/unicode/README.utf8data | 8 ++++----
- fs/unicode/mkutf8data.c    | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ Documentation/dontdiff | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/unicode/README.utf8data b/fs/unicode/README.utf8data
-index c73786807d3b..f75567e28138 100644
---- a/fs/unicode/README.utf8data
-+++ b/fs/unicode/README.utf8data
-@@ -1,4 +1,4 @@
--The utf8data.h file in this directory is generated from the Unicode
-+The utf8data.c file in this directory is generated from the Unicode
- Character Database for version 12.1.0 of the Unicode standard.
- 
- The full set of files can be found here:
-@@ -45,13 +45,13 @@ Then, build under fs/unicode/ with REGENERATE_UTF8DATA=1:
- 
- 	make REGENERATE_UTF8DATA=1 fs/unicode/
- 
--After sanity checking the newly generated utf8data.h file (the
-+After sanity checking the newly generated utf8data.c file (the
- version generated from the 12.1.0 UCD should be 4,109 lines long, and
- have a total size of 324k) and/or comparing it with the older version
--of utf8data.h_shipped, rename it to utf8data.h_shipped.
-+of utf8data.c_shipped, rename it to utf8data.c_shipped.
- 
- If you are a kernel developer updating to a newer version of the
- Unicode Character Database, please update this README.utf8data file
- with the version of the UCD that was used, the md5sum and sha1sums of
--the *.txt files, before checking in the new versions of the utf8data.h
-+the *.txt files, before checking in the new versions of the utf8data.c
- and README.utf8data files.
-diff --git a/fs/unicode/mkutf8data.c b/fs/unicode/mkutf8data.c
-index 77b685db8275..fbcd97fe68b7 100644
---- a/fs/unicode/mkutf8data.c
-+++ b/fs/unicode/mkutf8data.c
-@@ -36,7 +36,7 @@
- #define FOLD_NAME	"CaseFolding.txt"
- #define NORM_NAME	"NormalizationCorrections.txt"
- #define TEST_NAME	"NormalizationTest.txt"
--#define UTF8_NAME	"utf8data.h"
-+#define UTF8_NAME	"utf8data.c"
- 
- const char	*age_name  = AGE_NAME;
- const char	*ccc_name  = CCC_NAME;
+diff --git a/Documentation/dontdiff b/Documentation/dontdiff
+index 3c399f132e2d..94b3492dc301 100644
+--- a/Documentation/dontdiff
++++ b/Documentation/dontdiff
+@@ -262,7 +262,7 @@ vsyscall_32.lds
+ wanxlfw.inc
+ uImage
+ unifdef
+-utf8data.h
++utf8data.c
+ wakeup.bin
+ wakeup.elf
+ wakeup.lds
 -- 
 2.34.3
 
