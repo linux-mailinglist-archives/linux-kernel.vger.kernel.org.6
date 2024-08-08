@@ -1,227 +1,125 @@
-Return-Path: <linux-kernel+bounces-279557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21A694BEE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:56:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBEFC94BEE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53DD281361
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:56:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8C002815E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8558018E047;
-	Thu,  8 Aug 2024 13:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="nTuftBjc"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2062.outbound.protection.outlook.com [40.92.102.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82C018E03F;
+	Thu,  8 Aug 2024 13:56:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C669018B489;
-	Thu,  8 Aug 2024 13:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723125353; cv=fail; b=NgJbyx73yYBVHiWZafjng1IQ4bdezJM5I2k7AyQQcAFTvTa/OPfMv/1DPQFQ8AXC2d7jNb8E14kAlN6DkJwwPa3W2VzkBO1p0wbwlv40+Mroiq7nvnfde1t8b8EEcf+iTK8JOkgGNGzKKa2LbiLhIvtBXNC0YX2cLOJ1Qw4Jq6Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723125353; c=relaxed/simple;
-	bh=wM5lJQU/XTPlSQMc3tjBBPl998jaf/IPW5DbGJ2A6IA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=TuxcEFc2M3QSJRdodDEWzdwtq4FIcuNZJLMkNjkGaWgmrczwk1OxXOu9stNDTtSScimVAUgY1njECpbHjUM5XyhR4MJmvnZjD3kyCstjvjg+a5I5972R6+mSzKdd1rClA5Zx6K0kob13ZNl9XKX/WPcVm02J+LcPtYHaPa0RiqI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=nTuftBjc; arc=fail smtp.client-ip=40.92.102.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b3rNarX/MWZ6vO1wiam6svUHzc8fVVF1J0V1qc0MXNqynhkzvoPg1/+dYQfGL1aINPcWQa7P0TbJOp+wMjFpTYogUd2ZuAhyZkHcwL2s6KiLEZN8ms3uVwqIYVvJptTXuaEsAuHi7ztyiYkz0TLf3looiJZMjSfi8FdGZwZMdgrdSkG6FJ3nlfyKao9V1sF/2mkO3Yoac9xSJn47n6c7M8KT1Y/u5Z5NaZveH1SbTTxRdnRnmvBV95DfzrAL+Bz/AhAnS/+u5ecbhuskZonrjQe3HxvW6/jXMnsnAoV0sUehzgDijkVLkO85227RcOu7EDSuujuHf3r3356514OhOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WFlmNon3cxCsrA/dn65ztpfF+V3XRcHR23mKlXxL7g4=;
- b=qxPAHKtfBPTp/Gciy6/M7dPt6mjZ5IKninda91649yMpnzq2Neg/xfUV1Rg81M2qAgYIc0Jj+ckZ9a7IkZb/GMdAZ2i1biDs06n+/KXZu4PzH8sO/RMio4vk0PR8N75rLMsMJE60nerlk6NFa+cio0OcGkTZTfa5ZfH/AOtGfqGTvbBsK8iitzeWMvIbV7EZhNp/1jopBmfJQRST9ikBGAKK9foC4cCrQSfaMiA07Okpif/XIF4HGgYUh4dcl4RfjPXaWBALfWr2Sasz/3Lo3utLbUbwIAp309T292XN8AkUD/TlYBQ3W2rZ7XPnrY5yizabvQs8E0GXvEYjFAyNXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WFlmNon3cxCsrA/dn65ztpfF+V3XRcHR23mKlXxL7g4=;
- b=nTuftBjcaZ9s3UaAVQVpsbBn5KVgyUmGGuoPvRdNin5EZ7FbbxPiUAswwiCxl1hyyKv4gocGsB6fMk26t443qDiTt01QBTIzfwsXG5G7bG9VjpYdceZK/A6QkMg2zgCHqn1475aOla5+qGMX+xTZ7gF2XHL8WZG/po2Jk5gdoE7xZGvmhwlxAoaQx73K2/DtyNwjWGlVcXOjF7HlB7QSYtD/js6vyaXUCtHmm+DYHqW3dZFhMmPjZyNLADI/AOAgbq1YsoDuM64g/djj4iYsy6jiig3JAxfs3GyIx1aMy0anfxFbAmgauXd/iMUHMEtY5khNnI/lcVjwyQbMHsqF3g==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- PN2P287MB2013.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1c6::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.14; Thu, 8 Aug 2024 13:55:42 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.013; Thu, 8 Aug 2024
- 13:55:42 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
-	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
-CC: Orlando Chamberlain <orlandoch.dev@gmail.com>, Kerem Karabay
-	<kekrby@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: [PATCH v3 7/9] HID: multitouch: add device ID for Apple Touch Bars
-Thread-Topic: [PATCH v3 7/9] HID: multitouch: add device ID for Apple Touch
- Bars
-Thread-Index: AQHa6ZqoKS0lNEgwgkOWtDaddXUfEg==
-Date: Thu, 8 Aug 2024 13:55:42 +0000
-Message-ID: <34127221-073B-43A4-91BB-9637F96B99C5@live.com>
-References: <1368FEE8-58BB-41C9-B9AD-7F2F68FF1D53@live.com>
-In-Reply-To: <1368FEE8-58BB-41C9-B9AD-7F2F68FF1D53@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [GzdbJfBE/UHHQd0m1xcZ0ULQvuqXOYWHavNSEuvM0w3NpcZXw6Dh+EisFF3z7OOXi4QLNa8a+18=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN2P287MB2013:EE_
-x-ms-office365-filtering-correlation-id: c1600182-18db-4efa-e865-08dcb7b1caef
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799003|461199028|8060799006|19110799003|3412199025|440099028|102099032;
-x-microsoft-antispam-message-info:
- c6lH75XOu+NKsCG2c7rPe6mKWJEdrKvEei3cdOXR6SlFH2/pXOffU2OLR2Ke9yJn6xeJwo/GM1nNCcA/V3PFwdiK0rNn8ALLEPtacE66QZEzr+WUBGfq+Ym9N7MkcktO1e2druydC5NAYpF/YXk3QTZMXAxzKDtYXAw/RDdQ8uY3SfPTaqdcUkvSDgy348fyCyaRRO6YiCzYZFRHV0l765R86oy0MRM6T9+ABsIFBSmKr40Nj0jhH2nztIUUHpSvfOXX5sO4nSDNxzuwCazuI/tDlejsjmKoLOT7NBUu0kh0ve2DF3tChKcgCqfIS4DjDtAeeZBNN6Q6LkS627E8TN73gTMbbyZdFCCI24IcU6MDSvWl/dPbNJ8QgrVzWyU0xPtmtiEDgxsMDq+wOFgBdmLjd43TpSeNVRV6Ck4C2lnHiBtUh8XTPZO2WFadTFDCxg/bpBUuFWmkbh0WUIW1Cuv0uk+/Tq5O6huEGgziYp0CptGRRiXYl+FADdZfGga8a3UDIT3eaurOmby55TCaLbJj5OXKSpVFSQB759qM5dw1I2vbh8ANtSZVTf4X81x/DbE18ppQBhw8gSJo73C7SnZEVdg2LxwgfJgfpHg2ZL6iyYh23RlSCarXMYHunPGIWEOi5hE4Szufrf2bOJQjNow1C1vv7aY7BpJBm0PxNGIqi2U1IdN4IoiON9CqKAUm
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?wrmtEN3HuoBEUS2FaO97P96QJxo30NNN/xlRXN4n1hYw2UZtqZRkujIa4HKW?=
- =?us-ascii?Q?KnCFvh9oCEsg3GfuTX+obcQpH1it0k542WH8UxHFsWX4MHu8Ycoz6ETMXNDo?=
- =?us-ascii?Q?gS/EEOyMQ1MAm5QtikD7Vel8RAepIVMbP3P2bTBg1NMGue7mCOsXW+ERWOSl?=
- =?us-ascii?Q?3UEDgq6jwLzJmZy76ujvQkvlj/S2yQ+47Jq9QbAYXKBe9z5qVb1e2rtO0fHP?=
- =?us-ascii?Q?nNJtvG+xTjU/YNheHvyZWTonqf6shCoN9Dn+o8dFW4Bx5kA3tbJGya+MuVvI?=
- =?us-ascii?Q?CkjBazswTAgh7hnrji49YmmyxcDGPLLKwTWcK1iRSvrXUu7/H5GamNMeX/uL?=
- =?us-ascii?Q?hO9PdZWRtfnmpy3c+coQ9oVoYW4KEcsx5LI+w9wSWMKRVfJ4JhNwroHnYJSd?=
- =?us-ascii?Q?KvPUodqImnRiSuSMC1HdUhOGBDerr2iINLL6Ia/L/mIfB83ez3bzhLERmVeK?=
- =?us-ascii?Q?BaBy770IFtpfyxshUj9oUb+hsRB12kEKCt80KxJFZYQOzB6WQw5gHn1fKsJ8?=
- =?us-ascii?Q?nf+BVKJa+lEY3M6HJJC1FRlNheGtMwsbPJmY4S59dBGuzF4k0+ORdWNpk3Sq?=
- =?us-ascii?Q?ggFdXknCdWRAttlVA1XtjrpkXlCWiw5djETf2y93y1skmGkmALPbxfYg0sLc?=
- =?us-ascii?Q?A2dcrAyON2ftveVd/D/LPFoM+G+GES7AbBjGxb1MAZ5d+H/etfF1IzOR1+26?=
- =?us-ascii?Q?+xiaEHlYaY3UlFTr4OMq4EM+hHV7I0/mZHGESrukSjAnn0hAD3wi4xImZzHZ?=
- =?us-ascii?Q?f9WD/ma58SkDwKugUL4ovXZYGGRU0tCAgcc/lRZU9CpQmXwZXhXxGsZj9c8g?=
- =?us-ascii?Q?CiMeAYwhoAnjDSAA1P5gSlWxD2YVc0h93ZhxY6dP1pdWbVLMwkdqFueoGsO6?=
- =?us-ascii?Q?PXDMyPwe8xWe4aR8P3u1TWxVV/t8cIw2+ahylH9cuwwLvvscMIFoYbUG4/Dp?=
- =?us-ascii?Q?l/jh+jpB+LX73Lh9VJ0iCQf5TuIH+BuDRcTJi97bN2tooKSpRHGZTKaxLVtZ?=
- =?us-ascii?Q?xuNCIwd7kuTNQS+xYFmdup//r4sS/QqJRqvXBTNdcmxes80nQZx/0wf+7pq3?=
- =?us-ascii?Q?8Uw6v70ggYAluulc0Fr3SHtNvrHssLjKqAWvEWexknMtOmOfzCmg+D34pFd6?=
- =?us-ascii?Q?9qnLBn3LL/e19Uw05ngqSnMfNqiBmx1RuzTGBHvcni0KozpH3WptHrR0oR2K?=
- =?us-ascii?Q?/CD0KdwrTDCwY1VK6evewdqP8Kli2WhV8vTF36J566WpOlmguDvStRy6/CyR?=
- =?us-ascii?Q?qB1knbmYiHUTb4qrbgqlxzCPqxyod3bXvsM8g5HbDAunFbQH17NzuS4A01yh?=
- =?us-ascii?Q?1BA9a7xO3bbVkSWPkZSpzX2e?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <589FD4482AC496439F18665D09E19EA2@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEB618B489
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 13:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723125365; cv=none; b=MOOz6wA9D1wZuXb7QKvAYzI67o7UjDKyU3ScEFtbwXJlL/iw5WCZ05TmiGaMkfEqu10HiHfLTn+IA4C3mrvehtaflU5r+HTomKInYv6U6l7RBsTBwNwpqzR8msyJk7zVqhlN6ktf2QB3UyUpbfzDrw2NBV0o7mXpbFmx+pO1u18=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723125365; c=relaxed/simple;
+	bh=BuWbBSk9c1d7sEwcKbdwo2Wv8m6VAJxQfyfRFYYSvKo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=c55vMwSV9LAozSqmqoJRIYtywli+42wAwdat2KjMZsDcO0vIdi4Kku4KKCfhHEty51QHnSvep+UGzQK2AfCexUZb/xz+p53H5GULq47nwpgvGRnEmFOMkpKQuaKL1s7zoroEJfU8mgGMM7E1u6Z8UV35BCqepSuwSm4Y4NNynbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39a16e61586so13207005ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 06:56:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723125363; x=1723730163;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tVf+bjAeD2WX75jaTyYPvVFceVDKe7WlZliTtQoeqIc=;
+        b=S8fwKe38pil00T4R1tmTr2sPShHUxxE1Rh4p9BzOCPgEQZ5ylBTu3RggmsiFXCLFdR
+         Nh43qwxhFONa94bh+/OqKMgtvvOjU74Xgr6aBK5lpGYUyG8KaoYT4/2ecDjvaHBeLM+H
+         2+1mkzkxguvLGWHmM5XHuesyahbKDFTc7vRL9ydh1e/BcrYT43soE8DHBBNu/h42467d
+         w4qd9/L8PHpPAh5sbjzlSZd9tIcxCcHlCYRiRbdL44DMlU/BjJTVdYpjyo+tsP31XMBp
+         JYvOEWBOPbqNye3vkYe+FYepcflOjpaG4zrDCpKOF47aXLE/bPAs/DaYYtF9b1yk9JW7
+         8n6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUXkWNAkmLoRbyakMjqBa0llaleCt7FTRYy0oz1u14G+FLyx7WJRmT/b22n3JCnke7KEQDvdkxM3fbuCoZrjaX5+57ghQt4RszxX9Wt
+X-Gm-Message-State: AOJu0YzRQlwUv+A2f9zKucEXwRGO4dwjdNTlWuFeB0I5Mdl7QMOdV0ry
+	AB9aP2PeBb7Kz24CEMHnCnd0g7cEOpIRtFf8uMEY8ptuMXECqQXHpwr1UFPrKJEk8dMVDxJSGXb
+	L2y0fxG8S35ZnJmQV1cbD7s6BcWnTDbZBWz0xYCI3t8Po913BC7T8GSE=
+X-Google-Smtp-Source: AGHT+IG58j6FEVECMvGJjeam9SrYl4p222UPdkQKjguSnCBcE4OMj8QEZ9QhywdrrBhXnZskVHGOiIrbkDfTz29VpB8GeRQvdbYn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1600182-18db-4efa-e865-08dcb7b1caef
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 13:55:42.1250
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB2013
+X-Received: by 2002:a05:6e02:1a45:b0:397:3a28:94f1 with SMTP id
+ e9e14a558f8ab-39b5ed2d470mr1738645ab.3.1723125362761; Thu, 08 Aug 2024
+ 06:56:02 -0700 (PDT)
+Date: Thu, 08 Aug 2024 06:56:02 -0700
+In-Reply-To: <tencent_8284976E368C4A38741176FB67D03C6B3609@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000026b469061f2c635c@google.com>
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Kerem Karabay <kekrby@gmail.com>
+Hello,
 
-Note that this is device ID is for T2 Macs. Testing on T1 Macs would be
-appreciated.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in v9fs_begin_writeback
 
-Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/hid/Kconfig          |  1 +
- drivers/hid/hid-multitouch.c | 26 ++++++++++++++++++++++----
- 2 files changed, 23 insertions(+), 4 deletions(-)
+ino: ffff8880329e8000, inode fid list is empty: 1, v9fs_fid_find_inode
+------------[ cut here ]------------
+folio expected an open fid inode->i_ino=1901335
+WARNING: CPU: 3 PID: 3173 at fs/9p/vfs_addr.c:39 v9fs_begin_writeback fs/9p/vfs_addr.c:39 [inline]
+WARNING: CPU: 3 PID: 3173 at fs/9p/vfs_addr.c:39 v9fs_begin_writeback+0x210/0x280 fs/9p/vfs_addr.c:33
+Modules linked in:
+CPU: 3 UID: 0 PID: 3173 Comm: kworker/u32:11 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: writeback wb_workfn (flush-9p-172)
+RIP: 0010:v9fs_begin_writeback fs/9p/vfs_addr.c:39 [inline]
+RIP: 0010:v9fs_begin_writeback+0x210/0x280 fs/9p/vfs_addr.c:33
+Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 66 48 8b 73 40 48 c7 c7 e0 9a 8e 8b e8 a1 49 0d fe 90 <0f> 0b 90 90 e9 62 ff ff ff e8 82 2a a8 fe e9 51 ff ff ff e8 e8 29
+RSP: 0018:ffffc900231d7480 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff8880329e8000 RCX: ffffffff814cc379
+RDX: ffff88802c048000 RSI: ffffffff814cc386 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000000 R12: ffff88801f08f108
+R13: dffffc0000000000 R14: ffffc900231d7840 R15: ffff88801f08f358
+FS:  0000000000000000(0000) GS:ffff88806b300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000740 CR3: 0000000040d1c000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ netfs_writepages+0x656/0xde0 fs/netfs/write_issue.c:534
+ do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
+ __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
+ writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
+ wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
+ wb_do_writeback fs/fs-writeback.c:2274 [inline]
+ wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index 72b665eda..35ef5d4ef 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -744,6 +744,7 @@ config HID_MULTITOUCH
- 	  Say Y here if you have one of the following devices:
- 	  - 3M PCT touch screens
- 	  - ActionStar dual touch panels
-+	  - Touch Bars on x86 MacBook Pros
- 	  - Atmel panels
- 	  - Cando dual touch panels
- 	  - Chunghwa panels
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 2948fbcbc..0fed95536 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -214,6 +214,7 @@ static void mt_post_parse(struct mt_device *td, struct =
-mt_application *app);
- #define MT_CLS_GOOGLE				0x0111
- #define MT_CLS_RAZER_BLADE_STEALTH		0x0112
- #define MT_CLS_SMART_TECH			0x0113
-+#define MT_CLS_APPLE_TOUCHBAR			0x0114
-=20
- #define MT_DEFAULT_MAXCONTACT	10
- #define MT_MAX_MAXCONTACT	250
-@@ -398,6 +399,13 @@ static const struct mt_class mt_classes[] =3D {
- 			MT_QUIRK_CONTACT_CNT_ACCURATE |
- 			MT_QUIRK_SEPARATE_APP_REPORT,
- 	},
-+	{ .name =3D MT_CLS_APPLE_TOUCHBAR,
-+		.quirks =3D MT_QUIRK_HOVERING |
-+			MT_QUIRK_TOUCH_IS_TIPSTATE |
-+			MT_QUIRK_SLOT_IS_CONTACTID_MINUS_ONE,
-+		.is_direct =3D true,
-+		.maxcontacts =3D 11,
-+	},
- 	{ }
- };
-=20
-@@ -1747,6 +1755,15 @@ static int mt_probe(struct hid_device *hdev, const s=
-truct hid_device_id *id)
- 		}
- 	}
-=20
-+	ret =3D hid_parse(hdev);
-+	if (ret !=3D 0)
-+		return ret;
-+
-+	if (mtclass->name =3D=3D MT_CLS_APPLE_TOUCHBAR &&
-+	    !hid_find_field(hdev, HID_INPUT_REPORT,
-+			    HID_DG_TOUCHPAD, HID_DG_TRANSDUCER_INDEX))
-+		return -ENODEV;
-+
- 	td =3D devm_kzalloc(&hdev->dev, sizeof(struct mt_device), GFP_KERNEL);
- 	if (!td) {
- 		dev_err(&hdev->dev, "cannot allocate multitouch data\n");
-@@ -1794,10 +1811,6 @@ static int mt_probe(struct hid_device *hdev, const s=
-truct hid_device_id *id)
-=20
- 	timer_setup(&td->release_timer, mt_expired_timeout, 0);
-=20
--	ret =3D hid_parse(hdev);
--	if (ret !=3D 0)
--		return ret;
--
- 	if (mtclass->quirks & MT_QUIRK_FIX_CONST_CONTACT_ID)
- 		mt_fix_const_fields(hdev, HID_DG_CONTACTID);
-=20
-@@ -2249,6 +2262,11 @@ static const struct hid_device_id mt_devices[] =3D {
- 		MT_USB_DEVICE(USB_VENDOR_ID_XIROKU,
- 			USB_DEVICE_ID_XIROKU_CSR2) },
-=20
-+	/* Apple Touch Bars */
-+	{ .driver_data =3D MT_CLS_APPLE_TOUCHBAR,
-+		HID_USB_DEVICE(USB_VENDOR_ID_APPLE,
-+			       USB_DEVICE_ID_APPLE_TOUCHBAR_DISPLAY) },
-+
- 	/* Google MT devices */
- 	{ .driver_data =3D MT_CLS_GOOGLE,
- 		HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, USB_VENDOR_ID_GOOGLE,
---=20
-2.43.0
+
+Tested on:
+
+commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1355d66d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=125dbd23980000
 
 
