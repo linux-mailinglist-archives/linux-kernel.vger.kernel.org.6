@@ -1,82 +1,120 @@
-Return-Path: <linux-kernel+bounces-279143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C155B94B984
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:14:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2531694B988
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A883B218E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:14:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFF2F282F27
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E858189BBE;
-	Thu,  8 Aug 2024 09:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DDA146D6D;
+	Thu,  8 Aug 2024 09:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="T2hNgVQs"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PaU3DDkq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41ABC189BA0
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755DF13DDC0;
+	Thu,  8 Aug 2024 09:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723108464; cv=none; b=NQPmBVZrObVCr63WQsifIpGMXUYNOetL2OwKFjibDQBhhtHqTfR1SBEpc66yFq/trlm2H86ExtmzFPh8UPmdWkkxA8dRjvQZlR53epItbUkFjkJgTgAnp5y8c1vdUVJHDkbxcsaakCGCYmD1OOqk4J1yvkTLG7GfvC7KwGUeHho=
+	t=1723108560; cv=none; b=bqol92y+J77oi/I+P7XwBCPuQzrHVSPZ7Ch/81G4G+FVi8J3fh/JbAKUSTDjQjzt/6nhyenuniJc8a9S978BWhSeoBsYR+qBlbvF6v4SWuQPq0ENh6vtlqbnFWw7EPlvLZ9wxl2Xf65NSYpB38uLCooM/2hYwDRUDjVza1UeeIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723108464; c=relaxed/simple;
-	bh=+OrJxe0D7xREShQfmGh81Vo8Uz6+eWSXYbFVN4mx++E=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=USgtLlT6YXXqEXCI9rJkdERtAO/rOVjpQMd5AjXeHmV7gmwsimKd0o7SdDu4fK4ztoixG7CcPI5DsaM5uANyTsK9CePvW8VQB7sPZtjpoFcQ8CH61UD1CDFC4Oj3PioKqoV1bc/bz5aJhyAZsPT7JM/XwARmupJjeM2XJ+yMjRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=T2hNgVQs; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723108460; x=1723367660;
-	bh=l2VLv70ZhOSgGrwZycl6ZH7PcquoSAgvnaR1Gwl6JC0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=T2hNgVQs4AXajLZoqe35IdhFAqcF+j+dwwB5i8PYKCVR0fxd8aCrnA9usK5+xACuE
-	 mABcz/slipqNyi9+3kmyVYtGmaT15iV/NjO32Ei+pLAeXCWSMfQo+TuLnoOGX/O3g8
-	 aQBGdADcqkD7AHGrPqVhXAwDkPfT4UZ4yC5i4yj54b8v2mvELPEY9rmwNN/uM42Atl
-	 PeQrEMHix5C0Dv4Uk5QignWdg7In9Mr/obO4rANu1UnGjkf/sQoje4s6R14OTmebrn
-	 Lo+siAvZ7I95GT2nEjZaONphZYyYQPk6o806gqbFDimasqRXjZDnwLp7obNnewHf5a
-	 fKrFXozIDXFiQ==
-Date: Thu, 08 Aug 2024 09:14:13 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 19/28] rust: alloc: remove `VecExt` extension
-Message-ID: <7b794a44-b13f-4f8d-8f10-84c5a1042107@proton.me>
-In-Reply-To: <20240805152004.5039-20-dakr@kernel.org>
-References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-20-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: f88fa19c14d097cfd90760ea67a16df15776c1c4
+	s=arc-20240116; t=1723108560; c=relaxed/simple;
+	bh=KZmNwisvy1+bW0jb4C0Xe46JoI2p4c05A2Q3nZGvmds=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Z4JRMxq7egzxHLIi2kG1Rn5+MxJwUOZMt0P0pXjEd+W7XAaeMZ0+QG26A8XDor7lg2pSMj/ahpBTalLTr9I2TUHF1R0/YHcFvlmrPf+VNn6sBD2B2AAhRAv5J7JdqEkh8vJUKAGM5eMWzc865hauPCn41J902IRLjgAs03jDbaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PaU3DDkq; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723108559; x=1754644559;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=KZmNwisvy1+bW0jb4C0Xe46JoI2p4c05A2Q3nZGvmds=;
+  b=PaU3DDkqNobkNRtS+47wV3vxGN/Pq4QIQcSKnCnnWNRix82dQydcYriU
+   7VAdCReUTlPZ77XMSi9V+gd5Sgckhw0xF6UfINlH6bAkLeRaiFu/3lMoD
+   2LLjDh8wlVVT+tyhElzfJwKcu/si3xEMdpg2fKzF2zDl9kWtQpb27tFVG
+   Ep5Vd9R7yfZXKypCwZejefdF/zlztrMtp1y0fFaryTRnpLYNtNvimE+3k
+   6TCDepMfbNTSSrFuw2EAFNcKMtrHUQ0821vjH4cKzPdnBYBli7ftF+NK6
+   KvYviUOO69UxVypZAsW/uki8njRZo5SqcvIOPpviXVIMs7iMWd2B0hPJp
+   A==;
+X-CSE-ConnectionGUID: Hwj/CVwzSAWYxNJMRjKEPg==
+X-CSE-MsgGUID: 6P6c/1roQUOd9MxzZEWcuw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="32368268"
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="32368268"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 02:15:59 -0700
+X-CSE-ConnectionGUID: pQvtXec2Tk2BMoRS26MzGg==
+X-CSE-MsgGUID: tKK1SP2mRb2km2t2/AQ1xA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="61256847"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.125.108.108])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 02:15:56 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 8 Aug 2024 12:15:51 +0300 (EEST)
+To: Jiri Slaby <jirislaby@kernel.org>
+cc: Doug Anderson <dianders@chromium.org>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    linux-serial <linux-serial@vger.kernel.org>, 
+    LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH 03/13] serial: don't use uninitialized value in
+ uart_poll_init()
+In-Reply-To: <c4c01c01-e926-49fb-8704-90a69662254d@kernel.org>
+Message-ID: <816a5459-833c-07fb-cc92-288cd9a53a76@linux.intel.com>
+References: <20240805102046.307511-1-jirislaby@kernel.org> <20240805102046.307511-4-jirislaby@kernel.org> <84af065c-b1a1-dc84-4c28-4596c3803fd2@linux.intel.com> <CAD=FV=WeekuQXzjk90K8jn=Evn8dMaT1RyctbT7gwEZYYgA9Aw@mail.gmail.com>
+ <c4c01c01-e926-49fb-8704-90a69662254d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On 05.08.24 17:19, Danilo Krummrich wrote:
-> Now that all existing `Vec` users were moved to the kernel `Vec` type,
-> remove the `VecExt` extension.
->=20
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/alloc.rs         |   1 -
->  rust/kernel/alloc/vec_ext.rs | 185 -----------------------------------
->  rust/kernel/prelude.rs       |   5 +-
->  3 files changed, 1 insertion(+), 190 deletions(-)
->  delete mode 100644 rust/kernel/alloc/vec_ext.rs
+On Thu, 8 Aug 2024, Jiri Slaby wrote:
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> On 05. 08. 24, 17:46, Doug Anderson wrote:
+> > > > @@ -2717,10 +2716,10 @@ static int uart_poll_init(struct tty_driver
+> > > > *driver, int line, char *options)
+> > > >                ret = uart_set_options(port, NULL, baud, parity, bits,
+> > > > flow);
+> > > >                console_list_unlock();
+> > > >        }
+> > > > -out:
+> > > > +
+> > > >        if (ret)
+> > > >                uart_change_pm(state, pm_state);
+> > > > -     mutex_unlock(&tport->mutex);
+> > > > +
+> > > >        return ret;
+> > > >   }
+> > > 
+> > > This too needs #include.
+> > 
+> > Why? I see in "mutex.h" (which is already included by serial_core.c):
+> > 
+> > DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T))
+> > 
+> > ...so we're using the mutex guard and including the header file that
+> > defines the mutex guard. Seems like it's all legit to me.
+> 
+> The patches got merged. But I can post a fix on top, of course. But, what is
+> the consensus here -- include or not to include? I assume mutex.h includes
+> cleanup.h already due to the above guard definition.
 
----
-Cheers,
-Benno
+Yeah, while guard() itself is in cleanup.h, Doug has a point that 
+DEFINE_GUARD() creates a guaranteed implicit include route for cleanup.h. 
+Thus you can disregard my comment as it seems unnecessary to include 
+cleanup.h.
+
+-- 
+ i.
 
 
