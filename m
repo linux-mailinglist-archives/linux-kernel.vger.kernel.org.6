@@ -1,209 +1,205 @@
-Return-Path: <linux-kernel+bounces-279630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D0094BFC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:38:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7372F94BFBF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07EA1B238FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:38:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B69A11F22209
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F1018E760;
-	Thu,  8 Aug 2024 14:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F2E18EFCD;
+	Thu,  8 Aug 2024 14:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="C6MxJB92"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ll/vCCmj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E6318E038
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2FC1EA90;
+	Thu,  8 Aug 2024 14:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723127908; cv=none; b=ILwAPZBFsfwhawwkGQSFRCY+X1yI0IMZggCQyZvlVNBuJb5L9rZCxQ0m02rY5v58tTHpL9FGGadts2xbBprTLA1n88YCoctcoeUQYRyhRgI4mOtixQlcg8Yy4NBD2Aol+VdUxkLluKH+u7Jti1JH3UrgmOPgYJv7bKql9wSBORs=
+	t=1723127899; cv=none; b=haAMG5QrUg8ogH4QOGCZAV9fpPJqVI2bXndzoQo4T7SxP/ILJiBl7zJqzPt8qu7HUxSWEPBJvZpVBlzdkn6qFOF6aVHVoOx/th0IgVelHK9dVHDeMFiH1haxCKONmpb2PjBZVKCFWu2ricxKg5Ff9xdsSE8k+KCHMXXZci9GEOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723127908; c=relaxed/simple;
-	bh=ZHY69bn4zkG3Bec7Y5+D9/RG4Lgy/kYv0Z+VNKx08xM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sYgE8l2dGfs+u+JszlyMgp359O2J1/n+VYx9CLH+K2ydaNqEY7h0DwsqYEYR4biBquIIrRGOEjBBPVlV7o8LoPTZWTU71UZsXBkkZ+wbyMBEFAbr5mOozurH7jjyYP43uIfy0xUN5x4fBcbaeAChpWL7/DyRipsC1iFQhIxM7Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=C6MxJB92; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-44feaa08040so5879451cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 07:38:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1723127906; x=1723732706; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zxTnFMiW5NpNKcXksgsMIVAEv1c5dPsaim/ynjFpGro=;
-        b=C6MxJB928yg8PMepLBDF59gac5yERJ/DAQqCQp/WRiK5egYw0WWGl5b//uscFsb/vo
-         yp/ljm26KdUg2EouUAD04IVoNtRw67QGRuutV+sFJ0a0oH3H1thL1O/FdAFPA1JxYghu
-         Qlq0clsUAQUNrRQ/8n7OFCBwNndQFyzEfb/UXVUz43/BVaO6muinmYXr5uw4UdbCane5
-         kKdu5BlOwnfyqeblhV0KPyAN4Q2LP8HPsZ6K0TfieVEdNjG5j5Lx7mQXYIuxZVOz6iro
-         rxWQRzVTTt2Xw7Y/Z7XkrzEEfC7w4vTaVCwSxS+6VSgjpJP7Zw1ahQGVSujZU6Px0LHj
-         dOwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723127906; x=1723732706;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zxTnFMiW5NpNKcXksgsMIVAEv1c5dPsaim/ynjFpGro=;
-        b=t7NZK8A4iCVuk6FuYLKMiDP5aKoQ4gA4b4BSmN1gHdFluvD8dXOODgoM6bjxz4dqbt
-         NYvGDupOpamGxsBZqnk8FUruuAfLxUMstBhzSzn0Yt/W5eUBxe9lxLUjy6qlmdQBZptP
-         +0TrG1A4GYqjKjh19/8Pwho/rZ2/+ugHiPLcKZ2Vg0A/2URXjpTw7WapIGG2r67l3AIR
-         f3PL474c84tUcGLJ72U9Ql+uSoSfkQmdMlHjewGV887o/kZI/0qrFN86BTJxl2nfO3Mo
-         GctQW1iWkwoAaMFFSg54iesRccPy1WkLtvvsR6I2c/voS85+w5UEoH7xU48IxmU8CRg/
-         nXfA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9Gum8pMvJEwTW9OP3El4aFdLVzmSfBeYJBngP0IAoRZQktgJRmCdJHMxWRS75eQt/JE6ystBZPlZ/BR67cEG6mvsXu8j2DCzO3V3Q
-X-Gm-Message-State: AOJu0Yy+bO90homQjHNh4GpqByIMcUNGH/e/pee3GhsLTe92I/LuF0l4
-	26cVHq4Gi1P6JJ116/ewUnAMXAhah6tgqNQOdibKUMz7wXVT7SD5sv31yLFHzuPZpFDwAFh8OL9
-	KjCTTQPBGGeb2X2H8MNceI7xMAWcWP0J6TMo0TQ==
-X-Google-Smtp-Source: AGHT+IE4Q18JvF0O8xoPrLNZi+cEFK4Ub9f6UlLXgkDGTwk2Tfq6nQktE8hMqrq7CGrtOdjIDNCic8427B7Nu1awNOQ=
-X-Received: by 2002:a05:622a:5c0d:b0:446:5568:a6de with SMTP id
- d75a77b69052e-451d42dab81mr19305801cf.48.1723127905793; Thu, 08 Aug 2024
- 07:38:25 -0700 (PDT)
+	s=arc-20240116; t=1723127899; c=relaxed/simple;
+	bh=hSjeiqnr5aAwzBd9Sn/yugh4BM6IEWpBe7Pwe72BkFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BlG2p2JoCYQfhht+wovRdq1fq99l/W2yD3lkrfReIxZJXitfHG2sc6zCtmq0IxVA9v0Zi3fW7VTxvgTjtZKji24GQn0tRe9zJlmwAq4act2jyj61Z22dB8cGB6TVfU7wZzh2F09KgpgeQLj8IAaMITokMfoWZK0seM49n3/mqBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ll/vCCmj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BA0CC32782;
+	Thu,  8 Aug 2024 14:38:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723127898;
+	bh=hSjeiqnr5aAwzBd9Sn/yugh4BM6IEWpBe7Pwe72BkFo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ll/vCCmjpYcq2iE4+J9AQl5/DG+FrNlA6rrsxAIk9EzGG/b272cMSGh56Q48mRu7t
+	 QSVQA6Qt6D6JXXzBqtRXg0uQU6suADxza38PIavs9PVeH2wuKX94sIhpIl1hsbwr6p
+	 Io51hkuPaLaamLaCo4pwiwVivzfPG1y4P+UZEgHdlSbC3P1I4SylnkyG0rr29J++y+
+	 nDZgTOMHzYF3+l+0EnlnfpN/OpeirXggTIHQTq76qQpvsITXzXzQvuQizhpPQm9DRO
+	 3M2XAmehhEY2EoLwasjF5GhtWmyydYZSiOY2acDcysVAfZu2B4HLC4j+l4fCy1up2o
+	 QsuBzgw9lPD/Q==
+Message-ID: <81524fee-c32c-405b-b63b-d048dde6ae33@kernel.org>
+Date: Thu, 8 Aug 2024 16:38:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807211929.3433304-1-pasha.tatashin@soleen.com>
- <20240807211929.3433304-4-pasha.tatashin@soleen.com> <E5F2A1F6-DD29-4FD8-B4AA-2CA917F6E89F@linux.dev>
- <CA+CK2bCOYYkGK6yDm4NKto15TjgNGXrDDbhkx1=rGeyQ-ofv9w@mail.gmail.com> <CAJD7tkZK_9+mHupROfWomxXm=br0vvu_aJc2dyEOye2fhgk+eQ@mail.gmail.com>
-In-Reply-To: <CAJD7tkZK_9+mHupROfWomxXm=br0vvu_aJc2dyEOye2fhgk+eQ@mail.gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Thu, 8 Aug 2024 10:37:48 -0400
-Message-ID: <CA+CK2bBkdqDyi_TX84F8G9xEfLdaeshLLHTXA2RbgBAvf3tzWQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] mm: don't account memmap per node
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Memory Management List <linux-mm@kvack.org>, cerasuolodomenico@gmail.com, 
-	Johannes Weiner <hannes@cmpxchg.org>, Joel Granados <j.granados@samsung.com>, lizhijian@fujitsu.com, 
-	Nhat Pham <nphamcs@gmail.com>, David Rientjes <rientjes@google.com>, Mike Rapoport <rppt@kernel.org>, 
-	Sourav Panda <souravpanda@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom: Add common PLL clock
+ controller for IPQ SoC
+To: Luo Jie <quic_luoj@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com,
+ quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com,
+ quic_leiwei@quicinc.com
+References: <20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com>
+ <20240808-qcom_ipq_cmnpll-v1-1-b0631dcbf785@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240808-qcom_ipq_cmnpll-v1-1-b0631dcbf785@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 8, 2024 at 1:36=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com> =
-wrote:
->
-> On Wed, Aug 7, 2024 at 9:04=E2=80=AFPM Pasha Tatashin <pasha.tatashin@sol=
-een.com> wrote:
-> >
-> > On Wed, Aug 7, 2024 at 10:59=E2=80=AFPM Muchun Song <muchun.song@linux.=
-dev> wrote:
-> > >
-> > >
-> > >
-> > > > On Aug 8, 2024, at 05:19, Pasha Tatashin <pasha.tatashin@soleen.com=
-> wrote:
-> > > >
-> > > > Currently, when memory is hot-plugged or hot-removed the accounting=
- is
-> > > > done based on the assumption that memmap is allocated from the same=
- node
-> > > > as the hot-plugged/hot-removed memory, which is not always the case=
-.
-> > > >
-> > > > In addition, there are challenges with keeping the node id of the m=
-emory
-> > > > that is being remove to the time when memmap accounting is actually
-> > > > performed: since this is done after remove_pfn_range_from_zone(), a=
-nd
-> > > > also after remove_memory_block_devices(). Meaning that we cannot us=
-e
-> > > > pgdat nor walking though memblocks to get the nid.
-> > > >
-> > > > Given all of that, account the memmap overhead system wide instead.
-> > >
-> > > Hi Pasha,
-> > >
-> > > You've changed it to vm event mechanism. But I found a comment (below=
-) say
-> > > "CONFIG_VM_EVENT_COUNTERS". I do not know why it has such a rule
-> > > sice 2006. Now the rule should be changed, is there any effect to use=
-rs of
-> > > /proc/vmstat?
-> >
-> > There should not be any effect on the users of the /proc/vmstat, the
-> > values for nr_memap and nr_memmap_boot before and after are still in
-> > /proc/vmstat under the same names.
-> >
-> > >
-> > > /*
-> > >  * Light weight per cpu counter implementation.
-> > >  *
-> > >  * Counters should only be incremented and no critical kernel compone=
-nt
-> > >  * should rely on the counter values.
-> > >  *
-> > >  * Counters are handled completely inline. On many platforms the code
-> > >  * generated will simply be the increment of a global address.
-> >
-> > Thank you for noticing this. Based on my digging, it looks like this
-> > comment means that the increment only produces the most efficient code
-> > on some architectures (i.e. i386, ia64):
-> >
-> > Here is the original commit message from 6/30/06:
-> > f8891e5e1f93a1 [PATCH] Lightweight event counters
-> >
-> >  Relevant information:
-> >   The implementation of these counters is through inline code that hope=
-fully
-> >   results in only a single instruction increment instruction being emit=
-ted
-> >   (i386, x86_64) or in the increment being hidden though instruction
-> >   concurrency (EPIC architectures such as ia64 can get that done).
-> >
-> > My patch does not change anything in other places where vm_events are
-> > used, so it won't introduce performance regression anywhere. Memmap,
-> > increment and decrement can happen based on the value of delta. I have
-> > tested, and it works correctly. Perhaps we should update the comment.
->
-> I think there may be a semantic inconsistency here.
->
-> I am not so sure about this code, but for memcg stats, there is a
-> semantic distinction between stat (or state) and event.
->
-> Per-memcg events (which are a subset of NR_VM_EVENT_ITEMS) are
-> basically counting the number of times a certain event happened (e.g.
-> PGFAULT). This naturally cannot be decremented because the number of
-> page faults that happened cannot decrease.
+On 08/08/2024 16:03, Luo Jie wrote:
+> The common PLL controller provides clocks to networking hardware
+> blocks on Qualcomm IPQ SoC. It receives input clock from the on-chip
+> Wi-Fi, and produces output clocks at fixed rates. These output rates
+> are predetermined, and are unrelated to the input clock rate. The
+> output clocks are supplied to the Ethernet hardware such as PPE
+> (packet process engine) and the externally connected switch or PHY
+> device.
+> 
+> The common PLL driver is initially being supported for IPQ9574 SoC.
 
-From what I can tell, for users, there is no difference, at the end
-everything is provided through /proc/vmstat, depending on a counter
-name they can either only-grow or go up and down. The separation is an
-internal only concept.
+Drop references to driver and explain the hardware.
 
-> Per-memcg state are things that represent the current state of the
-> system (e.g. NR_SWAPCACHE). This can naturally go up or down.
->
-> It seems like the code here follows the same semantics, and this
-> change breaks that. Also, now these stats depend on
-> CONFIG_VM_EVENT_COUNTERS .
+Above with the usage of "common" looks like this is all for some common
+driver, not for particular hardware.
 
-Yes, nr_memmap_* won't show up without this config with my change.
+> 
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> ---
+>  .../bindings/clock/qcom,ipq-cmn-pll.yaml           | 87 ++++++++++++++++++++++
+>  1 file changed, 87 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq-cmn-pll.yaml
+> new file mode 100644
+> index 000000000000..c45b3a201751
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq-cmn-pll.yaml
 
->
-> Looking at NR_VMSTAT_ITEMS, it looks like it's composed of:
-> NR_VM_ZONE_STAT_ITEMS,
-> NR_VM_NUMA_EVENT_ITEMS,
-> NR_VM_NODE_STAT_ITEMS,
-> NR_VM_WRITEBACK_STAT_ITEMS,
-> NR_VM_EVENT_ITEMS (with CONFIG_VM_EVENT_COUNTERS)
-> Semantically, the memmap stats do not fit into any of the above
-> categories if we do not want them to be per-node. Maybe they should
-> have their own category like NR_VM_WRITEBACK_STAT_ITEMS, or maybe we
-> should consolidate both of them into a global stat items category
-> (e.g. NR_VM_STAT_ITEMS)?
+Use compatible as filename.
 
-I like the idea of renaming NR_VM_WRITEBACK_STAT_ITEMS with
-NR_GLOBAL_STAT_ITEMS, and add counters there, let me do that.
+> @@ -0,0 +1,87 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,ipq-cmn-pll.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Common PLL Clock Controller on IPQ SoC
+> +
+> +maintainers:
+> +  - Bjorn Andersson <andersson@kernel.org>
+> +  - Luo Jie <quic_luoj@quicinc.com>
+> +
+> +description:
+> +  The common PLL clock controller expects a reference input clock.
+> +  This reference clock is from the on-board Wi-Fi. The CMN PLL
+> +  supplies a number of fixed rate output clocks to the Ethernet
+> +  devices including PPE (packet process engine) and the connected
+> +  switch or PHY device.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,ipq9574-cmn-pll
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: The reference clock, the supported clock rates include
+> +          25000000, 31250000, 40000000, 48000000, 50000000 and 96000000 HZ.
+> +      - description: The AHB clock
+> +      - description: The SYS clock
+> +    description:
+> +      The reference clock is the source clock of CMN PLL, which is from the
+> +      Wi-Fi. The AHB and SYS clocks must be enabled to access common PLL
+> +      clock registers.
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ref
+> +      - const: ahb
+> +      - const: sys
+> +
+> +  clock-output-names:
+> +    items:
+> +      - const: ppe-353mhz
+> +      - const: eth0-50mhz
+> +      - const: eth1-50mhz
+> +      - const: eth2-50mhz
+> +      - const: eth-25mhz
 
-Pasha
+Drop entire property. If the names are fixed, what's the point of having
+it in DTS? There is no.
+
+Best regards,
+Krzysztof
+
 
