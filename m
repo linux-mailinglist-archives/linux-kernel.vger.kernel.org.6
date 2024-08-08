@@ -1,62 +1,63 @@
-Return-Path: <linux-kernel+bounces-279330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B8594BBF4
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:08:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53CDC94BBFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2757C1F21194
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:08:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94FC4B212C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA8C18B479;
-	Thu,  8 Aug 2024 11:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BB518C912;
+	Thu,  8 Aug 2024 11:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dJY5qws9"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wDObhFiC"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A36915444E;
-	Thu,  8 Aug 2024 11:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBD418C32B;
+	Thu,  8 Aug 2024 11:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723115303; cv=none; b=pNgjrwqLhDB8ZCCmBkxsX4lE2Oxzc4U0TEZAo+qjBwnLXYSbIs9r/o4jnQ9VKfs7aooyRKzDk0xAYfKO+yR4RejGq5DN1/DIa6r9QbmZrzMiwcDYO8lE5z/RNsTF9qyQU8BJsDGuYpN8nEn5MG1y+/IYzefKsTY4QmnCi8czCX8=
+	t=1723115309; cv=none; b=OqX0HfwSXjUVsgXdHRL0JhXuzaFCWBr5aJsvjhHMvpWyqm0NR76faUGR2Kp9AtpeF+VeLZNU12wONafNF86LZPVHWRo7CMk2OpVLABJPMyS0avtfKat+4MMxt0wdRaO3rCqwsFFiLBoVDEXS4ptisweAomhJHfBbI68LVXnQWVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723115303; c=relaxed/simple;
-	bh=pn5gbqt6Ww3+ceamKAsPpOvM4O3wGKHnFrIUp9UqX1I=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jSHKml6Vddhcajuc5lZ/eGQxopVlw3CxopWhDh4pLHb1I/tilYncvMSxfPrntiPuE4R745bjG29M3CsOF7QHwXB7WMeuBrYDLpFwI+9Xf5Sa5A2pAtOKhlfxDwGxb/7n9f63V5GkYhQDciBia/BlFMIGunLKF25grHxeT02Uxy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dJY5qws9; arc=none smtp.client-ip=198.47.23.248
+	s=arc-20240116; t=1723115309; c=relaxed/simple;
+	bh=dkHrlZ8cnZIRu6+k/09dceV4xJqjMLZ57uoKcrIjH0k=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IGnWP0DN4ObpM+6Z5gfgPG49cIgnoRFRf75qpYOwAepRINN0D46MzhjGExfl98nWlwVmn4OO7h1VfFGi1XvX6gvU2BjEHKqBUnUA263JkYnsviiNAVhOKKhyqYVyfZtITPtK1xbjl4Z0R7ak9zjUHugDt6fkM43b5Ozk2Eh/Ir8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wDObhFiC; arc=none smtp.client-ip=198.47.23.249
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 478B83iq130423;
-	Thu, 8 Aug 2024 06:08:03 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 478B85hD121883;
+	Thu, 8 Aug 2024 06:08:05 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723115283;
-	bh=OYmqZvXDg6xl4E5wCck2fmUGcqhLJC4qchZVAtvvSXc=;
-	h=From:To:CC:Subject:Date;
-	b=dJY5qws9zRJCO8toXPBESpWgAxqgkKkwF5TyrEPb2XxaZI8kNBqq/9kU5GZpG0cn2
-	 npjpGWE7+gIKm7mn6ai1i9JRIgBKW8wvdklVkdCyJdsITGqRVAD4WjqGxaZQNdndPD
-	 3TDMtZAuxjhu/34LbouwEWEomiRh5/Da7xf8Ay3A=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 478B83ZD081467
+	s=ti-com-17Q1; t=1723115285;
+	bh=unFGtIaLV852e7NhQ88rKDTvf4aXBnMYM/ojLpB9pCg=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=wDObhFiC9wTvQcNl86pIimGk2BZ6Dce6A9GldXrb2vxo9T0O1gp3EyOs0gvlrmWIa
+	 OE9/LYPCsZohWCS+hHALn5Z/RKbEAPLgytgZuuL4vftnvo8krD+lh3s+VQG0147anb
+	 RBH1ZiIkX4qH2de91Td1Ut36aCEvMmMrK9wzfzWw=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 478B85Qa017878
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 8 Aug 2024 06:08:03 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 8 Aug 2024 06:08:05 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
- Aug 2024 06:08:03 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2024 06:08:05 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 8 Aug 2024 06:08:03 -0500
+ Frontend Transport; Thu, 8 Aug 2024 06:08:05 -0500
 Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 478B83Xt070844;
-	Thu, 8 Aug 2024 06:08:03 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 478B85vu087519;
+	Thu, 8 Aug 2024 06:08:05 -0500
 Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 478B82u7011983;
-	Thu, 8 Aug 2024 06:08:02 -0500
+	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 478B84Kw011988;
+	Thu, 8 Aug 2024 06:08:04 -0500
 From: MD Danish Anwar <danishanwar@ti.com>
 To: Jan Kiszka <jan.kiszka@siemens.com>,
         Dan Carpenter
@@ -79,10 +80,12 @@ CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
         Roger Quadros
 	<rogerq@kernel.org>
-Subject: [PATCH net-next 0/6] Introduce HSR offload support for ICSSG
-Date: Thu, 8 Aug 2024 16:37:54 +0530
-Message-ID: <20240808110800.1281716-1-danishanwar@ti.com>
+Subject: [PATCH net-next 1/6] net: ti: icssg-prueth: Enable IEP1
+Date: Thu, 8 Aug 2024 16:37:55 +0530
+Message-ID: <20240808110800.1281716-2-danishanwar@ti.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240808110800.1281716-1-danishanwar@ti.com>
+References: <20240808110800.1281716-1-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,130 +96,53 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi All,
-This series introduces HSR offload support for ICSSG driver. To support HSR
-offload to hardware, ICSSG HSR firmware is used.
+IEP1 is needed by firmware to enable FDB learning and FDB ageing.
+Always enable IEP1
 
-This series introduces,
-1. HSR frame offload support for ICSSG driver.
-2. HSR Tx Packet duplication offload
-3. HSR Tx Tag and Rx Tag offload
-4. Multicast filtering support in HSR offload mode.
-5. Dependencies related to IEP.
+Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+---
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-HSR Test Setup:
---------------
-
-     ___________           ___________           ___________
-    |           | Link AB |           | Link BC |           |
-  __|   AM64*   |_________|   AM64    |_________|   AM64*   |___
- |  | Station A |         | Station B |         | Station C |   |
- |  |___________|         |___________|         |___________|   |
- |                                                              |
- |______________________________________________________________|
-                            Link CA
- *Could be any device that supports two ethernet interfaces.
-
-Steps to switch to HSR frame forward offload mode:
--------------------------------------------------
-Example assuming eth1, eth2 ports of ICSSG1 on AM64-EVM
-
-  1) Enable HSR offload for both interfaces
-      ethtool -K eth1 hsr-fwd-offload on
-      ethtool -K eth1 hsr-dup-offload on
-      ethtool -K eth1 hsr-tag-ins-offload on
-      ethtool -K eth1 hsr-tag-rm-offload on
-
-      ethtool -K eth2 hsr-fwd-offload on
-      ethtool -K eth2 hsr-dup-offload on
-      ethtool -K eth2 hsr-tag-ins-offload on
-      ethtool -K eth2 hsr-tag-rm-offload on
-
-  2) Create HSR interface and add slave interfaces to it
-      ip link add name hsr0 type hsr slave1 eth1 slave2 eth2 \
-    supervision 45 version 1
-
-  3) Add IP address to the HSR interface
-      ip addr add <IP_ADDR>/24 dev hsr0
-
-  4) Bring up the HSR interface
-      ip link set hsr0 up
-
-Switching back to Dual EMAC mode:
---------------------------------
-  1) Delete HSR interface
-      ip link delete hsr0
-
-  2) Disable HSR port-to-port offloading mode, packet duplication
-      ethtool -K eth1 hsr-fwd-offload off
-      ethtool -K eth1 hsr-dup-offload off
-      ethtool -K eth1 hsr-tag-ins-offload off
-      ethtool -K eth1 hsr-tag-rm-offload off
-
-      ethtool -K eth2 hsr-fwd-offload off
-      ethtool -K eth2 hsr-dup-offload off
-      ethtool -K eth2 hsr-tag-ins-offload off
-      ethtool -K eth2 hsr-tag-rm-offload off
-
-Testing the port-to-port frame forward offload feature:
------------------------------------------------------
-  1) Connect the LAN cables as shown in the test setup.
-  2) Configure Station A and Station C in HSR non-offload mode.
-  3) Configure Station B is HSR offload mode.
-  4) Since HSR is a redundancy protocol, disconnect cable "Link CA",
-     to ensure frames from Station A reach Station C only through
-     Station B.
-  5) Run iperf3 Server on Station C and client on station A.
-  7) Check the CPU usage on Station B.
-
-CPU usage report on Station B using mpstat when running UDP iperf3:
--------------------------------------------------------------------
-
-  1) Non-Offload case
-  -------------------
-  CPU  %usr  %nice  %sys %iowait  %irq  %soft  %steal  %guest   %idle
-  all  0.00   0.00  0.50    0.00  3.52  29.15    0.00    0.00   66.83
-    0  0.00   0.00  0.00    0.00  7.00  58.00    0.00    0.00   35.00
-    1  0.00   0.00  0.99    0.00  0.99   0.00    0.00    0.00   98.02
-
-  2) Offload case
-  ---------------
-  CPU  %usr  %nice  %sys %iowait  %irq  %soft  %steal  %guest   %idle
-  all  0.00   0.00  0.00    0.00  0.50   0.00    0.00    0.00   99.50
-    0  0.00   0.00  0.99    0.00  0.00   0.00    0.00    0.00   99.01
-    1  0.00   0.00  0.00    0.00  0.00   0.00    0.00    0.00  100.00
-
-Note:
-1) At the very least, hsr-fwd-offload must be enabled.
-   Without offloading the port-to-port offload, other
-   HSR offloads cannot be enabled.
-
-2) Inorder to enable hsr-tag-ins-offload, hsr-dup-offload
-   must also be enabled as these are tightly coupled in
-   the firmware implementation.
-
-MD Danish Anwar (4):
-  net: ti: icssg-prueth: Enable IEP1
-  net: ti: icssg-prueth: Add support for HSR frame forward offload
-  net: ti: icssg-prueth: Add multicast filtering support in HSR mode
-  net: ti: icss-iep: Move icss_iep structure
-
-Ravi Gunasekaran (2):
-  net: ti: icssg-prueth: Enable HSR Tx Packet duplication offload
-  net: ti: icssg-prueth: Enable HSR Tx Tag and Rx Tag offload
-
- drivers/net/ethernet/ti/icssg/icss_iep.c      |  72 -------
- drivers/net/ethernet/ti/icssg/icss_iep.h      |  74 ++++++-
- .../net/ethernet/ti/icssg/icssg_classifier.c  |   1 +
- drivers/net/ethernet/ti/icssg/icssg_common.c  |  16 +-
- drivers/net/ethernet/ti/icssg/icssg_config.c  |  10 +-
- drivers/net/ethernet/ti/icssg/icssg_config.h  |   2 +
- drivers/net/ethernet/ti/icssg/icssg_prueth.c  | 189 ++++++++++++++++--
- drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   9 +
- 8 files changed, 277 insertions(+), 96 deletions(-)
-
-
-base-commit: 222a3380f92b8791d4eeedf7cd750513ff428adf
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+index 9dc9de39bb8f..c61423118319 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+@@ -1255,12 +1255,8 @@ static int prueth_probe(struct platform_device *pdev)
+ 		goto put_iep0;
+ 	}
+ 
+-	if (prueth->pdata.quirk_10m_link_issue) {
+-		/* Enable IEP1 for FW in 64bit mode as W/A for 10M FD link detect issue under TX
+-		 * traffic.
+-		 */
+-		icss_iep_init_fw(prueth->iep1);
+-	}
++	/* Enable IEP1 for FW as it's needed by FW for FDB Learning and FDB ageing */
++	icss_iep_init_fw(prueth->iep1);
+ 
+ 	/* setup netdev interfaces */
+ 	if (eth0_node) {
+@@ -1365,8 +1361,7 @@ static int prueth_probe(struct platform_device *pdev)
+ 	}
+ 
+ exit_iep:
+-	if (prueth->pdata.quirk_10m_link_issue)
+-		icss_iep_exit_fw(prueth->iep1);
++	icss_iep_exit_fw(prueth->iep1);
+ 	icss_iep_put(prueth->iep1);
+ 
+ put_iep0:
+@@ -1423,8 +1418,7 @@ static void prueth_remove(struct platform_device *pdev)
+ 		prueth_netdev_exit(prueth, eth_node);
+ 	}
+ 
+-	if (prueth->pdata.quirk_10m_link_issue)
+-		icss_iep_exit_fw(prueth->iep1);
++	icss_iep_exit_fw(prueth->iep1);
+ 
+ 	icss_iep_put(prueth->iep1);
+ 	icss_iep_put(prueth->iep0);
 -- 
 2.34.1
 
