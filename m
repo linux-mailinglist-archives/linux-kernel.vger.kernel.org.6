@@ -1,114 +1,81 @@
-Return-Path: <linux-kernel+bounces-278829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 760D194B561
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:16:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1859894B565
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A17871C21A68
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:16:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF453283157
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A11142AB0;
-	Thu,  8 Aug 2024 03:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D5F43AA4;
+	Thu,  8 Aug 2024 03:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iCvGZzrS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BS4ykAC/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D61710A0D
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 03:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90AC6CA6F;
+	Thu,  8 Aug 2024 03:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723087008; cv=none; b=nkHQbRKPnS0Fc8o5D+ORSMURst8nn04j1BDLPfwSf6yB86iDBI+eQnRrsPsktKZ1A5CGlkjj7hcuQi2NK4khUfYy30ifIQ0tz/MrkmUNiFMqUy1XDS6qANwr8/glNjz1bOvFHcVNCyWCH8v2+MYY92Rgb3oc128SIw0CFAiKBbQ=
+	t=1723087139; cv=none; b=lVbSOifnbJaJ34Og+ao7VttARgLDl3BRnW1H2tlXe5vzR5HsLCuZv5J9OnhZTXSmcEEj04cUXSQ0tCkJGx+okowD/bYu7y0LTMjAeI+y2vdopd1nRwD/GPOv1lDHaW0w9G2TJVqm61Vm9taelmGdiz9IfeZ8a/5WkgGWLQZfJ8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723087008; c=relaxed/simple;
-	bh=A8xU9k4hRyFBgfPyMNhTQezZabXu3vv0f2eI1zyTczk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FtsYldwBY45ugXNpozosXrhzc3Nk/KOSN+6VeAoE/984Y1IgQUwD+1DatDCgoIxquS1loIbsL1jlrug/f2Dg/6VN1vW1BUmW9aqFdU4fexjH+nkds1am7RGq6HHsisL+KMNUIhbLgLW+8H3aFpbNLIiIV5CNiinLXb81fYRJ4Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iCvGZzrS; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723087007; x=1754623007;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=A8xU9k4hRyFBgfPyMNhTQezZabXu3vv0f2eI1zyTczk=;
-  b=iCvGZzrSp55Jw4+HcumTtyjhbYqK9LhJi04EU0ziipQm8wVTHpH+Leot
-   v7Vcxub/aYvVBL9v5wZvtEFUdJKy/TBh/H7nbjny8Y7p9r5Lb4EhZ8x9W
-   IgEDYQhL0BlwPVSzMH/s8AwEGNME+lzhUyxWqf34D3FqXAmcktTvnuWUR
-   Cee5FIG0KyXH4vL947w6XErJsrXgdYAOdiA6ud9DV+wFEGOPVjkC11V2l
-   9SejLoxFM4XKCwtPBzEZ/94W+vQu2XGiZF3UOJONfWmdvh/tQtYudeFp/
-   lA5Lb0Zp7UIhm0emoxQgeogeBnxhBPKDDtirvWiwMD+8r4Lp8Z5TD0V9D
-   Q==;
-X-CSE-ConnectionGUID: e1rr2JxGSTq0nhsoAXWebQ==
-X-CSE-MsgGUID: ti23cSIKTb21Geolxw0Ekw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="38648958"
-X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
-   d="scan'208";a="38648958"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 20:16:47 -0700
-X-CSE-ConnectionGUID: PZaVSFZlRfKDW6iPwG+rvQ==
-X-CSE-MsgGUID: AcLTCbtiSoGjhulurif7RA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
-   d="scan'208";a="56993578"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 07 Aug 2024 20:16:45 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sbtdq-0005tK-2G;
-	Thu, 08 Aug 2024 03:16:42 +0000
-Date: Thu, 8 Aug 2024 11:15:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
-Subject: ERROR: modpost: "__popcountsi2" [drivers/mmc/host/bcm2835.ko]
- undefined!
-Message-ID: <202408081106.qmqrtvNa-lkp@intel.com>
+	s=arc-20240116; t=1723087139; c=relaxed/simple;
+	bh=VVR+xEtsgA7xj816NAm5owc3atP8G1fTSEBkGMayaR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jXX0wO+Dmm+j3Pco6/+8EHaBX8T288NgYqGTRvzJyv1mk+NQODWjueHSYVkQ4RyRysH7jkbrQYtMFMs6RSI6KVAZsdTqwSlTbiT7yeIE1hyCn6Q5b3r0pk+S+0jD6VTl6Poe2D23eXwncMKNVdGAGEe6xe/fER4OuElmKtU2dOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BS4ykAC/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97B36C32781;
+	Thu,  8 Aug 2024 03:18:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723087139;
+	bh=VVR+xEtsgA7xj816NAm5owc3atP8G1fTSEBkGMayaR8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BS4ykAC/Y4nza/CoFDs74AMtAxKcxtjAR92RS3nukMWmWdqymlWlOjLnuZ0Cr+B3/
+	 +GIIkS66/58n9rcU3U77a8lC93af/0QdTzlemtkMvCodoq04Tb6megb1eNs78eqk+Q
+	 9N7RoMMg6/kQx//eq7xYYbCrVuCkx5mOmSMjZBES3EwKOIuh7ajiTWRgSbI+fIBg0X
+	 5wC1RPHwpst4Jqd1MrSSyHyEJkgqgYnDOky2KByeDwyNLQMJ3oryBe7q7EiKOvKKsT
+	 EgE84IuUayR08jrLumr/NA+DHN6EzkXjeEaIeWwU3WNUPwe/p0ZGVrSsmen+TJbv8v
+	 93RDiFKm6PRMw==
+Date: Wed, 7 Aug 2024 20:18:57 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, ernis@microsoft.com
+Subject: Re: [PATCH] net: netvsc: Increase default VMBus channel from 8 to
+ 16
+Message-ID: <20240807201857.445f9f95@kernel.org>
+In-Reply-To: <1722923751-27296-1-git-send-email-ernis@linux.microsoft.com>
+References: <1722923751-27296-1-git-send-email-ernis@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Arnd,
+On Mon,  5 Aug 2024 22:55:51 -0700 Erni Sri Satya Vennela wrote:
+> Performance tests showed significant improvement in throughput:
+> - 0.54% for 16 vCPUs
+> - 1.51% for 32 vCPUs
+> - 0.72% for 48 vCPUs
+> - 5.57% for 64 vCPUs
+> - 9.14% for 96 vCPUs
 
-First bad commit (maybe != root cause):
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   6a0e38264012809afa24113ee2162dc07f4ed22b
-commit: 64ea30d1a192e2866397169ebfe3d0109878d040 clk: imx: fix compile testing imxrt1050
-date:   1 year, 6 months ago
-config: arm-randconfig-r112-20240807 (https://download.01.org/0day-ci/archive/20240808/202408081106.qmqrtvNa-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 423aec6573df4424f90555468128e17073ddc69e)
-reproduce: (https://download.01.org/0day-ci/archive/20240808/202408081106.qmqrtvNa-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408081106.qmqrtvNa-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-ERROR: modpost: "__popcountsi2" [fs/ext2/ext2.ko] undefined!
-ERROR: modpost: "__popcountsi2" [fs/fat/fat.ko] undefined!
-ERROR: modpost: "__popcountsi2" [fs/hfs/hfs.ko] undefined!
-ERROR: modpost: "__popcountsi2" [fs/ufs/ufs.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/soc/aspeed/aspeed-lpc-ctrl.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/iommu/iova.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/usb/gadget/udc/udc-xilinx.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/md/bcache/bcache.ko] undefined!
->> ERROR: modpost: "__popcountsi2" [drivers/mmc/host/bcm2835.ko] undefined!
->> ERROR: modpost: "__popcountsi2" [drivers/mmc/core/mmc_core.ko] undefined!
-WARNING: modpost: suppressed 1 unresolved symbol warnings because there were too many)
-
+Could you please switch to netif_get_num_default_rss_queues() ?
+It used to return hard coded 8, but now it returns #physical cores / 2.
+That's based on broad experience with Meta's workloads. Some workloads
+need more some needs fewer, but broadly half of physical cores is
+a good guess for 90%+
+Assuming you have thread siblings in those vCPUs above it should
+match what you want, too.
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+pw-bot: cr
 
