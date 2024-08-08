@@ -1,185 +1,174 @@
-Return-Path: <linux-kernel+bounces-279413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C84094BD05
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:10:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAAF294BD07
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB3D1B20FCD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:10:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F1A5288A40
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30D018C348;
-	Thu,  8 Aug 2024 12:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFAF18C91B;
+	Thu,  8 Aug 2024 12:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MOQaHrQ/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="Sj8DVxCW"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2100.outbound.protection.outlook.com [40.92.102.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4041E18B494
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723119047; cv=none; b=nZW1fKrYbs1jcyaq2N9thMY38TLgbr/F2TMw9Vmg4iQAY7FyZmiXZk13mRxJAl6KDqxc0FhGGN+7VEXBpunZFu86qwoYortojiQO7mT3deXyjA2oZdynypvwa1aO3/X/Hqz3wa/CDMqDnB3Gg1DIZ8ajabVcf6UeerOt6g9I9oA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723119047; c=relaxed/simple;
-	bh=9bc7aDzprpbcgS4WFLHvkOB53uMBGrapeaVhrEf3Z7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YYMQkf/7bKxFoif/c63sF/38OkluM7AHwlrb4X8mv5CRvGuzkI8/NZhPlIqcS6ySsAWFrOIo/N4lB7GEEYbEwal6FQwX+vThqVHeEUflNmoEbKmYv8QJ6SfCWo+BJZ8OFnLM1dJC2J3k6W4vcmBMlumukrgBNp4243I1ZEJVLxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MOQaHrQ/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723119044;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1M/Bbzbm2m4qddYa34fpB/kjEFz/ogrNcSTJJcSrSIw=;
-	b=MOQaHrQ/MZAZf5pAUfup/zVew2rP7fbGq/oaWI64OCPX4yHv+h18OwfBGlQOS32hEloPPE
-	HSSgGMPIPulS/iMlF0U2zT9KOlCXiP8yirY1L2dzb2UUH27eZuu+7v12pe2uw+3Eu/KN6Z
-	p81y4j+/6EpVWoIC+qLZF1NeuLDjV9I=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-691-jVwjj3QSMVe08phNXgXeWA-1; Thu, 08 Aug 2024 08:10:40 -0400
-X-MC-Unique: jVwjj3QSMVe08phNXgXeWA-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5a16fae2ba7so588008a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 05:10:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723119039; x=1723723839;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1M/Bbzbm2m4qddYa34fpB/kjEFz/ogrNcSTJJcSrSIw=;
-        b=rd9oHI+GLHu8Vu9JosgNjG30pumfHga2u6SKH3pxIw+4Fe8yKJO4L8+cGSY522qPUz
-         hWVRCu2AF2QU99RoBZu49FHRomZVw6rOmT/2y+fV9afO+meGgs/rV/WjIu5PBWUz88+l
-         wQwYSFDDuHk9A8aHXfi/5410weAm+s8KDsS/Iwx4xmaCgDRuuUNVoXWcPq3JIsp/kM7J
-         bCEi0kKw8NlWhpxG1Aw1D/YHjFz/iOAXH7CXlIdogqpLtG95VHWuGpIINQjSZ3bkSkR1
-         aLu1nJQ3SXuGDzJkhWSKIgbMPhItd9m7MLmyYi/1n1kX5Sl3+vhJWTD7C3jhyexi+18j
-         LIbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXuij5Th4be9vCjE/F/IxiwzC23o60WYIeTFc7+MFtlj1RYlRODVoevJi0RyojTqVD+maeArxjb87mqjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykGvTyoZFdhNEl/KmGY19XZt2/NCV/8o8STuZXU4ppBXA6d/Cb
-	QaUa/8LDetCQSCAhtEahqNX2nodOBMQjxy22cAWKS6IWeG5ep8GNjVgudnITVgHYzd/ezbYSVlY
-	RbD41GTeihq3krQCytgIB3hOhsbp6jhh+psoIecF36QD5JmbwwNdxs76ebXOqRQ==
-X-Received: by 2002:a05:6402:2803:b0:5a1:24fc:9a47 with SMTP id 4fb4d7f45d1cf-5bbb23decc5mr1357331a12.27.1723119039469;
-        Thu, 08 Aug 2024 05:10:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGLx/yjqoXNv7pgu3Db5bjZDcuVQRkJcyOheFnVizNfuaxPT8z3LRIP3msZG+5UgTn6kRv+YQ==
-X-Received: by 2002:a05:6402:2803:b0:5a1:24fc:9a47 with SMTP id 4fb4d7f45d1cf-5bbb23decc5mr1357292a12.27.1723119038645;
-        Thu, 08 Aug 2024 05:10:38 -0700 (PDT)
-Received: from redhat.com ([2.55.14.119])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2bf841asm564212a12.5.2024.08.08.05.10.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 05:10:37 -0700 (PDT)
-Date: Thu, 8 Aug 2024 08:10:34 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Hongyu Ning <hongyu.ning@linux.intel.com>
-Subject: Re: [PATCH] virtio: Remove virtio devices on device_shutdown()
-Message-ID: <20240808075701-mutt-send-email-mst@kernel.org>
-References: <20240808075141.3433253-1-kirill.shutemov@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE7418C906;
+	Thu,  8 Aug 2024 12:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.100
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723119051; cv=fail; b=AAKyniL+zgOmT/diFJOC1XDo30mM2pZ6Xn0muyOU9nGu0BJ9cnlturgKxLeJrvY2TOT9w5JX/LFl+0a5NMA1joyWkDnXuYhiyZ8OMtNK2KnLVl14kCObWzyn7Lqz7+dlQZPmTGqIE5R2ExFTwiTRdw76kClQyImRzm6qr/0VEMk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723119051; c=relaxed/simple;
+	bh=vRQ56ui35j7gSUDh6/aC8rAWi07FjxWDnMNCtBkWUOY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=peFbZ3GZ+z+Iztizgg194y3DUz6mQK17AoD2+A4cGqyZYNloHPSB1S5cfNdduZkf+CxvpBsRYfSGT1YAfT8HR9rvphShadYBADK5L4wNMn/hsLN8S2wyLLr53KPwiHQ7Ylo0rkyT24MWTogBjU7bedV6Wjv5IjI0KQxj2gcjmOw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=Sj8DVxCW; arc=fail smtp.client-ip=40.92.102.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VJcyVsSkETCZpjSABTM4gaTL+vOlmJLQgrOkl3aWo36IKIOKQLczCybYDgoy6BWMQUp0Kg1u6AcKyAC2OZHTiUnt7JtcXFFcteBUCVdyb6j+6b5fbAvuC5PEzjBN/k41mshqiGRXh1EWBdEtqYlNTtGrIGviur/lpEVny7EC468SQ7rUzTuglSqhg+iVHhKKm+XFOfqblCN7LTNo2MUH9ZdDgb2OVraAIODZtzLpxKWB48Ss2GZ4bzcqKHJ7IAxuLs3kOXvXYfKVqQDjgrCokDR38gJS8RqdqfOepR4oG4B4QM+D14I3Aw3mxrg0YZcUj5vDYkqVC4FFdd03KzqhtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cIBzWghiSd/94g2S+ca6KQlE54fye1PXtvDLmTaqqw4=;
+ b=I7UXlyIhNcvLQouULG4h10m2bxg5yTVBuR1KqgxR8ryFiUxDxrp4wz2eiftY6WgDO4XChUcMvk4OBP1c54+EYPPSY5VDJ4zpjh7TAcpIlY7hwNwe79lE1qKgPJ/pn7/ukG/nhIHJ7/SwJDUub2hl4JcWJujZdmUO6zv5mVcLNdhSCkw0zZt25q2Se3uLzlUhxXSLx+my3XaQV1DuAeKfEC0x1YId7EGXGXCoqv58dcoe1g1DxVVrGCj2UpLND0qDkfgKqVaBXg5pRdA+D2GD+3A5nAQQjK0b/NHbft2C9Kd1lbPmpjMR/yu3vMEsCgAAyqqVmaraLfLa7GDJbowMRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cIBzWghiSd/94g2S+ca6KQlE54fye1PXtvDLmTaqqw4=;
+ b=Sj8DVxCWIFsecmhmnClZQ5u0d/Viqk0DDAqYtTUZYC0/YR8xgSPLCjEaqkvFttdgAFoPw+veCoD7nFypAmHQxl7TuE7KBY6gf0sKs8Rqyy/z9hE3snu8w2/bZCyR7DvKpTX79YMRSYllLWZnjdjmPerTfcmsQRdbe5xczMuCTUKQvA+XoAp5CDe6rwj1NvgM7uXwnDggPEolHUIC47LWA8mx8mZfyblYwPZ4Auwue4fN9u63BtYN7RMtG8I1h+6Fy9o0AM7GQNEaLahhwkSW7BFvNwKvKIOpLtiixm9f1bWemp1sO5TRDx8BaJfUCJmHNGY5oSkWJCCp9A3UaEeRMw==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ PN2P287MB0723.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:fe::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.13; Thu, 8 Aug 2024 12:10:43 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.013; Thu, 8 Aug 2024
+ 12:10:43 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
+	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
+CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: [PATCH RESEND v2 5/9] HID: multitouch: take cls->maxcontacts into
+ account for devices without a HID_DG_CONTACTMAX field too
+Thread-Topic: [PATCH RESEND v2 5/9] HID: multitouch: take cls->maxcontacts
+ into account for devices without a HID_DG_CONTACTMAX field too
+Thread-Index: AQHa6Yv+ROpT31L5LkWmC+xCy7IhrQ==
+Date: Thu, 8 Aug 2024 12:10:43 +0000
+Message-ID: <C885A405-B6A3-48DD-8F30-1E16FFD262CC@live.com>
+References: <752D8EEA-EE3B-4854-9B5E-F412AFA20048@live.com>
+ <8495C8A9-5B99-45A8-95CB-623682BF8982@live.com>
+In-Reply-To: <8495C8A9-5B99-45A8-95CB-623682BF8982@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [rytfL9Ga7Q13BNyB3Du2F8eb7Iw+TOVRhwqKo7jll6LvyPNAzeFweUyof7YPOyB/V2x+JANQpGg=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN2P287MB0723:EE_
+x-ms-office365-filtering-correlation-id: 2fa9b8de-1c87-421e-3603-08dcb7a320a0
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|15080799003|8060799006|19110799003|102099032|3412199025|440099028;
+x-microsoft-antispam-message-info:
+ YPG4ktB9iyCQebyo7cm9xBfbom19s4nZWgGDosAqzHNOOVGZhPo/FNdIu2gGoYXsulX0pqsa8WuHfrf4z7cdfOIRc7CtBKf7OjYiMnXrCfFsu6yH2Ww3rCvJ5yGHB0hnLRogXEXXMB8hO67j6MVw/3JC+aGPOQjIfcSzW3zy+hX4XqOj/u1HqkOGxQKAfXdr7CxMBF5rFoJh62gPyoDZI+vucL04bAwg/JOnwVBhQ/hdYthyJrVmGRo77l3tJioD4j6wkrv+Oh+Z2KFJogiFv4dmlqdEVbCx+Yb001dd22lUSgO+qag0PpwqHqJcxb87XAAryY73LijjG/PgGlIaoaEDgdU0BHB7m7i/4zeAZBh1bDkwAftbTQYgwEzAV9pw1x4XgF0cKqCluj9+zq/G9bSaJ7DxmhJfdpzQPoIVyoeYAbqV0xJXFZMJoZEEZ828agH4dLXsW6Q91Ri0t+38v5/KFARr15ByPpaegoPxSX3WnipzB7HiOHC6Y9O2m9Cra2B+WrHtez2lnXC31utEdowOBzyyO7sYhDOW1JenKaRqtMJB6uD385mnYJeFQzdGeimqWQaPxW3gyj1af3hjJ4XVH+pLpNo0uJSKVdSG3oN3VUzHCWLdpd37yS3kUtD9Hv2Qd5snfv61dFi46qVYw8YJFZjjvBjuVVLonGQ0xJhBFDvhZlhvCBFc9al+OnVD
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?WwNcCVRJJ29rtgloTWZch/jylDdU5sI6M0DqjbaCO4IRrdmytC19bL/74UbH?=
+ =?us-ascii?Q?PBvfiH4SgEq05OD1OkzYkmKEc477NDhPNMFDmAGE2BLS706imXWklxcKmkc1?=
+ =?us-ascii?Q?a1fWvfn3ImG/BZYcFvnVN3DdGiDYm94TI9ywk+H4K0/uLg129/dEAxBJJ8kx?=
+ =?us-ascii?Q?XBrW9vS851Y3IMuelpMprLAengDnCykkq2GwpJh72HFPh39QIgOqlt8bbM5i?=
+ =?us-ascii?Q?mBl8Zt76/g39VLx1qf6VFcEgRqZEYJ9A2b8rQb1O/WXLOQMyYKkoELc0C2QM?=
+ =?us-ascii?Q?RR5Aon6jsKGvit5JUpnZhDBTrZSiSJLym0lnHPfGjMCE+Afllmu3Z+BMxrXg?=
+ =?us-ascii?Q?nRD2tvlZh0xHqvBQWYCdpFHdAB41BSt2MNArCVb7FmjZjyFxbFI0cvzHxllR?=
+ =?us-ascii?Q?Q+Kly0Ri/SBMOqDLKiELgHckS1+k2LJcJacLAE13Bf/3yCOgmnptgXTOzzBw?=
+ =?us-ascii?Q?xm0Qu4g//LhIiyuAeYN4wohZ6xRbaUXs3n58xH4hCbBCMnzvlN7VWREEKHnh?=
+ =?us-ascii?Q?QG2+x/uEagtr7U0r8aT1M05kea03DxXX9CqjmFvuvPyK17pFIWg89evSvdOB?=
+ =?us-ascii?Q?Cl0kNXGJobFtoa+CKCdvh+zKEbRszU3ErvMqFZCUkv6Gju5D/k039pikTriv?=
+ =?us-ascii?Q?yRLNPmOxQ5i4ftHKs9QcTrRcogdKlZNHbdcalcXpQ4wCtTrqPPBUHLhCs84Y?=
+ =?us-ascii?Q?K8fliZdcPwFs1Jo4jgBKsMg260GPJPdrZfOUIgyXXzpWVEAOUV8NpEIeXj8t?=
+ =?us-ascii?Q?Yd9va+L9c3cTuIlUjQiEZIeohF3vUKhOeCgGUDQwNiTa2jlKwultsk88FB8B?=
+ =?us-ascii?Q?Awkq6iSo5S+Bs/XDXT2HDjFCuY8JwUL4QcLvZ41zpV4MX+5+4eE23j3Gwe7A?=
+ =?us-ascii?Q?Y87p6vwVtx29DadIaoP0sfP5yTRX6tiQqr1/bpwBtY0lyyZGfXR9I4Vp0coA?=
+ =?us-ascii?Q?AhPR7aKmSOWJO0B7nLMqK9V9vQs4s/FWx2euz3L2srkRN1ZLiQZp/H8U3Sqn?=
+ =?us-ascii?Q?gsLsy/759RAofnoQpaU9GTAfzI/6gfo9ijXxIT6BR1pXfy8EdgwgZqoPblNg?=
+ =?us-ascii?Q?b6yXv7NFzSz8ri7jvwAJzYJ/BAMJgfZPRqXb7+gSYh7asD4+jVsjxaEUoXpk?=
+ =?us-ascii?Q?8SrLivI2n3L3gFf/BpTXC04KL+MwFt3b+rk5B8vbM6HY4EKI18lDx1of38cj?=
+ =?us-ascii?Q?TBKDD4yGzI/wceEwyFlL+Ddpkh+xGA1VLOy68xeE8k4OZfuXF0x+mKKMO/hk?=
+ =?us-ascii?Q?TxwO7e/iffQzucoOuB5L1vK3xIzzTCLPJZ8r17xADxNBsd7oJmo/BS2fPPct?=
+ =?us-ascii?Q?Tr/qjiiynLjfAetav50ZH+yz?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <E7784C36D7B6C2489F236C87A791E3C0@INDP287.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808075141.3433253-1-kirill.shutemov@linux.intel.com>
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2fa9b8de-1c87-421e-3603-08dcb7a320a0
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 12:10:43.4187
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0723
 
-On Thu, Aug 08, 2024 at 10:51:41AM +0300, Kirill A. Shutemov wrote:
-> Hongyu reported a hang on kexec in a VM. QEMU reported invalid memory
-> accesses during the hang.
-> 
-> 	Invalid read at addr 0x102877002, size 2, region '(null)', reason: rejected
-> 	Invalid write at addr 0x102877A44, size 2, region '(null)', reason: rejected
-> 	...
-> 
-> It was traced down to virtio-console. Kexec works fine if virtio-console
-> is not in use.
+From: Kerem Karabay <kekrby@gmail.com>
 
-virtio is not doing a lot of 16 bit reads.
-Are these the reads:
+This is needed for Apple Touch Bars, where no HID_DG_CONTACTMAX field is
+present and the maximum contact count is greater than the default.
 
-                virtio_cread(vdev, struct virtio_console_config, cols, &cols);
-                virtio_cread(vdev, struct virtio_console_config, rows, &rows);
+Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+Signed-off-by: Aditya Garg <gargaditya08@live.com>
+---
+ drivers/hid/hid-multitouch.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-?
-
-write is a bit puzzling too. This one?
-
-bool vp_notify(struct virtqueue *vq)
-{       
-        /* we write the queue's selector into the notification register to
-         * signal the other end */
-        iowrite16(vq->index, (void __iomem *)vq->priv);
-        return true;
-}
-        
-> 
-> Looks like virtio-console continues to write to the MMIO even after
-> underlying virtio-pci device is removed.
-
-You mention both MMIO and pci, I am confused.
-Removed by what? In what sense?
-
-
-
-
-> 
-> The problem can be mitigated by removing all virtio devices on virtio
-> bus shutdown.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reported-by: Hongyu Ning <hongyu.ning@linux.intel.com>
-
-A bit worried about doing so much activity on shutdown,
-and for all devices, too. I'd like to understand what
-is going on a bit better - could be a symptom of
-a bigger problem (e.g. missing handling for suprise
-removal?).
-
-
-
-
-> ---
->  drivers/virtio/virtio.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
-> index a9b93e99c23a..6c2f908eb22c 100644
-> --- a/drivers/virtio/virtio.c
-> +++ b/drivers/virtio/virtio.c
-> @@ -356,6 +356,15 @@ static void virtio_dev_remove(struct device *_d)
->  	of_node_put(dev->dev.of_node);
->  }
->  
-> +static void virtio_dev_shutdown(struct device *_d)
-> +{
-> +	struct virtio_device *dev = dev_to_virtio(_d);
-> +	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
-> +
-> +	if (drv && drv->remove)
-> +		drv->remove(dev);
-> +}
-> +
->  static const struct bus_type virtio_bus = {
->  	.name  = "virtio",
->  	.match = virtio_dev_match,
-> @@ -363,6 +372,7 @@ static const struct bus_type virtio_bus = {
->  	.uevent = virtio_uevent,
->  	.probe = virtio_dev_probe,
->  	.remove = virtio_dev_remove,
-> +	.shutdown = virtio_dev_shutdown,
->  };
->  
->  int __register_virtio_driver(struct virtio_driver *driver, struct module *owner)
-> -- 
-> 2.43.0
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 571435da5..60b675cd1 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -490,9 +490,6 @@ static void mt_feature_mapping(struct hid_device *hdev,
+ 		if (!td->maxcontacts &&
+ 		    field->logical_maximum <=3D MT_MAX_MAXCONTACT)
+ 			td->maxcontacts =3D field->logical_maximum;
+-		if (td->mtclass.maxcontacts)
+-			/* check if the maxcontacts is given by the class */
+-			td->maxcontacts =3D td->mtclass.maxcontacts;
+=20
+ 		break;
+ 	case HID_DG_BUTTONTYPE:
+@@ -1309,6 +1306,10 @@ static int mt_touch_input_configured(struct hid_devi=
+ce *hdev,
+ 	struct input_dev *input =3D hi->input;
+ 	int ret;
+=20
++	/* check if the maxcontacts is given by the class */
++	if (cls->maxcontacts)
++		td->maxcontacts =3D cls->maxcontacts;
++
+ 	if (!td->maxcontacts)
+ 		td->maxcontacts =3D MT_DEFAULT_MAXCONTACT;
+=20
+--=20
+2.39.3 (Apple Git-146)
 
 
