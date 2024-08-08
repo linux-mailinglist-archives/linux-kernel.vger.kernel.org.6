@@ -1,254 +1,104 @@
-Return-Path: <linux-kernel+bounces-279210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2D5194BA83
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:08:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E34D494BA8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55574B2161E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:08:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20C851C2138F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7993E189F4B;
-	Thu,  8 Aug 2024 10:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53E5189F50;
+	Thu,  8 Aug 2024 10:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwmJ5Eqx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="SSh4DpBT"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AF913D61D;
-	Thu,  8 Aug 2024 10:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131FA189F33;
+	Thu,  8 Aug 2024 10:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723111676; cv=none; b=clEmT31ogbP5t2K+0bVLU3a/Vu8/lSjU6GjQNnA6NCBOJpbfwtmvoyozkiyu/7sPjoZSfcDCdiqeR3JtB31N+/FTH4s59rmkrOB7J/eQOM4/sXKchKjPX4FKwvH6vmEq34LmIIDapBBmjLfgfLBETD3Z3nvcJn3UcH1mc2pZ6xo=
+	t=1723111988; cv=none; b=SlHOkkdZPGM4/6yKnJ5yzllVZNBmAvdQrRA/p5JbYopnAgnWbAsME0AxcxNMcV7IS7uXbiDBT/Ct8jzjSIFeoNRxCLKAk+i69G3J/jATU28yGIu/7mgK7743JxqUJeo8BC2EdSK1dX+F7VzPui+jnH3ec03fQnEdYAjcfplOQ7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723111676; c=relaxed/simple;
-	bh=Z+730wdykgDL37zu2DW7NoDiCuHq6W2AiZCHoRLEZqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nQk0l62Srv7LGl3VAupqMG1TUdWSExHhR+mV3SZtMaBJ1EhvKm7Mm2NvwyNL4qayU09+rx4u8jEGJdp4DRU5A9PssDQ9aZ0h+6zBfKLMQaEPZB0/V2z91IwqEjkLwqGm3xqr8d04C50PxVfl/rS/0ANc6SI9CSZTEhK7SBuubls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwmJ5Eqx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C160C32782;
-	Thu,  8 Aug 2024 10:07:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723111676;
-	bh=Z+730wdykgDL37zu2DW7NoDiCuHq6W2AiZCHoRLEZqY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JwmJ5EqxR2+5nZsc8J2ITqAp+c84P9wmWOqHbtVQmXYDpigys7RJu0fprpFnekTIk
-	 I2hOtXdwcZIL/MHEFL3sep8UIdvmN4kVgALNiOpd2rrPrBYvpSGe2nnXz8jzuwz2Y1
-	 HjEMZXCIHCS4dyHi5qfRW3YqhbV3OOrWCzzgtz9+pYeVb/ykj4Xv4eJROFQAI5rbTI
-	 kBgggxRh33MSFiyxwQEEr1Rqs1/ntBQbnSoNPQRUdc2CN7RWUsUFXNonm7Rg4ZZGe5
-	 zFjso8EH7LUwCRRmv7XG5MXmWfqhKqjytATHP4RBBW8FR+tb+UdsLlxge0ml+jWBFW
-	 A2AB2+RBtsxGw==
-Date: Thu, 8 Aug 2024 12:07:48 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
-	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v4 25/28] rust: alloc: implement `Cmalloc` in module
- allocator_test
-Message-ID: <ZrSY9DZuDu7lY-1Q@pollux>
-References: <20240805152004.5039-1-dakr@kernel.org>
- <20240805152004.5039-26-dakr@kernel.org>
- <dcf75b19-9900-4aaa-8ff7-36b08baa18f2@proton.me>
+	s=arc-20240116; t=1723111988; c=relaxed/simple;
+	bh=ouPA6ZrahlF54R4HPTBRnYcpfrAsj1xJHWagR7bwEPg=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=VAZJRUpyvW1PfRM7il8/yvwNnySGHIURmPNthGrOJb/HnLDYFj/zoHpm88xpN9/CQ3PejWS1jO7tjex8TAPc6TgLRC0V7WbChsJv2qStPJzb4hT3ArHexHfEWZgJmcDZXbJ3uJdCz566OQnfzLcQlP2jEtjs0jp20ly80pBVQJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=SSh4DpBT; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1723111974; bh=mfUonZG/C+QDJMq8H/BlxiTC4EXPl9wK66ybZn66nho=;
+	h=From:To:Cc:Subject:Date;
+	b=SSh4DpBTmvsAan2sf0kQ2JglXirYEBMGu2GtOSde8tiwpNh0W/xnuf04q7/Q15+PA
+	 cFtVV52iyWdB6TeWLSHpiLmQbNE9YU80L5EftPm26ImFChTF92STWAb30fmKfV8ofL
+	 CMV2MdzUGTk7AIUdU5KOJfSZtAZe2BQzo3wa0suY=
+Received: from localhost.localdomain ([123.150.8.42])
+	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
+	id DB32546F; Thu, 08 Aug 2024 17:54:51 +0800
+X-QQ-mid: xmsmtpt1723110891tvw1l3xep
+Message-ID: <tencent_9A3345EA79C1EE9DC4464BB576C6A602A105@qq.com>
+X-QQ-XMAILINFO: MIAHdi1iQo+zW6xu5i8c99xvDD8u1RYFkfUoGob7cHiYe6CLAgMVTwiC/6ImLo
+	 VdVTh+YuWZ4RkoxTjANVW6Ab40A7jqAqZamUnu6TYQ3Y0QUQF4Vn8P2VZu1hN9n387G0zesJrFbi
+	 qpS8D8feVAT/4FzJlHEpN0ujM6K0XGdbexhcXgFB30ia5DspdKRO+ht55TTtMaCE6SqXolB6bgfg
+	 37THZsAj2xT8bShU/tCsAl5xpF9P4WLUUWol6K3JEwKNLvt5jJ2XAdcFiv8AOUX5Iysdf9SRz6VP
+	 XiARAib8dRY7KdJgvf2La39ixs8+LZhgzbleWi/UWjQFcg01TGqOdj6at8YiGzCwe5EiGtvKi9dN
+	 iYznpCqIJi+loBHl3GN10j0E0cErrYVap18rclMlrZKvbJnMxKrEOkaFA+x8/lc+jwAIQE9LiSD1
+	 fyRqdTy+MoCQ7qsrLB/Oru/JPQsWeBN6aL8AYEWMgF4CuVjBYpmq6e57PnRIjck57h1O9G1ThFc8
+	 1T379W1Bi6IZp82x2yAnwxVHpbsDkwWbXXTjeaij3tz1camucB8XGWaWwXTJK5hBiFDuDKoKW+uP
+	 3RUl6oB5iLJVoxZwIeNOjNuuH/b9CGwJP1I40nsl8GT0vv/Xu4MAjFer8ROxX5r5/GCEVmOMmJ8X
+	 AfP6UCLyNFnURYcMERFuOXh7kiQO5quqgJ33GDAwhE5p7z75ZecWOSHuz/HC+jB2aw8zvw/IdFWF
+	 a6KylLu2v5UG2lbsjvM8u2cWxZPCiQ2eT/kkY+n3yviALvDrsHSybA8f2Pv4kI03yWKxinmsdsJB
+	 haPqu0ty/nNIVT8g8GtZGYQJqYI5UEBpQsHej09ckj5qCiAHhAS/AueHvbQml3KLZnV6ER5XqD7c
+	 YwG+5NMdg61G8CvrFyzUEhShK21m5MDDbE2Sy1cH3uDkoIbfsx/7q8NASdnh13Gg==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: 824731276@qq.com
+To: axboe@kernel.dk
+Cc: linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	baiguo@kylinos.cn
+Subject: [PATCH] block:added printing when bio->bi_status fails
+Date: Thu,  8 Aug 2024 17:54:48 +0800
+X-OQ-MSGID: <20240808095448.360239-1-824731276@qq.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dcf75b19-9900-4aaa-8ff7-36b08baa18f2@proton.me>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 08, 2024 at 09:35:47AM +0000, Benno Lossin wrote:
-> On 05.08.24 17:19, Danilo Krummrich wrote:
-> > So far the kernel's `Box` and `Vec` types can't be used by userspace
-> > test cases, since all users of those types (e.g. `CString`) use kernel
-> > allocators for instantiation.
-> > 
-> > In order to allow userspace test cases to make use of such types as
-> > well, implement the `Cmalloc` allocator within the allocator_test module
-> > and type alias all kernel allocators to `Cmalloc`. The `Cmalloc`
-> > allocator uses libc's realloc() function as allocator backend.
-> > 
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > ---
-> > I know, having an `old_size` parameter would indeed help implementing `Cmalloc`.
-> > 
-> > However, I really don't want test infrastructure to influence the design of
-> > kernel internal APIs.
-> > 
-> > Besides that, adding the `old_size` parameter would have the consequence that
-> > we'd either need to honor it for kernel allocators too (which adds another
-> > source of potential failure) or ignore it for all kernel allocators (which
-> > potentially tricks people into taking wrong assumptions on how the API works).
-> > ---
-> >  rust/kernel/alloc/allocator_test.rs | 91 ++++++++++++++++++++++++++---
-> >  1 file changed, 84 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
-> > index 1b2642c547ec..05fd75b89238 100644
-> > --- a/rust/kernel/alloc/allocator_test.rs
-> > +++ b/rust/kernel/alloc/allocator_test.rs
-> > @@ -2,20 +2,97 @@
-> > 
-> >  #![allow(missing_docs)]
-> > 
-> > -use super::{AllocError, Allocator, Flags};
-> > +use super::{flags::*, AllocError, Allocator, Flags};
-> >  use core::alloc::Layout;
-> > +use core::ptr;
-> >  use core::ptr::NonNull;
-> > 
-> > -pub struct Kmalloc;
-> > +pub struct Cmalloc;
-> > +pub type Kmalloc = Cmalloc;
-> >  pub type Vmalloc = Kmalloc;
-> >  pub type KVmalloc = Kmalloc;
-> > 
-> > -unsafe impl Allocator for Kmalloc {
-> > +extern "C" {
-> > +    #[link_name = "aligned_alloc"]
-> > +    fn libc_aligned_alloc(align: usize, size: usize) -> *mut core::ffi::c_void;
-> > +
-> > +    #[link_name = "free"]
-> > +    fn libc_free(ptr: *mut core::ffi::c_void);
-> > +
-> > +    // Do not use this function for production code! For test cases only it's
-> > +    // probably fine if used with care.
-> > +    #[link_name = "malloc_usable_size"]
-> > +    fn libc_malloc_usable_size(ptr: *mut core::ffi::c_void) -> usize;
-> > +}
-> > +
-> > +unsafe impl Allocator for Cmalloc {
-> > +    fn alloc(layout: Layout, flags: Flags) -> Result<NonNull<[u8]>, AllocError> {
-> > +        let layout = layout.pad_to_align();
-> > +
-> > +        // SAFETY: Returns either NULL or a pointer to a memory allocation that satisfies or
-> > +        // exceeds the given size and alignment requirements.
-> > +        let raw_ptr = unsafe { libc_aligned_alloc(layout.align(), layout.size()) } as *mut u8;
-> > +
-> > +        if flags.contains(__GFP_ZERO) && !raw_ptr.is_null() {
-> > +            // SAFETY: `raw_ptr` points to memory successfully allocated with `libc_aligned_alloc`.
-> > +            let size = unsafe { libc_malloc_usable_size(raw_ptr.cast()) };
-> > +
-> > +            // SAFETY: `raw_ptr` points to memory successfully allocated with `libc_aligned_alloc`
-> > +            // of at least `size` bytes.
-> > +            unsafe { core::ptr::write_bytes(raw_ptr, 0, size) };
-> > +        }
-> > +
-> > +        let ptr = if layout.size() == 0 {
-> > +            NonNull::dangling()
-> 
-> Why do you call `libc_aligned_alloc` when you return `dangling()`
-> anyways when size is zero? I would move this check upwards.
-> 
-> > +        } else {
-> > +            NonNull::new(raw_ptr).ok_or(AllocError)?
-> 
-> Would also make sense to do this above the null check.
-> 
-> > +        };
-> > +
-> > +        Ok(NonNull::slice_from_raw_parts(ptr, layout.size()))
-> > +    }
-> > +
-> >      unsafe fn realloc(
-> > -        _ptr: Option<NonNull<u8>>,
-> > -        _layout: Layout,
-> > -        _flags: Flags,
-> > +        ptr: Option<NonNull<u8>>,
-> > +        layout: Layout,
-> > +        flags: Flags,
-> >      ) -> Result<NonNull<[u8]>, AllocError> {
-> > -        panic!();
-> > +        let layout = layout.pad_to_align();
-> > +        let src: *mut u8 = if let Some(src) = ptr {
-> > +            src.as_ptr().cast()
-> > +        } else {
-> > +            ptr::null_mut()
-> > +        };
-> > +
-> > +        if layout.size() == 0 {
-> > +            // SAFETY: `src` is either NULL or has previously been allocatored with this
-> > +            // `Allocator`.
-> > +            unsafe { libc_free(src.cast()) };
-> > +
-> > +            return Ok(NonNull::slice_from_raw_parts(NonNull::dangling(), 0));
-> > +        }
-> > +
-> > +        let dst = Self::alloc(layout, flags)?;
-> > +
-> > +        if src.is_null() {
-> > +            return Ok(dst);
-> > +        }
-> > +
-> > +        // SAFETY: `src` is either NULL or has previously been allocatored with this `Allocator`.
-> > +        let old_size = unsafe { libc_malloc_usable_size(src.cast()) };
-> 
-> Citing man malloc_usable_size(3):
-> 
->     CAVEATS
->         The value returned by malloc_usable_size() may be greater than
->         the requested size of the allocation because of various internal
->         implementation details, none of which the programmer should rely
->         on.  This function is intended to only be used for diagnostics
->         and statistics; writing to the excess memory without first
->         calling realloc(3) to resize the allocation is not supported.
->         The returned value is only valid at the time of the call.
-> 
-> While you don't write, you might read below, which might not be OK?
+From: baiguo <baiguo@kylinos.cn>
 
-That is very interesting, the man page entry I looked at said:
+    When ftrace is not enabled and bio is not OK,
+    the system cannot actively record which disk is abnormal.
+    Add a message record to bio_endio.
 
-       The  value  returned by malloc_usable_size() may be greater than the requested size of the
-       allocation because of alignment and minimum size constraints.  Although the  excess  bytes
-       can  be  overwritten  by the application without ill effects, this is not good programming
-       practice: the  number  of  excess  bytes  in  an  allocation  depends  on  the  underlying
-       implementation.
+Signed-off-by: baiguo <baiguo@kylinos.cn>
+---
+ block/bio.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-This was changed in [1] and it looks like "can be overwritten by the application
-without ill effects" just isn't true any more, too bad.
+diff --git a/block/bio.c b/block/bio.c
+index c4053d496..fb07589c8 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1617,6 +1617,11 @@ void bio_endio(struct bio *bio)
+ 		bio_clear_flag(bio, BIO_TRACE_COMPLETION);
+ 	}
+ 
++	if (bio->bi_status && bio->bi_bdev)
++		printk(KERN_ERR "bio: %s status is %d, disk[%d:%d]\n",\
++				__func__, bio->bi_status, bio->bi_bdev->bd_disk->major,\
++				bio->bi_bdev->bd_disk->first_minor);
++
+ 	/*
+ 	 * Need to have a real endio function for chained bios, otherwise
+ 	 * various corner cases will break (like stacking block devices that
+-- 
+2.33.0
 
-I have to think about it a bit, what we could do instead. I also don't really
-want to have an old size parameter for `realloc` only because it's needed by
-test infrastructure.
-
-[1] https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=015464751006a964ff401f1eb5945ca28c4448a7
-
-> 
-> ---
-> Cheers,
-> Benno
-> 
-> > +
-> > +        // SAFETY: `src` has previously been allocated with this `Allocator`; `dst` has just been
-> > +        // newly allocated. Taking the minimum of their sizes guarantees that we do not exceed
-> > +        // either bounds.
-> > +        unsafe {
-> > +            // Always copy -- do not rely on potential spare memory reported by
-> > +            // malloc_usable_size() which technically may still be sufficient.
-> > +            ptr::copy_nonoverlapping(
-> > +                src,
-> > +                dst.as_ptr().cast(),
-> > +                core::cmp::min(layout.size(), old_size),
-> > +            )
-> > +        };
-> > +
-> > +        Ok(dst)
-> >      }
-> >  }
-> > --
-> > 2.45.2
-> > 
-> 
 
