@@ -1,256 +1,165 @@
-Return-Path: <linux-kernel+bounces-279468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D273994BD9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:36:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84FB894BDA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57E0E1F21B86
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:36:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C91AD1F22FFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A3D18C910;
-	Thu,  8 Aug 2024 12:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38ABA18C925;
+	Thu,  8 Aug 2024 12:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lElkMJLi"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YIgJuwTH"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2067.outbound.protection.outlook.com [40.107.243.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821E9189513
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723120598; cv=none; b=tYC+cpolaxtbk/Z4JB1FRCu/BdDRiwEpEoCKK8Fm5RiKhcSprJJCV4EycE2M0CfzPjiIyk7w86RqtvVyD1WmhmFApIVuHZZi2InRAS3bqJIPuL3cQdMeBH9jPPYsDbqIIZhw+Sh95yzj2Vl1JPi6QxiMnry11Fo66WSyPJ/UF6I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723120598; c=relaxed/simple;
-	bh=v7lV3u+lEpVaa3+itGth6H6NEphiQOJexLQEacBnr/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HT4s24mOdpT+RjmAl+fjuycXCAaOwigpzj7xBPlV6Ua9fLW87HYaIlaRbdCj33Wb8H8xCUE0dfYehGuSZc0lCkq6QRq4loRsIJqy3LvQ5ZidjzsaRCmPdJ1TSMXqWMMHh3MqI9tvbpSu0Yrb7LvuMHJBxHyBZPDQ3WxAulzuiIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lElkMJLi; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52f025bc147so1012813e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 05:36:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723120595; x=1723725395; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jzp6Micu3tjXmEKWe8ueoR6gtmK+4KywnqQdz8LMUg0=;
-        b=lElkMJLiMRlG6aD+zDchsP/tAQQatxbOGMacx1USlTu7PLOJlbP1q8nmkt55JmZLyl
-         /h4aLBMe858WZlCeF0lKd6XERd9Se298mVH63PUy2OoqL98y8Ny/naFX8q9HSCaxBnZB
-         6IdCSHEaaddPyob5x22dxXjFZOYoDZFfbgIhMRFN4hya0bdyfH/NbS7+dyUHZeR/RPyw
-         W8shvpX45muF1dadL21SkSE1Ah+zo5IyrvnsHtp09OODLeenVz7cYIwKwYvrDc2bRXjj
-         GgPwIB0hvwzajyCrgQHHWAR7oOZWasLgfGZtZKOqVCdU76dqQepHR+H11vFf7gPcjSU8
-         NuBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723120595; x=1723725395;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jzp6Micu3tjXmEKWe8ueoR6gtmK+4KywnqQdz8LMUg0=;
-        b=pU88L6uVuMfAggsFmqn0NieGSXhVM1teDDEo+KWW6/MCSGmyL+84Dxr8S6BDVHboDp
-         VmyubBs62Rfpr6WgrLA34D+ArikrFqDpsQTm6TOLSx58qNhRvBcp6sUDAM/Y0/RyIGO/
-         gPrQNVNvFj0oYwzNNq//jFNTslw71UbplHT6L8btFFBhm6/qfRBFjnSmI8kt3HERraN/
-         WvnyZfsfNZYJ6S0f7dL0iF5jaJh3iNhEnPTwy5CTpKXHkzBI7NdlQMK2FGy1iwPMSPbI
-         wEbbrLFJznnUOa4Ervjzj/01ZO1QTNtbD4tbvOPA70/DoLv+yG+xxVW05+OJ+y2dIGbK
-         RJ8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXnSyD++BkNIKR7c2K+Y0OWyuwd1o+67LFW7lJizwKR66vmdsKwP8gJxf2xGPWESLdBgefhrt203PMCUNTmp3IL73RqidKwCAr/KVnQ
-X-Gm-Message-State: AOJu0YzLmaheopg0OjGnb8n6dGuMyOlKtwcmodWp0S2icQWLKgRom1c/
-	91h31wSb0qHowAAHDOlw/8zmlAI5cOVYkGPTQhQycSigQp2NooE3
-X-Google-Smtp-Source: AGHT+IEsat8se4x82dZXnFb2EBu0ObaUr3wLeEjTA0CGa11gLFEcU0x+9GA8FmNxC7IJMwqqtpYeng==
-X-Received: by 2002:a05:6512:4025:b0:52e:76e8:e18e with SMTP id 2adb3069b0e04-530e581651fmr1326816e87.7.1723120593782;
-        Thu, 08 Aug 2024 05:36:33 -0700 (PDT)
-Received: from fedora ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530de47c5fesm623464e87.269.2024.08.08.05.36.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 05:36:32 -0700 (PDT)
-Date: Thu, 8 Aug 2024 15:36:28 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] regmap: Allow setting IRQ domain name suffix
-Message-ID: <776bc4996969e5081bcf61b9bdb5517e537147a3.1723120028.git.mazziesaccount@gmail.com>
-References: <cover.1723120028.git.mazziesaccount@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE75663D;
+	Thu,  8 Aug 2024 12:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723120674; cv=fail; b=e0h7teSqitaTewh1mR6DWevMmQATG+fYEn1+Jixqi2AFH4o5S1zklxMgcLpSPFzeR9Sb28ToKa9eaK9qA55TesuPH7TYKTD9/WsqMGQajvojjWZiumcAV5GDPv8+5+B2TPJFdZAGJ3xhKvdjanTu1J7Ls2p25MHNU+jrTKd+NLc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723120674; c=relaxed/simple;
+	bh=znFBPoJLnQzgpAyU1LEd4K36b29KXw/px+Gr6XIzC+I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p9Tw3SC1od1GmkBR+5yK4e7qThgT6FgqhDuu9jYFgSQH3NtYcWk9POZ746aKyeev/hyfq4eAnzb38lR5sEUR9gYDidOzFc6fSSBRnIlf+8ZByQACvqzLmUCsfRyowPbk1kri9sD58JlyCdPwClWpNhmN+mV7+LV8hm+Iyg1Ootg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YIgJuwTH; arc=fail smtp.client-ip=40.107.243.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HA/vLRrO1lYgsZ8vgdZZK0ijK1MgV22nE7euqtbxDDTdHvHKiikJaakuAGIX31IQH0ZJKyMIvyuKNIGm5368oVOhb5AKAAmknZ1UDT+BgbdNt0SGQ529SNi6PXsCc+FHIsVR5LnPcSatvV4z/kC9KIakF8X3pQIXgBf/NXGoL8Ej1cfUpKx8ireo8TpxaYUMgqsKAxmaTckLU0WHPjtt6utZKy0gU6Wu1WM/KDUyfW4M947+GBJ26AiG1cnVfgVFXN7DpRSXTeTsffmZAJ/OEU9ZaMzDHTYVjfQtOfFoZ53FHoZ2Ra0HYshLTD+j5bT0BHKkUF50PmWzd7AsOd/mRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ez011FTiXme6+4NfsNAKOh53eo4p4Mn0gtq4skhxTvU=;
+ b=m8riO3ywJaCNlroJWB3KbX77EWFrz6lXSAze/8QMIkrrIw7dWh05tRK4YByOkNOjSGaiLqxrKEMTG/arvjsxrowRKf8XheYMYb89mzlNjmPFJH25EKgzyI9AKHA/lEdKxlm0p76uQJqQuoQJMIteua2FoKKcrOZQ9USSCPcvMTiS2Cxvs9jwsAI6EjMYqcveCcxde/0WcxmYgoexPy/CYLtjAliFHNGlGA3PGYFLmn9VrRKCuiatVoP0wNxqXLAidVoyNJt7AwyVU6CXU76LZtI4OVFxR9KNitgFV7cIUfL0XgKH2y+TJaRLWRoWF+8ImAWkOP4/EQLd0yIuSMG6Ow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ez011FTiXme6+4NfsNAKOh53eo4p4Mn0gtq4skhxTvU=;
+ b=YIgJuwTHCEKqaosKzu1/0onWrXmiw7oWsYotc6lLatyFe9NzN5tb+3QCEhdMxpSZkEvRHHOdRQo2Z8ov33Mj+aLlXUf9ktE8O3z6tg8xEnjfjM7KVMsoZk1sxWW6PSpTL24oEhTaGQuUaEnsZqWEK2vsrdXJMIzQSCAO3/zLVFg=
+Received: from DS7PR05CA0058.namprd05.prod.outlook.com (2603:10b6:8:2f::11) by
+ IA0PR12MB7507.namprd12.prod.outlook.com (2603:10b6:208:441::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Thu, 8 Aug
+ 2024 12:37:49 +0000
+Received: from CY4PEPF0000FCC0.namprd03.prod.outlook.com
+ (2603:10b6:8:2f:cafe::31) by DS7PR05CA0058.outlook.office365.com
+ (2603:10b6:8:2f::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13 via Frontend
+ Transport; Thu, 8 Aug 2024 12:37:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000FCC0.mail.protection.outlook.com (10.167.242.102) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7828.19 via Frontend Transport; Thu, 8 Aug 2024 12:37:49 +0000
+Received: from shatadru.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 8 Aug
+ 2024 07:37:44 -0500
+From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+To: <ray.huang@amd.com>, <gautham.shenoy@amd.com>,
+	<mario.limonciello@amd.com>, <perry.yuan@amd.com>, <rafael@kernel.org>,
+	<viresh.kumar@linaro.org>, <li.meng@amd.com>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dhananjay
+ Ugwekar" <Dhananjay.Ugwekar@amd.com>
+Subject: [PATCH v2] cpufreq/amd-pstate: Add the missing cpufreq_cpu_put()
+Date: Thu, 8 Aug 2024 12:36:52 +0000
+Message-ID: <20240808123651.3741-1-Dhananjay.Ugwekar@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="L07GlhcC5fAcYGs/"
-Content-Disposition: inline
-In-Reply-To: <cover.1723120028.git.mazziesaccount@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC0:EE_|IA0PR12MB7507:EE_
+X-MS-Office365-Filtering-Correlation-Id: b2e356ee-844a-4fdd-884b-08dcb7a6e9a9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FvJbgUoRrcrLqitF18BHXg7GeZQCbgjZd8JW2Ca2XLKihSIEHv4tkemLypi2?=
+ =?us-ascii?Q?e1UrKmNeHvCHW3SLNH95PE++nc0avTmzxUnJiih1n4MAcEtOxfbZOMtXRMMq?=
+ =?us-ascii?Q?Pe0yEr9jyHUhg+p5WVk7My/WNH69NvgH9wf1NAwaWdAOlC8aZPw/5T5asb4H?=
+ =?us-ascii?Q?r+Pn1hdj9t8bH/4HAa9ZxTcxlQLOMTZvmHBZBZwBlDwiAwN43KZdy52N8tvQ?=
+ =?us-ascii?Q?wOfXDGrTArHPJxuN+mIOjOnhh5AOd0p6GxICBNAzSJ7Nfd8V4Bh7M8m8lTJy?=
+ =?us-ascii?Q?Gge/euOXwfowfMD3b1q1CqtQBVJOcgljuipgJCQjqO/0sLCYxEmqw6H8ghVF?=
+ =?us-ascii?Q?n/++D0wc5mWAa2/uHMW5g6zemt0ScbXzdpbU6Lff60y4lLmutduGsIy5cWDk?=
+ =?us-ascii?Q?OtgODc0Ff5krUfpKaijYPyqVBKJYmFPLhmsP6bj0L8xqmK/LSEX2EOkXJUR8?=
+ =?us-ascii?Q?tTVoTlDQ7UStst84w64bWN7JJYnK5qXs2nRHzHag8AtIhFv2AXDhiR7DGKzB?=
+ =?us-ascii?Q?tEUEh2LRIYXqvhixVU3ixEGGnIb6wbbapTCGS2pIl9t+lHb9xfdreuSd6xD8?=
+ =?us-ascii?Q?iggbJgXsK2kJbngpWpZhjTNPb+1s6cy0KDivKnbfuXsHBpkuSslH1oUTfN8D?=
+ =?us-ascii?Q?MsS/gLl4EenSN8Wwt/T4FpOGCcHabZ/S6YJQ3OmMxpGkbo3Y0LtwuU7o+y1Z?=
+ =?us-ascii?Q?P1HWDgwEVhzzjRAs5btujlqiRP8X8TAgzoIzAq7aIRip8jC9moN7WFprEVfG?=
+ =?us-ascii?Q?JSYo/Q1fMLYxwtgWFwwXp3Nnb6yXbd+LKLxMGKpZjwoVOFyeNC+8gxD5yv7f?=
+ =?us-ascii?Q?NXWmPXTWqvUNAhpAE0yz+u6zydA7Enf+wmgz3vdW/MqfRTZM2pC2LbpnWQpV?=
+ =?us-ascii?Q?AwTbXpvrUoIVgUydb+f8F+AWRFphzWa4TSLXLPjaKpJ0tSFdD0jvqxcUYCW3?=
+ =?us-ascii?Q?oYVChKkbg2w5tVHwulhW+m2p//m6RDi6UCVfnm7KJNSdJmuAQX4YMsyOuQoX?=
+ =?us-ascii?Q?gTHyRMhGSA1nZclNtxwl09bwU3lalyWcRb5Iusc/YoGDQMBP+RAb+XOTJ9hG?=
+ =?us-ascii?Q?6ja5QapKWulY/l7JCotTE/AZqchUY+Q9JwJMTlKV5ntDiBAV5MOAvx5FGT3Q?=
+ =?us-ascii?Q?o/PLtS8ErBLmXe6qRRl/b1z1ZWD6Fqe90LHmVTqDiwedj75Oyuu7/4UHRAFa?=
+ =?us-ascii?Q?br6I/bO2pK5NXR4wV/BhgTuuThGkOoo5F8n+ERR/0K6BsLMv5De5OSc1DnKt?=
+ =?us-ascii?Q?NsoZjL9o3jivks2w5I9om0iyj1ZRShkK3r7UC0stwW3lZz6bKEY2aYMqgGv/?=
+ =?us-ascii?Q?k4vO0W7pI6VoABU5m9bM4/VWS6nWDF6VXndx4oY6y+ZatQGiTrCwHkOCpUaJ?=
+ =?us-ascii?Q?W8koz5WpRIjIS1hWii3CVTKbGhflLUtJma/gnmh9vVpGIZSYJPVd1Flcf2SG?=
+ =?us-ascii?Q?2ddl3HxwP0sQ9U3KIsoK6jWD8BDhpmz1?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 12:37:49.0704
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b2e356ee-844a-4fdd-884b-08dcb7a6e9a9
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000FCC0.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7507
 
+Fix the reference counting of cpufreq_policy object in amd_pstate_update()
+function by adding the missing cpufreq_cpu_put().
 
---L07GlhcC5fAcYGs/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-When multiple IRQ domains are created from the same device-tree node they
-will get the same name based on the device-tree path. This will cause a
-naming collision in debugFS when IRQ domain specific entries are created.
-
-The regmap-IRQ creates per instance IRQ domains. This will lead to a
-domain name conflict when a device which provides more than one
-interrupt line uses the regmap-IRQ.
-
-Add support for specifying an IRQ domain name suffix when creating a
-regmap-IRQ controller.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Fixes: e8f555daacd3 ("cpufreq/amd-pstate: fix setting policy current frequency value")
+Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Reviewed-by: Perry Yuan <perry.yuan@amd.com>
 ---
-A change worth mentioning is that this patch changes the error code
-returned by IRQ domain generation code to be propagated to the caller.
-Earlier all IRQ domain creation failutes were returning the -ENOMEM.
-Please let me know if you assume this will cause problems.
+ drivers/cpufreq/amd-pstate.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This patch was originally part of the series adding support for the
-ROHM BD96801 PMIC. Basic support was already merged while this one was
-postponed until the name-suffix support was added to IRQ-domain code.
-Hence the non linear version history.
-
-Finally, there is a comment:
-"Should really dispose of the domain but..." in the regmap-IRQ creation
-code. Any insight what the "but..." refers to would be appreciated as
-there would be an option to for example use the devm_ variant of the
-irq_domain_instantiate().
-
-Revision history:
-v1 =3D> v2 (new series)
- - fix the legacy domain instantiation as was pointed out by Thomas
-   Gleixner.
- - drop irq_domain_associate_many() which was moved to be called during
-   the irq_domain_instantiate() as was suggested by Thomas.
-v1 of the new series:
- - use the new irq_domain_instantiate().
-v2 =3D> v3 (old series):
- - Drop name suffix support for the legacy domains
----
- drivers/base/regmap/regmap-irq.c | 37 ++++++++++++++++++++++----------
- include/linux/regmap.h           |  4 ++++
- 2 files changed, 30 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-=
-irq.c
-index d3ec1345b5b5..a750e48a26b8 100644
---- a/drivers/base/regmap/regmap-irq.c
-+++ b/drivers/base/regmap/regmap-irq.c
-@@ -608,6 +608,30 @@ int regmap_irq_set_type_config_simple(unsigned int **b=
-uf, unsigned int type,
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 804fab4ebb26..36edae40db1a 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -560,6 +560,8 @@ static void amd_pstate_update(struct amd_cpudata *cpudata, u32 min_perf,
+ 
+ 	amd_pstate_update_perf(cpudata, min_perf, des_perf,
+ 			       max_perf, fast_switch);
++
++	cpufreq_cpu_put(policy);
  }
- EXPORT_SYMBOL_GPL(regmap_irq_set_type_config_simple);
-=20
-+static int regmap_irq_create_domain(struct fwnode_handle *fwnode, int irq_=
-base,
-+				    const struct regmap_irq_chip *chip,
-+				    struct regmap_irq_chip_data *d)
-+{
-+	struct irq_domain_info info =3D {
-+		.fwnode =3D fwnode,
-+		.size =3D chip->num_irqs,
-+		.hwirq_max =3D chip->num_irqs,
-+		.virq_base =3D irq_base,
-+		.ops =3D &regmap_domain_ops,
-+		.host_data =3D d,
-+		.name_suffix =3D chip->domain_suffix,
-+	};
-+
-+	d->domain =3D irq_domain_instantiate(&info);
-+	if (IS_ERR(d->domain)) {
-+		dev_err(d->map->dev, "Failed to create IRQ domain\n");
-+		return PTR_ERR(d->domain);
-+	}
-+
-+	return 0;
-+}
-+
-+
- /**
-  * regmap_add_irq_chip_fwnode() - Use standard regmap IRQ controller handl=
-ing
-  *
-@@ -856,18 +880,9 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *f=
-wnode,
- 		}
- 	}
-=20
--	if (irq_base)
--		d->domain =3D irq_domain_create_legacy(fwnode, chip->num_irqs,
--						     irq_base, 0,
--						     &regmap_domain_ops, d);
--	else
--		d->domain =3D irq_domain_create_linear(fwnode, chip->num_irqs,
--						     &regmap_domain_ops, d);
--	if (!d->domain) {
--		dev_err(map->dev, "Failed to create IRQ domain\n");
--		ret =3D -ENOMEM;
-+	ret =3D regmap_irq_create_domain(fwnode, irq_base, chip, d);
-+	if (ret)
- 		goto err_alloc;
--	}
-=20
- 	ret =3D request_threaded_irq(irq, NULL, regmap_irq_thread,
- 				   irq_flags | IRQF_ONESHOT,
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index 122e38161acb..f9ccad32fc5c 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -1521,6 +1521,9 @@ struct regmap_irq_chip_data;
-  * struct regmap_irq_chip - Description of a generic regmap irq_chip.
-  *
-  * @name:        Descriptive name for IRQ controller.
-+ * @domain_suffix: Name suffix to be appended to end of IRQ domain name. N=
-eeded
-+ *		   when multiple regmap-IRQ controllers are created from same
-+ *		   device.
-  *
-  * @main_status: Base main status register address. For chips which have
-  *		 interrupts arranged in separate sub-irq blocks with own IRQ
-@@ -1606,6 +1609,7 @@ struct regmap_irq_chip_data;
-  */
- struct regmap_irq_chip {
- 	const char *name;
-+	const char *domain_suffix;
-=20
- 	unsigned int main_status;
- 	unsigned int num_main_status_bits;
---=20
-2.45.2
+ 
+ static int amd_pstate_verify(struct cpufreq_policy_data *policy)
+-- 
+2.34.1
 
-
---=20
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =3D]=20
-
---L07GlhcC5fAcYGs/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAma0u8wACgkQeFA3/03a
-ocWCVwgAws5IIkXc2W8Qd4bjOcO8Wc93xF5phcSkuhKo3er7w5PoujIDjOI8WPDf
-osyNmZDaGtUBtqlT6zj7V+x7cbrDpfD7OtMDHyDp7fhD/cSl2J/ClJuKijR1r17U
-+MJWo4Ge8Z4wZsj16qurgkI7pkgJJP5NN8BxCvPKS2L/DyrG1LZ5UIcTxfpeuMRB
-z05gmNFSRC7VKbQUdMMN39nmjCCPgf0RW7pAHeEnlGB1nElFeCszmTx841Y7bARo
-B5dIfaYIyxbFgB16s5sKBX7RltmzDvwDZzIxkmOrqY7EosVmpt2fHp+fdpNv7azB
-UyiEehNUCqAS0q3kaonqSQrU8o5bAA==
-=W7Rg
------END PGP SIGNATURE-----
-
---L07GlhcC5fAcYGs/--
 
