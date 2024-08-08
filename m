@@ -1,129 +1,79 @@
-Return-Path: <linux-kernel+bounces-279693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC01094C092
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:08:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 405C694C0D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28AB41C231ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:08:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F051A285A6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54AC18F2CF;
-	Thu,  8 Aug 2024 15:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B695618EFE8;
+	Thu,  8 Aug 2024 15:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="NTHOAgwn"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b="2xhBvQ1B"
+Received: from mail.antaris-organics.com (mail.antaris-organics.com [91.227.220.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBAE4A33
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76815C8D1;
+	Thu,  8 Aug 2024 15:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.220.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723129720; cv=none; b=ChEpIt4FjFO2eeDP5zjV7qqmt8c9Sn0wLpARRKBpCQz1WEtgapzHcX9xJ0VVl3G3UOMYz4lDBWjdfWJXe3lQX/HaBzP6Un8GRHmNLb8kUVmnLQyx2CLYWRfCGmkIaRR1ylR2eSXLHczAjHQJSxGjNUCFN+MLpcJO6xmwkLBKtj4=
+	t=1723130414; cv=none; b=D76ZOoDtiS9mRYFpglFYRcPhvmB839qQiYYJCw8/JJXOjVqYTlYXpQ0HIhbNMyBF39RHvUII28K7+AoBe5X1RfVn9JcLVpVFc2rcTGiqAL+Vd4wmLo6cX7vXGyxRWyKY6St4mAHBbhcPmXZqtSL4s+Zv8XMmMOlG2BqH7ez+IYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723129720; c=relaxed/simple;
-	bh=w4R25BPgS5phZlT1l4auPlaUzCSJiEfnbiR3AJUJ7Qw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gxmNAdzczhoHb4URBeUgK498aaLrLEoBTLuUe4YedJP7+HExWgfveLBKpxGgC3bOgyKE3PkWEdeoIBU+9LnBsBzbqeAzYA7fhQpW/he5/bLtfDvVLftsgswAJKrl7DNOR3ohX4n8+6HNhc/oj1Zwk/SBCcSTfMRJKvs5ehs4Tes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=NTHOAgwn; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=Ve8L
-	lTcqJOjzP7isM+JdryITAP9551O9yPbo/RFx+AU=; b=NTHOAgwnCwb/3N10kJrv
-	tPOddDACm+HtzA1Bzk6OXNusk13dgX5VKkhoQqkYDb2i+MHUa/QwU1TP6beXiP3C
-	+V0YgTnCOoW22E2bxmzCRLAzjsEe0GtMax7U5yGgQOsNNpfRvDME1NYaJZbrdfck
-	cbk5bCVBBLwrfJJGDTM/fwVQTFaYpB61jPzrbx4FiL0JBYZOrxEH9fIwNYosaBBj
-	nbm2lk9Fue95NRB/ElRVU3EjWiC29CSEH+lUQNHcDyQX3SoWM5SFXw9zl8Ng43FE
-	thQZMGq+VNYgLn8bET1rmqiesdAh1FauHNANjgOGjuBL+a1Js8EHYkV9fY0A82L8
-	NQ==
-Received: (qmail 351774 invoked from network); 8 Aug 2024 17:08:35 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Aug 2024 17:08:35 +0200
-X-UD-Smtp-Session: l3s3148p1@jOCZZi0f1URtKPBr
-Date: Thu, 8 Aug 2024 17:08:35 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v3 04/11] i2c: riic: Enable runtime PM autosuspend support
-Message-ID: <ZrTfc5imZgvduGc8@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Claudiu <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com,
-	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
- <20240711115207.2843133-5-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1723130414; c=relaxed/simple;
+	bh=hNa4B/hL22QgWZp6hWQZ7Qe86Zu1q4zoaYB/hMOvkW0=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QAFRJUVSQfR4WwcZmUCxE+1fJKpzdV5ilALVWmW8uSyPEPTEJ2QwIB7EcNcnVNKuTDHsDu9egjshTXCahCMN5m8cGgaLKl8sl6Ck6Ecrtd1euXBwJJOVaP/Hpo+rFeT44kb8EnivfEkSBq4CVoSoBXCWOM6RZDfO0QEYggl54G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com; spf=pass smtp.mailfrom=mareichelt.com; dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b=2xhBvQ1B; arc=none smtp.client-ip=91.227.220.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mareichelt.com
+Date: Thu, 8 Aug 2024 17:10:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mareichelt.com;
+	s=202107; t=1723129835;
+	bh=hNa4B/hL22QgWZp6hWQZ7Qe86Zu1q4zoaYB/hMOvkW0=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To:Cc:Cc:content-type:content-type:date:date:
+	 From:from:in-reply-to:in-reply-to:message-id:mime-version:
+	 references:reply-to:Sender:Subject:Subject:To:To;
+	b=2xhBvQ1BwZuKJbjcS7yAHgtVVk+tC4bJ7ivp2HkG45C0ztgEdlMVTuexV/NuDds8i
+	 xAyD4fh5LyTo/lf7Ez3BTDjCPvKw8/YXI+ysRP+YoA1ZR2P3NCQIR224VAC5GJ8D0B
+	 b/nY7/TRfDav1gsv1LGyTDOGe61OA+J0JR1T1B+LuAbqxAdJYsDR29GdkjVAcN12/A
+	 kfLJL/Pm4ZLHwxSS6vJp2+X0oUczllhrRGaOK7FXIA8l0ecWJ899Uoj0oyL9Oy4OmP
+	 +egLhXP2uwR7gw+V3vZyFnAG4D3OsRACXVmW9q+oB7LfhgBUFb/wkKVMSvdjloCmkX
+	 NOqXoCtyx5W+g==
+From: Markus Reichelt <lkt+2023@mareichelt.com>
+To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6.10 000/123] 6.10.4-rc1 review
+Message-ID: <20240808151034.GA2417@pc21.mareichelt.com>
+Mail-Followup-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240807150020.790615758@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wyJIwvqvaRJYLemY"
-Content-Disposition: inline
-In-Reply-To: <20240711115207.2843133-5-claudiu.beznea.uj@bp.renesas.com>
-
-
---wyJIwvqvaRJYLemY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240807150020.790615758@linuxfoundation.org>
 
-On Thu, Jul 11, 2024 at 02:52:00PM +0300, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->=20
-> Enable runtime PM autosuspend support for the RIIC driver. With this, in
-> case there are consecutive xfer requests the device wouldn't be runtime
-> enabled/disabled after each consecutive xfer but after the
-> the delay configured by user. With this, we can avoid touching hardware
-> registers involved in runtime PM suspend/resume saving in this way some
-> cycles. The default chosen autosuspend delay is zero to keep the
-> previous driver behavior.
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+* Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-Basically, OK with me. I'd just like a comment here like:
+> This is the start of the stable review cycle for the 6.10.4 release.
+> There are 123 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 09 Aug 2024 14:59:54 +0000.
+> Anything received after that time might be too late.
 
-/* Default 0 to save power. Can be overridden via sysfs for lower latency */
-> +	pm_runtime_set_autosuspend_delay(dev, 0);
-> +	pm_runtime_use_autosuspend(dev);
+Hi Greg
 
-Other than that:
+6.10.4-rc1 compiles, boots and runs here on x86_64
+(AMD Ryzen 5 PRO 4650G, Slackware64-15.0)
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---wyJIwvqvaRJYLemY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma033MACgkQFA3kzBSg
-KbaT4A//XCkpAcVYza+MfVUBCF0Nxci3BvJ7/aNEWvqASBIdFHWQFMzCVeJi1qcJ
-TvZcxxo8EbcFdfF1W3Of6OYEZgbn1AhJhPRhCgDEo6j7kKyBhtXOOSXH4nTNh7sn
-21U1ztQRmSFnX1HzWrB5V+du2pzclFXESPP5dqUmxJe5fPqUkCXGvMOJ4mWCDO5b
-J/+3aMV48yWxbiSkMgGL1Z9hDiUGxFLgftfVN1F5mhdNakY+nfsqjASF78DanwB8
-w/JkXjCQrkqWVUmazmCy2hLJ9PD/gN1XipFgS/8g7ZYzOBya5P9f+/Nh4OO9VfPd
-JpoiOWLcOcRf26DjIsuybQJH2TqC0v+icwinbR8s55ekrWMjLeZS9q9GsKdSqEwh
-DBJVuMWbbEu2OMjDBL2aKGcrKSJEyFBHAd0USDISyEudbHt3duThmgfg179UMZ0Z
-z+H+R85V81f5KqgJxpod4Qhu06gHwChRBDTzcfszNRhg/qUsY+GoYM7ngrN5sOHN
-lniuB/pWjwxS1rRkIijq9+FfwJl8Tp8PUtd5UD4YSVr9FsvbhBaWGJ2seES0pOfB
-KFRfhtH4tAmIp29KmT9qQS/3LQWo/11r1VBtZpTkawKYauWHFgSSMAToQDSeo3CG
-NceoaaBR50JCS+AellLOfGeTJVDUgdy0fOJCKQLpO6zbYC066xU=
-=7V5+
------END PGP SIGNATURE-----
-
---wyJIwvqvaRJYLemY--
+Tested-by: Markus Reichelt <lkt+2023@mareichelt.com>
 
