@@ -1,84 +1,56 @@
-Return-Path: <linux-kernel+bounces-279434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C4DB94BD47
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:21:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81BC294BD4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03D791F23675
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:21:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B240E1C21EED
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB1218C35F;
-	Thu,  8 Aug 2024 12:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="TyQ/56Ud"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010015.outbound.protection.outlook.com [52.101.128.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119041891D6;
-	Thu,  8 Aug 2024 12:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723119647; cv=fail; b=IrR7l5G/SobsYinu7ACqLXSk/WE2Tw8NAmE7kYjkqpwPaR7kadryBCP4tIuTSU1Brq37w++kcnpKgxG/CT0mvjvnBZA2Idw4OiwFD3eomXEkB3NKj24ezNfQdVMQ+TK93Yf6E2pu7Hi8sPTbFRMQrZV+CIDE91WETFMFu7viooo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723119647; c=relaxed/simple;
-	bh=SZYQcrtqjOIMlrAwhqi9PVgZgtSsYBQm34woqYq8EVM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h6HScuZXKFRwpfADYu+FZwG6YG9x4Y7LK2MRivJb7pQG9Jq3pEPhY3SLugtHd0gyyQdGn0hlFJhJ2CbBOV3W21W0FXDWRDxyIgcAzPznwEFge7rrKAJt1ZBpDYWnvkHJC8jQcVFYis2IfEDspz5q2QPHBGHMc7G9WjMzjx7mKAo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=TyQ/56Ud; arc=fail smtp.client-ip=52.101.128.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FM2uyhFMEl0C7zLkxjoMSLQVmFMfa/JOe4ACWnVE8U3XBknvg6+Ol1yxC+kbCOQUopWtO0kRLl2waHdc2z30ZoP+9tl4ZyMLvyQtjljyCb6E/HKuH+btG7e8WQNpFcBCyFTsahwsVeyk9k9Bi2SvEoJKmQJOxjSpy2xKOQ/32jC+bz3lukTTc5k0eA6KxJhyTubnGL+keW8UZ5WsvGxON/L3pjMrKy/oEegsBtTSpCAXzVskLckYfYNoZWALFQj+3hLM8WTZn5FHsY+1MnJmxZqdFWeJXUir6U/lEez0JANaU6r2xKEWwbyCa+5zzSYLFdbqYtlqQPf0huznhOcnOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OFRQ53R+djKUPnahF0yjTjjJJyMEoANp+bquweFGGvI=;
- b=zUXzQbyVOjLdXGVFAymkUEpTSvJdX280F1M96kC/YemzY9b962fwnJjPRP6HgtEcHA1fVz4BJ2btq/3+edBA3lDrFDoWokxsFz3wg7qlhzQvNOUan5llEBoVoSyUmIyqoCzTnecPTbHXbygaHyamEjqQFNZxZXSoWs8HvjHLpNErEfL2o2eLsexYRzPmw+O6x4nOvaWRQeK4Sr8UAEM/t6Y9oJ58YbCOf/tgb4DGuTGylZt3DN56qlo+O6svGrooLQ0M95xjkZ56EQrQq/FvS4WZxMXMxFjGRrmeyQ/hpb1FAWzz0lXD/1qo01jzxk2mhKlxaFDRHGx+ACFr1novPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=oppo.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=oppo.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OFRQ53R+djKUPnahF0yjTjjJJyMEoANp+bquweFGGvI=;
- b=TyQ/56UdDIPxMBfkV3TwGX/TkRpb4GGo0EHRSrJT7xo/5VtRYO/WGYq1t0sBfQXi/H8tQaXbxHeQ7soLSNbn3wAiKVjbb/W3uJCz7h+naEd35QVxFBVjj2MjGZ7Uu7Nxb2s7TUmmZoyOOcwMgmOvXkxmKOzk1LYfEd1Opb/4fXQ=
-Received: from SG2P153CA0041.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::10) by
- TYZPR02MB6222.apcprd02.prod.outlook.com (2603:1096:400:282::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7828.25; Thu, 8 Aug 2024 12:20:40 +0000
-Received: from SG1PEPF000082E2.apcprd02.prod.outlook.com
- (2603:1096:4:c6:cafe::5d) by SG2P153CA0041.outlook.office365.com
- (2603:1096:4:c6::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.8 via Frontend
- Transport; Thu, 8 Aug 2024 12:20:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- SG1PEPF000082E2.mail.protection.outlook.com (10.167.240.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7849.8 via Frontend Transport; Thu, 8 Aug 2024 12:20:39 +0000
-Received: from PH80250894.adc.com (172.16.40.118) by mailappw31.adc.com
- (172.16.56.198) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 8 Aug
- 2024 20:20:38 +0800
-From: Hailong Liu <hailong.liu@oppo.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki
-	<urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>, Vlastimil Babka
-	<vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>
-CC: Hailong Liu <hailong.liu@oppo.com>, Tangquan Zheng
-	<zhengtangquan@oppo.com>, <stable@vger.kernel.org>, Barry Song
-	<21cnbao@gmail.com>, Baoquan He <bhe@redhat.com>, Matthew Wilcox
-	<willy@infradead.org>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-Subject: [RESEND PATCH v1] mm/vmalloc: fix page mapping if vm_area_alloc_pages() with high order fallback to order 0
-Date: Thu, 8 Aug 2024 20:19:56 +0800
-Message-ID: <20240808122019.3361-1-hailong.liu@oppo.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E2B18C35F;
+	Thu,  8 Aug 2024 12:24:20 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 9D8A9156220;
+	Thu,  8 Aug 2024 12:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723119859; cv=none; b=Ssl2k7tBD6/Ot4tJlIvBcEb3yxrOhanCY/X/MORSyCI0j3wNhbADUIXP9z2udlax6pddw8USIBuFxUiR1OrLVgeb9QAl/VVmr63JsmAKGB/g8B8FeurUEDQEWwA1F0A7LDQ4xcTW1ixd9PkuQysY3p9/FRy/gkYZmBLMzyc4hv8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723119859; c=relaxed/simple;
+	bh=SXys11+xLoBsHco0MZl/A5tIPMtTS+9EsXL6IR3Hvxk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rieHxcu8WFJ5cQD5DSkuLIe7dwPqlcYeDF+jFDSzLiSITxqu/5bKh3Dk/mFMEbPmBwpZFKUHik+gY7mywcbONNf3t0FO1vLkLDHndNnakSjNjJIlZCOxmAWRgWyGtdRsZhL9P4+viNqHnUO+Ph2zPGsS+ErjfMBGCcRQ3F9yOas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id C603B60C7B26D;
+	Thu,  8 Aug 2024 20:23:45 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: sfrench@samba.org,
+	pc@manguebit.com,
+	ronniesahlberg@gmail.com,
+	sprasad@microsoft.com,
+	tom@talpey.com,
+	bharathsm@microsoft.com,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: Su Hui <suhui@nfschina.com>,
+	linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] smb/client: avoid possible NULL dereference in cifs_free_subrequest()
+Date: Thu,  8 Aug 2024 20:23:32 +0800
+Message-Id: <20240808122331.342473-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,121 +58,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw31.adc.com
- (172.16.56.198)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E2:EE_|TYZPR02MB6222:EE_
-X-MS-Office365-Filtering-Correlation-Id: eb268ca0-7ceb-4bd9-b103-08dcb7a48418
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xy/ez0pjFqDppU5akyL7UG7eRmCsE45/mwWQNisZTyJK6x5pMCoBXQ+v6AD4?=
- =?us-ascii?Q?tiJ1UoiBD3giZVd6BLrqZ8dZrRJ20l+h5j30etj9TjI9j18ekP/IC5mJt6Zl?=
- =?us-ascii?Q?52cD9Lj4tvvOH76luwBDJPAF74lf2yiWs10VLt20Ils2d+zrFH0jaD9LaDhZ?=
- =?us-ascii?Q?MpBiO5aPI4EVOdtfMxi5XWG06bV19kSbt6L0pf3WcBDx++bnTel3RTrX5gmO?=
- =?us-ascii?Q?59dXnGIdh46S7VJ5NXIRUZwKnjh1aRHoY4M1jQ95cChHyI2FiU77Pkih0ON0?=
- =?us-ascii?Q?Manakzd2bRPbohDaP89jJjN5Jev2Ncr+/0NvxYJClZr7U0++2FmmPxH6FPQ4?=
- =?us-ascii?Q?6NM7IbIYsBVpdeeP1YCvu7qSiRlURQmBJCuYpGCqFPM7BghGQ3sXWG42cSig?=
- =?us-ascii?Q?HeyqIrHdWMMX8lNsZH4TkpqY5NuO1Cavcg9RKBvBVflClhqu0koi9Itx8Z1b?=
- =?us-ascii?Q?wOevDHPIq2HWTk/RS9rsXPF7PwLK9PZS0nNGC+jgOXdl8jabd0OzQosDI5BB?=
- =?us-ascii?Q?EZVBwpg0sT9FVTYvkIxlyVoLeg9shV5OwfdY4vfu+ghoHK8pbefsavg/CscV?=
- =?us-ascii?Q?rDOV4I78ObRDQzjekDJM/ChrRefJAba8bl1vtjj6sm4n3w1rhM2ooeBA8ywg?=
- =?us-ascii?Q?SfJvPdHjg6+UNP2nXeERxux2bpduFATDYwzwGrFLDR+pYH54DpWFayRCLByC?=
- =?us-ascii?Q?eOSP+sXn5jC8K6aGebJTCsUSkqlj+gVOis5UIPyUteyL1hFutcc2nA42pp9c?=
- =?us-ascii?Q?BfEQpZ4DfIqIdZjozro8nG2FI3504rYnGnVsh2WEzmOXcRZrjBK9CF15XJQ0?=
- =?us-ascii?Q?v7p3I4iDma27UttJ2m/tiNYPRPzRUmdcHUq5GYtdvXBv9IBRuE//P9qVVubc?=
- =?us-ascii?Q?LhKiLwpPNrY2rep+fV3xGAaxDxvJsVsQwBjEUo2v5c8j/bS83INCpX87rYUD?=
- =?us-ascii?Q?ugZXJXTM3jyOG08OHkN8ttpZaG7Mle79zqc9mAYaGDu8/SjS821dDsU0NcOf?=
- =?us-ascii?Q?1S/wfZS1O7D1nVTbQMOSoHaxCZLyXQRXPMsPaBaqs2PZ+TVLL3owCh7XrSqO?=
- =?us-ascii?Q?ZqkWIPAUN+oXXunpGpr0ieWb5PuiAoqJCHfU9pOLOpzpBtewJcWFT0nD9ct/?=
- =?us-ascii?Q?XUpE379UkW50BGeZeXZteZU7Je5rTp8YJgbp5asHB7DCcYk19Raq80gIjuOT?=
- =?us-ascii?Q?RQ8Y+SJfnbA/HstQR5RrbcFTgkSqtjwFi8aJutvQIcD7acfRZvBfosq3eCZh?=
- =?us-ascii?Q?M9r774bJ+Xzv6ZMD4feyaFVCPgh7c+XBOPbERGrM4rh4XlObSckNNPgnKA03?=
- =?us-ascii?Q?KAo7pFA1uGrzwFjoYGgOm9RkqYhNQ3xGHSgaYuT1ZNqT6NpiBMTBtdrDD+rF?=
- =?us-ascii?Q?7YAf4fZNLOf6G2Q1Lhi/Wv2NkQEei8rPGGv+FqTzLF7HeP/Kuw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 12:20:39.7560
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb268ca0-7ceb-4bd9-b103-08dcb7a48418
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E2.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR02MB6222
 
-The __vmap_pages_range_noflush() assumes its argument pages** contains
-pages with the same page shift. However, since commit e9c3cda4d86e
-("mm, vmalloc: fix high order __GFP_NOFAIL allocations"), if gfp_flags
-includes __GFP_NOFAIL with high order in vm_area_alloc_pages()
-and page allocation failed for high order, the pages** may contain
-two different page shifts (high order and order-0). This could
-lead __vmap_pages_range_noflush() to perform incorrect mappings,
-potentially resulting in memory corruption.
+Clang static checker (scan-build) warning:
+	cifsglob.h:line 890, column 3
+	Access to field 'ops' results in a dereference of a null pointer.
 
-Users might encounter this as follows (vmap_allow_huge = true, 2M is for PMD_SIZE):
-kvmalloc(2M, __GFP_NOFAIL|GFP_X)
-    __vmalloc_node_range_noprof(vm_flags=VM_ALLOW_HUGE_VMAP)
-        vm_area_alloc_pages(order=9) ---> order-9 allocation failed and fallback to order-0
-            vmap_pages_range()
-                vmap_pages_range_noflush()
-                    __vmap_pages_range_noflush(page_shift = 21) ----> wrong mapping happens
+Commit 519be989717c ("cifs: Add a tracepoint to track credits involved in
+R/W requests") adds a check for 'rdata->server', and let clang throw this
+warning about NULL dereference.
 
-We can remove the fallback code because if a high-order
-allocation fails, __vmalloc_node_range_noprof() will retry with
-order-0. Therefore, it is unnecessary to fallback to order-0
-here. Therefore, fix this by removing the fallback code.
+When 'rdata->credits.value != 0 && rdata->server == NULL' happens,
+add_credits_and_wake_if() will call rdata->server->ops->add_credits().
+This will cause NULL dereference problem. Add a check for 'rdata->server'
+to avoid NULL dereference.
 
-Fixes: e9c3cda4d86e ("mm, vmalloc: fix high order __GFP_NOFAIL allocations")
-Signed-off-by: Hailong Liu <hailong.liu@oppo.com>
-Reported-by: Tangquan Zheng <zhengtangquan@oppo.com>
-Cc: <stable@vger.kernel.org>
-CC: Barry Song <21cnbao@gmail.com>
-CC: Baoquan He <bhe@redhat.com>
-CC: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- mm/vmalloc.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ fs/smb/client/file.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 6b783baf12a1..af2de36549d6 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -3584,15 +3584,8 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
- 			page = alloc_pages_noprof(alloc_gfp, order);
- 		else
- 			page = alloc_pages_node_noprof(nid, alloc_gfp, order);
--		if (unlikely(!page)) {
--			if (!nofail)
--				break;
--
--			/* fall back to the zero order allocations */
--			alloc_gfp |= __GFP_NOFAIL;
--			order = 0;
--			continue;
--		}
-+		if (unlikely(!page))
-+			break;
+diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
+index b2405dd4d4d4..45459af5044d 100644
+--- a/fs/smb/client/file.c
++++ b/fs/smb/client/file.c
+@@ -315,7 +315,7 @@ static void cifs_free_subrequest(struct netfs_io_subrequest *subreq)
+ #endif
+ 	}
+ 
+-	if (rdata->credits.value != 0)
++	if (rdata->credits.value != 0) {
+ 		trace_smb3_rw_credits(rdata->rreq->debug_id,
+ 				      rdata->subreq.debug_index,
+ 				      rdata->credits.value,
+@@ -323,8 +323,12 @@ static void cifs_free_subrequest(struct netfs_io_subrequest *subreq)
+ 				      rdata->server ? rdata->server->in_flight : 0,
+ 				      -rdata->credits.value,
+ 				      cifs_trace_rw_credits_free_subreq);
++		if (rdata->server)
++			add_credits_and_wake_if(rdata->server, &rdata->credits, 0);
++		else
++			rdata->credits.value = 0;
++	}
+ 
+-	add_credits_and_wake_if(rdata->server, &rdata->credits, 0);
+ 	if (rdata->have_xid)
+ 		free_xid(rdata->xid);
+ }
+-- 
+2.30.2
 
- 		/*
- 		 * Higher order allocations must be able to be treated as
----
-Sorry for fat fingers. with .rej file. resend this.
-
-Baoquan suggests set page_shift to 0 if fallback in (2 and concern about
-performance of retry with order-0. But IMO with retry,
-- Save memory usage if high order allocation failed.
-- Keep consistancy with align and page-shift.
-- make use of bulk allocator with order-0
-
-[2] https://lore.kernel.org/lkml/20240725035318.471-1-hailong.liu@oppo.com/
---
-2.30.0
 
