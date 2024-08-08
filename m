@@ -1,134 +1,178 @@
-Return-Path: <linux-kernel+bounces-280107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10F894C5BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:32:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 038F294C5CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB2A81C22170
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:32:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8F44282336
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895871552E0;
-	Thu,  8 Aug 2024 20:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8147A15A85F;
+	Thu,  8 Aug 2024 20:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXEefZ2e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x6SGk8qM"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C620752F88;
-	Thu,  8 Aug 2024 20:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D9C1586FE
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 20:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723149159; cv=none; b=X4D62AN36oxKNYLOQuql6QD+YUPjTvVmG4ZPwoBd0wpMJLALS76l7Ij79zoCqGoI7t3m0+uef8b/wbfnKvUJjffUfTz40bhlDIdly/g1hsZKsZpUCOee4/HaJhuy4BDM1uAXBIn6HC82P338IzuyaOmfEZO2KqzCaqi4JFzbH3Q=
+	t=1723149399; cv=none; b=EYfkllv0mSn6mLgbwP+HQwUNR1VdGavOQK0OGJasIKwROoM/JgNVodV97ThaKraIkZF/rt9LiHNMXeGixzFQFGILaiMQNBnHodS0YH3xZqTTabQ2+esn5CNnrDI4WbqT7CMSlEXO0QfhkpT+32d/E3f4arlI5MvyC9xBKRSbnwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723149159; c=relaxed/simple;
-	bh=rJGqi+Na8v3GfQ0y92F0ElfSsv6iJrHMY+un6SEJ+TU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FkMp+QIAz9JHSmlOVwbDk3slBi0UdvefLO5gyaThW8GKGz+ll5YZnaZdq4iKUW/Y3RZZlA4wovNuEduMrwtOi9MUOBhNRsKP/RTOHJJrfL7iQqdg8cX1GxtIDovyTKda4XqPkZHkRAy7p5pYUuXHsCwwumnLmjtRhOFWTZpago4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXEefZ2e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96CD6C32782;
-	Thu,  8 Aug 2024 20:32:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723149159;
-	bh=rJGqi+Na8v3GfQ0y92F0ElfSsv6iJrHMY+un6SEJ+TU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RXEefZ2ewotY1UN2kljKPQsVwHs1vOdqNScWXj2FoJdgXD7beOebasb1XMGSBLRNj
-	 +FLD0hM4LEFLyJZm7Eqy8OcT6saTqomckK3etEqZb1vJD+PJ+MrrlfUovpVv6AuJvQ
-	 NvDR/LyRopUK8/lgg95qM1QPBYU1g1b8tbrR1dH2o1B21fRDzfVrL+FZolcrX/hhxJ
-	 XwrM+LYwneMw9RTpiAIiGiAD2L/cAI5xZ9uMJcLeMSX5lRi+ZNsohODlYzb8kFIe0d
-	 iM7eZ2805temCKLrgt5PVgV216QDMlKBrWUO5E2DTca57HhauNQtpZbGXH8glSJWQK
-	 dNiB3/3EMyjaA==
-Date: Thu, 8 Aug 2024 17:32:36 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Zixian Cai <fzczx123@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Paran Lee <p4ranlee@gmail.com>, Ben Gainey <ben.gainey@arm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf script python: Add the ins_lat field to event
- handler
-Message-ID: <ZrUrZOp1w5-8wjQM@x1>
-References: <20240808133208.3577910-1-fzczx123@gmail.com>
- <8be2eeaf-9c85-4a77-b66d-53dd1b35bf91@intel.com>
+	s=arc-20240116; t=1723149399; c=relaxed/simple;
+	bh=AQWn/xnnEHnNvSM4lorxKMv1lH4nZlJoO1CrXZ0ujvo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z4yd6oR2DkujiNrbnTOzUfZRpdAVlGDbkc5XNHBLKbM59FBHdJSdC1qR1Bl2CLo/9wHdoVz5mIYgJWNAS2XERbCGtiCLcMeX/qaoZrkCfE4pWgT0KNCP0HR2xpXEXyWGwf9NpYYasq3bng2tTt+et0F1jym+A2VlrO/tswqo1D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x6SGk8qM; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-44fe58fcf2bso8470751cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 13:36:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723149396; x=1723754196; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vOI5LTLx9cXrWhuBdvZp6mpixN3oVmTyWbuUGECDTYI=;
+        b=x6SGk8qM4ol3KzlyM19lvutubfSozSymkojAosXvy2p7iEi/57f0fmxcY/V2rjJojd
+         8sjm146NzZgAZnrP3T4MViYjDkLXS6of4u+0sC9HI3Jb0KTyr2D0/pHWeIQjn7A8OUPY
+         8I5QJrvrQmL91A0MDm+K5tx/sep46NirIcHlLpp3rvmiDkBxsnj29LJkDErtCXuiEBs2
+         zVTDcCYAW/P68np5jn3+cU6G8YAWpIDWElfiZJKjj1iYwq+tCGJ/uDPFCZqLWXupMUxY
+         Hg/rYQ7JP6RwqNow96vW51hAXYdUjYzVRQdDgMGKiSDXlCllFOtshZNnQxD4y4rb+pvp
+         9UYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723149396; x=1723754196;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vOI5LTLx9cXrWhuBdvZp6mpixN3oVmTyWbuUGECDTYI=;
+        b=rZcHnLwprxyw3TV1EC2DpagVf2bvyGp7Kjep+twIjDwoft6yMM0xo/Mq4oLaTq36uo
+         Gb3Bh9RpNsfJl/66CrgFuKTZrXLAjg4Kg/dIeQavjy6M8fvlOP9Vtn2QNQwnlI545uRn
+         HBX1TJ+qp8m35m03nvKCYmVpzx2LiM12dDSfFQY7T+SbkSoFDf/0Ma+XxRnsvnrEy9E+
+         7O6TZ8Frh+p/T5JZTU/futwVoAEovikDgK9m0Pe0qf+Q6aPgUeA8PdfPAxvVXPOSBzfH
+         WHjnxgdjfkq7gR46R0HU+Hx3Siz7Uvh6C3OOE864DBLsrKegsfIIgQrlapn7dPZpCAoL
+         yeSg==
+X-Forwarded-Encrypted: i=1; AJvYcCWjOSWebWJD3SujqTqTuUmIPMDdHx+lZ3Gba5Ry8aWr3GHjcNOxR7WXJxLf8p+20we1+0Y7u+28rXhWL44T9xLhJuo7VbrxeZZDNRdG
+X-Gm-Message-State: AOJu0Yz+ptLkjw0GHuTcxUbdCXc/LApnFK5QQJG3n+CMN05t9XXCyhhO
+	6nOcEROEU61tP6TfFMFnmrHhU1LRT0NHl/jULAxN2xpGesD6tkVIF7F+T4wFd6rh0m9VEPIvxUE
+	OrXQIW85LbNMPolMgCaaMVDX7FXVosPsO8L0l
+X-Google-Smtp-Source: AGHT+IGEd8MEPPIzKesyVrhvbUxEPsn7+b9jVtjwHdEDzmwadpVOXKjz66694N5xOc7FFo6QD61TV8emUgJPi2VIqag=
+X-Received: by 2002:a05:6214:498e:b0:6b7:b4b1:85ae with SMTP id
+ 6a1803df08f44-6bd6bd7f455mr38124966d6.54.1723149396123; Thu, 08 Aug 2024
+ 13:36:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8be2eeaf-9c85-4a77-b66d-53dd1b35bf91@intel.com>
+References: <20240805212536.2172174-1-almasrymina@google.com>
+ <20240805212536.2172174-8-almasrymina@google.com> <20240806135924.5bb65ec7@kernel.org>
+In-Reply-To: <20240806135924.5bb65ec7@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 8 Aug 2024 16:36:24 -0400
+Message-ID: <CAHS8izOA80dxpB9rzOwv7Oe_1w4A7vo5S3c3=uCES8TSnjyzpg@mail.gmail.com>
+Subject: Re: [PATCH net-next v18 07/14] memory-provider: dmabuf devmem memory provider
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, 
+	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
+	Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2024 at 06:50:16PM +0300, Adrian Hunter wrote:
-> On 8/08/24 16:32, Zixian Cai wrote:
-> > For example, when using the Alder Lake PMU memory load event, the instruction latency is stored in ins_lat, while the cache latency is stored in weight.
-> > 
-> > This patch reports the ins_lat field for Python scripting.
-> > 
-> > Signed-off-by: Zixian Cai <fzczx123@gmail.com>
-> 
-> Minor comments, otherwise:
-> 
-> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+On Tue, Aug 6, 2024 at 4:59=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wro=
+te:
+>
+...
+> On Mon,  5 Aug 2024 21:25:20 +0000 Mina Almasry wrote:
+> > +     if (pool->p.queue) {
+> > +             /* We rely on rtnl_lock()ing to make sure netdev_rx_queue
+> > +              * configuration doesn't change while we're initializing =
+the
+> > +              * page_pool.
+> > +              */
+> > +             ASSERT_RTNL();
+> > +             pool->mp_priv =3D pool->p.queue->mp_params.mp_priv;
+>
 
-Thanks, I'm then waiting for a v3 with those comments addressed and your
-Reviewed-by tag collected,
+Hi Jakub,
 
+Sorry for the late reply, it took a bit of code reading to understand
+what you mean with the deactivation request on the other patch, but I
+think I got it down and have a patch on the way.
+
+> How do you know that the driver:
+>  - supports net_iov at all (let's not make implicit assumptions based
+>    on presence of queue API);
+>  - supports net_iov in current configuration (eg header-data split is
+>    enabled)
+>  - supports net_iov for _this_ pool (all drivers must have separate
+>    buffer pools for headers and data for this to work, some will use
+>    page pool for both)
+>
+> What comes to mind is adding an "I can gobble up net_iovs from this
+> pool" flag in page pool params (the struct that comes from the driver),
+
+This already sorta exists in the current iteration, although maybe in
+an implicit way. As written, drivers need to set params.queue,
+otherwise core will not attempt to grab the mp information from
+params.queue. A driver can set params.queue for its data pages pool
+and not set it for the headers pool. AFAICT that deals with all 3
+issues you present above.
+
+The awkward part is if params.queue starts getting used for other
+reasons rather than passing mp configuration, but as of today that's
+not the case so I didn't add the secondary flag. If you want a second
+flag to be added preemptively, I can do that, no problem. Can you
+confirm params.queue is not good enough?
+
+> and then on the installation path we can check if after queue reset
+> the refcount of the binding has increased. If it did - driver has
+> created a pool as we expected, otherwise - fail, something must be off.
+> Maybe that's a bit hacky?
+
+What's missing is for core to check at binding time that the driver
+supports net_iov. I had relied on the implicit presence of the
+queue-API.
+
+What you're proposing works, but AFAICT it's quite hacky, yes. I
+basically need to ASSERT_RTNL in net_devmem_binding_get() to ensure
+nothing can increment the refcount while the binding is happening so
+that the refcount check is valid.
+
+I think a less hacky approach is to add a function to the queue-API
+like ndo_queue_supported_features(), which lets the driver declare
+that it supports net_iov at a given rx queue. However I'm open to both
+approaches. What do you prefer?
+
+--=20
 Thanks,
-
-- Arnaldo
- 
-> > ---
-> > v2) rebase on top of perf-tools-next
-> > 
-> >  tools/perf/util/scripting-engines/trace-event-python.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
-> > index fb00f3ad6815..c9e8dbd6feb5 100644
-> > --- a/tools/perf/util/scripting-engines/trace-event-python.c
-> > +++ b/tools/perf/util/scripting-engines/trace-event-python.c
-> > @@ -888,6 +888,8 @@ static PyObject *get_perf_sample_dict(struct perf_sample *sample,
-> >  	set_sample_read_in_dict(dict_sample, sample, evsel);
-> >  	pydict_set_item_string_decref(dict_sample, "weight",
-> >  			PyLong_FromUnsignedLongLong(sample->weight));
-> > +	pydict_set_item_string_decref(dict_sample, "ins_lat",
-> > +			PyLong_FromUnsignedLongLong(sample->ins_lat));
-> 
-> ins_lat is u16 so it could be PyLong_FromUnsignedLong()
-> 
-> >  	pydict_set_item_string_decref(dict_sample, "transaction",
-> >  			PyLong_FromUnsignedLongLong(sample->transaction));
-> >  	set_sample_datasrc_in_dict(dict_sample, sample);
-> > @@ -1317,7 +1319,7 @@ static void python_export_sample_table(struct db_export *dbe,
-> >  	struct tables *tables = container_of(dbe, struct tables, dbe);
-> >  	PyObject *t;
-> > 
-> > -	t = tuple_new(27);
-> > +	t = tuple_new(28);
-> > 
-> >  	tuple_set_d64(t, 0, es->db_id);
-> >  	tuple_set_d64(t, 1, es->evsel->db_id);
-> > @@ -1346,6 +1348,7 @@ static void python_export_sample_table(struct db_export *dbe,
-> >  	tuple_set_s32(t, 24, es->sample->flags);
-> >  	tuple_set_d64(t, 25, es->sample->id);
-> >  	tuple_set_d64(t, 26, es->sample->stream_id);
-> > +	tuple_set_s32(t, 27, es->sample->ins_lat);
-> 
-> ins_lat is u16 so it could be tuple_set_u32()
-> 
-> > 
-> >  	call_object(tables->sample_handler, t, "sample_table");
-> > 
-> > --
-> > 2.25.1
-> > 
+Mina
 
