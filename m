@@ -1,115 +1,117 @@
-Return-Path: <linux-kernel+bounces-279043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F1C94B835
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:49:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96E2294B838
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE6B28A458
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:49:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C82CE1C2444E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFBA188008;
-	Thu,  8 Aug 2024 07:49:39 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CFA71891A0;
+	Thu,  8 Aug 2024 07:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B8jdPorz"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE03184114
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 07:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A4D184114
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 07:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723103379; cv=none; b=uvhcz5ujbmHPhJozzAqmVSfzY2f6Y1kMl4yXz5mnkbxkyk/3yv2n9mNx+BuizYfJEZzXgBTgTvhfzS3NWLOpW7HNhRiAE5ZPsUcwOApD65CtwEnAbvYXZ+dQdQq4CYep/fHGZtcKbADRfr/Tr2nS308kUNQO3T2gY0GFGWAsNmw=
+	t=1723103386; cv=none; b=WFgtpXk84NNALGFjFrHHL5uMbE2W/axh22P1XZcscUQHdmPkOeD2ShigmlQJ6CobouX1Yme20acBHd+FYrtbVlXq0AwJDyyLe8dGcdU1EqrNhABzvcD+1HRl214scH+d3Ovun4WVDrYf11qZCzwfxRJHEZY+2ruYnI7RcSpQGCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723103379; c=relaxed/simple;
-	bh=gOJr9e4E7br/KPgtRSt4FPMnkhQtTMMdTifCtoMGT7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aeiXDehz1FM6wIMMXP/7D+9bOS3w9yLlXbsRUCMsyIF3kh9AmqdFqLYVCL+snxc3eTnGlXxtB/ox1j9ui+n3RAitDezWdJrk761sAO6/7GKGsa9ObqVv+xEetTnaLhbPZQInqekIQ/w6xEijGYEVGeYlKwcxbRWeFICp/pn5IiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sbxth-0008B1-NK; Thu, 08 Aug 2024 09:49:21 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sbxtf-005NJp-1r; Thu, 08 Aug 2024 09:49:19 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sbxte-008lsq-2w;
-	Thu, 08 Aug 2024 09:49:18 +0200
-Date: Thu, 8 Aug 2024 09:49:18 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	kernel@pengutronix.de, leitao@debian.org, linux-can@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mkl@pengutronix.de,
-	netdev@vger.kernel.org, pabeni@redhat.com, robin@protonic.nl,
-	socketcan@hartkopp.net,
-	syzbot+ad601904231505ad6617@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH net-next V2] can: j1939: fix uaf warning in
- j1939_session_destroy
-Message-ID: <ZrR4fsTgDud3Uyo0@pengutronix.de>
-References: <20240807071655.5b230108@kernel.org>
- <tencent_1F473700968236B84AEA74ED76FF67023C09@qq.com>
+	s=arc-20240116; t=1723103386; c=relaxed/simple;
+	bh=eRMCGQGyPMzEKe5DbxrFRJMmi8rj1jlg7tNTvlTUMvU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XgB7RfWsMShyEyrIaCrt83Jr2UrzfRtjt9WjFkPNu0WB4gJE4/mzdb1T1v8F0PvnxzNhIGc5BtWat69GAwTXBgpJtXUjS1OigpuiGsa9BZG6oBlmA89DPBgiJ7zSjMc8wGjxpRnFbUyTTuNdohme9yvN6AcCQM5UuLt7fITufxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B8jdPorz; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-661d7e68e89so5499327b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 00:49:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723103383; x=1723708183; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eRMCGQGyPMzEKe5DbxrFRJMmi8rj1jlg7tNTvlTUMvU=;
+        b=B8jdPorzRd0y5M5KeAXF+/5QB6w3Lat0e1lvMTyhSnkJYoNc6jFN7huQbpaNf39kpk
+         Zc8jNR6RRVm3QP/JnmyQElHVxPA2/FG7LpbwLPSeLshqI/Hz8MI6+TGEoEEIQ/IelRS6
+         muWj8/liweI2PrYwRkik3KEPEliyqGlCNTVNdUY3SRuxb75OydqrdfOAODXdMaaV+Zsk
+         yf0u7OVmhgQUkk4Q7rvip/mJ7I2fa/yfPFAfiowMYnowbcOlUBFAT01uTUHHXA2anikm
+         FkEiDt0YkkIyRkQID5p9cF70lmoutjaWQFzUDyKDP/QLJ/3yF3r0xu50PZL+M8GmL/Ey
+         vLYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723103383; x=1723708183;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eRMCGQGyPMzEKe5DbxrFRJMmi8rj1jlg7tNTvlTUMvU=;
+        b=fNlVl0m1ascjnWz+7bS2ps/0j6y1gqmcBeHTVoYbkpN//YzPTIryI9KhgNqdKutWNQ
+         BVQhuc8Mv2dBO/78pbykGDPZLj5oEJXkoScqQ9+ya97U0NfuaQ7AnIsYTGGkwk6uQ2Th
+         SYenqVAVzDEo7Wiu7eN40XPWYG6FPpnWmDrxoA3rvDri8jLqQ8rSdFPWiQqIuMzVYYdw
+         Ntv4VAPRD4IdyQdhHYZWyXvRbPm8z1iPMzlvEe3XFh6m5BPQeRVmBChEz1RijdSKdZxS
+         2HccSeRVVJW47GUI08s15MM/TCdbk3XPwI4CzPnZFmkQyqYE9ZC0LqECagVWl38bUYgj
+         glGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUa1/XwYakLhQ/1ra/+h0HuaxJGchTg1GU+E8GEi9Ix/FxThqtbYO9KpiEe+QYv/wH4t5C3aiPDJ8u/TBKcc3nXsRzOdPERnr7WGerC
+X-Gm-Message-State: AOJu0Yy+8bdT4brqztJoECYe6uFryFBqf/fLR6eb2CgKbstshSla8uBr
+	WqLJmpdLoqrljUpCN+71QwZmoxP8rYpMOL9ljEQ7KixK77mr+9fxkIvjU+2xZiNZLec/WybJcO6
+	hPmQlFQPouzg1o3/1mLF0S6BmhVrGGYc9eQsN9g==
+X-Google-Smtp-Source: AGHT+IFyIUiLZyMQe48633h5dRgjuSDZTU0zmncfIpnawrCmNKHGxrVkYgirf7pL6TeuoZ7Ea4yE3VCGND/RcnmcpDw=
+X-Received: by 2002:a05:690c:650d:b0:651:4b29:403c with SMTP id
+ 00721157ae682-69c0d6c32b1mr5818397b3.2.1723103382998; Thu, 08 Aug 2024
+ 00:49:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <tencent_1F473700968236B84AEA74ED76FF67023C09@qq.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240731-hci_qca_fixes-v1-0-59dad830b243@linaro.org>
+ <20240731-hci_qca_fixes-v1-2-59dad830b243@linaro.org> <a3bd82fa-eb27-4a71-96d8-c768b9866bf1@penguintechs.org>
+In-Reply-To: <a3bd82fa-eb27-4a71-96d8-c768b9866bf1@penguintechs.org>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Thu, 8 Aug 2024 09:49:32 +0200
+Message-ID: <CACMJSet78P5ix7QM=uz2jH21MSNmJ0nVCaeaJFKA6S8T+0R-Eg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] Bluetooth: hci_qca: fix QCA6390 support on non-DT platforms
+To: Wren Turkal <wt@penguintechs.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Marcel Holtmann <marcel@holtmann.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Edward,
+On Wed, 7 Aug 2024 at 21:09, Wren Turkal <wt@penguintechs.org> wrote:
+>
+> On 7/31/24 8:20 AM, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > QCA6390 can albo be used on non-DT systems so we must not make the power
+> > sequencing the only option. Check if the serdev device consumes an OF
+> > node. If so: honor the new contract as per the DT bindings. If not: fall
+> > back to the previous behavior by falling through to the existing
+> > default label.
+> >
+> > Fixes: 9a15ce685706 ("Bluetooth: qca: use the power sequencer for QCA6390")
+> > Reported-by: Wren Turkal <wt@penguintechs.org>
+> > Closes: https://lore.kernel.org/linux-bluetooth/27e6a6c5-fb63-4219-be0b-eefa2c116e06@penguintechs.org/
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Was this commit supposed to have a Tested-by: footer for me?
+>
 
-On Thu, Aug 08, 2024 at 07:08:49AM +0800, Edward Adam Davis wrote:
-> The root cause of this problem is when both of the following conditions
-> are met simultaneously:
-> [1] Introduced commit c9c0ee5f20c5, There are following rules:
-> In debug builds (CONFIG_DEBUG_NET set), the reference count is always
-> decremented, even when it's 1.
-> 
-> [2] When executing sendmsg, the newly created session did not increase the
-> skb reference count, only added skb to the session's skb_queue.
-> 
-> The solution is:
-> When creating a new session, do not add the skb to the skb_queue.
-> Instead, when using skb, uniformly use j1939_session_skb_queue to add
-> the skb to the queue and increase the skb reference count through it.
-> 
-> Reported-and-tested-by: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=ad601904231505ad6617
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Yes, I sent you an offlist message about it. You added:
 
-This patch breaks j1939.
-The issue can be reproduced by running following commands:
-git clone git@github.com:linux-can/can-tests.git
-cd can-tests/j1939/
-ip link add type vcan
-ip l s dev vcan0 up
-./run_all.sh vcan0 vcan0
++Tested-by: (...)
 
+The leading `+` caused patchwork to omit the tag. Just do:
 
-Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Tested-by: (...)
+
+next time.
+
+Thanks,
+Bartosz
 
