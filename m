@@ -1,210 +1,433 @@
-Return-Path: <linux-kernel+bounces-279317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5451994BBC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:56:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC70294BBCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E48D5B230C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:56:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71C501F2206B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52F618B469;
-	Thu,  8 Aug 2024 10:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6371918B479;
+	Thu,  8 Aug 2024 10:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LtOUdPAh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="L5dgVSUW"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6C213A257;
-	Thu,  8 Aug 2024 10:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85ACE18A952;
+	Thu,  8 Aug 2024 10:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723114572; cv=none; b=VIKdZQIHEI9Ov3mkzUFIH+P/RBngDETUDYNHRwX3HZXqxQ+WLxI6pN2jG5jne13RKlM7BnPVKOh2k0qUKKu50CiOKDIxMXG1v2w36XDDVifhwjLlJFGCG0BTAD8olRFKJRnaXqTUHYyhzVpnHcCR0Q1L7jwESOAyuDUmxLoa77Q=
+	t=1723114680; cv=none; b=m/p1p9EPppaVSUy3aRJ3ich603Ke3UtfhBqNA3YFLPz6mJZC39AldbKFTuKJYtv6IZ9yLu0uvYgZJLc+ns5IH1nZhKxy5hGhZwRZMhPSIbXmpvrw0rjaUefR1Ydb3B5TNU1hkwj62MB57yN5g1OztcG3zNIJWzah454aE6J/kRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723114572; c=relaxed/simple;
-	bh=TeKQmd5lTHdo9nK0gbzefeQgA5HbBNzXFovVrBMQFmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hoRFDa1nAZhZVDRKBces1ft/LlKrSnyp72NI1kvBhXONjVo0HfbPjCFyx0k1k/PQ7CPBVRH60IoTWgtcoqbSOMLJ3iRIICDE+xGxx5dMjSFjxB10MwW+iCLFzW4MIQS2LPeuC/61SNKEBhuk3rWi6eWCFg8cEQGwiPb/ROPNWtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LtOUdPAh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4780nbcU020984;
-	Thu, 8 Aug 2024 10:55:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	i3JQwwIVB+7xMCg3ydKuLW2vtns05Zod+nZsJTFL65M=; b=LtOUdPAhCjtzfLn1
-	haaKSJG1yG9xy5CjYOEhjqDxLRCjwBC2fqn4HnMlEFuSPiUKBuw0TUiuNR86zdup
-	2M+rdaDu5hu4OPwcdBLNDQFit7jxwctF+iCokf3lYSDaoFErdlu7a8ixF9gciPSH
-	DGo81oefKOTmyPZE4MRg0OLCWfpTliL39pIWY9XpAZvtUVD572eGXXlYaUpSn0pN
-	dmblwtWbq2wX+mdhjoGERTwVd9y8oSOQx1ISMhM6vgttTo3jXw51sPM2w9Ri7+Vo
-	IX/UaiVBqSnKs9lDc0BV4mBZi3rh7aKsyQdMVAMt5qBet16y07Icr/g0D/221V05
-	K4C5vw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40v79jb570-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 10:55:56 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 478AtuhR026103
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 8 Aug 2024 10:55:56 GMT
-Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 8 Aug 2024
- 03:55:51 -0700
-Message-ID: <36de7f9c-701f-6650-468b-bf07453e2e21@quicinc.com>
-Date: Thu, 8 Aug 2024 16:25:48 +0530
+	s=arc-20240116; t=1723114680; c=relaxed/simple;
+	bh=55kfGyOz+WEaJo/W86H3TTAnsKSPU+R1arN+qH2jaAs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ovLSBZ4N3u/oCQOam4Cie3Mg8b/CrbOG6wzh7+0UU28bcuo1bHSC8tL3t9EKoRjcFowE3rM0TH5QVJxKDdKNsijv2MswsHUPGCDK31ZDNVjpkoWuYah3bltc6rrjnrmTatVQv41lGbQQ3TAosSMFXpDBdLye3rAi9K40rM7cGiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=L5dgVSUW; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 0c7a91f4557511ef87684b57767b52b1-20240808
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=25aCUhW16bAELL0sJZvG8xG/qjYiHb1//nKMHBCUUF4=;
+	b=L5dgVSUWHOSBLFs/Qtar2wxsKsGB8ZtepI1O7hRPNpJjNlqfQCpKmRf0OBMjCFae3z8+xtL0AKYP+5M+/CRn959cZTRIxnlB3Yljs302C4sGYCWshJzb9BxP6CJTtpQzRZsxSLiODQTAkQcrmLuCBecMK8rvm7PB2+GJ+BjUnIY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:44992d60-3425-4e84-9a8d-5137599c1d33,IP:0,U
+	RL:25,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:25
+X-CID-META: VersionHash:6dc6a47,CLOUDID:d074e33e-6019-4002-9080-12f7f4711092,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 0c7a91f4557511ef87684b57767b52b1-20240808
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1035804885; Thu, 08 Aug 2024 18:57:48 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 8 Aug 2024 03:57:48 -0700
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 8 Aug 2024 18:57:48 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen
+ Chu <sen.chu@mediatek.com>, Jason-ch Chen <Jason-ch.Chen@mediatek.com>,
+	Chris-qj chen <chris-qj.chen@mediatek.com>, MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>, Alexandre
+ Mergnat <amergnat@baylibre.com>, Chen-Yu Tsai <wenst@chromium.org>
+Subject: [PATCH] dt-bindings: mfd: mediatek: mt6397: Convert to DT schema format
+Date: Thu, 8 Aug 2024 18:57:22 +0800
+Message-ID: <20240808105722.7222-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2 1/2] PM: domains: add device managed version of
- dev_pm_domain_attach|detach_list()
-Content-Language: en-US
-To: Dhruva Gole <d-gole@ti.com>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        "Len
- Brown" <len.brown@intel.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio"
-	<konrad.dybcio@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ulf
- Hansson <ulf.hansson@linaro.org>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <1723014947-15571-1-git-send-email-quic_dikshita@quicinc.com>
- <1723014947-15571-2-git-send-email-quic_dikshita@quicinc.com>
- <20240808104130.3lehlvkcprag2md6@lcpd911>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <20240808104130.3lehlvkcprag2md6@lcpd911>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: V80uN_qPRXJWl7nKg850ChAMZfcTJgEG
-X-Proofpoint-ORIG-GUID: V80uN_qPRXJWl7nKg850ChAMZfcTJgEG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-08_11,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 phishscore=0 adultscore=0 malwarescore=0
- lowpriorityscore=0 bulkscore=0 impostorscore=0 mlxlogscore=999
- suspectscore=0 spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408080078
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
+Convert the mfd: mediatek: mt6397 binding to DT schema format.
 
+New updates in this conversion:
+ - Align generic names of DT schema "audio-codec" and "regulators".
+ - mt6397-regulators: Replace the "txt" reference with newly added DT
+   schema.
 
-On 8/8/2024 4:11 PM, Dhruva Gole wrote:
-> On Aug 07, 2024 at 12:45:46 +0530, Dikshita Agarwal wrote:
->> Add the devres-enabled version of dev_pm_domain_attach|detach_list.
->> If client drivers use devm_pm_domain_attach_list() to attach the
->> PM domains, devm_pm_domain_detach_list() will be invoked implicitly
->> during remove phase.
->>
->> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
->> ---
->>  drivers/base/power/common.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
->>  include/linux/pm_domain.h   | 13 +++++++++++++
->>  2 files changed, 57 insertions(+)
->>
->> diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
->> index 327d168..729d6c2 100644
->> --- a/drivers/base/power/common.c
->> +++ b/drivers/base/power/common.c
->> @@ -277,6 +277,50 @@ int dev_pm_domain_attach_list(struct device *dev,
->>  EXPORT_SYMBOL_GPL(dev_pm_domain_attach_list);
->>  
->>  /**
->> + * devm_pm_domain_detach_list - devres-enabled version of dev_pm_domain_detach_list.
->> + * @_list: The list of PM domains to detach.
->> + *
->> + * This function reverse the actions from devm_pm_domain_attach_list().
->> + * it will be invoked during the remove phase from drivers implicitly if driver
->> + * uses devm_pm_domain_attach_list() to attach the PM domains.
->> + */
->> +void devm_pm_domain_detach_list(void *_list)
->> +{
->> +	struct dev_pm_domain_list *list = _list;
->> +
->> +	dev_pm_domain_detach_list(list);
->> +}
->> +EXPORT_SYMBOL_GPL(devm_pm_domain_detach_list);
->> +
->> +/**
->> + * devm_pm_domain_attach_list - devres-enabled version of dev_pm_domain_attach_list
->> + * @dev: The device used to lookup the PM domains for.
->> + * @data: The data used for attaching to the PM domains.
->> + * @list: An out-parameter with an allocated list of attached PM domains.
->> + *
->> + * NOTE: this will also handle calling devm_pm_domain_detach_list() for
->> + * you during remove phase.
->> + *
->> + * Returns the number of attached PM domains or a negative error code in case of
->> + * a failure.
->> + */
->> +int devm_pm_domain_attach_list(struct device *dev,
->> +			       const struct dev_pm_domain_attach_data *data,
->> +			       struct dev_pm_domain_list **list)
->> +{
->> +	int ret, num_pds = 0;
-> 
-> Do we require this =0? In the very next line you're initing this anyway.
-> 
-That's correct, will fix this. Thanks.
->> +
->> +	num_pds = dev_pm_domain_attach_list(dev, data, list);
->> +
->> +	ret = devm_add_action_or_reset(dev, devm_pm_domain_detach_list, *list);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return num_pds;
->> +}
->> +EXPORT_SYMBOL_GPL(devm_pm_domain_attach_list);
->> +
->> +/**
->>   * dev_pm_domain_detach - Detach a device from its PM domain.
->>   * @dev: Device to detach.
->>   * @power_off: Used to indicate whether we should power off the device.
->> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
->> index 772d328..efd517017 100644
->> --- a/include/linux/pm_domain.h
->> +++ b/include/linux/pm_domain.h
->> @@ -450,8 +450,12 @@ struct device *dev_pm_domain_attach_by_name(struct device *dev,
->>  int dev_pm_domain_attach_list(struct device *dev,
->>  			      const struct dev_pm_domain_attach_data *data,
->>  			      struct dev_pm_domain_list **list);
->> +int devm_pm_domain_attach_list(struct device *dev,
->> +			       const struct dev_pm_domain_attach_data *data,
->> +			       struct dev_pm_domain_list **list);
->>  void dev_pm_domain_detach(struct device *dev, bool power_off);
->>  void dev_pm_domain_detach_list(struct dev_pm_domain_list *list);
->> +void devm_pm_domain_detach_list(void *list);
-> 
-> Why not just call it dev_pm_domain_list *list? Why make it void? I am a
-> bit confused.
-> 
-This comment is not clear to me, could you pls elaborate?
-This is just a stub API like others in this file for !CONFIG_PM case.
+Signed-off-by: Sen Chu <sen.chu@mediatek.com>
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+---
+ .../bindings/mfd/mediatek,mt6397.yaml         | 202 ++++++++++++++++++
+ .../devicetree/bindings/mfd/mt6397.txt        | 110 ----------
+ 2 files changed, 202 insertions(+), 110 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mfd/mt6397.txt
 
-Thanks,
-Dikshita
-> 
+Changes for v1:
+ - This patch depends on conversion of mediatek,mt6397-regulator.yaml
+   [1] https://lore.kernel.org/lkml/20240807091738.18387-1-macpaul.lin@mediatek.com/T/
+
+diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+new file mode 100644
+index 0000000..cfbf2215
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+@@ -0,0 +1,202 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: MediaTek MT6397/MT6323 Multifunction Device
++
++maintainers:
++  - Sen Chu <sen.chu@mediatek.com>
++  - Macpaul Lin <macpaul.lin@mediatek.com>
++
++description: |
++  MT6397/MT6323 is a multifunction device with the following sub modules:
++  - Regulator
++  - RTC
++  - Audio codec
++  - GPIO
++  - Clock
++  - LED
++  - Keys
++  - Power controller
++
++  It is interfaced to host controller using SPI interface by a proprietary hardware
++  called PMIC wrapper or pwrap. MT6397/MT6323 MFD is a child device of pwrap.
++  See the following for pwarp node definitions:
++  ../soc/mediatek/mediatek,pwrap.yaml
++
++  This document describes the binding for MFD device and its sub module.
++
++properties:
++  compatible:
++    oneOf:
++      - enum:
++          - mediatek,mt6323
++          - mediatek,mt6331 # "mediatek,mt6331" for PMIC MT6331 and MT6332.
++          - mediatek,mt6357
++          - mediatek,mt6358
++          - mediatek,mt6359
++          - mediatek,mt6397
++      - items:
++          - enum:
++              - mediatek,mt6366 # "mediatek,mt6366", "mediatek,mt6358" for PMIC MT6366
++          - const: mediatek,mt6358
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 2
++
++  rtc:
++    type: object
++    unevaluatedProperties: false
++    description:
++      Real Time Clock (RTC)
++      See ../rtc/rtc-mt6397.txt
++    properties:
++      compatible:
++        oneOf:
++          - enum:
++              - mediatek,mt6323-rtc
++              - mediatek,mt6331-rtc
++              - mediatek,mt6358-rtc
++              - mediatek,mt6397-rtc
++          - items:
++              - enum:
++                  - mediatek,mt6366-rtc # RTC MT6366
++              - const: mediatek,mt6358-rtc
++
++  regulators:
++    type: object
++    oneOf:
++      - $ref: /schemas/regulator/mediatek,mt6358-regulator.yaml
++      - $ref: /schemas/regulator/mediatek,mt6397-regulator.yaml
++    unevaluatedProperties: false
++    description:
++      Regulators
++      For mt6323, see ../regulator/mt6323-regulator.txt
++    properties:
++      compatible:
++        oneOf:
++          - enum:
++              - mediatek,mt6323-regulator
++              - mediatek,mt6358-regulator
++              - mediatek,mt6397-regulator
++          - items:
++              - enum:
++                  - mediatek,mt6366-regulator # Regulator MT6366
++              - const: mediatek,mt6358-regulator
++
++  audio-codec:
++    type: object
++    unevaluatedProperties: false
++    description:
++      Audio codec
++    properties:
++      compatible:
++        oneOf:
++          - enum:
++              - mediatek,mt6397-codec
++              - mediatek,mt6358-sound
++          - items:
++              - enum:
++                  - mediatek,mt6366-sound # Codec MT6366
++              - const: mediatek,mt6358-sound
++
++  clk:
++    type: object
++    unevaluatedProperties: false
++    description:
++      Clock
++    properties:
++      compatible:
++        const: mediatek,mt6397-clk
++
++  led:
++    type: object
++    unevaluatedProperties: false
++    description:
++      LED
++      See ../leds/leds-mt6323.txt for more information
++    properties:
++      compatible:
++        const: mediatek,mt6323-led
++
++  keys:
++    type: object
++    $ref: /schemas/input/mediatek,pmic-keys.yaml
++    unevaluatedProperties: false
++    description: Keys
++    properties:
++      compatible:
++        oneOf:
++          - enum:
++              - mediatek,mt6323-keys
++              - mediatek,mt6331-keys
++              - mediatek,mt6397-keys
++
++  power-controller:
++    type: object
++    unevaluatedProperties: false
++    description:
++      Power controller
++      See ../power/reset/mt6323-poweroff.txt
++    properties:
++      compatible:
++        const: mediatek,mt6323-pwrc
++
++  pin-controller:
++    type: object
++    $ref: /schemas/pinctrl/mediatek,mt65xx-pinctrl.yaml
++    unevaluatedProperties: false
++    description:
++      Pin controller
++    properties:
++      compatible:
++        const: mediatek,mt6397-pinctrl
++
++required:
++  - compatible
++  - regulators
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    pwrap {
++        pmic {
++            compatible = "mediatek,mt6397";
++            interrupts-extended = <&pio 222 IRQ_TYPE_LEVEL_HIGH>;
++            interrupt-controller;
++            #interrupt-cells = <2>;
++
++            mt6397_codec: audio-codec {
++                compatible = "mediatek,mt6397-codec";
++            };
++
++            mt6397_regulators: regulators {
++                compatible = "mediatek,mt6397-regulator";
++
++                mt6397_vpca15_reg: buck_vpca15 {
++                    regulator-name = "vpca15";
++                    regulator-min-microvolt = <850000>;
++                    regulator-max-microvolt = <1400000>;
++                    regulator-ramp-delay = <12500>;
++                    regulator-always-on;
++                };
++
++                mt6397_vgp4_reg: ldo_vgp4 {
++                    regulator-name = "vgp4";
++                    regulator-min-microvolt = <1200000>;
++                    regulator-max-microvolt = <3300000>;
++                    regulator-enable-ramp-delay = <218>;
++                };
++            };
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/mfd/mt6397.txt b/Documentation/devicetree/bindings/mfd/mt6397.txt
+deleted file mode 100644
+index 10540aa..0000000
+--- a/Documentation/devicetree/bindings/mfd/mt6397.txt
++++ /dev/null
+@@ -1,110 +0,0 @@
+-MediaTek MT6397/MT6323 Multifunction Device Driver
+-
+-MT6397/MT6323 is a multifunction device with the following sub modules:
+-- Regulator
+-- RTC
+-- Audio codec
+-- GPIO
+-- Clock
+-- LED
+-- Keys
+-- Power controller
+-
+-It is interfaced to host controller using SPI interface by a proprietary hardware
+-called PMIC wrapper or pwrap. MT6397/MT6323 MFD is a child device of pwrap.
+-See the following for pwarp node definitions:
+-../soc/mediatek/mediatek,pwrap.yaml
+-
+-This document describes the binding for MFD device and its sub module.
+-
+-Required properties:
+-compatible:
+-	"mediatek,mt6323" for PMIC MT6323
+-	"mediatek,mt6331" for PMIC MT6331 and MT6332
+-	"mediatek,mt6357" for PMIC MT6357
+-	"mediatek,mt6358" for PMIC MT6358
+-	"mediatek,mt6359" for PMIC MT6359
+-	"mediatek,mt6366", "mediatek,mt6358" for PMIC MT6366
+-	"mediatek,mt6397" for PMIC MT6397
+-
+-Optional subnodes:
+-
+-- rtc
+-	Required properties: Should be one of follows
+-		- compatible: "mediatek,mt6323-rtc"
+-		- compatible: "mediatek,mt6331-rtc"
+-		- compatible: "mediatek,mt6358-rtc"
+-		- compatible: "mediatek,mt6397-rtc"
+-	For details, see ../rtc/rtc-mt6397.txt
+-- regulators
+-	Required properties:
+-		- compatible: "mediatek,mt6323-regulator"
+-	see ../regulator/mt6323-regulator.txt
+-		- compatible: "mediatek,mt6358-regulator"
+-		- compatible: "mediatek,mt6366-regulator", "mediatek-mt6358-regulator"
+-	see ../regulator/mt6358-regulator.txt
+-		- compatible: "mediatek,mt6397-regulator"
+-	see ../regulator/mt6397-regulator.txt
+-- codec
+-	Required properties:
+-		- compatible: "mediatek,mt6397-codec" or "mediatek,mt6358-sound"
+-- clk
+-	Required properties:
+-		- compatible: "mediatek,mt6397-clk"
+-- led
+-	Required properties:
+-		- compatible: "mediatek,mt6323-led"
+-	see ../leds/leds-mt6323.txt
+-
+-- keys
+-	Required properties: Should be one of the following
+-		- compatible: "mediatek,mt6323-keys"
+-		- compatible: "mediatek,mt6331-keys"
+-		- compatible: "mediatek,mt6397-keys"
+-	see ../input/mtk-pmic-keys.txt
+-
+-- power-controller
+-	Required properties:
+-		- compatible: "mediatek,mt6323-pwrc"
+-	For details, see ../power/reset/mt6323-poweroff.txt
+-
+-- pin-controller
+-	Required properties:
+-		- compatible: "mediatek,mt6397-pinctrl"
+-	For details, see ../pinctrl/pinctrl-mt65xx.txt
+-
+-Example:
+-	pwrap: pwrap@1000f000 {
+-		compatible = "mediatek,mt8135-pwrap";
+-
+-		...
+-
+-		pmic {
+-			compatible = "mediatek,mt6397";
+-
+-			codec: mt6397codec {
+-				compatible = "mediatek,mt6397-codec";
+-			};
+-
+-			regulators {
+-				compatible = "mediatek,mt6397-regulator";
+-
+-				mt6397_vpca15_reg: buck_vpca15 {
+-					regulator-compatible = "buck_vpca15";
+-					regulator-name = "vpca15";
+-					regulator-min-microvolt = <850000>;
+-					regulator-max-microvolt = <1400000>;
+-					regulator-ramp-delay = <12500>;
+-					regulator-always-on;
+-				};
+-
+-				mt6397_vgp4_reg: ldo_vgp4 {
+-					regulator-compatible = "ldo_vgp4";
+-					regulator-name = "vgp4";
+-					regulator-min-microvolt = <1200000>;
+-					regulator-max-microvolt = <3300000>;
+-					regulator-enable-ramp-delay = <218>;
+-				};
+-			};
+-		};
+-	};
+-- 
+2.18.0
+
 
