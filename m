@@ -1,70 +1,47 @@
-Return-Path: <linux-kernel+bounces-279663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F9794C02E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63DAB94C032
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A4481C222CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:49:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 965191C20DA9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D0818A6A0;
-	Thu,  8 Aug 2024 14:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1864F19066F;
+	Thu,  8 Aug 2024 14:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PSfaEOiR"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vr6YBJlU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A650BBE5D
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4729118E034;
+	Thu,  8 Aug 2024 14:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723128315; cv=none; b=PIuxF32C6pZPL0J4uRT/RpwiFBP6/XCnf9aPf8b/KBNgdLogIa0+eDw6o/aKbTrAnRVwVw452qudRmoDFnJhhm7Dgfhtei9fpcERqlkxcXjQriGfPdl/bAxMzGhyL4a0oH+gpkHn2Wi1Rx/bWBbP5ggVuMw42AakJffpkOhOFqs=
+	t=1723128349; cv=none; b=sDwO8zgd52E5irlsvj0QBK11REFSeiWPvxrV7h6SUBB7ApyLzt3cVn98lu4MxwNIxqv6FCrI82wkI7xukYfdQQZ+mRhNCw26i06g/eqHr9qxRViXLgoFHhp8Syxh/o2LJgASdpd2ihaw1n5+AB+P+UexcJGwJOXT4g+Ut4Z3kY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723128315; c=relaxed/simple;
-	bh=KpALEWerRE9Ihb8BvAaMPRncWWeI5MDABubpleySyrw=;
+	s=arc-20240116; t=1723128349; c=relaxed/simple;
+	bh=OAP7qipXG5UOuc9kNII+/P+BLWo3SVeG/J1A9fG278M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MLclr+TrWpGAJEtiKR4u77kqXv+dRjC8REzixoMbLu5DYGN8pfjhvIP5um69ectCRacSKoz+LLx8MB+XbYINuYiXhe7C537LBSU06tk0OgIhqvgpx0h1c+fZThx8f2qPHEvkDYRL/UQ5WONJWAqDmqRGqrsKxJW24mCW8M/0wPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PSfaEOiR; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-39aeccc63deso454865ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 07:45:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1723128313; x=1723733113; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LOyLR96pj1FmhAY2pd0AwP2D0CmcEpgxNczBjEIKOY0=;
-        b=PSfaEOiRNDENzNOnamXI+Y6NZ7G7stq2VJ2o4v/STs52q0P/vftCTQyhlTctHnRtT1
-         dxhgfGMn2ARloF4Cq/bLgwxLGpN/ApzX3ZeBP0SoRWg/xfgO4r4qit9uJs1Rdcs4lVfR
-         YlarhRnMYVH8wpYirpvOaizMBOuodGuT/Jihg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723128313; x=1723733113;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LOyLR96pj1FmhAY2pd0AwP2D0CmcEpgxNczBjEIKOY0=;
-        b=DgDcxETi9WC1UeTkdb3NYMS5EwtBB/Y6fH5dF4wC2ixgUn7RqO9MPFKkt6CXggCGpa
-         /5u/TNCB2CtFsSN2+XZukFjQarWanUu6TScBmkFv/BAjyso2XbMX+absaw+az/WD+m3t
-         ce4/RH1GhlwE4kfKqzXdL1dTtf4R8mbsl0xN4wDlbT9pGjEgtr5miKQkBZoW8JpRxFGs
-         HWdqQy6leFg7GN1yIfAkJkCY19juoJFdnF6gGhJ27ObX9H4J1WthbI5EhAEC0HWhmxt3
-         NS4GY5r9X6hKxfDEUgjMhbqlUezkEy5x7/xPLZDmkjYn2639AKi8jYTAl4yWXiv6mfHw
-         zdjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtxdRePfOALLnM8gNnXShWGs8Lttli8cWearecBQwVOjBKhFKK1qjvO+AKI0x2xSQFsvuCbqqj/shzmxShHQyhxr1gdhHPLsLh2e2x
-X-Gm-Message-State: AOJu0YwiQhgLusfqocEvCxswe+Ws+5zqE2QO9lfItKxZFUX64hcQ/Nyi
-	uUnGm/lly5sHMahYhIB1b4RzhIdTMOiuEEEXcesWYI83btLMAjvlAw7BoEEdV9Y=
-X-Google-Smtp-Source: AGHT+IGIrmSZpTANKFadpi4Xa8lpeuWa1JDx7izZT0ePNLlGrzbH9rBwlgoGg+JdS+CnC09zUSfpqg==
-X-Received: by 2002:a5d:9317:0:b0:821:dad2:cc0 with SMTP id ca18e2360f4ac-82253773b3bmr160018039f.0.1723128312636;
-        Thu, 08 Aug 2024 07:45:12 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ca6300b223sm240120173.131.2024.08.08.07.45.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 07:45:12 -0700 (PDT)
-Message-ID: <86c0af63-d5b6-4076-ac50-36ac4334c8b0@linuxfoundation.org>
-Date: Thu, 8 Aug 2024 08:45:11 -0600
+	 In-Reply-To:Content-Type; b=cUKtfktOlisYKMa5A3R13Xz+5IrAfZRMX4u78lzV6U+ZoWHa3a4i42FWPUgOMuJLAbomUhPQNQWcpuZZlN4mLA+Jh+7S56HkB6zp2Zruu8oGD0h7VWQG/i/aB5ddLOQXvaTrh9WqdV5Ljoqf02adQ2XaBT2S7NGz58HZ4NQJd2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vr6YBJlU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FAE0C32782;
+	Thu,  8 Aug 2024 14:45:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723128348;
+	bh=OAP7qipXG5UOuc9kNII+/P+BLWo3SVeG/J1A9fG278M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Vr6YBJlU0L3DMW6rOG1RTmdBgKr5FJn7+K8rxHfj3254H4pdXyzYtAus98hhSOhjb
+	 V/TAiGCTjyM/suF58TaR/7Rq+39mA3yPRNKd0LOT6j2+bS2iEF4PTZQJe8AHoL2gt2
+	 C6o1sxYy9bxh2GZL+aG7ygjLRAUSAhsr9c7brCQygiCLTns3UTb60MLIjnRDQn5RHf
+	 uH/RvDFIEo7BY6YQkKh2pXGfHiw2vQYHnLKGd0X9BsprIqxrWqpFV39ps+tFFM2FLq
+	 UUF8/6FtsadKExZ4nhJ5RH0r6aaI/mvEP1kZFv3+48PgOaYDFwIhQEgjYOOtTzNEzy
+	 0Jf6vrsWYUepw==
+Message-ID: <1d5b1666-4ced-45e6-bea4-50a33530a12c@kernel.org>
+Date: Thu, 8 Aug 2024 16:45:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,78 +49,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kerneldoc: Fix two missing newlines in drm_connector.c
-To: Daniel Yang <danielyangkang@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240808084058.223770-1-danielyangkang@gmail.com>
+Subject: Re: [PATCH 4/4] arm64: dts: qcom: Add common PLL node for IPQ9574 SoC
+To: Luo Jie <quic_luoj@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com,
+ quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com,
+ quic_leiwei@quicinc.com
+References: <20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com>
+ <20240808-qcom_ipq_cmnpll-v1-4-b0631dcbf785@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240808084058.223770-1-danielyangkang@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240808-qcom_ipq_cmnpll-v1-4-b0631dcbf785@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/8/24 02:40, Daniel Yang wrote:
-> drm_connector.c has two kerneldoc comments that were missing newlines.
-> This results in the following warnings when running make htmldocs:
-> 
-> ./Documentation/gpu/drm-kms:538: ./drivers/gpu/drm/drm_connector.c:2344:
-> WARNING: Definition list ends without a blank line; unexpected unindent.
-> [docutils] ./Documentation/gpu/drm-kms:538:
-> 
-> ./drivers/gpu/drm/drm_connector.c:2346: ERROR: Unexpected indentation.
-> [docutils] ./Documentation/gpu/drm-kms:538:
-> 
-> ./drivers/gpu/drm/drm_connector.c:2368: WARNING: Block quote ends without a
-> blank line; unexpected unindent. [docutils] ./Documentation/gpu/drm-kms:538:
-> 
-> ./drivers/gpu/drm/drm_connector.c:2381: ERROR: Unexpected indentation.
-> [docutils]
+On 08/08/2024 16:03, Luo Jie wrote:
 
-Add a line to say "Fix the unexpected indentation errors"
+>  
+>  /dts-v1/;
+> @@ -167,3 +167,7 @@ &usb3 {
+>  &xo_board_clk {
+>  	clock-frequency = <24000000>;
+>  };
+> +
+> +&cmn_pll_ref_clk {
 
-drm maintainers will have a final say on this. :)
+Please follow DTS coding style.
 
-> 
-> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-> ---
->   drivers/gpu/drm/drm_connector.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-> index 80e239a6493..fc35f47e284 100644
-> --- a/drivers/gpu/drm/drm_connector.c
-> +++ b/drivers/gpu/drm/drm_connector.c
-> @@ -2342,7 +2342,9 @@ EXPORT_SYMBOL(drm_mode_create_aspect_ratio_property);
->    *
->    *	Default:
->    *		The behavior is driver-specific.
-> + *
->    *	BT2020_RGB:
-> + *
->    *	BT2020_YCC:
->    *		User space configures the pixel operation properties to produce
->    *		RGB content with Rec. ITU-R BT.2020 colorimetry, Rec.
-> @@ -2366,6 +2368,7 @@ EXPORT_SYMBOL(drm_mode_create_aspect_ratio_property);
->    *		range.
->    *		The variants BT2020_RGB and BT2020_YCC are equivalent and the
->    *		driver chooses between RGB and YCbCr on its own.
-> + *
->    *	SMPTE_170M_YCC:
->    *	BT709_YCC:
->    *	XVYCC_601:
-> @@ -2378,6 +2381,7 @@ EXPORT_SYMBOL(drm_mode_create_aspect_ratio_property);
->    *	DCI-P3_RGB_Theater:
->    *	RGB_WIDE_FIXED:
->    *	RGB_WIDE_FLOAT:
-> + *
->    *	BT601_YCC:
->    *		The behavior is undefined.
->    *
+> +	clock-frequency = <48000000>;
+> +};
 
-thanks,
--- Shuah
+
+
+Best regards,
+Krzysztof
+
 
