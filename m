@@ -1,71 +1,60 @@
-Return-Path: <linux-kernel+bounces-280167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896C494C68F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:57:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C31B94C6AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB5011C20E72
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:57:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2753AB20DD8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655711465B3;
-	Thu,  8 Aug 2024 21:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3004215D5A1;
+	Thu,  8 Aug 2024 22:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="yKpx0UmO"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcbT6Dfd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D0115820F;
-	Thu,  8 Aug 2024 21:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA03156C78;
+	Thu,  8 Aug 2024 22:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723154256; cv=none; b=p3DjVe3K3m3oSngdpNJKZ/JfTqwTGtXIDaVLyX9di5M9RoN39L8zcsUmqhe+uE2gJs4UaRoIXyutotMr3OkpK0X8tJYw1nQxXyUu238gaC/P4g1vQ04+mYM4vmHipujQAwZKYI6QHGMbrBMrKxhbjt0zlT6i/AyWq9z2Ejfc2dU=
+	t=1723154648; cv=none; b=j8rDo2F4NNJW2cXwL2Zavz/MqAQgPMDMUo4QVMKImIszYXVLWUcIC6Fd007U/NdPeRu2hFiMKBjeH/yk+PU795NSy21DW4LySHIy3G/Mo1V8dhn/EHC7lXv8LeqpQE04glv6OqyV18zrW2liCUAirJlGZtL61syrMncTZaghpAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723154256; c=relaxed/simple;
-	bh=fTYNQC4CAH7sOYb/bMWwW5CHXUN+mk34w8L/xq/xi2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P1fFYEid0Ovc639VLiW2rPUgYs4lzC48lv5DAskBGjlvgSQiGKJsd3v651k+73tNCI8rvM33y6+GeameIXqVhnDB9+Xs1ktZZrOUv45gFY45DGmi3srI52RYDdoocY4mgduWXT+DO6AZ4P0GmgeKhwO9yHrCCIcUCaLm9hQ2oK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=yKpx0UmO; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id E6AAA212EB;
-	Thu,  8 Aug 2024 23:57:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1723154244;
-	bh=OEsvf7g7/w9CifdM3bR3zFhc4Ws0Z/D5lK7FraIhQzQ=;
-	h=Received:From:To:Subject;
-	b=yKpx0UmOrL8hPRh8T+o0nK1OvzWcEk3154xj3jXg2xTU2No9zUK1DdfGps75RyKdX
-	 OiC1klIIaYWHkNuUvAhXkfiYUa7o9aA3TAmpy9fmH4VAxmfSywCdy4T9CPjbppYBd4
-	 8JthzIAH8Gzkw04cSWnKg6JdTHtI5pO88zcKoDT7JabqGz7AdsNLG7skoHK7dbnG2U
-	 A9i7kUSVZ1hmi56dDBfauPieTuARPiKYmAaj50VCLBL9/RYDtjJRsffBOXwyC21hO4
-	 N3JI/+Rh85GafItqSluoF/8mBUllkXr33cYy7jUye+VyvujfZJuow2qBGyHVh6D00k
-	 AqyoiKnvPIDsQ==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id 7A9107F8F1; Thu,  8 Aug 2024 23:57:23 +0200 (CEST)
-Date: Thu, 8 Aug 2024 23:57:23 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Linux Team <linux-imx@nxp.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 0/4]  net: fec: add PPS channel configuration
-Message-ID: <ZrU_QwbcgaUxBg61@gaggiata.pivistrello.it>
-References: <20240807144349.297342-1-francesco@dolcini.it>
+	s=arc-20240116; t=1723154648; c=relaxed/simple;
+	bh=vF3wxdSW9XO29eue8EVs7PMb8qOZVTLaCZnW3y2XlEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mCx8LaoUjC/AGBwqLch8izEVLkyHmeV7jxBP2I7mnzVp0fEbl0j1IYsjzioRIrq1QmROfh2QPhod8zQ4trJNSecuTzsO4W/aJ6tTZXsZTza/Vp2NC1WVhPOtfAaKxk2SUyvq+TLAzGTRAJoUfaLNE9PiynaIlcOZdx92uiwJBbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lcbT6Dfd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F37E0C32782;
+	Thu,  8 Aug 2024 22:04:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723154648;
+	bh=vF3wxdSW9XO29eue8EVs7PMb8qOZVTLaCZnW3y2XlEI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lcbT6DfdERNNi4oaIhiOd7UkjLo5R9abMgt/Pzcso+b7cTE1w94h+uIJL8b/jcxN7
+	 Au1aiy5WMDU9xEqr00hYZd40X3QIQ6Ycjqpr77k37929VKTnjoiBFWBYb0AfuOIDap
+	 HkFKOO6alCWoNGHq830g7/5MvN10XgsBmLxf/KkND3IzZgzwHppW3/acKO6b5OinyL
+	 5yB9qfwhD3VfK/PYQPr7u5hqFMngHBhhCCYkquFKbIhu4kGpFvnha/HfAZzx2nwu6n
+	 6aez+O8agRvbBZLvy/Mt6h5T57UQ5XXhl4THbUGr49TaGbcI9IqtCmefdqgMFOkx8E
+	 iF7uLMqpjpmew==
+Date: Thu, 8 Aug 2024 16:04:04 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Namjae Jeon <linkinjeon@kernel.org>, Steve French <sfrench@samba.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tom Talpey <tom@talpey.com>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Bharath SM <bharathsm@microsoft.com>
+Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] smb: smb2pdu.h: Use static_assert() to check struct
+ sizes
+Message-ID: <ZrVA1N6Iv0Byb3I7@cute>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,18 +63,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240807144349.297342-1-francesco@dolcini.it>
 
-Hello net people,
+Commit 9f9bef9bc5c6 ("smb: smb2pdu.h: Avoid -Wflex-array-member-not-at-end
+warnings") introduced tagged `struct create_context_hdr`. We want to
+ensure that when new members need to be added to the flexible structure,
+they are always included within this tagged struct.
 
-On Wed, Aug 07, 2024 at 04:43:45PM +0200, Francesco Dolcini wrote:
-> From: Francesco Dolcini <francesco.dolcini@toradex.com>
-> 
-> Make the FEC Ethernet PPS channel configurable from device tree.
+So, we use `static_assert()` to ensure that the memory layout for
+both the flexible structure and the tagged struct is the same after
+any changes.
 
-I realized that I forgot the `net-next` subject patch prefix on this series,
-let me know if I should re-send it with it added, thanks.
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ fs/smb/common/smb2pdu.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Francesco
+diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
+index c3ee42188d25..c769f9dbc0b4 100644
+--- a/fs/smb/common/smb2pdu.h
++++ b/fs/smb/common/smb2pdu.h
+@@ -1216,6 +1216,8 @@ struct create_context {
+ 	);
+ 	__u8 Buffer[];
+ } __packed;
++static_assert(offsetof(struct create_context, Buffer) == sizeof(struct create_context_hdr),
++	      "struct member likely outside of __struct_group()");
+ 
+ struct smb2_create_req {
+ 	struct smb2_hdr hdr;
+-- 
+2.34.1
 
 
